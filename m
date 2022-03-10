@@ -2,239 +2,240 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76933C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  9 Mar 2022 22:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01F3C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Mar 2022 04:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238617AbiCIWW0 (ORCPT
+        id S239528AbiCJEzV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 9 Mar 2022 17:22:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46938 "EHLO
+        Wed, 9 Mar 2022 23:55:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238618AbiCIWWW (ORCPT
+        with ESMTP id S239525AbiCJEzU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 9 Mar 2022 17:22:22 -0500
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2087.outbound.protection.outlook.com [40.107.21.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BFFD120E8A;
-        Wed,  9 Mar 2022 14:21:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O2ckgYhslW0OmKCVPd4RclcfnFfrVS7Zx8Rro9PmTXO/i1f8XLzXkIGThbkBB7Cmb6GGavSOWs+1dcrPb0lUXfU7KevJShZ/LjbjJ7fPJcGLAwQtLc9m0VX9iEV0dRVEUxUyvbmAdHFlaOBOiwWWcuUuzYupro7zyF8xF0eNrG5k12Nzae/vBkQN6Qk3t/zjtHfvIvpHU+O6CDGv3Y4jJJDpnIlC6WnKx+F17EDQ0EZJflZFORPIn8OWkxlVvz0KSw9k3MIMHhLqHFfj7r20fy/K3FOT+m6GVB3U1FaltudeQOKIBa3tIxHKkYdCcUay1goaJcUTXWFCKfUAlKldEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RhEfDWu1ze6ZvDKWXQK6H8VW1nqMi7O8EtFzjmxrFKo=;
- b=Q7KR36K+YzMiiAwcee+A6CK5rGOnYN3KNWX3sV0b7q0DmYcyugUFDpk/pYnrB7Ti7wfoPqIjbvTxKY4y4v439OjkNLOY0aDvoYF0hby2MRXpxVPA6xZxhhsYHTMY4/QfYV95i7iOi/e2NIr80dXuIqoPPo8rWdeh9wiUaa9VDO9664Exsi7uZNHS5qGwSvucgmZry9VGOw/55qA2Ur+ba9aFdg78eNwSdoj4Dy16tJAO+3iGbo/fuHCfJNn76X3iYVY94A/v3qmtYRiWmjNQ8e1fXaxL+u8GZXscrZ7UihpZ4iB80eVspC3BVX6VKM7UlykbtxcG4KZGdkId/aH0Jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RhEfDWu1ze6ZvDKWXQK6H8VW1nqMi7O8EtFzjmxrFKo=;
- b=A2ifYit/B9R83XA/4W+CWjMetMA/w8qLm5FhQZHL8SL9NcyEr5go3hkhYPmjz+Tv9iQAfLDaUgnO0tn96Ym6bXkePbvGq2RSN1HOA7OB2TtOdjUmekY2QCdpnHYIZ3vRuHEFZC8Qf/CM+ckYcUaIcjFWcuIhaF5cRFZfgxpURjk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by VI1PR04MB4512.eurprd04.prod.outlook.com (2603:10a6:803:69::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.16; Wed, 9 Mar
- 2022 22:21:20 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::5538:7e34:6843:2bc7]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::5538:7e34:6843:2bc7%6]) with mapi id 15.20.5038.027; Wed, 9 Mar 2022
- 22:21:20 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        arnaud.pouliquen@foss.st.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peng.fan@nxp.com
-Subject: [PATCH V3 2/2] remoteproc: support attach recovery after rproc crash
-Date:   Thu, 10 Mar 2022 07:01:28 +0800
-Message-Id: <20220309230128.15856-3-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20220309230128.15856-1-peng.fan@oss.nxp.com>
-References: <20220309230128.15856-1-peng.fan@oss.nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0022.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::14) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f4317c70-346d-4b0e-20a5-08da021b2339
-X-MS-TrafficTypeDiagnostic: VI1PR04MB4512:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-Microsoft-Antispam-PRVS: <VI1PR04MB4512041BEB71BF15B6DAC282C90A9@VI1PR04MB4512.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: L7G0WbRDVvOHGqJpaMfAk0wUMvXKnLbqSMHr1BXJZYsmNRfD1X/b6RI+aCYmSWQQyw+anJyascq1Z/3kvLNRxQDcydd3B3b1XiwvDM7w02XuPEUAJATRC+e1BTKUkJXltWUuvkSKt/dP/xiEHCGG6P2iS1cBQKVqIwh0u5/nZ6UuGXQozSGipS9kMAaMtIfTbfD9JzHb/gUXiL/R4VJBCGE5ntIYdUeo8W4n14RbbuyUU+yPS0iIlJtEWuAgtDXibmqmAqGB0plPk99rdjrg3M6OtVmyexkVbI2NqahywFC6A2LhUtnCMp0LEwePkND1VGMxIl6ymAlS/vugpGoEyo9J0UcQqZqBEVuw5hthwNFjdm1O3qfX4ip7Mn1tyDr3tgL1O8jZnNpLNSYCaQJCNpNINMypB9u8iFYK0knylqcTGUWxm3S7NYriE72ByLu++zhqCMrdbmGq//10PEDMGEgCy9Zz0mkEA4u3ljAHd+1ZAiAbmGO44kwOAM2tsa9gQ/2vFpl/eGOIk4B6QFyY7nX9dKq2M77FNTrKGgF5Pn9It1Sp40hnfFBfFYrk8/3qKYVTx4wCfFkPROhToZAs+41WBjLrltTtQmwHMaIeXoStppZbkuVmRJD4w0MeguGA6XjK+0Ab67Z0OWSvGqgVXvATUKT9iwc2Uay8H/CG70+akrGmoJkhwWzmlkE4XHFZ6lao/VlSkjd+A7+Bsc1ZyGemOtgjredEZCyD+alsa+8+kkVHWctKgRaCjne01g4Qzcr7eUxyVMgh2yzoPSeNc8c69k/kNuut35ZdlzHoEk0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(5660300002)(8936002)(2906002)(6512007)(83380400001)(2616005)(26005)(1076003)(186003)(66946007)(66556008)(966005)(508600001)(6506007)(66476007)(6486002)(4326008)(52116002)(8676002)(86362001)(38100700002)(316002)(38350700002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FVakTZIG4k7zKFbDJV0IZdmlTxYWSm13zodo//e5vo8h5E8S5x87Y6yPPb5D?=
- =?us-ascii?Q?icTu+mLqipkSrk3jsgT+GgU20fbKOibFcXJZjSR/c4va21F3pd7g7B8N2H3N?=
- =?us-ascii?Q?cGCUwJdD6s2WGtFN4kbawObYqz33agVu2OHs9jePE58W41cyE4elebs3ZJLG?=
- =?us-ascii?Q?ieWMGK4XvRhH5yQMlWUsq46Jyc4JNa8ZXX0GYHZJ9tBuGreYZbXOcmMb+VrK?=
- =?us-ascii?Q?cH2oFN8h1eXcbBeXSjnpLAj0A12d02couiDRapTANZZ+6kL24cLAA0iGVz8D?=
- =?us-ascii?Q?DD3nYyEOiahTFS/AmslR3xmw3X/p0hw3ohY+IqkCYAo5ETPJMEhELLwPPNQo?=
- =?us-ascii?Q?aqOgcBPKzZYHaiVVpFS+2vBXEZYZoPCPI4BhThCUOppZFPtPSagXsZxNMVuU?=
- =?us-ascii?Q?+HkbpChn3bM82V3RyiQaYAM6ZVWX/X4JsPruh8YlGT4r28SaEoSEFeOMdki2?=
- =?us-ascii?Q?8acJ6rUziEOGwCWF5WZihHW1TyMiCLeOnPFz5kpbB99xnIsIwIOuk+wFLKwJ?=
- =?us-ascii?Q?2vOVuDxHPVuxku76FajwFPk6LZQq7g7mulby/3KPvFvegCODMztRbWntyS1Y?=
- =?us-ascii?Q?G2u3GZ8eDcYKXzG5yMogtT3i80o6iATbl/HPKs/J2MpDaRd5YoRYJn8oLGVJ?=
- =?us-ascii?Q?v7VAE9LEUcOeR3qlcWdolJynPz3xQtigGgzyZnIlV2Vbx4PyJdx7KF+FPtKn?=
- =?us-ascii?Q?tTDvKej+GdMSVccCrFnQGLey+5tYS53dvU1TJe5iCpLVy7ARsXQYmjhjSjGh?=
- =?us-ascii?Q?vK+CnZ1E4eyHLRKonHmktjYqiaqKDzVzH06mftcdWXmjSN+c1tp0vq6eK/We?=
- =?us-ascii?Q?263MpDZrckTujFHQgJl1MG0C7X+C4vfpwxZ6F/55QKmyTKfwaDzpTdMG6PTv?=
- =?us-ascii?Q?bI0rnJfBhsyN8AzfZOVieyD5gkHDWy1K0P3belfgD2mNs+/XiwBQ+pRbNfVf?=
- =?us-ascii?Q?sLd9CydgleaA2kTNodRne+ExDtmCmXDLobgTuaxNArpR6e0AlHgFlWpy0cho?=
- =?us-ascii?Q?i2mWLQuarNU61XFA0AAGj6eNM7V18KI84wvNa/Syt7Cv6S3sNKbTLuU9MOTU?=
- =?us-ascii?Q?zONqa2+3u+dXKPU9LIONIKvPlp+FeJrIxMSlBNiEBpyzMCHXhWK8yhc0qI8T?=
- =?us-ascii?Q?FfRX/lU45Qr6A4P6cC+2v+Uzh3U5svrOWtWH3xSUpIjWV1Umtj0Hbv+AHHzO?=
- =?us-ascii?Q?sin/duz61vkaRViH536wZw/zxG9dwftSrAsYYaA3ePy7TJLNdGIRIxM4XBdO?=
- =?us-ascii?Q?EKnbhldqiwyP6c6QaoeRiJKUlfYgI8CqTMMuF0Kiq1epP7jFck0SVoRfp8Xz?=
- =?us-ascii?Q?7xnCuCKi6c/SCxdjN5N1AWU9d2uEE3p8WswX8Fch11knYJu82EZrQ34v2Kwi?=
- =?us-ascii?Q?Ccc3JC5TP4oB6ohKodPcC/KCpQsPSssyyGk78I+hldIsTEmotdgr+46rds+v?=
- =?us-ascii?Q?hOTIf1R2w4mqD/udYmJ2Ca+aD7EZRjwTrcKHN+fj7qtx69rMObzDb64DLgKv?=
- =?us-ascii?Q?yrSMSnOUVfEnF1x2sQp/ZHxa4xbnxQehs0lJ7j905BZvd99Y2PObhbYo2CbK?=
- =?us-ascii?Q?1B/89/S32NbPLvHnaP8LchiUmYT+VuA6tn8tMfinjd5Upe9c72OcywAc555b?=
- =?us-ascii?Q?fxXA9yz7nvgEIrkmx8kHMs0=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f4317c70-346d-4b0e-20a5-08da021b2339
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2022 22:21:20.6383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Poi0I75p/6sVfTqx5hXrWJZeChi+fQ6Ys3BUyg+sxRE7ydi+kcKJF9bmh9MlJhSdcJ3zFcGBBdTW2vCVRNk+sg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4512
+        Wed, 9 Mar 2022 23:55:20 -0500
+Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 027E5129BA3;
+        Wed,  9 Mar 2022 20:54:18 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R761e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V6n5VCi_1646888052;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V6n5VCi_1646888052)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 10 Mar 2022 12:54:13 +0800
+Message-ID: <1646887597.810321-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v7 09/26] virtio_ring: split: implement virtqueue_reset_vring_split()
+Date:   Thu, 10 Mar 2022 12:46:37 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
+ <20220308123518.33800-10-xuanzhuo@linux.alibaba.com>
+ <512de020-b36e-8473-69c8-8b3925fbb6c1@redhat.com>
+In-Reply-To: <512de020-b36e-8473-69c8-8b3925fbb6c1@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Wed, 9 Mar 2022 15:55:44 +0800, Jason Wang <jasowang@redhat.com> wrote:
+>
+> =E5=9C=A8 2022/3/8 =E4=B8=8B=E5=8D=888:35, Xuan Zhuo =E5=86=99=E9=81=93:
+> > virtio ring supports reset.
+> >
+> > Queue reset is divided into several stages.
+> >
+> > 1. notify device queue reset
+> > 2. vring release
+> > 3. attach new vring
+> > 4. notify device queue re-enable
+> >
+> > After the first step is completed, the vring reset operation can be
+> > performed. If the newly set vring num does not change, then just reset
+> > the vq related value.
+> >
+> > Otherwise, the vring will be released and the vring will be reallocated.
+> > And the vring will be attached to the vq. If this process fails, the
+> > function will exit, and the state of the vq will be the vring release
+> > state. You can call this function again to reallocate the vring.
+> >
+> > In addition, vring_align, may_reduce_num are necessary for reallocating
+> > vring, so they are retained when creating vq.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 69 ++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 69 insertions(+)
+> >
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index e0422c04c903..148fb1fd3d5a 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -158,6 +158,12 @@ struct vring_virtqueue {
+> >   			/* DMA address and size information */
+> >   			dma_addr_t queue_dma_addr;
+> >   			size_t queue_size_in_bytes;
+> > +
+> > +			/* The parameters for creating vrings are reserved for
+> > +			 * creating new vrings when enabling reset queue.
+> > +			 */
+> > +			u32 vring_align;
+> > +			bool may_reduce_num;
+> >   		} split;
+> >
+> >   		/* Available for packed ring */
+> > @@ -217,6 +223,12 @@ struct vring_virtqueue {
+> >   #endif
+> >   };
+> >
+> > +static void vring_free(struct virtqueue *vq);
+> > +static void __vring_virtqueue_init_split(struct vring_virtqueue *vq,
+> > +					 struct virtio_device *vdev);
+> > +static int __vring_virtqueue_attach_split(struct vring_virtqueue *vq,
+> > +					  struct virtio_device *vdev,
+> > +					  struct vring vring);
+> >
+> >   /*
+> >    * Helpers.
+> > @@ -1012,6 +1024,8 @@ static struct virtqueue *vring_create_virtqueue_s=
+plit(
+> >   		return NULL;
+> >   	}
+> >
+> > +	to_vvq(vq)->split.vring_align =3D vring_align;
+> > +	to_vvq(vq)->split.may_reduce_num =3D may_reduce_num;
+> >   	to_vvq(vq)->split.queue_dma_addr =3D vring.dma_addr;
+> >   	to_vvq(vq)->split.queue_size_in_bytes =3D vring.queue_size_in_bytes;
+> >   	to_vvq(vq)->we_own_ring =3D true;
+> > @@ -1019,6 +1033,59 @@ static struct virtqueue *vring_create_virtqueue_=
+split(
+> >   	return vq;
+> >   }
+> >
+> > +static int virtqueue_reset_vring_split(struct virtqueue *_vq, u32 num)
+> > +{
+>
+>
+> So what this function does is to resize the virtqueue actually, I
+> suggest to rename it as virtqueue_resize_split().
 
-Current logic only support main processor to stop/start the remote
-processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
-remote processor could do attach recovery after crash and trigger watchdog
-reboot. It does not need main processor to load image, or stop/start M4
-core.
+In addition to resize, when num is 0, the function is to reinitialize vq ri=
+ng
+related variables. For example avail_idx_shadow.
 
-Introduce two functions: rproc_attach_recovery, rproc_firmware_recovery
-for the two cases. Firmware recovery is as before, let main processor to
-help recovery, while attach recovery is recover itself withou help.
-To attach recovery, we only do detach and attach.
+So I think 'reset' is more appropriate.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+Thanks.
 
-V3:
- Resend with cover-letter
-
-V2-version 2:
- use rproc_has_feature in patch 1/2
-V2-version1:
- Nothing change in V2.
- Only move this patch out from
- https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
-
- drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++--------
- 1 file changed, 48 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 69f51acf235e..366fad475898 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1887,6 +1887,50 @@ static int __rproc_detach(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int rproc_attach_recovery(struct rproc *rproc)
-+{
-+	int ret;
-+
-+	mutex_unlock(&rproc->lock);
-+	ret = rproc_detach(rproc);
-+	mutex_lock(&rproc->lock);
-+	if (ret)
-+		return ret;
-+
-+	if (atomic_inc_return(&rproc->power) > 1)
-+		return 0;
-+
-+	return rproc_attach(rproc);
-+}
-+
-+static int rproc_firmware_recovery(struct rproc *rproc)
-+{
-+	const struct firmware *firmware_p;
-+	struct device *dev = &rproc->dev;
-+	int ret;
-+
-+	ret = rproc_stop(rproc, true);
-+	if (ret)
-+		return ret;
-+
-+	/* generate coredump */
-+	rproc->ops->coredump(rproc);
-+
-+	/* load firmware */
-+	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+	if (ret < 0) {
-+		dev_err(dev, "request_firmware failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* boot the remote processor up again */
-+	ret = rproc_start(rproc, firmware_p);
-+
-+	release_firmware(firmware_p);
-+
-+	return ret;
-+}
-+
- /**
-  * rproc_trigger_recovery() - recover a remoteproc
-  * @rproc: the remote processor
-@@ -1901,7 +1945,6 @@ static int __rproc_detach(struct rproc *rproc)
-  */
- int rproc_trigger_recovery(struct rproc *rproc)
- {
--	const struct firmware *firmware_p;
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
-@@ -1915,24 +1958,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 
- 	dev_err(dev, "recovering %s\n", rproc->name);
- 
--	ret = rproc_stop(rproc, true);
--	if (ret)
--		goto unlock_mutex;
--
--	/* generate coredump */
--	rproc->ops->coredump(rproc);
--
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto unlock_mutex;
--	}
--
--	/* boot the remote processor up again */
--	ret = rproc_start(rproc, firmware_p);
--
--	release_firmware(firmware_p);
-+	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_RECOVERY))
-+		ret = rproc_attach_recovery(rproc);
-+	else
-+		ret = rproc_firmware_recovery(rproc);
- 
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
--- 
-2.30.0
-
+>
+>
+> > +	struct vring_virtqueue *vq =3D to_vvq(_vq);
+> > +	struct virtio_device *vdev =3D _vq->vdev;
+> > +	struct vring_split vring;
+> > +	int err;
+> > +
+> > +	if (num > _vq->num_max)
+> > +		return -E2BIG;
+> > +
+> > +	switch (vq->vq.reset) {
+> > +	case VIRTIO_VQ_RESET_STEP_NONE:
+> > +		return -ENOENT;
+> > +
+> > +	case VIRTIO_VQ_RESET_STEP_VRING_ATTACH:
+> > +	case VIRTIO_VQ_RESET_STEP_DEVICE:
+> > +		if (vq->split.vring.num =3D=3D num || !num)
+> > +			break;
+> > +
+> > +		vring_free(_vq);
+> > +
+> > +		fallthrough;
+> > +
+> > +	case VIRTIO_VQ_RESET_STEP_VRING_RELEASE:
+> > +		if (!num)
+> > +			num =3D vq->split.vring.num;
+> > +
+> > +		err =3D vring_create_vring_split(&vring, vdev,
+> > +					       vq->split.vring_align,
+> > +					       vq->weak_barriers,
+> > +					       vq->split.may_reduce_num, num);
+> > +		if (err)
+> > +			return -ENOMEM;
+>
+>
+> We'd better need a safe fallback here like:
+>
+> If we can't allocate new memory, we can keep using the current one.
+> Otherwise an ethtool -G fail may make the device not usable.
+>
+> This could be done by not freeing the old vring and virtqueue states
+> until new is allocated.
+>
+>
+> > +
+> > +		err =3D __vring_virtqueue_attach_split(vq, vdev, vring.vring);
+> > +		if (err) {
+> > +			vring_free_queue(vdev, vring.queue_size_in_bytes,
+> > +					 vring.queue,
+> > +					 vring.dma_addr);
+> > +			return -ENOMEM;
+> > +		}
+> > +
+> > +		vq->split.queue_dma_addr =3D vring.dma_addr;
+> > +		vq->split.queue_size_in_bytes =3D vring.queue_size_in_bytes;
+> > +	}
+> > +
+> > +	__vring_virtqueue_init_split(vq, vdev);
+> > +	vq->we_own_ring =3D true;
+>
+>
+> This seems wrong, we have the transport (rproc/mlxtbf) that allocate the
+> vring by themselves. I think we need to fail the resize for we_own_ring
+> =3D=3D false.
+>
+> Thanks
+>
+>
+>
+> > +	vq->vq.reset =3D VIRTIO_VQ_RESET_STEP_VRING_ATTACH;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >
+> >   /*
+> >    * Packed ring specific functions - *_packed().
+> > @@ -2317,6 +2384,8 @@ static int __vring_virtqueue_attach_split(struct =
+vring_virtqueue *vq,
+> >   static void __vring_virtqueue_init_split(struct vring_virtqueue *vq,
+> >   					 struct virtio_device *vdev)
+> >   {
+> > +	vq->vq.reset =3D VIRTIO_VQ_RESET_STEP_NONE;
+> > +
+> >   	vq->packed_ring =3D false;
+> >   	vq->we_own_ring =3D false;
+> >   	vq->broken =3D false;
+>
