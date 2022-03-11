@@ -2,156 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D58C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 20:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FD9C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 23:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbiCKU4J (ORCPT
+        id S230078AbiCKXDP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 15:56:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        Fri, 11 Mar 2022 18:03:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230324AbiCKU4I (ORCPT
+        with ESMTP id S231265AbiCKXDF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 15:56:08 -0500
-Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A7A32028AB
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 12:54:55 -0800 (PST)
-Received: by mail-oo1-xc29.google.com with SMTP id n5-20020a4a9545000000b0031d45a442feso11945373ooi.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 12:54:55 -0800 (PST)
+        Fri, 11 Mar 2022 18:03:05 -0500
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E326E10E55B
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 14:58:03 -0800 (PST)
+Received: by mail-oi1-x22f.google.com with SMTP id v75so2179278oie.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 14:58:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=1Eb4lJ/gRDGHQtzxeJ/n15BUoLk+AfXEc1aV/y6NJFo=;
-        b=mD6CQw0YWd3H8i8Emv3nPIRx2chGxuqbAk1C75U0CqzBBTn9zloG/aU5nIwgWuMjxc
-         UNkPmd8Pwd4Duvvp6MIgSvRF6LPOgQQ8aG12+/IS04ubDMbb1ZXfGGjaA+V2hEqhdMsF
-         L7Iw19u8joHut2ekiM4dK6FMbRZ4wGH6jP3ps9KWjKXPkFzGEMw/DcjRDwxmpRY0vZE2
-         qOEDk0a1Bh8kjMzxvUa+36rTE9pdSV+DJ8IfrmBQhLYiJucMJEXg+S7RYm8+h5JukFhL
-         IC0hP3TnWoHw+wu0sPhi7zeITEXSB32A3lFsLhZ5MxwhDSvp5v6S+59ACGi6RfgRkEHh
-         7klQ==
+        bh=ouXKxtl+8G+GwtOSfWWV903AmhWVHKS99b2n31iKIp0=;
+        b=O1KTLBkViqTZcE4jO3SOzLYQ8Mei2Q0WFKGyWQ7q1Z8YSG0iZna9ofEhD8FI7UWF6z
+         tPER/jc5vn1cs81+THtmfmovsASEuu8cL32uJb60hesZuTGIhUY65eyZMFg2cc47Q73Q
+         FuhcV/gVHTTrsUcWIYK3CUEyun16UeMGBpUYAvy41TxF1qtIZaveH3q6GuDpVV7wiXnZ
+         i1dmjE90JWtGhYePMiyO51edeJlKCZz5Vea3iD7NHYxibiq//Ld9uhfyIyRWRQFWl/7P
+         tSq33q/j6F+ToeLOezKn+VNRlqO0s0NXR7GYYAyHhIcT6ZCffDol6e78+d61FdBJ6Ywf
+         VMQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=1Eb4lJ/gRDGHQtzxeJ/n15BUoLk+AfXEc1aV/y6NJFo=;
-        b=qtgn8arIWonpJ59ch80HQTuW454cHOZ4cWDONoo1SMZERP4NXG+wqRmwuRg8MxJdfb
-         ejevJUEMT3M9NjCCn3JPiphC47sI9jBZXG9n8SnV6ImayQwdWw/uP7QGSn2wzxeAX1wX
-         RB7mdmumsk41qYUuA4IW758vMJW0h006nrIAi7MgJYJFC6FGGqO0W3aqY5Ktm64/lUK1
-         fpsA+3OdK3eh/lPSL/+YMowCR6iYIqc+akzF6Oup9Y4/Ktol2N6gkOs3y4irWYQRlrfN
-         +FgCBdhKljw0XhFeYTT/S+P2CBoIx+SSGyEfPPxqde0pvJhwG+mqMgSv7KIo0hXYaIGQ
-         DNCg==
-X-Gm-Message-State: AOAM53356mYKZUYmus2tjL5sgvM1vHGZi+tk4/RMEM4FanoYYyQZcaX/
-        dENQsGgvhmYsYLnQCqHMlqr/GA==
-X-Google-Smtp-Source: ABdhPJy5GmX5UQ0mj0ySsNzmIfZIFATXV7mzuj3RfTYMC74asWaMPo8GP7EpX/K3319p7uZfI+aziQ==
-X-Received: by 2002:a05:6870:a986:b0:da:b3f:3277 with SMTP id ep6-20020a056870a98600b000da0b3f3277mr6854732oab.295.1647032089018;
-        Fri, 11 Mar 2022 12:54:49 -0800 (PST)
+        bh=ouXKxtl+8G+GwtOSfWWV903AmhWVHKS99b2n31iKIp0=;
+        b=7tD52GRDIScY0i4pIUa6CxowoJyFpxvYLlMAcKI+03IeSRgY6PY90zCkWw63XgqaAn
+         cyfdjp3hbmplsP7tMXZKv/4zBK5lA7P8b0ZOvSo//M5oz9VH9U+QPYlKZrJ7i7hlVuOO
+         etLVcX1H4XfV7HfB50pdCBDCH5gjqpahk96IZQQXesaU4/vWCscyvzxk07kXLNHh1rTf
+         ZST8xjLIR7uU7mjt5Y3YGcBra9BFEtAhOFH1YVWmTMrU9lN43Yh9708V4RjJJ3l6l1pU
+         udrJMVbO+AUest21ABL3FiaT97x6mIb6Urt1sVaThnsiYvl2qnS7twGvwxe34k5MtqXY
+         mfKw==
+X-Gm-Message-State: AOAM533/gTqzSKNJ42tXOkS0pxSzucBDWdH8V9lwYBuyUqnyaiLk1J7g
+        L0GYyIhTPFQ7/LhY3XvqK5SBSz+FrMx1/Q==
+X-Google-Smtp-Source: ABdhPJy5imBF8v+itpeZObmG9hNl+BNIFPxFEpa5iCCi6LwHq9hqq00WyZ3eP2YdWvG14iZkBA/VnA==
+X-Received: by 2002:a05:6870:b42a:b0:d4:fc95:35e8 with SMTP id x42-20020a056870b42a00b000d4fc9535e8mr11876861oap.4.1647032510568;
+        Fri, 11 Mar 2022 13:01:50 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id o10-20020acaf00a000000b002da04e165a4sm4245817oih.23.2022.03.11.12.54.47
+        by smtp.gmail.com with ESMTPSA id j10-20020a4ad2ca000000b0031c515672d0sm4112516oos.23.2022.03.11.13.01.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 12:54:48 -0800 (PST)
-Date:   Fri, 11 Mar 2022 14:54:46 -0600
+        Fri, 11 Mar 2022 13:01:50 -0800 (PST)
+Date:   Fri, 11 Mar 2022 15:01:48 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Deepak Kumar Singh <quic_deesin@quicinc.com>
-Cc:     swboyd@chromium.org, quic_clew@quicinc.com,
-        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: [PATCH V1 3/3] rpmsg: glink: Add lock for ctrl device
-Message-ID: <Yiu3Fl/Diw5iqh24@builder.lan>
-References: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
- <1643223886-28170-4-git-send-email-quic_deesin@quicinc.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mathieu.poirier@linaro.org
+Subject: Re: [PATCH] remoteproc: Use unbounded/high priority workqueue for
+ recovery work
+Message-ID: <Yiu4vKuqWHQ5wfZ1@builder.lan>
+References: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1643223886-28170-4-git-send-email-quic_deesin@quicinc.com>
+In-Reply-To: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 26 Jan 13:04 CST 2022, Deepak Kumar Singh wrote:
+On Wed 19 Jan 13:30 CST 2022, Mukesh Ojha wrote:
 
-> Race between rpmsg_eptdev_create and rpmsg_chrdev_remove
-> can sometime casue crash while accessing rpdev while new
-> endpoint is being created. Using lock ensure no new eptdev
-> is created after rpmsg_chrdev_remove has been completed.
+> There could be a scenario where there is too much load(n number
+> of tasks which is affined) on a core on which rproc recovery
+> is queued. Due to which, it takes number of seconds to complete
+> the recovery.
+> 
+> If we make this queue unbounded and move it to high priority worker
+> pool then this work can be attempted to finished in less time.
 
-This patch lacks a Signed-off-by.
+I unfortunately find this reasoning for adding WQ_HIGHPRI rather
+speculative. Please describe a concrete case that warrants the new
+work queue to be high priority.
 
-Isn't this solving the same problem as the previous patch? Would be nice
-with some more specifics on the race that you're seeing.
+What is "number of seconds", what is "less time" and why is it more
+important to recover some remote processor than whatever else the system
+is busy doing?
 
 Thanks,
 Bjorn
 
-> ---
->  drivers/rpmsg/rpmsg_char.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 2108ef8..3e5b85d 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -27,6 +27,7 @@
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 69f51ac..efb6316 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
 >  
->  static dev_t rpmsg_major;
->  static struct class *rpmsg_class;
-> +struct mutex ctrl_lock;
+>  /* Unique indices for remoteproc devices */
+>  static DEFINE_IDA(rproc_dev_index);
+> +static struct workqueue_struct *rproc_recovery_wq;
 >  
->  static DEFINE_IDA(rpmsg_ctrl_ida);
->  static DEFINE_IDA(rpmsg_ept_ida);
-> @@ -396,9 +397,12 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->  	struct device *dev;
->  	int ret;
+>  static const char * const rproc_crash_names[] = {
+>  	[RPROC_MMUFAULT]	= "mmufault",
+> @@ -2752,8 +2753,10 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+>  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+>  		rproc->name, rproc_crash_to_string(type));
 >  
-> +	mutex_lock(&ctrl_lock);
->  	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
-> -	if (!eptdev)
-> +	if (!eptdev) {
-> +		mutex_unlock(&ctrl_lock);
->  		return -ENOMEM;
-> +	}
->  
->  	dev = &eptdev->dev;
->  	eptdev->rpdev = rpdev;
-> @@ -443,6 +447,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->  		put_device(dev);
->  	}
->  
-> +	mutex_unlock(&ctrl_lock);
->  	return ret;
->  
->  free_ept_ida:
-> @@ -453,6 +458,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->  	put_device(dev);
->  	kfree(eptdev);
->  
-> +	mutex_unlock(&ctrl_lock);
->  	return ret;
+> -	/* Have a worker handle the error; ensure system is not suspended */
+> -	queue_work(system_freezable_wq, &rproc->crash_handler);
+> +	if (rproc_recovery_wq)
+> +		queue_work(rproc_recovery_wq, &rproc->crash_handler);
+> +	else
+> +		queue_work(system_freezable_wq, &rproc->crash_handler);
 >  }
+>  EXPORT_SYMBOL(rproc_report_crash);
 >  
-> @@ -525,6 +531,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  	if (!ctrldev)
->  		return -ENOMEM;
+> @@ -2802,6 +2805,11 @@ static void __exit rproc_exit_panic(void)
 >  
-> +	mutex_init(&ctrl_lock);
->  	ctrldev->rpdev = rpdev;
->  
->  	dev = &ctrldev->dev;
-> @@ -581,12 +588,14 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
->  	int ret;
->  
->  	/* Destroy all endpoints */
-> +	mutex_lock(&ctrl_lock);
->  	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
->  	if (ret)
->  		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
->  
->  	device_del(&ctrldev->dev);
->  	put_device(&ctrldev->dev);
-> +	mutex_unlock(&ctrl_lock);
+>  static int __init remoteproc_init(void)
+>  {
+> +	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq", WQ_UNBOUND |
+> +				WQ_HIGHPRI | WQ_FREEZABLE, 0);
+> +	if (!rproc_recovery_wq)
+> +		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+> +
+>  	rproc_init_sysfs();
+>  	rproc_init_debugfs();
+>  	rproc_init_cdev();
+> @@ -2818,6 +2826,8 @@ static void __exit remoteproc_exit(void)
+>  	rproc_exit_panic();
+>  	rproc_exit_debugfs();
+>  	rproc_exit_sysfs();
+> +	if (rproc_recovery_wq)
+> +		destroy_workqueue(rproc_recovery_wq);
 >  }
+>  module_exit(remoteproc_exit);
 >  
->  static struct rpmsg_driver rpmsg_chrdev_driver = {
 > -- 
 > 2.7.4
 > 
