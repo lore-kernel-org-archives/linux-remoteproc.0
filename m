@@ -2,329 +2,203 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2D0C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 05:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECB4C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 12:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344613AbiCKFKz (ORCPT
+        id S1348592AbiCKMXF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 00:10:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55328 "EHLO
+        Fri, 11 Mar 2022 07:23:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344410AbiCKFKy (ORCPT
+        with ESMTP id S238228AbiCKMWz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 00:10:54 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C8B9EE3388
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Mar 2022 21:09:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646975390;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9nBenv8s0AYm2+pJMUm/jGEPBjH6r3BWfbAB/qp2ZZE=;
-        b=NWVQDmdOIHj3vLiw+Bp5Ehb5JIh06xg0j0yI7sVx0gU6MTKZ05CEj42gQgnv84aqLuiByn
-        YoGrE76Ojge8fxc9L0V7heGAuy6RlE39h7OZ1WmWy9ob17who6TbE+e1DmmgW8ZRc11JyT
-        avlFQpWlX+IFE8KhE9kVNtgcU8d/syM=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-272-k1-kDg07NPKtsDc2sQMwCw-1; Fri, 11 Mar 2022 00:09:48 -0500
-X-MC-Unique: k1-kDg07NPKtsDc2sQMwCw-1
-Received: by mail-pg1-f199.google.com with SMTP id q7-20020a63e207000000b003801b9bb18dso4170383pgh.15
-        for <linux-remoteproc@vger.kernel.org>; Thu, 10 Mar 2022 21:09:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=9nBenv8s0AYm2+pJMUm/jGEPBjH6r3BWfbAB/qp2ZZE=;
-        b=j5ig1c1W2dOFbExKv5yiFGZfObniLVotZgPLlQd2DVTZuxjbmE0AXwMFOmjfbbUJkm
-         /twNoSn3KV8w8LgNo9BLCnEC+BK14CCWcYarjjPxfRFIjfIF4pqLLit9jsuCdr0OTVcR
-         7EHH6Xdl/fghdJflwTdf1+QFa+y0VwSgVLFTaP1eu48OCArJAKBjrrDuLp2OTjmesnV3
-         aUGPwoDJ0X6A43Dl9gVoA/ToALY1OL9q9XUKLMTKYXGJu3Eqljiw1vWh3L4/L0iwqfuw
-         l0RDNxPuVCiFuOVF1cEdY+QqFSLb0d3JuKzTxGS+6suKGHEbklLph6XwdW0sOqyfd/ZO
-         7J9Q==
-X-Gm-Message-State: AOAM530NZiCtO94PFdPiC/CASDzL26MEtJ+X+4NARRvM4aQfnF5OsLSr
-        SF9lPsf31FcP4KkIpdtBTg9WcwVaal7a7pc9UkiHgf0ZBHNyVChhlNYCHD0QA7viFzYsHfgM3dg
-        LGjQeXF1Q+cR13Kxf8YhRfZBAU0vkfQ==
-X-Received: by 2002:a17:90a:d3d0:b0:1bb:f5b3:2fbf with SMTP id d16-20020a17090ad3d000b001bbf5b32fbfmr8820721pjw.87.1646975387532;
-        Thu, 10 Mar 2022 21:09:47 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx8JKZXffEodSfmEHpMRgYWBvpIlhcshqGZgVYLA+ugGNosDsbJfihtdbxn5vtUMGsfzlzXdw==
-X-Received: by 2002:a17:90a:d3d0:b0:1bb:f5b3:2fbf with SMTP id d16-20020a17090ad3d000b001bbf5b32fbfmr8820693pjw.87.1646975387226;
-        Thu, 10 Mar 2022 21:09:47 -0800 (PST)
-Received: from [10.72.13.226] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id z7-20020a056a00240700b004e1cde37bc1sm8792099pfh.84.2022.03.10.21.09.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 21:09:46 -0800 (PST)
-Message-ID: <06b3adbb-6777-7022-00d2-beca2b166e10@redhat.com>
-Date:   Fri, 11 Mar 2022 13:09:36 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.2
-Subject: Re: [PATCH v7 17/26] virtio_pci: queue_reset: support
- VIRTIO_F_RING_RESET
-Content-Language: en-US
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
+        Fri, 11 Mar 2022 07:22:55 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9168A1B2AEB;
+        Fri, 11 Mar 2022 04:21:51 -0800 (PST)
+X-UUID: 38a4f557e8c244fba8e099cd23d0d93b-20220311
+X-UUID: 38a4f557e8c244fba8e099cd23d0d93b-20220311
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 236184143; Fri, 11 Mar 2022 20:21:30 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Fri, 11 Mar 2022 20:21:29 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 11 Mar 2022 20:21:28 +0800
+Message-ID: <dcd01834c0a995c7084d7498b7939cb378250d33.camel@mediatek.com>
+Subject: Re: [PATCH] remoteproc: mediatek: fix side effect of mt8195 sram
+ power on
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20220308123518.33800-1-xuanzhuo@linux.alibaba.com>
- <20220308123518.33800-18-xuanzhuo@linux.alibaba.com>
- <8b9d337d-71c2-07b4-8e65-6f83cf09bf7a@redhat.com>
- <1646900411.6481435-2-xuanzhuo@linux.alibaba.com>
-From:   Jason Wang <jasowang@redhat.com>
-In-Reply-To: <1646900411.6481435-2-xuanzhuo@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Date:   Fri, 11 Mar 2022 20:21:29 +0800
+In-Reply-To: <4974d21c-953c-30c1-8dbf-5826dbb20d8e@collabora.com>
+References: <20220309114713.8156-1-tinghan.shen@mediatek.com>
+         <4974d21c-953c-30c1-8dbf-5826dbb20d8e@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Angelo,
 
-在 2022/3/10 下午4:20, Xuan Zhuo 写道:
-> On Wed, 9 Mar 2022 16:54:10 +0800, Jason Wang <jasowang@redhat.com> wrote:
->> 在 2022/3/8 下午8:35, Xuan Zhuo 写道:
->>> This patch implements virtio pci support for QUEUE RESET.
->>>
->>> Performing reset on a queue is divided into these steps:
->>>
->>>    1. virtio_reset_vq()              - notify the device to reset the queue
->>>    2. virtqueue_detach_unused_buf()  - recycle the buffer submitted
->>>    3. virtqueue_reset_vring()        - reset the vring (may re-alloc)
->>>    4. virtio_enable_resetq()         - mmap vring to device, and enable the queue
->>>
->>> This patch implements virtio_reset_vq(), virtio_enable_resetq() in the
->>> pci scenario.
->>>
->>> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
->>> ---
->>>    drivers/virtio/virtio_pci_common.c |  8 +--
->>>    drivers/virtio/virtio_pci_modern.c | 83 ++++++++++++++++++++++++++++++
->>>    2 files changed, 88 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
->>> index fdbde1db5ec5..863d3a8a0956 100644
->>> --- a/drivers/virtio/virtio_pci_common.c
->>> +++ b/drivers/virtio/virtio_pci_common.c
->>> @@ -248,9 +248,11 @@ static void vp_del_vq(struct virtqueue *vq)
->>>    	struct virtio_pci_vq_info *info = vp_dev->vqs[vq->index];
->>>    	unsigned long flags;
->>>
->>> -	spin_lock_irqsave(&vp_dev->lock, flags);
->>> -	list_del(&info->node);
->>> -	spin_unlock_irqrestore(&vp_dev->lock, flags);
->>> +	if (!vq->reset) {
->>> +		spin_lock_irqsave(&vp_dev->lock, flags);
->>> +		list_del(&info->node);
->>> +		spin_unlock_irqrestore(&vp_dev->lock, flags);
->>> +	}
->>>
->>>    	vp_dev->del_vq(info);
->>>    	kfree(info);
->>> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
->>> index 49a4493732cf..3c67d3607802 100644
->>> --- a/drivers/virtio/virtio_pci_modern.c
->>> +++ b/drivers/virtio/virtio_pci_modern.c
->>> @@ -34,6 +34,9 @@ static void vp_transport_features(struct virtio_device *vdev, u64 features)
->>>    	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
->>>    			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
->>>    		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
->>> +
->>> +	if (features & BIT_ULL(VIRTIO_F_RING_RESET))
->>> +		__virtio_set_bit(vdev, VIRTIO_F_RING_RESET);
->>>    }
->>>
->>>    /* virtio config->finalize_features() implementation */
->>> @@ -199,6 +202,82 @@ static int vp_active_vq(struct virtqueue *vq, u16 msix_vec)
->>>    	return 0;
->>>    }
->>>
->>> +static int vp_modern_reset_vq(struct virtqueue *vq)
->>> +{
->>> +	struct virtio_pci_device *vp_dev = to_vp_device(vq->vdev);
->>> +	struct virtio_pci_modern_device *mdev = &vp_dev->mdev;
->>> +	struct virtio_pci_vq_info *info;
->>> +	unsigned long flags;
->>> +	unsigned int irq;
->>> +
->>> +	if (!virtio_has_feature(vq->vdev, VIRTIO_F_RING_RESET))
->>> +		return -ENOENT;
->>> +
->>> +	vp_modern_set_queue_reset(mdev, vq->index);
->>> +
->>> +	info = vp_dev->vqs[vq->index];
->>> +
->>> +	/* delete vq from irq handler */
->>> +	spin_lock_irqsave(&vp_dev->lock, flags);
->>> +	list_del(&info->node);
->>> +	spin_unlock_irqrestore(&vp_dev->lock, flags);
->>> +
->>> +	INIT_LIST_HEAD(&info->node);
->>> +
->>> +	vq->reset = VIRTIO_VQ_RESET_STEP_DEVICE;
->>> +
->>> +	/* sync irq callback. */
->>> +	if (vp_dev->intx_enabled) {
->>> +		irq = vp_dev->pci_dev->irq;
->>> +
->>> +	} else {
->>> +		if (info->msix_vector == VIRTIO_MSI_NO_VECTOR)
->>> +			return 0;
->>> +
->>> +		irq = pci_irq_vector(vp_dev->pci_dev, info->msix_vector);
->>> +	}
->>> +
->>> +	synchronize_irq(irq);
->>
->> Synchronize_irq() is not sufficient here since it breaks the effort of
->> the interrupt hardening which is done by commits:
->>
->> 080cd7c3ac87 virtio-pci: harden INTX interrupts
->> 9e35276a5344 virtio_pci: harden MSI-X interrupts
->>
->> Unfortunately  080cd7c3ac87 introduces an issue that disable_irq() were
->> used for the affinity managed irq but we're discussing a fix.
->>
->
-> ok, I think disable_irq() is still used here.
->
-> I want to determine the solution for this detail first. So I posted the code, I
-> hope Jason can help confirm this point first.
->
-> There are three situations in which vq corresponds to an interrupt
->
-> 1. intx
-> 2. msix: per vq vectors
-> 2. msix: share irq
->
-> Essentially can be divided into two categories: per vq vectors and share irq.
->
-> For share irq is based on virtqueues to find vq, so I think it is safe as long
-> as list_del() is executed under the protection of the lock.
->
-> In the case of per vq vectors, disable_irq() is used.
+I'll update your suggestions at next version.
+Thank you.
 
 
-See the discussion here[1], disable_irq() could be problematic for the 
-block and scsi device that using affinity managed irq. We're waiting for 
-the IRQ maintainer to comment on a solution. Other looks sane.
+Best regards,
+Tinghan
 
-Thanks
-
-[1] https://lkml.org/lkml/2022/3/8/743
-
-
->
-> Thanks.
->
-> +static int vp_modern_reset_vq(struct virtqueue *vq)
-> +{
-> +       struct virtio_pci_device *vp_dev = to_vp_device(vq->vdev);
-> +       struct virtio_pci_modern_device *mdev = &vp_dev->mdev;
-> +       struct virtio_pci_vq_info *info;
-> +       unsigned long flags;
-> +       unsigned int irq;
-> +
-> +       if (!virtio_has_feature(vq->vdev, VIRTIO_F_RING_RESET))
-> +               return -ENOENT;
-> +
-> +       vp_modern_set_queue_reset(mdev, vq->index);
-> +
-> +       info = vp_dev->vqs[vq->index];
-> +
-> +       /* delete vq from irq handler */
-> +       spin_lock_irqsave(&vp_dev->lock, flags);
-> +       list_del(&info->node);
-> +       vp_modern_set_queue_reset(mdev, vq->index);
-> +
-> +       info = vp_dev->vqs[vq->index];
-> +
-> +       /* delete vq from irq handler */
-> +       spin_lock_irqsave(&vp_dev->lock, flags);
-> +       list_del(&info->node);
-> +       spin_unlock_irqrestore(&vp_dev->lock, flags);
-> +
-> +       INIT_LIST_HEAD(&info->node);
-> +
-> +       /* For the case where vq has an exclusive irq, to prevent the irq from
-> +        * being received again and the pending irq, call disable_irq().
-> +        *
-> +        * In the scenario based on shared interrupts, vq will be searched from
-> +        * the queue virtqueues. Since the previous list_del() has been deleted
-> +        * from the queue, it is impossible for vq to be called in this case.
-> +        * There is no need to close the corresponding interrupt.
-> +        */
-> +       if (vp_dev->per_vq_vectors && msix_vec != VIRTIO_MSI_NO_VECTOR)
-> +               disable_irq(pci_irq_vector(vp_dev->pci_dev, info->msix_vector));
-> +
-> +       vq->reset = true;
-> +
-> +       return 0;
-> +}
-> +
-> +static int vp_modern_enable_reset_vq(struct virtqueue *vq)
-> +{
-> +       struct virtio_pci_device *vp_dev = to_vp_device(vq->vdev);
-> +       struct virtio_pci_modern_device *mdev = &vp_dev->mdev;
-> +       struct virtio_pci_vq_info *info;
-> +       unsigned long flags, index;
-> +       int err;
-> +
-> +       if (!vq->reset)
-> +               return -EBUSY;
-> +
-> +       index = vq->index;
-> +       info = vp_dev->vqs[index];
-> +
-> +       /* check queue reset status */
-> +       if (vp_modern_get_queue_reset(mdev, index) != 1)
-> +               return -EBUSY;
-> +
-> +       err = vp_active_vq(vq, info->msix_vector);
-> +       if (err)
-> +               return err;
-> +
-> +       if (vq->callback) {
-> +               spin_lock_irqsave(&vp_dev->lock, flags);
-> +               list_add(&info->node, &vp_dev->virtqueues);
-> +               spin_unlock_irqrestore(&vp_dev->lock, flags);
-> +       } else {
-> +               INIT_LIST_HEAD(&info->node);
-> +       }
-> +
-> +       vp_modern_set_queue_enable(&vp_dev->mdev, index, true);
-> +       vq->reset = false;
-> +
-> +       if (vp_dev->per_vq_vectors && msix_vec != VIRTIO_MSI_NO_VECTOR)
-> +               enable_irq(pci_irq_vector(vp_dev->pci_dev, info->msix_vector));
-> +
-> +       return 0;
-> +}
->
->
+On Thu, 2022-03-10 at 15:40 +0100, AngeloGioacchino Del Regno wrote:
+> Il 09/03/22 12:47, Tinghan Shen ha scritto:
+> > The definition of L1TCM_SRAM_PDN bits on mt8195 is different to mt8192.
+> > 
+> > L1TCM_SRAM_PDN bits[3:0] control the power of mt8195 L1TCM SRAM.
+> > 
+> > L1TCM_SRAM_PDN bits[7:4] control the access path to EMI for SCP.
+> > These bits have to be powered on to allow EMI access for SCP.
+> > 
+> > Bits[7:4] also affect audio DSP because audio DSP and SCP are
+> > placed on the same hardware bus. If SCP cannot access EMI, audio DSP is
+> > blocked too.
+> > 
+> > L1TCM_SRAM_PDN bits[31:8] are not used.
+> > 
+> > This fix removes modification of bits[7:4] when power on/off mt8195 SCP
+> > L1TCM. It's because the modification introduces a short period of time
+> > blocking audio DSP to access EMI. This was not a problem until we have
+> > to load both SCP module and audio DSP module. audio DSP needs to access
+> > EMI because it has source/data on DRAM. Audio DSP will have unexpected
+> > behavior when it accesses EMI and the SCP driver blocks the EMI path at
+> > the same time.
+> > 
+> > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> > ---
+> >   drivers/remoteproc/mtk_common.h |  4 +++
+> >   drivers/remoteproc/mtk_scp.c    | 57 +++++++++++++++++++++++++++++----
+> >   2 files changed, 55 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> > index 5ff3867c72f3..27e7172c926d 100644
+> > --- a/drivers/remoteproc/mtk_common.h
+> > +++ b/drivers/remoteproc/mtk_common.h
+> > @@ -51,6 +51,10 @@
+> >   #define MT8192_CORE0_WDT_IRQ		0x10030
+> >   #define MT8192_CORE0_WDT_CFG		0x10034
+> >   
+> > +#define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		0xF0
+> 
+> This is GENMASK(7, 4)..
+> 
+> > +#define MT8195_L1TCM_SRAM_PDN_RESERVED_BITS \
+> > +	MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
+> > +
+> 
+> Why are you defining the same thing twice?
+> Please drop this.
+> 
+> >   #define SCP_FW_VER_LEN			32
+> >   #define SCP_SHARE_BUFFER_SIZE		288
+> >   
+> > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> > index dcddb33e9997..4d75af856fd1 100644
+> > --- a/drivers/remoteproc/mtk_scp.c
+> > +++ b/drivers/remoteproc/mtk_scp.c
+> > @@ -365,22 +365,32 @@ static int mt8183_scp_before_load(struct mtk_scp *scp)
+> >   	return 0;
+> >   }
+> >   
+> > -static void mt8192_power_on_sram(void __iomem *addr)
+> > +static void scp_sram_power_on(void __iomem *addr, u32 reserved_mask)
+> >   {
+> >   	int i;
+> >   
+> >   	for (i = 31; i >= 0; i--)
+> > -		writel(GENMASK(i, 0), addr);
+> > +		writel(GENMASK(i, 0) & ~reserved_mask, addr);
+> >   	writel(0, addr);
+> >   }
+> >   
+> > -static void mt8192_power_off_sram(void __iomem *addr)
+> > +static void scp_sram_power_off(void __iomem *addr, u32 reserved_mask)
+> >   {
+> >   	int i;
+> >   
+> >   	writel(0, addr);
+> >   	for (i = 0; i < 32; i++)
+> > -		writel(GENMASK(i, 0), addr);
+> > +		writel(GENMASK(i, 0) & ~reserved_mask, addr);
+> > +}
+> > +
+> > +static void mt8192_power_on_sram(void __iomem *addr)
+> > +{
+> > +	scp_sram_power_on(addr, 0);
+> > +}
+> > +
+> > +static void mt8192_power_off_sram(void __iomem *addr)
+> > +{
+> > +	scp_sram_power_off(addr, 0);
+> >   }
+> >   
+> >   static int mt8192_scp_before_load(struct mtk_scp *scp)
+> > @@ -403,6 +413,27 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
+> >   	return 0;
+> >   }
+> >   
+> > +static int mt8195_scp_before_load(struct mtk_scp *scp)
+> > +{
+> > +	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
+> > +	writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
+> > +
+> > +	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
+> > +
+> > +	/* enable SRAM clock */
+> > +	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
+> 
+> At this point, you can simply use scp_sram_power_{on, off} instead of defining
+> a new function for just one call... I get that your intent here is to enhance
+> human readability, but I don't think that this is really happening with that and,
+> if it is, it's just about a little ignorable difference.
+> 
+> Please use scp_sram_power_on() and scp_sram_power_off() directly.
+> 
+> 	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
+> 	... etc :)
+> 
+> > +	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
+> > +	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
+> > +	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
+> > +			  MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
+> > +	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
+> > +
+> > +	/* enable MPU for all memory regions */
+> > +	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> Please remember to add me to the Cc's for the next version, so that I will be
+> able to timely give you my R-b tag for this one.
+> 
+> Regards,
+> Angelo
+> 
+> 
 
