@@ -2,221 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FBFC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 20:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286B1C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 20:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351183AbiCKUUK (ORCPT
+        id S229894AbiCKUyD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 15:20:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53212 "EHLO
+        Fri, 11 Mar 2022 15:54:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351173AbiCKUUI (ORCPT
+        with ESMTP id S230107AbiCKUyA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 15:20:08 -0500
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 820771AAFDB
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 12:19:04 -0800 (PST)
-Received: by mail-oi1-x22f.google.com with SMTP id n7so10597626oif.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 12:19:04 -0800 (PST)
+        Fri, 11 Mar 2022 15:54:00 -0500
+Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19ECE43AE9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 12:52:48 -0800 (PST)
+Received: by mail-ot1-x330.google.com with SMTP id s35-20020a0568302aa300b005b2463a41faso7093815otu.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 12:52:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=byy3khpUB/C66OcuZpBogrh1vBdJYZWOahv4ARsAqeU=;
-        b=JsI+MgGwcNWNo5mFTmDhFQFX43IPSGP8AHmpadTTq1/jegWXkSYGxRbyYSNd2GGAfZ
-         QJL9ePsqy1+pQCjIkYOKeRZF/4ou56BLTl43xcIPQgKVuLYTvOOSpWVMBXvPzi3iVcEE
-         M9OokvdpojzL0W3mpYKQGxN00uuF3MValP5LkZwv7tBK8MbHNCEdcUSp8EyQgNvmdObM
-         dV8uEHfL0A+kbdg4/kBwvllnMdB0q6LY78GBq99WSqCsQB+n/5bFK7oLoh//RzZWPskK
-         DuBKl43ZqA2bbLdc1tjjtMkwJymKeQrW5rKztLf0fnJNsCRRE5EUHhDiGz2DbwyIRrvz
-         mrcQ==
+        bh=EoGq7CQCvilBzLF7EBvLt44/XMCx9ydzBEATyyna41M=;
+        b=CKKJLhM3DL0STMT/zHMYyuQkf7SjzNu9GIO9XEDKVh6oPrb8hpH8CDIv32r2mMmodO
+         OC0AXhq5oIUdcxLhu3S1kRXRl3KfkRZdrKoQonU/m+d7VeqYOA4SsEdC7qRz8Pdy9brt
+         e6vHcthX3R55CCIZKRCwOpe8BhDcghibEyq/qUu6KKZIuDlTVhhTo2VsRhFLBhF2SL6q
+         ARrVGlenbvXoXn4K3QM050iftag/43xdBuhk+JNoNivjvDJ+bgGMaNiijFCS1rntcrqT
+         C2S2qT/f4accnWi7ioLEfEkhQbiTz06Y5ccVkIdpii1rRDEH+dLuTh9Knz875k1KHaAA
+         kvnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=byy3khpUB/C66OcuZpBogrh1vBdJYZWOahv4ARsAqeU=;
-        b=Va6KhAAZEUjLvDHf2di4GdFCaAMcdLkvUvRxyGyJuRbQ+6LWPrUlDs+HvD01XQddDG
-         hLZNbOC2PSfOcmUoc52CymCvfeZ3Xa6fRql9Ni/fLF1ju0G0xJTtcjhEHYUFI84pttj1
-         BoVZ92KGx/hnZGlGKFcNXLgeqMRx0M0GBXGaluj57uxmUeM6J61eY1p8LaWf1zdGDcia
-         rREzjvxO2jc10STC1MEHHjiZ8PpOqsyKTbHSg6D8VhCccDOwZhd7yV5dHerX9j7Ldo9B
-         zEuzIVT8zKMvOh9i1EuyymLJzukyNnYOveL6L9/piUBSpl7LDM2T+/hgOgQZfyUldNgQ
-         p5ow==
-X-Gm-Message-State: AOAM532h4nlaEAlV9RXm8SfbZq2Gs11lCybJyfMljOlbYgYlBLSIWO5S
-        zNaPW1GQ0SvpDITOqMqdtG10ZQ==
-X-Google-Smtp-Source: ABdhPJwiCKmAYCnvMQUHkha6DRmgbP0TH7H+cC730Evh2nxJN9gacFfI6shVehimGVsKyYdMWq24uQ==
-X-Received: by 2002:a05:6808:1406:b0:2d9:a01a:4bcb with SMTP id w6-20020a056808140600b002d9a01a4bcbmr7858798oiv.242.1647029943809;
-        Fri, 11 Mar 2022 12:19:03 -0800 (PST)
+        bh=EoGq7CQCvilBzLF7EBvLt44/XMCx9ydzBEATyyna41M=;
+        b=MrqXrh0d18MeMlKFhatN+TN0+fj9juHMD5vhVdHFsF+wfKb/ZUwI/ujdEeVHlY3HuP
+         R9rz7FMIJNkzJgXuw2HFRWEouRJ+50WlbYiyVS0dZofG7mge+8+WWnopsm+T9iQarSVx
+         KzNrQx9iEO2Qi5iY6XTnBVhN71bfz6r+Qp6VYvCThJmG+4camMgMgoyRxBHFoCR5QTao
+         QANPFEYqMlhfGC4nOAy9Jm0Br7RS0+3rJwDQchY/6EzBCn/dYCO85Gmo9jKiz3C4/unp
+         6Jsm8texoFRvDAsMAzKeJeixlJrLhdQ/hujrSzbZ/TKHSvdYRZ88g0ZayZiv39WbnNf5
+         BZ3w==
+X-Gm-Message-State: AOAM533ghBs3oDukAWBGt1rX820x2N1ds+NvCYRbq1ifwjBPbKRpjhM4
+        DsKin8BG6CCXQVo5yomnXNlirQ==
+X-Google-Smtp-Source: ABdhPJxFVPqtmT+KW+gdOsiTMsN9KZ49xHJYjMjRYlvIq1fZNQlALIw5/drNOFmDnOmXp/sMZ9V0Zg==
+X-Received: by 2002:a05:6830:1394:b0:5af:6776:ea37 with SMTP id d20-20020a056830139400b005af6776ea37mr5808079otq.80.1647031967989;
+        Fri, 11 Mar 2022 12:52:47 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id r41-20020a056870582900b000d6cbaf589esm3887680oap.40.2022.03.11.12.19.02
+        by smtp.gmail.com with ESMTPSA id y66-20020a9d22c8000000b005c943ff75dbsm825295ota.7.2022.03.11.12.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 12:19:02 -0800 (PST)
-Date:   Fri, 11 Mar 2022 14:19:00 -0600
+        Fri, 11 Mar 2022 12:52:47 -0800 (PST)
+Date:   Fri, 11 Mar 2022 14:52:45 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v3 11/11] rpmsg: Fix kfree() of static memory on setting
- driver_override
-Message-ID: <YiuutCsuf4j192cJ@builder.lan>
-References: <20220227135214.145599-1-krzysztof.kozlowski@canonical.com>
- <20220227135329.145862-5-krzysztof.kozlowski@canonical.com>
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>
+Cc:     swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [PATCH V1 2/3] rpmsg: glink: Add lock to avoid race when rpmsg
+ device is released
+Message-ID: <Yiu2nawUPxWYaIY3@builder.lan>
+References: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
+ <1643223886-28170-3-git-send-email-quic_deesin@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220227135329.145862-5-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <1643223886-28170-3-git-send-email-quic_deesin@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun 27 Feb 07:53 CST 2022, Krzysztof Kozlowski wrote:
+On Wed 26 Jan 13:04 CST 2022, Deepak Kumar Singh wrote:
 
-> The driver_override field from platform driver should not be initialized
-> from static memory (string literal) because the core later kfree() it,
-> for example when driver_override is set via sysfs.
+> When remote host goes down glink char device channel is freed,
+> At the same time user space apps can still try to open rpmsg_char
+> device which will result in calling rpmsg_create_ept. This may cause
+> reference to already freed context of glink chardev channel.
 > 
-> Use dedicated helper to set driver_override properly.
-> 
-> Fixes: 950a7388f02b ("rpmsg: Turn name service into a stand alone driver")
-> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Hi Deepak,
+
+Could you please be a little bit more specific on the details of where
+you're seeing this race? Perhaps I'm just missing something obvious?
+
+> Use per ept lock to avoid race between rpmsg_destroy_ept and
+> rpmsg_destory_ept.
+
+I presume one of these should say rpmsg_eptdev_open().
 
 Regards,
 Bjorn
 
 > ---
->  drivers/rpmsg/rpmsg_core.c     |  3 ++-
->  drivers/rpmsg/rpmsg_internal.h | 13 +++++++++++--
->  drivers/rpmsg/rpmsg_ns.c       | 14 ++++++++++++--
->  include/linux/rpmsg.h          |  6 ++++--
->  4 files changed, 29 insertions(+), 7 deletions(-)
+>  drivers/rpmsg/rpmsg_char.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index d9e612f4f0f2..6e2bf2742973 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -397,7 +397,8 @@ field##_store(struct device *dev, struct device_attribute *attr,	\
->  	      const char *buf, size_t sz)				\
->  {									\
->  	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-> -	char *new, *old;						\
-> +	const char *old;						\
-> +	char *new;							\
->  									\
->  	new = kstrndup(buf, sz, GFP_KERNEL);				\
->  	if (!new)							\
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index b1245d3ed7c6..31345d6e9a7e 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -92,10 +92,19 @@ int rpmsg_release_channel(struct rpmsg_device *rpdev,
->   */
->  static inline int rpmsg_chrdev_register_device(struct rpmsg_device *rpdev)
->  {
-> +	int ret;
-> +
->  	strcpy(rpdev->id.name, "rpmsg_chrdev");
-> -	rpdev->driver_override = "rpmsg_chrdev";
-> +	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
-> +				  "rpmsg_chrdev", strlen("rpmsg_chrdev"));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rpmsg_register_device(rpdev);
-> +	if (ret)
-> +		kfree(rpdev->driver_override);
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 72ee101..2108ef8 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -85,6 +85,7 @@ static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+>  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
 >  
-> -	return rpmsg_register_device(rpdev);
-> +	return ret;
+>  	mutex_lock(&eptdev->ept_lock);
+> +	eptdev->rpdev = NULL;
+>  	if (eptdev->ept) {
+>  		rpmsg_destroy_ept(eptdev->ept);
+>  		eptdev->ept = NULL;
+> @@ -145,15 +146,24 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  
+>  	get_device(dev);
+>  
+> +	mutex_lock(&eptdev->ept_lock);
+> +	if (!eptdev->rpdev) {
+> +		put_device(dev);
+> +		mutex_unlock(&eptdev->ept_lock);
+> +		return -ENETRESET;
+> +	}
+> +
+>  	ept = rpmsg_create_ept(rpdev, rpmsg_ept_cb, eptdev, eptdev->chinfo);
+>  	if (!ept) {
+>  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
+> +		mutex_unlock(&eptdev->ept_lock);
+>  		put_device(dev);
+>  		return -EINVAL;
+>  	}
+>  
+>  	ept->sig_cb = rpmsg_sigs_cb;
+>  	eptdev->ept = ept;
+> +	mutex_unlock(&eptdev->ept_lock);
+>  	filp->private_data = eptdev;
+>  
+>  	return 0;
+> @@ -285,7 +295,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+>  	if (eptdev->sig_pending)
+>  		mask |= EPOLLPRI;
+>  
+> +	mutex_lock(&eptdev->ept_lock);
+>  	mask |= rpmsg_poll(eptdev->ept, filp, wait);
+> +	mutex_unlock(&eptdev->ept_lock);
+>  
+>  	return mask;
 >  }
->  
->  #endif
-> diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
-> index 762ff1ae279f..95a51543f5ad 100644
-> --- a/drivers/rpmsg/rpmsg_ns.c
-> +++ b/drivers/rpmsg/rpmsg_ns.c
-> @@ -20,12 +20,22 @@
->   */
->  int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
->  {
-> +	int ret;
-> +
->  	strcpy(rpdev->id.name, "rpmsg_ns");
-> -	rpdev->driver_override = "rpmsg_ns";
-> +	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
-> +				  "rpmsg_ns", strlen("rpmsg_ns"));
-> +	if (ret)
-> +		return ret;
-> +
->  	rpdev->src = RPMSG_NS_ADDR;
->  	rpdev->dst = RPMSG_NS_ADDR;
->  
-> -	return rpmsg_register_device(rpdev);
-> +	ret = rpmsg_register_device(rpdev);
-> +	if (ret)
-> +		kfree(rpdev->driver_override);
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL(rpmsg_ns_register_device);
->  
-> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> index 02fa9116cd60..20c8cd1cde21 100644
-> --- a/include/linux/rpmsg.h
-> +++ b/include/linux/rpmsg.h
-> @@ -41,7 +41,9 @@ struct rpmsg_channel_info {
->   * rpmsg_device - device that belong to the rpmsg bus
->   * @dev: the device struct
->   * @id: device id (used to match between rpmsg drivers and devices)
-> - * @driver_override: driver name to force a match
-> + * @driver_override: driver name to force a match; do not set directly,
-> + *                   because core frees it; use driver_set_override() to
-> + *                   set or clear it.
->   * @src: local address
->   * @dst: destination address
->   * @ept: the rpmsg endpoint of this channel
-> @@ -51,7 +53,7 @@ struct rpmsg_channel_info {
->  struct rpmsg_device {
->  	struct device dev;
->  	struct rpmsg_device_id id;
-> -	char *driver_override;
-> +	const char *driver_override;
->  	u32 src;
->  	u32 dst;
->  	struct rpmsg_endpoint *ept;
 > -- 
-> 2.32.0
+> 2.7.4
 > 
