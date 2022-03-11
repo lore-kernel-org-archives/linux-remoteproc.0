@@ -2,140 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C43C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 16:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4D3C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 18:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350245AbiCKQ7x (ORCPT
+        id S1348702AbiCKSJL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 11:59:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57146 "EHLO
+        Fri, 11 Mar 2022 13:09:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350333AbiCKQ7t (ORCPT
+        with ESMTP id S239544AbiCKSJJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 11:59:49 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3509673D5;
-        Fri, 11 Mar 2022 08:58:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1647017925; x=1678553925;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8tt9qgzw4Kq/v31eFaRN55hhJVALG1NfF2eNwvPj8zw=;
-  b=FFuzbEmifR9Mv+P/oR61YORAEDnHvtTxYLeriALSpZSlmGKbQ5zjteij
-   gy24c15yxVshe2kNaCdaVHnqSpySoEhztgIFCH27/X4f+gVp62WC8ER0b
-   c5JDPkT7Hnsw6kM/PpdCMKrNmGeeiwaiX81k9Vjpy2Zerogm5OpzCOg7F
-   Mar4UOAwIXXcjMPemrwnElLq41qoaVI8s7sLwFEQGTCnJaUWCZX5LbSPp
-   sUKyHvlL1xgG5PBmxZz7FnB6xTYFQq78YOSw8ioZ75LFshGE7vObcj447
-   /LwwXyq/I3Ygk6hxpZp4egs9FfoVMb3+yvuYU+sNEJIJFI9N6S4c+Lz24
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10283"; a="255342698"
-X-IronPort-AV: E=Sophos;i="5.90,174,1643702400"; 
-   d="scan'208";a="255342698"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2022 08:58:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,174,1643702400"; 
-   d="scan'208";a="555375546"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by orsmga008.jf.intel.com with ESMTP; 11 Mar 2022 08:58:37 -0800
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nSib6-0006nH-EB; Fri, 11 Mar 2022 16:58:36 +0000
-Date:   Sat, 12 Mar 2022 00:57:58 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     kbuild-all@lists.01.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: Re: [PATCH v2] remoteproc: mediatek: fix side effect of mt8195 sram
- power on
-Message-ID: <202203120056.qtDEVoye-lkp@intel.com>
-References: <20220311123056.32689-1-tinghan.shen@mediatek.com>
+        Fri, 11 Mar 2022 13:09:09 -0500
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E2C843AFE
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 10:08:05 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id o83so2769162oif.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 10:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=T6tAfBDIbeqr2rX5cz/+B+v+oAUesU8ImGhC1rDQ7lA=;
+        b=Z23fpFSaOFDv2bKo6jNWklXN739Cp5FIq+rKAF+f2uye3T6qd45lxtGWLM/KHr1A+w
+         0jpfmf4dCqsY0o9ZAn03Un97WioX6gA2ouqXcnilV+2DhZkw2rX6Fa4dZgrhLAKEWl2L
+         mfC0SSPKQ/sn/zxCCusOjW8hXykq3TE1MP3WS5Msq5AjKy5H/MaP7JjEbAwBOwt3Rjyq
+         S9+m1Mbqptwe7EUvJIWFT5NDCI3aHF7c0EaAaryPQHMlF70HJCb8lzo9BX6eI3/D1ut/
+         6s4ZO9WFX0sMAHFvYv7ZMIz6JC6lpjE+qwwCALoBPNdI36phi3oV9I+w5wq1/Gkz0qfi
+         /M4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=T6tAfBDIbeqr2rX5cz/+B+v+oAUesU8ImGhC1rDQ7lA=;
+        b=6yQv77DgnS3aw4tFWy9rJAJ1ONgsxCtsyOPJs8BIrZWYUrzh9UMwJevzyaZP7DguNw
+         JnLdsjNYrNSP1Rc+TVbE0NCaH12G+s0Va1y8+89DI0mI6dOcaVbrQusT3NtkbBOEuXVR
+         DDBtFwFmWJ2dy9PZxK1h9Oqbc+QP17NPwnuGJRjE4lR3DkmM1SFhMQ8K2GB1vn6qz/Hu
+         s84zlfO3RMF76r5Xa4LS9tW7cHXBJKUkLGx4ItC5lvo5gN4pkl1VnR8bJiNM59nCoxZS
+         acS3gkGWWZflB2mCDMg8qHDKGRWHKOls9THX1tba6yoCMYkTiDJ4HNksDTVxcRsygc2M
+         N9uA==
+X-Gm-Message-State: AOAM5311OJh7rxT1rBjx6cNvnMvFronbw0w7Wyx8EPHiAClJsSFNzR97
+        YIDDJoG0g6CYhvq+R56y7anZ4w==
+X-Google-Smtp-Source: ABdhPJzVOnqSRL/7lmpX9k7aXHuUAUBSzyGrOLOd3DPralQG3Til5oHsTJ3SVVxCCZ+IxCKYIg4WMw==
+X-Received: by 2002:a05:6808:8ce:b0:2ec:a7ff:4925 with SMTP id k14-20020a05680808ce00b002eca7ff4925mr863487oij.122.1647022084653;
+        Fri, 11 Mar 2022 10:08:04 -0800 (PST)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id h11-20020a9d6f8b000000b005b230ab0461sm3851009otq.64.2022.03.11.10.08.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Mar 2022 10:08:03 -0800 (PST)
+Date:   Fri, 11 Mar 2022 12:08:02 -0600
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Drew Fustini <dfustini@baylibre.com>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Suman Anna <s-anna@ti.com>, Dave Gerlach <d-gerlach@ti.com>
+Subject: Re: [PATCH] remoteproc: move rproc_da_to_va declaration to
+ remoteproc.h
+Message-ID: <YiuQAvnbBIdWhy2l@builder.lan>
+References: <20220308172515.29556-1-dfustini@baylibre.com>
+ <YiedlvZWpHd8HP40@ripper>
+ <YijeDirNSJ6bpRMj@x1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220311123056.32689-1-tinghan.shen@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <YijeDirNSJ6bpRMj@x1>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tinghan,
+On Wed 09 Mar 11:04 CST 2022, Drew Fustini wrote:
 
-Thank you for the patch! Yet something to improve:
+> On Tue, Mar 08, 2022 at 10:16:54AM -0800, Bjorn Andersson wrote:
+> > On Tue 08 Mar 09:25 PST 2022, Drew Fustini wrote:
+> > 
+> > > From: Suman Anna <s-anna@ti.com>
+> > > 
+> > > The rproc_da_to_va() API is an exported function, so move its
+> > > declaration from the remoteproc local remoteproc_internal.h
+> > > to the public remoteproc.h file.
+> > > 
+> > > This will allow drivers outside of the remoteproc folder to be
+> > > able to use this API.
+> > > 
+> > 
+> > Can you explain why drivers outside of the remoteproc folder should be
+> > able to poke straight into the memory of the remoteproc?
+> > 
+> > Your reasoning makes sense, but we've on purpose kept it out of
+> > remoteproc.h because no one has had a proper reason for it and I sense
+> > that we might open the door for some new creative solutions...
+> 
+> rproc_da_to_va() is used in a patch for drivers/soc/ti/wkup_m3_ipc.c
+> that adds support for i2c voltage scaling [1].
+> 
+> wkup_m3_copy_aux_data() will copy auxiliary data to special region of
+> the Cortex M3 memory. It calls rproc_da_to_va() to get aux_data_addr
+> which is then used as a memcpy destination.
+> 
 
-[auto build test ERROR on remoteproc/rproc-next]
-[also build test ERROR on v5.17-rc7 next-20220310]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+So in essence it's an essential part for the "communication protocol"
+used to communicate with the remoteproc...
 
-url:    https://github.com/0day-ci/linux/commits/Tinghan-Shen/remoteproc-mediatek-fix-side-effect-of-mt8195-sram-power-on/20220311-203255
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-config: parisc-randconfig-r031-20220310 (https://download.01.org/0day-ci/archive/20220312/202203120056.qtDEVoye-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/6d56ab3bae4e0d5e07d295169602883ba7d7de08
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Tinghan-Shen/remoteproc-mediatek-fix-side-effect-of-mt8195-sram-power-on/20220311-203255
-        git checkout 6d56ab3bae4e0d5e07d295169602883ba7d7de08
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=parisc SHELL=/bin/bash drivers/remoteproc/
+> Does that seem like a reasonable way to do it?
+> 
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+I have a concern about the life cycle of the pointer acquired by this
+"independent" driver. But this is an extension of my existing concern
+where the wkup driver uses the remoteproc core as a "firmware loader",
+but it's not a standalone remoteproc driver.
 
-All errors (new ones prefixed by >>):
+I think it would have been nicer to model the remoteproc driver as the
+parent of the wkup device, so we probe/remove the wkup device based on
+the state of the remoteproc.
 
-   drivers/remoteproc/mtk_scp.c: In function 'mt8195_scp_before_load':
->> drivers/remoteproc/mtk_scp.c:418:27: error: 'MT8195_L1TCM_SRAM_PDN_RESERVED_BITS' undeclared (first use in this function); did you mean 'MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS'?
-     418 |                           MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
-         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                           MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
-   drivers/remoteproc/mtk_scp.c:418:27: note: each undeclared identifier is reported only once for each function it appears in
-   drivers/remoteproc/mtk_scp.c: In function 'mt8195_scp_stop':
-   drivers/remoteproc/mtk_scp.c:592:28: error: 'MT8195_L1TCM_SRAM_PDN_RESERVED_BITS' undeclared (first use in this function); did you mean 'MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS'?
-     592 |                            MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
-         |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                            MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
+This would remove concerns about races between the remoteproc
+starting/stopping/restarting and the other driver and it would help
+clarify that the life cycle of the pointer returned by rproc_da_to_va()
+lives from start to stop of the remoteproc.
 
 
-vim +418 drivers/remoteproc/mtk_scp.c
+This does however not change the need for exporting the symbol, so I'm
+merging this patch.
 
-   405	
-   406	static int mt8195_scp_before_load(struct mtk_scp *scp)
-   407	{
-   408		/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-   409		writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
-   410	
-   411		writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-   412	
-   413		/* enable SRAM clock */
-   414		scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-   415		scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-   416		scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-   417		scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
- > 418				  MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
-   419		scp_sram_power_on(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
-   420	
-   421		/* enable MPU for all memory regions */
-   422		writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-   423	
-   424		return 0;
-   425	}
-   426	
+Regards,
+Bjorn
 
----
-0-DAY CI Kernel Test Service
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> I was going to submit the i2c voltage scaling patches later. However,
+> I could combine them into a series with this remoteproc patch if that
+> helps to justify the remoteproc.h change.
+> 
+> Thanks,
+> Drew
+> 
+> [1] https://lore.kernel.org/linux-omap/20220219215328.485660-9-dfustini@baylibre.com/
