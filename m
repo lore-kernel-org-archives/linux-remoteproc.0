@@ -2,143 +2,220 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FD9C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 23:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 115BFC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 23:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230078AbiCKXDP (ORCPT
+        id S230157AbiCKXEw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 18:03:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32818 "EHLO
+        Fri, 11 Mar 2022 18:04:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbiCKXDF (ORCPT
+        with ESMTP id S230164AbiCKXEm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 18:03:05 -0500
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E326E10E55B
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 14:58:03 -0800 (PST)
-Received: by mail-oi1-x22f.google.com with SMTP id v75so2179278oie.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 14:58:03 -0800 (PST)
+        Fri, 11 Mar 2022 18:04:42 -0500
+Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BF8DE9A
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 15:02:01 -0800 (PST)
+Received: by mail-oi1-x22d.google.com with SMTP id n7so11018342oif.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 15:02:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=ouXKxtl+8G+GwtOSfWWV903AmhWVHKS99b2n31iKIp0=;
-        b=O1KTLBkViqTZcE4jO3SOzLYQ8Mei2Q0WFKGyWQ7q1Z8YSG0iZna9ofEhD8FI7UWF6z
-         tPER/jc5vn1cs81+THtmfmovsASEuu8cL32uJb60hesZuTGIhUY65eyZMFg2cc47Q73Q
-         FuhcV/gVHTTrsUcWIYK3CUEyun16UeMGBpUYAvy41TxF1qtIZaveH3q6GuDpVV7wiXnZ
-         i1dmjE90JWtGhYePMiyO51edeJlKCZz5Vea3iD7NHYxibiq//Ld9uhfyIyRWRQFWl/7P
-         tSq33q/j6F+ToeLOezKn+VNRlqO0s0NXR7GYYAyHhIcT6ZCffDol6e78+d61FdBJ6Ywf
-         VMQg==
+        bh=yzD1RK3pSrLk9IQZWHEqYqXIzTPUld+BN2oJpwWhxXs=;
+        b=y2kEMmHWrdSGLy13N1UopU0NsU8PwQXMpsT5ULm/ANc9IAUQp1hx0p/66nJSl/PrWI
+         OqOpUP7bgQJTXebZdmmW6u8c1qrHyYD/m59TC9YhN6nOlFB9RwBm09J7s08x71BToGtz
+         GtrK9BxN0++ZASSmEG1eaGYMMcAJj4H4M0ejsUJY1yHqD/1J9N02QKjepxfGEGiKrqw9
+         PglskyxGLjbi+SR/Vuhrda3X7Xe2N7eR2nrMp2A1Xdz3Uhw5jre+x3o9ZUk6SYx82Lbe
+         HnOFLRDchTWcw2Xzqz7HXtbp89RuOfJgoT6hsnQtifM1Ws9ZFM8C+xuumJHul8k9pmOR
+         eblQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=ouXKxtl+8G+GwtOSfWWV903AmhWVHKS99b2n31iKIp0=;
-        b=7tD52GRDIScY0i4pIUa6CxowoJyFpxvYLlMAcKI+03IeSRgY6PY90zCkWw63XgqaAn
-         cyfdjp3hbmplsP7tMXZKv/4zBK5lA7P8b0ZOvSo//M5oz9VH9U+QPYlKZrJ7i7hlVuOO
-         etLVcX1H4XfV7HfB50pdCBDCH5gjqpahk96IZQQXesaU4/vWCscyvzxk07kXLNHh1rTf
-         ZST8xjLIR7uU7mjt5Y3YGcBra9BFEtAhOFH1YVWmTMrU9lN43Yh9708V4RjJJ3l6l1pU
-         udrJMVbO+AUest21ABL3FiaT97x6mIb6Urt1sVaThnsiYvl2qnS7twGvwxe34k5MtqXY
-         mfKw==
-X-Gm-Message-State: AOAM533/gTqzSKNJ42tXOkS0pxSzucBDWdH8V9lwYBuyUqnyaiLk1J7g
-        L0GYyIhTPFQ7/LhY3XvqK5SBSz+FrMx1/Q==
-X-Google-Smtp-Source: ABdhPJy5imBF8v+itpeZObmG9hNl+BNIFPxFEpa5iCCi6LwHq9hqq00WyZ3eP2YdWvG14iZkBA/VnA==
-X-Received: by 2002:a05:6870:b42a:b0:d4:fc95:35e8 with SMTP id x42-20020a056870b42a00b000d4fc9535e8mr11876861oap.4.1647032510568;
-        Fri, 11 Mar 2022 13:01:50 -0800 (PST)
+        bh=yzD1RK3pSrLk9IQZWHEqYqXIzTPUld+BN2oJpwWhxXs=;
+        b=mSrO3dETgR4M2xYpEOsa9/ZsJE7yyxALRqSEne2coX+8S6fUD6Od+B/FUz5MU7J68J
+         xRJ6q9R6AsVRbOQqmhq+EKdbxH4qjMvBlZRFwXsg26yn25D/Q/XgzKMhRfT6mw4w0Ito
+         dfNsg8kxmhhsCnHeIjS1WnUri/ngA+a237OKk2M7PZMUOZ2/APnlGhtrWlWkFnj/89nw
+         2xk7cIDXDJYaONN9XzFtBcChwlPyYRAid9vTjoTi3kv3FW9uSqKiBiCJxMiav9ePcCGl
+         KFVLYwQMgCizbuF0yTTwbDb+8DwR55WAP2WjSR0UoC5MeBkDXm/L3bRuwfGYTZJXVamx
+         jF5g==
+X-Gm-Message-State: AOAM533PkVrzjlXRrFdnNB+WWGrrKou7JFYwwbGaEXIYONNsnQT8PePS
+        G2DjnXaxsVvpRlHzE9lfMfVHJnc3t+a/6A==
+X-Google-Smtp-Source: ABdhPJxwm0eMWuv8Cx+IDd9t4EsguO15cCAebWBRr3MSUHjJT08kxq3GZ8bSPCd+FB8BlQr72tggWw==
+X-Received: by 2002:a05:6870:1492:b0:da:b3f:322e with SMTP id k18-20020a056870149200b000da0b3f322emr6529020oab.222.1647032964730;
+        Fri, 11 Mar 2022 13:09:24 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id j10-20020a4ad2ca000000b0031c515672d0sm4112516oos.23.2022.03.11.13.01.49
+        by smtp.gmail.com with ESMTPSA id k15-20020a056808068f00b002d91362e56esm4154417oig.1.2022.03.11.13.09.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 13:01:50 -0800 (PST)
-Date:   Fri, 11 Mar 2022 15:01:48 -0600
+        Fri, 11 Mar 2022 13:09:24 -0800 (PST)
+Date:   Fri, 11 Mar 2022 15:09:22 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mathieu.poirier@linaro.org
-Subject: Re: [PATCH] remoteproc: Use unbounded/high priority workqueue for
- recovery work
-Message-ID: <Yiu4vKuqWHQ5wfZ1@builder.lan>
-References: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>
+Cc:     swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [PATCH V2 2/3] rpmsg: glink: Add support to handle signals
+ command
+Message-ID: <Yiu6guYrKYRhGtei@builder.lan>
+References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
+ <1642534993-6552-3-git-send-email-quic_deesin@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
+In-Reply-To: <1642534993-6552-3-git-send-email-quic_deesin@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 19 Jan 13:30 CST 2022, Mukesh Ojha wrote:
+On Tue 18 Jan 13:43 CST 2022, Deepak Kumar Singh wrote:
 
-> There could be a scenario where there is too much load(n number
-> of tasks which is affined) on a core on which rproc recovery
-> is queued. Due to which, it takes number of seconds to complete
-> the recovery.
+> Remote peripherals send signal notifications over glink with commandID 15.
 > 
-> If we make this queue unbounded and move it to high priority worker
-> pool then this work can be attempted to finished in less time.
+> Add support to send and receive the signal command and convert the signals
+> from NATIVE to TIOCM while receiving and vice versa while sending.
+> 
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 
-I unfortunately find this reasoning for adding WQ_HIGHPRI rather
-speculative. Please describe a concrete case that warrants the new
-work queue to be high priority.
+Co-developed-by: seems appropriate here, or you need to ensure the
+author remains Chris, as his S-o-b comes first.
 
-What is "number of seconds", what is "less time" and why is it more
-important to recover some remote processor than whatever else the system
-is busy doing?
+> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> ---
+>  drivers/rpmsg/qcom_glink_native.c | 77 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 3f377a7..d673d65 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/sizes.h>
+>  #include <linux/slab.h>
+> +#include <linux/termios.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/mailbox_client.h>
+>  
+> @@ -205,9 +206,16 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
+>  #define RPM_CMD_TX_DATA_CONT		12
+>  #define RPM_CMD_READ_NOTIF		13
+>  #define RPM_CMD_RX_DONE_W_REUSE		14
+> +#define RPM_CMD_SIGNALS			15
+>  
+>  #define GLINK_FEATURE_INTENTLESS	BIT(1)
+>  
+> +#define NATIVE_DTR_SIG			BIT(31)
 
-Thanks,
+Seems reasonable to prefix these with GLINK_, perhaps GLINK_SIGNAL_DTR?
+
+> +#define NATIVE_CTS_SIG			BIT(30)
+> +#define NATIVE_CD_SIG			BIT(29)
+> +#define NATIVE_RI_SIG			BIT(28)
+> +#define	SIG_MASK			0x0fff;
+> +
+>  static void qcom_glink_rx_done_work(struct work_struct *work);
+>  
+>  static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
+> @@ -1003,6 +1011,70 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * qcom_glink_set_flow_control() - convert a signal cmd to wire format and
+> + * 				   transmit
+> + * @ept:	Rpmsg endpoint for channel.
+> + * @enable:	True/False - enable or disable flow control
+
+"enable flow control" sounds sufficient (i.e. no need for True/False)
+part.
+
+Regards,
 Bjorn
 
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 69f51ac..efb6316 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
->  
->  /* Unique indices for remoteproc devices */
->  static DEFINE_IDA(rproc_dev_index);
-> +static struct workqueue_struct *rproc_recovery_wq;
->  
->  static const char * const rproc_crash_names[] = {
->  	[RPROC_MMUFAULT]	= "mmufault",
-> @@ -2752,8 +2753,10 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
->  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
->  		rproc->name, rproc_crash_to_string(type));
->  
-> -	/* Have a worker handle the error; ensure system is not suspended */
-> -	queue_work(system_freezable_wq, &rproc->crash_handler);
-> +	if (rproc_recovery_wq)
-> +		queue_work(rproc_recovery_wq, &rproc->crash_handler);
-> +	else
-> +		queue_work(system_freezable_wq, &rproc->crash_handler);
->  }
->  EXPORT_SYMBOL(rproc_report_crash);
->  
-> @@ -2802,6 +2805,11 @@ static void __exit rproc_exit_panic(void)
->  
->  static int __init remoteproc_init(void)
->  {
-> +	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq", WQ_UNBOUND |
-> +				WQ_HIGHPRI | WQ_FREEZABLE, 0);
-> +	if (!rproc_recovery_wq)
-> +		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+> + *
+> + * Return: 0 on success or standard Linux error code.
+> + */
+> +static int qcom_glink_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
+> +{
+> +	struct glink_channel *channel = to_glink_channel(ept);
+> +	struct qcom_glink *glink = channel->glink;
+> +	struct glink_msg msg;
+> +	u32 sigs;
 > +
->  	rproc_init_sysfs();
->  	rproc_init_debugfs();
->  	rproc_init_cdev();
-> @@ -2818,6 +2826,8 @@ static void __exit remoteproc_exit(void)
->  	rproc_exit_panic();
->  	rproc_exit_debugfs();
->  	rproc_exit_sysfs();
-> +	if (rproc_recovery_wq)
-> +		destroy_workqueue(rproc_recovery_wq);
->  }
->  module_exit(remoteproc_exit);
+> +	/**
+> +	 * convert signals from TIOCM to NATIVE
+> +	 * sigs = TIOCM_DTR|TIOCM_RTS
+> +	 */
+> +	if (enable)
+> +		sigs |= NATIVE_DTR_SIG | NATIVE_CTS_SIG;
+> +	else
+> +		sigs |= ~(NATIVE_DTR_SIG | NATIVE_CTS_SIG);
+> +
+> +	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
+> +	msg.param1 = cpu_to_le16(channel->lcid);
+> +	msg.param2 = cpu_to_le32(sigs);
+> +
+> +	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
+> +}
+> +
+> +static int qcom_glink_handle_signals(struct qcom_glink *glink,
+> +				     unsigned int rcid, unsigned int sigs)
+> +{
+> +	struct glink_channel *channel;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&glink->idr_lock, flags);
+> +	channel = idr_find(&glink->rcids, rcid);
+> +	spin_unlock_irqrestore(&glink->idr_lock, flags);
+> +	if (!channel) {
+> +		dev_err(glink->dev, "signal for non-existing channel\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!channel->ept.sig_cb)
+> +		return 0;
+> +
+> +	/* convert signals from NATIVE to TIOCM */
+> +	if (sigs & NATIVE_DTR_SIG)
+> +		sigs |= TIOCM_DSR;
+> +	if (sigs & NATIVE_CTS_SIG)
+> +		sigs |= TIOCM_CTS;
+> +	if (sigs & NATIVE_CD_SIG)
+> +		sigs |= TIOCM_CD;
+> +	if (sigs & NATIVE_RI_SIG)
+> +		sigs |= TIOCM_RI;
+> +	sigs &= SIG_MASK;
+> +
+> +	channel->ept.sig_cb(channel->ept.rpdev, channel->ept.priv, sigs);
+> +
+> +	return 0;
+> +}
+> +
+>  static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+>  {
+>  	struct qcom_glink *glink = data;
+> @@ -1067,6 +1139,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+>  			qcom_glink_handle_intent_req_ack(glink, param1, param2);
+>  			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+>  			break;
+> +		case RPM_CMD_SIGNALS:
+> +			qcom_glink_handle_signals(glink, param1, param2);
+> +			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+> +			break;
+>  		default:
+>  			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
+>  			ret = -EINVAL;
+> @@ -1442,6 +1518,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+>  	.sendto = qcom_glink_sendto,
+>  	.trysend = qcom_glink_trysend,
+>  	.trysendto = qcom_glink_trysendto,
+> +	.set_flow_control = qcom_glink_set_flow_control,
+>  };
 >  
+>  static void qcom_glink_rpdev_release(struct device *dev)
 > -- 
 > 2.7.4
 > 
