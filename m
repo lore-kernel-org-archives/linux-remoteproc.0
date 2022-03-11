@@ -2,135 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4D3C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 18:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260D9C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 18:20:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348702AbiCKSJL (ORCPT
+        id S232985AbiCKSVz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 13:09:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40472 "EHLO
+        Fri, 11 Mar 2022 13:21:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239544AbiCKSJJ (ORCPT
+        with ESMTP id S1350882AbiCKSVx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 13:09:09 -0500
-Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E2C843AFE
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 10:08:05 -0800 (PST)
-Received: by mail-oi1-x22e.google.com with SMTP id o83so2769162oif.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 10:08:05 -0800 (PST)
+        Fri, 11 Mar 2022 13:21:53 -0500
+Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03D7BD8BF
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 10:20:49 -0800 (PST)
+Received: by mail-ot1-x32e.google.com with SMTP id z9-20020a05683020c900b005b22bf41872so6801060otq.13
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 10:20:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=T6tAfBDIbeqr2rX5cz/+B+v+oAUesU8ImGhC1rDQ7lA=;
-        b=Z23fpFSaOFDv2bKo6jNWklXN739Cp5FIq+rKAF+f2uye3T6qd45lxtGWLM/KHr1A+w
-         0jpfmf4dCqsY0o9ZAn03Un97WioX6gA2ouqXcnilV+2DhZkw2rX6Fa4dZgrhLAKEWl2L
-         mfC0SSPKQ/sn/zxCCusOjW8hXykq3TE1MP3WS5Msq5AjKy5H/MaP7JjEbAwBOwt3Rjyq
-         S9+m1Mbqptwe7EUvJIWFT5NDCI3aHF7c0EaAaryPQHMlF70HJCb8lzo9BX6eI3/D1ut/
-         6s4ZO9WFX0sMAHFvYv7ZMIz6JC6lpjE+qwwCALoBPNdI36phi3oV9I+w5wq1/Gkz0qfi
-         /M4w==
+        bh=0XCZSSYUxWjjomwnD2lYhbaRZ7zlD7qdfMOSwCQW09s=;
+        b=kHEPz0z7I7YdLzYk85vXvqchzpmoZwlqoWPvcV2+BaluB1OfX+kOGhpYd2j/KddU4m
+         qjRn/G1N3B2vja2ivGtvs4TETE3JVjjO8pLaJ7e1dW72zQatLr3VUNJ8EHDNR44a5vVV
+         GYr9ywtSB/boUN+35ZDjRF8aa6Pen6Zm+DaFHceR42V4HzXO+Kughg16fU+KcbccfQXB
+         xkmledf3aV+2Re5azWXmv54ti0E0n3TfaXV7vmXZAIbvi45vqyZMXy9YtmqBuUA48HXD
+         ApacltuXr4jhv1yO4wx21vOPBLlUz29h6AO50OGlD9Mbf7/X6yNSQ5JbYb9vfMtWZtTT
+         REQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=T6tAfBDIbeqr2rX5cz/+B+v+oAUesU8ImGhC1rDQ7lA=;
-        b=6yQv77DgnS3aw4tFWy9rJAJ1ONgsxCtsyOPJs8BIrZWYUrzh9UMwJevzyaZP7DguNw
-         JnLdsjNYrNSP1Rc+TVbE0NCaH12G+s0Va1y8+89DI0mI6dOcaVbrQusT3NtkbBOEuXVR
-         DDBtFwFmWJ2dy9PZxK1h9Oqbc+QP17NPwnuGJRjE4lR3DkmM1SFhMQ8K2GB1vn6qz/Hu
-         s84zlfO3RMF76r5Xa4LS9tW7cHXBJKUkLGx4ItC5lvo5gN4pkl1VnR8bJiNM59nCoxZS
-         acS3gkGWWZflB2mCDMg8qHDKGRWHKOls9THX1tba6yoCMYkTiDJ4HNksDTVxcRsygc2M
-         N9uA==
-X-Gm-Message-State: AOAM5311OJh7rxT1rBjx6cNvnMvFronbw0w7Wyx8EPHiAClJsSFNzR97
-        YIDDJoG0g6CYhvq+R56y7anZ4w==
-X-Google-Smtp-Source: ABdhPJzVOnqSRL/7lmpX9k7aXHuUAUBSzyGrOLOd3DPralQG3Til5oHsTJ3SVVxCCZ+IxCKYIg4WMw==
-X-Received: by 2002:a05:6808:8ce:b0:2ec:a7ff:4925 with SMTP id k14-20020a05680808ce00b002eca7ff4925mr863487oij.122.1647022084653;
-        Fri, 11 Mar 2022 10:08:04 -0800 (PST)
+        bh=0XCZSSYUxWjjomwnD2lYhbaRZ7zlD7qdfMOSwCQW09s=;
+        b=xp7S3jAKxMhS333K3ozbefacjEMhNNvbgBRiuZ1chn8oZIZU0CJvE2S4BXa13/Z3Ud
+         ApBi6mUTRZXisMWqdwuh/zrglOnRLNu+Gg0d2VADQlEVBMQHmBU0aLbEnUxs7/DWySE9
+         xHSQx5xWWopT/EPIqmGUYT8PCmvb4J1tt3Et1/G4rBD3jFD/khNERzWRc3OpW1jQZ7aM
+         U1UFuJi9KHbh2geTXzn5KYzS9r0R6T8ucjVAg915e6PjvQill8yip3GJj3S/qZf3vZt/
+         AmvwNYNkCVnmRjvqyOQ0pxgno8ZarVC6cqyxPArJS2EymvZmBx+NC2Z4IHs9Bf+zMed+
+         HZwQ==
+X-Gm-Message-State: AOAM532monAFGSoFJZWmUmuu8VgmtZpe96heuA4CTE7A0UcajlKUNDLm
+        q2FmSLi5HAc3SwahBQqNZXcnRA==
+X-Google-Smtp-Source: ABdhPJys4u6YxWXymBZmswZzl4L8tNx1NsVBadm2bVHFPU2mgJp3qwIQkLI+5i6YhRQsTFerFhScqA==
+X-Received: by 2002:a05:6830:34f:b0:5b1:f8fe:f957 with SMTP id h15-20020a056830034f00b005b1f8fef957mr5499792ote.153.1647022848767;
+        Fri, 11 Mar 2022 10:20:48 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id h11-20020a9d6f8b000000b005b230ab0461sm3851009otq.64.2022.03.11.10.08.03
+        by smtp.gmail.com with ESMTPSA id ep36-20020a056870a9a400b000d6bd82a92fsm4167829oab.18.2022.03.11.10.20.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 10:08:03 -0800 (PST)
-Date:   Fri, 11 Mar 2022 12:08:02 -0600
+        Fri, 11 Mar 2022 10:20:48 -0800 (PST)
+Date:   Fri, 11 Mar 2022 12:20:46 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Drew Fustini <dfustini@baylibre.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Suman Anna <s-anna@ti.com>, Dave Gerlach <d-gerlach@ti.com>
-Subject: Re: [PATCH] remoteproc: move rproc_da_to_va declaration to
- remoteproc.h
-Message-ID: <YiuQAvnbBIdWhy2l@builder.lan>
-References: <20220308172515.29556-1-dfustini@baylibre.com>
- <YiedlvZWpHd8HP40@ripper>
- <YijeDirNSJ6bpRMj@x1>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     mathieu.poirier@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] remoteproc: imx_rproc: Ignore create mem entry for
+ resource table
+Message-ID: <YiuS/pVVdqFXy9mA@builder.lan>
+References: <20220308065754.3355-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YijeDirNSJ6bpRMj@x1>
+In-Reply-To: <20220308065754.3355-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed 09 Mar 11:04 CST 2022, Drew Fustini wrote:
+On Tue 08 Mar 00:57 CST 2022, Peng Fan (OSS) wrote:
 
-> On Tue, Mar 08, 2022 at 10:16:54AM -0800, Bjorn Andersson wrote:
-> > On Tue 08 Mar 09:25 PST 2022, Drew Fustini wrote:
-> > 
-> > > From: Suman Anna <s-anna@ti.com>
-> > > 
-> > > The rproc_da_to_va() API is an exported function, so move its
-> > > declaration from the remoteproc local remoteproc_internal.h
-> > > to the public remoteproc.h file.
-> > > 
-> > > This will allow drivers outside of the remoteproc folder to be
-> > > able to use this API.
-> > > 
-> > 
-> > Can you explain why drivers outside of the remoteproc folder should be
-> > able to poke straight into the memory of the remoteproc?
-> > 
-> > Your reasoning makes sense, but we've on purpose kept it out of
-> > remoteproc.h because no one has had a proper reason for it and I sense
-> > that we might open the door for some new creative solutions...
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> rproc_da_to_va() is used in a patch for drivers/soc/ti/wkup_m3_ipc.c
-> that adds support for i2c voltage scaling [1].
-> 
-> wkup_m3_copy_aux_data() will copy auxiliary data to special region of
-> the Cortex M3 memory. It calls rproc_da_to_va() to get aux_data_addr
-> which is then used as a memcpy destination.
-> 
+> Resource table will not be used for memory allocation, no need to create
+> rproc mem entry.
 
-So in essence it's an essential part for the "communication protocol"
-used to communicate with the remoteproc...
-
-> Does that seem like a reasonable way to do it?
-> 
-
-I have a concern about the life cycle of the pointer acquired by this
-"independent" driver. But this is an extension of my existing concern
-where the wkup driver uses the remoteproc core as a "firmware loader",
-but it's not a standalone remoteproc driver.
-
-I think it would have been nicer to model the remoteproc driver as the
-parent of the wkup device, so we probe/remove the wkup device based on
-the state of the remoteproc.
-
-This would remove concerns about races between the remoteproc
-starting/stopping/restarting and the other driver and it would help
-clarify that the life cycle of the pointer returned by rproc_da_to_va()
-lives from start to stop of the remoteproc.
-
-
-This does however not change the need for exporting the symbol, so I'm
-merging this patch.
+Can you please expand this to cover why the "resource table will not be
+used for memory allocation"?
 
 Regards,
 Bjorn
 
-> I was going to submit the i2c voltage scaling patches later. However,
-> I could combine them into a series with this remoteproc patch if that
-> helps to justify the remoteproc.h change.
 > 
-> Thanks,
-> Drew
+> Fixes: b29b4249f8f0c ("remoteproc: imx_rproc: add i.MX specific parse fw hook")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 > 
-> [1] https://lore.kernel.org/linux-omap/20220219215328.485660-9-dfustini@baylibre.com/
+> V2:
+>  Add Fixes tag
+>  Separate the patch from https://patchwork.kernel.org/project/linux-remoteproc/patch/20220111033333.403448-7-peng.fan@oss.nxp.com/
+>  Address typo
+> 
+>  drivers/remoteproc/imx_rproc.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 7a096f1891e6..f2bfc9077c19 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -423,6 +423,9 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>  		if (!strcmp(it.node->name, "vdev0buffer"))
+>  			continue;
+>  
+> +		if (!strncmp(it.node->name, "rsc-table", strlen("rsc-table")))
+> +			continue;
+> +
+>  		rmem = of_reserved_mem_lookup(it.node);
+>  		if (!rmem) {
+>  			dev_err(priv->dev, "unable to acquire memory-region\n");
+> -- 
+> 2.30.0
+> 
