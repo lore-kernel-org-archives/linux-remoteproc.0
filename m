@@ -2,219 +2,204 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CF4C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 23:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4E6C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Mar 2022 23:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229952AbiCKXJM (ORCPT
+        id S229534AbiCKXOt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Mar 2022 18:09:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54560 "EHLO
+        Fri, 11 Mar 2022 18:14:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbiCKXJM (ORCPT
+        with ESMTP id S229954AbiCKXOq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Mar 2022 18:09:12 -0500
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B3981A4C75
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 15:08:07 -0800 (PST)
-Received: by mail-oo1-xc36.google.com with SMTP id q1-20020a4a7d41000000b003211b63eb7bso12258683ooe.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 15:08:07 -0800 (PST)
+        Fri, 11 Mar 2022 18:14:46 -0500
+Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6EA037018
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 15:13:41 -0800 (PST)
+Received: by mail-yb1-xb34.google.com with SMTP id u10so19819648ybd.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Mar 2022 15:13:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Yr+EpRW9Z0TSAD7dSRiRBdvgDfolyIlRbve+K3pZ6CU=;
-        b=sK5PFeJEOg8sIlRshJg3bAbaGWntnn8gqRnEpXHzLfHthZOKB4sWkf08LgBv9JvheE
-         4FPriDMxTV4y5+5LJv1MKgZ72yFQIcEmy4ytltQG1KTFDCBj09wxJM70GinaBSMZgcWr
-         9Unmg5Xgha7ZQ5c9T45EQOiAJ46rWB9C2ttLVRP7tH+3tKimK8DeUCzC5w92PsewgvaR
-         oY5gUUeCAa7VIZaV7dvlpmYMpJyu9Ztxxu/MFnLV2/Jyh92BY5fzyNrihsJhVs7WsFPI
-         8AN5gWYOHo6K3G23HqFdBmoBgUkSIgbJe6y7nYdOqG2YYx3OSs8COh1Aay9x+rxIVBZp
-         0cAQ==
+        bh=92arqH79BiLSpPq07XLUFaVqVUezAYRqELNUQGsWkP8=;
+        b=iQpC0+rNJZbuHaOeNvznCfYVkxwcczBWd0UPzccgCs+Go8jlx74Jwrya4YQPPBqi1a
+         LIhTzDWIhSomlxEQMebBYj8mab0jbSuU3k9hDKg0n1CMhsrp9WiAjLKAjU27AZhCBitS
+         QdUsya3XzeGHUIkAESKVibTANgUfmYd5fV2hTFATDwqkRGRgZ8T6ndA7i/TLiLdoJf0W
+         ZgnR8E5uV3gns2EJU0+hrIVrz5bQFQ2CfJzZXCTKlZr0x+0nbhJsXD0LqeAY2NFTGf2N
+         ZcI9uRsZS71/z3er5kTnwf0nSFfrzZrnHIc3Sol/BUgkr2SKn5yPQVWURocQU4wj4diI
+         6opQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Yr+EpRW9Z0TSAD7dSRiRBdvgDfolyIlRbve+K3pZ6CU=;
-        b=4uVadoh9fF+thN4mzmhLRdeOLRH0LZu8mt+6jFuo+fjwWGXM8Yc/J4r9CQOkcKeosY
-         gzMIL5dIkvtbnIhFtLK7FNrugtnesdVWjV0yZUcnXXNBIRfn5WooElkWVfwkOc8yGrj2
-         p1cIuBE/aleLytOZKfO7x6k3GtDRsJ2L9748+LZEkCNxkHE7la43vQi07SFw9IFfym62
-         Bu4sscMY9ZE45oP1nIl9PSLlPeDf24zRh3X7aF0Ru1ifjQvH7qna4YtatyZ9yB6AqvLM
-         zt2MYPKwryGLQUWrkJ4k69yliaZIu8h5kcemmfbnqmUhUVllhhA/A4h1Hq7Jm1RyABcS
-         FpFw==
-X-Gm-Message-State: AOAM5310/WPOICVOQcYGyIeumO8tvixifNId+NW61enfZ88P8++Jbm6N
-        YGbNxHEpxUjXJikQJmCHuTNQD8MYoxDjQg==
-X-Google-Smtp-Source: ABdhPJxry66IE5gf3DaRXf2Wzvoc+Z3uEVp+kLSeb4hIL6nULTEjW7sAoNaahJ0ohD+KTPWh4EBixA==
-X-Received: by 2002:a05:6808:148d:b0:2d9:9049:b0e8 with SMTP id e13-20020a056808148d00b002d99049b0e8mr7436984oiw.151.1647033102656;
-        Fri, 11 Mar 2022 13:11:42 -0800 (PST)
+        bh=92arqH79BiLSpPq07XLUFaVqVUezAYRqELNUQGsWkP8=;
+        b=rCmClLtCC8ofMDcu03WMplPbcJWxzfiOpVWfMcHFd4neEx3kSsQcXgf+Q5wwZFFfYW
+         dKbicDU57kYFJxF+SZcWHbFlRxEv1uZ8raL4n7LumritbmIEoOGEmkuY95lcFvRST+nA
+         tcvmRW3m2f8v0aV6I1qg/n5KNUySzZgJjA7urtiAyfQLjvFvLiwSft1p7N7rdG8ujjwB
+         3mgxY91p5Qdr/XkxyaGtN7HqQJsf9eGWXA+e4UjZgfTrpA2/6Z4CaXNW/PoPXUf+gb0l
+         PcDhGYJ6kCYNH7reCTuSlvvWGrb7w6VqhTG+WxgZjWgdMB5Lknvbb/x+Q0imDt3/dV4a
+         snPg==
+X-Gm-Message-State: AOAM533qh5GhcAgbFPC13eA5ICPcXSpowoftETZdb00gNmQzyztcdBBq
+        auIEUPPBvqKhFJS0hhWF0/mXr64ycqYAHA==
+X-Google-Smtp-Source: ABdhPJyNJ1dbWXRv+O1wDk73YwyJ+7WeYLAxuFLmw30ASpn4am7HYMJlx1E1uXw3X6gJavS+fE1RZA==
+X-Received: by 2002:a4a:a9cf:0:b0:2e9:5c75:e242 with SMTP id h15-20020a4aa9cf000000b002e95c75e242mr5516391oon.25.1647033654425;
+        Fri, 11 Mar 2022 13:20:54 -0800 (PST)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id b3-20020a056830310300b005c93d1cbb9fsm1172891ots.68.2022.03.11.13.11.41
+        by smtp.gmail.com with ESMTPSA id u22-20020a4ae696000000b0032158ab4ce9sm2585808oot.26.2022.03.11.13.20.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Mar 2022 13:11:42 -0800 (PST)
-Date:   Fri, 11 Mar 2022 15:11:40 -0600
+        Fri, 11 Mar 2022 13:20:53 -0800 (PST)
+Date:   Fri, 11 Mar 2022 15:20:52 -0600
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Deepak Kumar Singh <quic_deesin@quicinc.com>
-Cc:     swboyd@chromium.org, quic_clew@quicinc.com,
-        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: [PATCH V2 1/3] rpmsg: core: Add signal API support
-Message-ID: <Yiu7DPHDY3uwcnLK@builder.lan>
-References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
- <1642534993-6552-2-git-send-email-quic_deesin@quicinc.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     mathieu.poirier@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peng.fan@nxp.com
+Subject: Re: [PATCH V3 2/2] remoteproc: support attach recovery after rproc
+ crash
+Message-ID: <Yiu9NNn/ZFpg7j7F@builder.lan>
+References: <20220309230128.15856-1-peng.fan@oss.nxp.com>
+ <20220309230128.15856-3-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1642534993-6552-2-git-send-email-quic_deesin@quicinc.com>
+In-Reply-To: <20220309230128.15856-3-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue 18 Jan 13:43 CST 2022, Deepak Kumar Singh wrote:
+On Wed 09 Mar 17:01 CST 2022, Peng Fan (OSS) wrote:
 
-> Some transports like Glink support the state notifications between
-> clients using signals similar to serial protocol signals.
-> Local glink client drivers can send and receive signals to glink
-> clients running on remote processors.
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Add APIs to support sending and receiving of signals by rpmsg clients.
+> Current logic only support main processor to stop/start the remote
+> processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
+> remote processor could do attach recovery after crash and trigger watchdog
+> reboot. It does not need main processor to load image, or stop/start M4
+> core.
 > 
-> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-> ---
->  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
->  drivers/rpmsg/rpmsg_internal.h |  2 ++
->  include/linux/rpmsg.h          | 14 ++++++++++++++
->  3 files changed, 37 insertions(+)
+> Introduce two functions: rproc_attach_recovery, rproc_firmware_recovery
+> for the two cases. Firmware recovery is as before, let main processor to
+> help recovery, while attach recovery is recover itself withou help.
+> To attach recovery, we only do detach and attach.
 > 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index d3eb600..6712418 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -328,6 +328,24 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
->  
->  /**
-> + * rpmsg_set_flow_control() - sets/clears serial flow control signals
-> + * @ept:	the rpmsg endpoint
-> + * @enable:	enable or disable serial flow control
-> + *
-> + * Return: 0 on success and an appropriate error value on failure.
-> + */
-> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-This API looks nice and clean and deals with flow control.
+Hi Peng,
 
-> +{
-> +	if (WARN_ON(!ept))
-> +		return -EINVAL;
-> +	if (!ept->ops->set_flow_control)
-> +		return -ENXIO;
-> +
-> +	return ept->ops->set_flow_control(ept, enable);
-> +}
-> +EXPORT_SYMBOL(rpmsg_set_flow_control);
-> +
-> +/**
->   * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
->   * @ept: the rpmsg endpoint
->   *
-> @@ -535,6 +553,9 @@ static int rpmsg_dev_probe(struct device *dev)
->  
->  		rpdev->ept = ept;
->  		rpdev->src = ept->addr;
-> +
-> +		if (rpdrv->signals)
-> +			ept->sig_cb = rpdrv->signals;
->  	}
->  
->  	err = rpdrv->probe(rpdev);
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index b1245d3..35c2197 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -53,6 +53,7 @@ struct rpmsg_device_ops {
->   * @trysendto:		see @rpmsg_trysendto(), optional
->   * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
->   * @poll:		see @rpmsg_poll(), optional
-> + * @set_flow_control:	see @rpmsg_set_flow_control(), optional
->   * @get_mtu:		see @rpmsg_get_mtu(), optional
->   *
->   * Indirection table for the operations that a rpmsg backend should implement.
-> @@ -73,6 +74,7 @@ struct rpmsg_endpoint_ops {
->  			     void *data, int len);
->  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
->  			     poll_table *wait);
-> +	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
->  	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
->  };
->  
-> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> index 02fa911..06d090c 100644
-> --- a/include/linux/rpmsg.h
-> +++ b/include/linux/rpmsg.h
-> @@ -62,12 +62,14 @@ struct rpmsg_device {
->  };
->  
->  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-> +typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32);
-
-This callback however, is still using the original low level tty
-signals.
-
-Is there any reason why this can't be "rpmsg_flowcontrol_cb_t" and take
-a boolean, so we get a clean interface in both directions?
+Didn't spot this v3 as I reviewed v2, please see my feedback on that
+version.
 
 Regards,
 Bjorn
 
->  
->  /**
->   * struct rpmsg_endpoint - binds a local rpmsg address to its user
->   * @rpdev: rpmsg channel device
->   * @refcount: when this drops to zero, the ept is deallocated
->   * @cb: rx callback handler
-> + * @sig_cb: rx serial signal handler
->   * @cb_lock: must be taken before accessing/changing @cb
->   * @addr: local rpmsg address
->   * @priv: private data for the driver's use
-> @@ -90,6 +92,7 @@ struct rpmsg_endpoint {
->  	struct rpmsg_device *rpdev;
->  	struct kref refcount;
->  	rpmsg_rx_cb_t cb;
-> +	rpmsg_rx_sig_t sig_cb;
->  	struct mutex cb_lock;
->  	u32 addr;
->  	void *priv;
-> @@ -111,6 +114,7 @@ struct rpmsg_driver {
->  	int (*probe)(struct rpmsg_device *dev);
->  	void (*remove)(struct rpmsg_device *dev);
->  	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-> +	int (*signals)(struct rpmsg_device *rpdev, void *priv, u32);
->  };
->  
->  static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
-> @@ -188,6 +192,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->  
->  ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
->  
-> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
-> +
->  #else
->  
->  static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
-> @@ -306,6 +312,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->  	return -ENXIO;
+> ---
+> 
+> V3:
+>  Resend with cover-letter
+> 
+> V2-version 2:
+>  use rproc_has_feature in patch 1/2
+> V2-version1:
+>  Nothing change in V2.
+>  Only move this patch out from
+>  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
+> 
+>  drivers/remoteproc/remoteproc_core.c | 67 ++++++++++++++++++++--------
+>  1 file changed, 48 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 69f51acf235e..366fad475898 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1887,6 +1887,50 @@ static int __rproc_detach(struct rproc *rproc)
+>  	return 0;
 >  }
 >  
-> +static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
+> +static int rproc_attach_recovery(struct rproc *rproc)
 > +{
-> +	/* This shouldn't be possible */
-> +	WARN_ON(1);
+> +	int ret;
 > +
-> +	return -ENXIO;
+> +	mutex_unlock(&rproc->lock);
+> +	ret = rproc_detach(rproc);
+> +	mutex_lock(&rproc->lock);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (atomic_inc_return(&rproc->power) > 1)
+> +		return 0;
+> +
+> +	return rproc_attach(rproc);
 > +}
 > +
->  #endif /* IS_ENABLED(CONFIG_RPMSG) */
+> +static int rproc_firmware_recovery(struct rproc *rproc)
+> +{
+> +	const struct firmware *firmware_p;
+> +	struct device *dev = &rproc->dev;
+> +	int ret;
+> +
+> +	ret = rproc_stop(rproc, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* generate coredump */
+> +	rproc->ops->coredump(rproc);
+> +
+> +	/* load firmware */
+> +	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "request_firmware failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* boot the remote processor up again */
+> +	ret = rproc_start(rproc, firmware_p);
+> +
+> +	release_firmware(firmware_p);
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * rproc_trigger_recovery() - recover a remoteproc
+>   * @rproc: the remote processor
+> @@ -1901,7 +1945,6 @@ static int __rproc_detach(struct rproc *rproc)
+>   */
+>  int rproc_trigger_recovery(struct rproc *rproc)
+>  {
+> -	const struct firmware *firmware_p;
+>  	struct device *dev = &rproc->dev;
+>  	int ret;
 >  
->  /* use a macro to avoid include chaining to get THIS_MODULE */
+> @@ -1915,24 +1958,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  
+>  	dev_err(dev, "recovering %s\n", rproc->name);
+>  
+> -	ret = rproc_stop(rproc, true);
+> -	if (ret)
+> -		goto unlock_mutex;
+> -
+> -	/* generate coredump */
+> -	rproc->ops->coredump(rproc);
+> -
+> -	/* load firmware */
+> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+> -	if (ret < 0) {
+> -		dev_err(dev, "request_firmware failed: %d\n", ret);
+> -		goto unlock_mutex;
+> -	}
+> -
+> -	/* boot the remote processor up again */
+> -	ret = rproc_start(rproc, firmware_p);
+> -
+> -	release_firmware(firmware_p);
+> +	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_RECOVERY))
+> +		ret = rproc_attach_recovery(rproc);
+> +	else
+> +		ret = rproc_firmware_recovery(rproc);
+>  
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
 > -- 
-> 2.7.4
+> 2.30.0
 > 
