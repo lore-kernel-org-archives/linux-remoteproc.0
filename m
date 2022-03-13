@@ -2,63 +2,65 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BB3C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 13 Mar 2022 02:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF4AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 13 Mar 2022 02:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233385AbiCMCrH (ORCPT
+        id S233445AbiCMCrO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 12 Mar 2022 21:47:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55684 "EHLO
+        Sat, 12 Mar 2022 21:47:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232810AbiCMCrF (ORCPT
+        with ESMTP id S232810AbiCMCrN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 12 Mar 2022 21:47:05 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC029100768
-        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Mar 2022 18:45:57 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id cx5so11493991pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Mar 2022 18:45:57 -0800 (PST)
+        Sat, 12 Mar 2022 21:47:13 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31F7100768
+        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Mar 2022 18:46:05 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id 6so10829917pgg.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 12 Mar 2022 18:46:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=v9ynjd7oEnonByMr2gLfZybzQggHULZvnP/5MBiCxLA=;
-        b=pm3J9UBltGcItHnGW1QzmD401cX/KeMqgRjjbMmoWYurnSL2INTROZe1TRGQcYbIy3
-         cCSYafN76p+rdxcSQyIM/wkEXll5fThQk3ajiEF8HiWyJJzqhmg+iOI0eng0p2MpOVuB
-         xQbWkMn3Lvv4elr3TMm9/B9oqVYZs5GP12qJIHIyhivll4seIN7LpOEOJJJpjNDpN3RF
-         OajhRpZQ7PTHzC+myL8B7dfqxLBJYOzR+EQZCiCtAD1R0CDH3yAE2BDwngdElaXLGvRv
-         tWCdKfOu721mvlY3G4PRqkPQBdjknVcIg5t3hr/QK5zeP0Hcs0vQKOlYzOi6mAhBuD1y
-         0sSg==
+        bh=PtE66+8Xg6M+GwZIzpubSaWEJLD5uRZKLrEr1DpXlU8=;
+        b=e4CMyiicp57JDYrXM9lw/gUkfRpptMUZDkojn28SgT/FYz33qTyDoojxIHcokziizw
+         5OfxW0H4VgaqDdqEsOsDHvxu6ZYATTGdyyvpM8P/3PtdIjir6HGtQXIGcq6PFkPqNqgO
+         s8CXWvg6cW1QtlLaS8wfK6iY5/TJHxOuAE7vF0he78DkTt7A8dAwCLAxJMp7+AXCKAjP
+         acTJcUaOHueMfdPAaeyr0pbXUoyMYDo/g9w8x1+kO5zqq9y5KnSuVet4WNaWukdGWG3+
+         7hLTIPLeqD4Mt5TEAtDS3ds8AxLGtPySer5zhBVejNbeeUvVelYjmBbveur4t4Eo+5pq
+         OdUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=v9ynjd7oEnonByMr2gLfZybzQggHULZvnP/5MBiCxLA=;
-        b=109saec7Hge1VhuvDkcvuhnRKJVqh5Wq0vf1+iN46fWkaTw/3s9lvZPcub9TTuADlm
-         nsFanBIEh41CbWuuZu7ad/HUlclTplbJdvCsXdltzGdulbBXPt7RCpPlRZt4fRcrZbkm
-         0d3q6C5vT+Xqezfo4VIJ+oBdu0pgHy/OtUh7rg+xldveXbZemUR14vpfVj3xeeiNtj8r
-         JFmGCqXZ9B/FpyKhqu+DJK1UMptl9UUpCAxTVFFpXeuLUu9ldeUuNNJ13qo/H31csTPp
-         6Jgxs/AJlfTtg61bHMalqGAC1xha9fpkwLyjjpYUkns3VGZh0uNi3gy6kdzAGyqdvMc8
-         8IRQ==
-X-Gm-Message-State: AOAM533pnsiZrncw7JzW6lP80Xt4p7JS1aHvzXuzK1aUo+Yz8p9t9mnD
-        vZt54xl2MffQ3rOHhXxKWzU=
-X-Google-Smtp-Source: ABdhPJyi3pvG0RslA7HBbJAZVCuxjzctqOO624MynZk4dUtSrRRNEwTfUx8ecghosbVZscVBIGF6AA==
-X-Received: by 2002:a17:902:ea0d:b0:151:df90:779f with SMTP id s13-20020a170902ea0d00b00151df90779fmr18095264plg.1.1647139557265;
-        Sat, 12 Mar 2022 18:45:57 -0800 (PST)
+        bh=PtE66+8Xg6M+GwZIzpubSaWEJLD5uRZKLrEr1DpXlU8=;
+        b=lAsLUoJRrXVOixhwH+kaZ4b/rNsnhwyJX2NBqchJsaz0dICOmYgm4DJryYCg2hrau3
+         dlvu2HCRB0toTX4Cp8VCjg7UiBiPmmVcX35aQUXdKiO91V4Jl9LjnrWhnY+TRWZsZ2DJ
+         TSFGvAHeruYmervJg0YlDw0bc/HrryW31ee1FNijeWlrBh06NKndl/uVrdqgL0Kna4lj
+         uweyJYySm9jyGg3hxKkHEuBAHWR9i5JpVGwDm/USrgxRnkzQgBGnPE7vGK+FgN90yZ5n
+         LZxJeoDy0kXndv6aQf2dghQKAR1bho9d+zoHXgJ8F/mcsiKs4E9zOKHYnc2djxoPN76V
+         lydQ==
+X-Gm-Message-State: AOAM532Yu5+F62qStlPWk1AW7/l1C9WhTxoO5rVTjaVMHHzBFXXe7PWa
+        kcSRYPB9UPalE6/9VKiefkA=
+X-Google-Smtp-Source: ABdhPJwujozTvOOL0kcCM8GULSiuQEC2zGqdkgHvMsdScckIWRihvIXBkLLgkXJGbWg2eFyzlQwdkw==
+X-Received: by 2002:a63:4d15:0:b0:37f:f622:fe0f with SMTP id a21-20020a634d15000000b0037ff622fe0fmr14585083pgb.68.1647139565093;
+        Sat, 12 Mar 2022 18:46:05 -0800 (PST)
 Received: from localhost.localdomain ([2001:f40:906:26d6:1e16:d3e6:5bef:9507])
-        by smtp.googlemail.com with ESMTPSA id k4-20020a17090a910400b001bd171c7fd4sm16499924pjo.25.2022.03.12.18.45.55
+        by smtp.googlemail.com with ESMTPSA id k4-20020a17090a910400b001bd171c7fd4sm16499924pjo.25.2022.03.12.18.46.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Mar 2022 18:45:56 -0800 (PST)
+        Sat, 12 Mar 2022 18:46:04 -0800 (PST)
 From:   tim.blechmann@gmail.com
 X-Google-Original-From: tim@klingt.org
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, Tim Blechmann <tim@klingt.org>
-Subject: [PATCH 0/1 v2] rpmsg: char - treat `ENOMEM` as `EAGAIN`
-Date:   Sun, 13 Mar 2022 10:45:40 +0800
-Message-Id: <20220313024541.1579848-1-tim@klingt.org>
+Cc:     linux-remoteproc@vger.kernel.org, Tim Blechmann <tim@klingt.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 1/1] rpmsg: char - treat ENOMEM as EAGAIN
+Date:   Sun, 13 Mar 2022 10:45:41 +0800
+Message-Id: <20220313024541.1579848-2-tim@klingt.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <Yiy42BBHJO11GGhG@builder.lan>
+In-Reply-To: <20220313024541.1579848-1-tim@klingt.org>
 References: <Yiy42BBHJO11GGhG@builder.lan>
+ <20220313024541.1579848-1-tim@klingt.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -67,20 +69,40 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Tim Blechmann <tim@klingt.org>
 
-This patch should allow the use of `rpmsg_char` character devices with
-libraries that do a `poll`/`write` loop and expect `EAGAIN` when sending
-fails and the user space application needs to `poll` to wait for more
-space to be available.
-`boost::asio::write` is a notable example of a library, which implements
-such a loop.
+rpmsg_trysend() returns -ENOMEM when no rpmsg buffer can be allocated.
+this causes write to fail with this error as opposed to -EAGAIN.
+this is what user space applications (and libraries like boost.asio)
+would expect when using normal character devices.
 
-
-Tim Blechmann (1):
-  rpmsg: char - treat `ENOMEM` as `EAGAIN`
-
+Signed-off-by: Tim Blechmann <tim@klingt.org>
+CC: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
  drivers/rpmsg/rpmsg_char.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 5663cf799c95..5b9e708d595a 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -239,14 +239,17 @@ static ssize_t rpmsg_eptdev_write_iter(struct kiocb *iocb,
+ 
+ 	if (!eptdev->ept) {
+ 		ret = -EPIPE;
+ 		goto unlock_eptdev;
+ 	}
+ 
+-	if (filp->f_flags & O_NONBLOCK)
++	if (filp->f_flags & O_NONBLOCK) {
+ 		ret = rpmsg_trysendto(eptdev->ept, kbuf, len, eptdev->chinfo.dst);
++		if (ret == -ENOMEM)
++			ret = -EAGAIN;
++	}
+ 	else
+ 		ret = rpmsg_sendto(eptdev->ept, kbuf, len, eptdev->chinfo.dst);
+ 
+ unlock_eptdev:
+ 	mutex_unlock(&eptdev->ept_lock);
+ 
 -- 
 2.35.1
 
