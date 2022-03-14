@@ -2,182 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0C5C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 10:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B2EC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 11:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbiCNKBp (ORCPT
+        id S238814AbiCNLNZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Mar 2022 06:01:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59044 "EHLO
+        Mon, 14 Mar 2022 07:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbiCNKBp (ORCPT
+        with ESMTP id S238815AbiCNLNX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Mar 2022 06:01:45 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6001719C28;
-        Mon, 14 Mar 2022 03:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1647252035; x=1678788035;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=LeMnOhM+GEPGEkeVg5rUIbVD4CakRFa9JprrFWKhPWQ=;
-  b=N2oKZ6vMTbK/q+580dyLoe6PGyApoWwIk3xU3hCC+ZsKOx2y3OSD+UZu
-   m+/yxrFmDQOhuPVXm9ob55gUJP34p9ANUdqENJB+jSbA/m6oi8dwJfZm+
-   T0H1IlAJrbErrqBdnuwmiTQc6H1p8LxPUqcBp01YxBQwIfXYJWh8HUBpH
-   s=;
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 14 Mar 2022 03:00:34 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2022 03:00:34 -0700
-Received: from nalasex01b.na.qualcomm.com (10.47.209.197) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Mon, 14 Mar 2022 03:00:33 -0700
-Received: from hu-ylal-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.15; Mon, 14 Mar 2022 03:00:30 -0700
-From:   Yogesh Lal <quic_ylal@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <quic_sibis@quicinc.com>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yogesh Lal <quic_ylal@quicinc.com>
-Subject: [PATCH] remoteproc: qcom: pas: Add elf64 support to coredump
-Date:   Mon, 14 Mar 2022 15:30:13 +0530
-Message-ID: <1647252013-7794-1-git-send-email-quic_ylal@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 14 Mar 2022 07:13:23 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7468917A85;
+        Mon, 14 Mar 2022 04:12:09 -0700 (PDT)
+X-UUID: 33b3eaef36e64793a9345f9570c4cf03-20220314
+X-UUID: 33b3eaef36e64793a9345f9570c4cf03-20220314
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 211809994; Mon, 14 Mar 2022 19:12:04 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Mon, 14 Mar 2022 19:12:03 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 14 Mar 2022 19:12:02 +0800
+Message-ID: <588cb791c2fe3e1db8e0dd9ad66aa6d1bb95b348.camel@mediatek.com>
+Subject: Re: [PATCH v2] remoteproc: mediatek: fix side effect of mt8195 sram
+ power on
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Miles Chen <miles.chen@mediatek.com>, <lkp@intel.com>
+CC:     <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <angelogioacchino.delregno@collabora.com>,
+        <bjorn.andersson@linaro.org>, <kbuild-all@lists.01.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <mathieu.poirier@linaro.org>,
+        <matthias.bgg@gmail.com>
+Date:   Mon, 14 Mar 2022 19:12:03 +0800
+In-Reply-To: <20220313000110.3869-1-miles.chen@mediatek.com>
+References: <202203120056.qtDEVoye-lkp@intel.com>
+         <20220313000110.3869-1-miles.chen@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add support to use elf64 coredumps to remote processors.
+Hi Miles,
 
-Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 67 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 64 insertions(+), 3 deletions(-)
+On Sun, 2022-03-13 at 08:01 +0800, Miles Chen wrote:
+> Hi Tinghan,
+> 
+> >      418 |                           MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
+> >          |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >          |                           MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
+> >    drivers/remoteproc/mtk_scp.c:418:27: note: each undeclared identifier is reported only once
+> > for each function it appears in
+> >    drivers/remoteproc/mtk_scp.c: In function 'mt8195_scp_stop':
+> >    drivers/remoteproc/mtk_scp.c:592:28: error: 'MT8195_L1TCM_SRAM_PDN_RESERVED_BITS' undeclared
+> > (first use in this function); did you mean 'MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS'?
+> >      592 |                            MT8195_L1TCM_SRAM_PDN_RESERVED_BITS);
+> >          |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >          |                            MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS
+> 
+> I tested this patch and it can should be caught by the
+> internal build test.
+> 
+> Could you do the test before submitting patches out?
+> 
+> 
+> Thanks,
+> Miles
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 1ae47cc..58c335e 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -34,6 +34,7 @@ struct adsp_data {
- 	const char *firmware_name;
- 	int pas_id;
- 	unsigned int minidump_id;
-+	bool uses_elf64;
- 	bool has_aggre2_clk;
- 	bool auto_boot;
- 
-@@ -450,7 +451,11 @@ static int adsp_probe(struct platform_device *pdev)
- 	}
- 
- 	rproc->auto_boot = desc->auto_boot;
--	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-+
-+	if (desc->uses_elf64)
-+		rproc_coredump_set_elf_info(rproc, ELFCLASS64, EM_NONE);
-+	else
-+		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
- 	adsp = (struct qcom_adsp *)rproc->priv;
- 	adsp->dev = &pdev->dev;
-@@ -617,6 +622,24 @@ static const struct adsp_data sm8350_adsp_resource = {
- 	.ssctl_id = 0x14,
- };
- 
-+static const struct adsp_data sm8450_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.pas_id = 1,
-+	.uses_elf64 = true,
-+	.has_aggre2_clk = false,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+};
-+
- static const struct adsp_data msm8996_adsp_resource = {
- 		.crash_reason_smem = 423,
- 		.firmware_name = "adsp.mdt",
-@@ -721,6 +744,24 @@ static const struct adsp_data sm8350_cdsp_resource = {
- 	.ssctl_id = 0x17,
- };
- 
-+static const struct adsp_data sm8450_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.pas_id = 18,
-+	.uses_elf64 = true,
-+	.has_aggre2_clk = false,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
-+
- static const struct adsp_data mpss_resource_init = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -755,6 +796,25 @@ static const struct adsp_data sc8180x_mpss_resource = {
- 	.ssctl_id = 0x12,
- };
- 
-+static const struct adsp_data sm8450_mpss_resource = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.minidump_id = 3,
-+	.uses_elf64 = true,
-+	.has_aggre2_clk = false,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+};
-+
- static const struct adsp_data slpi_resource_init = {
- 		.crash_reason_smem = 424,
- 		.firmware_name = "slpi.mdt",
-@@ -879,10 +939,11 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
- 	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sm8350_slpi_resource},
- 	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
--	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
-+	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8450_adsp_resource},
-+	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8450_cdsp_resource},
- 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
- 	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adsp_of_match);
--- 
-2.7.4
+I'm Sorry. I was too confident for this change.
+I'll do the test at next time.
+Thank you.
+
+
+Best regards,
+TingHan
 
