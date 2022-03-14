@@ -2,129 +2,149 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E7EC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 22:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BE6C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 22:38:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243515AbiCNW3i (ORCPT
+        id S239824AbiCNWkD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Mar 2022 18:29:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38296 "EHLO
+        Mon, 14 Mar 2022 18:40:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238826AbiCNW3h (ORCPT
+        with ESMTP id S233496AbiCNWkD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Mar 2022 18:29:37 -0400
-Received: from mail-oo1-xc2e.google.com (mail-oo1-xc2e.google.com [IPv6:2607:f8b0:4864:20::c2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8947F11A31
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 15:28:26 -0700 (PDT)
-Received: by mail-oo1-xc2e.google.com with SMTP id k13-20020a4a948d000000b003172f2f6bdfso22238930ooi.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 15:28:26 -0700 (PDT)
+        Mon, 14 Mar 2022 18:40:03 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4BB22B13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 15:38:52 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id w127so19026122oig.10
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 15:38:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=nQWuqg+ddOw1oV88Ty6v00QRPKt0GAj8NU+qEDYWO1I=;
-        b=DWIDuPdANPxggwyxysS41MKFKbgxS7fkRxBrxcq4WZhLsEOVoC/190qUjKO0WrcEz2
-         HiK0siER3AD5sgCRTQNgQ8/N5EX2OLxSNRG5cZ0leQS9KUP9kapFMG+dof6VDruanClL
-         hh8qFFy6AiVYFXWrs6N4xXfPTWx6g5ZU1zLrOgwulN+/ejxqi1Pv/GF3zKo/R1ZmghSX
-         yPFU8OfhQva/95dcbXAVEdH9oDcVDxRUT02RDoqZa2FGx3TcjyjRG8U7wOki+KQLldGY
-         XdcI2t/BkHas1esRbgo4ySE9bY98ZY1WelKEct+9PpPijyvyMOujB6o3CErj58wtXgEK
-         C3Ng==
+        bh=YXkFYBEzojBY1qqCl4Kxt1AhbpSUG3Tsb0zDnLNmqZ0=;
+        b=WcVdtBUaKkF+aSmgdLxPUC7etTQfErJlN9YeeS3QKG4zrBeU32ndyFXx7YQQcOwezZ
+         Cokc3VIVYaYOniyJB1OY9nksQwiwSgMs9r+BRfcgRTHmu2QE3i7XJN6yAz3BZRWYOycE
+         jwpygELyZo/gVDQ7EDdKoDZRjg9jKRIieAbuHYqZhdGGGlmEUCfW9fEhVYa4zNfPfZ+k
+         tld4VRBVds/0c1IFje0L21JO3x9fTOIyrLGEnwoy4CiZGEuZI4FsjQYyr287oEYarFDs
+         J4J22Ggs4VI9Yeohday6QNv+N2YyrW1b5JdkZAr/2bZ+vtoV0XrtecU6DEQ1Ylj8cue/
+         cmoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=nQWuqg+ddOw1oV88Ty6v00QRPKt0GAj8NU+qEDYWO1I=;
-        b=0gIl9d9xRuqp3hE7o2oF6mnyrdWDOBL4meHZkh0P0Pjnkru4BjDzPaFEYsf5LY+NKp
-         rPm2hRaP1ATccKIlY8mWpnhUImveL76XEbg4OSaetoG+XgZk0ajQok+JrO9xIhodw/xm
-         p1cdiIwsG4RlZrMT/clKk9lwgO4SUK8mw0PjFZ3cavbt8PSpxH8SYRXkKL49/dmqxA9z
-         uEeJPfvNsWGKP8Kl1sCJByUJ0wFyM/BbXAJzgwXnM1rja694PDCfqHoUik/IdqlXmHKq
-         eOsi/Fu4Z6wJxalMtJqQz4JJCrELUEjDlfkizFdZxlmrAJa/swmgCvBblMoOMRhh9V3v
-         haYA==
-X-Gm-Message-State: AOAM531gl5dqOY1V1y/55G1AKpYZWskvqJykQUEradKvDoFsHW5ElLq3
-        vtX/mOiDGEkJJTQInRn9zyL69Q==
-X-Google-Smtp-Source: ABdhPJwfNTLqkeOQnK1jvXc3XDq+dTSGGjbe07ZUKsKBp7CCf9AnvWDHI5pE6GufZ1uel/pwlnBIow==
-X-Received: by 2002:a05:6870:17a1:b0:da:b3f:3258 with SMTP id r33-20020a05687017a100b000da0b3f3258mr512703oae.264.1647296905949;
-        Mon, 14 Mar 2022 15:28:25 -0700 (PDT)
+        bh=YXkFYBEzojBY1qqCl4Kxt1AhbpSUG3Tsb0zDnLNmqZ0=;
+        b=tBnJhgUaSccfdBIsVLBIaZWrlkOZc17F45A3cJUhTXkSEOxq65W61Pa5wOJO/L/YaC
+         pVCoz/EuthUa++gyOIN9BHuFW6hbXM2ND3D+UsufAPmJ4JOONUwqAXmNCjbfCRJL4uTH
+         9P0qDTd9+c3/S7KDHc5YikwxWWf5HaXCkdMdMBe4VtVzsg5OB9khBpdfRst3vT8xAQCH
+         dzg9DwIzBFNjMS8kSb48/irJ8i2bmk1RfSjfUcutbdKcQUkZ6BxjbvWisuDOd9hxWjn5
+         qLh+4y+ztsVGQ5vlOQspj/zQINVWCxeJCr2s92rsmRFxLK0oeu7XqTqqxFcKTfL2kuae
+         Jllw==
+X-Gm-Message-State: AOAM532F3rXA8c6Pl9lmSdxBuZ7gCA4NylYNtgO+jJMec4FrLv31Gz1N
+        PKFZL6mT5iCfT0fV469vo8B0bxmcnmHWXA==
+X-Google-Smtp-Source: ABdhPJygsq2dL74GG22/VfljFSfGfYJUxf/rqsqC1VFczZCgSv28PIwMQkk48UaxBoaQaGnpC9LIpg==
+X-Received: by 2002:aca:c44:0:b0:2da:45a4:98a2 with SMTP id i4-20020aca0c44000000b002da45a498a2mr602667oiy.220.1647297531426;
+        Mon, 14 Mar 2022 15:38:51 -0700 (PDT)
 Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id n128-20020a4a4086000000b0032118eda64bsm7991304ooa.38.2022.03.14.15.28.25
+        by smtp.gmail.com with ESMTPSA id bn14-20020a056808230e00b002da0c0f502esm8301688oib.24.2022.03.14.15.38.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 15:28:25 -0700 (PDT)
-Date:   Mon, 14 Mar 2022 17:28:23 -0500
+        Mon, 14 Mar 2022 15:38:50 -0700 (PDT)
+Date:   Mon, 14 Mar 2022 17:38:48 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Alexandre Bailon <abailon@baylibre.com>
-Cc:     ohad@wizery.com, mathieu.poirier@linaro.org, robh+dt@kernel.or,
-        matthias.bgg@gmail.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stephane.leprovost@mediatek.com, khilman@baylibre.com,
-        Julien STEPHAN <jstephan@baylibre.com>
-Subject: Re: [PATCH v4 6/7] remoteproc: mtk-apu: Add support of MT8365
-Message-ID: <Yi/Bh8CsB2bnE9Ca@builder.lan>
-References: <20220304161514.994128-1-abailon@baylibre.com>
- <20220304161514.994128-7-abailon@baylibre.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "krzysztof.kozlowski@canonical.com" 
+        <krzysztof.kozlowski@canonical.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 2/6] dt-bindings: remoteproc: imx_rproc: support
+ i.MX8QM
+Message-ID: <Yi/D+CmHcm2/8S9B@builder.lan>
+References: <20220309102118.8131-1-peng.fan@oss.nxp.com>
+ <20220309102118.8131-3-peng.fan@oss.nxp.com>
+ <YiqFJ+1l/h7XCQkN@robh.at.kernel.org>
+ <DU0PR04MB9417A914373C466BE76729AB880C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220304161514.994128-7-abailon@baylibre.com>
+In-Reply-To: <DU0PR04MB9417A914373C466BE76729AB880C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri 04 Mar 10:15 CST 2022, Alexandre Bailon wrote:
+On Thu 10 Mar 19:58 CST 2022, Peng Fan wrote:
 
-> From: Julien STEPHAN <jstephan@baylibre.com>
+> > Subject: Re: [PATCH V2 2/6] dt-bindings: remoteproc: imx_rproc: support
+> > i.MX8QM
+> > 
+> > On Wed, Mar 09, 2022 at 06:21:14PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Add i.MX8QM compatible
+> > >
+> > > There are two general purpose M4, so add reg property to indicate the
+> > > id.
+> > 
+> > Where does the id come from? Is this just an index?
 > 
-> This adds support of APU available in the MT8365.
+> It is software use to identify which is m4_0 and which is m4_1,
+> just an index.
 > 
-> Signed-off-by: Julien STEPHAN <jstephan@baylibre.com>
-> Signed-off-by: Alexandre Bailon <abailon@baylibre.com>
-> ---
->  drivers/remoteproc/mtk_apu.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/mtk_apu.c b/drivers/remoteproc/mtk_apu.c
-> index deec51b86ba5..57dd73c63d3f 100644
-> --- a/drivers/remoteproc/mtk_apu.c
-> +++ b/drivers/remoteproc/mtk_apu.c
-> @@ -96,6 +96,24 @@ static const struct mtk_apu_conf mt8183_conf = {
->  	.clk_names = mt8183_clk_names
->  };
->  
-> +static const char * const mt8365_clk_names[] = {
-> +	"if_ck",
-> +	"edma",
-> +	"ahb",
-> +	"axi",
-> +	"ipu",
-> +	"jtag",
-> +	"smi_cam",
-> +	"ifr_apu_axi",
-> +};
-> +
-> +static const struct mtk_apu_conf mt8365_conf = {
-> +	.core_default0 = BIT(26) | BIT(20),
-> +	.core_default1 = BIT(3) | BIT(7),
 
-Would it be possible to get some defines for these bits as well?
+"reg" is supposed to represent some sort of identifier on the parent
+bus, as such it doesn't seem to be the appropriate property to provide
+an arbitrary 0 or 1 to identify which of the two m4s this is.
 
-Thanks,
+Regards,
 Bjorn
 
-> +	.num_clks = ARRAY_SIZE(mt8365_clk_names),
-> +	.clk_names = mt8365_clk_names
-> +};
-> +
->  static int mtk_apu_iommu_map(struct rproc *rproc, struct rproc_mem_entry *entry)
->  {
->  	struct mtk_apu_rproc *apu_rproc = rproc->priv;
-> @@ -633,6 +651,7 @@ static int mtk_apu_rproc_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id mtk_apu_rproc_of_match[] = {
->  	{ .compatible = "mediatek,mt8183-apu", .data = &mt8183_conf },
-> +	{ .compatible = "mediatek,mt8365-apu", .data = &mt8365_conf },
->  	{ /* sentinel */ },
->  };
->  MODULE_DEVICE_TABLE(of, mtk_apu_rproc_of_match);
-> -- 
-> 2.34.1
+> Thanks,
+> Peng.
 > 
+> > 
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4
+> > ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git
+> > > a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > index f25c203dd2f9..41d366cff3cd 100644
+> > > --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > @@ -20,6 +20,7 @@ properties:
+> > >        - fsl,imx8mn-cm7
+> > >        - fsl,imx8mp-cm7
+> > >        - fsl,imx8qxp-cm4
+> > > +      - fsl,imx8qm-cm4
+> > >        - fsl,imx8ulp-cm33
+> > >        - fsl,imx7d-cm4
+> > >        - fsl,imx7ulp-cm4
+> > > @@ -68,6 +69,9 @@ properties:
+> > >    power-domains:
+> > >      maxItems: 8
+> > >
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > >    rsrc-id:
+> > >      description:
+> > >        This property is to specify the resource id of the remote
+> > > processor in SoC
+> > > --
+> > > 2.30.0
+> > >
+> > >
