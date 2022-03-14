@@ -2,90 +2,202 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E4FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 19:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CF9C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 21:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243550AbiCNTKE (ORCPT
+        id S237460AbiCNVlj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Mar 2022 15:10:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55440 "EHLO
+        Mon, 14 Mar 2022 17:41:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233327AbiCNTKD (ORCPT
+        with ESMTP id S244008AbiCNVli (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Mar 2022 15:10:03 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ACBB220DD;
-        Mon, 14 Mar 2022 12:08:53 -0700 (PDT)
-Received: from g550jk.localnet (a246182.upc-a.chello.nl [62.163.246.182])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 9A351C8782;
-        Mon, 14 Mar 2022 19:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1647284900; bh=c0PhVAVBuzLcDTY70UAlTT8hnsjR2XvszePUiJZYgww=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=q9iVJh8gkxFkAohLgEyZc+3ba0+PrjmFzrQVBcJjj41PiNd24TayjH0AkAFa+f9TV
-         csgcW1WP7ywAjPZHfHUbILJy1jKvvI5j3/+ooR3QRvXH94sXVmoMBi/6Zd1S0G0+uB
-         Ks70d+RPUgps3DeI4vqcTj67T/UnxA48x+WPEQtE=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mon, 14 Mar 2022 17:41:38 -0400
+Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92FF915A2B
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 14:40:26 -0700 (PDT)
+Received: by mail-oo1-xc29.google.com with SMTP id u30-20020a4a6c5e000000b00320d8dc2438so22080134oof.12
+        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 14:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CH4PnxS5OBdq/D6Vp76lpnMDoAzcsxnrc14ncEtoegU=;
+        b=xebXMdKQRsxXOA7mx5JtV5zjLWaAZEH3jQiH8bLmEct6J+cbDMWpl6BEFRd4oEwx7C
+         aNHPC/DfZCpmFfU5qnKNnH9lLrZF0XsLRJadbQpFW5uHwvK1DyvQ7Ng9Wbst8nLe1qsR
+         Ft6GfQv4BPrC35S2TRP1ZBPhmcGSWrRLMGDXZIAdoA59r7bRWYD/W+k+4zIg/fhSzMzq
+         /2zrpUqXcbxsW4RumT0k8RSdI/Ja2wI5dBCudbU4qTij+ePaky/5R+yCovnVJr6c33D+
+         cUQgZOdC7qOyeFKfbd74gFwiJOa59Kf3ihQjT//XQ8aIRBETqhBdm4lOg+iDeP32JHMs
+         3GGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CH4PnxS5OBdq/D6Vp76lpnMDoAzcsxnrc14ncEtoegU=;
+        b=bO0ob96dWGa+hm0tqZkIFasAJD01ob18ZyfzN79EPlzg6dNJnk4Y2iM4dBBfcVgydu
+         L5NH/Y69fysLKGoRHPBwD4VqPkATbOtDmFsG74/V6juLZ7FMyofSqVywcFjh2yLfsD0s
+         YiZmlISX64FbyX5a31rd7BKqgXLuGZ01XV0DqEZgrWDMs5XCKtEIkB+jdNqOPtO0hyL0
+         c28Z4JvqRl0QG0KbdGw9Hn+zNMX4fD/QLjKpPgntoJBpJ+Lv5tM8dfThi3dLFZOJ7xFg
+         IAxcH1RZCj5kG7rlp7dBc9IBrof5PSgvOeQgAiw11rkc8pIyK5EtjtKHNhg1c6zFY+7f
+         P8+A==
+X-Gm-Message-State: AOAM531Xidc08FfiS5z5/zVPTFYDRghr6+64EO/kEpeYB7Efcr9F6k4+
+        a9+KYdn6w+OQvwH2tATdgEZ4yw==
+X-Google-Smtp-Source: ABdhPJx9ShNGhKeS4XKWob97GViwdgXKmKriwSN7lAV2IHVCc/GNGiM8uDLrubhREgewA0JXe92OxQ==
+X-Received: by 2002:a05:6870:d685:b0:da:b3f:2b84 with SMTP id z5-20020a056870d68500b000da0b3f2b84mr402796oap.291.1647294025542;
+        Mon, 14 Mar 2022 14:40:25 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id y8-20020a544d88000000b002d525da014bsm8244544oix.42.2022.03.14.14.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Mar 2022 14:40:24 -0700 (PDT)
+Date:   Mon, 14 Mar 2022 16:40:23 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Yogesh Lal <quic_ylal@quicinc.com>
+Cc:     quic_sibis@quicinc.com, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] rpmsg: smd: allow opening rpm_requests even if already opened
-Date:   Mon, 14 Mar 2022 20:08:20 +0100
-Message-ID: <2630587.mvXUDI8C0e@g550jk>
-In-Reply-To: <20220220201909.445468-6-luca@z3ntu.xyz>
-References: <20220220201909.445468-1-luca@z3ntu.xyz> <20220220201909.445468-6-luca@z3ntu.xyz>
+Subject: Re: [PATCH] remoteproc: qcom: pas: Add elf64 support to coredump
+Message-ID: <Yi+2Rylfx6mOHHOK@builder.lan>
+References: <1647252013-7794-1-git-send-email-quic_ylal@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1647252013-7794-1-git-send-email-quic_ylal@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi all,
+On Mon 14 Mar 05:00 CDT 2022, Yogesh Lal wrote:
 
-any feedback on this patch? It's needed for msm8953 to boot properly.
+> Add support to use elf64 coredumps to remote processors.
 
-Regards
-Luca
+The commit message does not describe _this_ patch and it fails to
+explain _why_ sm8450 should have 64-bit coredumps.
 
-On Sonntag, 20. Februar 2022 21:18:58 CET Luca Weiss wrote:
-> On msm8953 the channel seems to be already opened when booting Linux but
-> we still need to open it for communication with regulators etc.
+Please correct this.
+
+Thanks,
+Bjorn
+
 > 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
 > ---
-> Changes in v2:
-> - rework original patch, don't drop condition completely but allow force
->   opening rpm_requests channel
+>  drivers/remoteproc/qcom_q6v5_pas.c | 67 ++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 64 insertions(+), 3 deletions(-)
 > 
->  drivers/rpmsg/qcom_smd.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 1ae47cc..58c335e 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -34,6 +34,7 @@ struct adsp_data {
+>  	const char *firmware_name;
+>  	int pas_id;
+>  	unsigned int minidump_id;
+> +	bool uses_elf64;
+>  	bool has_aggre2_clk;
+>  	bool auto_boot;
+>  
+> @@ -450,7 +451,11 @@ static int adsp_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	rproc->auto_boot = desc->auto_boot;
+> -	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+> +
+> +	if (desc->uses_elf64)
+> +		rproc_coredump_set_elf_info(rproc, ELFCLASS64, EM_NONE);
+> +	else
+> +		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>  
+>  	adsp = (struct qcom_adsp *)rproc->priv;
+>  	adsp->dev = &pdev->dev;
+> @@ -617,6 +622,24 @@ static const struct adsp_data sm8350_adsp_resource = {
+>  	.ssctl_id = 0x14,
+>  };
+>  
+> +static const struct adsp_data sm8450_adsp_resource = {
+> +	.crash_reason_smem = 423,
+> +	.firmware_name = "adsp.mdt",
+> +	.pas_id = 1,
+> +	.uses_elf64 = true,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"lcx",
+> +		"lmx",
+> +		NULL
+> +	},
+> +	.load_state = "adsp",
+> +	.ssr_name = "lpass",
+> +	.sysmon_name = "adsp",
+> +	.ssctl_id = 0x14,
+> +};
+> +
+>  static const struct adsp_data msm8996_adsp_resource = {
+>  		.crash_reason_smem = 423,
+>  		.firmware_name = "adsp.mdt",
+> @@ -721,6 +744,24 @@ static const struct adsp_data sm8350_cdsp_resource = {
+>  	.ssctl_id = 0x17,
+>  };
+>  
+> +static const struct adsp_data sm8450_cdsp_resource = {
+> +	.crash_reason_smem = 601,
+> +	.firmware_name = "cdsp.mdt",
+> +	.pas_id = 18,
+> +	.uses_elf64 = true,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mxc",
+> +		NULL
+> +	},
+> +	.load_state = "cdsp",
+> +	.ssr_name = "cdsp",
+> +	.sysmon_name = "cdsp",
+> +	.ssctl_id = 0x17,
+> +};
+> +
+>  static const struct adsp_data mpss_resource_init = {
+>  	.crash_reason_smem = 421,
+>  	.firmware_name = "modem.mdt",
+> @@ -755,6 +796,25 @@ static const struct adsp_data sc8180x_mpss_resource = {
+>  	.ssctl_id = 0x12,
+>  };
+>  
+> +static const struct adsp_data sm8450_mpss_resource = {
+> +	.crash_reason_smem = 421,
+> +	.firmware_name = "modem.mdt",
+> +	.pas_id = 4,
+> +	.minidump_id = 3,
+> +	.uses_elf64 = true,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = false,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mss",
+> +		NULL
+> +	},
+> +	.load_state = "modem",
+> +	.ssr_name = "mpss",
+> +	.sysmon_name = "modem",
+> +	.ssctl_id = 0x12,
+> +};
+> +
+>  static const struct adsp_data slpi_resource_init = {
+>  		.crash_reason_smem = 424,
+>  		.firmware_name = "slpi.mdt",
+> @@ -879,10 +939,11 @@ static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
+>  	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sm8350_slpi_resource},
+>  	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
+> -	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
+> -	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
+> +	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8450_adsp_resource},
+> +	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8450_cdsp_resource},
+>  	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
+>  	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
+> +	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, adsp_of_match);
+> -- 
+> 2.7.4
 > 
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 540e027f08c4..887e21ca51f2 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -1288,9 +1288,14 @@ static void qcom_channel_state_worker(struct
-> work_struct *work) if (channel->state != SMD_CHANNEL_CLOSED)
->  			continue;
-> 
-> +		/*
-> +		 * Always open rpm_requests, even when already opened 
-which is
-> +		 * required on some SoCs like msm8953.
-> +		 */
->  		remote_state = GET_RX_CHANNEL_INFO(channel, state);
->  		if (remote_state != SMD_CHANNEL_OPENING &&
-> -		    remote_state != SMD_CHANNEL_OPENED)
-> +		    remote_state != SMD_CHANNEL_OPENED &&
-> +		    strcmp(channel->name, "rpm_requests"))
->  			continue;
-> 
->  		if (channel->registered)
-
-
-
-
