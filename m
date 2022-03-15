@@ -2,151 +2,184 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1EBC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Mar 2022 12:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D47FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Mar 2022 14:42:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348449AbiCOMtS (ORCPT
+        id S239969AbiCOOnK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 08:49:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        Tue, 15 Mar 2022 10:43:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348456AbiCOMtQ (ORCPT
+        with ESMTP id S242040AbiCOOnJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Mar 2022 08:49:16 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21113BF51;
-        Tue, 15 Mar 2022 05:47:59 -0700 (PDT)
-X-UUID: 6176232bef0040b18e8b657291c8e1f8-20220315
-X-UUID: 6176232bef0040b18e8b657291c8e1f8-20220315
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <allen-kh.cheng@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 699758180; Tue, 15 Mar 2022 20:47:53 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Tue, 15 Mar 2022 20:47:51 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 15 Mar 2022 20:47:51 +0800
-From:   Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>
-Subject: [PATCH v6 2/2] remoteproc: mediatek: Support mt8186 scp
-Date:   Tue, 15 Mar 2022 20:47:47 +0800
-Message-ID: <20220315124747.30144-3-allen-kh.cheng@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220315124747.30144-1-allen-kh.cheng@mediatek.com>
-References: <20220315124747.30144-1-allen-kh.cheng@mediatek.com>
+        Tue, 15 Mar 2022 10:43:09 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A72005575C;
+        Tue, 15 Mar 2022 07:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1647355317; x=1678891317;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=MrQ1fvABcxNaAepb8WOlt+Sg8YuuQ7eRewo0sYq/MHY=;
+  b=CjWJVsrXpuf0/nWsMOAlPlLdelQ80bGCl30wsa4gaH2MmaqdHtxXU/kS
+   7SR5m8oMUz72wolBOLT+1cx7SQ3kPknPsDZRkYad9BbetJYyjBVkstZhm
+   DEFSJ9sC09eub4XhsJPXXaETf++12XaVq5Ms/znx5i3/GeQEU4dd6CKfv
+   Q=;
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 15 Mar 2022 07:41:57 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2022 07:41:57 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.15; Tue, 15 Mar 2022 07:41:56 -0700
+Received: from hu-ylal-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 15 Mar 2022 07:41:54 -0700
+From:   Yogesh Lal <quic_ylal@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <quic_sibis@quicinc.com>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yogesh Lal <quic_ylal@quicinc.com>
+Subject: [PATCH V2] remoteproc: qcom: pas: Add elf64 support to coredump
+Date:   Tue, 15 Mar 2022 20:11:47 +0530
+Message-ID: <1647355307-7612-1-git-send-email-quic_ylal@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>
+This change adds elf64 coredump to the ADSP,CDSP and MPSS subsystems as
+they will be 64 bit from sm8450 onward.
 
-Add SCP support for mt8186
-
-Signed-off-by: Allen-KH Cheng <Allen-KH.Cheng@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
 ---
- drivers/remoteproc/mtk_common.h |  3 +++
- drivers/remoteproc/mtk_scp.c    | 42 +++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
+ Updating commit message and minor code change.
+ drivers/remoteproc/qcom_q6v5_pas.c | 68 +++++++++++++++++++++++++++++++++++---
+ 1 file changed, 64 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 5ff3867c72f3..71ce4977cb0b 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -32,6 +32,9 @@
- #define MT8183_SCP_CACHESIZE_8KB	BIT(8)
- #define MT8183_SCP_CACHE_CON_WAYEN	BIT(10)
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 1ae47cc..445ee3f 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -34,6 +34,7 @@ struct adsp_data {
+ 	const char *firmware_name;
+ 	int pas_id;
+ 	unsigned int minidump_id;
++	bool uses_elf64;
+ 	bool has_aggre2_clk;
+ 	bool auto_boot;
  
-+#define MT8186_SCP_L1_SRAM_PD_P1	0x40B0
-+#define MT8186_SCP_L1_SRAM_PD_p2	0x40B4
-+
- #define MT8192_L2TCM_SRAM_PD_0		0x10C0
- #define MT8192_L2TCM_SRAM_PD_1		0x10C4
- #define MT8192_L2TCM_SRAM_PD_2		0x10C8
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index dcddb33e9997..11be6b4235eb 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -383,6 +383,35 @@ static void mt8192_power_off_sram(void __iomem *addr)
- 		writel(GENMASK(i, 0), addr);
- }
+@@ -450,7 +451,11 @@ static int adsp_probe(struct platform_device *pdev)
+ 	}
  
-+static int mt8186_scp_before_load(struct mtk_scp *scp)
-+{
-+	/* Clear SCP to host interrupt */
-+	writel(MT8183_SCP_IPC_INT_BIT, scp->reg_base + MT8183_SCP_TO_HOST);
+ 	rproc->auto_boot = desc->auto_boot;
+-	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
 +
-+	/* Reset clocks before loading FW */
-+	writel(0x0, scp->reg_base + MT8183_SCP_CLK_SW_SEL);
-+	writel(0x0, scp->reg_base + MT8183_SCP_CLK_DIV_SEL);
-+
-+	/* Turn on the power of SCP's SRAM before using it. Enable 1 block per time*/
-+	mt8192_power_on_sram(scp->reg_base + MT8183_SCP_SRAM_PDN);
-+
-+	/* Initialize TCM before loading FW. */
-+	writel(0x0, scp->reg_base + MT8183_SCP_L1_SRAM_PD);
-+	writel(0x0, scp->reg_base + MT8183_SCP_TCM_TAIL_SRAM_PD);
-+	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_P1);
-+	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_p2);
-+
-+	/*
-+	 * Set I-cache and D-cache size before loading SCP FW.
-+	 * SCP SRAM logical address may change when cache size setting differs.
-+	 */
-+	writel(MT8183_SCP_CACHE_CON_WAYEN | MT8183_SCP_CACHESIZE_8KB,
-+	       scp->reg_base + MT8183_SCP_CACHE_CON);
-+	writel(MT8183_SCP_CACHESIZE_8KB, scp->reg_base + MT8183_SCP_DCACHE_CON);
-+
-+	return 0;
-+}
-+
- static int mt8192_scp_before_load(struct mtk_scp *scp)
- {
- 	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-@@ -874,6 +903,18 @@ static const struct mtk_scp_of_data mt8183_of_data = {
- 	.ipi_buf_offset = 0x7bdb0,
++	if (desc->uses_elf64)
++		rproc_coredump_set_elf_info(rproc, ELFCLASS64, EM_NONE);
++	else
++		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+ 	adsp = (struct qcom_adsp *)rproc->priv;
+ 	adsp->dev = &pdev->dev;
+@@ -617,6 +622,24 @@ static const struct adsp_data sm8350_adsp_resource = {
+ 	.ssctl_id = 0x14,
  };
  
-+static const struct mtk_scp_of_data mt8186_of_data = {
-+	.scp_clk_get = mt8195_scp_clk_get,
-+	.scp_before_load = mt8186_scp_before_load,
-+	.scp_irq_handler = mt8183_scp_irq_handler,
-+	.scp_reset_assert = mt8183_scp_reset_assert,
-+	.scp_reset_deassert = mt8183_scp_reset_deassert,
-+	.scp_stop = mt8183_scp_stop,
-+	.scp_da_to_va = mt8183_scp_da_to_va,
-+	.host_to_scp_reg = MT8183_HOST_TO_SCP,
-+	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
++static const struct adsp_data sm8450_adsp_resource = {
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.pas_id = 1,
++	.uses_elf64 = true,
++	.has_aggre2_clk = false,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"lcx",
++		"lmx",
++		NULL
++	},
++	.load_state = "adsp",
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
 +};
 +
- static const struct mtk_scp_of_data mt8192_of_data = {
- 	.scp_clk_get = mt8192_scp_clk_get,
- 	.scp_before_load = mt8192_scp_before_load,
-@@ -900,6 +941,7 @@ static const struct mtk_scp_of_data mt8195_of_data = {
+ static const struct adsp_data msm8996_adsp_resource = {
+ 		.crash_reason_smem = 423,
+ 		.firmware_name = "adsp.mdt",
+@@ -721,6 +744,24 @@ static const struct adsp_data sm8350_cdsp_resource = {
+ 	.ssctl_id = 0x17,
+ };
  
- static const struct of_device_id mtk_scp_of_match[] = {
- 	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
-+	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
- 	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
- 	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
- 	{},
++static const struct adsp_data sm8450_cdsp_resource = {
++	.crash_reason_smem = 601,
++	.firmware_name = "cdsp.mdt",
++	.pas_id = 18,
++	.uses_elf64 = true,
++	.has_aggre2_clk = false,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		"mxc",
++		NULL
++	},
++	.load_state = "cdsp",
++	.ssr_name = "cdsp",
++	.sysmon_name = "cdsp",
++	.ssctl_id = 0x17,
++};
++
+ static const struct adsp_data mpss_resource_init = {
+ 	.crash_reason_smem = 421,
+ 	.firmware_name = "modem.mdt",
+@@ -755,6 +796,25 @@ static const struct adsp_data sc8180x_mpss_resource = {
+ 	.ssctl_id = 0x12,
+ };
+ 
++static const struct adsp_data sm8450_mpss_resource = {
++	.crash_reason_smem = 421,
++	.firmware_name = "modem.mdt",
++	.pas_id = 4,
++	.minidump_id = 3,
++	.uses_elf64 = true,
++	.has_aggre2_clk = false,
++	.auto_boot = false,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		"mss",
++		NULL
++	},
++	.load_state = "modem",
++	.ssr_name = "mpss",
++	.sysmon_name = "modem",
++	.ssctl_id = 0x12,
++};
++
+ static const struct adsp_data slpi_resource_init = {
+ 		.crash_reason_smem = 424,
+ 		.firmware_name = "slpi.mdt",
+@@ -879,10 +939,10 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
+ 	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sm8350_slpi_resource},
+ 	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
+-	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
+-	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
++	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8450_adsp_resource},
++	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8450_cdsp_resource},
+ 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
+-	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
++	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, adsp_of_match);
 -- 
-2.18.0
+2.7.4
 
