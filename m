@@ -2,109 +2,165 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8EEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Mar 2022 20:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B450C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Mar 2022 22:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244761AbiCOUPv (ORCPT
+        id S1352358AbiCOWtc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 16:15:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60504 "EHLO
+        Tue, 15 Mar 2022 18:49:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234688AbiCOUPu (ORCPT
+        with ESMTP id S1350376AbiCOWtc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Mar 2022 16:15:50 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3CF5AA7A;
-        Tue, 15 Mar 2022 13:14:38 -0700 (PDT)
-Received: from g550jk.localnet (a246182.upc-a.chello.nl [62.163.246.182])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id AF31CCB556;
-        Tue, 15 Mar 2022 20:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1647375275; bh=invxskIdOgqfDDwWrwC5sBLhuscbs9Z9OfNld5S4mXY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=L2oeOX4C6bkNHEBFWrmsaM2MWMfl0hw6j0WEXU/4cTem9TJB/VvFX3esSLGbqLMVL
-         /DRvGBKccPcqoyQ1ywoB04lPUYRS1MaVXJtBSius4TJ81oCYncEcV9rjqpaWl4epA7
-         t4WYPkpyP+GXyty/f1eHTaV3vks5fDawj+qSJw6s=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+        Tue, 15 Mar 2022 18:49:32 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25FE238BD5;
+        Tue, 15 Mar 2022 15:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1647384499; x=1678920499;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=P9qMja6/fAMvM2ugsrl1pMMJHX9GWLFIsNE39aB8ACc=;
+  b=lYAZCEqQF/XjKWym3CuxUKQqkPAOZRnZPcNb86AfUTzCJqy6nyl51PoD
+   kltMw7N4v43wVHP5JNV+q+K509r6brylvyVg5eGEgZkjWPjIwmn2pzfyM
+   wsw4XrtucRbGYWY70eWpXyaKb6ivQGOq1BhZ6fjZsf+pfkjqdUo63mhoa
+   2QyDnABOq+fAFRDnvWtsjXDFcKQGnopmHl90ccaVcxEAaeGbkrjuHULJI
+   Hzg8nmV+gd2XatDE7uuYHtozecsRPqZkgGC9u0CNwwtEdpeBw7YZZfAOq
+   tPpli5+AcPoPDJnG83KiFA8Rbcxw4jy9J52z5qezM2SrVx5ZmQutct6QM
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10286"; a="281213578"
+X-IronPort-AV: E=Sophos;i="5.90,185,1643702400"; 
+   d="scan'208";a="281213578"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Mar 2022 15:48:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,185,1643702400"; 
+   d="scan'208";a="516072862"
+Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 15 Mar 2022 15:48:16 -0700
+Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nUFxf-000Bag-Nu; Tue, 15 Mar 2022 22:48:15 +0000
+Date:   Wed, 16 Mar 2022 06:47:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 05/10] rpmsg: smd: allow opening rpm_requests even if already opened
-Date:   Tue, 15 Mar 2022 21:14:35 +0100
-Message-ID: <5558411.DvuYhMxLoT@g550jk>
-In-Reply-To: <2630587.mvXUDI8C0e@g550jk>
-References: <20220220201909.445468-1-luca@z3ntu.xyz> <20220220201909.445468-6-luca@z3ntu.xyz> <2630587.mvXUDI8C0e@g550jk>
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     kbuild-all@lists.01.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        arnaud.pouliquen@foss.st.com
+Subject: Re: [PATCH] rpmsg: virtio: set dst address on first message received
+Message-ID: <202203160614.sjUMuSy8-lkp@intel.com>
+References: <20220315153856.3117676-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220315153856.3117676-1-arnaud.pouliquen@foss.st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Montag, 14. M=E4rz 2022 20:08:20 CET Luca Weiss wrote:
-> Hi all,
->=20
-> any feedback on this patch? It's needed for msm8953 to boot properly.
+Hi Arnaud,
 
-I was informed that the patch has already been applied and is now also pres=
-ent=20
-in linux-next, so please disregard my last email.
+I love your patch! Perhaps something to improve:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?
-id=3Da8f8cc6b39b7ee0dbaccbebd1268c9d3458ebf13
+[auto build test WARNING on remoteproc/rpmsg-next]
+[also build test WARNING on v5.17-rc8 next-20220315]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Regards
-Luca
+url:    https://github.com/0day-ci/linux/commits/Arnaud-Pouliquen/rpmsg-virtio-set-dst-address-on-first-message-received/20220315-234049
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-next
+config: s390-randconfig-s031-20220313 (https://download.01.org/0day-ci/archive/20220316/202203160614.sjUMuSy8-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 11.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/0day-ci/linux/commit/ef182a34773917f6bf876b37485031962393a1cd
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Arnaud-Pouliquen/rpmsg-virtio-set-dst-address-on-first-message-received/20220315-234049
+        git checkout ef182a34773917f6bf876b37485031962393a1cd
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=s390 SHELL=/bin/bash
 
->=20
-> Regards
-> Luca
->=20
-> On Sonntag, 20. Februar 2022 21:18:58 CET Luca Weiss wrote:
-> > On msm8953 the channel seems to be already opened when booting Linux but
-> > we still need to open it for communication with regulators etc.
-> >=20
-> > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> > ---
-> > Changes in v2:
-> > - rework original patch, don't drop condition completely but allow force
-> >=20
-> >   opening rpm_requests channel
-> > =20
-> >  drivers/rpmsg/qcom_smd.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> > index 540e027f08c4..887e21ca51f2 100644
-> > --- a/drivers/rpmsg/qcom_smd.c
-> > +++ b/drivers/rpmsg/qcom_smd.c
-> > @@ -1288,9 +1288,14 @@ static void qcom_channel_state_worker(struct
-> > work_struct *work) if (channel->state !=3D SMD_CHANNEL_CLOSED)
-> >=20
-> >  			continue;
-> >=20
-> > +		/*
-> > +		 * Always open rpm_requests, even when already opened
->=20
-> which is
->=20
-> > +		 * required on some SoCs like msm8953.
-> > +		 */
-> >=20
-> >  		remote_state =3D GET_RX_CHANNEL_INFO(channel, state);
-> >  		if (remote_state !=3D SMD_CHANNEL_OPENING &&
-> >=20
-> > -		    remote_state !=3D SMD_CHANNEL_OPENED)
-> > +		    remote_state !=3D SMD_CHANNEL_OPENED &&
-> > +		    strcmp(channel->name, "rpm_requests"))
-> >=20
-> >  			continue;
-> >  	=09
-> >  		if (channel->registered)
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/rpmsg/virtio_rpmsg_bus.c:756:36: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned int [usertype] dst @@     got restricted __rpmsg32 [usertype] src @@
+   drivers/rpmsg/virtio_rpmsg_bus.c:756:36: sparse:     expected unsigned int [usertype] dst
+   drivers/rpmsg/virtio_rpmsg_bus.c:756:36: sparse:     got restricted __rpmsg32 [usertype] src
 
+vim +756 drivers/rpmsg/virtio_rpmsg_bus.c
 
+   727	
+   728		/*
+   729		 * We currently use fixed-sized buffers, so trivially sanitize
+   730		 * the reported payload length.
+   731		 */
+   732		if (len > vrp->buf_size ||
+   733		    msg_len > (len - sizeof(struct rpmsg_hdr))) {
+   734			dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+   735			return -EINVAL;
+   736		}
+   737	
+   738		/* use the dst addr to fetch the callback of the appropriate user */
+   739		mutex_lock(&vrp->endpoints_lock);
+   740	
+   741		ept = idr_find(&vrp->endpoints, __rpmsg32_to_cpu(little_endian, msg->dst));
+   742	
+   743		/* let's make sure no one deallocates ept while we use it */
+   744		if (ept)
+   745			kref_get(&ept->refcount);
+   746	
+   747		mutex_unlock(&vrp->endpoints_lock);
+   748	
+   749		if (ept) {
+   750			rpdev = ept->rpdev;
+   751			if (rpdev->ept == ept && rpdev->dst == RPMSG_ADDR_ANY) {
+   752				/*
+   753				 * First message received from the remote side on the default endpoint,
+   754				 * update channel destination address.
+   755				 */
+ > 756				rpdev->dst = msg->src;
+   757			}
+   758	
+   759			/* make sure ept->cb doesn't go away while we use it */
+   760			mutex_lock(&ept->cb_lock);
+   761	
+   762			if (ept->cb)
+   763				ept->cb(ept->rpdev, msg->data, msg_len, ept->priv,
+   764					__rpmsg32_to_cpu(little_endian, msg->src));
+   765	
+   766			mutex_unlock(&ept->cb_lock);
+   767	
+   768			/* farewell, ept, we don't need you anymore */
+   769			kref_put(&ept->refcount, __ept_release);
+   770		} else
+   771			dev_warn_ratelimited(dev, "msg received with no recipient\n");
+   772	
+   773		/* publish the real size of the buffer */
+   774		rpmsg_sg_init(&sg, msg, vrp->buf_size);
+   775	
+   776		/* add the buffer back to the remote processor's virtqueue */
+   777		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+   778		if (err < 0) {
+   779			dev_err(dev, "failed to add a virtqueue buffer: %d\n", err);
+   780			return err;
+   781		}
+   782	
+   783		return 0;
+   784	}
+   785	
+
+---
+0-DAY CI Kernel Test Service
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
