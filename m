@@ -2,149 +2,86 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BE6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 14 Mar 2022 22:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5FFC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Mar 2022 12:48:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239824AbiCNWkD (ORCPT
+        id S1348453AbiCOMtQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 14 Mar 2022 18:40:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59732 "EHLO
+        Tue, 15 Mar 2022 08:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbiCNWkD (ORCPT
+        with ESMTP id S1348448AbiCOMtO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 14 Mar 2022 18:40:03 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4BB22B13
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 15:38:52 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id w127so19026122oig.10
-        for <linux-remoteproc@vger.kernel.org>; Mon, 14 Mar 2022 15:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YXkFYBEzojBY1qqCl4Kxt1AhbpSUG3Tsb0zDnLNmqZ0=;
-        b=WcVdtBUaKkF+aSmgdLxPUC7etTQfErJlN9YeeS3QKG4zrBeU32ndyFXx7YQQcOwezZ
-         Cokc3VIVYaYOniyJB1OY9nksQwiwSgMs9r+BRfcgRTHmu2QE3i7XJN6yAz3BZRWYOycE
-         jwpygELyZo/gVDQ7EDdKoDZRjg9jKRIieAbuHYqZhdGGGlmEUCfW9fEhVYa4zNfPfZ+k
-         tld4VRBVds/0c1IFje0L21JO3x9fTOIyrLGEnwoy4CiZGEuZI4FsjQYyr287oEYarFDs
-         J4J22Ggs4VI9Yeohday6QNv+N2YyrW1b5JdkZAr/2bZ+vtoV0XrtecU6DEQ1Ylj8cue/
-         cmoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YXkFYBEzojBY1qqCl4Kxt1AhbpSUG3Tsb0zDnLNmqZ0=;
-        b=tBnJhgUaSccfdBIsVLBIaZWrlkOZc17F45A3cJUhTXkSEOxq65W61Pa5wOJO/L/YaC
-         pVCoz/EuthUa++gyOIN9BHuFW6hbXM2ND3D+UsufAPmJ4JOONUwqAXmNCjbfCRJL4uTH
-         9P0qDTd9+c3/S7KDHc5YikwxWWf5HaXCkdMdMBe4VtVzsg5OB9khBpdfRst3vT8xAQCH
-         dzg9DwIzBFNjMS8kSb48/irJ8i2bmk1RfSjfUcutbdKcQUkZ6BxjbvWisuDOd9hxWjn5
-         qLh+4y+ztsVGQ5vlOQspj/zQINVWCxeJCr2s92rsmRFxLK0oeu7XqTqqxFcKTfL2kuae
-         Jllw==
-X-Gm-Message-State: AOAM532F3rXA8c6Pl9lmSdxBuZ7gCA4NylYNtgO+jJMec4FrLv31Gz1N
-        PKFZL6mT5iCfT0fV469vo8B0bxmcnmHWXA==
-X-Google-Smtp-Source: ABdhPJygsq2dL74GG22/VfljFSfGfYJUxf/rqsqC1VFczZCgSv28PIwMQkk48UaxBoaQaGnpC9LIpg==
-X-Received: by 2002:aca:c44:0:b0:2da:45a4:98a2 with SMTP id i4-20020aca0c44000000b002da45a498a2mr602667oiy.220.1647297531426;
-        Mon, 14 Mar 2022 15:38:51 -0700 (PDT)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id bn14-20020a056808230e00b002da0c0f502esm8301688oib.24.2022.03.14.15.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 15:38:50 -0700 (PDT)
-Date:   Mon, 14 Mar 2022 17:38:48 -0500
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "krzysztof.kozlowski@canonical.com" 
-        <krzysztof.kozlowski@canonical.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Tue, 15 Mar 2022 08:49:14 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0531721BF;
+        Tue, 15 Mar 2022 05:47:54 -0700 (PDT)
+X-UUID: 81e3a45f5d13432db59e9c0e30614be4-20220315
+X-UUID: 81e3a45f5d13432db59e9c0e30614be4-20220315
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <allen-kh.cheng@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1334456454; Tue, 15 Mar 2022 20:47:50 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Tue, 15 Mar 2022 20:47:49 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 15 Mar 2022 20:47:49 +0800
+From:   Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 2/6] dt-bindings: remoteproc: imx_rproc: support
- i.MX8QM
-Message-ID: <Yi/D+CmHcm2/8S9B@builder.lan>
-References: <20220309102118.8131-1-peng.fan@oss.nxp.com>
- <20220309102118.8131-3-peng.fan@oss.nxp.com>
- <YiqFJ+1l/h7XCQkN@robh.at.kernel.org>
- <DU0PR04MB9417A914373C466BE76729AB880C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+        <linux-remoteproc@vger.kernel.org>,
+        Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Subject: [PATCH v6 0/2] Add SCP support for mt8186
+Date:   Tue, 15 Mar 2022 20:47:45 +0800
+Message-ID: <20220315124747.30144-1-allen-kh.cheng@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9417A914373C466BE76729AB880C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 10 Mar 19:58 CST 2022, Peng Fan wrote:
+Based on tag: next-20220310, linux-next/master.
 
-> > Subject: Re: [PATCH V2 2/6] dt-bindings: remoteproc: imx_rproc: support
-> > i.MX8QM
-> > 
-> > On Wed, Mar 09, 2022 at 06:21:14PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Add i.MX8QM compatible
-> > >
-> > > There are two general purpose M4, so add reg property to indicate the
-> > > id.
-> > 
-> > Where does the id come from? Is this just an index?
-> 
-> It is software use to identify which is m4_0 and which is m4_1,
-> just an index.
-> 
+changes since v5:
+ - set I-cache and D-cache size before loading SCP FW.
+ - remove unused ipi_buf_offset.
 
-"reg" is supposed to represent some sort of identifier on the parent
-bus, as such it doesn't seem to be the appropriate property to provide
-an arbitrary 0 or 1 to identify which of the two m4s this is.
+changes since v4:
+ - use 'Reviewed-by:' for the preferred signature.
 
-Regards,
-Bjorn
+changes since v3:
+ - base on rproc-next
 
-> Thanks,
-> Peng.
-> 
-> > 
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4
-> > ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > > b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > > index f25c203dd2f9..41d366cff3cd 100644
-> > > --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > > +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > > @@ -20,6 +20,7 @@ properties:
-> > >        - fsl,imx8mn-cm7
-> > >        - fsl,imx8mp-cm7
-> > >        - fsl,imx8qxp-cm4
-> > > +      - fsl,imx8qm-cm4
-> > >        - fsl,imx8ulp-cm33
-> > >        - fsl,imx7d-cm4
-> > >        - fsl,imx7ulp-cm4
-> > > @@ -68,6 +69,9 @@ properties:
-> > >    power-domains:
-> > >      maxItems: 8
-> > >
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > >    rsrc-id:
-> > >      description:
-> > >        This property is to specify the resource id of the remote
-> > > processor in SoC
-> > > --
-> > > 2.30.0
-> > >
-> > >
+changes since v2:
+ - remove redundant SoB.
+
+changes since v1:
+ - use mt8192_power_on_sram() helper
+ - add MT8186_SCP_L1_SRAM_PD_P1 in mtk_common.h
+ - add MT8186_SCP_L1_SRAM_PD_P2 in mtk_common.h
+
+Allen-KH Cheng (2):
+  dt-bindings: remoteproc: mediatek: Add binding for mt8186 scp
+  remoteproc: mediatek: Support mt8186 scp
+
+ .../bindings/remoteproc/mtk,scp.yaml          |  1 +
+ drivers/remoteproc/mtk_common.h               |  3 ++
+ drivers/remoteproc/mtk_scp.c                  | 42 +++++++++++++++++++
+ 3 files changed, 46 insertions(+)
+
+-- 
+2.18.0
+
