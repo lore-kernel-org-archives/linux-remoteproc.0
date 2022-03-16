@@ -2,217 +2,178 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFCBBC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Mar 2022 03:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DC8C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Mar 2022 08:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244454AbiCPDNG (ORCPT
+        id S1354746AbiCPI6W (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Mar 2022 23:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38330 "EHLO
+        Wed, 16 Mar 2022 04:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237407AbiCPDNF (ORCPT
+        with ESMTP id S1354723AbiCPI6V (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Mar 2022 23:13:05 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168875C352;
-        Tue, 15 Mar 2022 20:11:50 -0700 (PDT)
-X-UUID: 059c8ae7a8bb4e5e835b1a30499283f2-20220316
-X-UUID: 059c8ae7a8bb4e5e835b1a30499283f2-20220316
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 2061592986; Wed, 16 Mar 2022 11:11:21 +0800
-Received: from mtkcas11.mediatek.inc (172.21.101.40) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.792.15; Wed, 16 Mar 2022 11:11:20 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 16 Mar 2022 11:11:20 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wed, 16 Mar 2022 04:58:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CAA2165164
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Mar 2022 01:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647421020;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0Bc153qdO6aJS+V+8boSatM96Pn9LsInVn8PpJNJpKY=;
+        b=LrwTCEEcXM0pmNVVZseUx7z7LYPIevcMP51lOmzKHa+DVirxSrqU+S7wbWUt1R4y+dil2l
+        i3s2UI5mYD4yLix/9LQdLcjj/E0UCp/wSjCD4Jzs5rMlq1wi55flVYQNdhXgAx9HgD6VR1
+        wxUHnmS+g8IpTE1k4PZ9TEYNriSco6I=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-298-MECJcEfDNzaP1BAZ6-tytw-1; Wed, 16 Mar 2022 04:56:59 -0400
+X-MC-Unique: MECJcEfDNzaP1BAZ6-tytw-1
+Received: by mail-wr1-f69.google.com with SMTP id a5-20020adfdd05000000b001f023fe32ffso312758wrm.18
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Mar 2022 01:56:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=0Bc153qdO6aJS+V+8boSatM96Pn9LsInVn8PpJNJpKY=;
+        b=Jeyxp2ELeRhc5Z7yJidu6/GMt4Dj+L2lT6NIS3Xxrfs8ystCdnwfO4p/MvfQBqPNtQ
+         oNf3b/AwgK5prGOajV/cMEy1Umy2Z9PHNCQIClnCIvYIkBHpv0j+O05IvgJfiT61972Z
+         afb05xkfN4x4aB8O9jGNaw8tZn9pBQzmxVrd47OqmeahWn2ajB7dz3REuWBpxaro4veC
+         22IME6/QQnpyODpkkQaZYS9YCfROIfHwaoB1TY821qm2h4mjTkRGnc6MZBqSh/6V0obh
+         jE+i9fdtFYztUDvm2M4FPO4+lF6Kz+9eF1WxQmKRJE0j/bQLG9voGdXu6rTzZ88ougQD
+         tWvg==
+X-Gm-Message-State: AOAM532qEjCiW3Su2raHdf5mO7QRL/YlJECcIih5PY36vaoWdiLj8ghy
+        fQPHyWn9awVG5EWw2huIAl3okYPR7LhcWlKspCEd0DZjo5yWKxvdlVXMZ9KvvWiZEmH2W4PnVL6
+        6Hcu88GO+rSWVQqvc+vg2ZpXK5ujIfA==
+X-Received: by 2002:a5d:4d4b:0:b0:1f1:d99e:1122 with SMTP id a11-20020a5d4d4b000000b001f1d99e1122mr23570215wru.604.1647421018440;
+        Wed, 16 Mar 2022 01:56:58 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxxg+HdKFc+OlgI5Uf6j74GkTyT+tlDfMeOChHK9/5Na0k8DDsBUyiZqTzroGOmIKGPRSv82g==
+X-Received: by 2002:a5d:4d4b:0:b0:1f1:d99e:1122 with SMTP id a11-20020a5d4d4b000000b001f1d99e1122mr23570190wru.604.1647421018228;
+        Wed, 16 Mar 2022 01:56:58 -0700 (PDT)
+Received: from redhat.com ([2.53.2.35])
+        by smtp.gmail.com with ESMTPSA id p1-20020a5d59a1000000b00203d83b0ae4sm1136056wrr.109.2022.03.16.01.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Mar 2022 01:56:57 -0700 (PDT)
+Date:   Wed, 16 Mar 2022 04:56:48 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH v4] remoteproc: mediatek: Fix side effect of mt8195 sram power on
-Date:   Wed, 16 Mar 2022 11:11:17 +0800
-Message-ID: <20220316031117.7311-1-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jason Wang <jasowang@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v4 08/11] vdpa: Use helper for safer setting of
+ driver_override
+Message-ID: <20220316045633-mutt-send-email-mst@kernel.org>
+References: <20220312132856.65163-1-krzysztof.kozlowski@canonical.com>
+ <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220312132856.65163-9-krzysztof.kozlowski@canonical.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The definition of L1TCM_SRAM_PDN bits on mt8195 is different to mt8192.
+On Sat, Mar 12, 2022 at 02:28:53PM +0100, Krzysztof Kozlowski wrote:
+> Use a helper to set driver_override to reduce amount of duplicated code.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 
-L1TCM_SRAM_PDN bits[3:0] control the power of mt8195 L1TCM SRAM.
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-L1TCM_SRAM_PDN bits[7:4] control the access path to EMI for SCP.
-These bits have to be powered on to allow EMI access for SCP.
+feel free to merge with the rest of the patchset.
 
-Bits[7:4] also affect audio DSP because audio DSP and SCP are
-placed on the same hardware bus. If SCP cannot access EMI, audio DSP is
-blocked too.
-
-L1TCM_SRAM_PDN bits[31:8] are not used.
-
-This fix removes modification of bits[7:4] when power on/off mt8195 SCP
-L1TCM. It's because the modification introduces a short period of time
-blocking audio DSP to access EMI. This was not a problem until we have
-to load both SCP module and audio DSP module. audio DSP needs to access
-EMI because it has source/data on DRAM. Audio DSP will have unexpected
-behavior when it accesses EMI and the SCP driver blocks the EMI path at
-the same time.
-
-Fixes: 79111df414fc ("remoteproc: mediatek: Support mt8195 scp")
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
----
-v4: add Fixes and Reviewed-by tags
-v3: fix build error
-v2: apply comments about macro definition and function calls
----
- drivers/remoteproc/mtk_common.h |  2 ++
- drivers/remoteproc/mtk_scp.c    | 67 +++++++++++++++++++++++++++++++----------
- 2 files changed, 53 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 5ff3867c72f3..ff954a06637c 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -51,6 +51,8 @@
- #define MT8192_CORE0_WDT_IRQ		0x10030
- #define MT8192_CORE0_WDT_CFG		0x10034
- 
-+#define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
-+
- #define SCP_FW_VER_LEN			32
- #define SCP_SHARE_BUFFER_SIZE		288
- 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 36e48cf58ed6..5f686fe09203 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -365,22 +365,22 @@ static int mt8183_scp_before_load(struct mtk_scp *scp)
- 	return 0;
- }
- 
--static void mt8192_power_on_sram(void __iomem *addr)
-+static void scp_sram_power_on(void __iomem *addr, u32 reserved_mask)
- {
- 	int i;
- 
- 	for (i = 31; i >= 0; i--)
--		writel(GENMASK(i, 0), addr);
-+		writel(GENMASK(i, 0) & ~reserved_mask, addr);
- 	writel(0, addr);
- }
- 
--static void mt8192_power_off_sram(void __iomem *addr)
-+static void scp_sram_power_off(void __iomem *addr, u32 reserved_mask)
- {
- 	int i;
- 
- 	writel(0, addr);
- 	for (i = 0; i < 32; i++)
--		writel(GENMASK(i, 0), addr);
-+		writel(GENMASK(i, 0) & ~reserved_mask, addr);
- }
- 
- static int mt8192_scp_before_load(struct mtk_scp *scp)
-@@ -391,11 +391,32 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
- 	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
- 
- 	/* enable SRAM clock */
--	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
--	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
--	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
--	mt8192_power_on_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
--	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
-+
-+	/* enable MPU for all memory regions */
-+	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-+
-+	return 0;
-+}
-+
-+static int mt8195_scp_before_load(struct mtk_scp *scp)
-+{
-+	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-+	writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+
-+	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-+
-+	/* enable SRAM clock */
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
-+			  MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	scp_sram_power_on(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
- 
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-@@ -551,11 +572,25 @@ static void mt8183_scp_stop(struct mtk_scp *scp)
- static void mt8192_scp_stop(struct mtk_scp *scp)
- {
- 	/* Disable SRAM clock */
--	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
--	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
--	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
--	mt8192_power_off_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
--	mt8192_power_off_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L1TCM_SRAM_PDN, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
-+
-+	/* Disable SCP watchdog */
-+	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
-+}
-+
-+static void mt8195_scp_stop(struct mtk_scp *scp)
-+{
-+	/* Disable SRAM clock */
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
-+			   MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	scp_sram_power_off(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
- 
- 	/* Disable SCP watchdog */
- 	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
-@@ -901,11 +936,11 @@ static const struct mtk_scp_of_data mt8192_of_data = {
- 
- static const struct mtk_scp_of_data mt8195_of_data = {
- 	.scp_clk_get = mt8195_scp_clk_get,
--	.scp_before_load = mt8192_scp_before_load,
-+	.scp_before_load = mt8195_scp_before_load,
- 	.scp_irq_handler = mt8192_scp_irq_handler,
- 	.scp_reset_assert = mt8192_scp_reset_assert,
- 	.scp_reset_deassert = mt8192_scp_reset_deassert,
--	.scp_stop = mt8192_scp_stop,
-+	.scp_stop = mt8195_scp_stop,
- 	.scp_da_to_va = mt8192_scp_da_to_va,
- 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
- 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
--- 
-2.15.GIT
+> ---
+>  drivers/vdpa/vdpa.c  | 29 ++++-------------------------
+>  include/linux/vdpa.h |  4 +++-
+>  2 files changed, 7 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> index 1ea525433a5c..2dabed1df35c 100644
+> --- a/drivers/vdpa/vdpa.c
+> +++ b/drivers/vdpa/vdpa.c
+> @@ -77,32 +77,11 @@ static ssize_t driver_override_store(struct device *dev,
+>  				     const char *buf, size_t count)
+>  {
+>  	struct vdpa_device *vdev = dev_to_vdpa(dev);
+> -	const char *driver_override, *old;
+> -	char *cp;
+> +	int ret;
+>  
+> -	/* We need to keep extra room for a newline */
+> -	if (count >= (PAGE_SIZE - 1))
+> -		return -EINVAL;
+> -
+> -	driver_override = kstrndup(buf, count, GFP_KERNEL);
+> -	if (!driver_override)
+> -		return -ENOMEM;
+> -
+> -	cp = strchr(driver_override, '\n');
+> -	if (cp)
+> -		*cp = '\0';
+> -
+> -	device_lock(dev);
+> -	old = vdev->driver_override;
+> -	if (strlen(driver_override)) {
+> -		vdev->driver_override = driver_override;
+> -	} else {
+> -		kfree(driver_override);
+> -		vdev->driver_override = NULL;
+> -	}
+> -	device_unlock(dev);
+> -
+> -	kfree(old);
+> +	ret = driver_set_override(dev, &vdev->driver_override, buf, count);
+> +	if (ret)
+> +		return ret;
+>  
+>  	return count;
+>  }
+> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> index 721089bb4c84..37117404660e 100644
+> --- a/include/linux/vdpa.h
+> +++ b/include/linux/vdpa.h
+> @@ -64,7 +64,9 @@ struct vdpa_mgmt_dev;
+>   * struct vdpa_device - representation of a vDPA device
+>   * @dev: underlying device
+>   * @dma_dev: the actual device that is performing DMA
+> - * @driver_override: driver name to force a match
+> + * @driver_override: driver name to force a match; do not set directly,
+> + *                   because core frees it; use driver_set_override() to
+> + *                   set or clear it.
+>   * @config: the configuration ops for this device.
+>   * @cf_mutex: Protects get and set access to configuration layout.
+>   * @index: device index
+> -- 
+> 2.32.0
 
