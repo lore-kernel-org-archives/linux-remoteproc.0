@@ -2,134 +2,161 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841B6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Mar 2022 15:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACFFCC43219
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Mar 2022 15:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355167AbiCPPb3 (ORCPT
+        id S1357402AbiCPP4f (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Mar 2022 11:31:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46164 "EHLO
+        Wed, 16 Mar 2022 11:56:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344573AbiCPPb2 (ORCPT
+        with ESMTP id S1357364AbiCPP4e (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Mar 2022 11:31:28 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB796C92A;
-        Wed, 16 Mar 2022 08:30:12 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22GEDsXd005355;
-        Wed, 16 Mar 2022 16:30:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=c2g6I4As5BWCLWcUp9SWPHmLYhsOd/4wcTcA+mh+Uv4=;
- b=HjOO/44Fw06Ezka90aXRsOVUgdvqhFg/1YfLErtLJakF926nVRgcLzELZFfDEMQ3XVQ/
- j0P555mxEGPqPTJB/2s/YNi3JJi61/uUrL7SeiVaLkOWTDUDRR4V1gKL6lG78+qgw9NY
- vhyLQMuQ8rToSqGdM0ZXwHBbCgegd9kIACFOmdklDg4YnOfm4vEAu1CvfnW/caNjqI7j
- YxMw0Q0y+vfVk14tTEqxkYybn+jKh0THbJhMhnmeqPJMw0wBskwKKUHqVkhgcwnMUBnM
- Rci4RXurkppp3SCV5OuOc+9m3VYK4dq3HGxiL8dAUg+lcKFRpjvY/rh/NeLQOFVK+4xc aA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3et63j6kw6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Mar 2022 16:30:10 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6498E10002A;
-        Wed, 16 Mar 2022 16:30:09 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5842422FA29;
-        Wed, 16 Mar 2022 16:30:09 +0100 (CET)
-Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 16 Mar 2022 16:30:09
- +0100
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2] rpmsg: virtio: set dst address on first message received
-Date:   Wed, 16 Mar 2022 16:30:01 +0100
-Message-ID: <20220316153001.662422-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 16 Mar 2022 11:56:34 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 944945F4F0;
+        Wed, 16 Mar 2022 08:55:19 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id hw13so5077104ejc.9;
+        Wed, 16 Mar 2022 08:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xrv4PFSyhAtwnCAL/pjWyzmn6e9Q3pw3qGeeMjVLkWc=;
+        b=ThLCeQCLe60XloIENcKZTLtoa92AsszbMGtlE1VP85Nj8ONYeGAtPtd3THFkwuE1R4
+         Rb+p8levz1Kkk/esESpsWOOce4y/GAs3zE/h/Iq8JTZadMNMhSzoXuCsi65zQcSj9uj9
+         roUu7BL6G2KSrbQdMUcXxa1eBfn7GLPhFdgtrRtKQ1B6XjhvDCk1M6WlSKyn57HnuVDa
+         81Zd+YwZwjEFy9IgsZIWqi9+OJ0hcLCs/C3anzU5mAn4GgUA+5ei9x+U8aPDc4PlCURW
+         8DQSGQ08z9c9bhp4uK79m+ecf2bqZ6sdte5Pd0FZyKDC2WwgAQ/cfFk5gcysCgAmWYjH
+         wmBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xrv4PFSyhAtwnCAL/pjWyzmn6e9Q3pw3qGeeMjVLkWc=;
+        b=jZbVG83EaNe51cfcqEo9zhXvbP0JhZmRa5ZQhstJYLcyw5r96NRrK+Quf/tVffXkRC
+         s4KfTzJCbYt6XC3lKngK7Pt9Cg8ORMH9LLnB+SDHbXt9IKMZfKa5bLo1VL9zjdsPtn0H
+         SqVNrKJp6hIjfAUDBJh0GMLgbC5PtvvPaXMhe1V+Y+r5o/vZTrbZntfJXz5ZcPvMonlN
+         DT22h5wzva3KgO7A9Ms9tGDqMTRKUfhMPkrW+D48QnGLV3u0A8INbVEZ43VF/B4RG5/q
+         DCedcz06rkUE02MyfAx2f927LmGrNhCkZnoQRIILqlyw0vy7Jn0wsDzDZ+Ns5lSCSQLi
+         jQHw==
+X-Gm-Message-State: AOAM532FM1C5NuMF+Jefu/fmEKnWuwFxwfW4y5qzanz2YoWIcBTMkeY7
+        lVwHu1j6CbKdJUvidv7pmqkKuZydHQWmUgZOtDA=
+X-Google-Smtp-Source: ABdhPJx7tfhflG1OGwg4hJv+lc6fCCCsMyBIcaeP4g7aVOZtvesN3U3Aevmj9sLhxYjH7UWlro+fkCpgMa2F3+GK74E=
+X-Received: by 2002:a17:907:6e01:b0:6d0:562c:e389 with SMTP id
+ sd1-20020a1709076e0100b006d0562ce389mr499870ejc.497.1647446118072; Wed, 16
+ Mar 2022 08:55:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-16_06,2022-03-15_01,2022-02-23_01
+References: <20220316150533.421349-1-krzysztof.kozlowski@canonical.com> <20220316150533.421349-2-krzysztof.kozlowski@canonical.com>
+In-Reply-To: <20220316150533.421349-2-krzysztof.kozlowski@canonical.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 16 Mar 2022 17:54:04 +0200
+Message-ID: <CAHp75VeaQdzUKJSKzH9FjbmON5asqH799AS8OzHGoDiRnJifNw@mail.gmail.com>
+Subject: Re: [PATCH v5 01/11] driver: platform: Add helper for safer setting
+ of driver_override
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-When a rpmsg channel has been created locally with a destination address
-set to RPMSG_ADDR_ANY, a name service announcement message is sent to
-the remote side. Then the destination address is never updated, making it
-impossible to send messages to the remote.
+On Wed, Mar 16, 2022 at 5:06 PM Krzysztof Kozlowski
+<krzysztof.kozlowski@canonical.com> wrote:
 
-An example of kernel trace observed:
-rpmsg_tty virtio0.rpmsg-tty.29.-1: invalid addr (src 0x1d, dst 0xffffffff)
+...
 
-Implement same strategy than the open-amp library:
-On the reception of the first message, if the destination address is
-RPMSG_ADDR_ANY, then set it to address of the remote endpoint that
-send the message.
+> +int driver_set_override(struct device *dev, const char **override,
+> +                       const char *s, size_t len)
+> +{
+> +       const char *new, *old;
+> +       char *cp;
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> +       if (!dev || !override || !s)
+> +               return -EINVAL;
 
----
-Update from V1:
-- fix rpmsg address conversion from fvirtio to cpu format,
-  reported-by the kernel test robot <lkp@intel.com>.
+Sorry, I didn't pay much attention on this. First of all, I would drop
+dev checks and simply require that dev should be valid. Do you expect
+this can be called when dev is invalid? I would like to hear if it's
+anything but theoretical. Second one, is the !s requirement. Do I
+understand correctly that the string must be always present? But then
+how we NULify the override? Is it possible? Third one is absence of
+len check. See below.
 
-Remarks:
+> +       /*
+> +        * The stored value will be used in sysfs show callback (sysfs_emit()),
+> +        * which has a length limit of PAGE_SIZE and adds a trailing newline.
+> +        * Thus we can store one character less to avoid truncation during sysfs
+> +        * show.
+> +        */
+> +       if (len >= (PAGE_SIZE - 1))
+> +               return -EINVAL;
 
-- This issue has been detected during validation of the rpmsg_char
-  restructuring series on going[1].
-  Tested on the rpmsg_next branch[2]
+I would relax this to make sure we can use it if \n is within this limit.
 
-- An alternative (or a complement?) could be to add a NS bind/unbind in
-  the NS announcement channel (in rpmsg_ns.c).
-  This would allow the local and/or the remote processor to inform the
-  remote side the the service announced in bound.
+> +       cp = strnchr(s, len, '\n');
+> +       if (cp)
+> +               len = cp - s;
+> +
+> +       new = kstrndup(s, len, GFP_KERNEL);
 
-[1] https://lkml.org/lkml/2022/1/24/293
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/log/?h=for-next
+Here is a word about the len check.
 
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> +       if (!new)
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3ede25b1f2e4..152b54b83782 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -708,6 +708,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
- static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			     struct rpmsg_hdr *msg, unsigned int len)
- {
-+	struct rpmsg_device *rpdev;
- 	struct rpmsg_endpoint *ept;
- 	struct scatterlist sg;
- 	bool little_endian = virtio_is_little_endian(vrp->vdev);
-@@ -746,6 +747,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 	mutex_unlock(&vrp->endpoints_lock);
- 
- 	if (ept) {
-+		rpdev = ept->rpdev;
-+		if (rpdev->ept == ept && rpdev->dst == RPMSG_ADDR_ANY) {
-+			/*
-+			 * First message received from the remote side on the default endpoint,
-+			 * update channel destination address.
-+			 */
-+			rpdev->dst = __rpmsg32_to_cpu(little_endian, msg->src);
-+		}
-+
- 		/* make sure ept->cb doesn't go away while we use it */
- 		mutex_lock(&ept->cb_lock);
- 
+If len == 0, this won't trigger and you have something very
+interesting as a result.
+
+One way is to use ZERO_PTR_OR_NULL() another is explicitly check for 0
+and issue a (different?) error code.
+
+> +               return -ENOMEM;
+> +
+> +       device_lock(dev);
+> +       old = *override;
+> +       if (cp != s) {
+> +               *override = new;
+> +       } else {
+> +               kfree(new);
+> +               *override = NULL;
+> +       }
+> +       device_unlock(dev);
+> +
+> +       kfree(old);
+> +
+> +       return 0;
+> +}
+
 -- 
-2.25.1
-
+With Best Regards,
+Andy Shevchenko
