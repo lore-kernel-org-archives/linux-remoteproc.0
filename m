@@ -2,203 +2,99 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEAAC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Mar 2022 07:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136B3C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Mar 2022 12:29:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbiCVHpI (ORCPT
+        id S234857AbiCVMa0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Mar 2022 03:45:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43036 "EHLO
+        Tue, 22 Mar 2022 08:30:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbiCVHoa (ORCPT
+        with ESMTP id S234859AbiCVMaY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Mar 2022 03:44:30 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A585313A
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Mar 2022 00:37:23 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id v130so32101787ybe.13
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Mar 2022 00:37:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Mb+xIEW59K1ZB7JeQIqggKVm6yQ70+u2EGq5PySJ9L0=;
-        b=zXlZqTgqZoDxNOA0MJjXq4WWfpvRgUImx6SnOY8s6b9gF4bb1S2E5uuxbw7/TJ2u3M
-         pcDxMyhlO4n8gUfJfzZecrWiJQDoSlFXQzxiteXgVjAxGXT3tQNAPuGX4beq3lymspW/
-         VMlqR2s+arUpSskLZjspfndI8csXkNkkEr0NZ2mDFVJslYftWcMLGZbNrF6AUdfasNQY
-         8o419MNY++AHlgjr00dD+ildrgPnnxCS2VVHuDFaqp2EkSAMM+rA3A8zqOe1S+JkLnQR
-         JxpwAKetqFDwDrddy+OTZCSiZIsoW0wlQIIgTQUPn6HS5iFpAW6OcuKZM+uYgn42EMEV
-         B61Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Mb+xIEW59K1ZB7JeQIqggKVm6yQ70+u2EGq5PySJ9L0=;
-        b=nlMACOX2RnHTol0vyYd7fbxvrwS7FRD7OL98H0YUIoPgX3rTe9DJZg4dMV9PAvTMp7
-         2Iy/HJP/m4mG2JC+Ru9vg3Q+cxKECWif7u7xgOV64gY3SpGfaiFr/oQayk6ZzaJhBN2f
-         54+N1J4vhH3fmTRASIjtQSjamo4nzG9nt9jCGrr6LdY8zmZ3RXfe9lOId9zS9D9B1B+x
-         EPO9Qklmr3bWz0B645VMZpZ1dUa9zqq2ZhAuj3hw1DIaIXGW5f3zQhDSFrcmr7k4YnzG
-         iYNcqZwKkhrYvDuGaiaTdF58NZFJl/WmSrbG2Z3DYc5YxiSSOkh/Tg5BySnAPlGl+pW7
-         5YNA==
-X-Gm-Message-State: AOAM533X0ejn68QwHdHAepVvS8Cp5/J57COLne5za2VsDKv8ZnLo0EGt
-        OhmDkyL+90jo+HU5gAuHq7L+NW2S4RxmOTlvyVoLhw==
-X-Google-Smtp-Source: ABdhPJxluSKeXS66jhWemtnQAJQY0JcIr5zVe3IkwMjQoQOUhcV8E/b9uGRg4t9T9qgGJTOa3zVDCNKEhHg3jStcF4M=
-X-Received: by 2002:a25:a0c5:0:b0:633:63da:5ead with SMTP id
- i5-20020a25a0c5000000b0063363da5eadmr26371770ybm.412.1647934642439; Tue, 22
- Mar 2022 00:37:22 -0700 (PDT)
-MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 22 Mar 2022 13:07:11 +0530
-Message-ID: <CA+G9fYv6_mytUwaa9bgQTuMUhrGfkg-yFKC0u_Ujh7sRTtgNfw@mail.gmail.com>
-Subject: WARNING: possible recursive locking detected - lock(&irq_desc_lock_class);
-To:     open list <linux-kernel@vger.kernel.org>,
-        rcu <rcu@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>, lkft-triage@lists.linaro.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Vinod Koul <vinod.koul@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Tue, 22 Mar 2022 08:30:24 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143CC13F50;
+        Tue, 22 Mar 2022 05:28:52 -0700 (PDT)
+X-UUID: d75214175f7b4c9887984bbf88c1975e-20220322
+X-UUID: d75214175f7b4c9887984bbf88c1975e-20220322
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+        (envelope-from <allen-kh.cheng@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1570562477; Tue, 22 Mar 2022 20:28:48 +0800
+Received: from mtkexhb02.mediatek.inc (172.21.101.103) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 22 Mar 2022 20:28:47 +0800
+Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb02.mediatek.inc
+ (172.21.101.103) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 22 Mar
+ 2022 20:28:47 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 22 Mar 2022 20:28:46 +0800
+From:   Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Subject: [PATCH] remoteproc: mediatek: enable cache for mt8186 SCP
+Date:   Tue, 22 Mar 2022 20:28:45 +0800
+Message-ID: <20220322122845.4068-1-allen-kh.cheng@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-While booting linux mainline kernel v5.17.0 on arm64 dragonboard 845c
-the following kernel deadlock warning was noticed.
+1. Set SCP cache size before loading SCP FW. (8KB+8KB)
+2. Adjust ipi_buf_offset from 0x7bdb0 to 0x3BDB0 for enableing cache
 
-This build config is generated by kselftest-merge configs.
+SCP side
+ - IPI Buffer: 0x3BDB0 <-> 0x3C000
+ - Cache: 0x3C000 <-> 0x40000
 
-[   11.472323] qcom_q6v5_pas remoteproc-adsp: supply cx not found,
-using dummy regulator
-[   11.482690] qcom_q6v5_pas remoteproc-adsp: supply px not found,
-using dummy regulator
-[   11.643728] qcom,slim-ngd-ctrl 171c0000.slim: Adding to iommu group 1
-[   11.647956] NET: Registered PF_QIPCRTR protocol family
-[   11.655652] failed to send lookup registration: -19
-[   11.679730] remoteproc remoteproc0: remoteproc-adsp is available
-[   11.688073] remoteproc remoteproc0: Direct firmware load for
-qcom/sdm845/adsp.mbn failed with error -2
-[   11.698131] remoteproc remoteproc0: powering up remoteproc-adsp
-[   11.704730] remoteproc remoteproc0: Direct firmware load for
-qcom/sdm845/adsp.mbn failed with error -2
-[   11.714571] remoteproc remoteproc0: request_firmware failed: -2
-[   11.753156] cpu cpu0: EM: created perf domain
-[   11.773034]
-[   11.774570] ============================================
-[   11.779933] WARNING: possible recursive locking detected
-[   11.785303] 5.17.0 #1 Not tainted
-[   11.788662] --------------------------------------------
-[   11.794029] kworker/u16:2/80 is trying to acquire lock:
-[   11.798293] qcom_q6v5_pas remoteproc-cdsp: supply cx not found,
-using dummy regulator
-[   11.799312] ffff7e0cc11b28f8 (&irq_desc_lock_class){-.-.}-{2:2},
-at: __irq_get_desc_lock+0x64/0xa4
-[   11.816285]
-[   11.816285] but task is already holding lock:
-[   11.822173] ffff7e0cc0fd38f8 (&irq_desc_lock_class){-.-.}-{2:2},
-at: __irq_get_desc_lock+0x64/0xa4
-[   11.823425] qcom_q6v5_pas remoteproc-cdsp: supply px not found,
-using dummy regulator
-[   11.831231]
-[   11.831231] other info that might help us debug this:
-[   11.831234]  Possible unsafe locking scenario:
-[   11.831234]
-[   11.831236]        CPU0
-[   11.831238]        ----
-[   11.831240]   lock(&irq_desc_lock_class);
-[   11.831245]   lock(&irq_desc_lock_class);
-[   11.831251]
-[   11.831251]  *** DEADLOCK ***
-[   11.831251]
-[   11.831253]  May be due to missing lock nesting notation
-[   11.831253]
-[   11.831255] 6 locks held by kworker/u16:2/80:
-[   11.831259]  #0: ffff7e0cc0018d38
-((wq_completion)events_unbound){+.+.}-{0:0}, at:
-process_one_work+0x1e8/0x6f4
-[   11.862787] cfg80211: Loading compiled-in X.509 certificates for
-regulatory database
-[   11.864788]  #1: ffff800008673dd0
-(deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1e8/0x6f4
-[   11.864808]  #2: ffff7e0cc12bf188 (&dev->mutex
-[   11.882336] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[   11.892239] ){....}-{3:3}, at: __device_attach+0x44/0x1c0
-[   11.892255]  #3: ffffb99e189d0870 (cpu_hotplug_lock){++++}-{0:0},
-at: cpus_read_lock+0x1c/0x30
-[   11.892276]  #4:
-[   11.900398] platform regulatory.0: Direct firmware load for
-regulatory.db failed with error -2
-[   11.909407] ffff7e0cc0f98918 (subsys mutex#8){+.+.}-{3:3}, at:
-subsys_interface_register+0x64/0x150
-[   11.909429]  #5: ffff7e0cc0fd38f8
-(&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0x64/0xa4
-[   11.913956] cfg80211: failed to load regulatory.db
-[   11.920518]
-[   11.920518] stack backtrace:
-[   11.920523] CPU: 4 PID: 80 Comm: kworker/u16:2 Not tainted 5.17.0 #1
-[   11.920530] Hardware name: Thundercomm Dragonboard 845c (DT)
-[   11.920535] Workqueue: events_unbound deferred_probe_work_func
-[   11.957146] remoteproc remoteproc1: remoteproc-cdsp is available
-[   11.963917]
-[   11.963921] Call trace:
-[   11.963924]  dump_backtrace+0xf8/0x130
-[   11.963933]  show_stack+0x24/0x80
-[   11.963937]  dump_stack_lvl+0x8c/0xb8
-[   11.963948]  dump_stack+0x18/0x34
-[   11.985142] remoteproc remoteproc1: Direct firmware load for
-qcom/sdm845/cdsp.mbn failed with error -2
-[   11.985323]  __lock_acquire+0xbc8/0x20cc
-[   11.991270] remoteproc remoteproc1: powering up remoteproc-cdsp
-[   11.997292]  lock_acquire.part.0+0xe0/0x230
-[   11.997301]  lock_acquire+0x68/0x84
-[   11.997309]  _raw_spin_lock_irqsave+0x88/0x150
-[   11.997317]  __irq_get_desc_lock+0x64/0xa4
-[   11.997324]  enable_irq+0x40/0xb0
-[   11.998891] remoteproc remoteproc1: Direct firmware load for
-qcom/sdm845/cdsp.mbn failed with error -2
-[   12.001316]  lmh_enable_interrupt+0x38/0x44 [lmh]
-[   12.001329]  irq_enable+0x4c/0xa0
-[   12.001337]  __irq_startup+0x80/0xb0
-[   12.005282] remoteproc remoteproc1: request_firmware failed: -2
-[   12.008487]  irq_startup+0x84/0x174
-[   12.008495]  __enable_irq+0x7c/0x90
-[   12.008501]  enable_irq+0x54/0xb0
-[   12.008508]  qcom_cpufreq_ready+0x2c/0x3c
-[   12.096152]  cpufreq_online+0x5a8/0xa60
-[   12.096160]  cpufreq_add_dev+0xc8/0xe0
-[   12.096167]  subsys_interface_register+0x138/0x150
-[   12.096176]  cpufreq_register_driver+0x180/0x300
- OK   Started udev Coldplug all Devices.[   12.113357]
-qcom_cpufreq_hw_driver_probe+0xe0/0x150
-[   12.123101]  platform_probe+0x74/0xf0
-[   12.126994]  really_probe+0x1c4/0x440
-[   12.130706]  __driver_probe_device+0x11c/0x190
-[   12.135201]  driver_probe_device+0x48/0x104
-[   12.139429]  __device_attach_driver+0xa4/0x140
-[   12.143927]  bus_for_each_drv+0x84/0xe0
-[   12.147810]  __device_attach+0xe4/0x1c0
-[   12.151695]  device_initial_probe+0x20/0x30
-[   12.155934]  bus_probe_device+0xac/0xb4
-[   12.159817]  deferred_probe_work_func+0xc8/0x120
-[   12.164486]  process_one_work+0x280/0x6f4
-[   12.168540]  worker_thread+0x80/0x450
-[   12.172256]  kthread+0x10c/0x120
-[   12.172264]  ret_from_fork+0x10/0x20
+Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+---
+ drivers/remoteproc/mtk_scp.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 38609153bf64..24065b6b4da8 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -401,6 +401,14 @@ static int mt8186_scp_before_load(struct mtk_scp *scp)
+ 	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_P1);
+ 	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_p2);
+ 
++	/*
++	 * Set I-cache and D-cache size before loading SCP FW.
++	 * SCP SRAM logical address may change when cache size setting differs.
++	 */
++	writel(MT8183_SCP_CACHE_CON_WAYEN | MT8183_SCP_CACHESIZE_8KB,
++	       scp->reg_base + MT8183_SCP_CACHE_CON);
++	writel(MT8183_SCP_CACHESIZE_8KB, scp->reg_base + MT8183_SCP_DCACHE_CON);
++
+ 	return 0;
+ }
+ 
+@@ -905,7 +913,7 @@ static const struct mtk_scp_of_data mt8186_of_data = {
+ 	.scp_da_to_va = mt8183_scp_da_to_va,
+ 	.host_to_scp_reg = MT8183_HOST_TO_SCP,
+ 	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
+-	.ipi_buf_offset = 0x7bdb0,
++	.ipi_buf_offset = 0x3bdb0,
+ };
+ 
+ static const struct mtk_scp_of_data mt8192_of_data = {
+-- 
+2.18.0
 
-metadata:
-  git_ref: master
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/torvalds/linux-mainline
-  git_sha: f443e374ae131c168a065ea1748feac6b2e76613
-  git_describe: v5.17
-  kernel_version: 5.17.0
-  kernel-config: https://builds.tuxbuild.com/26fPPSbBmMfOqElIN3NGgvUWHeW/config
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
-[1] https://lkft.validation.linaro.org/scheduler/job/4754457#L3342
