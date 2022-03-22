@@ -2,231 +2,203 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAE6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 21 Mar 2022 06:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEAAC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Mar 2022 07:44:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231665AbiCUGFR (ORCPT
+        id S229974AbiCVHpI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 21 Mar 2022 02:05:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37600 "EHLO
+        Tue, 22 Mar 2022 03:45:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344486AbiCUGFQ (ORCPT
+        with ESMTP id S229807AbiCVHoa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 21 Mar 2022 02:05:16 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84944B865;
-        Sun, 20 Mar 2022 23:03:50 -0700 (PDT)
-X-UUID: 0dfaf9dfe0534777a0c7e501be2722de-20220321
-X-UUID: 0dfaf9dfe0534777a0c7e501be2722de-20220321
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1947819968; Mon, 21 Mar 2022 14:03:43 +0800
-Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 21 Mar 2022 14:03:42 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by mtkexhb01.mediatek.inc
- (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 21 Mar
- 2022 14:03:42 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 21 Mar 2022 14:03:42 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [PATCH v6] remoteproc: mediatek: Fix side effect of mt8195 sram power on
-Date:   Mon, 21 Mar 2022 14:03:40 +0800
-Message-ID: <20220321060340.10975-1-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.15.GIT
+        Tue, 22 Mar 2022 03:44:30 -0400
+Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A585313A
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Mar 2022 00:37:23 -0700 (PDT)
+Received: by mail-yb1-xb2e.google.com with SMTP id v130so32101787ybe.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Mar 2022 00:37:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=Mb+xIEW59K1ZB7JeQIqggKVm6yQ70+u2EGq5PySJ9L0=;
+        b=zXlZqTgqZoDxNOA0MJjXq4WWfpvRgUImx6SnOY8s6b9gF4bb1S2E5uuxbw7/TJ2u3M
+         pcDxMyhlO4n8gUfJfzZecrWiJQDoSlFXQzxiteXgVjAxGXT3tQNAPuGX4beq3lymspW/
+         VMlqR2s+arUpSskLZjspfndI8csXkNkkEr0NZ2mDFVJslYftWcMLGZbNrF6AUdfasNQY
+         8o419MNY++AHlgjr00dD+ildrgPnnxCS2VVHuDFaqp2EkSAMM+rA3A8zqOe1S+JkLnQR
+         JxpwAKetqFDwDrddy+OTZCSiZIsoW0wlQIIgTQUPn6HS5iFpAW6OcuKZM+uYgn42EMEV
+         B61Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=Mb+xIEW59K1ZB7JeQIqggKVm6yQ70+u2EGq5PySJ9L0=;
+        b=nlMACOX2RnHTol0vyYd7fbxvrwS7FRD7OL98H0YUIoPgX3rTe9DJZg4dMV9PAvTMp7
+         2Iy/HJP/m4mG2JC+Ru9vg3Q+cxKECWif7u7xgOV64gY3SpGfaiFr/oQayk6ZzaJhBN2f
+         54+N1J4vhH3fmTRASIjtQSjamo4nzG9nt9jCGrr6LdY8zmZ3RXfe9lOId9zS9D9B1B+x
+         EPO9Qklmr3bWz0B645VMZpZ1dUa9zqq2ZhAuj3hw1DIaIXGW5f3zQhDSFrcmr7k4YnzG
+         iYNcqZwKkhrYvDuGaiaTdF58NZFJl/WmSrbG2Z3DYc5YxiSSOkh/Tg5BySnAPlGl+pW7
+         5YNA==
+X-Gm-Message-State: AOAM533X0ejn68QwHdHAepVvS8Cp5/J57COLne5za2VsDKv8ZnLo0EGt
+        OhmDkyL+90jo+HU5gAuHq7L+NW2S4RxmOTlvyVoLhw==
+X-Google-Smtp-Source: ABdhPJxluSKeXS66jhWemtnQAJQY0JcIr5zVe3IkwMjQoQOUhcV8E/b9uGRg4t9T9qgGJTOa3zVDCNKEhHg3jStcF4M=
+X-Received: by 2002:a25:a0c5:0:b0:633:63da:5ead with SMTP id
+ i5-20020a25a0c5000000b0063363da5eadmr26371770ybm.412.1647934642439; Tue, 22
+ Mar 2022 00:37:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 22 Mar 2022 13:07:11 +0530
+Message-ID: <CA+G9fYv6_mytUwaa9bgQTuMUhrGfkg-yFKC0u_Ujh7sRTtgNfw@mail.gmail.com>
+Subject: WARNING: possible recursive locking detected - lock(&irq_desc_lock_class);
+To:     open list <linux-kernel@vger.kernel.org>,
+        rcu <rcu@vger.kernel.org>, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>, lkft-triage@lists.linaro.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Vinod Koul <vinod.koul@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The definition of L1TCM_SRAM_PDN bits on mt8195 is different to mt8192.
+While booting linux mainline kernel v5.17.0 on arm64 dragonboard 845c
+the following kernel deadlock warning was noticed.
 
-L1TCM_SRAM_PDN bits[3:0] control the power of mt8195 L1TCM SRAM.
+This build config is generated by kselftest-merge configs.
 
-L1TCM_SRAM_PDN bits[7:4] control the access path to EMI for SCP.
-These bits have to be powered on to allow EMI access for SCP.
+[   11.472323] qcom_q6v5_pas remoteproc-adsp: supply cx not found,
+using dummy regulator
+[   11.482690] qcom_q6v5_pas remoteproc-adsp: supply px not found,
+using dummy regulator
+[   11.643728] qcom,slim-ngd-ctrl 171c0000.slim: Adding to iommu group 1
+[   11.647956] NET: Registered PF_QIPCRTR protocol family
+[   11.655652] failed to send lookup registration: -19
+[   11.679730] remoteproc remoteproc0: remoteproc-adsp is available
+[   11.688073] remoteproc remoteproc0: Direct firmware load for
+qcom/sdm845/adsp.mbn failed with error -2
+[   11.698131] remoteproc remoteproc0: powering up remoteproc-adsp
+[   11.704730] remoteproc remoteproc0: Direct firmware load for
+qcom/sdm845/adsp.mbn failed with error -2
+[   11.714571] remoteproc remoteproc0: request_firmware failed: -2
+[   11.753156] cpu cpu0: EM: created perf domain
+[   11.773034]
+[   11.774570] ============================================
+[   11.779933] WARNING: possible recursive locking detected
+[   11.785303] 5.17.0 #1 Not tainted
+[   11.788662] --------------------------------------------
+[   11.794029] kworker/u16:2/80 is trying to acquire lock:
+[   11.798293] qcom_q6v5_pas remoteproc-cdsp: supply cx not found,
+using dummy regulator
+[   11.799312] ffff7e0cc11b28f8 (&irq_desc_lock_class){-.-.}-{2:2},
+at: __irq_get_desc_lock+0x64/0xa4
+[   11.816285]
+[   11.816285] but task is already holding lock:
+[   11.822173] ffff7e0cc0fd38f8 (&irq_desc_lock_class){-.-.}-{2:2},
+at: __irq_get_desc_lock+0x64/0xa4
+[   11.823425] qcom_q6v5_pas remoteproc-cdsp: supply px not found,
+using dummy regulator
+[   11.831231]
+[   11.831231] other info that might help us debug this:
+[   11.831234]  Possible unsafe locking scenario:
+[   11.831234]
+[   11.831236]        CPU0
+[   11.831238]        ----
+[   11.831240]   lock(&irq_desc_lock_class);
+[   11.831245]   lock(&irq_desc_lock_class);
+[   11.831251]
+[   11.831251]  *** DEADLOCK ***
+[   11.831251]
+[   11.831253]  May be due to missing lock nesting notation
+[   11.831253]
+[   11.831255] 6 locks held by kworker/u16:2/80:
+[   11.831259]  #0: ffff7e0cc0018d38
+((wq_completion)events_unbound){+.+.}-{0:0}, at:
+process_one_work+0x1e8/0x6f4
+[   11.862787] cfg80211: Loading compiled-in X.509 certificates for
+regulatory database
+[   11.864788]  #1: ffff800008673dd0
+(deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1e8/0x6f4
+[   11.864808]  #2: ffff7e0cc12bf188 (&dev->mutex
+[   11.882336] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   11.892239] ){....}-{3:3}, at: __device_attach+0x44/0x1c0
+[   11.892255]  #3: ffffb99e189d0870 (cpu_hotplug_lock){++++}-{0:0},
+at: cpus_read_lock+0x1c/0x30
+[   11.892276]  #4:
+[   11.900398] platform regulatory.0: Direct firmware load for
+regulatory.db failed with error -2
+[   11.909407] ffff7e0cc0f98918 (subsys mutex#8){+.+.}-{3:3}, at:
+subsys_interface_register+0x64/0x150
+[   11.909429]  #5: ffff7e0cc0fd38f8
+(&irq_desc_lock_class){-.-.}-{2:2}, at: __irq_get_desc_lock+0x64/0xa4
+[   11.913956] cfg80211: failed to load regulatory.db
+[   11.920518]
+[   11.920518] stack backtrace:
+[   11.920523] CPU: 4 PID: 80 Comm: kworker/u16:2 Not tainted 5.17.0 #1
+[   11.920530] Hardware name: Thundercomm Dragonboard 845c (DT)
+[   11.920535] Workqueue: events_unbound deferred_probe_work_func
+[   11.957146] remoteproc remoteproc1: remoteproc-cdsp is available
+[   11.963917]
+[   11.963921] Call trace:
+[   11.963924]  dump_backtrace+0xf8/0x130
+[   11.963933]  show_stack+0x24/0x80
+[   11.963937]  dump_stack_lvl+0x8c/0xb8
+[   11.963948]  dump_stack+0x18/0x34
+[   11.985142] remoteproc remoteproc1: Direct firmware load for
+qcom/sdm845/cdsp.mbn failed with error -2
+[   11.985323]  __lock_acquire+0xbc8/0x20cc
+[   11.991270] remoteproc remoteproc1: powering up remoteproc-cdsp
+[   11.997292]  lock_acquire.part.0+0xe0/0x230
+[   11.997301]  lock_acquire+0x68/0x84
+[   11.997309]  _raw_spin_lock_irqsave+0x88/0x150
+[   11.997317]  __irq_get_desc_lock+0x64/0xa4
+[   11.997324]  enable_irq+0x40/0xb0
+[   11.998891] remoteproc remoteproc1: Direct firmware load for
+qcom/sdm845/cdsp.mbn failed with error -2
+[   12.001316]  lmh_enable_interrupt+0x38/0x44 [lmh]
+[   12.001329]  irq_enable+0x4c/0xa0
+[   12.001337]  __irq_startup+0x80/0xb0
+[   12.005282] remoteproc remoteproc1: request_firmware failed: -2
+[   12.008487]  irq_startup+0x84/0x174
+[   12.008495]  __enable_irq+0x7c/0x90
+[   12.008501]  enable_irq+0x54/0xb0
+[   12.008508]  qcom_cpufreq_ready+0x2c/0x3c
+[   12.096152]  cpufreq_online+0x5a8/0xa60
+[   12.096160]  cpufreq_add_dev+0xc8/0xe0
+[   12.096167]  subsys_interface_register+0x138/0x150
+[   12.096176]  cpufreq_register_driver+0x180/0x300
+ OK   Started udev Coldplug all Devices.[   12.113357]
+qcom_cpufreq_hw_driver_probe+0xe0/0x150
+[   12.123101]  platform_probe+0x74/0xf0
+[   12.126994]  really_probe+0x1c4/0x440
+[   12.130706]  __driver_probe_device+0x11c/0x190
+[   12.135201]  driver_probe_device+0x48/0x104
+[   12.139429]  __device_attach_driver+0xa4/0x140
+[   12.143927]  bus_for_each_drv+0x84/0xe0
+[   12.147810]  __device_attach+0xe4/0x1c0
+[   12.151695]  device_initial_probe+0x20/0x30
+[   12.155934]  bus_probe_device+0xac/0xb4
+[   12.159817]  deferred_probe_work_func+0xc8/0x120
+[   12.164486]  process_one_work+0x280/0x6f4
+[   12.168540]  worker_thread+0x80/0x450
+[   12.172256]  kthread+0x10c/0x120
+[   12.172264]  ret_from_fork+0x10/0x20
 
-Bits[7:4] also affect audio DSP because audio DSP and SCP are
-placed on the same hardware bus. If SCP cannot access EMI, audio DSP is
-blocked too.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-L1TCM_SRAM_PDN bits[31:8] are not used.
+metadata:
+  git_ref: master
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/torvalds/linux-mainline
+  git_sha: f443e374ae131c168a065ea1748feac6b2e76613
+  git_describe: v5.17
+  kernel_version: 5.17.0
+  kernel-config: https://builds.tuxbuild.com/26fPPSbBmMfOqElIN3NGgvUWHeW/config
 
-This fix removes modification of bits[7:4] when power on/off mt8195 SCP
-L1TCM. It's because the modification introduces a short period of time
-blocking audio DSP to access EMI. This was not a problem until we have
-to load both SCP module and audio DSP module. audio DSP needs to access
-EMI because it has source/data on DRAM. Audio DSP will have unexpected
-behavior when it accesses EMI and the SCP driver blocks the EMI path at
-the same time.
 
-Fixes: 79111df414fc ("remoteproc: mediatek: Support mt8195 scp")
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
----
-v6: fix build error
-v5: rebased on rproc-next
-v4: add Fixes and Reviewed-by tags
-v3: fix build error
-v2: apply comments about macro definition and function calls
----
- drivers/remoteproc/mtk_common.h |  2 +
- drivers/remoteproc/mtk_scp.c    | 69 +++++++++++++++++++++++++--------
- 2 files changed, 54 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 71ce4977cb0b..ea6fa1100a00 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -54,6 +54,8 @@
- #define MT8192_CORE0_WDT_IRQ		0x10030
- #define MT8192_CORE0_WDT_CFG		0x10034
- 
-+#define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
-+
- #define SCP_FW_VER_LEN			32
- #define SCP_SHARE_BUFFER_SIZE		288
- 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 38609153bf64..ee6c4009586e 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -365,22 +365,22 @@ static int mt8183_scp_before_load(struct mtk_scp *scp)
- 	return 0;
- }
- 
--static void mt8192_power_on_sram(void __iomem *addr)
-+static void scp_sram_power_on(void __iomem *addr, u32 reserved_mask)
- {
- 	int i;
- 
- 	for (i = 31; i >= 0; i--)
--		writel(GENMASK(i, 0), addr);
-+		writel(GENMASK(i, 0) & ~reserved_mask, addr);
- 	writel(0, addr);
- }
- 
--static void mt8192_power_off_sram(void __iomem *addr)
-+static void scp_sram_power_off(void __iomem *addr, u32 reserved_mask)
- {
- 	int i;
- 
- 	writel(0, addr);
- 	for (i = 0; i < 32; i++)
--		writel(GENMASK(i, 0), addr);
-+		writel(GENMASK(i, 0) & ~reserved_mask, addr);
- }
- 
- static int mt8186_scp_before_load(struct mtk_scp *scp)
-@@ -393,7 +393,7 @@ static int mt8186_scp_before_load(struct mtk_scp *scp)
- 	writel(0x0, scp->reg_base + MT8183_SCP_CLK_DIV_SEL);
- 
- 	/* Turn on the power of SCP's SRAM before using it. Enable 1 block per time*/
--	mt8192_power_on_sram(scp->reg_base + MT8183_SCP_SRAM_PDN);
-+	scp_sram_power_on(scp->reg_base + MT8183_SCP_SRAM_PDN, 0);
- 
- 	/* Initialize TCM before loading FW. */
- 	writel(0x0, scp->reg_base + MT8183_SCP_L1_SRAM_PD);
-@@ -412,11 +412,32 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
- 	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
- 
- 	/* enable SRAM clock */
--	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
--	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
--	mt8192_power_on_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
--	mt8192_power_on_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
--	mt8192_power_on_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
-+
-+	/* enable MPU for all memory regions */
-+	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-+
-+	return 0;
-+}
-+
-+static int mt8195_scp_before_load(struct mtk_scp *scp)
-+{
-+	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-+	writel(0xff, scp->reg_base + MT8192_SCP2SPM_IPC_CLR);
-+
-+	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_SET);
-+
-+	/* enable SRAM clock */
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_on(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
-+			  MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	scp_sram_power_on(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
- 
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
-@@ -572,11 +593,25 @@ static void mt8183_scp_stop(struct mtk_scp *scp)
- static void mt8192_scp_stop(struct mtk_scp *scp)
- {
- 	/* Disable SRAM clock */
--	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_0);
--	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_1);
--	mt8192_power_off_sram(scp->reg_base + MT8192_L2TCM_SRAM_PD_2);
--	mt8192_power_off_sram(scp->reg_base + MT8192_L1TCM_SRAM_PDN);
--	mt8192_power_off_sram(scp->reg_base + MT8192_CPU0_SRAM_PD);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L1TCM_SRAM_PDN, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
-+
-+	/* Disable SCP watchdog */
-+	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
-+}
-+
-+static void mt8195_scp_stop(struct mtk_scp *scp)
-+{
-+	/* Disable SRAM clock */
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-+	scp_sram_power_off(scp->reg_base + MT8192_L1TCM_SRAM_PDN,
-+			   MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-+	scp_sram_power_off(scp->reg_base + MT8192_CPU0_SRAM_PD, 0);
- 
- 	/* Disable SCP watchdog */
- 	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
-@@ -922,11 +957,11 @@ static const struct mtk_scp_of_data mt8192_of_data = {
- 
- static const struct mtk_scp_of_data mt8195_of_data = {
- 	.scp_clk_get = mt8195_scp_clk_get,
--	.scp_before_load = mt8192_scp_before_load,
-+	.scp_before_load = mt8195_scp_before_load,
- 	.scp_irq_handler = mt8192_scp_irq_handler,
- 	.scp_reset_assert = mt8192_scp_reset_assert,
- 	.scp_reset_deassert = mt8192_scp_reset_deassert,
--	.scp_stop = mt8192_scp_stop,
-+	.scp_stop = mt8195_scp_stop,
- 	.scp_da_to_va = mt8192_scp_da_to_va,
- 	.host_to_scp_reg = MT8192_GIPC_IN_SET,
- 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
--- 
-2.18.0
-
+--
+Linaro LKFT
+https://lkft.linaro.org
+[1] https://lkft.validation.linaro.org/scheduler/job/4754457#L3342
