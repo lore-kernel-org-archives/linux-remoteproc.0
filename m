@@ -2,115 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121BCC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Mar 2022 09:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E53C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Mar 2022 10:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232578AbiCWJwj (ORCPT
+        id S243470AbiCWKTp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 05:52:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55756 "EHLO
+        Wed, 23 Mar 2022 06:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiCWJwi (ORCPT
+        with ESMTP id S243477AbiCWKTn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Mar 2022 05:52:38 -0400
-X-Greylist: delayed 510 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Mar 2022 02:51:09 PDT
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC374130B
-        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Mar 2022 02:51:09 -0700 (PDT)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D0D17201A57;
-        Wed, 23 Mar 2022 10:42:37 +0100 (CET)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 97F50201A41;
-        Wed, 23 Mar 2022 10:42:37 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 805A1183AC96;
-        Wed, 23 Mar 2022 17:42:36 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: [PATCH] remoteproc: core: Remove state checking before changing state
-Date:   Wed, 23 Mar 2022 17:32:50 +0800
-Message-Id: <1648027970-11488-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Wed, 23 Mar 2022 06:19:43 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736022AE9;
+        Wed, 23 Mar 2022 03:18:09 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22N9Wdiv000571;
+        Wed, 23 Mar 2022 11:18:02 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=cscpJKP+YTpsfI2Xqs/WsEvpgV755qDqbGsryfxbRHE=;
+ b=KU5LShSdGc20mPYFyN/qzFqFyIXdiEv8TE1cx0/TX3cYJGwZ4LH3o3jSE1I4y8WKEmMy
+ y8JxSTH8VHPTBTKA0JHJkq55TaVuwWTNtiy0jnxlH/9sM5+XTB7hy6YazSahXa9NTRb4
+ ZkrBsrcP6k53yv4f/F3ttxW0N/Vv9GnEjwNmJx8tDWgviKVg5n0R69sgrsCYbET0v0bX
+ E+uVCceStHRleh49wQqoWJaE8Ju+ML54cbvhD4IckkhvGrpD2tEnO4a/qHRA11MmU/c+
+ CuOGxK2aFKQKyVWv41mGDE5tzSzlwG6kWGpL4/uAspFyJ3FdrdYoihtLMmm4isLOOU6s kA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ew6xkhup7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Mar 2022 11:18:02 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1C079100034;
+        Wed, 23 Mar 2022 11:17:59 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 13F5A221793;
+        Wed, 23 Mar 2022 11:17:59 +0100 (CET)
+Received: from [10.201.20.246] (10.75.127.45) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 23 Mar
+ 2022 11:17:58 +0100
+Message-ID: <5cde9477-d73c-03c4-4dc0-c63fa0f8c8d9@foss.st.com>
+Date:   Wed, 23 Mar 2022 11:17:57 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [PATCH V2 0/3] rpmsg and glink signaling API support
+Content-Language: en-US
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-23_05,2022-03-22_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-There is no mutex protecting of these state checking, which
-can't garantee there is no another instance is trying to do
-same operation.
+Hi all,
 
-The reference counter rproc->power is used to manage state
-changing and there is mutex protection in each operation
-function for multi instance case.
+On 1/18/22 20:43, Deepak Kumar Singh wrote:
+> [Change from V1]
+> Fixed most of the review comments in V1.
 
-So remove this state checking in rproc_cdev_write() and
-state_store(), just let reference counter rproc->power to
-manage the behaviors.
+This implementation works for the glink transport,
+But how to manage such flow control for other transport
+layer?
+From my POV it is important that it is also usable for
+by transport backends which doe not have such signaling.
+The idea here is not to implement in other backends yet, but
+at least to determine how it could be handled to avoid that
+tomorrow this has to be reworked. 
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/remoteproc/remoteproc_cdev.c  | 11 -----------
- drivers/remoteproc/remoteproc_sysfs.c | 11 -----------
- 2 files changed, 22 deletions(-)
+More than that I wonder if the flow control could also be used
+to solve the RPmsg protocol issue related to the channel
+announcement [1][2]
 
-diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
-index 906ff3c4dfdd..687f205fd70a 100644
---- a/drivers/remoteproc/remoteproc_cdev.c
-+++ b/drivers/remoteproc/remoteproc_cdev.c
-@@ -32,21 +32,10 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
- 		return -EFAULT;
- 
- 	if (!strncmp(cmd, "start", len)) {
--		if (rproc->state == RPROC_RUNNING ||
--		    rproc->state == RPROC_ATTACHED)
--			return -EBUSY;
--
- 		ret = rproc_boot(rproc);
- 	} else if (!strncmp(cmd, "stop", len)) {
--		if (rproc->state != RPROC_RUNNING &&
--		    rproc->state != RPROC_ATTACHED)
--			return -EINVAL;
--
- 		ret = rproc_shutdown(rproc);
- 	} else if (!strncmp(cmd, "detach", len)) {
--		if (rproc->state != RPROC_ATTACHED)
--			return -EINVAL;
--
- 		ret = rproc_detach(rproc);
- 	} else {
- 		dev_err(&rproc->dev, "Unrecognized option\n");
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 51a04bc6ba7a..8c7ea8922638 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -194,23 +194,12 @@ static ssize_t state_store(struct device *dev,
- 	int ret = 0;
- 
- 	if (sysfs_streq(buf, "start")) {
--		if (rproc->state == RPROC_RUNNING ||
--		    rproc->state == RPROC_ATTACHED)
--			return -EBUSY;
--
- 		ret = rproc_boot(rproc);
- 		if (ret)
- 			dev_err(&rproc->dev, "Boot failed: %d\n", ret);
- 	} else if (sysfs_streq(buf, "stop")) {
--		if (rproc->state != RPROC_RUNNING &&
--		    rproc->state != RPROC_ATTACHED)
--			return -EINVAL;
--
- 		ret = rproc_shutdown(rproc);
- 	} else if (sysfs_streq(buf, "detach")) {
--		if (rproc->state != RPROC_ATTACHED)
--			return -EINVAL;
--
- 		ret = rproc_detach(rproc);
- 	} else {
- 		dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
--- 
-2.17.1
+[1] https://github.com/OpenAMP/open-amp/pull/160
+[2] https://lore.kernel.org/lkml/20220316153001.662422-1-arnaud.pouliquen@foss.st.com/
 
+Thanks,
+Arnaud
+
+> 
+> Deepak Kumar Singh (3):
+>   rpmsg: core: Add signal API support
+>   rpmsg: glink: Add support to handle signals command
+>   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+> 
+>  drivers/rpmsg/qcom_glink_native.c | 77 +++++++++++++++++++++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_char.c        | 47 ++++++++++++++++++++++--
+>  drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++
+>  drivers/rpmsg/rpmsg_internal.h    |  2 +
+>  include/linux/rpmsg.h             | 14 +++++++
+>  5 files changed, 157 insertions(+), 4 deletions(-)
+> 
