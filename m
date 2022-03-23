@@ -2,64 +2,62 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2EEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Mar 2022 10:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C710C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Mar 2022 13:38:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234539AbiCWK7Q (ORCPT
+        id S233886AbiCWNkR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 06:59:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52632 "EHLO
+        Wed, 23 Mar 2022 09:40:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243664AbiCWK7P (ORCPT
+        with ESMTP id S239960AbiCWNkQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Mar 2022 06:59:15 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC5378925;
-        Wed, 23 Mar 2022 03:57:44 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22N9Gq6c029260;
-        Wed, 23 Mar 2022 11:57:37 +0100
+        Wed, 23 Mar 2022 09:40:16 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859A65E14E;
+        Wed, 23 Mar 2022 06:38:46 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22NCxj3F022015;
+        Wed, 23 Mar 2022 14:38:40 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : from : subject : to : cc : references : in-reply-to :
+ mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=selector1;
- bh=WCVSJNz4FKwo1y85lq01vI5ZuAMhAuljc4SWrnPI9fU=;
- b=4vXcp4Jcv59ZKnUoy7vYxvgbeoMbRanec7ebfN2fVbeFNRECJKgVN3Z3SlsJ8YwYkCl7
- AUOyVo2Y1GXdqcNnZaUYbI1h3lCruHjsx7xQAtUAtFCr/DheSSj0EV1ibbpQsNMnl2yw
- PZ5FQXk5cewQvW6l2wAS2mTdmoZrxq2xXi+H7r4L4tC+j92QpqlGgKVEXcSBkJgjR7j/
- Xepn/x2o3ewK0l8LQevOC7/60KxjKd0ww6zr9PKBBZh0w99vEj/wEp90yV3HFWYHhlbk
- AON5bc8tXOm6v/OZROOdpaLj05r2AvsI9bsVzeuVLBHzmHAaWG1sZrwe9JvygZXRqhf3 8A== 
+ bh=P7ZqFBQaQQZDZswUVGm+4mgYq4ZngDZt4zwx6qLPUs8=;
+ b=wVTyWBtqdwAlPMTCprb3bpmnHUxFRq9uaDlWUGKV6FhQIMBJvBzuPG7J132KlWT3oJe8
+ gWBNSeuSYZ4yTftO3xR7rUnW04akAm0OgT56OoiV8mkhZD9r8jpMXziS1VKulcLvAJt3
+ vegfAiSNucFcDO3amXIvxzQc46lSamuWNL/vrw2heCi9IovOQSfmNgdAH4lMv5ZkEOfs
+ dsaI7XHflf57fny4bTkb0y1jFKvPZD1j5rd/EFsZ/YSfvDh+oPN2U6ip+oohx1I8ek7Y
+ 9WhIvKXwIZE4jbObYunHgmJqRztNu3KfL82yhLZKNc5+BBhVPjRVDKycwOBvcF84tjix TA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ew7d4fgfw-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ewr5fyu3b-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Mar 2022 11:57:37 +0100
+        Wed, 23 Mar 2022 14:38:40 +0100
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C287310002A;
-        Wed, 23 Mar 2022 11:57:34 +0100 (CET)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 11B7D10002A;
+        Wed, 23 Mar 2022 14:38:38 +0100 (CET)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BA5ED2248D6;
-        Wed, 23 Mar 2022 11:57:34 +0100 (CET)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 091FB22FA37;
+        Wed, 23 Mar 2022 14:38:38 +0100 (CET)
 Received: from [10.201.20.246] (10.75.127.47) by SFHDAG2NODE2.st.com
  (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 23 Mar
- 2022 11:57:34 +0100
-Message-ID: <9be3d491-4fdc-4aa6-8176-23a2cf3773ca@foss.st.com>
-Date:   Wed, 23 Mar 2022 11:57:33 +0100
+ 2022 14:38:37 +0100
+Message-ID: <e04ac97e-51bf-7470-5265-ce55119e1ba9@foss.st.com>
+Date:   Wed, 23 Mar 2022 14:38:36 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH V2 1/3] rpmsg: core: Add signal API support
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-CC:     <swboyd@chromium.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
+Subject: Re: [PATCH V2 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+Content-Language: en-US
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>,
         Ohad Ben-Cohen <ohad@wizery.com>
 References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
- <1642534993-6552-2-git-send-email-quic_deesin@quicinc.com>
- <Yiu7DPHDY3uwcnLK@builder.lan>
-Content-Language: en-US
-In-Reply-To: <Yiu7DPHDY3uwcnLK@builder.lan>
+ <1642534993-6552-4-git-send-email-quic_deesin@quicinc.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <1642534993-6552-4-git-send-email-quic_deesin@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.75.127.47]
@@ -67,176 +65,142 @@ X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-23_06,2022-03-22_01,2022-02-23_01
+ definitions=2022-03-23_07,2022-03-22_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 3/11/22 22:11, Bjorn Andersson wrote:
-> On Tue 18 Jan 13:43 CST 2022, Deepak Kumar Singh wrote:
+On 1/18/22 20:43, Deepak Kumar Singh wrote:
+> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
+> to get/set the low level transport signals.
 > 
->> Some transports like Glink support the state notifications between
->> clients using signals similar to serial protocol signals.
->> Local glink client drivers can send and receive signals to glink
->> clients running on remote processors.
->>
->> Add APIs to support sending and receiving of signals by rpmsg clients.
->>
->> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
->> ---
->>  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
->>  drivers/rpmsg/rpmsg_internal.h |  2 ++
->>  include/linux/rpmsg.h          | 14 ++++++++++++++
->>  3 files changed, 37 insertions(+)
->>
->> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
->> index d3eb600..6712418 100644
->> --- a/drivers/rpmsg/rpmsg_core.c
->> +++ b/drivers/rpmsg/rpmsg_core.c
->> @@ -328,6 +328,24 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
->>  
->>  /**
->> + * rpmsg_set_flow_control() - sets/clears serial flow control signals
->> + * @ept:	the rpmsg endpoint
->> + * @enable:	enable or disable serial flow control
->> + *
->> + * Return: 0 on success and an appropriate error value on failure.
->> + */
->> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 47 ++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 43 insertions(+), 4 deletions(-)
 > 
-> This API looks nice and clean and deals with flow control.
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index b5907b8..c03a118 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/skbuff.h>
+>  #include <linux/slab.h>
+> +#include <linux/termios.h>
+>  #include <linux/uaccess.h>
+>  #include <uapi/linux/rpmsg.h>
+>  
+> @@ -74,6 +75,9 @@ struct rpmsg_eptdev {
+>  	spinlock_t queue_lock;
+>  	struct sk_buff_head queue;
+>  	wait_queue_head_t readq;
+> +
+> +	u32 rsigs;
+> +	bool sig_pending;
+>  };
+>  
+>  static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+> @@ -112,7 +116,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  	skb_queue_tail(&eptdev->queue, skb);
+>  	spin_unlock(&eptdev->queue_lock);
+>  
+> -	/* wake up any blocking processes, waiting for new data */
+> +	wake_up_interruptible(&eptdev->readq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv, u32 sigs)
+> +{
+> +	struct rpmsg_eptdev *eptdev = priv;
+> +
+> +	eptdev->rsigs = sigs;
+> +	eptdev->sig_pending = true;
+> +
+>  	wake_up_interruptible(&eptdev->readq);
 
-seems to me ambiguous API... what does it means flow control enable? Does it means that the flow control is enable or that the the local
-endpoint is ready to receive?
+Regarding the Glink code, the callback is used to be informed that the remote
+is ready to send (DSR) and to receive (CTS or DSR)
+So I suppose that the transmission should also be conditioned by the sig_pending
 
-Could we consider here that it is more a bind/unbind of the endpoint?
+That said tell me if I'm wrong but look to me that what is implemented here is the 
+ hardware flow control already managed by the TTY interface. What about using the
+TTY interface in this case?
 
-> 
->> +{
->> +	if (WARN_ON(!ept))
->> +		return -EINVAL;
->> +	if (!ept->ops->set_flow_control)
->> +		return -ENXIO;
->> +
->> +	return ept->ops->set_flow_control(ept, enable);
->> +}
->> +EXPORT_SYMBOL(rpmsg_set_flow_control);
->> +
->> +/**
->>   * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
->>   * @ept: the rpmsg endpoint
->>   *
->> @@ -535,6 +553,9 @@ static int rpmsg_dev_probe(struct device *dev)
->>  
->>  		rpdev->ept = ept;
->>  		rpdev->src = ept->addr;
->> +
->> +		if (rpdrv->signals)
+And What about using the "software flow control" instead? [1]
 
-seems an useless check
+[1] https://en.wikipedia.org/wiki/Software_flow_control
 
->> +			ept->sig_cb = rpdrv->signals;
->>  	}
->>  
->>  	err = rpdrv->probe(rpdev);
->> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
->> index b1245d3..35c2197 100644
->> --- a/drivers/rpmsg/rpmsg_internal.h
->> +++ b/drivers/rpmsg/rpmsg_internal.h
->> @@ -53,6 +53,7 @@ struct rpmsg_device_ops {
->>   * @trysendto:		see @rpmsg_trysendto(), optional
->>   * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
->>   * @poll:		see @rpmsg_poll(), optional
->> + * @set_flow_control:	see @rpmsg_set_flow_control(), optional
->>   * @get_mtu:		see @rpmsg_get_mtu(), optional
->>   *
->>   * Indirection table for the operations that a rpmsg backend should implement.
->> @@ -73,6 +74,7 @@ struct rpmsg_endpoint_ops {
->>  			     void *data, int len);
->>  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
->>  			     poll_table *wait);
->> +	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
->>  	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
->>  };
->>  
->> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
->> index 02fa911..06d090c 100644
->> --- a/include/linux/rpmsg.h
->> +++ b/include/linux/rpmsg.h
->> @@ -62,12 +62,14 @@ struct rpmsg_device {
->>  };
->>  
->>  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
->> +typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32);
-> 
-> This callback however, is still using the original low level tty
-> signals.
-> 
-> Is there any reason why this can't be "rpmsg_flowcontrol_cb_t" and take
-> a boolean, so we get a clean interface in both directions?
-> 
-> Regards,
-> Bjorn
-> 
->>  
->>  /**
->>   * struct rpmsg_endpoint - binds a local rpmsg address to its user
->>   * @rpdev: rpmsg channel device
->>   * @refcount: when this drops to zero, the ept is deallocated
->>   * @cb: rx callback handler
->> + * @sig_cb: rx serial signal handler
+>  
+>  	return 0;
+> @@ -137,6 +152,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  		return -EINVAL;
+>  	}
+>  
+> +	ept->sig_cb = rpmsg_sigs_cb;
+>  	eptdev->ept = ept;
+>  	filp->private_data = eptdev;
+>  
+> @@ -155,6 +171,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+>  		eptdev->ept = NULL;
+>  	}
+>  	mutex_unlock(&eptdev->ept_lock);
+> +	eptdev->sig_pending = false;
+>  
+>  	/* Discard all SKBs */
+>  	skb_queue_purge(&eptdev->queue);
+> @@ -265,6 +282,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+>  	if (!skb_queue_empty(&eptdev->queue))
+>  		mask |= EPOLLIN | EPOLLRDNORM;
+>  
+> +	if (eptdev->sig_pending)
+> +		mask |= EPOLLPRI;
+> +
+>  	mask |= rpmsg_poll(eptdev->ept, filp, wait);
+>  
+>  	return mask;
+> @@ -274,11 +294,30 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  			       unsigned long arg)
+>  {
+>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+> +	bool set;
+> +	u32 val;
+> +	int ret;
+>  
+> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> -		return -EINVAL;
+> +	switch (cmd) {
+> +	case TIOCMGET:
+> +		eptdev->sig_pending = false;
+> +		ret = put_user(eptdev->rsigs, (int __user *)arg);
+> +		break;
+> +	case TIOCMSET:
+> +		ret = get_user(val, (int __user *)arg);
+> +		if (ret)
+> +			break;
+> +		set = (val & TIOCM_DTR) ? true : false;
+> +		ret = rpmsg_set_flow_control(eptdev->ept, set);
+> +		break;
 
-Is it signaling for reception or transmission?
-
+Could this directly be handled by the driver on open close?
+If application wants to suspend the link it could just close de /dev/rpmsgX.
+ 
 Regards,
 Arnaud
 
->>   * @cb_lock: must be taken before accessing/changing @cb
->>   * @addr: local rpmsg address
->>   * @priv: private data for the driver's use
->> @@ -90,6 +92,7 @@ struct rpmsg_endpoint {
->>  	struct rpmsg_device *rpdev;
->>  	struct kref refcount;
->>  	rpmsg_rx_cb_t cb;
->> +	rpmsg_rx_sig_t sig_cb;
->>  	struct mutex cb_lock;
->>  	u32 addr;
->>  	void *priv;
->> @@ -111,6 +114,7 @@ struct rpmsg_driver {
->>  	int (*probe)(struct rpmsg_device *dev);
->>  	void (*remove)(struct rpmsg_device *dev);
->>  	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
->> +	int (*signals)(struct rpmsg_device *rpdev, void *priv, u32);
->>  };
->>  
->>  static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
->> @@ -188,6 +192,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->>  
->>  ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
->>  
->> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
->> +
->>  #else
->>  
->>  static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
->> @@ -306,6 +312,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->>  	return -ENXIO;
->>  }
->>  
->> +static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
->> +{
->> +	/* This shouldn't be possible */
->> +	WARN_ON(1);
->> +
->> +	return -ENXIO;
->> +}
->> +
->>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
->>  
->>  /* use a macro to avoid include chaining to get THIS_MODULE */
->> -- 
->> 2.7.4
->>
+> +	case RPMSG_DESTROY_EPT_IOCTL:
+> +		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+>  
+> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
+> +	return ret;
+>  }
+>  
+>  static const struct file_operations rpmsg_eptdev_fops = {
