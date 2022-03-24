@@ -2,132 +2,152 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D05FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Mar 2022 15:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B29ABC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Mar 2022 16:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351571AbiCXP6h (ORCPT
+        id S1352056AbiCXQ41 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Mar 2022 11:58:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
+        Thu, 24 Mar 2022 12:56:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351535AbiCXP6b (ORCPT
+        with ESMTP id S1352074AbiCXQ4G (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Mar 2022 11:58:31 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB83ADD6E
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 08:56:32 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id q11so5125216pln.11
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 08:56:32 -0700 (PDT)
+        Thu, 24 Mar 2022 12:56:06 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C773B82E9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 09:53:40 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id lr4so1962281ejb.11
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 09:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ne9OYL5CfWNLmAIU1ktd7k6bzX961vRnh7JsrHpoDCE=;
-        b=Mo5KsPPSgnxGxZkAbOQY4wXE7rPREwoiIpmvFYqkA2rgmGggEsYL7IPCwqlDS1MZxW
-         tRDAp0+YpIQjI813unWjBmL6NWl4EgP8KFOuOTpNtUBJpDyoaAumOWEU4Dh/Gh1EGCYu
-         oEu4rfjYp1y38w6+m35Z9v4plMMCrqnjTuRSWYgxfMY7nKkpVtU9f7N9KxhpMS+zYaGc
-         sE5pCNsfufxQKD6hVtemU9rl3xWOijablRSYktVU7wwqVkV6sDXSUzv+5B+8cDE7f3e/
-         G1uYT9qT5FYAVOkFp0dGlh2ds8Xn6cDAuFiJ94c2ZX9cdRCCjAzG6V5Tqz0bKj98W0J4
-         +RIw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=guAY8H9s0/D31TGTPoAO5wEnVmI1SOOb0AGR5y37XQ0=;
+        b=LKOewzvBfrVsBknqjic7BjVmPsGz3mI+RjmqeIl2waFAs4UelmkJiiCqP9CSGpoUK8
+         vEI7DpODTzvqQQsr1z6S3IR9ZvEkd7cOsW3Ir2F/PFo3Y5fDz4ZIoWMdAyI3mLrKgF3N
+         KHwdyXL/aDYhYIWD/MjtbVBguQ8NPLbjZEq5gC20mKyd5qXPLiUf81dejGctiP7tdi1R
+         v/FOYWFbQ5FXhhQHPSycWEDVYhy319VZIik8NLKMl+2PY9OJeRT2pNanmcFrBB/IMjC5
+         +azdg6iduo8AqZYkwnPySp0G/pd4be2sCMa4oWExJ1QT3xZ/zW7C6C0iMTOuvC49xYOb
+         9isg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ne9OYL5CfWNLmAIU1ktd7k6bzX961vRnh7JsrHpoDCE=;
-        b=XHQceok+iEvDCvQhj5tFFvxxygkWCYWsd0SEOq5eb/Yw3Z1KDSdGb8Edad+FRAuJFT
-         SqpMm3+kZn4WIGdJL+fWsHmFHJxzjPFPSarCXkETw0lpMozdGrz9ZKgDwiZMu55m4wFB
-         1uXzz1Kfr/rUwYigLYCTPmcrtPcTcUVolkufE7F2vCpL3iqqU00V7Fxs0yX8L0PkM7Yp
-         9W+SnbFiG8HpXycoMhW7f4/68khrvtRInG/10DThlAX+I6o4sizWvMy0kvti8SZ3ljIw
-         Xg+1rJkicaKyEOTIeaWAyHvIlVJHFb89iGKN2My6X2dGG7MJSvOhw1UcpUoTO+zPouaP
-         d5oA==
-X-Gm-Message-State: AOAM530Pjz8X2/2QgiZazABj9AZ8VKwLS+vxKni/YBryhpYFCk6wyCFU
-        vIbWFMeurIS2UbsaWVMWWC3Eqg==
-X-Google-Smtp-Source: ABdhPJy8nDCvoMyZv7HY/JHEm34TZfmOQhWBhT7JqRM3pglG7soXNfBfct5EyFVyJ7HskDz+ILQeQQ==
-X-Received: by 2002:a17:902:bd88:b0:14f:8ddf:e373 with SMTP id q8-20020a170902bd8800b0014f8ddfe373mr6771743pls.89.1648137391723;
-        Thu, 24 Mar 2022 08:56:31 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id f16-20020a056a00239000b004fa7103e13csm4256187pfc.41.2022.03.24.08.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Mar 2022 08:56:30 -0700 (PDT)
-Date:   Thu, 24 Mar 2022 09:56:28 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: mediatek: enable cache for mt8186 SCP
-Message-ID: <20220324155628.GC3514576@p14s>
-References: <20220322122845.4068-1-allen-kh.cheng@mediatek.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=guAY8H9s0/D31TGTPoAO5wEnVmI1SOOb0AGR5y37XQ0=;
+        b=GwmDtLr05c9/+4iqZANZCXqyaPbN/souUPbCZf0rXnLWu5p/OHHcwMeYmjb0jnHTL0
+         sz2sonYA6NETSYLZRdNq92JjlG1PtxZnn4gi47DFkvL7ymy6yopHHS48riCOkAJpqmM1
+         ZpkOi/FGCX2P9IMEGYfDNlYxPu4WKaAkxh5kihBn9hEGalu+lO69/eEPhahnxw5aCMn6
+         VPwaq7hedpNoEn1emozQgbJSm5Va675vlWND68jFBGpO01axX1xuibR1oL5OveGK5NE6
+         8Uap8BAY1FzByg4QG2tcOuRjnFccDwAluPKuNmDNws8oyxdQjMpogE80NaAeZGW/8QZA
+         SOkQ==
+X-Gm-Message-State: AOAM530UITAB2/CtsKd28QP5N/j+wMLNoB5auc7rM9S1dWFVBgybvj+H
+        jtC7B2LEnUzbQ1hRPv4cg9vC2Iodtvgm5a1JkMFEdg==
+X-Google-Smtp-Source: ABdhPJxFg49QIVLDzYPvwRFRl+5RxuEgvpIWY9pDjjcp1qKJ/Us5NofAcbWQasCtYd+4DWyxEP8KrYKIFv4xTZAJ6zI=
+X-Received: by 2002:a17:906:3cf1:b0:6cf:86c6:8a12 with SMTP id
+ d17-20020a1709063cf100b006cf86c68a12mr6702003ejh.202.1648140819020; Thu, 24
+ Mar 2022 09:53:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220322122845.4068-1-allen-kh.cheng@mediatek.com>
+References: <1648027970-11488-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1648027970-11488-1-git-send-email-shengjiu.wang@nxp.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 24 Mar 2022 10:53:27 -0600
+Message-ID: <CANLsYkyHVcoF_fM836vES9gsj0b39aqC6s=9UNeRuAQMZjggRQ@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: core: Remove state checking before changing state
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Allen,
-
-On Tue, Mar 22, 2022 at 08:28:45PM +0800, Allen-KH Cheng wrote:
-> 1. Set SCP cache size before loading SCP FW. (8KB+8KB)
-> 2. Adjust ipi_buf_offset from 0x7bdb0 to 0x3BDB0 for enableing cache
-> 
-> SCP side
->  - IPI Buffer: 0x3BDB0 <-> 0x3C000
->  - Cache: 0x3C000 <-> 0x40000
+On Wed, 23 Mar 2022 at 03:42, Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
 >
+> There is no mutex protecting of these state checking, which
+> can't garantee there is no another instance is trying to do
+> same operation.
+>
+> The reference counter rproc->power is used to manage state
+> changing and there is mutex protection in each operation
+> function for multi instance case.
+>
+> So remove this state checking in rproc_cdev_write() and
+> state_store(), just let reference counter rproc->power to
+> manage the behaviors.
+>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  drivers/remoteproc/remoteproc_cdev.c  | 11 -----------
+>  drivers/remoteproc/remoteproc_sysfs.c | 11 -----------
+>  2 files changed, 22 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_cdev.c b/drivers/remoteproc/remoteproc_cdev.c
+> index 906ff3c4dfdd..687f205fd70a 100644
+> --- a/drivers/remoteproc/remoteproc_cdev.c
+> +++ b/drivers/remoteproc/remoteproc_cdev.c
+> @@ -32,21 +32,10 @@ static ssize_t rproc_cdev_write(struct file *filp, const char __user *buf, size_
+>                 return -EFAULT;
+>
+>         if (!strncmp(cmd, "start", len)) {
+> -               if (rproc->state == RPROC_RUNNING ||
+> -                   rproc->state == RPROC_ATTACHED)
+> -                       return -EBUSY;
+> -
+>                 ret = rproc_boot(rproc);
+>         } else if (!strncmp(cmd, "stop", len)) {
+> -               if (rproc->state != RPROC_RUNNING &&
+> -                   rproc->state != RPROC_ATTACHED)
+> -                       return -EINVAL;
+> -
+>                 ret = rproc_shutdown(rproc);
+>         } else if (!strncmp(cmd, "detach", len)) {
+> -               if (rproc->state != RPROC_ATTACHED)
+> -                       return -EINVAL;
+> -
+>                 ret = rproc_detach(rproc);
+>         } else {
+>                 dev_err(&rproc->dev, "Unrecognized option\n");
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index 51a04bc6ba7a..8c7ea8922638 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -194,23 +194,12 @@ static ssize_t state_store(struct device *dev,
+>         int ret = 0;
+>
+>         if (sysfs_streq(buf, "start")) {
+> -               if (rproc->state == RPROC_RUNNING ||
+> -                   rproc->state == RPROC_ATTACHED)
+> -                       return -EBUSY;
+> -
 
-I would also like to find in this changelog "why" this patch is needed and more
-importantly, how it remains compatible with existing implementation.  I am
-mostly worried about implemenations where the application processor is using
-caches while the SCP is not.
+As per my previous comment the above conditions need to be moved into
+rproc_boot().
 
-I will also need a couple of "Tested-by" tags before moving forward with this
-patch.
+>                 ret = rproc_boot(rproc);
+>                 if (ret)
+>                         dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+>         } else if (sysfs_streq(buf, "stop")) {
+> -               if (rproc->state != RPROC_RUNNING &&
+> -                   rproc->state != RPROC_ATTACHED)
+> -                       return -EINVAL;
+> -
+>                 ret = rproc_shutdown(rproc);
+>         } else if (sysfs_streq(buf, "detach")) {
+> -               if (rproc->state != RPROC_ATTACHED)
+> -                       return -EINVAL;
+> -
+
+This patch should have been part of a patch series with your other
+work sent on March 18th[1].
 
 Thanks,
 Mathieu
 
-> Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 38609153bf64..24065b6b4da8 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -401,6 +401,14 @@ static int mt8186_scp_before_load(struct mtk_scp *scp)
->  	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_P1);
->  	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_p2);
->  
-> +	/*
-> +	 * Set I-cache and D-cache size before loading SCP FW.
-> +	 * SCP SRAM logical address may change when cache size setting differs.
-> +	 */
-> +	writel(MT8183_SCP_CACHE_CON_WAYEN | MT8183_SCP_CACHESIZE_8KB,
-> +	       scp->reg_base + MT8183_SCP_CACHE_CON);
-> +	writel(MT8183_SCP_CACHESIZE_8KB, scp->reg_base + MT8183_SCP_DCACHE_CON);
-> +
->  	return 0;
->  }
->  
-> @@ -905,7 +913,7 @@ static const struct mtk_scp_of_data mt8186_of_data = {
->  	.scp_da_to_va = mt8183_scp_da_to_va,
->  	.host_to_scp_reg = MT8183_HOST_TO_SCP,
->  	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
-> -	.ipi_buf_offset = 0x7bdb0,
-> +	.ipi_buf_offset = 0x3bdb0,
->  };
->  
->  static const struct mtk_scp_of_data mt8192_of_data = {
-> -- 
-> 2.18.0
-> 
+[1]. [PATCH] remoteproc: core: check rproc->power value before decreasing it
+
+>                 ret = rproc_detach(rproc);
+>         } else {
+>                 dev_err(&rproc->dev, "Unrecognised option: %s\n", buf);
+> --
+> 2.17.1
+>
