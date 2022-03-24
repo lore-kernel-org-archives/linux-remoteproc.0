@@ -2,166 +2,122 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F26C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Mar 2022 17:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F27C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Mar 2022 18:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242905AbiCXRiJ (ORCPT
+        id S1352516AbiCXSOI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Mar 2022 13:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44418 "EHLO
+        Thu, 24 Mar 2022 14:14:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239992AbiCXRiI (ORCPT
+        with ESMTP id S234332AbiCXSOE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Mar 2022 13:38:08 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E708BA996B;
-        Thu, 24 Mar 2022 10:36:35 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22OEsGHx021455;
-        Thu, 24 Mar 2022 18:36:26 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=eh0bJYy6P9lh2u14OVLnjWv2JImlfYQbNppO6gtKh8A=;
- b=z2PefEh6Zay2Djoiej/voaURbNdb9QykeoBOsU2tyE2n+wB7zHBg0WkPbX03IkklOkF/
- Fln8Ux4Ym69+VRaVS9sE98+8nANInVn44ljPX3y3C4ixBKEAnpzoQZeRPrz0Ph7yIrVU
- 9iHTx8T+YR11Q7Kn/XaxCIg8JiMAh7kLNmSEjqdga5PAIP9qObzqoBKgcf5+l+uudOPN
- TeZvW8otEbW6vuA1ye9vXlor3xX9GQTVeLlPd/OgexbYik3TSaUiK+P9Uc/MqiFCFaBx
- 9eAuuo7j/BMgU0ZoKiRhFcgXw1meuDBdhTB6hrM4TDG9ugEwkecSL9Fv4oN8WePPg2w7 8Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ew7d4rd7y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Mar 2022 18:36:26 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DF45410002A;
-        Thu, 24 Mar 2022 18:36:24 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node1.st.com [10.75.127.4])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 92772245511;
-        Thu, 24 Mar 2022 18:36:24 +0100 (CET)
-Received: from [10.201.20.246] (10.75.127.49) by SFHDAG2NODE1.st.com
- (10.75.127.4) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 24 Mar
- 2022 18:36:23 +0100
-Message-ID: <239eeeea-af04-7163-61ca-436c6632c2a8@foss.st.com>
-Date:   Thu, 24 Mar 2022 18:36:23 +0100
+        Thu, 24 Mar 2022 14:14:04 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C83EA3BA7A
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 11:12:31 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id w8so5581971pll.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 11:12:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eVas7rSAou2utAAYyG+KdmDyPsGts9SfpHbo6bgzccc=;
+        b=fg0CQFG+ey99c3Kw8AMhUXok74QqW5Uri8wM4K8vYFBngy7cnH2EGVVvS1MwVRJDh8
+         FJqDB/YbdfxfDGw1AU/fqYF19SMpg4wkOrlQtNpN6zeSBgOGX33dQxj/2Wtm9O/IdlNJ
+         cKgTDTSyusZTq6+NV5sLmiX7qRTEtP/2avXv2Pju+TbbT7Hr4QLKEWykL9GZ4KQ7AALp
+         D7VEDHxTqJT3v4rz99vpvkQz/dNYHCPZh3QZeqgjZ0GgFyGF7SHV7vNnPMkecFo8pN5L
+         lXSyUMHD7NWagG0/OpCAxofnnlP47gDraXCq5QpR8whR8xYz95E+8xNrRLpnGKRYSzck
+         rWyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eVas7rSAou2utAAYyG+KdmDyPsGts9SfpHbo6bgzccc=;
+        b=Faq8A6428zdTgMKNrxuyd6aoHzY/yxTMVqWqqXEf3PDYCXXYgaOGHCFO0AVcdTKeR1
+         7cDYtHAWfiFOtyQifdnF+yqtDvxmGvAJW/fQziA90I2wOiytq6izz/6vRyV3PhdXCLDI
+         M/nNPCHu0BslfALpxQEOHSbaUzeiSVfTrxI/LClgr5wzd1w30U80zpeGqIRZTyRW9HJD
+         jG2aprbb5yfh6S9dsUEUVt4gut8SEf/oUgBHVTCnKpNtkWQUqamXnuQ32ZtR+IK9PLUy
+         ZSllZOfHXTcTfLRWeh0v1UVcUcSnoJ+WwHbWmxeGCMOPPL3XhIJ3s5PFkSzu8buUfiyp
+         qTkg==
+X-Gm-Message-State: AOAM532j6SD65zbuiAOYC4umEg0iB0JKfaDC/nITr0F/TaNhiCirlm7F
+        pKCEZFyk5uE9LVeFapRGsvoXTpaJf3YY
+X-Google-Smtp-Source: ABdhPJwZHFFgB0y5nweFFiqApmDXuKr5fZr1/oRbmXVFv0+V0BJHSHh3uwGMsw3KFY4ENUbmQbgzhg==
+X-Received: by 2002:a17:902:b68c:b0:153:bd06:85ad with SMTP id c12-20020a170902b68c00b00153bd0685admr7133646pls.99.1648145551272;
+        Thu, 24 Mar 2022 11:12:31 -0700 (PDT)
+Received: from localhost.localdomain ([27.111.75.218])
+        by smtp.gmail.com with ESMTPSA id j20-20020a62e914000000b004fa3bd9bef0sm3816013pfh.110.2022.03.24.11.12.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Mar 2022 11:12:30 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] remoteproc: Don't bother checking the return value of debugfs_create*
+Date:   Thu, 24 Mar 2022 23:42:24 +0530
+Message-Id: <20220324181224.21542-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v9 00/11] Restructure the rpmsg_char driver and introduce
- rpmsg_ctrl driver
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <julien.massot@iot.bzh>
-References: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE1.st.com
- (10.75.127.4)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-24_06,2022-03-24_01,2022-02-23_01
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+DebugFS APIs are designed to return only the error pointers and not NULL
+in the case of failure. So these return pointers are safe to be passed on
+to the successive debugfs_create* APIs.
 
-On 1/24/22 11:25, Arnaud Pouliquen wrote:
-> Updates from V8 [1]:
-> - rebase on 5.17-rc1 + rpmsg char cdev release fixes[2][3]
-> - updates based on Bjorn Andersson's comments:
->   - remove rpmsg_create_default_ept API, set directly the ept->priv in rpmsg_chrdev_probe
->     function.
->   - rework commit message in [8/9]rpmsg: char: Introduce the "rpmsg-raw" channel
-> 
-> Patchset description:
-> 
-> The current rpmsg_char module implements a /dev/rpmsg_ctrl interface that provides the ability to
-> instantiate char devices (/dev/rpmsgX) associated with an rpmsg endpoint for communication with the
-> remote processor.
-> This implementation fits with QCOM rpmsg backend but not with the magement by chanel implemented
-> in the generic rpmsg virtio backend.
-> This series restructures the rpmsg_char driver to decorrelate the control part from the data part
-> in order to improve its compatible with the rpmsg virtio backend.
-> 
-> Objective:
-> - Expose a /dev/rpmsg_ctrlX interface for the application that is no longer dedicated to the
->   rpmsg_char but generalized to all rpmsg services. This offers capability to create and destroy
->   rpmsg channels from a user's application initiative (using the new RPMSG_CREATE_DEV_IOCTL and
->   RPMSG_DESTROY_DEV_IOCTL controls).
->   An application will be able to create/establish an rpmsg communication channel to communicate
->   with the remote processor, and not only wait the remote processor initiative.
->   This is interesting for example to establish a temporary communication link for diagnosis,
->   calibration, debugging... or instantiate  new data flows on some user actions.
-> - Add capability to probe the rpmsg_char device at the initiative of the remote processor
->  (rpmsg service announcement mechanism).
->   This allows platforms based on the rpmsg virtio backend to create the /dev/rpmgX interface with
->   a rpmsg name service announcement.
-> 
-> Subsets:
->   - Extract the control part of the char dev and create the rpmsg_ctrl.c file (patches 1 to 6)
->   - Introduce the "rpmsg-raw" channel in rpmsg_char(patches 7 to 10)
->   - Introduce the RPMSG_CREATE_DEV_IOCTL IOCTL and RPMSG_DESTROY_DEV_IOCTL to instantiate RPMsg
->     devices (patch 11)
->     The application can then create or release a channel by specifying:
->        - the name service of the device to instantiate.   
->        - the source address.
->        - the destination address.
-> 
-> This series has be applied and tested on 'commit e783362eb54c ("Linux 5.17-rc1") +
-> rpmsg_char cdev release fixes [2][3]
-> 
-> [1] https://lkml.org/lkml/2021/12/7/186
-> [2] https://lkml.org/lkml/2022/1/10/1129
-> [3] https://lkml.org/lkml/2022/1/10/1130
-> 
-> Arnaud Pouliquen (11):
->   rpmsg: char: Export eptdev create and destroy functions
->   rpmsg: Create the rpmsg class in core instead of in rpmsg char
->   rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
+Therefore, let's just get rid of the checks.
 
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/remoteproc/remoteproc_debugfs.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
->   arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
->   RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
->   arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
+diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+index b5a1e3b697d9..2e2c4a31c154 100644
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -386,16 +386,8 @@ void rproc_remove_trace_file(struct dentry *tfile)
+ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+ 				       struct rproc_debug_trace *trace)
+ {
+-	struct dentry *tfile;
+-
+-	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
++	return debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+ 				    &trace_rproc_ops);
+-	if (!tfile) {
+-		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
+-		return NULL;
+-	}
+-
+-	return tfile;
+ }
+ 
+ void rproc_delete_debug_dir(struct rproc *rproc)
+@@ -411,8 +403,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 		return;
+ 
+ 	rproc->dbg_dir = debugfs_create_dir(dev_name(dev), rproc_dbg);
+-	if (!rproc->dbg_dir)
+-		return;
+ 
+ 	debugfs_create_file("name", 0400, rproc->dbg_dir,
+ 			    rproc, &rproc_name_ops);
+@@ -430,11 +420,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+ 
+ void __init rproc_init_debugfs(void)
+ {
+-	if (debugfs_initialized()) {
++	if (debugfs_initialized())
+ 		rproc_dbg = debugfs_create_dir(KBUILD_MODNAME, NULL);
+-		if (!rproc_dbg)
+-			pr_err("can't create debugfs dir\n");
+-	}
+ }
+ 
+ void __exit rproc_exit_debugfs(void)
+-- 
+2.25.1
 
-Thank you for merging this series!
-
-I can't see in the "for next" branch[1] the 3 patches above that update configs
-Are you expecting a specific action from me?   
-
-[1]https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
-
-Regards,
-Arnaud
-
->   rpmsg: Update rpmsg_chrdev_register_device function
->   rpmsg: char: Refactor rpmsg_chrdev_eptdev_create function
->   rpmsg: char: Add possibility to use default endpoint of the rpmsg
->     device
->   rpmsg: char: Introduce the "rpmsg-raw" channel
->   rpmsg: ctrl: Introduce new RPMSG_CREATE/RELEASE_DEV_IOCTL controls
-> 
->  arch/arm/configs/qcom_defconfig   |   1 +
->  arch/arm64/configs/defconfig      |   1 +
->  arch/riscv/configs/defconfig      |   1 +
->  arch/riscv/configs/rv32_defconfig |   1 +
->  drivers/rpmsg/Kconfig             |   8 +
->  drivers/rpmsg/Makefile            |   1 +
->  drivers/rpmsg/qcom_glink_native.c |   2 +-
->  drivers/rpmsg/qcom_smd.c          |   2 +-
->  drivers/rpmsg/rpmsg_char.c        | 231 +++++++++++-----------------
->  drivers/rpmsg/rpmsg_char.h        |  46 ++++++
->  drivers/rpmsg/rpmsg_core.c        |  15 +-
->  drivers/rpmsg/rpmsg_ctrl.c        | 243 ++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_internal.h    |  10 +-
->  drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
->  include/uapi/linux/rpmsg.h        |  10 ++
->  15 files changed, 419 insertions(+), 155 deletions(-)
->  create mode 100644 drivers/rpmsg/rpmsg_char.h
->  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
-> 
