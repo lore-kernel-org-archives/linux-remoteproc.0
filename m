@@ -2,205 +2,110 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C710C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Mar 2022 13:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B4DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Mar 2022 15:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233886AbiCWNkR (ORCPT
+        id S1348270AbiCXPNI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 23 Mar 2022 09:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45402 "EHLO
+        Thu, 24 Mar 2022 11:13:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239960AbiCWNkQ (ORCPT
+        with ESMTP id S242453AbiCXPNI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 23 Mar 2022 09:40:16 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859A65E14E;
-        Wed, 23 Mar 2022 06:38:46 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22NCxj3F022015;
-        Wed, 23 Mar 2022 14:38:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=P7ZqFBQaQQZDZswUVGm+4mgYq4ZngDZt4zwx6qLPUs8=;
- b=wVTyWBtqdwAlPMTCprb3bpmnHUxFRq9uaDlWUGKV6FhQIMBJvBzuPG7J132KlWT3oJe8
- gWBNSeuSYZ4yTftO3xR7rUnW04akAm0OgT56OoiV8mkhZD9r8jpMXziS1VKulcLvAJt3
- vegfAiSNucFcDO3amXIvxzQc46lSamuWNL/vrw2heCi9IovOQSfmNgdAH4lMv5ZkEOfs
- dsaI7XHflf57fny4bTkb0y1jFKvPZD1j5rd/EFsZ/YSfvDh+oPN2U6ip+oohx1I8ek7Y
- 9WhIvKXwIZE4jbObYunHgmJqRztNu3KfL82yhLZKNc5+BBhVPjRVDKycwOBvcF84tjix TA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ewr5fyu3b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Mar 2022 14:38:40 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 11B7D10002A;
-        Wed, 23 Mar 2022 14:38:38 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 091FB22FA37;
-        Wed, 23 Mar 2022 14:38:38 +0100 (CET)
-Received: from [10.201.20.246] (10.75.127.47) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 23 Mar
- 2022 14:38:37 +0100
-Message-ID: <e04ac97e-51bf-7470-5265-ce55119e1ba9@foss.st.com>
-Date:   Wed, 23 Mar 2022 14:38:36 +0100
+        Thu, 24 Mar 2022 11:13:08 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56FDEA94C3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 08:11:36 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id h19so3207188pfv.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Mar 2022 08:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8rZfGXhxPnCPDkK85iJOEuPuLqVvxqMTkD5qg+n6vFE=;
+        b=pkEOCiut+ZAQ5lJHTD6mEO3U8qX21+b0ADJvqP9I8NdNzs+hijc/igpJyUHZvQNz33
+         Dd3LYuhKBfR2uGsCEHbMLPF5Eeb95XBStH/BXNMSWWbeHmhdJLV8eh+8tVxC0an1O3aR
+         MpH2dlXc+nxiOGxB6JQyVs4LdjUeuT1Q1QdNFfg0ZCM4q+xox1t/Q5oPuxpg9cR1mlvx
+         Et21nx3xZpw9WO8OSYUNsgUlZgRcG5ZwyCx4rSTHEWPCLM4w6cRJuhBl1Aq29rFmKKLF
+         Y3RPyifxi6LksLivRdY9VHzVKWDge2mGn+mZgyPPRAFmzU9O8rnfgarGbu8DvrT9zKjH
+         UWdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8rZfGXhxPnCPDkK85iJOEuPuLqVvxqMTkD5qg+n6vFE=;
+        b=SLXr8AnbT4JFcCBPEQdRffY9yhLg3PTxBK4QVgM17PXlSu+g+MeBlwvDTlFfQH+qje
+         40RKHpDNxC4/g2nnEBCr0uqZgxe1tBFAyVu/og0w4hAqkstXhp+TAWic6sURVNPXn7D+
+         w7HBZI4niRphAv/ZXK9del5M0qpgtMOCrhlZnpTjIgML0ghAMaoxP7C4chi1whej5j7R
+         aZcYRu3O0Zf7a9ejxDbC4vC4Q9aKe3GXiYNXLiK90CytSA5o4yi3mqrCcGjzK3u57onw
+         6cCsfCWMFSEwqFwHpv7EMHfKTh1w3C1lY3pA6x2l9VZm6h7H+3XD6JwfhE5SbxbX1trQ
+         xP9Q==
+X-Gm-Message-State: AOAM531+jPfoe0GJzKUaY5rH7iKD8XTh04PcV8BG0dd9USHudDpMCdos
+        anPLU9msFaF9RN11uc6zWqEWbQ==
+X-Google-Smtp-Source: ABdhPJz8fH+V3mM/o8K64N2LM9Q+QkXZ5GKXul5fdPvPPlho9Q/gScHtkAfHqSoFrBcHb+V7ldDtkg==
+X-Received: by 2002:a05:6a02:10d:b0:381:f4c8:ad26 with SMTP id bg13-20020a056a02010d00b00381f4c8ad26mr4335657pgb.135.1648134695746;
+        Thu, 24 Mar 2022 08:11:35 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id x2-20020a63aa42000000b0038265eb2495sm2943406pgo.88.2022.03.24.08.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Mar 2022 08:11:34 -0700 (PDT)
+Date:   Thu, 24 Mar 2022 09:11:32 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     bjorn.andersson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] remoteproc: imx_rproc: Ignore create mem entry for
+ resource table
+Message-ID: <20220324151132.GA3514576@p14s>
+References: <20220308065754.3355-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH V2 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Content-Language: en-US
-To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
- <1642534993-6552-4-git-send-email-quic_deesin@quicinc.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <1642534993-6552-4-git-send-email-quic_deesin@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-23_07,2022-03-22_01,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220308065754.3355-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 1/18/22 20:43, Deepak Kumar Singh wrote:
-> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
-> to get/set the low level transport signals.
+On Tue, Mar 08, 2022 at 02:57:54PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> Resource table will not be used for memory allocation, no need to create
+> rproc mem entry.
+> 
+> Fixes: b29b4249f8f0c ("remoteproc: imx_rproc: add i.MX specific parse fw hook")
+
+
+https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst
+
+
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/rpmsg/rpmsg_char.c | 47 ++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 43 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index b5907b8..c03a118 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -19,6 +19,7 @@
->  #include <linux/rpmsg.h>
->  #include <linux/skbuff.h>
->  #include <linux/slab.h>
-> +#include <linux/termios.h>
->  #include <linux/uaccess.h>
->  #include <uapi/linux/rpmsg.h>
+> V2:
+>  Add Fixes tag
+>  Separate the patch from https://patchwork.kernel.org/project/linux-remoteproc/patch/20220111033333.403448-7-peng.fan@oss.nxp.com/
+>  Address typo
+> 
+>  drivers/remoteproc/imx_rproc.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 7a096f1891e6..f2bfc9077c19 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -423,6 +423,9 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>  		if (!strcmp(it.node->name, "vdev0buffer"))
+>  			continue;
 >  
-> @@ -74,6 +75,9 @@ struct rpmsg_eptdev {
->  	spinlock_t queue_lock;
->  	struct sk_buff_head queue;
->  	wait_queue_head_t readq;
+> +		if (!strncmp(it.node->name, "rsc-table", strlen("rsc-table")))
+> +			continue;
 > +
-> +	u32 rsigs;
-> +	bool sig_pending;
->  };
->  
->  static int rpmsg_eptdev_destroy(struct device *dev, void *data)
-> @@ -112,7 +116,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
->  	skb_queue_tail(&eptdev->queue, skb);
->  	spin_unlock(&eptdev->queue_lock);
->  
-> -	/* wake up any blocking processes, waiting for new data */
-> +	wake_up_interruptible(&eptdev->readq);
-> +
-> +	return 0;
-> +}
-> +
-> +static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv, u32 sigs)
-> +{
-> +	struct rpmsg_eptdev *eptdev = priv;
-> +
-> +	eptdev->rsigs = sigs;
-> +	eptdev->sig_pending = true;
-> +
->  	wake_up_interruptible(&eptdev->readq);
-
-Regarding the Glink code, the callback is used to be informed that the remote
-is ready to send (DSR) and to receive (CTS or DSR)
-So I suppose that the transmission should also be conditioned by the sig_pending
-
-That said tell me if I'm wrong but look to me that what is implemented here is the 
- hardware flow control already managed by the TTY interface. What about using the
-TTY interface in this case?
-
-And What about using the "software flow control" instead? [1]
-
-[1] https://en.wikipedia.org/wiki/Software_flow_control
-
->  
->  	return 0;
-> @@ -137,6 +152,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->  		return -EINVAL;
->  	}
->  
-> +	ept->sig_cb = rpmsg_sigs_cb;
->  	eptdev->ept = ept;
->  	filp->private_data = eptdev;
->  
-> @@ -155,6 +171,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
->  		eptdev->ept = NULL;
->  	}
->  	mutex_unlock(&eptdev->ept_lock);
-> +	eptdev->sig_pending = false;
->  
->  	/* Discard all SKBs */
->  	skb_queue_purge(&eptdev->queue);
-> @@ -265,6 +282,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
->  	if (!skb_queue_empty(&eptdev->queue))
->  		mask |= EPOLLIN | EPOLLRDNORM;
->  
-> +	if (eptdev->sig_pending)
-> +		mask |= EPOLLPRI;
-> +
->  	mask |= rpmsg_poll(eptdev->ept, filp, wait);
->  
->  	return mask;
-> @@ -274,11 +294,30 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->  			       unsigned long arg)
->  {
->  	struct rpmsg_eptdev *eptdev = fp->private_data;
-> +	bool set;
-> +	u32 val;
-> +	int ret;
->  
-> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
-> -		return -EINVAL;
-> +	switch (cmd) {
-> +	case TIOCMGET:
-> +		eptdev->sig_pending = false;
-> +		ret = put_user(eptdev->rsigs, (int __user *)arg);
-> +		break;
-> +	case TIOCMSET:
-> +		ret = get_user(val, (int __user *)arg);
-> +		if (ret)
-> +			break;
-> +		set = (val & TIOCM_DTR) ? true : false;
-> +		ret = rpmsg_set_flow_control(eptdev->ept, set);
-> +		break;
-
-Could this directly be handled by the driver on open close?
-If application wants to suspend the link it could just close de /dev/rpmsgX.
- 
-Regards,
-Arnaud
-
-> +	case RPMSG_DESTROY_EPT_IOCTL:
-> +		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-> +	}
->  
-> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
-> +	return ret;
->  }
->  
->  static const struct file_operations rpmsg_eptdev_fops = {
+>  		rmem = of_reserved_mem_lookup(it.node);
+>  		if (!rmem) {
+>  			dev_err(priv->dev, "unable to acquire memory-region\n");
+> -- 
+> 2.30.0
+> 
