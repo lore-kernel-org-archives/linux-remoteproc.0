@@ -2,178 +2,159 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EBCC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Mar 2022 15:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 126ACC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Mar 2022 16:02:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376653AbiCYQB2 (ORCPT
+        id S1376757AbiCYQDx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 25 Mar 2022 12:01:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51594 "EHLO
+        Fri, 25 Mar 2022 12:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359620AbiCYQB2 (ORCPT
+        with ESMTP id S1376730AbiCYQDs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 25 Mar 2022 12:01:28 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15882583B2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 08:59:53 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id o8so6768394pgf.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 08:59:53 -0700 (PDT)
+        Fri, 25 Mar 2022 12:03:48 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA8C8A0BE1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 09:02:13 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id r13so16259804ejd.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 09:02:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Jbwom5SIfVz2t3Itg2pHeOR73ypDeLXyJJwPCqRaeV4=;
-        b=fSgSIJEw8LXAH0vR2BDKGHY9QcSoC70ZJdOaT8shmp236orB0hEICzqO2IastwqHH9
-         excwaFADB+juHbEny3EQyDCWc7rHzFxuK840EPYGLLPBalYCP6e2NQJBRAmhM00Wxn9R
-         GLdY51KhDPQePVarSJVUnuq3FtueA3hdjn29nngMLOA6eYWaE/Ub17hidrCY6w7VltJG
-         QF4z6fWrsX5B2FwlA45Zi7xNbI9PohCNv9pxW82OGWh/8TMPuQFNNaUcGf2uEx1kHA+A
-         1EAkv0zfhieTQ0u4vzKIOvUjbAaXdbHm5wPG8093xTKGobrH2mr1kZIxGmMfe77NPMVA
-         pB1g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dt8vhtKiPbsbCcDg8xMi/AmQ4OjbxYDQR91N6G2Nv8U=;
+        b=eP8Y1tjZ6Fdx7y7CstaqPOR2P+1OEINFk5F6Bwa9lUeoWBBkhaHuJtY6k8zbPtWyCg
+         f7XoErNmsZauAx5rC9HMwlTYgDfa3BqTJA0Cv1TAsGrAi8mQsFjLR08Enal2k/SCXm5B
+         aUCn20OP1arKyyd9nvLs9BSAsuWvEvzBmoP06jeVWquGZvlVHOfV2RjVYj2xx8jyp/JN
+         3Unv+3DTQsp3tzz0yV2O26ZTcjFz1Q5zv0HXS3E2N071d3WYozi3OD12Dobq3GBagrAH
+         JlDoZBVgf8+uvzc8H5aGLis/dw8UzksD2rlTlEq19nCuo+U20FfMPH6sO+7D7qq2QMqy
+         incw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Jbwom5SIfVz2t3Itg2pHeOR73ypDeLXyJJwPCqRaeV4=;
-        b=7RBpC0K5bW4dKFr+7jwURzmCNUWjMA77Dt+S6PbmNucjd/D1AU+Qr5fsPYE8i8cCsC
-         2FuXOvMyNzxgqvAS732Lo0519erTlU+lDelFY0khlr2DjUMr7dRQ/JDQq/UNFlbC9jQx
-         LI5rtK7qlbXSkcIu10UjP1KHkGxeB42doBddFLSLwdsEwFWyhhqNkLSMUadtg9akBnlW
-         WVur8X1v4ZgvkdDRMj+auoHrnGx4Hp6Y2SfnYo/aEgB5KcEBcIbbbDFvDpWAi1dzj9XH
-         FE3qzoZ6SSf9Ie9UE33IYdAtnCHvZ9XaReODY9sT8fu+pqmO2kSeGHTL335ZVG19Y37k
-         eWuA==
-X-Gm-Message-State: AOAM533XH1WuRzO3rVfyBPLt4mR7hjqBaD1bN8moGHr7aTSRcQo3cJKw
-        /sxCy5ovepfIB2DjpZV71ACkOw==
-X-Google-Smtp-Source: ABdhPJwvrLFuQMKm+9L94zZqosStlskB9ebpFokhMd8iQ/vYsFDKdzJXkQaRNdxrSfgLvC3IGvoiDw==
-X-Received: by 2002:a65:6d87:0:b0:374:2525:dcb0 with SMTP id bc7-20020a656d87000000b003742525dcb0mr234315pgb.248.1648223993163;
-        Fri, 25 Mar 2022 08:59:53 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id x2-20020a63aa42000000b0038265eb2495sm5724454pgo.88.2022.03.25.08.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Mar 2022 08:59:52 -0700 (PDT)
-Date:   Fri, 25 Mar 2022 09:59:49 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Subject: Re: [PATCH v9 00/11] Restructure the rpmsg_char driver and introduce
- rpmsg_ctrl driver
-Message-ID: <20220325155949.GA3576184@p14s>
-References: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
- <239eeeea-af04-7163-61ca-436c6632c2a8@foss.st.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dt8vhtKiPbsbCcDg8xMi/AmQ4OjbxYDQR91N6G2Nv8U=;
+        b=aNcvS+G7bNx58PH//CrwT3zdTdwXQweuBgX5mbE2XLSjWG1RXm+rqjCDGpEFhy/8XB
+         85Y+qAK/Oh9HC8RyHmubM7lOjr/bXS4VPlJFTmadDXmAPmKKJtDmUvi/vdTQKvwFFAko
+         xRPO2Fi3oQC6rucWz/ebqZbETtsaU8xT10JgtbcSuOOi5QkQMO0U5Bddj8q69pCU9oPP
+         Vw+hzUkLh9em/+hdNhHMICIdvy8/HQObhSmRfxF9opX5ntusLOs/ZDMetN1PyhqLDbEx
+         Eo2VHw5DRkTEPTty82NPTQvLiqPVm3TraNW+Ckoql9SF4fe+Sj9O7G9FAJZ81YTm+fZo
+         vIPw==
+X-Gm-Message-State: AOAM532QgHyT5RML3zNW0f6hV9HUEVjeyB7EYRro90tcMYQ90N2FX7r0
+        TJ2VB4/uw+kLuDRx7E6NNtTWxYp5QVhuDAcEH/DAbA==
+X-Google-Smtp-Source: ABdhPJzmBi+FlxvitVY57HS8NQh5UNF9rAYcKlF0M2lOGrob4PNv04aYCTE6rtAPsF1CNE1q/tI+Z+043IpaLxVk+7U=
+X-Received: by 2002:a17:906:7307:b0:6da:92db:c78f with SMTP id
+ di7-20020a170906730700b006da92dbc78fmr12327012ejc.35.1648224132413; Fri, 25
+ Mar 2022 09:02:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <239eeeea-af04-7163-61ca-436c6632c2a8@foss.st.com>
+References: <20220308065754.3355-1-peng.fan@oss.nxp.com> <20220324151132.GA3514576@p14s>
+ <DU0PR04MB9417991BDB9564321FC30EE7881A9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+In-Reply-To: <DU0PR04MB9417991BDB9564321FC30EE7881A9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 25 Mar 2022 10:02:00 -0600
+Message-ID: <CANLsYkyLyROGsUuzaxA7Kx2ouj48NHM1t84DeyOiJmDiDMTgHA@mail.gmail.com>
+Subject: Re: [PATCH V2] remoteproc: imx_rproc: Ignore create mem entry for
+ resource table
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Mar 24, 2022 at 06:36:23PM +0100, Arnaud POULIQUEN wrote:
-> Hi Bjorn,
-> 
-> On 1/24/22 11:25, Arnaud Pouliquen wrote:
-> > Updates from V8 [1]:
-> > - rebase on 5.17-rc1 + rpmsg char cdev release fixes[2][3]
-> > - updates based on Bjorn Andersson's comments:
-> >   - remove rpmsg_create_default_ept API, set directly the ept->priv in rpmsg_chrdev_probe
-> >     function.
-> >   - rework commit message in [8/9]rpmsg: char: Introduce the "rpmsg-raw" channel
-> > 
-> > Patchset description:
-> > 
-> > The current rpmsg_char module implements a /dev/rpmsg_ctrl interface that provides the ability to
-> > instantiate char devices (/dev/rpmsgX) associated with an rpmsg endpoint for communication with the
-> > remote processor.
-> > This implementation fits with QCOM rpmsg backend but not with the magement by chanel implemented
-> > in the generic rpmsg virtio backend.
-> > This series restructures the rpmsg_char driver to decorrelate the control part from the data part
-> > in order to improve its compatible with the rpmsg virtio backend.
-> > 
-> > Objective:
-> > - Expose a /dev/rpmsg_ctrlX interface for the application that is no longer dedicated to the
-> >   rpmsg_char but generalized to all rpmsg services. This offers capability to create and destroy
-> >   rpmsg channels from a user's application initiative (using the new RPMSG_CREATE_DEV_IOCTL and
-> >   RPMSG_DESTROY_DEV_IOCTL controls).
-> >   An application will be able to create/establish an rpmsg communication channel to communicate
-> >   with the remote processor, and not only wait the remote processor initiative.
-> >   This is interesting for example to establish a temporary communication link for diagnosis,
-> >   calibration, debugging... or instantiate  new data flows on some user actions.
-> > - Add capability to probe the rpmsg_char device at the initiative of the remote processor
-> >  (rpmsg service announcement mechanism).
-> >   This allows platforms based on the rpmsg virtio backend to create the /dev/rpmgX interface with
-> >   a rpmsg name service announcement.
-> > 
-> > Subsets:
-> >   - Extract the control part of the char dev and create the rpmsg_ctrl.c file (patches 1 to 6)
-> >   - Introduce the "rpmsg-raw" channel in rpmsg_char(patches 7 to 10)
-> >   - Introduce the RPMSG_CREATE_DEV_IOCTL IOCTL and RPMSG_DESTROY_DEV_IOCTL to instantiate RPMsg
-> >     devices (patch 11)
-> >     The application can then create or release a channel by specifying:
-> >        - the name service of the device to instantiate.   
-> >        - the source address.
-> >        - the destination address.
-> > 
-> > This series has be applied and tested on 'commit e783362eb54c ("Linux 5.17-rc1") +
-> > rpmsg_char cdev release fixes [2][3]
-> > 
-> > [1] https://lkml.org/lkml/2021/12/7/186
-> > [2] https://lkml.org/lkml/2022/1/10/1129
-> > [3] https://lkml.org/lkml/2022/1/10/1130
-> > 
-> > Arnaud Pouliquen (11):
-> >   rpmsg: char: Export eptdev create and destroy functions
-> >   rpmsg: Create the rpmsg class in core instead of in rpmsg char
-> >   rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
-> 
-> 
-> >   arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-> >   RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-> >   arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
-> 
-> Thank you for merging this series!
-> 
-> I can't see in the "for next" branch[1] the 3 patches above that update configs
-> Are you expecting a specific action from me?   
+On Thu, 24 Mar 2022 at 20:02, Peng Fan <peng.fan@nxp.com> wrote:
+>
+> Hi Mathieu,
+>
+> > Subject: Re: [PATCH V2] remoteproc: imx_rproc: Ignore create mem entry for
+> > resource table
+> >
+> > On Tue, Mar 08, 2022 at 02:57:54PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Resource table will not be used for memory allocation, no need to
+> > > create rproc mem entry.
+> > >
+> > > Fixes: b29b4249f8f0c ("remoteproc: imx_rproc: add i.MX specific parse
+> > > fw hook")
+> >
+> >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Felixir.b
+> > ootlin.com%2Flinux%2Fv5.17%2Fsource%2FDocumentation%2Fprocess%2Fsu
+> > bmitting-patches.rst&amp;data=04%7C01%7Cpeng.fan%40nxp.com%7Cae62
+> > e633010048f972db08da0da89836%7C686ea1d3bc2b4c6fa92cd99c5c301635
+> > %7C0%7C1%7C637837315009092474%7CUnknown%7CTWFpbGZsb3d8eyJW
+> > IjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C
+> > 3000&amp;sdata=Xod3YxSRW8h2WXdnpu1WX4DzRpCTnYE9gVlt9HXMlnU%3
+> > D&amp;reserved=0
+>
+> Sorry, I could not get your point of which part conflicts with the patch rules.
+> Please clarify and I'll improve.
 
-Those patches will need to go through the Arm, RISC-V and arm64 subsystems.  The
-mailing list for those subsystems has been CC'ed but that isn't enough to get
-the maintainers' attention.  
+The commitID in the "Fixes" tag should be 12 characters rather than 13
+as you have above.
 
-I suggest sending another patchset with those 3 patches that CC the maintainers
-directly.  For the Arm patch I suggest adding Linus Walleij.
-
-Thanks,
-Mathieu
-
-> 
-> [1]https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
-> 
-> Regards,
-> Arnaud
-> 
-> >   rpmsg: Update rpmsg_chrdev_register_device function
-> >   rpmsg: char: Refactor rpmsg_chrdev_eptdev_create function
-> >   rpmsg: char: Add possibility to use default endpoint of the rpmsg
-> >     device
-> >   rpmsg: char: Introduce the "rpmsg-raw" channel
-> >   rpmsg: ctrl: Introduce new RPMSG_CREATE/RELEASE_DEV_IOCTL controls
-> > 
-> >  arch/arm/configs/qcom_defconfig   |   1 +
-> >  arch/arm64/configs/defconfig      |   1 +
-> >  arch/riscv/configs/defconfig      |   1 +
-> >  arch/riscv/configs/rv32_defconfig |   1 +
-> >  drivers/rpmsg/Kconfig             |   8 +
-> >  drivers/rpmsg/Makefile            |   1 +
-> >  drivers/rpmsg/qcom_glink_native.c |   2 +-
-> >  drivers/rpmsg/qcom_smd.c          |   2 +-
-> >  drivers/rpmsg/rpmsg_char.c        | 231 +++++++++++-----------------
-> >  drivers/rpmsg/rpmsg_char.h        |  46 ++++++
-> >  drivers/rpmsg/rpmsg_core.c        |  15 +-
-> >  drivers/rpmsg/rpmsg_ctrl.c        | 243 ++++++++++++++++++++++++++++++
-> >  drivers/rpmsg/rpmsg_internal.h    |  10 +-
-> >  drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
-> >  include/uapi/linux/rpmsg.h        |  10 ++
-> >  15 files changed, 419 insertions(+), 155 deletions(-)
-> >  create mode 100644 drivers/rpmsg/rpmsg_char.h
-> >  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
-> > 
+>
+> Thanks,
+> Peng.
+>
+>
+> >
+> >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >
+> > > V2:
+> > >  Add Fixes tag
+> > >  Separate the patch from
+> > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > >
+> > hwork.kernel.org%2Fproject%2Flinux-remoteproc%2Fpatch%2F20220111033
+> > 333
+> > > .403448-7-peng.fan%40oss.nxp.com%2F&amp;data=04%7C01%7Cpeng.fan
+> > %40nxp.
+> > >
+> > com%7Cae62e633010048f972db08da0da89836%7C686ea1d3bc2b4c6fa92cd
+> > 99c5c301
+> > >
+> > 635%7C0%7C1%7C637837315009092474%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000&am
+> > p;sdata
+> > >
+> > =CYL9grwXHpUud4qpzFAEijOWv%2BehvefwyZ4aU02wJnw%3D&amp;reserv
+> > ed=0
+> > >  Address typo
+> > >
+> > >  drivers/remoteproc/imx_rproc.c | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > b/drivers/remoteproc/imx_rproc.c index 7a096f1891e6..f2bfc9077c19
+> > > 100644
+> > > --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -423,6 +423,9 @@ static int imx_rproc_prepare(struct rproc *rproc)
+> > >             if (!strcmp(it.node->name, "vdev0buffer"))
+> > >                     continue;
+> > >
+> > > +           if (!strncmp(it.node->name, "rsc-table", strlen("rsc-table")))
+> > > +                   continue;
+> > > +
+> > >             rmem = of_reserved_mem_lookup(it.node);
+> > >             if (!rmem) {
+> > >                     dev_err(priv->dev, "unable to acquire memory-region\n");
+> > > --
+> > > 2.30.0
+> > >
