@@ -2,209 +2,213 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE7EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Mar 2022 17:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137DDC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Mar 2022 17:35:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230181AbiCYRaN (ORCPT
+        id S229763AbiCYRg5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 25 Mar 2022 13:30:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57498 "EHLO
+        Fri, 25 Mar 2022 13:36:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242771AbiCYR3J (ORCPT
+        with ESMTP id S230476AbiCYRg5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 25 Mar 2022 13:29:09 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E261EE4C3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 10:27:34 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id k10so10048989edj.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 10:27:34 -0700 (PDT)
+        Fri, 25 Mar 2022 13:36:57 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E76FD5EB7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 10:35:15 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id k14so7010025pga.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 10:35:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5u5urieHuzI+j+3ptMC7YQF9ejNK0x/2mefsP+1XvoI=;
-        b=td+Q9FritYydKZ00NXFPur1UtdfOYZxpUyjjY6Ta+eBmdSMxOw7YHU1HVnIxn2PBcc
-         NnKq2Cfv0fZehmM4agQ50f4tBlHR2RO27mHh7Y0xIsmN3OuHrsWNpiWb5LSUA8WAgzCV
-         kukrfW6fIDMEDthSVQSv8Sh0+gOyoABoSYsQqbOWE7mdz+196jTu9N83ybyW0zAX4fS6
-         f6zO0GbAFjFZYlnqaHhZc9CvSVJGSge/IMbA8QmjzQUCtvvoQjkL3lfjDotS+r7FzRTO
-         bHY6aycr1Oyu4PYAk7nqRAIcprR6Kz107RLKEUKN8WEmGmIFEz4Wd10pArEVXDUv8WVc
-         2sSA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=WDLVL2CBtTtmZ03hvae7Gda3UiodG88S9fzgPpRXpvw=;
+        b=OiWmJSqsd56fJnsMw7vy14nT7y4RqvdUDtzT0hRVl8eJM8j+kwYhzyKSXtH1X0btj+
+         gF6iVne9zsezOcHNXAWwuNmE+7+4oXfeQ3zzCnBO1EMiKA0V4JaqdB1fUHTpBZyfP16f
+         mv5riwoU/Uzt2nQrsxTceBnO5Q8peVyJiIhNvjpN/r8ZKS/IRxBoZAY4eQgLXM1yU1wf
+         RuyTp3+5TNjAhKRzpedRkXInlLXr+vIIQN8Ju/9g6WcTI/Q1Gx2gMlDHTgUo7q67SlIA
+         XglOP+lMKdSyY9n3ZWaZDOe94rZRoU4QCqE3q5wD7lW1aIZ4E8iuhVq7n2Jf9qIqBUb6
+         mz9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5u5urieHuzI+j+3ptMC7YQF9ejNK0x/2mefsP+1XvoI=;
-        b=evwgyoZp9DbXJaL+i/4A1LX6c4VN0e9qDNCSXikKeeOKHUsSXhQ3OIWCv4+F0+V9wG
-         IIoIeBbFgiJNMvAZaNH2oqK44tBewFvQOTCDuVqSsXt55xyPth9QG12wSdnVF7NH0ieZ
-         qeYyUIomsnNjNnGni/+Pii90J3VhvuOEM/m+lKWY1VPoCQwz3AB36t5TuFEYPdYSdUdZ
-         u4xqx+rcvQ3EYmOdHKBbqfyl/OXGsRBQVFNMfk0oJH1NWlCm6q8jsO1yiGH5Yvll5Ttm
-         Dh4kgnbFqkkb8oftaE1VetrkWDTPoekeUQIYSnlHfF/n/MXdN13+sx/WtRAKy7FqaO9J
-         dGMw==
-X-Gm-Message-State: AOAM531mP4vx/1Isfi2PrhgeLNxQE0laOA8D0ECiAm/KB54xysQ1zt2j
-        ifA6eqM704rN/F7h6mHOCCcKfqNf898XvgwYaC0G7g==
-X-Google-Smtp-Source: ABdhPJwU6bVBzdB9hUo276FW6eScvnFfXOeST7zwDzISPHzItI1V/FY6xS9IhW3mf0B3wbCEuxFFsgDrBDaBLtZ7QqM=
-X-Received: by 2002:a05:6402:27d2:b0:419:1a3d:442b with SMTP id
- c18-20020a05640227d200b004191a3d442bmr14004784ede.409.1648229252721; Fri, 25
- Mar 2022 10:27:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220124102524.295783-1-arnaud.pouliquen@foss.st.com>
- <239eeeea-af04-7163-61ca-436c6632c2a8@foss.st.com> <20220325155949.GA3576184@p14s>
- <999a0caf-0c27-d894-63a6-9708c9221433@foss.st.com>
-In-Reply-To: <999a0caf-0c27-d894-63a6-9708c9221433@foss.st.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WDLVL2CBtTtmZ03hvae7Gda3UiodG88S9fzgPpRXpvw=;
+        b=HdMH7pUg9T3h3HBUGP69zXwjF5M2i7rcuMZKHHCvLZgneKYzzFLdmD5D5xmz0iMpep
+         DNvySLrCEUwxVyp3gnakBHNRdZbmUVgIlLPPtOOuvxN/s98XOq4lFnPVANMjEpO2uePd
+         6iwZoiTDYnBfu6TbK5CD2TpVxxFPZenvtSUA0zP0qAt8MpjO7k2WhZC4MuuAVUT5gf4I
+         HnZTZv5WcNjYGzslJTfVlL7vuuAezv/xVx8F18F3FxF0WIO7zqCzkHfR3H8z6ZZ1G8tL
+         hanwkWCedkMfuhyj3NAn8TC3sw+/k/Wy8a0RRJicJA95HIzowYXqYTMuSC5/Kpd2PVll
+         cYuw==
+X-Gm-Message-State: AOAM5301uNhaVR946z9MzU7k/zLjUKm+4Rbks7Rb56qdy3mF/G3wstAZ
+        l8ZNMQppFpnLyfIL5O4ikrksNFnMbwJq9w==
+X-Google-Smtp-Source: ABdhPJx4UuZpPPNTjdIKS58siaD7XKd04M0BmM0IvWb3s03mLNTfP7MWSWNilRuPWBWICiRC4ete5Q==
+X-Received: by 2002:a05:6a00:98e:b0:4fb:1162:b2a5 with SMTP id u14-20020a056a00098e00b004fb1162b2a5mr4155395pfg.12.1648228956842;
+        Fri, 25 Mar 2022 10:22:36 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id 16-20020a17090a005000b001c7511dc31esm6674946pjb.41.2022.03.25.10.22.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Mar 2022 10:22:35 -0700 (PDT)
+Date:   Fri, 25 Mar 2022 11:22:33 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 25 Mar 2022 11:27:21 -0600
-Message-ID: <CANLsYkxTSBwmqOgDb8jxnkMjgXkDEr8MkQ7fhAHSiMs8QCYFrw@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] Restructure the rpmsg_char driver and introduce
- rpmsg_ctrl driver
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, julien.massot@iot.bzh
-Content-Type: text/plain; charset="UTF-8"
+To:     "S.J. Wang" <shengjiu.wang@nxp.com>
+Cc:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>
+Subject: Re: [PATCH] remoteproc: core: Remove state checking before changing
+ state
+Message-ID: <20220325172233.GB3576184@p14s>
+References: <PAXPR04MB9089EC1B959187335D00953BE31A9@PAXPR04MB9089.eurprd04.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9089EC1B959187335D00953BE31A9@PAXPR04MB9089.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 25 Mar 2022 at 11:05, Arnaud POULIQUEN
-<arnaud.pouliquen@foss.st.com> wrote:
->
->
->
-> On 3/25/22 16:59, Mathieu Poirier wrote:
-> > On Thu, Mar 24, 2022 at 06:36:23PM +0100, Arnaud POULIQUEN wrote:
-> >> Hi Bjorn,
-> >>
-> >> On 1/24/22 11:25, Arnaud Pouliquen wrote:
-> >>> Updates from V8 [1]:
-> >>> - rebase on 5.17-rc1 + rpmsg char cdev release fixes[2][3]
-> >>> - updates based on Bjorn Andersson's comments:
-> >>>   - remove rpmsg_create_default_ept API, set directly the ept->priv in rpmsg_chrdev_probe
-> >>>     function.
-> >>>   - rework commit message in [8/9]rpmsg: char: Introduce the "rpmsg-raw" channel
-> >>>
-> >>> Patchset description:
-> >>>
-> >>> The current rpmsg_char module implements a /dev/rpmsg_ctrl interface that provides the ability to
-> >>> instantiate char devices (/dev/rpmsgX) associated with an rpmsg endpoint for communication with the
-> >>> remote processor.
-> >>> This implementation fits with QCOM rpmsg backend but not with the magement by chanel implemented
-> >>> in the generic rpmsg virtio backend.
-> >>> This series restructures the rpmsg_char driver to decorrelate the control part from the data part
-> >>> in order to improve its compatible with the rpmsg virtio backend.
-> >>>
-> >>> Objective:
-> >>> - Expose a /dev/rpmsg_ctrlX interface for the application that is no longer dedicated to the
-> >>>   rpmsg_char but generalized to all rpmsg services. This offers capability to create and destroy
-> >>>   rpmsg channels from a user's application initiative (using the new RPMSG_CREATE_DEV_IOCTL and
-> >>>   RPMSG_DESTROY_DEV_IOCTL controls).
-> >>>   An application will be able to create/establish an rpmsg communication channel to communicate
-> >>>   with the remote processor, and not only wait the remote processor initiative.
-> >>>   This is interesting for example to establish a temporary communication link for diagnosis,
-> >>>   calibration, debugging... or instantiate  new data flows on some user actions.
-> >>> - Add capability to probe the rpmsg_char device at the initiative of the remote processor
-> >>>  (rpmsg service announcement mechanism).
-> >>>   This allows platforms based on the rpmsg virtio backend to create the /dev/rpmgX interface with
-> >>>   a rpmsg name service announcement.
-> >>>
-> >>> Subsets:
-> >>>   - Extract the control part of the char dev and create the rpmsg_ctrl.c file (patches 1 to 6)
-> >>>   - Introduce the "rpmsg-raw" channel in rpmsg_char(patches 7 to 10)
-> >>>   - Introduce the RPMSG_CREATE_DEV_IOCTL IOCTL and RPMSG_DESTROY_DEV_IOCTL to instantiate RPMsg
-> >>>     devices (patch 11)
-> >>>     The application can then create or release a channel by specifying:
-> >>>        - the name service of the device to instantiate.
-> >>>        - the source address.
-> >>>        - the destination address.
-> >>>
-> >>> This series has be applied and tested on 'commit e783362eb54c ("Linux 5.17-rc1") +
-> >>> rpmsg_char cdev release fixes [2][3]
-> >>>
-> >>> [1] https://lkml.org/lkml/2021/12/7/186
-> >>> [2] https://lkml.org/lkml/2022/1/10/1129
-> >>> [3] https://lkml.org/lkml/2022/1/10/1130
-> >>>
-> >>> Arnaud Pouliquen (11):
-> >>>   rpmsg: char: Export eptdev create and destroy functions
-> >>>   rpmsg: Create the rpmsg class in core instead of in rpmsg char
-> >>>   rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl
-> >>
-> >>
-> >>>   arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-> >>>   RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-> >>>   arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
-> >>
-> >> Thank you for merging this series!
-> >>
-> >> I can't see in the "for next" branch[1] the 3 patches above that update configs
-> >> Are you expecting a specific action from me?
-> >
-> > Those patches will need to go through the Arm, RISC-V and arm64 subsystems.  The
-> > mailing list for those subsystems has been CC'ed but that isn't enough to get
-> > the maintainers' attention.
-> >
-> > I suggest sending another patchset with those 3 patches that CC the maintainers
-> > directly.  For the Arm patch I suggest adding Linus Walleij.
->
-> I will do what you suggest.
->
-> My concerns in this case is about the scheduling of the integration.
-> I suppose that sending a second patchset for configs requests that the
-> rpmsg char series is first applied
-
-Right, but the rpmsg_char series has been applied.
-
-> But on the other hand this may lead to some failures as the RPMSG_CTRL is now
-> needed to create the /dev/rpmsg_ctrl0
->
-
-Possibly, but right now there is no other way.
-
-> so probably, I need to do this as fixup patch.
->
-
-Indeed, this can be applied as a fix in rc1.
-
-> FYI the RISC-V patch as been reviewed by Anup Patel
->
-
-... but Anup does not maintain any of the defconfig files.
-
-> Thanks,
-> Arnaud
->
-> >
+On Fri, Mar 25, 2022 at 03:44:20AM +0000, S.J. Wang wrote:
+> Hi
+> 
+> > >
+> > > There is no mutex protecting of these state checking, which can't
+> > > garantee there is no another instance is trying to do same operation.
+> > >
+> > > The reference counter rproc->power is used to manage state changing
+> > > and there is mutex protection in each operation function for multi
+> > > instance case.
+> > >
+> > > So remove this state checking in rproc_cdev_write() and state_store(),
+> > > just let reference counter rproc->power to manage the behaviors.
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_cdev.c  | 11 -----------
+> > > drivers/remoteproc/remoteproc_sysfs.c | 11 -----------
+> > >  2 files changed, 22 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_cdev.c
+> > > b/drivers/remoteproc/remoteproc_cdev.c
+> > > index 906ff3c4dfdd..687f205fd70a 100644
+> > > --- a/drivers/remoteproc/remoteproc_cdev.c
+> > > +++ b/drivers/remoteproc/remoteproc_cdev.c
+> > > @@ -32,21 +32,10 @@ static ssize_t rproc_cdev_write(struct file *filp,
+> > const char __user *buf, size_
+> > >                 return -EFAULT;
+> > >
+> > >         if (!strncmp(cmd, "start", len)) {
+> > > -               if (rproc->state == RPROC_RUNNING ||
+> > > -                   rproc->state == RPROC_ATTACHED)
+> > > -                       return -EBUSY;
+> > > -
+> > >                 ret = rproc_boot(rproc);
+> > >         } else if (!strncmp(cmd, "stop", len)) {
+> > > -               if (rproc->state != RPROC_RUNNING &&
+> > > -                   rproc->state != RPROC_ATTACHED)
+> > > -                       return -EINVAL;
+> > > -
+> > >                 ret = rproc_shutdown(rproc);
+> > >         } else if (!strncmp(cmd, "detach", len)) {
+> > > -               if (rproc->state != RPROC_ATTACHED)
+> > > -                       return -EINVAL;
+> > > -
+> > >                 ret = rproc_detach(rproc);
+> > >         } else {
+> > >                 dev_err(&rproc->dev, "Unrecognized option\n"); diff
+> > > --git a/drivers/remoteproc/remoteproc_sysfs.c
+> > > b/drivers/remoteproc/remoteproc_sysfs.c
+> > > index 51a04bc6ba7a..8c7ea8922638 100644
+> > > --- a/drivers/remoteproc/remoteproc_sysfs.c
+> > > +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> > > @@ -194,23 +194,12 @@ static ssize_t state_store(struct device *dev,
+> > >         int ret = 0;
+> > >
+> > >         if (sysfs_streq(buf, "start")) {
+> > > -               if (rproc->state == RPROC_RUNNING ||
+> > > -                   rproc->state == RPROC_ATTACHED)
+> > > -                       return -EBUSY;
+> > > -
+> > 
+> > As per my previous comment the above conditions need to be moved into
+> > rproc_boot().
+> > 
+> > >                 ret = rproc_boot(rproc);
+> > >                 if (ret)
+> > >                         dev_err(&rproc->dev, "Boot failed: %d\n", ret);
+> > >         } else if (sysfs_streq(buf, "stop")) {
+> > > -               if (rproc->state != RPROC_RUNNING &&
+> > > -                   rproc->state != RPROC_ATTACHED)
+> > > -                       return -EINVAL;
+> > > -
+> > >                 ret = rproc_shutdown(rproc);
+> > >         } else if (sysfs_streq(buf, "detach")) {
+> > > -               if (rproc->state != RPROC_ATTACHED)
+> > > -                       return -EINVAL;
+> > > -
+> > 
+> > This patch should have been part of a patch series with your other work sent
+> > on March 18th[1].
+> > 
 > > Thanks,
 > > Mathieu
-> >
-> >>
-> >> [1]https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git
-> >>
-> >> Regards,
-> >> Arnaud
-> >>
-> >>>   rpmsg: Update rpmsg_chrdev_register_device function
-> >>>   rpmsg: char: Refactor rpmsg_chrdev_eptdev_create function
-> >>>   rpmsg: char: Add possibility to use default endpoint of the rpmsg
-> >>>     device
-> >>>   rpmsg: char: Introduce the "rpmsg-raw" channel
-> >>>   rpmsg: ctrl: Introduce new RPMSG_CREATE/RELEASE_DEV_IOCTL controls
-> >>>
-> >>>  arch/arm/configs/qcom_defconfig   |   1 +
-> >>>  arch/arm64/configs/defconfig      |   1 +
-> >>>  arch/riscv/configs/defconfig      |   1 +
-> >>>  arch/riscv/configs/rv32_defconfig |   1 +
-> >>>  drivers/rpmsg/Kconfig             |   8 +
-> >>>  drivers/rpmsg/Makefile            |   1 +
-> >>>  drivers/rpmsg/qcom_glink_native.c |   2 +-
-> >>>  drivers/rpmsg/qcom_smd.c          |   2 +-
-> >>>  drivers/rpmsg/rpmsg_char.c        | 231 +++++++++++-----------------
-> >>>  drivers/rpmsg/rpmsg_char.h        |  46 ++++++
-> >>>  drivers/rpmsg/rpmsg_core.c        |  15 +-
-> >>>  drivers/rpmsg/rpmsg_ctrl.c        | 243 ++++++++++++++++++++++++++++++
-> >>>  drivers/rpmsg/rpmsg_internal.h    |  10 +-
-> >>>  drivers/rpmsg/virtio_rpmsg_bus.c  |   2 +-
-> >>>  include/uapi/linux/rpmsg.h        |  10 ++
-> >>>  15 files changed, 419 insertions(+), 155 deletions(-)
-> >>>  create mode 100644 drivers/rpmsg/rpmsg_char.h
-> >>>  create mode 100644 drivers/rpmsg/rpmsg_ctrl.c
-> >>>
+> > 
+> > [1]. [PATCH] remoteproc: core: check rproc->power value before decreasing
+> > it
+> > 
+> 
+> Thanks for the comments.
+> I still have one question, if there are two instances independently to 'start'
+> 'stop' remoteproc, for example:
+> 
+> Instance1: echo start > /sys/class/remoteproc/remoteproc0/state
+> Instance2: echo start > /sys/class/remoteproc/remoteproc0/state
+> 
+> ...
+> 
+> Instance2: echo stop > /sys/class/remoteproc/remoteproc0/state
+> ...
+> Instance1: echo stop > /sys/class/remoteproc/remoteproc0/state
+> 
+> When instance2 'stop' the remoteproc, then instance1 will be impacted for
+> It still needs the service from remoteproc.
+> 
+> That's why I just removed of the checking state, didn't move them to
+> rproc_boot()/rproc_shutdown()/rproc_detach(). And in order to utilize
+> the reference counter (rproc->power) to handle the multi-instance case.
+
+Thanks for the exta information, now I understand the problem.  The above should
+be part of the changelog.
+
+There are two problems here:
+
+1) Dealing with race conditions when checking the state of a remote processor.
+2) Properly dealing with the remote processor's reference count.
+
+For the first one, state checks control the remote processor state machine and
+can't simply be removed.  They have to be brought inside the mutex lock in order
+to avoid race conditions when multiple users interact with the remote processor.
+
+For the second one, moving the rproc->state checks inside the mutex lock in
+rproc_shutdown() and rproc_detach() will work with the rproc->power check.
+
+The problem is with rproc_boot().  For (at least) two years now we have lost
+the capability to increase the rproc->power reference count from sysfs and the
+cdev interface due to the rproc-state checks in state_store() and
+rproc_cdev_write().  I think that should be corrected but it will introduce a
+user space visible change, which needs to be treated carefully.
+
+With the above in mind, please send a patchset that includes one patch that
+removes the rproc->state checks from the "start" command in state_store() and
+rproc_cdev_write().  The other patch should move the rproc->state checks for the
+"stop" and "detach" command inside rproc_shutdown() and rproc_detach().
+
+With that we can start a discussion on the best way to proceed.
+
+Thanks,
+Mathieu
+
+> 
+> 
+> Best regards
+> Wang Shengjiu
