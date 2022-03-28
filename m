@@ -2,450 +2,276 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F6BC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 25 Mar 2022 19:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D872DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Mar 2022 02:00:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232095AbiCYUB1 (ORCPT
+        id S235440AbiC1CCO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 25 Mar 2022 16:01:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33698 "EHLO
+        Sun, 27 Mar 2022 22:02:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231136AbiCYUBU (ORCPT
+        with ESMTP id S230063AbiC1CCN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 25 Mar 2022 16:01:20 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0F15208C35
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 12:51:32 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id p17so9198536plo.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Mar 2022 12:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oTqzv2UPtujHVYpyZcLI/63OCpmQDxQw7bKSYRwCs5k=;
-        b=wv7nxNPLSfH619eceF5nO0VS9wqz79VjQTUAQpN7SWrxh2GL9x9E+GVi60fcwHo3rO
-         mwzAevP90yjtLlAINPGdqxxh8PjOgSjNiOv0oKuJaMNrEqK0SCTs+t041AdIStpzuszN
-         e24MxfM7syCr9vtmSJQxyo4u5PWOBLhU2aLm92RKBJC2PoD6NkB/GCkBuGlUBt0Z0K+n
-         euBVSnCemWbG73hwLgDodtT3ZnQ6ECLp0N1MQe4jC8eTWbTdE1Lxr7bKmF4A42aOHKpj
-         fTzF0lAMb3EmT8lPN57v15yS7zOTX1vGvSNEkZZXlf3AGoLYzTGALPrisrlHLBTEd8Un
-         TwVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oTqzv2UPtujHVYpyZcLI/63OCpmQDxQw7bKSYRwCs5k=;
-        b=WeJyzViF4byhayEa6GsU9N1bjSllAVNyXEA0Vl2/w7kqF7zgSWPjyznkRAtOH8NbDE
-         3Oo+7N1UtCBHVDdWieLyf2+jF/nIb17b3OuMxXjyOZJlHM+5KYlH5GvPG3exhCQyrq6y
-         m95fbkhrgyyxQnk4WzjCANYO2Hagx9tKXLP+MsaStK9OuJgt8NblTytuIdsa70lZp8zw
-         //DLo1v3Acv47zUG6FyyFywue8DC9iaemuig6RBAZQyEPem44RRTOFEaUQiVTu3Z8WsS
-         dNbBROO+0EqO3kKjcJpcWpaRe7dkO/8H6N5ajST8dO0cvKGjPKVrLTAV8CJpOkGEivgh
-         Iz4Q==
-X-Gm-Message-State: AOAM532grtCs3JvVAbVvPBdB9Sw0oaZCx/b/LQhmmgoZL0r0aCzfNevc
-        A7OBeJHUgTZH7Y7501TXXM2eqw==
-X-Google-Smtp-Source: ABdhPJybadkw3hViCU03N1XlVUOkzDRcipdFGM9hD1BMpGH5sZQ1+Hoxn/p+NpUFwUKE9f/jeD0/Fw==
-X-Received: by 2002:a17:902:e846:b0:154:3d19:c5ae with SMTP id t6-20020a170902e84600b001543d19c5aemr13313141plg.87.1648237890581;
-        Fri, 25 Mar 2022 12:51:30 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id c63-20020a624e42000000b004fa9ee41b7bsm7264857pfb.217.2022.03.25.12.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Mar 2022 12:51:29 -0700 (PDT)
-Date:   Fri, 25 Mar 2022 13:51:27 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Subject: Re: [RFC PATCH v4 4/4] remoteproc: virtio: Create platform device
- for the remoteproc_virtio
-Message-ID: <20220325195127.GD3576184@p14s>
-References: <20220314170126.2333996-1-arnaud.pouliquen@foss.st.com>
- <20220314170126.2333996-5-arnaud.pouliquen@foss.st.com>
+        Sun, 27 Mar 2022 22:02:13 -0400
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2082.outbound.protection.outlook.com [40.107.22.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67DAC50079;
+        Sun, 27 Mar 2022 19:00:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UllOAHNXh8cp5EN4SReO4g6+rN7TPGCzbc6UxQ2UQkHIO+GsWTU9VmaRED5BOuASD0hZ8Ac3jJ2z48LV300VjNXUYNk4v0/dP5/YO18BLAcA62SSy0ofaCqxvx34RPiFroBB8dA0sD4IaO7Vv/PnFNdb/tQ6rhwocjPK1pvejXa6vItrhKl/hPT/ueEiscHJOl9ts1Jo/GNDz7PTnxrfxmYlvnzJWFs8wvMyOSC1S3VJ4IYA+n+dQH2zAPe3RkXayQk0JhaLmUZAUAJ3sYJ9MBhTS1Y0MK3WYJLvoqJHisGuwM3auTHShSaLBop1hWXPAdR6SQOtkz4BqnHzVcZovQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fAziCvgS1lu0P4XrvZbwQxrZhSB5RM9UFC/scaj5oKI=;
+ b=gfxgmoW66YVfSo2/t3adS+BFlZ5t6ZsOXtw6NV+9xUIj1ywMlb7n250o+psShloMCmIjed7l7Aou78VJ+PHdnFV/rzp+aPsfsec2mMx2qTS6Er0D3V/JuhNCWjs7I9j4oD7WXpNurNyxL11mDADJHEmjGcImnSaHSTxCeLRE/12MlA9CDT+12V59BGISTSPDRDNcqBWpGcZFcxr/yZhVUxEM2XcRZQmVzlYe2GIbWOCnMp8iyJ+1RKElio+l7mTK+EB4zgnwxlVPuRNB/curZ7hY6wv/5Rr0/0/r+98YaysPmGSD6LhEietNp1P61TB4Npjv028uFgJdTYA8MbbFhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fAziCvgS1lu0P4XrvZbwQxrZhSB5RM9UFC/scaj5oKI=;
+ b=LSXFY0vDx8DGodh8mItxyz7PO7k5XquUKbF0I8OKF5hUcyD6mG73NDKrR7QeUyfO7GPoLhV6t0k4nUPP4AZb1T9MLFhsb9VjTK4u5RqWloLTOMD29N55v7HVpI5RMS3aJjYpnspPDhhw9LRhRhDipXKbQrx8XToxiaUpV4evoWE=
+Received: from PAXPR04MB9089.eurprd04.prod.outlook.com (2603:10a6:102:225::22)
+ by DB7PR04MB4954.eurprd04.prod.outlook.com (2603:10a6:10:1e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5102.22; Mon, 28 Mar
+ 2022 02:00:30 +0000
+Received: from PAXPR04MB9089.eurprd04.prod.outlook.com
+ ([fe80::bc25:a82e:ab71:84fb]) by PAXPR04MB9089.eurprd04.prod.outlook.com
+ ([fe80::bc25:a82e:ab71:84fb%8]) with mapi id 15.20.5102.022; Mon, 28 Mar 2022
+ 02:00:30 +0000
+From:   "S.J. Wang" <shengjiu.wang@nxp.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>
+Subject: Re: [PATCH] remoteproc: core: Remove state checking before changing
+ state
+Thread-Topic: [PATCH] remoteproc: core: Remove state checking before changing
+ state
+Thread-Index: AdhCR5iiww5OTsKBQo2cZWS0KqdY4Q==
+Date:   Mon, 28 Mar 2022 02:00:30 +0000
+Message-ID: <PAXPR04MB908967BF3EE535F7F5C6377EE31D9@PAXPR04MB9089.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ed9ef0c2-f639-45c2-0149-08da105ebcd3
+x-ms-traffictypediagnostic: DB7PR04MB4954:EE_
+x-microsoft-antispam-prvs: <DB7PR04MB49544148BE76273745789EADE31D9@DB7PR04MB4954.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ltJdYpoQaxt783oEQXrY3hEaXW05iwX8ObqS+6m+k6yYO0v9osIKnOxXTx2ySGkZMC/8Rohia2mrqdTshIth2zTqzgMDbYGrdKMGyLkbWw00EBoXtiDX4i35kis6TyggJBTh68z8367eyEF1WHJ+DAmFtRn0BKOxJzyh6b/rka8ohgkRuevIlsn8oADB3jLOpPSKfikxXh4rhTI7tCH0FROtRG1an14Bb1DIJsrVlq/uUtoLnRdAmwAEIboxtSvZY31UTvJTiInPK2KhM/aVOTHEYB9StzpczYlkuYiGAMvPWzU1B6DFwXOFLfJQArRRTScngIpECZBu0xcUpJlWj7xRJ+KSqAdx1raY06LnUSE2Stt7Fn2WGYt9ymFFXsCKK4XE3HKjJcx0LIFmv0lL0yEQxpbJ+q6rbQkrRa6JCHmtDTYoeeVkSf/EEjZhIIoBvbtNs5YcWFV4Wlw5iL/jT4x6/JnwzY5KYEIuR4GasRBfwkn5Qb5jfL4qUFDb6JO4BseyUmzStJHlBtsltgzjDVEYI6oLR1TrPv2ddg2SiyMDIE9s5XP4C9viTK3FKEowjFBTi1U66FE9bcFyfL0xgVkumVpDamrceRrIamDUzqpySDnsRDMNquyRk+aFMwsjEbrsi5Q4xHtWldddslS27Ry/DrILO3n5kNMly5MnCYKP0Djd0bDatyWp0k6S5xKK86PVY6+RKyGrAAA5hUP8EQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9089.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(83380400001)(508600001)(52536014)(8676002)(2906002)(66556008)(64756008)(76116006)(66476007)(66946007)(4326008)(71200400001)(8936002)(7696005)(186003)(26005)(55016003)(66446008)(6506007)(38100700002)(38070700005)(9686003)(86362001)(5660300002)(33656002)(6916009)(54906003)(122000001)(316002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6zo9QKPQkWClWVJEuN6UTv7xe/wqsLoWEDaEGuNGj/8uxqLZ9673Ei6vSZTn?=
+ =?us-ascii?Q?MIiPYOg03XPH4RJK0uKyFZmjhL/lkIiFTRVSuBWrMmZZrnRWzoR63m8RMoGa?=
+ =?us-ascii?Q?TskgVRw3krUAAL0xjkSfnnxsJr7s5XQgcr3H7dWdDF1SiwcfS8gXsRsDDChi?=
+ =?us-ascii?Q?ZX3QlblWr3pbxFIY/RP1hSzkhfoVjKyLPvumGEBVcX5bcH8WPh3FZ9yG8Gbw?=
+ =?us-ascii?Q?3HIiuYQ6Eb7xBv/QdJ29CZaDH2fwqWvLWiebx7neLrONhBh2xklJKRcxY+/K?=
+ =?us-ascii?Q?YpT8ej3q2vYZ9TCF7fNYPU62eWsh47K9RApRbR+SYLr0cPlgHe1EpOZzePig?=
+ =?us-ascii?Q?m0oD15HWLesEUIjpOkwTtz+2s774dSQKDIC8/uQ5GnBlGbFx+yIUfjw5BhID?=
+ =?us-ascii?Q?+E6qrcI6XZF/BXhN4Zq5LMjSrLY5kvjdTkUTfkVN1BAeOzfF6VOENzcVQKTp?=
+ =?us-ascii?Q?gQJscn5OGe0xafML1bkgQIyqe2OyIBNDPmPdDAZSTpusl/1XqjmCxkL0Gwrh?=
+ =?us-ascii?Q?n7uoSZ3mAVJM06HzF9KLTDqoI3qC5HuUrsaU8fQSbTLBZ/qucDjRtwlCZSol?=
+ =?us-ascii?Q?1vSSsB5BzZPmSycyluuuRLSvPE1NrCZti/JFJamDr9dyjdthkF9lcu38VCPb?=
+ =?us-ascii?Q?MiwTr6TVFOPRkWYg6R6Jea5p9Zpmrq6lDMuV4Rp1CJ5pCyJO14fSbDPFcL4M?=
+ =?us-ascii?Q?Y36XsNagK1X8rDS/qmbYMI9XHDlDG46TJKLMXncDihVZp6ZZVyQTNmW+Rdhq?=
+ =?us-ascii?Q?YXScnTu7n4CXRW6/JrqzpfxZ/oz7dOA+nU0TkGKMr2pZtdgJYVM/C71GEXvx?=
+ =?us-ascii?Q?yYz8BpZ95rzUJzO5t2D7ykHPCrL5/0cSu42552ktzImVSGVB7aT07GYL5d5z?=
+ =?us-ascii?Q?CftPwix9/XRcz0Rr0s3M/HXRf1kPhtH5rmaRucgcDzy9yuYbDb5FTOw0f/29?=
+ =?us-ascii?Q?R7e81aM/V8P7Tf4nKcftxFNPicSVUyBN4pJrQVJfOTQSFBSKCLXgoBurBkmM?=
+ =?us-ascii?Q?GT2lfsDiN81yWvwtj+1EAG9IUk/IoBJvfdQmHkz4DLv7FzHzJcwLma8ZWw2y?=
+ =?us-ascii?Q?5/kYEAvKu3a0Gh3l9ApU4UkMC8smq5/2x8h82kk74MwIwETavpDS4zrPX/VR?=
+ =?us-ascii?Q?MtdmrnApS5VUbF3qjBi+mw915V38fI5HYBcaFQLTrgBSITQjzANtgvIrCQES?=
+ =?us-ascii?Q?2eLSycz6RGCwdix5JMY15R9L0zf72iOcXEExBneC0ctNCQXsuvd2d6c2qoq9?=
+ =?us-ascii?Q?D8xPNS8kbZjP/nw092k8mrgVzC4VQdGRoXkxmwVTwvFAY4O5CROrErGZYI0a?=
+ =?us-ascii?Q?1s3QHnJB7khvGDBf9+3p6Gv9Q+0Tq/LHs9zj8Gzq2/AswQH4p8F8aYcSiOLj?=
+ =?us-ascii?Q?dLhwkDgbQn1UQxTrtkkMtgCFa7ItreGYpFLxqDcDNgFtuqmb2yXWZAYDwkHh?=
+ =?us-ascii?Q?R3RcPUY4+pv5+evko5a2OL2AbbNYWyNgbOCwPVt3zc20qI6jQJXiKggh3Enz?=
+ =?us-ascii?Q?7oBrfgNg2yqGWlMAcst5jxd8ddpiFfc1v3aUbqF+pi096h0wYitj4FyTmBYC?=
+ =?us-ascii?Q?4MSdlavIIpWqyrpxcj++Qf7Ns8HA1YGLIH5afaAtMF0YQJEBQJsf5hiQunKg?=
+ =?us-ascii?Q?FAqH2jLGos9uUIkGFdhAv/K0q6NKdlCu4J7i+g2FEZ36WCFrbnDY2JZa4wzi?=
+ =?us-ascii?Q?NcT5+UdQcEL+s1hoJwgQVBziHw0+g3tj+er73s0vQ+CccGlTcoX35UQ+R//n?=
+ =?us-ascii?Q?p776ZjRmqg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220314170126.2333996-5-arnaud.pouliquen@foss.st.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9089.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed9ef0c2-f639-45c2-0149-08da105ebcd3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Mar 2022 02:00:30.6636
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zVzL2drKGM7AyQbgI6kTbTxPdBjbY3XCj7eCm1mQjr24lse5MNIkjx1CTsCTMFSsHY95PYLPiP34bYx0MBCRKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4954
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Mar 14, 2022 at 06:01:26PM +0100, Arnaud Pouliquen wrote:
-> Define a platform driver to manage the remoteproc virtio device as
-> a platform devices.
-> 
-> The platform device allows to pass rproc_vdev_data platform data to
-> specify properties that are stored in the rproc_vdev structure.
-> 
-> Such approach will allow to preserve legacy remoteproc virtio device
-> creation but also to probe the device using device tree mechanism.
-> 
-> remoteproc_virtio.c update:
->   - Add rproc_virtio_driver platform driver. The probe/remove ops replace
->     the rproc_rvdev_add_device/rproc_rvdev_remove_device functions.
->   - All reference to the rvdev->dev has been updated to rvdev-pdev->dev.
->   - rproc_rvdev_release is removed as associated to the rvdev device.
->   - The use of rvdev->kref counter is replaced by get/put_device on the
->     remoteproc virtio platform device.
->   - The vdev device no longer increments rproc device counter.
->     increment/decrement is done in rproc_virtio_probe/rproc_virtio_remove
->     function in charge of the vrings allocation/free.
-> 
-> remoteproc_core.c update:
->   Migrate from the rvdev device to the rvdev platform device.
->   From this patch, when a vdev resource is found in the resource table
->   the remoteproc core register a platform device.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> Update vs previous revision:
->   - remove useless platform_get_drvdata call in  rproc_handle_vdev function.
->     This call was a leftover from a previous version of the patch.
-> ---
->  drivers/remoteproc/remoteproc_core.c     |  13 +-
->  drivers/remoteproc/remoteproc_internal.h |   3 -
->  drivers/remoteproc/remoteproc_virtio.c   | 151 +++++++++++------------
->  include/linux/remoteproc.h               |   6 +-
->  4 files changed, 83 insertions(+), 90 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c05c721c1f18..3cd624de8856 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -478,6 +478,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	struct device *dev = &rproc->dev;
->  	struct rproc_vdev *rvdev;
->  	struct rproc_vdev_data rvdev_data;
-> +	struct platform_device *pdev;
->  
->  	/* make sure resource isn't truncated */
->  	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-> @@ -506,9 +507,13 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	rvdev_data.rsc_offset = offset;
->  	rvdev_data.rsc = rsc;
->  
-> -	rvdev = rproc_rvdev_add_device(rproc, &rvdev_data);
-> -	if (IS_ERR(rvdev))
-> -		return PTR_ERR(rvdev);
-> +	pdev = platform_device_register_data(dev, "rproc-virtio", rvdev_data.index, &rvdev_data,
-> +					     sizeof(rvdev_data));
-> +	if (IS_ERR(pdev)) {
-> +		dev_err(rproc->dev.parent,
-> +			"failed to create rproc-virtio device\n");
-> +		return PTR_ERR(pdev);
-> +	}
+Hi
 
-This patchset looks much cleaner now.  I'll take a final look at V5 and then we
-can move on to the next installment.
+> > > >
+> > > > There is no mutex protecting of these state checking, which can't
+> > > > garantee there is no another instance is trying to do same operatio=
+n.
+> > > >
+> > > > The reference counter rproc->power is used to manage state
+> > > > changing and there is mutex protection in each operation function
+> > > > for multi instance case.
+> > > >
+> > > > So remove this state checking in rproc_cdev_write() and
+> > > > state_store(), just let reference counter rproc->power to manage th=
+e
+> behaviors.
+> > > >
+> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > ---
+> > > >  drivers/remoteproc/remoteproc_cdev.c  | 11 -----------
+> > > > drivers/remoteproc/remoteproc_sysfs.c | 11 -----------
+> > > >  2 files changed, 22 deletions(-)
+> > > >
+> > > > diff --git a/drivers/remoteproc/remoteproc_cdev.c
+> > > > b/drivers/remoteproc/remoteproc_cdev.c
+> > > > index 906ff3c4dfdd..687f205fd70a 100644
+> > > > --- a/drivers/remoteproc/remoteproc_cdev.c
+> > > > +++ b/drivers/remoteproc/remoteproc_cdev.c
+> > > > @@ -32,21 +32,10 @@ static ssize_t rproc_cdev_write(struct file
+> > > > *filp,
+> > > const char __user *buf, size_
+> > > >                 return -EFAULT;
+> > > >
+> > > >         if (!strncmp(cmd, "start", len)) {
+> > > > -               if (rproc->state =3D=3D RPROC_RUNNING ||
+> > > > -                   rproc->state =3D=3D RPROC_ATTACHED)
+> > > > -                       return -EBUSY;
+> > > > -
+> > > >                 ret =3D rproc_boot(rproc);
+> > > >         } else if (!strncmp(cmd, "stop", len)) {
+> > > > -               if (rproc->state !=3D RPROC_RUNNING &&
+> > > > -                   rproc->state !=3D RPROC_ATTACHED)
+> > > > -                       return -EINVAL;
+> > > > -
+> > > >                 ret =3D rproc_shutdown(rproc);
+> > > >         } else if (!strncmp(cmd, "detach", len)) {
+> > > > -               if (rproc->state !=3D RPROC_ATTACHED)
+> > > > -                       return -EINVAL;
+> > > > -
+> > > >                 ret =3D rproc_detach(rproc);
+> > > >         } else {
+> > > >                 dev_err(&rproc->dev, "Unrecognized option\n");
+> > > > diff --git a/drivers/remoteproc/remoteproc_sysfs.c
+> > > > b/drivers/remoteproc/remoteproc_sysfs.c
+> > > > index 51a04bc6ba7a..8c7ea8922638 100644
+> > > > --- a/drivers/remoteproc/remoteproc_sysfs.c
+> > > > +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> > > > @@ -194,23 +194,12 @@ static ssize_t state_store(struct device *dev=
+,
+> > > >         int ret =3D 0;
+> > > >
+> > > >         if (sysfs_streq(buf, "start")) {
+> > > > -               if (rproc->state =3D=3D RPROC_RUNNING ||
+> > > > -                   rproc->state =3D=3D RPROC_ATTACHED)
+> > > > -                       return -EBUSY;
+> > > > -
+> > >
+> > > As per my previous comment the above conditions need to be moved
+> > > into rproc_boot().
+> > >
+> > > >                 ret =3D rproc_boot(rproc);
+> > > >                 if (ret)
+> > > >                         dev_err(&rproc->dev, "Boot failed: %d\n", r=
+et);
+> > > >         } else if (sysfs_streq(buf, "stop")) {
+> > > > -               if (rproc->state !=3D RPROC_RUNNING &&
+> > > > -                   rproc->state !=3D RPROC_ATTACHED)
+> > > > -                       return -EINVAL;
+> > > > -
+> > > >                 ret =3D rproc_shutdown(rproc);
+> > > >         } else if (sysfs_streq(buf, "detach")) {
+> > > > -               if (rproc->state !=3D RPROC_ATTACHED)
+> > > > -                       return -EINVAL;
+> > > > -
+> > >
+> > > This patch should have been part of a patch series with your other
+> > > work sent on March 18th[1].
+> > >
+> > > Thanks,
+> > > Mathieu
+> > >
+> > > [1]. [PATCH] remoteproc: core: check rproc->power value before
+> > > decreasing it
+> > >
+> >
+> > Thanks for the comments.
+> > I still have one question, if there are two instances independently to =
+'start'
+> > 'stop' remoteproc, for example:
+> >
+> > Instance1: echo start > /sys/class/remoteproc/remoteproc0/state
+> > Instance2: echo start > /sys/class/remoteproc/remoteproc0/state
+> >
+> > ...
+> >
+> > Instance2: echo stop > /sys/class/remoteproc/remoteproc0/state
+> > ...
+> > Instance1: echo stop > /sys/class/remoteproc/remoteproc0/state
+> >
+> > When instance2 'stop' the remoteproc, then instance1 will be impacted
+> > for It still needs the service from remoteproc.
+> >
+> > That's why I just removed of the checking state, didn't move them to
+> > rproc_boot()/rproc_shutdown()/rproc_detach(). And in order to utilize
+> > the reference counter (rproc->power) to handle the multi-instance case.
+>=20
+> Thanks for the exta information, now I understand the problem.  The above
+> should be part of the changelog.
+>=20
+> There are two problems here:
+>=20
+> 1) Dealing with race conditions when checking the state of a remote
+> processor.
+> 2) Properly dealing with the remote processor's reference count.
+>=20
+> For the first one, state checks control the remote processor state machin=
+e
+> and can't simply be removed.  They have to be brought inside the mutex lo=
+ck
+> in order to avoid race conditions when multiple users interact with the
+> remote processor.
+>=20
+> For the second one, moving the rproc->state checks inside the mutex lock =
+in
+> rproc_shutdown() and rproc_detach() will work with the rproc->power check=
+.
+>=20
+> The problem is with rproc_boot().  For (at least) two years now we have l=
+ost
+> the capability to increase the rproc->power reference count from sysfs an=
+d
+> the cdev interface due to the rproc-state checks in state_store() and
+> rproc_cdev_write().  I think that should be corrected but it will introdu=
+ce a
+> user space visible change, which needs to be treated carefully.
+>=20
+> With the above in mind, please send a patchset that includes one patch th=
+at
+> removes the rproc->state checks from the "start" command in state_store()
+> and rproc_cdev_write().  The other patch should move the rproc->state
+> checks for the "stop" and "detach" command inside rproc_shutdown() and
+> rproc_detach().
+>=20
+> With that we can start a discussion on the best way to proceed.
+>=20
 
-Thanks,
-Mathieu
+Ok, thanks,  will send the patches.
 
->  
->  	return 0;
->  }
-> @@ -1248,7 +1253,7 @@ void rproc_resource_cleanup(struct rproc *rproc)
->  
->  	/* clean up remote vdev entries */
->  	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
-> -		kref_put(&rvdev->refcount, rproc_vdev_release);
-> +		platform_device_unregister(rvdev->pdev);
->  
->  	rproc_coredump_cleanup(rproc);
->  }
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index ba8ba36561f4..c8914002d0c9 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -45,10 +45,7 @@ int rproc_of_parse_firmware(struct device *dev, int index,
->  			    const char **fw_name);
->  
->  /* from remoteproc_virtio.c */
-> -struct rproc_vdev *rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data);
-> -void rproc_rvdev_remove_device(struct rproc_vdev *rvdev);
->  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-> -void rproc_vdev_release(struct kref *ref);
->  
->  /* from remoteproc_debugfs.c */
->  void rproc_remove_trace_file(struct dentry *tfile);
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 581c3dd13cd4..e734067174f1 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -13,6 +13,7 @@
->  #include <linux/dma-map-ops.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/export.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/remoteproc.h>
->  #include <linux/virtio.h>
-> @@ -46,7 +47,11 @@ static int copy_dma_range_map(struct device *to, struct device *from)
->  
->  static struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
->  {
-> -	return container_of(vdev->dev.parent, struct rproc_vdev, dev);
-> +	struct platform_device *pdev;
-> +
-> +	pdev = container_of(vdev->dev.parent, struct platform_device, dev);
-> +
-> +	return platform_get_drvdata(pdev);
->  }
->  
->  static  struct rproc *vdev_to_rproc(struct virtio_device *vdev)
-> @@ -341,13 +346,10 @@ static void rproc_virtio_dev_release(struct device *dev)
->  {
->  	struct virtio_device *vdev = dev_to_virtio(dev);
->  	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
-> -	struct rproc *rproc = vdev_to_rproc(vdev);
->  
->  	kfree(vdev);
->  
-> -	kref_put(&rvdev->refcount, rproc_vdev_release);
-> -
-> -	put_device(&rproc->dev);
-> +	put_device(&rvdev->pdev->dev);
->  }
->  
->  /**
-> @@ -363,7 +365,7 @@ static void rproc_virtio_dev_release(struct device *dev)
->  static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  {
->  	struct rproc *rproc = rvdev->rproc;
-> -	struct device *dev = &rvdev->dev;
-> +	struct device *dev = &rvdev->pdev->dev;
->  	struct virtio_device *vdev;
->  	struct rproc_mem_entry *mem;
->  	int ret;
-> @@ -433,18 +435,8 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  	vdev->dev.parent = dev;
->  	vdev->dev.release = rproc_virtio_dev_release;
->  
-> -	/*
-> -	 * We're indirectly making a non-temporary copy of the rproc pointer
-> -	 * here, because drivers probed with this vdev will indirectly
-> -	 * access the wrapping rproc.
-> -	 *
-> -	 * Therefore we must increment the rproc refcount here, and decrement
-> -	 * it _only_ when the vdev is released.
-> -	 */
-> -	get_device(&rproc->dev);
-> -
->  	/* Reference the vdev and vring allocations */
-> -	kref_get(&rvdev->refcount);
-> +	get_device(dev);
->  
->  	ret = register_virtio_device(vdev);
->  	if (ret) {
-> @@ -486,78 +478,57 @@ static int rproc_vdev_do_start(struct rproc_subdev *subdev)
->  static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
->  {
->  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
-> +	struct device *dev = &rvdev->pdev->dev;
->  	int ret;
->  
-> -	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
-> +	ret = device_for_each_child(dev, NULL, rproc_remove_virtio_dev);
->  	if (ret)
-> -		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
-> -}
-> -
-> -/**
-> - * rproc_rvdev_release() - release the existence of a rvdev
-> - *
-> - * @dev: the subdevice's dev
-> - */
-> -static void rproc_rvdev_release(struct device *dev)
-> -{
-> -	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
-> -
-> -	of_reserved_mem_device_release(dev);
-> -
-> -	kfree(rvdev);
-> +		dev_warn(dev, "can't remove vdev child device: %d\n", ret);
->  }
->  
-> -struct rproc_vdev *
-> -rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
-> +static int rproc_virtio_probe(struct platform_device *pdev)
->  {
-> +	struct device *dev = &pdev->dev;
-> +	struct rproc_vdev_data *rvdev_data = dev->platform_data;
->  	struct rproc_vdev *rvdev;
-> -	struct fw_rsc_vdev *rsc = rvdev_data->rsc;
-> -	char name[16];
-> +	struct rproc *rproc = container_of(dev->parent, struct rproc, dev);
-> +	struct fw_rsc_vdev *rsc;
->  	int i, ret;
->  
-> -	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
-> -	if (!rvdev)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (!rvdev_data)
-> +		return -EINVAL;
->  
-> -	kref_init(&rvdev->refcount);
-> +	rvdev = devm_kzalloc(dev, sizeof(*rvdev), GFP_KERNEL);
-> +	if (!rvdev)
-> +		return -ENOMEM;
->  
->  	rvdev->id = rvdev_data->id;
->  	rvdev->rproc = rproc;
->  	rvdev->index = rvdev_data->index;
->  
-> -	/* Initialise vdev subdevice */
-> -	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> -	rvdev->dev.parent = &rproc->dev;
-> -	rvdev->dev.release = rproc_rvdev_release;
-> -	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-> -	dev_set_drvdata(&rvdev->dev, rvdev);
-> -
-> -	ret = device_register(&rvdev->dev);
-> -	if (ret) {
-> -		put_device(&rvdev->dev);
-> -		return ERR_PTR(ret);
-> -	}
-> -
-> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> +	ret = copy_dma_range_map(dev, rproc->dev.parent);
->  	if (ret)
-> -		goto free_rvdev;
-> +		return ret;
->  
->  	/* Make device dma capable by inheriting from parent's capabilities */
-> -	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
-> +	set_dma_ops(dev, get_dma_ops(rproc->dev.parent));
->  
-> -	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
-> -					   dma_get_mask(rproc->dev.parent));
-> +	ret = dma_coerce_mask_and_coherent(dev, dma_get_mask(rproc->dev.parent));
->  	if (ret) {
-> -		dev_warn(&rvdev->dev,
-> -			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
-> +		dev_warn(dev, "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
->  			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
->  	}
->  
-> +	platform_set_drvdata(pdev, rvdev);
-> +	rvdev->pdev = pdev;
-> +
-> +	rsc = rvdev_data->rsc;
-> +
->  	/* parse the vrings */
->  	for (i = 0; i < rsc->num_of_vrings; i++) {
->  		ret = rproc_parse_vring(rvdev, rsc, i);
->  		if (ret)
-> -			goto free_rvdev;
-> +			return ret;
->  	}
->  
->  	/* remember the resource offset*/
-> @@ -577,18 +548,30 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
->  
->  	rproc_add_subdev(rproc, &rvdev->subdev);
->  
-> -	return rvdev;
-> +	dev_dbg(dev, "virtio dev %d added\n",  rvdev->index);
-> +
-> +	/*
-> +	 * We're indirectly making a non-temporary copy of the rproc pointer
-> +	 * here, because the platform devicer or the vdev device will indirectly
-> +	 * access the wrapping rproc.
-> +	 *
-> +	 * Therefore we must increment the rproc refcount here, and decrement
-> +	 * it _only_ on platform remove.
-> +	 */
-> +	get_device(&rproc->dev);
-> +
-> +	return 0;
->  
->  unwind_vring_allocations:
->  	for (i--; i >= 0; i--)
->  		rproc_free_vring(&rvdev->vring[i]);
-> -free_rvdev:
-> -	device_unregister(&rvdev->dev);
-> -	return ERR_PTR(ret);
-> +
-> +	return ret;
->  }
->  
-> -void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
-> +static int rproc_virtio_remove(struct platform_device *pdev)
->  {
-> +	struct rproc_vdev *rvdev = dev_get_drvdata(&pdev->dev);
->  	struct rproc *rproc = rvdev->rproc;
->  	struct rproc_vring *rvring;
->  	int id;
-> @@ -600,19 +583,29 @@ void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
->  
->  	rproc_remove_subdev(rproc, &rvdev->subdev);
->  	rproc_remove_rvdev(rvdev);
-> -	device_unregister(&rvdev->dev);
-> -}
->  
-> -void rproc_vdev_release(struct kref *ref)
-> -{
-> -	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
-> -	struct rproc_vring *rvring;
-> -	int id;
-> +	of_reserved_mem_device_release(&pdev->dev);
->  
-> -	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-> -		rvring = &rvdev->vring[id];
-> -		rproc_free_vring(rvring);
-> -	}
-> +	dev_dbg(&pdev->dev, "virtio dev %d removed\n",  rvdev->index);
->  
-> -	rproc_rvdev_remove_device(rvdev);
-> +	/* The remote proc device can be removed */
-> +	put_device(&rproc->dev);
-> +
-> +	return 0;
->  }
-> +
-> +/* Platform driver */
-> +static const struct of_device_id rproc_virtio_match[] = {
-> +	{ .compatible = "rproc-virtio", },
-> +	{},
-> +};
-> +
-> +static struct platform_driver rproc_virtio_driver = {
-> +	.probe		= rproc_virtio_probe,
-> +	.remove		= rproc_virtio_remove,
-> +	.driver		= {
-> +		.name	= "rproc-virtio",
-> +		.of_match_table	= rproc_virtio_match,
-> +	},
-> +};
-> +builtin_platform_driver(rproc_virtio_driver);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 93a1d0050fbc..31577d6b405d 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -616,9 +616,8 @@ struct rproc_vring {
->  
->  /**
->   * struct rproc_vdev - remoteproc state for a supported virtio device
-> - * @refcount: reference counter for the vdev and vring allocations
->   * @subdev: handle for registering the vdev as a rproc subdevice
-> - * @dev: device struct used for reference count semantics
-> + * @pdev: remoteproc virtio platform device
->   * @id: virtio device id (as in virtio_ids.h)
->   * @node: list node
->   * @rproc: the rproc handle
-> @@ -627,10 +626,9 @@ struct rproc_vring {
->   * @index: vdev position versus other vdev declared in resource table
->   */
->  struct rproc_vdev {
-> -	struct kref refcount;
->  
->  	struct rproc_subdev subdev;
-> -	struct device dev;
-> +	struct platform_device *pdev;
->  
->  	unsigned int id;
->  	struct list_head node;
-> -- 
-> 2.25.1
-> 
+Best regards
+Wang Shengjiu
