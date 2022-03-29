@@ -2,160 +2,170 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF07C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Mar 2022 14:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75B9C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Mar 2022 15:00:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236913AbiC2Odf (ORCPT
+        id S236761AbiC2PBo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 10:33:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35244 "EHLO
+        Tue, 29 Mar 2022 11:01:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231230AbiC2Ode (ORCPT
+        with ESMTP id S235779AbiC2PBo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Mar 2022 10:33:34 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6401BEA8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Mar 2022 07:31:51 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id h23-20020a17090a051700b001c9c1dd3acbso3049720pjh.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Mar 2022 07:31:51 -0700 (PDT)
+        Tue, 29 Mar 2022 11:01:44 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231DB17288B
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Mar 2022 08:00:01 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id bi12so35791472ejb.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Mar 2022 08:00:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lsP70CCaXDaE2udz5nTAsHVpadgeSMC46x2B6kOKiJQ=;
-        b=fMwa8vv5SwPhBGFC75W4BQQ5WY2CI99tuPzzJZ+X5ITg8Lh3RLEe1zM2G8WxMWv6IE
-         j3GrtHftNkEbR3cU8tDBFJqgvT5/9GepeX7aPPwB8Zilv9QWyBgkArgiXlOdsjtb8gqa
-         h/5CmpSX2N7oJqhoUqTJQiMf6Ll7bg8vlozCOc1w0fVPuwdV7fXwG0uNIg6CDR4yYsfB
-         iBfHjakcc9pqzL2JJZytwv/EqaJIV4NeS0kTb606qFvhlPdVY4RJECWl5o84knLFk92r
-         pLN4W+298EFOqb+EDY5FHclBHUxo6fG39kjg8v1nzl1QC/4ZdjBsx93cw8Rzq3YjHYWz
-         m3og==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jr+YHDK3n2vTpZOmH5dp3WwG8cBZ0d9eo62u5A14CnQ=;
+        b=dU8g3eM9IZW/mOtxib5HnHyHG+Dk1mLogrsoXXlUXu26Wv7GPll9bgcPa1LzwUKRlr
+         RSmRLBi1J88rzF5GCcJ1JBaPn28tmD3H6pnDOM+O1EYW13A4pmxVbhF/VEk0U1bFc7Kb
+         Ci0XcJeRSmQjgHjH1APsCIMiF2pz1rr2xeZg3L7gIlPLazn12jUQYBXHAUwFgpfVyYoW
+         sRVRL3VvfBAsdIiLumBkBXHzXLWeVXmQDpwdsCuV+7PjoTQgW6xBdlJ2mXoZTW3PUx63
+         2w/K4bOb8/jkGFuBMJti9ch8jrSy0IBx93jzFIztJRr1UcjUVWXC3Z6EkRPCJBlQi26/
+         2dOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lsP70CCaXDaE2udz5nTAsHVpadgeSMC46x2B6kOKiJQ=;
-        b=l0m5ZEmD0URandByjUHLdQkZNZZObbGfEV+1xD3SnCGyKBO533CjXLUVVDGcFTRh0x
-         +qfzL7Me+rWyestHiFnCR6KrofKQ59kff9PcL6cnvcx7vlBLGGGphbxN1Vo16tLm+yfw
-         TPOMn01sAbIzxS24A82frYQb4JD1VwtZJoxAzWo7QQXnArBO3mc5HI/bRGmd3AhfceHN
-         auqdu2++fymmpVCFOBo7BFf4/4F8qVsHDFzDeJCI8vLigOMgS/gpMFtozP+WJ+MViSLa
-         PgNV65/ZalmlqCjfS6OfzjCA6zHNJP9QAxn8KC6vwVrZYNcSofl+662vR9GEjDCTVUCy
-         BHKg==
-X-Gm-Message-State: AOAM532V9OSa4Aw75zrG092yapmy2UoSr6HGpoThlLn1ZRzRr0yYCpHm
-        q2o6kHvFxVMcNCUQpVgwe2+y
-X-Google-Smtp-Source: ABdhPJzpE1FYDJsc5tTxrz8in/qSw0DgAFt3quMPCz0DVaHZ3rP6uWeZiHIBljgpxDUit+IE1ERO0g==
-X-Received: by 2002:a17:90b:4a83:b0:1c6:f037:bc73 with SMTP id lp3-20020a17090b4a8300b001c6f037bc73mr4811286pjb.44.1648564311071;
-        Tue, 29 Mar 2022 07:31:51 -0700 (PDT)
-Received: from thinkpad ([117.217.181.81])
-        by smtp.gmail.com with ESMTPSA id c18-20020a056a000ad200b004cdccd3da08sm20983552pfl.44.2022.03.29.07.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 07:31:50 -0700 (PDT)
-Date:   Tue, 29 Mar 2022 20:01:46 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jr+YHDK3n2vTpZOmH5dp3WwG8cBZ0d9eo62u5A14CnQ=;
+        b=WwjEVv2EptDGIkb9Fxyi830YzXpcfdLeIXmT+tBJNeSEk7crtEUMN2qDj68H3+GVRa
+         AKC/gtggKwV1ImuShspdwmsaVAOGLH5NnSwiuFwczZeNRHff3ZooXnNRDr86NYbGR+A0
+         pf/u1h/fm/47XhovN+BaBWy62bjfmv66jfrQcARTgP3dia93UxdDd6Fbl3HER92MRIvw
+         T90W+68yNwUBuJTdmNhenyiBsSWYcKsAqKAumvBXksIlx1uf/c0zL5acuAlccdmM2MB+
+         hL7HsFR0Cb8M1Z/b3TQvVro6sDj2+wV1bYGODV71SQHQGm771/kWLs1ITF5sb6JHgEGD
+         IBcg==
+X-Gm-Message-State: AOAM531cfHuF2bOcExbRYkDHoZvZuUWv3ldnFp3XDOPkWG5xc3Odicvj
+        wgreso/e+gS0P8D2700Yvaj8yGJESHR6K/ABQ5N4OQ==
+X-Google-Smtp-Source: ABdhPJwBVxxhotY4Guhj8daqDOOTdY8D+IGs0CqmabWY98csspgg4M7bOY0gNJWTIkdyaUmrgOMajY9I72kDGrOueVM=
+X-Received: by 2002:a17:906:3cf1:b0:6cf:86c6:8a12 with SMTP id
+ d17-20020a1709063cf100b006cf86c68a12mr34416789ejh.202.1648565999599; Tue, 29
+ Mar 2022 07:59:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220324181224.21542-1-manivannan.sadhasivam@linaro.org>
+ <20220328155123.GA3722211@p14s> <20220329143146.GA2137@thinkpad>
+In-Reply-To: <20220329143146.GA2137@thinkpad>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 29 Mar 2022 08:59:48 -0600
+Message-ID: <CANLsYkwZY=JwUyfTRkUS2Kq8VEjjgETRW9E3ryrznEvcWntfpA@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Don't bother checking the return value of debugfs_create*
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: Don't bother checking the return value of
- debugfs_create*
-Message-ID: <20220329143146.GA2137@thinkpad>
-References: <20220324181224.21542-1-manivannan.sadhasivam@linaro.org>
- <20220328155123.GA3722211@p14s>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220328155123.GA3722211@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On Tue, 29 Mar 2022 at 08:31, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Hi Mathieu,
+>
+> On Mon, Mar 28, 2022 at 09:51:23AM -0600, Mathieu Poirier wrote:
+> > Hi Mani,
+> >
+> > On Thu, Mar 24, 2022 at 11:42:24PM +0530, Manivannan Sadhasivam wrote:
+> > > DebugFS APIs are designed to return only the error pointers and not NULL
+> > > in the case of failure. So these return pointers are safe to be passed on
+> > > to the successive debugfs_create* APIs.
+> > >
+> > > Therefore, let's just get rid of the checks.
+> > >
+> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_debugfs.c | 17 ++---------------
+> > >  1 file changed, 2 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> > > index b5a1e3b697d9..2e2c4a31c154 100644
+> > > --- a/drivers/remoteproc/remoteproc_debugfs.c
+> > > +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> > > @@ -386,16 +386,8 @@ void rproc_remove_trace_file(struct dentry *tfile)
+> > >  struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+> > >                                    struct rproc_debug_trace *trace)
+> > >  {
+> > > -   struct dentry *tfile;
+> > > -
+> > > -   tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+> > > +   return debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+> > >                                 &trace_rproc_ops);
+> > > -   if (!tfile) {
+> > > -           dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
+> > > -           return NULL;
+> > > -   }
+> > > -
+> > > -   return tfile;
+> >
+> > Please see this thread [1] for an earlier conversation on this topic.
+> >
+> > [1]. https://lore.kernel.org/lkml/20220105131022.25247-1-linmq006@gmail.com/T/
+> >
+>
+> Thanks for the pointer! I believe the conclusion was to return 0 here
+> and ignore the return from debugfs_create_file(). If that's the case, it looks
+> fine to me and I'll send a follow-up patch.
 
-On Mon, Mar 28, 2022 at 09:51:23AM -0600, Mathieu Poirier wrote:
-> Hi Mani,
-> 
-> On Thu, Mar 24, 2022 at 11:42:24PM +0530, Manivannan Sadhasivam wrote:
-> > DebugFS APIs are designed to return only the error pointers and not NULL
-> > in the case of failure. So these return pointers are safe to be passed on
-> > to the successive debugfs_create* APIs.
-> > 
-> > Therefore, let's just get rid of the checks.
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/remoteproc/remoteproc_debugfs.c | 17 ++---------------
-> >  1 file changed, 2 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> > index b5a1e3b697d9..2e2c4a31c154 100644
-> > --- a/drivers/remoteproc/remoteproc_debugfs.c
-> > +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> > @@ -386,16 +386,8 @@ void rproc_remove_trace_file(struct dentry *tfile)
-> >  struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
-> >  				       struct rproc_debug_trace *trace)
-> >  {
-> > -	struct dentry *tfile;
-> > -
-> > -	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
-> > +	return debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
-> >  				    &trace_rproc_ops);
-> > -	if (!tfile) {
-> > -		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
-> > -		return NULL;
-> > -	}
-> > -
-> > -	return tfile;
-> 
-> Please see this thread [1] for an earlier conversation on this topic.
-> 
-> [1]. https://lore.kernel.org/lkml/20220105131022.25247-1-linmq006@gmail.com/T/
-> 
+Correct.
 
-Thanks for the pointer! I believe the conclusion was to return 0 here
-and ignore the return from debugfs_create_file(). If that's the case, it looks
-fine to me and I'll send a follow-up patch.
+>
+> > >  }
+> > >
+> > >  void rproc_delete_debug_dir(struct rproc *rproc)
+> > > @@ -411,8 +403,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
+> > >             return;
+> > >
+> > >     rproc->dbg_dir = debugfs_create_dir(dev_name(dev), rproc_dbg);
+> > > -   if (!rproc->dbg_dir)
+> > > -           return;
+> > >
+> > >     debugfs_create_file("name", 0400, rproc->dbg_dir,
+> > >                         rproc, &rproc_name_ops);
+> > > @@ -430,11 +420,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+> > >
+> > >  void __init rproc_init_debugfs(void)
+> > >  {
+> > > -   if (debugfs_initialized()) {
+> > > +   if (debugfs_initialized())
+> > >             rproc_dbg = debugfs_create_dir(KBUILD_MODNAME, NULL);
+> > > -           if (!rproc_dbg)
+> > > -                   pr_err("can't create debugfs dir\n");
+> > > -   }
+> >
+> > The above two are fine since debugfs_create_file() and debugfs_create_dir() can
+> > deal with @parent being an error code.
+> >
+>
+> debugfs_create_* APIs would never return NULL, so these checks are wrong.
+> Moreover, Greg recommends not to check the return value for any of these
+> functions.
+>
 
-> >  }
-> >  
-> >  void rproc_delete_debug_dir(struct rproc *rproc)
-> > @@ -411,8 +403,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
-> >  		return;
-> >  
-> >  	rproc->dbg_dir = debugfs_create_dir(dev_name(dev), rproc_dbg);
-> > -	if (!rproc->dbg_dir)
-> > -		return;
-> > 
-> >  	debugfs_create_file("name", 0400, rproc->dbg_dir,
-> >  			    rproc, &rproc_name_ops);
-> > @@ -430,11 +420,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
-> >  
-> >  void __init rproc_init_debugfs(void)
-> >  {
-> > -	if (debugfs_initialized()) {
-> > +	if (debugfs_initialized())
-> >  		rproc_dbg = debugfs_create_dir(KBUILD_MODNAME, NULL);
-> > -		if (!rproc_dbg)
-> > -			pr_err("can't create debugfs dir\n");
-> > -	}
-> 
-> The above two are fine since debugfs_create_file() and debugfs_create_dir() can
-> deal with @parent being an error code.
-> 
+When writing "the above two are fine", I meant that I am in agreement
+with your changes.  Reading my comment again I can see how it could be
+interpreted as "I don't think your changes are necessary", which isn't
+the case.
 
-debugfs_create_* APIs would never return NULL, so these checks are wrong.
-Moreover, Greg recommends not to check the return value for any of these
-functions.
+> I've found the mail thread where Greg explained the reasoning behind it:
+> https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1907800.html
+>
 
-I've found the mail thread where Greg explained the reasoning behind it:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1907800.html
-
-Thanks,
-Mani
+I'll bookmark this one as it is bound to come back again.
 
 > Thanks,
-> Mathieu
-> 
-> >  }
-> >  
-> >  void __exit rproc_exit_debugfs(void)
-> > -- 
-> > 2.25.1
-> > 
+> Mani
+>
+> > Thanks,
+> > Mathieu
+> >
+> > >  }
+> > >
+> > >  void __exit rproc_exit_debugfs(void)
+> > > --
+> > > 2.25.1
+> > >
