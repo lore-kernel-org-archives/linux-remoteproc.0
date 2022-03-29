@@ -2,215 +2,160 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6A8C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Mar 2022 12:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF07C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Mar 2022 14:31:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234019AbiC2M1b (ORCPT
+        id S236913AbiC2Odf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 08:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55360 "EHLO
+        Tue, 29 Mar 2022 10:33:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232550AbiC2M1a (ORCPT
+        with ESMTP id S231230AbiC2Ode (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Mar 2022 08:27:30 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB9834D9C1;
-        Tue, 29 Mar 2022 05:25:47 -0700 (PDT)
+        Tue, 29 Mar 2022 10:33:34 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD6401BEA8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Mar 2022 07:31:51 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id h23-20020a17090a051700b001c9c1dd3acbso3049720pjh.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Mar 2022 07:31:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1648556747; x=1680092747;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WVHkWJgk24fHhQG2ByXpzHy7k84pUFobXcMicFqNaFQ=;
-  b=im9zYr9JrquBb/544c3KVZplUnAJsHX+lk0tzQX9e2NvwdEnwIQI3fC9
-   u9PY1FwUo1hWCwdEg3MnyriCgK1IwmseQi3uf5kVEJR8zRWh11LwGvMyP
-   MKo0bLmmZy5Ck6pRp8bhIvzb9vhZ482hFJnSQHfpG0nuPpI4boicUXJ/c
-   w=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 29 Mar 2022 05:25:47 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 05:25:46 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 29 Mar 2022 05:25:46 -0700
-Received: from [10.216.50.108] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 29 Mar
- 2022 05:25:41 -0700
-Message-ID: <33334ab5-1dff-b637-17c1-2a92f209b6d6@quicinc.com>
-Date:   Tue, 29 Mar 2022 17:55:36 +0530
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lsP70CCaXDaE2udz5nTAsHVpadgeSMC46x2B6kOKiJQ=;
+        b=fMwa8vv5SwPhBGFC75W4BQQ5WY2CI99tuPzzJZ+X5ITg8Lh3RLEe1zM2G8WxMWv6IE
+         j3GrtHftNkEbR3cU8tDBFJqgvT5/9GepeX7aPPwB8Zilv9QWyBgkArgiXlOdsjtb8gqa
+         h/5CmpSX2N7oJqhoUqTJQiMf6Ll7bg8vlozCOc1w0fVPuwdV7fXwG0uNIg6CDR4yYsfB
+         iBfHjakcc9pqzL2JJZytwv/EqaJIV4NeS0kTb606qFvhlPdVY4RJECWl5o84knLFk92r
+         pLN4W+298EFOqb+EDY5FHclBHUxo6fG39kjg8v1nzl1QC/4ZdjBsx93cw8Rzq3YjHYWz
+         m3og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lsP70CCaXDaE2udz5nTAsHVpadgeSMC46x2B6kOKiJQ=;
+        b=l0m5ZEmD0URandByjUHLdQkZNZZObbGfEV+1xD3SnCGyKBO533CjXLUVVDGcFTRh0x
+         +qfzL7Me+rWyestHiFnCR6KrofKQ59kff9PcL6cnvcx7vlBLGGGphbxN1Vo16tLm+yfw
+         TPOMn01sAbIzxS24A82frYQb4JD1VwtZJoxAzWo7QQXnArBO3mc5HI/bRGmd3AhfceHN
+         auqdu2++fymmpVCFOBo7BFf4/4F8qVsHDFzDeJCI8vLigOMgS/gpMFtozP+WJ+MViSLa
+         PgNV65/ZalmlqCjfS6OfzjCA6zHNJP9QAxn8KC6vwVrZYNcSofl+662vR9GEjDCTVUCy
+         BHKg==
+X-Gm-Message-State: AOAM532V9OSa4Aw75zrG092yapmy2UoSr6HGpoThlLn1ZRzRr0yYCpHm
+        q2o6kHvFxVMcNCUQpVgwe2+y
+X-Google-Smtp-Source: ABdhPJzpE1FYDJsc5tTxrz8in/qSw0DgAFt3quMPCz0DVaHZ3rP6uWeZiHIBljgpxDUit+IE1ERO0g==
+X-Received: by 2002:a17:90b:4a83:b0:1c6:f037:bc73 with SMTP id lp3-20020a17090b4a8300b001c6f037bc73mr4811286pjb.44.1648564311071;
+        Tue, 29 Mar 2022 07:31:51 -0700 (PDT)
+Received: from thinkpad ([117.217.181.81])
+        by smtp.gmail.com with ESMTPSA id c18-20020a056a000ad200b004cdccd3da08sm20983552pfl.44.2022.03.29.07.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Mar 2022 07:31:50 -0700 (PDT)
+Date:   Tue, 29 Mar 2022 20:01:46 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: Don't bother checking the return value of
+ debugfs_create*
+Message-ID: <20220329143146.GA2137@thinkpad>
+References: <20220324181224.21542-1-manivannan.sadhasivam@linaro.org>
+ <20220328155123.GA3722211@p14s>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH V2 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Content-Language: en-US
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
- <1642534993-6552-4-git-send-email-quic_deesin@quicinc.com>
- <e04ac97e-51bf-7470-5265-ce55119e1ba9@foss.st.com>
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-In-Reply-To: <e04ac97e-51bf-7470-5265-ce55119e1ba9@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220328155123.GA3722211@p14s>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Mathieu,
 
-On 3/23/2022 7:08 PM, Arnaud POULIQUEN wrote:
->
-> On 1/18/22 20:43, Deepak Kumar Singh wrote:
->> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
->> to get/set the low level transport signals.
->>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
->> ---
->>   drivers/rpmsg/rpmsg_char.c | 47 ++++++++++++++++++++++++++++++++++++++++++----
->>   1 file changed, 43 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->> index b5907b8..c03a118 100644
->> --- a/drivers/rpmsg/rpmsg_char.c
->> +++ b/drivers/rpmsg/rpmsg_char.c
->> @@ -19,6 +19,7 @@
->>   #include <linux/rpmsg.h>
->>   #include <linux/skbuff.h>
->>   #include <linux/slab.h>
->> +#include <linux/termios.h>
->>   #include <linux/uaccess.h>
->>   #include <uapi/linux/rpmsg.h>
->>   
->> @@ -74,6 +75,9 @@ struct rpmsg_eptdev {
->>   	spinlock_t queue_lock;
->>   	struct sk_buff_head queue;
->>   	wait_queue_head_t readq;
->> +
->> +	u32 rsigs;
->> +	bool sig_pending;
->>   };
->>   
->>   static int rpmsg_eptdev_destroy(struct device *dev, void *data)
->> @@ -112,7 +116,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
->>   	skb_queue_tail(&eptdev->queue, skb);
->>   	spin_unlock(&eptdev->queue_lock);
->>   
->> -	/* wake up any blocking processes, waiting for new data */
->> +	wake_up_interruptible(&eptdev->readq);
->> +
->> +	return 0;
->> +}
->> +
->> +static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv, u32 sigs)
->> +{
->> +	struct rpmsg_eptdev *eptdev = priv;
->> +
->> +	eptdev->rsigs = sigs;
->> +	eptdev->sig_pending = true;
->> +
->>   	wake_up_interruptible(&eptdev->readq);
-> Regarding the Glink code, the callback is used to be informed that the remote
-> is ready to send (DSR) and to receive (CTS or DSR)
-> So I suppose that the transmission should also be conditioned by the sig_pending
+On Mon, Mar 28, 2022 at 09:51:23AM -0600, Mathieu Poirier wrote:
+> Hi Mani,
+> 
+> On Thu, Mar 24, 2022 at 11:42:24PM +0530, Manivannan Sadhasivam wrote:
+> > DebugFS APIs are designed to return only the error pointers and not NULL
+> > in the case of failure. So these return pointers are safe to be passed on
+> > to the successive debugfs_create* APIs.
+> > 
+> > Therefore, let's just get rid of the checks.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/remoteproc/remoteproc_debugfs.c | 17 ++---------------
+> >  1 file changed, 2 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> > index b5a1e3b697d9..2e2c4a31c154 100644
+> > --- a/drivers/remoteproc/remoteproc_debugfs.c
+> > +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> > @@ -386,16 +386,8 @@ void rproc_remove_trace_file(struct dentry *tfile)
+> >  struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
+> >  				       struct rproc_debug_trace *trace)
+> >  {
+> > -	struct dentry *tfile;
+> > -
+> > -	tfile = debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+> > +	return debugfs_create_file(name, 0400, rproc->dbg_dir, trace,
+> >  				    &trace_rproc_ops);
+> > -	if (!tfile) {
+> > -		dev_err(&rproc->dev, "failed to create debugfs trace entry\n");
+> > -		return NULL;
+> > -	}
+> > -
+> > -	return tfile;
+> 
+> Please see this thread [1] for an earlier conversation on this topic.
+> 
+> [1]. https://lore.kernel.org/lkml/20220105131022.25247-1-linmq006@gmail.com/T/
+> 
 
-I think client need to get signal value before starting transmission, so 
-that it knows that
+Thanks for the pointer! I believe the conclusion was to return 0 here
+and ignore the return from debugfs_create_file(). If that's the case, it looks
+fine to me and I'll send a follow-up patch.
 
-it good to transmit data. Also it is not be enforced for every client. 
-Some clients may not require
+> >  }
+> >  
+> >  void rproc_delete_debug_dir(struct rproc *rproc)
+> > @@ -411,8 +403,6 @@ void rproc_create_debug_dir(struct rproc *rproc)
+> >  		return;
+> >  
+> >  	rproc->dbg_dir = debugfs_create_dir(dev_name(dev), rproc_dbg);
+> > -	if (!rproc->dbg_dir)
+> > -		return;
+> > 
+> >  	debugfs_create_file("name", 0400, rproc->dbg_dir,
+> >  			    rproc, &rproc_name_ops);
+> > @@ -430,11 +420,8 @@ void rproc_create_debug_dir(struct rproc *rproc)
+> >  
+> >  void __init rproc_init_debugfs(void)
+> >  {
+> > -	if (debugfs_initialized()) {
+> > +	if (debugfs_initialized())
+> >  		rproc_dbg = debugfs_create_dir(KBUILD_MODNAME, NULL);
+> > -		if (!rproc_dbg)
+> > -			pr_err("can't create debugfs dir\n");
+> > -	}
+> 
+> The above two are fine since debugfs_create_file() and debugfs_create_dir() can
+> deal with @parent being an error code.
+> 
 
-to use signalling/flow control.
+debugfs_create_* APIs would never return NULL, so these checks are wrong.
+Moreover, Greg recommends not to check the return value for any of these
+functions.
 
->
-> That said tell me if I'm wrong but look to me that what is implemented here is the
->   hardware flow control already managed by the TTY interface. What about using the
-> TTY interface in this case?
+I've found the mail thread where Greg explained the reasoning behind it:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1907800.html
 
-Correct. But some clients are using rpmsg char driver directly and don't 
-go through tty interface.
+Thanks,
+Mani
 
-So we are incorporating tty like interface here(flow control).
-
-> And What about using the "software flow control" instead? [1]
->
-> [1] https://en.wikipedia.org/wiki/Software_flow_control
->
->>   
->>   	return 0;
->> @@ -137,6 +152,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->>   		return -EINVAL;
->>   	}
->>   
->> +	ept->sig_cb = rpmsg_sigs_cb;
->>   	eptdev->ept = ept;
->>   	filp->private_data = eptdev;
->>   
->> @@ -155,6 +171,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
->>   		eptdev->ept = NULL;
->>   	}
->>   	mutex_unlock(&eptdev->ept_lock);
->> +	eptdev->sig_pending = false;
->>   
->>   	/* Discard all SKBs */
->>   	skb_queue_purge(&eptdev->queue);
->> @@ -265,6 +282,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
->>   	if (!skb_queue_empty(&eptdev->queue))
->>   		mask |= EPOLLIN | EPOLLRDNORM;
->>   
->> +	if (eptdev->sig_pending)
->> +		mask |= EPOLLPRI;
->> +
->>   	mask |= rpmsg_poll(eptdev->ept, filp, wait);
->>   
->>   	return mask;
->> @@ -274,11 +294,30 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->>   			       unsigned long arg)
->>   {
->>   	struct rpmsg_eptdev *eptdev = fp->private_data;
->> +	bool set;
->> +	u32 val;
->> +	int ret;
->>   
->> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
->> -		return -EINVAL;
->> +	switch (cmd) {
->> +	case TIOCMGET:
->> +		eptdev->sig_pending = false;
->> +		ret = put_user(eptdev->rsigs, (int __user *)arg);
->> +		break;
->> +	case TIOCMSET:
->> +		ret = get_user(val, (int __user *)arg);
->> +		if (ret)
->> +			break;
->> +		set = (val & TIOCM_DTR) ? true : false;
->> +		ret = rpmsg_set_flow_control(eptdev->ept, set);
->> +		break;
-> Could this directly be handled by the driver on open close?
-> If application wants to suspend the link it could just close de /dev/rpmsgX.
-All clients may not require setting flow control.
->   
-> Regards,
-> Arnaud
->
->> +	case RPMSG_DESTROY_EPT_IOCTL:
->> +		ret = rpmsg_eptdev_destroy(&eptdev->dev, NULL);
->> +		break;
->> +	default:
->> +		ret = -EINVAL;
->> +	}
->>   
->> -	return rpmsg_eptdev_destroy(&eptdev->dev, NULL);
->> +	return ret;
->>   }
->>   
->>   static const struct file_operations rpmsg_eptdev_fops = {
+> Thanks,
+> Mathieu
+> 
+> >  }
+> >  
+> >  void __exit rproc_exit_debugfs(void)
+> > -- 
+> > 2.25.1
+> > 
