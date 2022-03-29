@@ -2,142 +2,206 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC054C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Mar 2022 08:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3338BC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Mar 2022 10:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232327AbiC2IZG (ORCPT
+        id S232269AbiC2K5X (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Mar 2022 04:25:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42572 "EHLO
+        Tue, 29 Mar 2022 06:57:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233831AbiC2IZF (ORCPT
+        with ESMTP id S235225AbiC2K5W (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Mar 2022 04:25:05 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B902252D;
-        Tue, 29 Mar 2022 01:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1648542203; x=1680078203;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nHVoNu5kgc0SwtZZ5WltSamwVIVIgMmiXJdovOQdV0c=;
-  b=YdjO8oMOoscy5ICpCJDfEcYnfjliiGqHJ/I4GQywzcUl6mGBgN9/9MN0
-   woV7MLe3JOwEIbcJh+vb9hHNyZAx+jPkuH4r+9E0eheG4nr5JRrYmQwE4
-   7R4yv7XWZt6kcIyX3/iM3YSFatOJayNaF84uSs+gcWVSI5fQAGul3DmMP
-   k=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 29 Mar 2022 01:23:23 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Mar 2022 01:23:23 -0700
-Received: from [10.110.1.142] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.47.97.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 29 Mar
- 2022 01:23:20 -0700
-Message-ID: <404f5f3e-3211-7eb4-1bba-2eea5239d0e7@quicinc.com>
-Date:   Tue, 29 Mar 2022 13:53:15 +0530
+        Tue, 29 Mar 2022 06:57:22 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3699E1D317;
+        Tue, 29 Mar 2022 03:55:37 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id 905851F4399D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1648551336;
+        bh=BkZPje0ko1RmCOeaZCQI6Aif1v92KYxg2RWub0qs3h8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=fm3OdlCmMJLmpoBlTsVUEIEc8hA+qRakTJt355ubrkrs8fTrHqj1xrg0jaS71Mtx4
+         v1SzYfySxtz0h7F0BdfqgcwD5rw/p1P9/NIFnhm4kamId/J0t9xKThI5PJ1bekqvX+
+         JpYTkvYiu57KBPel8szadY6HJP6kkPo2ji2sKnOvIwiw1ppZZjZe/I8f7yPZkpuaox
+         PnmTnghFGlqj7deWCvL5jlDVw9bQCb5TUHyNn33A+ID/1vh+WP5bIQxTM+kn+OFGyr
+         3S0BqXREluIaVVgD52cGTRk8RMEn7KvuGH0eLVVg5bS/q0Zu/W3CbLroJ/hvsHk6MW
+         FnCkbsHYB05qg==
+Message-ID: <ea0f7cdd-0fae-fb66-3171-f0870384e6aa@collabora.com>
+Date:   Tue, 29 Mar 2022 12:55:33 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH] remoteproc: Use unbounded/high priority workqueue for
- recovery work
+Subject: Re: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
 Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>
-References: <1642620644-19297-1-git-send-email-quic_mojha@quicinc.com>
- <Yiu4vKuqWHQ5wfZ1@builder.lan>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <Yiu4vKuqWHQ5wfZ1@builder.lan>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.47.97.222)
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     bjorn.andersson@linaro.org, matthias.bgg@gmail.com,
+        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+References: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
+ <20220217190349.GA477215@p14s>
+ <ad306275-cd38-e6ad-55cc-0f7c4bdfcecf@collabora.com>
+ <20220218180111.GA574087@p14s>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20220218180111.GA574087@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On 3/12/2022 2:31 AM, Bjorn Andersson wrote:
-> On Wed 19 Jan 13:30 CST 2022, Mukesh Ojha wrote:
->
->> There could be a scenario where there is too much load(n number
->> of tasks which is affined) on a core on which rproc recovery
->> is queued. Due to which, it takes number of seconds to complete
->> the recovery.
+Il 18/02/22 19:01, Mathieu Poirier ha scritto:
+> On Fri, Feb 18, 2022 at 10:16:51AM +0100, AngeloGioacchino Del Regno wrote:
+>> Il 17/02/22 20:03, Mathieu Poirier ha scritto:
+>>> Hi Angelo,
+>>>
+>>> On Fri, Jan 14, 2022 at 03:47:37PM +0100, AngeloGioacchino Del Regno wrote:
+>>>> During execution of the worker that's used to register rpmsg devices
+>>>> we are safely locking the channels mutex but, when creating a new
+>>>> endpoint for such devices, we are registering a IPI on the SCP, which
+>>>> then makes the SCP to trigger an interrupt, lock its own mutex and in
+>>>> turn register more subdevices.
+>>>> This creates a circular locking dependency situation, as the mtk_rpmsg
+>>>> channels_lock will then depend on the SCP IPI lock.
+>>>>
+>>>> [   18.014514]  Possible unsafe locking scenario:
+>>>> [   18.014515]        CPU0                    CPU1
+>>>> [   18.014517]        ----                    ----
+>>>> [   18.045467]   lock(&mtk_subdev->channels_lock);
+>>>> [   18.045474]                                lock(&scp->ipi_desc[i].lock);
+>>>
+>>> I spent well over an hour tracing through the meanders of the code to end up in
+>>> scp_ipi_register() which, I think, leads to the above.  But from there I don't
+>>> see how an IPI can come in and that tells me my assumption is wrong.
+>>>
+>>> Can you give more details on the events that lead to the above?  I'm not saying
+>>> there is no problem, I just need to understand it.
+>>>
 >>
->> If we make this queue unbounded and move it to high priority worker
->> pool then this work can be attempted to finished in less time.
-> I unfortunately find this reasoning for adding WQ_HIGHPRI rather
-> speculative. Please describe a concrete case that warrants the new
-> work queue to be high priority.
->
-> What is "number of seconds", what is "less time" and why is it more
-> important to recover some remote processor than whatever else the system
-> is busy doing?
+>> Hi Mathieu,
+>>
+>> I understand that following this flow without the assistance of the actual
+>> hardware may be a little confusing, so, no worries.
+>>
+>> drivers/remoteproc/mtk_scp.c - this driver manages the SCP (obviously, a
+>> remote processor)
+>> drivers/remoteproc/mtk_scp_ipi.c - public functions for kernel SCP IPC
+>>
+>> Flow:
+>> - MediaTek SCP gets probed
+>> - RPMSG starts, we start probing "something", like google,cros-ec-rpmsg
+>> - mtk_rpmsg: creates endpoint; IPI handler is registered here.
+>>
+>>           ( more flow )
+>>
+>> - mtk_rpmsg: mtk_rpmsg_ns_cb() -> mtk_rpmsg_create_device(), channel is
+>>               added to the channels list, worker gets scheduled
+> 
+> To me the above is out of order.  The name space endpoint is registered as part
+> of the remote processor start sequence.  From there an IPI with ns_ipi_id comes in
+> and then cros_ec_rpmsg_probe() is called.  The above seems to imply the
+> opposite.
+> 
+>>
+>>
+>> Now for the part that produces the real issue:
+>>
+>> label_a:
+>>
+>> *** RPMSG MUTEX LOCK ***
+> 
+> By this I take you mean the subdev->channels_lock mutex.
+> 
+>> - mtk_rpmsg: ## Go through multiple channels ##, call mtk_rpmsg_register_device()
+>>
+>> - Registered device tries to communicate through RPMSG
+>> - .send() or .trysend() (depending on the device) is called: send_ipi()
+>>      *** SCP MUTEX LOCK ***
+> 
+> And this one is either scp->send_lock or scp->ipi_desc[i].lock.
+> 
+>>     - mtk_scp_ipi: Data written, ACK? ok -> return 0
+>>      *** SCP MUTEX UNLOCK ***
+>>
+>> - mtk_scp_ipi: **** INTERRUPT!!! **** New RPMSG NS available? -> create channel
+>>            goto label_a;
+>>
+>> *** RPMSG MUTEX UNLOCK ***
+>>
+>>
+>> Pardon me for keeping some things in this flow implicit, but that was done to
+>> simplify it as much as possible as to try to make you understand the situation.
+> 
+> I certainly appreciate the effort but the above does not provide me with a clear
+> path that causes the lock to happen.  As I said in my last reply I don't doubt
+> there is a lock contention but the provided information doesn't allow to
+> understand how it happens.
+> 
+> All I am looking for is one scenario with all mutexes and functions calls
+> involved.
+> 
 
-Meanwhile, I will try to check if making it unbound only helps us in our 
-low latency use cases.
-So, does it make sense to make it  Unbound | freezable ?
+Hello Mathieu,
+I'm sorry for leaving this unresolved for a long time, had to work on other
+things in the meanwhile.
 
--Mukesh
+I'm not sure what you need, can you please help me to give you the
+issue background that you require?
+
+In the meanwhile, here's full debugging info coming from the kmsg:
+
+https://paste.debian.net/1235967/
+
+Thanks,
+Angelo
 
 > Thanks,
-> Bjorn
->
->> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->> ---
->>   drivers/remoteproc/remoteproc_core.c | 14 ++++++++++++--
->>   1 file changed, 12 insertions(+), 2 deletions(-)
+> Mathieu
+> 
 >>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index 69f51ac..efb6316 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
->>   
->>   /* Unique indices for remoteproc devices */
->>   static DEFINE_IDA(rproc_dev_index);
->> +static struct workqueue_struct *rproc_recovery_wq;
->>   
->>   static const char * const rproc_crash_names[] = {
->>   	[RPROC_MMUFAULT]	= "mmufault",
->> @@ -2752,8 +2753,10 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
->>   	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
->>   		rproc->name, rproc_crash_to_string(type));
->>   
->> -	/* Have a worker handle the error; ensure system is not suspended */
->> -	queue_work(system_freezable_wq, &rproc->crash_handler);
->> +	if (rproc_recovery_wq)
->> +		queue_work(rproc_recovery_wq, &rproc->crash_handler);
->> +	else
->> +		queue_work(system_freezable_wq, &rproc->crash_handler);
->>   }
->>   EXPORT_SYMBOL(rproc_report_crash);
->>   
->> @@ -2802,6 +2805,11 @@ static void __exit rproc_exit_panic(void)
->>   
->>   static int __init remoteproc_init(void)
->>   {
->> +	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq", WQ_UNBOUND |
->> +				WQ_HIGHPRI | WQ_FREEZABLE, 0);
->> +	if (!rproc_recovery_wq)
->> +		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
->> +
->>   	rproc_init_sysfs();
->>   	rproc_init_debugfs();
->>   	rproc_init_cdev();
->> @@ -2818,6 +2826,8 @@ static void __exit remoteproc_exit(void)
->>   	rproc_exit_panic();
->>   	rproc_exit_debugfs();
->>   	rproc_exit_sysfs();
->> +	if (rproc_recovery_wq)
->> +		destroy_workqueue(rproc_recovery_wq);
->>   }
->>   module_exit(remoteproc_exit);
->>   
->> -- 
->> 2.7.4
+>> Cheers,
+>> Angelo
+>>
+>>> Thanks,
+>>> Mathieu
+>>>
+>>>> [   18.228399]                                lock(&mtk_subdev->channels_lock);
+>>>> [   18.228405]   lock(&scp->ipi_desc[i].lock);
+>>>> [   18.264405]
+>>>>
+>>>> To solve this, simply unlock the channels_lock mutex before calling
+>>>> mtk_rpmsg_register_device() and relock it right after, as safety is
+>>>> still ensured by the locking mechanism that happens right after
+>>>> through SCP.
+>>>> Notably, mtk_rpmsg_register_device() does not even require locking.
+>>>>
+>>>> Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
+>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>>    drivers/rpmsg/mtk_rpmsg.c | 2 ++
+>>>>    1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+>>>> index 5b4404b8be4c..d1213c33da20 100644
+>>>> --- a/drivers/rpmsg/mtk_rpmsg.c
+>>>> +++ b/drivers/rpmsg/mtk_rpmsg.c
+>>>> @@ -234,7 +234,9 @@ static void mtk_register_device_work_function(struct work_struct *register_work)
+>>>>    		if (info->registered)
+>>>>    			continue;
+>>>> +		mutex_unlock(&subdev->channels_lock);
+>>>>    		ret = mtk_rpmsg_register_device(subdev, &info->info);
+>>>> +		mutex_lock(&subdev->channels_lock);
+>>>>    		if (ret) {
+>>>>    			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
+>>>>    			continue;
+>>>> -- 
+>>>> 2.33.1
+>>>>
+>>
+>>
 >>
