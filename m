@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78193C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Apr 2022 20:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79399C4167B
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Apr 2022 20:10:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349516AbiDAUMd (ORCPT
+        id S1351697AbiDAUMg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 1 Apr 2022 16:12:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48492 "EHLO
+        Fri, 1 Apr 2022 16:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236493AbiDAUMd (ORCPT
+        with ESMTP id S232256AbiDAUMf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 1 Apr 2022 16:12:33 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D95A214065
-        for <linux-remoteproc@vger.kernel.org>; Fri,  1 Apr 2022 13:10:42 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id bh17so8100318ejb.8
-        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Apr 2022 13:10:42 -0700 (PDT)
+        Fri, 1 Apr 2022 16:12:35 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E68215473
+        for <linux-remoteproc@vger.kernel.org>; Fri,  1 Apr 2022 13:10:45 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id g20so4222314edw.6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Apr 2022 13:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8wZcoxvb7+ZLDwTeQD+hjkDPjIR0SXEiE7FVLTNvQVs=;
-        b=kwcW1jSZpHJRPWS/q+/yKLIdOKu51YsIhJPEvx1hTh5CdP/24vFnQsoDX8t8I/EA18
-         0K+y6UsHPLzZX/3YtNRDuOXZM5YVeuOMU1lQkQZSYnrPxjSNtLxMn8S13PELEM4xtziw
-         jvzgO03Cz/57QPZ2s8+QnbcP64x6KwF++6xaYQXLcPdaJtC5Z6e6N/l5gJyU8qWgHbjM
-         TqSIZwRCiYcMSgoy8lxIhrKZOvadUtXMKKIEsmk70ndyNFTi1UgAOlWMgosjFCup3GeM
-         po2tjV0YBicGElRbmBLGIcqe2jwx7Xpf1TKDoop5tKZqXow8ff8TC5OprbiL6NUhBcnB
-         EYgw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vZSpTcuUm8K1XcOnNjGfRvdX99iMAx27okwDjYgvL64=;
+        b=s514l3cehwTECRMHAc4oVh8Lhac5rDM7VsZkihN1to6DI5SOrc/DmRwA66MZNpOGeN
+         z1KAOi70gQsdnwn1BEUXtd9eMOSfcgdFjNyWXQtXFuyGKJVi/EsXwNDusRU2WBZe7+5g
+         BA2+5Zcbv+WHmg0p4cGHgSSpNcsXZKxlRVnBCrVfRNwLvwbva71VHr7yFlMEDcVb++c2
+         3B0VR371koPWu9tIs2/3ZTl73e5UoamFfqj79J2QMgmNtJENQWj/wYjczFyKAkRQ0sfG
+         uSIkn0cy5+Ty7wxteoxqdbE3chIr0GYBJK7unkvRWSRhjN5Kxm8xBJOBuEOrhLyDPBVL
+         fURQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=8wZcoxvb7+ZLDwTeQD+hjkDPjIR0SXEiE7FVLTNvQVs=;
-        b=AH4EjYfKkOJEljEa3GnCAZNc0yAqK+TpwuOzqWSpYK+oNMiOij6nMnfXCLs4C7z9Xu
-         ODY1H+kAw4wfNbY4gN0y+FL9FdQJ02n/qepQ5qB/fBDgFZ6cczz3y8tw0Rd4bBOUiWeo
-         PhbR++vBx+C3ptQmsNEQWQQMQkbNa8Bl9vy90fVPRZfyGWpO9CHXdSDakiK8VSBJ0X8R
-         VkcS9YPZkJlDFbuP7J572d41llFLW869gBilsC+5FnjNbE/xQJ/uQ2btfxvCovR46bQk
-         hJSfSssNQB8Bh0f00FRm07l6p7bAJG3+vic2qiF+KZHfrtTcsEUxdM19bAkwMmzOJ/3z
-         z2Yg==
-X-Gm-Message-State: AOAM531wORQjrp6FQ8XGX5a8LINENhYemi0u9sOeyyiyqjadhtWGXzrx
-        /jy4V4F2EcddNR/isUbSCCwY9Q==
-X-Google-Smtp-Source: ABdhPJx3248xj2ECjEpo2EmyEJ3T727gIATeSKJ1kASZj0fkpUuIOY0E9ezVEbTrCsYZ9ha9IPpCvg==
-X-Received: by 2002:a17:907:a0c8:b0:6e0:da87:fde9 with SMTP id hw8-20020a170907a0c800b006e0da87fde9mr1329911ejc.90.1648843840760;
-        Fri, 01 Apr 2022 13:10:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vZSpTcuUm8K1XcOnNjGfRvdX99iMAx27okwDjYgvL64=;
+        b=5T+YGs+CwwJFXvfRkX6Xj8kbuw63KsPoC8o8rakceD8rrZKt2GTjE2r5fzr41ANXMN
+         EZGEg7PuLS/uruvqm4Owhy6UTL/J3TbfkMLA66c7DDIcHvofQaRpIC5XY0ZRHrCYspV8
+         QeXImk05q5Ym1SFN8t0khZWWTW1QtnrFO9f7QzoXTi4aj/Nnt44/LDEFMnCbtiGSOcex
+         fAMoDicXvNwJnvcbKq8lRMvVCdofczOa06HM2M3utRZGPnZ+oHycQIrI+ndD1CwJRKPh
+         HKpDp7zP97mvZ/tgtv1E7gJnQJI8PE2mZS9O0k51ublbO87J+ybUczKhJ5g2xh2imVVU
+         jWsw==
+X-Gm-Message-State: AOAM531dxEIshG7MPuWd0WCwFKsEL0L6XwUwYMpt6/THbOBV/Zqv1ipk
+        NUDgN952CVILuFmZ7OqYVXnw9Q==
+X-Google-Smtp-Source: ABdhPJyu5vqa1NpW1FvnOrBS6maT+upb58FT6mJWm3l3rhXpz0gVmoF9622SkOdt3PUlF4HSdh1GuA==
+X-Received: by 2002:aa7:da81:0:b0:419:11e8:1039 with SMTP id q1-20020aa7da81000000b0041911e81039mr22622742eds.285.1648843844267;
+        Fri, 01 Apr 2022 13:10:44 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id bx5-20020a0564020b4500b00418fca53406sm1509041edb.27.2022.04.01.13.10.39
+        by smtp.gmail.com with ESMTPSA id bx5-20020a0564020b4500b00418fca53406sm1509041edb.27.2022.04.01.13.10.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Apr 2022 13:10:40 -0700 (PDT)
+        Fri, 01 Apr 2022 13:10:42 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Andy Gross <agross@kernel.org>,
@@ -64,71 +64,37 @@ To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 00/10] qcom: convert to dtschema qcom,smd and qcom,rpmcc
-Date:   Fri,  1 Apr 2022 22:10:25 +0200
-Message-Id: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 02/10] arm64: dts: qcom: msm8994: remove SMD qcom,local-pid property
+Date:   Fri,  1 Apr 2022 22:10:27 +0200
+Message-Id: <20220401201035.189106-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
+References: <20220401201035.189106-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+The Qualcomm SMD does not use qcom,local-pid property.
 
-Convert to DT schema clock/qcom,rpmcc and soc/qcom,smd. The SoC and clock
-schema patches are independent, although Rob's bot might complain about
-compatible without schema, so maybe let's take them via one tree?
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/msm8994.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-The DTS patches are independent fixes/cleanups for issues pointed out by this
-schema and can be taken independently.  Not tested, although no impact on
-functionality is expected.
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (10):
-  arm64: dts: qcom: msm8953: do not use underscore in node name
-  arm64: dts: qcom: msm8994: remove SMD qcom,local-pid property
-  arm64: dts: qcom: add RPM clock controller fallback compatible
-  ARM: dts: qcom: msm8974-lge-nexus5: move gpio-keys out of soc
-  ARM: dts: qcom: msm8974-samsung-klte: move gpio-keys out of soc
-  ARM: dts: qcom: msm8974: override nodes by label
-  ARM: dts: qcom: do not use underscore in node name
-  dt-bindings: soc: qcom,smd: convert to dtschema
-  dt-bindings: clock: qcom,rpmcc: convert to dtschema
-  dt-bindings: clock: qcom,rpmcc: add clocks property
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt  |   63 -
- .../devicetree/bindings/clock/qcom,rpmcc.yaml |   75 ++
- .../regulator/qcom,smd-rpm-regulator.yaml     |    2 +-
- .../bindings/remoteproc/qcom,q6v5.txt         |    2 +-
- .../bindings/remoteproc/qcom,wcnss-pil.txt    |    2 +-
- .../bindings/soc/qcom/qcom,smd-rpm.yaml       |    8 +-
- .../devicetree/bindings/soc/qcom/qcom,smd.txt |   98 --
- .../bindings/soc/qcom/qcom,smd.yaml           |  137 ++
- arch/arm/boot/dts/qcom-apq8064.dtsi           |    8 +-
- .../arm/boot/dts/qcom-apq8074-dragonboard.dts |  614 +++++----
- arch/arm/boot/dts/qcom-apq8084.dtsi           |    2 +-
- .../boot/dts/qcom-msm8974-fairphone-fp2.dts   |  581 +++++----
- .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 1105 ++++++++--------
- .../boot/dts/qcom-msm8974-samsung-klte.dts    | 1127 ++++++++---------
- .../dts/qcom-msm8974-sony-xperia-amami.dts    |  569 ++++-----
- .../dts/qcom-msm8974-sony-xperia-castor.dts   |  908 +++++++------
- .../dts/qcom-msm8974-sony-xperia-honami.dts   |  636 +++++-----
- arch/arm/boot/dts/qcom-msm8974.dtsi           |   16 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi         |    2 +-
- arch/arm64/boot/dts/qcom/msm8953.dtsi         |    4 +-
- arch/arm64/boot/dts/qcom/msm8992.dtsi         |    2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi         |    3 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |    2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi          |    2 +-
- 24 files changed, 3000 insertions(+), 2968 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
- delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.txt
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+index 8c1dc5155b71..1ff7e2c03ce3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+@@ -233,7 +233,6 @@ rpm {
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+ 			qcom,ipc = <&apcs 8 0>;
+ 			qcom,smd-edge = <15>;
+-			qcom,local-pid = <0>;
+ 			qcom,remote-pid = <6>;
+ 
+ 			rpm_requests: rpm-requests {
 -- 
 2.32.0
 
