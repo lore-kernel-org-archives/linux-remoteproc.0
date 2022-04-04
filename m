@@ -2,93 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8511CC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  3 Apr 2022 19:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8701FC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Apr 2022 09:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376388AbiDCTnY (ORCPT
+        id S1347679AbiDDJDr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 3 Apr 2022 15:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56716 "EHLO
+        Mon, 4 Apr 2022 05:03:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376387AbiDCTnX (ORCPT
+        with ESMTP id S236111AbiDDJDq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 3 Apr 2022 15:43:23 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49A2393DC
-        for <linux-remoteproc@vger.kernel.org>; Sun,  3 Apr 2022 12:41:24 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id m3so13597604lfj.11
-        for <linux-remoteproc@vger.kernel.org>; Sun, 03 Apr 2022 12:41:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=tf4NDkrFjFtpA/8rtvNg2MUKvuMuXJVPPPy1VqazccE=;
-        b=kKYkpOxPM+0g5Brf45xBmthZe9re4AsHez3ayLqL/VANXxs1pTjQygyVH/vmM5VnwU
-         fhXvMlF/jehoXe3ss/MZwB+6jiI3wWTQOsgnBvKd3IoOqj5N02I5635VK0YAu+RqdNFX
-         1tX6slGMX2seVAGYW795uUtMq5vHC9NRI6QHRIQGXNsrAJHxvDhiozqPdP5glNFdjSws
-         dbffPL/q3MRDoUCjViBvVTK7160cu41Ee70eAREnTldNS9mBli6+zVAkbZNV5QWvoyWW
-         eZPJ7QCbJx8cCmiHpJYUPnJCPZLs5GzcKzLxhi/817Yu/7B3l8zqI8m0tR+t9hYmDFmt
-         LVag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=tf4NDkrFjFtpA/8rtvNg2MUKvuMuXJVPPPy1VqazccE=;
-        b=sPGIpZpbmajF/cSYoh9PNC41oN/4Xck4rjFJ9ITBIIWHYfe6uN4D1UCxxd+NoqWFSJ
-         vo4fHjNvbsQODqIuE93b8NZTYOJV4jgeYFh/x5D2eW9iKqYiz6h9WFIVTvSHJTcMtjse
-         hTq97zj4761r8oKAtUotGjbTN6GbG747MorR3GheqgJrBiMWj3YPW/IeoGvQYE39gfde
-         X7OXUYtbxuoWz1ezI+fG9ojDfuaq5MMT+fal671auH4scaZwPlMYU6VaKYSlA8XgL36d
-         AyxzbZbKtUCrh257gDQYI2+IrR6uxP4RejwQxYV4VuyTL68o0ykQBKCEImNABK0ip7qu
-         yNzQ==
-X-Gm-Message-State: AOAM531oC02HoNdiNpf9WhuYM319iUpMT91PfnccLME+RdUEjLaO3ihl
-        OlJRjGxkRPrn7GuQP7Pw1zUHWQ==
-X-Google-Smtp-Source: ABdhPJygV2SkVKOu0JaDxquUlDNuQAJnqXBsm+URyjIGM1u2HmD8dlaHEUqxXutWYQ4OV1PDISAK+w==
-X-Received: by 2002:a05:6512:118f:b0:44a:2d97:d83b with SMTP id g15-20020a056512118f00b0044a2d97d83bmr20114206lfr.487.1649014883031;
-        Sun, 03 Apr 2022 12:41:23 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id g11-20020ac24d8b000000b0044a3454c858sm904669lfe.81.2022.04.03.12.41.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Apr 2022 12:41:22 -0700 (PDT)
-Message-ID: <8c047408-34a5-0754-25f8-2e37e2a5be5f@linaro.org>
-Date:   Sun, 3 Apr 2022 22:41:21 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: msm8996-xiaomi-*: Enable MSS and
- SLPI
-Content-Language: en-GB
-To:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Andy Gross <agross@kernel.org>,
+        Mon, 4 Apr 2022 05:03:46 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96D722E9E9;
+        Mon,  4 Apr 2022 02:01:50 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2347hpMj006750;
+        Mon, 4 Apr 2022 11:01:08 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=2r6LBCsLXfgrpRh4AggzOgtj/Gi7zMgd2JTuz/hdogs=;
+ b=y2I4WYq9eG3hEMvrk6Q+3nmiYYmxX4ptQEjKJzZJyTnBvcEvL61MqkeaFr54P5G4jg2c
+ yWGbHqBQDmKmYfQT/ywPzOn/bSJKzPg4ymvYImk14FyoeequmRl89tRIqW/jtJlo0BsE
+ rNBhPPtPsEyAdaqasheZrf2RniB0HEO1QBiSRdn3VQ5HddqxyJ3bvhlHKkuapaRC76Uy
+ 309Te+bf8pXhtG1O+mflreJVxY9CBYKnRfZ6hLZLihvHgFpifnbrREmxe0mOiHkMiaim
+ 0hg41cjTSwyv0+84sXhS0KYhNOBUSdsR6g8vrqmLycr9CVawBNklV9lgYGJFzrX62dfq 9Q== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6dcgj0jk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 04 Apr 2022 11:01:08 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B4EFE10002A;
+        Mon,  4 Apr 2022 11:01:05 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9E0D82132F9;
+        Mon,  4 Apr 2022 11:01:05 +0200 (CEST)
+Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 4 Apr 2022 11:01:05
+ +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Russell King <linux@armlinux.org.uk>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Raffaele Tranquillini <raffaele.tranquillini@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210926190555.278589-1-y.oudjana@protonmail.com>
- <20210926190555.278589-6-y.oudjana@protonmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20210926190555.278589-6-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <arnaud.pouliquen@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+Subject: [PATCH] arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
+Date:   Mon, 4 Apr 2022 11:00:47 +0200
+Message-ID: <20220404090047.581523-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-04_03,2022-03-31_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 26/09/2021 22:06, Yassine Oudjana wrote:
-> Enable mss_pil and slpi_pil and set their firmware paths.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+In the patch 617d32938d1b: "rpmsg: Move the rpmsg control device
+from rpmsg_char to rpmsg_ctrl", we split the rpmsg_char driver in two.
+By default give everyone who had the old driver enabled the rpmsg_ctrl
+driver too.
 
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> #db820c
+Fixes: 617d32938d1b ("rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl", 2022-01-24)
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
 
+This patch is extracted from the series [1] that has been partially
+integrated in the Linux Kernel 5.18-rc1.
 
+[1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+---
+ arch/arm/configs/qcom_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+index 9981566f2096..2e7e9a4f31f6 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -241,6 +241,7 @@ CONFIG_QCOM_Q6V5_PAS=y
+ CONFIG_QCOM_Q6V5_PIL=y
+ CONFIG_QCOM_WCNSS_PIL=y
+ CONFIG_RPMSG_CHAR=y
++CONFIG_RPMSG_CTRL=y
+ CONFIG_RPMSG_QCOM_GLINK_SMEM=y
+ CONFIG_RPMSG_QCOM_SMD=y
+ CONFIG_QCOM_COMMAND_DB=y
 -- 
-With best wishes
-Dmitry
+2.25.1
+
