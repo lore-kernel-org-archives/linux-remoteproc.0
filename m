@@ -2,93 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07055C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 10:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13236C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 14:34:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241032AbiDEK2b (ORCPT
+        id S1344250AbiDEOfr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 06:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43786 "EHLO
+        Tue, 5 Apr 2022 10:35:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354759AbiDEKPe (ORCPT
+        with ESMTP id S1381289AbiDEMy3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Apr 2022 06:15:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F389E49256;
-        Tue,  5 Apr 2022 03:02:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8FB4F6172B;
-        Tue,  5 Apr 2022 10:02:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B434C385A1;
-        Tue,  5 Apr 2022 10:02:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649152958;
-        bh=k04tRHaCCcaSw16B5b4zqxD/SIoqsMzrPWW5b4SpaUY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uBTJMYh1kpH9daBvUzCX2ZnVWkt5yq09suIO2yPIesh2sIX+o25O2vl7bbH7pawb4
-         mXLMzzGqhbDq7sgdEfS2LhzRFhHVXATieIv2hXbpGc5KjnezZiKY1A9BebQkw+gIdh
-         iCS3Oe/kZy6MczG3qzcsQXxv9A0Q116hhxc6KD9E=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alistair Delva <adelva@google.com>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Tue, 5 Apr 2022 08:54:29 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C5629829;
+        Tue,  5 Apr 2022 04:55:44 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2358bQur023351;
+        Tue, 5 Apr 2022 13:55:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=uNe3MedjDxKalRumV64AE9IvnjWebDrgxw89gcF3weo=;
+ b=BX4XKKQBxKrCKv5zIad8xtPo7vql69uMpjHLGzw/rrIJk75mk6zZgjs/CvvTEWedsnUO
+ mxmrVMK7Tyx9FuGFC3rf8YJJFXPjD8AG0XY/LoSin7p5qtf2AVjfGY9J1xYmMh8rYFLD
+ s1/muLaiKQYF0Gw3vcKlU4Oy5xKtV3P2OlgD0ccNzlqg2f3psHbMzLTCPpjTJhWijCUX
+ buwzr/915315mGCt4FUqiI7Jkc50kpidOeHY05mA4/qMpR/bscWL9Xp0Cgl12bwqjrOA
+ V2MgK40xBoLqM5fESv7LMZEmgCrUYRNwT0bATIQzj1IxvtJNtMIOyQFvDuLDM6n4mOsK hA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6dcgsrjn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 Apr 2022 13:55:34 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E204310002A;
+        Tue,  5 Apr 2022 13:55:33 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B646821A237;
+        Tue,  5 Apr 2022 13:55:33 +0200 (CEST)
+Received: from localhost (10.75.127.44) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 5 Apr 2022 13:55:33
+ +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH 5.10 051/599] remoteproc: Fix count check in rproc_coredump_write()
-Date:   Tue,  5 Apr 2022 09:25:45 +0200
-Message-Id: <20220405070300.346945793@linuxfoundation.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220405070258.802373272@linuxfoundation.org>
-References: <20220405070258.802373272@linuxfoundation.org>
-User-Agent: quilt/0.66
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <arnaud.pouliquen@foss.st.com>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+Subject: [PATCH v2] arm64: defconfig: Config that had RPMSG_CHAR now gets RPMSG_CTRL
+Date:   Tue, 5 Apr 2022 13:55:24 +0200
+Message-ID: <20220405115524.1020499-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-05_02,2022-04-05_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Alistair Delva <adelva@google.com>
+In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
+from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
+By default give everyone who had the old driver enabled the rpmsg_ctrl
+driver too.
 
-commit f89672cc3681952f2d06314981a6b45f8b0045d1 upstream.
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 
-Check count for 0, to avoid a potential underflow. Make the check the
-same as the one in rproc_recovery_write().
+This patch is extracted from the series [1] that has been partially
+integrated in the Linux Kernel 5.18-rc1.
 
-Fixes: 3afdc59e4390 ("remoteproc: Add coredump debugfs entry")
-Signed-off-by: Alistair Delva <adelva@google.com>
-Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
-Cc: stable@vger.kernel.org
-Cc: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Sibi Sankar <sibis@codeaurora.org>
-Cc: linux-remoteproc@vger.kernel.org
-Cc: kernel-team@android.com
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lore.kernel.org/r/20220119232139.1125908-1-adelva@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Update vs previous version:
+- remove "Fixes:" tag in commit, requested by Mathieu Poirier in [2]
+
+[1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+[2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
 ---
- drivers/remoteproc/remoteproc_debugfs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/remoteproc/remoteproc_debugfs.c
-+++ b/drivers/remoteproc/remoteproc_debugfs.c
-@@ -76,7 +76,7 @@ static ssize_t rproc_coredump_write(stru
- 	int ret, err = 0;
- 	char buf[20];
- 
--	if (count > sizeof(buf))
-+	if (count < 1 || count > sizeof(buf))
- 		return -EINVAL;
- 
- 	ret = copy_from_user(buf, user_buf, count);
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 50aa3d75ab4f..3f8906b8a2ca 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1053,6 +1053,7 @@ CONFIG_QCOM_Q6V5_PAS=m
+ CONFIG_QCOM_SYSMON=m
+ CONFIG_QCOM_WCNSS_PIL=m
+ CONFIG_RPMSG_CHAR=m
++CONFIG_RPMSG_CTRL=m
+ CONFIG_RPMSG_QCOM_GLINK_RPM=y
+ CONFIG_RPMSG_QCOM_GLINK_SMEM=m
+ CONFIG_RPMSG_QCOM_SMD=y
+-- 
+2.25.1
 
