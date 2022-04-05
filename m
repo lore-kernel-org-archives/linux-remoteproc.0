@@ -2,34 +2,34 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDB8C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 07:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D84C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 09:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231467AbiDEHsi (ORCPT
+        id S235635AbiDEJOB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 03:48:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47456 "EHLO
+        Tue, 5 Apr 2022 05:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232916AbiDEHrO (ORCPT
+        with ESMTP id S238554AbiDEIoP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Apr 2022 03:47:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E291B9D053;
-        Tue,  5 Apr 2022 00:43:15 -0700 (PDT)
+        Tue, 5 Apr 2022 04:44:15 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 422BA1EEF7;
+        Tue,  5 Apr 2022 01:35:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 62DDDB81B92;
-        Tue,  5 Apr 2022 07:43:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCF8C3410F;
-        Tue,  5 Apr 2022 07:43:12 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BE8AFB81C69;
+        Tue,  5 Apr 2022 08:35:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE745C385A4;
+        Tue,  5 Apr 2022 08:35:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649144593;
+        s=korg; t=1649147755;
         bh=k04tRHaCCcaSw16B5b4zqxD/SIoqsMzrPWW5b4SpaUY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sDkCJ0OhczFfMnt0OSiXEKL3UwI0birB6bn8sYARH72zAyT5hiAT+5qCumL7AqUSA
-         Si484HyimwnLz5ZNMk5mGLFw1Xi5SBTOCiQBO2/k/9N0SuwySP5gsSXLUMqODMBkeS
-         lj6CzjxuZcc8B/NB1c8uOZL7NAKY/KUf1ktIZXWA=
+        b=OGfH+9jzC5HqMF5zcAi7Ggqn0CPkaNBR2Uj1Hh9GblLN76StgJCyJTL9uH9qJm8OC
+         +hE9A2gw7DeGko5Xpni2NW6XpAu9yePF7TXGQR/euTcR4Q1MnXYvOu+t6L4PttGos+
+         oZ/CVY4jGlUyPwGCaMSOgZ624ZoS34h9GGeFR2j0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -40,12 +40,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Sibi Sankar <sibis@codeaurora.org>,
         linux-remoteproc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH 5.17 0062/1126] remoteproc: Fix count check in rproc_coredump_write()
-Date:   Tue,  5 Apr 2022 09:13:29 +0200
-Message-Id: <20220405070409.390759506@linuxfoundation.org>
+Subject: [PATCH 5.16 0073/1017] remoteproc: Fix count check in rproc_coredump_write()
+Date:   Tue,  5 Apr 2022 09:16:26 +0200
+Message-Id: <20220405070356.357754401@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220405070407.513532867@linuxfoundation.org>
-References: <20220405070407.513532867@linuxfoundation.org>
+In-Reply-To: <20220405070354.155796697@linuxfoundation.org>
+References: <20220405070354.155796697@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
