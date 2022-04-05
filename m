@@ -2,79 +2,93 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB56C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Apr 2022 23:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDB8C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 07:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238791AbiDDXUH (ORCPT
+        id S231467AbiDEHsi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Apr 2022 19:20:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45220 "EHLO
+        Tue, 5 Apr 2022 03:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243643AbiDDXTk (ORCPT
+        with ESMTP id S232916AbiDEHrO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Apr 2022 19:19:40 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CEFE09
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Apr 2022 16:17:35 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-e1dcc0a327so8014540fac.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Apr 2022 16:17:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=3oavjVNL5tvXCS8rCyRmNRZyTNOmhHfeYfiVBThyPpY=;
-        b=X40oLTAq3dSUcjtkQd9V5X6dkLJqgWLCPb38tSrT2KASFKB4M72dgY9+i9r7tRkAJX
-         2WFTZ+Ls9Q46VhlgNLPHIorWQUAP/fwrYFHj1hg36kmxAgfvB+wWX1Daa4Fr7NL50Jwn
-         6vlDJZw+urzzAJIWP9KHH0jDXdF4AqjIXKi3A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=3oavjVNL5tvXCS8rCyRmNRZyTNOmhHfeYfiVBThyPpY=;
-        b=E9J5Q/brbY1MlLV/0nRucbVLjvHIO6BZM6pwJLxNPvOVBJOQ+smr1F82DfN1nVoOBu
-         3m67QuS9wR0BiYRBkkkVgYr+8oCD8OEuHh+sf/E3ECVLoaYS/CozBsK6D09v3zQw8rsR
-         NM7JTC2C3DdfmHuMu9sSDMuo8JB4lCp3b69qAOm6K2/igH4/8aBRwRPib9Tjm6st9PLS
-         O/I99ng/YMhkfF9n4pa6d8A3PbABQ9wP+Q9/wkbQ8ib9ZdL1twPLBFVgK3aMDNacETZ0
-         42dIbzYEKcpp8na1weiwhwEtJ1n6vMnNDNecMCkpmWs8gO1AYSaZnHz3DY/W8uBRXSQa
-         qqJw==
-X-Gm-Message-State: AOAM533nYmZpqJvVUSRk7tTaDGQSXjw61/Wkm7xN+rggSKPNO4u+ZaiL
-        gPVTJ1MNqgfcQnwr2SCXe9CU3KR3hpk+AFLTWuHSmg==
-X-Google-Smtp-Source: ABdhPJw/tm7Cn1JQZT4ViERftJOcoWdd0d2O+5vIOoyfW+N1pdWhsxvqITjnxp3nXTPe4Psm2WQze1TU1CgHCqhalIQ=
-X-Received: by 2002:a05:6870:558e:b0:e1:db7c:26aa with SMTP id
- n14-20020a056870558e00b000e1db7c26aamr274655oao.63.1649114255219; Mon, 04 Apr
- 2022 16:17:35 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 4 Apr 2022 18:17:34 -0500
+        Tue, 5 Apr 2022 03:47:14 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E291B9D053;
+        Tue,  5 Apr 2022 00:43:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 62DDDB81B92;
+        Tue,  5 Apr 2022 07:43:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCF8C3410F;
+        Tue,  5 Apr 2022 07:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1649144593;
+        bh=k04tRHaCCcaSw16B5b4zqxD/SIoqsMzrPWW5b4SpaUY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sDkCJ0OhczFfMnt0OSiXEKL3UwI0birB6bn8sYARH72zAyT5hiAT+5qCumL7AqUSA
+         Si484HyimwnLz5ZNMk5mGLFw1Xi5SBTOCiQBO2/k/9N0SuwySP5gsSXLUMqODMBkeS
+         lj6CzjxuZcc8B/NB1c8uOZL7NAKY/KUf1ktIZXWA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alistair Delva <adelva@google.com>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-remoteproc@vger.kernel.org, kernel-team@android.com
+Subject: [PATCH 5.17 0062/1126] remoteproc: Fix count check in rproc_coredump_write()
+Date:   Tue,  5 Apr 2022 09:13:29 +0200
+Message-Id: <20220405070409.390759506@linuxfoundation.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220405070407.513532867@linuxfoundation.org>
+References: <20220405070407.513532867@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <1644813252-12897-1-git-send-email-quic_sibis@quicinc.com>
-References: <1644813252-12897-1-git-send-email-quic_sibis@quicinc.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Mon, 4 Apr 2022 18:17:34 -0500
-Message-ID: <CAE-0n51qygskCKAv7MwJmM8BVV2D0wT46YCBwxtGKybP4QA+jQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add support for proxy interconnect bandwidth votes
-To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org
-Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        krzysztof.kozlowski@canonical.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Sibi Sankar (2022-02-13 20:34:09)
-> Add support for proxy interconnect bandwidth votes during modem bootup on
-> SC7280 SoCs.
->
-> Sibi Sankar (3):
->   dt-bindings: remoteproc: qcom: Add interconnects property
->   remoteproc: qcom_q6v5_mss: Add support for interconnect bandwidth
->     voting
->   arm64: dts: qcom: sc7280: Add proxy interconnect requirements for
->     modem
+From: Alistair Delva <adelva@google.com>
 
-Is this patch series going to be resent? Does it need to be applied to
-sc7180 as well?
+commit f89672cc3681952f2d06314981a6b45f8b0045d1 upstream.
+
+Check count for 0, to avoid a potential underflow. Make the check the
+same as the one in rproc_recovery_write().
+
+Fixes: 3afdc59e4390 ("remoteproc: Add coredump debugfs entry")
+Signed-off-by: Alistair Delva <adelva@google.com>
+Cc: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+Cc: stable@vger.kernel.org
+Cc: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Sibi Sankar <sibis@codeaurora.org>
+Cc: linux-remoteproc@vger.kernel.org
+Cc: kernel-team@android.com
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Link: https://lore.kernel.org/r/20220119232139.1125908-1-adelva@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/remoteproc/remoteproc_debugfs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/remoteproc/remoteproc_debugfs.c
++++ b/drivers/remoteproc/remoteproc_debugfs.c
+@@ -76,7 +76,7 @@ static ssize_t rproc_coredump_write(stru
+ 	int ret, err = 0;
+ 	char buf[20];
+ 
+-	if (count > sizeof(buf))
++	if (count < 1 || count > sizeof(buf))
+ 		return -EINVAL;
+ 
+ 	ret = copy_from_user(buf, user_buf, count);
+
+
