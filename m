@@ -2,62 +2,63 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719BFC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 14:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A06B2C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 14:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344498AbiDEOf6 (ORCPT
+        id S1349905AbiDEOgC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 10:35:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
+        Tue, 5 Apr 2022 10:36:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381360AbiDEMy3 (ORCPT
+        with ESMTP id S1380217AbiDEMxl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Apr 2022 08:54:29 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E320929C9B;
-        Tue,  5 Apr 2022 04:57:44 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23584hp2001248;
-        Tue, 5 Apr 2022 13:57:34 +0200
+        Tue, 5 Apr 2022 08:53:41 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84D3CE095;
+        Tue,  5 Apr 2022 04:53:38 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2358i9ao002139;
+        Tue, 5 Apr 2022 13:52:58 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : mime-version : content-transfer-encoding :
  content-type; s=selector1;
- bh=RGZkwUJKEThI2ThqlcBsOIy4O4YxLaZE8yQWY5cVZSw=;
- b=5uqJEvk6QoTVRVQRBREnBXOC0lX62r5raYfwqm7TO2RLNuK3wQC4csM0O8RB39gjFP5M
- E6KGtfFjvPujmy+o1Pyu20Cb5b/Mn+TDIaadYNOsxUBdD969m+cOAoqg+5Dwmv44wsNM
- OywrI6+urdm72ONWXlBdL1ld6BfHB1uU/vjiCxHDkIhUuTL7oVX0k5Zy5XioL8e8/7xV
- 199C6WZCaSL0E5QgaMwx0sir+hbh5T56x1d5WkfjzJONa6iNuaL+dkS9ItBC4bz5j/QX
- go1pdP8SVkcr/1UgxKT+7ZTINWKnvboG1bObo59BAznW8heYeu3PfhrRW8Lx346vCuCK pQ== 
+ bh=ahMNFWxzpaVmVp3viku9IaBrdSUCBM3LW49uPEPbvxU=;
+ b=AOxt4YrYB/LoekLRTWYYtVuMG3+PLFJzeUn29lBTkGZa3ek7xYQZnOOGVb7exI9rDJGo
+ EmbWbNLQYZU05k5hGR9B9IGQlM9eJJSvNfOBVjVCwj+uCTubQb+U/fzk4qYEbVXJA4Xx
+ OTPm7FsfKjPSWMl5QdTxw+M1nWXQ6trXXL9g4AhGy0kUO1l8YgWsVXg6i4UlKXoeAOyh
+ 2d/dysRHJgXKEM7Vcxe8UUzu8iMDAkxaL3ZM5THKOp8zPn51c3CJ4GyTd1V8rgLB06a/
+ elErddY4//H/Nnoj0AWanhffmXC3EgtYuohqqXd9T+kHG5m2sgHsOt/lc+f+RieA4Kg9 Sw== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6du0ptsq-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6dcgsr66-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Apr 2022 13:57:34 +0200
+        Tue, 05 Apr 2022 13:52:58 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6DB0310002A;
-        Tue,  5 Apr 2022 13:57:34 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 09BEE10002A;
+        Tue,  5 Apr 2022 13:52:55 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 58CF720FA4D;
-        Tue,  5 Apr 2022 13:57:34 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 5 Apr 2022 13:57:34
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EFBFF21A239;
+        Tue,  5 Apr 2022 13:52:54 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 5 Apr 2022 13:52:54
  +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        <linux-riscv@lists.infradead.org>,
+To:     Russell King <linux@armlinux.org.uk>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>
 CC:     <arnaud.pouliquen@foss.st.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH v2] RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-Date:   Tue, 5 Apr 2022 13:57:29 +0200
-Message-ID: <20220405115729.1020889-1-arnaud.pouliquen@foss.st.com>
+        <linux-remoteproc@vger.kernel.org>
+Subject: [PATCH v2] arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
+Date:   Tue, 5 Apr 2022 13:52:36 +0200
+Message-ID: <20220405115236.1019955-1-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
+X-Originating-IP: [10.75.127.46]
 X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
@@ -73,7 +74,6 @@ By default give everyone who had the old driver enabled the rpmsg_ctrl
 driver too.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
 ---
 
 This patch is extracted from the series [1] that has been partially
@@ -85,34 +85,21 @@ Update vs previous version:
 [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
 [2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
 ---
- arch/riscv/configs/defconfig      | 1 +
- arch/riscv/configs/rv32_defconfig | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/configs/qcom_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 30e3017f22bc..0cc17db8aaba 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -101,6 +101,7 @@ CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_INPUT=y
- CONFIG_VIRTIO_MMIO=y
+diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+index 9981566f2096..2e7e9a4f31f6 100644
+--- a/arch/arm/configs/qcom_defconfig
++++ b/arch/arm/configs/qcom_defconfig
+@@ -241,6 +241,7 @@ CONFIG_QCOM_Q6V5_PAS=y
+ CONFIG_QCOM_Q6V5_PIL=y
+ CONFIG_QCOM_WCNSS_PIL=y
  CONFIG_RPMSG_CHAR=y
 +CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_VIRTIO=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
-diff --git a/arch/riscv/configs/rv32_defconfig b/arch/riscv/configs/rv32_defconfig
-index 7e5efdc3829d..6cd9d84d3e13 100644
---- a/arch/riscv/configs/rv32_defconfig
-+++ b/arch/riscv/configs/rv32_defconfig
-@@ -93,6 +93,7 @@ CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_INPUT=y
- CONFIG_VIRTIO_MMIO=y
- CONFIG_RPMSG_CHAR=y
-+CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_VIRTIO=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
+ CONFIG_RPMSG_QCOM_GLINK_SMEM=y
+ CONFIG_RPMSG_QCOM_SMD=y
+ CONFIG_QCOM_COMMAND_DB=y
 -- 
 2.25.1
 
