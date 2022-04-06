@@ -2,256 +2,95 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A129AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 13:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F12C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 13:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232867AbiDFNL6 (ORCPT
+        id S232431AbiDFNOu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 09:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
+        Wed, 6 Apr 2022 09:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232859AbiDFNLA (ORCPT
+        with ESMTP id S232677AbiDFNNx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 09:11:00 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99505F474E;
-        Wed,  6 Apr 2022 02:45:39 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369iY2K108785;
-        Wed, 6 Apr 2022 04:44:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1649238274;
-        bh=OskuzPfkNKjmgGxwDEWjMFzgc0nXe4l8jI+0wfywHIw=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Qg/m55LMAU/AcyFOrNbJOCsQyJ9SOYXlVu19ZOJgYracME127VVaj2tIwHHd0grV9
-         KecFIqBbzRJ0byzcTDlMcOwtwkPwIQxp/Df/PTWEmBm1xZoMUIZE/fQcEm6GJShhVK
-         Ht3SUi8IOgaaTO+0LzZSbQTrQQSczkgPYVyYbR3Q=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369iYrW113189
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Apr 2022 04:44:34 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 6
- Apr 2022 04:44:33 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Wed, 6 Apr 2022 04:44:34 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369iWal025938;
-        Wed, 6 Apr 2022 04:44:33 -0500
-From:   Puranjay Mohan <p-mohan@ti.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
-        <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <vigneshr@ti.com>, <kishon@ti.com>
-Subject: [RFC 12/13] dt-bindings: net: Add ICSSG Ethernet Driver bindings
-Date:   Wed, 6 Apr 2022 15:13:57 +0530
-Message-ID: <20220406094358.7895-13-p-mohan@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220406094358.7895-1-p-mohan@ti.com>
-References: <20220406094358.7895-1-p-mohan@ti.com>
+        Wed, 6 Apr 2022 09:13:53 -0400
+Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B317E295243;
+        Tue,  5 Apr 2022 20:44:56 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R851e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9Jmrkf_1649216689;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9Jmrkf_1649216689)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 06 Apr 2022 11:44:50 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     virtualization@lists.linux-foundation.org
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v9 29/32] virtio_net: get ringparam by virtqueue_get_vring_max_size()
+Date:   Wed,  6 Apr 2022 11:43:43 +0800
+Message-Id: <20220406034346.74409-30-xuanzhuo@linux.alibaba.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Git-Hash: 881cb3483d12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a YAML binding document for the ICSSG Programmable real time unit
-based Ethernet driver. This driver uses the PRU and PRUSS consumer APIs
-to interface the PRUs and load/run the firmware for supporting ethernet
-functionality.
+Use virtqueue_get_vring_max_size() in virtnet_get_ringparam() to set
+tx,rx_max_pending.
 
-Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 ---
- .../bindings/net/ti,icssg-prueth.yaml         | 172 ++++++++++++++++++
- 1 file changed, 172 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
+ drivers/net/virtio_net.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-new file mode 100644
-index 000000000000..8b8acb69e43e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-@@ -0,0 +1,172 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/ti,icssg-prueth.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: |+
-+  Texas Instruments ICSSG PRUSS Ethernet
-+
-+maintainers:
-+  - Puranjay Mohan <p-mohan@ti.com>
-+
-+description: |+
-+  Ethernet based on the Programmable Real-Time Unit and Industrial Communication Subsystem.
-+
-+allOf:
-+  - $ref: /schemas/remoteproc/ti,pru-consumer.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,am654-icssg-prueth  # for AM65x SoC family
-+
-+  sram:
-+    description: |
-+      phandle to MSMC SRAM node
-+
-+  dmas:
-+    description: |
-+      list of phandles and specifiers to UDMA as specified in bindings/dma/ti/k3-udma.txt.
-+
-+  dma-names:
-+    items:
-+      - const: tx0-0
-+      - const: tx0-1
-+      - const: tx0-2
-+      - const: tx0-3
-+      - const: tx1-0
-+      - const: tx1-1
-+      - const: tx1-2
-+      - const: tx1-3
-+      - const: rx0
-+      - const: rx1
-+
-+  ethernet-ports:
-+    type: object
-+    properties:
-+      '#address-cells':
-+        const: 1
-+      '#size-cells':
-+        const: 0
-+
-+    patternProperties:
-+      port@[0-1]:
-+        type: object
-+        description: ICSSG PRUETH external ports
-+
-+        $ref: ethernet-controller.yaml#
-+
-+        properties:
-+          reg:
-+            items:
-+              - enum: [0, 1]
-+            description: ICSSG PRUETH port number
-+
-+          ti,syscon-rgmii-delay:
-+            $ref: /schemas/types.yaml#/definitions/phandle-array
-+            description:
-+              phandle to system controller node and register offset
-+              to ICSSG control register for RGMII transmit delay
-+
-+        required:
-+          - reg
-+
-+    additionalProperties: false
-+
-+  ti,mii-g-rt:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: |
-+      phandle to MII_G_RT module's syscon regmap.
-+
-+  ti,mii-rt:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: |
-+      phandle to MII_RT module's syscon regmap
-+
-+  interrupts:
-+    description: |
-+      Interrupt specifiers to TX timestamp IRQ.
-+
-+  interrupt-names:
-+    items:
-+      - const: tx_ts0
-+      - const: tx_ts1
-+
-+required:
-+  - compatible
-+  - sram
-+  - ti,mii-g-rt
-+  - dmas
-+  - dma-names
-+  - ethernet-ports
-+  - interrupts
-+  - interrupt-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+
-+    /* Example k3-am654 base board SR2.0, dual-emac */
-+        pruss2_eth: pruss2_eth {
-+                compatible = "ti,am654-icssg-prueth";
-+                pinctrl-names = "default";
-+                pinctrl-0 = <&icssg2_rgmii_pins_default>;
-+                sram = <&msmc_ram>;
-+
-+                ti,prus = <&pru2_0>, <&rtu2_0>, <&tx_pru2_0>, <&pru2_1>, <&rtu2_1>, <&tx_pru2_1>;
-+                firmware-name = "ti-pruss/am65x-pru0-prueth-fw.elf",
-+                                "ti-pruss/am65x-rtu0-prueth-fw.elf",
-+                                "ti-pruss/am65x-txpru0-prueth-fw.elf",
-+                                "ti-pruss/am65x-pru1-prueth-fw.elf",
-+                                "ti-pruss/am65x-rtu1-prueth-fw.elf",
-+                                "ti-pruss/am65x-txpru1-prueth-fw.elf";
-+                ti,pruss-gp-mux-sel = <2>,      /* MII mode */
-+                                      <2>,
-+                                      <2>,
-+                                      <2>,      /* MII mode */
-+                                      <2>,
-+                                      <2>;
-+                ti,mii-g-rt = <&icssg2_mii_g_rt>;
-+                dmas = <&main_udmap 0xc300>, /* egress slice 0 */
-+                       <&main_udmap 0xc301>, /* egress slice 0 */
-+                       <&main_udmap 0xc302>, /* egress slice 0 */
-+                       <&main_udmap 0xc303>, /* egress slice 0 */
-+                       <&main_udmap 0xc304>, /* egress slice 1 */
-+                       <&main_udmap 0xc305>, /* egress slice 1 */
-+                       <&main_udmap 0xc306>, /* egress slice 1 */
-+                       <&main_udmap 0xc307>, /* egress slice 1 */
-+                       <&main_udmap 0x4300>, /* ingress slice 0 */
-+                       <&main_udmap 0x4301>, /* ingress slice 1 */
-+                       <&main_udmap 0x4302>, /* mgmnt rsp slice 0 */
-+                       <&main_udmap 0x4303>; /* mgmnt rsp slice 1 */
-+                dma-names = "tx0-0", "tx0-1", "tx0-2", "tx0-3",
-+                            "tx1-0", "tx1-1", "tx1-2", "tx1-3",
-+                            "rx0", "rx1";
-+                interrupts = <24 0 2>, <25 1 3>;
-+                interrupt-names = "tx_ts0", "tx_ts1";
-+                ethernet-ports {
-+                        #address-cells = <1>;
-+                        #size-cells = <0>;
-+                        pruss2_emac0: port@0 {
-+                                reg = <0>;
-+                                phy-handle = <&pruss2_eth0_phy>;
-+                                phy-mode = "rgmii-rxid";
-+                                interrupts-extended = <&icssg2_intc 24>;
-+                                ti,syscon-rgmii-delay = <&scm_conf 0x4120>;
-+                                /* Filled in by bootloader */
-+                                local-mac-address = [00 00 00 00 00 00];
-+                        };
-+
-+                        pruss2_emac1: port@1 {
-+                                reg = <1>;
-+                                phy-handle = <&pruss2_eth1_phy>;
-+                                phy-mode = "rgmii-rxid";
-+                                interrupts-extended = <&icssg2_intc 25>;
-+                                ti,syscon-rgmii-delay = <&scm_conf 0x4124>;
-+                                /* Filled in by bootloader */
-+                                local-mac-address = [00 00 00 00 00 00];
-+                        };
-+                };
-+        };
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index dad497a47b3a..96d96c666c8c 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2177,10 +2177,10 @@ static void virtnet_get_ringparam(struct net_device *dev,
+ {
+ 	struct virtnet_info *vi = netdev_priv(dev);
+ 
+-	ring->rx_max_pending = virtqueue_get_vring_size(vi->rq[0].vq);
+-	ring->tx_max_pending = virtqueue_get_vring_size(vi->sq[0].vq);
+-	ring->rx_pending = ring->rx_max_pending;
+-	ring->tx_pending = ring->tx_max_pending;
++	ring->rx_max_pending = virtqueue_get_vring_max_size(vi->rq[0].vq);
++	ring->tx_max_pending = virtqueue_get_vring_max_size(vi->sq[0].vq);
++	ring->rx_pending = virtqueue_get_vring_size(vi->rq[0].vq);
++	ring->tx_pending = virtqueue_get_vring_size(vi->sq[0].vq);
+ }
+ 
+ 
 -- 
-2.17.1
+2.31.0
 
