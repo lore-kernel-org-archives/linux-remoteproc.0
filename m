@@ -2,110 +2,160 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD8CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 08:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05224C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 11:39:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbiDGIJx (ORCPT
+        id S244841AbiDGLlB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 04:09:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49352 "EHLO
+        Thu, 7 Apr 2022 07:41:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242927AbiDGIH7 (ORCPT
+        with ESMTP id S240112AbiDGLlA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:07:59 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D38F18A3C6;
-        Thu,  7 Apr 2022 01:05:28 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id a11so7393847qtb.12;
-        Thu, 07 Apr 2022 01:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LomUbG6PUJaOAyEeNPYEZc4yxOTynNZPy0VtcUyX4ZY=;
-        b=qEXiGdWO0X885lVsV8evUW3Xj83FkNLGn+sz2Ih0nGowdrhhpAS2CFVNTlxHVHOu1K
-         ycdLIJlkG/QO8uws4gGTEownETCyqcDPh2QaVRpIzDrOLMZZQ4ilO41WK2eY8mTxpMmr
-         RNlHObg18i8GFQAbkYB3tTUvh0Ewyytn1gHI86RsOI8yBnP4KN8wuvV57H4QX3f0brGd
-         zAf72uESLzGygARFlD0yEEIbSN1LdpibjcarKCVlUTr8KWaZfnbTtwyMqKsOb8dv11Ey
-         LY9qCnbipxWjN8DZ53MyYc2dAJKSWb0m9DYKt77SoZsebcoW+xkJtl2pqTaPasHCMOQT
-         Sm1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LomUbG6PUJaOAyEeNPYEZc4yxOTynNZPy0VtcUyX4ZY=;
-        b=dfy2NB34mOkqKoQrBjxs4U6cffjp+mBNaOiHj6IYOdLKrQwMcjrKvB0a5SMWjInDSI
-         O3SaQEnPLQJNsVPvfdOPA9ezDrjdRg2YSj+e29eGbkGFfwrqkdHYVkcFq5rzOtuzvGTH
-         azApvnYbYU/GER2dl8EFkVdzLMUoF34tdvBnyZasFdeK7zWs03FlNHmyVckZXK5MvrkU
-         +EjUh2IIjlBlwTrXVoxPwFI6NIjKY0H5cV75nKmiyNW0K9mbMt69yFUGFDQ0cDDo297e
-         is77QQGofPDtIK/HYrUMX8HWrvoWfjMOVvcQe9X50iOLIZtQMRuWJqwyB5GLcR0nCTCF
-         WO5A==
-X-Gm-Message-State: AOAM530jVFwrHlEcS1XJVek1/2cjmVIKrbwL8Touqx5lv8me8EwT8xES
-        Gg/Qhb9zcHUunWuOb5fQGMKw+I25Chfl0zzp+h0=
-X-Google-Smtp-Source: ABdhPJziSL8XilgioJ+e1Mjq34CoarB6ZiDVs658zsFvAH5lr0ZDr829LIWqEJ1qLVoQacv9INCueTY+IzGIft5r+m0=
-X-Received: by 2002:a05:622a:14cd:b0:2e1:d83a:6fdd with SMTP id
- u13-20020a05622a14cd00b002e1d83a6fddmr10643425qtx.401.1649318727682; Thu, 07
- Apr 2022 01:05:27 -0700 (PDT)
+        Thu, 7 Apr 2022 07:41:00 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCA0A133654;
+        Thu,  7 Apr 2022 04:38:59 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369i3Jj108698;
+        Wed, 6 Apr 2022 04:44:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1649238243;
+        bh=NZajb31VTP+/s1Rr/jPY5VYbBOIIC0ip92OpWe0CpKI=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=rLQvQURaHhNQczJHyY8HVhkB9iZhR4NTs96JkBqSVxWIpp03g3xc5DDCaEtxnlgUb
+         /HRFgxGx33AmQ8YggawaAR/l7MgKhfHDQBHCU4jE8Ypmt2bgfDE9m59SgEKM+hQz2u
+         N3T1PC+Wso0+s4wPS2FroV27pWRrx4nEmQlFc6uQ=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369i3mH069663
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Apr 2022 04:44:03 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 6
+ Apr 2022 04:44:03 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Wed, 6 Apr 2022 04:44:03 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369i1sF089477;
+        Wed, 6 Apr 2022 04:44:02 -0500
+From:   Puranjay Mohan <p-mohan@ti.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
+        <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
+        <vigneshr@ti.com>, <kishon@ti.com>
+Subject: [RFC 01/13] dt-bindings: remoteproc: Add PRU consumer bindings
+Date:   Wed, 6 Apr 2022 15:13:46 +0530
+Message-ID: <20220406094358.7895-2-p-mohan@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220406094358.7895-1-p-mohan@ti.com>
+References: <20220406094358.7895-1-p-mohan@ti.com>
 MIME-Version: 1.0
-References: <20220323064944.1351923-1-peng.fan@oss.nxp.com>
- <20220323064944.1351923-3-peng.fan@oss.nxp.com> <CAEnQRZB1LL=d3SBCgNomPErBvzEgTVtbBE_PH=V60v-_9UObEg@mail.gmail.com>
- <DU0PR04MB9417DEFA09AB85211AA72A2E88E79@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <CAEnQRZBS8nLjVuTv739BjBFEnPDnN0iRkvdouT0ooJrEDDbH4A@mail.gmail.com>
-In-Reply-To: <CAEnQRZBS8nLjVuTv739BjBFEnPDnN0iRkvdouT0ooJrEDDbH4A@mail.gmail.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Thu, 7 Apr 2022 11:05:14 +0300
-Message-ID: <CAEnQRZDpsMQUTSBvhztsnApEkWqtnjxf-NbNbr+L22mmiAV8AA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 6, 2022 at 2:25 PM Daniel Baluta <daniel.baluta@gmail.com> wrote:
->
-> On Wed, Apr 6, 2022 at 1:58 PM Peng Fan <peng.fan@nxp.com> wrote:
-> >
-> > > Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: use common
-> > > rproc_elf_load_segments
-> > >
-> > > On Thu, Mar 24, 2022 at 1:34 AM Peng Fan (OSS) <peng.fan@oss.nxp.com>
-> > > wrote:
-> > > >
-> > > > From: Peng Fan <peng.fan@nxp.com>
-> > > >
-> > > > remoteproc elf loader supports the specific case that segments have
-> > > > PT_LOAD and memsz/filesz set to zero, so no duplicate code.
-> > > >
-> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+From: Suman Anna <s-anna@ti.com>
 
-Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
+Add a YAML binding document for PRU consumers. The binding includes
+all the common properties that can be used by different PRU consumer
+or application nodes and supported by the PRU remoteproc driver.
+These are used to configure the PRU hardware for specific user
+applications.
 
-Peng,
+The application nodes themselves should define their own bindings.
 
-I'm fine going on with this now. Next we need to replace the boolean is_iomem
-with a flags parameter to hold ATT_IOMEM, ATT_IOMEM32, etc.
+Co-developed-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+---
+ .../bindings/remoteproc/ti,pru-consumer.yaml  | 66 +++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 
-> > >
-> > > I think this change OK, but we have a case with the DSP were reads/writes
-> > > should be done in multiples of 32/64.
-> > >
-> > > We need a way to provide our own "memcpy" function to be used by
-> > > rproc_elf_load_segments.
-> >
-> > I think when generating elf file, the sections needs to be 32/64bits aligned.
->
-> Sure, that could be a fix. But some malicious user can crash the kernel
-> by crafting an elf with unaligned sections.
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+new file mode 100644
+index 000000000000..c245fe1de656
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Common TI PRU Consumer Binding
++
++maintainers:
++  - Suman Anna <s-anna@ti.com>
++
++description: |
++  A PRU application/consumer/user node typically uses one or more PRU device
++  nodes to implement a PRU application/functionality. Each application/client
++  node would need a reference to at least a PRU node, and optionally define
++  some properties needed for hardware/firmware configuration. The below
++  properties are a list of common properties supported by the PRU remoteproc
++  infrastructure.
++
++  The application nodes shall define their own bindings like regular platform
++  devices, so below are in addition to each node's bindings.
++
++properties:
++  ti,prus:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: phandles to the PRU, RTU or Tx_PRU nodes used
++
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    description: |
++      firmwares for the PRU cores, the default firmware for the core from
++      the PRU node will be used if not provided. The firmware names should
++      correspond to the PRU cores listed in the 'ti,prus' property
++
++  ti,pruss-gp-mux-sel:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    maxItems: 6
++    items:
++        enum: [0, 1, 2, 3, 4]
++    description: |
++      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
++      This selects the internal muxing scheme for the PRU instance. Values
++      should correspond to the PRU cores listed in the 'ti,prus' property. The
++      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
++      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
++      same slice in the associative array. If the array size is smaller than
++      the size of 'ti,prus' property, the default out-of-reset value (0) for the
++      PRU core is used.
++
++required:
++  - ti,prus
++
++dependencies:
++  firmware-name: [ 'ti,prus' ]
++  ti,pruss-gp-mux-sel: [ 'ti,prus' ]
++
++additionalProperties: true
++
++examples:
++  - |
++    /* PRU application node example */
++    pru-app {
++        ti,prus = <&pru0>, <&pru1>;
++        firmware-name = "pruss-app-fw0", "pruss-app-fw1";
++        ti,pruss-gp-mux-sel = <2>, <1>;
++    };
+-- 
+2.17.1
+
