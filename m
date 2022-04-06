@@ -2,531 +2,208 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95927C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A72EC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234411AbiDFOJW (ORCPT
+        id S233308AbiDFOLE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 10:09:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51132 "EHLO
+        Wed, 6 Apr 2022 10:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235279AbiDFOIt (ORCPT
+        with ESMTP id S234359AbiDFOJT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 10:08:49 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFCFB1EE8CB;
-        Wed,  6 Apr 2022 02:57:33 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 23664JV7025461;
-        Wed, 6 Apr 2022 11:55:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=qgMbLXnQGitI8fYv/RT4WWwZZQQU2JxeZAtYaqPueHg=;
- b=fyZvBn5oArmTfoCjzUTGQ6raD0gDES8E9RkU1u73vn+I3tgHAHnjgCgP3JLepzq0Z6k1
- ukYkfi6okmHSHzDhDTracjM7/WOuNm1Hdge7KbRzDWSxTSvGF938weeZvDOry0byVCuG
- 0PLZjNcCPH29Ryj7wEiu8o3pTVfffcT6C3XMK6WBiMjKH5cuH15K2pbfk220ZNg0exiI
- Xd/XHbmctw4JbZqZgiuJuGcmEAcDKnq82wanEddWOfDudg6IsaLpGpZfi4b8UFvZap/C
- deneIui6WxJXC+ICPwdMv9lSW+wUDq2A/TMXvh71y4l9p9ctgxb0mEN1T6xYOdJa5W6A xQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6du0vqtc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Apr 2022 11:55:26 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DA4D610002A;
-        Wed,  6 Apr 2022 11:55:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D1B2020F2A4;
-        Wed,  6 Apr 2022 11:55:25 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 6 Apr 2022 11:55:25
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH v5 3/4] remoteproc: Move rproc_vdev management to remoteproc_virtio.c
-Date:   Wed, 6 Apr 2022 11:54:45 +0200
-Message-ID: <20220406095446.1187968-4-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
-References: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
+        Wed, 6 Apr 2022 10:09:19 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1BF4ED0C5;
+        Wed,  6 Apr 2022 03:05:49 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id t7so3377653qta.10;
+        Wed, 06 Apr 2022 03:05:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2VSAsL2CXxrE77kXFBa8TcwGi/LVtFh7YwP75sQ1TkA=;
+        b=nFH8nSv8u2z2VrycbL7jcP3CAcHZjP/EULtXO9QHdvJOZEKn1TCzlLXc86GXCi7Mmd
+         6OT7TIZ2Q7dJ0U6hVtjdLAIGIQDv9QeeBRJZ4FoPsPOuwqpWlhUW0SSa9GGQZrBK1pSC
+         SYrltpIS39/4lZyqixcMZsrTh/rNTPis01lrBX7rikZlN7xLrQ1986ikQmhJ/rWGmZ/i
+         q+YH4DqQcEtmG5icR7TWQd/CXEexRIXvNFTL1J5v1ODkMCUZVLPhrhO/0kRTVsreKJJV
+         reLzEOgygvOshNCTIsLmubVYawMMiKqMdP/5krBi5ySqz8xGYXe+w52VPQkOPGli3U07
+         GGoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2VSAsL2CXxrE77kXFBa8TcwGi/LVtFh7YwP75sQ1TkA=;
+        b=5etS1P1jT0bCPZT+g4mIKsotL5ijQXTWGOcH/V9aghMHSOCm9BaDq2DIB1l7KTYQr4
+         TM4gXbZQTCvYPjYwJtqdsP+d3/2SZ+XqWw5CWGOueKhv3I2e3mGfUTQf5IzFKArpmw4u
+         8IKBHiFRulTmHq0x1hFSpbBIuUPuJwjmJ/T9Mamu0WZBTLjPqm4hqqcPaiESiVl7uB7C
+         OERTnbUc5dSgAU9i+k5PCZFFKcNwNYYmRx0je5qjLvvdimbtGmIIKhiOsBETSqcw3XgU
+         mjkq65DJHByYcZXSY7zispF7MwH+Ps7OIyTrp05LEhWmt0vWs1vUlPJaSuU7x0EGsibd
+         lOrQ==
+X-Gm-Message-State: AOAM532K/Ez3B6HWirwEd+Fh0LHyQHdLJv2ZTJSpqfYZlh9tWR9qmGtB
+        NJtzjL3sz69Qwy/wM7cAgNIq7bJQKM2zS27n6Fs=
+X-Google-Smtp-Source: ABdhPJzJ51LUKgHNsZSqfo2DF9g+oizaRLxeUSLiFI7JUgaZgBlMXR+GkcR82KzMkbYV3Pw7dmxC8tAPKSbyI0Y+ZMA=
+X-Received: by 2002:a05:622a:82:b0:2e1:d61d:81ec with SMTP id
+ o2-20020a05622a008200b002e1d61d81ecmr6628223qtw.674.1649239528097; Wed, 06
+ Apr 2022 03:05:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-06_03,2022-04-05_01,2022-02-23_01
+References: <20220323064944.1351923-1-peng.fan@oss.nxp.com> <20220323064944.1351923-3-peng.fan@oss.nxp.com>
+In-Reply-To: <20220323064944.1351923-3-peng.fan@oss.nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Wed, 6 Apr 2022 13:05:16 +0300
+Message-ID: <CAEnQRZB1LL=d3SBCgNomPErBvzEgTVtbBE_PH=V60v-_9UObEg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     bjorn.andersson@linaro.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Move functions related to the management of the rproc_vdev
-structure in the remoteproc_virtio.c.
-The aim is to decorrelate as possible the virtio management from
-the core part.
+On Thu, Mar 24, 2022 at 1:34 AM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> remoteproc elf loader supports the specific case that segments
+> have PT_LOAD and memsz/filesz set to zero, so no duplicate
+> code.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Due to the strong correlation between the vrings and the resource table
-the rproc_alloc/parse/free_vring functions are kept in the remoteproc core.
+I think this change OK, but we have a case with the DSP were
+reads/writes should be done in multiples of 32/64.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+We need a way to provide our own "memcpy" function to be used by
+rproc_elf_load_segments.
 
----
-Update vs previous revision:
- - clean up bad rproc_free_vring call in rproc_vdev_release
----
- drivers/remoteproc/remoteproc_core.c     | 162 +----------------------
- drivers/remoteproc/remoteproc_internal.h |  11 +-
- drivers/remoteproc/remoteproc_virtio.c   | 159 +++++++++++++++++++++-
- 3 files changed, 167 insertions(+), 165 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 081bea39daf4..bd6d3f2decc6 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -23,9 +23,7 @@
- #include <linux/panic_notifier.h>
- #include <linux/slab.h>
- #include <linux/mutex.h>
--#include <linux/dma-map-ops.h>
- #include <linux/dma-mapping.h>
--#include <linux/dma-direct.h> /* XXX: pokes into bus_dma_range */
- #include <linux/firmware.h>
- #include <linux/string.h>
- #include <linux/debugfs.h>
-@@ -383,7 +381,7 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
- 	return 0;
- }
- 
--static int
-+int
- rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
- {
- 	struct rproc *rproc = rvdev->rproc;
-@@ -434,164 +432,17 @@ void rproc_free_vring(struct rproc_vring *rvring)
- 	}
- }
- 
--static int rproc_vdev_do_start(struct rproc_subdev *subdev)
--{
--	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
--
--	return rproc_add_virtio_dev(rvdev, rvdev->id);
--}
--
--static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
--{
--	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
--	int ret;
--
--	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
--	if (ret)
--		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
--}
--
--/**
-- * rproc_rvdev_release() - release the existence of a rvdev
-- *
-- * @dev: the subdevice's dev
-- */
--static void rproc_rvdev_release(struct device *dev)
--{
--	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
--
--	of_reserved_mem_device_release(dev);
--
--	kfree(rvdev);
--}
--
--static int copy_dma_range_map(struct device *to, struct device *from)
--{
--	const struct bus_dma_region *map = from->dma_range_map, *new_map, *r;
--	int num_ranges = 0;
--
--	if (!map)
--		return 0;
--
--	for (r = map; r->size; r++)
--		num_ranges++;
--
--	new_map = kmemdup(map, array_size(num_ranges + 1, sizeof(*map)),
--			  GFP_KERNEL);
--	if (!new_map)
--		return -ENOMEM;
--	to->dma_range_map = new_map;
--	return 0;
--}
--
--static void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
-+void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
- {
- 	if (rvdev && rproc)
- 		list_add_tail(&rvdev->node, &rproc->rvdevs);
- }
- 
--static void rproc_remove_rvdev(struct rproc_vdev *rvdev)
-+void rproc_remove_rvdev(struct rproc_vdev *rvdev)
- {
- 	if (rvdev)
- 		list_del(&rvdev->node);
- }
--
--static struct rproc_vdev *
--rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
--{
--	struct rproc_vdev *rvdev;
--	struct fw_rsc_vdev *rsc = rvdev_data->rsc;
--	char name[16];
--	int i, ret;
--
--	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
--	if (!rvdev)
--		return ERR_PTR(-ENOMEM);
--
--	kref_init(&rvdev->refcount);
--
--	rvdev->id = rvdev_data->id;
--	rvdev->rproc = rproc;
--	rvdev->index = rvdev_data->index;
--
--	/* Initialise vdev subdevice */
--	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
--	rvdev->dev.parent = &rproc->dev;
--	rvdev->dev.release = rproc_rvdev_release;
--	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
--	dev_set_drvdata(&rvdev->dev, rvdev);
--
--	ret = device_register(&rvdev->dev);
--	if (ret) {
--		put_device(&rvdev->dev);
--		return ERR_PTR(ret);
--	}
--
--	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
--	if (ret)
--		goto free_rvdev;
--
--	/* Make device dma capable by inheriting from parent's capabilities */
--	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
--
--	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
--					   dma_get_mask(rproc->dev.parent));
--	if (ret) {
--		dev_warn(&rvdev->dev,
--			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
--			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
--	}
--
--	/* parse the vrings */
--	for (i = 0; i < rsc->num_of_vrings; i++) {
--		ret = rproc_parse_vring(rvdev, rsc, i);
--		if (ret)
--			goto free_rvdev;
--	}
--
--	/* remember the resource offset*/
--	rvdev->rsc_offset = rvdev_data->rsc_offset;
--
--	/* allocate the vring resources */
--	for (i = 0; i < rsc->num_of_vrings; i++) {
--		ret = rproc_alloc_vring(rvdev, i);
--		if (ret)
--			goto unwind_vring_allocations;
--	}
--
--	rproc_add_rvdev(rproc, rvdev);
--
--	rvdev->subdev.start = rproc_vdev_do_start;
--	rvdev->subdev.stop = rproc_vdev_do_stop;
--
--	rproc_add_subdev(rproc, &rvdev->subdev);
--
--	return rvdev;
--
--unwind_vring_allocations:
--	for (i--; i >= 0; i--)
--		rproc_free_vring(&rvdev->vring[i]);
--free_rvdev:
--	device_unregister(&rvdev->dev);
--	return ERR_PTR(ret);
--}
--
--static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
--{
--	struct rproc *rproc = rvdev->rproc;
--	struct rproc_vring *rvring;
--	int id;
--
--	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
--		rvring = &rvdev->vring[id];
--		rproc_free_vring(rvring);
--	}
--
--	rproc_remove_subdev(rproc, &rvdev->subdev);
--	rproc_remove_rvdev(rvdev);
--	device_unregister(&rvdev->dev);
--}
--
- /**
-  * rproc_handle_vdev() - handle a vdev fw resource
-  * @rproc: the remote processor
-@@ -662,13 +513,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
- 	return 0;
- }
- 
--void rproc_vdev_release(struct kref *ref)
--{
--	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
--
--	rproc_rvdev_remove_device(rvdev);
--}
--
- /**
-  * rproc_handle_trace() - handle a shared trace buffer resource
-  * @rproc: the remote processor
-diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-index 99f2ff88079f..f82f9a5378ae 100644
---- a/drivers/remoteproc/remoteproc_internal.h
-+++ b/drivers/remoteproc/remoteproc_internal.h
-@@ -41,14 +41,14 @@ struct rproc_vdev_data {
- 
- /* from remoteproc_core.c */
- void rproc_release(struct kref *kref);
--irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
--void rproc_vdev_release(struct kref *ref);
- int rproc_of_parse_firmware(struct device *dev, int index,
- 			    const char **fw_name);
- 
- /* from remoteproc_virtio.c */
--int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id);
--int rproc_remove_virtio_dev(struct device *dev, void *data);
-+struct rproc_vdev *rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data);
-+void rproc_rvdev_remove_device(struct rproc_vdev *rvdev);
-+irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-+void rproc_vdev_release(struct kref *ref);
- 
- /* from remoteproc_debugfs.c */
- void rproc_remove_trace_file(struct dentry *tfile);
-@@ -98,6 +98,7 @@ static inline void  rproc_char_device_remove(struct rproc *rproc)
- 
- void rproc_free_vring(struct rproc_vring *rvring);
- int rproc_alloc_vring(struct rproc_vdev *rvdev, int i);
-+int rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i);
- 
- phys_addr_t rproc_va_to_pa(void *cpu_addr);
- int rproc_trigger_recovery(struct rproc *rproc);
-@@ -110,6 +111,8 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
- 						       const struct firmware *fw);
- struct rproc_mem_entry *
- rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
-+void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev);
-+void rproc_remove_rvdev(struct rproc_vdev *rvdev);
- 
- static inline int rproc_prepare_device(struct rproc *rproc)
- {
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 70ab496d0431..e2e796ab2fd8 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -9,7 +9,9 @@
-  * Brian Swetland <swetland@google.com>
-  */
- 
-+#include <linux/dma-direct.h>
- #include <linux/dma-map-ops.h>
-+#include <linux/dma-mapping.h>
- #include <linux/export.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/remoteproc.h>
-@@ -23,6 +25,25 @@
- 
- #include "remoteproc_internal.h"
- 
-+static int copy_dma_range_map(struct device *to, struct device *from)
-+{
-+	const struct bus_dma_region *map = from->dma_range_map, *new_map, *r;
-+	int num_ranges = 0;
-+
-+	if (!map)
-+		return 0;
-+
-+	for (r = map; r->size; r++)
-+		num_ranges++;
-+
-+	new_map = kmemdup(map, array_size(num_ranges + 1, sizeof(*map)),
-+			  GFP_KERNEL);
-+	if (!new_map)
-+		return -ENOMEM;
-+	to->dma_range_map = new_map;
-+	return 0;
-+}
-+
- static struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
- {
- 	return container_of(vdev->dev.parent, struct rproc_vdev, dev);
-@@ -339,7 +360,7 @@ static void rproc_virtio_dev_release(struct device *dev)
-  *
-  * Return: 0 on success or an appropriate error value otherwise
-  */
--int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
-+static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
- {
- 	struct rproc *rproc = rvdev->rproc;
- 	struct device *dev = &rvdev->dev;
-@@ -447,10 +468,144 @@ int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
-  *
-  * Return: 0
-  */
--int rproc_remove_virtio_dev(struct device *dev, void *data)
-+static int rproc_remove_virtio_dev(struct device *dev, void *data)
- {
- 	struct virtio_device *vdev = dev_to_virtio(dev);
- 
- 	unregister_virtio_device(vdev);
- 	return 0;
- }
-+
-+static int rproc_vdev_do_start(struct rproc_subdev *subdev)
-+{
-+	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
-+
-+	return rproc_add_virtio_dev(rvdev, rvdev->id);
-+}
-+
-+static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
-+{
-+	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
-+	int ret;
-+
-+	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
-+	if (ret)
-+		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
-+}
-+
-+/**
-+ * rproc_rvdev_release() - release the existence of a rvdev
-+ *
-+ * @dev: the subdevice's dev
-+ */
-+static void rproc_rvdev_release(struct device *dev)
-+{
-+	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
-+
-+	of_reserved_mem_device_release(dev);
-+
-+	kfree(rvdev);
-+}
-+
-+struct rproc_vdev *
-+rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
-+{
-+	struct rproc_vdev *rvdev;
-+	struct fw_rsc_vdev *rsc = rvdev_data->rsc;
-+	char name[16];
-+	int i, ret;
-+
-+	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
-+	if (!rvdev)
-+		return ERR_PTR(-ENOMEM);
-+
-+	kref_init(&rvdev->refcount);
-+
-+	rvdev->id = rvdev_data->id;
-+	rvdev->rproc = rproc;
-+	rvdev->index = rvdev_data->index;
-+
-+	/* Initialise vdev subdevice */
-+	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-+	rvdev->dev.parent = &rproc->dev;
-+	rvdev->dev.release = rproc_rvdev_release;
-+	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
-+	dev_set_drvdata(&rvdev->dev, rvdev);
-+
-+	ret = device_register(&rvdev->dev);
-+	if (ret) {
-+		put_device(&rvdev->dev);
-+		return ERR_PTR(ret);
-+	}
-+
-+	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-+	if (ret)
-+		goto free_rvdev;
-+
-+	/* Make device dma capable by inheriting from parent's capabilities */
-+	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
-+
-+	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
-+					   dma_get_mask(rproc->dev.parent));
-+	if (ret) {
-+		dev_warn(&rvdev->dev,
-+			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
-+			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
-+	}
-+
-+	/* parse the vrings */
-+	for (i = 0; i < rsc->num_of_vrings; i++) {
-+		ret = rproc_parse_vring(rvdev, rsc, i);
-+		if (ret)
-+			goto free_rvdev;
-+	}
-+
-+	/* remember the resource offset*/
-+	rvdev->rsc_offset = rvdev_data->rsc_offset;
-+
-+	/* allocate the vring resources */
-+	for (i = 0; i < rsc->num_of_vrings; i++) {
-+		ret = rproc_alloc_vring(rvdev, i);
-+		if (ret)
-+			goto unwind_vring_allocations;
-+	}
-+
-+	rproc_add_rvdev(rproc, rvdev);
-+
-+	rvdev->subdev.start = rproc_vdev_do_start;
-+	rvdev->subdev.stop = rproc_vdev_do_stop;
-+
-+	rproc_add_subdev(rproc, &rvdev->subdev);
-+
-+	return rvdev;
-+
-+unwind_vring_allocations:
-+	for (i--; i >= 0; i--)
-+		rproc_free_vring(&rvdev->vring[i]);
-+free_rvdev:
-+	device_unregister(&rvdev->dev);
-+	return ERR_PTR(ret);
-+}
-+
-+void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
-+{
-+	struct rproc *rproc = rvdev->rproc;
-+	struct rproc_vring *rvring;
-+	int id;
-+
-+	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-+		rvring = &rvdev->vring[id];
-+		rproc_free_vring(rvring);
-+	}
-+
-+	rproc_remove_subdev(rproc, &rvdev->subdev);
-+	rproc_remove_rvdev(rvdev);
-+	device_unregister(&rvdev->dev);
-+}
-+
-+void rproc_vdev_release(struct kref *ref)
-+{
-+	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
-+
-+	rproc_rvdev_remove_device(rvdev);
-+}
--- 
-2.25.1
-
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 95 +-----------------------------
+>  1 file changed, 1 insertion(+), 94 deletions(-)
+>
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index 2abee78df96e..eee3c44c2146 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -649,99 +649,6 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
+>         return 0;
+>  }
+>
+> -/**
+> - * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
+> - * @rproc: remote processor which will be booted using these fw segments
+> - * @fw: the ELF firmware image
+> - *
+> - * This function specially checks if memsz is zero or not, otherwise it
+> - * is mostly same as rproc_elf_load_segments().
+> - */
+> -static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc,
+> -                                          const struct firmware *fw)
+> -{
+> -       struct device *dev = &rproc->dev;
+> -       u8 class = fw_elf_get_class(fw);
+> -       u32 elf_phdr_get_size = elf_size_of_phdr(class);
+> -       const u8 *elf_data = fw->data;
+> -       const void *ehdr, *phdr;
+> -       int i, ret = 0;
+> -       u16 phnum;
+> -
+> -       ehdr = elf_data;
+> -       phnum = elf_hdr_get_e_phnum(class, ehdr);
+> -       phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
+> -
+> -       /* go through the available ELF segments */
+> -       for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
+> -               u64 da = elf_phdr_get_p_paddr(class, phdr);
+> -               u64 memsz = elf_phdr_get_p_memsz(class, phdr);
+> -               u64 filesz = elf_phdr_get_p_filesz(class, phdr);
+> -               u64 offset = elf_phdr_get_p_offset(class, phdr);
+> -               u32 type = elf_phdr_get_p_type(class, phdr);
+> -               void *ptr;
+> -
+> -               /*
+> -                *  There is a case that with PT_LOAD type, the
+> -                *  filesz = memsz = 0. If memsz = 0, rproc_da_to_va
+> -                *  should return NULL ptr, then error is returned.
+> -                *  So this case should be skipped from the loop.
+> -                *  Add !memsz checking here.
+> -                */
+> -               if (type != PT_LOAD || !memsz)
+> -                       continue;
+> -
+> -               dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
+> -                       type, da, memsz, filesz);
+> -
+> -               if (filesz > memsz) {
+> -                       dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
+> -                               filesz, memsz);
+> -                       ret = -EINVAL;
+> -                       break;
+> -               }
+> -
+> -               if (offset + filesz > fw->size) {
+> -                       dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
+> -                               offset + filesz, fw->size);
+> -                       ret = -EINVAL;
+> -                       break;
+> -               }
+> -
+> -               if (!rproc_u64_fit_in_size_t(memsz)) {
+> -                       dev_err(dev, "size (%llx) does not fit in size_t type\n",
+> -                               memsz);
+> -                       ret = -EOVERFLOW;
+> -                       break;
+> -               }
+> -
+> -               /* grab the kernel address for this device address */
+> -               ptr = rproc_da_to_va(rproc, da, memsz, NULL);
+> -               if (!ptr) {
+> -                       dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> -                               memsz);
+> -                       ret = -EINVAL;
+> -                       break;
+> -               }
+> -
+> -               /* put the segment where the remote processor expects it */
+> -               if (filesz)
+> -                       memcpy(ptr, elf_data + offset, filesz);
+> -
+> -               /*
+> -                * Zero out remaining memory for this segment.
+> -                *
+> -                * This isn't strictly required since dma_alloc_coherent already
+> -                * did this for us. albeit harmless, we may consider removing
+> -                * this.
+> -                */
+> -               if (memsz > filesz)
+> -                       memset(ptr + filesz, 0, memsz - filesz);
+> -       }
+> -
+> -       return ret;
+> -}
+> -
+>  /* Prepare function for rproc_ops */
+>  static int imx_dsp_rproc_prepare(struct rproc *rproc)
+>  {
+> @@ -808,7 +715,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+>         .start          = imx_dsp_rproc_start,
+>         .stop           = imx_dsp_rproc_stop,
+>         .kick           = imx_dsp_rproc_kick,
+> -       .load           = imx_dsp_rproc_elf_load_segments,
+> +       .load           = rproc_elf_load_segments,
+>         .parse_fw       = rproc_elf_load_rsc_table,
+>         .sanity_check   = rproc_elf_sanity_check,
+>         .get_boot_addr  = rproc_elf_get_boot_addr,
+> --
+> 2.25.1
+>
