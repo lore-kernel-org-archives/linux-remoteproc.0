@@ -2,160 +2,275 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36C6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF92C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:28:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234826AbiDFO3Z (ORCPT
+        id S234744AbiDFOaj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 10:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60484 "EHLO
+        Wed, 6 Apr 2022 10:30:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234855AbiDFO2g (ORCPT
+        with ESMTP id S234937AbiDFOaU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 10:28:36 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36B404FD6B0;
-        Wed,  6 Apr 2022 03:43:55 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2369BEpd021551;
-        Wed, 6 Apr 2022 11:55:25 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=hEO64zeJXsOJOwf4KqsHNweR2RF04Q3X7QAJQ1jDCTA=;
- b=cHl+gWf/f0J04Xi6gp93Npv2mLBQ0Xjs+Kj9xa1iwAc3rmqrIyyJkyWygr/ZlHrkscbU
- RQjZh6JCShK+/wibo2xMy2nZ1T93CACD1r3W4DgA5VXqRqdIMKarGsWAsfTYUl8ZbZ99
- x+BCPq3w3MvTo11d+qALcaldn1BW1I9b+SiuIjpRXPaSE04oEOgnNo+y06maBbXPw4N7
- TJzyq/ascngOt7ySsIS1gnEp44fLEgCxrxdjeJk+Bxf3NYj9kHHxnvfVAfLQNs3nNS1l
- nYeFG5gO6ZBtB8MOWTD9QhP0QTnN4O78Yc8Mv3v0uW7ZjuZZ9xt58NzjdH7Q6IVhcz4l aw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6bwk54q7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Apr 2022 11:55:25 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4545410002A;
-        Wed,  6 Apr 2022 11:55:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3956E20F2A4;
-        Wed,  6 Apr 2022 11:55:24 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 6 Apr 2022 11:55:23
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH v5 0/4] remoteproc: restructure the remoteproc VirtIO device
-Date:   Wed, 6 Apr 2022 11:54:42 +0200
-Message-ID: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 6 Apr 2022 10:30:20 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38D9447D5AB;
+        Wed,  6 Apr 2022 03:46:30 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369iNNw059322;
+        Wed, 6 Apr 2022 04:44:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1649238263;
+        bh=3mr6PWWFKPhhqSpWuRBqusywwjTd5CFgavwJj4zaMBI=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=CpC3IY8l4kE8f6xFTLsMq5aYiQaQwh8p3CAEt/ibd5By7p7b2BUC1tBNlE2OaZFLP
+         X87ofzxeY0sUZ55x2Ou5Dz4DLgizb4Jhl0rE/OR/IemH+15EF4Rv/N8fDEYdQT6eEq
+         F+UbMqHDDYgob9SVESZjD3WZjjYzO1v/NwWb+7m4=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369iNa5113119
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Apr 2022 04:44:23 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 6
+ Apr 2022 04:44:22 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Wed, 6 Apr 2022 04:44:22 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369iLLW025792;
+        Wed, 6 Apr 2022 04:44:22 -0500
+From:   Puranjay Mohan <p-mohan@ti.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
+        <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
+        <vigneshr@ti.com>, <kishon@ti.com>
+Subject: [RFC 08/13] soc: ti: pruss: Add pruss_cfg_read()/update() API
+Date:   Wed, 6 Apr 2022 15:13:53 +0530
+Message-ID: <20220406094358.7895-9-p-mohan@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220406094358.7895-1-p-mohan@ti.com>
+References: <20220406094358.7895-1-p-mohan@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-06_03,2022-04-05_01,2022-02-23_01
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-1) Update from V4 [1]:
+From: Suman Anna <s-anna@ti.com>
 
-Minor updates based on Mathieu's comments.
-Updates are listed in the commit message of each patch.
+Add two new generic API pruss_cfg_read() and pruss_cfg_update() to
+the PRUSS platform driver to allow other drivers to read and program
+respectively a register within the PRUSS CFG sub-module represented
+by a syscon driver. This interface provides a simple way for client
+drivers without having them to include and parse the CFG syscon node
+within their respective device nodes. Various useful registers and
+macros for certain register bit-fields and their values have also
+been added.
 
-[1] https://lkml.org/lkml/2022/3/14/1177
+It is the responsibility of the client drivers to reconfigure or
+reset a particular register upon any failures.
 
-2) Patchset description:
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+---
+ drivers/soc/ti/pruss.c |  41 +++++++++++++++++
+ include/linux/pruss.h  | 102 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 143 insertions(+)
 
-This series is a part of the work initiated a long time ago in 
-the series "remoteproc: Decorelate virtio from core"[2]
-
-Objective of the work:
-- Update the remoteproc VirtIO device creation (use platform device)
-- Allow to declare remoteproc VirtIO device in DT
-    - declare resources associated to a remote proc VirtIO
-    - declare a list of VirtIO supported by the platform.
-- Prepare the enhancement to more VirtIO devices (e.g I2C, audio, video, ...).
-  For instance be able to declare a I2C device in a virtio-i2C node.
-- Keep the legacy working!
-- Try to improve the picture about concerns reported by Christoph Hellwing [3][4]
-
-[2] https://lkml.org/lkml/2020/4/16/1817
-[3] https://lkml.org/lkml/2021/6/23/607
-[4] https://patchwork.kernel.org/project/linux-remoteproc/patch/AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch/
-
-In term of device tree this would result in such hierarchy (stm32mp1 example with 2 virtio RPMSG):
-
-	m4_rproc: m4@10000000 {
-		compatible = "st,stm32mp1-m4";
-		reg = <0x10000000 0x40000>,
-		      <0x30000000 0x40000>,
-		      <0x38000000 0x10000>;
-        memory-region = <&retram>, <&mcuram>,<&mcuram2>;
-        mboxes = <&ipcc 2>, <&ipcc 3>;
-        mbox-names = "shutdown", "detach";
-        status = "okay";
-
-        #address-cells = <1>;
-        #size-cells = <0>;
-        
-        vdev@0 {
-		compatible = "rproc-virtio";
-		reg = <0>;
-		virtio,id = <7>;  /* RPMSG */
-		memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
-		mboxes = <&ipcc 0>, <&ipcc 1>;
-		mbox-names = "vq0", "vq1";
-		status = "okay";
-        };
-
-        vdev@1 {
-		compatible = "rproc-virtio";
-		reg = <1>;
-		virtio,id = <7>;  /*RPMSG */
-		memory-region = <&vdev1vring0>, <&vdev1vring1>, <&vdev1buffer>;
-		mboxes = <&ipcc 4>, <&ipcc 5>;
-		mbox-names = "vq0", "vq1";
-		status = "okay";
-        };
-};
-
-I have divided the work in 4 steps to simplify the review, This series implements only
-the step 1:
-step 1:  redefine the remoteproc VirtIO device as a platform device
-  - migrate rvdev management in remoteproc virtio.c,
-  - create a remotproc virtio config ( can be disabled for platform that not use VirtIO IPC.
-step 2: add possibility to declare and probe a VirtIO sub node
-  - VirtIO bindings declaration,
-  - multi DT VirtIO devices support,
-  - introduction of a remote proc virtio bind device mechanism ,
-=> https://github.com/arnopo/linux/commits/step2-virtio-in-DT
-step 3: Add memory declaration in VirtIO subnode
-=> https://github.com/arnopo/linux/commits/step3-virtio-memories
-step 4: Add mailbox declaration in VirtIO subnode
-=> https://github.com/arnopo/linux/commits/step4-virtio-mailboxes
-
-Arnaud Pouliquen (4):
-  remoteproc: core: Introduce virtio device add/remove functions
-  remoteproc: core: Introduce rproc_register_rvdev function
-  remoteproc: Move rproc_vdev management to remoteproc_virtio.c
-  remoteproc: virtio: Create platform device for the remoteproc_virtio
-
- drivers/remoteproc/remoteproc_core.c     | 154 +++---------------
- drivers/remoteproc/remoteproc_internal.h |  23 ++-
- drivers/remoteproc/remoteproc_virtio.c   | 193 ++++++++++++++++++++---
- include/linux/remoteproc.h               |   6 +-
- 4 files changed, 215 insertions(+), 161 deletions(-)
-
+diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+index bda920662de2..9ef15daa405a 100644
+--- a/drivers/soc/ti/pruss.c
++++ b/drivers/soc/ti/pruss.c
+@@ -164,6 +164,47 @@ int pruss_release_mem_region(struct pruss *pruss,
+ }
+ EXPORT_SYMBOL_GPL(pruss_release_mem_region);
+ 
++/**
++ * pruss_cfg_read() - read a PRUSS CFG sub-module register
++ * @pruss: the pruss instance handle
++ * @reg: register offset within the CFG sub-module
++ * @val: pointer to return the value in
++ *
++ * Reads a given register within the PRUSS CFG sub-module and
++ * returns it through the passed-in @val pointer
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val)
++{
++	if (IS_ERR_OR_NULL(pruss))
++		return -EINVAL;
++
++	return regmap_read(pruss->cfg_regmap, reg, val);
++}
++EXPORT_SYMBOL_GPL(pruss_cfg_read);
++
++/**
++ * pruss_cfg_update() - configure a PRUSS CFG sub-module register
++ * @pruss: the pruss instance handle
++ * @reg: register offset within the CFG sub-module
++ * @mask: bit mask to use for programming the @val
++ * @val: value to write
++ *
++ * Programs a given register within the PRUSS CFG sub-module
++ *
++ * Return: 0 on success, or an error code otherwise
++ */
++int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
++		     unsigned int mask, unsigned int val)
++{
++	if (IS_ERR_OR_NULL(pruss))
++		return -EINVAL;
++
++	return regmap_update_bits(pruss->cfg_regmap, reg, mask, val);
++}
++EXPORT_SYMBOL_GPL(pruss_cfg_update);
++
+ static void pruss_of_free_clk_provider(void *data)
+ {
+ 	struct device_node *clk_mux_np = data;
+diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+index 689ef243bcbc..eb2f974eef9c 100644
+--- a/include/linux/pruss.h
++++ b/include/linux/pruss.h
+@@ -10,12 +10,99 @@
+ #ifndef __LINUX_PRUSS_H
+ #define __LINUX_PRUSS_H
+ 
++#include <linux/bits.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/types.h>
+ 
+ #define PRU_RPROC_DRVNAME "pru-rproc"
+ 
++/*
++ * PRU_ICSS_CFG registers
++ * SYSCFG, ISRP, ISP, IESP, IECP, SCRP applicable on AMxxxx devices only
++ */
++#define PRUSS_CFG_REVID		0x00
++#define PRUSS_CFG_SYSCFG	0x04
++#define PRUSS_CFG_GPCFG(x)	(0x08 + (x) * 4)
++#define PRUSS_CFG_CGR		0x10
++#define PRUSS_CFG_ISRP		0x14
++#define PRUSS_CFG_ISP		0x18
++#define PRUSS_CFG_IESP		0x1C
++#define PRUSS_CFG_IECP		0x20
++#define PRUSS_CFG_SCRP		0x24
++#define PRUSS_CFG_PMAO		0x28
++#define PRUSS_CFG_MII_RT	0x2C
++#define PRUSS_CFG_IEPCLK	0x30
++#define PRUSS_CFG_SPP		0x34
++#define PRUSS_CFG_PIN_MX	0x40
++
++/* PRUSS_GPCFG register bits */
++#define PRUSS_GPCFG_PRU_GPO_SH_SEL		BIT(25)
++
++#define PRUSS_GPCFG_PRU_DIV1_SHIFT		20
++#define PRUSS_GPCFG_PRU_DIV1_MASK		GENMASK(24, 20)
++
++#define PRUSS_GPCFG_PRU_DIV0_SHIFT		15
++#define PRUSS_GPCFG_PRU_DIV0_MASK		GENMASK(15, 19)
++
++#define PRUSS_GPCFG_PRU_GPO_MODE		BIT(14)
++#define PRUSS_GPCFG_PRU_GPO_MODE_DIRECT		0
++#define PRUSS_GPCFG_PRU_GPO_MODE_SERIAL		BIT(14)
++
++#define PRUSS_GPCFG_PRU_GPI_SB			BIT(13)
++
++#define PRUSS_GPCFG_PRU_GPI_DIV1_SHIFT		8
++#define PRUSS_GPCFG_PRU_GPI_DIV1_MASK		GENMASK(12, 8)
++
++#define PRUSS_GPCFG_PRU_GPI_DIV0_SHIFT		3
++#define PRUSS_GPCFG_PRU_GPI_DIV0_MASK		GENMASK(7, 3)
++
++#define PRUSS_GPCFG_PRU_GPI_CLK_MODE_POSITIVE	0
++#define PRUSS_GPCFG_PRU_GPI_CLK_MODE_NEGATIVE	BIT(2)
++#define PRUSS_GPCFG_PRU_GPI_CLK_MODE		BIT(2)
++
++#define PRUSS_GPCFG_PRU_GPI_MODE_MASK		GENMASK(1, 0)
++#define PRUSS_GPCFG_PRU_GPI_MODE_SHIFT		0
++
++#define PRUSS_GPCFG_PRU_MUX_SEL_SHIFT		26
++#define PRUSS_GPCFG_PRU_MUX_SEL_MASK		GENMASK(29, 26)
++
++/* PRUSS_MII_RT register bits */
++#define PRUSS_MII_RT_EVENT_EN			BIT(0)
++
++/* PRUSS_SPP register bits */
++#define PRUSS_SPP_XFER_SHIFT_EN			BIT(1)
++#define PRUSS_SPP_PRU1_PAD_HP_EN		BIT(0)
++
++/*
++ * enum pruss_gp_mux_sel - PRUSS GPI/O Mux modes for the
++ * PRUSS_GPCFG0/1 registers
++ *
++ * NOTE: The below defines are the most common values, but there
++ * are some exceptions like on 66AK2G, where the RESERVED and MII2
++ * values are interchanged. Also, this bit-field does not exist on
++ * AM335x SoCs
++ */
++enum pruss_gp_mux_sel {
++	PRUSS_GP_MUX_SEL_GP = 0,
++	PRUSS_GP_MUX_SEL_ENDAT,
++	PRUSS_GP_MUX_SEL_RESERVED,
++	PRUSS_GP_MUX_SEL_SD,
++	PRUSS_GP_MUX_SEL_MII2,
++	PRUSS_GP_MUX_SEL_MAX,
++};
++
++/*
++ * enum pruss_gpi_mode - PRUSS GPI configuration modes, used
++ *			 to program the PRUSS_GPCFG0/1 registers
++ */
++enum pruss_gpi_mode {
++	PRUSS_GPI_MODE_DIRECT = 0,
++	PRUSS_GPI_MODE_PARALLEL,
++	PRUSS_GPI_MODE_28BIT_SHIFT,
++	PRUSS_GPI_MODE_MII,
++};
++
+ /*
+  * enum pruss_pru_id - PRU core identifiers
+  */
+@@ -73,6 +160,9 @@ int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
+ 			     struct pruss_mem_region *region);
+ int pruss_release_mem_region(struct pruss *pruss,
+ 			     struct pruss_mem_region *region);
++int pruss_cfg_read(struct pruss *pruss, unsigned int reg, unsigned int *val);
++int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
++		     unsigned int mask, unsigned int val);
+ 
+ #else
+ 
+@@ -96,6 +186,18 @@ static inline int pruss_release_mem_region(struct pruss *pruss,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int pruss_cfg_read(struct pruss *pruss, unsigned int reg,
++				 unsigned int *val)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
++				   unsigned int mask, unsigned int val)
++{
++	return -EOPNOTSUPP;
++}
++
+ #endif /* CONFIG_TI_PRUSS */
+ 
+ #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
 -- 
-2.25.1
+2.17.1
 
