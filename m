@@ -2,178 +2,134 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AC7C43217
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 15:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D508C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 16:09:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236561AbiDFPs3 (ORCPT
+        id S237485AbiDFQLt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:48:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50646 "EHLO
+        Wed, 6 Apr 2022 12:11:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237334AbiDFPsV (ORCPT
+        with ESMTP id S237519AbiDFQLl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 11:48:21 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8DD4781C6;
-        Wed,  6 Apr 2022 06:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1649250471; x=1680786471;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IHd+NLZREeqx4UE9sFXsjEcbaAa5I96BAyNN4S3AmjU=;
-  b=YZTlJeQKqCxXfv/XAIX0fTwLZERgAnJvWUJ/K04tRhhYR6osg8bNvk5u
-   7rQKlvhd+1OKPifbNuw3+Tg4quji5ki7GWXZ5rt1o2rBBaG90CthVGwaR
-   5rFep5dp8ePPh8jwn7OhlEqNi/kBWi5UtGY3fv/nh+JN4GQ7uLm/Ct/v6
-   c=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 06 Apr 2022 04:38:31 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 04:38:31 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 6 Apr 2022 04:38:30 -0700
-Received: from [10.216.29.113] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Apr 2022
- 04:38:25 -0700
-Message-ID: <d23b7674-214f-10f4-d669-5de32c82152f@quicinc.com>
-Date:   Wed, 6 Apr 2022 17:08:19 +0530
+        Wed, 6 Apr 2022 12:11:41 -0400
+Received: from out199-2.us.a.mail.aliyun.com (out199-2.us.a.mail.aliyun.com [47.90.199.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32236BF012;
+        Tue,  5 Apr 2022 20:44:31 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R811e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9JzisK_1649216663;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9JzisK_1649216663)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 06 Apr 2022 11:44:24 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     virtualization@lists.linux-foundation.org
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v9 17/32] virtio_ring: packed: introduce virtqueue_resize_packed()
+Date:   Wed,  6 Apr 2022 11:43:31 +0800
+Message-Id: <20220406034346.74409-18-xuanzhuo@linux.alibaba.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH V1 3/3] rpmsg: glink: Add lock for ctrl device
-Content-Language: en-US
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-CC:     <swboyd@chromium.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        "Ohad Ben-Cohen" <ohad@wizery.com>
-References: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
- <1643223886-28170-4-git-send-email-quic_deesin@quicinc.com>
- <Yiu3Fl/Diw5iqh24@builder.lan>
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-In-Reply-To: <Yiu3Fl/Diw5iqh24@builder.lan>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+X-Git-Hash: 881cb3483d12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+virtio ring packed supports resize.
 
-On 3/12/2022 2:24 AM, Bjorn Andersson wrote:
-> On Wed 26 Jan 13:04 CST 2022, Deepak Kumar Singh wrote:
->
->> Race between rpmsg_eptdev_create and rpmsg_chrdev_remove
->> can sometime casue crash while accessing rpdev while new
->> endpoint is being created. Using lock ensure no new eptdev
->> is created after rpmsg_chrdev_remove has been completed.
-> This patch lacks a Signed-off-by.
-I will correct that in next patch.
-> Isn't this solving the same problem as the previous patch? Would be nice
-> with some more specifics on the race that you're seeing.
->
-> Thanks,
-> Bjorn
+Only after the new vring is successfully allocated based on the new num,
+we will release the old vring. In any case, an error is returned,
+indicating that the vring still points to the old vring.
 
-Issue was observed after having patch 2, in reboot test case.
+In the case of an error, the caller must re-initialize(by
+virtqueue_reinit_packed()) the virtqueue to ensure that the vring can be
+used.
 
-Here observation was, user space daemon was able to create rpmsg0 device 
-through
+Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+---
+ drivers/virtio/virtio_ring.c | 40 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-ctrl device and it was in process of rpmsg_eptdev_create() but as such 
-ept creation was not yet done.
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index 9a4f2db718bd..06f66b15c86c 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -2059,6 +2059,46 @@ static struct virtqueue *vring_create_virtqueue_packed(
+ 	return NULL;
+ }
+ 
++static int virtqueue_resize_packed(struct virtqueue *_vq, u32 num)
++{
++	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_addr;
++	struct vring_packed_desc_event *driver, *device;
++	size_t ring_size_in_bytes, event_size_in_bytes;
++	struct vring_virtqueue *vq = to_vvq(_vq);
++	struct virtio_device *vdev = _vq->vdev;
++	struct vring_desc_state_packed *state;
++	struct vring_desc_extra *extra;
++	struct vring_packed_desc *ring;
++	int err;
++
++	if (vring_alloc_queue_packed(vdev, num, &ring, &driver, &device,
++				     &ring_dma_addr, &driver_event_dma_addr,
++				     &device_event_dma_addr,
++				     &ring_size_in_bytes, &event_size_in_bytes))
++		goto err_ring;
++
++
++	err = vring_alloc_state_extra_packed(num, &state, &extra);
++	if (err)
++		goto err_state_extra;
++
++	vring_free(&vq->vq);
++
++	vring_virtqueue_attach_packed(vq, num, ring, driver, device,
++				      ring_dma_addr, driver_event_dma_addr,
++				      device_event_dma_addr, ring_size_in_bytes,
++				      event_size_in_bytes, state, extra);
++	vring_virtqueue_init_packed(vq, vdev);
++	return 0;
++
++err_state_extra:
++	vring_free_queue(vdev, event_size_in_bytes, device, device_event_dma_addr);
++	vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma_addr);
++	vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
++err_ring:
++	return -ENOMEM;
++}
++
+ 
+ /*
+  * Generic functions and exported symbols.
+-- 
+2.31.0
 
-At the same time rpmsg_chrdev_remove() call happened which caused ctrl 
-device to be freed.
-
-backtrace of crash -
-
-rpmsg_create_ept+0x40/0xa0
-rpmsg_eptdev_open+0x88/0x138
-chrdev_open+0xc4/0x1c8
-do_dentry_open+0x230/0x378
-vfs_open+0x3c/0x48
-path_openat+0x93c/0xa78
-do_filp_open+0x98/0x118
-do_sys_openat2+0x90/0x220
-do_sys_open+0x64/0x8c
-
->> ---
->>   drivers/rpmsg/rpmsg_char.c | 11 ++++++++++-
->>   1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->> index 2108ef8..3e5b85d 100644
->> --- a/drivers/rpmsg/rpmsg_char.c
->> +++ b/drivers/rpmsg/rpmsg_char.c
->> @@ -27,6 +27,7 @@
->>   
->>   static dev_t rpmsg_major;
->>   static struct class *rpmsg_class;
->> +struct mutex ctrl_lock;
->>   
->>   static DEFINE_IDA(rpmsg_ctrl_ida);
->>   static DEFINE_IDA(rpmsg_ept_ida);
->> @@ -396,9 +397,12 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->>   	struct device *dev;
->>   	int ret;
->>   
->> +	mutex_lock(&ctrl_lock);
->>   	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
->> -	if (!eptdev)
->> +	if (!eptdev) {
->> +		mutex_unlock(&ctrl_lock);
->>   		return -ENOMEM;
->> +	}
->>   
->>   	dev = &eptdev->dev;
->>   	eptdev->rpdev = rpdev;
->> @@ -443,6 +447,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->>   		put_device(dev);
->>   	}
->>   
->> +	mutex_unlock(&ctrl_lock);
->>   	return ret;
->>   
->>   free_ept_ida:
->> @@ -453,6 +458,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
->>   	put_device(dev);
->>   	kfree(eptdev);
->>   
->> +	mutex_unlock(&ctrl_lock);
->>   	return ret;
->>   }
->>   
->> @@ -525,6 +531,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->>   	if (!ctrldev)
->>   		return -ENOMEM;
->>   
->> +	mutex_init(&ctrl_lock);
->>   	ctrldev->rpdev = rpdev;
->>   
->>   	dev = &ctrldev->dev;
->> @@ -581,12 +588,14 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
->>   	int ret;
->>   
->>   	/* Destroy all endpoints */
->> +	mutex_lock(&ctrl_lock);
->>   	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
->>   	if (ret)
->>   		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
->>   
->>   	device_del(&ctrldev->dev);
->>   	put_device(&ctrldev->dev);
->> +	mutex_unlock(&ctrl_lock);
->>   }
->>   
->>   static struct rpmsg_driver rpmsg_chrdev_driver = {
->> -- 
->> 2.7.4
->>
