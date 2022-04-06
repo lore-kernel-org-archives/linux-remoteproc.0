@@ -2,202 +2,151 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EC4C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 12:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10EF0C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 13:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232837AbiDFMS5 (ORCPT
+        id S232476AbiDFNLH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:18:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36084 "EHLO
+        Wed, 6 Apr 2022 09:11:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233194AbiDFMSL (ORCPT
+        with ESMTP id S232672AbiDFNK4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:18:11 -0400
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D7B2963D1;
-        Tue,  5 Apr 2022 20:45:01 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9KCOR._1649216693;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9KCOR._1649216693)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 06 Apr 2022 11:44:54 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     virtualization@lists.linux-foundation.org
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH v9 31/32] virtio_net: support rx/tx queue resize
-Date:   Wed,  6 Apr 2022 11:43:45 +0800
-Message-Id: <20220406034346.74409-32-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+        Wed, 6 Apr 2022 09:10:56 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBA095F38F1;
+        Wed,  6 Apr 2022 02:45:37 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369iFWd108739;
+        Wed, 6 Apr 2022 04:44:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1649238255;
+        bh=zgzNCrg2jxb2fMhf7Xl7w052aCeYSvcx7BoVAy9SRiQ=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=A/ceEQ1+xCVGdMhG4IJWdicZYBXElFeYzWE175OdYmLX9imSiL6NsIx+50xmiNF5+
+         PKHdnXubjD7KJ5kZBoQr+d1VMAVMtlfyvR/80ZAToKlRuaJyGJSEFhLwFEHHqTU1yV
+         r0oTS7WW+Ck1D/D5DovH55wjQGqLHUJcAG8x8tq8=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369iFdg014796
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 6 Apr 2022 04:44:15 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 6
+ Apr 2022 04:44:15 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Wed, 6 Apr 2022 04:44:15 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369iDtw025691;
+        Wed, 6 Apr 2022 04:44:14 -0500
+From:   Puranjay Mohan <p-mohan@ti.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
+        <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
+        <vigneshr@ti.com>, <kishon@ti.com>
+Subject: [RFC 05/13] remoteproc: pru: Configure firmware based on client setup
+Date:   Wed, 6 Apr 2022 15:13:50 +0530
+Message-ID: <20220406094358.7895-6-p-mohan@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220406094358.7895-1-p-mohan@ti.com>
+References: <20220406094358.7895-1-p-mohan@ti.com>
 MIME-Version: 1.0
-X-Git-Hash: 881cb3483d12
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch implements the resize function of the rx, tx queues.
-Based on this function, it is possible to modify the ring num of the
-queue.
+From: Tero Kristo <t-kristo@ti.com>
 
-There may be an exception during the resize process, the resize may
-fail, or the vq can no longer be used. Either way, we must execute
-napi_enable(). Because napi_disable is similar to a lock, napi_enable
-must be called after calling napi_disable.
+Client device node property firmware-name is now used to configure
+firmware for the PRU instances. The default firmware is also
+restored once releasing the PRU resource.
 
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Co-developed-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
 ---
- drivers/net/virtio_net.c | 81 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ drivers/remoteproc/pru_rproc.c | 35 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index b8bf00525177..ba6859f305f7 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -251,6 +251,9 @@ struct padded_vnet_hdr {
- 	char padding[4];
- };
- 
-+static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void *buf);
-+static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *buf);
-+
- static bool is_xdp_frame(void *ptr)
- {
- 	return (unsigned long)ptr & VIRTIO_XDP_FLAG;
-@@ -1369,6 +1372,15 @@ static void virtnet_napi_enable(struct virtqueue *vq, struct napi_struct *napi)
- {
- 	napi_enable(napi);
- 
-+	/* Check if vq is in reset state. The normal reset/resize process will
-+	 * be protected by napi. However, the protection of napi is only enabled
-+	 * during the operation, and the protection of napi will end after the
-+	 * operation is completed. If re-enable fails during the process, vq
-+	 * will remain unavailable with reset state.
-+	 */
-+	if (vq->reset)
-+		return;
-+
- 	/* If all buffers were filled by other side before we napi_enabled, we
- 	 * won't get another interrupt, so process any outstanding packets now.
- 	 * Call local_bh_enable after to trigger softIRQ processing.
-@@ -1413,6 +1425,15 @@ static void refill_work(struct work_struct *work)
- 		struct receive_queue *rq = &vi->rq[i];
- 
- 		napi_disable(&rq->napi);
-+
-+		/* Check if vq is in reset state. See more in
-+		 * virtnet_napi_enable()
-+		 */
-+		if (rq->vq->reset) {
-+			virtnet_napi_enable(rq->vq, &rq->napi);
-+			continue;
-+		}
-+
- 		still_empty = !try_fill_recv(vi, rq, GFP_KERNEL);
- 		virtnet_napi_enable(rq->vq, &rq->napi);
- 
-@@ -1523,6 +1544,10 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
- 	if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
- 		return;
- 
-+	/* Check if vq is in reset state. See more in virtnet_napi_enable() */
-+	if (sq->vq->reset)
-+		return;
-+
- 	if (__netif_tx_trylock(txq)) {
- 		do {
- 			virtqueue_disable_cb(sq->vq);
-@@ -1769,6 +1794,62 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	return NETDEV_TX_OK;
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index d06b763e995e..2977eb50631b 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -171,6 +171,23 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
+ 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
  }
  
-+static int virtnet_rx_resize(struct virtnet_info *vi,
-+			     struct receive_queue *rq, u32 ring_num)
++/**
++ * pru_rproc_set_firmware() - set firmware for a pru core
++ * @rproc: the rproc instance of the PRU
++ * @fw_name: the new firmware name, or NULL if default is desired
++ *
++ * Return: 0 on success, or errno in error case.
++ */
++static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
 +{
-+	int err;
++	struct pru_rproc *pru = rproc->priv;
 +
-+	napi_disable(&rq->napi);
++	if (!fw_name)
++		fw_name = pru->fw_name;
 +
-+	err = virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unused_buf);
-+	if (err)
-+		goto err;
-+
-+	if (!try_fill_recv(vi, rq, GFP_KERNEL))
-+		schedule_delayed_work(&vi->refill, 0);
-+
-+	virtnet_napi_enable(rq->vq, &rq->napi);
-+	return 0;
-+
-+err:
-+	netdev_err(vi->dev,
-+		   "reset rx reset vq fail: rx queue index: %td err: %d\n",
-+		   rq - vi->rq, err);
-+	virtnet_napi_enable(rq->vq, &rq->napi);
-+	return err;
++	return rproc_set_firmware(rproc, fw_name);
 +}
 +
-+static int virtnet_tx_resize(struct virtnet_info *vi,
-+			     struct send_queue *sq, u32 ring_num)
-+{
-+	struct netdev_queue *txq;
-+	int err, qindex;
+ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+ {
+ 	struct device_node *rproc_np = NULL;
+@@ -231,6 +248,8 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	struct rproc *rproc;
+ 	struct pru_rproc *pru;
+ 	struct device *dev;
++	const char *fw_name;
++	int ret;
+ 
+ 	try_module_get(THIS_MODULE);
+ 
+@@ -257,7 +276,21 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	if (pru_id)
+ 		*pru_id = pru->id;
+ 
++	ret = of_property_read_string_index(np, "firmware-name", index,
++					    &fw_name);
++	if (!ret) {
++		ret = pru_rproc_set_firmware(rproc, fw_name);
++		if (ret) {
++			dev_err(dev, "failed to set firmware: %d\n", ret);
++			goto err;
++		}
++	}
 +
-+	qindex = sq - vi->sq;
-+
-+	virtnet_napi_tx_disable(&sq->napi);
-+
-+	txq = netdev_get_tx_queue(vi->dev, qindex);
-+	__netif_tx_lock_bh(txq);
-+	netif_stop_subqueue(vi->dev, qindex);
-+	__netif_tx_unlock_bh(txq);
-+
-+	err = virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf);
-+	if (err)
-+		goto err;
-+
-+	netif_start_subqueue(vi->dev, qindex);
-+	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
-+	return 0;
+ 	return rproc;
 +
 +err:
-+	netdev_err(vi->dev,
-+		   "reset tx reset vq fail: tx queue index: %td err: %d\n",
-+		   sq - vi->sq, err);
-+	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
-+	return err;
-+}
++	pru_rproc_put(rproc);
++	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL_GPL(pru_rproc_get);
+ 
+@@ -277,6 +310,8 @@ void pru_rproc_put(struct rproc *rproc)
+ 
+ 	pru = rproc->priv;
+ 
++	pru_rproc_set_firmware(rproc, NULL);
 +
- /*
-  * Send command via the control virtqueue and check status.  Commands
-  * supported by the hypervisor, as indicated by feature bits, should
+ 	mutex_lock(&pru->lock);
+ 
+ 	if (!pru->client_np) {
 -- 
-2.31.0
+2.17.1
 
