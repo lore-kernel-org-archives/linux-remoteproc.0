@@ -2,168 +2,125 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E19DC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33DCC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234833AbiDFOYo (ORCPT
+        id S234444AbiDFOZf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 10:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51086 "EHLO
+        Wed, 6 Apr 2022 10:25:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234843AbiDFOYL (ORCPT
+        with ESMTP id S234828AbiDFOZ0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 10:24:11 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA5E6267AC6;
-        Tue,  5 Apr 2022 20:44:21 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R651e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9JmreT_1649216654;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9JmreT_1649216654)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 06 Apr 2022 11:44:16 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     virtualization@lists.linux-foundation.org
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH v9 13/32] virtio_ring: packed: extract the logic of alloc state and extra
-Date:   Wed,  6 Apr 2022 11:43:27 +0800
-Message-Id: <20220406034346.74409-14-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+        Wed, 6 Apr 2022 10:25:26 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1667444A6AF;
+        Wed,  6 Apr 2022 03:35:53 -0700 (PDT)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2369Y1vC030563;
+        Wed, 6 Apr 2022 11:55:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=dK4+cXbxny0t1pj5PstgT/p8V7GGZbAPXnZTGdQw1v0=;
+ b=dYpIDry0Imfaf/YU/NJ23gQOciFtNxBna/vqeOHojb7CPXuTsjVeBwZm/NpKdx+80Za+
+ rY5bI9VbYzYaLIQh8ZGaKEItaLVJTGIuus8BW3puwIoUsmcd0ygs/A6hE0YdAevODznT
+ hS18lG+X9LVFRv09sZdqYuDGf9io3eZhMJLeOjGiiMRxRhjT+FJ2sOKUtoIzXa7ANRqt
+ ubCC7s6zk0Gh4g6GidEU8DXMeTHv5dmvh+Yl1BScn1odSSaa68aAXrRtdHVXlKe0E8H3
+ 4a3OeITJKqpefYfZSn54KuASN3ZizF7r1Vay27jChA+c/rib9ZGEI8X7RWQmgDacC24L Pw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6bwk54qh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 Apr 2022 11:55:25 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6F93A100039;
+        Wed,  6 Apr 2022 11:55:25 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 683FC20F2A4;
+        Wed,  6 Apr 2022 11:55:25 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 6 Apr 2022 11:55:24
+ +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Bruce Ashfield <bruce.ashfield@xilinx.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH v5 2/4] remoteproc: core: Introduce rproc_register_rvdev function
+Date:   Wed, 6 Apr 2022 11:54:44 +0200
+Message-ID: <20220406095446.1187968-3-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
+References: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-X-Git-Hash: 881cb3483d12
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-06_03,2022-04-05_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Separate the logic for alloc desc_state and desc_extra, which will
-be called separately by subsequent patches.
+The rproc structure contains a list of registered rproc_vdev structure.
+To be able to move the management of the rproc_vdev structure in
+remoteproc_virtio.c (i.e rproc_rvdev_add_device and
+rproc_rvdev_remove_device functions), introduce the rproc_register_rvdev
+and rproc_unregister_rvdev functions.
 
-Use struct vring_packed to pass desc_state, desc_extra.
-
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/virtio/virtio_ring.c | 51 ++++++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 14 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index ea451ae2aaef..5b5976c5742e 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -1876,6 +1876,34 @@ static int vring_alloc_queue_packed(struct virtio_device *vdev,
- 	return -ENOMEM;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 3a469220ac73..081bea39daf4 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -484,6 +484,18 @@ static int copy_dma_range_map(struct device *to, struct device *from)
+ 	return 0;
  }
  
-+static int vring_alloc_state_extra_packed(u32 num,
-+					  struct vring_desc_state_packed **desc_state,
-+					  struct vring_desc_extra **desc_extra)
++static void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
 +{
-+	struct vring_desc_state_packed *state;
-+	struct vring_desc_extra *extra;
-+
-+	state = kmalloc_array(num, sizeof(struct vring_desc_state_packed), GFP_KERNEL);
-+	if (!state)
-+		goto err_desc_state;
-+
-+	memset(state, 0, num * sizeof(struct vring_desc_state_packed));
-+
-+	extra = vring_alloc_desc_extra(num);
-+	if (!extra)
-+		goto err_desc_extra;
-+
-+	*desc_state = state;
-+	*desc_extra = extra;
-+
-+	return 0;
-+
-+err_desc_extra:
-+	kfree(state);
-+err_desc_state:
-+	return -ENOMEM;
++	if (rvdev && rproc)
++		list_add_tail(&rvdev->node, &rproc->rvdevs);
 +}
 +
- static struct virtqueue *vring_create_virtqueue_packed(
- 	unsigned int index,
- 	unsigned int num,
-@@ -1891,8 +1919,11 @@ static struct virtqueue *vring_create_virtqueue_packed(
- 	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_addr;
- 	struct vring_packed_desc_event *driver, *device;
- 	size_t ring_size_in_bytes, event_size_in_bytes;
-+	struct vring_desc_state_packed *state;
-+	struct vring_desc_extra *extra;
- 	struct vring_packed_desc *ring;
- 	struct vring_virtqueue *vq;
-+	int err;
++static void rproc_remove_rvdev(struct rproc_vdev *rvdev)
++{
++	if (rvdev)
++		list_del(&rvdev->node);
++}
++
+ static struct rproc_vdev *
+ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
+ {
+@@ -547,7 +559,7 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
+ 			goto unwind_vring_allocations;
+ 	}
  
- 	if (vring_alloc_queue_packed(vdev, num, &ring, &driver, &device,
- 				     &ring_dma_addr, &driver_event_dma_addr,
-@@ -1949,22 +1980,16 @@ static struct virtqueue *vring_create_virtqueue_packed(
- 	vq->packed.event_flags_shadow = 0;
- 	vq->packed.avail_used_flags = 1 << VRING_PACKED_DESC_F_AVAIL;
+-	list_add_tail(&rvdev->node, &rproc->rvdevs);
++	rproc_add_rvdev(rproc, rvdev);
  
--	vq->packed.desc_state = kmalloc_array(num,
--			sizeof(struct vring_desc_state_packed),
--			GFP_KERNEL);
--	if (!vq->packed.desc_state)
--		goto err_desc_state;
-+	err = vring_alloc_state_extra_packed(num, &state, &extra);
-+	if (err)
-+		goto err_state_extra;
+ 	rvdev->subdev.start = rproc_vdev_do_start;
+ 	rvdev->subdev.stop = rproc_vdev_do_stop;
+@@ -576,7 +588,7 @@ static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
+ 	}
  
--	memset(vq->packed.desc_state, 0,
--		num * sizeof(struct vring_desc_state_packed));
-+	vq->packed.desc_state = state;
-+	vq->packed.desc_extra = extra;
+ 	rproc_remove_subdev(rproc, &rvdev->subdev);
+-	list_del(&rvdev->node);
++	rproc_remove_rvdev(rvdev);
+ 	device_unregister(&rvdev->dev);
+ }
  
- 	/* Put everything in free lists. */
- 	vq->free_head = 0;
- 
--	vq->packed.desc_extra = vring_alloc_desc_extra(num);
--	if (!vq->packed.desc_extra)
--		goto err_desc_extra;
--
- 	/* No callback?  Tell other side not to bother us. */
- 	if (!callback) {
- 		vq->packed.event_flags_shadow = VRING_PACKED_EVENT_FLAG_DISABLE;
-@@ -1977,9 +2002,7 @@ static struct virtqueue *vring_create_virtqueue_packed(
- 	spin_unlock(&vdev->vqs_list_lock);
- 	return &vq->vq;
- 
--err_desc_extra:
--	kfree(vq->packed.desc_state);
--err_desc_state:
-+err_state_extra:
- 	kfree(vq);
- err_vq:
- 	vring_free_queue(vdev, event_size_in_bytes, device, device_event_dma_addr);
 -- 
-2.31.0
+2.25.1
 
