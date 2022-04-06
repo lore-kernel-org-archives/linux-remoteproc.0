@@ -2,136 +2,178 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE4B3C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 15:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AC7C43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 15:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235759AbiDFPSa (ORCPT
+        id S236561AbiDFPs3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:18:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
+        Wed, 6 Apr 2022 11:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236325AbiDFPR7 (ORCPT
+        with ESMTP id S237334AbiDFPsV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 11:17:59 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9304F7AC0;
-        Wed,  6 Apr 2022 05:18:10 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369iVIE031133;
-        Wed, 6 Apr 2022 04:44:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1649238271;
-        bh=V24Pg9flw1bNbkBXpcqZ1XDD4yowcEtZAzI4rpfzD24=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=NFBaEH2tni6szUgCBluHVeBrweVIKSj3mOzplXXjcpS4hWqn45ZmlrocHs91zEd0q
-         ThbLxFoVveL6adi1yyCvTh6WOZdl0oWqTzkR2+sM0hYshEgHrwsi+JTm19j+pkoHfJ
-         g4vUjTWHFehedQyTkOf0nPLF6yL4X0rNXqANXzhc=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369iVgs069842
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Apr 2022 04:44:31 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 6
- Apr 2022 04:44:31 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Wed, 6 Apr 2022 04:44:31 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369iTbO021546;
-        Wed, 6 Apr 2022 04:44:30 -0500
-From:   Puranjay Mohan <p-mohan@ti.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
-        <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <vigneshr@ti.com>, <kishon@ti.com>
-Subject: [RFC 11/13] soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
-Date:   Wed, 6 Apr 2022 15:13:56 +0530
-Message-ID: <20220406094358.7895-12-p-mohan@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220406094358.7895-1-p-mohan@ti.com>
-References: <20220406094358.7895-1-p-mohan@ti.com>
+        Wed, 6 Apr 2022 11:48:21 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8DD4781C6;
+        Wed,  6 Apr 2022 06:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1649250471; x=1680786471;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IHd+NLZREeqx4UE9sFXsjEcbaAa5I96BAyNN4S3AmjU=;
+  b=YZTlJeQKqCxXfv/XAIX0fTwLZERgAnJvWUJ/K04tRhhYR6osg8bNvk5u
+   7rQKlvhd+1OKPifbNuw3+Tg4quji5ki7GWXZ5rt1o2rBBaG90CthVGwaR
+   5rFep5dp8ePPh8jwn7OhlEqNi/kBWi5UtGY3fv/nh+JN4GQ7uLm/Ct/v6
+   c=;
+Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 06 Apr 2022 04:38:31 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 04:38:31 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 6 Apr 2022 04:38:30 -0700
+Received: from [10.216.29.113] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 6 Apr 2022
+ 04:38:25 -0700
+Message-ID: <d23b7674-214f-10f4-d669-5de32c82152f@quicinc.com>
+Date:   Wed, 6 Apr 2022 17:08:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH V1 3/3] rpmsg: glink: Add lock for ctrl device
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <swboyd@chromium.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        "Ohad Ben-Cohen" <ohad@wizery.com>
+References: <1643223886-28170-1-git-send-email-quic_deesin@quicinc.com>
+ <1643223886-28170-4-git-send-email-quic_deesin@quicinc.com>
+ <Yiu3Fl/Diw5iqh24@builder.lan>
+From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
+In-Reply-To: <Yiu3Fl/Diw5iqh24@builder.lan>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
 
-Add two new helper functions pruss_cfg_get_gpmux() & pruss_cfg_set_gpmux()
-to get and set the GP MUX mode for programming the PRUSS internal wrapper
-mux functionality as needed by usecases.
+On 3/12/2022 2:24 AM, Bjorn Andersson wrote:
+> On Wed 26 Jan 13:04 CST 2022, Deepak Kumar Singh wrote:
+>
+>> Race between rpmsg_eptdev_create and rpmsg_chrdev_remove
+>> can sometime casue crash while accessing rpdev while new
+>> endpoint is being created. Using lock ensure no new eptdev
+>> is created after rpmsg_chrdev_remove has been completed.
+> This patch lacks a Signed-off-by.
+I will correct that in next patch.
+> Isn't this solving the same problem as the previous patch? Would be nice
+> with some more specifics on the race that you're seeing.
+>
+> Thanks,
+> Bjorn
 
-Co-developed-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
----
- include/linux/pruss_driver.h | 44 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Issue was observed after having patch 2, in reboot test case.
 
-diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
-index e2d5477225c6..3312281ef4c1 100644
---- a/include/linux/pruss_driver.h
-+++ b/include/linux/pruss_driver.h
-@@ -35,4 +35,48 @@ struct pruss {
- 	struct clk *iep_clk_mux;
- };
- 
-+/**
-+ * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: pointer to store the current mux value into
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id pru_id, u8 *mux)
-+{
-+	int ret = 0;
-+	u32 val;
-+
-+	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
-+
-+	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(pru_id), &val);
-+	if (!ret)
-+		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
-+			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+	return ret;
-+}
-+
-+/**
-+ * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: new mux value for PRU
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id pru_id, u8 mux)
-+{
-+	if (mux >= PRUSS_GP_MUX_SEL_MAX ||
-+	    pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
-+				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
-+				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+}
-+
- #endif	/* _PRUSS_DRIVER_H_ */
--- 
-2.17.1
+Here observation was, user space daemon was able to create rpmsg0 device 
+through
 
+ctrl device and it was in process of rpmsg_eptdev_create() but as such 
+ept creation was not yet done.
+
+At the same time rpmsg_chrdev_remove() call happened which caused ctrl 
+device to be freed.
+
+backtrace of crash -
+
+rpmsg_create_ept+0x40/0xa0
+rpmsg_eptdev_open+0x88/0x138
+chrdev_open+0xc4/0x1c8
+do_dentry_open+0x230/0x378
+vfs_open+0x3c/0x48
+path_openat+0x93c/0xa78
+do_filp_open+0x98/0x118
+do_sys_openat2+0x90/0x220
+do_sys_open+0x64/0x8c
+
+>> ---
+>>   drivers/rpmsg/rpmsg_char.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>> index 2108ef8..3e5b85d 100644
+>> --- a/drivers/rpmsg/rpmsg_char.c
+>> +++ b/drivers/rpmsg/rpmsg_char.c
+>> @@ -27,6 +27,7 @@
+>>   
+>>   static dev_t rpmsg_major;
+>>   static struct class *rpmsg_class;
+>> +struct mutex ctrl_lock;
+>>   
+>>   static DEFINE_IDA(rpmsg_ctrl_ida);
+>>   static DEFINE_IDA(rpmsg_ept_ida);
+>> @@ -396,9 +397,12 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>>   	struct device *dev;
+>>   	int ret;
+>>   
+>> +	mutex_lock(&ctrl_lock);
+>>   	eptdev = kzalloc(sizeof(*eptdev), GFP_KERNEL);
+>> -	if (!eptdev)
+>> +	if (!eptdev) {
+>> +		mutex_unlock(&ctrl_lock);
+>>   		return -ENOMEM;
+>> +	}
+>>   
+>>   	dev = &eptdev->dev;
+>>   	eptdev->rpdev = rpdev;
+>> @@ -443,6 +447,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>>   		put_device(dev);
+>>   	}
+>>   
+>> +	mutex_unlock(&ctrl_lock);
+>>   	return ret;
+>>   
+>>   free_ept_ida:
+>> @@ -453,6 +458,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+>>   	put_device(dev);
+>>   	kfree(eptdev);
+>>   
+>> +	mutex_unlock(&ctrl_lock);
+>>   	return ret;
+>>   }
+>>   
+>> @@ -525,6 +531,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>>   	if (!ctrldev)
+>>   		return -ENOMEM;
+>>   
+>> +	mutex_init(&ctrl_lock);
+>>   	ctrldev->rpdev = rpdev;
+>>   
+>>   	dev = &ctrldev->dev;
+>> @@ -581,12 +588,14 @@ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>>   	int ret;
+>>   
+>>   	/* Destroy all endpoints */
+>> +	mutex_lock(&ctrl_lock);
+>>   	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_eptdev_destroy);
+>>   	if (ret)
+>>   		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+>>   
+>>   	device_del(&ctrldev->dev);
+>>   	put_device(&ctrldev->dev);
+>> +	mutex_unlock(&ctrl_lock);
+>>   }
+>>   
+>>   static struct rpmsg_driver rpmsg_chrdev_driver = {
+>> -- 
+>> 2.7.4
+>>
