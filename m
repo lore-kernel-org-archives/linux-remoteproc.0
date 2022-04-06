@@ -2,208 +2,184 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A72EC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86729C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 14:22:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233308AbiDFOLE (ORCPT
+        id S234690AbiDFOYe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 10:11:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56344 "EHLO
+        Wed, 6 Apr 2022 10:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234359AbiDFOJT (ORCPT
+        with ESMTP id S234765AbiDFOYN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 10:09:19 -0400
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E1BF4ED0C5;
-        Wed,  6 Apr 2022 03:05:49 -0700 (PDT)
-Received: by mail-qt1-x830.google.com with SMTP id t7so3377653qta.10;
-        Wed, 06 Apr 2022 03:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2VSAsL2CXxrE77kXFBa8TcwGi/LVtFh7YwP75sQ1TkA=;
-        b=nFH8nSv8u2z2VrycbL7jcP3CAcHZjP/EULtXO9QHdvJOZEKn1TCzlLXc86GXCi7Mmd
-         6OT7TIZ2Q7dJ0U6hVtjdLAIGIQDv9QeeBRJZ4FoPsPOuwqpWlhUW0SSa9GGQZrBK1pSC
-         SYrltpIS39/4lZyqixcMZsrTh/rNTPis01lrBX7rikZlN7xLrQ1986ikQmhJ/rWGmZ/i
-         q+YH4DqQcEtmG5icR7TWQd/CXEexRIXvNFTL1J5v1ODkMCUZVLPhrhO/0kRTVsreKJJV
-         reLzEOgygvOshNCTIsLmubVYawMMiKqMdP/5krBi5ySqz8xGYXe+w52VPQkOPGli3U07
-         GGoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2VSAsL2CXxrE77kXFBa8TcwGi/LVtFh7YwP75sQ1TkA=;
-        b=5etS1P1jT0bCPZT+g4mIKsotL5ijQXTWGOcH/V9aghMHSOCm9BaDq2DIB1l7KTYQr4
-         TM4gXbZQTCvYPjYwJtqdsP+d3/2SZ+XqWw5CWGOueKhv3I2e3mGfUTQf5IzFKArpmw4u
-         8IKBHiFRulTmHq0x1hFSpbBIuUPuJwjmJ/T9Mamu0WZBTLjPqm4hqqcPaiESiVl7uB7C
-         OERTnbUc5dSgAU9i+k5PCZFFKcNwNYYmRx0je5qjLvvdimbtGmIIKhiOsBETSqcw3XgU
-         mjkq65DJHByYcZXSY7zispF7MwH+Ps7OIyTrp05LEhWmt0vWs1vUlPJaSuU7x0EGsibd
-         lOrQ==
-X-Gm-Message-State: AOAM532K/Ez3B6HWirwEd+Fh0LHyQHdLJv2ZTJSpqfYZlh9tWR9qmGtB
-        NJtzjL3sz69Qwy/wM7cAgNIq7bJQKM2zS27n6Fs=
-X-Google-Smtp-Source: ABdhPJzJ51LUKgHNsZSqfo2DF9g+oizaRLxeUSLiFI7JUgaZgBlMXR+GkcR82KzMkbYV3Pw7dmxC8tAPKSbyI0Y+ZMA=
-X-Received: by 2002:a05:622a:82:b0:2e1:d61d:81ec with SMTP id
- o2-20020a05622a008200b002e1d61d81ecmr6628223qtw.674.1649239528097; Wed, 06
- Apr 2022 03:05:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220323064944.1351923-1-peng.fan@oss.nxp.com> <20220323064944.1351923-3-peng.fan@oss.nxp.com>
-In-Reply-To: <20220323064944.1351923-3-peng.fan@oss.nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 6 Apr 2022 13:05:16 +0300
-Message-ID: <CAEnQRZB1LL=d3SBCgNomPErBvzEgTVtbBE_PH=V60v-_9UObEg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     bjorn.andersson@linaro.org,
+        Wed, 6 Apr 2022 10:24:13 -0400
+Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC2AF28AC63;
+        Tue,  5 Apr 2022 20:44:53 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9K8Del_1649216687;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9K8Del_1649216687)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 06 Apr 2022 11:44:48 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     virtualization@lists.linux-foundation.org
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        linux-remoteproc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v9 28/32] virtio_net: set the default max ring size by find_vqs()
+Date:   Wed,  6 Apr 2022 11:43:42 +0800
+Message-Id: <20220406034346.74409-29-xuanzhuo@linux.alibaba.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+MIME-Version: 1.0
+X-Git-Hash: 881cb3483d12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Mar 24, 2022 at 1:34 AM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> remoteproc elf loader supports the specific case that segments
-> have PT_LOAD and memsz/filesz set to zero, so no duplicate
-> code.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Use virtio_find_vqs_ctx_size() to specify the maximum ring size of tx,
+rx at the same time.
 
-I think this change OK, but we have a case with the DSP were
-reads/writes should be done in multiples of 32/64.
+                         | rx/tx ring size
+-------------------------------------------
+speed == UNKNOWN or < 10G| 1024
+speed < 40G              | 4096
+speed >= 40G             | 8192
 
-We need a way to provide our own "memcpy" function to be used by
-rproc_elf_load_segments.
+Call virtnet_update_settings() once before calling init_vqs() to update
+speed.
 
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 95 +-----------------------------
->  1 file changed, 1 insertion(+), 94 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 2abee78df96e..eee3c44c2146 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -649,99 +649,6 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
->         return 0;
->  }
->
-> -/**
-> - * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-> - * @rproc: remote processor which will be booted using these fw segments
-> - * @fw: the ELF firmware image
-> - *
-> - * This function specially checks if memsz is zero or not, otherwise it
-> - * is mostly same as rproc_elf_load_segments().
-> - */
-> -static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc,
-> -                                          const struct firmware *fw)
-> -{
-> -       struct device *dev = &rproc->dev;
-> -       u8 class = fw_elf_get_class(fw);
-> -       u32 elf_phdr_get_size = elf_size_of_phdr(class);
-> -       const u8 *elf_data = fw->data;
-> -       const void *ehdr, *phdr;
-> -       int i, ret = 0;
-> -       u16 phnum;
-> -
-> -       ehdr = elf_data;
-> -       phnum = elf_hdr_get_e_phnum(class, ehdr);
-> -       phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> -
-> -       /* go through the available ELF segments */
-> -       for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> -               u64 da = elf_phdr_get_p_paddr(class, phdr);
-> -               u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> -               u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> -               u64 offset = elf_phdr_get_p_offset(class, phdr);
-> -               u32 type = elf_phdr_get_p_type(class, phdr);
-> -               void *ptr;
-> -
-> -               /*
-> -                *  There is a case that with PT_LOAD type, the
-> -                *  filesz = memsz = 0. If memsz = 0, rproc_da_to_va
-> -                *  should return NULL ptr, then error is returned.
-> -                *  So this case should be skipped from the loop.
-> -                *  Add !memsz checking here.
-> -                */
-> -               if (type != PT_LOAD || !memsz)
-> -                       continue;
-> -
-> -               dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> -                       type, da, memsz, filesz);
-> -
-> -               if (filesz > memsz) {
-> -                       dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> -                               filesz, memsz);
-> -                       ret = -EINVAL;
-> -                       break;
-> -               }
-> -
-> -               if (offset + filesz > fw->size) {
-> -                       dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> -                               offset + filesz, fw->size);
-> -                       ret = -EINVAL;
-> -                       break;
-> -               }
-> -
-> -               if (!rproc_u64_fit_in_size_t(memsz)) {
-> -                       dev_err(dev, "size (%llx) does not fit in size_t type\n",
-> -                               memsz);
-> -                       ret = -EOVERFLOW;
-> -                       break;
-> -               }
-> -
-> -               /* grab the kernel address for this device address */
-> -               ptr = rproc_da_to_va(rproc, da, memsz, NULL);
-> -               if (!ptr) {
-> -                       dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> -                               memsz);
-> -                       ret = -EINVAL;
-> -                       break;
-> -               }
-> -
-> -               /* put the segment where the remote processor expects it */
-> -               if (filesz)
-> -                       memcpy(ptr, elf_data + offset, filesz);
-> -
-> -               /*
-> -                * Zero out remaining memory for this segment.
-> -                *
-> -                * This isn't strictly required since dma_alloc_coherent already
-> -                * did this for us. albeit harmless, we may consider removing
-> -                * this.
-> -                */
-> -               if (memsz > filesz)
-> -                       memset(ptr + filesz, 0, memsz - filesz);
-> -       }
-> -
-> -       return ret;
-> -}
-> -
->  /* Prepare function for rproc_ops */
->  static int imx_dsp_rproc_prepare(struct rproc *rproc)
->  {
-> @@ -808,7 +715,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->         .start          = imx_dsp_rproc_start,
->         .stop           = imx_dsp_rproc_stop,
->         .kick           = imx_dsp_rproc_kick,
-> -       .load           = imx_dsp_rproc_elf_load_segments,
-> +       .load           = rproc_elf_load_segments,
->         .parse_fw       = rproc_elf_load_rsc_table,
->         .sanity_check   = rproc_elf_sanity_check,
->         .get_boot_addr  = rproc_elf_get_boot_addr,
-> --
-> 2.25.1
->
+Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+---
+ drivers/net/virtio_net.c | 42 ++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 38 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index a801ea40908f..dad497a47b3a 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2861,6 +2861,29 @@ static unsigned int mergeable_min_buf_len(struct virtnet_info *vi, struct virtqu
+ 		   (unsigned int)GOOD_PACKET_LEN);
+ }
+ 
++static void virtnet_config_sizes(struct virtnet_info *vi, u32 *sizes)
++{
++	u32 i, rx_size, tx_size;
++
++	if (vi->speed == SPEED_UNKNOWN || vi->speed < SPEED_10000) {
++		rx_size = 1024;
++		tx_size = 1024;
++
++	} else if (vi->speed < SPEED_40000) {
++		rx_size = 1024 * 4;
++		tx_size = 1024 * 4;
++
++	} else {
++		rx_size = 1024 * 8;
++		tx_size = 1024 * 8;
++	}
++
++	for (i = 0; i < vi->max_queue_pairs; i++) {
++		sizes[rxq2vq(i)] = rx_size;
++		sizes[txq2vq(i)] = tx_size;
++	}
++}
++
+ static int virtnet_find_vqs(struct virtnet_info *vi)
+ {
+ 	vq_callback_t **callbacks;
+@@ -2868,6 +2891,7 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+ 	int ret = -ENOMEM;
+ 	int i, total_vqs;
+ 	const char **names;
++	u32 *sizes;
+ 	bool *ctx;
+ 
+ 	/* We expect 1 RX virtqueue followed by 1 TX virtqueue, followed by
+@@ -2895,10 +2919,15 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+ 		ctx = NULL;
+ 	}
+ 
++	sizes = kmalloc_array(total_vqs, sizeof(*sizes), GFP_KERNEL);
++	if (!sizes)
++		goto err_sizes;
++
+ 	/* Parameters for control virtqueue, if any */
+ 	if (vi->has_cvq) {
+ 		callbacks[total_vqs - 1] = NULL;
+ 		names[total_vqs - 1] = "control";
++		sizes[total_vqs - 1] = 64;
+ 	}
+ 
+ 	/* Allocate/initialize parameters for send/receive virtqueues */
+@@ -2913,8 +2942,10 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+ 			ctx[rxq2vq(i)] = true;
+ 	}
+ 
+-	ret = virtio_find_vqs_ctx(vi->vdev, total_vqs, vqs, callbacks,
+-				  names, ctx, NULL);
++	virtnet_config_sizes(vi, sizes);
++
++	ret = virtio_find_vqs_ctx_size(vi->vdev, total_vqs, vqs, callbacks,
++				       names, sizes, ctx, NULL);
+ 	if (ret)
+ 		goto err_find;
+ 
+@@ -2934,6 +2965,8 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+ 
+ 
+ err_find:
++	kfree(sizes);
++err_sizes:
+ 	kfree(ctx);
+ err_ctx:
+ 	kfree(names);
+@@ -3252,6 +3285,9 @@ static int virtnet_probe(struct virtio_device *vdev)
+ 		vi->curr_queue_pairs = num_online_cpus();
+ 	vi->max_queue_pairs = max_queue_pairs;
+ 
++	virtnet_init_settings(dev);
++	virtnet_update_settings(vi);
++
+ 	/* Allocate/initialize the rx/tx queues, and invoke find_vqs */
+ 	err = init_vqs(vi);
+ 	if (err)
+@@ -3264,8 +3300,6 @@ static int virtnet_probe(struct virtio_device *vdev)
+ 	netif_set_real_num_tx_queues(dev, vi->curr_queue_pairs);
+ 	netif_set_real_num_rx_queues(dev, vi->curr_queue_pairs);
+ 
+-	virtnet_init_settings(dev);
+-
+ 	if (virtio_has_feature(vdev, VIRTIO_NET_F_STANDBY)) {
+ 		vi->failover = net_failover_create(vi->dev);
+ 		if (IS_ERR(vi->failover)) {
+-- 
+2.31.0
+
