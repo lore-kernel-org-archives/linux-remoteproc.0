@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC81C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 13:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D571C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 13:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232964AbiDFNLK (ORCPT
+        id S232697AbiDFNLZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 09:11:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
+        Wed, 6 Apr 2022 09:11:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232594AbiDFNK4 (ORCPT
+        with ESMTP id S232640AbiDFNK7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 09:10:56 -0400
+        Wed, 6 Apr 2022 09:10:59 -0400
 Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA2A25F38EE;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3C1B5F4746;
         Wed,  6 Apr 2022 02:45:37 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369i1g4123994;
-        Wed, 6 Apr 2022 04:44:01 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2369iK0v124113;
+        Wed, 6 Apr 2022 04:44:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1649238241;
-        bh=i82QElo4qW/ZxzePP7z1G4gXpHWKCfEZ/Utyi8RagUc=;
-        h=From:To:CC:Subject:Date;
-        b=cF7cbvAC8ByO1B56uuIJX6i28swVZ5jfCexJdBfx/f1MjDaV9kW6RpWi0LeUOpI0k
-         6Zc1v58kkNJex98fcY9l2EMYMpXL5yT56YLYVzpZeQEep06O0AEeLMkvS7Q61YAwxF
-         /0p3c16R1CQB99wCUxabYl/xVR+HQs2LJv1GdutQ=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369i1xF069593
+        s=ti-com-17Q1; t=1649238260;
+        bh=/5NlnwXPN+MBKqpNS3+01wsyJFwJHxbj3myy9wtg2wY=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=OKdEtb6UM2UhuOxNsF9kKoAN6qv4fpcDmEvO6kesY36qBkyRVVVyNYS7JjD28GIrJ
+         6ht/DB0CUN3IOntp0DNrFqbqJHMZe+0k1gIcdEzrQlWvhmydFV/6CM0yIX0VcPJDrh
+         O8ae8rhn3nmELeySakzDvjb8IfRVtQ2I9poCn2pQ=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2369iKEs014837
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Apr 2022 04:44:01 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 6 Apr 2022 04:44:20 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Wed, 6
- Apr 2022 04:44:00 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ Apr 2022 04:44:20 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Wed, 6 Apr 2022 04:44:00 -0500
+ Frontend Transport; Wed, 6 Apr 2022 04:44:20 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369hxXx089428;
-        Wed, 6 Apr 2022 04:44:00 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2369iILq021405;
+        Wed, 6 Apr 2022 04:44:19 -0500
 From:   Puranjay Mohan <p-mohan@ti.com>
 To:     <linux-kernel@vger.kernel.org>
 CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
@@ -50,10 +50,12 @@ CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
         <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
         <davem@davemloft.net>, <kuba@kernel.org>, <netdev@vger.kernel.org>,
         <vigneshr@ti.com>, <kishon@ti.com>
-Subject: [RFC 00/13] PRUSS Remoteproc, Platform APIS, and Ethernet Driver
-Date:   Wed, 6 Apr 2022 15:13:45 +0530
-Message-ID: <20220406094358.7895-1-p-mohan@ti.com>
+Subject: [RFC 07/13] soc: ti: pruss: Add pruss_{request,release}_mem_region() API
+Date:   Wed, 6 Apr 2022 15:13:52 +0530
+Message-ID: <20220406094358.7895-8-p-mohan@ti.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220406094358.7895-1-p-mohan@ti.com>
+References: <20220406094358.7895-1-p-mohan@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -61,160 +63,239 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Everyone,
+From: "Andrew F. Davis" <afd@ti.com>
 
-This series includes three separate patch series which are supposed to be
-applied to three different trees, remoteproc, soc, and net respectively
-These are the three series in sequence:-
-1. Introduce PRU remoteproc consumer API (5 Patches)
-2. Introduce PRU platform consumer API (6 Patches)
-3. Introduce ICSSG based ethernet Driver (2 Patches)
+Add two new API - pruss_request_mem_region() & pruss_release_mem_region(),
+to the PRUSS platform driver to allow client drivers to acquire and release
+the common memory resources present within a PRU-ICSS subsystem. This
+allows the client drivers to directly manipulate the respective memories,
+as per their design contract with the associated firmware.
 
-I am sending all three series together as RFC because
-2nd depends on 1st and 3rd depends on both 1st and 2nd.
-Once I have received the comments on this, I will send these series
-separately to their respective trees.
+Co-developed-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+---
+ drivers/soc/ti/pruss.c       | 77 ++++++++++++++++++++++++++++++++++++
+ include/linux/pruss.h        | 39 ++++++++++++++++++
+ include/linux/pruss_driver.h | 27 +++----------
+ 3 files changed, 121 insertions(+), 22 deletions(-)
 
-The 1st series is the v3 of [1], which had some checkpatch errors,
-that have been corrected in v3(this).
-The 2nd series is the v2 of [2], It has no functional changes.
-
-[1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20201216165239.2744-1-grzegorz.jaszczyk@linaro.org/
-[2] https://patchwork.kernel.org/project/linux-remoteproc/cover/20201211184811.6490-1-grzegorz.jaszczyk@linaro.org/
-
-Now, I am adding the cover letters and details about the individual series
-
-1. Introduce PRU remoteproc consumer API
-
-The Programmable Real-Time Unit and Industrial Communication Subsystem
-(PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
-RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
-
-There are 3 foundation components for PRUSS subsystem: the PRUSS platform
-driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
-already merged and can be found under:
-1) drivers/soc/ti/pruss.c
-   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-2) drivers/irqchip/irq-pruss-intc.c
-   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
-3) drivers/remoteproc/pru_rproc.c
-   Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-
-The programmable nature of the PRUs provide flexibility to implement custom
-peripheral interfaces, fast real-time responses, or specialized data handling.
-Example of a PRU consumer drivers will be:
-  - Software UART over PRUSS
-  - PRU-ICSS Ethernet EMAC
-
-In order to make usage of common PRU resources and allow the consumer drivers to
-configure the PRU hardware for specific usage the PRU API is introduced.
-
-Roger Quadros (1):
-  remoteproc: pru: Add pru_rproc_set_ctable() function
-
-Suman Anna (2):
-  dt-bindings: remoteproc: Add PRU consumer bindings
-  remoteproc: pru: Make sysfs entries read-only for PRU client driven
-    boots
-
-Tero Kristo (2):
-  remoteproc: pru: Add APIs to get and put the PRU cores
-  remoteproc: pru: Configure firmware based on client setup
-
-
-2. Introduce PRU platform consumer API
-
-The Programmable Real-Time Unit and Industrial Communication Subsystem (PRU-ICSS
-or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
-(Programmable Real-Time Units, or PRUs) for program execution.
-
-There are 3 foundation components for TI PRUSS subsystem: the PRUSS platform
-driver, the PRUSS INTC driver and the PRUSS remoteproc driver.
-
-The programmable nature of the PRUs provide flexibility to implement custom
-peripheral interfaces, fast real-time responses, or specialized data handling.
-Example of a PRU consumer drivers will be:
-  - Software UART over PRUSS
-  - PRU-ICSS Ethernet EMAC
-
-In order to make usage of common PRU resources and allow the consumer drivers to
-configure the PRU hardware for specific usage the PRU API is introduced.
-
-Andrew F. Davis (1):
-  soc: ti: pruss: Add pruss_{request,release}_mem_region() API
-
-Suman Anna (3):
-  soc: ti: pruss: Add pruss_cfg_read()/update() API
-  soc: ti: pruss: Add helper functions to set GPI mode, MII_RT_event and
-    XFR
-  soc: ti: pruss: Add helper function to enable OCP master ports
-
-Tero Kristo (2):
-  soc: ti: pruss: Add pruss_get()/put() API
-  soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
-
-
-3. Introduce ICSSG based ethernet Driver
-
-The Programmable Real-time Unit and Industrial Communication Subsystem
-Gigabit (PRU_ICSSG) is a low-latency microcontroller subsystem in the TI
-SoCs. This subsystem is provided for the use cases like implementation of
-custom peripheral interfaces, offloading of tasks from the other
-processor cores of the SoC, etc.
-
-The subsystem includes many accelerators for data processing like
-multiplier and multiplier-accumulator. It also has peripherals like
-UART, MII/RGMII, MDIO, etc. Every ICSSG core includes two 32-bit
-load/store RISC CPU cores called PRUs.
-
-The above features allow it to be used for implementing custom firmware
-based peripherals like ethernet.
-
-This series adds the YAML documentation and the driver with basic EMAC
-support for TI AM654 Silicon Rev 2 SoC with the PRU_ICSSG Sub-system.
-running dual-EMAC firmware.
-This currently supports basic EMAC with 1Gbps and 100Mbps link. 10M and
-half-duplex modes are not yet supported because they require the support
-of an IEP, which will be added later.
-Advanced features like switch-dev and timestamping will be added later.
-
-Puranjay Mohan (1):
-  dt-bindings: net: Add ICSSG Ethernet Driver bindings
-
-Roger Quadros (1):
-  net: ti: icssg-prueth: Add ICSSG ethernet driver 
-
- .../bindings/net/ti,icssg-prueth.yaml         |  172 ++
- .../bindings/remoteproc/ti,pru-consumer.yaml  |   66 +
- drivers/net/ethernet/ti/Kconfig               |   15 +
- drivers/net/ethernet/ti/Makefile              |    3 +
- drivers/net/ethernet/ti/icssg_classifier.c    |  375 ++++
- drivers/net/ethernet/ti/icssg_config.c        |  443 ++++
- drivers/net/ethernet/ti/icssg_config.h        |  200 ++
- drivers/net/ethernet/ti/icssg_ethtool.c       |  301 +++
- drivers/net/ethernet/ti/icssg_mii_cfg.c       |  104 +
- drivers/net/ethernet/ti/icssg_mii_rt.h        |  151 ++
- drivers/net/ethernet/ti/icssg_prueth.c        | 1891 +++++++++++++++++
- drivers/net/ethernet/ti/icssg_prueth.h        |  247 +++
- drivers/net/ethernet/ti/icssg_switch_map.h    |  183 ++
- drivers/remoteproc/pru_rproc.c                |  234 +-
- drivers/soc/ti/pruss.c                        |  257 ++-
- include/linux/pruss.h                         |  300 +++
- include/linux/pruss_driver.h                  |   72 +-
- 17 files changed, 4985 insertions(+), 29 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
- create mode 100644 drivers/net/ethernet/ti/icssg_classifier.c
- create mode 100644 drivers/net/ethernet/ti/icssg_config.c
- create mode 100644 drivers/net/ethernet/ti/icssg_config.h
- create mode 100644 drivers/net/ethernet/ti/icssg_ethtool.c
- create mode 100644 drivers/net/ethernet/ti/icssg_mii_cfg.c
- create mode 100644 drivers/net/ethernet/ti/icssg_mii_rt.h
- create mode 100644 drivers/net/ethernet/ti/icssg_prueth.c
- create mode 100644 drivers/net/ethernet/ti/icssg_prueth.h
- create mode 100644 drivers/net/ethernet/ti/icssg_switch_map.h
- create mode 100644 include/linux/pruss.h
-
+diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+index 5ad62c35da5d..bda920662de2 100644
+--- a/drivers/soc/ti/pruss.c
++++ b/drivers/soc/ti/pruss.c
+@@ -88,6 +88,82 @@ void pruss_put(struct pruss *pruss)
+ }
+ EXPORT_SYMBOL_GPL(pruss_put);
+ 
++/**
++ * pruss_request_mem_region() - request a memory resource
++ * @pruss: the pruss instance
++ * @mem_id: the memory resource id
++ * @region: pointer to memory region structure to be filled in
++ *
++ * This function allows a client driver to request a memory resource,
++ * and if successful, will let the client driver own the particular
++ * memory region until released using the pruss_release_mem_region()
++ * API.
++ *
++ * Return: 0 if requested memory region is available (in such case pointer to
++ * memory region is returned via @region), an error otherwise
++ */
++int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
++			     struct pruss_mem_region *region)
++{
++	if (!pruss || !region || mem_id >= PRUSS_MEM_MAX)
++		return -EINVAL;
++
++	mutex_lock(&pruss->lock);
++
++	if (pruss->mem_in_use[mem_id]) {
++		mutex_unlock(&pruss->lock);
++		return -EBUSY;
++	}
++
++	*region = pruss->mem_regions[mem_id];
++	pruss->mem_in_use[mem_id] = region;
++
++	mutex_unlock(&pruss->lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pruss_request_mem_region);
++
++/**
++ * pruss_release_mem_region() - release a memory resource
++ * @pruss: the pruss instance
++ * @region: the memory region to release
++ *
++ * This function is the complimentary function to
++ * pruss_request_mem_region(), and allows the client drivers to
++ * release back a memory resource.
++ *
++ * Return: 0 on success, an error code otherwise
++ */
++int pruss_release_mem_region(struct pruss *pruss,
++			     struct pruss_mem_region *region)
++{
++	int id;
++
++	if (!pruss || !region)
++		return -EINVAL;
++
++	mutex_lock(&pruss->lock);
++
++	/* find out the memory region being released */
++	for (id = 0; id < PRUSS_MEM_MAX; id++) {
++		if (pruss->mem_in_use[id] == region)
++			break;
++	}
++
++	if (id == PRUSS_MEM_MAX) {
++		mutex_unlock(&pruss->lock);
++		return -EINVAL;
++	}
++
++	pruss->mem_in_use[id] = NULL;
++
++	mutex_unlock(&pruss->lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pruss_release_mem_region);
++
+ static void pruss_of_free_clk_provider(void *data)
+ {
+ 	struct device_node *clk_mux_np = data;
+@@ -290,6 +366,7 @@ static int pruss_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	pruss->dev = dev;
++	mutex_init(&pruss->lock);
+ 
+ 	child = of_get_child_by_name(np, "memories");
+ 	if (!child) {
+diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+index 23d556e0dd72..689ef243bcbc 100644
+--- a/include/linux/pruss.h
++++ b/include/linux/pruss.h
+@@ -39,6 +39,28 @@ enum pru_ctable_idx {
+ 	PRU_C31,
+ };
+ 
++/*
++ * enum pruss_mem - PRUSS memory range identifiers
++ */
++enum pruss_mem {
++	PRUSS_MEM_DRAM0 = 0,
++	PRUSS_MEM_DRAM1,
++	PRUSS_MEM_SHRD_RAM2,
++	PRUSS_MEM_MAX,
++};
++
++/**
++ * struct pruss_mem_region - PRUSS memory region structure
++ * @va: kernel virtual address of the PRUSS memory region
++ * @pa: physical (bus) address of the PRUSS memory region
++ * @size: size of the PRUSS memory region
++ */
++struct pruss_mem_region {
++	void __iomem *va;
++	phys_addr_t pa;
++	size_t size;
++};
++
+ struct device_node;
+ struct rproc;
+ struct pruss;
+@@ -47,6 +69,10 @@ struct pruss;
+ 
+ struct pruss *pruss_get(struct rproc *rproc);
+ void pruss_put(struct pruss *pruss);
++int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
++			     struct pruss_mem_region *region);
++int pruss_release_mem_region(struct pruss *pruss,
++			     struct pruss_mem_region *region);
+ 
+ #else
+ 
+@@ -57,6 +83,19 @@ static inline struct pruss *pruss_get(struct rproc *rproc)
+ 
+ static inline void pruss_put(struct pruss *pruss) { }
+ 
++static inline int pruss_request_mem_region(struct pruss *pruss,
++					   enum pruss_mem mem_id,
++					   struct pruss_mem_region *region)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int pruss_release_mem_region(struct pruss *pruss,
++					   struct pruss_mem_region *region)
++{
++	return -EOPNOTSUPP;
++}
++
+ #endif /* CONFIG_TI_PRUSS */
+ 
+ #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
+index d054d2179d82..e2d5477225c6 100644
+--- a/include/linux/pruss_driver.h
++++ b/include/linux/pruss_driver.h
+@@ -9,37 +9,18 @@
+ #ifndef _PRUSS_DRIVER_H_
+ #define _PRUSS_DRIVER_H_
+ 
++#include <linux/mutex.h>
+ #include <linux/pruss.h>
+ #include <linux/types.h>
+ 
+-/*
+- * enum pruss_mem - PRUSS memory range identifiers
+- */
+-enum pruss_mem {
+-	PRUSS_MEM_DRAM0 = 0,
+-	PRUSS_MEM_DRAM1,
+-	PRUSS_MEM_SHRD_RAM2,
+-	PRUSS_MEM_MAX,
+-};
+-
+-/**
+- * struct pruss_mem_region - PRUSS memory region structure
+- * @va: kernel virtual address of the PRUSS memory region
+- * @pa: physical (bus) address of the PRUSS memory region
+- * @size: size of the PRUSS memory region
+- */
+-struct pruss_mem_region {
+-	void __iomem *va;
+-	phys_addr_t pa;
+-	size_t size;
+-};
+-
+ /**
+  * struct pruss - PRUSS parent structure
+  * @dev: pruss device pointer
+  * @cfg_base: base iomap for CFG region
+  * @cfg_regmap: regmap for config region
+  * @mem_regions: data for each of the PRUSS memory regions
++ * @mem_in_use: to indicate if memory resource is in use
++ * @lock: mutex to serialize access to resources
+  * @core_clk_mux: clk handle for PRUSS CORE_CLK_MUX
+  * @iep_clk_mux: clk handle for PRUSS IEP_CLK_MUX
+  */
+@@ -48,6 +29,8 @@ struct pruss {
+ 	void __iomem *cfg_base;
+ 	struct regmap *cfg_regmap;
+ 	struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
++	struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
++	struct mutex lock; /* PRU resource lock */
+ 	struct clk *core_clk_mux;
+ 	struct clk *iep_clk_mux;
+ };
 -- 
 2.17.1
 
