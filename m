@@ -2,123 +2,99 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42618C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Apr 2022 22:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D69CC43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 10:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbiDEWMd (ORCPT
+        id S1378138AbiDFKTm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Apr 2022 18:12:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48954 "EHLO
+        Wed, 6 Apr 2022 06:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457533AbiDEQG3 (ORCPT
+        with ESMTP id S1376984AbiDFKSg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Apr 2022 12:06:29 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00533DDA;
-        Tue,  5 Apr 2022 09:04:29 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 235ANpX7013964;
-        Tue, 5 Apr 2022 18:04:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=siZuhc+89Jo9JDA/pbHU2hXuJ1K7MHFkUHJM38FJfmw=;
- b=wjcnvV0EE/7FrSLN1x2A8CbH1mUtD2blQDYwa/L32Abma3dUt+KypinbB/YCNajWtFRR
- QadwC+5pppvKXtF3T6KAambfwcr1uH0TliGG7d6+ouJmyV3NWFJuyV+uZr5518Kqdl1K
- a13t6OlHsHmNUdYADAkZMHSN+M/cwhN831PcTFBt8sK6vXkjYAt6rzpPUR9WHhoKqq+p
- QVcZ7bLp90qHjeOSFj3rZBdGRWPcymFcg+kHOsbAchmw/bHXthgRkClkD4q4CSyW+Mla
- 7qV2fe7yPDnofLmlafzNRa+H81c99c1eodrCAB5twZ3IUZbrPwLa+4znao1AkP0xyOD+ +Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6du0r4em-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 05 Apr 2022 18:04:09 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C2A4810002A;
-        Tue,  5 Apr 2022 18:04:08 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9B6DB245534;
-        Tue,  5 Apr 2022 18:04:08 +0200 (CEST)
-Received: from [10.201.20.246] (10.75.127.48) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Tue, 5 Apr
- 2022 18:04:07 +0200
-Message-ID: <9f10659b-a778-1c9b-09ba-bd4dbc3f7c66@foss.st.com>
-Date:   Tue, 5 Apr 2022 18:04:06 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] arm64: defconfig: Config that had RPMSG_CHAR now gets
- RPMSG_CTRL
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        Wed, 6 Apr 2022 06:18:36 -0400
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBDD28255C;
+        Tue,  5 Apr 2022 20:44:51 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9K2XHM_1649216685;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9K2XHM_1649216685)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 06 Apr 2022 11:44:46 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     virtualization@lists.linux-foundation.org
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20220405115524.1020499-1-arnaud.pouliquen@foss.st.com>
- <20220405152555.GB4147585@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220405152555.GB4147585@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-05_04,2022-04-05_01,2022-02-23_01
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH v9 27/32] virtio: add helper virtio_find_vqs_ctx_size()
+Date:   Wed,  6 Apr 2022 11:43:41 +0800
+Message-Id: <20220406034346.74409-28-xuanzhuo@linux.alibaba.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+MIME-Version: 1.0
+X-Git-Hash: 881cb3483d12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Introduce helper virtio_find_vqs_ctx_size() to call find_vqs and specify
+the maximum size of each vq ring.
 
+Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+---
+ include/linux/virtio_config.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-On 4/5/22 17:25, Mathieu Poirier wrote:
-> On Tue, Apr 05, 2022 at 01:55:24PM +0200, Arnaud Pouliquen wrote:
->> In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
->> from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
->> By default give everyone who had the old driver enabled the rpmsg_ctrl
->> driver too.
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> 
-> This patch is missing a separation marker, i.e "---", just above.  Without it
-> the text below is also included in the changelog, and it shouldn't.
+diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+index 0f7def7ddfd2..22e29c926946 100644
+--- a/include/linux/virtio_config.h
++++ b/include/linux/virtio_config.h
+@@ -235,6 +235,18 @@ int virtio_find_vqs_ctx(struct virtio_device *vdev, unsigned nvqs,
+ 				      ctx, desc);
+ }
+ 
++static inline
++int virtio_find_vqs_ctx_size(struct virtio_device *vdev, u32 nvqs,
++				 struct virtqueue *vqs[],
++				 vq_callback_t *callbacks[],
++				 const char * const names[],
++				 u32 sizes[],
++				 const bool *ctx, struct irq_affinity *desc)
++{
++	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, sizes,
++				      ctx, desc);
++}
++
+ /**
+  * virtio_device_ready - enable vq use in probe function
+  * @vdev: the device
+-- 
+2.31.0
 
-A badly controlled cleaning... I send a V3
-
-My apologizes,
-Arnaud 
-
-> 
-> Thanks,
-> Mathieu
-> 
->>
->> This patch is extracted from the series [1] that has been partially
->> integrated in the Linux Kernel 5.18-rc1.
->>
->> Update vs previous version:
->> - remove "Fixes:" tag in commit, requested by Mathieu Poirier in [2]
->>
->> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
->> [2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
->> ---
->>  arch/arm64/configs/defconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index 50aa3d75ab4f..3f8906b8a2ca 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -1053,6 +1053,7 @@ CONFIG_QCOM_Q6V5_PAS=m
->>  CONFIG_QCOM_SYSMON=m
->>  CONFIG_QCOM_WCNSS_PIL=m
->>  CONFIG_RPMSG_CHAR=m
->> +CONFIG_RPMSG_CTRL=m
->>  CONFIG_RPMSG_QCOM_GLINK_RPM=y
->>  CONFIG_RPMSG_QCOM_GLINK_SMEM=m
->>  CONFIG_RPMSG_QCOM_SMD=y
->> -- 
->> 2.25.1
->>
