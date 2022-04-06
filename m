@@ -2,24 +2,24 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58380C43219
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 12:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79EC4C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 12:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232675AbiDFMSg (ORCPT
+        id S232837AbiDFMS5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 08:18:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34084 "EHLO
+        Wed, 6 Apr 2022 08:18:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233001AbiDFMSG (ORCPT
+        with ESMTP id S233194AbiDFMSL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:18:06 -0400
+        Wed, 6 Apr 2022 08:18:11 -0400
 Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB22C267AE8;
-        Tue,  5 Apr 2022 20:44:36 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9JnaSb_1649216667;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9JnaSb_1649216667)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D7B2963D1;
+        Tue,  5 Apr 2022 20:45:01 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0V9KCOR._1649216693;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9KCOR._1649216693)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 06 Apr 2022 11:44:29 +0800
+          Wed, 06 Apr 2022 11:44:54 +0800
 From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 To:     virtualization@lists.linux-foundation.org
 Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
@@ -51,9 +51,9 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         platform-driver-x86@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH v9 19/32] virtio_pci: struct virtio_pci_common_cfg add queue_notify_data
-Date:   Wed,  6 Apr 2022 11:43:33 +0800
-Message-Id: <20220406034346.74409-20-xuanzhuo@linux.alibaba.com>
+Subject: [PATCH v9 31/32] virtio_net: support rx/tx queue resize
+Date:   Wed,  6 Apr 2022 11:43:45 +0800
+Message-Id: <20220406034346.74409-32-xuanzhuo@linux.alibaba.com>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
 References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
@@ -64,38 +64,140 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add queue_notify_data in struct virtio_pci_common_cfg, which comes from
-here https://github.com/oasis-tcs/virtio-spec/issues/89
+This patch implements the resize function of the rx, tx queues.
+Based on this function, it is possible to modify the ring num of the
+queue.
 
-For not breaks uABI, add a new struct virtio_pci_common_cfg_notify.
-
-Since I want to add queue_reset after queue_notify_data, I submitted
-this patch first.
+There may be an exception during the resize process, the resize may
+fail, or the vq can no longer be used. Either way, we must execute
+napi_enable(). Because napi_disable is similar to a lock, napi_enable
+must be called after calling napi_disable.
 
 Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
 ---
- include/uapi/linux/virtio_pci.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/virtio_net.c | 81 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
-index 3a86f36d7e3d..22bec9bd0dfc 100644
---- a/include/uapi/linux/virtio_pci.h
-+++ b/include/uapi/linux/virtio_pci.h
-@@ -166,6 +166,13 @@ struct virtio_pci_common_cfg {
- 	__le32 queue_used_hi;		/* read-write */
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index b8bf00525177..ba6859f305f7 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -251,6 +251,9 @@ struct padded_vnet_hdr {
+ 	char padding[4];
  };
  
-+struct virtio_pci_common_cfg_notify {
-+	struct virtio_pci_common_cfg cfg;
++static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void *buf);
++static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *buf);
 +
-+	__le16 queue_notify_data;	/* read-write */
-+	__le16 padding;
-+};
+ static bool is_xdp_frame(void *ptr)
+ {
+ 	return (unsigned long)ptr & VIRTIO_XDP_FLAG;
+@@ -1369,6 +1372,15 @@ static void virtnet_napi_enable(struct virtqueue *vq, struct napi_struct *napi)
+ {
+ 	napi_enable(napi);
+ 
++	/* Check if vq is in reset state. The normal reset/resize process will
++	 * be protected by napi. However, the protection of napi is only enabled
++	 * during the operation, and the protection of napi will end after the
++	 * operation is completed. If re-enable fails during the process, vq
++	 * will remain unavailable with reset state.
++	 */
++	if (vq->reset)
++		return;
 +
- /* Fields in VIRTIO_PCI_CAP_PCI_CFG: */
- struct virtio_pci_cfg_cap {
- 	struct virtio_pci_cap cap;
+ 	/* If all buffers were filled by other side before we napi_enabled, we
+ 	 * won't get another interrupt, so process any outstanding packets now.
+ 	 * Call local_bh_enable after to trigger softIRQ processing.
+@@ -1413,6 +1425,15 @@ static void refill_work(struct work_struct *work)
+ 		struct receive_queue *rq = &vi->rq[i];
+ 
+ 		napi_disable(&rq->napi);
++
++		/* Check if vq is in reset state. See more in
++		 * virtnet_napi_enable()
++		 */
++		if (rq->vq->reset) {
++			virtnet_napi_enable(rq->vq, &rq->napi);
++			continue;
++		}
++
+ 		still_empty = !try_fill_recv(vi, rq, GFP_KERNEL);
+ 		virtnet_napi_enable(rq->vq, &rq->napi);
+ 
+@@ -1523,6 +1544,10 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
+ 	if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
+ 		return;
+ 
++	/* Check if vq is in reset state. See more in virtnet_napi_enable() */
++	if (sq->vq->reset)
++		return;
++
+ 	if (__netif_tx_trylock(txq)) {
+ 		do {
+ 			virtqueue_disable_cb(sq->vq);
+@@ -1769,6 +1794,62 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	return NETDEV_TX_OK;
+ }
+ 
++static int virtnet_rx_resize(struct virtnet_info *vi,
++			     struct receive_queue *rq, u32 ring_num)
++{
++	int err;
++
++	napi_disable(&rq->napi);
++
++	err = virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unused_buf);
++	if (err)
++		goto err;
++
++	if (!try_fill_recv(vi, rq, GFP_KERNEL))
++		schedule_delayed_work(&vi->refill, 0);
++
++	virtnet_napi_enable(rq->vq, &rq->napi);
++	return 0;
++
++err:
++	netdev_err(vi->dev,
++		   "reset rx reset vq fail: rx queue index: %td err: %d\n",
++		   rq - vi->rq, err);
++	virtnet_napi_enable(rq->vq, &rq->napi);
++	return err;
++}
++
++static int virtnet_tx_resize(struct virtnet_info *vi,
++			     struct send_queue *sq, u32 ring_num)
++{
++	struct netdev_queue *txq;
++	int err, qindex;
++
++	qindex = sq - vi->sq;
++
++	virtnet_napi_tx_disable(&sq->napi);
++
++	txq = netdev_get_tx_queue(vi->dev, qindex);
++	__netif_tx_lock_bh(txq);
++	netif_stop_subqueue(vi->dev, qindex);
++	__netif_tx_unlock_bh(txq);
++
++	err = virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf);
++	if (err)
++		goto err;
++
++	netif_start_subqueue(vi->dev, qindex);
++	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
++	return 0;
++
++err:
++	netdev_err(vi->dev,
++		   "reset tx reset vq fail: tx queue index: %td err: %d\n",
++		   sq - vi->sq, err);
++	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
++	return err;
++}
++
+ /*
+  * Send command via the control virtqueue and check status.  Commands
+  * supported by the hypervisor, as indicated by feature bits, should
 -- 
 2.31.0
 
