@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C76F1C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 15:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BCBC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 16:56:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240579AbiDGPL5 (ORCPT
+        id S1345876AbiDGQ6m (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 11:11:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59032 "EHLO
+        Thu, 7 Apr 2022 12:58:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234054AbiDGPLz (ORCPT
+        with ESMTP id S231669AbiDGQ6l (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Apr 2022 11:11:55 -0400
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DB82BB18;
-        Thu,  7 Apr 2022 08:09:55 -0700 (PDT)
-Received: by mail-ot1-f46.google.com with SMTP id 88-20020a9d0ee1000000b005d0ae4e126fso4087110otj.5;
-        Thu, 07 Apr 2022 08:09:55 -0700 (PDT)
+        Thu, 7 Apr 2022 12:58:41 -0400
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0F6FFF4F;
+        Thu,  7 Apr 2022 09:56:41 -0700 (PDT)
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-ddfa38f1c1so6970561fac.11;
+        Thu, 07 Apr 2022 09:56:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=mvsoNOk9u8RV2yVCZLMb/29uYaw0/4/Qw5+UfuDkMks=;
-        b=ec2YPQw+MOwqh33IbQ6jfO5ewzH9X6jl14iOKTglcII8F3l0PuXw++gXCgaNN8FfKO
-         lDBEr6GwssmRWJV9YxgwvieXOwyKSLhXUIVtWMiSFcNg/k2HQWAIhHIadKjQb9U3MzmK
-         kyLa3oMqSmEGXay2bgXNHr6nKHHQcB85MICWNJw7EkbXrQQQyIZIQYkDXa7rd8QCnUTX
-         ZliN5vGinAHWQxxalsIviBrhwSemnl5svIbNimC+7i0/HWKTrb7CU2/Ppwr4wv0HrKEn
-         93ZsAIm5vkQ+j9fOm4WSfKInzy2MaGpMhKM18Se0190HbtItgpfoHGuazFvjmaETYVZf
-         q4xA==
-X-Gm-Message-State: AOAM532R/aQn279nKLoaTcasdUgIglW1MG489F1/pr0Q1Hahr1FdjChC
-        ncrtggWy/Edw51/YzIDI8/6P8aZTXw==
-X-Google-Smtp-Source: ABdhPJzdNp+SArorak1XGGcOGrCQUd+SwHej8ANssNSIJv2Vtew9hsSojZk7jiFJDg5SzFN4KY51PA==
-X-Received: by 2002:a9d:136:0:b0:5cd:9e9b:4872 with SMTP id 51-20020a9d0136000000b005cd9e9b4872mr5150803otu.192.1649344194343;
-        Thu, 07 Apr 2022 08:09:54 -0700 (PDT)
+        bh=57Q8OXO7BdqRA4VCo1CnfvOYS04YZnH8X3yf4O0sei8=;
+        b=HbwLDVLCkdE5eAyxGrVglRpyqdWGEnTr5Kl0SG279EM/UNWBv0hHGR30+2sBGVBLY6
+         9TwSp+NayucW637R3PEbYoDne4mPoQvllwyyDfdbn0oI/kDqu+3Mvx0RVpo7qwTMe5zY
+         5RRhk1bneQt/E9HbrqglwYrsXau99Dy5EYVvc0wtWA74Z7SU24T3IX5vK/2qgT4tSuiz
+         NHy7i0VWm7dftwZfzPfUFVDxKwZylv2N8anTPLOBPKBVlGzR8vOT3GzYfOpQRWoVfrr2
+         4QHVbgWo0vGOxff2uPW0ju+QSGGCIZ6ucVUh0a7sTThNtJmnHzNtBo4B4liK/T5EUZ/7
+         Vt7A==
+X-Gm-Message-State: AOAM532jxP58PEHpLuWyuRCM2eh703iAbjGMbaQgcxOpu4hLt6b6xgdt
+        PKfk/yVJtaDyfwHWi4iWPw==
+X-Google-Smtp-Source: ABdhPJxo1TIbRV2YwAwg/aLoxDI2UrimsMpXZ3Jxi+c84xJ+nsYVYYXxG1PmravHzw8SMpWwncDKHg==
+X-Received: by 2002:a05:6870:9712:b0:e1:f96c:f62a with SMTP id n18-20020a056870971200b000e1f96cf62amr6984741oaq.58.1649350600428;
+        Thu, 07 Apr 2022 09:56:40 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id q39-20020a4a88ea000000b0032165eb3af8sm7531169ooh.42.2022.04.07.08.09.53
+        by smtp.gmail.com with ESMTPSA id u23-20020a056870d59700b000de821ba7cbsm7809576oao.15.2022.04.07.09.56.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 08:09:54 -0700 (PDT)
-Received: (nullmailer pid 1105330 invoked by uid 1000);
-        Thu, 07 Apr 2022 15:09:53 -0000
-Date:   Thu, 7 Apr 2022 10:09:53 -0500
+        Thu, 07 Apr 2022 09:56:40 -0700 (PDT)
+Received: (nullmailer pid 1397105 invoked by uid 1000);
+        Thu, 07 Apr 2022 16:56:39 -0000
+Date:   Thu, 7 Apr 2022 11:56:39 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Puranjay Mohan <p-mohan@ti.com>
 Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
@@ -50,124 +50,226 @@ Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
         linux-arm-kernel@lists.infradead.org, davem@davemloft.net,
         kuba@kernel.org, netdev@vger.kernel.org, vigneshr@ti.com,
         kishon@ti.com
-Subject: Re: [RFC 01/13] dt-bindings: remoteproc: Add PRU consumer bindings
-Message-ID: <Yk7+wXwDHrtjFo9s@robh.at.kernel.org>
+Subject: Re: [RFC 12/13] dt-bindings: net: Add ICSSG Ethernet Driver bindings
+Message-ID: <Yk8Xx4IRPHkPz+Fn@robh.at.kernel.org>
 References: <20220406094358.7895-1-p-mohan@ti.com>
- <20220406094358.7895-2-p-mohan@ti.com>
+ <20220406094358.7895-13-p-mohan@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220406094358.7895-2-p-mohan@ti.com>
+In-Reply-To: <20220406094358.7895-13-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 06, 2022 at 03:13:46PM +0530, Puranjay Mohan wrote:
-> From: Suman Anna <s-anna@ti.com>
+On Wed, Apr 06, 2022 at 03:13:57PM +0530, Puranjay Mohan wrote:
+> Add a YAML binding document for the ICSSG Programmable real time unit
+> based Ethernet driver. This driver uses the PRU and PRUSS consumer APIs
+> to interface the PRUs and load/run the firmware for supporting ethernet
+> functionality.
 > 
-> Add a YAML binding document for PRU consumers. The binding includes
-> all the common properties that can be used by different PRU consumer
-> or application nodes and supported by the PRU remoteproc driver.
-> These are used to configure the PRU hardware for specific user
-> applications.
-> 
-> The application nodes themselves should define their own bindings.
-> 
-> Co-developed-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 > Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
 > ---
->  .../bindings/remoteproc/ti,pru-consumer.yaml  | 66 +++++++++++++++++++
->  1 file changed, 66 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>  .../bindings/net/ti,icssg-prueth.yaml         | 172 ++++++++++++++++++
+>  1 file changed, 172 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> diff --git a/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
 > new file mode 100644
-> index 000000000000..c245fe1de656
+> index 000000000000..8b8acb69e43e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
+> @@ -0,0 +1,172 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+> +$id: http://devicetree.org/schemas/net/ti,icssg-prueth.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Common TI PRU Consumer Binding
+> +title: |+
+> +  Texas Instruments ICSSG PRUSS Ethernet
 > +
 > +maintainers:
-> +  - Suman Anna <s-anna@ti.com>
+> +  - Puranjay Mohan <p-mohan@ti.com>
 > +
-> +description: |
-> +  A PRU application/consumer/user node typically uses one or more PRU device
-> +  nodes to implement a PRU application/functionality. Each application/client
-> +  node would need a reference to at least a PRU node, and optionally define
-> +  some properties needed for hardware/firmware configuration. The below
-> +  properties are a list of common properties supported by the PRU remoteproc
-> +  infrastructure.
+> +description: |+
+> +  Ethernet based on the Programmable Real-Time Unit and Industrial Communication Subsystem.
 > +
-> +  The application nodes shall define their own bindings like regular platform
-> +  devices, so below are in addition to each node's bindings.
+> +allOf:
+> +  - $ref: /schemas/remoteproc/ti,pru-consumer.yaml#
 > +
 > +properties:
-> +  ti,prus:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Needs contraints. A phandle-array is really a matrix of phandles and 
-args. If no args, something like this:
-
-minItems: ??
-maxItems: ??
-items:
-  maxItems: 1
-
-> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
+> +  compatible:
+> +    enum:
+> +      - ti,am654-icssg-prueth  # for AM65x SoC family
 > +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +  sram:
 > +    description: |
-> +      firmwares for the PRU cores, the default firmware for the core from
-> +      the PRU node will be used if not provided. The firmware names should
-> +      correspond to the PRU cores listed in the 'ti,prus' property
+> +      phandle to MSMC SRAM node
 > +
-> +  ti,pruss-gp-mux-sel:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    maxItems: 6
+> +  dmas:
+> +    description: |
+> +      list of phandles and specifiers to UDMA as specified in bindings/dma/ti/k3-udma.txt.
+
+How many?
+
+> +
+> +  dma-names:
 > +    items:
-> +        enum: [0, 1, 2, 3, 4]
+> +      - const: tx0-0
+> +      - const: tx0-1
+> +      - const: tx0-2
+> +      - const: tx0-3
+> +      - const: tx1-0
+> +      - const: tx1-1
+> +      - const: tx1-2
+> +      - const: tx1-3
+> +      - const: rx0
+> +      - const: rx1
+
+Is there a minimum and maximum number? Is it really so variable?
+
+> +
+> +  ethernet-ports:
+> +    type: object
+> +    properties:
+> +      '#address-cells':
+> +        const: 1
+> +      '#size-cells':
+> +        const: 0
+> +
+> +    patternProperties:
+> +      port@[0-1]:
+
+fooport@0bar would be valid here.
+
+'^port@[0-1]$'
+
+
+> +        type: object
+> +        description: ICSSG PRUETH external ports
+> +
+> +        $ref: ethernet-controller.yaml#
+
+           unevaluatedProperties: false
+
+> +
+> +        properties:
+> +          reg:
+> +            items:
+> +              - enum: [0, 1]
+> +            description: ICSSG PRUETH port number
+> +
+> +          ti,syscon-rgmii-delay:
+> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+> +            description:
+> +              phandle to system controller node and register offset
+> +              to ICSSG control register for RGMII transmit delay
+> +
+> +        required:
+> +          - reg
+> +
+> +    additionalProperties: false
+> +
+> +  ti,mii-g-rt:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 > +    description: |
-> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
-> +      This selects the internal muxing scheme for the PRU instance. Values
-> +      should correspond to the PRU cores listed in the 'ti,prus' property. The
-> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
-> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
-> +      same slice in the associative array. If the array size is smaller than
-> +      the size of 'ti,prus' property, the default out-of-reset value (0) for the
-> +      PRU core is used.
+> +      phandle to MII_G_RT module's syscon regmap.
+> +
+> +  ti,mii-rt:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
+> +      phandle to MII_RT module's syscon regmap
+> +
+> +  interrupts:
+> +    description: |
+> +      Interrupt specifiers to TX timestamp IRQ.
+
+How many?
+
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: tx_ts0
+> +      - const: tx_ts1
 > +
 > +required:
-> +  - ti,prus
+> +  - compatible
+> +  - sram
+> +  - ti,mii-g-rt
+> +  - dmas
+> +  - dma-names
+> +  - ethernet-ports
+> +  - interrupts
+> +  - interrupt-names
 > +
-> +dependencies:
-> +  firmware-name: [ 'ti,prus' ]
-> +  ti,pruss-gp-mux-sel: [ 'ti,prus' ]
-> +
-> +additionalProperties: true
-
-This must be false unless it is a common, shared schema.
-
+> +unevaluatedProperties: false
 > +
 > +examples:
 > +  - |
-> +    /* PRU application node example */
-> +    pru-app {
-> +        ti,prus = <&pru0>, <&pru1>;
-> +        firmware-name = "pruss-app-fw0", "pruss-app-fw1";
-> +        ti,pruss-gp-mux-sel = <2>, <1>;
-> +    };
+> +
+> +    /* Example k3-am654 base board SR2.0, dual-emac */
+> +        pruss2_eth: pruss2_eth {
+> +                compatible = "ti,am654-icssg-prueth";
+> +                pinctrl-names = "default";
+> +                pinctrl-0 = <&icssg2_rgmii_pins_default>;
+> +                sram = <&msmc_ram>;
+> +
+> +                ti,prus = <&pru2_0>, <&rtu2_0>, <&tx_pru2_0>, <&pru2_1>, <&rtu2_1>, <&tx_pru2_1>;
+> +                firmware-name = "ti-pruss/am65x-pru0-prueth-fw.elf",
+> +                                "ti-pruss/am65x-rtu0-prueth-fw.elf",
+> +                                "ti-pruss/am65x-txpru0-prueth-fw.elf",
+> +                                "ti-pruss/am65x-pru1-prueth-fw.elf",
+> +                                "ti-pruss/am65x-rtu1-prueth-fw.elf",
+> +                                "ti-pruss/am65x-txpru1-prueth-fw.elf";
+> +                ti,pruss-gp-mux-sel = <2>,      /* MII mode */
+> +                                      <2>,
+> +                                      <2>,
+> +                                      <2>,      /* MII mode */
+> +                                      <2>,
+> +                                      <2>;
+> +                ti,mii-g-rt = <&icssg2_mii_g_rt>;
+> +                dmas = <&main_udmap 0xc300>, /* egress slice 0 */
+> +                       <&main_udmap 0xc301>, /* egress slice 0 */
+> +                       <&main_udmap 0xc302>, /* egress slice 0 */
+> +                       <&main_udmap 0xc303>, /* egress slice 0 */
+> +                       <&main_udmap 0xc304>, /* egress slice 1 */
+> +                       <&main_udmap 0xc305>, /* egress slice 1 */
+> +                       <&main_udmap 0xc306>, /* egress slice 1 */
+> +                       <&main_udmap 0xc307>, /* egress slice 1 */
+> +                       <&main_udmap 0x4300>, /* ingress slice 0 */
+> +                       <&main_udmap 0x4301>, /* ingress slice 1 */
+> +                       <&main_udmap 0x4302>, /* mgmnt rsp slice 0 */
+> +                       <&main_udmap 0x4303>; /* mgmnt rsp slice 1 */
+> +                dma-names = "tx0-0", "tx0-1", "tx0-2", "tx0-3",
+> +                            "tx1-0", "tx1-1", "tx1-2", "tx1-3",
+> +                            "rx0", "rx1";
+> +                interrupts = <24 0 2>, <25 1 3>;
+> +                interrupt-names = "tx_ts0", "tx_ts1";
+> +                ethernet-ports {
+> +                        #address-cells = <1>;
+> +                        #size-cells = <0>;
+> +                        pruss2_emac0: port@0 {
+> +                                reg = <0>;
+> +                                phy-handle = <&pruss2_eth0_phy>;
+> +                                phy-mode = "rgmii-rxid";
+> +                                interrupts-extended = <&icssg2_intc 24>;
+> +                                ti,syscon-rgmii-delay = <&scm_conf 0x4120>;
+> +                                /* Filled in by bootloader */
+> +                                local-mac-address = [00 00 00 00 00 00];
+> +                        };
+> +
+> +                        pruss2_emac1: port@1 {
+> +                                reg = <1>;
+> +                                phy-handle = <&pruss2_eth1_phy>;
+> +                                phy-mode = "rgmii-rxid";
+> +                                interrupts-extended = <&icssg2_intc 25>;
+> +                                ti,syscon-rgmii-delay = <&scm_conf 0x4124>;
+> +                                /* Filled in by bootloader */
+> +                                local-mac-address = [00 00 00 00 00 00];
+> +                        };
+> +                };
+> +        };
 > -- 
 > 2.17.1
 > 
