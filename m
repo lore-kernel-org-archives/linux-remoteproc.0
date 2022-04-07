@@ -2,131 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2777FC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Apr 2022 20:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97959C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 06:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233270AbiDFUeN (ORCPT
+        id S240059AbiDGGtF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Apr 2022 16:34:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55544 "EHLO
+        Thu, 7 Apr 2022 02:49:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235439AbiDFUcz (ORCPT
+        with ESMTP id S235677AbiDGGtE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Apr 2022 16:32:55 -0400
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90F136478D;
-        Wed,  6 Apr 2022 11:54:52 -0700 (PDT)
-Received: by mail-oi1-f179.google.com with SMTP id b188so3330866oia.13;
-        Wed, 06 Apr 2022 11:54:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=Lm/ONmGbxsdA25Z0fG4ZT+Z1iRsHjkpKpaJkjdZ5COY=;
-        b=OBCYVmoZGwmKz2RveRDMOVs2tyG2SUzg6l843Tz1ES5nqYMeR6lhsQzbW7PrrHKUTu
-         VmLycItgZMeGPxFH7vmEO4ySoqOufvA/dj4TwdOQrM8RfkwH9Prb+2d2W/0Ipby2ueaH
-         fu7gegCEQ/hsTLIlSU/mP0S5bVtvBTv4NvjqXi1/KZDKIF4eNT6Cf3qejmolrOpAKw4t
-         89wo3dSy1TgNMovchL9KR/7Lc3t6Hw3OgHYXkC/BO7kXF4AYy8ArrrxyK+T7FKk2uDFl
-         L279xSvXzJSZsBQtvaLWy5wqLdQn+541p9KSZ+i4nlZ7UmPIrw58XJIe4RY/7AQj/uLk
-         cT+Q==
-X-Gm-Message-State: AOAM531Lwx3jQuHJcGR3Mi4XOz8NMpNO09oxgtAHUjxMkBiVWaNlihuJ
-        kbjUgaKLSWESwgIvkJZGjJ6SXbf+cw==
-X-Google-Smtp-Source: ABdhPJxXvM3z8yhyG8vVgJqle/yx/OreVndgv4ogfsuisU/phylm10J6pGMGOEt5/5eHIivc2c65lQ==
-X-Received: by 2002:a05:6808:3ad:b0:2d9:fc59:ef0e with SMTP id n13-20020a05680803ad00b002d9fc59ef0emr4358505oie.266.1649271291912;
-        Wed, 06 Apr 2022 11:54:51 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id w7-20020a9d6387000000b005b2265711fcsm7152964otk.16.2022.04.06.11.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 11:54:51 -0700 (PDT)
-Received: (nullmailer pid 2581012 invoked by uid 1000);
-        Wed, 06 Apr 2022 18:54:50 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Puranjay Mohan <p-mohan@ti.com>
-Cc:     linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        devicetree@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        ssantosh@kernel.org, vigneshr@ti.com, kishon@ti.com,
-        mathieu.poirier@linaro.org, nm@ti.com, netdev@vger.kernel.org,
-        s-anna@ti.com, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20220406094358.7895-13-p-mohan@ti.com>
-References: <20220406094358.7895-1-p-mohan@ti.com> <20220406094358.7895-13-p-mohan@ti.com>
-Subject: Re: [RFC 12/13] dt-bindings: net: Add ICSSG Ethernet Driver bindings
-Date:   Wed, 06 Apr 2022 13:54:50 -0500
-Message-Id: <1649271290.537509.2581011.nullmailer@robh.at.kernel.org>
+        Thu, 7 Apr 2022 02:49:04 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2039521A88E;
+        Wed,  6 Apr 2022 23:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1649314023; x=1680850023;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=1MUxVLaAVyEjkudarS9QFZG9jUh9u3JUPo9r3Rg6SNY=;
+  b=FeqFEbxhfgkuuzzxnYxhDDXH79bvT7J+1AjU/QrDxMoeuGTxCRPoAVre
+   d+3MLgj3gNA+5x82CbDYhHtlgUFsA96ORE+nJHXCroHn2PYCmB4WgdG1w
+   +Bm/D/LC7J6GTGCwv84tfWQ/k9EswHQMOT3LsSKNr8v0vYjFgA3URCgA5
+   I=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 06 Apr 2022 23:47:03 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 23:47:04 -0700
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 6 Apr 2022 23:47:02 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH v2] remoteproc: Use unbounded workqueue for recovery work
+Date:   Thu, 7 Apr 2022 12:16:38 +0530
+Message-ID: <1649313998-1086-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.47.97.222)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 06 Apr 2022 15:13:57 +0530, Puranjay Mohan wrote:
-> Add a YAML binding document for the ICSSG Programmable real time unit
-> based Ethernet driver. This driver uses the PRU and PRUSS consumer APIs
-> to interface the PRUs and load/run the firmware for supporting ethernet
-> functionality.
-> 
-> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
-> ---
->  .../bindings/net/ti,icssg-prueth.yaml         | 172 ++++++++++++++++++
->  1 file changed, 172 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-> 
+There could be a scenario where there is too much load on a core
+(n number of tasks which is affined) or in a case when multiple
+rproc subsystem is going for a recovery and they queued recovery
+work to one core so even though subsystem are independent there
+recovery will be delayed if one of the subsystem recovery work
+is taking more time in completing.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+If we make this queue unbounded, the recovery work could be picked
+on any cpu. This patch try to address this.
 
-yamllint warnings/errors:
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v2:
+  - Removed WQ_HIGHPRI.
+  - Updated commit text.
 
-dtschema/dtc warnings/errors:
-schemas/remoteproc/ti,pru-consumer.yaml: ignoring, error parsing file
-schemas/remoteproc/ti,pru-consumer.yaml: ignoring, error parsing file
-Traceback (most recent call last):
-  File "/usr/local/bin/dt-validate", line 176, in <module>
-    sg.check_trees(filename, testtree)
-  File "/usr/local/bin/dt-validate", line 123, in check_trees
-    self.check_subtree(dt, subtree, False, "/", "/", filename)
-  File "/usr/local/bin/dt-validate", line 112, in check_subtree
-    self.check_subtree(tree, value, disabled, name, fullname + name, filename)
-  File "/usr/local/bin/dt-validate", line 112, in check_subtree
-    self.check_subtree(tree, value, disabled, name, fullname + name, filename)
-  File "/usr/local/bin/dt-validate", line 107, in check_subtree
-    self.check_node(tree, subtree, disabled, nodename, fullname, filename)
-  File "/usr/local/bin/dt-validate", line 51, in check_node
-    errors = sorted(dtschema.DTValidator(schema).iter_errors(node), key=lambda e: e.linecol)
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 1027, in iter_errors
-    for error in super().iter_errors(instance, _schema):
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py", line 229, in iter_errors
-    for error in errors:
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/_validators.py", line 362, in allOf
-    yield from validator.descend(instance, subschema, schema_path=index)
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py", line 245, in descend
-    for error in self.evolve(schema=schema).iter_errors(instance):
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 1027, in iter_errors
-    for error in super().iter_errors(instance, _schema):
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py", line 229, in iter_errors
-    for error in errors:
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/_validators.py", line 298, in ref
-    yield from validator.descend(instance, resolved)
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py", line 245, in descend
-    for error in self.evolve(schema=schema).iter_errors(instance):
-  File "/usr/local/lib/python3.8/dist-packages/dtschema/lib.py", line 1027, in iter_errors
-    for error in super().iter_errors(instance, _schema):
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py", line 219, in iter_errors
-    scope = id_of(_schema)
-  File "/usr/local/lib/python3.8/dist-packages/jsonschema/validators.py", line 96, in _id_of
-    return schema.get("$id", "")
-AttributeError: 'NoneType' object has no attribute 'get'
+ drivers/remoteproc/remoteproc_core.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c510125..18bab67 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
+ 
+ /* Unique indices for remoteproc devices */
+ static DEFINE_IDA(rproc_dev_index);
++static struct workqueue_struct *rproc_recovery_wq;
+ 
+ static const char * const rproc_crash_names[] = {
+ 	[RPROC_MMUFAULT]	= "mmufault",
+@@ -2755,8 +2756,7 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+ 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+ 		rproc->name, rproc_crash_to_string(type));
+ 
+-	/* Have a worker handle the error; ensure system is not suspended */
+-	queue_work(system_freezable_wq, &rproc->crash_handler);
++	queue_work(rproc_recovery_wq, &rproc->crash_handler);
+ }
+ EXPORT_SYMBOL(rproc_report_crash);
+ 
+@@ -2805,6 +2805,11 @@ static void __exit rproc_exit_panic(void)
+ 
+ static int __init remoteproc_init(void)
+ {
++	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
++						WQ_UNBOUND | WQ_FREEZABLE, 0);
++	if (!rproc_recovery_wq)
++		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
++
+ 	rproc_init_sysfs();
+ 	rproc_init_debugfs();
+ 	rproc_init_cdev();
+@@ -2821,6 +2826,8 @@ static void __exit remoteproc_exit(void)
+ 	rproc_exit_panic();
+ 	rproc_exit_debugfs();
+ 	rproc_exit_sysfs();
++	if (rproc_recovery_wq)
++		destroy_workqueue(rproc_recovery_wq);
+ }
+ module_exit(remoteproc_exit);
+ 
+-- 
+2.7.4
 
