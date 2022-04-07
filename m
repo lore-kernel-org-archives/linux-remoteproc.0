@@ -2,117 +2,110 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97959C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 06:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD8CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 08:07:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240059AbiDGGtF (ORCPT
+        id S231502AbiDGIJx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 02:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56044 "EHLO
+        Thu, 7 Apr 2022 04:09:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235677AbiDGGtE (ORCPT
+        with ESMTP id S242927AbiDGIH7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Apr 2022 02:49:04 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2039521A88E;
-        Wed,  6 Apr 2022 23:47:05 -0700 (PDT)
+        Thu, 7 Apr 2022 04:07:59 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D38F18A3C6;
+        Thu,  7 Apr 2022 01:05:28 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id a11so7393847qtb.12;
+        Thu, 07 Apr 2022 01:05:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1649314023; x=1680850023;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=1MUxVLaAVyEjkudarS9QFZG9jUh9u3JUPo9r3Rg6SNY=;
-  b=FeqFEbxhfgkuuzzxnYxhDDXH79bvT7J+1AjU/QrDxMoeuGTxCRPoAVre
-   d+3MLgj3gNA+5x82CbDYhHtlgUFsA96ORE+nJHXCroHn2PYCmB4WgdG1w
-   +Bm/D/LC7J6GTGCwv84tfWQ/k9EswHQMOT3LsSKNr8v0vYjFgA3URCgA5
-   I=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 06 Apr 2022 23:47:03 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 23:47:04 -0700
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 6 Apr 2022 23:47:02 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>
-Subject: [PATCH v2] remoteproc: Use unbounded workqueue for recovery work
-Date:   Thu, 7 Apr 2022 12:16:38 +0530
-Message-ID: <1649313998-1086-1-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LomUbG6PUJaOAyEeNPYEZc4yxOTynNZPy0VtcUyX4ZY=;
+        b=qEXiGdWO0X885lVsV8evUW3Xj83FkNLGn+sz2Ih0nGowdrhhpAS2CFVNTlxHVHOu1K
+         ycdLIJlkG/QO8uws4gGTEownETCyqcDPh2QaVRpIzDrOLMZZQ4ilO41WK2eY8mTxpMmr
+         RNlHObg18i8GFQAbkYB3tTUvh0Ewyytn1gHI86RsOI8yBnP4KN8wuvV57H4QX3f0brGd
+         zAf72uESLzGygARFlD0yEEIbSN1LdpibjcarKCVlUTr8KWaZfnbTtwyMqKsOb8dv11Ey
+         LY9qCnbipxWjN8DZ53MyYc2dAJKSWb0m9DYKt77SoZsebcoW+xkJtl2pqTaPasHCMOQT
+         Sm1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LomUbG6PUJaOAyEeNPYEZc4yxOTynNZPy0VtcUyX4ZY=;
+        b=dfy2NB34mOkqKoQrBjxs4U6cffjp+mBNaOiHj6IYOdLKrQwMcjrKvB0a5SMWjInDSI
+         O3SaQEnPLQJNsVPvfdOPA9ezDrjdRg2YSj+e29eGbkGFfwrqkdHYVkcFq5rzOtuzvGTH
+         azApvnYbYU/GER2dl8EFkVdzLMUoF34tdvBnyZasFdeK7zWs03FlNHmyVckZXK5MvrkU
+         +EjUh2IIjlBlwTrXVoxPwFI6NIjKY0H5cV75nKmiyNW0K9mbMt69yFUGFDQ0cDDo297e
+         is77QQGofPDtIK/HYrUMX8HWrvoWfjMOVvcQe9X50iOLIZtQMRuWJqwyB5GLcR0nCTCF
+         WO5A==
+X-Gm-Message-State: AOAM530jVFwrHlEcS1XJVek1/2cjmVIKrbwL8Touqx5lv8me8EwT8xES
+        Gg/Qhb9zcHUunWuOb5fQGMKw+I25Chfl0zzp+h0=
+X-Google-Smtp-Source: ABdhPJziSL8XilgioJ+e1Mjq34CoarB6ZiDVs658zsFvAH5lr0ZDr829LIWqEJ1qLVoQacv9INCueTY+IzGIft5r+m0=
+X-Received: by 2002:a05:622a:14cd:b0:2e1:d83a:6fdd with SMTP id
+ u13-20020a05622a14cd00b002e1d83a6fddmr10643425qtx.401.1649318727682; Thu, 07
+ Apr 2022 01:05:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.47.97.222)
+References: <20220323064944.1351923-1-peng.fan@oss.nxp.com>
+ <20220323064944.1351923-3-peng.fan@oss.nxp.com> <CAEnQRZB1LL=d3SBCgNomPErBvzEgTVtbBE_PH=V60v-_9UObEg@mail.gmail.com>
+ <DU0PR04MB9417DEFA09AB85211AA72A2E88E79@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <CAEnQRZBS8nLjVuTv739BjBFEnPDnN0iRkvdouT0ooJrEDDbH4A@mail.gmail.com>
+In-Reply-To: <CAEnQRZBS8nLjVuTv739BjBFEnPDnN0iRkvdouT0ooJrEDDbH4A@mail.gmail.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Thu, 7 Apr 2022 11:05:14 +0300
+Message-ID: <CAEnQRZDpsMQUTSBvhztsnApEkWqtnjxf-NbNbr+L22mmiAV8AA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-There could be a scenario where there is too much load on a core
-(n number of tasks which is affined) or in a case when multiple
-rproc subsystem is going for a recovery and they queued recovery
-work to one core so even though subsystem are independent there
-recovery will be delayed if one of the subsystem recovery work
-is taking more time in completing.
+On Wed, Apr 6, 2022 at 2:25 PM Daniel Baluta <daniel.baluta@gmail.com> wrote:
+>
+> On Wed, Apr 6, 2022 at 1:58 PM Peng Fan <peng.fan@nxp.com> wrote:
+> >
+> > > Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: use common
+> > > rproc_elf_load_segments
+> > >
+> > > On Thu, Mar 24, 2022 at 1:34 AM Peng Fan (OSS) <peng.fan@oss.nxp.com>
+> > > wrote:
+> > > >
+> > > > From: Peng Fan <peng.fan@nxp.com>
+> > > >
+> > > > remoteproc elf loader supports the specific case that segments have
+> > > > PT_LOAD and memsz/filesz set to zero, so no duplicate code.
+> > > >
+> > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-If we make this queue unbounded, the recovery work could be picked
-on any cpu. This patch try to address this.
+Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
-Changes in v2:
-  - Removed WQ_HIGHPRI.
-  - Updated commit text.
+Peng,
 
- drivers/remoteproc/remoteproc_core.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+I'm fine going on with this now. Next we need to replace the boolean is_iomem
+with a flags parameter to hold ATT_IOMEM, ATT_IOMEM32, etc.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index c510125..18bab67 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
- 
- /* Unique indices for remoteproc devices */
- static DEFINE_IDA(rproc_dev_index);
-+static struct workqueue_struct *rproc_recovery_wq;
- 
- static const char * const rproc_crash_names[] = {
- 	[RPROC_MMUFAULT]	= "mmufault",
-@@ -2755,8 +2756,7 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
- 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
- 		rproc->name, rproc_crash_to_string(type));
- 
--	/* Have a worker handle the error; ensure system is not suspended */
--	queue_work(system_freezable_wq, &rproc->crash_handler);
-+	queue_work(rproc_recovery_wq, &rproc->crash_handler);
- }
- EXPORT_SYMBOL(rproc_report_crash);
- 
-@@ -2805,6 +2805,11 @@ static void __exit rproc_exit_panic(void)
- 
- static int __init remoteproc_init(void)
- {
-+	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
-+						WQ_UNBOUND | WQ_FREEZABLE, 0);
-+	if (!rproc_recovery_wq)
-+		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
-+
- 	rproc_init_sysfs();
- 	rproc_init_debugfs();
- 	rproc_init_cdev();
-@@ -2821,6 +2826,8 @@ static void __exit remoteproc_exit(void)
- 	rproc_exit_panic();
- 	rproc_exit_debugfs();
- 	rproc_exit_sysfs();
-+	if (rproc_recovery_wq)
-+		destroy_workqueue(rproc_recovery_wq);
- }
- module_exit(remoteproc_exit);
- 
--- 
-2.7.4
-
+> > >
+> > > I think this change OK, but we have a case with the DSP were reads/writes
+> > > should be done in multiples of 32/64.
+> > >
+> > > We need a way to provide our own "memcpy" function to be used by
+> > > rproc_elf_load_segments.
+> >
+> > I think when generating elf file, the sections needs to be 32/64bits aligned.
+>
+> Sure, that could be a fix. But some malicious user can crash the kernel
+> by crafting an elf with unaligned sections.
