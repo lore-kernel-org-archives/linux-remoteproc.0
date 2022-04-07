@@ -2,63 +2,67 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A242FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 13:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C76F1C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Apr 2022 15:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240599AbiDGNwp (ORCPT
+        id S240579AbiDGPL5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Apr 2022 09:52:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33604 "EHLO
+        Thu, 7 Apr 2022 11:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240547AbiDGNwd (ORCPT
+        with ESMTP id S234054AbiDGPLz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Apr 2022 09:52:33 -0400
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32C51E1252;
-        Thu,  7 Apr 2022 06:50:29 -0700 (PDT)
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-de3eda6b5dso6454650fac.0;
-        Thu, 07 Apr 2022 06:50:29 -0700 (PDT)
+        Thu, 7 Apr 2022 11:11:55 -0400
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39DB82BB18;
+        Thu,  7 Apr 2022 08:09:55 -0700 (PDT)
+Received: by mail-ot1-f46.google.com with SMTP id 88-20020a9d0ee1000000b005d0ae4e126fso4087110otj.5;
+        Thu, 07 Apr 2022 08:09:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=6uOQ/kJvojqDkdfw1uMvPqM/fa5BMaYlPRD4ijDOV5Q=;
-        b=STINaCYMGKVRvMkZc1Zqrk2U96dEwHC4ZSvdfmhMvRDUZAwZD70aFhIhKfI9kt3H2H
-         3qVbr019iEJ72Fqp0UNhHrkBpkZlVNAGNX0zsr9cq/60GZ3EBLvDCCVdmTO9FZ9o+Py5
-         15arxxUnCojonvBFleWfLMdOUZ8icdPpZLQF4LOJ6UAz2jUFDnl5GKNClTZ1aqCmxKEj
-         ihuTZ9JiWVgu+gIjZxuRVk7htk9yhOF4E70wpRRc+wRACjj0GM0VQ8kUiZpzpW3+l+oN
-         iNxo2L9i2lcNmriruBOT+qN/wb0sJZeZGZjsunY5zPvfWjIBPwDGa8dEW5A85YqVoN3J
-         6e2Q==
-X-Gm-Message-State: AOAM530aJlfkdbWyhi8axsEs597Ul7qodaGQe642ObU5rk5Do9IDoEvR
-        8cNiq5EjepmvMwiywvtFdg==
-X-Google-Smtp-Source: ABdhPJzHJQX/bwlqRnnc+CjMF09UNJp4+1PjBmsF22ov5JbijXywUe3we+ROhb9qm7aAFuR1xRv5Vw==
-X-Received: by 2002:a05:6870:a106:b0:de:de08:4e3d with SMTP id m6-20020a056870a10600b000dede084e3dmr6559409oae.256.1649339429093;
-        Thu, 07 Apr 2022 06:50:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=mvsoNOk9u8RV2yVCZLMb/29uYaw0/4/Qw5+UfuDkMks=;
+        b=ec2YPQw+MOwqh33IbQ6jfO5ewzH9X6jl14iOKTglcII8F3l0PuXw++gXCgaNN8FfKO
+         lDBEr6GwssmRWJV9YxgwvieXOwyKSLhXUIVtWMiSFcNg/k2HQWAIhHIadKjQb9U3MzmK
+         kyLa3oMqSmEGXay2bgXNHr6nKHHQcB85MICWNJw7EkbXrQQQyIZIQYkDXa7rd8QCnUTX
+         ZliN5vGinAHWQxxalsIviBrhwSemnl5svIbNimC+7i0/HWKTrb7CU2/Ppwr4wv0HrKEn
+         93ZsAIm5vkQ+j9fOm4WSfKInzy2MaGpMhKM18Se0190HbtItgpfoHGuazFvjmaETYVZf
+         q4xA==
+X-Gm-Message-State: AOAM532R/aQn279nKLoaTcasdUgIglW1MG489F1/pr0Q1Hahr1FdjChC
+        ncrtggWy/Edw51/YzIDI8/6P8aZTXw==
+X-Google-Smtp-Source: ABdhPJzdNp+SArorak1XGGcOGrCQUd+SwHej8ANssNSIJv2Vtew9hsSojZk7jiFJDg5SzFN4KY51PA==
+X-Received: by 2002:a9d:136:0:b0:5cd:9e9b:4872 with SMTP id 51-20020a9d0136000000b005cd9e9b4872mr5150803otu.192.1649344194343;
+        Thu, 07 Apr 2022 08:09:54 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k22-20020a056870959600b000d277c48d18sm8454241oao.3.2022.04.07.06.50.28
+        by smtp.gmail.com with ESMTPSA id q39-20020a4a88ea000000b0032165eb3af8sm7531169ooh.42.2022.04.07.08.09.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 06:50:28 -0700 (PDT)
-Received: (nullmailer pid 795405 invoked by uid 1000);
-        Thu, 07 Apr 2022 13:50:27 -0000
+        Thu, 07 Apr 2022 08:09:54 -0700 (PDT)
+Received: (nullmailer pid 1105330 invoked by uid 1000);
+        Thu, 07 Apr 2022 15:09:53 -0000
+Date:   Thu, 7 Apr 2022 10:09:53 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Puranjay Mohan <p-mohan@ti.com>
-Cc:     kishon@ti.com, nm@ti.com, linux-kernel@vger.kernel.org,
-        kuba@kernel.org, s-anna@ti.com, vigneshr@ti.com,
-        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        ssantosh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        davem@davemloft.net, linux-arm-kernel@lists.infradead.org,
-        mathieu.poirier@linaro.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org
-In-Reply-To: <20220406094358.7895-2-p-mohan@ti.com>
-References: <20220406094358.7895-1-p-mohan@ti.com> <20220406094358.7895-2-p-mohan@ti.com>
+Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
+        linux-arm-kernel@lists.infradead.org, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org, vigneshr@ti.com,
+        kishon@ti.com
 Subject: Re: [RFC 01/13] dt-bindings: remoteproc: Add PRU consumer bindings
-Date:   Thu, 07 Apr 2022 08:50:27 -0500
-Message-Id: <1649339427.644388.795404.nullmailer@robh.at.kernel.org>
+Message-ID: <Yk7+wXwDHrtjFo9s@robh.at.kernel.org>
+References: <20220406094358.7895-1-p-mohan@ti.com>
+ <20220406094358.7895-2-p-mohan@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406094358.7895-2-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 06 Apr 2022 15:13:46 +0530, Puranjay Mohan wrote:
+On Wed, Apr 06, 2022 at 03:13:46PM +0530, Puranjay Mohan wrote:
 > From: Suman Anna <s-anna@ti.com>
 > 
 > Add a YAML binding document for PRU consumers. The binding includes
@@ -80,27 +84,91 @@ On Wed, 06 Apr 2022 15:13:46 +0530, Puranjay Mohan wrote:
 >  1 file changed, 66 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> new file mode 100644
+> index 000000000000..c245fe1de656
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common TI PRU Consumer Binding
+> +
+> +maintainers:
+> +  - Suman Anna <s-anna@ti.com>
+> +
+> +description: |
+> +  A PRU application/consumer/user node typically uses one or more PRU device
+> +  nodes to implement a PRU application/functionality. Each application/client
+> +  node would need a reference to at least a PRU node, and optionally define
+> +  some properties needed for hardware/firmware configuration. The below
+> +  properties are a list of common properties supported by the PRU remoteproc
+> +  infrastructure.
+> +
+> +  The application nodes shall define their own bindings like regular platform
+> +  devices, so below are in addition to each node's bindings.
+> +
+> +properties:
+> +  ti,prus:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Needs contraints. A phandle-array is really a matrix of phandles and 
+args. If no args, something like this:
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml:39:9: [warning] wrong indentation: expected 6 but found 8 (indentation)
+minItems: ??
+maxItems: ??
+items:
+  maxItems: 1
 
-dtschema/dtc warnings/errors:
+> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    description: |
+> +      firmwares for the PRU cores, the default firmware for the core from
+> +      the PRU node will be used if not provided. The firmware names should
+> +      correspond to the PRU cores listed in the 'ti,prus' property
+> +
+> +  ti,pruss-gp-mux-sel:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    maxItems: 6
+> +    items:
+> +        enum: [0, 1, 2, 3, 4]
+> +    description: |
+> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
+> +      This selects the internal muxing scheme for the PRU instance. Values
+> +      should correspond to the PRU cores listed in the 'ti,prus' property. The
+> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
+> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
+> +      same slice in the associative array. If the array size is smaller than
+> +      the size of 'ti,prus' property, the default out-of-reset value (0) for the
+> +      PRU core is used.
+> +
+> +required:
+> +  - ti,prus
+> +
+> +dependencies:
+> +  firmware-name: [ 'ti,prus' ]
+> +  ti,pruss-gp-mux-sel: [ 'ti,prus' ]
+> +
+> +additionalProperties: true
 
-doc reference errors (make refcheckdocs):
+This must be false unless it is a common, shared schema.
 
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+> +
+> +examples:
+> +  - |
+> +    /* PRU application node example */
+> +    pru-app {
+> +        ti,prus = <&pru0>, <&pru1>;
+> +        firmware-name = "pruss-app-fw0", "pruss-app-fw1";
+> +        ti,pruss-gp-mux-sel = <2>, <1>;
+> +    };
+> -- 
+> 2.17.1
+> 
+> 
