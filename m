@@ -2,314 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88216C43217
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 08:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAF6C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 10:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238440AbiDLIOG (ORCPT
+        id S1359473AbiDLKtH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 04:14:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45788 "EHLO
+        Tue, 12 Apr 2022 06:49:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356929AbiDLHje (ORCPT
+        with ESMTP id S1357537AbiDLKqG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Apr 2022 03:39:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 41B074AE2E
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Apr 2022 00:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649747430;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=NGztLdiF5mtFDYQ2uVl1kOorRSYT0ewhcVo9olRY7S8=;
-        b=HdsoPLXhV/A6zhMvkhv61z5HDzeRBEXVFioQ0f5XUClZS8qBI20ziGLzdToJtJrFt5aimB
-        mULLhDTZjOpTVsoRAxtvWSCLER38JIhBlPfUjZTUHzgE/+eW2EU+iYkxXWn54OrAQvLOWT
-        f+XaThbLu0FJ7NJo/LtFAXuwnQKm1BE=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-308-uZDiU9lENAKpoBT2PJ1ktA-1; Tue, 12 Apr 2022 03:10:28 -0400
-X-MC-Unique: uZDiU9lENAKpoBT2PJ1ktA-1
-Received: by mail-pl1-f198.google.com with SMTP id k2-20020a170902ba8200b0015613b12004so7397852pls.22
-        for <linux-remoteproc@vger.kernel.org>; Tue, 12 Apr 2022 00:10:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=NGztLdiF5mtFDYQ2uVl1kOorRSYT0ewhcVo9olRY7S8=;
-        b=Zat1dbHnQIGeackic0CDTmnF+WfqI0ERtDOHWSC/k2aQjHipNoZkhAcrTUKUKi51pS
-         mwo2Th8RH+BSSfZzvoZPFxaA8ypzqw3Yr7ZPFzf0qzkafiH7hYGnrno5WU7bvbCbQ0kb
-         KjQp0oyHlhJBk7QcNPcEVG7Se5z0VeZ1Zv0gVBdX+AEED3AnU33JpJvhTuCxXJ5d2zpY
-         KoE3YlEWFZnZO+nH0s9Kn23HjeTOUtnaKmYvLbk1y+Idd32eIKOX/fNq8F8Wf7RaofTc
-         pFgEY6RGDn/6Tbw8mJZpLA80b2Ml/O9+lxt+Y10lADt8kNicKnQws4p3uaJPt/GPRZds
-         TEKQ==
-X-Gm-Message-State: AOAM533WRl9XlZndpqA/JXVy58hbfxRM6rtain9owBHjr7l4AoWT0EVF
-        bqZHuQUjTb92JadsoxjbQPpV2aZb8oysoguh5u+VjqGJlBTCEEEXQnDsuChcQKLeAFtjvrNeGbm
-        gnurRJP+J1EwoAYkbCf27QFIsyMwdDA==
-X-Received: by 2002:a17:902:e84d:b0:155:d31c:5c93 with SMTP id t13-20020a170902e84d00b00155d31c5c93mr35994566plg.103.1649747426835;
-        Tue, 12 Apr 2022 00:10:26 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxURT6e2iGDAZLnkWghXtDjSJ+7RYFzdSBEwH3dHydzlCPkYSiq+vvQpN+h1WUkOhsXje4cAA==
-X-Received: by 2002:a17:902:e84d:b0:155:d31c:5c93 with SMTP id t13-20020a170902e84d00b00155d31c5c93mr35994542plg.103.1649747426525;
-        Tue, 12 Apr 2022 00:10:26 -0700 (PDT)
-Received: from [10.72.14.5] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id m6-20020aa79006000000b00505bf6f2b36sm6154997pfo.205.2022.04.12.00.10.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 00:10:25 -0700 (PDT)
-Message-ID: <a0bcbceb-c550-b915-eb40-4e5769ae597d@redhat.com>
-Date:   Tue, 12 Apr 2022 15:10:12 +0800
+        Tue, 12 Apr 2022 06:46:06 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C03BC140EA;
+        Tue, 12 Apr 2022 02:46:53 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 23C9kfGa005679;
+        Tue, 12 Apr 2022 04:46:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1649756801;
+        bh=i/HJ+zZsyxwaz/TSJISxZa6OEBfTC1Es+lc7wWelgDc=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=ss0eCm4pMgZQA5BoIssYIyWyywYLl3H+3LtUAWFSNTFleVzoAZpnV2LOtHN02Mc4W
+         Nqvp5wPdgasN9qX62BGJqIJBO051puzZ9ZnmqbaCwDzt/uMJ2wWodJIo5m3g4jU6Lo
+         6K8Zhm6pxk8jHbqRk+1pkKdqUzE+gclzP5KFUOOk=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 23C9kfkW011525
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 12 Apr 2022 04:46:41 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Tue, 12
+ Apr 2022 04:46:41 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Tue, 12 Apr 2022 04:46:41 -0500
+Received: from [10.24.69.24] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 23C9kavA100290;
+        Tue, 12 Apr 2022 04:46:36 -0500
+Message-ID: <080bf31d-a452-af0b-ca41-a6b3d951e18f@ti.com>
+Date:   Tue, 12 Apr 2022 15:16:35 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH v9 24/32] virtio: find_vqs() add arg sizes
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC 13/13] net: ti: icssg-prueth: Add ICSSG ethernet driver
 Content-Language: en-US
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        virtualization@lists.linux-foundation.org
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-25-xuanzhuo@linux.alibaba.com>
-From:   Jason Wang <jasowang@redhat.com>
-In-Reply-To: <20220406034346.74409-25-xuanzhuo@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <linux-kernel@vger.kernel.org>, <bjorn.andersson@linaro.org>,
+        <mathieu.poirier@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <davem@davemloft.net>,
+        <kuba@kernel.org>, <netdev@vger.kernel.org>, <vigneshr@ti.com>,
+        <kishon@ti.com>, roger Quadros <rogerq@kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>
+References: <20220406094358.7895-1-p-mohan@ti.com>
+ <20220406094358.7895-14-p-mohan@ti.com> <Yk3fHzDsl1iNl9ah@lunn.ch>
+From:   Puranjay Mohan <p-mohan@ti.com>
+In-Reply-To: <Yk3fHzDsl1iNl9ah@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
++Roger, Grygorii
 
-在 2022/4/6 上午11:43, Xuan Zhuo 写道:
-> find_vqs() adds a new parameter sizes to specify the size of each vq
-> vring.
->
-> 0 means use the maximum size supported by the backend.
-
-
-Does this mean driver still need to prepare a array of 0 or it can 
-simply pass NULL to find_vqs()?
-
-Thanks
-
-
->
-> In the split scenario, the meaning of size is the largest size, because
-> it may be limited by memory, the virtio core will try a smaller size.
-> And the size is power of 2.
->
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->   arch/um/drivers/virtio_uml.c             |  2 +-
->   drivers/platform/mellanox/mlxbf-tmfifo.c |  1 +
->   drivers/remoteproc/remoteproc_virtio.c   |  1 +
->   drivers/s390/virtio/virtio_ccw.c         |  1 +
->   drivers/virtio/virtio_mmio.c             |  1 +
->   drivers/virtio/virtio_pci_common.c       |  2 +-
->   drivers/virtio/virtio_pci_common.h       |  2 +-
->   drivers/virtio/virtio_pci_modern.c       |  7 +++++--
->   drivers/virtio/virtio_vdpa.c             |  1 +
->   include/linux/virtio_config.h            | 14 +++++++++-----
->   10 files changed, 22 insertions(+), 10 deletions(-)
->
-> diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-> index 904993d15a85..6af98d130840 100644
-> --- a/arch/um/drivers/virtio_uml.c
-> +++ b/arch/um/drivers/virtio_uml.c
-> @@ -998,7 +998,7 @@ static struct virtqueue *vu_setup_vq(struct virtio_device *vdev,
->   
->   static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   		       struct virtqueue *vqs[], vq_callback_t *callbacks[],
-> -		       const char * const names[], const bool *ctx,
-> +		       const char * const names[], u32 sizes[], const bool *ctx,
->   		       struct irq_affinity *desc)
->   {
->   	struct virtio_uml_device *vu_dev = to_virtio_uml_device(vdev);
-> diff --git a/drivers/platform/mellanox/mlxbf-tmfifo.c b/drivers/platform/mellanox/mlxbf-tmfifo.c
-> index 1ae3c56b66b0..8be13d416f48 100644
-> --- a/drivers/platform/mellanox/mlxbf-tmfifo.c
-> +++ b/drivers/platform/mellanox/mlxbf-tmfifo.c
-> @@ -928,6 +928,7 @@ static int mlxbf_tmfifo_virtio_find_vqs(struct virtio_device *vdev,
->   					struct virtqueue *vqs[],
->   					vq_callback_t *callbacks[],
->   					const char * const names[],
-> +					u32 sizes[],
->   					const bool *ctx,
->   					struct irq_affinity *desc)
->   {
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 7611755d0ae2..baad31c9da45 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -158,6 +158,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->   				 struct virtqueue *vqs[],
->   				 vq_callback_t *callbacks[],
->   				 const char * const names[],
-> +				 u32 sizes[],
->   				 const bool * ctx,
->   				 struct irq_affinity *desc)
->   {
-> diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-> index 468da60b56c5..f0c814a54e78 100644
-> --- a/drivers/s390/virtio/virtio_ccw.c
-> +++ b/drivers/s390/virtio/virtio_ccw.c
-> @@ -634,6 +634,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   			       struct virtqueue *vqs[],
->   			       vq_callback_t *callbacks[],
->   			       const char * const names[],
-> +			       u32 sizes[],
->   			       const bool *ctx,
->   			       struct irq_affinity *desc)
->   {
-> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-> index a41abc8051b9..9d5a674bdeec 100644
-> --- a/drivers/virtio/virtio_mmio.c
-> +++ b/drivers/virtio/virtio_mmio.c
-> @@ -461,6 +461,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   		       struct virtqueue *vqs[],
->   		       vq_callback_t *callbacks[],
->   		       const char * const names[],
-> +		       u32 sizes[],
->   		       const bool *ctx,
->   		       struct irq_affinity *desc)
->   {
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 863d3a8a0956..826ea2e35d54 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -427,7 +427,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned nvqs,
->   /* the config->find_vqs() implementation */
->   int vp_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   		struct virtqueue *vqs[], vq_callback_t *callbacks[],
-> -		const char * const names[], const bool *ctx,
-> +		const char * const names[], u32 sizes[], const bool *ctx,
->   		struct irq_affinity *desc)
->   {
->   	int err;
-> diff --git a/drivers/virtio/virtio_pci_common.h b/drivers/virtio/virtio_pci_common.h
-> index 23f6c5c678d5..859eed559e10 100644
-> --- a/drivers/virtio/virtio_pci_common.h
-> +++ b/drivers/virtio/virtio_pci_common.h
-> @@ -113,7 +113,7 @@ void vp_del_vqs(struct virtio_device *vdev);
->   /* the config->find_vqs() implementation */
->   int vp_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   		struct virtqueue *vqs[], vq_callback_t *callbacks[],
-> -		const char * const names[], const bool *ctx,
-> +		const char * const names[], u32 sizes[], const bool *ctx,
->   		struct irq_affinity *desc);
->   const char *vp_bus_name(struct virtio_device *vdev);
->   
-> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-> index cb5d38f1c9c8..3b35e5056165 100644
-> --- a/drivers/virtio/virtio_pci_modern.c
-> +++ b/drivers/virtio/virtio_pci_modern.c
-> @@ -343,12 +343,15 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
->   static int vp_modern_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   			      struct virtqueue *vqs[],
->   			      vq_callback_t *callbacks[],
-> -			      const char * const names[], const bool *ctx,
-> +			      const char * const names[],
-> +			      u32 sizes[],
-> +			      const bool *ctx,
->   			      struct irq_affinity *desc)
->   {
->   	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
->   	struct virtqueue *vq;
-> -	int rc = vp_find_vqs(vdev, nvqs, vqs, callbacks, names, ctx, desc);
-> +	int rc = vp_find_vqs(vdev, nvqs, vqs, callbacks, names, sizes, ctx,
-> +			     desc);
->   
->   	if (rc)
->   		return rc;
-> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-> index 39e4c08eb0f2..ac86d3a6633c 100644
-> --- a/drivers/virtio/virtio_vdpa.c
-> +++ b/drivers/virtio/virtio_vdpa.c
-> @@ -269,6 +269,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   				struct virtqueue *vqs[],
->   				vq_callback_t *callbacks[],
->   				const char * const names[],
-> +				u32 sizes[],
->   				const bool *ctx,
->   				struct irq_affinity *desc)
->   {
-> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
-> index d4adcd0e1c57..0f7def7ddfd2 100644
-> --- a/include/linux/virtio_config.h
-> +++ b/include/linux/virtio_config.h
-> @@ -57,6 +57,7 @@ struct virtio_shm_region {
->    *		include a NULL entry for vqs that do not need a callback
->    *	names: array of virtqueue names (mainly for debugging)
->    *		include a NULL entry for vqs unused by driver
-> + *	sizes: array of virtqueue sizes
->    *	Returns 0 on success or error status
->    * @del_vqs: free virtqueues found by find_vqs().
->    * @get_features: get the array of feature bits for this device.
-> @@ -98,7 +99,9 @@ struct virtio_config_ops {
->   	void (*reset)(struct virtio_device *vdev);
->   	int (*find_vqs)(struct virtio_device *, unsigned nvqs,
->   			struct virtqueue *vqs[], vq_callback_t *callbacks[],
-> -			const char * const names[], const bool *ctx,
-> +			const char * const names[],
-> +			u32 sizes[],
-> +			const bool *ctx,
->   			struct irq_affinity *desc);
->   	void (*del_vqs)(struct virtio_device *);
->   	u64 (*get_features)(struct virtio_device *vdev);
-> @@ -206,7 +209,7 @@ struct virtqueue *virtio_find_single_vq(struct virtio_device *vdev,
->   	const char *names[] = { n };
->   	struct virtqueue *vq;
->   	int err = vdev->config->find_vqs(vdev, 1, &vq, callbacks, names, NULL,
-> -					 NULL);
-> +					 NULL, NULL);
->   	if (err < 0)
->   		return ERR_PTR(err);
->   	return vq;
-> @@ -218,7 +221,8 @@ int virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->   			const char * const names[],
->   			struct irq_affinity *desc)
->   {
-> -	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, NULL, desc);
-> +	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, NULL,
-> +				      NULL, desc);
->   }
->   
->   static inline
-> @@ -227,8 +231,8 @@ int virtio_find_vqs_ctx(struct virtio_device *vdev, unsigned nvqs,
->   			const char * const names[], const bool *ctx,
->   			struct irq_affinity *desc)
->   {
-> -	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, ctx,
-> -				      desc);
-> +	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, NULL,
-> +				      ctx, desc);
->   }
->   
->   /**
-
+On 07/04/22 00:12, Andrew Lunn wrote:
+>> +config TI_ICSSG_PRUETH
+>> +	tristate "TI Gigabit PRU Ethernet driver"
+>> +	select TI_DAVINCI_MDIO
+>> +
+> 
+> I don't see a dependency on TI_DAVINCI_MDIO in the code. All you need
+> is an MDIO bus so that your phy-handle has somewhere to point. But that
+> could be a GPIO bit banger.
+> 
+> What i do think is missing here is a dependency on PHYLIB.
+> 
+> If possible, it would be good to also have it compile when
+> COMPILE_TEST is set.
+> 
+>      Andrew
