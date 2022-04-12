@@ -2,68 +2,68 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49097C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 06:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B9DC43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 06:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348799AbiDLGbC (ORCPT
+        id S1350873AbiDLG47 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 02:31:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42950 "EHLO
+        Tue, 12 Apr 2022 02:56:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346058AbiDLGbB (ORCPT
+        with ESMTP id S1351623AbiDLGyG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Apr 2022 02:31:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 995F335865
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Apr 2022 23:28:44 -0700 (PDT)
+        Tue, 12 Apr 2022 02:54:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8AF7A37ABE
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Apr 2022 23:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649744923;
+        s=mimecast20190719; t=1649745802;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=96mvZW2N60Bc/yiEAvufsCeVXhKGkkUOXQ1a79/ykgI=;
-        b=RGhzfReoqB/wQyNd03K1DtA6aXWtbe6IR44LY9uB8UWrYJh74JmJAdbveIsWA8D05sArKR
-        4Id3Dow0ogAmLLXD7+LYq+hSxVfEGASEfR7Pk8kNueE2B8JBBgymlaIOdruH08vM13Xn5k
-        Dk+JtTciTTK4cX+5cuLXC0fRStM+BSs=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=YEDFVaHE5LgovQ1qymAwTeM82i08IwmDwRWKJJtG8Gs=;
+        b=hZtiyu1RibxHMuY7h+T4iWDINHudDPgb2ZR5a0uRVLmAinztpt7szMhwG8Cb5AaCvZzKpB
+        i31bM0L42tyfgAD1T8xK5ECALmcmht7WI1Ozuzk/zYU++zkak025sicxl7OzTw9bVbVnCl
+        fejkKsptPps9EH+XNuvKPMdQvP/e+ao=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-118-KakEoDObPSmaPeiFQg9mJg-1; Tue, 12 Apr 2022 02:28:42 -0400
-X-MC-Unique: KakEoDObPSmaPeiFQg9mJg-1
-Received: by mail-pf1-f199.google.com with SMTP id w187-20020a6282c4000000b00505dfdb4613so1196674pfd.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Apr 2022 23:28:42 -0700 (PDT)
+ us-mta-275-ekLcbq4NOQeTrHy5-UdnAQ-1; Tue, 12 Apr 2022 02:43:21 -0400
+X-MC-Unique: ekLcbq4NOQeTrHy5-UdnAQ-1
+Received: by mail-pl1-f198.google.com with SMTP id o16-20020a170902d4d000b00158504bca6fso2181578plg.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 Apr 2022 23:43:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=96mvZW2N60Bc/yiEAvufsCeVXhKGkkUOXQ1a79/ykgI=;
-        b=inaxOmcKZj5YdM75LIjthbIzzs67zaA7LiBVpm1LJRl0A1fdAx+Y0il+92XrM2AgTz
-         MeTVV8/PDfXBM//Tz3ryqW8vIAErY0S6oEqLjtmGJ786tlTCSq3vgtI2jHLGwqBTdp+f
-         aUmQionKJDHqkZym3o3ajPCWNBc+uIWztm64vCYdEfqOvdtouuwOJsBvwbhr0QYTLd/I
-         UpLJXEipGJjfy0l6kpYpwTrxhRZT1fBFW4LuR71bbwuuRJS+g66S8greUH8Ab5oVWtPZ
-         Gw+pFP+m8DPzGB7eMozAygoXNeCeykQmxIcrt3vWsA079bgHvnd4sQ4tTUlC8wnFaGRL
-         9Knw==
-X-Gm-Message-State: AOAM531cL3fe/IpG7vOl//ZLvXm4JD9NuNSfx8IQsD69uY6mDMO7O1ZM
-        NMvwxItUY6OnXMned7c0Nh3pyHYVC2JKxpaTwsMipYdVpuYEE9o4giZfOuXuii3cVZCaAyERt9f
-        EobJ/+5N3aAKJBBEEqVFo3k8tKZCp3A==
-X-Received: by 2002:a17:90a:600b:b0:1cb:8ba5:d3bc with SMTP id y11-20020a17090a600b00b001cb8ba5d3bcmr3322150pji.42.1649744921378;
-        Mon, 11 Apr 2022 23:28:41 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzsTZb815vqxK0EhXJcoHB9RSXY3UmD7WoV1CP0Y3EhajIsat86IZWa2d15JEEcfRFMnydtCQ==
-X-Received: by 2002:a17:90a:600b:b0:1cb:8ba5:d3bc with SMTP id y11-20020a17090a600b00b001cb8ba5d3bcmr3322121pji.42.1649744921156;
-        Mon, 11 Apr 2022 23:28:41 -0700 (PDT)
+        bh=YEDFVaHE5LgovQ1qymAwTeM82i08IwmDwRWKJJtG8Gs=;
+        b=ONu8zaVCQrVmoux4bTsogcCBWRcHrdQQqxec2rUm94telYdwc+z0o1N29W3nxtIi/c
+         3LMf19+rd45249iedd2g1h3FuWQnWKk2sigdJ1doyCjt9w0LELllhLBGgNcYp6dvU/JS
+         JoVcIUa1mkAQYWP8P4dDyHSOPmOtlt0PBq7kHlvanZNBx5GvOQHZcN/e9jmhl9XBREaJ
+         NQGULnfNqKRu6+G34mDy10QcdvVLef02wi8BuXfvgnx8gi+FEOh0YM4GmfDp0EovSwa3
+         FbyV/coU8O0Qe2QLoFcE1PElJohVhq5sgSpyNXoIcYnwqURX2VL1oqE2UIT0K98MdU+A
+         RVnw==
+X-Gm-Message-State: AOAM530o8+rt+OUAPtvhFTlOfiP/brkcLnDKZniUQAfZpWFL74jbGXGI
+        YVxZri7shrU0EoTh+wcvjagJ1ObzkoQpk+c+VeWoa8XNvhZ49nHijK3yEBvmHL93kTeFye2QPzH
+        eFmpKMW//2bMhyBwJ4HQNT+DOS4QJ/g==
+X-Received: by 2002:a65:494b:0:b0:399:28c:614f with SMTP id q11-20020a65494b000000b00399028c614fmr28693517pgs.182.1649745800170;
+        Mon, 11 Apr 2022 23:43:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzVisGJkqk8SxAqgvhvNH2N8TL+p8/HvB8CALOp5QP1jzqML5w0mYx0kcrqACK75c6WV3bObw==
+X-Received: by 2002:a65:494b:0:b0:399:28c:614f with SMTP id q11-20020a65494b000000b00399028c614fmr28693502pgs.182.1649745799938;
+        Mon, 11 Apr 2022 23:43:19 -0700 (PDT)
 Received: from [10.72.14.5] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id md4-20020a17090b23c400b001cb66e3e1f8sm1483400pjb.0.2022.04.11.23.28.29
+        by smtp.gmail.com with ESMTPSA id mn18-20020a17090b189200b001cac1781bb4sm1544598pjb.35.2022.04.11.23.43.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Apr 2022 23:28:40 -0700 (PDT)
-Message-ID: <4da7b8dc-74ca-fc1b-fbdb-21f9943e8d45@redhat.com>
-Date:   Tue, 12 Apr 2022 14:28:24 +0800
+        Mon, 11 Apr 2022 23:43:19 -0700 (PDT)
+Message-ID: <5a4d48e1-aab9-9416-adc7-a07ebb39c84d@redhat.com>
+Date:   Tue, 12 Apr 2022 14:43:08 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH v9 12/32] virtio_ring: packed: extract the logic of alloc
- queue
+Subject: Re: [PATCH v9 21/32] virtio_pci: queue_reset: update struct
+ virtio_pci_common_cfg and option functions
 Content-Language: en-US
 To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
         virtualization@lists.linux-foundation.org
@@ -95,9 +95,9 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org, bpf@vger.kernel.org
 References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-13-xuanzhuo@linux.alibaba.com>
+ <20220406034346.74409-22-xuanzhuo@linux.alibaba.com>
 From:   Jason Wang <jasowang@redhat.com>
-In-Reply-To: <20220406034346.74409-13-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <20220406034346.74409-22-xuanzhuo@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -106,143 +106,108 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 在 2022/4/6 上午11:43, Xuan Zhuo 写道:
-> Separate the logic of packed to create vring queue.
+> Add queue_reset in virtio_pci_common_cfg, and add related operation
+> functions.
 >
-> For the convenience of passing parameters, add a structure
-> vring_packed.
->
-> This feature is required for subsequent virtuqueue reset vring.
+> For not breaks uABI, add a new struct virtio_pci_common_cfg_reset.
 >
 > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 > ---
->   drivers/virtio/virtio_ring.c | 70 ++++++++++++++++++++++++++++--------
->   1 file changed, 56 insertions(+), 14 deletions(-)
+>   drivers/virtio/virtio_pci_modern_dev.c | 36 ++++++++++++++++++++++++++
+>   include/linux/virtio_pci_modern.h      |  2 ++
+>   include/uapi/linux/virtio_pci.h        |  7 +++++
+>   3 files changed, 45 insertions(+)
 >
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 33864134a744..ea451ae2aaef 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -1817,19 +1817,17 @@ static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num)
->   	return desc_extra;
+> diff --git a/drivers/virtio/virtio_pci_modern_dev.c b/drivers/virtio/virtio_pci_modern_dev.c
+> index e8b3ff2b9fbc..8c74b00bc511 100644
+> --- a/drivers/virtio/virtio_pci_modern_dev.c
+> +++ b/drivers/virtio/virtio_pci_modern_dev.c
+> @@ -3,6 +3,7 @@
+>   #include <linux/virtio_pci_modern.h>
+>   #include <linux/module.h>
+>   #include <linux/pci.h>
+> +#include <linux/delay.h>
+>   
+>   /*
+>    * vp_modern_map_capability - map a part of virtio pci capability
+> @@ -463,6 +464,41 @@ void vp_modern_set_status(struct virtio_pci_modern_device *mdev,
 >   }
+>   EXPORT_SYMBOL_GPL(vp_modern_set_status);
 >   
-> -static struct virtqueue *vring_create_virtqueue_packed(
-> -	unsigned int index,
-> -	unsigned int num,
-> -	unsigned int vring_align,
-> -	struct virtio_device *vdev,
-> -	bool weak_barriers,
-> -	bool may_reduce_num,
-> -	bool context,
-> -	bool (*notify)(struct virtqueue *),
-> -	void (*callback)(struct virtqueue *),
-> -	const char *name)
-> +static int vring_alloc_queue_packed(struct virtio_device *vdev,
-> +				    u32 num,
-> +				    struct vring_packed_desc **_ring,
-> +				    struct vring_packed_desc_event **_driver,
-> +				    struct vring_packed_desc_event **_device,
-> +				    dma_addr_t *_ring_dma_addr,
-> +				    dma_addr_t *_driver_event_dma_addr,
-> +				    dma_addr_t *_device_event_dma_addr,
-> +				    size_t *_ring_size_in_bytes,
-> +				    size_t *_event_size_in_bytes)
->   {
-> -	struct vring_virtqueue *vq;
->   	struct vring_packed_desc *ring;
->   	struct vring_packed_desc_event *driver, *device;
->   	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_addr;
-> @@ -1857,6 +1855,52 @@ static struct virtqueue *vring_create_virtqueue_packed(
->   	if (!device)
->   		goto err_device;
+> +/*
+> + * vp_modern_get_queue_reset - get the queue reset status
+> + * @mdev: the modern virtio-pci device
+> + * @index: queue index
+> + */
+> +int vp_modern_get_queue_reset(struct virtio_pci_modern_device *mdev, u16 index)
+> +{
+> +	struct virtio_pci_common_cfg_reset __iomem *cfg;
+> +
+> +	cfg = (struct virtio_pci_common_cfg_reset __iomem *)mdev->common;
+> +
+> +	vp_iowrite16(index, &cfg->cfg.queue_select);
+> +	return vp_ioread16(&cfg->queue_reset);
+> +}
+> +EXPORT_SYMBOL_GPL(vp_modern_get_queue_reset);
+> +
+> +/*
+> + * vp_modern_set_queue_reset - reset the queue
+> + * @mdev: the modern virtio-pci device
+> + * @index: queue index
+> + */
+> +void vp_modern_set_queue_reset(struct virtio_pci_modern_device *mdev, u16 index)
+> +{
+> +	struct virtio_pci_common_cfg_reset __iomem *cfg;
+> +
+> +	cfg = (struct virtio_pci_common_cfg_reset __iomem *)mdev->common;
+> +
+> +	vp_iowrite16(index, &cfg->cfg.queue_select);
+> +	vp_iowrite16(1, &cfg->queue_reset);
+> +
+> +	while (vp_ioread16(&cfg->queue_reset) != 1)
+> +		msleep(1);
+> +}
+> +EXPORT_SYMBOL_GPL(vp_modern_set_queue_reset);
+> +
+>   /*
+>    * vp_modern_queue_vector - set the MSIX vector for a specific virtqueue
+>    * @mdev: the modern virtio-pci device
+> diff --git a/include/linux/virtio_pci_modern.h b/include/linux/virtio_pci_modern.h
+> index eb2bd9b4077d..cc4154dd7b28 100644
+> --- a/include/linux/virtio_pci_modern.h
+> +++ b/include/linux/virtio_pci_modern.h
+> @@ -106,4 +106,6 @@ void __iomem * vp_modern_map_vq_notify(struct virtio_pci_modern_device *mdev,
+>   				       u16 index, resource_size_t *pa);
+>   int vp_modern_probe(struct virtio_pci_modern_device *mdev);
+>   void vp_modern_remove(struct virtio_pci_modern_device *mdev);
+> +int vp_modern_get_queue_reset(struct virtio_pci_modern_device *mdev, u16 index);
+> +void vp_modern_set_queue_reset(struct virtio_pci_modern_device *mdev, u16 index);
+>   #endif
+> diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
+> index 22bec9bd0dfc..d9462efd6ce8 100644
+> --- a/include/uapi/linux/virtio_pci.h
+> +++ b/include/uapi/linux/virtio_pci.h
+> @@ -173,6 +173,13 @@ struct virtio_pci_common_cfg_notify {
+>   	__le16 padding;
+>   };
 >   
-> +	*_ring                   = ring;
-> +	*_driver                 = driver;
-> +	*_device                 = device;
-> +	*_ring_dma_addr          = ring_dma_addr;
-> +	*_driver_event_dma_addr  = driver_event_dma_addr;
-> +	*_device_event_dma_addr  = device_event_dma_addr;
-> +	*_ring_size_in_bytes     = ring_size_in_bytes;
-> +	*_event_size_in_bytes    = event_size_in_bytes;
+> +struct virtio_pci_common_cfg_reset {
+> +	struct virtio_pci_common_cfg cfg;
+> +
+> +	__le16 queue_notify_data;	/* read-write */
+> +	__le16 queue_reset;		/* read-write */
+> +};
 
 
-I wonder if we can simply factor out split and packed from struct 
-vring_virtqueue:
+I prefer to use a separate patch for the uAPI change.
 
-struct vring_virtqueue {
-     union {
-         struct {} split;
-         struct {} packed;
-     };
-};
-
-to
-
-struct vring_virtqueue_split {};
-struct vring_virtqueue_packed {};
-
-Then we can do things like:
-
-vring_create_virtqueue_packed(struct virtio_device *vdev, u32 num, 
-struct vring_virtqueue_packed *packed);
-
-and
-
-vring_vritqueue_attach_packed(struct vring_virtqueue *vq, struct 
-vring_virtqueue_packed packed);
+Other looks good.
 
 Thanks
 
 
 > +
-> +	return 0;
-> +
-> +err_device:
-> +	vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma_addr);
-> +
-> +err_driver:
-> +	vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
-> +
-> +err_ring:
-> +	return -ENOMEM;
-> +}
-> +
-> +static struct virtqueue *vring_create_virtqueue_packed(
-> +	unsigned int index,
-> +	unsigned int num,
-> +	unsigned int vring_align,
-> +	struct virtio_device *vdev,
-> +	bool weak_barriers,
-> +	bool may_reduce_num,
-> +	bool context,
-> +	bool (*notify)(struct virtqueue *),
-> +	void (*callback)(struct virtqueue *),
-> +	const char *name)
-> +{
-> +	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_addr;
-> +	struct vring_packed_desc_event *driver, *device;
-> +	size_t ring_size_in_bytes, event_size_in_bytes;
-> +	struct vring_packed_desc *ring;
-> +	struct vring_virtqueue *vq;
-> +
-> +	if (vring_alloc_queue_packed(vdev, num, &ring, &driver, &device,
-> +				     &ring_dma_addr, &driver_event_dma_addr,
-> +				     &device_event_dma_addr,
-> +				     &ring_size_in_bytes,
-> +				     &event_size_in_bytes))
-> +		goto err_ring;
-> +
->   	vq = kmalloc(sizeof(*vq), GFP_KERNEL);
->   	if (!vq)
->   		goto err_vq;
-> @@ -1939,9 +1983,7 @@ static struct virtqueue *vring_create_virtqueue_packed(
->   	kfree(vq);
->   err_vq:
->   	vring_free_queue(vdev, event_size_in_bytes, device, device_event_dma_addr);
-> -err_device:
->   	vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma_addr);
-> -err_driver:
->   	vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
->   err_ring:
->   	return NULL;
+>   /* Fields in VIRTIO_PCI_CAP_PCI_CFG: */
+>   struct virtio_pci_cfg_cap {
+>   	struct virtio_pci_cap cap;
 
