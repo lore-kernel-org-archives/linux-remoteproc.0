@@ -2,146 +2,88 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD3EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 11:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD70C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 13:20:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345298AbiDLLKq (ORCPT
+        id S1355529AbiDLNWX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 07:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36498 "EHLO
+        Tue, 12 Apr 2022 09:22:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354105AbiDLLFC (ORCPT
+        with ESMTP id S1355531AbiDLNWR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Apr 2022 07:05:02 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8416579C;
-        Tue, 12 Apr 2022 02:56:31 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 23C9uMkm096818;
-        Tue, 12 Apr 2022 04:56:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1649757382;
-        bh=ugRzal5VjfUjawoYrtpjB5VqZuPi1bn0ckWPOzleY+I=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=C1f8WWG9B+NuH/0xhstTTtlhzitG0rhgxCIrYltEffUaic4JJMPgjkaJIsf2/+4Ug
-         431a7/S5g/wkQ84AW+CxPOAUMHEQd31cfQqvw6akWggMX3fd4nmUxEb5hUCaxEIzb5
-         MZqqMr0moR311MI/KhWkJY2IdK+96z5saHQwOPss=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 23C9uMvC027020
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Apr 2022 04:56:22 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Tue, 12
- Apr 2022 04:56:21 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Tue, 12 Apr 2022 04:56:21 -0500
-Received: from [10.249.96.184] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 23C9uGJA115407;
-        Tue, 12 Apr 2022 04:56:17 -0500
-Message-ID: <f3ae48a8-7177-3a92-bdfd-3b243a5527c1@ti.com>
-Date:   Tue, 12 Apr 2022 12:56:18 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
+        Tue, 12 Apr 2022 09:22:17 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 697E150B34;
+        Tue, 12 Apr 2022 06:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=WuiFiHeMvZDkq8Q1J+rs3YTSaLxbzfLA/uH6C46aS9A=; b=SYbDldAR1Y7f5n17R+WO4UvgWZ
+        4t+btoG7FyDmhtSvTemy98cGzaqJcwMXRlrejM7/9s81cWnn2FznXZmZLA71pOGPbtwKsuZYAosJX
+        oR87WRwmH+SdZYYSasxIZeM/MrV9xJ/y3zKaGzEi+wWUcNn16X1saCFl1ZfpX6s/9VBY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1neGI0-00FSJU-IF; Tue, 12 Apr 2022 15:10:36 +0200
+Date:   Tue, 12 Apr 2022 15:10:36 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Puranjay Mohan <p-mohan@ti.com>, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
+        linux-arm-kernel@lists.infradead.org, davem@davemloft.net,
+        kuba@kernel.org, netdev@vger.kernel.org, vigneshr@ti.com,
+        kishon@ti.com, Roger Quadros <rogerq@kernel.org>
 Subject: Re: [RFC 13/13] net: ti: icssg-prueth: Add ICSSG ethernet driver
-Content-Language: en-US
-To:     Puranjay Mohan <p-mohan@ti.com>, Andrew Lunn <andrew@lunn.ch>
-CC:     <linux-kernel@vger.kernel.org>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <davem@davemloft.net>,
-        <kuba@kernel.org>, <netdev@vger.kernel.org>, <vigneshr@ti.com>,
-        <kishon@ti.com>, Roger Quadros <rogerq@kernel.org>
+Message-ID: <YlV6TKTl5uQGZrQX@lunn.ch>
 References: <20220406094358.7895-1-p-mohan@ti.com>
- <20220406094358.7895-14-p-mohan@ti.com> <Yk3d/cC36fhNmfY2@lunn.ch>
+ <20220406094358.7895-14-p-mohan@ti.com>
+ <Yk3d/cC36fhNmfY2@lunn.ch>
  <468d4d9b-44b4-2894-2a75-4caab1e72147@ti.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-In-Reply-To: <468d4d9b-44b4-2894-2a75-4caab1e72147@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+ <f3ae48a8-7177-3a92-bdfd-3b243a5527c1@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f3ae48a8-7177-3a92-bdfd-3b243a5527c1@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 12/04/2022 12:45, Puranjay Mohan wrote:
-> + Roger, Grygorii
+> > > > +	if (phy_if == PHY_INTERFACE_MODE_RGMII_ID ||
+> > > > +	    phy_if == PHY_INTERFACE_MODE_RGMII_TXID)
+> > > > +		rgmii_tx_id |= ICSSG_CTRL_RGMII_ID_MODE;
+> > > > +
+> > > > +	regmap_update_bits(ctrl_mmr, icssgctrl_reg, ICSSG_CTRL_RGMII_ID_MODE, rgmii_tx_id);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > 
+> > > 
+> > > O.K, so this does not do what i initially thought it was doing. I was
+> > > thinking it was to fine tune the delay, ti,syscon-rgmii-delay would be
+> > > a small pico second value to allow the 2ns delay to be tuned to the
+> > > board.
+> > > 
+> > > But now i think this is actually inserting the full 2ns delay?
+> > > 
+> > > The problem is, you also pass phy_if to of_phy_connect() so the PHY
+> > > will also insert the delay if requested. So you end up with double
+> > > delays for rgmii_id and rgmii_txid.
 > 
-> On 07/04/22 00:07, Andrew Lunn wrote:
->>> +static int emac_phy_connect(struct prueth_emac *emac)
->>> +{
->>> +	struct prueth *prueth = emac->prueth;
->>> +
->>> +	/* connect PHY */
->>> +	emac->phydev = of_phy_connect(emac->ndev, emac->phy_node,
->>> +				      &emac_adjust_link, 0, emac->phy_if);
->>
->>> +static int prueth_config_rgmiidelay(struct prueth *prueth,
->>> +				    struct device_node *eth_np,
->>> +				    phy_interface_t phy_if)
->>> +{
->>> +	struct device *dev = prueth->dev;
->>> +	struct regmap *ctrl_mmr;
->>> +	u32 rgmii_tx_id = 0;
->>> +	u32 icssgctrl_reg;
->>> +
->>> +	if (!phy_interface_mode_is_rgmii(phy_if))
->>> +		return 0;
->>> +
->>> +	ctrl_mmr = syscon_regmap_lookup_by_phandle(eth_np, "ti,syscon-rgmii-delay");
->>> +	if (IS_ERR(ctrl_mmr)) {
->>> +		dev_err(dev, "couldn't get ti,syscon-rgmii-delay\n");
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	if (of_property_read_u32_index(eth_np, "ti,syscon-rgmii-delay", 1,
->>> +				       &icssgctrl_reg)) {
->>> +		dev_err(dev, "couldn't get ti,rgmii-delay reg. offset\n");
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	if (phy_if == PHY_INTERFACE_MODE_RGMII_ID ||
->>> +	    phy_if == PHY_INTERFACE_MODE_RGMII_TXID)
->>> +		rgmii_tx_id |= ICSSG_CTRL_RGMII_ID_MODE;
->>> +
->>> +	regmap_update_bits(ctrl_mmr, icssgctrl_reg, ICSSG_CTRL_RGMII_ID_MODE, rgmii_tx_id);
->>> +
->>> +	return 0;
->>> +}
->>>
->>
->> O.K, so this does not do what i initially thought it was doing. I was
->> thinking it was to fine tune the delay, ti,syscon-rgmii-delay would be
->> a small pico second value to allow the 2ns delay to be tuned to the
->> board.
->>
->> But now i think this is actually inserting the full 2ns delay?
->>
->> The problem is, you also pass phy_if to of_phy_connect() so the PHY
->> will also insert the delay if requested. So you end up with double
->> delays for rgmii_id and rgmii_txid.
+> It's misunderstanding here. The bit field name in TRM is RGMII0_ID_MODE
+> and meaning:
+> 0h - Internal transmit delay is enabled
+> 1h - Internal transmit delay is not enabled.
+> 
+> So here internal delay will be disabled for RGMII_ID/RGMII_TXID.
 
-It's misunderstanding here. The bit field name in TRM is RGMII0_ID_MODE
-and meaning:
-0h - Internal transmit delay is enabled
-1h - Internal transmit delay is not enabled.
+And enabled for the others?
 
-So here internal delay will be disabled for RGMII_ID/RGMII_TXID.
+Why don't you always disable the delays and let the PHY do it? That is
+what pretty much every other MAC/PHY combination does.
 
->>
->> The general recommendation is that the PHY inserts the delay, based on
->> phy-mode. The MAC does not add a delay, so i suggest you always write
->> 0 here, just to ensure the system is in a deterministic state, and the
->> bootloader and not being messing around with things.
->>
->> 	   Andrew
-
--- 
-Best regards,
-Grygorii, Ukraine
+    Andrew
