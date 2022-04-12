@@ -2,88 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD70C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 13:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B4AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Apr 2022 13:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355529AbiDLNWX (ORCPT
+        id S1356609AbiDLN6T (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 09:22:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56618 "EHLO
+        Tue, 12 Apr 2022 09:58:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355531AbiDLNWR (ORCPT
+        with ESMTP id S1356595AbiDLN6S (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Apr 2022 09:22:17 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [185.16.172.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 697E150B34;
-        Tue, 12 Apr 2022 06:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=WuiFiHeMvZDkq8Q1J+rs3YTSaLxbzfLA/uH6C46aS9A=; b=SYbDldAR1Y7f5n17R+WO4UvgWZ
-        4t+btoG7FyDmhtSvTemy98cGzaqJcwMXRlrejM7/9s81cWnn2FznXZmZLA71pOGPbtwKsuZYAosJX
-        oR87WRwmH+SdZYYSasxIZeM/MrV9xJ/y3zKaGzEi+wWUcNn16X1saCFl1ZfpX6s/9VBY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1neGI0-00FSJU-IF; Tue, 12 Apr 2022 15:10:36 +0200
-Date:   Tue, 12 Apr 2022 15:10:36 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Puranjay Mohan <p-mohan@ti.com>, linux-kernel@vger.kernel.org,
-        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
-        linux-arm-kernel@lists.infradead.org, davem@davemloft.net,
-        kuba@kernel.org, netdev@vger.kernel.org, vigneshr@ti.com,
-        kishon@ti.com, Roger Quadros <rogerq@kernel.org>
-Subject: Re: [RFC 13/13] net: ti: icssg-prueth: Add ICSSG ethernet driver
-Message-ID: <YlV6TKTl5uQGZrQX@lunn.ch>
-References: <20220406094358.7895-1-p-mohan@ti.com>
- <20220406094358.7895-14-p-mohan@ti.com>
- <Yk3d/cC36fhNmfY2@lunn.ch>
- <468d4d9b-44b4-2894-2a75-4caab1e72147@ti.com>
- <f3ae48a8-7177-3a92-bdfd-3b243a5527c1@ti.com>
+        Tue, 12 Apr 2022 09:58:18 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F4035F95;
+        Tue, 12 Apr 2022 06:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1649771759; x=1681307759;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EYdikBSkBJ4H7A++I5E1/miVOcZwRE1w+sy2tyOFVmQ=;
+  b=OUlSM9s7iag+ItDieoKvTThAuzT4daZjf30ujsEOQmLx1ZqzY9kGPiGm
+   dRxSEhYgY2Cj7VcfRhqlrqKK6xKZBNF6AQ4YAneua3tVFt/cGb58g9rJV
+   a2y0e3MV/o/uqImJtE54H+21cV3U19JtXA9qlfFVbCfiOnrvjDgfsNihc
+   g=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 12 Apr 2022 06:55:59 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2022 06:55:59 -0700
+Received: from [10.110.54.13] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.47.97.222) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 12 Apr
+ 2022 06:55:56 -0700
+Message-ID: <e2bbed61-b818-c391-bf65-824ea2a2ee5a@quicinc.com>
+Date:   Tue, 12 Apr 2022 19:25:50 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3ae48a8-7177-3a92-bdfd-3b243a5527c1@ti.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v3 ] remoteproc: Use unbounded workqueue for recovery work
+Content-Language: en-US
+To:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>
+References: <1649694620-10070-1-git-send-email-quic_mojha@quicinc.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <1649694620-10070-1-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.47.97.222)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> > > > +	if (phy_if == PHY_INTERFACE_MODE_RGMII_ID ||
-> > > > +	    phy_if == PHY_INTERFACE_MODE_RGMII_TXID)
-> > > > +		rgmii_tx_id |= ICSSG_CTRL_RGMII_ID_MODE;
-> > > > +
-> > > > +	regmap_update_bits(ctrl_mmr, icssgctrl_reg, ICSSG_CTRL_RGMII_ID_MODE, rgmii_tx_id);
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > 
-> > > 
-> > > O.K, so this does not do what i initially thought it was doing. I was
-> > > thinking it was to fine tune the delay, ti,syscon-rgmii-delay would be
-> > > a small pico second value to allow the 2ns delay to be tuned to the
-> > > board.
-> > > 
-> > > But now i think this is actually inserting the full 2ns delay?
-> > > 
-> > > The problem is, you also pass phy_if to of_phy_connect() so the PHY
-> > > will also insert the delay if requested. So you end up with double
-> > > delays for rgmii_id and rgmii_txid.
-> 
-> It's misunderstanding here. The bit field name in TRM is RGMII0_ID_MODE
-> and meaning:
-> 0h - Internal transmit delay is enabled
-> 1h - Internal transmit delay is not enabled.
-> 
-> So here internal delay will be disabled for RGMII_ID/RGMII_TXID.
+Hi,
 
-And enabled for the others?
+Can we consider this ? please suggest.
 
-Why don't you always disable the delays and let the PHY do it? That is
-what pretty much every other MAC/PHY combination does.
+Thanks,
+-Mukesh
 
-    Andrew
+On 4/11/2022 10:00 PM, Mukesh Ojha wrote:
+> There could be a scenario where there is too much load on a core
+> (n number of tasks which is affined) or in a case when multiple
+> rproc subsystem is going for a recovery and they queued recovery
+> work to one core so even though subsystem are independent there
+> recovery will be delayed if one of the subsystem recovery work
+> is taking more time in completing.
+>
+> If we make this queue unbounded, the recovery work could be picked
+> on any cpu. This patch try to address this.
+>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+> Changes in v3:
+>    - Add fallback option to go back to earlier path incase recovery wq
+>      creation fails.
+>
+> Changes in v2:
+>    - Removed WQ_HIGHPRI.
+>    - Updated commit text.
+>
+>   drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++--
+>   1 file changed, 13 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c510125..6446c84 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
+>   
+>   /* Unique indices for remoteproc devices */
+>   static DEFINE_IDA(rproc_dev_index);
+> +static struct workqueue_struct *rproc_recovery_wq;
+>   
+>   static const char * const rproc_crash_names[] = {
+>   	[RPROC_MMUFAULT]	= "mmufault",
+> @@ -2755,8 +2756,11 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+>   	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+>   		rproc->name, rproc_crash_to_string(type));
+>   
+> -	/* Have a worker handle the error; ensure system is not suspended */
+> -	queue_work(system_freezable_wq, &rproc->crash_handler);
+> +	if (rproc_recovery_wq)
+> +		queue_work(rproc_recovery_wq, &rproc->crash_handler);
+> +	else
+> +		queue_work(system_freezable_wq, &rproc->crash_handler);
+> +
+>   }
+>   EXPORT_SYMBOL(rproc_report_crash);
+>   
+> @@ -2805,6 +2809,11 @@ static void __exit rproc_exit_panic(void)
+>   
+>   static int __init remoteproc_init(void)
+>   {
+> +	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
+> +						WQ_UNBOUND | WQ_FREEZABLE, 0);
+> +	if (!rproc_recovery_wq)
+> +		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+> +
+>   	rproc_init_sysfs();
+>   	rproc_init_debugfs();
+>   	rproc_init_cdev();
+> @@ -2821,6 +2830,8 @@ static void __exit remoteproc_exit(void)
+>   	rproc_exit_panic();
+>   	rproc_exit_debugfs();
+>   	rproc_exit_sysfs();
+> +	if (rproc_recovery_wq)
+> +		destroy_workqueue(rproc_recovery_wq);
+>   }
+>   module_exit(remoteproc_exit);
+>   
