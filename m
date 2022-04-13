@@ -2,225 +2,143 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E52FC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 03:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3482C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 03:29:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231299AbiDMD27 (ORCPT
+        id S231232AbiDMDbS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 23:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59052 "EHLO
+        Tue, 12 Apr 2022 23:31:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiDMD26 (ORCPT
+        with ESMTP id S230095AbiDMDbQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Apr 2022 23:28:58 -0400
-Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF01F1127;
-        Tue, 12 Apr 2022 20:26:37 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V9xXClK_1649820390;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9xXClK_1649820390)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 13 Apr 2022 11:26:32 +0800
-Message-ID: <1649820210.3432868-4-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v9 12/32] virtio_ring: packed: extract the logic of alloc queue
-Date:   Wed, 13 Apr 2022 11:23:30 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-13-xuanzhuo@linux.alibaba.com>
- <4da7b8dc-74ca-fc1b-fbdb-21f9943e8d45@redhat.com>
-In-Reply-To: <4da7b8dc-74ca-fc1b-fbdb-21f9943e8d45@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 12 Apr 2022 23:31:16 -0400
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-eopbgr60041.outbound.protection.outlook.com [40.107.6.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 716F62497A;
+        Tue, 12 Apr 2022 20:28:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UCTBcc6zTVsY6XzxtntJuB8NXdYt3VOJG6eSpHN0aAnh6BkPbFbH0MWJU3XW2vuN0cVyTKRKi25bGAeQ0ziP/n1Vaf+qii8J10+N8USGV0VjecMve0/MNHX41xDp9aVzeYygaz7Xqv4GV5HdxyMUJffPUwa99q2cqWDzJ1bwHusMXsx7VgfbUHPbhE+T2glhyt7DMer7cF9eM8FMOTg1xhFrAUCPgJINJkBdvHz7ibB7UnPAflS1X2E3piJUB05Dlgao8tBPZEpummHth7T7QBuhDatL7NzQwIDwlLOHXCUl8Ta/jbriOsOtmzI7A8qaie2gf6dEfw+M/p7kQpKk+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5ZWAyW4ldKnu3kXikZo/hX0YEeSoDJ+iqPM7u1m88Lc=;
+ b=T0rcKsO6TZYgFavPv5PTFrNQR+5K1Hb3Oj8E2n0j4JL1D7CI2HVseitDIAJmijBp6d7mmlFJH6kxoF/LdkugR7Kz4MZ5Gx28mSXqc44RSCuEJWoF3HFXw/Us/Sk8UyL+b4MDwC12iuhyw+4FGxvrcOHCfpFq9tBqAA3gLCzGgj9RvLcSJAbty365dvTiPF/1o1t0//oniJ+ZyCWpgtl8rBVr/CrGxklM/P8Ty+Yq4967m+B0u3qb0dk4UgcuXcJxZEXV7xYwGujRrBFwc5hLKNwf7I4G7BC0Of3EUFiBe7tRBvQHRG+ADb/hMkVO2ffl6Pmqawu9dgBPLMpVCbnscQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5ZWAyW4ldKnu3kXikZo/hX0YEeSoDJ+iqPM7u1m88Lc=;
+ b=fxIynXyMCecoU0vvHmfDCjFdC35kkBQ0UFKPxAbmBmZwTl3BjwiOV6u1BsKyBk+Nl33si8judy+XNM5F7hvKqy2Ha6TevwcJBCmnAmi8P4/xlsCeFNJb9/T8wsMa9pFGY5NSUPt68ntyUyo7LM2lo8ymoBS+7B0/8sAnDv145Eo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PR3PR04MB7483.eurprd04.prod.outlook.com (2603:10a6:102:86::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.30; Wed, 13 Apr
+ 2022 03:28:50 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::389f:e6eb:a7a2:61b6]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::389f:e6eb:a7a2:61b6%8]) with mapi id 15.20.5144.029; Wed, 13 Apr 2022
+ 03:28:50 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
+Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        shengjiu.wang@nxp.com, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/2] remoteproc: elf: ignore PT_LOAD type segment with memsz as 0
+Date:   Wed, 13 Apr 2022 11:30:36 +0800
+Message-Id: <20220413033038.1715945-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0013.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::12) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8067a3de-5d5a-4233-74fc-08da1cfdba25
+X-MS-TrafficTypeDiagnostic: PR3PR04MB7483:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-Microsoft-Antispam-PRVS: <PR3PR04MB74837348693BA9A04634F9E2C9EC9@PR3PR04MB7483.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 3cxySkQS5F2x6UXE//DWUNguvTytz1/31kOPRnWvSzBqW4OaIPhSss5FukauAX5QKMK7LKJYp2z+kfrtVZ/Fcb4lEy9aDQo9IwLFD9THat9sYQGNLlEZ3yhYF8hR9A0PNcZL8DEifsicOjxT+D3KvaKGSFu9p6ZreNmh/61gJgUiD59V3FD3/nXQwup26Uu5ylHxR6Jt70TktZRdhaAa4aLJLJ8vsy+LAvU2S9OBP68ZKzpeqhDJIr1tWq/hatFDSEX0/ckSJRuHOFPLJqUkM7lJ8VtUyTRFOigDp9lhriM2Kd1+pvusJfGeelsCgskyKlUvQe3MhjpDsKKNWuizyg20qQvcHQg4vC4Xc4gHmTmQcGeydvI+to3TD1iKoN2e1GHxn9zqg40Nhi8cq8xVXtjZtNcMiYhC1g5i/I6/8TtLgqZnJjudRRS80BN0bGfFELm09a0qh4F/TGXblaUUuYSMbcqDxVfhaWOoLXG4QeX2MP2OwO23IikPzyoK/4FH63CyhYxe9apyasg3JpGH+yL3Yc1gUU71Pbpe9zzt/kHSa/OuIGCBXbSjfiejEb0TNtju+p7VUaKF2PQUsMjCOJUZqoUekkS7soz5kAQAHysKgOFG0hVmWdBlY+pfTcUkwCTNow/MW9w0AHAzK5oV+1hLFtybcr+6KEFp4ZGsjrFuPI8wst8WWX+/RViu8y6yLp2KU2YSSDCAXhO7v8GCduzVJKII1jW6rnzg2QBgPGcwXGktq4a2xQokMHREmQmH5TveSY9u4mFh0/mMBk3vWjFa29F0JKAKQrBTWjzMJOA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6666004)(508600001)(52116002)(316002)(1076003)(186003)(2616005)(6506007)(83380400001)(38350700002)(86362001)(38100700002)(26005)(4326008)(66476007)(66556008)(6512007)(2906002)(966005)(6486002)(8676002)(5660300002)(4744005)(8936002)(66946007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?tHrqNRUZgOg2qVr/wgZJy1ceRL1mQIl9LETn4bBQBJoqM0aOqmOypxnl7oEF?=
+ =?us-ascii?Q?/upBOydC/GOkU/pIE38Evk7Q0bY15wEhfaVQTkG1bMOXwYluUfjxdBHGp5+j?=
+ =?us-ascii?Q?csm7YeTpgAFK8h/2LoPn/0CLq+RJA1IzIPE5CylfksdN9WIdfIeb3tT2nnqZ?=
+ =?us-ascii?Q?/Frm3k4q4Ji5dzp2uZWjDTi/hEmjahhuzDVB+QqMaHNmAG7YvaP5rgomr2z9?=
+ =?us-ascii?Q?OPg+X27qQvLVbargjGsUyCp2aKaDLNJ2vJLOKnZceP9IYNGpfLSO9y6IRFSP?=
+ =?us-ascii?Q?gCh2H9rTNwE5OCXpzcbhJxRntgdU+W3rLadHpdoXicOxMtIIqIFBAALgo8SX?=
+ =?us-ascii?Q?VRTH6UIKD5GE4js7my3NrHA+8N8ZsqHtwUXcafMsPyjEXNNJKnXJ9GN+Sb6T?=
+ =?us-ascii?Q?Mgnd+tk9AUrxrcpFTKFbJVKBxj2VtzVD8m7N2NKKeIZC1fQib06PynIlKddz?=
+ =?us-ascii?Q?DuccLrLeP9O4fgru3f5pqBwkQL+iKDn8w8fMg/dN0Qn4M91zD83A5J97iyGK?=
+ =?us-ascii?Q?3Snx8GwZfffa3UqHb95uQ7h3z1+FQKO/bGPRnshkhke4ZqcPGL2KGP5dgHi2?=
+ =?us-ascii?Q?casdIfAidEbaGXd24AXPFd9ymijqZ7TpVtuV4jS8q6h+sWjjiL0lGHUMInx8?=
+ =?us-ascii?Q?MhYFTWeZATflGe7om2STQOXZ+5a6aQoPuTJnZONqX8dve5IkX6FEiNTWpqh9?=
+ =?us-ascii?Q?nOgmz4yhPf98BGDifvmcLqcnoE5jmb3DvIPkaOwCh/KkfxQnHsIF8RMC1BB8?=
+ =?us-ascii?Q?HF0POhP3NZ/DAHgnc9z4myIdn2/SqBcY9UwonQm7s7rLIGPmCXhDiLkx1kSW?=
+ =?us-ascii?Q?MHK4tMciYJeJ3P4CPmOMkqAY3hZKTyTwoKbrQUSUs1vnRuWzJFGQ03rG9LBa?=
+ =?us-ascii?Q?TKnYQ6PKnhiubC7FB94AiU/cBVglmBMMQeQeKEdHz0PTs/IiTblERzt8yjMC?=
+ =?us-ascii?Q?iDmrTFeTUxLRuACuH3dwHRM2Iev7hs06/LRaBjRHGSCeFHFv+yKXe9mdNbAo?=
+ =?us-ascii?Q?qhzy5INwuOalIGZgb9rPwknEgI8ZqAtu1p7AjAnaOjtSeRo7PU64l5xSJGrY?=
+ =?us-ascii?Q?iUZcFa/2be0FNx8tBfeCRcHOEuvNZ1C3TdLSSEA7UhHffYzyRLQ1taq7w9Xj?=
+ =?us-ascii?Q?guXExjYkRX7N+C2P3W0jAophBIZJnA2PSz9z2VGdsN4L9B9WH1s8k3WpaEg2?=
+ =?us-ascii?Q?gZ1BNpYicA0dcdyO06N7L9nadgWS3JdjEbbID7IgvE6Adgddo3ER0+C7XSN7?=
+ =?us-ascii?Q?eMkqtjhMs9XYgOtJj7GQU95JCDWktg2QDOiuJOTa0JFtvfdtjadLZzmh/boc?=
+ =?us-ascii?Q?nkAEz+RmwQSJu9R/4jNU9QYnI8i41w6vLmgilsanDf3hF5YAXdI9NUsC7ad2?=
+ =?us-ascii?Q?ZIVtkJ37jJLhlWtdfBtZrB5qoWeW8f24nRIMXUp8hJ9xoKX/4uMAp/17NqPX?=
+ =?us-ascii?Q?63uHDzPXNTNBS+jkxZWSfCTORhnvWPXU8GbUtJ79Nt5P1UI6/ABzzYkIIx/c?=
+ =?us-ascii?Q?rjcANGxI/3LN6EmBOt+ASlnd4vKBuCeqEmRiW+A5ZCmwG9a1K9eAHVdHeNHn?=
+ =?us-ascii?Q?LrbiGT3skSyiG/SD4k4kap+iuo/uqf+ErjLS7Wn738hlDVcqqunQ+ng8jArg?=
+ =?us-ascii?Q?vdGzBr2KcgHhtZN+SNQNd3Od1jdfVhiWE2hgpu1S/ey6RirL4a1XRTGQU5Sl?=
+ =?us-ascii?Q?gNoTE7AA1AO85FtjZwtR2fJ8caOKwoTnyUJXQkiyeJH00u+3v3badqB+N0oo?=
+ =?us-ascii?Q?ZQF4BJnEEw=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8067a3de-5d5a-4233-74fc-08da1cfdba25
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2022 03:28:50.4468
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J0ZTOnnBB5MySg/iH7Vp/c7qkP84mPRWe4fZ1M1aErHvoBgvdoTzEENM4E72MArXrzgTqM5FuelQbUQD8pqw0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7483
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 12 Apr 2022 14:28:24 +0800, Jason Wang <jasowang@redhat.com> wrote:
->
-> =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=93:
-> > Separate the logic of packed to create vring queue.
-> >
-> > For the convenience of passing parameters, add a structure
-> > vring_packed.
-> >
-> > This feature is required for subsequent virtuqueue reset vring.
-> >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 70 ++++++++++++++++++++++++++++--------
-> >   1 file changed, 56 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 33864134a744..ea451ae2aaef 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -1817,19 +1817,17 @@ static struct vring_desc_extra *vring_alloc_des=
-c_extra(unsigned int num)
-> >   	return desc_extra;
-> >   }
-> >
-> > -static struct virtqueue *vring_create_virtqueue_packed(
-> > -	unsigned int index,
-> > -	unsigned int num,
-> > -	unsigned int vring_align,
-> > -	struct virtio_device *vdev,
-> > -	bool weak_barriers,
-> > -	bool may_reduce_num,
-> > -	bool context,
-> > -	bool (*notify)(struct virtqueue *),
-> > -	void (*callback)(struct virtqueue *),
-> > -	const char *name)
-> > +static int vring_alloc_queue_packed(struct virtio_device *vdev,
-> > +				    u32 num,
-> > +				    struct vring_packed_desc **_ring,
-> > +				    struct vring_packed_desc_event **_driver,
-> > +				    struct vring_packed_desc_event **_device,
-> > +				    dma_addr_t *_ring_dma_addr,
-> > +				    dma_addr_t *_driver_event_dma_addr,
-> > +				    dma_addr_t *_device_event_dma_addr,
-> > +				    size_t *_ring_size_in_bytes,
-> > +				    size_t *_event_size_in_bytes)
-> >   {
-> > -	struct vring_virtqueue *vq;
-> >   	struct vring_packed_desc *ring;
-> >   	struct vring_packed_desc_event *driver, *device;
-> >   	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_ad=
-dr;
-> > @@ -1857,6 +1855,52 @@ static struct virtqueue *vring_create_virtqueue_=
-packed(
-> >   	if (!device)
-> >   		goto err_device;
-> >
-> > +	*_ring                   =3D ring;
-> > +	*_driver                 =3D driver;
-> > +	*_device                 =3D device;
-> > +	*_ring_dma_addr          =3D ring_dma_addr;
-> > +	*_driver_event_dma_addr  =3D driver_event_dma_addr;
-> > +	*_device_event_dma_addr  =3D device_event_dma_addr;
-> > +	*_ring_size_in_bytes     =3D ring_size_in_bytes;
-> > +	*_event_size_in_bytes    =3D event_size_in_bytes;
->
->
-> I wonder if we can simply factor out split and packed from struct
-> vring_virtqueue:
->
-> struct vring_virtqueue {
->  =C2=A0=C2=A0=C2=A0 union {
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 struct {} split;
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 struct {} packed;
->  =C2=A0=C2=A0=C2=A0 };
-> };
->
-> to
->
-> struct vring_virtqueue_split {};
-> struct vring_virtqueue_packed {};
->
-> Then we can do things like:
->
-> vring_create_virtqueue_packed(struct virtio_device *vdev, u32 num,
-> struct vring_virtqueue_packed *packed);
->
-> and
->
-> vring_vritqueue_attach_packed(struct vring_virtqueue *vq, struct
-> vring_virtqueue_packed packed);
+From: Peng Fan <peng.fan@nxp.com>
 
-This idea is very similar to my previous idea, just without introducing a n=
-ew
-structure.
+V2:
+ Add R-b/A-b tag
+ Drop inaccurate comment in patch 1
 
-I'd be more than happy to revise this.
+i.MX DSP firmware has segments with PT_LOAD and memsz/filesz as zero.
+It is valid case the memsz set to zero according to elf spec:
+https://refspecs.linuxbase.org/elf/elf.pdf page 40
 
-Thanks.
+So we could let remoteproc elf loader handle this case, then no
+duplicate code in imx dsp rproc driver
 
+Tested i.MX8MP DSP and M7 remoteproc
 
->
-> Thanks
->
->
-> > +
-> > +	return 0;
-> > +
-> > +err_device:
-> > +	vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma_=
-addr);
-> > +
-> > +err_driver:
-> > +	vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
-> > +
-> > +err_ring:
-> > +	return -ENOMEM;
-> > +}
-> > +
-> > +static struct virtqueue *vring_create_virtqueue_packed(
-> > +	unsigned int index,
-> > +	unsigned int num,
-> > +	unsigned int vring_align,
-> > +	struct virtio_device *vdev,
-> > +	bool weak_barriers,
-> > +	bool may_reduce_num,
-> > +	bool context,
-> > +	bool (*notify)(struct virtqueue *),
-> > +	void (*callback)(struct virtqueue *),
-> > +	const char *name)
-> > +{
-> > +	dma_addr_t ring_dma_addr, driver_event_dma_addr, device_event_dma_add=
-r;
-> > +	struct vring_packed_desc_event *driver, *device;
-> > +	size_t ring_size_in_bytes, event_size_in_bytes;
-> > +	struct vring_packed_desc *ring;
-> > +	struct vring_virtqueue *vq;
-> > +
-> > +	if (vring_alloc_queue_packed(vdev, num, &ring, &driver, &device,
-> > +				     &ring_dma_addr, &driver_event_dma_addr,
-> > +				     &device_event_dma_addr,
-> > +				     &ring_size_in_bytes,
-> > +				     &event_size_in_bytes))
-> > +		goto err_ring;
-> > +
-> >   	vq =3D kmalloc(sizeof(*vq), GFP_KERNEL);
-> >   	if (!vq)
-> >   		goto err_vq;
-> > @@ -1939,9 +1983,7 @@ static struct virtqueue *vring_create_virtqueue_p=
-acked(
-> >   	kfree(vq);
-> >   err_vq:
-> >   	vring_free_queue(vdev, event_size_in_bytes, device, device_event_dma=
-_addr);
-> > -err_device:
-> >   	vring_free_queue(vdev, event_size_in_bytes, driver, driver_event_dma=
-_addr);
-> > -err_driver:
-> >   	vring_free_queue(vdev, ring_size_in_bytes, ring, ring_dma_addr);
-> >   err_ring:
-> >   	return NULL;
->
+Peng Fan (2):
+  remoteproc: elf_loader: skip segment with memsz as zero
+  remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
+
+ drivers/remoteproc/imx_dsp_rproc.c         | 95 +---------------------
+ drivers/remoteproc/remoteproc_elf_loader.c |  2 +-
+ 2 files changed, 2 insertions(+), 95 deletions(-)
+
+-- 
+2.25.1
+
