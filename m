@@ -2,136 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648A3C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 14:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12044C43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 14:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233448AbiDMOUo (ORCPT
+        id S231182AbiDMOWz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 10:20:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
+        Wed, 13 Apr 2022 10:22:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231936AbiDMOUn (ORCPT
+        with ESMTP id S236171AbiDMOWj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Apr 2022 10:20:43 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30CDA6213C;
-        Wed, 13 Apr 2022 07:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1649859502; x=1681395502;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mMePPCPwRD0B6CGcAVU9zxObl60Dqj06lOAGekbmlj8=;
-  b=sbjvnnlpz1w6bEvRwkiq7zB+BJXRJjJI4cuIBvfRVccjyYAIaVNKSOrQ
-   MqxiVhBHcX8MvIF+0MczBklw0jSh0Pp7M/FoMEnXViyKmIu7KiF+Vfz1y
-   J5tPoWHj+FJPXYEI832TvGofHLeJibTDS7XAz/3DjhNwaO1wQ6BZEHYfZ
-   g=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 13 Apr 2022 07:18:22 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 07:18:21 -0700
-Received: from [10.110.69.201] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.47.97.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 13 Apr
- 2022 07:18:16 -0700
-Message-ID: <38602241-3d4e-7348-526c-80b44fb4cba7@quicinc.com>
-Date:   Wed, 13 Apr 2022 19:48:12 +0530
+        Wed, 13 Apr 2022 10:22:39 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8453237032
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Apr 2022 07:20:17 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1nedqK-00064F-1C; Wed, 13 Apr 2022 16:19:36 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1nedqH-002nds-0d; Wed, 13 Apr 2022 16:19:31 +0200
+Received: from pza by lupine with local (Exim 4.94.2)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1nedqE-000Bdk-Kr; Wed, 13 Apr 2022 16:19:30 +0200
+Message-ID: <03af79f89d80d985ebf9adacb77af7c128248d27.camel@pengutronix.de>
+Subject: Re: [PATCH] dt-bindings: Fix array constraints on scalar properties
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Agathe Porte <agathe.porte@nokia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-hwmon@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org
+Date:   Wed, 13 Apr 2022 16:19:30 +0200
+In-Reply-To: <20220413140121.3132837-1-robh@kernel.org>
+References: <20220413140121.3132837-1-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: Possible race in dev_coredumpm()-del_timer() path
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
-        <sboyd@kernel.org>, <johannes@sipsolutions.net>,
-        <rafael@kernel.org>
-References: <2e1f81e2-428c-f11f-ce92-eb11048cb271@quicinc.com>
- <YlZg4KkiAgODr45d@kroah.com>
- <20220413101639.GA24349@hu-mojha-hyd.qualcomm.com>
- <Ylas6F75Y7O6R87U@kroah.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <Ylas6F75Y7O6R87U@kroah.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.47.97.222)
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 4/13/2022 4:28 PM, Greg KH wrote:
-> On Wed, Apr 13, 2022 at 03:46:39PM +0530, Mukesh Ojha wrote:
->> On Wed, Apr 13, 2022 at 07:34:24AM +0200, Greg KH wrote:
->>> On Wed, Apr 13, 2022 at 10:59:22AM +0530, Mukesh Ojha wrote:
->>>> Hi All,
->>>>
->>>> We are hitting one race due to which try_to_grab_pending() is stuck .
->>>
->>> What kernel version are you using?
->>
->> 5.10
+On Mi, 2022-04-13 at 09:01 -0500, Rob Herring wrote:
+> Scalar properties shouldn't have array constraints (minItems, maxItems,
+> items). These constraints can simply be dropped with any constraints under
+> 'items' moved up a level.
+>
+> Cc: Agathe Porte <agathe.porte@nokia.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Jean Delvare <jdelvare@suse.com>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
+> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> Cc: Yunfei Dong <yunfei.dong@mediatek.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: linux-hwmon@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: linux-spi@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml       | 5 ++---
+>  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml      | 4 +---
+>  Documentation/devicetree/bindings/media/coda.yaml            | 1 -
+>  .../devicetree/bindings/media/mediatek,vcodec-decoder.yaml   | 2 --
+>  .../devicetree/bindings/media/mediatek,vcodec-encoder.yaml   | 2 --
+>  .../bindings/media/mediatek,vcodec-subdev-decoder.yaml       | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml | 4 +---
+>  Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml  | 2 --
+>  8 files changed, 4 insertions(+), 17 deletions(-)
 > 
-> 5.10.0 was released a very long time ago.  Please use a more modern
-> kernel release :)
-> 
+[...]
+> diff --git a/Documentation/devicetree/bindings/media/coda.yaml b/Documentation/devicetree/bindings/media/coda.yaml
+> index 36781ee4617f..c9d5adbc8c4a 100644
+> --- a/Documentation/devicetree/bindings/media/coda.yaml
+> +++ b/Documentation/devicetree/bindings/media/coda.yaml
+> @@ -65,7 +65,6 @@ properties:
+>    iram:
+>      $ref: /schemas/types.yaml#/definitions/phandle
+>      description: phandle pointing to the SRAM device node
+> -    maxItems: 1
 
-It would not be feasible for us to switch to latest kernel and I think, 
-this issue could be there in recent kernel as well.
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
->> Sorry, for the formatting mess.
->>
->>>> In following scenario, while running (p1)dev_coredumpm() devcd device is
->>>> added to
->>>> the framework and uevent notification sent to userspace that result in the
->>>> call to (p2) devcd_data_write()
->>>> which eventually try to delete the queued timer which in the racy scenario
->>>> timer is not queued yet.
->>>> So, debug object report some warning and in the meantime timer is
->>>> initialized and queued from p1 path.
->>>> and from p2 path it gets overriden again timer->entry.pprev=NULL and
->>>> try_to_grab_pending() stuck
->> 	p1 					p2(X)
->>
->>     dev_coredump() uevent sent to userspace
->>     device_add()  =========================> userspace process X reads the uevents
->>                                              writes to devcd fd which
->>                                              results into writes to
->>
->>                                              devcd_data_write()
->> 					      mod_delayed_work()
->>                                                  try_to_grab_pending()
->> 						  del_timer()
->> 						   debug_assert_init()
->>    INIT_DELAYED_WORK
->>    schedule_delayed_work
->> 						    debug_object_fixup()
-> 
-> Why do you have object debugging enabled?
-
-We have enabled object debugging to catch more issues around kernel.
-
->  That's going to take a LONG
-> time, and will find bugs in your code.  Perhaps like this one? 
-> 
-> What type of device is this?  What bus?  What driver?
-
-remoteproc client device driver would call dev_coredumpm() and devcd 
-device gets added as part of the call.
-
-> 
-> And if you turn object debugging off, what happens?
-
-We have not observed issue after disabling object debugging off.
-
-Regards,
-Mukesh
-
-> 
-> thanks,
-> 
-> greg k-h
+regards
+Philipp
