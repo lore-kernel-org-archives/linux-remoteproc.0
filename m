@@ -2,158 +2,302 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF697C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 08:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7255EC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 08:47:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233725AbiDMInf (ORCPT
+        id S229667AbiDMIt6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 04:43:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33250 "EHLO
+        Wed, 13 Apr 2022 04:49:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234487AbiDMInX (ORCPT
+        with ESMTP id S229513AbiDMIt5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Apr 2022 04:43:23 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6981247386
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Apr 2022 01:41:00 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id d10so1554013edj.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Apr 2022 01:41:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=vnyM2Iiv5ssFwZ+YfhSIPkTVc84CfyYTFaqlrMujJwU=;
-        b=JIbqyng6xlRV93M1Iu4dTb27ybe+M5EN2beeOTia2QovfKwHZWLGjr66cUx0YdX3/v
-         8nbu5XWVqbuUMx1VHW7Jp0LjTMIRW/JvtKlPAPwmC12IguAK8nAZjvST8nPijS6soEVz
-         lCEGXpJKRGImWyHRDfmKyn0IwmzTivzO/Vs8MDv+1cJ+MoZ5YxwAJ+kc5wqtfsrfRjlw
-         dl24/2CzxrUZbd2CgYUV995GGUYyvDMWOghjruTd1pRrJ7LcOsA6BV8p7XbkZUzO9Tat
-         9Hf6SigjF0nx23JEKIGKUT0nPYsQzEA7bWg8dt6IDJV7Ni9PpqpqRJKKkXLn7s8NY1Kj
-         Fn2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=vnyM2Iiv5ssFwZ+YfhSIPkTVc84CfyYTFaqlrMujJwU=;
-        b=I3El2xyKnkYQ52PA6abol7U2dxCkZAw/nOCNm83wVhmVX58X8uR5VmAb2rqkkCF6RS
-         y5MvFeGqfdpGLjuRSNCuxWMj+hcEw7jHh/NI8zjd7LBaC3olHgD/V38Ow6L0hXz9ZX8I
-         Gu/JRxnu3RjznYVSgZHv+/hT1ltIm/dLhRjHAQx1qyHyMjEtqCSXu/KtMgs6D+6GtlMG
-         vefK8UfArgQz0EKzDMOzBGhtM/p+dphu+K00IIE6NZXA8cjFp/QZ7It6VtxseddJjH5S
-         hwcP06G2j6yVh8dCeGh0OlgQt0/m83ZJtAgKaKbFQphrIblH/5VE3+W050DHrWLlVRyg
-         9WDA==
-X-Gm-Message-State: AOAM533urGj5HOVsKDrmoz+Zt8xyVj3TkmRuVRg53yAdB/2tPC4o2zwx
-        BsD44yfnMAp2U9uSv6lzbCKAKQ==
-X-Google-Smtp-Source: ABdhPJwtqQ40ij3I2sXCRUOzsMpUdkisZ2t9soK7OyZx79O22lSzuKtXAWN17iTj1ggfo92pAD3X0Q==
-X-Received: by 2002:aa7:c40b:0:b0:41d:9886:90a0 with SMTP id j11-20020aa7c40b000000b0041d988690a0mr5089328edq.275.1649839258932;
-        Wed, 13 Apr 2022 01:40:58 -0700 (PDT)
-Received: from [192.168.0.202] (xdsl-188-155-201-27.adslplus.ch. [188.155.201.27])
-        by smtp.gmail.com with ESMTPSA id o15-20020a50d80f000000b0041cc1f4f5e0sm902910edj.62.2022.04.13.01.40.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Apr 2022 01:40:58 -0700 (PDT)
-Message-ID: <f967f1b2-80a2-8418-d5e8-1e2ac41730a6@linaro.org>
-Date:   Wed, 13 Apr 2022 10:40:57 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v6 12/12] rpmsg: Fix kfree() of static memory on setting
- driver_override
-Content-Language: en-US
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Stuart Yoder <stuyoder@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Wed, 13 Apr 2022 04:49:57 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D293D1CC;
+        Wed, 13 Apr 2022 01:47:35 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V9yvgPd_1649839648;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9yvgPd_1649839648)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 13 Apr 2022 16:47:30 +0800
+Message-ID: <1649838917.6726515-10-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v9 31/32] virtio_net: support rx/tx queue resize
+Date:   Wed, 13 Apr 2022 16:35:17 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
         Heiko Carstens <hca@linux.ibm.com>,
         Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
         Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
         Sven Schnelle <svens@linux.ibm.com>,
-        Andy Gross <agross@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20220403183758.192236-1-krzysztof.kozlowski@linaro.org>
- <20220403183758.192236-13-krzysztof.kozlowski@linaro.org>
- <OS0PR01MB59226666C2C6805C86304BE586ED9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <OS0PR01MB59226666C2C6805C86304BE586ED9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+ <20220406034346.74409-32-xuanzhuo@linux.alibaba.com>
+ <122008a6-1e79-14d3-1478-59f96464afc9@redhat.com>
+In-Reply-To: <122008a6-1e79-14d3-1478-59f96464afc9@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/04/2022 16:10, Biju Das wrote:
-> Hi Krzysztof Kozlowski,
-> 
-> Thanks for the patch.
-> 
->> Subject: [PATCH v6 12/12] rpmsg: Fix kfree() of static memory on setting
->> driver_override
->>
->> The driver_override field from platform driver should not be initialized
->> from static memory (string literal) because the core later kfree() it, for
->> example when driver_override is set via sysfs.
->>
->> Use dedicated helper to set driver_override properly.
->>
->> Fixes: 950a7388f02b ("rpmsg: Turn name service into a stand alone driver")
->> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> ---
->>  drivers/rpmsg/rpmsg_internal.h | 13 +++++++++++--
->>  drivers/rpmsg/rpmsg_ns.c       | 14 ++++++++++++--
->>  include/linux/rpmsg.h          |  6 ++++--
->>  3 files changed, 27 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/rpmsg/rpmsg_internal.h
->> b/drivers/rpmsg/rpmsg_internal.h index d4b23fd019a8..1a2fb8edf5d3 100644
->> --- a/drivers/rpmsg/rpmsg_internal.h
->> +++ b/drivers/rpmsg/rpmsg_internal.h
->> @@ -94,10 +94,19 @@ int rpmsg_release_channel(struct rpmsg_device *rpdev,
->>   */
->>  static inline int rpmsg_ctrldev_register_device(struct rpmsg_device
->> *rpdev)  {
->> +	int ret;
->> +
->>  	strcpy(rpdev->id.name, "rpmsg_ctrl");
->> -	rpdev->driver_override = "rpmsg_ctrl";
->> +	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
->> +				  "rpmsg_ctrl", strlen("rpmsg_ctrl"));
-> 
-> Is it not possible to use rpdev->id.name instead of "rpmsg_ctrl" ?
-> rpdev->id.name has "rpmsg_ctrl" from strcpy(rpdev->id.name, "rpmsg_ctrl");
-> 
-> Same for "rpmsg_ns" as well
+On Wed, 13 Apr 2022 16:00:18 +0800, Jason Wang <jasowang@redhat.com> wrote:
+>
+> =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=93:
+> > This patch implements the resize function of the rx, tx queues.
+> > Based on this function, it is possible to modify the ring num of the
+> > queue.
+> >
+> > There may be an exception during the resize process, the resize may
+> > fail, or the vq can no longer be used. Either way, we must execute
+> > napi_enable(). Because napi_disable is similar to a lock, napi_enable
+> > must be called after calling napi_disable.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > ---
+> >   drivers/net/virtio_net.c | 81 ++++++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 81 insertions(+)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index b8bf00525177..ba6859f305f7 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -251,6 +251,9 @@ struct padded_vnet_hdr {
+> >   	char padding[4];
+> >   };
+> >
+> > +static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void *buf=
+);
+> > +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *buf=
+);
+> > +
+> >   static bool is_xdp_frame(void *ptr)
+> >   {
+> >   	return (unsigned long)ptr & VIRTIO_XDP_FLAG;
+> > @@ -1369,6 +1372,15 @@ static void virtnet_napi_enable(struct virtqueue=
+ *vq, struct napi_struct *napi)
+> >   {
+> >   	napi_enable(napi);
+> >
+> > +	/* Check if vq is in reset state. The normal reset/resize process will
+> > +	 * be protected by napi. However, the protection of napi is only enab=
+led
+> > +	 * during the operation, and the protection of napi will end after the
+> > +	 * operation is completed. If re-enable fails during the process, vq
+> > +	 * will remain unavailable with reset state.
+> > +	 */
+> > +	if (vq->reset)
+> > +		return;
+>
+>
+> I don't get when could we hit this condition.
 
-It's possible. I kept the pattern of duplicating the string literal
-because original code had it, but I don't mind to change it. In the
-output assembler that might be additional instruction - need to
-dereference the rpdev pointer - but that does not matter much.
+
+In patch 23, the code to implement re-enable vq is as follows:
+
++static int vp_modern_enable_reset_vq(struct virtqueue *vq)
++{
++	struct virtio_pci_device *vp_dev =3D to_vp_device(vq->vdev);
++	struct virtio_pci_modern_device *mdev =3D &vp_dev->mdev;
++	struct virtio_pci_vq_info *info;
++	unsigned long flags, index;
++	int err;
++
++	if (!vq->reset)
++		return -EBUSY;
++
++	index =3D vq->index;
++	info =3D vp_dev->vqs[index];
++
++	/* check queue reset status */
++	if (vp_modern_get_queue_reset(mdev, index) !=3D 1)
++		return -EBUSY;
++
++	err =3D vp_active_vq(vq, info->msix_vector);
++	if (err)
++		return err;
++
++	if (vq->callback) {
++		spin_lock_irqsave(&vp_dev->lock, flags);
++		list_add(&info->node, &vp_dev->virtqueues);
++		spin_unlock_irqrestore(&vp_dev->lock, flags);
++	} else {
++		INIT_LIST_HEAD(&info->node);
++	}
++
++	vp_modern_set_queue_enable(&vp_dev->mdev, index, true);
++
++	if (vp_dev->per_vq_vectors && info->msix_vector !=3D VIRTIO_MSI_NO_VECTOR)
++		enable_irq(pci_irq_vector(vp_dev->pci_dev, info->msix_vector));
++
++	vq->reset =3D false;
++
++	return 0;
++}
 
 
-Best regards,
-Krzysztof
+There are three situations where an error will be returned. These are the
+situations I want to handle.
+
+But I'm rethinking the question, and I feel like you're right, although the
+hardware setup may fail. We can no longer sync with the hardware. But using=
+ it
+as a normal vq doesn't have any problems.
+
+>
+>
+> > +
+> >   	/* If all buffers were filled by other side before we napi_enabled, =
+we
+> >   	 * won't get another interrupt, so process any outstanding packets n=
+ow.
+> >   	 * Call local_bh_enable after to trigger softIRQ processing.
+> > @@ -1413,6 +1425,15 @@ static void refill_work(struct work_struct *work)
+> >   		struct receive_queue *rq =3D &vi->rq[i];
+> >
+> >   		napi_disable(&rq->napi);
+> > +
+> > +		/* Check if vq is in reset state. See more in
+> > +		 * virtnet_napi_enable()
+> > +		 */
+> > +		if (rq->vq->reset) {
+> > +			virtnet_napi_enable(rq->vq, &rq->napi);
+> > +			continue;
+> > +		}
+>
+>
+> Can we do something similar in virtnet_close() by canceling the work?
+
+I think there is no need to cancel the work here, because napi_disable will=
+ wait
+for the napi_enable of the resize. So if the re-enable failed vq is used as=
+ a normal
+vq, this logic can be removed.
+
+
+>
+>
+> > +
+> >   		still_empty =3D !try_fill_recv(vi, rq, GFP_KERNEL);
+> >   		virtnet_napi_enable(rq->vq, &rq->napi);
+> >
+> > @@ -1523,6 +1544,10 @@ static void virtnet_poll_cleantx(struct receive_=
+queue *rq)
+> >   	if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
+> >   		return;
+> >
+> > +	/* Check if vq is in reset state. See more in virtnet_napi_enable() */
+> > +	if (sq->vq->reset)
+> > +		return;
+>
+>
+> We've disabled TX napi, any chance we can still hit this?
+
+Same as above.
+
+>
+>
+> > +
+> >   	if (__netif_tx_trylock(txq)) {
+> >   		do {
+> >   			virtqueue_disable_cb(sq->vq);
+> > @@ -1769,6 +1794,62 @@ static netdev_tx_t start_xmit(struct sk_buff *sk=
+b, struct net_device *dev)
+> >   	return NETDEV_TX_OK;
+> >   }
+> >
+> > +static int virtnet_rx_resize(struct virtnet_info *vi,
+> > +			     struct receive_queue *rq, u32 ring_num)
+> > +{
+> > +	int err;
+> > +
+> > +	napi_disable(&rq->napi);
+> > +
+> > +	err =3D virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unused_buf=
+);
+> > +	if (err)
+> > +		goto err;
+> > +
+> > +	if (!try_fill_recv(vi, rq, GFP_KERNEL))
+> > +		schedule_delayed_work(&vi->refill, 0);
+> > +
+> > +	virtnet_napi_enable(rq->vq, &rq->napi);
+> > +	return 0;
+> > +
+> > +err:
+> > +	netdev_err(vi->dev,
+> > +		   "reset rx reset vq fail: rx queue index: %td err: %d\n",
+> > +		   rq - vi->rq, err);
+> > +	virtnet_napi_enable(rq->vq, &rq->napi);
+> > +	return err;
+> > +}
+> > +
+> > +static int virtnet_tx_resize(struct virtnet_info *vi,
+> > +			     struct send_queue *sq, u32 ring_num)
+> > +{
+> > +	struct netdev_queue *txq;
+> > +	int err, qindex;
+> > +
+> > +	qindex =3D sq - vi->sq;
+> > +
+> > +	virtnet_napi_tx_disable(&sq->napi);
+> > +
+> > +	txq =3D netdev_get_tx_queue(vi->dev, qindex);
+> > +	__netif_tx_lock_bh(txq);
+> > +	netif_stop_subqueue(vi->dev, qindex);
+> > +	__netif_tx_unlock_bh(txq);
+> > +
+> > +	err =3D virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf=
+);
+> > +	if (err)
+> > +		goto err;
+> > +
+> > +	netif_start_subqueue(vi->dev, qindex);
+> > +	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
+> > +	return 0;
+> > +
+> > +err:
+>
+>
+> I guess we can still start the queue in this case? (Since we don't
+> change the queue if resize fails).
+
+Yes, you are right.
+
+Thanks.
+
+>
+>
+> > +	netdev_err(vi->dev,
+> > +		   "reset tx reset vq fail: tx queue index: %td err: %d\n",
+> > +		   sq - vi->sq, err);
+> > +	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
+> > +	return err;
+> > +}
+> > +
+> >   /*
+> >    * Send command via the control virtqueue and check status.  Commands
+> >    * supported by the hypervisor, as indicated by feature bits, should
+>
