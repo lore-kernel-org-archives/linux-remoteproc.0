@@ -2,249 +2,202 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12503C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 03:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15981C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 06:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232016AbiDMDba (ORCPT
+        id S233061AbiDMGnV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Apr 2022 23:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60178 "EHLO
+        Wed, 13 Apr 2022 02:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231975AbiDMDbX (ORCPT
+        with ESMTP id S233041AbiDMGnU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Apr 2022 23:31:23 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-eopbgr60041.outbound.protection.outlook.com [40.107.6.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74D03EA8E;
-        Tue, 12 Apr 2022 20:29:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=C4DjD/1b++kcGp5gEjrAs2UqFwrb98A2U3jkvXY3c9px8v2zF1u+i50JrqGdRyFuBQClZCbiRnhfGLYd5N87ekzi/QZo8XZMHX7p2mNfUJIA44+bBXdx0XOiU1O0ftEb84Bn01fbRA/34BiD663z/Q2oc27xPtsem96RmllGiC3OlgKyzAqkO57+LBvmM2heADzB7dU3idjG1VQgMApntngYz/RLaqHrpF0NVltXc4jnSxToyCA/aeKq6w9ovWCf9AGjYEUXLXjAR0B00WdHaBvfj34RNG0ewqYCdMHAem+eXAgq/EeRjAeQy8Wmseq8lgfYiBAfx1gfnrwLBlfySQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TSKjvn/lnn8ce+NBoENX5OfBmJhLqYPdcJx5Klg2ygQ=;
- b=M+5e0u+muYKfUUiWKb/Kpf9ZlLqazR73dTeBN8cbBRev7h++cfiNRwulUHCnLJwwpbdlhFfadA31bCKMSldaiKdiP288fAC0KbdiuX3AJzfGI20JVtSUU4UuPCGuyFVGkED7sQ1DqUd+IBDmTmyH2MNeluCdRAA+zbKC8vxWqvMer/SwDn3xnCr3hMTDYodzOHaAdbl/+iu1/fspmdQA5OZUTqb80X9KqcoQX1trCOPdxCygsFW1Q6RxCeYLW7tKwhegm9lp7NYHQc5olEj/P+2id+/jMqD4BHDb1Ul7GrjhBPYgVvW0Q4XrDWhZ5M+bvQeIiozsmk8TnW6EIpOWUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSKjvn/lnn8ce+NBoENX5OfBmJhLqYPdcJx5Klg2ygQ=;
- b=EvwvkbCW43aq1PtQX7qTfA8PMNyxRMo4G98GyZFuktmQ8OBnVi7kl3fCqgqUGxPhG4YeIE1lsdwuXeip8jvBZl9IcnYcJUhTYa9Bg7CYxys6jJYGQw9hem4nNxSQvgpZBMifO238khGNnIc74yoI7Loj+EYnc922RKkHQ3a9c5I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PR3PR04MB7483.eurprd04.prod.outlook.com (2603:10a6:102:86::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.30; Wed, 13 Apr
- 2022 03:28:59 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::389f:e6eb:a7a2:61b6]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::389f:e6eb:a7a2:61b6%8]) with mapi id 15.20.5144.029; Wed, 13 Apr 2022
- 03:28:59 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@nxp.com, Peng Fan <peng.fan@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH V2 2/2] remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
-Date:   Wed, 13 Apr 2022 11:30:38 +0800
-Message-Id: <20220413033038.1715945-3-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220413033038.1715945-1-peng.fan@oss.nxp.com>
-References: <20220413033038.1715945-1-peng.fan@oss.nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2P153CA0013.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::12) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f1a365f4-b509-4bd4-5613-08da1cfdbf4c
-X-MS-TrafficTypeDiagnostic: PR3PR04MB7483:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-Microsoft-Antispam-PRVS: <PR3PR04MB74838FB92F028E6AC4AE0331C9EC9@PR3PR04MB7483.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kwwhKC6Ao5P2qmJxka1WC+XqbCulG+izmjz3fwclqgujid65vGBnw7+XQVlUS5XgkpAtZASNHFRHW1veSV7dzUf6Sg+U3DdFiY5lSRUoSnDT6nQ4zE5yV2g1+rYObWbBMAubU5a2k4JhORKgYof87NHVEFdnDEcDLu/iESjQHnCh/34SPOqrLBn2lQy3j4LdeanZ3yrloRyQJW4mdRXblO4ag1kMsKnfMmblw0i/HDXkSC0nv/b1Qm5irDmmBRzrMDhOEqWya18Z+0SxUbBa14dSwdWIPtd6q1VQ81sVknVOBivrPTNeOKo5Pv4gnVQgrF+D7PKDkFpdQ1r3bjoFneEyW1hPZoE8iXtAlqbw/uzScuwGuzrnzINN5SmjFsAKbytCfnN7tZSs/5PRZFZpPcPqGsmtBmxtSOtfcJcS5BXxKdg4i0qirmy6yy8byXyw3j629iDgNhqVxA/AUiCrh1ljsw3V+pBj880WU1F6AmoHJ4b+dbKs2Bf0lC7xwnERlEgpMBv7vz1Jm+RB1ObO1kTHy9pK99YcO6QCRlNDRvUz2eNsa5blOnKO3xPhcTVBIZbUPJ+tYRpyacks9iwiXmQcZrkuKIw3zestdSePXt5FQ8qdPWnJCZFVueZJkbHWGAQ98URqtPjYzMuvU6A1D//H2gKbQuf2nNC0dlp3yBNw5PWlCmaiY3APrqiQkCwFdHZhxq7YfJb7zHI6uWwYqg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6666004)(508600001)(52116002)(316002)(1076003)(186003)(2616005)(6506007)(83380400001)(38350700002)(86362001)(38100700002)(26005)(4326008)(66476007)(66556008)(6512007)(2906002)(6486002)(54906003)(8676002)(5660300002)(8936002)(66946007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?78cYIKx7TzMPZMraWwGH2B75wS0LmLmBdJhzVcwpk0ZnCAoYbO2MCvnM7oh/?=
- =?us-ascii?Q?qfWPvQ9ERL0j6Liqp3LHEBloglFQ3BKhhzmf3raaEh0gCM6LNOyaP1bQok28?=
- =?us-ascii?Q?uMecPaglJMVmAHQo4UqShvKxpwFcK9osVY6b7ypIv0X/7k93CQIYBcKNIepx?=
- =?us-ascii?Q?4hPNrp8QkfoumzDjsmLYtCRBB9E0kCQDwS4xiVcnMqyGSiy4m5Vq4GxDZevh?=
- =?us-ascii?Q?mv8aOJEl6az+gNI1CWdSupPwaI+3d9G2edKhCPvnbRcblenKXTMNk2jKYxf7?=
- =?us-ascii?Q?45rKsy7lL/OP/kMD1dThjKcs2CXdQQVYGkPQoJVBpaTq4wPC1Ro08aJb1w5a?=
- =?us-ascii?Q?hka9xRl1ZpaP6Hv8qVmBXVObjg51Q2xX9MxR8JPOLWJIc/rwDQ7mKIshf2aS?=
- =?us-ascii?Q?EdbvYPnxBcHLP/AJyjyVtvWhDz5/Z/z2/nhfpo6Qhxki1SY/lQOpW+dmXpEz?=
- =?us-ascii?Q?L8FRJAmYwHKVeFUj4dlrv/imD16HqLw62z3KhuUU1CEHFiT/yd5A0cAJxSDH?=
- =?us-ascii?Q?YF5I/SVbiv0zZwCP547VvcbKwc7ZTOiEthD07/q7CUZnvxr4k+kpm0tFbmFj?=
- =?us-ascii?Q?OhF4HR7dYucICkSHOLTgHC+vm/p9EMzOt80xOz7EwXWxFXYVEyvRR+dNEGm2?=
- =?us-ascii?Q?4+vaM9bZPBp7ogHeta5Fcq2mZDtyIjPkyaxUK9CK4Zlvt/coz5fLtUgS4uVY?=
- =?us-ascii?Q?10z50W+JMS9RbsI5lh80/IevS2yEQnts3AK+pkskt+bu0z727bVPMoj7/ZdS?=
- =?us-ascii?Q?QTekXFdjmJIuFta1AuJ8eyjqVzj8kINUFLTTdfLwH5f6GjO7qI+22NWm6llE?=
- =?us-ascii?Q?V6WnPycSfEAIhEB/b2i3HcIWS/domhEL9AXIldo6Sdmp99GLs6MD/f1h9K4J?=
- =?us-ascii?Q?edOjw/V6NBmOYRUd5CgyjEDBWy2pA2UASHZPQ+Tvnl7YFwjz9nf/PJjb8slo?=
- =?us-ascii?Q?bbiRuB3mTqrlX0uvD8PeXpREWa+pIdXGTNr9V0hF/PBd494+ywG2ojea27Hh?=
- =?us-ascii?Q?w8JRko0iunVmg4TRngm7UxYXsTYV5tF8OCDS/EV9UDkQ/eRgZostfMQRGPEd?=
- =?us-ascii?Q?dL+GMgmcuF4SxvIeoVn0pijq4v1FV4H8MUCnNA7ZRdrOaKbey3Eh5yM4/Mqw?=
- =?us-ascii?Q?EeI0T6mQQPAgGsBRVsr/9qrPFWB9BE6ihZrT11lZkkvmM37AMzBOYzzNNNx+?=
- =?us-ascii?Q?7jYF987fk+9PSkfB0BaCXOMhO/NZrhmPPQbWPCQkuY6VpX55AVrUSU45Razm?=
- =?us-ascii?Q?vEJjdwfaYSdFSId4ot5yPtdEUTITT2SgUsCIhM2WXTXiujCvDeg6ru9zmwqT?=
- =?us-ascii?Q?t9yeFvHc10dQ9Jh4ICkh8tHo/HZvnMYcRp77IHrKEv+aEENXwvHovHxuyeHo?=
- =?us-ascii?Q?a1tZjJ5O1bROCJIm0EA1Qwl7LAD23aZWrhZwi/Muuzh44aDTy1CB8FaUCWwy?=
- =?us-ascii?Q?cEMA21QOiJm8gkryRRHpPnCQLLviAn48lxYkemAwXYm8yj1AlA3FoDub+JXU?=
- =?us-ascii?Q?ZzPkem3Wd+VIuobxVwMlKg4N4q7Gcrf2W4J27AeZWC8lOsohcSDHwSZSXD/T?=
- =?us-ascii?Q?iM47IcD5O/O51KgjXNph0liKtOtgRH28pnHXEb5Yi32BhGvghrcHPhT9nKXP?=
- =?us-ascii?Q?a73LCaEX5YkMI+lohr6b8HJCOXmi5Zz2GOHVGjFueiA11wAmE00A/5hdpXHO?=
- =?us-ascii?Q?DQVeffYsaIj1wjaA2lKKN/na65CpOE7csCFz7YxIhlbUBUi3Mpow8PyTLo+G?=
- =?us-ascii?Q?kwpXQxHuEA=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f1a365f4-b509-4bd4-5613-08da1cfdbf4c
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2022 03:28:59.0600
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f0OOosCHyHb1rtyuJNnwXzNxFgQaxj+D7WVdWiW/nTGXRVecHgPDgkz03Z3IaMGpGOiRmrLithbg9Fb7o5Sevg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7483
+        Wed, 13 Apr 2022 02:43:20 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5ED286C0;
+        Tue, 12 Apr 2022 23:40:58 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V9yQeE6_1649832051;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9yQeE6_1649832051)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 13 Apr 2022 14:40:53 +0800
+Message-ID: <1649831529.7724812-5-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v9 11/32] virtio_ring: split: introduce virtqueue_resize_split()
+Date:   Wed, 13 Apr 2022 14:32:09 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+ <20220406034346.74409-12-xuanzhuo@linux.alibaba.com>
+ <f79fc367-7ac5-961b-83c5-90f3d097c672@redhat.com>
+In-Reply-To: <f79fc367-7ac5-961b-83c5-90f3d097c672@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Tue, 12 Apr 2022 13:53:44 +0800, Jason Wang <jasowang@redhat.com> wrote:
+>
+> =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=93:
+> > virtio ring split supports resize.
+> >
+> > Only after the new vring is successfully allocated based on the new num,
+> > we will release the old vring. In any case, an error is returned,
+> > indicating that the vring still points to the old vring.
+> >
+> > In the case of an error, the caller must
+> > re-initialize(virtqueue_reinit_split()) the virtqueue to ensure that the
+> > vring can be used.
+> >
+> > In addition, vring_align, may_reduce_num are necessary for reallocating
+> > vring, so they are retained for creating vq.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 47 ++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 47 insertions(+)
+> >
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index 3dc6ace2ba7a..33864134a744 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -139,6 +139,12 @@ struct vring_virtqueue {
+> >   			/* DMA address and size information */
+> >   			dma_addr_t queue_dma_addr;
+> >   			size_t queue_size_in_bytes;
+> > +
+> > +			/* The parameters for creating vrings are reserved for
+> > +			 * creating new vring.
+> > +			 */
+> > +			u32 vring_align;
+> > +			bool may_reduce_num;
+> >   		} split;
+> >
+> >   		/* Available for packed ring */
+> > @@ -199,6 +205,7 @@ struct vring_virtqueue {
+> >   };
+> >
+> >   static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int n=
+um);
+> > +static void vring_free(struct virtqueue *_vq);
+> >
+> >   /*
+> >    * Helpers.
+> > @@ -1088,6 +1095,8 @@ static struct virtqueue *vring_create_virtqueue_s=
+plit(
+> >   		return NULL;
+> >   	}
+> >
+> > +	to_vvq(vq)->split.vring_align =3D vring_align;
+> > +	to_vvq(vq)->split.may_reduce_num =3D may_reduce_num;
+>
+>
+> It looks to me the above should belong to patch 6.
 
-remoteproc elf loader supports the specific case that segments
-have PT_LOAD and memsz/filesz set to zero, so no duplicate
-code.
+patch 6 just extracts a function, no logical modification.
 
-Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_dsp_rproc.c | 95 +-----------------------------
- 1 file changed, 1 insertion(+), 94 deletions(-)
+to_vvq(vq)->split.may_reduce_num is newly added, so I don't think it should=
+ be
+merged into patch 6.
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 2abee78df96e..eee3c44c2146 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -649,99 +649,6 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 	return 0;
- }
- 
--/**
-- * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-- * @rproc: remote processor which will be booted using these fw segments
-- * @fw: the ELF firmware image
-- *
-- * This function specially checks if memsz is zero or not, otherwise it
-- * is mostly same as rproc_elf_load_segments().
-- */
--static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc,
--					   const struct firmware *fw)
--{
--	struct device *dev = &rproc->dev;
--	u8 class = fw_elf_get_class(fw);
--	u32 elf_phdr_get_size = elf_size_of_phdr(class);
--	const u8 *elf_data = fw->data;
--	const void *ehdr, *phdr;
--	int i, ret = 0;
--	u16 phnum;
--
--	ehdr = elf_data;
--	phnum = elf_hdr_get_e_phnum(class, ehdr);
--	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
--
--	/* go through the available ELF segments */
--	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
--		u64 da = elf_phdr_get_p_paddr(class, phdr);
--		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
--		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
--		u64 offset = elf_phdr_get_p_offset(class, phdr);
--		u32 type = elf_phdr_get_p_type(class, phdr);
--		void *ptr;
--
--		/*
--		 *  There is a case that with PT_LOAD type, the
--		 *  filesz = memsz = 0. If memsz = 0, rproc_da_to_va
--		 *  should return NULL ptr, then error is returned.
--		 *  So this case should be skipped from the loop.
--		 *  Add !memsz checking here.
--		 */
--		if (type != PT_LOAD || !memsz)
--			continue;
--
--		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
--			type, da, memsz, filesz);
--
--		if (filesz > memsz) {
--			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
--				filesz, memsz);
--			ret = -EINVAL;
--			break;
--		}
--
--		if (offset + filesz > fw->size) {
--			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
--				offset + filesz, fw->size);
--			ret = -EINVAL;
--			break;
--		}
--
--		if (!rproc_u64_fit_in_size_t(memsz)) {
--			dev_err(dev, "size (%llx) does not fit in size_t type\n",
--				memsz);
--			ret = -EOVERFLOW;
--			break;
--		}
--
--		/* grab the kernel address for this device address */
--		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
--		if (!ptr) {
--			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
--				memsz);
--			ret = -EINVAL;
--			break;
--		}
--
--		/* put the segment where the remote processor expects it */
--		if (filesz)
--			memcpy(ptr, elf_data + offset, filesz);
--
--		/*
--		 * Zero out remaining memory for this segment.
--		 *
--		 * This isn't strictly required since dma_alloc_coherent already
--		 * did this for us. albeit harmless, we may consider removing
--		 * this.
--		 */
--		if (memsz > filesz)
--			memset(ptr + filesz, 0, memsz - filesz);
--	}
--
--	return ret;
--}
--
- /* Prepare function for rproc_ops */
- static int imx_dsp_rproc_prepare(struct rproc *rproc)
- {
-@@ -808,7 +715,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
- 	.start		= imx_dsp_rproc_start,
- 	.stop		= imx_dsp_rproc_stop,
- 	.kick		= imx_dsp_rproc_kick,
--	.load		= imx_dsp_rproc_elf_load_segments,
-+	.load		= rproc_elf_load_segments,
- 	.parse_fw	= rproc_elf_load_rsc_table,
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
--- 
-2.25.1
+>
+>
+> >   	to_vvq(vq)->split.queue_dma_addr =3D dma_addr;
+> >   	to_vvq(vq)->split.queue_size_in_bytes =3D queue_size_in_bytes;
+> >   	to_vvq(vq)->we_own_ring =3D true;
+> > @@ -1095,6 +1104,44 @@ static struct virtqueue *vring_create_virtqueue_=
+split(
+> >   	return vq;
+> >   }
+> >
+> > +static int virtqueue_resize_split(struct virtqueue *_vq, u32 num)
+> > +{
+> > +	struct vring_virtqueue *vq =3D to_vvq(_vq);
+> > +	struct virtio_device *vdev =3D _vq->vdev;
+> > +	struct vring_desc_state_split *state;
+> > +	struct vring_desc_extra *extra;
+> > +	size_t queue_size_in_bytes;
+> > +	dma_addr_t dma_addr;
+> > +	struct vring vring;
+> > +	int err =3D -ENOMEM;
+> > +	void *queue;
+> > +
+> > +	queue =3D vring_alloc_queue_split(vdev, &dma_addr, &num,
+> > +					vq->split.vring_align,
+> > +					vq->weak_barriers,
+> > +					vq->split.may_reduce_num);
+> > +	if (!queue)
+> > +		return -ENOMEM;
+> > +
+> > +	queue_size_in_bytes =3D vring_size(num, vq->split.vring_align);
+> > +
+> > +	err =3D vring_alloc_state_extra_split(num, &state, &extra);
+> > +	if (err) {
+> > +		vring_free_queue(vdev, queue_size_in_bytes, queue, dma_addr);
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	vring_free(&vq->vq);
+> > +
+> > +	vring_init(&vring, num, queue, vq->split.vring_align);
+> > +	vring_virtqueue_attach_split(vq, vring, state, extra);
+> > +	vq->split.queue_dma_addr =3D dma_addr;
+> > +	vq->split.queue_size_in_bytes =3D queue_size_in_bytes;
+>
+>
+> I wonder if it's better to move the above assignments to
+> vring_virtqueue_attach_split().
 
+I also think so, the reason for not doing this is that there is no dma_addr=
+ and
+queue_size_in_bytes when vring_virtqueue_attach_split is called in
+__vring_new_virtqueue.
+
+As discussed in patch 12, we can pass the struct struct vring_virtqueue_spl=
+it to
+vring_virtqueue_attach_split(). This is much more convenient.
+
+Thanks.
+
+>
+> Other looks good.
+>
+> Thanks
+>
+>
+> > +
+> > +	vring_virtqueue_init_split(vq, vdev, true);
+> > +	return 0;
+> > +}
+> > +
+> >
+> >   /*
+> >    * Packed ring specific functions - *_packed().
+>
