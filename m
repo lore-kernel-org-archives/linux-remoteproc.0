@@ -2,218 +2,245 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDD6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 12:22:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0A5C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 14:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232464AbiDMMZP (ORCPT
+        id S234880AbiDMODt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 08:25:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60360 "EHLO
+        Wed, 13 Apr 2022 10:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229714AbiDMMZM (ORCPT
+        with ESMTP id S233491AbiDMODp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Apr 2022 08:25:12 -0400
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D295AEE6;
-        Wed, 13 Apr 2022 05:22:50 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V9zbh3._1649852563;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9zbh3._1649852563)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 13 Apr 2022 20:22:44 +0800
-Message-ID: <1649852469.9980721-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v9 18/32] virtio_ring: introduce virtqueue_resize()
-Date:   Wed, 13 Apr 2022 20:21:09 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
+        Wed, 13 Apr 2022 10:03:45 -0400
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E7924475F;
+        Wed, 13 Apr 2022 07:01:24 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-df02f7e2c9so2063692fac.10;
+        Wed, 13 Apr 2022 07:01:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kj/dMLICDp8pu3HTv362IKpvU4oSd9uXdOmA9Gpau0o=;
+        b=z0VpJoE5jcdkaUq22SCpK0IKN+VixZhFFmt0goYR5g5tGzi1IpYvH0lAYOxjuJggQ7
+         T/x96Oru4CIvuI8M+dhyEJEZbHZ1ZysTO99PDr6HnsRHfYKiOyIzNs7Ft/ZsaPleOzSy
+         UlSUcJqA1l821n+RWh0ni46GEy7Zp7aR4Qpc97vXFlE8IGFxwxroJSteUgzt3aumEwYW
+         byU8lW7xaKZn9SW6zum6mH+Yv/k4pdRpPEbjnqtCQ+AyLg8OOcBoRfJiXCaq13X8yFPo
+         4gfvfpicibivSJ8PEBCNEGxWbbU9JGfiJp5NGVTREAEP89edntIXQV5cI2bGF48RZYCW
+         OEPQ==
+X-Gm-Message-State: AOAM530WRuKZlmd5p/hLe+v+zauBUTh7vybbvnO+uMw1GPuzJdIG1I7U
+        UzV63H/mO/PbuCEJOxFmPTWQQ0ASMA==
+X-Google-Smtp-Source: ABdhPJysepoRmg0UJTcPB4IkpN1yDuH8vtXxsQePwZZquqTXl0dPKH9xPDWoEW7s3ArRKkyQKapuAw==
+X-Received: by 2002:a05:6870:8896:b0:da:f5e5:5b62 with SMTP id m22-20020a056870889600b000daf5e55b62mr4345486oam.229.1649858483572;
+        Wed, 13 Apr 2022 07:01:23 -0700 (PDT)
+Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.googlemail.com with ESMTPSA id c20-20020a4a2854000000b00329d3f076aasm2157772oof.24.2022.04.13.07.01.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Apr 2022 07:01:23 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Agathe Porte <agathe.porte@nokia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jean Delvare <jdelvare@suse.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-19-xuanzhuo@linux.alibaba.com>
- <92622553-e02d-47bd-06f9-0ce24c22650c@redhat.com>
-In-Reply-To: <92622553-e02d-47bd-06f9-0ce24c22650c@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mark Brown <broonie@kernel.org>,
+        Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-hwmon@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH] dt-bindings: Fix array constraints on scalar properties
+Date:   Wed, 13 Apr 2022 09:01:21 -0500
+Message-Id: <20220413140121.3132837-1-robh@kernel.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 12 Apr 2022 14:41:18 +0800, Jason Wang <jasowang@redhat.com> wrote:
->
-> =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=93:
-> > Introduce virtqueue_resize() to implement the resize of vring.
-> > Based on these, the driver can dynamically adjust the size of the vring.
-> > For example: ethtool -G.
-> >
-> > virtqueue_resize() implements resize based on the vq reset function. In
-> > case of failure to allocate a new vring, it will give up resize and use
-> > the original vring.
-> >
-> > During this process, if the re-enable reset vq fails, the vq can no
-> > longer be used. Although the probability of this situation is not high.
-> >
-> > The parameter recycle is used to recycle the buffer that is no longer
-> > used.
-> >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 69 ++++++++++++++++++++++++++++++++++++
-> >   include/linux/virtio.h       |  3 ++
-> >   2 files changed, 72 insertions(+)
-> >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 06f66b15c86c..6250e19fc5bf 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -2554,6 +2554,75 @@ struct virtqueue *vring_create_virtqueue(
-> >   }
-> >   EXPORT_SYMBOL_GPL(vring_create_virtqueue);
-> >
-> > +/**
-> > + * virtqueue_resize - resize the vring of vq
-> > + * @_vq: the struct virtqueue we're talking about.
-> > + * @num: new ring num
-> > + * @recycle: callback for recycle the useless buffer
-> > + *
-> > + * When it is really necessary to create a new vring, it will set the =
-current vq
-> > + * into the reset state. Then call the passed callback to recycle the =
-buffer
-> > + * that is no longer used. Only after the new vring is successfully cr=
-eated, the
-> > + * old vring will be released.
-> > + *
-> > + * Caller must ensure we don't call this with other virtqueue operatio=
-ns
-> > + * at the same time (except where noted).
-> > + *
-> > + * Returns zero or a negative error.
->
->
-> Should we document that the virtqueue is kept unchanged (still
-> available) on (specific) failure?
->
->
-> > + */
-> > +int virtqueue_resize(struct virtqueue *_vq, u32 num,
-> > +		     void (*recycle)(struct virtqueue *vq, void *buf))
-> > +{
-> > +	struct vring_virtqueue *vq =3D to_vvq(_vq);
-> > +	struct virtio_device *vdev =3D vq->vq.vdev;
-> > +	bool packed;
-> > +	void *buf;
-> > +	int err;
-> > +
-> > +	if (!vq->we_own_ring)
-> > +		return -EINVAL;
-> > +
-> > +	if (num > vq->vq.num_max)
-> > +		return -E2BIG;
-> > +
-> > +	if (!num)
-> > +		return -EINVAL;
-> > +
-> > +	packed =3D virtio_has_feature(vdev, VIRTIO_F_RING_PACKED) ? true : fa=
-lse;
-> > +
-> > +	if ((packed ? vq->packed.vring.num : vq->split.vring.num) =3D=3D num)
-> > +		return 0;
-> > +
-> > +	if (!vdev->config->reset_vq)
-> > +		return -ENOENT;
-> > +
-> > +	if (!vdev->config->enable_reset_vq)
-> > +		return -ENOENT;
-> > +
-> > +	err =3D vdev->config->reset_vq(_vq);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	while ((buf =3D virtqueue_detach_unused_buf(_vq)) !=3D NULL)
-> > +		recycle(_vq, buf);
-> > +
-> > +	if (packed) {
-> > +		err =3D virtqueue_resize_packed(_vq, num);
-> > +		if (err)
-> > +			virtqueue_reinit_packed(vq);
->
->
-> Calling reinit here seems a little bit odd, it looks more like a reset
+Scalar properties shouldn't have array constraints (minItems, maxItems,
+items). These constraints can simply be dropped with any constraints under
+'items' moved up a level.
 
+Cc: Agathe Porte <agathe.porte@nokia.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-hwmon@vger.kernel.org
+Cc: alsa-devel@alsa-project.org
+Cc: linux-iio@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml       | 5 ++---
+ .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml      | 4 +---
+ Documentation/devicetree/bindings/media/coda.yaml            | 1 -
+ .../devicetree/bindings/media/mediatek,vcodec-decoder.yaml   | 2 --
+ .../devicetree/bindings/media/mediatek,vcodec-encoder.yaml   | 2 --
+ .../bindings/media/mediatek,vcodec-subdev-decoder.yaml       | 1 -
+ .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml | 4 +---
+ Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml  | 2 --
+ 8 files changed, 4 insertions(+), 17 deletions(-)
 
-I also feel that this is a bit odd, I will put virtqueue_reinit_* into
-virtqueue_resize_*.
+diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml b/Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml
+index 801ca9ba7d34..e7493e25a7d2 100644
+--- a/Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml
++++ b/Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml
+@@ -58,9 +58,8 @@ patternProperties:
+           The value (two's complement) to be programmed in the channel specific N correction register.
+           For remote channels only.
+         $ref: /schemas/types.yaml#/definitions/int32
+-        items:
+-          minimum: -128
+-          maximum: 127
++        minimum: -128
++        maximum: 127
+ 
+     required:
+       - reg
+diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+index 7c260f209687..952bc900d0fa 100644
+--- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
+@@ -108,9 +108,7 @@ patternProperties:
+           - [1-5]: order 1 to 5.
+           For audio purpose it is recommended to use order 3 to 5.
+         $ref: /schemas/types.yaml#/definitions/uint32
+-        items:
+-          minimum: 0
+-          maximum: 5
++        maximum: 5
+ 
+       "#io-channel-cells":
+         const: 1
+diff --git a/Documentation/devicetree/bindings/media/coda.yaml b/Documentation/devicetree/bindings/media/coda.yaml
+index 36781ee4617f..c9d5adbc8c4a 100644
+--- a/Documentation/devicetree/bindings/media/coda.yaml
++++ b/Documentation/devicetree/bindings/media/coda.yaml
+@@ -65,7 +65,6 @@ properties:
+   iram:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description: phandle pointing to the SRAM device node
+-    maxItems: 1
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml
+index 9b179bb44dfb..aa55ca65d6ed 100644
+--- a/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml
++++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml
+@@ -63,13 +63,11 @@ properties:
+ 
+   mediatek,vpu:
+     $ref: /schemas/types.yaml#/definitions/phandle
+-    maxItems: 1
+     description:
+       Describes point to vpu.
+ 
+   mediatek,scp:
+     $ref: /schemas/types.yaml#/definitions/phandle
+-    maxItems: 1
+     description:
+       Describes point to scp.
+ 
+diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+index e7b65a91c92c..2746dea3ce79 100644
+--- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
++++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+@@ -55,13 +55,11 @@ properties:
+ 
+   mediatek,vpu:
+     $ref: /schemas/types.yaml#/definitions/phandle
+-    maxItems: 1
+     description:
+       Describes point to vpu.
+ 
+   mediatek,scp:
+     $ref: /schemas/types.yaml#/definitions/phandle
+-    maxItems: 1
+     description:
+       Describes point to scp.
+ 
+diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml
+index 7687be0f50aa..c73bf2352aca 100644
+--- a/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml
++++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml
+@@ -61,7 +61,6 @@ properties:
+ 
+   mediatek,scp:
+     $ref: /schemas/types.yaml#/definitions/phandle
+-    maxItems: 1
+     description: |
+       The node of system control processor (SCP), using
+       the remoteproc & rpmsg framework.
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+index 2424de733ee4..d99a729d2710 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+@@ -104,8 +104,7 @@ properties:
+   qcom,smem-state-names:
+     $ref: /schemas/types.yaml#/definitions/string
+     description: The names of the state bits used for SMP2P output
+-    items:
+-      - const: stop
++    const: stop
+ 
+   glink-edge:
+     type: object
+@@ -130,7 +129,6 @@ properties:
+       qcom,remote-pid:
+         $ref: /schemas/types.yaml#/definitions/uint32
+         description: ID of the shared memory used by GLINK for communication with WPSS
+-        maxItems: 1
+ 
+     required:
+       - interrupts
+diff --git a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
+index b104899205f6..5de710adfa63 100644
+--- a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
++++ b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
+@@ -124,7 +124,6 @@ properties:
+     description: |
+       Override the default TX fifo size.  Unit is words.  Ignored if 0.
+     $ref: /schemas/types.yaml#/definitions/uint32
+-    maxItems: 1
+     default: 64
+ 
+   renesas,rx-fifo-size:
+@@ -132,7 +131,6 @@ properties:
+     description: |
+       Override the default RX fifo size.  Unit is words.  Ignored if 0.
+     $ref: /schemas/types.yaml#/definitions/uint32
+-    maxItems: 1
+     default: 64
+ 
+ required:
+-- 
+2.32.0
 
-Thanks.
-
-> of the virtqueue. Consider we may re-use virtqueue reset for more
-> purpose, I wonder if we need a helper like:
->
-> virtqueue_resize() {
->  =C2=A0=C2=A0=C2=A0 vdev->config->reset_vq(_vq);
->  =C2=A0=C2=A0=C2=A0 if (packed)
->  =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 virtqueue_reinit_packed(_vq)
->  =C2=A0=C2=A0=C2=A0 else
->  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 virtqueue_reinit_split(_vq)
-> }
->
-> Thanks
->
->
-> > +	} else {
-> > +		err =3D virtqueue_resize_split(_vq, num);
-> > +		if (err)
-> > +			virtqueue_reinit_split(vq);
-> > +	}
-> > +
-> > +	if (vdev->config->enable_reset_vq(_vq))
-> > +		return -EBUSY;
-> > +
-> > +	return err;
-> > +}
-> > +EXPORT_SYMBOL_GPL(virtqueue_resize);
-> > +
-> >   /* Only available for split ring */
-> >   struct virtqueue *vring_new_virtqueue(unsigned int index,
-> >   				      unsigned int num,
-> > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> > index d59adc4be068..c86ff02e0ca0 100644
-> > --- a/include/linux/virtio.h
-> > +++ b/include/linux/virtio.h
-> > @@ -91,6 +91,9 @@ dma_addr_t virtqueue_get_desc_addr(struct virtqueue *=
-vq);
-> >   dma_addr_t virtqueue_get_avail_addr(struct virtqueue *vq);
-> >   dma_addr_t virtqueue_get_used_addr(struct virtqueue *vq);
-> >
-> > +int virtqueue_resize(struct virtqueue *vq, u32 num,
-> > +		     void (*recycle)(struct virtqueue *vq, void *buf));
-> > +
-> >   /**
-> >    * virtio_device - representation of a device using virtio
-> >    * @index: unique position on the virtio bus
->
