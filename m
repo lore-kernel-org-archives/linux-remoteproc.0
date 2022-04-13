@@ -2,29 +2,70 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FDDC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 07:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9003DC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Apr 2022 08:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232138AbiDMHHS (ORCPT
+        id S233593AbiDMIDg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Apr 2022 03:07:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        Wed, 13 Apr 2022 04:03:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232134AbiDMHHR (ORCPT
+        with ESMTP id S233696AbiDMICz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Apr 2022 03:07:17 -0400
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97EB21C901;
-        Wed, 13 Apr 2022 00:04:56 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R391e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0V9yF4q8_1649833489;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0V9yF4q8_1649833489)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 13 Apr 2022 15:04:50 +0800
-Message-ID: <1649833450.9482608-9-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v9 09/32] virtio_ring: split: extract the logic of vq init
-Date:   Wed, 13 Apr 2022 15:04:10 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
+        Wed, 13 Apr 2022 04:02:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5B33D1FA53
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Apr 2022 01:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649836833;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BK0xGHuGKSg6tS7OvJ2UZVDC8hGmPnNquXolsiCRFqU=;
+        b=RqfjP+4ChLNbIpRaLldlNfQEOQ1SlwSMv4gWN6qdZCZL33/dgDvpNYDyzvT74+xATND5nL
+        1WAY7itK6IQ+HgAv/tToGC7wdyptNvvH5zxpQHyT5URmZJ8hFtC8nX5O+9SMcg3Re4WKDc
+        PooPRPwtJVx6D+eS8Mo3IoqRNIS5Idk=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-642-D2pMZB81NA--fu8YlANnFQ-1; Wed, 13 Apr 2022 04:00:32 -0400
+X-MC-Unique: D2pMZB81NA--fu8YlANnFQ-1
+Received: by mail-pj1-f71.google.com with SMTP id d11-20020a17090a628b00b001ca8fc92b9eso746888pjj.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Apr 2022 01:00:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=BK0xGHuGKSg6tS7OvJ2UZVDC8hGmPnNquXolsiCRFqU=;
+        b=l8DnXJWHz7kX4GO0qkdNGd9AmIfXLwMEmkRkmNiQZUv6fQh0k8zRBF4Kul5d7zVwiK
+         DbLTH4vGpZPhUNW2Fx9NP8fw42FG+QjUFWQffKlt7AwczmRji5tphzQStpyCDofMvOrB
+         xxwaKNxbjGBK+xzP9zwGY2dSDzPvSqWG26zs84AliwjMbOxPoQfPJ51QXKdokob82I2d
+         Pcrz5J8UgyXOeOshfAc5tjBkK+nYQCQNLVpkoex3pA9KmnrF0f0FWTkFjm4LdMFJ2bke
+         c/HqnFxxSAWTve6vhMdoDQBVM4Ih1oi1Hr0Rb+JjxodOjSN1Xqm6S0avxavr03VsTRCP
+         cweg==
+X-Gm-Message-State: AOAM531DKGSDe5oIcA6Im61fd8ciAU9taQ0ZS/LjhBuDd1MoFH+JLzsw
+        2wk+oa/ECeQqzvFZTOY0klST7ygcy+tdFmaycECOmHae4bmi69mw0D+uuVwVJaKM/g3Ql7v1ee3
+        emTTDHiJdS72j+rgByzYfLDYNp2JHJA==
+X-Received: by 2002:a63:885:0:b0:39d:2197:2dcf with SMTP id 127-20020a630885000000b0039d21972dcfmr16534630pgi.300.1649836831225;
+        Wed, 13 Apr 2022 01:00:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxxYX/5hHC47/+wODyw6SuCX6q43fRwhhJkty2IwP5vjbtPmYxOh8zOxYYGS8lSmQrVc9+uNA==
+X-Received: by 2002:a63:885:0:b0:39d:2197:2dcf with SMTP id 127-20020a630885000000b0039d21972dcfmr16534566pgi.300.1649836830786;
+        Wed, 13 Apr 2022 01:00:30 -0700 (PDT)
+Received: from [10.72.13.223] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id q6-20020a056a00150600b004fb2d266f97sm43184355pfu.115.2022.04.13.01.00.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Apr 2022 01:00:30 -0700 (PDT)
+Message-ID: <122008a6-1e79-14d3-1478-59f96464afc9@redhat.com>
+Date:   Wed, 13 Apr 2022 16:00:18 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.7.0
+Subject: Re: [PATCH v9 31/32] virtio_net: support rx/tx queue resize
+Content-Language: en-US
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        virtualization@lists.linux-foundation.org
 Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         Anton Ivanov <anton.ivanov@cambridgegreys.com>,
         "Michael S. Tsirkin" <mst@redhat.com>,
@@ -51,153 +92,172 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         linux-um@lists.infradead.org, netdev@vger.kernel.org,
         platform-driver-x86@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
+        kvm@vger.kernel.org, bpf@vger.kernel.org
 References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-10-xuanzhuo@linux.alibaba.com>
- <f91435e4-6559-c0c9-2b37-92084c88dee2@redhat.com>
-In-Reply-To: <f91435e4-6559-c0c9-2b37-92084c88dee2@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20220406034346.74409-32-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+In-Reply-To: <20220406034346.74409-32-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 12 Apr 2022 11:42:25 +0800, Jason Wang <jasowang@redhat.com> wrote:
->
-> =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=93:
-> > Separate the logic of initializing vq, and subsequent patches will call
-> > it separately.
-> >
-> > The feature of this part is that it does not depend on the information
-> > passed by the upper layer and can be called repeatedly.
-> >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 68 ++++++++++++++++++++----------------
-> >   1 file changed, 38 insertions(+), 30 deletions(-)
-> >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 083f2992ba0d..874f878087a3 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -916,6 +916,43 @@ static void *virtqueue_detach_unused_buf_split(str=
-uct virtqueue *_vq)
-> >   	return NULL;
-> >   }
-> >
-> > +static void vring_virtqueue_init_split(struct vring_virtqueue *vq,
-> > +				       struct virtio_device *vdev,
-> > +				       bool own_ring)
-> > +{
-> > +	vq->packed_ring =3D false;
-> > +	vq->vq.num_free =3D vq->split.vring.num;
-> > +	vq->we_own_ring =3D own_ring;
-> > +	vq->broken =3D false;
-> > +	vq->last_used_idx =3D 0;
-> > +	vq->event_triggered =3D false;
-> > +	vq->num_added =3D 0;
-> > +	vq->use_dma_api =3D vring_use_dma_api(vdev);
-> > +#ifdef DEBUG
-> > +	vq->in_use =3D false;
-> > +	vq->last_add_time_valid =3D false;
-> > +#endif
-> > +
-> > +	vq->event =3D virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-> > +
-> > +	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-> > +		vq->weak_barriers =3D false;
-> > +
-> > +	vq->split.avail_flags_shadow =3D 0;
-> > +	vq->split.avail_idx_shadow =3D 0;
-> > +
-> > +	/* No callback?  Tell other side not to bother us. */
-> > +	if (!vq->vq.callback) {
-> > +		vq->split.avail_flags_shadow |=3D VRING_AVAIL_F_NO_INTERRUPT;
-> > +		if (!vq->event)
-> > +			vq->split.vring.avail->flags =3D cpu_to_virtio16(vdev,
-> > +					vq->split.avail_flags_shadow);
-> > +	}
-> > +
-> > +	/* Put everything in free lists. */
-> > +	vq->free_head =3D 0;
->
->
-> It's not clear what kind of initialization that we want to do here. E.g
-> it mixes split specific setups with some general setups which is kind of
-> duplication of vring_virtqueue_init_packed().
->
-> I wonder if it's better to only do split specific setups here and have a
-> common helper to do the setup that is irrelevant to ring layout.
 
-Yes, you are right, I didn't notice this situation before.
+在 2022/4/6 上午11:43, Xuan Zhuo 写道:
+> This patch implements the resize function of the rx, tx queues.
+> Based on this function, it is possible to modify the ring num of the
+> queue.
+>
+> There may be an exception during the resize process, the resize may
+> fail, or the vq can no longer be used. Either way, we must execute
+> napi_enable(). Because napi_disable is similar to a lock, napi_enable
+> must be called after calling napi_disable.
+>
+> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> ---
+>   drivers/net/virtio_net.c | 81 ++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 81 insertions(+)
+>
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index b8bf00525177..ba6859f305f7 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -251,6 +251,9 @@ struct padded_vnet_hdr {
+>   	char padding[4];
+>   };
+>   
+> +static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void *buf);
+> +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *buf);
+> +
+>   static bool is_xdp_frame(void *ptr)
+>   {
+>   	return (unsigned long)ptr & VIRTIO_XDP_FLAG;
+> @@ -1369,6 +1372,15 @@ static void virtnet_napi_enable(struct virtqueue *vq, struct napi_struct *napi)
+>   {
+>   	napi_enable(napi);
+>   
+> +	/* Check if vq is in reset state. The normal reset/resize process will
+> +	 * be protected by napi. However, the protection of napi is only enabled
+> +	 * during the operation, and the protection of napi will end after the
+> +	 * operation is completed. If re-enable fails during the process, vq
+> +	 * will remain unavailable with reset state.
+> +	 */
+> +	if (vq->reset)
+> +		return;
 
-Thanks.
 
->
-> Thanks
->
->
-> > +}
-> > +
-> >   static void vring_virtqueue_attach_split(struct vring_virtqueue *vq,
-> >   					 struct vring vring,
-> >   					 struct vring_desc_state_split *desc_state,
-> > @@ -2249,42 +2286,15 @@ struct virtqueue *__vring_new_virtqueue(unsigne=
-d int index,
-> >   	if (!vq)
-> >   		return NULL;
-> >
-> > -	vq->packed_ring =3D false;
-> >   	vq->vq.callback =3D callback;
-> >   	vq->vq.vdev =3D vdev;
-> >   	vq->vq.name =3D name;
-> > -	vq->vq.num_free =3D vring.num;
-> >   	vq->vq.index =3D index;
-> > -	vq->we_own_ring =3D false;
-> >   	vq->notify =3D notify;
-> >   	vq->weak_barriers =3D weak_barriers;
-> > -	vq->broken =3D false;
-> > -	vq->last_used_idx =3D 0;
-> > -	vq->event_triggered =3D false;
-> > -	vq->num_added =3D 0;
-> > -	vq->use_dma_api =3D vring_use_dma_api(vdev);
-> > -#ifdef DEBUG
-> > -	vq->in_use =3D false;
-> > -	vq->last_add_time_valid =3D false;
-> > -#endif
-> >
-> >   	vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DES=
-C) &&
-> >   		!context;
-> > -	vq->event =3D virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-> > -
-> > -	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-> > -		vq->weak_barriers =3D false;
-> > -
-> > -	vq->split.avail_flags_shadow =3D 0;
-> > -	vq->split.avail_idx_shadow =3D 0;
-> > -
-> > -	/* No callback?  Tell other side not to bother us. */
-> > -	if (!callback) {
-> > -		vq->split.avail_flags_shadow |=3D VRING_AVAIL_F_NO_INTERRUPT;
-> > -		if (!vq->event)
-> > -			vq->split.vring.avail->flags =3D cpu_to_virtio16(vdev,
-> > -					vq->split.avail_flags_shadow);
-> > -	}
-> >
-> >   	err =3D vring_alloc_state_extra_split(vring.num, &state, &extra);
-> >   	if (err) {
-> > @@ -2293,9 +2303,7 @@ struct virtqueue *__vring_new_virtqueue(unsigned =
-int index,
-> >   	}
-> >
-> >   	vring_virtqueue_attach_split(vq, vring, state, extra);
-> > -
-> > -	/* Put everything in free lists. */
-> > -	vq->free_head =3D 0;
-> > +	vring_virtqueue_init_split(vq, vdev, false);
-> >
-> >   	spin_lock(&vdev->vqs_list_lock);
-> >   	list_add_tail(&vq->vq.list, &vdev->vqs);
->
+I don't get when could we hit this condition.
+
+
+> +
+>   	/* If all buffers were filled by other side before we napi_enabled, we
+>   	 * won't get another interrupt, so process any outstanding packets now.
+>   	 * Call local_bh_enable after to trigger softIRQ processing.
+> @@ -1413,6 +1425,15 @@ static void refill_work(struct work_struct *work)
+>   		struct receive_queue *rq = &vi->rq[i];
+>   
+>   		napi_disable(&rq->napi);
+> +
+> +		/* Check if vq is in reset state. See more in
+> +		 * virtnet_napi_enable()
+> +		 */
+> +		if (rq->vq->reset) {
+> +			virtnet_napi_enable(rq->vq, &rq->napi);
+> +			continue;
+> +		}
+
+
+Can we do something similar in virtnet_close() by canceling the work?
+
+
+> +
+>   		still_empty = !try_fill_recv(vi, rq, GFP_KERNEL);
+>   		virtnet_napi_enable(rq->vq, &rq->napi);
+>   
+> @@ -1523,6 +1544,10 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
+>   	if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
+>   		return;
+>   
+> +	/* Check if vq is in reset state. See more in virtnet_napi_enable() */
+> +	if (sq->vq->reset)
+> +		return;
+
+
+We've disabled TX napi, any chance we can still hit this?
+
+
+> +
+>   	if (__netif_tx_trylock(txq)) {
+>   		do {
+>   			virtqueue_disable_cb(sq->vq);
+> @@ -1769,6 +1794,62 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
+>   	return NETDEV_TX_OK;
+>   }
+>   
+> +static int virtnet_rx_resize(struct virtnet_info *vi,
+> +			     struct receive_queue *rq, u32 ring_num)
+> +{
+> +	int err;
+> +
+> +	napi_disable(&rq->napi);
+> +
+> +	err = virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unused_buf);
+> +	if (err)
+> +		goto err;
+> +
+> +	if (!try_fill_recv(vi, rq, GFP_KERNEL))
+> +		schedule_delayed_work(&vi->refill, 0);
+> +
+> +	virtnet_napi_enable(rq->vq, &rq->napi);
+> +	return 0;
+> +
+> +err:
+> +	netdev_err(vi->dev,
+> +		   "reset rx reset vq fail: rx queue index: %td err: %d\n",
+> +		   rq - vi->rq, err);
+> +	virtnet_napi_enable(rq->vq, &rq->napi);
+> +	return err;
+> +}
+> +
+> +static int virtnet_tx_resize(struct virtnet_info *vi,
+> +			     struct send_queue *sq, u32 ring_num)
+> +{
+> +	struct netdev_queue *txq;
+> +	int err, qindex;
+> +
+> +	qindex = sq - vi->sq;
+> +
+> +	virtnet_napi_tx_disable(&sq->napi);
+> +
+> +	txq = netdev_get_tx_queue(vi->dev, qindex);
+> +	__netif_tx_lock_bh(txq);
+> +	netif_stop_subqueue(vi->dev, qindex);
+> +	__netif_tx_unlock_bh(txq);
+> +
+> +	err = virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf);
+> +	if (err)
+> +		goto err;
+> +
+> +	netif_start_subqueue(vi->dev, qindex);
+> +	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
+> +	return 0;
+> +
+> +err:
+
+
+I guess we can still start the queue in this case? (Since we don't 
+change the queue if resize fails).
+
+
+> +	netdev_err(vi->dev,
+> +		   "reset tx reset vq fail: tx queue index: %td err: %d\n",
+> +		   sq - vi->sq, err);
+> +	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
+> +	return err;
+> +}
+> +
+>   /*
+>    * Send command via the control virtqueue and check status.  Commands
+>    * supported by the hypervisor, as indicated by feature bits, should
+
