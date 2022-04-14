@@ -2,86 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C486C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Apr 2022 12:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE1EC43217
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Apr 2022 16:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243135AbiDNMYR (ORCPT
+        id S236018AbiDNQmD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 08:24:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57402 "EHLO
+        Thu, 14 Apr 2022 12:42:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243128AbiDNMYQ (ORCPT
+        with ESMTP id S239673AbiDNQlW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Apr 2022 08:24:16 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91F560050;
-        Thu, 14 Apr 2022 05:21:50 -0700 (PDT)
-X-UUID: f4ed43b9c9f44f76b013b551e5546792-20220414
-X-UUID: f4ed43b9c9f44f76b013b551e5546792-20220414
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <allen-kh.cheng@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1283171965; Thu, 14 Apr 2022 20:21:45 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 14 Apr 2022 20:21:43 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 14 Apr 2022 20:21:43 +0800
-From:   Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Hsin-Yi Wang <hsinyi@chromium.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-Subject: [PATCH v2 1/2] dt-bindings: remoteproc: mediatek: add firmware-name property
-Date:   Thu, 14 Apr 2022 20:21:39 +0800
-Message-ID: <20220414122140.6114-2-allen-kh.cheng@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220414122140.6114-1-allen-kh.cheng@mediatek.com>
-References: <20220414122140.6114-1-allen-kh.cheng@mediatek.com>
+        Thu, 14 Apr 2022 12:41:22 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43C4FAC041
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Apr 2022 09:10:09 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id s137so5150257pgs.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Apr 2022 09:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=++TmBWO1YM92e9/sGWADvMXzGuWQuA2AD0SMUsAqv+Q=;
+        b=JoUoj8n/GW9gkKQC1j6p3chTuhXkvPltZdV1WwSw3ET/WW2qintUx7JYtkS0C+Dn/n
+         ns41TCv2Olei9/sxo0eUZ6hHo9JfC+Trb6vcLuwZh6A7JSmFouitlK62Cb5YStHALyFh
+         1VNfCeG6hcoCkRApyt101mCwSPXCqKHG3qS8sqybkuQ12StcZEU88yEQ7V1/f6dG8muy
+         juNzghTVH02wdgsShkpXvpNZkhU1aGjLJglQ5xXIixshsCHv3ihuCBu1AHfggTZGnHua
+         keDc8HOIKevZPwnSlFBnU4Jae0ocHwcMypk++/5KUNdSzXOJyS01Mrmj/w92B5fDvTSH
+         ZWcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=++TmBWO1YM92e9/sGWADvMXzGuWQuA2AD0SMUsAqv+Q=;
+        b=tP+pZytBnilT3rBziP8ISiSauTwTiwofmN0BBKTWYakDCGunW9Ij6sUEjw35eubiCt
+         ap0FW+qJddgchiCGBtUECPm0Yehwnxkp1x1SP9QqsfCIPaVKrifzjUchrVZ9bg5MDDOx
+         Ku0icE7uo0hXNBDHJqceqKKMGBMN//bFh6SRLmqkxECUiQbv+69Zyh1oUiRI8uN4kIj/
+         Wl+yjfKw7bHj7PlG+GV3GQfyK0ncONp40JkCmJTDucwUD5LZitu4oHQXEle2te6kJBt8
+         ga3+bq4TxcfUbSRDMgYGBHrb0EjVRBK4eMLwu9uMS25uaLg+obBlAhFrHdQpGBWKEGTh
+         Ssiw==
+X-Gm-Message-State: AOAM530CJQWIYD3H0ezHsb1BTP6W7raBkkUc0rOVGhEvfhYlLmy6sVTj
+        WBLfWBSagrBn+rYHZS9a1gD3Xg==
+X-Google-Smtp-Source: ABdhPJwvTXSLjFWKJT2b2kUclniIMf+jXP1VUhMPADLUMQgcA+BzmtbVUrDr4ZpIjDVNMHi3GupQLQ==
+X-Received: by 2002:a63:310f:0:b0:39d:90e3:6a44 with SMTP id x15-20020a63310f000000b0039d90e36a44mr2847254pgx.281.1649952608633;
+        Thu, 14 Apr 2022 09:10:08 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id m21-20020a17090a7f9500b001c97c6bcaf4sm6336845pjl.39.2022.04.14.09.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Apr 2022 09:10:06 -0700 (PDT)
+Date:   Thu, 14 Apr 2022 10:10:03 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     bjorn.andersson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V3] remoteproc: imx_rproc: Ignore create mem entry for
+ resource table
+Message-ID: <20220414161003.GA698343@p14s>
+References: <20220331084007.2323377-1-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220331084007.2323377-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The SCP needs firmware which differs between other platforms and SoCs.
-Add a new property "firmware-name" to allow the DT to specify the
-platform/board specific path to this firmware file.
+On Thu, Mar 31, 2022 at 04:40:07PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Resource table is used by Linux to get information pubished by
 
-Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
----
- Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+s/pubished/published
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index 5b693a2d049c..a20effa836f1 100644
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -42,6 +42,13 @@ properties:
-   clock-names:
-     const: main
- 
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      If present, name (or relative path) of the file within the
-+      firmware search path containing the firmware image used when
-+      initializing SCP.
-+
- required:
-   - compatible
-   - reg
--- 
-2.18.0
+> remote processor. It should be not be used for memory allocation, so
+> not create rproc mem entry.
+> 
+> Fixes: b29b4249f8f0 ("remoteproc: imx_rproc: add i.MX specific parse fw hook")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> 
+> V3:
+>  Update commit log
+>  Update Fixes tag
+> 
+> V2:
+>  Add Fixes tag
+>  Separate the patch from https://patchwork.kernel.org/project/linux-remoteproc/patch/20220111033333.403448-7-peng.fan@oss.nxp.com/
+>  Address typo
+> 
+>  drivers/remoteproc/imx_rproc.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 7a096f1891e6..f2bfc9077c19 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -423,6 +423,9 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>  		if (!strcmp(it.node->name, "vdev0buffer"))
+>  			continue;
+>  
+> +		if (!strncmp(it.node->name, "rsc-table", strlen("rsc-table")))
+> +			continue;
+> +
 
+Any reason the handling of vdev0buffer is using strcmp() and the resource table
+strncmp()?
+
+Thanks,
+Mathieu
+
+>  		rmem = of_reserved_mem_lookup(it.node);
+>  		if (!rmem) {
+>  			dev_err(priv->dev, "unable to acquire memory-region\n");
+> -- 
+> 2.25.1
+> 
