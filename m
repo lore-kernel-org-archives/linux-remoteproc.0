@@ -2,29 +2,67 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096CAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Apr 2022 06:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A502C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Apr 2022 09:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237470AbiDNG1Y (ORCPT
+        id S241596AbiDNJTB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 02:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50566 "EHLO
+        Thu, 14 Apr 2022 05:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231788AbiDNG1Y (ORCPT
+        with ESMTP id S241358AbiDNJTB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Apr 2022 02:27:24 -0400
-Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C97631FA6F;
-        Wed, 13 Apr 2022 23:24:56 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0VA0zc-G_1649917489;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VA0zc-G_1649917489)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 14 Apr 2022 14:24:51 +0800
-Message-ID: <1649917349.6242197-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v9 22/32] virtio_pci: queue_reset: extract the logic of active vq for modern pci
-Date:   Thu, 14 Apr 2022 14:22:29 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
+        Thu, 14 Apr 2022 05:19:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 738A350B35
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Apr 2022 02:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649927794;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oDyHVey8Or3yypg5xnBGmBMb7pZ6GTNQ18Cis2FA/oo=;
+        b=a5Jg2FVT0Js0d7xfEwWA1vvGePp6nNhFIZanOkRgvNgTVJUV/A+Du4J5odSyS1lrL3lHM7
+        2QdKkJR9LXdf7EhIFEEC55ZDYA2kn5pSS/5dTcIrdsugl9Mx7Apv1G3zg59oVbfubwzFDS
+        Nea3mnwWIi92eBxIHDLaHLW2htI+QmI=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-576-XRLswpgdMT2zk4VlnL6_Dg-1; Thu, 14 Apr 2022 05:16:33 -0400
+X-MC-Unique: XRLswpgdMT2zk4VlnL6_Dg-1
+Received: by mail-lj1-f198.google.com with SMTP id o17-20020a2e0c51000000b0024b484876a8so939405ljd.21
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Apr 2022 02:16:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oDyHVey8Or3yypg5xnBGmBMb7pZ6GTNQ18Cis2FA/oo=;
+        b=2c7hRmlCJoyc0DWAWyoyvm02hb85t1smqtAqr5dDiGn8dreGoMHIRd1hyRx7ij1QSI
+         xd0plP5/Uy6Q3v1s3Cpocxm8KlKukl76kU1QY1uIdpwAnc/8y8dm9PwJFx8L/ADT1Eqb
+         gHLUFsXDBcg1wBuXz5Bb7tILrnyqpJd6nBRDR1pA2dv4J8UlB7Gy3oOl0sJ19aIdU7aR
+         RNOG3wF3XxsXkz/CFgJ6MXlhfmofeS4D9zodKDm2qIcrRQhieItqoum2Y1fsdeJKa6tg
+         +YZhhBRMBCgomS/clTdo7JcblXTp1BbWYo+8FjfbCJANbE5pe7AHVkmqv84z8qZFRdRt
+         NLUg==
+X-Gm-Message-State: AOAM530QWwdGblAaasW0Mu2prYhLLZbPRWo5PNme5RqgjpI3+/cr4sb8
+        TzztyhSzX0WDz8U9Nx3e2YunvBbaAB5PMBMJYIf5hon3hfly3zo+p7ou3yZ/ETYdmrGqJ0kuPii
+        tWyXkVfHpEjYnpApZrgS4g8WUjN2nvZmcXLDrVH3m/jLV0g==
+X-Received: by 2002:a05:6512:3093:b0:46b:814c:3a69 with SMTP id z19-20020a056512309300b0046b814c3a69mr1318051lfd.376.1649927791410;
+        Thu, 14 Apr 2022 02:16:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy0kFBUTO7Dlm65tLj1wmU6knA+DzshVe6hYxPEBB/AR6yhSIFpfw3Y9RgnR4ACapxp3cguHQaa7kh1RItoYPY=
+X-Received: by 2002:a05:6512:3093:b0:46b:814c:3a69 with SMTP id
+ z19-20020a056512309300b0046b814c3a69mr1318022lfd.376.1649927791051; Thu, 14
+ Apr 2022 02:16:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
+ <20220406034346.74409-2-xuanzhuo@linux.alibaba.com> <71fbd7fc-20db-024b-ec66-b875216be4bd@redhat.com>
+ <1649816652.9004085-1-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1649816652.9004085-1-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Thu, 14 Apr 2022 17:16:19 +0800
+Message-ID: <CACGkMEvCrgRf=6TXQ_pQU0hm-ZDLEBu5VZcL71+c+jVWq=KLDg@mail.gmail.com>
+Subject: Re: [PATCH v9 01/32] virtio: add helper virtqueue_get_vring_max_size()
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         Anton Ivanov <anton.ivanov@cambridgegreys.com>,
         "Michael S. Tsirkin" <mst@redhat.com>,
@@ -48,124 +86,334 @@ Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
         John Fastabend <john.fastabend@gmail.com>,
         Johannes Berg <johannes.berg@intel.com>,
         Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
         platform-driver-x86@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        virtualization@lists.linux-foundation.org
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-23-xuanzhuo@linux.alibaba.com>
- <d228a41f-a3a1-029d-f259-d4fbab822e78@redhat.com>
-In-Reply-To: <d228a41f-a3a1-029d-f259-d4fbab822e78@redhat.com>
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        virtualization <virtualization@lists.linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 12 Apr 2022 14:58:19 +0800, Jason Wang <jasowang@redhat.com> wrote:
+On Wed, Apr 13, 2022 at 10:30 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wro=
+te:
 >
-> =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=93:
-> > Introduce vp_active_vq() to configure vring to backend after vq attach
-> > vring. And configure vq vector if necessary.
+> On Tue, 12 Apr 2022 10:41:03 +0800, Jason Wang <jasowang@redhat.com> wrot=
+e:
 > >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > ---
-> >   drivers/virtio/virtio_pci_modern.c | 46 ++++++++++++++++++------------
-> >   1 file changed, 28 insertions(+), 18 deletions(-)
+> > =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=
+=93:
+> > > Record the maximum queue num supported by the device.
+> > >
+> > > virtio-net can display the maximum (supported by hardware) ring size =
+in
+> > > ethtool -g eth0.
+> > >
+> > > When the subsequent patch implements vring reset, it can judge whethe=
+r
+> > > the ring size passed by the driver is legal based on this.
+> > >
+> > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > ---
+> > >   arch/um/drivers/virtio_uml.c             |  1 +
+> > >   drivers/platform/mellanox/mlxbf-tmfifo.c |  2 ++
+> > >   drivers/remoteproc/remoteproc_virtio.c   |  2 ++
+> > >   drivers/s390/virtio/virtio_ccw.c         |  3 +++
+> > >   drivers/virtio/virtio_mmio.c             |  2 ++
+> > >   drivers/virtio/virtio_pci_legacy.c       |  2 ++
+> > >   drivers/virtio/virtio_pci_modern.c       |  2 ++
+> > >   drivers/virtio/virtio_ring.c             | 14 ++++++++++++++
+> > >   drivers/virtio/virtio_vdpa.c             |  2 ++
+> > >   include/linux/virtio.h                   |  2 ++
+> > >   10 files changed, 32 insertions(+)
+> > >
+> > > diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_um=
+l.c
+> > > index ba562d68dc04..904993d15a85 100644
+> > > --- a/arch/um/drivers/virtio_uml.c
+> > > +++ b/arch/um/drivers/virtio_uml.c
+> > > @@ -945,6 +945,7 @@ static struct virtqueue *vu_setup_vq(struct virti=
+o_device *vdev,
+> > >             goto error_create;
+> > >     }
+> > >     vq->priv =3D info;
+> > > +   vq->num_max =3D num;
+> > >     num =3D virtqueue_get_vring_size(vq);
+> > >
+> > >     if (vu_dev->protocol_features &
+> > > diff --git a/drivers/platform/mellanox/mlxbf-tmfifo.c b/drivers/platf=
+orm/mellanox/mlxbf-tmfifo.c
+> > > index 38800e86ed8a..1ae3c56b66b0 100644
+> > > --- a/drivers/platform/mellanox/mlxbf-tmfifo.c
+> > > +++ b/drivers/platform/mellanox/mlxbf-tmfifo.c
+> > > @@ -959,6 +959,8 @@ static int mlxbf_tmfifo_virtio_find_vqs(struct vi=
+rtio_device *vdev,
+> > >                     goto error;
+> > >             }
+> > >
+> > > +           vq->num_max =3D vring->num;
+> > > +
+> > >             vqs[i] =3D vq;
+> > >             vring->vq =3D vq;
+> > >             vq->priv =3D vring;
+> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remotep=
+roc/remoteproc_virtio.c
+> > > index 70ab496d0431..7611755d0ae2 100644
+> > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > @@ -125,6 +125,8 @@ static struct virtqueue *rp_find_vq(struct virtio=
+_device *vdev,
+> > >             return ERR_PTR(-ENOMEM);
+> > >     }
+> > >
+> > > +   vq->num_max =3D len;
 > >
-> > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio=
-_pci_modern.c
-> > index 86d301f272b8..49a4493732cf 100644
-> > --- a/drivers/virtio/virtio_pci_modern.c
-> > +++ b/drivers/virtio/virtio_pci_modern.c
-> > @@ -176,6 +176,29 @@ static void vp_reset(struct virtio_device *vdev)
-> >   	vp_disable_cbs(vdev);
-> >   }
 > >
-> > +static int vp_active_vq(struct virtqueue *vq, u16 msix_vec)
-> > +{
-> > +	struct virtio_pci_device *vp_dev =3D to_vp_device(vq->vdev);
-> > +	struct virtio_pci_modern_device *mdev =3D &vp_dev->mdev;
-> > +	unsigned long index;
-> > +
-> > +	index =3D vq->index;
-> > +
-> > +	/* activate the queue */
-> > +	vp_modern_set_queue_size(mdev, index, virtqueue_get_vring_size(vq));
-> > +	vp_modern_queue_address(mdev, index, virtqueue_get_desc_addr(vq),
-> > +				virtqueue_get_avail_addr(vq),
-> > +				virtqueue_get_used_addr(vq));
-> > +
-> > +	if (msix_vec !=3D VIRTIO_MSI_NO_VECTOR) {
-> > +		msix_vec =3D vp_modern_queue_vector(mdev, index, msix_vec);
-> > +		if (msix_vec =3D=3D VIRTIO_MSI_NO_VECTOR)
-> > +			return -EBUSY;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static u16 vp_config_vector(struct virtio_pci_device *vp_dev, u16 vec=
-tor)
-> >   {
-> >   	return vp_modern_config_vector(&vp_dev->mdev, vector);
-> > @@ -220,32 +243,19 @@ static struct virtqueue *setup_vq(struct virtio_p=
+> > I wonder if this is correct.
+> >
+> > It looks to me len is counted in bytes:
+> >
+> > /**
+> >   * struct rproc_vring - remoteproc vring state
+> >   * @va: virtual address
+> >   * @len: length, in bytes
+> >   * @da: device address
+> >   * @align: vring alignment
+> >   * @notifyid: rproc-specific unique vring index
+> >   * @rvdev: remote vdev
+> >   * @vq: the virtqueue of this vring
+> >   */
+> > struct rproc_vring {
+> >          void *va;
+> >          int len;
+> >          u32 da;
+> >          u32 align;
+> >          int notifyid;
+> >          struct rproc_vdev *rvdev;
+> >          struct virtqueue *vq;
+> > };
+> >
+>
+> I think this comment is incorrect because here len is passed as num to
+> vring_new_virtqueue().
+>
+> There is also this usage:
+>
+>         /* actual size of vring (in bytes) */
+>         size =3D PAGE_ALIGN(vring_size(rvring->len, rvring->align));
+>
+>
+> And this value comes from here:
+>
+>         static int
+>         rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *r=
+sc, int i)
+>         {
+>                 struct rproc *rproc =3D rvdev->rproc;
+>                 struct device *dev =3D &rproc->dev;
+>                 struct fw_rsc_vdev_vring *vring =3D &rsc->vring[i];
+>                 struct rproc_vring *rvring =3D &rvdev->vring[i];
+>
+>                 dev_dbg(dev, "vdev rsc: vring%d: da 0x%x, qsz %d, align %=
+d\n",
+>                         i, vring->da, vring->num, vring->align);
+>
+>                 /* verify queue size and vring alignment are sane */
+>                 if (!vring->num || !vring->align) {
+>                         dev_err(dev, "invalid qsz (%d) or alignment (%d)\=
+n",
+>                                 vring->num, vring->align);
+>                         return -EINVAL;
+>                 }
+>
+>        >        rvring->len =3D vring->num;
+>                 rvring->align =3D vring->align;
+>                 rvring->rvdev =3D rvdev;
+>
+>                 return 0;
+>         }
+>
+> /**
+>  * struct fw_rsc_vdev_vring - vring descriptor entry
+>  * @da: device address
+>  * @align: the alignment between the consumer and producer parts of the v=
+ring
+>  * @num: num of buffers supported by this vring (must be power of two)
+>  * @notifyid: a unique rproc-wide notify index for this vring. This notif=
+y
+>  * index is used when kicking a remote processor, to let it know that thi=
+s
+>  * vring is triggered.
+>  * @pa: physical address
+>  *
+>  * This descriptor is not a resource entry by itself; it is part of the
+>  * vdev resource type (see below).
+>  *
+>  * Note that @da should either contain the device address where
+>  * the remote processor is expecting the vring, or indicate that
+>  * dynamically allocation of the vring's device address is supported.
+>  */
+> struct fw_rsc_vdev_vring {
+>         u32 da;
+>         u32 align;
+>         u32 num;
+>         u32 notifyid;
+>         u32 pa;
+> } __packed;
+>
+> So I think the 'len' here may have changed its meaning in a version updat=
+e.
+
+I think you're right, let's have a patch to fix the comment (probably
+with the name since len is confusing here).
+
+Thanks
+
+>
+> Thanks.
+>
+> >
+> > Other looks good.
+> >
+> > Thanks
+> >
+> >
+> > > +
+> > >     rvring->vq =3D vq;
+> > >     vq->priv =3D rvring;
+> > >
+> > > diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/v=
+irtio_ccw.c
+> > > index d35e7a3f7067..468da60b56c5 100644
+> > > --- a/drivers/s390/virtio/virtio_ccw.c
+> > > +++ b/drivers/s390/virtio/virtio_ccw.c
+> > > @@ -529,6 +529,9 @@ static struct virtqueue *virtio_ccw_setup_vq(stru=
+ct virtio_device *vdev,
+> > >             err =3D -ENOMEM;
+> > >             goto out_err;
+> > >     }
+> > > +
+> > > +   vq->num_max =3D info->num;
+> > > +
+> > >     /* it may have been reduced */
+> > >     info->num =3D virtqueue_get_vring_size(vq);
+> > >
+> > > diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmi=
+o.c
+> > > index 56128b9c46eb..a41abc8051b9 100644
+> > > --- a/drivers/virtio/virtio_mmio.c
+> > > +++ b/drivers/virtio/virtio_mmio.c
+> > > @@ -390,6 +390,8 @@ static struct virtqueue *vm_setup_vq(struct virti=
+o_device *vdev, unsigned index,
+> > >             goto error_new_virtqueue;
+> > >     }
+> > >
+> > > +   vq->num_max =3D num;
+> > > +
+> > >     /* Activate the queue */
+> > >     writel(virtqueue_get_vring_size(vq), vm_dev->base + VIRTIO_MMIO_Q=
+UEUE_NUM);
+> > >     if (vm_dev->version =3D=3D 1) {
+> > > diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virt=
+io_pci_legacy.c
+> > > index 34141b9abe27..b68934fe6b5d 100644
+> > > --- a/drivers/virtio/virtio_pci_legacy.c
+> > > +++ b/drivers/virtio/virtio_pci_legacy.c
+> > > @@ -135,6 +135,8 @@ static struct virtqueue *setup_vq(struct virtio_p=
 ci_device *vp_dev,
+> > >     if (!vq)
+> > >             return ERR_PTR(-ENOMEM);
+> > >
+> > > +   vq->num_max =3D num;
+> > > +
+> > >     q_pfn =3D virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SH=
+IFT;
+> > >     if (q_pfn >> 32) {
+> > >             dev_err(&vp_dev->pci_dev->dev,
+> > > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virt=
+io_pci_modern.c
+> > > index 5455bc041fb6..86d301f272b8 100644
+> > > --- a/drivers/virtio/virtio_pci_modern.c
+> > > +++ b/drivers/virtio/virtio_pci_modern.c
+> > > @@ -218,6 +218,8 @@ static struct virtqueue *setup_vq(struct virtio_p=
+ci_device *vp_dev,
+> > >     if (!vq)
+> > >             return ERR_PTR(-ENOMEM);
+> > >
+> > > +   vq->num_max =3D num;
+> > > +
+> > >     /* activate the queue */
+> > >     vp_modern_set_queue_size(mdev, index, virtqueue_get_vring_size(vq=
+));
+> > >     vp_modern_queue_address(mdev, index, virtqueue_get_desc_addr(vq),
+> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_rin=
+g.c
+> > > index 962f1477b1fa..b87130c8f312 100644
+> > > --- a/drivers/virtio/virtio_ring.c
+> > > +++ b/drivers/virtio/virtio_ring.c
+> > > @@ -2371,6 +2371,20 @@ void vring_transport_features(struct virtio_de=
+vice *vdev)
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(vring_transport_features);
+> > >
+> > > +/**
+> > > + * virtqueue_get_vring_max_size - return the max size of the virtque=
+ue's vring
+> > > + * @_vq: the struct virtqueue containing the vring of interest.
+> > > + *
+> > > + * Returns the max size of the vring.
+> > > + *
+> > > + * Unlike other operations, this need not be serialized.
+> > > + */
+> > > +unsigned int virtqueue_get_vring_max_size(struct virtqueue *_vq)
+> > > +{
+> > > +   return _vq->num_max;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(virtqueue_get_vring_max_size);
+> > > +
+> > >   /**
+> > >    * virtqueue_get_vring_size - return the size of the virtqueue's vr=
+ing
+> > >    * @_vq: the struct virtqueue containing the vring of interest.
+> > > diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdp=
+a.c
+> > > index 7767a7f0119b..39e4c08eb0f2 100644
+> > > --- a/drivers/virtio/virtio_vdpa.c
+> > > +++ b/drivers/virtio/virtio_vdpa.c
+> > > @@ -183,6 +183,8 @@ virtio_vdpa_setup_vq(struct virtio_device *vdev, =
+unsigned int index,
+> > >             goto error_new_virtqueue;
+> > >     }
+> > >
+> > > +   vq->num_max =3D max_num;
+> > > +
+> > >     /* Setup virtqueue callback */
+> > >     cb.callback =3D virtio_vdpa_virtqueue_cb;
+> > >     cb.private =3D info;
+> > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > > index 72292a62cd90..d59adc4be068 100644
+> > > --- a/include/linux/virtio.h
+> > > +++ b/include/linux/virtio.h
+> > > @@ -31,6 +31,7 @@ struct virtqueue {
+> > >     struct virtio_device *vdev;
+> > >     unsigned int index;
+> > >     unsigned int num_free;
+> > > +   unsigned int num_max;
+> > >     void *priv;
+> > >   };
+> > >
+> > > @@ -80,6 +81,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *=
+vq);
+> > >
+> > >   void *virtqueue_detach_unused_buf(struct virtqueue *vq);
+> > >
+> > > +unsigned int virtqueue_get_vring_max_size(struct virtqueue *vq);
+> > >   unsigned int virtqueue_get_vring_size(struct virtqueue *vq);
+> > >
+> > >   bool virtqueue_is_broken(struct virtqueue *vq);
 > >
-> >   	vq->num_max =3D num;
-> >
-> > -	/* activate the queue */
-> > -	vp_modern_set_queue_size(mdev, index, virtqueue_get_vring_size(vq));
-> > -	vp_modern_queue_address(mdev, index, virtqueue_get_desc_addr(vq),
-> > -				virtqueue_get_avail_addr(vq),
-> > -				virtqueue_get_used_addr(vq));
-> > +	err =3D vp_active_vq(vq, msix_vec);
-> > +	if (err)
-> > +		goto err;
-> >
-> >   	vq->priv =3D (void __force *)vp_modern_map_vq_notify(mdev, index, NU=
-LL);
-> >   	if (!vq->priv) {
-> >   		err =3D -ENOMEM;
-> > -		goto err_map_notify;
-> > -	}
-> > -
-> > -	if (msix_vec !=3D VIRTIO_MSI_NO_VECTOR) {
-> > -		msix_vec =3D vp_modern_queue_vector(mdev, index, msix_vec);
-> > -		if (msix_vec =3D=3D VIRTIO_MSI_NO_VECTOR) {
-> > -			err =3D -EBUSY;
-> > -			goto err_assign_vector;
-> > -		}
-> > +		goto err;
-> >   	}
-> >
-> >   	return vq;
-> >
-> > -err_assign_vector:
-> > -	if (!mdev->notify_base)
-> > -		pci_iounmap(mdev->pci_dev, (void __iomem __force *)vq->priv);
 >
->
-> We need keep this or anything I missed?
 
-I think so, after modification, vp_modern_map_vq_notify is the last step be=
-fore
-returning vq. If it fails, then vq->priv is equal to NULL, so there is no n=
-eed
-to execute pci_iounmap.
-
-Did I miss something?
-
-Thanks.
-
->
-> Thanks
->
->
-> > -err_map_notify:
-> > +err:
-> >   	vring_del_virtqueue(vq);
-> >   	return ERR_PTR(err);
-> >   }
->
