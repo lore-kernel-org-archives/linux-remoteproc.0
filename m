@@ -2,117 +2,151 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F692C43217
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Apr 2022 18:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADEBC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Apr 2022 00:44:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344333AbiDNSE4 (ORCPT
+        id S233178AbiDOArN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Apr 2022 14:04:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57268 "EHLO
+        Thu, 14 Apr 2022 20:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbiDNSEz (ORCPT
+        with ESMTP id S1348208AbiDOArI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Apr 2022 14:04:55 -0400
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC26085974;
-        Thu, 14 Apr 2022 11:02:29 -0700 (PDT)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-dacc470e03so6032894fac.5;
-        Thu, 14 Apr 2022 11:02:29 -0700 (PDT)
+        Thu, 14 Apr 2022 20:47:08 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 710901583E
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Apr 2022 17:44:22 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-2ec1914e315so55485107b3.23
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Apr 2022 17:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=ZwQPxBd8EtPA2caIKpSSvGEb5tp2AlMs5mP2bGiGorY=;
+        b=Xh0tbPmp/XKj/ZjaKdtHHKO9340eZClseHomoI4Rj3NjZNAp8e3naM0Dva0HKuMY8N
+         iPrz+wAscbKcTJliCnwg8XPd0ShgYtMoSkSzJWdJB9LagwPopFcjH8BUp0GDrkDmudA/
+         PNoh6MX9hLlgdIWTHP8ppSyBv0w/fKPxd01F7Jw44Ss/fAcWlCjIugQ/3kjPFWcS2LQC
+         tygatotND2v+OGc2+ZdvzjhzOhEhHQvLcQxsom2H5geXUjbW2NnD3SLoa8CsDZrItXwr
+         fg+e6cTsajQGQX76fJW1GZ+BC2uWURrEgv6wsn+zmayU1+gt97zF+l/xcZpdqTHxd2W7
+         uVOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9kQY7KYrORAXRdj8BS7CtbvQFtLXKlCapss2LUGGejI=;
-        b=c8PYoXzbecyFSTn4hc9onZzN6TAVpvknh/77qbaTtRdVZV0/2AjHBKudu75x9iAf7Q
-         JkEm2f513e8Zq9oSfCMJu07c6YC4XHqRv67cGA0/EvyXfBNVwH5T/1riA1S04zOrgU0E
-         07zP/0KUO8wVS6bNhu1wLwIXAtwyvTBcxyXzz2UI9RUUDM5a/Nfel3X1QfARxfgZ9yWA
-         3XcYxmoH5Yye4P5jsKa/ENb5g6PEYBnex0cryVfvZSXkBGXR0vmhBcErbZl4vFY0QFu1
-         pfsMUnNe9TTElVj2X8v1dytjf4EcybN6CCCWgv00M0oIQ4QS3Zyzy7+Ih4ycLUzXPDs3
-         dZbg==
-X-Gm-Message-State: AOAM533rkZcWzuqcflzn/kGItqBSp3pON5n05xL1svkg4t2BFqmKfONs
-        GiYZbGj7EG82RHSN6vpxvA==
-X-Google-Smtp-Source: ABdhPJxg/IzXLr9/pK68rl/yhXiL0WZz7ZwJQGzyFx0L13S4P88U4n2DfT3AFMuvduEA0czJc4UQrw==
-X-Received: by 2002:a05:6870:c892:b0:de:5f75:d8 with SMTP id er18-20020a056870c89200b000de5f7500d8mr2133742oab.133.1649959349136;
-        Thu, 14 Apr 2022 11:02:29 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id e22-20020a056870239600b000e2f0c69849sm940449oap.11.2022.04.14.11.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Apr 2022 11:02:28 -0700 (PDT)
-Received: (nullmailer pid 2320842 invoked by uid 1000);
-        Thu, 14 Apr 2022 18:02:27 -0000
-Date:   Thu, 14 Apr 2022 13:02:27 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-        linux-media@vger.kernel.org,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        linux-hwmon@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Agathe Porte <agathe.porte@nokia.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-spi@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] dt-bindings: Fix array constraints on scalar properties
-Message-ID: <Ylhhs2hgbQg8Ugeb@robh.at.kernel.org>
-References: <20220413140121.3132837-1-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220413140121.3132837-1-robh@kernel.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=ZwQPxBd8EtPA2caIKpSSvGEb5tp2AlMs5mP2bGiGorY=;
+        b=0NeFGsMTvZa3fGDFs+4B9BY5ktJ0sBribFJmtXjm+01GvuovgForturXp8uU7RzrzT
+         L0uVa5COfXExzVDNtg6Bxdms+i4ZRXYnIoqO6cxZGbmMjx7hzoNCEX8JycXhVAGWxFNX
+         tHN6/JAFvRioOnIHis1IS0oQIHI98FqSA907qGDXFO3HJy+0wKsOgIXxNwPKMir5ONqD
+         bq5MIBdfZAC783TEaJlIuShnhjc5Kn8OpnioJ0Oopa2IJcIyWkyNWNPLil87vGU6GMfQ
+         plU3aMbazP1zDJGgxvfTkIsRwXA01CZTn32V5Kwbwws8yiUj6GIRATwibakMNf4bgHfX
+         Ay2g==
+X-Gm-Message-State: AOAM533TOVWX9ycmBEPgsr2OE5IPbGcs51OMfPZq4gB2HCQQNZOR/6C0
+        U4+0BHUxWVMi1gALSh4ZyGKKnOyVJUKte1Y=
+X-Google-Smtp-Source: ABdhPJwAoaNAXHbsHFTs0B57rlO4LQu5dHbO3LV5mhgRiZ+Jyle+N1fkTzOQJzK493osORtW4RZmkpeUiU+qcwY=
+X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:b28d:6e12:8dbb:a7a8])
+ (user=saravanak job=sendgmr) by 2002:a05:690c:89:b0:2d7:fb7d:db7 with SMTP id
+ be9-20020a05690c008900b002d7fb7d0db7mr4518123ywb.219.1649983461658; Thu, 14
+ Apr 2022 17:44:21 -0700 (PDT)
+Date:   Thu, 14 Apr 2022 17:44:17 -0700
+In-Reply-To: <e2bbed61-b818-c391-bf65-824ea2a2ee5a@quicinc.com>
+Message-Id: <20220415004417.1790161-1-saravanak@google.com>
+Mime-Version: 1.0
+References: <e2bbed61-b818-c391-bf65-824ea2a2ee5a@quicinc.com>
+X-Mailer: git-send-email 2.36.0.rc0.470.gd361397f0d-goog
+Subject: [PATCH v3 ] remoteproc: Use unbounded workqueue for recovery work
+From:   Saravana Kannan <saravanak@google.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        Saravana Kannan <saravanak@google.com>, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 13 Apr 2022 09:01:21 -0500, Rob Herring wrote:
-> Scalar properties shouldn't have array constraints (minItems, maxItems,
-> items). These constraints can simply be dropped with any constraints under
-> 'items' moved up a level.
+Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+> There could be a scenario where there is too much load on a core
+> (n number of tasks which is affined) or in a case when multiple
+> rproc subsystem is going for a recovery and they queued recovery
+> work to one core so even though subsystem are independent there
+> recovery will be delayed if one of the subsystem recovery work
+> is taking more time in completing.
 > 
-> Cc: Agathe Porte <agathe.porte@nokia.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Olivier Moysan <olivier.moysan@foss.st.com>
-> Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-> Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: linux-hwmon@vger.kernel.org
-> Cc: alsa-devel@alsa-project.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: linux-spi@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> If we make this queue unbounded, the recovery work could be picked
+> on any cpu. This patch try to address this.
+> 
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/hwmon/ti,tmp464.yaml       | 5 ++---
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml      | 4 +---
->  Documentation/devicetree/bindings/media/coda.yaml            | 1 -
->  .../devicetree/bindings/media/mediatek,vcodec-decoder.yaml   | 2 --
->  .../devicetree/bindings/media/mediatek,vcodec-encoder.yaml   | 2 --
->  .../bindings/media/mediatek,vcodec-subdev-decoder.yaml       | 1 -
->  .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml | 4 +---
->  Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml  | 2 --
->  8 files changed, 4 insertions(+), 17 deletions(-)
+> Changes in v3:
+>   - Add fallback option to go back to earlier path incase recovery wq
+>     creation fails.
 > 
+> Changes in v2:
+>   - Removed WQ_HIGHPRI.
+>   - Updated commit text.
+> 
+>  drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c510125..6446c84 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
+>  
+>  /* Unique indices for remoteproc devices */
+>  static DEFINE_IDA(rproc_dev_index);
+> +static struct workqueue_struct *rproc_recovery_wq;
+>  
+>  static const char * const rproc_crash_names[] = {
+>  	[RPROC_MMUFAULT]	= "mmufault",
+> @@ -2755,8 +2756,11 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+>  	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+>  		rproc->name, rproc_crash_to_string(type));
+>  
+> -	/* Have a worker handle the error; ensure system is not suspended */
+> -	queue_work(system_freezable_wq, &rproc->crash_handler);
+> +	if (rproc_recovery_wq)
+> +		queue_work(rproc_recovery_wq, &rproc->crash_handler);
+> +	else
+> +		queue_work(system_freezable_wq, &rproc->crash_handler);
 
-Applied, thanks!
+This is unnecessarily complicated. If you can't create a workqueue you
+have bigger problems with the system. Just stick with the new rproc
+workqueue.
+
+> +
+>  }
+>  EXPORT_SYMBOL(rproc_report_crash);
+>  
+> @@ -2805,6 +2809,11 @@ static void __exit rproc_exit_panic(void)
+>  
+>  static int __init remoteproc_init(void)
+>  {
+> +	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
+> +						WQ_UNBOUND | WQ_FREEZABLE, 0);
+> +	if (!rproc_recovery_wq)
+> +		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+
+Fail the init if you can't create a workqueue.
+
+> +
+>  	rproc_init_sysfs();
+>  	rproc_init_debugfs();
+>  	rproc_init_cdev();
+> @@ -2821,6 +2830,8 @@ static void __exit remoteproc_exit(void)
+>  	rproc_exit_panic();
+>  	rproc_exit_debugfs();
+>  	rproc_exit_sysfs();
+> +	if (rproc_recovery_wq)
+> +		destroy_workqueue(rproc_recovery_wq);
+
+Will need a fix here too.
+
+-Saravana
+
+>  }
+>  module_exit(remoteproc_exit);
+>  
+> -- 
+> 2.7.4
