@@ -2,260 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0F9C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Apr 2022 08:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4FEC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Apr 2022 09:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233282AbiDRI5h (ORCPT
+        id S231566AbiDRJen (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Apr 2022 04:57:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51834 "EHLO
+        Mon, 18 Apr 2022 05:34:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231738AbiDRI5g (ORCPT
+        with ESMTP id S230500AbiDRJem (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Apr 2022 04:57:36 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F24EC257;
-        Mon, 18 Apr 2022 01:54:53 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=33;SR=0;TI=SMTPD_---0VALaedj_1650272086;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VALaedj_1650272086)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 18 Apr 2022 16:54:48 +0800
-Message-ID: <1650271705.1503067-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v9 31/32] virtio_net: support rx/tx queue resize
-Date:   Mon, 18 Apr 2022 16:48:25 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Jeff Dike <jdike@addtoit.com>, Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm <kvm@vger.kernel.org>,
-        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>
-References: <20220406034346.74409-1-xuanzhuo@linux.alibaba.com>
- <20220406034346.74409-32-xuanzhuo@linux.alibaba.com>
- <122008a6-1e79-14d3-1478-59f96464afc9@redhat.com>
- <1650252077.7934203-1-xuanzhuo@linux.alibaba.com>
- <CACGkMEtZOJ2PCsJidDcFKL57Q6oLHk4TH7xtewrLCTFhrbXSAA@mail.gmail.com>
-In-Reply-To: <CACGkMEtZOJ2PCsJidDcFKL57Q6oLHk4TH7xtewrLCTFhrbXSAA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 18 Apr 2022 05:34:42 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C62B16584;
+        Mon, 18 Apr 2022 02:32:04 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id j8so11889270pll.11;
+        Mon, 18 Apr 2022 02:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+195qXfSy+1LA8x1YeekJMgKTeLBXHFiPCdorrFsSmY=;
+        b=S9FLinlvmsTUmvcYZaE7lS7URLC2fH5qKRsJon4tQiByLM3ozGazHdR3F0jvWoydk0
+         nAIJYiDx1gIGlDo5PCpi2xcrRJLbZmXcX4sGla33my0scO4CEtBeBGLePzrQHHfS29hV
+         ClkpBLQs1/Xojb9qki1paTANFxUjXTR75c1fbi2WMDdyeTdMeP3OMkGeUNkf1KQAFcVP
+         HrJ5eTHgVB66cDGy1jLVma0vH/gst3kHDfgURyYJPXHL6TZO6mTk6KGELvbsiyhzppKU
+         q+gMG/2RAp3JTRGZnxO8YUf343t2eGwflhIhgjS9yH7gDP/Pac6SbZIVXTKzra+S3ziH
+         8V2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+195qXfSy+1LA8x1YeekJMgKTeLBXHFiPCdorrFsSmY=;
+        b=7KJZ/HdCxL4098z812Xa+cm5fpNu/qQd6dcQSnc9SWLckcGrA5uEH9r+OWiFTML8+4
+         ubOpWbil5C4KVicmDQIv0/bM2Wh4uHGaACgwGNrl78WPNRhuBpNbCLcYkUgmAG5uuLrX
+         KSLbtZlduOFmgVpP3z2Rbq+2ZeWA838hm20k8rTe5s0TJSCR5IMoP0cZOcCASRL5c+We
+         MbYD5q8XTOqpUc2l/4fry2xC9V60PMGInZGuYncGOQTCxNQGHR2WgNBKwb8cD6Hhy2sP
+         TkLD2raNzxh0gMFV0jtCTd+DVhPHQG4cRaA0eBTou3H1WChdPQsOSU7OLJyfeJfmbmpP
+         UcYg==
+X-Gm-Message-State: AOAM530aZ7d7GzDZ7V7YKwsaWeNt+mElUnWbyx53r2q2jxniZ17aoAd+
+        bVhWzlOyMSkAb3+6EDU2vQaxp8c9rwlJ/gHu
+X-Google-Smtp-Source: ABdhPJzCixskcytuhybhqhKIDydM/sMYkjYkUpG1m+SYtDGyds0EnaOyrYt48WDhneAImCbqp/a5ag==
+X-Received: by 2002:a17:90a:550e:b0:1cd:e722:8b82 with SMTP id b14-20020a17090a550e00b001cde7228b82mr17392126pji.223.1650274323848;
+        Mon, 18 Apr 2022 02:32:03 -0700 (PDT)
+Received: from localhost.localdomain ([103.84.139.165])
+        by smtp.gmail.com with ESMTPSA id d18-20020a056a0010d200b004fa2e13ce80sm12472393pfu.76.2022.04.18.02.32.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Apr 2022 02:32:03 -0700 (PDT)
+From:   Hangyu Hua <hbh25y@gmail.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        arnaud.pouliquen@foss.st.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hangyu Hua <hbh25y@gmail.com>
+Subject: [PATCH] rpmsg: virtio: fix possible double free in rpmsg_probe()
+Date:   Mon, 18 Apr 2022 17:31:44 +0800
+Message-Id: <20220418093144.40859-1-hbh25y@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 18 Apr 2022 15:49:29 +0800, Jason Wang <jasowang@redhat.com> wrote:
-> On Mon, Apr 18, 2022 at 11:24 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> w=
-rote:
-> >
-> > On Wed, 13 Apr 2022 16:00:18 +0800, Jason Wang <jasowang@redhat.com> wr=
-ote:
-> > >
-> > > =E5=9C=A8 2022/4/6 =E4=B8=8A=E5=8D=8811:43, Xuan Zhuo =E5=86=99=E9=81=
-=93:
-> > > > This patch implements the resize function of the rx, tx queues.
-> > > > Based on this function, it is possible to modify the ring num of the
-> > > > queue.
-> > > >
-> > > > There may be an exception during the resize process, the resize may
-> > > > fail, or the vq can no longer be used. Either way, we must execute
-> > > > napi_enable(). Because napi_disable is similar to a lock, napi_enab=
-le
-> > > > must be called after calling napi_disable.
-> > > >
-> > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > ---
-> > > >   drivers/net/virtio_net.c | 81 +++++++++++++++++++++++++++++++++++=
-+++++
-> > > >   1 file changed, 81 insertions(+)
-> > > >
-> > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > index b8bf00525177..ba6859f305f7 100644
-> > > > --- a/drivers/net/virtio_net.c
-> > > > +++ b/drivers/net/virtio_net.c
-> > > > @@ -251,6 +251,9 @@ struct padded_vnet_hdr {
-> > > >     char padding[4];
-> > > >   };
-> > > >
-> > > > +static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void =
-*buf);
-> > > > +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void =
-*buf);
-> > > > +
-> > > >   static bool is_xdp_frame(void *ptr)
-> > > >   {
-> > > >     return (unsigned long)ptr & VIRTIO_XDP_FLAG;
-> > > > @@ -1369,6 +1372,15 @@ static void virtnet_napi_enable(struct virtq=
-ueue *vq, struct napi_struct *napi)
-> > > >   {
-> > > >     napi_enable(napi);
-> > > >
-> > > > +   /* Check if vq is in reset state. The normal reset/resize proce=
-ss will
-> > > > +    * be protected by napi. However, the protection of napi is onl=
-y enabled
-> > > > +    * during the operation, and the protection of napi will end af=
-ter the
-> > > > +    * operation is completed. If re-enable fails during the proces=
-s, vq
-> > > > +    * will remain unavailable with reset state.
-> > > > +    */
-> > > > +   if (vq->reset)
-> > > > +           return;
-> > >
-> > >
-> > > I don't get when could we hit this condition.
-> > >
-> > >
-> > > > +
-> > > >     /* If all buffers were filled by other side before we napi_enab=
-led, we
-> > > >      * won't get another interrupt, so process any outstanding pack=
-ets now.
-> > > >      * Call local_bh_enable after to trigger softIRQ processing.
-> > > > @@ -1413,6 +1425,15 @@ static void refill_work(struct work_struct *=
-work)
-> > > >             struct receive_queue *rq =3D &vi->rq[i];
-> > > >
-> > > >             napi_disable(&rq->napi);
-> > > > +
-> > > > +           /* Check if vq is in reset state. See more in
-> > > > +            * virtnet_napi_enable()
-> > > > +            */
-> > > > +           if (rq->vq->reset) {
-> > > > +                   virtnet_napi_enable(rq->vq, &rq->napi);
-> > > > +                   continue;
-> > > > +           }
-> > >
-> > >
-> > > Can we do something similar in virtnet_close() by canceling the work?
-> > >
-> > >
-> > > > +
-> > > >             still_empty =3D !try_fill_recv(vi, rq, GFP_KERNEL);
-> > > >             virtnet_napi_enable(rq->vq, &rq->napi);
-> > > >
-> > > > @@ -1523,6 +1544,10 @@ static void virtnet_poll_cleantx(struct rece=
-ive_queue *rq)
-> > > >     if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
-> > > >             return;
-> > > >
-> > > > +   /* Check if vq is in reset state. See more in virtnet_napi_enab=
-le() */
-> > > > +   if (sq->vq->reset)
-> > > > +           return;
-> > >
-> > >
-> > > We've disabled TX napi, any chance we can still hit this?
-> >
-> >
-> > static int virtnet_poll(struct napi_struct *napi, int budget)
-> > {
-> >         struct receive_queue *rq =3D
-> >                 container_of(napi, struct receive_queue, napi);
-> >         struct virtnet_info *vi =3D rq->vq->vdev->priv;
-> >         struct send_queue *sq;
-> >         unsigned int received;
-> >         unsigned int xdp_xmit =3D 0;
-> >
-> >         virtnet_poll_cleantx(rq);
-> > ...
-> > }
-> >
-> > This is called by rx poll. Although it is the logic of tx, it is not dr=
-iven by
-> > tx napi, but is called in rx poll.
->
-> Ok, but we need guarantee the memory ordering in this case. Disable RX
-> napi could be a solution for this.
+vch will be free in virtio_rpmsg_release_device() when
+rpmsg_ns_register_device() fails. There is no need to call kfree() again.
 
-Yes, I have realized this too. I have two solutions, disable rx napi or the
-following.
+Fix this by changing error path from free_vch to free_ctrldev.
 
-Thanks.
+Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
+Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+---
+ drivers/rpmsg/virtio_rpmsg_bus.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 9bf1b6530b38..7764d1dcb831 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -135,6 +135,7 @@ struct send_queue {
- 	struct virtnet_sq_stats stats;
-
- 	struct napi_struct napi;
-+	bool reset;
- };
-
- /* Internal representation of a receive virtqueue */
-@@ -1583,6 +1587,11 @@ static void virtnet_poll_cleantx(struct receive_queu=
-e *rq)
- 		return;
-
- 	if (__netif_tx_trylock(txq)) {
-+		if (sq->reset) {
-+			__netif_tx_unlock(txq);
-+			return;
-+		}
-+
- 		do {
- 			virtqueue_disable_cb(sq->vq);
- 			free_old_xmit_skbs(sq, true);
-@@ -1828,6 +1837,56 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, s=
-truct net_device *dev)
- 	return NETDEV_TX_OK;
- }
-
-+static int virtnet_tx_resize(struct virtnet_info *vi,
-+			     struct send_queue *sq, u32 ring_num)
-+{
-+	struct netdev_queue *txq;
-+	int err, qindex;
-+
-+	qindex =3D sq - vi->sq;
-+
-+	virtnet_napi_tx_disable(&sq->napi);
-+
-+	txq =3D netdev_get_tx_queue(vi->dev, qindex);
-+
-+	__netif_tx_lock_bh(txq);
-+	netif_stop_subqueue(vi->dev, qindex);
-+	sq->reset =3D true;
-+	__netif_tx_unlock_bh(txq);
-+
-+	err =3D virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf);
-+	if (err)
-+		netdev_err(vi->dev, "resize tx fail: tx queue index: %d err: %d\n", qind=
-ex, err);
-+
-+	__netif_tx_lock_bh(txq);
-+	sq->reset =3D false;
-+	netif_start_subqueue(vi->dev, qindex);
-+	__netif_tx_unlock_bh(txq);
-+
-+	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
-+	return err;
-+}
-+
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 3ede25b1f2e4..603233f0686e 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -973,7 +973,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 		err = rpmsg_ns_register_device(rpdev_ns);
+ 		if (err)
+-			goto free_vch;
++			goto free_ctrldev;
+ 	}
+ 
+ 	/*
+@@ -997,8 +997,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 	return 0;
+ 
+-free_vch:
+-	kfree(vch);
+ free_ctrldev:
+ 	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
+ free_coherent:
+-- 
+2.25.1
 
