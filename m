@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7E4C46467
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3FDC352AA
 	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Apr 2022 11:35:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351582AbiDSLiN (ORCPT
+        id S1351585AbiDSLiN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Tue, 19 Apr 2022 07:38:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41444 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351498AbiDSLhr (ORCPT
+        with ESMTP id S1351394AbiDSLhg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Apr 2022 07:37:47 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091271A805
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:35:05 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id s18so32356037ejr.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:35:04 -0700 (PDT)
+        Tue, 19 Apr 2022 07:37:36 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C1FB7F9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:34:53 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id t11so32218493eju.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:34:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=za2ChgFa2MAb73hYI38RRAcoAzGnc/qyPQX8xgHdvQM=;
-        b=zVkWhAv51DVC1p4aJpiAjPCoWQril/21gAKuMsm6z+0NXkTbr3mNaIqUaZFcjR39cY
-         v4OMQBXlR/2rhpUCTx0VbESTsmsehL0V/OOEUkWQRkkVnA5m6023KnbBO9lJSa8rsIY2
-         /tvt+ZeGz8iYq05ODrVkPfPZK8t74hDar82Awg+fciFFk2Qd2NRV/6z2dC+Ds9ob3PSI
-         mNw5Vt41Pgcg5nBS6798wd5iqS4jiUWHQ3/NMJ/nlbxPJyi3xKd5m7ZfgU/xleQBIUs/
-         ITljrACLgzODper1Rl5lTvuiSCAyj79YAn5Qn9t2W7PwalGl5eAtA378B8fj3iSS5XxU
-         x/Hg==
+        bh=nKruD0hbBUx+nn+GE9l7RUaXsMouYslDmZcMsioEI1Q=;
+        b=hxNjQS3zh1TQ37oSrtUfwGeYt8aW2l1Sm9h+uqAsWbZdx5+TPuoUvrKY8uokxdMtKF
+         mLleac6wVOFOW7qIB9iinBjCBoXX/FzWvlxYEZVhYw7BCc4WpSuZLt5wiVLIRDX5VNXA
+         EFZhQhF/6rxTsmb8pJWhxF1tp3Za3zoA9fhB9WtIt9/kJJ274ZiN1OG2yJ5VN6t5Q8tF
+         z2mkOIFH34l1KyNXFjitqrXaPshNh57GLfsfYeuhRIumEncNvFdkH5ZeibHt5U0Vo1mV
+         w3TldCvphkT2yXiXTbOEEORvl3SIruFqbopdn22vRIZgwmnKeXZBCaUuInNWhNmv7xIJ
+         kTlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=za2ChgFa2MAb73hYI38RRAcoAzGnc/qyPQX8xgHdvQM=;
-        b=lxYnuvnOvUNHZsp8rFdMrf8OJ44m42K8cjcQeJagvZ2o4QBFp27SIEcTVLlLjc/9g1
-         xhuyuJ63HMNismYrbRA6ZocT2ahxT/o35nPP1U1iMYjVeCUqlZSxkKW/hlR8Ph2/Ioy4
-         Km5uiZ4281/blFtYMFEJ0oYFsoKL0BzNRtMzypOAuv3kc+lOUZnzn8K6vE0tmJxPzAyn
-         nDflS6SaRMPjuZwPfKa9PF3vkHvfV8vUd3haia640/4cUHIEQdv+hQP45vwHc9cy8Szz
-         4IwExlbRcqKxPhHfmkgguO4Wjk/KCf+JTfl2/i2tMvdSqpv1vSvc76arLAkzt3Apyhep
-         +Oww==
-X-Gm-Message-State: AOAM532uxbuON+lMg0fj5hd6XmBPF27nEtIMGCe/RgoUylfI/I05str/
-        AUQWJhCsOexvVXnaMoPuV0UF9w==
-X-Google-Smtp-Source: ABdhPJykXBXYimpAeumTHTNdPOwvvfUNc2rfx1d0CpWSKysWkExiziY11QDQTp0Hk2gdb+t7K6B5eQ==
-X-Received: by 2002:a17:907:2d0f:b0:6e8:b710:a68 with SMTP id gs15-20020a1709072d0f00b006e8b7100a68mr12790234ejc.510.1650368103349;
-        Tue, 19 Apr 2022 04:35:03 -0700 (PDT)
+        bh=nKruD0hbBUx+nn+GE9l7RUaXsMouYslDmZcMsioEI1Q=;
+        b=6ZcjoWkG3+j5D3zNU2D+5KX0J8D46ggqFWeTp1gAHwnRSiB9BsBqhLYTLvDPQno9+y
+         vcyoKDVkj5v1Vz80DbNlNzNnOmzvuIiruJYU2Nsg8cTP/2nPnMlto71nxO7xO0Yd4u3P
+         29sqlsstg92SWdvoxCR+OKsKtbhYSDXqONwNUbGtj7bZ/Ojf/sulbi7hiquRMj7NNMKs
+         siUCZueicG+y0lhhpKCqbCqiiQhLJ18bq8dxRFBSl+hqnMp3MGA08oFrPKSNnWLOV1A9
+         qWrFyIf3nJPYCeUmlG1sdMrdLs6wryhfpYPPa9UFQF0sOdpvKZY1PMRQbI580mHIyVpg
+         WN/w==
+X-Gm-Message-State: AOAM533l/0puLrZWVeSlSFJXONHPF4i0/pOKx6j4Dcpwl+N4Xo4x8qu+
+        F6MHJrejiS1/CIsClqjYWQJSnA==
+X-Google-Smtp-Source: ABdhPJym75DUa6YNLz0AzuXs59T5CIn4fkAzbWaGNW1BaMcFnN8QHFCcwCaQ7sI4GiRmHTg63Mvf6A==
+X-Received: by 2002:a17:907:1c82:b0:6ef:69a5:35bf with SMTP id nb2-20020a1709071c8200b006ef69a535bfmr13318299ejc.142.1650368092317;
+        Tue, 19 Apr 2022 04:34:52 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id ce21-20020a170906b25500b006e89869cbf9sm5608802ejb.105.2022.04.19.04.35.01
+        by smtp.gmail.com with ESMTPSA id ce21-20020a170906b25500b006e89869cbf9sm5608802ejb.105.2022.04.19.04.34.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 04:35:02 -0700 (PDT)
+        Tue, 19 Apr 2022 04:34:51 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>
@@ -77,11 +77,10 @@ Cc:     Stuart Yoder <stuyoder@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v7 10/12] slimbus: qcom-ngd: Fix kfree() of static memory on setting driver_override
-Date:   Tue, 19 Apr 2022 13:34:33 +0200
-Message-Id: <20220419113435.246203-11-krzysztof.kozlowski@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v7 03/12] fsl-mc: Use driver_set_override() instead of open-coding
+Date:   Tue, 19 Apr 2022 13:34:26 +0200
+Message-Id: <20220419113435.246203-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
 References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
@@ -91,50 +90,80 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The driver_override field from platform driver should not be initialized
-from static memory (string literal) because the core later kfree() it,
-for example when driver_override is set via sysfs.
+Use a helper to set driver_override to reduce the amount of duplicated
+code.  Make the driver_override field const char, because it is not
+modified by the core and it matches other subsystems.
 
-Use dedicated helper to set driver_override properly.
-
-Fixes: 917809e2280b ("slimbus: ngd: Add qcom SLIMBus NGD driver")
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/slimbus/qcom-ngd-ctrl.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 25 ++++---------------------
+ include/linux/fsl/mc.h          |  6 ++++--
+ 2 files changed, 8 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
-index 0f29a08b4c09..0aa8408464ad 100644
---- a/drivers/slimbus/qcom-ngd-ctrl.c
-+++ b/drivers/slimbus/qcom-ngd-ctrl.c
-@@ -1434,6 +1434,7 @@ static int of_qcom_slim_ngd_register(struct device *parent,
- 	const struct of_device_id *match;
- 	struct device_node *node;
- 	u32 id;
+diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+index 8fd4a356a86e..ba01c7f4de92 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-bus.c
++++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+@@ -166,31 +166,14 @@ static ssize_t driver_override_store(struct device *dev,
+ 				     const char *buf, size_t count)
+ {
+ 	struct fsl_mc_device *mc_dev = to_fsl_mc_device(dev);
+-	char *driver_override, *old = mc_dev->driver_override;
+-	char *cp;
 +	int ret;
  
- 	match = of_match_node(qcom_slim_ngd_dt_match, parent->of_node);
- 	data = match->data;
-@@ -1455,7 +1456,17 @@ static int of_qcom_slim_ngd_register(struct device *parent,
- 		}
- 		ngd->id = id;
- 		ngd->pdev->dev.parent = parent;
--		ngd->pdev->driver_override = QCOM_SLIM_NGD_DRV_NAME;
-+
-+		ret = driver_set_override(&ngd->pdev->dev,
-+					  &ngd->pdev->driver_override,
-+					  QCOM_SLIM_NGD_DRV_NAME,
-+					  strlen(QCOM_SLIM_NGD_DRV_NAME));
-+		if (ret) {
-+			platform_device_put(ngd->pdev);
-+			kfree(ngd);
-+			of_node_put(node);
-+			return ret;
-+		}
- 		ngd->pdev->dev.of_node = node;
- 		ctrl->ngd = ngd;
+ 	if (WARN_ON(dev->bus != &fsl_mc_bus_type))
+ 		return -EINVAL;
  
+-	if (count >= (PAGE_SIZE - 1))
+-		return -EINVAL;
+-
+-	driver_override = kstrndup(buf, count, GFP_KERNEL);
+-	if (!driver_override)
+-		return -ENOMEM;
+-
+-	cp = strchr(driver_override, '\n');
+-	if (cp)
+-		*cp = '\0';
+-
+-	if (strlen(driver_override)) {
+-		mc_dev->driver_override = driver_override;
+-	} else {
+-		kfree(driver_override);
+-		mc_dev->driver_override = NULL;
+-	}
+-
+-	kfree(old);
++	ret = driver_set_override(dev, &mc_dev->driver_override, buf, count);
++	if (ret)
++		return ret;
+ 
+ 	return count;
+ }
+diff --git a/include/linux/fsl/mc.h b/include/linux/fsl/mc.h
+index 7b6c42bfb660..7a87ab9eba99 100644
+--- a/include/linux/fsl/mc.h
++++ b/include/linux/fsl/mc.h
+@@ -170,7 +170,9 @@ struct fsl_mc_obj_desc {
+  * @regions: pointer to array of MMIO region entries
+  * @irqs: pointer to array of pointers to interrupts allocated to this device
+  * @resource: generic resource associated with this MC object device, if any.
+- * @driver_override: driver name to force a match
++ * @driver_override: driver name to force a match; do not set directly,
++ *                   because core frees it; use driver_set_override() to
++ *                   set or clear it.
+  *
+  * Generic device object for MC object devices that are "attached" to a
+  * MC bus.
+@@ -204,7 +206,7 @@ struct fsl_mc_device {
+ 	struct fsl_mc_device_irq **irqs;
+ 	struct fsl_mc_resource *resource;
+ 	struct device_link *consumer_link;
+-	char   *driver_override;
++	const char *driver_override;
+ };
+ 
+ #define to_fsl_mc_device(_dev) \
 -- 
 2.32.0
 
