@@ -2,121 +2,134 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F77CC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Apr 2022 17:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A310C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Apr 2022 11:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232268AbiDRRP7 (ORCPT
+        id S235842AbiDSL2x (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Apr 2022 13:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33306 "EHLO
+        Tue, 19 Apr 2022 07:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239486AbiDRRP4 (ORCPT
+        with ESMTP id S1349331AbiDSL2w (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Apr 2022 13:15:56 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592ED2B18E
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Apr 2022 10:13:13 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 203so938419pgb.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Apr 2022 10:13:13 -0700 (PDT)
+        Tue, 19 Apr 2022 07:28:52 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD7626107;
+        Tue, 19 Apr 2022 04:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=BvtRLSGlIqgoZJw83CHbKmm9w5RaBORQkePsPwp3Jcs=;
-        b=X4HUkGNZmS19IamCaufLPwvkr3VU3muJTy0uqV5g7ZncQwXZXwPRIPzafxazChGNEO
-         ybOPX5th1MG/Yh4Yz1AYYEXYUO1Km9yplsj4dJUgklqGMwCcUAJo+voR9rMmHwE28Lm/
-         TIHSSMmO6CjeQWVmvdyA9zhyPjvF5wnXzN01hFDq8nqhN4iJW+KLB58OFFV91GkgEig8
-         38brj/8xk4X5b7UkhN2nVvDuccfkk7KvvWk+JROL/vggq0uL2noWR2Zxih8fX6AdYzxh
-         Iq4Ye/qp4Z4iCOcRuFSskjr57JNOXttTftidMDZGNvCaK3+CvUxVdqWpFHuQadh2LhUI
-         GWHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=BvtRLSGlIqgoZJw83CHbKmm9w5RaBORQkePsPwp3Jcs=;
-        b=QofYfHH/srh+6uqMQq3nfeQo0VTvSb9M9luQ3fcdXc5UNoE43FHcTtLpuAiKazC7gD
-         uWyHIU2WjqGYvpNXLN5wA2VGAmtZlUhieJzaOBcjS7Qhg2RKUNsb8CVFrpsx52l5Y+K/
-         jIxPHZ1ca+3DWvMmP9sZxdJIkv11joGC/h9yqKpVcEJXMN7B97R8rPXmFHmrtovrzhr1
-         9QE7DzrMczAWbnBXNJJv49dV/nWy4MggPbjMdgog6uz38t+q0grPQLI1Giv3X87YNamX
-         2F3YC4FFsiNRXIAog2Q+bgbrJJqTmmIZcQOD86OoY8uwgaEcb2jsd5F/LUjTCm/UIfc+
-         nWDQ==
-X-Gm-Message-State: AOAM531vgUWpfjPhZq/ekjr1uDUpg7Uy+B2/ysSvO7lgCshDKSQyYx3X
-        Wc5tb8k+m+t1gSnkNCcUSGY65g==
-X-Google-Smtp-Source: ABdhPJx+xxEgbzOInBcT6iUBxz+NtIWz/XvFoiE0lFt8D8qcoTK1TxWsyQtJDP8JzSBdLixiTYwdjw==
-X-Received: by 2002:a62:1c8d:0:b0:4fa:8dcb:6da2 with SMTP id c135-20020a621c8d000000b004fa8dcb6da2mr13217641pfc.19.1650301992571;
-        Mon, 18 Apr 2022 10:13:12 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id u26-20020a63471a000000b003aa1ad643bdsm1809062pga.47.2022.04.18.10.13.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 10:13:10 -0700 (PDT)
-Date:   Mon, 18 Apr 2022 11:13:08 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     bjorn.andersson@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V4] remoteproc: imx_rproc: Ignore create mem entry for
- resource table
-Message-ID: <20220418171308.GA952787@p14s>
-References: <20220415025737.1561976-1-peng.fan@oss.nxp.com>
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1650367569; x=1681903569;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=iLiidp+TGadOX0ZPyXvxXxQB0kCJMreyZrDBDHEpvHM=;
+  b=YpcaJM+1L/oFsNsMsjU5EcPAdgu8o1FRnZOyisd8gmR1U9qAtNyM1Ef8
+   wBSh/yqQpggIALCcYwTpvcBD5SgAZMsdQE1ZSBnpYrwFQzNIBNI4DDTuh
+   YDYqq624HXG0ce0LJKp11ZohEld9zzXlcfx7P2bBS3DV/TYoDp8qboQie
+   8=;
+Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
+  by alexa-out.qualcomm.com with ESMTP; 19 Apr 2022 04:26:09 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2022 04:26:09 -0700
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 19 Apr 2022 04:26:06 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <quic_mojha@quicinc.com>
+Subject: [PATCH v4 ]  remoteproc: Use unbounded workqueue for recovery work
+Date:   Tue, 19 Apr 2022 16:55:54 +0530
+Message-ID: <1650367554-15510-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220415025737.1561976-1-peng.fan@oss.nxp.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.47.97.222)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Apr 15, 2022 at 10:57:37AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> Resource table is used by Linux to get information published by
-> remote processor. It should be not be used for memory allocation, so
-> not create rproc mem entry.
-> 
-> Fixes: b29b4249f8f0 ("remoteproc: imx_rproc: add i.MX specific parse fw hook")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V4:
->  Typo fix
->  use strcmp, not strncmp
-> 
-> V3:
->  Update commit log
->  Update Fixes tag
-> 
-> V2:
->  Add Fixes tag
->  Separate the patch from https://patchwork.kernel.org/project/linux-remoteproc/patch/20220111033333.403448-7-peng.fan@oss.nxp.com/
->  Address typo
-> 
-> 
->  drivers/remoteproc/imx_rproc.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 7a096f1891e6..91eb037089ef 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -423,6 +423,9 @@ static int imx_rproc_prepare(struct rproc *rproc)
->  		if (!strcmp(it.node->name, "vdev0buffer"))
->  			continue;
->  
-> +		if (!strcmp(it.node->name, "rsc-table"))
-> +			continue;
-> +
+There could be a scenario when there is too much load on a core
+(n number of tasks which is affined) or in a case when multiple
+rproc subsystem is going for recovery, they queue their recovery
+work to one core so even though subsystem are independent their
+recovery will be delayed if one of the subsystem recovery work
+is taking more time in completing.
 
-Applied.
+If we make this queue unbounded, the recovery work could be picked
+on any cpu. This patch is trying to address this.
 
-Thanks,
-Mathieu
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v4:
+  - Removed fallback option on @sarvana comment
+  - Fail the init on workqueue creation failure.
+  - modified commit text.
 
->  		rmem = of_reserved_mem_lookup(it.node);
->  		if (!rmem) {
->  			dev_err(priv->dev, "unable to acquire memory-region\n");
-> -- 
-> 2.25.1
-> 
+Changes in v3:
+  - Add fallback option to go back to earlier path incase recovery wq
+    creation fails.
+
+Changes in v2:
+  - Removed WQ_HIGHPRI.
+  - Updated commit text.
+
+
+ drivers/remoteproc/remoteproc_core.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c510125..c8a1e3e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -59,6 +59,7 @@ static int rproc_release_carveout(struct rproc *rproc,
+ 
+ /* Unique indices for remoteproc devices */
+ static DEFINE_IDA(rproc_dev_index);
++static struct workqueue_struct *rproc_recovery_wq;
+ 
+ static const char * const rproc_crash_names[] = {
+ 	[RPROC_MMUFAULT]	= "mmufault",
+@@ -2755,8 +2756,7 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+ 	dev_err(&rproc->dev, "crash detected in %s: type %s\n",
+ 		rproc->name, rproc_crash_to_string(type));
+ 
+-	/* Have a worker handle the error; ensure system is not suspended */
+-	queue_work(system_freezable_wq, &rproc->crash_handler);
++	queue_work(rproc_recovery_wq, &rproc->crash_handler);
+ }
+ EXPORT_SYMBOL(rproc_report_crash);
+ 
+@@ -2805,6 +2805,13 @@ static void __exit rproc_exit_panic(void)
+ 
+ static int __init remoteproc_init(void)
+ {
++	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
++						WQ_UNBOUND | WQ_FREEZABLE, 0);
++	if (!rproc_recovery_wq) {
++		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
++		return -ENOMEM;
++	}
++
+ 	rproc_init_sysfs();
+ 	rproc_init_debugfs();
+ 	rproc_init_cdev();
+@@ -2818,9 +2825,13 @@ static void __exit remoteproc_exit(void)
+ {
+ 	ida_destroy(&rproc_dev_index);
+ 
++	if (!rproc_recovery_wq)
++		return;
++
+ 	rproc_exit_panic();
+ 	rproc_exit_debugfs();
+ 	rproc_exit_sysfs();
++	destroy_workqueue(rproc_recovery_wq);
+ }
+ module_exit(remoteproc_exit);
+ 
+-- 
+2.7.4
+
