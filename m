@@ -2,106 +2,89 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D622C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Apr 2022 11:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7644C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Apr 2022 12:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349683AbiDSLw7 (ORCPT
+        id S243164AbiDSMgY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 Apr 2022 07:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42738 "EHLO
+        Tue, 19 Apr 2022 08:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351914AbiDSLwe (ORCPT
+        with ESMTP id S231693AbiDSMgY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Apr 2022 07:52:34 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18D8A13F43;
-        Tue, 19 Apr 2022 04:49:51 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 5C0881F42293
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650368990;
-        bh=r6OoFRF0ucAMfAcDbrXpKkVoip13W6nPZWDxs/jqu34=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=MHicWKIVvPyXryi5j5G1lgxR2qQrHIMMb5/s++e8qSu56qaTAz63/Qm65bpr+z+5c
-         6Mpg2j9JCJBewIONfXZ0w6ZRHVaa8CugNKrVr2eiJcbHSFc/cYVfu8BfEhIhRZRcJY
-         ZAZNhXCrwc6F7xKHzAVoZgFrCP9gpcdl9Dhi4aRuE3+0sIoij5F2/A9hwPtIzX+lpg
-         GRyqI8+EkPs23WtwzMuJV8Av8D9h+CgLdEo9kh8IPIJcnIndasDYNTq6w/CL4toflU
-         /qw6xL8Tzt6Pli4EQ/9GQqiMISGObmpPwn8fD0YG/l5nZ3wrU5z05xBOd0MGNi7yl3
-         CuuPiXLjd8kXw==
-Message-ID: <cb56d23b-fb80-426f-cc30-50ef351b0ad6@collabora.com>
-Date:   Tue, 19 Apr 2022 13:49:46 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2 2/2] remoteproc: mediatek: allow reading firmware-name
- from DT
-Content-Language: en-US
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Tue, 19 Apr 2022 08:36:24 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1D123BC3;
+        Tue, 19 Apr 2022 05:33:40 -0700 (PDT)
+X-UUID: 473cf921a10d4667bb1569154d2142f1-20220419
+X-UUID: 473cf921a10d4667bb1569154d2142f1-20220419
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw02.mediatek.com
+        (envelope-from <allen-kh.cheng@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 1020629310; Tue, 19 Apr 2022 20:33:35 +0800
+Received: from mtkexhb01.mediatek.inc (172.21.101.102) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 19 Apr 2022 20:33:34 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by mtkexhb01.mediatek.inc
+ (172.21.101.102) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 19 Apr
+ 2022 20:33:33 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 19 Apr 2022 20:33:33 +0800
+From:   Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Hsin-Yi Wang <hsinyi@chromium.org>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-References: <20220414122140.6114-1-allen-kh.cheng@mediatek.com>
- <20220414122140.6114-3-allen-kh.cheng@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220414122140.6114-3-allen-kh.cheng@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+CC:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Subject: [PATCH v3 1/2] dt-bindings: remoteproc: mediatek: add firmware-name property
+Date:   Tue, 19 Apr 2022 20:33:30 +0800
+Message-ID: <20220419123331.14377-2-allen-kh.cheng@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+References: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 14/04/22 14:21, Allen-KH Cheng ha scritto:
-> The SCP firmware blob differs between platforms and SoCs. We add
-> support in the SCP driver for reading the path of firmware file from
-> DT in order to allow these files to live in a generic file system
-> (or linux-firmware).
-> 
-> The firmware-name property is optional and the code falls back to the
-> old filename if the property isn't present.
-> 
-> Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-> Reviewed-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
-> ---
->   drivers/remoteproc/mtk_scp.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index ee6c4009586e..82813d74e829 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -809,9 +809,14 @@ static int scp_probe(struct platform_device *pdev)
->   	struct mtk_scp *scp;
->   	struct rproc *rproc;
->   	struct resource *res;
-> -	char *fw_name = "scp.img";
-> +	const char *fw_name = "scp.img";
->   	int ret, i;
->   
-> +	ret = of_property_read_string(pdev->dev.of_node, "firmware-name",
-> +				      &fw_name);
+The SCP needs firmware which differs between other platforms and SoCs.
+Add a new property "firmware-name" to allow the DT to specify the
+platform/board specific path to this firmware file.
 
-Hello Allen,
-the remoteproc subsystem provides a helper for that, please use it:
+Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-	ret = rproc_of_parse_firmware(&pdev->dev, 0, &fw_name);
-
-
-> +	if (ret < 0 && ret != -EINVAL)
-> +		return ret;
-
-... this check is necessary, so you can keep this one.
-
-Thanks,
-Angelo
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index 5b693a2d049c..a20effa836f1 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -42,6 +42,13 @@ properties:
+   clock-names:
+     const: main
+ 
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string
++    description:
++      If present, name (or relative path) of the file within the
++      firmware search path containing the firmware image used when
++      initializing SCP.
++
+ required:
+   - compatible
+   - reg
+-- 
+2.18.0
 
