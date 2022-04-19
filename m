@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4342C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Apr 2022 11:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B1BC3527E
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Apr 2022 11:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351423AbiDSLiL (ORCPT
+        id S1351462AbiDSLiL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Tue, 19 Apr 2022 07:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40990 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351468AbiDSLhp (ORCPT
+        with ESMTP id S1351351AbiDSLhd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Apr 2022 07:37:45 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AA03B7F9
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:35:01 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id lc2so32212162ejb.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:35:01 -0700 (PDT)
+        Tue, 19 Apr 2022 07:37:33 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD0B5F99
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:34:48 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id y10so14851139ejw.8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Apr 2022 04:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=7atrdHIPQWrKPdmTA65creUl3MO148uK4lDHmIisbDg=;
-        b=WxMg6XUgp81lXoeea6Vkx3cBnSpHn5GDg4Xb06H7rvL8o6r9kDTwT+y+cwIcbumpid
-         5qIHq+cB77g+DzrnMjqL9f/Ed57GfS5yxtrVc6ASVSzZHsJgtj5aKznr0s595wUoxAnN
-         E/S59Yi0tUvqKEu/O4lE69dAXqFwBPc+QSW0laxY134MT7i+ojjBgD2IE/n6Bg3JBK93
-         Lhu1zjZTUDvZFXPj1n6KqXKzWC2AmiaAXacBHU2rGY3ZqPv3n2RRFu2/8vB3K1vvwjTm
-         QoCq5W4VtfwwNz1R3vc2qvcpdZ7AyY7MmyP985K0TFgeeES2okX68npv32Q+7bUR1Vam
-         JqIQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+RS2KaOerzQuwGLCJlNRvQqdlqz9kGKXmmE/o8hIMxc=;
+        b=KQats4yWut+GAInZpgo6wlkPKVDagbM3R0tOSjC/tXzsGfNp7h99Zs58vCptEscTpK
+         mbbyQT/so7ThPQX6ZBwVgU/6/OMYPhZ3b8NWVo58v/AWgjGj/c13IinU0JZUxgsLmUbX
+         wtYV4iKZ7ZxkIIXJYr27Z/OtYMBaCbJnYhLBGRpddVl1U1LTnJSB6NA88CzMeSaiqqqr
+         2PHKBRlsALK1YRRnJegN2W7zECiyg6PKkD33wHtut9O6mBuGtDG4eNOOmh7evJgldNFD
+         daON6jPbeCRx5RgbYuUVlqa5xdPtHbcMYVioGRHSRAffliIvrFMlh5w4Z4HpNMVbB8RB
+         CtMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7atrdHIPQWrKPdmTA65creUl3MO148uK4lDHmIisbDg=;
-        b=j7jZZPDqRYtzn86SG8ml7doa269mI2c+NCE+MscwSSUMe6VEo+wbwj7JrEPf1JNb9o
-         /W014lBkXMcdUDyekv4Dh9gBke75L1wq2XoAVgXMb0BQwwz1z391tlcs5nXRrSu3rQoj
-         bzxq3uL8lF1dh9BCxOrpdUhsZi3gXOJzUHfL6PyHtlT4/mkr54VGDoP8Sw0lvS6DFoeE
-         V3/1L2qBLSXUiOORAZdjKYLFHaaOMCjbNtEG5KqXQgZxuzulGNdXAUI08HG+w+GzLE6r
-         Wi0ImkY4G6q4AaeNaU15Vir/9FZjWCCSHA4+VP+eQ8oGAIakaX9OszcQKjEmTin+k6T0
-         +dZA==
-X-Gm-Message-State: AOAM5300QeV8iyQSgUAyI6SYhwSnSIN2eVA/sYDJ9JwkRFjQfM6mbKqM
-        RZ/wTmlSZBfgFnjN+wuABMothA==
-X-Google-Smtp-Source: ABdhPJy/HDdRnFcEBc8e1p8gVzy6WYfbU/9ZfvPlCkGd8Q6ySzsHA+NJEntfhZ+3uR4IyIIiCxdJng==
-X-Received: by 2002:a17:906:6a1e:b0:6e8:aa9d:d8b8 with SMTP id qw30-20020a1709066a1e00b006e8aa9dd8b8mr13070576ejc.269.1650368100023;
-        Tue, 19 Apr 2022 04:35:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+RS2KaOerzQuwGLCJlNRvQqdlqz9kGKXmmE/o8hIMxc=;
+        b=5KBZVntY5uFKq+LGBHmswR2utOn2c6TF2/pwvzQdnibG11LyARgmdKyZHmRyfbaCiq
+         K86GgrYrFnzg7pCQRh4E4cKexpdCaFHbkJ70/hEdZbqoENrdT/hgVcCRPwg0E+tFZUGq
+         8LNWqFnEethLSC9tc1z9kS80KCTn+Cf3L9huTjZzpXYAApPCq95q+kkJJViDvtpSU/jM
+         VPjV66w31fgA59CU7QDKt4kYCjUg+NJypSYHE6SlHR7diK+lkTJg7hyMqqF2JTaBJjpk
+         IYaIEBV8/70IEV9hg5aWKD/G4vQNur4f4Q7ew3FZZdLLKBgVKJ35cNhunuI8yyOPSp4v
+         0IYg==
+X-Gm-Message-State: AOAM533Rm8S5y0cMPwL0blQ3xXvj5rb8wfarRHh6HOfq1xRWipLc2Yzf
+        2dYewSvkF3zQY8pTnbi6fU6UcQ==
+X-Google-Smtp-Source: ABdhPJzqToh0YQRiewe8EqLT6PK01CMGRMmUim2jYYjkDbBJ++z/iu7RXEodKQaWchfKBfcBWKLKsQ==
+X-Received: by 2002:a17:907:6e90:b0:6ef:ef41:ac10 with SMTP id sh16-20020a1709076e9000b006efef41ac10mr750787ejc.187.1650368087470;
+        Tue, 19 Apr 2022 04:34:47 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id ce21-20020a170906b25500b006e89869cbf9sm5608802ejb.105.2022.04.19.04.34.58
+        by smtp.gmail.com with ESMTPSA id ce21-20020a170906b25500b006e89869cbf9sm5608802ejb.105.2022.04.19.04.34.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 04:34:59 -0700 (PDT)
+        Tue, 19 Apr 2022 04:34:46 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>
@@ -77,86 +77,126 @@ Cc:     Stuart Yoder <stuyoder@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>
-Subject: [PATCH v7 08/12] vdpa: Use helper for safer setting of driver_override
-Date:   Tue, 19 Apr 2022 13:34:31 +0200
-Message-Id: <20220419113435.246203-9-krzysztof.kozlowski@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v7 00/12] Fix broken usage of driver_override (and kfree of static memory)
+Date:   Tue, 19 Apr 2022 13:34:23 +0200
+Message-Id: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
-References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Use a helper to set driver_override to the reduce amount of duplicated
-code.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/vdpa/vdpa.c  | 29 ++++-------------------------
- include/linux/vdpa.h |  4 +++-
- 2 files changed, 7 insertions(+), 26 deletions(-)
+This is a continuation of my old patchset from 2019. [1]
+Back then, few drivers set driver_override wrong. I fixed Exynos
+in a different way after discussions. QCOM NGD was not fixed
+and a new user appeared - IMX SCU.
 
-diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-index 2b75c00b1005..33d1ad60cba7 100644
---- a/drivers/vdpa/vdpa.c
-+++ b/drivers/vdpa/vdpa.c
-@@ -77,32 +77,11 @@ static ssize_t driver_override_store(struct device *dev,
- 				     const char *buf, size_t count)
- {
- 	struct vdpa_device *vdev = dev_to_vdpa(dev);
--	const char *driver_override, *old;
--	char *cp;
-+	int ret;
- 
--	/* We need to keep extra room for a newline */
--	if (count >= (PAGE_SIZE - 1))
--		return -EINVAL;
--
--	driver_override = kstrndup(buf, count, GFP_KERNEL);
--	if (!driver_override)
--		return -ENOMEM;
--
--	cp = strchr(driver_override, '\n');
--	if (cp)
--		*cp = '\0';
--
--	device_lock(dev);
--	old = vdev->driver_override;
--	if (strlen(driver_override)) {
--		vdev->driver_override = driver_override;
--	} else {
--		kfree(driver_override);
--		vdev->driver_override = NULL;
--	}
--	device_unlock(dev);
--
--	kfree(old);
-+	ret = driver_set_override(dev, &vdev->driver_override, buf, count);
-+	if (ret)
-+		return ret;
- 
- 	return count;
- }
-diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-index 8943a209202e..c0a5083632ab 100644
---- a/include/linux/vdpa.h
-+++ b/include/linux/vdpa.h
-@@ -64,7 +64,9 @@ struct vdpa_mgmt_dev;
-  * struct vdpa_device - representation of a vDPA device
-  * @dev: underlying device
-  * @dma_dev: the actual device that is performing DMA
-- * @driver_override: driver name to force a match
-+ * @driver_override: driver name to force a match; do not set directly,
-+ *                   because core frees it; use driver_set_override() to
-+ *                   set or clear it.
-  * @config: the configuration ops for this device.
-  * @cf_mutex: Protects get and set access to configuration layout.
-  * @index: device index
+It seems "char *" in driver_override looks too consty, so we
+tend to make a mistake of storing there string literals.
+
+Changes since latest v7
+=======================
+1. Patch #1: remove out_free label, document clearing override in kerneldoc and
+   in code-comments (Andy).
+2. Patch #12 (rpmsg): do not duplicate string (Biju).
+
+Changes since latest v6
+=======================
+1. Patch #1: Don't check for !dev and handle len==0 (Andy).
+2. New patch #11 (rpmsg): split constifying of local variable to a new patch.
+
+Changes since latest v5
+=======================
+1. Patch #11 (rpmsg): split from previous patch 11 - easier to understand the
+   need of it.
+2. Fix build issue in patch 12 (rpmsg).
+
+Changes since latest v4
+=======================
+1. Correct commit msgs and comments after Andy's review.
+2. Re-order code in new helper (patch #1) (Andy).
+3. Add tags.
+
+Changes since latest v3
+=======================
+1. Wrap comments, extend comment in driver_set_override() about newline.
+2. Minor commit msg fixes.
+3. Add tags.
+
+Changes since latest v2
+=======================
+1. Make all driver_override fields as "const char *", just like SPI
+   and VDPA. (Mark)
+2. Move "count" check to the new helper and add "count" argument. (Michael)
+3. Fix typos in docs, patch subject. Extend doc. (Michael, Bjorn)
+4. Compare pointers to reduce number of string readings in the helper.
+5. Fix clk-imx return value.
+
+Changes since latest v1 (not the old 2019 solution):
+====================================================
+https://lore.kernel.org/all/708eabb1-7b35-d525-d4c3-451d4a3de84f@rasmusvillemoes.dk/
+1. Add helper for setting driver_override.
+2. Use the helper.
+
+Dependencies (and stable):
+==========================
+1. All patches, including last three fixes, depend on the first patch
+   introducing the helper.
+2. The last three commits - fixes - are probably not backportable
+   directly, because of this dependency. I don't know how to express
+   this dependency here, since stable-kernel-rules.rst mentions only commits as
+   possible dependencies.
+
+[1] https://lore.kernel.org/all/1550484960-2392-3-git-send-email-krzk@kernel.org/
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (12):
+  driver: platform: Add helper for safer setting of driver_override
+  amba: Use driver_set_override() instead of open-coding
+  fsl-mc: Use driver_set_override() instead of open-coding
+  hv: Use driver_set_override() instead of open-coding
+  PCI: Use driver_set_override() instead of open-coding
+  s390/cio: Use driver_set_override() instead of open-coding
+  spi: Use helper for safer setting of driver_override
+  vdpa: Use helper for safer setting of driver_override
+  clk: imx: scu: Fix kfree() of static memory on setting driver_override
+  slimbus: qcom-ngd: Fix kfree() of static memory on setting
+    driver_override
+  rpmsg: Constify local variable in field store macro
+  rpmsg: Fix kfree() of static memory on setting driver_override
+
+ drivers/amba/bus.c              | 28 ++-----------
+ drivers/base/driver.c           | 69 +++++++++++++++++++++++++++++++++
+ drivers/base/platform.c         | 28 ++-----------
+ drivers/bus/fsl-mc/fsl-mc-bus.c | 25 ++----------
+ drivers/clk/imx/clk-scu.c       |  7 +++-
+ drivers/hv/vmbus_drv.c          | 28 ++-----------
+ drivers/pci/pci-sysfs.c         | 28 ++-----------
+ drivers/rpmsg/rpmsg_core.c      |  3 +-
+ drivers/rpmsg/rpmsg_internal.h  | 13 ++++++-
+ drivers/rpmsg/rpmsg_ns.c        | 14 ++++++-
+ drivers/s390/cio/cio.h          |  6 ++-
+ drivers/s390/cio/css.c          | 28 ++-----------
+ drivers/slimbus/qcom-ngd-ctrl.c | 13 ++++++-
+ drivers/spi/spi.c               | 26 ++-----------
+ drivers/vdpa/vdpa.c             | 29 ++------------
+ include/linux/amba/bus.h        |  6 ++-
+ include/linux/device/driver.h   |  2 +
+ include/linux/fsl/mc.h          |  6 ++-
+ include/linux/hyperv.h          |  6 ++-
+ include/linux/pci.h             |  6 ++-
+ include/linux/platform_device.h |  6 ++-
+ include/linux/rpmsg.h           |  6 ++-
+ include/linux/spi/spi.h         |  2 +
+ include/linux/vdpa.h            |  4 +-
+ 24 files changed, 184 insertions(+), 205 deletions(-)
+
 -- 
 2.32.0
 
