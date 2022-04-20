@@ -2,101 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC74DC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Apr 2022 03:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72275C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Apr 2022 06:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344195AbiDTDJI (ORCPT
+        id S231518AbiDTGYR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 Apr 2022 23:09:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
+        Wed, 20 Apr 2022 02:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359167AbiDTDIr (ORCPT
+        with ESMTP id S229580AbiDTGYP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Apr 2022 23:08:47 -0400
-Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4411C2AFE;
-        Tue, 19 Apr 2022 20:05:51 -0700 (PDT)
-Received: by mail-qk1-x732.google.com with SMTP id e128so361183qkd.7;
-        Tue, 19 Apr 2022 20:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jXVd4JyYt+RLNj/hac0Knj+pNB+a1zaGjepppWkJ+bY=;
-        b=ZFxLZ3jbqwA5VN/V3U/Sorl04NGsIMy+K76HC0ts1VMujTqraPtXgbpy5j38Vr9y25
-         P03eTzrb5j+T55kQJmLGL0oTfrJhhIKMehj4M43TrxjbvCUE5i2lnBnXedwhUB0Hrg8T
-         Km317NMpdTpDEDCNWEwmM0UIdwDiGLeChlukAexTd1u+qP0rZqP16/WcVoKDON3/vYwq
-         i7vFxRBZmRhliRki+IgBDiztCxmLGNoxw7Zgao2S8BI1opGRiguZJh9M5gUsCVwo9kNR
-         f9HEzFx1zQc5GciqiPzoiVb8snwF2//GFjEDjuvFlX95ZL3WxdzAKWNBqKf/cpmMIev2
-         lQyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jXVd4JyYt+RLNj/hac0Knj+pNB+a1zaGjepppWkJ+bY=;
-        b=8Eljv12YMj5RIK5MCsL1cuuuqrB/L6iIRM5Y0KR9Uf7ju+5cdfSmLRQVie6OlEb8At
-         SKJIr2eGfJHL0QaLQwl+2MiLFWKcHomakDggYnfLvX0O9zqRu9BVKxQpze71BVoigkby
-         9x2EeKMlmMkMiCoWI3OL1bUyCRRmJWHu+PThMRrAtapczbxv+XY9H2FSFzhaTfEFDUQB
-         G1rIOtoBOjtR8j1s87U9jXL/zfOJDOzpMF5dKxoeoBEfi16BX4wN6R+dtT4E+RKYi8Nc
-         +vuPfPrtr2gCTW3G98j5D4u5FbFTBKIOBVtQ9GEHy7pxdpQU/had2vNUSvVr/M15tWV6
-         NfVA==
-X-Gm-Message-State: AOAM530iiGOZNPxlxqcCj15y0rMiDhHrMRKR5cVKfMCVuDg5PAlapLRi
-        YLVb2w90ZRRkE0AXTMErGAM=
-X-Google-Smtp-Source: ABdhPJzL0eDkXCbFY6rkISzDtHZ8674iDU2OWn1mphdzKQERD2iJuHbptDQuf4Brr0rJp8/htPELXg==
-X-Received: by 2002:a37:b502:0:b0:69a:ca1:298 with SMTP id e2-20020a37b502000000b0069a0ca10298mr11469168qkf.133.1650423950492;
-        Tue, 19 Apr 2022 20:05:50 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id s16-20020ac85cd0000000b002e1ed82f1e5sm1157252qta.75.2022.04.19.20.05.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 20:05:50 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: chi.minghao@zte.com.cn
-To:     agross@kernel.org
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        Wed, 20 Apr 2022 02:24:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014C73A1B1;
+        Tue, 19 Apr 2022 23:21:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8CA18617A8;
+        Wed, 20 Apr 2022 06:21:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0152DC385A0;
+        Wed, 20 Apr 2022 06:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650435689;
+        bh=0fnhV9YkvBUWpgub55PwLix+EHcctNe6r9w3DAv/eSs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uRhP6/uh5dQ8KaiZBwolEqJZ+BExpzzEgvp9iKZbROH0T58MpbqaXd0vAI2lOHtmZ
+         dWIGdKjFZUEXN+71V2fZuaDLxxoGpvZuaLXjZ0eyhhdpzB97TSAI3ZNmzYqoGeGVk8
+         sNAFC6Pf5xLbNSDBV4wMY7E3ACUKpdt0Y3B6NAFyLiEhXXSdjaNpA5EQbnhEIdEtaZ
+         JhfmHUarnj594zIFAqsfG2gNCVCk2GKuvATOvOXO8hi2djqyNlb2xRcTVzYijRC+J1
+         Yw4EbASjMuUsRJFhYqOeyJGxu2cwOgp2zuWDi+a2eKkyIdzXG0GFUBvedKtAG9XBUw
+         1jiym83pzN22A==
+Date:   Wed, 20 Apr 2022 11:51:25 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Minghao Chi <chi.minghao@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] remoteproc: qcom: using pm_runtime_resume_and_get to simplify the code
-Date:   Wed, 20 Apr 2022 03:05:11 +0000
-Message-Id: <20220420030511.2575880-1-chi.minghao@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: pas: Add sc8280xp
+ adsp and nsp pair
+Message-ID: <Yl+mZSk8+EhtkICQ@matsya>
+References: <20220408220539.625301-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220408220539.625301-1-bjorn.andersson@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Minghao Chi <chi.minghao@zte.com.cn>
+On 08-04-22, 15:05, Bjorn Andersson wrote:
+> Add the Qualcomm sc8280xp ADSP and NSP pairs to the binding.
 
-Using pm_runtime_resume_and_get() to replace pm_runtime_get_sync and
-pm_runtime_put_noidle. This change is just to simplify the code, no
-actual functional changes.
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Minghao Chi <chi.minghao@zte.com.cn>
----
- drivers/remoteproc/qcom_wcnss.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 9a223d394087..2c471c763b5b 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -228,11 +228,9 @@ static int wcnss_start(struct rproc *rproc)
- 
- 	for (i = 0; i < wcnss->num_pds; i++) {
- 		dev_pm_genpd_set_performance_state(wcnss->pds[i], INT_MAX);
--		ret = pm_runtime_get_sync(wcnss->pds[i]);
--		if (ret < 0) {
--			pm_runtime_put_noidle(wcnss->pds[i]);
-+		ret = pm_runtime_resume_and_get(wcnss->pds[i]);
-+		if (ret < 0)
- 			goto disable_pds;
--		}
- 	}
- 
- 	ret = regulator_bulk_enable(wcnss->num_vregs, wcnss->vregs);
 -- 
-2.25.1
-
-
+~Vinod
