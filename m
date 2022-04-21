@@ -2,83 +2,76 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C3CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Apr 2022 06:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F54AC43219
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Apr 2022 06:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356204AbiDUG0V (ORCPT
+        id S1385245AbiDUGyQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Apr 2022 02:26:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
+        Thu, 21 Apr 2022 02:54:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229726AbiDUG0T (ORCPT
+        with ESMTP id S1386059AbiDUGyA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Apr 2022 02:26:19 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A0613EB5;
-        Wed, 20 Apr 2022 23:23:26 -0700 (PDT)
-X-UUID: 2b3dd1b70e574701b82cdee100969f99-20220421
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.4,REQID:f394c3dd-92b6-4aa6-b650-d66cc163b093,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:45
-X-CID-INFO: VERSION:1.1.4,REQID:f394c3dd-92b6-4aa6-b650-d66cc163b093,OB:0,LOB:
-        0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:45,FILE:0,RULE:Release_Ham,ACTIO
-        N:release,TS:45
-X-CID-META: VersionHash:faefae9,CLOUDID:775372f0-da02-41b4-b6df-58f4ccd36682,C
-        OID:IGNORED,Recheck:0,SF:13|15|28|17|19|48,TC:nil,Content:0,EDM:-3,File:ni
-        l,QS:0,BEC:nil
-X-UUID: 2b3dd1b70e574701b82cdee100969f99-20220421
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
-        (envelope-from <rex-bc.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1665368436; Thu, 21 Apr 2022 14:23:21 +0800
-Received: from mtkcas10.mediatek.inc (172.21.101.39) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
- Thu, 21 Apr 2022 14:23:20 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkcas10.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 21 Apr 2022 14:23:20 +0800
-Message-ID: <02d4b85ae2595f4bf08ec7ddb2ec4dfb35a45f2a.camel@mediatek.com>
-Subject: Re: [PATCH v3 2/2] remoteproc: mediatek: allow reading
- firmware-name from DT
-From:   Rex-BC Chen <rex-bc.chen@mediatek.com>
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Mathieu Poirier" <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Hsin-Yi Wang <hsinyi@chromium.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>
-Date:   Thu, 21 Apr 2022 14:23:19 +0800
-In-Reply-To: <20220419123331.14377-3-allen-kh.cheng@mediatek.com>
-References: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
-         <20220419123331.14377-3-allen-kh.cheng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Thu, 21 Apr 2022 02:54:00 -0400
+Received: from muru.com (muru.com [72.249.23.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1ED8EB37;
+        Wed, 20 Apr 2022 23:51:12 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 704FC8106;
+        Thu, 21 Apr 2022 06:48:20 +0000 (UTC)
+Date:   Thu, 21 Apr 2022 09:51:10 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Puranjay Mohan <p-mohan@ti.com>
+Cc:     linux-kernel@vger.kernel.org, nm@ti.com,
+        devicetree@vger.kernel.org, grygorii.strashko@ti.com,
+        vigneshr@ti.com, mathieu.poirier@linaro.org, kishon@ti.com,
+        linux-remoteproc@vger.kernel.org, bjorn.andersson@linaro.org,
+        rogerq@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        ssantosh@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 5/6] soc: ti: pruss: Add helper function to enable OCP
+ master ports
+Message-ID: <YmD+3svXUIHiX6DJ@atomide.com>
+References: <20220418123004.9332-1-p-mohan@ti.com>
+ <20220418123004.9332-6-p-mohan@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220418123004.9332-6-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 2022-04-19 at 20:33 +0800, Allen-KH Cheng wrote:
-> The SCP firmware blob differs between platforms and SoCs. We add
-> support in the SCP driver for reading the path of firmware file from
-> DT in order to allow these files to live in a generic file system
-> (or linux-firmware).
-> 
-> The firmware-name property is optional and the code falls back to the
-> old filename if the property isn't present.
-> 
-> Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-> ---
+* Puranjay Mohan <p-mohan@ti.com> [220418 12:35]:
+> From: Suman Anna <s-anna@ti.com>
+> +/**
+> + * pruss_cfg_ocp_master_ports() - configure PRUSS OCP master ports
+> + * @pruss: the pruss instance handle
+> + * @enable: set to true for enabling or false for disabling the OCP master ports
+> + *
+> + * This function programs the PRUSS_SYSCFG.STANDBY_INIT bit either to enable or
+> + * disable the OCP master ports (applicable only on SoCs using OCP interconnect
+> + * like the OMAP family). Clearing the bit achieves dual functionalities - one
+> + * is to deassert the MStandby signal to the device PRCM, and the other is to
+> + * enable OCP master ports to allow accesses outside of the PRU-ICSS. The
+> + * function has to wait for the PRCM to acknowledge through the monitoring of
+> + * the PRUSS_SYSCFG.SUB_MWAIT bit when enabling master ports. Setting the bit
+> + * disables the master access, and also signals the PRCM that the PRUSS is ready
+> + * for Standby.
 
-Reviewed-by: Rex-BC Chen <rex-bc.chen@mediatek.com>
+Looks OK to me, some comments regarding runtime PM though for future patching
+though.
 
+Eventually we may want to handle this in drivers/bus/ti-sysc.c so it gets toggled
+based on runtime PM. The PRUSS sysc register seems to be just a new variant of
+sysc_regbits_omap4_simple with the standby and status bits added.
+
+If using runtime PM for the PRUSS instance is not suitable for managing the
+standby and status bits, then some comments should be added describing why
+finer grained control is needed for these bits beyond runtime PM.
+
+As far as I'm concerned, these can be done in separate changes, no need to update
+this patch.
+
+Regards,
+
+Tony
