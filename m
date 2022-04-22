@@ -2,94 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD968C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 15:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B56FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 23:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356527AbiDVP50 (ORCPT
+        id S229868AbiDVXZH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 11:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
+        Fri, 22 Apr 2022 19:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1449587AbiDVP5Z (ORCPT
+        with ESMTP id S230025AbiDVXYx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Apr 2022 11:57:25 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92004237FD;
-        Fri, 22 Apr 2022 08:54:31 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23MExSaS028654;
-        Fri, 22 Apr 2022 17:54:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=/ZsiM/JVSStGy085+VUcOInF1XyD4vqdtylPW/d5gq8=;
- b=2rPNmR8qK7iYuF8eztJY/RH/AjGxVchq46xGxrCRGIxD4AX0udT3s9e7kO63Evlap+Um
- 2rvZTiD5JtgwEHStlzJjTn+OUnJbdmCs+TH7rZUY2NDYmbEpO5K24sacp1lXf3HsCpYK
- 4cQpffwgYwI+lz76MmlYic6DChgTyULQ7hjLlrqvxGlcBXs4loyMKy8eYG0rppUpQJ/5
- XfrBcauEAsA3MgipT75hTZ7pyM6qLgrSr7R0Xv9O6PyG9lAAg31BSbZ2znY2k+1Prkp5
- zfTHq8Dyz5/rHx/r2yVKfTrBcNL6mTvVnUzH8rVUo9CoYemfni/04lU2MUkVL6K93Zt3 Ug== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3fk4fvg40d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Apr 2022 17:54:27 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3CD5010002A;
-        Fri, 22 Apr 2022 17:54:27 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3611B23695A;
-        Fri, 22 Apr 2022 17:54:27 +0200 (CEST)
-Received: from localhost (10.75.127.44) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Fri, 22 Apr 2022 17:54:26
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>, Hangyu Hua <hbh25y@gmail.com>
-Subject: [PATCH] rpmsg: virtio: Fix the unregistration of the device rpmsg_ctrl
-Date:   Fri, 22 Apr 2022 17:54:02 +0200
-Message-ID: <20220422155402.721982-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.24.3
+        Fri, 22 Apr 2022 19:24:53 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6C31EE1DA
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 16:00:04 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-e5c42b6e31so10106109fac.12
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 16:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ElI2t4nByDOB6dr+yLR266lxMKTIEX40DDSnpkzAfdk=;
+        b=AAL18eX8s5pFrRM+VhPDxLjLMGLkQCN9PL+jVRgw0V7kN4VQZrGyrC9yvnUkDDTA9m
+         kUoPiX2AeDEFGlhQgafrnJM6b0hbFWx6As1XdFyzsaPMNT+LFL88wT8KL6EtbHBVMNiY
+         XmAZFpWedjwOngPwoyeeBAkh1yzof7YA1rRPwXRc4zrYY9xeqwYv73OLXw569g5RyDJ/
+         4UItx60O5ACzGqIv8o1yXv3z55PWWdx2axpX7VycwhT98ePwWGv8hegxjQnUJGFg1Nsc
+         Uj1hIqqdCUTMkyisAjlr4sM4FbKyYp5nyDGNaJ/+DYjN1Lwjt3DbfgXDofNsTFiWo2YU
+         ZsbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ElI2t4nByDOB6dr+yLR266lxMKTIEX40DDSnpkzAfdk=;
+        b=J/jbpto2IT49hGdZjecK1guLtZq/6sM2+K0PVm42KecKnu87UTSi/Yd+foG1auRGQu
+         zw7evSkZKerGqh2B7mFHXRh5Sp4C486GamGH+676lFX7V5h1Ys162+bOx6U1OGCq0FiX
+         Y94Jtzkygp9HI6fAyVim+H2vwCPraxcadvKBb+FQthTqGJu0WN0ge3W1uMPulEyjIprJ
+         2B9tV+l/71C/ijMISUvuDRZWTObEqwZOUbQlrWBUD+nHdmWr/2Zpp1vE4k1X/UBXvqHm
+         R6ti0HFmsH8SQ5317hNRMidRjZbmUYbO4N8L/+AHpUdBCGVZBU+iLtccisQyhfJME+pi
+         yrDg==
+X-Gm-Message-State: AOAM533E78WBN/MdWcgNDOnNaup/ws7swhf0HGnkYgBMmzD0VQ0Mwei6
+        PWFGutmXRQn5sq2h+PKniRSwTA==
+X-Google-Smtp-Source: ABdhPJyhzjfmiSNV9pg+MVvlFlGDkq8CvnWd0Mwcnumh+SSclYdBOE1HNA5Unl92+fFrCF1gMYMSkg==
+X-Received: by 2002:a05:6870:ea89:b0:e6:4acc:9302 with SMTP id s9-20020a056870ea8900b000e64acc9302mr3081663oap.203.1650668403484;
+        Fri, 22 Apr 2022 16:00:03 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id v65-20020aca6144000000b0032259d24076sm1250566oib.30.2022.04.22.16.00.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 16:00:02 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
+        <nfraprado@collabora.com>
+Cc:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: (subset) [PATCH v1 1/3] dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
+Date:   Fri, 22 Apr 2022 18:00:01 -0500
+Message-Id: <165066838719.2742284.7900096409445311556.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220225225854.81038-2-nfraprado@collabora.com>
+References: <20220225225854.81038-1-nfraprado@collabora.com> <20220225225854.81038-2-nfraprado@collabora.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-22_04,2022-04-22_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Unregister the rpmsg_ctrl device instead of just freeing the
-the virtio_rpmsg_channel structure.
-This will properly unregister the device and call
-virtio_rpmsg_release_device() that frees the structure.
+On Fri, 25 Feb 2022 17:58:52 -0500, Nícolas F. R. A. Prado wrote:
+> The SCP node can have an associated interrupt. Add a property for it.
+> 
+> 
 
-Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
+Applied, thanks!
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Hangyu Hua <hbh25y@gmail.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[1/3] dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
+      commit: b7da6f517214c307efece604ac9dc58dc6123c07
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3b7b47f785cf..0db8043e6c49 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -861,7 +861,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
- {
- 	if (!rpdev_ctrl)
- 		return;
--	kfree(to_virtio_rpmsg_channel(rpdev_ctrl));
-+	device_unregister(&rpdev_ctrl->dev);
- }
- 
- static int rpmsg_probe(struct virtio_device *vdev)
+Best regards,
 -- 
-2.24.3
-
+Bjorn Andersson <bjorn.andersson@linaro.org>
