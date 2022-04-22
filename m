@@ -2,109 +2,137 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C6EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 15:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D2DC43217
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 15:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442528AbiDVPcA (ORCPT
+        id S233291AbiDVPn2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 11:32:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41886 "EHLO
+        Fri, 22 Apr 2022 11:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379791AbiDVPb7 (ORCPT
+        with ESMTP id S234254AbiDVPnY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Apr 2022 11:31:59 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88155D5FF;
-        Fri, 22 Apr 2022 08:29:05 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23MEwQKI028996;
-        Fri, 22 Apr 2022 17:29:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=7OtoQsmkk74HkzZwgy+GPk/bwOwOBCrV453Og/7yYoE=;
- b=dHszagQgj2uytg0rBRYm6gs9htdcYMiV1vk0wrJg6qVNC5/hEleqC1i3JJqeM6NECE7z
- BUU3SoHs1Qrqmn7WIBls/beBcaz58jBkDtH2g2uQA6T1KcUcXzDewwk+N4cQTFX6/zhk
- lBNZCmnfEMZDvLhowTfsyiA2Mifzru9eTCZaxi44y24zxnRxrVCVnf6CWupjXR5g5lcP
- CY8m/uDi/7qccLBB44SNY5noPNpnstPMmXpMg/OlW0Sssn3fB3sQg2m4I6eSQwXZzzeM
- 9R6gFaVdvkW6gj1eci1IUjJu4G3lLCZ+344AmC8R9Aw6D93TTvaD5cRLGGJJtBYEBDuL dA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3fk4fvg0bg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Apr 2022 17:29:03 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5195410002A;
-        Fri, 22 Apr 2022 17:29:03 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4B35A233C76;
-        Fri, 22 Apr 2022 17:29:03 +0200 (CEST)
-Received: from [10.201.20.246] (10.75.127.46) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Fri, 22 Apr
- 2022 17:29:02 +0200
-Message-ID: <93383e14-736e-56c8-2f96-d295d5019ddc@foss.st.com>
-Date:   Fri, 22 Apr 2022 17:29:02 +0200
+        Fri, 22 Apr 2022 11:43:24 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C6E9583A3;
+        Fri, 22 Apr 2022 08:40:30 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id v64-20020a1cac43000000b0038cfd1b3a6dso8201982wme.5;
+        Fri, 22 Apr 2022 08:40:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ES0l6S93mE+Wb+3kqpTJgwQ5QqgD39UykyyH0mPFa1A=;
+        b=eAJDeSA5ES65uo2n7FwOPrhjMXpb1/30wYGIYDKU1AzFS1Oqvazunp1Lgruo6FULJd
+         N1IB7K2+Ifwa9kYQkwb3cmGFVMpYNerQIo6Xf5XWsYkCezu38OlPmhnwNMBTL/W5oCn2
+         L75ox71Pu3LZ/UYtIbm1TWt+gVsRU+MzQneRGct7i/4SWy81zHrPejYrVdeI/YMaPpPx
+         HmXn74qleRfqwuZZ2MVnbuefcR2uqjqw5yZFHI09alDi/A25qW1nE0me6ZBWB4tJciqf
+         3h4tTceozSY5WFT6wJ/px99wf0HGPFeQ2Mvngrekpv9MRQunqTkTNZxTeL/FkV9IMbNe
+         XHyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=ES0l6S93mE+Wb+3kqpTJgwQ5QqgD39UykyyH0mPFa1A=;
+        b=i16dVesuOrpmaFQGvUc54Z+kr6riITFAKIMhsXtUq38VPU/jiAnuC0p67lmfmH+hTT
+         nZ/OSly2xI/+AQLDyd7eO0kCd5BOPgTZv6wclepII+e++qfufcSG9kQXxuPALirEKSh+
+         hcLc0i5rtYMIZcLJ0eW/oyJthe+LsTT6mC72cbPF1+kAEhnLqQ7duSGNhw0ALNxHXbqj
+         V4IjG+wxwSy2Ccpic2K/ZmA/r1wcOJD+spsPuMINFIjJvN8OVYCseT25venDPjtcIi2w
+         45MqVLegkUVZOzGBlyGf3GWIcOIOL5NkgfotNoUVRe+fih+xMi4qFB7s2WSV1nDJx3Q2
+         a8OQ==
+X-Gm-Message-State: AOAM532mA27PQIWb6T2ZmUB/6SJSICViHi3x98X/ztaPLlCZX82t0VDe
+        LJeaACx1ozfa4i7c7cixY0g=
+X-Google-Smtp-Source: ABdhPJyTYQRjuZT+Ec8SM434CWQGeFUn2UkQ3zQWg/RiYa7Z+9pAMLI2nF/jZpTCnEOzRThwH++fmg==
+X-Received: by 2002:a05:600c:1e1e:b0:38e:baaa:aae0 with SMTP id ay30-20020a05600c1e1e00b0038ebaaaaae0mr4563460wmb.157.1650642029069;
+        Fri, 22 Apr 2022 08:40:29 -0700 (PDT)
+Received: from [192.168.1.145] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id y11-20020a056000168b00b0020a919422ccsm2434199wrd.109.2022.04.22.08.40.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Apr 2022 08:40:28 -0700 (PDT)
+Message-ID: <9a766c52-f085-0ce4-5072-5a602e533740@gmail.com>
+Date:   Fri, 22 Apr 2022 17:40:27 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] rpmsg: virtio: fix possible double free in rpmsg_probe()
+ Thunderbird/91.5.0
+Subject: Re: [PATCH v1 0/3] Fixes for Mediatek dt-bindings
 Content-Language: en-US
-To:     Hangyu Hua <hbh25y@gmail.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220418093144.40859-1-hbh25y@gmail.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220418093144.40859-1-hbh25y@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-22_04,2022-04-22_01,2022-02-23_01
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "N?colas F. R. A. Prado" <nfraprado@collabora.com>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>
+References: <20220225225854.81038-1-nfraprado@collabora.com>
+ <20220404152256.mkksr4oqjt65ytlf@notapiano> <YmLGyIOStJJAGSJG@builder.lan>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <YmLGyIOStJJAGSJG@builder.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 4/18/22 11:31, Hangyu Hua wrote:
-> vch will be free in virtio_rpmsg_release_device() when
-> rpmsg_ns_register_device() fails. There is no need to call kfree() again.
+On 22/04/2022 17:16, Bjorn Andersson wrote:
+> On Mon 04 Apr 10:22 CDT 2022, N?colas F. R. A. Prado wrote:
 > 
-> Fix this by changing error path from free_vch to free_ctrldev.
+>> Hi Matthias,
+>>
+>> Maybe you could pick this series through your tree? It addresses some dtc
+>> warnings that are introduced with the new nodes in mt8192.dtsi that you just
+>> picked up on your v5.18-next/dts64 branch.
+>>
 > 
-> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
-> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
-
-Tested-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-Thanks,
-Arnaud
-
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> I don't see a reply from Matthias, so I've picked up this (the
+> remoteproc) fix in our tree.
 > 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 3ede25b1f2e4..603233f0686e 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -973,7 +973,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  		err = rpmsg_ns_register_device(rpdev_ns);
->  		if (err)
-> -			goto free_vch;
-> +			goto free_ctrldev;
->  	}
->  
->  	/*
-> @@ -997,8 +997,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  	return 0;
->  
-> -free_vch:
-> -	kfree(vch);
->  free_ctrldev:
->  	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
->  free_coherent:
+
+That's totally fine. I'm reluctant to take random dt-binding patches as it can 
+provoke merge conflicts when there are other patches on the same binding taken 
+by the driver maintainer. Normally I leave it to the driver maintainer to take 
+such kind of patches.
+
+Regards,
+Matthias
+
+> Thanks,
+> Bjorn
+> 
+>> Thanks,
+>> Nícolas
+>>
+>> On Fri, Feb 25, 2022 at 05:58:51PM -0500, Nícolas F. R. A. Prado wrote:
+>>>
+>>> This series has some fixes for Mediatek dt-bindings. It solves some
+>>> warnings printed by dtbs_check, both for already merged Devicetrees, as
+>>> well as some that would be introduced by the changes to mt8192.dtsi in
+>>> [1].
+>>>
+>>> [1] https://lore.kernel.org/all/20220218091633.9368-1-allen-kh.cheng@mediatek.com/
+>>>
+>>>
+>>> Nícolas F. R. A. Prado (3):
+>>>    dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
+>>>    dt-bindings: usb: mtk-xhci: Allow wakeup interrupt-names to be
+>>>      optional
+>>>    media: dt-bindings: mtk-vcodec-encoder: Add power-domains property
+>>>
+>>>   .../devicetree/bindings/media/mediatek,vcodec-encoder.yaml     | 3 +++
+>>>   Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml      | 3 +++
+>>>   Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.yaml   | 1 +
+>>>   3 files changed, 7 insertions(+)
+>>>
+>>> -- 
+>>> 2.35.1
