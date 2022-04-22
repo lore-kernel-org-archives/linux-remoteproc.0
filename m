@@ -2,108 +2,95 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8C7C43217
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Apr 2022 16:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C461C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 06:24:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbiDUQ1v (ORCPT
+        id S1381736AbiDVG1i (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Apr 2022 12:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37252 "EHLO
+        Fri, 22 Apr 2022 02:27:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390690AbiDUQYS (ORCPT
+        with ESMTP id S1444364AbiDVG1h (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Apr 2022 12:24:18 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859A8220E6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Apr 2022 09:21:28 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id z5-20020a17090a468500b001d2bc2743c4so5675748pjf.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 Apr 2022 09:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=zOgF5YHHdnw6KFfM7+TfvuQyjrbr/lX5m0szyjvIkws=;
-        b=AZ6UWC536Tr+qN6iz60AuoVTHsNIJZh2fChIEo5NiY0GJ/2lpSLHpxlUwQYpLLnCGF
-         46dnieAD8HD3maBt+IEPmJ3/MxXRfN3Vd/YfUa/cFDSklKEoQHNORUJBPNRaFA8d8gI2
-         D+ezgg6ARlOYxeT5LjVHUOM42nantNwr9nDeWoE/KP2nxQTGfe678ToHMMf+7UMlSkU3
-         qd+jXYER+2NHQVYvn77FyjkOs5Azdt6NBzzx/BTOBRywlHUwmSqtohoFc4jGPUZiCQoK
-         T6R/cptVJXD96SN2vEcwhozxmRL20K7eZputX2D+qFZZhjuuIlWo8etvzEV+EIBDqWXN
-         pV4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=zOgF5YHHdnw6KFfM7+TfvuQyjrbr/lX5m0szyjvIkws=;
-        b=iqnNpC5VbV3e4hzakmJBWfc0SqZs2FCh/NYLP8/LAVD6buHa/0zSyBg2ILd4HpV1RE
-         5VgLqFpzY7Q8Mh3hKGXR2h5A3dZ9iXyHXTDpSQxOxlVDx6VQtLAqSpeIknPq8aLeCsmH
-         EKkAeARQ99/kuPSG8GtYB2YRItnHXMb0TDyeGxx/IsW+iRpwpp2NCzeUzmO/5ODqrtuM
-         1Q/NL4rPS/PcLqPCbosnhb4gGRhGn51rvDkkSTEwOnpSJeh9IMp7EgkmcDmqRoU+BeCB
-         CUveqyYv2mie9rz2+EIA3St4ZAit9Rr3LKMEVXx3Ehagattw96Xs+j4iJqy8C/+VNBlT
-         wAsg==
-X-Gm-Message-State: AOAM533nJ9cK2lL5H/dEfTWcE8Zt02sbXk857U1BcSEEhG9G/YrsTasX
-        BomL9Tde5QGbcqNQ+cRdJ2eJMQ==
-X-Google-Smtp-Source: ABdhPJyKW5sbH8IITrbG/4Ys8s+ipSdmANtpb03yMQnddgED1EkdIIGyeLpEf+JUcB5R0yVEhlgV0g==
-X-Received: by 2002:a17:90a:9416:b0:1ca:c87b:9439 with SMTP id r22-20020a17090a941600b001cac87b9439mr455923pjo.71.1650558088025;
-        Thu, 21 Apr 2022 09:21:28 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id p10-20020a637f4a000000b00373a2760775sm23361771pgn.2.2022.04.21.09.21.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 09:21:26 -0700 (PDT)
-Date:   Thu, 21 Apr 2022 10:21:24 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] remoteproc: mediatek: allow different SCP
- firmware names
-Message-ID: <20220421162124.GA1596562@p14s>
-References: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+        Fri, 22 Apr 2022 02:27:37 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF547506FA;
+        Thu, 21 Apr 2022 23:24:44 -0700 (PDT)
+X-UUID: 244b248a9c8143ab9665a120b063d961-20220422
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.4,REQID:5a2b6a49-19dd-4942-a433-db80654a85d7,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:faefae9,CLOUDID:7239beef-06b0-4305-bfbf-554bfc9d151a,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,File:nil,QS:0,BEC:nil
+X-UUID: 244b248a9c8143ab9665a120b063d961-20220422
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <mark-pk.tsai@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 612951047; Fri, 22 Apr 2022 14:24:39 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Fri, 22 Apr 2022 14:24:39 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 22 Apr 2022 14:24:39 +0800
+From:   Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robin.murphy@arm.com>
+CC:     <hch@lst.de>, <m.szyprowski@samsung.com>, <matthias.bgg@gmail.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <mark-pk.tsai@mediatek.com>,
+        <yj.chiang@mediatek.com>
+Subject: [PATCH 0/2] dma-mapping, remoteproc: Fix dma_mem leak after rproc_shutdown
+Date:   Fri, 22 Apr 2022 14:24:34 +0800
+Message-ID: <20220422062436.14384-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 08:33:29PM +0800, Allen-KH Cheng wrote:
-> The SCP needs firmware which differs between platforms and SoCs. Add a new
-> property "firmware-name" to allow the DT to specify the platform/board specific
-> path to this firmware file.
-> 
-> The firmware-name property is optional and the code falls back to the
-> old filename if the property isn't present.
-> 
-> Base on remoteproc/linux.git, rproc-next (58b7c856519f)
+Release dma coherent memory before rvdev is free in
+rproc_rvdev_release().
 
-I'm good with this patchset but I'll wait before applying to give Rob the time
-to review it.
+Below is the kmemleak report:
+unreferenced object 0xffffff8051c1a980 (size 128):
+  comm "sh", pid 4895, jiffies 4295026604 (age 15481.896s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<000000003a0f3ec0>] dma_declare_coherent_memory+0x44/0x11c
+    [<00000000ad243164>] rproc_add_virtio_dev+0xb8/0x20c
+    [<00000000d219c8e9>] rproc_vdev_do_start+0x18/0x24
+    [<00000000e694b468>] rproc_start+0x22c/0x3e0
+    [<000000000b938941>] rproc_boot+0x4a4/0x860
+    [<000000003c4dc532>] state_store.52856+0x10c/0x1b8
+    [<00000000df2297ac>] dev_attr_store+0x34/0x84
+    [<0000000083a53bdb>] sysfs_kf_write+0x60/0xbc
+    [<000000008ed830df>] kernfs_fop_write+0x198/0x458
+    [<0000000072b9ad06>] __vfs_write+0x50/0x210
+    [<00000000377d7469>] vfs_write+0xe4/0x1a8
+    [<00000000c3fc594e>] ksys_write+0x78/0x144
+    [<000000009aef6f4b>] __arm64_sys_write+0x1c/0x28
+    [<0000000003496a98>] el0_svc_common+0xc8/0x22c
+    [<00000000ea3fe7a3>] el0_svc_compat_handler+0x1c/0x28
+    [<00000000d1a85a4e>] el0_svc_compat+0x8/0x24
 
-Thanks,
-Mathieu
+Mark-PK Tsai (2):
+  dma-mapping: Add dma_release_coherent_memory to DMA API
+  remoteproc: Fix dma_mem leak after rproc_shutdown
 
-> 
-> changes since v2:$
-> - use rproc_of_parse_firmware instead of of_property_read_string
-> changes since v1:
-> - fix a misspelled word in commit title
-> 
-> Allen-KH Cheng (2):
->   dt-bindings: remoteproc: mediatek: add firmware-name property
->   remoteproc: mediatek: allow reading firmware-name from DT
-> 
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 7 +++++++
->  drivers/remoteproc/mtk_scp.c                              | 6 +++++-
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.18.0
-> 
+ drivers/remoteproc/remoteproc_core.c |  1 +
+ include/linux/dma-map-ops.h          |  3 +++
+ kernel/dma/coherent.c                | 10 ++++++++--
+ 3 files changed, 12 insertions(+), 2 deletions(-)
+
+-- 
+2.18.0
+
