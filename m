@@ -2,175 +2,131 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C69BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 15:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAECDC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 15:22:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1443556AbiDVPT4 (ORCPT
+        id S1449392AbiDVPZY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 11:19:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34148 "EHLO
+        Fri, 22 Apr 2022 11:25:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357069AbiDVPTz (ORCPT
+        with ESMTP id S1449390AbiDVPZV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Apr 2022 11:19:55 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174CEE093;
-        Fri, 22 Apr 2022 08:17:01 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23MAS3Xk031297;
-        Fri, 22 Apr 2022 17:16:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=s5sxuCtgNccCRANRgxe8iGyIasbOV71Jgg+UGoiZRFo=;
- b=PWlLRuCIcbWInfLoWY2OZ+Uj36byBj6N2jBr8SyeUkvuaiIZWKwSAZf6rJd9rSRiZW/8
- 2jBYnWqCBS4BBNpB75w47fF5OGynNnfDw9XwSWN/27pR8YUALx9mOwP1RhSi38TzOwSf
- oR3T2U0Sk8nuyUJFVB/C1mdku3r/6yb2IT+qB7Zu/kDdR0DD2ipRQ0Bs6/Bm88aYeSp4
- CKPn4zs0cSj6Ydjr1TTIQNLexMkD99ujy9Bmn92GtH+TJ1j5g18KA1lDbSwn9ejSY82j
- 3KFU+hJw3l9R6JUWENrC6AO7Y4u6mtQ90D3KoaKOjrqLK+kEW2708z13wcSVgQXmwd8P Dg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ffpqe9w71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 22 Apr 2022 17:16:59 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DC3B610002A;
-        Fri, 22 Apr 2022 17:16:58 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D3E2B22FA4F;
-        Fri, 22 Apr 2022 17:16:58 +0200 (CEST)
-Received: from [10.201.20.246] (10.75.127.44) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Fri, 22 Apr
- 2022 17:16:58 +0200
-Message-ID: <64aed5f4-bc6b-b8ea-f599-b2c43e35d9bd@foss.st.com>
-Date:   Fri, 22 Apr 2022 17:16:57 +0200
+        Fri, 22 Apr 2022 11:25:21 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8C956208
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 08:22:28 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id w194so9355919oiw.11
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 08:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zRM02qIQxQfC70nTBUvBA4m5fQ3xcQpnV7vq3c9440w=;
+        b=h/3IuuXkxgBlAc78SVN4gUgu/c8KG7pLgEH8c0fOYV68W85jMLSA+lPPcBKsKjg4QC
+         PqjIFSUHCosr0MyofPXkQCHfN90WQktRP53EDIzL1GES+d5gSpUOd0wF+JOyrWb2e+Si
+         kXbYBXHhSZ38Ta3vl9kMiBQ+9eEGuISje9Q1v9F62QBoYS0OKlwi34wIACZ+UvyupUdQ
+         2ha8AnWEw1/Mi4RmdfrlIcfzGrCz1LRPJbjcNBqr9GtuAIo7JxhE+gIlT/jdTcZlB0oj
+         cygYWKZ5WeOzAgqBjCz3cfyLkzh5Exoe1dmgnP4Zb2oH+kWXYp6obf0iua+0rrKvfcda
+         puGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=zRM02qIQxQfC70nTBUvBA4m5fQ3xcQpnV7vq3c9440w=;
+        b=tUrGxfGB7VQn+37SVJ0zqvoguIfIL/FB+BFgdjX537/TLBB6CUMWQq7IDhHXG3fowF
+         nJVKlBtBJ6Ziu9t8yPPz70Esx3V/HAPL70H6J2TWQaKsoqQr/1Y1GNLpwXW1+8Ywh27e
+         of0VXRAoV4E6lGQPtWjwmUARimCRss0BHgecyBC2v3hWltksAYLZcllHcIv9vyknbW1F
+         4GLT/mbDgHrEsVhHMkMQoYow1RWrs/8sl96rZFH0aEc6QV1aXmWnRdnIFQ0MI+Dr4OM+
+         XUikighNQll5p4lg6GrwE2ThTpSNraJs+/sFy9AjhOi8V0YtypQiw3GDxDwSxZ/Y0nIW
+         dg6w==
+X-Gm-Message-State: AOAM533FLUU8uuj3aSIogsBscoKZh+YNo2LM8u0aN0+ZJhXhIC9P0RAo
+        KA8uJsGM5uxT6gkQVtiZMJUh5g==
+X-Google-Smtp-Source: ABdhPJztX0pQAZNJhW4p1LHgjp7sVpM+w9Sq/Ow7PUaSzKnmgvwmZgkuX3dtlQ6yhTJ4zFgxKXGdsQ==
+X-Received: by 2002:a05:6808:e8c:b0:322:4b82:d33d with SMTP id k12-20020a0568080e8c00b003224b82d33dmr6802331oil.21.1650640947329;
+        Fri, 22 Apr 2022 08:22:27 -0700 (PDT)
+Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
+        by smtp.gmail.com with ESMTPSA id u20-20020a4a9e94000000b003291f6ac4b2sm894365ook.28.2022.04.22.08.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 08:22:26 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 10:22:24 -0500
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Yogesh Lal <quic_ylal@quicinc.com>
+Cc:     quic_sibis@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: Add fallback mechanism for full
+ coredump collection
+Message-ID: <YmLIMG62vPv4qtVe@builder.lan>
+References: <1649269662-20338-1-git-send-email-quic_ylal@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] rpmsg: virtio: fix possible double free in
- rpmsg_virtio_add_ctrl_dev()
-Content-Language: en-US
-To:     Hangyu Hua <hbh25y@gmail.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220418101724.42174-1-hbh25y@gmail.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220418101724.42174-1-hbh25y@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-22_04,2022-04-22_01,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1649269662-20338-1-git-send-email-quic_ylal@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Hangyu,
+On Wed 06 Apr 13:27 CDT 2022, Yogesh Lal wrote:
 
-On 4/18/22 12:17, Hangyu Hua wrote:
-> vch will be free in virtio_rpmsg_release_device() when
-> rpmsg_ctrldev_register_device() fails. There is no need to call
-> kfree() again.
+> In case remoteproc's firmware missing minidump support, during crash
+> scenario coredump does not collected. This change adds a fallback
+> mechanism for full coredump collection in the event of a crash.
 > 
-> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
-> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+> Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
 > ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/remoteproc/qcom_common.c   | 11 ++++++++---
+>  drivers/remoteproc/qcom_q6v5_pas.c |  1 +
+>  2 files changed, 9 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 603233f0686e..3b7b47f785cf 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -851,7 +851,6 @@ static struct rpmsg_device *rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev
->  
->  	err = rpmsg_ctrldev_register_device(rpdev_ctrl);
->  	if (err) {
-> -		kfree(vch);
->  		return ERR_PTR(err);
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 4b91e3c..68bd0bc 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -162,13 +162,18 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
+>  	 * is initialized in memory and encryption status is set.
+>  	 */
+>  	if (subsystem->regions_baseptr == 0 ||
+> -	    le32_to_cpu(subsystem->status) != 1 ||
+> -	    le32_to_cpu(subsystem->enabled) != MD_SS_ENABLED ||
+> -	    le32_to_cpu(subsystem->encryption_status) != MD_SS_ENCR_DONE) {
+> +		le32_to_cpu(subsystem->status) != 1 ||
+> +		le32_to_cpu(subsystem->enabled) != MD_SS_ENABLED) {
+> +			return rproc_coredump(rproc);
+> +		}
+> +
+> +	if (le32_to_cpu(subsystem->encryption_status) != MD_SS_ENCR_DONE) {
+>  		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+>  		return;
 >  	}
 >  
+> +	rproc_coredump_cleanup(rproc);
 
-Good catch! I confirmed by testing the error case. There is a double free.
+The patch looks good, but could you please explain in the commit message
+why this needs to be added? If the thing described in the message
+happens this code path wouldn't be taken.
 
-That said this highlight a quite more complex issue as
-rpmsg_virtio_del_ctrl_dev[1] and rpmsg_ns_register_device(rpdev_ns)error
-case[2] need also some improvements.
-
-[1]
-https://elixir.bootlin.com/linux/v5.18-rc3/source/drivers/rpmsg/virtio_rpmsg_bus.c#L861
-[2]https://elixir.bootlin.com/linux/v5.18-rc3/source/drivers/rpmsg/virtio_rpmsg_bus.c#L974
-
-Please find at the end of my mail a V2 patch that should fix more error
-cases.
-As you initiate the fix, do you want to send the V2 or do you prefer
-that I send the fix?
+Should it be a separate patch, or is it needed because of the fallback
+etc?
 
 Thanks,
-Arnaud
+Bjorn
 
-Subject: [PATCH V2] rpmsg: virtio: fix possible double free in rpmsg_probe()
-
-the virtio_rpmsg_channel structure will be free in
-virtio_rpmsg_release_device() when the device_register() fails or
-when device_unregister is called.
-There is no need to call kfree() again.
-
-Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
-
-Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c
-b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3ede25b1f2e4..a65c8be9b11f 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -850,10 +850,8 @@ static struct rpmsg_device
-*rpmsg_virtio_add_ctrl_dev(struct virtio_device *vdev
- 	rpdev_ctrl->little_endian = virtio_is_little_endian(vrp->vdev);
-
- 	err = rpmsg_ctrldev_register_device(rpdev_ctrl);
--	if (err) {
--		kfree(vch);
-+	if (err)
- 		return ERR_PTR(err);
--	}
-
- 	return rpdev_ctrl;
- }
-@@ -862,7 +860,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct
-rpmsg_device *rpdev_ctrl)
- {
- 	if (!rpdev_ctrl)
- 		return;
--	kfree(to_virtio_rpmsg_channel(rpdev_ctrl));
-+	device_unregister(&rpdev_ctrl->dev);
- }
-
- static int rpmsg_probe(struct virtio_device *vdev)
-@@ -973,7 +971,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
-
- 		err = rpmsg_ns_register_device(rpdev_ns);
- 		if (err)
--			goto free_vch;
-+			goto free_ctrldev;
- 	}
-
- 	/*
-@@ -997,8 +995,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
-
- 	return 0;
-
--free_vch:
--	kfree(vch);
- free_ctrldev:
- 	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
- free_coherent:
--- 
-2.24.3
+> +
+>  	ret = qcom_add_minidump_segments(rproc, subsystem);
+>  	if (ret) {
+>  		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 1ae47cc..40bf747 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -293,6 +293,7 @@ static const struct rproc_ops adsp_minidump_ops = {
+>  	.start = adsp_start,
+>  	.stop = adsp_stop,
+>  	.da_to_va = adsp_da_to_va,
+> +	.parse_fw = qcom_register_dump_segments,
+>  	.load = adsp_load,
+>  	.panic = adsp_panic,
+>  	.coredump = adsp_minidump,
+> -- 
+> 2.7.4
+> 
