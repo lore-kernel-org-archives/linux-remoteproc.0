@@ -2,91 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EF9C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 10:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABFE6C43217
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 14:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446894AbiDVK40 (ORCPT
+        id S1449012AbiDVO5C (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 06:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
+        Fri, 22 Apr 2022 10:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1446756AbiDVK4Z (ORCPT
+        with ESMTP id S1448987AbiDVO47 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Apr 2022 06:56:25 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 842365523B
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 03:53:32 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id g23so2942505edy.13
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 03:53:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5FUsF3Bm4YCkmboKOMo1H4UXrqyMZV42HmPdb6t+zEg=;
-        b=iTwMIkUlm5QdnVZDvAMZ8lv3kIjxsQ9C28n0K6MiwbpwtvFce7ujI+BCC8Rv2gER9h
-         a6684oc2VQwqV0D9gVE3quTVc776ypTodMrTG7mF+MNmMzk6nC3837htwDjcK3yrqYu1
-         9q1MwMpYT7T1YdAgi5q0/zzUWiT8eLkRI0a2K1W8Ejv5wlKP7UXZSA251z5qHmbCdIUw
-         e+JScoyT03JamWyFX0UEHVaaoAaMI6ZZbck336N1e0YwfeUiFB5OSh0WdNoX73I4DbcH
-         X45e5by65ELA6hXHR/qnfdriQvrl9tiFN41UWzC+94T5Pj8RgJqQ91XKCGUlBQ0b8gOl
-         0XSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5FUsF3Bm4YCkmboKOMo1H4UXrqyMZV42HmPdb6t+zEg=;
-        b=6ftwFLfxeFmKh50lIvy9SrA1xW0VGOgUxugZBqZYF73HV/Ug31xHX7aknnsukRv5oA
-         fa/hb/C5wlcO8bKQ0JiqZZNlKy2QZqIUyTaumlQ4OXYup8WvXEwnwA8kCWqzTG6PzF/W
-         mdbtoq1vrebdFKsNr5yD+m1PEE+meS1Iow8//45h90U5OJMaRIiqjoAc1lCTgUq4i3V3
-         2x6aDWKxeGbIU5FTPY+Qk6M/CU3AQrfff4IXVVkWhcFEOC/xN4ZBjeff1GTm7NAi440R
-         w5O0VVFOSo4b+RqCLO5zTh0tSDdvPTwb1kKzkTzcZMSDkipCCR8EcT+826gzLWxxgB05
-         gpxw==
-X-Gm-Message-State: AOAM533ongnNa38XzleCShfbuEKT0/57Inlv2/s0mH03t9L93N5tcjM4
-        qIJRLYtBWWDtU8wF+1516Nd65A==
-X-Google-Smtp-Source: ABdhPJxxWJp8w+RW/AI0tJ84JwzVl6Kbq3YxN/Efj32iTP/ULw3xGNDAXNvf59LrAf6J6fDYljZPOQ==
-X-Received: by 2002:a05:6402:50d0:b0:423:f4a1:597d with SMTP id h16-20020a05640250d000b00423f4a1597dmr4136984edb.228.1650624811158;
-        Fri, 22 Apr 2022 03:53:31 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id lb26-20020a170907785a00b006ea4d2928e5sm625573ejc.218.2022.04.22.03.53.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 03:53:30 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
+        Fri, 22 Apr 2022 10:56:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA78E5C36E;
+        Fri, 22 Apr 2022 07:54:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2BE36614CB;
+        Fri, 22 Apr 2022 14:54:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DC7EC385AB;
+        Fri, 22 Apr 2022 14:54:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1650639244;
+        bh=c/tlEA8ZlzdxmIQcMOOwVpEn66NWm3rRj8+jDgV6xxc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gqA0vzwFNzldjsjjRmYleh3zBQQsf2csoe8Klhv/3GjBm4DNaPy55KzSHN+92OUFG
+         m3GNyJl25wnUK7V/vD5eogrGZ+M/bqPHb977EwGlbc3JNLGzmYWVnypL9eTSt5TC+O
+         s80RQTbQw2OrYCwnCnsa3LtgR6qLawgvnYBRHp1Q=
+Date:   Fri, 22 Apr 2022 16:54:01 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] rpmsg: qcom_smd: Fix irq_of_parse_and_map() return value
-Date:   Fri, 22 Apr 2022 12:53:26 +0200
-Message-Id: <20220422105326.78713-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v7 00/12] Fix broken usage of driver_override (and kfree
+ of static memory)
+Message-ID: <YmLBiQjyKhFZsPlG@kroah.com>
+References: <20220419113435.246203-1-krzysztof.kozlowski@linaro.org>
+ <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <529de1fd-7e98-1634-c61e-0e69ddcd9e73@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The irq_of_parse_and_map() returns 0 on failure, not a negative ERRNO.
+On Wed, Apr 20, 2022 at 11:20:06AM +0200, Krzysztof Kozlowski wrote:
+> On 19/04/2022 13:34, Krzysztof Kozlowski wrote:
+> 
+> Hi Greg, Rafael,
+> 
+> The patchset was for some time on the lists, got some reviews, some
+> changes/feedback which I hope I applied/responded.
+> 
+> Entire set depends on the driver core changes, so maybe you could pick
+> up everything via drivers core tree?
 
-Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/rpmsg/qcom_smd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ok, will do, thanks.
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 764c980507be..6ccfa12abd10 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1407,7 +1407,7 @@ static int qcom_smd_parse_edge(struct device *dev,
- 		edge->name = node->name;
- 
- 	irq = irq_of_parse_and_map(node, 0);
--	if (irq < 0) {
-+	if (!irq) {
- 		dev_err(dev, "required smd interrupt missing\n");
- 		ret = irq;
- 		goto put_node;
--- 
-2.32.0
-
+greg k-h
