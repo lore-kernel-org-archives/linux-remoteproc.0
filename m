@@ -2,82 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DC7C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Apr 2022 03:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADB6C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Apr 2022 09:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232561AbiDWDtm (ORCPT
+        id S234467AbiDWJdG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 23:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
+        Sat, 23 Apr 2022 05:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232533AbiDWDtk (ORCPT
+        with ESMTP id S233884AbiDWJdD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Apr 2022 23:49:40 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B086E13977D
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 20:46:45 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-e2afb80550so10652602fac.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 20:46:45 -0700 (PDT)
+        Sat, 23 Apr 2022 05:33:03 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E6C9BF5C
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Apr 2022 02:30:06 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id f17so13090020edt.4
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Apr 2022 02:30:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=VK+Mc12IDWDoCeB4UokFVRy/0yOeXXdrFoo8csy15fI=;
-        b=rj1fWjvFr6UfrBYJZaadRrPi88B/qmQLm8ZzbEv6/alcfmDFmFeBGWnL4HKOjP37Oo
-         XIMpB2qQ1V8TZ5PJZgcS9t0rwYLuCx/HXeYd46dXX9BffgCtszf+ujA7bpVEDTbTllKr
-         9KuNVf4yaUNy1B2uLsiF1lj0wM19F15AdtbVlPC3DYFAWn8EYd5Wb3/cp0mY5gePmOY0
-         uDlSHzgYy48VHrRChwQWIbKfAU2B7/G+sVEH4wDLIPfXhyL1qCG67Gokmjruh61W/Wkf
-         ArAI0RkwHAhB9loPoYk+0/fRNf1D40UaO2lsgdjDih3yTT+SgLXv2D69dVSO4yoTT1lF
-         9EPw==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=gWNw5+tyYy38JczrM/Le6iFuWZtqe0ibvfQtEBkowsM=;
+        b=XrZhBiLZkTj6awE8Oa2tePjxJTvXAsAMkci6X9xRgDwn6KkvTCZio19A+yzapOy4wB
+         wJu16oPNvOEvZzboyd2oTUeA6n+AgzqlviXIq1j6WOUpGCRDlZR3Mb1DuX+AzWjaaPOy
+         KfwppWcQ//QZpmYHA+FU0n5TmhObH/Lb6NH0uhMAUjW2jC0gCEwh7+4SyylHHctS96eK
+         vf/591cZagJ5+bIJaXpBE8X+B14kd5HHB69aqjvd+mDHQrk8H/Rpnpj9MUrLttvB6Ron
+         JrvDpqredRVY6I/BdegUFJk4fOe4L+7I4MazPvzJy7tcVKfhGYYi5k0wh4wl8+9BxTgN
+         csPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VK+Mc12IDWDoCeB4UokFVRy/0yOeXXdrFoo8csy15fI=;
-        b=hOg+xaMwBwCV5ZkuE6pFL8dhHKAPwblifGfUw8s4zdU8ifOx8PCdW/p4oVpMI+oTL1
-         PEJfxlK/1bAD9FydKHi2Qdpjn3CjpAJnqv7k7YvoG0PL6di7qAZLhDZ+al/jVudmsaTp
-         CSxNtlCAaQqV/TRZYhjy9jhQPZVkauijiEqXfYhTrVStSlHF8uqYT4fQP66skD9jt1M+
-         KzBSiBD1Dy+pIJxTbKSdk91oG+bzqB1mAA2lrqbtdhS3eep9YxNUKvcBMWFX8kdT5z2I
-         w4+04hnS9rJd1O1agDM0xDGNiEahfjFn6WNPSHBVMZyhpA+kXfALycGImOpQ0khTxlgG
-         fOCw==
-X-Gm-Message-State: AOAM530vvzy8GiYmXn+B/84yx+TDpdWjPU4nwdkymd8K06vELA+0b+aV
-        rhK30lOehtgZy2Wcz/w/41OYZw==
-X-Google-Smtp-Source: ABdhPJwkRUj9ppkMSZqmz3YeDFf41/hx08RbxlEXevnET+FZzlP8mrOGYwNPSqQII5QEVaDRbcIT6A==
-X-Received: by 2002:a05:6870:8907:b0:e2:a4fd:7539 with SMTP id i7-20020a056870890700b000e2a4fd7539mr7629021oao.56.1650685605139;
-        Fri, 22 Apr 2022 20:46:45 -0700 (PDT)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id b188-20020aca34c5000000b002da579c994dsm1440218oia.31.2022.04.22.20.46.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 20:46:44 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=gWNw5+tyYy38JczrM/Le6iFuWZtqe0ibvfQtEBkowsM=;
+        b=CBJ6+AhWaiLAfo5sa43FTVbR+/LJ3laKQg6FD2Y92ioS2tnV5qX5tJdfg5RKc0u7EK
+         udLbQFyqta2w3SXL5fFcDHlkwqehPsYjnf9YJmnC2CrhTA6Wmb5gawk0R9zn/sLyIwbp
+         X5M7r+l6K4ho8yAjXIgIenbJ0X1lhRzfH2ofZseCimhdBInopQVvtQTGS2FO71aRzCy6
+         0Bb0cRzGTHrOweuX/wCFY1RagJIMKPSprAoxcTdEWG8Jkr8Hz78wgmWP8yPszG4YaPfA
+         huCPkmb8zDAuDGpxFPaIi3OWz+fkJ8wV8mK200R305bIQTu96jffAsZIDKQ5Uq0Y0c8z
+         INNw==
+X-Gm-Message-State: AOAM530Wtk1NtC3IYz7L1bvSVdBMBFwIbmt5y8ZH6aPtFgwmyxfpp5Hh
+        0auw7nnObQTAdSEb1gBtykKV3g==
+X-Google-Smtp-Source: ABdhPJxeDR7QS2kOkE0ODj+LMaknx4juR2ZAXuS9FLTupPezfuk6ii3SSBINfNMgM2GUf4ES/6+/JA==
+X-Received: by 2002:a05:6402:14c2:b0:41d:816a:4eb0 with SMTP id f2-20020a05640214c200b0041d816a4eb0mr9178123edx.301.1650706205187;
+        Sat, 23 Apr 2022 02:30:05 -0700 (PDT)
+Received: from [192.168.0.234] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id bw3-20020a170906c1c300b006e88cdfbc32sm1529556ejb.45.2022.04.23.02.30.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Apr 2022 02:30:04 -0700 (PDT)
+Message-ID: <b96bb266-e4d2-c291-ddb3-f27e55d10fbd@linaro.org>
+Date:   Sat, 23 Apr 2022 11:30:03 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: (subset) [PATCH] rpmsg: qcom_smd: Fix irq_of_parse_and_map()
+ return value
+Content-Language: en-US
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-remoteproc@vger.kernel.org
-Subject: Re: (subset) [PATCH] rpmsg: qcom_smd: Fix irq_of_parse_and_map() return value
-Date:   Fri, 22 Apr 2022 22:46:41 -0500
-Message-Id: <165068558593.2759280.17055526649115604333.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220422105326.78713-1-krzysztof.kozlowski@linaro.org>
 References: <20220422105326.78713-1-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+ <165068558593.2759280.17055526649115604333.b4-ty@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <165068558593.2759280.17055526649115604333.b4-ty@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 22 Apr 2022 12:53:26 +0200, Krzysztof Kozlowski wrote:
-> The irq_of_parse_and_map() returns 0 on failure, not a negative ERRNO.
+On 23/04/2022 05:46, Bjorn Andersson wrote:
+> On Fri, 22 Apr 2022 12:53:26 +0200, Krzysztof Kozlowski wrote:
+>> The irq_of_parse_and_map() returns 0 on failure, not a negative ERRNO.
+>>
+>>
 > 
+> Applied, thanks!
 > 
+> [1/1] rpmsg: qcom_smd: Fix irq_of_parse_and_map() return value
+>       commit: 1a358d35066487d228a68303d808bc4721c6b1b9
 
-Applied, thanks!
+Thanks, unfortunately Jakub Kicinski pointed out issue with returning 0
+later, which needs a fix. I'll send a fix which can be squashed.
 
-[1/1] rpmsg: qcom_smd: Fix irq_of_parse_and_map() return value
-      commit: 1a358d35066487d228a68303d808bc4721c6b1b9
 
 Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+Krzysztof
