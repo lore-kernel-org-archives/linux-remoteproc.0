@@ -2,90 +2,114 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B56FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Apr 2022 23:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF20C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Apr 2022 02:41:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229868AbiDVXZH (ORCPT
+        id S232207AbiDWCo2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 22 Apr 2022 19:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47026 "EHLO
+        Fri, 22 Apr 2022 22:44:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbiDVXYx (ORCPT
+        with ESMTP id S232165AbiDWCo1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 22 Apr 2022 19:24:53 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C6C31EE1DA
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 16:00:04 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-e5c42b6e31so10106109fac.12
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 16:00:04 -0700 (PDT)
+        Fri, 22 Apr 2022 22:44:27 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 350091F624B
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 19:41:32 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id n18so14733411plg.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 Apr 2022 19:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ElI2t4nByDOB6dr+yLR266lxMKTIEX40DDSnpkzAfdk=;
-        b=AAL18eX8s5pFrRM+VhPDxLjLMGLkQCN9PL+jVRgw0V7kN4VQZrGyrC9yvnUkDDTA9m
-         kUoPiX2AeDEFGlhQgafrnJM6b0hbFWx6As1XdFyzsaPMNT+LFL88wT8KL6EtbHBVMNiY
-         XmAZFpWedjwOngPwoyeeBAkh1yzof7YA1rRPwXRc4zrYY9xeqwYv73OLXw569g5RyDJ/
-         4UItx60O5ACzGqIv8o1yXv3z55PWWdx2axpX7VycwhT98ePwWGv8hegxjQnUJGFg1Nsc
-         Uj1hIqqdCUTMkyisAjlr4sM4FbKyYp5nyDGNaJ/+DYjN1Lwjt3DbfgXDofNsTFiWo2YU
-         ZsbQ==
+        d=dabbelt-com.20210112.gappssmtp.com; s=20210112;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=REmfpzw1xMslNBXNKTYCRBYBhCFLFRCkqr4sRav5rgY=;
+        b=4WeFBWPm+HwABfSRIIkgJWStFSAErKQ/PmL1rmQcC8lm1M4HPRnhWaTMlxULv/SJGz
+         ZgQ+tx/5aektTp0kYDf9FspiE/y5Zv7s8DUB6Esf1qL39NDJqj3bXDRhACiW3YnolmTB
+         P+qGJIIMZ8W9gNEo+ngQg63rzScAPaKDmbLMZ2pcxKUvkNQR1PB0iuJc+ZmFhJqek+Jt
+         TJYj3VMtSZFbSsbpRAu9X7+MqLSBKd5OKX8QYOQQIWMVV4CSO2spuqMfg2Nsi0wCxfpT
+         dRfP1s9+4hfKrzJYg+TxTWs1NHV8mfHUa9Uv5mFJKQ94O/WpZ44cF+dHvqMg9aYA3Um/
+         MTgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ElI2t4nByDOB6dr+yLR266lxMKTIEX40DDSnpkzAfdk=;
-        b=J/jbpto2IT49hGdZjecK1guLtZq/6sM2+K0PVm42KecKnu87UTSi/Yd+foG1auRGQu
-         zw7evSkZKerGqh2B7mFHXRh5Sp4C486GamGH+676lFX7V5h1Ys162+bOx6U1OGCq0FiX
-         Y94Jtzkygp9HI6fAyVim+H2vwCPraxcadvKBb+FQthTqGJu0WN0ge3W1uMPulEyjIprJ
-         2B9tV+l/71C/ijMISUvuDRZWTObEqwZOUbQlrWBUD+nHdmWr/2Zpp1vE4k1X/UBXvqHm
-         R6ti0HFmsH8SQ5317hNRMidRjZbmUYbO4N8L/+AHpUdBCGVZBU+iLtccisQyhfJME+pi
-         yrDg==
-X-Gm-Message-State: AOAM533E78WBN/MdWcgNDOnNaup/ws7swhf0HGnkYgBMmzD0VQ0Mwei6
-        PWFGutmXRQn5sq2h+PKniRSwTA==
-X-Google-Smtp-Source: ABdhPJyhzjfmiSNV9pg+MVvlFlGDkq8CvnWd0Mwcnumh+SSclYdBOE1HNA5Unl92+fFrCF1gMYMSkg==
-X-Received: by 2002:a05:6870:ea89:b0:e6:4acc:9302 with SMTP id s9-20020a056870ea8900b000e64acc9302mr3081663oap.203.1650668403484;
-        Fri, 22 Apr 2022 16:00:03 -0700 (PDT)
-Received: from builder.lan ([2600:1700:a0:3dc8:3697:f6ff:fe85:aac9])
-        by smtp.gmail.com with ESMTPSA id v65-20020aca6144000000b0032259d24076sm1250566oib.30.2022.04.22.16.00.02
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=REmfpzw1xMslNBXNKTYCRBYBhCFLFRCkqr4sRav5rgY=;
+        b=qm5ocBt58/+BF2NhZBQauFjWHrQXy46ZdwmRD7FfTqkcsG3aMl9pUzqnyc9n/mBIKl
+         bY8hoaZxc19ZS9mbomxM/8SK2U4uhD5RO9wjqP4VSbXWoS0B83QX57IRzN67VkNNr7yL
+         uWPLo/GePbmwl3oQRnqZmFvpf4P/bYUH3jWmMTSuYudJkzbFuCYd/yFV20mGgsLWy8mF
+         GL904hj2aIr9TC6jI8NwzM78lPAqP3dqJikHvTm/HSyLMjM0maNiq0gq+HRO9SgmpCrI
+         qp4Eq+SNZptOM13vmCXoS49V72QnEW3IMl0eVi1+ur07OY0ALjRko+QiRb5ZM8AkSfLk
+         pHYQ==
+X-Gm-Message-State: AOAM5313vWgpGedh3kg2+GW8gJS5o7xwJ5Ht+YvlUX/r+SSqeRe89qTP
+        q2H3QQ8OAIWCyk+2rfwwb+vMsg==
+X-Google-Smtp-Source: ABdhPJzTDUsXmUPRCkNu/YoxmSMlqJ3ANNR0+ezB3YEc/HXUrEK20xXuSZtgCWqoud9K1+OVziq2Cg==
+X-Received: by 2002:a17:903:18f:b0:15a:1cc6:48f5 with SMTP id z15-20020a170903018f00b0015a1cc648f5mr7521584plg.161.1650681691627;
+        Fri, 22 Apr 2022 19:41:31 -0700 (PDT)
+Received: from localhost ([12.3.194.138])
+        by smtp.gmail.com with ESMTPSA id ch10-20020a056a00288a00b0050a51a95e91sm3614749pfb.201.2022.04.22.19.41.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 16:00:02 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
-        <nfraprado@collabora.com>
-Cc:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v1 1/3] dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
-Date:   Fri, 22 Apr 2022 18:00:01 -0500
-Message-Id: <165066838719.2742284.7900096409445311556.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220225225854.81038-2-nfraprado@collabora.com>
-References: <20220225225854.81038-1-nfraprado@collabora.com> <20220225225854.81038-2-nfraprado@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Fri, 22 Apr 2022 19:41:30 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 19:41:30 -0700 (PDT)
+X-Google-Original-Date: Fri, 22 Apr 2022 19:26:44 PDT (-0700)
+Subject:     Re: [PATCH] RISC-V: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
+In-Reply-To: <20220404090527.582217-1-arnaud.pouliquen@foss.st.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        anup@brainfault.org
+From:   Palmer Dabbelt <palmer@dabbelt.com>
+To:     arnaud.pouliquen@foss.st.com
+Message-ID: <mhng-540193db-7721-4cd3-935a-be485b4af058@palmer-ri-x1c9>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 25 Feb 2022 17:58:52 -0500, Nícolas F. R. A. Prado wrote:
-> The SCP node can have an associated interrupt. Add a property for it.
-> 
-> 
+On Mon, 04 Apr 2022 02:05:27 PDT (-0700), arnaud.pouliquen@foss.st.com wrote:
+> In the patch 617d32938d1b: "rpmsg: Move the rpmsg control device
+> from rpmsg_char to rpmsg_ctrl", we split the rpmsg_char driver in two.
+> By default give everyone who had the old driver enabled the rpmsg_ctrl
+> driver too.
+>
+> Fixes: 617d32938d1b ("rpmsg: Move the rpmsg control device from rpmsg_char to rpmsg_ctrl", 2022-01-24)
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Anup Patel <anup@brainfault.org>
+> ---
+> this patch is extracted from the series [1] that has been partially
+> integrated in the Linux Kernel 5.18-rc1.
+>
+> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+> ---
+>  arch/riscv/configs/defconfig      | 1 +
+>  arch/riscv/configs/rv32_defconfig | 1 +
+>  2 files changed, 2 insertions(+)
+>
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 30e3017f22bc..0cc17db8aaba 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -101,6 +101,7 @@ CONFIG_VIRTIO_BALLOON=y
+>  CONFIG_VIRTIO_INPUT=y
+>  CONFIG_VIRTIO_MMIO=y
+>  CONFIG_RPMSG_CHAR=y
+> +CONFIG_RPMSG_CTRL=y
+>  CONFIG_RPMSG_VIRTIO=y
+>  CONFIG_EXT4_FS=y
+>  CONFIG_EXT4_FS_POSIX_ACL=y
+> diff --git a/arch/riscv/configs/rv32_defconfig b/arch/riscv/configs/rv32_defconfig
+> index 7e5efdc3829d..6cd9d84d3e13 100644
+> --- a/arch/riscv/configs/rv32_defconfig
+> +++ b/arch/riscv/configs/rv32_defconfig
+> @@ -93,6 +93,7 @@ CONFIG_VIRTIO_BALLOON=y
+>  CONFIG_VIRTIO_INPUT=y
+>  CONFIG_VIRTIO_MMIO=y
+>  CONFIG_RPMSG_CHAR=y
+> +CONFIG_RPMSG_CTRL=y
+>  CONFIG_RPMSG_VIRTIO=y
+>  CONFIG_EXT4_FS=y
+>  CONFIG_EXT4_FS_POSIX_ACL=y
 
-Applied, thanks!
-
-[1/3] dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
-      commit: b7da6f517214c307efece604ac9dc58dc6123c07
-
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+Thanks, this is on fixes.
