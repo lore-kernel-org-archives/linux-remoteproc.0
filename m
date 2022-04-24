@@ -2,92 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5771AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Apr 2022 19:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508D0C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 24 Apr 2022 02:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236970AbiDWT7x (ORCPT
+        id S237456AbiDXCJj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 23 Apr 2022 15:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50304 "EHLO
+        Sat, 23 Apr 2022 22:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234409AbiDWT7r (ORCPT
+        with ESMTP id S237336AbiDXCJi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 23 Apr 2022 15:59:47 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B0ED19A489
-        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Apr 2022 12:56:46 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id f17so14176067edt.4
-        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Apr 2022 12:56:46 -0700 (PDT)
+        Sat, 23 Apr 2022 22:09:38 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A648DEF8;
+        Sat, 23 Apr 2022 19:06:39 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id n8so19439829plh.1;
+        Sat, 23 Apr 2022 19:06:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20210112;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=yNSMjzR/UC7gAKQriiodIhNkqmmIvXbfjZZmbtmDsBI=;
-        b=yzdnRPgskGVSMi8zv4oBko9lVeYwVJkxDSR6MCkGUoXeTAK/4NDODNNgZ26KgG/mOU
-         CoB2QmI5FRJiOq51uIk68eCareFVrvmvpKA6fadl6vN+B9T5RdthGC51nk1UKkl+rI8V
-         bjJ2huIzejbSjE72D4g4LFxCCdRX9/IA+qfbvCDwAyYtGJd+1W1YKHpSRD6XJtD/NGTi
-         CpaqFGoxA5vUA+GgVLLCa5jP0gs2G4OvNlibifucQX9N1C8ExbobxZ9RxTWEg1kPm5Q4
-         cw1AHrC+4rdOM3XxOEVWQzz9UEH9NMK1rgPaPN7MQiMNTT4/+pOMEGnmTuWdtFC0C1b1
-         hT4w==
+        bh=G5chtXdXHBAHq9U8cN942JiV6ivsvkzMtMA5fbafTig=;
+        b=qBHPxvxPL6sor5qMtXE3DaLjQP9T/ilrSNm23CyTsMaZTcq1kHQr0cGCKQrgm/dVIT
+         QgaF5j6ync5JRYZ2Cn7QsuQs4YoVCQjiLf4eDT/zkMnquI/OYksg0q+4twatpo3R9McQ
+         EKKKowZ5KnFn0RmUUS0GvbXC3lrVd5mg4J+ZBC1yO6dAv5arSZxD7s9wd5+1Xl4/0SOg
+         CM4GhCkzCCqgDz7rw8n5pJ/Z9oh4DXfRGkWe1gmfaSQUH4c9Crpu/7hIZldobc6UBR+/
+         UnQBtXF1vJRs939yBl5MD72dxLB6O7h8fZja08SNADyYwlL9oOvCEJmcpKKjnH4665Ey
+         a4Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=yNSMjzR/UC7gAKQriiodIhNkqmmIvXbfjZZmbtmDsBI=;
-        b=fFkxlntpGpVRwqwrJ6sKGOp3WKg+7G3kK13FXnEWpgdJbLOngLkRdUerscoFlKFNi/
-         WkVhOIYRFmZ+oljPxM494DDUYv9OZtVBi6pOyexcDKtKOTmGWxCGEje1e4uFT42yobuN
-         vNEH9R7rcB+POJZtLzy16GZbKyh0p6DjZrqug/9RB58HckO9flOTOq7SsNNYdnJQByw4
-         iK4lHs384hZnB9uOJrPLHEJVBAAef1+oFx5d3ZAPzuLeJN6byV0ACiOUR8vhVhQ+SWhp
-         D4mJKbo7XQnDIIb/uhAKX+o3CdqtCdeS8VA+Az1iT/PGs8a62MqAJUvHSZ8sv/BQlpCR
-         UC3g==
-X-Gm-Message-State: AOAM533MAKRC53ws6e2d7a3RcbA6rHTn1PXg6ztZ4N+/nkQQhaukDaLc
-        xVDQ8u5y2fihvXpiV383EDJnVg==
-X-Google-Smtp-Source: ABdhPJzP7TI1ViD5VGn0KNvewzYBqWM6Mjpp1qDDQ0uaLL/LxQa1J8/5UFBb/Hc1PCg1kUb/MRd8iw==
-X-Received: by 2002:a05:6402:331c:b0:41d:9354:97c2 with SMTP id e28-20020a056402331c00b0041d935497c2mr11442391eda.300.1650743805113;
-        Sat, 23 Apr 2022 12:56:45 -0700 (PDT)
-Received: from [192.168.0.234] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id p24-20020a056402045800b0041614c8f79asm2518327edw.88.2022.04.23.12.56.44
+        bh=G5chtXdXHBAHq9U8cN942JiV6ivsvkzMtMA5fbafTig=;
+        b=mQC2gJFVPMp9teHV8NRCus0f6FAE0IbFIRLeeLDmoXMrKyDZkXeQNvFuzGj74lbXLH
+         lpxYZqwV3vfCOXS+gVLRppEn5K3khfnExk5of4UUD3y7XFnqy1QWwShGqALiq/OnxcL2
+         wtiINSoaU1Da4/LpdyyEPxPUu4A0Aqa9vJmU9vfk0305/qlJkexGzuX+lhsBe49pmwQq
+         anh6iB46tzCJ3RYOnPOonF4NCtGttuU9qIljcEvCD63SaNkCynSwEs+Lr3uAZ7qX1DF0
+         GC6xdcg/LBg1311NUcnR60Wwv8bhVtwbqkZSk0JGgd2zzK21A0r15pr0R0hmQWas4fng
+         ak7Q==
+X-Gm-Message-State: AOAM532aOhMfg9EDHqr/GJM5RtnwWMfQfcKwpSVu46RT0cv2yCh91mzz
+        /VvZsUZdurp0eQ7Iq5wca4c=
+X-Google-Smtp-Source: ABdhPJzLTnOSaQr+nWBe52Kah2RbUcCpcTm+2JUktZ74CsyXnl9YV8zvqt64lVJCETd/TcOiuFHoSA==
+X-Received: by 2002:a17:902:a501:b0:153:f956:29f0 with SMTP id s1-20020a170902a50100b00153f95629f0mr11714114plq.120.1650765998998;
+        Sat, 23 Apr 2022 19:06:38 -0700 (PDT)
+Received: from [192.168.50.247] ([103.84.139.165])
+        by smtp.gmail.com with ESMTPSA id 64-20020a17090a0fc600b001d5f22845bdsm9959867pjz.1.2022.04.23.19.06.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Apr 2022 12:56:44 -0700 (PDT)
-Message-ID: <af3d5b2f-b245-6c10-1e2c-0f8f5a979fc0@linaro.org>
-Date:   Sat, 23 Apr 2022 21:56:43 +0200
+        Sat, 23 Apr 2022 19:06:38 -0700 (PDT)
+Message-ID: <ab977d4e-dbe7-3198-9477-66d42d818d1a@gmail.com>
+Date:   Sun, 24 Apr 2022 10:06:31 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 1/5] dt-bindings: remoteproc: qcom: pas: Add MSM8226 adsp
+Subject: Re: [PATCH] rpmsg: virtio: Fix the unregistration of the device
+ rpmsg_ctrl
 Content-Language: en-US
-To:     Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220423155059.660387-1-luca@z3ntu.xyz>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220423155059.660387-1-luca@z3ntu.xyz>
-Content-Type: text/plain; charset=UTF-8
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20220422155402.721982-1-arnaud.pouliquen@foss.st.com>
+From:   Hangyu Hua <hbh25y@gmail.com>
+In-Reply-To: <20220422155402.721982-1-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 23/04/2022 17:50, Luca Weiss wrote:
-> Add the compatible for the adsp found in MSM8226.
+On 2022/4/22 23:54, Arnaud Pouliquen wrote:
+> Unregister the rpmsg_ctrl device instead of just freeing the
+> the virtio_rpmsg_channel structure.
+> This will properly unregister the device and call
+> virtio_rpmsg_release_device() that frees the structure.
 > 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Cc: Hangyu Hua <hbh25y@gmail.com>
 > ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+>   drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 3b7b47f785cf..0db8043e6c49 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -861,7 +861,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
+>   {
+>   	if (!rpdev_ctrl)
+>   		return;
+> -	kfree(to_virtio_rpmsg_channel(rpdev_ctrl));
+> +	device_unregister(&rpdev_ctrl->dev);
+>   }
+>   
+>   static int rpmsg_probe(struct virtio_device *vdev)
 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Thanks for further optimization.
 
+Reviewed-by: Hangyu Hua <hbh25y@gmail.com>
 
-Best regards,
-Krzysztof
+Thanks,
+Hangyu
