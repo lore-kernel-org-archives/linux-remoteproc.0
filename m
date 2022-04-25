@@ -2,134 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872D8C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Apr 2022 09:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DFBC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Apr 2022 16:55:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbiDYJDC (ORCPT
+        id S236432AbiDYQ7B (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Apr 2022 05:03:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38190 "EHLO
+        Mon, 25 Apr 2022 12:59:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231272AbiDYJDB (ORCPT
+        with ESMTP id S232143AbiDYQ7A (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Apr 2022 05:03:01 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF7713E0E;
-        Mon, 25 Apr 2022 01:59:55 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23P5rs67026768;
-        Mon, 25 Apr 2022 10:59:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : from : subject : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=ZMtuKaWe+BL2NAy7gcgkV/ofmg3oFgDu9ItvjXw0Dss=;
- b=75wL8opmHS3JmmtJd349aQQa17B+QQpNda5kDfJWtYZnwyg21twFy+5kGHWh76P1qXFN
- dall7bYGGHvUdnPfQvm+250Ac5JY83CIOO0HwE9OsrONHG/yLUQTp2DExxxqFszVi76k
- Zqx2qzxyuXdqp4ZUjeKdnxP+WFfFtdBq5ZQR0sVrPnuYdNsDsZ+BbasjFZ3I0LgJkOrE
- KzGRGIsZK3DG0R7gFWhrOsVzprdYADBFzaVMGm14PSaRUZcaL1jIMerkOew8Iu6I4KnK
- HbDTuGinZn9h2TSCn04CWEvZErvRr+8n5qcpURfEFnBv0dHUghABREVv34OsAKN5yQdQ 2w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3fm6k9037v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Apr 2022 10:59:49 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1E51E10002A;
-        Mon, 25 Apr 2022 10:59:47 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 16E6221682F;
-        Mon, 25 Apr 2022 10:59:47 +0200 (CEST)
-Received: from [10.201.20.246] (10.75.127.51) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 25 Apr
- 2022 10:59:46 +0200
-Message-ID: <c3e080e8-d070-ef90-cd8a-6d4bd41e32e0@foss.st.com>
-Date:   Mon, 25 Apr 2022 10:59:45 +0200
+        Mon, 25 Apr 2022 12:59:00 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0112D13F9B
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Apr 2022 09:55:55 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id n33-20020a17090a5aa400b001d28f5ee3f9so6480738pji.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Apr 2022 09:55:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fHj0AXFpbHX+x5jOd8SRt9e16ihhUng0D/feKZZnpv8=;
+        b=FEvSxjhbaiBv88L8kOktym3iC8R8O3qQefPdoXOLlesqLA7PHFDH4Ly1WACA+rAmHU
+         WFYWAsFAgO9K4ek0AIY1Py4MA2xes8OeKQTniMnqopB4OUBWhSYZyycRYIIrrO66eF+q
+         TezSS9rHfXn8M6biPzALcA8etR6djyTk3IYCFtRAc6AtM9o311inxeF5QVFsv9YOJdtQ
+         Iav/UtTiNPUp3qqSJW9SDbHTJ8n7Qn1kEQ7qIAsed4W8ZdZMYBKJuCxFSbqn3W4cofC3
+         vxKrxlTxfU0xkOltUvgpDhUIfB2B58Ap/oM5hMcHQAVk2ZVy/hup4ude5BbsD80l9n+2
+         sAUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fHj0AXFpbHX+x5jOd8SRt9e16ihhUng0D/feKZZnpv8=;
+        b=KQtYeUQx5v9N6XsAaCADDQpEkuMkxgTX18BMr3Mn0Yhn0IUsm3fiYxsyBKVZV+zNUM
+         cKEjPDA9DFMHkV9OjUeWTajNiozQKW1VSfXw5KprrM3bPH+dM/VLWKw3ehRKYQJvWOTL
+         +SWp1aRHIPtWJ5xw8UYtGKGgXFog5sz3m9ckAtk6nvFATNdMhawBgDP9u05z+rFPZWXN
+         QZgzV7lwzXpW70OWwcaRyDO0aZQGPzcrLMWoAHDR5S3ENRcphvCeEJanda5TKFXCS045
+         HBA/WDmYRoEMEgKogGstKBW8bxGlby47lt0YF4c7OTGP088KLhTsJYBK3aIwI0ENGNTy
+         XyUQ==
+X-Gm-Message-State: AOAM5320c+VvoVVpKIIilIxRFXmzYai5BbvNb0w2CZc7bXZ9xFRy8YvA
+        eiw9MtpZCQjPx44fnnUxzfmNJA==
+X-Google-Smtp-Source: ABdhPJy8UDRi8nvlNJ/DZUcck1tp5UrommAF25tWePBOj8Foc0cM4QAxsDb5oZ1qiqmpv2T1TVm1OQ==
+X-Received: by 2002:a17:90b:255:b0:1cf:39e7:a7aa with SMTP id fz21-20020a17090b025500b001cf39e7a7aamr22087982pjb.137.1650905755524;
+        Mon, 25 Apr 2022 09:55:55 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id d20-20020a056a00199400b005060849909esm14038460pfl.176.2022.04.25.09.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 25 Apr 2022 09:55:54 -0700 (PDT)
+Date:   Mon, 25 Apr 2022 10:55:52 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Hangyu Hua <hbh25y@gmail.com>
+Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: virtio: fix possible double free in rpmsg_probe()
+Message-ID: <20220425165552.GB1917807@p14s>
+References: <20220418093144.40859-1-hbh25y@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH V2 0/3] rpmsg and glink signaling API support
-To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>
-References: <1642534993-6552-1-git-send-email-quic_deesin@quicinc.com>
- <5cde9477-d73c-03c4-4dc0-c63fa0f8c8d9@foss.st.com>
-Content-Language: en-US
-In-Reply-To: <5cde9477-d73c-03c4-4dc0-c63fa0f8c8d9@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-04-25_05,2022-04-22_01,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220418093144.40859-1-hbh25y@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
-
-On 3/23/22 11:17, Arnaud POULIQUEN wrote:
-> Hi all,
+On Mon, Apr 18, 2022 at 05:31:44PM +0800, Hangyu Hua wrote:
+> vch will be free in virtio_rpmsg_release_device() when
+> rpmsg_ns_register_device() fails. There is no need to call kfree() again.
 > 
-> On 1/18/22 20:43, Deepak Kumar Singh wrote:
->> [Change from V1]
->> Fixed most of the review comments in V1.
+> Fix this by changing error path from free_vch to free_ctrldev.
 > 
-> This implementation works for the glink transport,
-> But how to manage such flow control for other transport
-> layer?
-> From my POV it is important that it is also usable for
-> by transport backends which doe not have such signaling.
-> The idea here is not to implement in other backends yet, but
-> at least to determine how it could be handled to avoid that
-> tomorrow this has to be reworked. 
-
-FYI, I've started some dev, trying to adapt the implementation to
-the virtio backend to move forward with this topic.
-
-It is only a POC for time being based on a new ROPMsg service for the
-flow control.
-
-Linux code is available here:
-https://github.com/arnopo/linux/commits/signalling
-
-openamp library associated code is available here:
-https://github.com/arnopo/open-amp/commits/flow_ctrl
-
-I hope to find some time next month to continue my dev and send patches
-to the mailing list. 
-
-Regards,
-Arnaud
-
-
+> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
+> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> More than that I wonder if the flow control could also be used
-> to solve the RPmsg protocol issue related to the channel
-> announcement [1][2]
-> 
-> [1] https://github.com/OpenAMP/open-amp/pull/160
-> [2] https://lore.kernel.org/lkml/20220316153001.662422-1-arnaud.pouliquen@foss.st.com/
-> 
-> Thanks,
-> Arnaud
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 3ede25b1f2e4..603233f0686e 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -973,7 +973,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  
+>  		err = rpmsg_ns_register_device(rpdev_ns);
+>  		if (err)
+> -			goto free_vch;
 
+Please add a comment that highlights where 'vch' will be free'd to avoid
+receiving patches that will introduce another kfree().  Same for your other
+patch.
 
+In the next revision please use a cover letter and add Arnaud's patches to it.
 
+Thanks,
+Mathieu
+
+> +			goto free_ctrldev;
+>  	}
+>  
+>  	/*
+> @@ -997,8 +997,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  
+>  	return 0;
+>  
+> -free_vch:
+> -	kfree(vch);
+>  free_ctrldev:
+>  	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
+>  free_coherent:
+> -- 
+> 2.25.1
 > 
->>
->> Deepak Kumar Singh (3):
->>   rpmsg: core: Add signal API support
->>   rpmsg: glink: Add support to handle signals command
->>   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
->>
->>  drivers/rpmsg/qcom_glink_native.c | 77 +++++++++++++++++++++++++++++++++++++++
->>  drivers/rpmsg/rpmsg_char.c        | 47 ++++++++++++++++++++++--
->>  drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++
->>  drivers/rpmsg/rpmsg_internal.h    |  2 +
->>  include/linux/rpmsg.h             | 14 +++++++
->>  5 files changed, 157 insertions(+), 4 deletions(-)
->>
