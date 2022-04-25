@@ -2,108 +2,99 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 508D0C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 24 Apr 2022 02:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FF4C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Apr 2022 07:17:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237456AbiDXCJj (ORCPT
+        id S231402AbiDYHUm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 23 Apr 2022 22:09:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53600 "EHLO
+        Mon, 25 Apr 2022 03:20:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237336AbiDXCJi (ORCPT
+        with ESMTP id S230099AbiDYHUl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 23 Apr 2022 22:09:38 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A648DEF8;
-        Sat, 23 Apr 2022 19:06:39 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id n8so19439829plh.1;
-        Sat, 23 Apr 2022 19:06:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=G5chtXdXHBAHq9U8cN942JiV6ivsvkzMtMA5fbafTig=;
-        b=qBHPxvxPL6sor5qMtXE3DaLjQP9T/ilrSNm23CyTsMaZTcq1kHQr0cGCKQrgm/dVIT
-         QgaF5j6ync5JRYZ2Cn7QsuQs4YoVCQjiLf4eDT/zkMnquI/OYksg0q+4twatpo3R9McQ
-         EKKKowZ5KnFn0RmUUS0GvbXC3lrVd5mg4J+ZBC1yO6dAv5arSZxD7s9wd5+1Xl4/0SOg
-         CM4GhCkzCCqgDz7rw8n5pJ/Z9oh4DXfRGkWe1gmfaSQUH4c9Crpu/7hIZldobc6UBR+/
-         UnQBtXF1vJRs939yBl5MD72dxLB6O7h8fZja08SNADyYwlL9oOvCEJmcpKKjnH4665Ey
-         a4Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=G5chtXdXHBAHq9U8cN942JiV6ivsvkzMtMA5fbafTig=;
-        b=mQC2gJFVPMp9teHV8NRCus0f6FAE0IbFIRLeeLDmoXMrKyDZkXeQNvFuzGj74lbXLH
-         lpxYZqwV3vfCOXS+gVLRppEn5K3khfnExk5of4UUD3y7XFnqy1QWwShGqALiq/OnxcL2
-         wtiINSoaU1Da4/LpdyyEPxPUu4A0Aqa9vJmU9vfk0305/qlJkexGzuX+lhsBe49pmwQq
-         anh6iB46tzCJ3RYOnPOonF4NCtGttuU9qIljcEvCD63SaNkCynSwEs+Lr3uAZ7qX1DF0
-         GC6xdcg/LBg1311NUcnR60Wwv8bhVtwbqkZSk0JGgd2zzK21A0r15pr0R0hmQWas4fng
-         ak7Q==
-X-Gm-Message-State: AOAM532aOhMfg9EDHqr/GJM5RtnwWMfQfcKwpSVu46RT0cv2yCh91mzz
-        /VvZsUZdurp0eQ7Iq5wca4c=
-X-Google-Smtp-Source: ABdhPJzLTnOSaQr+nWBe52Kah2RbUcCpcTm+2JUktZ74CsyXnl9YV8zvqt64lVJCETd/TcOiuFHoSA==
-X-Received: by 2002:a17:902:a501:b0:153:f956:29f0 with SMTP id s1-20020a170902a50100b00153f95629f0mr11714114plq.120.1650765998998;
-        Sat, 23 Apr 2022 19:06:38 -0700 (PDT)
-Received: from [192.168.50.247] ([103.84.139.165])
-        by smtp.gmail.com with ESMTPSA id 64-20020a17090a0fc600b001d5f22845bdsm9959867pjz.1.2022.04.23.19.06.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 23 Apr 2022 19:06:38 -0700 (PDT)
-Message-ID: <ab977d4e-dbe7-3198-9477-66d42d818d1a@gmail.com>
-Date:   Sun, 24 Apr 2022 10:06:31 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] rpmsg: virtio: Fix the unregistration of the device
- rpmsg_ctrl
-Content-Language: en-US
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mon, 25 Apr 2022 03:20:41 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2929BC87E;
+        Mon, 25 Apr 2022 00:17:34 -0700 (PDT)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23P5rPtt009535;
+        Mon, 25 Apr 2022 09:17:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=Opi8juyUDHiPfz1wuT/aeqe/MAuCKQKlaH9etNKYKA8=;
+ b=r05JG4F6PeA9O9I9iqS4DMqVc8VDTdrvPqI8c1G5KjL3au/IL7UbV2kHW7d2iMqCZhQ2
+ gG1IAA1Auyywe+gJnH4Vf3quqLeqVPOxdbYTWlZXyZBPCxUj2EArYitLVzVSFtPWEOP9
+ /Yd7CZSViEHQ8OOW9xqgf73hnDvWLBTCqqVaRDEmHjOtClGADH95UFzqOParHiK5IicM
+ tGPxiCFvebt6tX6EMOSdVRgqebh98C4kqYCGCtvCA5knJ2dchqGEq4bHT9y1n12mhoKV
+ 7hovfNyzWuilQXAhW+K38vGh8GHeVD2EUlgqxRo1jNgOZM+9SbPvR6logf7t4O1TXnSE BQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3fm6vk7gq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 25 Apr 2022 09:17:32 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 48FC010002A;
+        Mon, 25 Apr 2022 09:17:30 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C26272128D1;
+        Mon, 25 Apr 2022 09:17:30 +0200 (CEST)
+Received: from localhost (10.75.127.48) by SFHDAG2NODE2.st.com (10.75.127.5)
+ with Microsoft SMTP Server (TLS) id 15.0.1497.26; Mon, 25 Apr 2022 09:17:30
+ +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-References: <20220422155402.721982-1-arnaud.pouliquen@foss.st.com>
-From:   Hangyu Hua <hbh25y@gmail.com>
-In-Reply-To: <20220422155402.721982-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH] rpmsg: Fix parameter naming for announce_create/destroy ops.
+Date:   Mon, 25 Apr 2022 09:17:23 +0200
+Message-ID: <20220425071723.774050-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.24.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
+ (10.75.127.5)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-25_02,2022-04-22_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2022/4/22 23:54, Arnaud Pouliquen wrote:
-> Unregister the rpmsg_ctrl device instead of just freeing the
-> the virtio_rpmsg_channel structure.
-> This will properly unregister the device and call
-> virtio_rpmsg_release_device() that frees the structure.
-> 
-> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Cc: Hangyu Hua <hbh25y@gmail.com>
-> ---
->   drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 3b7b47f785cf..0db8043e6c49 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -861,7 +861,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
->   {
->   	if (!rpdev_ctrl)
->   		return;
-> -	kfree(to_virtio_rpmsg_channel(rpdev_ctrl));
-> +	device_unregister(&rpdev_ctrl->dev);
->   }
->   
->   static int rpmsg_probe(struct virtio_device *vdev)
+The parameter associated to the announce_create and
+announce_destroy ops functions is not an endpoint but a rpmsg device.
 
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+No fixed sha1 indicated in commit message as issue is present since a
+while, it does not fix a specific sha1.
 
-Thanks for further optimization.
+git blame highlight the sha1 [1], but issue was present before.
+The commit [1] just moves declaration from rpmsg.h to rpmsg_internal.
 
-Reviewed-by: Hangyu Hua <hbh25y@gmail.com>
+[1] fade037e0fd5 ("rpmsg: Hide rpmsg indirection tables")
+---
+ drivers/rpmsg/rpmsg_internal.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Hangyu
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index d4b23fd019a8..ff0b12122235 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -41,8 +41,8 @@ struct rpmsg_device_ops {
+ 					    rpmsg_rx_cb_t cb, void *priv,
+ 					    struct rpmsg_channel_info chinfo);
+ 
+-	int (*announce_create)(struct rpmsg_device *ept);
+-	int (*announce_destroy)(struct rpmsg_device *ept);
++	int (*announce_create)(struct rpmsg_device *rpdev);
++	int (*announce_destroy)(struct rpmsg_device *rpdev);
+ };
+ 
+ /**
+-- 
+2.24.3
+
