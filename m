@@ -2,80 +2,122 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9445AC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Apr 2022 00:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E5DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Apr 2022 01:40:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239730AbiDZAbT (ORCPT
+        id S240718AbiDZBnq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Apr 2022 20:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58234 "EHLO
+        Mon, 25 Apr 2022 21:43:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233656AbiDZAbR (ORCPT
+        with ESMTP id S240787AbiDZBno (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Apr 2022 20:31:17 -0400
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DD33EABF;
-        Mon, 25 Apr 2022 17:28:12 -0700 (PDT)
-Received: by mail-oo1-f42.google.com with SMTP id g30-20020a4a251e000000b0033a39d8340aso3105149ooa.5;
-        Mon, 25 Apr 2022 17:28:12 -0700 (PDT)
+        Mon, 25 Apr 2022 21:43:44 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75716192B4;
+        Mon, 25 Apr 2022 18:40:39 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id u6-20020a17090a1f0600b001d86bd69427so1080841pja.5;
+        Mon, 25 Apr 2022 18:40:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=hFH0E0pslzD20/GCGOdgN5SxCLuSjW6GDgQJx+W0IdQ=;
+        b=kd9OGIhHJtr1iPfgw/k7akidycurc6u8IZ0uktaPT3RthJc/mRJ3Gfj1teWQZktRNs
+         OV98pbRzHvYGVBARJRGtW4CPpomtKvniMTh/YzKheo628NE+oX6nlj3K6eT85ZO1vJC0
+         jWBMYJMJK0TKPequnko9LzQrrDflLcXiCYRbNjqzF6+MInOmO79C0rH8X3/Dv2L3vge5
+         UU80TJ0xIeapjiF7vb3GoTl4QYn9fNSa3IjNA4vNngnSnpPmEiYjyku0qa6koSiaMiX8
+         7lWkvzUVHxVZfZdctJgQXBfpKWaAC7FkQfmVHtjuHEXnFTHWxen6gjMUZn6Emp+7AIRy
+         Cjdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=SFFQr41CrK0hpZb0QawVnEuLVgHVc+Fj3FqF1lnbmG0=;
-        b=TpQzXGobhzhXUBCx/xO6fLvNNOdqOjeHEAH5iO8Lr0FlWKQkxuJy3h7A2niVtUoB0y
-         EuZ99f2WpVWswT1RrcErsOZaEPWt1xavSDpc0Ac/nviXDGFCE14pF5Mzu2RBG8wnkHKg
-         A7VrrqLdEREevVKkOncCc/3x2topL+6aghsjLSCSfwfZ3W1b35OquhXQV5/vwQYbyT3L
-         M8z1OLpv7LJVYPZsJcC5X923lUzWODwjSgzgJl47i3xvFh8NPeCG3Xb8suo8HlxysyeO
-         ZfbGogWNemxqrsIqHcN/zYaTJm7eZj5a+NoCAHmHEhnHOgVW7Bv8ITEPwSO8rzteTsax
-         iL8Q==
-X-Gm-Message-State: AOAM532UfvBvAr6PYKanXX0KZjJKk1CJ3iYZCAtIeBDyj6IkW0MT1vCT
-        FZNHdSy8Pw0OjMw3f7UroQ==
-X-Google-Smtp-Source: ABdhPJw59OK2Y1K9vrvU+qPU7j7PKh3L5AfO5Jhnd7VcgAhlOX360MKdf1AxoRUnz0bNQSUohxdmOw==
-X-Received: by 2002:a4a:e85a:0:b0:333:2aa8:264f with SMTP id j26-20020a4ae85a000000b003332aa8264fmr7277374ooj.65.1650932892015;
-        Mon, 25 Apr 2022 17:28:12 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id t3-20020a056870048300b000e686d1389fsm264473oam.57.2022.04.25.17.28.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 17:28:11 -0700 (PDT)
-Received: (nullmailer pid 613027 invoked by uid 1000);
-        Tue, 26 Apr 2022 00:28:10 -0000
-Date:   Mon, 25 Apr 2022 19:28:10 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-remoteproc@vger.kernel.org,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: mediatek: add
- firmware-name property
-Message-ID: <Ymc8mjDNx36OWm1/@robh.at.kernel.org>
-References: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
- <20220419123331.14377-2-allen-kh.cheng@mediatek.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=hFH0E0pslzD20/GCGOdgN5SxCLuSjW6GDgQJx+W0IdQ=;
+        b=wbdjPydLvmcqMi02Zx+ilRx0XwVzEMW6wRj2r1ip6lTV5FSrh7f1OB899riYNBxFic
+         EYPHBiKeAOvUWh3QDF+wObTnRQfTgm1vz2KPSglKLzzeUFLn+vSYqep5gIVjH5oV2Lc4
+         m5WGRv0YmvsHoI24wU1gfc2G2etE4EWmcY8QTKCGTER+F+PuyXTmV28gRvXv7bGm6tdz
+         sBvJxdnfSka3FRQnb+8L7oaPU5cE7ItDzH2rgFZzwK5IMJj5ISlE2gb5Y1reW9kDl0N4
+         JE59Jbd89AVU9VzTJwiyCG6JLCDH8rUSQIEeYGqlut0EnYYSuD9lviIWZv+ZLAnYUcxV
+         y78A==
+X-Gm-Message-State: AOAM531stg9+7d2VcU95TR1d5bqkNKOYpQSlOxat/hZJ0CZQzvxlEDfu
+        WzH0sB73F5DzZgDn8z6t7vE=
+X-Google-Smtp-Source: ABdhPJxjqpKHdxzZtml6ywb7wYDVkmA0BHprh64ZaZVr3QPRDpP2HsfzvB3I3AY7nCUJ/Arry7Sn4Q==
+X-Received: by 2002:a17:902:bd92:b0:15c:e5ba:fb49 with SMTP id q18-20020a170902bd9200b0015ce5bafb49mr14070106pls.35.1650937238912;
+        Mon, 25 Apr 2022 18:40:38 -0700 (PDT)
+Received: from [192.168.50.247] ([103.84.139.165])
+        by smtp.gmail.com with ESMTPSA id u3-20020a626003000000b00505a38fc90bsm13267910pfb.173.2022.04.25.18.40.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Apr 2022 18:40:38 -0700 (PDT)
+Message-ID: <60d80bae-d229-0aa2-8c63-025754ab3438@gmail.com>
+Date:   Tue, 26 Apr 2022 09:40:33 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220419123331.14377-2-allen-kh.cheng@mediatek.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] rpmsg: virtio: fix possible double free in rpmsg_probe()
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220418093144.40859-1-hbh25y@gmail.com>
+ <20220425165552.GB1917807@p14s>
+From:   Hangyu Hua <hbh25y@gmail.com>
+In-Reply-To: <20220425165552.GB1917807@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 19 Apr 2022 20:33:30 +0800, Allen-KH Cheng wrote:
-> The SCP needs firmware which differs between other platforms and SoCs.
-> Add a new property "firmware-name" to allow the DT to specify the
-> platform/board specific path to this firmware file.
+On 2022/4/26 00:55, Mathieu Poirier wrote:
+> On Mon, Apr 18, 2022 at 05:31:44PM +0800, Hangyu Hua wrote:
+>> vch will be free in virtio_rpmsg_release_device() when
+>> rpmsg_ns_register_device() fails. There is no need to call kfree() again.
+>>
+>> Fix this by changing error path from free_vch to free_ctrldev.
+>>
+>> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
+>> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+>> ---
+>>   drivers/rpmsg/virtio_rpmsg_bus.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> index 3ede25b1f2e4..603233f0686e 100644
+>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> @@ -973,7 +973,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>   
+>>   		err = rpmsg_ns_register_device(rpdev_ns);
+>>   		if (err)
+>> -			goto free_vch;
 > 
-> Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Please add a comment that highlights where 'vch' will be free'd to avoid
+> receiving patches that will introduce another kfree().  Same for your other
+> patch.
+> 
+> In the next revision please use a cover letter and add Arnaud's patches to it.
+> 
+> Thanks,
+> Mathieu
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Thanks! I will send a v2 later.
+
+>> +			goto free_ctrldev;
+>>   	}
+>>   
+>>   	/*
+>> @@ -997,8 +997,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>   
+>>   	return 0;
+>>   
+>> -free_vch:
+>> -	kfree(vch);
+>>   free_ctrldev:
+>>   	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
+>>   free_coherent:
+>> -- 
+>> 2.25.1
+>>
