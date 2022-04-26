@@ -2,107 +2,98 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 256AEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Apr 2022 16:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A731C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Apr 2022 21:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346075AbiDZRAV (ORCPT
+        id S1355345AbiDZVWs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 Apr 2022 13:00:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56390 "EHLO
+        Tue, 26 Apr 2022 17:22:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344321AbiDZRAU (ORCPT
+        with ESMTP id S1355327AbiDZVWr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 26 Apr 2022 13:00:20 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791526D18B
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Apr 2022 09:57:12 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id c12so30772092plr.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Apr 2022 09:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=DTPMRMeWBAzanCmBx6cBcukiqX2leSLOdPLeBw+/mc4=;
-        b=kOgwKw2JD0gfI0he7V3lrFfb/ewU0fph/RfUDZAE5UZgmOw59W9UZVTDHcF5OtPDnU
-         3Ek/n41/pC7tY/P2oF0XPaNdkxfsDElNuiCvLaQRNzjDEVFhTWKTjGAFvj0NktS0cWYW
-         8QbryrEBzZytP6eS/ePMzqSsm7l3TmwsbGlvHkavrnG8xyeUn2HNGKDkQlTIc8vberJD
-         LNm5aWrZUL2Ji8sV8vswlGKowjXOoLGcL0OSsUguwBkO8xD0DTUA9htAL4nKaIPwOeHY
-         UjV5GuaN+j1REKUhm0cEY0lYzyYkpNc0QNiYEQny5d6LJZwkWJXu6LH5AAjiuRWwwk3C
-         Bsfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=DTPMRMeWBAzanCmBx6cBcukiqX2leSLOdPLeBw+/mc4=;
-        b=b5JDp9pyZEAuosND6nEKJn+59wAAJmPtKfjUBm9gJ3FUpRM849OJbQoilYsBrmj/YA
-         7mSZ4VnARaM0dBKxpLrb/LnqnP83sqWCbDyWFCwwT76fX6/9jIqx+iyLU0I4eIjjzyMU
-         DtGIPdk42eTV6QPraEyHC4Cna6Mc0FpH2X6XXWW9+j5Ncobvwa11HPBXXhl5nfdfDC1+
-         9aqilfU31JegdrfiF7oQon0x4Zr8zheCF4xGNhNZAHlbxfKnGv6h1WPsgp5PEu0Rh8vf
-         w+2aIF4NYyhYCMbya0m/+Cf9dDR97S2vEKduXQC+ZY7KuiUTLuR4RTZJHLLy13Ei9Bye
-         0vFA==
-X-Gm-Message-State: AOAM531ate6Qro8HoKdbxHv6HQJtqHnebE47G5vToSia17peuASyesKn
-        jt7TmaAZjdF5utg0Lpyg41aU7Q==
-X-Google-Smtp-Source: ABdhPJwak3kS8aqfMggQA5aK6zxJOCtJWtrUoPhsxApZzL252nhjxcJxzOc/Ln00Y20h5uCULPrk4Q==
-X-Received: by 2002:a17:90b:1b03:b0:1d2:a577:d52 with SMTP id nu3-20020a17090b1b0300b001d2a5770d52mr27494002pjb.58.1650992231904;
-        Tue, 26 Apr 2022 09:57:11 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id i127-20020a62c185000000b0050d4869918csm6461120pfg.216.2022.04.26.09.57.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Apr 2022 09:57:10 -0700 (PDT)
-Date:   Tue, 26 Apr 2022 10:57:08 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] remoteproc: mediatek: allow different SCP
- firmware names
-Message-ID: <20220426165708.GB2007637@p14s>
-References: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+        Tue, 26 Apr 2022 17:22:47 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5E9C8677;
+        Tue, 26 Apr 2022 14:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651007979; x=1682543979;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EpwUa4TvzlVvOHJi5+yOiqfv4c3h+/WtFw0HkynHRMc=;
+  b=jw0FGDzob5T0ofLUw3h07A5ZmFhNoI8V8bjB7MsxC+bSOyqc2YzYGWOQ
+   zhZC2+MwAqzcokjlaf8QzkN/fjzviRqEi4lDA/36pPsoyV/9JAhWmCUTo
+   y269u+E89CqLF6R6pQ/4LX7DmkIKb8yNyfGwGr42OVVCK/jF3Quvuqwp/
+   QZBLOC+GM+Pun7UD/KrV98+j+1hA9xqzKQqjm5IWKSAdJBwc3yjF2Rx1z
+   Vb9HdBtozEv5Pjukx+0Fw3TnZ12WymRMznpADYW4p7JmvUNYERGJOFDLD
+   RnPiyrgkoCHT18Iee7DZb/RnZhx3hCOXKjMb8IjhBL0sNEEWzGIf1O+/D
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10329"; a="263317228"
+X-IronPort-AV: E=Sophos;i="5.90,292,1643702400"; 
+   d="scan'208";a="263317228"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 14:19:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,292,1643702400"; 
+   d="scan'208";a="595960382"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 26 Apr 2022 14:19:36 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1njSau-0003zy-4H;
+        Tue, 26 Apr 2022 21:19:36 +0000
+Date:   Wed, 27 Apr 2022 05:18:46 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Yogesh Lal <quic_ylal@quicinc.com>, bjorn.andersson@linaro.org,
+        quic_sibis@quicinc.com
+Cc:     kbuild-all@lists.01.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yogesh Lal <quic_ylal@quicinc.com>
+Subject: Re: [PATCH v2] remoteproc: qcom: Add fallback mechanism for full
+ coredump collection
+Message-ID: <202204270556.J6HOrXrU-lkp@intel.com>
+References: <1650969374-19245-1-git-send-email-quic_ylal@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+In-Reply-To: <1650969374-19245-1-git-send-email-quic_ylal@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 08:33:29PM +0800, Allen-KH Cheng wrote:
-> The SCP needs firmware which differs between platforms and SoCs. Add a new
-> property "firmware-name" to allow the DT to specify the platform/board specific
-> path to this firmware file.
-> 
-> The firmware-name property is optional and the code falls back to the
-> old filename if the property isn't present.
-> 
-> Base on remoteproc/linux.git, rproc-next (58b7c856519f)
-> 
-> changes since v2:$
-> - use rproc_of_parse_firmware instead of of_property_read_string
-> changes since v1:
-> - fix a misspelled word in commit title
-> 
-> Allen-KH Cheng (2):
->   dt-bindings: remoteproc: mediatek: add firmware-name property
->   remoteproc: mediatek: allow reading firmware-name from DT
-> 
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 7 +++++++
->  drivers/remoteproc/mtk_scp.c                              | 6 +++++-
+Hi Yogesh,
 
-I have applied this set.
+Thank you for the patch! Yet something to improve:
 
-Thanks,
-Mathieu
+[auto build test ERROR on remoteproc/rproc-next]
+[also build test ERROR on v5.18-rc4 next-20220426]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.18.0
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Yogesh-Lal/remoteproc-qcom-Add-fallback-mechanism-for-full-coredump-collection/20220426-184634
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20220427/202204270556.J6HOrXrU-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/679fb5eca3c1ce97bbd22b4f082d9db24f13b878
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Yogesh-Lal/remoteproc-qcom-Add-fallback-mechanism-for-full-coredump-collection/20220426-184634
+        git checkout 679fb5eca3c1ce97bbd22b4f082d9db24f13b878
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "rproc_coredump" [drivers/remoteproc/qcom_common.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
