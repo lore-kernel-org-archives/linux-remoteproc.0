@@ -2,113 +2,80 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DFBC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Apr 2022 16:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9445AC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Apr 2022 00:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236432AbiDYQ7B (ORCPT
+        id S239730AbiDZAbT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Apr 2022 12:59:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43922 "EHLO
+        Mon, 25 Apr 2022 20:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232143AbiDYQ7A (ORCPT
+        with ESMTP id S233656AbiDZAbR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Apr 2022 12:59:00 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0112D13F9B
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Apr 2022 09:55:55 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id n33-20020a17090a5aa400b001d28f5ee3f9so6480738pji.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Apr 2022 09:55:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=fHj0AXFpbHX+x5jOd8SRt9e16ihhUng0D/feKZZnpv8=;
-        b=FEvSxjhbaiBv88L8kOktym3iC8R8O3qQefPdoXOLlesqLA7PHFDH4Ly1WACA+rAmHU
-         WFYWAsFAgO9K4ek0AIY1Py4MA2xes8OeKQTniMnqopB4OUBWhSYZyycRYIIrrO66eF+q
-         TezSS9rHfXn8M6biPzALcA8etR6djyTk3IYCFtRAc6AtM9o311inxeF5QVFsv9YOJdtQ
-         Iav/UtTiNPUp3qqSJW9SDbHTJ8n7Qn1kEQ7qIAsed4W8ZdZMYBKJuCxFSbqn3W4cofC3
-         vxKrxlTxfU0xkOltUvgpDhUIfB2B58Ap/oM5hMcHQAVk2ZVy/hup4ude5BbsD80l9n+2
-         sAUA==
+        Mon, 25 Apr 2022 20:31:17 -0400
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DD33EABF;
+        Mon, 25 Apr 2022 17:28:12 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id g30-20020a4a251e000000b0033a39d8340aso3105149ooa.5;
+        Mon, 25 Apr 2022 17:28:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=fHj0AXFpbHX+x5jOd8SRt9e16ihhUng0D/feKZZnpv8=;
-        b=KQtYeUQx5v9N6XsAaCADDQpEkuMkxgTX18BMr3Mn0Yhn0IUsm3fiYxsyBKVZV+zNUM
-         cKEjPDA9DFMHkV9OjUeWTajNiozQKW1VSfXw5KprrM3bPH+dM/VLWKw3ehRKYQJvWOTL
-         +SWp1aRHIPtWJ5xw8UYtGKGgXFog5sz3m9ckAtk6nvFATNdMhawBgDP9u05z+rFPZWXN
-         QZgzV7lwzXpW70OWwcaRyDO0aZQGPzcrLMWoAHDR5S3ENRcphvCeEJanda5TKFXCS045
-         HBA/WDmYRoEMEgKogGstKBW8bxGlby47lt0YF4c7OTGP088KLhTsJYBK3aIwI0ENGNTy
-         XyUQ==
-X-Gm-Message-State: AOAM5320c+VvoVVpKIIilIxRFXmzYai5BbvNb0w2CZc7bXZ9xFRy8YvA
-        eiw9MtpZCQjPx44fnnUxzfmNJA==
-X-Google-Smtp-Source: ABdhPJy8UDRi8nvlNJ/DZUcck1tp5UrommAF25tWePBOj8Foc0cM4QAxsDb5oZ1qiqmpv2T1TVm1OQ==
-X-Received: by 2002:a17:90b:255:b0:1cf:39e7:a7aa with SMTP id fz21-20020a17090b025500b001cf39e7a7aamr22087982pjb.137.1650905755524;
-        Mon, 25 Apr 2022 09:55:55 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id d20-20020a056a00199400b005060849909esm14038460pfl.176.2022.04.25.09.55.54
+        bh=SFFQr41CrK0hpZb0QawVnEuLVgHVc+Fj3FqF1lnbmG0=;
+        b=TpQzXGobhzhXUBCx/xO6fLvNNOdqOjeHEAH5iO8Lr0FlWKQkxuJy3h7A2niVtUoB0y
+         EuZ99f2WpVWswT1RrcErsOZaEPWt1xavSDpc0Ac/nviXDGFCE14pF5Mzu2RBG8wnkHKg
+         A7VrrqLdEREevVKkOncCc/3x2topL+6aghsjLSCSfwfZ3W1b35OquhXQV5/vwQYbyT3L
+         M8z1OLpv7LJVYPZsJcC5X923lUzWODwjSgzgJl47i3xvFh8NPeCG3Xb8suo8HlxysyeO
+         ZfbGogWNemxqrsIqHcN/zYaTJm7eZj5a+NoCAHmHEhnHOgVW7Bv8ITEPwSO8rzteTsax
+         iL8Q==
+X-Gm-Message-State: AOAM532UfvBvAr6PYKanXX0KZjJKk1CJ3iYZCAtIeBDyj6IkW0MT1vCT
+        FZNHdSy8Pw0OjMw3f7UroQ==
+X-Google-Smtp-Source: ABdhPJw59OK2Y1K9vrvU+qPU7j7PKh3L5AfO5Jhnd7VcgAhlOX360MKdf1AxoRUnz0bNQSUohxdmOw==
+X-Received: by 2002:a4a:e85a:0:b0:333:2aa8:264f with SMTP id j26-20020a4ae85a000000b003332aa8264fmr7277374ooj.65.1650932892015;
+        Mon, 25 Apr 2022 17:28:12 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t3-20020a056870048300b000e686d1389fsm264473oam.57.2022.04.25.17.28.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 09:55:54 -0700 (PDT)
-Date:   Mon, 25 Apr 2022 10:55:52 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Hangyu Hua <hbh25y@gmail.com>
-Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: virtio: fix possible double free in rpmsg_probe()
-Message-ID: <20220425165552.GB1917807@p14s>
-References: <20220418093144.40859-1-hbh25y@gmail.com>
+        Mon, 25 Apr 2022 17:28:11 -0700 (PDT)
+Received: (nullmailer pid 613027 invoked by uid 1000);
+        Tue, 26 Apr 2022 00:28:10 -0000
+Date:   Mon, 25 Apr 2022 19:28:10 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-remoteproc@vger.kernel.org,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: mediatek: add
+ firmware-name property
+Message-ID: <Ymc8mjDNx36OWm1/@robh.at.kernel.org>
+References: <20220419123331.14377-1-allen-kh.cheng@mediatek.com>
+ <20220419123331.14377-2-allen-kh.cheng@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220418093144.40859-1-hbh25y@gmail.com>
+In-Reply-To: <20220419123331.14377-2-allen-kh.cheng@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Apr 18, 2022 at 05:31:44PM +0800, Hangyu Hua wrote:
-> vch will be free in virtio_rpmsg_release_device() when
-> rpmsg_ns_register_device() fails. There is no need to call kfree() again.
+On Tue, 19 Apr 2022 20:33:30 +0800, Allen-KH Cheng wrote:
+> The SCP needs firmware which differs between other platforms and SoCs.
+> Add a new property "firmware-name" to allow the DT to specify the
+> platform/board specific path to this firmware file.
 > 
-> Fix this by changing error path from free_vch to free_ctrldev.
-> 
-> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
-> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+> Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 3ede25b1f2e4..603233f0686e 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -973,7 +973,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  		err = rpmsg_ns_register_device(rpdev_ns);
->  		if (err)
-> -			goto free_vch;
 
-Please add a comment that highlights where 'vch' will be free'd to avoid
-receiving patches that will introduce another kfree().  Same for your other
-patch.
-
-In the next revision please use a cover letter and add Arnaud's patches to it.
-
-Thanks,
-Mathieu
-
-> +			goto free_ctrldev;
->  	}
->  
->  	/*
-> @@ -997,8 +997,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  
->  	return 0;
->  
-> -free_vch:
-> -	kfree(vch);
->  free_ctrldev:
->  	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
->  free_coherent:
-> -- 
-> 2.25.1
-> 
+Acked-by: Rob Herring <robh@kernel.org>
