@@ -2,98 +2,116 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A731C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Apr 2022 21:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32FFC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Apr 2022 02:50:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355345AbiDZVWs (ORCPT
+        id S231183AbiD0Cx6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 Apr 2022 17:22:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
+        Tue, 26 Apr 2022 22:53:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355327AbiDZVWr (ORCPT
+        with ESMTP id S1357299AbiD0Cx5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 26 Apr 2022 17:22:47 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5E9C8677;
-        Tue, 26 Apr 2022 14:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651007979; x=1682543979;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EpwUa4TvzlVvOHJi5+yOiqfv4c3h+/WtFw0HkynHRMc=;
-  b=jw0FGDzob5T0ofLUw3h07A5ZmFhNoI8V8bjB7MsxC+bSOyqc2YzYGWOQ
-   zhZC2+MwAqzcokjlaf8QzkN/fjzviRqEi4lDA/36pPsoyV/9JAhWmCUTo
-   y269u+E89CqLF6R6pQ/4LX7DmkIKb8yNyfGwGr42OVVCK/jF3Quvuqwp/
-   QZBLOC+GM+Pun7UD/KrV98+j+1hA9xqzKQqjm5IWKSAdJBwc3yjF2Rx1z
-   Vb9HdBtozEv5Pjukx+0Fw3TnZ12WymRMznpADYW4p7JmvUNYERGJOFDLD
-   RnPiyrgkoCHT18Iee7DZb/RnZhx3hCOXKjMb8IjhBL0sNEEWzGIf1O+/D
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10329"; a="263317228"
-X-IronPort-AV: E=Sophos;i="5.90,292,1643702400"; 
-   d="scan'208";a="263317228"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 14:19:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,292,1643702400"; 
-   d="scan'208";a="595960382"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 26 Apr 2022 14:19:36 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1njSau-0003zy-4H;
-        Tue, 26 Apr 2022 21:19:36 +0000
-Date:   Wed, 27 Apr 2022 05:18:46 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Yogesh Lal <quic_ylal@quicinc.com>, bjorn.andersson@linaro.org,
-        quic_sibis@quicinc.com
-Cc:     kbuild-all@lists.01.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yogesh Lal <quic_ylal@quicinc.com>
-Subject: Re: [PATCH v2] remoteproc: qcom: Add fallback mechanism for full
- coredump collection
-Message-ID: <202204270556.J6HOrXrU-lkp@intel.com>
-References: <1650969374-19245-1-git-send-email-quic_ylal@quicinc.com>
+        Tue, 26 Apr 2022 22:53:57 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01B1D43ED7;
+        Tue, 26 Apr 2022 19:50:47 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id z5-20020a17090a468500b001d2bc2743c4so662052pjf.0;
+        Tue, 26 Apr 2022 19:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=t5XJuaT4OWvlHmOcaIN/ZB13LUq7XOD/Hk33b436nUE=;
+        b=GRvHzPN2grxclVd31pWuiT3Ld01HG+2JD9IEeerQqqhnsysuIQZbQN310EmdGx4qlC
+         FkV8s1sD6bxYsrNWYFDdelThb3PV6tIm3g8PbchoKOS2CCM22YY6Wi7U7Fhno+p67Rkz
+         R12/9CRNqC6y7jeMW8J/DfYU0ACk8rS4aLUM+oHZp/J1AyuRGX9baP817AIYU3lut6EQ
+         c3NCdpgjcmpD5nAl4KDyC/0QfnFDwyeOcbvvv7NriNEjyDt8w0wXr2+jnfADt7TaMspK
+         tYuQapdU4mqfndcZ7/8R1xiZ9QqIjMADwfqLIIirF3LljvxpPyJUK1GAtrr9UhUuL5DO
+         wi1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=t5XJuaT4OWvlHmOcaIN/ZB13LUq7XOD/Hk33b436nUE=;
+        b=RXzrnd363+6SMZzHI6zpH8/Q+UEIsBGEHAVcFwvVVVdxU6wPAwOkyX/p56aLjx+jw+
+         gJWSbC71VavRMvUIsAWnvboedDncJALYJG7ZP79tgpugaEonuYWgsOJJzKAd7mNPDhdv
+         BiDYLHDhshNzpdZ0kGJRIJZvSLY136UB19Zk2uhrNriBPKijH63PeDUfLGKZ4tZ6JV72
+         +0MgqjUjHFRQxjgi9PK8QYllbNJwgF8UmkOo6i5kZ7WAjR9hK2Hh2DLmEmwl8H8Q8uaI
+         vzE2s7/fyK4fdjHRo4h0LpTKkJhahSCsARmnYNO+08wXQkNQ0xEeOQaQ+DuthEZJTRkc
+         vEXA==
+X-Gm-Message-State: AOAM5319THNAr0ssMJGHVewrlYvi9Dw/4xw0hZJc8wkkQXOCMfrt3Asu
+        4MI9nBU4McjcaMAxS86HzQkg+Owyf/c26Q==
+X-Google-Smtp-Source: ABdhPJw3uSJ5Qbs6kTLh86PlLxlSW0Wd9GY6ysXbJJ7irunc0DZtEPYrbdQV17dU8e38qEIjgtRTNQ==
+X-Received: by 2002:a17:902:a710:b0:156:5650:f94a with SMTP id w16-20020a170902a71000b001565650f94amr25788659plq.86.1651027846550;
+        Tue, 26 Apr 2022 19:50:46 -0700 (PDT)
+Received: from [192.168.50.247] ([103.84.139.165])
+        by smtp.gmail.com with ESMTPSA id h124-20020a62de82000000b0050d3020bda0sm11364538pfg.195.2022.04.26.19.50.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 19:50:46 -0700 (PDT)
+Message-ID: <55c946ad-5d19-1d38-3484-1ab059a27642@gmail.com>
+Date:   Wed, 27 Apr 2022 10:50:42 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1650969374-19245-1-git-send-email-quic_ylal@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2 3/3] rpmsg: virtio: Fix the unregistration of the
+ device rpmsg_ctrl
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220426060536.15594-1-hbh25y@gmail.com>
+ <20220426060536.15594-4-hbh25y@gmail.com> <20220426165613.GA2007637@p14s>
+From:   Hangyu Hua <hbh25y@gmail.com>
+In-Reply-To: <20220426165613.GA2007637@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Yogesh,
+On 2022/4/27 00:56, Mathieu Poirier wrote:
+> On Tue, Apr 26, 2022 at 02:05:36PM +0800, Hangyu Hua wrote:
+>> Unregister the rpmsg_ctrl device instead of just freeing the
+>> the virtio_rpmsg_channel structure.
+>> This will properly unregister the device and call
+>> virtio_rpmsg_release_device() that frees the structure.
+>>
+>> Fixes: c486682ae1e2 ("rpmsg: virtio: Register the rpmsg_char device")
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> Cc: Hangyu Hua <hbh25y@gmail.com>
+>> Reviewed-by: Hangyu Hua <hbh25y@gmail.com>
+>> ---
+>>   drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> index 291fc1cfab7f..485e95f506df 100644
+>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> @@ -862,7 +862,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
+>>   {
+>>   	if (!rpdev_ctrl)
+>>   		return;
+>> -	kfree(to_virtio_rpmsg_channel(rpdev_ctrl));
+>> +	device_unregister(&rpdev_ctrl->dev);
+> 
+> The author of this patch should have been Arnaud, something I have fixed before
+> applying this set.
+> 
+> Thanks,
+> Mathieu
+> 
 
-Thank you for the patch! Yet something to improve:
+I get it. I'm sorry i thought Signed-off-by and a description in cover 
+letter are enough to express. Do i need to do anything else?
 
-[auto build test ERROR on remoteproc/rproc-next]
-[also build test ERROR on v5.18-rc4 next-20220426]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yogesh-Lal/remoteproc-qcom-Add-fallback-mechanism-for-full-coredump-collection/20220426-184634
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20220427/202204270556.J6HOrXrU-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/679fb5eca3c1ce97bbd22b4f082d9db24f13b878
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Yogesh-Lal/remoteproc-qcom-Add-fallback-mechanism-for-full-coredump-collection/20220426-184634
-        git checkout 679fb5eca3c1ce97bbd22b4f082d9db24f13b878
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "rproc_coredump" [drivers/remoteproc/qcom_common.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Thanks,
+Hangyu
+>>   }
+>>   
+>>   static int rpmsg_probe(struct virtio_device *vdev)
+>> -- 
+>> 2.25.1
+>>
