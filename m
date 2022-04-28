@@ -2,241 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E816C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 16:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30202C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 17:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350392AbiD1RBN (ORCPT
+        id S1346684AbiD1RfI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 13:01:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
+        Thu, 28 Apr 2022 13:35:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235928AbiD1RBL (ORCPT
+        with ESMTP id S1350552AbiD1RfH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Apr 2022 13:01:11 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7208BB6D27;
-        Thu, 28 Apr 2022 09:57:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1651164963;
-        bh=DUb16bHT8ZVVcSBzzE8lnieko2RHZpG2zbwsEWdWo2c=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=TrwFfhoA2P1jqiZSh6qbThQbWQ3kajZ2U+JQrRL/jSZxckwFV1BopRKv6DRaeQSKC
-         DM8QpY2fv9fsoSq055uYb4MCMz8e9HvG+guo2m9xr29cJoYbxYguo2PwZIKFp/JXdB
-         qy9XbYXMKcmj9vbKxczpPpGqEow6LzKi+qj1B+ao=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.133.159]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MzyuS-1o6TNU3b1S-00x2R3; Thu, 28
- Apr 2022 18:56:03 +0200
-Message-ID: <6a7c924a-54a9-c5ea-8a9d-3ea92987b436@gmx.de>
-Date:   Thu, 28 Apr 2022 18:55:52 +0200
+        Thu, 28 Apr 2022 13:35:07 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763666833E
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Apr 2022 10:31:52 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id cu23-20020a17090afa9700b001d98d8e53b7so6437708pjb.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Apr 2022 10:31:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4oxf671PX/b/5YLLWBM8S/3ylJrxHqVxe323lh/h3FQ=;
+        b=n0tbH4XbRXNmX0pG3Dadr/bXh5a2HX6a9+K1mtMJa42hf2a79qQ++Vd+aSEd6qrWdJ
+         /t+OQbBesdE/dnniWLn3mYbFD/o+MkgeHMJXjJR5F40fSxLxPHfq3DVe4xIk0ezkc8Me
+         /bJbEMMa5supZWWaPlyALzVGvg5j9m/lGHaKr6DSpHIDkTgU1VR7jA+K2os8BCi9G1Ab
+         OBnNJjSAxqi/3debNrG4NdC5JdqZkTo3DbYxVCYQsQ0qCeiWclZfH8l0GA03vXq2qFKr
+         jbNDdy6MX3m5tegL4SGS09tJA/c0uUH1Jrv8yvIXJBcAAkGgnb9M7AOGWDR9XGl42sLO
+         4GDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4oxf671PX/b/5YLLWBM8S/3ylJrxHqVxe323lh/h3FQ=;
+        b=flQiLPN0NHmRaryl77vi6zJ69gIZH9yIeDcR9fog5J4QRsehNxZ8zU2j/Tb4OznodY
+         eA9on/CTXoyqwsSstfnf4ELt4J+8aqKk4x7IyszyMOc3utmBSFJicAX6QcJ89A8N5aDh
+         bNFjAppg+9hE3gUjxrPiRWPuAlFiF9+qa7gmEZNTdgYyy0ZOMuSU/3zrrf0qJUTjkmRw
+         O0TUt/nApNfbg4qhWUxnK+LcwdF/EdigHe28Na0rHCvJ7k/SezHVZ4hrBC85AXEiYntf
+         jveyJUxr/60DCKFEBpRx+oPi5qhBmOMR/KyU3THULTw+iTMSUUmacvWNrWLxkUdr1SoN
+         0nXA==
+X-Gm-Message-State: AOAM532A+Gdr2j/0KPJX5pXSnfB3t2Y+fDDM/IU3vC3ZIDo0JibrsMLr
+        plDH4Mm2A+wn98H9cnStMRqmHQ==
+X-Google-Smtp-Source: ABdhPJxIerott8Cy7D5882uOAWxFbbVSilYSlujg9dCoKfmkpgRndxCK5//0UxB36McM5Z8WP4F4JA==
+X-Received: by 2002:a17:90b:1b03:b0:1d2:a338:c568 with SMTP id nu3-20020a17090b1b0300b001d2a338c568mr51409101pjb.129.1651167111951;
+        Thu, 28 Apr 2022 10:31:51 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id v189-20020a622fc6000000b004fb72e95806sm439830pfv.48.2022.04.28.10.31.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 10:31:50 -0700 (PDT)
+Date:   Thu, 28 Apr 2022 11:31:48 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     bjorn.andersson@linaro.org, matthias.bgg@gmail.com,
+        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
+Message-ID: <20220428173148.GA2268704@p14s>
+References: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 12/30] parisc: Replace regular spinlock with spin_trylock
- on panic path
-Content-Language: en-US
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
-        kexec@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-13-gpiccoli@igalia.com>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <20220427224924.592546-13-gpiccoli@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5vdTXh07+igNuefls5XBW8Vnc+iEgtAi7WYk6EGDKuqY95FwGMe
- QwcWZKzUaEoh4UB+55vjZve/tYEaItgGsgQfOqHuHHkvtwYyxsf6YShgZsftQKYSmO6WQ+T
- ZC1GiQE33MbntUGomNddrKZxDF5sJxGJRqGlvPVNWYXBnGaRnQV/WvjdEKXY9QfAk5iDfpf
- 2SF7pYcym4psStLDUUMNQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:seIPaj7dpZM=:yycTg0fvdDhrITiv3IZXzI
- e4yFHTYHbrGUy0XcNvNSnWURkRH0CwdNhQ3CWNfifJgMcKrsF971kE1ZPU9NMQWdlbTy3YHHQ
- kdbLaclaoLvW+e4KLLE5yocf48/EeAYglXhY84PxWcp1QGdF7y7nXLElZka6kp2R0F8+61JyB
- loph7JvlvHMoA0h4saDhDgOi28CBTeWf2mZxC+/EkMY8v85s5wN3/znVOlOIi2kLzQZEdEUxg
- qZqRAEH0zpZWVc5jenddLnwtNUslbH1ysbnT6Jz+8m3SINHv4Rwqo8qzXPYlIEhtABEOB2CCo
- zGH68oxcPKpqrqbFPSUrvmevYIsFthSN4Qa4ESwcyflnmJb/H2yYOm3idKBPcHZoAc7MXpKFp
- RR3P6Q1355mAy9N9Htg1IQRALV21oxx1PunXwbHOYiOH77jvrab76cf+pliKkaIi4EdHQpQqw
- 9mxPXAGH7PZiMiQ7xVCBiONFGbdiXxNWW9WgP8A6pz6E89Sx90IwrTRc9D73bLfwpGwDmjWxi
- fFfVa4k8dmCqUPhBM1VhxPpxNRnj9QzEWrSQ0xThSfPtnfKEaiZ6CAhESljw6d2UOOHcDSLiC
- pYk2Il0xe7DktL7r83T2I0B8fYcU06QnK7MXlbmtGkMbQFBGucQc+IB7UEgTcN0uT8ZaS6/FI
- jkfGMBIY2eSkyrlErzq+vnajUsa0b9zENmsHS55RE7h43gLxmwE2UNFRUH8bWmdFhfJcUWhCo
- 0TAcvRyne9VEKfs0HrQjTEdgbmSa875UQ1egzran3Xhi4XGH8Atz9id4q//uvXHDPEYGUcpM1
- 1jCttDZecf4rq/B12RMkoMxP6zY3FZKwK7quDBpUSTid+jJEDxaXtx0XaeJ0Hg0rDMgviRyZ9
- HzUcPocKiz/LqCSxQKJ+5LacyVgyzC2Eg/QV5UE+RmBe/a0+mK1ccbKXN/YmWVo5xcoOe11r/
- LQC+womcGp8ubOddU8soGYLdecjhj+rpnt5TdzsPY9fawi7HlwarnA+ConVoG4a/SWDHYon/e
- QtxJhYG5A/NQ3aDfGGrPKFQkR4D9mAqQmSL7oHO9wv65NzEickiapaFqe4ZYqD4oBbohP/rOw
- OHyJm5CjSYyJJQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 4/28/22 00:49, Guilherme G. Piccoli wrote:
-> The panic notifiers' callbacks execute in an atomic context, with
-> interrupts/preemption disabled, and all CPUs not running the panic
-> function are off, so it's very dangerous to wait on a regular
-> spinlock, there's a risk of deadlock.
+On Fri, Jan 14, 2022 at 03:47:37PM +0100, AngeloGioacchino Del Regno wrote:
+> During execution of the worker that's used to register rpmsg devices
+> we are safely locking the channels mutex but, when creating a new
+> endpoint for such devices, we are registering a IPI on the SCP, which
+> then makes the SCP to trigger an interrupt, lock its own mutex and in
+> turn register more subdevices.
+> This creates a circular locking dependency situation, as the mtk_rpmsg
+> channels_lock will then depend on the SCP IPI lock.
+> 
+> [   18.014514]  Possible unsafe locking scenario:
+> [   18.014515]        CPU0                    CPU1
+> [   18.014517]        ----                    ----
+> [   18.045467]   lock(&mtk_subdev->channels_lock);
+> [   18.045474]                                lock(&scp->ipi_desc[i].lock);
+> [   18.228399]                                lock(&mtk_subdev->channels_lock);
+> [   18.228405]   lock(&scp->ipi_desc[i].lock);
+> [   18.264405]
+
+I finally understand the problem, something that would have been impossible
+without the pastebin you provided in your latest email.  Please add the content
+of that pastebin to the changelog and send another revision (checkpatch
+warnings can be ignored).
+
+> 
+> To solve this, simply unlock the channels_lock mutex before calling
+> mtk_rpmsg_register_device() and relock it right after, as safety is
+> still ensured by the locking mechanism that happens right after
+> through SCP.
+
+The integrity of the subdev->channels list is guaranteed by relocking the
+mutex, I'm not sure what "through SCP" adds to the sentence. 
+
+> Notably, mtk_rpmsg_register_device() does not even require locking.
 >
-> This patch refactors the panic notifier of parisc/power driver
-> to make use of spin_trylock - for that, we've added a second
-> version of the soft-power function. Also, some comments were
-> reorganized and trailing white spaces, useless header inclusion
-> and blank lines were removed.
->
-> Cc: Helge Deller <deller@gmx.de>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
-You may add:
-Acked-by: Helge Deller <deller@gmx.de> # parisc
+I don't agree with the above sentence - if locking doesn't happen in
+mtk_rpmsg_create_device(), there can be two CPUs accessing the list at the same
+time.
 
-Helge
+Thanks,
+Mathieu
 
-
+> Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  arch/parisc/include/asm/pdc.h |  1 +
->  arch/parisc/kernel/firmware.c | 27 +++++++++++++++++++++++----
->  drivers/parisc/power.c        | 17 ++++++++++-------
->  3 files changed, 34 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/parisc/include/asm/pdc.h b/arch/parisc/include/asm/pdc=
-.h
-> index b643092d4b98..7a106008e258 100644
-> --- a/arch/parisc/include/asm/pdc.h
-> +++ b/arch/parisc/include/asm/pdc.h
-> @@ -83,6 +83,7 @@ int pdc_do_firm_test_reset(unsigned long ftc_bitmap);
->  int pdc_do_reset(void);
->  int pdc_soft_power_info(unsigned long *power_reg);
->  int pdc_soft_power_button(int sw_control);
-> +int pdc_soft_power_button_panic(int sw_control);
->  void pdc_io_reset(void);
->  void pdc_io_reset_devices(void);
->  int pdc_iodc_getc(void);
-> diff --git a/arch/parisc/kernel/firmware.c b/arch/parisc/kernel/firmware=
-.c
-> index 6a7e315bcc2e..0e2f70b592f4 100644
-> --- a/arch/parisc/kernel/firmware.c
-> +++ b/arch/parisc/kernel/firmware.c
-> @@ -1232,15 +1232,18 @@ int __init pdc_soft_power_info(unsigned long *po=
-wer_reg)
->  }
->
->  /*
-> - * pdc_soft_power_button - Control the soft power button behaviour
-> - * @sw_control: 0 for hardware control, 1 for software control
-> + * pdc_soft_power_button{_panic} - Control the soft power button behavi=
-our
-> + * @sw_control: 0 for hardware control, 1 for software control
->   *
->   *
->   * This PDC function places the soft power button under software or
->   * hardware control.
-> - * Under software control the OS may control to when to allow to shut
-> - * down the system. Under hardware control pressing the power button
-> + * Under software control the OS may control to when to allow to shut
-> + * down the system. Under hardware control pressing the power button
->   * powers off the system immediately.
-> + *
-> + * The _panic version relies in spin_trylock to prevent deadlock
-> + * on panic path.
->   */
->  int pdc_soft_power_button(int sw_control)
->  {
-> @@ -1254,6 +1257,22 @@ int pdc_soft_power_button(int sw_control)
->  	return retval;
->  }
->
-> +int pdc_soft_power_button_panic(int sw_control)
-> +{
-> +	int retval;
-> +	unsigned long flags;
-> +
-> +	if (!spin_trylock_irqsave(&pdc_lock, flags)) {
-> +		pr_emerg("Couldn't enable soft power button\n");
-> +		return -EBUSY; /* ignored by the panic notifier */
-> +	}
-> +
-> +	retval =3D mem_pdc_call(PDC_SOFT_POWER, PDC_SOFT_POWER_ENABLE, __pa(pd=
-c_result), sw_control);
-> +	spin_unlock_irqrestore(&pdc_lock, flags);
-> +
-> +	return retval;
-> +}
-> +
->  /*
->   * pdc_io_reset - Hack to avoid overlapping range registers of Bridges =
-devices.
->   * Primarily a problem on T600 (which parisc-linux doesn't support) but
-> diff --git a/drivers/parisc/power.c b/drivers/parisc/power.c
-> index 456776bd8ee6..8512884de2cf 100644
-> --- a/drivers/parisc/power.c
-> +++ b/drivers/parisc/power.c
-> @@ -37,7 +37,6 @@
->  #include <linux/module.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> -#include <linux/notifier.h>
->  #include <linux/panic_notifier.h>
->  #include <linux/reboot.h>
->  #include <linux/sched/signal.h>
-> @@ -175,16 +174,21 @@ static void powerfail_interrupt(int code, void *x)
->
->
->
-> -/* parisc_panic_event() is called by the panic handler.
-> - * As soon as a panic occurs, our tasklets above will not be
-> - * executed any longer. This function then re-enables the
-> - * soft-power switch and allows the user to switch off the system
-> +/*
-> + * parisc_panic_event() is called by the panic handler.
-> + *
-> + * As soon as a panic occurs, our tasklets above will not
-> + * be executed any longer. This function then re-enables
-> + * the soft-power switch and allows the user to switch off
-> + * the system. We rely in pdc_soft_power_button_panic()
-> + * since this version spin_trylocks (instead of regular
-> + * spinlock), preventing deadlocks on panic path.
->   */
->  static int parisc_panic_event(struct notifier_block *this,
->  		unsigned long event, void *ptr)
->  {
->  	/* re-enable the soft-power switch */
-> -	pdc_soft_power_button(0);
-> +	pdc_soft_power_button_panic(0);
->  	return NOTIFY_DONE;
->  }
->
-> @@ -193,7 +197,6 @@ static struct notifier_block parisc_panic_block =3D =
-{
->  	.priority	=3D INT_MAX,
->  };
->
-> -
->  static int __init power_init(void)
->  {
->  	unsigned long ret;
-
+>  drivers/rpmsg/mtk_rpmsg.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+> index 5b4404b8be4c..d1213c33da20 100644
+> --- a/drivers/rpmsg/mtk_rpmsg.c
+> +++ b/drivers/rpmsg/mtk_rpmsg.c
+> @@ -234,7 +234,9 @@ static void mtk_register_device_work_function(struct work_struct *register_work)
+>  		if (info->registered)
+>  			continue;
+>  
+> +		mutex_unlock(&subdev->channels_lock);
+>  		ret = mtk_rpmsg_register_device(subdev, &info->info);
+> +		mutex_lock(&subdev->channels_lock);
+>  		if (ret) {
+>  			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
+>  			continue;
+> -- 
+> 2.33.1
+> 
