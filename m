@@ -2,98 +2,96 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307E0C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 06:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B4E9C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 08:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244427AbiD1GtK (ORCPT
+        id S1343833AbiD1IOy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 02:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39616 "EHLO
+        Thu, 28 Apr 2022 04:14:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244409AbiD1GtH (ORCPT
+        with ESMTP id S244874AbiD1IOg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Apr 2022 02:49:07 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D729858A;
-        Wed, 27 Apr 2022 23:45:52 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id n185so2962312qke.5;
-        Wed, 27 Apr 2022 23:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ozQAvh/QxaKIiwy4471nIibPkTSEzJozNZp0wEk64nc=;
-        b=LNZxey5sG/qnatBJx58qWzgHNkysC7SndnATolVVS08YKZvpglIOIuRnvE6oqscvpV
-         8K62hhNOkYOpuz9EBNiz3/iP3G+FkCTP+Miys6fk2eJy5h1YgUUMmN57RYTcKC/CR6LS
-         7opm1S5PD9PbdQ4utoal2UUS/txisW3dKsZxzHoLhho9jZM2H3dJdMw2tvvC4g67HrIK
-         E1ZmsEipY/jeZnwRNnlvNTgd0jsjbeoe+wunLITJb0hFG44lVzbrdFV8+XTLPkSOLgtW
-         Rzt++o5bAf2U5sgmcPhYgFWwOkfYpaCcmhw9ZLYxDWihOEPi6r5Z9Ve6fTksPUmP40V7
-         9aXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ozQAvh/QxaKIiwy4471nIibPkTSEzJozNZp0wEk64nc=;
-        b=Nxiww1HTrTkMKNDlAyIcgRDo6VoeZiiwyeSaqAoTFX/i5RJl5HSVcXQdPMaw7NT2Wo
-         dM5ilQXQqnxRw0/mCDCBJfJTTW+7v19bhvEGNyGvENof0ezAj4p/9HPSvkkArF1QebtJ
-         4+XT2BrqQNfRawee5NbjowFqTFn7OEcAtayRfprysA9XQoumZLmaoqmq0zOoHChQFCtg
-         ubGsL2M4Mx7zOa1D/w7FjoJV0Mph9Ewf+7zGhIYUaf4prOSrY2kTn5R05k8FBw1JRngk
-         oNrHqv+3V0iD/Elioak6vtnGKZ4XINCH8fSex5AJO72dDmq1IuXw2uRBGEfFa++nf/IU
-         VRkg==
-X-Gm-Message-State: AOAM533fUkJE9vkyA4FJygxMuy6YDvBt3hVA+847S4vJe4vK4e9YIrhz
-        Ocvf6c5/ENHRqTTDfCA4QpY=
-X-Google-Smtp-Source: ABdhPJze+I/OAY2J8r4P2DbZki/nDfefrL+rDDVv+p/+5yO1DB8UCQ4mTP/YCUhjUX+5emcvEtV44g==
-X-Received: by 2002:a37:9c8b:0:b0:69f:8793:f2ef with SMTP id f133-20020a379c8b000000b0069f8793f2efmr6035949qke.300.1651128351916;
-        Wed, 27 Apr 2022 23:45:51 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id i14-20020a05620a248e00b0069f6ab15281sm5653195qkn.52.2022.04.27.23.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Apr 2022 23:45:51 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: ran.jianping@zte.com.cn
-To:     agross@kernel.org
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        ran jianping <ran.jianping@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] remoteproc: qcom: using pm_runtime_resume_and_get to simplify the code
-Date:   Thu, 28 Apr 2022 06:45:45 +0000
-Message-Id: <20220428064545.3850057-1-ran.jianping@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Thu, 28 Apr 2022 04:14:36 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 364F776282;
+        Thu, 28 Apr 2022 01:11:21 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C4C213D5;
+        Thu, 28 Apr 2022 01:11:21 -0700 (PDT)
+Received: from [10.57.12.231] (unknown [10.57.12.231])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E93F3F774;
+        Thu, 28 Apr 2022 01:11:11 -0700 (PDT)
+Message-ID: <3cafe4fd-8a0b-2633-44a3-2995abd6c38c@arm.com>
+Date:   Thu, 28 Apr 2022 09:11:10 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH 09/30] coresight: cpu-debug: Replace mutex with
+ mutex_trylock on panic notifier
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-10-gpiccoli@igalia.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20220427224924.592546-10-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: ran jianping <ran.jianping@zte.com.cn>
+Hi Guilherme,
 
-Using pm_runtime_resume_and_get() to replace pm_runtime_get_sync and
-pm_runtime_put_noidle. This change is just to simplify the code, no
-actual functional changes.
+On 27/04/2022 23:49, Guilherme G. Piccoli wrote:
+> The panic notifier infrastructure executes registered callbacks when
+> a panic event happens - such callbacks are executed in atomic context,
+> with interrupts and preemption disabled in the running CPU and all other
+> CPUs disabled. That said, mutexes in such context are not a good idea.
+> 
+> This patch replaces a regular mutex with a mutex_trylock safer approach;
+> given the nature of the mutex used in the driver, it should be pretty
+> uncommon being unable to acquire such mutex in the panic path, hence
+> no functional change should be observed (and if it is, that would be
+> likely a deadlock with the regular mutex).
+> 
+> Fixes: 2227b7c74634 ("coresight: add support for CPU debug module")
+> Cc: Leo Yan <leo.yan@linaro.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Mike Leach <mike.leach@linaro.org>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: ran jianping <ran.jianping@zte.com.cn>
----
- drivers/remoteproc/qcom_q6v5_adsp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+How would you like to proceed with queuing this ? I am happy
+either way. In case you plan to push this as part of this
+series (I don't see any potential conflicts) :
 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 2f3b9f54251e..366e1d4a839a 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -175,9 +175,8 @@ static int qcom_rproc_pds_enable(struct qcom_adsp *adsp, struct device **pds,
- 
- 	for (i = 0; i < pd_count; i++) {
- 		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
--		ret = pm_runtime_get_sync(pds[i]);
-+		ret = pm_runtime_resume_and_get(pds[i])
- 		if (ret < 0) {
--			pm_runtime_put_noidle(pds[i]);
- 			dev_pm_genpd_set_performance_state(pds[i], 0);
- 			goto unroll_pd_votes;
- 		}
--- 
-2.25.1
-
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
