@@ -2,138 +2,189 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CC4C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 11:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAE5C43217
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 14:13:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345542AbiD1L1F (ORCPT
+        id S1348167AbiD1OQm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 07:27:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
+        Thu, 28 Apr 2022 10:16:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245064AbiD1L1B (ORCPT
+        with ESMTP id S1348142AbiD1OQl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Apr 2022 07:27:01 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D1266D971;
-        Thu, 28 Apr 2022 04:23:46 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 23SBNRXm112466;
-        Thu, 28 Apr 2022 06:23:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1651145007;
-        bh=5t3OzA0Rw/NGVThHMxQu6xew1IgZchZszoPZC/r7wwY=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=U3WwLaFQKcA8juoBzoJ6Y6E5ReyXXClgnmOv/P5Wr+nyQehNI/8L0F0MTE8pKV8eS
-         3D9gHclMZ2i5RG26Kvpp+Vkw4rtfUK5sfXAm+C3plcXYfLmBrAZ/x9bq7l66npIImz
-         Wo5aZCw9wmOgBy+CebCN6trSVY8+u4AF8UySDj40=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 23SBNRFQ011008
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 28 Apr 2022 06:23:27 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Thu, 28
- Apr 2022 06:23:27 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Thu, 28 Apr 2022 06:23:27 -0500
-Received: from [10.24.69.24] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 23SBNNd4068230;
-        Thu, 28 Apr 2022 06:23:23 -0500
-Message-ID: <ee1c1601-6db9-70d7-401a-8f67ec406ffc@ti.com>
-Date:   Thu, 28 Apr 2022 16:53:22 +0530
+        Thu, 28 Apr 2022 10:16:41 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB766B7156
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Apr 2022 07:13:24 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id i8so2051053ila.5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Apr 2022 07:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=bCT2JlxzOcDaE6ycYVbjB0p6hzfQxFS5OmPVl0XHT4A=;
+        b=ByPVeKDwQRcuSB47O0Zefv/dFt5S0aRWMNs2oJF7maE4wXnsormuysnBE3KE+1D9p9
+         PB3FB3BjkOR/97x+74MBqA5RA9WqHK53ukE6KnmiwNvHyxwXKz6iLxoZSM4bciItAhHz
+         gddQYhhdQpsolBOdwDYZPGvNMFMyqb4ql/QD0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=bCT2JlxzOcDaE6ycYVbjB0p6hzfQxFS5OmPVl0XHT4A=;
+        b=Gz+F2L/PLGK+wyY5uid9w4MrdJerXRgnvjlQpGoz39sNclnQu3/UHjiH7ENXVmAohd
+         o8x27+TtF6XZ8pgfQDT4wogblzHy8PC5KAZ5ixmjVKRQdFlcdLuTXNfapOc3sPCJ2lVk
+         UNy6IUxdarInlXonx0ciXMabVNU2JNfufuqS7utrWgj+2PkriDF+eZIa0ObxPI/VibdM
+         Q87lY0J2yn7DzYOOLZESzf7caj9sn+uOj3aATUHDVXXTFw5lp5sltbT+hBCA4eOdpBIi
+         5DBNqQFWi4kNu6Vz9qwMDyW4/jf9LSMhpOHrQ8auQCRYvwp7TT7Xca4Zq5SW3pNBuBiT
+         bQUA==
+X-Gm-Message-State: AOAM531DjkPU+Kf5GHKFATKtILO8rOHbMOR6n4bF/t53z5lLvptlx/1Y
+        /3ZUHxP/15ymgHUPCsZMxb39Pg==
+X-Google-Smtp-Source: ABdhPJw448TngRonNTsTASYhGkruvfda4Cqi/x7py0vOs1UkbxiFSjNKZ9c5oG5pi/4oeINikW5dJA==
+X-Received: by 2002:a92:cac3:0:b0:2c9:a265:4cab with SMTP id m3-20020a92cac3000000b002c9a2654cabmr13504351ilq.241.1651155203895;
+        Thu, 28 Apr 2022 07:13:23 -0700 (PDT)
+Received: from [172.22.22.4] (c-73-185-129-58.hsd1.mn.comcast.net. [73.185.129.58])
+        by smtp.googlemail.com with ESMTPSA id y21-20020a6bc415000000b00648da092c8esm4431ioa.14.2022.04.28.07.13.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Apr 2022 07:13:23 -0700 (PDT)
+Message-ID: <4cae140c-982a-6b9f-661c-4e0fdfa3297b@ieee.org>
+Date:   Thu, 28 Apr 2022 09:13:19 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH v3 0/5] Introduce PRU remoteproc consumer API
+Subject: Re: [PATCH 21/30] panic: Introduce the panic pre-reboot notifier list
 Content-Language: en-US
-To:     <linux-kernel@vger.kernel.org>
-CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <rogerq@kernel.org>,
-        <grygorii.strashko@ti.com>, <vigneshr@ti.com>, <kishon@ti.com>
-References: <20220418104118.12878-1-p-mohan@ti.com>
-From:   Puranjay Mohan <p-mohan@ti.com>
-In-Reply-To: <20220418104118.12878-1-p-mohan@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Alex Elder <elder@kernel.org>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Chris Zankel <chris@zankel.net>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Corey Minyard <minyard@acm.org>,
+        Dexuan Cui <decui@microsoft.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        James Morse <james.morse@arm.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Richard Henderson <rth@twiddle.net>,
+        Richard Weinberger <richard@nod.at>,
+        Robert Richter <rric@kernel.org>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, Wei Liu <wei.liu@kernel.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-22-gpiccoli@igalia.com>
+From:   Alex Elder <elder@ieee.org>
+In-Reply-To: <20220427224924.592546-22-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
-Hi Mathieu,
+On 4/27/22 5:49 PM, Guilherme G. Piccoli wrote:
+> This patch renames the panic_notifier_list to panic_pre_reboot_list;
+> the idea is that a subsequent patch will refactor the panic path
+> in order to better split the notifiers, running some of them very
+> early, some of them not so early [but still before kmsg_dump()] and
+> finally, the rest should execute late, after kdump. The latter ones
+> are now in the panic pre-reboot list - the name comes from the idea
+> that these notifiers execute before panic() attempts rebooting the
+> machine (if that option is set).
+> 
+> We also took the opportunity to clean-up useless header inclusions,
+> improve some notifier block declarations (e.g. in ibmasm/heartbeat.c)
+> and more important, change some priorities - we hereby set 2 notifiers
+> to run late in the list [iss_panic_event() and the IPMI panic_event()]
+> due to the risks they offer (may not return, for example).
+> Proper documentation is going to be provided in a subsequent patch,
+> that effectively refactors the panic path.
+> 
+> Cc: Alex Elder <elder@kernel.org>
 
-I am writing to follow up on this patch series.
-This has been on the list for the last 10 days and I have not received
-any comments on it. So, does this look good to everyone?
+For "drivers/net/ipa/ipa_smp2p.c":
 
-I had solved the minor checkpatch issues from v2 so I guess this series
-should be good now?
+Acked-by: Alex Elder <elder@kernel.org>
 
-Looking forward to your comments.
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Corey Minyard <minyard@acm.org>
+> Cc: Dexuan Cui <decui@microsoft.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Helge Deller <deller@gmx.de>
+> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Matt Turner <mattst88@gmail.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Richard Henderson <rth@twiddle.net>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: Robert Richter <rric@kernel.org>
+> Cc: Stefano Stabellini <sstabellini@kernel.org>
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Wei Liu <wei.liu@kernel.org>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+> 
 
-Thanks
-Puranjay Mohan
-
-On 18/04/22 16:11, Puranjay Mohan wrote:
-> This is the v3 of the patch series [1]. The v2 had some minor comments
-> which have been addressed here.
-> 
-> I will be posting two more patch series which depend on this series, one to
-> the soc tree and another to the networking tree. I had sent all the 3
-> series, including this one as RFC [2] to get comments and to explain the
-> dependencies.
-> 
-> The Programmable Real-Time Unit and Industrial Communication Subsystem
-> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
-> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
-> 
-> There are 3 foundation components for PRUSS subsystem: the PRUSS platform
-> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
-> already merged and can be found under:
-> 1) drivers/soc/ti/pruss.c
->    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-> 2) drivers/irqchip/irq-pruss-intc.c
->    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
-> 3) drivers/remoteproc/pru_rproc.c
->    Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
-> 
-> The programmable nature of the PRUs provide flexibility to implement custom
-> peripheral interfaces, fast real-time responses, or specialized data handling.
-> Example of a PRU consumer drivers will be:
->   - Software UART over PRUSS
->   - PRU-ICSS Ethernet EMAC
-> 
-> In order to make usage of common PRU resources and allow the consumer drivers to
-> configure the PRU hardware for specific usage the PRU API is introduced.
-> 
-> [1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20201216165239.2744-1-grzegorz.jaszczyk@linaro.org/
-> [2] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
-> 
-> Thanks,
-> Puranjay Mohan
-> 
-> Roger Quadros (1):
->   remoteproc: pru: Add pru_rproc_set_ctable() function
-> 
-> Suman Anna (2):
->   dt-bindings: remoteproc: Add PRU consumer bindings
->   remoteproc: pru: Make sysfs entries read-only for PRU client driven
->     boots
-> 
-> Tero Kristo (2):
->   remoteproc: pru: Add APIs to get and put the PRU cores
->   remoteproc: pru: Configure firmware based on client setup
-> 
->  .../bindings/remoteproc/ti,pru-consumer.yaml  |  70 ++++++
->  drivers/remoteproc/pru_rproc.c                | 234 +++++++++++++++++-
->  include/linux/pruss.h                         |  78 ++++++
->  3 files changed, 377 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
->  create mode 100644 include/linux/pruss.h
-> 
+. . .
