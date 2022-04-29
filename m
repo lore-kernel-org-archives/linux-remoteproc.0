@@ -2,110 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B213C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 13:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B89C43217
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 13:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376329AbiD2NlS (ORCPT
+        id S1376392AbiD2Nuv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 09:41:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
+        Fri, 29 Apr 2022 09:50:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376309AbiD2Nky (ORCPT
+        with ESMTP id S1352209AbiD2Nuu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Apr 2022 09:40:54 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EF1CB02C;
-        Fri, 29 Apr 2022 06:37:35 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 27DF61F46597
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651239454;
-        bh=kcEQjWB3+aoh/KNYmS+gc/t6zz5Iohch35uok/tdZ2g=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ebK2702xHh6jZr+XuacSG3T6K77O0e6jE4yrdtu4TG85TlKoWWfyhRSUooxkXDMXR
-         0OoI3Ng05ua+RkKFNWUxH4AKEsV2ra3A4nupIfjQHulZQbrn6NeJ3nCemO0i8EO37n
-         Zy4XpKKUqXxOTV8OlHIP6DfbqvUFKinAR4IbQvSyfDWJSguh8+h9IFwVR4AczojijI
-         fHPfWMfaBjbACP1E9gfPgSRultAXHSnBqumARBke0iTzk2dgTcyd8nlMhywjJYwjXY
-         90Lw1KN5skaMwO/WgwifwowJDIbGtdpeo4AnFoss0MfbjjpxdBGDAD+TB59o8vj/XP
-         k4LE+kVxfrPkg==
-Message-ID: <5f252726-3757-b063-d34f-c76beaa5d31b@collabora.com>
-Date:   Fri, 29 Apr 2022 15:37:30 +0200
+        Fri, 29 Apr 2022 09:50:50 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85220CB031;
+        Fri, 29 Apr 2022 06:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=C2OEpCl3NbPTnDM8xzX2S4IX9JfHaO7AlvKh6b2mc6o=; b=pqe8NQsff608mhiYOzk5PDnm3n
+        SqpJEt2cMOf7fKd9x6EBmHDeHOX5PyCqZaiQd+rsoiJqYRJfq3hy0YC1K+f5G6E1EYGyBkHkky/4o
+        A4sr1jLh/ZiZsTRb8VvM35RQhf4WjzvO8x5RrxtfBf8C8C5PVdUgz7Ik51+zFewe+U63oi8LhMtjA
+        jsMfNQ3e75qfSDrR+BCOQg4pDZsV5C5nFo1cAeFeQ7vSqL72QRCGkkh8ptmyZp43zUawgc2bKvA+V
+        5dpGhl6WFgQXUob6WnQm5VHnfuqrvgLJ/w/gTZOEZRu0JtLeyWnhBKRg4Xfo6FA1ZDb4qCsQBNlya
+        WoHGALzQ==;
+Received: from [179.113.53.197] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nkQxe-0007JF-GW; Fri, 29 Apr 2022 15:47:06 +0200
+Message-ID: <832eecc5-9569-1d95-6ab8-f029b660dfcb@igalia.com>
+Date:   Fri, 29 Apr 2022 10:46:35 -0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 17/30] tracing: Improve panic/die notifiers
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     bjorn.andersson@linaro.org, matthias.bgg@gmail.com,
-        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-References: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
- <20220428173148.GA2268704@p14s>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220428173148.GA2268704@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, senozhatsky@chromium.org,
+        stern@rowland.harvard.edu, tglx@linutronix.de, vgoyal@redhat.com,
+        vkuznets@redhat.com, will@kernel.org
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-18-gpiccoli@igalia.com>
+ <b8771b37-01f5-f50b-dbb3-9db4ee26e67e@gmail.com>
+ <20220429092351.10bca4dd@gandalf.local.home>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20220429092351.10bca4dd@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 28/04/22 19:31, Mathieu Poirier ha scritto:
-> On Fri, Jan 14, 2022 at 03:47:37PM +0100, AngeloGioacchino Del Regno wrote:
->> During execution of the worker that's used to register rpmsg devices
->> we are safely locking the channels mutex but, when creating a new
->> endpoint for such devices, we are registering a IPI on the SCP, which
->> then makes the SCP to trigger an interrupt, lock its own mutex and in
->> turn register more subdevices.
->> This creates a circular locking dependency situation, as the mtk_rpmsg
->> channels_lock will then depend on the SCP IPI lock.
+On 29/04/2022 10:23, Steven Rostedt wrote:
+> On Fri, 29 Apr 2022 12:22:44 +0300
+> Sergei Shtylyov <sergei.shtylyov@gmail.com> wrote:
+> 
+>>> +	switch (ev) {
+>>> +	case DIE_OOPS:
+>>> +		do_dump = 1;
+>>> +		break;
+>>> +	case PANIC_NOTIFIER:
+>>> +		do_dump = 1;
+>>> +		break;  
 >>
->> [   18.014514]  Possible unsafe locking scenario:
->> [   18.014515]        CPU0                    CPU1
->> [   18.014517]        ----                    ----
->> [   18.045467]   lock(&mtk_subdev->channels_lock);
->> [   18.045474]                                lock(&scp->ipi_desc[i].lock);
->> [   18.228399]                                lock(&mtk_subdev->channels_lock);
->> [   18.228405]   lock(&scp->ipi_desc[i].lock);
->> [   18.264405]
-> 
-> I finally understand the problem, something that would have been impossible
-> without the pastebin you provided in your latest email.  Please add the content
-> of that pastebin to the changelog and send another revision (checkpatch
-> warnings can be ignored).
-> 
-
-Thanks for giving it another look... I'll add a cover letter with the contents
-of the pastebin to avoid possible confusion for anyone looking at the patch.
-
+>>    Why not:
 >>
->> To solve this, simply unlock the channels_lock mutex before calling
->> mtk_rpmsg_register_device() and relock it right after, as safety is
->> still ensured by the locking mechanism that happens right after
->> through SCP.
+>> 	case DIE_OOPS:
+>> 	case PANIC_NOTIFIER:
+>> 		do_dump = 1;
+>> 		break;
 > 
-> The integrity of the subdev->channels list is guaranteed by relocking the
-> mutex, I'm not sure what "through SCP" adds to the sentence.
-
-I'll clarify the commit message.
-
+> Agreed.
 > 
->> Notably, mtk_rpmsg_register_device() does not even require locking.
->>
+> Other than that.
 > 
-> I don't agree with the above sentence - if locking doesn't happen in
-> mtk_rpmsg_create_device(), there can be two CPUs accessing the list at the same
-> time.
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 > 
+> -- Steve
 
-That's right, I have largely underestimated that for some reason, sorry about that.
+Thanks Sergei and Steven, good idea! I thought about the switch change
+you propose, but I confess I got a bit confused by the "fallthrough"
+keyword - do I need to use it?
 
-Regards,
-Angelo
+About the s/int/bool, for sure! Not sure why I didn't use bool at
+first...heheh
 
-> Thanks,
-> Mathieu
-> 
+Cheers,
+
+
+Guilherme
