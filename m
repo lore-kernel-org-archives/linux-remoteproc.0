@@ -2,62 +2,63 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E7BC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 19:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 425D2C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 20:00:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380479AbiD2UDR (ORCPT
+        id S1380482AbiD2UDR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Fri, 29 Apr 2022 16:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34860 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378695AbiD2UDO (ORCPT
+        with ESMTP id S1380469AbiD2UDP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Apr 2022 16:03:14 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46DB3A8893
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 12:59:54 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id y3so17317965ejo.12
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 12:59:54 -0700 (PDT)
+        Fri, 29 Apr 2022 16:03:15 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DE1AFAFF
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 12:59:53 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id k23so17390482ejd.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 12:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=6GGGspCpTAF4+99JVypFG14EZxu60b7+uyzMSAWdsj8=;
-        b=mg0YVXkCFw9WcvKIC2gqT9LvZFjGgZ/etWM/vssS6AogRR0+Gizm+Adt+8o7gckoRp
-         NHIdA/SlY7qfFuhF48VX7PguaAiEAyzi3fMK8fNUOMg1GQ9MOTnArURvwDxNXxaJRMLT
-         zzIDNYH6YFvIiayCkW67s2hCPPxvdP0OktVqZXlzNQofG8iyoJnTvfltfwNowU2kFsvN
-         s4NLmGxzR7MNMjSqfac4x+1EztHbPbGc68mNy5eM1phZaYUtsO91ZfUp2Pn1Shc8p3f5
-         CfshL/nD5QksFe9vFu5wqDu956C9dPvoNRp4jHfc60UKMvVG0AfaWVc7nnaOrbc0WsXY
-         entQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gOxgRBVME7mclmuamlr6PIBTUGVRi69KeRfnSyVkfPc=;
+        b=bZpA1wzvOK8I6x9HL/0QhdtdW5y7oEMIYpk/A3PJnQU1zXAuQil/KHDWPNQlww2/3A
+         CPTiJcwZgKfvqCgY2UklcLjxNwHay2XP1A/Ynm+nDanUCrAqaAuetcyzlNgxLewZutMW
+         W5Pp/AcMRBfl83CI85WDbqPC7yLnWjlqiww6vPsaQZpstaP7zmghmEyYYxGRIuWvDIjH
+         AuS8XILHLTLOa/0fA3j43ox0Y2i3YAdcuVaNcd3aI7iqLBF0cb8jo0HOTdywBiR2LktG
+         W8SArT3SxF8SZuIHTrLhNhUzssL/EFuIJgmxRNxXrvWWn1CWBmldnIFwsGnqhbnqD/f/
+         mEow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6GGGspCpTAF4+99JVypFG14EZxu60b7+uyzMSAWdsj8=;
-        b=WwltaWUwT0N0323KDaPM6l/3XySIgNT0ZuKivj8KVkJwSysd5iY16hFEdIAXPKEexu
-         kkHNwTHDW1EIKCgqXNIBwCJxqni5CYMp5L1h59cyP7VoozmWC11aHQ4K0D1myfa7jd65
-         5UBP6hCiRnxFzn9Ozt7D9eUyH4dQae9O+r+ZjdkP4zY6VqeBYL4nShCeRteVLghOTUy0
-         OclWHFidwkxyb1LGGZDjdhtD/ST+dNSDrSi4y/9BFzIECIyuDahCbhmhlgmiDwyL6/ZN
-         RptyPdkTi/328gne+1RBU/MN3uIGgKNPJmiLBr1Q33Tt2D6eKZeKhviTJe8jvJY87LI7
-         ZJfw==
-X-Gm-Message-State: AOAM532fj6TFtt/RpSymGEfPpMbCNkH1zePoKNhTYDnN8Qhdrp1Lbv1R
-        JobDZTiaWzl/VOwRtWfD5op3Hg==
-X-Google-Smtp-Source: ABdhPJyv8UENxg6HIl+91LjuLUzautPcnzrePWq/skb36plX7jAvd0Hm86jAvadZYuzJ3q3r7h33sQ==
-X-Received: by 2002:a17:907:6d10:b0:6f3:f56a:4620 with SMTP id sa16-20020a1709076d1000b006f3f56a4620mr841346ejc.733.1651262392907;
-        Fri, 29 Apr 2022 12:59:52 -0700 (PDT)
+        bh=gOxgRBVME7mclmuamlr6PIBTUGVRi69KeRfnSyVkfPc=;
+        b=57+mHVlGPE5VIjs29X6evH2yECXG0IAWQ8YoayicaRQI52CVz+aFBWOPfZTU6ECMZR
+         /y+8NXEiQPH0KJGL3RAousVvOonME7BGLwxWIwpPv30c/nHwas62SMofqkJOVX1xfZnY
+         NO07Eew3XiC69o5Fu9Y+jJe66m9PybwMsTs32wcTlH1mx+yGS0TOLZtzlJx4H1PSLnh9
+         fkxNpc0mr0LJTu85jkIcom0QiwQfGsGxnH2ggSs0Xoy7CrL1sYE3xofjTnKzdtdLzCzO
+         LIqituOvolQQM830qwGdYz1heHd1wL4gIy4hUc8wTrqLddJ5wXAAqYKyyf6RKnV6ftX7
+         kguA==
+X-Gm-Message-State: AOAM531G6JlnuGGOSdg0aI5RF5tp0FqltMdi8U/Gew9HldOUP1yn/rKL
+        LQIMiEmuY8t/Qhdd9EGxea4ceJIvkxmWFg==
+X-Google-Smtp-Source: ABdhPJw9zJe7ujZXVPeCOQ+tlVHyCoS4bz1d93A3Ut0Q4Cnw6LRhStlVFszPwd647YTv55colYrzng==
+X-Received: by 2002:a17:906:d54b:b0:6e7:f185:18d5 with SMTP id cr11-20020a170906d54b00b006e7f18518d5mr930627ejc.155.1651262391933;
+        Fri, 29 Apr 2022 12:59:51 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id en8-20020a17090728c800b006f3ef214de7sm929486ejc.77.2022.04.29.12.59.52
+        by smtp.gmail.com with ESMTPSA id en8-20020a17090728c800b006f3ef214de7sm929486ejc.77.2022.04.29.12.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 12:59:52 -0700 (PDT)
+        Fri, 29 Apr 2022 12:59:51 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] rpmsg: use local 'dev' variable
-Date:   Fri, 29 Apr 2022 21:59:46 +0200
-Message-Id: <20220429195946.1061725-3-krzysztof.kozlowski@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 1/2] rpmsg: Fix calling device_lock() on non-initialized device
+Date:   Fri, 29 Apr 2022 21:59:45 +0200
+Message-Id: <20220429195946.1061725-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220429195946.1061725-1-krzysztof.kozlowski@linaro.org>
 References: <20220429195946.1061725-1-krzysztof.kozlowski@linaro.org>
@@ -67,40 +68,185 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-'&rpdev->dev' is already cached as local variable, so use it to simplify
-the code.
+driver_set_override() helper uses device_lock() so it should not be
+called before rpmsg_register_device() (which calls device_register()).
+Effect can be seen with CONFIG_DEBUG_MUTEXES:
 
+  DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+  WARNING: CPU: 3 PID: 57 at kernel/locking/mutex.c:582 __mutex_lock+0x1ec/0x430
+  ...
+  Call trace:
+   __mutex_lock+0x1ec/0x430
+   mutex_lock_nested+0x44/0x50
+   driver_set_override+0x124/0x150
+   qcom_glink_native_probe+0x30c/0x3b0
+   glink_rpm_probe+0x274/0x350
+   platform_probe+0x6c/0xe0
+   really_probe+0x17c/0x3d0
+   __driver_probe_device+0x114/0x190
+   driver_probe_device+0x3c/0xf0
+   ...
+
+Refactor the rpmsg_register_device() function to use two-step device
+registering (initialization + add) and call driver_set_override() in
+proper moment.
+
+This moves the code around, so while at it also NULL-ify the
+rpdev->driver_override in error path to be sure it won't be kfree()
+second time.
+
+Fixes: 42cd402b8fd4 ("rpmsg: Fix kfree() of static memory on setting driver_override")
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 ---
- drivers/rpmsg/rpmsg_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Commit SHA from linux-next - Greg's tree.
+---
+ drivers/rpmsg/rpmsg_core.c     | 33 ++++++++++++++++++++++++++++++---
+ drivers/rpmsg/rpmsg_internal.h | 14 +-------------
+ drivers/rpmsg/rpmsg_ns.c       | 14 +-------------
+ include/linux/rpmsg.h          |  8 ++++++++
+ 4 files changed, 40 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 4938fc4eff00..290c1f02da10 100644
+index 95fc283f6af7..4938fc4eff00 100644
 --- a/drivers/rpmsg/rpmsg_core.c
 +++ b/drivers/rpmsg/rpmsg_core.c
-@@ -606,10 +606,10 @@ int rpmsg_register_device_override(struct rpmsg_device *rpdev,
- 	if (driver_override)
- 		strcpy(rpdev->id.name, driver_override);
+@@ -593,24 +593,51 @@ static struct bus_type rpmsg_bus = {
+ 	.remove		= rpmsg_dev_remove,
+ };
  
--	dev_set_name(&rpdev->dev, "%s.%s.%d.%d", dev_name(dev->parent),
-+	dev_set_name(dev, "%s.%s.%d.%d", dev_name(dev->parent),
+-int rpmsg_register_device(struct rpmsg_device *rpdev)
++/*
++ * A helper for registering rpmsg device with driver override and name.
++ * Drivers should not be using it, but instead rpmsg_register_device().
++ */
++int rpmsg_register_device_override(struct rpmsg_device *rpdev,
++				   const char *driver_override)
+ {
+ 	struct device *dev = &rpdev->dev;
+ 	int ret;
+ 
++	if (driver_override)
++		strcpy(rpdev->id.name, driver_override);
++
+ 	dev_set_name(&rpdev->dev, "%s.%s.%d.%d", dev_name(dev->parent),
  		     rpdev->id.name, rpdev->src, rpdev->dst);
  
--	rpdev->dev.bus = &rpmsg_bus;
-+	dev->bus = &rpmsg_bus;
+ 	rpdev->dev.bus = &rpmsg_bus;
  
- 	device_initialize(dev);
- 	if (driver_override) {
-@@ -627,7 +627,7 @@ int rpmsg_register_device_override(struct rpmsg_device *rpdev,
- 		dev_err(dev, "device_add failed: %d\n", ret);
- 		kfree(rpdev->driver_override);
- 		rpdev->driver_override = NULL;
--		put_device(&rpdev->dev);
-+		put_device(dev);
+-	ret = device_register(&rpdev->dev);
++	device_initialize(dev);
++	if (driver_override) {
++		ret = driver_set_override(dev, &rpdev->driver_override,
++					  driver_override,
++					  strlen(driver_override));
++		if (ret) {
++			dev_err(dev, "device_set_override failed: %d\n", ret);
++			return ret;
++		}
++	}
++
++	ret = device_add(dev);
+ 	if (ret) {
+-		dev_err(dev, "device_register failed: %d\n", ret);
++		dev_err(dev, "device_add failed: %d\n", ret);
++		kfree(rpdev->driver_override);
++		rpdev->driver_override = NULL;
+ 		put_device(&rpdev->dev);
  	}
  
  	return ret;
+ }
++EXPORT_SYMBOL(rpmsg_register_device_override);
++
++int rpmsg_register_device(struct rpmsg_device *rpdev)
++{
++	return rpmsg_register_device_override(rpdev, NULL);
++}
+ EXPORT_SYMBOL(rpmsg_register_device);
+ 
+ /*
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 3e81642238d2..a22cd4abe7d1 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -94,19 +94,7 @@ int rpmsg_release_channel(struct rpmsg_device *rpdev,
+  */
+ static inline int rpmsg_ctrldev_register_device(struct rpmsg_device *rpdev)
+ {
+-	int ret;
+-
+-	strcpy(rpdev->id.name, "rpmsg_ctrl");
+-	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
+-				  rpdev->id.name, strlen(rpdev->id.name));
+-	if (ret)
+-		return ret;
+-
+-	ret = rpmsg_register_device(rpdev);
+-	if (ret)
+-		kfree(rpdev->driver_override);
+-
+-	return ret;
++	return rpmsg_register_device_override(rpdev, "rpmsg_ctrl");
+ }
+ 
+ #endif
+diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+index 8eb8f328237e..c70ad03ff2e9 100644
+--- a/drivers/rpmsg/rpmsg_ns.c
++++ b/drivers/rpmsg/rpmsg_ns.c
+@@ -20,22 +20,10 @@
+  */
+ int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
+ {
+-	int ret;
+-
+-	strcpy(rpdev->id.name, "rpmsg_ns");
+-	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
+-				  rpdev->id.name, strlen(rpdev->id.name));
+-	if (ret)
+-		return ret;
+-
+ 	rpdev->src = RPMSG_NS_ADDR;
+ 	rpdev->dst = RPMSG_NS_ADDR;
+ 
+-	ret = rpmsg_register_device(rpdev);
+-	if (ret)
+-		kfree(rpdev->driver_override);
+-
+-	return ret;
++	return rpmsg_register_device_override(rpdev, "rpmsg_ns");
+ }
+ EXPORT_SYMBOL(rpmsg_ns_register_device);
+ 
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 20c8cd1cde21..523c98b96cb4 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -165,6 +165,8 @@ static inline __rpmsg64 cpu_to_rpmsg64(struct rpmsg_device *rpdev, u64 val)
+ 
+ #if IS_ENABLED(CONFIG_RPMSG)
+ 
++int rpmsg_register_device_override(struct rpmsg_device *rpdev,
++				   const char *driver_override);
+ int rpmsg_register_device(struct rpmsg_device *rpdev);
+ int rpmsg_unregister_device(struct device *parent,
+ 			    struct rpmsg_channel_info *chinfo);
+@@ -192,6 +194,12 @@ ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+ 
+ #else
+ 
++static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
++						 const char *driver_override)
++{
++	return -ENXIO;
++}
++
+ static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
+ {
+ 	return -ENXIO;
 -- 
 2.32.0
 
