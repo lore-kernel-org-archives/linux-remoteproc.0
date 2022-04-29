@@ -2,192 +2,174 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659A1C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 00:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F87EC43217
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 09:22:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353595AbiD2Azo (ORCPT
+        id S1356495AbiD2J0L (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 20:55:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34774 "EHLO
+        Fri, 29 Apr 2022 05:26:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353591AbiD2Azj (ORCPT
+        with ESMTP id S1356484AbiD2J0J (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Apr 2022 20:55:39 -0400
-Received: from EUR02-HE1-obe.outbound.protection.outlook.com (mail-eopbgr10087.outbound.protection.outlook.com [40.107.1.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36315BC84B;
-        Thu, 28 Apr 2022 17:52:21 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=W7pt3KgaXOxgCnqbryWkKYZWfnC89+AxpWR5N3pZ8fFtOEXzskmsHh36S97u8pwz0ywIF2pwe39Z4xNHrIsTpIddYeKtoSNpeX5PCuaJb3IdRY+PvCRKtAyU+NT1FxYf2uNDwhW5ILEwH3Iqrm+Ea92IwTMXH8qHnwukI7V/xO/40ncI/GatDE1+ErgztxI2s+muMcqbEFkCVV9dTWdzUOst43N15ElqPq65C4pky+oQXzbNLNjHhwwz2yUVUjI7AESKV09tCx4+NuUoQG38pYQExnMQrFEUFPY32w69NAtz8IF4fJAnRAWplN545v+iu4N4zqv7OE+IUotF+eQyhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VL6x8Q83Ck96DTCFE962M7gT794X42qpo/xnHvLGlhs=;
- b=l7J8Nz04cKd/VijSVbGwy0rgSRbqzARCvDUDr430tGDGfXwKIwXWOWdMtyuh7rpTYJMok6qu0Bwzmj7CDfKNpBYkToFrtzC+5GbOCcB+zlW8E/sqmYOPyhelLP3P5Pr4bCEHQWb+upXoO6yZkdU0O7tso9YhmovVwjn2AujNfFzImDIQsuqS13tkhh5/Rrdw0fg+xuN/K4sn1vkodaFwXvcaVfbQwagA47FHLZb8oPV5GbO1SlLHc5gV7k9QUBTQmGKUJFm9wdGzNj6CawtJDWS1BmUSCIb0MsCPyUEQIjJq12d2EHglx9j7HBgoploNKIT56FrP2948HG/NB6RWEw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VL6x8Q83Ck96DTCFE962M7gT794X42qpo/xnHvLGlhs=;
- b=UgnZGuIPukyO+0enMoU6SA4J4KKkFx1ZJlwR3dfkIu/UuONM4MnVRE3s93zz/DMMHb84VIAz0pjauPftHK184av8VDB/+tpOTlgLwW1xdq8e39bdUwKKARGAY8s9H5U6qLR7je5Br3cMd562W4Dbj29LSuBlendmIbMUChJHQz4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB8PR04MB6619.eurprd04.prod.outlook.com (2603:10a6:10:108::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.23; Fri, 29 Apr
- 2022 00:52:17 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::fc66:662f:2a82:1420]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::fc66:662f:2a82:1420%5]) with mapi id 15.20.5206.014; Fri, 29 Apr 2022
- 00:52:17 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 2/2] remoteproc: imx_rproc: support i.MX93
-Date:   Fri, 29 Apr 2022 08:53:46 +0800
-Message-Id: <20220429005346.2108279-3-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220429005346.2108279-1-peng.fan@oss.nxp.com>
-References: <20220429005346.2108279-1-peng.fan@oss.nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::22) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        Fri, 29 Apr 2022 05:26:09 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3029C6145;
+        Fri, 29 Apr 2022 02:22:50 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id bu29so13029543lfb.0;
+        Fri, 29 Apr 2022 02:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bhPxd6svpKOboxST/6guS4MOSMze/71rIJIgOQA8rZo=;
+        b=CcHlI3Au6GCo1UVzpXVov/h1wYElTNB9KLySGMMq2ve/a+TtvK5YlNIE1buiqFG4Nl
+         u/yJNPitTZt8sIeOJjB65Ui/1u355v1A2H7rivfKbBLHtHs+twE1aeJijeY6w74gk/C9
+         beognAtlmiiMUVoRPY2P2xBjOD5kn8WzXajIeBHjp2IbcVFILkaLGvvcgQymLNFVLX7W
+         O2NCAewH21dEqhwgYIy8zCJ1hXEDN8sGRLk/bc4Oj4c5AC8PD4Xjq19cf3SOi69El8Xe
+         CE7Bw/RGpPKDZ+W4HqGQMjQxaF5kblB25nziyJo7yUSAzUuWVoHRSngnqULHAZHmFVOo
+         K43A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bhPxd6svpKOboxST/6guS4MOSMze/71rIJIgOQA8rZo=;
+        b=0SwckDKyvdXtrGfj3hhw1YjwsKW9ovm6CR+kyVHkOL5C+wTIoQqtk3PyRio/+GXfwC
+         JKX/Phvw30VecJTvcM30pNnW/1kS6wwQAhWT72EDG2Ep4pE2FfDX08Oi+P//rUsVuAYh
+         8raAG9nJUrTn637tGyLrAiFo9mh/8Ql7wEcKu+Ut5+ne5Id/xqcEHPK5FBg4wwv8Pp+g
+         xdNSeLkA44/7Pe9MgSyCDg/qnWS1cUrB0o849lSW6st+A4tuLKkrsXXMxV3et/HRxuOT
+         lvX4iu0uIluRywm3wuZDuaDiPAq1LPqY2N7H8Gxq+Fqcfci9Mf0z+xt8oL18WsYyDuG4
+         6Y1Q==
+X-Gm-Message-State: AOAM5325XnkyXPcpINg1KmTdV56P0nmyRtY8ADBE+nUNBsU5hs6E3oJL
+        8oMZbCdPh/rLoWKChR8uicc=
+X-Google-Smtp-Source: ABdhPJzFja3bmADODH1fdpoqaNJXuuCGiOo+I2PKC036x77KFxdRqfAwbMVEMu8UhB/GID87ZxayFg==
+X-Received: by 2002:a05:6512:3ba0:b0:472:49f2:a752 with SMTP id g32-20020a0565123ba000b0047249f2a752mr1049387lfv.374.1651224168844;
+        Fri, 29 Apr 2022 02:22:48 -0700 (PDT)
+Received: from [192.168.1.103] ([178.176.73.25])
+        by smtp.gmail.com with ESMTPSA id e1-20020a196741000000b0046bc4be1d60sm192072lfj.123.2022.04.29.02.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Apr 2022 02:22:48 -0700 (PDT)
+Subject: Re: [PATCH 17/30] tracing: Improve panic/die notifiers
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-18-gpiccoli@igalia.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <b8771b37-01f5-f50b-dbb3-9db4ee26e67e@gmail.com>
+Date:   Fri, 29 Apr 2022 12:22:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 208a2c92-facb-443f-7603-08da297a825e
-X-MS-TrafficTypeDiagnostic: DB8PR04MB6619:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-Microsoft-Antispam-PRVS: <DB8PR04MB661933C4387D73811F8D3C62C9FC9@DB8PR04MB6619.eurprd04.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uqIY2Z406pQ2wwsM0CHU+ufWZo7gRTW6Sfl3izKwCasfXv6uEJVarNvR7ltzTHg7irjzFr29Z8sNzPmywOqTi036DHp8U5Nrb9nDJt+RLTV+velaAw5QbEU54AfM98ycgRF2UFl2LMKwjMRJ/mSHZ1365xT5LOimLPZaLUSF7Yadfk/wZhJKiKagRIPBzmDBxYjjLP2DwM1m5Q11YwkifvFuaNEd6ehFeUwPIOA9XvnSfdKjgWnlxpezN7TBHq56ZvLHZKBZHvyxcd7HRtuMpDsDbghNDkRj7lnTf8NJDkCEA5fTxVAQ1aA8Q7HeF+6di/B6Qfbgu0jn6/emEiPA/m41XoSTvY+gthtZpeql0pNNPfH50Akom5LgFxPkjuePJHzZCMTuDno6eJEMA+p85u/fmMxJVT5/oPKWxtOFAftW8CSZ3Eh0XPgS76QdXHtsJuIeGFyUxkGU+KEPbiatwjOaSnRYwRiWt5dtCW4yhmRFpuvOgCXx/TtawagDf8R3mK8yZf7jXbaeys+9oZALSAyEdE9m5S0iDrIba7Y/o8HDV4ECIA1a+Or7FutuymrpRvhXl0tDGyBrUjPJ1GCf8Z2Ijwd0XN9rssH4hik8G+ap52YdhVRbnIsXWJN1RzAl3woQbgUftCIlPSx27INA6n8HTKqn2VM9iVSa6BUgRJkWDeea/9dgpsgOkQ0GuYfXGr2zrsKpOWsp5mi26EBkEDXAOBF2eWqq0O4Px6SFzK0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(26005)(1076003)(6512007)(2616005)(5660300002)(86362001)(316002)(6486002)(7416002)(508600001)(38100700002)(38350700002)(8936002)(4326008)(6506007)(52116002)(6666004)(186003)(66946007)(66556008)(66476007)(8676002)(2906002)(921005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ah8CpZTavE69ASCRKyjjZYsKj4ZGXziMqz7+aRGASbPX3pwdeXCkRBBp2YI3?=
- =?us-ascii?Q?DLQlEWJeyyGIaYzEZyayc925g+SfyKNWBCj4ZD0Q4f6oRaAgEmeRdeBOn96F?=
- =?us-ascii?Q?4PWqh0JEuIJIFL5X1kIFVz/9tY3GjtM+ZXeIN3bbB1/z1gnP/a5NYHUXuQQb?=
- =?us-ascii?Q?ZJunLxVsU63jHp+5THGkn5Loq/rm2kJdWxIqxkfrnA+Zw5MMwfDc9gPB9zSq?=
- =?us-ascii?Q?IAIYpjsOz93wpTB10Upk5eRuKemXVFKnkaWvsbz9oKESdhgJ4xWGSds47Jds?=
- =?us-ascii?Q?6C+yrKxE8ajgIii4fqFkvfXcrsdCyD++mlu/pOPWKB7C9NsBj/ZkLcyjHYJP?=
- =?us-ascii?Q?TgMK0e2O4lFRjX4JxRtNSAru3TCL6zbIIcadrI+teTedi/BwQNrcB1iy7BkN?=
- =?us-ascii?Q?35ofusUh9b+dLfWA2DAY6B7iXJC86HAwhhMAyq+KvnyhhguBkBFpX0g/gNC3?=
- =?us-ascii?Q?cTJRrDAQ4j/JtyfuQI50ZI3TQ6MPkl24hsqdDue72eSAZVDlvxWtnYCyNYSJ?=
- =?us-ascii?Q?odtu6iPeWHYaXauKy2fJoIucM/qrRDVHyhTQpnIcqMT3eHQa+cvVmwK0A9xM?=
- =?us-ascii?Q?gRZYX68Zt62xtMXr8YlNUYcjQl9Es0pVmLnk8n8O7dub33MMqUOjfbEWi0in?=
- =?us-ascii?Q?gcO8v/0NewBDbBks5V7KG9wYBWgxAoQ0+EBVTYILkZ5x1IlvYS2xQrlpLWY4?=
- =?us-ascii?Q?vBNVAqWctTSgAxYbedftIoGsTR4AtKkMSn3AfXr/CSCYN9tnZiItObOu+RrY?=
- =?us-ascii?Q?VeSqiQxMposTqFWhquJy+Lz2bKO3lRuxoJ9/rl1D7IvxbiipzS9tBYfwQyyk?=
- =?us-ascii?Q?dJ3Vo7ukCNEQA+FGQasR3cadhKyvGApxJY5QqSeMzgP0UAFP3MsDRUATpon6?=
- =?us-ascii?Q?Y6Kv0exJ79k0OiXad5i5QYTVN4RXgdwbqFz2ljI1/kXLB2iKq3caGqICMg1I?=
- =?us-ascii?Q?k8U+sJ8R5ce0R2PCfbv3wPkilALU5j3vvLM1sNwfVdt+OBW09h+Yaw2eeS/s?=
- =?us-ascii?Q?xkSSkLSIx9cdLjR5XIAE4PQf+Vpot/EbsUgWsgprFwoWtn9fpAADoAlUhm8E?=
- =?us-ascii?Q?OT2wqgpoRswoDlwo1lwSmJgpA29K7f2PTWhDkMOpScUjZc8HpzpRGoempFwa?=
- =?us-ascii?Q?r8o5qidjJ9vy9zZMJN+yzbVcasS00UShxm2jTDR5Fz50+Uz37eYMK56TbRgM?=
- =?us-ascii?Q?xZMWwXky+zLQ91+X5YElfPyu7ctM3rvjJOibtOaHYlo/nC+d1ilMezks5Hhm?=
- =?us-ascii?Q?2rjjAtP4k8ALbhGTulnGKRsuSu2PHYymyZnk04TfjIONEeqQgZNmxyD8A99w?=
- =?us-ascii?Q?lSXcUqlKnWwJRxQ4qQMJKNmvGJ9iwJkuD5KB6GBDCn3JeppwCOkX9/Qmfe9Y?=
- =?us-ascii?Q?j7KCwMHopcsTUTFWm4OpjKAtH5PUlgHl4/BAxXP9PryLAr+s9gFkrHDqnbo+?=
- =?us-ascii?Q?k2sv7G3xpKtWnIo8yvU2vY2BBvUnyHDn7c1zodpLA+fQ4kvNv1HBo/twgrwc?=
- =?us-ascii?Q?T5dGnZY0qHLNKUXOjgJLj4hu3uLgEKa2hNoUvc/5gojII+i9d5u9ASzTwVHK?=
- =?us-ascii?Q?M6cMFXcRpiy/+pzgnliebtO1bbWTVYPLVr6Si3ULluE4ohd0cQZdVQUynb+i?=
- =?us-ascii?Q?2iWGvlv8AbFXrz52Nh0ILMVBLTusDk6JwkCnii9ev5hkDBxV2XgsHqZiW7SP?=
- =?us-ascii?Q?wIKiIZYRarv804C3OHn0SYK36FNBDUJT88Fm61MEZU7MNC712l6E7vnBVDI2?=
- =?us-ascii?Q?Od8sRyVmrg=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 208a2c92-facb-443f-7603-08da297a825e
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2022 00:52:17.8043
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c8I0v9VfYdqQ1M9KC3RWxhACawVWHqR5+l/hL9xcgbm+VbaxJeI0ZCBJ1wF6QdNqlNpV+QXgCP27UGu8BvdG+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6619
+In-Reply-To: <20220427224924.592546-18-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Hello!
 
-i.MX93 features a Cortex-M33 core which could be kicked by ROM/Bootloader
-/Linux. Similar with i.MX8MN/P, we use SMC to trap into Arm Trusted
-Firmware to start/stop the M33 core.
+On 4/28/22 1:49 AM, Guilherme G. Piccoli wrote:
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+> Currently the tracing dump_on_oops feature is implemented
+> through separate notifiers, one for die/oops and the other
+> for panic. With the addition of panic notifier "id", this
+> patch makes use of such "id" to unify both functions.
+> 
+> It also comments the function and changes the priority of the
+> notifier blocks, in order they run early compared to other
+> notifiers, to prevent useless trace data (like the callback
+> names for the other notifiers). Finally, we also removed an
+> unnecessary header inclusion.
+> 
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+> ---
+>  kernel/trace/trace.c | 57 +++++++++++++++++++++++++-------------------
+>  1 file changed, 32 insertions(+), 25 deletions(-)
+> 
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index f4de111fa18f..c1d8a3622ccc 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+[...]
+> @@ -9767,38 +9766,46 @@ static __init int tracer_init_tracefs(void)
+>  
+>  fs_initcall(tracer_init_tracefs);
+>  
+> -static int trace_panic_handler(struct notifier_block *this,
+> -			       unsigned long event, void *unused)
+> +/*
+> + * The idea is to execute the following die/panic callback early, in order
+> + * to avoid showing irrelevant information in the trace (like other panic
+> + * notifier functions); we are the 2nd to run, after hung_task/rcu_stall
+> + * warnings get disabled (to prevent potential log flooding).
+> + */
+> +static int trace_die_panic_handler(struct notifier_block *self,
+> +				unsigned long ev, void *unused)
+>  {
+> -	if (ftrace_dump_on_oops)
+> +	int do_dump;
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 91eb037089ef..4a3352821b1d 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -91,6 +91,32 @@ struct imx_rproc {
- 	void __iomem			*rsc_table;
- };
- 
-+static const struct imx_rproc_att imx_rproc_att_imx93[] = {
-+	/* dev addr , sys addr  , size	    , flags */
-+	/* TCM CODE NON-SECURE */
-+	{ 0x0FFC0000, 0x201C0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+	{ 0x0FFE0000, 0x201E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+
-+	/* TCM CODE SECURE */
-+	{ 0x1FFC0000, 0x201C0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+	{ 0x1FFE0000, 0x201E0000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+
-+	/* TCM SYS NON-SECURE*/
-+	{ 0x20000000, 0x20200000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+	{ 0x20020000, 0x20220000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+
-+	/* TCM SYS SECURE*/
-+	{ 0x30000000, 0x20200000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+	{ 0x30020000, 0x20220000, 0x00020000, ATT_OWN | ATT_IOMEM },
-+
-+	/* DDR */
-+	{ 0x80000000, 0x80000000, 0x10000000, 0 },
-+	{ 0x90000000, 0x80000000, 0x10000000, 0 },
-+
-+	{ 0xC0000000, 0xa0000000, 0x10000000, 0 },
-+	{ 0xD0000000, 0xa0000000, 0x10000000, 0 },
-+};
-+
- static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
- 	/* dev addr , sys addr  , size	    , flags */
- 	/* ITCM   */
-@@ -261,6 +287,12 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx6sx = {
- 	.method		= IMX_RPROC_MMIO,
- };
- 
-+static const struct imx_rproc_dcfg imx_rproc_cfg_imx93 = {
-+	.att		= imx_rproc_att_imx93,
-+	.att_size	= ARRAY_SIZE(imx_rproc_att_imx93),
-+	.method		= IMX_RPROC_SMC,
-+};
-+
- static int imx_rproc_start(struct rproc *rproc)
- {
- 	struct imx_rproc *priv = rproc->priv;
-@@ -824,6 +856,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
- 	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
- 	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
- 	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
-+	{ .compatible = "fsl,imx93-cm33", .data = &imx_rproc_cfg_imx93 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, imx_rproc_of_match);
--- 
-2.25.1
+   bool?
 
+> +
+> +	if (!ftrace_dump_on_oops)
+> +		return NOTIFY_DONE;
+> +
+> +	switch (ev) {
+> +	case DIE_OOPS:
+> +		do_dump = 1;
+> +		break;
+> +	case PANIC_NOTIFIER:
+> +		do_dump = 1;
+> +		break;
+
+   Why not:
+
+	case DIE_OOPS:
+	case PANIC_NOTIFIER:
+		do_dump = 1;
+		break;
+
+> +	default:
+> +		do_dump = 0;
+> +		break;
+> +	}
+> +
+> +	if (do_dump)
+>  		ftrace_dump(ftrace_dump_on_oops);
+> -	return NOTIFY_OK;
+> +
+> +	return NOTIFY_DONE;
+>  }
+[...]
+
+MBR, Sergey
