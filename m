@@ -2,226 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6F9C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 20:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB4EC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 21:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380940AbiD2UnJ (ORCPT
+        id S1357356AbiD2VFD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 16:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        Fri, 29 Apr 2022 17:05:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381104AbiD2UnC (ORCPT
+        with ESMTP id S1376454AbiD2VFC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Apr 2022 16:43:02 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871DD83021;
-        Fri, 29 Apr 2022 13:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9LhFYA+MjEc96AcZxxeEKFjkU9Lk82GaxnYYVWnVk68=; b=XwGE93aX+1E0t3pByj3j/O+5Ga
-        K3u/NbvWUIPTGWXFFUF5/S8bghnnop1aApPsPGKNCX+XA1bvvH3EQ0PcLpFJhLHgKjy3gTmHDpRZx
-        xpeiw9TV1dPXB2YSqRvo3agu2ikjDsTWOdpgS/WgDbAttd/ff7K6VJQNlrO38xJTdLOWq3LaiPpb7
-        BCxPsp9BBfFRjEJDD6TJuu/Y8uUcnXFJiNLt6QIOyD0DFBtRwQdBNCscMgnx+i0qVThLJVg3KcgFz
-        9afxev7tVqQLuY2Z0izXtjt9I1wawTaSR9Ugp7AvNWX4ugYt89qxijRM6XzCj5d2MXRHOn6SprLRr
-        LWTDMVqw==;
-Received: from [179.113.53.197] (helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nkXNs-000CEn-5h; Fri, 29 Apr 2022 22:38:36 +0200
-Message-ID: <50178dfb-8e94-f35f-09c3-22fe197550ef@igalia.com>
-Date:   Fri, 29 Apr 2022 17:38:08 -0300
+        Fri, 29 Apr 2022 17:05:02 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D888D3D9A
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 14:01:43 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id d6so10373927ede.8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 14:01:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=+hPInKpIDooHrKupF5RNs/2guHgbPlSDYet1zTo77CM=;
+        b=wPzuxVUyq4buxSFTI12310NVqICUJ/+JXnauyORm9IhtDwlBC4TKSS92rTZz6IA0Ze
+         gAS8gVzLn+NAo1j/nyet4r/GM76503xZ9FqFlHnZ2runqv7n6clIoPWxv1v3AAR/jmGP
+         n+Rcubc4fckTLI+f7+LLY3m+eiYdvGK9nxuFBXPp9cWmKPYniazuSyTwGgdzekaUjP/N
+         XfC3JZhWEhlmU89UAGAadAp2ug5ruorPWZljOrM4brVnI4vNixQVHZAj4xHb79MtSo99
+         XkUvaF/P8IJmzMEJ8Yu5E4Aqj+bOROp2URTh62M5mCQYNVJXsKbO21KrYKEOxbvK0DTp
+         Og+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=+hPInKpIDooHrKupF5RNs/2guHgbPlSDYet1zTo77CM=;
+        b=ja1IsSDKRMhp8cue9OiYpaqP18UEHNvo3T9bPgdUezdcjbYDJp2xpd1QLqAptBvCRY
+         No/+Zz/WQrlykPiCVWs1XHZp4SLLxnFafy2XEl3TevJKwmtMlnr+nYYfWRQ2B4x5yDc2
+         mureTROTEf1/xhOFlIUlGIoZmil/p495m8mUK0cdAmE8ENJTmNALK60/39J+Cdybzxd2
+         +cx2evGy8WJT9LXlV2n7H/Q6krLCKX2I5lBAr5S6eIknGNxHvdz0IC7ppWyn7bRv8CZe
+         jlLY9GZlPhLYnC2LM/y90M6dux6YbTHFYxn3MmsMl1r3SPg0dVEFljVPPn+CJPpBoI0Q
+         8/QA==
+X-Gm-Message-State: AOAM532UhEjCBr31UIcNs5R/hWc55az3g7t2qWDa/YtDpvxUchzEpP+1
+        gOQsMeKCPAwMn2sMiBUnYZrnDg==
+X-Google-Smtp-Source: ABdhPJydYUfzRWWlb7jnujGl+WeNXPkeDfWil6Fvx7LhbEmTqT3D2ffUa0UXb/8GKmomagoc6J4XoA==
+X-Received: by 2002:a05:6402:26d1:b0:426:3bc9:67d0 with SMTP id x17-20020a05640226d100b004263bc967d0mr1160939edd.400.1651266102271;
+        Fri, 29 Apr 2022 14:01:42 -0700 (PDT)
+Received: from [192.168.0.176] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id g7-20020aa7d1c7000000b0042617ba63b1sm3379674edp.59.2022.04.29.14.01.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 29 Apr 2022 14:01:41 -0700 (PDT)
+Message-ID: <fff7c77f-452f-2fe4-b405-a6f65e483d3e@linaro.org>
+Date:   Fri, 29 Apr 2022 23:01:40 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+ Thunderbird/91.7.0
+Subject: Re: [PATCH V2 1/2] dt-bindings: remoteproc: imx_rproc: support i.MX93
 Content-Language: en-US
-To:     "Michael Kelley (LINUX)" <mikelley@microsoft.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bhe@redhat.com" <bhe@redhat.com>,
-        "pmladek@suse.com" <pmladek@suse.com>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bcm-kernel-feedback-list@broadcom.com" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "openipmi-developer@lists.sourceforge.net" 
-        <openipmi-developer@lists.sourceforge.net>,
-        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
-        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
-        "halves@canonical.com" <halves@canonical.com>,
-        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
-        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "d.hatayama@jp.fujitsu.com" <d.hatayama@jp.fujitsu.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "dyoung@redhat.com" <dyoung@redhat.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "will@kernel.org" <will@kernel.org>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <PH0PR21MB30252C55EB4F97F3D78021BDD7FC9@PH0PR21MB3025.namprd21.prod.outlook.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <PH0PR21MB30252C55EB4F97F3D78021BDD7FC9@PH0PR21MB3025.namprd21.prod.outlook.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc:     devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+References: <20220429005346.2108279-1-peng.fan@oss.nxp.com>
+ <20220429005346.2108279-2-peng.fan@oss.nxp.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220429005346.2108279-2-peng.fan@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 29/04/2022 14:53, Michael Kelley (LINUX) wrote:
-> From: Guilherme G. Piccoli <gpiccoli@igalia.com> Sent: Wednesday, April 27, 2022 3:49 PM
->> [...]
->> +	panic_notifiers_level=
->> +			[KNL] Set the panic notifiers execution order.
->> +			Format: <unsigned int>
->> +			We currently have 4 lists of panic notifiers; based
->> +			on the functionality and risk (for panic success) the
->> +			callbacks are added in a given list. The lists are:
->> +			- hypervisor/FW notification list (low risk);
->> +			- informational list (low/medium risk);
->> +			- pre_reboot list (higher risk);
->> +			- post_reboot list (only run late in panic and after
->> +			kdump, not configurable for now).
->> +			This parameter defines the ordering of the first 3
->> +			lists with regards to kdump; the levels determine
->> +			which set of notifiers execute before kdump. The
->> +			accepted levels are:
->> +			0: kdump is the first thing to run, NO list is
->> +			executed before kdump.
->> +			1: only the hypervisor list is executed before kdump.
->> +			2 (default level): the hypervisor list and (*if*
->> +			there's any kmsg_dumper defined) the informational
->> +			list are executed before kdump.
->> +			3: both the hypervisor and the informational lists
->> +			(always) execute before kdump.
+On 29/04/2022 02:53, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> I'm not clear on why level 2 exists.  What is the scenario where
-> execution of the info list before kdump should be conditional on the
-> existence of a kmsg_dumper?   Maybe the scenario is described
-> somewhere in the patch set and I just missed it.
+> Add i.MX93 remote processor(Cortex-M33) compatible string, and
+> reorder the strings in alphabetical order
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml    | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
 
-Hi Michael, thanks for your review/consideration. So, this idea started
-kind of some time ago. It all started with a need of exposing more
-information on kernel log *before* kdump and *before* pstore -
-specifically, we're talking about panic_print. But this cause some
-reactions, Baoquan was very concerned with that [0]. Soon after, I've
-proposed a panic notifiers filter (orthogonal) approach, to which Petr
-suggested instead doing a major refactor [1] - it finally is alive in
-the form of this series.
 
-The theory behind the level 2 is to allow a scenario of kdump with the
-minimum amount of notifiers - what is the point in printing more
-information if the user doesn't care, since it's going to kdump? Now, if
-there is a kmsg dumper, it means that there is likely some interest in
-collecting information, and that might as well be required before the
-potential kdump (which is my case, hence the proposal on [0]).
-
-Instead of forcing one of the two behaviors (level 1 or level 3), we
-have a middle-term/compromise: if there's interest in collecting such
-data (in the form of a kmsg dumper), we then execute the informational
-notifiers before kdump. If not, why to increase (even slightly) the risk
-for kdump?
-
-I'm OK in removing the level 2 if people prefer, but I don't feel it's a
-burden, quite opposite - seems a good way to accommodate the somewhat
-antagonistic ideas (jump to kdump ASAP vs collecting more info in the
-panicked kernel log).
-
-[0] https://lore.kernel.org/lkml/20220126052246.GC2086@MiWiFi-R3L-srv/
-
-[1] https://lore.kernel.org/lkml/YfPxvzSzDLjO5ldp@alley/
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
->[...]
->> +	 * Based on the level configured (smaller than 4), we clear the
->> +	 * proper bits in "panic_notifiers_bits". Notice that this bitfield
->> +	 * is initialized with all notifiers set.
->> +	 */
->> +	switch (panic_notifiers_level) {
->> +	case 3:
->> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
->> +		break;
->> +	case 2:
->> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
->> +
->> +		if (!kmsg_has_dumpers())
->> +			clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
->> +		break;
->> +	case 1:
->> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
->> +		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
->> +		break;
->> +	case 0:
->> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
->> +		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
->> +		clear_bit(PN_HYPERVISOR_BIT, &panic_notifiers_bits);
->> +		break;
->> +	}
-> 
-> I think the above switch statement could be done as follows:
-> 
-> if (panic_notifiers_level <= 3)
-> 	clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
-> if (panic_notifiers_level <= 2)
-> 	if (!kmsg_has_dumpers())
-> 		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
-> if (panic_notifiers_level <=1)
-> 	clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
-> if (panic_notifiers_level == 0)
-> 	clear_bit(PN_HYPERVISOR_BIT, &panic_notifiers_bits);
-> 
-> That's about half the lines of code.  It's somewhat a matter of style,
-> so treat this as just a suggestion to consider.  I just end up looking
-> for a better solution when I see the same line of code repeated
-> 3 or 4 times!
-> 
-
-It's a good idea - I liked your code. The switch seems more
-natural/explicit for me, even duplicating some lines, but in case more
-people prefer your way, I can definitely change the code - thanks for
-the suggestion.
-Cheers,
-
-
-Guilherme
+Best regards,
+Krzysztof
