@@ -2,135 +2,137 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30202C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 28 Apr 2022 17:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA97C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 00:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346684AbiD1RfI (ORCPT
+        id S1353210AbiD2Azb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 28 Apr 2022 13:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
+        Thu, 28 Apr 2022 20:55:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350552AbiD1RfH (ORCPT
+        with ESMTP id S237318AbiD2Az3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 28 Apr 2022 13:35:07 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763666833E
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Apr 2022 10:31:52 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id cu23-20020a17090afa9700b001d98d8e53b7so6437708pjb.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 28 Apr 2022 10:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=4oxf671PX/b/5YLLWBM8S/3ylJrxHqVxe323lh/h3FQ=;
-        b=n0tbH4XbRXNmX0pG3Dadr/bXh5a2HX6a9+K1mtMJa42hf2a79qQ++Vd+aSEd6qrWdJ
-         /t+OQbBesdE/dnniWLn3mYbFD/o+MkgeHMJXjJR5F40fSxLxPHfq3DVe4xIk0ezkc8Me
-         /bJbEMMa5supZWWaPlyALzVGvg5j9m/lGHaKr6DSpHIDkTgU1VR7jA+K2os8BCi9G1Ab
-         OBnNJjSAxqi/3debNrG4NdC5JdqZkTo3DbYxVCYQsQ0qCeiWclZfH8l0GA03vXq2qFKr
-         jbNDdy6MX3m5tegL4SGS09tJA/c0uUH1Jrv8yvIXJBcAAkGgnb9M7AOGWDR9XGl42sLO
-         4GDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=4oxf671PX/b/5YLLWBM8S/3ylJrxHqVxe323lh/h3FQ=;
-        b=flQiLPN0NHmRaryl77vi6zJ69gIZH9yIeDcR9fog5J4QRsehNxZ8zU2j/Tb4OznodY
-         eA9on/CTXoyqwsSstfnf4ELt4J+8aqKk4x7IyszyMOc3utmBSFJicAX6QcJ89A8N5aDh
-         bNFjAppg+9hE3gUjxrPiRWPuAlFiF9+qa7gmEZNTdgYyy0ZOMuSU/3zrrf0qJUTjkmRw
-         O0TUt/nApNfbg4qhWUxnK+LcwdF/EdigHe28Na0rHCvJ7k/SezHVZ4hrBC85AXEiYntf
-         jveyJUxr/60DCKFEBpRx+oPi5qhBmOMR/KyU3THULTw+iTMSUUmacvWNrWLxkUdr1SoN
-         0nXA==
-X-Gm-Message-State: AOAM532A+Gdr2j/0KPJX5pXSnfB3t2Y+fDDM/IU3vC3ZIDo0JibrsMLr
-        plDH4Mm2A+wn98H9cnStMRqmHQ==
-X-Google-Smtp-Source: ABdhPJxIerott8Cy7D5882uOAWxFbbVSilYSlujg9dCoKfmkpgRndxCK5//0UxB36McM5Z8WP4F4JA==
-X-Received: by 2002:a17:90b:1b03:b0:1d2:a338:c568 with SMTP id nu3-20020a17090b1b0300b001d2a338c568mr51409101pjb.129.1651167111951;
-        Thu, 28 Apr 2022 10:31:51 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id v189-20020a622fc6000000b004fb72e95806sm439830pfv.48.2022.04.28.10.31.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Apr 2022 10:31:50 -0700 (PDT)
-Date:   Thu, 28 Apr 2022 11:31:48 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     bjorn.andersson@linaro.org, matthias.bgg@gmail.com,
-        pihsun@chromium.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [PATCH] rpmsg: mtk_rpmsg: Fix circular locking dependency
-Message-ID: <20220428173148.GA2268704@p14s>
-References: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
+        Thu, 28 Apr 2022 20:55:29 -0400
+Received: from EUR02-HE1-obe.outbound.protection.outlook.com (mail-eopbgr10084.outbound.protection.outlook.com [40.107.1.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB98BBB928;
+        Thu, 28 Apr 2022 17:52:12 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aLmBQKgn7qVIrip+3WZHh3ekPXUf2YJbZVPxBwcWF3146O3/xVkRSx5ZJY+fqw5rUBK3Yknck5N+Ngh0yWd2Q3hgXKQDg6zjGvO4g4jvqmHKVKv4aK3UXw9jSxZ8fXMDWFN12CUGiwBFn6CALhVvAKuNKpOPmkloCVA/xFxryu+J/RwgsV5z/5uLgBXvPHQcVzGIgBG+aDgPhQUOMl6Jd95INhpLYdlj65HkydEdXsUPdz6Xpgb9u4+TdFLH5yUqt/Ijy8Rs2LRNUWNFFWb2wKb7O0mQVoe1vqRT+gxXGSjho+ghIZvbHDy/eJULcgRYkz3ctwwp0ZhMfH0hIXwG1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MoDdzcGg2LBSHO5DoIeVww3gVqxZIYrtydNICycIwM0=;
+ b=oSIN0f5TQgbRqV9uQ4Oc6Wedv5iC7z1/Y5TxLdY6XCoZ02GvHyYgHoJz5QRPisN4hEKF0yBPP2XwkPx1ocFQTYYxppBcH/58C4XVvRh2IftTFskmiltzFNfGT4EAqxlgfsHE5BeeFgnJT/hiRPgqIBFM/bWqQcfBO79dgbfmWr0a0aZUoXYV+34ZaidN2iiM+dli9sXMSPBiJBKRWMyZEXaFxLP39WX/wn+9z3ZqRUdgTOmeWClZyx4NyjObo2i+Wea0+L/8dkGlBU6MnM4Fnf0B06Kl3DXQ9n3IB0uuQYxunWCHpmK1TelxMPXbFIWwPJ6KZ8L72J04pLst4bCLvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MoDdzcGg2LBSHO5DoIeVww3gVqxZIYrtydNICycIwM0=;
+ b=COTvCkET8S7Kk9v3449QZS4BBYtf/tRKGC8ofmqtfs1biR76vV/KYA9lIX5PBdIRokQBZ65GW3SBMCf+uLwfqcJlR+wok1azV89IgoTRQAX/8ocT4NFh+8q9sz1hDxGmFVwwqGbQ9T5gls4UN//p3oeMZqML+KRwDXkkIHXXOho=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB8PR04MB6619.eurprd04.prod.outlook.com (2603:10a6:10:108::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.23; Fri, 29 Apr
+ 2022 00:52:08 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::fc66:662f:2a82:1420]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::fc66:662f:2a82:1420%5]) with mapi id 15.20.5206.014; Fri, 29 Apr 2022
+ 00:52:08 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc:     devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 0/2] remoteproc: add i.MX93 support
+Date:   Fri, 29 Apr 2022 08:53:44 +0800
+Message-Id: <20220429005346.2108279-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0004.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::22) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220114144737.375621-1-angelogioacchino.delregno@collabora.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: bb215e97-2171-44dc-c2c4-08da297a7caa
+X-MS-TrafficTypeDiagnostic: DB8PR04MB6619:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-Microsoft-Antispam-PRVS: <DB8PR04MB661932BA21CA84AA75E1C7D2C9FC9@DB8PR04MB6619.eurprd04.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: /WHVkmIhmTGwz72/DUU6aLKZqR+6Lygv0i2wcknPCWVcv47KBPBpYAsaof9IqR5X/VwmfmUWYNALegtD2EhfK1Du4OBzVj4G1fYjb5dELgcYepWvZ5tYkTDBPSVNyzyIBZICv0AM6WG7MBHQiIfb2IHuy0gvwS0wLldVoKzKCuQSfTT8s0WAYy5meOTV+scz/xXG0HetgR+Owdlbs1OxYGK/wwDwvieB10zb7GntImieSpV2GNfGeoMqQa0lVs5/1fXi85s5KkTBWoVPVG+gfVk2xBAb+KPeLDLRWM/5HAHOEnQZ1+8sX4yL6nXnlO8n0RQO0gZjDR15fGL8i3g4vYMofPBlN2BKrqy73gYKxkUKfTWXFTndBXqYZyMzzD8KmVLdk00ngByXosoBz9C+Ae9aoVmFNJoONuqDfWQEF+KtfKYZEksjY6YMW/KHqAQ+33ahsFG4cSfGYWSpwW0t6a/1hn+xlF52ZmtPU8OyAckgPs8EwHXuJVd+PheXkiFG9Bb9eOkdwAZucfVmSpFy13IrzArE2f778841oJrbTzy9uWVzL7NcgoDVaFPdz6jzs0Eid4ert6Y4t5A4c+Y6sZoTjhXEIlDkjGbUhrXfu6WXuDs2hT47G8F5avfo2tmHWWsHEbzQkR5INeSohTYi3ogQwMJzQjkivW1R2dMHNdt73b51GPsrqbVJgJZ6nMXq8PcXjJqCFNz/8yggyJmx/Qtrtye367xr5QjaaElWplc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(26005)(1076003)(4744005)(6512007)(2616005)(5660300002)(86362001)(316002)(6486002)(7416002)(508600001)(38100700002)(38350700002)(8936002)(4326008)(6506007)(52116002)(6666004)(186003)(66946007)(66556008)(66476007)(83380400001)(8676002)(2906002)(921005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?t2tuLST27jwt/iJK3IpjvSF+PEjmCneD4mjYBNveq5X5NDZk0seXwfwJTaed?=
+ =?us-ascii?Q?D0RH1zybu7A6kqs+9Ozhv0B2nI/Dgq/FPRjDQ7vtyhw/4ZYPQL079YR6cYVM?=
+ =?us-ascii?Q?tpr5qqyTCQnCjwTmWY9mNtMW3H19Pk/7ELWc2zHIfdnD5UqRfSsus9+A/GuQ?=
+ =?us-ascii?Q?eNoi7+LF4scEOr0yVRhlcAndBtaReDlFs1HC4CBGZ/9FM60pvF8xO/PXLnJg?=
+ =?us-ascii?Q?txNtdOAG9fxarbuvHB11ELlgPTOJk2FTYrkcrx3dyHEzzUZxKVTtvgEAOIW6?=
+ =?us-ascii?Q?CiLp28Ji4dFWEXanM/EFd9FUlWYYIexVHVy/wmt8sbAczZbhxh7JvRkjXhtY?=
+ =?us-ascii?Q?e6if/gN4XZwKenAPj6UeSJ9ay+ypoXBqVd5nOV3dmW3RubtryEZWI9knX7Et?=
+ =?us-ascii?Q?5vW59XlBq5Wya2Um/2MUOVQZgxBZe4ofOjRJ7tq+VzusktJu96coQUUa9mbi?=
+ =?us-ascii?Q?IZBGHQZkA4bGMe8ckoICHwqy6VTuHk1fgQWSV+yVl/aKDJVJRE3y82GTGuqK?=
+ =?us-ascii?Q?if2E5v0meXMnXxP7euIvdnp34Mp6uHuQaps3hWCjOIazZmQk0ZDBD0yGs7/8?=
+ =?us-ascii?Q?ydxBgPH0T9VPMz+RKhEBvITBvhOycAlEkfeiGbEd6HhmT7D4bAFbByjkuFgm?=
+ =?us-ascii?Q?uvZ0OKMe7YC5yzwuWo4SmAGTn5tgIHX8fvmhzrsD6cSojaiFJDwXLHgU2UWY?=
+ =?us-ascii?Q?5irr7DZVB18qVkZWqY1Cv65pXec3thnAUrG53kMRaL7zPI3ABv71+DB6L6Kz?=
+ =?us-ascii?Q?F71BQ+KrpxsbvyieQ3bDfx2M5rZYN5EdstK2X6q83mBMYi4bvIfb4y6GNEu7?=
+ =?us-ascii?Q?vus0wNg/PgMtLwzVsgDnH/2ydDE72kYjhhTPUNEY1KCuuCYEpnBMRqOJX6Ss?=
+ =?us-ascii?Q?mg6y4sqgCJdGsQ2hHgaL/uDcRZMr9FUOTNttgs6W2F1IoecfGaUxGBzRZpbu?=
+ =?us-ascii?Q?zb17BiWvYjyRVdUxHzEelE1jl3+YXCz0xXUQIIaTkN9WNdSXgyQ+MtgX089k?=
+ =?us-ascii?Q?Wg47VL9L6c9z6sUqaf/ONuqsOxoe2oj8Fy/NGwC8e2JMeQYTZjvCTYSly8Qn?=
+ =?us-ascii?Q?OfYT+r1gAks2reZxuXWtTgC6o5p18CQrKGlJOGVx2AJ3IjGm5lzByHiBax95?=
+ =?us-ascii?Q?ffFcbSpxv0zclb16X6J7f9/ZnbTPWNimABkLJFFTtfGJOZh/5QHoWQ9VUDcK?=
+ =?us-ascii?Q?pbI+ZBkiQqjdV9DGmhy4Mjsn9JHPuzMUBF+clvTwItZ2hdFfz64sdWCcYemK?=
+ =?us-ascii?Q?t6DDUas/RyEh+DHpz46098xWqTPIVDGxI70d1JaM3VgkbK/JY+RWU4R7QwBI?=
+ =?us-ascii?Q?WRFCtgDcfe7rCHsTzeCGgNxm/+/Loynaujia4zHiblcuZRt9aU7xFbwKVCQU?=
+ =?us-ascii?Q?JYEyNBCvBjE0jEeS6sSpWWCxfOKndxa2K32G/3OJ/8PFAlGBZk9tpfVdz3QJ?=
+ =?us-ascii?Q?/AV9R8EUyauS09t9Uc716eL96bF896FuRucQCesx1c3LxOv/Bx9AwPj6ac78?=
+ =?us-ascii?Q?bFmgxCB2fBqU3ImIVe0/FukuXhk2UjLTsz9a+a9GcfDMKxMyYoEH8Yl+2JgZ?=
+ =?us-ascii?Q?2SVtLljXMcnTMpmFxtgnD6ePbf3HqqyHyweA+TKHrhBcVPODuh1qd5tB0u55?=
+ =?us-ascii?Q?hS2lC3R+fXjV6lH2Z6h7PUMnftnrKV4PQnkU3fTkL/Jh5CbcP6U7kxWR/oj8?=
+ =?us-ascii?Q?onqinGbbzFD2FGT5XZkjlNJwHSb53iY8WgsWbGe7uTF1YWXNzwiIRzP2b+92?=
+ =?us-ascii?Q?V8Swu8F3fQ=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb215e97-2171-44dc-c2c4-08da297a7caa
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2022 00:52:08.5517
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dg7NvSHNIqaSAS/T33lc/XGZ+PlZ6bt0crMLZmXtPVckOwgAinx5kQpToXYHKcT+FjmQafzNl/KlsVcb24apRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6619
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jan 14, 2022 at 03:47:37PM +0100, AngeloGioacchino Del Regno wrote:
-> During execution of the worker that's used to register rpmsg devices
-> we are safely locking the channels mutex but, when creating a new
-> endpoint for such devices, we are registering a IPI on the SCP, which
-> then makes the SCP to trigger an interrupt, lock its own mutex and in
-> turn register more subdevices.
-> This creates a circular locking dependency situation, as the mtk_rpmsg
-> channels_lock will then depend on the SCP IPI lock.
-> 
-> [   18.014514]  Possible unsafe locking scenario:
-> [   18.014515]        CPU0                    CPU1
-> [   18.014517]        ----                    ----
-> [   18.045467]   lock(&mtk_subdev->channels_lock);
-> [   18.045474]                                lock(&scp->ipi_desc[i].lock);
-> [   18.228399]                                lock(&mtk_subdev->channels_lock);
-> [   18.228405]   lock(&scp->ipi_desc[i].lock);
-> [   18.264405]
+From: Peng Fan <peng.fan@nxp.com>
 
-I finally understand the problem, something that would have been impossible
-without the pastebin you provided in your latest email.  Please add the content
-of that pastebin to the changelog and send another revision (checkpatch
-warnings can be ignored).
+V2:
+ CC dt maintainers
+ Reorder compatible strings in alphabetical order in patch 1
 
-> 
-> To solve this, simply unlock the channels_lock mutex before calling
-> mtk_rpmsg_register_device() and relock it right after, as safety is
-> still ensured by the locking mechanism that happens right after
-> through SCP.
+i.MX93 features a general purpose M33 core, support in with this patchset.
 
-The integrity of the subdev->channels list is guaranteed by relocking the
-mutex, I'm not sure what "through SCP" adds to the sentence. 
+Peng Fan (2):
+  dt-bindings: remoteproc: imx_rproc: support i.MX93
+  remoteproc: imx_rproc: support i.MX93
 
-> Notably, mtk_rpmsg_register_device() does not even require locking.
->
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    |  9 ++---
+ drivers/remoteproc/imx_rproc.c                | 33 +++++++++++++++++++
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
-I don't agree with the above sentence - if locking doesn't happen in
-mtk_rpmsg_create_device(), there can be two CPUs accessing the list at the same
-time.
+-- 
+2.25.1
 
-Thanks,
-Mathieu
-
-> Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/rpmsg/mtk_rpmsg.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-> index 5b4404b8be4c..d1213c33da20 100644
-> --- a/drivers/rpmsg/mtk_rpmsg.c
-> +++ b/drivers/rpmsg/mtk_rpmsg.c
-> @@ -234,7 +234,9 @@ static void mtk_register_device_work_function(struct work_struct *register_work)
->  		if (info->registered)
->  			continue;
->  
-> +		mutex_unlock(&subdev->channels_lock);
->  		ret = mtk_rpmsg_register_device(subdev, &info->info);
-> +		mutex_lock(&subdev->channels_lock);
->  		if (ret) {
->  			dev_err(&pdev->dev, "Can't create rpmsg_device\n");
->  			continue;
-> -- 
-> 2.33.1
-> 
