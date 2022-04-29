@@ -2,251 +2,226 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425D2C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 20:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6F9C4321E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 29 Apr 2022 20:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380482AbiD2UDR (ORCPT
+        id S1380940AbiD2UnJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 29 Apr 2022 16:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34882 "EHLO
+        Fri, 29 Apr 2022 16:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380469AbiD2UDP (ORCPT
+        with ESMTP id S1381104AbiD2UnC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 29 Apr 2022 16:03:15 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59DE1AFAFF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 12:59:53 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id k23so17390482ejd.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 Apr 2022 12:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gOxgRBVME7mclmuamlr6PIBTUGVRi69KeRfnSyVkfPc=;
-        b=bZpA1wzvOK8I6x9HL/0QhdtdW5y7oEMIYpk/A3PJnQU1zXAuQil/KHDWPNQlww2/3A
-         CPTiJcwZgKfvqCgY2UklcLjxNwHay2XP1A/Ynm+nDanUCrAqaAuetcyzlNgxLewZutMW
-         W5Pp/AcMRBfl83CI85WDbqPC7yLnWjlqiww6vPsaQZpstaP7zmghmEyYYxGRIuWvDIjH
-         AuS8XILHLTLOa/0fA3j43ox0Y2i3YAdcuVaNcd3aI7iqLBF0cb8jo0HOTdywBiR2LktG
-         W8SArT3SxF8SZuIHTrLhNhUzssL/EFuIJgmxRNxXrvWWn1CWBmldnIFwsGnqhbnqD/f/
-         mEow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gOxgRBVME7mclmuamlr6PIBTUGVRi69KeRfnSyVkfPc=;
-        b=57+mHVlGPE5VIjs29X6evH2yECXG0IAWQ8YoayicaRQI52CVz+aFBWOPfZTU6ECMZR
-         /y+8NXEiQPH0KJGL3RAousVvOonME7BGLwxWIwpPv30c/nHwas62SMofqkJOVX1xfZnY
-         NO07Eew3XiC69o5Fu9Y+jJe66m9PybwMsTs32wcTlH1mx+yGS0TOLZtzlJx4H1PSLnh9
-         fkxNpc0mr0LJTu85jkIcom0QiwQfGsGxnH2ggSs0Xoy7CrL1sYE3xofjTnKzdtdLzCzO
-         LIqituOvolQQM830qwGdYz1heHd1wL4gIy4hUc8wTrqLddJ5wXAAqYKyyf6RKnV6ftX7
-         kguA==
-X-Gm-Message-State: AOAM531G6JlnuGGOSdg0aI5RF5tp0FqltMdi8U/Gew9HldOUP1yn/rKL
-        LQIMiEmuY8t/Qhdd9EGxea4ceJIvkxmWFg==
-X-Google-Smtp-Source: ABdhPJw9zJe7ujZXVPeCOQ+tlVHyCoS4bz1d93A3Ut0Q4Cnw6LRhStlVFszPwd647YTv55colYrzng==
-X-Received: by 2002:a17:906:d54b:b0:6e7:f185:18d5 with SMTP id cr11-20020a170906d54b00b006e7f18518d5mr930627ejc.155.1651262391933;
-        Fri, 29 Apr 2022 12:59:51 -0700 (PDT)
-Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id en8-20020a17090728c800b006f3ef214de7sm929486ejc.77.2022.04.29.12.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 12:59:51 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] rpmsg: Fix calling device_lock() on non-initialized device
-Date:   Fri, 29 Apr 2022 21:59:45 +0200
-Message-Id: <20220429195946.1061725-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220429195946.1061725-1-krzysztof.kozlowski@linaro.org>
-References: <20220429195946.1061725-1-krzysztof.kozlowski@linaro.org>
+        Fri, 29 Apr 2022 16:43:02 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 871DD83021;
+        Fri, 29 Apr 2022 13:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=9LhFYA+MjEc96AcZxxeEKFjkU9Lk82GaxnYYVWnVk68=; b=XwGE93aX+1E0t3pByj3j/O+5Ga
+        K3u/NbvWUIPTGWXFFUF5/S8bghnnop1aApPsPGKNCX+XA1bvvH3EQ0PcLpFJhLHgKjy3gTmHDpRZx
+        xpeiw9TV1dPXB2YSqRvo3agu2ikjDsTWOdpgS/WgDbAttd/ff7K6VJQNlrO38xJTdLOWq3LaiPpb7
+        BCxPsp9BBfFRjEJDD6TJuu/Y8uUcnXFJiNLt6QIOyD0DFBtRwQdBNCscMgnx+i0qVThLJVg3KcgFz
+        9afxev7tVqQLuY2Z0izXtjt9I1wawTaSR9Ugp7AvNWX4ugYt89qxijRM6XzCj5d2MXRHOn6SprLRr
+        LWTDMVqw==;
+Received: from [179.113.53.197] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nkXNs-000CEn-5h; Fri, 29 Apr 2022 22:38:36 +0200
+Message-ID: <50178dfb-8e94-f35f-09c3-22fe197550ef@igalia.com>
+Date:   Fri, 29 Apr 2022 17:38:08 -0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Content-Language: en-US
+To:     "Michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bhe@redhat.com" <bhe@redhat.com>,
+        "pmladek@suse.com" <pmladek@suse.com>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bcm-kernel-feedback-list@broadcom.com" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "openipmi-developer@lists.sourceforge.net" 
+        <openipmi-developer@lists.sourceforge.net>,
+        "rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
+        "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
+        "halves@canonical.com" <halves@canonical.com>,
+        "fabiomirmar@gmail.com" <fabiomirmar@gmail.com>,
+        "alejandro.j.jimenez@oracle.com" <alejandro.j.jimenez@oracle.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "arnd@arndb.de" <arnd@arndb.de>, "bp@alien8.de" <bp@alien8.de>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "d.hatayama@jp.fujitsu.com" <d.hatayama@jp.fujitsu.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "dyoung@redhat.com" <dyoung@redhat.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "hidehiro.kawai.ez@hitachi.com" <hidehiro.kawai.ez@hitachi.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "john.ogness@linutronix.de" <john.ogness@linutronix.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "paulmck@kernel.org" <paulmck@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "vgoyal@redhat.com" <vgoyal@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "will@kernel.org" <will@kernel.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com>
+ <PH0PR21MB30252C55EB4F97F3D78021BDD7FC9@PH0PR21MB3025.namprd21.prod.outlook.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <PH0PR21MB30252C55EB4F97F3D78021BDD7FC9@PH0PR21MB3025.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-driver_set_override() helper uses device_lock() so it should not be
-called before rpmsg_register_device() (which calls device_register()).
-Effect can be seen with CONFIG_DEBUG_MUTEXES:
+On 29/04/2022 14:53, Michael Kelley (LINUX) wrote:
+> From: Guilherme G. Piccoli <gpiccoli@igalia.com> Sent: Wednesday, April 27, 2022 3:49 PM
+>> [...]
+>> +	panic_notifiers_level=
+>> +			[KNL] Set the panic notifiers execution order.
+>> +			Format: <unsigned int>
+>> +			We currently have 4 lists of panic notifiers; based
+>> +			on the functionality and risk (for panic success) the
+>> +			callbacks are added in a given list. The lists are:
+>> +			- hypervisor/FW notification list (low risk);
+>> +			- informational list (low/medium risk);
+>> +			- pre_reboot list (higher risk);
+>> +			- post_reboot list (only run late in panic and after
+>> +			kdump, not configurable for now).
+>> +			This parameter defines the ordering of the first 3
+>> +			lists with regards to kdump; the levels determine
+>> +			which set of notifiers execute before kdump. The
+>> +			accepted levels are:
+>> +			0: kdump is the first thing to run, NO list is
+>> +			executed before kdump.
+>> +			1: only the hypervisor list is executed before kdump.
+>> +			2 (default level): the hypervisor list and (*if*
+>> +			there's any kmsg_dumper defined) the informational
+>> +			list are executed before kdump.
+>> +			3: both the hypervisor and the informational lists
+>> +			(always) execute before kdump.
+> 
+> I'm not clear on why level 2 exists.  What is the scenario where
+> execution of the info list before kdump should be conditional on the
+> existence of a kmsg_dumper?   Maybe the scenario is described
+> somewhere in the patch set and I just missed it.
+> 
 
-  DEBUG_LOCKS_WARN_ON(lock->magic != lock)
-  WARNING: CPU: 3 PID: 57 at kernel/locking/mutex.c:582 __mutex_lock+0x1ec/0x430
-  ...
-  Call trace:
-   __mutex_lock+0x1ec/0x430
-   mutex_lock_nested+0x44/0x50
-   driver_set_override+0x124/0x150
-   qcom_glink_native_probe+0x30c/0x3b0
-   glink_rpm_probe+0x274/0x350
-   platform_probe+0x6c/0xe0
-   really_probe+0x17c/0x3d0
-   __driver_probe_device+0x114/0x190
-   driver_probe_device+0x3c/0xf0
-   ...
+Hi Michael, thanks for your review/consideration. So, this idea started
+kind of some time ago. It all started with a need of exposing more
+information on kernel log *before* kdump and *before* pstore -
+specifically, we're talking about panic_print. But this cause some
+reactions, Baoquan was very concerned with that [0]. Soon after, I've
+proposed a panic notifiers filter (orthogonal) approach, to which Petr
+suggested instead doing a major refactor [1] - it finally is alive in
+the form of this series.
 
-Refactor the rpmsg_register_device() function to use two-step device
-registering (initialization + add) and call driver_set_override() in
-proper moment.
+The theory behind the level 2 is to allow a scenario of kdump with the
+minimum amount of notifiers - what is the point in printing more
+information if the user doesn't care, since it's going to kdump? Now, if
+there is a kmsg dumper, it means that there is likely some interest in
+collecting information, and that might as well be required before the
+potential kdump (which is my case, hence the proposal on [0]).
 
-This moves the code around, so while at it also NULL-ify the
-rpdev->driver_override in error path to be sure it won't be kfree()
-second time.
+Instead of forcing one of the two behaviors (level 1 or level 3), we
+have a middle-term/compromise: if there's interest in collecting such
+data (in the form of a kmsg dumper), we then execute the informational
+notifiers before kdump. If not, why to increase (even slightly) the risk
+for kdump?
 
-Fixes: 42cd402b8fd4 ("rpmsg: Fix kfree() of static memory on setting driver_override")
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I'm OK in removing the level 2 if people prefer, but I don't feel it's a
+burden, quite opposite - seems a good way to accommodate the somewhat
+antagonistic ideas (jump to kdump ASAP vs collecting more info in the
+panicked kernel log).
 
----
+[0] https://lore.kernel.org/lkml/20220126052246.GC2086@MiWiFi-R3L-srv/
 
-Commit SHA from linux-next - Greg's tree.
----
- drivers/rpmsg/rpmsg_core.c     | 33 ++++++++++++++++++++++++++++++---
- drivers/rpmsg/rpmsg_internal.h | 14 +-------------
- drivers/rpmsg/rpmsg_ns.c       | 14 +-------------
- include/linux/rpmsg.h          |  8 ++++++++
- 4 files changed, 40 insertions(+), 29 deletions(-)
+[1] https://lore.kernel.org/lkml/YfPxvzSzDLjO5ldp@alley/
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 95fc283f6af7..4938fc4eff00 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -593,24 +593,51 @@ static struct bus_type rpmsg_bus = {
- 	.remove		= rpmsg_dev_remove,
- };
- 
--int rpmsg_register_device(struct rpmsg_device *rpdev)
-+/*
-+ * A helper for registering rpmsg device with driver override and name.
-+ * Drivers should not be using it, but instead rpmsg_register_device().
-+ */
-+int rpmsg_register_device_override(struct rpmsg_device *rpdev,
-+				   const char *driver_override)
- {
- 	struct device *dev = &rpdev->dev;
- 	int ret;
- 
-+	if (driver_override)
-+		strcpy(rpdev->id.name, driver_override);
-+
- 	dev_set_name(&rpdev->dev, "%s.%s.%d.%d", dev_name(dev->parent),
- 		     rpdev->id.name, rpdev->src, rpdev->dst);
- 
- 	rpdev->dev.bus = &rpmsg_bus;
- 
--	ret = device_register(&rpdev->dev);
-+	device_initialize(dev);
-+	if (driver_override) {
-+		ret = driver_set_override(dev, &rpdev->driver_override,
-+					  driver_override,
-+					  strlen(driver_override));
-+		if (ret) {
-+			dev_err(dev, "device_set_override failed: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	ret = device_add(dev);
- 	if (ret) {
--		dev_err(dev, "device_register failed: %d\n", ret);
-+		dev_err(dev, "device_add failed: %d\n", ret);
-+		kfree(rpdev->driver_override);
-+		rpdev->driver_override = NULL;
- 		put_device(&rpdev->dev);
- 	}
- 
- 	return ret;
- }
-+EXPORT_SYMBOL(rpmsg_register_device_override);
-+
-+int rpmsg_register_device(struct rpmsg_device *rpdev)
-+{
-+	return rpmsg_register_device_override(rpdev, NULL);
-+}
- EXPORT_SYMBOL(rpmsg_register_device);
- 
- /*
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3e81642238d2..a22cd4abe7d1 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -94,19 +94,7 @@ int rpmsg_release_channel(struct rpmsg_device *rpdev,
-  */
- static inline int rpmsg_ctrldev_register_device(struct rpmsg_device *rpdev)
- {
--	int ret;
--
--	strcpy(rpdev->id.name, "rpmsg_ctrl");
--	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
--				  rpdev->id.name, strlen(rpdev->id.name));
--	if (ret)
--		return ret;
--
--	ret = rpmsg_register_device(rpdev);
--	if (ret)
--		kfree(rpdev->driver_override);
--
--	return ret;
-+	return rpmsg_register_device_override(rpdev, "rpmsg_ctrl");
- }
- 
- #endif
-diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
-index 8eb8f328237e..c70ad03ff2e9 100644
---- a/drivers/rpmsg/rpmsg_ns.c
-+++ b/drivers/rpmsg/rpmsg_ns.c
-@@ -20,22 +20,10 @@
-  */
- int rpmsg_ns_register_device(struct rpmsg_device *rpdev)
- {
--	int ret;
--
--	strcpy(rpdev->id.name, "rpmsg_ns");
--	ret = driver_set_override(&rpdev->dev, &rpdev->driver_override,
--				  rpdev->id.name, strlen(rpdev->id.name));
--	if (ret)
--		return ret;
--
- 	rpdev->src = RPMSG_NS_ADDR;
- 	rpdev->dst = RPMSG_NS_ADDR;
- 
--	ret = rpmsg_register_device(rpdev);
--	if (ret)
--		kfree(rpdev->driver_override);
--
--	return ret;
-+	return rpmsg_register_device_override(rpdev, "rpmsg_ns");
- }
- EXPORT_SYMBOL(rpmsg_ns_register_device);
- 
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 20c8cd1cde21..523c98b96cb4 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -165,6 +165,8 @@ static inline __rpmsg64 cpu_to_rpmsg64(struct rpmsg_device *rpdev, u64 val)
- 
- #if IS_ENABLED(CONFIG_RPMSG)
- 
-+int rpmsg_register_device_override(struct rpmsg_device *rpdev,
-+				   const char *driver_override);
- int rpmsg_register_device(struct rpmsg_device *rpdev);
- int rpmsg_unregister_device(struct device *parent,
- 			    struct rpmsg_channel_info *chinfo);
-@@ -192,6 +194,12 @@ ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- 
- #else
- 
-+static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
-+						 const char *driver_override)
-+{
-+	return -ENXIO;
-+}
-+
- static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
- {
- 	return -ENXIO;
--- 
-2.32.0
 
+>[...]
+>> +	 * Based on the level configured (smaller than 4), we clear the
+>> +	 * proper bits in "panic_notifiers_bits". Notice that this bitfield
+>> +	 * is initialized with all notifiers set.
+>> +	 */
+>> +	switch (panic_notifiers_level) {
+>> +	case 3:
+>> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
+>> +		break;
+>> +	case 2:
+>> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
+>> +
+>> +		if (!kmsg_has_dumpers())
+>> +			clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
+>> +		break;
+>> +	case 1:
+>> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
+>> +		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
+>> +		break;
+>> +	case 0:
+>> +		clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
+>> +		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
+>> +		clear_bit(PN_HYPERVISOR_BIT, &panic_notifiers_bits);
+>> +		break;
+>> +	}
+> 
+> I think the above switch statement could be done as follows:
+> 
+> if (panic_notifiers_level <= 3)
+> 	clear_bit(PN_PRE_REBOOT_BIT, &panic_notifiers_bits);
+> if (panic_notifiers_level <= 2)
+> 	if (!kmsg_has_dumpers())
+> 		clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
+> if (panic_notifiers_level <=1)
+> 	clear_bit(PN_INFO_BIT, &panic_notifiers_bits);
+> if (panic_notifiers_level == 0)
+> 	clear_bit(PN_HYPERVISOR_BIT, &panic_notifiers_bits);
+> 
+> That's about half the lines of code.  It's somewhat a matter of style,
+> so treat this as just a suggestion to consider.  I just end up looking
+> for a better solution when I see the same line of code repeated
+> 3 or 4 times!
+> 
+
+It's a good idea - I liked your code. The switch seems more
+natural/explicit for me, even duplicating some lines, but in case more
+people prefer your way, I can definitely change the code - thanks for
+the suggestion.
+Cheers,
+
+
+Guilherme
