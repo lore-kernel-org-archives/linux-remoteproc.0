@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB39C4707A
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  1 May 2022 10:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D354FC35280
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  1 May 2022 10:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236402AbiEAKkB (ORCPT
+        id S1344855AbiEAKkF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 1 May 2022 06:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58368 "EHLO
+        Sun, 1 May 2022 06:40:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345533AbiEAKjD (ORCPT
+        with ESMTP id S1345374AbiEAKi6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 1 May 2022 06:39:03 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44DABE43
-        for <linux-remoteproc@vger.kernel.org>; Sun,  1 May 2022 03:35:37 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id a1so13713012edt.3
-        for <linux-remoteproc@vger.kernel.org>; Sun, 01 May 2022 03:35:37 -0700 (PDT)
+        Sun, 1 May 2022 06:38:58 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8196CE42
+        for <linux-remoteproc@vger.kernel.org>; Sun,  1 May 2022 03:35:32 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id z99so13700649ede.5
+        for <linux-remoteproc@vger.kernel.org>; Sun, 01 May 2022 03:35:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=h9YZjRwoHC6GaFFb1SDwA29ZxpNfUjxNdlL96hvSsO0=;
-        b=YY6qFncodP37LtEhEAtatrQ82fz/hPWy6G+dDcAafnW8/Lila7XInflVXwajnJNKcS
-         JNYDc9UkVSLbYrChCHIcyMzmc+UtYg1jLNiWSa69AIrTB2M9yt89MNKI6DPyNAWHXUJz
-         pwozzUisJWWhvadt+p3BEcDySyWLYXssYSrxwKbPNS9ZwcM5FUzofRSuru894YsOguUf
-         NyZ9gBJJCi6X6WdjNIv/ph4MaIZ8Ou0xvZFPDZCsFZQSB7cBXMTFoiz+EJ4bpZrSpmAI
-         XynyMXuzVv0orW+ui+Pb/4HlIwEjDklhauFgP+++nn8JAAYppqEIc5bRVgS0pORJrKN0
-         WQeg==
+        bh=0y5yzicLsas4EmHAcITZdZkPnQbuPjF+Rg+p5VrAikk=;
+        b=Rg0/nl3fR4LHEemjPjE6BNFsVJbpSfkKUgt9QbXYRHwHu51tUEcrTf8gA9nRzDeMnQ
+         kG4BVCJ/mJDO7XH0wtnbw/AGtNTJ23F3d2GhwmKQdYDAUvJ1Y/kWo97UtuC1jSld5VSQ
+         JuGaJTXwHb/Tk7sI4NgARxpEUZw9yEM6CLiA893wqR87pO9arJG5BtruiVIWLK+IlXe6
+         XpD2/2IQD+oc6akmpEcaqSLbnnxwRTiIdeJIAaPY0+DjJR1zKAg+KHxVsIwaAKz7F8uX
+         od9FyZa3KjpYmDmLPQg4UL87r5S+7BaYNMZuaLivlp9/yhcucbs3hEsb+usDFTmLScJW
+         8kBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=h9YZjRwoHC6GaFFb1SDwA29ZxpNfUjxNdlL96hvSsO0=;
-        b=fYSstB4Etl0UZSTnDxg19i6mUoHurEvSfRdQyTJ8bWWz4dcSKnRO9yEI5zWjuZzPWq
-         kXzeSFjbBktn8j5HLGu1BcecGgIaq6aWAtXSj3QhUPtxrwbCH3PkiMrSILqy+HQ2R05A
-         J9CjJVKfCH0upZx1+P4HTIs2nVFu1JGw+wSqGSKg6SVFU21QGyXcwQd0nMjcxO7iXE8K
-         r2ni45ocNvs7MskxGDyp6LLxm+OSfZs37o+4BxAGiD5NTvk4sF1AufOvkhW6+NcJkCf/
-         jEaUubdDU49c+BuBr2ccCzrJhiQOmzO3PGvqxSBlzdqrOdKunMeq1g7wBXI3YjcL1m5D
-         vn4w==
-X-Gm-Message-State: AOAM533TYMZ1698mhrRxVUICYgWdS86As7qzKpzLAL4fjUqLxPJyE2Ry
-        3XX97iTjdmzA3FT7eZZrbwQZkw==
-X-Google-Smtp-Source: ABdhPJw7iJwj9jQ5tU/50tMqagxdWh7joTS/ou6UwmV14fytS26n1/8N5nLzSNI34O3clqBJelNflQ==
-X-Received: by 2002:a05:6402:2d6:b0:425:ed85:46bf with SMTP id b22-20020a05640202d600b00425ed8546bfmr8106806edx.6.1651401335819;
-        Sun, 01 May 2022 03:35:35 -0700 (PDT)
+        bh=0y5yzicLsas4EmHAcITZdZkPnQbuPjF+Rg+p5VrAikk=;
+        b=d6wGIc8S/NyKER+46aqWItx/cwTwYU8ShRVWr8Cp1tXWmDy5LUeSzpXNrFcS/uofkc
+         R+u5BrQvsNMVlqvtqA1QeYYIhY1FHxDvvsa3SXLlGKCpSozGP/UyXeatwAlWaNQMYuDd
+         INatziO2EtniCslXsHJQcfFbn8Uu1kSD53OcO7cR/W42NUf3EpJoDTy5ws513Wom94Mn
+         U1wLxxeupfcHOIW3PYe5Deg1wx50e66nXjy3UHBna0ny8tfU7XRdpl6NAmdR4W68BljS
+         iPQUYQrLb5lHFBcZ3JH2pTcwCn/shv6l6WWq+KHGUpwKKtcwcGEtX4j+1Sa6Ph2fPqnC
+         zmVg==
+X-Gm-Message-State: AOAM533GKrH4EH3oWAuNdo1sNKlCTDhbzojwkxFf7RsPh8Aie4czI2nZ
+        Z7zNhxJnUhwCm8HrTguSKtwm1Q==
+X-Google-Smtp-Source: ABdhPJxd9q5dD1HBp8ci0ndlYpDqxQEaNKu7CYNuW/hdf1Co5oOWllrk9R1fcJtEOmPDmN5nmFg9Dg==
+X-Received: by 2002:a50:d65c:0:b0:425:ea34:7dd7 with SMTP id c28-20020a50d65c000000b00425ea347dd7mr8290816edj.18.1651401331027;
+        Sun, 01 May 2022 03:35:31 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id zp1-20020a17090684e100b006f3ef214df1sm2464438ejb.87.2022.05.01.03.35.34
+        by smtp.gmail.com with ESMTPSA id zp1-20020a17090684e100b006f3ef214df1sm2464438ejb.87.2022.05.01.03.35.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 May 2022 03:35:35 -0700 (PDT)
+        Sun, 01 May 2022 03:35:30 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -58,9 +58,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 8/8] soc: qcom: correct kerneldoc
-Date:   Sun,  1 May 2022 12:35:20 +0200
-Message-Id: <20220501103520.111561-8-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 3/8] remoteproc: qcom: correct kerneldoc
+Date:   Sun,  1 May 2022 12:35:15 +0200
+Message-Id: <20220501103520.111561-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
 References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
@@ -72,51 +72,36 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Correct kerneldoc warnings like:
 
-  drivers/soc/qcom/mdt_loader.c:126:
-    warning: Function parameter or member 'fw_name' not described in 'qcom_mdt_read_metadata'
+  drivers/remoteproc/qcom_common.c:68:
+    warning: expecting prototype for struct minidump_subsystem_toc. Prototype was for struct minidump_subsystem instead
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/soc/qcom/mdt_loader.c | 4 +++-
- drivers/soc/qcom/smp2p.c      | 3 +++
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 366db493579b..3f11554df2f3 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -108,6 +108,8 @@ EXPORT_SYMBOL_GPL(qcom_mdt_get_size);
-  * qcom_mdt_read_metadata() - read header and metadata from mdt or mbn
-  * @fw:		firmware of mdt header or mbn
-  * @data_len:	length of the read metadata blob
-+ * @fw_name:	name of the firmware, for construction of segment file names
-+ * @dev:	device handle to associate resources with
-  *
-  * The mechanism that performs the authentication of the loading firmware
-  * expects an ELF header directly followed by the segment of hashes, with no
-@@ -192,7 +194,7 @@ EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
-  * qcom_mdt_pas_init() - initialize PAS region for firmware loading
-  * @dev:	device handle to associate resources with
-  * @fw:		firmware object for the mdt file
-- * @firmware:	name of the firmware, for construction of segment file names
-+ * @fw_name:	name of the firmware, for construction of segment file names
-  * @pas_id:	PAS identifier
-  * @mem_phys:	physical address of allocated memory region
-  * @ctx:	PAS metadata context, to be released by caller
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 59dbf4b61e6c..d9c28a8a7cbf 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -119,6 +119,9 @@ struct smp2p_entry {
-  * @out:	pointer to the outbound smem item
-  * @smem_items:	ids of the two smem items
-  * @valid_entries: already scanned inbound entries
-+ * @ssr_ack_enabled: SMP2P_FEATURE_SSR_ACK feature is supported and was enabled
-+ * @ssr_ack: current cached state of the local ack bit
-+ * @negotiation_done: whether negotiating finished
-  * @local_pid:	processor id of the inbound edge
-  * @remote_pid:	processor id of the outbound edge
-  * @ipc_regmap:	regmap for the outbound ipc
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 4b91e3c9eafa..020349f8979d 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -50,7 +50,7 @@ struct minidump_region {
+ };
+ 
+ /**
+- * struct minidump_subsystem_toc: Subsystem's SMEM Table of content
++ * struct minidump_subsystem - Subsystem's SMEM Table of content
+  * @status : Subsystem toc init status
+  * @enabled : if set to 1, this region would be copied during coredump
+  * @encryption_status: Encryption status for this subsystem
+@@ -68,7 +68,7 @@ struct minidump_subsystem {
+ };
+ 
+ /**
+- * struct minidump_global_toc: Global Table of Content
++ * struct minidump_global_toc - Global Table of Content
+  * @status : Global Minidump init status
+  * @md_revision : Minidump revision
+  * @enabled : Minidump enable status
 -- 
 2.32.0
 
