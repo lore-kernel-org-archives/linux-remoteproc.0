@@ -2,90 +2,103 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5C5C4167E
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 May 2022 15:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D25FC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 May 2022 16:04:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386056AbiEBPyl (ORCPT
+        id S245656AbiEBQHo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 2 May 2022 11:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34654 "EHLO
+        Mon, 2 May 2022 12:07:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240096AbiEBPyj (ORCPT
+        with ESMTP id S237266AbiEBQHn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 2 May 2022 11:54:39 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCE602AC2;
-        Mon,  2 May 2022 08:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vs1TxitJVaqXfZt5+JAgzgpJc3Rl9y+sqSF7sQt0958=; b=CYM+I+cStAj6nsmkdvAL01St6e
-        IV8WQNLOxWhy3UHpXhc9ZYxNJzq7ZxpyOwHWort+30gmSz14Tjb7K8kvM2hGR2PPX3dc7GXMEaskm
-        g34Tjq/8qIJgML47/2DCuEUnFB03pqMfnk/uwmQB09CDWgBvh7TL/gFDoH0TI9HOJ3bezLUV1DrKv
-        MwXxD9LKMhdDIB0wdDr6Kr32RysL68LVvKOkDfa5SERbORMzBS0ZyutauBA2Ekqa3472ChMBhe54V
-        1FaXK1lleaqm8beFaaq7IO5wyd2Jb5T5RV+lvaTO/6luDzRXN43duubtlHaOQOQQCOGaRTF8O2nxl
-        BUemy2kw==;
-Received: from [179.113.53.197] (helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nlYKD-0006x9-MY; Mon, 02 May 2022 17:51:01 +0200
-Message-ID: <af03a6ef-6b92-31cd-72d4-47b82bc47f87@igalia.com>
-Date:   Mon, 2 May 2022 12:50:35 -0300
+        Mon, 2 May 2022 12:07:43 -0400
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BE70BC1E;
+        Mon,  2 May 2022 09:04:14 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id r8so15638135oib.5;
+        Mon, 02 May 2022 09:04:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=noR4HJFk7F0HSQNOMAQMG2M3tgi4T2ok0ZfyfqSOv20=;
+        b=MDAAafoaKw+ZpEgRfHoQ/UhiczJMpbkVCzo5BWFRDhU7S+4sHzUkBT8c+VhxHpScez
+         je1Bn1yjd0tR9X+UacR4iP+2ZuQIyD3XP2UnLSz6XEfyuNnQT5Q9u3sI3ouR0eKNST09
+         GZ2QaHjGeOSBzAubof9nQIVMtXJQBHZcxe78GHmQm2ZEBJj5PlcrZAvQj14upXwD77bh
+         F7CzxVQOXi6ob+llAu1zVI+5DBcCvTWBFUIrDyUPrNz3BCXrjkn4ElnTAKDukc1BGKid
+         MmPNt7Psj779KfyhJ+wRgpWmCw8s6Qg2o0TbzjTcNEeF2TggWRhIvTgQrSpJOntd3PHG
+         0Gwg==
+X-Gm-Message-State: AOAM533YwXklBK5kwJ6nqef6taUZ6OAXi/fSNd7jx583vjm9KKX6sjSz
+        2qMh9pbuJLi537ZTgA3UzQO2x+F8dg==
+X-Google-Smtp-Source: ABdhPJyp3N6PwcEyY2JXcQYDhoqtY3kwoqFv7iQuO063fxQxQ8tSr8xXiV7qNElm4YmaKCFaLGRjOA==
+X-Received: by 2002:a05:6808:1b0a:b0:325:ee07:e289 with SMTP id bx10-20020a0568081b0a00b00325ee07e289mr2987836oib.281.1651507453547;
+        Mon, 02 May 2022 09:04:13 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id e12-20020a4ae0cc000000b0035eb4e5a6d9sm3957814oot.47.2022.05.02.09.04.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 May 2022 09:04:12 -0700 (PDT)
+Received: (nullmailer pid 1215744 invoked by uid 1000);
+        Mon, 02 May 2022 16:04:12 -0000
+Date:   Mon, 2 May 2022 11:04:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado 
+        <nfraprado@collabora.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: remoteproc: mediatek: Add optional
+ memory-region to mtk,scp
+Message-ID: <YnAA+7eqP/WzGrhQ@robh.at.kernel.org>
+References: <20220429211111.2214119-1-nfraprado@collabora.com>
+ <20220429211111.2214119-3-nfraprado@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 15/30] bus: brcmstb_gisb: Clean-up panic/die notifiers
-Content-Language: en-US
-To:     Florian Fainelli <f.fainelli@gmail.com>, akpm@linux-foundation.org,
-        bhe@redhat.com, pmladek@suse.com, kexec@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        halves@canonical.com, fabiomirmar@gmail.com,
-        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
-        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
-        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, Brian Norris <computersforpeace@gmail.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-16-gpiccoli@igalia.com>
- <eaf3a893-00dd-8717-202e-911b395670e1@gmail.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <eaf3a893-00dd-8717-202e-911b395670e1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220429211111.2214119-3-nfraprado@collabora.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 02/05/2022 12:38, Florian Fainelli wrote:
-> [...] 
+On Fri, Apr 29, 2022 at 05:11:10PM -0400, Nícolas F. R. A. Prado wrote:
+> The SCP co-processor can optionally be passed a reserved memory region
+> to use. Add this property in the dt-binding.
 > 
-> Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
 > 
-> Not sure if the Fixes tag is warranted however as this is a clean up, 
-> and not really fixing a bug.
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index ec9ddeb6ca2c..64a9d2c7ed0d 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -51,6 +51,10 @@ properties:
+>    interrupts:
+>      maxItems: 1
+>  
+> +  memory-region:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-Perfect, thanks Florian. I'll add your ACK and remove the fixes tag in V2.
-Cheers,
+memory-region has a type already, so drop. What's needed is how many 
+entries and what they are if more than 1.
 
-
-Guilherme
+> +    description: phandle to reserved memory region.
+> +
+>  required:
+>    - compatible
+>    - reg
+> -- 
+> 2.36.0
+> 
+> 
