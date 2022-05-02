@@ -2,144 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE94C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 May 2022 15:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99849C43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  2 May 2022 15:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385840AbiEBPhF (ORCPT
+        id S1358130AbiEBPli (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 2 May 2022 11:37:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43008 "EHLO
+        Mon, 2 May 2022 11:41:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355963AbiEBPhF (ORCPT
+        with ESMTP id S234055AbiEBPlh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 2 May 2022 11:37:05 -0400
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABDCBC22;
-        Mon,  2 May 2022 08:33:35 -0700 (PDT)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-ed9ac77cbbso4020345fac.1;
-        Mon, 02 May 2022 08:33:35 -0700 (PDT)
+        Mon, 2 May 2022 11:41:37 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 276C46569;
+        Mon,  2 May 2022 08:38:08 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id i1so6602692plg.7;
+        Mon, 02 May 2022 08:38:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=G3glF1N1lkKRH3me6ZqnttV9WJnWFWFCivroWGr8uPw=;
+        b=jnlfZk0MfWr19qnX7NNM7gjFbPrAaWIfsyMT/a2rh5ffB/v2pJfbjyvAq97gGIe7rG
+         uTUMZLa+nH4Wi+FN1pN2qcbvqHIR7otQfoQlalMkw87IR+nh4GjHlRC2yY+aj07x7Zne
+         zGxtELORRMhqCmhbzrZiK6h4L9mSjjEbD0e/BNWv1R3qQVzAWwb6BmkzUoGpIqPCgA0+
+         2ObdH2Pg4hawFfFic1Il4G3F/+ejKXGEvbg5eg2rTiwMZw7T8927WOyZTHdoi9Cab9u+
+         ja/WP8lvKP5PRcbOA34iZHYDbBB8sQnBVMJ+5O9kafsYw33rMK6sYehTkd+7FNKb5q1e
+         OVZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=dD2Y3vOMl2tr/XEHZTE9aVU35/4IL1e3I9wJvGZpl2M=;
-        b=M7pYKdd2uedkmcrcRbthb/xGW+RthwBl0cryFQvRKbCrZVC8lWrGfvRsEha25wDRC3
-         4Lmqt9fJ9ahiPAmdnuX/x1Dyj/KLEE1O+dOXqJH4ru8imIVMBi/M9FTIfWbc4uX5JqAh
-         WOvSoNQgGAFlS2ljWLI+5yQnR7iwe2rEuXnrhD4AHe9iuU2HKnsYF/s6dm5J/EmUwF3f
-         /sAzN53emB7lfQl0Al5U2uR3IhNZFSEX9iZ0OabC58cez+z4CMS0RfdFRQROeq8ynptl
-         MJh/4h0ni+niJ7772p3blsHidKhzwjjpoaRZyG+16m0MoBOJ0D5SGmG4B5KNLRgGJFr5
-         CY9A==
-X-Gm-Message-State: AOAM531jqHDFcJYG+qJRW8Y3H7nXjJukhF0hC/bt8BmxXDe9oEId7KC6
-        WkWMvg+QYDNl4YxEmtOiJhVqbGCBJw==
-X-Google-Smtp-Source: ABdhPJwlvrfdTgjaRkOgo9CjTot/4UQsJOPWIqMwz3jzRpOIldIk7cbmsTcBnhJhaUqFMsfxE8sRng==
-X-Received: by 2002:a05:6870:e9a0:b0:e6:9d2:ff42 with SMTP id r32-20020a056870e9a000b000e609d2ff42mr5126607oao.7.1651505614677;
-        Mon, 02 May 2022 08:33:34 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id r4-20020a056830120400b0060603221240sm2950294otp.16.2022.05.02.08.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 May 2022 08:33:34 -0700 (PDT)
-Received: (nullmailer pid 1161773 invoked by uid 1000);
-        Mon, 02 May 2022 15:33:29 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        kernel@collabora.com, Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-In-Reply-To: <20220429211111.2214119-2-nfraprado@collabora.com>
-References: <20220429211111.2214119-1-nfraprado@collabora.com> <20220429211111.2214119-2-nfraprado@collabora.com>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: mediatek: Fix optional reg-names for mtk,scp
-Date:   Mon, 02 May 2022 10:33:29 -0500
-Message-Id: <1651505609.475123.1161772.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=G3glF1N1lkKRH3me6ZqnttV9WJnWFWFCivroWGr8uPw=;
+        b=ggQ+BhhSpV7UcC/hLOGkUd+P217e3yvV6Pckp1U7EPJAAEaK02b/iLypEy5a7Lk8Rs
+         lWbYG+0ZVqNhkAdOHoRWbb9Q4rFdBbJRwdCmx1383r/kjg8UOemym4nCVMVynN2BOg68
+         1JO2ncOl/vfQMTut9czrWmawF5Bbs1hlGOVQlWcz1nUClE+W9MDTGBkBMG3rsd9cML59
+         CfxfDdf/CPakR+GWhbypk9Zh/6zIkSbLrVzxJVkbXE42N3eC4mJWi5FGXENJHuxEgO9C
+         8VTmiDAjrXA0GoJf6v7ko2ZzGE3krmM9dyN6N1BWdkmE9c3gIiLrxJrlk8or+7a8B80h
+         MMtw==
+X-Gm-Message-State: AOAM5315idI4miIGDjidt8gZQmm5F+8zr/gsP0sudzNpnOJJGNibBD9r
+        FliLNIsCbzZ9uQQkFIHHNy4=
+X-Google-Smtp-Source: ABdhPJz2mcdlrFcmvMvPOd4zB8ruKzEKevBlh0oNjAFvQiI4OOjKtV9AXzvbEK94SOMfNeMR9xysnA==
+X-Received: by 2002:a17:903:230f:b0:15e:6e55:3230 with SMTP id d15-20020a170903230f00b0015e6e553230mr12264443plh.35.1651505887371;
+        Mon, 02 May 2022 08:38:07 -0700 (PDT)
+Received: from [192.168.1.3] (ip72-194-116-95.oc.oc.cox.net. [72.194.116.95])
+        by smtp.gmail.com with ESMTPSA id ba1-20020a170902720100b0015e8d4eb1e6sm4806927plb.48.2022.05.02.08.38.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 May 2022 08:38:06 -0700 (PDT)
+Message-ID: <eaf3a893-00dd-8717-202e-911b395670e1@gmail.com>
+Date:   Mon, 2 May 2022 08:38:02 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 15/30] bus: brcmstb_gisb: Clean-up panic/die notifiers
+Content-Language: en-US
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
+        kexec@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Brian Norris <computersforpeace@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-16-gpiccoli@igalia.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20220427224924.592546-16-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 29 Apr 2022 17:11:09 -0400, Nícolas F. R. A. Prado wrote:
-> The SCP has three memory regions: sram, l1tcm and cfg. Only sram is
-> required, the other two are optional. Fix the dt-binding so that the
-> optional regions can be omitted and passed in any order.
+
+
+On 4/27/2022 3:49 PM, Guilherme G. Piccoli wrote:
+> This patch improves the panic/die notifiers in this driver by
+> making use of a passed "id" instead of comparing pointer
+> address; also, it removes an useless prototype declaration
+> and unnecessary header inclusion.
 > 
-> Also add the missing minItems to the reg property and update the
-> description.
+> This is part of a panic notifiers refactor - this notifier in
+> the future will be moved to a new list, that encompass the
+> information notifiers only.
 > 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
-> ---
-> 
->  .../devicetree/bindings/remoteproc/mtk,scp.yaml      | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
+> Fixes: 9eb60880d9a9 ("bus: brcmstb_gisb: add notifier handling")
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
-
-Full log is available here: https://patchwork.ozlabs.org/patch/
-
-
-scp@10500000: interrupts: [[0, 174, 4]] is not of type 'object'
-	arch/arm64/boot/dts/mediatek/mt8183-evb.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper-sku16.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kappa.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow-sku0.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow-sku1.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu-sku22.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku16.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku272.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku288.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku32.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-krane-sku0.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-krane-sku176.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dtb
-
-scp@10500000: memory-region: [[25]] is not of type 'object'
-	arch/arm64/boot/dts/mediatek/mt8183-evb.dtb
-
-scp@10500000: memory-region: [[27]] is not of type 'object'
-	arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dtb
-
-scp@10500000: memory-region: [[28]] is not of type 'object'
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-burnet.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cozmo.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-damu.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel14-sku2.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku1.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku6.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-fennel-sku7.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-juniper-sku16.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kappa.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-kenzo.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow-sku0.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-willow-sku1.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu-sku22.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku16.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku272.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku288.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-kodama-sku32.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-krane-sku0.dtb
-	arch/arm64/boot/dts/mediatek/mt8183-kukui-krane-sku176.dtb
-
+Not sure if the Fixes tag is warranted however as this is a clean up, 
+and not really fixing a bug.
+-- 
+Florian
