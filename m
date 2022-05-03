@@ -2,48 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A474C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 May 2022 14:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECE2C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 May 2022 14:18:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236888AbiECOUT (ORCPT
+        id S236871AbiECOWN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 May 2022 10:20:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        Tue, 3 May 2022 10:22:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236912AbiECOUS (ORCPT
+        with ESMTP id S235673AbiECOWM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 May 2022 10:20:18 -0400
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE5722B10;
-        Tue,  3 May 2022 07:16:44 -0700 (PDT)
-Received: by mail-oi1-f171.google.com with SMTP id a10so18275815oif.9;
-        Tue, 03 May 2022 07:16:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ovnSXO2ai7NY/FkSGEqe8YZBBuc5/87pe4zQahwdIPY=;
-        b=p4Vahkv6oY5JJXJ+Y3VZwM7dj+TOnB31HWeso0YD3eQDLfRjYTWhKmVnGFZiuJ5zaQ
-         BTyM3DpSjs8kp8qaI1xNaEMihYGnpG6+fwWkIoj78pAdPM8lwyuFddWFU0uSssfLrmII
-         8E8n6Sfj70X1G4zeD4MeYBRh/cnHcGXl588SchMJvD/6+DaNvdAm8RuPC42toxHykxMt
-         IoFP2DyEoT7aDqRngoUiPeKBKpAjTHi7+5nJ4Q4OV9hfE3IBLxoU4fyGROVops3a9WJX
-         mU49iyq3VwTTMybFHJLS2hhqs7o1z6jElAynLMiaUUThjP2qVEMgalvo/iyL8nyInjtf
-         amtQ==
-X-Gm-Message-State: AOAM5321ohh8sdg9k+85ed+S0U1UFgpm26wYJ8SyOLH1ss6F+1k/741R
-        2a2UOlGCx86/LXxkRFrvNbxfdCMrcw==
-X-Google-Smtp-Source: ABdhPJzzZUL47cd3wp/QQrD1PTtAZ/Rx3sEuLc36LxZ460xFml881B1M+erBIePNQvzpcbDCmo/R3w==
-X-Received: by 2002:aca:da83:0:b0:325:432a:b45c with SMTP id r125-20020acada83000000b00325432ab45cmr1993812oig.11.1651587404241;
-        Tue, 03 May 2022 07:16:44 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id 13-20020aca0d0d000000b00325d7b6cab8sm3013442oin.16.2022.05.03.07.16.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 07:16:43 -0700 (PDT)
-Received: (nullmailer pid 3572067 invoked by uid 1000);
-        Tue, 03 May 2022 14:16:42 -0000
-Date:   Tue, 3 May 2022 09:16:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado 
+        Tue, 3 May 2022 10:22:12 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF63B24945;
+        Tue,  3 May 2022 07:18:40 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: kholk11)
+        with ESMTPSA id D4B381F43BCC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1651587519;
+        bh=tdv2h2YB7zXn+XefewHbbfpKCqa1mzg1E2iD1t5Fl0Q=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=W/X2MZsTr5pSE6d87lpmbCbBlJC9AMs64S21CzIf3kd2N/0cR07RkdqQ8c1rOjCr7
+         GWa59KAOqnXJRQOUvDSwkMRr0s9D0TbhacQJjMQZSjy3ZYz9mVtrMgJ3eKGF58mWDS
+         ygmQz1eLM80QUkZxErkCqhtwBMTSROdyODJzCbCvpii961xIzSelnbE1kwTU+JGQGX
+         YPeTiHtz20KhkJLlact+A2AOMpJQzL4IVMq/vP9+7KCyvBwkq5WVeFI8/SoaRndo0k
+         xjnl7B9fvC0D57pMzgYrphqtVwRhtz8RfFmXdXjnCib9wEFKQCU0xzhu62pMJgkVzq
+         Xitg5vdLU9OZw==
+Message-ID: <9a6ad743-b8c8-9ac1-824e-63295d03498a@collabora.com>
+Date:   Tue, 3 May 2022 16:18:36 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v2 2/2] dt-bindings: remoteproc: mediatek: Add optional
+ memory-region to mtk,scp
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
         <nfraprado@collabora.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-mediatek@lists.infradead.org,
@@ -54,39 +49,39 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-remoteproc@vger.kernel.org,
         Tinghan Shen <tinghan.shen@mediatek.com>, kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: remoteproc: mediatek: Add optional
- memory-region to mtk,scp
-Message-ID: <YnE5Sq8H6juQHpbM@robh.at.kernel.org>
 References: <20220502192420.2548512-1-nfraprado@collabora.com>
  <20220502192420.2548512-3-nfraprado@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+ <YnE5Sq8H6juQHpbM@robh.at.kernel.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <YnE5Sq8H6juQHpbM@robh.at.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220502192420.2548512-3-nfraprado@collabora.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 02 May 2022 15:24:20 -0400, Nícolas F. R. A. Prado wrote:
-> The SCP co-processor can optionally be passed a reserved memory region
-> to use. Add this property in the dt-binding.
+Il 03/05/22 16:16, Rob Herring ha scritto:
+> On Mon, 02 May 2022 15:24:20 -0400, NÃ­colas F. R. A. Prado wrote:
+>> The SCP co-processor can optionally be passed a reserved memory region
+>> to use. Add this property in the dt-binding.
+>>
+>> Signed-off-by: NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
+>>
+>> ---
+>> I left out Angelo's R-b since of the 3 lines in the patch from v1, only
+>> 1 is left.
+>>
+>> Changes in v2:
+>> - Dropped type and description since it's a well-known property
+>> - Set maxItems to 1
+>>
+>>   Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
 > 
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
-> ---
-> I left out Angelo's R-b since of the 3 lines in the patch from v1, only
-> 1 is left.
-> 
-> Changes in v2:
-> - Dropped type and description since it's a well-known property
-> - Set maxItems to 1
-> 
->  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+> Acked-by: Rob Herring <robh@kernel.org>
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
