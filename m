@@ -2,127 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17897C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 May 2022 12:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A474C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 May 2022 14:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235260AbiECMaB (ORCPT
+        id S236888AbiECOUT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 May 2022 08:30:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41314 "EHLO
+        Tue, 3 May 2022 10:20:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234078AbiECMaA (ORCPT
+        with ESMTP id S236912AbiECOUS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 May 2022 08:30:00 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4FD36E3C;
-        Tue,  3 May 2022 05:26:28 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: kholk11)
-        with ESMTPSA id 917831F441C3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651580779;
-        bh=LlBmjlHQSS35SPjCWj3dgSTZw3msR7REos5gfSK3Ax4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=PkOtHZLorH/YOUjW9gqgLkQUauN4xvNqLdgUWSJ9SQdywZy/6df1mU500jZoYGG7e
-         KWnMdgSZ+lwUMfVn+eWt/o7ztBSpNIO4yRiskjKgtKRpuqu1tCVCfpKE07ztDkXutw
-         sAHYPgIA84KFaDD4KAW62ToiVORvcjtAC/Pgs9FFFVV/culsbUX+8Rhx6z9vHe3Nmx
-         5YF7/L7wfKuEQGn742MYzKXe/MKmV4MXIBIMQl5R+gIZCGdEy+BdpZgevj732oEUdS
-         /ravPbw/cVWQnX6RRdu9OzUfRukuaGNkSeTXEm33+ZrPqL4T05yme0tyeJ6xlFhK9v
-         GWvKLIr0i0PrA==
-Message-ID: <4bf2343b-3760-6ebf-7463-0b25fe9d942e@collabora.com>
-Date:   Tue, 3 May 2022 14:26:15 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: mediatek: Fix optional
- reg-names for mtk,scp
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     kernel@collabora.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Tue, 3 May 2022 10:20:18 -0400
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE5722B10;
+        Tue,  3 May 2022 07:16:44 -0700 (PDT)
+Received: by mail-oi1-f171.google.com with SMTP id a10so18275815oif.9;
+        Tue, 03 May 2022 07:16:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=ovnSXO2ai7NY/FkSGEqe8YZBBuc5/87pe4zQahwdIPY=;
+        b=p4Vahkv6oY5JJXJ+Y3VZwM7dj+TOnB31HWeso0YD3eQDLfRjYTWhKmVnGFZiuJ5zaQ
+         BTyM3DpSjs8kp8qaI1xNaEMihYGnpG6+fwWkIoj78pAdPM8lwyuFddWFU0uSssfLrmII
+         8E8n6Sfj70X1G4zeD4MeYBRh/cnHcGXl588SchMJvD/6+DaNvdAm8RuPC42toxHykxMt
+         IoFP2DyEoT7aDqRngoUiPeKBKpAjTHi7+5nJ4Q4OV9hfE3IBLxoU4fyGROVops3a9WJX
+         mU49iyq3VwTTMybFHJLS2hhqs7o1z6jElAynLMiaUUThjP2qVEMgalvo/iyL8nyInjtf
+         amtQ==
+X-Gm-Message-State: AOAM5321ohh8sdg9k+85ed+S0U1UFgpm26wYJ8SyOLH1ss6F+1k/741R
+        2a2UOlGCx86/LXxkRFrvNbxfdCMrcw==
+X-Google-Smtp-Source: ABdhPJzzZUL47cd3wp/QQrD1PTtAZ/Rx3sEuLc36LxZ460xFml881B1M+erBIePNQvzpcbDCmo/R3w==
+X-Received: by 2002:aca:da83:0:b0:325:432a:b45c with SMTP id r125-20020acada83000000b00325432ab45cmr1993812oig.11.1651587404241;
+        Tue, 03 May 2022 07:16:44 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id 13-20020aca0d0d000000b00325d7b6cab8sm3013442oin.16.2022.05.03.07.16.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 May 2022 07:16:43 -0700 (PDT)
+Received: (nullmailer pid 3572067 invoked by uid 1000);
+        Tue, 03 May 2022 14:16:42 -0000
+Date:   Tue, 3 May 2022 09:16:42 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado 
+        <nfraprado@collabora.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-References: <20220429211111.2214119-1-nfraprado@collabora.com>
- <20220429211111.2214119-2-nfraprado@collabora.com>
- <a95fc4a9-af6b-e2c2-ef41-df9742d393de@linaro.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <a95fc4a9-af6b-e2c2-ef41-df9742d393de@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Tinghan Shen <tinghan.shen@mediatek.com>, kernel@collabora.com,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH v2 2/2] dt-bindings: remoteproc: mediatek: Add optional
+ memory-region to mtk,scp
+Message-ID: <YnE5Sq8H6juQHpbM@robh.at.kernel.org>
+References: <20220502192420.2548512-1-nfraprado@collabora.com>
+ <20220502192420.2548512-3-nfraprado@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220502192420.2548512-3-nfraprado@collabora.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 03/05/22 14:19, Krzysztof Kozlowski ha scritto:
-> On 29/04/2022 23:11, NÃ­colas F. R. A. Prado wrote:
->> The SCP has three memory regions: sram, l1tcm and cfg. Only sram is
->> required, the other two are optional. Fix the dt-binding so that the
->> optional regions can be omitted and passed in any order.
+On Mon, 02 May 2022 15:24:20 -0400, Nícolas F. R. A. Prado wrote:
+> The SCP co-processor can optionally be passed a reserved memory region
+> to use. Add this property in the dt-binding.
 > 
-> No, cannot be passed in any order.
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 > 
->>
->> Also add the missing minItems to the reg property and update the
->> description.
->>
->> Signed-off-by: NÃ­colas F. R. A. Prado <nfraprado@collabora.com>
->>
->> ---
->>
->>   .../devicetree/bindings/remoteproc/mtk,scp.yaml      | 12 +++++++++---
->>   1 file changed, 9 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
->> index 823a236242de..ec9ddeb6ca2c 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
->> @@ -24,14 +24,20 @@ properties:
->>     reg:
->>       description:
->>         Should contain the address ranges for memory regions SRAM, CFG, and
->> -      L1TCM.
->> +      L1TCM. Only SRAM is required, while CFG and L1TCM are optional.
->> +    minItems: 1
->>       maxItems: 3
->>   
->>     reg-names:
->> +    minItems: 1
->>       items:
->>         - const: sram
->> -      - const: cfg
->> -      - const: l1tcm
->> +      - enum:
->> +          - l1tcm
->> +          - cfg
->> +      - enum:
->> +          - l1tcm
->> +          - cfg
+> ---
+> I left out Angelo's R-b since of the 3 lines in the patch from v1, only
+> 1 is left.
 > 
-> This allows them in any combination which is not what we want. If both
-> are optional and both can appear, then last should be a const:l1tcm.
+> Changes in v2:
+> - Dropped type and description since it's a well-known property
+> - Set maxItems to 1
 > 
-> Best regards,
-> Krzysztof
+>  Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Nicolas, I think that you weren't clear about what you're trying to solve with this
-commit in the description.
-
-I remember you had this kind of instance, but I don't really remember if it was
-about mtk,scp or (and?) something else.... so.... are you trying to fix issues
-with devicetrees declaring
-
-	reg-names = "sram", "l1tcm"; ?
-
-Was this giving dtbs_check errors?
-
-Cheers,
-Angelo
+Acked-by: Rob Herring <robh@kernel.org>
