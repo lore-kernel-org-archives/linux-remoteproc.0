@@ -2,33 +2,33 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C86C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 May 2022 21:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA93C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 May 2022 21:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242666AbiECVPC (ORCPT
+        id S242699AbiECVPQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 May 2022 17:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        Tue, 3 May 2022 17:15:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240189AbiECVPC (ORCPT
+        with ESMTP id S242672AbiECVPE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 May 2022 17:15:02 -0400
+        Tue, 3 May 2022 17:15:04 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D292F3B8;
-        Tue,  3 May 2022 14:11:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABC173A1B2;
+        Tue,  3 May 2022 14:11:30 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: nfraprado)
-        with ESMTPSA id 56AF01F417FD
+        with ESMTPSA id 23E1E1F41A29
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651612287;
-        bh=wTlOS8O93LdQ3MZ6Pc0zTUq7Pc+a0aYpZvVoWcRP7HY=;
+        s=mail; t=1651612289;
+        bh=mA7otPzGgHa0tglo/3X5LMpk0p4zRAjSBL46I5ES5B0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PzSazz1tK90Q9PV9UW17Y7+FKQeT43UIJllNJzWKH28JQXxB3qTDrJA25wkDRYJVa
-         7BvGRuBU6nsidwYJ34eUmqTm4xn96Zszvt6v4qSaLn7YCrzzua8YDIlHsA08NI2fLv
-         sPUK2hKb9ofGOHQIhH3bvXF2j4kmXdgZs6no/FLLhA+WiC0dQCN1ULHQf42UjOLfTo
-         jk9dJ24cr4gJC8rVz1KVBHsXoE3IMidBLhmTCy3YqyQz4Lw5tRb2c4uzXwgHe+ZN1J
-         fX5k98xqZy/XPWuUhpWRnHcHF87r67Awf6Yz9/oYiQRo/WR1gS8oFcTetYQDsNkLry
-         rJPHKNqs4cjPg==
+        b=g4oVUtAJqNan5Xqyyf1UK2A5CbBf5KW9gGiTSWJKhPqQMA+NgjhhTeh6/DoS/YoPN
+         cGV/azRfLY1xCcx0YckY2n0Ct/I+ea0LO01IoUoLHTaNXSSMFa0JKBDmD0z+XhvTy1
+         WXscXMtcZHcozEVqQ3zU0g0m5QATlaTKFqqFEEnUnb8lTJamgdMA+yVbixowSjrvOL
+         f4oXfcG8CHzqYKB5biOUAyLq1i6Dtu32dMmcnfTdTPXk1BGp/FebsXgSHH+tZPeh8v
+         4gtRoKkR7QMuJ3pGq8QauUwFIeBVbeRisIjA8dnJmmPQc8PkUfuNIke3bYpcspL0EB
+         HZKIVmoLR5qpg==
 From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
         <nfraprado@collabora.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
@@ -44,9 +44,9 @@ Cc:     AngeloGioacchino Del Regno
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-remoteproc@vger.kernel.org
-Subject: [PATCH v3 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg optional for mtk,scp
-Date:   Tue,  3 May 2022 17:11:13 -0400
-Message-Id: <20220503211114.2656099-2-nfraprado@collabora.com>
+Subject: [PATCH v3 2/2] dt-bindings: remoteproc: mediatek: Add optional memory-region to mtk,scp
+Date:   Tue,  3 May 2022 17:11:14 -0400
+Message-Id: <20220503211114.2656099-3-nfraprado@collabora.com>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20220503211114.2656099-1-nfraprado@collabora.com>
 References: <20220503211114.2656099-1-nfraprado@collabora.com>
@@ -57,44 +57,38 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The SCP has three memory regions: sram, cfg and l1tcm. While the first
-two are required, l1tcm is optional. Fix the dt-binding so that it can
-be omitted and update the description. This gets rid of dtbs_check
-warnings for devicetrees where the l1tcm reg is missing like mt8183.
+The SCP co-processor can optionally be passed a reserved memory region
+to use. Add this property in the dt-binding.
 
 Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Rob Herring <robh@kernel.org>
 
 ---
 
-Changes in v3:
-- Made the cfg reg required again. After looking again into the mtk-scp
-  driver, only l1tcm is optional.
-- Added mention that a dtbs_check warning gets fixed by patch in commit
-  message.
+(no changes since v2)
 
- Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Changes in v2:
+- Dropped type and description since it's a well-known property
+- Set maxItems to 1
+
+ Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index 823a236242de..eeea84379a1e 100644
+index eeea84379a1e..395c80bce713 100644
 --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
 +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -23,11 +23,13 @@ properties:
+@@ -47,6 +47,9 @@ properties:
+   interrupts:
+     maxItems: 1
  
-   reg:
-     description:
--      Should contain the address ranges for memory regions SRAM, CFG, and
--      L1TCM.
-+      Should contain the address ranges for memory regions SRAM, CFG, and,
-+      optionally, L1TCM.
-+    minItems: 2
-     maxItems: 3
- 
-   reg-names:
-+    minItems: 2
-     items:
-       - const: sram
-       - const: cfg
++  memory-region:
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
 -- 
 2.36.0
 
