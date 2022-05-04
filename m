@@ -2,129 +2,150 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35208C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 May 2022 09:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D26C43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 May 2022 12:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244177AbiEDJqC (ORCPT
+        id S1349953AbiEDMuK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 May 2022 05:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54098 "EHLO
+        Wed, 4 May 2022 08:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238227AbiEDJp7 (ORCPT
+        with ESMTP id S235732AbiEDMuI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 May 2022 05:45:59 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40CAE26AC8;
-        Wed,  4 May 2022 02:42:22 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2446C7E6018201;
-        Wed, 4 May 2022 11:42:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=RSjmW4IjUGZ/bQ/two1rZ1aHlJIVLGx+97yQ1s1zd4A=;
- b=JkwE7esC89R64iqYz9q+1Wyv3tHA6csHuhH/W/gaRAX4Y4FkcHsPpLsJVGsDP/PlPKM/
- x9vw1JMYyrXVDV9S09ff5LYhUicrDOW6+K3cQBxgnbSDZpclUUCtS6E95K2nqCMsB8kd
- oNhtKpfAN/o5Pz+bvMomqiEq914ff0Xua2ygEjgPbfRo+1CyZG3pZ4at1lwo4bkwQriP
- BuDMchsW0nD6qgsqFBdJtBTjBQJ+Lv1NohNy40Mqirl3ETJko6qrt3ga/eYgSSQO3OaU
- GdZVkGDZQSk+PB7VCzWl7HFBGv759H0xXjPQF+KSRf3wmloGoyd1RP0xLJXbXUy5q15a rg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3frthjubws-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 May 2022 11:42:00 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 28C9610002A;
-        Wed,  4 May 2022 11:41:58 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 114BE216EE0;
-        Wed,  4 May 2022 11:41:58 +0200 (CEST)
-Received: from localhost (10.75.127.45) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Wed, 4 May 2022 11:41:57
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] dt-bindings: remoteproc: Fix phandle-array parameters description
-Date:   Wed, 4 May 2022 11:41:43 +0200
-Message-ID: <20220504094143.1272200-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.24.3
+        Wed, 4 May 2022 08:50:08 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447452CE37;
+        Wed,  4 May 2022 05:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UDxTzr/LbFPHIhZF1U36kLmGFtpbBGYhm6tD7CfQBjM=; b=KDrxDW8Mnr1qToRh0yGaDv25Fu
+        TWpgQRScRF3dRjjU3pakegMZLqUHmycIdjATA6DbY60uPfya2zQOAwJ0e5erFJc5BJn7o3eV3sQ41
+        Tox4yunn4/jA8a3IjyUJT/sI3KcoYtb2p2FNUwcMM3f1g/ex9W0DrY0odKixjZjudGtrtbA3G1JPw
+        m7Nny7DVsQFLh+HpvU/q7Yc8/k1hRGwJeSWIAUBYmqnc5ZdThCMVxiKgVNOsyAMWZdrNHmIgXn40c
+        w6AF2HzVr+D+OvvIusg4XzuOUWHoF2AYp44ZOOo2CAb1BDljEp1qf8qc23J8WoJ9sqhtbxFJxmFVB
+        8aeUFBag==;
+Received: from [179.113.53.197] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nmEOH-0003Ke-Oi; Wed, 04 May 2022 14:46:02 +0200
+Message-ID: <9581851d-6c61-a2ef-a3c4-6e2ce05eab12@igalia.com>
+Date:   Wed, 4 May 2022 09:45:31 -0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-04_03,2022-05-02_03,2022-02-23_01
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 04/30] firmware: google: Convert regular spinlock into
+ trylock on panic path
+Content-Language: en-US
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        pmladek@suse.com, kexec@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de,
+        Kees Cook <keescook@chromium.org>, luto@kernel.org,
+        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
+        peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
+        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Julius Werner <jwerner@chromium.org>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-5-gpiccoli@igalia.com>
+ <CAE=gft5Pq25L4KFoPWbftkPF-JN1ex2yws77mMJ4GQnn9W0L2g@mail.gmail.com>
+ <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com>
+ <CAE=gft623NxqetRssrZnaRmJLSP4BT5=-sVVwtYoHuspO_gULQ@mail.gmail.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <CAE=gft623NxqetRssrZnaRmJLSP4BT5=-sVVwtYoHuspO_gULQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Replace the FIXME by appropriate description.
+On 03/05/2022 18:56, Evan Green wrote:
+> Hi Guilherme,
+> [...] 
+>> Do you agree with that, or prefer really a parameter in
+>> gsmi_shutdown_reason() ? I'll follow your choice =)
+> 
+> I'm fine with either, thanks for the link. Mostly I want to make sure
+> other paths to gsmi_shutdown_reason() aren't also converted to a try.
 
-Fixes: 39bd2b6a3783 ("dt-bindings: Improve phandle-array schemas")
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- .../bindings/remoteproc/st,stm32-rproc.yaml      | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+Hi Evan, thanks for the prompt response! So, I'll proceed like I did in
+s390, for consistency.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index be3d9b0e876b..da50f0e99fe2 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -43,8 +43,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the trust zone setting register
-+          - description: The field mask of the trust zone state
- 
-   interrupts:
-     description: Should contain the WWDG1 watchdog reset interrupt
-@@ -101,8 +101,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the power setting register
-+          - description: The field mask of the PDDS selection
- 
-   st,syscfg-m4-state:
-     $ref: "/schemas/types.yaml#/definitions/phandle-array"
-@@ -111,8 +111,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block with the tamp register
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the tamp register
-+          - description: The field mask of the Cortex-M4 state
- 
-   st,syscfg-rsc-tbl:
-     $ref: "/schemas/types.yaml#/definitions/phandle-array"
-@@ -122,8 +122,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block with the tamp register
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the tamp register
-+          - description: The field mask of the Cortex-M4 resource table address
- 
-   st,auto-boot:
-     $ref: /schemas/types.yaml#/definitions/flag
--- 
-2.24.3
+> [...]
+>> Reasoning: the problem with your example is that, by default, secondary
+>> CPUs are disabled in the panic path, through an IPI mechanism. IPIs take
+>> precedence and interrupt the work in these CPUs, effectively
+>> interrupting the "polite work" with the lock held heh
+> 
+> The IPI can only interrupt a CPU with irqs disabled if the IPI is an
+> NMI. I haven't looked before to see if we use NMI IPIs to corral the
+> other CPUs on panic. On x86, I grepped my way down to
+> native_stop_other_cpus(), which looks like it does a normal IPI, waits
+> 1 second, then does an NMI IPI. So, if a secondary CPU has the lock
+> held, on x86 it has roughly 1s to finish what it's doing and re-enable
+> interrupts before smp_send_stop() brings the NMI hammer down. I think
+> this should be more than enough time for the secondary CPU to get out
+> and release the lock.
+> 
+> So then it makes sense to me that you're fixing cases where we
+> panicked with the lock held, or hung with the lock held. Given the 1
+> second grace period x86 gives us, I'm on board, as that helps mitigate
+> the risk that we bailed out early with the try and should have spun a
+> bit longer instead. Thanks.
+> 
+> -Evan
 
+Well, in the old path without "crash_kexec_post_notifiers", we indeed
+end-up relying on native_stop_other_cpus() for x86 as you said, and the
+"1s rule" makes sense. But after this series (or even before, if the
+kernel parameter "crash_kexec_post_notifiers" was used) the function
+used to stop CPUs in the panic path is crash_smp_send_stop(), and the
+call chain is like:
+
+Main CPU:
+crash_smp_send_stop()
+--kdump_nmi_shootdown_cpus()
+----nmi_shootdown_cpus()
+
+Then, in each CPU (except the main one, running panic() path),
+we execute kdump_nmi_callback() in NMI context.
+
+So, we seem to indeed interrupt any context (even with IRQs disabled),
+increasing the likelihood of the potential lockups due to stopped CPUs
+holding the locks heheh
+
+Thanks again for the good discussion, let me know if anything I'm saying
+doesn't make sense - this crash path is a bit convoluted, specially in
+x86, I might have understood something wrongly =)
+Cheers,
+
+
+Guilherme
