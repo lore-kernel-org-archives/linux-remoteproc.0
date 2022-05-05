@@ -2,99 +2,125 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06651C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 May 2022 11:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF424C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 May 2022 17:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357822AbiEELls (ORCPT
+        id S236967AbiEERpY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 5 May 2022 07:41:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44362 "EHLO
+        Thu, 5 May 2022 13:45:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350382AbiEELlr (ORCPT
+        with ESMTP id S236080AbiEERpY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 May 2022 07:41:47 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C334535849;
-        Thu,  5 May 2022 04:38:07 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2458OXkn015790;
-        Thu, 5 May 2022 13:37:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=nah7mSDbtSwqT6AwNkM/s3+n1ALTH54pR+JyiLo0OUA=;
- b=jW6cEH7ZRj/XQEGpAAz73I8QIYZM9G9joxCDuohfazgHejixWyuRIUuZgn47sylctAkV
- 7kmgCflxJWiiVWw8n3C1rTp2LU3VOzlim7pci54gfZ8EOcqDWAM75P2ySWmxcXSMXkZV
- p1BZQPlHFIGOrVrN0Idc1RynTfjSDp4Nq7JcPdwanmiXDJltCc2XY7wZ8O6qLh6CuDV8
- g4ZxBuNS9PSaC7oNFJNIOnvZ7k8aXTrwktIGp/zXbN29dRizirEFxaJjbaNrHgjMuwZS
- u6jkeH6HxaFO7Ticfsc2wG04W3ILXceTCivxcED9whTCujVNSdWQyUO7lmibfm/iSKL7 1Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3frvf0sswk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 May 2022 13:37:54 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D6A4F100034;
-        Thu,  5 May 2022 13:37:39 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CFF1D21A23F;
-        Thu,  5 May 2022 13:37:39 +0200 (CEST)
-Received: from [10.211.10.105] (10.75.127.48) by SFHDAG2NODE2.st.com
- (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 5 May
- 2022 13:37:39 +0200
-Message-ID: <44356f74-5ab9-5cb9-ae76-6495803d845e@foss.st.com>
-Date:   Thu, 5 May 2022 13:37:38 +0200
+        Thu, 5 May 2022 13:45:24 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB5E64C8;
+        Thu,  5 May 2022 10:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1651772504; x=1683308504;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=ScniDQeyViqXsNKboACYzMfjH1l8ZsslcEthdej/xUg=;
+  b=sTPpkUQaZ2E7O4Ps/P2lEtSl9Jf+5wD6pjeZfnSoBg1kiEeVB9NcaR8O
+   8C3Fdw8zPiySHPb6A6ShKObDm8UzZ2fBuXM4C0zd53VwT0VW4Zo4mkKMM
+   v0D6eXuVfEe56Da/1uYda4qDhKIo2UO1qoRvH+bc+CVLWfkZQBthKZseS
+   8=;
+Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
+  by alexa-out.qualcomm.com with ESMTP; 05 May 2022 10:41:44 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2022 10:41:44 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Thu, 5 May 2022 10:41:28 -0700
+Received: from hu-ylal-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Thu, 5 May 2022 10:41:25 -0700
+From:   Yogesh Lal <quic_ylal@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <quic_sibis@quicinc.com>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>
+Subject: [PATCH 1/2] remoteproc: core: Export the rproc coredump APIs
+Date:   Thu, 5 May 2022 23:11:13 +0530
+Message-ID: <1651772474-18197-1-git-send-email-quic_ylal@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH] dt-bindings: remoteproc: Fix phandle-array parameters
- description
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20220504094143.1272200-1-arnaud.pouliquen@foss.st.com>
- <e0af5143-7fe1-fa68-25c0-eb81d695844a@linaro.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <e0af5143-7fe1-fa68-25c0-eb81d695844a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
- (10.75.127.5)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-05_04,2022-05-05_01,2022-02-23_01
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Siddharth Gupta <sidgup@codeaurora.org>
 
+The remoteproc coredump APIs are currently only part of the internal
+remoteproc header. This prevents the remoteproc platform drivers from
+using these APIs when needed. This change moves the rproc_coredump()
+and rproc_coredump_cleanup() APIs to the linux header and marks them
+as exported symbols.
 
-On 5/5/22 11:10, Krzysztof Kozlowski wrote:
-> On 04/05/2022 11:41, Arnaud Pouliquen wrote:
->> Replace the FIXME by appropriate description.
->>
->> Fixes: 39bd2b6a3783 ("dt-bindings: Improve phandle-array schemas")
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->>  .../bindings/remoteproc/st,stm32-rproc.yaml      | 16 ++++++++--------
-> 
-> Please add "st,stm32-rproc" as last prefix in the subject. With that:
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
+---
+ drivers/remoteproc/remoteproc_coredump.c | 2 ++
+ drivers/remoteproc/remoteproc_internal.h | 4 ----
+ include/linux/remoteproc.h               | 4 ++++
+ 3 files changed, 6 insertions(+), 4 deletions(-)
 
-Done in a V2,
-Thanks
-Arnaud
+diff --git a/drivers/remoteproc/remoteproc_coredump.c b/drivers/remoteproc/remoteproc_coredump.c
+index aee657c..aa45b68 100644
+--- a/drivers/remoteproc/remoteproc_coredump.c
++++ b/drivers/remoteproc/remoteproc_coredump.c
+@@ -32,6 +32,7 @@ void rproc_coredump_cleanup(struct rproc *rproc)
+ 		kfree(entry);
+ 	}
+ }
++EXPORT_SYMBOL(rproc_coredump_cleanup);
+ 
+ /**
+  * rproc_coredump_add_segment() - add segment of device memory to coredump
+@@ -327,6 +328,7 @@ void rproc_coredump(struct rproc *rproc)
+ 	 */
+ 	wait_for_completion(&dump_state.dump_done);
+ }
++EXPORT_SYMBOL(rproc_coredump);
+ 
+ /**
+  * rproc_coredump_using_sections() - perform coredump using section headers
+diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+index a328e63..a492a41 100644
+--- a/drivers/remoteproc/remoteproc_internal.h
++++ b/drivers/remoteproc/remoteproc_internal.h
+@@ -49,10 +49,6 @@ extern struct class rproc_class;
+ int rproc_init_sysfs(void);
+ void rproc_exit_sysfs(void);
+ 
+-/* from remoteproc_coredump.c */
+-void rproc_coredump_cleanup(struct rproc *rproc);
+-void rproc_coredump(struct rproc *rproc);
+-
+ #ifdef CONFIG_REMOTEPROC_CDEV
+ void rproc_init_cdev(void);
+ void rproc_exit_cdev(void);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 83c09ac..b8c8c3a 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -673,6 +673,10 @@ void rproc_shutdown(struct rproc *rproc);
+ int rproc_detach(struct rproc *rproc);
+ int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
+ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
++
++/* from remoteproc_coredump.c */
++void rproc_coredump_cleanup(struct rproc *rproc);
++void rproc_coredump(struct rproc *rproc);
+ void rproc_coredump_using_sections(struct rproc *rproc);
+ int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
+ int rproc_coredump_add_custom_segment(struct rproc *rproc,
+-- 
+2.7.4
 
-> 
-> Best regards,
-> Krzysztof
