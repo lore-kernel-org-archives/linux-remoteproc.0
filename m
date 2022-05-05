@@ -2,47 +2,55 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12325C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 May 2022 11:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06651C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 May 2022 11:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357923AbiEELk7 (ORCPT
+        id S1357822AbiEELls (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 5 May 2022 07:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43842 "EHLO
+        Thu, 5 May 2022 07:41:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357822AbiEELkw (ORCPT
+        with ESMTP id S1350382AbiEELlr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 May 2022 07:40:52 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D9C53E04;
-        Thu,  5 May 2022 04:37:12 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2458mitx001510;
-        Thu, 5 May 2022 13:36:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=Gbmbcgct1Jm9JW83im3dnwN0LJApetjGCItrRiQ0NAQ=;
- b=DrZPztefIEMJn64835cOx3zys4xlhvm1siVkaDy7frxYasu4meM1GrK11Lv3nUImHZyF
- ZwZuu2xr4fyrNLCJtM4hd2YvBWfyPLeqfsKte+QSfStJWZNt6IkZpJS7fvDWfnZ8d211
- M8Jv9KM0HzOUDHhT/oRMn3fnjqpstGy7nTJWshxqjzreKdbRO5iE1lB57XA/wAII7WbA
- 4Nc7X0ycHne1q1WPwU0VGlxV7me6N+I4Xuhkz6tzFmELiAyAAKebdCjTyjOgW2wsGKU4
- Qr4JnMVBgXVgzPVvAaxEJMajhh8pcZ48lTlBE/sC/N4GLfzqnOr0YE/DAFb6bExz1HUC sA== 
+        Thu, 5 May 2022 07:41:47 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C334535849;
+        Thu,  5 May 2022 04:38:07 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2458OXkn015790;
+        Thu, 5 May 2022 13:37:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=nah7mSDbtSwqT6AwNkM/s3+n1ALTH54pR+JyiLo0OUA=;
+ b=jW6cEH7ZRj/XQEGpAAz73I8QIYZM9G9joxCDuohfazgHejixWyuRIUuZgn47sylctAkV
+ 7kmgCflxJWiiVWw8n3C1rTp2LU3VOzlim7pci54gfZ8EOcqDWAM75P2ySWmxcXSMXkZV
+ p1BZQPlHFIGOrVrN0Idc1RynTfjSDp4Nq7JcPdwanmiXDJltCc2XY7wZ8O6qLh6CuDV8
+ g4ZxBuNS9PSaC7oNFJNIOnvZ7k8aXTrwktIGp/zXbN29dRizirEFxaJjbaNrHgjMuwZS
+ u6jkeH6HxaFO7Ticfsc2wG04W3ILXceTCivxcED9whTCujVNSdWQyUO7lmibfm/iSKL7 1Q== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3frv0gk8mr-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3frvf0sswk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 May 2022 13:36:54 +0200
+        Thu, 05 May 2022 13:37:54 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 75F1010002A;
-        Thu,  5 May 2022 13:36:53 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D6A4F100034;
+        Thu,  5 May 2022 13:37:39 +0200 (CEST)
 Received: from Webmail-eu.st.com (sfhdag2node2.st.com [10.75.127.5])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6A7C721A23B;
-        Thu,  5 May 2022 13:36:53 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SFHDAG2NODE2.st.com (10.75.127.5)
- with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 5 May 2022 13:36:52
- +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CFF1D21A23F;
+        Thu,  5 May 2022 13:37:39 +0200 (CEST)
+Received: from [10.211.10.105] (10.75.127.48) by SFHDAG2NODE2.st.com
+ (10.75.127.5) with Microsoft SMTP Server (TLS) id 15.0.1497.26; Thu, 5 May
+ 2022 13:37:39 +0200
+Message-ID: <44356f74-5ab9-5cb9-ae76-6495803d845e@foss.st.com>
+Date:   Thu, 5 May 2022 13:37:38 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH] dt-bindings: remoteproc: Fix phandle-array parameters
+ description
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -50,17 +58,15 @@ To:     Rob Herring <robh+dt@kernel.org>,
 CC:     <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v2] dt-bindings: remoteproc: st,stm32-rproc: Fix phandle-array parameters description
-Date:   Thu, 5 May 2022 13:36:39 +0200
-Message-ID: <20220505113639.1344281-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG2NODE2.st.com
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20220504094143.1272200-1-arnaud.pouliquen@foss.st.com>
+ <e0af5143-7fe1-fa68-25c0-eb81d695844a@linaro.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <e0af5143-7fe1-fa68-25c0-eb81d695844a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG2NODE2.st.com
  (10.75.127.5)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
@@ -69,63 +75,26 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Replace the FIXME by appropriate description.
 
-Fixes: 39bd2b6a3783 ("dt-bindings: Improve phandle-array schemas")
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/remoteproc/st,stm32-rproc.yaml      | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index be3d9b0e876b..da50f0e99fe2 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -43,8 +43,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the trust zone setting register
-+          - description: The field mask of the trust zone state
- 
-   interrupts:
-     description: Should contain the WWDG1 watchdog reset interrupt
-@@ -101,8 +101,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the power setting register
-+          - description: The field mask of the PDDS selection
- 
-   st,syscfg-m4-state:
-     $ref: "/schemas/types.yaml#/definitions/phandle-array"
-@@ -111,8 +111,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block with the tamp register
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the tamp register
-+          - description: The field mask of the Cortex-M4 state
- 
-   st,syscfg-rsc-tbl:
-     $ref: "/schemas/types.yaml#/definitions/phandle-array"
-@@ -122,8 +122,8 @@ properties:
-     items:
-       - items:
-           - description: Phandle of syscon block with the tamp register
--          - description: FIXME
--          - description: FIXME
-+          - description: The offset of the tamp register
-+          - description: The field mask of the Cortex-M4 resource table address
- 
-   st,auto-boot:
-     $ref: /schemas/types.yaml#/definitions/flag
--- 
-2.25.1
+On 5/5/22 11:10, Krzysztof Kozlowski wrote:
+> On 04/05/2022 11:41, Arnaud Pouliquen wrote:
+>> Replace the FIXME by appropriate description.
+>>
+>> Fixes: 39bd2b6a3783 ("dt-bindings: Improve phandle-array schemas")
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  .../bindings/remoteproc/st,stm32-rproc.yaml      | 16 ++++++++--------
+> 
+> Please add "st,stm32-rproc" as last prefix in the subject. With that:
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
+Done in a V2,
+Thanks
+Arnaud
+
+> 
+> Best regards,
+> Krzysztof
