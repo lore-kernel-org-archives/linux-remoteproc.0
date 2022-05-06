@@ -2,93 +2,99 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453F0C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 May 2022 21:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E66C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 May 2022 22:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1444505AbiEFVgX (ORCPT
+        id S238396AbiEFWoe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 May 2022 17:36:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54564 "EHLO
+        Fri, 6 May 2022 18:44:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1444485AbiEFVgV (ORCPT
+        with ESMTP id S1380258AbiEFWo1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 May 2022 17:36:21 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E795DBEC;
-        Fri,  6 May 2022 14:32:37 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: nfraprado)
-        with ESMTPSA id ABEA51F46F19
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1651872756;
-        bh=7/ruMOw9euAiDMHjfy/tYPDDLSQ2ojwszbkys9iXdo8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cyOHKSKEm0Xl8bq7Ms0QZLOsaU/N6hUKUV6TpMGAReQ1A6WY6leaqWNUJfgviOnCf
-         OGPhAvVL2lmDWpsdiWjVz1H2p6ldfa6xpevW8ZbRn1mxDuZ94NLQAaOQPoBW5kr24W
-         JMAMXFneC5iwv/XgHH5+bM8WBp9BUnCbIkEtXoAkp0u7rtVpm0J1FIRG2Uu3dcDGEo
-         47l3VZSE78ZM+jmj3HORqEXuoP4c4P5vN/OTavCHPbTPxXq782c4mM6cDAs+nS7lxM
-         j7G/gtFGS0OMz4IQA2kjs/Mit4Za3N11h5GPJXSUIy4wj7lZ2rn/Bi/4MdreXeugE/
-         lRe86rpNYlZRA==
-From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
-        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH v4 2/2] dt-bindings: remoteproc: mediatek: Add optional memory-region to mtk,scp
-Date:   Fri,  6 May 2022 17:32:26 -0400
-Message-Id: <20220506213226.257859-3-nfraprado@collabora.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220506213226.257859-1-nfraprado@collabora.com>
-References: <20220506213226.257859-1-nfraprado@collabora.com>
+        Fri, 6 May 2022 18:44:27 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1443719012;
+        Fri,  6 May 2022 15:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651876842; x=1683412842;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gpR8WS924247ctuNc4WCcNsqtDd/VFN3XlYWLR4JePg=;
+  b=FmFGLwRtL3dlKXPdjdwhnY6qSRMehsJA3QVb3QDgbg6NBr0KfmmCT+Ov
+   Iq1Ig1A0r4LnawApx5SZjtVKvAu9HIi5xGdg2Gla/yHJK8b8S5DuYJHfF
+   nM4RhGjslVSO7HIpQVHGez6MSTPVMXfUIGspRxfbN7JvXihYa/IjEqk8W
+   bzotSet0daWC1QvgzGq8xfTa9Yfwrgo5MeLdBUsc/4dHVUFmKGP6Yx6m0
+   0VOXZbuIBcZsm3zd61clDRhRQFNC0PuyhIDgV3UHCWC49WztkFAMYea98
+   A1ajLoQGgRSbPyAdwan6QenZRRD5OBDgKewWfvPOXQ1P44Miw+EgRtTYe
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10339"; a="248499419"
+X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
+   d="scan'208";a="248499419"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 15:40:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
+   d="scan'208";a="622011041"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 06 May 2022 15:40:29 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nn6ce-000Dyx-Ri;
+        Fri, 06 May 2022 22:40:28 +0000
+Date:   Sat, 7 May 2022 06:40:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
+        arnd@arndb.de
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, sboyd@kernel.org, agross@kernel.org,
+        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
+        mka@chromium.org, Sibi Sankar <quic_sibis@quicinc.com>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: map/unmap metadata region
+ before/after use
+Message-ID: <202205070616.N8LRPhTW-lkp@intel.com>
+References: <1651845086-16535-1-git-send-email-quic_sibis@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1651845086-16535-1-git-send-email-quic_sibis@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The SCP co-processor can optionally be passed a reserved memory region
-to use. Add this property in the dt-binding.
+Hi Sibi,
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Thank you for the patch! Yet something to improve:
 
----
+[auto build test ERROR on remoteproc/rproc-next]
+[also build test ERROR on soc/for-next linux/master linus/master v5.18-rc5 next-20220506]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-(no changes since v2)
+url:    https://github.com/intel-lab-lkp/linux/commits/Sibi-Sankar/remoteproc-qcom_q6v5_mss-map-unmap-metadata-region-before-after-use/20220506-215346
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20220507/202205070616.N8LRPhTW-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/7a6766ecbb124cd4e41ae630420109330879239d
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sibi-Sankar/remoteproc-qcom_q6v5_mss-map-unmap-metadata-region-before-after-use/20220506-215346
+        git checkout 7a6766ecbb124cd4e41ae630420109330879239d
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash
 
-Changes in v2:
-- Dropped type and description since it's a well-known property
-- Set maxItems to 1
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
- Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index e1793a85e610..b0503146d7fe 100644
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -42,6 +42,9 @@ properties:
-   interrupts:
-     maxItems: 1
- 
-+  memory-region:
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
+>> ERROR: modpost: "dma_pgprot" [drivers/remoteproc/qcom_q6v5_mss.ko] undefined!
+
 -- 
-2.36.0
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
