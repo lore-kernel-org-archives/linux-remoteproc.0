@@ -2,102 +2,118 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C9FC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  7 May 2022 00:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05739C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  7 May 2022 16:33:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445058AbiEGATC (ORCPT
+        id S1383064AbiEGQhY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 May 2022 20:19:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34368 "EHLO
+        Sat, 7 May 2022 12:37:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235557AbiEGASu (ORCPT
+        with ESMTP id S242511AbiEGQhW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 May 2022 20:18:50 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2347F193D5;
-        Fri,  6 May 2022 17:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651882506; x=1683418506;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RoieiZOxAsa8mZzDzTygG0GgexdC4wyG4R77u0jYZbU=;
-  b=Dqeg0pi01SOe0zghZzLhKIfvXK/Gg1JEENtUwlgRE1a36lU9uxcfcvQs
-   VOy7UD7u37iK2W6XDL94UdGOJQf2lBYFBkMimRbQ/qwa9Howi3Gs/xPtX
-   zLcbn6Vb0x0qgjCgEsRHy4WG+mQYEYoKWyg5VB1F8+xgp7eOk8d0SsCP+
-   7KeXyeGeikhe/i8cHpN+0VsMrLhN0ykMpSCBqeTSG0eZMU0SX6yJ26wmQ
-   fpgaYiYywzTpj/1sP0k92xMcEH5273fBmbh0lLMfEKZR3L7I5VYUB7D+m
-   bizzJGa5KL02lL34zcNX2OJXSWdhrsHf6jDu6ypNLOF9p2e707xT6oInU
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10339"; a="355045363"
-X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
-   d="scan'208";a="355045363"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2022 17:15:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,205,1647327600"; 
-   d="scan'208";a="633164229"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 06 May 2022 17:15:03 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nn86A-000E2Z-QT;
-        Sat, 07 May 2022 00:15:02 +0000
-Date:   Sat, 7 May 2022 08:14:15 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
-        arnd@arndb.de
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        sboyd@kernel.org, agross@kernel.org,
-        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
-        mka@chromium.org, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: map/unmap metadata region
- before/after use
-Message-ID: <202205070739.ug3ojjmp-lkp@intel.com>
-References: <1651845086-16535-1-git-send-email-quic_sibis@quicinc.com>
+        Sat, 7 May 2022 12:37:22 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB9117E3F
+        for <linux-remoteproc@vger.kernel.org>; Sat,  7 May 2022 09:33:35 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id y21so11823312edo.2
+        for <linux-remoteproc@vger.kernel.org>; Sat, 07 May 2022 09:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=pKO2GPtNdIghjz6m7nU4lvNqHCZJe8aOfScuIu52lYI=;
+        b=cmLK3WTGMu+JUFTSMOh+sDJVERBH5LGbX9YNBtxSObQUA1nZntQ/c5pTdEdgArSC37
+         XT6tUpq3xiwy+X2rC4oFU4oYhpSyi2ZMdwxuF1/jc+WO3kouQHwmm6wJ1TPVWLB/hVph
+         fdYATZMGIKm4CHf2cx2DsjD7DxSjC+iFUqi1X9vEEz+hmBQg3XbevS6UT+UOjgiL9q+2
+         yBZcs0eoG2RgtAGi7d54VnDIXKApqL7/8x1GGXDOH1gSU3Uy4RFm0CJnxvoCL/pnhNEF
+         sjnStod+/FZH986KzgVqyZ3mXngZX3xkXCl89lVKWoQ3mQEmrEuYparnCmDAjUprWGF2
+         6HDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=pKO2GPtNdIghjz6m7nU4lvNqHCZJe8aOfScuIu52lYI=;
+        b=ZOCgLkHhqy9DtHN/MClakr6hM/HLLLyX5PJqb/qh58k0FR0Sw5WPyhRQMR0MwnE6FX
+         QcNI+VhGEo02d+uQZfHf15Ryl0/xGixGvMxNzW0+7rEbnrj16BZQYOFgG2+6qrD7rb5P
+         GRlE3LCG9oDRCXciYfYraBBK7WFehXlHIsW72CtwePVgVktWiZx1r7d+PnYZY0epNpmM
+         6Q+ZacEGYmFrRo33nMvLWhbMx9pZYZLO2lyZ9J2z+d7KvrOGZptO6jYwHcISOC/BdTNH
+         LntChRHrWTfOb49CaMVZtZy+FeKsp1Fzzkfb2aYoTLyMcX2X2vBD7lMgNPPkZimLKqfc
+         vlUw==
+X-Gm-Message-State: AOAM531YMSVgEBJdRzylw/fZqTFj0S7e5H+f5cnIUxXY/0nrk2elo02L
+        uHbCxFA8tS9jBNudgZnTtJbRmA==
+X-Google-Smtp-Source: ABdhPJwHYjjrG+KKOOSLs6RtoUUFX0QbyyBt93Asr2h6J9e7iKcP3hEt3PXEy5+GCvVymWXolMYvWw==
+X-Received: by 2002:a05:6402:5255:b0:427:de81:6af with SMTP id t21-20020a056402525500b00427de8106afmr9324701edd.269.1651941213736;
+        Sat, 07 May 2022 09:33:33 -0700 (PDT)
+Received: from [192.168.0.233] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id w26-20020a50fa9a000000b0041d893ed437sm3745988edr.2.2022.05.07.09.33.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 May 2022 09:33:33 -0700 (PDT)
+Message-ID: <d3e027ca-9ccf-cf91-2414-85d2b9b680f0@linaro.org>
+Date:   Sat, 7 May 2022 18:33:31 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1651845086-16535-1-git-send-email-quic_sibis@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg
+ exclusive to mt819x
+Content-Language: en-US
+To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Tzung-Bi Shih <tzungbi@google.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org
+References: <20220506213226.257859-1-nfraprado@collabora.com>
+ <20220506213226.257859-2-nfraprado@collabora.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220506213226.257859-2-nfraprado@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Sibi,
+On 06/05/2022 23:32, Nícolas F. R. A. Prado wrote:
+> Commit ca23ecfdbd44 ("remoteproc/mediatek: support L1TCM") added support
+> for the l1tcm memory region on the MT8192 SCP, adding a new da_to_va
+> callback that handles l1tcm while keeping the old one for
+> back-compatibility with MT8183. However, since the mt8192 compatible was
+> missing from the dt-binding, the accompanying dt-binding commit
+> 503c64cc42f1 ("dt-bindings: remoteproc: mediatek: add L1TCM memory region")
+> mistakenly added this reg as if it were for mt8183. And later
+> it became common to all platforms as their compatibles were added.
+> 
+> Fix the dt-binding so that the l1tcm reg can, and must, be present only
+> on the supported platforms: mt8192 and mt8195.
+> 
+> Fixes: 503c64cc42f1 ("dt-bindings: remoteproc: mediatek: add L1TCM memory region")
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 
+> ---
+> The if:then: branches became rather long since it seems that it's not
+> possible to override the properties in them, only add new ones. That is,
+> I couldn't leave the items definition for all three regs in the global
+> reg-names and just decrease minItems and maxItems to 2 for
+> mt8183/mt8186.
+> 
+> Also I had to add a description to the global reg-names, since it
+> couldn't be neither missing nor empty.
 
-Thank you for the patch! Yet something to improve:
+It is possible:
+https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/example-schema.yaml#L91
 
-[auto build test ERROR on remoteproc/rproc-next]
-[also build test ERROR on soc/for-next linux/master linus/master v5.18-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Keep constraints and list of names in properties. Then in allOf:if:then
+raise minItems or lower maxItems, depending on the variant.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sibi-Sankar/remoteproc-qcom_q6v5_mss-map-unmap-metadata-region-before-after-use/20220506-215346
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-config: arm64-randconfig-r021-20220506 (https://download.01.org/0day-ci/archive/20220507/202205070739.ug3ojjmp-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 5e004fb787698440a387750db7f8028e7cb14cfc)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/7a6766ecbb124cd4e41ae630420109330879239d
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Sibi-Sankar/remoteproc-qcom_q6v5_mss-map-unmap-metadata-region-before-after-use/20220506-215346
-        git checkout 7a6766ecbb124cd4e41ae630420109330879239d
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "dma_pgprot" [drivers/remoteproc/qcom_q6v5_mss.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Best regards,
+Krzysztof
