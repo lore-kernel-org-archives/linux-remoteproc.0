@@ -2,107 +2,138 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD6CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 12:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34621C43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 12:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234322AbiEIMZB (ORCPT
+        id S234609AbiEIMhk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 May 2022 08:25:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
+        Mon, 9 May 2022 08:37:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234252AbiEIMZA (ORCPT
+        with ESMTP id S234488AbiEIMhi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 May 2022 08:25:00 -0400
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6551D2555B5;
-        Mon,  9 May 2022 05:21:06 -0700 (PDT)
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-deb9295679so14476302fac.6;
-        Mon, 09 May 2022 05:21:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=1YMoFaBHhMjLkXPx9UtGpLV3eh41Hk7kM5z0duwbKfM=;
-        b=bUqgAB7+NzHB3P95FOidshZiFaQ9QrWVfMt2ul3PKRd1UHWPDBdPzj3Y0hk+peWLzq
-         Ek/k4+pZYIzn6OZoU+/d1I9Ca67xDPatf5MqEEreWcWO9tw8kIzoWxuJUmDMOn+3fY7A
-         Cf2vMgxgKnu5Mt7oX9ziKGBKST9c9FATehHlxKVb36klt0fXYGOazX+Lyh7R5AWdWx+K
-         /uwQypb9T8xCY9r4DrXKAHrjxQ9g1Os3l2/UvRPI0BNdKnkloBzbgnODOtyIzQV6yEG/
-         foh9WtrHkbLbxD8G9MS4WbsnrIWbiV5IJhBoTQRSSBBUT7urkM/7WJmN8UqAWEF2Sk+F
-         aaKQ==
-X-Gm-Message-State: AOAM530RChHgwjnn4qgUjveU8RRL8A8bsHedomu2N0rKl652u+XBaJQa
-        7UkkgQIRJTM+mAsVCGlmbg==
-X-Google-Smtp-Source: ABdhPJxrxqCw4xcwtmH1NwK0lTIRVic4gXA59v04MV73GhVQGdzYIMA1pMp2y/BEu14fL+6T/pBi9A==
-X-Received: by 2002:a05:6871:5cb:b0:ed:b5ed:667d with SMTP id v11-20020a05687105cb00b000edb5ed667dmr7068789oan.47.1652098865669;
-        Mon, 09 May 2022 05:21:05 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id d131-20020aca3689000000b003266a9846c0sm4303562oia.17.2022.05.09.05.21.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 May 2022 05:21:04 -0700 (PDT)
-Received: (nullmailer pid 3576235 invoked by uid 1000);
-        Mon, 09 May 2022 12:20:58 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     mka@chromium.org, swboyd@chromium.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, krzysztof.kozlowski@canonical.com,
-        agross@kernel.org, dianders@chromium.org, ohad@wizery.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org
-In-Reply-To: <1652082798-5855-2-git-send-email-quic_sibis@quicinc.com>
-References: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com> <1652082798-5855-2-git-send-email-quic_sibis@quicinc.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add SC7280 MSS bindings
-Date:   Mon, 09 May 2022 07:20:58 -0500
-Message-Id: <1652098858.589911.3576234.nullmailer@robh.at.kernel.org>
+        Mon, 9 May 2022 08:37:38 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C21BD28BDC9;
+        Mon,  9 May 2022 05:33:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=L3p0/83L4yDVyZoegOtsQfWmJV/6wtv6TZoOXChWFJg=; b=Gm1PabHNS+/VMjWNpRDgN0q7Gz
+        okgDM+2WHp5z93ZUGeQzJtlj40ch1Djul+F9LKvzWURwbafLBOoP/NgGu9GSmPuuE28KOgN2Dlog/
+        GHXl8dWWFH9IUIBQmU28gspF2npPpEWaJ19eWl8SzxR3mk4Q/F4kmhrZuCV0rVMHSE4nkq5aDi9ss
+        tskoNSlPr3h/0gKp/FmRCE42MZtPYeJf36WeID1+imZk2dUy5vrTX2Nb6oqUW3HqWx20YRVV7+Jqn
+        2U5xO3lqX+ogULZEqtYM74LQ/XjYNOdW70A5rw6LBK7UHwdRlT2URD08Y6BIbm5BwJqTO8MAols4i
+        vbgjN92g==;
+Received: from [177.183.162.244] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1no2ZO-0002Vw-CD; Mon, 09 May 2022 14:32:58 +0200
+Message-ID: <b5a1370c-1319-24d1-6b2a-629e5c8915ed@igalia.com>
+Date:   Mon, 9 May 2022 09:32:27 -0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 01/30] x86/crash,reboot: Avoid re-disabling VMX in all
+ CPUs on crash/restart
+Content-Language: en-US
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Sean Christopherson <seanjc@google.com>, vkuznets@redhat.com
+Cc:     kexec@lists.infradead.org, pmladek@suse.com, bhe@redhat.com,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, will@kernel.org,
+        "David P . Reed" <dpreed@deepplum.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-2-gpiccoli@igalia.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20220427224924.592546-2-gpiccoli@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 09 May 2022 13:23:17 +0530, Sibi Sankar wrote:
-> Add MSS PIL loading bindings for SC7280 SoCs.
+On 27/04/2022 19:48, Guilherme G. Piccoli wrote:
+> In the panic path we have a list of functions to be called, the panic
+> notifiers - such callbacks perform various actions in the machine's
+> last breath, and sometimes users want them to run before kdump. We
+> have the parameter "crash_kexec_post_notifiers" for that. When such
+> parameter is used, the function "crash_smp_send_stop()" is executed
+> to poweroff all secondary CPUs through the NMI-shootdown mechanism;
+> part of this process involves disabling virtualization features in
+> all CPUs (except the main one).
 > 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Now, in the emergency restart procedure we have also a way of
+> disabling VMX in all CPUs, using the same NMI-shootdown mechanism;
+> what happens though is that in case we already NMI-disabled all CPUs,
+> the emergency restart fails due to a second addition of the same items
+> in the NMI list, as per the following log output:
+> 
+> sysrq: Trigger a crash
+> Kernel panic - not syncing: sysrq triggered crash
+> [...]
+> Rebooting in 2 seconds..
+> list_add double add: new=<addr1>, prev=<addr2>, next=<addr1>.
+> ------------[ cut here ]------------
+> kernel BUG at lib/list_debug.c:29!
+> invalid opcode: 0000 [#1] PREEMPT SMP PTI
+> 
+> In order to reproduce the problem, users just need to set the kernel
+> parameter "crash_kexec_post_notifiers" *without* kdump set in any
+> system with the VMX feature present.
+> 
+> Since there is no benefit in re-disabling VMX in all CPUs in case
+> it was already done, this patch prevents that by guarding the restart
+> routine against doubly issuing NMIs unnecessarily. Notice we still
+> need to disable VMX locally in the emergency restart.
+> 
+> Fixes: ed72736183c4 ("x86/reboot: Force all cpus to exit VMX root if VMX is supported)
+> Fixes: 0ee59413c967 ("x86/panic: replace smp_send_stop() with kdump friendly version in panic path")
+> Cc: David P. Reed <dpreed@deepplum.com>
+> Cc: Hidehiro Kawai <hidehiro.kawai.ez@hitachi.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
 > ---
->  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
->  1 file changed, 261 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+>  arch/x86/include/asm/cpu.h |  1 +
+>  arch/x86/kernel/crash.c    |  8 ++++----
+>  arch/x86/kernel/reboot.c   | 14 ++++++++++++--
+>  3 files changed, 17 insertions(+), 6 deletions(-)
 > 
 
-Running 'make dtbs_check' with the schema in this patch gives the
-following warnings. Consider if they are expected or the schema is
-incorrect. These may not be new warnings.
+Hi Paolo / Sean / Vitaly, sorry for the ping.
+But do you think this fix is OK from the VMX point-of-view?
 
-Note that it is not yet a requirement to have 0 warnings for dtbs_check.
-This will change in the future.
+I'd like to send a V2 of this set soon, so any review here is highly
+appreciated!
 
-Full log is available here: https://patchwork.ozlabs.org/patch/
+Cheers,
 
 
-remoteproc@4080000: clock-names:1: 'snoc_axi' was expected
-	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
-
-remoteproc@4080000: clock-names:2: 'offline' was expected
-	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
-
-remoteproc@4080000: 'interconnects' is a required property
-	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
-
-remoteproc@4080000: reset-names:1: 'pdc_sync' was expected
-	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
-	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
-	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
+Guilherme
 
