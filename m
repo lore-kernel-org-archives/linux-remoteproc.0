@@ -2,43 +2,42 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 061E8C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 08:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0AAC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 08:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbiEIIMa (ORCPT
+        id S232023AbiEIIMc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 May 2022 04:12:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32964 "EHLO
+        Mon, 9 May 2022 04:12:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237456AbiEIIAo (ORCPT
+        with ESMTP id S237435AbiEIIAo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Mon, 9 May 2022 04:00:44 -0400
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89B2D35A88;
-        Mon,  9 May 2022 00:56:46 -0700 (PDT)
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA951FCE6;
+        Mon,  9 May 2022 00:56:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1652083006; x=1683619006;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=eFMuIn13ITRB11gFrh16kf8Q4cWqkvYYuaQJOeYnmHU=;
-  b=GJCJkGMr1QtLX/7sdqmiGRc6yipZpc+fGsZms3+z1yE7jyflp4MElCe3
-   nA3hh8+8xHY9l+n3Y1w9h60KGh8iiRGDTnfq9BuIYcww9cy2F9gtc+Nwi
-   eX/P7d8Fp7xZHR//BWGRJKFFRcqWX2wxaejSSY/64u+5laoEXGpW2V/Bp
-   4=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 09 May 2022 00:53:45 -0700
+  t=1652083001; x=1683619001;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=+dO5KbQ3Cgbia+ebcgEgHEy+ovujtFyyBT3iHByBRmQ=;
+  b=kqDFo60GH6ecOlUhJW4OXHeI+JcfLcD9ePBD4RYjjN9wzI9Hm9xvAnRW
+   ejQ54ze3BrKo7Rx/3U6ux6/fCLM4I+Fo84W27LU8v5dq5M7PjmYW3so5B
+   l6bS9r9Sal+V4NQntxX8D+12n8jYWmvIJp+Jfli8rcJMO2uVJNxUt1TvL
+   U=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 09 May 2022 00:53:34 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 00:53:43 -0700
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 00:53:33 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 9 May 2022 00:53:42 -0700
+ 15.2.986.22; Mon, 9 May 2022 00:53:33 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 9 May 2022 00:53:38 -0700
+ 15.2.986.22; Mon, 9 May 2022 00:53:28 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
 To:     <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>
 CC:     <ohad@wizery.com>, <agross@kernel.org>,
@@ -48,12 +47,10 @@ CC:     <ohad@wizery.com>, <agross@kernel.org>,
         <dianders@chromium.org>, <swboyd@chromium.org>, <mka@chromium.org>,
         <krzysztof.kozlowski@canonical.com>,
         Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH v2 2/2] arm64: dts: qcom: sc7280: Add proxy interconnect requirements for modem
-Date:   Mon, 9 May 2022 13:23:18 +0530
-Message-ID: <1652082798-5855-3-git-send-email-quic_sibis@quicinc.com>
+Subject: [PATCH v2 0/2] Add support for proxy interconnect bandwidth votes
+Date:   Mon, 9 May 2022 13:23:16 +0530
+Message-ID: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
-References: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -63,30 +60,23 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add interconnects that are required to be proxy voted upon during modem
-bootup on SC7280 SoCs.
+Add proxy interconnect bandwidth votes during modem bootup on SC7280 SoCs.
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+V2:
+ * Dropped patch 3 from version 1 [Sub with Bjorn's patch]
+ * Add YAML support [Krzysztof]
+ * Drop interconnect names [Bjorn]
 
-v2:
- * Drop incorrect interconnect names [Bjorn]
+Sibi Sankar (2):
+  dt-bindings: remoteproc: qcom: Add SC7280 MSS bindings
+  arm64: dts: qcom: sc7280: Add proxy interconnect requirements for
+    modem
 
- arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   1 +
+ 2 files changed, 262 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-index 9f4a9c263c35..91aad86cc708 100644
---- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
-@@ -88,6 +88,7 @@
- 	status = "okay";
- 	compatible = "qcom,sc7280-mss-pil";
- 	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
-+	interconnects = <&mc_virt MASTER_LLCC 0 &mc_virt SLAVE_EBI1 0>;
- 	memory-region = <&mba_mem>, <&mpss_mem>;
- };
- 
 -- 
 2.7.4
 
