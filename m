@@ -2,122 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C242EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 03:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061E8C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 08:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231391AbiEIDTl (ORCPT
+        id S231151AbiEIIMa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 8 May 2022 23:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39994 "EHLO
+        Mon, 9 May 2022 04:12:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231424AbiEIDPX (ORCPT
+        with ESMTP id S237456AbiEIIAo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 8 May 2022 23:15:23 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F67586AEF;
-        Sun,  8 May 2022 20:11:29 -0700 (PDT)
+        Mon, 9 May 2022 04:00:44 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89B2D35A88;
+        Mon,  9 May 2022 00:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1652065890; x=1683601890;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=p8urheBXbOU7HRdMjgj249wzbQxrt5Hj0ai6+bM7SsU=;
-  b=m0BEsNOyJ2zLwDXAUvQawRsU05SLRNNp3/hzwQNQIy09ww3mA8LfRzhD
-   MCBjm1CqSVZyeAiG0Gamwwso16bamP2RmRy9TCPlscTyYou57nkCzzBKc
-   gmvgpNeat7b3jztDpW9ubYkzGxO7RcQ4vKI5CD2QjGipPqR4TgN8PmM6a
-   M=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 08 May 2022 20:11:30 -0700
+  t=1652083006; x=1683619006;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=eFMuIn13ITRB11gFrh16kf8Q4cWqkvYYuaQJOeYnmHU=;
+  b=GJCJkGMr1QtLX/7sdqmiGRc6yipZpc+fGsZms3+z1yE7jyflp4MElCe3
+   nA3hh8+8xHY9l+n3Y1w9h60KGh8iiRGDTnfq9BuIYcww9cy2F9gtc+Nwi
+   eX/P7d8Fp7xZHR//BWGRJKFFRcqWX2wxaejSSY/64u+5laoEXGpW2V/Bp
+   4=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 09 May 2022 00:53:45 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2022 20:11:28 -0700
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 00:53:43 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 8 May 2022 20:11:28 -0700
+ 15.2.986.22; Mon, 9 May 2022 00:53:42 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 8 May 2022 20:11:24 -0700
+ 15.2.986.22; Mon, 9 May 2022 00:53:38 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <sboyd@kernel.org>, <agross@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <mka@chromium.org>, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH] remoteproc: sysmon: Wait for SSCTL service to come up
-Date:   Mon, 9 May 2022 08:41:07 +0530
-Message-ID: <1652065867-5669-1-git-send-email-quic_sibis@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>
+CC:     <ohad@wizery.com>, <agross@kernel.org>,
+        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <evgreen@chromium.org>,
+        <dianders@chromium.org>, <swboyd@chromium.org>, <mka@chromium.org>,
+        <krzysztof.kozlowski@canonical.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH v2 2/2] arm64: dts: qcom: sc7280: Add proxy interconnect requirements for modem
+Date:   Mon, 9 May 2022 13:23:18 +0530
+Message-ID: <1652082798-5855-3-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
+References: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The SSCTL service comes up after a finite time when the remote Q6 comes
-out of reset. Any graceful shutdowns requested during this period will
-be a NOP and abrupt tearing down of the glink channel might lead to pending
-transactions on the remote Q6 side and will ultimately lead to a fatal
-error. Fix this by waiting for the SSCTL service when a graceful shutdown
-is requested.
+Add interconnects that are required to be proxy voted upon during modem
+bootup on SC7280 SoCs.
 
-Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
 Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
- drivers/remoteproc/qcom_sysmon.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 9fca81492863..a9f04dd83ab6 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -41,6 +41,7 @@ struct qcom_sysmon {
- 	struct completion comp;
- 	struct completion ind_comp;
- 	struct completion shutdown_comp;
-+	struct completion ssctl_comp;
- 	struct mutex lock;
- 
- 	bool ssr_ack;
-@@ -445,6 +446,8 @@ static int ssctl_new_server(struct qmi_handle *qmi, struct qmi_service *svc)
- 
- 	svc->priv = sysmon;
- 
-+	complete(&sysmon->ssctl_comp);
-+
- 	return 0;
- }
- 
-@@ -501,6 +504,7 @@ static int sysmon_start(struct rproc_subdev *subdev)
- 		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
- 	};
- 
-+	reinit_completion(&sysmon->ssctl_comp);
- 	mutex_lock(&sysmon->state_lock);
- 	sysmon->state = SSCTL_SSR_EVENT_AFTER_POWERUP;
- 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-@@ -545,6 +549,11 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- 	if (crashed)
- 		return;
- 
-+	if (sysmon->ssctl_instance) {
-+		if (!wait_for_completion_timeout(&sysmon->ssctl_comp, HZ / 2))
-+			dev_err(sysmon->dev, "timeout waiting for ssctl service\n");
-+	}
-+
- 	if (sysmon->ssctl_version)
- 		sysmon->shutdown_acked = ssctl_request_shutdown(sysmon);
- 	else if (sysmon->ept)
-@@ -631,6 +640,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 	init_completion(&sysmon->comp);
- 	init_completion(&sysmon->ind_comp);
- 	init_completion(&sysmon->shutdown_comp);
-+	init_completion(&sysmon->ssctl_comp);
- 	mutex_init(&sysmon->lock);
- 	mutex_init(&sysmon->state_lock);
+v2:
+ * Drop incorrect interconnect names [Bjorn]
+
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+index 9f4a9c263c35..91aad86cc708 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+@@ -88,6 +88,7 @@
+ 	status = "okay";
+ 	compatible = "qcom,sc7280-mss-pil";
+ 	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
++	interconnects = <&mc_virt MASTER_LLCC 0 &mc_virt SLAVE_EBI1 0>;
+ 	memory-region = <&mba_mem>, <&mpss_mem>;
+ };
  
 -- 
 2.7.4
