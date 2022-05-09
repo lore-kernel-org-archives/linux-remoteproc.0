@@ -2,105 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3E1C43219
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 14:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40726C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 15:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237217AbiEIO3p (ORCPT
+        id S237917AbiEIPJW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 May 2022 10:29:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57406 "EHLO
+        Mon, 9 May 2022 11:09:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237151AbiEIO3j (ORCPT
+        with ESMTP id S237911AbiEIPJW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 May 2022 10:29:39 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71ADB15700;
-        Mon,  9 May 2022 07:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-        Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=P7ItdBTC+KXB0aqEwbSMXisX2R2Wb9V+tpF+BUJ3fMQ=; b=afqWOj15+1L7ZOehgz4TDp3T9b
-        MarVdwm0LTk8+i9B4YSy7xFp7vHwG1/w4WbfDff1U5lUjMxS0vk2DRuV0fJ7wbVLLeaMw89VjYM5x
-        WVJwpPzVyva0X5NmUi/i4nuSyMS2YeO8WasLcgi1Y8xImc6fOPpwaaWR9ocIpTn6nZEFaqdopezXx
-        OHjXA1hjw9QuPDRbTOoKOwl5vTqszrquVcmDp1xGYYzEdEOTzOi8SiNmSxJjEIE9o/SJMrBbQG4MO
-        b+UdR8rUhoog9dM2StftHOG35g7VaJwxTPUyd5VBoTJ128N6lfMi0IgW+WU1FzuWQA7pga9h2J0Nf
-        78MmVTaA==;
-Received: from [177.183.162.244] (helo=[192.168.0.5])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1no4KQ-000BPa-6C; Mon, 09 May 2022 16:25:38 +0200
-Message-ID: <260dccd8-a4f6-882c-8767-5bc27576df14@igalia.com>
-Date:   Mon, 9 May 2022 11:25:06 -0300
+        Mon, 9 May 2022 11:09:22 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58822685DC;
+        Mon,  9 May 2022 08:05:27 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: nfraprado)
+        with ESMTPSA id 9355F1F441A4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652108725;
+        bh=jwx7aoAOlo/IJzWJjPvpl/xGpjbHcHsD07r0sZmj1yw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=n/4nJIvMOj5TT2NzwztqbxeysgjE5CI478h4wmebsMpDRzoIVTxsDchO+oiTYWCiI
+         Bzg4sk/GWak+7NvQQ42YzSfavD5nj0lANWuukpPi+bepSoaSP78RTUbh/uZB1XC4kN
+         aLQld3NcAGSH55Sc67tAAZBAmAJybBE6JktNuTKhLRJgJNHeqW9q7jKCbGT+tTZ9Wg
+         CdoTa1kCmp49YK82c/w4GWdbvHVh3ctGY54Yx421gzvUqlEKfPi0Zl83OtvsqsQak1
+         RaPU151VNrRhR2Aoe+NfL8U/7vR+VMqVvc/jqe8JsKUyzuojOiE0Ma5Pw2MTWcOCOY
+         nuW65r2mHlW3A==
+Date:   Mon, 9 May 2022 11:05:17 -0400
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     Tzung-Bi Shih <tzungbi@google.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg
+ exclusive to mt819x
+Message-ID: <20220509150517.ij5lev2mlcem2epx@notapiano>
+References: <20220506213226.257859-1-nfraprado@collabora.com>
+ <20220506213226.257859-2-nfraprado@collabora.com>
+ <CA+Px+wXQjys8xvTSSJkLXoGp4yQnANbKWBtfuxiYi0UX6DH0jw@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
-Content-Language: en-US
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, bhe@redhat.com,
-        akpm@linux-foundation.org, bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        kexec@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, pmladek@suse.com
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <4fe85e9c-4e96-e9d5-9fd8-f062bafcda4f@infradead.org>
- <7518924e-5bb4-e6e9-0e3e-3f5cb03bf946@igalia.com>
-In-Reply-To: <7518924e-5bb4-e6e9-0e3e-3f5cb03bf946@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+Px+wXQjys8xvTSSJkLXoGp4yQnANbKWBtfuxiYi0UX6DH0jw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 29/04/2022 13:04, Guilherme G. Piccoli wrote:
-> On 27/04/2022 21:28, Randy Dunlap wrote:
->>
->>
->> On 4/27/22 15:49, Guilherme G. Piccoli wrote:
->>> +	crash_kexec_post_notifiers
->>> +			This was DEPRECATED - users should always prefer the
->>
->> 			This is DEPRECATED - users should always prefer the
->>
->>> +			parameter "panic_notifiers_level" - check its entry
->>> +			in this documentation for details on how it works.
->>> +			Setting this parameter is exactly the same as setting
->>> +			"panic_notifiers_level=4".
->>
+On Mon, May 09, 2022 at 10:27:18AM +0800, Tzung-Bi Shih wrote:
+> On Sat, May 7, 2022 at 5:32 AM Nícolas F. R. A. Prado
+> <nfraprado@collabora.com> wrote:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          enum:
+> > +            - mediatek,mt8192-scp
+> > +            - mediatek,mt8195-scp
+> > +    then:
+> > +      properties:
+> > +        reg:
+> > +          minItems: 3
+> > +          maxItems: 3
+> > +        reg-names:
+> > +          items:
+> > +            - const: sram
+> > +            - const: cfg
+> > +            - const: l1tcm
 > 
-> Thanks Randy, for your suggestion - but I confess I couldn't understand
-> it properly. It's related to spaces/tabs, right? What you suggest me to
-> change in this formatting? Just by looking the email I can't parse.
-> 
-> Cheers,
-> 
-> 
-> Guilherme
+> "l1tcm" should be optional.  Does it make more sense by using "minItems: 2"?
 
-Complete lack of attention from me, apologies!
-The suggestions was s/was/is - already fixed for V2, thanks Randy.
+Hi Tzung-Bi,
+
+thank you for the information. I did notice from the driver code that l1tcm was
+treated as optional for mt8192, but since I wasn't sure if that was intended, I
+kept it as required for the mt8192/mt8195 binding, since making it optional
+later wouldn't break the ABI, but the opposite would.
+
+But yes, since it is indeed optional for those platforms, I will lower minItems
+to 2 for them in the next version.
+
+Thanks,
+Nícolas
