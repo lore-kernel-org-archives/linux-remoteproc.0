@@ -2,76 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BD6C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 17:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D2DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 19:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239423AbiEIRFv (ORCPT
+        id S240524AbiEITXu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 May 2022 13:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35354 "EHLO
+        Mon, 9 May 2022 15:23:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239416AbiEIRFu (ORCPT
+        with ESMTP id S240506AbiEITXt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 May 2022 13:05:50 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72A1F17CC8F
-        for <linux-remoteproc@vger.kernel.org>; Mon,  9 May 2022 10:01:54 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id iq10so13726143pjb.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 May 2022 10:01:54 -0700 (PDT)
+        Mon, 9 May 2022 15:23:49 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7ABE4BB9B
+        for <linux-remoteproc@vger.kernel.org>; Mon,  9 May 2022 12:19:50 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id i1so14767617plg.7
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 May 2022 12:19:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=drmB4B/KeU3fHWFx597AR+Yu/A5DLZU91oSasUCiT7U=;
-        b=m1NE+UqwuE2JCokeZ/4NnYbjGBL1hDxABFvO2l9oOixcazovqQf/zz8Azbq0eOo08J
-         9dzO0LDQi8DcPKmus+QALfQFs0j7JWEjW73jBqepNzASDsb+O4TuxSoCEZsPZQzE+9Dw
-         4mMPzh0cj0SqCkhby2T4QPSK84JFJbmhvDa44=
+        bh=KxPqHT2Kr+KyNj+2ntbnJAJv8pZrB8xBI5SfIaP2vFc=;
+        b=B4IwO0nyKOAm5augILPM3hpD8rDu9e6FzqYla0dT2S8wGmnvAM7pRZbRKSnGeFFxpm
+         cNw5/XjodsTZgEN3O/QJ3ymKLQU6m3EkhA+wl5idtToj9//MAKok8i9+vJG5EkTtiQby
+         NFRCqT/KmrHY7WCJANDmfE6basadEMlF+PxpA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=drmB4B/KeU3fHWFx597AR+Yu/A5DLZU91oSasUCiT7U=;
-        b=KpPp7szT2NYJ8c8v90fsZJKjNg8+4SHiuk/rWEugqwoWFPEcE1LHy2JMhtypuzlYGM
-         ipQwcz5Vw2r+8mDxIgunT5jvZqzvYrMelni5BT9zNWOQqtxRASAQS5jUMDuqVLowCeO2
-         fB5CXdIe/Wl+UfZSNomw7SGgDVy5gWSDl7WCToXtk7BtwLI6Vr4Q7Sft5vPNEcu4Sj0b
-         OKxsjzoj312+1USIZEOoW1AGg3DPJNZO57nSoUSvT1wS4ipEmszZ0a0C9GqDXfmZQY88
-         TIRXdus1NJJ/ePJ9+smUBZc2886HJ105VyNS9uS1UExMOGa2Hp1EmsrSx0wEQrOxf/uL
-         f5zQ==
-X-Gm-Message-State: AOAM532BOTpjH+hrev+r9GU5weFvB4IF6yUQBGXimksG6VDBui2hlI/T
-        LfcsNEPdaeiqtYwL39J/UCWGVA==
-X-Google-Smtp-Source: ABdhPJzFx4RkUX7Re2fQ5VjSd7jPNvjGhUPAVnsG831dSlxazJfNq6euXwx81V8mDUA9ZdihKUhLDw==
-X-Received: by 2002:a17:90b:1642:b0:1dc:6419:43ff with SMTP id il2-20020a17090b164200b001dc641943ffmr19092455pjb.229.1652115713987;
-        Mon, 09 May 2022 10:01:53 -0700 (PDT)
+        bh=KxPqHT2Kr+KyNj+2ntbnJAJv8pZrB8xBI5SfIaP2vFc=;
+        b=SFLmcwjYPH1juD+QkgHA7d+lyrGIwBvBpkpEc+hfZvxZ9dOmLFOxamwqGifkU9jMkt
+         yj5lUybulYevi3Ub1xQyvTSkWTRRABOcvPSMlulE4yYfTqMDyLixeXOS1DPv628ZCw/S
+         W9bqrd6lYTACZDyYCdoA04tIHbPfX7AbZ9OIJ4Z7bbR7KwSZT0hVVUj9sr2jm6OzT3/h
+         KPTXj9YYO3S7hL8wzMMTtZMgvNjntlHf3/E+vpyVR+ga5K8hxZKACvFzFZ3mupjrP9DW
+         ryhuX7NIoK5H9wiVriAE5hzipcuwnwjdpsaR6YPYqMbF7AGFhBIB9h1LTTUSJs9RXwEd
+         0/cQ==
+X-Gm-Message-State: AOAM531su3RuQggZk4zwN+0qoruQumALDBr0knSnA93+vyoZjwp2KMk7
+        IHgo2qQbLs4LxqPrZ1BaRbRtkZ2gvEtRLg==
+X-Google-Smtp-Source: ABdhPJynK+hgyAqxpMUsozaBIsBVXpWHnA1HB/wZaD2Fn2o0ZomfaUwWpc0M5alYMbL3GWwl6Pyb8A==
+X-Received: by 2002:a17:90b:17c1:b0:1dc:a6e6:ef26 with SMTP id me1-20020a17090b17c100b001dca6e6ef26mr28136922pjb.22.1652123989602;
+        Mon, 09 May 2022 12:19:49 -0700 (PDT)
 Received: from localhost ([2620:15c:11a:202:753:614a:caf8:e14d])
-        by smtp.gmail.com with UTF8SMTPSA id cq17-20020a17090af99100b001cd4989fec9sm12854513pjb.21.2022.05.09.10.01.52
+        by smtp.gmail.com with UTF8SMTPSA id f19-20020a63dc53000000b003c14af50631sm8918375pgj.73.2022.05.09.12.19.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 10:01:53 -0700 (PDT)
-Date:   Mon, 9 May 2022 10:01:51 -0700
+        Mon, 09 May 2022 12:19:49 -0700 (PDT)
+Date:   Mon, 9 May 2022 12:19:47 -0700
 From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, sboyd@kernel.org, agross@kernel.org,
-        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org
-Subject: Re: [PATCH] remoteproc: sysmon: Wait for SSCTL service to come up
-Message-ID: <YnlI/9i1C720mgAX@google.com>
-References: <1652065867-5669-1-git-send-email-quic_sibis@quicinc.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Sibi Sankar <quic_sibis@quicinc.com>, swboyd@chromium.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        bjorn.andersson@linaro.org, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, krzysztof.kozlowski@canonical.com,
+        agross@kernel.org, dianders@chromium.org, ohad@wizery.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        evgreen@chromium.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add SC7280 MSS
+ bindings
+Message-ID: <YnlpU+sCfO86+qc2@google.com>
+References: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
+ <1652082798-5855-2-git-send-email-quic_sibis@quicinc.com>
+ <1652098858.589911.3576234.nullmailer@robh.at.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1652065867-5669-1-git-send-email-quic_sibis@quicinc.com>
+In-Reply-To: <1652098858.589911.3576234.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, May 09, 2022 at 08:41:07AM +0530, Sibi Sankar wrote:
-> The SSCTL service comes up after a finite time when the remote Q6 comes
-> out of reset. Any graceful shutdowns requested during this period will
-> be a NOP and abrupt tearing down of the glink channel might lead to pending
-> transactions on the remote Q6 side and will ultimately lead to a fatal
-> error. Fix this by waiting for the SSCTL service when a graceful shutdown
-> is requested.
+On Mon, May 09, 2022 at 07:20:58AM -0500, Rob Herring wrote:
+> On Mon, 09 May 2022 13:23:17 +0530, Sibi Sankar wrote:
+> > Add MSS PIL loading bindings for SC7280 SoCs.
+> > 
+> > Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> > ---
+> >  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
+> >  1 file changed, 261 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> > 
 > 
-> Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> Running 'make dtbs_check' with the schema in this patch gives the
+> following warnings. Consider if they are expected or the schema is
+> incorrect. These may not be new warnings.
+> 
+> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+> This will change in the future.
+> 
+> Full log is available here: https://patchwork.ozlabs.org/patch/
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+The culprit is this snippet in arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi:
+
+/* Modem setup is different on Chrome setups than typical Qualcomm setup */
+&remoteproc_mpss {
+	status = "okay";
+	compatible = "qcom,sc7280-mss-pil";
+	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
+	memory-region = <&mba_mem>, <&mpss_mem>;
+};
+
+The original compatible string from sc7280.dtsi is 'qcom,sc7280-mpss-pas'.
+
+> remoteproc@4080000: clock-names:1: 'snoc_axi' was expected
+> 	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
+> 
+> remoteproc@4080000: clock-names:2: 'offline' was expected
+> 	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
+
+The fix probably consists in adding overrides for 'clocks' and
+'clock-names' to the extension in sc7280-chrome-common.dtsi, unless
+we add a dedicated 'qcom,sc7280-mss-pil' node to sc7280.dtsi. This
+can be done once the binding landed.
+
+> remoteproc@4080000: 'interconnects' is a required property
+> 	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
+
+This can be fixed by adding an 'interconnects' to either the
+extension in sc7280-chrome-common.dtsi, or the original node if
+'qcom,sc7280-mpss-pas' uses the same interconnect.
+
+> remoteproc@4080000: reset-names:1: 'pdc_sync' was expected
+> 	arch/arm64/boot/dts/qcom/sc7280-crd.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r0.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-herobrine-herobrine-r1.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp2.dtb
+> 	arch/arm64/boot/dts/qcom/sc7280-idp.dtb
+>
+
+This could be fixed by aligning the reset names of the
+'qcom,sc7280-mpss-pas' and 'qcom,sc7280-mss-pil' bindings.
+The reset is called 'pdc_reset' for 'mpss-pas', and 'pdc_sync'
+for 'mpss-pil'.
