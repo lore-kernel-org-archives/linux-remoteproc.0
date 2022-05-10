@@ -2,100 +2,86 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A6CC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 May 2022 04:29:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E58CC43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 May 2022 04:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236587AbiEJEdF (ORCPT
+        id S236596AbiEJEdG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 May 2022 00:33:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50960 "EHLO
+        Tue, 10 May 2022 00:33:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236711AbiEJEbr (ORCPT
+        with ESMTP id S236690AbiEJEbl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 May 2022 00:31:47 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA73255099;
-        Mon,  9 May 2022 21:27:34 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d22so15687471plr.9;
-        Mon, 09 May 2022 21:27:34 -0700 (PDT)
+        Tue, 10 May 2022 00:31:41 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D231FD877;
+        Mon,  9 May 2022 21:27:19 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id iq2-20020a17090afb4200b001d93cf33ae9so1023615pjb.5;
+        Mon, 09 May 2022 21:27:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3fqvQ3B2e4Jfl0iz3GRolUCBYJvQ9lqVFwmUIWfWd7Y=;
-        b=qnGCBaEYK367xZ1eAYI6+LLPhIq5OrOC6tUVYCrOxpre7uW8ekX+CMakaeuz1UVqyd
-         TectHU6QsvpR50yVyYaeKk7h5h+s2aYfdkdTAhnPS9zffRxPDKoQvN1rU7dklJfWxova
-         I/ldPFfE3b5gbTvzZay7FyWJK7W6z3a12SFhfLxGuv5t2zDWt2n5y0yuarCbp11MRLXW
-         QTK5rYxv2fBJ34tOkoHjFt/bNPyutuujD8NF1u2lg47j+JGmaARATx+4p7tdnRV0KA9t
-         uJeL4CwyP0Ima0AKFjSA0dswRk38mJ6Ncq+D7Mzf5K8jRow7L08wS/OJjXUE2E0XX1TO
-         hlhA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4u/RzkeXys0EMuELTFpzcOuvMIBYe4ncU5xl9El+u4o=;
+        b=lh6e00EZoQ+eTQpYgYU1qFSGjsvbjIEuoeOVnwDqoGbGxxQG0BdC9IBhQvOGscIgjA
+         EDEo9YvAmkhED4LbYTn9KJTR7H3Sl7KO8PCe9UKbzKYE76nqs9qK2Grp/wlkI07Ew2ZV
+         TxbPIWf6oe9dl7Ht7XdezDfLZMQwBJ2JqIX+DHgiguyGWC3FxLAMv0rO/5RPFQ4wtf3w
+         KcJ4iK9HvoYFBPpRiV/6HOmaj9H9Xgyre09OjKa7X6nl7KIKfWL2SvQ/W9DUAtqXpFGZ
+         hyEaEySqF2K79pm0ClB+C+nuqCsbr1/wczmYRqxwW/sMBhUvqVwNdE+mFgChR4d0VtYM
+         ddyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3fqvQ3B2e4Jfl0iz3GRolUCBYJvQ9lqVFwmUIWfWd7Y=;
-        b=Lq9d6Tr9VbXwpFWtBsUYnCHVNPWpDgjMoXDR8Ckf8mkpzSpfCMak4P76gQmtbBmRri
-         UW+HkJEQJTyKZrKoWbWiBsLOfFVIECWRjgRfwJFIW9YMHFRVyKTvOr95xGfGQJJN1yOh
-         7+0EbIsIi9g9KfjqFMlB3w6ew6LUeQA/m2kWMAhdSPXJUI6Pmca2bw97lGlbXry+o0Nu
-         +vVDQdMfPk37AUOybLS59vc/UavXuOBAN6ESnjO7ntUGsj54iJ+jj7MhTliTGWbK9Awu
-         Fl1oUAEPaYyBT5xMm5Il4qP5sGaLP1I80bkKcXFQXncipHigK9YSolp77yQlQzHUyHoh
-         ovaA==
-X-Gm-Message-State: AOAM533Zblv+JBRdgdiPVn7TgbWy8sFTHgMSIw8ijUk8nwWLpLSULRGQ
-        BzQG6XMYl4ePuiy064zZHlLfplv5Z4nUgg==
-X-Google-Smtp-Source: ABdhPJxIie1pCr/tmPsDQ9H3w67WWAhPJGg0hqYxGcy/AwcuMSO/PgjddGDmJ3g5glskXx3C8Rgv7g==
-X-Received: by 2002:a17:902:bf0a:b0:15c:df1b:f37d with SMTP id bi10-20020a170902bf0a00b0015cdf1bf37dmr18665939plb.90.1652156854032;
-        Mon, 09 May 2022 21:27:34 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4u/RzkeXys0EMuELTFpzcOuvMIBYe4ncU5xl9El+u4o=;
+        b=KskHZSIQDtsyD5B2vvfsCHkx2GBGbD/xjC+2rgp8y9zsKGiNT5uVvrU7hhJmwQNa0j
+         H+t8XlFeZhVRWJo/DjVkKra8LpZ5DhNl2zrvWFTsM7AGPGfLWLly6sjnQZ+47A0MBEB3
+         DKagwBKkSImDLIzv12KR/ls955kHMUOxwt+VKXXVt7TtMfDT4/XBKAF+8FInQ037UVHf
+         /5v32d2axItmnQyqck4ajHGtPbl8bLJ7ajg2RJ2Fvf2Rr3UZt0fMpybsA1ZBenWO9MVY
+         /WV6STXHELjhX/lxUo4X6MRHCaQ7JXYu8/EQHMheQ5Qmbw+HRDMO3IigzraxbUhpHXgk
+         QEsw==
+X-Gm-Message-State: AOAM5305gI061fZsJBugrp570TnR3EtLugzBxI8E9bS8c+aSxx/+8oxw
+        DaYxH65czgXubsKidnltnigpCY87O5FBnQ==
+X-Google-Smtp-Source: ABdhPJznbQP8rceqpEitUK4xljll9kCPLkyWendrilqrLKk+iP0/GScYWhUPD/6FQn1fYqjZjIiD4w==
+X-Received: by 2002:a17:90b:210a:b0:1db:cbc6:ca57 with SMTP id kz10-20020a17090b210a00b001dbcbc6ca57mr29635611pjb.69.1652156838989;
+        Mon, 09 May 2022 21:27:18 -0700 (PDT)
 Received: from skynet-linux.local ([2401:4900:33a2:808d:da42:4e61:10ad:478d])
-        by smtp.googlemail.com with ESMTPSA id x4-20020a1709028ec400b0015e8d4eb2aesm741263plo.248.2022.05.09.21.27.29
+        by smtp.googlemail.com with ESMTPSA id x4-20020a1709028ec400b0015e8d4eb2aesm741263plo.248.2022.05.09.21.27.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 May 2022 21:27:33 -0700 (PDT)
+        Mon, 09 May 2022 21:27:17 -0700 (PDT)
 From:   Sireesh Kodali <sireeshkodali1@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
 Cc:     bjorn.andersson@linaro.org,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] arm64: dts: qcom: msm8916: Fix typo in pronto remoteproc node
-Date:   Tue, 10 May 2022 09:56:54 +0530
-Message-Id: <20220510042654.71152-3-sireeshkodali1@gmail.com>
+        Sireesh Kodali <sireeshkodali1@gmail.com>
+Subject: [PATCH 0/2] remoteproc: qcom: Fix handling of WCNSS IRQs
+Date:   Tue, 10 May 2022 09:56:52 +0530
+Message-Id: <20220510042654.71152-1-sireeshkodali1@gmail.com>
 X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220510042654.71152-1-sireeshkodali1@gmail.com>
-References: <20220510042654.71152-1-sireeshkodali1@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The smem-state properties for the pronto node were incorrectly labelled,
-reading `qcom,state*` rather than `qcom,smem-state*`. Fix that, allowing
-the stop state to be used.
+Hi,
 
-Fixes: 88106096cbf8 ("ARM: dts: msm8916: Add and enable wcnss node")
+Due to a bug in the code that fetches the IRQs from the device tree, the
+optional "stop-ack" IRQ was never used, even if it was defined in the
+device tree. This also allowed a typo in the MSM8916 SoC device tree,
+where the "stop-ack" irq was instead labeled "stop".
 
-Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The attached patches fix the handling of IRQs in the code, and fix the
+typo in the MSM8916 device tree.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index e34963505e07..7ecd747dc624 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -1758,8 +1758,8 @@ pronto: remoteproc@a21b000 {
- 					<&rpmpd MSM8916_VDDMX>;
- 			power-domain-names = "cx", "mx";
- 
--			qcom,state = <&wcnss_smp2p_out 0>;
--			qcom,state-names = "stop";
-+			qcom,smem-states = <&wcnss_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
- 
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&wcnss_pin_a>;
+Sireesh Kodali (2):
+  remoteproc: qcom: wcnss: Fix handling of IRQs
+  arm64: dts: qcom: msm8916: Fix typo in pronto remoteproc node
+
+ arch/arm64/boot/dts/qcom/msm8916.dtsi |  4 ++--
+ drivers/remoteproc/qcom_wcnss.c       | 10 ++++++++--
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
 -- 
 2.36.0
 
