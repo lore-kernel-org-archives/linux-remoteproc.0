@@ -2,101 +2,188 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E54FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 May 2022 15:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E94C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 May 2022 15:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345417AbiEJPMV (ORCPT
+        id S241038AbiEJPNQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 May 2022 11:12:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56888 "EHLO
+        Tue, 10 May 2022 11:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346127AbiEJPLx (ORCPT
+        with ESMTP id S1345511AbiEJPMV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 May 2022 11:11:53 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B149825B05B;
-        Tue, 10 May 2022 07:45:21 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id kq17so33443077ejb.4;
-        Tue, 10 May 2022 07:45:21 -0700 (PDT)
+        Tue, 10 May 2022 11:12:21 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D17A5A17B
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 May 2022 07:46:01 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id g23so20297245edy.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 May 2022 07:46:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c+hsJzreaFfLVPyymmLrJkbyzmNJnJu0qYLtB9ahG6I=;
-        b=Pvlrqisa1HswCwseRK15nENZEWQjoMc6spitn2A60Toeq2u4wyRG+3D8kZNYnnyuDY
-         9B9drOlmdCDl44n0mlLh/ePzcVnHgzvsmA62fzw4U5HS0e3OpUiHr5zEOTf0wTBqLx2w
-         npSUuQ19m0y2UrlY2sVD7f3VanQHN3FNAsHvhJmswelBFq0dnTJlrsZbePKQ2cdDwxKn
-         FFs+aWCv83G8Vx7PImReftM1vgLqU6Hf0GElXyWqNRvaVy2Nw3uZU9EyNWrmLOsmfzA8
-         U7NVEoxvhVTyYIegJb4iGIid9ZrGAmZGpm5Ubn4q+d+baPRupiqJotuFWPgCnzIpllWA
-         ZQ3A==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m3/At7y3DpyH1xn4UVfn5ukqMWdZeC51Z6nb713nrEM=;
+        b=fmwv+DkIw7qBc9dQvmK6dD2y9go7fNS8TbsYEOs3Z/4JbUN88xgE0dOxW7G7zdd0aL
+         MtXMnd/Quc7Q+xJcY2adZVj6BpixNyMeZ0zWlmwjLzOw+CTiOetT3F5GIQoDgNnH5/FH
+         hb90U2G6cv0nTLk7m4OQ5HvqH1rxUybdg3ZbaoyQnZT7Fs8I6DgT/rNyn6wVUJOJ/ijG
+         0rqEQOixxhf65y7+OF13MiCIQ3Qpdn9iOpVYKpzuhtEWg1AQyqRTieyGjwF0KUytAOrN
+         Nah5IxqwAgCEdSPr4dIVWQxzlUjRd5KSHA/mV+xxpktq9Te0SQqawc5ohTRuQdAXo8XT
+         IbbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c+hsJzreaFfLVPyymmLrJkbyzmNJnJu0qYLtB9ahG6I=;
-        b=brsOaKtHX94TyV7vErNm5kiEFf1J7vuUYBA1lSPxjA21EXxyC0LmrAfXd0WyG5mdkT
-         SxebNjSe4jvmtFCA2mV3iZaS2KsWmINufKxUo7r1GJUlu562euiOD74hlRxnz+X2RMSD
-         9E1ZwTgF7t8qKf5N2NsrUgRZCeuGmbYcTKDo7KWbiWAKT4ipp5OWd8GCtiBNgiLv0ESq
-         HKio74NXFK7hx4JDXDzkWfo2opPulmCM3fDDNbaRtrm9D8mWWQ6VIiwXWDu8xIVK7rlc
-         1uU9FN27nPwsjbCiHp4ed/lt32a+MxBu71zAmaO9VFKzkWUtAq5fY3Y+2M8fH4s1tiXp
-         d8Kg==
-X-Gm-Message-State: AOAM533qv9V6DD8TLxWvgTdMqhxW4aKl9x2szXV7i5OAP2oS6xHa8BqG
-        ouifin2kgIGF3HbTexMq+m8=
-X-Google-Smtp-Source: ABdhPJzbwex+ryg9LpRDhemVltmdQwfI6oaKvTEX7Dp179Go73CpJYXZYcOYN8rQYQA8rk/O4g1ujw==
-X-Received: by 2002:a17:907:6d1f:b0:6fc:309f:8363 with SMTP id sa31-20020a1709076d1f00b006fc309f8363mr3370782ejc.655.1652193920050;
-        Tue, 10 May 2022 07:45:20 -0700 (PDT)
-Received: from localhost.localdomain (89-38-99-188.hosted-by-worldstream.net. [89.38.99.188])
-        by smtp.gmail.com with ESMTPSA id z16-20020a170906241000b006fb6d9d25bfsm829652eja.22.2022.05.10.07.45.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 07:45:19 -0700 (PDT)
-From:   Yassine Oudjana <yassine.oudjana@gmail.com>
-X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        Yassine Oudjana <yassine.oudjana@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: [RFC PATCH 0/2] Make qcom-ngd-ctrl not wait indefinitely for already booted ADSP
-Date:   Tue, 10 May 2022 18:42:17 +0400
-Message-Id: <20220510144219.806391-1-y.oudjana@protonmail.com>
-X-Mailer: git-send-email 2.36.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m3/At7y3DpyH1xn4UVfn5ukqMWdZeC51Z6nb713nrEM=;
+        b=sp4l/RpOaeRcR6OoD2NoNKmKPRPamw45bF7ncAxcaxDAcQz0NhwhOtCcJGeN3MOciz
+         M93g/4+ce0HPLMV7lE/vdVGaLTsvohLENrFV7gVKaYg1sVPTMDmFPE+ifihinmWy/t6T
+         /2JYisUb0vtqIHIrL+gdRvoK41Cqo/IjNrZv31iqIJ8G4rdQN5U57VkKgcHAIXDMLeHC
+         e/ZOojHSM189fYlPLyBRYNiieLXOgMeAAHJuyrLB7EuzadhPqC0usrg6AUpSxpFEWvtQ
+         /Jjp2odeZLkVqalEHiKaEEGUyR4aoIGvYkDN7t6KoSDXPY3dxdOqT8tIyzloy0tGnlNf
+         enKQ==
+X-Gm-Message-State: AOAM532eT8glKY7fzqAhy9G/s+2Jj4E5pLJYek149Wj5AmoXg3S2v4f4
+        PR4RZXi8uJWxq2/zO7tATtakfhclEwni/w9u8rgrc2N98Vo=
+X-Google-Smtp-Source: ABdhPJyx8gmtrp9VEPth+GApYG51c0O501gkymHP+UpTVpU/3iDCq4sfkmvUz/9lxc3bdD5ilhpOQLuDyT6XFLRbsmk=
+X-Received: by 2002:a05:6402:335:b0:425:e3e0:5a90 with SMTP id
+ q21-20020a056402033500b00425e3e05a90mr23350271edw.14.1652193960197; Tue, 10
+ May 2022 07:46:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220315153856.3117676-1-arnaud.pouliquen@foss.st.com>
+ <20220506171222.GA2816011@p14s> <b7a3db59-201d-a5fb-f416-e1d60d79762f@foss.st.com>
+In-Reply-To: <b7a3db59-201d-a5fb-f416-e1d60d79762f@foss.st.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 10 May 2022 08:45:48 -0600
+Message-ID: <CANLsYkzEXQbcWBEOecVa2jkJFLY4a_sXm1ig-HA_OMb7u=R7Ww@mail.gmail.com>
+Subject: Re: [PATCH] rpmsg: virtio: set dst address on first message received
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Commit a899d324863a3 ("slimbus: qcom-ngd-ctrl: add Sub System Restart support")
-made qcom-ngd-ctrl wait for ADSP to become ready before starting to do its work.
-Due to how the SSR notifications currently work though, if qcom-ngd-ctrl probes
-after ADSP boots and becomes ready, it never receives a QCOM_SSR_AFTER_POWERUP
-event notification and keeps waiting indefinitely, making SLIMbus never come up.
+On Mon, 9 May 2022 at 03:18, Arnaud POULIQUEN
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+> Hello Mathieu,
+>
+> On 5/6/22 19:12, Mathieu Poirier wrote:
+> > On Tue, Mar 15, 2022 at 04:38:56PM +0100, Arnaud Pouliquen wrote:
+> >> when a rpmsg channel has been locally created with a destination address
+> >
+> > s/when/Wen
+> >
+> > Also, please be more specific about the "locally created" part, i.e
+> > rpmsg_ctrldev_ioctl() -> rpmsg_create_channel().  Otherwise it is really hard to
+> > understand the context of this change.
+> >
+> >> set to RPMSG_ADDR_ANY, a name service announcement message is sent to
+> >> the remote side. Then the destination address is never updated, making it
+> >> impossible to send messages to the remote.
+> >>
+> >> An example of kernel trace observed:
+> >> rpmsg_tty virtio0.rpmsg-tty.29.-1: invalid addr (src 0x1d, dst 0xffffffff)
+> >>
+> >> Implement same strategy than the open-amp library:
+> >> On the reception of the first message, if the destination address is
+> >> RPMSG_ADDR_ANY, then set it to address of the remote endpoint that
+> >> send the message.
+> >>
+> >
+> > I would have expected a "Fixes:" tag.
+>
+> Difficult to give a reference. For me the issue exists since the creation
+> of the rpmsg virtio bus. A driver can create a channel that generates a NS
+> announcement leading to this issue.
+> The issue as been highlighted by the creation of the  RPMSG_CREATE_DEV_IOCTL
+> control.
+>
 
-This series makes qcom_register_ssr_notifier call the notifier_call of the newly
-registered notifier block with the last SSR event received from the remoteproc,
-basically reporting the event that qcom-ngd-ctrl missed by registering late,
-stopping it from waiting for an event that has already happened.
+Ok
 
-I'm not sure if this approach would have any unwanted consequences in other
-drivers relying on SSR events however, hence I'm sending this as a RFC. This
-can also be considered a bug report, so if anyone has a better fix then I'd
-appreciate it getting applied instead of this one.
+> >
+> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>
+> >> ---
+> >> Remark:
+> >> An alternative (or a complement?) could be to add a NS bind/unbind in
+> >> the NS announcement channel (in rpmsg_ns.c).
+> >> This would allow the local and/or the remote processor to inform the
+> >> remote side the the service announced in bound.
+> >> ---
+> >>  drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
+> >>  1 file changed, 10 insertions(+)
+> >>
+> >> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> >> index 3ede25b1f2e4..99d2119cc164 100644
+> >> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> >> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> >> @@ -708,6 +708,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+> >>  static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >>                           struct rpmsg_hdr *msg, unsigned int len)
+> >>  {
+> >> +    struct rpmsg_device *rpdev;
+> >>      struct rpmsg_endpoint *ept;
+> >>      struct scatterlist sg;
+> >>      bool little_endian = virtio_is_little_endian(vrp->vdev);
+> >> @@ -746,6 +747,15 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> >>      mutex_unlock(&vrp->endpoints_lock);
+> >>
+> >>      if (ept) {
+> >> +            rpdev = ept->rpdev;
+> >> +            if (rpdev->ept == ept && rpdev->dst == RPMSG_ADDR_ANY) {
+> >
+> > Please add a comment to explain the first part of the if() clause.  It took me
+> > quite some time to understand.
+> >
+> >> +                    /*
+> >> +                     * First message received from the remote side on the default endpoint,
+> >> +                     * update channel destination address.
+> >> +                     */
+> >> +                    rpdev->dst = msg->src;
+> >
+> > This triggers a bot warning and should be addressed.  If it can't be addressed add
+> > a comment that clearly explains why so that we don't end up receiving patches
+> > for it every 4 weeks.
+>
+> Oops, I missed it, thanks for pointing it out.
+>
+>
+> Concerning the patch itself as discussed in RP open-amp meeting. I wonder if this issue
+> could be addressed by the flow control[1][2][3], or if needed in any case.
+>
+> I propose to send a V2 when ready to propose in parallel the flow control.
+> So both can be addressed at same time to have a global picture of the way to address the
+> use case..
+>
 
-The second patch is a general fix that became necessary after the first patch,
-and should likely be applied anyway.
+It will be one or the other, we can't have two ways to do things.  If
+the flow control patchset addresses this problem on top of adding more
+functionality then we should go with that one.
 
-Yassine Oudjana (2):
-  remoteproc: qcom: Report last event on SSR notifier registration
-  slimbus: qcom-ngd-ctrl: Initialize ngd_up_work before it can be
-    scheduled
-
- drivers/remoteproc/qcom_common.c | 17 +++++++++++++----
- drivers/slimbus/qcom-ngd-ctrl.c  |  3 ++-
- 2 files changed, 15 insertions(+), 5 deletions(-)
-
--- 
-2.36.0
-
+> Thanks,
+> Arnaud
+>
+> [1] POC Linux code:
+> https://github.com/arnopo/linux/commits/signalling
+>
+> [2] openamp library associated code:
+> https://github.com/arnopo/open-amp/commits/flow_ctrl
+>
+> [3] overview presentation
+> https://drive.google.com/file/d/1CLU3ybI3oSBGvor18AQ-HOzOJ2nOppEb/view
+>
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> >> +            }
+> >> +
+> >>              /* make sure ept->cb doesn't go away while we use it */
+> >>              mutex_lock(&ept->cb_lock);
+> >>
+> >> --
+> >> 2.25.1
+> >>
