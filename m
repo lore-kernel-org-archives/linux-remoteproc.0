@@ -2,76 +2,100 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE83C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 May 2022 19:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A6CC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 May 2022 04:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240742AbiEIT7F (ORCPT
+        id S236587AbiEJEdF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 May 2022 15:59:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45820 "EHLO
+        Tue, 10 May 2022 00:33:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240711AbiEIT7A (ORCPT
+        with ESMTP id S236711AbiEJEbr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 May 2022 15:59:00 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 774AC7223A
-        for <linux-remoteproc@vger.kernel.org>; Mon,  9 May 2022 12:55:05 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id qe3-20020a17090b4f8300b001dc24e4da73so327261pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 May 2022 12:55:05 -0700 (PDT)
+        Tue, 10 May 2022 00:31:47 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA73255099;
+        Mon,  9 May 2022 21:27:34 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d22so15687471plr.9;
+        Mon, 09 May 2022 21:27:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Kh+QQ/TxXS1NVKYU2dj8970PKcONRYGyMb573yL70Zs=;
-        b=DB5AMq154uPVEABPd/Ht20m9xAuHdLPAIpLNbV2AUd+Xl3o5PSogp22tXDaf8adH/V
-         thnCPnxPBairN5psa5Q3YUT6K4ogh3mhaBxf8XJNroaaR0CdTMSXlGfdIopfPo7ebDAN
-         AEoxTBUl1A2BS1estbYeGlGjmqCX74SR2d4XY=
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3fqvQ3B2e4Jfl0iz3GRolUCBYJvQ9lqVFwmUIWfWd7Y=;
+        b=qnGCBaEYK367xZ1eAYI6+LLPhIq5OrOC6tUVYCrOxpre7uW8ekX+CMakaeuz1UVqyd
+         TectHU6QsvpR50yVyYaeKk7h5h+s2aYfdkdTAhnPS9zffRxPDKoQvN1rU7dklJfWxova
+         I/ldPFfE3b5gbTvzZay7FyWJK7W6z3a12SFhfLxGuv5t2zDWt2n5y0yuarCbp11MRLXW
+         QTK5rYxv2fBJ34tOkoHjFt/bNPyutuujD8NF1u2lg47j+JGmaARATx+4p7tdnRV0KA9t
+         uJeL4CwyP0Ima0AKFjSA0dswRk38mJ6Ncq+D7Mzf5K8jRow7L08wS/OJjXUE2E0XX1TO
+         hlhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Kh+QQ/TxXS1NVKYU2dj8970PKcONRYGyMb573yL70Zs=;
-        b=EkLh2qUhPsMoeDOTrlM7e7e6flylyiXt43H5IKYtakMfjrY46FDpZUJBwACfDOgnt0
-         k04KWj/KKconJ/xsLknYqocLvyl/ARLCRI+YjcQpL4awqiI4XpBW2f4VYspOHwTvMstM
-         MJ3xAQAIJvXwV5kz9Nc/ULr+mN+sZhUKTYwo5+9BYj4PwU2ZXA1Tg0yoSH/ooZFmjM6d
-         aLc71M/6WRLmfAh/6OrhrNB5t4MAxqZ/lqGBsS3jUSOOGRxrsIsjNijKitc7HAR00nzt
-         0MyBqQTkBTAqj1IEOQF5ENCN00zQErJsCWOhyOQ9OkIDWDliqIHH1SjR+Ima8YXMIEOL
-         8E0w==
-X-Gm-Message-State: AOAM531wDfrVN1yUlaMjNI3otmSH/3k9vMHJ5BmHDwZgWw8IKI9Pp/qW
-        4zYbZUkD0HzYxGFzeyBaVYGDPg==
-X-Google-Smtp-Source: ABdhPJweHWgd7qc2MqEdODa2jlyfVzb0XNyTHa8rV9JgRxEzF16wLYb7GsZAb9n2TCoNDkBKkyCnUw==
-X-Received: by 2002:a17:90b:314e:b0:1dc:d143:a15d with SMTP id ip14-20020a17090b314e00b001dcd143a15dmr20698782pjb.111.1652126105085;
-        Mon, 09 May 2022 12:55:05 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:753:614a:caf8:e14d])
-        by smtp.gmail.com with UTF8SMTPSA id w19-20020a170903311300b0015e8d4eb2a2sm229445plc.236.2022.05.09.12.55.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 12:55:04 -0700 (PDT)
-Date:   Mon, 9 May 2022 12:55:03 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, ohad@wizery.com,
-        agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, swboyd@chromium.org,
-        krzysztof.kozlowski@canonical.com
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sc7280: Add proxy interconnect
- requirements for modem
-Message-ID: <Ynlxlz7brLWZFRnd@google.com>
-References: <1652082798-5855-1-git-send-email-quic_sibis@quicinc.com>
- <1652082798-5855-3-git-send-email-quic_sibis@quicinc.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3fqvQ3B2e4Jfl0iz3GRolUCBYJvQ9lqVFwmUIWfWd7Y=;
+        b=Lq9d6Tr9VbXwpFWtBsUYnCHVNPWpDgjMoXDR8Ckf8mkpzSpfCMak4P76gQmtbBmRri
+         UW+HkJEQJTyKZrKoWbWiBsLOfFVIECWRjgRfwJFIW9YMHFRVyKTvOr95xGfGQJJN1yOh
+         7+0EbIsIi9g9KfjqFMlB3w6ew6LUeQA/m2kWMAhdSPXJUI6Pmca2bw97lGlbXry+o0Nu
+         +vVDQdMfPk37AUOybLS59vc/UavXuOBAN6ESnjO7ntUGsj54iJ+jj7MhTliTGWbK9Awu
+         Fl1oUAEPaYyBT5xMm5Il4qP5sGaLP1I80bkKcXFQXncipHigK9YSolp77yQlQzHUyHoh
+         ovaA==
+X-Gm-Message-State: AOAM533Zblv+JBRdgdiPVn7TgbWy8sFTHgMSIw8ijUk8nwWLpLSULRGQ
+        BzQG6XMYl4ePuiy064zZHlLfplv5Z4nUgg==
+X-Google-Smtp-Source: ABdhPJxIie1pCr/tmPsDQ9H3w67WWAhPJGg0hqYxGcy/AwcuMSO/PgjddGDmJ3g5glskXx3C8Rgv7g==
+X-Received: by 2002:a17:902:bf0a:b0:15c:df1b:f37d with SMTP id bi10-20020a170902bf0a00b0015cdf1bf37dmr18665939plb.90.1652156854032;
+        Mon, 09 May 2022 21:27:34 -0700 (PDT)
+Received: from skynet-linux.local ([2401:4900:33a2:808d:da42:4e61:10ad:478d])
+        by smtp.googlemail.com with ESMTPSA id x4-20020a1709028ec400b0015e8d4eb2aesm741263plo.248.2022.05.09.21.27.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 May 2022 21:27:33 -0700 (PDT)
+From:   Sireesh Kodali <sireeshkodali1@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/2] arm64: dts: qcom: msm8916: Fix typo in pronto remoteproc node
+Date:   Tue, 10 May 2022 09:56:54 +0530
+Message-Id: <20220510042654.71152-3-sireeshkodali1@gmail.com>
+X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20220510042654.71152-1-sireeshkodali1@gmail.com>
+References: <20220510042654.71152-1-sireeshkodali1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1652082798-5855-3-git-send-email-quic_sibis@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, May 09, 2022 at 01:23:18PM +0530, Sibi Sankar wrote:
-> Add interconnects that are required to be proxy voted upon during modem
-> bootup on SC7280 SoCs.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+The smem-state properties for the pronto node were incorrectly labelled,
+reading `qcom,state*` rather than `qcom,smem-state*`. Fix that, allowing
+the stop state to be used.
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Fixes: 88106096cbf8 ("ARM: dts: msm8916: Add and enable wcnss node")
+
+Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index e34963505e07..7ecd747dc624 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -1758,8 +1758,8 @@ pronto: remoteproc@a21b000 {
+ 					<&rpmpd MSM8916_VDDMX>;
+ 			power-domain-names = "cx", "mx";
+ 
+-			qcom,state = <&wcnss_smp2p_out 0>;
+-			qcom,state-names = "stop";
++			qcom,smem-states = <&wcnss_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
+ 
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&wcnss_pin_a>;
+-- 
+2.36.0
+
