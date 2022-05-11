@@ -2,114 +2,128 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C74C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 09:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67758C43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 11:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233893AbiEKJOW (ORCPT
+        id S241087AbiEKLNb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 05:14:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34602 "EHLO
+        Wed, 11 May 2022 07:13:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232053AbiEKJOV (ORCPT
+        with ESMTP id S238907AbiEKLN3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 05:14:21 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28BA57C26A
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 02:14:20 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id i27so2711178ejd.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 02:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=bHmJ4JQM0ahp4y4UqiuvyOdC9DhyYS0199lrFCEzmUw=;
-        b=A+fkhlX3WrnIJwoPrBo2HZxSYfi4zPTUMo2UXnzO4F2uAiRkc6YPp+X8Iy5f8aiJOc
-         1zFYgKlp3cq/2uTrX3xiUwlIOQquQGa+z6BLya8KxkdEoz7Znujtl8Daai+EGoPZZbja
-         SDeRb9ZH7Ar3GBSTwKGZE7aIdi670ysp339ZyDTENJH2KFbO7VTNPd2Ssix5WRiJndNh
-         XwQw51D1nlGgRJxnrSRnABUxgr21MPLCIMTMb+Jh377tSdVtIJ+mwG/b5w8EhqqrxAg0
-         Z43L30PP3u8+Q6h3Qp05ZOlpxdDQ5weozC9dZIIkUNvp341vNKOQpYuvz5z3JxRpFv5f
-         uOOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=bHmJ4JQM0ahp4y4UqiuvyOdC9DhyYS0199lrFCEzmUw=;
-        b=G5gAXeNzj9Py8LCm5YWsZ11gmQSmiBXm5aKFw9TOnrPpVFbZKaJTNU6QURehhrDBRT
-         2ycZpxxmb191/gIQy6Fe1wyTFXQ1O8Me20bj9nhZNe16lzbqbq9YLb9JF7zjvMxRm1iu
-         kpi2qPlyWym/dbovdPDAAa1Pg6H/H3QsRTT2rAyjz/aDd1AB4jFuEoG8wa+nRjxSYDO4
-         CHelMeiTLrB5HrdEsBibI0dOLfNndDsd6MaA1bSkb3jft9AESfBVyxhIRub9c6vYg+tc
-         Ehn9pyBJR8HIW0p0CwP4ydDfg2YwloyX/tPT8BpcDOBrPWuFkc2xBYePfs5rxLM00uBV
-         VRKg==
-X-Gm-Message-State: AOAM533Dt+CCQht8T2d4U6pTCSuB4s1A5P+OZmE65Iztq61S9Q5uVUWt
-        umpag9lJOvvsIohtUoIjPmMsBn3+2CBf/e9D
-X-Google-Smtp-Source: ABdhPJxDrbjJVt79t2h9FiSlpJoNszdUyEQni7whfaHreR3sdC7CxegUPLZyiivDrf/5AS2/zp+N7g==
-X-Received: by 2002:a17:907:8a21:b0:6f4:d2e5:4d17 with SMTP id sc33-20020a1709078a2100b006f4d2e54d17mr24229498ejc.196.1652260458589;
-        Wed, 11 May 2022 02:14:18 -0700 (PDT)
-Received: from [192.168.0.152] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id au18-20020a170907093200b006f3ef214df9sm733996ejc.95.2022.05.11.02.14.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 May 2022 02:14:17 -0700 (PDT)
-Message-ID: <5c0bc870-2514-57b6-1ff3-c393b57fc5f0@linaro.org>
-Date:   Wed, 11 May 2022 11:14:16 +0200
+        Wed, 11 May 2022 07:13:29 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E031B1ED29C;
+        Wed, 11 May 2022 04:13:23 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 983B121B32;
+        Wed, 11 May 2022 11:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652267602; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FC1sflG6Id2SKeEdl4FJxU/B3titx078hgJ9iLge96M=;
+        b=PzdYpVjDm9GZjow/EUq37H7ookCOkOdew3j+O3sWtMh70hNVOnxtZzKqOPpZDQnacwtKh8
+        hTKee3j+Sl0MntfBuf4Onekv+PULsWjOAIitLyhS1jfqtNLxp3KL+emXCY3ZW29THEdaU3
+        +LT7bZxhID8yMwqQ2reWXTGMidRsh/s=
+Received: from suse.cz (pathway.suse.cz [10.100.12.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id BC7822C141;
+        Wed, 11 May 2022 11:13:20 +0000 (UTC)
+Date:   Wed, 11 May 2022 13:13:20 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Evan Green <evgreen@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>, bhe@redhat.com,
+        kexec@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Jonathan Corbet <corbet@lwn.net>, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, Kees Cook <keescook@chromium.org>,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, senozhatsky@chromium.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>, vgoyal@redhat.com,
+        vkuznets@redhat.com, Will Deacon <will@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Julius Werner <jwerner@chromium.org>
+Subject: Re: [PATCH 04/30] firmware: google: Convert regular spinlock into
+ trylock on panic path
+Message-ID: <20220511111320.GB26047@pathway.suse.cz>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-5-gpiccoli@igalia.com>
+ <CAE=gft5Pq25L4KFoPWbftkPF-JN1ex2yws77mMJ4GQnn9W0L2g@mail.gmail.com>
+ <adcf6d0e-c37c-6ede-479e-29959d03d8c0@igalia.com>
+ <YnpOv4hAPV4b+6v4@alley>
+ <20220510132015.38923cb2@gandalf.local.home>
+ <87h75xkwg9.fsf@jogness.linutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg
- exclusive to mt819x
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Tzung-Bi Shih <tzungbi@google.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-References: <20220506213226.257859-1-nfraprado@collabora.com>
- <20220506213226.257859-2-nfraprado@collabora.com>
- <d3e027ca-9ccf-cf91-2414-85d2b9b680f0@linaro.org>
- <20220510165016.r7nyck2abt5m4djp@notapiano>
- <66796853-efe7-f661-9637-ac6cfefc68e5@linaro.org>
-In-Reply-To: <66796853-efe7-f661-9637-ac6cfefc68e5@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h75xkwg9.fsf@jogness.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/05/2022 11:12, Krzysztof Kozlowski wrote:
-> On 10/05/2022 18:50, Nícolas F. R. A. Prado wrote:
->>>> Also I had to add a description to the global reg-names, since it
->>>> couldn't be neither missing nor empty.
->>>
->>> It is possible:
->>> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/example-schema.yaml#L91
->>>
->>> Keep constraints and list of names in properties. Then in allOf:if:then
->>> raise minItems or lower maxItems, depending on the variant.
->>
->> Hi Krzysztof,
->>
->> that example only shows setting minItems to override the default value, but the
->> issue here is that it's not possible to override minItems/maxItems (after
->> they're already set, even if implicitly) with a different value in the if.
+On Tue 2022-05-10 21:46:38, John Ogness wrote:
+> On 2022-05-10, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >> As already mentioned in the other reply, panic() sometimes stops the
+> >> other CPUs using NMI, for example, see kdump_nmi_shootdown_cpus().
+> >> 
+> >> Another situation is when the CPU using the lock ends in some
+> >> infinite loop because something went wrong. The system is in
+> >> an unpredictable state during panic().
+> >> 
+> >> I am not sure if this is possible with the code under gsmi_dev.lock
+> >> but such things really happen during panic() in other subsystems.
+> >> Using trylock in the panic() code path is a good practice.
+> >
+> > I believe that Peter Zijlstra had a special spin lock for NMIs or
+> > early printk, where it would not block if the lock was held on the
+> > same CPU. That is, if an NMI happened and paniced while this lock was
+> > held on the same CPU, it would not deadlock. But it would block if the
+> > lock was held on another CPU.
 > 
-> No, this example shows exactly what you need in first step - make one
-> item on the list optional.
+> Yes. And starting with 5.19 it will be carrying the name that _you_ came
+> up with (cpu_sync):
 > 
-> There are several other examples for the entire picture or different
-> aproach:
-> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/example-schema.yaml#L91
+> printk_cpu_sync_get_irqsave()
+> printk_cpu_sync_put_irqrestore()
 
-Wait, this is the same link... because it exactly matches your case.
+There is a risk that this lock might become a big kernel lock.
 
-Best regards,
-Krzysztof
+This special lock would need to be used even during normal
+system operation. It does not make sense to suddenly start using
+another lock during panic.
+
+So I think that we should think twice before using it.
+I would prefer using trylock of the original lock when
+possible during panic.
+
+It is possible that I miss something.
+
+Best Regards,
+Petr
