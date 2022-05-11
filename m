@@ -2,149 +2,144 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E0FC4167E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 16:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC1EC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 16:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344991AbiEKQsE (ORCPT
+        id S1345168AbiEKQuP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 12:48:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38230 "EHLO
+        Wed, 11 May 2022 12:50:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233496AbiEKQsA (ORCPT
+        with ESMTP id S1345127AbiEKQuB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 12:48:00 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DCDE6B7DB;
-        Wed, 11 May 2022 09:47:58 -0700 (PDT)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24BESoKr028080;
-        Wed, 11 May 2022 16:46:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=tjIW4ViQYza/lnoDnWyOhboEO5kjiPdt7taCyynzKFw=;
- b=lxUbqAEO3GqUpU+Tuw2IWXF1fzXIGSDn1j9FVHjMmFIPrrH/+bQrVN9PaaYcbEJhBJIr
- 7d0t++ZFM6UKMdcnwcUF0YasHW2SP51KwmfPJnRgOou9+kRarIXLa3hIMjmu5cX5t3FO
- 6rItwaIor28IfP+e6c0HY1HIerMLLjGg06tg70umpoMhCUKjDu0piWYCrZz/VisJ+s0b
- 0DuyX+X+ttOZsVNhvwPdzqfPCbp/RA3MDqZWBEVZBj0PN/wvhGTqQYzQ4imgN+k8TjhU
- NC3v9IrNMZOoN56TSdKZo20ktYuMVwJV19grssXUZ/JxpGndCu9D0HmYa5fO310s9Ten QA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g0etx3406-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 May 2022 16:46:00 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 24BGebih023228;
-        Wed, 11 May 2022 16:45:59 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g0etx33y1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 May 2022 16:45:59 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24BGgY6p030999;
-        Wed, 11 May 2022 16:45:56 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3fwgd8wsc9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 May 2022 16:45:55 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24BGjqsM27197764
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 May 2022 16:45:52 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA0B35204E;
-        Wed, 11 May 2022 16:45:52 +0000 (GMT)
-Received: from osiris (unknown [9.145.80.86])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id B9FCE52050;
-        Wed, 11 May 2022 16:45:50 +0000 (GMT)
-Date:   Wed, 11 May 2022 18:45:49 +0200
-From:   Heiko Carstens <hca@linux.ibm.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-leds@vger.kernel.org, pmladek@suse.com, bhe@redhat.com,
-        akpm@linux-foundation.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kexec@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
-        dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org
-Subject: Re: [PATCH 22/30] panic: Introduce the panic post-reboot notifier
- list
-Message-ID: <YnvoPe2cTS31qbjb@osiris>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-23-gpiccoli@igalia.com>
- <7017c234-7c73-524a-11b6-fefdd5646f59@igalia.com>
+        Wed, 11 May 2022 12:50:01 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7D61F15B4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:49:54 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id t25so4591295lfg.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=IIyLanREwoFCx9oDtJP6l/B2GLW4c3uyyeB7WHPqlcY=;
+        b=hQAzUQgpbX2JYdHBjVsDzoxLXtlUQwzlLE3xUX4lIk/B4hD8khNTplc3IrbJgpxjNK
+         QMob6SR1yxKEOuV7y5z8PgOVpPfRH8z7+LBnlMJx5EgIIE/orkkqAGNF9AGJd32nS0ca
+         y2a2REBFsZudkVlDBZkJHyvfxl5fVtzMywgJ61Clbq3BnRVIK8KUf49I04U5uR46HiZE
+         O1ai6iDAYhJzAb/C1XF1UCAZb+e3Z9iFGpuhyKPKan4B6GgQa3g27oowOmJ+jzTzayhm
+         ApbPbRxQHSQpJrRRKLw8e88d8FFJn7rr9az2pTiBwbJlW94voFQ3ojN/MbJz1ypdaSeJ
+         zYTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=IIyLanREwoFCx9oDtJP6l/B2GLW4c3uyyeB7WHPqlcY=;
+        b=jc53hkOoDFYssbkFWUd6n5HLePoL35lsqOA+igWrnjnwcIG03imGyS8KDWcEOgeJGL
+         eml9wVo/TEUHlghNkq17xMVC6BSIvKRrlP/CAxZ226mKx0biGecdffCNkufBd7caumWd
+         DbY6NZ13MyvX5aKkoCfTbwatMULaU/NSN/BRmvCng4cBecGZu2uGWM4qj7b5tbRogKza
+         X2rxsGjx7Iyz5fMHas7fUalRzL6UVrmtS59GzchAt9lz0Ieh7btSo5Zck8pWsNnCURhD
+         +9f5DeBuTEtZg7n4vqePa4doDBkXWUcbqpyzkHNPnxemzQo1Gd7MQ9+E06rdQJUmrLiC
+         /bCg==
+X-Gm-Message-State: AOAM530mmSbVodBi0DuNc/1tj8JMTO/NlGS0tMSRrAQ9YsyRrfownk0Q
+        /lGJGBDYpNvLy+MuVKPEsPYr2h4psE6QEQ==
+X-Google-Smtp-Source: ABdhPJxRxRD4JQYBVlHS8IbpgAaqLULxwcV4dQ97/QQyLbn3k+ah3uFu5iuDXB1dZuBPSADzZVyDAw==
+X-Received: by 2002:a05:6512:1694:b0:448:3fd4:c7a9 with SMTP id bu20-20020a056512169400b004483fd4c7a9mr21053901lfb.29.1652287792448;
+        Wed, 11 May 2022 09:49:52 -0700 (PDT)
+Received: from [192.168.1.211] ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id b28-20020a19645c000000b0047255d211c3sm351349lfj.242.2022.05.11.09.49.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 May 2022 09:49:52 -0700 (PDT)
+Message-ID: <8480eee1-42df-46b2-9ff5-2b09fdcc7dc6@linaro.org>
+Date:   Wed, 11 May 2022 19:49:51 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7017c234-7c73-524a-11b6-fefdd5646f59@igalia.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: P8jYmW-Xe3lS0Lxn9LfjJuLQx8-pWyu5
-X-Proofpoint-ORIG-GUID: 3EoVOe4XNkWaSjwGnBLNECSOqY142ccD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-11_07,2022-05-11_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 phishscore=0 mlxscore=0 adultscore=0
- suspectscore=0 mlxlogscore=429 bulkscore=0 impostorscore=0
- priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2202240000 definitions=main-2205110076
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 1/9] remoteproc: qcom: pas: Add MSM8953 ADSP PIL support
+Content-Language: en-GB
+To:     Sireesh Kodali <sireeshkodali1@gmail.com>,
+        linux-remoteproc@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20220511161602.117772-1-sireeshkodali1@gmail.com>
+ <20220511161602.117772-2-sireeshkodali1@gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20220511161602.117772-2-sireeshkodali1@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, May 09, 2022 at 11:16:10AM -0300, Guilherme G. Piccoli wrote:
-> On 27/04/2022 19:49, Guilherme G. Piccoli wrote:
-> > Currently we have 3 notifier lists in the panic path, which will
-> > be wired in a way to allow the notifier callbacks to run in
-> > different moments at panic time, in a subsequent patch.
-> > 
-> > But there is also an odd set of architecture calls hardcoded in
-> > the end of panic path, after the restart machinery. They're
-> > responsible for late time tunings / events, like enabling a stop
-> > button (Sparc) or effectively stopping the machine (s390).
-> > 
-> > This patch introduces yet another notifier list to offer the
-> > architectures a way to add callbacks in such late moment on
-> > panic path without the need of ifdefs / hardcoded approaches.
-> > 
-> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Sven Schnelle <svens@linux.ibm.com>
-> > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+On 11/05/2022 19:15, Sireesh Kodali wrote:
+> Add support for the Audio DSP PIL found on the Qualcomm MSM8953
+> platform. The same configuration is used on all SoCs based on the
+> MSM8953 platform (SDM450, SDA450, SDM625, SDM632, APQ8053).
 > 
-> Hey S390/SPARC folks, sorry for the ping!
+> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 31 ++++++++++++++++++++++++++++++
+>   1 file changed, 31 insertions(+)
 > 
-> Any reviews on this V1 would be greatly appreciated, I'm working on V2
-> and seeking feedback in the non-reviewed patches.
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 1ae47cc153e5..4dcb714a1468 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -617,7 +617,37 @@ static const struct adsp_data sm8350_adsp_resource = {
+>   	.ssctl_id = 0x14,
+>   };
+>   
+> +static const struct adsp_data msm8953_adsp_resource = {
+> +	.crash_reason_smem = 423,
+> +	.firmware_name = "adsp.mdt",
+> +	.pas_id = 1,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		NULL,
+> +	},
+> +	.ssr_name = "lpass",
+> +	.sysmon_name = "adsp",
+> +	.ssctl_id = 0x14,
+> +};
+> +
+>   static const struct adsp_data msm8996_adsp_resource = {
+> +	.crash_reason_smem = 423,
+> +	.firmware_name = "adsp.mdt",
+> +	.pas_id = 1,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		NULL,
+> +	},
+> +	.ssr_name = "lpass",
+> +	.sysmon_name = "adsp",
+> +	.ssctl_id = 0x14,
+> +};
+> +
+> +static const struct adsp_data msm8998_adsp_resource = {
 
-Sorry, missed that this is quite s390 specific. So, yes, this looks
-good to me and nice to see that one of the remaining CONFIG_S390 in
-common code will be removed!
+This was dropped in 9ae45035ba2be4117edb8fd3952c3c5b84a0b820. Please 
+take care when rebasing your patches.
 
-For the s390 bits:
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+>   		.crash_reason_smem = 423,
+>   		.firmware_name = "adsp.mdt",
+>   		.pas_id = 1,
+> @@ -850,6 +880,7 @@ static const struct adsp_data sdx55_mpss_resource = {
+>   static const struct of_device_id adsp_of_match[] = {
+>   	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+>   	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource},
+> +	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8953_adsp_resource},
+>   	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
+>   	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8996_adsp_resource},
+>   	{ .compatible = "qcom,msm8998-slpi-pas", .data = &slpi_resource_init},
+
+
+-- 
+With best wishes
+Dmitry
