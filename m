@@ -2,268 +2,96 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2247EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC43C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 19:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346122AbiEKSLz (ORCPT
+        id S1347303AbiEKTzC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 14:11:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
+        Wed, 11 May 2022 15:55:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346110AbiEKSLA (ORCPT
+        with ESMTP id S1347327AbiEKTy7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 14:11:00 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15EE249F88
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 11:10:58 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id l18so5651777ejc.7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 11:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=GjjYuooaKya+XTIpInDzfIomDPRmOBZ3nIRxVyRuRmo=;
-        b=eLdDCwkkAb6g4ZtEARDJ8k2Ft40ckz2IAfOuyfc6Q+rJRdlyaEznGMK50/phq7pgDV
-         wUfjyH2B8QMa6rkhxRFz5mAFkUwd0b9pTVZ6sCSheq5yATBwbSRvs9WxZ3Y6MwVym3yy
-         iEopFY/AAp26V8QZdyMr7dut8wevYCzPWACvShtvgdSNVYJFpnR+8RsqP930LBiEgQqb
-         H1H5/UxoIe0n/8hk8LbC8g7txlJkrYcB8WYHKslelCbZQjsxD4uHLc0CyZ9bCGN9QcaO
-         mcupuQvVdRIZGwsO7CkbQisMvjCKdCWddQzlLTyGnzpjy9HBSrqBuupEH2gCyN1eRqZ8
-         Fx6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=GjjYuooaKya+XTIpInDzfIomDPRmOBZ3nIRxVyRuRmo=;
-        b=KdtmMZC//S4r2vYcjcmlwee3KYGUHaO+SUrOKXbK4Y6ZnFWlUkoDHftPV4I/068XnS
-         kRWS87aXdkdH0uA0AMUIXytZhD11MYhsMZaeeWA8w8H4kSSp+ybR5fyW+v3Z0wgfHwRB
-         rxcA0DumbDhfbiflqjKGhsjrVpR8+qaKx9prnGDRGu2QN1DQwm+Wa9oWJDuHTwZm/xNt
-         DLIq0rB2lkPlrbjwAceed/tq5drUjCMG2Qk0ipQDChzzeQBR8U58yFRsQmDhM8D4qVlL
-         RwdPWNqUWQ/igWxv1qzCU30JGU62Mj6fB6+3hD/0614QlJiA8a08/RLFtzABhrOHeBR1
-         4k9A==
-X-Gm-Message-State: AOAM532iQTvabFov/uHHOX9JEWuVKCYe3TWaGT8Ebbb8EsWdf1i2KT5k
-        mUwG2CmjTOWK+RNfFqZGx1kHQw==
-X-Google-Smtp-Source: ABdhPJxx/DhDAyNRqeQt+gY3Wwf1d8tJBEMAku8H+VAYapdnldKRdJVR/jrdrKNwIjG1clAdybatiA==
-X-Received: by 2002:a17:907:9709:b0:6fd:c0e1:c86b with SMTP id jg9-20020a170907970900b006fdc0e1c86bmr7197430ejc.600.1652292656613;
-        Wed, 11 May 2022 11:10:56 -0700 (PDT)
-Received: from [192.168.0.155] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id g13-20020aa7c84d000000b0042617ba63b8sm1527196edt.66.2022.05.11.11.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 May 2022 11:10:56 -0700 (PDT)
-Message-ID: <436e497f-b43c-4543-62d4-e7aea3d37ac7@linaro.org>
-Date:   Wed, 11 May 2022 20:10:54 +0200
+        Wed, 11 May 2022 15:54:59 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10AFE9C2FC;
+        Wed, 11 May 2022 12:54:59 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: nfraprado)
+        with ESMTPSA id F06951F42CF0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1652298897;
+        bh=mb8FI9cn+BTWOJjO46oabe4cMLSOl4wn8hXjvFvCuoc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dpQiAjZI6Jhhxfs09HDMi10UTpbhdgj5qfUkzPgXjjmC7MFCoRAkXh2kPf8Zj/b6n
+         a31L8+kgqyxzLRD2bCYy1OcJv7Xh50hv++mdnTyw+xaxVCcjwvSq37pBLJhzNuJ7zp
+         k8XTHxEU/cPaEhoMXKQTkDl+FkDPjVMgyCBA5HJLq2VQr2UlfS/pmTkE6U1Q/t0XdC
+         rvdJV/8mEr7YgwsBJDPdQE+Lbaj+wFTdrOWFrfm7YiVivvmtDv/wgAnfiDQ7lg0pwF
+         thV44tjSbn8ZL6xGxPObQWwaig4gYkbUK5SwTP2Xs9pWcvs5UWS9lG4KSYBN2rLw73
+         9IwJ0Y27HprkA==
+From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     kernel@collabora.com,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Tzung-Bi Shih <tzungbi@google.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH v5 0/2] Mediatek SCP dt-binding tweaks
+Date:   Wed, 11 May 2022 15:54:50 -0400
+Message-Id: <20220511195452.871897-1-nfraprado@collabora.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v3 2/2] dt-bindings: remoteproc: qcom: Add SC7280 MSS
- bindings
-Content-Language: en-US
-To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org, Sireesh Kodali <sireeshkodali1@gmail.com>
-Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, mka@chromium.org,
-        krzysztof.kozlowski+dt@linaro.org
-References: <1652257162-23874-1-git-send-email-quic_sibis@quicinc.com>
- <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/05/2022 10:19, Sibi Sankar wrote:
-> Add MSS PIL loading bindings for SC7280 SoCs.
 
-Why not converting existing bindings? The compatible is already there,
-so you duplicated its binding.
+Two simple patches for the Mediatek SCP dt-binding. The first fixes the
+reg/reg-names property while the second adds a new optional
+memory-region property.
 
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
-> 
-> v3:
->  * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
-> 
->  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
->  1 file changed, 261 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> new file mode 100644
-> index 000000000000..2f95bfd7b3eb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> @@ -0,0 +1,261 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-mss-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SC7280 MSS Peripheral Image Loader
-> +
-> +maintainers:
-> +  - Sibi Sankar <quic_sibis@quicinc.com>
-> +
-> +description:
-> +  This document defines the binding for a component that loads and boots firmware
-> +  on the Qualcomm Technology Inc. SC7280 Modem Hexagon Core.
+v4: https://lore.kernel.org/all/20220506213226.257859-1-nfraprado@collabora.com
+v3: https://lore.kernel.org/all/20220503211114.2656099-1-nfraprado@collabora.com
+v2: https://lore.kernel.org/all/20220502192420.2548512-1-nfraprado@collabora.com
+v1: https://lore.kernel.org/all/20220429211111.2214119-1-nfraprado@collabora.com
 
-s/This document defines the binding for//
-Instead describe the hardware.
+Changes in v5:
+- Made l1tcm optional for mt8192/mt8195
+- Greatly simplified the constraints override in the if:then:
 
+Changes in v4:
+- Reworked presence of l1tcm reg to be if:then: based and present only
+  on mt8192/mt8195
 
-Anyway, similar patch was already sent:
-https://lore.kernel.org/all/20220511161602.117772-7-sireeshkodali1@gmail.com/
-Except its several issues, it is much more complete and specific.
+Changes in v3:
+- Made the cfg reg required again. After looking again into the mtk-scp
+  driver, only l1tcm is optional.
 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sc7280-mss-pil
-> +
-> +  reg:
-> +    items:
-> +      - description: MSS QDSP6 registers
-> +      - description: RMB registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: qdsp6
-> +      - const: rmb
-> +
-> +  iommus:
-> +    items:
-> +      - description: MSA Stream 1
-> +      - description: MSA Stream 2
-> +
-> +  interconnects:
-> +    items:
-> +      - description: Path leading to system memory
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Watchdog interrupt
-> +      - description: Fatal interrupt
-> +      - description: Ready interrupt
-> +      - description: Handover interrupt
-> +      - description: Stop acknowledge interrupt
-> +      - description: Shutdown acknowledge interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +      - const: shutdown-ack
-> +
-> +  clocks:
-> +    items:
-> +      - description: GCC MSS IFACE clock
-> +      - description: GCC MSS OFFLINE clock
-> +      - description: GCC MSS SNOC_AXI clock
-> +      - description: RPMH PKA clock
-> +      - description: RPMH XO clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface
-> +      - const: offline
-> +      - const: snoc_axi
-> +      - const: pka
-> +      - const: xo
-> +
-> +  power-domains:
-> +    items:
-> +      - description: CX power domain
-> +      - description: MSS power domain
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: cx
-> +      - const: mss
-> +
-> +  resets:
-> +    items:
-> +      - description: AOSS restart
-> +      - description: PDC reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: mss_restart
-> +      - const: pdc_reset
-> +
-> +  memory-region:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+Changes in v2:
+- Dropped type and description from memory-region since it's a
+  well-known property
+- Set memory-region maxItems to 1
 
-This should be defined by core schema and ref should not be needed.
+Nícolas F. R. A. Prado (2):
+  dt-bindings: remoteproc: mediatek: Make l1tcm reg exclusive to mt819x
+  dt-bindings: remoteproc: mediatek: Add optional memory-region to
+    mtk,scp
 
-> +    description: Phandle reference to the reserved-memory for the MBA region followed
-> +                 by the modem region.
+ .../bindings/remoteproc/mtk,scp.yaml          | 47 +++++++++++++------
+ 1 file changed, 33 insertions(+), 14 deletions(-)
 
-maxItems
+-- 
+2.36.1
 
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      The name of the firmware which should be loaded for this remote
-> +      processor.
-> +
-> +  qcom,halt-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      four offsets within syscon for q6, modem, nc and vq6 halt registers.
-> +
-> +  qcom,ext-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Two phandle references to syscons representing TCSR_REG and TCSR register
-> +      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
-> +      and axim1_clk_off/crypto_clk_off registers respectively.
-> +
-> +  qcom,qaccept-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      three offsets within syscon for mdm, cx and axi qaccept registers.
-> +
-> +  qcom,qmp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Reference to the AOSS side-channel message RAM.
-> +
-> +  qcom,smem-states:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: States used by the AP to signal the Hexagon core
-> +    items:
-> +      - description: Stop the modem
-> +
-> +  qcom,smem-state-names:
-> +    $ref: /schemas/types.yaml#/definitions/string
-
-For some reason you decided to make the same mistakes as the
-https://lore.kernel.org/all/20220511161602.117772-7-sireeshkodali1@gmail.com/
-
-even though all other bindings with this property looks correct.
-
-Please, re-use existing bindings, do not reinvent things in incorrect way.
-
-I'll stop the review, you need to align first.
-
-What is weird, your v2 was before Sireesh's patch, and you both made the
-same mistakes which do not exist in current bindings.
-
-All comments from his set apply here. It seems that his patchset came
-after yours and copied stuff from your bindings, so yours would be FIFO,
-if you made proper binding conversion.
-
-Best regards,
-Krzysztof
