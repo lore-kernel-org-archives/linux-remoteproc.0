@@ -2,345 +2,168 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309B1C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 08:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4400C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 09:12:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243524AbiEKITz (ORCPT
+        id S232974AbiEKJMx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 04:19:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42262 "EHLO
+        Wed, 11 May 2022 05:12:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243517AbiEKITv (ORCPT
+        with ESMTP id S231243AbiEKJMu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 04:19:51 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 757371498F0;
-        Wed, 11 May 2022 01:19:48 -0700 (PDT)
+        Wed, 11 May 2022 05:12:50 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9C0373794
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 02:12:48 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id p4so1826953edx.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 02:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1652257188; x=1683793188;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=PB/2aZrvQWYmUfnMErurG8sAofzUSHYXrrclvPfLz7g=;
-  b=XFt7rh/gTBhxXDOwChbXg/2p61EMSWWBb6xeAOjhCah0IqaKKU4sHDTN
-   oYf+6h4lvf4p2VHe/QetpewzMTPYEHVhysnJ/oIMUYYC8ZYy+LzHPjm1m
-   EV/sU0WXauIIbNA0/sUlWeimeE0+86CCRbWaoWebPbTpxnPWYz65X52aJ
-   Y=;
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 11 May 2022 01:19:48 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 01:19:48 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 11 May 2022 01:19:47 -0700
-Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 11 May 2022 01:19:43 -0700
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>
-CC:     <ohad@wizery.com>, <agross@kernel.org>,
-        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
-        <mka@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH v3 2/2] dt-bindings: remoteproc: qcom: Add SC7280 MSS bindings
-Date:   Wed, 11 May 2022 13:49:22 +0530
-Message-ID: <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1652257162-23874-1-git-send-email-quic_sibis@quicinc.com>
-References: <1652257162-23874-1-git-send-email-quic_sibis@quicinc.com>
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=iSM4KiWX5xiHYNImgQ6cDdJf0LCKtuaDlzcLfop++Jc=;
+        b=FM/vJ5D6P9x5+MqRB5GdGmrNf9cYDyJXebGhlNhF2u1A7m2Q+A93DNdO8nK1CBEXer
+         zqeo1Rkj7fSn7aO7BsPCAjVkbeq1WnvazQSNJeLEGXJzEr9BrC6MptVVEkqRqLDGqy9R
+         ctQbLtbuvZ0bdkBsXU1A1mkJ5FBorUWEZZI9KYJiL/koaHgU+0cm2wnXhQV0KSO0mq5O
+         rAQnl9p0rTja6EPjoI73YbS2GoLZZ5fKSQBQMDLQRaSLpVa3lHf6+czUrqLjcSkyzkfy
+         90h3XmzZ9y/bIriHXMRqYwCUCiUTbZMVemBEwuFENyHguqz3IH6U79m8+QWZZgn6nEMk
+         WHBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=iSM4KiWX5xiHYNImgQ6cDdJf0LCKtuaDlzcLfop++Jc=;
+        b=ShvFjv/5dzn1LcesZ0I3qQSIaD7+Q6hzy8AjGv6Wnw4XWURO0YmDRa+BLh+W2Zgluv
+         uUHHd7HpipbmTkLMFqBz4T0GYGkgl2Bgr9vze+1Ff1qBLpuoc1bNt0iKO+vyKEzB+GHB
+         oD9J1Dmybvya0adUY0MTEFuI+A0Kx3MKBhOYaKPIAbdXZZ2N02DlUnvg9D3gYpB31g2H
+         rq8x6iX44SIpZfawEWPCJjpmbIbYBXdtRrHZ/hMxKejM4/2KealdYrZmPaSXocv2r+1f
+         3FlhbjygOAjLN1cCTZpeJe5OGUMd+gnVlaOOphhV3osoW2wb258LHjuZRRhQ/EJQxFAB
+         I3Dg==
+X-Gm-Message-State: AOAM530hKOV+xN1Jfb6FdAc91fk9v5suZIkQSJX0NqKd0mAUBPiVApDS
+        vFJk/ivvJoGOnxIAdIlzhHQYeQ==
+X-Google-Smtp-Source: ABdhPJwAJshh0pyoM8iVsERACEz5gij6am1vxgOpfUotlGosF/fppxLJBLF71r5SRAXCzg2PJZXhpA==
+X-Received: by 2002:a05:6402:f13:b0:428:a849:d0c1 with SMTP id i19-20020a0564020f1300b00428a849d0c1mr11917128eda.346.1652260367481;
+        Wed, 11 May 2022 02:12:47 -0700 (PDT)
+Received: from [192.168.0.152] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id cb13-20020a0564020b6d00b0042617ba639asm893261edb.36.2022.05.11.02.12.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 May 2022 02:12:46 -0700 (PDT)
+Message-ID: <66796853-efe7-f661-9637-ac6cfefc68e5@linaro.org>
+Date:   Wed, 11 May 2022 11:12:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg
+ exclusive to mt819x
+Content-Language: en-US
+To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Tzung-Bi Shih <tzungbi@google.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org
+References: <20220506213226.257859-1-nfraprado@collabora.com>
+ <20220506213226.257859-2-nfraprado@collabora.com>
+ <d3e027ca-9ccf-cf91-2414-85d2b9b680f0@linaro.org>
+ <20220510165016.r7nyck2abt5m4djp@notapiano>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220510165016.r7nyck2abt5m4djp@notapiano>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add MSS PIL loading bindings for SC7280 SoCs.
+On 10/05/2022 18:50, Nícolas F. R. A. Prado wrote:
+>>> Also I had to add a description to the global reg-names, since it
+>>> couldn't be neither missing nor empty.
+>>
+>> It is possible:
+>> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/example-schema.yaml#L91
+>>
+>> Keep constraints and list of names in properties. Then in allOf:if:then
+>> raise minItems or lower maxItems, depending on the variant.
+> 
+> Hi Krzysztof,
+> 
+> that example only shows setting minItems to override the default value, but the
+> issue here is that it's not possible to override minItems/maxItems (after
+> they're already set, even if implicitly) with a different value in the if.
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+No, this example shows exactly what you need in first step - make one
+item on the list optional.
 
-v3:
- * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
+There are several other examples for the entire picture or different
+aproach:
+https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/example-schema.yaml#L91
 
- .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
- 1 file changed, 261 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+https://elixir.bootlin.com/linux/v5.18-rc2/source/Documentation/devicetree/bindings/clock/samsung,exynos7885-clock.yaml#L53
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-new file mode 100644
-index 000000000000..2f95bfd7b3eb
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-@@ -0,0 +1,261 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-mss-pil.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SC7280 MSS Peripheral Image Loader
-+
-+maintainers:
-+  - Sibi Sankar <quic_sibis@quicinc.com>
-+
-+description:
-+  This document defines the binding for a component that loads and boots firmware
-+  on the Qualcomm Technology Inc. SC7280 Modem Hexagon Core.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sc7280-mss-pil
-+
-+  reg:
-+    items:
-+      - description: MSS QDSP6 registers
-+      - description: RMB registers
-+
-+  reg-names:
-+    items:
-+      - const: qdsp6
-+      - const: rmb
-+
-+  iommus:
-+    items:
-+      - description: MSA Stream 1
-+      - description: MSA Stream 2
-+
-+  interconnects:
-+    items:
-+      - description: Path leading to system memory
-+
-+  interrupts:
-+    items:
-+      - description: Watchdog interrupt
-+      - description: Fatal interrupt
-+      - description: Ready interrupt
-+      - description: Handover interrupt
-+      - description: Stop acknowledge interrupt
-+      - description: Shutdown acknowledge interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: wdog
-+      - const: fatal
-+      - const: ready
-+      - const: handover
-+      - const: stop-ack
-+      - const: shutdown-ack
-+
-+  clocks:
-+    items:
-+      - description: GCC MSS IFACE clock
-+      - description: GCC MSS OFFLINE clock
-+      - description: GCC MSS SNOC_AXI clock
-+      - description: RPMH PKA clock
-+      - description: RPMH XO clock
-+
-+  clock-names:
-+    items:
-+      - const: iface
-+      - const: offline
-+      - const: snoc_axi
-+      - const: pka
-+      - const: xo
-+
-+  power-domains:
-+    items:
-+      - description: CX power domain
-+      - description: MSS power domain
-+
-+  power-domain-names:
-+    items:
-+      - const: cx
-+      - const: mss
-+
-+  resets:
-+    items:
-+      - description: AOSS restart
-+      - description: PDC reset
-+
-+  reset-names:
-+    items:
-+      - const: mss_restart
-+      - const: pdc_reset
-+
-+  memory-region:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: Phandle reference to the reserved-memory for the MBA region followed
-+                 by the modem region.
-+
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      The name of the firmware which should be loaded for this remote
-+      processor.
-+
-+  qcom,halt-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Phandle reference to a syscon representing TCSR followed by the
-+      four offsets within syscon for q6, modem, nc and vq6 halt registers.
-+
-+  qcom,ext-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Two phandle references to syscons representing TCSR_REG and TCSR register
-+      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
-+      and axim1_clk_off/crypto_clk_off registers respectively.
-+
-+  qcom,qaccept-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Phandle reference to a syscon representing TCSR followed by the
-+      three offsets within syscon for mdm, cx and axi qaccept registers.
-+
-+  qcom,qmp:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Reference to the AOSS side-channel message RAM.
-+
-+  qcom,smem-states:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: States used by the AP to signal the Hexagon core
-+    items:
-+      - description: Stop the modem
-+
-+  qcom,smem-state-names:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: The names of the state bits used for SMP2P output
-+    const: stop
-+
-+  glink-edge:
-+    type: object
-+    description: |
-+      Qualcomm G-Link subnode which represents communication edge, channels
-+      and devices related to the DSP.
-+
-+    properties:
-+      interrupts:
-+        items:
-+          - description: IRQ from MSS to GLINK
-+
-+      mboxes:
-+        items:
-+          - description: Mailbox for communication between APPS and MSS
-+
-+      label:
-+        description: The names of the state bits used for SMP2P output
-+        items:
-+          - const: modem
-+
-+      qcom,remote-pid:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: ID of the shared memory used by GLINK for communication with MSS
-+
-+    required:
-+      - interrupts
-+      - mboxes
-+      - label
-+      - qcom,remote-pid
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - iommus
-+  - interconnects
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - power-domain-names
-+  - resets
-+  - reset-names
-+  - qcom,halt-regs
-+  - qcom,ext-regs
-+  - qcom,qaccept-regs
-+  - memory-region
-+  - qcom,qmp
-+  - qcom,smem-states
-+  - qcom,smem-state-names
-+  - glink-edge
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/interconnect/qcom,sc7280.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/mailbox/qcom-ipcc.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-+    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-+
-+    remoteproc_mpss: remoteproc@4080000 {
-+        compatible = "qcom,sc7280-mss-pil";
-+        reg = <0x04080000 0x10000>, <0x04180000 0x48>;
-+        reg-names = "qdsp6", "rmb";
-+
-+        iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
-+
-+        interconnects = <&mc_virt MASTER_LLCC 0 &mc_virt SLAVE_EBI1 0>;
-+
-+        interrupts-extended = <&intc GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+
-+        interrupt-names = "wdog", "fatal", "ready", "handover",
-+                          "stop-ack", "shutdown-ack";
-+
-+        clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+                 <&gcc GCC_MSS_OFFLINE_AXI_CLK>,
-+                 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+                 <&rpmhcc RPMH_PKA_CLK>,
-+                 <&rpmhcc RPMH_CXO_CLK>;
-+        clock-names = "iface", "offline", "snoc_axi", "pka", "xo";
-+
-+        power-domains = <&rpmhpd SC7280_CX>,
-+                        <&rpmhpd SC7280_MSS>;
-+        power-domain-names = "cx", "mss";
-+
-+        memory-region = <&mba_mem>, <&mpss_mem>;
-+
-+        qcom,qmp = <&aoss_qmp>;
-+
-+        qcom,smem-states = <&modem_smp2p_out 0>;
-+        qcom,smem-state-names = "stop";
-+
-+        resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+                 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+        reset-names = "mss_restart", "pdc_reset";
-+
-+        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
-+        qcom,ext-regs = <&tcsr 0x10000 0x10004 &tcsr_mutex 0x26004 0x26008>;
-+        qcom,qaccept-regs = <&tcsr_mutex 0x23030 0x23040 0x23020>;
-+
-+        glink-edge {
-+            interrupts-extended = <&ipcc IPCC_CLIENT_MPSS
-+                                   IPCC_MPROC_SIGNAL_GLINK_QMP
-+                                   IRQ_TYPE_EDGE_RISING>;
-+            mboxes = <&ipcc IPCC_CLIENT_MPSS
-+                      IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+            label = "modem";
-+            qcom,remote-pid = <1>;
-+        };
-+    };
--- 
-2.7.4
+> 
+> That is:
+> 
+> 	properties:
+> 	  reg-names:
+> 	    items:
+> 	      - const: sram
+> 	      - const: cfg
+> 	      - const: l1tcm
 
+You did not use the example I gave you. Where is the minItems?
+
+> 
+> 	if:
+> 	  properties:
+> 	    compatible:
+> 	      enum:
+> 		- mediatek,mt8183-scp
+> 		- mediatek,mt8186-scp
+> 	then:
+> 	  properties:
+> 	    reg-names:
+> 	      minItems: 2
+> 	      maxItems: 2
+> 
+> Generates the error on dtbs_check:
+> 
+> /home/nfraprado/ext/git/linux/arch/arm64/boot/dts/mediatek/mt8183-kukui-kakadu.dtb: scp@10500000: reg-names: ['sram', 'cfg'] is too short
+
+Missing minItems in first properties.
+
+> 
+> I believe the tooling is implicitly adding
+> 
+> 	      minItems: 3
+> 	      maxItems: 3
+> 
+> to the common reg-names, and since it's not possible to override them, the
+> override to 2 doesn't work so they are kept at 3, causing the error.
+> 
+> Moving the minItems/maxItems to the common reg-names as a test gives:
+
+You cannot just. You need it in both places.
+
+> 
+> /home/nfraprado/ext/git/linux/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml: properties:reg-names: {'minItems': 2, 'maxItems': 2, 'items': [{'const': 'sram'}, {'const': 'cfg'}, {'const': 'l1tcm'}]} should not be valid under {'required': ['maxItems']}
+> 	hint: "maxItems" is not needed with an "items" list
+> 
+> That error, plus looking in the items meta-schema, suggests me that maxItems
+> isn't supposed to be set lower then the length of items. So even if the
+> minItems/maxItems override is fixed, there's still this issue. It seems like
+> defining the reg-names list separetely in each if branch is indeed the right way
+> to go.
+
+
+
+Best regards,
+Krzysztof
