@@ -2,193 +2,177 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7DFC4321E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 May 2022 20:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB70DC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 05:51:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230042AbiEJUNR (ORCPT
+        id S238588AbiEKFvy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 May 2022 16:13:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49742 "EHLO
+        Wed, 11 May 2022 01:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229660AbiEJUNM (ORCPT
+        with ESMTP id S232213AbiEKFvx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 May 2022 16:13:12 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D764F1A051;
-        Tue, 10 May 2022 13:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=gJbDvxZCHLE9Xc3dgTDCPLuG4mRgGmv6OD8aG7M3JDQ=; b=g3Nx+lB9bAjkoFhfBAw/tKnujE
-        HE49wVGnvYPT6LdjDh7XC7p9pg3dQOiKQmVqs5yBTQcMLD/Qb7loz7GoYe9PtUSJMIbL1xCX7WOmP
-        Vje/KjqWSNfESrwYFEgzZTAiGGwdZ+mo/M5Y4DNbzDEU8fdx1WAqo3dhuepVJxkwfJ6AyMl1hzYbL
-        37Bt4s+cXuNOUF+dflK9we5prMFoOFLTCAg4y4fzR8H75s0j2xAYXr1Tlb+YwkS4w97u5Z+/kankc
-        sGAGYvqPkX6LoRGzU4WQr1NirsakQGzt8bG3WfLCBDveLwXiZiOyOvqFNe/oiLGpRxJijV5VJBRHK
-        Ucite2AA==;
-Received: from [177.183.162.244] (helo=[192.168.0.5])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1noWDn-0000dk-Tv; Tue, 10 May 2022 22:12:41 +0200
-Message-ID: <24a56892-adb3-809c-8c35-b5b5f001c283@igalia.com>
-Date:   Tue, 10 May 2022 17:11:08 -0300
+        Wed, 11 May 2022 01:51:53 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 663F285656;
+        Tue, 10 May 2022 22:51:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1652248309; x=1683784309;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=y7Ma3NU4R9DKob8KaqtrYsX/Lg7x0p6qjlq2IolMo3A=;
+  b=ybP8OunGnSp4Cg6yf4bFIX+cEWMCEBXkaTINbzLmQw8dp922yf+Pvt0s
+   6cP+R7cHE7BRGAJRIEMISBcU2NPJHlAq8fZEghVjNZCw8epRA8+P8YfFq
+   R1C9WYF/U+RoHAEIJHyTy2aqqJEXTUww8Tcf2z2IOfQIE9bEZK9sjVQ+D
+   w=;
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 10 May 2022 22:51:49 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 22:51:50 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 10 May 2022 22:51:50 -0700
+Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 10 May
+ 2022 22:51:46 -0700
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: map/unmap metadata region
+ before/after use
+To:     Matthias Kaehlcke <mka@chromium.org>
+CC:     <bjorn.andersson@linaro.org>, <arnd@arndb.de>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <sboyd@kernel.org>, <agross@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mathieu.poirier@linaro.org>
+References: <1651845086-16535-1-git-send-email-quic_sibis@quicinc.com>
+ <YnVj7fxUbTqkJpdz@google.com>
+From:   Sibi Sankar <quic_sibis@quicinc.com>
+Message-ID: <d6dca8a1-0986-1d56-f0bd-131bda4b1381@quicinc.com>
+Date:   Wed, 11 May 2022 11:21:43 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 01/30] x86/crash,reboot: Avoid re-disabling VMX in all
- CPUs on crash/restart
+In-Reply-To: <YnVj7fxUbTqkJpdz@google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     akpm@linux-foundation.org, bhe@redhat.com, pmladek@suse.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        halves@canonical.com, fabiomirmar@gmail.com,
-        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
-        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
-        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, "David P . Reed" <dpreed@deepplum.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-2-gpiccoli@igalia.com> <Ynk40U/KA+hLBZRC@google.com>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <Ynk40U/KA+hLBZRC@google.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 09/05/2022 12:52, Sean Christopherson wrote:
-> I find the shortlog to be very confusing, the bug has nothing to do with disabling
-> VMX and I distinctly remember wrapping VMXOFF with exception fixup to prevent doom
-> if VMX is already disabled :-).  The issue is really that nmi_shootdown_cpus() doesn't
-> play nice with being called twice.
+Hey Matthias,
+Thanks for taking time to review the patch.
+
+On 5/6/22 11:37 PM, Matthias Kaehlcke wrote:
+> On Fri, May 06, 2022 at 07:21:26PM +0530, Sibi Sankar wrote:
+>> The application processor accessing the dynamically assigned metadata
+>> region after assigning it to the remote Q6 would lead to an XPU violation.
+>> Fix this by un-mapping the metadata region post firmware header copy. The
+>> metadata region is freed only after the modem Q6 is done with fw header
+>> authentication.
+>>
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > 
+> Should this have a 'Fixes:' tag
+It ideally should have but similar to what we did for mba and mpss
+region map/unmap, it would be a ugly backport since it would point to
+the very first commit. We can agree to do a backport if it's ever
+reported upstream on any of the older SoCs.
 
-Hey Sean, OK - I agree with you, the issue is really about the double
-list addition.
+-Sibi
 
-> [...]
 > 
-> Call stacks for the two callers would be very, very helpful.
-> [...]
-
-> This feels like were just adding more duct tape to the mess.  nmi_shootdown() is
-> still unsafe for more than one caller, and it takes a _lot_ of staring and searching
-> to understand that crash_smp_send_stop() is invoked iff CONFIG_KEXEC_CORE=y, i.e.
-> that it will call smp_ops.crash_stop_other_cpus() and not just smp_send_stop().
-> 
-> Rather than shared a flag between two relatively unrelated functions, what if we
-> instead disabling virtualization in crash_nmi_callback() and then turn the reboot
-> call into a nop if an NMI shootdown has already occurred?  That will also add a
-> bit of documentation about multiple shootdowns not working.
-> 
-> And I believe there's also a lurking bug in native_machine_emergency_restart() that
-> can be fixed with cleanup.  SVM can also block INIT and so should be disabled during
-> an emergency reboot.
-> 
-> The attached patches are compile tested only.  If they seem sane, I'll post an
-> official mini series.
-
-Thanks Sean, it makes sense - my patch is more a "band-aid" whereas
-yours fixes it in a more generic way. Confess I found the logic of your
-patch complex, but as you said, it requires a *lot* of code analysis to
-understand these multiple shutdown patches, the problem is complicated
-by nature heh
-
-I've tested your patch 0001 and it works well for all cases [0], so go
-ahead and submit the miniseries, feel free to add:
-
-Reported-and-tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
-
-
-I've read patch 0002 and it makes sense to me as well, a good proactive
-bug fix =)
-
-With that said, I'll of course drop this one from V2 of this series.
-Cheers,
-
-
-Guilherme
-
-
-
-
-[0]
-A summary of my tests and the code paths that the panic shutdown take
-depending on some conditions:
-
-New function that disables VMX/SVM: cpu_crash_disable_virtualization()
-[should be executed in every online CPU on shutdown)
-
-The panic path triggers the following call stacks depending on kdump and
-post_notifiers:
-
-
-(1) kexec/kdump + !crash_kexec_post_notifiers
-->machine_crash_shutdown()
-----.crash_shutdown() <custom handler>
-------native_machine_crash_shutdown() [all custom handlers except Xen PV
-call the native generic function]
---------crash_smp_send_stop()
-----------kdump_nmi_shootdown_cpus()
-------------nmi_shootdown_cpus(kdump_nmi_callback)
---------------crash_nmi_callback()
-----------------kdump_nmi_callback()
-------------------cpu_crash_disable_virtualization()
-
-
-(2) kexec/kdump + crash_kexec_post_notifiers
-->crash_smp_send_stop()
-----kdump_nmi_shootdown_cpus()
-------nmi_shootdown_cpus(kdump_nmi_callback)
---------crash_nmi_callback()
-----------kdump_nmi_callback()
-------------cpu_crash_disable_virtualization()
-
-After this path, will execute machine_crash_shutdown() but
-crash_smp_send_stop()
-is guarded against double execution. Also, emergency restart calls
-emergency_vmx_disable_all() .
-
-
-(3) !kexec/kdump + crash_kexec_post_notifiers
-
-Same as (2)
-
-
-(4) !kexec/kdump + !crash_kexec_post_notifiers
--> smp_send_stop()
-----native_stop_other_cpus()
-------apic_send_IPI_allbutself(REBOOT_VECTOR)
---------sysvec_reboot
-----------cpu_emergency_vmxoff() <if the IPI approach succeeded, CPU
-stopped here>
-
-If not:
-------register_stop_handler()
---------apic_send_IPI_allbutself(NMI_VECTOR)
-----------smp_stop_nmi_callback()
-------------cpu_emergency_vmxoff()
-
-After that, emergency_vmx_disable_all() gets called in the emergency
-restart path as well.
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_mss.c | 43 +++++++++++++++++++++++++++++++-------
+>>   1 file changed, 35 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+>> index af217de75e4d..eb34a258b67b 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -10,6 +10,7 @@
+>>   #include <linux/clk.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/devcoredump.h>
+>> +#include <linux/dma-map-ops.h>
+>>   #include <linux/dma-mapping.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/kernel.h>
+>> @@ -932,27 +933,52 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
+>>   static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
+>>   				const char *fw_name)
+>>   {
+>> -	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+>> +	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS | DMA_ATTR_NO_KERNEL_MAPPING;
+>> +	unsigned long flags = VM_DMA_COHERENT | VM_FLUSH_RESET_PERMS;
+>> +	struct page **pages;
+>> +	struct page *page;
+>>   	dma_addr_t phys;
+>>   	void *metadata;
+>>   	int mdata_perm;
+>>   	int xferop_ret;
+>>   	size_t size;
+>> -	void *ptr;
+>> +	void *vaddr;
+>> +	int count;
+>>   	int ret;
+>> +	int i;
+>>   
+>>   	metadata = qcom_mdt_read_metadata(fw, &size, fw_name, qproc->dev);
+>>   	if (IS_ERR(metadata))
+>>   		return PTR_ERR(metadata);
+>>   
+>> -	ptr = dma_alloc_attrs(qproc->dev, size, &phys, GFP_KERNEL, dma_attrs);
+>> -	if (!ptr) {
+>> -		kfree(metadata);
+>> +	page = dma_alloc_attrs(qproc->dev, size, &phys, GFP_KERNEL, dma_attrs);
+>> +	if (!page) {
+>>   		dev_err(qproc->dev, "failed to allocate mdt buffer\n");
+>> -		return -ENOMEM;
+>> +		ret = -ENOMEM;
+>> +		goto free_metadata;
+>> +	}
+>> +
+>> +	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>> +	pages = kmalloc_array(count, sizeof(struct page *), GFP_KERNEL);
+>> +	if (!pages) {
+>> +		ret = -ENOMEM;
+>> +		goto free_metadata;
+>>   	}
+>>   
+>> -	memcpy(ptr, metadata, size);
+>> +	for (i = 0; i < count; i++)
+>> +		pages[i] = nth_page(page, i);
+>> +
+>> +	vaddr = vmap(pages, count, flags, dma_pgprot(qproc->dev, PAGE_KERNEL, dma_attrs));
+>> +	kfree(pages);
+>> +	if (!vaddr) {
+>> +		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n", &phys, size);
+>> +		ret = -EBUSY;
+>> +		goto free_metadata;
+>> +	}
+>> +
+>> +	memcpy(vaddr, metadata, size);
+>> +
+>> +	vunmap(vaddr);
+>>   
+>>   	/* Hypervisor mapping to access metadata by modem */
+>>   	mdata_perm = BIT(QCOM_SCM_VMID_HLOS);
+>> @@ -982,7 +1008,8 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
+>>   			 "mdt buffer not reclaimed system may become unstable\n");
+>>   
+>>   free_dma_attrs:
+>> -	dma_free_attrs(qproc->dev, size, ptr, phys, dma_attrs);
+>> +	dma_free_attrs(qproc->dev, size, page, phys, dma_attrs);
+>> +free_metadata:
+>>   	kfree(metadata);
+>>   
+>>   	return ret < 0 ? ret : 0;
+>> -- 
+>> 2.7.4
+>>
