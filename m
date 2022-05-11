@@ -2,229 +2,295 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4151C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 16:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8234C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 16:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345164AbiEKQys (ORCPT
+        id S1345242AbiEKQ7e (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 12:54:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33998 "EHLO
+        Wed, 11 May 2022 12:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345167AbiEKQyp (ORCPT
+        with ESMTP id S1345231AbiEKQ7d (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 12:54:45 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDDBE54BC0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:54:42 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id i10so4577480lfg.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:54:42 -0700 (PDT)
+        Wed, 11 May 2022 12:59:33 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0E513CA0A
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:59:32 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d22so2450986plr.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:59:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=+5747A4Ma391dQmFsOLvwVUU2kapbuzWaQTGm/dKdZQ=;
-        b=NrZRAu/N5s8gpBmN+NE8JE4qm599tse0FE4/hUcxD2dduSKW9wcjqAwCyx+phX7hhI
-         OFZAunZ8ixiWs41Nk0IJ9xuGMr1PVNayB8zF7g3Wvo0Cj5R1D1Tq3P6fLdJ6buieL0Ex
-         98NpfA2mqbzQdhJKWE64l0nc2GXlZBY4lseJ1h3KiqC7bZnuQqWzQi9on+uQadEQw69T
-         t9u6X6xV3OwjOch09fv1bYhhdzmPkwetJduP2qksKYuU9hQQCfbMNI3jN5oJsGbxFWLB
-         XlomA+rUzeI4poH8sHTs4MnmUwj09JpTlohRPR0JJrfKjyvMyvgA/ad8e6RyPZRHzqAy
-         SGJA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=psIKzhbeiZw9Aftjj4SOmxtdH9ncwPzk8iMLnEGr5bQ=;
+        b=br3daB0N8p/kLYd3rvdlu/42N5uuMMNWC5vbDuU38H/bNftmrx5r5RxSbP1OyY/K6a
+         5RJdt2tVcmtISOviN61hb8DtmcBkGuMY01Z0pqx2idZS7vTzf+KudVdP0p/CCeotBBQi
+         wu7I97Mr3AaxtxNvklCkTkWG0dnRLEC1i+cBA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=+5747A4Ma391dQmFsOLvwVUU2kapbuzWaQTGm/dKdZQ=;
-        b=yiqolobNvXTkdvbEhYdjqdWqB2fNQ3AdLMOOrQcRldGoOwEtdMwJw2ZcBt2bI1ERb7
-         Rvh6+I/XCx5rWe0oyYu6q2IKR4OnyNVuxbCYMLtcjtHQ85SKWyZsWXwgZR+V37hSwN7Q
-         0pRkVHYvMsAoNcHnkthNyDIsqq7XAXsPc1HTw3bi0bKm+UYJZif3Y7J/M7jsxi758n2r
-         123HqwUge2QOB53Ss6wkiMxa7PeLZXtfOC+QiuD+az1fhRhpLxB9xUKY2Vx7ihujat21
-         bdAthYUH03/Iqci0p1+ON62d9l3WJKHlzcSYFZiD9pIlH9q9HbI5NDrE/qn2qeCBG4YF
-         p21Q==
-X-Gm-Message-State: AOAM530a7U4RvSkinJeQIn9juOwOV0Laszap6sFpNQkZrperTAmgECGG
-        Bo/k6a9n/HB9eb3izJDkFX/7yQ==
-X-Google-Smtp-Source: ABdhPJye2LWKIIWro0fjrmR+DnWvSvOo9wamkKGElpGs2OZ2l4JsOJdVTsjMmwDwZYXwdSRzw9Q0cA==
-X-Received: by 2002:a05:6512:2391:b0:473:ac1e:f2ce with SMTP id c17-20020a056512239100b00473ac1ef2cemr20756190lfv.297.1652288081314;
-        Wed, 11 May 2022 09:54:41 -0700 (PDT)
-Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id dt5-20020a0565122a8500b0047255d2119csm354662lfb.203.2022.05.11.09.54.40
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=psIKzhbeiZw9Aftjj4SOmxtdH9ncwPzk8iMLnEGr5bQ=;
+        b=yHI3Vfjz4P2HPTIR0cmpoMjx+6cHnZL4RFllfvByrdD02aUCyIBJiYDDxVnoAuUVYP
+         SYvgHzwRKWufTD2FwapXbyK0MzwSRN+8hE5P04kIZOl6eX4huJo1JZtKGKJ9c4q/L4Hw
+         WEfTvcLCWuChuJ9AKPx8apuftDh1tiXugodBLO0/QDv2LytRJCpLiYZDxTyJtGZRQYut
+         nNzFPpNG3OcsFO5Zk0zy+Uy+UW2kJZU87AzptdIgg1mS4fvorXqHSYpiX6npjRKde4SQ
+         tjZ6B2bcWfh00OrBmEY7xX+fxf0RHs9lR8+LvA21CVZjvmMt1NHyjMnZOEDXmUw7s9ug
+         Ylhw==
+X-Gm-Message-State: AOAM533/jkWmNkHB8F0hWJi0DBiZ7sFLkgp+TXatsjh8owZu833YwPDB
+        Tza+vYKeFzwFHwTYDEcphsDdoQ==
+X-Google-Smtp-Source: ABdhPJzMCgYv+v3OfOKwapUQQdn7yf3/lf5sB7Q70QMwgnjGiq1+4OKv65VIOQKiMkXuD95dtadtmg==
+X-Received: by 2002:a17:90a:f2ce:b0:1d9:a18f:87f3 with SMTP id gt14-20020a17090af2ce00b001d9a18f87f3mr6363099pjb.213.1652288371862;
+        Wed, 11 May 2022 09:59:31 -0700 (PDT)
+Received: from localhost ([2620:15c:11a:202:c586:bf93:e960:73b4])
+        by smtp.gmail.com with UTF8SMTPSA id a12-20020aa78e8c000000b0050dc762818dsm2023523pfr.103.2022.05.11.09.59.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 May 2022 09:54:40 -0700 (PDT)
-Message-ID: <1d43e1fa-30b2-dbf0-bfaf-f9cfaf987efb@linaro.org>
-Date:   Wed, 11 May 2022 19:54:40 +0300
+        Wed, 11 May 2022 09:59:31 -0700 (PDT)
+Date:   Wed, 11 May 2022 09:59:30 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, ohad@wizery.com,
+        agross@kernel.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        swboyd@chromium.org, krzysztof.kozlowski+dt@linaro.org
+Subject: Re: [PATCH v3 2/2] dt-bindings: remoteproc: qcom: Add SC7280 MSS
+ bindings
+Message-ID: <YnvrchuHVKFHE3B2@google.com>
+References: <1652257162-23874-1-git-send-email-quic_sibis@quicinc.com>
+ <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 2/9] remoteproc: qcom: q6v5-mss: Add modem support on
- MSM8953
-Content-Language: en-GB
-To:     Sireesh Kodali <sireeshkodali1@gmail.com>,
-        linux-remoteproc@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20220511161602.117772-1-sireeshkodali1@gmail.com>
- <20220511161602.117772-3-sireeshkodali1@gmail.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20220511161602.117772-3-sireeshkodali1@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/05/2022 19:15, Sireesh Kodali wrote:
-> The modem on the MSM8953 platform is similar to the modem on the MSM8996
-> platform in terms of set up. It differs primarily in the way it needs SCM
-> to bless the MPSS firmware region.
+Hi Sibi,
+
+On Wed, May 11, 2022 at 01:49:22PM +0530, Sibi Sankar wrote:
+> Add MSS PIL loading bindings for SC7280 SoCs.
 > 
-> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_mss.c | 64 +++++++++++++++++++++++++++---
->   1 file changed, 58 insertions(+), 6 deletions(-)
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+
+There is already a binding for 'qcom,sc7280-mss-pil' in
+Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt. Shouldn't
+the entries from that file be deleted?
+
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index af217de75e4d..a73fdcddeda4 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -234,6 +234,7 @@ struct q6v5 {
->   
->   enum {
->   	MSS_MSM8916,
-> +	MSS_MSM8953,
->   	MSS_MSM8974,
->   	MSS_MSM8996,
->   	MSS_MSM8998,
-> @@ -687,12 +688,14 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->   		}
->   		goto pbl_wait;
->   	} else if (qproc->version == MSS_MSM8996 ||
-> -		   qproc->version == MSS_MSM8998) {
-> +		   qproc->version == MSS_MSM8998 ||
-> +		   qproc->version == MSS_MSM8953) {
->   		int mem_pwr_ctl;
->   
->   		/* Override the ACC value if required */
-> -		writel(QDSP6SS_ACC_OVERRIDE_VAL,
-> -		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-> +		if (qproc->version != MSS_MSM8953)
-> +			writel(QDSP6SS_ACC_OVERRIDE_VAL,
-> +					qproc->reg_base + QDSP6SS_STRAP_ACC);
->   
->   		/* Assert resets, stop core */
->   		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-> @@ -734,7 +737,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
->   		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->   
->   		/* Turn on L1, L2, ETB and JU memories 1 at a time */
-> -		if (qproc->version == MSS_MSM8996) {
-> +		if (qproc->version == MSS_MSM8996 ||
-> +			qproc->version == MSS_MSM8953) {
->   			mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
->   			i = 19;
->   		} else {
-> @@ -1314,7 +1318,16 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->   			max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
->   	}
->   
-> -	/*
-> +	if (qproc->version == MSS_MSM8953) {
-> +		ret = qcom_scm_pas_mem_setup(5, qproc->mpss_phys, qproc->mpss_size);
-> +		if (ret) {
-> +			dev_err(qproc->dev,
-> +					"setting up mpss memory failed: %d\n", ret);
-> +			goto release_firmware;
-> +		}
-> +	}
+> v3:
+>  * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
+> 
+>  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
+>  1 file changed, 261 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> new file mode 100644
+> index 000000000000..2f95bfd7b3eb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> @@ -0,0 +1,261 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-mss-pil.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	/**
-
-Single star please
-
->   	 * In case of a modem subsystem restart on secure devices, the modem
->   	 * memory can be reclaimed only after MBA is loaded.
->   	 */
-> @@ -1413,7 +1426,6 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->   			writel(RMB_CMD_LOAD_READY, qproc->rmb_base + RMB_MBA_COMMAND_REG);
->   		}
->   		writel(size, qproc->rmb_base + RMB_PMI_CODE_LENGTH_REG);
-> -
->   		ret = readl(qproc->rmb_base + RMB_MBA_STATUS_REG);
->   		if (ret < 0) {
->   			dev_err(qproc->dev, "MPSS authentication failed: %d\n",
-> @@ -1422,6 +1434,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
->   		}
->   	}
->   
+> +title: Qualcomm SC7280 MSS Peripheral Image Loader
 > +
-
-Unnecessary
-
-
->   	/* Transfer ownership of modem ddr region to q6 */
->   	ret = q6v5_xfer_mem_ownership(qproc, &qproc->mpss_perm, false, true,
->   				      qproc->mpss_phys, qproc->mpss_size);
-> @@ -2198,6 +2211,44 @@ static const struct rproc_hexagon_res msm8996_mss = {
->   	.version = MSS_MSM8996,
->   };
->   
-> +static const struct rproc_hexagon_res msm8953_mss = {
-> +	.hexagon_mba_image = "mba.mbn",
-> +	.proxy_supply = (struct qcom_mss_reg_res[]) {
-> +		{
-> +			.supply = "pll",
-> +			.uA = 100000,
-> +		},
-> +		{}
-> +	},
-> +	.proxy_pd_names = (char*[]) {
-> +			"cx",
-> +			"mx",
-> +			NULL
-> +	},
-> +	.active_supply = (struct qcom_mss_reg_res[]) {
-> +		{
-> +			.supply = "mss",
-> +			.uV = 1050000,
-> +			.uA = 100000,
-> +		},
-> +		{}
-> +	},
-> +	.proxy_clk_names = (char*[]){
-> +			"xo",
-> +			NULL
-> +	},
-> +	.active_clk_names = (char*[]){
-> +			"iface",
-> +			"bus",
-> +			"mem",
-> +			NULL
-> +	},
-> +	.need_mem_protection = false,
-> +	.has_alt_reset = false,
-> +	.has_spare_reg = false,
-
-
-Please follow the custom  and define the rest of fields here.
-
-> +	.version = MSS_MSM8953,
-> +};
+> +maintainers:
+> +  - Sibi Sankar <quic_sibis@quicinc.com>
 > +
->   static const struct rproc_hexagon_res msm8916_mss = {
->   	.hexagon_mba_image = "mba.mbn",
->   	.proxy_supply = (struct qcom_mss_reg_res[]) {
-> @@ -2301,6 +2352,7 @@ static const struct of_device_id q6v5_of_match[] = {
->   	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
->   	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
->   	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
-> +	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss},
->   	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss},
->   	{ .compatible = "qcom,sc7180-mss-pil", .data = &sc7180_mss},
->   	{ .compatible = "qcom,sc7280-mss-pil", .data = &sc7280_mss},
+> +description:
+> +  This document defines the binding for a component that loads and boots firmware
+> +  on the Qualcomm Technology Inc. SC7280 Modem Hexagon Core.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sc7280-mss-pil
+> +
+> +  reg:
+> +    items:
+> +      - description: MSS QDSP6 registers
+> +      - description: RMB registers
+> +
+> +  reg-names:
+> +    items:
+> +      - const: qdsp6
+> +      - const: rmb
+> +
+> +  iommus:
+> +    items:
+> +      - description: MSA Stream 1
+> +      - description: MSA Stream 2
+> +
+> +  interconnects:
+> +    items:
+> +      - description: Path leading to system memory
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Watchdog interrupt
+> +      - description: Fatal interrupt
+> +      - description: Ready interrupt
+> +      - description: Handover interrupt
+> +      - description: Stop acknowledge interrupt
+> +      - description: Shutdown acknowledge interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +      - const: shutdown-ack
 
 
--- 
-With best wishes
-Dmitry
+The existing binding (qcom,q6v5.txt) also has:
+
+- interrupts-extended:
+        Usage: required
+	Value type: <prop-encoded-array>
+	Definition: reference to the interrupts that match interrupt-names
+
+That's covered implicitly by 'interrupts' I suppose?
+
+> +
+> +  clocks:
+> +    items:
+> +      - description: GCC MSS IFACE clock
+> +      - description: GCC MSS OFFLINE clock
+> +      - description: GCC MSS SNOC_AXI clock
+> +      - description: RPMH PKA clock
+> +      - description: RPMH XO clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: iface
+> +      - const: offline
+> +      - const: snoc_axi
+> +      - const: pka
+> +      - const: xo
+> +
+> +  power-domains:
+> +    items:
+> +      - description: CX power domain
+> +      - description: MSS power domain
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: cx
+> +      - const: mss
+> +
+> +  resets:
+> +    items:
+> +      - description: AOSS restart
+> +      - description: PDC reset
+> +
+> +  reset-names:
+> +    items:
+> +      - const: mss_restart
+> +      - const: pdc_reset
+> +
+> +  memory-region:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: Phandle reference to the reserved-memory for the MBA region followed
+> +                 by the modem region.
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description:
+> +      The name of the firmware which should be loaded for this remote
+> +      processor.
+> +
+> +  qcom,halt-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Phandle reference to a syscon representing TCSR followed by the
+> +      four offsets within syscon for q6, modem, nc and vq6 halt registers.
+> +
+> +  qcom,ext-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Two phandle references to syscons representing TCSR_REG and TCSR register
+> +      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
+> +      and axim1_clk_off/crypto_clk_off registers respectively.
+> +
+> +  qcom,qaccept-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Phandle reference to a syscon representing TCSR followed by the
+> +      three offsets within syscon for mdm, cx and axi qaccept registers.
+> +
+> +  qcom,qmp:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Reference to the AOSS side-channel message RAM.
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the Hexagon core
+> +    items:
+> +      - description: Stop the modem
+> +
+> +  qcom,smem-state-names:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The names of the state bits used for SMP2P output
+> +    const: stop
+> +
+> +  glink-edge:
+> +    type: object
+> +    description: |
+> +      Qualcomm G-Link subnode which represents communication edge, channels
+> +      and devices related to the DSP.
+> +
+> +    properties:
+> +      interrupts:
+> +        items:
+> +          - description: IRQ from MSS to GLINK
+> +
+> +      mboxes:
+> +        items:
+> +          - description: Mailbox for communication between APPS and MSS
+> +
+> +      label:
+> +        description: The names of the state bits used for SMP2P output
+> +        items:
+> +          - const: modem
+> +
+> +      qcom,remote-pid:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: ID of the shared memory used by GLINK for communication with MSS
+> +
+> +    required:
+> +      - interrupts
+> +      - mboxes
+> +      - label
+> +      - qcom,remote-pid
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - iommus
+> +  - interconnects
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - power-domain-names
+> +  - resets
+> +  - reset-names
+> +  - qcom,halt-regs
+> +  - qcom,ext-regs
+> +  - qcom,qaccept-regs
+> +  - memory-region
+> +  - qcom,qmp
+
+'qcom,qmp' is marked as 'optional' in qcom,q6v5.txt
