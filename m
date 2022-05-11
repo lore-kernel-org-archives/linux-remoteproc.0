@@ -2,295 +2,295 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8234C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 16:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3703C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 17:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345242AbiEKQ7e (ORCPT
+        id S243450AbiEKRQB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 12:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50856 "EHLO
+        Wed, 11 May 2022 13:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345231AbiEKQ7d (ORCPT
+        with ESMTP id S242783AbiEKRP5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 12:59:33 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0E513CA0A
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:59:32 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d22so2450986plr.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 09:59:32 -0700 (PDT)
+        Wed, 11 May 2022 13:15:57 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7DF3D48
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 10:15:49 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id p4so3432393edx.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 May 2022 10:15:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=psIKzhbeiZw9Aftjj4SOmxtdH9ncwPzk8iMLnEGr5bQ=;
-        b=br3daB0N8p/kLYd3rvdlu/42N5uuMMNWC5vbDuU38H/bNftmrx5r5RxSbP1OyY/K6a
-         5RJdt2tVcmtISOviN61hb8DtmcBkGuMY01Z0pqx2idZS7vTzf+KudVdP0p/CCeotBBQi
-         wu7I97Mr3AaxtxNvklCkTkWG0dnRLEC1i+cBA=
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :references:content-language:in-reply-to:content-transfer-encoding;
+        bh=2+4MntLHEZNAXBomauNodAZbp3YguNyy5lnTjqXp3Ic=;
+        b=JcBroyxGn8h8fNlXpKBt42ipS1NOhTuZm1+WlKC1/4/wjOusrkG9fFG2b1NrKOGgjD
+         3+c/A1g4tKA44nu30jSUdKPQWqMsaEUq0QT4KIsAATdlOeRXYObF5/D9VZLKYuwC/8Qf
+         1G/sFBlZfzj5soGBelp8EO2Dc4RNtXrGpt4woU67C6HCbcHAhAkLFNrcMsUmx7rmlyGo
+         3RGY+0gx1+GiEb/1QzlKbmTDGqIPnT+DT0r3cLZX49gomPOT7StVdPLDBrnnX2cm9NhH
+         kLs5cBUY6LdZPsj79WXn4wQB4z8BXx+rS2MKNDBU5aRpKqzrgRy3qzoZHFnxlOGJv7KL
+         OQbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=psIKzhbeiZw9Aftjj4SOmxtdH9ncwPzk8iMLnEGr5bQ=;
-        b=yHI3Vfjz4P2HPTIR0cmpoMjx+6cHnZL4RFllfvByrdD02aUCyIBJiYDDxVnoAuUVYP
-         SYvgHzwRKWufTD2FwapXbyK0MzwSRN+8hE5P04kIZOl6eX4huJo1JZtKGKJ9c4q/L4Hw
-         WEfTvcLCWuChuJ9AKPx8apuftDh1tiXugodBLO0/QDv2LytRJCpLiYZDxTyJtGZRQYut
-         nNzFPpNG3OcsFO5Zk0zy+Uy+UW2kJZU87AzptdIgg1mS4fvorXqHSYpiX6npjRKde4SQ
-         tjZ6B2bcWfh00OrBmEY7xX+fxf0RHs9lR8+LvA21CVZjvmMt1NHyjMnZOEDXmUw7s9ug
-         Ylhw==
-X-Gm-Message-State: AOAM533/jkWmNkHB8F0hWJi0DBiZ7sFLkgp+TXatsjh8owZu833YwPDB
-        Tza+vYKeFzwFHwTYDEcphsDdoQ==
-X-Google-Smtp-Source: ABdhPJzMCgYv+v3OfOKwapUQQdn7yf3/lf5sB7Q70QMwgnjGiq1+4OKv65VIOQKiMkXuD95dtadtmg==
-X-Received: by 2002:a17:90a:f2ce:b0:1d9:a18f:87f3 with SMTP id gt14-20020a17090af2ce00b001d9a18f87f3mr6363099pjb.213.1652288371862;
-        Wed, 11 May 2022 09:59:31 -0700 (PDT)
-Received: from localhost ([2620:15c:11a:202:c586:bf93:e960:73b4])
-        by smtp.gmail.com with UTF8SMTPSA id a12-20020aa78e8c000000b0050dc762818dsm2023523pfr.103.2022.05.11.09.59.31
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:references:content-language:in-reply-to
+         :content-transfer-encoding;
+        bh=2+4MntLHEZNAXBomauNodAZbp3YguNyy5lnTjqXp3Ic=;
+        b=BVXzVNWxky7LEDXvTrWgB/WushgDtNNXUXlLPAZ6jz+7OQq6PPwXaZRSxIQ6hqRJF/
+         aNXAt3WsPV8LcK4rVE2vQp/W6hQm1g0WflUdcK+63dVZ107gL2MZiQWBQWDXtMMm8/eM
+         4Lr4pU7UlVR/v9Gn0rvoQF4vFUPRWfyXb+u5FB7LqRX/nD4Hwplbnr+sGa7RKyrQ++HG
+         Z5VlvYAWmotpNs44LVi8z/y8hd8vfosAKq96QGMI4aYyQpIQdTCVKpEmBCd4D9oZCBp+
+         MZpr192eHP83vdN3NaMVj/eJ4IRwDbwFJzkulDClqZz9gDIZ8R/95SHlAypckwVW+wxw
+         RaXA==
+X-Gm-Message-State: AOAM532AsEVy1oLbz3jW87/oqPi/5EgHi8pu2QcR6FOeQSFQ1eQK/IwK
+        CNUPL7VHYTK1Va0DXaRbOwR3JQ==
+X-Google-Smtp-Source: ABdhPJy+l6Pw2ksp3ZDG3sf8ODxLy1zEongSmEXpjKq9Ts2M24KN/KaNbBfI/Scm7nQ4bUDirR4TPQ==
+X-Received: by 2002:a05:6402:190a:b0:427:efb7:bd81 with SMTP id e10-20020a056402190a00b00427efb7bd81mr30108532edz.63.1652289348324;
+        Wed, 11 May 2022 10:15:48 -0700 (PDT)
+Received: from [192.168.0.155] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id b5-20020a056402138500b0042a2d9af0f8sm311978edv.79.2022.05.11.10.15.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 May 2022 09:59:31 -0700 (PDT)
-Date:   Wed, 11 May 2022 09:59:30 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, ohad@wizery.com,
-        agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, krzysztof.kozlowski+dt@linaro.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: remoteproc: qcom: Add SC7280 MSS
- bindings
-Message-ID: <YnvrchuHVKFHE3B2@google.com>
-References: <1652257162-23874-1-git-send-email-quic_sibis@quicinc.com>
- <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
+        Wed, 11 May 2022 10:15:47 -0700 (PDT)
+Message-ID: <00234f36-9bae-31d5-5b83-ea238e7e3c11@linaro.org>
+Date:   Wed, 11 May 2022 19:15:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1652257162-23874-3-git-send-email-quic_sibis@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 4/9] dt-bindings: remoteproc: qcom: wcnss: Convert to YAML
+To:     Sireesh Kodali <sireeshkodali1@gmail.com>,
+        linux-remoteproc@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+References: <20220511161602.117772-1-sireeshkodali1@gmail.com>
+ <20220511161602.117772-5-sireeshkodali1@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20220511161602.117772-5-sireeshkodali1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Sibi,
+On 11/05/2022 18:15, Sireesh Kodali wrote:
+> Convert the dt-bindings from txt to YAML. This is in preparation for
+> including the relevant bindings for the MSM8953 platform's wcnss pil.
+> 
+> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
 
-On Wed, May 11, 2022 at 01:49:22PM +0530, Sibi Sankar wrote:
-> Add MSS PIL loading bindings for SC7280 SoCs.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+Thank you for your patch. There is something to discuss/improve.
 
-There is already a binding for 'qcom,sc7280-mss-pil' in
-Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt. Shouldn't
-the entries from that file be deleted?
+Please use existing bindings or example-schema as a starting point. Half
+of my review could be skipped if you just followed what we already have
+in the tree.
 
-> 
-> v3:
->  * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
-> 
->  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
->  1 file changed, 261 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> new file mode 100644
-> index 000000000000..2f95bfd7b3eb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> @@ -0,0 +1,261 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-mss-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SC7280 MSS Peripheral Image Loader
+Some of these qcom specific properties already exist but you decided to
+write them differently... please don't, rather reuse the code.
+
+(...)
+
 > +
 > +maintainers:
-> +  - Sibi Sankar <quic_sibis@quicinc.com>
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
 > +
 > +description:
-> +  This document defines the binding for a component that loads and boots firmware
-> +  on the Qualcomm Technology Inc. SC7280 Modem Hexagon Core.
+> +  This document defines the binding for a component that loads and boots
+> +  firmware on the Qualcomm WCNSS core.
 > +
 > +properties:
 > +  compatible:
-> +    enum:
-> +      - qcom,sc7280-mss-pil
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - qcom,pronto-v2-pil
+> +          - enum:
+> +              - qcom,pronto
+
+This does not look correct. The fallback compatible should not change.
+What is more, it was not documented in original binding, so this should
+be done in separate patch.
+
+> +      - items:
+
+No need for items, it's just one item.
+
+> +          - enum:
+> +              - qcom,riva-pil
+> +              - qcom,pronto-v1-pil
+> +              - qcom,pronto-v2-pil
 > +
 > +  reg:
-> +    items:
-> +      - description: MSS QDSP6 registers
-> +      - description: RMB registers
+> +    description: must specify the base address and size of the CCU, DXE and PMU
+> +      register blocks
+
+New line after "decription:", drop "must specify" and start with capital
+letter.
+
+You need maxItems: 3
+
+
 > +
 > +  reg-names:
 > +    items:
-> +      - const: qdsp6
-> +      - const: rmb
+> +      - const: ccu
+> +      - const: dxe
+> +      - const: pmu
 > +
-> +  iommus:
-> +    items:
-> +      - description: MSA Stream 1
-> +      - description: MSA Stream 2
-> +
-> +  interconnects:
-> +    items:
-> +      - description: Path leading to system memory
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Watchdog interrupt
-> +      - description: Fatal interrupt
-> +      - description: Ready interrupt
-> +      - description: Handover interrupt
-> +      - description: Stop acknowledge interrupt
-> +      - description: Shutdown acknowledge interrupt
+> +  interrupts-extended:
+> +    description:
+> +      Interrupt lines
+
+Skip description, it's obvious.
+
+It should be only "interrupts", not extended.
+
+> +    minItems: 2
+> +    maxItems: 5
 > +
 > +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +      - const: shutdown-ack
+> +    minItems: 2
+> +    maxItems: 5
 
+Names should be clearly defined. They were BTW defined in original
+bindings, so you should not remove them. This makes me wonder what else
+did you remove from original bindings...
 
-The existing binding (qcom,q6v5.txt) also has:
+Please document all deviations from pure conversion in the commit msg.
+It's a second "hidden" difference.
 
-- interrupts-extended:
-        Usage: required
-	Value type: <prop-encoded-array>
-	Definition: reference to the interrupts that match interrupt-names
-
-That's covered implicitly by 'interrupts' I suppose?
-
-> +
-> +  clocks:
-> +    items:
-> +      - description: GCC MSS IFACE clock
-> +      - description: GCC MSS OFFLINE clock
-> +      - description: GCC MSS SNOC_AXI clock
-> +      - description: RPMH PKA clock
-> +      - description: RPMH XO clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface
-> +      - const: offline
-> +      - const: snoc_axi
-> +      - const: pka
-> +      - const: xo
-> +
-> +  power-domains:
-> +    items:
-> +      - description: CX power domain
-> +      - description: MSS power domain
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: cx
-> +      - const: mss
-> +
-> +  resets:
-> +    items:
-> +      - description: AOSS restart
-> +      - description: PDC reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: mss_restart
-> +      - const: pdc_reset
-> +
-> +  memory-region:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: Phandle reference to the reserved-memory for the MBA region followed
-> +                 by the modem region.
 > +
 > +  firmware-name:
 > +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      The name of the firmware which should be loaded for this remote
-> +      processor.
+> +    description: Relative firmware image path for the WCNSS core. Defaults to
+> +      "wcnss.mdt".
+
+
+Blank line after "description:". This applies to other places as well.
+
+Remove "Defailts to ..." and just add "default" schema.
+
 > +
-> +  qcom,halt-regs:
+> +  vddpx-supply:
+> +    description: Reference to the PX regulator to be held on behalf of the
+> +      booting of the WCNSS core
+> +
+> +  vddmx-supply:
+> +    description: Reference to the MX regulator to be held on behalf of the
+> +      booting of the WCNSS core.
+> +
+> +  vddcx-supply:
+> +    description: Reference to the CX regulator to be held on behalf of the
+> +      booting of the WCNSS core.
+
+s/Reference to the//
+
+> +
+> +  power-domains:
 > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      four offsets within syscon for q6, modem, nc and vq6 halt registers.
+> +    description: References to the power domains that need to be held on
+> +      behalf of the booting WCNSS core
+
+1. Ditto.
+2. No need for ref
+3. maxItems
+
 > +
-> +  qcom,ext-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Two phandle references to syscons representing TCSR_REG and TCSR register
-> +      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
-> +      and axim1_clk_off/crypto_clk_off registers respectively.
-> +
-> +  qcom,qaccept-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      three offsets within syscon for mdm, cx and axi qaccept registers.
-> +
-> +  qcom,qmp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Reference to the AOSS side-channel message RAM.
+> +  power-domain-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+
+No need for ref, skip description.
+
+> +    description: Names of the power domains
+> +    items:
+> +      - const: cx
+> +      - const: mx
 > +
 > +  qcom,smem-states:
 > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: States used by the AP to signal the Hexagon core
+> +    description: States used by the AP to signal the WCNSS core that it should
+> +      shutdown
 > +    items:
 > +      - description: Stop the modem
 > +
 > +  qcom,smem-state-names:
-> +    $ref: /schemas/types.yaml#/definitions/string
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+
+No need for ref. Really, it does not appear in any of existing bindings
+for smem-state-names, so how did you get it?
+
 > +    description: The names of the state bits used for SMP2P output
-> +    const: stop
+> +    items:
+> +      - const: stop
 > +
-> +  glink-edge:
+> +  memory-region:
+> +    maxItems: 1
+> +    description: Reference to the reserved-memory for the WCNSS core
+> +
+> +  smd-edge:
 > +    type: object
-> +    description: |
-> +      Qualcomm G-Link subnode which represents communication edge, channels
-> +      and devices related to the DSP.
+> +    description:
+> +      Qualcomm Shared Memory subnode which represents communication edge,
+> +      channels and devices related to the ADSP.
+
+You should reference /schemas/soc/qcom/qcom,smd.yaml
+
+> +
+> +  iris:
+
+Generic node name... what is "iris"?
+
+> +    type: object
+> +    description:
+> +      The iris subnode of the WCNSS PIL is used to describe the attached rf module
+
+s/rf/RF/
+
+> +      and its resource dependencies.
 > +
 > +    properties:
-> +      interrupts:
-> +        items:
-> +          - description: IRQ from MSS to GLINK
+> +      compatible:
+> +        enum:
+> +          - qcom,wcn3620
+> +          - qcom,wcn3660
+> +          - qcom,wcn3660b
+> +          - qcom,wcn3680
 > +
-> +      mboxes:
-> +        items:
-> +          - description: Mailbox for communication between APPS and MSS
+> +      clocks:
+> +        description: XO clock
 > +
-> +      label:
-> +        description: The names of the state bits used for SMP2P output
+> +      clock-names:
 > +        items:
-> +          - const: modem
-> +
-> +      qcom,remote-pid:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description: ID of the shared memory used by GLINK for communication with MSS
+> +          - const: xo
 > +
 > +    required:
-> +      - interrupts
-> +      - mboxes
-> +      - label
-> +      - qcom,remote-pid
-> +
-> +    additionalProperties: false
+> +      - compatible
+
+clocks and clock-names were required.
+Missing supplies, which were btw as well required.
+
 > +
 > +required:
 > +  - compatible
 > +  - reg
 > +  - reg-names
-> +  - iommus
-> +  - interconnects
-> +  - interrupts
+> +  - interrupts-extended
 > +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - power-domain-names
-> +  - resets
-> +  - reset-names
-> +  - qcom,halt-regs
-> +  - qcom,ext-regs
-> +  - qcom,qaccept-regs
+> +  - vddpx-supply
 > +  - memory-region
-> +  - qcom,qmp
+> +  - smd-edge
+> +  - iris
+> +
+> +additionalProperties: false
+> +
+> +if:
 
-'qcom,qmp' is marked as 'optional' in qcom,q6v5.txt
+Within allOf, please.
+
+
+
+Best regards,
+Krzysztof
