@@ -2,51 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FA9C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 05:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302BAC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 11 May 2022 08:19:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231682AbiEKF5Z (ORCPT
+        id S242227AbiEKITm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 11 May 2022 01:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49972 "EHLO
+        Wed, 11 May 2022 04:19:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiEKF5Y (ORCPT
+        with ESMTP id S234169AbiEKITl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 11 May 2022 01:57:24 -0400
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AF9B4F9EE;
-        Tue, 10 May 2022 22:57:23 -0700 (PDT)
+        Wed, 11 May 2022 04:19:41 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94AA14A25C;
+        Wed, 11 May 2022 01:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1652248643; x=1683784643;
+  t=1652257181; x=1683793181;
   h=from:to:cc:subject:date:message-id:mime-version;
-  bh=JS0wQtwj/aI1mz6dCd4z6y/dqiOprbNP2cwtAwaTJck=;
-  b=zRDyEXMC5yr/kWra3Wz8CDLtnsCSEbVh75UyZIPXtzbq/gBk4wI52AA4
-   rcTtSXAzNsMc9GA7IHXdHLdrUBtBjYYrXmQEVOxFFA8Y5ngOQAYU3bzIf
-   q4umUDuo4A5p4+8SsQ+O2VndKaLujRZQFCrCNhwKNXDf+JSM9GGmNyDSM
-   o=;
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 10 May 2022 22:57:22 -0700
+  bh=Bb2LDTeU+oMoQTSKmfDO7CnRWwQhv1IINwWHZiHdTzM=;
+  b=caCozNoVTuJGVhVzx2LXjq17r4chZ9F9YIA68RNMBB/aLbC/dpkki3Fl
+   SP/FZR+KuSazsxULQcUh+J+retoOj39T86SBMMuQqtj9HcOeSYUI24trX
+   e3NZh/zcDst0d2VwSenTag0yMRyxo2SrY6ad34DN6Wt5yHJMTmSfCcjHu
+   k=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 11 May 2022 01:19:40 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2022 22:57:22 -0700
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2022 01:19:39 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 10 May 2022 22:57:22 -0700
+ 15.2.986.22; Wed, 11 May 2022 01:19:38 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 10 May 2022 22:57:18 -0700
+ 15.2.986.22; Wed, 11 May 2022 01:19:34 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <arnd@arndb.de>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <sboyd@kernel.org>, <agross@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <mka@chromium.org>, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH v2] remoteproc: qcom_q6v5_mss: map/unmap metadata region before/after use
-Date:   Wed, 11 May 2022 11:27:05 +0530
-Message-ID: <1652248625-990-1-git-send-email-quic_sibis@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>
+CC:     <ohad@wizery.com>, <agross@kernel.org>,
+        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <mka@chromium.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH v3 0/2] Add support for proxy interconnect bandwidth votes
+Date:   Wed, 11 May 2022 13:49:20 +0530
+Message-ID: <1652257162-23874-1-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -57,101 +59,26 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The application processor accessing the dynamically assigned metadata
-region after assigning it to the remote Q6 would lead to an XPU violation.
-Fix this by un-mapping the metadata region post firmware header copy. The
-metadata region is freed only after the modem Q6 is done with fw header
-authentication.
+Add proxy interconnect bandwidth votes during modem bootup on SC7280 SoCs.
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+V3:
+ * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
 
 V2:
- * Fix error when MSS is built as a module [Kernel Test Bot]
- * Fixup cleanup errors
+ * Dropped patch 3 from version 1 [Sub with Bjorn's patch]
+ * Add YAML support [Krzysztof]
+ * Drop interconnect names [Bjorn]
 
- drivers/remoteproc/qcom_q6v5_mss.c | 38 ++++++++++++++++++++++++++++++++------
- 1 file changed, 32 insertions(+), 6 deletions(-)
+Sibi Sankar (2):
+  arm64: dts: qcom: sc7280: Add proxy interconnect requirements for
+    modem
+  dt-bindings: remoteproc: qcom: Add SC7280 MSS bindings
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index af217de75e4d..4b37e11fbb03 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -10,6 +10,7 @@
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/devcoredump.h>
-+#include <linux/dma-map-ops.h>
- #include <linux/dma-mapping.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
-@@ -932,27 +933,52 @@ static void q6v5proc_halt_axi_port(struct q6v5 *qproc,
- static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
- 				const char *fw_name)
- {
--	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
-+	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS | DMA_ATTR_NO_KERNEL_MAPPING;
-+	unsigned long flags = VM_DMA_COHERENT | VM_FLUSH_RESET_PERMS;
-+	struct page **pages;
-+	struct page *page;
- 	dma_addr_t phys;
- 	void *metadata;
- 	int mdata_perm;
- 	int xferop_ret;
- 	size_t size;
--	void *ptr;
-+	void *vaddr;
-+	int count;
- 	int ret;
-+	int i;
- 
- 	metadata = qcom_mdt_read_metadata(fw, &size, fw_name, qproc->dev);
- 	if (IS_ERR(metadata))
- 		return PTR_ERR(metadata);
- 
--	ptr = dma_alloc_attrs(qproc->dev, size, &phys, GFP_KERNEL, dma_attrs);
--	if (!ptr) {
-+	page = dma_alloc_attrs(qproc->dev, size, &phys, GFP_KERNEL, dma_attrs);
-+	if (!page) {
- 		kfree(metadata);
- 		dev_err(qproc->dev, "failed to allocate mdt buffer\n");
- 		return -ENOMEM;
- 	}
- 
--	memcpy(ptr, metadata, size);
-+	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-+	pages = kmalloc_array(count, sizeof(struct page *), GFP_KERNEL);
-+	if (!pages) {
-+		ret = -ENOMEM;
-+		goto free_dma_attrs;
-+	}
-+
-+	for (i = 0; i < count; i++)
-+		pages[i] = nth_page(page, i);
-+
-+	vaddr = vmap(pages, count, flags, pgprot_dmacoherent(PAGE_KERNEL));
-+	kfree(pages);
-+	if (!vaddr) {
-+		dev_err(qproc->dev, "unable to map memory region: %pa+%zx\n", &phys, size);
-+		ret = -EBUSY;
-+		goto free_dma_attrs;
-+	}
-+
-+	memcpy(vaddr, metadata, size);
-+
-+	vunmap(vaddr);
- 
- 	/* Hypervisor mapping to access metadata by modem */
- 	mdata_perm = BIT(QCOM_SCM_VMID_HLOS);
-@@ -982,7 +1008,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
- 			 "mdt buffer not reclaimed system may become unstable\n");
- 
- free_dma_attrs:
--	dma_free_attrs(qproc->dev, size, ptr, phys, dma_attrs);
-+	dma_free_attrs(qproc->dev, size, page, phys, dma_attrs);
- 	kfree(metadata);
- 
- 	return ret < 0 ? ret : 0;
+ .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 261 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi |   1 +
+ 2 files changed, 262 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+
 -- 
 2.7.4
 
