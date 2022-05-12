@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5262C43217
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 May 2022 10:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D64C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 May 2022 10:00:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352379AbiELKAZ (ORCPT
+        id S1352399AbiELKA0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 12 May 2022 06:00:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
+        Thu, 12 May 2022 06:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352376AbiELKAU (ORCPT
+        with ESMTP id S1352406AbiELKAY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 12 May 2022 06:00:20 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D862B22EA71
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 03:00:18 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id z19so5588537edx.9
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 03:00:18 -0700 (PDT)
+        Thu, 12 May 2022 06:00:24 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B06922EA71
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 03:00:21 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id w24so5610484edx.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 03:00:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=emzH+JokSC0O/Ko2ZLGcXwOO6UT/JvwHW3bVaLoX1oI=;
-        b=IR4qiHWxHg5QD/BjSENOSJVPuLhW9zy59KW+f5fyG6rxVek9cMHJajUEBcMA4YzJ93
-         d1TefSNpzwjpwW+yDfM0GZN3y5PbxmucErU4dXaqW0Ew2ED6U8gL639BPGm/VdJiVlJt
-         RFoHZzesauJ2F6xao0X93WUsPUL/VcJnAQ1udsI6FueNthd2ptiYnDZHoOyDaF33yfx7
-         CYVZCRzX+qtFTiNrYE1kDGaRSdOBHv3YDLY0O3JfDQXZA8fhMfW35abzFTbvNWz5zlWk
-         mU69IfMX+Cwr9Jh9dQVsNv2E5K5moXF/aCCEIvExmEjIuz9MeiOWMRVE1A+J1SEwEAlZ
-         cxtg==
+        bh=ZjLxakQ0FSfyTvd+sfZt6yVLmsWKYw5HJWioql1MULA=;
+        b=oKuGfm7/9iBCaaPc5mhPpwnUcc7KMWedSIlK2to3AQnPjr5zs2yttDv1zqEA3nGfxY
+         /A8lPZm1yXkHH/aszZLujZQumQMR0FByXXA1eC6g7vsCjSDIff6rGT76DmZpGuy+C1DE
+         s1GeDDq8KPg0DLOpaTUOa9+1mnQ4rTFeOvLFqIQ7oTmFR8/RawpH0wVbJtgZNOHDeIZf
+         HyE/p38Gs/7Z6vVGENuVVaGdXUjth0n0Dm8ULQxY1Qfftnk0EQ5skJ/6+aLRGYGv55+n
+         cEAabyWwSYARxWtqgOeIbIqRHTYoNLDZ9TFwV5FV250WEF8kMWgQdX5Aa7x8SBf/rKfG
+         u8tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=emzH+JokSC0O/Ko2ZLGcXwOO6UT/JvwHW3bVaLoX1oI=;
-        b=cvVv2hXTOg9vC9J2uSwPYfiiP9cyUytzc0qOTp8ezmL+0n+dg9D/2hEPIgx2wXRab2
-         X765jNQ9qJ4INwLqnh4Je97Jk26bdhqCgvM2fyzVKydm0zvDgw9IZygoeTmwOH3AFL4J
-         lzXLNg6/IvfGjVu4nb02KMt8thCJIMK342IfkVemfXFoKsBUGchwfoEH0PR4t+u0JCvQ
-         94lg+g3zOo3G6hL63yHe7v/UNBlTLYnQ7AkUzOz4lJXBkkqrHJooiJsFBZm1tQC/HrbE
-         KafUAxq+9e9lHHnRYuWWNG/lfTpcrTcp11Np9Qsb4WmRoHjULEJEiqLTQDIs9jEI/sOB
-         ddGg==
-X-Gm-Message-State: AOAM531S3eNWO4wmIccEF92FhfoywsO8h9H9WBp8qHVvV7Oo+b2MlB8M
-        6pKwiTAWdmhmvC7TVZ/Ju8QeOA==
-X-Google-Smtp-Source: ABdhPJwI/kkZa2f79DEgU8mGj/rNuBIgrTItBI+pcSdRN9/xrHd4kzXsSy712av4kUjt+8cA2AwxMA==
-X-Received: by 2002:a50:a6c8:0:b0:428:5b3a:6c99 with SMTP id f8-20020a50a6c8000000b004285b3a6c99mr33119168edc.222.1652349617300;
-        Thu, 12 May 2022 03:00:17 -0700 (PDT)
+        bh=ZjLxakQ0FSfyTvd+sfZt6yVLmsWKYw5HJWioql1MULA=;
+        b=yFpsuqAxpY30U2wZXr7AVOpS7fikVjSjxoQqD9oNZfbARhBm7egxZAGYbkhV2e1VPU
+         YORia0u25d6IMdUE73q7fPRz4cORRbh50mXdCKG1kFeiyGniXhs/sJa9kzo59x2OUBVC
+         AGiJYDk3oFlGx9n/gJaMYIk7MJ5wgDbCNpdbEgUMKnAufA6MQUB7Nr+Mv2L7qNWNeT71
+         L76GY+3Q52TkJ+Htxz+5VIQ44p8zv6/pnbGbzSP18zHmO0OB782xB2Tlwd45jRh8mzrx
+         EwxF/amwNPgNrRqh9SA0+pfYt9gM+O/4PPj3yxwfoC9iouyEKlmJBZZuQb3mlnWvr3Gb
+         DRHg==
+X-Gm-Message-State: AOAM532u6ckZsjZZ0b+WIlMokarNJwfMcPEn6ZtPs+KgnkWHqIzwxIoS
+        a/g3JKbH7qVmPhXrCZxX35exQw==
+X-Google-Smtp-Source: ABdhPJwLH8DMilBzXnoMU839jb/MHw2Ayl45szfnmU2n4inrbex0g7IO4TeWJ6vQflnS/RWleVCPdQ==
+X-Received: by 2002:aa7:de0c:0:b0:425:d510:8f40 with SMTP id h12-20020aa7de0c000000b00425d5108f40mr34230989edv.4.1652349620065;
+        Thu, 12 May 2022 03:00:20 -0700 (PDT)
 Received: from localhost.localdomain (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id d17-20020a170906641100b006f3ef214da1sm1970287ejm.7.2022.05.12.03.00.16
+        by smtp.gmail.com with ESMTPSA id d17-20020a170906641100b006f3ef214da1sm1970287ejm.7.2022.05.12.03.00.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 03:00:16 -0700 (PDT)
+        Thu, 12 May 2022 03:00:19 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -61,9 +61,9 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     Sireesh Kodali <sireeshkodali1@gmail.com>,
         Sibi Sankar <quic_sibis@quicinc.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 01/12] dt-bindings: soc: qcom,wcnss: remove unneeded ref for names
-Date:   Thu, 12 May 2022 11:59:55 +0200
-Message-Id: <20220512100006.99695-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 03/12] dt-bindings: remoteproc: qcom,adsp: add interconnects
+Date:   Thu, 12 May 2022 11:59:57 +0200
+Message-Id: <20220512100006.99695-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220512100006.99695-1-krzysztof.kozlowski@linaro.org>
 References: <20220512100006.99695-1-krzysztof.kozlowski@linaro.org>
@@ -73,25 +73,30 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The core schema already sets a 'ref' for properties ending with 'names'.
+SM8350 ADSP Peripheral Image Loader already defines interconnects, so
+document the property:
+
+  sm8350-hdk.dtb: remoteproc@4080000: 'interconnects' does not match any of the regexes: 'pinctrl-[0-9]+'
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml | 1 -
- 1 file changed, 1 deletion(-)
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-index d891ecfb2691..5320504bb5e0 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-@@ -77,7 +77,6 @@ properties:
-           Should reference the tx-enable and tx-rings-empty SMEM states.
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+index 810ef9d2bcc1..6e1fdfe91043 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+@@ -67,6 +67,9 @@ properties:
+     minItems: 1
+     maxItems: 8
  
-       qcom,smem-state-names:
--        $ref: /schemas/types.yaml#/definitions/string-array
-         items:
-           - const: tx-enable
-           - const: tx-rings-empty
++  interconnects:
++    maxItems: 1
++
+   interrupts:
+     minItems: 5
+     maxItems: 6
 -- 
 2.32.0
 
