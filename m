@@ -2,56 +2,56 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772EDC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 May 2022 08:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418C4C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 May 2022 08:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351335AbiELIOX (ORCPT
+        id S1351578AbiELIhD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 12 May 2022 04:14:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33582 "EHLO
+        Thu, 12 May 2022 04:37:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344338AbiELIOW (ORCPT
+        with ESMTP id S1351539AbiELIhB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 12 May 2022 04:14:22 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5077E5DBE6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 01:14:20 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id d6so5303031ede.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 01:14:20 -0700 (PDT)
+        Thu, 12 May 2022 04:37:01 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA47C5DB7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 01:37:00 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id l18so8712816ejc.7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 May 2022 01:37:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=dKj3Wkk5G60lVyTD5qpq1NcTw9sWsRvLava+2G5nJbs=;
-        b=etNSNPWcfTj3Ga3QAPpZ99dN9/OxZpengwlNA+k1El504Pf3TOhGGS+VGx3NSKyx4B
-         DT+//kgDlbF17wpaOmvjiihu/ZsVyNB/o/fC+oXm4N14dv3riYtOHKrGwvn2TdZDLduJ
-         gVAiJffesApMhZvLIozNhGfyVgn37kNp+WhoxQt5pP1PrgWR8Xki/sw/UWCtY8tBSorj
-         x+HoeSklzYpg0BeZ7h7vnZDTu6e+pIhT4VYztwJgzukZRkT4SzgdA9WVO2FexrhD1dpZ
-         DO/+S+oEvmXnN1/A5YFo8aL2L2Yx5ihvDVKPt0EjoZejF2foomYWP0PiTRyFHwAMdE6N
-         CZHw==
+        bh=Nv8lNSH0gbtDRGd36VCloQ6uZGegVPpsw/onrG8x3ew=;
+        b=yzFJE4m26cI254ywYC9KLHQeXSX1cl8syDdlPf27qy+G0mcnTD0mjfjwiZWKfNMCVG
+         bimWGCB8dEaE8pCVPoXHBIvO7B5ruTyh8RbzEW+KTU6Q5Ur68C/0PrfR3gwonkuZILKn
+         XBEDBiRH3pEBoR0p9xzsQt3QSUfqEAs/l0utOohuB3A0+eVfGEEDm4GR//oeVo9nocC3
+         LnRt5HKYPC2gNtKH09R6CWG2p1K7zb/RLei1GCX0WchH+T1PnfXGnQjsTAoGFMoDKMOW
+         H5nABG6HPcz+QYi/kx0YLqNgwtJ8GZFbXjbKK4i/3dOZRUBZIBAgKzxeIiS4MEw/xpHm
+         KeCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=dKj3Wkk5G60lVyTD5qpq1NcTw9sWsRvLava+2G5nJbs=;
-        b=XvTTChf346aSMcO6S4KZen8n0tBe3SBv/qSKknBwUNxOSc5+VLgjaP1pKM6IepHFxO
-         Gw4htMIm4QkfIxeq+L09JP9cSm8PoakQc6s4Kk+Brs7mod79g0Ne8qgGG6J6khwnZ7z5
-         JZnTGMEIjzHKntYD5M364gjo+DyVQ2ZNremsopvnjya2MRni4H5mdD4Ky0qo7zqRHG+O
-         +eREOhqZWN98383Yxa+BZ+sR+cZ0RTK6B6YZXr9bNxg3LhyDoqVGmWWTlhNuKJzel7vT
-         ONjJfvU8GFHN/zTjNm5gJAP6fjvWVYdSaT23L8oyyYSiK9ZwK0Ge1rsdsMb4DyRYx2kz
-         3daw==
-X-Gm-Message-State: AOAM532IRHTlUJ28ErRVU+vqN8aR+uIcqzQORW6oJyetShIyY6gNuUIy
-        myvO0FlnUQpORBYj5DWH/2IVUw==
-X-Google-Smtp-Source: ABdhPJzkxgOSxH40scNowpHv6e6D0YUfb9fvbfZ7RnSikZ9iUxIxoKqkCYnsmEcVrB2Pn0jmTUywIw==
-X-Received: by 2002:a05:6402:128b:b0:425:d1d7:b321 with SMTP id w11-20020a056402128b00b00425d1d7b321mr33309173edv.179.1652343258888;
-        Thu, 12 May 2022 01:14:18 -0700 (PDT)
+        bh=Nv8lNSH0gbtDRGd36VCloQ6uZGegVPpsw/onrG8x3ew=;
+        b=UnuIDYSzoretaV7hy9pcstmi1gAo8kgHxBg4BWLXQ0a0SKwqmRpX4Nqm6wpr6+S7/Y
+         JdtBT6YSGRfalX4kvlz53p9qcCBEqSTQabWe35lkyZjkZzS/qwfx5YfGWu2nTmksu3Pu
+         tBuL4mFjJ5LXnXF7a7UIckg4CcvVYsZC1eax6tF4ibl0Onv52iPh4vWfjqACHckxyzgg
+         nIc/KjcRp3n6hjubsgsOA4llcYSwMDaoLT4NzH6KkykxXKvSXWVZcuhgHwi5s2miXFFM
+         8fufO7O4kTp5f7NO2uiRby6hqGag6H2sOk97ZzJOOrVMvqS2H6C/dJOWf8A6Bxfido4L
+         3fmA==
+X-Gm-Message-State: AOAM530Ak3SdulK6cxquJCeDr078ipN1Zpa2COnVJSPV0ffDPZbCJCoT
+        dEa88JnWVLMUTwpOyqG5yej7Jg==
+X-Google-Smtp-Source: ABdhPJwZLwXF5gGhpt3H78T3NZu8Rwtld52oms13g3NCCt4/CVIBRMHb30iIrWeu9SanSWzwVRzyKQ==
+X-Received: by 2002:a17:907:86a0:b0:6f4:fc1f:30d9 with SMTP id qa32-20020a17090786a000b006f4fc1f30d9mr28654321ejc.708.1652344618652;
+        Thu, 12 May 2022 01:36:58 -0700 (PDT)
 Received: from [192.168.0.156] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id h3-20020aa7c603000000b0042a41ad4688sm71edq.65.2022.05.12.01.14.17
+        by smtp.gmail.com with ESMTPSA id ko21-20020a170907987500b006f3ef214e28sm1881071ejc.142.2022.05.12.01.36.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 01:14:18 -0700 (PDT)
-Message-ID: <a62822a4-a771-dfa9-f46d-586fdccedf66@linaro.org>
-Date:   Thu, 12 May 2022 10:14:17 +0200
+        Thu, 12 May 2022 01:36:58 -0700 (PDT)
+Message-ID: <30c18480-bf0d-82b9-5b11-daa3b70c40df@linaro.org>
+Date:   Thu, 12 May 2022 10:36:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
@@ -79,185 +79,6 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 12/05/2022 08:50, Sireesh Kodali wrote:
-> On Wed May 11, 2022 at 10:45 PM IST, Krzysztof Kozlowski wrote:
->> On 11/05/2022 18:15, Sireesh Kodali wrote:
->>> Convert the dt-bindings from txt to YAML. This is in preparation for
->>> including the relevant bindings for the MSM8953 platform's wcnss pil.
->>>
->>> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
->>
->> Thank you for your patch. There is something to discuss/improve.
->>
->> Please use existing bindings or example-schema as a starting point. Half
->> of my review could be skipped if you just followed what we already have
->> in the tree.
->>
->> Some of these qcom specific properties already exist but you decided to
->> write them differently... please don't, rather reuse the code.
->>
-> 
-> Thank you for your review, I will make the chnages as appropriate in v2.
->> (...)
->>
->>> +
->>> +maintainers:
->>> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
->>> +
->>> +description:
->>> +  This document defines the binding for a component that loads and boots
->>> +  firmware on the Qualcomm WCNSS core.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->>> +      - items:
->>> +          - enum:
->>> +              - qcom,pronto-v2-pil
->>> +          - enum:
->>> +              - qcom,pronto
->>
->> This does not look correct. The fallback compatible should not change.
->> What is more, it was not documented in original binding, so this should
->> be done in separate patch.
->>
-> 
-> This was not a change to the fallback compatible. 
-
-You made it an enum, so you expect it to use different fallback for
-different cases.
-
-> msm8916.dtsi's wcnss
-> node has "qcom,pronto" as the compatible string, which is why this was
-> added. It is however not documented in the txt file. Is it sufficient to
-> add a note in the commit message, or should it be split into a separate
-> commit?
-
-Please split it, assuming that fallback is correct. Maybe the fallback
-is wrong?
-
-> 
->>> +      - items:
->>
->> No need for items, it's just one item.
->>
->>> +          - enum:
->>> +              - qcom,riva-pil
->>> +              - qcom,pronto-v1-pil
->>> +              - qcom,pronto-v2-pil
->>> +
->>> +  reg:
->>> +    description: must specify the base address and size of the CCU, DXE and PMU
->>> +      register blocks
->>
->> New line after "decription:", drop "must specify" and start with capital
->> letter.
->>
->> You need maxItems: 3
->>
-> 
-> Will fix in v2
->>
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: ccu
->>> +      - const: dxe
->>> +      - const: pmu
->>> +
->>> +  interrupts-extended:
->>> +    description:
->>> +      Interrupt lines
->>
->> Skip description, it's obvious.
->>
->> It should be only "interrupts", not extended.
->>
->>> +    minItems: 2
->>> +    maxItems: 5
->>> +
->>> +  interrupt-names:
->>> +    minItems: 2
->>> +    maxItems: 5
->>
->> Names should be clearly defined. They were BTW defined in original
->> bindings, so you should not remove them. This makes me wonder what else
->> did you remove from original bindings...
->>
->> Please document all deviations from pure conversion in the commit msg.
->> It's a second "hidden" difference.
->>
-> 
-> Sorry, this was meant to be a pure txt->YAML conversion. The missing
-> interrupt names was accidental, and will be fixed in v2.
->>> +
->>> +  firmware-name:
->>> +    $ref: /schemas/types.yaml#/definitions/string
->>> +    description: Relative firmware image path for the WCNSS core. Defaults to
->>> +      "wcnss.mdt".
->>
->>
->> Blank line after "description:". This applies to other places as well.
->>
->> Remove "Defailts to ..." and just add "default" schema.
->>
-> 
-> Will be fixed in v2
->>> +
->>> +  vddpx-supply:
->>> +    description: Reference to the PX regulator to be held on behalf of the
->>> +      booting of the WCNSS core
->>> +
->>> +  vddmx-supply:
->>> +    description: Reference to the MX regulator to be held on behalf of the
->>> +      booting of the WCNSS core.
->>> +
->>> +  vddcx-supply:
->>> +    description: Reference to the CX regulator to be held on behalf of the
->>> +      booting of the WCNSS core.
->>
->> s/Reference to the//
->>
->>> +
->>> +  power-domains:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    description: References to the power domains that need to be held on
->>> +      behalf of the booting WCNSS core
->>
->> 1. Ditto.
->> 2. No need for ref
->> 3. maxItems
->>
->>> +
->>> +  power-domain-names:
->>> +    $ref: /schemas/types.yaml#/definitions/string-array
->>
->> No need for ref, skip description.
->>
->>> +    description: Names of the power domains
->>> +    items:
->>> +      - const: cx
->>> +      - const: mx
->>> +
->>> +  qcom,smem-states:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->>> +    description: States used by the AP to signal the WCNSS core that it should
->>> +      shutdown
->>> +    items:
->>> +      - description: Stop the modem
->>> +
->>> +  qcom,smem-state-names:
->>> +    $ref: /schemas/types.yaml#/definitions/string-array
->>
->> No need for ref. Really, it does not appear in any of existing bindings
->> for smem-state-names, so how did you get it?
->>
-> 
-> The smem nodes were copied from /remoteproc/qcom,sdm845-adsp-pil.yaml
-
-Hm, indeed, you're right. There are few files having here ref. I'll fix
-these.
-
-> 
 >>> +    description: The names of the state bits used for SMP2P output
 >>> +    items:
 >>> +      - const: stop
@@ -273,18 +94,10 @@ these.
 >>> +      channels and devices related to the ADSP.
 >>
 >> You should reference /schemas/soc/qcom/qcom,smd.yaml
-> 
-> Will be done in v2
->>
->>> +
->>> +  iris:
->>
->> Generic node name... what is "iris"?
->>
-> Iris is the RF module, I'll make the description better
 
-RF like wifi? Then the property name should be "wifi".
-
+It seems it is not a SMD driver so above reference is not correct. This
+should be probably described in its own schema, I just need to
+understand what's this...
 
 
 Best regards,
