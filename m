@@ -2,397 +2,320 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22E4C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 May 2022 09:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1AB7C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 May 2022 09:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242267AbiELJT7 (ORCPT
+        id S1352094AbiELJcc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 12 May 2022 05:19:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60950 "EHLO
+        Thu, 12 May 2022 05:32:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229485AbiELJT6 (ORCPT
+        with ESMTP id S1352093AbiELJc2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 12 May 2022 05:19:58 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EC87205F2C;
-        Thu, 12 May 2022 02:19:56 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id l20-20020a17090a409400b001dd2a9d555bso4393075pjg.0;
-        Thu, 12 May 2022 02:19:56 -0700 (PDT)
+        Thu, 12 May 2022 05:32:28 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089B662133;
+        Thu, 12 May 2022 02:32:25 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id a191so4105835pge.2;
+        Thu, 12 May 2022 02:32:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:content-transfer-encoding:date:message-id:cc:subject
-         :from:to:references:in-reply-to;
-        bh=Nt7/SSWoDR75mNb090rQF4WPuNxt+chmnIAsdE3g0kU=;
-        b=DNYILr4tgb7B9qV1VlNAdEpvqH3F+SqP+ET2/g5ncLo8iz06RbruAy51IZE5Bk9NGy
-         wCDvMSh9kPQZRe1cZoo53E4sVMe1kioKYuFBG1WjDspni5PB+ge02KFuwmuxNXNgRQ8h
-         FoRDRUbWMHXMXrN4XG67616ksfG9TyN1bvtRkowskjUkaUOCnDldBCYw6D2ESSOwhjVJ
-         bF5qAugGnoUizdMKPj1rP4Ui/JK6gO0WTttZKjb6ljm0Qk5s8+fBuogPIxEpUzDv2orp
-         VU8OetHGA1ov34kXAjs2OUfouPlK3/Hgj6Ee+x8hIyLefueG4YjzxP4n9nrjMxqCvdM2
-         66JQ==
+        h=mime-version:content-transfer-encoding:date:message-id:to:cc
+         :subject:from:references:in-reply-to;
+        bh=flXivKEC2IcpiBFhfrddh1E6vjH9V3TZjevgVn91yi4=;
+        b=AN3U3kcHTlxbl51/sP1uJBCTPhiI6nHZw6wqz3ur7ecIYBifrP+OPAj8sktJaG0sbI
+         Z2Sn6izC8Um7AKLiUuB71AepwcU/kCOstIN5H8FlT13Bryk7oqT+lcrL3NICkAxo2rlH
+         d4gS8tshEKdqHFwVxbYXvol1qD7yxjnxhknP/FMUxMvZvlahjGvMvXHgEn6NpjcSMH2i
+         Clq7qnqAXgS+t5qtMQk6fhPr8cAgQKtY5AxvVkrXB5P6hqqteZI/P26qnClW2BhMd+Cr
+         cdw84aTRBKLszNAvxJN4Kq97/3prjkwG4vp2hvrOuk/kCe9KdN+9+5yWQP8Hd4iXmFw/
+         8Ufw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:content-transfer-encoding:date
-         :message-id:cc:subject:from:to:references:in-reply-to;
-        bh=Nt7/SSWoDR75mNb090rQF4WPuNxt+chmnIAsdE3g0kU=;
-        b=tr0sx6OAgFJT+UdZC1dyG2CXWjDwDSPSJF9D+Z9ixheVXINSFuH38VcjQTxip2IV/z
-         xsp68RaVU9IAvwu/o28UlvIk2hszWvHPn7wB2mmb3MMsvP+DqsnIzuTCVTSR9zldBiw/
-         unr9hlQf5Eh28eYKP2hgL2i1Hyngw+xz/fgC4F/OfFY1UgULCpMlMgM0p1WOPRF8mBk/
-         QC/vAmcwha1P6m3tocYbQwHxR/jfSH37fg0/3utZComtfS5PfzuX5XEqo40wZIh8xdgj
-         Oc+I7PNM+eP0NVYCmtfyQv9eb51U0DuEgTYhMiLjXreFF1+vhhKgDmfsTpgqIBYNSots
-         rvVw==
-X-Gm-Message-State: AOAM532aPgiszejeKGsq64jkGdaCCRpHT6V5h4CGdidAjAvOMfBUFI2V
-        UBZkT8eLlDRLlvAE0wt2mjW0UrAehuT2HQgH
-X-Google-Smtp-Source: ABdhPJynQCNJ9zZfkhh1IFBs8j6FfkoVhqJ9UhqYNRqVm1u9en9mfrs+O1kzL+x5hL+YtLV1RAG5uw==
-X-Received: by 2002:a17:902:b7cb:b0:15c:6650:a58a with SMTP id v11-20020a170902b7cb00b0015c6650a58amr29866078plz.63.1652347195964;
-        Thu, 12 May 2022 02:19:55 -0700 (PDT)
+         :message-id:to:cc:subject:from:references:in-reply-to;
+        bh=flXivKEC2IcpiBFhfrddh1E6vjH9V3TZjevgVn91yi4=;
+        b=F3Jl1AwG/VuZIRQrU6UvPjGi26O0cFm/zvJ73ZTF4aeQLEJCQPuVjWktm/SuTb7gKv
+         htDyr/bDWswESvBqfemze9hiM6kzQ+PWwIoKqX7WOH1kcZyBaguycAXmC3M/nyxVg6iQ
+         Ezb87+aPx8abm4SjKf47Oxu3/uUhR7td+WtFH87fgpfWQdCVxP87ROf+8TJ+c5bIixuD
+         P78YNRy8VroIRy57aA70NV9vZNnTF0NcR/VhyHYZq6CLd9gM3Ah2ph0C1T7ZCLKggZ03
+         zyucuOJhZlNdf/Hs7/j3OMK32fdcHGyeohWMdMx27ykOIo5s1irtIPGCsVzrqGjnHI3I
+         lXeA==
+X-Gm-Message-State: AOAM530YFcgZbeywUM/IASpwky3CsRTiAY4MJD+CBhKwzLQ9l35J6lol
+        iioHmREe2fH3bveHkhjykpW4oXLU6KyN0K9X
+X-Google-Smtp-Source: ABdhPJw/9YkqxrxQzGxTkTCCtpdkg05Mdc6nHzu4qoWSWe2lNP16o8faNIalqgzW/s/O+sqweam6Zg==
+X-Received: by 2002:a05:6a00:a02:b0:4fd:f9dd:5494 with SMTP id p2-20020a056a000a0200b004fdf9dd5494mr29453508pfh.68.1652347944324;
+        Thu, 12 May 2022 02:32:24 -0700 (PDT)
 Received: from localhost ([49.204.239.218])
-        by smtp.gmail.com with ESMTPSA id gc1-20020a17090b310100b001cd4989ff61sm1383206pjb.40.2022.05.12.02.19.51
+        by smtp.gmail.com with ESMTPSA id b1-20020a170902a9c100b0015e8d4eb1ebsm3386164plr.53.2022.05.12.02.32.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 May 2022 02:19:55 -0700 (PDT)
+        Thu, 12 May 2022 02:32:23 -0700 (PDT)
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 12 May 2022 14:49:49 +0530
-Message-Id: <CJXO6ZMZ454X.M3N9HDKNA5HB@skynet-linux>
+Date:   Thu, 12 May 2022 15:02:17 +0530
+Message-Id: <CJXOGJIR1ONQ.2ZT3JQGVWWHFB@skynet-linux>
+To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>
 Cc:     <linux-arm-msm@vger.kernel.org>,
         <~postmarketos/upstreaming@lists.sr.ht>,
         <bjorn.andersson@linaro.org>, <devicetree@vger.kernel.org>,
         <phone-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         "Andy Gross" <agross@kernel.org>,
+        "Mathieu Poirier" <mathieu.poirier@linaro.org>,
         "Rob Herring" <robh+dt@kernel.org>,
         "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: [PATCH 9/9] arm64: dts: qcom: msm8953: Add remote processor
- nodes
+Subject: Re: [PATCH 4/9] dt-bindings: remoteproc: qcom: wcnss: Convert to
+ YAML
 From:   "Sireesh Kodali" <sireeshkodali1@gmail.com>
-To:     "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>
 X-Mailer: aerc 0.9.0
 References: <20220511161602.117772-1-sireeshkodali1@gmail.com>
- <20220511161602.117772-10-sireeshkodali1@gmail.com>
- <2d68e610-e8ae-9e08-257a-3c94c3697334@linaro.org>
-In-Reply-To: <2d68e610-e8ae-9e08-257a-3c94c3697334@linaro.org>
+ <20220511161602.117772-5-sireeshkodali1@gmail.com>
+ <00234f36-9bae-31d5-5b83-ea238e7e3c11@linaro.org>
+ <CJXL0SG2GHN1.1IO2JOR5ARNV8@skynet-linux>
+ <a62822a4-a771-dfa9-f46d-586fdccedf66@linaro.org>
+In-Reply-To: <a62822a4-a771-dfa9-f46d-586fdccedf66@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed May 11, 2022 at 11:25 PM IST, Krzysztof Kozlowski wrote:
-> On 11/05/2022 18:16, Sireesh Kodali wrote:
-> > This commit adds the modem (q6v5_mss), WiFi (wcnss-pil) and audio DSP
-> > (q6v5_pas) remote processor nodes for the MSM8953 platform. It also add=
-s
-> > the coresponding SMP2P, SMSM and pinctrl nodes that are needed by these
-> > remote processors.
+On Thu May 12, 2022 at 1:44 PM IST, Krzysztof Kozlowski wrote:
+> On 12/05/2022 08:50, Sireesh Kodali wrote:
+> > On Wed May 11, 2022 at 10:45 PM IST, Krzysztof Kozlowski wrote:
+> >> On 11/05/2022 18:15, Sireesh Kodali wrote:
+> >>> Convert the dt-bindings from txt to YAML. This is in preparation for
+> >>> including the relevant bindings for the MSM8953 platform's wcnss pil.
+> >>>
+> >>> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
+> >>
+> >> Thank you for your patch. There is something to discuss/improve.
+> >>
+> >> Please use existing bindings or example-schema as a starting point. Ha=
+lf
+> >> of my review could be skipped if you just followed what we already hav=
+e
+> >> in the tree.
+> >>
+> >> Some of these qcom specific properties already exist but you decided t=
+o
+> >> write them differently... please don't, rather reuse the code.
+> >>
 > >=20
-> > Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-> > +			};
-> > +
-> > +			wcnss_sleep: wcnss-sleep-pins {
-> > +				wcss_wlan2 {
+> > Thank you for your review, I will make the chnages as appropriate in v2=
+.
+> >> (...)
+> >>
+> >>> +
+> >>> +maintainers:
+> >>> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> >>> +
+> >>> +description:
+> >>> +  This document defines the binding for a component that loads and b=
+oots
+> >>> +  firmware on the Qualcomm WCNSS core.
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    oneOf:
+> >>> +      - items:
+> >>> +          - enum:
+> >>> +              - qcom,pronto-v2-pil
+> >>> +          - enum:
+> >>> +              - qcom,pronto
+> >>
+> >> This does not look correct. The fallback compatible should not change.
+> >> What is more, it was not documented in original binding, so this shoul=
+d
+> >> be done in separate patch.
+> >>
+> >=20
+> > This was not a change to the fallback compatible.=20
 >
-> No underscores in node names, unless something needs it?
+> You made it an enum, so you expect it to use different fallback for
+> different cases.
 >
+> > msm8916.dtsi's wcnss
+> > node has "qcom,pronto" as the compatible string, which is why this was
+> > added. It is however not documented in the txt file. Is it sufficient t=
+o
+> > add a note in the commit message, or should it be split into a separate
+> > commit?
+>
+> Please split it, assuming that fallback is correct. Maybe the fallback
+> is wrong?
 
-wcnss_sleep is used by the pronto node defined below
+The code doesn't recognize "qcom,pronto", so perhaps the best solution
+is to just remove that compatible from msm8916.dtsi?
+>
+> >=20
+> >>> +      - items:
+> >>
+> >> No need for items, it's just one item.
+> >>
+> >>> +          - enum:
+> >>> +              - qcom,riva-pil
+> >>> +              - qcom,pronto-v1-pil
+> >>> +              - qcom,pronto-v2-pil
+> >>> +
+> >>> +  reg:
+> >>> +    description: must specify the base address and size of the CCU, =
+DXE and PMU
+> >>> +      register blocks
+> >>
+> >> New line after "decription:", drop "must specify" and start with capit=
+al
+> >> letter.
+> >>
+> >> You need maxItems: 3
+> >>
+> >=20
+> > Will fix in v2
+> >>
+> >>> +
+> >>> +  reg-names:
+> >>> +    items:
+> >>> +      - const: ccu
+> >>> +      - const: dxe
+> >>> +      - const: pmu
+> >>> +
+> >>> +  interrupts-extended:
+> >>> +    description:
+> >>> +      Interrupt lines
+> >>
+> >> Skip description, it's obvious.
+> >>
+> >> It should be only "interrupts", not extended.
+> >>
+> >>> +    minItems: 2
+> >>> +    maxItems: 5
+> >>> +
+> >>> +  interrupt-names:
+> >>> +    minItems: 2
+> >>> +    maxItems: 5
+> >>
+> >> Names should be clearly defined. They were BTW defined in original
+> >> bindings, so you should not remove them. This makes me wonder what els=
+e
+> >> did you remove from original bindings...
+> >>
+> >> Please document all deviations from pure conversion in the commit msg.
+> >> It's a second "hidden" difference.
+> >>
+> >=20
+> > Sorry, this was meant to be a pure txt->YAML conversion. The missing
+> > interrupt names was accidental, and will be fixed in v2.
+> >>> +
+> >>> +  firmware-name:
+> >>> +    $ref: /schemas/types.yaml#/definitions/string
+> >>> +    description: Relative firmware image path for the WCNSS core. De=
+faults to
+> >>> +      "wcnss.mdt".
+> >>
+> >>
+> >> Blank line after "description:". This applies to other places as well.
+> >>
+> >> Remove "Defailts to ..." and just add "default" schema.
+> >>
+> >=20
+> > Will be fixed in v2
+> >>> +
+> >>> +  vddpx-supply:
+> >>> +    description: Reference to the PX regulator to be held on behalf =
+of the
+> >>> +      booting of the WCNSS core
+> >>> +
+> >>> +  vddmx-supply:
+> >>> +    description: Reference to the MX regulator to be held on behalf =
+of the
+> >>> +      booting of the WCNSS core.
+> >>> +
+> >>> +  vddcx-supply:
+> >>> +    description: Reference to the CX regulator to be held on behalf =
+of the
+> >>> +      booting of the WCNSS core.
+> >>
+> >> s/Reference to the//
+> >>
+> >>> +
+> >>> +  power-domains:
+> >>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> >>> +    description: References to the power domains that need to be hel=
+d on
+> >>> +      behalf of the booting WCNSS core
+> >>
+> >> 1. Ditto.
+> >> 2. No need for ref
+> >> 3. maxItems
+> >>
+> >>> +
+> >>> +  power-domain-names:
+> >>> +    $ref: /schemas/types.yaml#/definitions/string-array
+> >>
+> >> No need for ref, skip description.
+> >>
+> >>> +    description: Names of the power domains
+> >>> +    items:
+> >>> +      - const: cx
+> >>> +      - const: mx
+> >>> +
+> >>> +  qcom,smem-states:
+> >>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> >>> +    description: States used by the AP to signal the WCNSS core that=
+ it should
+> >>> +      shutdown
+> >>> +    items:
+> >>> +      - description: Stop the modem
+> >>> +
+> >>> +  qcom,smem-state-names:
+> >>> +    $ref: /schemas/types.yaml#/definitions/string-array
+> >>
+> >> No need for ref. Really, it does not appear in any of existing binding=
+s
+> >> for smem-state-names, so how did you get it?
+> >>
+> >=20
+> > The smem nodes were copied from /remoteproc/qcom,sdm845-adsp-pil.yaml
+>
+> Hm, indeed, you're right. There are few files having here ref. I'll fix
+> these.
+>
+> >=20
+> >>> +    description: The names of the state bits used for SMP2P output
+> >>> +    items:
+> >>> +      - const: stop
+> >>> +
+> >>> +  memory-region:
+> >>> +    maxItems: 1
+> >>> +    description: Reference to the reserved-memory for the WCNSS core
+> >>> +
+> >>> +  smd-edge:
+> >>> +    type: object
+> >>> +    description:
+> >>> +      Qualcomm Shared Memory subnode which represents communication =
+edge,
+> >>> +      channels and devices related to the ADSP.
+> >>
+> >> You should reference /schemas/soc/qcom/qcom,smd.yaml
+> >=20
+> > Will be done in v2
+> >>
+> >>> +
+> >>> +  iris:
+> >>
+> >> Generic node name... what is "iris"?
+> >>
+> > Iris is the RF module, I'll make the description better
+>
+> RF like wifi? Then the property name should be "wifi".
 
-> > +					pins =3D "gpio76";
-> > +					function =3D "wcss_wlan2";
-> > +				};
-> > +				wcss_wlan1 {
-> > +					pins =3D "gpio77";
-> > +					function =3D "wcss_wlan1";
-> > +				};
-> > +				wcss_wlan0 {
-> > +					pins =3D "gpio78";
-> > +					function =3D "wcss_wlan0";
-> > +				};
-> > +				wcss_wlan {
-> > +					pins =3D "gpio79", "gpio80";
-> > +					function =3D "wcss_wlan";
-> > +				};
-> > +
-> > +				pinconf {
-> > +					pins =3D "gpio76", "gpio77",
-> > +					     "gpio78", "gpio79",
-> > +					     "gpio80";
-> > +					drive-strength =3D <2>;
-> > +					bias-pull-down;
-> > +				};
-> > +			};
-> >  		};
-> > =20
-> >  		gcc: clock-controller@1800000 {
-> > @@ -745,6 +892,59 @@ spmi_bus: spmi@200f000 {
-> >  			#size-cells =3D <0>;
-> >  		};
-> > =20
-> > +		modem: remoteproc@4080000 {
-> > +			compatible =3D "qcom,msm8953-mss-pil";
-> > +			reg =3D <0x4080000 0x100>,
-> > +			    <0x4020000 0x040>;
-> > +
-> > +			reg-names =3D "qdsp6", "rmb";
-> > +
-> > +			interrupts-extended =3D <&intc 0 24 1>,
-> > +					      <&modem_smp2p_in 0 0>,
-> > +					      <&modem_smp2p_in 1 0>,
-> > +					      <&modem_smp2p_in 2 0>,
-> > +					      <&modem_smp2p_in 3 0>;
-> > +			interrupt-names =3D "wdog", "fatal", "ready",
-> > +					  "handover", "stop-ack";
-> > +
-> > +			clocks =3D <&gcc GCC_MSS_CFG_AHB_CLK>,
-> > +				 <&gcc GCC_MSS_Q6_BIMC_AXI_CLK>,
-> > +				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-> > +				 <&xo_board>;
-> > +			clock-names =3D "iface", "bus", "mem", "xo";
-> > +
-> > +			power-domains =3D <&rpmpd MSM8953_VDDCX>, <&rpmpd MSM8953_VDDMX>;
-> > +			power-domain-names =3D "cx", "mx";
-> > +
-> > +			qcom,smem-states =3D <&modem_smp2p_out 0>;
-> > +			qcom,smem-state-names =3D "stop";
-> > +
-> > +			resets =3D <&gcc GCC_MSS_BCR>;
-> > +			reset-names =3D "mss_restart";
-> > +
-> > +			qcom,halt-regs =3D <&tcsr 0x18000 0x19000 0x1a000>;
-> > +
-> > +			status =3D "okay";
->
-> No need for okay.
+RF like wifi and bluetooth. However there are wifi and bt subnodes in
+the smd-edge subnode. Iris is just the antenna hardware if I understand
+correctly. Also this is just a documentation of the existing nodes that
+are present in msm8916.dtsi, but for whatever reason their documentation
+was missing in the txt file. Without adding this node in the YAML
+dtb_check fails.
 
-I'll drop it in v2
->
-> > +
-> > +			mba {
-> > +				memory-region =3D <&mba_mem>;
-> > +			};
-> > +
-> > +			mpss {
-> > +				memory-region =3D <&mpss_mem>;
-> > +			};
-> > +
-> > +			smd-edge {
-> > +				interrupts =3D <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
-> > +
-> > +				qcom,smd-edge =3D <0>;
-> > +				qcom,ipc =3D <&apcs 8 12>;
-> > +				qcom,remote-pid =3D <1>;
-> > +
-> > +				label =3D "modem";
-> > +			};
-> > +		};
-> > +
-> >  		usb3: usb@70f8800 {
-> >  			compatible =3D "qcom,msm8953-dwc3", "qcom,dwc3";
-> >  			reg =3D <0x70f8800 0x400>;
-> > @@ -1057,6 +1257,74 @@ i2c_8: i2c@7af8000 {
-> >  			status =3D "disabled";
-> >  		};
-> > =20
-> > +		pronto: remoteproc@a21b000 {
-> > +			compatible =3D "qcom,pronto-v3-pil", "qcom,pronto";
-> > +			reg =3D <0xa204000 0x2000>,
-> > +			      <0xa202000 0x1000>,
-> > +			      <0xa21b000 0x3000>;
-> > +			reg-names =3D "ccu", "dxe", "pmu";
-> > +
-> > +			memory-region =3D <&wcnss_fw_mem>;
-> > +
-> > +			interrupts-extended =3D <&intc 0 149 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&wcnss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&wcnss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&wcnss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&wcnss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> > +			interrupt-names =3D "wdog", "fatal", "ready", "handover", "stop-ack=
-";
-> > +
-> > +			power-domains =3D <&rpmpd MSM8953_VDDCX>, <&rpmpd MSM8953_VDDMX>;
-> > +			power-domain-names =3D "cx", "mx";
-> > +
-> > +			qcom,state =3D <&wcnss_smp2p_out 0>;
-> > +			qcom,state-names =3D "stop";
-> > +
-> > +			pinctrl-names =3D "default", "sleep";
-> > +			pinctrl-0 =3D <&wcnss_default>;
-> > +			pinctrl-1 =3D <&wcnss_sleep>;
-> > +
-> > +			status =3D "okay";
->
-> No need for status.
-
-Will be dropped in v2
->
-> > +
-> > +			iris: iris {
-> > +				compatible =3D "qcom,wcn3660b";
-> > +
-> > +				clocks =3D <&rpmcc RPM_SMD_RF_CLK2>;
-> > +				clock-names =3D "xo";
-> > +			};
-> > +
-> > +			smd-edge {
-> > +				interrupts =3D <GIC_SPI 142 IRQ_TYPE_EDGE_RISING>;
-> > +
-> > +				qcom,ipc =3D <&apcs 8 17>;
-> > +				qcom,smd-edge =3D <6>;
-> > +				qcom,remote-pid =3D <4>;
-> > +
-> > +				label =3D "pronto";
-> > +
-> > +				wcnss {
-> > +					compatible =3D "qcom,wcnss";
-> > +					qcom,smd-channels =3D "WCNSS_CTRL";
-> > +
-> > +					qcom,mmio =3D <&pronto>;
-> > +
-> > +					bt {
-> > +						compatible =3D "qcom,wcnss-bt";
-> > +					};
-> > +
-> > +					wifi {
-> > +						compatible =3D "qcom,wcnss-wlan";
-> > +
-> > +						interrupts =3D <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-> > +							     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
-> > +						interrupt-names =3D "tx", "rx";
-> > +
-> > +						qcom,smem-states =3D <&apps_smsm 10>, <&apps_smsm 9>;
-> > +						qcom,smem-state-names =3D "tx-enable", "tx-rings-empty";
-> > +					};
-> > +				};
-> > +			};
-> > +		};
-> > +
-> >  		intc: interrupt-controller@b000000 {
-> >  			compatible =3D "qcom,msm-qgic2";
-> >  			interrupt-controller;
-> > @@ -1070,6 +1338,116 @@ apcs: mailbox@b011000 {
-> >  			#mbox-cells =3D <1>;
-> >  		};
-> > =20
-> > +		lpass: remoteproc@c200000 {
-> > +			compatible =3D "qcom,msm8953-adsp-pil";
-> > +			reg =3D <0xc200000 0x100>;
-> > +
-> > +			interrupts-extended =3D <&intc 0 293 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-> > +					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
-> > +			interrupt-names =3D "wdog", "fatal", "ready",
-> > +					  "handover", "stop-ack";
-> > +			clocks =3D <&xo_board>;
-> > +			clock-names =3D "xo";
-> > +
-> > +			power-domains =3D <&rpmpd MSM8953_VDDCX>;
-> > +			power-domain-names =3D "cx";
-> > +
-> > +			memory-region =3D <&adsp_fw_mem>;
-> > +
-> > +			qcom,smem-states =3D <&smp2p_adsp_out 0>;
-> > +			qcom,smem-state-names =3D "stop";
-> > +
-> > +			smd-edge {
-> > +				interrupts =3D <GIC_SPI 289 IRQ_TYPE_EDGE_RISING>;
-> > +
-> > +				label =3D "lpass";
-> > +				mboxes =3D <&apcs 8>;
-> > +				qcom,smd-edge =3D <1>;
-> > +				qcom,remote-pid =3D <2>;
-> > +				#address-cells =3D <1>;
-> > +				#size-cells =3D <0>;
-> > +
-> > +				apr {
-> > +					compatible =3D "qcom,apr-v2";
-> > +					qcom,smd-channels =3D "apr_audio_svc";
-> > +					qcom,apr-domain =3D <APR_DOMAIN_ADSP>;
-> > +					#address-cells =3D <1>;
-> > +					#size-cells =3D <0>;
-> > +
-> > +					q6core {
-> > +						reg =3D <APR_SVC_ADSP_CORE>;
-> > +						compatible =3D "qcom,q6core";
-> > +					};
-> > +
-> > +					q6afe: q6afe {
-> > +						compatible =3D "qcom,q6afe";
-> > +						reg =3D <APR_SVC_AFE>;
-> > +						q6afedai: dais {
-> > +							compatible =3D "qcom,q6afe-dais";
-> > +							#address-cells =3D <1>;
-> > +							#size-cells =3D <0>;
-> > +							#sound-dai-cells =3D <1>;
-> > +
-> > +							dai@16 {
-> > +								reg =3D <PRIMARY_MI2S_RX>;
-> > +								qcom,sd-lines =3D <0 1>;
-> > +							};
-> > +
-> > +							dai@21 {
-> > +								reg =3D <TERTIARY_MI2S_TX>;
-> > +								qcom,sd-lines =3D <0 1>;
-> > +							};
-> > +						};
-> > +						q6afecc: clock-controller {
-> > +							compatible =3D "qcom,q6afe-clocks";
-> > +							#clock-cells =3D <2>;
-> > +						};
-> > +					};
-> > +
-> > +					q6asm: q6asm {
-> > +						compatible =3D "qcom,q6asm";
-> > +						reg =3D <APR_SVC_ASM>;
-> > +						q6asmdai: dais {
-> > +							compatible =3D "qcom,q6asm-dais";
-> > +							#address-cells =3D <1>;
-> > +							#size-cells =3D <0>;
-> > +							#sound-dai-cells =3D <1>;
-> > +
-> > +							dai@0 {
-> > +								reg =3D <MSM_FRONTEND_DAI_MULTIMEDIA1>;
-> > +							};
-> > +
-> > +							dai@1 {
-> > +								reg =3D <MSM_FRONTEND_DAI_MULTIMEDIA2>;
-> > +							};
-> > +
-> > +							dai@2 {
-> > +								reg =3D <MSM_FRONTEND_DAI_MULTIMEDIA3>;
-> > +							};
-> > +
-> > +							dai@3 {
-> > +								reg =3D <MSM_FRONTEND_DAI_MULTIMEDIA4>;
-> > +								is-compress-dai;
-> > +							};
-> > +						};
-> > +					};
-> > +
-> > +					q6adm: q6adm {
-> > +						compatible =3D "qcom,q6adm";
-> > +						reg =3D <APR_SVC_ADM>;
-> > +						q6routing: routing {
-> > +							compatible =3D "qcom,q6adm-routing";
-> > +							#sound-dai-cells =3D <0>;
-> > +						};
-> > +					};
-> > +				};
-> > +			};
-> > +
->
-> Remove unneeded blank lines.
-
-Will be fixed in v2
->
-> > +		};
-> > +
-> >  		timer@b120000 {
-> >  			compatible =3D "arm,armv7-timer-mem";
-> >  			reg =3D <0xb120000 0x1000>;
 >
 >
 > Best regards,
 > Krzysztof
 
-Thanks,
-Sireesh Kodali
