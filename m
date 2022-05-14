@@ -2,126 +2,123 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71877C43219
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 May 2022 14:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C1AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 May 2022 01:03:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381523AbiEMOqL (ORCPT
+        id S229476AbiENBDN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 May 2022 10:46:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58940 "EHLO
+        Fri, 13 May 2022 21:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381450AbiEMOp6 (ORCPT
+        with ESMTP id S229436AbiENBDL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 May 2022 10:45:58 -0400
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBB093C4B7;
-        Fri, 13 May 2022 07:45:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=A7LCydQD5IYNzaoDGyfG1KKM7tCxGhr7TuWULSo03X0=;
-        t=1652453114; x=1653662714; b=LYs2Kri0cw+/UGCEdaklFX6++OP3d6XjJhLcC02jkMM6M13
-        enCTtLPVnFDCrQRFLX819G3cOwVdjYiBSa9JccmqbQblnXISEdyq/7i5O4aMDV5xAFeJh8X61XWYA
-        3hNxcWPO6okKyPbXVAhEt6WHQ/sVkV0gcWR0C3dCeQWocdHTJKZWVZ25I4x63uWgmbhevhAje3sRQ
-        ynAaFSpM6xFAePbWKVwYY4aWUVh0Ju93mi2MceapTMkNIryb6lt7v4/iXwdFQzg89Tz18COaji5Fq
-        iSqUu6mUSMMlAVO2Bcj32MYDMrCOrP4TWkawclAlZw9o6WbW7KIcYMOBD7zR8fsA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1npWX2-00AdYm-Tp;
-        Fri, 13 May 2022 16:44:41 +0200
-Message-ID: <1760d499824f9ef053af7a8dac04b48ab7d7fd3d.camel@sipsolutions.net>
-Subject: Re: [PATCH 11/30] um: Improve panic notifiers consistency and
- ordering
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     akpm@linux-foundation.org, bhe@redhat.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        halves@canonical.com, fabiomirmar@gmail.com,
-        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
-        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
-        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org
-Date:   Fri, 13 May 2022 16:44:36 +0200
-In-Reply-To: <4b003501-f5c3-cd66-d222-88d98c93e141@igalia.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
-         <20220427224924.592546-12-gpiccoli@igalia.com> <Ynp2hRodh04K3pzK@alley>
-         <4b003501-f5c3-cd66-d222-88d98c93e141@igalia.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+        Fri, 13 May 2022 21:03:11 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4A7EEBAB3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 13 May 2022 17:38:33 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id d6so11742213ede.8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 13 May 2022 17:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wBxMEIa7glrwrCrckfkFnYPIKZ191GVYDBXQw925KJM=;
+        b=JONcElkgDZphNsx81je19YoaYkIWiMXMmwWkXlRXBRAoc2mTGHmpUt3PVXhzlE7zOk
+         w1olp0FSMeHbZ2s2dF2YXwBndjBW4gZJCN3c/jAJu/pzOTbmIR0DCO1EDjSJFZOlAvzF
+         2rBrEVG+JhyXcRlhoCB9KoBC4NtQeSlqRz+QWoRUrUtE/YPl18UTVtkhfmH/Kim5Pt8r
+         D/mzYJ5oWj8NXSB5608/xtHNfZJxs/V+2BBAil73jGDzejFoko6GhJbBFAxFPE4o6VG8
+         jCXzbIDMth9WiTWAyLVoR2dQ6zs62At73Hkqc629pl/9N7Yqgqwr8Le/0XPh8tecPF5H
+         iaQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wBxMEIa7glrwrCrckfkFnYPIKZ191GVYDBXQw925KJM=;
+        b=cgNYvHzpzwgJyTCsMhucyyMpPi5LmQwYraYF0Jb+0tdNB/FoHuKWbUfSuPfoFHowwK
+         0xyZtHjmWSwztO0xD2z2OLL9w4hIxvzZLU4dxt9PJsKS8ecsKI93MteKQn3aZuaZOp3g
+         QCyrH/VNg007kQW+cpdWtrQ1m6qygP5xOwxr6fglxRyqKNuz0XrVHgNt3dO8ZleMCqXl
+         3aSNdKEj3T9JPlj1HzQw2Vob+wdAdB0XGYtPrn3rE5uoyBzqM5U6pfYobWOgX3toCieS
+         aQw8rx4uoearWBeQDarl2uOgfSgeFM6o3C38Vod/qZYrdNp6aUY3tRcg3WY7wI4voBpC
+         OAFQ==
+X-Gm-Message-State: AOAM531TzWii8ZtBJXvUpOo9ycBqBUsdq/DnSb2bxNIn7U/TDs7qk9n8
+        MwzhugClbyIOFXdyFxvOaM0R5BouIPQ3gQ==
+X-Google-Smtp-Source: ABdhPJwDY51jaWk5OxFlqX2bG7+SQ3FCT87DAJ8k854xm7TgH2QAb1WKHYeT0fxHN9Xtcqg+lLJ3Vg==
+X-Received: by 2002:a05:6512:1513:b0:448:39c0:def0 with SMTP id bq19-20020a056512151300b0044839c0def0mr4888476lfb.469.1652486471683;
+        Fri, 13 May 2022 17:01:11 -0700 (PDT)
+Received: from eriador.lan ([37.153.55.125])
+        by smtp.gmail.com with ESMTPSA id z2-20020a2e9b82000000b0024f3d1daeaesm626221lji.54.2022.05.13.17.01.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 May 2022 17:01:11 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 2/4] dt-bindings: remoteproc: qcom: pas: Add SDM660 CDSP PAS compatible
+Date:   Sat, 14 May 2022 03:01:06 +0300
+Message-Id: <20220514000108.3070363-3-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220514000108.3070363-1-dmitry.baryshkov@linaro.org>
+References: <20220514000108.3070363-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 2022-05-11 at 17:22 -0300, Guilherme G. Piccoli wrote:
-> On 10/05/2022 11:28, Petr Mladek wrote:
-> > [...]
-> > It is not clear to me why user mode linux should not care about
-> > the other notifiers. It might be because I do not know much
-> > about the user mode linux.
-> > 
-> > Is the because they always create core dump or are never running
-> > in a hypervisor or ...?
-> > 
-> > AFAIK, the notifiers do many different things. For example, there
-> > is a notifier that disables RCU watchdog, print some extra
-> > information. Why none of them make sense here?
-> > 
-> 
-> Hi Petr, my understanding is that UML is a form of running Linux as a
-> regular userspace process for testing purposes.
+The Qualcomm SDM660 has the usual audio, compute, sensor and modem
+remoteprocs. Add compatible string and conditions for the compute and
+modem PAS.  While we are at it, also add missing conditions for the
+audio PAS.
 
-Correct.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml          | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> With that said, as soon
-> as we exit in the error path, less "pollution" would happen, so users
-> can use GDB to debug the core dump for example.
-> 
-> In later patches of this series (when we split the panic notifiers in 3
-> lists) these UML notifiers run in the pre-reboot list, so they run after
-> the informational notifiers for example (in the default level).
-> But without the list split we cannot order properly, so my gut feeling
-> is that makes sense to run them rather earlier than later in the panic
-> process...
-> 
-> Maybe Anton / Johannes / Richard could give their opinions - appreciate
-> that, I'm not attached to the priority here, it's more about users'
-> common usage of UML I can think of...
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+index a4409c398193..682df80d3a96 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+@@ -30,6 +30,7 @@ properties:
+       - qcom,sc8180x-cdsp-pas
+       - qcom,sc8180x-mpss-pas
+       - qcom,sdm660-adsp-pas
++      - qcom,sdm660-cdsp-pas
+       - qcom,sdm845-adsp-pas
+       - qcom,sdm845-cdsp-pas
+       - qcom,sdx55-mpss-pas
+@@ -169,6 +170,8 @@ allOf:
+               - qcom,sc8180x-adsp-pas
+               - qcom,sc8180x-cdsp-pas
+               - qcom,sc8180x-mpss-pas
++              - qcom,sdm660-adsp-pas
++              - qcom,sdm660-cdsp-pas
+               - qcom,sdm845-adsp-pas
+               - qcom,sdm845-cdsp-pas
+               - qcom,sm6350-adsp-pas
+@@ -284,6 +287,8 @@ allOf:
+               - qcom,qcs404-wcss-pas
+               - qcom,sc8180x-adsp-pas
+               - qcom,sc8180x-cdsp-pas
++              - qcom,sdm660-adsp-pas
++              - qcom,sdm660-cdsp-pas
+               - qcom,sdm845-adsp-pas
+               - qcom,sdm845-cdsp-pas
+               - qcom,sm6350-adsp-pas
+@@ -366,6 +371,8 @@ allOf:
+             enum:
+               - qcom,msm8996-adsp-pil
+               - qcom,msm8998-adsp-pas
++              - qcom,sdm660-adsp-pas
++              - qcom,sdm660-cdsp-pas
+     then:
+       properties:
+         power-domains:
+-- 
+2.35.1
 
-It's hard to say ... In a sense I'm not sure it matters?
-
-OTOH something like the ftrace dump notifier (kernel/trace/trace.c)
-might still be useful to run before the mconsole and coredump ones, even
-if you could probably use gdb to figure out the information.
-
-Personally, I don't have a scenario where I'd care about the trace
-buffers though, and most of the others I found would seem irrelevant
-(drivers that aren't even compiled, hung tasks won't really happen since
-we exit immediately, and similar.)
-
-johannes
