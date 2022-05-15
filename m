@@ -2,94 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2A4C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 14 May 2022 03:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC10C43217
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 15 May 2022 22:15:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbiENDAs (ORCPT
+        id S238772AbiEOWPA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 May 2022 23:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32804 "EHLO
+        Sun, 15 May 2022 18:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231614AbiENC7j (ORCPT
+        with ESMTP id S234701AbiEOWO5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 May 2022 22:59:39 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4BE35977C
-        for <linux-remoteproc@vger.kernel.org>; Fri, 13 May 2022 18:24:52 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id d15so17214342lfk.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 13 May 2022 18:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LXQljSMYkcP1zL5wN90tEXTSyht6bPqet9DUZ+TVp4k=;
-        b=sIJRLfub5P+8FjrCbD9ndvrG78oWNinDkXw5i+XBA0Ejxe22XwcLaa5nwbSvts0Tgn
-         sF4yThllcr6ZehZFtrVFYfI9lKgwR2GXo/fm8nXJdtr903apGBu0O4ozYsrMwQBFOUVN
-         V4iW+Znmg5u5iT1gJnTtJRNgrGXMqb8MdRegIyVp4RzC0sx6ZD5bdZ7yNratpt0c98ka
-         zvEJBsblqkRlmWhqSXZIVZjEJRVkpDsNuvfMS6v0EM1sHhQNii4O4HWa/1bSY8jUvMgw
-         LKX7tf85ZlCsEEbkIzwh+DPVuFSVYJnUqEiSejyIcJMwIoTB7BQkCCnQOVB640qIouWu
-         EJFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LXQljSMYkcP1zL5wN90tEXTSyht6bPqet9DUZ+TVp4k=;
-        b=7te70hVkm0EC13Kl2dzxDzYtHDbAHJeeUp5Zvis9v/yqZFb02FzLM/O/jM9YLFcruM
-         65O4/Zc7JrrvAQ5sjdRi4qFTxS/HdExpjCcqCt1dg5jBaJG+km3xG0SmWiI8KOCn6m2r
-         AWxDrcS4liQXYdIuUhLfoZIHa5ml2DGG2pdK8TGGQbvI6XBEJOIzXpDHg8+llhkpm9cS
-         tVuVkVDHouiOLNUjBMJqcK8wWViJyzB8gxrjvfklDVabbRn5TeszUPtinztr0pyrrlaW
-         SNmxfENRbA3sUZZEIaSRY+9UvtRbujRbdINkS9LuRTOPFM1Ghh73Y1dA5KEjvhZiGMvt
-         TY2A==
-X-Gm-Message-State: AOAM531mG4bGMMUJXO15eLu0n8vmtF89SScoyP88YfElTie3mXDj9u21
-        KpqOZmi0vApZ9YhuWEssQnUkKEZBi6a7rw==
-X-Google-Smtp-Source: ABdhPJyVnnwOR7kozUx7+jEEYO2nBEyXGAL2sB76p2vvPvilThVST+1bBRx0pN1+mmOo+nO7PC0r4A==
-X-Received: by 2002:a2e:8e98:0:b0:24f:15e9:ed39 with SMTP id z24-20020a2e8e98000000b0024f15e9ed39mr4259616ljk.460.1652486473215;
-        Fri, 13 May 2022 17:01:13 -0700 (PDT)
-Received: from eriador.lan ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id z2-20020a2e9b82000000b0024f3d1daeaesm626221lji.54.2022.05.13.17.01.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 May 2022 17:01:12 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 4/4] remoteproc: qcom: pas: Add SDM660 CDSP PAS support
-Date:   Sat, 14 May 2022 03:01:08 +0300
-Message-Id: <20220514000108.3070363-5-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220514000108.3070363-1-dmitry.baryshkov@linaro.org>
-References: <20220514000108.3070363-1-dmitry.baryshkov@linaro.org>
+        Sun, 15 May 2022 18:14:57 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB0F12AE33;
+        Sun, 15 May 2022 15:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=YHVcpMpwO8nyb8k3/FdyFSCMjS4nrs3MtFW4fah9gBU=; b=or/Fp90JrKe5WlMtL6cMgrtDTd
+        KlQ8Vj1tprmMn4SD+c397HC1ukULCsTvCB4iLkFWE/e5eO3HFfAEwKhrKkKAtUd9klk2EZdbn6mIN
+        Qd+4SALGR19YAeq7zzTYslQNi14hCF7XYTbP7jST+WF88j+/yFKclHfwZStwWLlezXivWrxaH8IdO
+        FFInQai4LoqHg4Is254olZSUcp3WbX0NojyrclkAFtXk81MOkLDyQLJPvTXx/jJ5o9GkRAlJzHqhs
+        Xl4VBJVpr4ONcW/qU5LapKJAeqGhxtirFucuu9tYQZm2MIj3QsWcao7mjJyCDthsv8RdX0nMP6hLP
+        SN2gr77A==;
+Received: from [177.183.162.244] (helo=[192.168.0.5])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nqMUS-005ij1-QV; Mon, 16 May 2022 00:13:29 +0200
+Message-ID: <178a456d-3961-9bc2-83d2-2b9457d45fbd@igalia.com>
+Date:   Sun, 15 May 2022 19:12:55 -0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 11/30] um: Improve panic notifiers consistency and
+ ordering
+Content-Language: en-US
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Petr Mladek <pmladek@suse.com>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-12-gpiccoli@igalia.com> <Ynp2hRodh04K3pzK@alley>
+ <4b003501-f5c3-cd66-d222-88d98c93e141@igalia.com>
+ <1760d499824f9ef053af7a8dac04b48ab7d7fd3d.camel@sipsolutions.net>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <1760d499824f9ef053af7a8dac04b48ab7d7fd3d.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add compatible string for the CDSP found on SDM660 platform. The
-resources needed matches those of QCS404, so its desc is reused.
+On 13/05/2022 11:44, Johannes Berg wrote:
+> [...]
+>> Maybe Anton / Johannes / Richard could give their opinions - appreciate
+>> that, I'm not attached to the priority here, it's more about users'
+>> common usage of UML I can think of...
+> 
+> It's hard to say ... In a sense I'm not sure it matters?
+> 
+> OTOH something like the ftrace dump notifier (kernel/trace/trace.c)
+> might still be useful to run before the mconsole and coredump ones, even
+> if you could probably use gdb to figure out the information.
+> 
+> Personally, I don't have a scenario where I'd care about the trace
+> buffers though, and most of the others I found would seem irrelevant
+> (drivers that aren't even compiled, hung tasks won't really happen since
+> we exit immediately, and similar.)
+> 
+> johannes
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks Johannes, I agree with you.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 1ae47cc153e5..39c9c56e8de9 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -862,6 +862,7 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource},
- 	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
-+	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init},
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
- 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
- 	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
--- 
-2.35.1
+We don't have great ordering now, one thing we need to enforce is the
+order between the 2 UML notifiers, and this patch is doing that..trying
+to order against other callbacks like the ftrace dumper is messy in the
+current code.
 
+OTOH if this patch set is accepted at some point, we'll likely have 3
+lists, and with that we can improve ordering a lot - this notifier for
+instance would run in the pre-reboot list, *after* the ftrace dumper (if
+a kmsg dumper is set).
+
+So, my intention is to keep this patch as is for V2 (with some changes
+Johannes suggested before), unless Petr or the other maintainers want
+something different.
+Cheers,
+
+
+Guilherme
