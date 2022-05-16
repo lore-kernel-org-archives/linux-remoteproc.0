@@ -2,118 +2,112 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0584C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 May 2022 14:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3BDC43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 May 2022 14:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236220AbiEPOlh (ORCPT
+        id S244602AbiEPOqD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 May 2022 10:41:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42668 "EHLO
+        Mon, 16 May 2022 10:46:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244674AbiEPOlM (ORCPT
+        with ESMTP id S244590AbiEPOqA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 May 2022 10:41:12 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB552CCB7;
-        Mon, 16 May 2022 07:41:11 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: nfraprado)
-        with ESMTPSA id 674151F42330
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1652712069;
-        bh=8BYTLgL7DNJMJHGxPDAPccqtEpDPhR7Z3zFk1UgBjIc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fsXq9RO5eqw/T8yDtZ9lIbJ1TmFcfGOYBVOnvXCQYo0FpkwjkzWr5K+eQFZnBaOml
-         fCBWcoMOeljiNkSas8UyyJqbj9Vz4AXbYnjHK4NwYb5+78oRZ08JyAVGl7QauMJhrU
-         IgX+OQu/IdZFaguIkyeI51Ze64t86HjO4TtIScPoxQMA7fzBFejhchi6hmCthMzN9I
-         Qfv3Zp8wjs2O+E4uYet8U58e1c4I/HZowCndnSyi2NyVXe2RAfZA8FEHinx9g55Ayd
-         h7sA3v5xQYcifDGKTfi9yXTQdqcF8tkMoAFWlG8uAYxFsL9PL5dENowgbelKhL5X2j
-         TzGD5vVwGGNtw==
-Date:   Mon, 16 May 2022 10:41:04 -0400
-From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
-        <nfraprado@collabora.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Tzung-Bi Shih <tzungbi@google.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg
- exclusive to mt819x
-Message-ID: <20220516144104.yvy2a2lncdcgznu6@notapiano>
-References: <20220511195452.871897-1-nfraprado@collabora.com>
- <20220511195452.871897-2-nfraprado@collabora.com>
- <30978e5a-18ef-3ea2-8df3-3ced50f44bfc@linaro.org>
+        Mon, 16 May 2022 10:46:00 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FBF763C1;
+        Mon, 16 May 2022 07:45:58 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 5D1DB21E29;
+        Mon, 16 May 2022 14:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652712357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tG6HOQkoWV3PTxPtSaDR17RqhX4V9rIOdD2egRcz4EQ=;
+        b=gFEwFsAV3UIKYYLVyI3mrLhX3TiIMpl9yPWRGPgk48WclnmFw5gYn5O+dNvzDdNjqF+pxI
+        IMKpGcGZV7FxvMc95tVdofmJAGyq2tRsWSZoEHDpo+UshHGwcUByHkHpUxr0BHmW9i2Opl
+        sUtunVb+gn6OV1DjkoM9JYfMJE7YMOM=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 5A0982C141;
+        Mon, 16 May 2022 14:45:56 +0000 (UTC)
+Date:   Mon, 16 May 2022 16:45:56 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH 22/30] panic: Introduce the panic post-reboot notifier
+ list
+Message-ID: <YoJjpBrz34QO+rn9@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-23-gpiccoli@igalia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <30978e5a-18ef-3ea2-8df3-3ced50f44bfc@linaro.org>
+In-Reply-To: <20220427224924.592546-23-gpiccoli@igalia.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, May 13, 2022 at 10:15:51AM +0200, Krzysztof Kozlowski wrote:
-> On 11/05/2022 21:54, Nícolas F. R. A. Prado wrote:
+On Wed 2022-04-27 19:49:16, Guilherme G. Piccoli wrote:
+> Currently we have 3 notifier lists in the panic path, which will
+> be wired in a way to allow the notifier callbacks to run in
+> different moments at panic time, in a subsequent patch.
 > 
-> Thank you for your patch. There is something to discuss/improve.
+> But there is also an odd set of architecture calls hardcoded in
+> the end of panic path, after the restart machinery. They're
+> responsible for late time tunings / events, like enabling a stop
+> button (Sparc) or effectively stopping the machine (s390).
 > 
-> >  
-> > -if:
-> > -  properties:
-> > -    compatible:
-> > -      enum:
-> > -        - mediatek,mt8183-scp
-> > -        - mediatek,mt8192-scp
-> > -then:
-> > -  required:
-> > -    - clocks
-> > -    - clock-names
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          enum:
-> > +            - mediatek,mt8183-scp
-> > +            - mediatek,mt8192-scp
-> > +    then:
-> > +      required:
-> > +        - clocks
-> > +        - clock-names
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          enum:
-> > +            - mediatek,mt8183-scp
-> > +            - mediatek,mt8186-scp
-> > +    then:
-> > +      properties:
-> > +        reg:
-> > +          maxItems: 2
-> > +        reg-names:
-> > +          maxItems: 2
-> 
-> Isn't l1tcm required on mt819x? Now it is left optional.
+> This patch introduces yet another notifier list to offer the
+> architectures a way to add callbacks in such late moment on
+> panic path without the need of ifdefs / hardcoded approaches.
 
-Hi Krzysztof,
+The patch looks good to me. I would just suggest two changes.
 
-actually l1tcm is optional for mt819x, as commented by Tzung-Bi on v4 [1]. So
-that change was intended.
+1. I would rename the list to "panic_loop_list" instead of
+   "panic_post_reboot_list".
 
-Thanks,
-Nícolas
+   It will be more clear that it includes things that are
+   needed before panic() enters the infinite loop.
 
-[1] https://lore.kernel.org/all/CA+Px+wXQjys8xvTSSJkLXoGp4yQnANbKWBtfuxiYi0UX6DH0jw@mail.gmail.com/
 
-> 
-> 
-> Best regards,
-> Krzysztof
+2. I would move all the notifiers that enable blinking here.
+
+   The blinking should be done only during the infinite
+   loop when there is nothing else to do. If we enable
+   earlier then it might disturb/break more important
+   functionality (dumping information, reboot).
+
+Best Regards,
+Petr
