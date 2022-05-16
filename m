@@ -2,114 +2,110 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BBDC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 May 2022 14:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F9FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 May 2022 14:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241878AbiEPOsi (ORCPT
+        id S244694AbiEPOuU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 May 2022 10:48:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37228 "EHLO
+        Mon, 16 May 2022 10:50:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244538AbiEPOsf (ORCPT
+        with ESMTP id S244712AbiEPOuR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 May 2022 10:48:35 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E6962EA3D
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 May 2022 07:48:34 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id gh6so29269478ejb.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 May 2022 07:48:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=pFiYrDI2KIk/lu+aID8s/T/vZWJ+Pf0jeglf1Qmti9o=;
-        b=VZeFthn0/+Mkzq95FEWhHGeRBLt9ztigE/j/mkGPyMCgjj2hS3+s0bPTWUhaUMSowz
-         +Y4SA+s45rp/kkwNngSt5sE+MtI48OukedYMYYlS5THImNtpFopQ/pw7es4dNn8zT+fy
-         +ElPBay/aVvcfgCjyEX3cuTM5A8Lik1hLDyzUTmOTDGUN+ir1qyXB69T9psUqx7Ahx+M
-         YOUEbuLttrp3s7fVSgeT1wrO2lKZ9llsuaGi1beg4ZEfAs71W72ow4W2l5jtLHPAcBRP
-         Jx7IMw+CSsHfQjd4fhsHYYjMFqQ998LB1sKM2jcO43xcVnddEWmHxTMm09WtRnUgECzy
-         2d2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=pFiYrDI2KIk/lu+aID8s/T/vZWJ+Pf0jeglf1Qmti9o=;
-        b=d23c0201uqltmTky4LfwEOMDtvQbjlNDvxehky5IVtCM/qLp+Z6m9RpzWDr948tjt0
-         phSkt+uTT0bJphCeT/jmBFfifizX9f0dTv9vKfTK2zBxj1wVy5/Qdm9wbH+Zdjv8k56z
-         yPVlziKLNrN3++8s47njVFogWGNLBR0skaMqiTHpUseCjDK1F/G+G0r3pN05kK6WNWmF
-         J8PQaGXsUYltOXBn6gEn7EJIOGCFVutxjMpvA3de5E//oe6+wKTZeLXuRx/EHeqd+YLS
-         KGONtbQ0rLpi9FIq3ALMFma0dgpOhGJ6lxaDS1IAgQvqv6EY/nt7te0/vStixxlV3iZe
-         8BMg==
-X-Gm-Message-State: AOAM5312MoMHJQmINuyvBYtMQz8N9Z+7MBl+owTVmWKJ5hYzhkZTns2O
-        dM6aMyX+yr8xJtXT43WsmkC71Q==
-X-Google-Smtp-Source: ABdhPJw+z3a4IS51Rh/2SPddsW0nZC5uDNxcK5FVTvU3AbHCQxPKbc9PunOYp96fOKe4UpFZaSKAnA==
-X-Received: by 2002:a17:907:e90:b0:6f4:cbc8:41bc with SMTP id ho16-20020a1709070e9000b006f4cbc841bcmr16005231ejc.536.1652712512721;
-        Mon, 16 May 2022 07:48:32 -0700 (PDT)
-Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id en8-20020a17090728c800b006f3ef214e0bsm3787988ejc.113.2022.05.16.07.48.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 May 2022 07:48:32 -0700 (PDT)
-Message-ID: <4b58f725-3bc6-d537-ca02-cb2a753227c0@linaro.org>
-Date:   Mon, 16 May 2022 16:48:31 +0200
+        Mon, 16 May 2022 10:50:17 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C92272ED44;
+        Mon, 16 May 2022 07:50:14 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 897CC21F73;
+        Mon, 16 May 2022 14:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652712613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KQiIlBeAtlsgCeLOjjHzTpkuGh7+XAuIIUDB14idFd4=;
+        b=S4QT9bHIulh2DX7+Td1E1eHZ8ylXqLGd87dgOU5qON7f0TC2viT1I31ABT9u1YFo+zVF7s
+        CRf1jIcOXQaAUTOOLTnLyfyBeX0en2TY7mgyp7gvJnFWNhPu01YU8FRcK1p4/UGj8Io8lk
+        XM2tY8ZdnQQ59J0fQXUB5igw6KG7gMQ=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 0B9D32C142;
+        Mon, 16 May 2022 14:50:13 +0000 (UTC)
+Date:   Mon, 16 May 2022 16:50:12 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, akpm@linux-foundation.org,
+        bhe@redhat.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, senozhatsky@chromium.org,
+        stern@rowland.harvard.edu, tglx@linutronix.de, vgoyal@redhat.com,
+        vkuznets@redhat.com, will@kernel.org
+Subject: Re: [PATCH 23/30] printk: kmsg_dump: Introduce helper to inform
+ number of dumpers
+Message-ID: <YoJkpAp8XdS7ROgd@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-24-gpiccoli@igalia.com>
+ <20220510134014.3923ccba@gandalf.local.home>
+ <c8818906-f113-82b6-b58b-d47ae0c16b4f@igalia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v5 1/2] dt-bindings: remoteproc: mediatek: Make l1tcm reg
- exclusive to mt819x
-Content-Language: en-US
-To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Tzung-Bi Shih <tzungbi@google.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-References: <20220511195452.871897-1-nfraprado@collabora.com>
- <20220511195452.871897-2-nfraprado@collabora.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220511195452.871897-2-nfraprado@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8818906-f113-82b6-b58b-d47ae0c16b4f@igalia.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/05/2022 21:54, Nícolas F. R. A. Prado wrote:
-> Commit ca23ecfdbd44 ("remoteproc/mediatek: support L1TCM") added support
-> for the l1tcm memory region on the MT8192 SCP, adding a new da_to_va
-> callback that handles l1tcm while keeping the old one for
-> back-compatibility with MT8183. However, since the mt8192 compatible was
-> missing from the dt-binding, the accompanying dt-binding commit
-> 503c64cc42f1 ("dt-bindings: remoteproc: mediatek: add L1TCM memory region")
-> mistakenly added this reg as if it were for mt8183. And later
-> it became common to all platforms as their compatibles were added.
+On Wed 2022-05-11 17:03:51, Guilherme G. Piccoli wrote:
+> On 10/05/2022 14:40, Steven Rostedt wrote:
+> > On Wed, 27 Apr 2022 19:49:17 -0300
+> > "Guilherme G. Piccoli" <gpiccoli@igalia.com> wrote:
+> > 
+> >> Currently we don't have a way to check if there are dumpers set,
+> >> except counting the list members maybe. This patch introduces a very
+> >> simple helper to provide this information, by just keeping track of
+> >> registered/unregistered kmsg dumpers. It's going to be used on the
+> >> panic path in the subsequent patch.
+> > 
+> > FYI, it is considered "bad form" to reference in the change log "this
+> > patch". We know this is a patch. The change log should just talk about what
+> > is being done. So can you reword your change logs (you do this is almost
+> > every patch). Here's what I would reword the above to be:
+> > 
+> >  Currently we don't have a way to check if there are dumpers set, except
+> >  perhaps by counting the list members. Introduce a very simple helper to
+> >  provide this information, by just keeping track of registered/unregistered
+> >  kmsg dumpers. This will simplify the refactoring of the panic path.
 > 
-> Fix the dt-binding so that the l1tcm reg can be present only on the
-> supported platforms: mt8192 and mt8195.
-> 
-> Fixes: 503c64cc42f1 ("dt-bindings: remoteproc: mediatek: add L1TCM memory region")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
-> ---
-> 
-> Changes in v5:
-> - Made l1tcm optional for mt8192/mt8195
-> - Greatly simplified the constraints override in the if:then:
-> - Updated commit message
-> 
+> Thanks for the hint, you're right - it's almost in all of my patches.
+> I'll reword all of them (except the ones already merged) to remove this
+> "bad form".
 
+Shame on me that I do not care that much about the style of the commit
+message :-)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Anyway, the code looks good to me. With the better commit message:
 
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Best regards,
-Krzysztof
+Best Regards,
+Petr
