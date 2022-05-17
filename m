@@ -2,201 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995C1C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 16:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A73C43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 16:46:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351124AbiEQQnC (ORCPT
+        id S1351105AbiEQQq5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 May 2022 12:43:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58684 "EHLO
+        Tue, 17 May 2022 12:46:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350063AbiEQQnB (ORCPT
+        with ESMTP id S1350225AbiEQQqy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 May 2022 12:43:01 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C073B3FDAD;
-        Tue, 17 May 2022 09:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=scD/9Z9PP3JtS/QbR0S82HRrb/qzzKD7mmsgRlJKv48=; b=A0Wed33QPDatmI/wU05BORZ9n1
-        0hhJk6U25fx6bbbZAsMcq0PkUqYkw6doFXVO3lE2gRlx4mNP2Gg+o2qX5D1iIed/eOGnpU07MiS7v
-        johrL8ZXBr9bRs4m6YspjNjUrp3CRZWOwFXObkbK34aTXOqWVxjbnj+S21xz3SW3iyyzLS8il/lBE
-        YgblTLXs216LyG4XvwA74bc/PHj8Q4o7WtYFZIjzCamKnOfAXbs0CZLburXLM75F/4BH78OE9Feno
-        1CTSSOT/QCKGLXFRsMSKXpMjqSuNKxrbhetupOiCZ9xDYHRTskdd6CLiaYJY53xEUzZgCM24bzp0B
-        WqYqJCVA==;
-Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nr0Hb-008gzd-4h; Tue, 17 May 2022 18:42:51 +0200
-Message-ID: <d72b9aab-675c-ac89-b73a-b1de4a0b722d@igalia.com>
-Date:   Tue, 17 May 2022 13:42:06 -0300
+        Tue, 17 May 2022 12:46:54 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A264EDF0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 09:46:52 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id c24so22856788lfv.11
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 09:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :references:from:in-reply-to:content-transfer-encoding;
+        bh=vA9MGHALbB+9Q0y2UR7t42fhnR0UrTgvfqZrIveu9Cc=;
+        b=EzHX8ExAL8o58vKiK6bTJ43XQZFYb6q0hkTBQTBcf7ktUCuIbVOz0oA9oYHfbrssCf
+         8UG5ExsXHxRAIn7KPjfdsn5+oOflZfxxnjMC4hs25Tf07x5CkCMlStLq8mo5KkFHsMuz
+         68nPVJN5oejQ90/naxoCgjKWODstSdzvy7tOgo1nlECkLCXMaiY1B1JCKufRsFyhWIMo
+         6Dvi2MPLe8wdkTGiZfSdJcSGdN+R32OnkNxwYU59fMuALFo6teNrQpzXka8LLARqJ/Ik
+         XbjD2OqFLQaj45CYavxHRXnzbbQUu4jP/wW9CvyqGtazsXts0S2VMn1uTTP7nkepvmQV
+         tgOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=vA9MGHALbB+9Q0y2UR7t42fhnR0UrTgvfqZrIveu9Cc=;
+        b=47EZKZNhHdA278CXYHXsM38OtRerSzNA0C+nr1T0O/LmWAcW1T56/o1FLfHYN7Rkjk
+         z9PqdMazk24G819B/bdx8znovWqn9V/sLM305mn5jNse8Sum0LSqEjQER/xvWlB/0L/e
+         piaR5/8VgyPYYDPm0srgAE4LT6wu6mc3pFXG9qYRIG4dzpU2//LQ+SQTu/SQMhK7dYf8
+         ZeFaNhb1J+t7isSnQUml7gqiqeCpUHLajNkTUxgWQQgAI77hLhFtESDx1DnlnjTq3CGa
+         liMCruszgjX05qn0GbsbW9n43vCZGyd0Lyv2nAlRVUEyErVI0ja7EchoGTDZ8TKZzW4j
+         35yw==
+X-Gm-Message-State: AOAM5310VokNI2n60DwXBE+04OLATp2lNid5E6682T6o6+eK1Ffd+/es
+        AQQIzziUP5rJKy8R73ks9q8uSQ==
+X-Google-Smtp-Source: ABdhPJwVr5ZpgKS7rdjqmUnTL/3jYg8wNCfJlf1QbuGXld3L872UyhJjEwyTp9pewtHINjQcj0GP1g==
+X-Received: by 2002:ac2:5b1e:0:b0:472:2c9f:5891 with SMTP id v30-20020ac25b1e000000b004722c9f5891mr17227499lfn.534.1652806010956;
+        Tue, 17 May 2022 09:46:50 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id h14-20020ac25d6e000000b00477a8c6b08dsm7331lft.100.2022.05.17.09.46.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 May 2022 09:46:50 -0700 (PDT)
+Message-ID: <2f73874b-430a-48d2-4739-b06eebed1ea8@linaro.org>
+Date:   Tue, 17 May 2022 18:46:49 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 19/30] panic: Add the panic hypervisor notifier list
+ Thunderbird/91.8.1
+Subject: Re: [PATCH 1/8] clk: qcom: alpha-pll: correct kerneldoc
 Content-Language: en-US
-To:     Petr Mladek <pmladek@suse.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     David Gow <davidgow@google.com>, Evan Green <evgreen@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pm@vger.kernel.org,
-        akpm@linux-foundation.org, bhe@redhat.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        halves@canonical.com, fabiomirmar@gmail.com,
-        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
-        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
-        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dexuan Cui <decui@microsoft.com>,
-        Doug Berger <opendmb@gmail.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Markus Mayer <mmayer@broadcom.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
-        Shile Zhang <shile.zhang@linux.alibaba.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Wang ShaoBo <bobo.shaobowang@huawei.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        zhenwei pi <pizhenwei@bytedance.com>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-20-gpiccoli@igalia.com> <YoJZVZl/MH0KiE/J@alley>
- <ad082ce7-db50-13bb-3dbb-9b595dfa78be@igalia.com> <YoOpyW1+q+Z5as78@alley>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <YoOpyW1+q+Z5as78@alley>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 17/05/2022 10:57, Petr Mladek wrote:
-> [...]
->>>> --- a/drivers/misc/bcm-vk/bcm_vk_dev.c
->>>> +++ b/drivers/misc/bcm-vk/bcm_vk_dev.c
->>>> @@ -1446,7 +1446,7 @@ static int bcm_vk_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>> [... snip ...]
->>> It seems to reset some hardware or so. IMHO, it should go into the
->>> pre-reboot list.
->>
->> Mixed feelings here, I'm looping Broadcom maintainers to comment.
->> (CC Scott and Broadcom list)
->>
->> I'm afraid it breaks kdump if this device is not reset beforehand - it's
->> a doorbell write, so not high risk I think...
->>
->> But in case the not-reset device can be probed normally in kdump kernel,
->> then I'm fine in moving this to the reboot list! I don't have the HW to
->> test myself.
+On 01/05/2022 12:35, Krzysztof Kozlowski wrote:
+> Correct kerneldoc warning:
 > 
-> Good question. Well, it if has to be called before kdump then
-> even "hypervisor" list is a wrong place because is not always
-> called before kdump.
-
-Agreed! I'll defer that to Scott and Broadcom folks to comment.
-If it's not strictly necessary, I'll happily move it to the reboot list.
-
-If necessary, we could use the machine_crash_kexec() approach, but we'll
-fall into the case arm64 doesn't support it and I'm not sure if this
-device is available for arm - again a question for the maintainers.
-
-
->  [...]
->>>> --- a/drivers/power/reset/ltc2952-poweroff.c
->>>> +++ b/drivers/power/reset/ltc2952-poweroff.c
->> [...]
->> This is setting a variable only, and once it's set (data->kernel_panic
->> is the bool's name), it just bails out the IRQ handler and a timer
->> setting - this timer seems kinda tricky, so bailing out ASAP makes sense
->> IMHO.
+>   drivers/clk/qcom/clk-alpha-pll.c:1450:
+>     warning: expecting prototype for clk_lucid_pll_configure(). Prototype was for clk_trion_pll_configure() instead
 > 
-> IMHO, the timer informs the hardware that the system is still alive
-> in the middle of panic(). If the timer is not working then the
-> hardware (chip) will think that the system frozen in panic()
-> and will power off the system. See the comments in
-> drivers/power/reset/ltc2952-poweroff.c:
-> [.... snip ...]
-> IMHO, we really have to keep it alive until we reach the reboot stage.
-> 
-> Another question is how it actually works when the interrupts are
-> disabled during panic() and the timer callbacks are not handled.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Agreed here! Guess I can move this one the reboot list, fine by me.
-Unless PM folks think otherwise.
+Any comments on entire set?
+
+They are on the lists for more than two weeks and it's getting late to
+apply it before merge window.
 
 
-> [...]
->> Disagree here, I'm CCing Florian for information.
->>
->> This notifier preserves RAM so it's *very interesting* if we have
->> kmsg_dump() for example, but maybe might be also relevant in case kdump
->> kernel is configured to store something in a persistent RAM (then,
->> without this notifier, after kdump reboots the system data would be lost).
-> 
-> I see. It is actually similar problem as with
-> drivers/firmware/google/gsmi.c.
-> 
-> I does similar things like kmsg_dump() so it should be called in
-> the same location (after info notifier list and before kdump).
-> 
-> A solution might be to put it at these notifiers at the very
-> end of the "info" list or make extra "dump" notifier list.
-
-Here I still disagree. I've commented in the other response thread
-(about Google gsmi) about the semantics of the hypervisor list, but
-again: this list should contain callbacks that
-
-(a) Should run early, _by default_ before a kdump;
-(b) Communicate with the firmware/hypervisor in a "low-risk" way;
-
-Imagine a scenario where users configure kdump kernel to save something
-in a persistent form in DRAM - it'd be like a late pstore, in the next
-kernel. This callback enables that, it's meant to inform FW "hey, panic
-happened, please from now on don't clear the RAM in the next FW-reboot".
-I don't see a reason to postpone that - let's see if the maintainers
-have an opinion.
-
-Cheers,
-
-
-Guilherme
+Best regards,
+Krzysztof
