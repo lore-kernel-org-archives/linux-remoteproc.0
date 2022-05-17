@@ -2,101 +2,66 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F8FC43217
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 15:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7E1C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 16:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350120AbiEQPee (ORCPT
+        id S233434AbiEQQXf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 May 2022 11:34:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35782 "EHLO
+        Tue, 17 May 2022 12:23:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347265AbiEQPec (ORCPT
+        with ESMTP id S234372AbiEQQXd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 May 2022 11:34:32 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41F24161A;
-        Tue, 17 May 2022 08:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=H3qrTQv7Tt4PXBVt8796c6Ly9chEP2DhR9UJaIWJhqo=; b=Kd/s+xrChiBK9NaSmFnFXM3RYc
-        UbvPwTdgYlS5Qa0rscW/rbtbKNYmUFJYz6cuBPp5A2fzucoID0yV96EUGF05FAOiWz8RXWusO+AHA
-        8G50ebt3m708xrBW8WQ3edVZ8TFa1h54Wb9WFcR4fr7CEuRFULxnhNWBP/+YYHyvucLESFjbnRE2j
-        n9qbZb3QL+2yKsrt97dJ6Amu5IZoY/oVzVzN5MU2xEsTlE/L+2AbQmiktH83j3MJhKZ0jI46IVrKr
-        LNwCY2ghNt9ogJWj8KzB1ejgALFJxydhnjupRBVywOgqfhSwQwo7FdrzyqWruEBFvoxYw8EKWcKt2
-        QJUgWtTw==;
-Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nqzDK-008cDX-EE; Tue, 17 May 2022 17:34:22 +0200
-Message-ID: <31f96f73-46b5-aa6f-a5db-5052c6f3fc92@igalia.com>
-Date:   Tue, 17 May 2022 12:33:52 -0300
+        Tue, 17 May 2022 12:23:33 -0400
+X-Greylist: delayed 1197 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 May 2022 09:23:32 PDT
+Received: from mail.neweas.com (mail.neweas.com [162.19.155.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5FA3B3D1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 09:23:31 -0700 (PDT)
+Received: by mail.neweas.com (Postfix, from userid 1002)
+        id 664B922CBB; Tue, 17 May 2022 15:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neweas.com; s=mail;
+        t=1652802379; bh=qQhd+6rcOH+OhrNQ6A9OWLCE/79cwvyTtb6LUe1aYuU=;
+        h=Date:From:To:Subject:From;
+        b=PTINO3Bujav/mzaRN9e5cLDEVFh4bHZCswrB/jE1QK/ACHq/dixzy68Vt6jvFUMTh
+         +IwgUIYnbJYy3VQ9/pTuBFVbejvFugtDf4B30enUgkXcprsargrzfoo6JozoOzX+/6
+         q+tDpaq4f0sy96syWcCMBL1cc36R9k+dFOelZWRKjjPyloOix3rMpqSEJDMtsIjcvD
+         mOsEby9WCFCL72YRqJcH7N+5YRj5A09riY/W+zaDehjZYv3udgbXNWATe2Pkfk4kpF
+         VsiF6R1gsckP2tR0/L2PXx4UbaQkQCEtCEAxjawfXu1TwiYjX4j7dWCAitmI1neWL9
+         rQp4K+D95OUNw==
+Received: by mail.neweas.com for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 15:45:46 GMT
+Message-ID: <20220517141500-0.1.f.1009.0.hff1ipw6h4@neweas.com>
+Date:   Tue, 17 May 2022 15:45:46 GMT
+From:   "Luca Gauthier" <luca.gauthier@neweas.com>
+To:     <linux-remoteproc@vger.kernel.org>
+Subject: New collaboration
+X-Mailer: mail.neweas.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 17/30] tracing: Improve panic/die notifiers
-Content-Language: en-US
-To:     Petr Mladek <pmladek@suse.com>, rostedt@goodmis.org
-Cc:     akpm@linux-foundation.org, bhe@redhat.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
-        halves@canonical.com, fabiomirmar@gmail.com,
-        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
-        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
-        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
-        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, senozhatsky@chromium.org,
-        stern@rowland.harvard.edu, tglx@linutronix.de, vgoyal@redhat.com,
-        vkuznets@redhat.com, will@kernel.org
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-18-gpiccoli@igalia.com>
- <20220511114541.GC26047@pathway.suse.cz>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20220511114541.GC26047@pathway.suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 11/05/2022 08:45, Petr Mladek wrote:
-> [...]
-> DIE_OOPS and PANIC_NOTIFIER are from different enum.
-> It feels like comparing apples with oranges here.
-> 
-> IMHO, the proper way to unify the two notifiers is
-> a check of the @self parameter. Something like:
-> 
-> static int trace_die_panic_handler(struct notifier_block *self,
-> 				unsigned long ev, void *unused)
-> {
-> 	if (self == trace_die_notifier && val != DIE_OOPS)
-> 		goto out;
-> 
-> 	ftrace_dump(ftrace_dump_on_oops);
-> out:
-> 	return NOTIFY_DONE;
-> }
-> 
-> Best Regards,
-> Petr
+Hello,
 
-OK Petr, thanks - will implement your suggestion in V2 (CC Steven)
+are you looking for more business clients?
 
-Cheers!
+We would like to start working with you as a partner in acquiring or exch=
+anging leads, which directly translates into mutual benefits in the form =
+of an increased client portfolio.
+
+We work in the sector of internet marketing and as one of the first in Eu=
+rope SEO Agencies we=E2=80=99ve introduced the SEO 360 service which allo=
+ws your clients to gain the access to original SEO consultations.
+
+By choosing to work with us you receive support in achieving your busines=
+s goals, and help in handling Digital Marketing for your clients.
+
+We support over 237 partner companies. We have one of the biggest executi=
+ve departments in Europe at our disposal, we=E2=80=99ve prepared over 200=
+0 campaigns in Europe and 200 in the USA and Canada.
+
+Are you interested in the details of our partnership programme?
+
+Yours sincerely,
+Luca Gauthier
