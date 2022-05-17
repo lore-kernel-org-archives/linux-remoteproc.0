@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00968C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 07:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A5DC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 07:01:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240180AbiEQHBi (ORCPT
+        id S240707AbiEQHBc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 May 2022 03:01:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34086 "EHLO
+        Tue, 17 May 2022 03:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240808AbiEQHBe (ORCPT
+        with ESMTP id S240559AbiEQHB3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 May 2022 03:01:34 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989383CFF4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 00:01:32 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id z2so32809039ejj.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 00:01:32 -0700 (PDT)
+        Tue, 17 May 2022 03:01:29 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2C83CFF4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 00:01:24 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id gh6so32914794ejb.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 00:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bc1mIt/3dkcIrUfw+Wx32EX6v+iTPPZGITrndOapvM4=;
-        b=Fjh6poNxasG94ErQpFcdlbjAl0+dlDmlCBoaT6HDLJGKC2Kw5OTZ92q8Dr7fo/kBF3
-         BLNhTmSo5/UVu2d9ilG70dsB8hTy4sLrmiex8pe6YJnw3utstVhoF1BcSiHY/9fMkZBL
-         xH4r97n04dXzIzRWhJvmJU+5eBiVSVbT6hT31XGH0IhBX+7iugUTRaSR1H4ewVuUO4nA
-         l9XGL7TQX4/ozmnfXw11EBk8btdV96qaweYJ5tsPVAMzCFpFjbBx6YvvpiGTbhOTrLgL
-         w5hKS9/BnpqQZc0GdsSBzhNdf3UODOS2hof9D/XKWnW0dLTLVx7fhOkn5thbJCdos7qx
-         V+WA==
+        bh=E5YORnDcbWOJgrpTz/qSCG6/YYMuC3Z8T9fT4bh9Wds=;
+        b=RYlKaedw8XHDuSPIsAKH6WOjvMjDHWHUoi4CQtC+m/fNR53cM3SDI76mkQpItCoVY1
+         CYzO9Ts1Qn/CfANZIYuarG2+pJ595hoigvvmvPKXlOl60ynbZmgx8UfonJLu9I3/gMlf
+         pglWRR4sOVASjLDDylbx9YnHd7vNP8uOPa3zQa8ruxz9nKwnf97+Snh2aJdSC0a/vvLM
+         TuP0m3Hn4OEbEQRJ0dxPsQ4/5lWgH/DI00PmuFY5BQ159Q5FJubWq/SKjQO7ENqXh8FA
+         2xjBfDRFoABd/YWD7eNX+e0+KqPKaM1A8DHXzjYDuiHHfksoy8+MlJsBDyp9tZvEX5+4
+         811Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bc1mIt/3dkcIrUfw+Wx32EX6v+iTPPZGITrndOapvM4=;
-        b=e8ig5F7VYhI6f8euEZy7bImc+OLdhAwzUrm9CmnksLewQikRVmaQsSk0vNhxbqrtNj
-         u0m4ioi+EAR/TWRuVgMCfZdbFQOVy21xUWtcZ21kXSRinTp3ud5QYj9rIbC/xLSr11os
-         7wOFdYahDiM1jdo9yRjo5DanVCQTwYjVJ0eUEWqkmn0KFCKfS7nn6RQz9CwIr+fHtGnJ
-         +AtO3oRs94tE452FvIIfn6OKg2MLNV9YFd+2rM2f6VR5jncI1P0Lf5nk6QD4CA7OWduJ
-         OQotm3O+IlvcKw3FHhqjNaFWBLV2Y+3LACsXyhu8ex21w/xzyupzv6xKjArwzquGdC3q
-         DplQ==
-X-Gm-Message-State: AOAM533E4c486EhJWGqGDuh/u0JhlOLXcv+2YGko6GhyIfh/Ajy3SeD3
-        MdrB12EsXV7eXoFVHZjac8F46Q==
-X-Google-Smtp-Source: ABdhPJzkUfAuTvwacS7XtUrVOynLJXz12kNbe6zJA4OEiOtW6jW6Kj8UltSzl8K/mI/BNt0o0hkPBA==
-X-Received: by 2002:a17:907:94d2:b0:6f4:b5f9:6f3a with SMTP id dn18-20020a17090794d200b006f4b5f96f3amr18025368ejc.313.1652770891993;
-        Tue, 17 May 2022 00:01:31 -0700 (PDT)
+        bh=E5YORnDcbWOJgrpTz/qSCG6/YYMuC3Z8T9fT4bh9Wds=;
+        b=nDDxPxjYmHXufgE3+3KzTS+a0JkKCDSOWYt4qaycd4cVdY3Dl2OdN6P/FTQqK2IUn7
+         9nkPk2pkgfa3eVdn6NBDIF9nogYec4RpPoLUU6EFRQ0byNAnXYOQ8UgscsOvz42fvIir
+         5UUsPHTn8UC/fD7bn8INoansHqZAQhpOPZQEk2Nz50hfTzxcbA6R+1K05PCiF4BlGDoz
+         YtIBKdJP4Tbg85KBGFSRVSvVcAeR90426urPeHSJgeQsh1i7E1PDfN4EtvjBzCDci7KZ
+         HnNo1JKxIisNjHJT7CR1sfkNBj97llrPGHwyv257YzGKrTZJKigDmqYjRUPc0c6cyIJH
+         uyGA==
+X-Gm-Message-State: AOAM533VYXZ8+tDA2nV8cAWahDcJsDd+ypvYri4qYWNoLHyCoCAhhp/N
+        6C2LVORD+7glFif/xUku44mqqA==
+X-Google-Smtp-Source: ABdhPJxPFRNvEnpD/ErxMu/AzfcJ14qdJNWTxdny8unKsWuGXSxICUMN5cKLkMAJZaswSxnz6rW1Pw==
+X-Received: by 2002:a17:906:5d11:b0:6f5:942e:bc60 with SMTP id g17-20020a1709065d1100b006f5942ebc60mr18109093ejt.254.1652770882573;
+        Tue, 17 May 2022 00:01:22 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id b5-20020a056402138500b0042617ba637esm6487016edv.8.2022.05.17.00.01.31
+        by smtp.gmail.com with ESMTPSA id b5-20020a056402138500b0042617ba637esm6487016edv.8.2022.05.17.00.01.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 May 2022 00:01:31 -0700 (PDT)
+        Tue, 17 May 2022 00:01:22 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -59,9 +59,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 12/12] arm64: dts: qcom: sm8450: remove duplicated glink-edge interrupt
-Date:   Tue, 17 May 2022 09:01:13 +0200
-Message-Id: <20220517070113.18023-13-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 04/12] dt-bindings: remoteproc: qcom,adsp: simplify interrupts
+Date:   Tue, 17 May 2022 09:01:05 +0200
+Message-Id: <20220517070113.18023-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220517070113.18023-1-krzysztof.kozlowski@linaro.org>
 References: <20220517070113.18023-1-krzysztof.kozlowski@linaro.org>
@@ -71,29 +71,90 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Specifying interrupts and interrupts-extended is not correct.  Keep only
-the extended ones, routed towards IPCC mailbox to fix warnings like:
-
-  sm8450-qrd.dtb: glink-edge: More than one condition true in oneOf schema:
-    {'$filename': 'Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml',
+Interrupts between variants differ only with presence of last optional
+interrupt, so the constraints can be simplified.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+ .../bindings/remoteproc/qcom,adsp.yaml        | 46 ++++++++-----------
+ 1 file changed, 18 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 7d08fad76371..4e796f27d6fc 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -2282,7 +2282,6 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
- 							     IRQ_TYPE_EDGE_RISING>;
- 				mboxes = <&ipcc IPCC_CLIENT_MPSS
- 						IPCC_MPROC_SIGNAL_GLINK_QMP>;
--				interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
- 				label = "modem";
- 				qcom,remote-pid = <1>;
- 			};
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+index 6e1fdfe91043..0b2db36e5d14 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+@@ -72,11 +72,23 @@ properties:
+ 
+   interrupts:
+     minItems: 5
+-    maxItems: 6
++    items:
++      - description: Watchdog interrupt
++      - description: Fatal interrupt
++      - description: Ready interrupt
++      - description: Handover interrupt
++      - description: Stop acknowledge interrupt
++      - description: Shutdown acknowledge interrupt
+ 
+   interrupt-names:
+     minItems: 5
+-    maxItems: 6
++    items:
++      - const: wdog
++      - const: fatal
++      - const: ready
++      - const: handover
++      - const: stop-ack
++      - const: shutdown-ack
+ 
+   resets:
+     minItems: 1
+@@ -317,19 +329,9 @@ allOf:
+     then:
+       properties:
+         interrupts:
+-          items:
+-            - description: Watchdog interrupt
+-            - description: Fatal interrupt
+-            - description: Ready interrupt
+-            - description: Handover interrupt
+-            - description: Stop acknowledge interrupt
++          maxItems: 5
+         interrupt-names:
+-          items:
+-            - const: wdog
+-            - const: fatal
+-            - const: ready
+-            - const: handover
+-            - const: stop-ack
++          maxItems: 5
+ 
+   - if:
+       properties:
+@@ -347,21 +349,9 @@ allOf:
+     then:
+       properties:
+         interrupts:
+-          items:
+-            - description: Watchdog interrupt
+-            - description: Fatal interrupt
+-            - description: Ready interrupt
+-            - description: Handover interrupt
+-            - description: Stop acknowledge interrupt
+-            - description: Shutdown acknowledge interrupt
++          minItems: 6
+         interrupt-names:
+-          items:
+-            - const: wdog
+-            - const: fatal
+-            - const: ready
+-            - const: handover
+-            - const: stop-ack
+-            - const: shutdown-ack
++          minItems: 6
+ 
+   - if:
+       properties:
 -- 
 2.32.0
 
