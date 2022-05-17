@@ -2,125 +2,129 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42620C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 09:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB07C43219
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 May 2022 10:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245081AbiEQJnS (ORCPT
+        id S1344761AbiEQK6X (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 May 2022 05:43:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36718 "EHLO
+        Tue, 17 May 2022 06:58:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245253AbiEQJnJ (ORCPT
+        with ESMTP id S1344691AbiEQK6U (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 May 2022 05:43:09 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B137C46B14
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 02:42:10 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id fd25so9032035edb.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 May 2022 02:42:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=siNpk3iy/2AiI/CebguH+obcJ5iL3RxgB8kelVAB/A0=;
-        b=flcjJKUCXVDcDKfZLAcf2dTd/cE3yhkSrMqpLMEF4zqyodwEXUgqoRvuiKCZ+Dbdou
-         7QJVvCa6zEiBzarwRA+ZZzLhQ8RDLmCnqWXyL+r9hGEUstMGB6k6LX4l6/cemQnxgNf/
-         cVPJIXcyu814uTKjvXTRGR+kI4MOoOSWZk+PfZ2LRucLvoAYm1LakeYeJ1lSyvSkFeR4
-         6EIJUdmQicJInp5VQZF8kX7XQBRg2InnYnVTarcPFAv3/H03PE+uqmZLPgSIaUwYS5OX
-         7mYHqZm71VMB9ta16A87RyzplT+snNiJHs07Yc7INs+yu2Gv+Aaq/Y8GuDlNXbCR9U0l
-         S1mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=siNpk3iy/2AiI/CebguH+obcJ5iL3RxgB8kelVAB/A0=;
-        b=pVHJk5+yDHRC9PDi31gTlnO8hIdrxgELUi87ZA2IHUhmdBdHov62QutD00tTEn1DCt
-         G6vEn1B6rJE/n0KovHCn3wsqv0lpF2Sfe5Un0vFQhuZ3qrA/neX7349UIzb9KrKm1KWm
-         PBXTJr1EwJt4liOD6YGrVodD239GygRLFHBofG2+yXrl0NPd127ICYloL8xWW047C/vM
-         uz6VI8u25EBakIIGyai1quveistDIvaBhA35bOezQkEH6bYJa6RObu08I8PbfvKatnOM
-         uABeWrcKV8UncngGjbiJg9V12gqKBcfyrsKhFSjC22UsauvXupJhXx2tAOxUdB8fQS/+
-         1XNA==
-X-Gm-Message-State: AOAM531FV9qkTZTV5WrSm4XC8pcF2lxflPrHTRsbkIdaV1YgQl0mmWl7
-        nejyLRxcPJyFF9uXpIkutxpAU4oiv+PmcjQIsPrN9Q==
-X-Google-Smtp-Source: ABdhPJyQwTl6/5xSRooPjamNgZDctgSI/lL5Ultsn4da+PPMTic/fwusW8sjtz1w8bZjOtUGY7FX64a+XwYtJqlE908=
-X-Received: by 2002:a05:6402:509:b0:42a:b6c9:eac with SMTP id
- m9-20020a056402050900b0042ab6c90eacmr7750279edv.225.1652780527711; Tue, 17
- May 2022 02:42:07 -0700 (PDT)
+        Tue, 17 May 2022 06:58:20 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13820483AA;
+        Tue, 17 May 2022 03:58:18 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 97F9F21CB7;
+        Tue, 17 May 2022 10:58:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1652785097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UpU3PwW0+vEopHT6mwlEtKZnt5vjcj6K5z6p2RvwFDI=;
+        b=A62HHwy96rt3Peh/2oQoJb/W5OQ8Z85j1RGtcSopCMAn7XlytDk/24zuEW9Tpga7/Yq/ue
+        yQKQnkJYG61eGpGqLTfCCGX/srVGllxHF23XScgduJU8Byym34HyS4Bk1MWh3Z8Rwo0Y9Q
+        s5hDkQjh35sYKTX8Zcjp7xwrzg3RpvU=
+Received: from suse.cz (unknown [10.100.201.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 5CD572C141;
+        Tue, 17 May 2022 10:58:15 +0000 (UTC)
+Date:   Tue, 17 May 2022 12:58:15 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc:     akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, coresight@lists.linaro.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, d.hatayama@jp.fujitsu.com,
+        dave.hansen@linux.intel.com, dyoung@redhat.com,
+        feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Wang ShaoBo <bobo.shaobowang@huawei.com>,
+        zhenwei pi <pizhenwei@bytedance.com>
+Subject: Re: [PATCH 05/30] misc/pvpanic: Convert regular spinlock into
+ trylock on panic path
+Message-ID: <YoN/x2fpdDU4+nSB@alley>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-6-gpiccoli@igalia.com>
+ <YnpXGOXicwdy1E6n@alley>
+ <0a20dd06-f459-638e-cb4d-8255ab1a1f23@igalia.com>
 MIME-Version: 1.0
-References: <20220323034405.976643-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20220323034405.976643-1-peng.fan@oss.nxp.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 17 May 2022 10:41:56 +0100
-Message-ID: <CANLsYkx089h16omSwAuteQz4RX9BMgT4_gWg9OqggqXk6m2-rw@mail.gmail.com>
-Subject: Re: [PATCH V4 0/2] remoteproc: support self recovery
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peng.fan@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0a20dd06-f459-638e-cb4d-8255ab1a1f23@igalia.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 23 Mar 2022 at 03:42, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> V4:
->   Based on Bjorn's comments on V2-2
->   Move the rproc_has_feature/rproc_set_feature to remoteproc_internal.h and
->  Keep rproc_features still in remoteproc.h, because we use
->  RPROC_MAX_FEATURES to declare bitmap.
->   Update commit log for patch 2/2, and add comments
+On Tue 2022-05-10 10:00:58, Guilherme G. Piccoli wrote:
+> On 10/05/2022 09:14, Petr Mladek wrote:
+> > [...]
+> >> With that said, it's dangerous to use regular spinlocks in such path,
+> >> as introduced by commit b3c0f8774668 ("misc/pvpanic: probe multiple instances").
+> >> This patch fixes that by replacing regular spinlocks with the trylock
+> >> safer approach.
+> > 
+> > It seems that the lock is used just to manipulating a list. A super
+> > safe solution would be to use the rcu API: rcu_add_rcu() and
+> > list_del_rcu() under rcu_read_lock(). The spin lock will not be
+> > needed and the list will always be valid.
+> > 
+> > The advantage would be that it will always call members that
+> > were successfully added earlier. That said, I am not familiar
+> > with pvpanic and am not sure if it is worth it.
+> > 
+> >> It also fixes an old comment (about a long gone framebuffer code) and
+> >> the notifier priority - we should execute hypervisor notifiers early,
+> >> deferring this way the panic action to the hypervisor, as expected by
+> >> the users that are setting up pvpanic.
+> > 
+> > This should be done in a separate patch. It changes the behavior.
+> > Also there might be a discussion whether it really should be
+> > the maximal priority.
+> > 
+> > Best Regards,
+> > Petr
+> 
+> Thanks for the review Petr. Patch was already merged - my goal was to be
+> concise, i.e., a patch per driver / module, so the patch kinda fixes
+> whatever I think is wrong with the driver with regards panic handling.
+> 
+> Do you think it worth to remove this patch from Greg's branch just to
+> split it in 2? Personally I think it's not worth, but opinions are welcome.
 
-I have received your patches but there is a significant backlog to go
-through before I can take a look at them.
+No problem. It is not worth the effort.
 
-Thanks,
-Mathieu
 
->
-> V3:
->  Resend the wrong labeled patchset
->  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
->
->  Write a cover-letter
->  To i.MX8QM/QXP, they have a M4 core self-recovery capability without
->  Linux loading firmware. The self recovery is done by
->  SCU(System Control Unit). Current remoteproc framework only support Linux
->  help recovery remote processor(stop, loading firmware, start). This
->  patchset is support remote processor self recovery(attach recovery).
->
->  In order to avoid introducing a new variable(bool support_self_recovery),
->  patch 1 introduce a new function, rproc_has_feature to make code easy to
->  extend, cleaner, such as we could move "bool has_iommu" to
->  rproc_has_feature(rproc, RPROC_FEAT_IOMMU).
->
->  Patch 2 is introduce a new function rproc_attach_recovery for
->  self recovery, the original logic move to rproc_firmware_recovery meaning
->  needs linux to help recovery.
->
->  V2-version 2:
->  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
->  Introduce rproc_has_feature
->
->  V2-version 1:
->  https://patchwork.kernel.org/project/linux-remoteproc/patch/20220126085120.3397450-1-peng.fan@oss.nxp.com/
->  Nothing change in V2.
->  Only move this patch out from
->  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
->
->
->
-> Peng Fan (2):
->   remoteproc: introduce rproc features
->   remoteproc: support attach recovery after rproc crash
->
->  drivers/remoteproc/remoteproc_core.c     | 67 +++++++++++++++++-------
->  drivers/remoteproc/remoteproc_internal.h | 10 ++++
->  include/linux/remoteproc.h               |  7 +++
->  3 files changed, 65 insertions(+), 19 deletions(-)
->
-> --
-> 2.25.1
->
+> About the RCU part, this one really could be a new patch, a good
+> improvement patch - it makes sense to me, we can think about that after
+> the fixes I guess.
+
+Yup.
+
+Best Regards,
+Petr
