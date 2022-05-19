@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FCDC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 07:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CF0C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 07:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234743AbiESHdm (ORCPT
+        id S234774AbiESHdn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 May 2022 03:33:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37486 "EHLO
+        Thu, 19 May 2022 03:33:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234789AbiESHdl (ORCPT
+        with ESMTP id S234693AbiESHdl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 19 May 2022 03:33:41 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 718E1939B1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 00:33:36 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id v8so5665767lfd.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 00:33:36 -0700 (PDT)
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E25939C4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 00:33:37 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id m6so5226123ljb.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 00:33:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qWPTFii076kMh3spx07UDdhkutNF23nYc3TRhpsUjGU=;
-        b=J7PQfDdwXyofHLtaxdaRupP6u/eH6BP2lL2t+Fqq+Q0MciM7VFeqt7k9dATO4OYp3J
-         LKObqclwxes4bhLdMUyIz24QoTikkBTrlIw2CJ5milvwEvvuePVK7ljo0+xHlR/8NNFY
-         /jC4ZxVcnZzr2rbsEeZUGqiw795MQSbQXLjH8FXzs/2IkfiFs1wap0sbzRu42mzTSBeP
-         ZVN+nMj5KGWBCQc+L8cPOn92IPSD3zeHHGVSE4ladEqXQekTPNwlEaXUHcr0Y59B5f6R
-         fuoSLnjigKl1Z37AwIPEYIZl98GZ66xc0PCQrbADlA+VBfAx3XB6K7tv2ROV+LqfAmbV
-         7TXQ==
+        bh=6Kn3MeT+ZvRFweey5kITF1vzOQi74c2SDJdwROiI/Lk=;
+        b=ilTTPIipkWBxO1IaY11XtVn1o41c1NNeH3HQ1jtxUFa8RzT3VARzZR7Fmg2Jk7WWLx
+         O8QTG382nelo+wJ4wWDAQJbBlktTOAmaQg0lLAtJ/+n6TuXLbeXuZst+Mb4AO017MCCa
+         AZxX6GAK3KNi15u/C+cIIXsjWgf1UTNScr8LsVGrH52H1CVvGmlLA+1Mqw8TTs9sG7nb
+         ztV41qf61EPd46O1Ijk8JcyfkOxvlK8HciUKk7QKy8CkWWQ2ecVdN2JhufHnc/WHcLc7
+         v99aAi39UMdl4iKuZ+m49Etb6u29LL6XaSRMFvvePO68zkThhap/qngbMnDS28R0NfeP
+         WKIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qWPTFii076kMh3spx07UDdhkutNF23nYc3TRhpsUjGU=;
-        b=oVDV4a/Fld+oCCW3EuXuy9ibxk0BhR64qAAEhNabnY7qftEjipabp7qkF+wd3X7E5T
-         QqweVj0MDTd0IIUtbSFnWbQuqYGeQb3Po7DaKRvkM3KzYAbiPjoVEEZlFDKihFxWqVWW
-         nQ5r1opjcPDSuJqXQfKRmz4q9Qqb4L+jziK++t7wpH/S1WzCz74gueQZf4ohGEdheXaH
-         aDWD9gqTCPpPMvoPMq88CIrC0wfZrpmkjhYpMKhEhPed7AxACAVtt4G+YnmmMUbPzWcr
-         dZ2W2nS4dKAJXMT0wOyUAgSWUo+CI9RA8CPfKiHRSh6/VYzLNek5klqrrTHf8mxkjZnv
-         H9Vw==
-X-Gm-Message-State: AOAM530LXcmq8yiGW5Aedt6lW7Lqs5xKuumElcC8y34JSpBvnpUGa4c7
-        bYRU/0c5hTeBi5xEylkJgZx+JQ==
-X-Google-Smtp-Source: ABdhPJyZnvswo5nLJZ+ZWjSAifqug4KpIFoaZsRIfX0IUXe8RU4GMwQ2xYnT/pIqdk0DsfJh8Beyng==
-X-Received: by 2002:a05:6512:1051:b0:473:b70c:941a with SMTP id c17-20020a056512105100b00473b70c941amr2364085lfb.238.1652945614854;
-        Thu, 19 May 2022 00:33:34 -0700 (PDT)
+        bh=6Kn3MeT+ZvRFweey5kITF1vzOQi74c2SDJdwROiI/Lk=;
+        b=AEq4C1+k9UBNXbb8j3Uzz4hIFRs/Pj8/3vDeipFs4OMioNLPAwHIpiEJr/tjtRZxXB
+         GfkOfPDG1t1XLXn1tL7LJNJxgUBntVuAjk/yWJSzIF8o+Xk62WB3TSELfYZoHwxzMKxd
+         aU3ZdxLZZuF97ioVuROMmkI2ukXgJD/1MLrge3NhBQ/wD1HkbyFuMXBDeNC6WQFNDrJG
+         vI9udTij0NhDuZiDjn5J/nh3c/yms7Rv8V+kevmquqcDxxeiBpFd2ovUV95fbtTgBisI
+         bkzTA6DAXuiEnpRMQauLeQpKtkuY7/6uKFSIlbLwJBS1EUioD7D3/Y8ELSseC+goHDpV
+         Tecg==
+X-Gm-Message-State: AOAM531+3X4OQHwG7EbFw3w1Cn9jVBbinLWPYCGhcshm03p+SHn3h5zJ
+        iErYkNGItvKDzaq3GRlUb7wx8w==
+X-Google-Smtp-Source: ABdhPJwKp9IKQBiIdQE8Whd7ZeY2r0L7LvOat4yNmMAjUGkWeprbz5x/NPSkoQ/NgXwlb51ACgNw4g==
+X-Received: by 2002:a2e:879a:0:b0:250:bdb3:7ab4 with SMTP id n26-20020a2e879a000000b00250bdb37ab4mr1861808lji.55.1652945615850;
+        Thu, 19 May 2022 00:33:35 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id a16-20020a056512201000b0047255d21159sm187484lfb.136.2022.05.19.00.33.33
+        by smtp.gmail.com with ESMTPSA id a16-20020a056512201000b0047255d21159sm187484lfb.136.2022.05.19.00.33.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 00:33:34 -0700 (PDT)
+        Thu, 19 May 2022 00:33:35 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -57,9 +57,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-kernel@vger.kernel.org
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 2/3] rpmsg: qcom: glink: remove unused name
-Date:   Thu, 19 May 2022 09:33:29 +0200
-Message-Id: <20220519073330.7187-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 3/3] rpmsg: qcom: correct kerneldoc
+Date:   Thu, 19 May 2022 09:33:30 +0200
+Message-Id: <20220519073330.7187-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
 References: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
@@ -69,11 +69,12 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The qcom_glink.name is read from DTS but never used further, never
-referenced, so drop it.  This also fixes kerneldoc warning:
+Correct kerneldoc warnings like:
 
-  drivers/rpmsg/qcom_glink_native.c:125:
-    warning: Function parameter or member 'name' not described in 'qcom_glink'
+  drivers/rpmsg/qcom_glink_ssr.c:45:
+    warning: expecting prototype for G(). Prototype was for GLINK_SSR_DO_CLEANUP() instead
+
+Also fix meaning of 'flag' argument.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Reviewed-by: Stephen Boyd <sboyd@kernel.org>
@@ -84,33 +85,41 @@ Changes since v1:
 1. Split series per subsystem.
 2. Add tag.
 ---
- drivers/rpmsg/qcom_glink_native.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/rpmsg/qcom_glink_ssr.c | 2 +-
+ drivers/rpmsg/qcom_smd.c       | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 5bc5a0a6a8a7..72a1c0fd091d 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -98,8 +98,6 @@ struct glink_core_rx_intent {
- struct qcom_glink {
- 	struct device *dev;
+diff --git a/drivers/rpmsg/qcom_glink_ssr.c b/drivers/rpmsg/qcom_glink_ssr.c
+index dea929c6045d..776d64446879 100644
+--- a/drivers/rpmsg/qcom_glink_ssr.c
++++ b/drivers/rpmsg/qcom_glink_ssr.c
+@@ -39,7 +39,7 @@ struct cleanup_done_msg {
+ 	__le32 seq_num;
+ };
  
--	const char *name;
--
- 	struct mbox_client mbox_client;
- 	struct mbox_chan *mbox_chan;
+-/**
++/*
+  * G-Link SSR protocol commands
+  */
+ #define GLINK_SSR_DO_CLEANUP	0
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 7c8c29f6c91d..7c9ede6c7d18 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -729,11 +729,11 @@ static int qcom_smd_write_fifo(struct qcom_smd_channel *channel,
+ }
  
-@@ -1755,10 +1753,6 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	if (ret)
- 		dev_err(dev, "failed to add groups\n");
- 
--	ret = of_property_read_string(dev->of_node, "label", &glink->name);
--	if (ret < 0)
--		glink->name = dev->of_node->name;
--
- 	glink->mbox_client.dev = dev;
- 	glink->mbox_client.knows_txdone = true;
- 	glink->mbox_chan = mbox_request_channel(&glink->mbox_client, 0);
+ /**
+- * qcom_smd_send - write data to smd channel
++ * __qcom_smd_send - write data to smd channel
+  * @channel:	channel handle
+  * @data:	buffer of data to write
+  * @len:	number of bytes to write
+- * @wait:	flag to indicate if write has ca wait
++ * @wait:	flag to indicate if write can wait
+  *
+  * This is a blocking write of len bytes into the channel's tx ring buffer and
+  * signal the remote end. It will sleep until there is enough space available
 -- 
 2.32.0
 
