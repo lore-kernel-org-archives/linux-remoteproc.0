@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0ED1C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 00:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6CAC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 00:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230395AbiESACr (ORCPT
+        id S231404AbiESADz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 18 May 2022 20:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55720 "EHLO
+        Wed, 18 May 2022 20:03:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231331AbiESACq (ORCPT
+        with ESMTP id S231428AbiESADy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 18 May 2022 20:02:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E882B4BE;
-        Wed, 18 May 2022 17:02:45 -0700 (PDT)
+        Wed, 18 May 2022 20:03:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B197A46C;
+        Wed, 18 May 2022 17:03:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 37ABD6177F;
-        Thu, 19 May 2022 00:02:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84F87C385A9;
-        Thu, 19 May 2022 00:02:44 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4B656B8225A;
+        Thu, 19 May 2022 00:03:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD5C0C385A9;
+        Thu, 19 May 2022 00:03:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652918564;
-        bh=yitfK/3kua0WBhTTRp7TVdCoOUJjFApZa1qfRybAxN8=;
+        s=k20201202; t=1652918631;
+        bh=sV3eHN3f7GLTVlHaLT/mBGjih2EUwa1UeZSc6G+S4f4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XInV3sP++2LWAQu5jk0rdxF5i+DmgsdYuU1AOtHrRpLL8zX0z8MJ6rabYACKBPprh
-         Em11oud9BCqOszN7CQiJfbrFavu//LdzHbZ0NaxVCTYGHRtftBV0vyoiKKoX+7xQKv
-         4MXXaA03mWj9i6k6b/Bejmsmvl6G+qSpD/oK8nq7P8IM+QZdZ9iHjx5j6UyCCMfmSO
-         BGDgn5rBFvre2n/BxxovvyRQe1y7Xap4n7ZF3MBAJsTX1BPdjQiy/DIV/zXycwLKaf
-         N67PEDvil5VB+UAdqujz9LPKuiPvDJoYTEn9/BrVsiUgJqr3AWZ+ITXPJx4JAiZanu
-         PUJ/B8GTZ1twg==
+        b=aPrXboX0Nt14KiibsUiIHwLx2MnZMyfiNT2T9rKuiYQU3mdMdevXcSgsqckC9bvON
+         y/+C1AKWOrJm54poH/92qmfKbqsmabW8Y/4mkfFLDll1pvmLNUMg1fccSW0+H2xB8M
+         Vm/9gC2IGo2w4j/4KQbEjVKtpbxBk1fnfKcDgvRtAUq+y9Fm2/3bm6kDvHQ85Tu8f9
+         7R1sl/jCq7yqOL+tzhJ5OZAht28UWVs7lWnS0zKIAO746K+LXxV4Wf8X25OADunOCI
+         jObrdFKZ2N/jcFXmLBg3lwjwUqXtlKvGvCuohTM/kahaixVSWwoJy4CVfmI7zscCyO
+         PxGGUrBljiKtQ==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/8] clk: qcom: alpha-pll: correct kerneldoc
+In-Reply-To: <20220501103520.111561-2-krzysztof.kozlowski@linaro.org>
+References: <20220501103520.111561-1-krzysztof.kozlowski@linaro.org> <20220501103520.111561-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 2/8] firmware: qcom_scm-legacy: correct kerneldoc
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -48,29 +48,33 @@ To:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Date:   Wed, 18 May 2022 17:02:42 -0700
+Date:   Wed, 18 May 2022 17:03:49 -0700
 User-Agent: alot/0.10
-Message-Id: <20220519000244.84F87C385A9@smtp.kernel.org>
+Message-Id: <20220519000350.DD5C0C385A9@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Krzysztof Kozlowski (2022-05-01 03:35:13)
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alph=
-a-pll.c
-> index 4406cf609aae..969d98fca5df 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -1439,7 +1439,7 @@ const struct clk_ops clk_alpha_pll_postdiv_fabia_op=
-s =3D {
->  EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
-> =20
+Quoting Krzysztof Kozlowski (2022-05-01 03:35:14)
+> diff --git a/drivers/firmware/qcom_scm-legacy.c b/drivers/firmware/qcom_s=
+cm-legacy.c
+> index 1829ba220576..7854af4abc62 100644
+> --- a/drivers/firmware/qcom_scm-legacy.c
+> +++ b/drivers/firmware/qcom_scm-legacy.c
+> @@ -120,6 +120,9 @@ static void __scm_legacy_do(const struct arm_smccc_ar=
+gs *smc,
 >  /**
-> - * clk_lucid_pll_configure - configure the lucid pll
-> + * clk_trion_pll_configure - configure the lucid pll
+>   * scm_legacy_call() - Sends a command to the SCM and waits for the comm=
+and to
+>   * finish processing.
+> + * @dev:       device
+> + * @desc:      descriptor structure containing arguments and return valu=
+es
+> + * @res:        results from SMC/HVC call
 
-configure the trion pll?
+I think only SMC call is possible so drop HVC to not be confusing.
 
 >   *
->   * @pll: clk alpha pll
->   * @regmap: register map
+>   * A note on cache maintenance:
+>   * Note that any buffers that are expected to be accessed by the secure =
+world
