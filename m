@@ -2,200 +2,287 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FBDC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 22:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C9DC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 23:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245518AbiESWfQ (ORCPT
+        id S1343734AbiESXpS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 May 2022 18:35:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39254 "EHLO
+        Thu, 19 May 2022 19:45:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245512AbiESWfP (ORCPT
+        with ESMTP id S1343737AbiESXpR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 May 2022 18:35:15 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580D2C0397
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 15:35:13 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-e656032735so8532258fac.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 15:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
-         :subject:to:cc;
-        bh=VjlrbV4vJKI8XrHdrvSp11oTKl50bHpTcvsdSZU8U4M=;
-        b=XkI+w/MjL3A6mJl2TFEUT88gLNyZg00mKX8nHV7mXLrN8otWS80SaNXd/6sNN2XUTo
-         oZ+Tp90Cs1lq2W9ocDlCd23qD8CaCLRgFr3Mk8m9L4k0AktuSg7PaUdLtT8S9CHKYj5y
-         caMezmMFbAAhbmPNUrkS5UN0NVPZA+odXJR2g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from
-         :user-agent:date:message-id:subject:to:cc;
-        bh=VjlrbV4vJKI8XrHdrvSp11oTKl50bHpTcvsdSZU8U4M=;
-        b=n2Gy+LUvEF5p5b8GUPIECDYRPTG+tnEmiB42GFyzMM49BTlW3kOgt3eNrzPL1B8ulD
-         87VywHDr/S4v+EDmxHFDa39vtNX9XdyKGLHm7VYNhegm7pZaS8M6U8ZDw277vhgyIl5F
-         S0oDHmK8OvZiWTeuQ0eZGrZ3CsMicXVmJJW5qOopwMROT9AHlmYLt/OAIaFFGVyDTZLo
-         GfY3Akw+exC2YRn12blSf4cSF9Qo3EZ4DmxyG0Nyxm+2WWs9nhYNy/rB6XAHp2yjvkwC
-         uyrKU8kfKnkE6TARLqN1lEtH9Mgt5bFA55BPffMup+KEGtSawgfkhUMKgYA/kD3FqJmt
-         hQGQ==
-X-Gm-Message-State: AOAM530gbrLOCyUF+Qp43ynIV79k1segnQhI6rBhs/Z2xwbQ+CdwAkxO
-        eEvIxcqTyOpXh1QnG/oUrZkNjS7Gi3PU6ifaVbaa9Q9Sgq4=
-X-Google-Smtp-Source: ABdhPJyHbu0BSr9LBi52hxpKPmXOdW1xCXpPhmUrDoe9clR+KRpEObjnicQVOt9bttlw1GiBXVL+iYfOG64eiydGEFw=
-X-Received: by 2002:a05:6870:240d:b0:f1:b878:e97c with SMTP id
- n13-20020a056870240d00b000f1b878e97cmr3776843oap.193.1652999712543; Thu, 19
- May 2022 15:35:12 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 19 May 2022 15:35:11 -0700
+        Thu, 19 May 2022 19:45:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 38F4811AFD6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 16:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653003914;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xcqeqNHBqLaEPFvaMSIdVsHM/2ssgjepqSc89Z+McDY=;
+        b=cH1jZ7B9s6QPsLL95flJcVUTqhu/a/tgBUpghaM5U6BI16PpGbL0aFbZt3tCOe0LuHUd1p
+        9Ag8XSB23ERy2dy9dibS8wRkFYY7oTZKGNoiOANIJKG3KWOtYWosuDQR4zKR+E6Ce+bJCZ
+        dO967Y0vDCSFGo7+e6Ic1TcGvCPGhxs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-671-51qE-HMZMJ-_l5k-QlXFHg-1; Thu, 19 May 2022 19:45:10 -0400
+X-MC-Unique: 51qE-HMZMJ-_l5k-QlXFHg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A41B685A5AA;
+        Thu, 19 May 2022 23:45:07 +0000 (UTC)
+Received: from localhost (ovpn-12-42.pek2.redhat.com [10.72.12.42])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4ABA5492C14;
+        Thu, 19 May 2022 23:45:06 +0000 (UTC)
+Date:   Fri, 20 May 2022 07:45:02 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     "michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        Dave Young <dyoung@redhat.com>, d.hatayama@jp.fujitsu.com,
+        akpm@linux-foundation.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
+        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Message-ID: <20220519234502.GA194232@MiWiFi-R3L-srv>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com>
+ <Yn0TnsWVxCcdB2yO@alley>
+ <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
 MIME-Version: 1.0
-In-Reply-To: <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com>
-References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com> <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date:   Thu, 19 May 2022 15:35:11 -0700
-Message-ID: <CAE-0n50iYAUmj6GEdCuOJ1d_SgeeFWtoxqWf7qN=jZ_js4wBcQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: remoteproc: qcom: Convert SC7280 MSS
- bindings to YAML
-To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
-Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mka@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Sibi Sankar (2022-05-19 09:47:04)
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> new file mode 100644
-> index 000000000000..a936d84eefa6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> @@ -0,0 +1,250 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-mss-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SC7280 MSS Peripheral Image Loader
-> +
-> +maintainers:
-> +  - Sibi Sankar <quic_sibis@quicinc.com>
-> +
-> +description:
-> +  This document describes the hardware for a component that loads and boots firmware
-> +  on the Qualcomm Technology Inc. SC7280 Modem Hexagon Core.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sc7280-mss-pil
-> +
-[..]
-> +
-> +  resets:
-> +    items:
-> +      - description: AOSS restart
-> +      - description: PDC reset
-> +
-> +  reset-names:
-> +    items:
-> +      - const: mss_restart
-> +      - const: pdc_reset
-> +
-> +  memory-region:
-> +    maxItems: 2
-> +    description: Phandle reference to the reserved-memory for the MBA region followed
-> +                 by the modem region.
-> +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    maxItems: 2
+On 05/15/22 at 07:47pm, Guilherme G. Piccoli wrote:
+> On 12/05/2022 11:03, Petr Mladek wrote:
+...... 
+> > OK, the question is how to make it better. Let's start with
+> > a clear picture of the problem:
+> > 
+> > 1. panic() has basically two funtions:
+> > 
+> >       + show/store debug information (optional ways and amount)
+> >       + do something with the system (reboot, stay hanged)
+> > 
+> > 
+> > 2. There are 4 ways how to show/store the information:
+> > 
+> >       + tell hypervisor to store what it is interested about
+> >       + crash_dump
+> >       + kmsg_dump()
+> >       + consoles
+> > 
+> >   , where crash_dump and consoles are special:
+> > 
+> >      + crash_dump does not return. Instead it ends up with reboot.
+> > 
+> >      + Consoles work transparently. They just need an extra flush
+> >        before reboot or staying hanged.
+> > 
+> > 
+> > 3. The various notifiers do things like:
+> > 
+> >      + tell hypervisor about the crash
+> >      + print more information (also stop watchdogs)
+> >      + prepare system for reboot (touch some interfaces)
+> >      + prepare system for staying hanged (blinking)
+> > 
+> >    Note that it pretty nicely matches the 4 notifier lists.
+> > 
+> 
+> I really appreciate the summary skill you have, to convert complex
+> problems in very clear and concise ideas. Thanks for that, very useful!
+> I agree with what was summarized above.
 
-Instead of maxItems can this be
+I want to say the similar words to Petr's reviewing comment when I went
+through the patches and traced each reviewing sub-thread to try to
+catch up. Petr has reivewed this series so carefully and given many
+comments I want to ack immediately.
 
-       items:
-         - description: Name of MBA firmware
-	 - description: Name of modem firmware
+I agree with most of the suggestions from Petr to this patch, except of
+one tiny concern, please see below inline comment.
 
-so that we know the order? Same for 'memory-region' above.
+> 
+> 
+> > Now, we need to decide about the ordering. The main area is how
+> > to store the debug information. Consoles are transparent so
+> > the quesition is about:
+> > 
+> >      + hypervisor
+> >      + crash_dump
+> >      + kmsg_dump
+> > 
+> > Some people need none and some people want all. There is a
+> > risk that system might hung at any stage. This why people want to
+> > make the order configurable.
+> > 
+> > But crash_dump() does not return when it succeeds. And kmsg_dump()
+> > users havn't complained about hypervisor problems yet. So, that
+> > two variants might be enough:
+> > 
+> >     + crash_dump (hypervisor, kmsg_dump as fallback)
+> >     + hypervisor, kmsg_dump, crash_dump
+> > 
+> > One option "panic_prefer_crash_dump" should be enough.
+> > And the code might look like:
+> > 
+> > void panic()
+> > {
+> > [...]
+> > 	dump_stack();
+> > 	kgdb_panic(buf);
+> > 
+> > 	< ---  here starts the reworked code --- >
+> > 
+> > 	/* crash dump is enough when enabled and preferred. */
+> > 	if (panic_prefer_crash_dump)
+> > 		__crash_kexec(NULL);
 
-> +    description:
-> +      The name of the MBA and modem firmware to be loaded for this remote processor.
-> +
-> +  qcom,halt-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+I like the proposed skeleton of panic() and code style suggested by
+Petr very much. About panic_prefer_crash_dump which might need be added,
+I hope it has a default value true. This makes crash_dump execute at
+first by default just as before, unless people specify
+panic_prefer_crash_dump=0|n|off to disable it. Otherwise we need add
+panic_prefer_crash_dump=1 in kernel and in our distros to enable kdump,
+this is inconsistent with the old behaviour.
 
-Should this have maxItems: 1? Or that's implicit from description?
+> > 
+> > 	/* Stop other CPUs and focus on handling the panic state. */
+> > 	if (has_kexec_crash_image)
+> > 		crash_smp_send_stop();
+> > 	else
+> > 		smp_send_stop()
+> > 
+> 
+> Here we have a very important point. Why do we need 2 variants of SMP
+> CPU stopping functions? I disagree with that - my understanding of this
+> after some study in architectures is that the crash_() variant is
+> "stronger", should work in all cases and if not, we should fix that -
+> that'd be a bug.
+> 
+> Such variant either maps to smp_send_stop() (in various architectures,
+> including XEN/x86) or overrides the basic function with more proper
+> handling for panic() case...I don't see why we still need such
+> distinction, if you / others have some insight about that, I'd like to
+> hear =)
+> 
+> 
+> > 	/* Notify hypervisor about the system panic. */
+> > 	atomic_notifier_call_chain(&panic_hypervisor_list, 0, NULL);
+> > 
+> > 	/*
+> > 	 * No need to risk extra info when there is no kmsg dumper
+> > 	 * registered.
+> > 	 */
+> > 	if (!has_kmsg_dumper())
+> > 		__crash_kexec(NULL);
+> > 
+> > 	/* Add extra info from different subsystems. */
+> > 	atomic_notifier_call_chain(&panic_info_list, 0, NULL);
+> > 
+> > 	kmsg_dump(KMSG_DUMP_PANIC);
+> > 	__crash_kexec(NULL);
+> > 
+> > 	/* Flush console */
+> > 	unblank_screen();
+> > 	console_unblank();
+> > 	debug_locks_off();
+> > 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
+> > 
+> > 	if (panic_timeout > 0) {
+> > 		delay()
+> > 	}
+> > 
+> > 	/*
+> > 	 * Prepare system for eventual reboot and allow custom
+> > 	 * reboot handling.
+> > 	 */
+> > 	atomic_notifier_call_chain(&panic_reboot_list, 0, NULL);
+> 
+> You had the order of panic_reboot_list VS. consoles flushing inverted.
+> It might make sense, although I didn't do that in V1...
+> Are you OK in having a helper for console flushing, as I did in V1? It
+> makes code of panic() a bit less polluted / more focused I feel.
+> 
+> 
+> > 
+> > 	if (panic_timeout != 0) {
+> > 		reboot();
+> > 	}
+> > 
+> > 	/*
+> > 	 * Prepare system for the infinite waiting, for example,
+> > 	 * setup blinking.
+> > 	 */
+> > 	atomic_notifier_call_chain(&panic_loop_list, 0, NULL);
+> > 
+> > 	infinite_loop();
+> > }
+> > 
+> > 
+> > __crash_kexec() is there 3 times but otherwise the code looks
+> > quite straight forward.
+> > 
+> > Note 1: I renamed the two last notifier list. The name 'post-reboot'
+> > 	did sound strange from the logical POV ;-)
+> > 
+> > Note 2: We have to avoid the possibility to call "reboot" list
+> > 	before kmsg_dump(). All callbacks providing info
+> > 	have to be in the info list. It a callback combines
+> > 	info and reboot functionality then it should be split.
+> > 
+> > 	There must be another way to calm down problematic
+> > 	info callbacks. And it has to be solved when such
+> > 	a problem is reported. Is there any known issue, please?
+> > 
+> > It is possible that I have missed something important.
+> > But I would really like to make the logic as simple as possible.
+> 
+> OK, I agree with you! It's indeed simpler and if others agree, I can
+> happily change the logic to what you proposed. Although...currently the
+> "crash_kexec_post_notifiers" allows to call _all_ panic_reboot_list
+> callbacks _before kdump_.
+> 
+> We need to mention this change in the commit messages, but I really
+> would like to hear the opinions of heavy users of notifiers (as
+> Michael/Hyper-V) and the kdump interested parties (like Baoquan / Dave
+> Young / Hayatama). If we all agree on such approach, will change that
+> for V2 =)
+> 
+> Thanks again Petr, for the time spent in such detailed review!
+> Cheers,
+> 
+> 
+> Guilherme
+> 
 
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      four offsets within syscon for q6, modem, nc and vq6 halt registers.
-> +
-> +  qcom,ext-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Should this have min/maxItems: 2?
-
-> +    description:
-> +      Two phandle references to syscons representing TCSR_REG and TCSR register
-> +      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
-> +      and axim1_clk_off/crypto_clk_off registers respectively.
-> +
-> +  qcom,qaccept-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      three offsets within syscon for mdm, cx and axi qaccept registers.
-> +
-> +  qcom,qmp:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Reference to the AOSS side-channel message RAM.
-> +
-> +  qcom,smem-states:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: States used by the AP to signal the Hexagon core
-> +    items:
-> +      - description: Stop the modem
-
-This one did items for a phandle array so I think we should follow the
-same above.
-
-> +
-> +  qcom,smem-state-names:
-> +    description: The names of the state bits used for SMP2P output
-> +    const: stop
-> +
-> +  glink-edge:
-> +    $ref: qcom,glink-edge.yaml#
-> +    description:
-> +      Qualcomm G-Link subnode which represents communication edge, channels
-> +      and devices related to the DSP.
-[..]
-> +        power-domain-names = "cx", "mss";
-> +
-> +        memory-region = <&mba_mem>, <&mpss_mem>;
-> +
-> +        qcom,qmp = <&aoss_qmp>;
-> +
-> +        qcom,smem-states = <&modem_smp2p_out 0>;
-> +        qcom,smem-state-names = "stop";
-> +
-> +        resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-> +                 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-> +        reset-names = "mss_restart", "pdc_reset";
-> +
-> +        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
-> +        qcom,ext-regs = <&tcsr 0x10000 0x10004 &tcsr_mutex 0x26004 0x26008>;
-
-Because it's two items I'd expect:
-	
-	<&tcsr 0x10000 0x10004>, <&tcsr_mutex 0x26004 0x26008>;
-
-> +        qcom,qaccept-regs = <&tcsr_mutex 0x23030 0x23040 0x23020>;
-> +
-> +        glink-edge {
-> +            interrupts-extended = <&ipcc IPCC_CLIENT_MPSS
-> +                                   IPCC_MPROC_SIGNAL_GLINK_QMP
-> +                                   IRQ_TYPE_EDGE_RISING>;
