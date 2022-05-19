@@ -2,103 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D924DC4321E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 19:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5995BC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 20:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244469AbiESTXL (ORCPT
+        id S244735AbiESUdK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 May 2022 15:23:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47008 "EHLO
+        Thu, 19 May 2022 16:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243925AbiESTXG (ORCPT
+        with ESMTP id S244600AbiESUdI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 May 2022 15:23:06 -0400
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7120C58E43;
-        Thu, 19 May 2022 12:23:05 -0700 (PDT)
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-f1eafa567cso4539458fac.8;
-        Thu, 19 May 2022 12:23:05 -0700 (PDT)
+        Thu, 19 May 2022 16:33:08 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6446719C5
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 13:33:06 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id e189so7814775oia.8
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 13:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=C4G90XvF1AnzZSzIPU4XdotIJK+4C8mTaUfSHQ0bvc0=;
+        b=zgz+Ca7AVevw/2dCflWBCbWT/iob9LjDx5sk9EcbWRz4kJNjuB9XW5EtxncNXLSABr
+         C39DQrOfPpZ6JhDOALmm189y+/38JIY0esjrwhoDDuUJk0t/EpVLkWv6BXIXj6/GoM7H
+         N6vhNUiwLn+NfuqWAKV+pssAx/VCMmkSTJvKK1S7VY2kjvWwYf4ZLCbEBQ10HzasSyjj
+         f9FjDQdiWpiN4LZdLPjyEy4Epj4E/N8+2QbZdf57okiCKnHMwZDM1wuTW0I4Wmkv4RNM
+         EnpDq8JcRJsFpE8leAvoCWE/DaEnu0TOlDUUbKQpJQzAQOY3vzYqUaOe++kLZi3MAhSs
+         Brnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=xUdBpJfFH6LsWjA2eoyMRt5PLk894PaKnYn1kRRc6EM=;
-        b=S3p/lOOvitntaO0p4qxXxG3uRZB7nk+Ha4aZOGejrs50Wbi/mW0Zhd/JVN/f8AqsBC
-         Btar3UDwkW0/OOLNUSL4UW1MCCb7R0eWYd9SEnS7n7del3Owa+/H+U9jrXddkWh+c5NW
-         ho0r4HicsYsUySJXx+qwRm2KNJEpGbsdltjHZWh8iz0qZu8gvS44L0uAtVqvia9rthc5
-         X525jYjrTeVwudjAlvqQidMYGWxboW8rmo+E3TOEXdM+1Q8Uv5ibbDzwef0BlavIl1oM
-         4luguN8jKmWNjEWGUTdOwSGjCx8hDo5sWmTD4sj4Z85OAUcJ5GYfBiixMMQcePPIHVUs
-         LKRw==
-X-Gm-Message-State: AOAM530+mdkTYxvIsAHkRS7dpfC+hVCJrBcYCFuBiYPhJTxT0Bm/EhdL
-        E9G/oEGhNR6/IPsrpKjGwg==
-X-Google-Smtp-Source: ABdhPJxlKaVBcMdiefUM0cnmhHo2Lr8eBJpDbB9PytEPQAGPaO56TKyr0H1SyDe14GDzXH7AZl00sg==
-X-Received: by 2002:a05:6870:6307:b0:e9:6ed6:cb2f with SMTP id s7-20020a056870630700b000e96ed6cb2fmr3606109oao.26.1652988184484;
-        Thu, 19 May 2022 12:23:04 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id i186-20020acab8c3000000b00325cda1ffb9sm43087oif.56.2022.05.19.12.23.03
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=C4G90XvF1AnzZSzIPU4XdotIJK+4C8mTaUfSHQ0bvc0=;
+        b=w4idu8lazocuok9UTV61f1LWTdIpuMHjXHEiyVE+dby8AqViUQi9HZwebGY8wATgHy
+         hoAwdsLjPt8eFW17nWX6tpZ2cfTCqlCG3YkNC1Wzv3g4+IK1g9v/zjl6x/h/fMSdQ+eP
+         02uwkxFwNmiEBm20fiu+Bd3EA+pzjf+NJp2O+E/QBwOv2kRgLDq3DJ2H06OPMYw1bvHh
+         sGx2kdeeaHnOg7RZon3nPq677sv55ZjElvPZm7HnTgITEV/+/v1wstCvMnLnkMVsxxFo
+         A0WAG4f6woCUmXc41oZUA4pAp6Ime8kmVwCQQIW7fHqlGi34cQUbSn+o7qio4nMffdCU
+         XJHg==
+X-Gm-Message-State: AOAM533FoNNhWP56dT/8PjU4CCa4nVJPGb2BuzqvVZa+fti/giCwo2eL
+        ucaV/65TCfQIDUrj8vGTIUUELQ==
+X-Google-Smtp-Source: ABdhPJyKEmocBdoNc0jjOWKQy1s3lNBUt/Ix7asHjn21UTv1kYd3ud/imXmL3pXihlLY/2SDomMbKg==
+X-Received: by 2002:a05:6808:1314:b0:326:e438:d8cd with SMTP id y20-20020a056808131400b00326e438d8cdmr3966295oiv.228.1652992386100;
+        Thu, 19 May 2022 13:33:06 -0700 (PDT)
+Received: from ripper (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id m12-20020a4a390c000000b0035eb4e5a6cbsm144514ooa.33.2022.05.19.13.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 12:23:03 -0700 (PDT)
-Received: (nullmailer pid 2044191 invoked by uid 1000);
-        Thu, 19 May 2022 19:23:01 -0000
-From:   Rob Herring <robh@kernel.org>
+        Thu, 19 May 2022 13:33:05 -0700 (PDT)
+Date:   Thu, 19 May 2022 13:35:25 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, robh+dt@kernel.org,
-        mka@chromium.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, agross@kernel.org, mathieu.poirier@linaro.org,
-        devicetree@vger.kernel.org, ohad@wizery.com,
-        krzysztof.kozlowski+dt@linaro.org, bjorn.andersson@linaro.org,
-        linux-remoteproc@vger.kernel.org
-In-Reply-To: <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com>
-References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com> <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: remoteproc: qcom: Convert SC7280 MSS bindings to YAML
-Date:   Thu, 19 May 2022 14:23:01 -0500
-Message-Id: <1652988181.135820.2044190.nullmailer@robh.at.kernel.org>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        swboyd@chromium.org, mka@chromium.org
+Subject: Re: [PATCH v4 1/3] arm64: dts: qcom: sc7280: Add proxy interconnect
+ requirements for modem
+Message-ID: <YoaqDcB6wkd4zOWR@ripper>
+References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
+ <1652978825-5304-2-git-send-email-quic_sibis@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1652978825-5304-2-git-send-email-quic_sibis@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 19 May 2022 22:17:04 +0530, Sibi Sankar wrote:
-> Convert SC7280 MSS PIL loading bindings to YAML.
+On Thu 19 May 09:47 PDT 2022, Sibi Sankar wrote:
+
+> Add interconnects that are required to be proxy voted upon during modem
+> bootup on SC7280 SoCs.
+
+This looks reasonable, but how come the vote is only for DDR frequency?
+What about the buses between modem and ddr?
+
+Regards,
+Bjorn
+
 > 
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 > Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > ---
+>  arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> v4:
->  * Remove older bindings [Matthias/Krzysztof]
->  * Misc. Fixes [Krzysztof]
->  * Rebased on v2 of Krzysztof's bindings cleanups
+> diff --git a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> index 9f4a9c263c35..91aad86cc708 100644
+> --- a/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc7280-chrome-common.dtsi
+> @@ -88,6 +88,7 @@
+>  	status = "okay";
+>  	compatible = "qcom,sc7280-mss-pil";
+>  	iommus = <&apps_smmu 0x124 0x0>, <&apps_smmu 0x488 0x7>;
+> +	interconnects = <&mc_virt MASTER_LLCC 0 &mc_virt SLAVE_EBI1 0>;
+>  	memory-region = <&mba_mem>, <&mpss_mem>;
+>  };
+>  
+> -- 
+> 2.7.4
 > 
-> v3:
->  * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
-> 
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  31 +--
->  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 250 +++++++++++++++++++++
->  2 files changed, 252 insertions(+), 29 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> 
-
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,glink-edge.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.example.dtb: remoteproc@4080000: glink-edge: False schema does not allow {'interrupts-extended': [[4294967295, 2, 0, 1]], 'mboxes': [[4294967295, 2, 0]], 'label': ['modem'], 'qcom,remote-pid': [[1]]}
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
