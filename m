@@ -2,179 +2,124 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E07C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 10:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE46C43217
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 12:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236655AbiESKTZ (ORCPT
+        id S237671AbiESMIm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 May 2022 06:19:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56534 "EHLO
+        Thu, 19 May 2022 08:08:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236609AbiESKTR (ORCPT
+        with ESMTP id S232762AbiESMIj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 May 2022 06:19:17 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30966A5ABB
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 03:19:16 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id p26so6413595eds.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 03:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rQZDF0ST+m3bjXxhfgKrKul8Pa3ypLxrdFU2KUJN6Wo=;
-        b=yulejd8gCAcfcCJ6Hbz4UE8pg5QLnb0fCWsWWDGcCpZEpalnvHluHjDTMZwcUqEvBS
-         TI1P7Eeo1L0VCdNbVplivDDT9YvH3KKapVz0QSM1jyBdfiESxEjiQstdwStrjVgcJZJ6
-         J8DQD+pHP+InweqD5x6O7wh4QBqZN1xSGdDl9Ga1NsZPoSHHIB/6hb2Mzu2ddIDy/sgd
-         wKmI25hsNlrcSz+C43HCmX0vIbFJqymCTcCdfA9j0SBuBc6a2Qj1QntZeO9u+M/9yx+I
-         ATGXd4ebtIyF8nektWoOXEDUzVs0I+Z4eYU0SRVjZJs4A9g5dcczKHkbezctiENN1R+8
-         IYUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rQZDF0ST+m3bjXxhfgKrKul8Pa3ypLxrdFU2KUJN6Wo=;
-        b=P8kdqpcD4nYwFj/1BUN9N7fxit8bnmgxMc+AmF1YGLB3zpjAd+wmVa/gQuepQwxpaB
-         SaqFKfcnkyxmMxefB1KHIpPZ2xAx0YWiJJlVFkYOOcBNF+OGBRW9SODNCC2pyj04Iey5
-         g5OXPtx/aMC2M+ydXwnRoetf4tanMxnKZp6mDPO6I+twp0P5Hu5ZzsabJArKNlROhQ08
-         KQdjhTTNZVm9UeZfz2DFuIgD7eNSuGZJ6BebtuKMiTdR4Xlu8qMMcKqIRI6o28ZU5IGE
-         9HLDpFRz3F8efZhs0o99bo/7kGjMDQBU7qFlA2Z0A4dmjG9LS+XalG12O/Jl1rwd5rdj
-         iFig==
-X-Gm-Message-State: AOAM530JiH81XB2Pa0LRhxgP6uGB7HE9bEbVv02dLy6aAR2tkc+tIrH5
-        tVGPTOpzV6cZDKulyjRjEBlHxZr1KavHZK2FtI6gxA==
-X-Google-Smtp-Source: ABdhPJxJRotEBuFNPsVGhczRDFHSLngF16rHucpJb9tpSyucqiOctuqwe+PayGCiBANvsl1m3CDpzIzQ37sdH0gPy2I=
-X-Received: by 2002:aa7:cb1a:0:b0:41c:dd9c:2eaa with SMTP id
- s26-20020aa7cb1a000000b0041cdd9c2eaamr4404541edt.119.1652955554524; Thu, 19
- May 2022 03:19:14 -0700 (PDT)
+        Thu, 19 May 2022 08:08:39 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF5265997C;
+        Thu, 19 May 2022 05:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8Or+sigV8tAW403lBCNOcYfh+f/QtBZxoM4MtJnkEDo=; b=JqidS10tAFi8w45bv/QRWgkoh/
+        KOgIwZ/tIUUpLlbLrbLO1ldSksH/br07uow35GeONuGXn9H2gl6Zc+ITyazsuepTHCwyY7cXFe/h7
+        MtwjDL5RB9ZO6kq5gTfsayx//B9lueprkuY9Bysrv6zGbl5LRv1UeYThThR2djyvHZK5yH9WAOS3f
+        IAvBZnCmpegeYcMo7srxsmSG31D8d5jvfPawZOHcM5Mv+NhxsgRuyQoZ7I4NYbnvdtmZ38tbx+LTT
+        WmYVOrIBhGzwQtf/+4wAyIFnS+fHagBv45fyKy1zunamCTiZMunglm+e59nItrKVAlZjSL4ou4wbM
+        ShGTIh/g==;
+Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1nrewo-00BE00-NL; Thu, 19 May 2022 14:08:07 +0200
+Message-ID: <73ade79a-5d76-0e68-708c-f14d3665a7d2@igalia.com>
+Date:   Thu, 19 May 2022 09:07:25 -0300
 MIME-Version: 1.0
-References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
-In-Reply-To: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Thu, 19 May 2022 11:19:03 +0100
-Message-ID: <CANLsYkw9HuLso9bGL4fM7C9qH+basgKA9yKFwms4WB4OUHqymQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/6] Add Xilinx RPU subsystem support
-To:     Tanmay Shah <tanmay.shah@xilinx.com>
-Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-        michal.simek@xilinx.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 19/30] panic: Add the panic hypervisor notifier list
+Content-Language: en-US
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     David Gow <davidgow@google.com>, Evan Green <evgreen@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        akpm@linux-foundation.org, bhe@redhat.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org, kernel-dev@igalia.com, kernel@gpiccoli.net,
+        halves@canonical.com, fabiomirmar@gmail.com,
+        alejandro.j.jimenez@oracle.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, bp@alien8.de, corbet@lwn.net,
+        d.hatayama@jp.fujitsu.com, dave.hansen@linux.intel.com,
+        dyoung@redhat.com, feng.tang@intel.com, gregkh@linuxfoundation.org,
+        mikelley@microsoft.com, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dexuan Cui <decui@microsoft.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Justin Chen <justinpopo6@gmail.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mihai Carabas <mihai.carabas@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Paul Mackerras <paulus@samba.org>, Pavel Machek <pavel@ucw.cz>,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Wang ShaoBo <bobo.shaobowang@huawei.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        zhenwei pi <pizhenwei@bytedance.com>
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-20-gpiccoli@igalia.com> <YoJZVZl/MH0KiE/J@alley>
+ <ad082ce7-db50-13bb-3dbb-9b595dfa78be@igalia.com> <YoOpyW1+q+Z5as78@alley>
+ <YoSnGmBJ3kYs5WMf@alley> <fbbd0a8d-2ef4-4a39-4b75-354918e85778@igalia.com>
+ <YoXr2AD+Jc/ukUhJ@alley>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <YoXr2AD+Jc/ukUhJ@alley>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tanmay,
+On 19/05/2022 04:03, Petr Mladek wrote:
+> [...]
+> I would ignore it for now. If anyone would want to safe the log
+> then they would need to read it. They will most likely use
+> the existing kmsg_dump() infastructure. In fact, they should
+> use it to avoid a code duplication.
+> 
+> Best Regards,
+> Petr
 
-I have replaced the previous version of this set with this one in my
-queue.  That way you don't go back to the bottom.
-
-Thanks,
-Mathieu.
-
-On Wed, 18 May 2022 at 20:46, Tanmay Shah <tanmay.shah@xilinx.com> wrote:
->
-> This patch series adds bindings document for RPU subsystem found on Xilinx
-> ZynqMP platforms. It also adds device nodes and driver to enable RPU
-> subsystem in split mode and lockstep mode.
->
-> Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
-> contains two arm cortex r5f cores. RPU subsystem can be configured in
-> split mode, lockstep mode and single-cpu mode.
->
-> RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
-> In lockstep mode, all 4 banks are combined and total of 256KB memory is
-> made available to r5 core0. In split mode, both cores can access two
-> TCM banks i.e. 128 KB.
->
-> RPU can also fetch data and execute instructions from DDR memory along with
-> TCM memory.
-> ---
->
-> Changes in v5:
->   - Add constraints of the possible values of xlnx,cluster-mode property
->   - fix description of power-domains property for r5 core
->   - Remove reg, address-cells and size-cells properties as it is not required
->   - Fix description of mboxes property
->   - Add description of each memory-region and remove old .txt binding link
->     reference in the description
->   - Remove optional reg property from r5fss node
->   - Move r5fss node out of axi node
->
-> Changes in v4:
->   - Add memory-region, mboxes and mbox-names properties in dt-bindings example
->   - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
->   - Remove redundant header files
->   - use dev_err_probe() to report errors during probe
->   - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
->   - Fix memory leaks all over the driver when resource allocation fails for any core
->   - make cluster mode check only at one place
->   - remove redundant initialization of variable
->   - remove redundant use of of_node_put()
->   - Fix Comment format problem
->   - Assign offset of zynqmp_tcm_banks instead of duplicating it
->   - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
->   - Remove rproc_mem_entry object from r5_core
->   - Use put_device() and rproc_del() APIs to fix memory leaks
->   - Replace pr_* with dev_*. This was missed in v3, fix now.
->   - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
->
-> Changes in v3:
->   - Fix checkpatch script indentation warning
->   - Remove unused variable from xilinx remoteproc driver
->   - use C style comments, i.e /*...*/
->   - Remove redundant debug information which can be derived using /proc/device-tree
->   - Fix multiline comment format
->   - s/"final fot TCM"/"final for TCM"
->   - Function devm_kzalloc() does not return an code on error, just NULL.
->     Remove redundant error check for this function throughout the driver.
->   - Fix RPU mode configuration and add documentation accordingly
->   - Get rid of the indentations to match function documentation style with rest of the driver
->   - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
->   - Use 'i' for the outer loop and 'j' for the inner one as per convention
->   - Remove redundant error and NULL checks throughout the driver
->   - Use devm_kcalloc() when more than one element is required
->   - Add memory-regions carveouts during driver probe instead of parse_fw call
->     This removes redundant copy of reserved_mem object in r5_core structure.
->   - Fix memory leak by using of_node_put()
->   - Fix indentation of tcm_mem_map function args
->   - Remove redundant init of variables
->   - Initialize tcm bank size variable for lockstep mode
->   - Replace u32 with phys_addr_t for variable stroing memory bank address
->   - Add documentation of TCM behavior in lockstep mode
->   - Use dev_get_drvdata instead of platform driver API
->   - Remove info level messages
->   - Fix checkpatch.pl warnings
->   - Add documentation for the Xilinx r5f platform to understand driver design
->
-> Changes in v2:
->   - Remove proprietary copyright footer from cover letter
->
->
-> Ben Levinsky (3):
->   firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
->     configuration.
->   firmware: xilinx: Add shutdown/wakeup APIs
->   firmware: xilinx: Add RPU configuration APIs
->
-> Tanmay Shah (3):
->   dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
->   arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
->   drivers: remoteproc: Add Xilinx r5 remoteproc driver
->
->  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  128 ++
->  arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
->  drivers/firmware/xilinx/zynqmp.c              |   97 ++
->  drivers/remoteproc/Kconfig                    |   12 +
->  drivers/remoteproc/Makefile                   |    1 +
->  drivers/remoteproc/xlnx_r5_remoteproc.c       | 1045 +++++++++++++++++
->  include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
->  include/linux/firmware/xlnx-zynqmp.h          |   60 +
->  8 files changed, 1382 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->  create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
->
->
-> base-commit: 01a1a0c8d456b11f2f6b9b822414481beaa44d6f
-> --
-> 2.25.1
->
+Cool, thanks! I agree, let's expect people use kmsg_dump() as they should =)
