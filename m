@@ -2,363 +2,146 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B62EC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 07:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36379C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235934AbiETH20 (ORCPT
+        id S244345AbiETIas (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 03:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
+        Fri, 20 May 2022 04:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233629AbiETH2Y (ORCPT
+        with ESMTP id S1347002AbiETIah (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 03:28:24 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8AE14B67B;
-        Fri, 20 May 2022 00:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653031704; x=1684567704;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=uY+O5EhdZu9YBVmFyJzpvxbmSECkXQf4QiywGDu3zjM=;
-  b=TOehi5Njh+LHsGosjz+MgzYeYC4i0rY1Fk3UaAFAqiYKHwlI0ajMFTI0
-   qoj+fWyshTNNp64VoJXkSm4LLYr95b5u3V5MdkWZeCdrOIHDLdz+s8iEd
-   zwdrgIPIg9f9k8pw7HubwpeOz906zJ3Mzq80w0dU7BbHmoKIla8V2IeNQ
-   c=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 20 May 2022 00:28:23 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 00:28:23 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Fri, 20 May 2022 00:28:22 -0700
-Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Fri, 20 May 2022 00:28:18 -0700
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <dmitry.baryshkov@linaro.org>
-CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH] remoteproc: qcom: pas: Add decrypt shutdown support for modem
-Date:   Fri, 20 May 2022 12:58:04 +0530
-Message-ID: <1653031684-14771-1-git-send-email-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 20 May 2022 04:30:37 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0473714E2DB;
+        Fri, 20 May 2022 01:30:06 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K4Uw9T017719;
+        Fri, 20 May 2022 10:30:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=YHFIJxRiiXd7Hm4A9fpzYXfeaDCgITQVThJATlJXER4=;
+ b=z5qsmjMr8pw8Svt/HbQH0xtotQE8l+Mn3cYrlhh8Aa+OcfRZMJ96KSVKVtnyThp4wn8D
+ 7UoKzxRDp6SXMvlraZ7mU77s4UDpmRwoS6UG6u4AmUf1IbbFvdmm5MT1VjbrEaT/ddSh
+ YtEglG8n+mlG3zYngJg8lZVApY8bXGxo6bfkaUDd7eRjQDIGCWTj+V06VMZ1hKBmH1eM
+ 8hU1xKUMKj75ojomsOERYK0BwcEgchjM4F5vhmgsslbwMtUkSSJsmlA4doW+yUXQ5VeE
+ ecuSuCvuJZd3LXETD5aMG7W64cUAWwdw/pjlqQ3wX1Jc1xE9zEXuoczk6A9wWvopYfeT aA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g21j9f79s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 May 2022 10:30:01 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8966210003B;
+        Fri, 20 May 2022 10:29:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F1C7215122;
+        Fri, 20 May 2022 10:29:58 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 20 May
+ 2022 10:29:58 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        Chris Lew <quic_clew@quicinc.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH 04/10] rpmsg: virtio: Implement the announce_remote_fc ops
+Date:   Fri, 20 May 2022 10:29:34 +0200
+Message-ID: <20220520082940.2984914-5-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
+References: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-20_03,2022-05-19_03,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The initial shutdown request to modem on SM8450 SoCs would start the
-decryption process and will keep returning errors until the modem shutdown
-is complete. Fix this by retrying shutdowns in fixed intervals.
+Add the capability for a rpmsg local endpoint to receive information
+of a remote endpoint state using the flow control channel.
 
-Err Logs on modem shutdown:
-qcom_q6v5_pas 4080000.remoteproc: failed to shutdown: -22
-remoteproc remoteproc3: can't stop rproc: -22
+The virtio_rpmsg_remote_flowctrl function calls the endpoint which
+matches with the chinfo.
 
-Fixes: 5cef9b48458d ("remoteproc: qcom: pas: Add SM8450 remoteproc support")
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 67 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 66 insertions(+), 1 deletion(-)
+ drivers/rpmsg/virtio_rpmsg_bus.c | 38 ++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 6ae39c5653b1..d04c4b877e12 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -8,6 +8,7 @@
-  */
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 0db8043e6c49..785fda77984e 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -305,6 +305,7 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
+ 	/* make sure in-flight inbound messages won't invoke cb anymore */
+ 	mutex_lock(&ept->cb_lock);
+ 	ept->cb = NULL;
++	ept->sig_cb =  NULL;
+ 	mutex_unlock(&ept->cb_lock);
  
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
-@@ -29,6 +30,8 @@
- #include "qcom_q6v5.h"
- #include "remoteproc_internal.h"
- 
-+#define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
-+
- struct adsp_data {
- 	int crash_reason_smem;
- 	const char *firmware_name;
-@@ -36,6 +39,7 @@ struct adsp_data {
- 	unsigned int minidump_id;
- 	bool has_aggre2_clk;
- 	bool auto_boot;
-+	bool decrypt_shutdown;
- 
- 	char **proxy_pd_names;
- 
-@@ -65,6 +69,7 @@ struct qcom_adsp {
- 	unsigned int minidump_id;
- 	int crash_reason_smem;
- 	bool has_aggre2_clk;
-+	bool decrypt_shutdown;
- 	const char *info_name;
- 
- 	struct completion start_done;
-@@ -128,6 +133,20 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
- 	}
+ 	kref_put(&ept->refcount, __ept_release);
+@@ -365,12 +366,49 @@ static int virtio_rpmsg_announce_destroy(struct rpmsg_device *rpdev)
+ 	return err;
  }
  
-+static int adsp_decrypt_shutdown(struct qcom_adsp *adsp)
++static int virtio_rpmsg_remote_flowctrl(struct rpmsg_device *rpdev,
++					struct rpmsg_channel_info *chinfo,
++					bool enable)
 +{
-+	int retry_num = 50;
-+	int ret = -EINVAL;
++	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
++	struct virtproc_info *vrp = vch->vrp;
++	struct rpmsg_endpoint *ept;
 +
-+	while (retry_num && ret) {
-+		msleep(ADSP_DECRYPT_SHUTDOWN_DELAY_MS);
-+		ret = qcom_scm_pas_shutdown(adsp->pas_id);
-+		retry_num--;
-+	}
++	/* Use the dst addr to fetch the callback of the appropriate user */
++	mutex_lock(&vrp->endpoints_lock);
 +
-+	return ret;
++	ept = idr_find(&vrp->endpoints, chinfo->dst);
++
++	/* Let's make sure no one deallocates ept while we use it */
++	if (ept)
++		kref_get(&ept->refcount);
++
++	mutex_unlock(&vrp->endpoints_lock);
++
++	if (!ept)
++		return -EINVAL;
++
++	/* Make sure ept->sig_cb doesn't go away while we use it */
++	mutex_lock(&ept->cb_lock);
++
++	if (ept->sig_cb)
++		ept->sig_cb(ept->rpdev, ept->priv, enable);
++
++	mutex_unlock(&ept->cb_lock);
++
++	/* Farewell, ept, we don't need you anymore */
++	kref_put(&ept->refcount, __ept_release);
++
++	return 0;
 +}
 +
- static int adsp_unprepare(struct rproc *rproc)
- {
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-@@ -249,6 +268,9 @@ static int adsp_stop(struct rproc *rproc)
- 		dev_err(adsp->dev, "timed out on wait\n");
- 
- 	ret = qcom_scm_pas_shutdown(adsp->pas_id);
-+	if (ret && adsp->decrypt_shutdown)
-+		ret = adsp_decrypt_shutdown(adsp);
-+
- 	if (ret)
- 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
- 
-@@ -459,6 +481,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->pas_id = desc->pas_id;
- 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
- 	adsp->info_name = desc->sysmon_name;
-+	adsp->decrypt_shutdown = desc->decrypt_shutdown;
- 	platform_set_drvdata(pdev, adsp);
- 
- 	device_wakeup_enable(adsp->dev);
-@@ -533,6 +556,7 @@ static const struct adsp_data adsp_resource_init = {
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
- 		.auto_boot = true,
-+		.decrypt_shutdown = false,
- 		.ssr_name = "lpass",
- 		.sysmon_name = "adsp",
- 		.ssctl_id = 0x14,
-@@ -544,6 +568,7 @@ static const struct adsp_data sdm845_adsp_resource_init = {
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
- 		.auto_boot = true,
-+		.decrypt_shutdown = false,
- 		.load_state = "adsp",
- 		.ssr_name = "lpass",
- 		.sysmon_name = "adsp",
-@@ -556,6 +581,7 @@ static const struct adsp_data sm6350_adsp_resource = {
- 	.pas_id = 1,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
- 		"lmx",
-@@ -573,6 +599,7 @@ static const struct adsp_data sm8150_adsp_resource = {
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
- 		.auto_boot = true,
-+		.decrypt_shutdown = false,
- 		.proxy_pd_names = (char*[]){
- 			"cx",
- 			NULL
-@@ -589,6 +616,7 @@ static const struct adsp_data sm8250_adsp_resource = {
- 	.pas_id = 1,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
- 		"lmx",
-@@ -606,6 +634,7 @@ static const struct adsp_data sm8350_adsp_resource = {
- 	.pas_id = 1,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
- 		"lmx",
-@@ -623,6 +652,7 @@ static const struct adsp_data msm8996_adsp_resource = {
- 		.pas_id = 1,
- 		.has_aggre2_clk = false,
- 		.auto_boot = true,
-+		.decrypt_shutdown = false,
- 		.proxy_pd_names = (char*[]){
- 			"cx",
- 			NULL
-@@ -638,6 +668,7 @@ static const struct adsp_data cdsp_resource_init = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
-@@ -649,6 +680,7 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.load_state = "cdsp",
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
-@@ -661,6 +693,7 @@ static const struct adsp_data sm6350_cdsp_resource = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		"mx",
-@@ -678,6 +711,7 @@ static const struct adsp_data sm8150_cdsp_resource = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		NULL
-@@ -694,6 +728,7 @@ static const struct adsp_data sm8250_cdsp_resource = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		NULL
-@@ -710,6 +745,7 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"nsp",
- 		NULL
-@@ -725,6 +761,7 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
- 	.pas_id = 30,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"nsp",
- 		NULL
-@@ -740,6 +777,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
- 	.pas_id = 18,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		"mxc",
-@@ -758,6 +796,26 @@ static const struct adsp_data mpss_resource_init = {
- 	.minidump_id = 3,
- 	.has_aggre2_clk = false,
- 	.auto_boot = false,
-+	.decrypt_shutdown = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+};
-+
-+static const struct adsp_data sm8450_mpss_resource = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.pas_id = 4,
-+	.minidump_id = 3,
-+	.has_aggre2_clk = false,
-+	.auto_boot = false,
-+	.decrypt_shutdown = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		"mss",
-@@ -775,6 +833,7 @@ static const struct adsp_data sc8180x_mpss_resource = {
- 	.pas_id = 4,
- 	.has_aggre2_clk = false,
- 	.auto_boot = false,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		NULL
-@@ -791,6 +850,7 @@ static const struct adsp_data slpi_resource_init = {
- 		.pas_id = 12,
- 		.has_aggre2_clk = true,
- 		.auto_boot = true,
-+		.decrypt_shutdown = false,
- 		.proxy_pd_names = (char*[]){
- 			"ssc_cx",
- 			NULL
-@@ -806,6 +866,7 @@ static const struct adsp_data sm8150_slpi_resource = {
- 		.pas_id = 12,
- 		.has_aggre2_clk = false,
- 		.auto_boot = true,
-+		.decrypt_shutdown = false,
- 		.proxy_pd_names = (char*[]){
- 			"lcx",
- 			"lmx",
-@@ -823,6 +884,7 @@ static const struct adsp_data sm8250_slpi_resource = {
- 	.pas_id = 12,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
- 		"lmx",
-@@ -840,6 +902,7 @@ static const struct adsp_data sm8350_slpi_resource = {
- 	.pas_id = 12,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
- 		"lmx",
-@@ -856,6 +919,7 @@ static const struct adsp_data wcss_resource_init = {
- 	.firmware_name = "wcnss.mdt",
- 	.pas_id = 6,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.ssr_name = "mpss",
- 	.sysmon_name = "wcnss",
- 	.ssctl_id = 0x12,
-@@ -867,6 +931,7 @@ static const struct adsp_data sdx55_mpss_resource = {
- 	.pas_id = 4,
- 	.has_aggre2_clk = false,
- 	.auto_boot = true,
-+	.decrypt_shutdown = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		"mss",
-@@ -916,7 +981,7 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
- 	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
- 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
--	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
- 	{ },
+ static const struct rpmsg_device_ops virtio_rpmsg_ops = {
+ 	.create_channel = virtio_rpmsg_create_channel,
+ 	.release_channel = virtio_rpmsg_release_channel,
+ 	.create_ept = virtio_rpmsg_create_ept,
+ 	.announce_create = virtio_rpmsg_announce_create,
+ 	.announce_destroy = virtio_rpmsg_announce_destroy,
++	.announce_remote_fc = virtio_rpmsg_remote_flowctrl,
  };
- MODULE_DEVICE_TABLE(of, adsp_of_match);
+ 
+ static void virtio_rpmsg_release_device(struct device *dev)
 -- 
-2.7.4
+2.25.1
 
