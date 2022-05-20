@@ -2,237 +2,363 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B382CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 03:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B62EC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 07:28:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345039AbiETDLi (ORCPT
+        id S235934AbiETH20 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 May 2022 23:11:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41018 "EHLO
+        Fri, 20 May 2022 03:28:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345045AbiETDK6 (ORCPT
+        with ESMTP id S233629AbiETH2Y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 May 2022 23:10:58 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C30112AE16;
-        Thu, 19 May 2022 20:10:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cZxd3hjzavVvOmzyAsVNHjFoBKtTdkp/hz5glS872NCMjmS5VlW8RLygB/amwmtOJZ0c6B3rr3OZVu87kmPaLfjUeq0ZymhEohFQQ2lCf8fWl735ZeVftlAjIkGlDYXnXJ5X85h0qJRIKjLWs8/qBv+LXaMZB1eS0gXyKd0f5lWFY6kyDYTWe2gp2wrWNSznIe6l8PjaIxpzo01FXq5xOgNfauB0+a8o/WYimAl9n30K69Y9tKTWfYSvviiKibz9KkrEGKT4+KthS/Ko9mmgLJ0AbdN0YsJeJIvn6mWaWqK6aiQ1eVm6VAdlx8mnc5wRhioSNrFqmPsMv1BFzDSnMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xc58ztUwCnc1VC1kseQvYguAJCiZ49N+ypQU7gUzRyk=;
- b=jj3O/McZxxGSjqeAC6T63tOl6hjwqwqSX8HzGAniDbaofRN0OLyhFb9q6zjmmK4HB4R8hFAa0AS4RucS1onb5UJFDDdvkQzOCCoCSbbYkkK/mbEMGU7YuQL+MhCItMXyS42JYrRgWtO9EI0rF9sVji144x+IqTRBvemeR/wLb7bDKjvui1NcKiqxGP6JmShdweU4j7plFB/7nlWyGzRFV/GuNjfrLwuOhK6yoBobtqXz9sLUcPAYSeM02Hj5thZqrTuFKslMVUVpXfj4UPJkz3oNl3E8wu6QxruoRdyiRMSYxQJ0V6nqtdb5MMihYPMzjdwnAox778uZXdlUlq6AXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        Fri, 20 May 2022 03:28:24 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8AE14B67B;
+        Fri, 20 May 2022 00:28:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xc58ztUwCnc1VC1kseQvYguAJCiZ49N+ypQU7gUzRyk=;
- b=DR+Qxj1T+qDwnrczVbNLsePx0z2xPK7Kur67gRr8r07gtrAH38cunSVdVJblgo6GG9RbJdntEUGcu+FJWItYn++CL+dFm5FkYr8d/AACVHGcl9dJ7K7iV/q5sM26UzI2K9Krs9wAlOpakGqA7kVc7OiOkWI9iGyCjc4tE6XD124=
-Received: from SN7PR18CA0022.namprd18.prod.outlook.com (2603:10b6:806:f3::21)
- by PH7PR02MB8955.namprd02.prod.outlook.com (2603:10b6:510:1f9::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.18; Fri, 20 May
- 2022 03:10:54 +0000
-Received: from SN1NAM02FT0010.eop-nam02.prod.protection.outlook.com
- (2603:10b6:806:f3:cafe::4d) by SN7PR18CA0022.outlook.office365.com
- (2603:10b6:806:f3::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.17 via Frontend
- Transport; Fri, 20 May 2022 03:10:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- SN1NAM02FT0010.mail.protection.outlook.com (10.97.4.76) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5273.14 via Frontend Transport; Fri, 20 May 2022 03:10:54 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Thu, 19 May 2022 20:10:46 -0700
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Thu, 19 May 2022 20:10:46 -0700
-Envelope-to: mathieu.poirier@linaro.org,
- bjorn.andersson@linaro.org,
- robh+dt@kernel.org,
- krzk+dt@kernel.org,
- linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Received: from [10.23.120.20] (port=64934)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <tanmay.shah@xilinx.com>)
-        id 1nrt2L-0008zb-TB; Thu, 19 May 2022 20:10:46 -0700
-Message-ID: <b4bef7c4-7f12-1cdb-c2f0-a248c125b9b4@xilinx.com>
-Date:   Thu, 19 May 2022 20:10:44 -0700
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1653031704; x=1684567704;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=uY+O5EhdZu9YBVmFyJzpvxbmSECkXQf4QiywGDu3zjM=;
+  b=TOehi5Njh+LHsGosjz+MgzYeYC4i0rY1Fk3UaAFAqiYKHwlI0ajMFTI0
+   qoj+fWyshTNNp64VoJXkSm4LLYr95b5u3V5MdkWZeCdrOIHDLdz+s8iEd
+   zwdrgIPIg9f9k8pw7HubwpeOz906zJ3Mzq80w0dU7BbHmoKIla8V2IeNQ
+   c=;
+Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 20 May 2022 00:28:23 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 00:28:23 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 20 May 2022 00:28:22 -0700
+Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 20 May 2022 00:28:18 -0700
+From:   Sibi Sankar <quic_sibis@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH] remoteproc: qcom: pas: Add decrypt shutdown support for modem
+Date:   Fri, 20 May 2022 12:58:04 +0530
+Message-ID: <1653031684-14771-1-git-send-email-quic_sibis@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-From:   <tanmay.shah@xilinx.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <michal.simek@xilinx.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 0/6] Add Xilinx RPU subsystem support
-References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
- <CANLsYkw9HuLso9bGL4fM7C9qH+basgKA9yKFwms4WB4OUHqymQ@mail.gmail.com>
-In-Reply-To: <CANLsYkw9HuLso9bGL4fM7C9qH+basgKA9yKFwms4WB4OUHqymQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6ad0fb10-2d05-4821-e22e-08da3a0e5a3d
-X-MS-TrafficTypeDiagnostic: PH7PR02MB8955:EE_
-X-Microsoft-Antispam-PRVS: <PH7PR02MB8955E8E576CEB5DAFB5FC252CAD39@PH7PR02MB8955.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: N2MvgR4B455eGkuzPFdFONBq+ml3qFy1tLG74J/qi5GIMuonxgGMZdX4a1P2pO99X3IX2CeoKfuYHWkOpasBqcuNXLERa20UogP3PWw0Pjz/QtJaOrBlTib6FqqqvC7Cx1S2HEle/3YK7Tg09JRTt5hz5Aeq2ktdMv5aY53v7utlfK3LI+A35EE/bzRpWYheHAWPbABiYrPxN+o6+nD1n34YGVX9GE3slBQ5sOpJxxHpZPdwkJwCiXpfRx2R6oJKsITJVxvOpwa68LSTQu/DiXodpQIg+nAy7j2Dh6ZZV4P3oSkUdvYRBPOMRQaeXy/Qoa/SpeL+g3Oi3S22xuC+gBW2MbGqWzsVnNHDEEkYXO9/3QPjnktgi3Z7Fgmz7+opshBBpa5Dl+hm2kEKORKthKBLdHLsBSW1ajcGnHca3ixkLnYeCFp7Ffm6hplSaBXJYQWX5XOcNSyhQXbQvUy9XlRrz4k3QS4QvkZ5ZaLCZJzInomO+nWW9CxBn260IOmmhc0BqZNmI9r788tW+oQJrN8yNhx9z6WKoIiCIR/ckFpJwDA++nSkQaor7gpO94NZ6qKyIsyWTQIm3hRjrblUoWrYQYjVOGbMkd0dD/PcdgP5IDmWT5osJpa+fwelhu1Nlx/hE2ydqUwA4rEFWr+VguiBkAhoSZrPi4uu73y7FGx/VI7h8II+eEbzB8S7xDxXJiAkHGD7xqkcKa2O6a7xpJtlwb0/ZmuMfe1wHicFBV6rgNuBRhmDg2uWXCh1QLXp
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(186003)(53546011)(336012)(82310400005)(356005)(110136005)(426003)(47076005)(36756003)(8936002)(9786002)(2876002)(31696002)(2616005)(8676002)(5660300002)(70586007)(83380400001)(26005)(2906002)(31686004)(316002)(508600001)(36860700001)(70206006)(40460700003)(7636003)(50156003)(43740500002)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2022 03:10:54.3523
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ad0fb10-2d05-4821-e22e-08da3a0e5a3d
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0010.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR02MB8955
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The initial shutdown request to modem on SM8450 SoCs would start the
+decryption process and will keep returning errors until the modem shutdown
+is complete. Fix this by retrying shutdowns in fixed intervals.
 
+Err Logs on modem shutdown:
+qcom_q6v5_pas 4080000.remoteproc: failed to shutdown: -22
+remoteproc remoteproc3: can't stop rproc: -22
 
-On 5/19/22 3:19 AM, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
-> Hi Tanmay,
-> 
-> I have replaced the previous version of this set with this one in my
-> queue.  That way you don't go back to the bottom.
-> 
+Fixes: 5cef9b48458d ("remoteproc: qcom: pas: Add SM8450 remoteproc support")
+Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 67 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
 
-Thanks Mathieu. Sure it will help.
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 6ae39c5653b1..d04c4b877e12 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/firmware.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+@@ -29,6 +30,8 @@
+ #include "qcom_q6v5.h"
+ #include "remoteproc_internal.h"
+ 
++#define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
++
+ struct adsp_data {
+ 	int crash_reason_smem;
+ 	const char *firmware_name;
+@@ -36,6 +39,7 @@ struct adsp_data {
+ 	unsigned int minidump_id;
+ 	bool has_aggre2_clk;
+ 	bool auto_boot;
++	bool decrypt_shutdown;
+ 
+ 	char **proxy_pd_names;
+ 
+@@ -65,6 +69,7 @@ struct qcom_adsp {
+ 	unsigned int minidump_id;
+ 	int crash_reason_smem;
+ 	bool has_aggre2_clk;
++	bool decrypt_shutdown;
+ 	const char *info_name;
+ 
+ 	struct completion start_done;
+@@ -128,6 +133,20 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
+ 	}
+ }
+ 
++static int adsp_decrypt_shutdown(struct qcom_adsp *adsp)
++{
++	int retry_num = 50;
++	int ret = -EINVAL;
++
++	while (retry_num && ret) {
++		msleep(ADSP_DECRYPT_SHUTDOWN_DELAY_MS);
++		ret = qcom_scm_pas_shutdown(adsp->pas_id);
++		retry_num--;
++	}
++
++	return ret;
++}
++
+ static int adsp_unprepare(struct rproc *rproc)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+@@ -249,6 +268,9 @@ static int adsp_stop(struct rproc *rproc)
+ 		dev_err(adsp->dev, "timed out on wait\n");
+ 
+ 	ret = qcom_scm_pas_shutdown(adsp->pas_id);
++	if (ret && adsp->decrypt_shutdown)
++		ret = adsp_decrypt_shutdown(adsp);
++
+ 	if (ret)
+ 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
+ 
+@@ -459,6 +481,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->pas_id = desc->pas_id;
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+ 	adsp->info_name = desc->sysmon_name;
++	adsp->decrypt_shutdown = desc->decrypt_shutdown;
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	device_wakeup_enable(adsp->dev);
+@@ -533,6 +556,7 @@ static const struct adsp_data adsp_resource_init = {
+ 		.pas_id = 1,
+ 		.has_aggre2_clk = false,
+ 		.auto_boot = true,
++		.decrypt_shutdown = false,
+ 		.ssr_name = "lpass",
+ 		.sysmon_name = "adsp",
+ 		.ssctl_id = 0x14,
+@@ -544,6 +568,7 @@ static const struct adsp_data sdm845_adsp_resource_init = {
+ 		.pas_id = 1,
+ 		.has_aggre2_clk = false,
+ 		.auto_boot = true,
++		.decrypt_shutdown = false,
+ 		.load_state = "adsp",
+ 		.ssr_name = "lpass",
+ 		.sysmon_name = "adsp",
+@@ -556,6 +581,7 @@ static const struct adsp_data sm6350_adsp_resource = {
+ 	.pas_id = 1,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+ 		"lmx",
+@@ -573,6 +599,7 @@ static const struct adsp_data sm8150_adsp_resource = {
+ 		.pas_id = 1,
+ 		.has_aggre2_clk = false,
+ 		.auto_boot = true,
++		.decrypt_shutdown = false,
+ 		.proxy_pd_names = (char*[]){
+ 			"cx",
+ 			NULL
+@@ -589,6 +616,7 @@ static const struct adsp_data sm8250_adsp_resource = {
+ 	.pas_id = 1,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+ 		"lmx",
+@@ -606,6 +634,7 @@ static const struct adsp_data sm8350_adsp_resource = {
+ 	.pas_id = 1,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+ 		"lmx",
+@@ -623,6 +652,7 @@ static const struct adsp_data msm8996_adsp_resource = {
+ 		.pas_id = 1,
+ 		.has_aggre2_clk = false,
+ 		.auto_boot = true,
++		.decrypt_shutdown = false,
+ 		.proxy_pd_names = (char*[]){
+ 			"cx",
+ 			NULL
+@@ -638,6 +668,7 @@ static const struct adsp_data cdsp_resource_init = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.ssr_name = "cdsp",
+ 	.sysmon_name = "cdsp",
+ 	.ssctl_id = 0x17,
+@@ -649,6 +680,7 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.load_state = "cdsp",
+ 	.ssr_name = "cdsp",
+ 	.sysmon_name = "cdsp",
+@@ -661,6 +693,7 @@ static const struct adsp_data sm6350_cdsp_resource = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		"mx",
+@@ -678,6 +711,7 @@ static const struct adsp_data sm8150_cdsp_resource = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		NULL
+@@ -694,6 +728,7 @@ static const struct adsp_data sm8250_cdsp_resource = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		NULL
+@@ -710,6 +745,7 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"nsp",
+ 		NULL
+@@ -725,6 +761,7 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
+ 	.pas_id = 30,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"nsp",
+ 		NULL
+@@ -740,6 +777,7 @@ static const struct adsp_data sm8350_cdsp_resource = {
+ 	.pas_id = 18,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		"mxc",
+@@ -758,6 +796,26 @@ static const struct adsp_data mpss_resource_init = {
+ 	.minidump_id = 3,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = false,
++	.decrypt_shutdown = false,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		"mss",
++		NULL
++	},
++	.load_state = "modem",
++	.ssr_name = "mpss",
++	.sysmon_name = "modem",
++	.ssctl_id = 0x12,
++};
++
++static const struct adsp_data sm8450_mpss_resource = {
++	.crash_reason_smem = 421,
++	.firmware_name = "modem.mdt",
++	.pas_id = 4,
++	.minidump_id = 3,
++	.has_aggre2_clk = false,
++	.auto_boot = false,
++	.decrypt_shutdown = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		"mss",
+@@ -775,6 +833,7 @@ static const struct adsp_data sc8180x_mpss_resource = {
+ 	.pas_id = 4,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = false,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		NULL
+@@ -791,6 +850,7 @@ static const struct adsp_data slpi_resource_init = {
+ 		.pas_id = 12,
+ 		.has_aggre2_clk = true,
+ 		.auto_boot = true,
++		.decrypt_shutdown = false,
+ 		.proxy_pd_names = (char*[]){
+ 			"ssc_cx",
+ 			NULL
+@@ -806,6 +866,7 @@ static const struct adsp_data sm8150_slpi_resource = {
+ 		.pas_id = 12,
+ 		.has_aggre2_clk = false,
+ 		.auto_boot = true,
++		.decrypt_shutdown = false,
+ 		.proxy_pd_names = (char*[]){
+ 			"lcx",
+ 			"lmx",
+@@ -823,6 +884,7 @@ static const struct adsp_data sm8250_slpi_resource = {
+ 	.pas_id = 12,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+ 		"lmx",
+@@ -840,6 +902,7 @@ static const struct adsp_data sm8350_slpi_resource = {
+ 	.pas_id = 12,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+ 		"lmx",
+@@ -856,6 +919,7 @@ static const struct adsp_data wcss_resource_init = {
+ 	.firmware_name = "wcnss.mdt",
+ 	.pas_id = 6,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.ssr_name = "mpss",
+ 	.sysmon_name = "wcnss",
+ 	.ssctl_id = 0x12,
+@@ -867,6 +931,7 @@ static const struct adsp_data sdx55_mpss_resource = {
+ 	.pas_id = 4,
+ 	.has_aggre2_clk = false,
+ 	.auto_boot = true,
++	.decrypt_shutdown = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+ 		"mss",
+@@ -916,7 +981,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
+ 	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
+ 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
+-	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
++	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, adsp_of_match);
+-- 
+2.7.4
 
-> Thanks,
-> Mathieu.
-> 
-> On Wed, 18 May 2022 at 20:46, Tanmay Shah <tanmay.shah@xilinx.com> wrote:
-> >
-> > This patch series adds bindings document for RPU subsystem found on Xilinx
-> > ZynqMP platforms. It also adds device nodes and driver to enable RPU
-> > subsystem in split mode and lockstep mode.
-> >
-> > Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
-> > contains two arm cortex r5f cores. RPU subsystem can be configured in
-> > split mode, lockstep mode and single-cpu mode.
-> >
-> > RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
-> > In lockstep mode, all 4 banks are combined and total of 256KB memory is
-> > made available to r5 core0. In split mode, both cores can access two
-> > TCM banks i.e. 128 KB.
-> >
-> > RPU can also fetch data and execute instructions from DDR memory along with
-> > TCM memory.
-> > ---
-> >
-> > Changes in v5:
-> >    - Add constraints of the possible values of xlnx,cluster-mode property
-> >    - fix description of power-domains property for r5 core
-> >    - Remove reg, address-cells and size-cells properties as it is not required
-> >    - Fix description of mboxes property
-> >    - Add description of each memory-region and remove old .txt binding link
-> >      reference in the description
-> >    - Remove optional reg property from r5fss node
-> >    - Move r5fss node out of axi node
-> >
-> > Changes in v4:
-> >    - Add memory-region, mboxes and mbox-names properties in dt-bindings example
-> >    - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
-> >    - Remove redundant header files
-> >    - use dev_err_probe() to report errors during probe
-> >    - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
-> >    - Fix memory leaks all over the driver when resource allocation fails for any core
-> >    - make cluster mode check only at one place
-> >    - remove redundant initialization of variable
-> >    - remove redundant use of of_node_put()
-> >    - Fix Comment format problem
-> >    - Assign offset of zynqmp_tcm_banks instead of duplicating it
-> >    - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
-> >    - Remove rproc_mem_entry object from r5_core
-> >    - Use put_device() and rproc_del() APIs to fix memory leaks
-> >    - Replace pr_* with dev_*. This was missed in v3, fix now.
-> >    - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
-> >
-> > Changes in v3:
-> >    - Fix checkpatch script indentation warning
-> >    - Remove unused variable from xilinx remoteproc driver
-> >    - use C style comments, i.e /*...*/
-> >    - Remove redundant debug information which can be derived using /proc/device-tree
-> >    - Fix multiline comment format
-> >    - s/"final fot TCM"/"final for TCM"
-> >    - Function devm_kzalloc() does not return an code on error, just NULL.
-> >      Remove redundant error check for this function throughout the driver.
-> >    - Fix RPU mode configuration and add documentation accordingly
-> >    - Get rid of the indentations to match function documentation style with rest of the driver
-> >    - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
-> >    - Use 'i' for the outer loop and 'j' for the inner one as per convention
-> >    - Remove redundant error and NULL checks throughout the driver
-> >    - Use devm_kcalloc() when more than one element is required
-> >    - Add memory-regions carveouts during driver probe instead of parse_fw call
-> >      This removes redundant copy of reserved_mem object in r5_core structure.
-> >    - Fix memory leak by using of_node_put()
-> >    - Fix indentation of tcm_mem_map function args
-> >    - Remove redundant init of variables
-> >    - Initialize tcm bank size variable for lockstep mode
-> >    - Replace u32 with phys_addr_t for variable stroing memory bank address
-> >    - Add documentation of TCM behavior in lockstep mode
-> >    - Use dev_get_drvdata instead of platform driver API
-> >    - Remove info level messages
-> >    - Fix checkpatch.pl warnings
-> >    - Add documentation for the Xilinx r5f platform to understand driver design
-> >
-> > Changes in v2:
-> >    - Remove proprietary copyright footer from cover letter
-> >
-> >
-> > Ben Levinsky (3):
-> >    firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
-> >      configuration.
-> >    firmware: xilinx: Add shutdown/wakeup APIs
-> >    firmware: xilinx: Add RPU configuration APIs
-> >
-> > Tanmay Shah (3):
-> >    dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
-> >    arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
-> >    drivers: remoteproc: Add Xilinx r5 remoteproc driver
-> >
-> >   .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  128 ++
-> >   arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
-> >   drivers/firmware/xilinx/zynqmp.c              |   97 ++
-> >   drivers/remoteproc/Kconfig                    |   12 +
-> >   drivers/remoteproc/Makefile                   |    1 +
-> >   drivers/remoteproc/xlnx_r5_remoteproc.c       | 1045 +++++++++++++++++
-> >   include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
-> >   include/linux/firmware/xlnx-zynqmp.h          |   60 +
-> >   8 files changed, 1382 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-> >   create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
-> >
-> >
-> > base-commit: 01a1a0c8d456b11f2f6b9b822414481beaa44d6f
-> > --
-> > 2.25.1
-> >
-> 
