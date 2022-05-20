@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442B2C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9072FC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345608AbiETIc0 (ORCPT
+        id S1347119AbiETIcb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 04:32:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
+        Fri, 20 May 2022 04:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347047AbiETIcT (ORCPT
+        with ESMTP id S1347172AbiETIcT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 20 May 2022 04:32:19 -0400
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8325DA0D;
-        Fri, 20 May 2022 01:31:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B34326A40E;
+        Fri, 20 May 2022 01:31:30 -0700 (PDT)
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K6PmIU022160;
-        Fri, 20 May 2022 10:31:14 +0200
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K1fHuU021302;
+        Fri, 20 May 2022 10:31:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=XxRyzDT/cjEKJwSautfebKnSTO2wQfu9PaCTzwbxsbM=;
- b=Zdg1hkZ3aCNwkHBaM7enUlBp96KdBa0rPExa/JTWIYi9YYP15mg8TpHlCyd+IrD0wGCQ
- fMtNqD7PireqCqnQEzFcQaaP78po6wTugsmEZQA7mpziw8xwHobRhXYL7zdq1weloqtK
- SvZ4nsoV8cT6wAipVG3LAlBsUUm7qJXJZCJi2GMCK/7h+DVcuuy1B4clZHQSONq4vrPA
- 41GqOEt1bGg0ctwSco9FN6gQcGQ6nsAiy82bAH0cH2EC+aamUkwLjEX3PugzoDItv23x
- tyTNcMhwM0y0r8K7qKloli8lEKVudfTobWfPHQRDm/pkBRaPEnso90T4ceoKlwGwxTtR ew== 
+ bh=CdJLGIQGVB3QH47VC81jXK7okrgL52nTShMQiG+y/eI=;
+ b=pyWNmPkUKV7bLK7LEt6AOPvIr540TQpwFm3VA24hUouFyUk7T4ny2ixzjb9vpRC1W2IM
+ 89Mm+qqPajmIKndjBJpfmlbop0iqyBuHWadOm5mr8BjhIeSUFM8tWD+Ab+IxM3g2UyGL
+ 2xnXy+1uFLXxzbspNFa2Q4z9QpUCjE1co/Sawork0lWwxTM9yLdxVMjfgko918bKC03F
+ fOocU2oKEM0gBFF2oIdw2dStKObF5Wk3JQDtoVXRWV2eR3aqGocUEdMDGupTD3X/NRJV
+ bve2oMjeUGvOkWRKi8+XUNHnT1v4D+waretm2gIaP9vk5IBQ70VwxbZks2yoHbKjz9i9 DA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23aj6vtu-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23aj6vtn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 10:31:14 +0200
+        Fri, 20 May 2022 10:31:12 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C021E100039;
-        Fri, 20 May 2022 10:31:11 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E8F9810002A;
+        Fri, 20 May 2022 10:31:09 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B9A7B215132;
-        Fri, 20 May 2022 10:31:11 +0200 (CEST)
-Received: from localhost (10.75.127.44) by SHFDAG1NODE2.st.com (10.75.129.70)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E178921512E;
+        Fri, 20 May 2022 10:31:09 +0200 (CEST)
+Received: from localhost (10.75.127.47) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 20 May
- 2022 10:31:11 +0200
+ 2022 10:31:09 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -50,16 +50,16 @@ CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Deepak Kumar Singh <quic_deesin@quicinc.com>,
         Chris Lew <quic_clew@quicinc.com>,
         <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH 08/10] rpmsg: Add the destination address in rpmsg_set_flow_control
-Date:   Fri, 20 May 2022 10:29:38 +0200
-Message-ID: <20220520082940.2984914-9-arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH 05/10] rpmsg: Introduce flow control channel driver
+Date:   Fri, 20 May 2022 10:29:35 +0200
+Message-ID: <20220520082940.2984914-6-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 References: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
+X-Originating-IP: [10.75.127.47]
 X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
@@ -69,126 +69,231 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The destination address is not part of the rpmsg_endpoint structure.
-For static endpoint without channel, we need to specify the
-destination address for backend such as the rpmsg virtio.
-It is also needed for endpoint to multi endpoint communication.
+Register the channel 54 to manage flow control between endpoints.
+the aim of this service is.
+- to inform the local endpoint of the state of the associated remote
+endpoints.
+- to inform remote endpoint about the state of the local endpoint.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/rpmsg/rpmsg_char.c       | 2 +-
- drivers/rpmsg/rpmsg_core.c       | 6 ++++--
- drivers/rpmsg/rpmsg_internal.h   | 2 +-
- drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
- include/linux/rpmsg.h            | 4 ++--
- 5 files changed, 11 insertions(+), 9 deletions(-)
+ drivers/rpmsg/Kconfig    |  10 ++++
+ drivers/rpmsg/Makefile   |   1 +
+ drivers/rpmsg/rpmsg_fc.c | 113 +++++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg/fc.h |  51 ++++++++++++++++++
+ 4 files changed, 175 insertions(+)
+ create mode 100644 drivers/rpmsg/rpmsg_fc.c
+ create mode 100644 include/linux/rpmsg/fc.h
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 904e7c67b356..f44747e64b5b 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -316,7 +316,7 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 		if (ret)
- 			break;
- 		set = (val & TIOCM_DTR) ? true : false;
--		ret = rpmsg_set_flow_control(eptdev->ept, set);
-+		ret = rpmsg_set_flow_control(eptdev->ept, eptdev->chinfo.dst, set);
- 		break;
- 	case RPMSG_DESTROY_EPT_IOCTL:
- 		/* Don't allow to destroy a default endpoint. */
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 6bbc3b3ace50..ab9a170ffa93 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -357,18 +357,20 @@ EXPORT_SYMBOL(rpmsg_trysend_offchannel);
- /**
-  * rpmsg_set_flow_control() - sets/clears serial flow control signals
-  * @ept:	the rpmsg endpoint
-+ * @dst:	the remote endpoint destination addr, set to RPMSG_ADDR_ANY to send to the default
-+ *		remote endpoint associated to the rpmsg device.
-  * @enable:	enable or disable serial flow control
-  *
-  * Return: 0 on success and an appropriate error value on failure.
-  */
--int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, u32 dst, bool enable)
- {
- 	if (WARN_ON(!ept))
- 		return -EINVAL;
- 	if (!ept->ops->set_flow_control)
- 		return -ENXIO;
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index d3795860f5c0..c6659f27c617 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -31,6 +31,16 @@ config RPMSG_NS
+ 	  channel that probes the associated RPMsg device on remote endpoint
+ 	  service announcement.
  
--	return ept->ops->set_flow_control(ept, enable);
-+	return ept->ops->set_flow_control(ept, dst, enable);
- }
- EXPORT_SYMBOL(rpmsg_set_flow_control);
- 
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 44e2c0f2f5ea..c34175f5093c 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -79,7 +79,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
--	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
-+	int (*set_flow_control)(struct rpmsg_endpoint *ept, u32 dst, bool enable);
- 	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
- };
- 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 96bd12095c8c..a8e60ca4cd08 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -154,7 +154,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
- 						   struct rpmsg_channel_info *chinfo);
- 
--static int virtio_rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
-+static int virtio_rpmsg_set_flow_control(struct rpmsg_endpoint *ept, u32 dst, bool enable);
- 
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
-@@ -748,7 +748,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
- 	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
- }
- 
--static int virtio_rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+static int virtio_rpmsg_set_flow_control(struct rpmsg_endpoint *ept, u32 dst, bool enable)
- {
- 	struct rpmsg_device *rpdev;
- 	struct virtio_rpmsg_channel *vch;
-@@ -764,7 +764,7 @@ static int virtio_rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable
- 		struct rpmsg_ept_msg msg;
- 
- 		msg.src = cpu_to_rpmsg32(rpdev, ept->addr);
--		msg.dst = cpu_to_rpmsg32(rpdev, rpdev->dst);
-+		msg.dst = cpu_to_rpmsg32(rpdev, dst == RPMSG_ADDR_ANY ? rpdev->dst : dst);
- 		msg.flags = cpu_to_rpmsg32(rpdev, enable ? RPMSG_EPT_FC_ON : 0);
- 
- 		err = rpmsg_sendto(ept, &msg, sizeof(msg), RPMSG_FC_ADDR);
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index dbd0c591bb85..9b321e1554e3 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -193,7 +193,7 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 
- ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- 
--int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
-+int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, u32 dst, bool enable);
- 
- #else
- 
-@@ -313,7 +313,7 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
- 	return -ENXIO;
- }
- 
--static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, u32 dst, bool enable)
- {
- 	/* This shouldn't be possible */
- 	WARN_ON(1);
++config RPMSG_FC
++	tristate "RPMSG endpoint flow control management"
++	depends on RPMSG
++	help
++	  Say Y here to enable the support of the flow control management
++	  for the rpmsg endpoints.
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called rpmsg_fc.
++
+ config RPMSG_MTK_SCP
+ 	tristate "MediaTek SCP"
+ 	depends on MTK_SCP
+diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
+index 58e3b382e316..c70b9864231f 100644
+--- a/drivers/rpmsg/Makefile
++++ b/drivers/rpmsg/Makefile
+@@ -3,6 +3,7 @@ obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
+ obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
+ obj-$(CONFIG_RPMSG_CTRL)	+= rpmsg_ctrl.o
+ obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
++obj-$(CONFIG_RPMSG_FC)		+= rpmsg_fc.o
+ obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
+ qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
+ obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
+diff --git a/drivers/rpmsg/rpmsg_fc.c b/drivers/rpmsg/rpmsg_fc.c
+new file mode 100644
+index 000000000000..d7e17c8cffb0
+--- /dev/null
++++ b/drivers/rpmsg/rpmsg_fc.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) STMicroelectronics 2022 - All Rights Reserved
++ */
++
++#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
++
++#include <linux/device.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/rpmsg.h>
++#include <linux/rpmsg/fc.h>
++#include <linux/slab.h>
++
++#include "rpmsg_internal.h"
++
++/**
++ * rpmsg_fc_register_device() - register name service device based on rpdev
++ * @rpdev: prepared rpdev to be used catfor creating endpoints
++ *
++ * This function wraps rpmsg_register_device() preparing the rpdev for use as
++ * basis for the rpmsg name service device.
++ */
++int rpmsg_fc_register_device(struct rpmsg_device *rpdev)
++{
++	strcpy(rpdev->id.name, "rpmsg_fc");
++	rpdev->driver_override = KBUILD_MODNAME;
++	rpdev->src = RPMSG_FC_ADDR;
++	rpdev->dst = RPMSG_FC_ADDR;
++
++	return rpmsg_register_device(rpdev);
++}
++EXPORT_SYMBOL(rpmsg_fc_register_device);
++
++/* Invoked when a name service announcement arrives */
++static int rpmsg_fc_cb(struct rpmsg_device *rpdev, void *data, int len,
++		       void *priv, u32 src)
++{
++	struct rpmsg_ept_msg *msg = data;
++	struct rpmsg_channel_info chinfo;
++	struct device *dev = rpdev->dev.parent;
++	bool enable;
++	int ret;
++
++	if (len != sizeof(*msg)) {
++		dev_err(dev, "malformed fc msg (%d)\n", len);
++		return -EINVAL;
++	}
++
++	chinfo.src = rpmsg32_to_cpu(rpdev, msg->src);
++	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->dst);
++	enable = rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_EPT_FC_ON;
++
++	dev_dbg(dev, "remote endpoint 0x%x in state %sable\n", chinfo.src, enable ? "en" : "dis");
++
++	ret = rpmsg_channel_remote_fc(rpdev, &chinfo, enable);
++	if (ret)
++		dev_err(dev, "rpmsg_annouce_flow_ctrl failed: %d\n", ret);
++
++	return ret;
++}
++
++static int rpmsg_fc_probe(struct rpmsg_device *rpdev)
++{
++	struct rpmsg_endpoint *fc_ept;
++	struct rpmsg_channel_info fc_chinfo = {
++		.src = RPMSG_FC_ADDR,
++		.dst = RPMSG_FC_ADDR,
++		.name = "flow_control_service",
++	};
++
++	/*
++	 * Create the Flow control (FC) service endpoint associated to the RPMsg
++	 * device. The endpoint will be automatically destroyed when the RPMsg
++	 * device will be deleted.
++	 */
++	fc_ept = rpmsg_create_ept(rpdev, rpmsg_fc_cb, NULL, fc_chinfo);
++	if (!fc_ept) {
++		dev_err(&rpdev->dev, "failed to create the FC ept\n");
++		return -ENOMEM;
++	}
++	rpdev->ept = fc_ept;
++
++	return 0;
++}
++
++static struct rpmsg_driver rpmsg_fc_driver = {
++	.drv.name = KBUILD_MODNAME,
++	.probe = rpmsg_fc_probe,
++};
++
++static int rpmsg_fc_init(void)
++{
++	int ret;
++
++	ret = register_rpmsg_driver(&rpmsg_fc_driver);
++	if (ret < 0)
++		pr_err("%s: Failed to register FC rpmsg driver\n", __func__);
++
++	return ret;
++}
++postcore_initcall(rpmsg_fc_init);
++
++static void rpmsg_fc_exit(void)
++{
++	unregister_rpmsg_driver(&rpmsg_fc_driver);
++}
++module_exit(rpmsg_fc_exit);
++
++MODULE_DESCRIPTION("Flow control service rpmsg driver");
++MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>");
++MODULE_ALIAS("rpmsg:" KBUILD_MODNAME);
++MODULE_LICENSE("GPL");
+diff --git a/include/linux/rpmsg/fc.h b/include/linux/rpmsg/fc.h
+new file mode 100644
+index 000000000000..5284ea410673
+--- /dev/null
++++ b/include/linux/rpmsg/fc.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _LINUX_RPMSG_FC_H
++#define _LINUX_RPMSG_FC_H
++
++#include <linux/mod_devicetable.h>
++#include <linux/rpmsg.h>
++#include <linux/rpmsg/byteorder.h>
++#include <linux/types.h>
++
++/* The feature bitmap for the endpoint flow control flags */
++#define	RPMSG_EPT_FC_ON	 BIT(0) /* Set when endpoint is ready to communicate */
++
++/**
++ * struct rpmsg_ept_msg - dynamic endpoint announcement message
++ * @src: address of the endpoint that sends the message
++ * @dest: address of the destination endpoint.
++ * @flags: indicates the state of the endpoint based on @rpmsg_ept_flags enum.
++ *
++ * This message is sent across to inform the remote about the state of a local
++ * endpoint associated with a remote endpoint:
++ * - a RPMSG_EPT_OFF can be sent to inform that a local endpoint is suspended.
++ * - a RPMSG_EPT_ON can be sent to inform that a local endpoint is ready to communicate.
++ *
++ * When we receive these messages, the appropriate endpoint is informed.
++ */
++struct rpmsg_ept_msg {
++	__rpmsg32 src;
++	__rpmsg32 dst;
++	__rpmsg32 flags;
++} __packed;
++
++/* Address 54 is reserved for flow control advertising */
++#define RPMSG_FC_ADDR                   (54)
++
++#if IS_ENABLED(CONFIG_RPMSG_FC)
++
++int rpmsg_fc_register_device(struct rpmsg_device *rpdev);
++
++#else
++
++static inline int rpmsg_fc_register_device(struct rpmsg_device *rpdev)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++#endif /* IS_ENABLED(CONFIG_RPMSG_FC)*/
++
++#endif
 -- 
 2.25.1
 
