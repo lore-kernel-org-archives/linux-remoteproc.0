@@ -2,64 +2,63 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B515CC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 19:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692C5C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 20:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353158AbiETTHY (ORCPT
+        id S1348425AbiETUKe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 15:07:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33116 "EHLO
+        Fri, 20 May 2022 16:10:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353111AbiETTHX (ORCPT
+        with ESMTP id S244836AbiETUKc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 15:07:23 -0400
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F41195E89
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 May 2022 12:07:21 -0700 (PDT)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-d6e29fb3d7so11337509fac.7
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 May 2022 12:07:21 -0700 (PDT)
+        Fri, 20 May 2022 16:10:32 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC39E19FB07
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 May 2022 13:10:30 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id q10so11183341oia.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 May 2022 13:10:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:user-agent:date:message-id
          :subject:to:cc;
-        bh=nihMNKg/Cee52sDZgIzDCYQdEGAz2qYL7OpwXO++SRk=;
-        b=Xzzdw+qOUg6OXEC6WX8aZ1fXI2d76UtEKEll96yvfxKwyLcQKj/n4uMJDsdxKR8Kh3
-         CLc9+NimGVuwpkzvs6o/El+Bo8J37wsXEpvP/XZxH5R59MsSoB+OL8ratu/uc9jTkxrQ
-         MwJ5uD2OsRF/hjJ4TmXsFrBtfEkLd4GcmRSJE=
+        bh=wiGaxzYkjsSexTF4OnqKljM8nknmSifQmJXxUrBf0MA=;
+        b=MVgIBoV64tzvV8y9jiIJOSMBnsDd4wm2LVgnLBX7s1HvFwvu0XSCEvVWzQqhbVoX6D
+         88DBGPkjq+0lWtRWBZwhEfZE7ggUnB7pT22Yf4GhVWCah2hLs6WlQeRPBFFBr4lZBNM7
+         Dy1qPpV7EiHYKOy5TulR/5ISe/5fF6OCvWo60=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:in-reply-to:references:from
          :user-agent:date:message-id:subject:to:cc;
-        bh=nihMNKg/Cee52sDZgIzDCYQdEGAz2qYL7OpwXO++SRk=;
-        b=uk68P6xUoZzPoMIZz8Sy+s/gqsixgBT/+FKXRAjQ40cUF6Vk9D1lceX5suPJjHTQwv
-         uZL4frqz5ecPU+PHI79vinIFxX+4XSokN00IuD204D69rfKDDOm6HFUkZ0NApicKGNIS
-         oTqUEJKoCaS2plXIyAvGbnPngC6RqBC1ZIaZWbO+3utPUSCQJc+Tzg4NemyWVYgYg9td
-         kmNC3SDHqfU8uQ6h+n6Gt4esZ2b2/R9VMBmEwVdzG2jcDo/FnBYNJyJvL1xQS/FPOp3+
-         tRIfou1aXI/rPfF4XLMN84lkQKbgRpYXhLhirgA0b+kMpInkUew8yMxYgwkmi8XzpCAW
-         CG6w==
-X-Gm-Message-State: AOAM532Ztci11uFf0tUXyfLLhbK7Y8tCtQRhM7Zn8W8rLLBRZXQw19M1
-        QuKUPZHnwT663AUZrOiNMUwqVzu2/klfSNcqkSuNvw==
-X-Google-Smtp-Source: ABdhPJxIC9bDA4i/ZggEJB0rWG96ePG3EUgyO1b8ubjEfLF0xE6tjuSnzDqSm6ZyeHYmPQkHU+YybI/U0OJccJHUwV8=
-X-Received: by 2002:a05:6870:240d:b0:f1:b878:e97c with SMTP id
- n13-20020a056870240d00b000f1b878e97cmr6170490oap.193.1653073641117; Fri, 20
- May 2022 12:07:21 -0700 (PDT)
+        bh=wiGaxzYkjsSexTF4OnqKljM8nknmSifQmJXxUrBf0MA=;
+        b=UIVNdez6oTfFHkQVEODed14cfkIs6ZJwPYx8+pZxn9R209aPQ2RDgBLrn+ZzFE02Pp
+         osAR3N3PSActOqabXvzQsn0MCX5mcdes2T8I4vv0SBFNFN/dtK/RSfZiZ683muwTpjzj
+         gV6cX/NYQh+L6nq8mEdw2MqhLs8Eb/uh2vvGuNYE1VckovEfPWFsTOSakc3s8N0DbzMA
+         hwfICXdpJu+j/8SRCG6Zv9i++dgkS2oqB2ERmSewBSrC1KvBDf3NCYj/wH1tFdznrcUI
+         jTuKSD9hF0xL2TkZBlcKU0yvXUgolA5C2J/TBkNt1k8ZUn6t33wPRZUlb8TTeqGElRio
+         PPfA==
+X-Gm-Message-State: AOAM53006IqDHjhYA9U1uhiZQiGBsZ1CHcLOPhHy7C2k6ibX7a5TMlYG
+        27DwkQn/TlXy6KrMB9xStdJKo5hTGKvo8wi+I2GV0w==
+X-Google-Smtp-Source: ABdhPJw2ESNASeabzgRPotV7qcOex0oQnU0E59jPuICmZ5pWN67wlKt5uZv6bTFKt/7R/sPtqR9z0wgtCUcJf2Pfkcs=
+X-Received: by 2002:a05:6808:14c2:b0:326:c129:d308 with SMTP id
+ f2-20020a05680814c200b00326c129d308mr6135411oiw.193.1653077430078; Fri, 20
+ May 2022 13:10:30 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 20 May 2022 12:07:20 -0700
+ HTTPREST; Fri, 20 May 2022 13:10:29 -0700
 MIME-Version: 1.0
-In-Reply-To: <031ebead-4b0d-8493-d8f8-96f2ff9d938a@quicinc.com>
+In-Reply-To: <1289c2e4-5607-b515-88b1-f44585e62cd3@quicinc.com>
 References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
- <1652978825-5304-2-git-send-email-quic_sibis@quicinc.com> <YoaqDcB6wkd4zOWR@ripper>
- <031ebead-4b0d-8493-d8f8-96f2ff9d938a@quicinc.com>
+ <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com> <CAE-0n50iYAUmj6GEdCuOJ1d_SgeeFWtoxqWf7qN=jZ_js4wBcQ@mail.gmail.com>
+ <1289c2e4-5607-b515-88b1-f44585e62cd3@quicinc.com>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Fri, 20 May 2022 12:07:20 -0700
-Message-ID: <CAE-0n53hDDoetQW0Bz7noq4peuNCyrGsXaJdjFj=4sMkGeZFgw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] arm64: dts: qcom: sc7280: Add proxy interconnect
- requirements for modem
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
+Date:   Fri, 20 May 2022 13:10:29 -0700
+Message-ID: <CAE-0n52tbS2zvOWb4+2cbL7uth0Z3AJ-O6e0WH_xtQsMyu4A7A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] dt-bindings: remoteproc: qcom: Convert SC7280 MSS
+ bindings to YAML
+To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
+Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         mka@chromium.org
@@ -68,23 +67,27 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Sibi Sankar (2022-05-20 11:08:52)
-> Hey Bjorn,
-> Thanks for taking time to review the series.
->
-> On 5/20/22 2:05 AM, Bjorn Andersson wrote:
-> > On Thu 19 May 09:47 PDT 2022, Sibi Sankar wrote:
+Quoting Sibi Sankar (2022-05-20 11:46:58)
+> On 5/20/22 4:05 AM, Stephen Boyd wrote:
+> > Quoting Sibi Sankar (2022-05-19 09:47:04)
+> >> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> >> new file mode 100644
+> >> index 000000000000..a936d84eefa6
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> >> +        resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
+> >> +                 <&pdc_reset PDC_MODEM_SYNC_RESET>;
+> >> +        reset-names = "mss_restart", "pdc_reset";
+> >> +
+> >> +        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
+> >> +        qcom,ext-regs = <&tcsr 0x10000 0x10004 &tcsr_mutex 0x26004 0x26008>;
 > >
-> >> Add interconnects that are required to be proxy voted upon during modem
-> >> bootup on SC7280 SoCs.
+> > Because it's two items I'd expect:
 > >
-> > This looks reasonable, but how come the vote is only for DDR frequency?
-> > What about the buses between modem and ddr?
+> >       <&tcsr 0x10000 0x10004>, <&tcsr_mutex 0x26004 0x26008>;
 >
-> The proxy votes that are put in aren't for perf related reasons, the
-> modem was getting llcc timeouts while trying to read contents from
-> memory. The hw team recommended the proxy votes as the fix.
+> I guess both the ways work since the driver uses
+> of_parse_phandle_with_fixed_args.
 
-Presumably the bootloader sets up some initial modem and ddr bus
-bandwidth requests? Or the modem bootloader stage (MSA?) handles that
-part?
+See commit 39bd2b6a3783 ("dt-bindings: Improve phandle-array schemas")
+for why the way you have it is not preferred.
