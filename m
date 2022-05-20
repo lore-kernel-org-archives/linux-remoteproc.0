@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A91AC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE78C43217
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347083AbiETIa4 (ORCPT
+        id S1347235AbiETIbM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 04:30:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40874 "EHLO
+        Fri, 20 May 2022 04:31:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347156AbiETIao (ORCPT
+        with ESMTP id S1347164AbiETIaq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 04:30:44 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FBF2140840;
-        Fri, 20 May 2022 01:30:20 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K4a0tN005786;
-        Fri, 20 May 2022 10:30:01 +0200
+        Fri, 20 May 2022 04:30:46 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B5D15A744;
+        Fri, 20 May 2022 01:30:25 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K3ZQ3p004615;
+        Fri, 20 May 2022 10:29:59 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=fIYcdPhrP+UAIOWW4991D3j8xdtottmzpGrRfJZWd1o=;
- b=sCDduPYQDYLoRBEwoS+Uup3p4ey+PAWnDkWEfXYCSd5PQcwQIlMmPUzB3q49N4wrGZAk
- 27QX0XcLO1WSDBtF7T4wMKwCm5fRIS2ku/8FmMocM4Qc83/Ze8yQfqxqIwNs4geMUlw1
- OQwVadXI3afvi9HmPiMhd0wzPUMdD5QXLfmm9RU4Go2qtAc5SlVK3SwrLNqjq4rr7Yab
- PjZZ+XK+UR9DSsYUant3Ew5bZuJZHdIiBus2ytqEQVivrJKgvmXQ2hY1fNMPU49YRMBk
- 4Pmhw8bm2qsWaR7lMIq+fPe4rC8Aw0o63YSF5aACgfOrGzHCajfZuGeGFspInsuoG/71 LQ== 
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=hneNV+UTX/MQsnnJ1NOLYhI1GUf8ZaFIZymZJDulI7Y=;
+ b=bVSQ9bpLAesU4gdQU0NY7YC9ypuO98FoqvhNOA2l0Rhf5a3s228zScK5H/gq2trCQuc3
+ oqSJPMYWZoRd4EEYCDCMV8rgHfCBZ4lhThMhnF61btFjxfFjBVczQEa726hgc0pmOy1M
+ Y84p0AynckK6gqePolG0QuO9NW/TXm7WHmPhgnTFTwWj79PVZIbjbrjEvkz51tlj9CGX
+ oDfoDXfZ8/edYsF0cRzfFBHV0C6ps7//j6tyXfCS92a6Ry/gqX8FrFUT93t81GKlhVPM
+ LHXXO0JMDnsdgfhhRw/u2vSa5O5Od7/clCS1TbPkhBNkuv3zY8NulMdUilILWY3MvYyv kg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g21j9f79t-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23s22tjt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 10:30:01 +0200
+        Fri, 20 May 2022 10:29:59 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3D643100039;
-        Fri, 20 May 2022 10:29:59 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DF853100038;
+        Fri, 20 May 2022 10:29:56 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 37397215127;
-        Fri, 20 May 2022 10:29:59 +0200 (CEST)
-Received: from localhost (10.75.127.44) by SHFDAG1NODE2.st.com (10.75.129.70)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D8EE1214D2D;
+        Fri, 20 May 2022 10:29:56 +0200 (CEST)
+Received: from localhost (10.75.127.45) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 20 May
- 2022 10:29:56 +0200
+ 2022 10:29:54 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -50,16 +50,14 @@ CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Deepak Kumar Singh <quic_deesin@quicinc.com>,
         Chris Lew <quic_clew@quicinc.com>,
         <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH 02/10] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Date:   Fri, 20 May 2022 10:29:32 +0200
-Message-ID: <20220520082940.2984914-3-arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH 00/10] Introduction of rpmsg flow control service
+Date:   Fri, 20 May 2022 10:29:30 +0200
+Message-ID: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
-References: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
+X-Originating-IP: [10.75.127.45]
 X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
@@ -69,137 +67,58 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+This series proposes an implementation for the rpmsg virtio transport
+backend, of the signaling API proposed by Deepak Kumar Singh:
+"rpmsg and glink signaling API support" [1]
 
-Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
-to get/set the low level transport signals.
+The aim of the series is to offer the possibility for an endpoint to inform
+a remote endpoint about its state, based on a software flow control[2].
 
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/rpmsg/rpmsg_char.c | 56 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 49 insertions(+), 7 deletions(-)
+For this a new rpmsg service( with a fixed address 64) is proposed.
+It is responsible for:
+- transmitting local endpoint flow control information to the remote side,
+- informing a local endpoint about a remote endpoint flow control.
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index b6183d4f62a2..904e7c67b356 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -23,6 +23,7 @@
- #include <linux/rpmsg.h>
- #include <linux/skbuff.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/uaccess.h>
- #include <uapi/linux/rpmsg.h>
- 
-@@ -52,6 +53,8 @@ static DEFINE_IDA(rpmsg_minor_ida);
-  * @readq:	wait object for incoming queue
-  * @default_ept: set to channel default endpoint if the default endpoint should be re-used
-  *              on device open to prevent endpoint address update.
-+ * @rsigs: remote flow control state
-+ * @sig_pending: inform that flow control information has been received from remote but not treated
-  */
- struct rpmsg_eptdev {
- 	struct device dev;
-@@ -68,6 +71,8 @@ struct rpmsg_eptdev {
- 	struct sk_buff_head queue;
- 	wait_queue_head_t readq;
- 
-+	u32 rsigs;
-+	bool sig_pending;
- };
- 
- int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
-@@ -107,7 +112,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
- 	skb_queue_tail(&eptdev->queue, skb);
- 	spin_unlock(&eptdev->queue_lock);
- 
--	/* wake up any blocking processes, waiting for new data */
-+	wake_up_interruptible(&eptdev->readq);
-+
-+	return 0;
-+}
-+
-+static int rpmsg_sigs_cb(struct rpmsg_device *rpdev, void *priv, u32 sigs)
-+{
-+	struct rpmsg_eptdev *eptdev = priv;
-+
-+	eptdev->rsigs = sigs;
-+	eptdev->sig_pending = true;
-+
- 	wake_up_interruptible(&eptdev->readq);
- 
- 	return 0;
-@@ -140,6 +156,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- 		return -EINVAL;
- 	}
- 
-+	ept->sig_cb = rpmsg_sigs_cb;
- 	eptdev->ept = ept;
- 	filp->private_data = eptdev;
- 
-@@ -159,6 +176,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- 		eptdev->ept = NULL;
- 	}
- 	mutex_unlock(&eptdev->ept_lock);
-+	eptdev->sig_pending = false;
- 
- 	/* Discard all SKBs */
- 	skb_queue_purge(&eptdev->queue);
-@@ -272,6 +290,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	if (!skb_queue_empty(&eptdev->queue))
- 		mask |= EPOLLIN | EPOLLRDNORM;
- 
-+	if (eptdev->sig_pending)
-+		mask |= EPOLLPRI;
-+
- 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
- 
- 	return mask;
-@@ -281,15 +302,36 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- 			       unsigned long arg)
- {
- 	struct rpmsg_eptdev *eptdev = fp->private_data;
-+	bool set;
-+	u32 val;
-+	int ret;
- 
--	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
--		return -EINVAL;
-+	switch (cmd) {
-+	case TIOCMGET:
-+		eptdev->sig_pending = false;
-+		ret = put_user(eptdev->rsigs, (int __user *)arg);
-+		break;
-+	case TIOCMSET:
-+		ret = get_user(val, (int __user *)arg);
-+		if (ret)
-+			break;
-+		set = (val & TIOCM_DTR) ? true : false;
-+		ret = rpmsg_set_flow_control(eptdev->ept, set);
-+		break;
-+	case RPMSG_DESTROY_EPT_IOCTL:
-+		/* Don't allow to destroy a default endpoint. */
-+		if (eptdev->default_ept) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
- 
--	/* Don't allow to destroy a default endpoint. */
--	if (eptdev->default_ept)
--		return -EINVAL;
- 
--	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
-+	return ret;
- }
- 
- static const struct file_operations rpmsg_eptdev_fops = {
+For the rpmsg virtio transport layer the service is negotiated thanks to the 
+virtio feature flag: VIRTIO_RPMSG_F_FC
+
+Notice that this pull request introduces new feature in the rpmsg protocol,
+So it has to be aligned with OpenAMP implementation.
+Pending OpenAMP pull request is available here:
+https://github.com/OpenAMP/open-amp/pull/394
+
+
+[1]https://lkml.org/lkml/2022/1/18/867
+[2]https://en.wikipedia.org/wiki/Software_flow_control
+
+Arnaud Pouliquen (8):
+  rpmsg: core: Add rpmsg device remote flow control announcement ops
+  rpmsg: virtio: Implement the announce_remote_fc ops
+  rpmsg: Introduce flow control channel driver
+  rpmsg: virtio: Add support of the VIRTIO_RPMSG_F_FC feature
+  rpmsg: virtio: Implement the set_flow_control ops
+  rpmsg: Add the destination address in rpmsg_set_flow_control
+  rpmsg: tty : Add the support of the flow control
+  rpmsg: virtio: Set default dst address on flow control
+
+Deepak Kumar Singh (2):
+  rpmsg: core: Add signal API support
+  rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+
+ drivers/rpmsg/Kconfig            |  11 +++
+ drivers/rpmsg/Makefile           |   1 +
+ drivers/rpmsg/rpmsg_char.c       |  56 +++++++++++++--
+ drivers/rpmsg/rpmsg_core.c       |  47 +++++++++++++
+ drivers/rpmsg/rpmsg_fc.c         | 113 +++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h   |   9 +++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 111 +++++++++++++++++++++++++++++-
+ drivers/tty/rpmsg_tty.c          |  50 ++++++++++++++
+ include/linux/rpmsg.h            |  15 ++++
+ include/linux/rpmsg/fc.h         |  51 ++++++++++++++
+ 10 files changed, 456 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/rpmsg/rpmsg_fc.c
+ create mode 100644 include/linux/rpmsg/fc.h
+
 -- 
 2.25.1
 
