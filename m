@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9072FC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 980CBC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347119AbiETIcb (ORCPT
+        id S1347013AbiETIcd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 04:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47398 "EHLO
+        Fri, 20 May 2022 04:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347172AbiETIcT (ORCPT
+        with ESMTP id S1347126AbiETIcR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 04:32:19 -0400
+        Fri, 20 May 2022 04:32:17 -0400
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B34326A40E;
-        Fri, 20 May 2022 01:31:30 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K1fHuU021302;
-        Fri, 20 May 2022 10:31:12 +0200
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E1253A75;
+        Fri, 20 May 2022 01:31:19 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K6OsWj029143;
+        Fri, 20 May 2022 10:31:14 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=CdJLGIQGVB3QH47VC81jXK7okrgL52nTShMQiG+y/eI=;
- b=pyWNmPkUKV7bLK7LEt6AOPvIr540TQpwFm3VA24hUouFyUk7T4ny2ixzjb9vpRC1W2IM
- 89Mm+qqPajmIKndjBJpfmlbop0iqyBuHWadOm5mr8BjhIeSUFM8tWD+Ab+IxM3g2UyGL
- 2xnXy+1uFLXxzbspNFa2Q4z9QpUCjE1co/Sawork0lWwxTM9yLdxVMjfgko918bKC03F
- fOocU2oKEM0gBFF2oIdw2dStKObF5Wk3JQDtoVXRWV2eR3aqGocUEdMDGupTD3X/NRJV
- bve2oMjeUGvOkWRKi8+XUNHnT1v4D+waretm2gIaP9vk5IBQ70VwxbZks2yoHbKjz9i9 DA== 
+ bh=Tqs+xiYCFI/8hHPXJbtrZX5TEbiaS90HqfCz+Xzn8qU=;
+ b=GhiDIvS3rGfr2I1AJ0Yyd08HBT/vGRKwQWuxQpg1FOLRh+ClBHMAkcmFKoENL2uVVvJj
+ bUL+gX8TSyV8bY0Ox53NEBldyWC5DqmYvxsCH+aNSRQuJS88qvWGz0j2NJImerSTu6Fp
+ EOvsGLZUOFHLLTJ4rVzQ8NyMCn5khnnfo94FMIjasmRCn+6orjFWTyvwg3HRjO1D0kj/
+ pNHS0ltq+Ce5PqUArGPSZjc7+1KfvKX/Tm4+IJQL5fkku9Mk+WsiuIOOW6zW5M9HOH5E
+ VNafwc6GzxlPKHUc/7dzVhVykr6KwETotSUq+zGWTYgjuFjDTT0p4CXPsy5ISel1MAVc 7A== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23aj6vtn-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g21j9f7ha-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 10:31:12 +0200
+        Fri, 20 May 2022 10:31:14 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E8F9810002A;
-        Fri, 20 May 2022 10:31:09 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 22F2D100034;
+        Fri, 20 May 2022 10:31:13 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E178921512E;
-        Fri, 20 May 2022 10:31:09 +0200 (CEST)
-Received: from localhost (10.75.127.47) by SHFDAG1NODE2.st.com (10.75.129.70)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1789221512E;
+        Fri, 20 May 2022 10:31:13 +0200 (CEST)
+Received: from localhost (10.75.127.46) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 20 May
- 2022 10:31:09 +0200
+ 2022 10:31:12 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -50,16 +50,16 @@ CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Deepak Kumar Singh <quic_deesin@quicinc.com>,
         Chris Lew <quic_clew@quicinc.com>,
         <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH 05/10] rpmsg: Introduce flow control channel driver
-Date:   Fri, 20 May 2022 10:29:35 +0200
-Message-ID: <20220520082940.2984914-6-arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH 09/10] rpmsg: tty : Add the support of the flow control
+Date:   Fri, 20 May 2022 10:29:39 +0200
+Message-ID: <20220520082940.2984914-10-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 References: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
+X-Originating-IP: [10.75.127.46]
 X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
@@ -69,231 +69,115 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Register the channel 54 to manage flow control between endpoints.
-the aim of this service is.
-- to inform the local endpoint of the state of the associated remote
-endpoints.
-- to inform remote endpoint about the state of the local endpoint.
+Add Software flow control support based on the RPMsg flow
+control channel.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/rpmsg/Kconfig    |  10 ++++
- drivers/rpmsg/Makefile   |   1 +
- drivers/rpmsg/rpmsg_fc.c | 113 +++++++++++++++++++++++++++++++++++++++
- include/linux/rpmsg/fc.h |  51 ++++++++++++++++++
- 4 files changed, 175 insertions(+)
- create mode 100644 drivers/rpmsg/rpmsg_fc.c
- create mode 100644 include/linux/rpmsg/fc.h
+ drivers/tty/rpmsg_tty.c | 50 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index d3795860f5c0..c6659f27c617 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -31,6 +31,16 @@ config RPMSG_NS
- 	  channel that probes the associated RPMsg device on remote endpoint
- 	  service announcement.
+diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
+index 29db413bbc03..fc1dc4a5ca9d 100644
+--- a/drivers/tty/rpmsg_tty.c
++++ b/drivers/tty/rpmsg_tty.c
+@@ -30,6 +30,7 @@ struct rpmsg_tty_port {
+ 	struct tty_port		port;	 /* TTY port data */
+ 	int			id;	 /* TTY rpmsg index */
+ 	struct rpmsg_device	*rpdev;	 /* rpmsg device */
++	bool			flow_stopped; /* remote device flow control */
+ };
  
-+config RPMSG_FC
-+	tristate "RPMSG endpoint flow control management"
-+	depends on RPMSG
-+	help
-+	  Say Y here to enable the support of the flow control management
-+	  for the rpmsg endpoints.
+ static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len, void *priv, u32 src)
+@@ -106,6 +107,9 @@ static unsigned int rpmsg_tty_write_room(struct tty_struct *tty)
+ 	struct rpmsg_tty_port *cport = tty->driver_data;
+ 	int size;
+ 
++	if (cport->flow_stopped)
++		return 0;
 +
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called rpmsg_fc.
-+
- config RPMSG_MTK_SCP
- 	tristate "MediaTek SCP"
- 	depends on MTK_SCP
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 58e3b382e316..c70b9864231f 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
- obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
- obj-$(CONFIG_RPMSG_CTRL)	+= rpmsg_ctrl.o
- obj-$(CONFIG_RPMSG_NS)		+= rpmsg_ns.o
-+obj-$(CONFIG_RPMSG_FC)		+= rpmsg_fc.o
- obj-$(CONFIG_RPMSG_MTK_SCP)	+= mtk_rpmsg.o
- qcom_glink-objs			:= qcom_glink_native.o qcom_glink_ssr.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK) += qcom_glink.o
-diff --git a/drivers/rpmsg/rpmsg_fc.c b/drivers/rpmsg/rpmsg_fc.c
-new file mode 100644
-index 000000000000..d7e17c8cffb0
---- /dev/null
-+++ b/drivers/rpmsg/rpmsg_fc.c
-@@ -0,0 +1,113 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) STMicroelectronics 2022 - All Rights Reserved
-+ */
-+
-+#define pr_fmt(fmt)		KBUILD_MODNAME ": " fmt
-+
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/rpmsg.h>
-+#include <linux/rpmsg/fc.h>
-+#include <linux/slab.h>
-+
-+#include "rpmsg_internal.h"
-+
-+/**
-+ * rpmsg_fc_register_device() - register name service device based on rpdev
-+ * @rpdev: prepared rpdev to be used catfor creating endpoints
-+ *
-+ * This function wraps rpmsg_register_device() preparing the rpdev for use as
-+ * basis for the rpmsg name service device.
-+ */
-+int rpmsg_fc_register_device(struct rpmsg_device *rpdev)
+ 	size = rpmsg_get_mtu(cport->rpdev->ept);
+ 	if (size < 0)
+ 		return 0;
+@@ -118,6 +122,28 @@ static void rpmsg_tty_hangup(struct tty_struct *tty)
+ 	tty_port_hangup(tty->port);
+ }
+ 
++static void rpmsg_tty_throttle(struct tty_struct *tty)
 +{
-+	strcpy(rpdev->id.name, "rpmsg_fc");
-+	rpdev->driver_override = KBUILD_MODNAME;
-+	rpdev->src = RPMSG_FC_ADDR;
-+	rpdev->dst = RPMSG_FC_ADDR;
-+
-+	return rpmsg_register_device(rpdev);
-+}
-+EXPORT_SYMBOL(rpmsg_fc_register_device);
-+
-+/* Invoked when a name service announcement arrives */
-+static int rpmsg_fc_cb(struct rpmsg_device *rpdev, void *data, int len,
-+		       void *priv, u32 src)
-+{
-+	struct rpmsg_ept_msg *msg = data;
-+	struct rpmsg_channel_info chinfo;
-+	struct device *dev = rpdev->dev.parent;
-+	bool enable;
++	struct rpmsg_tty_port *cport = tty->driver_data;
 +	int ret;
 +
-+	if (len != sizeof(*msg)) {
-+		dev_err(dev, "malformed fc msg (%d)\n", len);
-+		return -EINVAL;
-+	}
++	/* Disable remote transmission */
++	ret = rpmsg_set_flow_control(cport->rpdev->ept, RPMSG_ADDR_ANY, 0);
++	if (ret && ret != ENXIO)
++		dev_err(tty->dev, "cannot send control (%d)\n", ret);
++};
 +
-+	chinfo.src = rpmsg32_to_cpu(rpdev, msg->src);
-+	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->dst);
-+	enable = rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_EPT_FC_ON;
++static void rpmsg_tty_unthrottle(struct tty_struct *tty)
++{
++	struct rpmsg_tty_port *cport = tty->driver_data;
++	int ret;
 +
-+	dev_dbg(dev, "remote endpoint 0x%x in state %sable\n", chinfo.src, enable ? "en" : "dis");
++	/* Enable remote transmission */
++	ret = rpmsg_set_flow_control(cport->rpdev->ept, RPMSG_ADDR_ANY, 1);
++	if (ret && ret != ENXIO)
++		dev_err(tty->dev, "cannot send control (%d)\n", ret);
++};
 +
-+	ret = rpmsg_channel_remote_fc(rpdev, &chinfo, enable);
-+	if (ret)
-+		dev_err(dev, "rpmsg_annouce_flow_ctrl failed: %d\n", ret);
+ static const struct tty_operations rpmsg_tty_ops = {
+ 	.install	= rpmsg_tty_install,
+ 	.open		= rpmsg_tty_open,
+@@ -126,6 +152,8 @@ static const struct tty_operations rpmsg_tty_ops = {
+ 	.write_room	= rpmsg_tty_write_room,
+ 	.hangup		= rpmsg_tty_hangup,
+ 	.cleanup	= rpmsg_tty_cleanup,
++	.throttle	= rpmsg_tty_throttle,
++	.unthrottle	= rpmsg_tty_unthrottle,
+ };
+ 
+ static struct rpmsg_tty_port *rpmsg_tty_alloc_cport(void)
+@@ -162,11 +190,32 @@ static void rpmsg_tty_destruct_port(struct tty_port *port)
+ 	kfree(cport);
+ }
+ 
++static void rpmsg_tty_dtr_rts(struct tty_port *port, int raise)
++{
++	if (!port->tty)
++		return;
 +
-+	return ret;
++	if (raise)
++		rpmsg_tty_unthrottle(port->tty);
++	else
++		rpmsg_tty_throttle(port->tty);
 +}
 +
-+static int rpmsg_fc_probe(struct rpmsg_device *rpdev)
+ static const struct tty_port_operations rpmsg_tty_port_ops = {
+ 	.destruct = rpmsg_tty_destruct_port,
++	.dtr_rts  = rpmsg_tty_dtr_rts,
+ };
+ 
+ 
++static int rpmsg_tty_dsr_cts(struct rpmsg_device *rpdev, void *priv, u32 state)
 +{
-+	struct rpmsg_endpoint *fc_ept;
-+	struct rpmsg_channel_info fc_chinfo = {
-+		.src = RPMSG_FC_ADDR,
-+		.dst = RPMSG_FC_ADDR,
-+		.name = "flow_control_service",
-+	};
++	struct rpmsg_tty_port *cport = dev_get_drvdata(&rpdev->dev);
 +
-+	/*
-+	 * Create the Flow control (FC) service endpoint associated to the RPMsg
-+	 * device. The endpoint will be automatically destroyed when the RPMsg
-+	 * device will be deleted.
-+	 */
-+	fc_ept = rpmsg_create_ept(rpdev, rpmsg_fc_cb, NULL, fc_chinfo);
-+	if (!fc_ept) {
-+		dev_err(&rpdev->dev, "failed to create the FC ept\n");
-+		return -ENOMEM;
-+	}
-+	rpdev->ept = fc_ept;
++	cport->flow_stopped = !state;
 +
 +	return 0;
 +}
 +
-+static struct rpmsg_driver rpmsg_fc_driver = {
-+	.drv.name = KBUILD_MODNAME,
-+	.probe = rpmsg_fc_probe,
-+};
-+
-+static int rpmsg_fc_init(void)
-+{
-+	int ret;
-+
-+	ret = register_rpmsg_driver(&rpmsg_fc_driver);
-+	if (ret < 0)
-+		pr_err("%s: Failed to register FC rpmsg driver\n", __func__);
-+
-+	return ret;
-+}
-+postcore_initcall(rpmsg_fc_init);
-+
-+static void rpmsg_fc_exit(void)
-+{
-+	unregister_rpmsg_driver(&rpmsg_fc_driver);
-+}
-+module_exit(rpmsg_fc_exit);
-+
-+MODULE_DESCRIPTION("Flow control service rpmsg driver");
-+MODULE_AUTHOR("Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>");
-+MODULE_ALIAS("rpmsg:" KBUILD_MODNAME);
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/rpmsg/fc.h b/include/linux/rpmsg/fc.h
-new file mode 100644
-index 000000000000..5284ea410673
---- /dev/null
-+++ b/include/linux/rpmsg/fc.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _LINUX_RPMSG_FC_H
-+#define _LINUX_RPMSG_FC_H
-+
-+#include <linux/mod_devicetable.h>
-+#include <linux/rpmsg.h>
-+#include <linux/rpmsg/byteorder.h>
-+#include <linux/types.h>
-+
-+/* The feature bitmap for the endpoint flow control flags */
-+#define	RPMSG_EPT_FC_ON	 BIT(0) /* Set when endpoint is ready to communicate */
-+
-+/**
-+ * struct rpmsg_ept_msg - dynamic endpoint announcement message
-+ * @src: address of the endpoint that sends the message
-+ * @dest: address of the destination endpoint.
-+ * @flags: indicates the state of the endpoint based on @rpmsg_ept_flags enum.
-+ *
-+ * This message is sent across to inform the remote about the state of a local
-+ * endpoint associated with a remote endpoint:
-+ * - a RPMSG_EPT_OFF can be sent to inform that a local endpoint is suspended.
-+ * - a RPMSG_EPT_ON can be sent to inform that a local endpoint is ready to communicate.
-+ *
-+ * When we receive these messages, the appropriate endpoint is informed.
-+ */
-+struct rpmsg_ept_msg {
-+	__rpmsg32 src;
-+	__rpmsg32 dst;
-+	__rpmsg32 flags;
-+} __packed;
-+
-+/* Address 54 is reserved for flow control advertising */
-+#define RPMSG_FC_ADDR                   (54)
-+
-+#if IS_ENABLED(CONFIG_RPMSG_FC)
-+
-+int rpmsg_fc_register_device(struct rpmsg_device *rpdev);
-+
-+#else
-+
-+static inline int rpmsg_fc_register_device(struct rpmsg_device *rpdev)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+#endif /* IS_ENABLED(CONFIG_RPMSG_FC)*/
-+
-+#endif
+ static int rpmsg_tty_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct rpmsg_tty_port *cport;
+@@ -225,6 +274,7 @@ static struct rpmsg_driver rpmsg_tty_rpmsg_drv = {
+ 	.probe		= rpmsg_tty_probe,
+ 	.callback	= rpmsg_tty_cb,
+ 	.remove		= rpmsg_tty_remove,
++	.signals        = rpmsg_tty_dsr_cts,
+ };
+ 
+ static int __init rpmsg_tty_init(void)
 -- 
 2.25.1
 
