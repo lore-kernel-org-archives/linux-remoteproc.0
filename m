@@ -2,115 +2,127 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA68C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD9DC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 11:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344452AbiETId5 (ORCPT
+        id S1348250AbiETLYe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 04:33:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        Fri, 20 May 2022 07:24:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347160AbiETIdd (ORCPT
+        with ESMTP id S232303AbiETLYb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 04:33:33 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA5F15F6C8;
-        Fri, 20 May 2022 01:32:34 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K3tLjB028145;
-        Fri, 20 May 2022 10:32:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=c/Lq0oy39Sxj5Cf7Ma+CafFIl6MIsyg+0GLBTzXk1No=;
- b=zRkUXEdtfH8syzUhy3lFopRF1TbdtxZIywyejyCWnUNX26LEVEDLybDrMkuoTAYKQ8/T
- 653omNVZBb68VWCRg6tGVim8HxtRfYW+cfDoRuVn2Sqo8OaMnlj2cPgA3AKvcIZSiXBC
- 6/AE7bTSMalsCjyAOEfpcwpgzRTC/XkHo5GGGlPl4XbktN3MYbSGCj/a8KW522zhqPuQ
- Z1W3/YkC2Si2Ggign9MmSNMJFqNypEXhp4qIQKQfeXOIAijYbuOfpcHDfIVuLUTevTeL
- X4o+jwGgm252pY5zmExI9C7gL6jCye1DWsZ5i0ovj1h4qPGGYH6ho8dFue9JgrTRLLG9 sQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g23s22u1e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 10:32:26 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D9A8010002A;
-        Fri, 20 May 2022 10:32:23 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D11EB215124;
-        Fri, 20 May 2022 10:32:23 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 20 May
- 2022 10:32:22 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Chris Lew <quic_clew@quicinc.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH 10/10] rpmsg: virtio: Set default dst address on flow control
-Date:   Fri, 20 May 2022 10:29:40 +0200
-Message-ID: <20220520082940.2984914-11-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
-References: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
+        Fri, 20 May 2022 07:24:31 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECA58B36CE;
+        Fri, 20 May 2022 04:24:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=DGPrrkXTp6oI8cbbgByz5QLKv15GNHxUgmjuIwTAy/E=; b=eqnE/suLTpG3xbkMCBtDpxLY3n
+        NIRgLQiaBi0sCvdNCD4AFRLhJwRt1fDLW5HSSGFY7WXFEGFCYXn6Q0dC8gIFph3vTjXA6DvyBiQwz
+        I5PwxVn4HFAkq1g0udGCDh7f8awWYDjllyLtGAcRh6eSoRE6OIuNpAwHVy7SfEQenDYcne2doKiCl
+        jXXzZQlRm486qDYGQtQ0jW8Ms6RtpLdk65Qcz7YJ7/YEdFvKdb+dzF1Re9Q6nwXZnFrLVKgAD5Mwb
+        LfHsy0RngN1antwERG5D/EtoEWfAXqtoLg2k7TzZKasJtkGm7zpf+kH+Fd2GGS1HnQh8pXfJiIePS
+        VAbFF/9w==;
+Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1ns0jj-00Cb4k-Od; Fri, 20 May 2022 13:24:04 +0200
+Message-ID: <ded31ec0-076b-2c5b-0fe6-0c274954821f@igalia.com>
+Date:   Fri, 20 May 2022 08:23:33 -0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-20_03,2022-05-19_03,2022-02-23_01
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+Content-Language: en-US
+To:     Baoquan He <bhe@redhat.com>, Petr Mladek <pmladek@suse.com>
+Cc:     "michael Kelley (LINUX)" <mikelley@microsoft.com>,
+        Dave Young <dyoung@redhat.com>, d.hatayama@jp.fujitsu.com,
+        akpm@linux-foundation.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
+        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
+        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
+        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
+        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
+        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
+        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
+        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+        senozhatsky@chromium.org, stern@rowland.harvard.edu,
+        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
+        will@kernel.org
+References: <20220427224924.592546-1-gpiccoli@igalia.com>
+ <20220427224924.592546-25-gpiccoli@igalia.com> <Yn0TnsWVxCcdB2yO@alley>
+ <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
+ <20220519234502.GA194232@MiWiFi-R3L-srv>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20220519234502.GA194232@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-When a rpmsg channel has been created locally with a destination address
-set to RPMSG_ADDR_ANY, a name service announcement message is sent to
-the remote side. Then the destination address is never updated, making it
-impossible to send messages to the remote.
+On 19/05/2022 20:45, Baoquan He wrote:
+> [...]
+>> I really appreciate the summary skill you have, to convert complex
+>> problems in very clear and concise ideas. Thanks for that, very useful!
+>> I agree with what was summarized above.
+> 
+> I want to say the similar words to Petr's reviewing comment when I went
+> through the patches and traced each reviewing sub-thread to try to
+> catch up. Petr has reivewed this series so carefully and given many
+> comments I want to ack immediately.
+> 
+> I agree with most of the suggestions from Petr to this patch, except of
+> one tiny concern, please see below inline comment.
 
-An example of kernel trace observed:
-rpmsg_tty virtio0.rpmsg-tty.29.-1: invalid addr (src 0x1d, dst 0xffffffff)
+Hi Baoquan, thanks! I'm glad you're also reviewing that =)
 
-The flow control can be used to set the rpmsg device address.
-If the destination address is RPMSG_ADDR_ANY, then set it to
-address of the remote endpoint that send the message.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
-This patch is an alternative of the fix proposed in patch [1]
+> [...]
+> 
+> I like the proposed skeleton of panic() and code style suggested by
+> Petr very much. About panic_prefer_crash_dump which might need be added,
+> I hope it has a default value true. This makes crash_dump execute at
+> first by default just as before, unless people specify
+> panic_prefer_crash_dump=0|n|off to disable it. Otherwise we need add
+> panic_prefer_crash_dump=1 in kernel and in our distros to enable kdump,
+> this is inconsistent with the old behaviour.
 
-[1] https://lore.kernel.org/lkml/20220316153001.662422-1-arnaud.pouliquen@foss.st.com/
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I'd like to understand better why the crash_kexec() must always be the
+first thing in your use case. If we keep that behavior, we'll see all
+sorts of workarounds - see the last patches of this series, Hyper-V and
+PowerPC folks hardcoded "crash_kexec_post_notifiers" in order to force
+execution of their relevant notifiers (like the vmbus disconnect,
+specially in arm64 that has no custom machine_crash_shutdown, or the
+fadump case in ppc). This led to more risk in kdump.
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index a8e60ca4cd08..0337a07e278c 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -393,6 +393,16 @@ static int virtio_rpmsg_remote_flowctrl(struct rpmsg_device *rpdev,
- 	if (!ept)
- 		return -EINVAL;
- 
-+	/*
-+	 * If the endpoint is the rpmsg device default one, then it can not be yet associated
-+	 * to the remote endpoint. This can occur if a ns announcement message has been
-+	 * previously sent to the remote side.
-+	 * Update the rpmsg device destination address in such case to store the remote
-+	 * address as default remote endpoint.
-+	 */
-+	if (rpdev->ept == ept && rpdev->dst == RPMSG_ADDR_ANY)
-+		rpdev->dst = __rpmsg32_to_cpu(virtio_is_little_endian(vrp->vdev), chinfo->src);
-+
- 	/* Make sure ept->sig_cb doesn't go away while we use it */
- 	mutex_lock(&ept->cb_lock);
- 
--- 
-2.25.1
+The thing is: with the notifiers' split, we tried to keep only the most
+relevant/necessary stuff in this first list, things that ultimately
+should improve kdump reliability or if not, at least not break it. My
+feeling is that, with this series, we should change the idea/concept
+that kdump must run first nevertheless, not matter what. We're here
+trying to accommodate the antagonistic goals of hypervisors that need
+some clean-up (even for kdump to work) VS. kdump users, that wish a
+"pristine" system reboot ASAP after the crash.
 
+Cheers,
+
+
+Guilherme
