@@ -2,287 +2,237 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C9DC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 May 2022 23:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B382CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 03:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343734AbiESXpS (ORCPT
+        id S1345039AbiETDLi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 May 2022 19:45:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48878 "EHLO
+        Thu, 19 May 2022 23:11:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343737AbiESXpR (ORCPT
+        with ESMTP id S1345045AbiETDK6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 May 2022 19:45:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 38F4811AFD6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 May 2022 16:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653003914;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xcqeqNHBqLaEPFvaMSIdVsHM/2ssgjepqSc89Z+McDY=;
-        b=cH1jZ7B9s6QPsLL95flJcVUTqhu/a/tgBUpghaM5U6BI16PpGbL0aFbZt3tCOe0LuHUd1p
-        9Ag8XSB23ERy2dy9dibS8wRkFYY7oTZKGNoiOANIJKG3KWOtYWosuDQR4zKR+E6Ce+bJCZ
-        dO967Y0vDCSFGo7+e6Ic1TcGvCPGhxs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-671-51qE-HMZMJ-_l5k-QlXFHg-1; Thu, 19 May 2022 19:45:10 -0400
-X-MC-Unique: 51qE-HMZMJ-_l5k-QlXFHg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A41B685A5AA;
-        Thu, 19 May 2022 23:45:07 +0000 (UTC)
-Received: from localhost (ovpn-12-42.pek2.redhat.com [10.72.12.42])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4ABA5492C14;
-        Thu, 19 May 2022 23:45:06 +0000 (UTC)
-Date:   Fri, 20 May 2022 07:45:02 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     "michael Kelley (LINUX)" <mikelley@microsoft.com>,
-        Dave Young <dyoung@redhat.com>, d.hatayama@jp.fujitsu.com,
-        akpm@linux-foundation.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, dave.hansen@linux.intel.com, feng.tang@intel.com,
-        gregkh@linuxfoundation.org, hidehiro.kawai.ez@hitachi.com,
-        jgross@suse.com, john.ogness@linutronix.de, keescook@chromium.org,
-        luto@kernel.org, mhiramat@kernel.org, mingo@redhat.com,
-        paulmck@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, vkuznets@redhat.com,
-        will@kernel.org
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
-Message-ID: <20220519234502.GA194232@MiWiFi-R3L-srv>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <Yn0TnsWVxCcdB2yO@alley>
- <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
+        Thu, 19 May 2022 23:10:58 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2050.outbound.protection.outlook.com [40.107.237.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C30112AE16;
+        Thu, 19 May 2022 20:10:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cZxd3hjzavVvOmzyAsVNHjFoBKtTdkp/hz5glS872NCMjmS5VlW8RLygB/amwmtOJZ0c6B3rr3OZVu87kmPaLfjUeq0ZymhEohFQQ2lCf8fWl735ZeVftlAjIkGlDYXnXJ5X85h0qJRIKjLWs8/qBv+LXaMZB1eS0gXyKd0f5lWFY6kyDYTWe2gp2wrWNSznIe6l8PjaIxpzo01FXq5xOgNfauB0+a8o/WYimAl9n30K69Y9tKTWfYSvviiKibz9KkrEGKT4+KthS/Ko9mmgLJ0AbdN0YsJeJIvn6mWaWqK6aiQ1eVm6VAdlx8mnc5wRhioSNrFqmPsMv1BFzDSnMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xc58ztUwCnc1VC1kseQvYguAJCiZ49N+ypQU7gUzRyk=;
+ b=jj3O/McZxxGSjqeAC6T63tOl6hjwqwqSX8HzGAniDbaofRN0OLyhFb9q6zjmmK4HB4R8hFAa0AS4RucS1onb5UJFDDdvkQzOCCoCSbbYkkK/mbEMGU7YuQL+MhCItMXyS42JYrRgWtO9EI0rF9sVji144x+IqTRBvemeR/wLb7bDKjvui1NcKiqxGP6JmShdweU4j7plFB/7nlWyGzRFV/GuNjfrLwuOhK6yoBobtqXz9sLUcPAYSeM02Hj5thZqrTuFKslMVUVpXfj4UPJkz3oNl3E8wu6QxruoRdyiRMSYxQJ0V6nqtdb5MMihYPMzjdwnAox778uZXdlUlq6AXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xc58ztUwCnc1VC1kseQvYguAJCiZ49N+ypQU7gUzRyk=;
+ b=DR+Qxj1T+qDwnrczVbNLsePx0z2xPK7Kur67gRr8r07gtrAH38cunSVdVJblgo6GG9RbJdntEUGcu+FJWItYn++CL+dFm5FkYr8d/AACVHGcl9dJ7K7iV/q5sM26UzI2K9Krs9wAlOpakGqA7kVc7OiOkWI9iGyCjc4tE6XD124=
+Received: from SN7PR18CA0022.namprd18.prod.outlook.com (2603:10b6:806:f3::21)
+ by PH7PR02MB8955.namprd02.prod.outlook.com (2603:10b6:510:1f9::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.18; Fri, 20 May
+ 2022 03:10:54 +0000
+Received: from SN1NAM02FT0010.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:806:f3:cafe::4d) by SN7PR18CA0022.outlook.office365.com
+ (2603:10b6:806:f3::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.17 via Frontend
+ Transport; Fri, 20 May 2022 03:10:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ SN1NAM02FT0010.mail.protection.outlook.com (10.97.4.76) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5273.14 via Frontend Transport; Fri, 20 May 2022 03:10:54 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 19 May 2022 20:10:46 -0700
+Received: from smtp.xilinx.com (172.19.127.95) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Thu, 19 May 2022 20:10:46 -0700
+Envelope-to: mathieu.poirier@linaro.org,
+ bjorn.andersson@linaro.org,
+ robh+dt@kernel.org,
+ krzk+dt@kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Received: from [10.23.120.20] (port=64934)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <tanmay.shah@xilinx.com>)
+        id 1nrt2L-0008zb-TB; Thu, 19 May 2022 20:10:46 -0700
+Message-ID: <b4bef7c4-7f12-1cdb-c2f0-a248c125b9b4@xilinx.com>
+Date:   Thu, 19 May 2022 20:10:44 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d313eec2-96b6-04e3-35cd-981f103d010e@igalia.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.0
+From:   <tanmay.shah@xilinx.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <michal.simek@xilinx.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 0/6] Add Xilinx RPU subsystem support
+References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
+ <CANLsYkw9HuLso9bGL4fM7C9qH+basgKA9yKFwms4WB4OUHqymQ@mail.gmail.com>
+In-Reply-To: <CANLsYkw9HuLso9bGL4fM7C9qH+basgKA9yKFwms4WB4OUHqymQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6ad0fb10-2d05-4821-e22e-08da3a0e5a3d
+X-MS-TrafficTypeDiagnostic: PH7PR02MB8955:EE_
+X-Microsoft-Antispam-PRVS: <PH7PR02MB8955E8E576CEB5DAFB5FC252CAD39@PH7PR02MB8955.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: N2MvgR4B455eGkuzPFdFONBq+ml3qFy1tLG74J/qi5GIMuonxgGMZdX4a1P2pO99X3IX2CeoKfuYHWkOpasBqcuNXLERa20UogP3PWw0Pjz/QtJaOrBlTib6FqqqvC7Cx1S2HEle/3YK7Tg09JRTt5hz5Aeq2ktdMv5aY53v7utlfK3LI+A35EE/bzRpWYheHAWPbABiYrPxN+o6+nD1n34YGVX9GE3slBQ5sOpJxxHpZPdwkJwCiXpfRx2R6oJKsITJVxvOpwa68LSTQu/DiXodpQIg+nAy7j2Dh6ZZV4P3oSkUdvYRBPOMRQaeXy/Qoa/SpeL+g3Oi3S22xuC+gBW2MbGqWzsVnNHDEEkYXO9/3QPjnktgi3Z7Fgmz7+opshBBpa5Dl+hm2kEKORKthKBLdHLsBSW1ajcGnHca3ixkLnYeCFp7Ffm6hplSaBXJYQWX5XOcNSyhQXbQvUy9XlRrz4k3QS4QvkZ5ZaLCZJzInomO+nWW9CxBn260IOmmhc0BqZNmI9r788tW+oQJrN8yNhx9z6WKoIiCIR/ckFpJwDA++nSkQaor7gpO94NZ6qKyIsyWTQIm3hRjrblUoWrYQYjVOGbMkd0dD/PcdgP5IDmWT5osJpa+fwelhu1Nlx/hE2ydqUwA4rEFWr+VguiBkAhoSZrPi4uu73y7FGx/VI7h8II+eEbzB8S7xDxXJiAkHGD7xqkcKa2O6a7xpJtlwb0/ZmuMfe1wHicFBV6rgNuBRhmDg2uWXCh1QLXp
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(36840700001)(40470700004)(46966006)(186003)(53546011)(336012)(82310400005)(356005)(110136005)(426003)(47076005)(36756003)(8936002)(9786002)(2876002)(31696002)(2616005)(8676002)(5660300002)(70586007)(83380400001)(26005)(2906002)(31686004)(316002)(508600001)(36860700001)(70206006)(40460700003)(7636003)(50156003)(43740500002)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2022 03:10:54.3523
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ad0fb10-2d05-4821-e22e-08da3a0e5a3d
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0010.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR02MB8955
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 05/15/22 at 07:47pm, Guilherme G. Piccoli wrote:
-> On 12/05/2022 11:03, Petr Mladek wrote:
-...... 
-> > OK, the question is how to make it better. Let's start with
-> > a clear picture of the problem:
-> > 
-> > 1. panic() has basically two funtions:
-> > 
-> >       + show/store debug information (optional ways and amount)
-> >       + do something with the system (reboot, stay hanged)
-> > 
-> > 
-> > 2. There are 4 ways how to show/store the information:
-> > 
-> >       + tell hypervisor to store what it is interested about
-> >       + crash_dump
-> >       + kmsg_dump()
-> >       + consoles
-> > 
-> >   , where crash_dump and consoles are special:
-> > 
-> >      + crash_dump does not return. Instead it ends up with reboot.
-> > 
-> >      + Consoles work transparently. They just need an extra flush
-> >        before reboot or staying hanged.
-> > 
-> > 
-> > 3. The various notifiers do things like:
-> > 
-> >      + tell hypervisor about the crash
-> >      + print more information (also stop watchdogs)
-> >      + prepare system for reboot (touch some interfaces)
-> >      + prepare system for staying hanged (blinking)
-> > 
-> >    Note that it pretty nicely matches the 4 notifier lists.
-> > 
-> 
-> I really appreciate the summary skill you have, to convert complex
-> problems in very clear and concise ideas. Thanks for that, very useful!
-> I agree with what was summarized above.
 
-I want to say the similar words to Petr's reviewing comment when I went
-through the patches and traced each reviewing sub-thread to try to
-catch up. Petr has reivewed this series so carefully and given many
-comments I want to ack immediately.
 
-I agree with most of the suggestions from Petr to this patch, except of
-one tiny concern, please see below inline comment.
-
+On 5/19/22 3:19 AM, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+> Hi Tanmay,
 > 
-> 
-> > Now, we need to decide about the ordering. The main area is how
-> > to store the debug information. Consoles are transparent so
-> > the quesition is about:
-> > 
-> >      + hypervisor
-> >      + crash_dump
-> >      + kmsg_dump
-> > 
-> > Some people need none and some people want all. There is a
-> > risk that system might hung at any stage. This why people want to
-> > make the order configurable.
-> > 
-> > But crash_dump() does not return when it succeeds. And kmsg_dump()
-> > users havn't complained about hypervisor problems yet. So, that
-> > two variants might be enough:
-> > 
-> >     + crash_dump (hypervisor, kmsg_dump as fallback)
-> >     + hypervisor, kmsg_dump, crash_dump
-> > 
-> > One option "panic_prefer_crash_dump" should be enough.
-> > And the code might look like:
-> > 
-> > void panic()
-> > {
-> > [...]
-> > 	dump_stack();
-> > 	kgdb_panic(buf);
-> > 
-> > 	< ---  here starts the reworked code --- >
-> > 
-> > 	/* crash dump is enough when enabled and preferred. */
-> > 	if (panic_prefer_crash_dump)
-> > 		__crash_kexec(NULL);
-
-I like the proposed skeleton of panic() and code style suggested by
-Petr very much. About panic_prefer_crash_dump which might need be added,
-I hope it has a default value true. This makes crash_dump execute at
-first by default just as before, unless people specify
-panic_prefer_crash_dump=0|n|off to disable it. Otherwise we need add
-panic_prefer_crash_dump=1 in kernel and in our distros to enable kdump,
-this is inconsistent with the old behaviour.
-
-> > 
-> > 	/* Stop other CPUs and focus on handling the panic state. */
-> > 	if (has_kexec_crash_image)
-> > 		crash_smp_send_stop();
-> > 	else
-> > 		smp_send_stop()
-> > 
-> 
-> Here we have a very important point. Why do we need 2 variants of SMP
-> CPU stopping functions? I disagree with that - my understanding of this
-> after some study in architectures is that the crash_() variant is
-> "stronger", should work in all cases and if not, we should fix that -
-> that'd be a bug.
-> 
-> Such variant either maps to smp_send_stop() (in various architectures,
-> including XEN/x86) or overrides the basic function with more proper
-> handling for panic() case...I don't see why we still need such
-> distinction, if you / others have some insight about that, I'd like to
-> hear =)
-> 
-> 
-> > 	/* Notify hypervisor about the system panic. */
-> > 	atomic_notifier_call_chain(&panic_hypervisor_list, 0, NULL);
-> > 
-> > 	/*
-> > 	 * No need to risk extra info when there is no kmsg dumper
-> > 	 * registered.
-> > 	 */
-> > 	if (!has_kmsg_dumper())
-> > 		__crash_kexec(NULL);
-> > 
-> > 	/* Add extra info from different subsystems. */
-> > 	atomic_notifier_call_chain(&panic_info_list, 0, NULL);
-> > 
-> > 	kmsg_dump(KMSG_DUMP_PANIC);
-> > 	__crash_kexec(NULL);
-> > 
-> > 	/* Flush console */
-> > 	unblank_screen();
-> > 	console_unblank();
-> > 	debug_locks_off();
-> > 	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
-> > 
-> > 	if (panic_timeout > 0) {
-> > 		delay()
-> > 	}
-> > 
-> > 	/*
-> > 	 * Prepare system for eventual reboot and allow custom
-> > 	 * reboot handling.
-> > 	 */
-> > 	atomic_notifier_call_chain(&panic_reboot_list, 0, NULL);
-> 
-> You had the order of panic_reboot_list VS. consoles flushing inverted.
-> It might make sense, although I didn't do that in V1...
-> Are you OK in having a helper for console flushing, as I did in V1? It
-> makes code of panic() a bit less polluted / more focused I feel.
-> 
-> 
-> > 
-> > 	if (panic_timeout != 0) {
-> > 		reboot();
-> > 	}
-> > 
-> > 	/*
-> > 	 * Prepare system for the infinite waiting, for example,
-> > 	 * setup blinking.
-> > 	 */
-> > 	atomic_notifier_call_chain(&panic_loop_list, 0, NULL);
-> > 
-> > 	infinite_loop();
-> > }
-> > 
-> > 
-> > __crash_kexec() is there 3 times but otherwise the code looks
-> > quite straight forward.
-> > 
-> > Note 1: I renamed the two last notifier list. The name 'post-reboot'
-> > 	did sound strange from the logical POV ;-)
-> > 
-> > Note 2: We have to avoid the possibility to call "reboot" list
-> > 	before kmsg_dump(). All callbacks providing info
-> > 	have to be in the info list. It a callback combines
-> > 	info and reboot functionality then it should be split.
-> > 
-> > 	There must be another way to calm down problematic
-> > 	info callbacks. And it has to be solved when such
-> > 	a problem is reported. Is there any known issue, please?
-> > 
-> > It is possible that I have missed something important.
-> > But I would really like to make the logic as simple as possible.
-> 
-> OK, I agree with you! It's indeed simpler and if others agree, I can
-> happily change the logic to what you proposed. Although...currently the
-> "crash_kexec_post_notifiers" allows to call _all_ panic_reboot_list
-> callbacks _before kdump_.
-> 
-> We need to mention this change in the commit messages, but I really
-> would like to hear the opinions of heavy users of notifiers (as
-> Michael/Hyper-V) and the kdump interested parties (like Baoquan / Dave
-> Young / Hayatama). If we all agree on such approach, will change that
-> for V2 =)
-> 
-> Thanks again Petr, for the time spent in such detailed review!
-> Cheers,
-> 
-> 
-> Guilherme
+> I have replaced the previous version of this set with this one in my
+> queue.  That way you don't go back to the bottom.
 > 
 
+Thanks Mathieu. Sure it will help.
+
+> Thanks,
+> Mathieu.
+> 
+> On Wed, 18 May 2022 at 20:46, Tanmay Shah <tanmay.shah@xilinx.com> wrote:
+> >
+> > This patch series adds bindings document for RPU subsystem found on Xilinx
+> > ZynqMP platforms. It also adds device nodes and driver to enable RPU
+> > subsystem in split mode and lockstep mode.
+> >
+> > Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
+> > contains two arm cortex r5f cores. RPU subsystem can be configured in
+> > split mode, lockstep mode and single-cpu mode.
+> >
+> > RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
+> > In lockstep mode, all 4 banks are combined and total of 256KB memory is
+> > made available to r5 core0. In split mode, both cores can access two
+> > TCM banks i.e. 128 KB.
+> >
+> > RPU can also fetch data and execute instructions from DDR memory along with
+> > TCM memory.
+> > ---
+> >
+> > Changes in v5:
+> >    - Add constraints of the possible values of xlnx,cluster-mode property
+> >    - fix description of power-domains property for r5 core
+> >    - Remove reg, address-cells and size-cells properties as it is not required
+> >    - Fix description of mboxes property
+> >    - Add description of each memory-region and remove old .txt binding link
+> >      reference in the description
+> >    - Remove optional reg property from r5fss node
+> >    - Move r5fss node out of axi node
+> >
+> > Changes in v4:
+> >    - Add memory-region, mboxes and mbox-names properties in dt-bindings example
+> >    - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
+> >    - Remove redundant header files
+> >    - use dev_err_probe() to report errors during probe
+> >    - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
+> >    - Fix memory leaks all over the driver when resource allocation fails for any core
+> >    - make cluster mode check only at one place
+> >    - remove redundant initialization of variable
+> >    - remove redundant use of of_node_put()
+> >    - Fix Comment format problem
+> >    - Assign offset of zynqmp_tcm_banks instead of duplicating it
+> >    - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
+> >    - Remove rproc_mem_entry object from r5_core
+> >    - Use put_device() and rproc_del() APIs to fix memory leaks
+> >    - Replace pr_* with dev_*. This was missed in v3, fix now.
+> >    - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
+> >
+> > Changes in v3:
+> >    - Fix checkpatch script indentation warning
+> >    - Remove unused variable from xilinx remoteproc driver
+> >    - use C style comments, i.e /*...*/
+> >    - Remove redundant debug information which can be derived using /proc/device-tree
+> >    - Fix multiline comment format
+> >    - s/"final fot TCM"/"final for TCM"
+> >    - Function devm_kzalloc() does not return an code on error, just NULL.
+> >      Remove redundant error check for this function throughout the driver.
+> >    - Fix RPU mode configuration and add documentation accordingly
+> >    - Get rid of the indentations to match function documentation style with rest of the driver
+> >    - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
+> >    - Use 'i' for the outer loop and 'j' for the inner one as per convention
+> >    - Remove redundant error and NULL checks throughout the driver
+> >    - Use devm_kcalloc() when more than one element is required
+> >    - Add memory-regions carveouts during driver probe instead of parse_fw call
+> >      This removes redundant copy of reserved_mem object in r5_core structure.
+> >    - Fix memory leak by using of_node_put()
+> >    - Fix indentation of tcm_mem_map function args
+> >    - Remove redundant init of variables
+> >    - Initialize tcm bank size variable for lockstep mode
+> >    - Replace u32 with phys_addr_t for variable stroing memory bank address
+> >    - Add documentation of TCM behavior in lockstep mode
+> >    - Use dev_get_drvdata instead of platform driver API
+> >    - Remove info level messages
+> >    - Fix checkpatch.pl warnings
+> >    - Add documentation for the Xilinx r5f platform to understand driver design
+> >
+> > Changes in v2:
+> >    - Remove proprietary copyright footer from cover letter
+> >
+> >
+> > Ben Levinsky (3):
+> >    firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+> >      configuration.
+> >    firmware: xilinx: Add shutdown/wakeup APIs
+> >    firmware: xilinx: Add RPU configuration APIs
+> >
+> > Tanmay Shah (3):
+> >    dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+> >    arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+> >    drivers: remoteproc: Add Xilinx r5 remoteproc driver
+> >
+> >   .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  128 ++
+> >   arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
+> >   drivers/firmware/xilinx/zynqmp.c              |   97 ++
+> >   drivers/remoteproc/Kconfig                    |   12 +
+> >   drivers/remoteproc/Makefile                   |    1 +
+> >   drivers/remoteproc/xlnx_r5_remoteproc.c       | 1045 +++++++++++++++++
+> >   include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
+> >   include/linux/firmware/xlnx-zynqmp.h          |   60 +
+> >   8 files changed, 1382 insertions(+)
+> >   create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> >   create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
+> >
+> >
+> > base-commit: 01a1a0c8d456b11f2f6b9b822414481beaa44d6f
+> > --
+> > 2.25.1
+> >
+> 
