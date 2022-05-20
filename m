@@ -2,221 +2,89 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3AEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 18:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B515CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 19:07:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352653AbiETSrJ (ORCPT
+        id S1353158AbiETTHY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 14:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54200 "EHLO
+        Fri, 20 May 2022 15:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236364AbiETSrI (ORCPT
+        with ESMTP id S1353111AbiETTHX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 14:47:08 -0400
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9066F941AE;
-        Fri, 20 May 2022 11:47:06 -0700 (PDT)
+        Fri, 20 May 2022 15:07:23 -0400
+Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F41195E89
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 May 2022 12:07:21 -0700 (PDT)
+Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-d6e29fb3d7so11337509fac.7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 May 2022 12:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653072426; x=1684608426;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=AmggUx1E4WjOTJi2d8/NCr6el8KzJxZxVGbSr2RIJ6M=;
-  b=B+pFQJ/HxtDZkr5WWiwd4SGp0lqUVlDbv0ppUCpoY2InBBFrp6DPzjgx
-   ZIx0jTZLTiG0wl6OI15Z5yytfZyp/IeFOZe9lo1zdre6AKSDP3Y4Xsrwc
-   DqSjhXSs7gV/LTi8m2Z0Yz7AQgwZsvBkCVzI5ruZt/w4SvTpGlm479pRN
-   4=;
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 20 May 2022 11:47:06 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 11:47:05 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Fri, 20 May 2022 11:47:05 -0700
-Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 20 May
- 2022 11:47:01 -0700
-Subject: Re: [PATCH v4 2/3] dt-bindings: remoteproc: qcom: Convert SC7280 MSS
- bindings to YAML
-To:     Stephen Boyd <swboyd@chromium.org>, <bjorn.andersson@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <robh+dt@kernel.org>
-CC:     <ohad@wizery.com>, <agross@kernel.org>,
-        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mka@chromium.org>
-References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
- <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com>
- <CAE-0n50iYAUmj6GEdCuOJ1d_SgeeFWtoxqWf7qN=jZ_js4wBcQ@mail.gmail.com>
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-Message-ID: <1289c2e4-5607-b515-88b1-f44585e62cd3@quicinc.com>
-Date:   Sat, 21 May 2022 00:16:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:user-agent:date:message-id
+         :subject:to:cc;
+        bh=nihMNKg/Cee52sDZgIzDCYQdEGAz2qYL7OpwXO++SRk=;
+        b=Xzzdw+qOUg6OXEC6WX8aZ1fXI2d76UtEKEll96yvfxKwyLcQKj/n4uMJDsdxKR8Kh3
+         CLc9+NimGVuwpkzvs6o/El+Bo8J37wsXEpvP/XZxH5R59MsSoB+OL8ratu/uc9jTkxrQ
+         MwJ5uD2OsRF/hjJ4TmXsFrBtfEkLd4GcmRSJE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from
+         :user-agent:date:message-id:subject:to:cc;
+        bh=nihMNKg/Cee52sDZgIzDCYQdEGAz2qYL7OpwXO++SRk=;
+        b=uk68P6xUoZzPoMIZz8Sy+s/gqsixgBT/+FKXRAjQ40cUF6Vk9D1lceX5suPJjHTQwv
+         uZL4frqz5ecPU+PHI79vinIFxX+4XSokN00IuD204D69rfKDDOm6HFUkZ0NApicKGNIS
+         oTqUEJKoCaS2plXIyAvGbnPngC6RqBC1ZIaZWbO+3utPUSCQJc+Tzg4NemyWVYgYg9td
+         kmNC3SDHqfU8uQ6h+n6Gt4esZ2b2/R9VMBmEwVdzG2jcDo/FnBYNJyJvL1xQS/FPOp3+
+         tRIfou1aXI/rPfF4XLMN84lkQKbgRpYXhLhirgA0b+kMpInkUew8yMxYgwkmi8XzpCAW
+         CG6w==
+X-Gm-Message-State: AOAM532Ztci11uFf0tUXyfLLhbK7Y8tCtQRhM7Zn8W8rLLBRZXQw19M1
+        QuKUPZHnwT663AUZrOiNMUwqVzu2/klfSNcqkSuNvw==
+X-Google-Smtp-Source: ABdhPJxIC9bDA4i/ZggEJB0rWG96ePG3EUgyO1b8ubjEfLF0xE6tjuSnzDqSm6ZyeHYmPQkHU+YybI/U0OJccJHUwV8=
+X-Received: by 2002:a05:6870:240d:b0:f1:b878:e97c with SMTP id
+ n13-20020a056870240d00b000f1b878e97cmr6170490oap.193.1653073641117; Fri, 20
+ May 2022 12:07:21 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 20 May 2022 12:07:20 -0700
 MIME-Version: 1.0
-In-Reply-To: <CAE-0n50iYAUmj6GEdCuOJ1d_SgeeFWtoxqWf7qN=jZ_js4wBcQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+In-Reply-To: <031ebead-4b0d-8493-d8f8-96f2ff9d938a@quicinc.com>
+References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
+ <1652978825-5304-2-git-send-email-quic_sibis@quicinc.com> <YoaqDcB6wkd4zOWR@ripper>
+ <031ebead-4b0d-8493-d8f8-96f2ff9d938a@quicinc.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date:   Fri, 20 May 2022 12:07:20 -0700
+Message-ID: <CAE-0n53hDDoetQW0Bz7noq4peuNCyrGsXaJdjFj=4sMkGeZFgw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] arm64: dts: qcom: sc7280: Add proxy interconnect
+ requirements for modem
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Stephen,
+Quoting Sibi Sankar (2022-05-20 11:08:52)
+> Hey Bjorn,
+> Thanks for taking time to review the series.
+>
+> On 5/20/22 2:05 AM, Bjorn Andersson wrote:
+> > On Thu 19 May 09:47 PDT 2022, Sibi Sankar wrote:
+> >
+> >> Add interconnects that are required to be proxy voted upon during modem
+> >> bootup on SC7280 SoCs.
+> >
+> > This looks reasonable, but how come the vote is only for DDR frequency?
+> > What about the buses between modem and ddr?
+>
+> The proxy votes that are put in aren't for perf related reasons, the
+> modem was getting llcc timeouts while trying to read contents from
+> memory. The hw team recommended the proxy votes as the fix.
 
-On 5/20/22 4:05 AM, Stephen Boyd wrote:
-> Quoting Sibi Sankar (2022-05-19 09:47:04)
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
->> new file mode 100644
->> index 000000000000..a936d84eefa6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
->> @@ -0,0 +1,250 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-mss-pil.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm SC7280 MSS Peripheral Image Loader
->> +
->> +maintainers:
->> +  - Sibi Sankar <quic_sibis@quicinc.com>
->> +
->> +description:
->> +  This document describes the hardware for a component that loads and boots firmware
->> +  on the Qualcomm Technology Inc. SC7280 Modem Hexagon Core.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,sc7280-mss-pil
->> +
-> [..]
->> +
->> +  resets:
->> +    items:
->> +      - description: AOSS restart
->> +      - description: PDC reset
->> +
->> +  reset-names:
->> +    items:
->> +      - const: mss_restart
->> +      - const: pdc_reset
->> +
->> +  memory-region:
->> +    maxItems: 2
->> +    description: Phandle reference to the reserved-memory for the MBA region followed
->> +                 by the modem region.
->> +
->> +  firmware-name:
->> +    $ref: /schemas/types.yaml#/definitions/string-array
->> +    maxItems: 2
-> 
-> Instead of maxItems can this be
-> 
->         items:
->           - description: Name of MBA firmware
-> 	 - description: Name of modem firmware
-> 
-> so that we know the order? Same for 'memory-region' above.
-
-ack
-
-> 
->> +    description:
->> +      The name of the MBA and modem firmware to be loaded for this remote processor.
->> +
->> +  qcom,halt-regs:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> 
-> Should this have maxItems: 1? Or that's implicit from description?
-
-It's implicit!
-
-> 
->> +    description:
->> +      Phandle reference to a syscon representing TCSR followed by the
->> +      four offsets within syscon for q6, modem, nc and vq6 halt registers.
->> +
->> +  qcom,ext-regs:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> 
-> Should this have min/maxItems: 2?
-
-ack
-
-> 
->> +    description:
->> +      Two phandle references to syscons representing TCSR_REG and TCSR register
->> +      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
->> +      and axim1_clk_off/crypto_clk_off registers respectively.
->> +
->> +  qcom,qaccept-regs:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description:
->> +      Phandle reference to a syscon representing TCSR followed by the
->> +      three offsets within syscon for mdm, cx and axi qaccept registers.
->> +
->> +  qcom,qmp:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: Reference to the AOSS side-channel message RAM.
->> +
->> +  qcom,smem-states:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description: States used by the AP to signal the Hexagon core
->> +    items:
->> +      - description: Stop the modem
-> 
-> This one did items for a phandle array so I think we should follow the
-> same above.
-
-ack
-
-> 
->> +
->> +  qcom,smem-state-names:
->> +    description: The names of the state bits used for SMP2P output
->> +    const: stop
->> +
->> +  glink-edge:
->> +    $ref: qcom,glink-edge.yaml#
->> +    description:
->> +      Qualcomm G-Link subnode which represents communication edge, channels
->> +      and devices related to the DSP.
-> [..]
->> +        power-domain-names = "cx", "mss";
->> +
->> +        memory-region = <&mba_mem>, <&mpss_mem>;
->> +
->> +        qcom,qmp = <&aoss_qmp>;
->> +
->> +        qcom,smem-states = <&modem_smp2p_out 0>;
->> +        qcom,smem-state-names = "stop";
->> +
->> +        resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
->> +                 <&pdc_reset PDC_MODEM_SYNC_RESET>;
->> +        reset-names = "mss_restart", "pdc_reset";
->> +
->> +        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
->> +        qcom,ext-regs = <&tcsr 0x10000 0x10004 &tcsr_mutex 0x26004 0x26008>;
-> 
-> Because it's two items I'd expect:
-> 	
-> 	<&tcsr 0x10000 0x10004>, <&tcsr_mutex 0x26004 0x26008>;
-
-I guess both the ways work since the driver uses
-of_parse_phandle_with_fixed_args.
-
-> 
->> +        qcom,qaccept-regs = <&tcsr_mutex 0x23030 0x23040 0x23020>;
->> +
->> +        glink-edge {
->> +            interrupts-extended = <&ipcc IPCC_CLIENT_MPSS
->> +                                   IPCC_MPROC_SIGNAL_GLINK_QMP
->> +                                   IRQ_TYPE_EDGE_RISING>;
+Presumably the bootloader sets up some initial modem and ddr bus
+bandwidth requests? Or the modem bootloader stage (MSA?) handles that
+part?
