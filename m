@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BE3C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88769C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 May 2022 08:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239017AbiETIbN (ORCPT
+        id S233557AbiETIcQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 May 2022 04:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40894 "EHLO
+        Fri, 20 May 2022 04:32:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347105AbiETIap (ORCPT
+        with ESMTP id S1347041AbiETIbT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 May 2022 04:30:45 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBAC7140845;
-        Fri, 20 May 2022 01:30:17 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K7BpO1004845;
-        Fri, 20 May 2022 10:29:59 +0200
+        Fri, 20 May 2022 04:31:19 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC7347540;
+        Fri, 20 May 2022 01:31:17 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24K8N4uh009064;
+        Fri, 20 May 2022 10:31:12 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=2oUCJKuYX/NY/iBtWA66txdrB/9BfeAv1MvQ2qwk1ys=;
- b=c2+WEpseMSKCE9cXbU455BUQcyQfLs4tVxR8ZCuMZ0BRq5uMGqhBKCV3n6M5Ol6CFe7l
- JmZaYN7m4aB5xuz5RI4ol4j9SuXOcI52pDrCD/2a4EeesFrrWJzKZ9SPKl8hSoKZYo7P
- BPTi9Tfbx6RZfGUIY3h32P1lhcKN23Xf3YPpTsLBCUaqQiAD+NnzOqBAskKV/dRVUzdb
- vPtqSVWJ9EXSBqBv6sx08B1pnr0qax9wEzPcg5QIH/WwqrvzTGi/P5S+SgX6Wf805HJ3
- f1zQmZ52iC98mSRM8A2s61+s2fISuWSDbkX+8q58vPKRR4JJqKSFdxTVlFwJoeoJnhRC 5Q== 
+ bh=jJqFYr/2kSFBBvwcNFQzdXYzRLTYOhwzMWQZ47+U0eM=;
+ b=1XaD9oxWSDAZuwmh7yhFRShcHlu+fvFhvXpJz/oo8hD3a7v0J2mq6Rm/eV8txz8T+SwR
+ rAj65pGe6ERCgwXiOHVIakgmCZ3qSPqQFCgVqVtyqUN/VQTZU78WNHue9ztxxVfBnKxH
+ Ys1MphcL0EHDWTTZNTOVLL2ez7qTrE60UYYa/a8squWkyRDajojYWw4k11WkAz995zkp
+ hLPdjQZaceAQlDUj9cSbPUMjDlK0UURBD5obFgLBXD3l6Deo8F8kNEEumF2TgGCxbfIt
+ 2JIEhWP+Fl10LB7/PptxBxoSuzSQOfDks4mTEBepYeqFOi0pjMu/aOOZFyWQbONYUyUl zA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g21umb988-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3g21j9f7h4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 10:29:59 +0200
+        Fri, 20 May 2022 10:31:12 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 789CA100034;
-        Fri, 20 May 2022 10:29:56 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 52836100038;
+        Fri, 20 May 2022 10:31:10 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6C049214D28;
-        Fri, 20 May 2022 10:29:56 +0200 (CEST)
-Received: from localhost (10.75.127.46) by SHFDAG1NODE2.st.com (10.75.129.70)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 49418215131;
+        Fri, 20 May 2022 10:31:10 +0200 (CEST)
+Received: from localhost (10.75.127.47) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 20 May
- 2022 10:29:55 +0200
+ 2022 10:31:09 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -50,167 +50,126 @@ CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Deepak Kumar Singh <quic_deesin@quicinc.com>,
         Chris Lew <quic_clew@quicinc.com>,
         <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH 01/10] rpmsg: core: Add signal API support
-Date:   Fri, 20 May 2022 10:29:31 +0200
-Message-ID: <20220520082940.2984914-2-arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH 06/10] rpmsg: virtio: Add support of the VIRTIO_RPMSG_F_FC feature
+Date:   Fri, 20 May 2022 10:29:36 +0200
+Message-ID: <20220520082940.2984914-7-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 References: <20220520082940.2984914-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
+X-Originating-IP: [10.75.127.47]
 X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-20_02,2022-05-19_03,2022-02-23_01
+ definitions=2022-05-20_03,2022-05-19_03,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+Introduce the VIRTIO_RPMSG_F_FC feature in charge of the end
+point flow control management.
+The virtio feature is negotiated. If the remote side supports it,
+the rpmsg_fc device is probed.
 
-Some transports like Glink support the state notifications between
-clients using signals similar to serial protocol signals.
-Local glink client drivers can send and receive signals to glink
-clients running on remote processors.
-
-Add APIs to support sending and receiving of signals by rpmsg clients.
-
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h |  2 ++
- include/linux/rpmsg.h          | 15 +++++++++++++++
- 3 files changed, 38 insertions(+)
+ drivers/rpmsg/Kconfig            |  1 +
+ drivers/rpmsg/virtio_rpmsg_bus.c | 32 +++++++++++++++++++++++++++++++-
+ 2 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 79368a957d89..8de8aadd9b27 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -330,6 +330,24 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- }
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
+index c6659f27c617..e39cf32483de 100644
+--- a/drivers/rpmsg/Kconfig
++++ b/drivers/rpmsg/Kconfig
+@@ -89,6 +89,7 @@ config RPMSG_VIRTIO
+ 	depends on HAS_DMA
+ 	select RPMSG
+ 	select RPMSG_NS
++	select RPMSG_FC
+ 	select VIRTIO
  
-+/**
-+ * rpmsg_set_flow_control() - sets/clears serial flow control signals
-+ * @ept:	the rpmsg endpoint
-+ * @enable:	enable or disable serial flow control
-+ *
-+ * Return: 0 on success and an appropriate error value on failure.
-+ */
-+int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->set_flow_control)
-+		return -ENXIO;
-+
-+	return ept->ops->set_flow_control(ept, enable);
-+}
-+EXPORT_SYMBOL(rpmsg_set_flow_control);
-+
+ endmenu
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 785fda77984e..40d2ab86b395 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -19,6 +19,7 @@
+ #include <linux/mutex.h>
+ #include <linux/rpmsg.h>
+ #include <linux/rpmsg/byteorder.h>
++#include <linux/rpmsg/fc.h>
+ #include <linux/rpmsg/ns.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+@@ -70,6 +71,7 @@ struct virtproc_info {
+ 
+ /* The feature bitmap for virtio rpmsg */
+ #define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
++#define VIRTIO_RPMSG_F_FC	1 /* RP supports endpoint flow control notifications */
+ 
  /**
-  * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-  * @ept: the rpmsg endpoint
-@@ -538,6 +556,9 @@ static int rpmsg_dev_probe(struct device *dev)
- 
- 		rpdev->ept = ept;
- 		rpdev->src = ept->addr;
-+
-+		if (rpdrv->signals)
-+			ept->sig_cb = rpdrv->signals;
+  * struct rpmsg_hdr - common header for all rpmsg messages
+@@ -909,7 +911,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 	struct virtqueue *vqs[2];
+ 	struct virtproc_info *vrp;
+ 	struct virtio_rpmsg_channel *vch = NULL;
+-	struct rpmsg_device *rpdev_ns, *rpdev_ctrl;
++	struct rpmsg_device *rpdev_ns = NULL, *rpdev_ctrl, *rpdev_fc;
+ 	void *bufs_va;
+ 	int err = 0, i;
+ 	size_t total_buf_space;
+@@ -1013,6 +1015,30 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 			goto free_ctrldev;
  	}
  
- 	err = rpdrv->probe(rpdev);
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index d4b23fd019a8..4ce58e68af30 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -55,6 +55,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @set_flow_control:	see @rpmsg_set_flow_control(), optional
-  * @get_mtu:		see @rpmsg_get_mtu(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-@@ -75,6 +76,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
- 	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
++	/* If supported by the remote processor, enable the flow control service */
++	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_FC)) {
++		vch = kzalloc(sizeof(*vch), GFP_KERNEL);
++		if (!vch) {
++			err = -ENOMEM;
++			goto free_ns;
++		}
++
++		/* Link the channel to our vrp */
++		vch->vrp = vrp;
++
++		/* Assign public information to the rpmsg_device */
++		rpdev_fc = &vch->rpdev;
++		rpdev_fc->ops = &virtio_rpmsg_ops;
++		rpdev_fc->little_endian = virtio_is_little_endian(vrp->vdev);
++
++		rpdev_fc->dev.parent = &vrp->vdev->dev;
++		rpdev_fc->dev.release = virtio_rpmsg_release_device;
++
++		err = rpmsg_fc_register_device(rpdev_fc);
++		if (err)
++			goto free_ns;
++	}
++
+ 	/*
+ 	 * Prepare to kick but don't notify yet - we can't do this before
+ 	 * device is ready.
+@@ -1034,6 +1060,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+ 
+ 	return 0;
+ 
++free_ns:
++	if (rpdev_ns)
++		device_unregister(&rpdev_ns->dev);
+ free_ctrldev:
+ 	rpmsg_virtio_del_ctrl_dev(rpdev_ctrl);
+ free_coherent:
+@@ -1082,6 +1111,7 @@ static struct virtio_device_id id_table[] = {
+ 
+ static unsigned int features[] = {
+ 	VIRTIO_RPMSG_F_NS,
++	VIRTIO_RPMSG_F_FC,
  };
  
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 02fa9116cd60..dbd0c591bb85 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -62,12 +62,14 @@ struct rpmsg_device {
- };
- 
- typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-+typedef int (*rpmsg_rx_sig_t)(struct rpmsg_device *, void *, u32);
- 
- /**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
-  * @rpdev: rpmsg channel device
-  * @refcount: when this drops to zero, the ept is deallocated
-  * @cb: rx callback handler
-+ * @sig_cb: rx serial signal handler
-  * @cb_lock: must be taken before accessing/changing @cb
-  * @addr: local rpmsg address
-  * @priv: private data for the driver's use
-@@ -90,6 +92,7 @@ struct rpmsg_endpoint {
- 	struct rpmsg_device *rpdev;
- 	struct kref refcount;
- 	rpmsg_rx_cb_t cb;
-+	rpmsg_rx_sig_t sig_cb;
- 	struct mutex cb_lock;
- 	u32 addr;
- 	void *priv;
-@@ -104,6 +107,7 @@ struct rpmsg_endpoint {
-  * @probe: invoked when a matching rpmsg channel (i.e. device) is found
-  * @remove: invoked when the rpmsg channel is removed
-  * @callback: invoked when an inbound message is received on the channel
-+ * @signal:  invoked to received remote flow control signaling.
-  */
- struct rpmsg_driver {
- 	struct device_driver drv;
-@@ -111,6 +115,7 @@ struct rpmsg_driver {
- 	int (*probe)(struct rpmsg_device *dev);
- 	void (*remove)(struct rpmsg_device *dev);
- 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-+	int (*signals)(struct rpmsg_device *rpdev, void *priv, u32 state);
- };
- 
- static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
-@@ -188,6 +193,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 
- ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- 
-+int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
-+
- #else
- 
- static inline int rpmsg_register_device(struct rpmsg_device *rpdev)
-@@ -306,6 +313,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
- 	return -ENXIO;
- }
- 
-+static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+ static struct virtio_driver virtio_ipc_driver = {
 -- 
 2.25.1
 
