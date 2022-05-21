@@ -2,120 +2,196 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F73AC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 21 May 2022 06:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE17FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 21 May 2022 14:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240096AbiEUGOt (ORCPT
+        id S1355230AbiEUOdO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 21 May 2022 02:14:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56248 "EHLO
+        Sat, 21 May 2022 10:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233827AbiEUGOs (ORCPT
+        with ESMTP id S1355225AbiEUOdM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 21 May 2022 02:14:48 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6040F166696;
-        Fri, 20 May 2022 23:14:44 -0700 (PDT)
+        Sat, 21 May 2022 10:33:12 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF6F5FF1D
+        for <linux-remoteproc@vger.kernel.org>; Sat, 21 May 2022 07:33:10 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id bu29so18763531lfb.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 21 May 2022 07:33:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653113685; x=1684649685;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=88h/XalmwpDNbt5yjyOWwQF42/+dZnwpPutE6jurIgQ=;
-  b=pmPbP2xduwmAoyr9upRgZ6pqJARGWpFOU95YojDWjVGscpv06uqPLd7r
-   qB7AImcbIp4nJTPfUmOjWSp3kHULj7+wMJOBWx61Lcu3Wiha4klc287xZ
-   nq70OokbY387Iv7qsej4lFJlz7RqMS2XsbwyPUGfj71Eeohy2G6t8WWWw
-   E=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 20 May 2022 23:14:44 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2022 23:14:44 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Fri, 20 May 2022 23:14:43 -0700
-Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 20 May
- 2022 23:14:41 -0700
-Subject: Re: [PATCH 2/2 V2] remoteproc: qcom: Add full coredump fallback
- mechanism
-To:     Yogesh Lal <quic_ylal@quicinc.com>, <bjorn.andersson@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>
-References: <1652181930-22212-1-git-send-email-quic_ylal@quicinc.com>
- <1652181930-22212-2-git-send-email-quic_ylal@quicinc.com>
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-Message-ID: <271132da-4a6a-afd9-4509-47035dd18a8e@quicinc.com>
-Date:   Sat, 21 May 2022 11:44:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Hn1tpaExx4W+/e0w4YZThPk8OvIZPTL/mPjUx1/h2t4=;
+        b=cKZtkaIjNKIn8y6S+OXauTN4MPMFZ8458LigpDSBhWV76hYXxYBdqHWjYYzTFz9gzK
+         9J8yEJ9NsTW4U0FxzdG4RKJr4DMj81BSBvuJgKyYZ77lvujT3ufH15rxd+/L8KtBb5le
+         LeQSrU494fo6TMGAJQOP2cTf+5AIZ6EO/EIzZIRIpF5Lpp8/AwKlx79/PRfwcHw93UrB
+         kr/NZdnBb0ysyfY96bSS0k4xXjPormKhzj5JKYhy/rspkqFDzHc4Cnr8TVt0YDItzc+o
+         9Rd63W88lrb2ERvIb9uW6v5IKs0EmuW2S+GdliJIqeuQzRlG1AI9rtaxLb4F2rwojlAm
+         Vlcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Hn1tpaExx4W+/e0w4YZThPk8OvIZPTL/mPjUx1/h2t4=;
+        b=mb2RsedUafHhUCGsa9OvAxNAe0V1ESM2BLHC+qRbro0LjQ9H35nMN3Oa4m3sKJ2/9j
+         kTaNccCFzZvYt8VUtUKgizpy6Y8WL3rJJSmuNA4bGjAADLPeLowQDHzG4ObxZZrzo0B+
+         d266k1j9l2k5QWCV3zIE66QijXfFD3UeBbkNvX55QUZM86f/K7eRinbSfxxTkeLqe9Gz
+         U8ZlS278+ZpE2X+3MSJurRY2LGc9dEh3e72CJSrptjpun4F4quxOIiBKMCeWs1WbWMM8
+         UKALjzcx5uyQr82/A1ATl9CmNsDA/k3HQCPNltmj9IxZHNoNaRUVeoqekViLrgHLjAvX
+         NRYQ==
+X-Gm-Message-State: AOAM532n8yZLTTJ3ip56JdouJEKduQ1zEzm5xgA4ThVmFHEH8D5sZ2xQ
+        uZBYkXj8mk3sXB5a5DuFnoQOig==
+X-Google-Smtp-Source: ABdhPJyx6Mwjo8UHnCdnLrCqjRw6qNRdRwXtYGACm3ClOhYNuNa7LoKqXYd5gtbZXBA3V855VgXOlQ==
+X-Received: by 2002:a05:6512:ad2:b0:478:623e:ca73 with SMTP id n18-20020a0565120ad200b00478623eca73mr1771941lfu.290.1653143588422;
+        Sat, 21 May 2022 07:33:08 -0700 (PDT)
+Received: from [192.168.0.17] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id s25-20020a2e81d9000000b00253bb2564cbsm726024ljg.134.2022.05.21.07.33.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 May 2022 07:33:07 -0700 (PDT)
+Message-ID: <2a7ff8d1-9ef8-af6c-e541-80417aba7782@linaro.org>
+Date:   Sat, 21 May 2022 16:33:06 +0200
 MIME-Version: 1.0
-In-Reply-To: <1652181930-22212-2-git-send-email-quic_ylal@quicinc.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v4 2/3] dt-bindings: remoteproc: qcom: Convert SC7280 MSS
+ bindings to YAML
 Content-Language: en-US
+To:     Sibi Sankar <quic_sibis@quicinc.com>,
+        Stephen Boyd <swboyd@chromium.org>, bjorn.andersson@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org
+Cc:     ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mka@chromium.org
+References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
+ <1652978825-5304-3-git-send-email-quic_sibis@quicinc.com>
+ <CAE-0n50iYAUmj6GEdCuOJ1d_SgeeFWtoxqWf7qN=jZ_js4wBcQ@mail.gmail.com>
+ <1289c2e4-5607-b515-88b1-f44585e62cd3@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1289c2e4-5607-b515-88b1-f44585e62cd3@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Yogesh,
-Looks like you missed adding the patch that uses the exported
-rproc_cleanup api.
+On 20/05/2022 20:46, Sibi Sankar wrote:
+>>> +  memory-region:
+>>> +    maxItems: 2
+>>> +    description: Phandle reference to the reserved-memory for the MBA region followed
+>>> +                 by the modem region.
+>>> +
+>>> +  firmware-name:
+>>> +    $ref: /schemas/types.yaml#/definitions/string-array
+>>> +    maxItems: 2
+>>
+>> Instead of maxItems can this be
+>>
+>>         items:
+>>           - description: Name of MBA firmware
+>> 	 - description: Name of modem firmware
+>>
+>> so that we know the order? Same for 'memory-region' above.
+> 
+> ack
+> 
+>>
+>>> +    description:
+>>> +      The name of the MBA and modem firmware to be loaded for this remote processor.
+>>> +
+>>> +  qcom,halt-regs:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>
+>> Should this have maxItems: 1? Or that's implicit from description?
+> 
+> It's implicit!
+
+I am not aware of such implicit rule in schema. maxItems are always
+required. If this is maxItems:1 it is not even an array.
+
+> 
+>>
+>>> +    description:
+>>> +      Phandle reference to a syscon representing TCSR followed by the
+>>> +      four offsets within syscon for q6, modem, nc and vq6 halt registers.
+>>> +
+>>> +  qcom,ext-regs:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>
+>> Should this have min/maxItems: 2?
+> 
+> ack
+
+You should also define the items. This applies to all such fields. Check
+the examples of syscon consumers.
+
+> 
+>>
+>>> +    description:
+>>> +      Two phandle references to syscons representing TCSR_REG and TCSR register
+>>> +      space followed by the two offsets within the syscon to force_clk_en/rscc_disable
+>>> +      and axim1_clk_off/crypto_clk_off registers respectively.
+>>> +
+>>> +  qcom,qaccept-regs:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description:
+>>> +      Phandle reference to a syscon representing TCSR followed by the
+>>> +      three offsets within syscon for mdm, cx and axi qaccept registers.
+>>> +
+>>> +  qcom,qmp:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description: Reference to the AOSS side-channel message RAM.
+>>> +
+>>> +  qcom,smem-states:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description: States used by the AP to signal the Hexagon core
+>>> +    items:
+>>> +      - description: Stop the modem
+>>
+>> This one did items for a phandle array so I think we should follow the
+>> same above.
+> 
+> ack
+> 
+>>
+>>> +
+>>> +  qcom,smem-state-names:
+>>> +    description: The names of the state bits used for SMP2P output
+>>> +    const: stop
+>>> +
+>>> +  glink-edge:
+>>> +    $ref: qcom,glink-edge.yaml#
+>>> +    description:
+>>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>>> +      and devices related to the DSP.
+>> [..]
+>>> +        power-domain-names = "cx", "mss";
+>>> +
+>>> +        memory-region = <&mba_mem>, <&mpss_mem>;
+>>> +
+>>> +        qcom,qmp = <&aoss_qmp>;
+>>> +
+>>> +        qcom,smem-states = <&modem_smp2p_out 0>;
+>>> +        qcom,smem-state-names = "stop";
+>>> +
+>>> +        resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
+>>> +                 <&pdc_reset PDC_MODEM_SYNC_RESET>;
+>>> +        reset-names = "mss_restart", "pdc_reset";
+>>> +
+>>> +        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
+>>> +        qcom,ext-regs = <&tcsr 0x10000 0x10004 &tcsr_mutex 0x26004 0x26008>;
+>>
+>> Because it's two items I'd expect:
+>> 	
+>> 	<&tcsr 0x10000 0x10004>, <&tcsr_mutex 0x26004 0x26008>;
+> 
+> I guess both the ways work since the driver uses
+> of_parse_phandle_with_fixed_args.
+
+But only one is correct...
 
 
-On 5/10/22 4:55 PM, Yogesh Lal wrote:
-> From: Siddharth Gupta <sidgup@codeaurora.org>
-> 
-> If a remoteproc's firmware does not support minidump but the driver
-> adds an ID, the minidump driver does not collect any coredumps when
-> the remoteproc crashes. This hinders the purpose of coredump
-> collection. This change adds a fallback mechanism in the event of a
-> crash.
-> 
-
-Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
-
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-> Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
-> ---
->   drivers/remoteproc/qcom_common.c   | 7 +++++--
->   drivers/remoteproc/qcom_q6v5_pas.c | 1 +
->   2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 4b91e3c..b3fdc66 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -163,8 +163,11 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
->   	 */
->   	if (subsystem->regions_baseptr == 0 ||
->   	    le32_to_cpu(subsystem->status) != 1 ||
-> -	    le32_to_cpu(subsystem->enabled) != MD_SS_ENABLED ||
-> -	    le32_to_cpu(subsystem->encryption_status) != MD_SS_ENCR_DONE) {
-> +	    le32_to_cpu(subsystem->enabled) != MD_SS_ENABLED) {
-> +		return rproc_coredump(rproc);
-> +	}
-> +
-> +	if (le32_to_cpu(subsystem->encryption_status) != MD_SS_ENCR_DONE) {
->   		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
->   		return;
->   	}
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 401b1ec..6e5cbca 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -274,6 +274,7 @@ static const struct rproc_ops adsp_minidump_ops = {
->   	.start = adsp_start,
->   	.stop = adsp_stop,
->   	.da_to_va = adsp_da_to_va,
-> +	.parse_fw = qcom_register_dump_segments,
->   	.load = adsp_load,
->   	.panic = adsp_panic,
->   	.coredump = adsp_minidump,
-> 
+Best regards,
+Krzysztof
