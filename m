@@ -2,93 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBCAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 17:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D117C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 17:33:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239937AbiEXR2R (ORCPT
+        id S234928AbiEXRdr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 24 May 2022 13:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40784 "EHLO
+        Tue, 24 May 2022 13:33:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238246AbiEXR2R (ORCPT
+        with ESMTP id S239995AbiEXRdp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 May 2022 13:28:17 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD587CDE2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 10:28:14 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id wh22so36628178ejb.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 10:28:14 -0700 (PDT)
+        Tue, 24 May 2022 13:33:45 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA976A04F
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 10:33:44 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id gh17so23754825ejc.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 10:33:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=veu2FPBaI/1DFm4PUFxv9FNq6rpu8nFudiGrwlmGHSM=;
-        b=gZ/XlZBlp4L8IWxs+qoqoVja1YNbIPorTCnCOL3ZtY+iokMWUUaD/qbXxH3FqDY/YK
-         z2IDTP/hvjBYIrG/x3QYmaEeEdyDEheyjvJt2gpG0KV6gQqa1jEST15Jwb+iJG0rGBzz
-         m+ASNmvLNq/1DpUjSDcrb5XeLLw7XO5AXyVgLdNcBCc1RkQ3tE4hDjk0tLb1Ypw2fogP
-         R+Tv/EsU8qKhc2QDewyp6Z4H3wsn3SKJisGTmtnW7PZHcz4DlbCAKqtws7mOWNIYhTEm
-         BphQU5c9xe4GllqpbcDeUDcjVlbjlQuWZ7VTVoGjrCnwhMAPaWbEgDRVa4dx1fS87N9X
-         r5gQ==
+        bh=TDDiVK/0RrLn3b/aahT7btm7i296B2V0gGDLOx8X1ZY=;
+        b=qBqVLj0xgRV22kdm183vJuStce0HuTo2gKgvnAjIFKwH65LuG+Tf0xOhNXRzvTXICs
+         Tsi1vuETbH3G8ZqjfFnydAFMGGb1/8HPBxixEueqj+mULEsvfNBY/rYzthky1af8QVHf
+         pNlTnyhFJOduccrjtYdrZ9JcqmEdIKyiQJd62Yh9jpnONAzSNLLvZesxrJ2gPDSE+aWX
+         Nf9nnIOlQ+2ljoBsmwSI4HWrLhxZ8465YQ2fi+Tl3M4QSAzUNuMoErrPyxgkHj4xBRpj
+         sWa90IvRxFO4UZ34rlhA1uS1dDljxy+J4EKXs6wo5wdybfMS6eXdJ2ZjbD1xIwv/CAZ3
+         4KKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=veu2FPBaI/1DFm4PUFxv9FNq6rpu8nFudiGrwlmGHSM=;
-        b=gjPnEpcpoJva6f3BiWpZzTf0ZR6LFJmx4YR+7jNejyfc2uNpSIkJbeF3qIVKBweEm8
-         /6LrxpnmR/4z+Jnje6pwUFYK+eCv6ptB4PVkKTygtLoAGV22URKI0jKWuoi+TXP5oj0s
-         NRmEu8W/k16UWwmeHf77F4UaUJzUK1OpAzmtqEzR/gJvvfhUFVFCCQGTHca0AlbhtuGz
-         Bz+uSJm78gqlbzU6iRXujVG9mQ3t4Oc+EOzyTfgS+WsR3DfFAspoWxzUJcuLdkZgsGOa
-         aL+9Jrx/Va6V3JMdz1Aoa4ummbs5wv2BIp1chXrmQFU3bKkiXle0adVTl+kwfI4MzRyi
-         +KHg==
-X-Gm-Message-State: AOAM5338Y9m/OVCKzNRHQJN7N7PIc24fJMSi6YvtbgDLAR37nWThHKVR
-        /yysDGwWmjCePb/lr29FLYzw8w==
-X-Google-Smtp-Source: ABdhPJzNuf50ko0QWScaW7JCNXkoXZrgS/sd+uO6LY8fdrjSymVBWa5CO/EMaNYqNM1M5FqG8Jxnlw==
-X-Received: by 2002:a17:906:350f:b0:6fe:a264:2cd1 with SMTP id r15-20020a170906350f00b006fea2642cd1mr20654456eja.735.1653413293370;
-        Tue, 24 May 2022 10:28:13 -0700 (PDT)
+        bh=TDDiVK/0RrLn3b/aahT7btm7i296B2V0gGDLOx8X1ZY=;
+        b=Ln+0nWaofHrbcr+j48g/g7w1M3JONXWw919oEi+vtjVC/e320RnF2Zuzn3F0H5Qbtg
+         D2ng9TwGM1G2DkoXKJPdUFZYQwowhkpAFDpfVCE0HM69GtnAyhy240BCxArfmYpih2Ao
+         gr7Kbe9neXJ3+Gpa+5zfJaREldHu4OPDhrQixapohR11FXmkLnx8eYZiWjuFWv8wu3by
+         NErbf1OUEh3ELMVMwDKQ/lZbO9K3lezWHkvACmkdFSol7qlcNCghlFlwMrTEv9/LyA8f
+         bSvuuU+Rk3X1RMT/h27S58aFnRJrB4Ex7LFzaN/8Xy3MjFXGSRl1m5JHvvFvCuVe/GDM
+         DFHw==
+X-Gm-Message-State: AOAM5306oar/+T3RVRPk+mg34W0OAzn0n/+U2MMbGgAX9yRnglG7W3er
+        ye5LZ82DnPn2K7ks7CLHXJ4AYA==
+X-Google-Smtp-Source: ABdhPJw7idjF6lR2c/kScDlKjd/kk16xrz+CaaIEfnwGa6wCZpqyj8x7XEUhkdjJq4pGJueB1TiovQ==
+X-Received: by 2002:a17:906:a11a:b0:6fe:9814:70eb with SMTP id t26-20020a170906a11a00b006fe981470ebmr23763019ejy.118.1653413622914;
+        Tue, 24 May 2022 10:33:42 -0700 (PDT)
 Received: from [192.168.0.177] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id d3-20020a170907272300b006f3ef214e53sm7308396ejl.185.2022.05.24.10.28.11
+        by smtp.gmail.com with ESMTPSA id ay18-20020a056402203200b0042aa08c7799sm9560487edb.62.2022.05.24.10.33.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 May 2022 10:28:12 -0700 (PDT)
-Message-ID: <014a6c1c-2795-f066-f103-9a97afc35da7@linaro.org>
-Date:   Tue, 24 May 2022 19:28:10 +0200
+        Tue, 24 May 2022 10:33:42 -0700 (PDT)
+Message-ID: <9badcfce-1db2-5381-bab8-8e52b875cebd@linaro.org>
+Date:   Tue, 24 May 2022 19:33:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH v5 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
- bindings
+Subject: Re: [PATCH v4 3/3] dt-bindings: remoteproc: qcom: Convert SC7180 MSS
+ bindings to YAML
 Content-Language: en-US
-To:     Tanmay Shah <tanmay.shah@xilinx.com>, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-        michal.simek@xilinx.com
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
- <20220518194426.3784095-2-tanmay.shah@xilinx.com>
- <45fea4a1-387f-9684-a90b-58b695b54172@linaro.org>
- <c97d61b0-8a38-5054-d5f1-bc7c5e7bcf61@xilinx.com>
- <1b117e49-28d0-da75-68ee-c2fcef9fc9a9@linaro.org>
- <c7b248f4-9ec1-2ae8-c7e3-55f37592f56e@xilinx.com>
+To:     Sibi Sankar <quic_sibis@quicinc.com>, Rob Herring <robh@kernel.org>
+Cc:     bjorn.andersson@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        swboyd@chromium.org, mka@chromium.org
+References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
+ <1652978825-5304-4-git-send-email-quic_sibis@quicinc.com>
+ <20220520224011.GA374485-robh@kernel.org>
+ <371ce290-1deb-bff2-112b-71be8c005b37@linaro.org>
+ <a5ad7884-d2c5-aeb0-405e-0121bb51f0a1@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <c7b248f4-9ec1-2ae8-c7e3-55f37592f56e@xilinx.com>
+In-Reply-To: <a5ad7884-d2c5-aeb0-405e-0121bb51f0a1@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 24/05/2022 17:43, Tanmay Shah wrote:
-> With this, I will add 'maxItems: 8' in sram and memory-region properties.
+On 24/05/2022 04:00, Sibi Sankar wrote:
+> Hey Rob/Krzysztof,
 > 
-> If everything else looks good on schema in this revision, could you 
-> please also review next (dts) patch in this series?
+> On 5/21/22 8:04 PM, Krzysztof Kozlowski wrote:
+>> On 21/05/2022 00:40, Rob Herring wrote:
+>>> On Thu, May 19, 2022 at 10:17:05PM +0530, Sibi Sankar wrote:
+>>>> Convert SC7180 MSS PIL loading bindings to YAML.
+>>>
+>>> I suppose there is a reason the sc7180 is being split out and the only
+>>> one converted, but this doesn't tell me.
+>>
+>> I am also confused, especially that last time I pointed out that there
+>> is work already:
+>> https://lore.kernel.org/all/20220511161602.117772-7-sireeshkodali1@gmail.com/
 > 
-> If that looks good, can I get your 'rb' on that?
+> https://lore.kernel.org/all/e3543961-1645-b02a-c869-f8fa1ad2d41c@quicinc.com/#t
 > 
-> so we can reduce scope of reviews for next revisions?
+> The reason for the split was discussed on the list ^^, thought it
+> wouldn't make much sense adding any of it to the commit message.
+> Also since Krzysztof said he wanted a alignment between Sireesh/me
+> we did exchange mails saying I'll take care of SC7180/SC7280 (since
+> they had pas compatible which is overridden by mss compatible) and
+> he could continue with the rest.
 
-There is no need to resend after receiving a tag, so the amount of
-reviews/versions won't change.
+
+Sounds good to me, but Rob's got a point - this background should be
+better explained.
 
 
 Best regards,
