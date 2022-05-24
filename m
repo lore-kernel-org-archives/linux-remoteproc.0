@@ -2,145 +2,191 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA04C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 18:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E165DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 21:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240138AbiEXSJ7 (ORCPT
+        id S235078AbiEXVZT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 24 May 2022 14:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51306 "EHLO
+        Tue, 24 May 2022 17:25:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233757AbiEXSJ6 (ORCPT
+        with ESMTP id S230110AbiEXVZS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 May 2022 14:09:58 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 397026B09B;
-        Tue, 24 May 2022 11:09:57 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I+Q2v4tOwGW2d76P1lFxFf0b+ZX8ilcNAVVRmWS9BObDvUhRAsmaDbdZ78DtkQoXLaU1Tl4QUTY1MLAJp2xZOa2ND3S1IEEoBa18rM4d1lTY2CyaoBqJG7idSr9VZ7f89S3iXFBB0b+mKl7+mUa9lWQ2gObGBi1GvTjs2G3DdCIFeSjOkWxebIfMsmHzoKC2T6WXytijkuFbbdEw0y2Hr60BcDpVW6qj4+HZEIWNOiu7LIwjEy5Vd0sLgWa4b2XqmV27nalM7lRt93VgMNgBJ511M+rm/zHSBcaZ0kN3fgDZT808A2fHBuiYR5faTIkI4Ch7C3lNslkoLra53gR0eQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FEo4fxKPxAxhQDXaa90LCmjmokvxxgdk1UFNmvioJqY=;
- b=miKz5TxFDSMPude5DCcCSC4B6TQ1DeI2etz7/YmpiawxfLDERgC4pnL3iaW0CM5LtnT8H/4OjBtOwAqlb6k54fRFzVk4vsQqLXpraekb6yqKDozhfhM0G/cZw7ssKdeWq/sFowS6QbJGssBOGVb7gARoQeFDlPGYhtTFjSLGFCrjHl6LNrRm+AkISKYN9kvY6WhWiae49Qn+UaazVsV4Er9tx6BW9s00hMqjLAu9q2i2kd8poeyGM4vL3qUaEX9gmW03LjeriE5P/QEdgOSFy8gLcon8twhBjNLgt7Uued1HNpcatS0T/HThfuXPcNvDK/Q8FmfL9vdlisxXNJIq4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FEo4fxKPxAxhQDXaa90LCmjmokvxxgdk1UFNmvioJqY=;
- b=cO5WqzL14bsoE1GFabhovIJMLJD7XE/XBTdF/zYnNFy89d5n+hbXGwyFxPgpskALEMeVvjMDUHEEN88q6HwDuh3jABcD/G+f+NAB9wfSgYli55rDxGme7dr66p8QGeFW53wKX8GC0Q1U9IJ7hye39/unA66vRQLZfqq3eX/2XUk=
-Received: from DS7PR07CA0017.namprd07.prod.outlook.com (2603:10b6:5:3af::14)
- by DM6PR02MB4331.namprd02.prod.outlook.com (2603:10b6:5:27::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.17; Tue, 24 May
- 2022 18:09:54 +0000
-Received: from DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:3af:cafe::85) by DS7PR07CA0017.outlook.office365.com
- (2603:10b6:5:3af::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.14 via Frontend
- Transport; Tue, 24 May 2022 18:09:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT020.mail.protection.outlook.com (10.13.4.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5273.14 via Frontend Transport; Tue, 24 May 2022 18:09:54 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 24 May 2022 11:09:50 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Tue, 24 May 2022 11:09:50 -0700
-Envelope-to: krzysztof.kozlowski@linaro.org,
- bjorn.andersson@linaro.org,
- mathieu.poirier@linaro.org,
- robh+dt@kernel.org,
- krzk+dt@kernel.org,
- linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Received: from [10.23.123.15] (port=51136)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <tanmay.shah@xilinx.com>)
-        id 1ntYyc-0001ek-Lh; Tue, 24 May 2022 11:09:50 -0700
-Message-ID: <266f4fe2-e8b8-24f2-085d-fcdb87f90731@xilinx.com>
-Date:   Tue, 24 May 2022 11:09:49 -0700
+        Tue, 24 May 2022 17:25:18 -0400
+X-Greylist: delayed 456 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 24 May 2022 14:25:17 PDT
+Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [5.144.164.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 907C87A80E
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 14:25:17 -0700 (PDT)
+Received: from [10.1.250.9] (riviera.nat.ds.pw.edu.pl [194.29.137.1])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 632B73F6BE;
+        Tue, 24 May 2022 23:39:54 +0200 (CEST)
+Message-ID: <37267214-5edb-add6-c601-6df93043a2b3@somainline.org>
+Date:   Tue, 24 May 2022 23:17:39 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH v5 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
- bindings
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <michal.simek@xilinx.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
- <20220518194426.3784095-2-tanmay.shah@xilinx.com>
- <45fea4a1-387f-9684-a90b-58b695b54172@linaro.org>
- <c97d61b0-8a38-5054-d5f1-bc7c5e7bcf61@xilinx.com>
- <1b117e49-28d0-da75-68ee-c2fcef9fc9a9@linaro.org>
- <c7b248f4-9ec1-2ae8-c7e3-55f37592f56e@xilinx.com>
- <014a6c1c-2795-f066-f103-9a97afc35da7@linaro.org>
-From:   Tanmay Shah <tanmay.shah@xilinx.com>
-In-Reply-To: <014a6c1c-2795-f066-f103-9a97afc35da7@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ Gecko/20100101 Thunderbird/91.9.1
+Subject: Re: [PATCH 1/7] remoteproc: qcom: pas: Fixup the elf class for SM8450
+ remoteprocs
+To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org
+Cc:     agross@kernel.org, mathieu.poirier@linaro.org,
+        dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yogesh Lal <quic_ylal@quicinc.com>
+References: <1653398017-28426-1-git-send-email-quic_sibis@quicinc.com>
+ <1653398017-28426-2-git-send-email-quic_sibis@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@somainline.org>
+In-Reply-To: <1653398017-28426-2-git-send-email-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e4678abb-5933-4b01-121f-08da3db09ad6
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4331:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR02MB4331A90CD8DD9DD543AE95F8CAD79@DM6PR02MB4331.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9M4pL3lgWMp1Cb0FKsXYyhGZ69l4aa2oyxz0nGcLxuiRC4bfyIg7uHJg4KV7pNUU/C4OgILUdpOa7huY8Gtx0LcAqb2aNkZqgV59kkh5QlS/TvuLapcZtWztVU7owVOngq8YioEjTIUnzIrJP+cayYf0lW70RpC17YWdQoQq+eyDc6v3Njz7zrYWGsPFrWMP3USBxmAKYFBi57ixQSX4TamUNr7zHN62zSFSEXltmuWEmMNuVJi13+YmM/5HnzrjWk15bRQUTq4f2QjwHbqNZYEMuiR9R0596l9rY1/EY4YracZNQOOWQOIjjupFfFZzoAzAudOWX67G1YYSqzfFoXhlfiYcXtkhnrT/82tymho0WTRgw9uS+MIEvI2Gcxteet8MPEYJixE3BwzzP8s5IYbm/cM2Vw+WMY/ArDf/BGY0mbPpcJx8WXOzlFRTrnoi2j2P2pxK7/HMpHXqcXmUKoJYT9hi/5tWhAtC60CE0cd1DFnWVapEzDwUptfFULqcXgnE1jWTZ0lPvfc/WcDoCvyGGYpGlKxfDvBbbd3eAO58RGeaQnpVOK+lNgCIIYBnOq5q3Q8QgbvBD4EjX3J6UijBoJ2X8/zY+m6G/n2mdAJ1YHtZmvsazg/p5rtKJIwZP0V6wydwMrmF7Eq55et0Oa0efSj7AAEc0r96b5vhkCfy6iY3sxKMSOYxcarL9h9RFSu+6f/VXUeaUJlFKbQNZd7D2KsoQ8KgJf9G5XpVAQA=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(8936002)(40460700003)(508600001)(5660300002)(44832011)(4326008)(426003)(336012)(47076005)(9786002)(70586007)(70206006)(8676002)(54906003)(316002)(186003)(6636002)(36860700001)(4744005)(31696002)(110136005)(82310400005)(26005)(36756003)(7636003)(356005)(2906002)(31686004)(2616005)(53546011)(50156003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2022 18:09:54.6668
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4678abb-5933-4b01-121f-08da3db09ad6
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4331
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 5/24/22 10:28 AM, Krzysztof Kozlowski wrote:
-> On 24/05/2022 17:43, Tanmay Shah wrote:
->> With this, I will add 'maxItems: 8' in sram and memory-region properties.
->>
->> If everything else looks good on schema in this revision, could you
->> please also review next (dts) patch in this series?
->>
->> If that looks good, can I get your 'rb' on that?
->>
->> so we can reduce scope of reviews for next revisions?
-> There is no need to resend after receiving a tag, so the amount of
-> reviews/versions won't change.
 
-Ok. So, is it fine if I send new revision once dts patch is reviewed.
+On 24/05/2022 15:13, Sibi Sankar wrote:
+> From: Yogesh Lal <quic_ylal@quicinc.com>
+>
+> The coredumps for the ADSP,CDSP and MPSS subsystems will be 64 bit from
+> SM8450 SoCs onward. Update the elf class as elf64 accordingly.
 
-That way I can take care of any fixes in dts patch along with bindings 
-in next version.
+Hi,
+
+
+the "will be" got me thinking, whether you meant that SM8450 is the 
+first SoC that features 64-bit coredumps, or it is going to come in a 
+firmware update, but it was 32-bit in an earlier version.
+
+If the latter is true, did the consumer-release BSP for hardware vendors 
+include that change? Otherwise it may differ between devices, as some 
+vendors are known not to update their firmwares very often if at all.
+
+
+Konrad
 
 >
-> Best regards,
-> Krzysztof
+> Fixes: 5cef9b48458d ("remoteproc: qcom: pas: Add SM8450 remoteproc support")
+> Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
+>   drivers/remoteproc/qcom_q6v5_pas.c | 68 +++++++++++++++++++++++++++++++++++---
+>   1 file changed, 64 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 6ae39c5653b1..8ce68d0bb1bc 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -34,6 +34,7 @@ struct adsp_data {
+>   	const char *firmware_name;
+>   	int pas_id;
+>   	unsigned int minidump_id;
+> +	bool uses_elf64;
+>   	bool has_aggre2_clk;
+>   	bool auto_boot;
+>   
+> @@ -450,7 +451,11 @@ static int adsp_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	rproc->auto_boot = desc->auto_boot;
+> -	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+> +
+> +	if (desc->uses_elf64)
+> +		rproc_coredump_set_elf_info(rproc, ELFCLASS64, EM_NONE);
+> +	else
+> +		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>   
+>   	adsp = (struct qcom_adsp *)rproc->priv;
+>   	adsp->dev = &pdev->dev;
+> @@ -617,6 +622,24 @@ static const struct adsp_data sm8350_adsp_resource = {
+>   	.ssctl_id = 0x14,
+>   };
+>   
+> +static const struct adsp_data sm8450_adsp_resource = {
+> +	.crash_reason_smem = 423,
+> +	.firmware_name = "adsp.mdt",
+> +	.pas_id = 1,
+> +	.uses_elf64 = true,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"lcx",
+> +		"lmx",
+> +		NULL
+> +	},
+> +	.load_state = "adsp",
+> +	.ssr_name = "lpass",
+> +	.sysmon_name = "adsp",
+> +	.ssctl_id = 0x14,
+> +};
+> +
+>   static const struct adsp_data msm8996_adsp_resource = {
+>   		.crash_reason_smem = 423,
+>   		.firmware_name = "adsp.mdt",
+> @@ -751,6 +774,24 @@ static const struct adsp_data sm8350_cdsp_resource = {
+>   	.ssctl_id = 0x17,
+>   };
+>   
+> +static const struct adsp_data sm8450_cdsp_resource = {
+> +	.crash_reason_smem = 601,
+> +	.firmware_name = "cdsp.mdt",
+> +	.pas_id = 18,
+> +	.uses_elf64 = true,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = true,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mxc",
+> +		NULL
+> +	},
+> +	.load_state = "cdsp",
+> +	.ssr_name = "cdsp",
+> +	.sysmon_name = "cdsp",
+> +	.ssctl_id = 0x17,
+> +};
+> +
+>   static const struct adsp_data mpss_resource_init = {
+>   	.crash_reason_smem = 421,
+>   	.firmware_name = "modem.mdt",
+> @@ -785,6 +826,25 @@ static const struct adsp_data sc8180x_mpss_resource = {
+>   	.ssctl_id = 0x12,
+>   };
+>   
+> +static const struct adsp_data sm8450_mpss_resource = {
+> +	.crash_reason_smem = 421,
+> +	.firmware_name = "modem.mdt",
+> +	.pas_id = 4,
+> +	.minidump_id = 3,
+> +	.uses_elf64 = true,
+> +	.has_aggre2_clk = false,
+> +	.auto_boot = false,
+> +	.proxy_pd_names = (char*[]){
+> +		"cx",
+> +		"mss",
+> +		NULL
+> +	},
+> +	.load_state = "modem",
+> +	.ssr_name = "mpss",
+> +	.sysmon_name = "modem",
+> +	.ssctl_id = 0x12,
+> +};
+> +
+>   static const struct adsp_data slpi_resource_init = {
+>   		.crash_reason_smem = 424,
+>   		.firmware_name = "slpi.mdt",
+> @@ -913,10 +973,10 @@ static const struct of_device_id adsp_of_match[] = {
+>   	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
+>   	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sm8350_slpi_resource},
+>   	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
+> -	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
+> -	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
+> +	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8450_adsp_resource},
+> +	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8450_cdsp_resource},
+>   	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
+> -	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
+> +	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
+>   	{ },
+>   };
+>   MODULE_DEVICE_TABLE(of, adsp_of_match);
+>
