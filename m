@@ -2,103 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC0CC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 13:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F101C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 14:09:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237643AbiEXNOp (ORCPT
+        id S237682AbiEXOJo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 24 May 2022 09:14:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35616 "EHLO
+        Tue, 24 May 2022 10:09:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237607AbiEXNOa (ORCPT
+        with ESMTP id S230209AbiEXOJo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 May 2022 09:14:30 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E7209AE43;
-        Tue, 24 May 2022 06:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653398061; x=1684934061;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=kQsY5dppdnct/ZNtz2heoo4zsfgJCzMJGLniMhE5u8c=;
-  b=HSgwXFSEJiHIBK/GhHN1qhBmXp6QlFJSxr2blCz+URKnF61BHkQ8eRhx
-   sd3UeGLIEU1TMA4YYveYxZyt0a/hHuUTme4/tfsoyStyY2dYmz89os0jY
-   TVhbphgZuuF6cChZyDj0jN1qnmHT7GXreEr/llUeGwH9ooxSkGdZTroE+
-   I=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 24 May 2022 06:14:21 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2022 06:14:20 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 24 May 2022 06:14:20 -0700
-Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 24 May 2022 06:14:17 -0700
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>
-CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
-        <dmitry.baryshkov@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH 7/7] remoteproc: q6v5: Set q6 state to offline on receiving wdog irq
-Date:   Tue, 24 May 2022 18:43:37 +0530
-Message-ID: <1653398017-28426-8-git-send-email-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1653398017-28426-1-git-send-email-quic_sibis@quicinc.com>
-References: <1653398017-28426-1-git-send-email-quic_sibis@quicinc.com>
+        Tue, 24 May 2022 10:09:44 -0400
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D5027FDA;
+        Tue, 24 May 2022 07:09:43 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-edeb6c3642so22373416fac.3;
+        Tue, 24 May 2022 07:09:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nG80lP1Xa2erat+zWawIK5ymOe8Cuz6sDbYS9+ykkrA=;
+        b=xA7cQC+JDISweNmgTwA+kkLsnhn4XHS0rFoZUxZDcnYc1pI0TXbNVpmpfcdDM24u5q
+         PghtN+TOv+bEZVni+uZX55gfNTalLQaYYc9TwCBbQTc3zn1lbLA/HAiFEMK1mdqgRs0W
+         Zns+3aNiet0y5vyuMWhv7t/KfmzIL/IEoBm9WywDWRBFN/OSiC7/C0Ein0xLPvfrWNey
+         ++7978EAUcGme+3tgvheYxce/vhqiI0zK3BKX8F/UjP/38iAV8ML3daeae7IQ3g5aVbf
+         pn/p3G9y6u0E78vWVHAub3hGaBHKJ/VJejFUGBpQqd0AhkpRzjgwErE+SJaLxGUIyk7r
+         Slwg==
+X-Gm-Message-State: AOAM532wsuA/EmAz3mhRgKPzGtsSpox2oZhLP1j1f8l178KVQqTfFy2k
+        Z2E5x2Dd8wjYHswuMks0gA==
+X-Google-Smtp-Source: ABdhPJzQJqlYCgtjgQgfukGhoMZ9vX8fGvWFxtOAAHoPf47UrRhdP+w+huaQWy1Q5wEXsjg773nsYQ==
+X-Received: by 2002:a05:6870:524c:b0:f2:ae90:dae1 with SMTP id o12-20020a056870524c00b000f2ae90dae1mr732345oai.198.1653401382620;
+        Tue, 24 May 2022 07:09:42 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y41-20020a4a982c000000b0035eb4e5a6c7sm5392287ooi.29.2022.05.24.07.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 May 2022 07:09:41 -0700 (PDT)
+Received: (nullmailer pid 3697144 invoked by uid 1000);
+        Tue, 24 May 2022 14:09:40 -0000
+Date:   Tue, 24 May 2022 09:09:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        swboyd@chromium.org, mka@chromium.org
+Subject: Re: [PATCH v4 3/3] dt-bindings: remoteproc: qcom: Convert SC7180 MSS
+ bindings to YAML
+Message-ID: <20220524140940.GA3687200-robh@kernel.org>
+References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
+ <1652978825-5304-4-git-send-email-quic_sibis@quicinc.com>
+ <20220520224011.GA374485-robh@kernel.org>
+ <b495fa6c-6964-d8fa-0baf-acd719cd8779@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b495fa6c-6964-d8fa-0baf-acd719cd8779@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Siddharth Gupta <sidgup@codeaurora.org>
+On Tue, May 24, 2022 at 07:40:51AM +0530, Sibi Sankar wrote:
+> Hey Rob,
+> Thanks for taking time to review the series.
+> 
+> On 5/21/22 4:10 AM, Rob Herring wrote:
+> > On Thu, May 19, 2022 at 10:17:05PM +0530, Sibi Sankar wrote:
+> > > Convert SC7180 MSS PIL loading bindings to YAML.
+> > 
+> > I suppose there is a reason the sc7180 is being split out and the only
+> > one converted, but this doesn't tell me.
+> 
+> https://lore.kernel.org/all/e3543961-1645-b02a-c869-f8fa1ad2d41c@quicinc.com/#t
+> 
+> The reason for the split was discussed on the list ^^, thought it
+> wouldn't make much sense adding any of it to the commit message.
 
-Due to firmware bugs on the Q6 the hardware watchdog irq can be triggered
-multiple times. As the remoteproc framework schedules work items for the
-recovery process, if the other threads do not get a chance to run before
-recovery is completed the proceeding threads will see the state of the
-remoteproc as running and kill the remoteproc while it is running. This
-can result in various SMMU and NOC errors. This change sets the state of
-the remoteproc to offline whenever a watchdog irq is received.
+Why not? If you did, then we wouldn't be having this conversation.
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
- drivers/remoteproc/qcom_q6v5.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Commit messages, at a minimum, should answer why are you making the 
+change. They don't really need to explain what the change is. We can all 
+read the diff to understand that.
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 5280ec9b5449..497acfb33f8f 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -112,6 +112,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
- 	else
- 		dev_err(q6v5->dev, "watchdog without message\n");
- 
-+	q6v5->running = false;
- 	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
- 
- 	return IRQ_HANDLED;
-@@ -123,6 +124,9 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 	size_t len;
- 	char *msg;
- 
-+	if (!q6v5->running)
-+		return IRQ_HANDLED;
-+
- 	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
- 	if (!IS_ERR(msg) && len > 0 && msg[0])
- 		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
--- 
-2.7.4
-
+Rob
