@@ -2,109 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D117C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 17:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA04C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 24 May 2022 18:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234928AbiEXRdr (ORCPT
+        id S240138AbiEXSJ7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 24 May 2022 13:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50990 "EHLO
+        Tue, 24 May 2022 14:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239995AbiEXRdp (ORCPT
+        with ESMTP id S233757AbiEXSJ6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 24 May 2022 13:33:45 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA976A04F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 10:33:44 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id gh17so23754825ejc.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 May 2022 10:33:44 -0700 (PDT)
+        Tue, 24 May 2022 14:09:58 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 397026B09B;
+        Tue, 24 May 2022 11:09:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=I+Q2v4tOwGW2d76P1lFxFf0b+ZX8ilcNAVVRmWS9BObDvUhRAsmaDbdZ78DtkQoXLaU1Tl4QUTY1MLAJp2xZOa2ND3S1IEEoBa18rM4d1lTY2CyaoBqJG7idSr9VZ7f89S3iXFBB0b+mKl7+mUa9lWQ2gObGBi1GvTjs2G3DdCIFeSjOkWxebIfMsmHzoKC2T6WXytijkuFbbdEw0y2Hr60BcDpVW6qj4+HZEIWNOiu7LIwjEy5Vd0sLgWa4b2XqmV27nalM7lRt93VgMNgBJ511M+rm/zHSBcaZ0kN3fgDZT808A2fHBuiYR5faTIkI4Ch7C3lNslkoLra53gR0eQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FEo4fxKPxAxhQDXaa90LCmjmokvxxgdk1UFNmvioJqY=;
+ b=miKz5TxFDSMPude5DCcCSC4B6TQ1DeI2etz7/YmpiawxfLDERgC4pnL3iaW0CM5LtnT8H/4OjBtOwAqlb6k54fRFzVk4vsQqLXpraekb6yqKDozhfhM0G/cZw7ssKdeWq/sFowS6QbJGssBOGVb7gARoQeFDlPGYhtTFjSLGFCrjHl6LNrRm+AkISKYN9kvY6WhWiae49Qn+UaazVsV4Er9tx6BW9s00hMqjLAu9q2i2kd8poeyGM4vL3qUaEX9gmW03LjeriE5P/QEdgOSFy8gLcon8twhBjNLgt7Uued1HNpcatS0T/HThfuXPcNvDK/Q8FmfL9vdlisxXNJIq4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=TDDiVK/0RrLn3b/aahT7btm7i296B2V0gGDLOx8X1ZY=;
-        b=qBqVLj0xgRV22kdm183vJuStce0HuTo2gKgvnAjIFKwH65LuG+Tf0xOhNXRzvTXICs
-         Tsi1vuETbH3G8ZqjfFnydAFMGGb1/8HPBxixEueqj+mULEsvfNBY/rYzthky1af8QVHf
-         pNlTnyhFJOduccrjtYdrZ9JcqmEdIKyiQJd62Yh9jpnONAzSNLLvZesxrJ2gPDSE+aWX
-         Nf9nnIOlQ+2ljoBsmwSI4HWrLhxZ8465YQ2fi+Tl3M4QSAzUNuMoErrPyxgkHj4xBRpj
-         sWa90IvRxFO4UZ34rlhA1uS1dDljxy+J4EKXs6wo5wdybfMS6eXdJ2ZjbD1xIwv/CAZ3
-         4KKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=TDDiVK/0RrLn3b/aahT7btm7i296B2V0gGDLOx8X1ZY=;
-        b=Ln+0nWaofHrbcr+j48g/g7w1M3JONXWw919oEi+vtjVC/e320RnF2Zuzn3F0H5Qbtg
-         D2ng9TwGM1G2DkoXKJPdUFZYQwowhkpAFDpfVCE0HM69GtnAyhy240BCxArfmYpih2Ao
-         gr7Kbe9neXJ3+Gpa+5zfJaREldHu4OPDhrQixapohR11FXmkLnx8eYZiWjuFWv8wu3by
-         NErbf1OUEh3ELMVMwDKQ/lZbO9K3lezWHkvACmkdFSol7qlcNCghlFlwMrTEv9/LyA8f
-         bSvuuU+Rk3X1RMT/h27S58aFnRJrB4Ex7LFzaN/8Xy3MjFXGSRl1m5JHvvFvCuVe/GDM
-         DFHw==
-X-Gm-Message-State: AOAM5306oar/+T3RVRPk+mg34W0OAzn0n/+U2MMbGgAX9yRnglG7W3er
-        ye5LZ82DnPn2K7ks7CLHXJ4AYA==
-X-Google-Smtp-Source: ABdhPJw7idjF6lR2c/kScDlKjd/kk16xrz+CaaIEfnwGa6wCZpqyj8x7XEUhkdjJq4pGJueB1TiovQ==
-X-Received: by 2002:a17:906:a11a:b0:6fe:9814:70eb with SMTP id t26-20020a170906a11a00b006fe981470ebmr23763019ejy.118.1653413622914;
-        Tue, 24 May 2022 10:33:42 -0700 (PDT)
-Received: from [192.168.0.177] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id ay18-20020a056402203200b0042aa08c7799sm9560487edb.62.2022.05.24.10.33.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 May 2022 10:33:42 -0700 (PDT)
-Message-ID: <9badcfce-1db2-5381-bab8-8e52b875cebd@linaro.org>
-Date:   Tue, 24 May 2022 19:33:41 +0200
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FEo4fxKPxAxhQDXaa90LCmjmokvxxgdk1UFNmvioJqY=;
+ b=cO5WqzL14bsoE1GFabhovIJMLJD7XE/XBTdF/zYnNFy89d5n+hbXGwyFxPgpskALEMeVvjMDUHEEN88q6HwDuh3jABcD/G+f+NAB9wfSgYli55rDxGme7dr66p8QGeFW53wKX8GC0Q1U9IJ7hye39/unA66vRQLZfqq3eX/2XUk=
+Received: from DS7PR07CA0017.namprd07.prod.outlook.com (2603:10b6:5:3af::14)
+ by DM6PR02MB4331.namprd02.prod.outlook.com (2603:10b6:5:27::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.17; Tue, 24 May
+ 2022 18:09:54 +0000
+Received: from DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:5:3af:cafe::85) by DS7PR07CA0017.outlook.office365.com
+ (2603:10b6:5:3af::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.14 via Frontend
+ Transport; Tue, 24 May 2022 18:09:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ DM3NAM02FT020.mail.protection.outlook.com (10.13.4.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5273.14 via Frontend Transport; Tue, 24 May 2022 18:09:54 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Tue, 24 May 2022 11:09:50 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Tue, 24 May 2022 11:09:50 -0700
+Envelope-to: krzysztof.kozlowski@linaro.org,
+ bjorn.andersson@linaro.org,
+ mathieu.poirier@linaro.org,
+ robh+dt@kernel.org,
+ krzk+dt@kernel.org,
+ linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Received: from [10.23.123.15] (port=51136)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <tanmay.shah@xilinx.com>)
+        id 1ntYyc-0001ek-Lh; Tue, 24 May 2022 11:09:50 -0700
+Message-ID: <266f4fe2-e8b8-24f2-085d-fcdb87f90731@xilinx.com>
+Date:   Tue, 24 May 2022 11:09:49 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v4 3/3] dt-bindings: remoteproc: qcom: Convert SC7180 MSS
- bindings to YAML
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.0
+Subject: Re: [PATCH v5 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
+ bindings
 Content-Language: en-US
-To:     Sibi Sankar <quic_sibis@quicinc.com>, Rob Herring <robh@kernel.org>
-Cc:     bjorn.andersson@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        ohad@wizery.com, agross@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, mka@chromium.org
-References: <1652978825-5304-1-git-send-email-quic_sibis@quicinc.com>
- <1652978825-5304-4-git-send-email-quic_sibis@quicinc.com>
- <20220520224011.GA374485-robh@kernel.org>
- <371ce290-1deb-bff2-112b-71be8c005b37@linaro.org>
- <a5ad7884-d2c5-aeb0-405e-0121bb51f0a1@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <a5ad7884-d2c5-aeb0-405e-0121bb51f0a1@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
+        <michal.simek@xilinx.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
+ <20220518194426.3784095-2-tanmay.shah@xilinx.com>
+ <45fea4a1-387f-9684-a90b-58b695b54172@linaro.org>
+ <c97d61b0-8a38-5054-d5f1-bc7c5e7bcf61@xilinx.com>
+ <1b117e49-28d0-da75-68ee-c2fcef9fc9a9@linaro.org>
+ <c7b248f4-9ec1-2ae8-c7e3-55f37592f56e@xilinx.com>
+ <014a6c1c-2795-f066-f103-9a97afc35da7@linaro.org>
+From:   Tanmay Shah <tanmay.shah@xilinx.com>
+In-Reply-To: <014a6c1c-2795-f066-f103-9a97afc35da7@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e4678abb-5933-4b01-121f-08da3db09ad6
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4331:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR02MB4331A90CD8DD9DD543AE95F8CAD79@DM6PR02MB4331.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9M4pL3lgWMp1Cb0FKsXYyhGZ69l4aa2oyxz0nGcLxuiRC4bfyIg7uHJg4KV7pNUU/C4OgILUdpOa7huY8Gtx0LcAqb2aNkZqgV59kkh5QlS/TvuLapcZtWztVU7owVOngq8YioEjTIUnzIrJP+cayYf0lW70RpC17YWdQoQq+eyDc6v3Njz7zrYWGsPFrWMP3USBxmAKYFBi57ixQSX4TamUNr7zHN62zSFSEXltmuWEmMNuVJi13+YmM/5HnzrjWk15bRQUTq4f2QjwHbqNZYEMuiR9R0596l9rY1/EY4YracZNQOOWQOIjjupFfFZzoAzAudOWX67G1YYSqzfFoXhlfiYcXtkhnrT/82tymho0WTRgw9uS+MIEvI2Gcxteet8MPEYJixE3BwzzP8s5IYbm/cM2Vw+WMY/ArDf/BGY0mbPpcJx8WXOzlFRTrnoi2j2P2pxK7/HMpHXqcXmUKoJYT9hi/5tWhAtC60CE0cd1DFnWVapEzDwUptfFULqcXgnE1jWTZ0lPvfc/WcDoCvyGGYpGlKxfDvBbbd3eAO58RGeaQnpVOK+lNgCIIYBnOq5q3Q8QgbvBD4EjX3J6UijBoJ2X8/zY+m6G/n2mdAJ1YHtZmvsazg/p5rtKJIwZP0V6wydwMrmF7Eq55et0Oa0efSj7AAEc0r96b5vhkCfy6iY3sxKMSOYxcarL9h9RFSu+6f/VXUeaUJlFKbQNZd7D2KsoQ8KgJf9G5XpVAQA=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(8936002)(40460700003)(508600001)(5660300002)(44832011)(4326008)(426003)(336012)(47076005)(9786002)(70586007)(70206006)(8676002)(54906003)(316002)(186003)(6636002)(36860700001)(4744005)(31696002)(110136005)(82310400005)(26005)(36756003)(7636003)(356005)(2906002)(31686004)(2616005)(53546011)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2022 18:09:54.6668
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4678abb-5933-4b01-121f-08da3db09ad6
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT020.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4331
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 24/05/2022 04:00, Sibi Sankar wrote:
-> Hey Rob/Krzysztof,
-> 
-> On 5/21/22 8:04 PM, Krzysztof Kozlowski wrote:
->> On 21/05/2022 00:40, Rob Herring wrote:
->>> On Thu, May 19, 2022 at 10:17:05PM +0530, Sibi Sankar wrote:
->>>> Convert SC7180 MSS PIL loading bindings to YAML.
->>>
->>> I suppose there is a reason the sc7180 is being split out and the only
->>> one converted, but this doesn't tell me.
+On 5/24/22 10:28 AM, Krzysztof Kozlowski wrote:
+> On 24/05/2022 17:43, Tanmay Shah wrote:
+>> With this, I will add 'maxItems: 8' in sram and memory-region properties.
 >>
->> I am also confused, especially that last time I pointed out that there
->> is work already:
->> https://lore.kernel.org/all/20220511161602.117772-7-sireeshkodali1@gmail.com/
-> 
-> https://lore.kernel.org/all/e3543961-1645-b02a-c869-f8fa1ad2d41c@quicinc.com/#t
-> 
-> The reason for the split was discussed on the list ^^, thought it
-> wouldn't make much sense adding any of it to the commit message.
-> Also since Krzysztof said he wanted a alignment between Sireesh/me
-> we did exchange mails saying I'll take care of SC7180/SC7280 (since
-> they had pas compatible which is overridden by mss compatible) and
-> he could continue with the rest.
+>> If everything else looks good on schema in this revision, could you
+>> please also review next (dts) patch in this series?
+>>
+>> If that looks good, can I get your 'rb' on that?
+>>
+>> so we can reduce scope of reviews for next revisions?
+> There is no need to resend after receiving a tag, so the amount of
+> reviews/versions won't change.
 
+Ok. So, is it fine if I send new revision once dts patch is reviewed.
 
-Sounds good to me, but Rob's got a point - this background should be
-better explained.
+That way I can take care of any fixes in dts patch along with bindings 
+in next version.
 
-
-Best regards,
-Krzysztof
+>
+> Best regards,
+> Krzysztof
