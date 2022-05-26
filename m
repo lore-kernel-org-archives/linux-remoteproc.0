@@ -2,343 +2,273 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11049C43219
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 May 2022 16:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92EBAC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 26 May 2022 16:41:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346999AbiEZQ1Q (ORCPT
+        id S236677AbiEZQld (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 26 May 2022 12:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47030 "EHLO
+        Thu, 26 May 2022 12:41:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229780AbiEZQ1P (ORCPT
+        with ESMTP id S241861AbiEZQlc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 26 May 2022 12:27:15 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC484506F8;
-        Thu, 26 May 2022 09:27:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=g5u06r/Xg87j4V8Rg6/UfqgEi7DYXSrP5RmkrTIzh/Q=; b=iCgAR296S3LSbLmOpR3LkrCpsK
-        y7YGr6I7yByIEwTjZ2WtYRzzbyBvMDTQTR3zmmZ44zuVyZpeJqajxLL5P1xpJLJTb2dMh5pJztl3L
-        0g1AqEeOs5c1YhSNaGywDAZ/a8oRKFkwwQklOk+HDjN8XleGQXFDshk4Tc2fywUvD+bO6YJpDVBxc
-        VZ4/e0yO80afyjzEwVVVSVn0AWE9cNQ3TmY2LMY1cD3yxOgLWBpjPGf2UcUw/gYnz7ZNSKeZGhrc7
-        DZJCm/pzdYk71lBIOpedohq49XSnuibFm3AYgqR1AYHFLSTcilBkitlJTKPhazpNWpAJ8ROQUyMS/
-        zY22U5mQ==;
-Received: from 200-161-159-120.dsl.telesp.net.br ([200.161.159.120] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1nuGJf-002CG3-Fu; Thu, 26 May 2022 18:26:28 +0200
-Message-ID: <0d084eed-4781-c815-29c7-ac62c498e216@igalia.com>
-Date:   Thu, 26 May 2022 13:25:57 -0300
+        Thu, 26 May 2022 12:41:32 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2060.outbound.protection.outlook.com [40.107.237.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E54F42B184
+        for <linux-remoteproc@vger.kernel.org>; Thu, 26 May 2022 09:41:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N/DfOrHEM16BCClb36k2XjfA69xdLdkCvlAN67iTlZTkOCn+hVEmdEEI04tTpePYw0nyuDSpUA7/YScIARMQ+M+O20LdiydljuTNEVeSM7KNjCNH3TBLSC61sJH/nXaX7aHlUYV5DXAd7izcAMUMKHGWa/Qkuf0fS7CMDtENrndqrJsJE2gqDyzYsWaLWkYbekscsy0SVx0nbEodKUluoI7Z3Z8TqDYgOeACokuEm4IDyPifeNcrw5LM6mreToOoHKNRVGyd0/rb9q66AIzvontc4zN54E98GG1BPru/gGhyAAftFIB+2PCLM17lUhsWp5AOyYf2CrWVLxd/Z0LkyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vR5v+KCyCuyCj3lFmvWvk7SiOsjzhAO91yXgmEnfVrQ=;
+ b=DHe9J93VTxOyCr9YqqkzVHXAM71IBnCqbvj3A7t2SMqpkhTmtnru6UpuCRkNNaIXD9cBibObD6sosMvOs8Dc4JixW6AoUUobRvyD2gGw9zGi4qnp1lxVLIzqE+/XR8P1wU3rQgURAaLmlpa2eenbFO1nTVeAVP7mBfA+gapvpwFYCX4mwuH6OXEQoAwF3upX6qwBf4+kQ42Pfx+2ofOKFHdjmJL8DMMw46Bj5PbnsdfShG7vMlBZcHoKsUh50Znyt8ZWr1mYx/BDBfoy1BdMMTvf51VjyciAPnBPrCSUWjF9CSqcMnSyftDa4MNC2mKjlx3Cfo5aA14yh3q1vcFG/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vR5v+KCyCuyCj3lFmvWvk7SiOsjzhAO91yXgmEnfVrQ=;
+ b=J+WYxo0JOpFCuDn8vQw5yfrBva3NCfwwGHt+9Siux0oqZtmsITvh71ZXcjmUMyPfMMR4/HzNN7ORziwema1fNHdtZXdoFU1rdgm3JY6aGS3fwe5Nw9s3sfpSmsWZbB38t0GqQc3nHQ/wowb4yOcCuK3Gvn/QfUNrDazqgZYlhuw=
+Received: from BN6PR22CA0037.namprd22.prod.outlook.com (2603:10b6:404:37::23)
+ by BYAPR02MB4341.namprd02.prod.outlook.com (2603:10b6:a03:56::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.19; Thu, 26 May
+ 2022 16:41:27 +0000
+Received: from BN1NAM02FT033.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:404:37:cafe::78) by BN6PR22CA0037.outlook.office365.com
+ (2603:10b6:404:37::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13 via Frontend
+ Transport; Thu, 26 May 2022 16:41:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
+ smtp.mailfrom=xilinx.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com; pr=C
+Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
+ BN1NAM02FT033.mail.protection.outlook.com (10.13.3.186) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5293.13 via Frontend Transport; Thu, 26 May 2022 16:41:27 +0000
+Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
+ xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.14; Thu, 26 May 2022 09:41:26 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
+ 15.1.2176.14 via Frontend Transport; Thu, 26 May 2022 09:41:26 -0700
+Envelope-to: mathieu.poirier@linaro.org,
+ bjorn.andersson@linaro.org,
+ linux-remoteproc@vger.kernel.org
+Received: from [10.23.122.225] (port=59782)
+        by smtp.xilinx.com with esmtp (Exim 4.90)
+        (envelope-from <tanmay.shah@xilinx.com>)
+        id 1nuGYA-000ACH-It; Thu, 26 May 2022 09:41:26 -0700
+Message-ID: <bb0ad4ee-a9ad-e70a-5870-7552fa1cca51@xilinx.com>
+Date:   Thu, 26 May 2022 09:41:26 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.1
+Subject: Re: [PATCH v5 0/6] Add Xilinx RPU subsystem support
 Content-Language: en-US
-To:     bhe@redhat.com, d.hatayama@jp.fujitsu.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Mark Rutland <mark.rutland@arm.com>, mikelley@microsoft.com,
-        pmladek@suse.com, vkuznets@redhat.com
-Cc:     akpm@linux-foundation.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        hidehiro.kawai.ez@hitachi.com, jgross@suse.com,
-        john.ogness@linutronix.de, keescook@chromium.org, luto@kernel.org,
-        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
-        peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, will@kernel.org
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <87fskzuh11.fsf@email.froward.int.ebiederm.org>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <87fskzuh11.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From:   Tanmay Shah <tanmay.shah@xilinx.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <bjorn.andersson@linaro.org>, <linux-remoteproc@vger.kernel.org>
+References: <20220518194426.3784095-1-tanmay.shah@xilinx.com>
+ <CANLsYkw9HuLso9bGL4fM7C9qH+basgKA9yKFwms4WB4OUHqymQ@mail.gmail.com>
+ <b4bef7c4-7f12-1cdb-c2f0-a248c125b9b4@xilinx.com>
+In-Reply-To: <b4bef7c4-7f12-1cdb-c2f0-a248c125b9b4@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 357c42cb-fc75-455d-67dc-08da3f36941a
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4341:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4341C55B349409DFB50E2449CAD99@BYAPR02MB4341.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: c1nQ4YqTZcILvNW+nIuTLPgu27dckCgY+dTX1fBD5t8o5QtMrRDAAFL3h4p+llw/1La4+3DS2PCyM55Dnh452m7fRBYcdT/ATqEh3c4DbBRRh9RgwhCzS3+3yjlXlHDuD7mFdbMtEAd3rTigAy52eFzSP0nzGpcgL483B/QmyxkvJlz0cZNJZiG01ztHJjGuKSEU6zUp3kVgoaTeMX5X2r0PO59QfF4S3b6vLmr7jSrwA31DWKngF2jZJzqk1XGUNCgd36yAO6Bq+kR6Fuhgm0YrbBVzJ1Sqj07BUja2+w+GZjTtiJrTssuIIi+GGm2p9Id/MYDK+ohWojf46JNE3n/PFqc103GbY713J+YHRE/CpEcDCxJA7+aYNTBXJxvP85LaPtIZl8DyUnbMDXkpiJ2CS7Ij9Lpg9gUZ0pU5XGR+GJ9fgDMgM0abnZhabo/PwCkZQzUAK41kBppw5IiI256M0/9PLUMsl2XLqTbBiXU+/v7c3ja4gJjxcffmUntA+ca7J3PC37S1/7PlCvvZLGMau91HZFXd6Bgg2jlMX9ob4Dwk8SxmHIA/4th8KC9XB1qTKKzqcYUnIgLEla9rYKVQTpoEMemghUVXMP+8hFIuQ7NZztDyrU/evsd48x3iFFfzpYeBuEwCO6hZjW+4OQN3Yq+caxmQexc9RGjeAVQ8uwZRw2VqcDgSzKAnhRl0DwhrGIe0cYPies2dnFBdIswsBqybN1jNhFPvEAY2HqU=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(46966006)(36840700001)(40470700004)(2616005)(70586007)(8676002)(70206006)(40460700003)(356005)(44832011)(5660300002)(316002)(26005)(110136005)(31696002)(82310400005)(186003)(53546011)(9786002)(31686004)(7636003)(2906002)(8936002)(83380400001)(336012)(47076005)(426003)(36756003)(36860700001)(508600001)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2022 16:41:27.0482
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 357c42cb-fc75-455d-67dc-08da3f36941a
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT033.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4341
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey folks, first of all thanks a lot for the reviews / opinions about
-this. I imagined that such change would be polemic, and I see I was
-right heh
+
+On 5/19/22 8:10 PM, tanmay.shah@xilinx.com wrote:
+>
+>
+> On 5/19/22 3:19 AM, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+>> Hi Tanmay,
+>>
+>> I have replaced the previous version of this set with this one in my
+>> queue.  That way you don't go back to the bottom.
+>>
+>
+> Thanks Mathieu. Sure it will help.
+>
+Hi Mathieu,
+
+Just want to check on reviews. Are you any close to review this version ?
+
+I have minor fixes in bindings, but if I can get reviews on driver in 
+this version, I can send driver related changes in v6 as well.
+
+If my patch is not any close in queue (let's say within next week) I 
+will go ahead and post v6 that is fixing only bindings.
 
 
-I'll try to "mix" all the relevant opinions in a single email, since
-they happened in different responses and even different mail threads.
+Thanks,
 
-I've looped here the most interested parties based on the feedback
-received, such as Baoquan (kdump), Hatayama (kdump), Eric (kexec), Mark
-(arm64), Michael (Hyper-V), Petr (console/printk) and Vitaly (hyper-v /
-kvm). I hope we can discuss and try to reach some consensus - my
-apologies in advance for this long message!
+Tanmay
 
-So, here goes some feedback we received about this change and correlated
-feedback from arm64 community - my apologies if I missed something
-important, I've tried to collect the most relevant portions, while
-keeping the summary "as short" as possible. I'll respond to such
-feedback below, after the quotes.
-
-
-On 24/05/2022 05:32, Baoquan He wrote:
->> [...] 
->> Firstly, kdump is not always the first thing. In any use case, if kdump
->> kernel is not loaded, it's not the first thing at all. Not to mention
->> if crash_kexec_post_notifiers is specified.
->> [...]
->> Changing this will cause regression. During these years, nobody ever doubt
->> kdump should execute firstly if crashkernel is reserved and kdump kernel is
->> loaded. That's not saying we can't change
->> this, but need a convincing justification.
->> [...] 
->> Secondly, even with the notifiers' split, we can't guarantee people will
->> absolutely add notifiers into right list in the future. Letting kdump
->> execute behind lists by default will put kdump into risk.
->> [...] 
->> As for Hyper-V, if it enforces to terminate VMbus connection, no matter
->> it's kdump or not, why not taking it out of panic notifiers list and
->> execute it before kdump unconditionally.
-
-
-On 24/05/2022 05:01, Petr Mladek wrote:
->> [...]
->> Anyway, I see four possible solutions:
->> 
->>   1. The most conservative approach is to keep the current behavior
->>      and call kdump first by default.
->> 
->>   2. A medium conservative approach to change the default default
->>      behavior and call hypervisor and eventually the info notifiers
->>      before kdump. There still would be the possibility to call kdump
->>      first by the command line parameter.
->> 
->>   3. Remove the possibility to call kdump first completely. It would
->>      assume that all the notifiers in the info list are super safe
->>      or that they make kdump actually more safe.
->> 
->>   4. Create one more notifier list for operations that always should
->>      be called before crash_dump.
->> 
->> Regarding the extra notifier list (4th solution). It is not clear to
->> me whether it would be always called even before hypervisor list or
->> when kdump is not enabled. We must not over-engineer it.
->> 
->> 2nd proposal looks like a good compromise. But maybe we could do
->> this change few releases later. The notifiers split is a big
->> change on its own.
-
-
-On 24/05/2022 07:18, Baoquan He wrote:
->>[...]
->> I would vote for 1 or 4 without any hesitation, and prefer 4. I ever
->> suggest the variant of solution 4 in v1 reviewing. That's taking those
->> notifiers out of list and enforcing to execute them before kdump. E.g
->> the one on HyperV to terminate VMbus connection. Maybe solution 4 is
->> better to provide a determinate way for people to add necessary code
->> at the earliest part.
->> [...] 
->>>
->>> Regarding the extra notifier list (4th solution). It is not clear to
->>> me whether it would be always called even before hypervisor list or
->>> when kdump is not enabled. We must not over-engineer it.
->> 
->> One thing I would like to notice is, no matter how perfect we split the
->> lists this time, we can't gurantee people will add notifiers reasonablly
->> in the future. And people from different sub-component may not do
->> sufficient investigation and add them to fulfil their local purpose.
->> 
->> The current panic notifers list is the best example. Hyper-V actually
->> wants to run some necessary code before kdump, but not all of them, they
->> just add it, ignoring the original purpose of
->> crash_kexec_post_notifiers. I guess they do like this just because it's
->> easy to do, no need to bother changing code in generic place.
->> 
->> Solution 4 can make this no doubt, that's why I like it better.
->> [...] 
->> As I replied to Guilherme, solution 2 will cause regression if not
->> calling kdump firstly. Solution 3 leaves people space to make mistake,
->> they could add nontifier into wrong list.
->> 
->> I would like to note again that the panic notifiers are optional to run,
->> while kdump is expectd once loaded, from the original purpose. I guess
->> people I know will still have this thought, e.g Hatayama, Masa, they are
->> truly often use panic notifiers like this on their company's system.
-
-
-On 24/05/2022 11:44, Eric W. Biederman wrote:
-> [...]
-> Unfortunately I am also very grouchy.
-> 
-> Notifiers before kexec on panic are fundamentally broken.  So please
-> just remove crash_kexec_post notifiers and be done with it.  Part of the
-> deep issue is that firmware always has a common and broken
-> implementation for anything that is not mission critical to
-> motherboards.
-> 
-> Notifiers in any sense on these paths are just bollocks.  Any kind of
-> notifier list is fundamentally fragile in the face of memory corruption
-> and very very difficult to review.
-> 
-> So I am going to refresh my ancient NACK on this.
-> 
-> I can certainly appreciate that there are pieces of the reboot paths
-> that can be improved.  I don't think making anything more feature full
-> or flexible is any kind of real improvement.
-
-
-Now, from the thread "Should arm64 have a custom crash shutdown
-handler?" (link:
-https://lore.kernel.org/lkml/427a8277-49f0-4317-d6c3-4a15d7070e55@igalia.com/),
-we have:
-
-On 05/05/2022 08:10, Mark Rutland wrote:
->> On Wed, May 04, 2022 at 05:00:42PM -0300, Guilherme G. Piccoli wrote:
->>> [...]
->>> Currently, when we kexec in arm64, the function machine_crash_shutdown()
->>> is called as a handler to disable CPUs and (potentially) do extra
->>> quiesce work. In the aforementioned architectures, there's a way to
->>> override this function, if for example an hypervisor wish to have its
->>> guests running their own custom shutdown machinery.
->> 
->> What exactly do you need to do in this custom shutdown machinery?
->> 
->> The general expectation for arm64 is that any hypervisor can implement PSCI,
->> and as long as you have that, CPUs (and the VM as a whole) can be shutdown in a
->> standard way.
->> 
->> I suspect what you're actually after is a mechanism to notify the hypervisor
->> when the guest crashes, rather than changing the way the shutdown itself
->> occurs? If so, we already have panic notifiers, and QEMU has a "pvpanic"
->> device using that. See drivers/misc/pvpanic/.
-
-
-OK, so it seems we have some points in which agreement exists, and some
-points that there is no agreement and instead, we have antagonistic /
-opposite views and needs. Let's start with the easier part heh
-
-
-It seems everybody agrees that *we shouldn't over-engineer things*, and
-as per Eric good words: making the panic path more feature-full or
-increasing flexibility isn't a good idea. So, as a "corollary": the
-panic level approach I'm proposing is not a good fit, I'll drop it and
-let's go with something simpler.
-
-Another point of agreement seems to be that _notifier lists in the panic
-path are dangerous_, for *2 different reasons*:
-
-(a) We cannot guarantee that people won't add crazy callbacks there, we
-can plan and document things the best as possible - it'll never be
-enough, somebody eventually would slip a nonsense callback that would
-break things and defeat the planned purpose of such a list;
-
-(b) As per Eric point, in a panic/crash situation we might have memory
-corruption exactly in the list code / pointers, etc, so the notifier
-lists are, by nature, a bit fragile. But I think we shouldn't consider
-it completely "bollocks", since this approach has been used for a while
-with a good success rate. So, lists aren't perfect at all, but at the
-same time, they aren't completely useless.
-
-
-Now, to the points in which there are conflicting / antagonistic
-needs/views:
-
-(I) Kdump should be the first thing to run, as it's been like that since
-forever. But...notice that "crash_kexec_post_notifiers" was created
-exactly as a way to circumvent that, so we can see this is not an
-absolute truth. Some users really *require to execute* some special code
-*before kdump*.
-Worth noticing here that regular kexec invokes the drivers .shutdown()
-handlers, while kdump [aka crash_kexec()] does not, so we must have a
-way to run code before kdump in a crash situation.
-
-(II) If *we need* to have some code always running before kdump/reboot
-on panic path (like the Hyper-V vmbus connection unload), *where to add
-such code*? Again, conflicting views. Some would say we should hardcode
-this in the panic() function. Others, that we should use the custom
-machine_crash_shutdown() infrastructure - but notice that this isn't
-available in all architectures, like arm64. Finally, others suggest
-to...use notifier lists! Which was more or less the approach we took in
-this patch.
-
-How can we reach consensus on this? Not everybody will be 100% happy,
-that's for sure. Also, I'd risk to say keep things as-is now or even
-getting rid of "crash_kexec_post_notifiers" won't work at all, we have
-users with legitimate needs of running code before a kdump/reboot when
-crash happens. The *main goal* should be to have a *simple solution*
-that doesn't require users to abuse parameters, like it's been done with
-"crash_kexec_post_notifiers" (Hyper-V and PowerPC currently force this
-parameter to be enabled, for example).
-
-
-To avoid using a 4th list, especially given the list nature is a bit
-fragile, I'd suggest one of the 3 following approaches - I *really
-appreciate feedbacks* on that so I can implement the best solution and
-avoid wasting time in some poor/disliked solution:
-
-(1) We could have a helper function in the "beginning" of panic path,
-i.e., after the logic to disable preemption/IRQs/secondary CPUs, but
-*before* kdump. Then, users like Hyper-V that require to execute stuff
-regardless of kdump or not, would run their callbacks from there,
-directly, no lists involved.
-
-- pros: simple, doesn't mess with arch code or involve lists.
-- cons: header issues - will need to "export" such function from driver
-code, for example, to run in core code. Also, some code might only be
-required to run in some architectures, or only if kdump is set, etc.,
-making the callbacks more complex / full of if conditionals.
-
-
-(2) Similarly to previous solution, we could have a helper in the kexec
-core code, not in the panic path. This way, users that require running
-stuff *before a kdump* would add direct calls there; if kdump isn't
-configured, and if such users also require that this code execute in
-panic nevertheless, they'd need to also add a callback to some notifier
-list.
-
-- pros: also simple / doesn't mess with arch code or involve lists;
-restricts the callbacks to kdump case.
-- cons: also header issues, but might cause code duplicity too, since
-some users would require both to run their code before a kdump and in
-some panic notifier list.
-
-
-(3) Have a way in arm64 (and all archs maybe) to run code before a kdump
-- this is analog to the custom machine_crash_shutdown() we have nowadays
-in some archs.
-
-- pros: decouple kdump-required callbacks from panic notifiers, doesn't
-involve lists, friendly to arch-dependent callbacks.
-- cons: also header issues, might cause code duplicity (since some users
-would also require to run their code in panic path regardless of kdump)
-and involve changing arch code (some maintainers like Mark aren't fond
-about that, with good reasons!).
-
-
-So, hopefully we can converge to some direction even if not 100% of
-users are happy - this problem is naturally full of trade-offs.
-Thanks again for the reviews and the time you're spending reading these
-long threads.
-
-Cheers,
-
-
-Guilherme
+>> Thanks,
+>> Mathieu.
+>>
+>> On Wed, 18 May 2022 at 20:46, Tanmay Shah <tanmay.shah@xilinx.com> 
+>> wrote:
+>> >
+>> > This patch series adds bindings document for RPU subsystem found on 
+>> Xilinx
+>> > ZynqMP platforms. It also adds device nodes and driver to enable RPU
+>> > subsystem in split mode and lockstep mode.
+>> >
+>> > Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU 
+>> subsystem
+>> > contains two arm cortex r5f cores. RPU subsystem can be configured in
+>> > split mode, lockstep mode and single-cpu mode.
+>> >
+>> > RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
+>> > In lockstep mode, all 4 banks are combined and total of 256KB 
+>> memory is
+>> > made available to r5 core0. In split mode, both cores can access two
+>> > TCM banks i.e. 128 KB.
+>> >
+>> > RPU can also fetch data and execute instructions from DDR memory 
+>> along with
+>> > TCM memory.
+>> > ---
+>> >
+>> > Changes in v5:
+>> >    - Add constraints of the possible values of xlnx,cluster-mode 
+>> property
+>> >    - fix description of power-domains property for r5 core
+>> >    - Remove reg, address-cells and size-cells properties as it is 
+>> not required
+>> >    - Fix description of mboxes property
+>> >    - Add description of each memory-region and remove old .txt 
+>> binding link
+>> >      reference in the description
+>> >    - Remove optional reg property from r5fss node
+>> >    - Move r5fss node out of axi node
+>> >
+>> > Changes in v4:
+>> >    - Add memory-region, mboxes and mbox-names properties in 
+>> dt-bindings example
+>> >    - Add reserved memory region node and use it in Xilinx dt RPU 
+>> subsystem node
+>> >    - Remove redundant header files
+>> >    - use dev_err_probe() to report errors during probe
+>> >    - Fix missing check on error code returned by 
+>> zynqmp_r5_add_rproc_core()
+>> >    - Fix memory leaks all over the driver when resource allocation 
+>> fails for any core
+>> >    - make cluster mode check only at one place
+>> >    - remove redundant initialization of variable
+>> >    - remove redundant use of of_node_put()
+>> >    - Fix Comment format problem
+>> >    - Assign offset of zynqmp_tcm_banks instead of duplicating it
+>> >    - Add tcm and memory regions rproc carveouts during prepare 
+>> instead of parse_fw
+>> >    - Remove rproc_mem_entry object from r5_core
+>> >    - Use put_device() and rproc_del() APIs to fix memory leaks
+>> >    - Replace pr_* with dev_*. This was missed in v3, fix now.
+>> >    - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This 
+>> was reported by checkpatch script.
+>> >
+>> > Changes in v3:
+>> >    - Fix checkpatch script indentation warning
+>> >    - Remove unused variable from xilinx remoteproc driver
+>> >    - use C style comments, i.e /*...*/
+>> >    - Remove redundant debug information which can be derived using 
+>> /proc/device-tree
+>> >    - Fix multiline comment format
+>> >    - s/"final fot TCM"/"final for TCM"
+>> >    - Function devm_kzalloc() does not return an code on error, just 
+>> NULL.
+>> >      Remove redundant error check for this function throughout the 
+>> driver.
+>> >    - Fix RPU mode configuration and add documentation accordingly
+>> >    - Get rid of the indentations to match function documentation 
+>> style with rest of the driver
+>> >    - Fix memory leak by only using r5_rproc->priv and not replace 
+>> it with new instance
+>> >    - Use 'i' for the outer loop and 'j' for the inner one as per 
+>> convention
+>> >    - Remove redundant error and NULL checks throughout the driver
+>> >    - Use devm_kcalloc() when more than one element is required
+>> >    - Add memory-regions carveouts during driver probe instead of 
+>> parse_fw call
+>> >      This removes redundant copy of reserved_mem object in r5_core 
+>> structure.
+>> >    - Fix memory leak by using of_node_put()
+>> >    - Fix indentation of tcm_mem_map function args
+>> >    - Remove redundant init of variables
+>> >    - Initialize tcm bank size variable for lockstep mode
+>> >    - Replace u32 with phys_addr_t for variable stroing memory bank 
+>> address
+>> >    - Add documentation of TCM behavior in lockstep mode
+>> >    - Use dev_get_drvdata instead of platform driver API
+>> >    - Remove info level messages
+>> >    - Fix checkpatch.pl warnings
+>> >    - Add documentation for the Xilinx r5f platform to understand 
+>> driver design
+>> >
+>> > Changes in v2:
+>> >    - Remove proprietary copyright footer from cover letter
+>> >
+>> >
+>> > Ben Levinsky (3):
+>> >    firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+>> >      configuration.
+>> >    firmware: xilinx: Add shutdown/wakeup APIs
+>> >    firmware: xilinx: Add RPU configuration APIs
+>> >
+>> > Tanmay Shah (3):
+>> >    dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+>> >    arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+>> >    drivers: remoteproc: Add Xilinx r5 remoteproc driver
+>> >
+>> >   .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  128 ++
+>> >   arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
+>> >   drivers/firmware/xilinx/zynqmp.c              |   97 ++
+>> >   drivers/remoteproc/Kconfig                    |   12 +
+>> >   drivers/remoteproc/Makefile                   |    1 +
+>> >   drivers/remoteproc/xlnx_r5_remoteproc.c       | 1045 
+>> +++++++++++++++++
+>> >   include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
+>> >   include/linux/firmware/xlnx-zynqmp.h          |   60 +
+>> >   8 files changed, 1382 insertions(+)
+>> >   create mode 100644 
+>> Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+>> >   create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
+>> >
+>> >
+>> > base-commit: 01a1a0c8d456b11f2f6b9b822414481beaa44d6f
+>> > --
+>> > 2.25.1
+>> >
+>>
