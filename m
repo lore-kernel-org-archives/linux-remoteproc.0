@@ -2,107 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A6EC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 06:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C3BC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 16:11:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232816AbiE3GXh (ORCPT
+        id S238399AbiE3QLo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 May 2022 02:23:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58592 "EHLO
+        Mon, 30 May 2022 12:11:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232801AbiE3GX2 (ORCPT
+        with ESMTP id S231636AbiE3QLn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 May 2022 02:23:28 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEE7B487;
-        Sun, 29 May 2022 23:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653891807; x=1685427807;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=shTB0DnuQEAQMrBnn3hQIHFMKfWKIyiEX/Amn09n/BM=;
-  b=Q+EXTRUfBlfgZrTKmjbC2c+8fT4OL+zkUWMJe2jqskfatjPyHTSJfVv6
-   gN8JMV0qy9Z8gp3oyzB2If0gcucoKd9eV9B3fnEi+OLvxqZjc+STSJ2Pj
-   2AMGWW3qWsQwTxQ7COxhh4++2CkEHpeonh+lLxpjF8McI6s5XfgKT4ruW
-   A=;
-Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
-  by alexa-out.qualcomm.com with ESMTP; 29 May 2022 23:23:27 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2022 23:23:26 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 29 May 2022 23:23:26 -0700
-Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 29 May 2022 23:23:23 -0700
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>
-CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
-        <dmitry.baryshkov@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <konrad.dybcio@somainline.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [V2 6/6] remoteproc: sysmon: Send sysmon state only for running rprocs
-Date:   Mon, 30 May 2022 11:52:51 +0530
-Message-ID: <1653891771-17103-7-git-send-email-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1653891771-17103-1-git-send-email-quic_sibis@quicinc.com>
-References: <1653891771-17103-1-git-send-email-quic_sibis@quicinc.com>
+        Mon, 30 May 2022 12:11:43 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112C83A5F3;
+        Mon, 30 May 2022 09:11:41 -0700 (PDT)
+Received: from mail-yw1-f176.google.com ([209.85.128.176]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MxDgm-1nbiC331j6-00xXYP; Mon, 30 May 2022 18:11:39 +0200
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-30c2f288f13so39766167b3.7;
+        Mon, 30 May 2022 09:11:39 -0700 (PDT)
+X-Gm-Message-State: AOAM531ISlRInc2Xwuxpy8R3BNV/MMpjTlU4b12H4/BovxC+/vUkvhZ7
+        y5MJgOK5XqhP2IaLHBj1iwAwesNehFETh9XuFOo=
+X-Google-Smtp-Source: ABdhPJzz3XlqawyrllmUlfmpCRvsScEJzlN451+7Mmq+gGGuBjqysfamSt3+XlP2gFPc9sId0jCRiqlAcBI0boxBsTg=
+X-Received: by 2002:a81:28b:0:b0:30c:5e57:fac3 with SMTP id
+ 133-20020a81028b000000b0030c5e57fac3mr4506381ywc.249.1653927098209; Mon, 30
+ May 2022 09:11:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+References: <1652248625-990-1-git-send-email-quic_sibis@quicinc.com>
+In-Reply-To: <1652248625-990-1-git-send-email-quic_sibis@quicinc.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 30 May 2022 18:11:21 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2b05w3uRjXhx7CgdLEHL78ZHRjgOYoG_SR0SyDxcLDMg@mail.gmail.com>
+Message-ID: <CAK8P3a2b05w3uRjXhx7CgdLEHL78ZHRjgOYoG_SR0SyDxcLDMg@mail.gmail.com>
+Subject: Re: [PATCH v2] remoteproc: qcom_q6v5_mss: map/unmap metadata region
+ before/after use
+To:     Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        sboyd@kernel.org, agross@kernel.org,
+        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
+        mka@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:HjsYA+nrojhCIllRkh3gdovi3Qg5wl0dW0CKHI0r/POmXLGGqhi
+ 7kgE6qEs+iFxMAZ1F301SkzE4kkctb9K5tqCl3/85/crUk0LI285LW7ZSJTv47601yNsabx
+ UVQieCq94RBDD2OK2iLvT24SLE2byxsEFLic0EsUI0RYFztiGLpML851GgDxhPthqfpl1ip
+ UgC1fx1MHKEILUOdUTsFg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:w02Pzz3C5XQ=:vZ/x27lMmOlXjpUFhvk6hg
+ /XJmrkyPjDqFk8UZjreOELRjvweTubirPAYkp0amL8wgOOCb0KZpYV9WkvTOHDUgH7BpGKr93
+ dqYINIfKoOiVjndt51yQF0mskNhL5gwfnZKDE57UlX8V1advBV/ETkrb7lisxy4K7T2vLR0zx
+ s/jvBsP1gA3wI6geloszXKPi9oynrKEMzdtjS3TSWsqKZWBfZq+0/37+sxziDz+832RMLfpz8
+ Et06EhTzU+3mk495BKrJVHfkbBadgvCnbD2Tr4Q/0qJKvKdEhJ2zwMA14kMDDcJjQpt21ZRyc
+ YuAGvZMsV52Vaj7/QxyTFZD9/VBxwrZTqEZIOaD9erpe3tytl73QCNKdQsSfi8wU/n2C8jz1W
+ 9DwG9FW6K8ZTB3QH0teKoQBK8cSXY38ftQw/m0fCyicvsm+mFiuvHP9fnnclgcfvq8ERZSjIV
+ RYzraigs7bdIF8UxhbAXA5TbkE+LtIXwONMFVnZ8+ZFBmDHp4q/6P4skXwf2Vo4T1UO0Im0Zl
+ ttzlLgjq5g1+1oaCUfJEXgVteKbVKmAClFqkN5vJ7oO+WvYyr6jbTsFuFIt2r3t3QSwRwpmlg
+ /2E8nDmgKZXhCj5afsDRDsaCPSHJNmsfFzUBkKpvfnciej4hHPkccmS2ccH9Q6nVogh+zYoRh
+ zbN9nhQGSQNcB+elKheXPbaPHtspc/nAUMWerAjjAxlJ8PuoLqhB1C9sxPj6fcnGP6Pr12YJo
+ Usb6z+B+Zekj3WE1RpqHO4zMFvQGAGFKi256GrFE04vMiQKh6k3pSlLwsmQ6RvgstPKHjNRDR
+ OaZa+JzvwebQrAHwlm6XipVsVeccn8HgsaH74ITKnF/gaQbNHflCQmPxRfAZixta9IVROHJvV
+ 9OTqOKhZ6MYKsmXMmZUA==
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Siddharth Gupta <sidgup@codeaurora.org>
+On Wed, May 11, 2022 at 7:57 AM Sibi Sankar <quic_sibis@quicinc.com> wrote:
+>
+> The application processor accessing the dynamically assigned metadata
+> region after assigning it to the remote Q6 would lead to an XPU violation.
+> Fix this by un-mapping the metadata region post firmware header copy. The
+> metadata region is freed only after the modem Q6 is done with fw header
+> authentication.
+>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 
-When a new remoteproc boots up, send the sysmon state notification
-of only running remoteprocs. Sending state of remoteprocs booting
-up in parallel can cause a race between SSR clients of the remoteproc
-that is booting up and the sysmon notification for the same remoteproc,
-resulting in an inconsistency between which state the remoteproc that
-is booting up in parallel.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-For example - if remoteproc A and B crash one after the other, after
-remoteproc A boots up, if the remoteproc A tries to get the state of
-remoteproc B before the sysmon subdevice for B is invoked but after
-the ssr subdevice of B has been invoked, clients on remoteproc A
-might get confused when the sysmon notification indicates a different
-state.
+Sorry for the late reply, this looks reasonable overall. Just two
+small comments:
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
- drivers/remoteproc/qcom_sysmon.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> -       memcpy(ptr, metadata, size);
+> +       count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> +       pages = kmalloc_array(count, sizeof(struct page *), GFP_KERNEL);
+> +       if (!pages) {
+> +               ret = -ENOMEM;
+> +               goto free_dma_attrs;
+> +       }
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index a9f04dd83ab6..57dde2a69b9d 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -512,10 +512,12 @@ static int sysmon_start(struct rproc_subdev *subdev)
- 
- 	mutex_lock(&sysmon_lock);
- 	list_for_each_entry(target, &sysmon_list, node) {
--		if (target == sysmon)
-+		mutex_lock(&target->state_lock);
-+		if (target == sysmon || target->state != SSCTL_SSR_EVENT_AFTER_POWERUP) {
-+			mutex_unlock(&target->state_lock);
- 			continue;
-+		}
- 
--		mutex_lock(&target->state_lock);
- 		event.subsys_name = target->name;
- 		event.ssr_event = target->state;
- 
--- 
-2.7.4
+If you know a fixed upper bound for the array size, it might be easier to
+put it on the stack.
 
+> +
+> +       for (i = 0; i < count; i++)
+> +               pages[i] = nth_page(page, i);
+> +
+> +       vaddr = vmap(pages, count, flags, pgprot_dmacoherent(PAGE_KERNEL));
+
+I was a bit unsure about this part, as I don't know how portable this is.
+If the CPU bypasses the cache with pgprot_dmacoherent(), then the
+other side should not use a cacheable access either, but that is a property
+of the hardware that is normally hidden from the driver interface.
+
+It's probably ok here, since the pages are not mapped anywhere else
+and should have no active cache lines.
+
+       Arnd
