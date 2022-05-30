@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E6FC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 06:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A6EC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 06:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232798AbiE3GXa (ORCPT
+        id S232816AbiE3GXh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 May 2022 02:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58536 "EHLO
+        Mon, 30 May 2022 02:23:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232788AbiE3GXV (ORCPT
+        with ESMTP id S232801AbiE3GX2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 May 2022 02:23:21 -0400
+        Mon, 30 May 2022 02:23:28 -0400
 Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9601B7C1;
-        Sun, 29 May 2022 23:23:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEE7B487;
+        Sun, 29 May 2022 23:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653891801; x=1685427801;
+  t=1653891807; x=1685427807;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=E2jHDHi18Z+mWHWAL+E/cky65ceubcR6Tm6q2NH1E+4=;
-  b=ZWX4PvUIwOIfTft6lPAKG6t+sMvda63wUKbCSEBn3Vd6UBin5Qf4nOJ5
-   sDeG+HLv1HJUThGddjGNVjFrQipBdwe1FXaAdIKLAwg7nXD1nD6mODVdf
-   XsFHTHUbmud5/s8tLQUkvcAi6oB6z+PuDDPpOXa+3Kyz4uiWDmibhWh1c
-   M=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 29 May 2022 23:23:20 -0700
+  bh=shTB0DnuQEAQMrBnn3hQIHFMKfWKIyiEX/Amn09n/BM=;
+  b=Q+EXTRUfBlfgZrTKmjbC2c+8fT4OL+zkUWMJe2jqskfatjPyHTSJfVv6
+   gN8JMV0qy9Z8gp3oyzB2If0gcucoKd9eV9B3fnEi+OLvxqZjc+STSJ2Pj
+   2AMGWW3qWsQwTxQ7COxhh4++2CkEHpeonh+lLxpjF8McI6s5XfgKT4ruW
+   A=;
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 29 May 2022 23:23:27 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2022 23:23:19 -0700
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2022 23:23:26 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 29 May 2022 23:23:19 -0700
+ 15.2.986.22; Sun, 29 May 2022 23:23:26 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 29 May 2022 23:23:15 -0700
+ 15.2.986.22; Sun, 29 May 2022 23:23:23 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
 To:     <bjorn.andersson@linaro.org>
 CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
@@ -47,9 +47,9 @@ CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
         <konrad.dybcio@somainline.org>,
         Siddharth Gupta <sidgup@codeaurora.org>,
         Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [V2 4/6] remoteproc: qcom: pas: Check if coredump is enabled
-Date:   Mon, 30 May 2022 11:52:49 +0530
-Message-ID: <1653891771-17103-5-git-send-email-quic_sibis@quicinc.com>
+Subject: [V2 6/6] remoteproc: sysmon: Send sysmon state only for running rprocs
+Date:   Mon, 30 May 2022 11:52:51 +0530
+Message-ID: <1653891771-17103-7-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1653891771-17103-1-git-send-email-quic_sibis@quicinc.com>
 References: <1653891771-17103-1-git-send-email-quic_sibis@quicinc.com>
@@ -64,30 +64,44 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Siddharth Gupta <sidgup@codeaurora.org>
 
-Client drivers need to check if coredump is enabled for the rproc before
-continuing with coredump generation. This change adds a check in the PAS
-driver.
+When a new remoteproc boots up, send the sysmon state notification
+of only running remoteprocs. Sending state of remoteprocs booting
+up in parallel can cause a race between SSR clients of the remoteproc
+that is booting up and the sysmon notification for the same remoteproc,
+resulting in an inconsistency between which state the remoteproc that
+is booting up in parallel.
 
-Fixes: 8ed8485c4f05 ("remoteproc: qcom: Add capability to collect minidumps")
+For example - if remoteproc A and B crash one after the other, after
+remoteproc A boots up, if the remoteproc A tries to get the state of
+remoteproc B before the sysmon subdevice for B is invoked but after
+the ssr subdevice of B has been invoked, clients on remoteproc A
+might get confused when the sysmon notification indicates a different
+state.
+
 Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/remoteproc/qcom_sysmon.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 22736723448a..dd3f89fbac78 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -92,6 +92,9 @@ static void adsp_minidump(struct rproc *rproc)
- {
- 	struct qcom_adsp *adsp = rproc->priv;
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index a9f04dd83ab6..57dde2a69b9d 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -512,10 +512,12 @@ static int sysmon_start(struct rproc_subdev *subdev)
  
-+	if (rproc->dump_conf == RPROC_COREDUMP_DISABLED)
-+		return;
-+
- 	qcom_minidump(rproc, adsp->minidump_id);
- }
+ 	mutex_lock(&sysmon_lock);
+ 	list_for_each_entry(target, &sysmon_list, node) {
+-		if (target == sysmon)
++		mutex_lock(&target->state_lock);
++		if (target == sysmon || target->state != SSCTL_SSR_EVENT_AFTER_POWERUP) {
++			mutex_unlock(&target->state_lock);
+ 			continue;
++		}
+ 
+-		mutex_lock(&target->state_lock);
+ 		event.subsys_name = target->name;
+ 		event.ssr_event = target->state;
  
 -- 
 2.7.4
