@@ -2,108 +2,154 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C3BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 16:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2E3C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 17:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238399AbiE3QLo (ORCPT
+        id S236698AbiE3RRg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 May 2022 12:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56922 "EHLO
+        Mon, 30 May 2022 13:17:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231636AbiE3QLn (ORCPT
+        with ESMTP id S234576AbiE3RRf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 May 2022 12:11:43 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 112C83A5F3;
-        Mon, 30 May 2022 09:11:41 -0700 (PDT)
-Received: from mail-yw1-f176.google.com ([209.85.128.176]) by
- mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1MxDgm-1nbiC331j6-00xXYP; Mon, 30 May 2022 18:11:39 +0200
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-30c2f288f13so39766167b3.7;
-        Mon, 30 May 2022 09:11:39 -0700 (PDT)
-X-Gm-Message-State: AOAM531ISlRInc2Xwuxpy8R3BNV/MMpjTlU4b12H4/BovxC+/vUkvhZ7
-        y5MJgOK5XqhP2IaLHBj1iwAwesNehFETh9XuFOo=
-X-Google-Smtp-Source: ABdhPJzz3XlqawyrllmUlfmpCRvsScEJzlN451+7Mmq+gGGuBjqysfamSt3+XlP2gFPc9sId0jCRiqlAcBI0boxBsTg=
-X-Received: by 2002:a81:28b:0:b0:30c:5e57:fac3 with SMTP id
- 133-20020a81028b000000b0030c5e57fac3mr4506381ywc.249.1653927098209; Mon, 30
- May 2022 09:11:38 -0700 (PDT)
+        Mon, 30 May 2022 13:17:35 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC0857154
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 May 2022 10:17:33 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id y199so11033646pfb.9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 May 2022 10:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=v32XyTzYwEZ6CcA55bpkB++VCp4n/aQDrKIUuhlqtLw=;
+        b=u8TAtGuCUdK5voRyLmSukH8SoKS84J0lPAzQOXpDnxNjtGSZx/CKLZoB1SKoIiLm/f
+         3ayEBaewDh2Z/9oyMweEy7IIRXL0/ESm4yT4+SecscYeXmjCMz8RRZiA5UoYRRBnnsbk
+         wVvx9+KOQ21oyra6V3KMk+gXh+ugrpxAwlYZ/Fn4pybFHLYnR+x26JOnkurJfLYg13WX
+         MIRhlS6alU+wurnKCOTj5JfIMP5JBzG43jvpsVVDCyDXQnoKWfL6i+J22mb0zd4M5ZlR
+         5Wu1lY3zCyzdQ+x8sHB5w3MwQNnDwU2l8K51shptwZtFLg0TqfDYiPN+gxT3WHUYCO1G
+         W+1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=v32XyTzYwEZ6CcA55bpkB++VCp4n/aQDrKIUuhlqtLw=;
+        b=fvXDSc3FQ+0WuwfJJAI5SZzvql9furiVt8kprAX80CxmCsvpVJeLUZel69rdikntTB
+         iWkeO+EnDv0waiUQk5IxZ3npF0lb/rCJsb9XYcDpTpICeDvQqAjbKv5NWFbun108702z
+         Q2HzDOdqwULERZHgs2gxrFzaNREtKoAEHrUmrJk45K/ww3XeH1JsbLUFPCPPXU9UWwq6
+         sob8NcLsNYHHvj/TkNf/MxmKavmoNyvCPCVdhpYDm0wqLIWMAaqU8B508ggrwZOcysCa
+         JnGuhfnqF7fogdZ9KyhPNP/azbtxJFyl1QAgyju4TKy5clpzqnhUIG7CDtfneke0MKFC
+         h5UA==
+X-Gm-Message-State: AOAM530K/xWle2jCnnnNh1AG2Pd+P94aq28+fovwSp0Ex1sW58rFI51x
+        IczDU1xf1imoinojXh3q53Xm4A==
+X-Google-Smtp-Source: ABdhPJwCr4F4DOh6HBx4KBklJyG6sO2vY56x0JQAK8vbbspV4akagYbYnfnULot7a4R+5hXyEDDnJg==
+X-Received: by 2002:a63:63c7:0:b0:3f5:faf8:c45e with SMTP id x190-20020a6363c7000000b003f5faf8c45emr49893892pgb.234.1653931053461;
+        Mon, 30 May 2022 10:17:33 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id h22-20020a170902ac9600b00163ed0931b7sm1855644plr.302.2022.05.30.10.17.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 May 2022 10:17:31 -0700 (PDT)
+Date:   Mon, 30 May 2022 11:17:28 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peng.fan@nxp.com
+Subject: Re: [PATCH V4 1/2] remoteproc: introduce rproc features
+Message-ID: <20220530171728.GA482330@p14s>
+References: <20220323034405.976643-1-peng.fan@oss.nxp.com>
+ <20220323034405.976643-2-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
-References: <1652248625-990-1-git-send-email-quic_sibis@quicinc.com>
-In-Reply-To: <1652248625-990-1-git-send-email-quic_sibis@quicinc.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 30 May 2022 18:11:21 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2b05w3uRjXhx7CgdLEHL78ZHRjgOYoG_SR0SyDxcLDMg@mail.gmail.com>
-Message-ID: <CAK8P3a2b05w3uRjXhx7CgdLEHL78ZHRjgOYoG_SR0SyDxcLDMg@mail.gmail.com>
-Subject: Re: [PATCH v2] remoteproc: qcom_q6v5_mss: map/unmap metadata region
- before/after use
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     bjorn.andersson@linaro.org, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        sboyd@kernel.org, agross@kernel.org,
-        linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
-        mka@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:HjsYA+nrojhCIllRkh3gdovi3Qg5wl0dW0CKHI0r/POmXLGGqhi
- 7kgE6qEs+iFxMAZ1F301SkzE4kkctb9K5tqCl3/85/crUk0LI285LW7ZSJTv47601yNsabx
- UVQieCq94RBDD2OK2iLvT24SLE2byxsEFLic0EsUI0RYFztiGLpML851GgDxhPthqfpl1ip
- UgC1fx1MHKEILUOdUTsFg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:w02Pzz3C5XQ=:vZ/x27lMmOlXjpUFhvk6hg
- /XJmrkyPjDqFk8UZjreOELRjvweTubirPAYkp0amL8wgOOCb0KZpYV9WkvTOHDUgH7BpGKr93
- dqYINIfKoOiVjndt51yQF0mskNhL5gwfnZKDE57UlX8V1advBV/ETkrb7lisxy4K7T2vLR0zx
- s/jvBsP1gA3wI6geloszXKPi9oynrKEMzdtjS3TSWsqKZWBfZq+0/37+sxziDz+832RMLfpz8
- Et06EhTzU+3mk495BKrJVHfkbBadgvCnbD2Tr4Q/0qJKvKdEhJ2zwMA14kMDDcJjQpt21ZRyc
- YuAGvZMsV52Vaj7/QxyTFZD9/VBxwrZTqEZIOaD9erpe3tytl73QCNKdQsSfi8wU/n2C8jz1W
- 9DwG9FW6K8ZTB3QH0teKoQBK8cSXY38ftQw/m0fCyicvsm+mFiuvHP9fnnclgcfvq8ERZSjIV
- RYzraigs7bdIF8UxhbAXA5TbkE+LtIXwONMFVnZ8+ZFBmDHp4q/6P4skXwf2Vo4T1UO0Im0Zl
- ttzlLgjq5g1+1oaCUfJEXgVteKbVKmAClFqkN5vJ7oO+WvYyr6jbTsFuFIt2r3t3QSwRwpmlg
- /2E8nDmgKZXhCj5afsDRDsaCPSHJNmsfFzUBkKpvfnciej4hHPkccmS2ccH9Q6nVogh+zYoRh
- zbN9nhQGSQNcB+elKheXPbaPHtspc/nAUMWerAjjAxlJ8PuoLqhB1C9sxPj6fcnGP6Pr12YJo
- Usb6z+B+Zekj3WE1RpqHO4zMFvQGAGFKi256GrFE04vMiQKh6k3pSlLwsmQ6RvgstPKHjNRDR
- OaZa+JzvwebQrAHwlm6XipVsVeccn8HgsaH74ITKnF/gaQbNHflCQmPxRfAZixta9IVROHJvV
- 9OTqOKhZ6MYKsmXMmZUA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220323034405.976643-2-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 11, 2022 at 7:57 AM Sibi Sankar <quic_sibis@quicinc.com> wrote:
->
-> The application processor accessing the dynamically assigned metadata
-> region after assigning it to the remote Q6 would lead to an XPU violation.
-> Fix this by un-mapping the metadata region post firmware header copy. The
-> metadata region is freed only after the modem Q6 is done with fw header
-> authentication.
->
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+Hi Peng,
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-Sorry for the late reply, this looks reasonable overall. Just two
-small comments:
-
->
-> -       memcpy(ptr, metadata, size);
-> +       count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> +       pages = kmalloc_array(count, sizeof(struct page *), GFP_KERNEL);
-> +       if (!pages) {
-> +               ret = -ENOMEM;
-> +               goto free_dma_attrs;
-> +       }
-
-If you know a fixed upper bound for the array size, it might be easier to
-put it on the stack.
-
+On Wed, Mar 23, 2022 at 11:44:04AM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> remote processor may support:
+>  - firmware recovery with help from main processor
+>  - self recovery without help from main processor
+>  - iommu
+>  - etc
+> 
+> Introduce rproc features could simplify code to avoid adding more bool
+> flags
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/remoteproc/remoteproc_internal.h | 10 ++++++++++
+>  include/linux/remoteproc.h               |  7 +++++++
+>  2 files changed, 17 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 72d4d3d7d94d..e9ae743c5587 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -24,6 +24,16 @@ struct rproc_debug_trace {
+>  	struct rproc_mem_entry trace_mem;
+>  };
+>  
+> +static inline bool rproc_has_feature(struct rproc *rproc, unsigned int feature)
+> +{
+> +	return test_bit(feature, rproc->features);
+> +}
 > +
-> +       for (i = 0; i < count; i++)
-> +               pages[i] = nth_page(page, i);
+> +static inline void rproc_set_feature(struct rproc *rproc, unsigned int feature)
+> +{
+
+I would expect this function to return -EINVAL if feature is >
+RPROC_MAX_FEATURES.
+
+> +	set_bit(feature, rproc->features);
+> +}
 > +
-> +       vaddr = vmap(pages, count, flags, pgprot_dmacoherent(PAGE_KERNEL));
+>  /* from remoteproc_core.c */
+>  void rproc_release(struct kref *kref);
+>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 7c943f0a2fc4..7847c6b10a69 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -489,6 +489,11 @@ struct rproc_dump_segment {
+>  	loff_t offset;
+>  };
+> 
 
-I was a bit unsure about this part, as I don't know how portable this is.
-If the CPU bypasses the cache with pgprot_dmacoherent(), then the
-other side should not use a cacheable access either, but that is a property
-of the hardware that is normally hidden from the driver interface.
+Please add proper kernel documentation.
 
-It's probably ok here, since the pages are not mapped anywhere else
-and should have no active cache lines.
+> +enum rproc_features {
+> +	RPROC_FEAT_ATTACH_RECOVERY,
 
-       Arnd
+s/RPROC_FEAT_ATTACH_RECOVERY/RPROC_FEAT_ATTACH_ON_RECOVERY
+
+> +	RPROC_MAX_FEATURES,
+> +};
+> +
+>  /**
+>   * struct rproc - represents a physical remote processor device
+>   * @node: list node of this rproc object
+> @@ -530,6 +535,7 @@ struct rproc_dump_segment {
+>   * @elf_machine: firmware ELF machine
+>   * @cdev: character device of the rproc
+>   * @cdev_put_on_release: flag to indicate if remoteproc should be shutdown on @char_dev release
+> + * @features: indicate remoteproc features
+>   */
+>  struct rproc {
+>  	struct list_head node;
+> @@ -570,6 +576,7 @@ struct rproc {
+>  	u16 elf_machine;
+>  	struct cdev cdev;
+>  	bool cdev_put_on_release;
+> +	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
+>  };
+>  
+>  /**
+> -- 
+> 2.25.1
+> 
