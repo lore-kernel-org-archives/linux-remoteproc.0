@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679DAC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 06:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 254A6C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 May 2022 06:23:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232763AbiE3GX1 (ORCPT
+        id S232803AbiE3GX3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 May 2022 02:23:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58494 "EHLO
+        Mon, 30 May 2022 02:23:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232767AbiE3GXS (ORCPT
+        with ESMTP id S231684AbiE3GX0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 May 2022 02:23:18 -0400
+        Mon, 30 May 2022 02:23:26 -0400
 Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F10B49A;
-        Sun, 29 May 2022 23:23:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4557B7C8;
+        Sun, 29 May 2022 23:23:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1653891797; x=1685427797;
+  t=1653891803; x=1685427803;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=McfwcvKWW0TNLIO3cncs6dQjZ0QsI6YIBZWV+ZrCtdE=;
-  b=MKTn/FzjLkJDMVA+Krc0BZmfakYmjT2I28UN76Rq7uiOn+iPrJVPYNKH
-   0zAsPlFvQ1+VFYQqlEG8NBqRvKUeN4zhGEkG5ykfR7w/SpS7UIZJJ3FuJ
-   HjuMZcBS56aQBfFml6KlU3Hi9iUAEflJoYHki4k2KfQRBWiT+wBJhx3/V
-   g=;
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 29 May 2022 23:23:16 -0700
+  bh=kQsY5dppdnct/ZNtz2heoo4zsfgJCzMJGLniMhE5u8c=;
+  b=pJfKj9ms2EMEvLepLh0TJEvd+PGxgJ/He2h8PLr0JS4HN8pLSK6gqt4K
+   /tHrmyFfMr7daVkHBIWLgF6mydUXijRkbGSN/WhPR61bUkRkOxQKTBPHo
+   epQsHy/RUrjD5/HojdTqIAEdLZDQVHCuaqYyd1aRwk8sU5mhHgrTBXTzi
+   k=;
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 29 May 2022 23:23:23 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2022 23:23:16 -0700
+  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2022 23:23:23 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 29 May 2022 23:23:15 -0700
+ 15.2.986.22; Sun, 29 May 2022 23:23:23 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Sun, 29 May 2022 23:23:12 -0700
+ 15.2.986.22; Sun, 29 May 2022 23:23:19 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
 To:     <bjorn.andersson@linaro.org>
 CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
@@ -47,9 +47,9 @@ CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
         <konrad.dybcio@somainline.org>,
         Siddharth Gupta <sidgup@codeaurora.org>,
         Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [V2 3/6] remoteproc: qcom: pas: Mark devices as wakeup capable
-Date:   Mon, 30 May 2022 11:52:48 +0530
-Message-ID: <1653891771-17103-4-git-send-email-quic_sibis@quicinc.com>
+Subject: [V2 5/6] remoteproc: q6v5: Set q6 state to offline on receiving wdog irq
+Date:   Mon, 30 May 2022 11:52:50 +0530
+Message-ID: <1653891771-17103-6-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1653891771-17103-1-git-send-email-quic_sibis@quicinc.com>
 References: <1653891771-17103-1-git-send-email-quic_sibis@quicinc.com>
@@ -64,33 +64,42 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Siddharth Gupta <sidgup@codeaurora.org>
 
-device_wakeup_enable() on its own is not capable of setting
-device as wakeup capable, it needs to be used in conjunction
-with device_set_wakeup_capable(). The device_init_wakeup()
-calls both these functions on the device passed.
+Due to firmware bugs on the Q6 the hardware watchdog irq can be triggered
+multiple times. As the remoteproc framework schedules work items for the
+recovery process, if the other threads do not get a chance to run before
+recovery is completed the proceeding threads will see the state of the
+remoteproc as running and kill the remoteproc while it is running. This
+can result in various SMMU and NOC errors. This change sets the state of
+the remoteproc to offline whenever a watchdog irq is received.
 
-Fixes: a781e5aa5911 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
 Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index eb817809d5d4..22736723448a 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -487,7 +487,9 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
- 	platform_set_drvdata(pdev, adsp);
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 5280ec9b5449..497acfb33f8f 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -112,6 +112,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+ 	else
+ 		dev_err(q6v5->dev, "watchdog without message\n");
  
--	device_wakeup_enable(adsp->dev);
-+	ret = device_init_wakeup(adsp->dev, true);
-+	if (ret)
-+		goto free_rproc;
++	q6v5->running = false;
+ 	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
  
- 	ret = adsp_alloc_memory_region(adsp);
- 	if (ret)
+ 	return IRQ_HANDLED;
+@@ -123,6 +124,9 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+ 	size_t len;
+ 	char *msg;
+ 
++	if (!q6v5->running)
++		return IRQ_HANDLED;
++
+ 	msg = qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
+ 	if (!IS_ERR(msg) && len > 0 && msg[0])
+ 		dev_err(q6v5->dev, "fatal error received: %s\n", msg);
 -- 
 2.7.4
 
