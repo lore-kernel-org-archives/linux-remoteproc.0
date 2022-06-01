@@ -2,100 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE65C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 12:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942AEC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 13:26:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351855AbiFAMXq (ORCPT
+        id S1353201AbiFAN0O (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 08:23:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52484 "EHLO
+        Wed, 1 Jun 2022 09:26:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350851AbiFAMXi (ORCPT
+        with ESMTP id S236812AbiFAN0N (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 08:23:38 -0400
-Received: from mail-oa1-x33.google.com (mail-oa1-x33.google.com [IPv6:2001:4860:4864:20::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1793DA5C
-        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Jun 2022 05:23:34 -0700 (PDT)
-Received: by mail-oa1-x33.google.com with SMTP id 586e51a60fabf-f2cd424b9cso2457638fac.7
-        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Jun 2022 05:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2ZeeMPsVq/F2kMhsR41ridh7qdYgsJ3WBnG/douuUrE=;
-        b=LhBaRrG1fxI90fUlzneUqaVvc+fkDfCztkgs5q9MatvTuiEqmSvtYMbnAwd52xAe3I
-         zRg+odQHSeRcWScWnjEEPEspwgMwqc57zsBgANK9qxcR/kC6iYapF9+qayx00vxc6wRv
-         /Vs+8vxLR4eTTSluzg1B77+eIiHTEkyV1GgUGpqLmiizynYkKvNDJCCE+vFjmMqVTJEi
-         lUue1Ca/NSvQBtbgV2UvUWvXgLYjD3MUFRwP9F0iEint4G1qw2QDf0xThtXF9qdZezFG
-         uj5IRomooli3fEPqh78YSdz6Du36gS0MQaqPb/AG6dZ/m4p+E12JPifC7VfvwLg3+++o
-         VVYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2ZeeMPsVq/F2kMhsR41ridh7qdYgsJ3WBnG/douuUrE=;
-        b=OOnOuT1B6C1SiKzAxqLm4HCeIr8v8kpiOluR2Vtbr5xyH52vnu/aE6xfE8Ir8zK5c+
-         GYOjSUNoZ1tOsEt8AKq+lgiSHvmIxzkyKZ9kfG/KgGLAXL0GJKleAkl8co4QK5UlKbUg
-         Ah2WHPUfpC7rr/Ne6bZTs7fFR8D+L+DmvLYRXpQlxyD9F4hQmPdrUIq9iNzNYDtuRlSF
-         qzZAhskUtYunOni640As/j2x7G33G0FGFUVSCNkvRiYFfytf/CNtK4F+x2e/mvVgyMot
-         GcnTHsAn2LIdJiXEhU6U+Bh3O1+BhCId1MiEgg1+VGtNmCXyBZMzQEMkR3v6qUVmV+PV
-         Fu0A==
-X-Gm-Message-State: AOAM530UjOplNr08OvnVTQo53LN5mf0Ahn3kU1gt3XPpB0pzU6+6LD8s
-        2VPw3j8PaTvqGATDgnpO0/o4V/KPPZOahg==
-X-Google-Smtp-Source: ABdhPJwsy06DtmIXDK6TBLlB20wpUQ7qEftOU5W93iRILKFthhSU/xOYgS9iXHJc+MH8bri2mp3d9A==
-X-Received: by 2002:a05:6870:891f:b0:f3:3811:3e30 with SMTP id i31-20020a056870891f00b000f338113e30mr8652915oao.269.1654086213813;
-        Wed, 01 Jun 2022 05:23:33 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id u2-20020a9d7202000000b00606387601a2sm685418otj.34.2022.06.01.05.23.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 05:23:33 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hangyu Hua <hbh25y@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [GIT PULL] rpmsg updates for v5.19
-Date:   Wed,  1 Jun 2022 07:23:32 -0500
-Message-Id: <20220601122332.536516-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.32.0
+        Wed, 1 Jun 2022 09:26:13 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749014FC47;
+        Wed,  1 Jun 2022 06:26:12 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 251ATMAL020279;
+        Wed, 1 Jun 2022 15:25:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=wVUW8uMPP13aja6CCJEYa/t1b7jdtRgdhj/8bybOLRI=;
+ b=RYa0r5uLW243c+5XQmONqfSkyZius11Ye1xpMzBNKqdFR1bH8fXU+7/o/ywGzkXC3hR0
+ X2KxH6/f4MqvAPuBcLOQfpIuwzzkp9L7SsE7M7JOPBy85WqgFAunY3nalQjasI5kim+g
+ zBZ8uThDIioNa1r4jLNL9anXa+2DhGz6TovfzemC4YYW8XpWzZpdSnedvKdf/Pqjk9cQ
+ NPQkUfEcptyfJL+uydFhccPmiwLcfd+rYxwLtu/h9Ix96g1VBD25A3jPAOLQsIk/DwPq
+ M0dS2x7jcqHJZeGqe3UaV5wismWgEJyF4cm+/ElNWXHFSho/Hr9YTwJXeoQ8SUVxiwFS Tg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3gbc93rp68-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 01 Jun 2022 15:25:47 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DB5F910003A;
+        Wed,  1 Jun 2022 15:25:44 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B1D6A22A6FC;
+        Wed,  1 Jun 2022 15:25:44 +0200 (CEST)
+Received: from [10.211.9.37] (10.75.127.45) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Wed, 1 Jun
+ 2022 15:25:43 +0200
+Message-ID: <c497e1ef-5a62-d956-4516-87e7b53a6001@foss.st.com>
+Date:   Wed, 1 Jun 2022 15:25:42 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3] arm64: defconfig: Config that had RPMSG_CHAR now gets
+ RPMSG_CTRL
+Content-Language: en-US
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20220405161114.1107745-1-arnaud.pouliquen@foss.st.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20220405161114.1107745-1-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-01_03,2022-06-01_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The following changes since commit ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e:
+Hello,
 
-  Linux 5.18-rc2 (2022-04-10 14:21:36 -1000)
+Gentle reminder.
+Please notice that Mathieu replied with a "Reviewed-by".
 
-are available in the Git repository at:
+Thanks,
+Arnaud
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v5.19
-
-for you to fetch changes up to 59d6f72f6f9c92fec8757d9e29527da828e9281f:
-
-  rpmsg: qcom_smd: Fix returning 0 if irq_of_parse_and_map() fails (2022-04-28 14:32:15 -0500)
-
-----------------------------------------------------------------
-rpmsg updates for v5.19
-
-This corrects the check for irq_of_parse_and_map() failures in the
-Qualcomm SMD driver and fixes unregistration and a couple of double free
-in the virtio rpmsg driver.
-
-----------------------------------------------------------------
-Arnaud Pouliquen (1):
-      rpmsg: virtio: Fix the unregistration of the device rpmsg_ctrl
-
-Hangyu Hua (2):
-      rpmsg: virtio: Fix possible double free in rpmsg_probe()
-      rpmsg: virtio: Fix possible double free in rpmsg_virtio_add_ctrl_dev()
-
-Krzysztof Kozlowski (2):
-      rpmsg: qcom_smd: Fix irq_of_parse_and_map() return value
-      rpmsg: qcom_smd: Fix returning 0 if irq_of_parse_and_map() fails
-
- drivers/rpmsg/qcom_smd.c         | 4 ++--
- drivers/rpmsg/virtio_rpmsg_bus.c | 9 ++++-----
- 2 files changed, 6 insertions(+), 7 deletions(-)
+On 4/5/22 18:11, Arnaud Pouliquen wrote:
+> In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
+> from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
+> By default give everyone who had the old driver enabled the rpmsg_ctrl
+> driver too.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> 
+> This patch is extracted from the series [1] that has been partially
+> integrated in the Linux Kernel 5.18-rc1.
+> 
+> Update vs previous version:
+> - Add missing "---" separation marker after "Signed-off-by".
+> 
+> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+> [2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 50aa3d75ab4f..3f8906b8a2ca 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1053,6 +1053,7 @@ CONFIG_QCOM_Q6V5_PAS=m
+>  CONFIG_QCOM_SYSMON=m
+>  CONFIG_QCOM_WCNSS_PIL=m
+>  CONFIG_RPMSG_CHAR=m
+> +CONFIG_RPMSG_CTRL=m
+>  CONFIG_RPMSG_QCOM_GLINK_RPM=y
+>  CONFIG_RPMSG_QCOM_GLINK_SMEM=m
+>  CONFIG_RPMSG_QCOM_SMD=y
