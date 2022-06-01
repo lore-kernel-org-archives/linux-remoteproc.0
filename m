@@ -2,129 +2,111 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF18C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 08:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3392FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 11:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348160AbiFAIes (ORCPT
+        id S244727AbiFALWP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 04:34:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57192 "EHLO
+        Wed, 1 Jun 2022 07:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239960AbiFAIes (ORCPT
+        with ESMTP id S238488AbiFALWO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 04:34:48 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344AC5537F;
-        Wed,  1 Jun 2022 01:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1654072487; x=1685608487;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=x5nMSSI5/humEcyp6BGP5MXHhmWKZK8ljqf5CpFlbKg=;
-  b=fe1gVsH0qRH7EbcUP6rMO8/aw+W0sSlUzeWJ771tokHEgPc326CwrtGz
-   V5PWuRhZECcGUUEE+zZtMEFCYyyXzoQihem6sjdN9LyD0mLmWIEtob7kK
-   5TA8uRT2xHAdQnLrJYqne+KzEkWGEiJHmb3O/ldxzFwr5hQoSJAS0puMz
-   k=;
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 01 Jun 2022 01:34:46 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2022 01:34:46 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 1 Jun 2022 01:34:45 -0700
-Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Wed, 1 Jun 2022
- 01:34:43 -0700
-Subject: Re: [PATCH v2] remoteproc: qcom_q6v5_mss: map/unmap metadata region
- before/after use
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     <bjorn.andersson@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <sboyd@kernel.org>,
-        <agross@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <mka@chromium.org>
-References: <1652248625-990-1-git-send-email-quic_sibis@quicinc.com>
- <CAK8P3a2b05w3uRjXhx7CgdLEHL78ZHRjgOYoG_SR0SyDxcLDMg@mail.gmail.com>
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-Message-ID: <08778603-4f15-0fb7-687d-4cf42c8ddbd3@quicinc.com>
-Date:   Wed, 1 Jun 2022 14:04:39 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 1 Jun 2022 07:22:14 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1498D40E42;
+        Wed,  1 Jun 2022 04:22:11 -0700 (PDT)
+X-UUID: 131e4688f43a4375a8efce446ab08179-20220601
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.5,REQID:501e9399-13c8-405f-8b90-96a3b6a844ba,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:2a19b09,CLOUDID:91648f14-f88c-475e-badf-d9ee54230b8f,C
+        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
+        ,QS:0,BEC:nil
+X-UUID: 131e4688f43a4375a8efce446ab08179-20220601
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 711226445; Wed, 01 Jun 2022 19:22:05 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Wed, 1 Jun 2022 19:22:04 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.3 via Frontend Transport; Wed, 1 Jun 2022 19:22:04 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Daisuke Nojiri <dnojiri@chromium.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        "Dustin L. Howett" <dustin@howett.net>,
+        Tzung-Bi Shih <tzungbi@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Prashant Malani <pmalani@chromium.org>,
+        "Enric Balletbo i Serra" <enric.balletbo@collabora.com>,
+        Brian Norris <briannorris@chromium.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <weishunc@google.com>
+Subject: [PATCH v1 00/15] Add support for MT8195 SCP 2nd core
+Date:   Wed, 1 Jun 2022 19:21:46 +0800
+Message-ID: <20220601112201.15510-1-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2b05w3uRjXhx7CgdLEHL78ZHRjgOYoG_SR0SyDxcLDMg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Arnd,
-Thanks for taking time to review the patch.
+The MT8195 System Companion Processor(SCP) is a dual-core RISC-V MCU.
+Current mediatek remoteproc driver only supports bring-up single core 
+SCP or the 1st core of a dual-core SCP. This series support to bring-up 
+the 2nd core of a dual-core SCP.
 
-On 5/30/22 9:41 PM, Arnd Bergmann wrote:
-> On Wed, May 11, 2022 at 7:57 AM Sibi Sankar <quic_sibis@quicinc.com> wrote:
->>
->> The application processor accessing the dynamically assigned metadata
->> region after assigning it to the remote Q6 would lead to an XPU violation.
->> Fix this by un-mapping the metadata region post firmware header copy. The
->> metadata region is freed only after the modem Q6 is done with fw header
->> authentication.
->>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Sorry for the late reply, this looks reasonable overall. Just two
-> small comments:
-> 
->>
->> -       memcpy(ptr, metadata, size);
->> +       count = PAGE_ALIGN(size) >> PAGE_SHIFT;
->> +       pages = kmalloc_array(count, sizeof(struct page *), GFP_KERNEL);
->> +       if (!pages) {
->> +               ret = -ENOMEM;
->> +               goto free_dma_attrs;
->> +       }
-> 
-> If you know a fixed upper bound for the array size, it might be easier to
-> put it on the stack.
+Tinghan Shen (15):
+  dt-binding: remoteproc: mediatek: Support dual-core SCP
+  remoteproc: Kconfig: Add mt8195 SCP dual core configuration
+  remoteproc: mediatek: Support hanlding scp core 1 wdt timeout
+  remoteproc: mediatek: Add SCP core 1 register definitions
+  remoteproc: mediatek: Add SCP core 1 driver for dual-core scp
+  remoteproc: mediatek: Add SCP core 1 rproc operations
+  remoteproc: mediatek: Add SCP core 1 reserved memory support
+  remoteproc: mediatek: Add SCP core 1 interrupt support
+  remoteproc: mediatek: Register SCP core 1 initialization ipi
+  remoteproc: mediatek: Add chip dependent operations for SCP core 1
+  remoteproc: mediatek: Add SCP core 1 SRAM offset
+  remoteproc: mediatek: SCP core 1 as a rproc subdevice
+  remoteproc: mediatek: Wait SCP core 1 probe done
+  remoteproc: mediatek: Support rpmsg for SCP core 1
+  mfd: cros_ec: Add SCP 2nd core as a new CrOS EC MCU
 
-The metadata consists of the 32bit elf header and SoC dependent variable
-number of program headers. Arriving at the upper bound from the spec
-seemed futile since the max program headers supported could be > 0xffff.
-The best I can do is get the max size of metadata of all the QC SoCs
-supported upstream for putting the pages on stack and leave "count" as
-the min between the dynamic calculation and upper bound. Would that be
-good enough?
+ .../bindings/remoteproc/mtk,scp.yaml          |  12 +
+ drivers/mfd/cros_ec_dev.c                     |   5 +
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mtk_common.h               |  50 +++
+ drivers/remoteproc/mtk_scp.c                  |  92 ++++-
+ drivers/remoteproc/mtk_scp_dual.c             | 320 ++++++++++++++++++
+ drivers/remoteproc/mtk_scp_subdev.c           | 163 +++++++++
+ .../linux/platform_data/cros_ec_commands.h    |   2 +
+ include/linux/platform_data/cros_ec_proto.h   |   1 +
+ 10 files changed, 644 insertions(+), 12 deletions(-)
+ create mode 100644 drivers/remoteproc/mtk_scp_dual.c
+ create mode 100644 drivers/remoteproc/mtk_scp_subdev.c
 
-> 
->> +
->> +       for (i = 0; i < count; i++)
->> +               pages[i] = nth_page(page, i);
->> +
->> +       vaddr = vmap(pages, count, flags, pgprot_dmacoherent(PAGE_KERNEL));
-> 
-> I was a bit unsure about this part, as I don't know how portable this is.
-> If the CPU bypasses the cache with pgprot_dmacoherent(), then the
-> other side should not use a cacheable access either, but that is a property
-> of the hardware that is normally hidden from the driver interface.
-> 
-> It's probably ok here, since the pages are not mapped anywhere else
-> and should have no active cache lines.
+-- 
+2.18.0
 
-yup we make sure the other side can access the region only after no
-cache lines are active (that's the main problem that we are trying
-to solve through this patch).
-
--Sibi
-
-> 
->         Arnd
-> 
