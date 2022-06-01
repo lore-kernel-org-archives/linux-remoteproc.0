@@ -2,169 +2,194 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2A3C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 12:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEE9C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 12:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352047AbiFAMSN (ORCPT
+        id S1347455AbiFAMWq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 08:18:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
+        Wed, 1 Jun 2022 08:22:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348712AbiFAMSM (ORCPT
+        with ESMTP id S1352936AbiFAMWp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 08:18:12 -0400
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A3F5002C
-        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Jun 2022 05:18:11 -0700 (PDT)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-d39f741ba0so2394922fac.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Jun 2022 05:18:11 -0700 (PDT)
+        Wed, 1 Jun 2022 08:22:45 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA4B3BBCE
+        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Jun 2022 05:22:40 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id q21so3426766ejm.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Jun 2022 05:22:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=jYSb8FA9Ykns49985bGrz8nq1DrPHUc7tJMRYFIXey8=;
-        b=hYbEA6ZSL7pLmVip4Fp9+C1YueJqiza/AFlE1vKomNckQklu67pK1AuCTVhysaltO/
-         H4FHn+ddGhP68EK/VTSAgQ220f6INzgV+p5JtWl/Ip/fNs6Gpohq7k3U1sX2L4nq8sX5
-         T5uQc4RbGKjZR6v3RObwFoYYlLutcY6AjKxAnqcm6XtFMOsiQ8T0brYxpxu7uP/dNSLt
-         YPzjiEZ0aU46ZXQ9f8lJScJ2xr4cm+NxR74CGU+aQ1cSbxFENLUqy/bwV0W4XY1HRrhD
-         r8DWcsM4T/8wFqv+JJOwYrWoaixGbjjFL0HSPuZfSaYCtaJng27rzUoh7QA+VqQUnJPI
-         vC2g==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=ZDgi6QT1T7EpVIAwPl8YawRZEJZufjvXhtek/OEXbdU=;
+        b=IGH9KuLMT3HYQF2PpAJxEcijlE9gMLD3M570Hqtdk9x/5aqV4hW0tiLeZpxEfnOGKr
+         9Shmi8k54+r6RaWu9Y0sPyM2ih3Q0AzczEqglxN5Hp0niQ5o5DAulAjuUjY3ehCwR8Ff
+         jYZKYkjAJ4nkfeNbVwdNoh2xA4lOB6QEBXJrIQymVjr+viKC7z5M+lQ53kZFnRBkVgl4
+         +IXuPqiQrAmLg52aD2xT5T3ypEPqCFUyc4vjiTk/GUocyo6a0AU8KMj2hOMV19gb29Gi
+         srFj0P4uB0/cHWcpRL6uS70TGZnWX0nujTZ1suoxqMUiSqqsio6yptx+tZ8yM5hwMB9X
+         VB6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=jYSb8FA9Ykns49985bGrz8nq1DrPHUc7tJMRYFIXey8=;
-        b=Kp4ROrLyAfLMvbRbbZ/avP3iZ8ZrmDlAPsm3W0UuTSWcY+WrWIZYfnDLYY9KmO4ICp
-         mLZICTiFPFU2ZitFJB72MjQxG5ItNBZcLLANhlUs8LGwAwMYHAgw1Tn0dXQTzgCG8nYV
-         Yx4+Sc7AtSehXkb/D8iskALDLgqaJTVriKO7isGme0unP2Jx8prT/fsBkFezmrGI3YU4
-         5ETuncFYKtgzlpGYTLoCQsHoHAHVIFMZiyRnAbmd3xJPttbwQVk84WJ552GVgjLN330b
-         YA9K8nibZGbKlNxM9efFqGjusURADZqoXh/ngk8tKyZwlIh6eFd8OrXoBfASNMRKK3Gk
-         pwog==
-X-Gm-Message-State: AOAM532PN2uoCk6UgYLCU+naQ/1xBLl5Tf9OnPuEt4RUwiz2aLgcmgsx
-        cfXTDxvcQl16J3/qlJuUU1uP0g==
-X-Google-Smtp-Source: ABdhPJziuOEo0HMHzqpjpdzaJSxid8KEX0AtyrINYNPwpMziuIkIvpE6iNSDsnfDVgnkfEZ+A9x1OA==
-X-Received: by 2002:a05:6870:d6aa:b0:f1:8277:3026 with SMTP id z42-20020a056870d6aa00b000f182773026mr16699231oap.200.1654085890917;
-        Wed, 01 Jun 2022 05:18:10 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 12-20020aca120c000000b00325cda1ffa5sm779377ois.36.2022.06.01.05.18.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jun 2022 05:18:10 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
-        <nfraprado@collabora.com>,
-        Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-Subject: [GIT PULL] remoteproc updates for v5.19
-Date:   Wed,  1 Jun 2022 07:18:09 -0500
-Message-Id: <20220601121809.536000-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.32.0
+        bh=ZDgi6QT1T7EpVIAwPl8YawRZEJZufjvXhtek/OEXbdU=;
+        b=PK7gYVsLI6h16oBhwcJr00AE16L1dRjPyyZTKF29P2Op0R/Cs9AlNz42Dq7tk2B6To
+         Hxin31fZvZMGcfRzzLEuqqpa7LkVX+Xx1fpk82iHJLexTUXwMFuh2kOjHWpAXNmzHBmQ
+         pyHPGOKFk9rSRtGaFGswtnWY7d6znjXQmtpEzbUrEkWDhHhAdPkFlG2VoRUH+aAZMaQc
+         AH0RiDgmvUzWeK+e7SwY20rL7KGdN7sVBOkRifiZURzwuIoiLVhjHA3dfULrc+Z2VucI
+         rnvPqr16tLM65HUEr5jeKzeVUVXVKfESQ8CEJPcKFAc4R29PAflkcJlMubLGhMB0raXZ
+         Zx2w==
+X-Gm-Message-State: AOAM530O0LYZRiqGqeQKEIUsPQ3DC9NuMJCy8jTwHTyeLBMvclQFyK8u
+        RH/8pVjgghevvMR7OdSXIyJ/Vg==
+X-Google-Smtp-Source: ABdhPJyvJbwGPjXVa+X3djqfGIJHVCyeFGfVCL8frzhyOFUP05z/hnZlK01sRTcQV+QNd9iwdn52IQ==
+X-Received: by 2002:a17:907:2cc4:b0:6fe:1c72:7888 with SMTP id hg4-20020a1709072cc400b006fe1c727888mr58492508ejc.373.1654086158619;
+        Wed, 01 Jun 2022 05:22:38 -0700 (PDT)
+Received: from [192.168.0.179] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id o17-20020a1709061b1100b006febc1ef61csm637801ejg.106.2022.06.01.05.22.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Jun 2022 05:22:38 -0700 (PDT)
+Message-ID: <44053e7d-71fd-2012-dc7f-5641536c1f2c@linaro.org>
+Date:   Wed, 1 Jun 2022 14:22:36 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v6 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
+ bindings
+Content-Language: en-US
+To:     Tanmay Shah <tanmay.shah@xilinx.com>,
+        openamp-system-reference@lists.openampproject.org,
+        bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, michal.simek@xilinx.com,
+        ben.levinsky@xilinx.com
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20220531234308.3317795-1-tanmay.shah@xilinx.com>
+ <20220531234308.3317795-2-tanmay.shah@xilinx.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220531234308.3317795-2-tanmay.shah@xilinx.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The following changes since commit ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e:
+On 01/06/2022 01:43, Tanmay Shah wrote:
+> Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
+> Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem
+> (cluster).
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
+> ---
+> 
+> Changes in v6:
+>   - Add maxItems to sram and memory-region property
+> 
+> Changes in v5:
+> - Add constraints of the possible values of xlnx,cluster-mode property
+> - fix description of power-domains property for r5 core
+> - Remove reg, address-cells and size-cells properties as it is not required
+> - Fix description of mboxes property
+> - Add description of each memory-region and remove old .txt binding link
+>   reference in the description
+> 
+> Changes in v4:
+>   - Add memory-region, mboxes and mbox-names properties in example
+> 
+> Changes in v3:
+>   - None
+> 
+> 
+>  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 129 ++++++++++++++++++
+>  include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
+>  2 files changed, 135 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> new file mode 100644
+> index 000000000000..cbff1c201a89
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> @@ -0,0 +1,129 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx R5F processor subsystem
+> +
+> +maintainers:
+> +  - Ben Levinsky <ben.levinsky@xilinx.com>
+> +  - Tanmay Shah <tanmay.shah@xilinx.com>
+> +
+> +description: |
+> +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
+> +  real-time processing based on the Cortex-R5F processor core from ARM.
+> +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
+> +  floating-point unit that implements the Arm VFPv3 instruction set.
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,zynqmp-r5fss
+> +
+> +  xlnx,cluster-mode:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2]
+> +    description: |
+> +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
+> +      lock-step mode(Both RPU cores execute the same code in lock-step,
+> +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
+> +      core 1 runs normally). The processor does not support dynamic configuration.
+> +      Switching between modes is only permitted immediately after a processor reset.
+> +      If set to  1 then lockstep mode and if 0 then split mode.
+> +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
+> +
+> +patternProperties:
+> +  "^r5f-[a-f0-9]+$":
+> +    type: object
+> +    description: |
+> +      The RPU is located in the Low Power Domain of the Processor Subsystem.
+> +      Each processor includes separate L1 instruction and data caches and
+> +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
+> +      memory space is non-cacheable.
+> +
+> +      Each RPU contains one 64KB memory and two 32KB memories that
+> +      are accessed via the TCM A and B port interfaces, for a total of 128KB
+> +      per processor. In lock-step mode, the processor has access to 256KB of
+> +      TCM memory.
+> +
+> +    properties:
+> +      compatible:
+> +        const: xlnx,zynqmp-r5f
+> +
+> +      power-domains:
+> +        description: RPU core PM domain specifier
+> +        maxItems: 1
+> +
+> +      mboxes:
+> +        minItems: 1
+> +        items:
+> +          - description: mailbox channel to send data to RPU
+> +          - description: mailbox channel to receive data from RPU
+> +
+> +      mbox-names:
+> +        minItems: 1
+> +        items:
+> +          - const: tx
+> +          - const: rx
+> +
+> +      sram:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        maxItems: 8
 
-  Linux 5.18-rc2 (2022-04-10 14:21:36 -1000)
+Without minItems, this means maxItems=minItems and previously you had
+here "minItems:1", so is it really what you want?
 
-are available in the Git repository at:
+Anyway rest looks good to me.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v5.19
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-for you to fetch changes up to bb489b96406104070c1fbe364c441cffae8a2ae4:
-
-  dt-bindings: remoteproc: mediatek: Add optional memory-region to mtk,scp (2022-05-17 03:19:08 +0100)
-
-----------------------------------------------------------------
-remoteproc updates for v5.19
-
-This fixes a race condition in the user space interface for starting and
-stopping remote processors, it makes the ELF loader properly skip zero
-memsz segments and it cleans up the debugfs tracefile code a bit by not
-checking for errors.
-
-It introduces support for controlling the audio DSP on Qualcomm MSM8226,
-as well as audio and compute DSPs on Qualcomm SC8280XP.
-
-It makes it possible to specify the firmware path for Mediatek's remote
-processors, fixes a double free in the SCP driver and addresses an issue
-with the SRAM initialization on MT8195.
-
-Lastly it deprecates the custom ELF loader in the iMX remoteproc driver,
-in favor of using the shared one.
-
-----------------------------------------------------------------
-Allen-KH Cheng (2):
-      dt-bindings: remoteproc: mediatek: Add firmware-name property
-      remoteproc: mediatek: Allow reading firmware-name from DT
-
-Arnaud Pouliquen (1):
-      dt-bindings: remoteproc: st,stm32-rproc: Fix phandle-array parameters description
-
-Bjorn Andersson (2):
-      dt-bindings: remoteproc: qcom: pas: Add sc8280xp adsp and nsp pair
-      remoteproc: qcom: pas: Add sc8280xp remoteprocs
-
-Christophe JAILLET (1):
-      remoteproc: mtk_scp: Fix a potential double free
-
-Daniel Baluta (1):
-      remoteproc: imx_dsp_rproc: Make rsc_table optional
-
-Luca Weiss (2):
-      dt-bindings: remoteproc: qcom: pas: Add MSM8226 adsp
-      remoteproc: qcom: pas: Add MSM8226 ADSP support
-
-Manivannan Sadhasivam (1):
-      remoteproc: Don't bother checking the return value of debugfs_create*
-
-Mathieu Poirier (2):
-      Merge branch 'rproc-fixes' into rproc-next
-      Merge branch 'rproc-fixes' into rproc-next
-
-Nícolas F. R. A. Prado (3):
-      dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
-      dt-bindings: remoteproc: mediatek: Make l1tcm reg exclusive to mt819x
-      dt-bindings: remoteproc: mediatek: Add optional memory-region to mtk,scp
-
-Peng Fan (5):
-      remoteproc: elf_loader: skip segment with memsz as zero
-      remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
-      remoteproc: imx_rproc: Ignore create mem entry for resource table
-      dt-bindings: remoteproc: imx_rproc: Support i.MX93
-      remoteproc: imx_rproc: Support i.MX93
-
-Shengjiu Wang (2):
-      remoteproc: core: Remove state checking before calling rproc_boot()
-      remoteproc: core: Move state checking to remoteproc_core
-
-Tinghan Shen (1):
-      remoteproc: mediatek: Fix side effect of mt8195 sram power on
-
- .../bindings/remoteproc/fsl,imx-rproc.yaml         |   9 +-
- .../devicetree/bindings/remoteproc/mtk,scp.yaml    |  57 ++++++++---
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  31 ++++++
- .../bindings/remoteproc/st,stm32-rproc.yaml        |  16 ++--
- drivers/remoteproc/imx_dsp_rproc.c                 | 105 ++-------------------
- drivers/remoteproc/imx_rproc.c                     |  36 +++++++
- drivers/remoteproc/mtk_common.h                    |   2 +
- drivers/remoteproc/mtk_scp.c                       |  76 +++++++++++----
- drivers/remoteproc/qcom_q6v5_pas.c                 |  34 +++++++
- drivers/remoteproc/remoteproc_cdev.c               |  11 ---
- drivers/remoteproc/remoteproc_core.c               |  15 ++-
- drivers/remoteproc/remoteproc_debugfs.c            |  17 +---
- drivers/remoteproc/remoteproc_elf_loader.c         |   2 +-
- drivers/remoteproc/remoteproc_sysfs.c              |  11 ---
- 14 files changed, 240 insertions(+), 182 deletions(-)
+Best regards,
+Krzysztof
