@@ -2,116 +2,89 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DD4C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 13:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B66CCA468
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 13:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352372AbiFAN32 (ORCPT
+        id S1353343AbiFANuz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 09:29:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51560 "EHLO
+        Wed, 1 Jun 2022 09:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245537AbiFAN31 (ORCPT
+        with ESMTP id S1353355AbiFANuy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 09:29:27 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1ABB4FC46;
-        Wed,  1 Jun 2022 06:29:25 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 251AUsn6017988;
-        Wed, 1 Jun 2022 15:29:00 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=b2S5IXgspUK8egzdQzb9LTEDhdR8tCzLN95i1lLnZkY=;
- b=RZLhYFWkxBva8PxnAt59zjnn+u1hwXhiqzyOESgr0ovoE/NV41jAdH64VjUu95ZDsR0F
- Ldm4du69dnyE7EbiVQLIZr8gaDIBa/M+uzpjVk/XX4YOVYJLbZE2Eov8Q2kkq92+2mE5
- kWgjnOu92WmTcIClnD6Vk0z744sI2lM/VVJRB6yaVOnHF/cn491Ept4XROygg9ANEinZ
- 1YGjSl6yQCsUkKyWrDaiy2q2MIyZ+JDlIHYbmfKsOpZPjQLF4RSCzBJb5jsozgIJTaHy
- 46uM1RK59MjlkTBDufFqEDyHdfHbB3ff/Jtt0nIRSstGxM8ircO0PpFzKDVcGuYf0GCA 9Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3gbc2vs50f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 01 Jun 2022 15:29:00 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BF5F4100039;
-        Wed,  1 Jun 2022 15:28:58 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ADB3D22AFEF;
-        Wed,  1 Jun 2022 15:28:58 +0200 (CEST)
-Received: from [10.211.9.37] (10.75.127.45) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Wed, 1 Jun
- 2022 15:28:58 +0200
-Message-ID: <b301b3f5-f0be-47b7-4789-f9914497b819@foss.st.com>
-Date:   Wed, 1 Jun 2022 15:28:57 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2] arm: configs: Configs that had RPMSG_CHAR now get
- RPMSG_CTRL
-Content-Language: en-US
-To:     Russell King <linux@armlinux.org.uk>,
+        Wed, 1 Jun 2022 09:50:54 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC61F6F481;
+        Wed,  1 Jun 2022 06:50:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 2262ACE1A1E;
+        Wed,  1 Jun 2022 13:50:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A7CC385A5;
+        Wed,  1 Jun 2022 13:50:48 +0000 (UTC)
+Date:   Wed, 1 Jun 2022 14:50:45 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20220405115236.1019955-1-arnaud.pouliquen@foss.st.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220405115236.1019955-1-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-01_03,2022-06-01_01,2022-02-23_01
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: defconfig: Config that had RPMSG_CHAR now gets
+ RPMSG_CTRL
+Message-ID: <YpdutV3/jOsfPb5c@arm.com>
+References: <20220405161114.1107745-1-arnaud.pouliquen@foss.st.com>
+ <c497e1ef-5a62-d956-4516-87e7b53a6001@foss.st.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c497e1ef-5a62-d956-4516-87e7b53a6001@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello,
+On Wed, Jun 01, 2022 at 03:25:42PM +0200, Arnaud POULIQUEN wrote:
+> Gentle reminder.
+> Please notice that Mathieu replied with a "Reviewed-by".
 
-Gentle reminder.
-Please notice that Mathieu replied with a "Reviewed-by".
+We usually leave the defconfig updates to the SoC team. Cc'ing Arnd.
 
-Thanks,
-Arnaud
+Catalin
 
-
-On 4/5/22 13:52, Arnaud Pouliquen wrote:
-> In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
-> from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
-> By default give everyone who had the old driver enabled the rpmsg_ctrl
-> driver too.
+> Thanks,
+> Arnaud
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> 
-> This patch is extracted from the series [1] that has been partially
-> integrated in the Linux Kernel 5.18-rc1.
-> 
-> Update vs previous version:
-> - remove "Fixes:" tag in commit, requested by Mathieu Poirier in [2]
-> 
-> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
-> [2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
-> ---
->  arch/arm/configs/qcom_defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-> index 9981566f2096..2e7e9a4f31f6 100644
-> --- a/arch/arm/configs/qcom_defconfig
-> +++ b/arch/arm/configs/qcom_defconfig
-> @@ -241,6 +241,7 @@ CONFIG_QCOM_Q6V5_PAS=y
->  CONFIG_QCOM_Q6V5_PIL=y
->  CONFIG_QCOM_WCNSS_PIL=y
->  CONFIG_RPMSG_CHAR=y
-> +CONFIG_RPMSG_CTRL=y
->  CONFIG_RPMSG_QCOM_GLINK_SMEM=y
->  CONFIG_RPMSG_QCOM_SMD=y
->  CONFIG_QCOM_COMMAND_DB=y
+> On 4/5/22 18:11, Arnaud Pouliquen wrote:
+> > In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
+> > from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
+> > By default give everyone who had the old driver enabled the rpmsg_ctrl
+> > driver too.
+> > 
+> > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> > ---
+> > 
+> > This patch is extracted from the series [1] that has been partially
+> > integrated in the Linux Kernel 5.18-rc1.
+> > 
+> > Update vs previous version:
+> > - Add missing "---" separation marker after "Signed-off-by".
+> > 
+> > [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+> > [2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
+> > ---
+> >  arch/arm64/configs/defconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> > index 50aa3d75ab4f..3f8906b8a2ca 100644
+> > --- a/arch/arm64/configs/defconfig
+> > +++ b/arch/arm64/configs/defconfig
+> > @@ -1053,6 +1053,7 @@ CONFIG_QCOM_Q6V5_PAS=m
+> >  CONFIG_QCOM_SYSMON=m
+> >  CONFIG_QCOM_WCNSS_PIL=m
+> >  CONFIG_RPMSG_CHAR=m
+> > +CONFIG_RPMSG_CTRL=m
+> >  CONFIG_RPMSG_QCOM_GLINK_RPM=y
+> >  CONFIG_RPMSG_QCOM_GLINK_SMEM=m
+> >  CONFIG_RPMSG_QCOM_SMD=y
