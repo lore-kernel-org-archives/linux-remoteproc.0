@@ -2,40 +2,40 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C03C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 11:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB2DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 11:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352552AbiFALWU (ORCPT
+        id S1352556AbiFALWV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 07:22:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60610 "EHLO
+        Wed, 1 Jun 2022 07:22:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348453AbiFALWQ (ORCPT
+        with ESMTP id S1344037AbiFALWQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 1 Jun 2022 07:22:16 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 662DE42A2A;
-        Wed,  1 Jun 2022 04:22:14 -0700 (PDT)
-X-UUID: 34aac9a9ae084ceb81e2490911d9a68c-20220601
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB60F42A08;
+        Wed,  1 Jun 2022 04:22:13 -0700 (PDT)
+X-UUID: ebcf26889c404718b295ac3823ad1664-20220601
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:1fa75032-b3d3-4545-ab73-476466c84bd6,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACT
-        ION:release,TS:-5
-X-CID-META: VersionHash:2a19b09,CLOUDID:bd90268a-32d7-4fc0-b2ef-8776ac194f8f,C
+X-CID-O-INFO: VERSION:1.1.5,REQID:1f741c7a-ec17-4916-9855-996018afb70d,OB:0,LO
+        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
+        ON:release,TS:0
+X-CID-META: VersionHash:2a19b09,CLOUDID:a2648f14-f88c-475e-badf-d9ee54230b8f,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
         ,QS:0,BEC:nil
-X-UUID: 34aac9a9ae084ceb81e2490911d9a68c-20220601
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+X-UUID: ebcf26889c404718b295ac3823ad1664-20220601
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 421798836; Wed, 01 Jun 2022 19:22:05 +0800
+        with ESMTP id 1630622834; Wed, 01 Jun 2022 19:22:08 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Wed, 1 Jun 2022 19:22:04 +0800
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Wed, 1 Jun 2022 19:22:06 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.3 via Frontend Transport; Wed, 1 Jun 2022 19:22:04 +0800
+ 15.2.792.3 via Frontend Transport; Wed, 1 Jun 2022 19:22:06 +0800
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -60,9 +60,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         <weishunc@google.com>
-Subject: [PATCH v1 02/15] remoteproc: Kconfig: Add mt8195 SCP dual core configuration
-Date:   Wed, 1 Jun 2022 19:21:48 +0800
-Message-ID: <20220601112201.15510-3-tinghan.shen@mediatek.com>
+Subject: [PATCH v1 15/15] mfd: cros_ec: Add SCP core 1 as a new CrOS EC MCU
+Date:   Wed, 1 Jun 2022 19:22:01 +0800
+Message-ID: <20220601112201.15510-16-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220601112201.15510-1-tinghan.shen@mediatek.com>
 References: <20220601112201.15510-1-tinghan.shen@mediatek.com>
@@ -73,35 +73,60 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-MediaTek MT8195 SoC SCP is a dual-core subsystem. Add a remoteproc
-configuration to enable support of the 2nd core.
+MT8195 System Companion Processors(SCP) is a dual-core RISC-V MCU.
+Add a new cros feature id to represent the SCP 2nd core.
+
+The 1st core is referred to as 'core 0', and the 2nd core is referred
+to as 'core 1'.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 ---
- drivers/remoteproc/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mfd/cros_ec_dev.c                      | 5 +++++
+ include/linux/platform_data/cros_ec_commands.h | 2 ++
+ include/linux/platform_data/cros_ec_proto.h    | 1 +
+ 3 files changed, 8 insertions(+)
 
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 166019786653..bb2960b4ffbd 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -64,6 +64,16 @@ config MTK_SCP
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index 596731caf407..07cc31d92edc 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -64,6 +64,11 @@ static const struct cros_feature_to_name cros_mcu_devices[] = {
+ 		.name	= CROS_EC_DEV_SCP_NAME,
+ 		.desc	= "System Control Processor",
+ 	},
++	{
++		.id	= EC_FEATURE_SCP_C1,
++		.name	= CROS_EC_DEV_SCP_C1_NAME,
++		.desc	= "System Control Processor 2nd Core",
++	},
+ 	{
+ 		.id	= EC_FEATURE_TOUCHPAD,
+ 		.name	= CROS_EC_DEV_TP_NAME,
+diff --git a/include/linux/platform_data/cros_ec_commands.h b/include/linux/platform_data/cros_ec_commands.h
+index 8cfa8cfca77e..9fbf1c5eb8d3 100644
+--- a/include/linux/platform_data/cros_ec_commands.h
++++ b/include/linux/platform_data/cros_ec_commands.h
+@@ -1300,6 +1300,8 @@ enum ec_feature_code {
+ 	 * mux.
+ 	 */
+ 	EC_FEATURE_TYPEC_MUX_REQUIRE_AP_ACK = 43,
++	/* The MCU is a System Companion Processor (SCP) 2nd Core. */
++	EC_FEATURE_SCP_C1 = 45,
+ };
  
- 	  It's safe to say N here.
+ #define EC_FEATURE_MASK_0(event_code) BIT(event_code % 32)
+diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+index 138fd912c808..da06dc7cf1cb 100644
+--- a/include/linux/platform_data/cros_ec_proto.h
++++ b/include/linux/platform_data/cros_ec_proto.h
+@@ -19,6 +19,7 @@
+ #define CROS_EC_DEV_ISH_NAME	"cros_ish"
+ #define CROS_EC_DEV_PD_NAME	"cros_pd"
+ #define CROS_EC_DEV_SCP_NAME	"cros_scp"
++#define CROS_EC_DEV_SCP_C1_NAME	"cros_scp_c1"
+ #define CROS_EC_DEV_TP_NAME	"cros_tp"
  
-+config MTK_SCP_DUALCORE
-+	tristate "MediaTek SCP dual-core support"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on MTK_SCP
-+	help
-+	  Say y here to support bring up the 2nd core of the dual-core version of
-+	  MediaTek's SCP via the remote processor framework.
-+
-+	  It's safe to say N here.
-+
- config OMAP_REMOTEPROC
- 	tristate "OMAP remoteproc support"
- 	depends on ARCH_OMAP4 || SOC_OMAP5 || SOC_DRA7XX
+ /*
 -- 
 2.18.0
 
