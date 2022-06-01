@@ -2,27 +2,27 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00E2CCA477
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588F9CCA473
 	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 16:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356081AbiFAQVu (ORCPT
+        id S1356086AbiFAQVu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 1 Jun 2022 12:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47498 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356076AbiFAQVp (ORCPT
+        with ESMTP id S1354136AbiFAQVr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 12:21:45 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2061.outbound.protection.outlook.com [40.107.93.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246DEDD0;
-        Wed,  1 Jun 2022 09:21:42 -0700 (PDT)
+        Wed, 1 Jun 2022 12:21:47 -0400
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2081.outbound.protection.outlook.com [40.107.100.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17702ADB;
+        Wed,  1 Jun 2022 09:21:44 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CKxrYLD/CKRiUVtI1yMi4vJ2sY0oLG6aU5RJKeI6zeC1x2OtnZ4dEE1QnIV6+CR6A/b6EZuLjD9BdymGRvOu22+1G1eJvLWidxrI3fYHKVzd6UzUPFVpKyqKwspVZDJ+No7J/Od+PxT/1h3gyPKMuL3jov44EY9LDT2h3fJJ5kz+ikbuJkwdlDMGO7t73iu820vMPxZmNDEwyzSFB64K3w8R4IPFj3wwF1IswmnSTq+VmDwd5idFRFsw4u+HlblzPPEa1JFjW7ZSgI4ldxq2n/iCNEQkJFnef/OwFuUoumQtD27YJ5ccE0Uaq38l0C2tPmA2AdZaObOTLA+yTbbMWw==
+ b=n1u6GJy/OthropuACyTISxORzSTXWzDwekoES0o1TKUQkfXUjBiQF12kno+ELAVQvlgOFt9pW7QgEPgw7kxYJD+2xEPcMSTCuDm6EKLPvTdL4hzSXEuFfFMhMa8H3fLDjjnPuVp0I8Rmek1Iq+KmIH8YFPKkMd2Zz/c6U9PdXno74VxtIK42giR3qtCk0uzx31pY8CSq7VHebIq2tIliZSXtAJTcV4NSlRnqXxkqJj35IoA63DLNrfgWa2l9C0Ku8jtBBnWpGCi9MaNyoPxHVPnuZy3g9QgSTn7pL1hiqZxEz3BzHaD5wGwy0biNXndhmD3e2ahNJzQ49zvUfkJLcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bevVLhHG05UzMCZyjLaMleOpgfBexhgpdP6/NnzIraQ=;
- b=g6gw5wsTaSwsDiZXWqVgxcdzrCtLXDwQVZWlrBVfgdc93ANnhyvmu1D7Bxy0xo8ij5DzVjsf1IHwiIBbq9BgsJ7U7wC6g7VoS6gwZimica7C1q3RseA7GcnmKSnEnuqE7OG/PpFDcZFOxb3OQiafcplvRlbRbC5bYjs1iSEeWOY+MlqzGdrZsbXV5atol+hDisM5t56TC7hBACUfojzMgnG87Vn22wH5pPEVkzgAa8+lw5f0tCpUv/8IAjdRoRAVw0srCAxFjomDYoahfDYYz/QOAYiVMLNrcd5h8s7S5WjNRYyz4woG41yxmqgN0TGNG1Jve0sOWlRWqZsTfo71VQ==
+ bh=21ycIIGJY8rMS8OIfeYr0C+IRzsawuB5vVgz1CYe9MQ=;
+ b=ZaUmmAJx/RKDNZ6pg0SKbgV7a29akF1vlKhwUj8H3iQy/EpGYSBBjVRPeVy02deWldCz6ODyHLxv+9o/NK/h8izpfDCV779R29K612yLAzmIXj8XWeK9aw9OtEs9k2opp4ZUahmDtAwjVMMlKN0Dd0sQcqWc+iIy4Zm0uEYBpuQNliHjtB7DLHujouGYLmjjx/wvOilCm7mN8zoefAMpNIjB6f8NsejpWJTTRgrQ41oH+sl6Mx4hV272VEIfipP82Lhsr83XZky4I/9oHjgPuTowY9Gd6WucQIWxmV+j9nWRerYRAebUz5JapRimxSTy6v4ITCCUJ+DatXplD1/pRg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=lists.openampproject.org
  smtp.mailfrom=xilinx.com; dmarc=pass (p=none sp=none pct=100) action=none
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bevVLhHG05UzMCZyjLaMleOpgfBexhgpdP6/NnzIraQ=;
- b=QCmujPomeFVoa8g7gBnLWxCIqoe+HuBt2PwPKhQx183fBFZv9T09+ehEVpIhdwQEI3E+nk9FQ22kaWr2FR5rZCvJT45/WOkAT/dvyALN/GuAHyerK1j9vOfLNnp0wCcXt7L0XVLH2LIWHWtwOGiknmzNV/yzE7mddw14HGLJX6s=
-Received: from SN6PR08CA0021.namprd08.prod.outlook.com (2603:10b6:805:66::34)
- by SA0PR02MB7482.namprd02.prod.outlook.com (2603:10b6:806:ef::9) with
+ bh=21ycIIGJY8rMS8OIfeYr0C+IRzsawuB5vVgz1CYe9MQ=;
+ b=Q4EsoAEBYjZ5lQ9ZmvMkyw42hncGTmLtuYZyyWNtQVsTx7vEOxEADhANvW4GEmb0ZhQBlEW5BbJkm9EdhF3hPqW9jEhDAYJo+/io4HRGj9eDTm/ERjIElJjVReQtzxNMsDD06HI27PomcleK8SXKyiqcmVhqixnEwfSgiGCnRqg=
+Received: from SN6PR08CA0013.namprd08.prod.outlook.com (2603:10b6:805:66::26)
+ by BYAPR02MB4792.namprd02.prod.outlook.com (2603:10b6:a03:4a::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.12; Wed, 1 Jun
- 2022 16:21:40 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13; Wed, 1 Jun
+ 2022 16:21:39 +0000
 Received: from SN1NAM02FT0052.eop-nam02.prod.protection.outlook.com
- (2603:10b6:805:66:cafe::7a) by SN6PR08CA0021.outlook.office365.com
- (2603:10b6:805:66::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13 via Frontend
- Transport; Wed, 1 Jun 2022 16:21:40 +0000
+ (2603:10b6:805:66:cafe::80) by SN6PR08CA0013.outlook.office365.com
+ (2603:10b6:805:66::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13 via Frontend
+ Transport; Wed, 1 Jun 2022 16:21:39 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=xilinx.com;
@@ -51,7 +51,7 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
 Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
  SN1NAM02FT0052.mail.protection.outlook.com (10.97.5.70) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5314.12 via Frontend Transport; Wed, 1 Jun 2022 16:21:40 +0000
+ 15.20.5314.12 via Frontend Transport; Wed, 1 Jun 2022 16:21:39 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
@@ -71,7 +71,7 @@ Envelope-to: openamp-system-reference@lists.openampproject.org,
 Received: from [172.19.3.14] (port=50642 helo=xsjtanmays50.xilinx.com)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <tanmay.shah@xilinx.com>)
-        id 1nwR6I-0003Rb-Dr; Wed, 01 Jun 2022 09:21:38 -0700
+        id 1nwR6I-0003Rb-Bi; Wed, 01 Jun 2022 09:21:38 -0700
 From:   Tanmay Shah <tanmay.shah@xilinx.com>
 To:     <openamp-system-reference@lists.openampproject.org>,
         <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
@@ -81,116 +81,145 @@ To:     <openamp-system-reference@lists.openampproject.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v7 2/6] arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
-Date:   Wed, 1 Jun 2022 09:21:08 -0700
-Message-ID: <20220601162111.3505458-3-tanmay.shah@xilinx.com>
+Subject: [PATCH v7 0/6] Add Xilinx RPU subsystem support
+Date:   Wed, 1 Jun 2022 09:21:06 -0700
+Message-ID: <20220601162111.3505458-1-tanmay.shah@xilinx.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220601162111.3505458-1-tanmay.shah@xilinx.com>
-References: <20220601162111.3505458-1-tanmay.shah@xilinx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5f3988b7-fe4a-44b6-4fbd-08da43eacf2c
-X-MS-TrafficTypeDiagnostic: SA0PR02MB7482:EE_
-X-Microsoft-Antispam-PRVS: <SA0PR02MB74823D88EFAE6C6304E3C60ACADF9@SA0PR02MB7482.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 6e580567-64a5-4f40-580b-08da43eaceb0
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4792:EE_
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4792544744EECDC377029948CADF9@BYAPR02MB4792.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XJ4TYSxlgQ3gvJ0BHBRLTx4pJRFKxl6U0Ya8ygHPraYN+LkEvlp55XbQ8zhTWQ0yzuKc3wP1KA28+5HVR5E9EqK5ZrtGHRjqgPUEMpFsH1pT4jFRV2dVnCB6k2mUS9t8vapQ6UsfKHEWlSXDCKLhWTiE+oxA4sbmYG5wiG9dUoD/BxlM601QQNRaqaaQ41OMOz1N8FpVhuFy7fbLvsD/FGV9NbQc4w7oM7dx9yjmGAQtwIxebxWmPWtqdStrZdPCd5QBE1KUxh2enTPYxNAFhPL83Hqre49ZN4+tzSVuuJ9O8ETKDfSlE9I52Tsh+MKlcp+IxIciZMVOb6fwLZqPR9C9hcXBG2TytxhLl4Zxh5d7Fw8JWXdGbXtgB+vqXrJvLTUkb4jnZ0QnVi+nUrGN9ZCFXPPX2N1IzcO08apyZdwmK1kOtWCxAi+I3f9TnF+io5oW/zOhOs+TdHnD2mhuoDYjg10SVrKVV+xFGZpttKkoLMAdg0fW3enJiawxwlMWUSlMR60UfhnlIj3YWkOPv8RvlzamXOYXTY5sHfqJp5S5jEPTRVX+8j94aedfqMQCz50eSf998oLPzc053ZHKflsC2llxP/sKCVdOxPLU3g5yrY6wf39B2iMXgxAAr6Ys1i69S2SG3DDEsNSlQY/Xvgnrb/uoWSm1NIwS7SIo4NDPgnlfIItaApdwy4n9hHQ8BpZhoTjs2LghXN1l081/nA==
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(46966006)(36840700001)(36756003)(508600001)(1076003)(316002)(2616005)(36860700001)(8936002)(7696005)(186003)(9786002)(426003)(82310400005)(336012)(47076005)(110136005)(54906003)(356005)(5660300002)(2906002)(6666004)(70206006)(70586007)(40460700003)(4326008)(8676002)(7636003)(26005)(83380400001)(7049001)(44832011)(102446001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: B3RNEVGwPuIlLT/S/8hShgujaQZzQKxyvoJcVh1PECZZDY90QgRkE6Gs15heWmW/eaFm3OavP3OC0tAaPFu5wpVJQKHiUbuiMFkvYzkE0BLLrUYu15Lzd2lyVVFCzpbb+lCOIWNx5FNRYagEKRDeudSVk+Id+ZR7z06xL81Khyo3anDylZcaUOz+4fpy5U1rZPgF9lb8S5yeYyAws+VLWvJz7koKGYacXz81AHDJoeueuS+u1doHl94Q7soenfDCgB53USj+m6iYTZKo+dOyInnQYrrqTkK6r8g0h8hQJYmMpeUxwWcHASb3uS9ZOKWKl0rvCOMkyO0c/bJ6hhBtXB/8NjFvUs572ePxe5s6vdJZERX7k+951MJ82RemuGRTvWrZsr5oSdVfKpbAGq9MaYJNaNlacS8AXwPXoKcwMbKhirUrD/Mbp1Z2aDW9lN69/QcpfQLjekv5aofBJHDil1ezehdnoeAg3DF4sFuxnmO9F5UIrVAZ+0o1RKtDhbWQgppsN5cNbUtt4MDcS5jBFo7CdRpxfAvwzzanD0BHLbz02+1pA/3FEOdO9ktbbrPlYAYa6KmXmZ3INtUAStMo/q8jxqQ8jEP59sFzD4Kyec2rVzkHZFyBcZV/MMPO7Do2QAOo0gBqdxNxvMRbZ8r6XBlx4E2uCo1NuIuWxVIsJe5OepQhydq5lbMkFFb31Ylu8UpWRXrUnTn55bwezejOoQ==
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(82310400005)(186003)(1076003)(8936002)(8676002)(316002)(110136005)(4326008)(36756003)(70206006)(47076005)(426003)(336012)(70586007)(83380400001)(54906003)(7696005)(2616005)(9786002)(508600001)(44832011)(5660300002)(7636003)(356005)(36860700001)(26005)(6666004)(40460700003)(7049001)(2906002)(102446001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2022 16:21:40.2761
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2022 16:21:39.4636
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f3988b7-fe4a-44b6-4fbd-08da43eacf2c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e580567-64a5-4f40-580b-08da43eaceb0
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
 X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0052.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR02MB7482
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4792
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-RPU subsystem can be configured in cluster-mode or split mode.
-Also each r5 core has separate power domains.
+This patch series adds bindings document for RPU subsystem found on Xilinx
+ZynqMP platforms. It also adds device nodes and driver to enable RPU
+subsystem in split mode and lockstep mode.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
+Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
+contains two arm cortex r5f cores. RPU subsystem can be configured in
+split mode, lockstep mode and single-cpu mode.
+
+RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
+In lockstep mode, all 4 banks are combined and total of 256KB memory is
+made available to r5 core0. In split mode, both cores can access two
+TCM banks i.e. 128 KB.
+
+RPU can also fetch data and execute instructions from DDR memory along with
+TCM memory.
 ---
 
 Changes in v7:
-  - None
+  - Add minItems in sram property
 
 Changes in v6:
-  - None
+  - Add maxItems to sram and memory-region property
 
 Changes in v5:
+  - Add constraints of the possible values of xlnx,cluster-mode property
+  - fix description of power-domains property for r5 core
+  - Remove reg, address-cells and size-cells properties as it is not required
+  - Fix description of mboxes property
+  - Add description of each memory-region and remove old .txt binding link
+    reference in the description
   - Remove optional reg property from r5fss node
   - Move r5fss node out of axi node
 
 Changes in v4:
-  - Add reserved memory region node and use it in RPU subsystem node
+  - Add memory-region, mboxes and mbox-names properties in dt-bindings example
+  - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
+  - Remove redundant header files
+  - use dev_err_probe() to report errors during probe
+  - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
+  - Fix memory leaks all over the driver when resource allocation fails for any core
+  - make cluster mode check only at one place
+  - remove redundant initialization of variable
+  - remove redundant use of of_node_put() 
+  - Fix Comment format problem
+  - Assign offset of zynqmp_tcm_banks instead of duplicating it
+  - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
+  - Remove rproc_mem_entry object from r5_core
+  - Use put_device() and rproc_del() APIs to fix memory leaks
+  - Replace pr_* with dev_*. This was missed in v3, fix now.
+  - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
 
 Changes in v3:
-  - Fix checkpatch.pl style warning
+  - Fix checkpatch script indentation warning
+  - Remove unused variable from xilinx remoteproc driver
+  - use C style comments, i.e /*...*/
+  - Remove redundant debug information which can be derived using /proc/device-tree
+  - Fix multiline comment format
+  - s/"final fot TCM"/"final for TCM"
+  - Function devm_kzalloc() does not return an code on error, just NULL.
+    Remove redundant error check for this function throughout the driver.
+  - Fix RPU mode configuration and add documentation accordingly
+  - Get rid of the indentations to match function documentation style with rest of the driver
+  - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
+  - Use 'i' for the outer loop and 'j' for the inner one as per convention
+  - Remove redundant error and NULL checks throughout the driver
+  - Use devm_kcalloc() when more than one element is required
+  - Add memory-regions carveouts during driver probe instead of parse_fw call
+    This removes redundant copy of reserved_mem object in r5_core structure.
+  - Fix memory leak by using of_node_put()
+  - Fix indentation of tcm_mem_map function args
+  - Remove redundant init of variables
+  - Initialize tcm bank size variable for lockstep mode
+  - Replace u32 with phys_addr_t for variable stroing memory bank address
+  - Add documentation of TCM behavior in lockstep mode
+  - Use dev_get_drvdata instead of platform driver API
+  - Remove info level messages
+  - Fix checkpatch.pl warnings
+  - Add documentation for the Xilinx r5f platform to understand driver design
 
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 33 ++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Changes in v2:
+  - Remove proprietary copyright footer from cover letter
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-index c715a18368c2..e8315a4f7f61 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-@@ -100,6 +100,22 @@ opp03 {
- 		};
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		rproc_0_fw_image: memory@3ed00000 {
-+			no-map;
-+			reg = <0x0 0x3ed00000 0x0 0x40000>;
-+		};
-+
-+		rproc_1_fw_image: memory@3ef00000 {
-+			no-map;
-+			reg = <0x0 0x3ef00000 0x0 0x40000>;
-+		};
-+	};
-+
- 	zynqmp_ipi: zynqmp_ipi {
- 		compatible = "xlnx,zynqmp-ipi-mailbox";
- 		interrupt-parent = <&gic>;
-@@ -203,6 +219,23 @@ fpga_full: fpga-full {
- 		ranges;
- 	};
- 
-+	r5fss: r5fss {
-+		compatible = "xlnx,zynqmp-r5fss";
-+		xlnx,cluster-mode = <1>;
-+
-+		r5f_core0: r5f-0 {
-+			compatible = "xlnx,zynqmp-r5f";
-+			power-domains = <&zynqmp_firmware PD_RPU_0>;
-+			memory-region = <&rproc_0_fw_image>;
-+		};
-+
-+		r5f_core1: r5f-1 {
-+			compatible = "xlnx,zynqmp-r5f";
-+			power-domains = <&zynqmp_firmware PD_RPU_1>;
-+			memory-region = <&rproc_1_fw_image>;
-+		};
-+	};
-+
- 	amba: axi {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
+Ben Levinsky (3):
+  firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+    configuration.
+  firmware: xilinx: Add shutdown/wakeup APIs
+  firmware: xilinx: Add RPU configuration APIs
+
+Tanmay Shah (3):
+  dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+  arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+  drivers: remoteproc: Add Xilinx r5 remoteproc driver
+
+ .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  130 ++
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
+ drivers/firmware/xilinx/zynqmp.c              |   97 ++
+ drivers/remoteproc/Kconfig                    |   12 +
+ drivers/remoteproc/Makefile                   |    1 +
+ drivers/remoteproc/xlnx_r5_remoteproc.c       | 1045 +++++++++++++++++
+ include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
+ include/linux/firmware/xlnx-zynqmp.h          |   60 +
+ 8 files changed, 1384 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+ create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
+
+
+base-commit: 01a1a0c8d456b11f2f6b9b822414481beaa44d6f
 -- 
 2.25.1
 
