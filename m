@@ -2,167 +2,169 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8683C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 11:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2A3C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Jun 2022 12:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237966AbiFALuj (ORCPT
+        id S1352047AbiFAMSN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 07:50:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32936 "EHLO
+        Wed, 1 Jun 2022 08:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352868AbiFALuQ (ORCPT
+        with ESMTP id S1348712AbiFAMSM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 07:50:16 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98694737AB
-        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Jun 2022 04:50:14 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id b8so1790947edf.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Jun 2022 04:50:14 -0700 (PDT)
+        Wed, 1 Jun 2022 08:18:12 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94A3F5002C
+        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Jun 2022 05:18:11 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-d39f741ba0so2394922fac.13
+        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Jun 2022 05:18:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=NCu09c7It8PCgWDIsBdAVtichE5PsFctC0ahaIHP8Xk=;
-        b=KD/GF46y0L9iV/6oC8B0iJGCrA1YOd1ZDr5ZyyRZKnNDXwqFSyH7pMugTFD19FNvuK
-         DLG3zOI1/3Fg4wUPC6NHPSQsy5OZb4b0Gzq06f1NQQgETWqm89FW05A3FR2gVOXq19JI
-         CVJ6LZEFdk42WkWzwgK+DKTWazScy0oP4rYwVZuAJM9xGuHcCJziiPFOQ+DYiY0ziLC9
-         879vFCoj64XlDCsamSFbS8NsBkT6Wd/mB/bfROk0lZwGArhZOmwQjbsMRzUVQWJzSFqQ
-         TKzfvDC846UfKtt8N47ycGDKj/fiFXjMu2XbHSJn7sd2vqALeK2+srAsZBIKPsgY1YKN
-         9Hvw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jYSb8FA9Ykns49985bGrz8nq1DrPHUc7tJMRYFIXey8=;
+        b=hYbEA6ZSL7pLmVip4Fp9+C1YueJqiza/AFlE1vKomNckQklu67pK1AuCTVhysaltO/
+         H4FHn+ddGhP68EK/VTSAgQ220f6INzgV+p5JtWl/Ip/fNs6Gpohq7k3U1sX2L4nq8sX5
+         T5uQc4RbGKjZR6v3RObwFoYYlLutcY6AjKxAnqcm6XtFMOsiQ8T0brYxpxu7uP/dNSLt
+         YPzjiEZ0aU46ZXQ9f8lJScJ2xr4cm+NxR74CGU+aQ1cSbxFENLUqy/bwV0W4XY1HRrhD
+         r8DWcsM4T/8wFqv+JJOwYrWoaixGbjjFL0HSPuZfSaYCtaJng27rzUoh7QA+VqQUnJPI
+         vC2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=NCu09c7It8PCgWDIsBdAVtichE5PsFctC0ahaIHP8Xk=;
-        b=QhWQzUTdH7Rd1L3upsed23U0YpnYEgs2WurVvDlZlr2CGF/gK5RQ5cvAD2+v862Iut
-         JVIhVEAmQY9C5qAC2Dk7Kwb3qR8q2yA1U88lnynP32k7zFVlhMmZr9utongmKJ/MlqH7
-         PQLWEXKKsYmtdV5sHgP09x6pBIdohWkQRZTzHQcc/Ytakk8yYmcS0H09qw3J1I0lQxzk
-         ZWP6Y7BnWqv5Fjj4zhNUs9cRVMzd4i3RuF4qaLVS50wTFgWE6aEEwV7lXCoR1jpoy/y1
-         o6UwWs6iuxfemQC/rFzlO0tBZcp0dI43EKyeafkdLCZOcmsGQJRVthbblo2q8EyiHuvF
-         U+ww==
-X-Gm-Message-State: AOAM5315fHOzEVZ/SEtwltnCLQalyvwg9hmlikbDuYxqUkhmoze011is
-        uqWQ5gt8hdVHGx47fLsSTJAA+w==
-X-Google-Smtp-Source: ABdhPJyELI2heE5E7DXJZNsKABuJGaTaxV4OxNBunIxicg2IcK642ipDPhUCnEa0+rHGU5oepmuQnQ==
-X-Received: by 2002:a05:6402:1851:b0:42d:c904:d73b with SMTP id v17-20020a056402185100b0042dc904d73bmr20563379edy.417.1654084213214;
-        Wed, 01 Jun 2022 04:50:13 -0700 (PDT)
-Received: from [192.168.0.179] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id e26-20020a50ec9a000000b0042ad0358c8bsm855792edr.38.2022.06.01.04.50.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jun 2022 04:50:12 -0700 (PDT)
-Message-ID: <dd3ea397-fa21-abe5-85ad-b8a4818dc011@linaro.org>
-Date:   Wed, 1 Jun 2022 13:50:11 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v1 01/15] dt-binding: remoteproc: mediatek: Support
- dual-core SCP
-Content-Language: en-US
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        bh=jYSb8FA9Ykns49985bGrz8nq1DrPHUc7tJMRYFIXey8=;
+        b=Kp4ROrLyAfLMvbRbbZ/avP3iZ8ZrmDlAPsm3W0UuTSWcY+WrWIZYfnDLYY9KmO4ICp
+         mLZICTiFPFU2ZitFJB72MjQxG5ItNBZcLLANhlUs8LGwAwMYHAgw1Tn0dXQTzgCG8nYV
+         Yx4+Sc7AtSehXkb/D8iskALDLgqaJTVriKO7isGme0unP2Jx8prT/fsBkFezmrGI3YU4
+         5ETuncFYKtgzlpGYTLoCQsHoHAHVIFMZiyRnAbmd3xJPttbwQVk84WJ552GVgjLN330b
+         YA9K8nibZGbKlNxM9efFqGjusURADZqoXh/ngk8tKyZwlIh6eFd8OrXoBfASNMRKK3Gk
+         pwog==
+X-Gm-Message-State: AOAM532PN2uoCk6UgYLCU+naQ/1xBLl5Tf9OnPuEt4RUwiz2aLgcmgsx
+        cfXTDxvcQl16J3/qlJuUU1uP0g==
+X-Google-Smtp-Source: ABdhPJziuOEo0HMHzqpjpdzaJSxid8KEX0AtyrINYNPwpMziuIkIvpE6iNSDsnfDVgnkfEZ+A9x1OA==
+X-Received: by 2002:a05:6870:d6aa:b0:f1:8277:3026 with SMTP id z42-20020a056870d6aa00b000f182773026mr16699231oap.200.1654085890917;
+        Wed, 01 Jun 2022 05:18:10 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 12-20020aca120c000000b00325cda1ffa5sm779377ois.36.2022.06.01.05.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jun 2022 05:18:10 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
+        <nfraprado@collabora.com>,
+        Allen-KH Cheng <allen-kh.cheng@mediatek.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Daisuke Nojiri <dnojiri@chromium.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        "Dustin L. Howett" <dustin@howett.net>,
-        Tzung-Bi Shih <tzungbi@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Brian Norris <briannorris@chromium.org>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        chrome-platform@lists.linux.dev,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        weishunc@google.com
-References: <20220601112201.15510-1-tinghan.shen@mediatek.com>
- <20220601112201.15510-2-tinghan.shen@mediatek.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220601112201.15510-2-tinghan.shen@mediatek.com>
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+Subject: [GIT PULL] remoteproc updates for v5.19
+Date:   Wed,  1 Jun 2022 07:18:09 -0500
+Message-Id: <20220601121809.536000-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 01/06/2022 13:21, Tinghan Shen wrote:
-> The SCP co-processor is a dual-core RISC-V MCU on MT8195.
-> 
-> Add a new property to identify each core and helps to find drivers
-> through device tree API to cooperate with each other, e.g. boot flow and
-> watchdog timeout flow.
-> 
-> Add a new compatile for the driver of SCP 2nd core.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> ---
->  .../devicetree/bindings/remoteproc/mtk,scp.yaml      | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index eec3b9c4c713..b181786d9575 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -20,6 +20,7 @@ properties:
->        - mediatek,mt8186-scp
->        - mediatek,mt8192-scp
->        - mediatek,mt8195-scp
-> +      - mediatek,mt8195-scp-dual
->  
->    reg:
->      description:
-> @@ -57,6 +58,16 @@ properties:
->    memory-region:
->      maxItems: 1
->  
-> +  mediatek,scp-core:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      The property value is a list with 2 items, a core id and a phandle
+The following changes since commit ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e:
 
-uint32, not phandle.
+  Linux 5.18-rc2 (2022-04-10 14:21:36 -1000)
 
-> +      to the sibling SCP node. 
+are available in the Git repository at:
 
-Skip this. First part is obvious from the schema, second part should be
-described via items.
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v5.19
 
-The core id represents the id of the dts node contains
-> +      this property. The valid values of core id are 0 and 1 for dual-core SCP.
-> +      The phandle of sibling SCP node is used to find the register settings,
-> +      trigger core dependent callback, and invoke rproc API.
+for you to fetch changes up to bb489b96406104070c1fbe364c441cffae8a2ae4:
 
-Entire description did not help me to understand what's this. So far it
-looks like it is not a hardware property but some programming help, so
-it does not look like properly described in bindings.
+  dt-bindings: remoteproc: mediatek: Add optional memory-region to mtk,scp (2022-05-17 03:19:08 +0100)
 
-> +    maxItems: 1
+----------------------------------------------------------------
+remoteproc updates for v5.19
 
-In description you said - two items.
+This fixes a race condition in the user space interface for starting and
+stopping remote processors, it makes the ELF loader properly skip zero
+memsz segments and it cleans up the debugfs tracefile code a bit by not
+checking for errors.
 
-You need allOf:if:then disallowing this property for other variants.
+It introduces support for controlling the audio DSP on Qualcomm MSM8226,
+as well as audio and compute DSPs on Qualcomm SC8280XP.
 
-> +
->  required:
->    - compatible
->    - reg
-> @@ -115,6 +126,7 @@ examples:
->          reg-names = "sram", "cfg", "l1tcm";
->          clocks = <&infracfg CLK_INFRA_SCPSYS>;
->          clock-names = "main";
-> +        mediatek,scp-core = <0 &scp_dual>;
+It makes it possible to specify the firmware path for Mediatek's remote
+processors, fixes a double free in the SCP driver and addresses an issue
+with the SRAM initialization on MT8195.
 
-This looks like phandle, so wrong type.
->  
->          cros_ec {
->              mediatek,rpmsg-name = "cros-ec-rpmsg";
+Lastly it deprecates the custom ELF loader in the iMX remoteproc driver,
+in favor of using the shared one.
 
+----------------------------------------------------------------
+Allen-KH Cheng (2):
+      dt-bindings: remoteproc: mediatek: Add firmware-name property
+      remoteproc: mediatek: Allow reading firmware-name from DT
 
-Best regards,
-Krzysztof
+Arnaud Pouliquen (1):
+      dt-bindings: remoteproc: st,stm32-rproc: Fix phandle-array parameters description
+
+Bjorn Andersson (2):
+      dt-bindings: remoteproc: qcom: pas: Add sc8280xp adsp and nsp pair
+      remoteproc: qcom: pas: Add sc8280xp remoteprocs
+
+Christophe JAILLET (1):
+      remoteproc: mtk_scp: Fix a potential double free
+
+Daniel Baluta (1):
+      remoteproc: imx_dsp_rproc: Make rsc_table optional
+
+Luca Weiss (2):
+      dt-bindings: remoteproc: qcom: pas: Add MSM8226 adsp
+      remoteproc: qcom: pas: Add MSM8226 ADSP support
+
+Manivannan Sadhasivam (1):
+      remoteproc: Don't bother checking the return value of debugfs_create*
+
+Mathieu Poirier (2):
+      Merge branch 'rproc-fixes' into rproc-next
+      Merge branch 'rproc-fixes' into rproc-next
+
+Nícolas F. R. A. Prado (3):
+      dt-bindings: remoteproc: mediatek: Add interrupts property to mtk,scp
+      dt-bindings: remoteproc: mediatek: Make l1tcm reg exclusive to mt819x
+      dt-bindings: remoteproc: mediatek: Add optional memory-region to mtk,scp
+
+Peng Fan (5):
+      remoteproc: elf_loader: skip segment with memsz as zero
+      remoteproc: imx_dsp_rproc: use common rproc_elf_load_segments
+      remoteproc: imx_rproc: Ignore create mem entry for resource table
+      dt-bindings: remoteproc: imx_rproc: Support i.MX93
+      remoteproc: imx_rproc: Support i.MX93
+
+Shengjiu Wang (2):
+      remoteproc: core: Remove state checking before calling rproc_boot()
+      remoteproc: core: Move state checking to remoteproc_core
+
+Tinghan Shen (1):
+      remoteproc: mediatek: Fix side effect of mt8195 sram power on
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         |   9 +-
+ .../devicetree/bindings/remoteproc/mtk,scp.yaml    |  57 ++++++++---
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  31 ++++++
+ .../bindings/remoteproc/st,stm32-rproc.yaml        |  16 ++--
+ drivers/remoteproc/imx_dsp_rproc.c                 | 105 ++-------------------
+ drivers/remoteproc/imx_rproc.c                     |  36 +++++++
+ drivers/remoteproc/mtk_common.h                    |   2 +
+ drivers/remoteproc/mtk_scp.c                       |  76 +++++++++++----
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  34 +++++++
+ drivers/remoteproc/remoteproc_cdev.c               |  11 ---
+ drivers/remoteproc/remoteproc_core.c               |  15 ++-
+ drivers/remoteproc/remoteproc_debugfs.c            |  17 +---
+ drivers/remoteproc/remoteproc_elf_loader.c         |   2 +-
+ drivers/remoteproc/remoteproc_sysfs.c              |  11 ---
+ 14 files changed, 240 insertions(+), 182 deletions(-)
