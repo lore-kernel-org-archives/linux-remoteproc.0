@@ -2,42 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3CFDCCA47A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jun 2022 03:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582F0C43334
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jun 2022 05:21:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229549AbiFBDwq (ORCPT
+        id S229910AbiFBFV1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Jun 2022 23:52:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47822 "EHLO
+        Thu, 2 Jun 2022 01:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229455AbiFBDwp (ORCPT
+        with ESMTP id S229750AbiFBFVZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Jun 2022 23:52:45 -0400
+        Thu, 2 Jun 2022 01:21:25 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A600A2E9;
-        Wed,  1 Jun 2022 20:52:43 -0700 (PDT)
-X-UUID: 3ff230b8e35743a6a46dcca47ce5415f-20220602
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C85A21789D;
+        Wed,  1 Jun 2022 22:21:19 -0700 (PDT)
+X-UUID: 45217320bfc549768738f244ebdcbd4a-20220602
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:bc2b454a-0ba9-445c-bd84-6e5e0628a0e4,OB:0,LO
+X-CID-O-INFO: VERSION:1.1.5,REQID:4c6e7e22-4ee9-40c7-a15b-1eb1ca0b54e5,OB:0,LO
         B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
         ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:bdb68c0d-3a0d-4bbe-9d72-0e5d26d57423,C
+X-CID-META: VersionHash:2a19b09,CLOUDID:1f170415-b515-4766-a72d-4514488fe823,C
         OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
         ,QS:0,BEC:nil
-X-UUID: 3ff230b8e35743a6a46dcca47ce5415f-20220602
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+X-UUID: 45217320bfc549768738f244ebdcbd4a-20220602
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 811584588; Thu, 02 Jun 2022 11:52:39 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Thu, 2 Jun 2022 11:52:38 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.792.3 via Frontend
- Transport; Thu, 2 Jun 2022 11:52:38 +0800
-Message-ID: <016eb93f0bee329c061725cb5096d49ab4240152.camel@mediatek.com>
-Subject: Re: [PATCH v1 00/15] Add support for MT8195 SCP 2nd core
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1495350360; Thu, 02 Jun 2022 13:21:14 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.792.3;
+ Thu, 2 Jun 2022 13:21:13 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 2 Jun 2022 13:21:12 +0800
+Message-ID: <3c837acfbefa5b7e23e1121678b5b878f08e4ef2.camel@mediatek.com>
+Subject: Re: [PATCH v1 01/15] dt-binding: remoteproc: mediatek: Support
+ dual-core SCP
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -62,10 +63,11 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         <weishunc@google.com>
-Date:   Thu, 2 Jun 2022 11:52:38 +0800
-In-Reply-To: <919ca8ee-4b01-e601-714c-26098647d5c7@linaro.org>
+Date:   Thu, 2 Jun 2022 13:21:12 +0800
+In-Reply-To: <dd3ea397-fa21-abe5-85ad-b8a4818dc011@linaro.org>
 References: <20220601112201.15510-1-tinghan.shen@mediatek.com>
-         <919ca8ee-4b01-e601-714c-26098647d5c7@linaro.org>
+         <20220601112201.15510-2-tinghan.shen@mediatek.com>
+         <dd3ea397-fa21-abe5-85ad-b8a4818dc011@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
@@ -76,30 +78,98 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hi Krzysztof,
- 
-On Wed, 2022-06-01 at 13:46 +0200, Krzysztof Kozlowski wrote:
+
+On Wed, 2022-06-01 at 13:50 +0200, Krzysztof Kozlowski wrote:
 > On 01/06/2022 13:21, Tinghan Shen wrote:
-> > The MT8195 System Companion Processor(SCP) is a dual-core RISC-V MCU.
-> > Current mediatek remoteproc driver only supports bring-up single core 
-> > SCP or the 1st core of a dual-core SCP. This series support to bring-up 
+> > The SCP co-processor is a dual-core RISC-V MCU on MT8195.
+> > 
+> > Add a new property to identify each core and helps to find drivers
+> > through device tree API to cooperate with each other, e.g. boot flow and
+> > watchdog timeout flow.
+> > 
+> > Add a new compatile for the driver of SCP 2nd core.
+> > 
+> > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/remoteproc/mtk,scp.yaml      | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> > b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> > index eec3b9c4c713..b181786d9575 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> > @@ -20,6 +20,7 @@ properties:
+> >        - mediatek,mt8186-scp
+> >        - mediatek,mt8192-scp
+> >        - mediatek,mt8195-scp
+> > +      - mediatek,mt8195-scp-dual
+> >  
+> >    reg:
+> >      description:
+> > @@ -57,6 +58,16 @@ properties:
+> >    memory-region:
+> >      maxItems: 1
+> >  
+> > +  mediatek,scp-core:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +    description:
+> > +      The property value is a list with 2 items, a core id and a phandle
 > 
->       ^^ this or is confusing a bit.
+> uint32, not phandle.
 > 
-> Does this mean that MT8195 has three RISC-V MCUs?
+> > +      to the sibling SCP node. 
+> 
+> Skip this. First part is obvious from the schema, second part should be
+> described via items.
+> 
+> The core id represents the id of the dts node contains
+> > +      this property. The valid values of core id are 0 and 1 for dual-core SCP.
+> > +      The phandle of sibling SCP node is used to find the register settings,
+> > +      trigger core dependent callback, and invoke rproc API.
+> 
+> Entire description did not help me to understand what's this. So far it
+> looks like it is not a hardware property but some programming help, so
+> it does not look like properly described in bindings.
+> 
+> > +    maxItems: 1
+> 
+> In description you said - two items.
+> 
+> You need allOf:if:then disallowing this property for other variants.
+> 
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -115,6 +126,7 @@ examples:
+> >          reg-names = "sram", "cfg", "l1tcm";
+> >          clocks = <&infracfg CLK_INFRA_SCPSYS>;
+> >          clock-names = "main";
+> > +        mediatek,scp-core = <0 &scp_dual>;
+> 
+> This looks like phandle, so wrong type.
+> >  
+> >          cros_ec {
+> >              mediatek,rpmsg-name = "cros-ec-rpmsg";
+> 
 
-My intention is to express that current SCP driver supports bring-up,
-1. the single core SCP, e.g. MT8183
-2. the 1st core of dual-core SCP, e.g. MT8195
+Thanks for your feedback.
+After looking for a comparable uses case, I find out a different approach.
 
+  mediatek,scp-core:
+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+    description:
+      Enable the dual-core support in scp driver.
+    items:
+      - items:
+          - description: Assign a core id for current scp node.
+            enum: [0, 1]
+          - description:
+              Phandle of another SCP node. This helps to find
+              the scp driver of another core to trigger core
+              dependent callback, invoke rproc subdevice API, etc.
 
-Perhaps rewriting as follows is preferable?
-
-"The mediatek remoteproc driver currently only allows bringing up a single 
-core SCP. It only supports bringing up the 1st core in SoCs with a dual-core SCP."
-> 
-> > the 2nd core of a dual-core SCP.
-> 
-> 
 > 
 > Best regards,
 > Krzysztof
