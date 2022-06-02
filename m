@@ -2,260 +2,450 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495DEC43334
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jun 2022 16:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AFDC43334
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Jun 2022 17:43:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233541AbiFBQJF (ORCPT
+        id S237621AbiFBRm7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Jun 2022 12:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
+        Thu, 2 Jun 2022 13:42:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232051AbiFBQJF (ORCPT
+        with ESMTP id S237624AbiFBRm7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Jun 2022 12:09:05 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B39D1D5026;
-        Thu,  2 Jun 2022 09:09:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lwboKhLlKTcnlU+xq0VTWG6w0p3/1SLQOtuOafuSpIFKmp5P4zfa6AzsN7Y2tLwdySjKRwf0gViS+obhjwFa4lTavOGnKLGTL6jsFwNHYXJA4NjsNjR4pJJwUhoZSkHnoxt83a32qvpaf8tvgk9gMxq0E8+/Z8tKqyl7v0BaKdrNXNTpdbnTf2mLCxA/Nm2XwX9TK42nKk+ibK73dmpneIvRk3/Cyg337gYa+ZdfEB+u2R8YEfXK89Jq96yPKgtOnkTedEvCilwc0iE36JvxRkNps9JbFbqECrVmOE5OEinCqh/J47RVqeSjfGAaRZmmJrpFWi1ZuH62It5g5yR9Yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PXQMK0I9E8uaestoNZ2+xJWnw9PpUVueOwWLWbYSKRQ=;
- b=bOdW91s3RL350lEJuxL4QCsCsLnGN+y3QwgXyOiqAoWIdqW7o3qAZkfAGnhb3O+c8feOrf8ZxpmDr4PLXWq4zzEhkhMD/azUtuaqetdFsLStvP8tHJnfo/0mFpQsBOVxOcIOzT+40oC0wZPnBTRWBmieUwNCmB1f9ocFEclWDaJuHmEXT1DoCu1bzz56A6eC5Qq7RZymbzm8wo+UgEONsHUe4bvwHqx2V2QNf8lMYpEpCTenO3O9EmEdEYO34ggq2+leH3fLnY2sJBIFNvhWCKDMzO7ECL6ZW6aAG+/cBXDVP/s83Mz3fSmjRFij2Rroh9q2EKR4WTfIxXeYxHMF/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=kernel.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        Thu, 2 Jun 2022 13:42:59 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AC9F249314
+        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Jun 2022 10:42:57 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id b135so5311134pfb.12
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Jun 2022 10:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PXQMK0I9E8uaestoNZ2+xJWnw9PpUVueOwWLWbYSKRQ=;
- b=nGE/U+CHpMpKBkxLDEX0Wbu03dwYhiX1inT2Y2ZFMVv2BUdQNP/KUuJc2LbiHK+1MNu4MPST3a4wzKcqp5wmTJ9qwPM/42peX8q+J5CzHeyxsXODlfbCwb20pahuFlAf2bfvKIOHDi3C1Xz/92tPlImome/SL3oAruPVc+FE2ms=
-Received: from DS7P222CA0020.NAMP222.PROD.OUTLOOK.COM (2603:10b6:8:2e::16) by
- CY4PR02MB2327.namprd02.prod.outlook.com (2603:10b6:903:e::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5293.13; Thu, 2 Jun 2022 16:09:01 +0000
-Received: from DM3NAM02FT022.eop-nam02.prod.protection.outlook.com
- (2603:10b6:8:2e:cafe::73) by DS7P222CA0020.outlook.office365.com
- (2603:10b6:8:2e::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13 via Frontend
- Transport; Thu, 2 Jun 2022 16:09:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT022.mail.protection.outlook.com (10.13.5.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5314.12 via Frontend Transport; Thu, 2 Jun 2022 16:09:00 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Thu, 2 Jun 2022 09:08:48 -0700
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Thu, 2 Jun 2022 09:08:48 -0700
-Envelope-to: robh@kernel.org,
- openamp-system-reference@lists.openampproject.org,
- bjorn.andersson@linaro.org,
- mathieu.poirier@linaro.org,
- krzk+dt@kernel.org,
- linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Received: from [10.23.120.222] (port=62864)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <tanmay.shah@xilinx.com>)
-        id 1nwnNQ-0006u2-Hw; Thu, 02 Jun 2022 09:08:48 -0700
-Message-ID: <6b87b48e-d030-9942-6204-bd5d645faf49@xilinx.com>
-Date:   Thu, 2 Jun 2022 09:08:47 -0700
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=kNwkmX3s5deCBIdM1Zsf6aeSldXJoOpdX3dOnwwdhh8=;
+        b=S5YkOJzoeURVyMVomohy5E80Xzgijy63l8/Hi2b96WJKnh/IxdkQxahm+KGXWqm1C4
+         uAY+20WxB5ATud+sMBmBCSGjbsKnsyas85CZSmw77naQAvDFzF8UTwyeiqUNAXSl339w
+         VZdKrhaDHlIaHZ7Yht+tGG1ChpaDTiqobWFFHWIza+XHFiMq05A5cK+0ggaqz/ymh+gQ
+         NTcpvqoZ026EpKOPfBTeG+uCZUsTJoi/oxMAFKYMUmfW7zauYJTLI80TfgDeHuBwRh8l
+         LJ3D1bV/mtcEnUcm6idF7N/yAUknqz1RtNmtgrx/s44/u8/EqQWZ0uHotgHPN12UxS4Z
+         n4dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kNwkmX3s5deCBIdM1Zsf6aeSldXJoOpdX3dOnwwdhh8=;
+        b=od3Wqs6hv9M7K2d1ORBNB3pSh8Wk1kXOU5neP3Lme7lY2j6/4DgbL5tXiDExTrIJDs
+         j0+aQ/sGdbvZ5xVrdGdj+o+vNNWSQ8rtrKkjxsQWrQbsaJYvyuBxx/AX41c1TJndLdcF
+         xQicq1n1l52YbTgMYhMkZvlL+kpd3IYVJuomw6/lEqW5qS0UOQWlUK3qgP8HUvrwzPSp
+         i9skJMu+0nurpID3o5ztje28d+IGMXpQ90Lkmcyt0jVdwxtbrkGYjpzcbfZtDuU8NeXB
+         jnLaloz1u88ld5Ye1Ixj4HXkpPwqntgmXZIV5C3Ufa5QPBFsADVjG7UnA/72CUIROZvb
+         U5BA==
+X-Gm-Message-State: AOAM531PHDTjBhSe2rMzVgG5Hu4OsIuwajMi3AHGqzMwaVdBXjngHWBM
+        mVK8qNd411kRVS8cFRSC0WS0Ng==
+X-Google-Smtp-Source: ABdhPJwKXfTohdDJg0TpRE7WpwlV1ZkpePTHlYklrs/4rMFeyORMsSVWQgwhxLOuTTapp82WzfjNWQ==
+X-Received: by 2002:a63:1f17:0:b0:3fb:afd3:985d with SMTP id f23-20020a631f17000000b003fbafd3985dmr5219720pgf.396.1654191776447;
+        Thu, 02 Jun 2022 10:42:56 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id e13-20020aa798cd000000b0050dc76281b8sm3999249pfm.146.2022.06.02.10.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jun 2022 10:42:55 -0700 (PDT)
+Date:   Thu, 2 Jun 2022 11:42:52 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Bruce Ashfield <bruce.ashfield@xilinx.com>
+Subject: Re: [RFC PATCH v5 4/4] remoteproc: virtio: Create platform device
+ for the remoteproc_virtio
+Message-ID: <20220602174252.GE531268@p14s>
+References: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
+ <20220406095446.1187968-5-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH v6 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
- bindings
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     <openamp-system-reference@lists.openampproject.org>,
-        <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <krzk+dt@kernel.org>, <michal.simek@xilinx.com>,
-        <ben.levinsky@xilinx.com>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20220531234308.3317795-1-tanmay.shah@xilinx.com>
- <20220531234308.3317795-2-tanmay.shah@xilinx.com>
- <20220601184240.GA188558-robh@kernel.org>
- <d7854ce0-3553-3286-809c-651780fb91e5@xilinx.com>
- <20220602151409.GA2333778-robh@kernel.org>
-From:   Tanmay Shah <tanmay.shah@xilinx.com>
-In-Reply-To: <20220602151409.GA2333778-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 37c50f37-848a-4886-7763-08da44b234ec
-X-MS-TrafficTypeDiagnostic: CY4PR02MB2327:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR02MB2327CB3DDA450C4B7C3B4D2CCADE9@CY4PR02MB2327.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +Ja4+qOiCmNtMgYjqOxMMEyBlTx7dikw4yLl8O7tC5Gj0TmLkYChlBBYL82eTPx8GHO1W7+aioiTrPsM7jtkRA2/g+i1n4eQGuN7Wfz74PBV56GdqY1uDp/wxIC+0ti11jOjhr+J8t/l6Nz+i3L8fAV7sqewlCi40b+2HBvzD/gbts2FeL9OxmJAbN+yHuH0TCWB65HKJHJrHBhpTcJKfGjFqTPs3gG7j4VAYRw16EfOTRNMrGn1LDIeq/MDv8Kv8LgR2xH7ECHZ/kwQspzNrLSZQZ1qV0Prk5NgQi4zrnRfwt1BNo6vMEWWu52pF0BnRFBpTD0v7c6vAGa+6LV+UbRP7AjNohxtgPvNaHLEGFIiyktB4/0W4q/2sMruRzF+6SNTGgTZ3Ms6H914b7RPrCzGuIfcyce89Twa3xLacVV+tmdam/I7u7pAX0sUAIInc2fkG9oOCOFc4FfFz+pOmkOHap0ootgfGoq/5R9jJaIOFkvxKtmDLgTR/lbAMS8VQdiKCLINY+zB6KenrtdCHygv1y6WfHdYy5APNXodny5dLkNQnUnH5e/SMeXbH8m7y0qRVkHUf7qND3t1bJyhqiYskupXrSKOgt+AXJ9z+nGbmHarSXhafnb4w+wxBRSWLnafWFJsPlC1OTSP9AlM2N5Q/9ZW+Mba4c/8z10tcTr3YuEomXHp+dd5/FmrzS4xT5iKlclHuo9BMSXW6zVKSYO7MhYeSSuaAKq5Refh6kc2J6i3pUiSa/Jl4trgF3RKAOWIm7ofz7L642GCgxmNRhN0G2f38UIX2aEU0zVeGpj2tTYcV9KPMqxWSWTdSLfpIu+u2aaIyq52Xv1WXo+mBdpcBwms9BF8bsnVPzMHaPw=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(83380400001)(26005)(36860700001)(508600001)(4326008)(5660300002)(2616005)(53546011)(966005)(2906002)(44832011)(40460700003)(426003)(47076005)(336012)(31686004)(186003)(31696002)(6916009)(70206006)(8676002)(356005)(9786002)(8936002)(82310400005)(70586007)(36756003)(7636003)(316002)(54906003)(50156003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2022 16:09:00.8188
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37c50f37-848a-4886-7763-08da44b234ec
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT022.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR02MB2327
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406095446.1187968-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Wed, Apr 06, 2022 at 11:54:46AM +0200, Arnaud Pouliquen wrote:
+> Define a platform driver to manage the remoteproc virtio device as
+> a platform devices.
+> 
+> The platform device allows to pass rproc_vdev_data platform data to
+> specify properties that are stored in the rproc_vdev structure.
+> 
+> Such approach will allow to preserve legacy remoteproc virtio device
+> creation but also to probe the device using device tree mechanism.
+> 
+> remoteproc_virtio.c update:
+>   - Add rproc_virtio_driver platform driver. The probe/remove ops replace
+>     the rproc_rvdev_add_device/rproc_rvdev_remove_device functions.
+>   - All reference to the rvdev->dev has been updated to rvdev-pdev->dev.
+>   - rproc_rvdev_release is removed as associated to the rvdev device.
+>   - The use of rvdev->kref counter is replaced by get/put_device on the
+>     remoteproc virtio platform device.
+>   - The vdev device no longer increments rproc device counter.
+>     increment/decrement is done in rproc_virtio_probe/rproc_virtio_remove
+>     function in charge of the vrings allocation/free.
+> 
+> remoteproc_core.c update:
+>   Migrate from the rvdev device to the rvdev platform device.
+>   From this patch, when a vdev resource is found in the resource table
+>   the remoteproc core register a platform device.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> Update vs previous revision:
+>  - Updated the compatible name to align with the "virtio, <transport>"
+> name used for instance for "virtio,mmio"
+> ---
+>  drivers/remoteproc/remoteproc_core.c     |  13 +-
+>  drivers/remoteproc/remoteproc_internal.h |   3 -
+>  drivers/remoteproc/remoteproc_virtio.c   | 146 +++++++++++------------
+>  include/linux/remoteproc.h               |   6 +-
+>  4 files changed, 84 insertions(+), 84 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index bd6d3f2decc6..c0c88ecaa66e 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -478,6 +478,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  	struct device *dev = &rproc->dev;
+>  	struct rproc_vdev *rvdev;
+>  	struct rproc_vdev_data rvdev_data;
+> +	struct platform_device *pdev;
+>  
+>  	/* make sure resource isn't truncated */
+>  	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
+> @@ -506,9 +507,13 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  	rvdev_data.rsc_offset = offset;
+>  	rvdev_data.rsc = rsc;
+>  
+> -	rvdev = rproc_rvdev_add_device(rproc, &rvdev_data);
+> -	if (IS_ERR(rvdev))
+> -		return PTR_ERR(rvdev);
+> +	pdev = platform_device_register_data(dev, "rproc-virtio", rvdev_data.index, &rvdev_data,
+> +					     sizeof(rvdev_data));
+> +	if (IS_ERR(pdev)) {
+> +		dev_err(rproc->dev.parent,
 
-On 6/2/22 8:14 AM, Rob Herring wrote:
-> On Wed, Jun 01, 2022 at 12:05:09PM -0700, Tanmay Shah wrote:
->> Hi Rob,
->>
->> Thanks for reviews. Please find my comments below:
->>
->> On 6/1/22 11:42 AM, Rob Herring wrote:
->>> On Tue, May 31, 2022 at 04:43:05PM -0700, Tanmay Shah wrote:
->>>> Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
->>>> Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem
->>>> (cluster).
->>>>
->>>> Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
->>>> ---
->>>>
->>>> Changes in v6:
->>>>     - Add maxItems to sram and memory-region property
->>>>
->>>> Changes in v5:
->>>> - Add constraints of the possible values of xlnx,cluster-mode property
->>>> - fix description of power-domains property for r5 core
->>>> - Remove reg, address-cells and size-cells properties as it is not required
->>>> - Fix description of mboxes property
->>>> - Add description of each memory-region and remove old .txt binding link
->>>>     reference in the description
->>>>
->>>> Changes in v4:
->>>>     - Add memory-region, mboxes and mbox-names properties in example
->>>>
->>>> Changes in v3:
->>>>     - None
->>>>
->>>>
->>>>    .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 129 ++++++++++++++++++
->>>>    include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
->>>>    2 files changed, 135 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->>>> new file mode 100644
->>>> index 000000000000..cbff1c201a89
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->>>> @@ -0,0 +1,129 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Xilinx R5F processor subsystem
->>>> +
->>>> +maintainers:
->>>> +  - Ben Levinsky <ben.levinsky@xilinx.com>
->>>> +  - Tanmay Shah <tanmay.shah@xilinx.com>
->>>> +
->>>> +description: |
->>>> +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
->>>> +  real-time processing based on the Cortex-R5F processor core from ARM.
->>>> +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
->>>> +  floating-point unit that implements the Arm VFPv3 instruction set.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: xlnx,zynqmp-r5fss
->>>> +
->>>> +  xlnx,cluster-mode:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    enum: [0, 1, 2]
->>>> +    description: |
->>>> +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
->>>> +      lock-step mode(Both RPU cores execute the same code in lock-step,
->>>> +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
->>>> +      core 1 runs normally). The processor does not support dynamic configuration.
->>>> +      Switching between modes is only permitted immediately after a processor reset.
->>>> +      If set to  1 then lockstep mode and if 0 then split mode.
->>>> +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
->>>> +
->>>> +patternProperties:
->>>> +  "^r5f-[a-f0-9]+$":
->>>> +    type: object
->>>> +    description: |
->>>> +      The RPU is located in the Low Power Domain of the Processor Subsystem.
->>>> +      Each processor includes separate L1 instruction and data caches and
->>>> +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
->>>> +      memory space is non-cacheable.
->>>> +
->>>> +      Each RPU contains one 64KB memory and two 32KB memories that
->>>> +      are accessed via the TCM A and B port interfaces, for a total of 128KB
->>>> +      per processor. In lock-step mode, the processor has access to 256KB of
->>>> +      TCM memory.
->>>> +
->>>> +    properties:
->>>> +      compatible:
->>>> +        const: xlnx,zynqmp-r5f
->>>> +
->>>> +      power-domains:
->>>> +        description: RPU core PM domain specifier
->>>> +        maxItems: 1
->>>> +
->>>> +      mboxes:
->>>> +        minItems: 1
->>>> +        items:
->>>> +          - description: mailbox channel to send data to RPU
->>>> +          - description: mailbox channel to receive data from RPU
->>>> +
->>>> +      mbox-names:
->>>> +        minItems: 1
->>>> +        items:
->>>> +          - const: tx
->>>> +          - const: rx
->>>> +
->>>> +      sram:
->>>> +        $ref: /schemas/types.yaml#/definitions/phandle-array
->>>> +        maxItems: 8
->>> minItems: 1
->>> maxItems: 8
->>> items:
->>>     maxItems: 1
->> I have posted v7 which adds "minItems: 1".
->>
->> However, I didn't get items: part. Is it required to have items: now?
-> Yes.
->> Can I add items: part once TCM bindings are posted?
-> No.
->
->> I understand that minItems and maxItems under sram property decides how many
->> phandles sram can have.
->>
->> However, maxItems: 1 under items: field what it describes?
-> 'phandle-array' is really a matrix type because we can have phandles
-> plus argument cells. So you have to define each of the 1-8 entries is a
-> single phandle cell (and no arg cells).
+                dev_err(dev,
 
-Thanks for explanation. I will send new revision as suggested.
+> +			"failed to create rproc-virtio device\n");
+> +		return PTR_ERR(pdev);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1248,7 +1253,7 @@ void rproc_resource_cleanup(struct rproc *rproc)
+>  
+>  	/* clean up remote vdev entries */
+>  	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
+> -		kref_put(&rvdev->refcount, rproc_vdev_release);
+> +		platform_device_unregister(rvdev->pdev);
+>  
+>  	rproc_coredump_cleanup(rproc);
+>  }
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index f82f9a5378ae..41176f4b35c9 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -45,10 +45,7 @@ int rproc_of_parse_firmware(struct device *dev, int index,
+>  			    const char **fw_name);
+>  
+>  /* from remoteproc_virtio.c */
+> -struct rproc_vdev *rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data);
+> -void rproc_rvdev_remove_device(struct rproc_vdev *rvdev);
+>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
+> -void rproc_vdev_release(struct kref *ref);
+>  
+>  /* from remoteproc_debugfs.c */
+>  void rproc_remove_trace_file(struct dentry *tfile);
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index e2e796ab2fd8..3937c1e5eb19 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/dma-map-ops.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/export.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/remoteproc.h>
+>  #include <linux/virtio.h>
+> @@ -46,7 +47,11 @@ static int copy_dma_range_map(struct device *to, struct device *from)
+>  
+>  static struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
+>  {
+> -	return container_of(vdev->dev.parent, struct rproc_vdev, dev);
+> +	struct platform_device *pdev;
+> +
+> +	pdev = container_of(vdev->dev.parent, struct platform_device, dev);
+> +
+> +	return platform_get_drvdata(pdev);
+>  }
+>  
+>  static  struct rproc *vdev_to_rproc(struct virtio_device *vdev)
+> @@ -341,13 +346,10 @@ static void rproc_virtio_dev_release(struct device *dev)
+>  {
+>  	struct virtio_device *vdev = dev_to_virtio(dev);
+>  	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
+> -	struct rproc *rproc = vdev_to_rproc(vdev);
+>  
+>  	kfree(vdev);
+>  
+> -	kref_put(&rvdev->refcount, rproc_vdev_release);
+> -
+> -	put_device(&rproc->dev);
+> +	put_device(&rvdev->pdev->dev);
+>  }
+>  
+>  /**
+> @@ -363,7 +365,7 @@ static void rproc_virtio_dev_release(struct device *dev)
+>  static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+>  {
+>  	struct rproc *rproc = rvdev->rproc;
+> -	struct device *dev = &rvdev->dev;
+> +	struct device *dev = &rvdev->pdev->dev;
+>  	struct virtio_device *vdev;
+>  	struct rproc_mem_entry *mem;
+>  	int ret;
+> @@ -433,18 +435,8 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
+>  	vdev->dev.parent = dev;
+>  	vdev->dev.release = rproc_virtio_dev_release;
+>  
+> -	/*
+> -	 * We're indirectly making a non-temporary copy of the rproc pointer
+> -	 * here, because drivers probed with this vdev will indirectly
+> -	 * access the wrapping rproc.
+> -	 *
+> -	 * Therefore we must increment the rproc refcount here, and decrement
+> -	 * it _only_ when the vdev is released.
+> -	 */
+> -	get_device(&rproc->dev);
+> -
+>  	/* Reference the vdev and vring allocations */
+> -	kref_get(&rvdev->refcount);
+> +	get_device(dev);
+>  
+>  	ret = register_virtio_device(vdev);
+>  	if (ret) {
+> @@ -486,78 +478,57 @@ static int rproc_vdev_do_start(struct rproc_subdev *subdev)
+>  static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
+>  {
+>  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
+> +	struct device *dev = &rvdev->pdev->dev;
+>  	int ret;
+>  
+> -	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
+> +	ret = device_for_each_child(dev, NULL, rproc_remove_virtio_dev);
+>  	if (ret)
+> -		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
+> +		dev_warn(dev, "can't remove vdev child device: %d\n", ret);
+>  }
+>  
+> -/**
+> - * rproc_rvdev_release() - release the existence of a rvdev
+> - *
+> - * @dev: the subdevice's dev
+> - */
+> -static void rproc_rvdev_release(struct device *dev)
+> -{
+> -	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
+> -
+> -	of_reserved_mem_device_release(dev);
+> -
+> -	kfree(rvdev);
+> -}
+> -
+> -struct rproc_vdev *
+> -rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
+> +static int rproc_virtio_probe(struct platform_device *pdev)
+>  {
+> +	struct device *dev = &pdev->dev;
+> +	struct rproc_vdev_data *rvdev_data = dev->platform_data;
+>  	struct rproc_vdev *rvdev;
+> -	struct fw_rsc_vdev *rsc = rvdev_data->rsc;
+> -	char name[16];
+> +	struct rproc *rproc = container_of(dev->parent, struct rproc, dev);
+> +	struct fw_rsc_vdev *rsc;
+>  	int i, ret;
+>  
+> -	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
+> -	if (!rvdev)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!rvdev_data)
+> +		return -EINVAL;
+>  
+> -	kref_init(&rvdev->refcount);
+> +	rvdev = devm_kzalloc(dev, sizeof(*rvdev), GFP_KERNEL);
+> +	if (!rvdev)
+> +		return -ENOMEM;
+>  
+>  	rvdev->id = rvdev_data->id;
+>  	rvdev->rproc = rproc;
+>  	rvdev->index = rvdev_data->index;
+>  
+> -	/* Initialise vdev subdevice */
+> -	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+> -	rvdev->dev.parent = &rproc->dev;
+> -	rvdev->dev.release = rproc_rvdev_release;
+> -	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+> -	dev_set_drvdata(&rvdev->dev, rvdev);
+> -
+> -	ret = device_register(&rvdev->dev);
+> -	if (ret) {
+> -		put_device(&rvdev->dev);
+> -		return ERR_PTR(ret);
+> -	}
+> -
+> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
+> +	ret = copy_dma_range_map(dev, rproc->dev.parent);
+>  	if (ret)
+> -		goto free_rvdev;
+> +		return ret;
+>  
+>  	/* Make device dma capable by inheriting from parent's capabilities */
+> -	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
+> +	set_dma_ops(dev, get_dma_ops(rproc->dev.parent));
+>  
+> -	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
+> -					   dma_get_mask(rproc->dev.parent));
+> +	ret = dma_coerce_mask_and_coherent(dev, dma_get_mask(rproc->dev.parent));
+>  	if (ret) {
+> -		dev_warn(&rvdev->dev,
+> -			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
+> +		dev_warn(dev, "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
+>  			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
+>  	}
+>  
+> +	platform_set_drvdata(pdev, rvdev);
+> +	rvdev->pdev = pdev;
+> +
+> +	rsc = rvdev_data->rsc;
+> +
+>  	/* parse the vrings */
+>  	for (i = 0; i < rsc->num_of_vrings; i++) {
+>  		ret = rproc_parse_vring(rvdev, rsc, i);
+>  		if (ret)
+> -			goto free_rvdev;
+> +			return ret;
+>  	}
+>  
+>  	/* remember the resource offset*/
+> @@ -577,18 +548,30 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
+>  
+>  	rproc_add_subdev(rproc, &rvdev->subdev);
+>  
+> -	return rvdev;
+> +	dev_dbg(dev, "virtio dev %d added\n",  rvdev->index);
 
->
-> Rob
+Please remove this along with the one in rproc_vdev_release().
+
+> +
+> +	/*
+> +	 * We're indirectly making a non-temporary copy of the rproc pointer
+> +	 * here, because the platform devicer or the vdev device will indirectly
+> +	 * access the wrapping rproc.
+> +	 *
+> +	 * Therefore we must increment the rproc refcount here, and decrement
+> +	 * it _only_ on platform remove.
+> +	 */
+> +	get_device(&rproc->dev);
+> +
+> +	return 0;
+>  
+>  unwind_vring_allocations:
+>  	for (i--; i >= 0; i--)
+>  		rproc_free_vring(&rvdev->vring[i]);
+> -free_rvdev:
+> -	device_unregister(&rvdev->dev);
+> -	return ERR_PTR(ret);
+> +
+> +	return ret;
+>  }
+>  
+> -void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
+> +static int rproc_virtio_remove(struct platform_device *pdev)
+>  {
+> +	struct rproc_vdev *rvdev = dev_get_drvdata(&pdev->dev);
+>  	struct rproc *rproc = rvdev->rproc;
+>  	struct rproc_vring *rvring;
+>  	int id;
+> @@ -600,12 +583,29 @@ void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
+>  
+>  	rproc_remove_subdev(rproc, &rvdev->subdev);
+>  	rproc_remove_rvdev(rvdev);
+> -	device_unregister(&rvdev->dev);
+> -}
+>  
+> -void rproc_vdev_release(struct kref *ref)
+> -{
+> -	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
+> +	of_reserved_mem_device_release(&pdev->dev);
+> +
+> +	dev_dbg(&pdev->dev, "virtio dev %d removed\n",  rvdev->index);
+>  
+> -	rproc_rvdev_remove_device(rvdev);
+> +	/* The remote proc device can be removed */
+
+This comment doesn't make sense - the remoteproc device can't be removed here.
+Please refactor.
+
+Thanks,
+Mathieu
+
+> +	put_device(&rproc->dev);
+> +
+> +	return 0;
+>  }
+> +
+> +/* Platform driver */
+> +static const struct of_device_id rproc_virtio_match[] = {
+> +	{ .compatible = "virtio,rproc", },
+> +	{},
+> +};
+> +
+> +static struct platform_driver rproc_virtio_driver = {
+> +	.probe		= rproc_virtio_probe,
+> +	.remove		= rproc_virtio_remove,
+> +	.driver		= {
+> +		.name	= "rproc-virtio",
+> +		.of_match_table	= rproc_virtio_match,
+> +	},
+> +};
+> +builtin_platform_driver(rproc_virtio_driver);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 7c943f0a2fc4..64b9809d0ec1 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -616,9 +616,8 @@ struct rproc_vring {
+>  
+>  /**
+>   * struct rproc_vdev - remoteproc state for a supported virtio device
+> - * @refcount: reference counter for the vdev and vring allocations
+>   * @subdev: handle for registering the vdev as a rproc subdevice
+> - * @dev: device struct used for reference count semantics
+> + * @pdev: remoteproc virtio platform device
+>   * @id: virtio device id (as in virtio_ids.h)
+>   * @node: list node
+>   * @rproc: the rproc handle
+> @@ -627,10 +626,9 @@ struct rproc_vring {
+>   * @index: vdev position versus other vdev declared in resource table
+>   */
+>  struct rproc_vdev {
+> -	struct kref refcount;
+>  
+>  	struct rproc_subdev subdev;
+> -	struct device dev;
+> +	struct platform_device *pdev;
+>  
+>  	unsigned int id;
+>  	struct list_head node;
+> -- 
+> 2.25.1
+> 
