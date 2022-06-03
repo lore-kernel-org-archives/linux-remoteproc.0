@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E944C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DA8CCA47D
 	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Jun 2022 12:15:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244232AbiFCMPu (ORCPT
+        id S244236AbiFCMPu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Fri, 3 Jun 2022 08:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53558 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244222AbiFCMPr (ORCPT
+        with ESMTP id S244189AbiFCMPt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Jun 2022 08:15:47 -0400
+        Fri, 3 Jun 2022 08:15:49 -0400
 Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D80E39B8A;
-        Fri,  3 Jun 2022 05:15:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 805FC39826;
+        Fri,  3 Jun 2022 05:15:48 -0700 (PDT)
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 253CFVxv078311;
-        Fri, 3 Jun 2022 07:15:31 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 253CFaNC078403;
+        Fri, 3 Jun 2022 07:15:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1654258531;
-        bh=4Un21zBmAxDQIKEz1mlNtx5Yvx0CT5zaSYLpH3w3xBM=;
+        s=ti-com-17Q1; t=1654258536;
+        bh=RUZPQ+k/CYQH8PVfKXR4X3F5fhUjffskd1cfh1MzVPE=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=OUuDCIJchlnTtEIbm5pspmm7KrHzKrrncWUYb9ieMhmDB2sbLuGQIeOZW8fOyW2d1
-         HXs9rraBd+WYnEhjsVzzjnN0IDgVww4wuqpkhTa9Len5t6BwomIUGRu6Q/XZvHUnoU
-         PetrmmcQNpD9JYN1SP1RKjAsICZRuWj5sTB98bHc=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 253CFVDY113617
+        b=mn81pSs2Fv/sYgGMQm3MtKYsg/rEcAMR2B/hEFHcBb5ft9AVcfsjSIWa+VBo2fk30
+         stOKiGzocXa9OTpB+tOZdiKt1K7GM4ZkL6c1MtuQCkbtiDxZsZl5eYER3rRkdZW1wx
+         YSJIV5sBmBjQdkxlwfqmmh2algmroMLRSrARlmmw=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 253CFall113689
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 3 Jun 2022 07:15:31 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 3 Jun 2022 07:15:36 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 3
- Jun 2022 07:15:31 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2022 07:15:35 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Fri, 3 Jun 2022 07:15:31 -0500
+ Frontend Transport; Fri, 3 Jun 2022 07:15:36 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 253CFU8R121294;
-        Fri, 3 Jun 2022 07:15:30 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 253CFYvT129114;
+        Fri, 3 Jun 2022 07:15:35 -0500
 From:   Puranjay Mohan <p-mohan@ti.com>
 To:     <linux-kernel@vger.kernel.org>
 CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
@@ -50,9 +50,9 @@ CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
         <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
         <rogerq@kernel.org>, <grygorii.strashko@ti.com>, <vigneshr@ti.com>,
         <kishon@ti.com>, <robh@kernel.org>
-Subject: [PATCH v4 4/6] remoteproc: pru: Add pru_rproc_set_ctable() function
-Date:   Fri, 3 Jun 2022 17:45:18 +0530
-Message-ID: <20220603121520.13730-5-p-mohan@ti.com>
+Subject: [PATCH v4 6/6] remoteproc: pru: add support for configuring GPMUX based on client setup
+Date:   Fri, 3 Jun 2022 17:45:20 +0530
+Message-ID: <20220603121520.13730-7-p-mohan@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220603121520.13730-1-p-mohan@ti.com>
 References: <20220603121520.13730-1-p-mohan@ti.com>
@@ -63,187 +63,78 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Roger Quadros <rogerq@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
 
-Some firmwares expect the OS drivers to configure the CTABLE
-entries publishing dynamically allocated memory regions. For
-example, the PRU Ethernet firmwares use the C28 and C30 entries
-for retrieving the Shared RAM and System SRAM (OCMC) areas
-allocated by the PRU Ethernet client driver.
+Client device node property ti,pruss-gp-mux-sel can now be used to
+configure the GPMUX config value for PRU.
 
-Provide a way for users to do that through a new API,
-pru_rproc_set_ctable(). The API returns 0 on success and
-a negative value on error.
-
-NOTE:
-The programmable CTABLE entries are typically re-programmed by
-the PRU firmwares when dealing with a certain block of memory
-during block processing. This API provides an interface to the
-PRU client drivers to publish a dynamically allocated memory
-block with the PRU firmware using a CTABLE entry instead of a
-negotiated address in shared memory. Additional synchronization
-may be needed between the PRU client drivers and firmwares if
-different addresses needs to be published at run-time reusing
-the same CTABLE entry.
-
-Co-developed-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Co-developed-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+[s-anna@ti.com: simplify the pru id usage]
 Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
 ---
- drivers/remoteproc/pru_rproc.c | 59 ++++++++++++++++++++++++++++++++++
- include/linux/pruss.h          | 22 +++++++++++++
- 2 files changed, 81 insertions(+)
+ drivers/remoteproc/pru_rproc.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 9fed3e0372d3..d06b763e995e 100644
+index 2977eb50631b..b532069fe259 100644
 --- a/drivers/remoteproc/pru_rproc.c
 +++ b/drivers/remoteproc/pru_rproc.c
-@@ -119,6 +119,7 @@ struct pru_private_data {
-  * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-  * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-  * @pru_interrupt_map_sz: pru_interrupt_map size
-+ * @rmw_lock: lock for read, modify, write operations on registers
+@@ -123,6 +123,7 @@ struct pru_private_data {
   * @dbg_single_step: debug state variable to set PRU into single step mode
   * @dbg_continuous: debug state variable to restore PRU execution mode
   * @evt_count: number of mapped events
-@@ -136,6 +137,7 @@ struct pru_rproc {
- 	unsigned int *mapped_irq;
- 	struct pru_irq_rsc *pru_interrupt_map;
- 	size_t pru_interrupt_map_sz;
-+	spinlock_t rmw_lock; /* register access lock */
++ * @gpmux_save: saved value for gpmux config
+  */
+ struct pru_rproc {
+ 	int id;
+@@ -141,6 +142,7 @@ struct pru_rproc {
  	u32 dbg_single_step;
  	u32 dbg_continuous;
  	u8 evt_count;
-@@ -152,6 +154,23 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
- 	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
- }
- 
-+static inline
-+void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
-+			 u32 mask, u32 set)
-+{
-+	u32 val;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&pru->rmw_lock, flags);
-+
-+	val = pru_control_read_reg(pru, reg);
-+	val &= ~mask;
-+	val |= (set & mask);
-+	pru_control_write_reg(pru, reg, val);
-+
-+	spin_unlock_irqrestore(&pru->rmw_lock, flags);
-+}
-+
- static struct rproc *__pru_rproc_get(struct device_node *np, int index)
- {
- 	struct device_node *rproc_np = NULL;
-@@ -273,6 +292,45 @@ void pru_rproc_put(struct rproc *rproc)
- }
- EXPORT_SYMBOL_GPL(pru_rproc_put);
- 
-+/**
-+ * pru_rproc_set_ctable() - set the constant table index for the PRU
-+ * @rproc: the rproc instance of the PRU
-+ * @c: constant table index to set
-+ * @addr: physical address to set it to
-+ *
-+ * Return: 0 on success, or errno in error case.
-+ */
-+int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+	unsigned int reg;
-+	u32 mask, set;
-+	u16 idx;
-+	u16 idx_mask;
-+
-+	if (IS_ERR_OR_NULL(rproc))
-+		return -EINVAL;
-+
-+	if (!rproc->dev.parent || !is_pru_rproc(rproc->dev.parent))
-+		return -ENODEV;
-+
-+	/* pointer is 16 bit and index is 8-bit so mask out the rest */
-+	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
-+
-+	/* ctable uses bit 8 and upwards only */
-+	idx = (addr >> 8) & idx_mask;
-+
-+	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
-+	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
-+	mask = idx_mask << (16 * (c & 1));
-+	set = idx << (16 * (c & 1));
-+
-+	pru_control_set_reg(pru, reg, mask, set);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
-+
- static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
- {
- 	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
-@@ -944,6 +1002,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	pru->rproc = rproc;
- 	pru->fw_name = fw_name;
- 	pru->client_np = NULL;
-+	spin_lock_init(&pru->rmw_lock);
- 	mutex_init(&pru->lock);
- 
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index fdc719b43db0..d830e20056c7 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -23,13 +23,29 @@ enum pruss_pru_id {
- 	PRUSS_NUM_PRUS,
++	u8 gpmux_save;
  };
  
-+/*
-+ * enum pru_ctable_idx - Configurable Constant table index identifiers
-+ */
-+enum pru_ctable_idx {
-+	PRU_C24 = 0,
-+	PRU_C25,
-+	PRU_C26,
-+	PRU_C27,
-+	PRU_C28,
-+	PRU_C29,
-+	PRU_C30,
-+	PRU_C31,
-+};
+ static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+@@ -250,6 +252,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	struct device *dev;
+ 	const char *fw_name;
+ 	int ret;
++	u32 mux;
+ 
+ 	try_module_get(THIS_MODULE);
+ 
+@@ -273,6 +276,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 
+ 	mutex_unlock(&pru->lock);
+ 
++	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
++        if (ret) {
++                dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
++                goto err;
++        }
 +
- struct device_node;
-+struct rproc;
- 
- #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
- 
- struct rproc *pru_rproc_get(struct device_node *np, int index,
- 			    enum pruss_pru_id *pru_id);
- void pru_rproc_put(struct rproc *rproc);
-+int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
- 
- #else
- 
-@@ -41,6 +57,12 @@ pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
- 
- static inline void pru_rproc_put(struct rproc *rproc) { }
- 
-+static inline int pru_rproc_set_ctable(struct rproc *rproc,
-+				       enum pru_ctable_idx c, u32 addr)
-+{
-+	return -EOPNOTSUPP;
-+}
++        ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
++                                         &mux);
++        if (!ret) {
++                ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
++                if (ret) {
++                        dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
++                        goto err;
++                }
++        }
 +
- #endif /* CONFIG_PRU_REMOTEPROC */
+ 	if (pru_id)
+ 		*pru_id = pru->id;
  
- static inline bool is_pru_rproc(struct device *dev)
+@@ -310,6 +329,7 @@ void pru_rproc_put(struct rproc *rproc)
+ 
+ 	pru = rproc->priv;
+ 
++	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
+ 	pru_rproc_set_firmware(rproc, NULL);
+ 
+ 	mutex_lock(&pru->lock);
 -- 
 2.17.1
 
