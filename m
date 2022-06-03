@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC40CCA47D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Jun 2022 12:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F399FCCA480
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Jun 2022 12:15:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244201AbiFCMPk (ORCPT
+        id S244205AbiFCMPl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Jun 2022 08:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
+        Fri, 3 Jun 2022 08:15:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244189AbiFCMPj (ORCPT
+        with ESMTP id S244203AbiFCMPl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Jun 2022 08:15:39 -0400
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DE4239B9C;
-        Fri,  3 Jun 2022 05:15:38 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 253CFWS1122172;
-        Fri, 3 Jun 2022 07:15:32 -0500
+        Fri, 3 Jun 2022 08:15:41 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2922A39826;
+        Fri,  3 Jun 2022 05:15:40 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 253CFNNf054345;
+        Fri, 3 Jun 2022 07:15:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1654258532;
-        bh=dBMdXXJjf/3rYTmk7prgbpTWI+NgQ9Euuq3gHbvNNck=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=vv5JWtEBXevOqEH2C0toq30+uHae1YdeH0FK/xUpcRKT9SgDgerl7TwXPpfSMjbHU
-         d3rCoHlOMHJd7Ra7X53xz2KQu7FA/v/ZlXkdiC+eArrqzOKZa01l5JO+j1Eh+cyf5F
-         JT8u1PbuRGLFyla3nv4aerVpA1eXJ38bJUDF2L2U=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 253CFWhj097521
+        s=ti-com-17Q1; t=1654258523;
+        bh=wx1Z1JAWtJ0bLXfcJY0X28Tf4dQ3zbCBztSxFzw1Ksc=;
+        h=From:To:CC:Subject:Date;
+        b=lpeAHNriu5d2vuC6OQeEAbResmu00iZLeEHCyBrSBRTKAAPy8dBbj+NBaqVeSZ/bb
+         qLd0zItocBLxaay9+QNt83JVW2xYAtlIPdvZZGCQCS1ImO0s5JQP50TVfn4uriRd6V
+         vocWW41SWU7pz3AEAE58+yglAmKYxmjvRBFhAqek=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 253CFNfV031375
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 3 Jun 2022 07:15:32 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 3 Jun 2022 07:15:23 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Fri, 3
- Jun 2022 07:15:26 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2022 07:15:22 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Fri, 3 Jun 2022 07:15:26 -0500
+ Frontend Transport; Fri, 3 Jun 2022 07:15:22 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 253CFPZc025742;
-        Fri, 3 Jun 2022 07:15:26 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 253CFLg7025652;
+        Fri, 3 Jun 2022 07:15:22 -0500
 From:   Puranjay Mohan <p-mohan@ti.com>
 To:     <linux-kernel@vger.kernel.org>
 CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
@@ -50,12 +50,10 @@ CC:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
         <p-mohan@ti.com>, <linux-arm-kernel@lists.infradead.org>,
         <rogerq@kernel.org>, <grygorii.strashko@ti.com>, <vigneshr@ti.com>,
         <kishon@ti.com>, <robh@kernel.org>
-Subject: [PATCH v4 2/6] remoteproc: pru: Add APIs to get and put the PRU cores
-Date:   Fri, 3 Jun 2022 17:45:16 +0530
-Message-ID: <20220603121520.13730-3-p-mohan@ti.com>
+Subject: [PATCH v4 0/6] Introduce PRU remoteproc consumer API
+Date:   Fri, 3 Jun 2022 17:45:14 +0530
+Message-ID: <20220603121520.13730-1-p-mohan@ti.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220603121520.13730-1-p-mohan@ti.com>
-References: <20220603121520.13730-1-p-mohan@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -63,315 +61,65 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+This is the v4 of the patch series [1]. The v3 had some comments
+on the DT patch that have been addressed here. The 6th patch in this
+series was missed in the previous versions, so, it has been added now.
 
-Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
-driver to allow client drivers to acquire and release the remoteproc
-device associated with a PRU core. The PRU cores are treated as
-resources with only one client owning it at a time.
+I have posted two more patch series that depend on this series, one to
+the soc tree and another to the networking tree. I had sent all the 3
+series, including this one as RFC [2] to get comments and to explain the
+dependencies.
 
-The pru_rproc_get() function returns the rproc handle corresponding
-to a PRU core identified by the device tree "ti,prus" property under
-the client node. The pru_rproc_put() is the complementary function
-to pru_rproc_get().
+The Programmable Real-Time Unit and Industrial Communication Subsystem
+(PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
+RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
 
-Co-developed-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
-Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
----
- drivers/remoteproc/pru_rproc.c | 138 +++++++++++++++++++++++++++++++--
- include/linux/pruss.h          |  56 +++++++++++++
- 2 files changed, 189 insertions(+), 5 deletions(-)
+There are 3 foundation components for PRUSS subsystem: the PRUSS platform
+driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
+already merged and can be found under:
+1) drivers/soc/ti/pruss.c
+   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+2) drivers/irqchip/irq-pruss-intc.c
+   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+3) drivers/remoteproc/pru_rproc.c
+   Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+
+The programmable nature of the PRUs provide flexibility to implement custom
+peripheral interfaces, fast real-time responses, or specialized data handling.
+Example of a PRU consumer drivers will be:
+  - Software UART over PRUSS
+  - PRU-ICSS Ethernet EMAC
+
+In order to make usage of common PRU resources and allow the consumer drivers to
+configure the PRU hardware for specific usage the PRU API is introduced.
+
+[1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220418104118.12878-1-p-mohan@ti.com/
+[2] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
+
+Thanks and Regards,
+Puranjay Mohan
+
+Roger Quadros (1):
+  remoteproc: pru: Add pru_rproc_set_ctable() function
+
+Suman Anna (2):
+  dt-bindings: remoteproc: Add PRU consumer bindings
+  remoteproc: pru: Make sysfs entries read-only for PRU client driven
+    boots
+
+Tero Kristo (3):
+  remoteproc: pru: Add APIs to get and put the PRU cores
+  remoteproc: pru: Configure firmware based on client setup
+  remoteproc: pru: add support for configuring GPMUX based on client
+    setup
+
+ .../bindings/remoteproc/ti,pru-consumer.yaml  |  69 +++++
+ drivers/remoteproc/pru_rproc.c                | 254 +++++++++++++++++-
+ include/linux/pruss.h                         |  78 ++++++
+ 3 files changed, 396 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
  create mode 100644 include/linux/pruss.h
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 1777a01fa84e..7a35b400287a 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -2,12 +2,13 @@
- /*
-  * PRU-ICSS remoteproc driver for various TI SoCs
-  *
-- * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
-+ * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
-  *
-  * Author(s):
-  *	Suman Anna <s-anna@ti.com>
-  *	Andrew F. Davis <afd@ti.com>
-  *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
-+ *	Puranjay Mohan <p-mohan@ti.com>
-  */
- 
- #include <linux/bitops.h>
-@@ -16,6 +17,7 @@
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-+#include <linux/pruss.h>
- #include <linux/pruss_driver.h>
- #include <linux/remoteproc.h>
- 
-@@ -111,6 +113,8 @@ struct pru_private_data {
-  * @rproc: remoteproc pointer for this PRU core
-  * @data: PRU core specific data
-  * @mem_regions: data for each of the PRU memory regions
-+ * @client_np: client device node
-+ * @lock: mutex to protect client usage
-  * @fw_name: name of firmware image used during loading
-  * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-  * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-@@ -126,6 +130,8 @@ struct pru_rproc {
- 	struct rproc *rproc;
- 	const struct pru_private_data *data;
- 	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
-+	struct device_node *client_np;
-+	struct mutex lock; /* client access lock */
- 	const char *fw_name;
- 	unsigned int *mapped_irq;
- 	struct pru_irq_rsc *pru_interrupt_map;
-@@ -146,6 +152,125 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
- 	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
- }
- 
-+static struct rproc *__pru_rproc_get(struct device_node *np, int index)
-+{
-+	struct device_node *rproc_np = NULL;
-+	struct platform_device *pdev;
-+	struct rproc *rproc;
-+
-+	rproc_np = of_parse_phandle(np, "ti,prus", index);
-+	if (!rproc_np || !of_device_is_available(rproc_np))
-+		return ERR_PTR(-ENODEV);
-+
-+	pdev = of_find_device_by_node(rproc_np);
-+	of_node_put(rproc_np);
-+
-+	if (!pdev || !(&pdev->dev) || !((&pdev->dev)->driver))
-+		/* probably PRU not yet probed */
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	/* make sure it is PRU rproc */
-+	if (!is_pru_rproc(&pdev->dev)) {
-+		put_device(&pdev->dev);
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	rproc = platform_get_drvdata(pdev);
-+	put_device(&pdev->dev);
-+	if (!rproc)
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	get_device(&rproc->dev);
-+
-+	return rproc;
-+}
-+
-+/**
-+ * pru_rproc_get() - get the PRU rproc instance from a device node
-+ * @np: the user/client device node
-+ * @index: index to use for the ti,prus property
-+ * @pru_id: optional pointer to return the PRU remoteproc processor id
-+ *
-+ * This function looks through a client device node's "ti,prus" property at
-+ * index @index and returns the rproc handle for a valid PRU remote processor if
-+ * found. The function allows only one user to own the PRU rproc resource at a
-+ * time. Caller must call pru_rproc_put() when done with using the rproc, not
-+ * required if the function returns a failure.
-+ *
-+ * When optional @pru_id pointer is passed the PRU remoteproc processor id is
-+ * returned.
-+ *
-+ * Return: rproc handle on success, and an ERR_PTR on failure using one
-+ * of the following error values
-+ *    -ENODEV if device is not found
-+ *    -EBUSY if PRU is already acquired by anyone
-+ *    -EPROBE_DEFER is PRU device is not probed yet
-+ */
-+struct rproc *pru_rproc_get(struct device_node *np, int index,
-+			    enum pruss_pru_id *pru_id)
-+{
-+	struct rproc *rproc;
-+	struct pru_rproc *pru;
-+	struct device *dev;
-+
-+	try_module_get(THIS_MODULE);
-+
-+	rproc = __pru_rproc_get(np, index);
-+	if (IS_ERR(rproc))
-+		return rproc;
-+
-+	pru = rproc->priv;
-+	dev = &rproc->dev;
-+
-+	mutex_lock(&pru->lock);
-+
-+	if (pru->client_np) {
-+		mutex_unlock(&pru->lock);
-+		put_device(dev);
-+		return ERR_PTR(-EBUSY);
-+	}
-+
-+	pru->client_np = np;
-+
-+	mutex_unlock(&pru->lock);
-+
-+	if (pru_id)
-+		*pru_id = pru->id;
-+
-+	return rproc;
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_get);
-+
-+/**
-+ * pru_rproc_put() - release the PRU rproc resource
-+ * @rproc: the rproc resource to release
-+ *
-+ * Releases the PRU rproc resource and makes it available to other
-+ * users.
-+ */
-+void pru_rproc_put(struct rproc *rproc)
-+{
-+	struct pru_rproc *pru;
-+
-+	if (IS_ERR_OR_NULL(rproc) || !is_pru_rproc(rproc->dev.parent))
-+		return;
-+
-+	pru = rproc->priv;
-+
-+	mutex_lock(&pru->lock);
-+
-+	if (!pru->client_np) {
-+		mutex_unlock(&pru->lock);
-+		return;
-+	}
-+
-+	pru->client_np = NULL;
-+	mutex_unlock(&pru->lock);
-+
-+	put_device(&rproc->dev);
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_put);
-+
- static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
- {
- 	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
-@@ -438,7 +563,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
- 	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
- 	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
- 	/* PRU1 has its local RAM addresses reversed */
--	if (pru->id == 1)
-+	if (pru->id == PRUSS_PRU1)
- 		swap(dram0, dram1);
- 	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
- 
-@@ -747,14 +872,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
- 	case RTU0_IRAM_ADDR_MASK:
- 		fallthrough;
- 	case PRU0_IRAM_ADDR_MASK:
--		pru->id = 0;
-+		pru->id = PRUSS_PRU0;
- 		break;
- 	case TX_PRU1_IRAM_ADDR_MASK:
- 		fallthrough;
- 	case RTU1_IRAM_ADDR_MASK:
- 		fallthrough;
- 	case PRU1_IRAM_ADDR_MASK:
--		pru->id = 1;
-+		pru->id = PRUSS_PRU1;
- 		break;
- 	default:
- 		ret = -EINVAL;
-@@ -816,6 +941,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	pru->pruss = platform_get_drvdata(ppdev);
- 	pru->rproc = rproc;
- 	pru->fw_name = fw_name;
-+	pru->client_np = NULL;
-+	mutex_init(&pru->lock);
- 
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-@@ -903,7 +1030,7 @@ MODULE_DEVICE_TABLE(of, pru_rproc_match);
- 
- static struct platform_driver pru_rproc_driver = {
- 	.driver = {
--		.name   = "pru-rproc",
-+		.name   = PRU_RPROC_DRVNAME,
- 		.of_match_table = pru_rproc_match,
- 		.suppress_bind_attrs = true,
- 	},
-@@ -915,5 +1042,6 @@ module_platform_driver(pru_rproc_driver);
- MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
- MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
- MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
-+MODULE_AUTHOR("Puranjay Mohan <p-mohan@ti.com>");
- MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-new file mode 100644
-index 000000000000..fdc719b43db0
---- /dev/null
-+++ b/include/linux/pruss.h
-@@ -0,0 +1,56 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/**
-+ * PRU-ICSS Subsystem user interfaces
-+ *
-+ * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
-+ *	Suman Anna <s-anna@ti.com>
-+ */
-+
-+#ifndef __LINUX_PRUSS_H
-+#define __LINUX_PRUSS_H
-+
-+#include <linux/device.h>
-+#include <linux/types.h>
-+
-+#define PRU_RPROC_DRVNAME "pru-rproc"
-+
-+/*
-+ * enum pruss_pru_id - PRU core identifiers
-+ */
-+enum pruss_pru_id {
-+	PRUSS_PRU0 = 0,
-+	PRUSS_PRU1,
-+	PRUSS_NUM_PRUS,
-+};
-+
-+struct device_node;
-+
-+#if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
-+
-+struct rproc *pru_rproc_get(struct device_node *np, int index,
-+			    enum pruss_pru_id *pru_id);
-+void pru_rproc_put(struct rproc *rproc);
-+
-+#else
-+
-+static inline struct rproc *
-+pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
-+static inline void pru_rproc_put(struct rproc *rproc) { }
-+
-+#endif /* CONFIG_PRU_REMOTEPROC */
-+
-+static inline bool is_pru_rproc(struct device *dev)
-+{
-+	const char *drv_name = dev_driver_string(dev);
-+
-+	if (strncmp(drv_name, PRU_RPROC_DRVNAME, sizeof(PRU_RPROC_DRVNAME)))
-+		return false;
-+
-+	return true;
-+}
-+
-+#endif /* __LINUX_PRUSS_H */
 -- 
 2.17.1
 
