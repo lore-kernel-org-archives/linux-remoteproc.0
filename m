@@ -2,293 +2,209 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04D5C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Jun 2022 06:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40591C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Jun 2022 08:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241164AbiFCGd0 (ORCPT
+        id S242725AbiFCILJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Jun 2022 02:33:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60318 "EHLO
+        Fri, 3 Jun 2022 04:11:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240867AbiFCGdZ (ORCPT
+        with ESMTP id S229685AbiFCILI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Jun 2022 02:33:25 -0400
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF3552BC4;
-        Thu,  2 Jun 2022 23:33:22 -0700 (PDT)
-Received: (Authenticated sender: peter@korsgaard.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9FCC1E0008;
-        Fri,  3 Jun 2022 06:33:14 +0000 (UTC)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.94.2)
-        (envelope-from <peter@korsgaard.com>)
-        id 1nx0rx-00AQdY-D4; Fri, 03 Jun 2022 08:33:13 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Tanmay Shah <tanmay.shah@xilinx.com>
-Cc:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <michal.simek@xilinx.com>, <ben.levinsky@xilinx.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <openamp-system-reference@lists.openampproject.org>
-Subject: Re: [PATCH v8 1/6] dt-bindings: remoteproc: Add Xilinx RPU
- subsystem bindings
-References: <20220602203834.3675160-1-tanmay.shah@xilinx.com>
-        <20220602203834.3675160-2-tanmay.shah@xilinx.com>
-Date:   Fri, 03 Jun 2022 08:33:13 +0200
-In-Reply-To: <20220602203834.3675160-2-tanmay.shah@xilinx.com> (Tanmay Shah's
-        message of "Thu, 2 Jun 2022 13:38:29 -0700")
-Message-ID: <87tu921ck6.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Fri, 3 Jun 2022 04:11:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1CEC39BAD;
+        Fri,  3 Jun 2022 01:11:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C4A6618A6;
+        Fri,  3 Jun 2022 08:11:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72B6FC385A9;
+        Fri,  3 Jun 2022 08:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654243866;
+        bh=Zuuk2BFVHgqDOOa0QhgsL7oMb1UanVQf4pSgQrJ1+Yc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=pC6sPxW10xp5d6NbjNTP9uVQMFtPrPxrSK5++FIMLhOiJW0K7crEjfOxs0pKtI3PX
+         x0ZvxvdiRswtoNXw1GTxO2aiNXTS1PHELoxFjgGwv+nSO1bURbYObrU9k14qMxlFvE
+         Kwix7caDE6ppeKL6tL9SGba7cRdavQRdBCX9too9nBDxgHLYIIjtAMsNXoeEDKzuO1
+         GGDlL9g01LeTQO7a+8qjEWejZX2jbP2V1M01zHhtAFiHZF9Ka23CwSHtHhVBf3bEQl
+         8vK/SLtGqwEYPkz+Lf6K8AyuLtyY19GAci2w1UXMXtjxxc18OXF+5bX0I8cXgm+BCB
+         v/YFvmZpayfvg==
+Message-ID: <5bf638ee-6cc8-d5cb-5795-a840d8d2bb87@kernel.org>
+Date:   Fri, 3 Jun 2022 11:11:00 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v3 1/5] dt-bindings: remoteproc: Add PRU consumer bindings
+Content-Language: en-US
+To:     Puranjay Mohan <p-mohan@ti.com>, Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
+        linux-arm-kernel@lists.infradead.org, grygorii.strashko@ti.com,
+        vigneshr@ti.com, kishon@ti.com
+References: <20220418104118.12878-1-p-mohan@ti.com>
+ <20220418104118.12878-2-p-mohan@ti.com> <YnA3dtaqptLgZBrV@robh.at.kernel.org>
+ <6c054a1b-2842-a6f0-733a-92cfda76f828@ti.com>
+From:   Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <6c054a1b-2842-a6f0-733a-92cfda76f828@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
->>>>> "Tanmay" == Tanmay Shah <tanmay.shah@xilinx.com> writes:
+Hi Puranjay,
 
-Hi,
+On 02/06/2022 08:28, Puranjay Mohan wrote:
+> Hi Rob,
+> 
+> On 03/05/22 01:26, Rob Herring wrote:
+>> On Mon, Apr 18, 2022 at 04:11:14PM +0530, Puranjay Mohan wrote:
+>>> From: Suman Anna <s-anna@ti.com>
+>>>
+>>> Add a YAML binding document for PRU consumers. The binding includes
+>>> all the common properties that can be used by different PRU consumer
+>>> or application nodes and supported by the PRU remoteproc driver.
+>>> These are used to configure the PRU hardware for specific user
+>>> applications.
+>>>
+>>> The application nodes themselves should define their own bindings.
+>>>
+>>> Co-developed-by: Tero Kristo <t-kristo@ti.com>
+>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>>> ---
+>>>  .../bindings/remoteproc/ti,pru-consumer.yaml  | 70 +++++++++++++++++++
+>>>  1 file changed, 70 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>>> new file mode 100644
+>>> index 000000000000..5b1f1cb2f098
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>>> @@ -0,0 +1,70 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Common TI PRU Consumer Binding
+>>> +
+>>> +maintainers:
+>>> +  - Suman Anna <s-anna@ti.com>
+>>> +
+>>> +description: |
+>>> +  A PRU application/consumer/user node typically uses one or more PRU device
+>>> +  nodes to implement a PRU application/functionality. Each application/client
+>>> +  node would need a reference to at least a PRU node, and optionally define
+>>> +  some properties needed for hardware/firmware configuration. The below
+>>> +  properties are a list of common properties supported by the PRU remoteproc
+>>> +  infrastructure.
+>>> +
+>>> +  The application nodes shall define their own bindings like regular platform
+>>> +  devices, so below are in addition to each node's bindings.
+>>> +
+>>> +properties:
+>>> +  ti,prus:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>>> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
+>>> +    minItems: 1
+>>> +    maxItems: 6
+>>> +    items:
+>>> +      maxItems: 1
+>>> +
+>>> +  firmware-name:
+>>> +    $ref: /schemas/types.yaml#/definitions/string-array
+>>> +    description: |
+>>> +      firmwares for the PRU cores, the default firmware for the core from
+>>> +      the PRU node will be used if not provided. The firmware names should
+>>> +      correspond to the PRU cores listed in the 'ti,prus' property
+>>
+>> So should be the name number of entries?:
+>>
+>> minItems: 1
+>> maxItems: 6
+> 
+> will add in v4
+> 
+>>
+>>> +
+>>> +  ti,pruss-gp-mux-sel:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>
+>> minItems: 1
+> 
+> will add in v4
+> 
+>>
+>>> +    maxItems: 6
+>>> +    items:
+>>> +      enum: [0, 1, 2, 3, 4]
+>>> +    description: |
+>>> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
+>>> +      This selects the internal muxing scheme for the PRU instance. Values
+>>> +      should correspond to the PRU cores listed in the 'ti,prus' property. The
+>>> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
+>>> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
+>>> +      same slice in the associative array. If the array size is smaller than
+>>> +      the size of 'ti,prus' property, the default out-of-reset value (0) for the
+>>> +      PRU core is used.
+>>> +
+>>> +required:
+>>> +  - ti,prus
+>>> +
+>>> +dependencies:
+>>> +  firmware-name: [ 'ti,prus' ]
+>>> +  ti,pruss-gp-mux-sel: [ 'ti,prus' ]
+>>
+>> This doesn't make sense because 'ti,prus' is already required. Should 
+>> all 3 properties always be required?
+> 
+> All three of these are always required, so, I will remove the
 
- > Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
- > Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem
- > (cluster).
+Are you sure? It should not be required and remoteproc driver should use
+default name if not provided in DT.
+In patch 5 see what is being done in pru_rproc_get().
+It doesn't error out if firmware-name is not provided.
 
- > Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
- > ---
+Same for ti,pruss-gp-mux-sel. Did you miss the patch that adds support for this
+in this series?
 
- > Changes in v8:
- >   - Add 'items:' for sram property
+> "dependencies:" tag and add all three of them to "required:" in v4
+> Will it be the correct way to do it?
+> 
+>>
+>>> +
+>>> +additionalProperties: true
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    /* PRU application node example */
+>>> +    pru-app {
+>>> +        ti,prus = <&pru0>, <&pru1>;
+>>> +        firmware-name = "pruss-app-fw0", "pruss-app-fw1";
+>>> +        ti,pruss-gp-mux-sel = <2>, <1>;
+>>
+>> This example never validates, but okay I guess.
+>>
+>>> +    };
+>>> -- 
+>>> 2.17.1
+>>>
+>>>
+> 
+> Thanks,
+> Puranjay Mohan
 
- > Changes in v7:
- >   - Add minItems in sram property
-
- > Changes in v6:
- >   - Add maxItems to sram and memory-region property
-
- > Changes in v5:
- > - Add constraints of the possible values of xlnx,cluster-mode property
- > - fix description of power-domains property for r5 core
- > - Remove reg, address-cells and size-cells properties as it is not required
- > - Fix description of mboxes property
- > - Add description of each memory-region and remove old .txt binding link
- >   reference in the description
-
- > Changes in v4:
- >   - Add memory-region, mboxes and mbox-names properties in example
-
- > Changes in v3:
- >   - None
-
- >  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 130 ++++++++++++++++++
- >  include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
- >  2 files changed, 138 insertions(+)
- >  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-
- > diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
- > new file mode 100644
- > index 000000000000..adfe05ff157a
- > --- /dev/null
- > +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
- > @@ -0,0 +1,132 @@
- > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
- > +%YAML 1.2
- > +---
- > +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
- > +$schema: http://devicetree.org/meta-schemas/core.yaml#
- > +
- > +title: Xilinx R5F processor subsystem
- > +
- > +maintainers:
- > +  - Ben Levinsky <ben.levinsky@xilinx.com>
- > +  - Tanmay Shah <tanmay.shah@xilinx.com>
- > +
- > +description: |
- > +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
- > +  real-time processing based on the Cortex-R5F processor core from ARM.
- > +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
- > +  floating-point unit that implements the Arm VFPv3 instruction set.
- > +
- > +properties:
- > +  compatible:
- > +    const: xlnx,zynqmp-r5fss
- > +
- > +  xlnx,cluster-mode:
- > +    $ref: /schemas/types.yaml#/definitions/uint32
- > +    enum: [0, 1, 2]
-
-A textual mode ("dual", "lock-step", "single") would be more readable.
-
-
- > +    description: |
- > +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
-
-space missing before "(Dual-processor"
-
-
- > +      lock-step mode(Both RPU cores execute the same code in lock-step,
- > +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
-
-"can be" sounds a bit weak, perhaps "is"
-
-
- > +      core 1 runs normally). The processor does not support dynamic configuration.
- > +      Switching between modes is only permitted immediately after a processor reset.
- > +      If set to  1 then lockstep mode and if 0 then split mode.
- > +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
-
-This looks a bit confusing. If you decide to stick to the numerical
-modes, then at least list them in numerical order, E.G.:
-
- 0: split
- 1: lockstep
- 2: single
-
-
-> +
- > +patternProperties:
- > +  "^r5f-[a-f0-9]+$":
- > +    type: object
- > +    description: |
- > +      The RPU is located in the Low Power Domain of the Processor Subsystem.
- > +      Each processor includes separate L1 instruction and data caches and
- > +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
- > +      memory space is non-cacheable.
- > +
- > +      Each RPU contains one 64KB memory and two 32KB memories that
- > +      are accessed via the TCM A and B port interfaces, for a total of 128KB
- > +      per processor. In lock-step mode, the processor has access to 256KB of
- > +      TCM memory.
- > +
- > +    properties:
- > +      compatible:
- > +        const: xlnx,zynqmp-r5f
- > +
- > +      power-domains:
- > +        description: RPU core PM domain specifier
- > +        maxItems: 1
-
-A bit more detail would be good, E.G. something like arm/cpus.yaml does:
-
-      List of phandles and PM domain specifiers, as defined by bindings of the
-      PM domain provider (see also ../power_domain.txt).
-
-And the phandle-array ref.
-
-
-> +
- > +      mboxes:
- > +        minItems: 1
- > +        items:
- > +          - description: mailbox channel to send data to RPU
- > +          - description: mailbox channel to receive data from RPU
- > +
- > +      mbox-names:
- > +        minItems: 1
- > +        items:
- > +          - const: tx
- > +          - const: rx
-
-And here as well for mailbox/mailbox.txt
-
-
- > +
- > +      sram:
- > +        $ref: /schemas/types.yaml#/definitions/phandle-array
- > +        minItems: 1
- > +        maxItems: 8
- > +        items:
- > +          maxItems: 1
- > +        description: |
- > +          phandles to one or more reserved on-chip SRAM regions. Other than TCM,
- > +          the RPU can execute instructions and access data from, the OCM memory,
- > +          the main DDR memory, and other system memories.
-
-Drop the comma after "from"
-
-
- > +
- > +          The regions should be defined as child nodes of the respective SRAM
- > +          node, and should be defined as per the generic bindings in,
-
-Drop the comma after "in"
-
-
- > +          Documentation/devicetree/bindings/sram/sram.yaml
- > +
- > +      memory-region:
- > +        description: |
- > +          List of phandles to the reserved memory regions associated with the
- > +          remoteproc device. This is variable and describes the memories shared with
- > +          the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
- > +          vrings, ...). This reserved memory region will be allocated on DDR memory.
-
-s/on DDR/in DDR/
-
- > +        minItems: 1
- > +        maxItems: 8
- > +        items:
- > +          - description: region used for RPU firmware image section
- > +          - description: vdev buffer
- > +          - description: vring0
- > +          - description: vring1
- > +        additionalItems: true
- > +
- > +    required:
- > +      - compatible
- > +      - power-domains
- > +
- > +    unevaluatedProperties: false
- > +
- > +required:
- > +  - compatible
- > +
- > +additionalProperties: false
- > +
- > +examples:
- > +  - |
- > +    r5fss: r5fss {
- > +        compatible = "xlnx,zynqmp-r5fss";
- > +        xlnx,cluster-mode = <1>;
- > +
- > +        r5f-0 {
- > +            compatible = "xlnx,zynqmp-r5f";
- > +            power-domains = <&zynqmp_firmware 0x7>;
- > +            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
- > +            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
- > +            mbox-names = "tx", "rx";
- > +        };
- > +
- > +        r5f-1 {
- > +            compatible = "xlnx,zynqmp-r5f";
- > +            power-domains = <&zynqmp_firmware 0x8>;
- > +            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
- > +            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
- > +            mbox-names = "tx", "rx";
- > +        };
- > +    };
- > +...
- > diff --git a/include/dt-bindings/power/xlnx-zynqmp-power.h b/include/dt-bindings/power/xlnx-zynqmp-power.h
- > index 0d9a412fd5e0..618024cbb20d 100644
- > --- a/include/dt-bindings/power/xlnx-zynqmp-power.h
- > +++ b/include/dt-bindings/power/xlnx-zynqmp-power.h
- > @@ -6,6 +6,12 @@
- >  #ifndef _DT_BINDINGS_ZYNQMP_POWER_H
- >  #define _DT_BINDINGS_ZYNQMP_POWER_H
- 
- > +#define		PD_RPU_0	7
- > +#define		PD_RPU_1	8
- > +#define		PD_R5_0_ATCM	15
- > +#define		PD_R5_0_BTCM	16
- > +#define		PD_R5_1_ATCM	17
- > +#define		PD_R5_1_BTCM	18
- >  #define		PD_USB_0	22
- >  #define		PD_USB_1	23
- >  #define		PD_TTC_0	24
- > -- 
-
- > 2.25.1
-
-
--- 
-Bye, Peter Korsgaard
+cheers,
+-roger
