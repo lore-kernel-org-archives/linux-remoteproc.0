@@ -2,101 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE84C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  5 Jun 2022 08:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2401AC43334
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  5 Jun 2022 22:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236575AbiFEIdo (ORCPT
+        id S1348374AbiFEWtE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 5 Jun 2022 04:33:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
+        Sun, 5 Jun 2022 18:49:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236304AbiFEIdo (ORCPT
+        with ESMTP id S240474AbiFEWtD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 5 Jun 2022 04:33:44 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0398377E1;
-        Sun,  5 Jun 2022 01:33:42 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id w3so9917230plp.13;
-        Sun, 05 Jun 2022 01:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1XynJUO5aAAYX/xCNCu1+sq4mTp/XcAazdfl0dSPwkE=;
-        b=HJRR11UTNvFUTyNZaNrqwzGJuWtUZ4I2ZKI1ZFLnjeyvqyfb0Vg3z4/q5K+4PXYkW6
-         NEZ+Gz2epzUZ/2gl5jPCffWL4olKfliCaXcAbVlQ9bcLlkujBWo4665rfhi6NaeINY1j
-         mwXO5DlPxuQf0gS1O1lAgO7euB8YbvPR35geAUiZ8AMoeNj7Sb3wlTxrCkKiAtV2hzmH
-         20JqdS9UTF4FzDBd7iC+llUCcHlIHfsT0jHyPW46/eW8OHuL+O97jpVbaC/mZDmWE9nY
-         +0ataNa+VAjlKtbh3zyQTQaQBNjzjW/WBPDxtTpFnVzOQIXkTHNxcfsleMzV8A+Wvy2+
-         rkxQ==
+        Sun, 5 Jun 2022 18:49:03 -0400
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC422FFCE;
+        Sun,  5 Jun 2022 15:49:03 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id n197so2752053qke.1;
+        Sun, 05 Jun 2022 15:49:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1XynJUO5aAAYX/xCNCu1+sq4mTp/XcAazdfl0dSPwkE=;
-        b=aXYxWnRCqx0NlunV0JKmw4v/uOGhrytnHEe8pq3jFL0z2YS7NXuO2aG/QaIiWWS4kM
-         NDZ+RPu5LTZPI6QUkSlKXBulf6+DNdvH84fB7aYquqbyjbvknc9g4iPR7YPGyYxMQ59I
-         quKhcNpra6HLRGHNxOiMvVd9Yb8/TR+sVL35uEJi4ZXqp/VkFY0vy0SDtm3pKPSo6k2n
-         njY0abDaAkNYanBN3oX/l36+XZZGKWb7JjrZi6STNjJKxsJXvdYOsM8343hxS+jF+5Dy
-         tBxXhYKE6m9jdJwcniJ3tu8IhYc+uBTTuOXfnVxd0CJ6FNejNr2ctpiybCPeiXk52ZBi
-         AyFw==
-X-Gm-Message-State: AOAM531KXvTk7yV6O56q2lHrdE4a3QY6cWcWEEB8vusVXnhIht8PRz77
-        MUuBNvnsJ27hC0RgE4uf5d4=
-X-Google-Smtp-Source: ABdhPJyZ+37YegClUoL+IO6Krkp0Vi3gUJ/RpM3fh+GWzhWBlqmsVOnAg9cEKB+068RGiqSDQmudtg==
-X-Received: by 2002:a17:902:d4c2:b0:166:46c9:577b with SMTP id o2-20020a170902d4c200b0016646c9577bmr15187821plg.66.1654418022259;
-        Sun, 05 Jun 2022 01:33:42 -0700 (PDT)
-Received: from localhost.localdomain ([202.120.234.246])
-        by smtp.googlemail.com with ESMTPSA id w8-20020a1709029a8800b0016405375132sm4232935plp.25.2022.06.05.01.33.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cFQv2TrAmUdwhDKidl65ILu68jId00HPH3oLSQ72B5o=;
+        b=2H1hgGqearhmwqlyKzscm/iTpnjGO9ixXdXzknomE0VpGF9nY3AGhc4Ci7/C6ZQCV9
+         KjLB2B0FVx2cmIoTXv2SLYbWax97uo9hgwlSRbZ8zoEaeTF4GUOIWZT+Y0S1+sP2vUkv
+         A8yaUWqbRO3JP4rBeD1VPx2Ej8O0mwhaK1X7FZLfl69oKZ/q+0cbGbyc+z2eyxK6S3o5
+         RheYqtdyjiR4EGQVXRA7VHRkZ93tE/Qo5HhO93C3iPGdplD80OkYuESR95IytwnGRknD
+         O/vlnRtrt894X7c8jvJEEMQakJozOJ4OSQNU7cx8UcN1zWjWDIO7OS2gW1oXVP7RW5Bj
+         CFwg==
+X-Gm-Message-State: AOAM5320gCSSMXPHYel8WEe/0nB5Q9JI3tW63sm+ITiIHu0A6hrJDUIL
+        xb7HfsnReGHseZV2ycWv5A==
+X-Google-Smtp-Source: ABdhPJxJPLZPo26sTSCa9JYf+TTBlOyo7cPD042GPk7h8wYbwewlEFr2v0vnS1Xb/N/q+TJ0KnMy4w==
+X-Received: by 2002:a05:620a:404d:b0:6a4:f5b0:d8ca with SMTP id i13-20020a05620a404d00b006a4f5b0d8camr13825512qko.506.1654469342227;
+        Sun, 05 Jun 2022 15:49:02 -0700 (PDT)
+Received: from robh.at.kernel.org ([2607:fb90:1bdb:2e61:f12:452:5315:9c7e])
+        by smtp.gmail.com with ESMTPSA id x23-20020ac86b57000000b002f93760e4cfsm8714685qts.26.2022.06.05.15.48.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jun 2022 01:33:41 -0700 (PDT)
-From:   Miaoqian Lin <linmq006@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     linmq006@gmail.com
-Subject: [PATCH] remoteproc: k3-r5: Fix refcount leak in k3_r5_cluster_of_init
-Date:   Sun,  5 Jun 2022 12:33:34 +0400
-Message-Id: <20220605083334.23942-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Sun, 05 Jun 2022 15:49:01 -0700 (PDT)
+Received: (nullmailer pid 3673195 invoked by uid 1000);
+        Sun, 05 Jun 2022 22:48:58 -0000
+Date:   Sun, 5 Jun 2022 17:48:58 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Puranjay Mohan <p-mohan@ti.com>
+Cc:     rogerq@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        s-anna@ti.com, kishon@ti.com, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        nm@ti.com, ssantosh@kernel.org, linux-kernel@vger.kernel.org,
+        vigneshr@ti.com, grygorii.strashko@ti.com
+Subject: Re: [PATCH v4 1/6] dt-bindings: remoteproc: Add PRU consumer bindings
+Message-ID: <20220605224858.GA3673137-robh@kernel.org>
+References: <20220603121520.13730-1-p-mohan@ti.com>
+ <20220603121520.13730-2-p-mohan@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220603121520.13730-2-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Every iteration of for_each_available_child_of_node() decrements
-the reference count of the previous node.
-When breaking early from a for_each_available_child_of_node() loop,
-we need to explicitly call of_node_put() on the child node.
-Add missing of_node_put() to avoid refcount leak.
+On Fri, 03 Jun 2022 17:45:15 +0530, Puranjay Mohan wrote:
+> From: Suman Anna <s-anna@ti.com>
+> 
+> Add a YAML binding document for PRU consumers. The binding includes
+> all the common properties that can be used by different PRU consumer
+> or application nodes and supported by the PRU remoteproc driver.
+> These are used to configure the PRU hardware for specific user
+> applications.
+> 
+> The application nodes themselves should define their own bindings.
+> 
+> Co-developed-by: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> ---
+> V3->V4:
+> * Addressed Rob's comments regarding max and min Items.
+> * removed the dependencies tag as it was redundant.
+> ---
+> .../bindings/remoteproc/ti,pru-consumer.yaml  | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> 
 
-Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 4840ad906018..0481926c6975 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -1655,6 +1655,7 @@ static int k3_r5_cluster_of_init(struct platform_device *pdev)
- 		if (!cpdev) {
- 			ret = -ENODEV;
- 			dev_err(dev, "could not get R5 core platform device\n");
-+			of_node_put(child);
- 			goto fail;
- 		}
- 
-@@ -1663,6 +1664,7 @@ static int k3_r5_cluster_of_init(struct platform_device *pdev)
- 			dev_err(dev, "k3_r5_core_of_init failed, ret = %d\n",
- 				ret);
- 			put_device(&cpdev->dev);
-+			of_node_put(child);
- 			goto fail;
- 		}
- 
--- 
-2.25.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
