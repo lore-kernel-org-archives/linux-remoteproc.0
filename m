@@ -2,161 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03155C43334
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Jun 2022 16:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE84C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  5 Jun 2022 08:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343969AbiFCQce (ORCPT
+        id S236575AbiFEIdo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Jun 2022 12:32:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
+        Sun, 5 Jun 2022 04:33:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243276AbiFCQcY (ORCPT
+        with ESMTP id S236304AbiFEIdo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Jun 2022 12:32:24 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD8CA38DA1;
-        Fri,  3 Jun 2022 09:32:20 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 253GIYpt004994;
-        Fri, 3 Jun 2022 18:32:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=XYfsgN0Fz1IFWhCX2F/Bh12FPK+Ortq56BmKZ6Jz8Bs=;
- b=7ch4VNH4Y7lUZrcXNyRXs+6zPKADMCtk3xau0A+z5WNye7tIlw6lgqCeHZtOnxClyhFZ
- Sb7JFK74azX4V7ZrreI6AESR2cYhuNtV5ztIAyHl6C7TkbsyWtQtcHhk0FgCk9LzJt8G
- klyD+f1jhDj1Z2fwwCO7zydHJZYlj0Dsvc+hanCH70l4jlRFXQDjeJefDpjqcVU5dgDB
- McMqQAdDn/Aa0ArVPzTmPxNtVu9p3EiWL1OxxeqPQBMx//Zrk0U6Vi1o5z3+uk0sVoEm
- 5zs/Jj6CFek/Rl/2l5qEPzXDfEQQWUJT/DGQSbdlUYs/QwLK4ZYbvRICWrI0bfZnJewv 0Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3gbc5174sy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Jun 2022 18:32:03 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6585E10002A;
-        Fri,  3 Jun 2022 18:32:01 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D57C0231533;
-        Fri,  3 Jun 2022 18:32:01 +0200 (CEST)
-Received: from localhost (10.75.127.48) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 3 Jun
- 2022 18:32:01 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+        Sun, 5 Jun 2022 04:33:44 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0398377E1;
+        Sun,  5 Jun 2022 01:33:42 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id w3so9917230plp.13;
+        Sun, 05 Jun 2022 01:33:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1XynJUO5aAAYX/xCNCu1+sq4mTp/XcAazdfl0dSPwkE=;
+        b=HJRR11UTNvFUTyNZaNrqwzGJuWtUZ4I2ZKI1ZFLnjeyvqyfb0Vg3z4/q5K+4PXYkW6
+         NEZ+Gz2epzUZ/2gl5jPCffWL4olKfliCaXcAbVlQ9bcLlkujBWo4665rfhi6NaeINY1j
+         mwXO5DlPxuQf0gS1O1lAgO7euB8YbvPR35geAUiZ8AMoeNj7Sb3wlTxrCkKiAtV2hzmH
+         20JqdS9UTF4FzDBd7iC+llUCcHlIHfsT0jHyPW46/eW8OHuL+O97jpVbaC/mZDmWE9nY
+         +0ataNa+VAjlKtbh3zyQTQaQBNjzjW/WBPDxtTpFnVzOQIXkTHNxcfsleMzV8A+Wvy2+
+         rkxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1XynJUO5aAAYX/xCNCu1+sq4mTp/XcAazdfl0dSPwkE=;
+        b=aXYxWnRCqx0NlunV0JKmw4v/uOGhrytnHEe8pq3jFL0z2YS7NXuO2aG/QaIiWWS4kM
+         NDZ+RPu5LTZPI6QUkSlKXBulf6+DNdvH84fB7aYquqbyjbvknc9g4iPR7YPGyYxMQ59I
+         quKhcNpra6HLRGHNxOiMvVd9Yb8/TR+sVL35uEJi4ZXqp/VkFY0vy0SDtm3pKPSo6k2n
+         njY0abDaAkNYanBN3oX/l36+XZZGKWb7JjrZi6STNjJKxsJXvdYOsM8343hxS+jF+5Dy
+         tBxXhYKE6m9jdJwcniJ3tu8IhYc+uBTTuOXfnVxd0CJ6FNejNr2ctpiybCPeiXk52ZBi
+         AyFw==
+X-Gm-Message-State: AOAM531KXvTk7yV6O56q2lHrdE4a3QY6cWcWEEB8vusVXnhIht8PRz77
+        MUuBNvnsJ27hC0RgE4uf5d4=
+X-Google-Smtp-Source: ABdhPJyZ+37YegClUoL+IO6Krkp0Vi3gUJ/RpM3fh+GWzhWBlqmsVOnAg9cEKB+068RGiqSDQmudtg==
+X-Received: by 2002:a17:902:d4c2:b0:166:46c9:577b with SMTP id o2-20020a170902d4c200b0016646c9577bmr15187821plg.66.1654418022259;
+        Sun, 05 Jun 2022 01:33:42 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.246])
+        by smtp.googlemail.com with ESMTPSA id w8-20020a1709029a8800b0016405375132sm4232935plp.25.2022.06.05.01.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jun 2022 01:33:41 -0700 (PDT)
+From:   Miaoqian Lin <linmq006@gmail.com>
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v6 0/4] remoteproc: restructure the remoteproc VirtIO device
-Date:   Fri, 3 Jun 2022 18:31:54 +0200
-Message-ID: <20220603163158.612513-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.24.3
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linmq006@gmail.com
+Subject: [PATCH] remoteproc: k3-r5: Fix refcount leak in k3_r5_cluster_of_init
+Date:   Sun,  5 Jun 2022 12:33:34 +0400
+Message-Id: <20220605083334.23942-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-03_05,2022-06-03_01,2022-02-23_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-1) Update from V5 [1]:
+Every iteration of for_each_available_child_of_node() decrements
+the reference count of the previous node.
+When breaking early from a for_each_available_child_of_node() loop,
+we need to explicitly call of_node_put() on the child node.
+Add missing of_node_put() to avoid refcount leak.
 
-Updates based on Mathieu's comments.
-Updates are listed in the commit message of each patch.
+Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1] https://lkml.org/lkml/2022/4/6/597
-
-2) Patchset description:
-
-This series is a part of the work initiated a long time ago in 
-the series "remoteproc: Decorelate virtio from core"[2]
-
-Objective of the work:
-- Update the remoteproc VirtIO device creation (use platform device)
-- Allow to declare remoteproc VirtIO device in DT
-    - declare resources associated to a remote proc VirtIO
-    - declare a list of VirtIO supported by the platform.
-- Prepare the enhancement to more VirtIO devices (e.g I2C, audio, video, ...).
-  For instance be able to declare a I2C device in a virtio-i2C node.
-- Keep the legacy working!
-- Try to improve the picture about concerns reported by Christoph Hellwing [3][4]
-
-[2] https://lkml.org/lkml/2020/4/16/1817
-[3] https://lkml.org/lkml/2021/6/23/607
-[4] https://patchwork.kernel.org/project/linux-remoteproc/patch/AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch/
-
-In term of device tree this would result in such hierarchy (stm32mp1 example with 2 virtio RPMSG):
-
-	m4_rproc: m4@10000000 {
-		compatible = "st,stm32mp1-m4";
-		reg = <0x10000000 0x40000>,
-		      <0x30000000 0x40000>,
-		      <0x38000000 0x10000>;
-        memory-region = <&retram>, <&mcuram>,<&mcuram2>;
-        mboxes = <&ipcc 2>, <&ipcc 3>;
-        mbox-names = "shutdown", "detach";
-        status = "okay";
-
-        #address-cells = <1>;
-        #size-cells = <0>;
-        
-        vdev@0 {
-		compatible = "rproc-virtio";
-		reg = <0>;
-		virtio,id = <7>;  /* RPMSG */
-		memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
-		mboxes = <&ipcc 0>, <&ipcc 1>;
-		mbox-names = "vq0", "vq1";
-		status = "okay";
-        };
-
-        vdev@1 {
-		compatible = "rproc-virtio";
-		reg = <1>;
-		virtio,id = <7>;  /*RPMSG */
-		memory-region = <&vdev1vring0>, <&vdev1vring1>, <&vdev1buffer>;
-		mboxes = <&ipcc 4>, <&ipcc 5>;
-		mbox-names = "vq0", "vq1";
-		status = "okay";
-        };
-};
-
-I have divided the work in 4 steps to simplify the review, This series implements only
-the step 1:
-step 1:  redefine the remoteproc VirtIO device as a platform device
-  - migrate rvdev management in remoteproc virtio.c,
-  - create a remotproc virtio config ( can be disabled for platform that not use VirtIO IPC.
-step 2: add possibility to declare and probe a VirtIO sub node
-  - VirtIO bindings declaration,
-  - multi DT VirtIO devices support,
-  - introduction of a remote proc virtio bind device mechanism ,
-=> https://github.com/arnopo/linux/commits/step2-virtio-in-DT
-step 3: Add memory declaration in VirtIO subnode
-=> https://github.com/arnopo/linux/commits/step3-virtio-memories
-step 4: Add mailbox declaration in VirtIO subnode
-=> https://github.com/arnopo/linux/commits/step4-virtio-mailboxes
-
-Arnaud Pouliquen (4):
-  remoteproc: core: Introduce rproc_rvdev_add_device function
-  remoteproc: core: Introduce rproc_add_rvdev function
-  remoteproc: Move rproc_vdev management to remoteproc_virtio.c
-  remoteproc: virtio: Create platform device for the remoteproc_virtio
-
- drivers/remoteproc/remoteproc_core.c     | 153 +++---------------
- drivers/remoteproc/remoteproc_internal.h |  23 ++-
- drivers/remoteproc/remoteproc_virtio.c   | 188 ++++++++++++++++++++---
- include/linux/remoteproc.h               |   6 +-
- 4 files changed, 209 insertions(+), 161 deletions(-)
-
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 4840ad906018..0481926c6975 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -1655,6 +1655,7 @@ static int k3_r5_cluster_of_init(struct platform_device *pdev)
+ 		if (!cpdev) {
+ 			ret = -ENODEV;
+ 			dev_err(dev, "could not get R5 core platform device\n");
++			of_node_put(child);
+ 			goto fail;
+ 		}
+ 
+@@ -1663,6 +1664,7 @@ static int k3_r5_cluster_of_init(struct platform_device *pdev)
+ 			dev_err(dev, "k3_r5_core_of_init failed, ret = %d\n",
+ 				ret);
+ 			put_device(&cpdev->dev);
++			of_node_put(child);
+ 			goto fail;
+ 		}
+ 
 -- 
-2.24.3
+2.25.1
 
