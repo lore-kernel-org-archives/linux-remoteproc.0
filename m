@@ -2,157 +2,140 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E62C43334
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Jun 2022 15:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFD4C43334
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Jun 2022 15:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241180AbiFFPrv (ORCPT
+        id S241336AbiFFP4R (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 11:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41976 "EHLO
+        Mon, 6 Jun 2022 11:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241175AbiFFPru (ORCPT
+        with ESMTP id S241330AbiFFP4R (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Jun 2022 11:47:50 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB308FD5B
-        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Jun 2022 08:47:48 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id h19so19433211edj.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Jun 2022 08:47:48 -0700 (PDT)
+        Mon, 6 Jun 2022 11:56:17 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126F62390A9
+        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Jun 2022 08:56:16 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id 15so13053888pfy.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Jun 2022 08:56:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jLpWvMlf+YUwu7qBpzspLbufy8yyDTs9EuJTxwHjhIs=;
-        b=sAgL1HX3YrPvng7nckLZkM6PqZZq8RKPIRXtt7wwM4al/LJSnm1WAVNBbbzeQh4R2H
-         Jq7/nQtKQuCFpgc0sv062DxA8dvn2F/t4f5EYYVz81sdhSFtwHdehGNkLnvoab3T1fwP
-         YZSY2QPUMi83ez2/lssfP34+EvEtX5nx65of/XBbu3YJIBp4+O35V5RUeroJr0wl7/bS
-         BTqZbvIrwzkeuYlBV0ekUNJg7WpdLF55ymyo794mVag6VrVpqKYFhUklQ17gZT+mipiB
-         Z6xXhQoEDesesVKLQbxfUsgj0TSrARi9FwRMZDSczxSXkNoyBcUGA27qutTVyGgvlpyH
-         riCQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=HqBVIaUxLFLt31mKtTfmzpaubYdTK4hqFLvxcHrajGI=;
+        b=am390ormAxfQBcDhad1xqfGuaIZhU7gIyzfW/9uyFo3xvj2W19MLPe42Uxbqs6q937
+         WLzpSDXD9fxuZqRO2SmIDl3w0Cwe8amaEnwFcOEnLReu0b1+W18AgTvCA3yyiCdFMxk6
+         H5tx+lg9wX6uKyHJz1DtdAqa66eSr/6WvFO7lJqSxj//PJqxpBDwR+YevD8yqIlJK/Mx
+         ZcqC+/cRvVqub4Ggt/l/3P3QWCr+b4CkTekrLG3K45HTTZrJZt5U6kt8kyraYtRvIsD7
+         PJDLyj70pL7QYVclaTA8PuCd/+cfqq/wzBL80/7UiaDyOElSklvX7PxNJIrVlxh41xi0
+         QGkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jLpWvMlf+YUwu7qBpzspLbufy8yyDTs9EuJTxwHjhIs=;
-        b=0TSr0pE4GKakBMHALlLdvOlyYA/ncQ6+qqDuE+JPHzy7sTpYlF+pC3szOIhuIm2Pgz
-         ZjzNCRYUshJ84YYj2oihQCbLqcakeq2dW0IUorJhr23EgsyuuzKhFLKH9t3rqww1dQvQ
-         GwGQ5YcdcutYR7rFbOBFLklJHC3rpF3axCEWnJvY6MNkvMjTxB/v1/5MiO8yHIFQVz1A
-         HyazlZcPQkOrDvB0h0wDXMFUI3YtSqdOeSXnwLKpkEBjxaUErgB+I9QDAxnkf/lppwdL
-         bVXb9+rIaoqzAJLopJLbAJEug/cd5mQ9NFHDzF7uy82KtVh/5pNV5MdyyJHJqVp7UFUg
-         Uueg==
-X-Gm-Message-State: AOAM532QdyGmSRqVjcV4HLtI1lxLix/WnwZEIcjJq70OaCmxqGIRPi+m
-        4FqV5MTSwHHh9XVzb7qDQSAKMNr3Tv6WunwvZMmqzMnamIc=
-X-Google-Smtp-Source: ABdhPJziEwq+2TK54NAomosbKFoIgCbxKZ0vpPY7wD/35TTSTUyrCW2Y4sC6CD4fFotGJU9nupk9KF/eT9WvZshZfmE=
-X-Received: by 2002:a05:6402:274a:b0:42d:dcd1:c847 with SMTP id
- z10-20020a056402274a00b0042ddcd1c847mr27773129edd.169.1654530466868; Mon, 06
- Jun 2022 08:47:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
- <20220406095446.1187968-3-arnaud.pouliquen@foss.st.com> <20220601174159.GD531268@p14s>
- <b85c7526-80a4-35f2-7629-319d172bc734@foss.st.com>
-In-Reply-To: <b85c7526-80a4-35f2-7629-319d172bc734@foss.st.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=HqBVIaUxLFLt31mKtTfmzpaubYdTK4hqFLvxcHrajGI=;
+        b=bCFSq5fyaR11z/t1mHBYqM89DcDHnku+atfBswOG0tnp3eb6mbbzH9UDPds41ERNjx
+         OAhIPzFbS4NxLOGdZSVNuYwtCGEkwKLch55qLapzfbYGfAri6b/O2H/XIgU3HRViN7b/
+         tWBrER67zErPJNlnb4QZYKSQQm5aTReNV9qqwEMfxGwPWXbIw3v+PItOs9cyLZCImiUW
+         8sgAxIqtiNzMhsa3+C3kpeGsQ7HR8gLTas5Pn6FPP64B7qxgDVns2F+/lIfHNhNyZBDa
+         mLK5YosctoIlR+Dbesxc1O5LIttXk7fA3zqiR88+v4n3ZewZxK9jbOFZrPITxd5dzy9P
+         bpmA==
+X-Gm-Message-State: AOAM531pvgoAPKlYUxC8EYnf1tx6ebtR7/nD7X5joLW8l2cesh5QNCiH
+        D8lKcUpwFI2ITBE7Oj9xbiFDcw==
+X-Google-Smtp-Source: ABdhPJze2KfB5rZ725/eBE9Lz2Jfsvti1kHUrazKUB2pLSiIxcf6vV6SLvqVc/BjbYmcF7nR2jTnuA==
+X-Received: by 2002:a63:741:0:b0:3fc:6b3c:f9dd with SMTP id 62-20020a630741000000b003fc6b3cf9ddmr21224601pgh.351.1654530975570;
+        Mon, 06 Jun 2022 08:56:15 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id i6-20020a17090ad34600b001cd4989ff41sm10370086pjx.8.2022.06.06.08.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 08:56:14 -0700 (PDT)
+Date:   Mon, 6 Jun 2022 09:56:12 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 6 Jun 2022 09:47:35 -0600
-Message-ID: <CANLsYkzcgC3+pWSzyRKaRQuWEp=m_tML5W9hc1+fR9CLgMYHSQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 2/4] remoteproc: core: Introduce
- rproc_register_rvdev function
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Puranjay Mohan <p-mohan@ti.com>
+Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
+        linux-arm-kernel@lists.infradead.org, rogerq@kernel.org,
+        grygorii.strashko@ti.com, vigneshr@ti.com, kishon@ti.com,
+        robh@kernel.org
+Subject: Re: [PATCH v4 0/6] Introduce PRU remoteproc consumer API
+Message-ID: <20220606155612.GA809345@p14s>
+References: <20220603121520.13730-1-p-mohan@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220603121520.13730-1-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 3 Jun 2022 at 05:54, Arnaud POULIQUEN
-<arnaud.pouliquen@foss.st.com> wrote:
->
-> Hello Mathieu,
->
-> On 6/1/22 19:41, Mathieu Poirier wrote:
-> > On Wed, Apr 06, 2022 at 11:54:44AM +0200, Arnaud Pouliquen wrote:
-> >> The rproc structure contains a list of registered rproc_vdev structure.
-> >
-> > This should be rproc_rvdev.
->
-> Thanks for your review!
->
-> I will send a new version according to your comments except
-> this one.
-> The structure name rproc_vdev is the good one, or
-> or maybe I'm missing something?
->
+I have started to review this set, comments will come over the next few days.  I
+will clearly inform you when I am done reviewing.
 
-Structure rproc does not contain a list of rproc_vdev, it contains a
-list of rproc_rvdev in rproc::rvdevs.
+Thanks,
+Mathieu
 
-> Thanks,
-> Arnaud
->
-> >
-> >> To be able to move the management of the rproc_vdev structure in
-> >> remoteproc_virtio.c (i.e rproc_rvdev_add_device and
-> >> rproc_rvdev_remove_device functions), introduce the rproc_register_rvdev
-> >> and rproc_unregister_rvdev functions.
-> >
-> > The name of those functions doesn't match the content of the patch.
-> >
-> >>
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >>  drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++--
-> >>  1 file changed, 14 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> >> index 3a469220ac73..081bea39daf4 100644
-> >> --- a/drivers/remoteproc/remoteproc_core.c
-> >> +++ b/drivers/remoteproc/remoteproc_core.c
-> >> @@ -484,6 +484,18 @@ static int copy_dma_range_map(struct device *to, struct device *from)
-> >>      return 0;
-> >>  }
-> >>
-> >> +static void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
-> >> +{
-> >> +    if (rvdev && rproc)
-> >> +            list_add_tail(&rvdev->node, &rproc->rvdevs);
-> >> +}
-> >> +
-> >> +static void rproc_remove_rvdev(struct rproc_vdev *rvdev)
-> >> +{
-> >> +    if (rvdev)
-> >> +            list_del(&rvdev->node);
-> >> +}
-> >> +
-> >>  static struct rproc_vdev *
-> >>  rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
-> >>  {
-> >> @@ -547,7 +559,7 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
-> >>                      goto unwind_vring_allocations;
-> >>      }
-> >>
-> >> -    list_add_tail(&rvdev->node, &rproc->rvdevs);
-> >> +    rproc_add_rvdev(rproc, rvdev);
-> >>
-> >>      rvdev->subdev.start = rproc_vdev_do_start;
-> >>      rvdev->subdev.stop = rproc_vdev_do_stop;
-> >> @@ -576,7 +588,7 @@ static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
-> >>      }
-> >>
-> >>      rproc_remove_subdev(rproc, &rvdev->subdev);
-> >> -    list_del(&rvdev->node);
-> >> +    rproc_remove_rvdev(rvdev);
-> >
-> > With the above:
-> >
-> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >
-> >>      device_unregister(&rvdev->dev);
-> >>  }
-> >>
-> >> --
-> >> 2.25.1
-> >>
+On Fri, Jun 03, 2022 at 05:45:14PM +0530, Puranjay Mohan wrote:
+> This is the v4 of the patch series [1]. The v3 had some comments
+> on the DT patch that have been addressed here. The 6th patch in this
+> series was missed in the previous versions, so, it has been added now.
+> 
+> I have posted two more patch series that depend on this series, one to
+> the soc tree and another to the networking tree. I had sent all the 3
+> series, including this one as RFC [2] to get comments and to explain the
+> dependencies.
+> 
+> The Programmable Real-Time Unit and Industrial Communication Subsystem
+> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
+> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
+> 
+> There are 3 foundation components for PRUSS subsystem: the PRUSS platform
+> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
+> already merged and can be found under:
+> 1) drivers/soc/ti/pruss.c
+>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+> 2) drivers/irqchip/irq-pruss-intc.c
+>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+> 3) drivers/remoteproc/pru_rproc.c
+>    Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+> 
+> The programmable nature of the PRUs provide flexibility to implement custom
+> peripheral interfaces, fast real-time responses, or specialized data handling.
+> Example of a PRU consumer drivers will be:
+>   - Software UART over PRUSS
+>   - PRU-ICSS Ethernet EMAC
+> 
+> In order to make usage of common PRU resources and allow the consumer drivers to
+> configure the PRU hardware for specific usage the PRU API is introduced.
+> 
+> [1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220418104118.12878-1-p-mohan@ti.com/
+> [2] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
+> 
+> Thanks and Regards,
+> Puranjay Mohan
+> 
+> Roger Quadros (1):
+>   remoteproc: pru: Add pru_rproc_set_ctable() function
+> 
+> Suman Anna (2):
+>   dt-bindings: remoteproc: Add PRU consumer bindings
+>   remoteproc: pru: Make sysfs entries read-only for PRU client driven
+>     boots
+> 
+> Tero Kristo (3):
+>   remoteproc: pru: Add APIs to get and put the PRU cores
+>   remoteproc: pru: Configure firmware based on client setup
+>   remoteproc: pru: add support for configuring GPMUX based on client
+>     setup
+> 
+>  .../bindings/remoteproc/ti,pru-consumer.yaml  |  69 +++++
+>  drivers/remoteproc/pru_rproc.c                | 254 +++++++++++++++++-
+>  include/linux/pruss.h                         |  78 ++++++
+>  3 files changed, 396 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>  create mode 100644 include/linux/pruss.h
+> 
+> -- 
+> 2.17.1
+> 
