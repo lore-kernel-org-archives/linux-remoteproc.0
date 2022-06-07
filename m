@@ -2,155 +2,75 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE62C43334
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jun 2022 05:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5474C43334
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jun 2022 12:07:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236752AbiFGFEW (ORCPT
+        id S243382AbiFGMHO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 01:04:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54700 "EHLO
+        Tue, 7 Jun 2022 08:07:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236722AbiFGFEV (ORCPT
+        with ESMTP id S243365AbiFGMHN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Jun 2022 01:04:21 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595E8C1ECE;
-        Mon,  6 Jun 2022 22:04:19 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 25754BWT013755;
-        Tue, 7 Jun 2022 00:04:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1654578251;
-        bh=LuyJp6N2+OSRRSCMTgRGlAsY50dcRaUtJNXh97nhDcw=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=LGQLeIUFehUMVRddXGsbBAUwn98Txzayy1mu+Htw/cWRp1SqI7xa54Z0vWJw1v8VS
-         PoC03iinNDyZRo2HttU17al509mLTTroHnvyrlXczBgGM/in0zgvi9xB+2A1bBr5Gx
-         3XmqiVcpApZ2STi6dLMlVI3JcmfB5Am4WsrqMDmI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 25754Bro003108
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 7 Jun 2022 00:04:11 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Tue, 7
- Jun 2022 00:04:10 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
- Frontend Transport; Tue, 7 Jun 2022 00:04:10 -0500
-Received: from [172.24.220.119] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 25753v3M120195;
-        Tue, 7 Jun 2022 00:03:59 -0500
-Message-ID: <37bbd74e-17e2-5b45-43da-f1103dd0c752@ti.com>
-Date:   Tue, 7 Jun 2022 10:33:56 +0530
+        Tue, 7 Jun 2022 08:07:13 -0400
+Received: from m12-13.163.com (m12-13.163.com [220.181.12.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 48C4FF5534;
+        Tue,  7 Jun 2022 05:07:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=cuOJ+
+        EnOHMkX51iPE9y80C6s7and7tUcive9YqXs8/I=; b=UpNWtAjEaL6rAB7JjwoaQ
+        0lZjknXPXetIdiQv8XlLbKh2tIiVR6pNj/2NLk1njl6QmrQKjrYg17KTd/CCXMKC
+        bCsCPSOjaKm/2XJ2PAZcmaTb8TwseFWoIDD0aFaICGWomIkk6jzeLFErWXkMbIwf
+        kexetpk65Dsuek2BG/O568=
+Received: from carlis-virtual-machine (unknown [218.17.89.92])
+        by smtp9 (Coremail) with SMTP id DcCowAAXqSNaP59iuAYyHg--.30257S2;
+        Tue, 07 Jun 2022 20:06:51 +0800 (CST)
+From:   Xuezhi Zhang <zhangxuezhi1@coolpad.com>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mathieu.poirier@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Xuezhi Zhang <zhangxuezhi1@coolpad.com>
+Subject: [PATCH] rpmsg: convert sysfs snprintf to sysfs_emit
+Date:   Tue,  7 Jun 2022 20:06:49 +0800
+Message-Id: <20220607120649.78436-1-zhangxuezhi1@coolpad.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v4 0/6] Introduce PRU remoteproc consumer API
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <bjorn.andersson@linaro.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <rogerq@kernel.org>,
-        <grygorii.strashko@ti.com>, <vigneshr@ti.com>, <kishon@ti.com>,
-        <robh@kernel.org>
-References: <20220603121520.13730-1-p-mohan@ti.com>
- <20220606155612.GA809345@p14s> <20220606161518.GB809345@p14s>
-From:   Puranjay Mohan <p-mohan@ti.com>
-In-Reply-To: <20220606161518.GB809345@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DcCowAAXqSNaP59iuAYyHg--.30257S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XrW7AryDtw43Gr4fuFWfKrg_yoW3CrcEkr
+        y0yw4xAF1vvrn5uFnrXFnxZF9avw15Xr1vqw40vFy3CFZYyws8ZrZ29F48J3yDC345JF9x
+        Cw1kJryFyr47ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnZjjDUUUUU==
+X-Originating-IP: [218.17.89.92]
+Sender: llyz108@163.com
+X-CM-SenderInfo: xoo16iiqy6il2tof0z/1tbiWxwZhWI0U54-sAAAsP
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+Fix the following coccicheck warning:
+drivers/rpmsg/qcom_glink_native.c:1677:8-16:
+WARNING: use scnprintf or sprintf
 
-On 06/06/22 21:45, Mathieu Poirier wrote:
-> On Mon, Jun 06, 2022 at 09:56:12AM -0600, Mathieu Poirier wrote:
->> I have started to review this set, comments will come over the next few days.  I
->> will clearly inform you when I am done reviewing.
-> 
-> This patch is giving me several checkpatch warnings that should have been caught
-> before sending the patches out to the mailing list.  As such I will not review
-> this work and seriously considering adding your next revision at the very bottom
-> of my queue.
+Signed-off-by: Xuezhi Zhang <zhangxuezhi1@coolpad.com>
+---
+ drivers/rpmsg/qcom_glink_native.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I am sorry for this. I had introduced the 6th patch in v4 and it is
-giving these errors. I have fixed them and sent a v5. Please don't move
-the v5 to the bottom of the queue. I will be extra cautious from next time.
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 07586514991f..62e741883222 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1674,7 +1674,7 @@ static ssize_t rpmsg_name_show(struct device *dev,
+ 	if (ret < 0)
+ 		name = dev->of_node->name;
+ 
+-	return snprintf(buf, RPMSG_NAME_SIZE, "%s\n", name);
++	return sysfs_emit(buf, "%s\n", name);
+ }
+ static DEVICE_ATTR_RO(rpmsg_name);
+ 
+-- 
+2.34.1
 
-Thanks,
-Puranjay Mohan
-
-> 
->>
->> Thanks,
->> Mathieu
->>
->> On Fri, Jun 03, 2022 at 05:45:14PM +0530, Puranjay Mohan wrote:
->>> This is the v4 of the patch series [1]. The v3 had some comments
->>> on the DT patch that have been addressed here. The 6th patch in this
->>> series was missed in the previous versions, so, it has been added now.
->>>
->>> I have posted two more patch series that depend on this series, one to
->>> the soc tree and another to the networking tree. I had sent all the 3
->>> series, including this one as RFC [2] to get comments and to explain the
->>> dependencies.
->>>
->>> The Programmable Real-Time Unit and Industrial Communication Subsystem
->>> (PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
->>> RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
->>>
->>> There are 3 foundation components for PRUSS subsystem: the PRUSS platform
->>> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
->>> already merged and can be found under:
->>> 1) drivers/soc/ti/pruss.c
->>>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> 2) drivers/irqchip/irq-pruss-intc.c
->>>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
->>> 3) drivers/remoteproc/pru_rproc.c
->>>    Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
->>>
->>> The programmable nature of the PRUs provide flexibility to implement custom
->>> peripheral interfaces, fast real-time responses, or specialized data handling.
->>> Example of a PRU consumer drivers will be:
->>>   - Software UART over PRUSS
->>>   - PRU-ICSS Ethernet EMAC
->>>
->>> In order to make usage of common PRU resources and allow the consumer drivers to
->>> configure the PRU hardware for specific usage the PRU API is introduced.
->>>
->>> [1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220418104118.12878-1-p-mohan@ti.com/
->>> [2] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
->>>
->>> Thanks and Regards,
->>> Puranjay Mohan
->>>
->>> Roger Quadros (1):
->>>   remoteproc: pru: Add pru_rproc_set_ctable() function
->>>
->>> Suman Anna (2):
->>>   dt-bindings: remoteproc: Add PRU consumer bindings
->>>   remoteproc: pru: Make sysfs entries read-only for PRU client driven
->>>     boots
->>>
->>> Tero Kristo (3):
->>>   remoteproc: pru: Add APIs to get and put the PRU cores
->>>   remoteproc: pru: Configure firmware based on client setup
->>>   remoteproc: pru: add support for configuring GPMUX based on client
->>>     setup
->>>
->>>  .../bindings/remoteproc/ti,pru-consumer.yaml  |  69 +++++
->>>  drivers/remoteproc/pru_rproc.c                | 254 +++++++++++++++++-
->>>  include/linux/pruss.h                         |  78 ++++++
->>>  3 files changed, 396 insertions(+), 5 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
->>>  create mode 100644 include/linux/pruss.h
->>>
->>> -- 
->>> 2.17.1
->>>
