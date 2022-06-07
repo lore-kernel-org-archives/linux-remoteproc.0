@@ -2,157 +2,109 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66F6C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Jun 2022 16:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 749C9C43334
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jun 2022 01:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241721AbiFFQU4 (ORCPT
+        id S229629AbiFGBWq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Jun 2022 12:20:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
+        Mon, 6 Jun 2022 21:22:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241714AbiFFQUz (ORCPT
+        with ESMTP id S232999AbiFGBWq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Jun 2022 12:20:55 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 832DD2B2BB0
-        for <linux-remoteproc@vger.kernel.org>; Mon,  6 Jun 2022 09:20:54 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id h23so18866057ejj.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Jun 2022 09:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=12UkLhNWmn2NlSuxlr6S4i7rRJBFRzlnkvu5nBhtCdk=;
-        b=DFflpyIFsZnXHHqmPDg2ed5oqgbXienQBXEPLAaCN/Rw/SD9GDpUQKli40bGJQrMvW
-         d+mCUp9VxvOfdf5J0RrlUNq7WdkjaSStwDF4au+pvldwh621urWTtklhLgROAMxL6Zb0
-         /12gojX0eluv6wl7sIV3Cb+6xpuA68WDLF4eopEzoDyz1FilA1N40+ZRysXVjgyBZ3my
-         ydGPh5FvCWvFpOCLtzcbqk1eabc01zfqE3A8+cy9O7r2XTkvpDje1arAnkuTEpgT1OSO
-         yFNMJa5+XiBnHZB/lCCWXGKcmG1hqtTH6eIHfuRHNkrVZDoQFvKPEhqaMSY6JBMtn0pc
-         3Hng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=12UkLhNWmn2NlSuxlr6S4i7rRJBFRzlnkvu5nBhtCdk=;
-        b=VsztBUnn9L8rWbGLYsLeTPSwwfoLOjq8Au1arnN7tYkOok4+kXuA5KvuqXWU9BAvNK
-         TALemmnS3BJ6jJwJlwXHwPo5B3jQfbJ3V5NlJeGNQjzdhAqgdB5RCTQ6nfrH7zEhD2zs
-         sAxKaltvhDe/w8Ebc4OK46MmJ5jO2nGT4DX1BtiCOczBlz1wCXKtRPXzZfMPzngWAF54
-         6eLgPz3exHa2gUfw98hSqXdjKr41zvVkK5FUxyqqHsLrMTaBxw9PiD2AmHrIXignV9fY
-         qERYPpNO2UnI95c1DDO0ALKeBU65y3mz4Ls11hNX1fOVdu/dgQJCuRi6vCFAhHysubJZ
-         mZXw==
-X-Gm-Message-State: AOAM533qzsBNt7jD3IwqoU+bHO8W7nx5YWXNEHy4ZbQlB/TueppSGxD8
-        UkSR1mxj/OVtLBXTONw8l2faUqFri70ew9RJ4QG/LQ==
-X-Google-Smtp-Source: ABdhPJySZx0kslKEfNGrGcdenQ/vGoHfPvIpIIerAHQ96ovYKU6gs5Xm9U68o1ARI3U9vVrPknGE2fegJ/Nwqo5tf6g=
-X-Received: by 2002:a17:907:c22:b0:711:dc95:3996 with SMTP id
- ga34-20020a1709070c2200b00711dc953996mr396834ejc.62.1654532453015; Mon, 06
- Jun 2022 09:20:53 -0700 (PDT)
+        Mon, 6 Jun 2022 21:22:46 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8082D273;
+        Mon,  6 Jun 2022 18:22:42 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2571McrH079758;
+        Mon, 6 Jun 2022 20:22:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1654564958;
+        bh=CgaOdxh/6hTCnwxfxKHlEtwk/bs3B/+0KLtEZteZTeg=;
+        h=Date:Subject:To:References:From:In-Reply-To;
+        b=WBskwVxgmQlIJmJBEj3/Pmv6FjtSLOqr/Nfj3hMdri6rjg92TgEh93deyVd7h/a2O
+         xMkmKCzES3ocVaAUuAoCvU73dc/7tz4TzMZA09NDg5DHnkPrv48+lx97Wwu02xKoVL
+         vh3YbbTamu0OL1FsP53KtHG59fl5MI5Dtt8KErtE=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2571Mcv9039513
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 6 Jun 2022 20:22:38 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14; Mon, 6
+ Jun 2022 20:22:38 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2308.14 via
+ Frontend Transport; Mon, 6 Jun 2022 20:22:38 -0500
+Received: from [10.249.32.125] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2571Mb7j069761;
+        Mon, 6 Jun 2022 20:22:38 -0500
+Message-ID: <eb7c2a20-3d9d-597c-c462-516bce30f82e@ti.com>
+Date:   Mon, 6 Jun 2022 20:22:37 -0500
 MIME-Version: 1.0
-References: <20220406095446.1187968-1-arnaud.pouliquen@foss.st.com>
- <20220406095446.1187968-3-arnaud.pouliquen@foss.st.com> <20220601174159.GD531268@p14s>
- <b85c7526-80a4-35f2-7629-319d172bc734@foss.st.com>
-In-Reply-To: <b85c7526-80a4-35f2-7629-319d172bc734@foss.st.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 6 Jun 2022 10:20:41 -0600
-Message-ID: <CANLsYkwsqoKVoYSj7bWxT+t=rMp3dhsrpMYaWm6DhFKHvMSEKw@mail.gmail.com>
-Subject: Re: [RFC PATCH v5 2/4] remoteproc: core: Introduce
- rproc_register_rvdev function
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] remoteproc: k3-r5: Fix refcount leak in
+ k3_r5_cluster_of_init
+Content-Language: en-US
+To:     Miaoqian Lin <linmq006@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20220605083334.23942-1-linmq006@gmail.com>
+From:   Suman Anna <s-anna@ti.com>
+In-Reply-To: <20220605083334.23942-1-linmq006@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 3 Jun 2022 at 05:54, Arnaud POULIQUEN
-<arnaud.pouliquen@foss.st.com> wrote:
->
-> Hello Mathieu,
->
-> On 6/1/22 19:41, Mathieu Poirier wrote:
-> > On Wed, Apr 06, 2022 at 11:54:44AM +0200, Arnaud Pouliquen wrote:
-> >> The rproc structure contains a list of registered rproc_vdev structure.
-> >
-> > This should be rproc_rvdev.
->
-> Thanks for your review!
->
-> I will send a new version according to your comments except
-> this one.
-> The structure name rproc_vdev is the good one, or
-> or maybe I'm missing something?
->
+Hi Miaoqian,
 
-You are correct - I had the name of the variable, i.e rvdev, found in
-rproc_handle_vdev() in my head.  You can forget this comment.
+On 6/5/22 03:33, Miaoqian Lin wrote:
+> Every iteration of for_each_available_child_of_node() decrements
+> the reference count of the previous node.
+> When breaking early from a for_each_available_child_of_node() loop,
+> we need to explicitly call of_node_put() on the child node.
+> Add missing of_node_put() to avoid refcount leak.
 
-> Thanks,
-> Arnaud
->
-> >
-> >> To be able to move the management of the rproc_vdev structure in
-> >> remoteproc_virtio.c (i.e rproc_rvdev_add_device and
-> >> rproc_rvdev_remove_device functions), introduce the rproc_register_rvdev
-> >> and rproc_unregister_rvdev functions.
-> >
-> > The name of those functions doesn't match the content of the patch.
-> >
-> >>
-> >> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >> ---
-> >>  drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++--
-> >>  1 file changed, 14 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> >> index 3a469220ac73..081bea39daf4 100644
-> >> --- a/drivers/remoteproc/remoteproc_core.c
-> >> +++ b/drivers/remoteproc/remoteproc_core.c
-> >> @@ -484,6 +484,18 @@ static int copy_dma_range_map(struct device *to, struct device *from)
-> >>      return 0;
-> >>  }
-> >>
-> >> +static void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
-> >> +{
-> >> +    if (rvdev && rproc)
-> >> +            list_add_tail(&rvdev->node, &rproc->rvdevs);
-> >> +}
-> >> +
-> >> +static void rproc_remove_rvdev(struct rproc_vdev *rvdev)
-> >> +{
-> >> +    if (rvdev)
-> >> +            list_del(&rvdev->node);
-> >> +}
-> >> +
-> >>  static struct rproc_vdev *
-> >>  rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
-> >>  {
-> >> @@ -547,7 +559,7 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
-> >>                      goto unwind_vring_allocations;
-> >>      }
-> >>
-> >> -    list_add_tail(&rvdev->node, &rproc->rvdevs);
-> >> +    rproc_add_rvdev(rproc, rvdev);
-> >>
-> >>      rvdev->subdev.start = rproc_vdev_do_start;
-> >>      rvdev->subdev.stop = rproc_vdev_do_stop;
-> >> @@ -576,7 +588,7 @@ static void rproc_rvdev_remove_device(struct rproc_vdev *rvdev)
-> >>      }
-> >>
-> >>      rproc_remove_subdev(rproc, &rvdev->subdev);
-> >> -    list_del(&rvdev->node);
-> >> +    rproc_remove_rvdev(rvdev);
-> >
-> > With the above:
-> >
-> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >
-> >>      device_unregister(&rvdev->dev);
-> >>  }
-> >>
-> >> --
-> >> 2.25.1
-> >>
+Thanks for catching this.
+
+> 
+> Fixes: 6dedbd1d5443 ("remoteproc: k3-r5: Add a remoteproc driver for R5F subsystem")
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+
+Acked-by: Suman Anna <s-anna@ti.com>
+
+regards
+Suman
+
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 4840ad906018..0481926c6975 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1655,6 +1655,7 @@ static int k3_r5_cluster_of_init(struct platform_device *pdev)
+>  		if (!cpdev) {
+>  			ret = -ENODEV;
+>  			dev_err(dev, "could not get R5 core platform device\n");
+> +			of_node_put(child);
+>  			goto fail;
+>  		}
+>  
+> @@ -1663,6 +1664,7 @@ static int k3_r5_cluster_of_init(struct platform_device *pdev)
+>  			dev_err(dev, "k3_r5_core_of_init failed, ret = %d\n",
+>  				ret);
+>  			put_device(&cpdev->dev);
+> +			of_node_put(child);
+>  			goto fail;
+>  		}
+>  
+
