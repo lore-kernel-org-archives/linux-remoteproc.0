@@ -2,83 +2,77 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7502C43334
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jun 2022 13:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6411CC43334
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jun 2022 16:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244787AbiFGNgD (ORCPT
+        id S1345110AbiFGQnk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 09:36:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51744 "EHLO
+        Tue, 7 Jun 2022 12:43:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244804AbiFGNgA (ORCPT
+        with ESMTP id S237151AbiFGQnj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Jun 2022 09:36:00 -0400
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4988C6847;
-        Tue,  7 Jun 2022 06:35:57 -0700 (PDT)
-Received: (Authenticated sender: peter@korsgaard.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id 9D8144000A;
-        Tue,  7 Jun 2022 13:35:54 +0000 (UTC)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.94.2)
-        (envelope-from <peter@korsgaard.com>)
-        id 1nyYrp-00058v-Gr; Tue, 07 Jun 2022 15:03:29 +0200
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Tanmay Shah <tanmay.shah@xilinx.com>
-Cc:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <michal.simek@xilinx.com>, <ben.levinsky@xilinx.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <openamp-system-reference@lists.openampproject.org>
-Subject: Re: [PATCH v8 6/6] drivers: remoteproc: Add Xilinx r5 remoteproc
- driver
-References: <20220602203834.3675160-1-tanmay.shah@xilinx.com>
-        <20220602203834.3675160-7-tanmay.shah@xilinx.com>
-Date:   Tue, 07 Jun 2022 15:03:29 +0200
-In-Reply-To: <20220602203834.3675160-7-tanmay.shah@xilinx.com> (Tanmay Shah's
-        message of "Thu, 2 Jun 2022 13:38:34 -0700")
-Message-ID: <87pmjkwrq6.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 7 Jun 2022 12:43:39 -0400
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58E5EB36C0;
+        Tue,  7 Jun 2022 09:43:38 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id q76so10855080iod.8;
+        Tue, 07 Jun 2022 09:43:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KQhN2bCw2qzHzEfViF9RH6IaU2tqDjbhZaw77rQjUj8=;
+        b=OCB+dnI5IN7FO5ybiN90ipNOZOwukyvWjrLaV9cATXZkL4R/3yitkfqugVxbI/273W
+         gkly7Ey8PmU4mubLtYbILSlYzG/plbgjcEt36SefnWtqdHa0gV4hJLLdtnEi00RB084+
+         YDkaE2pfuhxX8yvN6Mk8DPD7WlL+Med5QRiyeoU+Q8vp1ItLdhgIB4mxvyfyGnKeTzSX
+         A8UHMb8PbzZcV+OLvB1gjIuzc8NSWWTklwrwJUOaJy8fNV0H++bR9EbZL0PAaIVtvz1b
+         H5ByQqY9mzqJ8NYrPai5G51QGGcfqWxZhZBY7dzZOyy3/Q1J7n58XuD6JL3JNOUguUTQ
+         g5hw==
+X-Gm-Message-State: AOAM5306kN5iGxR1vFMlRz/M98xFmTprhFtIyNiErxy+rvOp7GD6qjp4
+        NrUibXP8aCCZgJkmGb7d1A==
+X-Google-Smtp-Source: ABdhPJyJ2L0oQIGdzZg1DvKHr4FFEhIlqyV/wjzoCkNQxGXJJFfSgVxrTPgvLeSYaY/OCk76B5bIOg==
+X-Received: by 2002:a05:6638:371e:b0:331:bc34:c3b1 with SMTP id k30-20020a056638371e00b00331bc34c3b1mr4629870jav.68.1654620217640;
+        Tue, 07 Jun 2022 09:43:37 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id z9-20020a921a49000000b002d396d6a2b4sm7456318ill.13.2022.06.07.09.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 09:43:37 -0700 (PDT)
+Received: (nullmailer pid 3412797 invoked by uid 1000);
+        Tue, 07 Jun 2022 16:43:35 -0000
+Date:   Tue, 7 Jun 2022 10:43:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Luca Weiss <luca@z3ntu.xyz>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: q6v5: fix example
+Message-ID: <20220607164335.GA3409694-robh@kernel.org>
+References: <20220606132324.1497349-1-luca@z3ntu.xyz>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220606132324.1497349-1-luca@z3ntu.xyz>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
->>>>> "Tanmay" == Tanmay Shah <tanmay.shah@xilinx.com> writes:
+On Mon, Jun 06, 2022 at 03:23:24PM +0200, Luca Weiss wrote:
+> Use the node in the examples that is present in msm8974.dtsi, which uses
+> proper flags for the interrupts and add required 'xo' clock among
+> others.
+> 
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+>  .../bindings/remoteproc/qcom,q6v5.txt         | 41 +++++++++++--------
+>  1 file changed, 23 insertions(+), 18 deletions(-)
 
-Hi,
+Please consider just converting this to schema instead. Then we actually 
+check the example.
 
- > This driver enables r5f dual core Real time Processing Unit subsystem
- > available on Xilinx Zynq Ultrascale MPSoC Platform. RPU subsystem
- > (cluster) can be configured in different modes e.g. split mode in which
- > two r5f cores work independent of each other and lock-step mode in which
- > both r5f cores execute same code clock-for-clock and notify if the
- > result is different.
-
- > The Xilinx r5 Remoteproc Driver boots the RPU cores via calls to the Xilinx
- > Platform Management Unit that handles the R5 configuration, memory access
- > and R5 lifecycle management. The interface to this manager is done in this
- > driver via zynqmp_pm_* function calls.
-
- > Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
- > Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
-
- > + * zynqmp_r5_set_mode - set RPU operation mode
- > + *
- > + * set RPU operation mode
- > + *
- > + * Return: 0 for success, negative value for failure
- > + */
- > +static int zynqmp_r5_set_mode(struct zynqmp_r5_core *r5_core,
- > +			      enum rpu_oper_mode fw_reg_val,
- > +			      enum rpu_tcm_comb tcm_mode)
- > +{
-
-NIT: That is an odd name for the lockstep/split argument. Why do you
-need to specify both R5F mode and TCM configuration, isn't the TCM mode
-implied by the R5F mode?
-
--- 
-Bye, Peter Korsgaard
+Rob
