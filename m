@@ -2,40 +2,40 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384B8CCA47F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 09:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F763C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 09:15:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234238AbiFHJPy (ORCPT
+        id S234328AbiFHJP5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 05:15:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36906 "EHLO
+        Wed, 8 Jun 2022 05:15:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235093AbiFHJOa (ORCPT
+        with ESMTP id S235108AbiFHJOb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Jun 2022 05:14:30 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE871D82F4;
-        Wed,  8 Jun 2022 01:36:10 -0700 (PDT)
-X-UUID: b566a5b6eae447c9897858eace2fbdea-20220608
+        Wed, 8 Jun 2022 05:14:31 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4164B1285C9;
+        Wed,  8 Jun 2022 01:36:12 -0700 (PDT)
+X-UUID: c835ab158e284bddb1877ac900538f02-20220608
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:0d5b83aa-2477-46cd-b412-e843e534e382,OB:0,LO
-        B:20,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,AC
-        TION:release,TS:95
-X-CID-INFO: VERSION:1.1.5,REQID:0d5b83aa-2477-46cd-b412-e843e534e382,OB:0,LOB:
-        20,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,AC
-        TION:quarantine,TS:95
-X-CID-META: VersionHash:2a19b09,CLOUDID:ac2415e5-2ba2-4dc1-b6c5-11feb6c769e0,C
+X-CID-O-INFO: VERSION:1.1.5,REQID:f3055498-72a6-4c8e-b6f1-c622fac0ef7e,OB:20,L
+        OB:10,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,A
+        CTION:release,TS:95
+X-CID-INFO: VERSION:1.1.5,REQID:f3055498-72a6-4c8e-b6f1-c622fac0ef7e,OB:20,LOB
+        :10,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,A
+        CTION:quarantine,TS:95
+X-CID-META: VersionHash:2a19b09,CLOUDID:577d9f7e-c8dc-403a-96e8-6237210dceee,C
         OID:ab9fe7398c47,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,QS:0,BEC:nil
-X-UUID: b566a5b6eae447c9897858eace2fbdea-20220608
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+X-UUID: c835ab158e284bddb1877ac900538f02-20220608
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 788356503; Wed, 08 Jun 2022 16:36:03 +0800
+        with ESMTP id 18680939; Wed, 08 Jun 2022 16:36:04 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Wed, 8 Jun 2022 16:36:02 +0800
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Wed, 8 Jun 2022 16:36:02 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
  15.2.792.3 via Frontend Transport; Wed, 8 Jun 2022 16:36:02 +0800
@@ -61,9 +61,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>,
         <weishunc@google.com>
-Subject: [PATCH v2 1/9] dt-binding: remoteproc: mediatek: Support dual-core SCP
-Date:   Wed, 8 Jun 2022 16:35:45 +0800
-Message-ID: <20220608083553.8697-2-tinghan.shen@mediatek.com>
+Subject: [PATCH v2 5/9] remoteproc: mediatek: Add chip dependent operations for SCP core 1
+Date:   Wed, 8 Jun 2022 16:35:49 +0800
+Message-ID: <20220608083553.8697-6-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220608083553.8697-1-tinghan.shen@mediatek.com>
 References: <20220608083553.8697-1-tinghan.shen@mediatek.com>
@@ -74,55 +74,123 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The MT8195 SCP co-processor is a dual-core RISC-V MCU.
-
-Add a new property to reference the sibling core and to assign
-core id to SCP nodes. Also add a new compatile for the driver of
-SCP 2nd core.
+The SCP rproc operations has chip dependent callbacks. Implement a
+version of these callbacks for MT8195 SCP core 1.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 ---
- .../devicetree/bindings/remoteproc/mtk,scp.yaml     | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/remoteproc/mtk_scp.c | 65 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-index eec3b9c4c713..4576ff9b1f2d 100644
---- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-@@ -20,6 +20,7 @@ properties:
-       - mediatek,mt8186-scp
-       - mediatek,mt8192-scp
-       - mediatek,mt8195-scp
-+      - mediatek,mt8195-scp-dual
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 91b4aefde4ac..731a8094c373 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -180,6 +180,16 @@ static void mt8192_scp_reset_deassert(struct mtk_scp *scp)
+ 	writel(1, scp->reg_base + MT8192_CORE0_SW_RSTN_CLR);
+ }
  
-   reg:
-     description:
-@@ -57,6 +58,17 @@ properties:
-   memory-region:
-     maxItems: 1
- 
-+  mediatek,scp-core:
-+    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-+    description:
-+      Reference to the sibling SCP core. This is required to
-+      enable support for dual-core SCP.
-+    items:
-+      - items:
-+          - description: Phandle of sibling SCP node.
-+          - description: Core id of this SCP node
-+            enum: [0, 1]
++static void mt8195_scp_dual_reset_assert(struct mtk_scp *scp)
++{
++	writel(1, scp->reg_base + MT8195_CORE1_SW_RSTN_SET);
++}
 +
- required:
-   - compatible
-   - reg
-@@ -115,6 +127,7 @@ examples:
-         reg-names = "sram", "cfg", "l1tcm";
-         clocks = <&infracfg CLK_INFRA_SCPSYS>;
-         clock-names = "main";
-+        mediatek,scp-core = <&scp_dual 0>;
++static void mt8195_scp_dual_reset_deassert(struct mtk_scp *scp)
++{
++	writel(1, scp->reg_base + MT8195_CORE1_SW_RSTN_CLR);
++}
++
+ static void mt8183_scp_irq_handler(struct mtk_scp *scp)
+ {
+ 	u32 scp_to_host;
+@@ -241,6 +251,24 @@ static void mt8195_scp_irq_handler(struct mtk_scp *scp)
+ 	}
+ }
  
-         cros_ec {
-             mediatek,rpmsg-name = "cros-ec-rpmsg";
++static void mt8195_scp_dual_irq_handler(struct mtk_scp *scp)
++{
++	u32 scp_to_host;
++
++	scp_to_host = readl(scp->reg_base + MT8195_SSHUB2APMCU_IPC_SET);
++
++	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
++		scp_ipi_handler(scp);
++
++		/*
++		 * SCP won't send another interrupt until we clear
++		 * MT8195_SSHUB2APMCU_IPC_CLR.
++		 */
++		writel(MT8192_SCP_IPC_INT_BIT,
++		       scp->reg_base + MT8195_SSHUB2APMCU_IPC_CLR);
++	}
++}
++
+ static irqreturn_t scp_irq_handler(int irq, void *priv)
+ {
+ 	struct mtk_scp *scp = priv;
+@@ -474,6 +502,21 @@ static int mt8195_scp_before_load(struct mtk_scp *scp)
+ 	return 0;
+ }
+ 
++static int mt8195_scp_dual_before_load(struct mtk_scp *scp)
++{
++	u32 sec_ctrl;
++
++	scp_sram_power_on(scp->reg_base + MT8195_CPU1_SRAM_PD, 0);
++
++	/* hold SCP in reset while loading FW. */
++	scp->data->scp_reset_assert(scp);
++
++	/* enable MPU for all memory regions */
++	writel(0xff, scp->reg_base + MT8195_CORE1_MEM_ATT_PREDEF);
++
++	return 0;
++}
++
+ static int scp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct mtk_scp *scp = rproc->priv;
+@@ -646,6 +689,15 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
+ 	writel(0, scp->reg_base + MT8192_CORE0_WDT_CFG);
+ }
+ 
++static void mt8195_scp_dual_stop(struct mtk_scp *scp)
++{
++	/* Power off CPU SRAM */
++	scp_sram_power_off(scp->reg_base + MT8195_CPU1_SRAM_PD, 0);
++
++	/* Disable SCP watchdog */
++	writel(0, scp->reg_base + MT8195_CORE1_WDT_CFG);
++}
++
+ static int scp_stop(struct rproc *rproc)
+ {
+ 	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
+@@ -1013,11 +1065,24 @@ static const struct mtk_scp_of_data mt8195_of_data = {
+ 	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+ };
+ 
++static const struct mtk_scp_of_data mt8195_scp_dual_of_data = {
++	.scp_clk_get = mt8195_scp_clk_get,
++	.scp_before_load = mt8195_scp_dual_before_load,
++	.scp_irq_handler = mt8195_scp_dual_irq_handler,
++	.scp_reset_assert = mt8195_scp_dual_reset_assert,
++	.scp_reset_deassert = mt8195_scp_dual_reset_deassert,
++	.scp_stop = mt8195_scp_dual_stop,
++	.scp_da_to_va = mt8192_scp_da_to_va,
++	.host_to_scp_reg = MT8192_GIPC_IN_SET,
++	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
++};
++
+ static const struct of_device_id mtk_scp_of_match[] = {
+ 	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
+ 	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
+ 	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
+ 	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
++	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_scp_dual_of_data },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
 -- 
 2.18.0
 
