@@ -2,317 +2,192 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B56CCA483
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Jun 2022 17:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ED1C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 04:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245591AbiFGRla (ORCPT
+        id S231888AbiFHEwF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Jun 2022 13:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36152 "EHLO
+        Wed, 8 Jun 2022 00:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347513AbiFGRjG (ORCPT
+        with ESMTP id S231948AbiFHEvU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Jun 2022 13:39:06 -0400
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2060a.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e8d::60a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D963586A;
-        Tue,  7 Jun 2022 10:33:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mmy6mOPYYf+Gtb/FCcqasVnHpCa2RX/ymTHP5FbznexvKwfDS5ivHJl3SN8u+FAdxRj0oa3xa6KfZzbkcRQfNjw8tB2+JGmcFgmOOW2R0yYNEaXubWAJP8MZCpxcPutRaoTA+7WplXCnYOMR0ZnKBvqPEaU+jPWVKAclRWvSSolmqK0Fsc0MPHyN0+5gmkmRPN9acT375xcV2wA7XCjvgDlN8IlWfOQ/4r6ENTcdiWHIc0NUIM/K81s34AHoOj/SGoei/nngc/I2FomJa39C1Mw4ATBFbFU7f17rCYoqlU/jC7Vp0kp9Bol20fwOiiVdVRYXLrguVW8N8x7qeid7wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MpeKYTZ7UnKSjTRoAs/0IMlIlrk4G0DiECmMV/uMlTc=;
- b=bNUo8yd+cutws9SowSKdznQSYulAae0nhrLgfy8sRdGb034lyfCQU9jd9CADcEzs4dg5dN/kMoqT6pivE/59K33A+aCgRQ3RW63Jm5NT10n1S6JP3Gw8PYz338dcmiXwli1nv6xsoGmQCMYdsrhC7WRWDScNT3Tiu9MHvpmPNvQKJ10dADNrxDVSQZTMbAG6DLkjfCtdGsX/dBTdH1RugrzGvHZHbw4165sm+Kj/+Houe9rZX4PcodRRRzMVR79r7R7SK9FWBHEVzvzwZJr8WMBs7vsTo+hY2crH0cWp7jgMCsVH1QABWCFix0y8XEY51D+o0N07aCcuGuGBl3cGNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        Wed, 8 Jun 2022 00:51:20 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED1A2717AB;
+        Tue,  7 Jun 2022 18:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MpeKYTZ7UnKSjTRoAs/0IMlIlrk4G0DiECmMV/uMlTc=;
- b=pitU8x1YC87JFKE5N54t3YDEJ1Z3okEGZFn+DqIsVhXgmq+1mMNPYN2SzMJAXydMiE9VAFniwbuo3FN3rpmjOlcRJIps656rSF4NPC5RVfzn3yYuELjgAzoSpMKV1JhZeKGe+j4RxT5eyOQxKJovMpA82rFv5TDWpWos7AnxJII=
-Received: from SN6PR01CA0034.prod.exchangelabs.com (2603:10b6:805:b6::47) by
- DM6PR02MB5116.namprd02.prod.outlook.com (2603:10b6:5:4f::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5314.13; Tue, 7 Jun 2022 17:32:49 +0000
-Received: from SN1NAM02FT0026.eop-nam02.prod.protection.outlook.com
- (2603:10b6:805:b6:cafe::8f) by SN6PR01CA0034.outlook.office365.com
- (2603:10b6:805:b6::47) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.13 via Frontend
- Transport; Tue, 7 Jun 2022 17:32:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- SN1NAM02FT0026.mail.protection.outlook.com (10.97.5.74) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5314.12 via Frontend Transport; Tue, 7 Jun 2022 17:32:49 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Tue, 7 Jun 2022 10:32:49 -0700
-Received: from smtp.xilinx.com (172.19.127.96) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Tue, 7 Jun 2022 10:32:49 -0700
-Envelope-to: bjorn.andersson@linaro.org,
- mathieu.poirier@linaro.org,
- robh+dt@kernel.org,
- krzk+dt@kernel.org,
- linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- openamp-system-reference@lists.openampproject.org
-Received: from [10.23.123.50] (port=63598)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <tanmay.shah@xilinx.com>)
-        id 1nyd4T-0007JE-39; Tue, 07 Jun 2022 10:32:49 -0700
-Message-ID: <9722112e-770f-53dd-4b28-48be696c0d12@xilinx.com>
-Date:   Tue, 7 Jun 2022 10:32:48 -0700
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1654651042; x=1686187042;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=k1TdWJdCOte5lEmhirdFhp1kWl2phGEs6DbE8zLu2oQ=;
+  b=wjLJxzHbopOqCRppzLNHsj9CT3DesharkOuAaaPH4GtHlFHrLP4aGx9Y
+   v3O+OBTo6qUWPDgX/dhlscjfsfYH80S755qp6yYUWlaWJXn6ZNSzc0FHQ
+   RHX/WTnNGXMpuaYWEa3aF8fcnds3xn09t+LlDUs2Qvmb8y1DDQBp/EUu+
+   k=;
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 07 Jun 2022 18:17:20 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg02-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 18:17:20 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 7 Jun 2022 18:17:19 -0700
+Received: from hu-clew-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Tue, 7 Jun 2022 18:17:19 -0700
+From:   Chris Lew <quic_clew@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_clew@quicinc.com>
+Subject: [PATCH 1/4] rpmsg: core: Add rx done hooks
+Date:   Tue, 7 Jun 2022 18:16:42 -0700
+Message-ID: <1654651005-15475-2-git-send-email-quic_clew@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
+References: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH v8 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
- bindings
-Content-Language: en-US
-To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzk+dt@kernel.org>,
-        <michal.simek@xilinx.com>, <ben.levinsky@xilinx.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <openamp-system-reference@lists.openampproject.org>
-References: <20220602203834.3675160-1-tanmay.shah@xilinx.com>
- <20220602203834.3675160-2-tanmay.shah@xilinx.com>
-From:   Tanmay Shah <tanmay.shah@xilinx.com>
-In-Reply-To: <20220602203834.3675160-2-tanmay.shah@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: eef0a148-d917-4fde-11e9-08da48abbe41
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5116:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR02MB5116BCEFE83982121B56FBDACAA59@DM6PR02MB5116.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xQvcEqsOxkMpUutE3YUm/AjyH9mR03NwTt5ryXbegeoMxcqIgFUS7OA5A8pdAyJCGd6QimDk8TSnoM38P6hvBoVCczkk8g3t81aTq8UMhuGVIisijszKjNJ/zDaP7xFLcIQ/KKHRhFFtBRrjm8IhRYkNJZeORVj0n37MNz/rU2xmHpqvKvGqbKpx9irzr7htRb5gnoBUzG4g2GYCnACyZZBoNRJ5sDre1UIXc3X2VehHv0jbBUlqnSn7xKYkCgSHYZPDXSwSiVbiT8svO/OBMjW5WepD61oN0JvJTe6gbfRFtBGKMSkBZi1xq+J7McC6y8O3F8kDbITiLvamxjiLgaq1GdpPP8P+1R+c6/LwBfQNYn+wdXBUdypZhDMJhfj2DU65wuYFPVNCyTJrpZvWrMrTu+yteResuWiZ99dz5Xmy2tVDYJQ93PKtz8BMsuV5nR8R16gTKp+wmRI8TeqE+HTl09GHSSFT69SGhyJIgPxliNJneUd0oMInpVjJfLKo8L5J1sA70XRTZZKu5/qXXR7AjX89EAtjH4OiDwUenvaQ5Py6V+MxSYurKlSryq+VcvfV94T7r9wSMe3FYZuS7WVSasuItRGJiCIiKaLhsWS5o2IZee9rPLcK4wthxY1KRMuLj964ph13bjWhFOJOyDU/0b2AsOsGe6LHD95va+2K1vnwADEgdYrFy7BhZyiQlVcZHlg4FDbOtdL5bMfAAXNMszyfq+ZlDlNEsdd9b8BW0dayK23ZCrlK6OYUXlz3r4Vzp8gzJZUgYY3VdEVlFOaSUARLaxILkfI0AQr1/G3RJSXg2GhmpVKrOcvpfujAkV5sGuPZylQZLy0lZ+kti/M9912U7tKLnroQ+IEtZOM=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230001)(4636009)(40470700004)(36840700001)(46966006)(26005)(5660300002)(356005)(316002)(44832011)(9786002)(7636003)(8936002)(53546011)(70586007)(82310400005)(8676002)(70206006)(4326008)(31686004)(2906002)(31696002)(54906003)(36756003)(6636002)(83380400001)(426003)(110136005)(47076005)(186003)(336012)(2616005)(508600001)(36860700001)(966005)(40460700003)(50156003)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2022 17:32:49.4108
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eef0a148-d917-4fde-11e9-08da48abbe41
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1NAM02FT0026.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5116
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Rob,
+In order to reduce the amount of copies in the rpmsg framework, it is
+necessary for clients to take brief ownership of the receive buffer.
 
-Ping for reviews.
+Add the capability for clients to notify the rpmsg framework and the
+underlying transports when it is going to hold onto a buffer and also
+notify when the client is done with the buffer.
 
-Thanks,
+In the .rx_cb of the rpmsg drivers, if they wish to use the received
+buffer at a later point, they should return RPMSG_DEFER. Otherwise
+returning RPMSG_HANDLED (0) will signal the framework that the client
+is done with the resources and can continue with cleanup.
 
-Tanmay
+The clients should check if their rpmsg endpoint supports the rx_done
+operation with the new state variable in the rpmsg_endpoint since not
+all endpoints will have the ability to support this operation.
 
-On 6/2/22 1:38 PM, Tanmay Shah wrote:
-> Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
-> Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem
-> (cluster).
->
-> Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
-> ---
->
-> Changes in v8:
->    - Add 'items:' for sram property
->
-> Changes in v7:
->    - Add minItems in sram property
->
-> Changes in v6:
->    - Add maxItems to sram and memory-region property
->
-> Changes in v5:
-> - Add constraints of the possible values of xlnx,cluster-mode property
-> - fix description of power-domains property for r5 core
-> - Remove reg, address-cells and size-cells properties as it is not required
-> - Fix description of mboxes property
-> - Add description of each memory-region and remove old .txt binding link
->    reference in the description
->
-> Changes in v4:
->    - Add memory-region, mboxes and mbox-names properties in example
->
-> Changes in v3:
->    - None
->
->   .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 130 ++++++++++++++++++
->   include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
->   2 files changed, 138 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-> new file mode 100644
-> index 000000000000..adfe05ff157a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-> @@ -0,0 +1,132 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx R5F processor subsystem
-> +
-> +maintainers:
-> +  - Ben Levinsky <ben.levinsky@xilinx.com>
-> +  - Tanmay Shah <tanmay.shah@xilinx.com>
-> +
-> +description: |
-> +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
-> +  real-time processing based on the Cortex-R5F processor core from ARM.
-> +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
-> +  floating-point unit that implements the Arm VFPv3 instruction set.
-> +
-> +properties:
-> +  compatible:
-> +    const: xlnx,zynqmp-r5fss
-> +
-> +  xlnx,cluster-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2]
-> +    description: |
-> +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
-> +      lock-step mode(Both RPU cores execute the same code in lock-step,
-> +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
-> +      core 1 runs normally). The processor does not support dynamic configuration.
-> +      Switching between modes is only permitted immediately after a processor reset.
-> +      If set to  1 then lockstep mode and if 0 then split mode.
-> +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
-> +
-> +patternProperties:
-> +  "^r5f-[a-f0-9]+$":
-> +    type: object
-> +    description: |
-> +      The RPU is located in the Low Power Domain of the Processor Subsystem.
-> +      Each processor includes separate L1 instruction and data caches and
-> +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
-> +      memory space is non-cacheable.
-> +
-> +      Each RPU contains one 64KB memory and two 32KB memories that
-> +      are accessed via the TCM A and B port interfaces, for a total of 128KB
-> +      per processor. In lock-step mode, the processor has access to 256KB of
-> +      TCM memory.
-> +
-> +    properties:
-> +      compatible:
-> +        const: xlnx,zynqmp-r5f
-> +
-> +      power-domains:
-> +        description: RPU core PM domain specifier
-> +        maxItems: 1
-> +
-> +      mboxes:
-> +        minItems: 1
-> +        items:
-> +          - description: mailbox channel to send data to RPU
-> +          - description: mailbox channel to receive data from RPU
-> +
-> +      mbox-names:
-> +        minItems: 1
-> +        items:
-> +          - const: tx
-> +          - const: rx
-> +
-> +      sram:
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> +        minItems: 1
-> +        maxItems: 8
-> +        items:
-> +          maxItems: 1
-> +        description: |
-> +          phandles to one or more reserved on-chip SRAM regions. Other than TCM,
-> +          the RPU can execute instructions and access data from, the OCM memory,
-> +          the main DDR memory, and other system memories.
-> +
-> +          The regions should be defined as child nodes of the respective SRAM
-> +          node, and should be defined as per the generic bindings in,
-> +          Documentation/devicetree/bindings/sram/sram.yaml
-> +
-> +      memory-region:
-> +        description: |
-> +          List of phandles to the reserved memory regions associated with the
-> +          remoteproc device. This is variable and describes the memories shared with
-> +          the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
-> +          vrings, ...). This reserved memory region will be allocated on DDR memory.
-> +        minItems: 1
-> +        maxItems: 8
-> +        items:
-> +          - description: region used for RPU firmware image section
-> +          - description: vdev buffer
-> +          - description: vring0
-> +          - description: vring1
-> +        additionalItems: true
-> +
-> +    required:
-> +      - compatible
-> +      - power-domains
-> +
-> +    unevaluatedProperties: false
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    r5fss: r5fss {
-> +        compatible = "xlnx,zynqmp-r5fss";
-> +        xlnx,cluster-mode = <1>;
-> +
-> +        r5f-0 {
-> +            compatible = "xlnx,zynqmp-r5f";
-> +            power-domains = <&zynqmp_firmware 0x7>;
-> +            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-> +            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-> +            mbox-names = "tx", "rx";
-> +        };
-> +
-> +        r5f-1 {
-> +            compatible = "xlnx,zynqmp-r5f";
-> +            power-domains = <&zynqmp_firmware 0x8>;
-> +            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
-> +            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
-> +            mbox-names = "tx", "rx";
-> +        };
-> +    };
-> +...
-> diff --git a/include/dt-bindings/power/xlnx-zynqmp-power.h b/include/dt-bindings/power/xlnx-zynqmp-power.h
-> index 0d9a412fd5e0..618024cbb20d 100644
-> --- a/include/dt-bindings/power/xlnx-zynqmp-power.h
-> +++ b/include/dt-bindings/power/xlnx-zynqmp-power.h
-> @@ -6,6 +6,12 @@
->   #ifndef _DT_BINDINGS_ZYNQMP_POWER_H
->   #define _DT_BINDINGS_ZYNQMP_POWER_H
->   
-> +#define		PD_RPU_0	7
-> +#define		PD_RPU_1	8
-> +#define		PD_R5_0_ATCM	15
-> +#define		PD_R5_0_BTCM	16
-> +#define		PD_R5_1_ATCM	17
-> +#define		PD_R5_1_BTCM	18
->   #define		PD_USB_0	22
->   #define		PD_USB_1	23
->   #define		PD_TTC_0	24
+Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+---
+ drivers/rpmsg/rpmsg_core.c     | 20 ++++++++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h |  1 +
+ include/linux/rpmsg.h          | 24 ++++++++++++++++++++++++
+ 3 files changed, 45 insertions(+)
+
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 290c1f02da10..359be643060f 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -351,6 +351,26 @@ ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+ }
+ EXPORT_SYMBOL(rpmsg_get_mtu);
+ 
++/**
++ * rpmsg_rx_done() - release resources related to @data from a @rx_cb
++ * @ept:	the rpmsg endpoint
++ * @data:	payload from a message
++ *
++ * Returns 0 on success and an appropriate error value on failure.
++ */
++int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data)
++{
++	if (WARN_ON(!ept))
++		return -EINVAL;
++	if (!ept->ops->rx_done)
++		return -ENXIO;
++	if (!ept->rx_done)
++		return -EINVAL;
++
++	return ept->ops->rx_done(ept, data);
++}
++EXPORT_SYMBOL(rpmsg_rx_done);
++
+ /*
+  * match a rpmsg channel with a channel info struct.
+  * this is used to make sure we're not creating rpmsg devices for channels
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index a22cd4abe7d1..99cb86ce638e 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -76,6 +76,7 @@ struct rpmsg_endpoint_ops {
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
+ 	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
++	int (*rx_done)(struct rpmsg_endpoint *ept, void *data);
+ };
+ 
+ struct device *rpmsg_find_device(struct device *parent,
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index 523c98b96cb4..8e34222e8bca 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -63,6 +63,18 @@ struct rpmsg_device {
+ 	const struct rpmsg_device_ops *ops;
+ };
+ 
++/**
++ * rpmsg rx callback return definitions
++ * @RPMSG_HANDLED: rpmsg user is done processing data, framework can free the
++ *                 resources related to the buffer
++ * @RPMSG_DEFER:   rpmsg user is not done processing data, framework will hold
++ *                 onto resources related to the buffer until rpmsg_rx_done is
++ *                 called. User should check their endpoint to see if rx_done
++ *                 is a supported operation.
++ */
++#define RPMSG_HANDLED	0
++#define RPMSG_DEFER	1
++
+ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+ 
+ /**
+@@ -71,6 +83,7 @@ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+  * @refcount: when this drops to zero, the ept is deallocated
+  * @cb: rx callback handler
+  * @cb_lock: must be taken before accessing/changing @cb
++ * @rx_done: if set, rpmsg endpoint supports rpmsg_rx_done
+  * @addr: local rpmsg address
+  * @priv: private data for the driver's use
+  *
+@@ -93,6 +106,7 @@ struct rpmsg_endpoint {
+ 	struct kref refcount;
+ 	rpmsg_rx_cb_t cb;
+ 	struct mutex cb_lock;
++	bool rx_done;
+ 	u32 addr;
+ 	void *priv;
+ 
+@@ -192,6 +206,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 
+ ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+ 
++int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data);
++
+ #else
+ 
+ static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
+@@ -316,6 +332,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+ 	return -ENXIO;
+ }
+ 
++static inline int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data)
++{
++	/* This shouldn't be possible */
++	WARN_ON(1);
++
++	return -ENXIO;
++}
++
+ #endif /* IS_ENABLED(CONFIG_RPMSG) */
+ 
+ /* use a macro to avoid include chaining to get THIS_MODULE */
+-- 
+2.7.4
+
