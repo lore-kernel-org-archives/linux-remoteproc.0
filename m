@@ -2,149 +2,124 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B467ACCA481
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 04:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01484CCA47B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 09:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231584AbiFHEw0 (ORCPT
+        id S234207AbiFHJPw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 00:52:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51152 "EHLO
+        Wed, 8 Jun 2022 05:15:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231316AbiFHEvp (ORCPT
+        with ESMTP id S235091AbiFHJOa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Jun 2022 00:51:45 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F992717A3;
-        Tue,  7 Jun 2022 18:17:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1654651040; x=1686187040;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=/4WqRcJOS9PY50o3EM4s4sR3QVY+ZH5V0fBKwluwEdU=;
-  b=xPxwn/4n6JGw4mV0mAeMLhhgGiNzEAuBG7lhVTGlCyH6wzYZ4uvHM8kX
-   7C8wtIGHWtqiqf0lM2jiVs87lqCptntP15xoNP3lQDLDZwn5SPtMCVjJ2
-   kbF7KivFtM6arV5wVBMXo6N+BssC+jZm9zzQpb0Nq7JKHs+oSjPAhticA
-   I=;
-Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 07 Jun 2022 18:17:20 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 18:17:20 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 7 Jun 2022 18:17:19 -0700
-Received: from hu-clew-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 7 Jun 2022 18:17:19 -0700
-From:   Chris Lew <quic_clew@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_clew@quicinc.com>
-Subject: [PATCH 2/4] rpmsg: char: Add support to use rpmsg_rx_done
-Date:   Tue, 7 Jun 2022 18:16:43 -0700
-Message-ID: <1654651005-15475-3-git-send-email-quic_clew@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
-References: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
+        Wed, 8 Jun 2022 05:14:30 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B94213FBE7;
+        Wed,  8 Jun 2022 01:36:09 -0700 (PDT)
+X-UUID: 048a3eaa67b9411fa163e65141b652ba-20220608
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.5,REQID:cdb083ea-238d-44b5-b0c2-5e1e28fce40f,OB:0,LO
+        B:10,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,A
+        CTION:release,TS:90
+X-CID-INFO: VERSION:1.1.5,REQID:cdb083ea-238d-44b5-b0c2-5e1e28fce40f,OB:0,LOB:
+        10,IP:0,URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,A
+        CTION:quarantine,TS:90
+X-CID-META: VersionHash:2a19b09,CLOUDID:b27c9f7e-c8dc-403a-96e8-6237210dceee,C
+        OID:049188456f91,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,QS:0,BEC:nil
+X-UUID: 048a3eaa67b9411fa163e65141b652ba-20220608
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
+        with ESMTP id 285445624; Wed, 08 Jun 2022 16:36:03 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Wed, 8 Jun 2022 16:36:02 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.3 via Frontend Transport; Wed, 8 Jun 2022 16:36:02 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        "Guenter Roeck" <groeck@chromium.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Daisuke Nojiri <dnojiri@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Prashant Malani <pmalani@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <weishunc@google.com>
+Subject: [PATCH v2 3/9] remoteproc: mediatek: Add SCP core 1 register definitions
+Date:   Wed, 8 Jun 2022 16:35:47 +0800
+Message-ID: <20220608083553.8697-4-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20220608083553.8697-1-tinghan.shen@mediatek.com>
+References: <20220608083553.8697-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add support into the rpmsg char driver to skip copying the data into an
-skb if the endpoint supports rpmsg_rx_done. If the endpoint supports
-the rx_done operation, allocate a zero sized skb and set the data to
-the buffer returned in the rx callback. When the packet is read from
-the character device, release the memory by calling rpmsg_rx_done().
+Add MT8195 SCP core 1 related register definitions.
 
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 ---
- drivers/rpmsg/rpmsg_char.c | 50 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 48 insertions(+), 2 deletions(-)
+ drivers/remoteproc/mtk_common.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index b6183d4f62a2..be62ddcf356c 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -91,8 +91,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
- }
- EXPORT_SYMBOL(rpmsg_chrdev_eptdev_destroy);
+diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+index 73e8adf00de3..5582f4207fbf 100644
+--- a/drivers/remoteproc/mtk_common.h
++++ b/drivers/remoteproc/mtk_common.h
+@@ -47,6 +47,7 @@
+ #define MT8192_SCP2SPM_IPC_CLR		0x4094
+ #define MT8192_GIPC_IN_SET		0x4098
+ #define MT8192_HOST_IPC_INT_BIT		BIT(0)
++#define MT8195_CORE1_HOST_IPC_INT_BIT	BIT(4)
  
--static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
--			void *priv, u32 addr)
-+static int rpmsg_ept_copy_cb(struct rpmsg_device *rpdev, void *buf, int len,
-+			     void *priv, u32 addr)
- {
- 	struct rpmsg_eptdev *eptdev = priv;
- 	struct sk_buff *skb;
-@@ -113,6 +113,43 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
- 	return 0;
- }
+ #define MT8192_CORE0_SW_RSTN_CLR	0x10000
+ #define MT8192_CORE0_SW_RSTN_SET	0x10004
+@@ -60,6 +61,26 @@
  
-+static int rpmsg_ept_no_copy_cb(struct rpmsg_device *rpdev, void *buf, int len,
-+				void *priv, u32 addr)
-+{
-+	struct rpmsg_eptdev *eptdev = priv;
-+	struct sk_buff *skb;
-+
-+	skb = alloc_skb(0, GFP_ATOMIC);
-+	if (!skb)
-+		return -ENOMEM;
-+
-+	skb->head = buf;
-+	skb->data = buf;
-+	skb_reset_tail_pointer(skb);
-+	skb_set_end_offset(skb, len);
-+	skb_put(skb, len);
-+
-+	spin_lock(&eptdev->queue_lock);
-+	skb_queue_tail(&eptdev->queue, skb);
-+	spin_unlock(&eptdev->queue_lock);
-+
-+	/* wake up any blocking processes, waiting for new data */
-+	wake_up_interruptible(&eptdev->readq);
-+
-+	return RPMSG_DEFER;
-+}
-+
-+static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
-+			void *priv, u32 addr)
-+{
-+	struct rpmsg_eptdev *eptdev = priv;
-+	rpmsg_rx_cb_t cb;
-+
-+	cb = (eptdev->ept->rx_done) ? rpmsg_ept_no_copy_cb : rpmsg_ept_copy_cb;
-+
-+	return cb(rpdev, buf, len, priv, addr);
-+}
-+
- static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-@@ -210,6 +247,15 @@ static ssize_t rpmsg_eptdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (copy_to_iter(skb->data, use, to) != use)
- 		use = -EFAULT;
+ #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
  
-+	if (eptdev->ept->rx_done) {
-+		rpmsg_rx_done(eptdev->ept, skb->data);
-+		/*
-+		 * Data memory is freed by rpmsg_rx_done(), reset the skb data
-+		 * pointers so kfree_skb() does not try to free a second time.
-+		 */
-+		skb->head = NULL;
-+		skb->data = NULL;
-+	}
- 	kfree_skb(skb);
++#define MT8195_CPU1_SRAM_PD			0x1084
++#define MT8195_SSHUB2APMCU_IPC_SET		0x4088
++#define MT8195_SSHUB2APMCU_IPC_CLR		0x408C
++#define MT8195_CORE1_SW_RSTN_CLR		0x20000
++#define MT8195_CORE1_SW_RSTN_SET		0x20004
++#define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
++#define MT8195_CORE1_WDT_IRQ			0x20030
++#define MT8195_CORE1_WDT_CFG			0x20034
++
++#define MT8195_SEC_CTRL				0x85000
++#define MT8195_CORE_OFFSET_ENABLE_D		BIT(13)
++#define MT8195_CORE_OFFSET_ENABLE_I		BIT(12)
++#define MT8195_L2TCM_OFFSET_RANGE_0_LOW		0x850b0
++#define MT8195_L2TCM_OFFSET_RANGE_0_HIGH	0x850b4
++#define MT8195_L2TCM_OFFSET			0x850d0
++#define SCP_SRAM_REMAP_LOW			0
++#define SCP_SRAM_REMAP_HIGH			1
++#define SCP_SRAM_REMAP_OFFSET			2
++#define SCP_SRAM_REMAP_SIZE			3
++
+ #define SCP_FW_VER_LEN			32
+ #define SCP_SHARE_BUFFER_SIZE		288
  
- 	return use;
 -- 
-2.7.4
+2.18.0
 
