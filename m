@@ -2,132 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7BACCA47F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 09:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B74C43334
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Jun 2022 13:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234747AbiFHJQE (ORCPT
+        id S239870AbiFHNE6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Jun 2022 05:16:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48324 "EHLO
+        Wed, 8 Jun 2022 09:04:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235109AbiFHJOb (ORCPT
+        with ESMTP id S239855AbiFHNE5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Jun 2022 05:14:31 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1276A1E7349;
-        Wed,  8 Jun 2022 01:36:12 -0700 (PDT)
-X-UUID: 569b3735fca34859a0ff75c044fca289-20220608
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:4df39298-de03-4d3e-b3bb-0ce690f802b3,OB:50,L
-        OB:20,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Release_Ham,A
-        CTION:release,TS:95
-X-CID-INFO: VERSION:1.1.5,REQID:4df39298-de03-4d3e-b3bb-0ce690f802b3,OB:50,LOB
-        :20,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,RULE:Spam_GS981B3D,A
-        CTION:quarantine,TS:95
-X-CID-META: VersionHash:2a19b09,CLOUDID:907d9f7e-c8dc-403a-96e8-6237210dceee,C
-        OID:ab9fe7398c47,Recheck:0,SF:28|17|19|48,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,QS:0,BEC:nil
-X-UUID: 569b3735fca34859a0ff75c044fca289-20220608
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 586299730; Wed, 08 Jun 2022 16:36:04 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Wed, 8 Jun 2022 16:36:03 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.3 via Frontend Transport; Wed, 8 Jun 2022 16:36:03 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        "Guenter Roeck" <groeck@chromium.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Daisuke Nojiri <dnojiri@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        <weishunc@google.com>
-Subject: [PATCH v2 9/9] mfd: cros_ec: Add SCP core 1 as a new CrOS EC MCU
-Date:   Wed, 8 Jun 2022 16:35:53 +0800
-Message-ID: <20220608083553.8697-10-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20220608083553.8697-1-tinghan.shen@mediatek.com>
-References: <20220608083553.8697-1-tinghan.shen@mediatek.com>
+        Wed, 8 Jun 2022 09:04:57 -0400
+Received: from smtpbg.qq.com (smtpbg136.qq.com [106.55.201.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C4E23356D;
+        Wed,  8 Jun 2022 06:04:51 -0700 (PDT)
+X-QQ-mid: bizesmtp63t1654693458t6gkyl6p
+Received: from localhost.localdomain ( [111.9.5.115])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Wed, 08 Jun 2022 21:04:10 +0800 (CST)
+X-QQ-SSF: 01000000002000C0H000B00A0000000
+X-QQ-FEAT: q6FcPYdgG0j/KN8E2vfhBxbKRMPS7A5j1h6d5+w82C+Q9RY6OwevC8v+SOEsR
+        hSrpBsYYlHOn0tiiwyBZInY5KYN8uMsA7Kxkx6geiZp2JZIb9VFd8TrzrONdMMqhAeA1cv3
+        Uid2dJcuPjXzkxNjvm/KodYXo3y4wY72tcOfc3E7fXLJ6QC9O9ty9ioqm3Y4pfjj3Aqf/NU
+        Uo5G9SFRClH02HXoI7qdMK4n+KMtjaA0aHcuqHqXDKtJF2Evi5NhhxQKZBWaEoDLAnnjNij
+        /V20LuLZg4xBqZ0P3wU2aiiAG1aB8wuxfTEOTinCxNEmCNXaFfrhfypvpZMajP8fAB9LgKd
+        KsSyIt3wnyjz/xbCks=
+X-QQ-GoodBg: 0
+From:   Xiang wangx <wangxiang@cdjrlc.com>
+To:     bjorn.andersson@linaro.org
+Cc:     mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiang wangx <wangxiang@cdjrlc.com>
+Subject: [PATCH] remoteproc: omap_remoteproc: Fix typo in comment
+Date:   Wed,  8 Jun 2022 21:04:06 +0800
+Message-Id: <20220608130406.46005-1-wangxiang@cdjrlc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybgspam:qybgspam7
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-MT8195 System Companion Processors(SCP) is a dual-core RISC-V MCU.
-Add a new cros feature id to represent the SCP 2nd core.
+Delete the redundant word 'The'.
+Delete the redundant word 'to'.
 
-The 1st core is referred to as 'core 0', and the 2nd core is referred
-to as 'core 1'.
-
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Signed-off-by: Xiang wangx <wangxiang@cdjrlc.com>
 ---
- drivers/mfd/cros_ec_dev.c                      | 5 +++++
- include/linux/platform_data/cros_ec_commands.h | 2 ++
- include/linux/platform_data/cros_ec_proto.h    | 1 +
- 3 files changed, 8 insertions(+)
+ drivers/remoteproc/omap_remoteproc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index 546feef851ab..7be2e23525e1 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -64,6 +64,11 @@ static const struct cros_feature_to_name cros_mcu_devices[] = {
- 		.name	= CROS_EC_DEV_SCP_NAME,
- 		.desc	= "System Control Processor",
- 	},
-+	{
-+		.id	= EC_FEATURE_SCP_C1,
-+		.name	= CROS_EC_DEV_SCP_C1_NAME,
-+		.desc	= "System Control Processor 2nd Core",
-+	},
- 	{
- 		.id	= EC_FEATURE_TOUCHPAD,
- 		.name	= CROS_EC_DEV_TP_NAME,
-diff --git a/include/linux/platform_data/cros_ec_commands.h b/include/linux/platform_data/cros_ec_commands.h
-index c23554531961..1176cdc92d23 100644
---- a/include/linux/platform_data/cros_ec_commands.h
-+++ b/include/linux/platform_data/cros_ec_commands.h
-@@ -1296,6 +1296,8 @@ enum ec_feature_code {
- 	 * mux.
- 	 */
- 	EC_FEATURE_TYPEC_MUX_REQUIRE_AP_ACK = 43,
-+	/* The MCU is a System Companion Processor (SCP) 2nd Core. */
-+	EC_FEATURE_SCP_C1 = 45,
- };
- 
- #define EC_FEATURE_MASK_0(event_code) BIT(event_code % 32)
-diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-index df3c78c92ca2..12fc60f3c90d 100644
---- a/include/linux/platform_data/cros_ec_proto.h
-+++ b/include/linux/platform_data/cros_ec_proto.h
-@@ -19,6 +19,7 @@
- #define CROS_EC_DEV_ISH_NAME	"cros_ish"
- #define CROS_EC_DEV_PD_NAME	"cros_pd"
- #define CROS_EC_DEV_SCP_NAME	"cros_scp"
-+#define CROS_EC_DEV_SCP_C1_NAME	"cros_scp_c1"
- #define CROS_EC_DEV_TP_NAME	"cros_tp"
- 
- /*
+diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+index 32a588fefbdc..430fab0266ed 100644
+--- a/drivers/remoteproc/omap_remoteproc.c
++++ b/drivers/remoteproc/omap_remoteproc.c
+@@ -243,7 +243,7 @@ static inline int omap_rproc_get_timer_irq(struct omap_rproc_timer *timer)
+  * omap_rproc_ack_timer_irq() - acknowledge a timer irq
+  * @timer: handle to a OMAP rproc timer
+  *
+- * This function is used to clear the irq associated with a watchdog timer. The
++ * This function is used to clear the irq associated with a watchdog timer.
+  * The function is called by the OMAP remoteproc upon a watchdog event on the
+  * remote processor to clear the interrupt status of the watchdog timer.
+  */
+@@ -303,7 +303,7 @@ static irqreturn_t omap_rproc_watchdog_isr(int irq, void *data)
+  * @configure: boolean flag used to acquire and configure the timer handle
+  *
+  * This function is used primarily to enable the timers associated with
+- * a remoteproc. The configure flag is provided to allow the driver to
++ * a remoteproc. The configure flag is provided to allow the driver
+  * to either acquire and start a timer (during device initialization) or
+  * to just start a timer (during a resume operation).
+  *
+@@ -443,7 +443,7 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
+  * @configure: boolean flag used to release the timer handle
+  *
+  * This function is used primarily to disable the timers associated with
+- * a remoteproc. The configure flag is provided to allow the driver to
++ * a remoteproc. The configure flag is provided to allow the driver
+  * to either stop and release a timer (during device shutdown) or to just
+  * stop a timer (during a suspend operation).
+  *
 -- 
-2.18.0
+2.36.1
 
