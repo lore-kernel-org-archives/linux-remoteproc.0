@@ -2,110 +2,98 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71186C43334
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jun 2022 05:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AC4C43334
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jun 2022 08:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbiFIFpr (ORCPT
+        id S240189AbiFII5v (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Jun 2022 01:45:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58412 "EHLO
+        Thu, 9 Jun 2022 04:57:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231516AbiFIFpq (ORCPT
+        with ESMTP id S242892AbiFII5R (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Jun 2022 01:45:46 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54128BE3B;
-        Wed,  8 Jun 2022 22:45:41 -0700 (PDT)
-X-UUID: c52a80f5c538460a9e680ebfb8ec7533-20220609
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.5,REQID:54d230bf-68ea-4de1-8396-6a5264a8b297,OB:0,LO
-        B:0,IP:0,URL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,RULE:Release_Ham,ACTI
-        ON:release,TS:0
-X-CID-META: VersionHash:2a19b09,CLOUDID:32f8be7e-c8dc-403a-96e8-6237210dceee,C
-        OID:IGNORED,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil
-        ,QS:0,BEC:nil
-X-UUID: c52a80f5c538460a9e680ebfb8ec7533-20220609
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 946602744; Thu, 09 Jun 2022 13:45:32 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Thu, 9 Jun 2022 13:45:30 +0800
-Received: from mtksdccf07 (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.792.3 via Frontend
- Transport; Thu, 9 Jun 2022 13:45:30 +0800
-Message-ID: <ce1bef46497abd1495c2675424ac87db7e519659.camel@mediatek.com>
-Subject: Re: [PATCH v2 0/9] Add support for MT8195 SCP 2nd core
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Daisuke Nojiri <dnojiri@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Prashant Malani <pmalani@chromium.org>,
-        "Enric Balletbo i Serra" <enric.balletbo@collabora.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <chrome-platform@lists.linux.dev>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        <weishunc@google.com>
-Date:   Thu, 9 Jun 2022 13:45:30 +0800
-In-Reply-To: <20220608083553.8697-1-tinghan.shen@mediatek.com>
-References: <20220608083553.8697-1-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+        Thu, 9 Jun 2022 04:57:17 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F4E81AA17E
+        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Jun 2022 01:56:55 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id v25so30291931eda.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Jun 2022 01:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=+yd5iHP2yY5c1OXBZIRV0qC4dmycegJSyCeqfOJ7QUY=;
+        b=Fv6Wptj50UJPR+ugIGW0UUBw/egxBXl/lFQf7aK+QiWMToDtwFA04ho4CjXClEXpp0
+         PXWtI4lk1YKtEc3H0rr09wd6tbHVNOwkCk3z+UNNt+rrQxIvGrgZ+AIJlmywPvi+najY
+         CVAs+Ur8PinDyOX/HNDW+Pfk+2s8ZzY7YFHLTqjzbkfXzPwwhKOC/zigTRcOxOSfQf9v
+         wCN7YbR2v9V40hLgzLv38jsj/7sl6jt3GUC1n08fvchfiacy7Q6W+CQmvzS1frQJjDCx
+         J/CvAR3t0Z2+q7XnkQb4Z1H9Kdq+L2K9B1Vc+NOT4qEfbL7jgIUnwb4Nonjkupp9SIzh
+         CqHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=+yd5iHP2yY5c1OXBZIRV0qC4dmycegJSyCeqfOJ7QUY=;
+        b=uj9yYUxUNyhBoz3+WgW2FGEHf1fdmg9xoajEk4G8Za/V96oLc/tgiRThv779PAaIV1
+         ce7asmRqvVQM52sq0DNVKsZA4RNkLjsb7JJyZHUNv5SUB9B0KrNDKiemSXXnUF81Dlz0
+         tGqklJwy5YmBCP17EW4TcKyTLNa7pA9omatXfP9xGyT7P2QC9atBDx504/a65gkRjjzv
+         QMme2DVQ79nFsdAD7XoVfRrXjHKUvR/wcoZJM7sFKKcPTVOzWkE2elJ11dtL0FGwbtHW
+         dbLXA2BPcEuLxOcmszvRVbFN7UtYRCbTh5qu0I/YZTNnbeEp1TYSCsAixGDUW89j4ti9
+         0ZZQ==
+X-Gm-Message-State: AOAM531t7uS7T7NG679GbRXabfvIO8KZ8R+Mh8BxNmQ6jTTZQpqmuoKr
+        yi+5jqXXacZRjfMh/F+pFKt+8vKFFbNItA==
+X-Google-Smtp-Source: ABdhPJzTbp6zWlYGU8YUGkUgG8xefKpnPiNwgjkqSsVpzIE67QdAmXQbobdNpCmQBlBiTd4qE5khxQ==
+X-Received: by 2002:a05:6402:542:b0:42d:c7d6:4121 with SMTP id i2-20020a056402054200b0042dc7d64121mr43169569edx.302.1654765013804;
+        Thu, 09 Jun 2022 01:56:53 -0700 (PDT)
+Received: from [192.168.0.195] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id bv21-20020a170906b1d500b006fe98fb9523sm10405226ejb.129.2022.06.09.01.56.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jun 2022 01:56:53 -0700 (PDT)
+Message-ID: <640d2a3d-4c38-b921-45c1-048c255b5a9d@linaro.org>
+Date:   Thu, 9 Jun 2022 10:56:52 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2 1/3] rpmsg: qcom: glink: replace strncpy() with
+ strscpy_pad()
+Content-Language: en-US
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>
+References: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 2022-06-08 at 16:35 +0800, Tinghan Shen wrote:
-> The mediatek remoteproc driver currently only allows bringing up a 
-> single core SCP, e.g. MT8183. It also only bringing up the 1st 
-> core in SoCs with a dual-core SCP, e.g. MT8195. This series support 
-> to bring-up the 2nd core of the dual-core SCP.
-
-Add missing change log.
-
-v1 -> v2:
-1. update dt-binding property description
-2. remove kconfig for scp dual driver
-3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
-
-Regards,
-TingHan
-
+On 19/05/2022 09:33, Krzysztof Kozlowski wrote:
+> The use of strncpy() is considered deprecated for NUL-terminated
+> strings[1]. Replace strncpy() with strscpy_pad(), to keep existing
+> pad-behavior of strncpy, similarly to commit 08de420a8014 ("rpmsg:
+> glink: Replace strncpy() with strscpy_pad()").  This fixes W=1 warning:
 > 
-> Tinghan Shen (9):
->   dt-binding: remoteproc: mediatek: Support dual-core SCP
->   remoteproc: mediatek: Support hanlding scp core 1 wdt timeout
->   remoteproc: mediatek: Add SCP core 1 register definitions
->   remoteproc: mediatek: Support probing for the 2nd core of dual-core
->     SCP
->   remoteproc: mediatek: Add chip dependent operations for SCP core 1
->   remoteproc: mediatek: Add SCP core 1 SRAM offset
->   remoteproc: mediatek: Add SCP core 1 as a rproc subdevice
->   remoteproc: mediatek: Wait SCP core 1 probe done
->   mfd: cros_ec: Add SCP core 1 as a new CrOS EC MCU
+>   In function ‘qcom_glink_rx_close’,
+>     inlined from ‘qcom_glink_work’ at ../drivers/rpmsg/qcom_glink_native.c:1638:4:
+>   drivers/rpmsg/qcom_glink_native.c:1549:17: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+>    1549 |                 strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
 > 
->  .../bindings/remoteproc/mtk,scp.yaml          |  13 +
->  drivers/mfd/cros_ec_dev.c                     |   5 +
->  drivers/remoteproc/mtk_common.h               |  35 ++
->  drivers/remoteproc/mtk_scp.c                  | 322 +++++++++++++++++-
->  .../linux/platform_data/cros_ec_commands.h    |   2 +
->  include/linux/platform_data/cros_ec_proto.h   |   1 +
->  6 files changed, 375 insertions(+), 3 deletions(-)
+> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
 > 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Split series per subsystem.
 
+Any comments on these?
+
+Best regards,
+Krzysztof
