@@ -2,328 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 669CAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jun 2022 17:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96973C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Jun 2022 20:51:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344498AbiFIRlO (ORCPT
+        id S233035AbiFIUvS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Jun 2022 13:41:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48906 "EHLO
+        Thu, 9 Jun 2022 16:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344696AbiFIRlN (ORCPT
+        with ESMTP id S232983AbiFIUvR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Jun 2022 13:41:13 -0400
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E79516B2C0;
-        Thu,  9 Jun 2022 10:41:12 -0700 (PDT)
-Received: by mail-il1-f179.google.com with SMTP id f7so19272904ilr.5;
-        Thu, 09 Jun 2022 10:41:12 -0700 (PDT)
+        Thu, 9 Jun 2022 16:51:17 -0400
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C88E193FE;
+        Thu,  9 Jun 2022 13:51:16 -0700 (PDT)
+Received: by mail-io1-f45.google.com with SMTP id y12so23401406ior.7;
+        Thu, 09 Jun 2022 13:51:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=vvuEZ+ahbF/TjJmGRAqIakqEcaAp2NfM45XvNptvRrY=;
-        b=a6tBnRgkD27NQl88p14bOvImXsIhiAhdKlsiaRBzB/GbL6/9HDm64cBUPtcMgi2hlk
-         wlBNb1skoGieIJ0HKepQMKCdX7XY/3RJNot64aScuwEkKThV/qXwapI3PK635hNIY7IC
-         Ub1DsbC9HO9/SXhkaVeRMiG7v7EkiecvEGwYZCNa/lDnTEugERHiUFlQfXZXNqf2H0Nv
-         iG7USmtlcyBFXU4gfd7hF/pXJQ10pBl5KROun9rTvV0o0z2NMYt0BF+ypb6tbnvBoqPY
-         GTw+igHk0sxQ1gt/A/REVqTMaZ6MFvavGX8kMmk6LkT1LyBk0TVJKbCDtni7e6KAXluQ
-         WBbw==
-X-Gm-Message-State: AOAM532jGjbyQ60FW9RXNiC+nNkyZXIE/8PPUDryNVr/EUCxX9TaH/H3
-        SqqdsOy2+Cn0XIKzUDbkzQ==
-X-Google-Smtp-Source: ABdhPJw05Q21QpLVW1caJjvIBqdflv0+c5+2dJLA0xkQFgTBityuX+S4qVzYLVgwKtEADXxlB58Klw==
-X-Received: by 2002:a05:6e02:188f:b0:2d3:c38f:7e9b with SMTP id o15-20020a056e02188f00b002d3c38f7e9bmr22830438ilu.151.1654796471217;
-        Thu, 09 Jun 2022 10:41:11 -0700 (PDT)
+        bh=6UkS4SPS1bXVXetBXdzfxgOMHLZzAndl0YdUye+T98U=;
+        b=AtSPkpqJFBdhC9+dJeSF01DEYbEojYtB8jvxRfKkpK7vHVB5xYjZx6MpLh3A1ACI1S
+         lHqKLU4kZ5miTorQ8X6aZr2LcfNd4E/+zorpC9L7tyWAPtbyAXsuw8NXQxcmPnAQx59w
+         lZbHpPTc1gF1RSYr28wKWX+GtcCUQW5kE9GzZ01JSnx3UtlDGI5VdLmcsJJ3/CwnSOoW
+         m+llVhuTESEUKrUGN5mr2WgzAnYPl/uhc9l1LT7o7jGE2dq0sZ1FC09fe/ZyHF/Xbn3T
+         qKy2QOMLF6kECNv+H6OOgzdrHsH3iACk9iDF342ahalnbM1noJ6vS5sD6e7RoErkybgb
+         Jbpg==
+X-Gm-Message-State: AOAM530/iTzceDRPGg0ol0uU1rfB8/Iy9aJRmF3I9KLfmqG6RoMGPSCD
+        GfWjCXn6+fQQTqcKfrfbw8vANbWZNw==
+X-Google-Smtp-Source: ABdhPJwOVwZeLmYAjjuRwTF1mXzjxf7By9LYuIqGnacWdW2E6Un0R5tJzxy5bnVQ5rBRzs4VUQ+xzA==
+X-Received: by 2002:a5e:c318:0:b0:669:975b:7d06 with SMTP id a24-20020a5ec318000000b00669975b7d06mr4223204iok.199.1654807875963;
+        Thu, 09 Jun 2022 13:51:15 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id bf10-20020a056602368a00b0065a47e16f38sm8214473iob.10.2022.06.09.10.41.09
+        by smtp.gmail.com with ESMTPSA id b17-20020a026f51000000b0032e71f31487sm9867485jae.31.2022.06.09.13.51.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jun 2022 10:41:10 -0700 (PDT)
-Received: (nullmailer pid 4010790 invoked by uid 1000);
-        Thu, 09 Jun 2022 17:41:08 -0000
-Date:   Thu, 9 Jun 2022 11:41:08 -0600
+        Thu, 09 Jun 2022 13:51:15 -0700 (PDT)
+Received: (nullmailer pid 78588 invoked by uid 1000);
+        Thu, 09 Jun 2022 20:51:13 -0000
+Date:   Thu, 9 Jun 2022 14:51:13 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Peter Korsgaard <peter@korsgaard.com>
-Cc:     Tanmay Shah <tanmay.shah@xilinx.com>, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, krzk+dt@kernel.org,
-        michal.simek@xilinx.com, ben.levinsky@xilinx.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        openamp-system-reference@lists.openampproject.org
-Subject: Re: [PATCH v8 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
- bindings
-Message-ID: <20220609174108.GB3996953-robh@kernel.org>
-References: <20220602203834.3675160-1-tanmay.shah@xilinx.com>
- <20220602203834.3675160-2-tanmay.shah@xilinx.com>
- <87tu921ck6.fsf@dell.be.48ers.dk>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        weishunc@google.com,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-kernel@vger.kernel.org,
+        Daisuke Nojiri <dnojiri@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        chrome-platform@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Prashant Malani <pmalani@chromium.org>
+Subject: Re: [PATCH v2 1/9] dt-binding: remoteproc: mediatek: Support
+ dual-core SCP
+Message-ID: <20220609205113.GA78534-robh@kernel.org>
+References: <20220608083553.8697-1-tinghan.shen@mediatek.com>
+ <20220608083553.8697-2-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87tu921ck6.fsf@dell.be.48ers.dk>
+In-Reply-To: <20220608083553.8697-2-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 08:33:13AM +0200, Peter Korsgaard wrote:
-> >>>>> "Tanmay" == Tanmay Shah <tanmay.shah@xilinx.com> writes:
+On Wed, 08 Jun 2022 16:35:45 +0800, Tinghan Shen wrote:
+> The MT8195 SCP co-processor is a dual-core RISC-V MCU.
 > 
-> Hi,
+> Add a new property to reference the sibling core and to assign
+> core id to SCP nodes. Also add a new compatile for the driver of
+> SCP 2nd core.
 > 
->  > Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
->  > Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem
->  > (cluster).
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+>  .../devicetree/bindings/remoteproc/mtk,scp.yaml     | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
->  > Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
->  > ---
-> 
->  > Changes in v8:
->  >   - Add 'items:' for sram property
-> 
->  > Changes in v7:
->  >   - Add minItems in sram property
-> 
->  > Changes in v6:
->  >   - Add maxItems to sram and memory-region property
-> 
->  > Changes in v5:
->  > - Add constraints of the possible values of xlnx,cluster-mode property
->  > - fix description of power-domains property for r5 core
->  > - Remove reg, address-cells and size-cells properties as it is not required
->  > - Fix description of mboxes property
->  > - Add description of each memory-region and remove old .txt binding link
->  >   reference in the description
-> 
->  > Changes in v4:
->  >   - Add memory-region, mboxes and mbox-names properties in example
-> 
->  > Changes in v3:
->  >   - None
-> 
->  >  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 130 ++++++++++++++++++
->  >  include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
->  >  2 files changed, 138 insertions(+)
->  >  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
-> 
->  > diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->  > new file mode 100644
->  > index 000000000000..adfe05ff157a
->  > --- /dev/null
->  > +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
->  > @@ -0,0 +1,132 @@
->  > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
->  > +%YAML 1.2
->  > +---
->  > +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
->  > +$schema: http://devicetree.org/meta-schemas/core.yaml#
->  > +
->  > +title: Xilinx R5F processor subsystem
->  > +
->  > +maintainers:
->  > +  - Ben Levinsky <ben.levinsky@xilinx.com>
->  > +  - Tanmay Shah <tanmay.shah@xilinx.com>
->  > +
->  > +description: |
->  > +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
->  > +  real-time processing based on the Cortex-R5F processor core from ARM.
->  > +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
->  > +  floating-point unit that implements the Arm VFPv3 instruction set.
->  > +
->  > +properties:
->  > +  compatible:
->  > +    const: xlnx,zynqmp-r5fss
->  > +
->  > +  xlnx,cluster-mode:
->  > +    $ref: /schemas/types.yaml#/definitions/uint32
->  > +    enum: [0, 1, 2]
-> 
-> A textual mode ("dual", "lock-step", "single") would be more readable.
-> 
-> 
->  > +    description: |
->  > +      The RPU MPCore can operate in split mode(Dual-processor performance), Safety
-> 
-> space missing before "(Dual-processor"
-> 
-> 
->  > +      lock-step mode(Both RPU cores execute the same code in lock-step,
->  > +      clock-for-clock) or Single CPU mode (RPU core 0 can be held in reset while
-> 
-> "can be" sounds a bit weak, perhaps "is"
-> 
-> 
->  > +      core 1 runs normally). The processor does not support dynamic configuration.
->  > +      Switching between modes is only permitted immediately after a processor reset.
->  > +      If set to  1 then lockstep mode and if 0 then split mode.
->  > +      If set to  2 then single CPU mode. When not defined, default will be lockstep mode.
-> 
-> This looks a bit confusing. If you decide to stick to the numerical
-> modes, then at least list them in numerical order, E.G.:
-> 
->  0: split
->  1: lockstep
->  2: single
 
-The bigger issue has been multiple Cortex-R5 bindings all doing their 
-own thing for this feature which is not vendor specific (except TI has 
-their own extra mode or something). How TCMs are described is the 
-other issue. I've just stopped caring because no one listens.
-
-> 
-> > +
->  > +patternProperties:
->  > +  "^r5f-[a-f0-9]+$":
->  > +    type: object
->  > +    description: |
->  > +      The RPU is located in the Low Power Domain of the Processor Subsystem.
->  > +      Each processor includes separate L1 instruction and data caches and
->  > +      tightly coupled memories (TCM). System memory is cacheable, but the TCM
->  > +      memory space is non-cacheable.
->  > +
->  > +      Each RPU contains one 64KB memory and two 32KB memories that
->  > +      are accessed via the TCM A and B port interfaces, for a total of 128KB
->  > +      per processor. In lock-step mode, the processor has access to 256KB of
->  > +      TCM memory.
->  > +
->  > +    properties:
->  > +      compatible:
->  > +        const: xlnx,zynqmp-r5f
->  > +
->  > +      power-domains:
->  > +        description: RPU core PM domain specifier
->  > +        maxItems: 1
-> 
-> A bit more detail would be good, E.G. something like arm/cpus.yaml does:
-> 
->       List of phandles and PM domain specifiers, as defined by bindings of the
->       PM domain provider (see also ../power_domain.txt).
-> 
-> And the phandle-array ref.
-
-Both suggestions are wrong. We don't need common properties re-described 
-by every user. They already have a type definition too, so we don't need 
-to repeat phandle-array ref either.
-
-The existing description is not needed either as it doesn't provide any 
-information specific to this binding. You only need to describe each 
-entry when there is more than 1 entry because we need to know what each 
-entry is and the order.
-
-> > +
->  > +      mboxes:
->  > +        minItems: 1
->  > +        items:
->  > +          - description: mailbox channel to send data to RPU
->  > +          - description: mailbox channel to receive data from RPU
->  > +
->  > +      mbox-names:
->  > +        minItems: 1
->  > +        items:
->  > +          - const: tx
->  > +          - const: rx
-> 
-> And here as well for mailbox/mailbox.txt
-
-Nope!
-
-> 
-> 
->  > +
->  > +      sram:
->  > +        $ref: /schemas/types.yaml#/definitions/phandle-array
->  > +        minItems: 1
->  > +        maxItems: 8
->  > +        items:
->  > +          maxItems: 1
->  > +        description: |
->  > +          phandles to one or more reserved on-chip SRAM regions. Other than TCM,
->  > +          the RPU can execute instructions and access data from, the OCM memory,
->  > +          the main DDR memory, and other system memories.
-> 
-> Drop the comma after "from"
-> 
-> 
->  > +
->  > +          The regions should be defined as child nodes of the respective SRAM
->  > +          node, and should be defined as per the generic bindings in,
-> 
-> Drop the comma after "in"
-> 
-> 
->  > +          Documentation/devicetree/bindings/sram/sram.yaml
->  > +
->  > +      memory-region:
->  > +        description: |
->  > +          List of phandles to the reserved memory regions associated with the
->  > +          remoteproc device. This is variable and describes the memories shared with
->  > +          the remote processor (e.g. remoteproc firmware and carveouts, rpmsg
->  > +          vrings, ...). This reserved memory region will be allocated on DDR memory.
-> 
-> s/on DDR/in DDR/
-> 
->  > +        minItems: 1
->  > +        maxItems: 8
->  > +        items:
->  > +          - description: region used for RPU firmware image section
->  > +          - description: vdev buffer
->  > +          - description: vring0
->  > +          - description: vring1
->  > +        additionalItems: true
->  > +
->  > +    required:
->  > +      - compatible
->  > +      - power-domains
->  > +
->  > +    unevaluatedProperties: false
->  > +
->  > +required:
->  > +  - compatible
->  > +
->  > +additionalProperties: false
->  > +
->  > +examples:
->  > +  - |
->  > +    r5fss: r5fss {
->  > +        compatible = "xlnx,zynqmp-r5fss";
->  > +        xlnx,cluster-mode = <1>;
->  > +
->  > +        r5f-0 {
->  > +            compatible = "xlnx,zynqmp-r5f";
->  > +            power-domains = <&zynqmp_firmware 0x7>;
->  > +            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
->  > +            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
->  > +            mbox-names = "tx", "rx";
->  > +        };
->  > +
->  > +        r5f-1 {
->  > +            compatible = "xlnx,zynqmp-r5f";
->  > +            power-domains = <&zynqmp_firmware 0x8>;
->  > +            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
->  > +            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
->  > +            mbox-names = "tx", "rx";
->  > +        };
->  > +    };
->  > +...
->  > diff --git a/include/dt-bindings/power/xlnx-zynqmp-power.h b/include/dt-bindings/power/xlnx-zynqmp-power.h
->  > index 0d9a412fd5e0..618024cbb20d 100644
->  > --- a/include/dt-bindings/power/xlnx-zynqmp-power.h
->  > +++ b/include/dt-bindings/power/xlnx-zynqmp-power.h
->  > @@ -6,6 +6,12 @@
->  >  #ifndef _DT_BINDINGS_ZYNQMP_POWER_H
->  >  #define _DT_BINDINGS_ZYNQMP_POWER_H
->  
->  > +#define		PD_RPU_0	7
->  > +#define		PD_RPU_1	8
->  > +#define		PD_R5_0_ATCM	15
->  > +#define		PD_R5_0_BTCM	16
->  > +#define		PD_R5_1_ATCM	17
->  > +#define		PD_R5_1_BTCM	18
->  >  #define		PD_USB_0	22
->  >  #define		PD_USB_1	23
->  >  #define		PD_TTC_0	24
->  > -- 
-> 
->  > 2.25.1
-> 
-> 
-> -- 
-> Bye, Peter Korsgaard
-> 
+Reviewed-by: Rob Herring <robh@kernel.org>
