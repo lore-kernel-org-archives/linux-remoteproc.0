@@ -2,27 +2,27 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F316C43334
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Jun 2022 21:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF6FCCA47B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Jun 2022 21:36:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236164AbiFMVRU (ORCPT
+        id S234023AbiFMVgX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Jun 2022 17:17:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46692 "EHLO
+        Mon, 13 Jun 2022 17:36:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351971AbiFMVRC (ORCPT
+        with ESMTP id S245728AbiFMVgW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Jun 2022 17:17:02 -0400
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2088.outbound.protection.outlook.com [40.107.93.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DC43140F4;
-        Mon, 13 Jun 2022 13:59:24 -0700 (PDT)
+        Mon, 13 Jun 2022 17:36:22 -0400
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2067.outbound.protection.outlook.com [40.107.244.67])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE09EF1;
+        Mon, 13 Jun 2022 14:36:17 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dd3RtjCOkUCeTIkNWDzAs3VC1L/xW48+2VaNoMJ+8iWThGQthFb95lq5JuzvXzsMtypsfPu/k/xgnfrQZoKGpKWiSBkmDh+dpfcf0wGgxez5yzGPpGBh0XpYYonyLlyIyj2ZFVtnUcPJ/eFOEgWBqYyVr8vEy1fgl1z3OOVr/uMzVzQorKteDxSktjj8gBcU6m2T96bk7lXpXmQmSMl0090GxKTDkL8i/o8dqGPXXlY3s0tAU/9nqOsptMoRXByl3KBh+onHSTnQYmo8LFRcN0SIlToJRg72apGXsbyGuNUwQaPcNtflUutCfYEo94wJLxWWxX++rAWupr8HryatyA==
+ b=J0NTHd/3jHlKealZ+kU7FnhU4fKy3amtNeP/wiYYnDfHWXXvyPWQbqtOgK/G4nIls0rB1jdyrUTqCsMTPgImOzNj/xkUplcXJ6ycBTmEZj6i/YvYv9EO0XHV5GUEJY0aVVq7k0Jo2Th+g+ejNu3Mij8tJzmyREwl8k3zqM+zzuFmv2MQxit6qUNsBm9jwfEeFcIApAb92JdlXWC4fxHtKkJ7twmwujK7FYnF+D9WEdX1whKqIV6EQ+Wr/yKaRLJmsInJ7XdLUaqQTeD4CWNmUmbk1aJnxaR2asOvps89zlU9SXaYNPpUgGb3clyb1KzBcmXnfNxGd3FxgbwiQ/bncQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PIEzUmN3CEs9Ow5KZSESJ+8i82BmaKVheVvL2j9pt7E=;
- b=GVMLk5rNj3Tcd1Gwbu0/mKV1qgBFEdDQulbyLM/Z8heTAushIalCpcrZCGMzfnXC/vALD0R6MrUItyoIjBhqp+afaNLWeHyZkmbbubrIcrVVMxzn6KTUQ+NNahDbHhYuu4YFjk7RyQZOtnsLGbWXzP2skQ9vYiq/AiR7iV7pv56I4bg2VmiK3HmpDMARPBzc4CJswY+uMz0W0HSV/C7jZMRB9yzh+zhPimnQAnHMC/Uh6fesnlrlSkQbq1DXTTtdabegOdkk17Ixgq9bKKmA1ivJkq5kh73vgEajK6rDO0mJ3XkA2GahcYazMqG3GWYibqR8G8n1tkfn0yt6srh/0Q==
+ bh=szZ2Jq54xr8QLzI+rbJoUTgunRvlW5nsWf/6kMYElEo=;
+ b=C+zp4ZVsj13Q5BL+Ip+EvXpjfuK4gsfAxPNh1fgWigw9dkiQpTBYZAhn5+L2M55qg5yuIKieawNOedqTDCeRKsRhUJzG0da0Ic5tWMTHdW06u8fC6iKMGk97UWmb1Tm2NX8dnbW55B1x1DUb9bZ5I6ZCYbSMrykW4AnXuj6lu1yZTAF7IwRfF6uF4AD5hyxw7RONNKCSNWYLG+DMc/HoHXFDEmfkXb+p28Ow5jTvAFaCGF47e+kivnGmkdB2ugZyEN4KZ1V8i8Ux5ktH24omPN0ut7zRgP0O0dzfC1FjBkYVtzhOgBw/FjDPF2IfoiUWNsjK6pYun2c+QQxTudXISg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
  dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
@@ -30,34 +30,35 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PIEzUmN3CEs9Ow5KZSESJ+8i82BmaKVheVvL2j9pt7E=;
- b=Hk3XmkP3vmgm1nWby9utvQPQm30QDx0fd7susBoXXQkkHpccQgwKdIpEQU27+iJ1o2NBezUm0Ub8CBd8kIf0i4ZF1wPwfMAixldTQB1C1tsHuQZzBqx33DN91ZIFK8PJWFHWu7z075NcBf9Mdv+Ig0Gsr/v3bmktdF/GeDDA9zM=
-Received: from DS7PR05CA0082.namprd05.prod.outlook.com (2603:10b6:8:57::23) by
- DM6PR02MB5515.namprd02.prod.outlook.com (2603:10b6:5:30::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5332.14; Mon, 13 Jun 2022 20:59:22 +0000
-Received: from DM3NAM02FT013.eop-nam02.prod.protection.outlook.com
- (2603:10b6:8:57:cafe::56) by DS7PR05CA0082.outlook.office365.com
- (2603:10b6:8:57::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.5 via Frontend
- Transport; Mon, 13 Jun 2022 20:59:21 +0000
+ bh=szZ2Jq54xr8QLzI+rbJoUTgunRvlW5nsWf/6kMYElEo=;
+ b=LEG/xMVxgt0herjeT6c1hBD2lIddu+CRU+s+XFpZys/QseJvcnRuZfOCOcS5ZSilZqadsOna/lwHAZxT6+JrPnYDOiY+9KBVVPe7fYrCRAoQqvRexJdY53xQVcCmkJxaSQvABN13YLDhSJHvrfdZyMaDg+ieUJO6SCSGP69mvYM=
+Received: from BN9PR03CA0126.namprd03.prod.outlook.com (2603:10b6:408:fe::11)
+ by DM5PR02MB3879.namprd02.prod.outlook.com (2603:10b6:4:ba::35) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.16; Mon, 13 Jun
+ 2022 21:36:14 +0000
+Received: from BN1NAM02FT026.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:408:fe:cafe::7e) by BN9PR03CA0126.outlook.office365.com
+ (2603:10b6:408:fe::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.15 via Frontend
+ Transport; Mon, 13 Jun 2022 21:36:14 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
  smtp.mailfrom=xilinx.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT013.mail.protection.outlook.com (10.13.5.126) with Microsoft SMTP
+ client-ip=149.199.62.198; helo=xsj-pvapexch02.xlnx.xilinx.com; pr=C
+Received: from xsj-pvapexch02.xlnx.xilinx.com (149.199.62.198) by
+ BN1NAM02FT026.mail.protection.outlook.com (10.13.2.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5332.12 via Frontend Transport; Mon, 13 Jun 2022 20:59:21 +0000
+ 15.20.5332.12 via Frontend Transport; Mon, 13 Jun 2022 21:36:13 +0000
 Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
+ xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.14; Mon, 13 Jun 2022 13:59:21 -0700
-Received: from smtp.xilinx.com (172.19.127.95) by
+ 15.1.2176.14; Mon, 13 Jun 2022 14:36:12 -0700
+Received: from smtp.xilinx.com (172.19.127.96) by
  xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2176.14 via Frontend Transport; Mon, 13 Jun 2022 13:59:21 -0700
+ 15.1.2176.14 via Frontend Transport; Mon, 13 Jun 2022 14:36:12 -0700
 Envelope-to: mathieu.poirier@linaro.org,
  bjorn.andersson@linaro.org,
  robh+dt@kernel.org,
@@ -67,12 +68,12 @@ Envelope-to: mathieu.poirier@linaro.org,
  linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org,
  openamp-system-reference@lists.openampproject.org
-Received: from [10.23.122.97] (port=62642)
+Received: from [10.23.122.97] (port=62985)
         by smtp.xilinx.com with esmtp (Exim 4.90)
         (envelope-from <tanmay.shah@xilinx.com>)
-        id 1o0r9c-000FZD-Ss; Mon, 13 Jun 2022 13:59:21 -0700
-Message-ID: <ac466771-0157-47aa-0179-38bf642c47e8@xilinx.com>
-Date:   Mon, 13 Jun 2022 13:59:20 -0700
+        id 1o0rjI-0001dk-Lw; Mon, 13 Jun 2022 14:36:12 -0700
+Message-ID: <30344b9c-fd6d-f797-7b89-e6ea75d4dc46@xilinx.com>
+Date:   Mon, 13 Jun 2022 14:36:12 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.9.1
@@ -88,48 +89,47 @@ CC:     <bjorn.andersson@linaro.org>, <robh+dt@kernel.org>,
         <openamp-system-reference@lists.openampproject.org>
 References: <20220602203834.3675160-1-tanmay.shah@xilinx.com>
  <20220602203834.3675160-7-tanmay.shah@xilinx.com>
- <20220607165245.GA890059@p14s>
+ <20220608173742.GA956547@p14s>
 From:   Tanmay Shah <tanmay.shah@xilinx.com>
-In-Reply-To: <20220607165245.GA890059@p14s>
+In-Reply-To: <20220608173742.GA956547@p14s>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f76f5bb8-6dd8-445e-59cf-08da4d7f971c
-X-MS-TrafficTypeDiagnostic: DM6PR02MB5515:EE_
-X-Microsoft-Antispam-PRVS: <DM6PR02MB5515A85427DEE3F27086CB06CAAB9@DM6PR02MB5515.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 317eda15-279a-477c-e973-08da4d84bda7
+X-MS-TrafficTypeDiagnostic: DM5PR02MB3879:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR02MB3879EC4092EF494F3E0C93B6CAAB9@DM5PR02MB3879.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XXYcQRA+Ugiui7CyISsQtrLGyIIdHqRoowxeVRDuyReb6KJggdMXkVSXkLNl3angAv03eS5ptGIdBReJehd15pxfRsHg+AqCoeF2Hsu8Y+YwGPwMgHI1QIiWqvPI0BtXubO0VgDtu1Akvpri51XUV2blgkL0bHxxkcvxBJYtQ2fMaONQSf8SvM9uBz+fYW9Ynb+73vYWToZhi2vJXphzjdRXDFJoWUQmm/T5ZQFI+KSI6R0qEK+yHjfaurril5hgPFLaBK8BdDV5jOX/5wUwTSHmB5rJE+BAgBrmB9JpcIdAnlcW97rMQWQ5LxyZmBvzepgkOwahEoqTiEpMM+0KE9PuIKKQRL9pCUbTYTXGQxOmCZl6naT1XildIWo7UicbFmq/BhWdaJPvDA6utNT9VLOUca30zLzqjHFRy+99fHaj7Bj2ltme4DIopnRQVfSDtz6BaLIpJcvLFVzVmuqSK2fHpKOyb5PSHEHV/QXVYMfoO7/dNAOmQnwy8fpVSKh9Xyd9HWc20ZgtaNRwct45388pzw8t2dJ8qGj2el8Y2YP9ehFZiEQI8e+bVrGqO0PrUXYEf0AbK6GqFd/kDgoAe0k7yt5LS7Q1IzNUegNXOq611KiXEKpuBJEL7hFBq8hs3yCYtOrh+TBCIzy03mZMrd4sAQHvuRq6WMJciVmkxlQ5uoPCtTOCu44OvA2v70TarUZ8e4IGf4SVBKGscp6xiA9n06ZpLevQQSRVtuPAhUE=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230016)(4636009)(40470700004)(46966006)(36840700001)(30864003)(44832011)(83380400001)(31696002)(40460700003)(336012)(426003)(2906002)(26005)(186003)(5660300002)(8936002)(508600001)(53546011)(2616005)(47076005)(9786002)(36756003)(356005)(54906003)(6916009)(70586007)(82310400005)(316002)(31686004)(70206006)(7636003)(36860700001)(8676002)(4326008)(50156003)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: J1MF0fJEcRZmuuzdd3Z8vdwoa8ukk1xm+8mMYLiFg0O8dBWi+O9SgdMbUn5oWalrWebTK0tQHuyuUriNkBGo+8EZkn6cRlfo5i78saj3CALLz/1idaQQYSll43sYbYTH25kQj/UNI4bLWr7ZGHdnEsTGhcz965pOnWxRMnskVSZHSmDMvSqtBbZUDbBy7pIEuLr7jRkS2Pi697WtPwHtrtm/b+Z5YtvdEPmWag/WgxWJC0FonGhe/mADc0oDnc7Iz06l8QsVO3dNUcJUT5eCytohl+JwLVI7Kw+vM1IeJgfeA0+kbFnNY5wLDmucucPGt7Ot2W9n6MOpsdiVO/cGW2Em1hP0jZw2IDerMG/OkSIvp93XiNBsGvETl1OE5wXuA/fW0EAZlGe8KN5tVdQF6IiTlIzBFiTsLsEbYMmAHqMdT8KWjAB4VZlbCNseP9yfLknxeDGnC/5vujPFgHjvKQABExluu9obIdjnUfj2BVIqAM7ApJSSgS1a25P2Pq275eteSoiadgAsg4zZBu15K+EBeXZuvfw6jbMpoSHVZJ85OPL64+/oLxX+kUxMURgp99VGdGJZaQd6tUkUHDgqp2l4y46/2TdEGgGVvpO8Ho2K74HrUwmdxMBLV9ucjdQxc65mTQwWo7cUd1QFVpomM6klyqXs+eJYvfihCkuw1GAOj+DlI3xZYID5ZdUWgLp8oMG1eTjy8a7crXvCs6p4RgelaVkxtAyanUKleJ6s8mk=
+X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch02.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230016)(4636009)(40470700004)(36840700001)(46966006)(47076005)(426003)(336012)(8676002)(4326008)(70206006)(70586007)(186003)(5660300002)(54906003)(2616005)(53546011)(83380400001)(6916009)(36756003)(31686004)(26005)(82310400005)(36860700001)(2906002)(30864003)(8936002)(356005)(7636003)(40460700003)(31696002)(508600001)(316002)(9786002)(44832011)(50156003)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2022 20:59:21.6812
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2022 21:36:13.7704
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f76f5bb8-6dd8-445e-59cf-08da4d7f971c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 317eda15-279a-477c-e973-08da4d84bda7
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT013.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch02.xlnx.xilinx.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1NAM02FT026.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5515
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3879
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hi Mathieu,
 
-Thanks for reviews. I will address all the comments in this email in 
-next revision.
+I agree to all of the comments. I will address them in next revision.
+
+Please find my response below for some comments:
 
 Thanks,
 
 Tanmay
 
-On 6/7/22 9:52 AM, Mathieu Poirier wrote:
-> Hi Tanmay,
->
+On 6/8/22 10:37 AM, Mathieu Poirier wrote:
 > On Thu, Jun 02, 2022 at 01:38:34PM -0700, Tanmay Shah wrote:
 >> This driver enables r5f dual core Real time Processing Unit subsystem
 >> available on Xilinx Zynq Ultrascale MPSoC Platform. RPU subsystem
@@ -487,6 +487,19 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +	/* memory regions not defined */
 >> +	if (num_mem_regions < 1)
 >> +		return 0;
+> This can't happen as per zynqmp_r5_get_mem_region_node().
+
+
+That's right. I will fix this in zynqmp_r5_get_mem_region_node().
+
+As memory-region is not required property, we return successfully if 
+memory regions are not defined.
+
+So, zynqmp_r5_get_mem_region_node() should not fail if memory-region 
+property is not found.
+
+
+>
 >> +
 >> +	rproc_mem = kcalloc(num_mem_regions,
 >> +			    sizeof(struct rproc_mem_entry *), GFP_KERNEL);
@@ -503,6 +516,21 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +						    zynqmp_r5_mem_region_map,
 >> +						    zynqmp_r5_mem_region_unmap,
 >> +						    rmem->name);
+> Any reason you need to call rproc_mem_entry_init() on the vdev0buffers?
+
+Thanks for this pointer.
+
+Actually this is remoteproc driver only and I was only considering to 
+add only fw-image memory-region.
+
+But, as this is generic function for all the memory regions, I think I 
+should handle other regions as well.
+
+I believe there is no code change needed to add virngs.
+
+However, for vdev*buffers I will use "rproc_of_resm_mem_entry_init()".
+
+
 >> +		if (!rproc_mem[i])
 >> +			goto release_mem_regions;
 >> +
@@ -617,6 +645,9 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +		dev_err(dev, "need to specify TCM banks\n");
 >> +		return -EINVAL;
 >> +	}
+> This check should be done in zynqmp_r5_get_tcm_node(), please remove.  Same
+> comment for add_tcm_carveout_lockstep_mode().
+>
 >> +
 >> +	rproc_mem = kcalloc(num_banks,
 >> +			    sizeof(struct rproc_mem_entry *), GFP_KERNEL);
@@ -652,6 +683,9 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +		if (!rproc_mem[i]) {
 >> +			ret = -ENOMEM;
 >> +			goto release_tcm_split;
+> If we end up here function zynqmp_pm_release_node() would not be called for the
+> bank that was powered just above.
+>
 >> +		}
 >> +	}
 >> +
@@ -668,6 +702,8 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +release_tcm_split:
 >> +	/* If failed, Turn off all TCM banks turned on before */
 >> +	for (i--; i > -1; i--) {
+> I have already commented on this, please apply throughout.
+>
 >> +		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
 >> +		zynqmp_pm_release_node(pm_domain_id);
 >> +		kfree(rproc_mem[i]);
@@ -795,6 +831,10 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> + * @fw: ptr to firmware to be loaded onto r5 core
 >> + *
 >> + * When loading firmware, ensure the necessary carveouts are in remoteproc
+> There are no checks done to that effect in the function...
+Thanks. This documentation is old. I will remove above line and fix 
+description.
+>
 >> + *
 >> + * return 0 on success, otherwise non-zero value on failure
 >> + */
@@ -888,9 +928,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +	r5_rproc = devm_rproc_alloc(cdev, dev_name(cdev),
 >> +				    &zynqmp_r5_rproc_ops,
 >> +				    NULL, sizeof(struct zynqmp_r5_core));
-> Not sure why devm_rproc_alloc() is used when rproc_add() is used below and
-> rproc_del() in zynqmp_r5_core_exit().
->
 >> +	if (!r5_rproc) {
 >> +		dev_err(cdev, "failed to allocate memory for rproc instance\n");
 >> +		return ERR_PTR(-ENOMEM);
@@ -932,16 +969,9 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +	int i, j;
 >> +	struct zynqmp_r5_core *r5_core;
 >> +	struct device *dev = cluster->dev;
-> 	struct device *dev = cluster->dev;
->          struct zynqmp_r5_core *r5_core;
-> 	int tcm_bank_count, tcm_node;
-> 	int i, j;
->
 >> +
 >> +	/*
 >> +	 * ToDo: Use predefined TCM address space values from driver until
-> s/until/while
->
 >> +	 * system-dt spec is not final for TCM
 >> +	 */
 >> +	tcm_bank_count = ARRAY_SIZE(zynqmp_tcm_banks);
@@ -998,8 +1028,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +
 >> +	dev = r5_core->dev;
 >> +
-> Extra newline.
->
 >> +	np = r5_core->np;
 >> +
 >> +	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
@@ -1035,8 +1063,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +
 >> +release_rmem:
 >> +	for (i--; i > -1; i--)
-> s/"i > -1"/"i >= 0"
->
 >> +		kfree(rmem[i]);
 >> +	devm_kfree(dev, rmem);
 >> +	return -ENOMEM;
@@ -1052,8 +1078,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> + */
 >> +static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
 >> +			       enum rpu_oper_mode fw_reg_val, int tcm_mode)
-> I would have expected @tcm_mode to be of type "enum rpu_tcm_comp".
->
 >> +{
 >> +	int ret, i;
 >> +	struct zynqmp_r5_core *r5_core;
@@ -1165,8 +1189,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +	i = 0;
 >> +	for_each_available_child_of_node(dev_node, child) {
 >> +		child_pdev = of_find_device_by_node(child);
-> Here a reference to child_pdev->dev is taken...
->
 >> +		if (!child_pdev) {
 >> +			of_node_put(child);
 >> +			ret = -ENODEV;
@@ -1177,10 +1199,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +		r5_cores[i] = zynqmp_r5_add_rproc_core(&child_pdev->dev);
 >> +		if (IS_ERR(r5_cores[i])) {
 >> +			of_node_put(child);
-> If devm_rproc_alloc() fails in zynqmp_r5_add_rproc_core() the reference to
-> child_pdev-dev taken above is not released.
->
->
 >> +			ret = PTR_ERR(r5_cores[i]);
 >> +			goto release_r5_cores;
 >> +		}
@@ -1213,8 +1231,6 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +
 >> +release_r5_cores:
 >> +	for (i--; i > -1; i--) {
-> s/"i > -1"/"i >= 0"
->
 >> +		put_device(r5_cores[i]->dev);
 >> +		rproc_del(r5_cores[i]->rproc);
 >> +	}
@@ -1242,18 +1258,7 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +
 >> +	for (i = 0; i < cluster->core_count; i++) {
 >> +		zynqmp_r5_core_exit(cluster->r5_cores[i]);
-> I don't see a need for this extra function.  Just call put_device() and
-> rproc_del() here.
->
 >> +		cluster->r5_cores[i] = NULL;
-> Not sure this is useful since both cluster->r5_cores and cluster are freed
-> below.
->
-> I will review zynqmp_r5_rproc_ops and up tomorrow and Thursday.
->
-> Thanks,
-> Mathieu
->
 >> +	}
 >> +
 >> +	kfree(cluster->r5_cores);
@@ -1301,6 +1306,15 @@ On 6/7/22 9:52 AM, Mathieu Poirier wrote:
 >> +	}
 >> +
 >> +	ret = devm_add_action_or_reset(dev, zynqmp_r5_cluster_exit, pdev);
+> I am still not convinced you need to use the devm_add_action_or_reset() API as
+> opposed to a simple platform_driver::remove function, but this is something we
+> can tackle in another revision.
+Ok for now, I will keep it as it is.
+> I am done reviewing this driver.
+>
+> Thanks,
+> Mathieu
+>
 >> +	if (ret)
 >> +		return ret;
 >> +
