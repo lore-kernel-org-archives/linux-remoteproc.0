@@ -2,145 +2,124 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6371DC43334
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jun 2022 14:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52761C43334
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Jun 2022 22:29:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239166AbiFNOgS (ORCPT
+        id S235582AbiFNW3K (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Jun 2022 10:36:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57668 "EHLO
+        Tue, 14 Jun 2022 18:29:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349328AbiFNOgG (ORCPT
+        with ESMTP id S233355AbiFNW3A (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Jun 2022 10:36:06 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6733C71C;
-        Tue, 14 Jun 2022 07:36:04 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 82CAB1F9A0;
-        Tue, 14 Jun 2022 14:36:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1655217363; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7h6hH0gYTond1cgiS/uMW2G4mVmL8aIozW74ouv+gK4=;
-        b=B9wTA4hA6Qxez4dhaQq2jaLjcRQqv8/C1d0oKbtJxHWYl3duIpfM3QjZ2J2ZIG1jByzjIk
-        ObTWFZbyZcppMylTomPCNwhynw9TlYQGEMrmiuv4k8IcEezBoIE3JYy9Oiijt3mtdocbSR
-        YntR36rSYs/Otfz0SDXm/BOtVHJZFAE=
-Received: from suse.cz (unknown [10.100.201.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0C0ED2C142;
-        Tue, 14 Jun 2022 14:36:01 +0000 (UTC)
-Date:   Tue, 14 Jun 2022 16:36:01 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     bhe@redhat.com, d.hatayama@jp.fujitsu.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Mark Rutland <mark.rutland@arm.com>, mikelley@microsoft.com,
-        vkuznets@redhat.com, akpm@linux-foundation.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        netdev@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-        rcu@vger.kernel.org, sparclinux@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, halves@canonical.com,
-        fabiomirmar@gmail.com, alejandro.j.jimenez@oracle.com,
-        andriy.shevchenko@linux.intel.com, arnd@arndb.de, bp@alien8.de,
-        corbet@lwn.net, dave.hansen@linux.intel.com, dyoung@redhat.com,
-        feng.tang@intel.com, gregkh@linuxfoundation.org,
-        hidehiro.kawai.ez@hitachi.com, jgross@suse.com,
-        john.ogness@linutronix.de, keescook@chromium.org, luto@kernel.org,
-        mhiramat@kernel.org, mingo@redhat.com, paulmck@kernel.org,
-        peterz@infradead.org, rostedt@goodmis.org,
-        senozhatsky@chromium.org, stern@rowland.harvard.edu,
-        tglx@linutronix.de, vgoyal@redhat.com, will@kernel.org
-Subject: Re: [PATCH 24/30] panic: Refactor the panic path
-Message-ID: <Yqic0R8/UFqTbbMD@alley>
-References: <20220427224924.592546-1-gpiccoli@igalia.com>
- <20220427224924.592546-25-gpiccoli@igalia.com>
- <87fskzuh11.fsf@email.froward.int.ebiederm.org>
- <0d084eed-4781-c815-29c7-ac62c498e216@igalia.com>
+        Tue, 14 Jun 2022 18:29:00 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EE352522
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jun 2022 15:28:59 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id o6so8917618plg.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jun 2022 15:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=KRnsDnmzLVNJLD4XQT4OOkfWd3Wv3kaVliobD56LDKY=;
+        b=eeK29CNLmpmnGvffPElFI3R5kizjdYTm2bmjh3/DAtzRv4bxOEbQtqE0k+ChAX8hPf
+         BdhRkSeyr0admaHZEvD8srfe/iRbFt2VSGfoVBL/CepvGCqAde+/m2WJSuQTyzMSSKWI
+         bm2R37DaoGnSuaDulrkvjmT4YcyK9tZN5f+4xihtv73rOLWxgheTePZyjXVafO3kRfDx
+         KbIgjzGONeT6zfgdCRJoamh5GQ1+eM6MgqzhoQK2nLq/QIG3PY6DCHU/3Av+ZHxHHPo+
+         9wiIlwS1ynUbq7L9V2zB9dD37ek9s2NoG5NgEbUPyqqctLiGbCiHE5EctHu9GckDdfH+
+         v5hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=KRnsDnmzLVNJLD4XQT4OOkfWd3Wv3kaVliobD56LDKY=;
+        b=hmHcfPftZhXbfDP7RjZUytuzrgbDUu597czyX7fsRUjUn19INqkP5hL8zjaEkNFPVH
+         3Lpv9rWG7BQH55OFdm++jiQh1rqGv0W4f1IJ4D2/d+5T3IynvJk3VGRtUTgesz+BLao/
+         Pq0k/dmAfPqpXoEon3Vxl/+hGq76alqoiylX3njDLYqGOsmUIEOk1hNNi18KDaQed7GD
+         78OHvl0i6X4BDTXKxPSN1aj4x57T57pGjI+A8EadOcRJnKCxped0NNtjs7cWpm5WCb9V
+         D1+oZ2aiOf3+Fy1S9YQRgQm9tYmzvkwfPBcktUUfQ1t+vU/MX80QBZxjWdi6AEpu162F
+         STHg==
+X-Gm-Message-State: AJIora+Q5JnFBTZp/6A/ErKxUILA4i3WztP52AzCQiFxNlsJBaRUNSpj
+        x0NxmcR2F1YExkUxPMbtEGvAVA==
+X-Google-Smtp-Source: AGRyM1v+i/wHlb7BJZUwkeZoDYuk2cZeUxb+qwT1JnX5NVO7/5IejyC4N3W0/iW3bCy4FUzjTlNAtQ==
+X-Received: by 2002:a17:90b:4c0c:b0:1ea:87ef:546a with SMTP id na12-20020a17090b4c0c00b001ea87ef546amr6724342pjb.209.1655245738693;
+        Tue, 14 Jun 2022 15:28:58 -0700 (PDT)
+Received: from p14s ([192.77.111.2])
+        by smtp.gmail.com with ESMTPSA id c3-20020a170902d90300b00163c0a1f718sm7746920plz.303.2022.06.14.15.28.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jun 2022 15:28:57 -0700 (PDT)
+Date:   Tue, 14 Jun 2022 16:28:54 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shengjiu.wang@gmail.com
+Subject: Re: [RESEND PATCH] rpmsg: char: Add mutex protection for
+ rpmsg_eptdev_open()
+Message-ID: <20220614222854.GA1236509@p14s>
+References: <1653104105-16779-1-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0d084eed-4781-c815-29c7-ac62c498e216@igalia.com>
+In-Reply-To: <1653104105-16779-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu 2022-05-26 13:25:57, Guilherme G. Piccoli wrote:
-> OK, so it seems we have some points in which agreement exists, and some
-> points that there is no agreement and instead, we have antagonistic /
-> opposite views and needs. Let's start with the easier part heh
->
-> It seems everybody agrees that *we shouldn't over-engineer things*, and
-> as per Eric good words: making the panic path more feature-full or
-> increasing flexibility isn't a good idea. So, as a "corollary": the
-> panic level approach I'm proposing is not a good fit, I'll drop it and
-> let's go with something simpler.
-
-Makes sense.
-
-> Another point of agreement seems to be that _notifier lists in the panic
-> path are dangerous_, for *2 different reasons*:
+On Sat, May 21, 2022 at 11:35:05AM +0800, Shengjiu Wang wrote:
+> There is no mutex protection for rpmsg_eptdev_open(),
+> especially for eptdev->ept read and write operation.
+> It may cause issues when multiple instances call
+> rpmsg_eptdev_open() in parallel,the return state
+> may be success or EBUGY.
 > 
-> (a) We cannot guarantee that people won't add crazy callbacks there, we
-> can plan and document things the best as possible - it'll never be
-> enough, somebody eventually would slip a nonsense callback that would
-> break things and defeat the planned purpose of such a list;
+> Fixes: 964e8bedd5a1 ("rpmsg: char: Return an error if device already open")
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+> changes in resend:
+> - add fixes tag
+> 
+>  drivers/rpmsg/rpmsg_char.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 
-It is true that notifier lists might allow to add crazy stuff
-without proper review more easily. Things added into the core
-code would most likely get better review.
+I have applied your patch.
 
-But nothing is error-proof. And bugs will happen with any approach.
+Thanks,
+Mathieu
 
-
-> (b) As per Eric point, in a panic/crash situation we might have memory
-> corruption exactly in the list code / pointers, etc, so the notifier
-> lists are, by nature, a bit fragile. But I think we shouldn't consider
-> it completely "bollocks", since this approach has been used for a while
-> with a good success rate. So, lists aren't perfect at all, but at the
-> same time, they aren't completely useless.
-
-I am not able to judge this. Of course, any extra step increases
-the risk. I am just not sure how much more complicated it would
-be to hardcode the calls. Most of them are architecture
-and/or feature specific. And such code is often hard to
-review and maintain.
-
-> To avoid using a 4th list,
-
-4th or 5th? We already have "hypervisor", "info", "pre-reboot", and "pre-loop".
-The 5th might be pre-crash-exec.
-
-> especially given the list nature is a bit
-> fragile, I'd suggest one of the 3 following approaches - I *really
-> appreciate feedbacks* on that so I can implement the best solution and
-> avoid wasting time in some poor/disliked solution:
-
-Honestly, I am not able to decide what might be better without seeing
-the code.
-
-Most things fits pretty well into the 4 proposed lists:
-"hypervisor", "info", "pre-reboot", and "pre-loop". IMHO, the
-only question is the code that needs to be always called
-even before crash_dump.
-
-I suggest that you solve the crash_dump callbacks the way that
-looks best to you. Ideally do it in a separate patch so it can be
-reviewed and reworked more easily.
-
-I believe that a fresh code with an updated split and simplified
-logic would help us to move forward.
-
-Best Regards,
-Petr
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index b6183d4f62a2..4f2189111494 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -120,8 +120,11 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  	struct rpmsg_device *rpdev = eptdev->rpdev;
+>  	struct device *dev = &eptdev->dev;
+>  
+> -	if (eptdev->ept)
+> +	mutex_lock(&eptdev->ept_lock);
+> +	if (eptdev->ept) {
+> +		mutex_unlock(&eptdev->ept_lock);
+>  		return -EBUSY;
+> +	}
+>  
+>  	get_device(dev);
+>  
+> @@ -137,11 +140,13 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  	if (!ept) {
+>  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
+>  		put_device(dev);
+> +		mutex_unlock(&eptdev->ept_lock);
+>  		return -EINVAL;
+>  	}
+>  
+>  	eptdev->ept = ept;
+>  	filp->private_data = eptdev;
+> +	mutex_unlock(&eptdev->ept_lock);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.17.1
+> 
