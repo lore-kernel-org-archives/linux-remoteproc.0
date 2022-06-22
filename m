@@ -2,191 +2,99 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01DEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jun 2022 17:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9D1C43334
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Jun 2022 17:46:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376618AbiFVRZg (ORCPT
+        id S1377401AbiFVRqV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Jun 2022 13:25:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33964 "EHLO
+        Wed, 22 Jun 2022 13:46:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359867AbiFVRZf (ORCPT
+        with ESMTP id S1355581AbiFVRqV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Jun 2022 13:25:35 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1503625280
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jun 2022 10:25:34 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id a14so7071403pgh.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jun 2022 10:25:34 -0700 (PDT)
+        Wed, 22 Jun 2022 13:46:21 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AADB034BB6
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jun 2022 10:46:19 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id z14so16767160pgh.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jun 2022 10:46:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=F1h7Ij/RTr4Zg7zLZzpgB2ElBs7s3zrp84VdRnTR+Xc=;
-        b=laefo6G9MLDmi0wKtkaq0i7nGZ1aSPyQWj2RnlF/s1kuk2xAk3KSr6lXYrJVRXzD9Y
-         r6LIV49fQ9Ya7irW0bTDRDbWuPauJImCAIsyH2G6DiJpdD5ccwJ4ygcetLgg68ZRRROR
-         5Jl0BHaNSyrm4PkhMHPt/0yREML0hEExZypPwNmBdg4z28xhlFETMIbCXRmbtnp5fma9
-         AKSsv2Z2GjfXQBXK2X1EMRvoUAqdgDk9On16yr16I5aNpNyp0FdpcyLwHHf3zODIUuFS
-         p4CYF2tJFlHLkAnMFbKEv71zmir+GvJVdVaUfhORIsyjxIkuzEf/eLNuRLFQVMFCE4Z1
-         2KNg==
+        bh=EpgE2jvIQSFQgAN8WwXX/5vPgLEXVBbuCYjMWpqhCMs=;
+        b=QBt8d0UvvlahctWqyz9WVkxT0d4SOTK0NzVBYWVTJPxbLp5UNpIslqwUBSx8/KBBsq
+         A+Zw0xj6Cb/ehzhESIgmA9cwUHsw3Lf8BxRs09qsgbPtGdNYaUcbLW8l5EWPwkZ0AQ5g
+         iGESoRZXgqDD1vdCkXNbLWk/HCn9nRHSub86qFFPaZYSu/vy+4VR5E0vXlQHak7s1i8O
+         a5FQABvTZhyh9Uyq1WBQj3JvkensqX0mcupgMm8ueALkWiZdB97G75hdreUpxIhT5uA0
+         TA6dzh2C6/mSYctThb5VLyOmgIq2lFVNGbkMhROrYhHZTzQbRWLNXQ1rFhthz1aNZEQ+
+         Lsnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=F1h7Ij/RTr4Zg7zLZzpgB2ElBs7s3zrp84VdRnTR+Xc=;
-        b=Keuf4GOkziWStsqpPFjKIBH6VPsT8UBv+b7rpPIXVXrb390pFrk/FM0piN5Qw/g03K
-         D2XueROXMLUxlDYB1f4cr9NfsyE4EZs81GwA16ktOgQQ55IuYtTXj1LneX/gHKJgu3TV
-         7WFvB5pcOjWR2JeHa7HvOGh4ImXCQPtZ6lhcD0tUT8S9DKBmy/x+Mw1hRfI7m5a1ILjJ
-         /m4RakJ2Bp1EwgpzycaWI7jtOos7OII4Ai+qgwaPNAZUBzqKHIffD0jDGkImKgsTDfcG
-         mcqjVgZy9GukSxsBmFBnu/1FZIXpNJhLyE31cBhMLhN6NhpVZQ92BOo+5vi8aI4l8fOZ
-         WB8g==
-X-Gm-Message-State: AJIora+qR5htfFdi45Mk6D8oCzAlnhHoWY4pIPBXvTaGu0n8kZ5fNzOf
-        kGiKzR665ENY6EtpDrve7CrFRw==
-X-Google-Smtp-Source: AGRyM1vInwevu3tlVu6C5YUKTeIb1PSpcZfZEAyjD+A/y+J2jdqOYiiuX0FyQv9M7m4TkjDxkCSDvw==
-X-Received: by 2002:a63:c63:0:b0:3fe:e14b:b5a0 with SMTP id 35-20020a630c63000000b003fee14bb5a0mr3848548pgm.428.1655918733500;
-        Wed, 22 Jun 2022 10:25:33 -0700 (PDT)
+        bh=EpgE2jvIQSFQgAN8WwXX/5vPgLEXVBbuCYjMWpqhCMs=;
+        b=ImOAwkomjSufKH5k/w20CFKLMWGlV25uo2yZiAZULqaVM4M2Ko5LJM/ueCQnYWhgms
+         rdOpJ7K7EjsFaFwi+ToZbzNs98IcrcCGTHGvpfMC7xR+zjxWgvLavi8K1OtXcvQKr6H1
+         wqRa2ugH7MIMGK1yXyaE2p2YWaX/hWY8j+/2tI0Cf2DTpmNgPaBcE49HG6uouaml/+c9
+         A2k3MXW2ZmxTtQ54l3Xv6O/Q4a/3e+gd8oEEGho2ckOkb42CeL+VyiswJq44LUv2IrRa
+         6IsMfCKHJjgV3Yj8olGCuGOOL+kMuup20qOATYTYcBcsU1mkZzl+4lGR8gNXcVEZWvKR
+         7TIA==
+X-Gm-Message-State: AJIora8b4nNyCz2po6p+44jubd6PIkauYiRQuKofxbJ0gTvlECrRIJuD
+        gu6K09iKIT07IiN1EEEmE5QhgA==
+X-Google-Smtp-Source: AGRyM1vvmEv/0t0GsVemfxrvCV9s3hxYmKfiYakDddtSica5aCNDyttDzA/GvdXDpYo1Yp0jqBBf6w==
+X-Received: by 2002:a05:6a00:15c1:b0:525:2db4:2a2c with SMTP id o1-20020a056a0015c100b005252db42a2cmr13485017pfu.30.1655919979228;
+        Wed, 22 Jun 2022 10:46:19 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id x15-20020a63b34f000000b0040d027e1f0fsm3434521pgt.25.2022.06.22.10.25.31
+        by smtp.gmail.com with ESMTPSA id j7-20020a17090a7e8700b001ec4f258028sm29034pjl.55.2022.06.22.10.46.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jun 2022 10:25:32 -0700 (PDT)
-Date:   Wed, 22 Jun 2022 11:25:29 -0600
+        Wed, 22 Jun 2022 10:46:18 -0700 (PDT)
+Date:   Wed, 22 Jun 2022 11:46:16 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     Saud Farooqui <farooqui_saud@hotmail.com>
 Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V5 2/2] remoteproc: support attach recovery after rproc
- crash
-Message-ID: <20220622172529.GC1606016@p14s>
-References: <20220615032048.465486-1-peng.fan@oss.nxp.com>
- <20220615032048.465486-3-peng.fan@oss.nxp.com>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: strcpy is not safe, use strncpy
+Message-ID: <20220622174616.GD1606016@p14s>
+References: <PA4P189MB1421005C22E46EBD708EBA798BA49@PA4P189MB1421.EURP189.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220615032048.465486-3-peng.fan@oss.nxp.com>
+In-Reply-To: <PA4P189MB1421005C22E46EBD708EBA798BA49@PA4P189MB1421.EURP189.PROD.OUTLOOK.COM>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 11:20:48AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+Hi Saud,
+
+On Wed, Jun 08, 2022 at 11:43:30PM +0500, Saud Farooqui wrote:
+> Replace strcpy with strncpy for copying the rpmsg
+> device name in rpmsg_register_device_override
 > 
-> Current logic only support main processor to stop/start the remote
-> processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
-> remote processor could do attach recovery after crash and trigger watchdog
-> reboot. It does not need main processor to load image, or stop/start M4
-> core.
-> 
-> Introduce two functions: rproc_attach_recovery, rproc_firmware_recovery
-> for the two cases. Firmware recovery is as before, let main processor to
-> help recovery, while attach recovery is recover itself withou help.
-> To attach recovery, we only do detach and attach.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Saud Farooqui <farooqui_saud@hotmail.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 64 +++++++++++++++++++---------
->  1 file changed, 45 insertions(+), 19 deletions(-)
+>  drivers/rpmsg/rpmsg_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 02a04ab34a23..1c1c90176aff 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1883,6 +1883,47 @@ static int __rproc_detach(struct rproc *rproc)
->  	return 0;
->  }
->  
-> +static int rproc_attach_recovery(struct rproc *rproc)
-> +{
-> +	int ret;
-> +
-> +	mutex_unlock(&rproc->lock);
-> +	ret = __rproc_detach(rproc);
-> +	mutex_lock(&rproc->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return __rproc_attach(rproc);
-> +}
-> +
-> +static int rproc_firmware_recovery(struct rproc *rproc)
-
-s/rproc_firmware_recovery/rproc_boot_recovery
-
-> +{
-> +	const struct firmware *firmware_p;
-> +	struct device *dev = &rproc->dev;
-> +	int ret;
-> +
-> +	ret = rproc_stop(rproc, true);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* generate coredump */
-> +	rproc->ops->coredump(rproc);
-> +
-> +	/* load firmware */
-> +	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "request_firmware failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* boot the remote processor up again */
-> +	ret = rproc_start(rproc, firmware_p);
-> +
-> +	release_firmware(firmware_p);
-> +
-> +	return ret;
-> +}
-> +
->  /**
->   * rproc_trigger_recovery() - recover a remoteproc
->   * @rproc: the remote processor
-> @@ -1897,7 +1938,6 @@ static int __rproc_detach(struct rproc *rproc)
->   */
->  int rproc_trigger_recovery(struct rproc *rproc)
->  {
-> -	const struct firmware *firmware_p;
->  	struct device *dev = &rproc->dev;
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 290c1f02da10..d3b29c19715d 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -604,7 +604,7 @@ int rpmsg_register_device_override(struct rpmsg_device *rpdev,
 >  	int ret;
 >  
-> @@ -1911,24 +1951,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
->  
->  	dev_err(dev, "recovering %s\n", rproc->name);
->  
-> -	ret = rproc_stop(rproc, true);
-> -	if (ret)
-> -		goto unlock_mutex;
-> -
-> -	/* generate coredump */
-> -	rproc->ops->coredump(rproc);
-> -
-> -	/* load firmware */
-> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> -	if (ret < 0) {
-> -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> -		goto unlock_mutex;
-> -	}
-> -
-> -	/* boot the remote processor up again */
-> -	ret = rproc_start(rproc, firmware_p);
-> -
-> -	release_firmware(firmware_p);
-> +	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-> +		ret = rproc_attach_recovery(rproc);
-> +	else
-> +		ret = rproc_firmware_recovery(rproc);
+>  	if (driver_override)
+> -		strcpy(rpdev->id.name, driver_override);
+> +		strncpy(rpdev->id.name, driver_override, sizeof(rpdev->id.name));
 
-This patch contains a serious flaw related to locking that should have been
-obvious when it was put together.  Please go back and carefully review the code you are submitting.  
-
-I will not consider another revision of this set until July 15th.
+Please use strscpy_pad() instead of strncpy().
 
 Thanks,
 Mathieu
 
 >  
->  unlock_mutex:
->  	mutex_unlock(&rproc->lock);
+>  	dev_set_name(dev, "%s.%s.%d.%d", dev_name(dev->parent),
+>  		     rpdev->id.name, rpdev->src, rpdev->dst);
 > -- 
 > 2.25.1
 > 
