@@ -2,218 +2,184 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0264DC43334
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 07:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF49CCA473
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 11:19:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbiFXH1h (ORCPT
+        id S229783AbiFXLT0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 03:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53378 "EHLO
+        Fri, 24 Jun 2022 07:19:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiFXH1g (ORCPT
+        with ESMTP id S229523AbiFXLT0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Jun 2022 03:27:36 -0400
-Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C334D612;
-        Fri, 24 Jun 2022 00:27:34 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VHG.Bjb_1656055647;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VHG.Bjb_1656055647)
-          by smtp.aliyun-inc.com;
-          Fri, 24 Jun 2022 15:27:28 +0800
-Message-ID: <1656055406.7931285-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v10 00/41] virtio pci support VIRTIO_F_RING_RESET
-Date:   Fri, 24 Jun 2022 15:23:26 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com
-References: <20220624025621.128843-1-xuanzhuo@linux.alibaba.com>
- <20220624025954-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20220624025954-mutt-send-email-mst@kernel.org>
+        Fri, 24 Jun 2022 07:19:26 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94F660F3D;
+        Fri, 24 Jun 2022 04:19:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1656069564; x=1687605564;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=hxKeGBCoNVcsY4jmdcJC/1WgkWmF0rNxgTj2EqBC0PU=;
+  b=pAdq59qVWyU2tmeXB25qnUVP5SekkytBICBzqmFj/E8VQps1UhV4nWpM
+   ecYEYyrPIjBE12KquVZO0eELZ2rR+8mPCmUpc9dfdtXgYiFUJF5H5MK7i
+   F3xdYrel0l9FeEbFhFMjeOZoC8EDfkSe1G7o2fuuQlwOiMeJNWj3oz5kH
+   I=;
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 24 Jun 2022 04:19:24 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2022 04:19:24 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 24 Jun 2022 04:19:23 -0700
+Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 24 Jun
+ 2022 04:19:21 -0700
+Subject: Re: [PATCH] remoteproc: qcom: pas: Adjust the phys addr wrt the mem
+ region
+To:     Yogesh Lal <quic_ylal@quicinc.com>, <bjorn.andersson@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1654200007-5453-1-git-send-email-quic_ylal@quicinc.com>
+From:   Sibi Sankar <quic_sibis@quicinc.com>
+Message-ID: <ed665e94-dab9-9d6c-87d7-aa1efd157755@quicinc.com>
+Date:   Fri, 24 Jun 2022 16:49:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <1654200007-5453-1-git-send-email-quic_ylal@quicinc.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 24 Jun 2022 03:00:12 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> On Fri, Jun 24, 2022 at 10:55:40AM +0800, Xuan Zhuo wrote:
-> > The virtio spec already supports the virtio queue reset function. This patch set
-> > is to add this function to the kernel. The relevant virtio spec information is
-> > here:
-> >
-> >     https://github.com/oasis-tcs/virtio-spec/issues/124
-> >     https://github.com/oasis-tcs/virtio-spec/issues/139
-> >
-> > Also regarding MMIO support for queue reset, I plan to support it after this
-> > patch is passed.
-> >
-> > This patch set implements the refactoring of vring. Finally, the
-> > virtuque_resize() interface is provided based on the reset function of the
-> > transport layer.
-> >
-> > Test environment:
-> >     Host: 4.19.91
-> >     Qemu: QEMU emulator version 6.2.50 (with vq reset support)
-> >     Test Cmd:  ethtool -G eth1 rx $1 tx $2; ethtool -g eth1
-> >
-> >     The default is split mode, modify Qemu virtio-net to add PACKED feature to test
-> >     packed mode.
-> >
-> > Qemu code:
-> >     https://github.com/fengidri/qemu/compare/89f3bfa3265554d1d591ee4d7f1197b6e3397e84...master
->
->
-> Pls rebase on top of my latest tree, there are some conflicts.
+Hey Yogesh,
+Thanks for the patch.
 
-OK, I'll pull your latest version before committing the next version.
+On 6/3/22 1:30 AM, Yogesh Lal wrote:
+> The minidump table in the toc contains physical addresses that may lie
+> before the physical address of the first elf segment in relocatable
 
-Thanks.
+doesn't this apply to full coredumps as well? Do you plan to address
+that in a separate patch?
 
->
-> > In order to simplify the review of this patch set, the function of reusing
-> > the old buffers after resize will be introduced in subsequent patch sets.
-> >
-> > Please review. Thanks.
-> >
-> > v10:
-> >   1. on top of the harden vring IRQ
-> >   2. factor out split and packed from struct vring_virtqueue
-> >   3. some suggest from @Jason Wang
-> >
-> > v9:
-> >   1. Provide a virtqueue_resize() interface directly
-> >   2. A patch set including vring resize, virtio pci reset, virtio-net resize
-> >   3. No more separate structs
-> >
-> > v8:
-> >   1. Provide a virtqueue_reset() interface directly
-> >   2. Split the two patch sets, this is the first part
-> >   3. Add independent allocation helper for allocating state, extra
-> >
-> > v7:
-> >   1. fix #6 subject typo
-> >   2. fix #6 ring_size_in_bytes is uninitialized
-> >   3. check by: make W=12
-> >
-> > v6:
-> >   1. virtio_pci: use synchronize_irq(irq) to sync the irq callbacks
-> >   2. Introduce virtqueue_reset_vring() to implement the reset of vring during
-> >      the reset process. May use the old vring if num of the vq not change.
-> >   3. find_vqs() support sizes to special the max size of each vq
-> >
-> > v5:
-> >   1. add virtio-net support set_ringparam
-> >
-> > v4:
-> >   1. just the code of virtio, without virtio-net
-> >   2. Performing reset on a queue is divided into these steps:
-> >     1. reset_vq: reset one vq
-> >     2. recycle the buffer from vq by virtqueue_detach_unused_buf()
-> >     3. release the ring of the vq by vring_release_virtqueue()
-> >     4. enable_reset_vq: re-enable the reset queue
-> >   3. Simplify the parameters of enable_reset_vq()
-> >   4. add container structures for virtio_pci_common_cfg
-> >
-> > v3:
-> >   1. keep vq, irq unreleased
-> >
-> > *** BLURB HERE ***
-> >
-> > Xuan Zhuo (41):
-> >   remoteproc: rename len of rpoc_vring to num
-> >   virtio: add helper virtqueue_get_vring_max_size()
-> >   virtio: struct virtio_config_ops add callbacks for queue_reset
-> >   virtio_ring: update the document of the virtqueue_detach_unused_buf
-> >     for queue reset
-> >   virtio_ring: remove the arg vq of vring_alloc_desc_extra()
-> >   virtio_ring: extract the logic of freeing vring
-> >   virtio_ring: split vring_virtqueue
-> >   virtio_ring: introduce virtqueue_init()
-> >   virtio_ring: split: introduce vring_free_split()
-> >   virtio_ring: split: extract the logic of alloc queue
-> >   virtio_ring: split: extract the logic of alloc state and extra
-> >   virtio_ring: split: extract the logic of attach vring
-> >   virtio_ring: split: extract the logic of vring init
-> >   virtio_ring: split: introduce virtqueue_reinit_split()
-> >   virtio_ring: split: reserve vring_align, may_reduce_num
-> >   virtio_ring: split: introduce virtqueue_resize_split()
-> >   virtio_ring: packed: introduce vring_free_packed
-> >   virtio_ring: packed: extract the logic of alloc queue
-> >   virtio_ring: packed: extract the logic of alloc state and extra
-> >   virtio_ring: packed: extract the logic of attach vring
-> >   virtio_ring: packed: extract the logic of vring init
-> >   virtio_ring: packed: introduce virtqueue_reinit_packed()
-> >   virtio_ring: packed: introduce virtqueue_resize_packed()
-> >   virtio_ring: introduce virtqueue_resize()
-> >   virtio_pci: struct virtio_pci_common_cfg add queue_notify_data
-> >   virtio: queue_reset: add VIRTIO_F_RING_RESET
-> >   virtio: allow to unbreak/break virtqueue individually
-> >   virtio_pci: update struct virtio_pci_common_cfg
-> >   virtio_pci: introduce helper to get/set queue reset
-> >   virtio_pci: extract the logic of active vq for modern pci
-> >   virtio_pci: support VIRTIO_F_RING_RESET
-> >   virtio: find_vqs() add arg sizes
-> >   virtio_pci: support the arg sizes of find_vqs()
-> >   virtio_mmio: support the arg sizes of find_vqs()
-> >   virtio: add helper virtio_find_vqs_ctx_size()
-> >   virtio_net: set the default max ring size by find_vqs()
-> >   virtio_net: get ringparam by virtqueue_get_vring_max_size()
-> >   virtio_net: split free_unused_bufs()
-> >   virtio_net: support rx queue resize
-> >   virtio_net: support tx queue resize
-> >   virtio_net: support set_ringparam
-> >
-> >  arch/um/drivers/virtio_uml.c             |   3 +-
-> >  drivers/net/virtio_net.c                 | 209 +++++-
-> >  drivers/platform/mellanox/mlxbf-tmfifo.c |   3 +
-> >  drivers/remoteproc/remoteproc_core.c     |   4 +-
-> >  drivers/remoteproc/remoteproc_virtio.c   |  13 +-
-> >  drivers/s390/virtio/virtio_ccw.c         |   4 +
-> >  drivers/virtio/virtio_mmio.c             |  11 +-
-> >  drivers/virtio/virtio_pci_common.c       |  32 +-
-> >  drivers/virtio/virtio_pci_common.h       |   3 +-
-> >  drivers/virtio/virtio_pci_legacy.c       |   8 +-
-> >  drivers/virtio/virtio_pci_modern.c       | 157 ++++-
-> >  drivers/virtio/virtio_pci_modern_dev.c   |  39 ++
-> >  drivers/virtio/virtio_ring.c             | 794 +++++++++++++++++------
-> >  drivers/virtio/virtio_vdpa.c             |   3 +
-> >  include/linux/remoteproc.h               |   4 +-
-> >  include/linux/virtio.h                   |   9 +
-> >  include/linux/virtio_config.h            |  38 +-
-> >  include/linux/virtio_pci_modern.h        |   2 +
-> >  include/uapi/linux/virtio_config.h       |   7 +-
-> >  include/uapi/linux/virtio_pci.h          |  14 +
-> >  20 files changed, 1063 insertions(+), 294 deletions(-)
-> >
-> > --
-> > 2.31.0
->
+> images. This change adds a custom dump function for minidumps which
+> calculates the offset into the carveout region using the start of
+> the physical address instead of the start of the first elf segment.
+> 
+> Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
+> ---
+>   drivers/remoteproc/qcom_common.c   |  9 +++++----
+>   drivers/remoteproc/qcom_common.h   |  5 ++++-
+>   drivers/remoteproc/qcom_q6v5_pas.c | 21 ++++++++++++++++++++-
+>   3 files changed, 29 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 246e716..503326b 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -101,7 +101,8 @@ static void qcom_minidump_cleanup(struct rproc *rproc)
+>   	}
+>   }
+>   
+> -static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem)
+> +static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
+> +									rproc_dumpfn_t dumpfn)
+>   {
+>   	struct minidump_region __iomem *ptr;
+>   	struct minidump_region region;
+> @@ -131,7 +132,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+>   			}
+>   			da = le64_to_cpu(region.address);
+>   			size = le32_to_cpu(region.size);
+> -			rproc_coredump_add_custom_segment(rproc, da, size, NULL, name);
+> +			rproc_coredump_add_custom_segment(rproc, da, size, dumpfn, name);
+>   		}
+>   	}
+>   
+> @@ -139,7 +140,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+>   	return 0;
+>   }
+>   
+> -void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
+> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id, rproc_dumpfn_t dumpfn)
+>   {
+>   	int ret;
+>   	struct minidump_subsystem *subsystem;
+> @@ -179,7 +180,7 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
+>   
+>   	rproc_coredump_cleanup(rproc);
+>   
+> -	ret = qcom_add_minidump_segments(rproc, subsystem);
+> +	ret = qcom_add_minidump_segments(rproc, subsystem, dumpfn);
+>   	if (ret) {
+>   		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
+>   		goto clean_minidump;
+> diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+> index c35adf7..29e528b 100644
+> --- a/drivers/remoteproc/qcom_common.h
+> +++ b/drivers/remoteproc/qcom_common.h
+> @@ -33,7 +33,10 @@ struct qcom_rproc_ssr {
+>   	struct qcom_ssr_subsystem *info;
+>   };
+>   
+> -void qcom_minidump(struct rproc *rproc, unsigned int minidump_id);
+> +typedef void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
+> +			void *dest, size_t offset, size_t size);
+
+you can perhaps stick with not using typedef like how it is handled in
+remoteproc_coredump.
+
+> +
+> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id, rproc_dumpfn_t dumpfn);
+>   
+>   void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
+>   			   const char *ssr_name);
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 6e5cbca..9c6cb0b 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -83,11 +83,30 @@ struct qcom_adsp {
+>   	struct qcom_sysmon *sysmon;
+>   };
+>   
+> +void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+> +						void *dest, size_t offset, size_t size)
+> +{
+> +	struct qcom_adsp *adsp = rproc->priv;
+> +	int total_offset;
+> +
+> +	total_offset = segment->da + segment->offset + offset - adsp->mem_phys;
+> +	if (total_offset < 0 || total_offset + size > adsp->mem_size) {
+> +		dev_err(adsp->dev,
+> +			"invalid copy request for segment %pad with offset %zu and size %zu)\n",
+> +			&segment->da, offset, size);
+> +		memset(dest, 0xff, size);
+> +		return;
+> +	}
+> +
+> +	memcpy_fromio(dest, adsp->mem_region + total_offset, size);
+> +}
+> +
+> +
+remove additional empty line.
+
+>   static void adsp_minidump(struct rproc *rproc)
+>   {
+>   	struct qcom_adsp *adsp = rproc->priv;
+>   
+> -	qcom_minidump(rproc, adsp->minidump_id);
+> +	qcom_minidump(rproc, adsp->minidump_id, adsp_segment_dump);
+>   }
+>   
+>   static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
+> 
