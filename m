@@ -2,184 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF49CCA473
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 11:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E3CC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 16:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229783AbiFXLT0 (ORCPT
+        id S230077AbiFXQsk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 07:19:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47288 "EHLO
+        Fri, 24 Jun 2022 12:48:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbiFXLT0 (ORCPT
+        with ESMTP id S229774AbiFXQsk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Jun 2022 07:19:26 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94F660F3D;
-        Fri, 24 Jun 2022 04:19:24 -0700 (PDT)
+        Fri, 24 Jun 2022 12:48:40 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8A84EDC2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 09:48:38 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id p5so3331792pjt.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 09:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1656069564; x=1687605564;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=hxKeGBCoNVcsY4jmdcJC/1WgkWmF0rNxgTj2EqBC0PU=;
-  b=pAdq59qVWyU2tmeXB25qnUVP5SekkytBICBzqmFj/E8VQps1UhV4nWpM
-   ecYEYyrPIjBE12KquVZO0eELZ2rR+8mPCmUpc9dfdtXgYiFUJF5H5MK7i
-   F3xdYrel0l9FeEbFhFMjeOZoC8EDfkSe1G7o2fuuQlwOiMeJNWj3oz5kH
-   I=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 24 Jun 2022 04:19:24 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2022 04:19:24 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Fri, 24 Jun 2022 04:19:23 -0700
-Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 24 Jun
- 2022 04:19:21 -0700
-Subject: Re: [PATCH] remoteproc: qcom: pas: Adjust the phys addr wrt the mem
- region
-To:     Yogesh Lal <quic_ylal@quicinc.com>, <bjorn.andersson@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1654200007-5453-1-git-send-email-quic_ylal@quicinc.com>
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-Message-ID: <ed665e94-dab9-9d6c-87d7-aa1efd157755@quicinc.com>
-Date:   Fri, 24 Jun 2022 16:49:11 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7vaOGSSaS2BSeF0eCGOBdnJBKLvorCKIGcPWI6JfN0M=;
+        b=y/IbSUpXpt2dGe1jDFLOsSSUkh1YBHRUnJmUb8sFZZm5NLih02wnUPXYt5zjjKeypb
+         5Ffpu8piazgJRDNC42kW6T6j1S8K0mebrE7N0RwQPnfu+w8dFmATyybUe8Li6Ax2Pbsq
+         6i0tJIm6mnulrZuaP8LlD+bk0IDIh7ztPilxJLZ2r82xW5PSaATQjSK6ypPckDxrjzPQ
+         1bJK58MfXrbD6UbHeCtj6QwHeNzd3TOhfuFAniLjlYZ5xRUrZA93EYYGbms/FfDtCwRZ
+         fD3/L6ZsvUORcp5roVkzX0bDUqQJrvcXD+t6BkwOR2kijU8lP3ghEMss2dpRQ7RGgeA7
+         3xtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7vaOGSSaS2BSeF0eCGOBdnJBKLvorCKIGcPWI6JfN0M=;
+        b=wIuPsMEWlF2TnbD6vpFjstGeQnDhfu+tQh+kvC1BCfxHHHFZNP7W43exCar6LvrFaM
+         bh1kGXIGzVh+UYKglfFNuGMif2DoCIV8mfan+/2LuIYGcD68aG7WAcpO0PQkXvwmtksT
+         /pboS5Yk2Xz76Ed+xU/3E5Kkb46xC5e45SPuweLQnBrUXboWvjCwJsbMRFp3H1zY+1in
+         VC9JjrhQ5ZmU3PeltSrGMHiV1WbD3WjsBfzjwEL+qGvdq61Mu72ZdzrUlYl7EkimXsBu
+         gcZFEYGHks3ie9BF3I8Hj3VtxI0QksERqC9Y/0tPXJuJ2fUdmPFA8ELCqUZHpEQDwmKB
+         7LfA==
+X-Gm-Message-State: AJIora/etgmUFFk+iGBYQNSLkKCW4k1/+YTuxCyKcCCxoReKvkkThrjJ
+        C2cLTYjBEtaHoJ4FTAC5QZG8I5xVs+bXxw==
+X-Google-Smtp-Source: AGRyM1sMTKHk1czlE8w1vn1du6WoyJEAfH19Gy+e0hnTwhXskgrBEnEhnbwsZHR1W2asFkceOKtghg==
+X-Received: by 2002:a17:902:e8d7:b0:168:e2da:893c with SMTP id v23-20020a170902e8d700b00168e2da893cmr45709631plg.152.1656089318365;
+        Fri, 24 Jun 2022 09:48:38 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id h9-20020a170902f70900b001663cf001besm2033477plo.174.2022.06.24.09.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jun 2022 09:48:36 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 10:48:34 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+Cc:     bjorn.andersson@linaro.org, robin.murphy@arm.com, hch@lst.de,
+        m.szyprowski@samsung.com, matthias.bgg@gmail.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, yj.chiang@mediatek.com
+Subject: Re: [PATCH 0/2] dma-mapping, remoteproc: Fix dma_mem leak after
+ rproc_shutdown
+Message-ID: <20220624164834.GA1736477@p14s>
+References: <20220422062436.14384-1-mark-pk.tsai@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <1654200007-5453-1-git-send-email-quic_ylal@quicinc.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220422062436.14384-1-mark-pk.tsai@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Yogesh,
-Thanks for the patch.
-
-On 6/3/22 1:30 AM, Yogesh Lal wrote:
-> The minidump table in the toc contains physical addresses that may lie
-> before the physical address of the first elf segment in relocatable
-
-doesn't this apply to full coredumps as well? Do you plan to address
-that in a separate patch?
-
-> images. This change adds a custom dump function for minidumps which
-> calculates the offset into the carveout region using the start of
-> the physical address instead of the start of the first elf segment.
+On Fri, Apr 22, 2022 at 02:24:34PM +0800, Mark-PK Tsai wrote:
+> Release dma coherent memory before rvdev is free in
+> rproc_rvdev_release().
 > 
-> Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
-> ---
->   drivers/remoteproc/qcom_common.c   |  9 +++++----
->   drivers/remoteproc/qcom_common.h   |  5 ++++-
->   drivers/remoteproc/qcom_q6v5_pas.c | 21 ++++++++++++++++++++-
->   3 files changed, 29 insertions(+), 6 deletions(-)
+> Below is the kmemleak report:
+> unreferenced object 0xffffff8051c1a980 (size 128):
+>   comm "sh", pid 4895, jiffies 4295026604 (age 15481.896s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000003a0f3ec0>] dma_declare_coherent_memory+0x44/0x11c
+>     [<00000000ad243164>] rproc_add_virtio_dev+0xb8/0x20c
+>     [<00000000d219c8e9>] rproc_vdev_do_start+0x18/0x24
+>     [<00000000e694b468>] rproc_start+0x22c/0x3e0
+>     [<000000000b938941>] rproc_boot+0x4a4/0x860
+>     [<000000003c4dc532>] state_store.52856+0x10c/0x1b8
+>     [<00000000df2297ac>] dev_attr_store+0x34/0x84
+>     [<0000000083a53bdb>] sysfs_kf_write+0x60/0xbc
+>     [<000000008ed830df>] kernfs_fop_write+0x198/0x458
+>     [<0000000072b9ad06>] __vfs_write+0x50/0x210
+>     [<00000000377d7469>] vfs_write+0xe4/0x1a8
+>     [<00000000c3fc594e>] ksys_write+0x78/0x144
+>     [<000000009aef6f4b>] __arm64_sys_write+0x1c/0x28
+>     [<0000000003496a98>] el0_svc_common+0xc8/0x22c
+>     [<00000000ea3fe7a3>] el0_svc_compat_handler+0x1c/0x28
+>     [<00000000d1a85a4e>] el0_svc_compat+0x8/0x24
 > 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 246e716..503326b 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -101,7 +101,8 @@ static void qcom_minidump_cleanup(struct rproc *rproc)
->   	}
->   }
->   
-> -static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem)
-> +static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsystem *subsystem,
-> +									rproc_dumpfn_t dumpfn)
->   {
->   	struct minidump_region __iomem *ptr;
->   	struct minidump_region region;
-> @@ -131,7 +132,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
->   			}
->   			da = le64_to_cpu(region.address);
->   			size = le32_to_cpu(region.size);
-> -			rproc_coredump_add_custom_segment(rproc, da, size, NULL, name);
-> +			rproc_coredump_add_custom_segment(rproc, da, size, dumpfn, name);
->   		}
->   	}
->   
-> @@ -139,7 +140,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
->   	return 0;
->   }
->   
-> -void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
-> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id, rproc_dumpfn_t dumpfn)
->   {
->   	int ret;
->   	struct minidump_subsystem *subsystem;
-> @@ -179,7 +180,7 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
->   
->   	rproc_coredump_cleanup(rproc);
->   
-> -	ret = qcom_add_minidump_segments(rproc, subsystem);
-> +	ret = qcom_add_minidump_segments(rproc, subsystem, dumpfn);
->   	if (ret) {
->   		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
->   		goto clean_minidump;
-> diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
-> index c35adf7..29e528b 100644
-> --- a/drivers/remoteproc/qcom_common.h
-> +++ b/drivers/remoteproc/qcom_common.h
-> @@ -33,7 +33,10 @@ struct qcom_rproc_ssr {
->   	struct qcom_ssr_subsystem *info;
->   };
->   
-> -void qcom_minidump(struct rproc *rproc, unsigned int minidump_id);
-> +typedef void (*rproc_dumpfn_t)(struct rproc *rproc, struct rproc_dump_segment *segment,
-> +			void *dest, size_t offset, size_t size);
+> Mark-PK Tsai (2):
+>   dma-mapping: Add dma_release_coherent_memory to DMA API
+>   remoteproc: Fix dma_mem leak after rproc_shutdown
+> 
+>  drivers/remoteproc/remoteproc_core.c |  1 +
+>  include/linux/dma-map-ops.h          |  3 +++
+>  kernel/dma/coherent.c                | 10 ++++++++--
+>  3 files changed, 12 insertions(+), 2 deletions(-)
 
-you can perhaps stick with not using typedef like how it is handled in
-remoteproc_coredump.
+Applied.
 
-> +
-> +void qcom_minidump(struct rproc *rproc, unsigned int minidump_id, rproc_dumpfn_t dumpfn);
->   
->   void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
->   			   const char *ssr_name);
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 6e5cbca..9c6cb0b 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -83,11 +83,30 @@ struct qcom_adsp {
->   	struct qcom_sysmon *sysmon;
->   };
->   
-> +void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
-> +						void *dest, size_t offset, size_t size)
-> +{
-> +	struct qcom_adsp *adsp = rproc->priv;
-> +	int total_offset;
-> +
-> +	total_offset = segment->da + segment->offset + offset - adsp->mem_phys;
-> +	if (total_offset < 0 || total_offset + size > adsp->mem_size) {
-> +		dev_err(adsp->dev,
-> +			"invalid copy request for segment %pad with offset %zu and size %zu)\n",
-> +			&segment->da, offset, size);
-> +		memset(dest, 0xff, size);
-> +		return;
-> +	}
-> +
-> +	memcpy_fromio(dest, adsp->mem_region + total_offset, size);
-> +}
-> +
-> +
-remove additional empty line.
+Thanks,
+Mathieu
 
->   static void adsp_minidump(struct rproc *rproc)
->   {
->   	struct qcom_adsp *adsp = rproc->priv;
->   
-> -	qcom_minidump(rproc, adsp->minidump_id);
-> +	qcom_minidump(rproc, adsp->minidump_id, adsp_segment_dump);
->   }
->   
->   static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
+> 
+> -- 
+> 2.18.0
 > 
