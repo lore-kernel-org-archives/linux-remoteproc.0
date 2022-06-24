@@ -2,117 +2,113 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E3CC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 16:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B3CC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 17:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbiFXQsk (ORCPT
+        id S229645AbiFXRER (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 12:48:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44818 "EHLO
+        Fri, 24 Jun 2022 13:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229774AbiFXQsk (ORCPT
+        with ESMTP id S229451AbiFXRER (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Jun 2022 12:48:40 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8A84EDC2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 09:48:38 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id p5so3331792pjt.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 09:48:38 -0700 (PDT)
+        Fri, 24 Jun 2022 13:04:17 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7713448333
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 10:04:16 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id d129so2944903pgc.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 10:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=7vaOGSSaS2BSeF0eCGOBdnJBKLvorCKIGcPWI6JfN0M=;
-        b=y/IbSUpXpt2dGe1jDFLOsSSUkh1YBHRUnJmUb8sFZZm5NLih02wnUPXYt5zjjKeypb
-         5Ffpu8piazgJRDNC42kW6T6j1S8K0mebrE7N0RwQPnfu+w8dFmATyybUe8Li6Ax2Pbsq
-         6i0tJIm6mnulrZuaP8LlD+bk0IDIh7ztPilxJLZ2r82xW5PSaATQjSK6ypPckDxrjzPQ
-         1bJK58MfXrbD6UbHeCtj6QwHeNzd3TOhfuFAniLjlYZ5xRUrZA93EYYGbms/FfDtCwRZ
-         fD3/L6ZsvUORcp5roVkzX0bDUqQJrvcXD+t6BkwOR2kijU8lP3ghEMss2dpRQ7RGgeA7
-         3xtA==
+        bh=px0NDP+xMP/FC6x3oq/ZqsG3as1hiZ0Zx10SR0gFPhw=;
+        b=Kfjbdfkm0W6Zdy+6MK69FVKokZMdg9L72sU5ZFsa3Erau208+5AqAmdwvFMsFY55I+
+         s/scJ1Bj7SkUJSLUVnKzH+nf0Vclteum+FaY3IvrLOvQlNoTvkZ+dKuuKLhfm254o0iL
+         Fy3Oy5yEY20TL784MKYQC2IZOxnrb+OgU/TBvKGOS8n6HcIu4fM97s1Q4RjevgLokS16
+         yDaTUEX/MqXSl+En9pAv1A2/V8fehscmUhps2kAEf5p8CFQ9EfZnqVij1IuMdFrWMNd+
+         wLlHqBOOZZrlZ3JqsHL7dQfmilNLsCTrnlhbEQRmr1lRCp0pZluh6lYDpkAnSFk1t9Eb
+         0r3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=7vaOGSSaS2BSeF0eCGOBdnJBKLvorCKIGcPWI6JfN0M=;
-        b=wIuPsMEWlF2TnbD6vpFjstGeQnDhfu+tQh+kvC1BCfxHHHFZNP7W43exCar6LvrFaM
-         bh1kGXIGzVh+UYKglfFNuGMif2DoCIV8mfan+/2LuIYGcD68aG7WAcpO0PQkXvwmtksT
-         /pboS5Yk2Xz76Ed+xU/3E5Kkb46xC5e45SPuweLQnBrUXboWvjCwJsbMRFp3H1zY+1in
-         VC9JjrhQ5ZmU3PeltSrGMHiV1WbD3WjsBfzjwEL+qGvdq61Mu72ZdzrUlYl7EkimXsBu
-         gcZFEYGHks3ie9BF3I8Hj3VtxI0QksERqC9Y/0tPXJuJ2fUdmPFA8ELCqUZHpEQDwmKB
-         7LfA==
-X-Gm-Message-State: AJIora/etgmUFFk+iGBYQNSLkKCW4k1/+YTuxCyKcCCxoReKvkkThrjJ
-        C2cLTYjBEtaHoJ4FTAC5QZG8I5xVs+bXxw==
-X-Google-Smtp-Source: AGRyM1sMTKHk1czlE8w1vn1du6WoyJEAfH19Gy+e0hnTwhXskgrBEnEhnbwsZHR1W2asFkceOKtghg==
-X-Received: by 2002:a17:902:e8d7:b0:168:e2da:893c with SMTP id v23-20020a170902e8d700b00168e2da893cmr45709631plg.152.1656089318365;
-        Fri, 24 Jun 2022 09:48:38 -0700 (PDT)
+        bh=px0NDP+xMP/FC6x3oq/ZqsG3as1hiZ0Zx10SR0gFPhw=;
+        b=RFEd4LyppoYMgOwXjQiMIXZkPgQgAm6tF6oD1Uejy4QHBpDLoUrhw87w0wg2qet5wW
+         ctNel+jrQ9JoDtcUvQ+s1F2IJceDw7BnAFlMLmWAcPUZgeT4KEWTaoZeHi+G+aTgDCcq
+         Ig8cZkIGFwl0YIWLzAY5esusYKwFLXoeOKYemvH1XpoHz8od9gLnztbljxYmf9js/74A
+         6vRAkVO3HT3OFyUe+8o1jL0MlqHir93KIFeAVnV8Q90bYzONdYXsLCrNOEEtZJAyJYLP
+         bBFLDfQfYUbXcdIupzS3ot6MsMEBah/m6xgoQxoveYSRurs4/N10oSLvzYMUBpUNvTHq
+         Y8jg==
+X-Gm-Message-State: AJIora8pocwsa3Vs/PU/x2NuNDwB0rpvg2cLsxuolF+e2VrWQZTR7a1q
+        RNJScdl6bV7uzPc+gkI4TsBdxM3gjm1TRQ==
+X-Google-Smtp-Source: AGRyM1sOrG404HSLruVfY9X5ggzvzt4b2Sj0s8owzQLffqnbgAWCJjQShwdIzThq4iEnPG37oxJ3SQ==
+X-Received: by 2002:a62:4ed3:0:b0:525:5a10:d5ac with SMTP id c202-20020a624ed3000000b005255a10d5acmr8721428pfb.65.1656090255892;
+        Fri, 24 Jun 2022 10:04:15 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id h9-20020a170902f70900b001663cf001besm2033477plo.174.2022.06.24.09.48.35
+        by smtp.gmail.com with ESMTPSA id k63-20020a632442000000b003fd3a3db089sm1839687pgk.11.2022.06.24.10.04.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 09:48:36 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 10:48:34 -0600
+        Fri, 24 Jun 2022 10:04:11 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 11:04:07 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-Cc:     bjorn.andersson@linaro.org, robin.murphy@arm.com, hch@lst.de,
-        m.szyprowski@samsung.com, matthias.bgg@gmail.com,
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, yj.chiang@mediatek.com
-Subject: Re: [PATCH 0/2] dma-mapping, remoteproc: Fix dma_mem leak after
- rproc_shutdown
-Message-ID: <20220624164834.GA1736477@p14s>
-References: <20220422062436.14384-1-mark-pk.tsai@mediatek.com>
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] rpmsg: Fix parameter naming for announce_create/destroy
+ ops.
+Message-ID: <20220624170407.GB1736477@p14s>
+References: <20220425071723.774050-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220422062436.14384-1-mark-pk.tsai@mediatek.com>
+In-Reply-To: <20220425071723.774050-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 02:24:34PM +0800, Mark-PK Tsai wrote:
-> Release dma coherent memory before rvdev is free in
-> rproc_rvdev_release().
+On Mon, Apr 25, 2022 at 09:17:23AM +0200, Arnaud Pouliquen wrote:
+> The parameter associated to the announce_create and
+> announce_destroy ops functions is not an endpoint but a rpmsg device.
 > 
-> Below is the kmemleak report:
-> unreferenced object 0xffffff8051c1a980 (size 128):
->   comm "sh", pid 4895, jiffies 4295026604 (age 15481.896s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<000000003a0f3ec0>] dma_declare_coherent_memory+0x44/0x11c
->     [<00000000ad243164>] rproc_add_virtio_dev+0xb8/0x20c
->     [<00000000d219c8e9>] rproc_vdev_do_start+0x18/0x24
->     [<00000000e694b468>] rproc_start+0x22c/0x3e0
->     [<000000000b938941>] rproc_boot+0x4a4/0x860
->     [<000000003c4dc532>] state_store.52856+0x10c/0x1b8
->     [<00000000df2297ac>] dev_attr_store+0x34/0x84
->     [<0000000083a53bdb>] sysfs_kf_write+0x60/0xbc
->     [<000000008ed830df>] kernfs_fop_write+0x198/0x458
->     [<0000000072b9ad06>] __vfs_write+0x50/0x210
->     [<00000000377d7469>] vfs_write+0xe4/0x1a8
->     [<00000000c3fc594e>] ksys_write+0x78/0x144
->     [<000000009aef6f4b>] __arm64_sys_write+0x1c/0x28
->     [<0000000003496a98>] el0_svc_common+0xc8/0x22c
->     [<00000000ea3fe7a3>] el0_svc_compat_handler+0x1c/0x28
->     [<00000000d1a85a4e>] el0_svc_compat+0x8/0x24
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> No fixed sha1 indicated in commit message as issue is present since a
+> while, it does not fix a specific sha1.
 > 
-> Mark-PK Tsai (2):
->   dma-mapping: Add dma_release_coherent_memory to DMA API
->   remoteproc: Fix dma_mem leak after rproc_shutdown
+> git blame highlight the sha1 [1], but issue was present before.
+> The commit [1] just moves declaration from rpmsg.h to rpmsg_internal.
 > 
->  drivers/remoteproc/remoteproc_core.c |  1 +
->  include/linux/dma-map-ops.h          |  3 +++
->  kernel/dma/coherent.c                | 10 ++++++++--
->  3 files changed, 12 insertions(+), 2 deletions(-)
+> [1] fade037e0fd5 ("rpmsg: Hide rpmsg indirection tables")
 
-Applied.
+This patch is not a candidate for the stable kernel and as such a "Fixes" tag
+isn't needed.
+
+> ---
+>  drivers/rpmsg/rpmsg_internal.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index d4b23fd019a8..ff0b12122235 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -41,8 +41,8 @@ struct rpmsg_device_ops {
+>  					    rpmsg_rx_cb_t cb, void *priv,
+>  					    struct rpmsg_channel_info chinfo);
+>  
+> -	int (*announce_create)(struct rpmsg_device *ept);
+> -	int (*announce_destroy)(struct rpmsg_device *ept);
+> +	int (*announce_create)(struct rpmsg_device *rpdev);
+> +	int (*announce_destroy)(struct rpmsg_device *rpdev);
+
+I have applied this patch.
 
 Thanks,
 Mathieu
 
-> 
+>  };
+>  
+>  /**
 > -- 
-> 2.18.0
+> 2.24.3
 > 
