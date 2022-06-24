@@ -2,113 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B3CC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 17:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE90C43334
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Jun 2022 17:36:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbiFXRER (ORCPT
+        id S230490AbiFXRg2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Jun 2022 13:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57102 "EHLO
+        Fri, 24 Jun 2022 13:36:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbiFXRER (ORCPT
+        with ESMTP id S229910AbiFXRg2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Jun 2022 13:04:17 -0400
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7713448333
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 10:04:16 -0700 (PDT)
-Received: by mail-pg1-x529.google.com with SMTP id d129so2944903pgc.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 10:04:16 -0700 (PDT)
+        Fri, 24 Jun 2022 13:36:28 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C7415DF10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 10:36:27 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id jb13so2677458plb.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jun 2022 10:36:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=px0NDP+xMP/FC6x3oq/ZqsG3as1hiZ0Zx10SR0gFPhw=;
-        b=Kfjbdfkm0W6Zdy+6MK69FVKokZMdg9L72sU5ZFsa3Erau208+5AqAmdwvFMsFY55I+
-         s/scJ1Bj7SkUJSLUVnKzH+nf0Vclteum+FaY3IvrLOvQlNoTvkZ+dKuuKLhfm254o0iL
-         Fy3Oy5yEY20TL784MKYQC2IZOxnrb+OgU/TBvKGOS8n6HcIu4fM97s1Q4RjevgLokS16
-         yDaTUEX/MqXSl+En9pAv1A2/V8fehscmUhps2kAEf5p8CFQ9EfZnqVij1IuMdFrWMNd+
-         wLlHqBOOZZrlZ3JqsHL7dQfmilNLsCTrnlhbEQRmr1lRCp0pZluh6lYDpkAnSFk1t9Eb
-         0r3w==
+        bh=3tejim6nzB75lm4NOJYENLppeUpH5ct1kCbXERXFHSQ=;
+        b=i4v9ObAH9p9emQBJy5npqaKQc4gDNMt8SM/Df3WI7fBbJk1TsUGTGhGvaMSJA7hptg
+         snfRS46NbjgqbzVCI8qHYKCGUHe8qgRiM25sLSfDn/44eC1RTK4jK0JZ+nV575KojMXR
+         1kkFJ3NOPVtwZhY3PA58/oUN7YCpBvCje5CYCRHmpI/3/7xV4yiBgyUcKXs2ADboiJV8
+         +UEc4wk7HuauX4FsVb6IsaRpPxUNoslti+1qOAsW68vnYSfc4xhVnvjTfGTjX5KliYGM
+         2gJRoMDU48sLFk7qSDF3yzyDEs90TbJjlnTvEVnBru9y1GaKcBXZ6RQjPwNTzoWY6DbH
+         i6JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=px0NDP+xMP/FC6x3oq/ZqsG3as1hiZ0Zx10SR0gFPhw=;
-        b=RFEd4LyppoYMgOwXjQiMIXZkPgQgAm6tF6oD1Uejy4QHBpDLoUrhw87w0wg2qet5wW
-         ctNel+jrQ9JoDtcUvQ+s1F2IJceDw7BnAFlMLmWAcPUZgeT4KEWTaoZeHi+G+aTgDCcq
-         Ig8cZkIGFwl0YIWLzAY5esusYKwFLXoeOKYemvH1XpoHz8od9gLnztbljxYmf9js/74A
-         6vRAkVO3HT3OFyUe+8o1jL0MlqHir93KIFeAVnV8Q90bYzONdYXsLCrNOEEtZJAyJYLP
-         bBFLDfQfYUbXcdIupzS3ot6MsMEBah/m6xgoQxoveYSRurs4/N10oSLvzYMUBpUNvTHq
-         Y8jg==
-X-Gm-Message-State: AJIora8pocwsa3Vs/PU/x2NuNDwB0rpvg2cLsxuolF+e2VrWQZTR7a1q
-        RNJScdl6bV7uzPc+gkI4TsBdxM3gjm1TRQ==
-X-Google-Smtp-Source: AGRyM1sOrG404HSLruVfY9X5ggzvzt4b2Sj0s8owzQLffqnbgAWCJjQShwdIzThq4iEnPG37oxJ3SQ==
-X-Received: by 2002:a62:4ed3:0:b0:525:5a10:d5ac with SMTP id c202-20020a624ed3000000b005255a10d5acmr8721428pfb.65.1656090255892;
-        Fri, 24 Jun 2022 10:04:15 -0700 (PDT)
+        bh=3tejim6nzB75lm4NOJYENLppeUpH5ct1kCbXERXFHSQ=;
+        b=zDlksWsrE9C0yICk5zbdv3s0gDTsvABAXdyaox+NtWztKPLT5noi4tdcVNJuMLk3Tb
+         86/rkWPwCh0DjhDXwvgIK1bgfai3qBjnoCjxR3SqcRjn500umx6Y/nBBMfn9hPNRPL6d
+         nuw9BavDgcYI0aPed+d7bvrtQYRxQE5vuwmhJRC4PXttRXN4ElEd/CZUGCjd6T+rGWvk
+         3juyFD0bUKJMAGPbt3bcHWiyi1LL0nuwCMCRnU2TtuJOQMfbfoA9Tm/io42edpoU2++w
+         dm4mEHwSbtBltwW3EslBypfp5qq6LejZjoq4qXkIeRCZCGaEGRO/E3WqN91sHJQT9ciF
+         +4Pg==
+X-Gm-Message-State: AJIora+9j4G0633MCPpmCN1Kgrf4TAoYCi+6kSzBlYneuigLKMS3us34
+        O0Me0DKOawxC5AxLar78jnKldw==
+X-Google-Smtp-Source: AGRyM1tYp/RSiDESfqIGLsXMa6eRXkw8298tIe+RDAKrzDSjKy278q9qLFJWk/B394Ptlw7Sa+Lm2Q==
+X-Received: by 2002:a17:902:f64c:b0:156:4349:7e9b with SMTP id m12-20020a170902f64c00b0015643497e9bmr153949plg.139.1656092186820;
+        Fri, 24 Jun 2022 10:36:26 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id k63-20020a632442000000b003fd3a3db089sm1839687pgk.11.2022.06.24.10.04.10
+        by smtp.gmail.com with ESMTPSA id i68-20020a636d47000000b003fd1deccd4dsm1844360pgc.59.2022.06.24.10.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jun 2022 10:04:11 -0700 (PDT)
-Date:   Fri, 24 Jun 2022 11:04:07 -0600
+        Fri, 24 Jun 2022 10:36:25 -0700 (PDT)
+Date:   Fri, 24 Jun 2022 11:36:21 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] rpmsg: Fix parameter naming for announce_create/destroy
- ops.
-Message-ID: <20220624170407.GB1736477@p14s>
-References: <20220425071723.774050-1-arnaud.pouliquen@foss.st.com>
+To:     Hangyu Hua <hbh25y@gmail.com>
+Cc:     bjorn.andersson@linaro.org, gregkh@linuxfoundation.org,
+        krzysztof.kozlowski@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rpmsg: fix possible refcount leak in
+ rpmsg_register_device_override()
+Message-ID: <20220624173621.GC1736477@p14s>
+References: <20220624024120.11576-1-hbh25y@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220425071723.774050-1-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20220624024120.11576-1-hbh25y@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 09:17:23AM +0200, Arnaud Pouliquen wrote:
-> The parameter associated to the announce_create and
-> announce_destroy ops functions is not an endpoint but a rpmsg device.
+On Fri, Jun 24, 2022 at 10:41:20AM +0800, Hangyu Hua wrote:
+> rpmsg_register_device_override need to call put_device to free vch when
+> driver_set_override fails.
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Fix this by adding a put_device() to the error path.
+> 
+> Fixes: bb17d110cbf2 ("rpmsg: Fix calling device_lock() on non-initialized device")
+
+This is funny... Neither Bjorn nor I have reviewed this patch...
+
+> Signed-off-by: Hangyu Hua <hbh25y@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> No fixed sha1 indicated in commit message as issue is present since a
-> while, it does not fix a specific sha1.
 > 
-> git blame highlight the sha1 [1], but issue was present before.
-> The commit [1] just moves declaration from rpmsg.h to rpmsg_internal.
+> v2: change the commit log.
 > 
-> [1] fade037e0fd5 ("rpmsg: Hide rpmsg indirection tables")
-
-This patch is not a candidate for the stable kernel and as such a "Fixes" tag
-isn't needed.
-
-> ---
->  drivers/rpmsg/rpmsg_internal.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/rpmsg/rpmsg_core.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index d4b23fd019a8..ff0b12122235 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -41,8 +41,8 @@ struct rpmsg_device_ops {
->  					    rpmsg_rx_cb_t cb, void *priv,
->  					    struct rpmsg_channel_info chinfo);
->  
-> -	int (*announce_create)(struct rpmsg_device *ept);
-> -	int (*announce_destroy)(struct rpmsg_device *ept);
-> +	int (*announce_create)(struct rpmsg_device *rpdev);
-> +	int (*announce_destroy)(struct rpmsg_device *rpdev);
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 290c1f02da10..5a47cad89fdc 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -618,6 +618,7 @@ int rpmsg_register_device_override(struct rpmsg_device *rpdev,
+>  					  strlen(driver_override));
+>  		if (ret) {
+>  			dev_err(dev, "device_set_override failed: %d\n", ret);
+> +			put_device(dev);
 
-I have applied this patch.
+Applied.
 
 Thanks,
 Mathieu
 
->  };
->  
->  /**
+>  			return ret;
+>  		}
+>  	}
 > -- 
-> 2.24.3
+> 2.25.1
 > 
