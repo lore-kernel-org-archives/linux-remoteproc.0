@@ -2,128 +2,149 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93ECBC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 25 Jun 2022 19:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05785CCA47C
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Jun 2022 02:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233268AbiFYTto (ORCPT
+        id S229895AbiF0Ca7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 25 Jun 2022 15:49:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59106 "EHLO
+        Sun, 26 Jun 2022 22:30:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233189AbiFYTto (ORCPT
+        with ESMTP id S229955AbiF0Ca6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 25 Jun 2022 15:49:44 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F57612D2B
-        for <linux-remoteproc@vger.kernel.org>; Sat, 25 Jun 2022 12:49:42 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id eq6so7784212edb.6
-        for <linux-remoteproc@vger.kernel.org>; Sat, 25 Jun 2022 12:49:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=HA6yMKopT74zQaJjN9SZYwa0mNq4EMr02YrYzwvzxsM=;
-        b=odF82Ov6/2ffkqCpBwU4vswyFYJuCV1DRSR82ZlEuBtS/ouJKvZ8K/a59J5jyhzw4A
-         qJU/+H7XHjCgk+jEVVrFwvt7Epyvf0Orm3JNWJYMo1J0zLQ/6axyFUjLqu2aUi+cjQfG
-         t9zZuthq+EeUI0sVpqwrlhxPj/QeYT/MRsQWj4Q1x1idaqN4AtmzhRM1ysPLw0uUfXsw
-         Cr1+aUB/OXy54bJUiHP7vccztkf2ZT3CqzylN5U584Mc2dkScJjLTjnp2qB092Pdj5Sm
-         rb+MQuVio/0qzwzjyft8XpFvWDtTpjCO+njwzuV3tVdwglHh9OxASXhLmFDwhwsyreVh
-         QxPw==
+        Sun, 26 Jun 2022 22:30:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF9272BE9
+        for <linux-remoteproc@vger.kernel.org>; Sun, 26 Jun 2022 19:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656297056;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kJbcwB7EfNKpZ99plzFtpzkiIgmO0GfWqgxD6ydKGBA=;
+        b=O+AVCCYAVcZ+unyq4WDBIyDHCnIFtjwZo6ua7+oY0je044DHpfBv0eDeF6Hz3+NTx89/1S
+        2yOBQnJsh5l/n1+5eSWxKWMcIuxw2OsDc75iVnp4Om5NxZxK6A893PBKr0Et8zHNpxxIiJ
+        Wxeq0YhxOcC/pmsRN5NePbhyJaEOap4=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-41-H6Et_PdTNEm1ZWdOtm8ErQ-1; Sun, 26 Jun 2022 22:30:54 -0400
+X-MC-Unique: H6Et_PdTNEm1ZWdOtm8ErQ-1
+Received: by mail-lf1-f71.google.com with SMTP id q22-20020a0565123a9600b0047f6b8e1babso4017743lfu.21
+        for <linux-remoteproc@vger.kernel.org>; Sun, 26 Jun 2022 19:30:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=HA6yMKopT74zQaJjN9SZYwa0mNq4EMr02YrYzwvzxsM=;
-        b=JTeQ8RTYu2aLYZqSck3wGQKrOfU3P3CTHcFV5Z2fzmftdBnp6zHXvTw9nN2ixVmu/6
-         ELGrm27A/laHVMCUgc+J0o1oqdG43dHGBKhSvzV3hN5c/uvWoTHsLEeljwziClV0au1f
-         IWrnEP9w2tJ8mqP4OoZiHkfiLvK3yDmyk2Qs57RmCFMIbdTsKyf5GL2t3trWy4m3TSJr
-         +T8V2T+3rPdouH7XRXerOnIcYJ8jgpC5oX2dtRZ95IxDTPmMFSHmZFKkLLZkoP0OVAE6
-         7YUDAgHwvystnOWXVYQflE8GaC8lKYnH07vsMqrFHFp7NPtP5pJ9CE6QpmqRrF2F6I3b
-         KYEA==
-X-Gm-Message-State: AJIora8hul9JRMMxdzpCvLxPn35z01JRl33ejUqJTyXWzGyE335X8XgV
-        KDpmSDcQwCS9YWDCsqRbhpWfmw==
-X-Google-Smtp-Source: AGRyM1s9XQKHvg1m+VzJMRiiDjGQ6PgKaGZRw/8e08B+jZj7zDsWlxP6vGY9sRSbO+O9QQVoGFnUXA==
-X-Received: by 2002:a05:6402:2047:b0:435:67e0:44fe with SMTP id bc7-20020a056402204700b0043567e044femr6775259edb.360.1656186581159;
-        Sat, 25 Jun 2022 12:49:41 -0700 (PDT)
-Received: from [192.168.0.239] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id n18-20020a05640204d200b00435a08a3557sm4610408edw.27.2022.06.25.12.49.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 25 Jun 2022 12:49:40 -0700 (PDT)
-Message-ID: <2d937f96-0a3e-9177-ea6f-6ebae113386b@linaro.org>
-Date:   Sat, 25 Jun 2022 21:49:39 +0200
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kJbcwB7EfNKpZ99plzFtpzkiIgmO0GfWqgxD6ydKGBA=;
+        b=k7BTTYrstzly3+Br6RqJ0VVGiyraGdeyOKiwaEb+/U4lpqVDdEk1ID1sWWTXyLkWxO
+         vnt5qk/kfa7D1UAUPAeC/FAB6He3tJEPTeBdx8/k8tU1AnKO7BIApThFxL6Eb2zt8HpQ
+         QkdpLHMD5T+MsmGldpEZ1iy5VJqTXtaet5REViBtBZi9xYZVr0QytCwCwD/ty7thmyeA
+         yX05RvXbfrjt9rojEnfxX2JlYKpszb2YjKHyzabsU5Sr0v6MILG0SoyvaNfBIu/Nhfv5
+         V8egrbCWFA6/LXYAYXlnHP+zyRimr5u/UOtaOoGkQ1z9H2z/pAIY2p9gNvTxqSnJMzx1
+         ilpA==
+X-Gm-Message-State: AJIora8UX72M6YwX+o3Iu6+fOA9MnoCwELJ9HTi7EtijayHN0IkFP6in
+        MYLZOgRiVXydEAoyx1l25nv8QP03TQ6ltKNXqwDpmlWV7OqowQRBZgndLJujTabFTy8qV8oqJNV
+        02Dp47pS/KhqKh+4MMxBsdupl/lCFWjTtHkjkb6Doxdz/1Q==
+X-Received: by 2002:a05:6512:13a5:b0:47d:c1d9:dea8 with SMTP id p37-20020a05651213a500b0047dc1d9dea8mr6773777lfa.442.1656297053240;
+        Sun, 26 Jun 2022 19:30:53 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1ur82ARcDJaALzWVAunDCgq4vaJSklh1IynesHEAuaeWnmZYcX/Br+tGQmrs/x93fW3c+90sT9mKBAdQ35aQEI=
+X-Received: by 2002:a05:6512:13a5:b0:47d:c1d9:dea8 with SMTP id
+ p37-20020a05651213a500b0047dc1d9dea8mr6773770lfa.442.1656297053073; Sun, 26
+ Jun 2022 19:30:53 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] rpmsg: fix possible refcount leak in
- rpmsg_register_device_override()
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Hangyu Hua <hbh25y@gmail.com>, bjorn.andersson@linaro.org,
-        gregkh@linuxfoundation.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220624024120.11576-1-hbh25y@gmail.com>
- <20220624173621.GC1736477@p14s>
- <47db0cd8-c940-6e74-f8dc-8e3931e13d80@linaro.org>
- <CANLsYkzT5ZROReZNQ_eYL-r49ijaZYZ5TzdMpqy1RK0_hvW3_Q@mail.gmail.com>
- <0bbee169-6fdc-b50e-87f7-1551dac821e2@linaro.org>
-In-Reply-To: <0bbee169-6fdc-b50e-87f7-1551dac821e2@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220624025621.128843-1-xuanzhuo@linux.alibaba.com>
+ <20220624025621.128843-26-xuanzhuo@linux.alibaba.com> <20220624025817-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20220624025817-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Mon, 27 Jun 2022 10:30:42 +0800
+Message-ID: <CACGkMEseptD=45j3kQr0yciRxR679Jcig=292H07-RYC2vXmFQ@mail.gmail.com>
+Subject: Re: [PATCH v10 25/41] virtio_pci: struct virtio_pci_common_cfg add queue_notify_data
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        kangjie.xu@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 25/06/2022 21:40, Krzysztof Kozlowski wrote:
-> On 24/06/2022 20:43, Mathieu Poirier wrote:
->> On Fri, 24 Jun 2022 at 11:45, Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org> wrote:
->>>
->>> On 24/06/2022 19:36, Mathieu Poirier wrote:
->>>> On Fri, Jun 24, 2022 at 10:41:20AM +0800, Hangyu Hua wrote:
->>>>> rpmsg_register_device_override need to call put_device to free vch when
->>>>> driver_set_override fails.
->>>>>
->>>>> Fix this by adding a put_device() to the error path.
->>>>>
->>>>> Fixes: bb17d110cbf2 ("rpmsg: Fix calling device_lock() on non-initialized device")
->>>>
->>>> This is funny... Neither Bjorn nor I have reviewed this patch...
->>>
->>> It was a fix for commit in Greg's tree and Greg's pick it up after a
->>> week or something. I am not sure if that's actually funny that Greg has
->>> to pick it up without review :(
->>>
->>
->> The patch was sent out on April 19th and committed 3 days later on
->> April 22nd.  Is 3 days the new patch review time standard?
-> 
-> Neither 19th, nor 22nd are correct. The patch which you set you never
-> reviewed, so commit bb17d110cbf2 was sent on 29th of April:
-> https://lore.kernel.org/all/20220429195946.1061725-1-krzysztof.kozlowski@linaro.org/
-> 
-> And committed on 6 of May, which gives some time for review. Where did
-> you see the other dates?
+On Fri, Jun 24, 2022 at 2:59 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Fri, Jun 24, 2022 at 10:56:05AM +0800, Xuan Zhuo wrote:
+> > Add queue_notify_data in struct virtio_pci_common_cfg, which comes from
+> > here https://github.com/oasis-tcs/virtio-spec/issues/89
+> >
+> > For not breaks uABI, add a new struct virtio_pci_common_cfg_notify.
+>
+> What exactly is meant by not breaking uABI?
+> Users are supposed to be prepared for struct size to change ... no?
+
+Not sure, any doc for this?
+
+Thanks
 
 
-Maybe you refer to much earlier commit, not mentioned here which was on
-the list since February and committed indeed around April 22, so it gave
-around 2 months of time for review. In the meantime the patch was
-changing although since v6 (beginning of April [1]) it was almost
-untouched, except one string change.
+>
+>
+> > Since I want to add queue_reset after queue_notify_data, I submitted
+> > this patch first.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+> > ---
+> >  include/uapi/linux/virtio_pci.h | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
+> > index 3a86f36d7e3d..22bec9bd0dfc 100644
+> > --- a/include/uapi/linux/virtio_pci.h
+> > +++ b/include/uapi/linux/virtio_pci.h
+> > @@ -166,6 +166,13 @@ struct virtio_pci_common_cfg {
+> >       __le32 queue_used_hi;           /* read-write */
+> >  };
+> >
+> > +struct virtio_pci_common_cfg_notify {
+> > +     struct virtio_pci_common_cfg cfg;
+> > +
+> > +     __le16 queue_notify_data;       /* read-write */
+> > +     __le16 padding;
+> > +};
+> > +
+> >  /* Fields in VIRTIO_PCI_CAP_PCI_CFG: */
+> >  struct virtio_pci_cfg_cap {
+> >       struct virtio_pci_cap cap;
+> > --
+> > 2.31.0
+>
 
-Therefore this original set, not one being mentioned here bb17d110cbf2,
-was quite available. And you were Cc-ed since beginning - the version 2
-this year (February, [2]). Two months is usually quite enough for
-review, especially for not so big diff.
-
-[1]
-https://lore.kernel.org/all/20220403183758.192236-1-krzysztof.kozlowski@linaro.org/
-
-[2]
-https://lore.kernel.org/all/20220223191310.347669-1-krzysztof.kozlowski@canonical.com/
-
-
-Best regards,
-Krzysztof
