@@ -2,24 +2,24 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E74CCA481
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 06:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBF0CCA483
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 06:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232735AbiF2G6M (ORCPT
+        id S230200AbiF2G6N (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 02:58:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37156 "EHLO
+        Wed, 29 Jun 2022 02:58:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232607AbiF2G5g (ORCPT
+        with ESMTP id S231998AbiF2G5Y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Jun 2022 02:57:36 -0400
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B71030540;
-        Tue, 28 Jun 2022 23:57:34 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0VHmYOtE_1656485846;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VHmYOtE_1656485846)
+        Wed, 29 Jun 2022 02:57:24 -0400
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC3D31340;
+        Tue, 28 Jun 2022 23:57:21 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R641e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0VHmY1Cw_1656485833;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VHmY1Cw_1656485833)
           by smtp.aliyun-inc.com;
-          Wed, 29 Jun 2022 14:57:27 +0800
+          Wed, 29 Jun 2022 14:57:15 +0800
 From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 To:     virtualization@lists.linux-foundation.org
 Cc:     Richard Weinberger <richard@nod.at>,
@@ -55,9 +55,9 @@ Cc:     Richard Weinberger <richard@nod.at>,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org, bpf@vger.kernel.org,
         kangjie.xu@linux.alibaba.com
-Subject: [PATCH v11 14/40] virtio_ring: split: introduce virtqueue_resize_split()
-Date:   Wed, 29 Jun 2022 14:56:30 +0800
-Message-Id: <20220629065656.54420-15-xuanzhuo@linux.alibaba.com>
+Subject: [PATCH v11 08/40] virtio_ring: split: extract the logic of alloc queue
+Date:   Wed, 29 Jun 2022 14:56:24 +0800
+Message-Id: <20220629065656.54420-9-xuanzhuo@linux.alibaba.com>
 X-Mailer: git-send-email 2.31.0
 In-Reply-To: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
 References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
@@ -68,73 +68,124 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-virtio ring split supports resize.
+Separate the logic of split to create vring queue.
 
-Only after the new vring is successfully allocated based on the new num,
-we will release the old vring. In any case, an error is returned,
-indicating that the vring still points to the old vring.
-
-In the case of an error, re-initialize(virtqueue_reinit_split()) the
-virtqueue to ensure that the vring can be used.
-
-In addition, vring_align, may_reduce_num are necessary for reallocating
-vring, so they are retained for creating vq.
+This feature is required for subsequent virtuqueue reset vring.
 
 Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 ---
- drivers/virtio/virtio_ring.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/virtio/virtio_ring.c | 68 ++++++++++++++++++++++--------------
+ 1 file changed, 42 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 9c83c5e6d5a9..1aaa1e5f9991 100644
+index 49d61e412dc6..a9ceb9c16c54 100644
 --- a/drivers/virtio/virtio_ring.c
 +++ b/drivers/virtio/virtio_ring.c
-@@ -212,6 +212,7 @@ struct vring_virtqueue {
- };
- 
- static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int num);
-+static void vring_free(struct virtqueue *_vq);
- 
- /*
-  * Helpers.
-@@ -1114,6 +1115,37 @@ static struct virtqueue *vring_create_virtqueue_split(
- 	return vq;
+@@ -949,28 +949,19 @@ static void vring_free_split(struct vring_virtqueue_split *vring,
+ 	kfree(vring->desc_extra);
  }
  
-+static int virtqueue_resize_split(struct virtqueue *_vq, u32 num)
-+{
-+	struct vring_virtqueue *vq = to_vvq(_vq);
-+	struct vring_virtqueue_split vring = {};
-+	struct virtio_device *vdev = _vq->vdev;
-+	int err;
+-static struct virtqueue *vring_create_virtqueue_split(
+-	unsigned int index,
+-	unsigned int num,
+-	unsigned int vring_align,
+-	struct virtio_device *vdev,
+-	bool weak_barriers,
+-	bool may_reduce_num,
+-	bool context,
+-	bool (*notify)(struct virtqueue *),
+-	void (*callback)(struct virtqueue *),
+-	const char *name)
++static int vring_alloc_queue_split(struct vring_virtqueue_split *vring,
++				   struct virtio_device *vdev,
++				   u32 num,
++				   unsigned int vring_align,
++				   bool may_reduce_num)
+ {
+-	struct virtqueue *vq;
+ 	void *queue = NULL;
+ 	dma_addr_t dma_addr;
+-	size_t queue_size_in_bytes;
+-	struct vring vring;
+ 
+ 	/* We assume num is a power of 2. */
+ 	if (num & (num - 1)) {
+ 		dev_warn(&vdev->dev, "Bad virtqueue length %u\n", num);
+-		return NULL;
++		return -EINVAL;
+ 	}
+ 
+ 	/* TODO: allocate each queue chunk individually */
+@@ -981,11 +972,11 @@ static struct virtqueue *vring_create_virtqueue_split(
+ 		if (queue)
+ 			break;
+ 		if (!may_reduce_num)
+-			return NULL;
++			return -ENOMEM;
+ 	}
+ 
+ 	if (!num)
+-		return NULL;
++		return -ENOMEM;
+ 
+ 	if (!queue) {
+ 		/* Try to get a single page. You are my only hope! */
+@@ -993,21 +984,46 @@ static struct virtqueue *vring_create_virtqueue_split(
+ 					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
+ 	}
+ 	if (!queue)
+-		return NULL;
++		return -ENOMEM;
 +
-+	err = vring_alloc_queue_split(&vring, vdev, num, vq->split.vring_align,
-+				      vq->split.may_reduce_num);
-+	if (err)
-+		goto err;
-+
-+	err = vring_alloc_state_extra_split(&vring);
-+	if (err) {
-+		vring_free_split(&vring, vdev);
-+		goto err;
-+	}
-+
-+	vring_free(&vq->vq);
-+
-+	virtqueue_init(vq, vring.vring.num);
-+	virtqueue_vring_attach_split(vq, &vring);
-+	virtqueue_vring_init_split(vq);
++	vring_init(&vring->vring, num, queue, vring_align);
+ 
+-	queue_size_in_bytes = vring_size(num, vring_align);
+-	vring_init(&vring, num, queue, vring_align);
++	vring->queue_dma_addr = dma_addr;
++	vring->queue_size_in_bytes = vring_size(num, vring_align);
 +
 +	return 0;
-+
-+err:
-+	virtqueue_reinit_split(vq);
-+	return -ENOMEM;
 +}
 +
++static struct virtqueue *vring_create_virtqueue_split(
++	unsigned int index,
++	unsigned int num,
++	unsigned int vring_align,
++	struct virtio_device *vdev,
++	bool weak_barriers,
++	bool may_reduce_num,
++	bool context,
++	bool (*notify)(struct virtqueue *),
++	void (*callback)(struct virtqueue *),
++	const char *name)
++{
++	struct vring_virtqueue_split vring = {};
++	struct virtqueue *vq;
++	int err;
++
++	err = vring_alloc_queue_split(&vring, vdev, num, vring_align,
++				      may_reduce_num);
++	if (err)
++		return NULL;
  
- /*
-  * Packed ring specific functions - *_packed().
+-	vq = __vring_new_virtqueue(index, vring, vdev, weak_barriers, context,
+-				   notify, callback, name);
++	vq = __vring_new_virtqueue(index, vring.vring, vdev, weak_barriers,
++				   context, notify, callback, name);
+ 	if (!vq) {
+-		vring_free_queue(vdev, queue_size_in_bytes, queue,
+-				 dma_addr);
++		vring_free_split(&vring, vdev);
+ 		return NULL;
+ 	}
+ 
+-	to_vvq(vq)->split.queue_dma_addr = dma_addr;
+-	to_vvq(vq)->split.queue_size_in_bytes = queue_size_in_bytes;
++	to_vvq(vq)->split.queue_dma_addr = vring.queue_dma_addr;
++	to_vvq(vq)->split.queue_size_in_bytes = vring.queue_size_in_bytes;
+ 	to_vvq(vq)->we_own_ring = true;
+ 
+ 	return vq;
 -- 
 2.31.0
 
