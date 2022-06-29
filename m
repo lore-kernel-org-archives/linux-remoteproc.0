@@ -2,125 +2,127 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D08CCC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 08:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF8AC43334
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 17:43:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231635AbiF2ICH (ORCPT
+        id S229635AbiF2RnZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 04:02:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48734 "EHLO
+        Wed, 29 Jun 2022 13:43:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232356AbiF2ICD (ORCPT
+        with ESMTP id S229944AbiF2RnY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Jun 2022 04:02:03 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 233363B002
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 01:02:02 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id mf9so31004150ejb.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 01:02:02 -0700 (PDT)
+        Wed, 29 Jun 2022 13:43:24 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D40C20BEE
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 10:43:22 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d17so15742163pfq.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 10:43:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Viz1ZP9VtvajOYcBqzTA3hqYlKNwj1b1TN6tp7yivm4=;
-        b=iaWcatXWkv8khJ9y4MBhrfxkn3ToqWrxQyLJQkkWX/9f4c5UKIlkD0rd0v7r99gV1E
-         ujrr6uAV32ZkmS+wAw4LdQefshb1Ek/pV6a0nXHDTfk7oWI8BQRstoeDkXFuUHbRBaBj
-         BrbGYePz6ImBTByIHKT0Jl65XkjSsyTY1Gdmcvx2GdN3uBpQ2s9zzw8yKBqZT8LVMpGu
-         WVsBvKxQYvVxseQivZTuiWjlYnAxw757+Z7yZ5EQ5KqhhjW6AViH7uvXpT0nBN/swmIM
-         tNq8iIsjqY2mfqyA1LFR/X5Om92MlVvlWVLMUFOrSva9Afrqf0/0E+Prk4aQxwgqQ5pv
-         wqzA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JYmoTNNj2u0Lok7u1LjrEtUQiPn3m9TUK3sK1Y6kL4A=;
+        b=rUeuBihYsq497ezCoCAJZAN+xjweZLDohCiI8Ix/wAaJ/zhbrEh0XGF1MSRHmVfzCP
+         9QVgiWs+6ILQq4RlM4wcMdNpcH+bjSNJkg7rqUTdUawMmgI0zXfIcpnxsm6au2kQmiCt
+         hNDnwhgmYde+YY1XOZVZnOYI6q3J/NDuP6aiCCAIaxLVuIh7Z1eLuSO+CDIZ8wknyPBr
+         PaFmfICaASRnV4xv7mu0F01fF8YLTqdlKd7AXKLLbkJi/ivTWCeFUQCeZWQJTidEgNE/
+         JtmNs+U0sxiKPhEPsiZdpGoWNVpXKkukGDuEd+AIiudVKpEGRbLYnTxxS4g7RkFVtpAs
+         LZVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Viz1ZP9VtvajOYcBqzTA3hqYlKNwj1b1TN6tp7yivm4=;
-        b=ggZHS5MDRpJzlfQscH1rT1OOZAMo9SX0Kad5gMLTfk+EndWH90DB1F1yCAWkhXC0dl
-         T/EX7N3Wl6f0D66K3ykl92fU+gZAOdhWrCRk9fDg47WL6Rn45j53zXu4G1PzIR2MP6HR
-         jzvuESamOMoAUNUmnSYxHZTnlZDNEn2dB8HziI1bnM6BcPWNRy7rIoQmZVe/KljZ1CT5
-         CtwljI1u3C6Y5e9bhKUuZ80sbj90zUqktwVPo3bhm7cmk5qprqEe/+mU2YLcgNf6bKFu
-         p5detQZ/O524A5tIeOwIIo0kQ57mFrnAUwqpZrFuRbY/ZNYHb54sD6p0vx3TExTJ54ty
-         DlyQ==
-X-Gm-Message-State: AJIora+VBJPWTDM8OBfYM7otfCdfFqxFpV/SE3izkZ9M0/PEyECHxALB
-        UAzXTBYezRO3KCHS2hS2LlVeQw==
-X-Google-Smtp-Source: AGRyM1vO7SGdnsCGYLmlnxZnMJUpI/1lJrFBUrqZgXT8n+78HOyrtE1+gmTy3RSQtFx4xDctKuDt6A==
-X-Received: by 2002:a17:907:a0ca:b0:722:f8df:7d21 with SMTP id hw10-20020a170907a0ca00b00722f8df7d21mr1944691ejc.393.1656489720637;
-        Wed, 29 Jun 2022 01:02:00 -0700 (PDT)
-Received: from [192.168.0.183] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
-        by smtp.gmail.com with ESMTPSA id d20-20020aa7ce14000000b00435d4179bbdsm11054730edv.4.2022.06.29.01.01.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jun 2022 01:01:59 -0700 (PDT)
-Message-ID: <9237dbad-12de-cd0f-82dd-40c08bf2a47b@linaro.org>
-Date:   Wed, 29 Jun 2022 10:01:58 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v2] rpmsg: fix possible refcount leak in
- rpmsg_register_device_override()
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Hangyu Hua <hbh25y@gmail.com>, bjorn.andersson@linaro.org,
-        gregkh@linuxfoundation.org, linux-remoteproc@vger.kernel.org,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JYmoTNNj2u0Lok7u1LjrEtUQiPn3m9TUK3sK1Y6kL4A=;
+        b=faeadNrrfjUT3s++b8EIO88rPuos8A04rjJZA/2HnrCm0RGThKyv5tAn6JI/01sa3X
+         yW5RrlsmcyPQD2gzJJBWeHaW1s5/IZRmKFYXXuMABdlJXPI2ekgrcuhKxGy2QkvcnMbF
+         QKyev15OYJe3esHWKb4PgzdgoXWpgDUbb6To+G9/Nn+ytYZL3H7nHZx6vfj4vp65fa1C
+         TlBtdx547RDJLW/5RnPdyJCGBWv7OZn2GnByM3P4/+2HKbGKWuGwHWlqqJ7RS8i29G8D
+         ne9zM4ANBU5iqpgsD+dxjQmWA03tsrT2dXZH7P+idAodPPtWxNBTzo5HDQ1+fqRfY3W4
+         KhUQ==
+X-Gm-Message-State: AJIora8eXU7zl1m16R3U0M7rYfNbIROtQizXFqEU9EEbpZ6d7BmgfIkP
+        xs5X/LrybwypkdPHsRngfkXIgA==
+X-Google-Smtp-Source: AGRyM1sLJtpLkVERiBCjUAP4WJMQReS9VEfnekz+M+5IbfdSpho2//yeUPx0+GXDAPGWBEyGLl/Syw==
+X-Received: by 2002:a62:ee07:0:b0:525:1a3e:bebb with SMTP id e7-20020a62ee07000000b005251a3ebebbmr11229314pfi.77.1656524602172;
+        Wed, 29 Jun 2022 10:43:22 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id f20-20020a170902ab9400b0016a109c7606sm11796430plr.259.2022.06.29.10.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jun 2022 10:43:20 -0700 (PDT)
+Date:   Wed, 29 Jun 2022 11:43:18 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Anup Patel <apatel@ventanamicro.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Atish Patra <atishp@atishpatra.org>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Anup Patel <anup@brainfault.org>,
+        linux-remoteproc@vger.kernel.org, kvm-riscv@lists.infradead.org,
         linux-kernel@vger.kernel.org
-References: <20220624024120.11576-1-hbh25y@gmail.com>
- <20220624173621.GC1736477@p14s>
- <47db0cd8-c940-6e74-f8dc-8e3931e13d80@linaro.org>
- <CANLsYkzT5ZROReZNQ_eYL-r49ijaZYZ5TzdMpqy1RK0_hvW3_Q@mail.gmail.com>
- <0bbee169-6fdc-b50e-87f7-1551dac821e2@linaro.org>
- <20220628163107.GA1942439@p14s>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220628163107.GA1942439@p14s>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] rpmsg: virtio: Fix broken rpmsg_probe()
+Message-ID: <20220629174318.GB2018382@p14s>
+References: <20220608171334.730739-1-apatel@ventanamicro.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220608171334.730739-1-apatel@ventanamicro.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 28/06/2022 18:31, Mathieu Poirier wrote:
-> On Sat, Jun 25, 2022 at 09:40:36PM +0200, Krzysztof Kozlowski wrote:
->> On 24/06/2022 20:43, Mathieu Poirier wrote:
->>> On Fri, 24 Jun 2022 at 11:45, Krzysztof Kozlowski
->>> <krzysztof.kozlowski@linaro.org> wrote:
->>>>
->>>> On 24/06/2022 19:36, Mathieu Poirier wrote:
->>>>> On Fri, Jun 24, 2022 at 10:41:20AM +0800, Hangyu Hua wrote:
->>>>>> rpmsg_register_device_override need to call put_device to free vch when
->>>>>> driver_set_override fails.
->>>>>>
->>>>>> Fix this by adding a put_device() to the error path.
->>>>>>
->>>>>> Fixes: bb17d110cbf2 ("rpmsg: Fix calling device_lock() on non-initialized device")
->>>>>
->>>>> This is funny... Neither Bjorn nor I have reviewed this patch...
->>>>
->>>> It was a fix for commit in Greg's tree and Greg's pick it up after a
->>>> week or something. I am not sure if that's actually funny that Greg has
->>>> to pick it up without review :(
->>>>
->>>
->>> The patch was sent out on April 19th and committed 3 days later on
->>> April 22nd.  Is 3 days the new patch review time standard?
->>
->> Neither 19th, nor 22nd are correct. The patch which you set you never
->> reviewed, so commit bb17d110cbf2 was sent on 29th of April:
->> https://lore.kernel.org/all/20220429195946.1061725-1-krzysztof.kozlowski@linaro.org/
->>
+Hi Anup,
+
+On Wed, Jun 08, 2022 at 10:43:34PM +0530, Anup Patel wrote:
+> The rpmsg_probe() is broken at the moment because virtqueue_add_inbuf()
+> fails due to both virtqueues (Rx and Tx) marked as broken by the
+> __vring_new_virtqueue() function. To solve this, virtio_device_ready()
+> (which unbreaks queues) should be called before virtqueue_add_inbuf().
 > 
-> Twitchy fingers... Those dates are for commit 42cd402b8fd4, which is referenced
-> by bb17d110cbf2.
+> Fixes: 8b4ec69d7e09 ("virtio: harden vring IRQ")
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> The end result is the same, that is patches related to the remoteproc/rpmsg
-> subsystems (or any subsystem) should not be committed before their maintainers
-> have the opportunity to review them.
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 905ac7910c98..71a64d2c7644 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -929,6 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	/* and half is dedicated for TX */
+>  	vrp->sbufs = bufs_va + total_buf_space / 2;
+>  
+> +	/* From this point on, we can notify and get callbacks. */
+> +	virtio_device_ready(vdev);
+> +
 
-I think two months for your involvement was enough. During this two
-months there was a comment from Bjorn, applied and later quite plenty of
-time to revise/check/review.
+Calling virtio_device_ready() here means that virtqueue_get_buf_ctx_split() can
+potentially be called (by way of rpmsg_recv_done()), which will race with
+virtqueue_add_inbuf().  If buffers in the virtqueue aren't available then
+rpmsg_recv_done() will fail, potentially breaking remote processors' state
+machines that don't expect their initial name service to fail when the "device"
+has been marked as ready.
 
-I understand that we are all busy, pretty often working on upstream in
-spare time etc. So no one here complained that you did not review this
-patch within two months. But I don't understand what shall we do more if
-two months are not enough - wait four months? Six months?
+What does make me curious though is that nobody on the remoteproc mailing list
+has complained about commit 8b4ec69d7e09 breaking their environment... By now,
+i.e rc4, that should have happened.  Anyone from TI, ST and Xilinx care to test this on
+their rig?
 
-Best regards,
-Krzysztof
+Thanks,
+Mathieu
+
+>  	/* set up the receive buffers */
+>  	for (i = 0; i < vrp->num_bufs / 2; i++) {
+>  		struct scatterlist sg;
+> @@ -983,9 +986,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	 */
+>  	notify = virtqueue_kick_prepare(vrp->rvq);
+>  
+> -	/* From this point on, we can notify and get callbacks. */
+> -	virtio_device_ready(vdev);
+> -
+>  	/* tell the remote processor it can start sending messages */
+>  	/*
+>  	 * this might be concurrent with callbacks, but we are only
+> -- 
+> 2.34.1
+> 
