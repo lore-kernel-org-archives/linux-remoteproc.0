@@ -2,161 +2,125 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E92C8CCA485
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 07:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D08CCC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 08:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230491AbiF2HB5 (ORCPT
+        id S231635AbiF2ICH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:01:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40388 "EHLO
+        Wed, 29 Jun 2022 04:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232876AbiF2G74 (ORCPT
+        with ESMTP id S232356AbiF2ICD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Jun 2022 02:59:56 -0400
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB69B36B55;
-        Tue, 28 Jun 2022 23:58:30 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0VHmYPBX_1656485900;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VHmYPBX_1656485900)
-          by smtp.aliyun-inc.com;
-          Wed, 29 Jun 2022 14:58:21 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     virtualization@lists.linux-foundation.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com
-Subject: [PATCH v11 39/40] virtio_net: support tx queue resize
-Date:   Wed, 29 Jun 2022 14:56:55 +0800
-Message-Id: <20220629065656.54420-40-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
-References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+        Wed, 29 Jun 2022 04:02:03 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 233363B002
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 01:02:02 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id mf9so31004150ejb.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 01:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Viz1ZP9VtvajOYcBqzTA3hqYlKNwj1b1TN6tp7yivm4=;
+        b=iaWcatXWkv8khJ9y4MBhrfxkn3ToqWrxQyLJQkkWX/9f4c5UKIlkD0rd0v7r99gV1E
+         ujrr6uAV32ZkmS+wAw4LdQefshb1Ek/pV6a0nXHDTfk7oWI8BQRstoeDkXFuUHbRBaBj
+         BrbGYePz6ImBTByIHKT0Jl65XkjSsyTY1Gdmcvx2GdN3uBpQ2s9zzw8yKBqZT8LVMpGu
+         WVsBvKxQYvVxseQivZTuiWjlYnAxw757+Z7yZ5EQ5KqhhjW6AViH7uvXpT0nBN/swmIM
+         tNq8iIsjqY2mfqyA1LFR/X5Om92MlVvlWVLMUFOrSva9Afrqf0/0E+Prk4aQxwgqQ5pv
+         wqzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Viz1ZP9VtvajOYcBqzTA3hqYlKNwj1b1TN6tp7yivm4=;
+        b=ggZHS5MDRpJzlfQscH1rT1OOZAMo9SX0Kad5gMLTfk+EndWH90DB1F1yCAWkhXC0dl
+         T/EX7N3Wl6f0D66K3ykl92fU+gZAOdhWrCRk9fDg47WL6Rn45j53zXu4G1PzIR2MP6HR
+         jzvuESamOMoAUNUmnSYxHZTnlZDNEn2dB8HziI1bnM6BcPWNRy7rIoQmZVe/KljZ1CT5
+         CtwljI1u3C6Y5e9bhKUuZ80sbj90zUqktwVPo3bhm7cmk5qprqEe/+mU2YLcgNf6bKFu
+         p5detQZ/O524A5tIeOwIIo0kQ57mFrnAUwqpZrFuRbY/ZNYHb54sD6p0vx3TExTJ54ty
+         DlyQ==
+X-Gm-Message-State: AJIora+VBJPWTDM8OBfYM7otfCdfFqxFpV/SE3izkZ9M0/PEyECHxALB
+        UAzXTBYezRO3KCHS2hS2LlVeQw==
+X-Google-Smtp-Source: AGRyM1vO7SGdnsCGYLmlnxZnMJUpI/1lJrFBUrqZgXT8n+78HOyrtE1+gmTy3RSQtFx4xDctKuDt6A==
+X-Received: by 2002:a17:907:a0ca:b0:722:f8df:7d21 with SMTP id hw10-20020a170907a0ca00b00722f8df7d21mr1944691ejc.393.1656489720637;
+        Wed, 29 Jun 2022 01:02:00 -0700 (PDT)
+Received: from [192.168.0.183] (xdsl-188-155-176-92.adslplus.ch. [188.155.176.92])
+        by smtp.gmail.com with ESMTPSA id d20-20020aa7ce14000000b00435d4179bbdsm11054730edv.4.2022.06.29.01.01.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jun 2022 01:01:59 -0700 (PDT)
+Message-ID: <9237dbad-12de-cd0f-82dd-40c08bf2a47b@linaro.org>
+Date:   Wed, 29 Jun 2022 10:01:58 +0200
 MIME-Version: 1.0
-X-Git-Hash: 3fdaf102dd89
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v2] rpmsg: fix possible refcount leak in
+ rpmsg_register_device_override()
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Hangyu Hua <hbh25y@gmail.com>, bjorn.andersson@linaro.org,
+        gregkh@linuxfoundation.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220624024120.11576-1-hbh25y@gmail.com>
+ <20220624173621.GC1736477@p14s>
+ <47db0cd8-c940-6e74-f8dc-8e3931e13d80@linaro.org>
+ <CANLsYkzT5ZROReZNQ_eYL-r49ijaZYZ5TzdMpqy1RK0_hvW3_Q@mail.gmail.com>
+ <0bbee169-6fdc-b50e-87f7-1551dac821e2@linaro.org>
+ <20220628163107.GA1942439@p14s>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220628163107.GA1942439@p14s>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch implements the resize function of the tx queues.
-Based on this function, it is possible to modify the ring num of the
-queue.
+On 28/06/2022 18:31, Mathieu Poirier wrote:
+> On Sat, Jun 25, 2022 at 09:40:36PM +0200, Krzysztof Kozlowski wrote:
+>> On 24/06/2022 20:43, Mathieu Poirier wrote:
+>>> On Fri, 24 Jun 2022 at 11:45, Krzysztof Kozlowski
+>>> <krzysztof.kozlowski@linaro.org> wrote:
+>>>>
+>>>> On 24/06/2022 19:36, Mathieu Poirier wrote:
+>>>>> On Fri, Jun 24, 2022 at 10:41:20AM +0800, Hangyu Hua wrote:
+>>>>>> rpmsg_register_device_override need to call put_device to free vch when
+>>>>>> driver_set_override fails.
+>>>>>>
+>>>>>> Fix this by adding a put_device() to the error path.
+>>>>>>
+>>>>>> Fixes: bb17d110cbf2 ("rpmsg: Fix calling device_lock() on non-initialized device")
+>>>>>
+>>>>> This is funny... Neither Bjorn nor I have reviewed this patch...
+>>>>
+>>>> It was a fix for commit in Greg's tree and Greg's pick it up after a
+>>>> week or something. I am not sure if that's actually funny that Greg has
+>>>> to pick it up without review :(
+>>>>
+>>>
+>>> The patch was sent out on April 19th and committed 3 days later on
+>>> April 22nd.  Is 3 days the new patch review time standard?
+>>
+>> Neither 19th, nor 22nd are correct. The patch which you set you never
+>> reviewed, so commit bb17d110cbf2 was sent on 29th of April:
+>> https://lore.kernel.org/all/20220429195946.1061725-1-krzysztof.kozlowski@linaro.org/
+>>
+> 
+> Twitchy fingers... Those dates are for commit 42cd402b8fd4, which is referenced
+> by bb17d110cbf2.
+> 
+> The end result is the same, that is patches related to the remoteproc/rpmsg
+> subsystems (or any subsystem) should not be committed before their maintainers
+> have the opportunity to review them.
 
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
----
- drivers/net/virtio_net.c | 48 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+I think two months for your involvement was enough. During this two
+months there was a comment from Bjorn, applied and later quite plenty of
+time to revise/check/review.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 6ab16fd193e5..fd358462f802 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -135,6 +135,9 @@ struct send_queue {
- 	struct virtnet_sq_stats stats;
- 
- 	struct napi_struct napi;
-+
-+	/* Record whether sq is in reset state. */
-+	bool reset;
- };
- 
- /* Internal representation of a receive virtqueue */
-@@ -279,6 +282,7 @@ struct padded_vnet_hdr {
- };
- 
- static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *buf);
-+static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void *buf);
- 
- static bool is_xdp_frame(void *ptr)
- {
-@@ -1603,6 +1607,11 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
- 		return;
- 
- 	if (__netif_tx_trylock(txq)) {
-+		if (READ_ONCE(sq->reset)) {
-+			__netif_tx_unlock(txq);
-+			return;
-+		}
-+
- 		do {
- 			virtqueue_disable_cb(sq->vq);
- 			free_old_xmit_skbs(sq, true);
-@@ -1868,6 +1877,45 @@ static int virtnet_rx_resize(struct virtnet_info *vi,
- 	return err;
- }
- 
-+static int virtnet_tx_resize(struct virtnet_info *vi,
-+			     struct send_queue *sq, u32 ring_num)
-+{
-+	struct netdev_queue *txq;
-+	int err, qindex;
-+
-+	qindex = sq - vi->sq;
-+
-+	virtnet_napi_tx_disable(&sq->napi);
-+
-+	txq = netdev_get_tx_queue(vi->dev, qindex);
-+
-+	/* 1. wait all ximt complete
-+	 * 2. fix the race of netif_stop_subqueue() vs netif_start_subqueue()
-+	 */
-+	__netif_tx_lock_bh(txq);
-+
-+	/* Prevent rx poll from accessing sq. */
-+	WRITE_ONCE(sq->reset, true);
-+
-+	/* Prevent the upper layer from trying to send packets. */
-+	netif_stop_subqueue(vi->dev, qindex);
-+
-+	__netif_tx_unlock_bh(txq);
-+
-+	err = virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf);
-+	if (err)
-+		netdev_err(vi->dev, "resize tx fail: tx queue index: %d err: %d\n", qindex, err);
-+
-+	/* Memory barrier before set reset and start subqueue. */
-+	smp_mb();
-+
-+	WRITE_ONCE(sq->reset, false);
-+	netif_tx_wake_queue(txq);
-+
-+	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
-+	return err;
-+}
-+
- /*
-  * Send command via the control virtqueue and check status.  Commands
-  * supported by the hypervisor, as indicated by feature bits, should
--- 
-2.31.0
+I understand that we are all busy, pretty often working on upstream in
+spare time etc. So no one here complained that you did not review this
+patch within two months. But I don't understand what shall we do more if
+two months are not enough - wait four months? Six months?
 
+Best regards,
+Krzysztof
