@@ -2,54 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE5BC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jun 2022 19:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1902BC43334
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jun 2022 19:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236598AbiF3T2R (ORCPT
+        id S236786AbiF3T3d (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Jun 2022 15:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59348 "EHLO
+        Thu, 30 Jun 2022 15:29:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236529AbiF3T2K (ORCPT
+        with ESMTP id S236758AbiF3T3b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Jun 2022 15:28:10 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA7882710
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jun 2022 12:28:06 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id u9so539632oiv.12
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jun 2022 12:28:06 -0700 (PDT)
+        Thu, 30 Jun 2022 15:29:31 -0400
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0E1D43386
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jun 2022 12:29:30 -0700 (PDT)
+Received: by mail-oi1-x22f.google.com with SMTP id h65so556053oia.11
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Jun 2022 12:29:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Be8QNcCzBh2OVJvduXkHkZHJYzkPyNZW5yQHcwTAmSA=;
-        b=N8ycTjRtAbg+TjfoZ3hOkQeAn7uV7hJlsVLOghZ6Wb4Yinwr16MSGOs3SR4SaiK2+t
-         Su/ejV+XTyD5m+P3z3ljjkJ9PfVuxyhz3tdUikcPG5vx9OIviqPgUc80uh6jHC8yHnaW
-         MpgAIjrYyN4v8h5DAtTvj5AwK34NoOifFHyXryAnf9Ei6pWo5xe8zQ25NP7LvChQzeyl
-         1hqgq1ukI6y1ssU1yCz6kyjXyCOpCzMs/0KIrbXhxsnEpNl76H3PBv1fm7U7D2yOp8Ri
-         Jyju2aFUTnzG7iE0C/Du9maCuMPgwWrdpbaqDo7Z/fWp+sT+obzdTe1V9ALUh7oQVooj
-         VcLg==
+        bh=fhTlI95dhMQbdEg/ufyk+UwC70ISSv1cQXARFGMlr9w=;
+        b=uNEpkb+duVeG68QoyxqUVOuYFKeM8jvvXhZpnf0CVl9+N7LvKt2TXIwLnNz4N2f/Hk
+         bODPNzb5TiFPtcVrYJv1DOSL/uI0KmLXaUOl91KwOzCWY1Q2J7BNlawzG3dtbPfX9Fj3
+         IsTSaVvG2Li1vLAYH0gW4YMV9XrCgosYWe++ejitpn+4sYldz+vMPh+tu1udWKRrfv9m
+         kQp4T3rv1pFQ8xGZRSZfjLvgBmq96R3lOd9xdE2s/pL6XRUDDqdwKMxUFqDPuaFR/NzV
+         GGISO9HAXQs7VOO/NnrFQMoKOsG/M8ItJ8ldiJwe+WhStMwe98Siak+zYD7ixqUqKlk8
+         kzvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Be8QNcCzBh2OVJvduXkHkZHJYzkPyNZW5yQHcwTAmSA=;
-        b=TnDvQTPPEmtXuAMAf8apTNPkj+2goFNbrmvSBWHI5bFmfI2DdwJdwO72qbwFhU/CE7
-         T1jguvZeHtiWcMFWT/2/5fkb13p0gaEIlxcmRbdpIIGBkPk6yefzWnTO062eBdo3OAjU
-         +A1qYo4Pr1KTRqTUuUn9AdHslX7VyZvm46M31OWKmsjsLzlf3Vb28jrVoshe0GAsaTRL
-         QtEMozAirZJw3+FVWedL1Fu7ZbXLZexpcw+RTa/3NBbg9kYFwke1Nl7KrELw6mBsNbcg
-         YFS9IyynKunqKABlitrjmk8bAWTZ2oQgGyPUAYkVtIBMcnMtVOS0whFiBkdkWjjzB4+U
-         3TBQ==
-X-Gm-Message-State: AJIora8aLg+DGdEwAb4VwDfIo8vOQJAx/9b725QQPDsJHRliIASThFwl
-        weOmEaW0X4U49kqjaUxpq7/0Og==
-X-Google-Smtp-Source: AGRyM1tKrtGPmsIuyjwRTsLjKZZHCHYFwdBQOxt+vzmBA0QSvpywqAo9YWprSidSqREkAOzK7SGvSQ==
-X-Received: by 2002:a05:6808:1490:b0:335:b325:7ae7 with SMTP id e16-20020a056808149000b00335b3257ae7mr5658305oiw.154.1656617286095;
-        Thu, 30 Jun 2022 12:28:06 -0700 (PDT)
+        bh=fhTlI95dhMQbdEg/ufyk+UwC70ISSv1cQXARFGMlr9w=;
+        b=Z0PkVeBwTo5ymKEJP6T10SVds1kfwbrMSlCjAAvhPIQE/R64av+BhUm1Cqj+K6Z69C
+         S9DO2Ijh4aEIMVfHANZ5Pd9gM8zknsqw8kSctF3VMAUrl+De04/tdwBiN3JPSWNo+xDV
+         MeDFVoQycbHxGO2nVmjtnEXMHSe2Kc/4HNA6ucfSHcsPEOvi7CgKQrBAzgH6awzYMrLB
+         xLx+9gHmRLVcGGnHJLO4ElZGWG3hst/ruGgkUIIDcaVN9DOJhSJvxRyr+OLN1hLB5eQh
+         0UAxfMG1sofdFI3GWXqWAa7Tw2tyutIcdmy2ys/1nEz42FJBYW2z40Ox6C/8DtevKZK7
+         hwMw==
+X-Gm-Message-State: AJIora/n+eT9zYl0+0+qyCZf2tX8W6nnGb1ObHNBOYsTc3RA29a8We2+
+        MlD/yOGwMBPxr9cBKNDhTRa0sg==
+X-Google-Smtp-Source: AGRyM1vKCHlTcfruP18DhjDQDCsUTzTvsVJBE7ndA2a+KgvmK0GRID9hZwZWTKcgcJ0zFL6R2xWyRw==
+X-Received: by 2002:aca:a913:0:b0:335:1bd8:2d03 with SMTP id s19-20020acaa913000000b003351bd82d03mr6405481oie.56.1656617370187;
+        Thu, 30 Jun 2022 12:29:30 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 38-20020a9d0c29000000b0060bf6213084sm5354954otr.27.2022.06.30.12.28.05
+        by smtp.gmail.com with ESMTPSA id t2-20020a4ad0a2000000b0042599b92c21sm8721746oor.47.2022.06.30.12.29.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jun 2022 12:28:05 -0700 (PDT)
-Date:   Thu, 30 Jun 2022 14:28:03 -0500
+        Thu, 30 Jun 2022 12:29:29 -0700 (PDT)
+Date:   Thu, 30 Jun 2022 14:29:27 -0500
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Sibi Sankar <quic_sibis@quicinc.com>
 Cc:     dmitry.baryshkov@linaro.org, agross@kernel.org,
@@ -57,7 +57,7 @@ Cc:     dmitry.baryshkov@linaro.org, agross@kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] remoteproc: qcom: pas: Add decrypt shutdown support for
  modem
-Message-ID: <Yr35Q2G8NNvYaI8M@builder.lan>
+Message-ID: <Yr35lyyX+u76m/Tu@builder.lan>
 References: <1653031684-14771-1-git-send-email-quic_sibis@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -68,71 +68,17 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On Fri 20 May 02:28 CDT 2022, Sibi Sankar wrote:
-
-> The initial shutdown request to modem on SM8450 SoCs would start the
-> decryption process and will keep returning errors until the modem shutdown
-> is complete. Fix this by retrying shutdowns in fixed intervals.
-> 
-> Err Logs on modem shutdown:
-> qcom_q6v5_pas 4080000.remoteproc: failed to shutdown: -22
-> remoteproc remoteproc3: can't stop rproc: -22
-> 
-> Fixes: 5cef9b48458d ("remoteproc: qcom: pas: Add SM8450 remoteproc support")
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-
-Looks reasonable, just two inquiries below.
-
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 67 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 66 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 6ae39c5653b1..d04c4b877e12 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -8,6 +8,7 @@
->   */
->  
->  #include <linux/clk.h>
-> +#include <linux/delay.h>
->  #include <linux/firmware.h>
->  #include <linux/interrupt.h>
->  #include <linux/kernel.h>
-> @@ -29,6 +30,8 @@
->  #include "qcom_q6v5.h"
->  #include "remoteproc_internal.h"
->  
-> +#define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
-> +
->  struct adsp_data {
->  	int crash_reason_smem;
->  	const char *firmware_name;
-> @@ -36,6 +39,7 @@ struct adsp_data {
->  	unsigned int minidump_id;
->  	bool has_aggre2_clk;
->  	bool auto_boot;
-> +	bool decrypt_shutdown;
->  
->  	char **proxy_pd_names;
->  
-> @@ -65,6 +69,7 @@ struct qcom_adsp {
->  	unsigned int minidump_id;
->  	int crash_reason_smem;
->  	bool has_aggre2_clk;
-> +	bool decrypt_shutdown;
->  	const char *info_name;
->  
->  	struct completion start_done;
-> @@ -128,6 +133,20 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
->  	}
->  }
->  
 > +static int adsp_decrypt_shutdown(struct qcom_adsp *adsp)
+
+Forgot to write down one comment, how about naming this
+adsp_shutdown_poll_decrypt() to make it slightly more clear from the
+name what's going on here?
+
+Thanks,
+Bjorn
+
 > +{
 > +	int retry_num = 50;
-
-Seems unsigned to me.
-
 > +	int ret = -EINVAL;
 > +
 > +	while (retry_num && ret) {
@@ -140,49 +86,7 @@ Seems unsigned to me.
 > +		ret = qcom_scm_pas_shutdown(adsp->pas_id);
 > +		retry_num--;
 > +	}
-
-Will qcom_scm_pas_shutdown() ever return any other errors than -EINVAL?
-
-Would it make sense to make this:
-
-	do {
-		...;
-	} while (ret == -EINVAL && --retry_num);
-
 > +
 > +	return ret;
 > +}
 > +
->  static int adsp_unprepare(struct rproc *rproc)
->  {
->  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> @@ -249,6 +268,9 @@ static int adsp_stop(struct rproc *rproc)
->  		dev_err(adsp->dev, "timed out on wait\n");
->  
->  	ret = qcom_scm_pas_shutdown(adsp->pas_id);
-> +	if (ret && adsp->decrypt_shutdown)
-> +		ret = adsp_decrypt_shutdown(adsp);
-> +
->  	if (ret)
->  		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
->  
-> @@ -459,6 +481,7 @@ static int adsp_probe(struct platform_device *pdev)
->  	adsp->pas_id = desc->pas_id;
->  	adsp->has_aggre2_clk = desc->has_aggre2_clk;
->  	adsp->info_name = desc->sysmon_name;
-> +	adsp->decrypt_shutdown = desc->decrypt_shutdown;
->  	platform_set_drvdata(pdev, adsp);
->  
->  	device_wakeup_enable(adsp->dev);
-> @@ -533,6 +556,7 @@ static const struct adsp_data adsp_resource_init = {
->  		.pas_id = 1,
->  		.has_aggre2_clk = false,
->  		.auto_boot = true,
-> +		.decrypt_shutdown = false,
-
-With all these booleans, I would prefer if we cleaned it up to not list
-the disabled options. That would make it quicker to spot which features
-are actually enabled for each remoteproc.
-
-Regards,
-Bjorn
