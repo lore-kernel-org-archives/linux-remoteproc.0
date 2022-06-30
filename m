@@ -2,127 +2,284 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF8AC43334
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Jun 2022 17:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DEFCCA481
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jun 2022 06:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiF2RnZ (ORCPT
+        id S231566AbiF3Gf6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Jun 2022 13:43:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50510 "EHLO
+        Thu, 30 Jun 2022 02:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229944AbiF2RnY (ORCPT
+        with ESMTP id S231892AbiF3Gf6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Jun 2022 13:43:24 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D40C20BEE
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 10:43:22 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d17so15742163pfq.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 10:43:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JYmoTNNj2u0Lok7u1LjrEtUQiPn3m9TUK3sK1Y6kL4A=;
-        b=rUeuBihYsq497ezCoCAJZAN+xjweZLDohCiI8Ix/wAaJ/zhbrEh0XGF1MSRHmVfzCP
-         9QVgiWs+6ILQq4RlM4wcMdNpcH+bjSNJkg7rqUTdUawMmgI0zXfIcpnxsm6au2kQmiCt
-         hNDnwhgmYde+YY1XOZVZnOYI6q3J/NDuP6aiCCAIaxLVuIh7Z1eLuSO+CDIZ8wknyPBr
-         PaFmfICaASRnV4xv7mu0F01fF8YLTqdlKd7AXKLLbkJi/ivTWCeFUQCeZWQJTidEgNE/
-         JtmNs+U0sxiKPhEPsiZdpGoWNVpXKkukGDuEd+AIiudVKpEGRbLYnTxxS4g7RkFVtpAs
-         LZVQ==
+        Thu, 30 Jun 2022 02:35:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E2862C124
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 23:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656570956;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=njLH7GFfaOXROEX4o3ayXFUqakNk2re9lthQMqB92Q8=;
+        b=Cszq9WKGEorYodXlbXwTLWiLcgFbLynErC83mnoHP8ziyi+UYuQX60rGPm06ecKMlptk15
+        hi21BDtOhmJ9ypK70xVM3gpykg/laNgqewukehMndTM5QVgFf+vZeGX9YXEzHLui3QUkWe
+        +HkXelkSql7Y7+041+vNL5Qm19/YQQc=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-175-mKikxIbtNO-jQEaKzpwc9Q-1; Thu, 30 Jun 2022 02:35:52 -0400
+X-MC-Unique: mKikxIbtNO-jQEaKzpwc9Q-1
+Received: by mail-lf1-f72.google.com with SMTP id bq4-20020a056512150400b0047f7f36efc6so8644679lfb.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jun 2022 23:35:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JYmoTNNj2u0Lok7u1LjrEtUQiPn3m9TUK3sK1Y6kL4A=;
-        b=faeadNrrfjUT3s++b8EIO88rPuos8A04rjJZA/2HnrCm0RGThKyv5tAn6JI/01sa3X
-         yW5RrlsmcyPQD2gzJJBWeHaW1s5/IZRmKFYXXuMABdlJXPI2ekgrcuhKxGy2QkvcnMbF
-         QKyev15OYJe3esHWKb4PgzdgoXWpgDUbb6To+G9/Nn+ytYZL3H7nHZx6vfj4vp65fa1C
-         TlBtdx547RDJLW/5RnPdyJCGBWv7OZn2GnByM3P4/+2HKbGKWuGwHWlqqJ7RS8i29G8D
-         ne9zM4ANBU5iqpgsD+dxjQmWA03tsrT2dXZH7P+idAodPPtWxNBTzo5HDQ1+fqRfY3W4
-         KhUQ==
-X-Gm-Message-State: AJIora8eXU7zl1m16R3U0M7rYfNbIROtQizXFqEU9EEbpZ6d7BmgfIkP
-        xs5X/LrybwypkdPHsRngfkXIgA==
-X-Google-Smtp-Source: AGRyM1sLJtpLkVERiBCjUAP4WJMQReS9VEfnekz+M+5IbfdSpho2//yeUPx0+GXDAPGWBEyGLl/Syw==
-X-Received: by 2002:a62:ee07:0:b0:525:1a3e:bebb with SMTP id e7-20020a62ee07000000b005251a3ebebbmr11229314pfi.77.1656524602172;
-        Wed, 29 Jun 2022 10:43:22 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id f20-20020a170902ab9400b0016a109c7606sm11796430plr.259.2022.06.29.10.43.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jun 2022 10:43:20 -0700 (PDT)
-Date:   Wed, 29 Jun 2022 11:43:18 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Anup Patel <apatel@ventanamicro.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Atish Patra <atishp@atishpatra.org>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        linux-remoteproc@vger.kernel.org, kvm-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: virtio: Fix broken rpmsg_probe()
-Message-ID: <20220629174318.GB2018382@p14s>
-References: <20220608171334.730739-1-apatel@ventanamicro.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=njLH7GFfaOXROEX4o3ayXFUqakNk2re9lthQMqB92Q8=;
+        b=hsABhYtSe9NhcMZRguGbNgBJPX03mjr380BzMWfee64ya4+Kat0oljwMykrhWZ/Avj
+         aiPpQNzDAr9Uhx58j9etSb4X2TFoeJJItnijuImnMhSdTrqVZL67+KWfHspTUNeTckW2
+         Fr6GUBGvIryHxCjdA2j2hSt/HLQb04WugIfl4jAvHdTw3Yl8X90LPU7Cm6V+TPecrGK7
+         21Ad38oJe8CtnnT3/XWeuZjcXPZwDcvZBNZnGWRw8Txr4kkVVN0mR9oSCoEzR0chYzpf
+         FpLQjwO1Y0j87jhBGPjRUUX8lzqlmcYbtVHZFcRG2PSRAMktC450L1llE0ggLfQIXVZN
+         lL5Q==
+X-Gm-Message-State: AJIora8wwGlzhzrZJ0qSGFVuwZpx4jpG/+bNm5ffoX76mCHSpo0FR7yE
+        0tc/+WTixUcupd8nwZyP8+6r0p9j5brPEYFJVGBh65qwce/2XTOGRJy+H96nJdBPmzLqRCKoD/d
+        YSf2BS7+9D26FtDQTbr0TBAnTUALdIB1reatn/CoQavSnyQ==
+X-Received: by 2002:a05:6512:158d:b0:47f:718c:28b5 with SMTP id bp13-20020a056512158d00b0047f718c28b5mr4745081lfb.397.1656570950068;
+        Wed, 29 Jun 2022 23:35:50 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tJKVtY+Zl0/40XEr/wn6beDS0TB6Ve6wa1Oo7+BpbGVCUvzB09kLNntuaMrZWqNzwTBjf08mKnZiCH+Ir+mBo=
+X-Received: by 2002:a05:6512:158d:b0:47f:718c:28b5 with SMTP id
+ bp13-20020a056512158d00b0047f718c28b5mr4745069lfb.397.1656570949818; Wed, 29
+ Jun 2022 23:35:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220608171334.730739-1-apatel@ventanamicro.com>
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com> <20220629065656.54420-2-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <20220629065656.54420-2-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Thu, 30 Jun 2022 14:35:38 +0800
+Message-ID: <CACGkMEuWK5i4pyvzN306v2ijstFQQbuspNCcNRJrw0kskvcozg@mail.gmail.com>
+Subject: Re: [PATCH v11 01/40] virtio: add helper virtqueue_get_vring_max_size()
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     virtualization <virtualization@lists.linux-foundation.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        kangjie.xu@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Anup,
-
-On Wed, Jun 08, 2022 at 10:43:34PM +0530, Anup Patel wrote:
-> The rpmsg_probe() is broken at the moment because virtqueue_add_inbuf()
-> fails due to both virtqueues (Rx and Tx) marked as broken by the
-> __vring_new_virtqueue() function. To solve this, virtio_device_ready()
-> (which unbreaks queues) should be called before virtqueue_add_inbuf().
-> 
-> Fixes: 8b4ec69d7e09 ("virtio: harden vring IRQ")
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+On Wed, Jun 29, 2022 at 2:57 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrote:
+>
+> Record the maximum queue num supported by the device.
+>
+> virtio-net can display the maximum (supported by hardware) ring size in
+> ethtool -g eth0.
+>
+> When the subsequent patch implements vring reset, it can judge whether
+> the ring size passed by the driver is legal based on this.
+>
+> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 > ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 905ac7910c98..71a64d2c7644 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -929,6 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	/* and half is dedicated for TX */
->  	vrp->sbufs = bufs_va + total_buf_space / 2;
->  
-> +	/* From this point on, we can notify and get callbacks. */
-> +	virtio_device_ready(vdev);
+>  arch/um/drivers/virtio_uml.c             |  1 +
+>  drivers/platform/mellanox/mlxbf-tmfifo.c |  2 ++
+>  drivers/remoteproc/remoteproc_virtio.c   |  2 ++
+>  drivers/s390/virtio/virtio_ccw.c         |  3 +++
+>  drivers/virtio/virtio_mmio.c             |  2 ++
+>  drivers/virtio/virtio_pci_legacy.c       |  2 ++
+>  drivers/virtio/virtio_pci_modern.c       |  2 ++
+>  drivers/virtio/virtio_ring.c             | 14 ++++++++++++++
+>  drivers/virtio/virtio_vdpa.c             |  2 ++
+>  include/linux/virtio.h                   |  2 ++
+>  10 files changed, 32 insertions(+)
+>
+> diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
+> index 82ff3785bf69..e719af8bdf56 100644
+> --- a/arch/um/drivers/virtio_uml.c
+> +++ b/arch/um/drivers/virtio_uml.c
+> @@ -958,6 +958,7 @@ static struct virtqueue *vu_setup_vq(struct virtio_device *vdev,
+>                 goto error_create;
+>         }
+>         vq->priv = info;
+> +       vq->num_max = num;
+>         num = virtqueue_get_vring_size(vq);
+>
+>         if (vu_dev->protocol_features &
+> diff --git a/drivers/platform/mellanox/mlxbf-tmfifo.c b/drivers/platform/mellanox/mlxbf-tmfifo.c
+> index 38800e86ed8a..1ae3c56b66b0 100644
+> --- a/drivers/platform/mellanox/mlxbf-tmfifo.c
+> +++ b/drivers/platform/mellanox/mlxbf-tmfifo.c
+> @@ -959,6 +959,8 @@ static int mlxbf_tmfifo_virtio_find_vqs(struct virtio_device *vdev,
+>                         goto error;
+>                 }
+>
+> +               vq->num_max = vring->num;
 > +
+>                 vqs[i] = vq;
+>                 vring->vq = vq;
+>                 vq->priv = vring;
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index d43d74733f0a..0f7706e23eb9 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -125,6 +125,8 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
+>                 return ERR_PTR(-ENOMEM);
+>         }
+>
+> +       vq->num_max = num;
+> +
+>         rvring->vq = vq;
+>         vq->priv = rvring;
+>
+> diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
+> index 161d3b141f0d..6b86d0280d6b 100644
+> --- a/drivers/s390/virtio/virtio_ccw.c
+> +++ b/drivers/s390/virtio/virtio_ccw.c
+> @@ -530,6 +530,9 @@ static struct virtqueue *virtio_ccw_setup_vq(struct virtio_device *vdev,
+>                 err = -ENOMEM;
+>                 goto out_err;
+>         }
+> +
+> +       vq->num_max = info->num;
+> +
+>         /* it may have been reduced */
+>         info->num = virtqueue_get_vring_size(vq);
+>
+> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+> index 083ff1eb743d..a20d5a6b5819 100644
+> --- a/drivers/virtio/virtio_mmio.c
+> +++ b/drivers/virtio/virtio_mmio.c
+> @@ -403,6 +403,8 @@ static struct virtqueue *vm_setup_vq(struct virtio_device *vdev, unsigned int in
+>                 goto error_new_virtqueue;
+>         }
+>
+> +       vq->num_max = num;
+> +
+>         /* Activate the queue */
+>         writel(virtqueue_get_vring_size(vq), vm_dev->base + VIRTIO_MMIO_QUEUE_NUM);
+>         if (vm_dev->version == 1) {
+> diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
+> index a5e5721145c7..2257f1b3d8ae 100644
+> --- a/drivers/virtio/virtio_pci_legacy.c
+> +++ b/drivers/virtio/virtio_pci_legacy.c
+> @@ -135,6 +135,8 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
+>         if (!vq)
+>                 return ERR_PTR(-ENOMEM);
+>
+> +       vq->num_max = num;
+> +
+>         q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
+>         if (q_pfn >> 32) {
+>                 dev_err(&vp_dev->pci_dev->dev,
+> diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+> index 623906b4996c..e7e0b8c850f6 100644
+> --- a/drivers/virtio/virtio_pci_modern.c
+> +++ b/drivers/virtio/virtio_pci_modern.c
+> @@ -218,6 +218,8 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
+>         if (!vq)
+>                 return ERR_PTR(-ENOMEM);
+>
+> +       vq->num_max = num;
+> +
+>         /* activate the queue */
+>         vp_modern_set_queue_size(mdev, index, virtqueue_get_vring_size(vq));
+>         vp_modern_queue_address(mdev, index, virtqueue_get_desc_addr(vq),
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index a5ec724c01d8..4cac600856ad 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -2385,6 +2385,20 @@ void vring_transport_features(struct virtio_device *vdev)
+>  }
+>  EXPORT_SYMBOL_GPL(vring_transport_features);
+>
+> +/**
+> + * virtqueue_get_vring_max_size - return the max size of the virtqueue's vring
+> + * @_vq: the struct virtqueue containing the vring of interest.
+> + *
+> + * Returns the max size of the vring.
+> + *
+> + * Unlike other operations, this need not be serialized.
+> + */
+> +unsigned int virtqueue_get_vring_max_size(struct virtqueue *_vq)
+> +{
+> +       return _vq->num_max;
+> +}
+> +EXPORT_SYMBOL_GPL(virtqueue_get_vring_max_size);
+> +
+>  /**
+>   * virtqueue_get_vring_size - return the size of the virtqueue's vring
+>   * @_vq: the struct virtqueue containing the vring of interest.
+> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+> index c40f7deb6b5a..9670cc79371d 100644
+> --- a/drivers/virtio/virtio_vdpa.c
+> +++ b/drivers/virtio/virtio_vdpa.c
+> @@ -183,6 +183,8 @@ virtio_vdpa_setup_vq(struct virtio_device *vdev, unsigned int index,
+>                 goto error_new_virtqueue;
+>         }
+>
+> +       vq->num_max = max_num;
+> +
+>         /* Setup virtqueue callback */
+>         cb.callback = callback ? virtio_vdpa_virtqueue_cb : NULL;
+>         cb.private = info;
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index d8fdf170637c..a82620032e43 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -31,6 +31,7 @@ struct virtqueue {
+>         struct virtio_device *vdev;
+>         unsigned int index;
+>         unsigned int num_free;
+> +       unsigned int num_max;
 
-Calling virtio_device_ready() here means that virtqueue_get_buf_ctx_split() can
-potentially be called (by way of rpmsg_recv_done()), which will race with
-virtqueue_add_inbuf().  If buffers in the virtqueue aren't available then
-rpmsg_recv_done() will fail, potentially breaking remote processors' state
-machines that don't expect their initial name service to fail when the "device"
-has been marked as ready.
+A question, since we export virtqueue to drivers, this means they can
+access vq->num_max directly.
 
-What does make me curious though is that nobody on the remoteproc mailing list
-has complained about commit 8b4ec69d7e09 breaking their environment... By now,
-i.e rc4, that should have happened.  Anyone from TI, ST and Xilinx care to test this on
-their rig?
+So we probably don't need a helper here.
 
-Thanks,
-Mathieu
+Thanks
 
->  	/* set up the receive buffers */
->  	for (i = 0; i < vrp->num_bufs / 2; i++) {
->  		struct scatterlist sg;
-> @@ -983,9 +986,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
->  	 */
->  	notify = virtqueue_kick_prepare(vrp->rvq);
->  
-> -	/* From this point on, we can notify and get callbacks. */
-> -	virtio_device_ready(vdev);
-> -
->  	/* tell the remote processor it can start sending messages */
->  	/*
->  	 * this might be concurrent with callbacks, but we are only
-> -- 
-> 2.34.1
-> 
+>         void *priv;
+>  };
+>
+> @@ -80,6 +81,7 @@ bool virtqueue_enable_cb_delayed(struct virtqueue *vq);
+>
+>  void *virtqueue_detach_unused_buf(struct virtqueue *vq);
+>
+> +unsigned int virtqueue_get_vring_max_size(struct virtqueue *vq);
+>  unsigned int virtqueue_get_vring_size(struct virtqueue *vq);
+>
+>  bool virtqueue_is_broken(struct virtqueue *vq);
+> --
+> 2.31.0
+>
+
