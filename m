@@ -2,65 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF505C43334
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jun 2022 16:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F03FCCA47B
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 30 Jun 2022 16:37:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236138AbiF3QUv (ORCPT
+        id S235325AbiF3QhB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 30 Jun 2022 12:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57616 "EHLO
+        Thu, 30 Jun 2022 12:37:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236179AbiF3QUr (ORCPT
+        with ESMTP id S235814AbiF3QhA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 30 Jun 2022 12:20:47 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA353C49E;
-        Thu, 30 Jun 2022 09:20:44 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UDhRqt001696;
-        Thu, 30 Jun 2022 18:20:26 +0200
+        Thu, 30 Jun 2022 12:37:00 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6941F3B559;
+        Thu, 30 Jun 2022 09:36:59 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25UDw2pc015110;
+        Thu, 30 Jun 2022 18:36:50 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=selector1;
- bh=8OPsY3NYVtvi/Y0bIeB4MSPnX33YqwmgeqJgxgT3N7c=;
- b=wHKDT4tzjux6li799C0XwsCWKitWHrEXKuWFA6uVszftSwA5cAdBihnOqZ4o4pw5Oqzr
- nAXHgCuHDe+u/wLDh6IJhi8aZec1Oomf081y//dIacJ67yzG+QiZd5Ddw3c7+rJUNB0W
- DQLXMBqdHFHKitirZCO8KM5FHrhMSU/HBonqiHIyf4pt7DOfEpv39c3fWhyG+5ptdQzV
- JTZJjS3wr38V2/eiLQD9IEMUAz91VdHcxANBBRq1H4jmvwQInJmPYAxxiP/X9VzOOECr
- CSk4drqswKUNQu417uIynnZPnIjyAC/EY98KreFqwUp3hIcpXyJS+VEe1+Q7hzTb3n2Q Kg== 
+ bh=PPK7NJXmodZO2xtaWKpT2ki8JN6en9ktaebVlvJYU0M=;
+ b=tElMf53uO4MQd5obAVU2EXwhBYahEIvAisQM0Jlz1WtsxJBdK8k8qZDjfaDPugJPUMcg
+ rCY0TP934ffw3jfgUIYvehxRwjm0j4/svm9Kcukj2it2QtF2rxLUNRl1ZwKNZoEeJh5R
+ 1Tm1KSP2R20ADF77XYtEWtyH1GSxpX4lqs6M+wwLbzFDJwXur5XCTY58pl7cGZ4MjXXR
+ BRPVPlp9pjJKaa/UoRROkPMHrpQr89gsDKf03kq8DvjAJ6tgac4KL1Byo9fmeYerhe8t
+ BwWF6i1qaYPOTEEXctjvkAK5id7fWZF4HLJJv+8l34q7kjvHof2IzOaXxLPOLfceEWTz tA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3h1cy9h7he-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3h1d648y1w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 30 Jun 2022 18:20:26 +0200
+        Thu, 30 Jun 2022 18:36:50 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E6BB110002A;
-        Thu, 30 Jun 2022 18:20:23 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 05CC610002A;
+        Thu, 30 Jun 2022 18:36:49 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AE10A2248DD;
-        Thu, 30 Jun 2022 18:20:23 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 012DC226FC5;
+        Thu, 30 Jun 2022 18:36:49 +0200 (CEST)
 Received: from [10.252.24.34] (10.75.127.44) by SHFDAG1NODE2.st.com
  (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Thu, 30 Jun
- 2022 18:20:20 +0200
-Message-ID: <bf87a50c-6d92-8657-72a9-75af81d2489f@foss.st.com>
-Date:   Thu, 30 Jun 2022 18:20:19 +0200
+ 2022 18:36:45 +0200
+Message-ID: <7881ee36-89f6-3ba9-f4ac-7c4e614728dd@foss.st.com>
+Date:   Thu, 30 Jun 2022 18:36:45 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH] rpmsg: virtio: Fix broken rpmsg_probe()
+Subject: Re: [PATCH 1/2] remoteproc: core: Introduce rproc_del_carveout
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Anup Patel <apatel@ventanamicro.com>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Atish Patra <atishp@atishpatra.org>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <kvm-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20220608171334.730739-1-apatel@ventanamicro.com>
- <20220629174318.GB2018382@p14s>
+To:     Chris Lew <quic_clew@quicinc.com>, <bjorn.andersson@linaro.org>,
+        <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1654888985-3846-1-git-send-email-quic_clew@quicinc.com>
+ <1654888985-3846-2-git-send-email-quic_clew@quicinc.com>
 From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220629174318.GB2018382@p14s>
+In-Reply-To: <1654888985-3846-2-git-send-email-quic_clew@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.75.127.44]
@@ -68,92 +64,73 @@ X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-06-30_11,2022-06-28_01,2022-06-22_01
+ definitions=2022-06-30_12,2022-06-28_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hi,
 
-On 6/29/22 19:43, Mathieu Poirier wrote:
-> Hi Anup,
+On 6/10/22 21:23, Chris Lew wrote:
+> To mirror the exported rproc_add_carveout(), add a rproc_del_carveout()
+> so memory carveout resources added by devices outside of remoteproc can
+> manage the resource lifetime more accurately.
 > 
-> On Wed, Jun 08, 2022 at 10:43:34PM +0530, Anup Patel wrote:
->> The rpmsg_probe() is broken at the moment because virtqueue_add_inbuf()
->> fails due to both virtqueues (Rx and Tx) marked as broken by the
->> __vring_new_virtqueue() function. To solve this, virtio_device_ready()
->> (which unbreaks queues) should be called before virtqueue_add_inbuf().
->>
->> Fixes: 8b4ec69d7e09 ("virtio: harden vring IRQ")
->> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
->> ---
->>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
->> index 905ac7910c98..71a64d2c7644 100644
->> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->> @@ -929,6 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>  	/* and half is dedicated for TX */
->>  	vrp->sbufs = bufs_va + total_buf_space / 2;
->>  
->> +	/* From this point on, we can notify and get callbacks. */
->> +	virtio_device_ready(vdev);
->> +
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 20 ++++++++++++++++++++
+>  include/linux/remoteproc.h           |  1 +
+>  2 files changed, 21 insertions(+)
 > 
-> Calling virtio_device_ready() here means that virtqueue_get_buf_ctx_split() can
-> potentially be called (by way of rpmsg_recv_done()), which will race with
-> virtqueue_add_inbuf().  If buffers in the virtqueue aren't available then
-> rpmsg_recv_done() will fail, potentially breaking remote processors' state
-> machines that don't expect their initial name service to fail when the "device"
-> has been marked as ready.
-> 
-> What does make me curious though is that nobody on the remoteproc mailing list
-> has complained about commit 8b4ec69d7e09 breaking their environment... By now,
-> i.e rc4, that should have happened.  Anyone from TI, ST and Xilinx care to test this on
-> their rig?
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 02a04ab34a23..ee71fccae970 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1001,6 +1001,26 @@ void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+>  EXPORT_SYMBOL(rproc_add_carveout);
+>  
+>  /**
+> + * rproc_del_carveout() - remove an allocated carveout region
+> + * @rproc: rproc handle
+> + * @mem: memory entry to register
+> + *
+> + * This function removes specified memory entry in @rproc carveouts list.
+> + */
+> +void rproc_del_carveout(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	struct rproc_mem_entry *entry, *tmp;
+> +
+> +	list_for_each_entry_safe(entry, tmp, &rproc->carveouts, node) {
+> +		if (entry == mem) {
+> +			list_del(&mem->node);
+> +			return;
+> +		}
+> +	}
+> +}
+> +EXPORT_SYMBOL(rproc_del_carveout);
 
-I tested on STm32mp1 board using tag v5.19-rc4(03c765b0e3b4)
-I confirm the issue!
+This API seems to me quite dangerous because it can be called while carveouts are in use.
+At least some checks should be added...
 
-Concerning the solution, I share Mathieu's concern. This could break legacy.
-I made a short test and I would suggest to use __virtio_unbreak_device instead, tounbreak the virtqueues without changing the init sequence.
-
-I this case the patch would be: 
- 
-+	/*
-+	 * Unbreak the virtqueues to allow to add buffers before setting the vdev status
-+	 * to ready
-+	 */
-+	__virtio_unbreak_device(vdev);
-+
-
- 	/* set up the receive buffers */
- 	for (i = 0; i < vrp->num_bufs / 2; i++) {
- 		struct scatterlist sg;
- 		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+What about using rproc_resource_cleanup instead?
 
 Regards,
 Arnaud
- 
-> 
-> Thanks,
-> Mathieu
-> 
->>  	/* set up the receive buffers */
->>  	for (i = 0; i < vrp->num_bufs / 2; i++) {
->>  		struct scatterlist sg;
->> @@ -983,9 +986,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>  	 */
->>  	notify = virtqueue_kick_prepare(vrp->rvq);
->>  
->> -	/* From this point on, we can notify and get callbacks. */
->> -	virtio_device_ready(vdev);
->> -
->>  	/* tell the remote processor it can start sending messages */
->>  	/*
->>  	 * this might be concurrent with callbacks, but we are only
->> -- 
->> 2.34.1
->>
+
+> +
+> +/**
+>   * rproc_mem_entry_init() - allocate and initialize rproc_mem_entry struct
+>   * @dev: pointer on device struct
+>   * @va: virtual address
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 7c943f0a2fc4..43112aa78ffe 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -658,6 +658,7 @@ struct rproc *devm_rproc_alloc(struct device *dev, const char *name,
+>  int devm_rproc_add(struct device *dev, struct rproc *rproc);
+>  
+>  void rproc_add_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+> +void rproc_del_carveout(struct rproc *rproc, struct rproc_mem_entry *mem);
+>  
+>  struct rproc_mem_entry *
+>  rproc_mem_entry_init(struct device *dev,
