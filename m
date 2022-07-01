@@ -2,220 +2,191 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EC6C43334
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Jul 2022 09:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A12ACCA480
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Jul 2022 09:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235309AbiGAJf2 (ORCPT
+        id S236000AbiGAJgy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 1 Jul 2022 05:35:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55060 "EHLO
+        Fri, 1 Jul 2022 05:36:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234917AbiGAJf1 (ORCPT
+        with ESMTP id S235980AbiGAJgy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 1 Jul 2022 05:35:27 -0400
-Received: from EUR03-AM5-obe.outbound.protection.outlook.com (mail-eopbgr30046.outbound.protection.outlook.com [40.107.3.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452FA747A9;
-        Fri,  1 Jul 2022 02:35:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RgPo0njhq/NQ2eqRefo7vawrwZu4Vv2qhdL5Yst39EUTeiZ+r9sNUMqcdRmAGW0dXuwYVMpH1oyngBWqZ6Ax4/lKKLmRz1s45/uLUB9PNzfSeJT5umPbkEAtl+95B9W/uiUfBMeAEWcnk859Nq8wBDWZ5G2ZMj6y678beU4FMoA2Jrtj2PIggFd1yl/j0fXbZvdXVtayHssVz8cqf8tBVFIHMfXv7XoYT0UooCOTb+1poXqGgw8KbsVSo00BSaaEf0vAYGhSwyAmUXnV3OaT1P4mkz5d0h/o1v+dL1AD+YnGq/8thjp49Bq1RJiZfUEIsCmM+ABF3SIQGGzTjCGkfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=otVKadlaaoou49b+fDAQ6ZmGz6y7tRTCzm2rje/Z1yI=;
- b=bP/nm+XOfzPIG1XOXgWRoyhrZf1vE8tteccTMvGmVLQFSD9V0iClGSxj4vnj+TZ3+CPvIBiI/UA9ObG2nO+vfIv+iunbkx1Bexo5iGUiF5x0ZZJUE9KVcByAbbtsQC1xeyeOTBPmde27/6LKW2JqThCHJMP5dhtz8doUrD1g+Kjuq1wZl5yunaRn+Ai7JZCgEKM60jePzx91DLh0ocOgxwjWkaoAVFv1+FU3eeuAcI0E/0R5lQMcS2RGBU0cU/pduMcgp1zb+SyroTqgUfxVxnAk7UCXuzwn4GcymbyhOS3fw7z0WPQEYH5ojcQGyatxUd7N8EKnSeaqGAMHZkygUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=otVKadlaaoou49b+fDAQ6ZmGz6y7tRTCzm2rje/Z1yI=;
- b=dGgDxx9HxH/BFUxp/cHaUgFc66SB19X4+nOZIJxFefDDm+dujQe7/Ng5QLxLyF15Mqv7n2s0z4tZSWsh2j/M1JZPQ1H5sEN5AcFO2BjWWEKSjvDUl8+nMbotksh32ql2dD7rHtPdNeYiTW3tHl246whGbMZw/z3krGOk9YGOgGY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by VI1PR04MB4655.eurprd04.prod.outlook.com (2603:10a6:803:72::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Fri, 1 Jul
- 2022 09:35:24 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::fdd4:8557:334b:180d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::fdd4:8557:334b:180d%6]) with mapi id 15.20.5395.015; Fri, 1 Jul 2022
- 09:35:24 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V6 2/2] remoteproc: support attach recovery after rproc crash
-Date:   Fri,  1 Jul 2022 17:37:02 +0800
-Message-Id: <20220701093702.265249-3-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220701093702.265249-1-peng.fan@oss.nxp.com>
-References: <20220701093702.265249-1-peng.fan@oss.nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0178.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::34) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        Fri, 1 Jul 2022 05:36:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 599A0747B6
+        for <linux-remoteproc@vger.kernel.org>; Fri,  1 Jul 2022 02:36:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656668212;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=3dN2Ed9BguDI5gyWO5SlL0rnKl20jgh9B0B8prvlwR0=;
+        b=H+CZHz8PKDirAu1OP5EfpjzPD7XQP0FLnWU9sWm8OyL7lA7QysWvLqWVFUBQvMwpmMGQkA
+        Y2kQIf5nJfRKgQmEDM4LNvzthY2YXdXR3pkwbm71BpY1mCiVnAlaZ1ErdGnBfqW9yNGeF9
+        xkdc0RHl/Yqk/hl8skMHiRSZ065Ihtk=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-659-uP-TnDS7NWaFuUkWMQ__jQ-1; Fri, 01 Jul 2022 05:36:49 -0400
+X-MC-Unique: uP-TnDS7NWaFuUkWMQ__jQ-1
+Received: by mail-pf1-f198.google.com with SMTP id by4-20020a056a00400400b005251029fd97so767496pfb.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Jul 2022 02:36:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=3dN2Ed9BguDI5gyWO5SlL0rnKl20jgh9B0B8prvlwR0=;
+        b=kMsgfWJAsBkicm1H5ARk5H9Th0LuD4KdzLiilGCs9cg/ePVs+5szecODbPK0sYGFIn
+         rl7xDT0ZHKjLWm44fi+3hOKg2KDentEu+Dv2MP748oNmnjgpbH+ItuD0irhvDhFMvuat
+         jetctFjTlyGwFfh5lXfi7s7Q2OmN+BxlvAyMRFF4zumsMUbRDItsRG3aJHlpYAXlfIBm
+         d9M7v3yqw+P2syqNbeT91n5CHeIADV2kPWF63iuA9KI2IXKOT9nu1L6GRDvSmHDQkHJ7
+         APQlHy+ymxU9QF1gakyJwu5nOtsy+93FA5bFSOwVMJA1KGavG3I3UGKutIX5NjK13jC6
+         kUfg==
+X-Gm-Message-State: AJIora8BmYggITYmrml0T36TaujIXDkUWr5QHgiHf9UO3big2KUM58Wd
+        l+CLKTO3mjZhfz5sl3NBip20Gbz8rCBVo4e+/GL4DWM+LrQwXbHaQ5ayxOB0zbjgxlkpIMNUgzg
+        O+6W9Uo3WI17yB7vyq+nknDwzX2hQ0A==
+X-Received: by 2002:a17:903:24e:b0:16b:9fa2:41e5 with SMTP id j14-20020a170903024e00b0016b9fa241e5mr13769772plh.127.1656668208676;
+        Fri, 01 Jul 2022 02:36:48 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1s2tQyLCXMrbx9yXxpYY9TeU2uoF6cGR+tGI1XuAVQyHwDEpf0d8SFWt7v9pCDnMz5Bdj+bww==
+X-Received: by 2002:a17:903:24e:b0:16b:9fa2:41e5 with SMTP id j14-20020a170903024e00b0016b9fa241e5mr13769722plh.127.1656668208349;
+        Fri, 01 Jul 2022 02:36:48 -0700 (PDT)
+Received: from [10.72.13.237] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id t129-20020a625f87000000b005259578e8fcsm11802013pfb.181.2022.07.01.02.36.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Jul 2022 02:36:47 -0700 (PDT)
+Message-ID: <79e519ec-0129-6a21-11da-44eaff1429fa@redhat.com>
+Date:   Fri, 1 Jul 2022 17:36:32 +0800
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c0c8e266-73b6-4154-7af7-08da5b450647
-X-MS-TrafficTypeDiagnostic: VI1PR04MB4655:EE_
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: j91gj4Pfq+7kf1IL1BP/e6TaIv0qm5TU62uNDAqhOmob6GRBt9kCiE/XXFVMcFdsIQGnGPQhPArw/gNAS+tNyNHdqyu8sCLmjNeWe4KPwJQr5X187M0vVGhDWxzG01rboJIKnpy+WSBfl0wcqEhMOi4qEzr7Ox0VMNBZZwPoOJFwDHeGBHojBFs8BwUB01aD6CsYzKgOxbzeRn71v1so1qq+fwGyF2gqhNLWWU7viXzQ0RsttqVy3EoXiFsQ/HQWnAaviqVDwuBfuGhyudQKuQmievYCv6XjhBQ3aQVu9HeJfodtnJbt0LUACvEEBYm8D90CDZmf+YLxJcd7dmHEoQgTjgkDNuyk4jIQxcCly6l0noL9n5en83ZzliJIjdTEIiSF/spUDa3q+EAVYXv4cbQ2cdiBPZTMKnD8+xattkJHKtdAjtrIPvZSVhWWGeI/kggCDSSNyhT6oAOlZrxmWk3TTZTt0Xeq3UTCNGZzgaWW/syiMKZAukKfxnaob3MzC5pFw9hiCKvTE2T5z8hqhCeTm9mFx9nWMcJ1XXK5Ng8MIuOWd/kWXkMEMpFearF6o6ORW+Sk6KDtncecH9RhRxzOMNCYD422aVd6+MY9xj02Xtf6X4EfMUrMa8kQQZU0TFZdHFjL/+4xyKlC5xq6lyiJeqCZt1DZC4mt3a9MBuI3x6vlrBRGmu52o4f3k9GrxETtiB4hgK8HUhUDHL4rQhgb4Km56G/8aGLNwmKK/lrg43adbw56+SHAyU10hxX9Vh4JYOHC49yHdR8F929KkielRr3/pnmSopPPPkOHdJuXTzRmFot3zCTYkvVVQJwU
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(366004)(39860400002)(346002)(396003)(1076003)(316002)(66556008)(66946007)(4326008)(66476007)(2616005)(86362001)(186003)(2906002)(8676002)(6512007)(8936002)(5660300002)(478600001)(26005)(6666004)(52116002)(6506007)(38350700002)(38100700002)(83380400001)(41300700001)(6486002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Ac5jLxBN6Lx+Bh32IHu1sCNDOKhMzRzoXMykPQFSZe7tPLA16oVH/M1ddgy/?=
- =?us-ascii?Q?DdGMM+zy6/517cG5dKh8wrv/HddMfY3cu6gYXAnMZSMrfXhnLppLEKI9+VoU?=
- =?us-ascii?Q?o+N3Bq9nXvrckUCgLBz5SeybH4VjplTIcTsIn6jVxlSfbJALR88MBFpx+Cu+?=
- =?us-ascii?Q?lA2SZiTxaTdhPBu6DnqFr/p395N1tGS5SGvSqEgTYbSihrUFUWIJJqTGNg2t?=
- =?us-ascii?Q?78pHEVjmKP+ktl9L1wwjbO41R3CrHNuyqFYz2vUzJHQeNicKsGuIjqC22z00?=
- =?us-ascii?Q?J5Q5PlpsESh1p7KXQtz2aW+ACoxqKjb3CVeoMUFxCejBvtfr5is4S2kgQgMg?=
- =?us-ascii?Q?dKMvxJwHTw3qotk0kr9AtIZttMzgX4wPnhRurhnIxEj71JD7x7ZIpkwwDD2w?=
- =?us-ascii?Q?a/ItjDOssocEMwpBZutppopPr2pzMzUWglraEboNm8BNP9d9UiwPSDduE6zJ?=
- =?us-ascii?Q?XPX8euMnD5W3rR6dCCex6Ru0diR1ge3Augozlz22/MKkuRMrQPyooNjxajP5?=
- =?us-ascii?Q?AphcgVArfPZfyuL/RJhf6IPgJ+V/53kjmb1czSmK/igfk6Wcc2PRu7MAtiYP?=
- =?us-ascii?Q?yAHzyvlLblCqeaaN3YA1DUxiIe5o8XcT1L3r0Dx9QsZqOJWfgdf51o+NmCvT?=
- =?us-ascii?Q?v+VvDlPHlbQ/QSa6zLCxpBDU51anSqxDgyyO7ocHGE2LE0JO1xwWFOpG6q70?=
- =?us-ascii?Q?iBlTJoG9u1AULSkySH6z/jYw2xTLWrHefvVK23meSfXqlBZPSzp4HfmUEq7k?=
- =?us-ascii?Q?V8stOp3UVEH0YsFT7nNLuWsxMwtB+cpMmWPk2G6PpLANcfzbfUi9sUOXK3Kc?=
- =?us-ascii?Q?RAg5pSqj+eepXjzuHM3afi/EeNHTF78lf8wWJTF+vW+CKPeBMD9XLs0nfL7k?=
- =?us-ascii?Q?fHc6Og+l+EG1KfVbUY0jZXrRP1m+AnUq3JtbnE6jHOQD2KDSGFCzhAA8Ktv3?=
- =?us-ascii?Q?1d5lPdrouC8d6AHx241Y07P3JYqEWvsdPYhRLnPDTva/maOYwOvia1+TfeaX?=
- =?us-ascii?Q?1iQ/SxbZqSG1LE06/7ppgdiUvjF742Sq2kDRC7jDM4nHQlcPydQo2QFCj4k+?=
- =?us-ascii?Q?+6jD7M/WgEZRIw3bkqFil8wFmZwLD36Lnp9Gy+6RZc8/YEkXKTJDcO/CPys/?=
- =?us-ascii?Q?54uo/t5Pve6X2rQJZguqWP9lVkue6LYreIXsfRxTLViCpOEBd32Pk6b5CG1V?=
- =?us-ascii?Q?KlsEPo5oV+YfFtjgjIUW93lC3A+QIhLH8iTGGU8RYI7BtWkTieKXdw7icDdy?=
- =?us-ascii?Q?7ZrD7wi8Oz0AhMJh/81le0MJ8hucK5qkXsGAd5o2H8YdiedxvA5H4QpvRVAY?=
- =?us-ascii?Q?D9O0+F+cIrGGaWWl4yGwvpfYtNIwWaZppuBMrqzaHI415T9ueKHZDaWtkwIx?=
- =?us-ascii?Q?l5smm68x6sFmcl6XzxiLx3Jmvz5jLPHQSU6rKJRsBGIUH3qJN2pj5R+58/mx?=
- =?us-ascii?Q?IjKtrNoTkCMM4qYT7DdhT/fRLzmNQjFFPvtU9p/+N4q7YsZdsIIaQGkB9sFx?=
- =?us-ascii?Q?Baya4MEBW77UH4Jdt54rqNCwStHfDY9+ppuMzcI5HegbNaZ+PPQSDv5ryVw2?=
- =?us-ascii?Q?xN4+s5XwzXJOcgghzxV8K2IzCShI3gw0/0EcFwRc?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0c8e266-73b6-4154-7af7-08da5b450647
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 09:35:24.4143
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ivejuijwqkQEm2mpb6AzqjcPuY4LTe5o86nnLzlfxqCndcqYFC5pgl2oqKNown7MqLu39pf054p+gJVG1/VteQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4655
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH v11 25/40] virtio: allow to unbreak/break virtqueue
+ individually
+Content-Language: en-US
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        kangjie.xu@linux.alibaba.com
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+ <20220629065656.54420-26-xuanzhuo@linux.alibaba.com>
+ <20220701022950-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+In-Reply-To: <20220701022950-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
 
-Current logic only support main processor to stop/start the remote
-processor after rproc crash. However to SoC, such as i.MX8QM/QXP, the
-remote processor could do attach recovery after crash and trigger watchdog
-reboot. It does not need main processor to load image, or stop/start M4
-core.
+在 2022/7/1 14:31, Michael S. Tsirkin 写道:
+> On Wed, Jun 29, 2022 at 02:56:41PM +0800, Xuan Zhuo wrote:
+>> This patch allows the new introduced
+>> __virtqueue_break()/__virtqueue_unbreak() to break/unbreak the
+>> virtqueue.
+>>
+>> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> I wonder how this interacts with the hardening patches.
+> Jason?
 
-Introduce two functions: rproc_attach_recovery, rproc_firmware_recovery
-for the two cases. Firmware recovery is as before, let main processor to
-help recovery, while attach recovery is recover itself withou help.
-To attach recovery, we only do detach and attach.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/remoteproc_core.c | 62 +++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 19 deletions(-)
+Consider we've marked it as broken, I think we don't need to care about 
+the hardening in this series. Just make it work without hardening.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index ed374c8bf14a..ef5b9310bc83 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1884,6 +1884,45 @@ static int __rproc_detach(struct rproc *rproc)
- 	return 0;
- }
- 
-+static int rproc_attach_recovery(struct rproc *rproc)
-+{
-+	int ret;
-+
-+	ret = __rproc_detach(rproc);
-+	if (ret)
-+		return ret;
-+
-+	return __rproc_attach(rproc);
-+}
-+
-+static int rproc_boot_recovery(struct rproc *rproc)
-+{
-+	const struct firmware *firmware_p;
-+	struct device *dev = &rproc->dev;
-+	int ret;
-+
-+	ret = rproc_stop(rproc, true);
-+	if (ret)
-+		return ret;
-+
-+	/* generate coredump */
-+	rproc->ops->coredump(rproc);
-+
-+	/* load firmware */
-+	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-+	if (ret < 0) {
-+		dev_err(dev, "request_firmware failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* boot the remote processor up again */
-+	ret = rproc_start(rproc, firmware_p);
-+
-+	release_firmware(firmware_p);
-+
-+	return ret;
-+}
-+
- /**
-  * rproc_trigger_recovery() - recover a remoteproc
-  * @rproc: the remote processor
-@@ -1898,7 +1937,6 @@ static int __rproc_detach(struct rproc *rproc)
-  */
- int rproc_trigger_recovery(struct rproc *rproc)
- {
--	const struct firmware *firmware_p;
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
-@@ -1912,24 +1950,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 
- 	dev_err(dev, "recovering %s\n", rproc->name);
- 
--	ret = rproc_stop(rproc, true);
--	if (ret)
--		goto unlock_mutex;
--
--	/* generate coredump */
--	rproc->ops->coredump(rproc);
--
--	/* load firmware */
--	ret = request_firmware(&firmware_p, rproc->firmware, dev);
--	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
--		goto unlock_mutex;
--	}
--
--	/* boot the remote processor up again */
--	ret = rproc_start(rproc, firmware_p);
--
--	release_firmware(firmware_p);
-+	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-+		ret = rproc_attach_recovery(rproc);
-+	else
-+		ret = rproc_boot_recovery(rproc);
- 
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
--- 
-2.25.1
+And I will handle vq reset when rework the IRQ hardening.
+
+Thanks
+
+
+>
+>> ---
+>>   drivers/virtio/virtio_ring.c | 24 ++++++++++++++++++++++++
+>>   include/linux/virtio.h       |  3 +++
+>>   2 files changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>> index 5ec43607cc15..7b02be7fce67 100644
+>> --- a/drivers/virtio/virtio_ring.c
+>> +++ b/drivers/virtio/virtio_ring.c
+>> @@ -2744,6 +2744,30 @@ unsigned int virtqueue_get_vring_size(struct virtqueue *_vq)
+>>   }
+>>   EXPORT_SYMBOL_GPL(virtqueue_get_vring_size);
+>>   
+>> +/*
+>> + * This function should only be called by the core, not directly by the driver.
+>> + */
+>> +void __virtqueue_break(struct virtqueue *_vq)
+>> +{
+>> +	struct vring_virtqueue *vq = to_vvq(_vq);
+>> +
+>> +	/* Pairs with READ_ONCE() in virtqueue_is_broken(). */
+>> +	WRITE_ONCE(vq->broken, true);
+>> +}
+>> +EXPORT_SYMBOL_GPL(__virtqueue_break);
+>> +
+>> +/*
+>> + * This function should only be called by the core, not directly by the driver.
+>> + */
+>> +void __virtqueue_unbreak(struct virtqueue *_vq)
+>> +{
+>> +	struct vring_virtqueue *vq = to_vvq(_vq);
+>> +
+>> +	/* Pairs with READ_ONCE() in virtqueue_is_broken(). */
+>> +	WRITE_ONCE(vq->broken, false);
+>> +}
+> I don't think these "Pairs" comments have any value.
+>
+>
+>> +EXPORT_SYMBOL_GPL(__virtqueue_unbreak);
+>> +
+>>   bool virtqueue_is_broken(struct virtqueue *_vq)
+>>   {
+>>   	struct vring_virtqueue *vq = to_vvq(_vq);
+>> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+>> index 1272566adec6..dc474a0d48d1 100644
+>> --- a/include/linux/virtio.h
+>> +++ b/include/linux/virtio.h
+>> @@ -138,6 +138,9 @@ bool is_virtio_device(struct device *dev);
+>>   void virtio_break_device(struct virtio_device *dev);
+>>   void __virtio_unbreak_device(struct virtio_device *dev);
+>>   
+>> +void __virtqueue_break(struct virtqueue *_vq);
+>> +void __virtqueue_unbreak(struct virtqueue *_vq);
+>> +
+>>   void virtio_config_changed(struct virtio_device *dev);
+>>   #ifdef CONFIG_PM_SLEEP
+>>   int virtio_device_freeze(struct virtio_device *dev);
+>> -- 
+>> 2.31.0
 
