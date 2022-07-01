@@ -2,158 +2,175 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839C1C43334
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Jul 2022 09:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8F9C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Jul 2022 09:35:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233288AbiGAJea (ORCPT
+        id S232365AbiGAJfX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 1 Jul 2022 05:34:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54218 "EHLO
+        Fri, 1 Jul 2022 05:35:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233106AbiGAJe2 (ORCPT
+        with ESMTP id S231470AbiGAJfV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 1 Jul 2022 05:34:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 33F5274799
-        for <linux-remoteproc@vger.kernel.org>; Fri,  1 Jul 2022 02:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656668066;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TRbVMG9pe9kLTW8fXLQQcAgh1G0fF5UqNIzjXT/Ehks=;
-        b=frQjgV8eDQIyeBUP7eS5JJ11PoKKd/sdDRGarXN0U8VLdqFiQS6G7fxAwuZsIyCOLesowF
-        goJ9kjryM/ws2dCqbMHUP/ksV/KnIfR0FUrDZmLG0EJbQXIiEaMRUesHP42ktUVb+AKxsI
-        ZQVIE1BetqJNqMiq/uVuHlw+4b/E0rk=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-671-72N8hb-zNdi0fy18UctPyw-1; Fri, 01 Jul 2022 05:34:25 -0400
-X-MC-Unique: 72N8hb-zNdi0fy18UctPyw-1
-Received: by mail-pg1-f200.google.com with SMTP id q132-20020a632a8a000000b00411eb01811fso270490pgq.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Jul 2022 02:34:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=TRbVMG9pe9kLTW8fXLQQcAgh1G0fF5UqNIzjXT/Ehks=;
-        b=v3Ihc2xMlqsR2jnb8I+UVnbEJmxvtmuJPQtqx8He+QBVd/coMCoqItP6A/SA4h00+P
-         7Wqss2lBl1V47/1KnlVk1rBIu0r+xPDwyJo28dhVig3Khaee+Ia7uqERQg2HWmMaiW7m
-         4jjr182EbkCUuRIPe0MlrWIR+9CxSvzMWrZ1AXZ7pD8vycli0v1AdCoim107hZKICZ2Y
-         DYnuklRcUxEGwbr50kdBpcTtTD4tjqZCgtjefSQLjylSPLdCiCMD/YspbqUGnXVa8/pp
-         ZGqXU7fqZxDIuQg7ron3qcrUNN6z99RhhWrAIoW2ppxaBYFG2VAlg5Sfav/qF7FHxX+i
-         1CrQ==
-X-Gm-Message-State: AJIora/hbncvRRxl1LuxuBPMfvQpmA9Fgnyzk58eIji+nqMyfjYR9G94
-        EogjpyKLXW8gGEXPBv2LSaN+OqIMeRfTl2MP3oxK/KaodX5nkyZLtjbCOr04U/2tG/SfZxdJfIt
-        dj7yjTCPj490E/oldxbacpm4C8GLksg==
-X-Received: by 2002:a63:be41:0:b0:40c:b4a8:dee9 with SMTP id g1-20020a63be41000000b0040cb4a8dee9mr11432183pgo.107.1656668064252;
-        Fri, 01 Jul 2022 02:34:24 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1sE5v7ksf3buwxxjLGMpBCFIkErXWPc59l6I+VsrcgW6eytue9aR08XqOAivwqVk5DzrN+qQw==
-X-Received: by 2002:a63:be41:0:b0:40c:b4a8:dee9 with SMTP id g1-20020a63be41000000b0040cb4a8dee9mr11432146pgo.107.1656668063999;
-        Fri, 01 Jul 2022 02:34:23 -0700 (PDT)
-Received: from [10.72.13.237] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x1-20020a636301000000b004085adf1372sm14860507pgb.77.2022.07.01.02.34.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Jul 2022 02:34:23 -0700 (PDT)
-Message-ID: <10281add-4d72-efe6-e94d-1f19ced9cb27@redhat.com>
-Date:   Fri, 1 Jul 2022 17:34:12 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.11.0
-Subject: Re: [PATCH v11 24/40] virtio_pci: struct virtio_pci_common_cfg add
- queue_notify_data
-Content-Language: en-US
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        virtualization@lists.linux-foundation.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com
-References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
- <20220629065656.54420-25-xuanzhuo@linux.alibaba.com>
-From:   Jason Wang <jasowang@redhat.com>
-In-Reply-To: <20220629065656.54420-25-xuanzhuo@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Fri, 1 Jul 2022 05:35:21 -0400
+Received: from EUR03-AM5-obe.outbound.protection.outlook.com (mail-eopbgr30084.outbound.protection.outlook.com [40.107.3.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD7174798;
+        Fri,  1 Jul 2022 02:35:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bKuktQCel1MNrGB+1Jhn1cnZigxymo8EP+PETy1RJIUSa+mk4AAf5Q08KicTrpPKSWAvObKqobECumAkyDQU/59bnOPx9YS3cav9zKUsFBgOziaROOAGCbBCXDB1VwDmllylkTYlUJvjkWbchyIgz2XotK7szV1Sxgjih09TsQJSE8MtwZ3kw+GXG+84HRk5oLC/vTe59G9Uun7A0IKkSi82S9LBdIk6euw2MLw83qR2xj9dJ4y8mDmBMkqcitta7/9NBRuPvzuKuWc0cEXYU2CaEBm+eqB4dqpcZ/p/FR1iP4UioNuCZ4s05dwaOV91sltWTeqbv5o7gbW6i3zrEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eWZk2ipfrmVOuDUklIu3RE9GIhXwZSRuXvwX/zjzeEM=;
+ b=WBL//Xhmp/cCPysr7bumymme0Og3QfLAU8s4atZvDFw2IDzxpT1OJ5wjkY1rpnIvoPoiZLzGEPJZYRKSvEo0y3SeoZ7VyUqe7y0Pjbo2ryqKjERAOBc3qQF/AvPI3fTBykJ7HRx9+JyyclI165itYzOuJzBu+SEe/c8zfvSTxUoXJOpiyqdz6eBADVklixzVf+dCgLIzW4PNjMvVmL4a4Wya3Xx2l53E7CUMiRWBesEaKWI3AsNABDJiZ5Sx7eb9214q8ouX9G1f1A6ix7Hp37tBpNh+Y1iFJf8v/wd7grufkKIT9Qs8823zzHTaxaUDYd5mZdKtQqYF6AEBtuCPJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eWZk2ipfrmVOuDUklIu3RE9GIhXwZSRuXvwX/zjzeEM=;
+ b=fujfBNuFeklTWfH8Wc3Dlzr4GbP65CmS4PFCA1BPzOpNEbDG2Vg+AomXYwrqdsEABTbNEzdzpYxEa+jerUwaXmhC+KVT2G3asy6pMrXQMJsJtPMp9quevMay4Aew8DezoiVe2nnl7VShZh2G9GRLiEqMN9HvH6Ez5PG0kaUjEW0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by VI1PR04MB4655.eurprd04.prod.outlook.com (2603:10a6:803:72::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.14; Fri, 1 Jul
+ 2022 09:35:17 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::fdd4:8557:334b:180d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::fdd4:8557:334b:180d%6]) with mapi id 15.20.5395.015; Fri, 1 Jul 2022
+ 09:35:17 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V6 0/2] remoteproc: support self recovery
+Date:   Fri,  1 Jul 2022 17:37:00 +0800
+Message-Id: <20220701093702.265249-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0178.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:28::34) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7be43fe5-99ba-40e3-8a37-08da5b4501ce
+X-MS-TrafficTypeDiagnostic: VI1PR04MB4655:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: C0bnp2EOPhuM+YFnjCxANjr+3pjjb54DlqoWl8VXf1087c67dveMc8YSPhqTaLlWa+o5rWZiBVxDz/YhEadlgLKCiVDNbNp11ZtnPzqK8cigRyI1pBBHpd42/DoG0m6ExgY92n4GT/gJfygJSmNzSXEfZnGIZkz/aF2cuMdRfEX2e7ezseiq8zTxZISOZsKGR2mUzhHVBzTPNLz/4jdzOeN0DXV8dMxAmVuOEoomhoXTAP11iqnsUSUeyBbADpdbVwYTDoR5+2LI0cgqsQvSm/7+XcDwK4Vyj5ogujldl/7GlzsilM5XT6zdn9ThSH60zzO5kBzcGGznIWpFzjirLSlvMMKD5HW9kfKbxDMFE0XGCJ2C6DzphRrAZwanbIfXhIPdr50LgxjY63I7wChQhIQkftwrYteO+GktzCFndeWs/HhSp9c7UMzwVxN2247OqYDuRxtDZiaH12wobh6psIXySWuw8+XAunwOQHk+OOe6YbGldOHB1exUMOyiNIAfi/qHpvlW0xaNvCchMykns1YOb9uK43ukl6KqBc/EZF4HCshHN48U7B4HloFaOD9wrmDd01FqsRKwd70P5HYjE6wmGLFf4Tkll4gxhFHeRUDfhiwHqDqLmUD5QKjKlUu/k+nPxx+jNTzujTshEkspIoJc9k2ALENOgkaTX14N/67kTi2yp5h9A+p+CdBv1jOo/DnZ7ZZgjiMOihY4Y87XBextCIihoP6bIppHOH8cmnKcYPzxjrlJWoIkoRRvxCDMbVWeqETtv/QzV7WYBewSv3Ock5ixK6IU8SOJ0T9GfVo1Dqk4t0vRZvKdkfYsKJDtihXaNGKboDUrUpoLhV3Ec2cpsuNf1XGtoVjr309TKXlcgrZgr0UaZ8zpf0q1gn74
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(366004)(39860400002)(346002)(396003)(1076003)(316002)(66556008)(66946007)(4326008)(66476007)(2616005)(86362001)(186003)(2906002)(8676002)(6512007)(8936002)(5660300002)(478600001)(26005)(6666004)(52116002)(6506007)(38350700002)(38100700002)(83380400001)(41300700001)(966005)(6486002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?OjQyeB04QSI00w7HorZi3XxOgtoZFcqxx2gfMAxRpTmZj/TQY9QrcSoNEKxH?=
+ =?us-ascii?Q?T/GqK5Prn0uIvgKV5NkCpL4Qr6+niN76Q0OLb4oItDk3wn6iRsLvhuz2yZN3?=
+ =?us-ascii?Q?PspnPouOYheMaa7O79bsnx2PV6BAYu7gx5euvJsqkN9rPCx6w6Jg5mKoRvtJ?=
+ =?us-ascii?Q?aGdqr4N0SkbJgOAq9/HlJC2BhZ2A80AAfi+U1qWg61LwVl2DATQoU4MLm9eh?=
+ =?us-ascii?Q?50+qI5b2mFdyOLxXvVvK3o1eK8qAY2HI11DTu4ZnX+LHXZi+QIkI4B4Jn4+h?=
+ =?us-ascii?Q?aiB9pB7mctMuSr4TPf5iJvd3rpQRvKguMBy03SlAIvVdoQR/e6dx6IqU5aS6?=
+ =?us-ascii?Q?C/bmG7P6E0VH9wtRA0hvcwuF3f+ONRfUo1wMLQAZJ1p0f/2zoxoO318fnHBn?=
+ =?us-ascii?Q?2AswWJk7c8Pemwa/AxF/cai3lHlPAIBEZG75sZolHMHgU2Lgo8hQksJB21Zp?=
+ =?us-ascii?Q?35wyv5y/Tmqs0hGWfES1Ja6NvilUbgOs0EBYksckJqyU3+anGGLRSAWdKSuX?=
+ =?us-ascii?Q?pfhnaRKO7YWwBqrB9l5yWw4wslnLB6nWKgMUkw3uDghDPp7MJCR34CpR1BXo?=
+ =?us-ascii?Q?mlW+hX543Lg+PSuMQiBROMNvao0KPJtj+eAFhX+vT0ytIk/LS5VdkpaJuHIV?=
+ =?us-ascii?Q?hLW8zLdeIG0jGK/X4889g79eBaFYGQcy2Ye/3rvK+rcebty3z1kA5/7ekEAn?=
+ =?us-ascii?Q?cx7Y2J22aadg4Mr0hR5WwlbRIPLWx0V2SVbyYOUM5cwJH5uGtZsni7j2Y+ZI?=
+ =?us-ascii?Q?H0eVLsLyqWM5DYis5HDtjEz/HYwdyru8yIw+X4NfDkx8MpNmjliW/QKAkoUU?=
+ =?us-ascii?Q?dDaDO7gfJTzSrlYFoogefVnYQqaRtiE6iIedYyyI+kWk57SnBJ670LwM1HUu?=
+ =?us-ascii?Q?qmVgWATD09BwdsrD19qDyCpjP59ib47gyaCjpzI1u+tkf9m3V8D1ZFW2yR1t?=
+ =?us-ascii?Q?GTSQDbkzM67J6N/rm3UQ4RSHrpXpO8yoF/9ndCRMTSKMgBvuIX2i0Wmk4H4O?=
+ =?us-ascii?Q?hWB6isOd3Z5cUYUtZw3sXBkeM23elU0/Qk40yZhVdjSderno92iwWTF2W/Mc?=
+ =?us-ascii?Q?WtwI+P25u1EF2XnbjoOWn4MyLdczAm5VIgHr0FwgwT8z0r54iRoJgDXURFaK?=
+ =?us-ascii?Q?S3GXGWyUvBo6V0fNTd9k7H0SKJzRRloHIelQiz4xp/gWvAZys6Zy6pH+4P43?=
+ =?us-ascii?Q?LvIGzkXMCM8PPpDnE2kMe5tiQPgVHkWZ900KXEO5R6LKqBV88fY51vv0ey6V?=
+ =?us-ascii?Q?X5IxFqt4qO8irteO6FuffZa2reBjEZhj+7C0NnYW0dskLE69EiUBvrd9pMK1?=
+ =?us-ascii?Q?DV0FlVBQv5+HnOWUBCH40fpco/hJ+3VrG0z0QZ2tqLeQoaxCrX12b1bk4f9x?=
+ =?us-ascii?Q?EjIjyPCpXKdVPRHSlO9yjPjbvJetfpsbbJerC62ud7ubQroqGvVMfuiLyJqN?=
+ =?us-ascii?Q?DOAq8dQDIHvoM7NziKCawqlftu4iaJ+hrYnUrNYXldssVkPpvG/Jv28YjY4x?=
+ =?us-ascii?Q?74ETAPsFt4m3tVzh2gXuV83vdBC6TaZXZQgKwwkWf1r93FPWK4saL6ak2R7O?=
+ =?us-ascii?Q?lo86chbw8bNh6GVAmcI5KuvKBjDocL/akDjvktgz?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7be43fe5-99ba-40e3-8a37-08da5b4501ce
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jul 2022 09:35:17.1138
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dIvhHDGTsNFjGZ8YRvd2fw1dv8ytYT/4747nf+jP7z2dHt6cLUlGZuvys/QEAMpGb/oWgfla/rUotL04SYdyPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4655
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-在 2022/6/29 14:56, Xuan Zhuo 写道:
-> Add queue_notify_data in struct virtio_pci_common_cfg, which comes from
-> here https://github.com/oasis-tcs/virtio-spec/issues/89
->
-> Since I want to add queue_reset after queue_notify_data, I submitted
-> this patch first.
->
-> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> Acked-by: Jason Wang <jasowang@redhat.com>
-> ---
->   include/linux/virtio_pci_modern.h | 2 ++
->   include/uapi/linux/virtio_pci.h   | 1 +
->   2 files changed, 3 insertions(+)
->
-> diff --git a/include/linux/virtio_pci_modern.h b/include/linux/virtio_pci_modern.h
-> index c4f7ffbacb4e..9f31dde46f57 100644
-> --- a/include/linux/virtio_pci_modern.h
-> +++ b/include/linux/virtio_pci_modern.h
-> @@ -29,6 +29,8 @@ struct virtio_pci_common_cfg {
->   	__le32 queue_avail_hi;		/* read-write */
->   	__le32 queue_used_lo;		/* read-write */
->   	__le32 queue_used_hi;		/* read-write */
-> +	__le16 queue_notify_data;	/* read-write */
-> +	__le16 padding;
->   };
+V6:
+ Rename rproc_firmware_recovery to rproc_boot_recovery
+ Drop the unlock/lock when do reproc_attach_recovery
+
+V5:
+ Rename RPROC_FEAT_ATTACH_RECOVERY to RPROC_FEAT_ATTACH_ON_RECOVERY
+ Add kerneldoc for rproc features
+ Change rproc_set_feature to return int type and add a max feature check
+ Use __rproc_detach and __rproc_attach when do attach recovery
+ https://patchwork.kernel.org/project/linux-remoteproc/cover/20220615032048.465486-1-peng.fan@oss.nxp.com/
+
+V4:
+  Based on Bjorn's comments on V2-2
+  Move the rproc_has_feature/rproc_set_feature to remoteproc_internal.h and
+ Keep rproc_features still in remoteproc.h, because we use
+ RPROC_MAX_FEATURES to declare bitmap.
+  Update commit log for patch 2/2, and add comments
+
+  https://patchwork.kernel.org/project/linux-remoteproc/cover/20220323034405.976643-1-peng.fan@oss.nxp.com/
+ 
+V3:
+ Resend the wrong labeled patchset
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
+
+ Write a cover-letter
+ To i.MX8QM/QXP, they have a M4 core self-recovery capability without
+ Linux loading firmware. The self recovery is done by
+ SCU(System Control Unit). Current remoteproc framework only support Linux
+ help recovery remote processor(stop, loading firmware, start). This
+ patchset is support remote processor self recovery(attach recovery).
+
+ In order to avoid introducing a new variable(bool support_self_recovery),
+ patch 1 introduce a new function, rproc_has_feature to make code easy to
+ extend, cleaner, such as we could move "bool has_iommu" to
+ rproc_has_feature(rproc, RPROC_FEAT_IOMMU).
+
+ Patch 2 is introduce a new function rproc_attach_recovery for
+ self recovery, the original logic move to rproc_firmware_recovery meaning
+ needs linux to help recovery.
+
+ V2-version 2:
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
+ Introduce rproc_has_feature
+
+ V2-version 1:
+ https://patchwork.kernel.org/project/linux-remoteproc/patch/20220126085120.3397450-1-peng.fan@oss.nxp.com/
+ Nothing change in V2.
+ Only move this patch out from
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
 
 
-As previous patch, I think it's better to simple embed the uAPI 
-structure here.
+Peng Fan (2):
+  remoteproc: introduce rproc features
+  remoteproc: support attach recovery after rproc crash
 
-Thanks
+ drivers/remoteproc/remoteproc_core.c     | 62 ++++++++++++++++--------
+ drivers/remoteproc/remoteproc_internal.h | 15 ++++++
+ include/linux/remoteproc.h               | 15 ++++++
+ 3 files changed, 73 insertions(+), 19 deletions(-)
 
-
->   
->   struct virtio_pci_modern_device {
-> diff --git a/include/uapi/linux/virtio_pci.h b/include/uapi/linux/virtio_pci.h
-> index 247ec42af2c8..748b3eb62d2f 100644
-> --- a/include/uapi/linux/virtio_pci.h
-> +++ b/include/uapi/linux/virtio_pci.h
-> @@ -176,6 +176,7 @@ struct virtio_pci_cfg_cap {
->   #define VIRTIO_PCI_COMMON_Q_AVAILHI	44
->   #define VIRTIO_PCI_COMMON_Q_USEDLO	48
->   #define VIRTIO_PCI_COMMON_Q_USEDHI	52
-> +#define VIRTIO_PCI_COMMON_Q_NDATA	56
->   
->   #endif /* VIRTIO_PCI_NO_MODERN */
->   
+-- 
+2.25.1
 
