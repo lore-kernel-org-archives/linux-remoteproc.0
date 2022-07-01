@@ -2,218 +2,193 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF88C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Jul 2022 09:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7082C43334
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  1 Jul 2022 09:39:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236346AbiGAJjL (ORCPT
+        id S236393AbiGAJjw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 1 Jul 2022 05:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59900 "EHLO
+        Fri, 1 Jul 2022 05:39:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236207AbiGAJjK (ORCPT
+        with ESMTP id S234034AbiGAJjv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 1 Jul 2022 05:39:10 -0400
+        Fri, 1 Jul 2022 05:39:51 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6754C1E3DD
-        for <linux-remoteproc@vger.kernel.org>; Fri,  1 Jul 2022 02:39:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CEB85205C4
+        for <linux-remoteproc@vger.kernel.org>; Fri,  1 Jul 2022 02:39:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656668348;
+        s=mimecast20190719; t=1656668390;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=M6jjd4ijXuXIvJJrjir19vpImb6pnScxQWCTyU/0jws=;
-        b=LPAmb7aixWLlNHwghQIer3DV0GXscDLx+OW5I9ldUKTwjeBtv+6DYPt67SlgWb/O3bfRYX
-        3Y+8jJfBzN+7IcHSg4cVN4N7bWNaydxVkxXjkrmJ7lP7wwHPhZxj2GHL5SBpEmrfIAn+nA
-        2LyVimUfefE2qHr4YZtQHUdv6o9rhAg=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=1d79Stpus0q2yxaNU7MJkY6xfoyQBkCSEyRGquJaFl4=;
+        b=Jjs7+iDfQTV9H9OOI6ArA2W59gJHqcpJNxNrK/Wn+58RDSrSaYho2TfU1w0V3iOlQT8X1j
+        GeJbu114UDr4Dno2lmwrxyEuYDceOUn8O56S0IlDsa5PWJ6i+HZv6/fI/Zp3eQ24LCrUjA
+        g+I6UMRkXzYstwz30XseA4eQuVa8an8=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-613-6ZkHDghJPFiNz0FqY-hDxA-1; Fri, 01 Jul 2022 05:39:07 -0400
-X-MC-Unique: 6ZkHDghJPFiNz0FqY-hDxA-1
-Received: by mail-wm1-f72.google.com with SMTP id m20-20020a05600c4f5400b003a03aad6bdfso785838wmq.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Jul 2022 02:39:07 -0700 (PDT)
+ us-mta-627-kYNjr6_lMTm5uEL2vxNzEA-1; Fri, 01 Jul 2022 05:39:49 -0400
+X-MC-Unique: kYNjr6_lMTm5uEL2vxNzEA-1
+Received: by mail-pj1-f72.google.com with SMTP id 92-20020a17090a09e500b001d917022847so1139164pjo.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 01 Jul 2022 02:39:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=M6jjd4ijXuXIvJJrjir19vpImb6pnScxQWCTyU/0jws=;
-        b=sHI5qeCviyJWLj/uq09SYUwF/Nvx+3+RyPPshK/6rmSJuHbk77ymuy68QOYbIXvTXd
-         mo5oWNpBcQ8x6Y9EUrP6dWw0zU9FlEfcdA/lgO9DWKdtWJ9jLnlWu8jegqHlDwQsM6gL
-         tq/2fq+UR16IBgNA+UK/6nImMhsH8pfwFukMle285MI8AFlDrD5HYAmjibMITHKX5BUT
-         2qXEJR7qhNGiD5YbGLJ6OPzAtamyhg5LDHQK7aSWekRdF/e+WKO/77AZHucrTUA8xWNt
-         QkffIi7rofWOosuiFRb+xEzkwmapW9U0bbwwbhWAwnASVb8y/qMqbbXShh1TIso1Z7g5
-         xT1w==
-X-Gm-Message-State: AJIora+NcjeMk1trDHve/tye00eoc3Ev2bqNICwolElHqMikUV64usZE
-        ciyTsNp9bof6RtEP9ZNGui3OBXJ5a5hljUgqqApVyXSP3WGF9SHd/goFPnyt6aa2pvRIWWfBgUW
-        FVmQWVhxLflTfrfEouzlGxzxdiiCiSA==
-X-Received: by 2002:a05:6000:a1e:b0:21b:8c8d:3cb5 with SMTP id co30-20020a0560000a1e00b0021b8c8d3cb5mr12801981wrb.372.1656668345694;
-        Fri, 01 Jul 2022 02:39:05 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1tFcAXZoAaZyHfEts4V1bW0kmJ5lrttXMA/0eqVrtSgtW5wTjnCGywc6ih/h68PKIHmHWboSw==
-X-Received: by 2002:a05:6000:a1e:b0:21b:8c8d:3cb5 with SMTP id co30-20020a0560000a1e00b0021b8c8d3cb5mr12801952wrb.372.1656668345358;
-        Fri, 01 Jul 2022 02:39:05 -0700 (PDT)
-Received: from redhat.com ([2.55.3.188])
-        by smtp.gmail.com with ESMTPSA id bg28-20020a05600c3c9c00b003a175bc9c17sm6267998wmb.42.2022.07.01.02.39.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Jul 2022 02:39:04 -0700 (PDT)
-Date:   Fri, 1 Jul 2022 05:39:01 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Anup Patel <apatel@ventanamicro.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Atish Patra <atishp@atishpatra.org>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        linux-remoteproc@vger.kernel.org, kvm-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: virtio: Fix broken rpmsg_probe()
-Message-ID: <20220701053813-mutt-send-email-mst@kernel.org>
-References: <20220608171334.730739-1-apatel@ventanamicro.com>
- <20220629174318.GB2018382@p14s>
- <20220630151716-mutt-send-email-mst@kernel.org>
- <65d972ed-31b4-5636-86a3-dabd5f25a3be@foss.st.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=1d79Stpus0q2yxaNU7MJkY6xfoyQBkCSEyRGquJaFl4=;
+        b=HrCGauSEwWd6Hfz3fkNw+b6L2M51cOcRVRlvojC83B1NgaNItv467/rbATzmRVCkrX
+         gsFxy61WcenhVxAiHSRE1itxnOAUtMwRX9zhgzp5urjUUwXiBgZCXg4GGgwdPmlZF8oF
+         hfsicdjOAfcfB4oPHqvsd+eszzC8GcxurduH+fqECMPyePPLT/UqNHQYW3Q+HyGq8tIL
+         K9wrM3uuzLNeIDh5kcisoZYERbrFFXiEB+siJnf8R3oxGz6VhQpm1nvtc4dhYDc0nhki
+         mnhVEwc4nHtfzljIy1sUphUiw2X0N5d9edGNjE8pWuGAaWKqLOWyAY8xUVMcSTS7yXlJ
+         MDnw==
+X-Gm-Message-State: AJIora9RIuLoGQkYj2zcgmXvlHYI0a+o0Li5zxxwx0cJP4iOF2NeweY0
+        wcK5K1rQX9m/JI7/5X7Y1jtNEf2lhaoDBHfQFErbSvGA1aFQ1OYWXRAojxPbyamfVo6WiTb/OnC
+        Hx91rwZFxdvHTDVeEpwBHLBgLju3/2A==
+X-Received: by 2002:a63:454a:0:b0:411:bbff:b079 with SMTP id u10-20020a63454a000000b00411bbffb079mr4669461pgk.507.1656668387168;
+        Fri, 01 Jul 2022 02:39:47 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1uQXl0Mg32c6PANnbBYsi+TCYur6T2X1Z6vqtoZHDXDxtmKbFKHms2mPc6lxJgdRzWP3sExWg==
+X-Received: by 2002:a63:454a:0:b0:411:bbff:b079 with SMTP id u10-20020a63454a000000b00411bbffb079mr4669428pgk.507.1656668386921;
+        Fri, 01 Jul 2022 02:39:46 -0700 (PDT)
+Received: from [10.72.13.237] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id jy18-20020a17090b325200b001e31803540fsm6079692pjb.6.2022.07.01.02.39.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Jul 2022 02:39:46 -0700 (PDT)
+Message-ID: <494bcf3f-d42c-f05b-cbdb-d4ba834bd118@redhat.com>
+Date:   Fri, 1 Jul 2022 17:39:35 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.11.0
+Subject: Re: [PATCH v11 28/40] virtio_pci: introduce helper to get/set queue
+ reset
+Content-Language: en-US
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        virtualization@lists.linux-foundation.org
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        kangjie.xu@linux.alibaba.com
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+ <20220629065656.54420-29-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+In-Reply-To: <20220629065656.54420-29-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <65d972ed-31b4-5636-86a3-dabd5f25a3be@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 01, 2022 at 11:00:28AM +0200, Arnaud POULIQUEN wrote:
-> Hello,
-> 
-> On 6/30/22 21:19, Michael S. Tsirkin wrote:
-> > On Wed, Jun 29, 2022 at 11:43:18AM -0600, Mathieu Poirier wrote:
-> >> Hi Anup,
-> >>
-> >> On Wed, Jun 08, 2022 at 10:43:34PM +0530, Anup Patel wrote:
-> >>> The rpmsg_probe() is broken at the moment because virtqueue_add_inbuf()
-> >>> fails due to both virtqueues (Rx and Tx) marked as broken by the
-> >>> __vring_new_virtqueue() function. To solve this, virtio_device_ready()
-> >>> (which unbreaks queues) should be called before virtqueue_add_inbuf().
-> >>>
-> >>> Fixes: 8b4ec69d7e09 ("virtio: harden vring IRQ")
-> >>> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> >>> ---
-> >>>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
-> >>>  1 file changed, 3 insertions(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>> index 905ac7910c98..71a64d2c7644 100644
-> >>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>> @@ -929,6 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >>>  	/* and half is dedicated for TX */
-> >>>  	vrp->sbufs = bufs_va + total_buf_space / 2;
-> >>>  
-> >>> +	/* From this point on, we can notify and get callbacks. */
-> >>> +	virtio_device_ready(vdev);
-> >>> +
-> >>
-> >> Calling virtio_device_ready() here means that virtqueue_get_buf_ctx_split() can
-> >> potentially be called (by way of rpmsg_recv_done()), which will race with
-> >> virtqueue_add_inbuf().  If buffers in the virtqueue aren't available then
-> >> rpmsg_recv_done() will fail, potentially breaking remote processors' state
-> >> machines that don't expect their initial name service to fail when the "device"
-> >> has been marked as ready.
-> > 
-> > When you say available I am guessing you really need used.
-> > 
-> > With a non broken device you won't get a callback
-> > until some buffers have been used.
-> > 
-> > Or, if no used buffers are present then you will get another
-> > callback down the road.
-> 
-> In current implementation the Linux rpmsg_virtio driver allocates the
-> virtio buffers for the coprocessor rpmsg virtio device transmission and
-> then updates the virtio device status in shared memory to inform the
-> coprocessor that it is ready for inter-processor communication.
-> 
-> So from coprocessor perspective, when the virtio device is ready
-> (set to VIRTIO_CONFIG_S_DRIVER_OK), it can
-> start to get available buffers and send virtio buffers to the Linux.
-> 
-> With the patch proposed, the virtio is set to VIRTIO_CONFIG_S_DRIVER_OK
-> while no buffer are available for the coprocessor transmission.
-> 
-> I'm agree that, if the Linux rpmsg_virtio driver has not allocated the
-> buffer, the coprocessor will fail to get available virtio buffer for
-> communication and so has "just" to wait that some buffers are available
-> in the virtqueue.
-> 
-> But this change the behavior and can lead to an unexpected error case
-> for some legacy coprocessor firmware...
-> Should we take the risk that this legacy is no longer compatible?
-> 
-> 
-> That said regarding the virtio spec 1.1 chapter 3.1.1 [1], I also wonder
-> if the introduction of the virqueue broken flag is compliant with the
-> spec? 
-> But i guess this is probably a matter of interpretation...
-> 
-> " 
-> The driver MUST follow this sequence to initialize a device:
-> [...]
-> 7. Perform device-specific setup, including discovery of virtqueues for
-> the device, optional per-bus setup, reading and possibly writing the
-> device’s virtio configuration space, and population of virtqueues.
-> 8. Set the DRIVER_OK status bit. At this point the device is “live”.
-> "
-> 
-> My question is what means in point 7. "and population of virtqueues"?
-> 
-> In my interpretation the call of "virtqueue_add_inbuf()" populates the
-> RX virtqueue.
-> That would mean that calling virtqueue_add_inbuf before calling 
-> virtio_device_ready() should be possible.
-> 
-> Thanks,
-> Arnaud 
-> 
-> [1]https://docs.oasis-open.org/virtio/virtio/v1.1/csprd01/virtio-v1.1-csprd01.html#x1-920001
 
-I think I agree. For example, the networking device uses "population" in this
-sense:
-
-	It is generally a good idea to keep the receive virtqueue as
-	fully populated as possible: if it runs out, network performance
-	will suffer.
+在 2022/6/29 14:56, Xuan Zhuo 写道:
+> Introduce new helpers to implement queue reset and get queue reset
+> status.
+>
+>   https://github.com/oasis-tcs/virtio-spec/issues/124
+>   https://github.com/oasis-tcs/virtio-spec/issues/139
+>
+> Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
 
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-> 
-> > 
-> > 
-> >>
-> >> What does make me curious though is that nobody on the remoteproc mailing list
-> >> has complained about commit 8b4ec69d7e09 breaking their environment... By now,
-> >> i.e rc4, that should have happened.  Anyone from TI, ST and Xilinx care to test this on
-> >> their rig?
-> >>
-> >> Thanks,
-> >> Mathieu
-> >>
-> >>>  	/* set up the receive buffers */
-> >>>  	for (i = 0; i < vrp->num_bufs / 2; i++) {
-> >>>  		struct scatterlist sg;
-> >>> @@ -983,9 +986,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >>>  	 */
-> >>>  	notify = virtqueue_kick_prepare(vrp->rvq);
-> >>>  
-> >>> -	/* From this point on, we can notify and get callbacks. */
-> >>> -	virtio_device_ready(vdev);
-> >>> -
-> >>>  	/* tell the remote processor it can start sending messages */
-> >>>  	/*
-> >>>  	 * this might be concurrent with callbacks, but we are only
-> >>> -- 
-> >>> 2.34.1
-> >>>
-> >>
-> > 
+
+> ---
+>   drivers/virtio/virtio_pci_modern_dev.c | 35 ++++++++++++++++++++++++++
+>   include/linux/virtio_pci_modern.h      |  2 ++
+>   2 files changed, 37 insertions(+)
+>
+> diff --git a/drivers/virtio/virtio_pci_modern_dev.c b/drivers/virtio/virtio_pci_modern_dev.c
+> index fa2a9445bb18..07415654247c 100644
+> --- a/drivers/virtio/virtio_pci_modern_dev.c
+> +++ b/drivers/virtio/virtio_pci_modern_dev.c
+> @@ -3,6 +3,7 @@
+>   #include <linux/virtio_pci_modern.h>
+>   #include <linux/module.h>
+>   #include <linux/pci.h>
+> +#include <linux/delay.h>
+>   
+>   /*
+>    * vp_modern_map_capability - map a part of virtio pci capability
+> @@ -474,6 +475,40 @@ void vp_modern_set_status(struct virtio_pci_modern_device *mdev,
+>   }
+>   EXPORT_SYMBOL_GPL(vp_modern_set_status);
+>   
+> +/*
+> + * vp_modern_get_queue_reset - get the queue reset status
+> + * @mdev: the modern virtio-pci device
+> + * @index: queue index
+> + */
+> +int vp_modern_get_queue_reset(struct virtio_pci_modern_device *mdev, u16 index)
+> +{
+> +	struct virtio_pci_common_cfg __iomem *cfg = mdev->common;
+> +
+> +	vp_iowrite16(index, &cfg->queue_select);
+> +	return vp_ioread16(&cfg->queue_reset);
+> +}
+> +EXPORT_SYMBOL_GPL(vp_modern_get_queue_reset);
+> +
+> +/*
+> + * vp_modern_set_queue_reset - reset the queue
+> + * @mdev: the modern virtio-pci device
+> + * @index: queue index
+> + */
+> +void vp_modern_set_queue_reset(struct virtio_pci_modern_device *mdev, u16 index)
+> +{
+> +	struct virtio_pci_common_cfg __iomem *cfg = mdev->common;
+> +
+> +	vp_iowrite16(index, &cfg->queue_select);
+> +	vp_iowrite16(1, &cfg->queue_reset);
+> +
+> +	while (vp_ioread16(&cfg->queue_reset))
+> +		msleep(1);
+> +
+> +	while (vp_ioread16(&cfg->queue_enable))
+> +		msleep(1);
+> +}
+> +EXPORT_SYMBOL_GPL(vp_modern_set_queue_reset);
+> +
+>   /*
+>    * vp_modern_queue_vector - set the MSIX vector for a specific virtqueue
+>    * @mdev: the modern virtio-pci device
+> diff --git a/include/linux/virtio_pci_modern.h b/include/linux/virtio_pci_modern.h
+> index beebc7a4a31d..ded01157f864 100644
+> --- a/include/linux/virtio_pci_modern.h
+> +++ b/include/linux/virtio_pci_modern.h
+> @@ -134,4 +134,6 @@ void __iomem * vp_modern_map_vq_notify(struct virtio_pci_modern_device *mdev,
+>   				       u16 index, resource_size_t *pa);
+>   int vp_modern_probe(struct virtio_pci_modern_device *mdev);
+>   void vp_modern_remove(struct virtio_pci_modern_device *mdev);
+> +int vp_modern_get_queue_reset(struct virtio_pci_modern_device *mdev, u16 index);
+> +void vp_modern_set_queue_reset(struct virtio_pci_modern_device *mdev, u16 index);
+>   #endif
 
