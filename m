@@ -2,85 +2,188 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDEC43334
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  3 Jul 2022 04:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E273C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  3 Jul 2022 10:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233024AbiGCEAr (ORCPT
+        id S231217AbiGCKRN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 3 Jul 2022 00:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
+        Sun, 3 Jul 2022 06:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232798AbiGCD7l (ORCPT
+        with ESMTP id S229779AbiGCKRM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 2 Jul 2022 23:59:41 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C809DF11
-        for <linux-remoteproc@vger.kernel.org>; Sat,  2 Jul 2022 20:58:00 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id l81so8914176oif.9
-        for <linux-remoteproc@vger.kernel.org>; Sat, 02 Jul 2022 20:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eJ/HSOVi6T6+W5It4M/UYPcXmqIF2IGyMOvm2eYN/hg=;
-        b=cPQGTSOZ9AG/DoR8s7YJk3MwgY/duECkhznMoQhV9VHOHPgCoKbhkeSQkaUEZLdUJv
-         3kgb76sBG6wvqrVmvtWi67t17x4cm43Ga6124GkiDF7MgM7y+Lsnj/z9MHXl1B50RysP
-         Mote2c/eCti6U3mS2V53GpevNTPSSjowsciZk/sf+oY6dTzqLPT9I4SiaeLs5/oTJSun
-         IH/rlva/UrvwoZasNHEfWJgZk3QwMWMcJYQGTCFkRvahN+MRKze+4fqfL6aGf0fZI0jq
-         ioD0PhcNLqM/0Be1rwOVctffCJDVsMmSRUagjJb82X6ClUp8TTWRhA7oLU+fSh0EZRss
-         VMDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eJ/HSOVi6T6+W5It4M/UYPcXmqIF2IGyMOvm2eYN/hg=;
-        b=ojHA2OYCMGfcgyxCby4k8mpnyEXSGMO5xqcp/qxdFi2L2n6opqF/oX7dCSNJYBdmvo
-         bTyW1JCfsY4Yhoy60XsyGC1j6IOIzEIqrDVwij+MEpaeWx1eNG75F7mnnzc2EM00zr3A
-         63RLDPwPRJ+baz6NAngjn7oPWhAgfoF50jrDS7ebywITARxAC/6WM9BY10I2SfI2k1Xv
-         f86Q8a8kNSmS6caJxni3Ul5fGJXP24UhmysXKJqpWlul3a3awRV1Q4nWWAJHCsen/sQC
-         VXXDdyYTCboXjnGXSVAnVB1+w+Rw0bM/SjrH1xW6xrFQZO9WVIpNOCuJxr2i/PGCWo3y
-         0rFQ==
-X-Gm-Message-State: AJIora/E26cH+GWTtEPD1cHofT2rSQgkKBsECuzTBbsNzCBc8nBxHU+h
-        AyWo41Wffc9oaSEs/4zE1hIssm43KH2IhA==
-X-Google-Smtp-Source: AGRyM1sXofxsPr+IeRS/vIyhp0YmRs7G23WDfuwp8Os14Ws4pDKs+/H7OT/xUXeyp/wv1Y7JyEka5g==
-X-Received: by 2002:aca:a904:0:b0:335:5e06:1e38 with SMTP id s4-20020acaa904000000b003355e061e38mr12960230oie.20.1656820678671;
-        Sat, 02 Jul 2022 20:57:58 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 25-20020aca0f19000000b0032e5d0b5d5fsm12965910oip.58.2022.07.02.20.57.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jul 2022 20:57:57 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: (subset) [PATCH v2 2/2] arm64: dts: qcom: msm8916: Fix typo in pronto remoteproc node
-Date:   Sat,  2 Jul 2022 22:56:51 -0500
-Message-Id: <165682055970.445910.12399555371619436680.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220526141740.15834-3-sireeshkodali1@gmail.com>
-References: <20220526141740.15834-1-sireeshkodali1@gmail.com> <20220526141740.15834-3-sireeshkodali1@gmail.com>
+        Sun, 3 Jul 2022 06:17:12 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A01AF6163
+        for <linux-remoteproc@vger.kernel.org>; Sun,  3 Jul 2022 03:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1656843246;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=3dxEyMqHzzsFuWVcEwH40m4/4bzynqSKKxtXxi1Ci70=;
+    b=GWi8VxyGxQC96Ieg4OyEQdBrkTOCnjmZKnW21/ycAzYH7ov1V8ddZY45Zh/jNPcSyp
+    1OdPSJA4NQ/ayvEmbvV1HrRQMsP43hKbnq9/5snoGX5VNIYg40JLeRMWOGui6e/29FmL
+    tHIpx5KlOno198HmaQQxhSnLR6v1TqySoPP5/SoOkkR6C4u0OOW7MPIzFAC42iQyJSQv
+    f5i33wIP7EyRCey/UVJ27zAIuO1Y7TPeTs9TjHIRslB7fOL0JCRtNgFTcEQqk3oxZhgm
+    Q4mBrP3ZTUtkof7FBIJpnnlYiqpGVUoV/qc5d3Ty9E10TsqX+J0yAZZ8+y3WyRYF7hsg
+    uSnA==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKY7lg=="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 47.46.1 AUTH)
+    with ESMTPSA id yfdd30y63AE5AcK
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Sun, 3 Jul 2022 12:14:05 +0200 (CEST)
+Date:   Sun, 3 Jul 2022 12:13:51 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, Konrad Dybcio <konradybcio@gmail.com>
+Subject: Re: [PATCH 3/4] remoteproc: qcom: q6v5-mss: Add support for
+ SDM630/636/660 MSS remoteproc
+Message-ID: <YsFrtn0X6ywJh6d3@gerhold.net>
+References: <20220514000108.3070363-1-dmitry.baryshkov@linaro.org>
+ <20220514000108.3070363-4-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220514000108.3070363-4-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 26 May 2022 19:47:40 +0530, Sireesh Kodali wrote:
-> The smem-state properties for the pronto node were incorrectly labelled,
-> reading `qcom,state*` rather than `qcom,smem-state*`. Fix that, allowing
-> the stop state to be used.
+On Sat, May 14, 2022 at 03:01:07AM +0300, Dmitry Baryshkov wrote:
+> From: Konrad Dybcio <konradybcio@gmail.com>
 > 
+> This adds support for sdm630/636/660 modem subsystem
+> remote processor.
 > 
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+> [DB: fixed commit message, removed note about modem restarting regularly]
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Applied, thanks!
+I was only looking at this by coincidence recently but since it doesn't
+seem to be applied yet(?) some comments below.
 
-[2/2] arm64: dts: qcom: msm8916: Fix typo in pronto remoteproc node
-      commit: 5458d6f2827cd30218570f266b8d238417461f2f
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 111 +++++++++++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index af217de75e4d..7a4cca30db8a 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+[...]
+> @@ -754,6 +759,79 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>  			val |= readl(qproc->reg_base + mem_pwr_ctl);
+>  			udelay(1);
+>  		}
+> +		/* Remove word line clamp */
+> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +		val &= ~QDSP6v56_CLAMP_WL;
+> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +	} else if (qproc->version == MSS_SDM660) {
+> +		int mem_pwr_ctl;
+> +
+> +		/* Override the ACC value if required */
+> +		writel(QDSP6SS_ACC_OVERRIDE_VAL,
+> +		       qproc->reg_base + QDSP6SS_STRAP_ACC);
+> +
+> +		/* Assert resets, stop core */
+> +		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
+> +		val |= Q6SS_CORE_ARES | Q6SS_BUS_ARES_ENABLE | Q6SS_STOP_CORE;
+> +		writel(val, qproc->reg_base + QDSP6SS_RESET_REG);
+> +
+> +		/* BHS require xo cbcr to be enabled */
+> +		val = readl(qproc->reg_base + QDSP6SS_XO_CBCR);
+> +		val |= 1;
 
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+val |= Q6SS_CBCR_CLKEN; (like in the existing 8996 code)
+
+> +		writel(val, qproc->reg_base + QDSP6SS_XO_CBCR);
+
+I would also expect this to wait for !Q6SS_CBCR_CLKOFF like on all the
+other SoCs. Pretty sure downstream does that for all of them in
+q6v55_branch_clk_enable().
+
+> +
+> +		/* Enable power block headswitch and wait for it to stabilize */
+> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +		val |= QDSP6v56_BHS_ON;
+> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +		mb();
+> +		udelay(1);
+> +
+> +		for (i = BHS_CHECK_MAX_LOOPS; i > 0; i--) {
+> +			if (readl_relaxed(qproc->reg_base + QDSP6V62SS_BHS_STATUS)
+> +			    & QDSP6v55_BHS_EN_REST_ACK)
+> +				break;
+> +			udelay(1);
+> +		}
+
+This looks like readl_poll_timeout().
+
+> +		if (!i) {
+> +			pr_err("%s: BHS_EN_REST_ACK not set!\n", __func__);
+
+dev_err()
+
+> +			return -ETIMEDOUT;
+> +		}
+> +
+> +		/* Put LDO in bypass mode */
+> +		val |= QDSP6v56_LDO_BYP;
+> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +		/* Remove QMC_MEM clamp */
+> +		val &= ~QDSP6v56_CLAMP_QMC_MEM;
+> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +		/* Deassert QDSP6 compiler memory clamp */
+> +		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +		val &= ~QDSP6v56_CLAMP_QMC_MEM;
+> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+
+Why does this clear QDSP6v56_CLAMP_QMC_MEM twice?
+
+> +		/* Deassert memory peripheral sleep and L2 memory standby */
+> +		val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
+> +		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> +
+> +		/* Turn on L1, L2, ETB and JU memories 1 at a time */
+> +		mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
+> +		i = 29;
+> +
+> +		val = readl(qproc->reg_base + mem_pwr_ctl);
+> +		for (; i >= 0; i--) {
+> +			val |= BIT(i);
+> +			writel(val, qproc->reg_base + mem_pwr_ctl);
+> +			/*
+> +			 * Read back value to ensure the write is done then
+> +			 * wait for 1us for both memory peripheral and data
+> +			 * array to turn on.
+> +			 */
+> +			val |= readl(qproc->reg_base + mem_pwr_ctl);
+> +			udelay(1);
+> +		}
+> +
+>  		/* Remove word line clamp */
+>  		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>  		val &= ~QDSP6v56_CLAMP_WL;
+
+All in all this looks almost exactly like the existing code for
+MSS_MSM8996/8. Wouldn't it be cleaner to just add an if statement for
+the QDSP6V62SS_BHS_STATUS readl_poll_timeout() to the existing code?
+
+Thanks,
+Stephan
