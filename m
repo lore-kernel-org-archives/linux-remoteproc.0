@@ -2,139 +2,169 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7F8C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Jul 2022 17:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5811DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Jul 2022 17:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231582AbiGDRWK (ORCPT
+        id S234288AbiGDRsx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Jul 2022 13:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36578 "EHLO
+        Mon, 4 Jul 2022 13:48:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230215AbiGDRWJ (ORCPT
+        with ESMTP id S234285AbiGDRsw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Jul 2022 13:22:09 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 227F9C42
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Jul 2022 10:22:08 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id f85so5633654pfa.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Jul 2022 10:22:08 -0700 (PDT)
+        Mon, 4 Jul 2022 13:48:52 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E9064CF
+        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Jul 2022 10:48:51 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 145so9425699pga.12
+        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Jul 2022 10:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=vRC8pIQf0We13zLtIDGhR39LQaKZSAzTrltz62jYPX8=;
-        b=WNcAvObM2RP4nCiHMJfhi4m6omuJBahSsG10OSs8QGfF2tQsqCOlmbvj88FuzeLdPU
-         3CuyWxh+YV8w5M6HsO8nW9yvNgGEPMEWjgjHm94bLk9tRlDacqR+nfeTIGNWYf9KNesR
-         xNqtSR68+hv7Sc//cvW0tiiT9PgcYrJHwyL7gbG3WVlW2QX/7WVoOMqeHdk0No2Jxn+Q
-         /cYEvacVhpvYBBJixF3F6Q/ANCOSo6uqejXKKfkMdD3DQxXcS70+Y+5xeuZuh793bdk6
-         SqcQ6MGvtUU8iZ0egNJlzoQ2iCXdze8GdNevApBJvFyBDIVacIdhHwjAg//XGfZOfk9m
-         7Ynw==
+        bh=Udd4R3ZrMYiNGLqIpE7ggk+XAAQ35MqvZZnbwebCtH0=;
+        b=ywwgPuQETUb0XKgmY6N8kbYzlczDZlOgpvxcJbu5idjcakvBApLm8foq6ddCSFC0Ge
+         Wk3scbhyna/+OwEM2m4e9YLbB9Ycc8Q3MjydiudyvccO+YCwADgPkHsn+kN1igv4inHs
+         yqJxtUSgRPZcj3VbKRbdFj6wON/mjKxXVgdDpvkliicFFhqDTd8tX/NcKr0jQPNLVDmz
+         f1s1HzI0LQb9rYKssLkBZmMLo2mMC25UB99OHAsi35DXkCUTAMj7vRZ0t3Zmz/3BAioK
+         FKMYL129R2wm1paNi/n/ElkJe1rXisYE/XVGHSgsE3C4DhiyQOsSttc5gkM41X94i0LO
+         KpAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=vRC8pIQf0We13zLtIDGhR39LQaKZSAzTrltz62jYPX8=;
-        b=DXftDtxdVw/u5uikL6hqeAYN9bSX3Eyqx+F+NuqwQ6umqkgiPWb2KCXnw6z0QolOCS
-         B379NYxfZrbNEh3LRSG3PIjd34ttiLuaeqZZffbhG/8yF0EBv66tuzyHD2O2HM19+rRC
-         LHPUx3f8GAEg2VCXSLtvPGk8hwbNgtB0+pBDQezk6lgWJhPtpqpUKIaRWhU5awS2nKo4
-         nE5gck4cj9R8Dd9Kn3Z2J+qXvZOmnGgrApM0qMoy+/xhGTSL1bBKb4RDIjZ9beP1kIDV
-         AuqHq227fdL6ueLdieQI1WI1GjZn/2fjSBM+qIq8VjlFOGnAtpkgPq1HhommVSo4LwVC
-         xx4w==
-X-Gm-Message-State: AJIora+LnvZA3XshAJA1iCMoNhAjYaBNlNSJbFWG/AjD1/AYnpV4nmON
-        PikE8pVi8JQ6wDD/VXDRNe5UFA==
-X-Google-Smtp-Source: AGRyM1uVDQ+hPip9IBzuK8uCdyPMNrrRXAss4SBldNQ7p4p9W/HScpc43T2gjutc2uCEzIh6NdOWCA==
-X-Received: by 2002:a05:6a00:f8f:b0:525:537d:69b1 with SMTP id ct15-20020a056a000f8f00b00525537d69b1mr38074857pfb.52.1656955327682;
-        Mon, 04 Jul 2022 10:22:07 -0700 (PDT)
+        bh=Udd4R3ZrMYiNGLqIpE7ggk+XAAQ35MqvZZnbwebCtH0=;
+        b=rE0+dLHvplkBbZ93eV1FRtF5cVdp+2F6eowz4Nh11S0U2nIpFAFOtswYJZphEXvnfo
+         f1fFaymRFQNBED3tdEmw4/h6g8Kkk0GLZcEHlQ9gU5W4Zdg58HU/dtLMrxiICZ+is7ko
+         SJUoFAzttVj9OB7o+knDbvQ43XNLzlEoq5r36nfKH7Y2R3I4x0bCPrO96HAekNy4M0ul
+         BYlt5XVQ229D402TDvqbcaVO7QDb8F3PLyrc1vMLXXM6bhoIu7u+D34AR6ZgGecyZ5wP
+         nIbrdmu6Z3QfzlHacaaBTjSx39Ol3IdgCPYW26IheuKEKi5wyKHdF5+QAAqBXe6W7LXi
+         /iag==
+X-Gm-Message-State: AJIora+93DCr26hUwDbZtswJY9I8Iabq4t56yxdWDVH78uY5FDRGXZkl
+        5Jf7uA882uhh6LuDpuuZ/J4dAWZqS3YHww==
+X-Google-Smtp-Source: AGRyM1uf4yCHruMaBFnncT3Rtuctls7yZWm6tVxELQFCsmBfuHdLgzQ/6Y8Qu5Zfe803boexULTN9w==
+X-Received: by 2002:a63:8741:0:b0:411:6ef8:18ec with SMTP id i62-20020a638741000000b004116ef818ecmr26917433pge.258.1656956931272;
+        Mon, 04 Jul 2022 10:48:51 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l189-20020a6225c6000000b005255263a864sm21321486pfl.169.2022.07.04.10.22.05
+        by smtp.gmail.com with ESMTPSA id z13-20020a17090a8b8d00b001ec798b0dc4sm12986101pjn.38.2022.07.04.10.48.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 10:22:06 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 11:22:04 -0600
+        Mon, 04 Jul 2022 10:48:49 -0700 (PDT)
+Date:   Mon, 4 Jul 2022 11:48:47 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Project_Global_Chrome_Upstream_Group@mediatek.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org,
-        Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v2 1/1] remoteproc: mediatek: enable cache for mt8186 SCP
-Message-ID: <20220704172204.GB2375750@p14s>
-References: <20220701121229.22756-1-allen-kh.cheng@mediatek.com>
- <20220701121229.22756-2-allen-kh.cheng@mediatek.com>
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Bruce Ashfield <bruce.ashfield@xilinx.com>
+Subject: Re: [PATCH v6 0/4] remoteproc: restructure the remoteproc VirtIO
+ device
+Message-ID: <20220704174847.GC2375750@p14s>
+References: <20220603163158.612513-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220701121229.22756-2-allen-kh.cheng@mediatek.com>
+In-Reply-To: <20220603163158.612513-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 01, 2022 at 08:12:29PM +0800, Allen-KH Cheng wrote:
-> This patch is for enableing cache in SCP. There is not enough space
-> on the SRAM of SCP. We need to run programs in DRAM. The DRAM power
-> and latency is much larger than SRAM, so cache is used to mitigate
-> the negative effects for performance. we set SCP registers for cache
-
-s/we/We
-
-> size before loading SCP FW. (8KB+8KB) and also adjust ipi_buf_offset
-> in SRAM from 0x7bdb0 to 0x3BDB0 for enableing cache.
-
-s/0x3BDB0/0x3bdb0
-
-s/enableing/enabling
-
-> 
-> This patch was tested on MediaTek mt8186.
-> 
-
-If we keep the above statement it will be in the kernel's changelog for ever.
-Comments such as this one are usually found in the cover letter or between "---"
-lines after the SoB.
-
-> Signed-off-by: Allen-KH Cheng <allen-kh.cheng@mediatek.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 47b2a40e1b4a..5b2ad789e720 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -401,6 +401,14 @@ static int mt8186_scp_before_load(struct mtk_scp *scp)
->  	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_P1);
->  	writel(0x0, scp->reg_base + MT8186_SCP_L1_SRAM_PD_p2);
->  
-> +	/*
-> +	 * Set I-cache and D-cache size before loading SCP FW.
-> +	 * SCP SRAM logical address may change when cache size setting differs.
-> +	 */
-> +	writel(MT8183_SCP_CACHE_CON_WAYEN | MT8183_SCP_CACHESIZE_8KB,
-> +	       scp->reg_base + MT8183_SCP_CACHE_CON);
-> +	writel(MT8183_SCP_CACHESIZE_8KB, scp->reg_base + MT8183_SCP_DCACHE_CON);
-> +
->  	return 0;
->  }
->  
-> @@ -943,7 +951,7 @@ static const struct mtk_scp_of_data mt8186_of_data = {
->  	.scp_da_to_va = mt8183_scp_da_to_va,
->  	.host_to_scp_reg = MT8183_HOST_TO_SCP,
->  	.host_to_scp_int_bit = MT8183_HOST_IPC_INT_BIT,
-> -	.ipi_buf_offset = 0x7bdb0,
-> +	.ipi_buf_offset = 0x3bdb0,
->  };
-
-I have made the above corrections and applied this patch.
+I have started reviewing this set.
 
 Thanks,
 Mathieu
 
->  
->  static const struct mtk_scp_of_data mt8192_of_data = {
+On Fri, Jun 03, 2022 at 06:31:54PM +0200, Arnaud Pouliquen wrote:
+> 1) Update from V5 [1]:
+> 
+> Updates based on Mathieu's comments.
+> Updates are listed in the commit message of each patch.
+> 
+> [1] https://lkml.org/lkml/2022/4/6/597
+> 
+> 2) Patchset description:
+> 
+> This series is a part of the work initiated a long time ago in 
+> the series "remoteproc: Decorelate virtio from core"[2]
+> 
+> Objective of the work:
+> - Update the remoteproc VirtIO device creation (use platform device)
+> - Allow to declare remoteproc VirtIO device in DT
+>     - declare resources associated to a remote proc VirtIO
+>     - declare a list of VirtIO supported by the platform.
+> - Prepare the enhancement to more VirtIO devices (e.g I2C, audio, video, ...).
+>   For instance be able to declare a I2C device in a virtio-i2C node.
+> - Keep the legacy working!
+> - Try to improve the picture about concerns reported by Christoph Hellwing [3][4]
+> 
+> [2] https://lkml.org/lkml/2020/4/16/1817
+> [3] https://lkml.org/lkml/2021/6/23/607
+> [4] https://patchwork.kernel.org/project/linux-remoteproc/patch/AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch/
+> 
+> In term of device tree this would result in such hierarchy (stm32mp1 example with 2 virtio RPMSG):
+> 
+> 	m4_rproc: m4@10000000 {
+> 		compatible = "st,stm32mp1-m4";
+> 		reg = <0x10000000 0x40000>,
+> 		      <0x30000000 0x40000>,
+> 		      <0x38000000 0x10000>;
+>         memory-region = <&retram>, <&mcuram>,<&mcuram2>;
+>         mboxes = <&ipcc 2>, <&ipcc 3>;
+>         mbox-names = "shutdown", "detach";
+>         status = "okay";
+> 
+>         #address-cells = <1>;
+>         #size-cells = <0>;
+>         
+>         vdev@0 {
+> 		compatible = "rproc-virtio";
+> 		reg = <0>;
+> 		virtio,id = <7>;  /* RPMSG */
+> 		memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
+> 		mboxes = <&ipcc 0>, <&ipcc 1>;
+> 		mbox-names = "vq0", "vq1";
+> 		status = "okay";
+>         };
+> 
+>         vdev@1 {
+> 		compatible = "rproc-virtio";
+> 		reg = <1>;
+> 		virtio,id = <7>;  /*RPMSG */
+> 		memory-region = <&vdev1vring0>, <&vdev1vring1>, <&vdev1buffer>;
+> 		mboxes = <&ipcc 4>, <&ipcc 5>;
+> 		mbox-names = "vq0", "vq1";
+> 		status = "okay";
+>         };
+> };
+> 
+> I have divided the work in 4 steps to simplify the review, This series implements only
+> the step 1:
+> step 1:  redefine the remoteproc VirtIO device as a platform device
+>   - migrate rvdev management in remoteproc virtio.c,
+>   - create a remotproc virtio config ( can be disabled for platform that not use VirtIO IPC.
+> step 2: add possibility to declare and probe a VirtIO sub node
+>   - VirtIO bindings declaration,
+>   - multi DT VirtIO devices support,
+>   - introduction of a remote proc virtio bind device mechanism ,
+> => https://github.com/arnopo/linux/commits/step2-virtio-in-DT
+> step 3: Add memory declaration in VirtIO subnode
+> => https://github.com/arnopo/linux/commits/step3-virtio-memories
+> step 4: Add mailbox declaration in VirtIO subnode
+> => https://github.com/arnopo/linux/commits/step4-virtio-mailboxes
+> 
+> Arnaud Pouliquen (4):
+>   remoteproc: core: Introduce rproc_rvdev_add_device function
+>   remoteproc: core: Introduce rproc_add_rvdev function
+>   remoteproc: Move rproc_vdev management to remoteproc_virtio.c
+>   remoteproc: virtio: Create platform device for the remoteproc_virtio
+> 
+>  drivers/remoteproc/remoteproc_core.c     | 153 +++---------------
+>  drivers/remoteproc/remoteproc_internal.h |  23 ++-
+>  drivers/remoteproc/remoteproc_virtio.c   | 188 ++++++++++++++++++++---
+>  include/linux/remoteproc.h               |   6 +-
+>  4 files changed, 209 insertions(+), 161 deletions(-)
+> 
 > -- 
-> 2.18.0
+> 2.24.3
 > 
