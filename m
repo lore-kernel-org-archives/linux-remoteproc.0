@@ -2,122 +2,223 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2935EC43334
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  3 Jul 2022 11:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE8CC43334
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Jul 2022 02:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232329AbiGCLBJ (ORCPT
+        id S229868AbiGDCEv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 3 Jul 2022 07:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
+        Sun, 3 Jul 2022 22:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbiGCLBI (ORCPT
+        with ESMTP id S229505AbiGDCEu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 3 Jul 2022 07:01:08 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B807F65DD
-        for <linux-remoteproc@vger.kernel.org>; Sun,  3 Jul 2022 04:01:06 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id b23so7725800ljh.7
-        for <linux-remoteproc@vger.kernel.org>; Sun, 03 Jul 2022 04:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:user-agent:in-reply-to:references
-         :message-id:mime-version:content-transfer-encoding;
-        bh=iSMx4v4MQhT6LaqCu6U6c7zNkD8D78ZUh7uTaQEZQe8=;
-        b=h+tAKs6MSik+OJIHdNju5BshaaATprQUaI5rsUjLCjovK7q03xMPHrlQjyFKVTDs+x
-         Y46TTaGtw8XAgQnBojzrixlYB1tsxUDzwGZTxGHnK8opeMVlmUyTP3alcdt03zw+aiK3
-         Ba8bAKXM4ZdJguOz1MxJViL3QeZejTQiGw/SGaps9d8ewnIMPO6NI/rCIx0staeQTpzD
-         VTTvpartGrMyE0hOS+Emrg47hhrIO49l0imRXJ7AsVEfkpcitVPd4d4YoBRb+JecnZl+
-         NuJFBTHd9M4PRH9mrB4q2oEGmOzYCqV0ZbIO2sXMTdLSKP/TLmSazl3DuTRfaH9h227K
-         0tbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:user-agent:in-reply-to
-         :references:message-id:mime-version:content-transfer-encoding;
-        bh=iSMx4v4MQhT6LaqCu6U6c7zNkD8D78ZUh7uTaQEZQe8=;
-        b=OtxOm4NugsEqN/hkH1TrDZCNwIKkr07YymmxCJY71Y8p7Ux5aPR6UlDleaOLO+eHQB
-         GBui1S/UkOOeRC3Rtae4JdTF3+vXuJn/F2LT/qcGAWwtZ9fNXUQ+hDHMyJsSi/5xTXHu
-         IXYqWfnyCN6eQB4/JGzYa1pWeFqPA7dUlGyg+XOjPxm8verKU/vDRnif6vXDKzjczywl
-         NobUAUlOJV9/+FKkMkAl5f/wRf9ppSmzKKw4wjzlIgBzclYtKbkrWTTYwFnYYl8J1QtU
-         /VKRrS8QuC/7AqGvgTSZjdUppeUKJqPqWKslZ/12QsWHdxzNJmy8NJenJhYqf1CzOLjt
-         0yZg==
-X-Gm-Message-State: AJIora+JLdXfycuprkxvshaJMY3Y4VYyk4yE3O2QH61TaKJJa5GaJWas
-        pWIlO8Ltx9oZtR7OeMR3b8tNsQ==
-X-Google-Smtp-Source: AGRyM1sOraTGWkKfkpbrBKpXmppWtOz5jfeiEuJV2YD2yKY84I8jDUXSTpFArHSmuFmb0CgpAloIRA==
-X-Received: by 2002:a2e:3507:0:b0:25b:2e3c:bb6 with SMTP id z7-20020a2e3507000000b0025b2e3c0bb6mr13765501ljz.393.1656846065077;
-        Sun, 03 Jul 2022 04:01:05 -0700 (PDT)
-Received: from [127.0.0.1] ([188.162.64.125])
-        by smtp.gmail.com with ESMTPSA id k6-20020ac257c6000000b0047fa02cd96csm4650408lfo.162.2022.07.03.04.01.03
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Jul 2022 04:01:04 -0700 (PDT)
-Date:   Sun, 03 Jul 2022 14:00:58 +0300
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-CC:     Andy Gross <agross@kernel.org>,
+        Sun, 3 Jul 2022 22:04:50 -0400
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5809538BB;
+        Sun,  3 Jul 2022 19:04:47 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VIDpTgv_1656900279;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VIDpTgv_1656900279)
+          by smtp.aliyun-inc.com;
+          Mon, 04 Jul 2022 10:04:40 +0800
+Message-ID: <1656900267.44917-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v11 09/40] virtio_ring: split: extract the logic of alloc state and extra
+Date:   Mon, 4 Jul 2022 10:04:27 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, Konrad Dybcio <konradybcio@gmail.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_3/4=5D_remoteproc=3A_qcom=3A_q6v5-mss=3A_?= =?US-ASCII?Q?Add_support_for_SDM630/636/660_MSS_remoteproc?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <YsFrtn0X6ywJh6d3@gerhold.net>
-References: <20220514000108.3070363-1-dmitry.baryshkov@linaro.org> <20220514000108.3070363-4-dmitry.baryshkov@linaro.org> <YsFrtn0X6ywJh6d3@gerhold.net>
-Message-ID: <CE68B315-BB4C-4A77-BEDE-140784D337D2@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        kangjie.xu@linux.alibaba.com,
+        virtualization@lists.linux-foundation.org
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+ <20220629065656.54420-10-xuanzhuo@linux.alibaba.com>
+ <c4d24e5c-1a3e-e577-462e-c9ebde90d659@redhat.com>
+In-Reply-To: <c4d24e5c-1a3e-e577-462e-c9ebde90d659@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 3 July 2022 13:13:51 GMT+03:00, Stephan Gerhold <stephan@gerhold=2Enet>=
- wrote:
->On Sat, May 14, 2022 at 03:01:07AM +0300, Dmitry Baryshkov wrote:
->> From: Konrad Dybcio <konradybcio@gmail=2Ecom>
->>=20
->> This adds support for sdm630/636/660 modem subsystem
->> remote processor=2E
->>=20
->> Signed-off-by: Konrad Dybcio <konradybcio@gmail=2Ecom>
->> [DB: fixed commit message, removed note about modem restarting regularl=
-y]
->> Signed-off-by: Dmitry Baryshkov <dmitry=2Ebaryshkov@linaro=2Eorg>
+On Fri, 1 Jul 2022 16:55:05 +0800, Jason Wang <jasowang@redhat.com> wrote:
 >
->I was only looking at this by coincidence recently but since it doesn't
->seem to be applied yet(?) some comments below=2E
+> =E5=9C=A8 2022/6/29 14:56, Xuan Zhuo =E5=86=99=E9=81=93:
+> > Separate the logic of creating desc_state, desc_extra, and subsequent
+> > patches will call it independently.
+> >
+> > Since only the structure vring is passed into __vring_new_virtqueue(),
+> > when creating the function vring_alloc_state_extra_split(), we prefer to
+> > use vring_virtqueue_split as a parameter, and it will be more convenient
+> > to pass vring_virtqueue_split to some subsequent functions.
+> >
+> > So a new vring_virtqueue_split variable is added in
+> > __vring_new_virtqueue().
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 58 +++++++++++++++++++++++++-----------
+> >   1 file changed, 40 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index a9ceb9c16c54..cedd340d6db7 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -204,6 +204,7 @@ struct vring_virtqueue {
+> >   #endif
+> >   };
+> >
+> > +static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int nu=
+m);
+> >
+> >   /*
+> >    * Helpers.
+> > @@ -939,6 +940,32 @@ static void *virtqueue_detach_unused_buf_split(str=
+uct virtqueue *_vq)
+> >   	return NULL;
+> >   }
+> >
+> > +static int vring_alloc_state_extra_split(struct vring_virtqueue_split =
+*vring)
+> > +{
+> > +	struct vring_desc_state_split *state;
+> > +	struct vring_desc_extra *extra;
+> > +	u32 num =3D vring->vring.num;
+> > +
+> > +	state =3D kmalloc_array(num, sizeof(struct vring_desc_state_split), G=
+FP_KERNEL);
+> > +	if (!state)
+> > +		goto err_state;
+> > +
+> > +	extra =3D vring_alloc_desc_extra(num);
+> > +	if (!extra)
+> > +		goto err_extra;
+> > +
+> > +	memset(state, 0, num * sizeof(struct vring_desc_state_split));
+> > +
+> > +	vring->desc_state =3D state;
+> > +	vring->desc_extra =3D extra;
+> > +	return 0;
+> > +
+> > +err_extra:
+> > +	kfree(state);
+> > +err_state:
+> > +	return -ENOMEM;
+> > +}
+> > +
+> >   static void vring_free_split(struct vring_virtqueue_split *vring,
+> >   			     struct virtio_device *vdev)
+> >   {
+> > @@ -2224,7 +2251,7 @@ EXPORT_SYMBOL_GPL(vring_interrupt);
+> >
+> >   /* Only available for split ring */
+> >   struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> > -					struct vring vring,
+> > +					struct vring _vring,
+> >   					struct virtio_device *vdev,
+> >   					bool weak_barriers,
+> >   					bool context,
+> > @@ -2232,7 +2259,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned =
+int index,
+> >   					void (*callback)(struct virtqueue *),
+> >   					const char *name)
+> >   {
+> > +	struct vring_virtqueue_split vring =3D {};
+>
+>
+> Nit: to reduce the change-set, let's use vring_split here?
 
-Thanks for your comments, I will take a look next week=2E
+Will fix.
+
+Thanks.
+
 
 >
->> ---
->>  drivers/remoteproc/qcom_q6v5_mss=2Ec | 111 +++++++++++++++++++++++++++=
-++
->>  1 file changed, 111 insertions(+)
->>=20
->> diff --git a/drivers/remoteproc/qcom_q6v5_mss=2Ec b/drivers/remoteproc/=
-qcom_q6v5_mss=2Ec
->> index af217de75e4d=2E=2E7a4cca30db8a 100644
->> --- a/drivers/remoteproc/qcom_q6v5_mss=2Ec
->> +++ b/drivers/remoteproc/qcom_q6v5_mss=2Ec
->[=2E=2E=2E]
->> +		}
->> +
->>  		/* Remove word line clamp */
->>  		val =3D readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
->>  		val &=3D ~QDSP6v56_CLAMP_WL;
+> Other looks good.
 >
->All in all this looks almost exactly like the existing code for
->MSS_MSM8996/8=2E Wouldn't it be cleaner to just add an if statement for
->the QDSP6V62SS_BHS_STATUS readl_poll_timeout() to the existing code?
-
-For quite some time I was unhappy with this part of the mss driver=2E Mayb=
-e it's time to review platform-specific code in attempt to generalise it=2E
-
---=20
-With best wishes
-Dmitry
+> Thanks
+>
+>
+> >   	struct vring_virtqueue *vq;
+> > +	int err;
+> >
+> >   	if (virtio_has_feature(vdev, VIRTIO_F_RING_PACKED))
+> >   		return NULL;
+> > @@ -2261,7 +2290,7 @@ struct virtqueue *__vring_new_virtqueue(unsigned =
+int index,
+> >   	vq->split.queue_dma_addr =3D 0;
+> >   	vq->split.queue_size_in_bytes =3D 0;
+> >
+> > -	vq->split.vring =3D vring;
+> > +	vq->split.vring =3D _vring;
+> >   	vq->split.avail_flags_shadow =3D 0;
+> >   	vq->split.avail_idx_shadow =3D 0;
+> >
+> > @@ -2273,30 +2302,23 @@ struct virtqueue *__vring_new_virtqueue(unsigne=
+d int index,
+> >   					vq->split.avail_flags_shadow);
+> >   	}
+> >
+> > -	vq->split.desc_state =3D kmalloc_array(vring.num,
+> > -			sizeof(struct vring_desc_state_split), GFP_KERNEL);
+> > -	if (!vq->split.desc_state)
+> > -		goto err_state;
+> > +	vring.vring =3D _vring;
+> >
+> > -	vq->split.desc_extra =3D vring_alloc_desc_extra(vring.num);
+> > -	if (!vq->split.desc_extra)
+> > -		goto err_extra;
+> > +	err =3D vring_alloc_state_extra_split(&vring);
+> > +	if (err) {
+> > +		kfree(vq);
+> > +		return NULL;
+> > +	}
+> >
+> > -	memset(vq->split.desc_state, 0, vring.num *
+> > -			sizeof(struct vring_desc_state_split));
+> > +	vq->split.desc_state =3D vring.desc_state;
+> > +	vq->split.desc_extra =3D vring.desc_extra;
+> >
+> > -	virtqueue_init(vq, vq->split.vring.num);
+> > +	virtqueue_init(vq, vring.vring.num);
+> >
+> >   	spin_lock(&vdev->vqs_list_lock);
+> >   	list_add_tail(&vq->vq.list, &vdev->vqs);
+> >   	spin_unlock(&vdev->vqs_list_lock);
+> >   	return &vq->vq;
+> > -
+> > -err_extra:
+> > -	kfree(vq->split.desc_state);
+> > -err_state:
+> > -	kfree(vq);
+> > -	return NULL;
+> >   }
+> >   EXPORT_SYMBOL_GPL(__vring_new_virtqueue);
+> >
+>
