@@ -2,334 +2,181 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F188FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  4 Jul 2022 18:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9C3C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 01:13:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229887AbiGDSAs (ORCPT
+        id S230060AbiGEBNx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 4 Jul 2022 14:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
+        Mon, 4 Jul 2022 21:13:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbiGDSAr (ORCPT
+        with ESMTP id S231583AbiGEBNu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 4 Jul 2022 14:00:47 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55430DF22
-        for <linux-remoteproc@vger.kernel.org>; Mon,  4 Jul 2022 11:00:46 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id i8-20020a17090a4b8800b001ef8a65bfbdso2745681pjh.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 04 Jul 2022 11:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=m7UJ+YG5CXHk/LR6YSJUbKvXt0/M9BLJzyNtxtftuDs=;
-        b=lCJqce/AmmNuefMQS0l5Lc63NRUef3tEkehYhM0q6WPX3fsdGV00lIPwu+YIvNfe3I
-         z+vZkiC2iaQyT4tjJxYoZ0BD1aO4RC3OvwJy4lydHDeOTzvG2UZ+4lI2nEn0t6qO5H0N
-         qsc4HMlCyOO0ISj1ciw3FJm+w9RQ/xI6HuVYq/FmXgYWVFrZnlTkpOmGTwy9P7KVFXj2
-         M6+s30FCM3Bu6dX1YhYZ5jkDVD+9jkR78FpnL98WM5swYTwPK9SMiDD9z0zl8la3o6G5
-         mtM5uW82rR7QIep1kJERLhJtgw4UcV6/fm+BqRFBs0UzrRLYLkvnzw/Gh0e/FFzL/6rU
-         9VEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=m7UJ+YG5CXHk/LR6YSJUbKvXt0/M9BLJzyNtxtftuDs=;
-        b=ovE2nsKy5XbtATJxbqXirYq8AAPO6udBIfEqFONHZroxAF1+XRQwB11rDIjN/0MIDI
-         hIIKiQiHrQCTaXpIw0X0TVCnz1sKa2dUmVrLNqZGvggFz6AUsZY5u61CW5QUzeYmNE5m
-         2SmJPjy9tsTBaRgAaPFbRjgIKAPcsqzsnDG1Fwb4+VqrXjPEypLNJoAzv4W6tI00lpoZ
-         LF/UPAiCtP3tER9EMyU5a7QOkxo7d6NgKU6MaZht6b5eV6pbH+hP0E4g0yLDrsiSEA8C
-         BxLb6L880/mYxWNZHDRpoKRDrd9PQ/rHIbTG7VWyW6BO+W+kUtFfX938UcA2zLvLJEwi
-         ZW3A==
-X-Gm-Message-State: AJIora++9Em92dbdx5x44xKep+2777nSWE5sBJQb9CGGtzb1tHjuN7zY
-        wpZdrxqZ9l6ultdX4h9U0tiLPQ==
-X-Google-Smtp-Source: AGRyM1vS4WoOBYR1kjgATDREJnIY0Lh1WxfImEtlm8sicCq+0ROl94da+SVFAX4uUKmOj1LWnuynuQ==
-X-Received: by 2002:a17:902:c3c1:b0:16a:14bd:8b19 with SMTP id j1-20020a170902c3c100b0016a14bd8b19mr36346350plj.152.1656957645747;
-        Mon, 04 Jul 2022 11:00:45 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id m12-20020a170902768c00b0016a17da4ad4sm21484231pll.39.2022.07.04.11.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Jul 2022 11:00:44 -0700 (PDT)
-Date:   Mon, 4 Jul 2022 12:00:42 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Subject: Re: [PATCH v6 1/4] remoteproc: core: Introduce
- rproc_rvdev_add_device function
-Message-ID: <20220704180042.GD2375750@p14s>
-References: <20220603163158.612513-1-arnaud.pouliquen@foss.st.com>
- <20220603163158.612513-2-arnaud.pouliquen@foss.st.com>
+        Mon, 4 Jul 2022 21:13:50 -0400
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-eopbgr80083.outbound.protection.outlook.com [40.107.8.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A762FEE19;
+        Mon,  4 Jul 2022 18:13:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jrlc/241qIWTHAhMYZxVIwY7LbCyQ2JOCXuK9pTzLYSp6yhv9LjwU/rFy7NA/otiMvTzgzL+NJs+lzhMLGVTRvXb0rQVUM9jhiW6e15MSIEhpdj44EV6aMUHaTnP/QAknAdytfYXUfqH0zsHJStl4F8ZugO1I0NEsKIcEPnXqgQceMupirhO50NHN4Pnrx6wAYqVt61pFti+USbrMtTcIX0TgSNn2aP0Qzar8qrrmuqHqw1eaxgKDOynD+rIKIjtL4x6LetqoSHVGcNTqptde+SiXh8DP4FnPv+xlYsiq7uCGPgbzeXVb6g9htNOBIMBjmFQsbb+HKl0DhlelN1iBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g2+aL3NaizpYxplvW2GPUVb/9F8n2S5ika2pp9+VEuk=;
+ b=A2Y4pdYPEbTjdqq/Mdh9ebK8HWARQSJBITjoDuKuskSiY58cK1UioAYdEI6W1wc43zivBAMLF8BELi6eT2kZ03T/z/UJjFLkjn8eUwgYg15zwCL4LtHgpBO42mYC9/SUiOMJpj0pPRjdF5eg5E6X6djoyAq/qkJ8rtPvNVne3Gl2d7wG6D2UIn3idhkBN1gHSFzxdR2jmM7PiQiYonWzelpuJh5p3dZ9smwut5vZ182bsCOQkOJpy8eRJy4zXb8yN2XA4bGH2yvUA1Zd4geMVwyaHQHdetp81fZvM1/K1cDtam0CWP0vp+Xsp4L9hVlJ+rmK/6E0BroMd2iDRJ5/6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g2+aL3NaizpYxplvW2GPUVb/9F8n2S5ika2pp9+VEuk=;
+ b=ijmbsdYWi9NGl3LCCRaBZqNcl9DlbXV/6xWjD4NJRbf8XwgnQ0rpLI1zFzu+dfBm6Ekw7F8S1+cn5Bwt69P7KvZy15k/1qBQRy/xKAiHFyzo93k+3UQmuy0af3G1Y6NAcIpXFbl7ad7Q8C5Mg1AeKdtYyKdp3T0fDIQQj7KUayQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by VI1PR04MB4365.eurprd04.prod.outlook.com (2603:10a6:803:49::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5395.20; Tue, 5 Jul
+ 2022 01:13:45 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::fdd4:8557:334b:180d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::fdd4:8557:334b:180d%7]) with mapi id 15.20.5395.020; Tue, 5 Jul 2022
+ 01:13:45 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        arnaud.pouliquen@foss.st.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V7 0/2] remoteproc: support self recovery
+Date:   Tue,  5 Jul 2022 09:15:25 +0800
+Message-Id: <20220705011527.2849057-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0053.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::7) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220603163158.612513-2-arnaud.pouliquen@foss.st.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9c0c9a13-fd35-4401-d57a-08da5e239ba9
+X-MS-TrafficTypeDiagnostic: VI1PR04MB4365:EE_
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: qxw7d0DjtuXCmw2gEZOwiKVJungDmWCbTM66WsVunITTonX2dY/SHW99FrnW/s0NxO8QBThJddQJowjyG+g61hopu+J6s3o3kIlESuR2MwY7fqjVW8iWkmwU+s5YbD3XAzPpcM3n4LRcOTKETDd4VzzVtZvLavjQWjhdpNTMP3/Ucu0LQhnzWLO3trS3KFb+dsmFz7Ald9+Fo5srPAieDhmEd0lnmDc0HB7lFKYuBQ3JJx9gcdOl4n47mU2RFtLBW7EcLWXEnJuCuc+tKGoIYP30NFWVxr98I5s31JRWgKWfc2l/CDEqwyXVpMNkbKl298yEG6Dxzc5bR0VBSVlIxNI9TzEocjonJUoQl5PKuMqWjVzmroP+iW/0pzojV7kTa87tNopEAo0/ovRKC7wddxm5TMbMyicgPMj+kGLhCCY+bnQeuG0g0RCpNhMbOd11MXhxXPGw18r85W+WFiiwSmvege8nvV7T9Gg6FWK/bObKwWANfNJoc5/y/fFJkWRSbdwhpiCpMQLDaXGCFIbrRlo3j0UlCR3KP66vVDUI27irv/OsMqjh7W5p/WQyOHULHiV7es7aJFkQ6EXC1EzMHzQ1hFyXJC8zrHskv/SFzdMZ8mPDBR6/pYn8nkm/iXKEPgLe5pTCt9MI9O/fSxnlIwcOwAEfv9GS1VT44pSodL6U23YDgw8UWs2eRB1uhtFnFkYv432lmgcd6/uSjbSECX8N+gD72ywlmqtArOgYK/hzc0pV5eyZ8/YcJYDJ8bazAzqh+cA7BW2uSvvrpgILHhCQ4KgtdAYMBO07RsZvhWPP+YlLZdAZDNjW+wkT8zUr7RyvPnquaQNrsInvLzxj5XpiE3p2Okak/uRa/d+dDlr6AwLs0TtlA9uNLSq7DEoj
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(376002)(366004)(136003)(396003)(39860400002)(346002)(6666004)(52116002)(2616005)(6506007)(4326008)(66946007)(8676002)(66476007)(41300700001)(86362001)(966005)(6512007)(66556008)(26005)(6486002)(316002)(38350700002)(1076003)(478600001)(38100700002)(2906002)(8936002)(186003)(83380400001)(5660300002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YwluEDuAixv++T+VEufoPDpYzJ/j7ZvgfZD7OU/2J53EqAQzy/oPESpNt+qu?=
+ =?us-ascii?Q?wsH8nA6Nm3HCQmzi+tuIZ2n/rYFST0C9zHIHKRScIi7VE4kNVS4rsPgPy3uo?=
+ =?us-ascii?Q?B8xx2VpGnlrhxy33iqkateM2B4dr/hUJ32r3+ABUOTpFb38J6ZmzH1uDIIFc?=
+ =?us-ascii?Q?VWc3Qyhkk9GU96Lgr2DOz6z+ZmeEIzRGuyeau2Z1vRroGHLxYdgkGWCeoqdb?=
+ =?us-ascii?Q?Dd0KGTyvkb5Z7G71x1yaILgPupERfi/cis9dlXdEfLTz7ZpY7xOGS8bOi/ch?=
+ =?us-ascii?Q?1vOsbwfxWPEKtgZwd0y594hpEs6niKP+DeYxeBpcLDsQje+DlvbLlVhdeyh6?=
+ =?us-ascii?Q?Ogqcu2gGUJ6B2DmAC6b/IAf9xFccwShAFg3zoXMjL8TBaUXyPy/M4VfAWUWr?=
+ =?us-ascii?Q?gnrpmjxUyWInVbO7bvLNqHOSR3+O5Jqm2T6Tpf6IwzpfTrb132oBJp5RPQps?=
+ =?us-ascii?Q?83ouF9E/OLxY4TPSvkgh2K2bBcBcaOKVcayhasHudIuDR8EIFm0Du84DxCqJ?=
+ =?us-ascii?Q?A+HFkRcb8NoFTPm3w/t1zOFoB7h8l/dNTkifkZ4hsvH/qyUDWzhHZd9jNwyu?=
+ =?us-ascii?Q?b2yKm2VfI0SHn/kI/FfNdPqKpL6S/WX/f5195YQPADjfTO261mNkb0qFVOIC?=
+ =?us-ascii?Q?5XYFPFIus5laKrEkVcfG2dYYl7dX9pH0ie7kyOOrqD7jez4XqlwWe7cN8Skl?=
+ =?us-ascii?Q?NsNAUqVbCv7/ysEYJxoJwn6NFY+fYV1562U1GxJEqjS2I2mTru58vmATxAFn?=
+ =?us-ascii?Q?LSSj73yCwR/fIeVdlRIvgTzbHAE+N1+upJx754nS6t4qaGS2GrNRoN31sMZM?=
+ =?us-ascii?Q?w8H1wswrBB+YuLRCLEfnYXUZBNljNAfN+DHB8JmMlVZrOHnrDU2wrUyoMQg9?=
+ =?us-ascii?Q?P4Qd4z08EnV8Wwi1Mpll8C3b1KgN4qD/0q4y5aPAfqHlVPpzjAvEGRHZ5dD8?=
+ =?us-ascii?Q?ijWdzZ/leq+3oRAawK6R4UZVxcOi0skdOBxKQEc6qS+y4DO32gBrw1Kf3sV4?=
+ =?us-ascii?Q?oi8tuxbOIYZdjN3qyLP2r+wRIu2A/C6kXQEYBOHUDapR1jNQsiD9O+t20xw2?=
+ =?us-ascii?Q?8uuR8o98vrhHeddLuY8QFVAv8Ii03mhSeMvQYdJDESmKPM4lCxYM/DaZNXzI?=
+ =?us-ascii?Q?Ye0iiVqLUPibZkbsxcELwGolDHkvxtbiczECqY6jspZmRBlnjkkyeDOwu6WD?=
+ =?us-ascii?Q?M3VQ/yfaB2n9/TibxnTGVsBRavqCuvvmZFC39OFVSt1Zl1GpvviqcpZIXsiP?=
+ =?us-ascii?Q?jwafrC70X+UMlCk/sxyPCzYK+ih5OErlFi52T3X9ws0+RskhkSFSB3DEdexS?=
+ =?us-ascii?Q?n/oXs/Rspkjlt7w3XIcHQ2hSODBe/i7RI3BM/rbBZeWImzzs2I1ZkS1fDaIi?=
+ =?us-ascii?Q?g+nu8bVLtfHWN2rLkr2p8wa1IlJjgyKeUOVRihVLu7PpIEiY/QGth0fgcvAt?=
+ =?us-ascii?Q?rGDFj55KY6GLd9BUHBEQH+tVWbivTZHLrsUy+7H9mCM5ES1C6tD2kpkj+Kyt?=
+ =?us-ascii?Q?GfvYKaNeVmWYRuqs7cu1gWPlGhs1ciAVOzkndkZCV7VOt/vwWtekWvAKOUm+?=
+ =?us-ascii?Q?tCxANcdB2xC9s+eJLJYAWIoBa4hoVGiAexi5cT9/?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c0c9a13-fd35-4401-d57a-08da5e239ba9
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2022 01:13:45.8092
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: //Ew3V9KvLf5OErt7mE8C8NNNnxHQzFESLe/7CblN/ls3zRFh6kLw3jWFl8OGJqyBgis470nJR0n4blqFrCkrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4365
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 06:31:55PM +0200, Arnaud Pouliquen wrote:
-> In preparation of the migration of the management of rvdev in
-> remoteproc_virtio.c, this patch spins off a new function to manage the
-> remoteproc virtio device creation.
-> 
-> The rproc_rvdev_add_device will be moved to remoteproc_virtio.c.
-> 
-> The rproc_vdev_data structure is introduced to provide information for
-> the rvdev creation. This structure allows to manage the rvdev and vrings
-> allocation in the rproc_rvdev_add_device function.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> Updates vs previous revision (based on Mathieu Poirier's comments):
->   - rproc_vdev_data struct change index field type to u32
->   - remove rproc_rvdev_remove_device function creation
-> ---
->  drivers/remoteproc/remoteproc_core.c     | 145 +++++++++++++----------
->  drivers/remoteproc/remoteproc_internal.h |  15 +++
->  2 files changed, 97 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c510125769b9..c438c32f7f0d 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -484,74 +484,23 @@ static int copy_dma_range_map(struct device *to, struct device *from)
->  	return 0;
->  }
->  
-> -/**
-> - * rproc_handle_vdev() - handle a vdev fw resource
-> - * @rproc: the remote processor
-> - * @ptr: the vring resource descriptor
-> - * @offset: offset of the resource entry
-> - * @avail: size of available data (for sanity checking the image)
-> - *
-> - * This resource entry requests the host to statically register a virtio
-> - * device (vdev), and setup everything needed to support it. It contains
-> - * everything needed to make it possible: the virtio device id, virtio
-> - * device features, vrings information, virtio config space, etc...
-> - *
-> - * Before registering the vdev, the vrings are allocated from non-cacheable
-> - * physically contiguous memory. Currently we only support two vrings per
-> - * remote processor (temporary limitation). We might also want to consider
-> - * doing the vring allocation only later when ->find_vqs() is invoked, and
-> - * then release them upon ->del_vqs().
-> - *
-> - * Note: @da is currently not really handled correctly: we dynamically
-> - * allocate it using the DMA API, ignoring requested hard coded addresses,
-> - * and we don't take care of any required IOMMU programming. This is all
-> - * going to be taken care of when the generic iommu-based DMA API will be
-> - * merged. Meanwhile, statically-addressed iommu-based firmware images should
-> - * use RSC_DEVMEM resource entries to map their required @da to the physical
-> - * address of their base CMA region (ouch, hacky!).
-> - *
-> - * Return: 0 on success, or an appropriate error code otherwise
-> - */
-> -static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
-> -			     int offset, int avail)
-> +static struct rproc_vdev *
-> +rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
->  {
-> -	struct fw_rsc_vdev *rsc = ptr;
-> -	struct device *dev = &rproc->dev;
->  	struct rproc_vdev *rvdev;
-> -	int i, ret;
-> +	struct fw_rsc_vdev *rsc = rvdev_data->rsc;
->  	char name[16];
-> -
-> -	/* make sure resource isn't truncated */
-> -	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-> -			avail) {
-> -		dev_err(dev, "vdev rsc is truncated\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	/* make sure reserved bytes are zeroes */
-> -	if (rsc->reserved[0] || rsc->reserved[1]) {
-> -		dev_err(dev, "vdev rsc has non zero reserved bytes\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	dev_dbg(dev, "vdev rsc: id %d, dfeatures 0x%x, cfg len %d, %d vrings\n",
-> -		rsc->id, rsc->dfeatures, rsc->config_len, rsc->num_of_vrings);
-> -
-> -	/* we currently support only two vrings per rvdev */
-> -	if (rsc->num_of_vrings > ARRAY_SIZE(rvdev->vring)) {
-> -		dev_err(dev, "too many vrings: %d\n", rsc->num_of_vrings);
-> -		return -EINVAL;
-> -	}
-> +	int i, ret;
->  
->  	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
->  	if (!rvdev)
-> -		return -ENOMEM;
-> +		return ERR_PTR(-ENOMEM);
->  
->  	kref_init(&rvdev->refcount);
->  
-> -	rvdev->id = rsc->id;
-> +	rvdev->id = rvdev_data->id;
->  	rvdev->rproc = rproc;
-> -	rvdev->index = rproc->nb_vdev++;
-> +	rvdev->index = rvdev_data->index;
->  
->  	/* Initialise vdev subdevice */
->  	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
-> @@ -563,7 +512,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	ret = device_register(&rvdev->dev);
->  	if (ret) {
->  		put_device(&rvdev->dev);
-> -		return ret;
-> +		return ERR_PTR(ret);
->  	}
->  
->  	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
-> @@ -576,7 +525,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
->  					   dma_get_mask(rproc->dev.parent));
->  	if (ret) {
-> -		dev_warn(dev,
-> +		dev_warn(&rvdev->dev,
->  			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
->  			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
->  	}
-> @@ -589,7 +538,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	}
->  
->  	/* remember the resource offset*/
-> -	rvdev->rsc_offset = offset;
-> +	rvdev->rsc_offset = rvdev_data->rsc_offset;
->  
->  	/* allocate the vring resources */
->  	for (i = 0; i < rsc->num_of_vrings; i++) {
-> @@ -605,14 +554,14 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  
->  	rproc_add_subdev(rproc, &rvdev->subdev);
->  
-> -	return 0;
-> +	return rvdev;
->  
->  unwind_vring_allocations:
->  	for (i--; i >= 0; i--)
->  		rproc_free_vring(&rvdev->vring[i]);
->  free_rvdev:
->  	device_unregister(&rvdev->dev);
-> -	return ret;
-> +	return ERR_PTR(ret);
->  }
->  
->  void rproc_vdev_release(struct kref *ref)
-> @@ -632,6 +581,76 @@ void rproc_vdev_release(struct kref *ref)
->  	device_unregister(&rvdev->dev);
->  }
->  
-> +/**
-> + * rproc_handle_vdev() - handle a vdev fw resource
-> + * @rproc: the remote processor
-> + * @ptr: the vring resource descriptor
-> + * @offset: offset of the resource entry
-> + * @avail: size of available data (for sanity checking the image)
-> + *
-> + * This resource entry requests the host to statically register a virtio
-> + * device (vdev), and setup everything needed to support it. It contains
-> + * everything needed to make it possible: the virtio device id, virtio
-> + * device features, vrings information, virtio config space, etc...
-> + *
-> + * Before registering the vdev, the vrings are allocated from non-cacheable
-> + * physically contiguous memory. Currently we only support two vrings per
-> + * remote processor (temporary limitation). We might also want to consider
-> + * doing the vring allocation only later when ->find_vqs() is invoked, and
-> + * then release them upon ->del_vqs().
-> + *
-> + * Note: @da is currently not really handled correctly: we dynamically
-> + * allocate it using the DMA API, ignoring requested hard coded addresses,
-> + * and we don't take care of any required IOMMU programming. This is all
-> + * going to be taken care of when the generic iommu-based DMA API will be
-> + * merged. Meanwhile, statically-addressed iommu-based firmware images should
-> + * use RSC_DEVMEM resource entries to map their required @da to the physical
-> + * address of their base CMA region (ouch, hacky!).
-> + *
-> + * Return: 0 on success, or an appropriate error code otherwise
-> + */
-> +static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
-> +			     int offset, int avail)
-> +{
-> +	struct fw_rsc_vdev *rsc = ptr;
-> +	struct device *dev = &rproc->dev;
-> +	struct rproc_vdev *rvdev;
-> +	struct rproc_vdev_data rvdev_data;
-> +
-> +	/* make sure resource isn't truncated */
-> +	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-> +			avail) {
-> +		dev_err(dev, "vdev rsc is truncated\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* make sure reserved bytes are zeroes */
-> +	if (rsc->reserved[0] || rsc->reserved[1]) {
-> +		dev_err(dev, "vdev rsc has non zero reserved bytes\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	dev_dbg(dev, "vdev rsc: id %d, dfeatures 0x%x, cfg len %d, %d vrings\n",
-> +		rsc->id, rsc->dfeatures, rsc->config_len, rsc->num_of_vrings);
-> +
-> +	/* we currently support only two vrings per rvdev */
-> +	if (rsc->num_of_vrings > ARRAY_SIZE(rvdev->vring)) {
-> +		dev_err(dev, "too many vrings: %d\n", rsc->num_of_vrings);
-> +		return -EINVAL;
-> +	}
-> +
-> +	rvdev_data.id = rsc->id;
-> +	rvdev_data.index = rproc->nb_vdev++;
-> +	rvdev_data.rsc_offset = offset;
-> +	rvdev_data.rsc = rsc;
-> +
-> +	rvdev = rproc_rvdev_add_device(rproc, &rvdev_data);
-> +	if (IS_ERR(rvdev))
-> +		return PTR_ERR(rvdev);
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * rproc_handle_trace() - handle a shared trace buffer resource
->   * @rproc: the remote processor
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 72d4d3d7d94d..caa1ef91be14 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -24,6 +24,21 @@ struct rproc_debug_trace {
->  	struct rproc_mem_entry trace_mem;
->  };
->  
-> +/**
-> + * struct rproc_vdev_data - remoteproc virtio device data
-> + * @rsc_offset: offset of the vdev's resource entry
-> + * @id: virtio device id (as in virtio_ids.h)
-> + * @index: vdev position versus other vdev declared in resource table
-> + * @rsc: pointer to the vdev resource entry. Valid onlyduring vdev init as the resource can
+From: Peng Fan <peng.fan@nxp.com>
 
-s/onlyduring/only during
+V7:
+ Per comments from Arnaud Pouliquen:
+   Typo fixes
+   Added A-b tag
 
-More comments coming tomorrow.
+V6:
+ Rename rproc_firmware_recovery to rproc_boot_recovery
+ Drop the unlock/lock when do reproc_attach_recovery
 
-> + *       be cached by rproc.
-> + */
-> +struct rproc_vdev_data {
-> +	u32 rsc_offset;
-> +	unsigned int id;
-> +	u32 index;
-> +	struct fw_rsc_vdev *rsc;
-> +};
-> +
->  /* from remoteproc_core.c */
->  void rproc_release(struct kref *kref);
->  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
-> -- 
-> 2.24.3
-> 
+V5:
+ Rename RPROC_FEAT_ATTACH_RECOVERY to RPROC_FEAT_ATTACH_ON_RECOVERY
+ Add kerneldoc for rproc features
+ Change rproc_set_feature to return int type and add a max feature check
+ Use __rproc_detach and __rproc_attach when do attach recovery
+ https://patchwork.kernel.org/project/linux-remoteproc/cover/20220615032048.465486-1-peng.fan@oss.nxp.com/
+
+V4:
+  Based on Bjorn's comments on V2-2
+  Move the rproc_has_feature/rproc_set_feature to remoteproc_internal.h and
+ Keep rproc_features still in remoteproc.h, because we use
+ RPROC_MAX_FEATURES to declare bitmap.
+  Update commit log for patch 2/2, and add comments
+
+  https://patchwork.kernel.org/project/linux-remoteproc/cover/20220323034405.976643-1-peng.fan@oss.nxp.com/
+ 
+V3:
+ Resend the wrong labeled patchset
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
+
+ Write a cover-letter
+ To i.MX8QM/QXP, they have a M4 core self-recovery capability without
+ Linux loading firmware. The self recovery is done by
+ SCU(System Control Unit). Current remoteproc framework only support Linux
+ help recovery remote processor(stop, loading firmware, start). This
+ patchset is support remote processor self recovery(attach recovery).
+
+ In order to avoid introducing a new variable(bool support_self_recovery),
+ patch 1 introduce a new function, rproc_has_feature to make code easy to
+ extend, cleaner, such as we could move "bool has_iommu" to
+ rproc_has_feature(rproc, RPROC_FEAT_IOMMU).
+
+ Patch 2 is introduce a new function rproc_attach_recovery for
+ self recovery, the original logic move to rproc_firmware_recovery meaning
+ needs linux to help recovery.
+
+ V2-version 2:
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
+ Introduce rproc_has_feature
+
+ V2-version 1:
+ https://patchwork.kernel.org/project/linux-remoteproc/patch/20220126085120.3397450-1-peng.fan@oss.nxp.com/
+ Nothing change in V2.
+ Only move this patch out from
+ https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
+
+
+Peng Fan (2):
+  remoteproc: introduce rproc features
+  remoteproc: support attach recovery after rproc crash
+
+ drivers/remoteproc/remoteproc_core.c     | 62 ++++++++++++++++--------
+ drivers/remoteproc/remoteproc_internal.h | 15 ++++++
+ include/linux/remoteproc.h               | 16 ++++++
+ 3 files changed, 74 insertions(+), 19 deletions(-)
+
+-- 
+2.25.1
+
