@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EC1C43334
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 12:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413A7CCA485
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 12:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234346AbiGEMJX (ORCPT
+        id S234390AbiGEMJ0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 08:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53264 "EHLO
+        Tue, 5 Jul 2022 08:09:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235283AbiGEMIu (ORCPT
+        with ESMTP id S235289AbiGEMIv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 08:08:50 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85B0D80;
-        Tue,  5 Jul 2022 05:08:46 -0700 (PDT)
+        Tue, 5 Jul 2022 08:08:51 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CA9E10B8;
+        Tue,  5 Jul 2022 05:08:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1657022927; x=1688558927;
+  t=1657022930; x=1688558930;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=1TnrlON6jGNxZUFCvOW+lAd5eWA6M54MhqVKSC7Hbgk=;
-  b=g6IAYkKjqL8X4S1rdr0Ldz+RuET+5IUkYznX+51k4y5D9aht1syxDID5
-   pSXiIe+RI5OmzFRvKWrRzXaF3wNtka+17cpEf7Eyl7Q3OCu4n7W39c23Q
-   G+wxCcBJln4Rgp38NesxfNXicNX04ep1aqKaCeqLc8judH6yVtlBi924k
-   I=;
-Received: from ironmsg-lv-alpha.qualcomm.com ([10.47.202.13])
-  by alexa-out.qualcomm.com with ESMTP; 05 Jul 2022 05:08:46 -0700
+  bh=YRsVqKY1FP8GB58R3OD493uBwRt0/4HsIz06TH1IPTg=;
+  b=yDR7LzRkvFDpNmBlhdPqLj+249WDf+BKk8msN1AZpWK5hDXBfFkuckcT
+   tfPXt64DAafMTCc8D+gi1KKAzTRnWwXkN0WXvazs5HH/aReGqFM5aIiA0
+   lSQ83wgOyO6wqVzheuCWJbhv7YllwqdSuEh2Vfw4JJS7HEaMfeh5Qyeyc
+   A=;
+Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 05 Jul 2022 05:08:50 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-lv-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 05:08:46 -0700
+  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 05:08:49 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 05:08:45 -0700
+ 15.2.986.22; Tue, 5 Jul 2022 05:08:49 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 05:08:42 -0700
+ 15.2.986.22; Tue, 5 Jul 2022 05:08:45 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
 To:     <bjorn.andersson@linaro.org>
 CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
@@ -47,9 +47,9 @@ CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
         <konrad.dybcio@somainline.org>,
         Siddharth Gupta <sidgup@codeaurora.org>,
         Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [V3 2/7] remoteproc: qcom: pas: Mark va as io memory
-Date:   Tue, 5 Jul 2022 17:38:15 +0530
-Message-ID: <1657022900-2049-3-git-send-email-quic_sibis@quicinc.com>
+Subject: [V3 3/7] remoteproc: qcom: pas: Mark devices as wakeup capable
+Date:   Tue, 5 Jul 2022 17:38:16 +0530
+Message-ID: <1657022900-2049-4-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1657022900-2049-1-git-send-email-quic_sibis@quicinc.com>
 References: <1657022900-2049-1-git-send-email-quic_sibis@quicinc.com>
@@ -64,30 +64,33 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Siddharth Gupta <sidgup@codeaurora.org>
 
-The pas driver remaps the entire carveout region using the dev_ioremap_wc()
-call, which is then used in the adsp_da_to_va() calls made by the rproc
-framework. This change marks the va returned by this call as an iomem va.
+device_wakeup_enable() on its own is not capable of setting
+device as wakeup capable, it needs to be used in conjunction
+with device_set_wakeup_capable(). The device_init_wakeup()
+calls both these functions on the device passed.
 
+Fixes: a781e5aa5911 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
 Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
 Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 297700f87fe8..df13cfc3aeb8 100644
+index df13cfc3aeb8..43dde151120f 100644
 --- a/drivers/remoteproc/qcom_q6v5_pas.c
 +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -289,6 +289,9 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iom
- 	if (offset < 0 || offset + len > adsp->mem_size)
- 		return NULL;
+@@ -486,7 +486,9 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
+ 	platform_set_drvdata(pdev, adsp);
  
-+	if (is_iomem)
-+		*is_iomem = true;
-+
- 	return adsp->mem_region + offset;
- }
+-	device_wakeup_enable(adsp->dev);
++	ret = device_init_wakeup(adsp->dev, true);
++	if (ret)
++		goto free_rproc;
  
+ 	ret = adsp_alloc_memory_region(adsp);
+ 	if (ret)
 -- 
 2.7.4
 
