@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F423CCA47F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 12:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE42FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 12:09:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234297AbiGEMJS (ORCPT
+        id S234318AbiGEMJU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 08:09:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52334 "EHLO
+        Tue, 5 Jul 2022 08:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235342AbiGEMJB (ORCPT
+        with ESMTP id S235280AbiGEMIt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 08:09:01 -0400
+        Tue, 5 Jul 2022 08:08:49 -0400
 Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D1F17E17;
-        Tue,  5 Jul 2022 05:09:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11E0CF7;
+        Tue,  5 Jul 2022 05:08:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1657022940; x=1688558940;
+  t=1657022922; x=1688558922;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=fwRrMl9p2riRRQyGmmFyrVjyUvagNctJ2fZDM2FI/A4=;
-  b=KhcGk4UbcRg6dqGj4UzNaAqQ4+bZ4gRkatMadLQqGIYtqpTOUpJDZU4q
-   D9U2Sa6z2SDCbQrP0holqCO4izuExr6QRAbnSpjmB7viacjqGYiTzu8QV
-   FL+ZTmgRa0SE0rNWh8Hu0KelM18tC2O6YKief6cm6ntA7iJre1Pz2y19w
-   4=;
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 05 Jul 2022 05:09:00 -0700
+  bh=CDyatd/alwRxhQKIcCzS9dAT6SbHX1ERg8cwqTzIgys=;
+  b=U65DyMa9iOTEWwlQf7fH7zHF5MYATUOJWytoVUY6TXUcv1BzlTJfWEbn
+   /KsnIjbsyRvQmAqsfzcOtvGZU2o3e9Ie/IK/Kx1q7qKbxPDVRyriBFH0A
+   H/dcpJ0Id72FI0poSX8q0yArhpI7a3ld1YMHbw2ANOqb03/cqYocQN/QK
+   c=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 05 Jul 2022 05:08:42 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg05-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 05:09:00 -0700
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 05:08:42 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 05:08:59 -0700
+ 15.2.986.22; Tue, 5 Jul 2022 05:08:42 -0700
 Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 05:08:56 -0700
+ 15.2.986.22; Tue, 5 Jul 2022 05:08:39 -0700
 From:   Sibi Sankar <quic_sibis@quicinc.com>
 To:     <bjorn.andersson@linaro.org>
 CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
@@ -46,9 +46,9 @@ CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <konrad.dybcio@somainline.org>,
         Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [V3 6/7] remoteproc: sysmon: Wait for SSCTL service to come up
-Date:   Tue, 5 Jul 2022 17:38:19 +0530
-Message-ID: <1657022900-2049-7-git-send-email-quic_sibis@quicinc.com>
+Subject: [V3 1/7] remoteproc: qcom: pas: Add decrypt shutdown support for modem
+Date:   Tue, 5 Jul 2022 17:38:14 +0530
+Message-ID: <1657022900-2049-2-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1657022900-2049-1-git-send-email-quic_sibis@quicinc.com>
 References: <1657022900-2049-1-git-send-email-quic_sibis@quicinc.com>
@@ -61,69 +61,134 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The SSCTL service comes up after a finite time when the remote Q6 comes
-out of reset. Any graceful shutdowns requested during this period will
-be a NOP and abrupt tearing down of the glink channel might lead to pending
-transactions on the remote Q6 side and will ultimately lead to a fatal
-error. Fix this by waiting for the SSCTL service when a graceful shutdown
-is requested.
+The initial shutdown request to modem on SM8450 SoCs would start the
+decryption process and will keep returning errors until the modem shutdown
+is complete. Fix this by retrying shutdowns in fixed intervals.
 
-Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Err Logs on modem shutdown:
+qcom_q6v5_pas 4080000.remoteproc: failed to shutdown: -22
+remoteproc remoteproc3: can't stop rproc: -22
+
+Fixes: 5cef9b48458d ("remoteproc: qcom: pas: Add SM8450 remoteproc support")
 Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
- drivers/remoteproc/qcom_sysmon.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 9fca81492863..a9f04dd83ab6 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -41,6 +41,7 @@ struct qcom_sysmon {
- 	struct completion comp;
- 	struct completion ind_comp;
- 	struct completion shutdown_comp;
-+	struct completion ssctl_comp;
- 	struct mutex lock;
+v3:
+ * Fixup misc. suggestions and rename to adsp_shutdown_poll_decrypt() [Bjorn]
+
+ drivers/remoteproc/qcom_q6v5_pas.c | 43 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 6ae39c5653b1..297700f87fe8 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -8,6 +8,7 @@
+  */
  
- 	bool ssr_ack;
-@@ -445,6 +446,8 @@ static int ssctl_new_server(struct qmi_handle *qmi, struct qmi_service *svc)
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/firmware.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+@@ -29,6 +30,8 @@
+ #include "qcom_q6v5.h"
+ #include "remoteproc_internal.h"
  
- 	svc->priv = sysmon;
- 
-+	complete(&sysmon->ssctl_comp);
++#define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
 +
- 	return 0;
+ struct adsp_data {
+ 	int crash_reason_smem;
+ 	const char *firmware_name;
+@@ -36,6 +39,7 @@ struct adsp_data {
+ 	unsigned int minidump_id;
+ 	bool has_aggre2_clk;
+ 	bool auto_boot;
++	bool decrypt_shutdown;
+ 
+ 	char **proxy_pd_names;
+ 
+@@ -65,6 +69,7 @@ struct qcom_adsp {
+ 	unsigned int minidump_id;
+ 	int crash_reason_smem;
+ 	bool has_aggre2_clk;
++	bool decrypt_shutdown;
+ 	const char *info_name;
+ 
+ 	struct completion start_done;
+@@ -128,6 +133,19 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
+ 	}
  }
  
-@@ -501,6 +504,7 @@ static int sysmon_start(struct rproc_subdev *subdev)
- 		.ssr_event = SSCTL_SSR_EVENT_AFTER_POWERUP
- 	};
- 
-+	reinit_completion(&sysmon->ssctl_comp);
- 	mutex_lock(&sysmon->state_lock);
- 	sysmon->state = SSCTL_SSR_EVENT_AFTER_POWERUP;
- 	blocking_notifier_call_chain(&sysmon_notifiers, 0, (void *)&event);
-@@ -545,6 +549,11 @@ static void sysmon_stop(struct rproc_subdev *subdev, bool crashed)
- 	if (crashed)
- 		return;
- 
-+	if (sysmon->ssctl_instance) {
-+		if (!wait_for_completion_timeout(&sysmon->ssctl_comp, HZ / 2))
-+			dev_err(sysmon->dev, "timeout waiting for ssctl service\n");
-+	}
++static int adsp_shutdown_poll_decrypt(struct qcom_adsp *adsp)
++{
++	unsigned int retry_num = 50;
++	int ret;
 +
- 	if (sysmon->ssctl_version)
- 		sysmon->shutdown_acked = ssctl_request_shutdown(sysmon);
- 	else if (sysmon->ept)
-@@ -631,6 +640,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 	init_completion(&sysmon->comp);
- 	init_completion(&sysmon->ind_comp);
- 	init_completion(&sysmon->shutdown_comp);
-+	init_completion(&sysmon->ssctl_comp);
- 	mutex_init(&sysmon->lock);
- 	mutex_init(&sysmon->state_lock);
++	do {
++		msleep(ADSP_DECRYPT_SHUTDOWN_DELAY_MS);
++		ret = qcom_scm_pas_shutdown(adsp->pas_id);
++	} while (ret == -EINVAL && --retry_num);
++
++	return ret;
++}
++
+ static int adsp_unprepare(struct rproc *rproc)
+ {
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+@@ -249,6 +267,9 @@ static int adsp_stop(struct rproc *rproc)
+ 		dev_err(adsp->dev, "timed out on wait\n");
  
+ 	ret = qcom_scm_pas_shutdown(adsp->pas_id);
++	if (ret && adsp->decrypt_shutdown)
++		ret = adsp_shutdown_poll_decrypt(adsp);
++
+ 	if (ret)
+ 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
+ 
+@@ -459,6 +480,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->pas_id = desc->pas_id;
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+ 	adsp->info_name = desc->sysmon_name;
++	adsp->decrypt_shutdown = desc->decrypt_shutdown;
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	device_wakeup_enable(adsp->dev);
+@@ -877,6 +899,25 @@ static const struct adsp_data sdx55_mpss_resource = {
+ 	.ssctl_id = 0x22,
+ };
+ 
++static const struct adsp_data sm8450_mpss_resource = {
++	.crash_reason_smem = 421,
++	.firmware_name = "modem.mdt",
++	.pas_id = 4,
++	.minidump_id = 3,
++	.has_aggre2_clk = false,
++	.auto_boot = false,
++	.decrypt_shutdown = true,
++	.proxy_pd_names = (char*[]){
++		"cx",
++		"mss",
++		NULL
++	},
++	.load_state = "modem",
++	.ssr_name = "mpss",
++	.sysmon_name = "modem",
++	.ssctl_id = 0x12,
++};
++
+ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,msm8226-adsp-pil", .data = &adsp_resource_init},
+ 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+@@ -916,7 +957,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
+ 	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
+ 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
+-	{ .compatible = "qcom,sm8450-mpss-pas", .data = &mpss_resource_init},
++	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, adsp_of_match);
 -- 
 2.7.4
 
