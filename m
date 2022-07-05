@@ -2,117 +2,115 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DF9CCA47B
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 14:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FADCCA47B
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 15:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232601AbiGEOGn (ORCPT
+        id S229501AbiGEPKF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 10:06:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
+        Tue, 5 Jul 2022 11:10:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232633AbiGEOGZ (ORCPT
+        with ESMTP id S231634AbiGEPJs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 10:06:25 -0400
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04139237EF;
-        Tue,  5 Jul 2022 06:54:40 -0700 (PDT)
-Received: by mail-io1-f44.google.com with SMTP id p69so11132696iod.10;
-        Tue, 05 Jul 2022 06:54:39 -0700 (PDT)
+        Tue, 5 Jul 2022 11:09:48 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD5DC165A7
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Jul 2022 08:06:56 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id o16-20020a05600c379000b003a02eaea815so8039246wmr.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Jul 2022 08:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=+cVXdg+Brnle8yemDKHWIkEdNxNp1s8TSLsVgVGe5J0=;
+        b=MGwCh4yeqqLnhT0WMeoMr6CScRSYX/1HhkHLkHd4QnnDjSiVs6v9atM7MaOH9RGZDK
+         dGO7qUntVI039HvOKrW3QKVdjI2CczNLcXdb7Dt1Ub7vmntUW/GmQihHPISmn7NdyW6x
+         Oz3bmlZUkboe9bpM7bjhv3VgCAhihHMi8oG80QjJ8o+3hxS3yPiy3Q0+fWBsjDHSC4NT
+         8Fmugcq3HKmqosRHKeCgvK/GzuEf+g62jHkWPXUR0XfqbUFTtkyOv51QXZZEcXaYblgq
+         mTfli3sCq2GSvf3Tlj6JJp/NqJoNlsmSYIDI1XPGIDLvzIbbY6BYNAK6jXh5Tuj2jQsn
+         0f8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=C0Erhk9To/7rIjjiO+9MuSp924KsHFPnMjsP3V7msnQ=;
-        b=py5ruxiv5LHEpm1Oq3v+y+btfJf1wI/QCHFEMuaBei11VJeHNVXLeYgLMe8lRLCsYD
-         o9rLyIM0eldgC/K8uKW1jMuK8MjwFHdKGlAfy2jtTnomRlm7YYwyacLo+fDgxwwPkTCZ
-         ynmCh0LrNtAGmu91KNGDb3vHWssKegcNEVSdbN9SMi8VHu3dph8jDkcQ5azu/6xDearr
-         GDP94u0HMunH7MFDAQ3yBukxjjpN11RQdfi7hihAmiLA12+JrfBBlEbK4piykEjPAt00
-         AMg+d4xQJnqYgxmR4Y+IOY2rc5lO2DGMqaWjBGJVK4r73H4cd/HSPVoFLD+dzOu29to6
-         2rTQ==
-X-Gm-Message-State: AJIora/0qk6RKtP8JAq5n3qC3E1LM24Q5gM2OZyRcp4/tdR46xZ8Xq2u
-        huL65NPqrjh75gnkz9YLBQ==
-X-Google-Smtp-Source: AGRyM1seMsK4ptpqLHhWfEoLMLQgP0++6s7fhJZFk+zA/SDMjQenWTm0BiPdQRIK/XyX+gBz4/C5BA==
-X-Received: by 2002:a6b:fb05:0:b0:657:655e:a287 with SMTP id h5-20020a6bfb05000000b00657655ea287mr19384229iog.211.1657029279231;
-        Tue, 05 Jul 2022 06:54:39 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id o27-20020a02a1db000000b00339ef592279sm14613515jah.127.2022.07.05.06.54.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 06:54:38 -0700 (PDT)
-Received: (nullmailer pid 1999999 invoked by uid 1000);
-        Tue, 05 Jul 2022 13:54:31 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     linux-remoteproc@vger.kernel.org, konrad.dybcio@somainline.org,
-        mka@chromium.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, bjorn.andersson@linaro.org,
-        robh+dt@kernel.org, swboyd@chromium.org,
-        mathieu.poirier@linaro.org, agross@kernel.org
-In-Reply-To: <1657020721-24939-2-git-send-email-quic_sibis@quicinc.com>
-References: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com> <1657020721-24939-2-git-send-email-quic_sibis@quicinc.com>
-Subject: Re: [V5 1/2] dt-bindings: remoteproc: qcom: Convert SC7280 MSS bindings to YAML
-Date:   Tue, 05 Jul 2022 07:54:31 -0600
-Message-Id: <1657029271.238790.1999998.nullmailer@robh.at.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=+cVXdg+Brnle8yemDKHWIkEdNxNp1s8TSLsVgVGe5J0=;
+        b=pVT5jLpmmBF4oQd+dQBrNgYuFWIYxQCVtEkOYP4i5Pr+65/j3U1236rOhw0KLxRF4z
+         nBn07MXGLVIWTbeKWow5x0YpqDJcBrVrpKAYJOy2iFJh0APGwqH7Q9Kw8L36dKwTv2nJ
+         cDZGOZ6Mjq0uLMuEZ5sQZLoLGyHSXmLwQNeqJ+483UbITKcNUNwhAxIWbnV+tZyib8EE
+         BVd2LR/ZVbO1NBWisMixREfX/R7V4xGjAQinV76Egl8E/KPE6rbgoUUiDET0Lakbm+sz
+         KJlmNmcENKszXVBRgCeYmMA3ZZoK+AmyV80mi2TtdkoLSV5MOAqPE+w29TH0YbfmHfO8
+         vY5A==
+X-Gm-Message-State: AJIora9OLEDpqnqshyOqa7lF9PkU/yE6XZjSgeAAXaYX+bo27spbN9xh
+        XzNAGP9uwHt/uEqjM0erS4IrByXvjWVAHy8/+4/+mA==
+X-Google-Smtp-Source: AGRyM1sPaHkA/oz0kbKM+58TCz8Bc3vtUDjTnCx3JRdROJ2gHJtU1pj3EzwdjI0I3EXWoLbaZGRMWaQPNjnOe1p6KLo=
+X-Received: by 2002:a05:600c:4e46:b0:3a0:4d54:f206 with SMTP id
+ e6-20020a05600c4e4600b003a04d54f206mr40771971wmq.151.1657033615052; Tue, 05
+ Jul 2022 08:06:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
+ <640d2a3d-4c38-b921-45c1-048c255b5a9d@linaro.org> <d4972a70-8ddf-a394-3e8f-08fb778622d8@linaro.org>
+ <57aca768-18f4-6b79-9490-c57123d71232@linaro.org>
+In-Reply-To: <57aca768-18f4-6b79-9490-c57123d71232@linaro.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 5 Jul 2022 09:06:43 -0600
+Message-ID: <CANLsYkzgG9gAropJVsdCe8PE+EJpQnD+Chc4ncm9otNyzUYZ2g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] rpmsg: qcom: glink: replace strncpy() with strscpy_pad()
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 05 Jul 2022 17:02:00 +0530, Sibi Sankar wrote:
-> Add a separate YAML binding to act as a superset of the PAS and non-PAS
-> compatible for SC7280 MSS PIL. This also serves as a way to increase
-> readability.
-> 
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
-> 
-> Depends on Krzysztof's remoteproc cleanups and improvements:
-> https://patchwork.kernel.org/project/linux-arm-msm/cover/20220517070113.18023-1-krzysztof.kozlowski@linaro.org/
-> 
-> Previous discussions on PAS vs non-PAS bindings:
-> https://lore.kernel.org/lkml/YUps1JfGtf6JdbCx@ripper/ [Bjorn]
-> https://lore.kernel.org/lkml/CAE-0n51KBYjZvwGNy06_okmEWjEfRLQO54CYaY6-JnbBk6kOhA@mail.gmail.com/ [Stephen]
-> 
-> v5:
->  * Improve phandle-array schemas [Stephen/Rob/Krzysztof]
->  * Add more details to the firmware-name/memory region string array [Stephen/Rob]
->  * Drop 'items' from label [Rob]
-> 
-> v4:
->  * Remove older bindings [Matthias/Krzysztof]
->  * Misc. Fixes [Krzysztof]
->  * Rebased on v2 of Krzysztof's bindings cleanups
-> 
-> v3:
->  * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
-> 
->  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  31 +--
->  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 266 +++++++++++++++++++++
->  2 files changed, 268 insertions(+), 29 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> 
+On Tue, 5 Jul 2022 at 06:14, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 20/06/2022 20:37, Krzysztof Kozlowski wrote:
+> > On 09/06/2022 10:56, Krzysztof Kozlowski wrote:
+> >> On 19/05/2022 09:33, Krzysztof Kozlowski wrote:
+> >>> The use of strncpy() is considered deprecated for NUL-terminated
+> >>> strings[1]. Replace strncpy() with strscpy_pad(), to keep existing
+> >>> pad-behavior of strncpy, similarly to commit 08de420a8014 ("rpmsg:
+> >>> glink: Replace strncpy() with strscpy_pad()").  This fixes W=3D1 warn=
+ing:
+> >>>
+> >>>   In function =E2=80=98qcom_glink_rx_close=E2=80=99,
+> >>>     inlined from =E2=80=98qcom_glink_work=E2=80=99 at ../drivers/rpms=
+g/qcom_glink_native.c:1638:4:
+> >>>   drivers/rpmsg/qcom_glink_native.c:1549:17: warning: =E2=80=98strncp=
+y=E2=80=99 specified bound 32 equals destination size [-Wstringop-truncatio=
+n]
+> >>>    1549 |                 strncpy(chinfo.name, channel->name, sizeof(=
+chinfo.name));
+> >>>
+> >>> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#st=
+rncpy-on-nul-terminated-strings
+> >>>
+> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >>>
+> >>> ---
+> >>>
+> >>> Changes since v1:
+> >>> 1. Split series per subsystem.
+> >>
+> >> Any comments on these?
+> >
+> > I sent first iteration in May, then on 19th of May. There is review fro=
+m
+> > Stephen.
+> >
+> > On 9th of June I pinged but the patchset is still waiting. Anyone minds
+> > me taking these?
+>
+> Hmmm... These are all fixes but wait for quite a long time. Shall we
+> make the rpmsg subsystem orphaned?
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Bjorn handles all Qcom patches for the remoteproc/rpmsg subsystems.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,glink-edge.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.example.dtb: remoteproc@4080000: glink-edge: False schema does not allow {'interrupts-extended': [[4294967295, 2, 0, 1]], 'mboxes': [[4294967295, 2, 0]], 'label': ['modem'], 'qcom,remote-pid': [[1]]}
-	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+>
+> Best regards,
+> Krzysztof
