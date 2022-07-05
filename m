@@ -2,111 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8558CCA47B
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 12:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DF9CCA47B
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 14:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235815AbiGEMUX (ORCPT
+        id S232601AbiGEOGn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 08:20:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35972 "EHLO
+        Tue, 5 Jul 2022 10:06:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237493AbiGEMTR (ORCPT
+        with ESMTP id S232633AbiGEOGZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 08:19:17 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A36D21D0F0
-        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Jul 2022 05:14:51 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id t25so20202844lfg.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Jul 2022 05:14:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language
-         :from:to:cc:references:in-reply-to:content-transfer-encoding;
-        bh=eL+08v8Oi5zgvZaTmHJaJqmfpDb3pg+GRYdgzapfaeA=;
-        b=IlbN2EKy4yQqYZ6TvuHxuB4Brfc58jz2COGInOXdqWYrxosn56LD8j38tIpCLG+ifF
-         O4hd4lyK4J+FilFcGOge/0dt6N2OQ/8ClL09bZ1CTBK5jhppv/EUnvSV8jitc1OMFVqh
-         0V3GML79t3b42q12UUevZQ30e/m4KFt2PwjMWBMNJQhYow/6/kD4dmrRovGPowydnBdo
-         CsRijzBCJLV0+witJNk/3iPbzuM7Px2532fhidb2oljMhB2bwptWF+dafPlMb9jt08M9
-         F04VWDAC2OdUnbcNOuzOr6Y2UaKVUYwPCjBZht6u6QvbU/+zKAr45qwH0yH/XyAnDS0U
-         42MQ==
+        Tue, 5 Jul 2022 10:06:25 -0400
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04139237EF;
+        Tue,  5 Jul 2022 06:54:40 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id p69so11132696iod.10;
+        Tue, 05 Jul 2022 06:54:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:from:to:cc:references:in-reply-to
-         :content-transfer-encoding;
-        bh=eL+08v8Oi5zgvZaTmHJaJqmfpDb3pg+GRYdgzapfaeA=;
-        b=aQcb8Aij2f7wXvchgwFbuLpdxb1QhIY82FI/0AdehasLU1Vv2VrexQxWtzW4S1cI0K
-         HeIk6vxh0+yAoYjP9oeMSamk7JE3uRbnS6bwUJmPWstWbXGGIOHeX4LGPAYzsYqSSrj1
-         whH9qzi4F//yL0a25IWAPDWPwumMtl6fFVtSPlHylSi5B4apNUeFVT6ER0f3Cv7dRwSl
-         Ct3OmH3H212D89is9xXUK8zZh3YA0AqpJRiXJqlpL2kHCciAW+cwRDF+W3T2igMZzpHk
-         kHHGWE+BTdS8UEERAYMkGzTrSS9IC3hyfx1oN9nauyAeKDwdf1U+3SPtyZz6B6c61Jt7
-         2VsQ==
-X-Gm-Message-State: AJIora+sGVtpEqgVM7zyOYrTj4TNjb0kyiCMqhgfUCdtxjpZmMAiB3Hc
-        +3nlVNsjvZInGLSH0pdJuLS2kQ==
-X-Google-Smtp-Source: AGRyM1s/yOEIUzQU+X3pSlzpw0EltRXDz7KCK5C05eZnuBOHpHDEuKwOWuFuqLLMSl7dgCD4X8Ap2w==
-X-Received: by 2002:ac2:4c19:0:b0:47f:9f39:768c with SMTP id t25-20020ac24c19000000b0047f9f39768cmr21990330lfq.285.1657023290040;
-        Tue, 05 Jul 2022 05:14:50 -0700 (PDT)
-Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id t15-20020ac243af000000b0048295a41b0asm1990198lfl.302.2022.07.05.05.14.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Jul 2022 05:14:49 -0700 (PDT)
-Message-ID: <57aca768-18f4-6b79-9490-c57123d71232@linaro.org>
-Date:   Tue, 5 Jul 2022 14:14:48 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2 1/3] rpmsg: qcom: glink: replace strncpy() with
- strscpy_pad()
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>
-References: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
- <640d2a3d-4c38-b921-45c1-048c255b5a9d@linaro.org>
- <d4972a70-8ddf-a394-3e8f-08fb778622d8@linaro.org>
-In-Reply-To: <d4972a70-8ddf-a394-3e8f-08fb778622d8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=C0Erhk9To/7rIjjiO+9MuSp924KsHFPnMjsP3V7msnQ=;
+        b=py5ruxiv5LHEpm1Oq3v+y+btfJf1wI/QCHFEMuaBei11VJeHNVXLeYgLMe8lRLCsYD
+         o9rLyIM0eldgC/K8uKW1jMuK8MjwFHdKGlAfy2jtTnomRlm7YYwyacLo+fDgxwwPkTCZ
+         ynmCh0LrNtAGmu91KNGDb3vHWssKegcNEVSdbN9SMi8VHu3dph8jDkcQ5azu/6xDearr
+         GDP94u0HMunH7MFDAQ3yBukxjjpN11RQdfi7hihAmiLA12+JrfBBlEbK4piykEjPAt00
+         AMg+d4xQJnqYgxmR4Y+IOY2rc5lO2DGMqaWjBGJVK4r73H4cd/HSPVoFLD+dzOu29to6
+         2rTQ==
+X-Gm-Message-State: AJIora/0qk6RKtP8JAq5n3qC3E1LM24Q5gM2OZyRcp4/tdR46xZ8Xq2u
+        huL65NPqrjh75gnkz9YLBQ==
+X-Google-Smtp-Source: AGRyM1seMsK4ptpqLHhWfEoLMLQgP0++6s7fhJZFk+zA/SDMjQenWTm0BiPdQRIK/XyX+gBz4/C5BA==
+X-Received: by 2002:a6b:fb05:0:b0:657:655e:a287 with SMTP id h5-20020a6bfb05000000b00657655ea287mr19384229iog.211.1657029279231;
+        Tue, 05 Jul 2022 06:54:39 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id o27-20020a02a1db000000b00339ef592279sm14613515jah.127.2022.07.05.06.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Jul 2022 06:54:38 -0700 (PDT)
+Received: (nullmailer pid 1999999 invoked by uid 1000);
+        Tue, 05 Jul 2022 13:54:31 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     linux-remoteproc@vger.kernel.org, konrad.dybcio@somainline.org,
+        mka@chromium.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org, swboyd@chromium.org,
+        mathieu.poirier@linaro.org, agross@kernel.org
+In-Reply-To: <1657020721-24939-2-git-send-email-quic_sibis@quicinc.com>
+References: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com> <1657020721-24939-2-git-send-email-quic_sibis@quicinc.com>
+Subject: Re: [V5 1/2] dt-bindings: remoteproc: qcom: Convert SC7280 MSS bindings to YAML
+Date:   Tue, 05 Jul 2022 07:54:31 -0600
+Message-Id: <1657029271.238790.1999998.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 20/06/2022 20:37, Krzysztof Kozlowski wrote:
-> On 09/06/2022 10:56, Krzysztof Kozlowski wrote:
->> On 19/05/2022 09:33, Krzysztof Kozlowski wrote:
->>> The use of strncpy() is considered deprecated for NUL-terminated
->>> strings[1]. Replace strncpy() with strscpy_pad(), to keep existing
->>> pad-behavior of strncpy, similarly to commit 08de420a8014 ("rpmsg:
->>> glink: Replace strncpy() with strscpy_pad()").  This fixes W=1 warning:
->>>
->>>   In function ‘qcom_glink_rx_close’,
->>>     inlined from ‘qcom_glink_work’ at ../drivers/rpmsg/qcom_glink_native.c:1638:4:
->>>   drivers/rpmsg/qcom_glink_native.c:1549:17: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
->>>    1549 |                 strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
->>>
->>> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>> ---
->>>
->>> Changes since v1:
->>> 1. Split series per subsystem.
->>
->> Any comments on these?
+On Tue, 05 Jul 2022 17:02:00 +0530, Sibi Sankar wrote:
+> Add a separate YAML binding to act as a superset of the PAS and non-PAS
+> compatible for SC7280 MSS PIL. This also serves as a way to increase
+> readability.
 > 
-> I sent first iteration in May, then on 19th of May. There is review from
-> Stephen.
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> ---
 > 
-> On 9th of June I pinged but the patchset is still waiting. Anyone minds
-> me taking these?
+> Depends on Krzysztof's remoteproc cleanups and improvements:
+> https://patchwork.kernel.org/project/linux-arm-msm/cover/20220517070113.18023-1-krzysztof.kozlowski@linaro.org/
+> 
+> Previous discussions on PAS vs non-PAS bindings:
+> https://lore.kernel.org/lkml/YUps1JfGtf6JdbCx@ripper/ [Bjorn]
+> https://lore.kernel.org/lkml/CAE-0n51KBYjZvwGNy06_okmEWjEfRLQO54CYaY6-JnbBk6kOhA@mail.gmail.com/ [Stephen]
+> 
+> v5:
+>  * Improve phandle-array schemas [Stephen/Rob/Krzysztof]
+>  * Add more details to the firmware-name/memory region string array [Stephen/Rob]
+>  * Drop 'items' from label [Rob]
+> 
+> v4:
+>  * Remove older bindings [Matthias/Krzysztof]
+>  * Misc. Fixes [Krzysztof]
+>  * Rebased on v2 of Krzysztof's bindings cleanups
+> 
+> v3:
+>  * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
+> 
+>  .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  31 +--
+>  .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 266 +++++++++++++++++++++
+>  2 files changed, 268 insertions(+), 29 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+> 
 
-Hmmm... These are all fixes but wait for quite a long time. Shall we
-make the rpmsg subsystem orphaned?
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Best regards,
-Krzysztof
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+./Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,glink-edge.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.example.dtb: remoteproc@4080000: glink-edge: False schema does not allow {'interrupts-extended': [[4294967295, 2, 0, 1]], 'mboxes': [[4294967295, 2, 0]], 'label': ['modem'], 'qcom,remote-pid': [[1]]}
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
