@@ -2,107 +2,89 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79DEC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 16:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC1DC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 18:32:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232064AbiGEQom (ORCPT
+        id S231764AbiGEScF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 12:44:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40634 "EHLO
+        Tue, 5 Jul 2022 14:32:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231769AbiGEQol (ORCPT
+        with ESMTP id S230143AbiGEScF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 12:44:41 -0400
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DE9C1B
-        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Jul 2022 09:44:40 -0700 (PDT)
-Received: by mail-pj1-x1029.google.com with SMTP id s21so8174024pjq.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Jul 2022 09:44:40 -0700 (PDT)
+        Tue, 5 Jul 2022 14:32:05 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E911D0D0
+        for <linux-remoteproc@vger.kernel.org>; Tue,  5 Jul 2022 11:32:02 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id bu42so2166685lfb.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 Jul 2022 11:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=eLgml7wSqf63i8QKqavHdfBKu65SGTRMU0zAE0A8Gro=;
-        b=L3PxmXdaLTjNaaXfqG64jVu2kWycf/WdmNEvgUeUz8ylOX7RH4pvRAEwyG479e9en/
-         bDOh0IpGIbpA4za5jmhUd7zLwJo6RzCX9wzPW83GHWzjKA3a0bRVzsp4QZ+5UTMnTXw+
-         4Fh95neopPitrCv8hR9He6fj5HhCx/h2dUDMs56SF4Y3HyRfnGqUSvJk3zVMu0HG+tRK
-         vJqhxMt2q3XYvuCrzTLwivkxsvuY+0lgIkJQ9m0jMsxtQkyAYaxJkdppeutZDcKWHeg8
-         Fjyk+Ql5yUg+L45MlEpE8EaxPj5AtXlBWBmi73+O2lrXoz7sUt9mofgyxhSG1f7kzUWQ
-         MDBQ==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=D7p/sDYm9E/8XqmiA5LCzNTiG40IUVuc7U3G6pKRMDI=;
+        b=iK/1VeDZGeqhZtaRP8JXyzmjmfKPHoqHsrT3kFEFCYnYSTmFePKupGg5DjzkqiTaOF
+         uhhrlDEcmYe7rnLNNqf1k9mk6rdAdbkP7xUlYfxhzTRORaGKYmZAg8s3Tz/039HYKLMf
+         5i+x4EVBN6SW5hwOoWoS6+35pbe3UMo/uBUgrg+D8RUejpGXAKOUTIu5XtKWaY1ffHHF
+         i8XG5CaR7nwZ3EtN0KrOAqmiwde/y6JQe2QdsrIyT5/aRajsS2MfswSMoUJf+/3ENk36
+         qGixnLcaQJU6sCQ8K1FSCxV70cpki+N42/8BfleRxDePwlLAXpUjmj9pQF9R8BhLdbUi
+         Kw7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eLgml7wSqf63i8QKqavHdfBKu65SGTRMU0zAE0A8Gro=;
-        b=ccigGq1DvwHk+O/zCY+a1fkLAV9OAsOLw0NG6H0pl9pBEH56oNQN6Gimvj/Xlxe/OL
-         fG+PAOV7uy93rJ7FwXYBT0mQdQdhIQAbC/CW2RCcPyWfhDRTimZygOalKSP6i7/arZax
-         GkN8VTaNiSjsEAJJ1SA9503anbp9ByreltYgrRyitLlYxr7RgV7nz3A2Qo/PX/mvpfvZ
-         okekGBQZ4nNaE0dsDjS2WKuoivW0HeGAPONE8PV6HLqmRQ69xqB9GPTE7nRY2LqwR99V
-         EC8mlN+Oi+lPtEi4QvaP8sHR3gmwqUQ5bb2XjnXmv+KNN11ATxRmQTOy/Q1hqoLMIy7I
-         loRg==
-X-Gm-Message-State: AJIora+hOCHBvwsWI6u8LnhCLxFLyuuHak4uZSkcXAHoGLdQsMYVWonA
-        X+W06FMOZd/20AX9oQ1Ih/XsVg==
-X-Google-Smtp-Source: AGRyM1vIEL7g2JbVjG7B+hWQi1J4TzibjdTDXl464exty9BLy/HIy5ENYXacjU2ODoDjd3/7/Hwdsw==
-X-Received: by 2002:a17:90b:3d81:b0:1ef:a950:a0cd with SMTP id pq1-20020a17090b3d8100b001efa950a0cdmr404122pjb.43.1657039480255;
-        Tue, 05 Jul 2022 09:44:40 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id m17-20020a170902db1100b0016a275623c1sm16071929plx.219.2022.07.05.09.44.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Jul 2022 09:44:39 -0700 (PDT)
-Date:   Tue, 5 Jul 2022 10:44:37 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] remoteproc: pru: Add support for various PRU
- cores on K3 AM62x SoCs
-Message-ID: <20220705164437.GA2443558@p14s>
-References: <20220602101920.12504-1-kishon@ti.com>
- <20220602101920.12504-4-kishon@ti.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=D7p/sDYm9E/8XqmiA5LCzNTiG40IUVuc7U3G6pKRMDI=;
+        b=Z427rCynsxqSnbRJ7VV2yLXT9lmXVWyJcmFYtxy+LXKczJ2Y0Ph7D/KLhvhhpQWje2
+         NMiULk0z/KD12MIVbonjO+mrbR/CX5g9/NiSQ6jIsAqLrj/375Jw2Hibz34ReLeslCGj
+         RIGgVEDK6gOqRHhv3Iu75veMVCj8KxMCSGRuVo0ZLgJlp+BZsjkUmtgVsquec7LQoZg1
+         Nqy7QU0LZl3E6xQQaY+7U937MLqe+/socuNji3A6GaljSsSYWMBvH7eIVy61Lt6zp4cj
+         XMYzSeJ2tXIQ7YiZbIcIlHb9RqsfqL3uhIegBRU9WvDKDuVZStzuUi477eJar0R+xTik
+         Hcog==
+X-Gm-Message-State: AJIora+yrX/YXy02GRy4m/yNsmGPd4D+NJaNbgC96xUoTGQSp5JnFSPD
+        KxfAy27uFsn6tLtTYzvzxpSE3A==
+X-Google-Smtp-Source: AGRyM1t2wLoT1QWk9JTsHRGXDhwZlXzky4+x2+l2qkjQodcPdKTyE9N2H3IJN13d8nRtoTmfHpmg6A==
+X-Received: by 2002:a05:6512:260e:b0:47d:ae43:62b3 with SMTP id bt14-20020a056512260e00b0047dae4362b3mr25369019lfb.77.1657045921399;
+        Tue, 05 Jul 2022 11:32:01 -0700 (PDT)
+Received: from [192.168.1.52] ([84.20.121.239])
+        by smtp.gmail.com with ESMTPSA id h15-20020a2eb0ef000000b00255500154fasm5710910ljl.52.2022.07.05.11.32.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Jul 2022 11:32:00 -0700 (PDT)
+Message-ID: <1413a50e-5966-00f7-30a9-4a6c99536e1e@linaro.org>
+Date:   Tue, 5 Jul 2022 20:31:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220602101920.12504-4-kishon@ti.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [V5 0/2] Add support for proxy interconnect bandwidth votes
+Content-Language: en-US
+To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org,
+        swboyd@chromium.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     mathieu.poirier@linaro.org, agross@kernel.org,
+        konrad.dybcio@somainline.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org
+References: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jun 02, 2022 at 03:49:20PM +0530, Kishon Vijay Abraham I wrote:
-> The K3 AM62x family of SoC has one PRUSS-M instance and it has two
-> Programmable Real-Time Units (PRU0 and PRU1). This does not support
-> Industrial Communications Subsystem features like Ethernet.
+On 05/07/2022 13:31, Sibi Sankar wrote:
+> Add proxy interconnect bandwidth votes during modem bootup on SC7280 SoCs.
 > 
-> Enhance the existing PRU remoteproc driver to support the PRU cores
-> by using specific compatibles. The initial names for the firmware
-> images for each PRU core are retrieved from DT nodes, and can be adjusted
-> through sysfs if required.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/remoteproc/pru_rproc.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 1777a01fa84e..128bf9912f2c 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -897,6 +897,7 @@ static const struct of_device_id pru_rproc_match[] = {
->  	{ .compatible = "ti,j721e-pru",		.data = &k3_pru_data },
->  	{ .compatible = "ti,j721e-rtu",		.data = &k3_rtu_data },
->  	{ .compatible = "ti,j721e-tx-pru",	.data = &k3_tx_pru_data },
-> +	{ .compatible = "ti,am625-pru",		.data = &k3_pru_data },
+> V5:
+>  * Improve phandle-array schemas [Stephen/Rob/Krzysztof]
+>  * Add more details to the firmware-name/memory region string array [Stephen/Rob]
+>  * Drop 'items' from label [Rob]
+>  * Drop the patch 1 since Bjorn picked it up
 
-I have applied this set.
+Use proper subject prefixes - you miss here PATCH. The easiest is to use
+`git format-patch -v5`. You can do it other way as well, but just make
+it a correct patch with proper subject elements.
 
-Thanks,
-Mathieu
-
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, pru_rproc_match);
-> -- 
-> 2.17.1
-> 
+Best regards,
+Krzysztof
