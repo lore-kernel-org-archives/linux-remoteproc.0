@@ -2,414 +2,200 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E490CCA47F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 11:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D06CC43334
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 11:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231710AbiGELc3 (ORCPT
+        id S230089AbiGELxv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 07:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42682 "EHLO
+        Tue, 5 Jul 2022 07:53:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiGELc1 (ORCPT
+        with ESMTP id S231888AbiGELxb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 07:32:27 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC5E1403F;
-        Tue,  5 Jul 2022 04:32:26 -0700 (PDT)
+        Tue, 5 Jul 2022 07:53:31 -0400
+Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD08BF51;
+        Tue,  5 Jul 2022 04:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1657020746; x=1688556746;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=OsaLkT3umH4kgAjHw58Buvv6qeVIaVRPCZKVmwZeJLQ=;
-  b=wN+MBqRzBd7NZtqlJuodSTwB8RMniTjzQo+ZpgxtTmo/NtU1umanX/Yn
-   HZqnlWkTAzsCEgyrbJvemM65oGYj1V9j8vgnK+w+C1eopLSnnrzE8CeQ0
-   wVifSg6vv6jlT04JB/89wv12WluAPGnBIDYFGqbvw1YNXQN09UI3ZQawW
-   M=;
-Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 05 Jul 2022 04:32:26 -0700
+  t=1657022010; x=1688558010;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=t0jdRRxvBRqLaphgAV4C75lY4+jAufKtnXYqkuwxxi8=;
+  b=fFLIzI2kIIoofweoDoz6up5pUKnLdfq0yvJPv+fIW0nOIHBRQQuegEC8
+   3BaKIGe+e9oJUNXjr6fxSIaILtNgsSPG7pNxrNq3dypCAteDcQHGoiYLE
+   lC120GxLobXP6ekMejWTJWJwygHewyXfruTG0zPpdIKyE95ZhLaIiViYm
+   I=;
+Received: from ironmsg07-lv.qualcomm.com ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 05 Jul 2022 04:53:30 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 04:32:25 -0700
+  by ironmsg07-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 04:53:30 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 04:32:25 -0700
-Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 04:32:21 -0700
+ 15.2.986.22; Tue, 5 Jul 2022 04:53:29 -0700
+Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 5 Jul 2022
+ 04:53:27 -0700
+Subject: Re: [PATCH] remoteproc: qcom: pas: Add decrypt shutdown support for
+ modem
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+CC:     <dmitry.baryshkov@linaro.org>, <agross@kernel.org>,
+        <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1653031684-14771-1-git-send-email-quic_sibis@quicinc.com>
+ <Yr35Q2G8NNvYaI8M@builder.lan>
 From:   Sibi Sankar <quic_sibis@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
-CC:     <mathieu.poirier@linaro.org>, <agross@kernel.org>,
-        <konrad.dybcio@somainline.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [V5 2/2] dt-bindings: remoteproc: qcom: Convert SC7180 MSS bindings to YAML
-Date:   Tue, 5 Jul 2022 17:02:01 +0530
-Message-ID: <1657020721-24939-3-git-send-email-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
-References: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
+Message-ID: <a4373b5d-fd01-9692-2660-792b5b84d08c@quicinc.com>
+Date:   Tue, 5 Jul 2022 17:23:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <Yr35Q2G8NNvYaI8M@builder.lan>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a separate YAML binding to act as a superset of the PAS and non-PAS
-compatible for SC7180 MSS PIL. This also serves as a way to increase
-readability.
+Hey Bjorn,
+Thanks for taking time to review the series.
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
----
+On 7/1/22 12:58 AM, Bjorn Andersson wrote:
+> On Fri 20 May 02:28 CDT 2022, Sibi Sankar wrote:
+> 
+>> The initial shutdown request to modem on SM8450 SoCs would start the
+>> decryption process and will keep returning errors until the modem shutdown
+>> is complete. Fix this by retrying shutdowns in fixed intervals.
+>>
+>> Err Logs on modem shutdown:
+>> qcom_q6v5_pas 4080000.remoteproc: failed to shutdown: -22
+>> remoteproc remoteproc3: can't stop rproc: -22
+>>
+>> Fixes: 5cef9b48458d ("remoteproc: qcom: pas: Add SM8450 remoteproc support")
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> 
+> Looks reasonable, just two inquiries below.
+> 
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pas.c | 67 +++++++++++++++++++++++++++++++++++++-
+>>   1 file changed, 66 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+>> index 6ae39c5653b1..d04c4b877e12 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>> @@ -8,6 +8,7 @@
+>>    */
+>>   
+>>   #include <linux/clk.h>
+>> +#include <linux/delay.h>
+>>   #include <linux/firmware.h>
+>>   #include <linux/interrupt.h>
+>>   #include <linux/kernel.h>
+>> @@ -29,6 +30,8 @@
+>>   #include "qcom_q6v5.h"
+>>   #include "remoteproc_internal.h"
+>>   
+>> +#define ADSP_DECRYPT_SHUTDOWN_DELAY_MS	100
+>> +
+>>   struct adsp_data {
+>>   	int crash_reason_smem;
+>>   	const char *firmware_name;
+>> @@ -36,6 +39,7 @@ struct adsp_data {
+>>   	unsigned int minidump_id;
+>>   	bool has_aggre2_clk;
+>>   	bool auto_boot;
+>> +	bool decrypt_shutdown;
+>>   
+>>   	char **proxy_pd_names;
+>>   
+>> @@ -65,6 +69,7 @@ struct qcom_adsp {
+>>   	unsigned int minidump_id;
+>>   	int crash_reason_smem;
+>>   	bool has_aggre2_clk;
+>> +	bool decrypt_shutdown;
+>>   	const char *info_name;
+>>   
+>>   	struct completion start_done;
+>> @@ -128,6 +133,20 @@ static void adsp_pds_disable(struct qcom_adsp *adsp, struct device **pds,
+>>   	}
+>>   }
+>>   
+>> +static int adsp_decrypt_shutdown(struct qcom_adsp *adsp)
+>> +{
+>> +	int retry_num = 50;
+> 
+> Seems unsigned to me.
 
-Depends on Krzysztof's remoteproc cleanups and improvements:
-https://patchwork.kernel.org/project/linux-arm-msm/cover/20220517070113.18023-1-krzysztof.kozlowski@linaro.org/
+ack
 
-Previous discussion on PAS vs non-PAS bindings:
-https://lore.kernel.org/lkml/YUps1JfGtf6JdbCx@ripper/ [Bjorn]
-https://lore.kernel.org/lkml/CAE-0n51KBYjZvwGNy06_okmEWjEfRLQO54CYaY6-JnbBk6kOhA@mail.gmail.com/ [Stephen]
+> 
+>> +	int ret = -EINVAL;
+>> +
+>> +	while (retry_num && ret) {
+>> +		msleep(ADSP_DECRYPT_SHUTDOWN_DELAY_MS);
+>> +		ret = qcom_scm_pas_shutdown(adsp->pas_id);
+>> +		retry_num--;
+>> +	}
+> 
+> Will qcom_scm_pas_shutdown() ever return any other errors than -EINVAL?
+> 
+> Would it make sense to make this:
+> 
+> 	do {
+> 		...;
+> 	} while (ret == -EINVAL && --retry_num);
+> 
 
-v5:
- * Improve phandle-array schemas [Stephen/Rob/Krzysztof]
- * Add more details to the firmware-name/memory region string array [Stephen/Rob]
- * Drop 'items' from label [Rob]
+Just checking on ret would cover the -EINVAL case as well but like you
+said pas_shutdown() won't return any other error. So I'll just stick
+with your suggestion.
 
- .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  20 +-
- .../bindings/remoteproc/qcom,sc7180-mss-pil.yaml   | 245 +++++++++++++++++++++
- 2 files changed, 247 insertions(+), 18 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>   static int adsp_unprepare(struct rproc *rproc)
+>>   {
+>>   	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>> @@ -249,6 +268,9 @@ static int adsp_stop(struct rproc *rproc)
+>>   		dev_err(adsp->dev, "timed out on wait\n");
+>>   
+>>   	ret = qcom_scm_pas_shutdown(adsp->pas_id);
+>> +	if (ret && adsp->decrypt_shutdown)
+>> +		ret = adsp_decrypt_shutdown(adsp);
+>> +
+>>   	if (ret)
+>>   		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
+>>   
+>> @@ -459,6 +481,7 @@ static int adsp_probe(struct platform_device *pdev)
+>>   	adsp->pas_id = desc->pas_id;
+>>   	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+>>   	adsp->info_name = desc->sysmon_name;
+>> +	adsp->decrypt_shutdown = desc->decrypt_shutdown;
+>>   	platform_set_drvdata(pdev, adsp);
+>>   
+>>   	device_wakeup_enable(adsp->dev);
+>> @@ -533,6 +556,7 @@ static const struct adsp_data adsp_resource_init = {
+>>   		.pas_id = 1,
+>>   		.has_aggre2_clk = false,
+>>   		.auto_boot = true,
+>> +		.decrypt_shutdown = false,
+> 
+> With all these booleans, I would prefer if we cleaned it up to not list
+> the disabled options. That would make it quicker to spot which features
+> are actually enabled for each remoteproc.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-index 1ec9093c3a82..1a691c1435f3 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
-@@ -14,7 +14,6 @@ on the Qualcomm Hexagon core.
- 		    "qcom,msm8974-mss-pil"
- 		    "qcom,msm8996-mss-pil"
- 		    "qcom,msm8998-mss-pil"
--		    "qcom,sc7180-mss-pil"
- 		    "qcom,sdm845-mss-pil"
- 
- - reg:
-@@ -46,7 +45,6 @@ on the Qualcomm Hexagon core.
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack"
- 	qcom,msm8996-mss-pil:
- 	qcom,msm8998-mss-pil:
--	qcom,sc7180-mss-pil:
- 	qcom,sdm845-mss-pil:
- 		    must be "wdog", "fatal", "ready", "handover", "stop-ack",
- 		    "shutdown-ack"
-@@ -84,9 +82,6 @@ on the Qualcomm Hexagon core.
- 	qcom,msm8998-mss-pil:
- 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
- 		    "snoc_axi", "mnoc_axi", "qdss"
--	qcom,sc7180-mss-pil:
--		    must be "iface", "bus", "xo", "snoc_axi", "mnoc_axi",
--		    "nav"
- 	qcom,sdm845-mss-pil:
- 		    must be "iface", "bus", "mem", "xo", "gpll0_mss",
- 		    "snoc_axi", "mnoc_axi", "prng"
-@@ -98,7 +93,7 @@ on the Qualcomm Hexagon core.
- 		    reference to the list of 3 reset-controllers for the
- 		    wcss sub-system
- 		    reference to the list of 2 reset-controllers for the modem
--		    sub-system on SC7180, SDM845 SoCs
-+		    sub-system on SDM845 SoCs
- 
- - reset-names:
- 	Usage: required
-@@ -107,7 +102,7 @@ on the Qualcomm Hexagon core.
- 		    must be "wcss_aon_reset", "wcss_reset", "wcss_q6_reset"
- 		    for the wcss sub-system
- 		    must be "mss_restart", "pdc_reset" for the modem
--		    sub-system on SC7180, SDM845 SoCs
-+		    sub-system on SDM845 SoCs
- 
- For devices where the mba and mpss sub-nodes are not specified, mba/mpss region
- should be referenced as follows:
-@@ -172,8 +167,6 @@ For the compatible string below the following supplies are required:
- 	qcom,msm8996-mss-pil:
- 	qcom,msm8998-mss-pil:
- 		    must be "cx", "mx"
--	qcom,sc7180-mss-pil:
--		    must be "cx", "mx", "mss"
- 	qcom,sdm845-mss-pil:
- 		    must be "cx", "mx", "mss"
- 
-@@ -200,15 +193,6 @@ For the compatible string below the following supplies are required:
- 		    by the three offsets within syscon for q6, modem and nc
- 		    halt registers.
- 
--For the compatible strings below the following phandle references are required:
--  "qcom,sc7180-mss-pil"
--- qcom,spare-regs:
--	Usage: required
--	Value type: <prop-encoded-array>
--	Definition: a phandle reference to a syscon representing TCSR followed
--		    by the offset within syscon for conn_box_spare0 register
--		    used by the modem sub-system running on SC7180 SoC.
--
- The Hexagon node must contain iommus property as described in ../iommu/iommu.txt
- on platforms which do not have TrustZone.
- 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-new file mode 100644
-index 000000000000..e76c861165dd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-@@ -0,0 +1,245 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,sc7180-mss-pil.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SC7180 MSS Peripheral Image Loader
-+
-+maintainers:
-+  - Sibi Sankar <quic_sibis@quicinc.com>
-+
-+description:
-+  This document describes the hardware for a component that loads and boots firmware
-+  on the Qualcomm Technology Inc. SC7180 Modem Hexagon Core.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sc7180-mss-pil
-+
-+  reg:
-+    items:
-+      - description: MSS QDSP6 registers
-+      - description: RMB registers
-+
-+  reg-names:
-+    items:
-+      - const: qdsp6
-+      - const: rmb
-+
-+  iommus:
-+    items:
-+      - description: MSA Stream 1
-+      - description: MSA Stream 2
-+
-+  interrupts:
-+    items:
-+      - description: Watchdog interrupt
-+      - description: Fatal interrupt
-+      - description: Ready interrupt
-+      - description: Handover interrupt
-+      - description: Stop acknowledge interrupt
-+      - description: Shutdown acknowledge interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: wdog
-+      - const: fatal
-+      - const: ready
-+      - const: handover
-+      - const: stop-ack
-+      - const: shutdown-ack
-+
-+  clocks:
-+    items:
-+      - description: GCC MSS IFACE clock
-+      - description: GCC MSS BUS clock
-+      - description: GCC MSS NAV clock
-+      - description: GCC MSS SNOC_AXI clock
-+      - description: GCC MSS MFAB_AXIS clock
-+      - description: RPMH XO clock
-+
-+  clock-names:
-+    items:
-+      - const: iface
-+      - const: bus
-+      - const: nav
-+      - const: snoc_axi
-+      - const: mnoc_axi
-+      - const: xo
-+
-+  power-domains:
-+    items:
-+      - description: CX power domain
-+      - description: MX power domain
-+      - description: MSS power domain
-+
-+  power-domain-names:
-+    items:
-+      - const: cx
-+      - const: mx
-+      - const: mss
-+
-+  resets:
-+    items:
-+      - description: AOSS restart
-+      - description: PDC reset
-+
-+  reset-names:
-+    items:
-+      - const: mss_restart
-+      - const: pdc_reset
-+
-+  memory-region:
-+    items:
-+      - description: MBA reserved region
-+      - description: modem reserved region
-+
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    items:
-+      - description: Name of MBA firmware
-+      - description: Name of modem firmware
-+
-+  qcom,halt-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Halt registers are used to halt transactions of various sub-components
-+      within MSS.
-+    items:
-+      - items:
-+          - description: phandle to TCSR_MUTEX registers
-+          - description: offset to the Q6 halt register
-+          - description: offset to the modem halt register
-+          - description: offset to the nc halt register
-+
-+  qcom,spare-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Spare registers are multipurpose registers used for errata
-+      handling.
-+    items:
-+      - items:
-+          - description: phandle to TCSR_MUTEX registers
-+          - description: offset to the conn_box_spare0 register
-+
-+  qcom,qmp:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Reference to the AOSS side-channel message RAM.
-+
-+  qcom,smem-states:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: States used by the AP to signal the Hexagon core
-+    items:
-+      - description: Stop the modem
-+
-+  qcom,smem-state-names:
-+    description: The names of the state bits used for SMP2P output
-+    const: stop
-+
-+  glink-edge:
-+    $ref: qcom,glink-edge.yaml#
-+    description:
-+      Qualcomm G-Link subnode which represents communication edge, channels
-+      and devices related to the DSP.
-+
-+    properties:
-+      interrupts:
-+        items:
-+          - description: IRQ from MSS to GLINK
-+
-+      mboxes:
-+        items:
-+          - description: Mailbox for communication between APPS and MSS
-+
-+      label:
-+        const: modem
-+
-+      apr: false
-+      fastrpc: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - iommus
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - power-domain-names
-+  - resets
-+  - reset-names
-+  - qcom,halt-regs
-+  - qcom,spare-regs
-+  - memory-region
-+  - qcom,qmp
-+  - qcom,smem-states
-+  - qcom,smem-state-names
-+  - glink-edge
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-+    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-+
-+    remoteproc_mpss: remoteproc@4080000 {
-+        compatible = "qcom,sc7180-mss-pil";
-+        reg = <0x04080000 0x10000>, <0x04180000 0x48>;
-+        reg-names = "qdsp6", "rmb";
-+
-+        iommus = <&apps_smmu 0x461 0x0>, <&apps_smmu 0x444 0x3>;
-+
-+        interrupts-extended = <&intc GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+                              <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+
-+        interrupt-names = "wdog", "fatal", "ready", "handover",
-+                          "stop-ack", "shutdown-ack";
-+
-+        clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+                 <&gcc GCC_MSS_Q6_MEMNOC_AXI_CLK>,
-+                 <&gcc GCC_MSS_NAV_AXI_CLK>,
-+                 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+                 <&gcc GCC_MSS_MFAB_AXIS_CLK>,
-+                 <&rpmhcc RPMH_CXO_CLK>;
-+        clock-names = "iface", "bus", "nav", "snoc_axi",
-+                      "mnoc_axi", "xo";
-+
-+        power-domains = <&rpmhpd SC7180_CX>,
-+                        <&rpmhpd SC7180_MX>,
-+                        <&rpmhpd SC7180_MSS>;
-+        power-domain-names = "cx", "mx", "mss";
-+
-+        memory-region = <&mba_mem>, <&mpss_mem>;
-+
-+        qcom,qmp = <&aoss_qmp>;
-+
-+        qcom,smem-states = <&modem_smp2p_out 0>;
-+        qcom,smem-state-names = "stop";
-+
-+        resets = <&aoss_reset AOSS_CC_MSS_RESTART>,
-+                 <&pdc_reset PDC_MODEM_SYNC_RESET>;
-+        reset-names = "mss_restart", "pdc_reset";
-+
-+        qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+        qcom,spare-regs = <&tcsr_regs 0xb3e4>;
-+
-+        glink-edge {
-+            interrupts = <GIC_SPI 449 IRQ_TYPE_EDGE_RISING>;
-+            mboxes = <&apss_shared 12>;
-+            qcom,remote-pid = <1>;
-+            label = "modem";
-+        };
-+    };
--- 
-2.7.4
+ack and ack to the adsp_shutdown_poll_decrypt() as well.
 
+> 
+> Regards,
+> Bjorn
+> 
