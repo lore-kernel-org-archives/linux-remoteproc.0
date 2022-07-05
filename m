@@ -2,55 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA33C43334
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 10:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B958FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  5 Jul 2022 11:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232087AbiGEKOq (ORCPT
+        id S229478AbiGELcU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 5 Jul 2022 06:14:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
+        Tue, 5 Jul 2022 07:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232045AbiGEKOp (ORCPT
+        with ESMTP id S229575AbiGELcS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 5 Jul 2022 06:14:45 -0400
+        Tue, 5 Jul 2022 07:32:18 -0400
 Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9208E13FB8;
-        Tue,  5 Jul 2022 03:14:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866BC16584;
+        Tue,  5 Jul 2022 04:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1657016082; x=1688552082;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=ZcLSmiENv+Qn2Ni4ALAByedzuulyYpiLnm+kBY0HlKc=;
-  b=adSPfST0L6nielm8DfodZucl21Ngxs6CoOOHszdIrO02q0MxdA8JaXZL
-   umgPpOeQUCTIUueqN50A1U1DEb4aDPMrofpfoJmXP8xt0apzfp8Elh8a/
-   NJDa+/+hoEmdmGBmw9Go9ruXqA6i9jadynkJ4EYQukxuAwR3dvFclmcp7
-   c=;
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 05 Jul 2022 03:14:42 -0700
+  t=1657020737; x=1688556737;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=DgpD0swGMPgGP3c6S88/tD4BnYuimi0ZGxDZ8vFIhHA=;
+  b=AgNiHcTKD5PRRAtnuTt1qeKQd4JsB5aIj75ppjp2sTBKI4jA9M2lI8pO
+   M7Z57YNbCu+crtNvatrPsopSpDpHNJkLjYaAm56Z2Fjjtnya2t1Z2MXXo
+   B+dZot2q188XRuIXgxe4/h27cY8/p5BPmvIXOqNCkbRAYB89FHzvIAXB9
+   I=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 05 Jul 2022 04:32:17 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 03:14:42 -0700
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jul 2022 04:32:17 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 03:14:41 -0700
-Received: from hu-ylal-hyd.qualcomm.com (10.80.80.8) by
+ 15.2.986.22; Tue, 5 Jul 2022 04:32:16 -0700
+Received: from blr-ubuntu-87.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Tue, 5 Jul 2022 03:14:38 -0700
-From:   Yogesh Lal <quic_ylal@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <quic_sibis@quicinc.com>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Yogesh Lal <quic_ylal@quicinc.com>
-Subject: [RESEND V3 2/2] remoteproc: qcom: Add full coredump fallback mechanism
-Date:   Tue, 5 Jul 2022 15:44:17 +0530
-Message-ID: <1657016057-22806-3-git-send-email-quic_ylal@quicinc.com>
+ 15.2.986.22; Tue, 5 Jul 2022 04:32:12 -0700
+From:   Sibi Sankar <quic_sibis@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
+CC:     <mathieu.poirier@linaro.org>, <agross@kernel.org>,
+        <konrad.dybcio@somainline.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <mka@chromium.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [V5 0/2] Add support for proxy interconnect bandwidth votes
+Date:   Tue, 5 Jul 2022 17:01:59 +0530
+Message-ID: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1657016057-22806-1-git-send-email-quic_ylal@quicinc.com>
-References: <1657016057-22806-1-git-send-email-quic_ylal@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -60,63 +59,42 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Siddharth Gupta <sidgup@codeaurora.org>
+Add proxy interconnect bandwidth votes during modem bootup on SC7280 SoCs.
 
-If a remoteproc's firmware does not support minidump but the driver
-adds an ID, the minidump driver does not collect any coredumps when
-the remoteproc crashes. This hinders the purpose of coredump
-collection. This change adds a fallback mechanism in the event of a
-crash.
+V5:
+ * Improve phandle-array schemas [Stephen/Rob/Krzysztof]
+ * Add more details to the firmware-name/memory region string array [Stephen/Rob]
+ * Drop 'items' from label [Rob]
+ * Drop the patch 1 since Bjorn picked it up
 
-Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
-Signed-off-by: Yogesh Lal <quic_ylal@quicinc.com>
----
- drivers/remoteproc/qcom_common.c   | 14 ++++++++++++--
- drivers/remoteproc/qcom_q6v5_pas.c |  1 +
- 2 files changed, 13 insertions(+), 2 deletions(-)
+V4:
+ * Remove older bindings [Matthias/Krzysztof]
+ * Convert sc7180/sc7280 to yaml and leave the rest to Sireesh's series
+ * Rebased on v2 of Krzysztof's bindings cleanups
+ * Misc. Fixes [Krzysztof]
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 4b91e3c..246e716 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -163,12 +163,22 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id)
- 	 */
- 	if (subsystem->regions_baseptr == 0 ||
- 	    le32_to_cpu(subsystem->status) != 1 ||
--	    le32_to_cpu(subsystem->enabled) != MD_SS_ENABLED ||
--	    le32_to_cpu(subsystem->encryption_status) != MD_SS_ENCR_DONE) {
-+	    le32_to_cpu(subsystem->enabled) != MD_SS_ENABLED) {
-+		return rproc_coredump(rproc);
-+	}
-+
-+	if (le32_to_cpu(subsystem->encryption_status) != MD_SS_ENCR_DONE) {
- 		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
- 		return;
- 	}
- 
-+	/**
-+	 * Clear out the dump segments populated by parse_fw before
-+	 * re-populating them with minidump segments.
-+	 */
-+
-+	rproc_coredump_cleanup(rproc);
-+
- 	ret = qcom_add_minidump_segments(rproc, subsystem);
- 	if (ret) {
- 		dev_err(&rproc->dev, "Failed with error: %d while adding minidump entries\n", ret);
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 401b1ec..6e5cbca 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -274,6 +274,7 @@ static const struct rproc_ops adsp_minidump_ops = {
- 	.start = adsp_start,
- 	.stop = adsp_stop,
- 	.da_to_va = adsp_da_to_va,
-+	.parse_fw = qcom_register_dump_segments,
- 	.load = adsp_load,
- 	.panic = adsp_panic,
- 	.coredump = adsp_minidump,
+V3:
+ * Re-ordered clock list, fixed pdc_sync typo [Rob/Matthias]
+
+V2:
+ * Dropped patch 3 from version 1 [Sub with Bjorn's patch]
+ * Add YAML support [Krzysztof]
+ * Drop interconnect names [Bjorn]
+
+Depends on Krzysztof's remoteproc cleanups and improvements:
+https://patchwork.kernel.org/project/linux-arm-msm/cover/20220517070113.18023-1-krzysztof.kozlowski@linaro.org/
+
+Sibi Sankar (2):
+  dt-bindings: remoteproc: qcom: Convert SC7280 MSS bindings to YAML
+  dt-bindings: remoteproc: qcom: Convert SC7180 MSS bindings to YAML
+
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |  47 +---
+ .../bindings/remoteproc/qcom,sc7180-mss-pil.yaml   | 245 +++++++++++++++++++
+ .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   | 266 +++++++++++++++++++++
+ 3 files changed, 513 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+
 -- 
 2.7.4
 
