@@ -2,44 +2,42 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A0FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jul 2022 12:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7533C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  6 Jul 2022 12:44:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbiGFMnr (ORCPT
+        id S232647AbiGFMoR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 6 Jul 2022 08:43:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46250 "EHLO
+        Wed, 6 Jul 2022 08:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232640AbiGFMnq (ORCPT
+        with ESMTP id S229558AbiGFMoQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 6 Jul 2022 08:43:46 -0400
-X-Greylist: delayed 286 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 06 Jul 2022 05:43:46 PDT
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CDF71EAD5
-        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jul 2022 05:43:45 -0700 (PDT)
+        Wed, 6 Jul 2022 08:44:16 -0400
+Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E04D4C
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jul 2022 05:44:16 -0700 (PDT)
 Received: from [192.168.1.101] (abxi46.neoplus.adsl.tpnet.pl [83.9.2.46])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 28DEB3F7A6;
-        Wed,  6 Jul 2022 14:43:44 +0200 (CEST)
-Message-ID: <3c6d6d13-0612-e808-d14c-81f9b312664a@somainline.org>
-Date:   Wed, 6 Jul 2022 14:43:43 +0200
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id F30D33F756;
+        Wed,  6 Jul 2022 14:38:57 +0200 (CEST)
+Message-ID: <b75e45fc-eede-d44d-9c0d-535923de2f9d@somainline.org>
+Date:   Wed, 6 Jul 2022 14:38:57 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: Re: [V3 7/7] remoteproc: sysmon: Send sysmon state only for running
- rprocs
+Subject: Re: [V3 1/7] remoteproc: qcom: pas: Add decrypt shutdown support for
+ modem
 Content-Language: en-US
 To:     Sibi Sankar <quic_sibis@quicinc.com>, bjorn.andersson@linaro.org
 Cc:     agross@kernel.org, mathieu.poirier@linaro.org,
         dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Siddharth Gupta <sidgup@codeaurora.org>
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1657022900-2049-1-git-send-email-quic_sibis@quicinc.com>
- <1657022900-2049-8-git-send-email-quic_sibis@quicinc.com>
+ <1657022900-2049-2-git-send-email-quic_sibis@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <1657022900-2049-8-git-send-email-quic_sibis@quicinc.com>
+In-Reply-To: <1657022900-2049-2-git-send-email-quic_sibis@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -49,47 +47,14 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 On 5.07.2022 14:08, Sibi Sankar wrote:
-> From: Siddharth Gupta <sidgup@codeaurora.org>
+> The initial shutdown request to modem on SM8450 SoCs would start the
+> decryption process and will keep returning errors until the modem shutdown
+> is complete. Fix this by retrying shutdowns in fixed intervals.
 > 
-> When a new remoteproc boots up, send the sysmon state notification
-> of only running remoteprocs. Sending state of remoteprocs booting
-> up in parallel can cause a race between SSR clients of the remoteproc
-> that is booting up and the sysmon notification for the same remoteproc,
-> resulting in an inconsistency between which state the remoteproc that
-> is booting up in parallel.
-> 
-> For example - if remoteproc A and B crash one after the other, after
-> remoteproc A boots up, if the remoteproc A tries to get the state of
-> remoteproc B before the sysmon subdevice for B is invoked but after
-> the ssr subdevice of B has been invoked, clients on remoteproc A
-> might get confused when the sysmon notification indicates a different
-> state.
-> 
-> Signed-off-by: Siddharth Gupta <sidgup@codeaurora.org>
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
+I'm sorry, but this message seems a bit cryptic to me.. What
+is being decrypted? How is it related to the shutdown sequence?
+Why does it need to finish first?
 
 Konrad
->  drivers/remoteproc/qcom_sysmon.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-> index a9f04dd83ab6..57dde2a69b9d 100644
-> --- a/drivers/remoteproc/qcom_sysmon.c
-> +++ b/drivers/remoteproc/qcom_sysmon.c
-> @@ -512,10 +512,12 @@ static int sysmon_start(struct rproc_subdev *subdev)
->  
->  	mutex_lock(&sysmon_lock);
->  	list_for_each_entry(target, &sysmon_list, node) {
-> -		if (target == sysmon)
-> +		mutex_lock(&target->state_lock);
-> +		if (target == sysmon || target->state != SSCTL_SSR_EVENT_AFTER_POWERUP) {
-> +			mutex_unlock(&target->state_lock);
->  			continue;
-> +		}
->  
-> -		mutex_lock(&target->state_lock);
->  		event.subsys_name = target->name;
->  		event.ssr_event = target->state;
->  
+
+[snipped the rest]
