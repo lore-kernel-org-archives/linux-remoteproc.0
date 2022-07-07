@@ -2,56 +2,56 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C91FC43334
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 07:00:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C51F1C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 07:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235145AbiGGHAg (ORCPT
+        id S235044AbiGGHBO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 03:00:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54232 "EHLO
+        Thu, 7 Jul 2022 03:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbiGGG7n (ORCPT
+        with ESMTP id S235087AbiGGHAj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jul 2022 02:59:43 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE74D5FB0
-        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jul 2022 23:59:23 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id z25so11987544lfr.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jul 2022 23:59:23 -0700 (PDT)
+        Thu, 7 Jul 2022 03:00:39 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFC7332041
+        for <linux-remoteproc@vger.kernel.org>; Wed,  6 Jul 2022 23:59:53 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id i18so29529068lfu.8
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 Jul 2022 23:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=message-id:date:mime-version:user-agent:subject:content-language:to
          :references:from:in-reply-to:content-transfer-encoding;
-        bh=iD4mGg+qM8HG6/1MdfbFXBy3mtObyupuyZ17+Do+v7o=;
-        b=ONpy15sjpZhrdm7lyMQyfqEirPUf4QXweXCqJDoF3TmiXGQBcXclsdsNCXlcl8/U+7
-         DHpIipWoFQ2JGNOTVXBFjUvRiXX+brHFVQw8VAqi+cqWUBrcnRSHcuuubuR7WylgjEUT
-         W06VefkS0KRN8y7Xd5+RYq7YlxaY6rVJFYxsccYJVMzwiREVouKmUB0Vz3SiNdExmagD
-         7LpZ1RJHWjIPqKx0E1eONMR9prhM8FrLTy9c7lR9slmEaI6LhQNJIo67MldHHf87cekH
-         4rOck3CrGYOAexdyBOYaJspX7yERoJnZxnOurumSYlJtITEDcY6heba9W0bFQOI0Vt3F
-         7wcQ==
+        bh=uudX0qE0EodfyOAtpNxIObBg7BD+vU4kR+vip3L6w9k=;
+        b=XsaW2j2vWBNrkQD0Fkp2Ibp4T8yUX5Vd0jRIPq7pCGZnJUMW/1yeRbtYaC/4RWKbkL
+         fowDz3z3jCu3YlbuSB5fRE8RglF22BzYSMoUWun72K9H9J1hmkk8BDKj/zODSARvMPZ2
+         wrTK/RMs3N0l0XFlAbYzNbW+qreJjh2u4vLBg6qPtbrakn0mKck6vvZoWO6k6tOO1bly
+         51suRCchE8Xzi05t3h8NwHY+XoK/76sJXG0iP+ZQZDiJn56PQFIXvoheT97e34vb+huE
+         5wc8fpGFr2NOf+g0cY+MdlEewqLNrXysmhaMw1+UQ/VoybbIHj8mg3ADwJyxdx+Vs5xT
+         lq5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
          :content-language:to:references:from:in-reply-to
          :content-transfer-encoding;
-        bh=iD4mGg+qM8HG6/1MdfbFXBy3mtObyupuyZ17+Do+v7o=;
-        b=tqk/cYqLDXZFBHK612gawIxG4AvcPENYPxFT+C9NmxsOm8j7Wx6Wchjr/ws65sbL96
-         YiSaj1wBHzFXUkzO2G3qr2KBahE/fipcK4kjdh3KgFOdzcM5wv4eGt2H1/jxr6OGu5JQ
-         rYVAqEcmjsDb5gu9lnQx+01AfiUkYTl4eV6weu/JIi333neCy9f/9BtSBm4UOzii6lnA
-         YcFj/FtWJ07otCCGUzR+a7tPqN7Wa7B8cZphPjd6x9BEB9o05cxIq9DPzwDWrdptB3gQ
-         t2afXhiUybbYMEo7dEwRxJB9KJaiOemGYMpr11pLp8wBO0yvvGxSKM+ek1jzdQPhkHPV
-         1raA==
-X-Gm-Message-State: AJIora8n7LOorh4D0w1ssEdDqt80zj8/yeVRERXdq/LAahwVEEsX61gX
-        79zP4MbsfxtdGY4u13jChoU3QA==
-X-Google-Smtp-Source: AGRyM1tMrmU5392DvadV6XBmRrqfiY+I0d31ph62y1mTwXDIkZJ91YrBcx12opHaqwcWL7mnx0+fZQ==
-X-Received: by 2002:a05:6512:3146:b0:482:e8c8:1a7f with SMTP id s6-20020a056512314600b00482e8c81a7fmr9900182lfi.62.1657177163289;
-        Wed, 06 Jul 2022 23:59:23 -0700 (PDT)
+        bh=uudX0qE0EodfyOAtpNxIObBg7BD+vU4kR+vip3L6w9k=;
+        b=e/ESy/0QqGjgDgjVi7ujfgq6wzOlvpwPuXdh1eHLflAwZd8+2aEWX27PkTAvCRMOFi
+         yjRaMhlSqcII9KqcSjh/JssCxgh8xy2Eye23PyfEJYRccx85glwPZKQD1/I0GtZp3cCN
+         ymc8W0MqDKVBH3Iy1FTYC1JWaeazPhsjxgLB01fRGQYOeYLQgMveuMYrF+J7XUZ+jO9G
+         D0TCa081u4mPR355npUsaRMYW3HeoioiP0Rs4Dkv8iQNu3XRN9B7RRFqneLgGh19zcgx
+         jeGjnKl4yvon20L0AyRDpcjmXYYl/4AfMCIqajpJx8uAx6HF6pLj2YmnL0IcHvW6Qabv
+         qWzA==
+X-Gm-Message-State: AJIora808WMHkPNtsoFXE+cNgbZ1+Pim/ScMc5T8M+RyCtuCIZxG/zUD
+        2pq7zlKfqN+6FtxmukvnB4LRpw==
+X-Google-Smtp-Source: AGRyM1uDcC2/uLeUv+nYCg4YXUX0JLtGsAJ2rhsItJBnSNg3ojhNi98v7mFkxoLbyJVzOpFG4NQ1lg==
+X-Received: by 2002:a05:6512:1303:b0:482:d0df:280f with SMTP id x3-20020a056512130300b00482d0df280fmr10006946lfu.14.1657177191963;
+        Wed, 06 Jul 2022 23:59:51 -0700 (PDT)
 Received: from [192.168.1.52] ([84.20.121.239])
-        by smtp.gmail.com with ESMTPSA id bp23-20020a056512159700b0047f65b60323sm6681329lfb.3.2022.07.06.23.59.21
+        by smtp.gmail.com with ESMTPSA id v27-20020ac258fb000000b00478f739f1fdsm1047602lfo.103.2022.07.06.23.59.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Jul 2022 23:59:22 -0700 (PDT)
-Message-ID: <379291a5-c48d-7d78-fdec-9b67d6b71fd9@linaro.org>
-Date:   Thu, 7 Jul 2022 08:59:21 +0200
+        Wed, 06 Jul 2022 23:59:51 -0700 (PDT)
+Message-ID: <98f7c329-b4b8-f7d6-33b4-b8471f23d174@linaro.org>
+Date:   Thu, 7 Jul 2022 08:59:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
@@ -80,12 +80,8 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 07/07/2022 03:30, Christian Marangi wrote:
 > Add missing smem compatible and hwlocks binding for ipq8064 dtsi
-> smem node.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+s/binding/phandle/
 
 
 Best regards,
