@@ -2,463 +2,290 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9413EC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 12:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B91C43334
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 23:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235020AbiGGMgY (ORCPT
+        id S236812AbiGGXdR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 08:36:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36122 "EHLO
+        Thu, 7 Jul 2022 19:33:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234713AbiGGMgX (ORCPT
+        with ESMTP id S236590AbiGGXdQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jul 2022 08:36:23 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 951D324097;
-        Thu,  7 Jul 2022 05:36:21 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267AOvdd029323;
-        Thu, 7 Jul 2022 14:36:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=HvR9wGmNVVrXwFuk996JnRyF9GHI+WVT7Zp7AX9Rt6g=;
- b=UG+cYp/AspBeSkReNCnKdkwRS6z5LoQ/GMDWkCcpFAyilRrbbJ3G+fRwzBceDyt6LYQ9
- furnY6yjRIhG4kgmc/jZhDO5h3qokfA0cRmbYkz6FLK57xcqzxDI68hzH856MHmkJ4/Q
- eqGRDIDErJ8/8vwvNQvRloeH56PGO6E8w5kC1cUZWRFGW/PF5jErFue+VyFnck60t0/G
- WeL7dkNyGdJoVvACmOvbTU8vs+CgkSeZ8Pis9aqz2W/awJGbdh9F9uQmurl5Yqvtdr2V
- 4o5HEfcScuM9/WaJrZb1EvnQadKCMAeLNB3jGxpIApOLT85/3sAKMUEQ8P+MuUz1u5d5 Aw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3h4ubfctr6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:36:12 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 45537100034;
-        Thu,  7 Jul 2022 14:36:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B84A8217B7D;
-        Thu,  7 Jul 2022 14:36:10 +0200 (CEST)
-Received: from [10.201.20.246] (10.75.127.47) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Thu, 7 Jul
- 2022 14:36:10 +0200
-Message-ID: <4e935df8-d918-38f6-404c-fbcecba81064@foss.st.com>
-Date:   Thu, 7 Jul 2022 14:36:09 +0200
+        Thu, 7 Jul 2022 19:33:16 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 023772B619;
+        Thu,  7 Jul 2022 16:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1657236794; x=1688772794;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Zq0IYeQ+zoUL5O2hNpqxGkXI6+bcL6FLvMdsPEh8Dd0=;
+  b=nJIN+HG4bO9TeV277oHESfyfzMteEQDhW0KHrY+3JiWDoxp2FWptH/70
+   nPJuWsiMtQP52DQvKtIssZKIM7hE6YBMoPG5F36Y/+Hwcc9tNwCDQ26p2
+   6BaCYG+EJb5p8ke6JYqhAKbhyTnJPBVzgTFhLpeaRV/H56uyzAPPgzoKQ
+   wR8xKLRugT3vkTWJGijPYPmiIlyOfA3FkxZXXtY+IsxY4FiJcAVCu9yf6
+   895X2V8euHIouawVI+SJufVGqIC4uYxrCaV4lrlla9NQxC/ZmN9nipJ6y
+   Di78M8znkDj8ASfS2MpDZHBfnXkDq07/YF/ClDfHVOYqZ2my0EZNZPXBL
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10401"; a="309705420"
+X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
+   d="scan'208";a="309705420"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 16:33:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
+   d="scan'208";a="568708353"
+Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 07 Jul 2022 16:33:11 -0700
+Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1o9aze-000Mbq-Q9;
+        Thu, 07 Jul 2022 23:33:10 +0000
+Date:   Fri, 08 Jul 2022 07:32:17 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ 75d7bf5eae277f32dd952276aa41ae7915dba1b2
+Message-ID: <62c76d01.vlHjMvDEG6yYDgx1%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v6 4/4] remoteproc: virtio: Create platform device for the
- remoteproc_virtio
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-References: <20220603163158.612513-1-arnaud.pouliquen@foss.st.com>
- <20220603163158.612513-5-arnaud.pouliquen@foss.st.com>
- <20220705162850.GE2440144@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220705162850.GE2440144@p14s>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-07_09,2022-06-28_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Mathieu,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: 75d7bf5eae277f32dd952276aa41ae7915dba1b2  Add linux-next specific files for 20220707
 
-On 7/5/22 18:28, Mathieu Poirier wrote:
-> On Fri, Jun 03, 2022 at 06:31:58PM +0200, Arnaud Pouliquen wrote:
->> Define a platform driver to manage the remoteproc virtio device as
->> a platform devices.
->>
->> The platform device allows to pass rproc_vdev_data platform data to
->> specify properties that are stored in the rproc_vdev structure.
->>
->> Such approach will allow to preserve legacy remoteproc virtio device
->> creation but also to probe the device using device tree mechanism.
->>
->> remoteproc_virtio.c update:
->>   - Add rproc_virtio_driver platform driver. The probe/remove ops replace
->>     the rproc_rvdev_add_device/rproc_rvdev_remove_device functions.
-> 
-> Function rproc_rvdev_remove_device() no longer exists.
-> 
->>   - All reference to the rvdev->dev has been updated to rvdev-pdev->dev.
->>   - rproc_rvdev_release is removed as associated to the rvdev device.
->>   - The use of rvdev->kref counter is replaced by get/put_device on the
->>     remoteproc virtio platform device.
->>   - The vdev device no longer increments rproc device counter.
->>     increment/decrement is done in rproc_virtio_probe/rproc_virtio_remove
->>     function in charge of the vrings allocation/free.
->>
->> remoteproc_core.c update:
->>   Migrate from the rvdev device to the rvdev platform device.
->>   From this patch, when a vdev resource is found in the resource table
->>   the remoteproc core register a platform device.
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->> Updates vs previous revision (based on Mathieu Poirier's comments):
->>   - remoteteproc_virtio:
->>     - remove debug print on probe and remove
->>     - remove wriong comment on put_device(&rproc->dev), the get is
->>       already commented
->>   - remoteproc_core:
->>     - fix dev_err() device parameter.
->> ---
->>  drivers/remoteproc/remoteproc_core.c     |  12 +-
->>  drivers/remoteproc/remoteproc_internal.h |   3 -
->>  drivers/remoteproc/remoteproc_virtio.c   | 141 ++++++++++++-----------
->>  include/linux/remoteproc.h               |   6 +-
->>  4 files changed, 81 insertions(+), 81 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index bd6d3f2decc6..81c4deef2895 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -478,6 +478,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->>  	struct device *dev = &rproc->dev;
->>  	struct rproc_vdev *rvdev;
->>  	struct rproc_vdev_data rvdev_data;
->> +	struct platform_device *pdev;
->>  
->>  	/* make sure resource isn't truncated */
->>  	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
->> @@ -506,9 +507,12 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->>  	rvdev_data.rsc_offset = offset;
->>  	rvdev_data.rsc = rsc;
->>  
->> -	rvdev = rproc_rvdev_add_device(rproc, &rvdev_data);
->> -	if (IS_ERR(rvdev))
->> -		return PTR_ERR(rvdev);
->> +	pdev = platform_device_register_data(dev, "rproc-virtio", rvdev_data.index, &rvdev_data,
->> +					     sizeof(rvdev_data));
->> +	if (IS_ERR(pdev)) {
->> +		dev_err(dev, "failed to create rproc-virtio device\n");
->> +		return PTR_ERR(pdev);
->> +	}
->>  
->>  	return 0;
->>  }
->> @@ -1248,7 +1252,7 @@ void rproc_resource_cleanup(struct rproc *rproc)
->>  
->>  	/* clean up remote vdev entries */
->>  	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
->> -		kref_put(&rvdev->refcount, rproc_vdev_release);
->> +		platform_device_unregister(rvdev->pdev);
->>  
->>  	rproc_coredump_cleanup(rproc);
->>  }
->> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
->> index 2c4358ad63ca..0608052d1120 100644
->> --- a/drivers/remoteproc/remoteproc_internal.h
->> +++ b/drivers/remoteproc/remoteproc_internal.h
->> @@ -45,10 +45,7 @@ int rproc_of_parse_firmware(struct device *dev, int index,
->>  			    const char **fw_name);
->>  
->>  /* from remoteproc_virtio.c */
->> -struct rproc_vdev *rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data);
->> -void rproc_rvdev_remove_device(struct rproc_vdev *rvdev);
-> 
-> Stale.
-> 
-> I am done reviewing this set.
+Error/Warning: (recently discovered and may have been fixed)
 
-Thanks for the review!
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x18c4): undefined reference to `__aeabi_ddiv'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x18e8): undefined reference to `__aeabi_ui2d'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1920): undefined reference to `__aeabi_dmul'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1928): undefined reference to `__aeabi_dadd'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1934): undefined reference to `__aeabi_dsub'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1940): undefined reference to `__aeabi_d2uiz'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1dbc): undefined reference to `__aeabi_d2iz'
+arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1e2c): undefined reference to `__aeabi_i2d'
+dc_dmub_srv.c:(.text+0x18b8): undefined reference to `__aeabi_ui2d'
+dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x33c): undefined reference to `__floatunsidf'
+drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
+drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
+drivers/scsi/qedi/qedi_fw_api.c:357:17: sparse:    left side has type restricted __le16
+drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x34c): undefined reference to `__floatunsidf'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x378): undefined reference to `__divdf3'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x38c): undefined reference to `__muldf3'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3a0): undefined reference to `__adddf3'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3b4): undefined reference to `__subdf3'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3d4): undefined reference to `__fixunsdfsi'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x740): undefined reference to `__fixdfsi'
+mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x7b0): undefined reference to `__floatsidf'
 
-Look to me reasonnable to wait conclusion concerning the thread:
-rpmsg: virtio: Fix broken rpmsg_probe[1], before sending a new revision.
-As this can impact this series
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-[1]https://lore.kernel.org/all/20220630151716-mutt-send-email-mst@kernel.org/t/
+ERROR: modpost: "usb_hub_find_child" [drivers/usb/dwc3/dwc3-qcom.ko] undefined!
+arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
+arch/x86/kernel/cpu/rdrand.c:36 x86_init_rdrand() error: uninitialized symbol 'prev'.
+drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
+drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/infiniband/hw/irdma/hw.c:1484:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/md/dm-mpath.c:1681:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/media/dvb-frontends/mxl692.c:49:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/media/i2c/ov5647.c:636:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/media/i2c/st-mipid02.c:271:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/media/platform/qcom/venus/vdec.c:1505:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/media/platform/st/sti/delta/delta-v4l2.c:719:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/media/tuners/msi001.c:81:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/mfd/sec-core.c:429:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/mmc/host/sh_mmcif.c:1318:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/bonding/bond_main.c:4647:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:1388:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/faraday/ftgmac100.c:854:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/hisilicon/hns/hnae.c:436:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/intel/i40e/i40e_main.c:9347:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/intel/ice/ice_base.c:1003:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/intel/ice/ice_dcb_lib.c:520:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/intel/ice/ice_vlan_mode.c:379:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/intel/igb/e1000_phy.c:1185:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/microchip/encx24j600.c:827:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/microchip/lan743x_main.c:1238:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/smsc/smsc9420.c:451:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/ethernet/vertexcom/mse102x.c:422:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/phy/dp83640.c:890:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/usb/cdc_ncm.c:195:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/net/usb/rtl8150.c:176:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/parport/ieee1284_ops.c:615:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/scsi/elx/efct/efct_unsol.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/scsi/elx/libefc/efc_domain.c:692:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/scsi/megaraid/megaraid_sas_fp.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/soc/mediatek/mtk-mutex.c:820:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/staging/media/zoran/zr36016.c:430:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/staging/media/zoran/zr36050.c:829:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/staging/media/zoran/zr36060.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/target/iscsi/iscsi_target.c:2348:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/thunderbolt/tmu.c:758:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/thunderbolt/tunnel.c:1264:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/tty/serial/atmel_serial.c:1442:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/usb/host/uhci-q.c:1367:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/usb/serial/digi_acceleport.c:1167:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+drivers/video/backlight/qcom-wled.c:871:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+fs/ext4/mballoc.c:3612:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+fs/kernel_read_file.c:61 kernel_read_file() warn: impossible condition '(i_size > (((~0) >> 1))) => (s64min-s64max > s64max)'
+fs/ubifs/recovery.c:1062:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+kernel/sched/core.c:2076:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+mm/filemap.c:1354:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+mm/page_alloc.c:1115:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+mm/page_alloc.c:7696:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+mm/slub.c:5434:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+net/bluetooth/hci_event.c:5926:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+net/qrtr/mhi.c:102:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+net/wireless/reg.c:205:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+sound/pci/lola/lola.c:178:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+sound/pci/pcxhr/pcxhr_core.c:134:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+sound/pci/rme9652/hdsp.c:666:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+sound/soc/fsl/fsl_spdif.c:1508:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+sound/soc/sh/rcar/core.c:1602:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+sound/soc/sof/intel/mtl.c:547:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
+{standard input}:2311: Error: expecting )
 
-Regards,
-Arnaud
+Error/Warning ids grouped by kconfigs:
 
-> 
-> Thanks,
-> Mathieu
-> 
->>  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int vq_id);
->> -void rproc_vdev_release(struct kref *ref);
->>  
->>  /* from remoteproc_debugfs.c */
->>  void rproc_remove_trace_file(struct dentry *tfile);
->> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
->> index ccc95d4e42cf..06d2131dad11 100644
->> --- a/drivers/remoteproc/remoteproc_virtio.c
->> +++ b/drivers/remoteproc/remoteproc_virtio.c
->> @@ -13,6 +13,7 @@
->>  #include <linux/dma-map-ops.h>
->>  #include <linux/dma-mapping.h>
->>  #include <linux/export.h>
->> +#include <linux/of_platform.h>
->>  #include <linux/of_reserved_mem.h>
->>  #include <linux/remoteproc.h>
->>  #include <linux/virtio.h>
->> @@ -46,7 +47,11 @@ static int copy_dma_range_map(struct device *to, struct device *from)
->>  
->>  static struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
->>  {
->> -	return container_of(vdev->dev.parent, struct rproc_vdev, dev);
->> +	struct platform_device *pdev;
->> +
->> +	pdev = container_of(vdev->dev.parent, struct platform_device, dev);
->> +
->> +	return platform_get_drvdata(pdev);
->>  }
->>  
->>  static  struct rproc *vdev_to_rproc(struct virtio_device *vdev)
->> @@ -341,13 +346,10 @@ static void rproc_virtio_dev_release(struct device *dev)
->>  {
->>  	struct virtio_device *vdev = dev_to_virtio(dev);
->>  	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
->> -	struct rproc *rproc = vdev_to_rproc(vdev);
->>  
->>  	kfree(vdev);
->>  
->> -	kref_put(&rvdev->refcount, rproc_vdev_release);
->> -
->> -	put_device(&rproc->dev);
->> +	put_device(&rvdev->pdev->dev);
->>  }
->>  
->>  /**
->> @@ -363,7 +365,7 @@ static void rproc_virtio_dev_release(struct device *dev)
->>  static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->>  {
->>  	struct rproc *rproc = rvdev->rproc;
->> -	struct device *dev = &rvdev->dev;
->> +	struct device *dev = &rvdev->pdev->dev;
->>  	struct virtio_device *vdev;
->>  	struct rproc_mem_entry *mem;
->>  	int ret;
->> @@ -433,18 +435,8 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->>  	vdev->dev.parent = dev;
->>  	vdev->dev.release = rproc_virtio_dev_release;
->>  
->> -	/*
->> -	 * We're indirectly making a non-temporary copy of the rproc pointer
->> -	 * here, because drivers probed with this vdev will indirectly
->> -	 * access the wrapping rproc.
->> -	 *
->> -	 * Therefore we must increment the rproc refcount here, and decrement
->> -	 * it _only_ when the vdev is released.
->> -	 */
->> -	get_device(&rproc->dev);
->> -
->>  	/* Reference the vdev and vring allocations */
->> -	kref_get(&rvdev->refcount);
->> +	get_device(dev);
->>  
->>  	ret = register_virtio_device(vdev);
->>  	if (ret) {
->> @@ -486,78 +478,57 @@ static int rproc_vdev_do_start(struct rproc_subdev *subdev)
->>  static void rproc_vdev_do_stop(struct rproc_subdev *subdev, bool crashed)
->>  {
->>  	struct rproc_vdev *rvdev = container_of(subdev, struct rproc_vdev, subdev);
->> +	struct device *dev = &rvdev->pdev->dev;
->>  	int ret;
->>  
->> -	ret = device_for_each_child(&rvdev->dev, NULL, rproc_remove_virtio_dev);
->> +	ret = device_for_each_child(dev, NULL, rproc_remove_virtio_dev);
->>  	if (ret)
->> -		dev_warn(&rvdev->dev, "can't remove vdev child device: %d\n", ret);
->> +		dev_warn(dev, "can't remove vdev child device: %d\n", ret);
->>  }
->>  
->> -/**
->> - * rproc_rvdev_release() - release the existence of a rvdev
->> - *
->> - * @dev: the subdevice's dev
->> - */
->> -static void rproc_rvdev_release(struct device *dev)
->> -{
->> -	struct rproc_vdev *rvdev = container_of(dev, struct rproc_vdev, dev);
->> -
->> -	of_reserved_mem_device_release(dev);
->> -
->> -	kfree(rvdev);
->> -}
->> -
->> -struct rproc_vdev *
->> -rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
->> +static int rproc_virtio_probe(struct platform_device *pdev)
->>  {
->> +	struct device *dev = &pdev->dev;
->> +	struct rproc_vdev_data *rvdev_data = dev->platform_data;
->>  	struct rproc_vdev *rvdev;
->> -	struct fw_rsc_vdev *rsc = rvdev_data->rsc;
->> -	char name[16];
->> +	struct rproc *rproc = container_of(dev->parent, struct rproc, dev);
->> +	struct fw_rsc_vdev *rsc;
->>  	int i, ret;
->>  
->> -	rvdev = kzalloc(sizeof(*rvdev), GFP_KERNEL);
->> -	if (!rvdev)
->> -		return ERR_PTR(-ENOMEM);
->> +	if (!rvdev_data)
->> +		return -EINVAL;
->>  
->> -	kref_init(&rvdev->refcount);
->> +	rvdev = devm_kzalloc(dev, sizeof(*rvdev), GFP_KERNEL);
->> +	if (!rvdev)
->> +		return -ENOMEM;
->>  
->>  	rvdev->id = rvdev_data->id;
->>  	rvdev->rproc = rproc;
->>  	rvdev->index = rvdev_data->index;
->>  
->> -	/* Initialise vdev subdevice */
->> -	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
->> -	rvdev->dev.parent = &rproc->dev;
->> -	rvdev->dev.release = rproc_rvdev_release;
->> -	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
->> -	dev_set_drvdata(&rvdev->dev, rvdev);
->> -
->> -	ret = device_register(&rvdev->dev);
->> -	if (ret) {
->> -		put_device(&rvdev->dev);
->> -		return ERR_PTR(ret);
->> -	}
->> -
->> -	ret = copy_dma_range_map(&rvdev->dev, rproc->dev.parent);
->> +	ret = copy_dma_range_map(dev, rproc->dev.parent);
->>  	if (ret)
->> -		goto free_rvdev;
->> +		return ret;
->>  
->>  	/* Make device dma capable by inheriting from parent's capabilities */
->> -	set_dma_ops(&rvdev->dev, get_dma_ops(rproc->dev.parent));
->> +	set_dma_ops(dev, get_dma_ops(rproc->dev.parent));
->>  
->> -	ret = dma_coerce_mask_and_coherent(&rvdev->dev,
->> -					   dma_get_mask(rproc->dev.parent));
->> +	ret = dma_coerce_mask_and_coherent(dev, dma_get_mask(rproc->dev.parent));
->>  	if (ret) {
->> -		dev_warn(&rvdev->dev,
->> -			 "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
->> +		dev_warn(dev, "Failed to set DMA mask %llx. Trying to continue... (%pe)\n",
->>  			 dma_get_mask(rproc->dev.parent), ERR_PTR(ret));
->>  	}
->>  
->> +	platform_set_drvdata(pdev, rvdev);
->> +	rvdev->pdev = pdev;
->> +
->> +	rsc = rvdev_data->rsc;
->> +
->>  	/* parse the vrings */
->>  	for (i = 0; i < rsc->num_of_vrings; i++) {
->>  		ret = rproc_parse_vring(rvdev, rsc, i);
->>  		if (ret)
->> -			goto free_rvdev;
->> +			return ret;
->>  	}
->>  
->>  	/* remember the resource offset*/
->> @@ -577,21 +548,30 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
->>  
->>  	rproc_add_subdev(rproc, &rvdev->subdev);
->>  
->> -	return rvdev;
->> +	/*
->> +	 * We're indirectly making a non-temporary copy of the rproc pointer
->> +	 * here, because the platform device or the vdev device will indirectly
->> +	 * access the wrapping rproc.
->> +	 *
->> +	 * Therefore we must increment the rproc refcount here, and decrement
->> +	 * it _only_ on platform remove.
->> +	 */
->> +	get_device(&rproc->dev);
->> +
->> +	return 0;
->>  
->>  unwind_vring_allocations:
->>  	for (i--; i >= 0; i--)
->>  		rproc_free_vring(&rvdev->vring[i]);
->> -free_rvdev:
->> -	device_unregister(&rvdev->dev);
->> -	return ERR_PTR(ret);
->> +
->> +	return ret;
->>  }
->>  
->> -void rproc_vdev_release(struct kref *ref)
->> +static int rproc_virtio_remove(struct platform_device *pdev)
->>  {
->> -	struct rproc_vdev *rvdev = container_of(ref, struct rproc_vdev, refcount);
->> -	struct rproc_vring *rvring;
->> +	struct rproc_vdev *rvdev = dev_get_drvdata(&pdev->dev);
->>  	struct rproc *rproc = rvdev->rproc;
->> +	struct rproc_vring *rvring;
->>  	int id;
->>  
->>  	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
->> @@ -601,5 +581,26 @@ void rproc_vdev_release(struct kref *ref)
->>  
->>  	rproc_remove_subdev(rproc, &rvdev->subdev);
->>  	rproc_remove_rvdev(rvdev);
->> -	device_unregister(&rvdev->dev);
->> +
->> +	of_reserved_mem_device_release(&pdev->dev);
->> +
->> +	put_device(&rproc->dev);
->> +
->> +	return 0;
->>  }
->> +
->> +/* Platform driver */
->> +static const struct of_device_id rproc_virtio_match[] = {
->> +	{ .compatible = "virtio,rproc", },
->> +	{},
->> +};
->> +
->> +static struct platform_driver rproc_virtio_driver = {
->> +	.probe		= rproc_virtio_probe,
->> +	.remove		= rproc_virtio_remove,
->> +	.driver		= {
->> +		.name	= "rproc-virtio",
->> +		.of_match_table	= rproc_virtio_match,
->> +	},
->> +};
->> +builtin_platform_driver(rproc_virtio_driver);
->> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->> index 7c943f0a2fc4..64b9809d0ec1 100644
->> --- a/include/linux/remoteproc.h
->> +++ b/include/linux/remoteproc.h
->> @@ -616,9 +616,8 @@ struct rproc_vring {
->>  
->>  /**
->>   * struct rproc_vdev - remoteproc state for a supported virtio device
->> - * @refcount: reference counter for the vdev and vring allocations
->>   * @subdev: handle for registering the vdev as a rproc subdevice
->> - * @dev: device struct used for reference count semantics
->> + * @pdev: remoteproc virtio platform device
->>   * @id: virtio device id (as in virtio_ids.h)
->>   * @node: list node
->>   * @rproc: the rproc handle
->> @@ -627,10 +626,9 @@ struct rproc_vring {
->>   * @index: vdev position versus other vdev declared in resource table
->>   */
->>  struct rproc_vdev {
->> -	struct kref refcount;
->>  
->>  	struct rproc_subdev subdev;
->> -	struct device dev;
->> +	struct platform_device *pdev;
->>  
->>  	unsigned int id;
->>  	struct list_head node;
->> -- 
->> 2.24.3
->>
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_read
+|   `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_write
+|-- arc-allyesconfig
+|   |-- block-partitions-efi.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- block-sed-opal.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- crypto-asymmetric_keys-pkcs7_verify.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-ata-libata-core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-ata-libata-eh.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-ata-sata_dwc_460ex.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-base-power-runtime.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-block-rbd.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-bluetooth-hci_ll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-bluetooth-hci_qca.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-cdrom-cdrom.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-char-ipmi-ipmi_ssif.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-char-pcmcia-cm4000_cs.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-char-random.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-char-tpm-tpm_tis_core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-clk-bcm-clk-iproc-armpll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-clk-clk-bd718x7.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-clk-clk-lochnagar.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-crypto-ccree-cc_request_mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-crypto-qce-sha.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-crypto-qce-skcipher.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-cxl-core-hdm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-cxl-core-pci.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-dma-buf-dma-buf.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-firmware-arm_scmi-bus.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-firmware-arm_scmi-clock.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-firmware-arm_scmi-powercap.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-firmware-arm_scmi-sensors.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-firmware-arm_scmi-voltage.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-fpga-dfl-fme-mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gnss-usb.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_debug.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce110-dce110_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce112-dce112_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu7_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu8_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-vega10_powertune.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-smumgr-smu7_smumgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_ttm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-bridge-cadence-cdns-mhdp8546-hdcp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-bridge-ite-it66121.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-bridge-lontium-lt9211.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-bridge-sii902x.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+|   |-- drivers-gpu-drm-mcde-mcde_dsi.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
+clang_recent_errors
+|-- arm64-buildonly-randconfig-r006-20220707
+|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
+|-- arm64-randconfig-r013-20220706
+|   `-- ERROR:usb_hub_find_child-drivers-usb-dwc3-dwc3-qcom.ko-undefined
+|-- x86_64-randconfig-a001
+|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
+|-- x86_64-randconfig-a005
+|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
+`-- x86_64-randconfig-a012
+    `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
+
+elapsed time: 732m
+
+configs tested: 52
+configs skipped: 2
+
+gcc tested configs:
+arm                                 defconfig
+arm                              allyesconfig
+arm64                            allyesconfig
+ia64                             allmodconfig
+alpha                            allyesconfig
+arc                              allyesconfig
+m68k                             allmodconfig
+m68k                             allyesconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+sh                               allmodconfig
+powerpc                           allnoconfig
+i386                                defconfig
+i386                             allyesconfig
+i386                          randconfig-a001
+i386                          randconfig-a003
+i386                          randconfig-a005
+x86_64                        randconfig-a013
+x86_64                        randconfig-a011
+x86_64                        randconfig-a015
+i386                          randconfig-a014
+i386                          randconfig-a012
+i386                          randconfig-a016
+x86_64                        randconfig-a002
+x86_64                        randconfig-a006
+x86_64                        randconfig-a004
+arc                  randconfig-r043-20220707
+s390                 randconfig-r044-20220707
+riscv                randconfig-r042-20220707
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                           rhel-8.3-syz
+x86_64                          rhel-8.3-func
+x86_64                         rhel-8.3-kunit
+x86_64                    rhel-8.3-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+
+clang tested configs:
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64                        randconfig-a016
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+i386                          randconfig-a013
+i386                          randconfig-a015
+i386                          randconfig-a011
+x86_64                        randconfig-a005
+x86_64                        randconfig-a001
+x86_64                        randconfig-a003
+hexagon              randconfig-r045-20220707
+hexagon              randconfig-r041-20220707
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
