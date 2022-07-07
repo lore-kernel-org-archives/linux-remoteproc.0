@@ -2,102 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5926DC43334
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 10:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7DEC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 10:59:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235105AbiGGKVH (ORCPT
+        id S235085AbiGGK7g (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 06:21:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49434 "EHLO
+        Thu, 7 Jul 2022 06:59:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235072AbiGGKVF (ORCPT
+        with ESMTP id S230187AbiGGK7e (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jul 2022 06:21:05 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5D12BFE;
-        Thu,  7 Jul 2022 03:21:04 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id os14so1351393ejb.4;
-        Thu, 07 Jul 2022 03:21:04 -0700 (PDT)
+        Thu, 7 Jul 2022 06:59:34 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7987D5721C;
+        Thu,  7 Jul 2022 03:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HrlXbWcFJrYmmGnhnXwnzHQ6nR1vAZ5/Ttv5TKyVVz4=;
-        b=UCj6ApGM3N18S4Dt6+Q/gWKy471ZadLbdHEBNZYY7fAFoj96ja0DQ8peadnrNHhcpj
-         SgKq0gPFfER74+4i9/CVV/ydJR0Nhe05d+1v8qBAW50OLh22cNNJqDwDzKODt9EIZrv8
-         MzJKifym6vd44Tr00zz8PKAYu7c0VgR0Dg22MVYDwGR9RwPpaRhB/IuJZVxnjnis/xxo
-         1Kg3gqw0aW8DaD1qhEd27dqCPUsx3qbNkVlIHReBo6OauksoixspoXUd9yZN338gs7H5
-         6RzNGRoagTdEqOxyr7dOq53ElZhRSC7W6DwYYDbklAUrNiRCJCXvd9gYfp8RrDX7rugi
-         5sFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HrlXbWcFJrYmmGnhnXwnzHQ6nR1vAZ5/Ttv5TKyVVz4=;
-        b=fKgvPKp/1TxG37eHxrMx4gT/Nwas9JetJiDk3ipTbW6GLMWMt6c1D6yS6cLDZwACxf
-         cBP7Jz2Xygl8MABS4ShG0HwF7HLJy9v0oZ67q8qOHzruWfUkXLJgYPTKXEbJsMjfS7qm
-         L+ZeA9RNsbkAb8hnF+gXxIxRDetcYXfUMJcg6tVK+VlsA3vVh6GtDF1zywotkaJ/99wC
-         x9qaDIIUHe2SLnWstcAMZ3/qbe0vCI7rTAFTR6NHGHtXC8NpFKEHeoOoueSQZCHBuqag
-         8TRuY4DUpZn6VPXSznfVy8sBMoM4uN2VqNT2bpQVS9wJzVfoKbG6r6B9+d45jyctlFaH
-         Deqw==
-X-Gm-Message-State: AJIora8YLUkSc3e/Iz7go+gAb1WyfBxoID3wcjpUuSOnDsRXl8ieMADb
-        OzqvCKXJLfxkfMyeA7wG0ng=
-X-Google-Smtp-Source: AGRyM1sq7ZRcrYah2UHhGSyBOrApze7sDmVHy7kME8pHSFycaghvbLni6IQQc4763QMY6dWCY2z0QQ==
-X-Received: by 2002:a17:907:9725:b0:726:c820:7653 with SMTP id jg37-20020a170907972500b00726c8207653mr45191077ejc.633.1657189262747;
-        Thu, 07 Jul 2022 03:21:02 -0700 (PDT)
-Received: from localhost.localdomain (93-42-70-190.ip85.fastwebnet.it. [93.42.70.190])
-        by smtp.googlemail.com with ESMTPSA id s22-20020a170906a19600b0071cef8bafc3sm18701117ejy.1.2022.07.07.03.21.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Jul 2022 03:21:02 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 3/3] ARM: dts: qcom: add missing smem compatible for ipq8064 dtsi
-Date:   Thu,  7 Jul 2022 12:20:40 +0200
-Message-Id: <20220707102040.1859-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220707102040.1859-1-ansuelsmth@gmail.com>
-References: <20220707102040.1859-1-ansuelsmth@gmail.com>
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1657191573; x=1688727573;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=OfSc07yQ3ge94ZYeQXBPSqIG1ZrgFidplmZMaEP/6us=;
+  b=gydAR5ApPju8f/+Q3tKFH4XjJbaNMNJwaGk/vdDR7fPLM3fN3Z5HkVi7
+   JAka9dX1RgyqhptL7HmwwVJ6imCPKvamiZjaJkLS69M8Jt6+He751s1RG
+   jjGFY7GyzGK740h4WWqhjwpYmNOuV3eTSK3qJp9Tc6BZqglK1yKCjF8NN
+   o=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 07 Jul 2022 03:59:33 -0700
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 03:59:33 -0700
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Thu, 7 Jul 2022 03:59:32 -0700
+Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 7 Jul 2022
+ 03:59:29 -0700
+Subject: Re: [V3 1/7] remoteproc: qcom: pas: Add decrypt shutdown support for
+ modem
+To:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        <bjorn.andersson@linaro.org>
+CC:     <agross@kernel.org>, <mathieu.poirier@linaro.org>,
+        <dmitry.baryshkov@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1657022900-2049-1-git-send-email-quic_sibis@quicinc.com>
+ <1657022900-2049-2-git-send-email-quic_sibis@quicinc.com>
+ <b75e45fc-eede-d44d-9c0d-535923de2f9d@somainline.org>
+From:   Sibi Sankar <quic_sibis@quicinc.com>
+Message-ID: <e51d0dc3-344a-f82f-aaf2-d07d76bed98e@quicinc.com>
+Date:   Thu, 7 Jul 2022 16:29:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b75e45fc-eede-d44d-9c0d-535923de2f9d@somainline.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add missing smem compatible and hwlocks phandle for ipq8064 dtsi
-smem node.
+Hey Konrad,
+Thanks for taking time to review the series.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/qcom-ipq8064.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/qcom-ipq8064.dtsi b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-index cd1b43e2cab4..ff1a2acb1d83 100644
---- a/arch/arm/boot/dts/qcom-ipq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom-ipq8064.dtsi
-@@ -292,8 +292,11 @@ nss@40000000 {
- 		};
- 
- 		smem: smem@41000000 {
-+			compatible = "qcom,smem";
- 			reg = <0x41000000 0x200000>;
- 			no-map;
-+
-+			hwlocks = <&sfpb_mutex 3>;
- 		};
- 	};
- 
--- 
-2.36.1
+On 7/6/22 6:08 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 5.07.2022 14:08, Sibi Sankar wrote:
+>> The initial shutdown request to modem on SM8450 SoCs would start the
+>> decryption process and will keep returning errors until the modem shutdown
+>> is complete. Fix this by retrying shutdowns in fixed intervals.
+>>
+> I'm sorry, but this message seems a bit cryptic to me.. What
+> is being decrypted? How is it related to the shutdown sequence?
+> Why does it need to finish first?
 
+I was told some portions of the modem logs in secured modem regions
+needs decryption and this needs to be completed before minidump/coredump
+are collected.
+
+-Sibi
+
+> 
+> Konrad
+> 
+> [snipped the rest]
+> 
