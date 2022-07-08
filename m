@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC3FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jul 2022 01:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72068CCA480
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jul 2022 01:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237052AbiGHBkt (ORCPT
+        id S237065AbiGHBku (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 21:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52758 "EHLO
+        Thu, 7 Jul 2022 21:40:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237029AbiGHBki (ORCPT
+        with ESMTP id S237033AbiGHBkj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jul 2022 21:40:38 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B3373584;
-        Thu,  7 Jul 2022 18:40:37 -0700 (PDT)
+        Thu, 7 Jul 2022 21:40:39 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2041.outbound.protection.outlook.com [40.107.243.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6794473588;
+        Thu,  7 Jul 2022 18:40:38 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Lj+gAz8hYvCAlnAOyWIUJGguoyI3d0myQWSZwgbanNx2pMHJWIAiISceE/+zXGU6AIks7XYVtYGl6RCoIHd+aAY+Zy/Loqi3pAHutL3npJbSiZxc7P0IqJyAt5BjbktqFlmH+cOg7Whdcx+008JCdgvf51/jTDw92rxRf7nXl+sckJxPBjlwYiUn0GwwvgxSE0H2pUIX1afjOTipvfS3dEfSmtfzUBLMPQwPQDp5ie6fzjL8j1b3swfbXV5OLwu2XqFWDuRJmvpxjllIZm/xuZH8/Tg8l4mrETeIYWUKysWqr2naO9sJerqJ0EoQNfKQe579DxIROBOITGURyIL7gg==
+ b=GSvOHL3gyh5LsLcW79kZlwq6lB4cdJeuvDWb7ViwNKFCr5bBJfZQbOaq4mHIRB6ZxpWYXcSq8sVJbGey+lSGZgsXUUX1qUo0KHHtKu7+dvDKzXDgpGwOtUy+WPE18lgPG8GtRjw5XLj4hHHfdcBZmYOL/mx3vg6xAL6fLM79QySYNYT+QOT/tv2jZdj1I78+EjpsqGURucAMrSUWD/YI+noSAWddpC3sjvXJE90/EZF2G/aWXjlPT+gw7Wq9XLi0D7QTiRoXt6y970sDT4A8iIBYj0KOpHsaH30mpFnMMOLqiq6K1uUV0F1BX6Yiwfp4oXKS2YuvGVy+56e7jE+bWw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jf5b3pbFtNwWBiYisMVxW4eaLh/8nu+vZd+3X4Dwd4Q=;
- b=ffgy0v9PePAo/jbvnPBVD4/P91Mcs8huLtI3GG2JOUbMc7Y3ipWbkjqJOVGAsmFSLvs0fvwtnOOdKlRStPL8ZHhG0f42ygCHqC4wOvlKLtTRcl5PJ1coQVMBUaOG4KI8vAxXcp4SllquGlXAXMDCZ7CpEXjHGhdiAt4QGwOm8ZdN+NpyThAh1TkYFMuWur6qZxtittfxX4Dzp05Eo/w6F92l00b39ifWwga6avqXo+/Mw3rLDGMTNf+K/EU5z0qPlVxaau+y3duD2B0umr6jhCoQqWtoxQKe9xTV7Mv5mT9vgRB6/bQ6V5yjq0tSEs/rK5OumL7l9VEY/Wt2zKj8tw==
+ bh=XANvWm6J9WbH7ErpoxfhJRro7/C1LKP97pbzDwq6wA0=;
+ b=SbTZTbr7tsJBD4n6R8y3qwpA67bWiaCRCSe3mGZWHVrErDisoe8+kacNLwvkhj7gLOkae9CwHjKxuiWWBOv+XEcE3Rs3+KRNXQjugrnxh3U8R7rulE5sSWOvegxsa0MnGSXW27pabDA+yETJsPl7+D0fpvJFwR0S7fjCcLMedqpEWVOS0hxP6FnUEK633WRaBWs3fxMLtZL6kdN/4+45/i38vx/FuKIMkbzgDkkUMprrKiPu2xGnffkrx/dB6K7zbKO+IovkTNtkQxeaqs4QMZpvoYqkrjk9XeXd+x/fzvKHrBOD7xnkxk4Yc/e3MfnaFXvlkN2vYrccc3o/wGiafA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jf5b3pbFtNwWBiYisMVxW4eaLh/8nu+vZd+3X4Dwd4Q=;
- b=G31NuMkx7vwSAxkeGuPcPXNy+V9oG93cGw3y5g/JN/2v5M1Tjqt9S0ASEJqq75w7lvboMWVIIxcovVM2vtvDLzuYWdRo6NQV35VVJgq1tsh601BvtLB+L6Rp5dBQvIs8J4BqK5BKHooFkPyy6XF7nGD5hZeLvUbYUwbwAnU83OI=
-Received: from MWHPR10CA0017.namprd10.prod.outlook.com (2603:10b6:301::27) by
- DM6PR12MB4449.namprd12.prod.outlook.com (2603:10b6:5:2a5::9) with Microsoft
+ bh=XANvWm6J9WbH7ErpoxfhJRro7/C1LKP97pbzDwq6wA0=;
+ b=HnqHABA53JQrehMlCiLeDiN6ItgyW5SUi2IHl0AupN9aISGV/1aXchR6borIFJoYZSSDtfXzwJpU9MRpGLv60VggSjXsCDAPhqJwKco4yUDp9o0YrBE+BAFPjK4WXowxPNDqemLN92CCZWAebh12IDMEQ3FLHPt7hWgZ2YdUWDk=
+Received: from MWHPR10CA0005.namprd10.prod.outlook.com (2603:10b6:301::15) by
+ CH2PR12MB3784.namprd12.prod.outlook.com (2603:10b6:610:21::28) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5417.16; Fri, 8 Jul 2022 01:40:35 +0000
+ 15.20.5417.16; Fri, 8 Jul 2022 01:40:32 +0000
 Received: from CO1NAM11FT031.eop-nam11.prod.protection.outlook.com
- (2603:10b6:301:0:cafe::f6) by MWHPR10CA0017.outlook.office365.com
- (2603:10b6:301::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.17 via Frontend
- Transport; Fri, 8 Jul 2022 01:40:35 +0000
+ (2603:10b6:301:0:cafe::c) by MWHPR10CA0005.outlook.office365.com
+ (2603:10b6:301::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.15 via Frontend
+ Transport; Fri, 8 Jul 2022 01:40:32 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -49,18 +49,14 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
  CO1NAM11FT031.mail.protection.outlook.com (10.13.174.118) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5417.15 via Frontend Transport; Fri, 8 Jul 2022 01:40:35 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ 15.20.5417.15 via Frontend Transport; Fri, 8 Jul 2022 01:40:32 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 7 Jul
- 2022 20:40:34 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 7 Jul
- 2022 20:40:33 -0500
+ 2022 20:40:31 -0500
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
- Transport; Thu, 7 Jul 2022 20:40:32 -0500
+ Transport; Thu, 7 Jul 2022 20:40:30 -0500
 From:   Tanmay Shah <tanmay.shah@amd.com>
 To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
         <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
@@ -70,9 +66,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Tanmay Shah <tanmay.shah@amd.com>
-Subject: [PATCH v9 4/6] firmware: xilinx: Add shutdown/wakeup APIs
-Date:   Thu, 7 Jul 2022 18:39:53 -0700
-Message-ID: <20220708013955.2340449-5-tanmay.shah@amd.com>
+Subject: [PATCH v9 2/6] arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+Date:   Thu, 7 Jul 2022 18:39:51 -0700
+Message-ID: <20220708013955.2340449-3-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220708013955.2340449-1-tanmay.shah@amd.com>
 References: <20220708013955.2340449-1-tanmay.shah@amd.com>
@@ -81,43 +77,38 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4c662aef-9c50-49f7-c0de-08da6082da9e
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4449:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec68d024-1e22-4b9f-553b-08da6082d8a5
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3784:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: tuh8XfT048Q5e0fk43zoeH50hnV1UyMh/1cBlMoBJ2PXquO0p4wGpjMPVhelbomErK8kDLyfXH9/aeEDBIxdIYy2tEtqCrZ5eawYQ6RRosSY5UFo+s/IFvMDb2vzgxOYBGAxUNT5iWyGAIWtWIuYP7h9j+mTFdjLtj7RSs0DdEcIz9QAIkQEV5AERx9OgDIyQIpeqMPF0sfTPRmMU5Cuns/gHbrzUI5mJy73Syr4A9/EZHs6/9aE/UqHOPtkkyIeh1hQXKL4mvRJMkBV9hUf8eGyNHNW4mAhUyldvp4k4K3XtB3uogn2sGU0rTxzRdJH606/hhdTTTmvPNRsGMWfKCvbI23p1/qkJgoOOtYdV6NCNWG9qwM5fCOWkEIAOY3oHoQi9YXIpqE5zUpaULNtzLbNX89z9JlKzIUmMaX4Gk2BAGoGpOk6GuQ/issAQ6e4g9TtzP37eD93AoB9TQxjxO/8Q63uQZQpqJxzOupO+V8d9F2ROhObAqlRL8hz+S9znw9kSM5RRCeWiXmyXwAw33+dTMSUkfOKC9x7XjetOLvtTPcZ3ajr8hUDxRgSWIm4vc7Zn6FqivtaOUQSbfO7TRuk0/7uqJhrglahFN1jcdDCo8uFhciQpMxVZ2a6jcThF0a1DA78/vF+REOp4YVneK8zfsFNLcHFg/T1zxRYlH2Vou3nCjhMqDxsvarWM66YE2SN1bKPvc6nx6ZzSEgvX4MKtOTxJJaVbqyTeIQI8cDlOpYKpaSZjkAsI12OPbsy2swVYzkacBOFqLNYiY+XmFC6RHE/wUVy91zBRdIBh8p1LdPL14pXw+CcQy2+rdTqenwFGLYl7cbYrjvXHhqZrbwCeSBo7bhwRjJ+2IU6T6ZVxURUuYSTNCfdC6zkfqiv
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(346002)(39860400002)(136003)(376002)(396003)(40470700004)(36840700001)(46966006)(86362001)(4326008)(6666004)(478600001)(44832011)(41300700001)(1076003)(2906002)(81166007)(316002)(70586007)(2616005)(70206006)(8676002)(36756003)(186003)(82740400003)(34020700004)(426003)(336012)(40480700001)(6636002)(26005)(82310400005)(83380400001)(356005)(110136005)(54906003)(5660300002)(36860700001)(8936002)(40460700003)(47076005)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: nxoKoOOmalluleAeuT1X/Re62TYjYZiDwWUtuEAmJEg6Np3uqNlCPpc7Z6tS/eR9g2tNkJ5ISvAeU2SPaVLp7hqennfvUMo5T7r9X/Qe4ozfM2hJDp51ZuYerUmMDJHNXm/gKbt8yR2bGP/8Re7HhuMTc8qiTEdK43Ykn8wYSFNyi27AkrXIGVPDDvfjVhMMU0C+dj4GQ+yNkxf5lt3WJzbxVB2onz46p//z71c8LNTJTf2Z0xnadc2xk73S7egqeyB+SPIAxX+RTPTGqPS1mUjA5JfdLVJl4amMpo8nKOe9FwVT26l00orEnkA8xE/T9uU9iOuMiLNOqS9DBW7p3bk1hS6rnYL2QLIMTW9QYthVdHmdmk2qVSgsjk5I+/gR99DFy7o36tPt6Q8v/KaY2diUW6Nn3FaP97qhQiqEgKVa5v7YTx0dy3IV+aCUkjPsaZqQh9fyPthfS7SUwG3aBaBlTxWkl2uHutvv1dcFe+6yNjyGm/K8Yvo3+mkdVMikutCo0zb4jYoMvXqjSf9O+HSi9d7H14eQIIBnkmNDzXB9prna78Wx7zir/sAYB+IMIwL3KoVDzZ3KfcjN9txhRTXOpauOSeYgsDvpOHNdZt5r3iX0WyV/1tHIPtXFyrgku5bgysxRmCvnJntnsaxi3mrFlajD2T1j/AkQpSdBcXFRX+eU0wttoiEFpGVmiajzgDcWtvHSofLqvpGwwadqEQLQ66eq13iYs9KRl1Jeua8w8pY1au5O0wWIghHChyVP6oDMjAuVj1ryJxtZFI/qigulJAYPIN7v9/h4gUUGg5xh/ID6ZsnA0+xpyXp5Ux06oms9Ji/oBmIyyjvbaJdf/SWEOViYW8gzo9Xpp6te3veU07ilb8jsIeDBcFLIWnN2
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(136003)(376002)(346002)(396003)(39860400002)(40470700004)(36840700001)(46966006)(2906002)(6666004)(41300700001)(82310400005)(478600001)(86362001)(82740400003)(356005)(81166007)(70206006)(70586007)(83380400001)(2616005)(54906003)(1076003)(4326008)(8676002)(47076005)(426003)(336012)(40460700003)(26005)(36860700001)(44832011)(40480700001)(8936002)(34020700004)(110136005)(36756003)(316002)(6636002)(186003)(5660300002)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 01:40:35.4011
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 01:40:32.0888
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c662aef-9c50-49f7-c0de-08da6082da9e
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec68d024-1e22-4b9f-553b-08da6082d8a5
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT031.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4449
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3784
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Ben Levinsky <ben.levinsky@xilinx.com>
+From: Tanmay Shah <tanmay.shah@xilinx.com>
 
-Add shutdown/wakeup a resource eemi operations to shutdown
-or bringup a resource.
+RPU subsystem can be configured in cluster-mode or split mode.
+Also each r5 core has separate power domains.
 
-Note alignment of args matches convention of other fn's in this file.
-The reason being that the long fn name results in aligned args that
-otherwise go over 80 chars so shift right to avoid this
-
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
 Signed-off-by: Tanmay Shah <tanmay.shah@xilinx.com>
 Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 ---
 
 Changes in v9:
-  - None
+  - remove unused labels
 
 Changes in v8:
   - None
@@ -129,119 +120,69 @@ Changes in v6:
   - None
 
 Changes in v5:
-  - None
+  - Remove optional reg property from r5fss node
+  - Move r5fss node out of axi node
 
 Changes in v4:
-  - None
+  - Add reserved memory region node and use it in RPU subsystem node
 
 Changes in v3:
-  - None
+  - Fix checkpatch.pl style warning
 
- drivers/firmware/xilinx/zynqmp.c     | 35 ++++++++++++++++++++++++++++
- include/linux/firmware/xlnx-zynqmp.h | 23 ++++++++++++++++++
- 2 files changed, 58 insertions(+)
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 33 ++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-index 7977a494a651..36384c4a4881 100644
---- a/drivers/firmware/xilinx/zynqmp.c
-+++ b/drivers/firmware/xilinx/zynqmp.c
-@@ -1145,6 +1145,41 @@ int zynqmp_pm_release_node(const u32 node)
- }
- EXPORT_SYMBOL_GPL(zynqmp_pm_release_node);
+diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+index c715a18368c2..1c19d9a03c49 100644
+--- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
++++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+@@ -100,6 +100,22 @@ opp03 {
+ 		};
+ 	};
  
-+/**
-+ * zynqmp_pm_force_pwrdwn - PM call to request for another PU or subsystem to
-+ *             be powered down forcefully
-+ * @node:  Node ID of the targeted PU or subsystem
-+ * @ack:   Flag to specify whether acknowledge is requested
-+ *
-+ * Return: status, either success or error+reason
-+ */
-+int zynqmp_pm_force_pwrdwn(const u32 node,
-+			   const enum zynqmp_pm_request_ack ack)
-+{
-+	return zynqmp_pm_invoke_fn(PM_FORCE_POWERDOWN, node, ack, 0, 0, NULL);
-+}
-+EXPORT_SYMBOL_GPL(zynqmp_pm_force_pwrdwn);
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
 +
-+/**
-+ * zynqmp_pm_request_wake - PM call to wake up selected master or subsystem
-+ * @node:  Node ID of the master or subsystem
-+ * @set_addr:  Specifies whether the address argument is relevant
-+ * @address:   Address from which to resume when woken up
-+ * @ack:   Flag to specify whether acknowledge requested
-+ *
-+ * Return: status, either success or error+reason
-+ */
-+int zynqmp_pm_request_wake(const u32 node,
-+			   const bool set_addr,
-+			   const u64 address,
-+			   const enum zynqmp_pm_request_ack ack)
-+{
-+	/* set_addr flag is encoded into 1st bit of address */
-+	return zynqmp_pm_invoke_fn(PM_REQUEST_WAKEUP, node, address | set_addr,
-+				   address >> 32, ack, NULL);
-+}
-+EXPORT_SYMBOL_GPL(zynqmp_pm_request_wake);
++		rproc_0_fw_image: memory@3ed00000 {
++			no-map;
++			reg = <0x0 0x3ed00000 0x0 0x40000>;
++		};
 +
- /**
-  * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
-  * @node:		Node ID of the slave
-diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-index 31386c82411a..407796f4464e 100644
---- a/include/linux/firmware/xlnx-zynqmp.h
-+++ b/include/linux/firmware/xlnx-zynqmp.h
-@@ -12,6 +12,7 @@
- 
- #ifndef __FIRMWARE_ZYNQMP_H__
- #define __FIRMWARE_ZYNQMP_H__
-+#include <linux/types.h>
- 
- #include <linux/err.h>
- 
-@@ -86,6 +87,8 @@ enum pm_api_cb_id {
- enum pm_api_id {
- 	PM_GET_API_VERSION = 1,
- 	PM_REGISTER_NOTIFIER = 5,
-+	PM_FORCE_POWERDOWN = 8,
-+	PM_REQUEST_WAKEUP = 10,
- 	PM_SYSTEM_SHUTDOWN = 12,
- 	PM_REQUEST_NODE = 13,
- 	PM_RELEASE_NODE = 14,
-@@ -487,6 +490,12 @@ int zynqmp_pm_feature(const u32 api_id);
- int zynqmp_pm_is_function_supported(const u32 api_id, const u32 id);
- int zynqmp_pm_set_feature_config(enum pm_feature_config_id id, u32 value);
- int zynqmp_pm_get_feature_config(enum pm_feature_config_id id, u32 *payload);
-+int zynqmp_pm_force_pwrdwn(const u32 target,
-+			   const enum zynqmp_pm_request_ack ack);
-+int zynqmp_pm_request_wake(const u32 node,
-+			   const bool set_addr,
-+			   const u64 address,
-+			   const enum zynqmp_pm_request_ack ack);
- #else
- static inline int zynqmp_pm_get_api_version(u32 *version)
- {
-@@ -752,6 +761,20 @@ static inline int zynqmp_pm_get_feature_config(enum pm_feature_config_id id,
- {
- 	return -ENODEV;
- }
++		rproc_1_fw_image: memory@3ef00000 {
++			no-map;
++			reg = <0x0 0x3ef00000 0x0 0x40000>;
++		};
++	};
 +
-+static inline int zynqmp_pm_force_pwrdwn(const u32 target,
-+					 const enum zynqmp_pm_request_ack ack)
-+{
-+	return -ENODEV;
-+}
-+
-+static inline int zynqmp_pm_request_wake(const u32 node,
-+					 const bool set_addr,
-+					 const u64 address,
-+					 const enum zynqmp_pm_request_ack ack)
-+{
-+	return -ENODEV;
-+}
- #endif
+ 	zynqmp_ipi: zynqmp_ipi {
+ 		compatible = "xlnx,zynqmp-ipi-mailbox";
+ 		interrupt-parent = <&gic>;
+@@ -203,6 +219,23 @@ fpga_full: fpga-full {
+ 		ranges;
+ 	};
  
- #endif /* __FIRMWARE_ZYNQMP_H__ */
++	r5fss {
++		compatible = "xlnx,zynqmp-r5fss";
++		xlnx,cluster-mode = <1>;
++
++		r5f-0 {
++			compatible = "xlnx,zynqmp-r5f";
++			power-domains = <&zynqmp_firmware PD_RPU_0>;
++			memory-region = <&rproc_0_fw_image>;
++		};
++
++		r5f-1 {
++			compatible = "xlnx,zynqmp-r5f";
++			power-domains = <&zynqmp_firmware PD_RPU_1>;
++			memory-region = <&rproc_1_fw_image>;
++		};
++	};
++
+ 	amba: axi {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
 -- 
 2.25.1
 
