@@ -2,290 +2,234 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B91C43334
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  7 Jul 2022 23:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA91C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jul 2022 01:40:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236812AbiGGXdR (ORCPT
+        id S236759AbiGHBkf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 7 Jul 2022 19:33:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39632 "EHLO
+        Thu, 7 Jul 2022 21:40:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236590AbiGGXdQ (ORCPT
+        with ESMTP id S235477AbiGHBke (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 7 Jul 2022 19:33:16 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 023772B619;
-        Thu,  7 Jul 2022 16:33:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657236794; x=1688772794;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Zq0IYeQ+zoUL5O2hNpqxGkXI6+bcL6FLvMdsPEh8Dd0=;
-  b=nJIN+HG4bO9TeV277oHESfyfzMteEQDhW0KHrY+3JiWDoxp2FWptH/70
-   nPJuWsiMtQP52DQvKtIssZKIM7hE6YBMoPG5F36Y/+Hwcc9tNwCDQ26p2
-   6BaCYG+EJb5p8ke6JYqhAKbhyTnJPBVzgTFhLpeaRV/H56uyzAPPgzoKQ
-   wR8xKLRugT3vkTWJGijPYPmiIlyOfA3FkxZXXtY+IsxY4FiJcAVCu9yf6
-   895X2V8euHIouawVI+SJufVGqIC4uYxrCaV4lrlla9NQxC/ZmN9nipJ6y
-   Di78M8znkDj8ASfS2MpDZHBfnXkDq07/YF/ClDfHVOYqZ2my0EZNZPXBL
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10401"; a="309705420"
-X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
-   d="scan'208";a="309705420"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2022 16:33:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,253,1650956400"; 
-   d="scan'208";a="568708353"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 07 Jul 2022 16:33:11 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o9aze-000Mbq-Q9;
-        Thu, 07 Jul 2022 23:33:10 +0000
-Date:   Fri, 08 Jul 2022 07:32:17 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-wireless@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 75d7bf5eae277f32dd952276aa41ae7915dba1b2
-Message-ID: <62c76d01.vlHjMvDEG6yYDgx1%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Thu, 7 Jul 2022 21:40:34 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2079.outbound.protection.outlook.com [40.107.243.79])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF8B572EFC;
+        Thu,  7 Jul 2022 18:40:32 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NqeFX4QwzFylv5yPMsB4nSJHXEylozxUxUn2RRC0wgS5I9B+0hmys/JS00Uvm4loPSRV8tEZ0UDFTib/af4DV5tTdD08RSsv3enR1wWLdhAjhH58M5NeEaMIlpe9jihTzXvt110kuAyz9NDIDo9cH5Ej/ERIt9qGEn3hd59bpZlCuX7W6b8hHQR3hGawxhJGLWKHKiHi8NfuQh5ytCw87h1YuTUpLEeLIb3bZ+0kb9l+hm28T+H7hPMBY29TWZBGIGpzlEJdQLOyK0RiXYtd4sMZ+F0AFboRO43wOHYQDH/iTmyEAYRi1hI3KJmX7b17RnBFEc2M1OU1Tn5lQF+Hvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JQQfQBIDgLG5VRK50406i2NGXqc197WnW7SvmfBOQ6s=;
+ b=Ux4eCarOQMvFm1qNF91qiyxW3iUfHG0P3WbD197GZ5mnVpoy/AkQswiVTg8RmtbCc37w46Dz++xPS1jVPvRfgg4DWzhK8M08k/cngRdsL4HwLDojHyTd0JT2yfiBfP9bEHj4oyZHqWD3GJtMCjN9QhNV+Eeetw0cbaKSnlgajSavuIXfsBigr+3j48U6HLwmzkaNEHCGGCuUtmrRqWaulCrKXFHRnhNs9ylSbBfpz7BddWIJxYAl/i2l9cZl2dFQira2m4/MEvOPx9VueqzvgZTz3w0nmlG/d1w0vnb4UaEmXdke5s1RaL/ax8fVCOE9oThvq/1SD7rcZ6JBKQgA7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JQQfQBIDgLG5VRK50406i2NGXqc197WnW7SvmfBOQ6s=;
+ b=uTRWnwpxudZ4VStLgwu4fDn3VIT2JSYIeHCvJZGFybR6wQjV+rH2KxZDMrjfPLxRhbz7ESLbmTjmhWreiyMc2qG4omAYiJcQoVu8s2s9ZC9+JBXQUMqrzYlEOhc8PXlA+rLQJ+e1gG2P3Gcl+4fJC1x+3HpsCR5K5Aol+Ew1bKU=
+Received: from MWHPR10CA0021.namprd10.prod.outlook.com (2603:10b6:301::31) by
+ DM6PR12MB3084.namprd12.prod.outlook.com (2603:10b6:5:117::25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5395.15; Fri, 8 Jul 2022 01:40:30 +0000
+Received: from CO1NAM11FT031.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:301:0:cafe::e1) by MWHPR10CA0021.outlook.office365.com
+ (2603:10b6:301::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5417.16 via Frontend
+ Transport; Fri, 8 Jul 2022 01:40:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CO1NAM11FT031.mail.protection.outlook.com (10.13.174.118) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5417.15 via Frontend Transport; Fri, 8 Jul 2022 01:40:30 +0000
+Received: from SATLEXMB08.amd.com (10.181.40.132) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 7 Jul
+ 2022 20:40:28 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB08.amd.com
+ (10.181.40.132) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.28; Thu, 7 Jul
+ 2022 18:40:28 -0700
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.28 via Frontend
+ Transport; Thu, 7 Jul 2022 20:40:27 -0500
+From:   Tanmay Shah <tanmay.shah@amd.com>
+To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <michal.simek@xilinx.com>, <ben.levinsky@xilinx.com>,
+        <tanmay.shah@xilinx.com>, <michal.simek@amd.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tanmay Shah <tanmay.shah@amd.com>
+Subject: [PATCH v9 0/6] Add Xilinx RPU subsystem support
+Date:   Thu, 7 Jul 2022 18:39:49 -0700
+Message-ID: <20220708013955.2340449-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 40012a73-cb91-4003-67ce-08da6082d76f
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3084:EE_
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: pfWOHSsAuEeGsQ//htYdC6EWADYHLDlhA1JJ9ylB4Bw5lM51TNL6vdM+itOnmxzgOL0RmdZK9ewMXIHK+2xQIGwRfDKowF/2NdNr7XOZFyi6BQvhJKkHulabH+niD0cM/QV9f9PdjBzHCrk6wn3M3UuYG1tQZblwHVt4GjdcBvzsnS2KqTFrNN3HsJG/26n+8GDY/W52flM8qD3gl4OzqugoZiEA/IAGaSbaJSptAARIfTS0z3SJcQNXNvnZyvSEMDikiwH5akTqBYWMZF6hjHcPhiTPfJPnN/vgaBJywuplzOnjTqHgDe0tXfTUpyG818K5BGo82H492cYr7qydmVU6EvuSMg55rbc3wWwSJH9+n+s5IOipiMrccW1urk9MxIgTWRXqc4jU0OmzxbqgmWwFmv7jhBf4a2RRzQ9mjJMacW7o4FQ0wWULR2L/je/+8jjxzHFCJguUnKvx7hI17xPvF5cZchi+ByNc+VDVJ2AzjipkujZa093K9JTzNzBlucHDVrWoS5w2szGJHj6VLGVMASgwO8l+Mm9D+Vnj8FA5x+XFUmTewHFmUNSdy+B//ixwGp59HHCjKZSa9hsnlrgEmvLZ+U/1oopO4ZGi8lsi8NfgMVFCuxoqvAdOxUolDHCMgWG0Kd5SwS8n3xZEpLwiKYcKo4Ay6XmmBTr/l5nMTR2ZsYKTS88yRbemu++jAoIiA4BbwpCBMsxq727yT4P0jgEFbe4ZxFiYeG8nRTkQXM9OAUma12r96424guTna7QHJD2mDZDMBQ1GdiBno5MrmkxE3HGZxti8Q1bx4yrWdBnjvalCDIFxmb3Xz/GBmiSxpcMHn5wN/rqO0eCuI1cPqqYWm9sWlDSfsN9RsAoNMmFO6hejvGcnCk46yYIo
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(396003)(136003)(346002)(376002)(36840700001)(46966006)(40470700004)(1076003)(316002)(26005)(41300700001)(110136005)(6666004)(82740400003)(8676002)(86362001)(70586007)(44832011)(8936002)(5660300002)(478600001)(54906003)(81166007)(356005)(4326008)(70206006)(40480700001)(2616005)(40460700003)(36860700001)(83380400001)(82310400005)(426003)(36756003)(47076005)(6636002)(2906002)(336012)(186003)(34020700004)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2022 01:40:30.0576
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40012a73-cb91-4003-67ce-08da6082d76f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT031.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3084
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 75d7bf5eae277f32dd952276aa41ae7915dba1b2  Add linux-next specific files for 20220707
+This patch series adds bindings document for RPU subsystem found on Xilinx
+ZynqMP platforms. It also adds device nodes and driver to enable RPU
+subsystem in split mode and lockstep mode.
 
-Error/Warning: (recently discovered and may have been fixed)
+Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
+contains two arm cortex r5f cores. RPU subsystem can be configured in
+split mode, lockstep mode and single-cpu mode.
 
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x18c4): undefined reference to `__aeabi_ddiv'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x18e8): undefined reference to `__aeabi_ui2d'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1920): undefined reference to `__aeabi_dmul'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1928): undefined reference to `__aeabi_dadd'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1934): undefined reference to `__aeabi_dsub'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1940): undefined reference to `__aeabi_d2uiz'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1dbc): undefined reference to `__aeabi_d2iz'
-arm-linux-gnueabi-ld: dc_dmub_srv.c:(.text+0x1e2c): undefined reference to `__aeabi_i2d'
-dc_dmub_srv.c:(.text+0x18b8): undefined reference to `__aeabi_ui2d'
-dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x33c): undefined reference to `__floatunsidf'
-drivers/pci/endpoint/functions/pci-epf-vntb.c:975:5: warning: no previous prototype for 'pci_read' [-Wmissing-prototypes]
-drivers/pci/endpoint/functions/pci-epf-vntb.c:984:5: warning: no previous prototype for 'pci_write' [-Wmissing-prototypes]
-drivers/scsi/qedi/qedi_fw_api.c:357:17: sparse:    left side has type restricted __le16
-drivers/vfio/vfio_iommu_type1.c:2141:35: warning: cast to smaller integer type 'enum iommu_cap' from 'void *' [-Wvoid-pointer-to-enum-cast]
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x34c): undefined reference to `__floatunsidf'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x378): undefined reference to `__divdf3'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x38c): undefined reference to `__muldf3'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3a0): undefined reference to `__adddf3'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3b4): undefined reference to `__subdf3'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x3d4): undefined reference to `__fixunsdfsi'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x740): undefined reference to `__fixdfsi'
-mips-linux-ld: dc_dmub_srv.c:(.text.dc_dmub_setup_subvp_dmub_command+0x7b0): undefined reference to `__floatsidf'
+RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
+In lockstep mode, all 4 banks are combined and total of 256KB memory is
+made available to r5 core0. In split mode, both cores can access two
+TCM banks i.e. 128 KB.
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+RPU can also fetch data and execute instructions from DDR memory along with
+TCM memory.
+---
 
-ERROR: modpost: "usb_hub_find_child" [drivers/usb/dwc3/dwc3-qcom.ko] undefined!
-arch/x86/events/core.c:2114 init_hw_perf_events() warn: missing error code 'err'
-arch/x86/kernel/cpu/rdrand.c:36 x86_init_rdrand() error: uninitialized symbol 'prev'.
-drivers/firmware/arm_scmi/clock.c:394:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/firmware/arm_scmi/powercap.c:376:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/gpu/drm/amd/amdgpu/../pm/powerplay/hwmgr/vega10_powertune.c:1214:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/gpu/drm/amd/display/dc/os_types.h: drm/drm_print.h is included more than once.
-drivers/gpu/drm/bridge/ite-it66121.c:1398:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/infiniband/hw/irdma/hw.c:1484:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/md/dm-mpath.c:1681:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/dvb-frontends/mxl692.c:49:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/i2c/ov5647.c:636:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/i2c/st-mipid02.c:271:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/platform/qcom/venus/vdec.c:1505:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/platform/st/sti/delta/delta-v4l2.c:719:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/media/tuners/msi001.c:81:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/mfd/sec-core.c:429:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/mmc/host/sh_mmcif.c:1318:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/bonding/bond_main.c:4647:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:1388:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/faraday/ftgmac100.c:854:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/hisilicon/hns/hnae.c:436:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/i40e/i40e_main.c:9347:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/ice/ice_base.c:1003:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/ice/ice_dcb_lib.c:520:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/ice/ice_vlan_mode.c:379:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/intel/igb/e1000_phy.c:1185:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/microchip/encx24j600.c:827:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/microchip/lan743x_main.c:1238:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/smsc/smsc9420.c:451:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/ethernet/vertexcom/mse102x.c:422:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/phy/dp83640.c:890:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/usb/cdc_ncm.c:195:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/net/usb/rtl8150.c:176:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/parport/ieee1284_ops.c:615:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/scsi/elx/efct/efct_unsol.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/scsi/elx/libefc/efc_domain.c:692:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/scsi/megaraid/megaraid_sas_fp.c:297:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/soc/mediatek/mtk-mutex.c:820:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/staging/media/zoran/zr36016.c:430:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/staging/media/zoran/zr36050.c:829:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/staging/media/zoran/zr36060.c:869:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/target/iscsi/iscsi_target.c:2348:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/thunderbolt/tmu.c:758:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/thunderbolt/tunnel.c:1264:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/tty/serial/atmel_serial.c:1442:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/usb/host/uhci-q.c:1367:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/usb/serial/digi_acceleport.c:1167:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-drivers/video/backlight/qcom-wled.c:871:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-fs/ext4/mballoc.c:3612:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-fs/kernel_read_file.c:61 kernel_read_file() warn: impossible condition '(i_size > (((~0) >> 1))) => (s64min-s64max > s64max)'
-fs/ubifs/recovery.c:1062:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-kernel/sched/core.c:2076:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/filemap.c:1354:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/page_alloc.c:1115:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/page_alloc.c:7696:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-mm/slub.c:5434:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-net/bluetooth/hci_event.c:5926:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-net/qrtr/mhi.c:102:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-net/wireless/reg.c:205:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/pci/lola/lola.c:178:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/pci/pcxhr/pcxhr_core.c:134:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/pci/rme9652/hdsp.c:666:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/soc/fsl/fsl_spdif.c:1508:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/soc/sh/rcar/core.c:1602:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-sound/soc/sof/intel/mtl.c:547:1: internal compiler error: in arc_ifcvt, at config/arc/arc.c:9637
-{standard input}:2311: Error: expecting )
+Changes in v9:
+  - bindings: remove power-domains property description
+  - bindings: fix nitpicks in description of properties
+  - dts: remove unused labels
+  - replace devm_rproc_alloc with rproc_alloc
+  - %s/until/while/r
+  - %s/i > -1/i >=0/r
+  - fix type of tcm_mode from int to enum rpu_tcm_comb
+  - release &child_pdev->dev references
+  - remove zynqmp_r5_core_exit()
+  - undefined memory-region property isn't failure
+  - remove tcm bank count check from ops
+  - fix tcm bank turn-off sequence
+  - fix parse_fw function documentation
+  - do not use rproc_mem_entry_init on vdev0buffers
+  - check tcm banks shouldn't be 0
+  - declare variabls in reverse xmas tree order
+  - remove extra line
 
-Error/Warning ids grouped by kconfigs:
+Changes in v8:
+  - add 'items:' for sram property
 
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_read
-|   `-- drivers-pci-endpoint-functions-pci-epf-vntb.c:warning:no-previous-prototype-for-pci_write
-|-- arc-allyesconfig
-|   |-- block-partitions-efi.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- block-sed-opal.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- crypto-asymmetric_keys-pkcs7_verify.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-ata-libata-core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-ata-libata-eh.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-ata-sata_dwc_460ex.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-base-power-runtime.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-block-rbd.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-bluetooth-hci_ll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-bluetooth-hci_qca.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-cdrom-cdrom.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-ipmi-ipmi_ssif.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-pcmcia-cm4000_cs.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-random.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-char-tpm-tpm_tis_core.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-clk-bcm-clk-iproc-armpll.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-clk-clk-bd718x7.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-clk-clk-lochnagar.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-crypto-ccree-cc_request_mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-crypto-qce-sha.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-crypto-qce-skcipher.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-cxl-core-hdm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-cxl-core-pci.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-dma-buf-dma-buf.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-bus.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-clock.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-powercap.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-sensors.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-firmware-arm_scmi-voltage.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-fpga-dfl-fme-mgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gnss-usb.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_debug.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-core-dc_link_dp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce110-dce110_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-dce112-dce112_resource.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu7_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-smu8_hwmgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-hwmgr-vega10_powertune.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-powerplay-smumgr-smu7_smumgr.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-swsmu-smu13-smu_v13_0.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-amd-amdgpu-amdgpu_ttm.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-bridge-cadence-cdns-mhdp8546-hdcp.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-bridge-ite-it66121.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-bridge-lontium-lt9211.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-bridge-sii902x.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-|   |-- drivers-gpu-drm-mcde-mcde_dsi.c:internal-compiler-error:in-arc_ifcvt-at-config-arc-arc.c
-clang_recent_errors
-|-- arm64-buildonly-randconfig-r006-20220707
-|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-|-- arm64-randconfig-r013-20220706
-|   `-- ERROR:usb_hub_find_child-drivers-usb-dwc3-dwc3-qcom.ko-undefined
-|-- x86_64-randconfig-a001
-|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-|-- x86_64-randconfig-a005
-|   `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
-`-- x86_64-randconfig-a012
-    `-- drivers-vfio-vfio_iommu_type1.c:warning:cast-to-smaller-integer-type-enum-iommu_cap-from-void
+Changes in v7:
+  - Add minItems in sram property
 
-elapsed time: 732m
+Changes in v6:
+  - Add maxItems to sram and memory-region property
 
-configs tested: 52
-configs skipped: 2
+Changes in v5:
+  - Add constraints of the possible values of xlnx,cluster-mode property
+  - fix description of power-domains property for r5 core
+  - Remove reg, address-cells and size-cells properties as it is not required
+  - Fix description of mboxes property
+  - Add description of each memory-region and remove old .txt binding link
+    reference in the description
+  - Remove optional reg property from r5fss node
+  - Move r5fss node out of axi node
 
-gcc tested configs:
-arm                                 defconfig
-arm                              allyesconfig
-arm64                            allyesconfig
-ia64                             allmodconfig
-alpha                            allyesconfig
-arc                              allyesconfig
-m68k                             allmodconfig
-m68k                             allyesconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-sh                               allmodconfig
-powerpc                           allnoconfig
-i386                                defconfig
-i386                             allyesconfig
-i386                          randconfig-a001
-i386                          randconfig-a003
-i386                          randconfig-a005
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-x86_64                        randconfig-a015
-i386                          randconfig-a014
-i386                          randconfig-a012
-i386                          randconfig-a016
-x86_64                        randconfig-a002
-x86_64                        randconfig-a006
-x86_64                        randconfig-a004
-arc                  randconfig-r043-20220707
-s390                 randconfig-r044-20220707
-riscv                randconfig-r042-20220707
-um                             i386_defconfig
-um                           x86_64_defconfig
-x86_64                           rhel-8.3-syz
-x86_64                          rhel-8.3-func
-x86_64                         rhel-8.3-kunit
-x86_64                    rhel-8.3-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                           allyesconfig
+Changes in v4:
+  - Add memory-region, mboxes and mbox-names properties in dt-bindings example
+  - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
+  - Remove redundant header files
+  - use dev_err_probe() to report errors during probe
+  - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
+  - Fix memory leaks all over the driver when resource allocation fails for any core
+  - make cluster mode check only at one place
+  - remove redundant initialization of variable
+  - remove redundant use of of_node_put() 
+  - Fix Comment format problem
+  - Assign offset of zynqmp_tcm_banks instead of duplicating it
+  - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
+  - Remove rproc_mem_entry object from r5_core
+  - Use put_device() and rproc_del() APIs to fix memory leaks
+  - Replace pr_* with dev_*. This was missed in v3, fix now.
+  - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
 
-clang tested configs:
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64                        randconfig-a016
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-i386                          randconfig-a013
-i386                          randconfig-a015
-i386                          randconfig-a011
-x86_64                        randconfig-a005
-x86_64                        randconfig-a001
-x86_64                        randconfig-a003
-hexagon              randconfig-r045-20220707
-hexagon              randconfig-r041-20220707
+Changes in v3:
+  - Fix checkpatch script indentation warning
+  - Remove unused variable from xilinx remoteproc driver
+  - use C style comments, i.e /*...*/
+  - Remove redundant debug information which can be derived using /proc/device-tree
+  - Fix multiline comment format
+  - s/"final fot TCM"/"final for TCM"
+  - Function devm_kzalloc() does not return an code on error, just NULL.
+    Remove redundant error check for this function throughout the driver.
+  - Fix RPU mode configuration and add documentation accordingly
+  - Get rid of the indentations to match function documentation style with rest of the driver
+  - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
+  - Use 'i' for the outer loop and 'j' for the inner one as per convention
+  - Remove redundant error and NULL checks throughout the driver
+  - Use devm_kcalloc() when more than one element is required
+  - Add memory-regions carveouts during driver probe instead of parse_fw call
+    This removes redundant copy of reserved_mem object in r5_core structure.
+  - Fix memory leak by using of_node_put()
+  - Fix indentation of tcm_mem_map function args
+  - Remove redundant init of variables
+  - Initialize tcm bank size variable for lockstep mode
+  - Replace u32 with phys_addr_t for variable stroing memory bank address
+  - Add documentation of TCM behavior in lockstep mode
+  - Use dev_get_drvdata instead of platform driver API
+  - Remove info level messages
+  - Fix checkpatch.pl warnings
+  - Add documentation for the Xilinx r5f platform to understand driver design
 
+Changes in v2:
+  - Remove proprietary copyright footer from cover letter
+
+
+Ben Levinsky (3):
+  firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+    configuration.
+  firmware: xilinx: Add shutdown/wakeup APIs
+  firmware: xilinx: Add RPU configuration APIs
+
+Tanmay Shah (3):
+  dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+  arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+  drivers: remoteproc: Add Xilinx r5 remoteproc driver
+
+ .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  135 +++
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
+ drivers/firmware/xilinx/zynqmp.c              |   97 ++
+ drivers/remoteproc/Kconfig                    |   12 +
+ drivers/remoteproc/Makefile                   |    1 +
+ drivers/remoteproc/xlnx_r5_remoteproc.c       | 1055 +++++++++++++++++
+ include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
+ include/linux/firmware/xlnx-zynqmp.h          |   60 +
+ 8 files changed, 1399 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+ create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
+
+
+base-commit: c6a669485125145afd22230df6e0e6c37f19ad41
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.25.1
+
