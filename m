@@ -2,326 +2,194 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58222C43334
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jul 2022 06:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F31CCA485
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jul 2022 06:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236956AbiGHGTm (ORCPT
+        id S237034AbiGHGVN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 8 Jul 2022 02:19:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49508 "EHLO
+        Fri, 8 Jul 2022 02:21:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230230AbiGHGTl (ORCPT
+        with ESMTP id S237290AbiGHGVN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 8 Jul 2022 02:19:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0B603DFC2
-        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jul 2022 23:19:39 -0700 (PDT)
+        Fri, 8 Jul 2022 02:21:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1BD562C109
+        for <linux-remoteproc@vger.kernel.org>; Thu,  7 Jul 2022 23:21:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657261179;
+        s=mimecast20190719; t=1657261271;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=a5vVz27zbJ4/4jSjRREMpd6iOsJvh9+pVel0XkOEnwA=;
-        b=calcOX9ZOSnYdss3xmc7VngHXS2Yi8RHODMOgZhZGc6nao8sb5B8RcUbBz4KH5vkJJp0zE
-        XH1Ui0j1vxfOq90YhdF2f21++J10pBBzY149fa/ThQb0+nsXKR2dQHtZAIjSpOvWHk6fum
-        C1tjAGRd7xVX8s5m22xN1+egVVKK4wA=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=vucI6v2UNiSkfdv0+LNa4VjRInUBJ0CkIXv+ERyy8hk=;
+        b=gr/1L6LVAyl1WDBk7lX5C5Biu9I6t+9otz3PFzFKD7LJ8NCIWtwFpWr/+xQ7EYCMMIhySo
+        F4WOMX7jf/aImRODLZvPKnZY5/HS+RbIb1jQ1ULPn9lQhCTVWfrO21s6QQMW3+ltJmrMje
+        /sRmr0qDN0DhxXNdRAM4CRsqyfR1pGA=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-313-2PumCMLvMfGv8djad2IEkQ-1; Fri, 08 Jul 2022 02:19:36 -0400
-X-MC-Unique: 2PumCMLvMfGv8djad2IEkQ-1
-Received: by mail-lf1-f69.google.com with SMTP id 10-20020ac2484a000000b0047f9f9c81daso7432426lfy.16
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jul 2022 23:19:36 -0700 (PDT)
+ us-mta-592-Xcb7Z6UKNHeyBiYwArnacw-1; Fri, 08 Jul 2022 02:21:05 -0400
+X-MC-Unique: Xcb7Z6UKNHeyBiYwArnacw-1
+Received: by mail-lj1-f199.google.com with SMTP id bd19-20020a05651c169300b0025d47eb32cfso1699719ljb.22
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 Jul 2022 23:21:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a5vVz27zbJ4/4jSjRREMpd6iOsJvh9+pVel0XkOEnwA=;
-        b=hhSTrY5thUn2wl7edjA+I3j8BrZsGqIEe/d5UdktdBjqxWPdEpltXLVzDXg7eJxWhV
-         VpQ360jRHoXx/n/cfVcFGaTg54hfbuSy1dp4AMmk5DyM416F1VyKrlkOoMJrKnIzbd6i
-         4da2D6KFUMvlKI9Zd51A3N9yXYV2vQtIvvjtDbNXBIu80urazwisFnPX74gBCWlhKvq9
-         Hq2eNjCEh2JRRMhp8x+4yvEYnn0ELVQjowvAsEaTeYVLac8rAC+dzuHvIXVCvPI5GHzL
-         SIGOPDvlSz6Qsg6jS3IX6NiAojLovm928BOhsYJ31aDNopJ/ZipuGly29U/pF4guMgnK
-         lGRA==
-X-Gm-Message-State: AJIora+vYcZ9lyupUmQQOfk+MKRTeMnXoDZG8FWKfhO5Y2EymavlDQO1
-        HBIQflaSr7WwgqTZ5IpEAWADJESbmgu+B76U1jU7TgssavmAaBkVxhXbVzgMTRH6fcF2V6smlHm
-        hYBFcPJ9T1eiVs6BZQa5mTuiiych+YyReUj9/M67u72LCPA==
-X-Received: by 2002:a2e:9799:0:b0:25d:15f5:228e with SMTP id y25-20020a2e9799000000b0025d15f5228emr978137lji.251.1657261174843;
-        Thu, 07 Jul 2022 23:19:34 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1uxJ/EKfFxMF/iaKBUmWK7QlG1NIa4793e3lxK+/z85nn1vFfdUQodKjT54juGd6oAmZdCrdadH0Z92bRjEZeU=
-X-Received: by 2002:a2e:9799:0:b0:25d:15f5:228e with SMTP id
- y25-20020a2e9799000000b0025d15f5228emr978131lji.251.1657261174573; Thu, 07
- Jul 2022 23:19:34 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vucI6v2UNiSkfdv0+LNa4VjRInUBJ0CkIXv+ERyy8hk=;
+        b=udVMKXXOser2rGn6+4EI3zcMAPtYPjKtJsNpaUuozhPp1zlaotyDPpWgQawyJixr6n
+         /prkqqcWxcpnVuLWp0JioA2GakR26UClpJky/B3zl9qOfO57iqKPF6JCjacn2qWjmDuw
+         O7saajukyfe5Qi5vYlJcr3FPBJVLNlWJJYYibdL4yfKlqyp6VXTxH+Ppsd3IQXNgqMjx
+         wDrjvd4TDscBHQVGyh+TxjfxBSWchZKEJ6TND8n/W/sMW06i7NzI2yjS3gu1kJnk+b5O
+         K1NI9SNur9gmqHNvmlMq76RFx4SX1lRqaayKEmSl+lHYmaDongkajegGOV4Ts34FuQfz
+         PUwA==
+X-Gm-Message-State: AJIora/T74Ic4x/tD04arAOxTEyiKv19pfl8fdnXf83GAqlPZm9q0nfk
+        hKnNPMuBYnhxNUmqRPBeDCe3eYFJBIunKOyOtfhupVqPW+bHuB3YxcQnrUgMNr079bYblneRgH1
+        2NWximLRKLEDKAUbAOpIjgVIqGOD5rhjIezfbOrq3zESzaA==
+X-Received: by 2002:a2e:9ad0:0:b0:25a:7156:26bb with SMTP id p16-20020a2e9ad0000000b0025a715626bbmr999488ljj.141.1657261263912;
+        Thu, 07 Jul 2022 23:21:03 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1siGvuif2Z3b/qz6BV5rwXiRX4Y2KnHOm/sW0UQhHOR8L3Ua/tIp6J6o+V7iV6847cM54TvfHUP9+sN1Wog1zw=
+X-Received: by 2002:a2e:9ad0:0:b0:25a:7156:26bb with SMTP id
+ p16-20020a2e9ad0000000b0025a715626bbmr999458ljj.141.1657261263714; Thu, 07
+ Jul 2022 23:21:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220608171334.730739-1-apatel@ventanamicro.com>
- <20220629174318.GB2018382@p14s> <bf87a50c-6d92-8657-72a9-75af81d2489f@foss.st.com>
- <CANLsYkzHZMV3eVUn3Xpk0eiAexyr9HC5__K9xfAwfm23nuQj=A@mail.gmail.com>
- <20220630152003-mutt-send-email-mst@kernel.org> <CACGkMEtHuoHT6meHacsie8M87yjUX3jGEvP7BuU_Vrb3yqkDWw@mail.gmail.com>
- <20220701021536-mutt-send-email-mst@kernel.org> <CACGkMEtkVmq2+NtDpp-XWZFD_WO6Dzm4=pcVwg-aKmStAqJCVg@mail.gmail.com>
- <66323a79-48a7-853e-1c44-9e62fcc5b775@foss.st.com> <CACGkMEt53Qd0m9sKjmPsHgBLWX=fkujD8hq6nNu3BSthAAGWwQ@mail.gmail.com>
- <dbca5ff7-d681-606e-7574-93280b981ccd@foss.st.com>
-In-Reply-To: <dbca5ff7-d681-606e-7574-93280b981ccd@foss.st.com>
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+ <20220629065656.54420-39-xuanzhuo@linux.alibaba.com> <c0747cbc-685b-85a9-1931-0124124755f2@redhat.com>
+ <1656986375.3420787-1-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1656986375.3420787-1-xuanzhuo@linux.alibaba.com>
 From:   Jason Wang <jasowang@redhat.com>
-Date:   Fri, 8 Jul 2022 14:19:23 +0800
-Message-ID: <CACGkMEtOpG4LoNOVAfRkxziM-v09ZC=-Zn0O++8v_U66fNOp0g@mail.gmail.com>
-Subject: Re: [PATCH] rpmsg: virtio: Fix broken rpmsg_probe()
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Anup Patel <apatel@ventanamicro.com>,
+Date:   Fri, 8 Jul 2022 14:20:52 +0800
+Message-ID: <CACGkMEu80KP-ULz_CBvauRk_3XsCubMkkWv0uLnbt-wib5KOnA@mail.gmail.com>
+Subject: Re: [PATCH v11 38/40] virtio_net: support rx queue resize
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Atish Patra <atishp@atishpatra.org>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Anup Patel <anup@brainfault.org>,
-        linux-remoteproc@vger.kernel.org, kvm-riscv@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        kangjie.xu@linux.alibaba.com,
         virtualization <virtualization@lists.linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jul 6, 2022 at 2:57 PM Arnaud POULIQUEN
-<arnaud.pouliquen@foss.st.com> wrote:
+On Tue, Jul 5, 2022 at 10:00 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrot=
+e:
 >
->
->
-> On 7/6/22 06:03, Jason Wang wrote:
-> > On Mon, Jul 4, 2022 at 5:45 PM Arnaud POULIQUEN
-> > <arnaud.pouliquen@foss.st.com> wrote:
-> >>
-> >> Hello Jason,
-> >>
-> >> On 7/4/22 06:35, Jason Wang wrote:
-> >>> On Fri, Jul 1, 2022 at 2:16 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >>>>
-> >>>> On Fri, Jul 01, 2022 at 09:22:15AM +0800, Jason Wang wrote:
-> >>>>> On Fri, Jul 1, 2022 at 3:20 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >>>>>>
-> >>>>>> On Thu, Jun 30, 2022 at 11:51:30AM -0600, Mathieu Poirier wrote:
-> >>>>>>> + virtualization@lists.linux-foundation.org
-> >>>>>>> + jasowang@redhat.com
-> >>>>>>> + mst@redhat.com
-> >>>>>>>
-> >>>>>>> On Thu, 30 Jun 2022 at 10:20, Arnaud POULIQUEN
-> >>>>>>> <arnaud.pouliquen@foss.st.com> wrote:
-> >>>>>>>>
-> >>>>>>>> Hi,
-> >>>>>>>>
-> >>>>>>>> On 6/29/22 19:43, Mathieu Poirier wrote:
-> >>>>>>>>> Hi Anup,
-> >>>>>>>>>
-> >>>>>>>>> On Wed, Jun 08, 2022 at 10:43:34PM +0530, Anup Patel wrote:
-> >>>>>>>>>> The rpmsg_probe() is broken at the moment because virtqueue_add_inbuf()
-> >>>>>>>>>> fails due to both virtqueues (Rx and Tx) marked as broken by the
-> >>>>>>>>>> __vring_new_virtqueue() function. To solve this, virtio_device_ready()
-> >>>>>>>>>> (which unbreaks queues) should be called before virtqueue_add_inbuf().
-> >>>>>>>>>>
-> >>>>>>>>>> Fixes: 8b4ec69d7e09 ("virtio: harden vring IRQ")
-> >>>>>>>>>> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> >>>>>>>>>> ---
-> >>>>>>>>>>  drivers/rpmsg/virtio_rpmsg_bus.c | 6 +++---
-> >>>>>>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
-> >>>>>>>>>>
-> >>>>>>>>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>>>>>>>>> index 905ac7910c98..71a64d2c7644 100644
-> >>>>>>>>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>>>>>>>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>>>>>>>>> @@ -929,6 +929,9 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >>>>>>>>>>      /* and half is dedicated for TX */
-> >>>>>>>>>>      vrp->sbufs = bufs_va + total_buf_space / 2;
-> >>>>>>>>>>
-> >>>>>>>>>> +    /* From this point on, we can notify and get callbacks. */
-> >>>>>>>>>> +    virtio_device_ready(vdev);
-> >>>>>>>>>> +
-> >>>>>>>>>
-> >>>>>>>>> Calling virtio_device_ready() here means that virtqueue_get_buf_ctx_split() can
-> >>>>>>>>> potentially be called (by way of rpmsg_recv_done()), which will race with
-> >>>>>>>>> virtqueue_add_inbuf().  If buffers in the virtqueue aren't available then
-> >>>>>>>>> rpmsg_recv_done() will fail, potentially breaking remote processors' state
-> >>>>>>>>> machines that don't expect their initial name service to fail when the "device"
-> >>>>>>>>> has been marked as ready.
-> >>>>>>>>>
-> >>>>>>>>> What does make me curious though is that nobody on the remoteproc mailing list
-> >>>>>>>>> has complained about commit 8b4ec69d7e09 breaking their environment... By now,
-> >>>>>>>>> i.e rc4, that should have happened.  Anyone from TI, ST and Xilinx care to test this on
-> >>>>>>>>> their rig?
-> >>>>>>>>
-> >>>>>>>> I tested on STm32mp1 board using tag v5.19-rc4(03c765b0e3b4)
-> >>>>>>>> I confirm the issue!
-> >>>>>>>>
-> >>>>>>>> Concerning the solution, I share Mathieu's concern. This could break legacy.
-> >>>>>>>> I made a short test and I would suggest to use __virtio_unbreak_device instead, tounbreak the virtqueues without changing the init sequence.
-> >>>>>>>>
-> >>>>>>>> I this case the patch would be:
-> >>>>>>>>
-> >>>>>>>> +       /*
-> >>>>>>>> +        * Unbreak the virtqueues to allow to add buffers before setting the vdev status
-> >>>>>>>> +        * to ready
-> >>>>>>>> +        */
-> >>>>>>>> +       __virtio_unbreak_device(vdev);
-> >>>>>>>> +
-> >>>>>>>>
-> >>>>>>>>         /* set up the receive buffers */
-> >>>>>>>>         for (i = 0; i < vrp->num_bufs / 2; i++) {
-> >>>>>>>>                 struct scatterlist sg;
-> >>>>>>>>                 void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
-> >>>>>>>
-> >>>>>>> This will indeed fix the problem.  On the flip side the kernel
-> >>>>>>> documentation for __virtio_unbreak_device() puzzles me...
-> >>>>>>> It clearly states that it should be used for probing and restoring but
-> >>>>>>> _not_ directly by the driver.  Function rpmsg_probe() is part of
-> >>>>>>> probing but also the entry point to a driver.
-> >>>>>>>
-> >>>>>>> Michael and virtualisation folks, is this the right way to move forward?
-> >>>>>>
-> >>>>>> I don't think it is, __virtio_unbreak_device is intended for core use.
-> >>>>>
-> >>>>> Can we fill the rx after virtio_device_ready() in this case?
-> >>>>>
-> >>>>> Btw, the driver set driver ok after registering, we probably get a svq
-> >>>>> kick before DRIVER_OK?
-> >>
-> >> By "registering" you mean calling rpmsg_virtio_add_ctrl_dev and
-> >> rpmsg_ns_register_device?
+> On Mon, 4 Jul 2022 11:44:12 +0800, Jason Wang <jasowang@redhat.com> wrote=
+:
 > >
-> > Yes.
+> > =E5=9C=A8 2022/6/29 14:56, Xuan Zhuo =E5=86=99=E9=81=93:
+> > > This patch implements the resize function of the rx queues.
+> > > Based on this function, it is possible to modify the ring num of the
+> > > queue.
+> > >
+> > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > ---
+> > >   drivers/net/virtio_net.c | 22 ++++++++++++++++++++++
+> > >   1 file changed, 22 insertions(+)
+> > >
+> > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > index 9fe222a3663a..6ab16fd193e5 100644
+> > > --- a/drivers/net/virtio_net.c
+> > > +++ b/drivers/net/virtio_net.c
+> > > @@ -278,6 +278,8 @@ struct padded_vnet_hdr {
+> > >     char padding[12];
+> > >   };
+> > >
+> > > +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *b=
+uf);
+> > > +
+> > >   static bool is_xdp_frame(void *ptr)
+> > >   {
+> > >     return (unsigned long)ptr & VIRTIO_XDP_FLAG;
+> > > @@ -1846,6 +1848,26 @@ static netdev_tx_t start_xmit(struct sk_buff *=
+skb, struct net_device *dev)
+> > >     return NETDEV_TX_OK;
+> > >   }
+> > >
+> > > +static int virtnet_rx_resize(struct virtnet_info *vi,
+> > > +                        struct receive_queue *rq, u32 ring_num)
+> > > +{
+> > > +   int err, qindex;
+> > > +
+> > > +   qindex =3D rq - vi->rq;
+> > > +
+> > > +   napi_disable(&rq->napi);
 > >
-> >>
-> >> The rpmsg_ns_register_device has to be called before. Because it has to be
-> >> probed to handle the first message coming from the remote side to create
-> >> associated rpmsg local device.
 > >
-> > I couldn't find the code to do this, maybe you can give me some hint on this.
+> > Do we need to cancel the refill work here?
 >
-> The rpmsg_ns is available here :
-> https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/rpmsg_ns.c
 >
-> It is probed on rpmsg_ns_register_device call.
-> https://elixir.bootlin.com/linux/latest/source/drivers/rpmsg/virtio_rpmsg_bus.c#L974
+> I think no, napi_disable is mutually exclusive, which ensures that there =
+will be
+> no conflicts between them.
 
-Yes but what I want to ask is, it looks to me
-rpmsg_ns_register_device() only creates a rpmsg device. Do you mean
-the rpmsg driver that will handle the first message during its probe?
+So this sounds similar to what I've fixed recently.
 
->
->
-> >
-> >> It doesn't send message.
-> >
-> > I see the function register the device to the bus, I wonder if this
-> > means the device could be probed and used by the driver before
-> > virtio_device_ready().
-> >
-> >>
-> >> The risk could be for the rpmsg_ctrl device. Registering it
-> >> after the virtio_device_ready(vdev) call could make sense...
-> >
-> > I see.
-> >
-> >>
-> >>>>>
-> >>>>> Thanks
-> >>>>
-> >>>> Is this an ack for the original patch?
-> >>>
-> >>> Nope, I meant, instead of moving virtio_device_ready() a little bit
-> >>> earlier, can we only move the rvq filling after virtio_device_ready().
-> >>>
-> >>> Thanks
-> >>
-> >> Please find some concerns about this inversion here:
-> >> https://lore.kernel.org/lkml/20220701053813-mutt-send-email-mst@kernel.org/
-> >>
-> >> Regarding __virtio_unbreak_device. The pending virtio_break_device is
-> >> used by some virtio driver.
-> >> Could we consider that it makes sense to also have a
-> >> virtio_unbreak_device interface?
-> >
-> > We don't want to allow the driver to unbreak a device since it's
-> > easier to have bugs.
-> >
-> >>
-> >>
-> >> I do not well understand the reason of the commit:
-> >> 8b4ec69d7e09 ("virtio: harden vring IRQ", 2022-05-27)
-> >
-> > It tries to forbid the virtqueue callbacks to be called before
-> > virtio_device_ready(). This helps to prevent the malicious device from
-> > attacking the driver.
-> >
-> > But unfortunately, it breaks several driver because:
-> >
-> > 1) some driver have races in probe/remove
-> > 2) it tries to reuse vq->broken which may break the driver that call
-> > virqueue_add() before virtio_device_ready() which is allowed by the
-> > spec
-> >
-> > There's a discussion to have a better behavior that doesn't break the
-> > existing drivers. And the IRQ hardening feature is marked as broken
-> > now, so rpmsg should be fine without any extra effort.
->
-> Thanks for the explanations.
-> If the discussions are in a mail thread could you give me the reference?
+1) NAPI schedule delayed work.
+2) we disable NAPI here
+3) delayed work get schedule and call NAPI again
 
-Here're the discussions and commits:
-
-https://lore.kernel.org/lkml/20220622012940.21441-1-jasowang@redhat.com/
-
-https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/commit/?h=linux-next&id=c346dae4f3fbce51bbd4f2ec5e8c6f9b91e93163
-https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/commit/?h=linux-next&id=6a9720576cd00d30722c5f755bd17d4cfa9df636
+?
 
 Thanks
 
 >
-> Thanks,
-> Arnaud
+> Thanks.
 >
-> >
-> >> So following alternative is probably pretty naive:
-> >> Is the use of virtqueue_disable_cb could be an alternative to the
-> >> vq->broken usage allowing to register buffer while preventing virtqueue IRQ?
-> >
-> > Probably not, there's no guarantee that the device will not send
-> > notification after virqtueue_disable_cb().
 > >
 > > Thanks
 > >
-> >>
-> >> Thanks,
-> >> Arnaud
-> >>
-> >>>
-> >>>>
-> >>>>>>
-> >>>>>>>>
-> >>>>>>>> Regards,
-> >>>>>>>> Arnaud
-> >>>>>>>>
-> >>>>>>>>>
-> >>>>>>>>> Thanks,
-> >>>>>>>>> Mathieu
-> >>>>>>>>>
-> >>>>>>>>>>      /* set up the receive buffers */
-> >>>>>>>>>>      for (i = 0; i < vrp->num_bufs / 2; i++) {
-> >>>>>>>>>>              struct scatterlist sg;
-> >>>>>>>>>> @@ -983,9 +986,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >>>>>>>>>>       */
-> >>>>>>>>>>      notify = virtqueue_kick_prepare(vrp->rvq);
-> >>>>>>>>>>
-> >>>>>>>>>> -    /* From this point on, we can notify and get callbacks. */
-> >>>>>>>>>> -    virtio_device_ready(vdev);
-> >>>>>>>>>> -
-> >>>>>>>>>>      /* tell the remote processor it can start sending messages */
-> >>>>>>>>>>      /*
-> >>>>>>>>>>       * this might be concurrent with callbacks, but we are only
-> >>>>>>>>>> --
-> >>>>>>>>>> 2.34.1
-> >>>>>>>>>>
-> >>>>>>
-> >>>>
-> >>>
-> >>
+> >
+> > > +
+> > > +   err =3D virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unused=
+_buf);
+> > > +   if (err)
+> > > +           netdev_err(vi->dev, "resize rx fail: rx queue index: %d e=
+rr: %d\n", qindex, err);
+> > > +
+> > > +   if (!try_fill_recv(vi, rq, GFP_KERNEL))
+> > > +           schedule_delayed_work(&vi->refill, 0);
+> > > +
+> > > +   virtnet_napi_enable(rq->vq, &rq->napi);
+> > > +   return err;
+> > > +}
+> > > +
+> > >   /*
+> > >    * Send command via the control virtqueue and check status.  Comman=
+ds
+> > >    * supported by the hypervisor, as indicated by feature bits, shoul=
+d
 > >
 >
 
