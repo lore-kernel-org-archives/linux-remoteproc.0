@@ -2,249 +2,119 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EC2FCCA481
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Jul 2022 12:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D467CCA47C
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Jul 2022 14:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233206AbiGLMqM (ORCPT
+        id S233607AbiGLO0r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 12 Jul 2022 08:46:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33526 "EHLO
+        Tue, 12 Jul 2022 10:26:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233216AbiGLMqL (ORCPT
+        with ESMTP id S233585AbiGLO0f (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 12 Jul 2022 08:46:11 -0400
-Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3B99D516;
-        Tue, 12 Jul 2022 05:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=C7DbLRbpXMyCj1Q5o2dItOE2QtxA2TFViSasGpGNT8A=; b=noMebIsnOHWlnAj3FbV8akvwMT
-        g1cZJw8JwiG/Xa3vUZlAqzDO3Aph2IAeawfKPlgqM6YS8lMFtlBgqm5Z2A5cRmug9du7OOwGbqdE2
-        UDyQBhpe5rgxF98hyEgcUGcvs8NM0eA/R7dJupZzhzdC+36NOl3OArm7/03tGhXxS1pNwpeaz/0+F
-        cHyOW8flGwdgxbTBvYW5MJNMJnsa5DJLTnibbrRzHraBHG2dDujFx4CLA4Gs5wwIbevEF8nDRIqV+
-        1+2MxphWY4xU9SFYUPTcmBdjQagOqG7e0lTejGnSB4d355z3QBiX881Y4Q1vfzoBsNc3xBqnrP6fN
-        YEBz5ccQ==;
-Received: from [10.22.3.24] (helo=kernkonzept.com)
-        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
-        id 1oBFH8-0087Gb-6S; Tue, 12 Jul 2022 14:46:02 +0200
-From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Tue, 12 Jul 2022 10:26:35 -0400
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA25B93D6;
+        Tue, 12 Jul 2022 07:26:18 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id p13so4937164ilq.0;
+        Tue, 12 Jul 2022 07:26:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=1krryCxXZpZ7zRDoyHmJlv2p3l9oqnjU6GHeaTd0+R8=;
+        b=T+Ow9FZdAsgkqR/mucvWZ/7kOqWTCb6XpK/tbPLei6VufBz0GbY9H5ofD5gZQi3is+
+         LFAgf+NMk8OgrRrYWaapfYuQSDTc/2NJ3pzwaJJS7MbHGmihvPrw6TSy4lQPWcl7PYzw
+         8PqU8/dl6dJpTsbNKYNHE6UMn5Dl1LgYO3GtxfB2EMwF7A1PLTMC6ECDHgijOn7TKSds
+         sfEopNzxRB1mGlH3OrooDNTTJeG1pKw5T1K2Lgp62lZ3nC/tmq3qAvZPhewjEDCqbDn0
+         myWRvDVLR2GC0OFdpPWJDFtY36YdHqa+cNgNETFhiMI0bxvnO9aDzvE4AePHo0B+Wrjg
+         +qFw==
+X-Gm-Message-State: AJIora8HDSIyixAicBMHgn1ppnv9rHBhXncSNzuQcZFxc6cGitBGp0CI
+        5DM6HCZeW8Iwl8FS/mpGuQ==
+X-Google-Smtp-Source: AGRyM1uhyieVNNMFSH9Fn+BMc4R7p6v+ljgAI1PZHfX3Z0Pg5ptWKgDm8FaP+gLvnmaZxcO2Gg6EvQ==
+X-Received: by 2002:a05:6e02:1d95:b0:2dc:4746:6a2d with SMTP id h21-20020a056e021d9500b002dc47466a2dmr11933000ila.322.1657635977511;
+        Tue, 12 Jul 2022 07:26:17 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id r25-20020a02b119000000b0032e271a558csm4138264jah.168.2022.07.12.07.26.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jul 2022 07:26:17 -0700 (PDT)
+Received: (nullmailer pid 1805852 invoked by uid 1000);
+        Tue, 12 Jul 2022 14:26:12 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Cc:     Sireesh Kodali <sireeshkodali1@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Stephan Gerhold <stephan@gerhold.net>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Subject: [PATCH 6/6] remoteproc: qcom_q6v5_mss: Add support for MSM8909
-Date:   Tue, 12 Jul 2022 14:44:21 +0200
-Message-Id: <20220712124421.3129206-7-stephan.gerhold@kernkonzept.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220712124421.3129206-1-stephan.gerhold@kernkonzept.com>
-References: <20220712124421.3129206-1-stephan.gerhold@kernkonzept.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>, Luca Weiss <luca@z3ntu.xyz>
+In-Reply-To: <20220712124421.3129206-3-stephan.gerhold@kernkonzept.com>
+References: <20220712124421.3129206-1-stephan.gerhold@kernkonzept.com> <20220712124421.3129206-3-stephan.gerhold@kernkonzept.com>
+Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916 to schema
+Date:   Tue, 12 Jul 2022 08:26:12 -0600
+Message-Id: <1657635972.125667.1805851.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Port the initialization sequence necessary for booting the modem remote
-processor on the MSM8909 SoC from Qualcomm's msm-3.10 release [1].
-The sequence is actually similar to the existing one for MSM8996 and
-MSM8998 except that there is no separate QDSP6SS_MEM_PWR_CTL register
-and most of the "memories" are enabled at once instead of sequentially.
+On Tue, 12 Jul 2022 14:44:17 +0200, Stephan Gerhold wrote:
+> qcom,q6v5.txt covers multiple SoCs with quite different binding
+> requirements. Converting this into one DT schema would require
+> several if statements, making the DT schema overall harder to
+> read and understand.
+> 
+> To avoid this, follow the example of SC7180/SC7280 and split
+> "qcom,msm8916-mss-pil" (and the equivalent deprecated "qcom,q6v5-pil"
+> compatible) into a separate DT schema. The schema is somewhat based
+> on the one for SC7180/SC7280 but adjusted for the old platforms.
+> 
+> Compared to the old plain text bindings, add missing documentation for
+> the "bam-dmux" subnode and recommend one particular approach to specify
+> the MBA/MPSS "memory-region" (the other one is marked as deprecated).
+> 
+> Cc: Sireesh Kodali <sireeshkodali1@gmail.com>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+> ---
+> Like Sibi's patch series for SC7180/SC7820 [1] this is somewhat related
+> to Sireesh's series that converts all of qcom,q6v5.txt [2] (with a lot
+> of if statements). However, this series focuses on MSM8916/MSM8974 (or
+> actually MSM8909) only.
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/1657020721-24939-1-git-send-email-quic_sibis@quicinc.com/
+> [2]: https://lore.kernel.org/linux-arm-msm/20220511161602.117772-7-sireeshkodali1@gmail.com/
+> ---
+>  .../remoteproc/qcom,msm8916-mss-pil.yaml      | 246 ++++++++++++++++++
+>  .../bindings/remoteproc/qcom,q6v5.txt         |  19 --
+>  2 files changed, 246 insertions(+), 19 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+> 
 
-To reuse the existing code just insert some if statements where needed
-and add a configuration similar to the one from MSM8916.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-[1]: https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/commit/56dcedc8dac8abff6b007f76a29430b2d0a44704
+yamllint warnings/errors:
 
-Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 123 +++++++++++++++++++++--------
- 1 file changed, 90 insertions(+), 33 deletions(-)
+dtschema/dtc warnings/errors:
+./Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,smd-edge.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.example.dtb: remoteproc@4080000: smd-edge: False schema does not allow {'interrupts': [[0, 25, 1]], 'qcom,smd-edge': [[0]], 'qcom,ipc': [[4294967295, 8, 12]], 'qcom,remote-pid': [[1]], 'label': ['hexagon']}
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index af217de75e4d..31f561619b19 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -110,6 +110,9 @@
- #define QDSS_BHS_ON			BIT(21)
- #define QDSS_LDO_BYP			BIT(22)
- 
-+/* QDSP6v55 parameters */
-+#define QDSP6V55_MEM_BITS		GENMASK(16, 8)
-+
- /* QDSP6v56 parameters */
- #define QDSP6v56_LDO_BYP		BIT(25)
- #define QDSP6v56_BHS_ON		BIT(24)
-@@ -233,6 +236,7 @@ struct q6v5 {
- };
- 
- enum {
-+	MSS_MSM8909,
- 	MSS_MSM8916,
- 	MSS_MSM8974,
- 	MSS_MSM8996,
-@@ -686,13 +690,14 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 			return ret;
- 		}
- 		goto pbl_wait;
--	} else if (qproc->version == MSS_MSM8996 ||
-+	} else if (qproc->version == MSS_MSM8909 ||
-+		   qproc->version == MSS_MSM8996 ||
- 		   qproc->version == MSS_MSM8998) {
--		int mem_pwr_ctl;
- 
--		/* Override the ACC value if required */
--		writel(QDSP6SS_ACC_OVERRIDE_VAL,
--		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-+		if (qproc->version != MSS_MSM8909)
-+			/* Override the ACC value if required */
-+			writel(QDSP6SS_ACC_OVERRIDE_VAL,
-+			       qproc->reg_base + QDSP6SS_STRAP_ACC);
- 
- 		/* Assert resets, stop core */
- 		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-@@ -724,36 +729,53 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		val |= QDSP6v56_LDO_BYP;
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
--		/* Deassert QDSP6 compiler memory clamp */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val &= ~QDSP6v56_CLAMP_QMC_MEM;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--
--		/* Deassert memory peripheral sleep and L2 memory standby */
--		val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--
--		/* Turn on L1, L2, ETB and JU memories 1 at a time */
--		if (qproc->version == MSS_MSM8996) {
--			mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
--			i = 19;
-+		if (qproc->version != MSS_MSM8909) {
-+			int mem_pwr_ctl;
-+
-+			/* Deassert QDSP6 compiler memory clamp */
-+			val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+			val &= ~QDSP6v56_CLAMP_QMC_MEM;
-+			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+			/* Deassert memory peripheral sleep and L2 memory standby */
-+			val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
-+			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+			/* Turn on L1, L2, ETB and JU memories 1 at a time */
-+			if (qproc->version == MSS_MSM8996) {
-+				mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
-+				i = 19;
-+			} else {
-+				/* MSS_MSM8998 */
-+				mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
-+				i = 28;
-+			}
-+			val = readl(qproc->reg_base + mem_pwr_ctl);
-+			for (; i >= 0; i--) {
-+				val |= BIT(i);
-+				writel(val, qproc->reg_base + mem_pwr_ctl);
-+				/*
-+				 * Read back value to ensure the write is done then
-+				 * wait for 1us for both memory peripheral and data
-+				 * array to turn on.
-+				 */
-+				val |= readl(qproc->reg_base + mem_pwr_ctl);
-+				udelay(1);
-+			}
- 		} else {
--			/* MSS_MSM8998 */
--			mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
--			i = 28;
--		}
--		val = readl(qproc->reg_base + mem_pwr_ctl);
--		for (; i >= 0; i--) {
--			val |= BIT(i);
--			writel(val, qproc->reg_base + mem_pwr_ctl);
--			/*
--			 * Read back value to ensure the write is done then
--			 * wait for 1us for both memory peripheral and data
--			 * array to turn on.
--			 */
--			val |= readl(qproc->reg_base + mem_pwr_ctl);
--			udelay(1);
-+			/* Turn on memories */
-+			val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+			val |= Q6SS_SLP_RET_N | Q6SS_L2DATA_STBY_N |
-+			       Q6SS_ETB_SLP_NRET_N | QDSP6V55_MEM_BITS;
-+			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+			/* Turn on L2 banks 1 at a time */
-+			for (i = 0; i <= 7; i++) {
-+				val |= BIT(i);
-+				writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+			}
- 		}
-+
- 		/* Remove word line clamp */
- 		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 		val &= ~QDSP6v56_CLAMP_WL;
-@@ -2198,6 +2220,40 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 	.version = MSS_MSM8996,
- };
- 
-+static const struct rproc_hexagon_res msm8909_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_supply = (struct qcom_mss_reg_res[]) {
-+		{
-+			.supply = "pll",
-+			.uA = 100000,
-+		},
-+		{}
-+	},
-+	.proxy_clk_names = (char*[]){
-+		"xo",
-+		NULL
-+	},
-+	.active_clk_names = (char*[]){
-+		"iface",
-+		"bus",
-+		"mem",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"mx",
-+		"cx",
-+		NULL
-+	},
-+	.need_mem_protection = false,
-+	.has_alt_reset = false,
-+	.has_mba_logs = false,
-+	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
-+	.version = MSS_MSM8909,
-+};
-+
- static const struct rproc_hexagon_res msm8916_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_supply = (struct qcom_mss_reg_res[]) {
-@@ -2298,6 +2354,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 
- static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
-+	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
- 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
- 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
--- 
-2.30.2
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
