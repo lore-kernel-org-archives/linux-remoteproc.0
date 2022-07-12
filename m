@@ -2,106 +2,127 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0748C43334
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  8 Jul 2022 19:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C5FC433EF
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 12 Jul 2022 08:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239388AbiGHTjQ (ORCPT
+        id S232630AbiGLIRY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 8 Jul 2022 15:39:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45956 "EHLO
+        Tue, 12 Jul 2022 04:17:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238693AbiGHTjP (ORCPT
+        with ESMTP id S232626AbiGLIRX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 8 Jul 2022 15:39:15 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BA63264;
-        Fri,  8 Jul 2022 12:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1657309154; x=1688845154;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LpoDI14rXdWMtl4+x5dyiQKRVxSqj32tjZgTDJN6bu8=;
-  b=PN4bpZJykrRj/+kj2wkTatzHsV8bA8ENTbOJZoV6ABCVdAYZsXe4fFpi
-   3nxUds9T/ClYX+R31NFxU16D82LUc9g2hbWr9LTKwxtIOWCp10fjdwBuJ
-   miN0lErIqxTF55Pg4MDBtGFrc47i1TpzxhVMxF0Dv1T/yNK6iTchQY4Vp
-   c5PudI22vUN9JHHIB4WX47wtB2kCbcq75D/47BgW6BUc1uWbSZ9192Kvs
-   sFSn7mRHSMF0cQJwq57vKbta6bxrHAfjARjAeQJDtmCWDJJ/cR1YXP5WZ
-   Q9uI/5gYbvtGJ3RUjDg2F1xH7VFKfInM0e4mXGSJM5G+cgtKBkejBImFy
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10402"; a="264764071"
-X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
-   d="scan'208";a="264764071"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2022 12:39:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,256,1650956400"; 
-   d="scan'208";a="661876727"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Jul 2022 12:39:09 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o9toe-000Nqg-0N;
-        Fri, 08 Jul 2022 19:39:04 +0000
-Date:   Sat, 9 Jul 2022 03:38:35 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Tanmay Shah <tanmay.shah@amd.com>, bjorn.andersson@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, michal.simek@xilinx.com,
-        ben.levinsky@xilinx.com, tanmay.shah@xilinx.com,
-        michal.simek@amd.com
-Cc:     Paul Gazzillo <paul@pgazz.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        kbuild-all@lists.01.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Tanmay Shah <tanmay.shah@amd.com>
-Subject: Re: [PATCH v9 6/6] drivers: remoteproc: Add Xilinx r5 remoteproc
- driver
-Message-ID: <202207090358.SyMJbHIZ-lkp@intel.com>
-References: <20220708013955.2340449-7-tanmay.shah@amd.com>
+        Tue, 12 Jul 2022 04:17:23 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F9F3A1244;
+        Tue, 12 Jul 2022 01:17:22 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26C6FC1w017805;
+        Tue, 12 Jul 2022 10:17:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=V6sjMB7RYrAmyXGWjhUGVzI5Qe/pzRzlrpCoknQyqNs=;
+ b=hR8WRcgff5vb8gEEHH7cKung5pd0Mn+XE0gch4XVWOT7VRjf9d0uO4gUkC89ue5wloJK
+ xPNI6YH2vSVQsayiBpmH9ng7JhhV4gOE3GXKkoYkQBMjDpl0LhoNN64yHx4+BZRtGiNd
+ PDwYv14fQ8Kq+8JCZP6Clbt5eGY+Cl3OHhMe6tn+yLOyoVEEDsPW0CGLs+NU3b8Astau
+ LUeDgz4aAFEhapyxWI8oULgU/87iTBFZ8tVjNlMYwt2o47M+AvcSkldQmwVW/aY8chsm
+ ct4maonrWSvFa4PWyt8/uxKSMG4b7qK8N8Q5nMHe6tN582sIHpc7gSgI05Q/2hgELMRN JA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3h71127u5r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Jul 2022 10:17:05 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B258D10002A;
+        Tue, 12 Jul 2022 10:17:03 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A59A1212FA9;
+        Tue, 12 Jul 2022 10:17:03 +0200 (CEST)
+Received: from [10.201.20.246] (10.75.127.45) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Tue, 12 Jul
+ 2022 10:17:02 +0200
+Message-ID: <18ffb30b-692d-4a67-896d-7b9485734336@foss.st.com>
+Date:   Tue, 12 Jul 2022 10:17:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220708013955.2340449-7-tanmay.shah@amd.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3] arm64: defconfig: Config that had RPMSG_CHAR now gets
+ RPMSG_CTRL
+Content-Language: en-US
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+CC:     Will Deacon <will@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20220405161114.1107745-1-arnaud.pouliquen@foss.st.com>
+ <c497e1ef-5a62-d956-4516-87e7b53a6001@foss.st.com> <YpdutV3/jOsfPb5c@arm.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <YpdutV3/jOsfPb5c@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-07-12_05,2022-07-08_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tanmay,
+Hello,
 
-Thank you for the patch! Perhaps something to improve:
+On 6/1/22 15:50, Catalin Marinas wrote:
+> On Wed, Jun 01, 2022 at 03:25:42PM +0200, Arnaud POULIQUEN wrote:
+>> Gentle reminder.
+>> Please notice that Mathieu replied with a "Reviewed-by".
+> 
+> We usually leave the defconfig updates to the SoC team. Cc'ing Arnd.
 
-[auto build test WARNING on c6a669485125145afd22230df6e0e6c37f19ad41]
+This patch seems still be stalled, should I resent it?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/Add-Xilinx-RPU-subsystem-support/20220708-094221
-base:   c6a669485125145afd22230df6e0e6c37f19ad41
-config: (https://download.01.org/0day-ci/archive/20220709/202207090358.SyMJbHIZ-lkp@intel.com/config)
-reproduce:
-        # https://github.com/intel-lab-lkp/linux/commit/77a934574239ba990778a8007045b8c43955d9f5
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Tanmay-Shah/Add-Xilinx-RPU-subsystem-support/20220708-094221
-        git checkout 77a934574239ba990778a8007045b8c43955d9f5
-        # 1. reproduce by kismet
-           # install kmax per https://github.com/paulgazz/kmax/blob/master/README.md
-           kismet --linux-ksrc=linux --selectees CONFIG_ZYNQMP_IPI_MBOX --selectors CONFIG_XLNX_R5_REMOTEPROC -a=arm64
-        # 2. reproduce by make
-           # save the config file to linux source tree
-           cd linux
-           make ARCH=arm64 olddefconfig
+Thanks,
+Arnaud
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for ZYNQMP_IPI_MBOX when selected by XLNX_R5_REMOTEPROC
-   
-   WARNING: unmet direct dependencies detected for ZYNQMP_IPI_MBOX
-     Depends on [n]: MAILBOX [=n] && ARCH_ZYNQMP [=y] && OF [=y]
-     Selected by [y]:
-     - XLNX_R5_REMOTEPROC [=y] && REMOTEPROC [=y] && PM [=y] && ARCH_ZYNQMP [=y] && ZYNQMP_FIRMWARE [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> 
+> Catalin
+> 
+>> Thanks,
+>> Arnaud
+>>
+>> On 4/5/22 18:11, Arnaud Pouliquen wrote:
+>>> In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
+>>> from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
+>>> By default give everyone who had the old driver enabled the rpmsg_ctrl
+>>> driver too.
+>>>
+>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>> ---
+>>>
+>>> This patch is extracted from the series [1] that has been partially
+>>> integrated in the Linux Kernel 5.18-rc1.
+>>>
+>>> Update vs previous version:
+>>> - Add missing "---" separation marker after "Signed-off-by".
+>>>
+>>> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+>>> [2]https://lore.kernel.org/linux-arm-kernel/CANLsYky1_b80qPbgOaLGVYD-GEr21V6C653iGEB7VCU=GbGvAQ@mail.gmail.com/T/
+>>> ---
+>>>  arch/arm64/configs/defconfig | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index 50aa3d75ab4f..3f8906b8a2ca 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -1053,6 +1053,7 @@ CONFIG_QCOM_Q6V5_PAS=m
+>>>  CONFIG_QCOM_SYSMON=m
+>>>  CONFIG_QCOM_WCNSS_PIL=m
+>>>  CONFIG_RPMSG_CHAR=m
+>>> +CONFIG_RPMSG_CTRL=m
+>>>  CONFIG_RPMSG_QCOM_GLINK_RPM=y
+>>>  CONFIG_RPMSG_QCOM_GLINK_SMEM=m
+>>>  CONFIG_RPMSG_QCOM_SMD=y
