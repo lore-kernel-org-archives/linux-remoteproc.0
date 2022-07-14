@@ -2,175 +2,109 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC0EC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 13 Jul 2022 16:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0745CCA480
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jul 2022 09:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236587AbiGMQpx (ORCPT
+        id S238441AbiGNJpt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 13 Jul 2022 12:45:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52142 "EHLO
+        Thu, 14 Jul 2022 05:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237178AbiGMQpq (ORCPT
+        with ESMTP id S237825AbiGNJpc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 13 Jul 2022 12:45:46 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BF102FFCB
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Jul 2022 09:45:31 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id g16-20020a17090a7d1000b001ea9f820449so4570789pjl.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 Jul 2022 09:45:31 -0700 (PDT)
+        Thu, 14 Jul 2022 05:45:32 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C5111260F
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 02:45:31 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id t1so1882879lft.8
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 02:45:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/iQtm6Kux/xWroeqwCGf2oSrpyEqZ4z/EH3B3RJO+Zo=;
-        b=Joha79Wraj0RM+cNfu3SLTwfR7k4tiDA9n7XxadX3uG3w0zYyxHrPOtXzh8dM3yFtA
-         FF2ylCS4LuB5M/us7A/MHNY98bLJE1mRjrjc3RpAHNtMmQWGPT3ztvVb8X2ySQf9WyHm
-         OSe3MmIRa4sR1Mub2jw6fK4W9IfwsKKvHoApKaQ8eFykY1qNF2EQtNfFx5k9DofsGOgc
-         Xt6AxlIOQbdyCFWgBWXsI+VkRYcg1r143YeWJP3ikSoe6BgtPxbBcCGaCuAYoWM/djmU
-         EEWqJrzaycQVS0zFdsIKKSti0JSLZCbm46H8xrVrLio68hqOaGS3WpuW/yiGHEF3PjFJ
-         VhsA==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=U7bE4AFFaqlBpYGWGp2bDcGNToCNNNh+R2dU+aim+1I=;
+        b=aAacLcEaAKm5bx3USPkdVVrwv0zguEu8rs1lY5F6lNOeMAWK+8D/A9m4WBr/44c1XH
+         LjpTQrqg2GOuzh62iX8vVHYvrvM1BmWkK0TdoeVHMYGqu7iNBK9Pb2WlWt2yiiW55k7O
+         a1Uewv3Eh3QXfplrqJHwnIuip7m5R6MSqvAol32na8mvx6P5EFZjqtYZI27p/kvwznqU
+         hFCVjuNsjXUEC8J4Oz2Br3ZlaUgC47Cmx086b+Cinv7CqI2/LLhOBboXUA1tbSATjM0q
+         iRvtW5lwOF31ZgAmE0CDH0K6oNH0tLR1IJyD/s/wWqaUMm1KTImvgYg5uALvwAQ1+2Oz
+         3/dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/iQtm6Kux/xWroeqwCGf2oSrpyEqZ4z/EH3B3RJO+Zo=;
-        b=Mep7Q1Yx1Iz/4bFNgoRCaNGMLzHUHyyjYamYVG6QLJGwgzuzlfwsnbdfZyyzSerUw3
-         7NmXhgDXoAxUZ6zDQYg3MGMcZdB0JSHspEhC4zEJ+8R9G8mWUmv1MQIaHoZGuL9wnLOx
-         wEBCbbl25lKDMXtaVJg8NcwlPjpxUxjHMN58Tme4QL1IYlpVLgLqiPO+fmlOxYd7Fsfg
-         A0gh/mnnqgdCYFY7IJWueEzt5uMnd2K9Fu2DebsD2DI8JQIB8MvfGftqW8gxIzYuKpfc
-         7sHylwxrUDMbZ+xuRkP2GoTzpsJU6/EpcejhIgB+t6a7kknlBnrikXp6Wq95pnbHQtrs
-         i5vw==
-X-Gm-Message-State: AJIora8RrzjAD1Ev83q8kmv/sOaAjdXbev0JHqqWZuuQZUqBzBY6SNvB
-        bJnew8ni2Yj6EIWS6HjtVpD6
-X-Google-Smtp-Source: AGRyM1vpxsjXKe7Cp4HLhTBdF09rD64pUIPfu6lFoXvKGOvtaOsFtN9vtggHGNXvZdPImb8Oe6tBgw==
-X-Received: by 2002:a17:90a:7c05:b0:1ee:e40c:589b with SMTP id v5-20020a17090a7c0500b001eee40c589bmr4764943pjf.78.1657730730820;
-        Wed, 13 Jul 2022 09:45:30 -0700 (PDT)
-Received: from workstation ([117.248.1.226])
-        by smtp.gmail.com with ESMTPSA id f1-20020a170902ce8100b0016beceac426sm9045079plg.138.2022.07.13.09.45.27
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jul 2022 09:45:30 -0700 (PDT)
-Date:   Wed, 13 Jul 2022 22:15:25 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=U7bE4AFFaqlBpYGWGp2bDcGNToCNNNh+R2dU+aim+1I=;
+        b=lQYoCPgtS1ByDoT4FlxbkiipxWGjgbqDrW+G8yZKptmhhsJvb+IaAv1wHbBQ/o30m5
+         tSCX222ehdnHBk3s/2xylfBHqH3q8EZe3yAv9zl0Joo/nBu6E4ukWROJWDumNOUEidmr
+         GhClbku0TF+FVqbmeJVN2STaGqkmWqoPiH+REs+VNo3+z7Rp1DoQXKJEk4wkm8VAr15X
+         gAUUqvQRbJ2XCFW3XjSNO+XYcEIvR7k+hyMJ3xfyff76TNQxNiIhcWeHInQxTIwXR7TE
+         2LreoZ7q3bk5jZyJ7s7F/gmyO+TwlytrML/t4kNvSunN+7Pj09kHe9tehOZ2hkQ1W3jp
+         Bv6w==
+X-Gm-Message-State: AJIora8hSlndIZHmZb1WDr33Q0PJ14zyDdv0GrQMTQhRPu6D/D14mrNo
+        0jFfTUW6YRzrLQvjyRPSz2PhGA==
+X-Google-Smtp-Source: AGRyM1vGpON0DG4ORvaWqjTmXe+q+KTMeS1n2R2I9F705IDWK+oapuyCfjSrtWQhaNSEqjPpmb36Ug==
+X-Received: by 2002:a05:6512:139a:b0:48a:1a73:8adc with SMTP id p26-20020a056512139a00b0048a1a738adcmr757796lfa.226.1657791929867;
+        Thu, 14 Jul 2022 02:45:29 -0700 (PDT)
+Received: from [10.0.0.8] (fwa5da9-171.bb.online.no. [88.93.169.171])
+        by smtp.gmail.com with ESMTPSA id 10-20020a05651c008a00b0025d2d495dc6sm185480ljq.66.2022.07.14.02.45.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Jul 2022 02:45:29 -0700 (PDT)
+Message-ID: <4936df27-e5b5-8ef5-5831-82fdf414ea90@linaro.org>
+Date:   Thu, 14 Jul 2022 11:45:27 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 1/6] arm64: dts: qcom: msm8916: Drop MSS fallback
+ compatible
+Content-Language: en-US
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Stephan Gerhold <stephan@gerhold.net>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_pas: Deal silently with optional
- px and cx regulators
-Message-ID: <20220713164525.GB4591@workstation>
-References: <20220713152835.3848875-1-abel.vesa@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220713152835.3848875-1-abel.vesa@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        devicetree@vger.kernel.org
+References: <20220712124421.3129206-1-stephan.gerhold@kernkonzept.com>
+ <20220712124421.3129206-2-stephan.gerhold@kernkonzept.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220712124421.3129206-2-stephan.gerhold@kernkonzept.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jul 13, 2022 at 06:28:35PM +0300, Abel Vesa wrote:
-> Use _get_optional as some platforms might not provide the px
-> and cx regulators.
-
-But this makes no failure for platforms that really needs these regulators and
-not defined in devicetree. But at the same time, the driver should trust
-the devicetree anyway and not try to validate it.
-
-So I think this is fine.
-
-> This avoids printing the following for each
-> unavailable regulator:
+On 12/07/2022 14:44, Stephan Gerhold wrote:
+> MSM8916 was originally using the "qcom,q6v5-pil" compatible for the
+> MSS remoteproc. Later it was decided to use SoC-specific compatibles
+> instead, so "qcom,msm8916-mss-pil" is now the preferred compatible.
 > 
-> [    4.350229] qcom_q6v5_pas 5c00000.remoteproc: supply cx not found,
-> using dummy regulator
-> [    4.374224] qcom_q6v5_pas 5c00000.remoteproc: supply px not found,
-> using dummy regulator
+> Commit 60a05ed059a0 ("arm64: dts: qcom: msm8916: Add MSM8916-specific
+> compatibles to SCM/MSS") updated the MSM8916 device tree to make use of
+> the new compatible but still kept the old "qcom,q6v5-pil" as fallback.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-Thanks,
-Mani
-
+> This is inconsistent with other SoCs and conflicts with the description
+> in the binding documentation (which says that only one compatible should
+> be present). Also, it has no functional advantage since older kernels
+> could not handle this DT anyway (e.g. "power-domains" in the MSS node is
+> only supported by kernels that also support "qcom,msm8916-mss-pil").
+> 
+> Make this consistent with other SoCs by using only the
+> "qcom,msm8916-mss-pil" compatible.
+> 
+> Fixes: 60a05ed059a0 ("arm64: dts: qcom: msm8916: Add MSM8916-specific compatibles to SCM/MSS")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
 > ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 32 +++++++++++++++++++-----------
->  1 file changed, 20 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 6ae39c5653b1..3c3affaff7ac 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -185,13 +185,17 @@ static int adsp_start(struct rproc *rproc)
->  	if (ret)
->  		goto disable_xo_clk;
->  
-> -	ret = regulator_enable(adsp->cx_supply);
-> -	if (ret)
-> -		goto disable_aggre2_clk;
-> +	if (adsp->cx_supply) {
-> +		ret = regulator_enable(adsp->cx_supply);
-> +		if (ret)
-> +			goto disable_aggre2_clk;
-> +	}
->  
-> -	ret = regulator_enable(adsp->px_supply);
-> -	if (ret)
-> -		goto disable_cx_supply;
-> +	if (adsp->px_supply) {
-> +		ret = regulator_enable(adsp->px_supply);
-> +		if (ret)
-> +			goto disable_cx_supply;
-> +	}
->  
->  	ret = qcom_scm_pas_auth_and_reset(adsp->pas_id);
->  	if (ret) {
-> @@ -212,9 +216,11 @@ static int adsp_start(struct rproc *rproc)
->  	return 0;
->  
->  disable_px_supply:
-> -	regulator_disable(adsp->px_supply);
-> +	if (adsp->px_supply)
-> +		regulator_disable(adsp->px_supply);
->  disable_cx_supply:
-> -	regulator_disable(adsp->cx_supply);
-> +	if (adsp->cx_supply)
-> +		regulator_disable(adsp->cx_supply);
->  disable_aggre2_clk:
->  	clk_disable_unprepare(adsp->aggre2_clk);
->  disable_xo_clk:
-> @@ -231,8 +237,10 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
->  {
->  	struct qcom_adsp *adsp = container_of(q6v5, struct qcom_adsp, q6v5);
->  
-> -	regulator_disable(adsp->px_supply);
-> -	regulator_disable(adsp->cx_supply);
-> +	if (adsp->px_supply)
-> +		regulator_disable(adsp->px_supply);
-> +	if (adsp->cx_supply)
-> +		regulator_disable(adsp->cx_supply);
->  	clk_disable_unprepare(adsp->aggre2_clk);
->  	clk_disable_unprepare(adsp->xo);
->  	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
-> @@ -326,13 +334,13 @@ static int adsp_init_clock(struct qcom_adsp *adsp)
->  
->  static int adsp_init_regulator(struct qcom_adsp *adsp)
->  {
-> -	adsp->cx_supply = devm_regulator_get(adsp->dev, "cx");
-> +	adsp->cx_supply = devm_regulator_get_optional(adsp->dev, "cx");
->  	if (IS_ERR(adsp->cx_supply))
->  		return PTR_ERR(adsp->cx_supply);
->  
->  	regulator_set_load(adsp->cx_supply, 100000);
->  
-> -	adsp->px_supply = devm_regulator_get(adsp->dev, "px");
-> +	adsp->px_supply = devm_regulator_get_optional(adsp->dev, "px");
->  	return PTR_ERR_OR_ZERO(adsp->px_supply);
->  }
->  
-> -- 
-> 2.34.3
-> 
+
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
