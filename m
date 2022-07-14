@@ -2,306 +2,64 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B938FC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jul 2022 10:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB628C43334
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jul 2022 14:42:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233712AbiGNKnf (ORCPT
+        id S231858AbiGNOmY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Jul 2022 06:43:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
+        Thu, 14 Jul 2022 10:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238420AbiGNKn0 (ORCPT
+        with ESMTP id S231666AbiGNOmX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Jul 2022 06:43:26 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 684B254CB9
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 03:43:24 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id sz17so2644103ejc.9
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 03:43:24 -0700 (PDT)
+        Thu, 14 Jul 2022 10:42:23 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CA13ED42
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 07:42:22 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id eq6so2695990edb.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 07:42:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7G95qX/Z/g6nBYu3wmSbe9p8uUBDG/7xmjXeY4B1fjI=;
-        b=FyKC5m52ouhDcSu/wW7qAcWViWBlkrreswXCt22es8z62p20b9Z83CB6CVhBgLrlMK
-         TqDuDMfCun+FJ65Zp+XGU5zCuFROAGDU+1PdW2gA7J0o6q33w2smvMbaJh/btBrQ4Y2E
-         90YxAy3LCDn0Ghj7+u/Ps+SVx5Bxi04VTdL7BqllapCQR/sdUIoerBygh9tD4LtxMlsk
-         Kf+yaS53LBoIG/ZpqiwoYWja9K09HWpNdtesPR3FcqBqH9k3gdQ31eTIU94TSEw0VWyV
-         QjFq7gQlo5Szs63P4ImJWaT5JGJSk5zLy/6+clRO5ui6BP9lJyoVmpWzesbCLWKQJXFI
-         E5XQ==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=a+QbYzDXONXHR2/ia9UjAFNxxvsoeRX7DRfMlIEMaTo=;
+        b=HU/NJh7uymD1T7yAyAn3Efq6axsEypXJREh3Db9L8xLHhRg0sPzVDXPEQ3V0W9AT+H
+         j9LErmfOhaR3Cj9H1CNBNeXRPZ3ulCFOC6CCxAfZ8zmLwqAfTcSmTe339Ymjf9DnO7if
+         Zl1hB+Kyii4qWJnQXbn32mndld+yJfIXVJvhJkv65dns4iaQOS1snmLgQFIWk7ZeyXaK
+         k31a7Ih9VaX4jTzaDP2oHms5ONHaZLuqQrZGAjLwK3AOJmWkWCS4n3qLngQpDnwYL9ju
+         dtZGRD6JWHtADMqNCoLUdiOu2v1CQxvoVC33WyLKerIYNpHeVJ1yQGRrjsv0jl4gRU9h
+         kF0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7G95qX/Z/g6nBYu3wmSbe9p8uUBDG/7xmjXeY4B1fjI=;
-        b=egOWL8rY+RWkPKIN7HaufrmIIy3Wv5Vf9yLXcV2fCHV9Z9+PfPyGQYGSLvNeLkCQih
-         LwEC2DCCbJfpLjvCzUwlXOjGyHIQ5lfcFSzU54SgQAAKKAv553TdhKcmyQFYXOovRgml
-         85drf9Xz+DuLaI8HOB/3/PGuHQQS4jThdCl5kDxIPM53KWP40+tVBqAU1Dbn6Rm6CNcw
-         8aHPvw3aKeKgmpHT5YrlrMRfVjHLdlMkWo32J2t/8x+38WVUYbHtqybZPgMvKqXoiAwV
-         3ln1/yMRBMfLZ36P+BX7YAQsQw6MDUdj4hpQ9sXYqFEcm6m+u198tdIlrdDhPFEeiaWO
-         CpbA==
-X-Gm-Message-State: AJIora8WKt7phcpoGehjDw54smax79MXoVUwultfk+0okfZQBeucKLwQ
-        QWnvoJ2tCtaNe9B2ebGN8TU8hw==
-X-Google-Smtp-Source: AGRyM1sRs65JSlDrQgcA+auOchgRzFK4pfgE0Bx1If3yHAifWYE4Hn5mfud4Ns7/L+SgzVLpMU10iw==
-X-Received: by 2002:a17:907:9612:b0:72e:56bd:2b9a with SMTP id gb18-20020a170907961200b0072e56bd2b9amr5365640ejc.526.1657795402871;
-        Thu, 14 Jul 2022 03:43:22 -0700 (PDT)
-Received: from localhost.localdomain ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id m21-20020aa7d355000000b0043a7de4e526sm822889edr.44.2022.07.14.03.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Jul 2022 03:43:22 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH] remoteproc: qcom: q6v5: Use _clk_get_optional for aggre2_clk
-Date:   Thu, 14 Jul 2022 13:43:09 +0300
-Message-Id: <20220714104309.4111334-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.3
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=a+QbYzDXONXHR2/ia9UjAFNxxvsoeRX7DRfMlIEMaTo=;
+        b=LH8WALJydmgJ4ahFHHUF8OzR8K+QcnhU03y+6C6pi4NEvsMkccKyWn1Xti+cwDM8qW
+         LjIq8ytIxpK+7EyzQXd0bOtlvbi/24bDOAzuawlAUefxkmTjstZblM8cRwPebafY1jom
+         CL2ri7jpDDkpk1ivT6CuEeLWkfhjA8wjRZoX6P5kD3lXBoQLbWZX+HxWR9RlaaXU2ydu
+         MACvRnKva9w96R0xE88pVrpZqSp0mFHMnWtTh8CoVJYWGyYMPj8dcMNkmu9DmJkr7xxX
+         RS9iqQuzrKwHKytYWznKwyIFwSw236mbobns8o4izy37MdlevNoDDmqbZ0cmEDGi14DF
+         4HXA==
+X-Gm-Message-State: AJIora8oU52TbspZSO4x1qm01hxTaG9iCPqG7NYOkMlIa65nspt7+IOY
+        POEk/KqtT6zK6bmHWvvNNIGRCXqwzGFoAVZO7VcNeuf4r5iPfw==
+X-Google-Smtp-Source: AGRyM1v6s2vInK/PGwkCB+079tbhdg5fR0aNCSJwwlOPK9CBRtfEHdNFY+WmLDnR79jR4uQnhdaYwzw+KAMUWyjCav0=
+X-Received: by 2002:a05:6402:3214:b0:43a:b36f:a0b4 with SMTP id
+ g20-20020a056402321400b0043ab36fa0b4mr12859865eda.122.1657809740401; Thu, 14
+ Jul 2022 07:42:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 14 Jul 2022 08:42:09 -0600
+Message-ID: <CANLsYkxuRtF-bfhz+UJXRWD_b5buUuncYeD2j_xFxYstFQqevw@mail.gmail.com>
+Subject: [INFO] Remoteproc/RPMSG patchset review order for July 14th 2022
+To:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-There is devm_clk_get_optional now, so lets drop the has_aggre2_clk
-from adsp_data.
-
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++-------------------------
- 1 file changed, 7 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 6ae39c5653b1..beef7a09c380 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -34,7 +34,6 @@ struct adsp_data {
- 	const char *firmware_name;
- 	int pas_id;
- 	unsigned int minidump_id;
--	bool has_aggre2_clk;
- 	bool auto_boot;
- 
- 	char **proxy_pd_names;
-@@ -64,7 +63,6 @@ struct qcom_adsp {
- 	int pas_id;
- 	unsigned int minidump_id;
- 	int crash_reason_smem;
--	bool has_aggre2_clk;
- 	const char *info_name;
- 
- 	struct completion start_done;
-@@ -310,15 +308,13 @@ static int adsp_init_clock(struct qcom_adsp *adsp)
- 		return ret;
- 	}
- 
--	if (adsp->has_aggre2_clk) {
--		adsp->aggre2_clk = devm_clk_get(adsp->dev, "aggre2");
--		if (IS_ERR(adsp->aggre2_clk)) {
--			ret = PTR_ERR(adsp->aggre2_clk);
--			if (ret != -EPROBE_DEFER)
--				dev_err(adsp->dev,
--					"failed to get aggre2 clock");
--			return ret;
--		}
-+	adsp->aggre2_clk = devm_clk_get_optional(adsp->dev, "aggre2");
-+	if (IS_ERR(adsp->aggre2_clk)) {
-+		ret = PTR_ERR(adsp->aggre2_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(adsp->dev,
-+				"failed to get aggre2 clock");
-+		return ret;
- 	}
- 
- 	return 0;
-@@ -457,7 +453,6 @@ static int adsp_probe(struct platform_device *pdev)
- 	adsp->rproc = rproc;
- 	adsp->minidump_id = desc->minidump_id;
- 	adsp->pas_id = desc->pas_id;
--	adsp->has_aggre2_clk = desc->has_aggre2_clk;
- 	adsp->info_name = desc->sysmon_name;
- 	platform_set_drvdata(pdev, adsp);
- 
-@@ -531,7 +526,6 @@ static const struct adsp_data adsp_resource_init = {
- 		.crash_reason_smem = 423,
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
--		.has_aggre2_clk = false,
- 		.auto_boot = true,
- 		.ssr_name = "lpass",
- 		.sysmon_name = "adsp",
-@@ -542,7 +536,6 @@ static const struct adsp_data sdm845_adsp_resource_init = {
- 		.crash_reason_smem = 423,
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
--		.has_aggre2_clk = false,
- 		.auto_boot = true,
- 		.load_state = "adsp",
- 		.ssr_name = "lpass",
-@@ -554,7 +547,6 @@ static const struct adsp_data sm6350_adsp_resource = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
-@@ -571,7 +563,6 @@ static const struct adsp_data sm8150_adsp_resource = {
- 		.crash_reason_smem = 423,
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
--		.has_aggre2_clk = false,
- 		.auto_boot = true,
- 		.proxy_pd_names = (char*[]){
- 			"cx",
-@@ -587,7 +578,6 @@ static const struct adsp_data sm8250_adsp_resource = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
-@@ -604,7 +594,6 @@ static const struct adsp_data sm8350_adsp_resource = {
- 	.crash_reason_smem = 423,
- 	.firmware_name = "adsp.mdt",
- 	.pas_id = 1,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
-@@ -621,7 +610,6 @@ static const struct adsp_data msm8996_adsp_resource = {
- 		.crash_reason_smem = 423,
- 		.firmware_name = "adsp.mdt",
- 		.pas_id = 1,
--		.has_aggre2_clk = false,
- 		.auto_boot = true,
- 		.proxy_pd_names = (char*[]){
- 			"cx",
-@@ -636,7 +624,6 @@ static const struct adsp_data cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.ssr_name = "cdsp",
- 	.sysmon_name = "cdsp",
-@@ -647,7 +634,6 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.load_state = "cdsp",
- 	.ssr_name = "cdsp",
-@@ -659,7 +645,6 @@ static const struct adsp_data sm6350_cdsp_resource = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
-@@ -676,7 +661,6 @@ static const struct adsp_data sm8150_cdsp_resource = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
-@@ -692,7 +676,6 @@ static const struct adsp_data sm8250_cdsp_resource = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
-@@ -708,7 +691,6 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"nsp",
-@@ -723,7 +705,6 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
- 	.crash_reason_smem = 633,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 30,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"nsp",
-@@ -738,7 +719,6 @@ static const struct adsp_data sm8350_cdsp_resource = {
- 	.crash_reason_smem = 601,
- 	.firmware_name = "cdsp.mdt",
- 	.pas_id = 18,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
-@@ -756,7 +736,6 @@ static const struct adsp_data mpss_resource_init = {
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
- 	.minidump_id = 3,
--	.has_aggre2_clk = false,
- 	.auto_boot = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
-@@ -773,7 +752,6 @@ static const struct adsp_data sc8180x_mpss_resource = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
--	.has_aggre2_clk = false,
- 	.auto_boot = false,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
-@@ -789,7 +767,6 @@ static const struct adsp_data slpi_resource_init = {
- 		.crash_reason_smem = 424,
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
--		.has_aggre2_clk = true,
- 		.auto_boot = true,
- 		.proxy_pd_names = (char*[]){
- 			"ssc_cx",
-@@ -804,7 +781,6 @@ static const struct adsp_data sm8150_slpi_resource = {
- 		.crash_reason_smem = 424,
- 		.firmware_name = "slpi.mdt",
- 		.pas_id = 12,
--		.has_aggre2_clk = false,
- 		.auto_boot = true,
- 		.proxy_pd_names = (char*[]){
- 			"lcx",
-@@ -821,7 +797,6 @@ static const struct adsp_data sm8250_slpi_resource = {
- 	.crash_reason_smem = 424,
- 	.firmware_name = "slpi.mdt",
- 	.pas_id = 12,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
-@@ -838,7 +813,6 @@ static const struct adsp_data sm8350_slpi_resource = {
- 	.crash_reason_smem = 424,
- 	.firmware_name = "slpi.mdt",
- 	.pas_id = 12,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"lcx",
-@@ -865,7 +839,6 @@ static const struct adsp_data sdx55_mpss_resource = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
- 	.pas_id = 4,
--	.has_aggre2_clk = false,
- 	.auto_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
--- 
-2.34.3
-
+[PATCH v5 0/6] Introduce PRU remoteproc consumer API
+[PATCH 0/4] Introduction of rpmsg_rx_done
+[PATCH v2 0/9] Add support for MT8195 SCP 2nd core
+[PATCH v9 0/6] Add Xilinx RPU subsystem support
+[PATCH v7 0/4] remoteproc: restructure the remoteproc VirtIO device
+[PATCH 0/2] remoteproc: imx: add start up delay
+[PATCH V4 0/6] remoteproc: imx_rproc: support i.MX8QM/QXP
