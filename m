@@ -2,168 +2,92 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645BDC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Jul 2022 08:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4029CCA482
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Jul 2022 19:45:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232832AbiGOIhL (ORCPT
+        id S230285AbiGOTpE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 15 Jul 2022 04:37:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        Fri, 15 Jul 2022 15:45:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231569AbiGOIhJ (ORCPT
+        with ESMTP id S229626AbiGOTpD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 15 Jul 2022 04:37:09 -0400
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0877781491;
-        Fri, 15 Jul 2022 01:37:06 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VJOcj-v_1657874219;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VJOcj-v_1657874219)
-          by smtp.aliyun-inc.com;
-          Fri, 15 Jul 2022 16:37:00 +0800
-Message-ID: <1657874178.9766078-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v11 38/40] virtio_net: support rx queue resize
-Date:   Fri, 15 Jul 2022 16:36:18 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm <kvm@vger.kernel.org>,
-        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
-        kangjie.xu@linux.alibaba.com,
-        virtualization <virtualization@lists.linux-foundation.org>
-References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
- <20220629065656.54420-39-xuanzhuo@linux.alibaba.com>
- <c0747cbc-685b-85a9-1931-0124124755f2@redhat.com>
- <1656986375.3420787-1-xuanzhuo@linux.alibaba.com>
- <CACGkMEu80KP-ULz_CBvauRk_3XsCubMkkWv0uLnbt-wib5KOnA@mail.gmail.com>
-In-Reply-To: <CACGkMEu80KP-ULz_CBvauRk_3XsCubMkkWv0uLnbt-wib5KOnA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Jul 2022 15:45:03 -0400
+Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BB660687
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 Jul 2022 12:45:01 -0700 (PDT)
+Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-10bffc214ffso8369724fac.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 Jul 2022 12:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=j7iV5fZyqzBzONfFQXTxDBvEEIXYMTwYFhpV/bb8XwM=;
+        b=xoKRsOEjKyeuf+T3RWfA08s4IkprbGLQoDcQWPvQJKwl2hsiVr5HDdIOvVbfNinDRd
+         LRnYVyJVcJxeH8WJHznR3H7vb7WuyHs4F/p0bAlGnNRWhqNbh+5h8EwYP2IrKsBpY9VA
+         TLQjcl2xc/cSU92U3CSSG74vuksh3l47MDKFqr3AWMAlv3dXaY2vmj81YcJbQUgOVJph
+         9MXzMcTw9BRUcm2IYBt3qLYA51wIDC7DyMKWB6qhazfW5u0xv4cUfdRrbsQNiPXIfk73
+         qCAS1fN3hHGBeVfMldztpkngbpox996y/PopP3EcjHq6/3NV5iameRw1kXM4gI5MWdBT
+         TWdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=j7iV5fZyqzBzONfFQXTxDBvEEIXYMTwYFhpV/bb8XwM=;
+        b=dgTIfKh9FAUVRHJupn5mKir+hg59vWc+6xhRGL656eD/rlhgPhLb9CMtrx/ZdCZ7Gx
+         jNb1JEN+8GtCCpwFdTeKww1lHdbNqN2V9vyPzqxakIlt76zyLXU0Msr+Ff6A4SDghvsv
+         xOwYtEHeEUeT4TCEU+0DoKlPTKW3ShvxFV6OKW0ePiUJVCWhA+EoyQWDZdSIwAHuZKfd
+         78oEFfzQDa8J8rVOUfH4a+AHIbrg/pffOCz366O7aWmg59PGNHc+yxTTrDL3iA0LFsuo
+         6J0dSltcBS4L/jejLmZWIOclVkVBSLcNBAomAIt5/98EoAFnLLnc+MPOkmMBojuNfEpq
+         0Vkg==
+X-Gm-Message-State: AJIora9kr+8ASmJuLZF2TLwNO7UJh8rsEv0vs1p+GjZzF2x270zd+ndR
+        9vL6AXVFKwiOnR+vBVW+Tptjyw==
+X-Google-Smtp-Source: AGRyM1sskKQ0hJm78u735uQuGOkhmNrWDPCf9RI2vIXZ2XPg/ePj60Ym3aKl6BYA95MoLNx2ET8bHQ==
+X-Received: by 2002:a05:6870:96a7:b0:10c:712:58c4 with SMTP id o39-20020a05687096a700b0010c071258c4mr8551462oaq.198.1657914300183;
+        Fri, 15 Jul 2022 12:45:00 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id r8-20020a056870e98800b00101bd4914f9sm2779380oao.43.2022.07.15.12.44.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jul 2022 12:44:59 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <quic_sibis@quicinc.com>,
+        krzysztof.kozlowski+dt@linaro.org, swboyd@chromium.org,
+        robh+dt@kernel.org
+Cc:     linux-kernel@vger.kernel.org, mka@chromium.org,
+        linux-arm-msm@vger.kernel.org, mathieu.poirier@linaro.org,
+        agross@kernel.org, konrad.dybcio@somainline.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [V5 0/2] Add support for proxy interconnect bandwidth votes
+Date:   Fri, 15 Jul 2022 14:44:58 -0500
+Message-Id: <165791429375.1604685.12160759168768291168.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
+References: <1657020721-24939-1-git-send-email-quic_sibis@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 8 Jul 2022 14:20:52 +0800, Jason Wang <jasowang@redhat.com> wrote:
-> On Tue, Jul 5, 2022 at 10:00 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wr=
-ote:
-> >
-> > On Mon, 4 Jul 2022 11:44:12 +0800, Jason Wang <jasowang@redhat.com> wro=
-te:
-> > >
-> > > =E5=9C=A8 2022/6/29 14:56, Xuan Zhuo =E5=86=99=E9=81=93:
-> > > > This patch implements the resize function of the rx queues.
-> > > > Based on this function, it is possible to modify the ring num of the
-> > > > queue.
-> > > >
-> > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > ---
-> > > >   drivers/net/virtio_net.c | 22 ++++++++++++++++++++++
-> > > >   1 file changed, 22 insertions(+)
-> > > >
-> > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > index 9fe222a3663a..6ab16fd193e5 100644
-> > > > --- a/drivers/net/virtio_net.c
-> > > > +++ b/drivers/net/virtio_net.c
-> > > > @@ -278,6 +278,8 @@ struct padded_vnet_hdr {
-> > > >     char padding[12];
-> > > >   };
-> > > >
-> > > > +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void =
-*buf);
-> > > > +
-> > > >   static bool is_xdp_frame(void *ptr)
-> > > >   {
-> > > >     return (unsigned long)ptr & VIRTIO_XDP_FLAG;
-> > > > @@ -1846,6 +1848,26 @@ static netdev_tx_t start_xmit(struct sk_buff=
- *skb, struct net_device *dev)
-> > > >     return NETDEV_TX_OK;
-> > > >   }
-> > > >
-> > > > +static int virtnet_rx_resize(struct virtnet_info *vi,
-> > > > +                        struct receive_queue *rq, u32 ring_num)
-> > > > +{
-> > > > +   int err, qindex;
-> > > > +
-> > > > +   qindex =3D rq - vi->rq;
-> > > > +
-> > > > +   napi_disable(&rq->napi);
-> > >
-> > >
-> > > Do we need to cancel the refill work here?
-> >
-> >
-> > I think no, napi_disable is mutually exclusive, which ensures that ther=
-e will be
-> > no conflicts between them.
->
-> So this sounds similar to what I've fixed recently.
->
-> 1) NAPI schedule delayed work.
-> 2) we disable NAPI here
-> 3) delayed work get schedule and call NAPI again
->
-> ?
+On Tue, 5 Jul 2022 17:01:59 +0530, Sibi Sankar wrote:
+> Add proxy interconnect bandwidth votes during modem bootup on SC7280 SoCs.
+> 
+> V5:
+>  * Improve phandle-array schemas [Stephen/Rob/Krzysztof]
+>  * Add more details to the firmware-name/memory region string array [Stephen/Rob]
+>  * Drop 'items' from label [Rob]
+>  * Drop the patch 1 since Bjorn picked it up
+> 
+> [...]
 
-Yes, but I don't think there are any negative effects.
+Applied, thanks!
 
-Thanks.
+[1/2] dt-bindings: remoteproc: qcom: Convert SC7280 MSS bindings to YAML
+      commit: 3abe6d654288553de0bf41da1491cfeee83777b7
+[2/2] dt-bindings: remoteproc: qcom: Convert SC7180 MSS bindings to YAML
+      commit: 5eb1c7def66349a5c3a80b7d450d0ed1f56141eb
 
->
-> Thanks
->
-> >
-> > Thanks.
-> >
-> > >
-> > > Thanks
-> > >
-> > >
-> > > > +
-> > > > +   err =3D virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unus=
-ed_buf);
-> > > > +   if (err)
-> > > > +           netdev_err(vi->dev, "resize rx fail: rx queue index: %d=
- err: %d\n", qindex, err);
-> > > > +
-> > > > +   if (!try_fill_recv(vi, rq, GFP_KERNEL))
-> > > > +           schedule_delayed_work(&vi->refill, 0);
-> > > > +
-> > > > +   virtnet_napi_enable(rq->vq, &rq->napi);
-> > > > +   return err;
-> > > > +}
-> > > > +
-> > > >   /*
-> > > >    * Send command via the control virtqueue and check status.  Comm=
-ands
-> > > >    * supported by the hypervisor, as indicated by feature bits, sho=
-uld
-> > >
-> >
->
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@linaro.org>
