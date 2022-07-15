@@ -2,112 +2,58 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2895C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 14 Jul 2022 19:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DA0C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Jul 2022 02:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbiGNTE5 (ORCPT
+        id S229996AbiGOCsJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 14 Jul 2022 15:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46916 "EHLO
+        Thu, 14 Jul 2022 22:48:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232623AbiGNTEy (ORCPT
+        with ESMTP id S229984AbiGOCsI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 14 Jul 2022 15:04:54 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D822452E7B
-        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 12:04:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1657825309;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=pRes7n5R1DDewbC5DkuuzmUV6aRqrRqkonDzKoWO2YA=;
-    b=ADfadyMPNMAVvhlYSoYx5qX0yarkzFWusjPc5ok/xwEujzf07lGtvh6niU4i0ehErE
-    Xn/Jd+opGuPnRxl7tBdDUek8AXzFum2DS0elsEdW3qgp8CLGiEdxtu4TBkCVNkbORmym
-    U+6W9wbYQ8eufVZBM9UeR6oZo5ta1+KDgW3q8C7Ph+zOGxQ0HNWkSNpmoxcqOD2jw2Ii
-    nszz192AZ5TLGZjDQWgbhyd9NKDFF67aYpzlJoRNSZ9txVxsw9kLESXrwXRCFDCDq0KI
-    ql11T6lTzhr484m6G6x4vf9gyWkhXg52lm9UoJmgrSuegH4NVWbkHTvQdQ1hKTGb7p84
-    UIkg==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKw8+6Y="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.47.0 AUTH)
-    with ESMTPSA id he04d0y6EJ1n8CC
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Thu, 14 Jul 2022 21:01:49 +0200 (CEST)
-Date:   Thu, 14 Jul 2022 21:01:47 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/6] ARM: dts: qcom: msm8974: Disable remoteprocs by
- default
-Message-ID: <YtBoG1mAwOlylGP2@gerhold.net>
-References: <20220712124421.3129206-1-stephan.gerhold@kernkonzept.com>
- <20220712124421.3129206-4-stephan.gerhold@kernkonzept.com>
- <bcb1e0ec-f0b7-ce45-a63f-7272c1f398c9@linaro.org>
+        Thu, 14 Jul 2022 22:48:08 -0400
+X-Greylist: delayed 350 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Jul 2022 19:48:07 PDT
+Received: from mailgw22.onamae.ne.jp (mailgw22-242.onamae.ne.jp [118.27.95.242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDFF65D5D
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 Jul 2022 19:48:07 -0700 (PDT)
+Received: from www100.onamae.ne.jp (unknown [172.16.42.212])
+        by mailgw22.onamae.ne.jp (Postfix) with ESMTP id C294018004A35E
+        for <linux-remoteproc@vger.kernel.org>; Fri, 15 Jul 2022 11:42:15 +0900 (JST)
+Received: by www100.onamae.ne.jp (Postfix, from userid 10413)
+        id C2076106329EC; Fri, 15 Jul 2022 11:42:15 +0900 (JST)
+To:     linux-remoteproc@vger.kernel.org
+Subject: =?UTF-8?B?44CQ5qCq5byP5Lya56S+44OR44K344OV44Kj44OD44Kv44OV44Kp44Os44K5?=  =?UTF-8?B?44OI44Oe44O844Kx44OG44Kj44Oz44Kw44CR44GK5ZWP44GE5ZCI44KP44Gb?=
+X-PHP-Script: www.pacific-fm.co.jp/index.php for 185.220.103.117
+X-PHP-Filename: /home/r0094398/public_html/pacific-fm.co.jp/index.php REMOTE_ADDR: 185.220.103.117
+Date:   Fri, 15 Jul 2022 02:42:15 +0000
+From:   =?UTF-8?B?5qCq5byP5Lya56S+44OR44K344OV44Kj44OD44Kv44OV44Kp44Os44K544OI?=
+         =?UTF-8?B?44Oe44O844Kx44OG44Kj44Oz44Kw?= 
+        <shunsuke.hori@pacific-fm.co.jp>
+Reply-To: shunsuke.hori@pacific-fm.co.jp
+Message-ID: <mnEwqrEKQlkxDOivfZ1zCBJwAJ8RVOU2WfJA4DFWA@www.pacific-fm.co.jp>
+X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcb1e0ec-f0b7-ce45-a63f-7272c1f398c9@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jul 14, 2022 at 11:55:44AM +0200, Krzysztof Kozlowski wrote:
-> On 12/07/2022 14:44, Stephan Gerhold wrote:
-> > The remoteproc configuration in qcom-msm8974.dtsi is incomplete because
-> > 
-> > diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> > index 814ad0b46232..35246bd02132 100644
-> > --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> > +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> > @@ -1172,6 +1172,8 @@ remoteproc_mss: remoteproc@fc880000 {
-> >  			qcom,smem-states = <&modem_smp2p_out 0>;
-> >  			qcom,smem-state-names = "stop";
-> >  
-> > +			status = "disabled";
-> > +
-> >  			mba {
-> >  				memory-region = <&mba_region>;
-> >  			};
-> > @@ -1639,6 +1641,8 @@ remoteproc_adsp: remoteproc@fe200000 {
-> >  			qcom,smem-states = <&adsp_smp2p_out 0>;
-> >  			qcom,smem-state-names = "stop";
-> >  
-> > +			status = "disabled";
-> > +
-> >  			smd-edge {
-> >  				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-> >  
-> > diff --git a/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts b/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> > index 58cb2ce1e4df..8a6b8e4de887 100644
-> > --- a/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> > +++ b/arch/arm/boot/dts/qcom-msm8974pro-fairphone-fp2.dts
-> > @@ -147,10 +147,12 @@ wcnss {
-> >  };
-> >  
-> >  &remoteproc_adsp {
-> > +	status = "okay";
-> 
-> These go to the end of properties.
-> 
+【株式会社パシフィックフォレストマーケティング】のWebサイトより、
+下記の内容でお問い合わせを受け付けました。
 
-All the other nodes in these two files have the 'status = "okay"' at the
-beginning (just like most of the Qualcomm boards actually). I know there
-have been some discussion to change this, but until existing boards have
-been changed I would rather not introduce a wild mix of both approaches
-(within the same file at least).
+法人名(組織名) :💝 Catherine want to meet you! Click Here: https://letsg0dancing.page.link/go?fcx 💝
+氏名 :52rdz1
+ふりがな :9wnsz1
+TEL :793420935763
+メールアドレス :linux-remoteproc@vger.kernel.org
 
-Thanks,
-Stephan
+内容:
+ppwl5n
+
+--
+株式会社パシフィックフォレストマーケティング
+〒7812110 高知県吾川郡いの町3175
+TEL : 123-456-7890
+FAX : 123-456-7890
