@@ -2,71 +2,209 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6DAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Jul 2022 08:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6913C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 15 Jul 2022 08:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbiGOIWL (ORCPT
+        id S232360AbiGOIbv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 15 Jul 2022 04:22:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46102 "EHLO
+        Fri, 15 Jul 2022 04:31:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiGOIWK (ORCPT
+        with ESMTP id S232322AbiGOIbu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 15 Jul 2022 04:22:10 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7F2674780;
-        Fri, 15 Jul 2022 01:22:09 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7F7EE6601A3F;
-        Fri, 15 Jul 2022 09:22:07 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1657873328;
-        bh=sUZouS3lE1J14tvmlfvtX6XwZPGBxusKP+JBfQl5o+8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Jl3Ep2702F1Hv+y/rgolfrFceblEiEI/XWHj03jg+HtkrHLPuIB2dR+MYJ1oBibzN
-         u14TtGUOyS4ev9oN28GqS87p6sAYnKuevWSxvFd4tksTHM3zP8BCoasDt29ysS5use
-         vEeKKR3RLuhc6hcfikfVL10JRgyLgiInE+zHmAIBx6lAXulc/1p/4+Apet4dES/LBU
-         gW89BP8q1GGK23snISdzk0lsfHxIhv1HPuPi6fxfv9i2IT7GkMHKxtDOnHCYzYpqlw
-         53BhUWo7AKElTegX7aQuJc8sXRhM9uVhKUXC6nYYpG1dbyzI0IhZ3u/uItMYp9jN90
-         6U9+fIMHS6Kwg==
-Message-ID: <5c25eaa7-c578-258e-a2ec-ca4a72488e72@collabora.com>
-Date:   Fri, 15 Jul 2022 10:22:04 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v1 2/2] remoteproc: mediatek: Support MT8188 SCP
-Content-Language: en-US
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        Fri, 15 Jul 2022 04:31:50 -0400
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91157804B5;
+        Fri, 15 Jul 2022 01:31:47 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R971e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VJOUor5_1657873898;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VJOUor5_1657873898)
+          by smtp.aliyun-inc.com;
+          Fri, 15 Jul 2022 16:31:40 +0800
+Message-ID: <1657873703.9301925-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v11 39/40] virtio_net: support tx queue resize
+Date:   Fri, 15 Jul 2022 16:28:23 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20220715051821.30707-1-tinghan.shen@mediatek.com>
- <20220715051821.30707-3-tinghan.shen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20220715051821.30707-3-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        kangjie.xu@linux.alibaba.com,
+        virtualization <virtualization@lists.linux-foundation.org>
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+ <20220629065656.54420-40-xuanzhuo@linux.alibaba.com>
+ <102d3b83-1ae9-a59a-16ce-251c22b7afb0@redhat.com>
+ <1656986432.1164997-2-xuanzhuo@linux.alibaba.com>
+ <CACGkMEt8MSS=tcn=Hd6WF9+btT0ccocxEd1ighRgK-V1uiWmCQ@mail.gmail.com>
+In-Reply-To: <CACGkMEt8MSS=tcn=Hd6WF9+btT0ccocxEd1ighRgK-V1uiWmCQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 15/07/22 07:18, Tinghan Shen ha scritto:
-> MT8188 SCP has two RISC-V cores and similar to MT8195 with some
-> differences. The MT8188 SCP doesn't have the l1tcm and fix the
-> DSP EMI issue on MT8195.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+On Fri, 8 Jul 2022 14:23:57 +0800, Jason Wang <jasowang@redhat.com> wrote:
+> On Tue, Jul 5, 2022 at 10:01 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wr=
+ote:
+> >
+> > On Mon, 4 Jul 2022 11:45:52 +0800, Jason Wang <jasowang@redhat.com> wro=
+te:
+> > >
+> > > =E5=9C=A8 2022/6/29 14:56, Xuan Zhuo =E5=86=99=E9=81=93:
+> > > > This patch implements the resize function of the tx queues.
+> > > > Based on this function, it is possible to modify the ring num of the
+> > > > queue.
+> > > >
+> > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > > ---
+> > > >   drivers/net/virtio_net.c | 48 +++++++++++++++++++++++++++++++++++=
++++++
+> > > >   1 file changed, 48 insertions(+)
+> > > >
+> > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > > index 6ab16fd193e5..fd358462f802 100644
+> > > > --- a/drivers/net/virtio_net.c
+> > > > +++ b/drivers/net/virtio_net.c
+> > > > @@ -135,6 +135,9 @@ struct send_queue {
+> > > >     struct virtnet_sq_stats stats;
+> > > >
+> > > >     struct napi_struct napi;
+> > > > +
+> > > > +   /* Record whether sq is in reset state. */
+> > > > +   bool reset;
+> > > >   };
+> > > >
+> > > >   /* Internal representation of a receive virtqueue */
+> > > > @@ -279,6 +282,7 @@ struct padded_vnet_hdr {
+> > > >   };
+> > > >
+> > > >   static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void=
+ *buf);
+> > > > +static void virtnet_sq_free_unused_buf(struct virtqueue *vq, void =
+*buf);
+> > > >
+> > > >   static bool is_xdp_frame(void *ptr)
+> > > >   {
+> > > > @@ -1603,6 +1607,11 @@ static void virtnet_poll_cleantx(struct rece=
+ive_queue *rq)
+> > > >             return;
+> > > >
+> > > >     if (__netif_tx_trylock(txq)) {
+> > > > +           if (READ_ONCE(sq->reset)) {
+> > > > +                   __netif_tx_unlock(txq);
+> > > > +                   return;
+> > > > +           }
+> > > > +
+> > > >             do {
+> > > >                     virtqueue_disable_cb(sq->vq);
+> > > >                     free_old_xmit_skbs(sq, true);
+> > > > @@ -1868,6 +1877,45 @@ static int virtnet_rx_resize(struct virtnet_=
+info *vi,
+> > > >     return err;
+> > > >   }
+> > > >
+> > > > +static int virtnet_tx_resize(struct virtnet_info *vi,
+> > > > +                        struct send_queue *sq, u32 ring_num)
+> > > > +{
+> > > > +   struct netdev_queue *txq;
+> > > > +   int err, qindex;
+> > > > +
+> > > > +   qindex =3D sq - vi->sq;
+> > > > +
+> > > > +   virtnet_napi_tx_disable(&sq->napi);
+> > > > +
+> > > > +   txq =3D netdev_get_tx_queue(vi->dev, qindex);
+> > > > +
+> > > > +   /* 1. wait all ximt complete
+> > > > +    * 2. fix the race of netif_stop_subqueue() vs netif_start_subq=
+ueue()
+> > > > +    */
+> > > > +   __netif_tx_lock_bh(txq);
+> > > > +
+> > > > +   /* Prevent rx poll from accessing sq. */
+> > > > +   WRITE_ONCE(sq->reset, true);
+> > >
+> > >
+> > > Can we simply disable RX NAPI here?
+> >
+> > Disable rx napi is indeed a simple solution. But I hope that when deali=
+ng with
+> > tx, it will not affect rx.
+>
+> Ok, but I think we've already synchronized with tx lock here, isn't it?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Yes, do you have any questions about WRITE_ONCE()? There is a set false ope=
+ration
+later, I did not use lock there, so I used WRITE/READ_ONCE
+uniformly.
 
+Thanks.
+
+>
+> Thanks
+>
+> >
+> > Thanks.
+> >
+> >
+> > >
+> > > Thanks
+> > >
+> > >
+> > > > +
+> > > > +   /* Prevent the upper layer from trying to send packets. */
+> > > > +   netif_stop_subqueue(vi->dev, qindex);
+> > > > +
+> > > > +   __netif_tx_unlock_bh(txq);
+> > > > +
+> > > > +   err =3D virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unus=
+ed_buf);
+> > > > +   if (err)
+> > > > +           netdev_err(vi->dev, "resize tx fail: tx queue index: %d=
+ err: %d\n", qindex, err);
+> > > > +
+> > > > +   /* Memory barrier before set reset and start subqueue. */
+> > > > +   smp_mb();
+> > > > +
+> > > > +   WRITE_ONCE(sq->reset, false);
+> > > > +   netif_tx_wake_queue(txq);
+> > > > +
+> > > > +   virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
+> > > > +   return err;
+> > > > +}
+> > > > +
+> > > >   /*
+> > > >    * Send command via the control virtqueue and check status.  Comm=
+ands
+> > > >    * supported by the hypervisor, as indicated by feature bits, sho=
+uld
+> > >
+> >
+>
