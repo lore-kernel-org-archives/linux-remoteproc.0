@@ -2,91 +2,126 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 417A3C43334
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 17:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C235C43334
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 22:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234314AbiGRRTQ (ORCPT
+        id S236435AbiGRWDH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 13:19:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39236 "EHLO
+        Mon, 18 Jul 2022 18:03:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233910AbiGRRTP (ORCPT
+        with ESMTP id S233533AbiGRWDG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Jul 2022 13:19:15 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 104F51FCF9
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 10:19:15 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id a15so12436236pjs.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 10:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6AlSG11Xz0KEmY1J4qxRxusy/iUb0jY7LfF1OTYlmoE=;
-        b=vEheWttEDztzn0wX59F2KAGkreCbHs3di+tKqkl4IAPJ8k+nkONjCaOPX0ur9T4LFn
-         HrVp5kPLFewdY8BqiqJF/XavfQqqwVJQWl6AOBEy+YbzNGvJwMKXg6qBhrucJC1j/d2f
-         /eixL9KXtAUfWaEZ6j5QcDUsb1pTei0QpfJACiz2a6oePiDheULjMRKUm+wzPiSz6E4w
-         0ZexggTDJG0McCTRtrAfYvWd0L88p05aYt0yWRNZGz/f1isLq+nSOc9bpNoaOfCzhY7g
-         YNbtNy9apzKYpB55t8+rdEKFWbEX3NqHfi3QUzYz5acc7L66jsN9JI8C3C/T5ZcpnnRY
-         PSMQ==
+        Mon, 18 Jul 2022 18:03:06 -0400
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D7030575;
+        Mon, 18 Jul 2022 15:03:05 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id n138so9197866iod.4;
+        Mon, 18 Jul 2022 15:03:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6AlSG11Xz0KEmY1J4qxRxusy/iUb0jY7LfF1OTYlmoE=;
-        b=tsASfpqvn5K2qG4y/N+Wr3vmp1JusOhoLHDYfPggisBj2xGHrJxTXXeANWttHtyvU+
-         1uNZWySaC4YF19QM1wltFhNNe58+4y4iQCWHrbUBD9t17GiNbZurXrRCndQqH2S2Y1LI
-         bCrdbQJ/IExS9NZHoHz5kUyJDAhJs0837R7fQL4ntq+9Yv1hmnTTePZALAacdKe/Njyn
-         FZkdZ6t/R2OmFGFwNc5x+ne7G/nNlss3e+vwiN+QFYl2ms1Bs5Z46VV2EW7g3fpoRsPt
-         Ugaa8Yec9VM6f3uLWxyVAIZnr1QvWscSpgBLgoaa1UnnB0kUA8j6MZODtNwvB8UG71HL
-         FpPA==
-X-Gm-Message-State: AJIora/T3EL3nNQ+WYy2NdbrhVkb+o+U3FOs6Zo24UZbsXlqJ2VFVVsV
-        xO5DIs/RmohhuahnmA+FKTlrGA==
-X-Google-Smtp-Source: AGRyM1t9xo/AS/NKpz2t46SlZm8sa/vdqDfuyTscDK82ci703AzuOy6ziJl8eg57k0SFP6nQ2Qy72A==
-X-Received: by 2002:a17:90b:3d85:b0:1f0:7355:734 with SMTP id pq5-20020a17090b3d8500b001f073550734mr34853999pjb.24.1658164754519;
-        Mon, 18 Jul 2022 10:19:14 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id a20-20020aa794b4000000b0052abfc4b4a4sm9830384pfl.12.2022.07.18.10.19.12
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=+Ds7vAIuyuYjYIOURWWj2FmYD2WCeACWUphKceomFs8=;
+        b=Oeijp9pmKah36XYb2DkKHK3MgE5v0BdiyWuge//EHzPZyDRrxh4DmVCsCqV9dJOxYd
+         qELoT9HquOiipMDmvLggcOofvCtZcgTKh0BTlJpX3oMCC+jpBTscP/ZDSOFlZUz4Jp/a
+         1+L5KszVa1VpLZq7d2qJpyEGLvoudOjiCBNM991J0gJ5YPA6ZH9ET8vh160ZE1f/IxHl
+         44ZE74A1zMdTmc06ii3QJc2o04fVAirtdclULYA23B3ZqcWPHm5lwvSjsNCneRCNQ1VZ
+         BswECk/8ts5sbt0o+il7VeGmtpNTGyFUpiY0mIUmEpf45fj8IhepHfxsqUPeCRd7BweK
+         bP5w==
+X-Gm-Message-State: AJIora8akJMQfnA50+ro9DT7T9dedqZrW/HWcTm8xPwR1+5mag0ZvBox
+        MIU57CC1iF7vlHj88XjsrNUoqwzGKg==
+X-Google-Smtp-Source: AGRyM1tYi/nREKRfmgHFryzYPu9A0DXLc7OMJxv4NHv5FPH8FMRBz5ewJiUW220s6YJVkefCycU11w==
+X-Received: by 2002:a05:6638:1920:b0:341:4c2f:18a9 with SMTP id p32-20020a056638192000b003414c2f18a9mr9755282jal.261.1658181785058;
+        Mon, 18 Jul 2022 15:03:05 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id ch23-20020a0566383e9700b003415f2fb081sm3118377jab.125.2022.07.18.15.03.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 10:19:13 -0700 (PDT)
-Date:   Mon, 18 Jul 2022 11:19:11 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Mon, 18 Jul 2022 15:03:04 -0700 (PDT)
+Received: (nullmailer pid 3645115 invoked by uid 1000);
+        Mon, 18 Jul 2022 22:03:02 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v1 0/2] Add support for MT8188 SCP
-Message-ID: <20220718171911.GA3331732@p14s>
-References: <20220715051821.30707-1-tinghan.shen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220715051821.30707-1-tinghan.shen@mediatek.com>
+        linux-remoteproc@vger.kernel.org,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        devicetree@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
+References: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com> <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
+Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916 to schema
+Date:   Mon, 18 Jul 2022 16:03:02 -0600
+Message-Id: <1658181782.827574.3645114.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 15, 2022 at 01:18:19PM +0800, Tinghan Shen wrote:
+On Mon, 18 Jul 2022 16:03:41 +0200, Stephan Gerhold wrote:
+> qcom,q6v5.txt covers multiple SoCs with quite different binding
+> requirements. Converting this into one DT schema would require
+> several if statements, making the DT schema overall harder to
+> read and understand.
 > 
-> Tinghan Shen (2):
->   dt-bindings: remoteproc: mediatek: Add binding for mt8188 scp
->   remoteproc: Support MT8188 SCP
+> To avoid this, follow the example of SC7180/SC7280 and split
+> "qcom,msm8916-mss-pil" (and the equivalent deprecated "qcom,q6v5-pil"
+> compatible) into a separate DT schema. The schema is somewhat based
+> on the one for SC7180/SC7280 but adjusted for the old platforms.
 > 
->  .../devicetree/bindings/remoteproc/mtk,scp.yaml     |  2 ++
->  drivers/remoteproc/mtk_scp.c                        | 13 +++++++++++++
->  2 files changed, 15 insertions(+)
+> Compared to the old plain text bindings, add missing documentation for
+> the "bam-dmux" subnode and recommend one particular approach to specify
+> the MBA/MPSS "memory-region" (the other one is marked as deprecated).
+> 
+> Cc: Sireesh Kodali <sireeshkodali1@gmail.com>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+> ---
+> Changes in v2:
+>   - Add blank lines between top-level properties
+>   - Drop "deprecated" in "oneOf" list, it is not clear if this is valid
+>     and it should be redundant since the properties itself are already
+>     marked as "deprecated"
+> ---
+> Like Sibi's patch series for SC7180/SC7820 [1] this is somewhat related
+> to Sireesh's series that converts all of qcom,q6v5.txt [2] (with a lot
+> of if statements). However, this series focuses on MSM8916/MSM8974 (or
+> actually MSM8909) only.
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/1657020721-24939-1-git-send-email-quic_sibis@quicinc.com/
+> [2]: https://lore.kernel.org/linux-arm-msm/20220511161602.117772-7-sireeshkodali1@gmail.com/
+> ---
+>  .../remoteproc/qcom,msm8916-mss-pil.yaml      | 247 ++++++++++++++++++
+>  .../bindings/remoteproc/qcom,q6v5.txt         |  19 --
+>  2 files changed, 247 insertions(+), 19 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+> 
 
-I have applied this set.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Thanks,
-Mathieu
+yamllint warnings/errors:
 
-> 
-> -- 
-> 2.18.0
-> 
+dtschema/dtc warnings/errors:
+./Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,smd-edge.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.example.dtb: remoteproc@4080000: smd-edge: False schema does not allow {'interrupts': [[0, 25, 1]], 'qcom,smd-edge': [[0]], 'qcom,ipc': [[4294967295, 8, 12]], 'qcom,remote-pid': [[1]], 'label': ['hexagon']}
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
