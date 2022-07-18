@@ -2,271 +2,317 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7524DC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 09:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3A6C43334
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 12:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234037AbiGRJOi (ORCPT
+        id S235067AbiGRMPz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 05:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44930 "EHLO
+        Mon, 18 Jul 2022 08:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233353AbiGRJOh (ORCPT
+        with ESMTP id S235077AbiGRMPj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Jul 2022 05:14:37 -0400
-Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B92F5B9;
-        Mon, 18 Jul 2022 02:14:34 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R811e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VJhAxgV_1658135667;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VJhAxgV_1658135667)
-          by smtp.aliyun-inc.com;
-          Mon, 18 Jul 2022 17:14:29 +0800
-Message-ID: <1658135504.1522465-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v11 39/40] virtio_net: support tx queue resize
-Date:   Mon, 18 Jul 2022 17:11:44 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
+        Mon, 18 Jul 2022 08:15:39 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199E823173
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 05:15:30 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id az2-20020a05600c600200b003a301c985fcso6963395wmb.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 05:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bh9NZr4gq3p7XYiwnsBZLhMSoV7xIvFjFW59LLlWpBM=;
+        b=xiuse1IKKx0XozsiaQHJ4SQtwAU2L7g25uNWBVbiSRGNk/7RNobYrCgwgYtzyyTML7
+         GDGCMfE82etDe6Qfd6fw2RqkO519c/uDDwCCR0Iqnh8P1ILw78wknKSnzVJxSojItxPX
+         AoFVy3NKFkuJsx6RUpsfgtC7OOg83pHEiF7FdWyeBIqOtE5bxZ6el2TMP/LdTSnkOdCk
+         AUNRxkNerbaoSywKcwjpLt1/edruIpyuwTi0xVo0Kdf5A785P0fcXqmQKrOmTGtF3q2R
+         Yr1r22iFSdBhXvjuGpvv4iDe5Y7I3DE32EvfqeiouOimN5JWlRC5+Kre4hTKc9iOlp34
+         id7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bh9NZr4gq3p7XYiwnsBZLhMSoV7xIvFjFW59LLlWpBM=;
+        b=F+8FgTnED1zWc2N4sL8EllnsHynZkgUhzQqpWdpld4wGumgIT7iBbaMRl2vTBYiwy+
+         4jaD4civrXtaSEBbODraDhp/Th33s+mQ6DrKDXtugX7+Xps+q4fGmmig/1U/lUkQA0Gs
+         heuh/SVM/juwAkaKi3PfK431zZ7ZMUU7cPQEapfb11hSAn2jNGei2Zkf3Z8y01dtwNwj
+         N1htBd+foFgclc5EPBEQT5ngbZAbP++TKiYowTN3RLgfiAT6RHdiALE//wbj8XDFPIIX
+         8Nn85WtagMIKYFdJM0A38Z0rK3Tm5ozyjWlN/bmt4+BSOeO/cls/5/lwoS3FUA4MbMIV
+         uLTg==
+X-Gm-Message-State: AJIora9+4b7obq/oW8Qxserd3DYNTBKtR81742yrT1yTB0EM+LcyGNwS
+        HHTM3EcWi4SVXOLIrtb+Xp/lSQ==
+X-Google-Smtp-Source: AGRyM1t73eqThp+YiwuMVeGp3LQdvy3Tti0MdP9P6YfwveVXZEm/D8ATXffrujB0f1dgfh974v8QJg==
+X-Received: by 2002:a05:600c:3844:b0:3a3:d71:c4ce with SMTP id s4-20020a05600c384400b003a30d71c4cemr14645076wmr.23.1658146528206;
+        Mon, 18 Jul 2022 05:15:28 -0700 (PDT)
+Received: from localhost.localdomain ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id r6-20020a5d6946000000b0021b91d1ddbfsm10795784wrw.21.2022.07.18.05.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jul 2022 05:15:27 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm <kvm@vger.kernel.org>,
-        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
-        kangjie.xu@linux.alibaba.com,
-        virtualization <virtualization@lists.linux-foundation.org>
-References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
- <20220629065656.54420-40-xuanzhuo@linux.alibaba.com>
- <102d3b83-1ae9-a59a-16ce-251c22b7afb0@redhat.com>
- <1656986432.1164997-2-xuanzhuo@linux.alibaba.com>
- <CACGkMEt8MSS=tcn=Hd6WF9+btT0ccocxEd1ighRgK-V1uiWmCQ@mail.gmail.com>
- <1657873703.9301925-1-xuanzhuo@linux.alibaba.com>
- <CACGkMEvgjX+67NxwrUym7CnbNFU2-=CbAXPN_UmtvDOTS1LrHA@mail.gmail.com>
-In-Reply-To: <CACGkMEvgjX+67NxwrUym7CnbNFU2-=CbAXPN_UmtvDOTS1LrHA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH v2] remoteproc: qcom: q6v5: Use _clk_get_optional for aggre2_clk
+Date:   Mon, 18 Jul 2022 15:15:14 +0300
+Message-Id: <20220718121514.2451590-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 18 Jul 2022 16:57:53 +0800, Jason Wang <jasowang@redhat.com> wrote:
-> On Fri, Jul 15, 2022 at 4:32 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wr=
-ote:
-> >
-> > On Fri, 8 Jul 2022 14:23:57 +0800, Jason Wang <jasowang@redhat.com> wro=
-te:
-> > > On Tue, Jul 5, 2022 at 10:01 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com=
-> wrote:
-> > > >
-> > > > On Mon, 4 Jul 2022 11:45:52 +0800, Jason Wang <jasowang@redhat.com>=
- wrote:
-> > > > >
-> > > > > =E5=9C=A8 2022/6/29 14:56, Xuan Zhuo =E5=86=99=E9=81=93:
-> > > > > > This patch implements the resize function of the tx queues.
-> > > > > > Based on this function, it is possible to modify the ring num o=
-f the
-> > > > > > queue.
-> > > > > >
-> > > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > > ---
-> > > > > >   drivers/net/virtio_net.c | 48 +++++++++++++++++++++++++++++++=
-+++++++++
-> > > > > >   1 file changed, 48 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > > > index 6ab16fd193e5..fd358462f802 100644
-> > > > > > --- a/drivers/net/virtio_net.c
-> > > > > > +++ b/drivers/net/virtio_net.c
-> > > > > > @@ -135,6 +135,9 @@ struct send_queue {
-> > > > > >     struct virtnet_sq_stats stats;
-> > > > > >
-> > > > > >     struct napi_struct napi;
-> > > > > > +
-> > > > > > +   /* Record whether sq is in reset state. */
-> > > > > > +   bool reset;
-> > > > > >   };
-> > > > > >
-> > > > > >   /* Internal representation of a receive virtqueue */
-> > > > > > @@ -279,6 +282,7 @@ struct padded_vnet_hdr {
-> > > > > >   };
-> > > > > >
-> > > > > >   static void virtnet_rq_free_unused_buf(struct virtqueue *vq, =
-void *buf);
-> > > > > > +static void virtnet_sq_free_unused_buf(struct virtqueue *vq, v=
-oid *buf);
-> > > > > >
-> > > > > >   static bool is_xdp_frame(void *ptr)
-> > > > > >   {
-> > > > > > @@ -1603,6 +1607,11 @@ static void virtnet_poll_cleantx(struct =
-receive_queue *rq)
-> > > > > >             return;
-> > > > > >
-> > > > > >     if (__netif_tx_trylock(txq)) {
-> > > > > > +           if (READ_ONCE(sq->reset)) {
-> > > > > > +                   __netif_tx_unlock(txq);
-> > > > > > +                   return;
-> > > > > > +           }
-> > > > > > +
-> > > > > >             do {
-> > > > > >                     virtqueue_disable_cb(sq->vq);
-> > > > > >                     free_old_xmit_skbs(sq, true);
-> > > > > > @@ -1868,6 +1877,45 @@ static int virtnet_rx_resize(struct virt=
-net_info *vi,
-> > > > > >     return err;
-> > > > > >   }
-> > > > > >
-> > > > > > +static int virtnet_tx_resize(struct virtnet_info *vi,
-> > > > > > +                        struct send_queue *sq, u32 ring_num)
-> > > > > > +{
-> > > > > > +   struct netdev_queue *txq;
-> > > > > > +   int err, qindex;
-> > > > > > +
-> > > > > > +   qindex =3D sq - vi->sq;
-> > > > > > +
-> > > > > > +   virtnet_napi_tx_disable(&sq->napi);
-> > > > > > +
-> > > > > > +   txq =3D netdev_get_tx_queue(vi->dev, qindex);
-> > > > > > +
-> > > > > > +   /* 1. wait all ximt complete
-> > > > > > +    * 2. fix the race of netif_stop_subqueue() vs netif_start_=
-subqueue()
-> > > > > > +    */
-> > > > > > +   __netif_tx_lock_bh(txq);
-> > > > > > +
-> > > > > > +   /* Prevent rx poll from accessing sq. */
-> > > > > > +   WRITE_ONCE(sq->reset, true);
-> > > > >
-> > > > >
-> > > > > Can we simply disable RX NAPI here?
-> > > >
-> > > > Disable rx napi is indeed a simple solution. But I hope that when d=
-ealing with
-> > > > tx, it will not affect rx.
-> > >
-> > > Ok, but I think we've already synchronized with tx lock here, isn't i=
-t?
-> >
-> > Yes, do you have any questions about WRITE_ONCE()? There is a set false=
- operation
-> > later, I did not use lock there, so I used WRITE/READ_ONCE
-> > uniformly.
->
-> I mean, since we've already used tx locks somewhere, we'd better use
-> them here as well at least as a start.
+Only msm8996 and msm8998 SLPIs need the RPM_SMD_AGGR2_NOC_CLK
+(as aggre2 clock). None of the other platforms do. Back when the support
+for the mentioned platforms was added to the q6v5 pass driver, the
+devm_clk_get_optional was not available, so the has_aggre2_clk was
+necessary in order to differentiate between plaforms that need this
+clock and those which do not. Now that devm_clk_get_optional is available,
+we can drop the has_aggre2_clk. This makes the adsp_data more cleaner
+and removes the check within adsp_init_clocks.
 
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
 
-OK. next version will fix.
+Changes since v1:
+ * reworded the commit message to explain why this change would make
+   sense, as suggested by Bjorn.
 
-Thanks.
+ drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++-------------------------
+ 1 file changed, 7 insertions(+), 34 deletions(-)
 
-+static int virtnet_tx_resize(struct virtnet_info *vi,
-+			     struct send_queue *sq, u32 ring_num)
-+{
-+	struct netdev_queue *txq;
-+	int err, qindex;
-+
-+	qindex =3D sq - vi->sq;
-+
-+	virtnet_napi_tx_disable(&sq->napi);
-+
-+	txq =3D netdev_get_tx_queue(vi->dev, qindex);
-+
-+	/* 1. wait all ximt complete
-+	 * 2. fix the race of netif_stop_subqueue() vs netif_start_subqueue()
-+	 */
-+	__netif_tx_lock_bh(txq);
-+
-+	sq->reset =3D true;
-+
-+	/* Prevent the upper layer from trying to send packets. */
-+	netif_stop_subqueue(vi->dev, qindex);
-+
-+	__netif_tx_unlock_bh(txq);
-+
-+	err =3D virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_unused_buf);
-+	if (err)
-+		netdev_err(vi->dev, "resize tx fail: tx queue index: %d err: %d\n", qind=
-ex, err);
-+
-+	__netif_tx_lock_bh(txq);
-+	sq->reset =3D false;
-+	netif_tx_wake_queue(txq);
-+	__netif_tx_unlock_bh(txq);
-+
-+	virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
-+	return err;
-+}
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 6ae39c5653b1..beef7a09c380 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -34,7 +34,6 @@ struct adsp_data {
+ 	const char *firmware_name;
+ 	int pas_id;
+ 	unsigned int minidump_id;
+-	bool has_aggre2_clk;
+ 	bool auto_boot;
 
+ 	char **proxy_pd_names;
+@@ -64,7 +63,6 @@ struct qcom_adsp {
+ 	int pas_id;
+ 	unsigned int minidump_id;
+ 	int crash_reason_smem;
+-	bool has_aggre2_clk;
+ 	const char *info_name;
 
->
-> Thanks
->
-> >
-> > Thanks.
-> >
-> > >
-> > > Thanks
-> > >
-> > > >
-> > > > Thanks.
-> > > >
-> > > >
-> > > > >
-> > > > > Thanks
-> > > > >
-> > > > >
-> > > > > > +
-> > > > > > +   /* Prevent the upper layer from trying to send packets. */
-> > > > > > +   netif_stop_subqueue(vi->dev, qindex);
-> > > > > > +
-> > > > > > +   __netif_tx_unlock_bh(txq);
-> > > > > > +
-> > > > > > +   err =3D virtqueue_resize(sq->vq, ring_num, virtnet_sq_free_=
-unused_buf);
-> > > > > > +   if (err)
-> > > > > > +           netdev_err(vi->dev, "resize tx fail: tx queue index=
-: %d err: %d\n", qindex, err);
-> > > > > > +
-> > > > > > +   /* Memory barrier before set reset and start subqueue. */
-> > > > > > +   smp_mb();
-> > > > > > +
-> > > > > > +   WRITE_ONCE(sq->reset, false);
-> > > > > > +   netif_tx_wake_queue(txq);
-> > > > > > +
-> > > > > > +   virtnet_napi_tx_enable(vi, sq->vq, &sq->napi);
-> > > > > > +   return err;
-> > > > > > +}
-> > > > > > +
-> > > > > >   /*
-> > > > > >    * Send command via the control virtqueue and check status.  =
-Commands
-> > > > > >    * supported by the hypervisor, as indicated by feature bits,=
- should
-> > > > >
-> > > >
-> > >
-> >
->
+ 	struct completion start_done;
+@@ -310,15 +308,13 @@ static int adsp_init_clock(struct qcom_adsp *adsp)
+ 		return ret;
+ 	}
+
+-	if (adsp->has_aggre2_clk) {
+-		adsp->aggre2_clk = devm_clk_get(adsp->dev, "aggre2");
+-		if (IS_ERR(adsp->aggre2_clk)) {
+-			ret = PTR_ERR(adsp->aggre2_clk);
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(adsp->dev,
+-					"failed to get aggre2 clock");
+-			return ret;
+-		}
++	adsp->aggre2_clk = devm_clk_get_optional(adsp->dev, "aggre2");
++	if (IS_ERR(adsp->aggre2_clk)) {
++		ret = PTR_ERR(adsp->aggre2_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(adsp->dev,
++				"failed to get aggre2 clock");
++		return ret;
+ 	}
+
+ 	return 0;
+@@ -457,7 +453,6 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->rproc = rproc;
+ 	adsp->minidump_id = desc->minidump_id;
+ 	adsp->pas_id = desc->pas_id;
+-	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+ 	adsp->info_name = desc->sysmon_name;
+ 	platform_set_drvdata(pdev, adsp);
+
+@@ -531,7 +526,6 @@ static const struct adsp_data adsp_resource_init = {
+ 		.crash_reason_smem = 423,
+ 		.firmware_name = "adsp.mdt",
+ 		.pas_id = 1,
+-		.has_aggre2_clk = false,
+ 		.auto_boot = true,
+ 		.ssr_name = "lpass",
+ 		.sysmon_name = "adsp",
+@@ -542,7 +536,6 @@ static const struct adsp_data sdm845_adsp_resource_init = {
+ 		.crash_reason_smem = 423,
+ 		.firmware_name = "adsp.mdt",
+ 		.pas_id = 1,
+-		.has_aggre2_clk = false,
+ 		.auto_boot = true,
+ 		.load_state = "adsp",
+ 		.ssr_name = "lpass",
+@@ -554,7 +547,6 @@ static const struct adsp_data sm6350_adsp_resource = {
+ 	.crash_reason_smem = 423,
+ 	.firmware_name = "adsp.mdt",
+ 	.pas_id = 1,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+@@ -571,7 +563,6 @@ static const struct adsp_data sm8150_adsp_resource = {
+ 		.crash_reason_smem = 423,
+ 		.firmware_name = "adsp.mdt",
+ 		.pas_id = 1,
+-		.has_aggre2_clk = false,
+ 		.auto_boot = true,
+ 		.proxy_pd_names = (char*[]){
+ 			"cx",
+@@ -587,7 +578,6 @@ static const struct adsp_data sm8250_adsp_resource = {
+ 	.crash_reason_smem = 423,
+ 	.firmware_name = "adsp.mdt",
+ 	.pas_id = 1,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+@@ -604,7 +594,6 @@ static const struct adsp_data sm8350_adsp_resource = {
+ 	.crash_reason_smem = 423,
+ 	.firmware_name = "adsp.mdt",
+ 	.pas_id = 1,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+@@ -621,7 +610,6 @@ static const struct adsp_data msm8996_adsp_resource = {
+ 		.crash_reason_smem = 423,
+ 		.firmware_name = "adsp.mdt",
+ 		.pas_id = 1,
+-		.has_aggre2_clk = false,
+ 		.auto_boot = true,
+ 		.proxy_pd_names = (char*[]){
+ 			"cx",
+@@ -636,7 +624,6 @@ static const struct adsp_data cdsp_resource_init = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.ssr_name = "cdsp",
+ 	.sysmon_name = "cdsp",
+@@ -647,7 +634,6 @@ static const struct adsp_data sdm845_cdsp_resource_init = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.load_state = "cdsp",
+ 	.ssr_name = "cdsp",
+@@ -659,7 +645,6 @@ static const struct adsp_data sm6350_cdsp_resource = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+@@ -676,7 +661,6 @@ static const struct adsp_data sm8150_cdsp_resource = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+@@ -692,7 +676,6 @@ static const struct adsp_data sm8250_cdsp_resource = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+@@ -708,7 +691,6 @@ static const struct adsp_data sc8280xp_nsp0_resource = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"nsp",
+@@ -723,7 +705,6 @@ static const struct adsp_data sc8280xp_nsp1_resource = {
+ 	.crash_reason_smem = 633,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 30,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"nsp",
+@@ -738,7 +719,6 @@ static const struct adsp_data sm8350_cdsp_resource = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+ 	.pas_id = 18,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+@@ -756,7 +736,6 @@ static const struct adsp_data mpss_resource_init = {
+ 	.firmware_name = "modem.mdt",
+ 	.pas_id = 4,
+ 	.minidump_id = 3,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+@@ -773,7 +752,6 @@ static const struct adsp_data sc8180x_mpss_resource = {
+ 	.crash_reason_smem = 421,
+ 	.firmware_name = "modem.mdt",
+ 	.pas_id = 4,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = false,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+@@ -789,7 +767,6 @@ static const struct adsp_data slpi_resource_init = {
+ 		.crash_reason_smem = 424,
+ 		.firmware_name = "slpi.mdt",
+ 		.pas_id = 12,
+-		.has_aggre2_clk = true,
+ 		.auto_boot = true,
+ 		.proxy_pd_names = (char*[]){
+ 			"ssc_cx",
+@@ -804,7 +781,6 @@ static const struct adsp_data sm8150_slpi_resource = {
+ 		.crash_reason_smem = 424,
+ 		.firmware_name = "slpi.mdt",
+ 		.pas_id = 12,
+-		.has_aggre2_clk = false,
+ 		.auto_boot = true,
+ 		.proxy_pd_names = (char*[]){
+ 			"lcx",
+@@ -821,7 +797,6 @@ static const struct adsp_data sm8250_slpi_resource = {
+ 	.crash_reason_smem = 424,
+ 	.firmware_name = "slpi.mdt",
+ 	.pas_id = 12,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+@@ -838,7 +813,6 @@ static const struct adsp_data sm8350_slpi_resource = {
+ 	.crash_reason_smem = 424,
+ 	.firmware_name = "slpi.mdt",
+ 	.pas_id = 12,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"lcx",
+@@ -865,7 +839,6 @@ static const struct adsp_data sdx55_mpss_resource = {
+ 	.crash_reason_smem = 421,
+ 	.firmware_name = "modem.mdt",
+ 	.pas_id = 4,
+-	.has_aggre2_clk = false,
+ 	.auto_boot = true,
+ 	.proxy_pd_names = (char*[]){
+ 		"cx",
+--
+2.34.3
+
