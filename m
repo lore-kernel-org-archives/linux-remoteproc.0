@@ -2,251 +2,122 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 822BAC433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 14:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A657C43334
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 16:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235707AbiGROFv (ORCPT
+        id S233739AbiGRQyp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 10:05:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33088 "EHLO
+        Mon, 18 Jul 2022 12:54:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235257AbiGROFu (ORCPT
+        with ESMTP id S233725AbiGRQyo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Jul 2022 10:05:50 -0400
-Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B34A3DF2A;
-        Mon, 18 Jul 2022 07:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Xs7wzf2rdkIl6A79wivxfhKpQiSvS3qbi/7VpAMI+GM=; b=A+1D2R3BsYvLCh1qriPVhfKLw2
-        O9TvzgNHKn7j40ew1cjUhqZ1L1zcPV5i3d9ZfoM5Cu+B3SGCq2rSGvIPZD942u5u0ep8jIZeYvZ9K
-        vqm/hKDTXGr4sC4TaMxmYPgL216XBgzZD3L+PxGNB4lZgy8Y0BkPJqFqc27imCfKAILvwGBgJqABn
-        96KyZjfu0U0Qy5+zNdMO12UhyOsqladVEfYJ18PJsHhyjAIaSwhmh49MgXypWRLYLjQAaevIxV4MD
-        x4a7ugrMlJSPRhm+3bhPTi0BRK2/o6le7Zw4N1NbXMFTQsDviuJriAGg56HKvisekZrcZ0gRkUcEI
-        n+4YP+8w==;
-Received: from [10.22.3.24] (helo=kernkonzept.com)
-        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
-        id 1oDRNV-008iC6-Ic; Mon, 18 Jul 2022 16:05:41 +0200
-From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Subject: [PATCH v2 5/5] remoteproc: qcom_q6v5_mss: Add support for MSM8909
-Date:   Mon, 18 Jul 2022 16:03:44 +0200
-Message-Id: <20220718140344.1831731-6-stephan.gerhold@kernkonzept.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com>
-References: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com>
+        Mon, 18 Jul 2022 12:54:44 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40488286D6
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 09:54:43 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id w12so16114379edd.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 09:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gfpNnbv9YOemTBAvBMvhdh6XDEmFRn+jVc5Sgvldw+c=;
+        b=YIUJz0+n5d+MRgeE8Kggy7XaBMiqg9MnEjo0j7YMzPJYtH+Alg1O4ymKE42Z3IKh8q
+         CxHTP8fHRuyW1dviJIgkn/4suGtCaaNT3qo/CGesBmoKK3PSiBlk6RHX+n/t+kUoiPoT
+         k0G+McbVBQ+YkIJdowKGhQWEFRIb15jfHhgAWgGXCVhS1G3UHIQ1FKnl7kIeBbfnl8+m
+         A3K6w2y+CDIvDFweCJJ+9bvBReSF6l/TYXyO2YTlCVXiNKFhO2QQ5k7JhpSnnNChCq0O
+         qL7v5XVPRwIu3iiveTk2YtcapolY9zaZDcb/3ocmub/aF/+BYBFSyUHuyL1PsrMFjn3r
+         B2pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gfpNnbv9YOemTBAvBMvhdh6XDEmFRn+jVc5Sgvldw+c=;
+        b=cApUhVcUteBj+tKod5KGp/pxaQHnnH0an13Qu4jtTaiWU18Ivm7NxIkSGbLZjpZXNA
+         vOQuG3d4mCZP0rp2ZvYpsmeLXn1g/JlfBxfXaWgq7y7BomVl4nBJWo3zRDhqFFcvBT5r
+         2Rnu839TR1fB0pGxrd98i0FIAIsZ1naI6HjLq8Yww0whlUaEeoPZgJTQ7+EddTN7wXEf
+         GouZ+/VdAqd83297VSUjMsMyH4hqtkzzYCNNOV0pppU4NQZjNFr9uGTXBWSRpB/p9wit
+         Z6VKZoWmRIc30RoJAAq3xrFSK/yFt01rmdjGyCGVawBCwkkXoZR7TUsmmQuNcjl9xMZi
+         8ZOg==
+X-Gm-Message-State: AJIora+ugEDxFNdh//yzi8evOYrZrGPe37p1IskdQ9XbXj7eViNVM4Tk
+        /VwlfhfaXo0peTZOaoMLbIjN/+a3eAraSg5AoaSQjg==
+X-Google-Smtp-Source: AGRyM1uuQTfolK7IZXwrLw43B2IEgqnbRr3TMqufL5pVAuJ8GJwGEAlIsCHfQBLshR8K/V80YP6eU5UeCGY9Oho6mXg=
+X-Received: by 2002:a05:6402:35cf:b0:43a:d139:ea2b with SMTP id
+ z15-20020a05640235cf00b0043ad139ea2bmr38300885edc.415.1658163281692; Mon, 18
+ Jul 2022 09:54:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com> <0eaabd6c-07bd-eb83-da9d-6195b350bc9a@foss.st.com>
+In-Reply-To: <0eaabd6c-07bd-eb83-da9d-6195b350bc9a@foss.st.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 18 Jul 2022 10:54:30 -0600
+Message-ID: <CANLsYkxBZ+4its5sUPJExnenU8dgttcUwdsBApwC_nYMLmsmHg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Introduction of rpmsg_rx_done
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Chris Lew <quic_clew@quicinc.com>, bjorn.andersson@linaro.org,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Port the initialization sequence necessary for booting the modem remote
-processor on the MSM8909 SoC from Qualcomm's msm-3.10 release [1].
-The sequence is actually similar to the existing one for MSM8996 and
-MSM8998 except that there is no separate QDSP6SS_MEM_PWR_CTL register
-and most of the "memories" are enabled at once instead of sequentially.
+On Mon, 18 Jul 2022 at 02:26, Arnaud POULIQUEN
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+> Hello Chris,
+>
+> On 6/8/22 03:16, Chris Lew wrote:
+> > This series proposes an implementation for the rpmsg framework to do
+> > deferred cleanup of buffers provided in the rx callback. The current
+> > implementation assumes that the client is done with the buffer after
+> > returning from the rx callback.
+> >
+> > In some cases where the data size is large, the client may want to
+> > avoid copying the data in the rx callback for later processing. This
+> > series proposes two new facilities for signaling that they want to
+> > hold on to a buffer after the rx callback.
+> > They are:
+> >  - New API rpmsg_rx_done() to tell the rpmsg framework the client is
+> >    done with the buffer
+> >  - New return codes for the rx callback to signal that the client will
+> >    hold onto a buffer and later call rpmsg_rx_done()
+> >
+> > This series implements the qcom_glink_native backend for these new
+> > facilities.
+>
+> The API you proposed seems to me quite smart and adaptable to the rpmsg
+> virtio backend.
+>
+> My main concern is about the release of the buffer when the endpoint
+> is destroyed.
+>
+> Does the buffer release should be handled by each services or by the
+> core?
+>
+> I wonder if the buffer list could be managed by the core part by adding
+> the list in the rpmsg_endpoint structure. On destroy the core could call
+> the rx_done for each remaining buffers in list...
+>
+> I let Bjorn and Mathieu advise on this...
 
-To reuse the existing code just insert some if statements where needed
-and add a configuration similar to the one from MSM8916.
+Thanks for taking a look Arnaud.  I'll get to this sortly.
 
-[1]: https://git.codelinaro.org/clo/la/kernel/msm-3.10/-/commit/56dcedc8dac8abff6b007f76a29430b2d0a44704
-
-Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
----
-Changes in v2: None.
----
- drivers/remoteproc/qcom_q6v5_mss.c | 123 +++++++++++++++++++++--------
- 1 file changed, 90 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index af217de75e4d..31f561619b19 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -110,6 +110,9 @@
- #define QDSS_BHS_ON			BIT(21)
- #define QDSS_LDO_BYP			BIT(22)
- 
-+/* QDSP6v55 parameters */
-+#define QDSP6V55_MEM_BITS		GENMASK(16, 8)
-+
- /* QDSP6v56 parameters */
- #define QDSP6v56_LDO_BYP		BIT(25)
- #define QDSP6v56_BHS_ON		BIT(24)
-@@ -233,6 +236,7 @@ struct q6v5 {
- };
- 
- enum {
-+	MSS_MSM8909,
- 	MSS_MSM8916,
- 	MSS_MSM8974,
- 	MSS_MSM8996,
-@@ -686,13 +690,14 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 			return ret;
- 		}
- 		goto pbl_wait;
--	} else if (qproc->version == MSS_MSM8996 ||
-+	} else if (qproc->version == MSS_MSM8909 ||
-+		   qproc->version == MSS_MSM8996 ||
- 		   qproc->version == MSS_MSM8998) {
--		int mem_pwr_ctl;
- 
--		/* Override the ACC value if required */
--		writel(QDSP6SS_ACC_OVERRIDE_VAL,
--		       qproc->reg_base + QDSP6SS_STRAP_ACC);
-+		if (qproc->version != MSS_MSM8909)
-+			/* Override the ACC value if required */
-+			writel(QDSP6SS_ACC_OVERRIDE_VAL,
-+			       qproc->reg_base + QDSP6SS_STRAP_ACC);
- 
- 		/* Assert resets, stop core */
- 		val = readl(qproc->reg_base + QDSP6SS_RESET_REG);
-@@ -724,36 +729,53 @@ static int q6v5proc_reset(struct q6v5 *qproc)
- 		val |= QDSP6v56_LDO_BYP;
- 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 
--		/* Deassert QDSP6 compiler memory clamp */
--		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--		val &= ~QDSP6v56_CLAMP_QMC_MEM;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--
--		/* Deassert memory peripheral sleep and L2 memory standby */
--		val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
--		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
--
--		/* Turn on L1, L2, ETB and JU memories 1 at a time */
--		if (qproc->version == MSS_MSM8996) {
--			mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
--			i = 19;
-+		if (qproc->version != MSS_MSM8909) {
-+			int mem_pwr_ctl;
-+
-+			/* Deassert QDSP6 compiler memory clamp */
-+			val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+			val &= ~QDSP6v56_CLAMP_QMC_MEM;
-+			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+			/* Deassert memory peripheral sleep and L2 memory standby */
-+			val |= Q6SS_L2DATA_STBY_N | Q6SS_SLP_RET_N;
-+			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+			/* Turn on L1, L2, ETB and JU memories 1 at a time */
-+			if (qproc->version == MSS_MSM8996) {
-+				mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
-+				i = 19;
-+			} else {
-+				/* MSS_MSM8998 */
-+				mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
-+				i = 28;
-+			}
-+			val = readl(qproc->reg_base + mem_pwr_ctl);
-+			for (; i >= 0; i--) {
-+				val |= BIT(i);
-+				writel(val, qproc->reg_base + mem_pwr_ctl);
-+				/*
-+				 * Read back value to ensure the write is done then
-+				 * wait for 1us for both memory peripheral and data
-+				 * array to turn on.
-+				 */
-+				val |= readl(qproc->reg_base + mem_pwr_ctl);
-+				udelay(1);
-+			}
- 		} else {
--			/* MSS_MSM8998 */
--			mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
--			i = 28;
--		}
--		val = readl(qproc->reg_base + mem_pwr_ctl);
--		for (; i >= 0; i--) {
--			val |= BIT(i);
--			writel(val, qproc->reg_base + mem_pwr_ctl);
--			/*
--			 * Read back value to ensure the write is done then
--			 * wait for 1us for both memory peripheral and data
--			 * array to turn on.
--			 */
--			val |= readl(qproc->reg_base + mem_pwr_ctl);
--			udelay(1);
-+			/* Turn on memories */
-+			val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+			val |= Q6SS_SLP_RET_N | Q6SS_L2DATA_STBY_N |
-+			       Q6SS_ETB_SLP_NRET_N | QDSP6V55_MEM_BITS;
-+			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+
-+			/* Turn on L2 banks 1 at a time */
-+			for (i = 0; i <= 7; i++) {
-+				val |= BIT(i);
-+				writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
-+			}
- 		}
-+
- 		/* Remove word line clamp */
- 		val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
- 		val &= ~QDSP6v56_CLAMP_WL;
-@@ -2198,6 +2220,40 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 	.version = MSS_MSM8996,
- };
- 
-+static const struct rproc_hexagon_res msm8909_mss = {
-+	.hexagon_mba_image = "mba.mbn",
-+	.proxy_supply = (struct qcom_mss_reg_res[]) {
-+		{
-+			.supply = "pll",
-+			.uA = 100000,
-+		},
-+		{}
-+	},
-+	.proxy_clk_names = (char*[]){
-+		"xo",
-+		NULL
-+	},
-+	.active_clk_names = (char*[]){
-+		"iface",
-+		"bus",
-+		"mem",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"mx",
-+		"cx",
-+		NULL
-+	},
-+	.need_mem_protection = false,
-+	.has_alt_reset = false,
-+	.has_mba_logs = false,
-+	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
-+	.version = MSS_MSM8909,
-+};
-+
- static const struct rproc_hexagon_res msm8916_mss = {
- 	.hexagon_mba_image = "mba.mbn",
- 	.proxy_supply = (struct qcom_mss_reg_res[]) {
-@@ -2298,6 +2354,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 
- static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
-+	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
- 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
- 	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
--- 
-2.30.2
-
+>
+> Thanks,
+> Arnaud
+>
+> >
+> > Chris Lew (4):
+> >   rpmsg: core: Add rx done hooks
+> >   rpmsg: char: Add support to use rpmsg_rx_done
+> >   rpmsg: glink: Try to send rx done in irq
+> >   rpmsg: glink: Add support for rpmsg_rx_done
+> >
+> >  drivers/rpmsg/qcom_glink_native.c | 112 ++++++++++++++++++++++++++++++--------
+> >  drivers/rpmsg/rpmsg_char.c        |  50 ++++++++++++++++-
+> >  drivers/rpmsg/rpmsg_core.c        |  20 +++++++
+> >  drivers/rpmsg/rpmsg_internal.h    |   1 +
+> >  include/linux/rpmsg.h             |  24 ++++++++
+> >  5 files changed, 183 insertions(+), 24 deletions(-)
+> >
