@@ -2,217 +2,213 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8331C43334
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 08:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A30CCA479
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 08:56:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233241AbiGRIcI (ORCPT
+        id S233628AbiGRI4r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 04:32:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39028 "EHLO
+        Mon, 18 Jul 2022 04:56:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbiGRIcH (ORCPT
+        with ESMTP id S233407AbiGRI4m (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Jul 2022 04:32:07 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 028DB19019;
-        Mon, 18 Jul 2022 01:32:05 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26I7VBb2032736;
-        Mon, 18 Jul 2022 10:31:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=+abmPYEQnU9+JlxUCqaWwS+GUJzoT8ValDRBagPFZmg=;
- b=R/D/pwpF/AZnDo1sRn+dRsDXD+enCHMXRONKwvYORIQ1oqxqox64lC6WNvX7y+J98hTQ
- l5ls3wb+4NEeeKUgH84faLGRe57U20drXuJdzXVx6ypujUaxepOKquWVIiUKLUqAqLGE
- rVjL/noW6D8Q8g14EP0wbpF6zkhLnQpKyGIN8XuVtshyn+QmGkcICrDcf11ruBJ9gOfA
- wwzcyGXGlvntu1GiQSH7mpbLfYY2y8L5OBLagxn4F0bdr7dn/SfDHxWlciuewl6sfbHu
- CO4xb3o1j5TLV0Dw6W6TIBM/lN++3KxfW4mPVUOmo+Pt+GyPbzMq2zuMUXmqy8Crvrxt vg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3hbnp5qw9d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 18 Jul 2022 10:31:59 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E5F8B10002A;
-        Mon, 18 Jul 2022 10:31:57 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E11E52138D7;
-        Mon, 18 Jul 2022 10:31:57 +0200 (CEST)
-Received: from [10.252.21.88] (10.75.127.47) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Mon, 18 Jul
- 2022 10:31:56 +0200
-Message-ID: <9a81c387-2b27-1227-ceb7-0da2d865f42d@foss.st.com>
-Date:   Mon, 18 Jul 2022 10:31:55 +0200
+        Mon, 18 Jul 2022 04:56:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4BCB9AE4F
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 01:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1658134600;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OWEVZ0lWemvnjJGr1KMJVEu33/f4lcOHck1LBmLT0x4=;
+        b=UFKCqPMRqlKU6maki4i505+1YW6HkM2/VaCogKPkgZEmtclhYMBnjg+D/789Dbd78bti6F
+        3ixntv7KHAv2Ovn3V9Odf0lfWyZyRoRfGkeGzEneQQr9RM89zVJYQg+JT/DfD9bwB1sXg9
+        PHagmXqDR8LCzoDfj8GrPx+CcQigRdE=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-453-LO1W0Df_NUWPGK5WjeyXsw-1; Mon, 18 Jul 2022 04:56:37 -0400
+X-MC-Unique: LO1W0Df_NUWPGK5WjeyXsw-1
+Received: by mail-lf1-f69.google.com with SMTP id w8-20020a197b08000000b00489e72a3025so4021157lfc.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 01:56:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OWEVZ0lWemvnjJGr1KMJVEu33/f4lcOHck1LBmLT0x4=;
+        b=wW/VWE98v67qCCbqoPg/Kc7Cyw8gZsCyeP8n4J4zsIP9dnn1XjnJ45E1RhemiMyt/q
+         iPS4hYY+roYNZHy2h23ZS+2C75NI+aLM2lm5FOTfzpOBOGiX9wSlqAaQhcWOb0x2mhAg
+         raa+ltZ3PcD/WeUaNqZTWV5oEjNrRBHbqPxPr33cLIhtiZTW4b0vzSkRQy22+QdnhVH+
+         UdaFAbS1pY6nk5o1qINgCtDX2K2ez64axM8ZceoFMbXrwWkCanRU/9gFZpYHRlSBIBIX
+         9O739zyVjj6+y+AqErxJKDz3WRgyCRmXvlapK5slAgeILaiOxIs/DXUs5tMoe3PZgG2i
+         VN2A==
+X-Gm-Message-State: AJIora/aY5S5gfw+YJHL6qNerIBi0Ut0ZZ02E4Mm9qzyGcwP1e8ZvvAE
+        yXLShl1D9JT/8Kibe2vfcSIVGS1m7kYn+TxjtJNlGQuCWWC4y8bytwt4Q7uD1FS66hGNTSXd8iL
+        SA4fbdrZB23RZZw2ek2pu8k+gXV506jf2yHD2I/tIXStosg==
+X-Received: by 2002:ac2:4c4c:0:b0:489:fe2c:c877 with SMTP id o12-20020ac24c4c000000b00489fe2cc877mr15771585lfk.238.1658134595388;
+        Mon, 18 Jul 2022 01:56:35 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1uT17stmgD/4/ICa/9NkCqW44+T43NZzTbYZlFnn5f6GksCmVOwfYnKSj/DtJ2DugQNpv1qMO4BpXj9dv3Brrw=
+X-Received: by 2002:ac2:4c4c:0:b0:489:fe2c:c877 with SMTP id
+ o12-20020ac24c4c000000b00489fe2cc877mr15771561lfk.238.1658134595164; Mon, 18
+ Jul 2022 01:56:35 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH 1/4] rpmsg: core: Add rx done hooks
-Content-Language: en-US
-To:     Chris Lew <quic_clew@quicinc.com>, <bjorn.andersson@linaro.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
- <1654651005-15475-2-git-send-email-quic_clew@quicinc.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <1654651005-15475-2-git-send-email-quic_clew@quicinc.com>
+References: <20220629065656.54420-1-xuanzhuo@linux.alibaba.com>
+ <20220629065656.54420-39-xuanzhuo@linux.alibaba.com> <c0747cbc-685b-85a9-1931-0124124755f2@redhat.com>
+ <1656986375.3420787-1-xuanzhuo@linux.alibaba.com> <CACGkMEu80KP-ULz_CBvauRk_3XsCubMkkWv0uLnbt-wib5KOnA@mail.gmail.com>
+ <1657874178.9766078-2-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1657874178.9766078-2-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Mon, 18 Jul 2022 16:56:24 +0800
+Message-ID: <CACGkMEtF5NSXh-=nnsniLqy0pX2Tpyh413S5Bu5vZ6h=d+aHTA@mail.gmail.com>
+Subject: Re: [PATCH v11 38/40] virtio_net: support rx queue resize
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        kangjie.xu@linux.alibaba.com,
+        virtualization <virtualization@lists.linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-18_04,2022-07-15_01,2022-06-22_01
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Fri, Jul 15, 2022 at 4:37 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrot=
+e:
+>
+> On Fri, 8 Jul 2022 14:20:52 +0800, Jason Wang <jasowang@redhat.com> wrote=
+:
+> > On Tue, Jul 5, 2022 at 10:00 AM Xuan Zhuo <xuanzhuo@linux.alibaba.com> =
+wrote:
+> > >
+> > > On Mon, 4 Jul 2022 11:44:12 +0800, Jason Wang <jasowang@redhat.com> w=
+rote:
+> > > >
+> > > > =E5=9C=A8 2022/6/29 14:56, Xuan Zhuo =E5=86=99=E9=81=93:
+> > > > > This patch implements the resize function of the rx queues.
+> > > > > Based on this function, it is possible to modify the ring num of =
+the
+> > > > > queue.
+> > > > >
+> > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > > > ---
+> > > > >   drivers/net/virtio_net.c | 22 ++++++++++++++++++++++
+> > > > >   1 file changed, 22 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > > > > index 9fe222a3663a..6ab16fd193e5 100644
+> > > > > --- a/drivers/net/virtio_net.c
+> > > > > +++ b/drivers/net/virtio_net.c
+> > > > > @@ -278,6 +278,8 @@ struct padded_vnet_hdr {
+> > > > >     char padding[12];
+> > > > >   };
+> > > > >
+> > > > > +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, voi=
+d *buf);
+> > > > > +
+> > > > >   static bool is_xdp_frame(void *ptr)
+> > > > >   {
+> > > > >     return (unsigned long)ptr & VIRTIO_XDP_FLAG;
+> > > > > @@ -1846,6 +1848,26 @@ static netdev_tx_t start_xmit(struct sk_bu=
+ff *skb, struct net_device *dev)
+> > > > >     return NETDEV_TX_OK;
+> > > > >   }
+> > > > >
+> > > > > +static int virtnet_rx_resize(struct virtnet_info *vi,
+> > > > > +                        struct receive_queue *rq, u32 ring_num)
+> > > > > +{
+> > > > > +   int err, qindex;
+> > > > > +
+> > > > > +   qindex =3D rq - vi->rq;
+> > > > > +
+> > > > > +   napi_disable(&rq->napi);
+> > > >
+> > > >
+> > > > Do we need to cancel the refill work here?
+> > >
+> > >
+> > > I think no, napi_disable is mutually exclusive, which ensures that th=
+ere will be
+> > > no conflicts between them.
+> >
+> > So this sounds similar to what I've fixed recently.
+> >
+> > 1) NAPI schedule delayed work.
+> > 2) we disable NAPI here
+> > 3) delayed work get schedule and call NAPI again
+> >
+> > ?
+>
+> Yes, but I don't think there are any negative effects.
 
+An infinite wait on the napi_disable()?
 
-On 6/8/22 03:16, Chris Lew wrote:
-> In order to reduce the amount of copies in the rpmsg framework, it is
-> necessary for clients to take brief ownership of the receive buffer.
-> 
-> Add the capability for clients to notify the rpmsg framework and the
-> underlying transports when it is going to hold onto a buffer and also
-> notify when the client is done with the buffer.
-> 
-> In the .rx_cb of the rpmsg drivers, if they wish to use the received
-> buffer at a later point, they should return RPMSG_DEFER. Otherwise
-> returning RPMSG_HANDLED (0) will signal the framework that the client
-> is done with the resources and can continue with cleanup.
-> 
-> The clients should check if their rpmsg endpoint supports the rx_done
-> operation with the new state variable in the rpmsg_endpoint since not
-> all endpoints will have the ability to support this operation.
-> 
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-> ---
->  drivers/rpmsg/rpmsg_core.c     | 20 ++++++++++++++++++++
->  drivers/rpmsg/rpmsg_internal.h |  1 +
->  include/linux/rpmsg.h          | 24 ++++++++++++++++++++++++
->  3 files changed, 45 insertions(+)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index 290c1f02da10..359be643060f 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -351,6 +351,26 @@ ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->  }
->  EXPORT_SYMBOL(rpmsg_get_mtu);
->  
-> +/**
-> + * rpmsg_rx_done() - release resources related to @data from a @rx_cb
-> + * @ept:	the rpmsg endpoint
-> + * @data:	payload from a message
-> + *
-> + * Returns 0 on success and an appropriate error value on failure.
-> + */
-> +int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data)
-> +{
-> +	if (WARN_ON(!ept))
-> +		return -EINVAL;
-> +	if (!ept->ops->rx_done)
-> +		return -ENXIO;
-> +	if (!ept->rx_done)
-> +		return -EINVAL;
-> +
-> +	return ept->ops->rx_done(ept, data);
-> +}
-> +EXPORT_SYMBOL(rpmsg_rx_done);
-> +
->  /*
->   * match a rpmsg channel with a channel info struct.
->   * this is used to make sure we're not creating rpmsg devices for channels
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index a22cd4abe7d1..99cb86ce638e 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -76,6 +76,7 @@ struct rpmsg_endpoint_ops {
->  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
->  			     poll_table *wait);
->  	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
-> +	int (*rx_done)(struct rpmsg_endpoint *ept, void *data);
->  };
->  
->  struct device *rpmsg_find_device(struct device *parent,
-> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> index 523c98b96cb4..8e34222e8bca 100644
-> --- a/include/linux/rpmsg.h
-> +++ b/include/linux/rpmsg.h
-> @@ -63,6 +63,18 @@ struct rpmsg_device {
->  	const struct rpmsg_device_ops *ops;
->  };
->  
-> +/**
-> + * rpmsg rx callback return definitions
-> + * @RPMSG_HANDLED: rpmsg user is done processing data, framework can free the
-> + *                 resources related to the buffer
-> + * @RPMSG_DEFER:   rpmsg user is not done processing data, framework will hold
-> + *                 onto resources related to the buffer until rpmsg_rx_done is
-> + *                 called. User should check their endpoint to see if rx_done
-> + *                 is a supported operation.
-> + */
-> +#define RPMSG_HANDLED	0
-> +#define RPMSG_DEFER	1
+Thanks
 
-DEFER or HOLD?
-In both case, would be nice to update the up-streamed RPMSG service
-devices to reflect this update, even if the compatibility is preserved.
+>
+> Thanks.
+>
+> >
+> > Thanks
+> >
+> > >
+> > > Thanks.
+> > >
+> > > >
+> > > > Thanks
+> > > >
+> > > >
+> > > > > +
+> > > > > +   err =3D virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_un=
+used_buf);
+> > > > > +   if (err)
+> > > > > +           netdev_err(vi->dev, "resize rx fail: rx queue index: =
+%d err: %d\n", qindex, err);
+> > > > > +
+> > > > > +   if (!try_fill_recv(vi, rq, GFP_KERNEL))
+> > > > > +           schedule_delayed_work(&vi->refill, 0);
+> > > > > +
+> > > > > +   virtnet_napi_enable(rq->vq, &rq->napi);
+> > > > > +   return err;
+> > > > > +}
+> > > > > +
+> > > > >   /*
+> > > > >    * Send command via the control virtqueue and check status.  Co=
+mmands
+> > > > >    * supported by the hypervisor, as indicated by feature bits, s=
+hould
+> > > >
+> > >
+> >
+>
 
-> +
->  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
->  
->  /**
-> @@ -71,6 +83,7 @@ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
->   * @refcount: when this drops to zero, the ept is deallocated
->   * @cb: rx callback handler
->   * @cb_lock: must be taken before accessing/changing @cb
-> + * @rx_done: if set, rpmsg endpoint supports rpmsg_rx_done
-
-Same: done or hold?
-
-Perhaps a bitmap here would be better for future.
-I guess that similar feature could be requested for TX...
-
-Regards,
-Arnaud
-
-
->   * @addr: local rpmsg address
->   * @priv: private data for the driver's use
->   *
-> @@ -93,6 +106,7 @@ struct rpmsg_endpoint {
->  	struct kref refcount;
->  	rpmsg_rx_cb_t cb;
->  	struct mutex cb_lock;
-> +	bool rx_done;
->  	u32 addr;
->  	void *priv;
->  
-> @@ -192,6 +206,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->  
->  ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
->  
-> +int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data);
-> +
->  #else
->  
->  static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
-> @@ -316,6 +332,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->  	return -ENXIO;
->  }
->  
-> +static inline int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data)
-> +{
-> +	/* This shouldn't be possible */
-> +	WARN_ON(1);
-> +
-> +	return -ENXIO;
-> +}
-> +
->  #endif /* IS_ENABLED(CONFIG_RPMSG) */
->  
->  /* use a macro to avoid include chaining to get THIS_MODULE */
