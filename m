@@ -2,64 +2,64 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C473BCCA487
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 22:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A34C43334
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 22:59:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234558AbiGRW70 (ORCPT
+        id S236132AbiGRW7a (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 18:59:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55232 "EHLO
+        Mon, 18 Jul 2022 18:59:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236266AbiGRW7X (ORCPT
+        with ESMTP id S236295AbiGRW7Y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Jul 2022 18:59:23 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE18C2AE15
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 15:59:22 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-10c0430e27dso27907337fac.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 15:59:22 -0700 (PDT)
+        Mon, 18 Jul 2022 18:59:24 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51782AE13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 15:59:23 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id r22-20020a056830419600b0061c6edc5dcfso10437149otu.12
+        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 15:59:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SxxNZtcVY0b8c3g8HahpgL2HEMB3NUWSQPhANcfFpcw=;
-        b=qScpjRmbKjILEK47SQVCEsWqBHMsmQf4XSp/wuZVwOsMjUVKZdEkrGbXnnuy1EERXk
-         sMPMCbWDEOWxGcqU88TEWa+qxEDKsNPfuTMHcNXlBvjKQOiYPvG+qZqgnmaNB1Bgq9Bh
-         KObNSdP235mb+8JgL9uU8PlOnMtbcppuB59vDaPWvCrcSdwo4xpuRPnE111wkKJD3spR
-         krwTD3vVI3ZXvcbcyZIP/E3FMlmCs8eYUtW1ecKGOYoxDFM58AsADBbWLhqBjbRsI7DM
-         HxEm79xV3zcUFoLqqP+YdgGjv4TUrki0UqB1FHeG58cVQ+/7b6TZX3W082eCJ24K5eo7
-         19wg==
+        bh=4kHud9mlsoAsSPgQFpekRiycMvMxnpzh8md2ULHRH8M=;
+        b=UoduGzpJcG+vgnNJXPprCMScMu3l2jZnTBwG0iq8IbcBEIea2YU6fpLPi/8MLwxf9P
+         ESjapwV36k/9ZVu0E9DFYUIIrywdE4t4IE6SP9nZZ3xbCKApAIOe9hgitBR7OkJg3Wik
+         BBUgZ6Q00ew6MdG4y+L3iERKx+YnNABaDvfXfDV2S1jtn2ZLaoF9ROsEp8wQ7IqDrQNn
+         c/Y1jwrj9QSdkhCyL2c8m2eiemm7ptCDvDxg6GMwfXzeyMYhZkDZbaBmq5D1GgO41iY8
+         OSeuAZVzSvZwFp6rcLHtYNfD1qtyCY75gyVKnXuA+pxrzaZ5HlXRrXqQB0yVTi3poTiO
+         au+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SxxNZtcVY0b8c3g8HahpgL2HEMB3NUWSQPhANcfFpcw=;
-        b=TamtrSVRmHEIY5subxcomRoR/N0sEC1rh+FaSH5XWeCN+PzV7pPz2FeTqAP0x0EhHp
-         9KxaMI0nwATubTgtNoaSy9fcwR++Aj5BB0bYMAgr+7KmbVl+7lgcGMGkx8YUhi6B7FYC
-         4viQ1uJtwj9Ph4Oc6rdUXKzUkLQsUVntXO4ZI3gfNuuHbloobgf0cD9aSWHRFFvbhqzN
-         7166ql322GLoQlQ/lWfv0riuTN7tjxivhj7G8E8O6VdIFqCHFKYGOFu5Sy7h0rL+OVv4
-         Djyr3INArvTtrP5+6/3HBE9h3uYbhcwW8B3ihtZu7bgCKy8J4BXp7ZrPQK6epDSxXHOc
-         0+SQ==
-X-Gm-Message-State: AJIora8p9iQ8xqNJXSBz1Q3Uu6trjByM+HRVP7tSTrMTam5i+DEZSuE/
-        DXGG5SBMnRMZSzWgoUoIXr75rQ==
-X-Google-Smtp-Source: AGRyM1uUem0OHxS57H5plPJD3mJfyUDxFeH0fZJvpLkK8OAg1T7jiG4WLJcodw+wDF2EctA/YJq1Wg==
-X-Received: by 2002:a05:6870:a110:b0:10c:2d87:9dad with SMTP id m16-20020a056870a11000b0010c2d879dadmr18379216oae.57.1658185162537;
-        Mon, 18 Jul 2022 15:59:22 -0700 (PDT)
+        bh=4kHud9mlsoAsSPgQFpekRiycMvMxnpzh8md2ULHRH8M=;
+        b=TNI31RotRnbZ+R3JBZdZAWdFXqLbFooYxfCKFwzvOH9QXxxxxBIc8uKtrwmETzfmF3
+         TbcBzVV+N9Y29dy32Re7OAoYkee5O++cjtVwJeI7mu6TxVPfETyCJapnRabzhQn/dVp0
+         6ZwKZ+F8w9BEsTLduhkqnMeppU34pnS7Ni6dPmSWMsrmpGya5UXbPjpU+9kw5FlzFFYK
+         omFRYSUrycvtqgqFEPTGo+wsCAcxk7tZniLb2d8dDaxRJT1AXEPkutHzQ6TKgNx0XUVB
+         vy5gNFb6zJ9ea3tQM8NysfaRc3eoRaftW1aVBZu9nixm8U0VfEFbMoWjp9yeeyfqI13w
+         mFaQ==
+X-Gm-Message-State: AJIora/42rIVBmKj1BM3d5mDNVX039ttnZ6ZrAvlD95dwodZlLmXyJON
+        4pPXG8xoyJjDwPU6Cn0LiKIyGw==
+X-Google-Smtp-Source: AGRyM1uFakFvCDT6jvma3XJcksWxbV5RTSCBSXFya7UHglFCPT1qwouMYZ7iXGz927NSgeZhMkx70g==
+X-Received: by 2002:a05:6830:33c3:b0:61c:6576:667a with SMTP id q3-20020a05683033c300b0061c6576667amr12131221ott.375.1658185163443;
+        Mon, 18 Jul 2022 15:59:23 -0700 (PDT)
 Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id j10-20020a4a908a000000b0041ba304546csm5330931oog.1.2022.07.18.15.59.21
+        by smtp.gmail.com with ESMTPSA id j10-20020a4a908a000000b0041ba304546csm5330931oog.1.2022.07.18.15.59.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 15:59:21 -0700 (PDT)
+        Mon, 18 Jul 2022 15:59:22 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     linux-kernel@vger.kernel.org, krzysztof.kozlowski@linaro.org,
         agross@kernel.org, mathieu.poirier@linaro.org,
         linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org
 Cc:     sboyd@kernel.org
-Subject: Re: [PATCH v2 1/3] rpmsg: qcom: glink: replace strncpy() with strscpy_pad()
-Date:   Mon, 18 Jul 2022 17:59:07 -0500
-Message-Id: <165817634384.1905814.9434531838630907611.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH v2] remoteproc: qcom: correct kerneldoc
+Date:   Mon, 18 Jul 2022 17:59:08 -0500
+Message-Id: <165817634386.1905814.13877230220169061028.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
-References: <20220519073330.7187-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220519073349.7270-1-krzysztof.kozlowski@linaro.org>
+References: <20220519073349.7270-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -67,27 +67,18 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 19 May 2022 09:33:28 +0200, Krzysztof Kozlowski wrote:
-> The use of strncpy() is considered deprecated for NUL-terminated
-> strings[1]. Replace strncpy() with strscpy_pad(), to keep existing
-> pad-behavior of strncpy, similarly to commit 08de420a8014 ("rpmsg:
-> glink: Replace strncpy() with strscpy_pad()").  This fixes W=1 warning:
+On Thu, 19 May 2022 09:33:49 +0200, Krzysztof Kozlowski wrote:
+> Correct kerneldoc warnings like:
 > 
->   In function ‘qcom_glink_rx_close’,
->     inlined from ‘qcom_glink_work’ at ../drivers/rpmsg/qcom_glink_native.c:1638:4:
->   drivers/rpmsg/qcom_glink_native.c:1549:17: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
->    1549 |                 strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
+>   drivers/remoteproc/qcom_common.c:68:
+>     warning: expecting prototype for struct minidump_subsystem_toc. Prototype was for struct minidump_subsystem instead
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/3] rpmsg: qcom: glink: replace strncpy() with strscpy_pad()
-      commit: 766279a8f85df32345dbda03b102ca1ee3d5ddea
-[2/3] rpmsg: qcom: glink: remove unused name
-      commit: 6c3ebc96ffefbc48297d7c2fd266e9cb78e6941e
-[3/3] rpmsg: qcom: correct kerneldoc
-      commit: 101042f4c0eb2daa331b4f7ce32c6d547114830a
+[1/1] remoteproc: qcom: correct kerneldoc
+      commit: d5f8c4c66a368e21a105c42042803526cd3ccc15
 
 Best regards,
 -- 
