@@ -2,83 +2,270 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B930C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 18 Jul 2022 23:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73C4C43334
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Jul 2022 15:53:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236549AbiGRXAJ (ORCPT
+        id S239214AbiGSPxs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 18 Jul 2022 19:00:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56034 "EHLO
+        Tue, 19 Jul 2022 11:53:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236419AbiGRW76 (ORCPT
+        with ESMTP id S239326AbiGSPxr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 18 Jul 2022 18:59:58 -0400
-Received: from mail-oa1-x2f.google.com (mail-oa1-x2f.google.com [IPv6:2001:4860:4864:20::2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6530833425
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 15:59:32 -0700 (PDT)
-Received: by mail-oa1-x2f.google.com with SMTP id 586e51a60fabf-10c0e6dd55eso27851692fac.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 18 Jul 2022 15:59:32 -0700 (PDT)
+        Tue, 19 Jul 2022 11:53:47 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C56A354054
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Jul 2022 08:53:45 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id b133so10150861pfb.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Jul 2022 08:53:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=03LF5AI/NRTuD/kyS3OgVmU6nY/7BwKmaxTyhvUPiv8=;
-        b=Ksc5LSfoveTc5spzX5+RHcF06T0ME6J9F+KmQmCChPqrUcOSWXBKjzGEMAOBeofcOT
-         Y/DGf0P3FZJECh8tpUplIwS8GxduPhfhcm0jjci4dLv2s4oZIUiu5mjg2AxMu+dTuuKe
-         IED1DJAy+EPEteErMxPgYhpv70NK5ww6FGWlk9+XaBC0CkCTJtqWPQ8yLSY0J0BF/CTr
-         ascKv/uw4tEIVk37CWiW5fjMscttD1Bx+BOI3pkclbmljHGfamgaZvm5Cmsj8tXDWymh
-         u4nfnFqDE2H2n4CQAfpd9iNHnnJ498j/0c+EPvV0KSzbieMoCvA20tP/bIlTaAQsAlCl
-         kgEA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=97PrQlIB8/07EwQL9gOpc20PS5FL9FE1rwJO80C1yVM=;
+        b=UPim7G55cZS0qbyf/En9E8FI/NhxptHgmYuDWQzwtpEQyojz3bZGdpj23WjBFWGs4j
+         WR91KmwclDvXUhcO6AmCwOM+gW1k7KmwNncAv/4uMzgMP3YLlQxoQfV9inHkHQFamXho
+         DlOzPi581rMHGTa4ypb6FDQaTJopFk5kllqZWBoUnfGEK39q3T19q00IINOBd9jT0P/+
+         BXfhh2Eehvezwa0+dO6SjyB9lKP2Kj9Vz381fzfsDM9OPNyElm6611TAAg5Dzrhs6i/7
+         JDHRnRY+bsTXv4m8u+4MtnC20HmsTSsyr5G97faGyLM2F+ZJJww09fBzX3YiSYSOSIZ3
+         Di0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=03LF5AI/NRTuD/kyS3OgVmU6nY/7BwKmaxTyhvUPiv8=;
-        b=67TnmoyyG6W7sk5sGWFh8G6ZcsewdkK5XFX+hDinVxNE6tq+VZcEPWE9O/oHx18Hjj
-         5QyN58t3EwLoWyo9PX9x0ZrPrsCH25BcKMVor6o+hZuoNelPRpgsFgXa1jjVtlVqdk3w
-         ewR+rw4cXNGi2jkZC23K3hbLADdkN412zTFUS0kxMfqeGs1soSq/otZWbgIlqfTZEI1x
-         3M21utSkl+00RAcKbBlLSTX80oCs7HGY29ctYGRFrOx907V3OEk+8UDNaaNf/OGebWol
-         DDDN6cTOjUJKPCbsCfT/IBCBlJ/g1PzIH0xkVNCZY1WZcIBrqx5Gx6Ot1uistkktqUPx
-         GgVQ==
-X-Gm-Message-State: AJIora9ZhUlz/yE70vyMEL6mQsMNKlCebE1Zb/RYEIqT8xG1XU0QwrNi
-        6V/NtwW5QqLYqycmhgsvozu5DQ==
-X-Google-Smtp-Source: AGRyM1uQXJXECfVWeSDUL1gakmAAxWhayKcDa92Y0JVrAm78oukdolXUfwGG6P8vFuqc1xkizr7qjw==
-X-Received: by 2002:a05:6808:18a9:b0:339:f385:a7c9 with SMTP id bi41-20020a05680818a900b00339f385a7c9mr13967278oib.242.1658185170485;
-        Mon, 18 Jul 2022 15:59:30 -0700 (PDT)
-Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id j10-20020a4a908a000000b0041ba304546csm5330931oog.1.2022.07.18.15.59.29
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=97PrQlIB8/07EwQL9gOpc20PS5FL9FE1rwJO80C1yVM=;
+        b=BUzvfkm6IWRT29HRLls8Aaz2CkKm7h0H/951DlnqJvYPSYrT1sJ1mqMF9GFbfydVOg
+         EeHKmUEJC/vYdjeEEo4TMgLBSUALdwj2NceQltbqne2hM9ItjWhSLWykIhDENSuTgY9l
+         Ow+PXCiGfhJMUr/vHOf4kodKvbxL36nGXunz4Qleg7166cOv1TwQsGYFNctkG1mIWeMG
+         8F0BfcItvritTgc6tYsctfWph8OvqCVSs/fH1EQlgLBjdUTkVuhMLFTK1zAXjdkJB87W
+         zpau9owdTmTBBZTZF7vcz5Yx8TGDQUTs0y7rM0N3Esb0fiaAUPeznwMiaiBC5ws7TrOD
+         Kppw==
+X-Gm-Message-State: AJIora8tfho2MA9Bmfm+reA/9u6wQgttI9yLHFge/AAWMZNNTU9ubntZ
+        7kJUIyOxqSX0nNZzFjYJrHca7g==
+X-Google-Smtp-Source: AGRyM1tkkiudUZbVg8XqOG/4Xa31HkkoEf7SZ2OfYCY0g4XW4BuT8wvr+CAoqB68Sklx9GpLmM3C5A==
+X-Received: by 2002:a05:6a00:1781:b0:528:c839:9886 with SMTP id s1-20020a056a00178100b00528c8399886mr34310041pfg.71.1658246024535;
+        Tue, 19 Jul 2022 08:53:44 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id o17-20020a170902779100b0015e8d4eb27esm11779414pll.200.2022.07.19.08.53.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Jul 2022 15:59:30 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     agross@kernel.org, mathieu.poirier@linaro.org,
-        zhangxuezhi1@coolpad.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH] rpmsg: convert sysfs snprintf to sysfs_emit
-Date:   Mon, 18 Jul 2022 17:59:15 -0500
-Message-Id: <165817634388.1905814.15887899020372976123.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220607120649.78436-1-zhangxuezhi1@coolpad.com>
-References: <20220607120649.78436-1-zhangxuezhi1@coolpad.com>
+        Tue, 19 Jul 2022 08:53:43 -0700 (PDT)
+Date:   Tue, 19 Jul 2022 09:53:40 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Puranjay Mohan <p-mohan@ti.com>
+Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
+        linux-arm-kernel@lists.infradead.org, rogerq@kernel.org,
+        grygorii.strashko@ti.com, vigneshr@ti.com, kishon@ti.com,
+        robh@kernel.org
+Subject: Re: [PATCH v5 4/6] remoteproc: pru: Add pru_rproc_set_ctable()
+ function
+Message-ID: <20220719155340.GA3393732@p14s>
+References: <20220607045650.4999-1-p-mohan@ti.com>
+ <20220607045650.4999-5-p-mohan@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220607045650.4999-5-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 7 Jun 2022 20:06:49 +0800, Xuezhi Zhang wrote:
-> Fix the following coccicheck warning:
-> drivers/rpmsg/qcom_glink_native.c:1677:8-16:
-> WARNING: use scnprintf or sprintf
+On Tue, Jun 07, 2022 at 10:26:48AM +0530, Puranjay Mohan wrote:
+> From: Roger Quadros <rogerq@ti.com>
 > 
+> Some firmwares expect the OS drivers to configure the CTABLE
+> entries publishing dynamically allocated memory regions. For
+> example, the PRU Ethernet firmwares use the C28 and C30 entries
+> for retrieving the Shared RAM and System SRAM (OCMC) areas
+> allocated by the PRU Ethernet client driver.
 > 
+> Provide a way for users to do that through a new API,
+> pru_rproc_set_ctable(). The API returns 0 on success and
+> a negative value on error.
+> 
+> NOTE:
+> The programmable CTABLE entries are typically re-programmed by
+> the PRU firmwares when dealing with a certain block of memory
+> during block processing. This API provides an interface to the
+> PRU client drivers to publish a dynamically allocated memory
+> block with the PRU firmware using a CTABLE entry instead of a
+> negotiated address in shared memory. Additional synchronization
+> may be needed between the PRU client drivers and firmwares if
+> different addresses needs to be published at run-time reusing
+> the same CTABLE entry.
 
-Applied, thanks!
+In all this the concept of a "ctable" is not explained and as such, I have to
+guess it stands for "constant table".  I also have to guess this table stores
+memory addresses known to other drivers, making it possible to boot a system
+without all components having access to a DT.  Again, those are all guesses
+because it is not explained.  And all that guessing makes reviewing this small
+patchset quite difficult.
 
-[1/1] rpmsg: convert sysfs snprintf to sysfs_emit
-      commit: 7113ac825371c17c15e2d0be79d850e5e16d3328
+> 
+> Co-developed-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Co-developed-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> ---
+>  drivers/remoteproc/pru_rproc.c | 59 ++++++++++++++++++++++++++++++++++
+>  include/linux/pruss.h          | 22 +++++++++++++
+>  2 files changed, 81 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> index 9fed3e0372d3..d06b763e995e 100644
+> --- a/drivers/remoteproc/pru_rproc.c
+> +++ b/drivers/remoteproc/pru_rproc.c
+> @@ -119,6 +119,7 @@ struct pru_private_data {
+>   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
+>   * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
+>   * @pru_interrupt_map_sz: pru_interrupt_map size
+> + * @rmw_lock: lock for read, modify, write operations on registers
+>   * @dbg_single_step: debug state variable to set PRU into single step mode
+>   * @dbg_continuous: debug state variable to restore PRU execution mode
+>   * @evt_count: number of mapped events
+> @@ -136,6 +137,7 @@ struct pru_rproc {
+>  	unsigned int *mapped_irq;
+>  	struct pru_irq_rsc *pru_interrupt_map;
+>  	size_t pru_interrupt_map_sz;
+> +	spinlock_t rmw_lock; /* register access lock */
+>  	u32 dbg_single_step;
+>  	u32 dbg_continuous;
+>  	u8 evt_count;
+> @@ -152,6 +154,23 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+>  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
+>  }
+>  
+> +static inline
+> +void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
+> +			 u32 mask, u32 set)
+> +{
+> +	u32 val;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&pru->rmw_lock, flags);
+> +
+> +	val = pru_control_read_reg(pru, reg);
+> +	val &= ~mask;
+> +	val |= (set & mask);
+> +	pru_control_write_reg(pru, reg, val);
+> +
+> +	spin_unlock_irqrestore(&pru->rmw_lock, flags);
+> +}
+> +
+>  static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+>  {
+>  	struct device_node *rproc_np = NULL;
+> @@ -273,6 +292,45 @@ void pru_rproc_put(struct rproc *rproc)
+>  }
+>  EXPORT_SYMBOL_GPL(pru_rproc_put);
+>  
+> +/**
+> + * pru_rproc_set_ctable() - set the constant table index for the PRU
+> + * @rproc: the rproc instance of the PRU
+> + * @c: constant table index to set
+> + * @addr: physical address to set it to
+> + *
+> + * Return: 0 on success, or errno in error case.
+> + */
+> +int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
+> +{
+> +	struct pru_rproc *pru = rproc->priv;
+> +	unsigned int reg;
+> +	u32 mask, set;
+> +	u16 idx;
+> +	u16 idx_mask;
+> +
+> +	if (IS_ERR_OR_NULL(rproc))
+> +		return -EINVAL;
+> +
+> +	if (!rproc->dev.parent || !is_pru_rproc(rproc->dev.parent))
+> +		return -ENODEV;
+> +
+> +	/* pointer is 16 bit and index is 8-bit so mask out the rest */
+> +	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
+> +
+> +	/* ctable uses bit 8 and upwards only */
+> +	idx = (addr >> 8) & idx_mask;
+> +
+> +	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
+> +	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
+> +	mask = idx_mask << (16 * (c & 1));
+> +	set = idx << (16 * (c & 1));
+> +
 
-Best regards,
--- 
-Bjorn Andersson <bjorn.andersson@linaro.org>
+Please add comments that describe the content and format of the CTABLE.
+Otherwise this code becomes unmaintainable.
+
+> +	pru_control_set_reg(pru, reg, mask, set);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
+> +
+>  static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
+>  {
+>  	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
+> @@ -944,6 +1002,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
+>  	pru->rproc = rproc;
+>  	pru->fw_name = fw_name;
+>  	pru->client_np = NULL;
+> +	spin_lock_init(&pru->rmw_lock);
+>  	mutex_init(&pru->lock);
+>  
+>  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+> index fdc719b43db0..d830e20056c7 100644
+> --- a/include/linux/pruss.h
+> +++ b/include/linux/pruss.h
+> @@ -23,13 +23,29 @@ enum pruss_pru_id {
+>  	PRUSS_NUM_PRUS,
+>  };
+>  
+> +/*
+> + * enum pru_ctable_idx - Configurable Constant table index identifiers
+> + */
+> +enum pru_ctable_idx {
+> +	PRU_C24 = 0,
+> +	PRU_C25,
+> +	PRU_C26,
+> +	PRU_C27,
+> +	PRU_C28,
+> +	PRU_C29,
+> +	PRU_C30,
+> +	PRU_C31,
+> +};
+> +
+>  struct device_node;
+> +struct rproc;
+>  
+>  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+>  
+>  struct rproc *pru_rproc_get(struct device_node *np, int index,
+>  			    enum pruss_pru_id *pru_id);
+>  void pru_rproc_put(struct rproc *rproc);
+> +int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
+>  
+>  #else
+>  
+> @@ -41,6 +57,12 @@ pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
+>  
+>  static inline void pru_rproc_put(struct rproc *rproc) { }
+>  
+> +static inline int pru_rproc_set_ctable(struct rproc *rproc,
+> +				       enum pru_ctable_idx c, u32 addr)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  #endif /* CONFIG_PRU_REMOTEPROC */
+>  
+>  static inline bool is_pru_rproc(struct device *dev)
+> -- 
+> 2.17.1
+> 
