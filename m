@@ -2,55 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F64C43334
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Jul 2022 16:16:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2372DCCA47F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 19 Jul 2022 16:17:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236084AbiGSQQe (ORCPT
+        id S233499AbiGSQRx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 Jul 2022 12:16:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50842 "EHLO
+        Tue, 19 Jul 2022 12:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235808AbiGSQQa (ORCPT
+        with ESMTP id S234995AbiGSQRw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Jul 2022 12:16:30 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11D4C4D822
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Jul 2022 09:16:29 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id c6so12393941pla.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Jul 2022 09:16:29 -0700 (PDT)
+        Tue, 19 Jul 2022 12:17:52 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D40404F684
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Jul 2022 09:17:49 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id w185so14029114pfb.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 Jul 2022 09:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=1/iQNc3gXhjz0NA1343D9qw+UVAwvTADGGcwrjN+3GM=;
-        b=oxbpN3Gyqd2c/4XkRBh7oWvtJtFAUi6DioLRIU+O5ISqhEpCFnaxo9hd8bA8EKIVA+
-         cprpb1sL3DW86MpjliDUr0wkpsfQ0sU7ASSbPyvfDA4G03OrMBifHEUuy9VivSAxt0YH
-         8yRLBsfHCiY4kw2bPI3AzHkMciY4zCxsVlwIVN7VBgLFwr1pnyV3FDmjm8kBHuZTTe8p
-         6Lu59uObwDL/GjBoDgd8TIr+m5ShFiF7hk/UDihQwLxYTlVX58gW+zXSPabIKs9ibSbI
-         qb4pdUf3uQh4BTLjuEE9pTt0VvGkdnv00TWvSHaiGZgyCLRxToTmLFybECxjBBZxHqfZ
-         7F0Q==
+         :content-disposition:in-reply-to;
+        bh=j99v33ldlK2FlKWV4TdK79PiQjRVPI8FTWxxa1tOtzg=;
+        b=xyAHcPPkHVBNE/JfV8PykfXY21OGJO3tYb8jOvOdDWvKZ3n6FFrvFYly2ZDsyG47aq
+         LDQBdEnk2K9xm+YjB4uVZCbVDVu29dvWKW2IVRXnEiDaocXiyXdlDLMW6CXLIcz/kR81
+         nIDPKMWeMsTFjMSNMkLWDiTZTjJ3DSoEcakCVhvmMk0l5E0wQiCEkhHW8hlnI+jiVirF
+         Lx1fvZoAUDWnzq8elL8JxetYAqHgAH0KmeajbeP97UWhhZjqeGWM/KtuX9UcbStGUlXh
+         jEJVuSnIxIC7xB+ZC8a2XzNp/qRUdWGjoM19E5dj5SUjYXEOig0vb5TgH4ajeON2SD6q
+         8cQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=1/iQNc3gXhjz0NA1343D9qw+UVAwvTADGGcwrjN+3GM=;
-        b=2UxE3usYgVa68sAlC3Dj9eOjiBTaU62aLMmLetmiBd1dLb+u9p2wyee0E6aKSLpyD+
-         eqHC0iDvliTIUyIeCnUX45TjzlFagBNKWBh7DOMzyG6iwBD8QtaEstFLvKm7eFj6Zuay
-         z2pzEiIVfO5gLGePBKUTGQF4binMUzJHtdJmNGQnfV9NBt/WL/y7+admTxcgQbfXmC73
-         upSh+MZA0lAN9seoXIM0b7MAmjGq0O3ns4Gm6elPWPUN25jhQFEiehXi8Vbkh8XIF1aY
-         F/hZMBbxN4x6t+GfzMiAe6LPQyz1b5IddkpxnSHX+WKFE+U6tQvERTSjmvUPfAE7mQsE
-         sRUw==
-X-Gm-Message-State: AJIora8H5G9vfhwHrNNP+PQn4w/99t9Vh8cCP7F+Tq6/UbFzHOhyuEHN
-        RpX5OhiXGqCuZ++a8anuuc9oXw==
-X-Google-Smtp-Source: AGRyM1uYwT+C2WlLmTkVjjapJiIuQe2wO03DCM5Zxd2mMcaMZEGKC9SCfBNEuA3IPhSKeBiNCQp5Zg==
-X-Received: by 2002:a17:903:248:b0:168:cf03:eefe with SMTP id j8-20020a170903024800b00168cf03eefemr33889666plh.124.1658247388439;
-        Tue, 19 Jul 2022 09:16:28 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to;
+        bh=j99v33ldlK2FlKWV4TdK79PiQjRVPI8FTWxxa1tOtzg=;
+        b=J/wJU7jK3ONV2MRikIuve4OodL1KdqGZYDsInhAFtPQzBScgibECjRICAj8EnK7b5V
+         gy0GUq7eb9fQOs2vFMsjvbLbH5HatByYvukPZWQh2eEbczEVCJ5/SXXEg3dutkHJNrmy
+         H2rRvVGijMSNdSs9Vxbeh3DGzamWfy+PB9ToYcdP4lyq3a4zDqvTc4ichT6vuUyUleLO
+         stPCfsBdOM9UXLEt/1ET5tVOy3taQCTgHstaHenW6Ho9Mk3cGBamtp4eLFym1e1v4Zkn
+         J55jtnuiUnvMTXIRNC0jQ1N+fe5HekVm/fAkLtFkOw91tT4+0o/WnW9DFHEKMGsZibVP
+         WznA==
+X-Gm-Message-State: AJIora9+5hq/u52iLXY/HEdAE7dhre9moYm+Fv97gZ2fSbHZDf/iO9i/
+        OgQaiCjSvNAnBej0sHQtZ0GRgw==
+X-Google-Smtp-Source: AGRyM1uDNXtAFgSgT5rk5Rv6dIC3uv0YhISGtimtbCkCl2vkoNFU0onmeUEBjPOSoO32fjDz7J8wow==
+X-Received: by 2002:a63:3fcc:0:b0:408:c856:dd6d with SMTP id m195-20020a633fcc000000b00408c856dd6dmr29959582pga.354.1658247469226;
+        Tue, 19 Jul 2022 09:17:49 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 72-20020a17090a09ce00b001efd39b7e39sm13705857pjo.37.2022.07.19.09.16.26
+        by smtp.gmail.com with ESMTPSA id g26-20020aa796ba000000b0052ab5a740aesm11675817pfk.162.2022.07.19.09.17.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jul 2022 09:16:27 -0700 (PDT)
-Date:   Tue, 19 Jul 2022 10:16:25 -0600
+        Tue, 19 Jul 2022 09:17:48 -0700 (PDT)
+Date:   Tue, 19 Jul 2022 10:17:46 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Puranjay Mohan <p-mohan@ti.com>
 Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
@@ -60,109 +59,128 @@ Cc:     linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
         linux-arm-kernel@lists.infradead.org, rogerq@kernel.org,
         grygorii.strashko@ti.com, vigneshr@ti.com, kishon@ti.com,
         robh@kernel.org
-Subject: Re: [PATCH v5 6/6] remoteproc: pru: add support for configuring
- GPMUX based on client setup
-Message-ID: <20220719161625.GB3393732@p14s>
+Subject: Re: [PATCH v5 1/6] dt-bindings: remoteproc: Add PRU consumer bindings
+Message-ID: <20220719161746.GC3393732@p14s>
 References: <20220607045650.4999-1-p-mohan@ti.com>
- <20220607045650.4999-7-p-mohan@ti.com>
+ <20220607045650.4999-2-p-mohan@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220607045650.4999-7-p-mohan@ti.com>
+In-Reply-To: <20220607045650.4999-2-p-mohan@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jun 07, 2022 at 10:26:50AM +0530, Puranjay Mohan wrote:
-> From: Tero Kristo <t-kristo@ti.com>
+On Tue, Jun 07, 2022 at 10:26:45AM +0530, Puranjay Mohan wrote:
+> From: Suman Anna <s-anna@ti.com>
 > 
-> Client device node property ti,pruss-gp-mux-sel can now be used to
-> configure the GPMUX config value for PRU.
+> Add a YAML binding document for PRU consumers. The binding includes
+> all the common properties that can be used by different PRU consumer
+> or application nodes and supported by the PRU remoteproc driver.
+> These are used to configure the PRU hardware for specific user
+> applications.
 > 
+> The application nodes themselves should define their own bindings.
+> 
+> Co-developed-by: Tero Kristo <t-kristo@ti.com>
 > Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> [s-anna@ti.com: simplify the pru id usage]
 > Signed-off-by: Suman Anna <s-anna@ti.com>
+> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 > Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
-> V4->v5
-> * This patch was included in v4 and had some checkpatch errors that have
->   been resolved in v5
+> V3->V4:
+> * Addressed Rob's comments regarding max and min Items.
+> * removed the dependencies tag as it was redundant.
 > ---
->  drivers/remoteproc/pru_rproc.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+>  .../bindings/remoteproc/ti,pru-consumer.yaml  | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 2977eb50631b..f2c6c55f0f20 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -123,6 +123,7 @@ struct pru_private_data {
->   * @dbg_single_step: debug state variable to set PRU into single step mode
->   * @dbg_continuous: debug state variable to restore PRU execution mode
->   * @evt_count: number of mapped events
-> + * @gpmux_save: saved value for gpmux config
->   */
->  struct pru_rproc {
->  	int id;
-> @@ -141,6 +142,7 @@ struct pru_rproc {
->  	u32 dbg_single_step;
->  	u32 dbg_continuous;
->  	u8 evt_count;
-> +	u8 gpmux_save;
->  };
->  
->  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
-> @@ -250,6 +252,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->  	struct device *dev;
->  	const char *fw_name;
->  	int ret;
-> +	u32 mux;
->  
->  	try_module_get(THIS_MODULE);
->  
-> @@ -273,6 +276,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->  
->  	mutex_unlock(&pru->lock);
->  
-> +	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
-> +		goto err;
-> +	}
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> new file mode 100644
+> index 000000000000..df384b44259b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
-> +					 &mux);
-> +	if (!ret) {
-> +		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
-> +		if (ret) {
-> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
-> +			goto err;
-> +		}
-> +	}
+> +title: Common TI PRU Consumer Binding
 > +
->  	if (pru_id)
->  		*pru_id = pru->id;
->  
-> @@ -310,6 +329,7 @@ void pru_rproc_put(struct rproc *rproc)
->  
->  	pru = rproc->priv;
->  
-> +	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
->  	pru_rproc_set_firmware(rproc, NULL);
->
+> +maintainers:
+> +  - Suman Anna <s-anna@ti.com>
+> +
+> +description: |
+> +  A PRU application/consumer/user node typically uses one or more PRU device
+> +  nodes to implement a PRU application/functionality. Each application/client
+> +  node would need a reference to at least a PRU node, and optionally define
+> +  some properties needed for hardware/firmware configuration. The below
+> +  properties are a list of common properties supported by the PRU remoteproc
+> +  infrastructure.
+> +
+> +  The application nodes shall define their own bindings like regular platform
+> +  devices, so below are in addition to each node's bindings.
+> +
+> +properties:
+> +  ti,prus:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
+> +    minItems: 1
+> +    maxItems: 6
+> +    items:
+> +      maxItems: 1
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    minItems: 1
+> +    maxItems: 6
+> +    description: |
+> +      firmwares for the PRU cores, the default firmware for the core from
+> +      the PRU node will be used if not provided. The firmware names should
+> +      correspond to the PRU cores listed in the 'ti,prus' property
+> +
+> +  ti,pruss-gp-mux-sel:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 1
+> +    maxItems: 6
+> +    items:
+> +      enum: [0, 1, 2, 3, 4]
+> +    description: |
+> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
+> +      This selects the internal muxing scheme for the PRU instance. Values
+> +      should correspond to the PRU cores listed in the 'ti,prus' property. The
+> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
+> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
+> +      same slice in the associative array. If the array size is smaller than
+> +      the size of 'ti,prus' property, the default out-of-reset value (0) for the
+> +      PRU core is used.
+> +
+> +required:
+> +  - ti,prus
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    /* PRU application node example */
+> +    pru-app {
+> +        ti,prus = <&pru0>, <&pru1>;
+> +        firmware-name = "pruss-app-fw0", "pruss-app-fw1";
+> +        ti,pruss-gp-mux-sel = <2>, <1>;
+> +    };
 
-  CC      drivers/remoteproc/pru_rproc.o
-/home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c: In function ‘pru_rproc_get’:
-/home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:279:8: error: implicit declaration of function ‘pruss_cfg_get_gpmux’ [-Werror=implicit-function-declaration]
-  279 |  ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
-      |        ^~~~~~~~~~~~~~~~~~~
-/home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:288:9: error: implicit declaration of function ‘pruss_cfg_set_gpmux’ [-Werror=implicit-function-declaration]
-  288 |   ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
-      |         ^~~~~~~~~~~~~~~~~~~
+It would be nice to have a full example in order to provide more context.
 
-I get this on both rproc-next and today's linux next.  
+I am done reviewing this set.
 
->  	mutex_lock(&pru->lock);
+Thanks,
+Mathieu
+
 > -- 
 > 2.17.1
 > 
