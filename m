@@ -2,121 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3387FCCA485
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Jul 2022 03:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4307C433EF
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 20 Jul 2022 22:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242055AbiGTDLN (ORCPT
+        id S229615AbiGTWqM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 19 Jul 2022 23:11:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37370 "EHLO
+        Wed, 20 Jul 2022 18:46:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241912AbiGTDIn (ORCPT
+        with ESMTP id S229592AbiGTWqL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 19 Jul 2022 23:08:43 -0400
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2008A743F5;
-        Tue, 19 Jul 2022 20:06:13 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0VJuvIvC_1658286367;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VJuvIvC_1658286367)
-          by smtp.aliyun-inc.com;
-          Wed, 20 Jul 2022 11:06:08 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     virtualization@lists.linux-foundation.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Wed, 20 Jul 2022 18:46:11 -0400
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8761F13CF6;
+        Wed, 20 Jul 2022 15:46:10 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id 125so57124iou.6;
+        Wed, 20 Jul 2022 15:46:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7fJqAHYv/e5MRGfwQS2QwxmL0W6+8ciRB/YwHGWHQFk=;
+        b=VMM8r+XSwoUERuLHe3pAgYxHM7zsr851aE8TNrwfstEOMkDcXB9ARFBRSY1JCI1Q4J
+         q8VeNQ0z56Fe7RC2tWioMkwbPT7mu3+Apo1HlrS73ugfODnlvLR0SkTlp1YV3DbYT4xw
+         III54UGyPpR/fFcaW64A7IjXOBf8+l66fcsmffNG0tPROyZCSn44uYAPqHY97gsTdukL
+         RpzGs0RPPbUbaNM9jqSvoaKtlB+ZGAKyGrjwphJ/ypo019bR1lfX7EQ3v2FKjdRsyEyB
+         GPuM9+CQyxPTv2ExzJqk2lDMr/p1cbHZvpkB8TCIXXlKSiH2q4krF1DMAnyFPGjBtrOp
+         CZvQ==
+X-Gm-Message-State: AJIora+oS0gFGwuhXLLvKCj+WwLwo7IH+JuesNiqMICoPG8NgL/JwODl
+        lIO99LeP0D/FqmAJxeNybA==
+X-Google-Smtp-Source: AGRyM1sMJiRBS/KvsrXJPU6XhiUJ7qH5dRdaof9vxE2dzv6IVnCLk1o/OGzQuanFv/qLBna90S6X1g==
+X-Received: by 2002:a05:6602:2d4f:b0:67b:f7c9:a3e with SMTP id d15-20020a0566022d4f00b0067bf7c90a3emr9887172iow.77.1658357169768;
+        Wed, 20 Jul 2022 15:46:09 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id i20-20020a023b54000000b0033f4b1c2151sm53341jaf.154.2022.07.20.15.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Jul 2022 15:46:09 -0700 (PDT)
+Received: (nullmailer pid 4120175 invoked by uid 1000);
+        Wed, 20 Jul 2022 22:46:08 -0000
+Date:   Wed, 20 Jul 2022 16:46:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com
-Subject: [PATCH v12 38/40] virtio_net: support rx queue resize
-Date:   Wed, 20 Jul 2022 11:04:34 +0800
-Message-Id: <20220720030436.79520-39-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220720030436.79520-1-xuanzhuo@linux.alibaba.com>
-References: <20220720030436.79520-1-xuanzhuo@linux.alibaba.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916
+ to schema
+Message-ID: <20220720224608.GA4107504-robh@kernel.org>
+References: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com>
+ <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
 MIME-Version: 1.0
-X-Git-Hash: 366032b2ffac
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch implements the resize function of the rx queues.
-Based on this function, it is possible to modify the ring num of the
-queue.
+On Mon, Jul 18, 2022 at 04:03:41PM +0200, Stephan Gerhold wrote:
+> qcom,q6v5.txt covers multiple SoCs with quite different binding
+> requirements. Converting this into one DT schema would require
+> several if statements, making the DT schema overall harder to
+> read and understand.
+> 
+> To avoid this, follow the example of SC7180/SC7280 and split
+> "qcom,msm8916-mss-pil" (and the equivalent deprecated "qcom,q6v5-pil"
+> compatible) into a separate DT schema. The schema is somewhat based
+> on the one for SC7180/SC7280 but adjusted for the old platforms.
+> 
+> Compared to the old plain text bindings, add missing documentation for
+> the "bam-dmux" subnode and recommend one particular approach to specify
+> the MBA/MPSS "memory-region" (the other one is marked as deprecated).
+> 
+> Cc: Sireesh Kodali <sireeshkodali1@gmail.com>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+> ---
+> Changes in v2:
+>   - Add blank lines between top-level properties
+>   - Drop "deprecated" in "oneOf" list, it is not clear if this is valid
+>     and it should be redundant since the properties itself are already
+>     marked as "deprecated"
+> ---
+> Like Sibi's patch series for SC7180/SC7820 [1] this is somewhat related
+> to Sireesh's series that converts all of qcom,q6v5.txt [2] (with a lot
+> of if statements). However, this series focuses on MSM8916/MSM8974 (or
+> actually MSM8909) only.
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/1657020721-24939-1-git-send-email-quic_sibis@quicinc.com/
+> [2]: https://lore.kernel.org/linux-arm-msm/20220511161602.117772-7-sireeshkodali1@gmail.com/
 
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
----
- drivers/net/virtio_net.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Is that one abandoned or do we just get to review both approaches 
+without coordination?
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index fe4dc43c05a1..1115a8b59a08 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -278,6 +278,8 @@ struct padded_vnet_hdr {
- 	char padding[12];
- };
- 
-+static void virtnet_rq_free_unused_buf(struct virtqueue *vq, void *buf);
-+
- static bool is_xdp_frame(void *ptr)
- {
- 	return (unsigned long)ptr & VIRTIO_XDP_FLAG;
-@@ -1846,6 +1848,26 @@ static netdev_tx_t start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	return NETDEV_TX_OK;
- }
- 
-+static int virtnet_rx_resize(struct virtnet_info *vi,
-+			     struct receive_queue *rq, u32 ring_num)
-+{
-+	int err, qindex;
-+
-+	qindex = rq - vi->rq;
-+
-+	napi_disable(&rq->napi);
-+
-+	err = virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_unused_buf);
-+	if (err)
-+		netdev_err(vi->dev, "resize rx fail: rx queue index: %d err: %d\n", qindex, err);
-+
-+	if (!try_fill_recv(vi, rq, GFP_KERNEL))
-+		schedule_delayed_work(&vi->refill, 0);
-+
-+	virtnet_napi_enable(rq->vq, &rq->napi);
-+	return err;
-+}
-+
- /*
-  * Send command via the control virtqueue and check status.  Commands
-  * supported by the hypervisor, as indicated by feature bits, should
--- 
-2.31.0
+I think you need a common q6v5 schema here with all the common 
+properties. Having the same property name with the type defined multiple 
+times is not great. In fact, I'm working on a check for finding those.
 
+Rob
