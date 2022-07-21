@@ -2,147 +2,131 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F79CCA487
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jul 2022 19:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D7ACCA485
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jul 2022 20:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233278AbiGUTfr (ORCPT
+        id S233122AbiGUUCy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 15:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49158 "EHLO
+        Thu, 21 Jul 2022 16:02:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230429AbiGUTfq (ORCPT
+        with ESMTP id S233075AbiGUUCy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Jul 2022 15:35:46 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5D641D37;
-        Thu, 21 Jul 2022 12:35:33 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id fy29so4807088ejc.12;
-        Thu, 21 Jul 2022 12:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=s79koBJKcUEHGr/LZx74gqZK4XdBpcqdo9YSWhBmsrI=;
-        b=WTo+GhvWZ2KpXZg1ebEE9eP08FCf8HSzh+sndlzGb1VNmi1SjV2xXorXTioHI4iibT
-         V6hjPWZFcm1UPVvXYSpI8HzO/zX6NHXmWCxCyKYu6lbg/4WF4e7tvO8FX/HZbtqihxmU
-         YJHqWKQKjYsmKKzyp393lx09exdRE1BSodwXTUAw0f8VViViL8TFNp/6JqLaGrVIiXI4
-         6GIYOaG+eHxrXq6aJIiEZWSbQsRg70mOfK8iRiF6YApGRFQGoeII0iq1XawDYifhHpen
-         lgBWDn9H4DFWJrWRWvmMm0UCo7hVrg485esZctkE116jlJyeEa/AVk67HVZXrAwatbzn
-         wR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=s79koBJKcUEHGr/LZx74gqZK4XdBpcqdo9YSWhBmsrI=;
-        b=o5/WaARLeDskYtm3eIHWfwE99LJJAm2YetQlMfvOC9SWmNBupPFIiHmmqUiHOD/a39
-         TZCM0LOmcSG0V89g+ttUxXmTbj8LnJxYnqfcJVohYoXEYBomSL3CTDwby0UWgvfjq8sI
-         pOIY4N6rJHBdiP5VkKiJYVETNQVBMgVnfiFqso/e2tp64AVbIt7uCxkiCKNyD6t20ikI
-         vbRO0v9x4Brn1WZogS4/crGuAAbnX1kByvb7nHoIbVJwrcZETeTLI7RKgR7nXxiNvvvA
-         fK9GtHvTqLf68UFzZfWTmVpsHabP2f8g3kVb9tVLsHM1uI8IlITH0xPXHAekEhIpSSl7
-         I0Jw==
-X-Gm-Message-State: AJIora+v6TuhbGhIo1SuicQNhdRskIQOfM7l/xVDPZraWQs8SfpdCOsJ
-        BUMr8tJdCMpVo4wD3xTcpJM=
-X-Google-Smtp-Source: AGRyM1v9GckEBIRe083XENtdxH6KPvli0SFKeCahz7f88NgopBVeh1KS77NWxtW7uHOP9KdyG9E08Q==
-X-Received: by 2002:a17:906:fd56:b0:72b:47b0:6bfa with SMTP id wi22-20020a170906fd5600b0072b47b06bfamr129163ejb.62.1658432131191;
-        Thu, 21 Jul 2022 12:35:31 -0700 (PDT)
-Received: from localhost.localdomain ([155.133.219.250])
-        by smtp.gmail.com with ESMTPSA id q6-20020a056402032600b0043574d27ddasm1430430edw.16.2022.07.21.12.35.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Jul 2022 12:35:30 -0700 (PDT)
-From:   Daniel Kestrel <kestrelseventyfour@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Thu, 21 Jul 2022 16:02:54 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5736D9DF;
+        Thu, 21 Jul 2022 13:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1658433770;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=Owkp8ktceAI2U5/duGJt4dKf9HIoey0z8t5W7UFe7eo=;
+    b=BLxrN2S+YWx0HdNI2q7oAFlQ2WmDx7BXapbRJITFzGr3CVzlPle8bxQ0WUuLMyvT7/
+    42ttEv5fnyJmOexK3Q1qd9utSb9Ik4gWvxMbFinqn4eKvmijNONIBxtuRQul4bn7rKcj
+    mKipm1pCV8RQUST7UndcS8AT6kWNrUEMLuYZhrFKITC4clMc7cOf/t8hRmyXSJF4khn6
+    R1kKfay+dTgQyMFgA5DEvFy/TkrqgJbJnzsb+SmmgeUh3DY0TYYMc0bhg/+Vpd4/sf4d
+    o3iJ6+AoR/0s063znjaukuKqOkqX0GE2N6y1HVntt03adNa82HOl8EKO2LUT0lsIErfl
+    Z88g==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLUrK86+6Y="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 47.47.0 AUTH)
+    with ESMTPSA id efdacay6LK2n61F
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Thu, 21 Jul 2022 22:02:49 +0200 (CEST)
+Date:   Thu, 21 Jul 2022 22:02:43 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Kestrel <kestrelseventyfour@gmail.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] dt-bindings: remoteproc: Add AVM WASP
-Date:   Thu, 21 Jul 2022 21:34:54 +0200
-Message-Id: <20220721193455.2717-3-kestrelseventyfour@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220721193455.2717-1-kestrelseventyfour@gmail.com>
-References: <20220721193455.2717-1-kestrelseventyfour@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916
+ to schema
+Message-ID: <Ytmw41giZ/4S+Pp0@gerhold.net>
+References: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com>
+ <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
+ <20220720224608.GA4107504-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220720224608.GA4107504-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-AVM Fritzbox router boards may contain an additional ATH79
-based SoC that has the wifi cards connected.
-This patch adds bindings for this remote processor.
+On Wed, Jul 20, 2022 at 04:46:08PM -0600, Rob Herring wrote:
+> On Mon, Jul 18, 2022 at 04:03:41PM +0200, Stephan Gerhold wrote:
+> > qcom,q6v5.txt covers multiple SoCs with quite different binding
+> > requirements. Converting this into one DT schema would require
+> > several if statements, making the DT schema overall harder to
+> > read and understand.
+> > 
+> > To avoid this, follow the example of SC7180/SC7280 and split
+> > "qcom,msm8916-mss-pil" (and the equivalent deprecated "qcom,q6v5-pil"
+> > compatible) into a separate DT schema. The schema is somewhat based
+> > on the one for SC7180/SC7280 but adjusted for the old platforms.
+> > 
+> > Compared to the old plain text bindings, add missing documentation for
+> > the "bam-dmux" subnode and recommend one particular approach to specify
+> > the MBA/MPSS "memory-region" (the other one is marked as deprecated).
+> > 
+> > Cc: Sireesh Kodali <sireeshkodali1@gmail.com>
+> > Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+> > ---
+> > Changes in v2:
+> >   - Add blank lines between top-level properties
+> >   - Drop "deprecated" in "oneOf" list, it is not clear if this is valid
+> >     and it should be redundant since the properties itself are already
+> >     marked as "deprecated"
+> > ---
+> > Like Sibi's patch series for SC7180/SC7820 [1] this is somewhat related
+> > to Sireesh's series that converts all of qcom,q6v5.txt [2] (with a lot
+> > of if statements). However, this series focuses on MSM8916/MSM8974 (or
+> > actually MSM8909) only.
+> > 
+> > [1]: https://lore.kernel.org/linux-arm-msm/1657020721-24939-1-git-send-email-quic_sibis@quicinc.com/
+> > [2]: https://lore.kernel.org/linux-arm-msm/20220511161602.117772-7-sireeshkodali1@gmail.com/
+> 
+> Is that one abandoned or do we just get to review both approaches 
+> without coordination?
+> 
 
-Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
----
- .../bindings/remoteproc/avm,wasp-rproc.yaml   | 61 +++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+I assumed the decision to make separate schemas rather than a big one
+was already made, since Sibi's series was applied and has already moved
+parts of qcom,q6v5.txt into separate schemas.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-new file mode 100644
-index 000000000000..e8618706a34f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-@@ -0,0 +1,61 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: AVM WASP processor controller bindings
-+
-+maintainers:
-+  - Daniel Kestrel <kestrelseventyfour@gmail.com>
-+
-+description: |
-+  This document defines the bindings for the remoteproc component that loads and
-+  boots firmwares on the AVM Wireless Assistant Support Processor (WASP) SoC
-+  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
-+
-+properties:
-+  compatible:
-+    enum:
-+      - avm,fritzbox3390-wasp
-+      - avm,fritzbox3490-wasp
-+      - avm,fritzbox5490-wasp
-+      - avm,fritzbox5491-wasp
-+      - avm,fritzbox7490-wasp
-+
-+  avm,wasp-mdio:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Lantiq GSWIP switch mdio.
-+
-+  avm,wasp-port:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: Network port, where the WASP SoC is connected to.
-+
-+  avm,reset-gpios:
-+    description: Reset gpio of the WASP SoC.
-+    maxItems: 1
-+
-+  avm,startup-gpios:
-+    description: Startup gpio of the WASP SoC.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - avm,wasp-mdio
-+  - avm,wasp-port
-+  - avm,reset-gpios
-+  - avm,startup-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    remoteproc {
-+        compatible = "avm,fritzbox7490-wasp";
-+        avm,wasp-mdio = <&gswip_mdio>;
-+        avm,wasp-port = <&port5>;
-+        avm,reset-gpios = <&gpio 34 GPIO_ACTIVE_HIGH>;
-+        avm,startup-gpios = <&gpio 5 GPIO_ACTIVE_HIGH>;
-+    };
--- 
-2.17.1
+Still, I did coordinate with Sireesh before submitting this patch and
+suggested that he can likely just add the new "qcom,msm8953-mss-pil"
+compatible from his series to the DT schema in this patch (the setup is
+also very similar).
 
+> I think you need a common q6v5 schema here with all the common 
+> properties. Having the same property name with the type defined multiple 
+> times is not great. In fact, I'm working on a check for finding those.
+
+Which properties would you move to a common schema? Most of the schema
+is just listing items for generic properties (interrupts, clocks, power
+domains, supplies, resets, memory-region, ...) and having them separated
+is intended to avoid lots of if statements in a common schema.
+
+What remains is maybe:
+
+  - "qcom,smem-states", which is already used in several other schemas
+    and could be possibly defined together with #qcom,smem-state-cells
+    in some generic schema(?)
+
+  - "qcom,halt-regs", "firmware-name", "smd-edge" are used by different
+    Qualcomm remoteproc drivers, so they could possibly be defined in
+    some common "qcom-remoteproc.yaml" schema(?)
+
+Thanks,
+Stephan
