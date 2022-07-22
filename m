@@ -2,261 +2,351 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B13C433EF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Jul 2022 03:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB581C43334
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Jul 2022 15:44:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232715AbiGVD56 (ORCPT
+        id S232931AbiGVPo5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 23:57:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35506 "EHLO
+        Fri, 22 Jul 2022 11:44:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbiGVD54 (ORCPT
+        with ESMTP id S229959AbiGVPo4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Jul 2022 23:57:56 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 136CD6C105;
-        Thu, 21 Jul 2022 20:57:52 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VK3SFm4_1658462266;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VK3SFm4_1658462266)
-          by smtp.aliyun-inc.com;
-          Fri, 22 Jul 2022 11:57:47 +0800
-Message-ID: <1658461678.632858-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v12 08/40] virtio_ring: split: extract the logic of alloc queue
-Date:   Fri, 22 Jul 2022 11:47:58 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
+        Fri, 22 Jul 2022 11:44:56 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D1502735;
+        Fri, 22 Jul 2022 08:44:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1658504695; x=1690040695;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qG2pNjvUpLBoBbPnjxVwoN8K5rzv5eBVte0Uf15BYbc=;
+  b=VkTHZAO+lOwJuuMyHGkAd3UdWSLuaQu6ewKymYCKDZKuFcv8OCV1Aqab
+   KUXzPycXcB+1NYFjTtLuXfsL7ilFxdJst81O17kuyj/JCkQoqdBfoaFXR
+   zcllbEh3k8+Td+jPAhnfQfy9vJCO3nP8tl/5vu74+UuOK4R2JcaJ0YF4Q
+   kAkqK8HzD10UcRjKSfP08qj3CdRq/23KTaLRARbNLCVsL/1sSMEcc441U
+   oPjIPKnvDmsJQ9COG8lgAqu76Nq7uomBUFde0I0jJlb5J4fZ19ON8ZBqL
+   7kCDZiSPaNnWTzjKomN0VjEHV/wSigVlJ8i0Eq9yVuOMTbTp0W8unEFmp
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10416"; a="287340974"
+X-IronPort-AV: E=Sophos;i="5.93,186,1654585200"; 
+   d="scan'208";a="287340974"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2022 08:44:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,186,1654585200"; 
+   d="scan'208";a="631602269"
+Received: from lkp-server01.sh.intel.com (HELO e0eace57cfef) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 22 Jul 2022 08:44:52 -0700
+Received: from kbuild by e0eace57cfef with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1oEupf-0001Ya-1g;
+        Fri, 22 Jul 2022 15:44:51 +0000
+Date:   Fri, 22 Jul 2022 23:44:36 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com,
-        virtualization@lists.linux-foundation.org
-References: <20220720030436.79520-1-xuanzhuo@linux.alibaba.com>
- <20220720030436.79520-9-xuanzhuo@linux.alibaba.com>
- <0b3c985d-d479-a554-4fe2-bfe94fc74070@redhat.com>
-In-Reply-To: <0b3c985d-d479-a554-4fe2-bfe94fc74070@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kestrel <kestrelseventyfour@gmail.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] remoteproc: Add AVM WASP driver
+Message-ID: <202207222313.GAofKYST-lkp@intel.com>
+References: <20220721193455.2717-4-kestrelseventyfour@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220721193455.2717-4-kestrelseventyfour@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 21 Jul 2022 17:13:49 +0800, Jason Wang <jasowang@redhat.com> wrote:
->
-> =E5=9C=A8 2022/7/20 11:04, Xuan Zhuo =E5=86=99=E9=81=93:
-> > Separate the logic of split to create vring queue.
-> >
-> > This feature is required for subsequent virtuqueue reset vring.
-> >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 68 ++++++++++++++++++++++--------------
-> >   1 file changed, 42 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index c94c5461e702..c7971438bb2c 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -950,28 +950,19 @@ static void vring_free_split(struct vring_virtque=
-ue_split *vring_split,
-> >   	kfree(vring_split->desc_extra);
-> >   }
-> >
-> > -static struct virtqueue *vring_create_virtqueue_split(
-> > -	unsigned int index,
-> > -	unsigned int num,
-> > -	unsigned int vring_align,
-> > -	struct virtio_device *vdev,
-> > -	bool weak_barriers,
-> > -	bool may_reduce_num,
-> > -	bool context,
-> > -	bool (*notify)(struct virtqueue *),
-> > -	void (*callback)(struct virtqueue *),
-> > -	const char *name)
-> > +static int vring_alloc_queue_split(struct vring_virtqueue_split *vring=
-_split,
-> > +				   struct virtio_device *vdev,
-> > +				   u32 num,
-> > +				   unsigned int vring_align,
-> > +				   bool may_reduce_num)
-> >   {
-> > -	struct virtqueue *vq;
-> >   	void *queue =3D NULL;
-> >   	dma_addr_t dma_addr;
-> > -	size_t queue_size_in_bytes;
-> > -	struct vring vring;
-> >
-> >   	/* We assume num is a power of 2. */
-> >   	if (num & (num - 1)) {
-> >   		dev_warn(&vdev->dev, "Bad virtqueue length %u\n", num);
-> > -		return NULL;
-> > +		return -EINVAL;
-> >   	}
-> >
-> >   	/* TODO: allocate each queue chunk individually */
-> > @@ -982,11 +973,11 @@ static struct virtqueue *vring_create_virtqueue_s=
-plit(
-> >   		if (queue)
-> >   			break;
-> >   		if (!may_reduce_num)
-> > -			return NULL;
-> > +			return -ENOMEM;
-> >   	}
-> >
-> >   	if (!num)
-> > -		return NULL;
-> > +		return -ENOMEM;
-> >
-> >   	if (!queue) {
-> >   		/* Try to get a single page. You are my only hope! */
-> > @@ -994,21 +985,46 @@ static struct virtqueue *vring_create_virtqueue_s=
-plit(
-> >   					  &dma_addr, GFP_KERNEL|__GFP_ZERO);
-> >   	}
-> >   	if (!queue)
-> > -		return NULL;
-> > +		return -ENOMEM;
-> > +
-> > +	vring_init(&vring_split->vring, num, queue, vring_align);
-> >
-> > -	queue_size_in_bytes =3D vring_size(num, vring_align);
-> > -	vring_init(&vring, num, queue, vring_align);
-> > +	vring_split->queue_dma_addr =3D dma_addr;
-> > +	vring_split->queue_size_in_bytes =3D vring_size(num, vring_align);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static struct virtqueue *vring_create_virtqueue_split(
-> > +	unsigned int index,
-> > +	unsigned int num,
-> > +	unsigned int vring_align,
-> > +	struct virtio_device *vdev,
-> > +	bool weak_barriers,
-> > +	bool may_reduce_num,
-> > +	bool context,
-> > +	bool (*notify)(struct virtqueue *),
-> > +	void (*callback)(struct virtqueue *),
-> > +	const char *name)
-> > +{
-> > +	struct vring_virtqueue_split vring_split =3D {};
-> > +	struct virtqueue *vq;
-> > +	int err;
-> > +
-> > +	err =3D vring_alloc_queue_split(&vring_split, vdev, num, vring_align,
-> > +				      may_reduce_num);
-> > +	if (err)
-> > +		return NULL;
-> >
-> > -	vq =3D __vring_new_virtqueue(index, vring, vdev, weak_barriers, conte=
-xt,
-> > -				   notify, callback, name);
-> > +	vq =3D __vring_new_virtqueue(index, vring_split.vring, vdev, weak_bar=
-riers,
-> > +				   context, notify, callback, name);
-> >   	if (!vq) {
-> > -		vring_free_queue(vdev, queue_size_in_bytes, queue,
-> > -				 dma_addr);
-> > +		vring_free_split(&vring_split, vdev);
-> >   		return NULL;
-> >   	}
-> >
-> > -	to_vvq(vq)->split.queue_dma_addr =3D dma_addr;
-> > -	to_vvq(vq)->split.queue_size_in_bytes =3D queue_size_in_bytes;
-> > +	to_vvq(vq)->split.queue_dma_addr =3D vring_split.queue_dma_addr;
-> > +	to_vvq(vq)->split.queue_size_in_bytes =3D vring_split.queue_size_in_b=
-ytes;
->
->
-> This still seems a little bit redundant since the current logic is a
-> little bit complicated since the vq->split is not initialized in a
-> single place.
->
-> I wonder if it's better to:
->
-> vring_alloc_queue_split()
-> vring_alloc_desc_extra() (reorder to make patch 9 come first)
->
-> then we can simply assign vring_split to vq->split in
-> __vring_new_virtqueue() since it has:
->
->  =C2=A0=C2=A0=C2=A0 vq->split.queue_dma_addr =3D 0;
->  =C2=A0=C2=A0 =C2=A0vq->split.queue_size_in_bytes =3D 0;
->
->  =C2=A0=C2=A0=C2=A0 vq->split.vring =3D vring;
->  =C2=A0=C2=A0=C2=A0 vq->split.avail_flags_shadow =3D 0;
->  =C2=A0=C2=A0=C2=A0 vq->split.avail_idx_shadow =3D 0;
->
-> This seems to simplify the logic and task of e.g
-> virtqueue_vring_attach_split() to a simple:
->
-> vq->split=3D vring_split;
+Hi Daniel,
 
-This does look simpler. The reason for not doing this is that the argument
-accepted by __vring_new_virtqueue() is "struct vring", and
-__vring_new_virtqueue() is an export symbol.
+Thank you for the patch! Perhaps something to improve:
 
-I took a look, and the only external direct call to __vring_new_virtqueue is
-here.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on robh/for-next linus/master v5.19-rc7 next-20220721]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-	tools/virtio/virtio_test.c
-	static void vq_reset(struct vq_info *info, int num, struct virtio_device *=
-vdev)
-	{
-		if (info->vq)
-			vring_del_virtqueue(info->vq);
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Kestrel/Add-support-for-WASP-SoC-on-AVM-router-boards/20220722-033724
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20220722/202207222313.GAofKYST-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 72686d68c137551cce816416190a18d45b4d4e2a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/b737a00511b74767e3eb13b2ddfba8e6dfe8e5c2
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Daniel-Kestrel/Add-support-for-WASP-SoC-on-AVM-router-boards/20220722-033724
+        git checkout b737a00511b74767e3eb13b2ddfba8e6dfe8e5c2
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/remoteproc/
 
-		memset(info->ring, 0, vring_size(num, 4096));
-		vring_init(&info->vring, num, info->ring, 4096);
-		info->vq =3D __vring_new_virtqueue(info->idx, info->vring, vdev, true,
-						 false, vq_notify, vq_callback, "test");
-		assert(info->vq);
-		info->vq->priv =3D info;
-	}
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
 
-I think this could be replaced with vring_new_virtqueue() so that we don't =
-need
-to make __vring_new_virtqueue as an export function so we can make some
-modifications to it.
+All warnings (new ones prefixed by >>):
 
-nit: vring_alloc_desc_extra() should not have to be extract from
-__vring_new_virtqueue() .
+>> drivers/remoteproc/avm_wasp.c:582:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+           if (!avmwasp->linux_blob) {
+               ^~~~~~~~~~~~~~~~~~~~
+   drivers/remoteproc/avm_wasp.c:776:9: note: uninitialized use occurs here
+           return ret;
+                  ^~~
+   drivers/remoteproc/avm_wasp.c:582:2: note: remove the 'if' if its condition is always false
+           if (!avmwasp->linux_blob) {
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/remoteproc/avm_wasp.c:566:9: note: initialize the variable 'ret' to silence this warning
+           int ret;
+                  ^
+                   = 0
+   1 warning generated.
 
-Thanks.
 
->
-> And if this makes sense, we can do something similar to packed ring.
->
-> Thanks
->
->
-> >   	to_vvq(vq)->we_own_ring =3D true;
-> >
-> >   	return vq;
->
+vim +582 drivers/remoteproc/avm_wasp.c
+
+   545	
+   546	/**
+   547	 * avm_wasp_load_initramfs_image() - load initramfs image to WASP
+   548	 * @avmwasp: pointer to drivers private avm_wasp_rproc structure
+   549	 *
+   550	 * Uses the lan port specified from DT to load the initramfs to
+   551	 * WASP after the network boot firmware was successfully started.
+   552	 * Communication is done by using raw sockets.
+   553	 * There are several commands and status values which are checked.
+   554	 * First a discovery packet is received and then each data packet
+   555	 * is acknowledged by the WASP network boot firmware.
+   556	 * First packet needs to prepend the load address and last packet
+   557	 * needs to append the execution address.
+   558	 *
+   559	 * Return: 0 on Success, -EFAULT if errors with the WASP send protocol
+   560	 * have occurred, -EAGAIN if the wasp network interface is down or the
+   561	 * error returned from the failed operating system function or service
+   562	 */
+   563	static int avm_wasp_load_initramfs_image(struct avm_wasp_rproc *avmwasp)
+   564	{
+   565		bool done = false;
+   566		int ret;
+   567		u32 num_chunks, chunk_counter;
+   568		short interface_flags;
+   569		const u8 *firmware, *firmware_end;
+   570		struct device *dev = &avmwasp->pdev->dev;
+   571		struct kvec socket_kvec;
+   572		struct msghdr socket_msghdr;
+   573		struct net_device *send_netdev;
+   574		struct sockaddr send_sock_addr;
+   575		struct sockaddr_ll send_socket_address;
+   576		struct socket *wasp_socket;
+   577		struct wasp_packet *packet = (struct wasp_packet *)
+   578				(avmwasp->buffer);
+   579		struct __kernel_old_timeval timeout;
+   580		time64_t start_time, current_time;
+   581	
+ > 582		if (!avmwasp->linux_blob) {
+   583			dev_err(dev, "error accessing initramfs image\n");
+   584			goto err;
+   585		}
+   586	
+   587		firmware = avmwasp->linux_blob->data;
+   588		firmware_end = firmware + avmwasp->linux_blob->size;
+   589	
+   590		ret = sock_create_kern(&init_net, PF_PACKET, SOCK_RAW,
+   591				       htons(ETH_TYPE_ATH_ECPS_FRAME),
+   592				       &wasp_socket);
+   593		if (ret < 0) {
+   594			dev_err(dev, "error opening recv socket: %d\n", ret);
+   595			goto err;
+   596		}
+   597	
+   598		timeout.tv_sec = 10;
+   599		timeout.tv_usec = 0;
+   600		ret = sock_setsockopt(wasp_socket, SOL_SOCKET, SO_RCVTIMEO_OLD,
+   601				      KERNEL_SOCKPTR(&timeout), sizeof(timeout));
+   602		if (ret < 0) {
+   603			dev_err(dev, "error SO_RCVTIMEO recv socket: %d\n", ret);
+   604			goto err_socket;
+   605		}
+   606	
+   607		ret = sock_setsockopt(wasp_socket, SOL_SOCKET, SO_SNDTIMEO_OLD,
+   608				      KERNEL_SOCKPTR(&timeout), sizeof(timeout));
+   609		if (ret < 0) {
+   610			dev_err(dev, "error SO_SNDTIMEO send socket: %d\n", ret);
+   611			goto err_socket;
+   612		}
+   613	
+   614		rcu_read_lock();
+   615		send_netdev = dev_get_by_name_rcu(sock_net(wasp_socket->sk),
+   616						  avmwasp->loader_port);
+   617		if (send_netdev)
+   618			interface_flags = (short)dev_get_flags(send_netdev);
+   619		rcu_read_unlock();
+   620	
+   621		if (IS_ERR_OR_NULL(send_netdev)) {
+   622			dev_err(dev, "error accessing net device\n");
+   623			ret = -ENODEV;
+   624			goto err_socket;
+   625		}
+   626	
+   627		if (!(interface_flags & IFF_UP && interface_flags & IFF_RUNNING)) {
+   628			dev_err(dev, "error wasp interface %s is down\n",
+   629				avmwasp->loader_port);
+   630			ret = -EAGAIN;
+   631			goto err_socket;
+   632		}
+   633	
+   634		avmwasp->ifindex = send_netdev->ifindex;
+   635		ret = dev_get_mac_address(&send_sock_addr, &init_net,
+   636					  avmwasp->loader_port);
+   637		if (ret < 0) {
+   638			dev_err(dev, "error getting mac address: %d\n", ret);
+   639			goto err_socket;
+   640		}
+   641	
+   642		send_socket_address.sll_halen = ETH_ALEN;
+   643		send_socket_address.sll_ifindex = avmwasp->ifindex;
+   644		memset(&socket_msghdr, 0, sizeof(socket_msghdr));
+   645		socket_msghdr.msg_name = (struct sockaddr *)&send_socket_address;
+   646		socket_msghdr.msg_namelen = sizeof(struct sockaddr_ll);
+   647	
+   648		start_time = ktime_get_seconds();
+   649	
+   650		while (!done) {
+   651			current_time = ktime_get_seconds();
+   652			if ((current_time - start_time) > ETH_SEND_LOOP_TIMEOUT_SECS) {
+   653				dev_err(dev,
+   654					"waiting for packet from WASP timed out\n");
+   655				ret = -ETIMEDOUT;
+   656				goto err_socket;
+   657			}
+   658	
+   659			socket_kvec.iov_base = avmwasp->buffer;
+   660			socket_kvec.iov_len = ETH_BUF_SIZE;
+   661			ret = kernel_recvmsg(wasp_socket,
+   662					     &socket_msghdr, &socket_kvec, 1,
+   663					     ETH_BUF_SIZE, 0);
+   664	
+   665			if (ret < 0) {
+   666				dev_err(dev,
+   667					"error receiving any packet or timeout: %d\n",
+   668					ret);
+   669				goto err_socket;
+   670			}
+   671	
+   672			if (ret < (sizeof(struct ethhdr) + sizeof(packet->hdr))) {
+   673				dev_err(dev,
+   674					"packet too small, discard and continue\n");
+   675				continue;
+   676			}
+   677	
+   678			if (packet->eh.h_proto != ETH_TYPE_ATH_ECPS_FRAME)
+   679				continue;
+   680	
+   681			memcpy(wasp_mac, packet->eh.h_source, sizeof(wasp_mac));
+   682	
+   683			if (packet->hdr.packet_start == ETH_WASP_PACKET_ID) {
+   684				switch (packet->hdr.response) {
+   685				case RESP_DISCOVER:
+   686					chunk_counter = 1;
+   687					num_chunks = DIV_ROUND_UP(avmwasp->linux_blob->size,
+   688								  ETH_DATA_SIZE);
+   689					fallthrough;
+   690				case RESP_OK:
+   691					memcpy(packet->eh.h_dest, wasp_mac, sizeof(packet->eh.h_dest));
+   692					packet->eh.h_proto = ETH_TYPE_ATH_ECPS_FRAME;
+   693					memcpy(packet->eh.h_source, send_sock_addr.sa_data,
+   694					       sizeof(packet->eh.h_source));
+   695	
+   696					if (firmware < firmware_end) {
+   697						size_t bytestosend, send_len;
+   698						u32 data_offset = 0;
+   699	
+   700						if (chunk_counter == 1) {
+   701							memcpy(packet->payload,
+   702							       &m_load_addr,
+   703							       sizeof(m_load_addr));
+   704							data_offset = sizeof(m_load_addr);
+   705						}
+   706	
+   707						if ((firmware_end - firmware) >=
+   708						     ETH_DATA_SIZE)
+   709							bytestosend = ETH_DATA_SIZE;
+   710						else
+   711							bytestosend = firmware_end -
+   712										firmware;
+   713						memcpy(&packet->payload[data_offset],
+   714						       firmware, bytestosend);
+   715						firmware = firmware + ETH_DATA_SIZE;
+   716	
+   717						packet->hdr.packet_start =
+   718								ETH_WASP_PACKET_ID;
+   719						if (chunk_counter == num_chunks) {
+   720							packet->hdr.response =
+   721								CMD_START_FIRMWARE;
+   722							memcpy(&packet->payload
+   723							       [data_offset + bytestosend],
+   724							       &m_load_addr,
+   725							       sizeof(m_load_addr));
+   726							bytestosend += sizeof(m_load_addr);
+   727						} else {
+   728							packet->hdr.command =
+   729								CMD_FIRMWARE_DATA;
+   730						}
+   731						packet->hdr.counter =
+   732								(chunk_counter - 1) * 4;
+   733	
+   734						send_len = sizeof(struct ethhdr)
+   735							+ sizeof(packet->hdr) + bytestosend +
+   736							data_offset;
+   737	
+   738						socket_kvec.iov_len = send_len;
+   739						socket_kvec.iov_base = avmwasp->buffer;
+   740	
+   741						ret = kernel_sendmsg(wasp_socket,
+   742								     &socket_msghdr,
+   743								     &socket_kvec,
+   744								     1, send_len);
+   745						if (ret < 0) {
+   746							dev_err(dev,
+   747								"error sending to WASP %d\n",
+   748								ret);
+   749							goto err_socket;
+   750						}
+   751	
+   752						chunk_counter++;
+   753					}
+   754					break;
+   755				case RESP_ERROR:
+   756					dev_err(dev,
+   757						"received an WASP error packet\n");
+   758					ret = -EFAULT;
+   759					goto err_socket;
+   760				case RESP_STARTING:
+   761					done = true;
+   762					ret = 0;
+   763					continue;
+   764					break;
+   765				default:
+   766					dev_err(dev, "unknown packet, continue\n");
+   767					continue;
+   768					break;
+   769				}
+   770			}
+   771		}
+   772	
+   773	err_socket:
+   774		wasp_socket->ops->release(wasp_socket);
+   775	err:
+   776		return ret;
+   777	}
+   778	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
