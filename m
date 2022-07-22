@@ -2,131 +2,278 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D7ACCA485
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 21 Jul 2022 20:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAA2CCA485
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 22 Jul 2022 03:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233122AbiGUUCy (ORCPT
+        id S233975AbiGVDGK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 21 Jul 2022 16:02:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38864 "EHLO
+        Thu, 21 Jul 2022 23:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233075AbiGUUCy (ORCPT
+        with ESMTP id S230153AbiGVDGJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 21 Jul 2022 16:02:54 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E5736D9DF;
-        Thu, 21 Jul 2022 13:02:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1658433770;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=Owkp8ktceAI2U5/duGJt4dKf9HIoey0z8t5W7UFe7eo=;
-    b=BLxrN2S+YWx0HdNI2q7oAFlQ2WmDx7BXapbRJITFzGr3CVzlPle8bxQ0WUuLMyvT7/
-    42ttEv5fnyJmOexK3Q1qd9utSb9Ik4gWvxMbFinqn4eKvmijNONIBxtuRQul4bn7rKcj
-    mKipm1pCV8RQUST7UndcS8AT6kWNrUEMLuYZhrFKITC4clMc7cOf/t8hRmyXSJF4khn6
-    R1kKfay+dTgQyMFgA5DEvFy/TkrqgJbJnzsb+SmmgeUh3DY0TYYMc0bhg/+Vpd4/sf4d
-    o3iJ6+AoR/0s063znjaukuKqOkqX0GE2N6y1HVntt03adNa82HOl8EKO2LUT0lsIErfl
-    Z88g==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLUrK86+6Y="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.47.0 AUTH)
-    with ESMTPSA id efdacay6LK2n61F
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Thu, 21 Jul 2022 22:02:49 +0200 (CEST)
-Date:   Thu, 21 Jul 2022 22:02:43 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Thu, 21 Jul 2022 23:06:09 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC51823A5;
+        Thu, 21 Jul 2022 20:06:06 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VK3N6a-_1658459160;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VK3N6a-_1658459160)
+          by smtp.aliyun-inc.com;
+          Fri, 22 Jul 2022 11:06:01 +0800
+Message-ID: <1658459137.1276448-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v12 30/40] virtio_pci: support VIRTIO_F_RING_RESET
+Date:   Fri, 22 Jul 2022 11:05:37 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916
- to schema
-Message-ID: <Ytmw41giZ/4S+Pp0@gerhold.net>
-References: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com>
- <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
- <20220720224608.GA4107504-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220720224608.GA4107504-robh@kernel.org>
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        kangjie.xu@linux.alibaba.com,
+        virtualization@lists.linux-foundation.org
+References: <20220720030436.79520-1-xuanzhuo@linux.alibaba.com>
+ <20220720030436.79520-31-xuanzhuo@linux.alibaba.com>
+ <efb6adca-a2a8-98d2-5604-5482d8be6ec9@redhat.com>
+In-Reply-To: <efb6adca-a2a8-98d2-5604-5482d8be6ec9@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jul 20, 2022 at 04:46:08PM -0600, Rob Herring wrote:
-> On Mon, Jul 18, 2022 at 04:03:41PM +0200, Stephan Gerhold wrote:
-> > qcom,q6v5.txt covers multiple SoCs with quite different binding
-> > requirements. Converting this into one DT schema would require
-> > several if statements, making the DT schema overall harder to
-> > read and understand.
-> > 
-> > To avoid this, follow the example of SC7180/SC7280 and split
-> > "qcom,msm8916-mss-pil" (and the equivalent deprecated "qcom,q6v5-pil"
-> > compatible) into a separate DT schema. The schema is somewhat based
-> > on the one for SC7180/SC7280 but adjusted for the old platforms.
-> > 
-> > Compared to the old plain text bindings, add missing documentation for
-> > the "bam-dmux" subnode and recommend one particular approach to specify
-> > the MBA/MPSS "memory-region" (the other one is marked as deprecated).
-> > 
-> > Cc: Sireesh Kodali <sireeshkodali1@gmail.com>
-> > Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+On Thu, 21 Jul 2022 17:15:11 +0800, Jason Wang <jasowang@redhat.com> wrote:
+>
+> =E5=9C=A8 2022/7/20 11:04, Xuan Zhuo =E5=86=99=E9=81=93:
+> > This patch implements virtio pci support for QUEUE RESET.
+> >
+> > Performing reset on a queue is divided into these steps:
+> >
+> >   1. notify the device to reset the queue
+> >   2. recycle the buffer submitted
+> >   3. reset the vring (may re-alloc)
+> >   4. mmap vring to device, and enable the queue
+> >
+> > This patch implements virtio_reset_vq(), virtio_enable_resetq() in the
+> > pci scenario.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 > > ---
-> > Changes in v2:
-> >   - Add blank lines between top-level properties
-> >   - Drop "deprecated" in "oneOf" list, it is not clear if this is valid
-> >     and it should be redundant since the properties itself are already
-> >     marked as "deprecated"
-> > ---
-> > Like Sibi's patch series for SC7180/SC7820 [1] this is somewhat related
-> > to Sireesh's series that converts all of qcom,q6v5.txt [2] (with a lot
-> > of if statements). However, this series focuses on MSM8916/MSM8974 (or
-> > actually MSM8909) only.
-> > 
-> > [1]: https://lore.kernel.org/linux-arm-msm/1657020721-24939-1-git-send-email-quic_sibis@quicinc.com/
-> > [2]: https://lore.kernel.org/linux-arm-msm/20220511161602.117772-7-sireeshkodali1@gmail.com/
-> 
-> Is that one abandoned or do we just get to review both approaches 
-> without coordination?
-> 
+> >   drivers/virtio/virtio_pci_common.c | 12 +++-
+> >   drivers/virtio/virtio_pci_modern.c | 96 ++++++++++++++++++++++++++++++
+> >   2 files changed, 105 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio=
+_pci_common.c
+> > index ca51fcc9daab..ad258a9d3b9f 100644
+> > --- a/drivers/virtio/virtio_pci_common.c
+> > +++ b/drivers/virtio/virtio_pci_common.c
+> > @@ -214,9 +214,15 @@ static void vp_del_vq(struct virtqueue *vq)
+> >   	struct virtio_pci_vq_info *info =3D vp_dev->vqs[vq->index];
+> >   	unsigned long flags;
+> >
+> > -	spin_lock_irqsave(&vp_dev->lock, flags);
+> > -	list_del(&info->node);
+> > -	spin_unlock_irqrestore(&vp_dev->lock, flags);
+> > +	/*
+> > +	 * If it fails during re-enable reset vq. This way we won't rejoin
+> > +	 * info->node to the queue. Prevent unexpected irqs.
+> > +	 */
+> > +	if (!vq->reset) {
+> > +		spin_lock_irqsave(&vp_dev->lock, flags);
+> > +		list_del(&info->node);
+> > +		spin_unlock_irqrestore(&vp_dev->lock, flags);
+> > +	}
+> >
+> >   	vp_dev->del_vq(info);
+> >   	kfree(info);
+> > diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio=
+_pci_modern.c
+> > index 9041d9a41b7d..4d28b6918c80 100644
+> > --- a/drivers/virtio/virtio_pci_modern.c
+> > +++ b/drivers/virtio/virtio_pci_modern.c
+> > @@ -34,6 +34,9 @@ static void vp_transport_features(struct virtio_devic=
+e *vdev, u64 features)
+> >   	if ((features & BIT_ULL(VIRTIO_F_SR_IOV)) &&
+> >   			pci_find_ext_capability(pci_dev, PCI_EXT_CAP_ID_SRIOV))
+> >   		__virtio_set_bit(vdev, VIRTIO_F_SR_IOV);
+> > +
+> > +	if (features & BIT_ULL(VIRTIO_F_RING_RESET))
+> > +		__virtio_set_bit(vdev, VIRTIO_F_RING_RESET);
+> >   }
+> >
+> >   /* virtio config->finalize_features() implementation */
+> > @@ -199,6 +202,95 @@ static int vp_active_vq(struct virtqueue *vq, u16 =
+msix_vec)
+> >   	return 0;
+> >   }
+> >
+> > +static int vp_modern_reset_vq(struct virtqueue *vq)
+> > +{
+> > +	struct virtio_pci_device *vp_dev =3D to_vp_device(vq->vdev);
+> > +	struct virtio_pci_modern_device *mdev =3D &vp_dev->mdev;
+> > +	struct virtio_pci_vq_info *info;
+> > +	unsigned long flags;
+> > +
+> > +	if (!virtio_has_feature(vq->vdev, VIRTIO_F_RING_RESET))
+> > +		return -ENOENT;
+> > +
+> > +	vp_modern_set_queue_reset(mdev, vq->index);
+> > +
+> > +	info =3D vp_dev->vqs[vq->index];
+> > +
+> > +	/* delete vq from irq handler */
+> > +	spin_lock_irqsave(&vp_dev->lock, flags);
+> > +	list_del(&info->node);
+> > +	spin_unlock_irqrestore(&vp_dev->lock, flags);
+> > +
+> > +	INIT_LIST_HEAD(&info->node);
+> > +
+> > +	/* For the case where vq has an exclusive irq, to prevent the irq from
+> > +	 * being received again and the pending irq, call synchronize_irq(), =
+and
+> > +	 * break it.
+> > +	 *
+> > +	 * We can't use disable_irq() since it conflicts with the affinity
+> > +	 * managed IRQ that is used by some drivers. So this is done on top of
+> > +	 * IRQ hardening.
+> > +	 *
+> > +	 * In the scenario based on shared interrupts, vq will be searched fr=
+om
+> > +	 * the queue virtqueues. Since the previous list_del() has been delet=
+ed
+> > +	 * from the queue, it is impossible for vq to be called in this case.
+> > +	 * There is no need to close the corresponding interrupt.
+> > +	 */
+> > +	if (vp_dev->per_vq_vectors && info->msix_vector !=3D VIRTIO_MSI_NO_VE=
+CTOR) {
+> > +#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+> > +		__virtqueue_break(vq);
+> > +#endif
+>
+>
+> I think we should do this unconditionally since it's an independent
+> feature, though the list_del() above should be sufficient.
 
-I assumed the decision to make separate schemas rather than a big one
-was already made, since Sibi's series was applied and has already moved
-parts of qcom,q6v5.txt into separate schemas.
+Yes.
 
-Still, I did coordinate with Sireesh before submitting this patch and
-suggested that he can likely just add the new "qcom,msm8953-mss-pil"
-compatible from his series to the DT schema in this patch (the setup is
-also very similar).
+>
+>
+> > +		synchronize_irq(pci_irq_vector(vp_dev->pci_dev, info->msix_vector));
+> > +	}
+> > +
+> > +	vq->reset =3D true;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int vp_modern_enable_reset_vq(struct virtqueue *vq)
+> > +{
+> > +	struct virtio_pci_device *vp_dev =3D to_vp_device(vq->vdev);
+> > +	struct virtio_pci_modern_device *mdev =3D &vp_dev->mdev;
+> > +	struct virtio_pci_vq_info *info;
+> > +	unsigned long flags, index;
+> > +	int err;
+> > +
+> > +	if (!vq->reset)
+> > +		return -EBUSY;
+> > +
+> > +	index =3D vq->index;
+> > +	info =3D vp_dev->vqs[index];
+> > +
+> > +	if (vp_modern_get_queue_reset(mdev, index))
+> > +		return -EBUSY;
+> > +
+> > +	if (vp_modern_get_queue_enable(mdev, index))
+> > +		return -EBUSY;
+> > +
+> > +	err =3D vp_active_vq(vq, info->msix_vector);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	if (vq->callback) {
+> > +		spin_lock_irqsave(&vp_dev->lock, flags);
+> > +		list_add(&info->node, &vp_dev->virtqueues);
+> > +		spin_unlock_irqrestore(&vp_dev->lock, flags);
+> > +	} else {
+> > +		INIT_LIST_HEAD(&info->node);
+> > +	}
+> > +
+> > +#ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+> > +	if (vp_dev->per_vq_vectors && info->msix_vector !=3D VIRTIO_MSI_NO_VE=
+CTOR)
+> > +		__virtqueue_unbreak(vq);
+> > +#endif
+> > +
+> > +	vp_modern_set_queue_enable(&vp_dev->mdev, index, true);
+> > +	vq->reset =3D false;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   static u16 vp_config_vector(struct virtio_pci_device *vp_dev, u16 vec=
+tor)
+> >   {
+> >   	return vp_modern_config_vector(&vp_dev->mdev, vector);
+> > @@ -413,6 +505,8 @@ static const struct virtio_config_ops virtio_pci_co=
+nfig_nodev_ops =3D {
+> >   	.set_vq_affinity =3D vp_set_vq_affinity,
+> >   	.get_vq_affinity =3D vp_get_vq_affinity,
+> >   	.get_shm_region  =3D vp_get_shm_region,
+> > +	.disable_vq_and_reset =3D vp_modern_reset_vq,
+> > +	.enable_vq_after_reset =3D vp_modern_enable_reset_vq,
+>
+>
+> Nit:
+>
+> To be consistent, let's use vp_modern_disable_vq_and_reset() and
+> vp_modern_enable_vq_after_reset()
 
-> I think you need a common q6v5 schema here with all the common 
-> properties. Having the same property name with the type defined multiple 
-> times is not great. In fact, I'm working on a check for finding those.
+Will fix.
 
-Which properties would you move to a common schema? Most of the schema
-is just listing items for generic properties (interrupts, clocks, power
-domains, supplies, resets, memory-region, ...) and having them separated
-is intended to avoid lots of if statements in a common schema.
+Thanks.
 
-What remains is maybe:
 
-  - "qcom,smem-states", which is already used in several other schemas
-    and could be possibly defined together with #qcom,smem-state-cells
-    in some generic schema(?)
-
-  - "qcom,halt-regs", "firmware-name", "smd-edge" are used by different
-    Qualcomm remoteproc drivers, so they could possibly be defined in
-    some common "qcom-remoteproc.yaml" schema(?)
-
-Thanks,
-Stephan
+>
+> Thanks
+>
+>
+> >   };
+> >
+> >   static const struct virtio_config_ops virtio_pci_config_ops =3D {
+> > @@ -431,6 +525,8 @@ static const struct virtio_config_ops virtio_pci_co=
+nfig_ops =3D {
+> >   	.set_vq_affinity =3D vp_set_vq_affinity,
+> >   	.get_vq_affinity =3D vp_get_vq_affinity,
+> >   	.get_shm_region  =3D vp_get_shm_region,
+> > +	.disable_vq_and_reset =3D vp_modern_reset_vq,
+> > +	.enable_vq_after_reset =3D vp_modern_enable_reset_vq,
+> >   };
+> >
+> >   /* the PCI probing function */
+>
