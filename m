@@ -2,221 +2,134 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4A9CCA48A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 25 Jul 2022 07:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA57C43334
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 23 Jul 2022 08:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231330AbiGYH3R (ORCPT
+        id S237098AbiGWI3g (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 25 Jul 2022 03:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59390 "EHLO
+        Sat, 23 Jul 2022 04:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231250AbiGYH3M (ORCPT
+        with ESMTP id S229708AbiGWI3g (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 25 Jul 2022 03:29:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8251512605
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Jul 2022 00:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658734150;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7V73Urf85bEAl0pJImVws1FSD2o2Nh9wuLCajEhv1dQ=;
-        b=UuhvzleC7C3ZwDyuYvwUb9V7eyomBOsXr1mDMqFp8kk/KFG6dxtHz+vmvotfa/Mt+Ob0ku
-        2KefS7nicYLQXzKoF6Cl368vhyH5IxMWSlxqMtxh+0lDtC6KrXZ78EHFmfBUbe2j5NR+3S
-        03xqqwdjI89HNx4FzVyQ9dV07zAFLXQ=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-322-K5824RzRNY2x6VVv4cpNsw-1; Mon, 25 Jul 2022 03:29:08 -0400
-X-MC-Unique: K5824RzRNY2x6VVv4cpNsw-1
-Received: by mail-lf1-f72.google.com with SMTP id w20-20020a194914000000b00489e66662d1so3195393lfa.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 Jul 2022 00:29:08 -0700 (PDT)
+        Sat, 23 Jul 2022 04:29:36 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E8E92A950
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Jul 2022 01:29:35 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id r14so7787076ljp.2
+        for <linux-remoteproc@vger.kernel.org>; Sat, 23 Jul 2022 01:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=resent-from:resent-to:resent-date:resent-message-id:from:to:cc
+         :subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=uzzbvpcg92Vbq8cJiUX3FDJ4W3Mjvx8Z9ViLMy+/Iz0=;
+        b=h2/jHT9SQsmsoIH4EAiU71xSLC3CIRit7HvmJdLH8xhMI43JPAKZELmT5KzLu5kzG6
+         0loA2tcEH35lJamXvEy84umKAoFx9JT6sO7cLzBVexXwwLO5mYNel1UyuPZMB6mwaC/i
+         MPe8vZuil1jDO2ttCTbZR9eoef3pOTLHAxYlR1WeLBDPVEurQpA4DdP8Jf74xi7J5vdd
+         qPZfm/j8phGB85NCXXSDLl+fEh5yzLzsC1HL0YjS8GgxXdbiv7NnAYfqGifJG+baGbIs
+         20ItlqY0FgNTuWDH8GoaDEHpgCWSJFFOFCIiZc44aVyP/AcCUY+C6dGAqQ3jGl9492ea
+         0cQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7V73Urf85bEAl0pJImVws1FSD2o2Nh9wuLCajEhv1dQ=;
-        b=UWOP/WTvKLlQkATV1KiAnTWDnrZGEcl9XeMizlFsR1o8249KkF+duId+AGEdqqGgBD
-         ShjCI0dbmonHL0eHxJ+vghEGyW5E71/JFPWkAcosdu98VTtrMgM4TV+duw/1rKv89l8q
-         H8Myw+D4ttKZlJQdFuWcAEpsRos7CejlK3GvmQB8AADKolPAc8MiYFr4e1ozmjXElAl4
-         MWE0MGresJ0djE7VGj4sjB6SwveV7zY5XAGqw4dCggYgLqSZXK7QwT4FpUGmnorOuj6I
-         qnvnammtF6iWDr61pdbuVzs5z9GYSXrYgEXx6QfO9uAM5kZh0BovE9ce8yFqCh8kHUVJ
-         aHqw==
-X-Gm-Message-State: AJIora+NVbi18KquNBgzIQGPzYadMe4Hc44PkUEHByUP2Xpwl9zdgbi4
-        A2ci+qVlnha0DJgho5WO64cQpQC7eMgv8UzoxHS2t9uysMgh1MUCh3MJzhP6LT4zSvG4NbXmwWe
-        8n01SxeIUSa0UmchBBmMOC4y1mIrOWI3Xi0zZjAIFLc2OPA==
-X-Received: by 2002:a05:6512:3f0e:b0:48a:5edd:99b2 with SMTP id y14-20020a0565123f0e00b0048a5edd99b2mr3893776lfa.124.1658734147161;
-        Mon, 25 Jul 2022 00:29:07 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1vSilpMwka+2TIjWzkO9OCXsrSScPIWOm9X8cfPvK1yqV+F7/YxylSd832Ayyg4Jn4Euf9+iYQrDan3aN009eg=
-X-Received: by 2002:a05:6512:3f0e:b0:48a:5edd:99b2 with SMTP id
- y14-20020a0565123f0e00b0048a5edd99b2mr3893759lfa.124.1658734146714; Mon, 25
- Jul 2022 00:29:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220720030436.79520-1-xuanzhuo@linux.alibaba.com>
- <20220720030436.79520-39-xuanzhuo@linux.alibaba.com> <726a5056-789a-b445-a2c6-879008ad270a@redhat.com>
- <1658731116.1695666-1-xuanzhuo@linux.alibaba.com> <CACGkMEvsAyR5uRprobv-bQYPOKKOM4sZzQ-Vw5ZiETMjiCkdRQ@mail.gmail.com>
- <1658733700.3892667-1-xuanzhuo@linux.alibaba.com>
-In-Reply-To: <1658733700.3892667-1-xuanzhuo@linux.alibaba.com>
-From:   Jason Wang <jasowang@redhat.com>
-Date:   Mon, 25 Jul 2022 15:28:55 +0800
-Message-ID: <CACGkMEvsS_QVbq3iCG8hvHuKrp9ObTy3jPUn75zPk-bSHd7tzA@mail.gmail.com>
-Subject: Re: [PATCH v12 38/40] virtio_net: support rx queue resize
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
+        h=x-gm-message-state:resent-from:resent-to:resent-date
+         :resent-message-id:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uzzbvpcg92Vbq8cJiUX3FDJ4W3Mjvx8Z9ViLMy+/Iz0=;
+        b=xneL7E+lYNSN0MwuWuWVRz4foou9lta06/0G0V/zPPXuBIf6yEbRW/F4EC9zA+vyp6
+         YQ7RiA3myQj7inBo+/dQ7SHhr9Tv/zACJ4AG4AkS9qR70voJLZBePsKawVEgKPNHMuRR
+         XkKjIc7wM0mrnviT/sS6UIRGgDQP8l+/MFtg3b+yiBlFeIC5ZvMFypMWYLLtmles/W78
+         5eY31toKQ69fVFGULNs2F3kkRmNlzainHNYTJR71h44Shw1MP5gjQc5hLaTWTDKKhR1/
+         uMMZgSlUoIRhcUwfte7OQ2UViZoZsKlPu4HPB1D6zSLI97WC5nx7++TOHGfGI7ugXR83
+         6oCw==
+X-Gm-Message-State: AJIora80etUkiGzYVGDQSLaTUAwA2AmYV+e+Y6v6fAF9GN1gwJT4SuMi
+        SlqcGy6MYEibR0t4XJZ5sKlpQdkZPTbqa6bK
+X-Google-Smtp-Source: AGRyM1sI7/MWEY9W6DOfjBiJpqpiZLmlhSFU4R7UfuL9J0v6kzRn4RZXYNWB5rOg1b5KPW8+yN4kgQ==
+X-Received: by 2002:a2e:9c86:0:b0:25d:edc3:3a2a with SMTP id x6-20020a2e9c86000000b0025dedc33a2amr1233921lji.406.1658564973078;
+        Sat, 23 Jul 2022 01:29:33 -0700 (PDT)
+Received: from [192.168.10.173] (93.81-167-86.customer.lyse.net. [81.167.86.93])
+        by smtp.gmail.com with ESMTPSA id e16-20020a2ea550000000b0025de5cbd183sm1480760ljn.116.2022.07.23.01.29.32
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 23 Jul 2022 01:29:32 -0700 (PDT)
+Received: from krzk-bin.home (93.81-167-86.customer.lyse.net. [81.167.86.93])
+        by smtp.gmail.com with ESMTPSA id n22-20020a05651203f600b004886508ca5csm1545801lfq.68.2022.07.23.01.24.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 23 Jul 2022 01:24:03 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm <kvm@vger.kernel.org>,
-        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
-        Kangjie Xu <kangjie.xu@linux.alibaba.com>,
-        virtualization <virtualization@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/2] dt-bindings: soc: qcom: smd-rpm: extend example
+Date:   Sat, 23 Jul 2022 10:23:58 +0200
+Message-Id: <20220723082358.39544-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220723082358.39544-1-krzysztof.kozlowski@linaro.org>
+References: <20220723082358.39544-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jul 25, 2022 at 3:23 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrot=
-e:
->
-> On Mon, 25 Jul 2022 14:57:11 +0800, Jason Wang <jasowang@redhat.com> wrot=
-e:
-> > On Mon, Jul 25, 2022 at 2:43 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> =
-wrote:
-> > >
-> > > On Thu, 21 Jul 2022 17:25:59 +0800, Jason Wang <jasowang@redhat.com> =
-wrote:
-> > > >
-> > > > =E5=9C=A8 2022/7/20 11:04, Xuan Zhuo =E5=86=99=E9=81=93:
-> > > > > This patch implements the resize function of the rx queues.
-> > > > > Based on this function, it is possible to modify the ring num of =
-the
-> > > > > queue.
-> > > > >
-> > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > ---
-> > > > >   drivers/net/virtio_net.c | 22 ++++++++++++++++++++++
-> > > > >   1 file changed, 22 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > > index fe4dc43c05a1..1115a8b59a08 100644
-> > > > > --- a/drivers/net/virtio_net.c
-> > > > > +++ b/drivers/net/virtio_net.c
-> > > > > @@ -278,6 +278,8 @@ struct padded_vnet_hdr {
-> > > > >     char padding[12];
-> > > > >   };
-> > > > >
-> > > > > +static void virtnet_rq_free_unused_buf(struct virtqueue *vq, voi=
-d *buf);
-> > > > > +
-> > > > >   static bool is_xdp_frame(void *ptr)
-> > > > >   {
-> > > > >     return (unsigned long)ptr & VIRTIO_XDP_FLAG;
-> > > > > @@ -1846,6 +1848,26 @@ static netdev_tx_t start_xmit(struct sk_bu=
-ff *skb, struct net_device *dev)
-> > > > >     return NETDEV_TX_OK;
-> > > > >   }
-> > > > >
-> > > > > +static int virtnet_rx_resize(struct virtnet_info *vi,
-> > > > > +                        struct receive_queue *rq, u32 ring_num)
-> > > > > +{
-> > > > > +   int err, qindex;
-> > > > > +
-> > > > > +   qindex =3D rq - vi->rq;
-> > > > > +
-> > > > > +   napi_disable(&rq->napi);
-> > > >
-> > > >
-> > > > We need to disable refill work as well. So this series might need
-> > > > rebasing on top of
-> > > >
-> > > > https://lore.kernel.org/netdev/20220704074859.16912-1-jasowang@redh=
-at.com/
-> > >
-> > > I understand that your patch is used to solve the situation where dev=
- is
-> > > destoryed but refill work is running.
-> > >
-> > > And is there such a possibility here?
-> >
-> > E.g the refill work runs in parallel with this function?
->
-> napi_disable enables lock-like functionality. So I think it's safe.
->
+Replace existing limited example with proper code for Qualcomm Resource
+Power Manager (RPM) over SMD based on MSM8916.  This also fixes the
+example's indentation.
 
-Ok, right, since there will be a napi_enable() soon afterwards.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../bindings/soc/qcom/qcom,smd-rpm.yaml       | 33 +++++++++++++++----
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-So
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-Thanks
-
-> Thanks.
->
-> >
-> > Thanks
-> >
-> > > Or is there any other scenario that I'm
-> > > not expecting?
-> > >
-> > > Thanks.
-> > >
-> > >
-> > > >
-> > > > I will send a new version (probably tomorrow).
-> > > >
-> > > > Thanks
-> > > >
-> > > >
-> > > > > +
-> > > > > +   err =3D virtqueue_resize(rq->vq, ring_num, virtnet_rq_free_un=
-used_buf);
-> > > > > +   if (err)
-> > > > > +           netdev_err(vi->dev, "resize rx fail: rx queue index: =
-%d err: %d\n", qindex, err);
-> > > > > +
-> > > > > +   if (!try_fill_recv(vi, rq, GFP_KERNEL))
-> > > > > +           schedule_delayed_work(&vi->refill, 0);
-> > > > > +
-> > > > > +   virtnet_napi_enable(rq->vq, &rq->napi);
-> > > > > +   return err;
-> > > > > +}
-> > > > > +
-> > > > >   /*
-> > > > >    * Send command via the control virtqueue and check status.  Co=
-mmands
-> > > > >    * supported by the hypervisor, as indicated by feature bits, s=
-hould
-> > > >
-> > >
-> >
->
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+index 50f834563e19..09d5bfa920f2 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+@@ -92,12 +92,33 @@ examples:
+             qcom,ipc = <&apcs 8 0>;
+             qcom,smd-edge = <15>;
+ 
+-                rpm-requests {
+-                        compatible = "qcom,rpm-msm8974";
+-                        qcom,smd-channels = "rpm_requests";
++            rpm-requests {
++                compatible = "qcom,rpm-msm8916";
++                qcom,smd-channels = "rpm_requests";
++
++                clock-controller {
++                    compatible = "qcom,rpmcc-msm8916", "qcom,rpmcc";
++                    #clock-cells = <1>;
++                    clocks = <&xo_board>;
++                    clock-names = "xo";
++                };
+ 
+-                        /* Regulator nodes to follow */
++                power-controller {
++                    compatible = "qcom,msm8916-rpmpd";
++                    #power-domain-cells = <1>;
++                    operating-points-v2 = <&rpmpd_opp_table>;
++
++                    rpmpd_opp_table: opp-table {
++                        compatible = "operating-points-v2";
++
++                        opp-1 {
++                            opp-level = <1>;
++                        };
++                        opp-2 {
++                            opp-level = <2>;
++                        };
++                    };
+                 };
+             };
+-     };
+-...
++        };
++    };
+-- 
+2.34.1
 
