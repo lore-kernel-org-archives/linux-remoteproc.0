@@ -2,94 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D280C00140
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jul 2022 17:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D78BC04A68
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 26 Jul 2022 17:52:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233382AbiGZRWb (ORCPT
+        id S239794AbiGZRwp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 26 Jul 2022 13:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50450 "EHLO
+        Tue, 26 Jul 2022 13:52:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbiGZRWb (ORCPT
+        with ESMTP id S239795AbiGZRwT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 26 Jul 2022 13:22:31 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 072DF6417
-        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Jul 2022 10:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1658855976;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=uaTIlHXasK14UazWIZQ5J2yjUjFXPsbpUf42M8f9VKM=;
-    b=gvrPlAyjpM6IenLkD2ogLNmZZyAieUbVVItaRfJxnKVysjU4PbhAQfHb/Q5Z2PAsHZ
-    pQFp8iQY117uBgRq8A03kUpD+T064ZIwLYiR/x4/MeUtHDeA5xFo5uW6ENFVwHNT0iO5
-    epUbQBHtUsgK48cOE20W3Jb7xyh34cc31EiVqV9CCqamqlMOEMon1/O9c5Q92lcbcVjm
-    F9vvSeH4FlJgmf8wRjlsr3ywhEYVfBWVn9bzddKYBl8re6MoQdlQl4QwTZhaYMvCAYTF
-    xLz+l73Bxab+IIFuGArHzb0g/C4dwuWbv+Iv0Kc+aMYygv4bRNVRoPwwCd3L38nwa+LM
-    RTmA==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKw7/aY="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 47.47.0 AUTH)
-    with ESMTPSA id u1045ey6QHJZ3UF
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Tue, 26 Jul 2022 19:19:35 +0200 (CEST)
-Date:   Tue, 26 Jul 2022 19:19:18 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916
- to schema
-Message-ID: <YuAh/ahbNiiQL5Ge@gerhold.net>
-References: <20220718140344.1831731-1-stephan.gerhold@kernkonzept.com>
- <20220718140344.1831731-3-stephan.gerhold@kernkonzept.com>
- <20220720224608.GA4107504-robh@kernel.org>
- <Ytmw41giZ/4S+Pp0@gerhold.net>
- <27b0d451-4cef-cfc3-c6ae-3bb6cb448083@linaro.org>
+        Tue, 26 Jul 2022 13:52:19 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92DB3122A
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Jul 2022 10:51:21 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d7so13992227plr.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 26 Jul 2022 10:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=F+HDDqObfng+U02lfgXmn7OnwfgF8WXJW/VqBzOllp0=;
+        b=a6C/xNGkJ/tlLE0z3lbgDiMjtLnG5+Pk8v16J19Ed/b/HkF9kRw3644iZJI3sVXXck
+         K3unqotJOeqeBY1NWvUL99rUbwAEe2NSwXyXfqZneH2ZKVcfSeOjISAgzCC9BNWZ4Vp7
+         kAGl8zXGFWT0O8NqB88HQboq76Vwk5/sZehKLY2wxOUgEVDp7Eo3v2fvf4EgTVQ03c4A
+         WDTxcq7JmkkWldjlEBbX3TdMeuI0HZr/gSl4uCbcXlZ/4CMsSryEleWhwBPADIHZoXyE
+         +rIJe5O4oaHfAFT/JN2b7wz3cJeEiJ1JFIxx3+SMH0oQ4UT9nuXcZF5HDFTICDn8LS7X
+         dIzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=F+HDDqObfng+U02lfgXmn7OnwfgF8WXJW/VqBzOllp0=;
+        b=rYmLpkSf754A6MVD2USaastecU9DD7/lxrdELOaFSk0BUrztOHIh+SXOETYi02rIS7
+         iMn3jht32pbEao4VNrE36+pu475hGox3jkp/1N942Ef7kiWHIfHVRAU4hosImha3490T
+         c6lai7f6GjW3dV7Tg/VubwdBfRNFqu73K+EnqoSClUjT04uz9fkBdLEXFvSqdqkruhqZ
+         iBJQkUZFXO6rrWFQf3PVZF9eN3nfcgKU+KvBE/imkrmzmoAcK7hMT9DJGYUEqq6KNbjU
+         qwG7+T1Dti1tLv7ocS/oEqX2I8tUgSzWUUVHfV42E2TVDsw9TwPDl9os4gLFyQRpkfLx
+         f9UQ==
+X-Gm-Message-State: AJIora9rAZosqUxERXJ3MEF24zyJ668SN97EWw7OZtK30wM/O/5Vonwi
+        GyUXvSS3vNh1GRSRant4NGsshg==
+X-Google-Smtp-Source: AGRyM1vurTC/JCeOvm1bUkvKqz4rp09POmCMcQQSmIeCIse22BpyedlKrRuhQ2C9xQoqLCGZAWCFRw==
+X-Received: by 2002:a17:903:20e:b0:16d:4d0b:5408 with SMTP id r14-20020a170903020e00b0016d4d0b5408mr17552661plh.161.1658857881433;
+        Tue, 26 Jul 2022 10:51:21 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id n1-20020a170902d2c100b0016a565f3f34sm12010223plc.168.2022.07.26.10.51.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Jul 2022 10:51:20 -0700 (PDT)
+Date:   Tue, 26 Jul 2022 11:51:18 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Chris Lew <quic_clew@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Introduction of rpmsg_rx_done
+Message-ID: <20220726175118.GA113917@p14s>
+References: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <27b0d451-4cef-cfc3-c6ae-3bb6cb448083@linaro.org>
+In-Reply-To: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Jul 23, 2022 at 10:41:53PM +0200, Krzysztof Kozlowski wrote:
-> On 21/07/2022 22:02, Stephan Gerhold wrote:
-> > What remains is maybe:
-> > 
-> >   - "qcom,smem-states", which is already used in several other schemas
-> >     and could be possibly defined together with #qcom,smem-state-cells
-> >     in some generic schema(?)
-> > 
-> >   - "qcom,halt-regs", "firmware-name", "smd-edge" are used by different
-> >     Qualcomm remoteproc drivers, so they could possibly be defined in
-> >     some common "qcom-remoteproc.yaml" schema(?)
+On Tue, Jun 07, 2022 at 06:16:41PM -0700, Chris Lew wrote:
+> This series proposes an implementation for the rpmsg framework to do
+> deferred cleanup of buffers provided in the rx callback. The current
+> implementation assumes that the client is done with the buffer after
+> returning from the rx callback.
 > 
-> smd-edge and glink is already in remoteproc/qcom,smd-edge.yaml
-> qcom,glink-edge.yaml
+> In some cases where the data size is large, the client may want to
+> avoid copying the data in the rx callback for later processing. This
+> series proposes two new facilities for signaling that they want to
+> hold on to a buffer after the rx callback.
+> They are:
+>  - New API rpmsg_rx_done() to tell the rpmsg framework the client is
+>    done with the buffer
+>  - New return codes for the rx callback to signal that the client will
+>    hold onto a buffer and later call rpmsg_rx_done()
 > 
+> This series implements the qcom_glink_native backend for these new
+> facilities.
+>  
+> Chris Lew (4):
+>   rpmsg: core: Add rx done hooks
+>   rpmsg: char: Add support to use rpmsg_rx_done
+>   rpmsg: glink: Try to send rx done in irq
+>   rpmsg: glink: Add support for rpmsg_rx_done
+> 
+>  drivers/rpmsg/qcom_glink_native.c | 112 ++++++++++++++++++++++++++++++--------
+>  drivers/rpmsg/rpmsg_char.c        |  50 ++++++++++++++++-
+>  drivers/rpmsg/rpmsg_core.c        |  20 +++++++
+>  drivers/rpmsg/rpmsg_internal.h    |   1 +
+>  include/linux/rpmsg.h             |  24 ++++++++
+>  5 files changed, 183 insertions(+), 24 deletions(-)
 
-Yep, I'm actually using it already in this patch. I think what I meant
-is that the smd-edge property $ref could be already defined in a common
-"qcom-remoteproc.yaml" schema and inherited via allOf, since all the
-qcom remoteprocs should have either a smd-edge or glink-edge.
-
-But all in all I'm still unsure which "common properties" Rob is
-referring to here, in which file to place them, and if this is worth it
-at all for the few I have listed above... :-)
+I have started reviewing this set.  Comments to come later today or tomorrow.
 
 Thanks,
-Stephan
+Mathieu
+
+> 
+> -- 
+> 2.7.4
+> 
