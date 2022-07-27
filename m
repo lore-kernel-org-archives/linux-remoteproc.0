@@ -2,163 +2,204 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B2DC19F29
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jul 2022 07:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE5FC04A68
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 27 Jul 2022 18:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230433AbiG0HoV (ORCPT
+        id S234385AbiG0SPy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 27 Jul 2022 03:44:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44076 "EHLO
+        Wed, 27 Jul 2022 14:15:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbiG0HoJ (ORCPT
+        with ESMTP id S234474AbiG0SPc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 27 Jul 2022 03:44:09 -0400
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0E73FA0F;
-        Wed, 27 Jul 2022 00:44:06 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VKZx5Pm_1658907838;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VKZx5Pm_1658907838)
-          by smtp.aliyun-inc.com;
-          Wed, 27 Jul 2022 15:43:59 +0800
-Message-ID: <1658907413.1860468-2-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH v13 16/42] virtio_ring: split: introduce virtqueue_resize_split()
-Date:   Wed, 27 Jul 2022 15:36:53 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com,
-        virtualization@lists.linux-foundation.org
-References: <20220726072225.19884-1-xuanzhuo@linux.alibaba.com>
- <20220726072225.19884-17-xuanzhuo@linux.alibaba.com>
- <15aa26f2-f8af-5dbd-f2b2-9270ad873412@redhat.com>
-In-Reply-To: <15aa26f2-f8af-5dbd-f2b2-9270ad873412@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 27 Jul 2022 14:15:32 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A7E378213
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jul 2022 10:16:22 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id y141so16633564pfb.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 27 Jul 2022 10:16:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7Cp8hxjyFsaE82FE3kUlY/wY5Sc8ygaOOh3psw0ODPs=;
+        b=gIyZY+gxDZfn2uH7MJzbE5BziRTX/OSE4vebEBtwvh9ioc/VZPVS5z293x+NDyQ21k
+         wysreh65HygpoMKCHphFLL/OXEJY6K7Zv+rjD35eg87HO/Ztwawh6hw4EKDxk1rOIe08
+         nLodSxyUXcbcB/JwXp66ZF3IBu+moTfdWcbZcdPYJZuHPvyu0siarx9pdvLteiom/3P1
+         v/hA4gJkOWaY0nBYTvT93ZFJbsct5uRlTyJQZNQ6DaHBdbgKx6dif+QDa/x4fbU2vGRJ
+         YPqbAG7SWVfyAo1yRXVXRe4Urq06+4YcxAdzhX0ghaOF9vQ4/Ic+WKh6nDiYLft0VzEj
+         vVwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=7Cp8hxjyFsaE82FE3kUlY/wY5Sc8ygaOOh3psw0ODPs=;
+        b=H31lwrBw9IYHZLi//9FLLOyvJMZ9wCB1l9Tru03M8LGtizFoumIZTcHH4hOQf5lHs0
+         ArfQWoR5WESFMl54p/7uP82Kg+n8LBG82SjFi3VLAKCdyBV43LCsEu0eg7TmbJpRDnCu
+         vMt6AJoxdRIdRmPkSEslq6VDW8fEd9ccEVph98DqgMVK9BsEQ9f/wBBC9AVr7OkCbM6r
+         TrAL1QJ8da64+aqgEcgkJzyE9tg0m/y0zueVw3yxcNHCJLLKIudyJjSxWk6nLt5FYe0w
+         dFKz5m7ob2Bucc8PsiizMqnRgfCBR70KWTs3cRIbUR6hieSkLHDIwYvRaUVabGR+5BgZ
+         x0sQ==
+X-Gm-Message-State: AJIora+PWuTDQDKfb4Zz1+9vY+ETIUVMZbR/7yPGQR9dQNaCbEr1mr4V
+        7lBRVshI9ZOMbKygK3M5wV7r9A==
+X-Google-Smtp-Source: AGRyM1t2p9mLNeFavg6JDGmNsDD591QfvcjLUIlhogsJg0Lzwt6k1eggGwfztu5hHmesV0ZyMMzfrg==
+X-Received: by 2002:a63:4722:0:b0:40d:289e:8637 with SMTP id u34-20020a634722000000b0040d289e8637mr19464184pga.362.1658942179666;
+        Wed, 27 Jul 2022 10:16:19 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id c1-20020a17090a674100b001f262f6f717sm2061945pjm.3.2022.07.27.10.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jul 2022 10:16:18 -0700 (PDT)
+Date:   Wed, 27 Jul 2022 11:16:16 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Chris Lew <quic_clew@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] rpmsg: core: Add rx done hooks
+Message-ID: <20220727171616.GA199805@p14s>
+References: <1654651005-15475-1-git-send-email-quic_clew@quicinc.com>
+ <1654651005-15475-2-git-send-email-quic_clew@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1654651005-15475-2-git-send-email-quic_clew@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 27 Jul 2022 11:12:19 +0800, Jason Wang <jasowang@redhat.com> wrote:
->
-> =E5=9C=A8 2022/7/26 15:21, Xuan Zhuo =E5=86=99=E9=81=93:
-> > virtio ring split supports resize.
-> >
-> > Only after the new vring is successfully allocated based on the new num,
-> > we will release the old vring. In any case, an error is returned,
-> > indicating that the vring still points to the old vring.
-> >
-> > In the case of an error, re-initialize(virtqueue_reinit_split()) the
-> > virtqueue to ensure that the vring can be used.
-> >
-> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > Acked-by: Jason Wang <jasowang@redhat.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 34 ++++++++++++++++++++++++++++++++++
-> >   1 file changed, 34 insertions(+)
-> >
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index b6fda91c8059..58355e1ac7d7 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -220,6 +220,7 @@ static struct virtqueue *__vring_new_virtqueue(unsi=
-gned int index,
-> >   					       void (*callback)(struct virtqueue *),
-> >   					       const char *name);
-> >   static struct vring_desc_extra *vring_alloc_desc_extra(unsigned int n=
-um);
-> > +static void vring_free(struct virtqueue *_vq);
-> >
-> >   /*
-> >    * Helpers.
-> > @@ -1117,6 +1118,39 @@ static struct virtqueue *vring_create_virtqueue_=
-split(
-> >   	return vq;
-> >   }
-> >
-> > +static int virtqueue_resize_split(struct virtqueue *_vq, u32 num)
-> > +{
-> > +	struct vring_virtqueue_split vring_split =3D {};
-> > +	struct vring_virtqueue *vq =3D to_vvq(_vq);
-> > +	struct virtio_device *vdev =3D _vq->vdev;
-> > +	int err;
-> > +
-> > +	err =3D vring_alloc_queue_split(&vring_split, vdev, num,
-> > +				      vq->split.vring_align,
-> > +				      vq->split.may_reduce_num);
-> > +	if (err)
-> > +		goto err;
->
->
-> I think we don't need to do anything here?
+On Tue, Jun 07, 2022 at 06:16:42PM -0700, Chris Lew wrote:
+> In order to reduce the amount of copies in the rpmsg framework, it is
+> necessary for clients to take brief ownership of the receive buffer.
+> 
+> Add the capability for clients to notify the rpmsg framework and the
+> underlying transports when it is going to hold onto a buffer and also
+> notify when the client is done with the buffer.
+> 
+> In the .rx_cb of the rpmsg drivers, if they wish to use the received
+> buffer at a later point, they should return RPMSG_DEFER. Otherwise
+> returning RPMSG_HANDLED (0) will signal the framework that the client
+> is done with the resources and can continue with cleanup.
+> 
+> The clients should check if their rpmsg endpoint supports the rx_done
+> operation with the new state variable in the rpmsg_endpoint since not
+> all endpoints will have the ability to support this operation.
+> 
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> ---
+>  drivers/rpmsg/rpmsg_core.c     | 20 ++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h |  1 +
+>  include/linux/rpmsg.h          | 24 ++++++++++++++++++++++++
+>  3 files changed, 45 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 290c1f02da10..359be643060f 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -351,6 +351,26 @@ ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>  }
+>  EXPORT_SYMBOL(rpmsg_get_mtu);
+>  
+> +/**
+> + * rpmsg_rx_done() - release resources related to @data from a @rx_cb
+> + * @ept:	the rpmsg endpoint
+> + * @data:	payload from a message
+> + *
+> + * Returns 0 on success and an appropriate error value on failure.
+> + */
+> +int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data)
+> +{
+> +	if (WARN_ON(!ept))
+> +		return -EINVAL;
+> +	if (!ept->ops->rx_done)
+> +		return -ENXIO;
+> +	if (!ept->rx_done)
+> +		return -EINVAL;
+> +
+> +	return ept->ops->rx_done(ept, data);
+> +}
+> +EXPORT_SYMBOL(rpmsg_rx_done);
+> +
+>  /*
+>   * match a rpmsg channel with a channel info struct.
+>   * this is used to make sure we're not creating rpmsg devices for channels
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index a22cd4abe7d1..99cb86ce638e 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -76,6 +76,7 @@ struct rpmsg_endpoint_ops {
+>  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+>  			     poll_table *wait);
+>  	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
+> +	int (*rx_done)(struct rpmsg_endpoint *ept, void *data);
+>  };
+>  
+>  struct device *rpmsg_find_device(struct device *parent,
+> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> index 523c98b96cb4..8e34222e8bca 100644
+> --- a/include/linux/rpmsg.h
+> +++ b/include/linux/rpmsg.h
+> @@ -63,6 +63,18 @@ struct rpmsg_device {
+>  	const struct rpmsg_device_ops *ops;
+>  };
+>  
+> +/**
+> + * rpmsg rx callback return definitions
+> + * @RPMSG_HANDLED: rpmsg user is done processing data, framework can free the
+> + *                 resources related to the buffer
+> + * @RPMSG_DEFER:   rpmsg user is not done processing data, framework will hold
+> + *                 onto resources related to the buffer until rpmsg_rx_done is
+> + *                 called. User should check their endpoint to see if rx_done
+> + *                 is a supported operation.
+> + */
+> +#define RPMSG_HANDLED	0
+> +#define RPMSG_DEFER	1
+> +
+>  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+>  
+>  /**
+> @@ -71,6 +83,7 @@ typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+>   * @refcount: when this drops to zero, the ept is deallocated
+>   * @cb: rx callback handler
+>   * @cb_lock: must be taken before accessing/changing @cb
+> + * @rx_done: if set, rpmsg endpoint supports rpmsg_rx_done
+>   * @addr: local rpmsg address
+>   * @priv: private data for the driver's use
+>   *
+> @@ -93,6 +106,7 @@ struct rpmsg_endpoint {
+>  	struct kref refcount;
+>  	rpmsg_rx_cb_t cb;
+>  	struct mutex cb_lock;
+> +	bool rx_done;
 
-Am I missing something?
+Do you see a scenario where rpmsg_endpoint_ops::rx_done holds a valid pointer
+but rpmsg_epndpoint::rx_done is set to false?  If not please remove.
 
->
->
-> > +
-> > +	err =3D vring_alloc_state_extra_split(&vring_split);
-> > +	if (err) {
-> > +		vring_free_split(&vring_split, vdev);
-> > +		goto err;
->
->
-> I suggest to move vring_free_split() into a dedicated error label.
-
-Will change.
-
-Thanks.
-
-
->
-> Thanks
->
->
-> > +	}
-> > +
-> > +	vring_free(&vq->vq);
-> > +
-> > +	virtqueue_vring_init_split(&vring_split, vq);
-> > +
-> > +	virtqueue_init(vq, vring_split.vring.num);
-> > +	virtqueue_vring_attach_split(vq, &vring_split);
-> > +
-> > +	return 0;
-> > +
-> > +err:
-> > +	virtqueue_reinit_split(vq);
-> > +	return -ENOMEM;
-> > +}
-> > +
-> >
-> >   /*
-> >    * Packed ring specific functions - *_packed().
->
+>  	u32 addr;
+>  	void *priv;
+>  
+> @@ -192,6 +206,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>  
+>  ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+>  
+> +int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data);
+> +
+>  #else
+>  
+>  static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
+> @@ -316,6 +332,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>  	return -ENXIO;
+>  }
+>  
+> +static inline int rpmsg_rx_done(struct rpmsg_endpoint *ept, void *data)
+> +{
+> +	/* This shouldn't be possible */
+> +	WARN_ON(1);
+> +
+> +	return -ENXIO;
+> +}
+> +
+>  #endif /* IS_ENABLED(CONFIG_RPMSG) */
+>  
+>  /* use a macro to avoid include chaining to get THIS_MODULE */
+> -- 
+> 2.7.4
+> 
