@@ -2,94 +2,391 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591FBC00140
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Aug 2022 02:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983BAC00144
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Aug 2022 04:49:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239144AbiHACfE (ORCPT
+        id S239527AbiHAEt3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 31 Jul 2022 22:35:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52060 "EHLO
+        Mon, 1 Aug 2022 00:49:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237027AbiHACfD (ORCPT
+        with ESMTP id S238834AbiHAEt2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 31 Jul 2022 22:35:03 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7166912D18;
-        Sun, 31 Jul 2022 19:35:02 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id t2so9246525ply.2;
-        Sun, 31 Jul 2022 19:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=05yqPtQPTf7ci9YCnKgRef4tjyfFywaN/GoiFJ0YjOE=;
-        b=I7J1Tt2AoMlpWf7ocbBYJyXVFnGRake41dwUCDfgo04DRKkXDA83/TwaZfnII6HmTI
-         PY/h2yeLaIeDEmiCLrg8rRJ7gBeYG5enucjxqLCrVmpvoI87i1aP5lgFinwcoqgNyA1C
-         0vNvlssNXWIWFvcTELv7P/Bv15uQmploiYXbfD1zr/lnO2QGXl+5TMAeD8Ue9X6rbN1v
-         qJLR+CHFOzcdOLxkWR4wknaRuajUYinbKD9yfyueiuiUcMd1U91dmPuExOoAmYinz9Xc
-         dE+8fTlkpSL9ZyoCjjxa4QDEcXT4iWihb5LSOlhpW4zyVhgCh1QxQfYW2okpkHAsRybK
-         fpXg==
+        Mon, 1 Aug 2022 00:49:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4ED8613E34
+        for <linux-remoteproc@vger.kernel.org>; Sun, 31 Jul 2022 21:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659329366;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=q+tpGySP9Lk1FyvMvrEtbd53hrU4ZKX1FexyKVAWT9g=;
+        b=HdNfbLfYZDJUN5WgV+kqtn6f6DClx+U3/gEhMfZ98KLDV5HUsJSBr/IDSUUeNKaJnQuG9+
+        i5Gm7RqAggl/KBW5s35m98C1n/DA+nO12w6seIVcj5ozbJftuGrQf3AQNCPtRy9jgbrkfJ
+        LvATCZEVrWXq+vUfJ9lThDvzSCfl5nU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-557-AHOsslnkMdWr0LP5eAeUtQ-1; Mon, 01 Aug 2022 00:49:24 -0400
+X-MC-Unique: AHOsslnkMdWr0LP5eAeUtQ-1
+Received: by mail-ej1-f69.google.com with SMTP id ga9-20020a1709070c0900b0072b4d787f5dso2542754ejc.21
+        for <linux-remoteproc@vger.kernel.org>; Sun, 31 Jul 2022 21:49:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=05yqPtQPTf7ci9YCnKgRef4tjyfFywaN/GoiFJ0YjOE=;
-        b=cSrkdaP6wJeIMMJA2P+aJq+kt/i7mvPkMZA7otD35CMSx7uRT8uth2pY537ylMr9Md
-         8mTQG7wCS8OTS5lYEQ91quFWp4bxISMRG/WZl8GUqqUj6+4JXHBY80vKDNkbmDixEx/9
-         ib6i2PZxO00ZhbqTZa+Tf8hTIM2bfeUjFKiPbYC1gzftFjxKDNNPFYML2vgDH3uynjf8
-         EWzu91Zvt4my++IpSgMAtN8U2MOIt+IClxT/PCU+5rsnV4DwbBcDYjRPtvhpM43LbrGx
-         B6N12vhNAjk7ym3bwAfGMboqkue40R1UOw3tVRafsSiXTNLmBYDSbK04zLyaUIM4xeAO
-         nhKw==
-X-Gm-Message-State: ACgBeo33eLP65nWl9KIEIjCVm8MBX6qM349d7mmaqLagE52RwDowq5ZK
-        U7xwOnUlm5yX3zP9Jf5ycRN7nKX+O9M=
-X-Google-Smtp-Source: AA6agR5ANAUOldoWBdgDfPgTkC2NwGER016r7xM3vQLroEoUjf81/eG4YADIx+t9uOGcoXwHYf/4gg==
-X-Received: by 2002:a17:903:4054:b0:16d:afc6:e7b5 with SMTP id n20-20020a170903405400b0016dafc6e7b5mr14536856pla.55.1659321301738;
-        Sun, 31 Jul 2022 19:35:01 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id s5-20020a17090a2f0500b001f218ddd5e2sm10205068pjd.32.2022.07.31.19.35.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 Jul 2022 19:35:01 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: ye.xingchen@zte.com.cn
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-remoteproc@vger.kernel.org,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH linux-next] remoteproc: qcom:q6v5_pas:using the pm_runtime_resume_and_get to  simplify the code
-Date:   Mon,  1 Aug 2022 02:34:29 +0000
-Message-Id: <20220801023429.1595033-1-ye.xingchen@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=q+tpGySP9Lk1FyvMvrEtbd53hrU4ZKX1FexyKVAWT9g=;
+        b=34bgbMXf1jxq0iKkdf18sfVrinZN+gpC9GqWL7K6NL8vLvPbqgTyXmkv9uro9nB9gm
+         nSbAxTyT21v29dwSvwdSJ21mll0sCs3Y6HzAbZJOFuK3VYAA8lZ9cAhgYqMF9LxNXg6U
+         rl6l4rLKN6ENux7wRf1YodhXe72cA2o31Gs+VS7X770l3IHV7172SNIjRwm2RmK1Zt6P
+         cL+f03EXyh5e3lN4qR7Z2N+Ushx3SJRjvjV9GUHS7GLazsa8vpZn81puiXJ3/UQ2W4uy
+         tPIjzAv3dyPxnlvopFmYQ6gcNDAXeApnUDGUiShKr2QDkVlLIksqE29xsC0idBTgXNmR
+         F43A==
+X-Gm-Message-State: ACgBeo0ZylmXNynW69KA7O1jGdHGxJialtK7ZyHketusY2E90BXhALm8
+        81Ij8xGWK237WrvpV5k2M3IoIiuSf2MmcnSr9BdofEU6PGpgJXW7OJAjGkSGTN9TZ7P7HZHunJG
+        +hM2OREuNElnJiUnhaGw4Ml4uu9Th2nZTNpklcn3eAC+O/w==
+X-Received: by 2002:a17:906:7952:b0:730:6ab7:6655 with SMTP id l18-20020a170906795200b007306ab76655mr4103322ejo.171.1659329363746;
+        Sun, 31 Jul 2022 21:49:23 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR6QSahe3Oz+0hcT4zTabdKp5OW3wU+PvaOKgpjGIS2wuAOteNl/QWorIgyoG68O4FkZexN8Vy86JXN1G06sGrw=
+X-Received: by 2002:a17:906:7952:b0:730:6ab7:6655 with SMTP id
+ l18-20020a170906795200b007306ab76655mr4103291ejo.171.1659329363476; Sun, 31
+ Jul 2022 21:49:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220726072225.19884-1-xuanzhuo@linux.alibaba.com>
+ <20220726072225.19884-17-xuanzhuo@linux.alibaba.com> <15aa26f2-f8af-5dbd-f2b2-9270ad873412@redhat.com>
+ <1658907413.1860468-2-xuanzhuo@linux.alibaba.com> <CACGkMEvxsOfiiaWWAR8P68GY1yfwgTvaAbHk1JF7pTw-o2k25w@mail.gmail.com>
+ <1658992162.584327-1-xuanzhuo@linux.alibaba.com> <CACGkMEv-KYieHKXY_Qn0nfcnLMOSF=TowF5PwLKOxESL3KQ40Q@mail.gmail.com>
+ <1658995783.1026692-1-xuanzhuo@linux.alibaba.com> <CACGkMEv6Ptn4zj_F-ww3Nay-VPmCNrXLaf5U98PvupAvo44FpA@mail.gmail.com>
+ <1659001321.5738833-2-xuanzhuo@linux.alibaba.com>
+In-Reply-To: <1659001321.5738833-2-xuanzhuo@linux.alibaba.com>
+From:   Jason Wang <jasowang@redhat.com>
+Date:   Mon, 1 Aug 2022 12:49:12 +0800
+Message-ID: <CACGkMEvcRxbqJ01sjC50muW3cQJiJKUJW+67QrsOP662FCgi0g@mail.gmail.com>
+Subject: Re: [PATCH v13 16/42] virtio_ring: split: introduce virtqueue_resize_split()
+To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev <netdev@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm <kvm@vger.kernel.org>,
+        "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
+        Kangjie Xu <kangjie.xu@linux.alibaba.com>,
+        virtualization <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: ye xingchen <ye.xingchen@zte.com.cn>
+On Thu, Jul 28, 2022 at 7:27 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> wrot=
+e:
+>
+> On Thu, 28 Jul 2022 17:04:36 +0800, Jason Wang <jasowang@redhat.com> wrot=
+e:
+> > On Thu, Jul 28, 2022 at 4:18 PM Xuan Zhuo <xuanzhuo@linux.alibaba.com> =
+wrote:
+> > >
+> > > On Thu, 28 Jul 2022 15:42:50 +0800, Jason Wang <jasowang@redhat.com> =
+wrote:
+> > > > On Thu, Jul 28, 2022 at 3:24 PM Xuan Zhuo <xuanzhuo@linux.alibaba.c=
+om> wrote:
+> > > > >
+> > > > > On Thu, 28 Jul 2022 10:38:51 +0800, Jason Wang <jasowang@redhat.c=
+om> wrote:
+> > > > > > On Wed, Jul 27, 2022 at 3:44 PM Xuan Zhuo <xuanzhuo@linux.aliba=
+ba.com> wrote:
+> > > > > > >
+> > > > > > > On Wed, 27 Jul 2022 11:12:19 +0800, Jason Wang <jasowang@redh=
+at.com> wrote:
+> > > > > > > >
+> > > > > > > > =E5=9C=A8 2022/7/26 15:21, Xuan Zhuo =E5=86=99=E9=81=93:
+> > > > > > > > > virtio ring split supports resize.
+> > > > > > > > >
+> > > > > > > > > Only after the new vring is successfully allocated based =
+on the new num,
+> > > > > > > > > we will release the old vring. In any case, an error is r=
+eturned,
+> > > > > > > > > indicating that the vring still points to the old vring.
+> > > > > > > > >
+> > > > > > > > > In the case of an error, re-initialize(virtqueue_reinit_s=
+plit()) the
+> > > > > > > > > virtqueue to ensure that the vring can be used.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > > > > > > > > Acked-by: Jason Wang <jasowang@redhat.com>
+> > > > > > > > > ---
+> > > > > > > > >   drivers/virtio/virtio_ring.c | 34 +++++++++++++++++++++=
++++++++++++++
+> > > > > > > > >   1 file changed, 34 insertions(+)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virti=
+o/virtio_ring.c
+> > > > > > > > > index b6fda91c8059..58355e1ac7d7 100644
+> > > > > > > > > --- a/drivers/virtio/virtio_ring.c
+> > > > > > > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > > > > > > @@ -220,6 +220,7 @@ static struct virtqueue *__vring_new_=
+virtqueue(unsigned int index,
+> > > > > > > > >                                            void (*callbac=
+k)(struct virtqueue *),
+> > > > > > > > >                                            const char *na=
+me);
+> > > > > > > > >   static struct vring_desc_extra *vring_alloc_desc_extra(=
+unsigned int num);
+> > > > > > > > > +static void vring_free(struct virtqueue *_vq);
+> > > > > > > > >
+> > > > > > > > >   /*
+> > > > > > > > >    * Helpers.
+> > > > > > > > > @@ -1117,6 +1118,39 @@ static struct virtqueue *vring_cre=
+ate_virtqueue_split(
+> > > > > > > > >     return vq;
+> > > > > > > > >   }
+> > > > > > > > >
+> > > > > > > > > +static int virtqueue_resize_split(struct virtqueue *_vq,=
+ u32 num)
+> > > > > > > > > +{
+> > > > > > > > > +   struct vring_virtqueue_split vring_split =3D {};
+> > > > > > > > > +   struct vring_virtqueue *vq =3D to_vvq(_vq);
+> > > > > > > > > +   struct virtio_device *vdev =3D _vq->vdev;
+> > > > > > > > > +   int err;
+> > > > > > > > > +
+> > > > > > > > > +   err =3D vring_alloc_queue_split(&vring_split, vdev, n=
+um,
+> > > > > > > > > +                                 vq->split.vring_align,
+> > > > > > > > > +                                 vq->split.may_reduce_nu=
+m);
+> > > > > > > > > +   if (err)
+> > > > > > > > > +           goto err;
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > I think we don't need to do anything here?
+> > > > > > >
+> > > > > > > Am I missing something?
+> > > > > >
+> > > > > > I meant it looks to me most of the virtqueue_reinit() is unnece=
+ssary.
+> > > > > > We probably only need to reinit avail/used idx there.
+> > > > >
+> > > > >
+> > > > > In this function, we can indeed remove some code.
+> > > > >
+> > > > > >       static void virtqueue_reinit_split(struct vring_virtqueue=
+ *vq)
+> > > > > >       {
+> > > > > >               int size, i;
+> > > > > >
+> > > > > >               memset(vq->split.vring.desc, 0, vq->split.queue_s=
+ize_in_bytes);
+> > > > > >
+> > > > > >               size =3D sizeof(struct vring_desc_state_split) * =
+vq->split.vring.num;
+> > > > > >               memset(vq->split.desc_state, 0, size);
+> > > > > >
+> > > > > >               size =3D sizeof(struct vring_desc_extra) * vq->sp=
+lit.vring.num;
+> > > > > >               memset(vq->split.desc_extra, 0, size);
+> > > > >
+> > > > > These memsets can be removed, and theoretically it will not cause=
+ any
+> > > > > exceptions.
+> > > >
+> > > > Yes, otherwise we have bugs in detach_buf().
+> > > >
+> > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >               for (i =3D 0; i < vq->split.vring.num - 1; i++)
+> > > > > >                       vq->split.desc_extra[i].next =3D i + 1;
+> > > > >
+> > > > > This can also be removed, but we need to record free_head that wi=
+ll been update
+> > > > > inside virtqueue_init().
+> > > >
+> > > > We can simply keep free_head unchanged? Otherwise it's a bug somewh=
+ere I guess.
+> > > >
+> > > >
+> > > > >
+> > > > > >
+> > > > > >               virtqueue_init(vq, vq->split.vring.num);
+> > > > >
+> > > > > There are some operations in this, which can also be skipped, suc=
+h as setting
+> > > > > use_dma_api. But I think calling this function directly will be m=
+ore convenient
+> > > > > for maintenance.
+> > > >
+> > > > I don't see anything that is necessary here.
+> > >
+> > > These three are currently inside virtqueue_init()
+> > >
+> > > vq->last_used_idx =3D 0;
+> > > vq->event_triggered =3D false;
+> > > vq->num_added =3D 0;
+> >
+> > Right. Let's keep it there.
+> >
+> > (Though it's kind of strange that the last_used_idx is not initialized
+> > at the same place with avail_idx/flags_shadow, we can optimize it on
+> > top).
+>
+> I put free_head =3D 0 in the attach function, it is only necessary to set
+> free_head =3D 0 when a new state/extra is attached.
 
-Using pm_runtime_resume_and_get() to instade of  pm_runtime_get_sync
-and pm_runtime_put_noidle.
+Ok, so I meant I tend to keep it to make this series converge soon :)
 
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+We can do optimization on top anyhow.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 98f133f9bb60..6da68a4e5fe9 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -106,9 +106,8 @@ static int adsp_pds_enable(struct qcom_adsp *adsp, struct device **pds,
- 
- 	for (i = 0; i < pd_count; i++) {
- 		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
--		ret = pm_runtime_get_sync(pds[i]);
-+		ret = pm_runtime_resume_and_get(pds[i]);
- 		if (ret < 0) {
--			pm_runtime_put_noidle(pds[i]);
- 			dev_pm_genpd_set_performance_state(pds[i], 0);
- 			goto unroll_pd_votes;
- 		}
--- 
-2.25.1
+Thanks
+
+>
+> In this way, when we call virtqueue_init(), we don't have to worry about
+> free_head being modified.
+>
+> Rethinking this problem, I think virtqueue_init() can be rewritten and so=
+me
+> variables that will not change are removed from it. (use_dma_api, event,
+> weak_barriers)
+>
+> +static void virtqueue_init(struct vring_virtqueue *vq, u32 num)
+> +{
+> +       vq->vq.num_free =3D num;
+> +
+> +       if (vq->packed_ring)
+> +               vq->last_used_idx =3D 0 | (1 << VRING_PACKED_EVENT_F_WRAP=
+_CTR);
+> +       else
+> +               vq->last_used_idx =3D 0;
+> +
+> +       vq->event_triggered =3D false;
+> +       vq->num_added =3D 0;
+> +
+> +#ifdef DEBUG
+> +       vq->in_use =3D false;
+> +       vq->last_add_time_valid =3D false;
+> +#endif
+> +}
+> +
+>
+> Thanks.
+>
+>
+> >
+> > Thanks
+> >
+> > >
+> > > Thanks.
+> > >
+> > >
+> > > >
+> > > > >
+> > > > >
+> > > > > >               virtqueue_vring_init_split(&vq->split, vq);
+> > > > >
+> > > > > virtqueue_vring_init_split() is necessary.
+> > > >
+> > > > Right.
+> > > >
+> > > > >
+> > > > > >       }
+> > > > >
+> > > > > Another method, we can take out all the variables to be reinitial=
+ized
+> > > > > separately, and repackage them into a new function. I don=E2=80=
+=99t think it=E2=80=99s worth
+> > > > > it, because this path will only be reached if the memory allocati=
+on fails, which
+> > > > > is a rare occurrence. In this case, doing so will increase the co=
+st of
+> > > > > maintenance. If you think so also, I will remove the above memset=
+ in the next
+> > > > > version.
+> > > >
+> > > > I agree.
+> > > >
+> > > > Thanks
+> > > >
+> > > > >
+> > > > > Thanks.
+> > > > >
+> > > > >
+> > > > > >
+> > > > > > Thanks
+> > > > > >
+> > > > > > >
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > > +
+> > > > > > > > > +   err =3D vring_alloc_state_extra_split(&vring_split);
+> > > > > > > > > +   if (err) {
+> > > > > > > > > +           vring_free_split(&vring_split, vdev);
+> > > > > > > > > +           goto err;
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > I suggest to move vring_free_split() into a dedicated error=
+ label.
+> > > > > > >
+> > > > > > > Will change.
+> > > > > > >
+> > > > > > > Thanks.
+> > > > > > >
+> > > > > > >
+> > > > > > > >
+> > > > > > > > Thanks
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > > +   }
+> > > > > > > > > +
+> > > > > > > > > +   vring_free(&vq->vq);
+> > > > > > > > > +
+> > > > > > > > > +   virtqueue_vring_init_split(&vring_split, vq);
+> > > > > > > > > +
+> > > > > > > > > +   virtqueue_init(vq, vring_split.vring.num);
+> > > > > > > > > +   virtqueue_vring_attach_split(vq, &vring_split);
+> > > > > > > > > +
+> > > > > > > > > +   return 0;
+> > > > > > > > > +
+> > > > > > > > > +err:
+> > > > > > > > > +   virtqueue_reinit_split(vq);
+> > > > > > > > > +   return -ENOMEM;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >
+> > > > > > > > >   /*
+> > > > > > > > >    * Packed ring specific functions - *_packed().
+> > > > > > > >
+> > > > > > >
+> > > > > >
+> > > > >
+> > > >
+> > >
+> >
+>
+
