@@ -2,149 +2,158 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BE4C19F2B
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 Aug 2022 06:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD7DC00140
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  2 Aug 2022 15:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239632AbiHAGnO (ORCPT
+        id S229460AbiHBPZr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 1 Aug 2022 02:43:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33792 "EHLO
+        Tue, 2 Aug 2022 11:25:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229792AbiHAGmf (ORCPT
+        with ESMTP id S231682AbiHBPZr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 1 Aug 2022 02:42:35 -0400
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75045140AD;
-        Sun, 31 Jul 2022 23:40:31 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R341e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=37;SR=0;TI=SMTPD_---0VL1cDS1_1659336023;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VL1cDS1_1659336023)
-          by smtp.aliyun-inc.com;
-          Mon, 01 Aug 2022 14:40:24 +0800
-From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To:     virtualization@lists.linux-foundation.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Tue, 2 Aug 2022 11:25:47 -0400
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022FD6371;
+        Tue,  2 Aug 2022 08:25:45 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id l24so10857060ion.13;
+        Tue, 02 Aug 2022 08:25:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=ZbgYz5Xwf6vwbfHu21Ds/i5GJdOzX5BaausoB5dIHO8=;
+        b=owhVT1rnzeNA0B3s+WmKQbOLADQVv/6q2SsChTwbgYBdSUeTop9QhFmIlMmXxotKnq
+         slmZfPIfm4xOIDn/3NRUhAqSAq9O/J/Bk/5EzkVg4AzhvncPcDPMlSBTUAtUd2Xxd4xF
+         sa4dYCIl7hnxTz/tP6bQuTXynDCvV/eWAYuJixlSucZaqK19ia0MMajr78lAaoXn5bN4
+         ceAvjecX7maqgn/UVtjvst4xajGtyrYIhjKLsRsmalG3tYk3LK+6OWIRQTl6XUVTjDOF
+         L/Ej9rp0xab38jNh2X/3BnBdLxiLJ4NQhlrHFOBSJptXbX5RPZsNZ8mziRsVc6+fyYnW
+         0jRw==
+X-Gm-Message-State: AJIora+RXtYUjvgyNDqkvnik1xlGnUnDYUzP+L0qAX3NRqgWh5Unbk9Q
+        uILH6LCCU46bLBSYl6W6Iw==
+X-Google-Smtp-Source: AGRyM1tott+jWdvGogVwj9+mzc9AcUyEu+QMyogO3NhyS73SxjIdbKEwVi6KMes1kXwuU+Fbj4WY/A==
+X-Received: by 2002:a05:6602:3405:b0:67c:2d26:f8b7 with SMTP id n5-20020a056602340500b0067c2d26f8b7mr7402164ioz.178.1659453944199;
+        Tue, 02 Aug 2022 08:25:44 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id b34-20020a0295a5000000b00341a215d3cesm168271jai.63.2022.08.02.08.25.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Aug 2022 08:25:43 -0700 (PDT)
+Received: (nullmailer pid 145716 invoked by uid 1000);
+        Tue, 02 Aug 2022 15:25:42 -0000
+Date:   Tue, 2 Aug 2022 09:25:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com
-Subject: [PATCH v14 42/42] virtio_net: support set_ringparam
-Date:   Mon,  1 Aug 2022 14:39:02 +0800
-Message-Id: <20220801063902.129329-43-xuanzhuo@linux.alibaba.com>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220801063902.129329-1-xuanzhuo@linux.alibaba.com>
-References: <20220801063902.129329-1-xuanzhuo@linux.alibaba.com>
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] dt-bindings: remoteproc: Add AVM WASP
+Message-ID: <20220802152542.GA132728-robh@kernel.org>
+References: <20220723074247.32523-1-kestrelseventyfour@gmail.com>
+ <20220723074247.32523-3-kestrelseventyfour@gmail.com>
 MIME-Version: 1.0
-X-Git-Hash: 0f12e405b061
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220723074247.32523-3-kestrelseventyfour@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Support set_ringparam based on virtio queue reset.
+On Sat, Jul 23, 2022 at 09:42:46AM +0200, Daniel Kestrel wrote:
+> AVM Fritzbox router boards may contain an additional ATH79
+> based SoC that has the wifi cards connected.
+> This patch adds bindings for this remote processor.
+> 
+> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
+> ---
+>  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> new file mode 100644
+> index 000000000000..e8618706a34f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/avm,wasp-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: AVM WASP processor controller bindings
+> +
+> +maintainers:
+> +  - Daniel Kestrel <kestrelseventyfour@gmail.com>
+> +
+> +description: |
+> +  This document defines the bindings for the remoteproc component that loads and
+> +  boots firmwares on the AVM Wireless Assistant Support Processor (WASP) SoC
+> +  that is attached to some AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490).
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - avm,fritzbox3390-wasp
+> +      - avm,fritzbox3490-wasp
+> +      - avm,fritzbox5490-wasp
+> +      - avm,fritzbox5491-wasp
+> +      - avm,fritzbox7490-wasp
+> +
+> +  avm,wasp-mdio:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Lantiq GSWIP switch mdio.
 
-Users can use ethtool -G eth0 <ring_num> to modify the ring size of
-virtio-net.
+"git grep 'mdio.*=.*<'" gives existing 'mdio-parent-bus', 'mdio-device', 
+and 'mdio-handle'. 'mdio-parent-bus' is the only one documented, but is 
+for muxes. I'd go with 'mdio-device' here.
 
-Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Acked-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 48 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+> +
+> +  avm,wasp-port:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Network port, where the WASP SoC is connected to.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index d1e6940b46d8..59fc48c60403 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2329,6 +2329,53 @@ static void virtnet_get_ringparam(struct net_device *dev,
- 	ring->tx_pending = virtqueue_get_vring_size(vi->sq[0].vq);
- }
- 
-+static int virtnet_set_ringparam(struct net_device *dev,
-+				 struct ethtool_ringparam *ring,
-+				 struct kernel_ethtool_ringparam *kernel_ring,
-+				 struct netlink_ext_ack *extack)
-+{
-+	struct virtnet_info *vi = netdev_priv(dev);
-+	u32 rx_pending, tx_pending;
-+	struct receive_queue *rq;
-+	struct send_queue *sq;
-+	int i, err;
-+
-+	if (ring->rx_mini_pending || ring->rx_jumbo_pending)
-+		return -EINVAL;
-+
-+	rx_pending = virtqueue_get_vring_size(vi->rq[0].vq);
-+	tx_pending = virtqueue_get_vring_size(vi->sq[0].vq);
-+
-+	if (ring->rx_pending == rx_pending &&
-+	    ring->tx_pending == tx_pending)
-+		return 0;
-+
-+	if (ring->rx_pending > vi->rq[0].vq->num_max)
-+		return -EINVAL;
-+
-+	if (ring->tx_pending > vi->sq[0].vq->num_max)
-+		return -EINVAL;
-+
-+	for (i = 0; i < vi->max_queue_pairs; i++) {
-+		rq = vi->rq + i;
-+		sq = vi->sq + i;
-+
-+		if (ring->tx_pending != tx_pending) {
-+			err = virtnet_tx_resize(vi, sq, ring->tx_pending);
-+			if (err)
-+				return err;
-+		}
-+
-+		if (ring->rx_pending != rx_pending) {
-+			err = virtnet_rx_resize(vi, rq, ring->rx_pending);
-+			if (err)
-+				return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static bool virtnet_commit_rss_command(struct virtnet_info *vi)
- {
- 	struct net_device *dev = vi->dev;
-@@ -2816,6 +2863,7 @@ static const struct ethtool_ops virtnet_ethtool_ops = {
- 	.get_drvinfo = virtnet_get_drvinfo,
- 	.get_link = ethtool_op_get_link,
- 	.get_ringparam = virtnet_get_ringparam,
-+	.set_ringparam = virtnet_set_ringparam,
- 	.get_strings = virtnet_get_strings,
- 	.get_sset_count = virtnet_get_sset_count,
- 	.get_ethtool_stats = virtnet_get_ethtool_stats,
--- 
-2.31.0
+Maybe something already exists here too.
 
+> +
+> +  avm,reset-gpios:
+> +    description: Reset gpio of the WASP SoC.
+> +    maxItems: 1
+
+Just 'reset-gpios' is fine here as that is somewhat standard.
+
+> +
+> +  avm,startup-gpios:
+> +    description: Startup gpio of the WASP SoC.
+
+s/gpio/GPIO/
+
+Perhaps some detail on what it does besides just 'startup'.
+
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - avm,wasp-mdio
+> +  - avm,wasp-port
+> +  - avm,reset-gpios
+> +  - avm,startup-gpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    remoteproc {
+> +        compatible = "avm,fritzbox7490-wasp";
+> +        avm,wasp-mdio = <&gswip_mdio>;
+> +        avm,wasp-port = <&port5>;
+> +        avm,reset-gpios = <&gpio 34 GPIO_ACTIVE_HIGH>;
+> +        avm,startup-gpios = <&gpio 5 GPIO_ACTIVE_HIGH>;
+> +    };
+> -- 
+> 2.17.1
+> 
+> 
