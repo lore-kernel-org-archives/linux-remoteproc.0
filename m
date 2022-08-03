@@ -2,107 +2,93 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83710C19F28
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Aug 2022 14:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87643C19F2B
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 Aug 2022 20:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238854AbiHCOWv (ORCPT
+        id S237313AbiHCUeY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 3 Aug 2022 10:22:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43654 "EHLO
+        Wed, 3 Aug 2022 16:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238575AbiHCOW2 (ORCPT
+        with ESMTP id S232488AbiHCUeX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 3 Aug 2022 10:22:28 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7DD532EFF;
-        Wed,  3 Aug 2022 07:22:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1659536547; x=1691072547;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=ab1zJS9fWPNKtBxryvC014d7x2EEfYkbWTsZfGv2w4c=;
-  b=wJ4I1NQzI/Ph9jkr7rk+WP9e8VkoxRH+bGkg3CwyPbQGwM5gY+hO6lG6
-   aEyajIb4D+HUmQxdHOcUQQBHm9p276fkYll03g2VUei+XKx8ttVD+nzoZ
-   lIoWNLizpCUpujFSSP+mfXBwiYkKNRIEp2Wagqvj9uj1/OC84PhpIdT3i
-   c=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 03 Aug 2022 07:22:26 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2022 07:22:26 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 3 Aug 2022 07:22:26 -0700
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Wed, 3 Aug 2022 07:22:20 -0700
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
-        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
-        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH 8/8] remoteproc: qcom: Update QDSP6 out-of-reset timeout value
-Date:   Wed, 3 Aug 2022 19:51:20 +0530
-Message-ID: <1659536480-5176-9-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+        Wed, 3 Aug 2022 16:34:23 -0400
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A4BF68;
+        Wed,  3 Aug 2022 13:34:21 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id z145so399475iof.9;
+        Wed, 03 Aug 2022 13:34:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=message-id:date:subject:references:in-reply-to:cc:to:from
+         :x-gm-message-state:from:to:cc;
+        bh=fyYePxjSKLpCDUc26DEQ4fndG8Oeo8s9amEB/iAl1Uw=;
+        b=B9chz2vbmiyrgJ4ZSrG5/kS+47Yys1O9pR8hotAi7MulpUOv2gUj9nBcBzD/6QLcCz
+         1PS11KVoobDqgAdFJbuDZJJwUWZygNS68U5HgggOZC7pvNgayfEoakE1wA9LJCpxKXJK
+         VBBZT1ZtEfRHtASTWMvu73kXTHyV0GMVaPSw4sgDdpDuoI0q1aBHUSj8/3PkrvCJL5VE
+         fel71z8o4X1ybSLOW6Wjvp+UA4S0xpivG0AxAyGaygN4PNrey7rv6L39biXFLiHq4xgh
+         1fQGmTsF7XUcLAteh9WMOIHRxRASRJlN4+vBqPDSQP+ywPTctUGE9xvfUwOiv0fq8ECf
+         VOaQ==
+X-Gm-Message-State: AJIora8mmjSciM9fHUSXMBCRkywsy1ydlDG/TAZFPd+Afzg0xwsRNCH/
+        lhWtZS6dneykG9HUXihLLA==
+X-Google-Smtp-Source: AGRyM1vhjM0ZBmXAJQ1EAzwnqAbTEo4T9AGfF470cX6CscugTD4dxGUNvWDuPeOPW7zL+gtBSXv+Iw==
+X-Received: by 2002:a05:6638:d93:b0:341:5cab:4d9 with SMTP id l19-20020a0566380d9300b003415cab04d9mr11383863jaj.146.1659558860997;
+        Wed, 03 Aug 2022 13:34:20 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id d11-20020a023f0b000000b00339e669df91sm8131503jaa.153.2022.08.03.13.34.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Aug 2022 13:34:20 -0700 (PDT)
+Received: (nullmailer pid 2576745 invoked by uid 1000);
+        Wed, 03 Aug 2022 20:34:18 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc:     quic_plai@quicinc.com, tiwai@suse.com,
+        linux-arm-msm@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, quic_rohkumar@quicinc.com,
+        bgoswami@quicinc.com, srinivas.kandagatla@linaro.org,
+        perex@perex.cz, agross@kernel.org, broonie@kernel.org,
+        robh+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <1659536480-5176-3-git-send-email-quic_srivasam@quicinc.com>
+References: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com> <1659536480-5176-3-git-send-email-quic_srivasam@quicinc.com>
+Subject: Re: [PATCH 2/8] dt-bindings: remoteproc: qcom: adsp: Add compatible name for SC7280
+Date:   Wed, 03 Aug 2022 14:34:18 -0600
+Message-Id: <1659558858.555688.2576744.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update QDSP6 out-of-reset timeout value to 1 second, as sometimes
-ADSP boot failing on SC7280 based platforms with existing value.
-Also add few micro seconds sleep after enabling boot core
-start register.
+On Wed, 03 Aug 2022 19:51:14 +0530, Srinivasa Rao Mandadapu wrote:
+> Add compatible name and update max reg items for SC7280 base platforms.
+> 
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml          | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
----
- drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index f81da47..1c0adc9 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -34,7 +34,7 @@
- /* time out value */
- #define ACK_TIMEOUT			1000
- #define ACK_TIMEOUT_US			1000000
--#define BOOT_FSM_TIMEOUT		10000
-+#define BOOT_FSM_TIMEOUT		1000000
- /* mask values */
- #define EVB_MASK			GENMASK(27, 4)
- /*QDSP6SS register offsets*/
-@@ -468,13 +468,14 @@ static int adsp_start(struct rproc *rproc)
- 
- 	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
- 	writel(LPASS_BOOT_CORE_START, adsp->qdsp6ss_base + CORE_START_REG);
-+	usleep_ranage(100, 110);
- 
- 	/* Trigger boot FSM to start QDSP6 */
- 	writel(LPASS_BOOT_CMD_START, adsp->qdsp6ss_base + BOOT_CMD_REG);
- 
- 	/* Wait for core to come out of reset */
- 	ret = readl_poll_timeout(adsp->qdsp6ss_base + BOOT_STATUS_REG,
--			val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-+			val, (val & BIT(0)) != 0, 100, BOOT_FSM_TIMEOUT);
- 	if (ret) {
- 		dev_err(adsp->dev, "failed to bootup adsp\n");
- 		goto disable_adsp_clks;
--- 
-2.7.4
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.example.dtb: remoteproc@17300000: reg: [[389021696, 1036]] is too short
+	From schema: /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
