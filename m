@@ -2,68 +2,58 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71980C19F2B
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 10:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1821AC19F2D
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 11:16:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234481AbiHDKPI (ORCPT
+        id S230390AbiHDLQP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Aug 2022 06:15:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50420 "EHLO
+        Thu, 4 Aug 2022 07:16:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiHDKPH (ORCPT
+        with ESMTP id S230057AbiHDLQO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Aug 2022 06:15:07 -0400
-Received: from alexa-out.qualcomm.com (alexa-out.qualcomm.com [129.46.98.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0FDF37F8C;
-        Thu,  4 Aug 2022 03:15:05 -0700 (PDT)
+        Thu, 4 Aug 2022 07:16:14 -0400
+Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F16222A3;
+        Thu,  4 Aug 2022 04:16:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1659608105; x=1691144105;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=XCvsOpbFvXVB0iV70v8x3JyHx/fBHTkYQUv4zcAVYmw=;
-  b=KbSXlB9uN0qyL3eRgQ+gC1QDWbH3mAlarB78V43heP/Oqlj4evLCm0xw
-   jrYv/v91+dkwB4UlcvOvcPmz2DRxlZQCArglp2cGu0SzIeTKyNyc2SA93
-   /yMtbqsTDGFvJqMzOvS4uOr6yiz/keZY59kIo3qH63ezigU2iRMD6ffeB
-   k=;
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 04 Aug 2022 03:15:05 -0700
+  t=1659611773; x=1691147773;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=klHnWSedRVv9div3XGBwTD+O776JK0g8/P3ma9LhGmY=;
+  b=QEuQraN6ZbrRQ2cXVXDefMirOp7FvLvEDPOfe2um8MQmXmi6WAEJf1q2
+   UA6xoA2Wh6ze8Z7TOYC2DFA2Wi6qaWPXUcNuDq7aoIKlil8Dg+xNDVpkp
+   3NdnWaMwSZ32iCIUkxT6OY/kCPTgIHVfiB0xmxZ8lqjxDy1+FiDYoxXbe
+   A=;
+Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 04 Aug 2022 04:16:12 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2022 03:15:05 -0700
+  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2022 04:16:11 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 4 Aug 2022 03:15:04 -0700
-Received: from [10.216.12.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Thu, 4 Aug 2022
- 03:14:58 -0700
-Message-ID: <5507af1a-3548-8e08-be3f-42f59bcc2096@quicinc.com>
-Date:   Thu, 4 Aug 2022 15:44:55 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 2/8] dt-bindings: remoteproc: qcom: adsp: Add compatible
- name for SC7280
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <quic_plai@quicinc.com>,
-        <bgoswami@quicinc.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <srinivas.kandagatla@linaro.org>, <quic_rohkumar@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <swboyd@chromium.org>, <judyhsiao@chromium.org>,
-        <devicetree@vger.kernel.org>
-References: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com>
- <1659536480-5176-3-git-send-email-quic_srivasam@quicinc.com>
- <20220803204359.GA2586715-robh@kernel.org>
+ 15.2.986.22; Thu, 4 Aug 2022 04:16:10 -0700
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Thu, 4 Aug 2022 04:16:05 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Organization: Qualcomm
-In-Reply-To: <20220803204359.GA2586715-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH v2 0/8] Update ADSP pil loader for SC7280 platform
+Date:   Thu, 4 Aug 2022 16:45:43 +0530
+Message-ID: <1659611751-7928-1-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
@@ -71,44 +61,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Update ADSP pil loader driver for SC7280 platforms.
 
-On 8/4/2022 2:13 AM, Rob Herring wrote:
-Thanks for your time and valuable inputs Rob!!!
-> On Wed, Aug 03, 2022 at 07:51:14PM +0530, Srinivasa Rao Mandadapu wrote:
->> Add compatible name and update max reg items for SC7280 base platforms.
->>
->> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
->> ---
->>   .../devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml          | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
->> index 9f11332..147996f 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
->> @@ -17,11 +17,12 @@ properties:
->>     compatible:
->>       enum:
->>         - qcom,sdm845-adsp-pil
->> +      - qcom,sc7280-adsp-pil
->>   
->>     reg:
->> -    maxItems: 1
->> +    maxItems: 2
-> sdm845 has 2 entries too?
-No. There max items not changed.
->
->>       description:
->> -      The base address and size of the qdsp6ss register
->> +      The base address and size of the qdsp6ss register and mcc register
-> Better expressed as:
->
-> minItems: 1
-> items:
->    - description: qdsp6ss register
->    - description: mcc register
->
-> Though the descriptions could expand on what those registers are.
->
-> Rob
-Okay. Will change accordingly and re spin the patches.
+Changes since V1:
+	-- Change reg property maxItems to minItems and update description.
+	-- Fix typo errors.
+
+Srinivasa Rao Mandadapu (8):
+  dt-bindings: remoteproc: qcom: adsp: Make ADSP pil loader as generic
+  dt-bindings: remoteproc: qcom: adsp: Add compatible name for SC7280
+  remoteproc: qcom: Add compatible name for SC7280 ADSP
+  remoteproc: qcom: Update hard coded values with macros
+  remoteproc: qcom: Add efuse evb selection control
+  remoteproc: qcom: Add flag in adsp private data structure
+  remoteproc: qcom: Add support for memory sandbox
+  remoteproc: qcom: Update QDSP6 out-of-reset timeout value
+
+ .../bindings/remoteproc/qcom,lpass-adsp-pil.yaml   | 162 +++++++++++++++++++++
+ .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  | 160 --------------------
+ drivers/remoteproc/qcom_q6v5_adsp.c                | 145 +++++++++++++++++-
+ 3 files changed, 301 insertions(+), 166 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+ delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+
+-- 
+2.7.4
+
