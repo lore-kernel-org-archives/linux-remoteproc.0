@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7243DC3F6B0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 11:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC8DEC25B06
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 11:17:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239496AbiHDLQT (ORCPT
+        id S239540AbiHDLQy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Aug 2022 07:16:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59850 "EHLO
+        Thu, 4 Aug 2022 07:16:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230457AbiHDLQS (ORCPT
+        with ESMTP id S239579AbiHDLQ3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Aug 2022 07:16:18 -0400
-Received: from alexa-out-sd-01.qualcomm.com (alexa-out-sd-01.qualcomm.com [199.106.114.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2295022BCB;
-        Thu,  4 Aug 2022 04:16:17 -0700 (PDT)
+        Thu, 4 Aug 2022 07:16:29 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8572E9CC;
+        Thu,  4 Aug 2022 04:16:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1659611777; x=1691147777;
+  t=1659611788; x=1691147788;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=W/xwRUYFWKtrKuwiHbo54nv9KOwbqLwnqwwukkswyy8=;
-  b=hapIidc3eHeRrvP9Pp7AowRVEljcNJOYuIgkcdxQbnAmPY+PBuStXgBc
-   FR6ZSHpxv6+i57Iu+JLL5zLtRvLV27YXjMBnb9uUqSyN2XIDx0yUfNXMP
-   2WcmSj7Rh/v7FX7HUwF8FYvnhER56TKgX7IH8CzlCczRTIe+XQ1NNhLRW
-   Y=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 04 Aug 2022 04:16:17 -0700
+  bh=Uc1q1aKtuwjzEqL0wQamFCypgEwTh9SyvR6sHIjmGqc=;
+  b=eK/5+f61xjYHoFJDVxIZEuYfmJYN/YvpdUFCp2VqL8SxGcE0JZ+BbgVQ
+   6JU+ZYPD20i3LE5TwpaVshzhVLvkiY9rb5F8JMuVWFp+TmnCOz8cN+ISR
+   VDN/PDClBfj30OEe3561fxnJOfAWs/tiRQN54XFIWw1101k5s+/k1Q2HR
+   w=;
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 04 Aug 2022 04:16:28 -0700
 X-QCInternal: smtphost
 Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2022 04:16:16 -0700
+  by ironmsg01-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2022 04:16:28 -0700
 Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
  nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 4 Aug 2022 04:16:16 -0700
+ 15.2.986.22; Thu, 4 Aug 2022 04:16:27 -0700
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 4 Aug 2022 04:16:10 -0700
+ 15.2.986.22; Thu, 4 Aug 2022 04:16:22 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
@@ -49,9 +49,9 @@ To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
         <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v2 1/8] dt-bindings: remoteproc: qcom: adsp: Make ADSP pil loader as generic
-Date:   Thu, 4 Aug 2022 16:45:44 +0530
-Message-ID: <1659611751-7928-2-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v2 3/8] remoteproc: qcom: Add compatible name for SC7280 ADSP
+Date:   Thu, 4 Aug 2022 16:45:46 +0530
+Message-ID: <1659611751-7928-4-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1659611751-7928-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1659611751-7928-1-git-send-email-quic_srivasam@quicinc.com>
@@ -64,349 +64,51 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Rename sdm845 adsp pil bindings to generic name, for using same binings
-file for subsequent SoCs.
+Update adsp pil data and compatible name for loading ADSP
+binary on SC7280 based platforms.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 ---
- .../bindings/remoteproc/qcom,lpass-adsp-pil.yaml   | 160 +++++++++++++++++++++
- .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  | 160 ---------------------
- 2 files changed, 160 insertions(+), 160 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
- delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+ drivers/remoteproc/qcom_q6v5_adsp.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
-new file mode 100644
-index 0000000..9f11332
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
-@@ -0,0 +1,160 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,lpass-adsp-pil.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 2f3b9f5..bb4494c 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -697,6 +697,24 @@ static const struct adsp_pil_data adsp_resource_init = {
+ 	},
+ };
+ 
++static const struct adsp_pil_data adsp_sc7280_resource_init = {
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mbn",
++	.load_state = "adsp",
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
++	.is_wpss = false,
++	.auto_boot = true,
++	.clk_ids = (const char*[]) {
++		"gcc_cfg_noc_lpass", NULL
++	},
++	.num_clks = 1,
++	.proxy_pd_names = (const char*[]) {
++		NULL
++	},
++};
 +
-+title: Qualcomm LPASS ADSP Peripheral Image Loader
-+
-+maintainers:
-+  - Bjorn Andersson <bjorn.andersson@linaro.org>
-+
-+description:
-+  This document defines the binding for a component that loads and boots firmware
-+  on the Qualcomm Technology Inc. ADSP.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sdm845-adsp-pil
-+
-+  reg:
-+    maxItems: 1
-+    description:
-+      The base address and size of the qdsp6ss register
-+
-+  interrupts:
-+    items:
-+      - description: Watchdog interrupt
-+      - description: Fatal interrupt
-+      - description: Ready interrupt
-+      - description: Handover interrupt
-+      - description: Stop acknowledge interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: wdog
-+      - const: fatal
-+      - const: ready
-+      - const: handover
-+      - const: stop-ack
-+
-+  clocks:
-+    items:
-+      - description: XO clock
-+      - description: SWAY clock
-+      - description: LPASS AHBS AON clock
-+      - description: LPASS AHBM AON clock
-+      - description: QDSP XO clock
-+      - description: Q6SP6SS SLEEP clock
-+      - description: Q6SP6SS CORE clock
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+      - const: sway_cbcr
-+      - const: lpass_ahbs_aon_cbcr
-+      - const: lpass_ahbm_aon_cbcr
-+      - const: qdsp6ss_xo
-+      - const: qdsp6ss_sleep
-+      - const: qdsp6ss_core
-+
-+  power-domains:
-+    items:
-+      - description: CX power domain
-+
-+  resets:
-+    items:
-+      - description: PDC AUDIO SYNC RESET
-+      - description: CC LPASS restart
-+
-+  reset-names:
-+    items:
-+      - const: pdc_sync
-+      - const: cc_lpass
-+
-+  memory-region:
-+    maxItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
-+
-+  qcom,halt-regs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description:
-+      Phandle reference to a syscon representing TCSR followed by the
-+      three offsets within syscon for q6, modem and nc halt registers.
-+
-+  qcom,smem-states:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: States used by the AP to signal the Hexagon core
-+    items:
-+      - description: Stop the modem
-+
-+  qcom,smem-state-names:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: The names of the state bits used for SMP2P output
-+    items:
-+      - const: stop
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+  - power-domains
-+  - resets
-+  - reset-names
-+  - qcom,halt-regs
-+  - memory-region
-+  - qcom,smem-states
-+  - qcom,smem-state-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-+    #include <dt-bindings/clock/qcom,lpass-sdm845.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-+    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-+    remoteproc@17300000 {
-+        compatible = "qcom,sdm845-adsp-pil";
-+        reg = <0x17300000 0x40c>;
-+
-+        interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "wdog", "fatal", "ready",
-+                "handover", "stop-ack";
-+
-+        clocks = <&rpmhcc RPMH_CXO_CLK>,
-+                 <&gcc GCC_LPASS_SWAY_CLK>,
-+                 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
-+                 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
-+                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
-+                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-+                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-+        clock-names = "xo", "sway_cbcr",
-+                "lpass_ahbs_aon_cbcr",
-+                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-+                "qdsp6ss_sleep", "qdsp6ss_core";
-+
-+        power-domains = <&rpmhpd SDM845_CX>;
-+
-+        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-+                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-+        reset-names = "pdc_sync", "cc_lpass";
-+
-+        qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
-+
-+        memory-region = <&pil_adsp_mem>;
-+
-+        qcom,smem-states = <&adsp_smp2p_out 0>;
-+        qcom,smem-state-names = "stop";
-+    };
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-deleted file mode 100644
-index 1535bbb..0000000
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-+++ /dev/null
-@@ -1,160 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/remoteproc/qcom,sdm845-adsp-pil.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm SDM845 ADSP Peripheral Image Loader
--
--maintainers:
--  - Bjorn Andersson <bjorn.andersson@linaro.org>
--
--description:
--  This document defines the binding for a component that loads and boots firmware
--  on the Qualcomm Technology Inc. ADSP.
--
--properties:
--  compatible:
--    enum:
--      - qcom,sdm845-adsp-pil
--
--  reg:
--    maxItems: 1
--    description:
--      The base address and size of the qdsp6ss register
--
--  interrupts:
--    items:
--      - description: Watchdog interrupt
--      - description: Fatal interrupt
--      - description: Ready interrupt
--      - description: Handover interrupt
--      - description: Stop acknowledge interrupt
--
--  interrupt-names:
--    items:
--      - const: wdog
--      - const: fatal
--      - const: ready
--      - const: handover
--      - const: stop-ack
--
--  clocks:
--    items:
--      - description: XO clock
--      - description: SWAY clock
--      - description: LPASS AHBS AON clock
--      - description: LPASS AHBM AON clock
--      - description: QDSP XO clock
--      - description: Q6SP6SS SLEEP clock
--      - description: Q6SP6SS CORE clock
--
--  clock-names:
--    items:
--      - const: xo
--      - const: sway_cbcr
--      - const: lpass_ahbs_aon_cbcr
--      - const: lpass_ahbm_aon_cbcr
--      - const: qdsp6ss_xo
--      - const: qdsp6ss_sleep
--      - const: qdsp6ss_core
--
--  power-domains:
--    items:
--      - description: CX power domain
--
--  resets:
--    items:
--      - description: PDC AUDIO SYNC RESET
--      - description: CC LPASS restart
--
--  reset-names:
--    items:
--      - const: pdc_sync
--      - const: cc_lpass
--
--  memory-region:
--    maxItems: 1
--    description: Reference to the reserved-memory for the Hexagon core
--
--  qcom,halt-regs:
--    $ref: /schemas/types.yaml#/definitions/phandle-array
--    description:
--      Phandle reference to a syscon representing TCSR followed by the
--      three offsets within syscon for q6, modem and nc halt registers.
--
--  qcom,smem-states:
--    $ref: /schemas/types.yaml#/definitions/phandle-array
--    description: States used by the AP to signal the Hexagon core
--    items:
--      - description: Stop the modem
--
--  qcom,smem-state-names:
--    $ref: /schemas/types.yaml#/definitions/string
--    description: The names of the state bits used for SMP2P output
--    items:
--      - const: stop
--
--required:
--  - compatible
--  - reg
--  - interrupts
--  - interrupt-names
--  - clocks
--  - clock-names
--  - power-domains
--  - resets
--  - reset-names
--  - qcom,halt-regs
--  - memory-region
--  - qcom,smem-states
--  - qcom,smem-state-names
--
--additionalProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/interrupt-controller/arm-gic.h>
--    #include <dt-bindings/clock/qcom,rpmh.h>
--    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
--    #include <dt-bindings/clock/qcom,lpass-sdm845.h>
--    #include <dt-bindings/power/qcom-rpmpd.h>
--    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
--    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
--    remoteproc@17300000 {
--        compatible = "qcom,sdm845-adsp-pil";
--        reg = <0x17300000 0x40c>;
--
--        interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
--                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
--                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
--                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
--                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
--        interrupt-names = "wdog", "fatal", "ready",
--                "handover", "stop-ack";
--
--        clocks = <&rpmhcc RPMH_CXO_CLK>,
--                 <&gcc GCC_LPASS_SWAY_CLK>,
--                 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
--                 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
--                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
--                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
--                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
--        clock-names = "xo", "sway_cbcr",
--                "lpass_ahbs_aon_cbcr",
--                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
--                "qdsp6ss_sleep", "qdsp6ss_core";
--
--        power-domains = <&rpmhpd SDM845_CX>;
--
--        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
--                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
--        reset-names = "pdc_sync", "cc_lpass";
--
--        qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
--
--        memory-region = <&pil_adsp_mem>;
--
--        qcom,smem-states = <&adsp_smp2p_out 0>;
--        qcom,smem-state-names = "stop";
--    };
+ static const struct adsp_pil_data cdsp_resource_init = {
+ 	.crash_reason_smem = 601,
+ 	.firmware_name = "cdsp.mdt",
+@@ -737,6 +755,7 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,qcs404-cdsp-pil", .data = &cdsp_resource_init },
+ 	{ .compatible = "qcom,sc7280-wpss-pil", .data = &wpss_resource_init },
+ 	{ .compatible = "qcom,sdm845-adsp-pil", .data = &adsp_resource_init },
++	{ .compatible = "qcom,sc7280-adsp-pil", .data = &adsp_sc7280_resource_init },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, adsp_of_match);
 -- 
 2.7.4
 
