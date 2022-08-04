@@ -2,435 +2,187 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C76C19F21
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 19:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 163BEC25B06
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 21:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237134AbiHDTtT (ORCPT
+        id S234479AbiHDVIX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Aug 2022 15:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
+        Thu, 4 Aug 2022 17:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240005AbiHDTsu (ORCPT
+        with ESMTP id S230337AbiHDVIW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Aug 2022 15:48:50 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74F6C6FA24
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Aug 2022 12:47:51 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id h13so940991wrf.6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Aug 2022 12:47:51 -0700 (PDT)
+        Thu, 4 Aug 2022 17:08:22 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF85B6FA2C;
+        Thu,  4 Aug 2022 14:08:20 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id a89so1187071edf.5;
+        Thu, 04 Aug 2022 14:08:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=QlT7DqqIhp/KPt8AYXFlLmzKkm+SJZEvwWGK5U978as=;
-        b=Ej+YlApkLVmQN+VjvK9aslfn+W0IWfglXj1gCvgdkrkZ/zEAC8fNXsTye9deOSm79p
-         bDBlItY0x1YLhIQ7XJPlXTQm3CsdusO4eXPpdRhwOPS8/aGgWx4dIPVVTGkgiPvn38ig
-         jrG/Ls4SFldrL4xIbCuMBZKmt9imaGlZQMS6ZPGC8ShkRAEHOikp+OmLsLSpRWgQE9BP
-         niCdN04hLA3aJ1GSCZUiKJdepfon6ivhGimAabFcaCVyuIYfqe+O29cpp/P1AkuEgbDr
-         7luOZjUexImBpmd7P5nLoXgJWZanWIu8B2+fjR992AgjfS6y7N0+8XW2gn4VrctYEnNh
-         /A7g==
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc;
+        bh=9Fx/r6gG45RdaUEXtZvdtTR0qBKogKkCa14b5WLRWyY=;
+        b=cOmHl2UAO+D+20hRsGYqUKoONVJrXAsH+F4x4KCnqpcDDUd/DdI3w4TDsD0jdv/1fa
+         +UNpmslIrY+Ef1FRa8vd3/DHj8nmTdAiGVYBlzbpuQnxAQOEETXDJFaiwAazQ3GVs/Jw
+         LfUIoIj6vkqNOkE/NgjhKt17YQGLatbS2JyoWKtpHK3rbFzHXVoP7IVRenhsDE9uAm7Z
+         t2CJ8bXdsbCx2a9WKUtxST5wFagJ3BiXUdqoS9NP85nKsROZRrYSKAQrKMqLxu4G3ZET
+         YUr5vqJ4Gqy165XCOEO+cVeu8tqY+pT181EVVWiDnN58rVjXCJFOOEEzlLLQ3HOLdXj+
+         cRQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=QlT7DqqIhp/KPt8AYXFlLmzKkm+SJZEvwWGK5U978as=;
-        b=O6jYpb05YT6oIhSb6F9KHi5UHQlN4qD6GdI2cUO21BNslwmtQMsb/3qJ3kmeUB8WKx
-         txIMlLQmlIuwCexAOx/xLtTptSnZak7w7oM3k1lg+iZufCH+7Qomd7AAtlK6PWp7GCNn
-         I90ttKpmNnrcBYznJmRPOFYGr0Vatu8LYNcAfhX4s0df2SHx0GBMlH1CTsr4UyjzTY95
-         7WHsQJLknDY3jUiKfqNxQOrQjiXr0kVjlkCFNHhQZWfPd1A1xrFs9xm9zlNGOC9M/av1
-         ZdzW799yK38VRthA36Itw6tLQUEpOxF2xCui3Fu/L5sSas+hFwI+2e1yOHQ/Jd9MsB1l
-         sXlg==
-X-Gm-Message-State: ACgBeo3EnEcIcyb1NFmW34c+UvAN9x29KPamciSKYErag7abxQHBQLke
-        wLMdOhBL0kPkxZskCszxKx5wSg==
-X-Google-Smtp-Source: AA6agR4KBKeJafzctEjHC4LXyH4OVEgAxIimdEUPkzTNZ3L1kV+nfkbNf8hLy9dIfgtIwgGNlb2udQ==
-X-Received: by 2002:a5d:4601:0:b0:21d:8db4:37c with SMTP id t1-20020a5d4601000000b0021d8db4037cmr2327990wrq.390.1659642469447;
-        Thu, 04 Aug 2022 12:47:49 -0700 (PDT)
-Received: from [192.168.1.12] ([81.178.197.238])
-        by smtp.gmail.com with ESMTPSA id p15-20020a05600c1d8f00b003a046549a85sm7285372wms.37.2022.08.04.12.47.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 Aug 2022 12:47:48 -0700 (PDT)
-Message-ID: <a59add1a-7e33-a47b-a804-b98c132d78f2@linaro.org>
-Date:   Thu, 4 Aug 2022 20:47:47 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH 1/8] dt-bindings: remoteproc: qcom: adsp: Make ADSP pil
- loader as generic
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, quic_plai@quicinc.com,
-        bgoswami@quicinc.com, perex@perex.cz, tiwai@suse.com,
-        srinivas.kandagatla@linaro.org, quic_rohkumar@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, judyhsiao@chromium.org,
-        devicetree@vger.kernel.org
-References: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com>
- <PLL_L3rk0As4iT923EpBfGe-uDR4XZZWQS3zFNrfS3m5TCPUtK0E58AEjofIncTglWcpEXVbYj2b1vWjEZgJBA==@protonmail.internalid>
- <1659536480-5176-2-git-send-email-quic_srivasam@quicinc.com>
-From:   Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <1659536480-5176-2-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc;
+        bh=9Fx/r6gG45RdaUEXtZvdtTR0qBKogKkCa14b5WLRWyY=;
+        b=RylkkcJx41taOieT74hbRKj4riKHctaZ6IY85xa6rWBaHzQGQxprC/8+P+Yeyt7gm/
+         BOgTdBZTTu6E1PEHRMZ7RT5USi0jLBDRzDDxkvoCqnNS+Vsju/wum4ejlLB1guMKsGNP
+         iv3+bXKbbzo/M4LJcFB7YisNIbgeqNkeoPIcDH++tnb8qm+V3+zIOCuTTZvwcP/GgI9c
+         043eahIVAIi2wkoYI4fxV5kjK2UAVXiKBVgSiKqU6NmEZCVZNhVwHG1+6RU7DLveKxGY
+         RdyX11kHshfniVkCOGC0tJfFzRSdUrLbQoeyh2WpwLTTkuK+kAMhjRi1F22dZ3Ja6hW+
+         DzqQ==
+X-Gm-Message-State: ACgBeo0kKhlCMCqKxw/3Z+gfxmzqYHsPlo5Z4DONDthANtbWQODRbqEI
+        BJQMUX3KN3cwqKpUXet7fNKzfEBORHHnag==
+X-Google-Smtp-Source: AA6agR7a/bbQGu2hbyROFfNcIvPGJhZEl+WD2hdxoXGYw1XI0gQnAiyofgcxrEhBmR9g+xfcMaf+hg==
+X-Received: by 2002:a05:6402:1389:b0:43a:ceea:93fd with SMTP id b9-20020a056402138900b0043aceea93fdmr3805027edv.64.1659647299265;
+        Thu, 04 Aug 2022 14:08:19 -0700 (PDT)
+Received: from ubuntu.fritz.box ([155.133.219.250])
+        by smtp.gmail.com with ESMTPSA id r10-20020a1709061baa00b007308fab3eb7sm699407ejg.195.2022.08.04.14.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Aug 2022 14:08:18 -0700 (PDT)
+From:   Daniel Kestrel <kestrelseventyfour@gmail.com>
+To:     kestrelseventyfour@gmail.com
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] Add support for WASP SoC on AVM router boards
+Date:   Thu,  4 Aug 2022 23:08:03 +0200
+Message-Id: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+There is a popular set of Lantiq xrx200 router boards by AVM in
+Germany (AVM Fritzbox 3390, 3490, 5490, 5491 and 7490) which
+have the strange implementation of having the wifi cards
+connected to a separate memory only ATH79 based SoC. It has no
+persistent storage and no access to any resource on the Lantiq
+host, but is connect to the Lantiq GSWIP switch on an additional
+fixed internal network port.
+This kernel module is to support booting the secondary SoC called
+Wireless Assistant Support Processor (WASP).
+After turning it on, a small network boot firmware is sent to
+the SoC by using mdio and when it is started, an initramfs
+linux image is sent to the SoC using raw ethernet frames.
 
-Hi,
-On 03/08/2022 15:21, Srinivasa Rao Mandadapu wrote:
-> Rename sdm845 adsp pil bindings to generic name, for using same binings
-> file for subsequent SoCs.
-> 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> ---
->   .../bindings/remoteproc/qcom,lpass-adsp-pil.yaml   | 160 +++++++++++++++++++++
->   .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  | 160 ---------------------
->   2 files changed, 160 insertions(+), 160 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
->   delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-This should be a rename, I think passing the -M flag to "git format-patch" 
-detects it.
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
-> new file mode 100644
-> index 0000000..9f11332
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
-> @@ -0,0 +1,160 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,lpass-adsp-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm LPASS ADSP Peripheral Image Loader
-> +
-> +maintainers:
-> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
-> +
-> +description:
-> +  This document defines the binding for a component that loads and boots firmware
-> +  on the Qualcomm Technology Inc. ADSP.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sdm845-adsp-pil
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      The base address and size of the qdsp6ss register
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Watchdog interrupt
-> +      - description: Fatal interrupt
-> +      - description: Ready interrupt
-> +      - description: Handover interrupt
-> +      - description: Stop acknowledge interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +
-> +  clocks:
-> +    items:
-> +      - description: XO clock
-> +      - description: SWAY clock
-> +      - description: LPASS AHBS AON clock
-> +      - description: LPASS AHBM AON clock
-> +      - description: QDSP XO clock
-> +      - description: Q6SP6SS SLEEP clock
-> +      - description: Q6SP6SS CORE clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xo
-> +      - const: sway_cbcr
-> +      - const: lpass_ahbs_aon_cbcr
-> +      - const: lpass_ahbm_aon_cbcr
-> +      - const: qdsp6ss_xo
-> +      - const: qdsp6ss_sleep
-> +      - const: qdsp6ss_core
-> +
-> +  power-domains:
-> +    items:
-> +      - description: CX power domain
-> +
-> +  resets:
-> +    items:
-> +      - description: PDC AUDIO SYNC RESET
-> +      - description: CC LPASS restart
-> +
-> +  reset-names:
-> +    items:
-> +      - const: pdc_sync
-> +      - const: cc_lpass
-> +
-> +  memory-region:
-> +    maxItems: 1
-> +    description: Reference to the reserved-memory for the Hexagon core
-> +
-> +  qcom,halt-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      three offsets within syscon for q6, modem and nc halt registers.
-> +
-> +  qcom,smem-states:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: States used by the AP to signal the Hexagon core
-> +    items:
-> +      - description: Stop the modem
-> +
-> +  qcom,smem-state-names:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description: The names of the state bits used for SMP2P output
-> +    items:
-> +      - const: stop
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - resets
-> +  - reset-names
-> +  - qcom,halt-regs
-> +  - memory-region
-> +  - qcom,smem-states
-> +  - qcom,smem-state-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> +    #include <dt-bindings/clock/qcom,lpass-sdm845.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-> +    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-> +    remoteproc@17300000 {
-> +        compatible = "qcom,sdm845-adsp-pil";
-> +        reg = <0x17300000 0x40c>;
-> +
-> +        interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +        interrupt-names = "wdog", "fatal", "ready",
-> +                "handover", "stop-ack";
-> +
-> +        clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +                 <&gcc GCC_LPASS_SWAY_CLK>,
-> +                 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
-> +                 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
-> +                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
-> +                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-> +                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-> +        clock-names = "xo", "sway_cbcr",
-> +                "lpass_ahbs_aon_cbcr",
-> +                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-> +                "qdsp6ss_sleep", "qdsp6ss_core";
-> +
-> +        power-domains = <&rpmhpd SDM845_CX>;
-> +
-> +        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-> +                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-> +        reset-names = "pdc_sync", "cc_lpass";
-> +
-> +        qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
-> +
-> +        memory-region = <&pil_adsp_mem>;
-> +
-> +        qcom,smem-states = <&adsp_smp2p_out 0>;
-> +        qcom,smem-state-names = "stop";
-> +    };
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-> deleted file mode 100644
-> index 1535bbb..0000000
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-> +++ /dev/null
-> @@ -1,160 +0,0 @@
-> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> -%YAML 1.2
-> ----
-> -$id: http://devicetree.org/schemas/remoteproc/qcom,sdm845-adsp-pil.yaml#
-> -$schema: http://devicetree.org/meta-schemas/core.yaml#
-> -
-> -title: Qualcomm SDM845 ADSP Peripheral Image Loader
-> -
-> -maintainers:
-> -  - Bjorn Andersson <bjorn.andersson@linaro.org>
-> -
-> -description:
-> -  This document defines the binding for a component that loads and boots firmware
-> -  on the Qualcomm Technology Inc. ADSP.
-> -
-> -properties:
-> -  compatible:
-> -    enum:
-> -      - qcom,sdm845-adsp-pil
-> -
-> -  reg:
-> -    maxItems: 1
-> -    description:
-> -      The base address and size of the qdsp6ss register
-> -
-> -  interrupts:
-> -    items:
-> -      - description: Watchdog interrupt
-> -      - description: Fatal interrupt
-> -      - description: Ready interrupt
-> -      - description: Handover interrupt
-> -      - description: Stop acknowledge interrupt
-> -
-> -  interrupt-names:
-> -    items:
-> -      - const: wdog
-> -      - const: fatal
-> -      - const: ready
-> -      - const: handover
-> -      - const: stop-ack
-> -
-> -  clocks:
-> -    items:
-> -      - description: XO clock
-> -      - description: SWAY clock
-> -      - description: LPASS AHBS AON clock
-> -      - description: LPASS AHBM AON clock
-> -      - description: QDSP XO clock
-> -      - description: Q6SP6SS SLEEP clock
-> -      - description: Q6SP6SS CORE clock
-> -
-> -  clock-names:
-> -    items:
-> -      - const: xo
-> -      - const: sway_cbcr
-> -      - const: lpass_ahbs_aon_cbcr
-> -      - const: lpass_ahbm_aon_cbcr
-> -      - const: qdsp6ss_xo
-> -      - const: qdsp6ss_sleep
-> -      - const: qdsp6ss_core
-> -
-> -  power-domains:
-> -    items:
-> -      - description: CX power domain
-> -
-> -  resets:
-> -    items:
-> -      - description: PDC AUDIO SYNC RESET
-> -      - description: CC LPASS restart
-> -
-> -  reset-names:
-> -    items:
-> -      - const: pdc_sync
-> -      - const: cc_lpass
-> -
-> -  memory-region:
-> -    maxItems: 1
-> -    description: Reference to the reserved-memory for the Hexagon core
-> -
-> -  qcom,halt-regs:
-> -    $ref: /schemas/types.yaml#/definitions/phandle-array
-> -    description:
-> -      Phandle reference to a syscon representing TCSR followed by the
-> -      three offsets within syscon for q6, modem and nc halt registers.
-> -
-> -  qcom,smem-states:
-> -    $ref: /schemas/types.yaml#/definitions/phandle-array
-> -    description: States used by the AP to signal the Hexagon core
-> -    items:
-> -      - description: Stop the modem
-> -
-> -  qcom,smem-state-names:
-> -    $ref: /schemas/types.yaml#/definitions/string
-> -    description: The names of the state bits used for SMP2P output
-> -    items:
-> -      - const: stop
-> -
-> -required:
-> -  - compatible
-> -  - reg
-> -  - interrupts
-> -  - interrupt-names
-> -  - clocks
-> -  - clock-names
-> -  - power-domains
-> -  - resets
-> -  - reset-names
-> -  - qcom,halt-regs
-> -  - memory-region
-> -  - qcom,smem-states
-> -  - qcom,smem-state-names
-> -
-> -additionalProperties: false
-> -
-> -examples:
-> -  - |
-> -    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> -    #include <dt-bindings/clock/qcom,rpmh.h>
-> -    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> -    #include <dt-bindings/clock/qcom,lpass-sdm845.h>
-> -    #include <dt-bindings/power/qcom-rpmpd.h>
-> -    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-> -    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-> -    remoteproc@17300000 {
-> -        compatible = "qcom,sdm845-adsp-pil";
-> -        reg = <0x17300000 0x40c>;
-> -
-> -        interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-> -                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> -                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> -                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> -                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> -        interrupt-names = "wdog", "fatal", "ready",
-> -                "handover", "stop-ack";
-> -
-> -        clocks = <&rpmhcc RPMH_CXO_CLK>,
-> -                 <&gcc GCC_LPASS_SWAY_CLK>,
-> -                 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
-> -                 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
-> -                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
-> -                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-> -                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-> -        clock-names = "xo", "sway_cbcr",
-> -                "lpass_ahbs_aon_cbcr",
-> -                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-> -                "qdsp6ss_sleep", "qdsp6ss_core";
-> -
-> -        power-domains = <&rpmhpd SDM845_CX>;
-> -
-> -        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-> -                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-> -        reset-names = "pdc_sync", "cc_lpass";
-> -
-> -        qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
-> -
-> -        memory-region = <&pil_adsp_mem>;
-> -
-> -        qcom,smem-states = <&adsp_smp2p_out 0>;
-> -        qcom,smem-state-names = "stop";
-> -    };
-> --
-> 2.7.4
-> 
+The whole procedure takes about 6 seconds, if there is no error.
+So far tested on 3490, 5490 and 7490 devices based on OpenWrt, 3390
+takes about 20 seconds.
+
+Patch 1/3 adds the vendor name
+Patch 2/3 adds the dt-bindings
+Patch 3/3 adds the remoteproc driver
+
+To build and run, there is OpenWrt PR 5075.
+
+Please review.
+
+Changes in v5:
+  - Replace names for properties and descriptions as requested in the
+    device tree documentation and change the driver to accept them
+  - Change example in the device tree documentation
+  - Restructure constants and defines in the beginning of the driver
+    source for better readability
+  - Combine m_start_addr and m_exec_addr into a single constant and
+    change avm_wasp_netboot_write_header to use only this one constant
+  - Change variable startup_gpio to power_gpio in driver
+
+Changes in v4:
+  - Fix compiler warnings with W=2 option
+
+Changes in v3:
+  - Replace generic avm,fritzboxx490-wasp with actual device names for
+    device tree documentation and change the driver to accept them
+  - Add maxItems to device tree documentation
+  - Change example in the device tree documentation
+  - Fix wait time to make the Wasp upload work for 3390 more reliable
+  - Enable the SOC on driver load, use reset instead of disable/enable
+    while driver is loaded and disable on unloading the driver
+  - Change some messages printed to adhere to standards (e.g. remove !)
+
+Changes in v2:
+  - Remove firmware names from dt-binding and add as kmod parameters
+  - Rename other bindings with vender prefix and fix gpios suffix
+  - Change descriptions in dt-binding
+  - Replace/Remove asynch load of firmware with request_firmware_direct
+  - Fix comments to use the errno define instead of the number
+  - Implement wait loops with read_poll_timeout() macro
+  - Wrap read_poll_timeout() macro in function saving 6k module size
+  - Return -ETIMEDOUT for all errors returned by read_poll_timeout
+  - Replace mdio writes/reads with mdiobus_write and mdiobus_read and add
+    return codes and their handling
+  - Remove mutex for mdiobus_lock and add return code checking for mdio ops
+  - Replaced the mdio register array with directly specifying registers
+  - As a result of the previous 3 changes remove the functions for mdio
+  - Consolidate error messages for mdio writes into a single one saved 1k
+    for module size
+  - Replaced mdelay with usleep_range saved 0,7k module size
+  - Remove unneeded include <linux/interrupt.h> and <linux/error.h>
+  - Wrap all blocks with {} and fix some indentation errors
+  - Change const len in to size_t in avm_wasp_netboot_write_chunk
+  - Make all methods static to fix kernel bot warning
+  - Change read variable name in avm_wasp_load_initramfs_image
+  - Change ssize_t variables to size_t in avm_wasp_load_initramfs_image
+  - avm_wasp_netboot_write_chunk change for loop for 2 byte divisibility
+  - Change uint32_t to u32
+  - Change int count = -1 to u32 with U32_MAX initialisation
+  - Add check for firmware len divisable by 4
+  - Replace big endian bit shift operations with be32_to_cpu
+  - Change loop to write 14 byte firmware chuncks like suggested
+  - Change WASP_CHUNK_SIZE to ARRAY_SIZE(mac_data) for readability
+  - Change int done to boolean
+  - Change unsigned ints to u32
+  - Change int to size_t for send_len
+  - Use int for numbytes because kernel_recvmsg returns error or number
+  - Two sockets are not needed, so reduce to one socket usage
+  - Remove struct timeval definition, replace with __kernel_old_timeval
+  - __kernel_old_timeval is depracated, but arch mips is 32bit platform
+  - Replace &avmwasp->pdev->dev with local dev
+  - Check if wasp network interface is up and fail if not in start method
+  - Remove setsockopt for SO_REUSEADDR and SO_BINDTODEVICE
+  - Remove packet_counter
+  - Move firmware and firmware_end out of RESP_DISCOVER to make sure that
+    they are initialized if RESP_DISCOVER is not happening first
+  - indend break;
+  - Move second half of the send/receive paket while loop to RESP_OK and
+    let RESP_DISCOVER fall through
+  - Remove bringing up the wasp network interface
+  - Check if wasp network interface is up in probe and defer if not
+  - Remove the check for the root device and replace it with match data
+    for WASP device identification
+  - Move of_read and find of mdio bus to rproc_start but delete reference
+    after using it in the rproc_start method
+  - Replace dev_set_drvdata with platform_set_drvdata
+  - Remove avm_wasp_rproc_boot_addr because its not needed and move
+    setting the fw struct pointer to avm_wasp_rproc_load
+  - Move avm_wasp.h definitions to kernel module
+
+Reported-by: kernel test robot <lkp@intel.com>
+
+Daniel Kestrel (3):
+  dt-bindings: vendor-prefixes: Add AVM
+  dt-bindings: remoteproc: Add AVM WASP
+  remoteproc: Add AVM WASP driver
+
+ .../bindings/remoteproc/avm,wasp-rproc.yaml   |   61 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+ drivers/remoteproc/Kconfig                    |   10 +
+ drivers/remoteproc/Makefile                   |    1 +
+ drivers/remoteproc/avm_wasp.c                 | 1051 +++++++++++++++++
+ 5 files changed, 1125 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+ create mode 100644 drivers/remoteproc/avm_wasp.c
 
 -- 
-Kind Regards,
-Caleb (they/he)
+2.17.1
+
