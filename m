@@ -2,110 +2,435 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B86C19F2C
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 11:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C76C19F21
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 Aug 2022 19:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231335AbiHDLRZ (ORCPT
+        id S237134AbiHDTtT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 Aug 2022 07:17:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60472 "EHLO
+        Thu, 4 Aug 2022 15:49:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239570AbiHDLQ6 (ORCPT
+        with ESMTP id S240005AbiHDTsu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 Aug 2022 07:16:58 -0400
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5256622BCB;
-        Thu,  4 Aug 2022 04:16:57 -0700 (PDT)
+        Thu, 4 Aug 2022 15:48:50 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74F6C6FA24
+        for <linux-remoteproc@vger.kernel.org>; Thu,  4 Aug 2022 12:47:51 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id h13so940991wrf.6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Aug 2022 12:47:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1659611817; x=1691147817;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=w+SN/SaIr+LvXT/a1kPPp+iizidghf+YuAzNx6mKr9c=;
-  b=Wir5wLd8j8rWP60lJBlKyLpcO0u1+XIYhoEaF9Hv1B79m5euXJ07mdAQ
-   r/yLLFUEFfee8GknbT3WR/qw3PSpreluIdkco/UMm975lsq+1bHUoj7YY
-   ZC5LAdiIXjQmpV5SFdYYft9LF1Y/xb21DsAqIEDafFoYiveZnBmuLYG4v
-   0=;
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 04 Aug 2022 04:16:57 -0700
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.47.97.222])
-  by ironmsg03-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2022 04:16:56 -0700
-Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
- nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 4 Aug 2022 04:16:56 -0700
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Thu, 4 Aug 2022 04:16:50 -0700
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
-        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
-        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
-        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v2 8/8] remoteproc: qcom: Update QDSP6 out-of-reset timeout value
-Date:   Thu, 4 Aug 2022 16:45:51 +0530
-Message-ID: <1659611751-7928-9-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1659611751-7928-1-git-send-email-quic_srivasam@quicinc.com>
-References: <1659611751-7928-1-git-send-email-quic_srivasam@quicinc.com>
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=QlT7DqqIhp/KPt8AYXFlLmzKkm+SJZEvwWGK5U978as=;
+        b=Ej+YlApkLVmQN+VjvK9aslfn+W0IWfglXj1gCvgdkrkZ/zEAC8fNXsTye9deOSm79p
+         bDBlItY0x1YLhIQ7XJPlXTQm3CsdusO4eXPpdRhwOPS8/aGgWx4dIPVVTGkgiPvn38ig
+         jrG/Ls4SFldrL4xIbCuMBZKmt9imaGlZQMS6ZPGC8ShkRAEHOikp+OmLsLSpRWgQE9BP
+         niCdN04hLA3aJ1GSCZUiKJdepfon6ivhGimAabFcaCVyuIYfqe+O29cpp/P1AkuEgbDr
+         7luOZjUexImBpmd7P5nLoXgJWZanWIu8B2+fjR992AgjfS6y7N0+8XW2gn4VrctYEnNh
+         /A7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=QlT7DqqIhp/KPt8AYXFlLmzKkm+SJZEvwWGK5U978as=;
+        b=O6jYpb05YT6oIhSb6F9KHi5UHQlN4qD6GdI2cUO21BNslwmtQMsb/3qJ3kmeUB8WKx
+         txIMlLQmlIuwCexAOx/xLtTptSnZak7w7oM3k1lg+iZufCH+7Qomd7AAtlK6PWp7GCNn
+         I90ttKpmNnrcBYznJmRPOFYGr0Vatu8LYNcAfhX4s0df2SHx0GBMlH1CTsr4UyjzTY95
+         7WHsQJLknDY3jUiKfqNxQOrQjiXr0kVjlkCFNHhQZWfPd1A1xrFs9xm9zlNGOC9M/av1
+         ZdzW799yK38VRthA36Itw6tLQUEpOxF2xCui3Fu/L5sSas+hFwI+2e1yOHQ/Jd9MsB1l
+         sXlg==
+X-Gm-Message-State: ACgBeo3EnEcIcyb1NFmW34c+UvAN9x29KPamciSKYErag7abxQHBQLke
+        wLMdOhBL0kPkxZskCszxKx5wSg==
+X-Google-Smtp-Source: AA6agR4KBKeJafzctEjHC4LXyH4OVEgAxIimdEUPkzTNZ3L1kV+nfkbNf8hLy9dIfgtIwgGNlb2udQ==
+X-Received: by 2002:a5d:4601:0:b0:21d:8db4:37c with SMTP id t1-20020a5d4601000000b0021d8db4037cmr2327990wrq.390.1659642469447;
+        Thu, 04 Aug 2022 12:47:49 -0700 (PDT)
+Received: from [192.168.1.12] ([81.178.197.238])
+        by smtp.gmail.com with ESMTPSA id p15-20020a05600c1d8f00b003a046549a85sm7285372wms.37.2022.08.04.12.47.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 Aug 2022 12:47:48 -0700 (PDT)
+Message-ID: <a59add1a-7e33-a47b-a804-b98c132d78f2@linaro.org>
+Date:   Thu, 4 Aug 2022 20:47:47 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH 1/8] dt-bindings: remoteproc: qcom: adsp: Make ADSP pil
+ loader as generic
+Content-Language: en-US
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        linux-remoteproc@vger.kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, robh+dt@kernel.org, quic_plai@quicinc.com,
+        bgoswami@quicinc.com, perex@perex.cz, tiwai@suse.com,
+        srinivas.kandagatla@linaro.org, quic_rohkumar@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        swboyd@chromium.org, judyhsiao@chromium.org,
+        devicetree@vger.kernel.org
+References: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com>
+ <PLL_L3rk0As4iT923EpBfGe-uDR4XZZWQS3zFNrfS3m5TCPUtK0E58AEjofIncTglWcpEXVbYj2b1vWjEZgJBA==@protonmail.internalid>
+ <1659536480-5176-2-git-send-email-quic_srivasam@quicinc.com>
+From:   Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <1659536480-5176-2-git-send-email-quic_srivasam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update QDSP6 out-of-reset timeout value to 1 second, as sometimes
-ADSP boot failing on SC7280 based platforms with existing value.
-Also add few micro seconds sleep after enabling boot core
-start register.
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
----
-Changes since V1:
-	-- Fix typo error.
+Hi,
+On 03/08/2022 15:21, Srinivasa Rao Mandadapu wrote:
+> Rename sdm845 adsp pil bindings to generic name, for using same binings
+> file for subsequent SoCs.
+> 
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> ---
+>   .../bindings/remoteproc/qcom,lpass-adsp-pil.yaml   | 160 +++++++++++++++++++++
+>   .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml  | 160 ---------------------
+>   2 files changed, 160 insertions(+), 160 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+>   delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+This should be a rename, I think passing the -M flag to "git format-patch" 
+detects it.
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+> new file mode 100644
+> index 0000000..9f11332
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+> @@ -0,0 +1,160 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,lpass-adsp-pil.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm LPASS ADSP Peripheral Image Loader
+> +
+> +maintainers:
+> +  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> +
+> +description:
+> +  This document defines the binding for a component that loads and boots firmware
+> +  on the Qualcomm Technology Inc. ADSP.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sdm845-adsp-pil
+> +
+> +  reg:
+> +    maxItems: 1
+> +    description:
+> +      The base address and size of the qdsp6ss register
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Watchdog interrupt
+> +      - description: Fatal interrupt
+> +      - description: Ready interrupt
+> +      - description: Handover interrupt
+> +      - description: Stop acknowledge interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO clock
+> +      - description: SWAY clock
+> +      - description: LPASS AHBS AON clock
+> +      - description: LPASS AHBM AON clock
+> +      - description: QDSP XO clock
+> +      - description: Q6SP6SS SLEEP clock
+> +      - description: Q6SP6SS CORE clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +      - const: sway_cbcr
+> +      - const: lpass_ahbs_aon_cbcr
+> +      - const: lpass_ahbm_aon_cbcr
+> +      - const: qdsp6ss_xo
+> +      - const: qdsp6ss_sleep
+> +      - const: qdsp6ss_core
+> +
+> +  power-domains:
+> +    items:
+> +      - description: CX power domain
+> +
+> +  resets:
+> +    items:
+> +      - description: PDC AUDIO SYNC RESET
+> +      - description: CC LPASS restart
+> +
+> +  reset-names:
+> +    items:
+> +      - const: pdc_sync
+> +      - const: cc_lpass
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +    description: Reference to the reserved-memory for the Hexagon core
+> +
+> +  qcom,halt-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Phandle reference to a syscon representing TCSR followed by the
+> +      three offsets within syscon for q6, modem and nc halt registers.
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the Hexagon core
+> +    items:
+> +      - description: Stop the modem
+> +
+> +  qcom,smem-state-names:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: The names of the state bits used for SMP2P output
+> +    items:
+> +      - const: stop
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - clock-names
+> +  - power-domains
+> +  - resets
+> +  - reset-names
+> +  - qcom,halt-regs
+> +  - memory-region
+> +  - qcom,smem-states
+> +  - qcom,smem-state-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> +    #include <dt-bindings/clock/qcom,lpass-sdm845.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+> +    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> +    remoteproc@17300000 {
+> +        compatible = "qcom,sdm845-adsp-pil";
+> +        reg = <0x17300000 0x40c>;
+> +
+> +        interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
+> +                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "wdog", "fatal", "ready",
+> +                "handover", "stop-ack";
+> +
+> +        clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +                 <&gcc GCC_LPASS_SWAY_CLK>,
+> +                 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
+> +                 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
+> +                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
+> +                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+> +                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+> +        clock-names = "xo", "sway_cbcr",
+> +                "lpass_ahbs_aon_cbcr",
+> +                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+> +                "qdsp6ss_sleep", "qdsp6ss_core";
+> +
+> +        power-domains = <&rpmhpd SDM845_CX>;
+> +
+> +        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+> +                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+> +        reset-names = "pdc_sync", "cc_lpass";
+> +
+> +        qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
+> +
+> +        memory-region = <&pil_adsp_mem>;
+> +
+> +        qcom,smem-states = <&adsp_smp2p_out 0>;
+> +        qcom,smem-state-names = "stop";
+> +    };
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+> deleted file mode 100644
+> index 1535bbb..0000000
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+> +++ /dev/null
+> @@ -1,160 +0,0 @@
+> -# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> -%YAML 1.2
+> ----
+> -$id: http://devicetree.org/schemas/remoteproc/qcom,sdm845-adsp-pil.yaml#
+> -$schema: http://devicetree.org/meta-schemas/core.yaml#
+> -
+> -title: Qualcomm SDM845 ADSP Peripheral Image Loader
+> -
+> -maintainers:
+> -  - Bjorn Andersson <bjorn.andersson@linaro.org>
+> -
+> -description:
+> -  This document defines the binding for a component that loads and boots firmware
+> -  on the Qualcomm Technology Inc. ADSP.
+> -
+> -properties:
+> -  compatible:
+> -    enum:
+> -      - qcom,sdm845-adsp-pil
+> -
+> -  reg:
+> -    maxItems: 1
+> -    description:
+> -      The base address and size of the qdsp6ss register
+> -
+> -  interrupts:
+> -    items:
+> -      - description: Watchdog interrupt
+> -      - description: Fatal interrupt
+> -      - description: Ready interrupt
+> -      - description: Handover interrupt
+> -      - description: Stop acknowledge interrupt
+> -
+> -  interrupt-names:
+> -    items:
+> -      - const: wdog
+> -      - const: fatal
+> -      - const: ready
+> -      - const: handover
+> -      - const: stop-ack
+> -
+> -  clocks:
+> -    items:
+> -      - description: XO clock
+> -      - description: SWAY clock
+> -      - description: LPASS AHBS AON clock
+> -      - description: LPASS AHBM AON clock
+> -      - description: QDSP XO clock
+> -      - description: Q6SP6SS SLEEP clock
+> -      - description: Q6SP6SS CORE clock
+> -
+> -  clock-names:
+> -    items:
+> -      - const: xo
+> -      - const: sway_cbcr
+> -      - const: lpass_ahbs_aon_cbcr
+> -      - const: lpass_ahbm_aon_cbcr
+> -      - const: qdsp6ss_xo
+> -      - const: qdsp6ss_sleep
+> -      - const: qdsp6ss_core
+> -
+> -  power-domains:
+> -    items:
+> -      - description: CX power domain
+> -
+> -  resets:
+> -    items:
+> -      - description: PDC AUDIO SYNC RESET
+> -      - description: CC LPASS restart
+> -
+> -  reset-names:
+> -    items:
+> -      - const: pdc_sync
+> -      - const: cc_lpass
+> -
+> -  memory-region:
+> -    maxItems: 1
+> -    description: Reference to the reserved-memory for the Hexagon core
+> -
+> -  qcom,halt-regs:
+> -    $ref: /schemas/types.yaml#/definitions/phandle-array
+> -    description:
+> -      Phandle reference to a syscon representing TCSR followed by the
+> -      three offsets within syscon for q6, modem and nc halt registers.
+> -
+> -  qcom,smem-states:
+> -    $ref: /schemas/types.yaml#/definitions/phandle-array
+> -    description: States used by the AP to signal the Hexagon core
+> -    items:
+> -      - description: Stop the modem
+> -
+> -  qcom,smem-state-names:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> -    description: The names of the state bits used for SMP2P output
+> -    items:
+> -      - const: stop
+> -
+> -required:
+> -  - compatible
+> -  - reg
+> -  - interrupts
+> -  - interrupt-names
+> -  - clocks
+> -  - clock-names
+> -  - power-domains
+> -  - resets
+> -  - reset-names
+> -  - qcom,halt-regs
+> -  - memory-region
+> -  - qcom,smem-states
+> -  - qcom,smem-state-names
+> -
+> -additionalProperties: false
+> -
+> -examples:
+> -  - |
+> -    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -    #include <dt-bindings/clock/qcom,rpmh.h>
+> -    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> -    #include <dt-bindings/clock/qcom,lpass-sdm845.h>
+> -    #include <dt-bindings/power/qcom-rpmpd.h>
+> -    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+> -    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> -    remoteproc@17300000 {
+> -        compatible = "qcom,sdm845-adsp-pil";
+> -        reg = <0x17300000 0x40c>;
+> -
+> -        interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
+> -                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> -                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> -                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> -                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> -        interrupt-names = "wdog", "fatal", "ready",
+> -                "handover", "stop-ack";
+> -
+> -        clocks = <&rpmhcc RPMH_CXO_CLK>,
+> -                 <&gcc GCC_LPASS_SWAY_CLK>,
+> -                 <&lpasscc LPASS_Q6SS_AHBS_AON_CLK>,
+> -                 <&lpasscc LPASS_Q6SS_AHBM_AON_CLK>,
+> -                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
+> -                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+> -                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+> -        clock-names = "xo", "sway_cbcr",
+> -                "lpass_ahbs_aon_cbcr",
+> -                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+> -                "qdsp6ss_sleep", "qdsp6ss_core";
+> -
+> -        power-domains = <&rpmhpd SDM845_CX>;
+> -
+> -        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+> -                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+> -        reset-names = "pdc_sync", "cc_lpass";
+> -
+> -        qcom,halt-regs = <&tcsr_mutex_regs 0x22000>;
+> -
+> -        memory-region = <&pil_adsp_mem>;
+> -
+> -        qcom,smem-states = <&adsp_smp2p_out 0>;
+> -        qcom,smem-state-names = "stop";
+> -    };
+> --
+> 2.7.4
+> 
 
- drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index f81da47..18a6bf6 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -34,7 +34,7 @@
- /* time out value */
- #define ACK_TIMEOUT			1000
- #define ACK_TIMEOUT_US			1000000
--#define BOOT_FSM_TIMEOUT		10000
-+#define BOOT_FSM_TIMEOUT		1000000
- /* mask values */
- #define EVB_MASK			GENMASK(27, 4)
- /*QDSP6SS register offsets*/
-@@ -468,13 +468,14 @@ static int adsp_start(struct rproc *rproc)
- 
- 	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
- 	writel(LPASS_BOOT_CORE_START, adsp->qdsp6ss_base + CORE_START_REG);
-+	usleep_range(100, 110);
- 
- 	/* Trigger boot FSM to start QDSP6 */
- 	writel(LPASS_BOOT_CMD_START, adsp->qdsp6ss_base + BOOT_CMD_REG);
- 
- 	/* Wait for core to come out of reset */
- 	ret = readl_poll_timeout(adsp->qdsp6ss_base + BOOT_STATUS_REG,
--			val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
-+			val, (val & BIT(0)) != 0, 100, BOOT_FSM_TIMEOUT);
- 	if (ret) {
- 		dev_err(adsp->dev, "failed to bootup adsp\n");
- 		goto disable_adsp_clks;
 -- 
-2.7.4
-
+Kind Regards,
+Caleb (they/he)
