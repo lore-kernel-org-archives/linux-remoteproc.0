@@ -2,61 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F88C25B0C
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  6 Aug 2022 20:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920D0C19F2D
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  6 Aug 2022 20:34:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232898AbiHFU0b (ORCPT
+        id S234945AbiHFUe0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 6 Aug 2022 16:26:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54948 "EHLO
+        Sat, 6 Aug 2022 16:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232926AbiHFU03 (ORCPT
+        with ESMTP id S234306AbiHFUeZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 6 Aug 2022 16:26:29 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A2DFD03
-        for <linux-remoteproc@vger.kernel.org>; Sat,  6 Aug 2022 13:26:28 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id d14so7644895lfl.13
-        for <linux-remoteproc@vger.kernel.org>; Sat, 06 Aug 2022 13:26:28 -0700 (PDT)
+        Sat, 6 Aug 2022 16:34:25 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5387CB1CA
+        for <linux-remoteproc@vger.kernel.org>; Sat,  6 Aug 2022 13:34:23 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id s9so6281263ljs.6
+        for <linux-remoteproc@vger.kernel.org>; Sat, 06 Aug 2022 13:34:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc;
-        bh=ROYvf8g259PGwFxDxBtSZpunTSjof4WFaayVaRYHt6s=;
-        b=YyIiRHEiDcm4t8olsQ7JXPjWvimPvxqSO4a0uMonk2AWyV0py44U4CnfElvXQ+dsWf
-         Em9yY3ngkfhhXLSFEFkE+GAb3bcMKdbZVqgGit+fb/YKczs95IEbJkUOjVs2gF2M0xJh
-         gH13ghOjyYKk19oGjQfDyVbncJKgReavpB6espV1Z9R59+jRh6jRykH5iMps4QfDeJ8I
-         IE0Qi/Lj/bnstyoLUEsqeEeONd+sm0Xi0qHw96QQIWINbb6D5V6TAcglKgO2rwKbYqWT
-         bQig78PJjdibXCv1lIOL3FhmudO0ztA/+RMXAcDepVhluosKKHvQvqSJMxo+usSv2lYO
-         YcLg==
+        bh=nUZOASi1AeWsiTeJpwg1uH93uFHvf8HXjE9XeYBo5aM=;
+        b=ZoUuuyAaXzkKYx0XT8mw+QQvBbduB7hwbgwm5wHD4dPejcIt8MVVklDLI2oaXlRTC+
+         6VioMO+g16FctWAoIDD1FvZnrJJtfkxXtFqg/6IKA2kEUIlNhcouL6LZTBA1htHLkNkH
+         CLBiEbxwCYA0qvbZv2KlxFqICEoC1+ZF5eHiIm37Sl/oKN6c6TOOmUDqrpv+NKo4pVgu
+         IFohCM2rqepd3I7ObqkoA6gzgvYpXBesgeqZrJbYldgxnqHo1vQOFs9dzM2iEQ+KBC9/
+         9IJySzfWY5h/tdL5f4v6RLjcqLZq3wPLkk6QCSIlxApRA5IqZkTIc98BCmdLHTjq0Wvr
+         yK6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc;
-        bh=ROYvf8g259PGwFxDxBtSZpunTSjof4WFaayVaRYHt6s=;
-        b=6y7jauLmS6HGjGmfYfSwBBLNqniDZ362XUoxqldlRUekA2hIiFBNfun8keiTEe1vbb
-         vn8LNFHvHI3pDAvgE8NyuHsnqJtg37QDlzlIqNSPWj4gPo/XvfFLyE57QA2EG2Arc3ic
-         jD8Ye07fkQctLwUNElx6/QetrzBtpaHWG5tN7Y7lHBHSzCqkguvbtMygX3pIUXVGILb6
-         pY88NKHyvCpNI+ZgXLk1x82c4IDG9+NOueOJRB2cLxpPTUlC3Bis4BfePopmk7NoA5KK
-         JkTd0TPub8wPAfgGFSKtoHliC3W1xatj9Ar0h/8hG9Gtd7ajLkWA6CKXjc1hMGvOFFRH
-         fGyg==
-X-Gm-Message-State: ACgBeo2kJn3jSxUReYN/+EOiBKPtH8n7gh6EmflxNaueDLxER1hh+avj
-        2cw4FengwimNh8WDEeI5wNMlNw==
-X-Google-Smtp-Source: AA6agR5jirJciuwIXYIOI2zYJj3CGahbCPgxcpB0S3yRhZMr/rkIxUNwZe9S3GiZP/CRKwuxAJbpng==
-X-Received: by 2002:ac2:4e15:0:b0:48b:7a5f:923c with SMTP id e21-20020ac24e15000000b0048b7a5f923cmr2132926lfr.134.1659817586613;
-        Sat, 06 Aug 2022 13:26:26 -0700 (PDT)
+        bh=nUZOASi1AeWsiTeJpwg1uH93uFHvf8HXjE9XeYBo5aM=;
+        b=vdbxt8vS39ZxCfPghatVPoWEQdvYvwpMhET38sPKbInaEwk7iL/8+YyqymcRisJChD
+         ZjiRLailrMRWJTwrjiAPUUf8hLdZ73PKuyqjwmZPMzlINyIQK5ZxN9C/pFrOh96WUzwz
+         OOmLGjTrFxUARVFfo8LweLz0TdnV/3t3X3Qjpk5fKbs9RocllJjhBg/Nq9cW4LtgVqzv
+         hy+muR+kzrhS41QSmwdzNT2EraMrznV0dOrXFRpRYiENC5TXnj/93UwDoh9ID2xcPqhD
+         OJmqleQuJcpe53Yvl5oAP0ltawuZOTlIUeAeraQF47gjgZrRtZxj63Wmptp//m9JcpWf
+         V1eA==
+X-Gm-Message-State: ACgBeo1xmAynkJU2JzEYNmHwOAzysUs+TU+sO5yFpCtAZ3JJDtlOKz+X
+        AYu1FUQuPirZo2UrAf3V3zoGxJDOOmmmgA==
+X-Google-Smtp-Source: AA6agR67XcS0BLgr+RQtLddpumdVPZaBVbRFhr7sKtIBlLKGWyVvNMxNj2cSbqRVrVkd3YZk6LRSdA==
+X-Received: by 2002:a2e:92c8:0:b0:25d:6ddf:e71d with SMTP id k8-20020a2e92c8000000b0025d6ddfe71dmr3625998ljh.170.1659818061691;
+        Sat, 06 Aug 2022 13:34:21 -0700 (PDT)
 Received: from [192.168.1.211] ([37.153.55.125])
-        by smtp.gmail.com with ESMTPSA id cf40-20020a056512282800b0047f84ecae2esm862310lfb.236.2022.08.06.13.26.25
+        by smtp.gmail.com with ESMTPSA id c11-20020ac25f6b000000b0048af2fe78c4sm874215lfc.3.2022.08.06.13.34.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Aug 2022 13:26:26 -0700 (PDT)
-Message-ID: <0ed40651-1638-3701-f310-cd50102ae763@linaro.org>
-Date:   Sat, 6 Aug 2022 23:26:25 +0300
+        Sat, 06 Aug 2022 13:34:21 -0700 (PDT)
+Message-ID: <9d78a571-8d02-2967-1f29-21ca737a582f@linaro.org>
+Date:   Sat, 6 Aug 2022 23:34:20 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.10.0
-Subject: Re: [PATCH 5/8] remoteproc: qcom: Add efuse evb selection control
+Subject: Re: [PATCH 7/8] remoteproc: qcom: Add support for memory sandbox
 Content-Language: en-GB
 To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         linux-remoteproc@vger.kernel.org, agross@kernel.org,
@@ -68,9 +68,9 @@ To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         swboyd@chromium.org, judyhsiao@chromium.org,
         devicetree@vger.kernel.org
 References: <1659536480-5176-1-git-send-email-quic_srivasam@quicinc.com>
- <1659536480-5176-6-git-send-email-quic_srivasam@quicinc.com>
+ <1659536480-5176-8-git-send-email-quic_srivasam@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <1659536480-5176-6-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1659536480-5176-8-git-send-email-quic_srivasam@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,60 +78,179 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 03/08/2022 17:21, Srinivasa Rao Mandadapu wrote:
-> Add efuse evb selection control and enable it for starting ADSP.
+> Add memory sandbox support for ADSP based platforms secure booting.
+
+This repeats commit subject. Please replace it with proper commit 
+message text describing what is done and why.
+
 > 
 > Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-
-Is the lpass_efuse region used solely by the ADSP or is it shared with 
-anybody else (e.g. other sound-related devices)? If the latter is true, 
-then please use syscon for the lpass_efuse region.
-
 > ---
->   drivers/remoteproc/qcom_q6v5_adsp.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+>   drivers/remoteproc/qcom_q6v5_adsp.c | 101 +++++++++++++++++++++++++++++++++++-
+>   1 file changed, 99 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index a9fcb5c..201cc21 100644
+> index 3dbd035..f81da47 100644
 > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
 > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -56,6 +56,7 @@
+> @@ -9,6 +9,7 @@
+>   #include <linux/firmware.h>
+>   #include <linux/interrupt.h>
+>   #include <linux/io.h>
+> +#include <linux/iommu.h>
+>   #include <linux/iopoll.h>
+>   #include <linux/kernel.h>
+>   #include <linux/mfd/syscon.h>
+> @@ -48,6 +49,8 @@
+>   #define LPASS_PWR_ON_REG		0x10
+>   #define LPASS_HALTREQ_REG		0x0
 >   
->   #define LPASS_BOOT_CORE_START	BIT(0)
->   #define LPASS_BOOT_CMD_START	BIT(0)
-> +#define LPASS_EFUSE_Q6SS_EVB_SEL 0x0
->   
->   struct adsp_pil_data {
->   	int crash_reason_smem;
-> @@ -85,6 +86,7 @@ struct qcom_adsp {
->   	struct clk_bulk_data *clks;
->   
->   	void __iomem *qdsp6ss_base;
-> +	void __iomem *lpass_efuse;
->   
->   	struct reset_control *pdc_sync_reset;
->   	struct reset_control *restart;
-> @@ -366,6 +368,9 @@ static int adsp_start(struct rproc *rproc)
->   	/* Program boot address */
->   	writel(adsp->mem_phys >> 4, adsp->qdsp6ss_base + RST_EVB_REG);
->   
-> +	if (adsp->lpass_efuse)
-> +		writel(LPASS_EFUSE_Q6SS_EVB_SEL, adsp->lpass_efuse);
+> +#define SID_MASK_DEFAULT        0xF
 > +
->   	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
->   	writel(LPASS_BOOT_CORE_START, adsp->qdsp6ss_base + CORE_START_REG);
+>   #define QDSP6SS_XO_CBCR		0x38
+>   #define QDSP6SS_CORE_CBCR	0x20
+>   #define QDSP6SS_SLEEP_CBCR	0x3c
+> @@ -77,7 +80,7 @@ struct adsp_pil_data {
+>   struct qcom_adsp {
+>   	struct device *dev;
+>   	struct rproc *rproc;
+> -
+> +	struct iommu_domain *iommu_dom;
+>   	struct qcom_q6v5 q6v5;
 >   
-> @@ -520,6 +525,11 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
->   		return PTR_ERR(adsp->qdsp6ss_base);
->   	}
+>   	struct clk *xo;
+> @@ -332,6 +335,91 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+>   	return 0;
+>   }
 >   
-> +	adsp->lpass_efuse =  devm_platform_ioremap_resource_byname(pdev, "lpass_efuse");
-> +	if (IS_ERR(adsp->lpass_efuse)) {
-> +		adsp->lpass_efuse = NULL;
-> +		dev_dbg(adsp->dev, "failed to map LPASS efuse registers\n");
+> +static int adsp_map_smmu(struct qcom_adsp *adsp, struct rproc *rproc)
+> +{
+> +	struct of_phandle_args args;
+> +	int ret, rc, i;
+> +	long long sid;
+> +
+> +	unsigned long mem_phys;
+> +	unsigned long iova;
+> +	const __be32 *prop;
+> +	int access_level;
+> +	uint32_t len, flag, mem_size;
+> +	int offset;
+> +	struct fw_rsc_hdr *hdr;
+> +	struct fw_rsc_devmem *rsc_fw;
+> +
+> +	rc = of_parse_phandle_with_fixed_args(adsp->dev->of_node, "iommus", 1, 0, &args);
+
+Please do not add implicit dependency on #iommu-cells value.
+
+> +	if (rc < 0)
+> +		sid = -1;
+> +	else
+> +		sid = args.args[0] & SID_MASK_DEFAULT;
+> +
+> +	adsp->iommu_dom = iommu_domain_alloc(&platform_bus_type);
+
+please use adsp->dev->bus instead of platform_bus_type here.
+
+> +	if (!adsp->iommu_dom) {
+> +		dev_err(adsp->dev, "failed to allocate iommu domain\n");
+> +		return -ENOMEM;
 > +	}
->   	syscon = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
->   	if (!syscon) {
->   		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
+> +
+> +	ret = iommu_attach_device(adsp->iommu_dom, adsp->dev);
+> +	if (ret) {
+> +		dev_err(adsp->dev, "could not attach device ret = %d\n", ret);
+> +		return -EBUSY;
+> +	}
+> +
+> +	/* Add SID configuration for ADSP Firmware to SMMU */
+> +	adsp->mem_phys =  adsp->mem_phys | (sid << 32);
+> +
+> +	ret = iommu_map(adsp->iommu_dom, adsp->mem_phys, adsp->mem_phys,
+> +			adsp->mem_size,	IOMMU_READ | IOMMU_WRITE);
+> +	if (ret) {
+> +		dev_err(adsp->dev, "Unable to map ADSP Physical Memory\n");
+> +		return ret;
+> +	}
+> +
+> +	prop = of_get_property(adsp->dev->of_node, "qcom,adsp-memory", &len);
+
+Non-documented property. So, this chunk is not acceptable.
+
+> +	if (prop) {
+> +		len /= sizeof(__be32);
+> +		for (i = 0; i < len; i++) {
+> +			iova = be32_to_cpu(prop[i++]);
+> +			mem_phys = be32_to_cpu(prop[i++]);
+> +			mem_size = be32_to_cpu(prop[i++]);
+> +			access_level = be32_to_cpu(prop[i]);
+> +
+> +			if (access_level)
+> +				flag = IOMMU_READ | IOMMU_WRITE;
+> +			else
+> +				flag = IOMMU_READ;
+> +
+> +			ret = iommu_map(adsp->iommu_dom, iova, mem_phys, mem_size, flag);
+> +			if (ret) {
+> +				dev_err(adsp->dev, "failed to map addr = %p mem_size = %x\n",
+> +						&(mem_phys), mem_size);
+> +				return ret;
+> +			}
+> +		}
+> +	} else {
+> +		if (!rproc->table_ptr)
+> +			return 0;
+> +
+> +		for (i = 0; i < rproc->table_ptr->num; i++) {
+> +			offset = rproc->table_ptr->offset[i];
+> +			hdr = (void *)rproc->table_ptr + offset;
+> +			rsc_fw = (struct fw_rsc_devmem *)hdr + sizeof(*hdr);
+> +
+> +			ret = iommu_map(rproc->domain, rsc_fw->da, rsc_fw->pa,
+> +						rsc_fw->len, rsc_fw->flags);
+
+What about filling an sgtable instead and using it?
+
+> +			if (ret) {
+> +				pr_err("%s; unable to map adsp memory address\n", __func__);
+> +				return ret;
+> +			}
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+> +
+>   static int adsp_start(struct rproc *rproc)
+>   {
+>   	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+> @@ -341,7 +429,13 @@ static int adsp_start(struct rproc *rproc)
+>   	ret = qcom_q6v5_prepare(&adsp->q6v5);
+>   	if (ret)
+>   		return ret;
+> -
+> +	if (!adsp->is_wpss) {
+> +		ret = adsp_map_smmu(adsp, rproc);
+
+Is this also applicable to cDSP? To sdm845 adsp?
+
+> +		if (ret) {
+> +			dev_err(adsp->dev, "ADSP smmu mapping failed\n");
+> +			goto adsp_smmu_unmap;
+> +		}
+> +	}
+>   	ret = clk_prepare_enable(adsp->xo);
+>   	if (ret)
+>   		goto disable_irqs;
+> @@ -402,6 +496,9 @@ static int adsp_start(struct rproc *rproc)
+>   	clk_disable_unprepare(adsp->xo);
+>   disable_irqs:
+>   	qcom_q6v5_unprepare(&adsp->q6v5);
+> +adsp_smmu_unmap:
+> +	iommu_unmap(adsp->iommu_dom, adsp->mem_phys, adsp->mem_size);
+> +	iommu_domain_free(adsp->iommu_dom);
+>   
+>   	return ret;
+>   }
 
 
 -- 
