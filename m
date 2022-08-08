@@ -2,108 +2,95 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91243C19F2A
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Aug 2022 01:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD62C00140
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Aug 2022 16:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231392AbiHHBMe (ORCPT
+        id S238207AbiHHQDU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 7 Aug 2022 21:12:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50420 "EHLO
+        Mon, 8 Aug 2022 12:03:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbiHHBMd (ORCPT
+        with ESMTP id S237094AbiHHQDT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 7 Aug 2022 21:12:33 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540C7D3;
-        Sun,  7 Aug 2022 18:12:32 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.57])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4M1J6y1QNGz1HBZZ;
-        Mon,  8 Aug 2022 09:11:06 +0800 (CST)
-Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 8 Aug 2022 09:12:28 +0800
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 8 Aug 2022 09:12:28 +0800
-Message-ID: <eabc9598-8a82-50a4-e67e-728045ce2280@huawei.com>
-Date:   Mon, 8 Aug 2022 09:12:27 +0800
+        Mon, 8 Aug 2022 12:03:19 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8BA659D
+        for <linux-remoteproc@vger.kernel.org>; Mon,  8 Aug 2022 09:03:18 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1168e046c85so1202842fac.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Aug 2022 09:03:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=rWZTIOBwzmM4sIioDCBDw6f1XYSRknsCYKXwTZDWqBA=;
+        b=qWOp8PSTbG5Js6+SGWJEuKJZabFzITzdEL4iOhNXgzNDmXxHt51mZGYEcHD+pUHkHu
+         zyJjkuEErmGlzNOgo0pEcfFxazTWoNuvd/KUErN4L+cE1MknxXMcEU5o8JZcp0SDgwJa
+         79xB1NwBfHh3yj08fM6zc2a/WaK8NkXbBvDlCFF1zPLffZ/8PNzTxvoXjHLHR5MG+3t1
+         HQnU6DDW+VBRr6DyDvIhFv0AVqI/i9frKg5jLLdJtGUmgT2tyx0RK7ZujCFrESTGshqD
+         HoK282+bpVeiLYt0TcgZGPJIqJeIJMoUj4zMndpZOEHgFSNntCeztx4E+8Nqwn6t8SKD
+         yDqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=rWZTIOBwzmM4sIioDCBDw6f1XYSRknsCYKXwTZDWqBA=;
+        b=nVH/n99gs3Zp7Nspec5fAOB5fZ9h9Y0HASNc3gIU9KQT1/MTsmOa68UQP32cvqoLg1
+         /eBV+qIbd7rvnB8v3fWNz5DarJoHu9lIkGRA9A2YNam0qbalIsaNLKHmLt1ZirQf23U5
+         tx/Lg4yq/+00JgO/oME4u1KpkJNFjChOlZ/upMKLClvIgQC97SF0oNiZMl2IjOU9/qW1
+         C7hIG5bvDVBv7VVQke3OKB3q7xYVmCzN5Plz0sNEr0qiT3YcgtFsNO4Y/zhd9ZXHSBne
+         83umvJ1ZNhLxdoWF5vQXSHgmU/VAXkiq03J59GmihneXZdweGDaUDdQp8q9BBKyhmhAw
+         x9oQ==
+X-Gm-Message-State: ACgBeo3bJ9cIu8UrjXl+I3SuhbWBJCLI00v+chu9TdtC0zFIw1oS3W59
+        j02w24POlMeB4GoyYCr+N+9KUg==
+X-Google-Smtp-Source: AA6agR5ksML+MM9uj7Xhr/5FSjtB2SGAkWiAGCgCsk3XNowYdVGQwB+HVYrT/mphSuJLJ1bBxMzmAg==
+X-Received: by 2002:a05:6870:b613:b0:10b:db5f:6026 with SMTP id cm19-20020a056870b61300b0010bdb5f6026mr8768566oab.159.1659974597713;
+        Mon, 08 Aug 2022 09:03:17 -0700 (PDT)
+Received: from builder.lan (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id n16-20020a4ac710000000b0043540f7701esm2229054ooq.31.2022.08.08.09.03.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Aug 2022 09:03:17 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Minghao Chi <chi.minghao@zte.com.cn>
+Subject: [GIT PULL] hwspinlock updates for v5.20
+Date:   Mon,  8 Aug 2022 11:03:16 -0500
+Message-Id: <20220808160316.2096259-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] remoteproc: rcar_rproc: silince address space sparse
- warning
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Julien Massot <julien.massot@iot.bzh>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        <linux-kernel@vger.kernel.org>, <rmk+kernel@armlinux.org.uk>,
-        "kernel test robot" <lkp@intel.com>
-References: <20220808011610.188119-1-wangkefeng.wang@huawei.com>
- <20220808011610.188119-2-wangkefeng.wang@huawei.com>
-From:   Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20220808011610.188119-2-wangkefeng.wang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.243]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500001.china.huawei.com (7.185.36.107)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-ignore this one， send the patch twice.
+The following changes since commit ce522ba9ef7e2d9fb22a39eb3371c0c64e2a433e:
 
-On 2022/8/8 9:16, Kefeng Wang wrote:
-> Fix sparse warnings,
->     drivers/remoteproc/st_remoteproc.c:98:12: sparse: sparse: incorrect type in assignment (different address spaces) @@
-> 	   expected void *va @@     got void [noderef] __iomem * @@
->     drivers/remoteproc/st_remoteproc.c:98:12: sparse:     expected void *va
->     drivers/remoteproc/st_remoteproc.c:98:12: sparse:     got void [noderef] __iomem *
->     ...
->     drivers/remoteproc/st_remoteproc.c:114:20: sparse:     expected void volatile [noderef] __iomem *io_addr
->     drivers/remoteproc/st_remoteproc.c:114:20: sparse:     got void *va
->
-> Add __iomem to io address space 'va' to fix it.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> ---
-> note: the commit d803336abdbc "(ARM: mm: kill unused runtime hook arch_iounmap())"
-> won't introduce the warning, but lkp report issue to me many times,
-> let's fix it.
->
->   drivers/remoteproc/rcar_rproc.c | 2 +-
->   include/linux/remoteproc.h      | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-> index aa86154109c7..e3363a4cde0a 100644
-> --- a/drivers/remoteproc/rcar_rproc.c
-> +++ b/drivers/remoteproc/rcar_rproc.c
-> @@ -22,7 +22,7 @@ static int rcar_rproc_mem_alloc(struct rproc *rproc,
->   				 struct rproc_mem_entry *mem)
->   {
->   	struct device *dev = &rproc->dev;
-> -	void *va;
-> +	void __iomem *va;
->   
->   	dev_dbg(dev, "map memory: %pa+%zx\n", &mem->dma, mem->len);
->   	va = ioremap_wc(mem->dma, mem->len);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 7c943f0a2fc4..c0c950cf7d72 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -330,7 +330,7 @@ struct rproc;
->    * @alloc: specific memory allocator function
->    */
->   struct rproc_mem_entry {
-> -	void *va;
-> +	void __iomem *va;
->   	bool is_iomem;
->   	dma_addr_t dma;
->   	size_t len;
+  Linux 5.18-rc2 (2022-04-10 14:21:36 -1000)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v5.20
+
+for you to fetch changes up to cdab30b44518513003607ecfc8a22de3dbbb78ed:
+
+  hwspinlock: qcom: Add support for mmio usage to sfpb-mutex (2022-07-16 21:47:44 -0500)
+
+----------------------------------------------------------------
+hwspinlock updates for v5.20
+
+This removes the need for representing the Qualcomm SFPB mutex using an
+intermediate syscon node and it clean up the pm_runtime_get_sync() usage
+in the OMAP hwspinlock driver.
+
+----------------------------------------------------------------
+Christian Marangi (1):
+      hwspinlock: qcom: Add support for mmio usage to sfpb-mutex
+
+Minghao Chi (1):
+      hwspinlock: using pm_runtime_resume_and_get instead of pm_runtime_get_sync
+
+ drivers/hwspinlock/omap_hwspinlock.c |  6 ++----
+ drivers/hwspinlock/qcom_hwspinlock.c | 28 +++++++++++++++++++++++-----
+ 2 files changed, 25 insertions(+), 9 deletions(-)
