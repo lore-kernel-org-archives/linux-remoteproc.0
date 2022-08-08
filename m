@@ -2,31 +2,31 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09318C19F2A
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Aug 2022 01:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 401A0C3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 Aug 2022 01:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230397AbiHHBKB (ORCPT
+        id S234847AbiHHBKC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 7 Aug 2022 21:10:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
+        Sun, 7 Aug 2022 21:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbiHHBKA (ORCPT
+        with ESMTP id S229967AbiHHBKA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Sun, 7 Aug 2022 21:10:00 -0400
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5827410A8;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBFB3A1AE;
         Sun,  7 Aug 2022 18:09:57 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4M1J1y3P1kzjXXM;
+Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4M1J1z00FwzjXZd;
         Mon,  8 Aug 2022 09:06:46 +0800 (CST)
 Received: from dggpemm500001.china.huawei.com (7.185.36.107) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
+ dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.24; Mon, 8 Aug 2022 09:09:55 +0800
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
  dggpemm500001.china.huawei.com (7.185.36.107) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 8 Aug 2022 09:09:54 +0800
+ 15.1.2375.24; Mon, 8 Aug 2022 09:09:55 +0800
 From:   Kefeng Wang <wangkefeng.wang@huawei.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Julien Massot <julien.massot@iot.bzh>,
@@ -37,9 +37,11 @@ CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Kefeng Wang <wangkefeng.wang@huawei.com>,
         kernel test robot <lkp@intel.com>
 Subject: [PATCH] remoteproc: rcar_rproc: silince address space sparse warning
-Date:   Mon, 8 Aug 2022 09:16:09 +0800
-Message-ID: <20220808011610.188119-1-wangkefeng.wang@huawei.com>
+Date:   Mon, 8 Aug 2022 09:16:10 +0800
+Message-ID: <20220808011610.188119-2-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220808011610.188119-1-wangkefeng.wang@huawei.com>
+References: <20220808011610.188119-1-wangkefeng.wang@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
