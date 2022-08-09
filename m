@@ -2,78 +2,73 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FABC25B0D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Aug 2022 19:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E976C3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Aug 2022 19:34:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344811AbiHITDh (ORCPT
+        id S245604AbiHITdl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 Aug 2022 15:03:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38652 "EHLO
+        Tue, 9 Aug 2022 15:33:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345386AbiHITCx (ORCPT
+        with ESMTP id S245292AbiHITdS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 Aug 2022 15:02:53 -0400
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22FAC2B244;
-        Tue,  9 Aug 2022 11:37:15 -0700 (PDT)
-Received: by mail-io1-f48.google.com with SMTP id q124so10299212iod.3;
-        Tue, 09 Aug 2022 11:37:15 -0700 (PDT)
+        Tue, 9 Aug 2022 15:33:18 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD52523163;
+        Tue,  9 Aug 2022 12:33:13 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id v185so10397110ioe.11;
+        Tue, 09 Aug 2022 12:33:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=VcS9DI/HMc/JsteoV/NPZ4X0etS3RlJ37iZ4qDrww+E=;
-        b=GnAey26nzHhJrA1OYtQYel4EHIIbry2J939iLUiwRh0XqL03vQ0qlclZcwFzgjMlB4
-         kTa5LE+o1B4vSHsBUjyuTMoBhz0c6+eWwdVwiTgQMvJykQJxUdkBhqCmW+1eSTIMY8HF
-         SSS2t7b+Y8x58qWQmXcB2goBESDy5g+14ka/QQOuAbeMlVIo1OxdtA/tVyPIMJy7vMcb
-         TkP5Ux/y2okV9iicM+gRPVAkIrrGR5Z2qr0A46hdS54JO4MdEk3E4kUzmnDF5PINXMkc
-         S9K8CMWmVo9kVmjLmcgZQbrjgXgjdwkiqAc/EUUmIVzkd6pMorHwvYVqoeXUNjcOb+oO
-         yyyQ==
-X-Gm-Message-State: ACgBeo2beBK1Z3vXekQUm+7dmW1aGeZyCJDs/9cbUQ5gCoZrCnh/g3E0
-        JhzfAFNcfmCA0Ru5wg3yJg==
-X-Google-Smtp-Source: AA6agR7XlRb2Pw2sz0INbVS0WO6qlPD/3W76n6AhSNKT9JG5HI3pRgKPmETO0BOlupLLg7uoKI3dGQ==
-X-Received: by 2002:a5d:9616:0:b0:67c:2039:c88e with SMTP id w22-20020a5d9616000000b0067c2039c88emr9771775iol.68.1660070234418;
-        Tue, 09 Aug 2022 11:37:14 -0700 (PDT)
+        bh=KbbQmWU4qA4C5SAgaTHau91UtMwlzzGKrvvzwpZ4910=;
+        b=viBznppw7y61QCnj+xTZZdr757B/JP6jEnsX6XssUNjUZhOFYBb2O313TC8hIxGodN
+         jSE1lnyxs2Sro7bWlMtGWph9Nt6/INvS6MFz3bHpQ8dqXZgU8fPeiCUHHQPG/CmIZfu4
+         B7yrBKIIvqpqfFysOD4QTvkm85tf+XeM4usYO8ZkCPYSVm5WqeWFw/sk1iSXTwpPmyEH
+         rb24GvAeB7bNQF6Qd10nS/vZLneofN0oF04+Od/Imluqk1ZvO57HV+ktZQBvE6f3Rh/D
+         AtFwzRThKvG0EbCg8epK3G32Z6SJa7/csFAl3bBLWDRMeXE3+zi54kBYnqjZYUjruQXm
+         fcgg==
+X-Gm-Message-State: ACgBeo3Xz+JHx1PLR/fJq40bxECP+kDkjnJECR5ZkEF4eg0YAruhbvtY
+        eNTG/1cxQocKGgImzLe6SM/m+LQNHA==
+X-Google-Smtp-Source: AA6agR5gwwnr/r/AZS7KgL3Iw9NgQckA8lPV0+OriPK7Db+sj37t3wV972uRUfF92jolGMkuLTiqcg==
+X-Received: by 2002:a05:6602:4192:b0:684:6256:e892 with SMTP id bx18-20020a056602419200b006846256e892mr6315524iob.89.1660073593070;
+        Tue, 09 Aug 2022 12:33:13 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id l10-20020a056e0212ea00b002dd6c2cf81dsm1309957iln.36.2022.08.09.11.37.11
+        by smtp.gmail.com with ESMTPSA id b3-20020a056638388300b00342f67a4789sm3436507jav.164.2022.08.09.12.33.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 11:37:13 -0700 (PDT)
-Received: (nullmailer pid 2163003 invoked by uid 1000);
-        Tue, 09 Aug 2022 18:37:10 -0000
-Date:   Tue, 9 Aug 2022 12:37:10 -0600
+        Tue, 09 Aug 2022 12:33:11 -0700 (PDT)
+Received: (nullmailer pid 2251083 invoked by uid 1000);
+        Tue, 09 Aug 2022 19:33:10 -0000
+Date:   Tue, 9 Aug 2022 13:33:10 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Cc:     bgoswami@quicinc.com, broonie@kernel.org, swboyd@chromium.org,
-        srinivas.kandagatla@linaro.org, perex@perex.cz,
-        judyhsiao@chromium.org, linux-arm-msm@vger.kernel.org,
-        tiwai@suse.com, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        quic_rohkumar@quicinc.com, quic_plai@quicinc.com,
-        lgirdwood@gmail.com, agross@kernel.org
-Subject: Re: [PATCH v2 2/8] dt-bindings: remoteproc: qcom: adsp: Add
- compatible name for SC7280
-Message-ID: <20220809183710.GA2162944-robh@kernel.org>
-References: <1659611751-7928-1-git-send-email-quic_srivasam@quicinc.com>
- <1659611751-7928-3-git-send-email-quic_srivasam@quicinc.com>
+To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] dt-bindings: remoteproc: Add AVM WASP
+Message-ID: <20220809193310.GA2251034-robh@kernel.org>
+References: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
+ <20220804210806.4053-3-kestrelseventyfour@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1659611751-7928-3-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <20220804210806.4053-3-kestrelseventyfour@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 04 Aug 2022 16:45:45 +0530, Srinivasa Rao Mandadapu wrote:
-> Add compatible name and update max reg items for SC7280 base platforms.
+On Thu, 04 Aug 2022 23:08:05 +0200, Daniel Kestrel wrote:
+> AVM Fritzbox router boards may contain an additional ATH79
+> based SoC that has the wifi cards connected.
+> This patch adds bindings for this remote processor.
 > 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
 > ---
-> Changes since V1:
-> 	-- Change reg property maxItems to minItems and update description.
-> 
->  .../devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml       | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
