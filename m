@@ -2,73 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E976C3F6B0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 Aug 2022 19:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58167C3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 Aug 2022 07:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245604AbiHITdl (ORCPT
+        id S231273AbiHJHq6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 Aug 2022 15:33:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37028 "EHLO
+        Wed, 10 Aug 2022 03:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245292AbiHITdS (ORCPT
+        with ESMTP id S231356AbiHJHqs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 Aug 2022 15:33:18 -0400
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD52523163;
-        Tue,  9 Aug 2022 12:33:13 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id v185so10397110ioe.11;
-        Tue, 09 Aug 2022 12:33:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=KbbQmWU4qA4C5SAgaTHau91UtMwlzzGKrvvzwpZ4910=;
-        b=viBznppw7y61QCnj+xTZZdr757B/JP6jEnsX6XssUNjUZhOFYBb2O313TC8hIxGodN
-         jSE1lnyxs2Sro7bWlMtGWph9Nt6/INvS6MFz3bHpQ8dqXZgU8fPeiCUHHQPG/CmIZfu4
-         B7yrBKIIvqpqfFysOD4QTvkm85tf+XeM4usYO8ZkCPYSVm5WqeWFw/sk1iSXTwpPmyEH
-         rb24GvAeB7bNQF6Qd10nS/vZLneofN0oF04+Od/Imluqk1ZvO57HV+ktZQBvE6f3Rh/D
-         AtFwzRThKvG0EbCg8epK3G32Z6SJa7/csFAl3bBLWDRMeXE3+zi54kBYnqjZYUjruQXm
-         fcgg==
-X-Gm-Message-State: ACgBeo3Xz+JHx1PLR/fJq40bxECP+kDkjnJECR5ZkEF4eg0YAruhbvtY
-        eNTG/1cxQocKGgImzLe6SM/m+LQNHA==
-X-Google-Smtp-Source: AA6agR5gwwnr/r/AZS7KgL3Iw9NgQckA8lPV0+OriPK7Db+sj37t3wV972uRUfF92jolGMkuLTiqcg==
-X-Received: by 2002:a05:6602:4192:b0:684:6256:e892 with SMTP id bx18-20020a056602419200b006846256e892mr6315524iob.89.1660073593070;
-        Tue, 09 Aug 2022 12:33:13 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id b3-20020a056638388300b00342f67a4789sm3436507jav.164.2022.08.09.12.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Aug 2022 12:33:11 -0700 (PDT)
-Received: (nullmailer pid 2251083 invoked by uid 1000);
-        Tue, 09 Aug 2022 19:33:10 -0000
-Date:   Tue, 9 Aug 2022 13:33:10 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] dt-bindings: remoteproc: Add AVM WASP
-Message-ID: <20220809193310.GA2251034-robh@kernel.org>
-References: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
- <20220804210806.4053-3-kestrelseventyfour@gmail.com>
+        Wed, 10 Aug 2022 03:46:48 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EDAC6E880;
+        Wed, 10 Aug 2022 00:46:47 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27A77pFg023911;
+        Wed, 10 Aug 2022 07:46:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=EVrrA2igkIFkqdzYyhExZvBddokYK1TV+gNlMRojUY0=;
+ b=RYYImUb9lQlYEhaa2xSIu5Ck8tLbZ62P7wbC0n0mIX7MkJtp3jVBis93Ya0Exzgf9/Fa
+ qrGiA24K5D73pa93A5At9A3CYUB/rWmmEaipOnkms4LNjg4qHvRrtCDAVeZec1NZOyPs
+ BbcdP5mlXayDeE71mXrRCD76qn0EUxjsXJeNy45lJzlhr/HTSgO/9YOvj5vbGNQAuZHT
+ qcjP81yuiThBihBuzWhM22S3Wx6so5qlcDwFgIk9m6Z9/7hIoHn+l/gWKxoqv8B7j2cv
+ bmQvNX5ATH9Sb9RLgnCjNbW3xiGGkpbaK15mRU2HF1QBy0f8iCYWj9Qti28lJRu69dfk SA== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3huwqm9jsd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Aug 2022 07:46:31 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.47.97.222])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27A7kUa6009639
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 10 Aug 2022 07:46:30 GMT
+Received: from nalasex01a.na.qualcomm.com (10.47.209.196) by
+ nasanex01c.na.qualcomm.com (10.47.97.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 10 Aug 2022 00:46:30 -0700
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Wed, 10 Aug 2022 00:46:24 -0700
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH v3 1/8] dt-bindings: remoteproc: qcom: adsp: Make ADSP pil loader as generic
+Date:   Wed, 10 Aug 2022 13:15:51 +0530
+Message-ID: <1660117558-21829-2-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1660117558-21829-1-git-send-email-quic_srivasam@quicinc.com>
+References: <1660117558-21829-1-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220804210806.4053-3-kestrelseventyfour@gmail.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vItlZ4c0hq1HNWyu2hQDqsyULdyt5iAC
+X-Proofpoint-ORIG-GUID: vItlZ4c0hq1HNWyu2hQDqsyULdyt5iAC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-10_03,2022-08-09_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ impostorscore=0 mlxlogscore=795 bulkscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 mlxscore=0 clxscore=1015 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208100022
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 04 Aug 2022 23:08:05 +0200, Daniel Kestrel wrote:
-> AVM Fritzbox router boards may contain an additional ATH79
-> based SoC that has the wifi cards connected.
-> This patch adds bindings for this remote processor.
-> 
-> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
-> ---
->  .../bindings/remoteproc/avm,wasp-rproc.yaml   | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
-> 
+Rename sdm845 adsp pil bindings to generic name, for using same binings
+file for subsequent SoCs.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+---
+Changes since V2:
+	-- Generate patch with -M flag.
+
+ .../{qcom,sdm845-adsp-pil.yaml => qcom,lpass-adsp-pil.yaml}           | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/remoteproc/{qcom,sdm845-adsp-pil.yaml => qcom,lpass-adsp-pil.yaml} (97%)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+similarity index 97%
+rename from Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+rename to Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+index 1535bbb..9f11332 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,lpass-adsp-pil.yaml
+@@ -1,10 +1,10 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/remoteproc/qcom,sdm845-adsp-pil.yaml#
++$id: http://devicetree.org/schemas/remoteproc/qcom,lpass-adsp-pil.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Qualcomm SDM845 ADSP Peripheral Image Loader
++title: Qualcomm LPASS ADSP Peripheral Image Loader
+ 
+ maintainers:
+   - Bjorn Andersson <bjorn.andersson@linaro.org>
+-- 
+2.7.4
+
