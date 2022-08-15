@@ -2,60 +2,60 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F1EC19F2C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Aug 2022 05:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE34C25B0F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Aug 2022 05:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233272AbiHPFY3 (ORCPT
+        id S229805AbiHPF2L (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 16 Aug 2022 01:24:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45368 "EHLO
+        Tue, 16 Aug 2022 01:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232386AbiHPFYN (ORCPT
+        with ESMTP id S229713AbiHPF1R (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 16 Aug 2022 01:24:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D17CF108937
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 14:54:07 -0700 (PDT)
+        Tue, 16 Aug 2022 01:27:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C97D1121
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 15:00:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660600421;
+        s=mimecast20190719; t=1660600853;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=bDCYLEy+BFzUXB2vyNCVod0ccaWSLx6QeKp/OdHtLfo=;
-        b=YNj27GS2xgnkckUCnuj4/tUL0ugvNNvLHK5C1SSgvRtkX2ExUn2MxOhifh97CO3H4lhplQ
-        yPAuWCEZJ7FObYzC2gibIJ2T2OIlPw1JNtS0Zsq7jApaUi2CXYPsJPmPQd0/Ke4S4Ce4sj
-        Rt0etFspiZktEzZuFUOc/Ohy7ig9uBI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=fg6AseMQKhGFaW1h59Li+nNVbNoTUAPXOEzU4kFeR3k=;
+        b=N6unTnZZhT/l2pDsSflGRw09cjCWg4J/gvDg1pwXk9AkzmfaQ2OA0tTfP5+JkO+NVb02g4
+        cWnvT5KqCsAB0xF/S7z+3UmtWSkobj4ydQa8rRQEkCbS8b9rT0cU5/7N4y5e2SgI0bFkFb
+        LK8rSt1Di8fARqa3xTg2WvnpWhdYdt0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-324-qG7ES0q9N36gK38QC07T8A-1; Mon, 15 Aug 2022 17:53:39 -0400
-X-MC-Unique: qG7ES0q9N36gK38QC07T8A-1
-Received: by mail-wm1-f72.google.com with SMTP id j22-20020a05600c485600b003a5e4420552so3820486wmo.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 14:53:39 -0700 (PDT)
+ us-mta-157-Z4_vD1pLMbml9-LFp0qbwA-1; Mon, 15 Aug 2022 18:00:52 -0400
+X-MC-Unique: Z4_vD1pLMbml9-LFp0qbwA-1
+Received: by mail-wm1-f69.google.com with SMTP id z16-20020a05600c0a1000b003a5c18a66f0so4060371wmp.6
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 15:00:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=bDCYLEy+BFzUXB2vyNCVod0ccaWSLx6QeKp/OdHtLfo=;
-        b=IHqdaQ8vP1OOXxOj+X3twWZsgD1w2aKLzZ6MzRILVkNRGQzavnIU+CKuENFMp/iEHi
-         U21ULh2wRXDOimEE2fEStmeUHQ4qfpjHlelAUk3NeCEb/kguwqI1uLemURpXPkyLnl7G
-         RpADjA/SyV/7F7craYrQQQGZMT57lw9fyh6vAcl55DVzizHM6QJrVvwJRH5ggTEfHXEx
-         OhT7sAnkQ7cVEGlzewpD4KcShteNqQTreLbcA/eJ9c/ttUchl5Vs6kJ4l1H525E8DwTE
-         yH63SEPNoNTr/lh0/g8LaLeMr4EBbASs+hzf5xlx6D7vCgnaiTSar3wGH4RA4LKx41M9
-         kL3w==
-X-Gm-Message-State: ACgBeo0dEII2k/A7fA4ao9XdTFNksulzANQRLzS/5kX8E0J2geJG4em4
-        RPR9Cl0S4Y89LQBG+eZEpY1+EtWcXcYyqbFmEjnUtrnVSJCYlvRQ0hYZ0Gal+Ik2wKzH87aOFMO
-        yS1wC5ncCQPbUzd8jdxKaucxRjO7UBQ==
-X-Received: by 2002:a7b:ca42:0:b0:3a6:9d:a444 with SMTP id m2-20020a7bca42000000b003a6009da444mr2231522wml.51.1660600418490;
-        Mon, 15 Aug 2022 14:53:38 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR4BN8C+PGA8RpmSRZwBido/QgzW+8NIJd7WJaZE3l05LkbGN7+KhxLct1xW2rLS+iQX/I9U0w==
-X-Received: by 2002:a7b:ca42:0:b0:3a6:9d:a444 with SMTP id m2-20020a7bca42000000b003a6009da444mr2231508wml.51.1660600418216;
-        Mon, 15 Aug 2022 14:53:38 -0700 (PDT)
-Received: from redhat.com ([2.55.4.37])
-        by smtp.gmail.com with ESMTPSA id l23-20020a1c7917000000b003a541358bdbsm10115773wme.21.2022.08.15.14.53.30
+        bh=fg6AseMQKhGFaW1h59Li+nNVbNoTUAPXOEzU4kFeR3k=;
+        b=cRlAM+ZW/7yqeBsmlJ3WvhZW/7nzjqQF580RlBExlI1PpKpqyA7JmYEvG/xkuF7eg6
+         33ic8tFrhtqlx2X+gU0X94NRdAxwTA905oh5eKOYWJfeijjQKMZKw/+BYMJxVZtODd9v
+         +7JSyxvDP8X9I6qH7YbLSA7jYwtAxyOHJKduzYFwx2sO9Uq6kCXTZyFIBk1Tz1RZX8Qq
+         BGa3hCwFkY92qfyyoomcV1rIAW6AeNxxCP+CZ2VVClIW9BlP0s7pqNxhSb61G0n3D+3L
+         9XV8h8wl86M9mV9aKAA4LgyhE0/8cAR90KjUcAX7fO/sLmXv1Pe9cR4Gh7PgIfZkukNh
+         IcGw==
+X-Gm-Message-State: ACgBeo2dxsyeezpw6qmrKT/GfULK/F0SydYLEsrU09dR9XOjSIlfFxw5
+        LGlypnJ39jJ0aZuOFPwKfx2mAEoREtK3TFXFxgrqixT/vPYik3Bo8Yi1xhFgz/FwOZ93nvhI864
+        wrD9duCMrb96yvp4fPI2Kl/A5aI1tlA==
+X-Received: by 2002:a05:600c:2193:b0:3a5:346f:57d0 with SMTP id e19-20020a05600c219300b003a5346f57d0mr11036824wme.124.1660600850781;
+        Mon, 15 Aug 2022 15:00:50 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR4PAdLc5XsHhXjTCgudQEwXQ2nfc/9Z68NwtJ4bkLWqWAnNtHc5GzFWw2XRQWHza6NtRnMdBQ==
+X-Received: by 2002:a05:600c:2193:b0:3a5:346f:57d0 with SMTP id e19-20020a05600c219300b003a5346f57d0mr11036801wme.124.1660600850490;
+        Mon, 15 Aug 2022 15:00:50 -0700 (PDT)
+Received: from redhat.com ([2.55.43.215])
+        by smtp.gmail.com with ESMTPSA id q18-20020adff952000000b00222ed7ea203sm8156397wrr.100.2022.08.15.15.00.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 14:53:37 -0700 (PDT)
-Date:   Mon, 15 Aug 2022 17:53:29 -0400
+        Mon, 15 Aug 2022 15:00:49 -0700 (PDT)
+Date:   Mon, 15 Aug 2022 18:00:44 -0400
 From:   "Michael S. Tsirkin" <mst@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
@@ -90,13 +90,13 @@ Cc:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
         linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
         kvm@vger.kernel.org
-Subject: [PATCH v2 1/1] virtio: Revert "virtio: find_vqs() add arg sizes"
-Message-ID: <20220815215251.154451-4-mst@redhat.com>
-References: <20220815215251.154451-1-mst@redhat.com>
+Subject: [PATCH v3 5/5] virtio: Revert "virtio: find_vqs() add arg sizes"
+Message-ID: <20220815215938.154999-6-mst@redhat.com>
+References: <20220815215938.154999-1-mst@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220815215251.154451-1-mst@redhat.com>
+In-Reply-To: <20220815215938.154999-1-mst@redhat.com>
 X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
 X-Mutt-Fcc: =sent
 Precedence: bulk
@@ -116,6 +116,18 @@ let's drop it.
 
 Fixes: a10fba037714 ("virtio: find_vqs() add arg sizes")
 Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+---
+ arch/um/drivers/virtio_uml.c             |  2 +-
+ drivers/platform/mellanox/mlxbf-tmfifo.c |  1 -
+ drivers/remoteproc/remoteproc_virtio.c   |  1 -
+ drivers/s390/virtio/virtio_ccw.c         |  1 -
+ drivers/virtio/virtio_mmio.c             |  1 -
+ drivers/virtio/virtio_pci_common.c       |  2 +-
+ drivers/virtio/virtio_pci_common.h       |  2 +-
+ drivers/virtio/virtio_pci_modern.c       |  7 ++-----
+ drivers/virtio/virtio_vdpa.c             |  1 -
+ include/linux/virtio_config.h            | 14 +++++---------
+ 10 files changed, 10 insertions(+), 22 deletions(-)
 
 diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
 index 79e38afd4b91..e719af8bdf56 100644
