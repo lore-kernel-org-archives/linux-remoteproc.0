@@ -2,316 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B576C00140
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Aug 2022 07:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE63DC00140
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Aug 2022 13:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241467AbiHOHjk (ORCPT
+        id S242660AbiHONAU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 15 Aug 2022 03:39:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40884 "EHLO
+        Mon, 15 Aug 2022 09:00:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232563AbiHOHji (ORCPT
+        with ESMTP id S242650AbiHONAU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 15 Aug 2022 03:39:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8131119C22
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 00:39:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660549176;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OC2bkx9zJBueAPg8JEQmoRM5UxmTc8D+tbnHej4iLwk=;
-        b=edPC3YGhxbabc8iT9D34VsVRbPv8lml054r2Ij2G+1chQf97+OvRm79qt7Fr33bLsj/M05
-        m4f/EYeRmErqS2S718Y6Agf4cny2uZaWetP/VC4PJHh2UIk61X8GVUNGt+hE4YsviswIBw
-        jUKhCNnRzjo8CmlC7dlUZBdxVUJlH2I=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-660-TH8Py-qaNkmdUoCkrkjQpg-1; Mon, 15 Aug 2022 03:39:35 -0400
-X-MC-Unique: TH8Py-qaNkmdUoCkrkjQpg-1
-Received: by mail-ed1-f69.google.com with SMTP id v19-20020a056402349300b0043d42b7ddefso4246895edc.13
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 00:39:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=OC2bkx9zJBueAPg8JEQmoRM5UxmTc8D+tbnHej4iLwk=;
-        b=x0+LXY52XVdYq9MXR7fLcshX4Uy26Qq6ZFQWDYKML95V1qOQLMkW5aaPoilNAQdTmB
-         bd4Q9Tos/XfYte8m/y9XqNwurjOcryyoy0jrV8V5vK/82osYCs900l63p3SOFmrKuUaW
-         6C4mtRICU8CgGr5gIZZdoDZ/k3ycvw1YF0e+uPYn6XpGxIhU58caI1705T/OUa02AfKk
-         HrrxSIKjSPdqEGaND9hx9wq2k1KS60fqfUxDjbYF2Ha/o+rgjjO7PRG70dlEAVAMDjcZ
-         mKeB+Zc5HTHC1BOo0TIlzonedoi12ciRMcqRxNEdYfdHd3Im5rL/1BHBS6yKIXmwRgVS
-         YvLA==
-X-Gm-Message-State: ACgBeo0rmS6FwqS2A7i7Ldz3+nyMypBOfuQKyxWuZluqMZs9TJdNqZMA
-        pKDoOJdDkSOWPtrADrS+NyEz5M+3HsSTaAt6x2xuCsHf9ic/ju4TzbQSGWsIMPJ+sEr4iVwPXmf
-        5VztnJe3tNTQDJ1OvFUMDe5TMd5z+pQ==
-X-Received: by 2002:a17:907:1608:b0:730:5ad0:ae1a with SMTP id hb8-20020a170907160800b007305ad0ae1amr9813489ejc.222.1660549174262;
-        Mon, 15 Aug 2022 00:39:34 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR5dF4uCArlexvqL8XPZdPtg7Gr2bGirXXunwpdi3Wu1c4gmQV30+uieFh6F/qWMw4uVYBdewg==
-X-Received: by 2002:a17:907:1608:b0:730:5ad0:ae1a with SMTP id hb8-20020a170907160800b007305ad0ae1amr9813461ejc.222.1660549173946;
-        Mon, 15 Aug 2022 00:39:33 -0700 (PDT)
-Received: from redhat.com ([2.54.169.49])
-        by smtp.gmail.com with ESMTPSA id f25-20020a50fc99000000b004424429afd4sm6151850edq.16.2022.08.15.00.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 00:39:33 -0700 (PDT)
-Date:   Mon, 15 Aug 2022 03:39:25 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc:     virtualization@lists.linux-foundation.org,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jesper Dangaard Brouer <hawk@kernel.org>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        linux-um@lists.infradead.org, netdev@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, bpf@vger.kernel.org,
-        kangjie.xu@linux.alibaba.com
-Subject: Re: [PATCH v14 37/42] virtio_net: set the default max ring size by
- find_vqs()
-Message-ID: <20220815033849-mutt-send-email-mst@kernel.org>
-References: <20220801063902.129329-1-xuanzhuo@linux.alibaba.com>
- <20220801063902.129329-38-xuanzhuo@linux.alibaba.com>
- <20220815015405-mutt-send-email-mst@kernel.org>
- <1660545303.436073-9-xuanzhuo@linux.alibaba.com>
- <20220815031022-mutt-send-email-mst@kernel.org>
- <1660548498.412278-11-xuanzhuo@linux.alibaba.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1660548498.412278-11-xuanzhuo@linux.alibaba.com>
+        Mon, 15 Aug 2022 09:00:20 -0400
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C111229;
+        Mon, 15 Aug 2022 06:00:16 -0700 (PDT)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EFB4C201ACD;
+        Mon, 15 Aug 2022 15:00:14 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B9F64200C0D;
+        Mon, 15 Aug 2022 15:00:14 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5D8C5180031D;
+        Mon, 15 Aug 2022 21:00:13 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: imx_dsp_rproc: fix argument 2 of rproc_mem_entry_init
+Date:   Mon, 15 Aug 2022 20:43:18 +0800
+Message-Id: <1660567398-24495-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Aug 15, 2022 at 03:28:18PM +0800, Xuan Zhuo wrote:
-> On Mon, 15 Aug 2022 03:14:43 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > On Mon, Aug 15, 2022 at 02:35:03PM +0800, Xuan Zhuo wrote:
-> > > On Mon, 15 Aug 2022 02:00:16 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
-> > > > On Mon, Aug 01, 2022 at 02:38:57PM +0800, Xuan Zhuo wrote:
-> > > > > Use virtio_find_vqs_ctx_size() to specify the maximum ring size of tx,
-> > > > > rx at the same time.
-> > > > >
-> > > > >                          | rx/tx ring size
-> > > > > -------------------------------------------
-> > > > > speed == UNKNOWN or < 10G| 1024
-> > > > > speed < 40G              | 4096
-> > > > > speed >= 40G             | 8192
-> > > > >
-> > > > > Call virtnet_update_settings() once before calling init_vqs() to update
-> > > > > speed.
-> > > > >
-> > > > > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > > > Acked-by: Jason Wang <jasowang@redhat.com>
-> > > >
-> > > > I've been looking at this patchset because of the resent
-> > > > reported crashes, and I'm having second thoughts about this.
-> > > >
-> > > > Do we really want to second-guess the device supplied
-> > > > max ring size? If yes why?
-> > > >
-> > > > Could you please share some performance data that motivated this
-> > > > specific set of numbers?
-> > >
-> > >
-> > > The impact of this value on performance is as follows. The larger the value, the
-> > > throughput can be increased, but the delay will also increase accordingly. It is
-> > > a maximum limit for the ring size under the corresponding speed. The purpose of
-> > > this limitation is not to improve performance, but more to reduce memory usage.
-> > >
-> > > These data come from many other network cards and some network optimization
-> > > experience.
-> > >
-> > > For example, in the case of speed = 20G, the impact of ring size greater
-> > > than 4096 on performance has no meaning. At this time, if the device supports
-> > > 8192, we limit it to 4096 through this, the real meaning is to reduce the memory
-> > > usage.
-> > >
-> > >
-> > > >
-> > > > Also why do we intepret UNKNOWN as "very low"?
-> > > > I'm thinking that should definitely be "don't change anything".
-> > > >
-> > >
-> > > Generally speaking, for a network card with a high speed, it will return a
-> > > correct speed. But I think it is a good idea to do nothing.
-> >
-> >
-> >
-> >
-> >
-> > >
-> > > > Finally if all this makes sense then shouldn't we react when
-> > > > speed changes?
-> > >
-> > > This is the feedback of the network card when it is started, and theoretically
-> > > it should not change in the future.
-> >
-> > Yes it should:
-> > 	Both \field{speed} and \field{duplex} can change, thus the driver
-> > 	is expected to re-read these values after receiving a
-> > 	configuration change notification.
-> >
-> >
-> > Moreover, during probe link can quite reasonably be down.
-> > If it is, then speed and duplex might not be correct.
-> >
-> 
-> 
-> It seems that this is indeed a problem.
-> 
-> But I feel that this is not the reason for the abnormal network.
+There are sparse warning:
+drivers/remoteproc/imx_dsp_rproc.c:602:49: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *va @@     got void [noderef] __iomem *[assigned] cpu_addr @@
+drivers/remoteproc/imx_dsp_rproc.c:602:49: sparse:     expected void *va
+drivers/remoteproc/imx_dsp_rproc.c:602:49: sparse:     got void [noderef] __iomem *[assigned] cpu_addr
+drivers/remoteproc/imx_dsp_rproc.c:638:49: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *va @@     got void [noderef] __iomem *[assigned] cpu_addr @@
+drivers/remoteproc/imx_dsp_rproc.c:638:49: sparse:     expected void *va
+drivers/remoteproc/imx_dsp_rproc.c:638:49: sparse:     got void [noderef] __iomem *[assigned] cpu_addr
 
-Yes, but it's a reason to revert this patch and rethink the approach.
+Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ drivers/remoteproc/imx_dsp_rproc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> I'm still trying google cloud vm.
-> 
-> 
-> >
-> >
-> >
-> > > >
-> > > > Could you try reverting this and showing performance results
-> > > > before and after please? Thanks!
-> > >
-> > > I hope the above reply can help you, if there is anything else you need me to
-> > > cooperate with, I am very happy.
-> > >
-> > > If you think it's ok, I can resubmit a commit with 'UNKNOW' set to unlimited. I
-> > > can submit it with the issue of #30.
-> > >
-> > > Thanks.
-> > >
-> > >
-> > > >
-> > > > > ---
-> > > > >  drivers/net/virtio_net.c | 42 ++++++++++++++++++++++++++++++++++++----
-> > > > >  1 file changed, 38 insertions(+), 4 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> > > > > index 8a5810bcb839..40532ecbe7fc 100644
-> > > > > --- a/drivers/net/virtio_net.c
-> > > > > +++ b/drivers/net/virtio_net.c
-> > > > > @@ -3208,6 +3208,29 @@ static unsigned int mergeable_min_buf_len(struct virtnet_info *vi, struct virtqu
-> > > > >  		   (unsigned int)GOOD_PACKET_LEN);
-> > > > >  }
-> > > > >
-> > > > > +static void virtnet_config_sizes(struct virtnet_info *vi, u32 *sizes)
-> > > > > +{
-> > > > > +	u32 i, rx_size, tx_size;
-> > > > > +
-> > > > > +	if (vi->speed == SPEED_UNKNOWN || vi->speed < SPEED_10000) {
-> > > > > +		rx_size = 1024;
-> > > > > +		tx_size = 1024;
-> > > > > +
-> > > > > +	} else if (vi->speed < SPEED_40000) {
-> > > > > +		rx_size = 1024 * 4;
-> > > > > +		tx_size = 1024 * 4;
-> > > > > +
-> > > > > +	} else {
-> > > > > +		rx_size = 1024 * 8;
-> > > > > +		tx_size = 1024 * 8;
-> > > > > +	}
-> > > > > +
-> > > > > +	for (i = 0; i < vi->max_queue_pairs; i++) {
-> > > > > +		sizes[rxq2vq(i)] = rx_size;
-> > > > > +		sizes[txq2vq(i)] = tx_size;
-> > > > > +	}
-> > > > > +}
-> > > > > +
-> > > > >  static int virtnet_find_vqs(struct virtnet_info *vi)
-> > > > >  {
-> > > > >  	vq_callback_t **callbacks;
-> > > > > @@ -3215,6 +3238,7 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
-> > > > >  	int ret = -ENOMEM;
-> > > > >  	int i, total_vqs;
-> > > > >  	const char **names;
-> > > > > +	u32 *sizes;
-> > > > >  	bool *ctx;
-> > > > >
-> > > > >  	/* We expect 1 RX virtqueue followed by 1 TX virtqueue, followed by
-> > > > > @@ -3242,10 +3266,15 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
-> > > > >  		ctx = NULL;
-> > > > >  	}
-> > > > >
-> > > > > +	sizes = kmalloc_array(total_vqs, sizeof(*sizes), GFP_KERNEL);
-> > > > > +	if (!sizes)
-> > > > > +		goto err_sizes;
-> > > > > +
-> > > > >  	/* Parameters for control virtqueue, if any */
-> > > > >  	if (vi->has_cvq) {
-> > > > >  		callbacks[total_vqs - 1] = NULL;
-> > > > >  		names[total_vqs - 1] = "control";
-> > > > > +		sizes[total_vqs - 1] = 64;
-> > > > >  	}
-> > > > >
-> > > > >  	/* Allocate/initialize parameters for send/receive virtqueues */
-> > > > > @@ -3260,8 +3289,10 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
-> > > > >  			ctx[rxq2vq(i)] = true;
-> > > > >  	}
-> > > > >
-> > > > > -	ret = virtio_find_vqs_ctx(vi->vdev, total_vqs, vqs, callbacks,
-> > > > > -				  names, ctx, NULL);
-> > > > > +	virtnet_config_sizes(vi, sizes);
-> > > > > +
-> > > > > +	ret = virtio_find_vqs_ctx_size(vi->vdev, total_vqs, vqs, callbacks,
-> > > > > +				       names, sizes, ctx, NULL);
-> > > > >  	if (ret)
-> > > > >  		goto err_find;
-> > > > >
-> > > > > @@ -3281,6 +3312,8 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
-> > > > >
-> > > > >
-> > > > >  err_find:
-> > > > > +	kfree(sizes);
-> > > > > +err_sizes:
-> > > > >  	kfree(ctx);
-> > > > >  err_ctx:
-> > > > >  	kfree(names);
-> > > > > @@ -3630,6 +3663,9 @@ static int virtnet_probe(struct virtio_device *vdev)
-> > > > >  		vi->curr_queue_pairs = num_online_cpus();
-> > > > >  	vi->max_queue_pairs = max_queue_pairs;
-> > > > >
-> > > > > +	virtnet_init_settings(dev);
-> > > > > +	virtnet_update_settings(vi);
-> > > > > +
-> > > > >  	/* Allocate/initialize the rx/tx queues, and invoke find_vqs */
-> > > > >  	err = init_vqs(vi);
-> > > > >  	if (err)
-> > > > > @@ -3642,8 +3678,6 @@ static int virtnet_probe(struct virtio_device *vdev)
-> > > > >  	netif_set_real_num_tx_queues(dev, vi->curr_queue_pairs);
-> > > > >  	netif_set_real_num_rx_queues(dev, vi->curr_queue_pairs);
-> > > > >
-> > > > > -	virtnet_init_settings(dev);
-> > > > > -
-> > > > >  	if (virtio_has_feature(vdev, VIRTIO_NET_F_STANDBY)) {
-> > > > >  		vi->failover = net_failover_create(vi->dev);
-> > > > >  		if (IS_ERR(vi->failover)) {
-> > > > > --
-> > > > > 2.31.0
-> > > >
-> >
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index ca0817f8e41e..899aa8dd12f0 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -599,7 +599,7 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
+ 		}
+ 
+ 		/* Register memory region */
+-		mem = rproc_mem_entry_init(dev, cpu_addr, (dma_addr_t)att->sa,
++		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)att->sa,
+ 					   att->size, da, NULL, NULL, "dsp_mem");
+ 
+ 		if (mem)
+@@ -635,7 +635,7 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
+ 		}
+ 
+ 		/* Register memory region */
+-		mem = rproc_mem_entry_init(dev, cpu_addr, (dma_addr_t)rmem->base,
++		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)rmem->base,
+ 					   rmem->size, da, NULL, NULL, it.node->name);
+ 
+ 		if (mem)
+-- 
+2.34.1
 
