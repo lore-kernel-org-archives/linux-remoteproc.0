@@ -2,333 +2,242 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77567C25B0E
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Aug 2022 06:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68C4C3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 15 Aug 2022 06:58:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231335AbiHOGhS (ORCPT
+        id S241214AbiHOG6b (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 15 Aug 2022 02:37:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
+        Mon, 15 Aug 2022 02:58:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231343AbiHOGhP (ORCPT
+        with ESMTP id S241199AbiHOG62 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 15 Aug 2022 02:37:15 -0400
-Received: from smtp.smtpout.orange.fr (smtp08.smtpout.orange.fr [80.12.242.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8871ADB9
-        for <linux-remoteproc@vger.kernel.org>; Sun, 14 Aug 2022 23:37:11 -0700 (PDT)
-Received: from [192.168.1.18] ([90.11.190.129])
-        by smtp.orange.fr with ESMTPA
-        id NTilozE1IUoLVNTilo20hb; Mon, 15 Aug 2022 08:37:08 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 15 Aug 2022 08:37:08 +0200
-X-ME-IP: 90.11.190.129
-Message-ID: <6d551cf9-94b4-653b-122a-938ee5504150@wanadoo.fr>
-Date:   Mon, 15 Aug 2022 08:37:06 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v4 6/7] remoteproc: qcom: Add support for memory sandbox
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-References: <1660308466-410-1-git-send-email-quic_srivasam@quicinc.com>
- <1660308466-410-7-git-send-email-quic_srivasam@quicinc.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     agross@kernel.org, bgoswami@quicinc.com,
-        bjorn.andersson@linaro.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, judyhsiao@chromium.org,
-        lgirdwood@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        perex@perex.cz, quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        robh+dt@kernel.org, srinivas.kandagatla@linaro.org,
-        swboyd@chromium.org, tiwai@suse.com
-In-Reply-To: <1660308466-410-7-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Mon, 15 Aug 2022 02:58:28 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356E3120A8;
+        Sun, 14 Aug 2022 23:58:22 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0VMEFdj9_1660546694;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0VMEFdj9_1660546694)
+          by smtp.aliyun-inc.com;
+          Mon, 15 Aug 2022 14:58:15 +0800
+Message-ID: <1660545303.436073-9-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH v14 37/42] virtio_net: set the default max ring size by find_vqs()
+Date:   Mon, 15 Aug 2022 14:35:03 +0800
+From:   Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jason Wang <jasowang@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Mark Gross <markgross@kernel.org>,
+        Vadim Pasternak <vadimp@nvidia.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        linux-um@lists.infradead.org, netdev@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, bpf@vger.kernel.org,
+        kangjie.xu@linux.alibaba.com
+References: <20220801063902.129329-1-xuanzhuo@linux.alibaba.com>
+ <20220801063902.129329-38-xuanzhuo@linux.alibaba.com>
+ <20220815015405-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20220815015405-mutt-send-email-mst@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Le 12/08/2022 à 14:47, Srinivasa Rao Mandadapu a écrit :
-> Update pil driver with SMMU mapping for allowing authorised
-> memory access to ADSP firmware, by reading required memory
-> regions either from device tree file or from resource table
-> embedded in ADSP binary header.
-> 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam-jfJNa2p1gH1BDgjK7y7TUQ@public.gmane.org>
-> ---
-> Changes since V3:
-> 	-- Rename is_adsp_sb_needed to adsp_sandbox_needed.
-> 	-- Add smmu unmapping in error case and in adsp stop.
-> Changes since V2:
-> 	-- Replace platform_bus_type with adsp->dev->bus.
-> 	-- Use API of_parse_phandle_with_args() instead of of_parse_phandle_with_fixed_args().
-> 	-- Replace adsp->is_wpss with adsp->is_adsp.
-> 	-- Update error handling in adsp_start().
-> 
->   drivers/remoteproc/qcom_q6v5_adsp.c | 172 +++++++++++++++++++++++++++++++++++-
->   1 file changed, 170 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index b0a63a0..ca45d2c 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -9,6 +9,7 @@
->   #include <linux/firmware.h>
->   #include <linux/interrupt.h>
->   #include <linux/io.h>
-> +#include <linux/iommu.h>
->   #include <linux/iopoll.h>
->   #include <linux/kernel.h>
->   #include <linux/mfd/syscon.h>
-> @@ -48,6 +49,8 @@
->   #define LPASS_PWR_ON_REG		0x10
->   #define LPASS_HALTREQ_REG		0x0
->   
-> +#define SID_MASK_DEFAULT        0xF
-> +
->   #define QDSP6SS_XO_CBCR		0x38
->   #define QDSP6SS_CORE_CBCR	0x20
->   #define QDSP6SS_SLEEP_CBCR	0x3c
-> @@ -78,7 +81,7 @@ struct adsp_pil_data {
->   struct qcom_adsp {
->   	struct device *dev;
->   	struct rproc *rproc;
-> -
-> +	struct iommu_domain *iommu_dom;
->   	struct qcom_q6v5 q6v5;
->   
->   	struct clk *xo;
-> @@ -333,6 +336,155 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->   	return 0;
->   }
->   
-> +static void adsp_of_unmap_smmu(struct iommu_domain *iommu_dom, const __be32 *prop, int len)
-> +{
-> +	unsigned long mem_phys;
-> +	unsigned long iova;
-> +	unsigned int mem_size;
-> +	int access_level;
-> +	int i;
-> +
-> +	for (i = 0; i < len; i++) {
-> +		iova = be32_to_cpu(prop[i++]);
-> +		mem_phys = be32_to_cpu(prop[i++]);
-> +		mem_size = be32_to_cpu(prop[i++]);
-> +		access_level = be32_to_cpu(prop[i]);
-> +		iommu_unmap(iommu_dom, iova, mem_size);
-> +	}
-> +}
-> +
-> +static void adsp_rproc_unmap_smmu(struct rproc *rproc, int len)
-> +{
-> +	struct fw_rsc_devmem *rsc_fw;
-> +	struct fw_rsc_hdr *hdr;
-> +	int offset;
-> +	int i;
-> +
-> +	for (i = 0; i < len; i++) {
-> +		offset = rproc->table_ptr->offset[i];
-> +		hdr = (void *)rproc->table_ptr + offset;
-> +		rsc_fw = (struct fw_rsc_devmem *)hdr + sizeof(*hdr);
-> +
-> +		iommu_unmap(rproc->domain, rsc_fw->da, rsc_fw->len);
-> +	}
-> +}
-> +
-> +static void adsp_unmap_smmu(struct rproc *rproc)
-> +{
-
-When I proposed a adsp_unmap_smmu() function, the idea was to undo 
-everything that is donne by adsp_map_smmu().
-iommu_domain_alloc() and iommu_map(adsp->iommu_dom, ..) are not undone here.
-
-If this make sense, it would improve the semantic, simplify the 
-'adsp_smmu_unmap' label in adsp_start() and avoid what looks like a leak 
-to me in adsp_stop().
+On Mon, 15 Aug 2022 02:00:16 -0400, "Michael S. Tsirkin" <mst@redhat.com> wrote:
+> On Mon, Aug 01, 2022 at 02:38:57PM +0800, Xuan Zhuo wrote:
+> > Use virtio_find_vqs_ctx_size() to specify the maximum ring size of tx,
+> > rx at the same time.
+> >
+> >                          | rx/tx ring size
+> > -------------------------------------------
+> > speed == UNKNOWN or < 10G| 1024
+> > speed < 40G              | 4096
+> > speed >= 40G             | 8192
+> >
+> > Call virtnet_update_settings() once before calling init_vqs() to update
+> > speed.
+> >
+> > Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+>
+> I've been looking at this patchset because of the resent
+> reported crashes, and I'm having second thoughts about this.
+>
+> Do we really want to second-guess the device supplied
+> max ring size? If yes why?
+>
+> Could you please share some performance data that motivated this
+> specific set of numbers?
 
 
-> +	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	const __be32 *prop;
-> +	unsigned int len;
-> +
-> +	prop = of_get_property(adsp->dev->of_node, "qcom,adsp-memory-regions", &len);
-> +	if (prop) {
+The impact of this value on performance is as follows. The larger the value, the
+throughput can be increased, but the delay will also increase accordingly. It is
+a maximum limit for the ring size under the corresponding speed. The purpose of
+this limitation is not to improve performance, but more to reduce memory usage.
 
-In the allocation path, you have a "len /= sizeof(__be32);" which is not 
-here. Is it needed?
+These data come from many other network cards and some network optimization
+experience.
 
-You call adsp_unmap_smmu() from the error handling path of 
-adsp_map_smmu(). If needed, maybe it should be part of adsp_of_unmap_smmu()?
+For example, in the case of speed = 20G, the impact of ring size greater
+than 4096 on performance has no meaning. At this time, if the device supports
+8192, we limit it to 4096 through this, the real meaning is to reduce the memory
+usage.
 
-> +		adsp_of_unmap_smmu(adsp->iommu_dom, prop, len);
-> +	} else {
-> +		if (rproc->table_ptr)
-> +			adsp_rproc_unmap_smmu(rproc, rproc->table_ptr->num);
-> +	}
-> +}
-> +
-> +static int adsp_map_smmu(struct qcom_adsp *adsp, struct rproc *rproc)
-> +{
-> +	struct of_phandle_args args;
-> +	struct fw_rsc_devmem *rsc_fw;
-> +	struct fw_rsc_hdr *hdr;
-> +	const __be32 *prop;
-> +	long long sid;
-> +	unsigned long mem_phys;
-> +	unsigned long iova;
-> +	unsigned int mem_size;
-> +	unsigned int flag;
-> +	unsigned int len;
-> +	int access_level;
-> +	int offset;
-> +	int ret;
-> +	int rc;
 
-Are ret and rc both needed?
+>
+> Also why do we intepret UNKNOWN as "very low"?
+> I'm thinking that should definitely be "don't change anything".
+>
 
-> +	int i;
-> +
-> +	rc = of_parse_phandle_with_args(adsp->dev->of_node, "iommus", "#iommu-cells", 0, &args);
-> +	if (rc < 0)
-> +		sid = -1;
-> +	else
-> +		sid = args.args[0] & SID_MASK_DEFAULT;
-> +
-> +	adsp->iommu_dom = iommu_domain_alloc(adsp->dev->bus);
-> +	if (!adsp->iommu_dom) {
-> +		dev_err(adsp->dev, "failed to allocate iommu domain\n");
-> +		ret = -ENOMEM;
-> +		goto domain_free;
-> +	}
-> +
-> +	ret = iommu_attach_device(adsp->iommu_dom, adsp->dev);
-> +	if (ret) {
-> +		dev_err(adsp->dev, "could not attach device ret = %d\n", ret);
-> +		ret = -EBUSY;
-> +		goto detach_device;
-> +	}
-> +
-> +	/* Add SID configuration for ADSP Firmware to SMMU */
-> +	adsp->mem_phys =  adsp->mem_phys | (sid << 32);
-> +
-> +	ret = iommu_map(adsp->iommu_dom, adsp->mem_phys, adsp->mem_phys,
-> +			adsp->mem_size,	IOMMU_READ | IOMMU_WRITE);
-> +	if (ret) {
-> +		dev_err(adsp->dev, "Unable to map ADSP Physical Memory\n");
-> +		goto sid_unmap;
-> +	}
-> +
-> +	prop = of_get_property(adsp->dev->of_node, "qcom,adsp-memory-regions", &len);
-> +	if (prop) {
-> +		len /= sizeof(__be32);
-> +		for (i = 0; i < len; i++) {
-> +			iova = be32_to_cpu(prop[i++]);
-> +			mem_phys = be32_to_cpu(prop[i++]);
-> +			mem_size = be32_to_cpu(prop[i++]);
-> +			access_level = be32_to_cpu(prop[i]);
-> +
-> +			if (access_level)
-> +				flag = IOMMU_READ | IOMMU_WRITE;
-> +			else
-> +				flag = IOMMU_READ;
-> +
-> +			ret = iommu_map(adsp->iommu_dom, iova, mem_phys, mem_size, flag);
-> +			if (ret) {
-> +				dev_err(adsp->dev, "failed to map addr = %p mem_size = %x\n",
-> +						&(mem_phys), mem_size);
-> +				goto smmu_unmap;
-> +			}
-> +		}
-> +	} else {
-> +		if (!rproc->table_ptr)
-> +			goto sid_unmap;
-> +
-> +		for (i = 0; i < rproc->table_ptr->num; i++) {
-> +			offset = rproc->table_ptr->offset[i];
-> +			hdr = (void *)rproc->table_ptr + offset;
-> +			rsc_fw = (struct fw_rsc_devmem *)hdr + sizeof(*hdr);
-> +
-> +			ret = iommu_map(rproc->domain, rsc_fw->da, rsc_fw->pa,
-> +						rsc_fw->len, rsc_fw->flags);
-> +			if (ret) {
-> +				pr_err("%s; unable to map adsp memory address\n", __func__);
-> +				goto rproc_smmu_unmap;
-> +			}
-> +		}
-> +	}
+Generally speaking, for a network card with a high speed, it will return a
+correct speed. But I think it is a good idea to do nothing.
 
-If you introduce a adsp_of_unmap_smmu() and adsp_rproc_unmap_smmu(), 
-would it make things more readable to have the same kind of functions 
-when allocating the resources?
 
-Symmetry often helps.
+> Finally if all this makes sense then shouldn't we react when
+> speed changes?
 
-> +	return 0;
+This is the feedback of the network card when it is started, and theoretically
+it should not change in the future.
 
-Add an empty new line here?
+>
+> Could you try reverting this and showing performance results
+> before and after please? Thanks!
 
-> +rproc_smmu_unmap:
-> +	adsp_rproc_unmap_smmu(rproc, i);
-> +	goto sid_unmap;
-> +smmu_unmap:
-> +	adsp_of_unmap_smmu(adsp->iommu_dom, prop, i);
-> +sid_unmap:
-> +	iommu_unmap(adsp->iommu_dom, adsp->mem_phys, adsp->mem_size);
-> +detach_device:
-> +	iommu_domain_free(adsp->iommu_dom);
-> +domain_free:
-> +	return ret;
-> +}
-> +
-> +
->   static int adsp_start(struct rproc *rproc)
->   {
->   	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> @@ -343,9 +495,16 @@ static int adsp_start(struct rproc *rproc)
->   	if (ret)
->   		return ret;
->   
-> +	if (adsp->adsp_sandbox_needed) {
-> +		ret = adsp_map_smmu(adsp, rproc);
-> +		if (ret) {
-> +			dev_err(adsp->dev, "ADSP smmu mapping failed\n");
-> +			goto disable_irqs;
-> +		}
-> +	}
->   	ret = clk_prepare_enable(adsp->xo);
->   	if (ret)
-> -		goto disable_irqs;
-> +		goto adsp_smmu_unmap;
->   
->   	ret = qcom_rproc_pds_enable(adsp, adsp->proxy_pds,
->   				    adsp->proxy_pd_count);
-> @@ -401,6 +560,12 @@ static int adsp_start(struct rproc *rproc)
->   	qcom_rproc_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->   disable_xo_clk:
->   	clk_disable_unprepare(adsp->xo);
-> +adsp_smmu_unmap:
-> +	if (adsp->adsp_sandbox_needed) {
-> +		iommu_unmap(adsp->iommu_dom, adsp->mem_phys, adsp->mem_size);
-> +		adsp_unmap_smmu(rproc);
-> +		iommu_domain_free(adsp->iommu_dom);
-> +	}
->   disable_irqs:
->   	qcom_q6v5_unprepare(&adsp->q6v5);
->   
-> @@ -429,6 +594,9 @@ static int adsp_stop(struct rproc *rproc)
->   	if (ret)
->   		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
->   
-> +	if (adsp->adsp_sandbox_needed)
-> +		adsp_unmap_smmu(rproc);
+I hope the above reply can help you, if there is anything else you need me to
+cooperate with, I am very happy.
 
-No need to call iommu_unmap() and iommu_domain_free() here?
-(this is the same comment as the one in adsp_rproc_unmap_smmu(). This is 
-just a blind guess based on symmetry of the code.)
+If you think it's ok, I can resubmit a commit with 'UNKNOW' set to unlimited. I
+can submit it with the issue of #30.
 
-> +
->   	handover = qcom_q6v5_unprepare(&adsp->q6v5);
->   	if (handover)
->   		qcom_adsp_pil_handover(&adsp->q6v5);
+Thanks.
 
+
+>
+> > ---
+> >  drivers/net/virtio_net.c | 42 ++++++++++++++++++++++++++++++++++++----
+> >  1 file changed, 38 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> > index 8a5810bcb839..40532ecbe7fc 100644
+> > --- a/drivers/net/virtio_net.c
+> > +++ b/drivers/net/virtio_net.c
+> > @@ -3208,6 +3208,29 @@ static unsigned int mergeable_min_buf_len(struct virtnet_info *vi, struct virtqu
+> >  		   (unsigned int)GOOD_PACKET_LEN);
+> >  }
+> >
+> > +static void virtnet_config_sizes(struct virtnet_info *vi, u32 *sizes)
+> > +{
+> > +	u32 i, rx_size, tx_size;
+> > +
+> > +	if (vi->speed == SPEED_UNKNOWN || vi->speed < SPEED_10000) {
+> > +		rx_size = 1024;
+> > +		tx_size = 1024;
+> > +
+> > +	} else if (vi->speed < SPEED_40000) {
+> > +		rx_size = 1024 * 4;
+> > +		tx_size = 1024 * 4;
+> > +
+> > +	} else {
+> > +		rx_size = 1024 * 8;
+> > +		tx_size = 1024 * 8;
+> > +	}
+> > +
+> > +	for (i = 0; i < vi->max_queue_pairs; i++) {
+> > +		sizes[rxq2vq(i)] = rx_size;
+> > +		sizes[txq2vq(i)] = tx_size;
+> > +	}
+> > +}
+> > +
+> >  static int virtnet_find_vqs(struct virtnet_info *vi)
+> >  {
+> >  	vq_callback_t **callbacks;
+> > @@ -3215,6 +3238,7 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+> >  	int ret = -ENOMEM;
+> >  	int i, total_vqs;
+> >  	const char **names;
+> > +	u32 *sizes;
+> >  	bool *ctx;
+> >
+> >  	/* We expect 1 RX virtqueue followed by 1 TX virtqueue, followed by
+> > @@ -3242,10 +3266,15 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+> >  		ctx = NULL;
+> >  	}
+> >
+> > +	sizes = kmalloc_array(total_vqs, sizeof(*sizes), GFP_KERNEL);
+> > +	if (!sizes)
+> > +		goto err_sizes;
+> > +
+> >  	/* Parameters for control virtqueue, if any */
+> >  	if (vi->has_cvq) {
+> >  		callbacks[total_vqs - 1] = NULL;
+> >  		names[total_vqs - 1] = "control";
+> > +		sizes[total_vqs - 1] = 64;
+> >  	}
+> >
+> >  	/* Allocate/initialize parameters for send/receive virtqueues */
+> > @@ -3260,8 +3289,10 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+> >  			ctx[rxq2vq(i)] = true;
+> >  	}
+> >
+> > -	ret = virtio_find_vqs_ctx(vi->vdev, total_vqs, vqs, callbacks,
+> > -				  names, ctx, NULL);
+> > +	virtnet_config_sizes(vi, sizes);
+> > +
+> > +	ret = virtio_find_vqs_ctx_size(vi->vdev, total_vqs, vqs, callbacks,
+> > +				       names, sizes, ctx, NULL);
+> >  	if (ret)
+> >  		goto err_find;
+> >
+> > @@ -3281,6 +3312,8 @@ static int virtnet_find_vqs(struct virtnet_info *vi)
+> >
+> >
+> >  err_find:
+> > +	kfree(sizes);
+> > +err_sizes:
+> >  	kfree(ctx);
+> >  err_ctx:
+> >  	kfree(names);
+> > @@ -3630,6 +3663,9 @@ static int virtnet_probe(struct virtio_device *vdev)
+> >  		vi->curr_queue_pairs = num_online_cpus();
+> >  	vi->max_queue_pairs = max_queue_pairs;
+> >
+> > +	virtnet_init_settings(dev);
+> > +	virtnet_update_settings(vi);
+> > +
+> >  	/* Allocate/initialize the rx/tx queues, and invoke find_vqs */
+> >  	err = init_vqs(vi);
+> >  	if (err)
+> > @@ -3642,8 +3678,6 @@ static int virtnet_probe(struct virtio_device *vdev)
+> >  	netif_set_real_num_tx_queues(dev, vi->curr_queue_pairs);
+> >  	netif_set_real_num_rx_queues(dev, vi->curr_queue_pairs);
+> >
+> > -	virtnet_init_settings(dev);
+> > -
+> >  	if (virtio_has_feature(vdev, VIRTIO_NET_F_STANDBY)) {
+> >  		vi->failover = net_failover_create(vi->dev);
+> >  		if (IS_ERR(vi->failover)) {
+> > --
+> > 2.31.0
+>
