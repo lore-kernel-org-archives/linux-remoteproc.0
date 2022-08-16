@@ -2,307 +2,303 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA99C32772
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Aug 2022 08:12:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B83C32773
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 Aug 2022 10:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232490AbiHPIMh (ORCPT
+        id S234904AbiHPKkK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 16 Aug 2022 04:12:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46578 "EHLO
+        Tue, 16 Aug 2022 06:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231539AbiHPILI (ORCPT
+        with ESMTP id S234821AbiHPKjb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 16 Aug 2022 04:11:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D96B465C2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 22:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660628221;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cpgv5FAeV4Xgxidc6icz1XaUm6ZCyxEOOOfQnaAl0aE=;
-        b=bN4/k5Cp0bVB5GsWteP06MZ7FUC4OytbR+bB1a0Xk+0gQoDSbk4ZlQWHx342mRyttebVTr
-        NsrHaPMzNs4um6IL/P8QxnksTpowXbPQGj9mgN2zESGk12Z2kKEGkrgB42BT/4s0+8+Tib
-        8SzN4kk6ibNd8eZmw5nAeBdAszAI530=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-507-vAJ0djOOOuSl6nuKO5SUYg-1; Tue, 16 Aug 2022 01:36:59 -0400
-X-MC-Unique: vAJ0djOOOuSl6nuKO5SUYg-1
-Received: by mail-wm1-f72.google.com with SMTP id v64-20020a1cac43000000b003a4bea31b4dso9730715wme.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Aug 2022 22:36:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=Cpgv5FAeV4Xgxidc6icz1XaUm6ZCyxEOOOfQnaAl0aE=;
-        b=ieHu8bt60VcGe4LowmrOiBuQHOxj9dwU1TMmx7uUjdfVmOBF4s2jwV9irzkzXTzBvE
-         Nei0V2xkERSaP5GNj5TEiHAzcDqRsTxlTA1sRkebaSbv/947sWc69ORDulGHzPDKYag9
-         RMcjk6E1XqDh666yqDfrVkOiOycJaNlGxsR2/uHOyRoSDDBHgH3UbXp4eIoud6m3VUOw
-         R2h5/sFKY40AvBwVJHA+zq7U2B9n71ZGxrnMTYHFjzszDkdzA/CKfYHz2a63lyjE3flz
-         Cfkdtow8RqZ/WQsrQRWGPNAN21EdGuhxH8mFMeXk1Mx+wk3hZu7J6hhoBqUKSaOEgbUf
-         rSQg==
-X-Gm-Message-State: ACgBeo19RcjDvkQL3fqBO2qUw+yy0drB+99tcSkm3I+1MXmzwZML7gWq
-        ef5trW4NWfDqI3OAou2z826q0PvFu2AhlRG6yuaCRp/Mk7hZwQzUYI3OBaiRqHEjwIw2mBOqck7
-        YwrxLtfeLYAt3Ancq2/qgoM7mqIw6/g==
-X-Received: by 2002:adf:f5cc:0:b0:221:7e3f:41eb with SMTP id k12-20020adff5cc000000b002217e3f41ebmr10278845wrp.551.1660628218611;
-        Mon, 15 Aug 2022 22:36:58 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR5WDnzBpzupB051dVdRKYw1crDTF90RoLhqKzZL00iu8qEeaHBRmDf/lNXmgrH/YzznHXnhuA==
-X-Received: by 2002:adf:f5cc:0:b0:221:7e3f:41eb with SMTP id k12-20020adff5cc000000b002217e3f41ebmr10278814wrp.551.1660628218337;
-        Mon, 15 Aug 2022 22:36:58 -0700 (PDT)
-Received: from redhat.com ([2.55.4.37])
-        by smtp.gmail.com with ESMTPSA id f16-20020adfb610000000b002237fd66585sm8918606wre.92.2022.08.15.22.36.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Aug 2022 22:36:57 -0700 (PDT)
-Date:   Tue, 16 Aug 2022 01:36:51 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Mark Gross <markgross@kernel.org>,
-        Vadim Pasternak <vadimp@nvidia.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [PATCH v4 6/6] virtio: Revert "virtio: find_vqs() add arg sizes"
-Message-ID: <20220816053602.173815-8-mst@redhat.com>
-References: <20220816053602.173815-1-mst@redhat.com>
+        Tue, 16 Aug 2022 06:39:31 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D409FB9422;
+        Tue, 16 Aug 2022 02:56:43 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27G52Dbu031473;
+        Tue, 16 Aug 2022 09:56:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Kkga1wf++c4F7p0F3XA1MWZfAKpsyxpIOAiuUzJwNJI=;
+ b=ntCT2j78h/H3/4nK2a4FQtGOBswhmL34ctkTY6Y3ts8TY9qDsyDBPf6SRJYXcFT0OP+t
+ 9XEfBk5LYv5aouTQZZ4bIpgBZB86a5UROtujBwZ13fdoQiTXMN9gt/EA+UHBtftIy9JK
+ 0rGty45j16fbObANnZ6YDbZV+ljOYERObmzNnECNs/fNdOs980/1GURikYIrbPxyh+vq
+ GHltbdkcmpbW1jqQwKi8Bela64Ngn3Iu7WEhI44FdHtKvGrQrOOdLho7at8dQB8AWOJp
+ 7co3y6AHkhMd7AXG44+1fifD332Yvr/cPSaL+euYRpLSNBgqPClDUcnQ8mjvXc4JYE0x 8Q== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3hyw582bm8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Aug 2022 09:56:02 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27G9p13L019181
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Aug 2022 09:51:01 GMT
+Received: from [10.216.49.243] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Tue, 16 Aug
+ 2022 02:50:56 -0700
+Message-ID: <315fbab4-faa4-a147-5002-b06f1af3d158@quicinc.com>
+Date:   Tue, 16 Aug 2022 15:20:53 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220816053602.173815-1-mst@redhat.com>
-X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
-X-Mutt-Fcc: =sent
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v4 1/7] dt-bindings: remoteproc: qcom: Add SC7280 ADSP
+ support
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <quic_plai@quicinc.com>,
+        <bgoswami@quicinc.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <srinivas.kandagatla@linaro.org>, <quic_rohkumar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <swboyd@chromium.org>, <judyhsiao@chromium.org>,
+        <devicetree@vger.kernel.org>
+References: <1660308466-410-1-git-send-email-quic_srivasam@quicinc.com>
+ <1660308466-410-2-git-send-email-quic_srivasam@quicinc.com>
+ <20220814203530.GA640885-robh@kernel.org>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <20220814203530.GA640885-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9RYf9f2XQDFU0rIePLoAGDJ2a6pqssnK
+X-Proofpoint-GUID: 9RYf9f2XQDFU0rIePLoAGDJ2a6pqssnK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-16_07,2022-08-16_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2207270000 definitions=main-2208160038
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This reverts commit a10fba0377145fccefea4dc4dd5915b7ed87e546: the
-proposed API isn't supported on all transports but no
-effort was made to address this.
 
-It might not be hard to fix if we want to: maybe just
-rename size to size_hint and make sure legacy
-transports ignore the hint.
-
-But it's not sure what the benefit is in any case, so
-let's drop it.
-
-Fixes: a10fba037714 ("virtio: find_vqs() add arg sizes")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- arch/um/drivers/virtio_uml.c             |  2 +-
- drivers/platform/mellanox/mlxbf-tmfifo.c |  1 -
- drivers/remoteproc/remoteproc_virtio.c   |  1 -
- drivers/s390/virtio/virtio_ccw.c         |  1 -
- drivers/virtio/virtio_mmio.c             |  1 -
- drivers/virtio/virtio_pci_common.c       |  2 +-
- drivers/virtio/virtio_pci_common.h       |  2 +-
- drivers/virtio/virtio_pci_modern.c       |  7 ++-----
- drivers/virtio/virtio_vdpa.c             |  1 -
- include/linux/virtio_config.h            | 14 +++++---------
- 10 files changed, 10 insertions(+), 22 deletions(-)
-
-diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-index 79e38afd4b91..e719af8bdf56 100644
---- a/arch/um/drivers/virtio_uml.c
-+++ b/arch/um/drivers/virtio_uml.c
-@@ -1011,7 +1011,7 @@ static struct virtqueue *vu_setup_vq(struct virtio_device *vdev,
- 
- static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 		       struct virtqueue *vqs[], vq_callback_t *callbacks[],
--		       const char * const names[], u32 sizes[], const bool *ctx,
-+		       const char * const names[], const bool *ctx,
- 		       struct irq_affinity *desc)
- {
- 	struct virtio_uml_device *vu_dev = to_virtio_uml_device(vdev);
-diff --git a/drivers/platform/mellanox/mlxbf-tmfifo.c b/drivers/platform/mellanox/mlxbf-tmfifo.c
-index 8be13d416f48..1ae3c56b66b0 100644
---- a/drivers/platform/mellanox/mlxbf-tmfifo.c
-+++ b/drivers/platform/mellanox/mlxbf-tmfifo.c
-@@ -928,7 +928,6 @@ static int mlxbf_tmfifo_virtio_find_vqs(struct virtio_device *vdev,
- 					struct virtqueue *vqs[],
- 					vq_callback_t *callbacks[],
- 					const char * const names[],
--					u32 sizes[],
- 					const bool *ctx,
- 					struct irq_affinity *desc)
- {
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index 81c4f5776109..0f7706e23eb9 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -158,7 +158,6 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 				 struct virtqueue *vqs[],
- 				 vq_callback_t *callbacks[],
- 				 const char * const names[],
--				 u32 sizes[],
- 				 const bool * ctx,
- 				 struct irq_affinity *desc)
- {
-diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-index 896896e32664..a10dbe632ef9 100644
---- a/drivers/s390/virtio/virtio_ccw.c
-+++ b/drivers/s390/virtio/virtio_ccw.c
-@@ -637,7 +637,6 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 			       struct virtqueue *vqs[],
- 			       vq_callback_t *callbacks[],
- 			       const char * const names[],
--			       u32 sizes[],
- 			       const bool *ctx,
- 			       struct irq_affinity *desc)
- {
-diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-index dfcecfd7aba1..3ff746e3f24a 100644
---- a/drivers/virtio/virtio_mmio.c
-+++ b/drivers/virtio/virtio_mmio.c
-@@ -474,7 +474,6 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 		       struct virtqueue *vqs[],
- 		       vq_callback_t *callbacks[],
- 		       const char * const names[],
--		       u32 sizes[],
- 		       const bool *ctx,
- 		       struct irq_affinity *desc)
- {
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index 7ad734584823..ad258a9d3b9f 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -396,7 +396,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
- /* the config->find_vqs() implementation */
- int vp_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 		struct virtqueue *vqs[], vq_callback_t *callbacks[],
--		const char * const names[], u32 sizes[], const bool *ctx,
-+		const char * const names[], const bool *ctx,
- 		struct irq_affinity *desc)
- {
- 	int err;
-diff --git a/drivers/virtio/virtio_pci_common.h b/drivers/virtio/virtio_pci_common.h
-index a5ff838b85a5..23112d84218f 100644
---- a/drivers/virtio/virtio_pci_common.h
-+++ b/drivers/virtio/virtio_pci_common.h
-@@ -110,7 +110,7 @@ void vp_del_vqs(struct virtio_device *vdev);
- /* the config->find_vqs() implementation */
- int vp_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 		struct virtqueue *vqs[], vq_callback_t *callbacks[],
--		const char * const names[], u32 sizes[], const bool *ctx,
-+		const char * const names[], const bool *ctx,
- 		struct irq_affinity *desc);
- const char *vp_bus_name(struct virtio_device *vdev);
- 
-diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
-index be51ec849252..c3b9f2761849 100644
---- a/drivers/virtio/virtio_pci_modern.c
-+++ b/drivers/virtio/virtio_pci_modern.c
-@@ -347,15 +347,12 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
- static int vp_modern_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 			      struct virtqueue *vqs[],
- 			      vq_callback_t *callbacks[],
--			      const char * const names[],
--			      u32 sizes[],
--			      const bool *ctx,
-+			      const char * const names[], const bool *ctx,
- 			      struct irq_affinity *desc)
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
- 	struct virtqueue *vq;
--	int rc = vp_find_vqs(vdev, nvqs, vqs, callbacks, names, sizes, ctx,
--			     desc);
-+	int rc = vp_find_vqs(vdev, nvqs, vqs, callbacks, names, ctx, desc);
- 
- 	if (rc)
- 		return rc;
-diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-index 832d2c5b1b19..9670cc79371d 100644
---- a/drivers/virtio/virtio_vdpa.c
-+++ b/drivers/virtio/virtio_vdpa.c
-@@ -269,7 +269,6 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 				struct virtqueue *vqs[],
- 				vq_callback_t *callbacks[],
- 				const char * const names[],
--				u32 sizes[],
- 				const bool *ctx,
- 				struct irq_affinity *desc)
- {
-diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
-index 888f7e96f0c7..36ec7be1f480 100644
---- a/include/linux/virtio_config.h
-+++ b/include/linux/virtio_config.h
-@@ -55,7 +55,6 @@ struct virtio_shm_region {
-  *		include a NULL entry for vqs that do not need a callback
-  *	names: array of virtqueue names (mainly for debugging)
-  *		include a NULL entry for vqs unused by driver
-- *	sizes: array of virtqueue sizes
-  *	Returns 0 on success or error status
-  * @del_vqs: free virtqueues found by find_vqs().
-  * @synchronize_cbs: synchronize with the virtqueue callbacks (optional)
-@@ -104,9 +103,7 @@ struct virtio_config_ops {
- 	void (*reset)(struct virtio_device *vdev);
- 	int (*find_vqs)(struct virtio_device *, unsigned nvqs,
- 			struct virtqueue *vqs[], vq_callback_t *callbacks[],
--			const char * const names[],
--			u32 sizes[],
--			const bool *ctx,
-+			const char * const names[], const bool *ctx,
- 			struct irq_affinity *desc);
- 	void (*del_vqs)(struct virtio_device *);
- 	void (*synchronize_cbs)(struct virtio_device *);
-@@ -215,7 +212,7 @@ struct virtqueue *virtio_find_single_vq(struct virtio_device *vdev,
- 	const char *names[] = { n };
- 	struct virtqueue *vq;
- 	int err = vdev->config->find_vqs(vdev, 1, &vq, callbacks, names, NULL,
--					 NULL, NULL);
-+					 NULL);
- 	if (err < 0)
- 		return ERR_PTR(err);
- 	return vq;
-@@ -227,8 +224,7 @@ int virtio_find_vqs(struct virtio_device *vdev, unsigned nvqs,
- 			const char * const names[],
- 			struct irq_affinity *desc)
- {
--	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, NULL,
--				      NULL, desc);
-+	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, NULL, desc);
- }
- 
- static inline
-@@ -237,8 +233,8 @@ int virtio_find_vqs_ctx(struct virtio_device *vdev, unsigned nvqs,
- 			const char * const names[], const bool *ctx,
- 			struct irq_affinity *desc)
- {
--	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, NULL,
--				      ctx, desc);
-+	return vdev->config->find_vqs(vdev, nvqs, vqs, callbacks, names, ctx,
-+				      desc);
- }
- 
- /**
--- 
-MST
-
+On 8/15/2022 2:05 AM, Rob Herring wrote:
+Thanks for Your time Rob!!!
+> On Fri, Aug 12, 2022 at 06:17:40PM +0530, Srinivasa Rao Mandadapu wrote:
+>> Add ADSP PIL loading support for SC7280 SoCs.
+>>
+>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> ---
+>>   .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 189 +++++++++++++++++++++
+>>   1 file changed, 189 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+>> new file mode 100644
+>> index 0000000..e656cc8
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+>> @@ -0,0 +1,189 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-adsp-pil.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm SC7280 ADSP Peripheral Image Loader
+>> +
+>> +maintainers:
+>> +  - Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> +
+>> +description:
+>> +  This document defines the binding for a component that loads and boots firmware
+>> +  on the Qualcomm Technology Inc. ADSP.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,sc7280-adsp-pil
+>> +
+>> +  reg:
+>> +    minItems: 1
+>> +    items:
+>> +      - description: qdsp6ss register
+>> +      - description: efuse q6ss register
+>> +
+>> +  interrupts:
+>> +    items:
+>> +      - description: Watchdog interrupt
+>> +      - description: Fatal interrupt
+>> +      - description: Ready interrupt
+>> +      - description: Handover interrupt
+>> +      - description: Stop acknowledge interrupt
+>> +      - description: Shutdown acknowledge interrupt
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: wdog
+>> +      - const: fatal
+>> +      - const: ready
+>> +      - const: handover
+>> +      - const: stop-ack
+>> +      - const: shutdown-ack
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: XO clock
+>> +      - description: GCC CFG NOC LPASS clock
+>> +      - description: LPASS AHBS AON clock
+>> +      - description: LPASS AHBM AON clock
+>> +      - description: QDSP XO clock
+>> +      - description: Q6SP6SS SLEEP clock
+>> +      - description: Q6SP6SS CORE clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: xo
+>> +      - const: gcc_cfg_noc_lpass
+>> +      - const: lpass_ahbs_aon_cbcr
+>> +      - const: lpass_ahbm_aon_cbcr
+>> +      - const: qdsp6ss_xo
+>> +      - const: qdsp6ss_sleep
+>> +      - const: qdsp6ss_core
+>> +
+>> +  power-domains:
+>> +    items:
+>> +      - description: LCX power domain
+>> +
+>> +  resets:
+>> +    items:
+>> +      - description: PDC AUDIO SYNC RESET
+>> +      - description: CC LPASS restart
+>> +
+>> +  reset-names:
+>> +    items:
+>> +      - const: pdc_sync
+>> +      - const: cc_lpass
+>> +
+>> +  memory-region:
+>> +    maxItems: 1
+>> +    description: Reference to the reserved-memory for the Hexagon core
+>> +
+>> +  qcom,adsp-memory-regions:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+>> +    description:
+>> +      Each entry consists of 4 integers and represents the
+>> +      list of memory regions accessed by ADSP firmware.
+>> +    items:
+>> +      items:
+>> +        - description: |
+>> +            "iova reg" indicates the address of virtual memory region.
+>> +        - description: |
+>> +            "physical reg" indicates the address of phyical memory region.
+>> +        - description: |
+>> +            "size" indicates the offset memory region.
+>> +        - description: |
+>> +            "access level" indicates the read, read and write access levels.
+>> +          minimum: 0
+>> +          maximum: 1
+>> +
+>> +  qcom,halt-regs:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    description:
+>> +      Phandle reference to a syscon representing TCSR followed by the
+>> +      three offsets within syscon for q6, modem and nc halt registers.
+> items:
+>    - items:
+>        - description: phandle to TCSR
+>        - description: offset to q6 halt registers
+>        - ...
+Okay. Will update accordingly and re post it.
+>
+>> +
+>> +  qcom,smem-states:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    description: States used by the AP to signal the Hexagon core
+>> +    items:
+>> +      - description: Stop the modem
+>> +
+>> +  qcom,smem-state-names:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>> +    description: The names of the state bits used for SMP2P output
+>> +    items:
+>> +      - const: stop
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>> +  - interrupt-names
+>> +  - clocks
+>> +  - clock-names
+>> +  - power-domains
+>> +  - resets
+>> +  - reset-names
+>> +  - qcom,halt-regs
+>> +  - memory-region
+>> +  - qcom,smem-states
+>> +  - qcom,smem-state-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/clock/qcom,rpmh.h>
+>> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
+>> +    #include <dt-bindings/clock/qcom,lpass-sc7280.h>
+>> +    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>> +    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
+>> +    #include <dt-bindings/power/qcom-rpmpd.h>
+>> +
+>> +    remoteproc@3000000 {
+>> +        compatible = "qcom,sc7280-adsp-pil";
+>> +        reg = <0x03000000 0x5000>,
+>> +              <0x355B000 0x10>;
+>> +
+>> +        interrupts-extended = <&pdc 162 IRQ_TYPE_EDGE_RISING>,
+>> +                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+>> +                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+>> +                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+>> +                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+>> +                <&adsp_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+>> +
+>> +        interrupt-names = "wdog", "fatal", "ready",
+>> +                "handover", "stop-ack", "shutdown-ack";
+>> +
+>> +        clocks = <&rpmhcc RPMH_CXO_CLK>,
+>> +                 <&gcc GCC_CFG_NOC_LPASS_CLK>,
+>> +                 <&lpasscc LPASS_Q6SS_AHBM_CLK>,
+>> +                 <&lpasscc LPASS_Q6SS_AHBS_CLK>,
+>> +                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
+>> +                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
+>> +                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
+>> +        clock-names = "xo", "gcc_cfg_noc_lpass",
+>> +                "lpass_ahbs_aon_cbcr",
+>> +                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
+>> +                "qdsp6ss_sleep", "qdsp6ss_core";
+>> +
+>> +        power-domains = <&rpmhpd SC7280_LCX>;
+>> +
+>> +        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
+>> +                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
+>> +        reset-names = "pdc_sync", "cc_lpass";
+>> +
+>> +        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
+>> +
+>> +        memory-region = <&adsp_mem>;
+>> +
+>> +        qcom,smem-states = <&adsp_smp2p_out 0>;
+>> +        qcom,smem-state-names = "stop";
+>> +
+>> +        qcom,adsp-memory-regions = <0x00100000 0x00100000 0x4000 0>,
+>> +                                   <0x00113000 0x00113000 0x1000 0>,
+>> +                                   <0x00117000 0x00117000 0x2000 1>;
+>> +    };
+>> -- 
+>> 2.7.4
+>>
+>>
