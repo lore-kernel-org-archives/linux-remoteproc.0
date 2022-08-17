@@ -2,132 +2,121 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA2FC25B08
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Aug 2022 09:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C3CC25B08
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Aug 2022 13:14:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbiHQJ0W (ORCPT
+        id S239668AbiHQNO2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Aug 2022 05:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50974 "EHLO
+        Wed, 17 Aug 2022 09:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbiHQJ0V (ORCPT
+        with ESMTP id S229694AbiHQNO1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Aug 2022 05:26:21 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAFDC58B5B;
-        Wed, 17 Aug 2022 02:26:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1660728380; x=1692264380;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dOM8O8t6ku6zzPdaPxgxSQ/dRuiaSIT2cXeOOYu8U+4=;
-  b=jbe11Scjj1jE+C8ww9CuX3MhZ/kUaM5ThSq3i4lEEMq++O5Zsormv7Ip
-   xqE/jYlolEswC+r93rlm1FgoiY35Ks3vPmD1I2ItM0cvjvTH5W/l8kdR/
-   gjKMr3MykXdwqKaaEb/eq+9OChmLKY7yOrAx1ORigZz8H7ocUL8eWQWVd
-   JobvuMxUVrc+AR+OWPbDF3OgkLHBQZBhKSAh8W8kWMLsQiJPAEVKqTiTJ
-   +/7EmmNkAN49Du5FpczG0ijswL6RVRxbhqG3GrcUIhOC3TMuCBz4RKtLw
-   5DbUOKbkyAprViTBzLypktZZ2GjQxCH8/Zo4doKEOUXsQy/VLN2M21oAU
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10441"; a="354191863"
-X-IronPort-AV: E=Sophos;i="5.93,242,1654585200"; 
-   d="scan'208";a="354191863"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2022 02:26:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,242,1654585200"; 
-   d="scan'208";a="675572048"
-Received: from lkp-server02.sh.intel.com (HELO 81d7e1ade3ba) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Aug 2022 02:26:16 -0700
-Received: from kbuild by 81d7e1ade3ba with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oOFJX-0000m4-17;
-        Wed, 17 Aug 2022 09:26:15 +0000
-Date:   Wed, 17 Aug 2022 17:25:26 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, quic_plai@quicinc.com,
-        bgoswami@quicinc.com, perex@perex.cz, tiwai@suse.com,
-        srinivas.kandagatla@linaro.org, quic_rohkumar@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, judyhsiao@chromium.org,
-        devicetree@vger.kernel.org
-Cc:     kbuild-all@lists.01.org,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: Re: [PATCH v5 6/7] remoteproc: qcom: Add support for memory sandbox
-Message-ID: <202208171740.ZRtOUAHf-lkp@intel.com>
-References: <1660649034-4303-7-git-send-email-quic_srivasam@quicinc.com>
+        Wed, 17 Aug 2022 09:14:27 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64490286CC
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Aug 2022 06:14:22 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id v4so253107ljg.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Aug 2022 06:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=yr0qSXKWvuCUzSvzydmBZDyY0XaWgq0dxUbMgXS9CA8=;
+        b=k3KB3iqQAItg/j+LVnImlemXiSO6+5rOXuibgEZhbn12A5XeCRZqVLUQvFBWKrMXhL
+         wHGAHLHrOlhviQ94alFATP9K5lSBsusdy6x1vrE35jdTL6xJKAmaGOWXlltOzsEkR7YX
+         5lLufTeKHRVNoo/gqQOpzCsRDl0SusVXNGOsS3hgZqq3cDMlCr2B946LyDFlhmSR98zS
+         xU/8qbvfQ1ySABSD/TEZ5ZRtZ9KeYY7Ao0pblZMO5owR8G8j62ATyUndWC7mZEDF0Vw5
+         WLfWRV0Wr2S9LDnpg/d+sq5nLFo+cCvgCu4JiFLkVsllY+CAnf4XR/SGp92Y4VMgXkPn
+         sCeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=yr0qSXKWvuCUzSvzydmBZDyY0XaWgq0dxUbMgXS9CA8=;
+        b=KruMarNIrBdnKnbBK58So0olFAoNhheRu1d320ZJZZiKzoKj3lxO7ggXC5FIKBYVgL
+         NTej1PQNhdqLpUHSzP1ZPQrrmD0DJS6AP4zS2P5g3CGuXRoPGoeCtwKMl/7BQKGup7FF
+         LsyOfRc9cFPCrbX1IFdSNOdM6+XyoVzUJwE/o1KrShYlrakN5F9t3w9c5/AFutQF9Qnc
+         wkRBavPEH0mXUMZ96CD6HsNyHOGyp1Md9kBOYsXptVcsJIkK4XfkPf0wDsVeDW3HsQ2/
+         hem/xpemblQJTfIjtfCj5VZpdmiSdyIgPTm2GHn0PBfx3c2FEJslvZXJxdKitsmS+36m
+         ucRw==
+X-Gm-Message-State: ACgBeo2uAm8b4NtpxbMF6ks3SDC5P9R97z04vzQHIMjprD+5fHn4SYTA
+        CEvR0xuMH7ZZaISr02xty9O3b+kwD2TOM5rG
+X-Google-Smtp-Source: AA6agR6aNj0wxF+CSoJesSR3A39nwgjWZForctkJ59VdUfdgNIhrnYUDSD1BP5qHHcHuHzPkX5x3Vw==
+X-Received: by 2002:a2e:6e13:0:b0:25e:87b1:fda8 with SMTP id j19-20020a2e6e13000000b0025e87b1fda8mr7457999ljc.250.1660742060794;
+        Wed, 17 Aug 2022 06:14:20 -0700 (PDT)
+Received: from krzk-bin.. (d15l54h48cw7vbh-qr4-4.rev.dnainternet.fi. [2001:14bb:ae:539c:1b1c:14b7:109b:ed76])
+        by smtp.gmail.com with ESMTPSA id k1-20020a2ea261000000b0026182f31aa0sm1411307ljm.1.2022.08.17.06.14.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Aug 2022 06:14:20 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Lee Jones <lee@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 00/12] ARM/hwlock: qcom: switch TCSR mutex to MMIO
+Date:   Wed, 17 Aug 2022 16:14:03 +0300
+Message-Id: <20220817131415.714340-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1660649034-4303-7-git-send-email-quic_srivasam@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Srinivasa,
+Hi,
 
-Thank you for the patch! Perhaps something to improve:
+Switch older Qualcomm SoCs to use MMIO-based method instead of syscon.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on linus/master v6.0-rc1 next-20220817]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Not tested on hardware. Please kindly provide tests.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Srinivasa-Rao-Mandadapu/Update-ADSP-pil-loader-for-SC7280-platform/20220816-195318
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20220817/202208171740.ZRtOUAHf-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/04dc00863cb7b62aa7e5356f81cad5e7720e17ad
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Srinivasa-Rao-Mandadapu/Update-ADSP-pil-loader-for-SC7280-platform/20220816-195318
-        git checkout 04dc00863cb7b62aa7e5356f81cad5e7720e17ad
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/remoteproc/
+Dependency
+==========
+Context in bindings depends on:
+arm64: dts: qcom: improvements to TCSR mutex in DTS
+https://lore.kernel.org/linux-devicetree/20220817130342.568396-1-krzysztof.kozlowski@linaro.org/T/#t
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+Best regards,
+Krzysztof
 
-All warnings (new ones prefixed by >>):
+Krzysztof Kozlowski (12):
+  dt-bindings: hwlock: qcom-hwspinlock: add support for MMIO on older
+    SoCs
+  dt-bindings: hwlock: qcom-hwspinlock: correct example indentation
+  dt-bindings: mfd: qcom,tcsr: add MSM8974
+  hwspinlock: qcom: correct MMIO max register for newer SoCs
+  hwspinlock: qcom: add support for MMIO on older SoCs
+  arm64: dts: qcom: ipq6018: switch TCSR mutex to MMIO
+  arm64: dts: qcom: msm8994: switch TCSR mutex to MMIO
+  ARM: dts: qcom: msm8974: add missing TCSR syscon compatible
+  ARM: dts: qcom: msm8974: split TCSR halt regs out of mutex
+  ARM: dts: qcom: msm8974: switch TCSR mutex to MMIO
+  ARM: dts: qcom: apq8084: switch TCSR mutex to MMIO
+  ARM: dts: qcom: msm8226: switch TCSR mutex to MMIO
 
-   In file included from include/linux/kernel.h:29,
-                    from include/linux/clk.h:13,
-                    from drivers/remoteproc/qcom_q6v5_adsp.c:7:
-   drivers/remoteproc/qcom_q6v5_adsp.c: In function 'adsp_rproc_map_smmu':
->> include/linux/kern_levels.h:5:25: warning: format '%p' expects argument of type 'void *', but argument 2 has type 'u32' {aka 'unsigned int'} [-Wformat=]
-       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
-         |                         ^~~~~~
-   include/linux/printk.h:447:25: note: in definition of macro 'printk_index_wrap'
-     447 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ^~~~
-   include/linux/printk.h:518:9: note: in expansion of macro 'printk'
-     518 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
-      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
-         |                         ^~~~~~~~
-   include/linux/printk.h:518:16: note: in expansion of macro 'KERN_ERR'
-     518 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                ^~~~~~~~
-   drivers/remoteproc/qcom_q6v5_adsp.c:442:25: note: in expansion of macro 'pr_err'
-     442 |                         pr_err("failed to map addr = %p mem_size = %x\n", rsc_fw->pa, rsc_fw->len);
-         |                         ^~~~~~
-
-
-vim +5 include/linux/kern_levels.h
-
-314ba3520e513a Joe Perches 2012-07-30  4  
-04d2c8c83d0e3a Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
-04d2c8c83d0e3a Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
-04d2c8c83d0e3a Joe Perches 2012-07-30  7  
+ .../bindings/hwlock/qcom-hwspinlock.yaml      | 25 +++++++----
+ .../devicetree/bindings/mfd/qcom,tcsr.yaml    |  1 +
+ .../arm/boot/dts/qcom-apq8074-dragonboard.dts |  2 +-
+ arch/arm/boot/dts/qcom-apq8084.dtsi           | 11 ++---
+ arch/arm/boot/dts/qcom-msm8226.dtsi           | 14 ++-----
+ .../qcom-msm8974-lge-nexus5-hammerhead.dts    |  2 +-
+ .../dts/qcom-msm8974-sony-xperia-rhine.dtsi   |  2 +-
+ arch/arm/boot/dts/qcom-msm8974.dtsi           | 25 ++++++-----
+ .../dts/qcom-msm8974pro-fairphone-fp2.dts     |  2 +-
+ .../boot/dts/qcom-msm8974pro-samsung-klte.dts |  2 +-
+ ...-msm8974pro-sony-xperia-shinano-castor.dts |  2 +-
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi         | 13 ++----
+ arch/arm64/boot/dts/qcom/msm8994.dtsi         | 13 ++----
+ drivers/hwspinlock/qcom_hwspinlock.c          | 42 ++++++++++++++-----
+ 14 files changed, 83 insertions(+), 73 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.34.1
+
