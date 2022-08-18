@@ -2,80 +2,77 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7F8C25B08
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 Aug 2022 21:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB03C00140
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Aug 2022 15:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241740AbiHQVPE (ORCPT
+        id S1344269AbiHRPYF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 Aug 2022 17:15:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51670 "EHLO
+        Thu, 18 Aug 2022 11:24:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241421AbiHQVPD (ORCPT
+        with ESMTP id S1344224AbiHRPYF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 Aug 2022 17:15:03 -0400
-X-Greylist: delayed 382 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 17 Aug 2022 14:15:02 PDT
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC05721BC
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Aug 2022 14:15:02 -0700 (PDT)
-Received: from [192.168.1.101] (abxi168.neoplus.adsl.tpnet.pl [83.9.2.168])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 81E4D1F635;
-        Wed, 17 Aug 2022 23:08:27 +0200 (CEST)
-Message-ID: <6d630619-80de-b36f-7405-d1f0f0b028fa@somainline.org>
-Date:   Wed, 17 Aug 2022 23:08:26 +0200
+        Thu, 18 Aug 2022 11:24:05 -0400
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C651B72AA;
+        Thu, 18 Aug 2022 08:24:04 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id u9so1854551oiv.12;
+        Thu, 18 Aug 2022 08:24:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=gnwNt4bzr2qCnvr4ju2qpGV+gCVuK0IjgUJ83knjKEA=;
+        b=fE++v8k1R3dp4a4SaOAL9VdXGPSP2V4aEakKI8AF/4cwtGh06o0xgJxfvIuC7Q0P1v
+         Y6tbK9FAu3Sc6FWXX1WrFWWZ+2piizUxuWTgvhzIqeG684kzPnrMzc+YM6aCRnYL4Rl/
+         JcdoZqdeNllodfHIxc+1KylaAUQ8pBRtYzwJyxfVErfDpnPzPb2kozBEiVcAWnib4DrZ
+         +XJdI9d4ANIVxp7N7AcblaqOZ9WjVd58h3q65wvdHG+rx0ry+DdWcCgV96+BXIcjIp5D
+         vesKMS5ju2769I06iwriFVD72MAwLl6NRYkyyWKgDKY5Ak+v+7f/gyt4vUKBCAUkBltH
+         ecCw==
+X-Gm-Message-State: ACgBeo3fmR5t8cwp48u8WIqSv3K1xBFHH1LelT3I+a37qnrv0jPNL9K7
+        v+MXsFIQa1VKh3pxd+V9aQ==
+X-Google-Smtp-Source: AA6agR4bDZuxqokyMcKfa+YPkWiyULO1WtQ3vOZ6OL3mqwXVBlywPpvai3aUPwf49sLOze8PP+pkYA==
+X-Received: by 2002:a05:6808:1389:b0:345:fde:79eb with SMTP id c9-20020a056808138900b003450fde79ebmr1902862oiw.21.1660836243611;
+        Thu, 18 Aug 2022 08:24:03 -0700 (PDT)
+Received: from robh.at.kernel.org ([2607:fb90:5fe0:b4f5:6e22:4704:df60:73a3])
+        by smtp.gmail.com with ESMTPSA id p1-20020a544601000000b00344cc0c4606sm401342oip.58.2022.08.18.08.24.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Aug 2022 08:24:03 -0700 (PDT)
+Received: (nullmailer pid 1895136 invoked by uid 1000);
+        Thu, 18 Aug 2022 15:24:00 -0000
+Date:   Thu, 18 Aug 2022 09:24:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Cc:     linux-remoteproc@vger.kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
+        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
+        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/7] dt-bindings: remoteproc: qcom: Add SC7280 ADSP
+ support
+Message-ID: <20220818152400.GL1829017-robh@kernel.org>
+References: <1660649034-4303-1-git-send-email-quic_srivasam@quicinc.com>
+ <1660649034-4303-2-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [RFT PATCH 04/12] hwspinlock: qcom: correct MMIO max register for
- newer SoCs
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Lee Jones <lee@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220817131415.714340-1-krzysztof.kozlowski@linaro.org>
- <20220817131415.714340-5-krzysztof.kozlowski@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@somainline.org>
-In-Reply-To: <20220817131415.714340-5-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1660649034-4303-2-git-send-email-quic_srivasam@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 17.08.2022 15:14, Krzysztof Kozlowski wrote:
-> Newer ARMv8 Qualcomm SoCs using 0x1000 register stride have maximum
-> register 0x20000 (32 mutexes * 0x1000).
+On Tue, Aug 16, 2022 at 04:53:48PM +0530, Srinivasa Rao Mandadapu wrote:
+> Add ADSP PIL loading support for SC7280 SoCs.
 > 
-> Fixes: 7a1e6fb1c606 ("hwspinlock: qcom: Allow mmio usage in addition to syscon")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-
-Konrad
->  drivers/hwspinlock/qcom_hwspinlock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes since V4:
+> 	-- Update halt registers description in dt bindings.
 > 
-> diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-> index 80ea45b3a815..9734e149d981 100644
-> --- a/drivers/hwspinlock/qcom_hwspinlock.c
-> +++ b/drivers/hwspinlock/qcom_hwspinlock.c
-> @@ -121,7 +121,7 @@ static const struct regmap_config tcsr_mutex_config = {
->  	.reg_bits		= 32,
->  	.reg_stride		= 4,
->  	.val_bits		= 32,
-> -	.max_register		= 0x40000,
-> +	.max_register		= 0x20000,
->  	.fast_io		= true,
->  };
->  
+>  .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 196 +++++++++++++++++++++
+>  1 file changed, 196 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+
+Reviewed-by: Rob Herring <robh@kernel.org>
