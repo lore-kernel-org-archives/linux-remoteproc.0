@@ -2,77 +2,71 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB03C00140
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Aug 2022 15:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A00F2C32792
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Aug 2022 21:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344269AbiHRPYF (ORCPT
+        id S1346257AbiHRVGF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Aug 2022 11:24:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43412 "EHLO
+        Thu, 18 Aug 2022 17:06:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344224AbiHRPYF (ORCPT
+        with ESMTP id S1346609AbiHRVFu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Aug 2022 11:24:05 -0400
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C651B72AA;
-        Thu, 18 Aug 2022 08:24:04 -0700 (PDT)
-Received: by mail-oi1-f174.google.com with SMTP id u9so1854551oiv.12;
-        Thu, 18 Aug 2022 08:24:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=gnwNt4bzr2qCnvr4ju2qpGV+gCVuK0IjgUJ83knjKEA=;
-        b=fE++v8k1R3dp4a4SaOAL9VdXGPSP2V4aEakKI8AF/4cwtGh06o0xgJxfvIuC7Q0P1v
-         Y6tbK9FAu3Sc6FWXX1WrFWWZ+2piizUxuWTgvhzIqeG684kzPnrMzc+YM6aCRnYL4Rl/
-         JcdoZqdeNllodfHIxc+1KylaAUQ8pBRtYzwJyxfVErfDpnPzPb2kozBEiVcAWnib4DrZ
-         +XJdI9d4ANIVxp7N7AcblaqOZ9WjVd58h3q65wvdHG+rx0ry+DdWcCgV96+BXIcjIp5D
-         vesKMS5ju2769I06iwriFVD72MAwLl6NRYkyyWKgDKY5Ak+v+7f/gyt4vUKBCAUkBltH
-         ecCw==
-X-Gm-Message-State: ACgBeo3fmR5t8cwp48u8WIqSv3K1xBFHH1LelT3I+a37qnrv0jPNL9K7
-        v+MXsFIQa1VKh3pxd+V9aQ==
-X-Google-Smtp-Source: AA6agR4bDZuxqokyMcKfa+YPkWiyULO1WtQ3vOZ6OL3mqwXVBlywPpvai3aUPwf49sLOze8PP+pkYA==
-X-Received: by 2002:a05:6808:1389:b0:345:fde:79eb with SMTP id c9-20020a056808138900b003450fde79ebmr1902862oiw.21.1660836243611;
-        Thu, 18 Aug 2022 08:24:03 -0700 (PDT)
-Received: from robh.at.kernel.org ([2607:fb90:5fe0:b4f5:6e22:4704:df60:73a3])
-        by smtp.gmail.com with ESMTPSA id p1-20020a544601000000b00344cc0c4606sm401342oip.58.2022.08.18.08.24.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Aug 2022 08:24:03 -0700 (PDT)
-Received: (nullmailer pid 1895136 invoked by uid 1000);
-        Thu, 18 Aug 2022 15:24:00 -0000
-Date:   Thu, 18 Aug 2022 09:24:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Cc:     linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
-        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
-        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, swboyd@chromium.org,
-        judyhsiao@chromium.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] dt-bindings: remoteproc: qcom: Add SC7280 ADSP
- support
-Message-ID: <20220818152400.GL1829017-robh@kernel.org>
-References: <1660649034-4303-1-git-send-email-quic_srivasam@quicinc.com>
- <1660649034-4303-2-git-send-email-quic_srivasam@quicinc.com>
+        Thu, 18 Aug 2022 17:05:50 -0400
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5786BD41A6
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Aug 2022 14:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=t7Ii6XLIRaP7at2yUuRIiz03+D4
+        RJlp1wSYdcFu6j6M=; b=oI1fYcGq6IUXrcsFkfdcZDXWr9xd3PTb4KgW5JaMIsH
+        XZ6ZtLfgO5XLUgH4KN4Q5E/WkZkVBk7+dohi3eC5lcH275XgUS1BbqlK+YedkyQv
+        P4sUqELpeuCvqJwIw5tP69rv3t+uwelrKgfL4kapaZ9yxPLldvBUG+9K3E9ZWRg4
+        =
+Received: (qmail 3961254 invoked from network); 18 Aug 2022 23:01:01 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Aug 2022 23:01:01 +0200
+X-UD-Smtp-Session: l3s3148p1@M0dbR4rm8LIucref
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: [PATCH] rpmsg: move from strlcpy with unused retval to strscpy
+Date:   Thu, 18 Aug 2022 23:01:00 +0200
+Message-Id: <20220818210100.7277-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1660649034-4303-2-git-send-email-quic_srivasam@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 04:53:48PM +0530, Srinivasa Rao Mandadapu wrote:
-> Add ADSP PIL loading support for SC7280 SoCs.
-> 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> ---
-> Changes since V4:
-> 	-- Update halt registers description in dt bindings.
-> 
->  .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 196 +++++++++++++++++++++
->  1 file changed, 196 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+Follow the advice of the below link and prefer 'strscpy' in this
+subsystem. Conversion is 1:1 because the return value is not used.
+Generated by a coccinelle script.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/rpmsg/qcom_glink_ssr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_ssr.c b/drivers/rpmsg/qcom_glink_ssr.c
+index 776d64446879..39ffa384c9b1 100644
+--- a/drivers/rpmsg/qcom_glink_ssr.c
++++ b/drivers/rpmsg/qcom_glink_ssr.c
+@@ -111,7 +111,7 @@ static int qcom_glink_ssr_notifier_call(struct notifier_block *nb,
+ 	msg.command = cpu_to_le32(GLINK_SSR_DO_CLEANUP);
+ 	msg.seq_num = cpu_to_le32(ssr->seq_num);
+ 	msg.name_len = cpu_to_le32(strlen(ssr_name));
+-	strlcpy(msg.name, ssr_name, sizeof(msg.name));
++	strscpy(msg.name, ssr_name, sizeof(msg.name));
+ 
+ 	ret = rpmsg_send(ssr->ept, &msg, sizeof(msg));
+ 	if (ret < 0)
+-- 
+2.35.1
+
