@@ -2,71 +2,152 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB121C25B0E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 Aug 2022 21:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4723FC32773
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 19 Aug 2022 14:23:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346517AbiHRVHX (ORCPT
+        id S1349063AbiHSOXb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 Aug 2022 17:07:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36832 "EHLO
+        Fri, 19 Aug 2022 10:23:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346521AbiHRVFd (ORCPT
+        with ESMTP id S1349156AbiHSOX2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 Aug 2022 17:05:33 -0400
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69033C12EB
-        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Aug 2022 14:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=oBixX6DhLq6qbxZVRh5Aw8QChfE
-        liTGt7nnigM7rJzc=; b=jAdlDciI2r4fAthfVP+1dGH/5FHgkTiHenkOmqQF/qr
-        mHRU0z+fozIWCibbTa9kEfOzKNLt6ZZOxR2R9DfjAJmxHnVuP2aXGEgkVdJx2D2A
-        iUvGyD5wLi4bepyHyUruOzS4OjgwN2Ydisa0pH6BBPkqY/ME+pZQRiL6eTmkWxJk
-        =
-Received: (qmail 3961216 invoked from network); 18 Aug 2022 23:00:59 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Aug 2022 23:00:59 +0200
-X-UD-Smtp-Session: l3s3148p1@TpNJR4rmVZUucref
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Fri, 19 Aug 2022 10:23:28 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34E8FF7B
+        for <linux-remoteproc@vger.kernel.org>; Fri, 19 Aug 2022 07:23:25 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id p128so4912654oif.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 19 Aug 2022 07:23:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=GeLnTCDFozOnXarr5bsZrfQIyPlCPObES/tRUVDlMRc=;
+        b=IbwerQM0KnuUKiPyH/DPcbFtlKeEJfs0qV5K8pmupSDXM20bKdKC/7T6BZ0OI6q4zD
+         +A2SFVIeHsHe54HLk/oLFri82rFSZzybkEN5oRx1vhn26Bwf3Me43ddfkIcoWRz48Acq
+         ruxEFs+P/ctwTDRaiCMlCwa3y2gjDYcvz6AYbrpzoKiqdUpV2toNmiqLHSlra3iSdcPw
+         PC6a0yOmfdGgjCVc9Kpj0+uN90FFCdaClXunjqOtQHDMugV7QG7DUCjWVT2u+auhtqwC
+         d4g6hBzTjKvWXNAJJy0dlH1uplQ01IgKk/zKWvBXCEs9CS+olmJRuB7U3ZWnRAzX6Kzq
+         z/fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=GeLnTCDFozOnXarr5bsZrfQIyPlCPObES/tRUVDlMRc=;
+        b=J25sz4GVOwXb+1HzEDCHmPNn9D4HO/7XIyN3RCJPePB9qKvk7/L05yIWr2XkYOiKT5
+         4DEtLGJIdy0JSMnNTGGZAeylo/iM6pKsSE/iKW0XN9e7PDmhf8tzJh5GYJ9Z2IgRcaue
+         SDjQ5KyGsFzXiJzDffhWKwdxgmYCkk0YXwAQtHwXBMACzoy6ByRH9jUKCl4zm164I3Tr
+         ttxbytKsDEsJOediIMB7Ta38WmPUa40InCtU5qC/zKkLpIsalKJ6nSc78f3x/6+72H6W
+         Ll/uMJJgb3lc73/F231IApbWJY1aWVPtl/iZDHUfkvfib5paGaBnU0UjlHX22Hvoaa7V
+         QLew==
+X-Gm-Message-State: ACgBeo2jX+XadNLaJ3Ma7CMoXeurpYqdl52SffhP+AWvwAi9luNsMUb8
+        Wekac9rSIVf+kS5FpBITAEGoLA==
+X-Google-Smtp-Source: AA6agR7N4ZbVcrXI4TmUZ/vYDXKsf2Lwa4ZiSJrBA5m0Qsfe0WDJTWC8qV+uhj11vk4/fyxaSM0aVw==
+X-Received: by 2002:a05:6808:1412:b0:343:345:98ac with SMTP id w18-20020a056808141200b00343034598acmr3320053oiv.288.1660919004509;
+        Fri, 19 Aug 2022 07:23:24 -0700 (PDT)
+Received: from ripper.. (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id l6-20020a056870f14600b000f2455e26acsm1303283oac.48.2022.08.19.07.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Aug 2022 07:23:23 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: [PATCH] remoteproc: move from strlcpy with unused retval to strscpy
-Date:   Thu, 18 Aug 2022 23:00:59 +0200
-Message-Id: <20220818210059.7253-1-wsa+renesas@sang-engineering.com>
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update Bjorn's email address
+Date:   Fri, 19 Aug 2022 07:25:49 -0700
+Message-Id: <20220819142549.1605081-1-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Follow the advice of the below link and prefer 'strscpy' in this
-subsystem. Conversion is 1:1 because the return value is not used.
-Generated by a coccinelle script.
+Update the email address for Bjorn's maintainer entries and fill in
+.mailmap accordingly.
 
-Link: https://lore.kernel.org/r/CAHk-=wgfRnXz0W3D37d01q3JFkr_i_uTL=V6A6G1oUZcprmknw@mail.gmail.com/
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/remoteproc/qcom_sysmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .mailmap    |  3 +++
+ MAINTAINERS | 12 ++++++------
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 57dde2a69b9d..032adceb311d 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -388,7 +388,7 @@ static void ssctl_send_event(struct qcom_sysmon *sysmon,
- 	}
+diff --git a/.mailmap b/.mailmap
+index 23241db2647f..521ecdb8aa67 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -71,6 +71,9 @@ Ben M Cahill <ben.m.cahill@intel.com>
+ Ben Widawsky <bwidawsk@kernel.org> <ben@bwidawsk.net>
+ Ben Widawsky <bwidawsk@kernel.org> <ben.widawsky@intel.com>
+ Ben Widawsky <bwidawsk@kernel.org> <benjamin.widawsky@intel.com>
++Bjorn Andersson <andersson@kernel.org> <bjorn@kryo.se>
++Bjorn Andersson <andersson@kernel.org> <bjorn.andersson@linaro.org>
++Bjorn Andersson <andersson@kernel.org> <bjorn.andersson@sonymobile.com>
+ Björn Steinbrink <B.Steinbrink@gmx.de>
+ Björn Töpel <bjorn@kernel.org> <bjorn.topel@gmail.com>
+ Björn Töpel <bjorn@kernel.org> <bjorn.topel@intel.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f69a1c5212bd..766037b30806 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2579,7 +2579,7 @@ W:	http://www.armlinux.org.uk/
  
- 	memset(&req, 0, sizeof(req));
--	strlcpy(req.subsys_name, event->subsys_name, sizeof(req.subsys_name));
-+	strscpy(req.subsys_name, event->subsys_name, sizeof(req.subsys_name));
- 	req.subsys_name_len = strlen(req.subsys_name);
- 	req.event = event->ssr_event;
- 	req.evt_driven_valid = true;
+ ARM/QUALCOMM SUPPORT
+ M:	Andy Gross <agross@kernel.org>
+-M:	Bjorn Andersson <bjorn.andersson@linaro.org>
++M:	Bjorn Andersson <andersson@kernel.org>
+ R:	Konrad Dybcio <konrad.dybcio@somainline.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+@@ -8941,7 +8941,7 @@ F:	include/linux/hw_random.h
+ 
+ HARDWARE SPINLOCK CORE
+ M:	Ohad Ben-Cohen <ohad@wizery.com>
+-M:	Bjorn Andersson <bjorn.andersson@linaro.org>
++M:	Bjorn Andersson <andersson@kernel.org>
+ R:	Baolin Wang <baolin.wang7@gmail.com>
+ L:	linux-remoteproc@vger.kernel.org
+ S:	Maintained
+@@ -16134,7 +16134,7 @@ F:	drivers/gpio/gpio-sama5d2-piobu.c
+ F:	drivers/pinctrl/pinctrl-at91*
+ 
+ PIN CONTROLLER - QUALCOMM
+-M:	Bjorn Andersson <bjorn.andersson@linaro.org>
++M:	Bjorn Andersson <andersson@kernel.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/pinctrl/qcom,*.txt
+@@ -16827,7 +16827,7 @@ F:	Documentation/devicetree/bindings/media/*camss*
+ F:	drivers/media/platform/qcom/camss/
+ 
+ QUALCOMM CLOCK DRIVERS
+-M:	Bjorn Andersson <bjorn.andersson@linaro.org>
++M:	Bjorn Andersson <andersson@kernel.org>
+ L:	linux-arm-msm@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
+@@ -17316,7 +17316,7 @@ S:	Supported
+ F:	fs/reiserfs/
+ 
+ REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM
+-M:	Bjorn Andersson <bjorn.andersson@linaro.org>
++M:	Bjorn Andersson <andersson@kernel.org>
+ M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+ S:	Maintained
+@@ -17329,7 +17329,7 @@ F:	include/linux/remoteproc.h
+ F:	include/linux/remoteproc/
+ 
+ REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+-M:	Bjorn Andersson <bjorn.andersson@linaro.org>
++M:	Bjorn Andersson <andersson@kernel.org>
+ M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+ L:	linux-remoteproc@vger.kernel.org
+ S:	Maintained
 -- 
 2.35.1
 
