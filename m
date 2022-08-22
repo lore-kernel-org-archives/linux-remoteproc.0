@@ -2,154 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A237AC25B08
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 20 Aug 2022 13:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5309C3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 Aug 2022 08:23:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345873AbiHTNw7 (ORCPT
+        id S233820AbiHVIXV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 20 Aug 2022 09:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50092 "EHLO
+        Mon, 22 Aug 2022 04:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231407AbiHTNwy (ORCPT
+        with ESMTP id S232755AbiHVIXT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 20 Aug 2022 09:52:54 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8430FB491;
-        Sat, 20 Aug 2022 06:52:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1661003572; x=1692539572;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t6j6S57MxAxhQy8w9ImFEE7IDPq5AbCwpk7d9siINMo=;
-  b=Cy1VSWEMHlYvUgj9G+mGb3ExvYWc1EtPshnk0yiFOmSZb2OV+lA4rKje
-   QTRBg4nLcaH4GsraiSOKE9C2r8FDC6CztnNJ/B8LMvIA0tA0RpLL+QtSi
-   Y/2MNQJsCHlQjaShqgDonHxibHrmChuQ8jii684It8kfCdFK1Jv5Ltbh3
-   K10Zikrk9O+Ir5/t+00IG/6byXO1mmjU1DLFaqb03J6iWbt3W5LsGRl+1
-   Upo/Yl0GXX1n5e/PVmdTW8+KydxQFniLksC/dTsjfypMdoFdgJeAl7HD+
-   qV71krFhpG/BqzMdddHMSRlX66fKNfuXHoRdm/hiDT59ne+trpNsSkjTu
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10445"; a="280141012"
-X-IronPort-AV: E=Sophos;i="5.93,251,1654585200"; 
-   d="scan'208";a="280141012"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2022 06:52:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.93,251,1654585200"; 
-   d="scan'208";a="750806715"
-Received: from lkp-server01.sh.intel.com (HELO 44b6dac04a33) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Aug 2022 06:52:46 -0700
-Received: from kbuild by 44b6dac04a33 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1oPOu5-0002kd-2r;
-        Sat, 20 Aug 2022 13:52:45 +0000
-Date:   Sat, 20 Aug 2022 21:52:06 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, quic_plai@quicinc.com,
-        bgoswami@quicinc.com, perex@perex.cz, tiwai@suse.com,
-        srinivas.kandagatla@linaro.org, quic_rohkumar@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, judyhsiao@chromium.org,
-        devicetree@vger.kernel.org
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: Re: [PATCH v5 6/7] remoteproc: qcom: Add support for memory sandbox
-Message-ID: <202208202105.f6q5X3x5-lkp@intel.com>
-References: <1660649034-4303-7-git-send-email-quic_srivasam@quicinc.com>
+        Mon, 22 Aug 2022 04:23:19 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30B71C24;
+        Mon, 22 Aug 2022 01:23:17 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27M7pHjo005389;
+        Mon, 22 Aug 2022 08:22:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=5aTpjUYseG5JJk8g+HoBTAumTKBG4wTdhq0GBCJReTk=;
+ b=AIKdyDlI5wTk9fJ4Ehm7+/6hKxhBbneVY8vMK+rihT/8Uu9q2B63G/JH3xaq2M74lI57
+ BRF9PpwXmU082xkMqPhy8B7V0o4M6x49BaSweIbRO7+BvA2LdW9YxFmlLh/50nj143/v
+ BvxYmKpOR4b448GgKQOQh2oDHJij6q15ND0AonGs2gkED3k33KSOtF+H+GDckrIu7bGd
+ rzuXwSPSiZ3DSBSuiv6ezBEZXbZaOwA+0bzbTHVM0M5rg7oN9qHywIXzEe3ioyHngHTX
+ gCfbn2+KedsepyvdfHknqPXxnPgeUGWeQji7JJ+HSk55LAfdqfdVN4oBIj5s7o1JD3VR YA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j2vwp3mb1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Aug 2022 08:22:27 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27M8MQnY029905
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Aug 2022 08:22:26 GMT
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Mon, 22 Aug 2022 01:22:21 -0700
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [RESEND v5 0/7] Update ADSP pil loader for SC7280 platform
+Date:   Mon, 22 Aug 2022 13:51:56 +0530
+Message-ID: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1660649034-4303-7-git-send-email-quic_srivasam@quicinc.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: avUMx1nl6UUzxA3qJm6hzTCGSSo2eYbA
+X-Proofpoint-ORIG-GUID: avUMx1nl6UUzxA3qJm6hzTCGSSo2eYbA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-22_04,2022-08-18_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 suspectscore=0 spamscore=0 mlxscore=0 clxscore=1015
+ mlxlogscore=866 lowpriorityscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2207270000 definitions=main-2208220035
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Srinivasa,
+Update ADSP pil loader driver for SC7280 platforms.
 
-Thank you for the patch! Perhaps something to improve:
+Changes since V4:
+	-- Update halt registers description in dt bindings.
+	-- Update Memory sandboxing with proper APIs for resource
+	   allocation and free.
+Changes since V3:
+	-- Rename is_adsp_sb_needed to adsp_sandbox_needed.
+	-- Update sc7280 compatible name entry in sorted order.
+	-- Add smmu unmapping in error case and in adsp stop.
+	-- Revert converting sdm845 dt bindings to generic and 
+	   create new dt bindings for sc7280.
+Changes since V2:
+	-- Generated patch with -M flag.
+	-- Add Clock property in dt bindings.
+	-- Add qcom,adsp-memory-regions property.
+	-- Add is_adsp_sb_needed flag instead of is_wpss.
+	-- Initialize is_adsp_sb_needed flag.
+	-- Remove empty proxy pds array.
+	-- Replace platform_bus_type with adsp->dev->bus.
+	-- Use API of_parse_phandle_with_args() instead of 
+	    of_parse_phandle_with_fixed_args().
+	-- Replace adsp->is_wpss with adsp->is_adsp.
+	-- Update error handling in adsp_start().
+Changes since V1:
+	-- Change reg property maxItems to minItems and update description.
+	-- Fix typo errors.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on linus/master v6.0-rc1 next-20220819]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Srinivasa Rao Mandadapu (7):
+  dt-bindings: remoteproc: qcom: Add SC7280 ADSP support
+  remoteproc: qcom: Add flag in adsp private data structure
+  remoteproc: qcom: Add compatible name for SC7280 ADSP
+  remoteproc: qcom: Replace hard coded values with macros
+  remoteproc: qcom: Add efuse evb selection control
+  remoteproc: qcom: Add support for memory sandbox
+  remoteproc: qcom: Update QDSP6 out-of-reset timeout value
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Srinivasa-Rao-Mandadapu/Update-ADSP-pil-loader-for-SC7280-platform/20220816-195318
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-config: arm64-allyesconfig (https://download.01.org/0day-ci/archive/20220820/202208202105.f6q5X3x5-lkp@intel.com/config)
-compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project c9a41fe60ab62f7a40049c100adcc8087a47669b)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install arm64 cross compiling tool for clang build
-        # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/04dc00863cb7b62aa7e5356f81cad5e7720e17ad
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Srinivasa-Rao-Mandadapu/Update-ADSP-pil-loader-for-SC7280-platform/20220816-195318
-        git checkout 04dc00863cb7b62aa7e5356f81cad5e7720e17ad
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash drivers/interconnect/imx/ drivers/remoteproc/ drivers/thunderbolt/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> drivers/remoteproc/qcom_q6v5_adsp.c:442:54: warning: format specifies type 'void *' but the argument has type 'u32' (aka 'unsigned int') [-Wformat]
-                           pr_err("failed to map addr = %p mem_size = %x\n", rsc_fw->pa, rsc_fw->len);
-                                                        ~~                   ^~~~~~~~~~
-                                                        %u
-   include/linux/printk.h:518:33: note: expanded from macro 'pr_err'
-           printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-                                  ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:475:60: note: expanded from macro 'printk'
-   #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-                                                       ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:447:19: note: expanded from macro 'printk_index_wrap'
-                   _p_func(_fmt, ##__VA_ARGS__);                           \
-                           ~~~~    ^~~~~~~~~~~
-   1 warning generated.
-
-
-vim +442 drivers/remoteproc/qcom_q6v5_adsp.c
-
-   422	
-   423	static int adsp_rproc_map_smmu(struct rproc *rproc, int len)
-   424	{
-   425		struct fw_rsc_devmem *rsc_fw;
-   426		struct fw_rsc_hdr *hdr;
-   427		int offset;
-   428		int ret;
-   429		int i;
-   430	
-   431		if (!rproc->table_ptr)
-   432			return 0;
-   433	
-   434		for (i = 0; i < rproc->table_ptr->num; i++) {
-   435			offset = rproc->table_ptr->offset[i];
-   436			hdr = (void *)rproc->table_ptr + offset;
-   437			rsc_fw = (struct fw_rsc_devmem *)hdr + sizeof(*hdr);
-   438	
-   439			ret = iommu_map(rproc->domain, rsc_fw->da, rsc_fw->pa,
-   440						rsc_fw->len, rsc_fw->flags);
-   441			if (ret) {
- > 442				pr_err("failed to map addr = %p mem_size = %x\n", rsc_fw->pa, rsc_fw->len);
-   443				goto  rproc_smmu_unmap;
-   444			}
-   445		}
-   446	
-   447		return 0;
-   448	
-   449	rproc_smmu_unmap:
-   450		adsp_rproc_unmap_smmu(rproc, i);
-   451		return ret;
-   452	}
-   453	
+ .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 196 +++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_adsp.c                | 243 ++++++++++++++++++++-
+ 2 files changed, 433 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.7.4
+
