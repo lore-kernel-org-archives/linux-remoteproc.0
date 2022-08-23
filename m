@@ -2,140 +2,116 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C8CC32772
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 20:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3FFC32772
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 20:31:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234060AbiHWUJF (ORCPT
+        id S231607AbiHWUbd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 Aug 2022 16:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45354 "EHLO
+        Tue, 23 Aug 2022 16:31:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbiHWUIr (ORCPT
+        with ESMTP id S230209AbiHWUbP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 Aug 2022 16:08:47 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C35DCB9439
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Aug 2022 12:26:21 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id 20so13673032plo.10
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Aug 2022 12:26:21 -0700 (PDT)
+        Tue, 23 Aug 2022 16:31:15 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F4457B786
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Aug 2022 13:06:48 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id x23so13772368pll.7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Aug 2022 13:06:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc;
-        bh=if3Wu5vCv14WPiE5YYFtKJ7NmPwOHQ61EcTR2rYW06Q=;
-        b=gb99UBL+xqsO8C3uNt4C/qEgvqPAQNlqzT/mWH210kTh9QHQ9ChDiWKKjXVf5cQQ1z
-         ybGH5VLhxUwAS0RLDFB195OxggA9SoMB7b71QplPASrCl84Isek9hCRRxtYHPmWXgYUn
-         rA9DplBf48Zdv4VtSCIy+tN1UyKLiPGtAFBrnJc9QG9MCffjTZBklegv8AiFxp6Wz8Sz
-         cAXK8KFUQPA7821QnSh7ILC/6jY/EqQ5LC0Bd/puBNegQ5VzOnsCwiM91s2b3ouvI0Mz
-         /TyyS+X4ftn/aHzEErRANMAfYmcl2GvJNxSSg1ac/znz36RWYAUwFlAtYER99XR18AaK
-         e08g==
+        bh=CbkIBCLoHbH9nNnU/J2Hb+7ZqJOjL/seN2XSe7TVevU=;
+        b=LyQZ8mpGnO62wtqueQ9ShrFp+nlxifSg/kxiyCwFOBEtJNosbOZLvblQHuIE6N2hjt
+         V/oQePAHGmvEulJfpi7dcrOIYh/b9yyhDrE2XuKRqv8E0nfyTkN1+ziMmIjvW9Y/K2Dm
+         gpTm9CNd1Wa+6RHT/+oUNI98z9jaJkAAVSirYcJZ3o3eK8zT4E3clJxiu5DdGcfxgW+Y
+         lM3TMLUTtYTY1/CQPIfgl4ghw4+cy8bi6wQ79Zf9HfOm/onkXJ3UYQ4B8AerTI/HwaMu
+         qAmBr35p0DqTJ+wFeG8lzBa+vgTnVmmOBu0a5bFySbiwtvL/ObBHWeWo0dUXpa5Nz96r
+         gPng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=if3Wu5vCv14WPiE5YYFtKJ7NmPwOHQ61EcTR2rYW06Q=;
-        b=Xe71zGkRCbcHWCbHjcLfrfZ3YE1GfMzZJ/X9u5b9kG3jPa/nj3OQ5IlFwt599y8YEj
-         /8ZwV4roFGXGGpbmeOIfZ1Xps8M8HwQmlkiDywavqne6itCQorsecE43K14V+bIAmVHB
-         1gc0Yv1JBjE9NeJ2Alyk8hwLuLZ7KK0H8xKF64XNe9c3EuiI2RigpLQupPkh48Sv9r8s
-         4y0+UuOQuBvw7NV3nfgmllXFk6UkCMBGwC4/hDGyrG4I0dlSE/lx4X4IWB5uaVq7iQh1
-         LtVUjlbxtOnH/e5hqluYwL6SSpeM046MHhm5o7dyUrvbhpAtT4d2wKv+H2ftqq+52e+/
-         fGDw==
-X-Gm-Message-State: ACgBeo1+8nc1zTz0PI3f9AP6H/5MvOArfZskf1cIiybbPAnk0ggoCvlA
-        /I7hmEnwePmIAiGcthaEDTz4ob3cLdRVXg==
-X-Google-Smtp-Source: AA6agR6TKsIjgsl0w9cS4g5nPdI3TS9Zk7RRQuZWRYCfJ3lfV3usrWgaQ4Uki3BtWS7V8s0tFxAxzA==
-X-Received: by 2002:a17:902:b410:b0:172:c9d1:7501 with SMTP id x16-20020a170902b41000b00172c9d17501mr18889146plr.106.1661282781182;
-        Tue, 23 Aug 2022 12:26:21 -0700 (PDT)
+        bh=CbkIBCLoHbH9nNnU/J2Hb+7ZqJOjL/seN2XSe7TVevU=;
+        b=Vh0zRnIOOWxNZCUieDWnJsDqzrDHcU8sXe53oLqG7qVUaFRtNN41CbHW1shIsAe3nQ
+         ezFIOhPVFNT3HAvUHi6iE1K3b973UaCdtzUPw8HVmBaOvnoREuuJ52Vb4tOOnyUsctZZ
+         rdPmxLq8mjsFtYqSkzUCQs8AAEW+9B65kycRiSpQ1NoACBM+CsF/vUBqk+KddcjJwA6T
+         feWYctBGryxGRZhbrm0TVohItthJzbu0ozl1JAmT6buQl9nvoZWjgJsfVra9BuaDbgZa
+         +rgkeOXeNjzJW/7BhtHV9JsRwGTEjr5rKni4PoV9nMmTphtwkBD4zK9LjHFgidFjjaHL
+         G0wg==
+X-Gm-Message-State: ACgBeo0nQd4izHAqRm5Qn7SssHQqAha75dXNB4fNUT3EeUynIn197fFp
+        nXS3L1aVLdZGmTM1H/eoQ0ri0Q==
+X-Google-Smtp-Source: AA6agR5p/BTbRDFoEOMWG8yU+S+cOrL/qtvtS7f5dviOX2iNU2ka8UU1HiT4GwoLDdpIYoSb0zf/pw==
+X-Received: by 2002:a17:902:cec7:b0:172:5b09:161c with SMTP id d7-20020a170902cec700b001725b09161cmr25181780plg.60.1661285207566;
+        Tue, 23 Aug 2022 13:06:47 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id j6-20020a170902758600b00172a2a41064sm10732401pll.298.2022.08.23.12.26.19
+        by smtp.gmail.com with ESMTPSA id t127-20020a625f85000000b005362baf16e4sm8574434pfb.141.2022.08.23.13.06.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Aug 2022 12:26:20 -0700 (PDT)
-Date:   Tue, 23 Aug 2022 13:26:18 -0600
+        Tue, 23 Aug 2022 13:06:46 -0700 (PDT)
+Date:   Tue, 23 Aug 2022 14:06:44 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Julien Massot <julien.massot@iot.bzh>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-kernel@vger.kernel.org, rmk+kernel@armlinux.org.uk,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] remoteproc: rcar_rproc: silince address space sparse
- warning
-Message-ID: <20220823192618.GB1781852@p14s>
-References: <20220808011610.188119-1-wangkefeng.wang@huawei.com>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     bjorn.andersson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: fix argument 2 of
+ rproc_mem_entry_init
+Message-ID: <20220823200644.GC1781852@p14s>
+References: <1660567398-24495-1-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220808011610.188119-1-wangkefeng.wang@huawei.com>
+In-Reply-To: <1660567398-24495-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Aug 08, 2022 at 09:16:09AM +0800, Kefeng Wang wrote:
-> Fix sparse warnings,
->    drivers/remoteproc/st_remoteproc.c:98:12: sparse: sparse: incorrect type in assignment (different address spaces) @@
-> 	   expected void *va @@     got void [noderef] __iomem * @@
->    drivers/remoteproc/st_remoteproc.c:98:12: sparse:     expected void *va
->    drivers/remoteproc/st_remoteproc.c:98:12: sparse:     got void [noderef] __iomem *
->    ...
->    drivers/remoteproc/st_remoteproc.c:114:20: sparse:     expected void volatile [noderef] __iomem *io_addr
->    drivers/remoteproc/st_remoteproc.c:114:20: sparse:     got void *va
+On Mon, Aug 15, 2022 at 08:43:18PM +0800, Shengjiu Wang wrote:
+> There are sparse warning:
+> drivers/remoteproc/imx_dsp_rproc.c:602:49: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *va @@     got void [noderef] __iomem *[assigned] cpu_addr @@
+> drivers/remoteproc/imx_dsp_rproc.c:602:49: sparse:     expected void *va
+> drivers/remoteproc/imx_dsp_rproc.c:602:49: sparse:     got void [noderef] __iomem *[assigned] cpu_addr
+> drivers/remoteproc/imx_dsp_rproc.c:638:49: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *va @@     got void [noderef] __iomem *[assigned] cpu_addr @@
+> drivers/remoteproc/imx_dsp_rproc.c:638:49: sparse:     expected void *va
+> drivers/remoteproc/imx_dsp_rproc.c:638:49: sparse:     got void [noderef] __iomem *[assigned] cpu_addr
 > 
-> Add __iomem to io address space 'va' to fix it.
-> 
+> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
 > Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 > ---
-> note: the commit d803336abdbc "(ARM: mm: kill unused runtime hook arch_iounmap())"
-> won't introduce the warning, but lkp report issue to me many times,
-> let's fix it.
+>  drivers/remoteproc/imx_dsp_rproc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->  drivers/remoteproc/rcar_rproc.c | 2 +-
->  include/linux/remoteproc.h      | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-
-$ ./scripts/checkpatch.pl _PATCH_remoteproc_rcar_rproc_silince_address_space_sparse_warning.patch 
-WARNING: A patch subject line should describe the change not the tool that found it
-#9: 
-Subject: [PATCH] remoteproc: rcar_rproc: silince address space sparse warning
-
-total: 0 errors, 1 warnings, 16 lines checked
-
-NOTE: For some of the reported defects, checkpatch may be able to
-      mechanically convert to the typical style using --fix or --fix-inplace.
-
-_PATCH_remoteproc_rcar_rproc_silince_address_space_sparse_warning.patch has style problems, please review.
-
-NOTE: If any of the errors are false positives, please report
-      them to the maintainer, see CHECKPATCH in MAINTAINERS.
-
-
-> diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-> index aa86154109c7..e3363a4cde0a 100644
-> --- a/drivers/remoteproc/rcar_rproc.c
-> +++ b/drivers/remoteproc/rcar_rproc.c
-> @@ -22,7 +22,7 @@ static int rcar_rproc_mem_alloc(struct rproc *rproc,
->  				 struct rproc_mem_entry *mem)
->  {
->  	struct device *dev = &rproc->dev;
-> -	void *va;
-> +	void __iomem *va;
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index ca0817f8e41e..899aa8dd12f0 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -599,7 +599,7 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
+>  		}
 >  
->  	dev_dbg(dev, "map memory: %pa+%zx\n", &mem->dma, mem->len);
->  	va = ioremap_wc(mem->dma, mem->len);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 7c943f0a2fc4..c0c950cf7d72 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -330,7 +330,7 @@ struct rproc;
->   * @alloc: specific memory allocator function
->   */
->  struct rproc_mem_entry {
-> -	void *va;
-> +	void __iomem *va;
->  	bool is_iomem;
->  	dma_addr_t dma;
->  	size_t len;
+>  		/* Register memory region */
+> -		mem = rproc_mem_entry_init(dev, cpu_addr, (dma_addr_t)att->sa,
+> +		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)att->sa,
+>  					   att->size, da, NULL, NULL, "dsp_mem");
+>  
+>  		if (mem)
+> @@ -635,7 +635,7 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
+>  		}
+>  
+>  		/* Register memory region */
+> -		mem = rproc_mem_entry_init(dev, cpu_addr, (dma_addr_t)rmem->base,
+> +		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)rmem->base,
+>  					   rmem->size, da, NULL, NULL, it.node->name);
+
+Applied.
+
+Thanks,
+Mathieu
+
+>  
+>  		if (mem)
 > -- 
-> 2.35.3
+> 2.34.1
 > 
