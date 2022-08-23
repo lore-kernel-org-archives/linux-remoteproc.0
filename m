@@ -2,57 +2,58 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB192C32774
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 03:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD6BC3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 03:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239695AbiHWD0K (ORCPT
+        id S240108AbiHWD0r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Aug 2022 23:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53460 "EHLO
+        Mon, 22 Aug 2022 23:26:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240289AbiHWDZt (ORCPT
+        with ESMTP id S239703AbiHWD0n (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Aug 2022 23:25:49 -0400
-Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B775AC54
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:25:47 -0700 (PDT)
-Received: by mail-oi1-x231.google.com with SMTP id n124so3668929oih.7
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:25:47 -0700 (PDT)
+        Mon, 22 Aug 2022 23:26:43 -0400
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23EA65AC59
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:26:42 -0700 (PDT)
+Received: by mail-oi1-x22e.google.com with SMTP id j5so14611935oih.6
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:26:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=to:subject:message-id:date:user-agent:from:references:in-reply-to
          :mime-version:from:to:cc;
-        bh=fffmNYLGo81FxNWq7HKUF+9vnBo+ApQB0bLNovia0Ps=;
-        b=SqIyFkbC8kfiSGs2nViNZRZfai5SQ+5Ug+q2stJagUm0xUrR4yVJjA/52qOt/F4qTT
-         cly9T2LxBvbdeUImfwcXUM3rj1CCjrPIyLbURcoxABrfIhfu/AJB5qXZtM30MDnz51Ps
-         dVAGqNNQf2R34R9TvCaUvZvu8S6fdGaWkmlTE=
+        bh=Gsyyrjom5d3tsO/Xn15lmH603RwdhQ72lNUI35huiTM=;
+        b=mjwiSApllSKwDPCczr3uydgvyvX2wS8lxJEu/gwgp9tVZydQYGWkhlHuAci4uuyoGZ
+         CgLVt4nCJxtQOokPMdKkIFNr7AiudAgAyT8VdaZYMtmFkiy86b8516vNxEf5mkehGOW/
+         eNRNr4Z5ZBcB1E27dxPG/ixvt4JUx1B8Kj9E8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:subject:message-id:date:user-agent:from:references:in-reply-to
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=fffmNYLGo81FxNWq7HKUF+9vnBo+ApQB0bLNovia0Ps=;
-        b=LXDukBAWSOKAm7HXc0iLHGJTggBcIbNjhWoCrxnA60sRA0MQwV/mDqwRYoxKIwmihH
-         cL+cF6SpTjHsfZXiFtoLyn7gr3DobeydOm9n8Eq361vAHXpgM81nHW+XkTHTEejtH+m6
-         J2osyU/8wvViiI8UAg3IqGG6QdsMk9eyChz/hz7sl22GK3MfA6vXrmH79HJnFq0ZlUjs
-         v0cGaivFTTFlPKZpokUASoruWmnBgcjIcH6YKVd5bkXEbGDU1TMOxlF5ER8YilDZf8Jq
-         kfMXU40Rd++fPFqzoasd7jKBDClL2QNfTPDCxxabvVoFTKqw8+sH65ZULJtpgzEiT/aR
-         ck4Q==
-X-Gm-Message-State: ACgBeo3EHhisMBdQEqH9/8FVulPYiQcLXxLekz2FbIRXSIBJPkF0R5HZ
-        5BUASzIYEpmsdwSblmojq2na6+K+Fr2obCOQ7PvnzQ==
-X-Google-Smtp-Source: AA6agR68Vx51dJQKbnN0lUPWYa6fMVK+jKC9+sq5Rm2J+Kz+JIetLjkYYPhvnce6qf5O0iGmCr5GPX2KW8CyLhhNQy8=
-X-Received: by 2002:a05:6808:bca:b0:344:ef42:930f with SMTP id
- o10-20020a0568080bca00b00344ef42930fmr539274oik.0.1661225146600; Mon, 22 Aug
- 2022 20:25:46 -0700 (PDT)
+        bh=Gsyyrjom5d3tsO/Xn15lmH603RwdhQ72lNUI35huiTM=;
+        b=FMhM+eezVwdSCXC7Wxrt8/l07FmF0OzN4HUNNyWsgHeks7Th63M2JBySSlG4ljtPlL
+         MN+ZfgTgjOUrUUblkSUbSz/ZMt+6PfPRbnHOqQV2TInfvscYO5XBxD0YsfVCix4D8pFG
+         rLFkuah9AbJLM42RGN5eBjCEXNYNR7ZJy1mkf646jOk9zBBfVJxJSKsfJ7izrOpwmwp9
+         FC+YvcIKWo/k5pGR2RTH4u7aJardLMzBpfGzPDv411iT7jbVr8l03u6SeAuFa8CM7RLR
+         ZYDQSN1YLxqrfp/69F7XsXA43gKMsjxsD038Xhbiab/yPX31pXm0TGEMyiFQsI+nduiL
+         os2w==
+X-Gm-Message-State: ACgBeo3Ncz+zIi6HzlJMQNT97YOnUbCZAsmqX21Hkt5nKjqCRtoVJnXn
+        LXLZhR8L/VPqtWVc2AJ1h14fS5IFVBSrz71mNFYKDg==
+X-Google-Smtp-Source: AA6agR60jN8ObvTbkxkB8864F0EhQ2EF92dgEFyCliL7GRPJViDGWxMtWGk0qX37sw5x/kn+Cgzh4TP8P9upti0JHsA=
+X-Received: by 2002:a05:6808:1142:b0:343:86a0:dedc with SMTP id
+ u2-20020a056808114200b0034386a0dedcmr546934oiu.44.1661225201548; Mon, 22 Aug
+ 2022 20:26:41 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 22 Aug 2022 22:25:46 -0500
+ HTTPREST; Mon, 22 Aug 2022 22:26:41 -0500
 MIME-Version: 1.0
-In-Reply-To: <1661156523-22611-7-git-send-email-quic_srivasam@quicinc.com>
-References: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com> <1661156523-22611-7-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1661156523-22611-8-git-send-email-quic_srivasam@quicinc.com>
+References: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com> <1661156523-22611-8-git-send-email-quic_srivasam@quicinc.com>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Mon, 22 Aug 2022 22:25:46 -0500
-Message-ID: <CAE-0n53G_nKUPDDZtH1i9=G9s9ATV=iTdpuFcU6y1oeKyc0B9w@mail.gmail.com>
-Subject: Re: [RESEND v5 6/7] remoteproc: qcom: Add support for memory sandbox
+Date:   Mon, 22 Aug 2022 22:26:41 -0500
+Message-ID: <CAE-0n53Lm37zcBAKqTVDHGvHDjDSDDd=Ct-b-XZOBOg=7gU5KQ@mail.gmail.com>
+Subject: Re: [RESEND v5 7/7] remoteproc: qcom: Update QDSP6 out-of-reset
+ timeout value
 To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         agross@kernel.org, bgoswami@quicinc.com,
         bjorn.andersson@linaro.org, broonie@kernel.org,
@@ -66,247 +67,13 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Srinivasa Rao Mandadapu (2022-08-22 01:22:02)
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index b0a63a0..d01c97e 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -333,6 +336,185 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->         return 0;
->  }
+Quoting Srinivasa Rao Mandadapu (2022-08-22 01:22:03)
+> Update QDSP6 out-of-reset timeout value to 1 second, as sometimes
+> ADSP boot failing on SC7280 based platforms with existing value.
+> Also add few micro seconds sleep after enabling boot core
+> start register.
 >
-> +static void adsp_of_unmap_smmu(struct iommu_domain *iommu_dom, const __be32 *prop, int len)
-> +{
-> +       unsigned long iova;
-> +       unsigned int mem_size;
-> +       int i;
-> +
-> +       len /= sizeof(__be32);
-> +       for (i = 0; i < len; i++) {
-> +               iova = be32_to_cpu(prop[i++]);
-> +               /* Skip Physical address*/
-> +               i++;
-> +               mem_size = be32_to_cpu(prop[i++]);
-> +               iommu_unmap(iommu_dom, iova, mem_size);
-> +       }
-> +}
-> +
-> +static void adsp_rproc_unmap_smmu(struct rproc *rproc, int len)
-> +{
-> +       struct fw_rsc_devmem *rsc_fw;
-> +       struct fw_rsc_hdr *hdr;
-> +       int offset;
-> +       int i;
-> +
-> +       for (i = 0; i < len; i++) {
-> +               offset = rproc->table_ptr->offset[i];
-> +               hdr = (void *)rproc->table_ptr + offset;
-> +               rsc_fw = (struct fw_rsc_devmem *)hdr + sizeof(*hdr);
-> +
-> +               iommu_unmap(rproc->domain, rsc_fw->da, rsc_fw->len);
-> +       }
-> +}
-> +
-> +static void adsp_unmap_smmu(struct rproc *rproc)
-> +{
-> +       struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +       const __be32 *prop;
-> +       unsigned int len;
-> +
-> +       iommu_unmap(adsp->iommu_dom, adsp->mem_phys, adsp->mem_size);
-> +
-> +       prop = of_get_property(adsp->dev->of_node, "qcom,adsp-memory-regions", &len);
-> +       if (prop) {
-> +               adsp_of_unmap_smmu(adsp->iommu_dom, prop, len);
-> +       } else {
-> +               if (rproc->table_ptr)
-> +                       adsp_rproc_unmap_smmu(rproc, rproc->table_ptr->num);
-> +       }
-> +
-> +       iommu_domain_free(adsp->iommu_dom);
-> +}
-> +
-> +static int adsp_of_map_smmu(struct iommu_domain *iommu_dom, const __be32 *prop, int len)
-> +{
-> +       unsigned long mem_phys;
-> +       unsigned long iova;
-> +       unsigned int mem_size;
-> +       unsigned int flag;
-> +       int access_level;
-> +       int ret;
-> +       int i;
-> +
-> +       len /= sizeof(__be32);
-> +       for (i = 0; i < len; i++) {
-> +               iova = be32_to_cpu(prop[i++]);
-> +               mem_phys = be32_to_cpu(prop[i++]);
-> +               mem_size = be32_to_cpu(prop[i++]);
-> +               access_level = be32_to_cpu(prop[i]);
-> +
-> +               if (access_level)
-> +                       flag = IOMMU_READ | IOMMU_WRITE;
-> +               else
-> +                       flag = IOMMU_READ;
-> +
-> +               ret = iommu_map(iommu_dom, iova, mem_phys, mem_size, flag);
-> +               if (ret) {
-> +                       pr_err("failed to map addr = %p mem_size = %x\n", &(mem_phys), mem_size);
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> ---
 
-Why can't this be dev_err()?
-
-> +                       goto of_smmu_unmap;
-> +               }
-> +       }
-> +       return 0;
-> +of_smmu_unmap:
-> +       adsp_of_unmap_smmu(iommu_dom, prop, i);
-> +       return ret;
-> +}
-> +
-> +static int adsp_rproc_map_smmu(struct rproc *rproc, int len)
-> +{
-> +       struct fw_rsc_devmem *rsc_fw;
-
-const?
-
-> +       struct fw_rsc_hdr *hdr;
-
-const?
-
-> +       int offset;
-> +       int ret;
-> +       int i;
-> +
-> +       if (!rproc->table_ptr)
-> +               return 0;
-> +
-> +       for (i = 0; i < rproc->table_ptr->num; i++) {
-> +               offset = rproc->table_ptr->offset[i];
-> +               hdr = (void *)rproc->table_ptr + offset;
-> +               rsc_fw = (struct fw_rsc_devmem *)hdr + sizeof(*hdr);
-> +
-> +               ret = iommu_map(rproc->domain, rsc_fw->da, rsc_fw->pa,
-> +                                       rsc_fw->len, rsc_fw->flags);
-> +               if (ret) {
-> +                       pr_err("failed to map addr = %x mem_size = %x\n", rsc_fw->pa, rsc_fw->len);
-
-Why can't this be dev_err()?
-
-> +                       goto  rproc_smmu_unmap;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +
-> +rproc_smmu_unmap:
-> +       adsp_rproc_unmap_smmu(rproc, i);
-
-Does i need to be incremented? And/or unmap should be done in reverse.
-
-> +       return ret;
-> +}
-> +
-> +static int adsp_map_smmu(struct qcom_adsp *adsp, struct rproc *rproc)
-> +{
-> +       struct of_phandle_args args;
-> +       const __be32 *prop;
-> +       long long sid;
-> +       unsigned int len;
-> +       int ret;
-> +
-> +       ret = of_parse_phandle_with_args(adsp->dev->of_node, "iommus", "#iommu-cells", 0, &args);
-> +       if (ret < 0)
-> +               sid = -1;
-
-Is it a good idea to set the sid to -1? Does that mean all stream IDs?
-
-> +       else
-> +               sid = args.args[0] & SID_MASK_DEFAULT;
-> +
-> +       adsp->iommu_dom = iommu_domain_alloc(adsp->dev->bus);
-> +       if (!adsp->iommu_dom) {
-> +               dev_err(adsp->dev, "failed to allocate iommu domain\n");
-> +               ret = -ENOMEM;
-> +               goto domain_free;
-> +       }
-> +
-> +       ret = iommu_attach_device(adsp->iommu_dom, adsp->dev);
-> +       if (ret) {
-> +               dev_err(adsp->dev, "could not attach device ret = %d\n", ret);
-> +               ret = -EBUSY;
-
-Why do we overwrite the error value?
-
-> +               goto detach_device;
-> +       }
-> +
-> +       /* Add SID configuration for ADSP Firmware to SMMU */
-> +       adsp->mem_phys =  adsp->mem_phys | (sid << 32);
-> +
-> +       ret = iommu_map(adsp->iommu_dom, adsp->mem_phys, adsp->mem_phys,
-> +                       adsp->mem_size, IOMMU_READ | IOMMU_WRITE);
-> +       if (ret) {
-> +               dev_err(adsp->dev, "Unable to map ADSP Physical Memory\n");
-> +               goto sid_unmap;
-> +       }
-> +
-> +       prop = of_get_property(adsp->dev->of_node, "qcom,adsp-memory-regions", &len);
-
-I find it odd that we're encoding virtual addresses (iovas) into
-devicetree. Presumably the physical address needs to be in DT as a
-carveout, but after that I would think we're free to allocate the
-segments from the carveout however we see fit and then program that into
-the SMMU. Maybe DT can be a suggestion, but otherwise can it be ignored?
-
-> +       if (prop) {
-> +               ret = adsp_of_map_smmu(adsp->iommu_dom, prop, len);
-> +               if (ret) {
-> +                       dev_err(adsp->dev, "Unable to map memory regions accessed by ADSP\n");
-> +                       goto sid_unmap;
-> +               }
-> +       } else {
-> +               ret = adsp_rproc_map_smmu(rproc, len);
-> +               if (ret) {
-> +                       dev_err(adsp->dev, "Unable to map memory regions accessed by ADSP\n");
-
-Maybe this should be a different string in case it is confused with the
-above print of the same string.
-
-> +                       goto sid_unmap;
-> +               }
-> +       }
-> +       return 0;
-> +
-> +sid_unmap:
-> +       iommu_unmap(adsp->iommu_dom, adsp->mem_phys, adsp->mem_size);
-> +detach_device:
-> +       iommu_domain_free(adsp->iommu_dom);
-> +domain_free:
-> +       return ret;
-> +}
-> +
-> +
->  static int adsp_start(struct rproc *rproc)
->  {
->         struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> @@ -343,9 +525,16 @@ static int adsp_start(struct rproc *rproc)
->         if (ret)
->                 return ret;
->
-> +       if (adsp->adsp_sandbox_needed) {
-> +               ret = adsp_map_smmu(adsp, rproc);
-> +               if (ret) {
-> +                       dev_err(adsp->dev, "ADSP smmu mapping failed\n");
-> +                       goto disable_irqs;
-> +               }
-> +       }
-
-Newline here please.
-
->         ret = clk_prepare_enable(adsp->xo);
->         if (ret)
-> -               goto disable_irqs;
-> +               goto adsp_smmu_unmap;
->
->         ret = qcom_rproc_pds_enable(adsp, adsp->proxy_pds,
->                                     adsp->proxy_pd_count);
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
