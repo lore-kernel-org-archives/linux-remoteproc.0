@@ -2,57 +2,57 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5AAC28D13
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 03:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8570CC3F6B0
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 03:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239926AbiHWDIo (ORCPT
+        id S239982AbiHWDJG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 Aug 2022 23:08:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34696 "EHLO
+        Mon, 22 Aug 2022 23:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239933AbiHWDIG (ORCPT
+        with ESMTP id S239845AbiHWDIZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 Aug 2022 23:08:06 -0400
-Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 375E3F6C
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:05:50 -0700 (PDT)
-Received: by mail-oi1-x22f.google.com with SMTP id bb16so14571056oib.11
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:05:50 -0700 (PDT)
+        Mon, 22 Aug 2022 23:08:25 -0400
+Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE9312BFB
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:06:27 -0700 (PDT)
+Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-11c896b879bso15294231fac.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Aug 2022 20:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=to:subject:message-id:date:user-agent:from:references:in-reply-to
          :mime-version:from:to:cc;
-        bh=VmBfhr0vpPVDGehePX0qDoV9RWqgGhohFmKMY5nUDoM=;
-        b=CZx1U4Ln0EyZYh59YOjcfrH+vkIPu5/IUhsoq1qWJqeQ8h/fUonDwwjeCuYodkBllx
-         AYCOflksLOktkUTjuBHTnPM5rxiyxFXB1UxpbQTuKWyQpzktO7aP/4FYUHLllD+uEDbM
-         JfDn9njIiH/P+1VVG8k10Q2XpLJNGFGZgMSCE=
+        bh=ntnuN1Cbf4zs1wTSTN7LzLd8igQL/4ijLCx6okIoVxk=;
+        b=Lh9cBLkVXyylxnaHrcvdYQsWQairdmSDoTPgCznyRmSjDMDiILp++/TGvKExXeo6O1
+         85c08Zk9eT8u1vBA1/vCqt20YoTrWBS1gi1I+Zjb0EriSCQzU61mIi/SCMOiKJ0wzppI
+         SCu9NGHHlhnXWqF2T/5TztWPz+ls/9dpdeHNA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:subject:message-id:date:user-agent:from:references:in-reply-to
          :mime-version:x-gm-message-state:from:to:cc;
-        bh=VmBfhr0vpPVDGehePX0qDoV9RWqgGhohFmKMY5nUDoM=;
-        b=mtFYUaYImm+gN1muUFeplfg+rLbpE4nw5FCEkSZ/HvOMK85PGgTL7JmmdEkAK+6eY/
-         apSH6/FT/Wu1ChfhNuz34HnftHFWxK45AXThoj0PSBKTPC6noSxTSfYM81vHte1lxxrF
-         bGR1Mz9Tc20hCGYmnH7zQxRei0iIeJjNpBBlG5oA9Zhpv16zNQR5PUKqpSz5qp68W2Eu
-         g2HlUwmBKGxA7dNeJ6gESRnbTOYcQV8IBIjt4TGPsd8GmUhg+saNghOgTA8RUL1sV3ZN
-         ZMQzm8Bg+YorIM3qiOWZpRQaZdK082qQBjIa5YBVbtk50XSADisjMFRQhCEhHuFuo6mR
-         mo+w==
-X-Gm-Message-State: ACgBeo0FhspKazJwePbPGc0UhCuWHhrecqTqCOA//QksJPTN1kEQ6jKM
-        ROn86+6Tj6g/bT1X4qCdzp7tNtUSKvVLkNzLzFZAmg==
-X-Google-Smtp-Source: AA6agR7x4KeAQutL5kyySAJzlnPzefZEz+ruRD7XlKs+TiWS1yrY8IIEz6wt1zAT4lA87TOfAYTxdqvLMxsfCLgAzm8=
-X-Received: by 2002:a05:6808:bca:b0:344:ef42:930f with SMTP id
- o10-20020a0568080bca00b00344ef42930fmr516939oik.0.1661223949623; Mon, 22 Aug
- 2022 20:05:49 -0700 (PDT)
+        bh=ntnuN1Cbf4zs1wTSTN7LzLd8igQL/4ijLCx6okIoVxk=;
+        b=SxcUybxTcE0Ddi0D4s26Dgp4efOQWgKJsog8KHqQK6X7C0l1vOuN8Qz/jABC52W7mg
+         Ptx46E44ZuZHtC+Fp095Ga+XcXVXuxMhgM4n5VTMHcrx+iSmMb5ZQ10OGshc8HmpOpJn
+         ddWVyYkeXFWIW2JZsG7vIvybcCUWPG/YmT9lDjxcaqQPjkrByOrWg6P5bN1r4WSamIPy
+         8ZP9UiKafzAmeGFo3/foy8z7my2iutm5GAqjKbh6JiHtl9l8no3JklXBQMfa9esOjXVD
+         DQ6KQaGjzqeQI/NaJrJDg0Q62HNb5PKHXql7k/hTfUYZ26wiJ2dkFvPFQDJWya9wSkm0
+         H/IQ==
+X-Gm-Message-State: ACgBeo1ZXG612CtALqOVC1qrUHfX5p9auhNFVtVMCt81r5lL+xDBKGLv
+        TuwCr8Qf5MJdbArilCLIEJ8MiMNXCPSukvbyS/X2Rw==
+X-Google-Smtp-Source: AA6agR5fL+F4upoZF82AsrgsRSYaDfJ86q9IfWZPbsEXsxBIolOFrRiht9F3qacrKx0bRyZhfJUdcElQgFukBVJ6feo=
+X-Received: by 2002:a05:6870:e408:b0:11c:37ad:773a with SMTP id
+ n8-20020a056870e40800b0011c37ad773amr564465oag.44.1661223987166; Mon, 22 Aug
+ 2022 20:06:27 -0700 (PDT)
 Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 22 Aug 2022 22:05:49 -0500
+ HTTPREST; Mon, 22 Aug 2022 22:06:26 -0500
 MIME-Version: 1.0
-In-Reply-To: <1661156523-22611-4-git-send-email-quic_srivasam@quicinc.com>
-References: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com> <1661156523-22611-4-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1661156523-22611-5-git-send-email-quic_srivasam@quicinc.com>
+References: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com> <1661156523-22611-5-git-send-email-quic_srivasam@quicinc.com>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.10
-Date:   Mon, 22 Aug 2022 22:05:49 -0500
-Message-ID: <CAE-0n52iLf0R0ovrpzMs0jp_Ty-RsONy0gcUvDsBvCz38R1fWw@mail.gmail.com>
-Subject: Re: [RESEND v5 3/7] remoteproc: qcom: Add compatible name for SC7280 ADSP
+Date:   Mon, 22 Aug 2022 22:06:26 -0500
+Message-ID: <CAE-0n52thpGPOZHtSx=P_ki1HApEKhK+2aerOKk5opY=Q9MSxw@mail.gmail.com>
+Subject: Re: [RESEND v5 4/7] remoteproc: qcom: Replace hard coded values with macros
 To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         agross@kernel.org, bgoswami@quicinc.com,
         bjorn.andersson@linaro.org, broonie@kernel.org,
@@ -66,29 +66,12 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Quoting Srinivasa Rao Mandadapu (2022-08-22 01:21:59)
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index d0b767f..6d409ca 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -701,6 +701,22 @@ static const struct adsp_pil_data adsp_resource_init = {
->         },
->  };
+Quoting Srinivasa Rao Mandadapu (2022-08-22 01:22:00)
+> Replace hard coded values of QDSP6 boot control reg params
+> with appropriate macro names.
 >
-> +static const struct adsp_pil_data adsp_sc7280_resource_init = {
-> +       .crash_reason_smem = 423,
-> +       .firmware_name = "adsp.mbn",
-> +       .load_state = "adsp",
-> +       .ssr_name = "lpass",
-> +       .sysmon_name = "adsp",
-> +       .ssctl_id = 0x14,
-> +       .is_wpss = false,
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-This can be left out, it's the default.
-
-> +       .adsp_sandbox_needed = true,
-> +       .auto_boot = true,
-> +       .clk_ids = (const char*[]) {
-> +               "gcc_cfg_noc_lpass", NULL
-> +       },
-> +       .num_clks = 1,
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
