@@ -2,108 +2,134 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CA9C32774
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 17:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB8EC32772
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 Aug 2022 20:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbiHWRWZ (ORCPT
+        id S233356AbiHWUGY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 Aug 2022 13:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56100 "EHLO
+        Tue, 23 Aug 2022 16:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241803AbiHWRVS (ORCPT
+        with ESMTP id S233648AbiHWUGG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 Aug 2022 13:21:18 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C867AC253;
-        Tue, 23 Aug 2022 07:57:31 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-11cb3c811d9so15414890fac.1;
-        Tue, 23 Aug 2022 07:57:31 -0700 (PDT)
+        Tue, 23 Aug 2022 16:06:06 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0832729
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Aug 2022 12:22:50 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id o14-20020a17090a0a0e00b001fabfd3369cso15675558pjo.5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Aug 2022 12:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=vluVKO5NRnQyzyhQUGPfMvMjb6neCROySKrkY1xAivk=;
+        b=RFpneXhBxHQqMg0kLtL1zDCS6S1gC3zkpuQU512oHuvBG+thV13/Uz2ISEDeYuBiqM
+         aGvSBuo+ONVzOIxbkx/SWFVmfK1YtaVx7n5yiomDC7o3JODhVP3wWul6vOytOuyuQk3X
+         ov6AqvXv6EJ5D8a04bCGgg4Vn9eBwVzMSXHMwZ0/FCs2R56Zj9JjErTF0QtxdLiJGRHt
+         aSg9MprO91J2uk8MCX64z1mLGpDRIkWe6dEfBTJ9s+qO3qURaRXvsOxeEuq6uYCR+jxC
+         daPdllVVFosoOaM7ewD0uO85ckP+/3r2ZE8f+4Jf1wogjxpfwQPIQu6huaOeaTK2YnG7
+         1gYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=E/n8+ANvvCKxMrSrOzblZTP/tD99uJWGC/nHupfAwYo=;
-        b=E+pfZ3tJr1FZeXPLVk1bJpMl+9N8QcPKUrE2JKh/r3ur4KVA2A/0nD09h+5QZm4UQt
-         DqUkUn+WyHaTuVPESupRsiX0w3SS5kbKt+6eaHUHt4apn9h2CkqUezINQ4W0HMcD+m2v
-         xLMQe6ePi7qQs9pw0RlHqvJ+H2WG7oUR9GvukuYifn40Z1HJD0HV6Pb+QbusbnRxT5sc
-         5VUqXDr9ojE4nAtlrchh00ok34R3/cSDfJC4PKB7E0MNkitm0JQ/V1R6jAJYuw44/HPz
-         2MMJ60f/PtCDX+3slxILen9GJM+AD2o4I7hwKZzd1sXwUSJVj+lF3k/OSDgkazps6fGA
-         4jTQ==
-X-Gm-Message-State: ACgBeo2IDIYaTP407r52OmdclNZO8gaSMVJmgPBEYdnVDEEkVmn//XEP
-        i835zPwr6RP3+ww7B783mA==
-X-Google-Smtp-Source: AA6agR5lMb2hvsauCXLU1ijbcXQY+dQlE0/NaS2H77wDnbGqI8QJsLlxfEIGjr6TYMdtd3ranumubw==
-X-Received: by 2002:a05:6870:c0c8:b0:101:b3c3:abc3 with SMTP id e8-20020a056870c0c800b00101b3c3abc3mr1568061oad.144.1661266650452;
-        Tue, 23 Aug 2022 07:57:30 -0700 (PDT)
-Received: from xps15.. (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.googlemail.com with ESMTPSA id t1-20020a056870600100b0011c65559b04sm3840637oaa.34.2022.08.23.07.57.29
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=vluVKO5NRnQyzyhQUGPfMvMjb6neCROySKrkY1xAivk=;
+        b=3iMIly/yNUImtufADXJeMRRq1LIoBfk+2w22KNyyyIvVecxmt/8F7u4HL5vtDLhMSp
+         mg7/EokH7R/dmOsfefNXcqtibtKuW1iTcsCWqDSfTw9toPms4wVuggNlafLYdS+fZuAi
+         PmD6AHgWlRHlpVusVbrtf+Wd/8YZmvR6sXoa6pN7hNkE7mbjaeT8059BcJS25xETuvp7
+         pyzmcurZqXvvjJ3X0x050/lu5/t9uB+tPjHN3VTtLBykowYW77JDDdS0L+Bfu5VtK8fr
+         slw+l91TChzB0uZ0uDtu6Zyitny8MZjK7yS7Bficpg/5kWAgLq/ahN4ewE2w6OyToMtt
+         dueA==
+X-Gm-Message-State: ACgBeo215s7imQxWJFvJPPLIC9dWrqeZhB4ZZA4rbM08uxgQR+YdaQAh
+        WuUDQZaRe/QBT1VtZtxmpIVPrieDqm+2wQ==
+X-Google-Smtp-Source: AA6agR6N2D2LqxwUPxnm1OVswfxuCieBbCam/Vy4PEiUjzbJ649yVF+yAFBnMC+7aRyrmSfb6NDHsw==
+X-Received: by 2002:a17:902:e809:b0:172:eded:e879 with SMTP id u9-20020a170902e80900b00172edede879mr9633105plg.54.1661282570371;
+        Tue, 23 Aug 2022 12:22:50 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id p63-20020a634242000000b004291cb9c047sm9556130pga.87.2022.08.23.12.22.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Aug 2022 07:57:29 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: remoteproc: Add missing (unevaluated|additional)Properties on child nodes
-Date:   Tue, 23 Aug 2022 09:56:41 -0500
-Message-Id: <20220823145649.3118479-10-robh@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Tue, 23 Aug 2022 12:22:49 -0700 (PDT)
+Date:   Tue, 23 Aug 2022 13:22:47 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirer@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] remoteproc: imx_rproc: Simplify some error message
+Message-ID: <20220823192247.GA1781852@p14s>
+References: <6b9343c2688117a340661d8ee491c2962c54a09a.1659736936.git.christophe.jaillet@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b9343c2688117a340661d8ee491c2962c54a09a.1659736936.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In order to ensure only documented properties are present, node schemas
-must have unevaluatedProperties or additionalProperties set to false
-(typically).
+On Sat, Aug 06, 2022 at 12:02:32AM +0200, Christophe JAILLET wrote:
+> dev_err_probe() already prints the error code in a human readable way, so
+> there is no need to duplicate it as a numerical value at the end of the
+> message.
+> 
+> While at it, remove 'ret' that is mostly useless.
+> 
+> Fixes: 2df7062002d0 ("remoteproc: imx_proc: enable virtio/mailbox")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
+>
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 +
- .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 +
- .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml     | 1 +
- 3 files changed, 3 insertions(+)
+Applied.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-index e76c861165dd..e4a7da8020f4 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-@@ -140,6 +140,7 @@ properties:
- 
-   glink-edge:
-     $ref: qcom,glink-edge.yaml#
-+    unevaluatedProperties: false
-     description:
-       Qualcomm G-Link subnode which represents communication edge, channels
-       and devices related to the DSP.
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-index da1a5de3d38b..b4de0521a89d 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-@@ -154,6 +154,7 @@ properties:
- 
-   glink-edge:
-     $ref: qcom,glink-edge.yaml#
-+    unevaluatedProperties: false
-     description:
-       Qualcomm G-Link subnode which represents communication edge, channels
-       and devices related to the DSP.
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-index 3f06d66cbe47..b6bd33438584 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-@@ -107,6 +107,7 @@ properties:
- 
-   glink-edge:
-     $ref: qcom,glink-edge.yaml#
-+    unevaluatedProperties: false
-     description:
-       Qualcomm G-Link subnode which represents communication edge, channels
-       and devices related to the ADSP.
--- 
-2.34.1
+Thanks,
+Mathieu
 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 38383e7de3c1..7cc4fd207e2d 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -646,7 +646,6 @@ static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
+>  	struct imx_rproc *priv = rproc->priv;
+>  	struct device *dev = priv->dev;
+>  	struct mbox_client *cl;
+> -	int ret;
+>  
+>  	if (!of_get_property(dev->of_node, "mbox-names", NULL))
+>  		return 0;
+> @@ -659,18 +658,15 @@ static int imx_rproc_xtr_mbox_init(struct rproc *rproc)
+>  	cl->rx_callback = imx_rproc_rx_callback;
+>  
+>  	priv->tx_ch = mbox_request_channel_byname(cl, "tx");
+> -	if (IS_ERR(priv->tx_ch)) {
+> -		ret = PTR_ERR(priv->tx_ch);
+> -		return dev_err_probe(cl->dev, ret,
+> -				     "failed to request tx mailbox channel: %d\n", ret);
+> -	}
+> +	if (IS_ERR(priv->tx_ch))
+> +		return dev_err_probe(cl->dev, PTR_ERR(priv->tx_ch),
+> +				     "failed to request tx mailbox channel\n");
+>  
+>  	priv->rx_ch = mbox_request_channel_byname(cl, "rx");
+>  	if (IS_ERR(priv->rx_ch)) {
+>  		mbox_free_channel(priv->tx_ch);
+> -		ret = PTR_ERR(priv->rx_ch);
+> -		return dev_err_probe(cl->dev, ret,
+> -				     "failed to request rx mailbox channel: %d\n", ret);
+> +		return dev_err_probe(cl->dev, PTR_ERR(priv->rx_ch),
+> +				     "failed to request rx mailbox channel\n");
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.34.1
+> 
