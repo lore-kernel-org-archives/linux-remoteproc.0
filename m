@@ -2,86 +2,109 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D0BC04AA5
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Aug 2022 12:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16550C04AA5
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Aug 2022 13:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241451AbiHYMTE (ORCPT
+        id S242403AbiHYNNs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 25 Aug 2022 08:19:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38564 "EHLO
+        Thu, 25 Aug 2022 09:13:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241194AbiHYMTD (ORCPT
+        with ESMTP id S242393AbiHYNNo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 25 Aug 2022 08:19:03 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9E1B0B0A
-        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Aug 2022 05:19:02 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id z25so28001541lfr.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Aug 2022 05:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc;
-        bh=SueU0ylS/DGZHRhMphFGlXlkKWtYfDHwqJySfC5KFDc=;
-        b=rXY3SbT3cDcqrgjAuDNQxDR6r+z03Hgm1PNGI54Ch92dMwTsawQ93+4+2trhU4kJDJ
-         lfRNvvl0nCvOmbgR7S8Mo/sXnKbKbgvfjbLYrgpp04kdhcIznUA1zie8BU1Y8/LnPZZT
-         qQE6jvN9f30ECZOE8+bf1KRcH2GM1+hZ7s5IiiM1ctFgXv1FGX5UEdp+GFUxyXiPOiu5
-         U3uN9i3V2zb7OADc44QfocmWjfKH7g9IChWHTkorl4miUSUvbzkHBomd74q6TdGvUpXs
-         oxy78rrSsUoOoQvP45F0/6UnLimg5JGH+/jG7Q4Iudyd33LpUvQy7xcYJN+3xzqSWXUU
-         Z89w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc;
-        bh=SueU0ylS/DGZHRhMphFGlXlkKWtYfDHwqJySfC5KFDc=;
-        b=nOiNoDV5b2OOaDY2rBbszdT3Hk/54rTokYwyW1Q7vv6BA4wQHxrhVwrMPVGt8CVFa8
-         Ec8NlnKb33jAGVQjfiNzYFz0tfyS4aLGe3uR0cpo5aDxpkPupxon/ihJTGGRDg0Edz05
-         O+hGEjOhrB2fGoXSEIq9wWizBOSl9zDtj5dV1otuSERH6R3qxrQbn4QD3axrZ+szNgWh
-         2HnzBDy3ScDjHPR5+wXL1nl2EB2hGea96CZOFY0kqakc5zQz1cntimX7uxn5fYigr0a4
-         FjatFX8j6cum34tS3QnfJzyj73stp43TodzXJIy6DgdNvidAjZKgouh1he/3cy56uyPp
-         8cCA==
-X-Gm-Message-State: ACgBeo1EAcobet72g09/1OrN5idbpKuQEMOQWAQgX48cF2rvYtbcmS5x
-        kGwbv/P/+vbSKkBpziC4Qs22Zw==
-X-Google-Smtp-Source: AA6agR4pM2U0ex+E+y7JbIyjJJSaYib0fDTzmJk0bBUBzl9hF/aW7Gvrcig///9p44oQVBaMjMyJjQ==
-X-Received: by 2002:a05:6512:31c6:b0:48b:2771:d0d2 with SMTP id j6-20020a05651231c600b0048b2771d0d2mr1029195lfe.382.1661429940494;
-        Thu, 25 Aug 2022 05:19:00 -0700 (PDT)
-Received: from [192.168.0.71] (82.131.98.15.cable.starman.ee. [82.131.98.15])
-        by smtp.gmail.com with ESMTPSA id i1-20020a2ea221000000b00261c30d71e5sm510243ljm.67.2022.08.25.05.18.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Aug 2022 05:18:59 -0700 (PDT)
-Message-ID: <59ec69e7-7eb4-b50d-e6bb-6e4348b2eddb@linaro.org>
-Date:   Thu, 25 Aug 2022 15:18:58 +0300
+        Thu, 25 Aug 2022 09:13:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FDC1B24B2;
+        Thu, 25 Aug 2022 06:13:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A141A61B0B;
+        Thu, 25 Aug 2022 13:13:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B2BC433C1;
+        Thu, 25 Aug 2022 13:13:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661433217;
+        bh=IZW5T8bTR6zlpO6HLb6mRol+oyWLXS34Ih/Xhypaguk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kMCucpv40+yoTKei7Vb+5ENQbEIz+hcPGK5+mqkpGqnhBHKfMa3V8YY2uFQPHbuWA
+         UYm5vFaTmXEg5r2azsBJFoS2ZAo6UMzg2NLcwUQdDa2jxw092nxypn31yMlnfCNP3Q
+         Pw1nYRsAV8WsH8sKUMYu5zTf3EoenvbsAMcawH6vRF2RV+7XQaZnDr/PAj1uYvX/ZD
+         uFRxcL5YalTayWJpmSZGhfFBmwSgZEjhVLT+tTIGbXFmU4yA6r1yQqPtRQBrIa7vKb
+         RDl3I2thfA3TQSNF+TGkEMf6dEvtIU37m3GXu+YeCid5kTybU1/Tr8a3CAjdBb4/QR
+         cYj9FpbGADa1Q==
+Received: by mail-vs1-f41.google.com with SMTP id m66so20787188vsm.12;
+        Thu, 25 Aug 2022 06:13:37 -0700 (PDT)
+X-Gm-Message-State: ACgBeo2KUZUkTIvJjxXw2ILZ6V1eeJPQdMdsi+89HwYsYjq48cpwpgOl
+        vfW9fM+lrzBIdaO6KiwTv1k2Ymu0vdQtAI36sw==
+X-Google-Smtp-Source: AA6agR5HHV9M9yXhQz5Wv4Fn3tOpZtPr51oSEmjee6h8mCyA1xklEwT58PruXe9mpGP3Rkw2EvGjEX5bSYAZLj5ddgM=
+X-Received: by 2002:a67:c09c:0:b0:390:9073:1122 with SMTP id
+ x28-20020a67c09c000000b0039090731122mr1350519vsi.85.1661433216073; Thu, 25
+ Aug 2022 06:13:36 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [RESEND v5 0/7] Update ADSP pil loader for SC7280 platform
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, quic_plai@quicinc.com,
-        bgoswami@quicinc.com, perex@perex.cz, tiwai@suse.com,
-        srinivas.kandagatla@linaro.org, quic_rohkumar@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        swboyd@chromium.org, judyhsiao@chromium.org,
-        devicetree@vger.kernel.org
-References: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1661156523-22611-1-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20220823145649.3118479-10-robh@kernel.org> <1491c83f-cd75-4de3-ec26-86db4adb2ade@linaro.org>
+In-Reply-To: <1491c83f-cd75-4de3-ec26-86db4adb2ade@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 25 Aug 2022 08:13:24 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJx1s5ez-ojP8ZK_MPBWuuLRyekjK1qhHd6Ezaimna8JQ@mail.gmail.com>
+Message-ID: <CAL_JsqJx1s5ez-ojP8ZK_MPBWuuLRyekjK1qhHd6Ezaimna8JQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: remoteproc: Add missing (unevaluated|additional)Properties
+ on child nodes
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 22/08/2022 11:21, Srinivasa Rao Mandadapu wrote:
-> Update ADSP pil loader driver for SC7280 platforms.
-> 
+On Thu, Aug 25, 2022 at 3:23 AM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 23/08/2022 17:56, Rob Herring wrote:
+> > In order to ensure only documented properties are present, node schemas
+> > must have unevaluatedProperties or additionalProperties set to false
+> > (typically).
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 +
+> >  .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 +
+> >  .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml     | 1 +
+> >  3 files changed, 3 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+> > index e76c861165dd..e4a7da8020f4 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+> > @@ -140,6 +140,7 @@ properties:
+> >
+> >    glink-edge:
+> >      $ref: qcom,glink-edge.yaml#
+> > +    unevaluatedProperties: false
+>
+> Is it actually needed? The qcom,glink-edge.yaml has
+> additionalProperties:false, so I expect it to complain if anything
+> appears here.
 
-Since you did not CC me, maybe you based your patch on some old tree?
-This has to be then rebased on current Linux source.
+Perhaps not, but I'm trying to come up with a meta-schema to check
+these though I'm not sure I can get to no warnings which is how I
+found all these cases. The main remaining warnings are bus child node
+pattern schemas which can perhaps be handled with
+'additionalProperties: true'. The rule I have says if properties or
+patternProperties is present then unevaluatedProperties or
+additionalProperties must be. To handle this case, I think we'd have
+to walk the $ref and check it.
 
-Best regards,
-Krzysztof
+Anyways, we can hold off on this one until when and if there's a
+meta-schema in place.
+
+Rob
