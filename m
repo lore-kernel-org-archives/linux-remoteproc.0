@@ -2,121 +2,105 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B3AC3F6B0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Aug 2022 00:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9F5C28D13
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 Aug 2022 08:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230074AbiHYAya (ORCPT
+        id S237497AbiHYIXX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 24 Aug 2022 20:54:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52364 "EHLO
+        Thu, 25 Aug 2022 04:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbiHYAy3 (ORCPT
+        with ESMTP id S233811AbiHYIXV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 24 Aug 2022 20:54:29 -0400
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A11818E4EB;
-        Wed, 24 Aug 2022 17:54:27 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VNAfI6D_1661388864;
-Received: from 30.97.48.44(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VNAfI6D_1661388864)
-          by smtp.aliyun-inc.com;
-          Thu, 25 Aug 2022 08:54:25 +0800
-Message-ID: <472ee15f-b89a-dc5a-548d-f2374f99dda0@linux.alibaba.com>
-Date:   Thu, 25 Aug 2022 08:54:35 +0800
+        Thu, 25 Aug 2022 04:23:21 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3B01A5990
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Aug 2022 01:23:19 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id z20so18713883ljq.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Aug 2022 01:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=QcYaN0JPky1EGXbRY64NqWC+vf4pbZdpI3za5tFR27Y=;
+        b=R6+bJKdroxxLZUeNX914wnlRmrBnu6dnYD5EjdF8U/Fu7DzRIGzlImTazksz7MMUE+
+         AtYJCGUm2qYs2ilZeWHBntZNyFAgv/64O/Q3WuNZ23BwxjUACbevkfowc+3UN52EvTk/
+         I2UxdF2QChDaiSduTt5APgjpVYLTTZ0WvNNnd3bxttbBn1TnZkgU/Syw4DI8wLeLaxXT
+         4RaxgB2NrE0LukyVvLOJzaMXXKUcLcTj4SqG8OORdb+VquhoJUuNYd3+U1ppcEe3ZJ4p
+         fKvSBT72f7NpcwIJlLNxO1tuBXskIFyFncojPfy3ahZbUoEpX316AcmPWVra2cbdWfYa
+         rECg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=QcYaN0JPky1EGXbRY64NqWC+vf4pbZdpI3za5tFR27Y=;
+        b=uaj2/KMWtsqyib5qJIs0jLxdqsgPdKrwUhC+4tVKZwqR9tpTB0LLgmSPHZXgWmLJX6
+         6SL+1eveyMrtP7J/+hwviXTiAdS8/zQZgdCrFN946Pk/V65Eufol4RLc05CGeQZ+owvI
+         YWpmgCfvfyyc9VEZFi8xe/3t/yZaCZF0LerJPAfNDtTuWxnJAwSwrKEx9kzphesKWpK3
+         Ljk6E3/EM/w8m8N1N2qRZGAVzyQQIQOGyL2mtkV1dXC6c/dWnrrllY9XmjXm9Lm/96dl
+         a1T/BzYLsYaGOlgV9N4Jww/gbH3RsS2f/XzK4cNYO7TSdvkdsSOBo1QEdffd52VK8rys
+         dW4w==
+X-Gm-Message-State: ACgBeo0x3/x9e1MTioeQhiYW/BHDtYdfZi8QlHZ4AFYAB5JPsLxcdYS3
+        yf6tjW64ixXPwP3KSNHREYGTfQ==
+X-Google-Smtp-Source: AA6agR78g9/aWyse4FQH581ZrbhVy37gSTslIw8h/JN2EkuNfJP5xOpXkmesnAnV+MzF5s5aBmGV0A==
+X-Received: by 2002:a2e:bf11:0:b0:261:9343:fb2 with SMTP id c17-20020a2ebf11000000b0026193430fb2mr770866ljr.47.1661415797930;
+        Thu, 25 Aug 2022 01:23:17 -0700 (PDT)
+Received: from [192.168.0.71] (82.131.98.15.cable.starman.ee. [82.131.98.15])
+        by smtp.gmail.com with ESMTPSA id c11-20020a056512074b00b0048a7c162bbesm356757lfs.279.2022.08.25.01.23.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Aug 2022 01:23:17 -0700 (PDT)
+Message-ID: <1491c83f-cd75-4de3-ec26-86db4adb2ade@linaro.org>
+Date:   Thu, 25 Aug 2022 11:23:16 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH] hwspinlock: sprd: Use devm_clk_get_enabled() helper
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] dt-bindings: remoteproc: Add missing
+ (unevaluated|additional)Properties on child nodes
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-References: <f962d22bfdbd09133d8923152133eeff9213dcee.1661324434.git.christophe.jaillet@wanadoo.fr>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <f962d22bfdbd09133d8923152133eeff9213dcee.1661324434.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220823145649.3118479-10-robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220823145649.3118479-10-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 8/24/2022 3:55 PM, Christophe JAILLET wrote:
-> The devm_clk_get_enabled() helper:
->     - calls devm_clk_get()
->     - calls clk_prepare_enable() and registers what is needed in order to
->       call clk_disable_unprepare() when needed, as a managed resource.
+On 23/08/2022 17:56, Rob Herring wrote:
+> In order to ensure only documented properties are present, node schemas
+> must have unevaluatedProperties or additionalProperties set to false
+> (typically).
 > 
-> This simplifies the code, the error handling paths and avoid the need of
-> a dedicated function used with devm_add_action_or_reset().
-> 
-> Based on my test with allyesconfig, this reduces the .o size from:
->     text	   data	    bss	    dec	    hex	filename
->     3423	   1528	      0	   4951	   1357	drivers/hwspinlock/sprd_hwspinlock.o
-> down to:
->     3025	   1392	      0	   4417	   1141	drivers/hwspinlock/sprd_hwspinlock.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-
-LGTM. Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
-> devm_clk_get_enabled() is new and is part of 6.0-rc1
-> ---
->   drivers/hwspinlock/sprd_hwspinlock.c | 23 ++---------------------
->   1 file changed, 2 insertions(+), 21 deletions(-)
+>  .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 +
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 +
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml     | 1 +
+>  3 files changed, 3 insertions(+)
 > 
-> diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-> index 22e2ffb91743..cb37706f61be 100644
-> --- a/drivers/hwspinlock/sprd_hwspinlock.c
-> +++ b/drivers/hwspinlock/sprd_hwspinlock.c
-> @@ -76,18 +76,11 @@ static const struct hwspinlock_ops sprd_hwspinlock_ops = {
->   	.relax = sprd_hwspinlock_relax,
->   };
->   
-> -static void sprd_hwspinlock_disable(void *data)
-> -{
-> -	struct sprd_hwspinlock_dev *sprd_hwlock = data;
-> -
-> -	clk_disable_unprepare(sprd_hwlock->clk);
-> -}
-> -
->   static int sprd_hwspinlock_probe(struct platform_device *pdev)
->   {
->   	struct sprd_hwspinlock_dev *sprd_hwlock;
->   	struct hwspinlock *lock;
-> -	int i, ret;
-> +	int i;
->   
->   	if (!pdev->dev.of_node)
->   		return -ENODEV;
-> @@ -102,24 +95,12 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
->   	if (IS_ERR(sprd_hwlock->base))
->   		return PTR_ERR(sprd_hwlock->base);
->   
-> -	sprd_hwlock->clk = devm_clk_get(&pdev->dev, "enable");
-> +	sprd_hwlock->clk = devm_clk_get_enabled(&pdev->dev, "enable");
->   	if (IS_ERR(sprd_hwlock->clk)) {
->   		dev_err(&pdev->dev, "get hwspinlock clock failed!\n");
->   		return PTR_ERR(sprd_hwlock->clk);
->   	}
->   
-> -	ret = clk_prepare_enable(sprd_hwlock->clk);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = devm_add_action_or_reset(&pdev->dev, sprd_hwspinlock_disable,
-> -				       sprd_hwlock);
-> -	if (ret) {
-> -		dev_err(&pdev->dev,
-> -			"Failed to add hwspinlock disable action\n");
-> -		return ret;
-> -	}
-> -
->   	/* set the hwspinlock to record user id to identify subsystems */
->   	writel(HWSPINLOCK_USER_BITS, sprd_hwlock->base + HWSPINLOCK_RECCTRL);
->   
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+> index e76c861165dd..e4a7da8020f4 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+> @@ -140,6 +140,7 @@ properties:
+>  
+>    glink-edge:
+>      $ref: qcom,glink-edge.yaml#
+> +    unevaluatedProperties: false
+
+Is it actually needed? The qcom,glink-edge.yaml has
+additionalProperties:false, so I expect it to complain if anything
+appears here.
+
+Best regards,
+Krzysztof
