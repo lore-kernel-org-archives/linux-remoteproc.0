@@ -2,122 +2,126 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB86ECAAA3
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 07:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB51ECAAD4
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 11:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245538AbiHZHpl (ORCPT
+        id S243374AbiHZLxg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 03:45:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47312 "EHLO
+        Fri, 26 Aug 2022 07:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245506AbiHZHpb (ORCPT
+        with ESMTP id S230132AbiHZLxe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 26 Aug 2022 03:45:31 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90CA88E0D7;
-        Fri, 26 Aug 2022 00:45:30 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27Q7Wdra023548;
-        Fri, 26 Aug 2022 07:45:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=ETkj+QXTCULceRPEha9GhQ71BYIoHHYCDlJY3zP5qIs=;
- b=MQAwx0HQ/6SekDZplIFA1FXuWJsCP14YleGxwuZRl50UADeby6bXZZw/8R2NdlQBCSLn
- eEvutKJ0esCirP+MViY7mj21QnjwBXosfc8ElX/qxg0cGWb4GzVyLgsqU5ktebXT+eSN
- SlT4LjdwABQva01jwzcSFaF+syRruwNFptr6BAoYlnj9deFan8UTRS48UhdSOnsEnCOt
- 5jgm1Z1YNT2oGQNu4RUSLNdrK9xQeHlPsjqpPx6siq2k97xzEdlDeOkdNiWKtoBOGjwj
- UqMQxPMMt8HOCOEzE/dW1KIApa06sz1F6hYaxh6j7rWy4tVillow6r7GHzBUUJlkU4b/ ww== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j6sv7829c-1
+        Fri, 26 Aug 2022 07:53:34 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25F1D7423;
+        Fri, 26 Aug 2022 04:53:33 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27QAjJVw027441;
+        Fri, 26 Aug 2022 13:53:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=ZdYz6ibBi/mMFACVTKpF3Ddf3TiBiFkaCG3AddWKmmk=;
+ b=qtzx9PG3XA/oI8HqcNxkTXQnHcTmG3GGzwawaS0uqSQlY8/KH9zSR1gphsEC/8RiOeVv
+ As9HhNteBaakyZ5aWlIehPeR0JXTPG9jS6IwSfHrWjA1J+/Zob2SRXrAMeU/PNpXOs9j
+ AHSpeerIUi6MyvRxlK05BAHCpmUyOj/e2XdgPQz36GCaoA7qMPWQTTLc8WoiUv39VNT6
+ HxCPpEBS5lghYMJQ97EKahfAuA6YWPH2zMMNlBGIu8OAk1GWHsbMNWg1V2p0F2IVl5e8
+ k3QSlp/+tbvxM+pFmDkH3Smh/PLk1c5Xv/RX1OhUFZuayPVaKnV25l6hy7NAzwjq0mip xQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3j6vpq89n4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Aug 2022 07:45:28 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27Q7eRx8005942
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Aug 2022 07:40:27 GMT
-Received: from [10.216.58.196] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 26 Aug
- 2022 00:40:23 -0700
-Message-ID: <089f50b7-a87e-8570-d85f-be7470153493@quicinc.com>
-Date:   Fri, 26 Aug 2022 13:10:18 +0530
+        Fri, 26 Aug 2022 13:53:25 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BDCC7100034;
+        Fri, 26 Aug 2022 13:53:24 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B6A19222CA8;
+        Fri, 26 Aug 2022 13:53:24 +0200 (CEST)
+Received: from localhost (10.75.127.118) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 26 Aug
+ 2022 13:53:24 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Bruce Ashfield <bruce.ashfield@xilinx.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v8 2/4] remoteproc: core: Introduce rproc_add_rvdev function
+Date:   Fri, 26 Aug 2022 13:52:30 +0200
+Message-ID: <20220826115232.2163130-3-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.24.3
+In-Reply-To: <20220826115232.2163130-1-arnaud.pouliquen@foss.st.com>
+References: <20220826115232.2163130-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH linux-next] rpmsg: char: Remove the unneeded result
- variable
-Content-Language: en-US
-To:     <cgel.zte@gmail.com>, <bjorn.andersson@linaro.org>
-CC:     <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        ye xingchen <ye.xingchen@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-References: <20220826071954.252485-1-ye.xingchen@zte.com.cn>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20220826071954.252485-1-ye.xingchen@zte.com.cn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: W3Ltf_LZM7JtQnhzXs2JeSd5AdWV_8z7
-X-Proofpoint-GUID: W3Ltf_LZM7JtQnhzXs2JeSd5AdWV_8z7
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.118]
+X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-26_02,2022-08-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 suspectscore=0 phishscore=0 clxscore=1011
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208260028
+ definitions=2022-08-26_06,2022-08-25_01,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The rproc structure contains a list of registered rproc_vdev structure.
+To be able to move the management of the rproc_vdev structure in
+remoteproc_virtio.c (i.e rproc_rvdev_add_device function),
+introduce the rproc_add_rvdev and rproc_remove_rvdev functions.
 
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/remoteproc/remoteproc_core.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-On 8/26/2022 12:49 PM, cgel.zte@gmail.com wrote:
-> From: ye xingchen <ye.xingchen@zte.com.cn>
-> 
-> Return the value rpmsg_chrdev_eptdev_add() directly instead of storing it
-> in another redundant variable.
-> 
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
-> ---
->   drivers/rpmsg/rpmsg_char.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 4f2189111494..0850ae34fb88 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -424,15 +424,12 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->   			       struct rpmsg_channel_info chinfo)
->   {
->   	struct rpmsg_eptdev *eptdev;
-> -	int ret;
->   
->   	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
->   	if (IS_ERR(eptdev))
->   		return PTR_ERR(eptdev);
->   
-> -	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> -
-> -	return ret;
-> +	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
->   }
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index c977e6c0bdb7..756b84811022 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -486,6 +486,18 @@ static int copy_dma_range_map(struct device *to, struct device *from)
+ 	return 0;
+ }
+ 
++static void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
++{
++	if (rvdev && rproc)
++		list_add_tail(&rvdev->node, &rproc->rvdevs);
++}
++
++static void rproc_remove_rvdev(struct rproc_vdev *rvdev)
++{
++	if (rvdev)
++		list_del(&rvdev->node);
++}
++
+ static struct rproc_vdev *
+ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
+ {
+@@ -549,7 +561,7 @@ rproc_rvdev_add_device(struct rproc *rproc, struct rproc_vdev_data *rvdev_data)
+ 			goto unwind_vring_allocations;
+ 	}
+ 
+-	list_add_tail(&rvdev->node, &rproc->rvdevs);
++	rproc_add_rvdev(rproc, rvdev);
+ 
+ 	rvdev->subdev.start = rproc_vdev_do_start;
+ 	rvdev->subdev.stop = rproc_vdev_do_stop;
+@@ -579,7 +591,7 @@ void rproc_vdev_release(struct kref *ref)
+ 	}
+ 
+ 	rproc_remove_subdev(rproc, &rvdev->subdev);
+-	list_del(&rvdev->node);
++	rproc_remove_rvdev(rvdev);
+ 	device_unregister(&rvdev->dev);
+ }
+ 
+-- 
+2.24.3
 
-LGTM.
-
-Reviewed-by:Mukesh Ojha <quic_mojha@quicinc.com>
-
--Mukesh
-
-
-
->   EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->   
