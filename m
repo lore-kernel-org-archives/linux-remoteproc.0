@@ -2,218 +2,141 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAE2ECAAA3
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 05:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E904EECAAD2
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 06:19:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235918AbiHZFpD (ORCPT
+        id S241159AbiHZGT1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 01:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45206 "EHLO
+        Fri, 26 Aug 2022 02:19:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241159AbiHZFpB (ORCPT
+        with ESMTP id S244864AbiHZGTY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 26 Aug 2022 01:45:01 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F1AB6368;
-        Thu, 25 Aug 2022 22:45:00 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27Q4Aviq007923;
-        Fri, 26 Aug 2022 05:44:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=PkVIGNJRBk4dislyu2Kr/mee6RfgQJSfYgLye2tNm2g=;
- b=dnvCyePDO4qcUmjA0kDjYWc3aZz98qjUmqgTDKiXR/U5HxmWDsoJH7mmCMK17WxES58x
- Dj1H66UEWDhxpy+GR6kXpvqZKo5z0kPo4tCMEF6IqvR2TjmuCJpPUUTA3vTpIhDPNobT
- OMn4J3hth1zmdYdy6I2hKWpUDr10O/BS15ahdmrIWYgWChfOE6H90vljOKrUweAG96oC
- QoYra9B3wowc31tt+dTtPtcA8OibmGlnmaXf4M4UcuFxgjuSeFCmtKINRw687YsuqMcB
- oQ4eDzDGETEaHu9nXja58bzPyCxmyvVWMR483Vrpg7xjFp32y6dDjKDqVKxMUTBl9zCZ TQ== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3j63v3makq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Aug 2022 05:44:54 +0000
-Received: from nasanex01c.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 27Q5irOE017381
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Aug 2022 05:44:53 GMT
-Received: from [10.216.58.196] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 25 Aug
- 2022 22:44:50 -0700
-Message-ID: <f6b58663-c414-1996-4951-7435070bec58@quicinc.com>
-Date:   Fri, 26 Aug 2022 11:14:42 +0530
+        Fri, 26 Aug 2022 02:19:24 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D025B940C
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Aug 2022 23:19:22 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id m3so725853lfg.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Aug 2022 23:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc;
+        bh=IWS8JKWz75o/tyFJVlcO0u3nY2nMGgxlstXU+vNhUYY=;
+        b=PTOX4eZo3au7x2ua0rwkqeVyPaYl1sms+TYrAkEO5uQdVHn8e43gb7K/YH3QOioTIT
+         vYZ4ipsviVMQDruLeDkFaj3ZyVUxZc+V8J37aJiYlOp/xWqeoyhAhclnZP/rZsBlsehH
+         qQRBefEbYs0HQP9vl7vLqXmzGbtlk+UOZ2iJ6QPRel0Ii5cbKJt2+5u1UB8nSqaA6Z99
+         4R56+Y6xfFowmnvg7whmI7ggQTioviUFGaeONEP8IglZW+j8TlTEkXxl9RGMVuHUh7e9
+         I1R+KnAj+nxgDbFVWjbDznUlcPnyXVgu5DrFs01AuRlXoa3Pjf9NtOpdp6UD/0J8LeQt
+         fYzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc;
+        bh=IWS8JKWz75o/tyFJVlcO0u3nY2nMGgxlstXU+vNhUYY=;
+        b=Y1n8miQ27e9vm4pLjJgpkpk7OylBGq+0YaV8Q5wSLjkvu/OdBW15QyLr+t3sUsJKYx
+         VdTMBhNmqSgEtSN+FgoYoVB8Fo05LYI7T8ze/bFSK2wFErzpZvbXpqsr5VqnHflWYiHF
+         l2StW/+58p5yIbgh6nKZdGtksSSyf75Yld6GWEFW/jTkFxT5Xg7AC9tyG9KSrez8xe3e
+         nDa447yMOF0LXUyV+haCFVmM4ytbHsMS3DkNHrES/1O6RV7CCN7poHvzP0uGn79D5uv1
+         MGTEMIQbq9rT/Mn2Anuig71NIEr/ZwHp82PeXGP3fZv2kOounLOL4gXUTwSnkLUSlLdM
+         2yqg==
+X-Gm-Message-State: ACgBeo31mhUTdHNersLZvu7jpJXkpPje6Qq2etWW+2bd0x+KyoRod7+z
+        QriLWuamQMjvx0vOEmiNsxIb/A==
+X-Google-Smtp-Source: AA6agR4EGgyGn1ent3TwSlY5F52Gh3VviAOmzGSwXgW4lFYhiNuN7BSGLZIdYaDikQzy1JSZqF+/TQ==
+X-Received: by 2002:a19:7714:0:b0:492:df83:8a0b with SMTP id s20-20020a197714000000b00492df838a0bmr1882594lfc.104.1661494760801;
+        Thu, 25 Aug 2022 23:19:20 -0700 (PDT)
+Received: from [192.168.0.71] (82.131.98.15.cable.starman.ee. [82.131.98.15])
+        by smtp.gmail.com with ESMTPSA id c26-20020a05651200da00b0048b1d92991asm240700lfp.303.2022.08.25.23.19.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Aug 2022 23:19:18 -0700 (PDT)
+Message-ID: <15a997b2-966b-3a6f-aa75-3a21b268351d@linaro.org>
+Date:   Fri, 26 Aug 2022 09:19:16 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH -next 3/3] remoteproc: qcom: wcss: Use dev_err_probe()
- helper in q6v5_wcss_init_clock()
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH] dt-bindings: remoteproc: Add missing
+ (unevaluated|additional)Properties on child nodes
 Content-Language: en-US
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-CC:     <agross@kernel.org>, <bjorn.andersson@linaro.org>
-References: <20220826014511.2270433-1-yangyingliang@huawei.com>
- <20220826014511.2270433-3-yangyingliang@huawei.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20220826014511.2270433-3-yangyingliang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20220823145649.3118479-10-robh@kernel.org>
+ <1491c83f-cd75-4de3-ec26-86db4adb2ade@linaro.org>
+ <CAL_JsqJx1s5ez-ojP8ZK_MPBWuuLRyekjK1qhHd6Ezaimna8JQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAL_JsqJx1s5ez-ojP8ZK_MPBWuuLRyekjK1qhHd6Ezaimna8JQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: E_AmhqMYjXmuiWhfFjYh-EwikXrco8wK
-X-Proofpoint-GUID: E_AmhqMYjXmuiWhfFjYh-EwikXrco8wK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-26_02,2022-08-25_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 adultscore=0 malwarescore=0 clxscore=1015
- suspectscore=0 mlxlogscore=999 mlxscore=0 phishscore=0 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2208260021
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 8/26/2022 7:15 AM, Yang Yingliang wrote:
-> dev_err() can be replace with dev_err_probe() which will check if error
-> code is -EPROBE_DEFER.
+On 25/08/2022 16:13, Rob Herring wrote:
+> On Thu, Aug 25, 2022 at 3:23 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 23/08/2022 17:56, Rob Herring wrote:
+>>> In order to ensure only documented properties are present, node schemas
+>>> must have unevaluatedProperties or additionalProperties set to false
+>>> (typically).
+>>>
+>>> Signed-off-by: Rob Herring <robh@kernel.org>
+>>> ---
+>>>  .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 +
+>>>  .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 +
+>>>  .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml     | 1 +
+>>>  3 files changed, 3 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+>>> index e76c861165dd..e4a7da8020f4 100644
+>>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+>>> @@ -140,6 +140,7 @@ properties:
+>>>
+>>>    glink-edge:
+>>>      $ref: qcom,glink-edge.yaml#
+>>> +    unevaluatedProperties: false
+>>
+>> Is it actually needed? The qcom,glink-edge.yaml has
+>> additionalProperties:false, so I expect it to complain if anything
+>> appears here.
 > 
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_wcss.c | 90 ++++++++++-------------------
->   1 file changed, 30 insertions(+), 60 deletions(-)
+> Perhaps not, but I'm trying to come up with a meta-schema to check
+> these though I'm not sure I can get to no warnings which is how I
+> found all these cases. The main remaining warnings are bus child node
+> pattern schemas which can perhaps be handled with
+> 'additionalProperties: true'. The rule I have says if properties or
+> patternProperties is present then unevaluatedProperties or
+> additionalProperties must be. To handle this case, I think we'd have
+> to walk the $ref and check it.
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-> index 209fc1bd1424..ec9ad2c019aa 100644
-> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> @@ -902,87 +902,57 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
->   	int ret;
->   
->   	wcss->xo = devm_clk_get(wcss->dev, "xo");
-> -	if (IS_ERR(wcss->xo)) {
-> -		ret = PTR_ERR(wcss->xo);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get xo clock");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->xo))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->xo),
-> +				     "failed to get xo clock");
->   
->   	wcss->gcc_abhs_cbcr = devm_clk_get(wcss->dev, "gcc_abhs_cbcr");
-> -	if (IS_ERR(wcss->gcc_abhs_cbcr)) {
-> -		ret = PTR_ERR(wcss->gcc_abhs_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get gcc abhs clock");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->gcc_abhs_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->gcc_abhs_cbcr),
-> +				     "failed to get gcc abhs clock");
->   
->   	wcss->gcc_axim_cbcr = devm_clk_get(wcss->dev, "gcc_axim_cbcr");
-> -	if (IS_ERR(wcss->gcc_axim_cbcr)) {
-> -		ret = PTR_ERR(wcss->gcc_axim_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get gcc axim clock\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->gcc_axim_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->gcc_axim_cbcr),
-> +				     "failed to get gcc axim clock\n");
->   
->   	wcss->ahbfabric_cbcr_clk = devm_clk_get(wcss->dev,
->   						"lcc_ahbfabric_cbc");
-> -	if (IS_ERR(wcss->ahbfabric_cbcr_clk)) {
-> -		ret = PTR_ERR(wcss->ahbfabric_cbcr_clk);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get ahbfabric clock\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->ahbfabric_cbcr_clk))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->ahbfabric_cbcr_clk),
-> +				     "failed to get ahbfabric clock\n");
->   
->   	wcss->lcc_csr_cbcr = devm_clk_get(wcss->dev, "tcsr_lcc_cbc");
-> -	if (IS_ERR(wcss->lcc_csr_cbcr)) {
-> -		ret = PTR_ERR(wcss->lcc_csr_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get csr cbcr clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->lcc_csr_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->lcc_csr_cbcr),
-> +				     "failed to get csr cbcr clk\n");
->   
->   	wcss->ahbs_cbcr = devm_clk_get(wcss->dev,
->   				       "lcc_abhs_cbc");
-> -	if (IS_ERR(wcss->ahbs_cbcr)) {
-> -		ret = PTR_ERR(wcss->ahbs_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get ahbs_cbcr clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->ahbs_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->ahbs_cbcr),
-> +				     "failed to get ahbs_cbcr clk\n");
->   
->   	wcss->tcm_slave_cbcr = devm_clk_get(wcss->dev,
->   					    "lcc_tcm_slave_cbc");
-> -	if (IS_ERR(wcss->tcm_slave_cbcr)) {
-> -		ret = PTR_ERR(wcss->tcm_slave_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get tcm cbcr clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->tcm_slave_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->tcm_slave_cbcr),
-> +				     "failed to get tcm cbcr clk\n");
->   
->   	wcss->qdsp6ss_abhm_cbcr = devm_clk_get(wcss->dev, "lcc_abhm_cbc");
-> -	if (IS_ERR(wcss->qdsp6ss_abhm_cbcr)) {
-> -		ret = PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get abhm cbcr clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->qdsp6ss_abhm_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->qdsp6ss_abhm_cbcr),
-> +				     "failed to get abhm cbcr clk\n");
->   
->   	wcss->qdsp6ss_axim_cbcr = devm_clk_get(wcss->dev, "lcc_axim_cbc");
-> -	if (IS_ERR(wcss->qdsp6ss_axim_cbcr)) {
-> -		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->qdsp6ss_axim_cbcr))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->qdsp6ss_axim_cbcr),
-> +				     "failed to get axim cbcr clk\n");
->   
->   	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
-> -	if (IS_ERR(wcss->lcc_bcr_sleep)) {
-> -		ret = PTR_ERR(wcss->lcc_bcr_sleep);
-> -		if (ret != -EPROBE_DEFER)
-> -			dev_err(wcss->dev, "failed to get bcr cbcr clk\n");
-> -		return ret;
-> -	}
-> +	if (IS_ERR(wcss->lcc_bcr_sleep))
-> +		return dev_err_probe(wcss->dev, PTR_ERR(wcss->lcc_bcr_sleep),
-> +				     "failed to get bcr cbcr clk\n");
->   
->   	return 0;
+> Anyways, we can hold off on this one until when and if there's a
+> meta-schema in place.
 
-LGTM.
+For me adding unevaluatedProp:false everywhere with $ref is okay and it
+makes the code easier to read - no need to dive into referenced schema
+to remember if it allows or does not allow additional properties. It is
+also a safer choice if referenced schema forgot to set additionalProp:false.
 
-Reviewed-by:Mukesh Ojha <quic_mojha@quicinc.com>
+However if referenced schema has additionalProp:false, then
+unevaluatedProp:false here is redundant and question is whether the
+redundancy is worth additional readability/obviousness.
 
--Mukesh
+To me, unevaluatedProp:false here would during review save time - no
+need to jump into referenced schema to check what is there. If we make
+it a rule / coding convention, then I am in.
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->   }
+Best regards,
+Krzysztof
