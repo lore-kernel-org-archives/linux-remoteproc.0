@@ -2,27 +2,27 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C85EECAAA2
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 01:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D5DECAAD1
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 01:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244405AbiHZBhY (ORCPT
+        id S244471AbiHZBhY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Thu, 25 Aug 2022 21:37:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39824 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233284AbiHZBhV (ORCPT
+        with ESMTP id S244189AbiHZBhW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 25 Aug 2022 21:37:21 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 464F3B1B9F;
-        Thu, 25 Aug 2022 18:37:20 -0700 (PDT)
-Received: from dggpemm500020.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4MDMp94Mr4znTln;
-        Fri, 26 Aug 2022 09:34:57 +0800 (CST)
+        Thu, 25 Aug 2022 21:37:22 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14061C2E98;
+        Thu, 25 Aug 2022 18:37:21 -0700 (PDT)
+Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4MDMmq1Svjz1N7K7;
+        Fri, 26 Aug 2022 09:33:47 +0800 (CST)
 Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500020.china.huawei.com (7.185.36.49) with Microsoft SMTP Server
+ dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Fri, 26 Aug 2022 09:37:18 +0800
+ 15.1.2375.24; Fri, 26 Aug 2022 09:37:19 +0800
 Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
  (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 26 Aug
@@ -30,10 +30,12 @@ Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
 From:   Yang Yingliang <yangyingliang@huawei.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
 CC:     <agross@kernel.org>, <bjorn.andersson@linaro.org>
-Subject: [PATCH -next 1/3] remoteproc: qcom: wcss: check return value after calling platform_get_resource_byname()
-Date:   Fri, 26 Aug 2022 09:45:09 +0800
-Message-ID: <20220826014511.2270433-1-yangyingliang@huawei.com>
+Subject: [PATCH -next 3/3] remoteproc: qcom: wcss: Use dev_err_probe() helper in q6v5_wcss_init_clock()
+Date:   Fri, 26 Aug 2022 09:45:11 +0800
+Message-ID: <20220826014511.2270433-3-yangyingliang@huawei.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220826014511.2270433-1-yangyingliang@huawei.com>
+References: <20220826014511.2270433-1-yangyingliang@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -45,29 +47,136 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-If platform_get_resource_byname() fails, 'res' will be set to null pointer,
-it will cause null-ptr-deref when it used in devm_ioremap(), so we need check
-the return value.
+dev_err() can be replace with dev_err_probe() which will check if error
+code is -EPROBE_DEFER.
 
-Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
 Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/qcom_q6v5_wcss.c | 90 ++++++++++-------------------
+ 1 file changed, 30 insertions(+), 60 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index bb0947f7770e..017ee225dc32 100644
+index 209fc1bd1424..ec9ad2c019aa 100644
 --- a/drivers/remoteproc/qcom_q6v5_wcss.c
 +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -827,6 +827,8 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
+@@ -902,87 +902,57 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
  	int ret;
  
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "qdsp6");
-+	if (!res)
-+		return -EINVAL;
- 	wcss->reg_base = devm_ioremap(&pdev->dev, res->start,
- 				      resource_size(res));
- 	if (!wcss->reg_base)
+ 	wcss->xo = devm_clk_get(wcss->dev, "xo");
+-	if (IS_ERR(wcss->xo)) {
+-		ret = PTR_ERR(wcss->xo);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get xo clock");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->xo))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->xo),
++				     "failed to get xo clock");
+ 
+ 	wcss->gcc_abhs_cbcr = devm_clk_get(wcss->dev, "gcc_abhs_cbcr");
+-	if (IS_ERR(wcss->gcc_abhs_cbcr)) {
+-		ret = PTR_ERR(wcss->gcc_abhs_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get gcc abhs clock");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->gcc_abhs_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->gcc_abhs_cbcr),
++				     "failed to get gcc abhs clock");
+ 
+ 	wcss->gcc_axim_cbcr = devm_clk_get(wcss->dev, "gcc_axim_cbcr");
+-	if (IS_ERR(wcss->gcc_axim_cbcr)) {
+-		ret = PTR_ERR(wcss->gcc_axim_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get gcc axim clock\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->gcc_axim_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->gcc_axim_cbcr),
++				     "failed to get gcc axim clock\n");
+ 
+ 	wcss->ahbfabric_cbcr_clk = devm_clk_get(wcss->dev,
+ 						"lcc_ahbfabric_cbc");
+-	if (IS_ERR(wcss->ahbfabric_cbcr_clk)) {
+-		ret = PTR_ERR(wcss->ahbfabric_cbcr_clk);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get ahbfabric clock\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->ahbfabric_cbcr_clk))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->ahbfabric_cbcr_clk),
++				     "failed to get ahbfabric clock\n");
+ 
+ 	wcss->lcc_csr_cbcr = devm_clk_get(wcss->dev, "tcsr_lcc_cbc");
+-	if (IS_ERR(wcss->lcc_csr_cbcr)) {
+-		ret = PTR_ERR(wcss->lcc_csr_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get csr cbcr clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->lcc_csr_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->lcc_csr_cbcr),
++				     "failed to get csr cbcr clk\n");
+ 
+ 	wcss->ahbs_cbcr = devm_clk_get(wcss->dev,
+ 				       "lcc_abhs_cbc");
+-	if (IS_ERR(wcss->ahbs_cbcr)) {
+-		ret = PTR_ERR(wcss->ahbs_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get ahbs_cbcr clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->ahbs_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->ahbs_cbcr),
++				     "failed to get ahbs_cbcr clk\n");
+ 
+ 	wcss->tcm_slave_cbcr = devm_clk_get(wcss->dev,
+ 					    "lcc_tcm_slave_cbc");
+-	if (IS_ERR(wcss->tcm_slave_cbcr)) {
+-		ret = PTR_ERR(wcss->tcm_slave_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get tcm cbcr clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->tcm_slave_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->tcm_slave_cbcr),
++				     "failed to get tcm cbcr clk\n");
+ 
+ 	wcss->qdsp6ss_abhm_cbcr = devm_clk_get(wcss->dev, "lcc_abhm_cbc");
+-	if (IS_ERR(wcss->qdsp6ss_abhm_cbcr)) {
+-		ret = PTR_ERR(wcss->qdsp6ss_abhm_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get abhm cbcr clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->qdsp6ss_abhm_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->qdsp6ss_abhm_cbcr),
++				     "failed to get abhm cbcr clk\n");
+ 
+ 	wcss->qdsp6ss_axim_cbcr = devm_clk_get(wcss->dev, "lcc_axim_cbc");
+-	if (IS_ERR(wcss->qdsp6ss_axim_cbcr)) {
+-		ret = PTR_ERR(wcss->qdsp6ss_axim_cbcr);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get axim cbcr clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->qdsp6ss_axim_cbcr))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->qdsp6ss_axim_cbcr),
++				     "failed to get axim cbcr clk\n");
+ 
+ 	wcss->lcc_bcr_sleep = devm_clk_get(wcss->dev, "lcc_bcr_sleep");
+-	if (IS_ERR(wcss->lcc_bcr_sleep)) {
+-		ret = PTR_ERR(wcss->lcc_bcr_sleep);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(wcss->dev, "failed to get bcr cbcr clk\n");
+-		return ret;
+-	}
++	if (IS_ERR(wcss->lcc_bcr_sleep))
++		return dev_err_probe(wcss->dev, PTR_ERR(wcss->lcc_bcr_sleep),
++				     "failed to get bcr cbcr clk\n");
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
