@@ -2,107 +2,174 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C20BECAAD4
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 26 Aug 2022 13:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62FCECAAA2
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 Aug 2022 17:40:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbiHZNEj (ORCPT
+        id S229587AbiH2Rk3 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 26 Aug 2022 09:04:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33720 "EHLO
+        Mon, 29 Aug 2022 13:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344059AbiHZNEh (ORCPT
+        with ESMTP id S229611AbiH2Rk1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 26 Aug 2022 09:04:37 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C084CE325;
-        Fri, 26 Aug 2022 06:04:35 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27QC9wmv022594;
-        Fri, 26 Aug 2022 15:04:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=z1xWPAdXPL/hA9ygi8o8THolktSH7wq59J0SnZUuJsw=;
- b=2P6I1UAKwBiPCDPfCOUhtVGEhodEsu99i72TZ6GcvZSfQDep0JsfcThcy+mjvCivhi/K
- KHMILPn2mMm12K+UNlUEfwgbbQa+xJkvMP4ZJWQ321GActdyZd8xBapUIpDMLXffeosq
- sWq/Fig2Hk91Tp+11OgLvU+bRANlh3xQhXMa8u6Z2HiDFycR+80sgr0swL7OBv9kCDAP
- t94G2fmHC7aScV2CZ7uJzY7JrIie1yM7rI8q+TzSjNVp6jKPHo5APeakOr7XFI5CaELW
- TTGM4PPU4RecY64ZWzWcI/1SKDxYPBmDewaYz+jF2qbnptkzWRTu8BQx4smOH8mLwmOP +w== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3j4w3dmcbf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 Aug 2022 15:04:12 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AE15310002A;
-        Fri, 26 Aug 2022 15:04:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CD49D228A39;
-        Fri, 26 Aug 2022 15:04:10 +0200 (CEST)
-Received: from localhost (10.75.127.118) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Fri, 26 Aug
- 2022 15:04:07 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <arnaud.pouliquen@foss.st.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH v3] arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-Date:   Fri, 26 Aug 2022 15:04:02 +0200
-Message-ID: <20220826130402.2207808-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 29 Aug 2022 13:40:27 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA18453013
+        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Aug 2022 10:40:25 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id n65-20020a17090a5ac700b001fbb4fad865so9286610pji.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Aug 2022 10:40:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=s6bYNpML21qzhk9c6rS49HOi5hkJ5sJySwf5mxEe49g=;
+        b=rRgo00unpZZnp/iKatcDw2P9q6aBOTa3VIJ41hGdq2Ue/i2CtTN2avO+BGFzPm7ldJ
+         Q4fcuykOqMRAXY15s1bCTM3iY+m2zAG0mUi09ztJOxDuEVlbao5Vu0ZROdDmba5HZX9z
+         mHPC7Jp3kLqFIbD03qnGdPz08YXFSVzC23jN911UhzBB9JMn0vPw9BKRahCzStPcwpJL
+         vAL6DWNqiIGoRocETe742dBQeMUzBWmIX9gHDnCjreZ718lu4bVA8ktqsjs9QMNp8WVb
+         I3YkJ71m+b5yYqo/m3O5I9esu+OgU2Cw/ZIRjR2ssuxrgD3GVRjq6S7inlqGU5kDWqvQ
+         gd4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=s6bYNpML21qzhk9c6rS49HOi5hkJ5sJySwf5mxEe49g=;
+        b=ysU6XN+q5bDPEhvWId0HXYBtvaBypLo+3cOU7ngE//utO1U5OYsn2XwXjdlQPLzwvC
+         iS/fHXgO2GUg5ahIBAUxOl77w88ChHXcSZ4ydXlM99ZgEQ5ZEeciuvVzXZpAOQhZiq+Y
+         U1wBGuyrIeh0WniL62+SgQ7DW81Oo3ZJRPvoutzJzNyKREzwuIDWQU0viSPTnJIKr45a
+         H89GQkuItI7cRpQXWi3Wv/qb41X6khv9BZJ3FtD9iUZ5SFG8tgdFH8LxyFUA9u8Fi0Jf
+         nyF2KtBPelQn38UPCOglAN+REy0WqlG3cedMu5WCx8rM8uBt8I+ezWOynlxoXEWnkELx
+         HD4g==
+X-Gm-Message-State: ACgBeo2wS/jDfUXVMM7gFZQZwag9g6A9F4pzrCpr4BgioqJpwEz9iBIr
+        dd1Lr5RMMknmnVX3/x57z5z03g==
+X-Google-Smtp-Source: AA6agR5A1l3owXOrDlGd71lrBje/h4zCkOyCf84EtysjEUjXD5K1Zz+Ho52D2qgBJcB1fk3TqmErmw==
+X-Received: by 2002:a17:902:9b85:b0:16e:cc02:b9b2 with SMTP id y5-20020a1709029b8500b0016ecc02b9b2mr17622412plp.74.1661794824904;
+        Mon, 29 Aug 2022 10:40:24 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id r2-20020aa79882000000b0053826ec2a68sm3224505pfl.191.2022.08.29.10.40.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Aug 2022 10:40:23 -0700 (PDT)
+Date:   Mon, 29 Aug 2022 11:40:21 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Daisuke Nojiri <dnojiri@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Prashant Malani <pmalani@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        chrome-platform@lists.linux.dev,
+        Project_Global_Chrome_Upstream_Group@mediatek.com,
+        weishunc@google.com
+Subject: Re: [PATCH v2 2/9] remoteproc: mediatek: Support hanlding scp core 1
+ wdt timeout
+Message-ID: <20220829174021.GA2264818@p14s>
+References: <20220608083553.8697-1-tinghan.shen@mediatek.com>
+ <20220608083553.8697-3-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.118]
-X-ClientProxiedBy: GPXDAG2NODE6.st.com (10.75.127.70) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-08-26_06,2022-08-25_01,2022-06-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220608083553.8697-3-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
-from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
-By default give everyone who had the old driver enabled the rpmsg_ctrl
-driver too.
+Hi Tinghan,
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
+I have started reviewing this set and I expect comments to be spread out over a few
+days.  I will tell you when I am done.
 
-This patch is extracted from the series [1] that has been partially
-integrated in the Linux Kernel 5.18-rc1.
+Please see below for comments...
 
-Update vs previous version[2]:
- - resent after rebase on Linux kernel v6.0-rc2.
+On Wed, Jun 08, 2022 at 04:35:46PM +0800, Tinghan Shen wrote:
+> MT8195 SCP is a dual-core processor. The SCP core 1 watchdog timeout
+> interrupt uses the same interrupt line of SCP core 0 watchdog timeout
+> interrupt.
+> 
+> Add support for handling SCP core 1 watchdog timeout interrupt in the
+> SCP IRQ handler.
+> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+>  drivers/remoteproc/mtk_common.h |  4 ++++
+>  drivers/remoteproc/mtk_scp.c    | 27 ++++++++++++++++++++++++++-
+>  2 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index ea6fa1100a00..73e8adf00de3 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -54,6 +54,10 @@
+>  #define MT8192_CORE0_WDT_IRQ		0x10030
+>  #define MT8192_CORE0_WDT_CFG		0x10034
+>  
+> +#define MT8195_SYS_STATUS		0x4004
+> +#define MT8195_CORE0_WDT		BIT(16)
+> +#define MT8195_CORE1_WDT		BIT(17)
+> +
+>  #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
+>  
+>  #define SCP_FW_VER_LEN			32
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 47b2a40e1b4a..3510c6d0bbc8 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -212,6 +212,31 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+>  	}
+>  }
+>  
+> +static void mt8195_scp_irq_handler(struct mtk_scp *scp)
+> +{
+> +	u32 scp_to_host;
+> +
+> +	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
+> +
+> +	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
+> +		scp_ipi_handler(scp);
+> +
+> +		/*
+> +		 * SCP won't send another interrupt until we clear
+> +		 * MT8192_SCP2APMCU_IPC.
+> +		 */
+> +		writel(MT8192_SCP_IPC_INT_BIT,
+> +		       scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
+> +	} else {
+> +		if (readl(scp->reg_base + MT8195_SYS_STATUS) & MT8195_CORE1_WDT) {
+> +			writel(1, scp->reg_base + MT8195_CORE1_WDT_IRQ);
+> +		} else {
+> +			writel(1, scp->reg_base + MT8192_CORE0_WDT_IRQ);
+> +			scp_wdt_handler(scp, scp_to_host);
 
-[1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
-[2]https://lore.kernel.org/linux-arm-kernel/b301b3f5-f0be-47b7-4789-f9914497b819@foss.st.com/T/
----
- arch/arm/configs/qcom_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Why is scp_wdt_handler() not called when CORE1 signals a watchdog failure?  If
+this is the intended behaviour there is no way for anyone but you to know that
+it is the case.  
 
-diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
-index 8a59441701a8..57686857d08a 100644
---- a/arch/arm/configs/qcom_defconfig
-+++ b/arch/arm/configs/qcom_defconfig
-@@ -245,6 +245,7 @@ CONFIG_QCOM_Q6V5_PAS=y
- CONFIG_QCOM_Q6V5_PIL=y
- CONFIG_QCOM_WCNSS_PIL=y
- CONFIG_RPMSG_CHAR=y
-+CONFIG_RPMSG_CTRL=y
- CONFIG_RPMSG_QCOM_GLINK_SMEM=y
- CONFIG_RPMSG_QCOM_SMD=y
- CONFIG_QCOM_COMMAND_DB=y
--- 
-2.24.3
-
+> +		}
+> +	}
+> +}
+> +
+>  static irqreturn_t scp_irq_handler(int irq, void *priv)
+>  {
+>  	struct mtk_scp *scp = priv;
+> @@ -961,7 +986,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+>  static const struct mtk_scp_of_data mt8195_of_data = {
+>  	.scp_clk_get = mt8195_scp_clk_get,
+>  	.scp_before_load = mt8195_scp_before_load,
+> -	.scp_irq_handler = mt8192_scp_irq_handler,
+> +	.scp_irq_handler = mt8195_scp_irq_handler,
+>  	.scp_reset_assert = mt8192_scp_reset_assert,
+>  	.scp_reset_deassert = mt8192_scp_reset_deassert,
+>  	.scp_stop = mt8195_scp_stop,
+> -- 
+> 2.18.0
+> 
