@@ -2,66 +2,97 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B49C67868
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 Aug 2022 23:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74C4ECAAD4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Aug 2022 14:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbiH2XqY (ORCPT
+        id S231658AbiHaOgn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 29 Aug 2022 19:46:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34368 "EHLO
+        Wed, 31 Aug 2022 10:36:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiH2XqX (ORCPT
+        with ESMTP id S230215AbiHaOgm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 29 Aug 2022 19:46:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C3F898A5A;
-        Mon, 29 Aug 2022 16:46:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C3F3EB815D1;
-        Mon, 29 Aug 2022 23:46:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5F2EC43470;
-        Mon, 29 Aug 2022 23:46:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661816780;
-        bh=WYQPNXG9dqE+9O4LnJLU3eHkWGDJlK0p2LnIx9mJadI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IX6t+6/7xcBoY9fTbX1KRcUycV8kugLe6XHuD3dgIpIxN66ycBzlN3w7lcbP7HeSw
-         jxz4xvFNFwscRH7luSpSvtHGrut0lwOzSRsgw/JpQVTsrNjNqolj6nuG4d8RpPkJer
-         8NH+0mms0sYq6K5TojMkkauA1sk2t+90HW6E/ul6HB15mOuPqk/YKMnF1sfXe2e7+b
-         x9JrIMfE/hFDjudfw0WkaM1AAMNPCDZ5h0ToPAR3Ie7LQm12BcgJT7eS5RNpqgRxFu
-         bQm1XRITwGChz5pDjprlF2WZlNBwzKFCNGm8sWw50H07sCqhv57G3y6eJJ62HqAgJ5
-         5GB7/poDRU3dw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>, konrad.dybcio@somainline.org,
-        mathieu.poirier@linaro.org, Bjorn Andersson <andersson@kernel.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Update Bjorn's email address
-Date:   Mon, 29 Aug 2022 18:45:42 -0500
-Message-Id: <166181675993.322065.9091360700945964893.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220819142549.1605081-1-bjorn.andersson@linaro.org>
-References: <20220819142549.1605081-1-bjorn.andersson@linaro.org>
+        Wed, 31 Aug 2022 10:36:42 -0400
+Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE6465830;
+        Wed, 31 Aug 2022 07:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:Message-Id
+        :Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=kItaLmx8+//UUguaHgtMVugiMoHgLZplR7VDHU7uylI=; b=UP2TZdb/K2rwG+vcv/nQZecbI5
+        uyE7Pwh4rk16ER0P/U3Ak0tFtPj68U3v7OTF0es7+9J38oGa1OFWm3afZOfP+qrlGgXRoKSnGPzRU
+        httzHG9R+HQGTp4EYyHj8teMB6xecooA3ETDB9G0zMUcE88OSJG7KmhYN57KM4ekhFKo34UyPnVNF
+        fi2l5GJNe3nxfWw7aSU2FHkKbdOgeJoYFfY5FpXhloaE6IXbaytGVnFJy8vJ/fZD6HSnfo9wejnyA
+        N55c1WOe+TmbanhKnjyJYQN+UpqmaIVVGf+9VQluzyB2/UcIT/Xum4HOLEAA7FfzCCmyfUYqTHrVF
+        cQbe0v/A==;
+Received: from [10.22.3.24] (helo=kernkonzept.com)
+        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
+        id 1oTO3y-003wS7-Sf; Wed, 31 Aug 2022 15:47:26 +0200
+From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Subject: [PATCH v3 0/7] remoteproc: qcom_q6v5_mss: Add MSM8909 and MSM8953
+Date:   Wed, 31 Aug 2022 15:46:19 +0200
+Message-Id: <20220831134626.2803117-1-stephan.gerhold@kernkonzept.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 19 Aug 2022 07:25:49 -0700, Bjorn Andersson wrote:
-> Update the email address for Bjorn's maintainer entries and fill in
-> .mailmap accordingly.
-> 
-> 
+Convert parts of the qcom,q6v5.txt binding documentation to a DT schema
+(together with some DT fixes) in preparation of adding new compatibles
+for MSM8909 and MSM8953. The schema can be easily shared between
+MSM8916, MSM8974, MSM8909 and MSM8953 because they have almost the same
+requirements. The other SoCs are quite different and are likely more
+clearly described in separate DT schema(s) to avoid a lot of complicated
+if statements.
 
-Applied, thanks!
+Since there were some concerns about overlap with the more generic
+(but also more complex) DT schema Sireesh made in [1], I've coordinated
+with Sireesh for v3 and include his adjusted changes for MSM8953 here.
 
-[1/1] MAINTAINERS: Update Bjorn's email address
-      commit: 8c8d28e1f10a0359f0c704be18cf744b3513acd2
+---
+Changes in v3:
+  - Combine series with Sireesh's for MSM8953
 
-Best regards,
+Changes in v2:
+  - Address review comments from Krzysztof
+  - Drop "ARM: dts: qcom: msm8974: Disable remoteprocs by default"
+    since Bjorn applied it already
+
+Sireesh Kodali (1):
+  remoteproc: qcom: q6v5-mss: Add modem support on MSM8953
+
+Stephan Gerhold (6):
+  arm64: dts: qcom: msm8916: Drop MSS fallback compatible
+  dt-bindings: remoteproc: qcom,q6v5: Move MSM8916 to schema
+  dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8974
+  dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8909
+  remoteproc: qcom_q6v5_mss: Add support for MSM8909
+  dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8953
+
+ .../remoteproc/qcom,msm8916-mss-pil.yaml      | 291 ++++++++++++++++++
+ .../bindings/remoteproc/qcom,q6v5.txt         |  35 ---
+ arch/arm64/boot/dts/qcom/msm8916.dtsi         |   2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c            | 174 +++++++++--
+ 4 files changed, 433 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.30.2
+
