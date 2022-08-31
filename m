@@ -2,104 +2,114 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D8FECAAD1
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Aug 2022 16:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B931ECAAD1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Aug 2022 16:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232097AbiHaQRw (ORCPT
+        id S232004AbiHaQql (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 31 Aug 2022 12:17:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
+        Wed, 31 Aug 2022 12:46:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231878AbiHaQRp (ORCPT
+        with ESMTP id S231724AbiHaQqi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 31 Aug 2022 12:17:45 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC207D2EB5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:17:42 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id z23so12297678ljk.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:17:42 -0700 (PDT)
+        Wed, 31 Aug 2022 12:46:38 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72518D83EF
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:46:36 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id c24so13959941pgg.11
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:46:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc;
-        bh=cKBGsEaj4oQkEiZ75eQ0nd+cq+8A2N09JqV8gHiJ4+Q=;
-        b=tMgFRqslaUaliYOxYH0dYUK2/uIP7BKLWbF+I6IKNsjCJinHeYlZHRVMu1TRfw18Wp
-         bUUkrsR36U9exIiOTQm6OmML0i/o8y2PcqqRp5BB8Nr2aaU0hNDmnhYE+52sHOujL6Vt
-         1edd5Gm891k0Nu5Fsw1IyJvFBxknVve9eMr9QIBaqtPqLZjmLfNcGdJqcnrwyXclrZrA
-         K9X6jK+IPOdS3ljtzFzBXEnpyCtnp6lopK0QmsQNQFcBrE2nqL3pllJCwOEwf0SimD2e
-         LzLBsew2A2CtBjjxVQ9pqWnVFcUCtYQn0uJKMIvISBauaVlJIsJxLbwth/pDtYdLqjiJ
-         h8ig==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc;
+        bh=SJCs+zrxY5DpXGitGn76vX0CELQw1pNbtUtNVrBLdOU=;
+        b=wMacyl36WAEo0AtT4AtI+EXWpdWwqkk25xy3wZzMH3h/+BSD4YjLg/n60+tfdQ+3+K
+         i2I7XBlF/1rR9OQNQs8I4LPpJTgQKoCUkA+aqzj4vEIZAmFbOMr95XPtKg4lghRU62PN
+         C7p/vH6t8izDWJYlyheurHuPKzwW/U52i65bHHdaIxhsLjBg4jcacWYfJcGxmgRmTFTa
+         czgixQLOXDOjAb4WEsgWe6/AGxGCyJ/MWHIvduGxb6ToLehe0wkuJZVFtBPFGFQiVXB+
+         dR/upGc/MzJr6zEPMFMoh+WSt1Y+Tck/7/7skyNtOCChrK0FFASzl/yW9dL0T+GDmp38
+         uEIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc;
-        bh=cKBGsEaj4oQkEiZ75eQ0nd+cq+8A2N09JqV8gHiJ4+Q=;
-        b=cE+gGBlp2ZHh4QM1vCtLOZLDo5iPKyosQL7f/NfOLpqqGrf0httSTUJLq5cJ9mMlyz
-         6PafY2Hu+UoTYrn5nKd/GaonMSnMWKnE2i8eJ+gd8ACFq6UjarIwjmvXGR4WSnrGDXD7
-         AUFQ56GT3+18Pwl4fiEqBEOGQTw+spzeNSBDXTSfayqYbMyc/1u0e92n0WsGEzG21Qi6
-         MJUFim7WRWL3RHcncVZu5/s0zHhawmpGRw/5CfEiEyxbjc6UNFDgvQOmQm07IG3H5LWQ
-         QVD6gq/quKIets4pUKKvZbVzrmSP/yaEOz1947J+t+tqUdhSytuWm/eKva2R2jQLvhtE
-         NCog==
-X-Gm-Message-State: ACgBeo3lamt2imdPUlByg0kiK8EeHrAO+eGh7Qj7Q8yby4yzO/sjq/nP
-        xHHBFa5bCYxQMXSdK40ZDWxGLg==
-X-Google-Smtp-Source: AA6agR4XliYALSJxmaQxjIWvOpSmc8kb/s83quW2sIBceAg8gUtAGNVFHuJ2Z38TzPn8KPwBT6uGuA==
-X-Received: by 2002:a05:651c:905:b0:261:d00c:e71 with SMTP id e5-20020a05651c090500b00261d00c0e71mr8699218ljq.407.1661962661016;
-        Wed, 31 Aug 2022 09:17:41 -0700 (PDT)
-Received: from krzk-bin.. (balticom-73-99-134.balticom.lv. [109.73.99.134])
-        by smtp.gmail.com with ESMTPSA id s2-20020a056512214200b004917a30c82bsm306338lfr.153.2022.08.31.09.17.39
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
+        bh=SJCs+zrxY5DpXGitGn76vX0CELQw1pNbtUtNVrBLdOU=;
+        b=tHArAfUVXg5vAJqZY186G+n+WE8UlS6g8HyoM8zHJKZTLMY5Y9PRy17SvAFMy3pCz+
+         iV4tB3Rbfff3QpmOzF4BzvSzdMIwyzwJbMAKnz4igb6Iy8MoADllYPMO2tQIe+CW6YgD
+         gLlGyWYc8qkVWT/L7sluHr56CyLhIsNYZ7wwVjft8oTnK6P5pHfCMB8bv5R74e1PJerQ
+         bWuzSEAKPQIfiIqHEQlF9Cnz8y7iCtYA3YjUtNtq0V2ezziU5Lu9IjBBpjuhhRClU7T0
+         YSXWwr5yuosYpqJdnFqDTRInZVjRya2Xf7XtniM5NrBk2+dUxG/xieEAhPAb1qBeZYqH
+         7geQ==
+X-Gm-Message-State: ACgBeo2aAKApD6DNAyb9zTTvQ/ouLE6ygqv0hKU5d59BSI9xZUoHCVwG
+        ScQcHc0hjRBkfW55cLHTK05DbA==
+X-Google-Smtp-Source: AA6agR6fkZMt73sieSqzi6umyc41MUl5fXDPsH4JeaX9QXNMq9ImVUzt9Z/JpwEBqUxhvzOTb4hAlg==
+X-Received: by 2002:a63:4802:0:b0:41c:ac9e:1950 with SMTP id v2-20020a634802000000b0041cac9e1950mr23084860pga.376.1661964395560;
+        Wed, 31 Aug 2022 09:46:35 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id j18-20020a635952000000b0042b5b036da4sm3518356pgm.68.2022.08.31.09.46.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Aug 2022 09:17:40 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] remoteproc: report firmware name on load failures
-Date:   Wed, 31 Aug 2022 19:17:36 +0300
-Message-Id: <20220831161736.749932-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 31 Aug 2022 09:46:34 -0700 (PDT)
+Date:   Wed, 31 Aug 2022 10:46:32 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     cgel.zte@gmail.com
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ye xingchen <ye.xingchen@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: Re: [PATCH linux-next] rpmsg: char: Remove the unneeded result
+ variable
+Message-ID: <20220831164632.GA217472@p14s>
+References: <20220826071954.252485-1-ye.xingchen@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220826071954.252485-1-ye.xingchen@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-remoteproc error messages like:
-  remoteproc remoteproc0: request_firmware failed: -2
-  remoteproc remoteproc1: request_firmware failed: -2
-are difficult to debug as one actually have no clue which device
-reported it and which firmware is missing.  Be verbose and print the
-name of the failed firmware.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+I am fine with the patch but I need to understand who is "cgel.zte" - are we
+talking about a person or an automated bot.  In case of the former than an SoB
+from that person needs to be on this patch.  If an automated bot, than that
+needs to be changed to someone accountable for the code that can put an SoB on
+the patch.
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e5279ed9a8d7..71cd7ed7a970 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1923,7 +1923,8 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	/* load firmware */
- 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
- 	if (ret < 0) {
--		dev_err(dev, "request_firmware failed: %d\n", ret);
-+		dev_err(dev, "request_firmware %s failed: %d\n",
-+			rproc->firmware, ret);
- 		goto unlock_mutex;
- 	}
- 
-@@ -2023,7 +2024,8 @@ int rproc_boot(struct rproc *rproc)
- 		/* load firmware */
- 		ret = request_firmware(&firmware_p, rproc->firmware, dev);
- 		if (ret < 0) {
--			dev_err(dev, "request_firmware failed: %d\n", ret);
-+			dev_err(dev, "request_firmware %s failed: %d\n",
-+				rproc->firmware, ret);
- 			goto downref_rproc;
- 		}
- 
--- 
-2.34.1
+Thanks,
+Mathieu
 
+On Fri, Aug 26, 2022 at 07:19:54AM +0000, cgel.zte@gmail.com wrote:
+> From: ye xingchen <ye.xingchen@zte.com.cn>
+> 
+> Return the value rpmsg_chrdev_eptdev_add() directly instead of storing it
+> in another redundant variable.
+> 
+> Reported-by: Zeal Robot <zealci@zte.com.cn>
+> Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 4f2189111494..0850ae34fb88 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -424,15 +424,12 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
+>  			       struct rpmsg_channel_info chinfo)
+>  {
+>  	struct rpmsg_eptdev *eptdev;
+> -	int ret;
+>  
+>  	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
+>  	if (IS_ERR(eptdev))
+>  		return PTR_ERR(eptdev);
+>  
+> -	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> -
+> -	return ret;
+> +	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+>  }
+>  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
+>  
+> -- 
+> 2.25.1
