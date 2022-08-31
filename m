@@ -2,139 +2,104 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CBFC0502A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Aug 2022 14:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D8FECAAD1
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Aug 2022 16:17:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231765AbiHaOgx (ORCPT
+        id S232097AbiHaQRw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 31 Aug 2022 10:36:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50480 "EHLO
+        Wed, 31 Aug 2022 12:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231785AbiHaOgv (ORCPT
+        with ESMTP id S231878AbiHaQRp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 31 Aug 2022 10:36:51 -0400
-Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E867E51A18;
-        Wed, 31 Aug 2022 07:36:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kernkonzept.com; s=mx1; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Sm7EcjrkBKNRmGQEqUHbiZj7AE8xpIRT1c+ae8XVuVs=; b=XoFt6Ofsb1K+i1OqIbZZFTaQn6
-        oP+uAfh9fyPKy4jfEQkF8Ri36Quj4JBFcJyGgLJoCUm4Ys4HTLWw2W2PdftFGTTk+I6g+5mvz+qVJ
-        1aD/DZ75ZD2bVDysw41VIM13P5zZIbBztZKze2aGAfBq0lqxTNzzTiws0dPae/7i3uuyBtLmkD7dp
-        WgpeiWLyoboWWALY4A9TrLbJ/W8a5+74EWiSwLnVVP/lM8WaW6EtiuwmG91tCWoSYB5vXWkZO9qHS
-        LQ6+SBj91XJHOUNdxeVnbnl9xotwrMY9ja+TBWZZkukeBDsOk7uIKuTo9gFcvGuNiV0A3E/zzborp
-        vUQnh1lQ==;
-Received: from [10.22.3.24] (helo=kernkonzept.com)
-        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
-        id 1oTO49-003wS7-M1; Wed, 31 Aug 2022 15:47:37 +0200
-From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Wed, 31 Aug 2022 12:17:45 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC207D2EB5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:17:42 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id z23so12297678ljk.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:17:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc;
+        bh=cKBGsEaj4oQkEiZ75eQ0nd+cq+8A2N09JqV8gHiJ4+Q=;
+        b=tMgFRqslaUaliYOxYH0dYUK2/uIP7BKLWbF+I6IKNsjCJinHeYlZHRVMu1TRfw18Wp
+         bUUkrsR36U9exIiOTQm6OmML0i/o8y2PcqqRp5BB8Nr2aaU0hNDmnhYE+52sHOujL6Vt
+         1edd5Gm891k0Nu5Fsw1IyJvFBxknVve9eMr9QIBaqtPqLZjmLfNcGdJqcnrwyXclrZrA
+         K9X6jK+IPOdS3ljtzFzBXEnpyCtnp6lopK0QmsQNQFcBrE2nqL3pllJCwOEwf0SimD2e
+         LzLBsew2A2CtBjjxVQ9pqWnVFcUCtYQn0uJKMIvISBauaVlJIsJxLbwth/pDtYdLqjiJ
+         h8ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc;
+        bh=cKBGsEaj4oQkEiZ75eQ0nd+cq+8A2N09JqV8gHiJ4+Q=;
+        b=cE+gGBlp2ZHh4QM1vCtLOZLDo5iPKyosQL7f/NfOLpqqGrf0httSTUJLq5cJ9mMlyz
+         6PafY2Hu+UoTYrn5nKd/GaonMSnMWKnE2i8eJ+gd8ACFq6UjarIwjmvXGR4WSnrGDXD7
+         AUFQ56GT3+18Pwl4fiEqBEOGQTw+spzeNSBDXTSfayqYbMyc/1u0e92n0WsGEzG21Qi6
+         MJUFim7WRWL3RHcncVZu5/s0zHhawmpGRw/5CfEiEyxbjc6UNFDgvQOmQm07IG3H5LWQ
+         QVD6gq/quKIets4pUKKvZbVzrmSP/yaEOz1947J+t+tqUdhSytuWm/eKva2R2jQLvhtE
+         NCog==
+X-Gm-Message-State: ACgBeo3lamt2imdPUlByg0kiK8EeHrAO+eGh7Qj7Q8yby4yzO/sjq/nP
+        xHHBFa5bCYxQMXSdK40ZDWxGLg==
+X-Google-Smtp-Source: AA6agR4XliYALSJxmaQxjIWvOpSmc8kb/s83quW2sIBceAg8gUtAGNVFHuJ2Z38TzPn8KPwBT6uGuA==
+X-Received: by 2002:a05:651c:905:b0:261:d00c:e71 with SMTP id e5-20020a05651c090500b00261d00c0e71mr8699218ljq.407.1661962661016;
+        Wed, 31 Aug 2022 09:17:41 -0700 (PDT)
+Received: from krzk-bin.. (balticom-73-99-134.balticom.lv. [109.73.99.134])
+        by smtp.gmail.com with ESMTPSA id s2-20020a056512214200b004917a30c82bsm306338lfr.153.2022.08.31.09.17.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Aug 2022 09:17:40 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-Subject: [PATCH v3 6/7] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8953
-Date:   Wed, 31 Aug 2022 15:46:25 +0200
-Message-Id: <20220831134626.2803117-7-stephan.gerhold@kernkonzept.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220831134626.2803117-1-stephan.gerhold@kernkonzept.com>
-References: <20220831134626.2803117-1-stephan.gerhold@kernkonzept.com>
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] remoteproc: report firmware name on load failures
+Date:   Wed, 31 Aug 2022 19:17:36 +0300
+Message-Id: <20220831161736.749932-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add the compatible for MSS as found on the MSM8953 platform.
+remoteproc error messages like:
+  remoteproc remoteproc0: request_firmware failed: -2
+  remoteproc remoteproc1: request_firmware failed: -2
+are difficult to debug as one actually have no clue which device
+reported it and which firmware is missing.  Be verbose and print the
+name of the failed firmware.
 
-The situation is similar to the existing bindings for MSM8974: there is
-an additional "mss" power domain that must be voted for while starting
-up the remote processor. The difference is that on MSM8974 the power
-domain is represented as a regulator (firmware expects specific voltage)
-while on MSM8953 it is represented as power domain (firmware expects
-performance state instead of voltage).
-
-Handle this difference by adding the "mss" power domain as optional
-third item, and then restrict it (and make it required) only when using
-the MSM8953 compatible.
-
-Co-developed-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Changes in v3: Combine series with Sireesh's patches for MSM8953
----
- .../remoteproc/qcom,msm8916-mss-pil.yaml      | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-index 98b19296bde5..3686aabf074a 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-@@ -19,6 +19,7 @@ properties:
-       - enum:
-           - qcom,msm8909-mss-pil
-           - qcom,msm8916-mss-pil
-+          - qcom,msm8953-mss-pil
-           - qcom,msm8974-mss-pil
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e5279ed9a8d7..71cd7ed7a970 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1923,7 +1923,8 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	/* load firmware */
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+ 	if (ret < 0) {
+-		dev_err(dev, "request_firmware failed: %d\n", ret);
++		dev_err(dev, "request_firmware %s failed: %d\n",
++			rproc->firmware, ret);
+ 		goto unlock_mutex;
+ 	}
  
-       - const: qcom,q6v5-pil
-@@ -69,11 +70,16 @@ properties:
-     items:
-       - description: CX proxy power domain (control handed over after startup)
-       - description: MX proxy power domain (control handed over after startup)
-+      - description: MSS proxy power domain (control handed over after startup)
-+                     (only valid for qcom,msm8953-mss-pil)
-+    minItems: 2
+@@ -2023,7 +2024,8 @@ int rproc_boot(struct rproc *rproc)
+ 		/* load firmware */
+ 		ret = request_firmware(&firmware_p, rproc->firmware, dev);
+ 		if (ret < 0) {
+-			dev_err(dev, "request_firmware failed: %d\n", ret);
++			dev_err(dev, "request_firmware %s failed: %d\n",
++				rproc->firmware, ret);
+ 			goto downref_rproc;
+ 		}
  
-   power-domain-names:
-     items:
-       - const: cx
-       - const: mx
-+      - const: mss # only valid for qcom,msm8953-mss-pil
-+    minItems: 2
- 
-   pll-supply:
-     description: PLL proxy supply (control handed over after startup)
-@@ -186,6 +192,27 @@ required:
-   - smd-edge
- 
- allOf:
-+  # mss power domain is only valid (and required) for MSM8953
-+  - if:
-+      properties:
-+        compatible:
-+          const: qcom,msm8953-mss-pil
-+    then:
-+      properties:
-+        power-domains:
-+          minItems: 3
-+        power-domain-names:
-+          minItems: 3
-+      required:
-+        - power-domains
-+        - power-domain-names
-+    else:
-+      properties:
-+        power-domains:
-+          maxItems: 2
-+        power-domain-names:
-+          maxItems: 2
-+
-   # mss-supply is only valid (and required) for MSM8974
-   - if:
-       properties:
 -- 
-2.30.2
+2.34.1
 
