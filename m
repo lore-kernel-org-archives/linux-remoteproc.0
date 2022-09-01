@@ -2,59 +2,65 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72293ECAAD5
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Sep 2022 08:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A29ECAAD3
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Sep 2022 09:16:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234264AbiIAI42 (ORCPT
+        id S233090AbiIAJQm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Sep 2022 04:56:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35414 "EHLO
+        Thu, 1 Sep 2022 05:16:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234292AbiIAI4O (ORCPT
+        with ESMTP id S232661AbiIAJQm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Sep 2022 04:56:14 -0400
+        Thu, 1 Sep 2022 05:16:42 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C936D12CB19;
-        Thu,  1 Sep 2022 01:56:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 543CA11B3F2;
+        Thu,  1 Sep 2022 02:16:41 -0700 (PDT)
 Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2817OAJd006975;
-        Thu, 1 Sep 2022 08:56:07 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28199FEo014094;
+        Thu, 1 Sep 2022 09:16:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
+ mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=fQA25NwyX3gMlI+Zmailgv/tBeOJU/nLjAI1PDjDWcs=;
- b=cIQrOBgEJbf4qlfmFq0rClIgiFJLRhted5Df/YOjp7rRRjWcH20KbPJp8/Rdv/H/GgQJ
- Z35Iaoy7AxnG4pkz2e1psGN7UO7jinBnxolnFZExHVDjeDJKCSOS4z2pZW/ecqtGwU48
- QWTm15Y71iPgmH+WkBnmq3wSbNipEfybcEyKM1TQLMXZzeRdsHvzid6ovCHoW8VlNove
- 6vEiqjTT12lr0Woh3fUL8Ey+i8rNnXuUgYhdga2jWOGeZAPIiQ4/3R7Wju4mrz+gQ4rj
- 9U+QUON5InzbRQRAFEEWLKxmHCXrIu16azyhyGupYLoIrqQoMPjupP6/ydR6kZz8qmAK rg== 
+ bh=ToB2dSIlRM11vEL4doHMXqMu/GtaAHUycPtIU/eQv8o=;
+ b=IBvaPP5+kQlsQM3phvTX0qOzh0p6JgPwPkJxqaeyMY5ZlcCYUy+jZETC3CvELOgdbYlA
+ hEUTgK0FOi/o6hTe0geIEb0Ics0GykOkdQY7F8fxeoUF+S1vIlh9smatxHqOoEnLvXHA
+ pbO4WVgwhwCIi4gTepojmX4YTUUmjriIjy+5mRp7q6zxCx/zfmCK1FgYI7GzhCKlRKJb
+ ssd4Ob/sJgvZvt09d8qlKJYGDQsmbNKetAoI1sWB9TlM8TLthmFPYuIezc9kxlcGFk0f
+ aHpBp5RD8Cpp0uACU9O7Z+rpR3bzBs5Q+6akZQKkbWoglLn6DIFSZw82JLJpw1n+A0/I sQ== 
 Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jaaasb1tb-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jaaasb2yb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Sep 2022 08:56:07 +0000
+        Thu, 01 Sep 2022 09:16:01 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2818u7bj011761
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2819G08r012523
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 1 Sep 2022 08:56:07 GMT
+        Thu, 1 Sep 2022 09:16:00 GMT
 Received: from [10.216.21.166] (10.80.80.8) by nasanex01c.na.qualcomm.com
  (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 1 Sep 2022
- 01:56:04 -0700
-Message-ID: <33688ee4-df73-a107-b775-02c4b4bc4229@quicinc.com>
-Date:   Thu, 1 Sep 2022 14:25:54 +0530
+ 02:15:54 -0700
+Message-ID: <9b131ed3-f54b-9def-13dc-5e487a5d1502@quicinc.com>
+Date:   Thu, 1 Sep 2022 14:45:49 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH] remoteproc: report firmware name on load failures
+Subject: Re: [PATCH v3] arm: configs: Configs that had RPMSG_CHAR now get
+ RPMSG_CTRL
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_mojha@quicinc.com>
-References: <20220831161736.749932-1-krzysztof.kozlowski@linaro.org>
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20220826130402.2207808-1-arnaud.pouliquen@foss.st.com>
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20220831161736.749932-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220826130402.2207808-1-arnaud.pouliquen@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
@@ -62,62 +68,58 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5pe_VhOTQSEdev5asV9R6AVGlspLfv2D
-X-Proofpoint-ORIG-GUID: 5pe_VhOTQSEdev5asV9R6AVGlspLfv2D
+X-Proofpoint-GUID: FCA-4lj7_-WsNKFB2eftbBs1upR4tiqu
+X-Proofpoint-ORIG-GUID: FCA-4lj7_-WsNKFB2eftbBs1upR4tiqu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-09-01_06,2022-08-31_03,2022-06-22_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=999 spamscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=645 spamscore=0 adultscore=0
  clxscore=1011 mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2209010039
+ engine=8.12.0-2207270000 definitions=main-2209010041
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-hi,
+Hi,
 
-On 8/31/2022 9:47 PM, Krzysztof Kozlowski wrote:
-> remoteproc error messages like:
->    remoteproc remoteproc0: request_firmware failed: -2
->    remoteproc remoteproc1: request_firmware failed: -2
-> are difficult to debug as one actually have no clue which device
-> reported it and which firmware is missing.  Be verbose and print the
-> name of the failed firmware.
+On 8/26/2022 6:34 PM, Arnaud Pouliquen wrote:
+> In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
+> from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
+> By default give everyone who had the old driver enabled the rpmsg_ctrl
+> driver too.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->   drivers/remoteproc/remoteproc_core.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index e5279ed9a8d7..71cd7ed7a970 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1923,7 +1923,8 @@ int rproc_trigger_recovery(struct rproc *rproc)
->   	/* load firmware */
->   	ret = request_firmware(&firmware_p, rproc->firmware, dev);
->   	if (ret < 0) {
-> -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> +		dev_err(dev, "request_firmware %s failed: %d\n",
-> +			rproc->firmware, ret);
->   		goto unlock_mutex;
->   	}
->   
-> @@ -2023,7 +2024,8 @@ int rproc_boot(struct rproc *rproc)
->   		/* load firmware */
->   		ret = request_firmware(&firmware_p, rproc->firmware, dev);
->   		if (ret < 0) {
-> -			dev_err(dev, "request_firmware failed: %d\n", ret);
-> +			dev_err(dev, "request_firmware %s failed: %d\n",
-> +				rproc->firmware, ret);
+> This patch is extracted from the series [1] that has been partially
+> integrated in the Linux Kernel 5.18-rc1.
+> 
+> Update vs previous version[2]:
+>   - resent after rebase on Linux kernel v6.0-rc2.
+> 
+> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
+> [2]https://lore.kernel.org/linux-arm-kernel/b301b3f5-f0be-47b7-4789-f9914497b819@foss.st.com/T/
+> ---
+>   arch/arm/configs/qcom_defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/qcom_defconfig b/arch/arm/configs/qcom_defconfig
+> index 8a59441701a8..57686857d08a 100644
+> --- a/arch/arm/configs/qcom_defconfig
+> +++ b/arch/arm/configs/qcom_defconfig
+> @@ -245,6 +245,7 @@ CONFIG_QCOM_Q6V5_PAS=y
+>   CONFIG_QCOM_Q6V5_PIL=y
+>   CONFIG_QCOM_WCNSS_PIL=y
+>   CONFIG_RPMSG_CHAR=y
+> +CONFIG_RPMSG_CTRL=y
+>   CONFIG_RPMSG_QCOM_GLINK_SMEM=y
+>   CONFIG_RPMSG_QCOM_SMD=y
+>   CONFIG_QCOM_COMMAND_DB=y
 
-Good to have this.
-Acked-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
->   			goto downref_rproc;
->   		}
->   
+LGTM.
+Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
 -Mukesh
