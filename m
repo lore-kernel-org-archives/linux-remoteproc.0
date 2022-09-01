@@ -2,114 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B931ECAAD1
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 Aug 2022 16:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769C3ECAAD1
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Sep 2022 05:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232004AbiHaQql (ORCPT
+        id S233055AbiIAFch (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 31 Aug 2022 12:46:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
+        Thu, 1 Sep 2022 01:32:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231724AbiHaQqi (ORCPT
+        with ESMTP id S232999AbiIAFcg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 31 Aug 2022 12:46:38 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72518D83EF
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:46:36 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id c24so13959941pgg.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 31 Aug 2022 09:46:36 -0700 (PDT)
+        Thu, 1 Sep 2022 01:32:36 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD8584B4A1;
+        Wed, 31 Aug 2022 22:32:35 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id x23so16099562pll.7;
+        Wed, 31 Aug 2022 22:32:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc;
-        bh=SJCs+zrxY5DpXGitGn76vX0CELQw1pNbtUtNVrBLdOU=;
-        b=wMacyl36WAEo0AtT4AtI+EXWpdWwqkk25xy3wZzMH3h/+BSD4YjLg/n60+tfdQ+3+K
-         i2I7XBlF/1rR9OQNQs8I4LPpJTgQKoCUkA+aqzj4vEIZAmFbOMr95XPtKg4lghRU62PN
-         C7p/vH6t8izDWJYlyheurHuPKzwW/U52i65bHHdaIxhsLjBg4jcacWYfJcGxmgRmTFTa
-         czgixQLOXDOjAb4WEsgWe6/AGxGCyJ/MWHIvduGxb6ToLehe0wkuJZVFtBPFGFQiVXB+
-         dR/upGc/MzJr6zEPMFMoh+WSt1Y+Tck/7/7skyNtOCChrK0FFASzl/yW9dL0T+GDmp38
-         uEIw==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=ZEf1OKeDEA5V5Dw4/dVFv1v3HHH3zctUJHUkfHz+FDw=;
+        b=H5WY6xYS9QdIcDtuikUyl0kkaW2Gr6ukBwxpISk66kmJtE1fRufGYNYMxCtC1d8ay/
+         HJt0QRq2KDaboNrCxGPvMeypkYtRtJU3+Q7QnKWSI9aSM/bX7keMFBXIapevjexsZv5o
+         3ozD8iaupvfV22rgdkTFtF+lh5uhCcxlMEYkTq7t4jwHMp2XZUjeeNqkBO4leFV/3BG5
+         1I7YGGN4/d3TnAtzl1+lPz0tM/tkLMnnB2Da2l3lzbwciClyxNiqCBuqa0QH9Eb6tIR7
+         CMcSqaxhs12qn46D5vd2UDA36URK/7aIopsDVF+XkMAbySYxHiF1tWHx7TSK9Sw2KxzE
+         BPbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc;
-        bh=SJCs+zrxY5DpXGitGn76vX0CELQw1pNbtUtNVrBLdOU=;
-        b=tHArAfUVXg5vAJqZY186G+n+WE8UlS6g8HyoM8zHJKZTLMY5Y9PRy17SvAFMy3pCz+
-         iV4tB3Rbfff3QpmOzF4BzvSzdMIwyzwJbMAKnz4igb6Iy8MoADllYPMO2tQIe+CW6YgD
-         gLlGyWYc8qkVWT/L7sluHr56CyLhIsNYZ7wwVjft8oTnK6P5pHfCMB8bv5R74e1PJerQ
-         bWuzSEAKPQIfiIqHEQlF9Cnz8y7iCtYA3YjUtNtq0V2ezziU5Lu9IjBBpjuhhRClU7T0
-         YSXWwr5yuosYpqJdnFqDTRInZVjRya2Xf7XtniM5NrBk2+dUxG/xieEAhPAb1qBeZYqH
-         7geQ==
-X-Gm-Message-State: ACgBeo2aAKApD6DNAyb9zTTvQ/ouLE6ygqv0hKU5d59BSI9xZUoHCVwG
-        ScQcHc0hjRBkfW55cLHTK05DbA==
-X-Google-Smtp-Source: AA6agR6fkZMt73sieSqzi6umyc41MUl5fXDPsH4JeaX9QXNMq9ImVUzt9Z/JpwEBqUxhvzOTb4hAlg==
-X-Received: by 2002:a63:4802:0:b0:41c:ac9e:1950 with SMTP id v2-20020a634802000000b0041cac9e1950mr23084860pga.376.1661964395560;
-        Wed, 31 Aug 2022 09:46:35 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id j18-20020a635952000000b0042b5b036da4sm3518356pgm.68.2022.08.31.09.46.33
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=ZEf1OKeDEA5V5Dw4/dVFv1v3HHH3zctUJHUkfHz+FDw=;
+        b=3NWOWgBid8INr55in9LGZ674HBE4jYnozWxebZdcg4EhVpDnmh5lPEP3b2aSj0i3R8
+         poo+xF1I45L2EMxIoKGyF/DDTDIdQTDMl/Il/P7xzp024hRawd++4rn4rZ2UydPzfJy9
+         mhM7qwlk261O+/ch6JW2EybaaiktrguyTkqDGdrbelLM9kDZnNGZN0X1OUlIDgauXsEf
+         MbXRTuqoI5kWP7bAQjp6YT00APParo4i7Cy0vJLEz9Bv9/+lAV6v0RlD9hW54/GMXURd
+         znU+A+unN8ykhHwUd7ykTBYIzgTzfVfRhY7VqdJGPWsrZgJA990Wc/MAWdAYOTDULq67
+         pYvg==
+X-Gm-Message-State: ACgBeo0/zoqzfcEN1FuiJ1My6hglTMlmDq/qtahd9IFcVVmfX5thxvxO
+        98wH27o0ebsQdTSMayM0vnI=
+X-Google-Smtp-Source: AA6agR4a4BJBASaUJhejO4S+45wUhdPSY3UUm2AJJGOMSWK30airlcBsnk068K0Xi77YQ2z3gfn/iw==
+X-Received: by 2002:a17:90b:1b12:b0:1fe:b98:2c42 with SMTP id nu18-20020a17090b1b1200b001fe0b982c42mr6867260pjb.184.1662010355274;
+        Wed, 31 Aug 2022 22:32:35 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id 18-20020a631252000000b0042254fce5e7sm4358271pgs.50.2022.08.31.22.32.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Aug 2022 09:46:34 -0700 (PDT)
-Date:   Wed, 31 Aug 2022 10:46:32 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     cgel.zte@gmail.com
-Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ye xingchen <ye.xingchen@zte.com.cn>,
-        Zeal Robot <zealci@zte.com.cn>
-Subject: Re: [PATCH linux-next] rpmsg: char: Remove the unneeded result
- variable
-Message-ID: <20220831164632.GA217472@p14s>
-References: <20220826071954.252485-1-ye.xingchen@zte.com.cn>
+        Wed, 31 Aug 2022 22:32:34 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: ye.xingchen@zte.com.cn
+To:     mathieu.poirier@linaro.org
+Cc:     bjorn.andersson@linaro.org, cgel.zte@gmail.com,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        ye.xingchen@zte.com.cn, --cc=zealci@zte.com.cn
+Subject: Re: [PATCH linux-next] rpmsg: char: Remove the unneeded result variable
+Date:   Thu,  1 Sep 2022 05:32:31 +0000
+Message-Id: <20220901053231.312211-1-ye.xingchen@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220831164632.GA217472@p14s>
+References: <20220831164632.GA217472@p14s>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220826071954.252485-1-ye.xingchen@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Thank you for your reply.
 
-I am fine with the patch but I need to understand who is "cgel.zte" - are we
-talking about a person or an automated bot.  In case of the former than an SoB
-from that person needs to be on this patch.  If an automated bot, than that
-needs to be changed to someone accountable for the code that can put an SoB on
-the patch.
+In fact,‘cgel.zte@gmail.com’ is our company's public mail address, and ‘ye.xingchen@zte.com.cn’is my personal mail address in the company.‘ZTE’ is the name of company, and ‘CGEL’the name of our project team in company.
 
+For some reason, the patchs needs to be reviewed by the company before it is sent out, and we have to use public mailboxes to send mails, because personal mailboxes are not allowed to send mails.
+
+Because it is the patch I submitted, the mail about the patch will be sent to my personal mailbox through the public mailbox.
+
+ 
 Thanks,
-Mathieu
-
-On Fri, Aug 26, 2022 at 07:19:54AM +0000, cgel.zte@gmail.com wrote:
-> From: ye xingchen <ye.xingchen@zte.com.cn>
-> 
-> Return the value rpmsg_chrdev_eptdev_add() directly instead of storing it
-> in another redundant variable.
-> 
-> Reported-by: Zeal Robot <zealci@zte.com.cn>
-> Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 4f2189111494..0850ae34fb88 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -424,15 +424,12 @@ int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent
->  			       struct rpmsg_channel_info chinfo)
->  {
->  	struct rpmsg_eptdev *eptdev;
-> -	int ret;
->  
->  	eptdev = rpmsg_chrdev_eptdev_alloc(rpdev, parent);
->  	if (IS_ERR(eptdev))
->  		return PTR_ERR(eptdev);
->  
-> -	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> -
-> -	return ret;
-> +	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
->  }
->  EXPORT_SYMBOL(rpmsg_chrdev_eptdev_create);
->  
-> -- 
-> 2.25.1
+YE XINGCHEN
