@@ -2,47 +2,47 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414CFECAAD2
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Sep 2022 00:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BEEECAAD3
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Sep 2022 00:06:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234698AbiIBAEV (ORCPT
+        id S234998AbiIBAGd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Sep 2022 20:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52496 "EHLO
+        Thu, 1 Sep 2022 20:06:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230151AbiIBAEU (ORCPT
+        with ESMTP id S234828AbiIBAG1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Sep 2022 20:04:20 -0400
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam07on2064.outbound.protection.outlook.com [40.107.212.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38266F257;
-        Thu,  1 Sep 2022 17:04:16 -0700 (PDT)
+        Thu, 1 Sep 2022 20:06:27 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64DB872ED1;
+        Thu,  1 Sep 2022 17:06:24 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CtQud74uHem+YitKNlohE14kDPVkim3e2Flf5BCbp+35se5vgNlSs7WfF6tDtYkRo+6ForSgLSJUiEh17FkGQHCDfLBHl/AUHMCt4SChWAVTdz3dWo3NSt/eM9U/3KMdVajVLr1WbFK98ngazrxfrmw98mvEbIFXTJn0Je+r2sZRrdPPNkxP2zhw5jReK/DbOcJGDM1fEhPt8cHT9Kbp93ppZz4+/MIrPK4ED4juARHE67dWv0qz8FMtC11BoX7KSQV1b9bOroXGA0M5mfTV3bMr2aIO0Q4qJyG3SJldtxA5G8tVooewikrYBYUn0HIPS8IItHGw5UxnCdv2ZF+E8w==
+ b=Z+pTP7YZ8w1tPaAmTiifGrYL0qD7qYHTaV+m2BAY4QQBAD1RatEajco4r8J4c/oxvWLbREPScep+H4hgEOoukMe43uIyLNVAuvtCcqiNaliHpACCAo9T3gkABGEqWPyLtlt8wsz9hx2CqxDgCv1hn9+NN8AWRRrbel2oMQtifmsP0oJWP+MzrSwLjm6UG7z4V3PzXxxS3NeUUnnfV1ztSaaes4ueZtduMAu5TYJtCeNd0OL61hmwMXmPrB3hxf+UKI0P0WyLPH197K/FeB846flVLYlZk7catYrxtR4l76I3v4Y0fHC8XPhia1LNVIFHxVh+EVHVtZBO/GvgMgsG5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bvWmrL1/LijJLe6wjhEkqiH7KQU3uOpbAqNQqMlBvlU=;
- b=f2+szye6m5VjykIpac4mO1jFKnfCPIOfIiB7r0dRrrkOc4A5aFG14BhDAJmMi0wlVjBDppgCkjOa5jOVpuclntF7JHN+WitW2E+qXx60VUin4pKjfrFX2Nfk20RSZGIYaBB4of4ZIiEMmnqmYipblVCHXDr97HZd9EIMtCuGc+VvVsVVt4yTxEeHNkaDNvg8mIoZS0BBUI2MS+Zlp5n0KIncb4ECt7H+EyIiqiHn95yOWx3Eofku43QH2EiU7OyHnB7t9UOM5mUCGdcJgHM+8qpHnaPZZ8VCu5jjcJ2Rr0mptlTP60Wcs6Wibs6r/c0I1DlG4qyvqoTk5fLrTmgsyg==
+ bh=9g1ozSYth1xknHcQlj7jMeK9FkbmS1acNAMzTpI3MRI=;
+ b=H8K8NGrOZSKq/LeclmwFBFWWPAmKKIGoDpMO68dDU12Rrt5TtDULm9U9Z929ThRwTOz7Hj+3HrGkkJL9aum43LO5/Cq0knz9Kk78C1fdG8blL/FGI3d1yaDFCbl4yP6aCBPF4Lw/VZq1wOylcHxw5uVCNt+WkZziLXrpQvu7BYVKV3gbdLkPVS0Y+twP3j9MuvIMWYySBXXtLeKesyhMnsmtJB57G4rDH8CLlMw8CbYriWx0drXvu7/unki4mHJuDnH/Nt5e45QXyCiHKGbnKURwotT/sk97BG2aPqMdv3rCMThkEdfzi59axGHRsF6uSXZj7kKGr5dfAEqssdZPqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bvWmrL1/LijJLe6wjhEkqiH7KQU3uOpbAqNQqMlBvlU=;
- b=bk96MykrnZhpFhy0eVNxHta/9rZzGPErGvFKgCJek2wfPb5p34r34LZVHWpM9YP9QFsGvnWlLzo2SYkT5BQYGUE9uqOHX4MS++/rRpN7Q6ZEg5RUW2CRUVJCoUTawOJhrl30bcf4g3kO/k37iNtlurT+1VuPn+X38Gw+/wXJiYI=
+ bh=9g1ozSYth1xknHcQlj7jMeK9FkbmS1acNAMzTpI3MRI=;
+ b=k8056VnYZs90H5BiFpXqRDgLQQGFo324Y8sQNGheJ8EZnEmMqL0lzaN1FohUOGW2fohW/m05LiA2haCx8LxrwQwUb/XpnqNdjfFdu0eXC6LVcQ4FYkKkqYwBKwWz8MH0t+XBfEHweUd/Nh1GUdOhoeAwMdBmUNxcovFlg0hL3tE=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
- by BY5PR12MB4065.namprd12.prod.outlook.com (2603:10b6:a03:202::16) with
+ by PH7PR12MB6954.namprd12.prod.outlook.com (2603:10b6:510:1b7::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5588.10; Fri, 2 Sep
- 2022 00:04:12 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5566.16; Fri, 2 Sep
+ 2022 00:06:19 +0000
 Received: from BY5PR12MB3683.namprd12.prod.outlook.com
  ([fe80::3441:5a68:b4b7:e988]) by BY5PR12MB3683.namprd12.prod.outlook.com
  ([fe80::3441:5a68:b4b7:e988%6]) with mapi id 15.20.5566.021; Fri, 2 Sep 2022
- 00:04:12 +0000
-Message-ID: <bd7a8e2c-0d9f-fed5-4a5c-920817adbad2@amd.com>
-Date:   Thu, 1 Sep 2022 17:04:07 -0700
+ 00:06:19 +0000
+Message-ID: <b70cec19-0b9f-91e3-6444-9d63038b142a@amd.com>
+Date:   Thu, 1 Sep 2022 17:06:12 -0700
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
  Gecko/20100101 Thunderbird/91.13.0
 Subject: Re: [PATCH v9 6/6] drivers: remoteproc: Add Xilinx r5 remoteproc
@@ -61,74 +61,71 @@ References: <20220708013955.2340449-1-tanmay.shah@amd.com>
 From:   Tanmay Shah <tanmays@amd.com>
 In-Reply-To: <20220901202517.GB626605@p14s>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR20CA0033.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::46) To BY5PR12MB3683.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR03CA0022.namprd03.prod.outlook.com
+ (2603:10b6:a02:a8::35) To BY5PR12MB3683.namprd12.prod.outlook.com
  (2603:10b6:a03:1a5::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9fc42843-b0db-482a-a2ca-08da8c76aa7d
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4065:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4435e05d-56d6-4b9c-3c50-08da8c76f631
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6954:EE_
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ARrZpB6fD5cfy6Paapwzus2w11BNpqNy2Ypz85eC/HcZbse4e91+BAoBWxx4S4dRZF/gPK2oReubjT4A/I958p7okj1rbHQc7BC2KXdWG4V67/8XUSkbXLZmwWrgTsT7pA1FrYEITSENLI2ams0A7meXBprSUJoVt7KYlro3eSqISsHftpO8xE6CYfWYCkff8rQKKD7dKcD+crSBzZHHWCE4LSvCrf5BwXdKEd5jrs2H0NHkgwaWABgnk5WlPPaLjelYmJLEBPe8JB7uiSWRAZdaifoyha9qRjfqEb3DqwXUZ3nzzr6jM/02/TZvd3lhPMnelMiqgl+xbU/R+bt1cQTgEUzt76/WtgT8X07faI0yKXuPZgrLTXkJlXt/I0DFhw85WUqt84sYBlYEzOPWy2ZcTCMQJ+oxAZ8R2x9plL91qg4jut97j+tel5SYFpk3gpuP77M+JbgWIWgtoxD6mwQVw3sFmpR/UkzOfmPuuBCjsslzhgysp5y9xpS/e7aQBHX/iq42EejmGnCj7inhH87SQ/4HzBGWo4DPxfNJQqxF12c+WInRe0J0wWaVG0aDTu6w120ML40RrLDgkcRKcw+g1hdKmLS5Hn0XyRUUYuKrG2WfSY+0+J1hW7jjNIVt1JBDQOPq8+jeooESuCgaek75yx8sWAFh4oXw+3/dpDFc5S+0H4ggsaxGYyOpaltjevvUeGpjWuZ2fAmgLNpdYlHkM1JYfvSRYtd+KZWW7oagVAb2m7xkrNVibZU56K6cBq+OIkjMgCzoAyex1/Shtok2J30BDgnXvjaWd5JRUPw=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(31696002)(316002)(38100700002)(26005)(6636002)(2616005)(30864003)(8936002)(2906002)(8676002)(66556008)(5660300002)(66946007)(4326008)(66476007)(186003)(110136005)(6486002)(83380400001)(6512007)(41300700001)(6666004)(478600001)(36756003)(6506007)(53546011)(31686004)(43740500002)(45980500001)(579004);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: AFCb8rFJvEu04KRxU17sBCUDuWBWstb+H+GfHSsBdL1fQkqR3S11spbtL/S4UdP45pK3Dtlf4t9LdwqgaOBnwiPmuP5jGAEptwHtiwaQQYNHsvXlSPuar2+/M6OLsXp9wYRiYMx+kt8tuXhs7nw7PEQ9b/pUupbeo9T3bmUpf793vpiilHOo//Cm96u+B4EwGd1rsSVMUOWTn5bF9cUL7ngidYxZVkZ45ldSsb4YNvxQX5rRNVym/5TQ6r+TLo+XhcGMpkI4mEyKJYGmy2weghWTHMOdbkrLeW5pXhYhVgb707jLzA9/2GHzecCRtzu2qeOsdslt8jhkVzWK6YOz/rtstZ4MbbBZLbCTowAdotEeM5+RNg1G8YzR/zz1SoLAJvKEhfdC4F82t3Cq0XHhbEHnhXFaXrNEGNX9Gb6tSVvtVg1vCeqZNlTS60UeazvPGFmQZXL5ZaG2OqSUBV1CQac4Aqo5biyNbgdMRvnqCRDAg/sXy2ONEMPAMnVhTdmW59YBBDUdKx52l58gBmza0H309aud0VmkCDULO5w6I+T4OJGnRc6ybm0m3tIecV+WTx3TBPacwFx3F99VKagxkaKZFUmxLEchTY3waPM+yHOhjJkIWrmlTqdc14EhXwJzETqAjWUqH8E0kRqPQA4/bZnVpqTvLkpTSlAQaYJm5YrLyutm0N20b9qjb73tFDIpe9V38HBR4j2NXRNtTZbLQ/WVyKz+FOe9vf3rjNfnml3I8240IcbwNyt1RvU+H1ZdqfbAObkvPC1Mm34Yz+Igwb5HK9Y6Ze+/uzjXTGltd1g=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(39860400002)(366004)(376002)(136003)(346002)(396003)(8676002)(5660300002)(30864003)(2616005)(6666004)(4326008)(66476007)(66556008)(66946007)(36756003)(26005)(53546011)(83380400001)(478600001)(8936002)(31686004)(186003)(6486002)(6512007)(6506007)(41300700001)(31696002)(2906002)(110136005)(316002)(6636002)(38100700002)(43740500002)(45980500001)(579004);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VWZYdENidEF3ME95MjYwVDRtMU1LZmhsMk9Yci81Wm4yK2Vmb0ZGQk1qYzBP?=
- =?utf-8?B?M29XS1BSWCs5U2E4YUQwc3BFQ0FCU29ocVpER0JyUjAranRFTmh4ajFUOUUz?=
- =?utf-8?B?NzJDMjdXbWNocWZnZVlvenRrOFNwU1RvZ3p0MlBVbDI1UmlMdUFYbUF1ZW8x?=
- =?utf-8?B?NXdqUmpTRlZpeFJJSDRsSjRyR2xDaXBHa1YyYWI2M2ZHMUJKUHVvaWo4bWt1?=
- =?utf-8?B?REVXY0dJc01XMFNaaXliSGNGNVNXczI5WExmL1NEdlcxR2lqNnVzUnpjTEw3?=
- =?utf-8?B?VUpCR0s0RytlSFFYeDNqY0R4ZWx4T1ZvZU9CNzNaME1vWTVXeDBPbmw1K1Zk?=
- =?utf-8?B?SnNURThucVFKL29tdldCZHpUNkFvazBubE9va0paTmVHQlJOblBVVlpXQkZX?=
- =?utf-8?B?ZG1tTCthRXBlcVBOaStHY2t1K2tKUi9EaFFPZVFMYStDZGpKWHNqSUFyL3hN?=
- =?utf-8?B?dG5Kb1B4VWxiTVlXTHdRcmc4S1ZqcUxpZDR6d2RBQU13NzBlQ1ZZTWJKRVFi?=
- =?utf-8?B?b0hUMkc4eERVZXkwSkpqbnhoY0hzdEZGVCtKeEV2dDFCMVh5d2d0Q0FRcnN2?=
- =?utf-8?B?UzZKYWJoaWI5ZmFHcDBTL1NNRWtjT1ZNTFV5aEorR21Xa0lYUlAzb0hncm1h?=
- =?utf-8?B?bWR4M1hqcGQ4R2JwMmp2d3BWZFIrQTJVZDErOUhjZW5FMlJ0TTlWOWZkV3Vv?=
- =?utf-8?B?bkdUK29hd2gvOEdCRTlkam4xa3lNdy82SkVNK3lGMmg5OFFUMm9nMXd4dE1i?=
- =?utf-8?B?WGhpb3BGbEt3QUlicU5BMWk4WkJjY1c2Rm0wQVNJNytVczhZSnlGeXg3NCsw?=
- =?utf-8?B?bDZJR1p5TTNrWmIyM053ekJpMzRSakprcVY0NjZDTGJoSVJnNEZrbUVXUnh4?=
- =?utf-8?B?N2VNanNISVl0NmhPaDJJaXdIUm5jOWVibFVKK282TTZITlc4TDRDNjNDU205?=
- =?utf-8?B?SzFNcE5kRnVJSnRrT055Uk5rMFVXODhST2tORmxIdkxxNDRwZjFNMFZwZjR4?=
- =?utf-8?B?eXBCQjNQZ2pGR25sZ2RRcDhCOUsvK1hwUEt3bUxaNzZKd3h6U2dqcGczQ1VX?=
- =?utf-8?B?cnN5QWZsZWxsQTJCTU1jQmZGNm16blJaSWh2NzFaTE03VlE2MjlHcEVBVkQv?=
- =?utf-8?B?K3VXRnBrY1ZIbTFFMU0yYmNjalV4WVBtK0QrQ0ZCaG41anBrVEhlYkRaT1Y4?=
- =?utf-8?B?S3orZFFzdDFndnlUYWJiWGQyc2pmcFZRMW1LRlF4OVYvd0VxWU1DN2lrUFY1?=
- =?utf-8?B?UTlFUGNKOW1aZjRLZnMvOGM0RFFxcExOczJjbXNpdm5BMzByODBPL3lveXpM?=
- =?utf-8?B?UU5UVE1ZdVBNR3drWk41MVUrQXlQQyt6NVI4TVVVRWtrcmdWTys3ekwzWlZt?=
- =?utf-8?B?RGp0ZGE3c05tSC9Udm5SSjR4MG9lMjJ6NTZNbWFtV0cvVHBJZUxMdzF0UXla?=
- =?utf-8?B?K2ZkcTV2djB5TzArak9HL25nRUpXRXh2RDJPWk1mMmlmTlBJbzFUeDB0M2Nm?=
- =?utf-8?B?UEQ1dms5TmhDR1BhUVh3elgrZ1BZVUtEWVFTTFFjdGc4MFZlLzZCRTZNc2xx?=
- =?utf-8?B?YzBDUzlqL2dhSW01ZXhZckpwbWlUWE9rMG4yTXMyaUpjdXVKdG5ZTDVjZXdq?=
- =?utf-8?B?R1EzMjlad20yNStLTVRBbHNwU3hiZklyVER3QkExUmd4R3ZmTWNWNVAxakNs?=
- =?utf-8?B?TUZSQ1JOZ1BHSjlQQXZYZ0RuelA4ODExSDRZNzNYM09GUmVrZUo3amJoeFh2?=
- =?utf-8?B?S2E3MnI4dVc5WWRTNUVZRzdVdUFZZm15VEZIZzdRdTdrdVFLWC9UQUxiZ2tv?=
- =?utf-8?B?WTZZUjNoMlZXMHp3K1lJSS9mNExacTlGa3lCcE1uTlBjQytWamZSNTUyS2Rz?=
- =?utf-8?B?aHV5MGt6QU1FKzROK3N1M1BpTUhPcXoyQmxjMW1TM1dXRnc5N25DLytEdFZD?=
- =?utf-8?B?cThYNHlmTXV6cVYrWkhxdVBNSllGS1V4RVdRQStqV1ZlUC9PNXR2SjRMeTZv?=
- =?utf-8?B?Z3dBQ0RDTE9JQ1hLU2o5dmJnRDh6dEg4WWNjMzhXKzZIcWlSaUZ3QlNQcEg3?=
- =?utf-8?B?Z3o3SEVqZ3NLZ3VESlUvdFpPL1dzbHo1ZEJOdlZJUCtRZzZKcFE3ejR1NVlo?=
- =?utf-8?Q?hpV0rg9nU9W5Bu9swZZnFwfU/?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YVpoOWd1amw2NjFzWXgyUjNPSlFjVXNrNVE3b0xjZ1Q1L05aVnQwaEtWdlF4?=
+ =?utf-8?B?ajc4STBIMHV2Q3dvbkVRYSsvTVlabFlFM1pKTFpsM1RVR3hZMkVEY2Q5MlhL?=
+ =?utf-8?B?Z0lpQmNlQ0gxellsbHBFVXVKSjNmSWVkOHVyTnZGbTFSektqYmllbUZnYzB6?=
+ =?utf-8?B?cXZpMURwRGtRTFhMeTRYVitDTXV6enRjVjkxd1JwVjNaMlJTc1hsbS8xa3c4?=
+ =?utf-8?B?STNxcStHZENqSTVUd0owUk5md243UTZWb1p6Q1JOcWY4ZlpMcFdCR09qcWI3?=
+ =?utf-8?B?MktSTm9QQnR5V2Z5OGNQVm5zd2ZXdmJSaVc5THkrRjlscGdwblNHL1RjOXhP?=
+ =?utf-8?B?alNVUTZmOHpTSFY5QzBPSWJsei9aRnBTYWtvZ3lHczVWU0VqRUE1Znlnb2tn?=
+ =?utf-8?B?NzFIZmFOTERMYXdsZmMrR2hzRnZVWC9QTklVS0E2NENOUDJmaW1TTmFyMXVG?=
+ =?utf-8?B?Q2tSUlBwcE9uWEJmN0FyK3F3TVNBSkFIc3QzRmtBTDdUWnpDeERNQWNNY3ho?=
+ =?utf-8?B?RHRVaE5mRDBucUhDNnM1TnFLaHgzRUkwOXZUVWdtMnNob0J4Z2U0NXR1R0RK?=
+ =?utf-8?B?VGJhc3l3WnFDR2ZKL0N1eXVYVVlvUUNiYnVIM3FMbXVKRS9RNFVSODRRZ2kv?=
+ =?utf-8?B?SysyRkwxM0FQa204dS93L0YvbFJjejZOMW5UOEVoSkZFbnVnMmJmejVHQXBP?=
+ =?utf-8?B?amdXRy84ZnNNNTMyVUNUMkdSdVM0NWR0TTlUdkVhT1B4YlQ4VmRCR280MWwy?=
+ =?utf-8?B?ZEdmRmZJUzRJcTVjWkdGcGwxRGJoNDlNU2VWQm1IVW9qUDhFbGJRd2d3dUs5?=
+ =?utf-8?B?WUtZZ0kyMlFzTlNWRWNtSlc0OWFFNFFHVDdMY1MvMmFmOGNuNUxQZGtON0ls?=
+ =?utf-8?B?NEN4SVAwSDZvdU5sdTFMaFBoLzJLU2NhYnBFai8zUjVCRThMTEJrQmdYYzNJ?=
+ =?utf-8?B?aFBIRDkwZ216bUNFa1JObVBpa1VmZkNQNmpad1A5SGNWYzdDQVdMeVVDdGNV?=
+ =?utf-8?B?V1hlTmVaT3Jmcm5DaFA3ckNVOEtIc1IxOU9UbmRGSkk4YVdhYmpUb0xMbm4z?=
+ =?utf-8?B?WWUyZnYwU3F5VEpKVUI4ZlQ0a3UrMnRudDArNnFjdTB6VGNCSHpiS3o4dld1?=
+ =?utf-8?B?SkJpRUlDQkZkemdMd0lxWGxxcjVSOWxacjRkRCtiL1JPUmRqU1pSNE43UU5Y?=
+ =?utf-8?B?YUZIN0hnSzQ0QTdJZ0taRTNodlA4eThmWXhIMDNjSHlVV0dwZk9xWkJRRld0?=
+ =?utf-8?B?RmpMUDhyRlJIRlhmMjdHVW1wRnl4TGNqMktFMHIzWVZQQ25aOUxXQ3FaSVBZ?=
+ =?utf-8?B?WnNPT2ZVazU0V3c4N3lCN1RLM2hBeGlvekU5UzRJYUZaTHJYc3VJRlVPeHdq?=
+ =?utf-8?B?bUlkWFg4R1ZYU1krNXhmQWJYT3lXbDlFb1RhUlc1VzNBMllwRnU3UkZtMEFR?=
+ =?utf-8?B?Tmo4ZUs4a0tISm9jN1dnZnZHamxVYkZTcjZVN210Z1EzTWdTSGQ3S1psQk1v?=
+ =?utf-8?B?QmVDd3NlVnMrRyttYVBnNy80bWpxQUo1c1JjVEZmWmJSelRlVkwyS20yMUtC?=
+ =?utf-8?B?YzJ1YnQrTW1LV2VDRXMrM3VIYXJkejUrZlFVdkEwR09XQUFnanBPVjd1c21a?=
+ =?utf-8?B?T3NPRzBxNlZGNS9MK0UwdUh1WE44MDBGUDliWVNrK0liVnVvaEJTOW9MOFNE?=
+ =?utf-8?B?SkV5ZlpTL0V1UHAzVmw3NFh3aTJBbVU3alUwdTZqb0UvMGE0cGtXVHZ3bTZU?=
+ =?utf-8?B?THR6Y01vNExPUFlldHlyQ0NtRWhKVy92eTNWMGdFN0NmN3JReU8wWHU5eG9B?=
+ =?utf-8?B?RVRsQlJpZGJ5R09Fa0ZUdlI5bUdBd3c4TVVPV2s5NFlUZ3BBQ0NGT1Q0ZEFJ?=
+ =?utf-8?B?YTBrVWl2Z3hKMXBIV0VqOENXWUFWdTRyQzE2a01QcUxOWmROaTZwSVZsdHB5?=
+ =?utf-8?B?R29yZVFSeE0rWStYNUEwUllINW5sTjc3VjlFUnhRdkZTMVJLUXBlLzB4NGJ2?=
+ =?utf-8?B?K2h6eEJmR2dzalh4TkFlS1haQXh0QzU1L3EwSjJHZUo1NlpzQ2lEdjBKZzUz?=
+ =?utf-8?B?WE55ZWFkWkYxbzV2bUdZeWpkSWNOVWJPWG42aEd0SUhYRzJpV0E3QmtTUXZs?=
+ =?utf-8?Q?xs/tEmRvvRxPi9co5ioWjhUj+?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fc42843-b0db-482a-a2ca-08da8c76aa7d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4435e05d-56d6-4b9c-3c50-08da8c76f631
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2022 00:04:12.3236
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Sep 2022 00:06:19.6891
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VajcL5lU2A7NFVYX23dXDCpq99nLyonNYz9b+sVkQMkar+aPHXqxV9bSDzJ5rPT2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4065
+X-MS-Exchange-CrossTenant-UserPrincipalName: GGY/WdhSFyRhJwkUwcEzLynQtQ9YKcixy23hKB92LUYTC0NBDJIX995iVlBcDmUm
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6954
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
-
-Thanks for reviews. Please find my comments below.
 
 On 9/1/22 1:25 PM, Mathieu Poirier wrote:
 > On Thu, Jul 07, 2022 at 06:39:55PM -0700, Tanmay Shah wrote:
@@ -919,14 +916,6 @@ On 9/1/22 1:25 PM, Mathieu Poirier wrote:
 >> +		dev_err(cdev, "can't get device node for r5 core\n");
 >> +		return ERR_PTR(-EINVAL);
 > Here @r5_rproc is leaked and r5_rproc->rproc never free'ed.
-
-This function is only used in cluster_init.
-
-r5_rproc->rproc is free'ed in release_r5_core label in 
-zynqmp_r5_cluster_init function if this function fails.
-
-This avoids multiple free of same resource.
-
 >
 >> +	}
 >> +
@@ -936,7 +925,6 @@ This avoids multiple free of same resource.
 >> +		dev_err(cdev, "failed to add r5 remoteproc\n");
 >> +		return ERR_PTR(ret);
 > Same.
-Same as above.
 >
 >> +	}
 >> +
@@ -951,7 +939,6 @@ Same as above.
 >> + * driver for now in this function.
 >> + *
 > It would be a good idea to explain _why_ hardcoded values are used.
-It is explained in function, but will add in description too.
 >
 >
 >> + * @cluster: pointer to zynqmp_r5_cluster type object
@@ -969,7 +956,7 @@ It is explained in function, but will add in description too.
 >> +	 * ToDo: Use predefined TCM address space values from driver while
 > I'm not sure why there is a "ToDo" here since this is exactly what you are
 > doing.
-Ack. ToDo needs to go.
+>
 >> +	 * system-dt spec is not final for TCM
 >> +	 */
 >> +	tcm_bank_count = ARRAY_SIZE(zynqmp_tcm_banks);
@@ -980,9 +967,6 @@ Ack. ToDo needs to go.
 >> +	if (tcm_bank_count <= 0)
 >> +		return -EINVAL;
 > As far as I can tell this can't happen and as such should be removed.
-
-I kept this check for future, when we add TCM dt nodes. I will remove it.
-
 >
 >> +
 >> +	/*
@@ -1073,7 +1057,6 @@ I kept this check for future, when we add TCM dt nodes. I will remove it.
 > Function of_reserved_mem_lookup() doesn't allocate a new reserved_mem structure,
 > you get a reference to an existing one.  As such there is no need to explicitly
 > free individual elements of the rmem array.
-Ack.
 >
 >> +	devm_kfree(dev, rmem);
 >> +	return -ENOMEM;
@@ -1165,35 +1148,9 @@ Ack.
 >> +	 */
 >> +	if (cluster_mode == LOCKSTEP_MODE) {
 > Why is are LOCKSTEP_MODE and LOCKSTEP_MODE defined when the same values were
-> already added in xlnx-zynqmp.h in patch 3/6?
-
-Actually LOCKSTEP_MODE defined in this driver is taken from dt-bindings 
-of this driver. However, PM_RPU_MODE_LOCKSTEP defined in firmware 
-represents value expected by firmware. They are not the same defines. 
-LOCKSTEP_MODE = 1 which is defined as per xlnx,cluster-mode bindings and 
-similar to ti cluster-mode bindings. PM_RPU_MODE_LOCKSTEP = 0 which is 
-expected from firmware.
-
-
->    And why not add SINGLE_CPU_MODE
+> already added in xlnx-zynqmp.h in patch 3/6?  And why not add SINGLE_CPU_MODE
 > there as well instead of duplicating things in enum zynqmp_r5_cluster_mode?
-
-
-SINGLE_CPU_MODE just represents xlnx,cluster-mode value from 
-dt-bindings. It is not supported in firmware.
-
-There are multiple ways to configure r5 cluster in single-cpu mode.
-
-1) Add new EEMI call which asks firmware to configure cluster in 
-single-cpu mode.
-
-or 2) use existing EEMI calls and configure cores from driver. As 
-single-cpu-mode is not supported yet, I am not sure, how it will
-
-be implemented or what its design will look like. So, I haven't modified 
-anything in firmware driver related to single-cpu mode.
-
-
+>
 >> +		tcm_mode = PM_RPU_TCM_COMB;
 >> +		fw_reg_val = PM_RPU_MODE_LOCKSTEP;
 >> +	} else if (cluster_mode == SPLIT_MODE) {
@@ -1254,8 +1211,7 @@ anything in firmware driver related to single-cpu mode.
 >> +			goto release_r5_cores;
 > If we are here and i == 0, we are leaking a reference to child_pdev since the
 > loop in release_r5_cores won't execute.
-Ack. I will check if i == 0 and put_device() before jumping to 
-release_r5_cores.
+>
 >
 >> +		}
 >> +
@@ -1273,15 +1229,7 @@ release_r5_cores.
 > LOCKSTEP_MODE.  That will avoid the fragile dance around the manipulation of
 > variable i and simplify the release of resources in release_r5_cores.
 >
-Actually variable name "i" needs to be changed. I need that variable to 
-track how many cores  are added successfully.
-
-So, if first core is added and second core fails, then I can release 
-resources allocated for first core successfully.
-
-So, instead of "i" I can use meaningful variable name like "cores_added" 
-or "cores_allocated".
-
+>
 >> +	}
 >> +
 >> +	cluster->mode = cluster_mode;
@@ -1399,6 +1347,13 @@ or "cores_allocated".
 >> +MODULE_AUTHOR("Xilinx Inc.");
 >> +MODULE_LICENSE("GPL");
 > There is a discrepency between the GPL-2.0 in the SPDS identifier and the above.
+
+// SPDX-License-Identifier: GPL-2.0
+
+I will fix above as
+
+// SPDX-License-Identifier: GPL
+
 >
 > More comments tomorrow or Tuesday.
 >
