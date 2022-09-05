@@ -2,111 +2,177 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0D5ECAAA1
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Sep 2022 06:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B78ECAAA1
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Sep 2022 09:12:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236471AbiIEGVR (ORCPT
+        id S236001AbiIEJML (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Sep 2022 02:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56824 "EHLO
+        Mon, 5 Sep 2022 05:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236270AbiIEGVP (ORCPT
+        with ESMTP id S231272AbiIEJMK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Sep 2022 02:21:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A122B62D;
-        Sun,  4 Sep 2022 23:21:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D2838610E7;
-        Mon,  5 Sep 2022 06:21:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 756C6C433D6;
-        Mon,  5 Sep 2022 06:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662358874;
-        bh=056KAePOeWgzIG5LJsb+xoS5aEhxNBcn6X0QjCynVOo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XdNTeqviAxPaYfXQBCXsrQG2mq7ZAVcobfT6XXI3oDsn8ifBtUUUQoOTNH2cYqoYT
-         EWG8N1mc3OZpX/xqdkK0LuZRruyFowz03dVrdlBKt9HdNN/mrZPr7KS9DfjoVC7D7b
-         NYZVa2h/Dt2BEpcpyxaFlefQYMukqh5zORWfD6tKJhpnd/UeZz08/MwTYg3vtvJY19
-         uNU879voF7VWVRV0eUWXW+2r5xYJO0kQ1sTyPXK0Moz08bghCLBzDqvHPInfITVLYS
-         aWr1aKkB/TndgBDUIAFWxtw8KLd9rfBNtxV7MOx2AyyhPKUU9quSf+k42LL/WtWksO
-         PRW5G/3Oai0/g==
-Date:   Mon, 5 Sep 2022 08:21:07 +0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Lee Jones <lee@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Yu Chen <chenyu56@huawei.com>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Carvalho Chehab <mchehab+huawei@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: phy: hisilicon,hi3660-usb3: simplify
- example
-Message-ID: <20220905082107.7ff83539@coco.lan>
-In-Reply-To: <20220817142246.828762-2-krzysztof.kozlowski@linaro.org>
-References: <20220817142246.828762-1-krzysztof.kozlowski@linaro.org>
-        <20220817142246.828762-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        Mon, 5 Sep 2022 05:12:10 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE9A2C679;
+        Mon,  5 Sep 2022 02:12:08 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2859BWsh054217;
+        Mon, 5 Sep 2022 04:11:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1662369092;
+        bh=xPTLqrQR3yIKqIqKWHosRsUm1HcTbEMKjHEpKqe7jKM=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=IXJ3+JlrONZZR2/GyHWJvowE4mQLyoL8k0yMJpEF4ofq2pVY02HEiKhr+nf+hjkgw
+         7z+vnMEkminkShYBDlldmCE0NnawGzdVY3CPbEF7tslF8TLORQpavO2KKGCzwVwkI+
+         jrysfoNv9IBPF7Ds2AkPRVEyy//UfaKhC4tmChi8=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2859BWQ7099534
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Sep 2022 04:11:32 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Mon, 5 Sep
+ 2022 04:11:32 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Mon, 5 Sep 2022 04:11:31 -0500
+Received: from [10.24.69.114] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2859BRHR065852;
+        Mon, 5 Sep 2022 04:11:28 -0500
+Message-ID: <49d1959e-88ae-c605-aafc-ca9819c4f85c@ti.com>
+Date:   Mon, 5 Sep 2022 14:41:27 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v5 6/6] remoteproc: pru: add support for configuring GPMUX
+ based on client setup
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <bjorn.andersson@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <rogerq@kernel.org>,
+        <grygorii.strashko@ti.com>, <vigneshr@ti.com>, <kishon@ti.com>,
+        <robh@kernel.org>
+References: <20220607045650.4999-1-p-mohan@ti.com>
+ <20220607045650.4999-7-p-mohan@ti.com> <20220719161625.GB3393732@p14s>
+From:   Md Danish Anwar <a0501179@ti.com>
+In-Reply-To: <20220719161625.GB3393732@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Em Wed, 17 Aug 2022 17:22:43 +0300
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> escreveu:
+Hi Mathieu,
 
-> syscon and simple-mfd cannot be used without device specific compatible,
-> so simplify the example to fix this.
+On 19/07/22 21:46, Mathieu Poirier wrote:
+> On Tue, Jun 07, 2022 at 10:26:50AM +0530, Puranjay Mohan wrote:
+>> From: Tero Kristo <t-kristo@ti.com>
+>>
+>> Client device node property ti,pruss-gp-mux-sel can now be used to
+>> configure the GPMUX config value for PRU.
+>>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> [s-anna@ti.com: simplify the pru id usage]
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>> ---
+>> V4->v5
+>> * This patch was included in v4 and had some checkpatch errors that have
+>>   been resolved in v5
+>> ---
+>>  drivers/remoteproc/pru_rproc.c | 20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>> index 2977eb50631b..f2c6c55f0f20 100644
+>> --- a/drivers/remoteproc/pru_rproc.c
+>> +++ b/drivers/remoteproc/pru_rproc.c
+>> @@ -123,6 +123,7 @@ struct pru_private_data {
+>>   * @dbg_single_step: debug state variable to set PRU into single step mode
+>>   * @dbg_continuous: debug state variable to restore PRU execution mode
+>>   * @evt_count: number of mapped events
+>> + * @gpmux_save: saved value for gpmux config
+>>   */
+>>  struct pru_rproc {
+>>  	int id;
+>> @@ -141,6 +142,7 @@ struct pru_rproc {
+>>  	u32 dbg_single_step;
+>>  	u32 dbg_continuous;
+>>  	u8 evt_count;
+>> +	u8 gpmux_save;
+>>  };
+>>  
+>>  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+>> @@ -250,6 +252,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>  	struct device *dev;
+>>  	const char *fw_name;
+>>  	int ret;
+>> +	u32 mux;
+>>  
+>>  	try_module_get(THIS_MODULE);
+>>  
+>> @@ -273,6 +276,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>  
+>>  	mutex_unlock(&pru->lock);
+>>  
+>> +	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
+>> +					 &mux);
+>> +	if (!ret) {
+>> +		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
+>> +		if (ret) {
+>> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
+>> +			goto err;
+>> +		}
+>> +	}
+>> +
+>>  	if (pru_id)
+>>  		*pru_id = pru->id;
+>>  
+>> @@ -310,6 +329,7 @@ void pru_rproc_put(struct rproc *rproc)
+>>  
+>>  	pru = rproc->priv;
+>>  
+>> +	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
+>>  	pru_rproc_set_firmware(rproc, NULL);
+>>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../bindings/phy/hisilicon,hi3660-usb3.yaml   | 22 +++++--------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
+>   CC      drivers/remoteproc/pru_rproc.o
+> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c: In function ‘pru_rproc_get’:
+> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:279:8: error: implicit declaration of function ‘pruss_cfg_get_gpmux’ [-Werror=implicit-function-declaration]
+>   279 |  ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
+>       |        ^~~~~~~~~~~~~~~~~~~
+> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:288:9: error: implicit declaration of function ‘pruss_cfg_set_gpmux’ [-Werror=implicit-function-declaration]
+>   288 |   ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
+>       |         ^~~~~~~~~~~~~~~~~~~
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml b/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
-> index c2e073e26190..20b79e2e8b82 100644
-> --- a/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
-> +++ b/Documentation/devicetree/bindings/phy/hisilicon,hi3660-usb3.yaml
-> @@ -41,20 +41,10 @@ additionalProperties: false
->  
->  examples:
->    - |
-> -    bus {
-> -      #address-cells = <2>;
-> -      #size-cells = <2>;
-> -
-> -      usb3_otg_bc: usb3_otg_bc@ff200000 {
-> -        compatible = "syscon", "simple-mfd";
-> -        reg = <0x0 0xff200000 0x0 0x1000>;
-> -
-> -        usb-phy {
-> -          compatible = "hisilicon,hi3660-usb-phy";
-> -          #phy-cells = <0>;
-> -          hisilicon,pericrg-syscon = <&crg_ctrl>;
-> -          hisilicon,pctrl-syscon = <&pctrl>;
-> -          hisilicon,eye-diagram-param = <0x22466e4>;
-> -        };
-> -      };
-> +    usb-phy {
-> +        compatible = "hisilicon,hi3660-usb-phy";
-> +        #phy-cells = <0>;
-> +        hisilicon,pericrg-syscon = <&crg_ctrl>;
-> +        hisilicon,pctrl-syscon = <&pctrl>;
-> +        hisilicon,eye-diagram-param = <0x22466e4>;
->      };
+> I get this on both rproc-next and today's linux next.  
 
-Acked-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+This patch is dependent on the series [2] Introduce PRU platform consumer API
+https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
+as the api pruss_cfg_get_gpmux calls the api pruss_cfg_read and the api
+pruss_cfg_set_gpmux calls the api pruss_cfg_update which are implemented by the
+patch "soc: ti: pruss: Add pruss_cfg_read()/update() API" in the above series.
+
+This error is coming as the dependent patch needs the patch "soc: ti: pruss:
+Add pruss_cfg_read()/update() API" to be applied for compilation.
 
 Thanks,
-Mauro
+Danish.
+
+> 
+>>  	mutex_lock(&pru->lock);
+>> -- 
+>> 2.17.1
+>>
