@@ -2,93 +2,132 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2D4ECAAD3
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Sep 2022 15:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DE5ECAAD3
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Sep 2022 18:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbiIEPCz (ORCPT
+        id S231981AbiIESz7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Sep 2022 11:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49590 "EHLO
+        Mon, 5 Sep 2022 14:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236147AbiIEPCx (ORCPT
+        with ESMTP id S231383AbiIESz6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Sep 2022 11:02:53 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E585018E;
-        Mon,  5 Sep 2022 08:02:52 -0700 (PDT)
-Received: from mail-ej1-f52.google.com ([209.85.218.52]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1M4JeB-1oVUbb44Cf-000POP; Mon, 05 Sep 2022 17:02:51 +0200
-Received: by mail-ej1-f52.google.com with SMTP id fc24so8639693ejc.3;
-        Mon, 05 Sep 2022 08:02:50 -0700 (PDT)
-X-Gm-Message-State: ACgBeo1VlPcvJ+xWWEd7pO4eWHUq8HyXbIrcAVMATqZQt7wL5u0XIUj+
-        cVs4W3ha/TUScq4is/DkI7iNRXeWwN0i/iluyjQ=
-X-Google-Smtp-Source: AA6agR5wJ1aL84FxA8QRwytzUhGkLyN55SpvraWEbihzBC5xXhOPokDXApu6UWIH1+rv+572pCGRZ7UtcPnLm4vD2w0=
-X-Received: by 2002:a17:907:7242:b0:741:770b:dfc6 with SMTP id
- ds2-20020a170907724200b00741770bdfc6mr27267865ejc.203.1662390170467; Mon, 05
- Sep 2022 08:02:50 -0700 (PDT)
+        Mon, 5 Sep 2022 14:55:58 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F34112A426;
+        Mon,  5 Sep 2022 11:55:56 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 285IpOor013121;
+        Mon, 5 Sep 2022 18:55:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=xokcUehziQh2CEwSHfQ5j2vgoUPPaEwvs3OtXW+Uar0=;
+ b=JR/KXZ2m2Nhpy8lxogeXae0gulwt8SFTp9g3JJlTtKOog9FA6SsINSeBfuSvhTPm2NxM
+ WHi7DxBQqqv+e6g0iqRCMJzTxtOqb8YsplYDbNb7ecSYQsepWttqTKwvzdxLDQ00IeDs
+ nWOiAR9CahN6dbbo1rfa9sgzW94aokWtPxExYFYukpMB6cQrdmeeLIT7bhS56mVGpiL1
+ 9uUOwxhGV1bSn+I4I0I23OLsvfxgJW4G8/AdIKiYlNUXeSyBGlHRTJ0pNhNlDUcZM3Lo
+ sZk52iv+qBpQfpdus63GRTHFaJVRi0OFKKAKHMBvRrk64OgHJQ1S1HNtc0P412WGgL+Y rQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jby58w0ca-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 05 Sep 2022 18:55:54 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 285ItrZ5001203
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 5 Sep 2022 18:55:53 GMT
+Received: from deesin-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Mon, 5 Sep 2022 11:55:50 -0700
+From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: [PATCH V2 1/2] rpmsg: glink: Add lock to avoid race when rpmsg device is released
+Date:   Tue, 6 Sep 2022 00:25:19 +0530
+Message-ID: <1662404120-24338-1-git-send-email-quic_deesin@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20220826130402.2207808-1-arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20220826130402.2207808-1-arnaud.pouliquen@foss.st.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 5 Sep 2022 17:02:33 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a32sEFFAm=-6RJEkBiwUOTBozHXKAoJqJ3iiR0_QGZUzg@mail.gmail.com>
-Message-ID: <CAK8P3a32sEFFAm=-6RJEkBiwUOTBozHXKAoJqJ3iiR0_QGZUzg@mail.gmail.com>
-Subject: Re: [PATCH v3] arm: configs: Configs that had RPMSG_CHAR now get RPMSG_CTRL
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:YR6o/FEFRV8zaAlkjXnqoG0EtH7RHlUoIN5MV5esjETmMnplrWF
- 2G8x9bBuLORDoiVsjt12OdFmUHc4HUhawaqsKk7SZi+xJ/iagRQ9AVSdNuJdhgbicHeGhVn
- 5vp1LAUyoAaME6eRbXjtN/5GHxKEoURpAhRJzWmrckzKVUzP30xq/mwND6WyAlh1xyJQYDL
- k7baTjliAkzg/xDrkBgfA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:JIKZgL4ybGM=:HDts/lexEzX4GJym1/0BXf
- FxH1WknTQ1AHXHhuMO5AC4X/1vXGO9/ZFMi4+NHBYBVFXibcZuV5a4Tj9Bv1udftyhLpXxZa6
- MG07xE4aLhjmSbCmSxqGYzOXa1sSZoxTykIQDPr1W5rqnLDL9LUwC4Zc6c2o83NCCcz4wN34Q
- mH6U/TwJZSfVjcAXeLeDvAUP1XsEDu/RXiFeOYFix4AHayvXmqRxuiVJlBjGxNFbiR1QHxybJ
- 6csJWyi6H641I5+E7iPdhKcczP2EkOGNzcanL9MYFag+ouP4daK7X3V7nxfSPQykMhHXhP86A
- JzrLn6LmWRPz7XGGu24t32QqvMUVeYgHUNAGB4IpOlD/CreLZLPpq+SgKeadTWFiQrQhci2lp
- G+7CkbYVl1WC5zpvEvDnb+s0ZI8eNSSe2ig6tCekv5yY+wb11inS0EXKA/dTcxdS/c+j11Je3
- X0zaUHe4zH23Chjmm6PaT0D+eKXztP3iFB+v4QmVL8MUAZKqj1XB8FgYCqlXYzaYfR3zETZ/y
- 9S79N6dY8Frwg5kmtQAePETGZZac0v7FZFvwIJKFn9S8tvY8ZtFgtXI4MBbApJ5IcqPqwH+7j
- t4oJykf6hSPXxCGSvKBpuByKluqQvWI4prERygdy1YLXecz4IrluAM9wfcEyuf+T6vGfx9F2b
- JZP++XBlT97ZxsfRHSNH+1EazgctKEYpuC3df7KMzlRmVBWXU9WLTop0dn34HsXlAcR5mJosI
- Ja4S7DmRMq+bY0acDVG70HoU8Qf9Rrp1WrMCXIbUP3rVhGSUhvFjLir5EEGFvRgEkfEidoYui
- UsHaud3Eem+NtXyqkPEmGrtd3QDQUv/A1dIKUbSgO5NIvrAN/yuFONdxN9fNRwMWLAp+H8aso
- 45NV5lGMuK/8iOhz06qfNorQri84SLfoSd4a25QGOaXEHpK8eeD1Li8J/4PFvV
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BkxiAMGpwY7PJly-e8-Cc14p3Y3KqlFo
+X-Proofpoint-GUID: BkxiAMGpwY7PJly-e8-Cc14p3Y3KqlFo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-05_14,2022-09-05_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 phishscore=0 clxscore=1011 suspectscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2209050092
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Aug 26, 2022 at 3:04 PM Arnaud Pouliquen
-<arnaud.pouliquen@foss.st.com> wrote:
->
-> In the commit 617d32938d1b ("rpmsg: Move the rpmsg control device
-> from rpmsg_char to rpmsg_ctrl"), we split the rpmsg_char driver in two.
-> By default give everyone who had the old driver enabled the rpmsg_ctrl
-> driver too.
->
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->
-> This patch is extracted from the series [1] that has been partially
-> integrated in the Linux Kernel 5.18-rc1.
->
-> Update vs previous version[2]:
->  - resent after rebase on Linux kernel v6.0-rc2.
->
-> [1]https://lore.kernel.org/lkml/15be2f08-ba03-2b80-6f53-2056359d5c41@gmail.com/T/
-> [2]https://lore.kernel.org/linux-arm-kernel/b301b3f5-f0be-47b7-4789-f9914497b819@foss.st.com/T/
+When remote host goes down glink char device channel is freed,
+At the same time user space apps can still try to open/poll rpmsg
+char device which will result in calling rpmsg_create_ept. This may
+cause reference to already freed context of glink chardev channel and
+result in below crash signatures -
 
-Applied to arm/defconfig, thanks!
+1)
+rpmsg_create_ept+0x40/0xa0
+rpmsg_eptdev_open+0x88/0x138
+chrdev_open+0xc4/0x1c8
+do_dentry_open+0x230/0x378
 
-      Arnd
+2)
+rpmsg_poll+0x5c/0x80
+rpmsg_eptdev_poll+0x84/0xa4
+do_sys_poll+0x22c/0x5c8
+
+This patch adds proper lock and check condition to avoid such crash.
+
+Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+---
+ drivers/rpmsg/rpmsg_char.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 4f21891..5500dc0 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -75,6 +75,7 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+ 	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+ 
+ 	mutex_lock(&eptdev->ept_lock);
++	eptdev->rpdev = NULL;
+ 	if (eptdev->ept) {
+ 		rpmsg_destroy_ept(eptdev->ept);
+ 		eptdev->ept = NULL;
+@@ -126,6 +127,11 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 		return -EBUSY;
+ 	}
+ 
++	if (!eptdev->rpdev) {
++		mutex_unlock(&eptdev->ept_lock);
++		return -ENETRESET;
++	}
++
+ 	get_device(dev);
+ 
+ 	/*
+@@ -277,7 +283,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+ 	if (!skb_queue_empty(&eptdev->queue))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
+ 
++	mutex_lock(&eptdev->ept_lock);
+ 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
++	mutex_unlock(&eptdev->ept_lock);
+ 
+ 	return mask;
+ }
+-- 
+2.7.4
+
