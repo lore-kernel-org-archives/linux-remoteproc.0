@@ -2,139 +2,131 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A7BECAAA1
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Sep 2022 03:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3FDC38145
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Sep 2022 09:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238344AbiIFD5Q (ORCPT
+        id S238834AbiIFJDZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Sep 2022 23:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57656 "EHLO
+        Tue, 6 Sep 2022 05:03:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237816AbiIFD4H (ORCPT
+        with ESMTP id S233089AbiIFJDY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Sep 2022 23:56:07 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D1B03D583;
-        Mon,  5 Sep 2022 20:55:39 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id a5-20020a17090aa50500b002008eeb040eso1372649pjq.1;
-        Mon, 05 Sep 2022 20:55:38 -0700 (PDT)
+        Tue, 6 Sep 2022 05:03:24 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1521A3CBD8
+        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Sep 2022 02:03:23 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id z25so16378120lfr.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Sep 2022 02:03:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=xjBsYojmgzjD37eDqYXmxvRKEdSztZBYdUrIaGIIl10=;
-        b=qksH03T7nCTUYXBzcBx0isjdScmAbtWT/mIv3l7Qonsi45G+SbkTJa/mBJz+SqF6XR
-         XSN17hEK7Z33up0g8jzBG4jdNfClrED1tTzPhAAruzXFTjOUv+wzCZlPyBI3F7aFbf3I
-         OH4zn+ktG4vbXq8lmjr5GCLrb2ocq0seKWLQEIg2WPkxa9sqAJxzNjyXRzqoohJaoerA
-         WuLBgckjDxCkqtC48wXTc1vK8yeX5uT/Izerc0movLufNrdDnKY4qQHoh/OpNM4o1zpr
-         4EsBu//D/7IJCIIrmzY/BcNPIoM2ra4bL+3zQAsGbEmbY61mJYfLt8oRxDYsBg+rHtTV
-         UvAQ==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=qKAHS8QOJPr7gTNEKi97bZ2RBqwyh0sayFIzXNeO7N8=;
+        b=FGQxGcqFByjtxDxOIs5PvfbJTQ9eEq9GcmSCWha7C0lIb2q3lUGFl8ZVz9wIQMdSJa
+         lKLX3QwZxiNNoY4coo1hyXGBH59d74JVFqtvc9j1LwObBXdArMyIB8MLVvaFTzJednbY
+         M7keFOSDLziyCZhusXNGJbJGnW8kr1y7K1tn+YjidvDyCgbGKxlSYliAegoCMHbHjrus
+         V2MiGMd4mKUvx4lTsndwKPYiBHHrdioq9buZK5XfdhdFz/LJgH8oJBMc8gMXy1RsZNSc
+         BdzVKv4dxX599HnYsmMJSptltzoEZCc0tZY0rmkBNLmHNP+YRtMG0KpeJ0BoW9sHHKGd
+         gXHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=xjBsYojmgzjD37eDqYXmxvRKEdSztZBYdUrIaGIIl10=;
-        b=yHJiPxbdguFnik34SQgANtCK98oe/7a7h8p68i0zJGLEVfWqYzO58+uCJNmtjrbT/I
-         pFUG4lZ6ZoAcbh5C/i+/cOOptw0Q8n/MyqH3z28e06f/tdwl9yj8chT5OXvT88jAXWi4
-         GxMPZj5OZCXXTrHlPj+a+DJMQKJljAAy79LHkQ8H+5v2emvLsf9XxUF1I1pStzMn2fCt
-         LQb5q+75LYe3zkuUciYH6rzBimsdy1vLNLm6kFKqaEiXZeKLJXg7c3uObN4B7TIv+K+l
-         l7bGTP27tMKto6PDAoU5OhBsWxutoVl8oE8ywwCsFWY8Jflwo485Z3ky60SsPFQjtlrS
-         mGpQ==
-X-Gm-Message-State: ACgBeo3j2c+A/Z2ux2hgE+VjV80Fv58VK6yI71elbTtSQqukSmCmYAcK
-        GkwpMx1CuZsa/p6jkDQKCOPm+Vw9Trn8tXEBzbvkSubU/JI=
-X-Google-Smtp-Source: AA6agR6H58hrOM2YTuRRZs4nXTxjZQ1XqTlHuSc0NMqGDQTIlURZrBfNQEnp4HdS16uVVzDTWphHj/1uVONismTwu/w=
-X-Received: by 2002:a17:902:cf0e:b0:172:60b7:777c with SMTP id
- i14-20020a170902cf0e00b0017260b7777cmr52953406plg.132.1662436538233; Mon, 05
- Sep 2022 20:55:38 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=qKAHS8QOJPr7gTNEKi97bZ2RBqwyh0sayFIzXNeO7N8=;
+        b=NXfyMEkMJwQwRfc8m22nje+cxvQWtXQAd7BuhQa+nweRPNmtTmDn8nL5iPQpWf54F+
+         4oN76/K+EOKW9Ug7CrVJqpL+trRtMl6/PQURFh3zokoMXw1ju5Fq0w/wy1D7hebBDt/P
+         TJmNmVFN7fTd4zf0LiSaWAgY7SAcue3enEEzELP3FUEBhHTBF5ayQdsRmTgRMIzWDu46
+         DIA+VyIWaQruXKJt/QtUFr1OyvMaACTiZs4zAj0cRRlCMLb2aOmDyhMd9IXb8g7AU+Je
+         T3Lv1aH4vnu+bia3ZF5eI1zVDWlaJEDvqkUabD4sjwHSyuVCKioBBHXxT8l2eXZqYN3s
+         9GBA==
+X-Gm-Message-State: ACgBeo1hmswgFBhhwiGvvvqJfDp6xwdHgBCSKpI5Q+LBoL3/5tpGU8Dl
+        MBjkZOSWSpV7h0nfrtKO7pzoLA==
+X-Google-Smtp-Source: AA6agR71TapACZZa68tF3V1Bts7FpSvEvhdkK84e8jhYmvFXx2UsXQ/vF3J0/lgxyibBVYn21QZF6Q==
+X-Received: by 2002:a05:6512:2805:b0:48b:78:6e91 with SMTP id cf5-20020a056512280500b0048b00786e91mr16482906lfb.569.1662455001421;
+        Tue, 06 Sep 2022 02:03:21 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id f12-20020a056512360c00b0049482adb3basm1601042lfs.63.2022.09.06.02.03.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Sep 2022 02:03:20 -0700 (PDT)
+Message-ID: <5d4abf52-17d5-343b-b771-ac87bc2cff07@linaro.org>
+Date:   Tue, 6 Sep 2022 11:03:19 +0200
 MIME-Version: 1.0
-References: <20170613234513.7624-1-s-anna@ti.com> <20170613234513.7624-3-s-anna@ti.com>
- <20170625201545.GA26155@builder> <1ccd9273-0fde-4241-6d99-1d03be2f5b57@ti.com>
-In-Reply-To: <1ccd9273-0fde-4241-6d99-1d03be2f5b57@ti.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Mon, 5 Sep 2022 20:55:27 -0700
-Message-ID: <CAKdAkRTHCmyYFX1yy8M1mTtT9D_h66Yj=0UUdEEwjCq4ia4z4Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] remoteproc/keystone: Add a remoteproc driver for
- Keystone 2 DSPs
-To:     Suman Anna <s-anna@ti.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Andrew F. Davis" <afd@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Sam Nelson <sam.nelson@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH v3 2/7] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916
+ to schema
+Content-Language: en-US
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20220831134626.2803117-1-stephan.gerhold@kernkonzept.com>
+ <20220831134626.2803117-3-stephan.gerhold@kernkonzept.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220831134626.2803117-3-stephan.gerhold@kernkonzept.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+On 31/08/2022 15:46, Stephan Gerhold wrote:
 
-On Mon, Jun 26, 2017 at 8:55 AM Suman Anna <s-anna@ti.com> wrote:
->
-> Hi Bjorn,
->
-> On 06/25/2017 03:15 PM, Bjorn Andersson wrote:
-> > On Tue 13 Jun 16:45 PDT 2017, Suman Anna wrote:
-> >
-> >> +static int keystone_rproc_start(struct rproc *rproc)
-> >> +{
-> >> +    struct keystone_rproc *ksproc = rproc->priv;
-> >> +    int ret;
-> >> +
-> >> +    INIT_WORK(&ksproc->workqueue, handle_event);
-> >> +
-> >> +    ret = request_irq(ksproc->irq_ring, keystone_rproc_vring_interrupt, 0,
-> >> +                      dev_name(ksproc->dev), ksproc);
-> >> +    if (ret) {
-> >> +            dev_err(ksproc->dev, "failed to enable vring interrupt, ret = %d\n",
-> >> +                    ret);
-> >> +            goto out;
-> >> +    }
-> >> +
-> >> +    ret = request_irq(ksproc->irq_fault, keystone_rproc_exception_interrupt,
-> >> +                      0, dev_name(ksproc->dev), ksproc);
-> >> +    if (ret) {
-> >> +            dev_err(ksproc->dev, "failed to enable exception interrupt, ret = %d\n",
-> >> +                    ret);
-> >> +            goto free_vring_irq;
-> >> +    }
-> >
-> > I do prefer that your request any resources during probe() and
-> > potentially enable/disable them here. If below concern about using a
-> > GPIO driver is cleared already I'll take it as is though.
-> >
-> > [..]
-> >> +static void keystone_rproc_kick(struct rproc *rproc, int vqid)
-> >> +{
-> >> +    struct keystone_rproc *ksproc = rproc->priv;
-> >> +
-> >> +    if (WARN_ON(ksproc->kick_gpio < 0))
-> >> +            return;
-> >> +
-> >> +    gpio_set_value(ksproc->kick_gpio, 1);
-> >> +}
-> >> +
-> >
-> > This doesn't sound like a gpio-controller and the GPIO maintainer did
-> > reject an attempt by me to use the GPIO framework to abstract a similar
-> > thing. Do you already have this driver upstream or have you clarified
-> > with the maintainer that the GPIO framework is an acceptable abstraction
-> > for this?
->
-> Yeah, this has been upstream since quite some time. See commit
-> 2134cb997f2f ("gpio: syscon: reuse for keystone 2 socs").
+Thank you for your patch. There is something to discuss/improve.
 
-Sorry for the thread necromancy, but was it intentional that the
-driver only parses DT to find this "GPIO" but never requests/reserves
-it? I would like to drop of_get_named_gpio_flags() in favor of a more
-standard dev_get_gpiod().
+> +  qcom,halt-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      Halt registers are used to halt transactions of various sub-components
+> +      within MSS.
+> +    items:
+> +      - items:
+> +          - description: phandle to TCSR syscon region
+> +          - description: offset to the Q6 halt register
+> +          - description: offset to the modem halt register
+> +          - description: offset to the nc halt register
+> +
+> +  memory-region:
+> +    items:
+> +      - description: MBA reserved region
+> +      - description: MPSS reserved region
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    items:
+> +      - description: Name of MBA firmware
+> +      - description: Name of modem firmware
+> +
+> +  bam-dmux:
+> +    $ref: /schemas/net/qcom,bam-dmux.yaml#
+> +    description:
+> +      Qualcomm BAM Data Multiplexer (provides network interface to the modem)
+> +
+> +  smd-edge:
+> +    $ref: qcom,smd-edge.yaml#
+> +    description:
+> +      Qualcomm SMD subnode which represents communication edge, channels
+> +      and devices related to the DSP.
+> +
+> +    properties:
+> +      label:
+> +        enum:
+> +          - modem
+> +          - hexagon
 
-Thanks.
+This needs unevaluatedProperties:false. I will fix qcom,adsp.yaml which
+has similar problem.
 
--- 
-Dmitry
+Best regards,
+Krzysztof
