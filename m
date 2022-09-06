@@ -2,54 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02229C54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Sep 2022 09:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8066C54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Sep 2022 09:43:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234080AbiIFJYd (ORCPT
+        id S239104AbiIFJnI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Sep 2022 05:24:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60758 "EHLO
+        Tue, 6 Sep 2022 05:43:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232940AbiIFJY3 (ORCPT
+        with ESMTP id S239387AbiIFJmq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Sep 2022 05:24:29 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F39F2AC3
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Sep 2022 02:24:27 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id az24-20020a05600c601800b003a842e4983cso7086483wmb.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Sep 2022 02:24:27 -0700 (PDT)
+        Tue, 6 Sep 2022 05:42:46 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39007674F
+        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Sep 2022 02:42:27 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id e13so14568386wrm.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Sep 2022 02:42:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=zhumN5rKHl+rJS3E436tBIxP4QCYB+3VNNyoim6GayU=;
-        b=yYjZ6G7dxVaQrqwsDtWyTqGwC0GyQSdDxJbH8PcJTSekji3/w9wtxA7AG60TYd6+vm
-         ezB1IoJxlbmW21w+sgqqlMqsL1/3JwjGDobmfldnQVfgGJaqmSL6BW46RauHHufkg3+S
-         MmMKIDlGMh9y8D1jxaxLrqOseURPced+5VZ1JkV8e2tjdjM7HRRK+3D36BjdVwCbjbJv
-         TmZlF3OmxTxTyZlK6iIxb27AJC1V4G/iYJ88K8InacNPKrXXi8bc5ji0AcKnAwfgd+k+
-         4MLEjWhL1o8GBnryg64WScL0qSMcqn8LkjlNg8jkdj9RP3C5hWhjoDQAsC3619S5g35q
-         Wseg==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=AZx+3K3BoIqYOQf32bjmF5LhfSd1CBJzz3H5OYRrses=;
+        b=WW+LgiFVZWKYAY1s0egxDFDVyEeujteQa6G9ahhqfU/Uee6Ye4FG17Go/8iIsxq5Tj
+         5EKTFU9qPAi+McU+k4Kjw8LqNU3wpVBfRe7o8LpsFSOIlHrWytu6BUP6M8olFxd77vpP
+         5p4dZopHxbbjUn9q3sutXRQ5YAzWe6DGqQ8QN9lQbnMF96Qoybb9qYkBvK9mD0ueO6l3
+         v1neSXgW0n/AB0nOZX+LZ8ZZ6w09TWn7dm+9u2NMB0xdSIH642dC+2e+nPl81uHzmMEw
+         T7UN3sRg5yUllT6AlWxadli7eilDRloJ9DlIQEnddBtwmAnUlPfHXUz1o+5feaRGwdOr
+         e5Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=zhumN5rKHl+rJS3E436tBIxP4QCYB+3VNNyoim6GayU=;
-        b=pUMbSR5gyNEurPNLGUVW3EYjtF6VKPli+6ImbXZfU7oEkM/tko1u324VPXncKrBueE
-         I5bjnf0p0VZC2WcfvzTFoKTUbpULNl0pVYR/52+jLw4usHSB3G76rbRbMdLUP3acKmYV
-         q3jL7yorYDNe0MEE2SfBeXAmo4k1ix4kWZWRvsq0NydVxKMuimsYONTDF8VuWb6kv3FK
-         Dxcs7vK1BkBfEjgy6jzoAjclPP3QRDGdzsKLBXs3l8/9WVTH3n1RoSBBHpQMmHtaBpqc
-         a3+sPwkmuSDbRQbO/BcFyTIxfTYSfOfuQDeaLZUw4/TgmNWeNdQJ1SQy8heXdCdoMSes
-         6LSQ==
-X-Gm-Message-State: ACgBeo1n2OurCNVobn0FTttFpqFTqQNWVIEkQvby4IV2dORveJH38uy2
-        E1FpM99qf3xHc6Wfbro7axhGUQ==
-X-Google-Smtp-Source: AA6agR6eCeqyyMBjhzrEThYbzGzQUuqP9IQNZtGs2H09IxSYjfI0WNlD6qFILcKCDFkqtW9p3qae0w==
-X-Received: by 2002:a7b:cd11:0:b0:3a8:3f6c:9abf with SMTP id f17-20020a7bcd11000000b003a83f6c9abfmr13403700wmj.30.1662456265828;
-        Tue, 06 Sep 2022 02:24:25 -0700 (PDT)
-Received: from hackbox.lan ([94.52.112.99])
-        by smtp.gmail.com with ESMTPSA id x1-20020a5d6b41000000b002250c35826dsm11691236wrw.104.2022.09.06.02.24.24
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=AZx+3K3BoIqYOQf32bjmF5LhfSd1CBJzz3H5OYRrses=;
+        b=sr+RHtyP6ikFGUUmyaphOoVD87ivVtXPAMfbHTd4+CvLWpXFMG57Nul54J/hfr+Hqb
+         wWGJWHKC8u/dn5DDFzmz0HONTfz87ncUtK+4McSaYlhb03zLECwQlHbG63WzorJ+CH3w
+         SqPBneNiTb3396rqmrHi1+4qXQ4jkNeIK4RoEke3dotm+4fQS4pcuGYk1b8rBLGuq/tQ
+         3ATBybKghSTya+JShMvBpl9e9/qyJVen2Nd/7UiUM3kS92BepvNxLeMjrUGx4cnnjcWm
+         0Azj1Y0BHW6cNEBxDJB4WqI0SzRjWH0TIJfKWQ4rjmzMwNG8/b/ywmQ4qztI5mgq6jLS
+         yOPA==
+X-Gm-Message-State: ACgBeo2dhVxdvC2f3+Mm8j9OmOwS4kXBQM1SXDFpFiNM+kx7gGCHl8dT
+        Xx+kqq3azGu73Emd6Ux7ze4LCw==
+X-Google-Smtp-Source: AA6agR4EN0Y+AtIIiMTu9ibUaomfMjFMz3Urbiy/6AlyQYadUGfPzqeqjDWoXYD8THtJGNTUuAeIWw==
+X-Received: by 2002:a5d:6483:0:b0:226:db59:2f94 with SMTP id o3-20020a5d6483000000b00226db592f94mr23082304wri.200.1662457332102;
+        Tue, 06 Sep 2022 02:42:12 -0700 (PDT)
+Received: from linaro.org ([94.52.112.99])
+        by smtp.gmail.com with ESMTPSA id v13-20020a5d678d000000b00228a45eb045sm5020774wru.109.2022.09.06.02.42.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Sep 2022 02:24:25 -0700 (PDT)
+        Tue, 06 Sep 2022 02:42:11 -0700 (PDT)
+Date:   Tue, 6 Sep 2022 12:42:10 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Amol Maheshwari <amahesh@qti.qualcomm.com>,
@@ -61,44 +61,59 @@ To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH v8 2/2] MAINTAINERS: Update fastrpc documentation file from txt to yaml
-Date:   Tue,  6 Sep 2022 12:24:15 +0300
-Message-Id: <20220906092415.1989720-2-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220906092415.1989720-1-abel.vesa@linaro.org>
+        linux-remoteproc@vger.kernel.org, David Heidelberg <david@ixit.cz>
+Subject: Re: [PATCH v8 1/2] dt-bindings: misc: fastrpc convert bindings to
+ yaml
+Message-ID: <YxcV8kAQoqr6Bs1X@linaro.org>
 References: <20220906092415.1989720-1-abel.vesa@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220906092415.1989720-1-abel.vesa@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The documentation for fastrpc bingings is now YAML. So update the
-MAINTAINERS file.
+On 22-09-06 12:24:14, Abel Vesa wrote:
+> Convert Qualcomm FastRPC bindings to yaml format, so that we could validate
+> dt-entries correctly and any future additions can go into yaml format.
+> 
+> Use compute-cb@ subnodes instead of just cb@. Add qcom,glink-channels and
+> qcom,smd-channels missing properties to make sure dtbs_check doesn't fail
+> right off the bat. Correct the name of the parent node in the example from
+> smd-edge to glink-edge.
+> 
+> Also change the file extension referenced in bindings
+> remoteproc/qcom,glink-edge.yaml from txt to yaml.
+> 
+> Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Co-developed-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> 
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
+...
 
-Changes since v7:
- * no changes
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+> index fa69f7b21eed..170b0601839a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+> @@ -25,7 +25,7 @@ properties:
+>    fastrpc:
+>      type: object
+>      description:
+> -      See Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
+> +      See Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On a second thought, this should be a $ref now that is yaml.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 96f47a7865d6..ad697195fc59 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16863,7 +16863,7 @@ M:	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
- M:	Amol Maheshwari <amahesh@qti.qualcomm.com>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
--F:	Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
-+F:	Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
- F:	drivers/misc/fastrpc.c
- F:	include/uapi/misc/fastrpc.h
- 
--- 
-2.34.1
+Will resend.
 
+>  
+>    interrupts:
+>      maxItems: 1
+> -- 
+> 2.34.1
+> 
