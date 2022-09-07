@@ -2,83 +2,70 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579E2C38145
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Sep 2022 10:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686D9C38145
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Sep 2022 15:42:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbiIGKY4 (ORCPT
+        id S229947AbiIGPmg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Sep 2022 06:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34672 "EHLO
+        Wed, 7 Sep 2022 11:42:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230308AbiIGKYx (ORCPT
+        with ESMTP id S229563AbiIGPma (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Sep 2022 06:24:53 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3205062EE
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Sep 2022 03:24:36 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id p5so2370036ljc.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Sep 2022 03:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=sjy4Jxxxofr/CNtkGo5BunwXXx20LZ0tjJE5uoNvdEQ=;
-        b=OGIExj4MjF/TqRB81wkACNnrGKX0bsArf1wuHu+JuLcWpZFBEH/FUO3li6w7en8MOc
-         BLUuPzWcKWHu0qkvn4tyyDD35IMJCiPA7kKPIJK/exdObqV1PKYINtL6jklXYs+e6dXj
-         F7o1U4W5BNFBcwAv+6CnfLHtMwchNpTO7HnZ87n+zxPlDjZf3x7Ik2H8iWNpXE4+7hmg
-         Z7aY3wk5FxM2z9e+KwbcGpO5nUaxq0kXVWtnC3vuSoEEzfC3GF5dDBe6LEvvKCxH/28x
-         tQqe4FM+4AdMY5NY0TA5lHOQNZN+Ssm8LnTdaSKmCeGKektk437RS3cB6F/hiOs8LzRd
-         igag==
+        Wed, 7 Sep 2022 11:42:30 -0400
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 969F6B0B3A;
+        Wed,  7 Sep 2022 08:42:28 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id v2-20020a056830090200b006397457afecso10506495ott.13;
+        Wed, 07 Sep 2022 08:42:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=sjy4Jxxxofr/CNtkGo5BunwXXx20LZ0tjJE5uoNvdEQ=;
-        b=PwSKhyIIc3HIDiAYLrZjfatfj5jMwJjfF3ozDll/o3mF75SqO6qrp0GGBnfl4nKpQa
-         OttSZx6/KVMFFYbvMGqluk2zboWtp9vcVQeVC1yWBTc6f+uhGSRf1ku/K0YB97ETrNYq
-         5eo+SGXMjILYDh2gi4hj/p+DlnDfYqQbFZq5STsJyCxbuohEj5XFduG4yvm7nh7QVf7K
-         pl51O7t70Wr/x9GeoHkrm1k36PqtjHvon0tiTUN9oa8xd+0x/77tWqq6YWu0GMAB1vMe
-         FvFWx3uH8GUyGvcLhTrWcT73WFOFtseud8jscDcwUWYtyIWr/WsCcAl+c0hTXCA2VmQ6
-         h+CQ==
-X-Gm-Message-State: ACgBeo3PSe4/jDjeyguRq+rS+zcClE2Ly3WvNGERrZKJ/+vGS7eMSy5S
-        svYyoyLODXras7HyKduNAwc/6g==
-X-Google-Smtp-Source: AA6agR7LrS6Wpr0G0GMNseZ4mqfHBTC8LHNpanhfuhXUqUCYOVOmftOUiwx4o+SwlUSvSCvYDrDtOQ==
-X-Received: by 2002:a05:651c:1542:b0:249:5d86:3164 with SMTP id y2-20020a05651c154200b002495d863164mr784613ljp.500.1662546274641;
-        Wed, 07 Sep 2022 03:24:34 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id q17-20020ac25111000000b004946c3cf53fsm2375739lfb.59.2022.09.07.03.24.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Sep 2022 03:24:33 -0700 (PDT)
-Message-ID: <115bb541-57d1-23fa-d365-4e239f933d1b@linaro.org>
-Date:   Wed, 7 Sep 2022 12:24:32 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v12] dt-bindings: misc: fastrpc convert bindings to yaml
-Content-Language: en-US
-To:     Abel Vesa <abel.vesa@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=O0C9t0VY3tvvvQVSv0/pXgbdUBlFzo5v3zMl5r02uQU=;
+        b=bgzhqVpt3OnLIuZ4VSICRTvj52t4nOdgrYHD1y7VDdcV9Tt9EEca40jpiknKjpPhF5
+         mvRy5nQyWg6m1MFd9mmH8eJxS2rPoLGk+uD5+fAWazGRZAO2+prTERsCg73RgKR7kU81
+         YXisgGzu7p/gpS/XmEyH7vr3d1tVDf3/fIsbFTeBJjq4gedUej1rDy30B48YXxSr1vDS
+         7lREDqwoci4m1nIAh5guBSPeCrOGrYFNrt2cvMVYfD/D3Nht/dxeWUz1J4mQP8wjgbQZ
+         LXhJSEZVNEag7VwNcd+BFGxm8AHcSELLMbKJLlxKhGMvn1DBsXnsWogNb4bx1rgn5H1Q
+         rvqQ==
+X-Gm-Message-State: ACgBeo0cR1G46Dqs2qBDJFLsID4oW0UqtoMJMRAP/IXjIZYC59vdypx0
+        n2UqR98QTu4Sa78g4sOoi+oTjWMsGQ==
+X-Google-Smtp-Source: AA6agR7LI/fVhUFeKz5sWm4Jx6IOy+RzpBAsW5Hc/i9i0RkMlpD3hfgjX5MK8MKQzdWCsaBTRik4MQ==
+X-Received: by 2002:a9d:67c1:0:b0:63b:2b5c:90bd with SMTP id c1-20020a9d67c1000000b0063b2b5c90bdmr1653134otn.237.1662565347815;
+        Wed, 07 Sep 2022 08:42:27 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id a11-20020a4a988b000000b00435a8024bc1sm5159957ooj.4.2022.09.07.08.42.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Sep 2022 08:42:27 -0700 (PDT)
+Received: (nullmailer pid 3505199 invoked by uid 1000);
+        Wed, 07 Sep 2022 15:42:26 -0000
+Date:   Wed, 7 Sep 2022 10:42:26 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Abel Vesa <abel.vesa@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org,
         Amol Maheshwari <amahesh@qti.qualcomm.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Rob Herring <robh@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org, David Heidelberg <david@ixit.cz>
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        David Heidelberg <david@ixit.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v12] dt-bindings: misc: fastrpc convert bindings to yaml
+Message-ID: <20220907154226.GA3505117-robh@kernel.org>
 References: <20220907074301.3996021-1-abel.vesa@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20220907074301.3996021-1-abel.vesa@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 07/09/2022 09:43, Abel Vesa wrote:
+On Wed, 07 Sep 2022 10:43:01 +0300, Abel Vesa wrote:
 > Convert Qualcomm FastRPC bindings to yaml format, so that we could validate
 > dt-entries correctly and any future additions can go into yaml format.
 > 
@@ -97,10 +84,19 @@ On 07/09/2022 09:43, Abel Vesa wrote:
 > Co-developed-by: David Heidelberg <david@ixit.cz>
 > Signed-off-by: David Heidelberg <david@ixit.cz>
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+> 
+> Changes since v11:
+>  * added 'additionalProperties: false' to the patternProperties,
+>    as suggested by Krzysztof
+> 
+>  .../devicetree/bindings/misc/qcom,fastrpc.txt |  88 -------------
+>  .../bindings/misc/qcom,fastrpc.yaml           | 124 ++++++++++++++++++
+>  .../bindings/remoteproc/qcom,glink-edge.yaml  |   4 +-
+>  MAINTAINERS                                   |   2 +-
+>  4 files changed, 127 insertions(+), 91 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
+>  create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+> 
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
+Applied, thanks!
