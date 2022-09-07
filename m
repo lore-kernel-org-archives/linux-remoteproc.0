@@ -2,118 +2,202 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 987C7ECAAD3
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Sep 2022 08:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 763F8C38145
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Sep 2022 09:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229495AbiIGIXi (ORCPT
+        id S229699AbiIGJPI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Sep 2022 04:23:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33266 "EHLO
+        Wed, 7 Sep 2022 05:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbiIGIX2 (ORCPT
+        with ESMTP id S229536AbiIGJPI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Sep 2022 04:23:28 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7EDAA347
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Sep 2022 01:23:27 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id bt10so21271926lfb.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Sep 2022 01:23:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=PMffZexfhPxUf0YHZ8IhoN7MwL1ZPf0n44VkkEDS57M=;
-        b=yYH6ZJP1hi7hz49sPr0A7ZzxmO+zviqS3k4RQfh7vETXvcV+RtB8a68Y1PvcZSocoE
-         aJKF76dJdcbpQ7uuFSRU3UpQyjj2/jDe4sC6Uy9EQQ/5o2wpFGTalTiKmIcZ7wEJsNNx
-         4j1bF8ySH8V47EtLL/NhRr8vbNgnJrZAQMnD+F4nqge42pwNjPDD4EJRELgw0XXzkJ08
-         J1Ygh73Vq2NCFycDpuo1Jcm8m12CUTVPQGi1oAolgyUKgU77+oDm98/IEir++HoW9btl
-         nMtsmsYMkWyfVjMBBi8Mux7KY0wKQ7KnfqMO+2ofOFIInL4eIyUz4V1EaNoCrMbyHvKA
-         LEHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=PMffZexfhPxUf0YHZ8IhoN7MwL1ZPf0n44VkkEDS57M=;
-        b=6REi/pEzeGCJ0ntMeyZiO6iQrrvnZWmiZbJQO5rXL+ehuGe/0L2J1DzFT5wkc/wayJ
-         R731w6tyIF8ilGcepctf3mhzaBriNEEumAnDQDVp3XFFeQAJtO6P9LAgwxIx0g8ybvpZ
-         n7aRf7UMFjcwovbKjU32WmuyKzfapFdVkSY7iq6Y5wVp3meB5L+n4F5nvmGXXwaPJNDe
-         iV+dTCeNj3AKMDr3vjdIOP75wkyYdO8u8fBzEftRI9KVUayXtfN1qyQk7s8QGm6w1FKE
-         MSEqtU1LqKdJdJqMd02bJbXi9flu18Szzav+Uh32hQO+HXu1IJNh/eO6NUMddseST6Od
-         KYxA==
-X-Gm-Message-State: ACgBeo02pCFhLPoh9+tmmfJgqllwsBc5qKx2j7mdwn8/NnsDzipc2M7P
-        jI7z6/2f2M5TaonzDl0VU0DmFg==
-X-Google-Smtp-Source: AA6agR5QYYhRNSKsahw3GggztqRGmZaan4egYMA//IRllSYSBi1GGWREmQ96xwI88a8Q4T/kP8mesA==
-X-Received: by 2002:a19:380e:0:b0:497:7968:e789 with SMTP id f14-20020a19380e000000b004977968e789mr715368lfa.242.1662539005327;
-        Wed, 07 Sep 2022 01:23:25 -0700 (PDT)
-Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id g5-20020a056512118500b00492df78f311sm2312204lfr.57.2022.09.07.01.23.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Sep 2022 01:23:24 -0700 (PDT)
-Message-ID: <e3367f73-c2da-3f6d-59a4-209efb114d9e@linaro.org>
-Date:   Wed, 7 Sep 2022 10:23:23 +0200
+        Wed, 7 Sep 2022 05:15:08 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 907AD2715F;
+        Wed,  7 Sep 2022 02:15:06 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2879EoX5099504;
+        Wed, 7 Sep 2022 04:14:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1662542090;
+        bh=jq2OfRlva5di9Vn4eHGrTV4oiKwUCDWB2+lxGTVYHMY=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=QBFTHZdg6YDR80M9fuUTIMdmUwj6p0i/XyWz2UdhpkOlJL3mDgfeKOefvaSqtpkbU
+         WFMaE1mZzTR3seyurCwOwinjXXseJfyvxZBxiVtlGDetw4aAaduqcm8MHFW1p0E8zg
+         lh0RVRUm/8ENuzEOyUYBEylb05NLzjwCCktvR+g0=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2879EoUL082708
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Sep 2022 04:14:50 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Wed, 7 Sep
+ 2022 04:14:50 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Wed, 7 Sep 2022 04:14:50 -0500
+Received: from [10.24.69.114] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2879EjNI025985;
+        Wed, 7 Sep 2022 04:14:46 -0500
+Message-ID: <28a2b54a-9105-d848-92bb-e4742ee3448a@ti.com>
+Date:   Wed, 7 Sep 2022 14:44:45 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH] remoteproc: report firmware name on load failures
+ Thunderbird/91.11.0
+Subject: Re: [EXTERNAL] Re: [PATCH v5 6/6] remoteproc: pru: add support for
+ configuring GPMUX based on client setup
 Content-Language: en-US
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220831161736.749932-1-krzysztof.kozlowski@linaro.org>
- <20220906194622.GB64477@p14s>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20220906194622.GB64477@p14s>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+CC:     <linux-kernel@vger.kernel.org>, <bjorn.andersson@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <nm@ti.com>, <ssantosh@kernel.org>, <s-anna@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <rogerq@kernel.org>,
+        <grygorii.strashko@ti.com>, <vigneshr@ti.com>, <kishon@ti.com>,
+        <robh@kernel.org>
+References: <20220607045650.4999-1-p-mohan@ti.com>
+ <20220607045650.4999-7-p-mohan@ti.com> <20220719161625.GB3393732@p14s>
+ <49d1959e-88ae-c605-aafc-ca9819c4f85c@ti.com> <20220906192949.GA64477@p14s>
+From:   Md Danish Anwar <a0501179@ti.com>
+In-Reply-To: <20220906192949.GA64477@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 06/09/2022 21:46, Mathieu Poirier wrote:
-> On Wed, Aug 31, 2022 at 07:17:36PM +0300, Krzysztof Kozlowski wrote:
->> remoteproc error messages like:
->>   remoteproc remoteproc0: request_firmware failed: -2
->>   remoteproc remoteproc1: request_firmware failed: -2
->> are difficult to debug as one actually have no clue which device
->> reported it and which firmware is missing.  Be verbose and print the
->> name of the failed firmware.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  drivers/remoteproc/remoteproc_core.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index e5279ed9a8d7..71cd7ed7a970 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1923,7 +1923,8 @@ int rproc_trigger_recovery(struct rproc *rproc)
->>  	/* load firmware */
->>  	ret = request_firmware(&firmware_p, rproc->firmware, dev);
->>  	if (ret < 0) {
->> -		dev_err(dev, "request_firmware failed: %d\n", ret);
->> +		dev_err(dev, "request_firmware %s failed: %d\n",
->> +			rproc->firmware, ret);
->>  		goto unlock_mutex;
->>  	}
->>  
->> @@ -2023,7 +2024,8 @@ int rproc_boot(struct rproc *rproc)
->>  		/* load firmware */
->>  		ret = request_firmware(&firmware_p, rproc->firmware, dev);
->>  		if (ret < 0) {
->> -			dev_err(dev, "request_firmware failed: %d\n", ret);
->> +			dev_err(dev, "request_firmware %s failed: %d\n",
->> +				rproc->firmware, ret);
+Hi Mathieu
+
+On 07/09/22 00:59, Mathieu Poirier wrote:
+> Good day,
 > 
-> That information is already available in sysfs 
+> On Mon, Sep 05, 2022 at 02:41:27PM +0530, Md Danish Anwar wrote:
+>> Hi Mathieu,
+>>
+>> On 19/07/22 21:46, Mathieu Poirier wrote:
+>>> On Tue, Jun 07, 2022 at 10:26:50AM +0530, Puranjay Mohan wrote:
+>>>> From: Tero Kristo <t-kristo@ti.com>
+>>>>
+>>>> Client device node property ti,pruss-gp-mux-sel can now be used to
+>>>> configure the GPMUX config value for PRU.
+>>>>
+>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>> [s-anna@ti.com: simplify the pru id usage]
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>>>> ---
+>>>> V4->v5
+>>>> * This patch was included in v4 and had some checkpatch errors that have
+>>>>   been resolved in v5
+>>>> ---
+>>>>  drivers/remoteproc/pru_rproc.c | 20 ++++++++++++++++++++
+>>>>  1 file changed, 20 insertions(+)
+>>>>
+>>>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>>>> index 2977eb50631b..f2c6c55f0f20 100644
+>>>> --- a/drivers/remoteproc/pru_rproc.c
+>>>> +++ b/drivers/remoteproc/pru_rproc.c
+>>>> @@ -123,6 +123,7 @@ struct pru_private_data {
+>>>>   * @dbg_single_step: debug state variable to set PRU into single step mode
+>>>>   * @dbg_continuous: debug state variable to restore PRU execution mode
+>>>>   * @evt_count: number of mapped events
+>>>> + * @gpmux_save: saved value for gpmux config
+>>>>   */
+>>>>  struct pru_rproc {
+>>>>  	int id;
+>>>> @@ -141,6 +142,7 @@ struct pru_rproc {
+>>>>  	u32 dbg_single_step;
+>>>>  	u32 dbg_continuous;
+>>>>  	u8 evt_count;
+>>>> +	u8 gpmux_save;
+>>>>  };
+>>>>  
+>>>>  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+>>>> @@ -250,6 +252,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>>>  	struct device *dev;
+>>>>  	const char *fw_name;
+>>>>  	int ret;
+>>>> +	u32 mux;
+>>>>  
+>>>>  	try_module_get(THIS_MODULE);
+>>>>  
+>>>> @@ -273,6 +276,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>>>  
+>>>>  	mutex_unlock(&pru->lock);
+>>>>  
+>>>> +	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
+>>>> +	if (ret) {
+>>>> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
+>>>> +		goto err;
+>>>> +	}
+>>>> +
+>>>> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
+>>>> +					 &mux);
+>>>> +	if (!ret) {
+>>>> +		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
+>>>> +		if (ret) {
+>>>> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
+>>>> +			goto err;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>>  	if (pru_id)
+>>>>  		*pru_id = pru->id;
+>>>>  
+>>>> @@ -310,6 +329,7 @@ void pru_rproc_put(struct rproc *rproc)
+>>>>  
+>>>>  	pru = rproc->priv;
+>>>>  
+>>>> +	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
+>>>>  	pru_rproc_set_firmware(rproc, NULL);
+>>>>
+>>>
+>>>   CC      drivers/remoteproc/pru_rproc.o
+>>> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c: In function ‘pru_rproc_get’:
+>>> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:279:8: error: implicit declaration of function ‘pruss_cfg_get_gpmux’ [-Werror=implicit-function-declaration]
+>>>   279 |  ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
+>>>       |        ^~~~~~~~~~~~~~~~~~~
+>>> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:288:9: error: implicit declaration of function ‘pruss_cfg_set_gpmux’ [-Werror=implicit-function-declaration]
+>>>   288 |   ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
+>>>       |         ^~~~~~~~~~~~~~~~~~~
+>>>
+>>> I get this on both rproc-next and today's linux next.  
+>>
+>> This patch is dependent on the series [2] Introduce PRU platform consumer API
+>> https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
+>> as the api pruss_cfg_get_gpmux calls the api pruss_cfg_read and the api
+>> pruss_cfg_set_gpmux calls the api pruss_cfg_update which are implemented by the
+>> patch "soc: ti: pruss: Add pruss_cfg_read()/update() API" in the above series.
+>>
+> 
+> What I read from the cover letter is that the series you are referring to was an
+> RFC that predated this series.  Also from the cover letter, the second paragraph
+> clearly indicate that two other series _depend_ on this series.  As such there
+> was no way for me to identify the dependency.  
+> 
+>> This error is coming as the dependent patch needs the patch "soc: ti: pruss:
+>> Add pruss_cfg_read()/update() API" to be applied for compilation.
+> 
+> Please provide a link when referencing patchsets.  That way we know exactly
+> which one we are talking about.
+> 
 
-Hm, it's not in deferred probe reasons, so where can I find it in sysfs?
+Sure, the current patch is dependent on the patch [PATCH v2 3/6] soc: ti:
+pruss: Add pruss_cfg_read()/update() API
+https://lore.kernel.org/lkml/20220418123004.9332-4-p-mohan@ti.com/
 
-> but if you are really keen on it
-> please do the same for rproc_trigger_auto_boot().
-Sure.
+Thanks,
+Danish.
 
-Best regards,
-Krzysztof
+>>
+>> Thanks,
+>> Danish.
+>>
+>>>
+>>>>  	mutex_lock(&pru->lock);
+>>>> -- 
+>>>> 2.17.1
+>>>>
