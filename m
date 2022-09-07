@@ -2,101 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686D9C38145
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Sep 2022 15:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E4BC38145
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Sep 2022 21:48:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiIGPmg (ORCPT
+        id S230352AbiIGVsY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Sep 2022 11:42:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39922 "EHLO
+        Wed, 7 Sep 2022 17:48:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiIGPma (ORCPT
+        with ESMTP id S230283AbiIGVsX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Sep 2022 11:42:30 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 969F6B0B3A;
-        Wed,  7 Sep 2022 08:42:28 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id v2-20020a056830090200b006397457afecso10506495ott.13;
-        Wed, 07 Sep 2022 08:42:28 -0700 (PDT)
+        Wed, 7 Sep 2022 17:48:23 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E6FC4807
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Sep 2022 14:48:21 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id dv25so4167524ejb.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Sep 2022 14:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=+/R8XTGRvXQTqvAr8XML9xdzybq9kmOE4MfJixg2MLI=;
+        b=BTcxONqs0yhXF+8dWjfiLFdOKd/xUabSvAO7NqrhEHtZGoYQ2KGmDrVRbsynKidinm
+         JEl8FINmdPf4Tq54yiD9FWNgsAzRf4/kuC+9ExmgscTOpEqMq/PttvPNuuDyxQmt83ng
+         SLsZ9j55agxBr/StLo4iPYaJK4rP4owe/bJT3f7m1CXVc+euPeTii0VulvZnOut4dd9j
+         xtJLgk2j4oe8HF/WqJlR2A845oq9NsdBssjoS/ULF0Rkr4i2w/7ex4m3IIHKYKzvl9QH
+         RTk86241OLYvGKkn1daSEwLN5wnH4IGEN13w7WyHhg5G0+D5jg7Y9mgWqHjfXi82i4Es
+         hF7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=O0C9t0VY3tvvvQVSv0/pXgbdUBlFzo5v3zMl5r02uQU=;
-        b=bgzhqVpt3OnLIuZ4VSICRTvj52t4nOdgrYHD1y7VDdcV9Tt9EEca40jpiknKjpPhF5
-         mvRy5nQyWg6m1MFd9mmH8eJxS2rPoLGk+uD5+fAWazGRZAO2+prTERsCg73RgKR7kU81
-         YXisgGzu7p/gpS/XmEyH7vr3d1tVDf3/fIsbFTeBJjq4gedUej1rDy30B48YXxSr1vDS
-         7lREDqwoci4m1nIAh5guBSPeCrOGrYFNrt2cvMVYfD/D3Nht/dxeWUz1J4mQP8wjgbQZ
-         LXhJSEZVNEag7VwNcd+BFGxm8AHcSELLMbKJLlxKhGMvn1DBsXnsWogNb4bx1rgn5H1Q
-         rvqQ==
-X-Gm-Message-State: ACgBeo0cR1G46Dqs2qBDJFLsID4oW0UqtoMJMRAP/IXjIZYC59vdypx0
-        n2UqR98QTu4Sa78g4sOoi+oTjWMsGQ==
-X-Google-Smtp-Source: AA6agR7LI/fVhUFeKz5sWm4Jx6IOy+RzpBAsW5Hc/i9i0RkMlpD3hfgjX5MK8MKQzdWCsaBTRik4MQ==
-X-Received: by 2002:a9d:67c1:0:b0:63b:2b5c:90bd with SMTP id c1-20020a9d67c1000000b0063b2b5c90bdmr1653134otn.237.1662565347815;
-        Wed, 07 Sep 2022 08:42:27 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id a11-20020a4a988b000000b00435a8024bc1sm5159957ooj.4.2022.09.07.08.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Sep 2022 08:42:27 -0700 (PDT)
-Received: (nullmailer pid 3505199 invoked by uid 1000);
-        Wed, 07 Sep 2022 15:42:26 -0000
-Date:   Wed, 7 Sep 2022 10:42:26 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        David Heidelberg <david@ixit.cz>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v12] dt-bindings: misc: fastrpc convert bindings to yaml
-Message-ID: <20220907154226.GA3505117-robh@kernel.org>
-References: <20220907074301.3996021-1-abel.vesa@linaro.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=+/R8XTGRvXQTqvAr8XML9xdzybq9kmOE4MfJixg2MLI=;
+        b=Kdl3ZI+U1GVowAnC6dRoQDwN2AKb90lVrgHt7jwUPAIZX6gVoRv4xJnOXfRPWYFkOR
+         7u/kgH2UhxLw9UckglDn1C81rHDLjlL8iL1sNvl94T2yoQ9guTyw08PWNj4bql4IUi4v
+         6+6NrhVm6cbuItmoqGenhJ25mIKVdkWgrKJK3Imym5qUlNCqp0dea0tcxR+t8FlRgRBa
+         RJSUW87WW6Pez8U1liEYNpSpJEcIfjtI46o87+cX08UtOLHrtM9lhLVi3+qGcJeMtXWw
+         PiqmeV/vEAZAp7kynzdQKukBlNNc+GOz2Sy2mOBHd0zvF9xly4Fo8sUqCMj06vV0AmlE
+         7mvg==
+X-Gm-Message-State: ACgBeo3/eggEo/4zhDE9qAOnZ3OKIvJQujaywiDVAsG7QBmo3rAuhu9T
+        /c9IskTG2YZq0ABM5nN2Slky0Cc/PBQ+vkxam/Yt8g==
+X-Google-Smtp-Source: AA6agR45YzgOvEABURG6+iYvf+WmW5H2jNOcAjhQrckuIdcu1V6NSk2KkiOw4zMEqgoSv6z8gP2a8acsKlEO6ez6f1o=
+X-Received: by 2002:a17:906:58c8:b0:6fe:91d5:18d2 with SMTP id
+ e8-20020a17090658c800b006fe91d518d2mr3800336ejs.190.1662587299605; Wed, 07
+ Sep 2022 14:48:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220907074301.3996021-1-abel.vesa@linaro.org>
+References: <Yxe20ehiOnitDGus@google.com>
+In-Reply-To: <Yxe20ehiOnitDGus@google.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 7 Sep 2022 23:48:08 +0200
+Message-ID: <CACRpkdaDc1YwdS+Z4R1LEM=tzuMvCoy1qxWix-WaLRHsrZ=SUQ@mail.gmail.com>
+Subject: Re: [RFC/PATCH] remoteproc/keystone: switch to using gpiod API
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 07 Sep 2022 10:43:01 +0300, Abel Vesa wrote:
-> Convert Qualcomm FastRPC bindings to yaml format, so that we could validate
-> dt-entries correctly and any future additions can go into yaml format.
-> 
-> Use compute-cb@ subnodes instead of just cb@. Add qcom,glink-channels and
-> qcom,smd-channels missing properties to make sure dtbs_check doesn't fail
-> right off the bat. Correct the name of the parent node in the example from
-> smd-edge to glink-edge.
-> 
-> Since now the qcom,fastrpc bindings document is yaml, update the
-> reference to it in qcom,glink-edge and also use $ref.
-> 
-> Also update the MAINTAINERS file to point to the yaml version.
-> 
-> Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> Co-developed-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> 
-> Changes since v11:
->  * added 'additionalProperties: false' to the patternProperties,
->    as suggested by Krzysztof
-> 
->  .../devicetree/bindings/misc/qcom,fastrpc.txt |  88 -------------
->  .../bindings/misc/qcom,fastrpc.yaml           | 124 ++++++++++++++++++
->  .../bindings/remoteproc/qcom,glink-edge.yaml  |   4 +-
->  MAINTAINERS                                   |   2 +-
->  4 files changed, 127 insertions(+), 91 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.txt
->  create mode 100644 Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
-> 
+On Tue, Sep 6, 2022 at 11:08 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-Applied, thanks!
+> This patch switches the driver away from legacy gpio/of_gpio API to
+> gpiod API, and removes use of of_get_named_gpio_flags() which I want to
+> make private to gpiolib.
+>
+> Note that there is a behavior change in the driver: previously the
+> driver did not actually request GPIO, it simply parsed GPIO number out
+> of device tree and poked at it.
+>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
