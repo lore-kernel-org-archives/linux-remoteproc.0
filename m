@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89124C6FA82
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Sep 2022 13:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CBAC38145
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Sep 2022 13:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232554AbiIHNZq (ORCPT
+        id S232462AbiIHN0H (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Sep 2022 09:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
+        Thu, 8 Sep 2022 09:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232493AbiIHNZZ (ORCPT
+        with ESMTP id S232537AbiIHNZn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Sep 2022 09:25:25 -0400
+        Thu, 8 Sep 2022 09:25:43 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BB7A6C4D;
-        Thu,  8 Sep 2022 06:25:18 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 288CwoH8003141;
-        Thu, 8 Sep 2022 13:24:38 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DC8FCD503;
+        Thu,  8 Sep 2022 06:25:28 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 288CxoxU027463;
+        Thu, 8 Sep 2022 13:24:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=DCwsZcxXcrVMJfQoJIj/g+6bd7ofZJhWkb4eNZeTGEk=;
- b=UePHvs2Y7Eg8oAwGoA8m/Be57v7V+CbB1TNdqMYQD/rEvBabKoZAOAxuevVBm+6NtUl3
- HN9JbCH124D1sqKGlj+5et5gVuq8I29+ehwF3RSeaVK4QUGYltQLVspB7Uv4tdUZscCy
- alQE+ZAYEOKBgePpeN20tM6K1LI4ZlePGGJ387keIANcenu+IOOEIhQGRMPTv1A+rKcs
- MvxaZi/O/fb4csCtI+MxNrnXRdEaVFHVpdhs2OkMGZg04tDWMmA4ilmQX0i/gX1oZeTL
- 67vadPKK5nsm/waNogYA/Owelvg+20DlBb5v78uWF9szpmK6LvinAjUTSO+///nB5Yyc Mg== 
+ bh=Sf7vs+B1hXRXmZ/h/pTN7HTiTNLxrOR6B3hBALtKKag=;
+ b=DS0AC1EH6c2u7Ti7AamlK1diKnBrd8VLQPnnN/56ZbpN7r0Zqnbf1mwOeGagmcIEv2Nl
+ xg4OVT1tEpsSQkbqhDC9ceK5q1IhSW1D9MyIjazKIIH/Eygtp0oIeYg8vSsUNJv5Po2Z
+ pqU3Qi6hdpHAhAH7bUoTDbLjfifmjP+M5TCbsA737eNgCxLh49vnM48+T/UhtDK9z7jz
+ myOciZ4QzzHvOmhnwNzDW1ft888+iBOHjqGMwZbwLzwd0euJl9t5Fz74xyUarFSpmq+U
+ XEQw2dxqK9BJMeZTOTr0EulMYmTl0BX1LU9XZRgb4npS2RYVSI86d/hNZZt/wrfVrXQ3 aQ== 
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jfaa5h2q3-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jf5pcsjsn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Sep 2022 13:24:38 +0000
+        Thu, 08 Sep 2022 13:24:48 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 288DObbu027072
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 288DOlfl027101
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 8 Sep 2022 13:24:37 GMT
+        Thu, 8 Sep 2022 13:24:47 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Thu, 8 Sep 2022 06:24:32 -0700
+ 15.2.986.29; Thu, 8 Sep 2022 06:24:42 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
@@ -50,9 +50,9 @@ To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
         <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v6 6/8] remoteproc: qcom: Add efuse evb selection control
-Date:   Thu, 8 Sep 2022 18:53:40 +0530
-Message-ID: <1662643422-14909-7-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v6 8/8] remoteproc: qcom: Update QDSP6 out-of-reset timeout value
+Date:   Thu, 8 Sep 2022 18:53:42 +0530
+Message-ID: <1662643422-14909-9-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1662643422-14909-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1662643422-14909-1-git-send-email-quic_srivasam@quicinc.com>
@@ -63,86 +63,60 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fs0rByC7HjexLbxFjnp5CnQBOMzxEABu
-X-Proofpoint-ORIG-GUID: fs0rByC7HjexLbxFjnp5CnQBOMzxEABu
+X-Proofpoint-ORIG-GUID: qZzt0Q-ob0nkNndPS0IRQTE1vFvn05t-
+X-Proofpoint-GUID: qZzt0Q-ob0nkNndPS0IRQTE1vFvn05t-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-08_08,2022-09-08_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- mlxlogscore=999 lowpriorityscore=0 phishscore=0 adultscore=0
- suspectscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2207270000 definitions=main-2209080049
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add efuse evb selection control and enable it for starting ADSP.
+Update QDSP6 out-of-reset timeout value to 1 second, as sometimes
+ADSP boot failing on SC7280 based platforms with existing value.
+Also add few micro seconds sleep after enabling boot core
+start register.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 ---
-Changes since V5:
-	-- Split devm_platform_ioremap_resource_byname function.
-
- drivers/remoteproc/qcom_q6v5_adsp.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 389b2c0..ccb5592 100644
+index e55d593..4414e23 100644
 --- a/drivers/remoteproc/qcom_q6v5_adsp.c
 +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -56,6 +56,7 @@
+@@ -34,7 +34,7 @@
+ /* time out value */
+ #define ACK_TIMEOUT			1000
+ #define ACK_TIMEOUT_US			1000000
+-#define BOOT_FSM_TIMEOUT		10000
++#define BOOT_FSM_TIMEOUT		1000000
+ /* mask values */
+ #define EVB_MASK			GENMASK(27, 4)
+ /*QDSP6SS register offsets*/
+@@ -422,13 +422,14 @@ static int adsp_start(struct rproc *rproc)
  
- #define LPASS_BOOT_CORE_START	BIT(0)
- #define LPASS_BOOT_CMD_START	BIT(0)
-+#define LPASS_EFUSE_Q6SS_EVB_SEL 0x0
- 
- struct adsp_pil_data {
- 	int crash_reason_smem;
-@@ -86,6 +87,7 @@ struct qcom_adsp {
- 	struct clk_bulk_data *clks;
- 
- 	void __iomem *qdsp6ss_base;
-+	void __iomem *lpass_efuse;
- 
- 	struct reset_control *pdc_sync_reset;
- 	struct reset_control *restart;
-@@ -368,6 +370,9 @@ static int adsp_start(struct rproc *rproc)
- 	/* Program boot address */
- 	writel(adsp->mem_phys >> 4, adsp->qdsp6ss_base + RST_EVB_REG);
- 
-+	if (adsp->lpass_efuse)
-+		writel(LPASS_EFUSE_Q6SS_EVB_SEL, adsp->lpass_efuse);
-+
  	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
  	writel(LPASS_BOOT_CORE_START, adsp->qdsp6ss_base + CORE_START_REG);
++	usleep_range(100, 110);
  
-@@ -513,6 +518,7 @@ static int adsp_init_reset(struct qcom_adsp *adsp)
- static int adsp_init_mmio(struct qcom_adsp *adsp,
- 				struct platform_device *pdev)
- {
-+	struct resource *efuse_region;
- 	struct device_node *syscon;
- 	int ret;
+ 	/* Trigger boot FSM to start QDSP6 */
+ 	writel(LPASS_BOOT_CMD_START, adsp->qdsp6ss_base + BOOT_CMD_REG);
  
-@@ -522,6 +528,17 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
- 		return PTR_ERR(adsp->qdsp6ss_base);
- 	}
- 
-+	efuse_region = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (!efuse_region) {
-+		adsp->lpass_efuse = NULL;
-+		dev_dbg(adsp->dev, "failed to get efuse memory region\n");
-+	} else {
-+		adsp->lpass_efuse = devm_ioremap_resource(&pdev->dev, efuse_region);
-+		if (IS_ERR(adsp->lpass_efuse)) {
-+			dev_err(adsp->dev, "failed to map efuse registers\n");
-+			return PTR_ERR(adsp->lpass_efuse);
-+		}
-+	}
- 	syscon = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
- 	if (!syscon) {
- 		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
+ 	/* Wait for core to come out of reset */
+ 	ret = readl_poll_timeout(adsp->qdsp6ss_base + BOOT_STATUS_REG,
+-			val, (val & BIT(0)) != 0, 10, BOOT_FSM_TIMEOUT);
++			val, (val & BIT(0)) != 0, 100, BOOT_FSM_TIMEOUT);
+ 	if (ret) {
+ 		dev_err(adsp->dev, "failed to bootup adsp\n");
+ 		goto disable_adsp_clks;
 -- 
 2.7.4
 
