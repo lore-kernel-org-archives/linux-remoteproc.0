@@ -2,106 +2,163 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EBCC38145
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Sep 2022 21:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06637C54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Sep 2022 21:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbiIHVQU (ORCPT
+        id S230102AbiIHV72 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Sep 2022 17:16:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37956 "EHLO
+        Thu, 8 Sep 2022 17:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbiIHVQU (ORCPT
+        with ESMTP id S230239AbiIHV7K (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Sep 2022 17:16:20 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A2D1BFC58;
-        Thu,  8 Sep 2022 14:16:18 -0700 (PDT)
-Received: by mail-ot1-f54.google.com with SMTP id c39-20020a05683034a700b006540d515722so1225805otu.5;
-        Thu, 08 Sep 2022 14:16:18 -0700 (PDT)
+        Thu, 8 Sep 2022 17:59:10 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DB313B10D
+        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Sep 2022 14:58:07 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id q63so17990042pga.9
+        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Sep 2022 14:58:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=zfA7HSiKgjWO9Mg4FuYytU28dDXflMeBRCSCwHqciIQ=;
+        b=JG+3q0Mg9KVWzTtQllyN7SyXYZ61BCvGbeOdbe7ILmxsR8gV4dT/9vvk0QNT7thCFw
+         2qOYXyQxpkm0xX2wvm8b3RWXE4aFt+zRerjIQWxYdkQ8nJ3VD/+2rLpCrBNvksxTQkvg
+         SVmGTWdXMbgB3kyPcMjJQ95OVtvlQvYXvux6hzwGLGnejr9GV5O+nN4jjAylwMCGzxQh
+         gTF8dp8d3rQ7ZgvJZjMAhcE9tL21pQa/Ad493sDXOYqri46mCrMGwb/XCEJC4tEooTlu
+         ylYFvDBuI6P33uZRD0mdNPtkCb+0DwG56RCxdaTVKOXDNP34M5D0UOWhL6ENQ3YEt9Oy
+         8FvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=message-id:date:subject:references:in-reply-to:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=rWcbq6ugiqgCgjELcrVqjS0I0wNefYBPb+GNt/oNe5w=;
-        b=1TrYSYYscIIBk0wK8JDkQn5sYV3jLzDPU/OehI29LgizQvm2lkjHSl1krAp7pzXqUd
-         ols+guR3MEpuwp06xrapqbdXsWasMlG/xEFI4u/BXoingH4211xI7d2cFHFGdxcL819F
-         leA6pxSaYWfPgnooVOW6rM1/pzWDiRQIUjrlqxSaYuF/sC3qMzoPudrih5fmT9szueYB
-         pBXcfARXbIFzqGgTbzpQuRaeDuzCLfQuU70n04H2EBYCaJXz0woElkKGK0ejWZCP2G5Y
-         dv+rm31XBWT7acGAooZRTTGLIU90fPX0haIhm7Vt1GT9ta26wD13vIn4cxWKA4xIy8Zn
-         qWzQ==
-X-Gm-Message-State: ACgBeo3mWQwL9/W77cxGouuRTAAK2OInW6IGSZjAcSFixRO94YxEOuWH
-        AlaPobl+tmPFhdyg8Ulz3w==
-X-Google-Smtp-Source: AA6agR5ionLIAJ47zBwQEOmI6h314I0xQAXIv3ruArlWY7lsCBuy17bNk3p+MWY01+zMs1FnHRbRpQ==
-X-Received: by 2002:a9d:6f04:0:b0:654:ce0:d6ca with SMTP id n4-20020a9d6f04000000b006540ce0d6camr1263105otq.159.1662671777625;
-        Thu, 08 Sep 2022 14:16:17 -0700 (PDT)
-Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z20-20020a056871015400b0011f390fdb0asm167406oab.12.2022.09.08.14.16.16
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=zfA7HSiKgjWO9Mg4FuYytU28dDXflMeBRCSCwHqciIQ=;
+        b=HsvOrBxHjBFGwSRiAB4nXqlpGUNgM+8mxCILSIdqU4rY5xqL/V92b5C3pFXs+IZZ4P
+         dWbiwoSoWyQSGVUHvYyXP+VvHGI+xZz23V0pL12fdaLhwCw4YUZ8NYzP/LuM7XLE4pwl
+         pGyJ/QmdukG6QeW+RyCgfFpM13Cr2tTc0qLTuZTc1WMCLK0auFMja/mwmYq5ZEm9ozh7
+         f0nMmZL+2DGFXwNLPXhnNyCw/zs7S5OhZhUt6o3B5WuVV2fgUxBmbOX9kYcBkk6vP/3R
+         +SNdA6ij8VEoSjrrYT+55a4tnhVwUVj62MhaLa7Aoo+L57IZ2tNXINW/DUV+slMd1cIp
+         cUbw==
+X-Gm-Message-State: ACgBeo3iAXmJt4KXPVKCcilhb72uC26MsDLVvxnH0SgJ8/ymB7P8byDs
+        dKAi+vvWuwsDhNCr4eJMR8kxow==
+X-Google-Smtp-Source: AA6agR5stbvgr0+jGXqDOfcEYUlDDFw8CQiyJW4hv1AG/W/6x+PNZtRFXDt0mlhkjhl+xDEfNEzKRg==
+X-Received: by 2002:a63:a501:0:b0:434:ff77:1fda with SMTP id n1-20020a63a501000000b00434ff771fdamr7612456pgf.310.1662674270417;
+        Thu, 08 Sep 2022 14:57:50 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id z15-20020a1709027e8f00b00176be23bbb3sm259pla.172.2022.09.08.14.57.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Sep 2022 14:16:17 -0700 (PDT)
-Received: (nullmailer pid 3355396 invoked by uid 1000);
-        Thu, 08 Sep 2022 21:16:16 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Sireesh Kodali <sireeshkodali1@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20220908184925.2714098-3-sireeshkodali1@gmail.com>
-References: <20220908184925.2714098-1-sireeshkodali1@gmail.com> <20220908184925.2714098-3-sireeshkodali1@gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: remoteproc: qcom: Convert wcnss documentation to YAML
-Date:   Thu, 08 Sep 2022 16:16:16 -0500
-Message-Id: <1662671776.543526.3355395.nullmailer@robh.at.kernel.org>
+        Thu, 08 Sep 2022 14:57:49 -0700 (PDT)
+Date:   Thu, 8 Sep 2022 15:57:47 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kishon@ti.com, danishanwar@ti.com, nm@ti.com, vigneshr@ti.com,
+        grygorii.strashko@ti.com
+Subject: Re: [RFC/PATCH] remoteproc/keystone: switch to using gpiod API
+Message-ID: <20220908215747.GA246255@p14s>
+References: <Yxe20ehiOnitDGus@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yxe20ehiOnitDGus@google.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 09 Sep 2022 00:19:23 +0530, Sireesh Kodali wrote:
-> This is a direct conversion of the existing txt documentation to YAML.
-> It is in preparation for the addition of pronto-v3 to the docs. This
-> patch doesn't document any of the existing subnodes/properties that are
-> not documented in the existing txt file. That is done in a separate
-> patch.
+On Tue, Sep 06, 2022 at 02:08:33PM -0700, Dmitry Torokhov wrote:
+> This patch switches the driver away from legacy gpio/of_gpio API to
+> gpiod API, and removes use of of_get_named_gpio_flags() which I want to
+> make private to gpiolib.
 > 
-> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
+> Note that there is a behavior change in the driver: previously the
+> driver did not actually request GPIO, it simply parsed GPIO number out
+> of device tree and poked at it.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > ---
->  .../bindings/remoteproc/qcom,wcnss-pil.yaml   | 263 ++++++++++++++++++
->  1 file changed, 263 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+>  drivers/remoteproc/keystone_remoteproc.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+
+This change looks good to me but I would like someone from the TI brigade test
+this before applying it.
+
+Thanks,
+Mathieu
+
 > 
-
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb: pronto@a21b000: iris: 'vddxo-supply' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb: pronto@a21b000: iris: 'vddrfa-supply' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb: pronto@a21b000: iris: 'vddpa-supply' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb: pronto@a21b000: iris: 'vdddig-supply' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb: wcnss: 'bt' does not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/qcom/qcom,wcnss.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> index 594a9b43b7ae..95b39741925d 100644
+> --- a/drivers/remoteproc/keystone_remoteproc.c
+> +++ b/drivers/remoteproc/keystone_remoteproc.c
+> @@ -14,7 +14,7 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_reserved_mem.h>
+> -#include <linux/of_gpio.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/regmap.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/remoteproc.h>
+> @@ -59,10 +59,10 @@ struct keystone_rproc {
+>  	int num_mems;
+>  	struct regmap *dev_ctrl;
+>  	struct reset_control *reset;
+> +	struct gpio_desc *kick_gpio;
+>  	u32 boot_offset;
+>  	int irq_ring;
+>  	int irq_fault;
+> -	int kick_gpio;
+>  	struct work_struct workqueue;
+>  };
+>  
+> @@ -232,10 +232,10 @@ static void keystone_rproc_kick(struct rproc *rproc, int vqid)
+>  {
+>  	struct keystone_rproc *ksproc = rproc->priv;
+>  
+> -	if (WARN_ON(ksproc->kick_gpio < 0))
+> +	if (!ksproc->kick_gpio)
+>  		return;
+>  
+> -	gpio_set_value(ksproc->kick_gpio, 1);
+> +	gpiod_set_value(ksproc->kick_gpio, 1);
+>  }
+>  
+>  /*
+> @@ -432,9 +432,9 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+>  		goto disable_clk;
+>  	}
+>  
+> -	ksproc->kick_gpio = of_get_named_gpio_flags(np, "kick-gpios", 0, NULL);
+> -	if (ksproc->kick_gpio < 0) {
+> -		ret = ksproc->kick_gpio;
+> +	ksproc->kick_gpio = gpiod_get(dev, "kick", GPIOD_ASIS);
+> +	ret = PTR_ERR_OR_ZERO(ksproc->kick_gpio);
+> +	if (ret) {
+>  		dev_err(dev, "failed to get gpio for virtio kicks, status = %d\n",
+>  			ret);
+>  		goto disable_clk;
+> @@ -466,6 +466,7 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+>  
+>  release_mem:
+>  	of_reserved_mem_device_release(dev);
+> +	gpiod_put(ksproc->kick_gpio);
+>  disable_clk:
+>  	pm_runtime_put_sync(dev);
+>  disable_rpm:
+> @@ -480,6 +481,7 @@ static int keystone_rproc_remove(struct platform_device *pdev)
+>  	struct keystone_rproc *ksproc = platform_get_drvdata(pdev);
+>  
+>  	rproc_del(ksproc->rproc);
+> +	gpiod_put(ksproc->kick_gpio);
+>  	pm_runtime_put_sync(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+>  	rproc_free(ksproc->rproc);
+> -- 
+> 2.37.2.789.g6183377224-goog
+> 
+> 
+> -- 
+> Dmitry
