@@ -2,62 +2,79 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C1EAC38145
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Sep 2022 02:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10597ECAAD5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Sep 2022 07:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbiIHCFa (ORCPT
+        id S230407AbiIHHtq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Sep 2022 22:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50384 "EHLO
+        Thu, 8 Sep 2022 03:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229710AbiIHCF3 (ORCPT
+        with ESMTP id S230403AbiIHHtp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Sep 2022 22:05:29 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF8F7B281
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Sep 2022 19:05:28 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id z97so921512ede.8
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Sep 2022 19:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date;
-        bh=NAQ8LB+hGQXgxj6b9xkh7G28EACDFrwYkoz4gLfoQ0o=;
-        b=N5OgSLnSYMEWJtUWsrS9zk3nFE7VQO5+4q2NEQiEDqbANktTMjXJLAdBKzL9mHBtmU
-         YexIWU2xSISmIzIESOX9i0yJCHzdt23yeYEtwld9yDI50FCz9lYQQGl2zxPHC9rAwcD5
-         nE8SP9bs+3tEkAvU9L3365xt6eiKZ+BcY3p79SLErnqSEiue0/zXPdxnwZTDZNxaTUHy
-         bVJqqEZbMBG7pyLnrX6ip99FBFw3jLHkz82mW7TLvUT9iIg7bnZiI7jvvj+CuS55jqeh
-         0hSiswU4hG7zjLMoqJrs62h2hYGjKExZdVv/r1a48G+bgjVwWIva9mxuRtECCtmKBMQc
-         0gOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=NAQ8LB+hGQXgxj6b9xkh7G28EACDFrwYkoz4gLfoQ0o=;
-        b=A7FbD2ZSLMvN8Fo8erxgJkyYem9Fkg/JOVYhK17rc9NBcvL9yot29RGlfo7uW+p1HG
-         BMfmuvppidFlsOTGc2ZXLew4SWbNa19ufVftPZCds/i39EEEm4pmxO5XSsm10rWG4ZRg
-         AyCpyld993G2Rayk5trSvttEsNuc/VhcfV4K+QtDOKn37pfnR1QmhI+qlTftUaSsfbaz
-         7xxCk0XyJFFbQQz4lQA8b+9770B8PbT5hx4lKIOzqz/7fxGfmkYO9nffE9lj1eOneXSV
-         QTzcRf6MJfbF1IuV/XNVbqRcaJoEd8o/tqyLWczS4gIGXuYvtBKqCCJyQP1kbtBi/sbo
-         PZ2A==
-X-Gm-Message-State: ACgBeo1DhiZdDmXEOulIAVUdmSvvuOOYj/P/mqVF/7Q/r+10zpSrPKKP
-        fT8cEEW8Hkx86QqZOJFmqH9Kr+2rFbfe+uef8wjP0cwujl9lOg==
-X-Google-Smtp-Source: AA6agR4wf8L+5991lstrQpjJQHw23gXhsZRdqosQtkoFpKOwF0kWeZzSktqLu2ib9QdC/XOzOg9Je6L/u+giVX/Txc0=
-X-Received: by 2002:a05:6402:35d0:b0:44e:ca66:7f8a with SMTP id
- z16-20020a05640235d000b0044eca667f8amr5193887edc.415.1662602726532; Wed, 07
- Sep 2022 19:05:26 -0700 (PDT)
+        Thu, 8 Sep 2022 03:49:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBEF2AE09;
+        Thu,  8 Sep 2022 00:49:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C2848B82002;
+        Thu,  8 Sep 2022 07:49:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA465C433D6;
+        Thu,  8 Sep 2022 07:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662623381;
+        bh=VLz4zF2cFIZah0mzXJv9INlKuOYVvHTMbPaOn9fvfk0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UQca3d3V3Z5hfxfgK0pa1Tg5vKIPlPJjiul08xEEpaKEEoWT5iNBCG9WbJdKwFn1p
+         DDUs+0lLnYaUuo3SQXc2374fF/DCPWEJCPmZ2HG7+Jibs6Bl2HYbC006oI1UUDqYRU
+         eozYcNaJAFeByaPjsOo4IW975Cf6OuZ9c08OLJK/Lux3iDoKYQQf7UsZpVx6YpdE6+
+         feo9LOQkwGTGQ6S8TeflQMWHDFa1f2R4utKFgUBssgnUBiE3FaJHkGVG+DMtduIoCr
+         2fZ27Srwxq2cwcHQmsBIqpZ0I2HsQex7SR0oGqRfuYLSM+UKr88m6zzid+SwrisC5j
+         iFhTQaIcfMdKA==
+Date:   Thu, 8 Sep 2022 08:49:35 +0100
+From:   Lee Jones <lee@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFT PATCH v2 01/17] dt-bindings: mfd: qcom,tcsr: drop
+ simple-mfd from IPQ6018
+Message-ID: <Yxmej9ejrZh9RfWL@google.com>
+References: <20220817145901.865977-1-krzysztof.kozlowski@linaro.org>
+ <20220817145901.865977-2-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 7 Sep 2022 20:05:15 -0600
-Message-ID: <CANLsYkxEex-d=Z2QqVEBYPFocvoaRka8GLnrNfCadiwW4L6qWg@mail.gmail.com>
-Subject: [INFO] Remoteproc/RPMSG patchset review order for September 8th 2022
-To:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220817145901.865977-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-[PATCH v8 0/4] remoteproc: restructure the remoteproc VirtIO device
-[PATCH V4 0/6] remoteproc: imx_rproc: support i.MX8QM/QXP
-[PATCH 0/2] remoteproc: imx: add start up delay
-[PATCH v4 0/3] Add support for WASP SoC on AVM router boards
+On Wed, 17 Aug 2022, Krzysztof Kozlowski wrote:
+
+> Commit 7677ed11e9fa ("dt-bindings: mfd: qcom,tcsr: Convert to dtschema")
+> converted bindings to DT schema literally - including the
+> qcom,tcsr-ipq6018 expecting syscon and simple-mfd.  Such configuration
+> is not used in DTS and there is no actual need of it.  The TCSR block is
+> purely configuration block and should not have children.  Any child
+> device should be simply moved outside of TCSR syscon block.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/mfd/qcom,tcsr.yaml    | 40 +++++++++----------
+>  1 file changed, 18 insertions(+), 22 deletions(-)
+
+Merge conflict.  Please rebase.
+
+-- 
+Lee Jones [李琼斯]
