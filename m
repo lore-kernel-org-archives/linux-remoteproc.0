@@ -2,91 +2,91 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C2DECAAA1
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 07:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4916DECAAD3
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 07:59:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231288AbiIIHTr (ORCPT
+        id S230337AbiIIH7R (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 03:19:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33092 "EHLO
+        Fri, 9 Sep 2022 03:59:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231281AbiIIHTp (ORCPT
+        with ESMTP id S230368AbiIIH7B (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Sep 2022 03:19:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3BE04455C;
-        Fri,  9 Sep 2022 00:19:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D5D461ECE;
-        Fri,  9 Sep 2022 07:19:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCD3C433C1;
-        Fri,  9 Sep 2022 07:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1662707980;
-        bh=KhGijpRTlM2bTdUkDiB+bOQtxpDM2p4+dDXvNnu++8s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZsL5kZxJ/aSR4JvyTUMVZJffg4K0vlVn+TivS9oaqMuiwwHn/XzcHlpCVfMrJxEAb
-         9yERXWfajGKRPiAR9XA8juIrsHQ1OK7RWdFd+vl+sw3b7Es72YRWzSt908OfIa5bgW
-         39eDkj6QC7cWshZEW+H7TrgccTmoKJyrNOwnPZqLLb97u/LTr4itAXfodSHb7ImXlp
-         +m5vUwPDvzftbYfRbNlZSL4Bq6CFoAMm6JJSYISWFDsGBPUKeli813AYNJiAqEh3/K
-         Sml46S1iNUmjhNfJSGhp0aUYnHIt+q0kdD3fR29Ia5nYlecSCnEqNSV4YPgKvzqYVZ
-         PD/lSESpSuIaA==
-Date:   Fri, 9 Sep 2022 08:19:33 +0100
-From:   Lee Jones <lee@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Fri, 9 Sep 2022 03:59:01 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40CFC1251B8
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 00:57:53 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id bq23so1344691lfb.7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Sep 2022 00:57:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=wygukOl8i/HPyLsY11Rs2ZxExJGU0+uocDld7aZ7GbA=;
+        b=QT6icU9vIyeCa567TOlGxMBCIpGy4/8/UOIixR5YBeaIjuwn4u/tDQddXTwRJ5RprJ
+         DTuO4Ho50oYf38S39HuhXZaa9x0kLQ/7fsHJcYAMSUE8pfEC71Rp+N1tQZICXZIzb9bj
+         hbdUW/SXy2qen/houJbZYhigBwfrZL0nD4Io0i34Vh9jF4nEJfd+Up5ZcRCebzPI2ztE
+         KoIeceiAx3G7xIglOhmVOquB1SuJxwf+SiqCS3WSgpotCWIc4IbLIoXHsmG4qxqL/jpo
+         Le8oMFd5poC6W23yaF3MWe91xDQInJz5e5x0wVmxZINGOhRSi+B+/Jj81PhFezuzEQxt
+         CRyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=wygukOl8i/HPyLsY11Rs2ZxExJGU0+uocDld7aZ7GbA=;
+        b=eDKFu8oUiVoLkq+qUyyO4uVPdqbgGTMyysOnR48qPxUiYLoYj+klZw28wRbOvQdGkB
+         ty0LJgPGXX7qIphOhPzoFswoqfTS7jykki1KzQaQgmLTpmR9Wp8MHZcAsooMuGnILG+S
+         G9YMMPvISdAtRk6XmGZ1gKoebC5pLVru8LE9xhQ3L7fPnXjKCzmqUuxyspOnPuYDBRR1
+         ot6dgAm6KUS1GCqyxYWwnyH3w2keJmaSY693Vcehtof6prOiYtmIYcY0qlPsMWYgHnNe
+         ym6hZ/FdUdQna30iL+NeyqZyMCtkiy+dirxmq7PSMNSa0HvqFsaegGCV2jxkX+JT5i9H
+         +i1w==
+X-Gm-Message-State: ACgBeo2OpQBL+edJT9H5CB44SFSZM8vBahkOox50YxkZgMNhgNek/v/U
+        laxU+ubVUhlwNTyRUTRcih9hTg==
+X-Google-Smtp-Source: AA6agR5xMNSOZ3u7aA5rNUci374+LvDxP0r+OCliuWHoHu8+tTWvd1Hp3J5LAylJ+GtbC4ZJypj0zg==
+X-Received: by 2002:a19:5e50:0:b0:497:a331:91d9 with SMTP id z16-20020a195e50000000b00497a33191d9mr4031794lfi.162.1662710271816;
+        Fri, 09 Sep 2022 00:57:51 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id z8-20020a2e7e08000000b0025e4e7c016dsm184412ljc.16.2022.09.09.00.57.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Sep 2022 00:57:51 -0700 (PDT)
+Message-ID: <643e8223-f88f-9258-dc36-1732dfa8bb19@linaro.org>
+Date:   Fri, 9 Sep 2022 09:57:50 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
+Subject: Re: [PATCH v2 2/4] dt-bindings: remoteproc: qcom: Convert wcnss
+ documentation to YAML
+Content-Language: en-US
+To:     Sireesh Kodali <sireeshkodali1@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     bjorn.andersson@linaro.org, Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFT PATCH v2 02/17] dt-bindings: mfd: qcom,tcsr: add QCS404
-Message-ID: <YxrpBfcsgquVFcgO@google.com>
-References: <20220817145901.865977-1-krzysztof.kozlowski@linaro.org>
- <20220817145901.865977-3-krzysztof.kozlowski@linaro.org>
- <YxmetuNRIgDhutKv@google.com>
- <9abc956f-17c7-60c9-4672-d62fe581f516@linaro.org>
- <e4337c1d-e579-a200-35c3-7ca9d0a0ba12@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e4337c1d-e579-a200-35c3-7ca9d0a0ba12@linaro.org>
+        open list <linux-kernel@vger.kernel.org>
+References: <20220908184925.2714098-1-sireeshkodali1@gmail.com>
+ <20220908184925.2714098-3-sireeshkodali1@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220908184925.2714098-3-sireeshkodali1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 08 Sep 2022, Krzysztof Kozlowski wrote:
+On 08/09/2022 20:49, Sireesh Kodali wrote:
+> This is a direct conversion of the existing txt documentation to YAML.
+> It is in preparation for the addition of pronto-v3 to the docs. This
+> patch doesn't document any of the existing subnodes/properties that are
+> not documented in the existing txt file. That is done in a separate
+> patch.
 
-> On 08/09/2022 10:15, Krzysztof Kozlowski wrote:
-> > On 08/09/2022 09:50, Lee Jones wrote:
-> >> On Wed, 17 Aug 2022, Krzysztof Kozlowski wrote:
-> >>
-> >>> Document new QCS404 TCSR compatible.
-> >>>
-> >>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
-> >>>  1 file changed, 1 insertion(+)
-> >>
-> >> Merge conflict.  Please rebase.
-> > 
-> > I will rebase. Can you check if you pushed your tree? I see updates 3
-> > weeks ago here:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/
-> 
-> It seems latest next also has your old tree from Aug 15, so on what
-> exactly I should rebase?
+There is no conversion here... Just adding new bindings.
 
-That was my last day.
-
-Only updates since Monday needed pushing - now complete.
-
--- 
-Lee Jones [李琼斯]
+Best regards,
+Krzysztof
