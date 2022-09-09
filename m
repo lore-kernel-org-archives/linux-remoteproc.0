@@ -2,205 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F39C6FA8B
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 12:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 132A1ECAAA1
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 16:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230419AbiIIMyi (ORCPT
+        id S229965AbiIIQQ4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 08:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44400 "EHLO
+        Fri, 9 Sep 2022 12:16:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231172AbiIIMyd (ORCPT
+        with ESMTP id S230070AbiIIQQz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Sep 2022 08:54:33 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDF9312111A
-        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 05:54:19 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id f14so1545789lfg.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Sep 2022 05:54:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=wCnjqrj2GGGlSBoOXRHfEq6CD5MpxnVT3q6Lv2UyXSE=;
-        b=sD/KxWUkLvt9xM/WSj1l2STBGBNhn/w/JaR6SXt3MIcagvOaTQyfUkBNLJFkhzL1Nu
-         zKCacYSWtaOQ2Y/7NjMbLACp9forkgYkEwfQGgg/usVeMCE0chFl2MMRQJhKCcXE8NSe
-         R+FkvoHB1p4u7dgS4968T0YBj0goL9zDGLaQBiYtt9sOZQmHPpYdJq3kYvM6QcvpWAFf
-         QYDLyc+D4X1zqC4HJbLclZzVvq+zO7yUhczMsVsRfzd9K1gCHABVh7CJelyznmCJVxdz
-         HRMfMjeUrNFzpFTIboevWM3YE7eNbPY4KTvA6xfdlxENiBRpxo4mPQo2nOIE5qU7G+VP
-         7WUA==
+        Fri, 9 Sep 2022 12:16:55 -0400
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC36525FD;
+        Fri,  9 Sep 2022 09:16:54 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-127f5411b9cso5153999fac.4;
+        Fri, 09 Sep 2022 09:16:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=wCnjqrj2GGGlSBoOXRHfEq6CD5MpxnVT3q6Lv2UyXSE=;
-        b=5h34nV1UF2KXC2GeyHNjwKkiH5aZkvamqED7q32TY86VQ1MFCxJTF0rq6s0kPvi96G
-         S0py8VVfw7XFtD1wdaFH8LWpb0/wIJS9oyzgsCSZ+9XhqfZuxOIXFVGGUZlj7Vp8kfIi
-         MdTazfG9zopPfzvVEhaOZSeI5qjsp1K9bK0jE9bTaztjCriec+vPrwFCqYpP85AUMlbr
-         +XwH3xSFyxskkmNioX7xor4uViqxhIvft9GNK6amwpCdE0FMMZY/qa2awwjLAlsFBRWS
-         G3gyDT/NNQEmO/cXASE2RhayIwRMg1rBNQx9IXKLn/+m+Pc5cutAFyuPy6VNCBNiWTAv
-         I9tg==
-X-Gm-Message-State: ACgBeo3BnfavKRWrJA1vWaT56qBRfcuYZ770YeggjkZYnCi7YC4eCewe
-        fBhUgUMGfexAaqY5lhVFGTQVKw==
-X-Google-Smtp-Source: AA6agR5eO8XIwHgdRjjsK/q9mJ1Cv4/XqjJeCpXM8Cxg76ENkHUBMXuRcQGNpPd5DHZ5jQc6LqG8mQ==
-X-Received: by 2002:a19:380e:0:b0:497:7968:e789 with SMTP id f14-20020a19380e000000b004977968e789mr4167167lfa.242.1662728058999;
-        Fri, 09 Sep 2022 05:54:18 -0700 (PDT)
-Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id g10-20020a2eb0ca000000b00263630ab29dsm64750ljl.118.2022.09.09.05.54.17
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=xlFFSOmL2Kg7d5JhqS1CuSA0YXH/t62smEQBhYJZXcE=;
+        b=e7pJ0DLcDlhHx+L1sxNmsrkydOvLvaSQDxnhmROTanCPeoXZiFFEmt1gK/D04oxOTF
+         Ic4zRr6vtKn5x3KfUZbf9RVfTCDWvRnRiWjEOEl/oQfXkccb+bqjd1Cz8/qEkp/Qv21a
+         tgg6jZ03wnsh6VtY48XJv6RDnLqEKXxt/Jm/Z1es9ZCebl0UBajxn63z4lBtVuTjM3/T
+         nrg24K6JQTyKj+iopcaqcAnDQG1xFV+InKWZpnF/ZVtztxxwSuWVrBAziXmMlS9g4dNN
+         gpnWSCkes+Z7d8j6ZmpIhDZEJ1OYGTUeWcAOGVQeysF+xgBUxYXLa4+WK0R0G1Aj5oRK
+         5BpQ==
+X-Gm-Message-State: ACgBeo329udLEuxMQnuEvxVIW3l8j8EjoMo1vHE3i6tC2i15Qr/06DHj
+        9kpPXszj1NNjicpdnYeQCA==
+X-Google-Smtp-Source: AA6agR6FjeNPJpiQyU8SWVHCL1E0ufnFpNOjvgQWXz133s4R1ZwGtn0kH8BBE6egrbFH0lo632aPyw==
+X-Received: by 2002:a05:6870:4727:b0:126:e6:3848 with SMTP id b39-20020a056870472700b0012600e63848mr5162213oaq.60.1662740213861;
+        Fri, 09 Sep 2022 09:16:53 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id k6-20020a056870818600b0010d7242b623sm560178oae.21.2022.09.09.09.16.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Sep 2022 05:54:18 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Fri, 09 Sep 2022 09:16:53 -0700 (PDT)
+Received: (nullmailer pid 1449252 invoked by uid 1000);
+        Fri, 09 Sep 2022 16:16:52 -0000
+Date:   Fri, 9 Sep 2022 11:16:52 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+Cc:     devicetree@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        David Heidelberg <david@ixit.cz>,
         Abel Vesa <abel.vesa@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 7/7] dt-bindings: remoteproc: qcom,smd-edge: define children
-Date:   Fri,  9 Sep 2022 14:54:03 +0200
-Message-Id: <20220909125403.803158-8-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220909125403.803158-1-krzysztof.kozlowski@linaro.org>
-References: <20220909125403.803158-1-krzysztof.kozlowski@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,smd-edge: Add APR/FastRPC
+Message-ID: <20220909161652.GA1448908-robh@kernel.org>
+References: <20220908181432.458900-1-stephan.gerhold@kernkonzept.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220908181432.458900-1-stephan.gerhold@kernkonzept.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-SMD edge contains subnodes representing devices related to the remote
-processor.  With limietd number of remote processors, there is a limited
-set of such devices.
+On Thu, 08 Sep 2022 20:14:32 +0200, Stephan Gerhold wrote:
+> Similar to qcom,glink-edge.yaml the smd-edge can also contain
+> apr/fastrpc nodes for functionality exposed by the modem or audio DSP.
+> 
+> These nodes are already used in existing device trees, adding them
+> fixes the following dtbs_check warnings after converting
+> qcom,msm8916-mss-pil to DT schema:
+> 
+> arch/arm64/boot/dts/qcom/apq8016-sbc.dtb: remoteproc@4080000: smd-edge:
+> Unevaluated properties are not allowed ('fastrpc' was unexpected)
+>   From schema: remoteproc/qcom,msm8916-mss-pil.yaml
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
+> ---
+> Since qcom,fastrpc.yaml only exists in Rob's tree right now and
+> a similar change for qcom,glink-edge.yaml was applied there it is
+> probably easiest if this patch goes through Rob's tree as well.
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,smd-edge.yaml  | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-List all of them in smd-edge bindings so schema can strictly check for
-subnodes.
-
-Additional benefit is requirement of "qcom,smd-channels" for such
-subnodes, because their schema cannot enforce it (few devices like APR
-or FastRPC can be part of either SMD or GLINK edge).
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/remoteproc/qcom,smd-edge.yaml    | 34 ++++++++++++++++++-
- .../bindings/soc/qcom/qcom,smd.yaml           | 27 +--------------
- 2 files changed, 34 insertions(+), 27 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml
-index 06eebf791e32..7ec8a6b6682c 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml
-@@ -13,12 +13,30 @@ description:
-   Qualcomm SMD subnode represents a remote subsystem or a remote processor of
-   some sort - or in SMD language an "edge". The name of the edges are not
-   important.
-+
-+  In turn, subnodes of the "edges" represent devices tied to SMD channels on
-+  that "edge". The names of the devices are not important. The properties of
-+  these nodes are defined by the individual bindings for the SMD devices.
-   See also Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
- 
- properties:
-   $nodename:
-     const: "smd-edge"
- 
-+  apr:
-+    $ref: /schemas/soc/qcom/qcom,apr.yaml#
-+    required:
-+      - qcom,smd-channels
-+    description:
-+      Qualcomm APR/GPR (Asynchronous/Generic Packet Router)
-+
-+  fastrpc:
-+    $ref: /schemas/misc/qcom,fastrpc.yaml#
-+    required:
-+      - qcom,smd-channels
-+    description:
-+      Qualcomm FastRPC
-+
-   interrupts:
-     maxItems: 1
- 
-@@ -56,6 +74,20 @@ properties:
-       The identifier for the remote processor as known by the rest of the
-       system.
- 
-+  rpm-requests:
-+    $ref: /schemas/soc/qcom/qcom,smd-rpm.yaml#
-+    required:
-+      - qcom,smd-channels
-+    description:
-+      Qualcomm Resource Power Manager (RPM) over SMD.
-+
-+  wcnss:
-+    $ref: /schemas/soc/qcom/qcom,wcnss.yaml
-+    required:
-+      - qcom,smd-channels
-+    description:
-+      Qualcomm WCNSS for Bluetooth, WiFi and FM radio.
-+
- required:
-   - interrupts
-   - qcom,smd-edge
-@@ -66,7 +98,7 @@ oneOf:
-   - required:
-       - qcom,ipc
- 
--additionalProperties: true
-+additionalProperties: false
- 
- examples:
-   - |
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
-index 0e548234611e..063e595c12f7 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
-@@ -22,37 +22,12 @@ properties:
- patternProperties:
-   "^smd-edge|rpm$":
-     $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
-+    unevaluatedProperties: false
-     description:
-       Each subnode of the SMD node represents a remote subsystem or a remote
-       processor of some sort - or in SMD language an "edge". The name of the
-       edges are not important.
- 
--    properties:
--      rpm-requests:
--        type: object
--        description:
--          In turn, subnodes of the "edges" represent devices tied to SMD
--          channels on that "edge". The names of the devices are not
--          important. The properties of these nodes are defined by the
--          individual bindings for the SMD devices.
--
--        properties:
--          qcom,smd-channels:
--            $ref: /schemas/types.yaml#/definitions/string-array
--            minItems: 1
--            maxItems: 32
--            description:
--              A list of channels tied to this device, used for matching the
--              device to channels.
--
--        required:
--          - compatible
--          - qcom,smd-channels
--
--        additionalProperties: true
--
--    unevaluatedProperties: false
--
- required:
-   - compatible
- 
--- 
-2.34.1
-
+Applied, thanks!
