@@ -2,108 +2,104 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77497ECAAD3
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 16:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43E4ECAAA1
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 19:24:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231852AbiIIQwM (ORCPT
+        id S230324AbiIITYE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 12:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48700 "EHLO
+        Fri, 9 Sep 2022 15:24:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231890AbiIIQwI (ORCPT
+        with ESMTP id S229835AbiIITYC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Sep 2022 12:52:08 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C34980B43
-        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 09:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1662741959;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=afnKVBQX5rCWk4RFGC1jNM+Dz0i9Uxm87RuXQL6z6cY=;
-    b=VwiFQ6+6Vw271fTblK0u+Caoo15AdNQHrR0nQN16mpxWeNzf1Z03lMRjDOzgPPvICn
-    sI8p03+A4KdxxOmk4GlfovyeHTztd19pPaZDLw0WfdEIeRDrg/0CGzyk8/vdccXE4x7r
-    P75kyssZFOIN52qPgexMsi35Uocgb8A1zNhPsgyzFd/DapyjvfXTHZNvSDMN8cCSQer2
-    GdsSYAhvoksVIMG/O6I6ukt/u7rqxQvXt3mCRRs1Ct0fVzSId+zOLZydCeceSmaOpJqe
-    CadQh6e1dGY2kM0LRqmvVq+vVxKNLqIn3oJjkdjtayTVTHttXvj4irRyolsKIxNZfVMw
-    +YNw==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLUrK09lg=="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 48.0.2 AUTH)
-    with ESMTPSA id I8c97dy89GjwCzv
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Fri, 9 Sep 2022 18:45:58 +0200 (CEST)
-Date:   Fri, 9 Sep 2022 18:45:52 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-        devicetree@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,smd-edge: Add APR/FastRPC
-Message-ID: <YxttwK1FMCMZ+CyS@gerhold.net>
-References: <20220908181432.458900-1-stephan.gerhold@kernkonzept.com>
- <20220909161652.GA1448908-robh@kernel.org>
- <CAL_JsqKVb54yckiky79mK5FdEf-Vf7SyVU01Jdpo9whOqq0spQ@mail.gmail.com>
- <0b6f5b4b-247e-7573-04fd-05d037533aa3@linaro.org>
+        Fri, 9 Sep 2022 15:24:02 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50BB143429
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 12:24:01 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id b144so2544707pfb.7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Sep 2022 12:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=1YL3JOnJhxMrmebag05eoFsKq7z4k+Mtpi8WQ+HWkBA=;
+        b=PFWHM6FNgcGzrNw+awdzUIJDCQyBKEQEKSlevJNyzCOj8tF/Q+hkpQjcpOciNhux9x
+         A0OdJumurQVQi1hUylldetn/Dicm6OGl1cwgvO1EgKFkc6h2YtJrmqHz464PBtcjGDSd
+         eXfyW4aqpypuN4Ldeon/6uequtYfihPaPzsVa1X9WircOCblJlS7alBk/5SPufUiqWWG
+         EE9cRuQcpwjPvVozrW4ItoU1r+I9X/Y931Cq70WNq2wfK1a3Bx0nUxLlNqF5Q6ev919z
+         q6vRtgguuTUyeeCPp2Bc4HBx070AZE40+M4agC1mW+twJFYyWDiT4mgb2YCdTMRCYVh+
+         plwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=1YL3JOnJhxMrmebag05eoFsKq7z4k+Mtpi8WQ+HWkBA=;
+        b=XCBi8Qem83f6YBXmxuzYlUjWNlfGKLfWMeimb9crGq4Ly2ycaKZDsi1XmY0hsvBJLH
+         XStoKJXvwUwy0NsUwMjUSJUhI7gOzMQHp1Lf0/3iWvDjpTqbuRaWQ1fpftgV2lJT/SG4
+         5MOcwVlvFpgARPGTxBSULaOmQSQJxFBrWt1p7VUWWqdx9tFm0KlJ68+E3b7gOHow3mJz
+         x5EGE5WWtjayxKS2WrmXSLUstQUkbDu7wnhT63jHGd+0O4UVO1tcOtKxyKYVdqkOg23/
+         ms6067IAZ0wUb0F3aeS4syYQwdEqlIqqjI5zDy0Z2y4evyxHj7hnovt/5drjbEF9Fa5J
+         t/Ww==
+X-Gm-Message-State: ACgBeo0Kph41esOdVn/zjhsuCET85n6mH5TWfy596jP1C+5BNyyxiWIP
+        WH5kEovju7znGrZg4QSU++yytw==
+X-Google-Smtp-Source: AA6agR5GxFgslNSJSVhP7jovTdqKbGSdAnXUIpR+aTUm3kfP3svOkUQ9KU1U48DF+jRxLqyIW2628g==
+X-Received: by 2002:a63:5526:0:b0:434:c99c:6fdc with SMTP id j38-20020a635526000000b00434c99c6fdcmr13521836pgb.558.1662751441109;
+        Fri, 09 Sep 2022 12:24:01 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id z8-20020a170903018800b001768452d4d7sm887925plg.14.2022.09.09.12.23.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Sep 2022 12:23:59 -0700 (PDT)
+Date:   Fri, 9 Sep 2022 13:23:57 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Maria Yu <quic_aiquny@quicinc.com>
+Cc:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_clew@quicinc.com
+Subject: Re: [PATCH v1] remoteproc: core: do pm relax when not first crash
+Message-ID: <20220909192357.GA319190@p14s>
+References: <1662712413-38233-1-git-send-email-quic_aiquny@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0b6f5b4b-247e-7573-04fd-05d037533aa3@linaro.org>
+In-Reply-To: <1662712413-38233-1-git-send-email-quic_aiquny@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 09, 2022 at 06:30:11PM +0200, Krzysztof Kozlowski wrote:
-> On 09/09/2022 18:22, Rob Herring wrote:
-> > On Fri, Sep 9, 2022 at 11:16 AM Rob Herring <robh@kernel.org> wrote:
-> >>
-> >> On Thu, 08 Sep 2022 20:14:32 +0200, Stephan Gerhold wrote:
-> >>> Similar to qcom,glink-edge.yaml the smd-edge can also contain
-> >>> apr/fastrpc nodes for functionality exposed by the modem or audio DSP.
-> >>>
-> >>> These nodes are already used in existing device trees, adding them
-> >>> fixes the following dtbs_check warnings after converting
-> >>> qcom,msm8916-mss-pil to DT schema:
-> >>>
-> >>> arch/arm64/boot/dts/qcom/apq8016-sbc.dtb: remoteproc@4080000: smd-edge:
-> >>> Unevaluated properties are not allowed ('fastrpc' was unexpected)
-> >>>   From schema: remoteproc/qcom,msm8916-mss-pil.yaml
-> >>>
-> >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-> >>> ---
-> >>> Since qcom,fastrpc.yaml only exists in Rob's tree right now and
-> >>> a similar change for qcom,glink-edge.yaml was applied there it is
-> >>> probably easiest if this patch goes through Rob's tree as well.
-> >>> ---
-> >>>  .../devicetree/bindings/remoteproc/qcom,smd-edge.yaml  | 10 ++++++++++
-> >>>  1 file changed, 10 insertions(+)
-> >>>
-> >>
-> >> Applied, thanks!
-> > 
-> > And dropped for Krzysztof's series instead.
-> 
-> Technically Stephan was first and his patch solves it in partial way,
-> yet still self-contained way. I am fine rebasing my patchset on top of it.
+Hi Maria,
+
+On Fri, Sep 09, 2022 at 04:33:33PM +0800, Maria Yu wrote:
+> Even if it is not first crash, need to relax the pm
+> wakelock otherwise the device will stay awake.
 > 
 
-Feel free to skip this patch if your series contains equivalent changes.
-I mainly submitted this to unblock my qcom,msm8916-mss-pil.yaml series
-so I'm fine as long as equivalent changes have been applied. :)
+The goal is exactly to keep the device awake... 
+
+> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index e5279ed9a8d7..30078043e939 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1956,6 +1956,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>  	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+>  		/* handle only the first crash detected */
+>  		mutex_unlock(&rproc->lock);
+> +		pm_relax(rproc->dev.parent);
+
+If we are here it means that rproc_crash_handler_work() has already been called
+_and_ that a recovery is in process.  When the first crash handler completes
+pm_relax() will be called and the device will go to sleep as expected.
 
 Thanks,
-Stephan
+Mathieu
+
+>  		return;
+>  	}
+>  
+> -- 
+> 2.7.4
+> 
