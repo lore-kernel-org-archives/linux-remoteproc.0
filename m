@@ -2,53 +2,54 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC5CECAAD3
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 09:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1152EC6FA82
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 09:20:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbiIIJUq (ORCPT
+        id S231304AbiIIJUr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 05:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43390 "EHLO
+        Fri, 9 Sep 2022 05:20:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229824AbiIIJUo (ORCPT
+        with ESMTP id S230399AbiIIJUp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Sep 2022 05:20:44 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1471B2D94
-        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 02:20:42 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id bs13so1088711ljb.8
-        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Sep 2022 02:20:42 -0700 (PDT)
+        Fri, 9 Sep 2022 05:20:45 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45CFB4435
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 02:20:43 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id x14so1645262lfu.10
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Sep 2022 02:20:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=XnkhLW1ejx8tTO+Y2Pwl+ZHC58noV7Cx6HucpRux/vI=;
-        b=QQojFVc2k9PcGOvKHHr5y1k4LCqtHDtgix461+LEA/MpWC9FdGdDFNqg+lJ3TH2guI
-         6qIc/txqs0RA8Um0J4kMYH8vFwQ+knr9QJ2ynb2Zh+n+7eRdEIj/rNAEgcC2lnofGeGo
-         FI+7DjM4wQc6RcRWGiKaVrt85uQD7zygPWc0hcJ5rb/saMZPSvx2oK0IhPUIfTdMw1ju
-         Bk5I96ljFe99+T06ENoi6nLiYtbcn3TyBdVCBcBGYlOE6tXgSSHQ+2S8LdRhNNvIWHY9
-         M6+tug9yOui5mUn0EzbHBQAR3+trhCV+TR0ri886ivgMC55AXBDa6XeQrEbrK8yUL0pu
-         8UAA==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=ylRikkO/bjiVr6cfpMQukwsajH9gmB7MCgQxpA3FZjg=;
+        b=Rbp6s+HHlty2tiIFVglQ/FRKyD5ATqB4XPHjipBAH8TzeUvX+65H7CX+s0YbT6FH26
+         9TwT92id9gqKOir2zehfw4IlRI068GaYXzKmkGG+5PvDZSBmIrK6oEW1TR7lfr5SB03S
+         nV0wymd5Aq3e0GP1Z8wRnZ5eeK/WswjAVc4layeXIfV0MP742IA7RtJ9LHNDdDTTUFzA
+         qksspnOEmImqHOjWNcnX5qOSlQAgUFjqQJOqcM6Wg+RzAnkat0CPmANd6o9Lyyq2CqrF
+         fuu9w5fV/Qa3klgUhAGtGUx9naCWwsrh17UU5cj1b6VF0W0MmN6wJi4vPQAzGWqcSdoQ
+         dUtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=XnkhLW1ejx8tTO+Y2Pwl+ZHC58noV7Cx6HucpRux/vI=;
-        b=t+PSoGFVyNu+fViyUj2+oA/7+/xPdO/k/rvlLTM6iEBecBGC4heXtbFSUJtAXG2g+m
-         uw2zgjGrwDmIBgXZJItEV+1oq4HpWATGilG6MaVRIOcoIvYfTDf8jKdmr4KrUiTM2TgW
-         mpQb9g56SUlRSZGNiIy/MS9LufKSAcjHz5Cs6jwkPwwd2bnqkRMxlMrRPDvesZoK8SDP
-         npO1BODE9LRFMYRs+/AVW6ZB7OreFWS/zDn6lR/3SxDtDhoIswlbxPyUsEVEFhGJdYWR
-         09aKPXrqgnBAH3ot5s1uwoXN0b43Mlmn6UNPnEqXcVdSljmmcBZ5xqSG4tY/g56bZCmC
-         +0NQ==
-X-Gm-Message-State: ACgBeo1RIjVO5opvvTRHHJntRCy6VG/KFdRT5MUCU0Argz8LlF16Odq4
-        BlqW+pCIwZOl5vAVWLIanU11wA==
-X-Google-Smtp-Source: AA6agR4/MECLtPUrG3w1cE3tpTg0G0bj6Q2BTrm9q5W4QM1J3Sxu7sA6FekYdA5+1DR+QEB22UhYBw==
-X-Received: by 2002:a2e:8518:0:b0:26a:cfb4:5d47 with SMTP id j24-20020a2e8518000000b0026acfb45d47mr3163880lji.22.1662715240709;
-        Fri, 09 Sep 2022 02:20:40 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=ylRikkO/bjiVr6cfpMQukwsajH9gmB7MCgQxpA3FZjg=;
+        b=7HK3aUzg5gx6Ca8t0jDrktwZeupI1PkGYYccMTcZZ26pch1MQrWflBGZp1JdNBOQwE
+         zl/8Vs5o9QdYEpQu/NdlXYEA5tjY98+jAYeX9++LtWiOH9vQkqwmwtuvD2SPaAg/gZkQ
+         lymZAmH6Q6QAwqTQfykhGfwuW/ZjLcnCesLIcxhCfUOCrmChwTqoa4YEE/ewXIqkeAp8
+         o6FRLPjX2hKUOvdx17iQ7dbpBRJ1LL/o5Kq1XmMsZ+yegN19ymVDnTH5mh6wgRhfL/fo
+         VoRACQZXCkSs+rC6Gu5oOm5Q3Ft2ivqu1/XQ+87prkHv5ZcNIvwl1yXV1BDqaUnq2MZo
+         YFcA==
+X-Gm-Message-State: ACgBeo34037DHaIVZLTeRE0s5/hCSbTiApcQBP2XfL24AkhR2bx7lZF3
+        yfkFrJ/J3i5ibxdn8v+jpP30P4LqW1GDpQ==
+X-Google-Smtp-Source: AA6agR6jczCJXyxJLilCEi7CM4ktZLZkRgci+Cx3cUsUO4hcl38+ebPcuAWdK8BhKeG2Ax98uYOKfQ==
+X-Received: by 2002:a05:6512:1087:b0:494:a011:2752 with SMTP id j7-20020a056512108700b00494a0112752mr4520199lfg.2.1662715241954;
+        Fri, 09 Sep 2022 02:20:41 -0700 (PDT)
 Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id s6-20020a056512214600b00498fe38ea0fsm2170lfr.174.2022.09.09.02.20.39
+        by smtp.gmail.com with ESMTPSA id s6-20020a056512214600b00498fe38ea0fsm2170lfr.174.2022.09.09.02.20.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Sep 2022 02:20:40 -0700 (PDT)
+        Fri, 09 Sep 2022 02:20:41 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -61,86 +62,59 @@ To:     Andy Gross <agross@kernel.org>,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 00/15] ARM/hwlock: qcom: switch TCSR mutex to MMIO
-Date:   Fri,  9 Sep 2022 11:20:20 +0200
-Message-Id: <20220909092035.223915-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 01/15] dt-bindings: hwlock: qcom-hwspinlock: add support for MMIO on older SoCs
+Date:   Fri,  9 Sep 2022 11:20:21 +0200
+Message-Id: <20220909092035.223915-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220909092035.223915-1-krzysztof.kozlowski@linaro.org>
+References: <20220909092035.223915-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Older Qualcomm SoCs have TCSR mutex registers with 0x80 stride, instead
+of 0x1000.  Add dedicated compatibles for such case.  Unfortunately the
+binding started using a generic "qcom,tcsr-mutex" compatible without
+specifying the SoC part, thus it looks now quite inconsistent.
 
-Switch older Qualcomm SoCs to use MMIO-based method instead of syscon.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Not tested on hardware. Please kindly provide tests.
+---
 
-Changes since v2
-================
-1. Rebase on current MFD changes.
-2. Add Rb tag.
-3. Split MFD patch to separate patchset:
-https://lore.kernel.org/linux-devicetree/20220909091056.128949-1-krzysztof.kozlowski@linaro.org/T/#u
+If anyone ever says "I want a generic compatible because I am sure all
+devices are compatible", that's one more argument they are wrong. :)
+---
+ .../bindings/hwlock/qcom-hwspinlock.yaml          | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Changes since v1
-================
-1. Use existing qcom,tcsr-msm8974 compatible.
-2. Fix few other TCSR syscon compatibles (new patches: ipq6018, msm8953,
-   qcs404, msm8996).
-3. New patch: dt-bindings: mfd: qcom,tcsr: drop simple-mfd from IPQ6018
-4. New patch: dt-bindings: mfd: qcom,tcsr: add QCS404
-
-Dependencies
-============
-1. DT bindings and driver patches can go via hwlock. DTS via Bjorn/Qualcomm.
-
-2. The last five DTS commits (ARM and arm64) named "switch TCSR mutex to MMIO"
-   depend on driver support. The changes are not bisectable, just like
-   previously such changes were not bisectable:
-   https://lore.kernel.org/all/20200622075956.171058-5-bjorn.andersson@linaro.org/
-   Therefore these changes could wait for next release.
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (15):
-  dt-bindings: hwlock: qcom-hwspinlock: add support for MMIO on older
-    SoCs
-  dt-bindings: hwlock: qcom-hwspinlock: correct example indentation
-  hwspinlock: qcom: correct MMIO max register for newer SoCs
-  hwspinlock: qcom: add support for MMIO on older SoCs
-  arm64: dts: qcom: ipq6018: add missing TCSR syscon compatible
-  arm64: dts: qcom: msm8953: add missing TCSR syscon compatible
-  arm64: dts: qcom: qcs404: add missing TCSR syscon compatible
-  arm64: dts: qcom: msm8996: add missing TCSR syscon compatible
-  ARM: dts: qcom: msm8974: add missing TCSR syscon compatible
-  ARM: dts: qcom: msm8974: split TCSR halt regs out of mutex
-  arm64: dts: qcom: ipq6018: switch TCSR mutex to MMIO
-  arm64: dts: qcom: msm8994: switch TCSR mutex to MMIO
-  ARM: dts: qcom: msm8974: switch TCSR mutex to MMIO
-  ARM: dts: qcom: apq8084: switch TCSR mutex to MMIO
-  ARM: dts: qcom: msm8226: switch TCSR mutex to MMIO
-
- .../bindings/hwlock/qcom-hwspinlock.yaml      | 25 +++++++----
- .../arm/boot/dts/qcom-apq8074-dragonboard.dts |  2 +-
- arch/arm/boot/dts/qcom-apq8084.dtsi           | 11 ++---
- arch/arm/boot/dts/qcom-msm8226.dtsi           | 14 ++-----
- .../qcom-msm8974-lge-nexus5-hammerhead.dts    |  2 +-
- .../dts/qcom-msm8974-sony-xperia-rhine.dtsi   |  2 +-
- arch/arm/boot/dts/qcom-msm8974.dtsi           | 25 ++++++-----
- .../dts/qcom-msm8974pro-fairphone-fp2.dts     |  2 +-
- .../boot/dts/qcom-msm8974pro-samsung-klte.dts |  2 +-
- ...-msm8974pro-sony-xperia-shinano-castor.dts |  2 +-
- arch/arm64/boot/dts/qcom/ipq6018.dtsi         | 15 +++----
- arch/arm64/boot/dts/qcom/msm8953.dtsi         |  2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi         | 13 ++----
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi          |  2 +-
- drivers/hwspinlock/qcom_hwspinlock.c          | 42 ++++++++++++++-----
- 16 files changed, 86 insertions(+), 77 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+index 1c7149f7d171..de98b961fb38 100644
+--- a/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
++++ b/Documentation/devicetree/bindings/hwlock/qcom-hwspinlock.yaml
+@@ -15,9 +15,18 @@ description:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - qcom,sfpb-mutex
+-      - qcom,tcsr-mutex
++    oneOf:
++      - enum:
++          - qcom,sfpb-mutex
++          - qcom,tcsr-mutex
++      - items:
++          - enum:
++              - qcom,apq8084-tcsr-mutex
++              - qcom,ipq6018-tcsr-mutex
++              - qcom,msm8226-tcsr-mutex
++              - qcom,msm8974-tcsr-mutex
++              - qcom,msm8994-tcsr-mutex
++          - const: qcom,tcsr-mutex
+ 
+   reg:
+     maxItems: 1
 -- 
 2.34.1
 
