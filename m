@@ -2,105 +2,145 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42F9ECAAD3
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 08:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC5CECAAD3
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  9 Sep 2022 09:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230420AbiIIIlv (ORCPT
+        id S229604AbiIIJUq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 9 Sep 2022 04:41:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
+        Fri, 9 Sep 2022 05:20:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbiIIIlu (ORCPT
+        with ESMTP id S229824AbiIIJUo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 9 Sep 2022 04:41:50 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D8E1177BC;
-        Fri,  9 Sep 2022 01:41:48 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2898YZiM032516;
-        Fri, 9 Sep 2022 08:41:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=7f4hf7+hMQph/clwgyAM77ojAQotmL6rbfg/BHdxJuY=;
- b=VehycXc7StbJruC2yJzFTrHvRUCOEciGzP1rsnCoQzVvVQJClQpyd0BrqDcQKE5pgT0d
- FwgfiTvhd8YrrjJUlJinfq6w5aIh7PGrFcvyteFXtM1wg17elfw9p15l2ueBDXqzohNf
- 76Dgl1YPslY0egAge1WQHHaj+tiqcEsLlndXr+z7tHTyTBAt+lH60N3H7nE5uk43qtMQ
- a67c9UIwXS8GdNM2ZHoBf3RRrGgIrX0MlDC8inEvZm3cclnyodMVu3qlAWuW7q+GvCNR
- QYazZNDdK6zAFsAQrnDadLerOlGnZVvL9nV+hinSd5ZZRetEPLZcGFOz/zfN8CpP4zKL lw== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jfeuuv5m0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Sep 2022 08:41:47 +0000
-Received: from nasanex01a.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2898fl8N003568
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 9 Sep 2022 08:41:47 GMT
-Received: from [10.239.133.73] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 9 Sep 2022
- 01:41:45 -0700
-Message-ID: <de6028e6-1f0d-0b3c-979e-897271f2c51e@quicinc.com>
-Date:   Fri, 9 Sep 2022 16:41:26 +0800
+        Fri, 9 Sep 2022 05:20:44 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1471B2D94
+        for <linux-remoteproc@vger.kernel.org>; Fri,  9 Sep 2022 02:20:42 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id bs13so1088711ljb.8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Sep 2022 02:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=XnkhLW1ejx8tTO+Y2Pwl+ZHC58noV7Cx6HucpRux/vI=;
+        b=QQojFVc2k9PcGOvKHHr5y1k4LCqtHDtgix461+LEA/MpWC9FdGdDFNqg+lJ3TH2guI
+         6qIc/txqs0RA8Um0J4kMYH8vFwQ+knr9QJ2ynb2Zh+n+7eRdEIj/rNAEgcC2lnofGeGo
+         FI+7DjM4wQc6RcRWGiKaVrt85uQD7zygPWc0hcJ5rb/saMZPSvx2oK0IhPUIfTdMw1ju
+         Bk5I96ljFe99+T06ENoi6nLiYtbcn3TyBdVCBcBGYlOE6tXgSSHQ+2S8LdRhNNvIWHY9
+         M6+tug9yOui5mUn0EzbHBQAR3+trhCV+TR0ri886ivgMC55AXBDa6XeQrEbrK8yUL0pu
+         8UAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=XnkhLW1ejx8tTO+Y2Pwl+ZHC58noV7Cx6HucpRux/vI=;
+        b=t+PSoGFVyNu+fViyUj2+oA/7+/xPdO/k/rvlLTM6iEBecBGC4heXtbFSUJtAXG2g+m
+         uw2zgjGrwDmIBgXZJItEV+1oq4HpWATGilG6MaVRIOcoIvYfTDf8jKdmr4KrUiTM2TgW
+         mpQb9g56SUlRSZGNiIy/MS9LufKSAcjHz5Cs6jwkPwwd2bnqkRMxlMrRPDvesZoK8SDP
+         npO1BODE9LRFMYRs+/AVW6ZB7OreFWS/zDn6lR/3SxDtDhoIswlbxPyUsEVEFhGJdYWR
+         09aKPXrqgnBAH3ot5s1uwoXN0b43Mlmn6UNPnEqXcVdSljmmcBZ5xqSG4tY/g56bZCmC
+         +0NQ==
+X-Gm-Message-State: ACgBeo1RIjVO5opvvTRHHJntRCy6VG/KFdRT5MUCU0Argz8LlF16Odq4
+        BlqW+pCIwZOl5vAVWLIanU11wA==
+X-Google-Smtp-Source: AA6agR4/MECLtPUrG3w1cE3tpTg0G0bj6Q2BTrm9q5W4QM1J3Sxu7sA6FekYdA5+1DR+QEB22UhYBw==
+X-Received: by 2002:a2e:8518:0:b0:26a:cfb4:5d47 with SMTP id j24-20020a2e8518000000b0026acfb45d47mr3163880lji.22.1662715240709;
+        Fri, 09 Sep 2022 02:20:40 -0700 (PDT)
+Received: from krzk-bin.. (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id s6-20020a056512214600b00498fe38ea0fsm2170lfr.174.2022.09.09.02.20.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Sep 2022 02:20:40 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 00/15] ARM/hwlock: qcom: switch TCSR mutex to MMIO
+Date:   Fri,  9 Sep 2022 11:20:20 +0200
+Message-Id: <20220909092035.223915-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH] remoteproc: core: do pm relax when not first crash
-To:     <bjorn.andersson@linaro.org>, <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_clew@quicinc.com>
-References: <1662710731-57212-1-git-send-email-quic_aiquny@quicinc.com>
-From:   "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
-In-Reply-To: <1662710731-57212-1-git-send-email-quic_aiquny@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MM0sXj4eJpY03fRCCPbB-g9rDItp5JDd
-X-Proofpoint-GUID: MM0sXj4eJpY03fRCCPbB-g9rDItp5JDd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-09_04,2022-09-09_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- mlxscore=0 mlxlogscore=999 clxscore=1015 phishscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2209090029
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 9/9/2022 4:05 PM, Maria Yu wrote:
-> Even if it is not first crash, need to relax the pm
-> wakelock otherwise the device will stay awake.
-> 
-> Change-Id: I26bfeb44871aab0b57837a77a6243b2086f94473
-Removed Change-Id in the later new patchset.
-Pls ignore this.
-> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
-> ---
->   drivers/remoteproc/remoteproc_core.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index e5279ed9a8d7..30078043e939 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1956,6 +1956,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
->   	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
->   		/* handle only the first crash detected */
->   		mutex_unlock(&rproc->lock);
-> +		pm_relax(rproc->dev.parent);
->   		return;
->   	}
->   
-> 
+Hi,
 
+Switch older Qualcomm SoCs to use MMIO-based method instead of syscon.
+
+Not tested on hardware. Please kindly provide tests.
+
+Changes since v2
+================
+1. Rebase on current MFD changes.
+2. Add Rb tag.
+3. Split MFD patch to separate patchset:
+https://lore.kernel.org/linux-devicetree/20220909091056.128949-1-krzysztof.kozlowski@linaro.org/T/#u
+
+Changes since v1
+================
+1. Use existing qcom,tcsr-msm8974 compatible.
+2. Fix few other TCSR syscon compatibles (new patches: ipq6018, msm8953,
+   qcs404, msm8996).
+3. New patch: dt-bindings: mfd: qcom,tcsr: drop simple-mfd from IPQ6018
+4. New patch: dt-bindings: mfd: qcom,tcsr: add QCS404
+
+Dependencies
+============
+1. DT bindings and driver patches can go via hwlock. DTS via Bjorn/Qualcomm.
+
+2. The last five DTS commits (ARM and arm64) named "switch TCSR mutex to MMIO"
+   depend on driver support. The changes are not bisectable, just like
+   previously such changes were not bisectable:
+   https://lore.kernel.org/all/20200622075956.171058-5-bjorn.andersson@linaro.org/
+   Therefore these changes could wait for next release.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (15):
+  dt-bindings: hwlock: qcom-hwspinlock: add support for MMIO on older
+    SoCs
+  dt-bindings: hwlock: qcom-hwspinlock: correct example indentation
+  hwspinlock: qcom: correct MMIO max register for newer SoCs
+  hwspinlock: qcom: add support for MMIO on older SoCs
+  arm64: dts: qcom: ipq6018: add missing TCSR syscon compatible
+  arm64: dts: qcom: msm8953: add missing TCSR syscon compatible
+  arm64: dts: qcom: qcs404: add missing TCSR syscon compatible
+  arm64: dts: qcom: msm8996: add missing TCSR syscon compatible
+  ARM: dts: qcom: msm8974: add missing TCSR syscon compatible
+  ARM: dts: qcom: msm8974: split TCSR halt regs out of mutex
+  arm64: dts: qcom: ipq6018: switch TCSR mutex to MMIO
+  arm64: dts: qcom: msm8994: switch TCSR mutex to MMIO
+  ARM: dts: qcom: msm8974: switch TCSR mutex to MMIO
+  ARM: dts: qcom: apq8084: switch TCSR mutex to MMIO
+  ARM: dts: qcom: msm8226: switch TCSR mutex to MMIO
+
+ .../bindings/hwlock/qcom-hwspinlock.yaml      | 25 +++++++----
+ .../arm/boot/dts/qcom-apq8074-dragonboard.dts |  2 +-
+ arch/arm/boot/dts/qcom-apq8084.dtsi           | 11 ++---
+ arch/arm/boot/dts/qcom-msm8226.dtsi           | 14 ++-----
+ .../qcom-msm8974-lge-nexus5-hammerhead.dts    |  2 +-
+ .../dts/qcom-msm8974-sony-xperia-rhine.dtsi   |  2 +-
+ arch/arm/boot/dts/qcom-msm8974.dtsi           | 25 ++++++-----
+ .../dts/qcom-msm8974pro-fairphone-fp2.dts     |  2 +-
+ .../boot/dts/qcom-msm8974pro-samsung-klte.dts |  2 +-
+ ...-msm8974pro-sony-xperia-shinano-castor.dts |  2 +-
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi         | 15 +++----
+ arch/arm64/boot/dts/qcom/msm8953.dtsi         |  2 +-
+ arch/arm64/boot/dts/qcom/msm8994.dtsi         | 13 ++----
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +-
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  2 +-
+ drivers/hwspinlock/qcom_hwspinlock.c          | 42 ++++++++++++++-----
+ 16 files changed, 86 insertions(+), 77 deletions(-)
 
 -- 
-Thx and BRs,
-Aiqun(Maria) Yu
+2.34.1
+
