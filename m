@@ -2,113 +2,96 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489A3ECAAD5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 17:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D05F7C6FA8D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 18:34:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbiILRGW (ORCPT
+        id S230249AbiILSe4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Sep 2022 13:06:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60572 "EHLO
+        Mon, 12 Sep 2022 14:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229929AbiILRGP (ORCPT
+        with ESMTP id S231646AbiILSeY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Sep 2022 13:06:15 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06DA62127C;
-        Mon, 12 Sep 2022 10:06:14 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28CFkfkU005809;
-        Mon, 12 Sep 2022 17:06:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=W3zY9QLNPWEAB8o9Gg6uFxsBfJVYFRPkCf7CJNbWhIg=;
- b=dC7Jd2O8lPEXKSUvRn2MAm6R/Qhef7ezb2+ZaheWYXVqvymKdfRTBVOx8QQZdSmPPXP9
- LzaZ/r37bKLSB/V+ce6Psx66pCEFm/CNDJ50J415yjhuRoI67NMadqEkWyqncr8PPGbM
- u1pDr9+Pz+jvuFMGEhoS1FDYZLgR/eKHCtLEOr9g+2cW1x97t5i93CaGve0OHUjNtAb4
- EL1YnlUTNYOoFTw1n35HMrX5T4NunhfxObzSKz02DEi5WNvh+PV2EBPIiGYd59dZUUu+
- aQj0o1N9+ET+ZCCRoPjhtAPQ2w7tTllTTldnW8JwItkm9vqBKWnv0+crZaEZfkSCgVSL ZA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jgkrswhnu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Sep 2022 17:06:09 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28CH69ro018166
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Sep 2022 17:06:09 GMT
-Received: from deesin-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 12 Sep 2022 10:06:06 -0700
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: [PATCH V3 2/2] rpmsg: glink: Add lock to rpmsg_ctrldev_remove
-Date:   Mon, 12 Sep 2022 22:35:36 +0530
-Message-ID: <1663002336-11809-3-git-send-email-quic_deesin@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1663002336-11809-1-git-send-email-quic_deesin@quicinc.com>
-References: <1663002336-11809-1-git-send-email-quic_deesin@quicinc.com>
+        Mon, 12 Sep 2022 14:34:24 -0400
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014364331A;
+        Mon, 12 Sep 2022 11:31:14 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-127f5411b9cso25683635fac.4;
+        Mon, 12 Sep 2022 11:31:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=qOuXJYWFlhMBv+hJob6UqyVwr1Eq15fJbMnFTSXIcyw=;
+        b=3hOnwY1QYm8WnDn+upE1oHWTxLU1QtBxNuLT/sENnRm1CXu1XTAGSVCSRfbL786KAy
+         SQZ/U92gFBVBg7fD89LDyft0HV9iL0tlxdAxiEsvoBTgB6K7zHDeCMyBrWctV0T7QO8G
+         IKCSefZHrQPH/cY/IILyH6Dvt17kdv8lcscj7IqtN3H/t/sBMDmkEaVVZAvFIbOjxNqX
+         I0cSGHPytigihP5McU83/+0o04+wsG18xdLrpfN+92Pi412mdmtAWQcav2mGYTFwUEsU
+         21effksCgG0HTR02tHfCQb5Sot+WDrAiRCWZosZCobDSEAtCMKy9aNd/e78NRUf/kP5j
+         R81g==
+X-Gm-Message-State: ACgBeo1gHFqKJt5fVS0ndKqRRpdPVyPEGqwKdjc0TswvrNi0AaPixHIH
+        KGaPfhCTJHQmLqqTabso8g==
+X-Google-Smtp-Source: AA6agR6sMx7mHoUriHC8Kh+qkq1RuDkElTwvjx7a2+2WT/6UEwW/82ho+p19Lacr5xK7BwDhHvQUvA==
+X-Received: by 2002:a05:6808:9b2:b0:34f:61af:fea7 with SMTP id e18-20020a05680809b200b0034f61affea7mr6381201oig.133.1663007382484;
+        Mon, 12 Sep 2022 11:29:42 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f11-20020a056830056b00b00636eeba9209sm4996703otc.52.2022.09.12.11.29.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Sep 2022 11:29:42 -0700 (PDT)
+Received: (nullmailer pid 1600984 invoked by uid 1000);
+        Mon, 12 Sep 2022 18:29:41 -0000
+Date:   Mon, 12 Sep 2022 13:29:41 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, Yu Chen <chenyu56@huawei.com>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Binghui Wang <wangbinghui@hisilicon.com>,
+        linux-phy@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] mfd/phy/remoteproc: dt-bindings: syscon: be specific
+Message-ID: <20220912182941.GA1596070-robh@kernel.org>
+References: <20220817142246.828762-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: P5BkvfdkUZBih2mL5LbfFZtSrVSJ0yvh
-X-Proofpoint-ORIG-GUID: P5BkvfdkUZBih2mL5LbfFZtSrVSJ0yvh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-12_12,2022-09-12_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501 mlxlogscore=935
- suspectscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
- definitions=main-2209120058
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220817142246.828762-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Call to rpmsg_ctrldev_ioctl() and rpmsg_ctrldev_remove() must be synchronized.
-In present code rpmsg_ctrldev_remove() is not protected with lock, therefore
-new char device creation can succeed through rpmsg_ctrldev_ioctl() call. At the
-same time call to rpmsg_ctrldev_remove() funtion for ctrl device removal will
-free associated rpdev device. As char device creation already succeeded, user
-space is free to issue open() call which maps to rpmsg_create_ept() in kernel.
-rpmsg_create_ept() function tries to reference rpdev which has already been
-freed through rpmsg_ctrldev_remove(). Issue is predominantly seen in aggressive
-reboot tests where rpmsg_ctrldev_ioctl() and rpmsg_ctrldev_remove() can race with
-each other.
+On Wed, 17 Aug 2022 17:22:42 +0300, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> The last MFD/syscon patch depends on the previous ones to avoid
+> dt_binding_check warnings.
+> 
+> I propose to take entire set via Rob's DT tree.
 
-Adding lock in rpmsg_ctrldev_remove() avoids any new char device creation
-throught rpmsg_ctrldev_ioctl() while remove call is already in progress.
+This may have been in the window where PW server moved and stopped 
+getting patches, so I missed it until patch 4 got applied and broke 
+linux-next...
 
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
----
- drivers/rpmsg/rpmsg_ctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> Best regards,
+> Krzysztof
+> 
+> Krzysztof Kozlowski (4):
+>   dt-bindings: phy: hisilicon,hi3660-usb3: simplify example
+>   dt-bindings: phy: hisilicon,hi3670-usb3: simplify example
+>   dt-bindings: remoteproc: qcom,pil-info: add missing imem compatible
+>   dt-bindings: mfd: syscon: require specific compatible also for
+>     simple-mfd
 
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 107da70..4332538 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -194,10 +194,12 @@ static void rpmsg_ctrldev_remove(struct rpmsg_device *rpdev)
- 	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
- 	int ret;
- 
-+	mutex_lock(&ctrldev->ctrl_lock);
- 	/* Destroy all endpoints */
- 	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
- 	if (ret)
- 		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
-+	mutex_unlock(&ctrldev->ctrl_lock);
- 
- 	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
- 	put_device(&ctrldev->dev);
--- 
-2.7.4
+I applied patches 1-3, thanks!
 
+Rob
