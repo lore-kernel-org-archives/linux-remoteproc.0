@@ -2,96 +2,78 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05F7C6FA8D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 18:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97139C6FA8B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 19:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbiILSe4 (ORCPT
+        id S230057AbiILTF4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Sep 2022 14:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38404 "EHLO
+        Mon, 12 Sep 2022 15:05:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbiILSeY (ORCPT
+        with ESMTP id S229502AbiILTFq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Sep 2022 14:34:24 -0400
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 014364331A;
-        Mon, 12 Sep 2022 11:31:14 -0700 (PDT)
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-127f5411b9cso25683635fac.4;
-        Mon, 12 Sep 2022 11:31:14 -0700 (PDT)
+        Mon, 12 Sep 2022 15:05:46 -0400
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C20B3402D7;
+        Mon, 12 Sep 2022 12:05:45 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-11e9a7135easo25939229fac.6;
+        Mon, 12 Sep 2022 12:05:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=qOuXJYWFlhMBv+hJob6UqyVwr1Eq15fJbMnFTSXIcyw=;
-        b=3hOnwY1QYm8WnDn+upE1oHWTxLU1QtBxNuLT/sENnRm1CXu1XTAGSVCSRfbL786KAy
-         SQZ/U92gFBVBg7fD89LDyft0HV9iL0tlxdAxiEsvoBTgB6K7zHDeCMyBrWctV0T7QO8G
-         IKCSefZHrQPH/cY/IILyH6Dvt17kdv8lcscj7IqtN3H/t/sBMDmkEaVVZAvFIbOjxNqX
-         I0cSGHPytigihP5McU83/+0o04+wsG18xdLrpfN+92Pi412mdmtAWQcav2mGYTFwUEsU
-         21effksCgG0HTR02tHfCQb5Sot+WDrAiRCWZosZCobDSEAtCMKy9aNd/e78NRUf/kP5j
-         R81g==
-X-Gm-Message-State: ACgBeo1gHFqKJt5fVS0ndKqRRpdPVyPEGqwKdjc0TswvrNi0AaPixHIH
-        KGaPfhCTJHQmLqqTabso8g==
-X-Google-Smtp-Source: AA6agR6sMx7mHoUriHC8Kh+qkq1RuDkElTwvjx7a2+2WT/6UEwW/82ho+p19Lacr5xK7BwDhHvQUvA==
-X-Received: by 2002:a05:6808:9b2:b0:34f:61af:fea7 with SMTP id e18-20020a05680809b200b0034f61affea7mr6381201oig.133.1663007382484;
-        Mon, 12 Sep 2022 11:29:42 -0700 (PDT)
+        bh=uI4DbGbAM0PwjRpMrOblwrt+romR1rmxVbvdKQ75a3g=;
+        b=iBN/UKu4z7gotgnRJsgczB5GMQmRya6ar8tSAcayeQWulBRM0y5IMJ8jCkWQrHaDrf
+         RzFJ8zkXogcgG6IH3uZMHhr/PG+DKPksJ5woKfr5H1WCTn/gY+j3I9HJUrnq8oB6+c4c
+         Lr6qZ7TfWS6USrkd9rcyLyF0X4kMxy9WHu4IM1bhOxKa4k3JTHgWVFjke0lkRZthjqhr
+         byRUpkBRhkwel76NhrYN7frUB3FuFB2HDK5/kBTKVSm86IiE+xv9w+3a1Xxyf4eyPBM6
+         6/KXdiIKBmQyBuC2dq91xilI7JikABFNDco556P2c/9a+2GngPq8kQro6//vOKwP2pMZ
+         qKDg==
+X-Gm-Message-State: ACgBeo3XlkFVetJb+hWOQEDaJ4Er2qCcDYYfavafVC4R5GXJ6KK1m/ON
+        B7s7DK8k0M8/8ciGaA47NA==
+X-Google-Smtp-Source: AA6agR6wKZLkyzDqxAkDrRQa7TDbXFNIvobcMLRTkCNkT+mXdN79cG0z+B7nutrnVbtasLONO+iHAg==
+X-Received: by 2002:a05:6808:1248:b0:34d:f86d:4ac9 with SMTP id o8-20020a056808124800b0034df86d4ac9mr7147955oiv.203.1663009544939;
+        Mon, 12 Sep 2022 12:05:44 -0700 (PDT)
 Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id f11-20020a056830056b00b00636eeba9209sm4996703otc.52.2022.09.12.11.29.41
+        by smtp.gmail.com with ESMTPSA id o10-20020a54478a000000b00344eb5a9416sm4330740oic.55.2022.09.12.12.05.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Sep 2022 11:29:42 -0700 (PDT)
-Received: (nullmailer pid 1600984 invoked by uid 1000);
-        Mon, 12 Sep 2022 18:29:41 -0000
-Date:   Mon, 12 Sep 2022 13:29:41 -0500
+        Mon, 12 Sep 2022 12:05:44 -0700 (PDT)
+Received: (nullmailer pid 1658600 invoked by uid 1000);
+        Mon, 12 Sep 2022 19:05:43 -0000
+Date:   Mon, 12 Sep 2022 14:05:43 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-remoteproc@vger.kernel.org,
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, Yu Chen <chenyu56@huawei.com>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>,
-        linux-phy@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] mfd/phy/remoteproc: dt-bindings: syscon: be specific
-Message-ID: <20220912182941.GA1596070-robh@kernel.org>
-References: <20220817142246.828762-1-krzysztof.kozlowski@linaro.org>
+        Sibi Sankar <quic_sibis@quicinc.com>
+Subject: Re: [PATCH] dt-bindings: remoteproc: Add missing
+ (unevaluated|additional)Properties on child nodes
+Message-ID: <20220912190543.GA1658366-robh@kernel.org>
+References: <20220823145649.3118479-10-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220817142246.828762-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220823145649.3118479-10-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 17 Aug 2022 17:22:42 +0300, Krzysztof Kozlowski wrote:
-> Hi,
+On Tue, 23 Aug 2022 09:56:41 -0500, Rob Herring wrote:
+> In order to ensure only documented properties are present, node schemas
+> must have unevaluatedProperties or additionalProperties set to false
+> (typically).
 > 
-> The last MFD/syscon patch depends on the previous ones to avoid
-> dt_binding_check warnings.
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 +
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 +
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml     | 1 +
+>  3 files changed, 3 insertions(+)
 > 
-> I propose to take entire set via Rob's DT tree.
 
-This may have been in the window where PW server moved and stopped 
-getting patches, so I missed it until patch 4 got applied and broke 
-linux-next...
-
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (4):
->   dt-bindings: phy: hisilicon,hi3660-usb3: simplify example
->   dt-bindings: phy: hisilicon,hi3670-usb3: simplify example
->   dt-bindings: remoteproc: qcom,pil-info: add missing imem compatible
->   dt-bindings: mfd: syscon: require specific compatible also for
->     simple-mfd
-
-I applied patches 1-3, thanks!
-
-Rob
+Applied, thanks!
