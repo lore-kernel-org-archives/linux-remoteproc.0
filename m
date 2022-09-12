@@ -2,109 +2,101 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F464ECAAD5
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 06:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 117CAC6FA83
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 10:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229459AbiILGtU (ORCPT
+        id S229735AbiILKrT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Sep 2022 02:49:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
+        Mon, 12 Sep 2022 06:47:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiILGtT (ORCPT
+        with ESMTP id S229680AbiILKrR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Sep 2022 02:49:19 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266B518B0E
-        for <linux-remoteproc@vger.kernel.org>; Sun, 11 Sep 2022 23:49:18 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28C68PYN007516;
-        Mon, 12 Sep 2022 06:49:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=ZxrsJXMEp0037xwdNe7V+xPXewdvg+9RYD9fwyrK20o=;
- b=dxUv3mbrNXej0h08Ap5TraRekIwXXovdl062kY3vio9qH3cXtzAzFp6jyrTCagA3xBO/
- No0UWM7zB0BEfthsWbArzZPd5C8li93QD8p2CG+B3dKlEMJZVjcFxmEi4fzBN4NtStGr
- 7NyhgWs++i1ZZIBTWUthJ6CxHQH1DVSe26OENvY85Hu2jl7ytpgcVusii0YNzHG/B3Qg
- oXUDPhqFlxK6UNDeN9KbkaSXgV++CvqwPOYJFiRoN1kBoxkmwbxNbYTSDo9vttugdg9T
- OwSQfWHVrAx1jSWBEbZ2M2lOQ1mnw5fs+aLtH8EE8OHQ9aObu6vD8eu3Hj8xfqRSFmld lw== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jgkrsuc0r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Sep 2022 06:49:05 +0000
-Received: from nasanex01c.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28C6htfO023197
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Sep 2022 06:43:55 GMT
-Received: from [10.216.17.239] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Sun, 11 Sep
- 2022 23:43:52 -0700
-Message-ID: <e30a0c0f-8a26-ccc5-b98b-c804c8876b76@quicinc.com>
-Date:   Mon, 12 Sep 2022 12:13:36 +0530
+        Mon, 12 Sep 2022 06:47:17 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC96131EEB
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Sep 2022 03:47:15 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id f14so13179504lfg.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Sep 2022 03:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=bS7LDsVs3qcnyEA5WCUeLMEdHfGdR6OQ6NC7pdWEKCo=;
+        b=v9C7GeUH/ntRNwKKZ1I7TT6BQcjJBRkVZ1XpH6mXDdIGqsu2oqlY8NR6ikeS2VHyL8
+         7XoeJToQeSx7WIMqvu9S5zhL+/zdPWkCJ/xRvKy5UYL5moSuGoTzW/rT+uXwRSG6Eiic
+         vRv3Oy4PyY5Y4nPRruZEaZcvpvxM6lCfMQ0gzcT4tFsasIVkJa+3D6W6V8K+hfLskejA
+         LNX5aQQbJSTAfgk7Upg8DIPsy+QVWFepdmlC4bDE/vck/eapbQzWJPan/jIBh9yCxMTn
+         xdGGkKSLDDM4Cf8yXZKpajXEJTCiwphjC+CcMOkntC3mGhoodSx7fPj7QXXQPJ79Il6x
+         BM5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=bS7LDsVs3qcnyEA5WCUeLMEdHfGdR6OQ6NC7pdWEKCo=;
+        b=ELSfksZNqzwDk0zMFzQ+5K298vJnwf14Nnf9DiJH3gvvnua6ylR9RlGKUkD/KhBbHr
+         dSfPbIyiRsnxu3HwCqiEQYaR1CArmZGQG0NnbyJhGTrcqKRw/AlOvsuVdWAkMzChWvoF
+         TIqwlKPxHuJ1JTvoKb2sL47a4nTYKiDxtmVTVw+SzGm2X8isV5snCUHE3SagPLk3EeCH
+         716xjT2OCV6Uq7BLZgokQ8Vg7BW8Emqr11VMH23o+c3Rx3neYplCjuZDBw2/Wy6pMRMt
+         qFVGj4VVbG7VyeRrkbf5Puz2z8caH4IwxQNY4TyrcabbYJbEjypBxjb3qVhtq4+isWQa
+         SeKA==
+X-Gm-Message-State: ACgBeo10RM8xnxjsdx7pUqaNi3DLiLv0ODTr5gUqJfbS3kuF8h7qFQwm
+        ht2AYKlSTB6cuZ+vcmj47pCA1w==
+X-Google-Smtp-Source: AA6agR5+jaTiqHAiQpzt1KGZYW6NOWDU4UIg3cF3n4GCh9g7ACcWMJRrb7wrqPm8IlRGzsNs5ZLcOA==
+X-Received: by 2002:a05:6512:3f8c:b0:492:b392:bb84 with SMTP id x12-20020a0565123f8c00b00492b392bb84mr8267929lfa.368.1662979633605;
+        Mon, 12 Sep 2022 03:47:13 -0700 (PDT)
+Received: from [10.129.96.84] ([109.232.243.34])
+        by smtp.gmail.com with ESMTPSA id p8-20020a2eb7c8000000b0026c111ac7bcsm188263ljo.86.2022.09.12.03.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Sep 2022 03:47:13 -0700 (PDT)
+Message-ID: <79c11b6a-8f34-a5ee-373d-f88d5a980039@linaro.org>
+Date:   Mon, 12 Sep 2022 12:47:09 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.13.0
-Subject: Re: [PATCH] remoteproc: qcom: wcnss: remove unused qcom_iris_driver
- declaration
+Subject: Re: [PATCH v2 3/4] dt-bindings: remoteproc: qcom: wcnss: Add
+ qcom,pronto compatible
 Content-Language: en-US
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@somainline.org>,
-        <mathieu.poirier@linaro.org>, <bjorn.andersson@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>
-References: <20220911090637.3208939-1-cuigaosheng1@huawei.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20220911090637.3208939-1-cuigaosheng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Sireesh Kodali <sireeshkodali1@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     bjorn.andersson@linaro.org, Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20220908184925.2714098-1-sireeshkodali1@gmail.com>
+ <20220908184925.2714098-4-sireeshkodali1@gmail.com>
+ <ad201ee7-d83c-9ebc-3619-64632f1f266e@linaro.org>
+ <CMU3V4NK164X.1D3TDJPALGIDD@skynet-linux>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CMU3V4NK164X.1D3TDJPALGIDD@skynet-linux>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: unj2xIPeXa_ZDLcKj7u_xozVOyfObMbl
-X-Proofpoint-ORIG-GUID: unj2xIPeXa_ZDLcKj7u_xozVOyfObMbl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-12_04,2022-09-09_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- spamscore=0 clxscore=1011 phishscore=0 priorityscore=1501 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
- definitions=main-2209120021
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
-
-On 9/11/2022 2:36 PM, Gaosheng Cui wrote:
-> qcom_iris_driver has been removed since
-> commit 1fcef985c8bd ("remoteproc: qcom: wcnss: Fix race
-> with iris probe"), so remove it.
+On 12/09/2022 05:33, Sireesh Kodali wrote:
+> On Fri Sep 9, 2022 at 1:30 PM IST, Krzysztof Kozlowski wrote:
+>> On 08/09/2022 20:49, Sireesh Kodali wrote:
+>>> The qcom,pronto compatible is used in the wcn36xx driver to determine
+>>> which register to access. However, this compatible was not documented.
+>>> This patch documents the existing compatible as is, since it isn't
+>>> immediately clear why the wcn36xx driver uses this extra compatible,
+>>> rather than relying directly on the regular compatible string.
+>>
+>> The patch does much more - messes entirely all compatibles...
 > 
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> ---
->   drivers/remoteproc/qcom_wcnss.h | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_wcnss.h b/drivers/remoteproc/qcom_wcnss.h
-> index 6d01ee6afa7f..cb4ce543e68f 100644
-> --- a/drivers/remoteproc/qcom_wcnss.h
-> +++ b/drivers/remoteproc/qcom_wcnss.h
-> @@ -5,8 +5,6 @@
->   struct qcom_iris;
->   struct qcom_wcnss;
->   
-> -extern struct platform_driver qcom_iris_driver;
-> -
+> Is there another preferred way to handle this?
 
-LGTM.
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+The one which does not introduces any other changes than what you wrote
+here. You wrote here, that qcom,pronto is being added, so why some
+things are changed to oneOf or to enums?
 
-
--Mukesh
-
->   struct wcnss_vreg_info {
->   	const char * const name;
->   	int min_voltage;
+Best regards,
+Krzysztof
