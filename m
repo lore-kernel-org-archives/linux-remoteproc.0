@@ -2,64 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA8EC6FA8E
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 15:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3D7C6FA82
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Sep 2022 17:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbiILPay (ORCPT
+        id S229736AbiILRGK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Sep 2022 11:30:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55176 "EHLO
+        Mon, 12 Sep 2022 13:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbiILPax (ORCPT
+        with ESMTP id S229689AbiILRGJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Sep 2022 11:30:53 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFF92251B;
-        Mon, 12 Sep 2022 08:30:52 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28CDF7ca012907;
-        Mon, 12 Sep 2022 15:30:46 GMT
+        Mon, 12 Sep 2022 13:06:09 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B6519C20;
+        Mon, 12 Sep 2022 10:06:05 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28CG03Fr009643;
+        Mon, 12 Sep 2022 17:06:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=x/heB6q2D/lSJBzQsR7Yoo/qqho43QjYowbw3qAX/6k=;
- b=U2m4SSt45Qa50N480od+7gV6ris+DGTQZByS0kE2WB2dztKirfKNuawphNoJsllt0KTK
- psSGg9OSVmfDk7Sv17fFNo94oCWA8nRchURZgudM3ceJGOWp73FfJRcrNCACXictgFTf
- pLNn1vjHYqsWXfhGn1/q+7Xh8+iRsfeqOalfGG+d1SC+TQ6ngKpm8KCgsgnbnvw/cEfB
- abDlj3Ig4QaUuJof1A+YAtP9QXauIRon45DLcrH5pgXLhj9XQYEzaehk6lByJ2zqjc0d
- K//1/Xf5tp+BLNlk3KLg53pVw3GN/gJV8g56XigmosQwD7WkIew8dVgVhIYKdS9JnWzR KQ== 
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=as7hFr/c4lwu3VSDiKMR3QMLu7y5K55DXiA6dXpl/Ok=;
+ b=Ma+OLttY0GAndyJCiFuRknkFVWZJzmFJqmlMGx4fHW3zf3VLdI5wqebqsibiTlJnaylP
+ AIAWn+8N3Fz/OenPUVqZrP/yDvkWa0Ms0pD2n/9ti5xcSfBalg++pUtJn0Xb/IOnlYgJ
+ mX4qt03N4+SzxCxN0gwLBm8gKfENiqUecZEv+5ljEvQKP4idRvV7T4SCIkRfdYNfSuVa
+ aTXS2ru43us70R3H3Xz1bK9mNrxVih7PHBDPlHz+qKfSwReu+zoKSXDcvyuCsdhkclc3
+ iI7kBYC6YRxy872+Twfc/8ArrAX9/gtvbpr07TNWzrkSMjN5V+xTojgHdJlge0npnjne Sw== 
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jgk0dd9wm-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jgk634rxn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Sep 2022 15:30:46 +0000
+        Mon, 12 Sep 2022 17:06:03 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28CFUjYA004613
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28CH62Ok017835
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Sep 2022 15:30:45 GMT
-Received: from hu-gokukris-sd.qualcomm.com (10.80.80.8) by
+        Mon, 12 Sep 2022 17:06:02 GMT
+Received: from deesin-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 12 Sep 2022 08:30:44 -0700
-From:   Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
+ 15.2.986.29; Mon, 12 Sep 2022 10:06:00 -0700
+From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
+To:     <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel @ vger . kernel . org--cc=Trilok Soni" 
-        <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        "Elliot Berman" <quic_eberman@quicinc.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-Subject: [PATCH v1 3/3] remoteproc: qcom: q6v5: Avoid setting smem bit in case of crash shutdown
-Date:   Mon, 12 Sep 2022 08:30:29 -0700
-Message-ID: <9e549a54e2a6ede3e413de933fd1725c660993c3.1662995608.git.quic_gokukris@quicinc.com>
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: [PATCH V3 0/2] rpmsg_char/ctrl driver fixes
+Date:   Mon, 12 Sep 2022 22:35:34 +0530
+Message-ID: <1663002336-11809-1-git-send-email-quic_deesin@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1662995608.git.quic_gokukris@quicinc.com>
-References: <cover.1662995608.git.quic_gokukris@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -67,46 +56,31 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8yxR3Vrk68vVrsdnQzIDAlsmj3tEkTx1
-X-Proofpoint-ORIG-GUID: 8yxR3Vrk68vVrsdnQzIDAlsmj3tEkTx1
+X-Proofpoint-GUID: h-BVMxoXfCllFy1zN4VVWxy6xZpe_YK_
+X-Proofpoint-ORIG-GUID: h-BVMxoXfCllFy1zN4VVWxy6xZpe_YK_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-12_10,2022-09-12_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- suspectscore=0 bulkscore=0 adultscore=0 spamscore=0 mlxlogscore=863
- phishscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2207270000 definitions=main-2209120052
+ definitions=2022-09-12_12,2022-09-12_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 bulkscore=0
+ clxscore=1015 adultscore=0 phishscore=0 spamscore=0 mlxscore=0
+ mlxlogscore=650 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2207270000 definitions=main-2209120058
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Avoid setting smem bit in case of crash shutdown, as remote
-processor is not able to send the ack back.
+Change from v2:
+Added more description in commit message of pacthes.
 
-Change-Id: I33f19087627e5a7fe2c3bcce377b51b903574bc4
-Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
----
- drivers/remoteproc/qcom_q6v5.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Deepak Kumar Singh (2):
+  rpmsg: glink: Add lock to avoid race when rpmsg device is released
+  rpmsg: glink: Add lock to rpmsg_ctrldev_remove
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 1b9e1e1..569427a 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -237,8 +237,10 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon)
- 
- 	q6v5->running = false;
- 
--	/* Don't perform SMP2P dance if sysmon already shut down the remote */
--	if (qcom_sysmon_shutdown_acked(sysmon))
-+	/* Don't perform SMP2P dance if sysmon already shut
-+	 * down the remote or if it isn't running
-+	 */
-+	if (q6v5->rproc->state != RPROC_RUNNING || qcom_sysmon_shutdown_acked(sysmon))
- 		return 0;
- 
- 	qcom_smem_state_update_bits(q6v5->state,
+ drivers/rpmsg/rpmsg_char.c | 8 ++++++++
+ drivers/rpmsg/rpmsg_ctrl.c | 2 ++
+ 2 files changed, 10 insertions(+)
+
 -- 
 2.7.4
 
