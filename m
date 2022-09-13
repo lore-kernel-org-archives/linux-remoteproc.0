@@ -2,132 +2,97 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4597C54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Sep 2022 13:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D56FDC54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Sep 2022 18:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232343AbiIMN6i (ORCPT
+        id S232756AbiIMSwH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Sep 2022 09:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37818 "EHLO
+        Tue, 13 Sep 2022 14:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232261AbiIMN6f (ORCPT
+        with ESMTP id S231207AbiIMSvv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Sep 2022 09:58:35 -0400
-Received: from mail-oo1-xc2c.google.com (mail-oo1-xc2c.google.com [IPv6:2607:f8b0:4864:20::c2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E984BA5A
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Sep 2022 06:58:32 -0700 (PDT)
-Received: by mail-oo1-xc2c.google.com with SMTP id c22-20020a4a4f16000000b00474a44441c8so1914809oob.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Sep 2022 06:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date;
-        bh=j4b3AwKXnbNOc68U591Ba49SYpbjEmsPStwHugruFXY=;
-        b=IY8xOwXpGjE0SdIJPzybMxmP4m2T8KAbKGM7JrPns4diuJRzQQdTrR9uBMLZMZ1lZO
-         K/HcgHm2G7ER+vdjQDjBa7FWLUTbtkNCQz2jT5oIF9qIbknckvE+l63mEgLKqMIJlf5J
-         fC+8+JnPKboKqHH/11hZPFYExWokI2U45amkI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=j4b3AwKXnbNOc68U591Ba49SYpbjEmsPStwHugruFXY=;
-        b=zbv4KrUcGIcEzPShbTu2/DMKt3f9K6c4eKnjFuP1lKQoMVAeNjtl576c9L71PW7cPK
-         77yA8fX5Q2Aq+rsQkfzv8Uk/ZJHML0Y2dy8mPGIw8Dy44cWoA4TTZHu0079tRyICSzhx
-         ObRI4NBw5UOcMAj5PKLpPKQbmDSQhmUtszsIrIcYH2F8g0F+aKnt08qrygZCuE5T3wap
-         lk9jH6Is+FVntZuqyeChxGfAAuYEl+WyekfiJHyyUW5j5TGH8ynt1PfSwKHAmOdVSBl6
-         JT4evxEwa8qJ3wktwVdee1C0y8pJvrJwXyeaMlcB2jdPEZba7fyCiOQR/9R3MtL3w2TL
-         gZXg==
-X-Gm-Message-State: ACgBeo1F73STPHljOUzCLGnh2owvXnBv+/ypqvCD0i0HSyzD6KN4qBy/
-        925pxIdK0rvUIk3R/itMDnYUwA==
-X-Google-Smtp-Source: AA6agR6Tr6upEAKirqfcck1pCLrIPjxxEXBfXhURgmYde0fXkAmfIiiM2LtbTbWlyIGlUU6Bd09Etg==
-X-Received: by 2002:a4a:8e81:0:b0:475:811f:3f9e with SMTP id p1-20020a4a8e81000000b00475811f3f9emr2603836ook.35.1663077511837;
-        Tue, 13 Sep 2022 06:58:31 -0700 (PDT)
-Received: from [172.22.22.4] ([98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id k26-20020a056808069a00b0033a11fcb23bsm5212658oig.27.2022.09.13.06.58.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Sep 2022 06:58:31 -0700 (PDT)
-Message-ID: <f2fa19a1-4854-b270-0776-38993dece03f@ieee.org>
-Date:   Tue, 13 Sep 2022 08:58:29 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH 0/4] Make QMI message rules const
-Content-Language: en-US
-To:     Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>, Andy Gross <agross@kernel.org>,
+        Tue, 13 Sep 2022 14:51:51 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7056F61;
+        Tue, 13 Sep 2022 11:36:00 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28DIHHux022463;
+        Tue, 13 Sep 2022 18:35:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=eKdTyxOiLccVrdw63VF1sE1mujYcuFpBho0TboPJW5c=;
+ b=Lc02Y3DwMw9MCj0MeUCcmheRpSLdHXXL6r6MeNWV1f5oj0Eja2XPVCOhTmgOiaJG/+Cs
+ N3jlcdgHZkRvwBHd98mQXIJIXvtM7l0+7qr/PQEEJ+wl5Is4d3AT2yx88p6chlYsihTQ
+ HDNiHhdKg34DmW/4rBuKysd5O1x3zWRdO9p6M/ve+94GCuP4C5C8s8a4bkAShWV4KWfG
+ SvpTsK1UiOj6i4p6cMAiJ3nhPuR/oOukuFnLYLQM5JhxhfJVwK4JPaTdL+MhfRHztWZl
+ X9oxhpKPVfk5OCWFzAS+34RGGADV8HOhHHewUi+0d8wqMa1ACrYa89pZI5LioDMXZ2Kd mw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy0e018w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Sep 2022 18:35:54 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28DIZrTE029252
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Sep 2022 18:35:53 GMT
+Received: from hu-gokukris-sd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Tue, 13 Sep 2022 11:35:52 -0700
+From:   Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20220912232526.27427-1-quic_jjohnson@quicinc.com>
-From:   Alex Elder <elder@ieee.org>
-In-Reply-To: <20220912232526.27427-1-quic_jjohnson@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        "Guru Das Srinagesh" <quic_gurus@quicinc.com>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+Subject: [PATCH v1 0/3] Handle coprocessor crash
+Date:   Tue, 13 Sep 2022 11:35:41 -0700
+Message-ID: <cover.1662995608.git.quic_gokukris@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vGGVyJ_hHbxBTRnJSGPXI_cjtUBHKDXj
+X-Proofpoint-GUID: vGGVyJ_hHbxBTRnJSGPXI_cjtUBHKDXj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-13_09,2022-09-13_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=535
+ suspectscore=0 malwarescore=0 phishscore=0 clxscore=1011
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2208220000 definitions=main-2209130085
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
+Message-ID: <20220913183541.kBFEALyQMtpwMWEQ-LRkypM1qrfeld2o2Y88DfstMyw@z>
 
-On 9/12/22 6:25 PM, Jeff Johnson wrote:
-> Change ff6d365898d ("soc: qcom: qmi: use const for struct
-> qmi_elem_info") allows QMI message encoding/decoding rules to be
-> const. So now update the definitions in the various client to take
-> advantage of this. Patches for ath10k and ath11k were perviously sent
-> separately.
+Make the following changes in case of coprocessor crash:
+1. Send subdevice notifications before panic
+2. Do not report crash if SSR is disabled
+3. Avoid setting smem bit in case of crash
 
-I have had this on my "to-do list" for ages.
-The commit you mention updates the code to be
-explicit about not modifying this data, which
-is great.
+Gokul krishna Krishnakumar (3):
+  remoteproc: qcom: q6v5: Send subdevice notifications before panic
+  remoteproc: qcom: q6v5: Do not report crash if SSR is disabled
+  remoteproc: qcom: q6v5: Avoid setting smem bit in case of crash
+    shutdown
 
-I scanned over the changes, and I assume that
-all you did was make every object having the
-qmi_elem_info structure type be defined as
-constant.
+ drivers/remoteproc/qcom_q6v5.c | 43 ++++++++++++++++++++++++++++++++++++++----
+ drivers/remoteproc/qcom_q6v5.h |  2 ++
+ 2 files changed, 41 insertions(+), 4 deletions(-)
 
-Why aren't you changing the "ei_array" field in
-the qmi_elem_info structure to be const?  Or the
-"ei" field of the qmi_msg_handler structure?  And
-the qmi_response_type_v01_ei array (and so on)?
-
-I like what you're doing, but can you comment
-on what your plans are beyond this series?
-Do you intend to make the rest of these fields
-const?
-
-Thanks.
-
-					-Alex
-
-> This series depends upon:
-> https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?h=for-next&id=ff6d365898d4d31bd557954c7fc53f38977b491c
-> 
-> This is in the for-next banch of:
-> git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
-> 
-> Hence this series is also based upon that tree/branch.
-> 
-> Jeff Johnson (4):
->    net: ipa: Make QMI message rules const
->    remoteproc: sysmon: Make QMI message rules const
->    slimbus: qcom-ngd-ctrl: Make QMI message rules const
->    soc: qcom: pdr: Make QMI message rules const
-> 
->   drivers/net/ipa/ipa_qmi_msg.c    | 20 ++++++++++----------
->   drivers/net/ipa/ipa_qmi_msg.h    | 20 ++++++++++----------
->   drivers/remoteproc/qcom_sysmon.c |  8 ++++----
->   drivers/slimbus/qcom-ngd-ctrl.c  |  8 ++++----
->   drivers/soc/qcom/pdr_internal.h  | 20 ++++++++++----------
->   5 files changed, 38 insertions(+), 38 deletions(-)
-> 
+-- 
+2.7.4
 
