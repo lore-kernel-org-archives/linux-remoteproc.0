@@ -2,62 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37BCC54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Sep 2022 19:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32410ECAAD8
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Sep 2022 20:21:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbiIMTFT (ORCPT
+        id S229667AbiIMUVh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Sep 2022 15:05:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41262 "EHLO
+        Tue, 13 Sep 2022 16:21:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbiIMTFC (ORCPT
+        with ESMTP id S229559AbiIMUVf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Sep 2022 15:05:02 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC653BD;
-        Tue, 13 Sep 2022 12:05:01 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28DIGnwJ021401;
-        Tue, 13 Sep 2022 19:04:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=IpC2wUwUWey40UM6owh3a0MmnVlbpzDaWHe2xX0ctPE=;
- b=QOLInBaD1/SL3UUKhcGi5q7MOrbtlT65hvq6l5qcbWwE/o0+EIyY7qLK5ZRP/nNGNleI
- 4cwdWN0q2RsMnaYaMidOZJfEooHOYwOHzGzfP6WSjNOxms4UhipLn2DeEh3/6YhwGC0s
- HkenHkCPck2EixO7HFdN0MYDth43VEeyEXxFRdfbI3oEy0skqYrixKi2zLdtN/E0MQx+
- P7MR786vw5CHExmv780/U+pnY2GWqvwkQJLP2+m09W2M/K1ox86sOUJKg86c61tIIfti
- uLdX9iYZtyofgv1AM1yDXeY2dY6gVwg0+4Vxr8J0XyE6IKWFk0brzXDNFLe0ETdqup1T DA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy0e039c-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Sep 2022 19:04:46 +0000
-Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 28DIpRsd013211;
-        Tue, 13 Sep 2022 18:51:27 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 3jj1ubxku9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Sep 2022 18:51:27 +0000
-Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28DIlOsp009542;
-        Tue, 13 Sep 2022 18:51:27 GMT
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 28DIpR9P013203
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Sep 2022 18:51:27 +0000
-Received: from [10.110.52.115] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 13 Sep
- 2022 11:51:25 -0700
-Message-ID: <5b0543dc-4db8-aa33-d469-0e185c82b221@quicinc.com>
-Date:   Tue, 13 Sep 2022 11:51:24 -0700
+        Tue, 13 Sep 2022 16:21:35 -0400
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A660E642EE
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Sep 2022 13:21:32 -0700 (PDT)
+Received: by mail-io1-xd30.google.com with SMTP id g8so7953497iob.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Sep 2022 13:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ieee.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=hvA7f1e70eZNisribXBaUlpwC7EMEv0cHfgluSEMJ+0=;
+        b=VPYxLNq/A8L3gEZHrUwDcoUnPkNmYHwG9R7k93b4XkSnlgyVRTTuF0O77jbNmGZoIO
+         fdkM8HmeOpQpWtqZPyf/TvCIxnU02BuqCVAm/R7KpqMDY9pXP01TznUpG3VpHJ9t/OYj
+         eUOiHs7lGwCuJU0/YT9WAeKvqZ79yq/a06L8Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=hvA7f1e70eZNisribXBaUlpwC7EMEv0cHfgluSEMJ+0=;
+        b=Gw6v1DGhER9fWr3H7xLCF3K7s1e1CeKk978BOolBt9c31Qjiqshdb+LN8KP2ISEIeY
+         3DoDu3cTZR7skr0e8uqVqwVGYPVAdj3GXx19nR77yFz2KefVrmw6fZhLZAjBKk4xV0Yl
+         6sXmRRNlGChl6ehN4/S3V/Qg/gY/NSyD1shNY5Ep3F9S8wEQndaRNAGtJera2p20EvpL
+         k9Nf1JqKacDQXzi61Bf2S9NneHe5o1k85U4urd9sfUw7z3+ir27K9qZzB+sHUkL+jsly
+         ubhl9KL9VcyLzd6ZFFUNDlWf4AtNqrYCkd61OR1lzIlfzKkcD/fNyLw/f789CqPcwH5R
+         olHg==
+X-Gm-Message-State: ACgBeo2m2HqxJg5QLJIwzT7KD9dqYqPggBfKVZDLM9dgW5SSXp8fUDak
+        AGUpP6nVw5XUMqezM87MxTtyxw==
+X-Google-Smtp-Source: AA6agR7bLInJc4dGlF3FU+bR5qg/fCB3+Slbgvu5j48T3Dz25FTGl4WwJnDiLCEX7WWA0v0QFQAfow==
+X-Received: by 2002:a05:6602:2f13:b0:6a1:730a:dd9d with SMTP id q19-20020a0566022f1300b006a1730add9dmr3702301iow.114.1663100492023;
+        Tue, 13 Sep 2022 13:21:32 -0700 (PDT)
+Received: from [172.22.22.4] ([98.61.227.136])
+        by smtp.googlemail.com with ESMTPSA id d4-20020a0566022be400b006a102cb4900sm5436906ioy.39.2022.09.13.13.21.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Sep 2022 13:21:31 -0700 (PDT)
+Message-ID: <ac428312-745c-490e-dfb4-2208913c27c1@ieee.org>
+Date:   Tue, 13 Sep 2022 15:21:30 -0500
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
 Subject: Re: [PATCH 0/4] Make QMI message rules const
 Content-Language: en-US
-To:     Alex Elder <elder@ieee.org>, Alex Elder <elder@kernel.org>,
+To:     Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Alex Elder <elder@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
@@ -67,74 +66,75 @@ To:     Alex Elder <elder@ieee.org>, Alex Elder <elder@kernel.org>,
         Kalle Valo <kvalo@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
 References: <20220912232526.27427-1-quic_jjohnson@quicinc.com>
  <f2fa19a1-4854-b270-0776-38993dece03f@ieee.org>
-From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <f2fa19a1-4854-b270-0776-38993dece03f@ieee.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <5b0543dc-4db8-aa33-d469-0e185c82b221@quicinc.com>
+From:   Alex Elder <elder@ieee.org>
+In-Reply-To: <5b0543dc-4db8-aa33-d469-0e185c82b221@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Pub-RnSfiPRai4Z1mkmYQFf4Rdu-yslM
-X-Proofpoint-GUID: Pub-RnSfiPRai4Z1mkmYQFf4Rdu-yslM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-13_09,2022-09-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=888
- suspectscore=0 malwarescore=0 phishscore=0 clxscore=1011
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2208220000 definitions=main-2209130087
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 9/13/2022 6:58 AM, Alex Elder wrote:
-> On 9/12/22 6:25 PM, Jeff Johnson wrote:
->> Change ff6d365898d ("soc: qcom: qmi: use const for struct
->> qmi_elem_info") allows QMI message encoding/decoding rules to be
->> const. So now update the definitions in the various client to take
->> advantage of this. Patches for ath10k and ath11k were perviously sent
->> separately.
+On 9/13/22 1:51 PM, Jeff Johnson wrote:
+> On 9/13/2022 6:58 AM, Alex Elder wrote:
+>> On 9/12/22 6:25 PM, Jeff Johnson wrote:
+>>> Change ff6d365898d ("soc: qcom: qmi: use const for struct
+>>> qmi_elem_info") allows QMI message encoding/decoding rules to be
+>>> const. So now update the definitions in the various client to take
+>>> advantage of this. Patches for ath10k and ath11k were perviously sent
+>>> separately.
+>>
+>> I have had this on my "to-do list" for ages.
+>> The commit you mention updates the code to be
+>> explicit about not modifying this data, which
+>> is great.
+>>
+>> I scanned over the changes, and I assume that
+>> all you did was make every object having the
+>> qmi_elem_info structure type be defined as
+>> constant.
+>>
+>> Why aren't you changing the "ei_array" field in
+>> the qmi_elem_info structure to be const?  Or the
+>> "ei" field of the qmi_msg_handler structure?  And
+>> the qmi_response_type_v01_ei array (and so on)?
+>>
+>> I like what you're doing, but can you comment
+>> on what your plans are beyond this series?
+>> Do you intend to make the rest of these fields
+>> const?
 > 
-> I have had this on my "to-do list" for ages.
-> The commit you mention updates the code to be
-> explicit about not modifying this data, which
-> is great.
+> Hi Alex,
+> My primary focus is the ath* wireless drivers, and my primary goal was 
+> to make the tables there const. So this series, along with the two 
+> out-of-series patches for ath10k and ath11k complete that scope of work.
 > 
-> I scanned over the changes, and I assume that
-> all you did was make every object having the
-> qmi_elem_info structure type be defined as
-> constant.
+> The lack of the other changes to the QMI data structures is simply due 
+> to me not looking in depth at the QMI code beyond the registration 
+> interface.
 > 
-> Why aren't you changing the "ei_array" field in
-> the qmi_elem_info structure to be const?  Or the
-> "ei" field of the qmi_msg_handler structure?  And
-> the qmi_response_type_v01_ei array (and so on)?
+> I'll be happy to revisit this as a separate cleanup.
+
+Sounds good to me.  Like I said I've wanted to do this
+myself, and as long as you've gotten this far I'd like
+to see it taken to completion.  Compile-testing is most
+likely sufficient to make sure you got it right.
+
+I cherry-picked the one commit, and downloaded the series
+and found no new build warnings.  Checkpatch would prefer
+you used "ff6d365898d4" rather than "ff6d365898d" for the
+commit ID, but that's OK.
+
+Anyway, for the whole series:
+
+Reviewed-by: Alex Elder <elder@linaro.org>
+
+
+> /jeff
 > 
-> I like what you're doing, but can you comment
-> on what your plans are beyond this series?
-> Do you intend to make the rest of these fields
-> const?
-
-Hi Alex,
-My primary focus is the ath* wireless drivers, and my primary goal was 
-to make the tables there const. So this series, along with the two 
-out-of-series patches for ath10k and ath11k complete that scope of work.
-
-The lack of the other changes to the QMI data structures is simply due 
-to me not looking in depth at the QMI code beyond the registration 
-interface.
-
-I'll be happy to revisit this as a separate cleanup.
-
-/jeff
 
