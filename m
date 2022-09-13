@@ -2,102 +2,90 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BFAC54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Sep 2022 22:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97D5C6FA86
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Sep 2022 22:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbiIMWoY (ORCPT
+        id S229812AbiIMWsU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Sep 2022 18:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50816 "EHLO
+        Tue, 13 Sep 2022 18:48:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbiIMWoW (ORCPT
+        with ESMTP id S229783AbiIMWsS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Sep 2022 18:44:22 -0400
+        Tue, 13 Sep 2022 18:48:18 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3218E606BF;
-        Tue, 13 Sep 2022 15:44:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE4257266;
+        Tue, 13 Sep 2022 15:48:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C1679615D7;
-        Tue, 13 Sep 2022 22:44:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF31C433C1;
-        Tue, 13 Sep 2022 22:44:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B57661633;
+        Tue, 13 Sep 2022 22:48:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D77C433C1;
+        Tue, 13 Sep 2022 22:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663109061;
-        bh=u+LdKw05eVC8NkkwkIGnnnew5oolemzm7O0U9HcAWEM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kFsrrgAM5K/pMbh9DbkdQcJdez3iXO16FF/faMXQPaQxvZ9G+gNAq4MWD4pLbnJfU
-         uMAMsrkDGRy1EjpRcrw30Xtp5kDDYuXJDKwZw5z8hBDbvZTxDSQZtRZYAr+dNVg50Z
-         KohcyssjUif+mizdcAMzUpXXdIaPhkBMWeo3bAPypHjhh0sLdVfAZ5JK6pVy6pLlAu
-         g31+ToD0CaUgPD97Gok5OhrcWWo28+fBeX3cFBRNrLPBJ7mjnv5QERM8QUco3BMF4j
-         3cgaUtYnLIoY4FV/5frjl+sW1EMLEu0+1LCqfzOfvKKUCsZ3kxKROXP6Vgw+FsJjY0
-         0V4mGSSxEOllw==
-Date:   Tue, 13 Sep 2022 17:44:18 -0500
+        s=k20201202; t=1663109295;
+        bh=o9OIk885vyZJTga7FlpTPbIJ66vBCL62iD+MWzKjerk=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=ToLNKLDL9gcSKRmoFvcXKS5RrT5qUgPALnwTjceD7qiZ9vVnI8ndDcKra0OgBp6aB
+         W687LCj3DnU2yr6Td4Jn4ceDSqDiLlyFQtqjbPI5uRj6ul1IG1rzUmmkL9iHzbrs+N
+         F56QQqQU7RAHEKpV0Jb2EZCU+jhnJCxjkDCwBKgYzCwjxmTmz8l44sfNheHNpGvC/t
+         h8rZlX95/FpNwu7ZqgVsDkacyN+bQC/OD3ekfOYI3qtdBXF9u5XxwlbG3wDrTZZHX5
+         GWVFTkgDF/sly2MLGsg7Kax1lzBYf+1NWVIQQsLmCYw7uERQEBvtHMDqIqJntbXmK2
+         mbGo06Wy9dtpQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 10/15] ARM: dts: qcom: msm8974: split TCSR halt regs
- out of mutex
-Message-ID: <20220913224418.jvvguc66y5le7qjo@builder.lan>
+To:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, konrad.dybcio@somainline.org,
+        ohad@wizery.com, linux-arm-msm@vger.kernel.org,
+        baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski@linaro.org,
+        devicetree@vger.kernel.org, vkoul@kernel.org
+Subject: Re: (subset) [PATCH v3 00/15] ARM/hwlock: qcom: switch TCSR mutex to MMIO
+Date:   Tue, 13 Sep 2022 17:48:08 -0500
+Message-Id: <166310928500.670084.9085382465104729419.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20220909092035.223915-1-krzysztof.kozlowski@linaro.org>
 References: <20220909092035.223915-1-krzysztof.kozlowski@linaro.org>
- <20220909092035.223915-11-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220909092035.223915-11-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 09, 2022 at 11:20:30AM +0200, Krzysztof Kozlowski wrote:
-[..]
-> diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> index 90a6d4b7605c..ada232bed2c8 100644
-> --- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-> +++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-> @@ -1189,7 +1189,7 @@ remoteproc_mss: remoteproc@fc880000 {
->  			resets = <&gcc GCC_MSS_RESTART>;
->  			reset-names = "mss_restart";
->  
-> -			qcom,halt-regs = <&tcsr_mutex_block 0x1180 0x1200 0x1280>;
-> +			qcom,halt-regs = <&tcsr_1 0x180 0x200 0x280>;
->  
->  			qcom,smem-states = <&modem_smp2p_out 0>;
->  			qcom,smem-state-names = "stop";
-> @@ -1230,10 +1230,15 @@ smd-edge {
->  
->  		tcsr_mutex_block: syscon@fd484000 {
->  			compatible = "syscon";
-> -			reg = <0xfd484000 0x2000>;
-> +			reg = <0xfd484000 0x1000>;
->  		};
->  
-> -		tcsr: syscon@fd4a0000 {
-> +		tcsr_1: syscon@fd485000 {
+On Fri, 9 Sep 2022 11:20:20 +0200, Krzysztof Kozlowski wrote:
+> Switch older Qualcomm SoCs to use MMIO-based method instead of syscon.
+> 
+> Not tested on hardware. Please kindly provide tests.
+> 
+> Changes since v2
+> ================
+> 1. Rebase on current MFD changes.
+> 2. Add Rb tag.
+> 3. Split MFD patch to separate patchset:
+> https://lore.kernel.org/linux-devicetree/20220909091056.128949-1-krzysztof.kozlowski@linaro.org/T/#u
+> 
+> [...]
 
-While the accessed registers look general purpose in nature, I would
-prefer that we stick with naming it based on the register blocks - and
-this is part of what's named "tcsr_mutex".
+Applied, thanks!
 
-Is it not possible to claim that this region is a
-"qcom,msm8974-tcsr-mutex" and a "syscon"?
+[05/15] arm64: dts: qcom: ipq6018: add missing TCSR syscon compatible
+        commit: d30bcfa4408596e8dd3714dfdd90334d2bdc9856
+[06/15] arm64: dts: qcom: msm8953: add missing TCSR syscon compatible
+        commit: d07ac9d93ced0f8203230bf1de49b7cc605e1547
+[07/15] arm64: dts: qcom: qcs404: add missing TCSR syscon compatible
+        commit: 98460385091fc2e86a296f9643105d8a8777ccc2
+[08/15] arm64: dts: qcom: msm8996: add missing TCSR syscon compatible
+        commit: 8a99e0fc8bd3fa9c8be1fc115a2e38f4fd51ccda
+[11/15] arm64: dts: qcom: ipq6018: switch TCSR mutex to MMIO
+        commit: f5e303aefc06b7508d7a490f9a2d80e4dc134c70
+[12/15] arm64: dts: qcom: msm8994: switch TCSR mutex to MMIO
+        commit: 9e826e05061c61d84217bbe436b4ef0bedbfe458
+[14/15] ARM: dts: qcom: apq8084: switch TCSR mutex to MMIO
+        commit: 16ae4e557b2fa9fc7372b4503247aca80a476272
+[15/15] ARM: dts: qcom: msm8226: switch TCSR mutex to MMIO
+        commit: 18a4af7a598445af54e1e16a66b7f31669578701
 
-> +			compatible = "qcom,tcsr-msm8974", "syscon";
-> +			reg = <0xfd485000 0x1000>;
-> +		};
-> +
-> +		tcsr_2: syscon@fd4a0000 {
-
-And I would like to keep this as "tcsr".
-
-Regards,
-Bjorn
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
