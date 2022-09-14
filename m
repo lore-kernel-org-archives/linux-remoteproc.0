@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2E7C6FA89
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 08:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C998C6FA8A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 09:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230192AbiINI7z (ORCPT
+        id S229721AbiINJTM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 04:59:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
+        Wed, 14 Sep 2022 05:19:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiINI72 (ORCPT
+        with ESMTP id S229933AbiINJSb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Sep 2022 04:59:28 -0400
+        Wed, 14 Sep 2022 05:18:31 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9FBA74E28;
-        Wed, 14 Sep 2022 01:58:54 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E8UQnc022214;
-        Wed, 14 Sep 2022 08:58:36 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FE94792FC;
+        Wed, 14 Sep 2022 02:08:56 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E8VNGu001667;
+        Wed, 14 Sep 2022 09:06:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=subject : to :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=0kaGHzaSpcyFnmwKJ+2+XawG8PyLKkjlKHKy/F9Qbos=;
- b=K7vivhzfY5iRhWr27a1J+7gFQHpQEYTQvDiMfTyM4ZgfknqDyETwhw06W0jtlqkiSrBH
- Ap5zhaYkw7VkKCoIl7JgAk3LqygjHPwlCQT/kyQdXoyQoCp06/mTzA6tX1Fa5PyeRsTB
- zE4M8AZVcftOL7jOfb3LX7aJOGD+3xiTYA7nepYcsmcJwNuAHfOZ7uNPTRJgbEH3z62g
- aracHrf0F2gNtZUvBNGSh/uYdPedt6mvz6mQjx3/+RQES55pC2zz3Uln8BFveu05kZRM
- eoyyeu0NiPJ4KWl289TqaIV4lEVocLNG5zM/XSFKHzvotjQ5Pv5K6cLL9acN/bKDknyv Yw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy0e1vm9-1
+ bh=6kFVICJ6jtew+3rXDnaR4PptRyZuceTadVnuNa0iKHA=;
+ b=BTL4oP5NvIADiQ1ivZ3ezjIUGfhUotu3xzPc450+vkR+1JcE9dkIRozqbInMhCuPFQ4K
+ mqfGGZxTJh2ISvv2lrD/sf7WpInxYdsCcEpSNyYSiyv1uaA+R/QAooEsNxL0PHrXrtCu
+ zgS9E5/tElD8Mn/dTD9iEd09TIOul/sua3iRX2kh2XgTSZBJWTliRydErbH1+vu8+q1z
+ qpYBPUC7bfp5cOz2+TpOhRDjYrdwSs9mYAsT4lgF9ur2/ED3kVbB8G/1XHrAeh+N4kUb
+ s6TNQx8LKFzWl8MHMhJF1AeUHOEZHMbGfzINjdXMTL92MZP2dTMidAvfTOOJ+BytkkPn GA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy0c9pua-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 08:58:36 +0000
+        Wed, 14 Sep 2022 09:06:45 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E8wYPi028705
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E96ig6020032
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 08:58:34 GMT
+        Wed, 14 Sep 2022 09:06:44 GMT
 Received: from [10.79.43.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 14 Sep
- 2022 01:58:30 -0700
-Subject: Re: [PATCH v6 1/8] dt-bindings: remoteproc: qcom: Add SC7280 ADSP
- support
+ 2022 02:06:39 -0700
+Subject: Re: [PATCH v6 2/8] remoteproc: qcom: Add flag in adsp private data
+ structure
 To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <bjorn.andersson@linaro.org>, <lgirdwood@gmail.com>,
@@ -52,14 +52,14 @@ To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
         <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>
 References: <1662643422-14909-1-git-send-email-quic_srivasam@quicinc.com>
- <1662643422-14909-2-git-send-email-quic_srivasam@quicinc.com>
+ <1662643422-14909-3-git-send-email-quic_srivasam@quicinc.com>
 From:   Sibi Sankar <quic_sibis@quicinc.com>
-Message-ID: <3d79125c-74c4-315e-cfd2-2263d3714716@quicinc.com>
-Date:   Wed, 14 Sep 2022 14:28:12 +0530
+Message-ID: <9a483cbc-f90a-65c8-5edf-95fa9016ce6b@quicinc.com>
+Date:   Wed, 14 Sep 2022 14:36:36 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1662643422-14909-2-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1662643422-14909-3-git-send-email-quic_srivasam@quicinc.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,231 +68,79 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mdGY0hU0cp5o-1DVSe4OO1sPGuUzOFXU
-X-Proofpoint-GUID: mdGY0hU0cp5o-1DVSe4OO1sPGuUzOFXU
+X-Proofpoint-ORIG-GUID: L5iTt_yBFld5wBfQbdRVnxufNqTspuly
+X-Proofpoint-GUID: L5iTt_yBFld5wBfQbdRVnxufNqTspuly
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-14_03,2022-09-14_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- suspectscore=0 malwarescore=0 phishscore=0 clxscore=1011
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2208220000 definitions=main-2209140043
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ phishscore=0 mlxscore=0 bulkscore=0 adultscore=0 impostorscore=0
+ spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2208220000 definitions=main-2209140044
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Srinivas,
-Thanks for the patch series.
-
 On 9/8/22 6:53 PM, Srinivasa Rao Mandadapu wrote:
-> Add ADSP PIL loading support for SC7280 SoCs.
+> Add flag in qcom_adsp private data structure and initialize
+> it to distinguish ADSP and WPSS modules for using iommu selectively.
+
+There are other flags available to distinguish between ADSP and WPSS
+like 'is_wpss'. So you probably want to tweak your commit message to
+just say if it has a iommu in front of it or not and skip referencing
+WPSS.
+
+Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
+
 > 
 > Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 > ---
 > Changes since V5:
-> 	-- Remove qcom,adsp-memory-regions property.
-> Changes since V4:
-> 	-- Update halt registers description in dt bindings.
+> 	-- Rename adsp_sandbox_needed to has_iommu.
+> Changes since V3:
+> 	-- Rename is_adsp_sb_needed to adsp_sandbox_needed.
+> Changes since V2:
+> 	-- Add is_adsp_sb_needed flag instead of is_wpss.
 > 
->   .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 175 +++++++++++++++++++++
->   1 file changed, 175 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+>   drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++++
+>   1 file changed, 5 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-> new file mode 100644
-> index 0000000..1428522
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-> @@ -0,0 +1,175 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,sc7280-adsp-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 2f3b9f5..fa2ccac 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -62,6 +62,7 @@ struct adsp_pil_data {
+>   	const char *sysmon_name;
+>   	int ssctl_id;
+>   	bool is_wpss;
+> +	bool has_iommu;
+>   	bool auto_boot;
+>   
+>   	const char **clk_ids;
+> @@ -99,6 +100,7 @@ struct qcom_adsp {
+>   	phys_addr_t mem_reloc;
+>   	void *mem_region;
+>   	size_t mem_size;
+> +	bool has_iommu;
+>   
+>   	struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
+>   	size_t proxy_pd_count;
+> @@ -596,12 +598,15 @@ static int adsp_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	rproc->auto_boot = desc->auto_boot;
+> +	rproc->has_iommu = desc->has_iommu;
+>   	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+>   
+>   	adsp = (struct qcom_adsp *)rproc->priv;
+>   	adsp->dev = &pdev->dev;
+>   	adsp->rproc = rproc;
+>   	adsp->info_name = desc->sysmon_name;
+> +	adsp->has_iommu = desc->has_iommu;
 > +
-> +title: Qualcomm SC7280 ADSP Peripheral Image Loader
-> +
-> +maintainers:
-> +  - Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> +
-> +description:
-> +  This document defines the binding for a component that loads and boots firmware
-
-s/defines the binding/describes the hardware.
-
-> +  on the Qualcomm Technology Inc. ADSP.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sc7280-adsp-pil
-> +
-> +  reg:
-> +    minItems: 1
-> +    items:
-> +      - description: qdsp6ss register
-> +      - description: efuse q6ss register
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Watchdog interrupt
-> +      - description: Fatal interrupt
-> +      - description: Ready interrupt
-> +      - description: Handover interrupt
-> +      - description: Stop acknowledge interrupt
-> +      - description: Shutdown acknowledge interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +      - const: shutdown-ack
-> +
-> +  clocks:
-> +    items:
-> +      - description: XO clock
-> +      - description: GCC CFG NOC LPASS clock
-> +      - description: LPASS AHBS AON clock
-> +      - description: LPASS AHBM AON clock
-> +      - description: QDSP XO clock
-> +      - description: Q6SP6SS SLEEP clock
-> +      - description: Q6SP6SS CORE clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: xo
-> +      - const: gcc_cfg_noc_lpass
-> +      - const: lpass_ahbs_aon_cbcr
-> +      - const: lpass_ahbm_aon_cbcr
-> +      - const: qdsp6ss_xo
-> +      - const: qdsp6ss_sleep
-> +      - const: qdsp6ss_core
-> +
-> +  power-domains:
-> +    items:
-> +      - description: LCX power domain
-
-Doesn't it need the LMX pd as well?
-
-
-> +
-> +  resets:
-> +    items:
-> +      - description: PDC AUDIO SYNC RESET
-> +      - description: CC LPASS restart
-> +
-> +  reset-names:
-> +    items:
-> +      - const: pdc_sync
-> +      - const: cc_lpass
-> +
-> +  memory-region:
-> +    maxItems: 1
-> +    description: Reference to the reserved-memory for the Hexagon core
-> +
-> +  qcom,halt-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      Phandle reference to a syscon representing TCSR followed by the
-> +      four offsets within syscon for q6, CE, AXI and qv6 halt registers.
-> +    items:
-> +      items:
-> +        - description: phandle to TCSR MUTEX
-> +        - description: offset to q6 halt registers
-> +        - description: offset to CE halt registers
-> +        - description: offset to AXI halt registers
-> +        - description: offset to qv6 halt registers
-> +
-> +  qcom,smem-states:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: States used by the AP to signal the Hexagon core
-> +    items:
-> +      - description: Stop the modem
-> +
-> +  qcom,smem-state-names:
-> +    $ref: /schemas/types.yaml#/definitions/string
-
-You can skip ref and items.
-
-> +    description: The names of the state bits used for SMP2P output
-> +    items:
-> +      - const: stop
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - resets
-> +  - reset-names
-> +  - qcom,halt-regs
-> +  - memory-region
-> +  - qcom,smem-states
-> +  - qcom,smem-state-names
-
-You probably also need to mention qcom,qmp as a required property.
-Not sure why you choose to skip glink-edge as well.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    #include <dt-bindings/clock/qcom,gcc-sc7280.h>
-> +    #include <dt-bindings/clock/qcom,lpass-sc7280.h>
-> +    #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-> +    #include <dt-bindings/reset/qcom,sdm845-pdc.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +
-> +    remoteproc@3000000 {
-> +        compatible = "qcom,sc7280-adsp-pil";
-> +        reg = <0x03000000 0x5000>,
-> +              <0x0355b000 0x10>;
-> +
-> +        interrupts-extended = <&pdc 162 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-> +                <&adsp_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-> +
-> +        interrupt-names = "wdog", "fatal", "ready",
-> +                "handover", "stop-ack", "shutdown-ack";
-> +
-> +        clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +                 <&gcc GCC_CFG_NOC_LPASS_CLK>,
-> +                 <&lpasscc LPASS_Q6SS_AHBM_CLK>,
-> +                 <&lpasscc LPASS_Q6SS_AHBS_CLK>,
-> +                 <&lpasscc LPASS_QDSP6SS_XO_CLK>,
-> +                 <&lpasscc LPASS_QDSP6SS_SLEEP_CLK>,
-> +                 <&lpasscc LPASS_QDSP6SS_CORE_CLK>;
-> +        clock-names = "xo", "gcc_cfg_noc_lpass",
-> +                "lpass_ahbs_aon_cbcr",
-> +                "lpass_ahbm_aon_cbcr", "qdsp6ss_xo",
-> +                "qdsp6ss_sleep", "qdsp6ss_core";
-> +
-> +        power-domains = <&rpmhpd SC7280_LCX>;
-> +
-> +        resets = <&pdc_reset PDC_AUDIO_SYNC_RESET>,
-> +                 <&aoss_reset AOSS_CC_LPASS_RESTART>;
-> +        reset-names = "pdc_sync", "cc_lpass";
-> +
-> +        qcom,halt-regs = <&tcsr_mutex 0x23000 0x25000 0x28000 0x33000>;
-> +
-> +        memory-region = <&adsp_mem>;
-> +
-> +        qcom,smem-states = <&adsp_smp2p_out 0>;
-> +        qcom,smem-state-names = "stop";
-> +
-> +    };
+>   	platform_set_drvdata(pdev, adsp);
+>   
+>   	if (desc->is_wpss)
 > 
