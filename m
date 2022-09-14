@@ -2,196 +2,104 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79430ECAAD8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 05:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE17ECAAD3
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 07:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbiINFZw (ORCPT
+        id S230073AbiINHvL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 01:25:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49726 "EHLO
+        Wed, 14 Sep 2022 03:51:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbiINFZv (ORCPT
+        with ESMTP id S230036AbiINHvI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Sep 2022 01:25:51 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F741FCE3;
-        Tue, 13 Sep 2022 22:25:50 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E4d9mM013283;
-        Wed, 14 Sep 2022 05:25:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=C3lMFLFSSqTsJUcY7ZeXmJrf5zBk3jlTur2JwEIR+TI=;
- b=DDX/y2riTLu2m8AkgwWSFIRQxWLJ/6NAuX/6py57q3etVsRfjRIPUAOXIX8creahlULb
- x832HnH+XMqJVF4LeuZ1lLVqihUJlnsUgaVd/58q83nbcjZ8bLP4YGXghHc7WHv2rJ+n
- OOvIPCsoI6PKztBgPcy+lWY9R0N61VNORTyv5ApfpQAm4vSp9gyXPWn52jIdPdxylxa7
- se1DSWN8jXDbDL/56m2J5u1/wPJ4K6BFtSMJDO5mMq+ADUEIMX0ONW1sy6X9rJGy6N62
- pqCExs0WOOQ/rR7JCGTEk41SY3PWI2W9dl4PyHPsABNgrtFnVvrMIELt/q1tzM+9LOAR Ag== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjxys1cbk-1
+        Wed, 14 Sep 2022 03:51:08 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF04A2A266;
+        Wed, 14 Sep 2022 00:50:59 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E55ft8013611;
+        Wed, 14 Sep 2022 09:50:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=pYGgu5rOLOhul9DJXw1aqoaq6vf4xJjwRWFbMfPDlA0=;
+ b=5OYcofgipre4PQWTMHddfC2faViTEibm/LEh/ls+7gvgxCWS8t/P6K6M5jzOSunKImJb
+ TZZJ1aVKW7PepdVZsaaGq9mqCXGAl2ViGpQ3T6+v6z04+maihAsf3kON+f7WOerDepLk
+ cvpsXznQmRXWUAP1jqstXeduWHAc3/Bjn9jwKS50UlfI/1mrMdnhiY4EsrL6QGoJHRc8
+ 3OKI/ZI8a1h5PtDXzGFO8/XBNWT03BmioH6RNc94RSVZ0Xyq19Eize61Rshl2o0U7HxW
+ N1oryXHBORrvvatx44eH/LcUyTazJ2VuCQIdbaAlqf2CZgke1JPJOiakNugHJqt+bElr Mw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jjxxckgyh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 05:25:40 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E5PdVo020795
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 05:25:39 GMT
-Received: from deesin-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 13 Sep 2022 22:25:36 -0700
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <arnaud.pouliquen@foss.st.com>,
-        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: [PATCH V3 2/3] rpmsg: glink: Add support to handle signals command
-Date:   Wed, 14 Sep 2022 10:55:01 +0530
-Message-ID: <1663133102-10671-3-git-send-email-quic_deesin@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
-References: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
+        Wed, 14 Sep 2022 09:50:53 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DE1C010002A;
+        Wed, 14 Sep 2022 09:50:49 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D946F2138FF;
+        Wed, 14 Sep 2022 09:50:49 +0200 (CEST)
+Received: from [10.201.22.245] (10.75.127.121) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Wed, 14 Sep
+ 2022 09:50:49 +0200
+Message-ID: <74224354-8543-559b-240b-0eda4d68fc52@foss.st.com>
+Date:   Wed, 14 Sep 2022 09:50:48 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5u_t1wWq3OpdxVOBFHfZg6VS8yp9di5Z
-X-Proofpoint-GUID: 5u_t1wWq3OpdxVOBFHfZg6VS8yp9di5Z
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V3 0/3] rpmsg signaling/flowcontrol patches
+Content-Language: en-US
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        <bjorn.andersson@linaro.org>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+References: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.121]
+X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To EQNDAG1NODE5.st.com
+ (10.75.129.134)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-14_02,2022-09-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 impostorscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 clxscore=1011 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2208220000 definitions=main-2209140025
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Remote peripherals send signal notifications over glink with commandID 15.
+Hi Deepak,
 
-Add support to send and receive the signal command and based signals
-enable or disable flow control with remote host.
+On 9/14/22 07:24, Deepak Kumar Singh wrote:
+> [Changes from V2]:
+> Trivial review comment fixes.
+> Avoid TIOCM_DTR etc signals in glink layer, use native signal macros only.
+> Glink layer to provide only flowcontrol on/off interface, no specific signal passing/receiving to client.
 
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
----
- drivers/rpmsg/qcom_glink_native.c | 63 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 115c0a1..01ee82a 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -17,6 +17,7 @@
- #include <linux/rpmsg.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/workqueue.h>
- #include <linux/mailbox_client.h>
- 
-@@ -203,9 +204,15 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
- #define RPM_CMD_TX_DATA_CONT		12
- #define RPM_CMD_READ_NOTIF		13
- #define RPM_CMD_RX_DONE_W_REUSE		14
-+#define RPM_CMD_SIGNALS			15
- 
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
- 
-+#define NATIVE_DTR_SIG			NATIVE_DSR_SIG
-+#define NATIVE_DSR_SIG			BIT(31)
-+#define NATIVE_RTS_SIG			NATIVE_CTS_SIG
-+#define NATIVE_CTS_SIG			BIT(30)
-+
- static void qcom_glink_rx_done_work(struct work_struct *work);
- 
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-@@ -1001,6 +1008,57 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 	return 0;
- }
- 
-+/**
-+ * qcom_glink_set_flow_control() - convert a signal cmd to wire format and
-+ * 				   transmit
-+ * @ept:	Rpmsg endpoint for channel.
-+ * @enable:	True/False - enable or disable flow control
-+ *
-+ * Return: 0 on success or standard Linux error code.
-+ */
-+static int qcom_glink_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	struct qcom_glink *glink = channel->glink;
-+	struct glink_msg msg;
-+	u32 sigs;
-+
-+	if (enable)
-+		sigs |= NATIVE_DTR_SIG | NATIVE_RTS_SIG;
-+
-+	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
-+	msg.param1 = cpu_to_le16(channel->lcid);
-+	msg.param2 = cpu_to_le32(sigs);
-+
-+	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-+}
-+
-+static int qcom_glink_handle_signals(struct qcom_glink *glink,
-+				     unsigned int rcid, unsigned int sigs)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+	bool enable = false;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, rcid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel) {
-+		dev_err(glink->dev, "signal for non-existing channel\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!channel->ept.flow_cb)
-+		return 0;
-+
-+	if (sigs & (NATIVE_DSR_SIG | NATIVE_CTS_SIG))
-+		enable = true;
-+		
-+	channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
-+
-+	return 0;
-+}
-+
- static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- {
- 	struct qcom_glink *glink = data;
-@@ -1065,6 +1123,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
- 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			break;
-+		case RPM_CMD_SIGNALS:
-+			qcom_glink_handle_signals(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
- 			ret = -EINVAL;
-@@ -1440,6 +1502,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
- 	.sendto = qcom_glink_sendto,
- 	.trysend = qcom_glink_trysend,
- 	.trysendto = qcom_glink_trysendto,
-+	.set_flow_control = qcom_glink_set_flow_control,
- };
- 
- static void qcom_glink_rpdev_release(struct device *dev)
--- 
-2.7.4
+Please, could you have a look to my series that implements
+your proposed interface for the virtio rpmsg [1]?
+It would be nice that your API takes into account update to
+support of the rpmsg virtio implementation proposed in [08/10] rpmsg: Add the
+destination address in rpmsg_set_flow_control[2]
 
+Thanks,
+Arnaud
+
+[1] https://lore.kernel.org/lkml/e54bcfcb-8e37-9caa-b330-a7411820b7ce@foss.st.com/T/
+[2]https://lore.kernel.org/lkml/e54bcfcb-8e37-9caa-b330-a7411820b7ce@foss.st.com/T/#m7340a8e70fb0d8935869c4cef96863abda555c96
+
+> 
+> Deepak Kumar Singh (3):
+>   rpmsg: core: Add signal API support
+>   rpmsg: glink: Add support to handle signals command
+>   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+> 
+>  drivers/rpmsg/qcom_glink_native.c | 63 +++++++++++++++++++++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_char.c        | 60 ++++++++++++++++++++++++++++++++-----
+>  drivers/rpmsg/rpmsg_core.c        | 20 +++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h    |  2 ++
+>  include/linux/rpmsg.h             | 15 ++++++++++
+>  5 files changed, 152 insertions(+), 8 deletions(-)
+> 
