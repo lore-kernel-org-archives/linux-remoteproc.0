@@ -2,220 +2,238 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D7FECAAD8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 13:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56AEC6FA89
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 23:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbiINNPc (ORCPT
+        id S229586AbiINXrr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 09:15:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51006 "EHLO
+        Wed, 14 Sep 2022 19:47:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbiINNPW (ORCPT
+        with ESMTP id S229459AbiINXrq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Sep 2022 09:15:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 663EF558C2;
-        Wed, 14 Sep 2022 06:15:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 38B2261D05;
-        Wed, 14 Sep 2022 13:15:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66B99C433D7;
-        Wed, 14 Sep 2022 13:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663161316;
-        bh=LC/yaD2w8sEiDYhcM6gqXvtnA5PdZMjHegWYyYGmmwY=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=ojozldpLrFaLrBJaXV3hDNPauxhrZSeQtHYIWs+cWinfMJk8fxnVe3ESfAHk6Eu7p
-         elAYJ5vyc5+OQzwdG4k0HGURSPYvJ7pquvUT9LRbUHUHhTj3MwwdUYjE+f/5MdyYIf
-         dPJZpp+1ULEcgj8VUJXu+D1oIBEGeqeQbCswr1zmepnKvEyTRS+NrpcHXGdrZhaIhs
-         k/7YrI9jrKrSmLICCPumwcJj1ksY9KgPweiaJ/XWm+burfnHM3xvZ8VFNuV2ORvHvm
-         Xbp1XrR41xJDSqklg0Tv+bEPTOHvvga4dTHFsy+ve0SQbLi775aFhZ2nz0OpP1WLGT
-         M5buLuMiBS9jA==
-Message-ID: <b55bbba1-16ed-dbac-05e9-25ea4661efab@kernel.org>
-Date:   Wed, 14 Sep 2022 16:15:11 +0300
+        Wed, 14 Sep 2022 19:47:46 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721DC7DF5E;
+        Wed, 14 Sep 2022 16:47:45 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28ENjXu1013301;
+        Wed, 14 Sep 2022 23:47:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=SHqpTMpWCQfP8l7TSCpgmY+13h/WxgR77drqM8ChOBM=;
+ b=ExPpgmzTLfKLUZU7rovBmEczGsoNiuQ4ChMLGL8nUUrN+DszpaJg9xKST4PAU6EelsCd
+ SijG30SwTwmHnPcejsUKO0Jdw1skCQocYAl4KJxBgW0DzP5tXBXFZO2VMYcD1VEXIcuC
+ GQcWgaVeVG/hA0qXQXmKpUtkp9nDvaDLWMOto03ZSBoaBhkIl301XpaK4tNbWfKEN8jr
+ I4DtIFz5twXIeB4ca5oyBp7x9CdfHf5ezGWGT4GEcXGLMgvWXz04rqkIOCX7c6B3Pipm
+ Yw/gTTYWPS1S9H1VVgGD4rRgU7JPyb64vEL7lygJNuqvHfkJ55A7yDNY+yax2ifka67f 5g== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy0hu9pr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Sep 2022 23:47:26 +0000
+Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 28ENlPUO030422;
+        Wed, 14 Sep 2022 23:47:25 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3jh430yku2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Sep 2022 23:47:25 +0000
+Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28ENhIXr026662;
+        Wed, 14 Sep 2022 23:47:24 GMT
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 28ENlOrh030414
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Sep 2022 23:47:24 +0000
+Received: from quicinc.com (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 14 Sep
+ 2022 16:47:24 -0700
+From:   Jeff Johnson <quic_jjohnson@quicinc.com>
+To:     Alex Elder <elder@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Kalle Valo <kvalo@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Alex Elder <elder@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Subject: [PATCH v2 1/4] net: ipa: Make QMI message rules const
+Date:   Wed, 14 Sep 2022 16:47:02 -0700
+Message-ID: <20220914234705.28405-2-quic_jjohnson@quicinc.com>
+X-Mailer: git-send-email 2.37.0
+In-Reply-To: <20220914234705.28405-1-quic_jjohnson@quicinc.com>
+References: <20220912232526.27427-1-quic_jjohnson@quicinc.com>
+ <20220914234705.28405-1-quic_jjohnson@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2 6/6] soc: ti: pruss: Add helper functions to get/set
- PRUSS_CFG_GPMUX
-Content-Language: en-US
-To:     Romain Naour <romain.naour@smile.fr>, linux-kernel@vger.kernel.org,
-        Md Danish Anwar <danishanwar@ti.com>
-Cc:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        nm@ti.com, ssantosh@kernel.org, s-anna@ti.com,
-        linux-arm-kernel@lists.infradead.org, grygorii.strashko@ti.com,
-        vigneshr@ti.com, kishon@ti.com
-References: <20220418123004.9332-1-p-mohan@ti.com>
- <20220418123004.9332-7-p-mohan@ti.com>
- <94b57cbc-b865-e0b4-0d52-3da72f2dd026@smile.fr>
-From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <94b57cbc-b865-e0b4-0d52-3da72f2dd026@smile.fr>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: iEfB44ZkzrpZ2REOblSwnp5RC2guEQ8P
+X-Proofpoint-GUID: iEfB44ZkzrpZ2REOblSwnp5RC2guEQ8P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-14_10,2022-09-14_04,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ malwarescore=0 clxscore=1015 impostorscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2208220000
+ definitions=main-2209140113
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Romain,
+Commit ff6d365898d4 ("soc: qcom: qmi: use const for struct
+qmi_elem_info") allows QMI message encoding/decoding rules to be
+const, so do that for IPA.
 
-On 12/09/2022 17:20, Romain Naour wrote:
-> +Danish
-> 
-> Hi Danish,
-> 
-> (Removed Puranjay (as he is no longer with TI) and adding Danish.)
-> 
-> Le 18/04/2022 à 14:30, Puranjay Mohan a écrit :
->> From: Tero Kristo <t-kristo@ti.com>
->>
->> Add two new helper functions pruss_cfg_get_gpmux() & pruss_cfg_set_gpmux()
->> to get and set the GP MUX mode for programming the PRUSS internal wrapper
->> mux functionality as needed by usecases.
-> 
-> Actually I'm curious about how the GP MUX mode are supposed to work in some
-> cases. The register mapping in the AM57xx TRM seems confusing.
-> 
-> See the "PRU-ICSS I/O Interface" part about the "PRU-ICSS Internal Wrapper
-> Multiplexing" [1].
-> 
-> The commit "ARM: dts: am57xx-idk: Add prueth on ICSS" [2] (only in the
-> TI kernel tree) adds pruss1 and pruss2 for the am571x-idk board.
-> 
-> But this commit doesn't really explain the ti,pruss-gp-mux-sel setting
-> from pruss1_eth and pruss2_eth:
-> 
->     /* Dual mac ethernet application node on icss1 */
->     pruss1_eth {
->     	status = "okay";
->     	compatible = "ti,am57-prueth";
-> 
->     	ti,pruss-gp-mux-sel = <0>,	/* GP, default */
->     			      <4>;	/* MII2, needed for PRUSS1_MII1 */
->     }
-> 
->     &pruss2_eth {
->     	ti,pruss-gp-mux-sel = <4>,	/* MII2, needed for PRUSS1_MII0 */
->     			      <4>;	/* MII2, needed for PRUSS1_MII1 */
->     };
-> 
-> At the first look, the two comments in pruss2_eth node about PRUSS1_MIIx seems
-> dubious. Indeed, it would means that the PRUSS2 setting (ti,pruss-gp-mux-sel) is
-> required to makes PRUSS1 work.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Reviewed-by: Alex Elder <elder@linaro.org>
+Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
+---
+ drivers/net/ipa/ipa_qmi_msg.c | 20 ++++++++++----------
+ drivers/net/ipa/ipa_qmi_msg.h | 20 ++++++++++----------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-Yes, if I remember right this is only applicable to AM571 Soc which had
-an overloaded pinmuxing design and it resulted in this kind of weird constraint.
-i.e. gp-mux-sel of PRUSS2 needs to be set to get PRUSS1 MII to work.
+diff --git a/drivers/net/ipa/ipa_qmi_msg.c b/drivers/net/ipa/ipa_qmi_msg.c
+index 6838e8065072..c5a5dac284a9 100644
+--- a/drivers/net/ipa/ipa_qmi_msg.c
++++ b/drivers/net/ipa/ipa_qmi_msg.c
+@@ -9,7 +9,7 @@
+ #include "ipa_qmi_msg.h"
+ 
+ /* QMI message structure definition for struct ipa_indication_register_req */
+-struct qmi_elem_info ipa_indication_register_req_ei[] = {
++const struct qmi_elem_info ipa_indication_register_req_ei[] = {
+ 	{
+ 		.data_type	= QMI_OPT_FLAG,
+ 		.elem_len	= 1,
+@@ -116,7 +116,7 @@ struct qmi_elem_info ipa_indication_register_req_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_indication_register_rsp */
+-struct qmi_elem_info ipa_indication_register_rsp_ei[] = {
++const struct qmi_elem_info ipa_indication_register_rsp_ei[] = {
+ 	{
+ 		.data_type	= QMI_STRUCT,
+ 		.elem_len	= 1,
+@@ -134,7 +134,7 @@ struct qmi_elem_info ipa_indication_register_rsp_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_driver_init_complete_req */
+-struct qmi_elem_info ipa_driver_init_complete_req_ei[] = {
++const struct qmi_elem_info ipa_driver_init_complete_req_ei[] = {
+ 	{
+ 		.data_type	= QMI_UNSIGNED_1_BYTE,
+ 		.elem_len	= 1,
+@@ -151,7 +151,7 @@ struct qmi_elem_info ipa_driver_init_complete_req_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_driver_init_complete_rsp */
+-struct qmi_elem_info ipa_driver_init_complete_rsp_ei[] = {
++const struct qmi_elem_info ipa_driver_init_complete_rsp_ei[] = {
+ 	{
+ 		.data_type	= QMI_STRUCT,
+ 		.elem_len	= 1,
+@@ -169,7 +169,7 @@ struct qmi_elem_info ipa_driver_init_complete_rsp_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_init_complete_ind */
+-struct qmi_elem_info ipa_init_complete_ind_ei[] = {
++const struct qmi_elem_info ipa_init_complete_ind_ei[] = {
+ 	{
+ 		.data_type	= QMI_STRUCT,
+ 		.elem_len	= 1,
+@@ -187,7 +187,7 @@ struct qmi_elem_info ipa_init_complete_ind_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_mem_bounds */
+-struct qmi_elem_info ipa_mem_bounds_ei[] = {
++const struct qmi_elem_info ipa_mem_bounds_ei[] = {
+ 	{
+ 		.data_type	= QMI_UNSIGNED_4_BYTE,
+ 		.elem_len	= 1,
+@@ -208,7 +208,7 @@ struct qmi_elem_info ipa_mem_bounds_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_mem_array */
+-struct qmi_elem_info ipa_mem_array_ei[] = {
++const struct qmi_elem_info ipa_mem_array_ei[] = {
+ 	{
+ 		.data_type	= QMI_UNSIGNED_4_BYTE,
+ 		.elem_len	= 1,
+@@ -229,7 +229,7 @@ struct qmi_elem_info ipa_mem_array_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_mem_range */
+-struct qmi_elem_info ipa_mem_range_ei[] = {
++const struct qmi_elem_info ipa_mem_range_ei[] = {
+ 	{
+ 		.data_type	= QMI_UNSIGNED_4_BYTE,
+ 		.elem_len	= 1,
+@@ -250,7 +250,7 @@ struct qmi_elem_info ipa_mem_range_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_init_modem_driver_req */
+-struct qmi_elem_info ipa_init_modem_driver_req_ei[] = {
++const struct qmi_elem_info ipa_init_modem_driver_req_ei[] = {
+ 	{
+ 		.data_type	= QMI_OPT_FLAG,
+ 		.elem_len	= 1,
+@@ -645,7 +645,7 @@ struct qmi_elem_info ipa_init_modem_driver_req_ei[] = {
+ };
+ 
+ /* QMI message structure definition for struct ipa_init_modem_driver_rsp */
+-struct qmi_elem_info ipa_init_modem_driver_rsp_ei[] = {
++const struct qmi_elem_info ipa_init_modem_driver_rsp_ei[] = {
+ 	{
+ 		.data_type	= QMI_STRUCT,
+ 		.elem_len	= 1,
+diff --git a/drivers/net/ipa/ipa_qmi_msg.h b/drivers/net/ipa/ipa_qmi_msg.h
+index 495e85abe50b..8dfac59ea0ed 100644
+--- a/drivers/net/ipa/ipa_qmi_msg.h
++++ b/drivers/net/ipa/ipa_qmi_msg.h
+@@ -242,15 +242,15 @@ struct ipa_init_modem_driver_rsp {
+ };
+ 
+ /* Message structure definitions defined in "ipa_qmi_msg.c" */
+-extern struct qmi_elem_info ipa_indication_register_req_ei[];
+-extern struct qmi_elem_info ipa_indication_register_rsp_ei[];
+-extern struct qmi_elem_info ipa_driver_init_complete_req_ei[];
+-extern struct qmi_elem_info ipa_driver_init_complete_rsp_ei[];
+-extern struct qmi_elem_info ipa_init_complete_ind_ei[];
+-extern struct qmi_elem_info ipa_mem_bounds_ei[];
+-extern struct qmi_elem_info ipa_mem_array_ei[];
+-extern struct qmi_elem_info ipa_mem_range_ei[];
+-extern struct qmi_elem_info ipa_init_modem_driver_req_ei[];
+-extern struct qmi_elem_info ipa_init_modem_driver_rsp_ei[];
++extern const struct qmi_elem_info ipa_indication_register_req_ei[];
++extern const struct qmi_elem_info ipa_indication_register_rsp_ei[];
++extern const struct qmi_elem_info ipa_driver_init_complete_req_ei[];
++extern const struct qmi_elem_info ipa_driver_init_complete_rsp_ei[];
++extern const struct qmi_elem_info ipa_init_complete_ind_ei[];
++extern const struct qmi_elem_info ipa_mem_bounds_ei[];
++extern const struct qmi_elem_info ipa_mem_array_ei[];
++extern const struct qmi_elem_info ipa_mem_range_ei[];
++extern const struct qmi_elem_info ipa_init_modem_driver_req_ei[];
++extern const struct qmi_elem_info ipa_init_modem_driver_rsp_ei[];
+ 
+ #endif /* !_IPA_QMI_MSG_H_ */
+-- 
+2.37.0
 
-> 
-> In my use case, only the pruss1 is expected to be used with the prueth driver.
-> 
-> Actually, the prueth on PRUSS1 partially works with only pruss1_eth's gp-mux
-> initialized:
-> 
->     pruss1_eth {
->             status = "okay";
->             compatible = "ti,am57-prueth";
-> 
->             ti,pruss-gp-mux-sel = <0>,      /* GP, default */
->                                   <4>;      /* MII2, needed for PRUSS1_MII1 */
->     }
-> 
->     pruss2_eth {
->             status = "disabled";
->     }
-> 
-> (Tests done with the ti-linux-kernel 5.10.y)
-> 
-> On wireshark I noticed ethernet frames (ping) sent from the board but the reply
-> from the remote PC is never received on the board.
-> 
-> It really seems we need pruss2_eth's gp-mux initialized.
-> The problem here is that I don't want to enable PRUSS2 just to
-> configure pruss2_eth's gp-mux for the sake of pruss1.
-> 
-> I had to write manually (using devmem2) the "good" value (0x10002003) in
-> PRUSS2_CFG0 and PRUSS2_CFG1 to configure entirely the PRUSS1_MII1.
-> 
-> I'm not sure how the driver should handle this register mapping properly.
-> 
-> [1] https://www.ti.com/lit/ds/symlink/am5749.pdf
-> 
-> [2]
-> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/commit/?h=linux-5.10.y&id=2a3b089f5697fe2f9a9875b2fba1bef88d196a53
-> 
-> Best regards,
-> Romain
-
-cheers,
--roger
-
-> 
->>
->> Co-developed-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
->> ---
->>  include/linux/pruss_driver.h | 44 ++++++++++++++++++++++++++++++++++++
->>  1 file changed, 44 insertions(+)
->>
->> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
->> index e2d5477225c6..3312281ef4c1 100644
->> --- a/include/linux/pruss_driver.h
->> +++ b/include/linux/pruss_driver.h
->> @@ -35,4 +35,48 @@ struct pruss {
->>  	struct clk *iep_clk_mux;
->>  };
->>  
->> +/**
->> + * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
->> + * @pruss: pruss instance
->> + * @pru_id: PRU identifier (0-1)
->> + * @mux: pointer to store the current mux value into
->> + *
->> + * Return: 0 on success, or an error code otherwise
->> + */
->> +static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
->> +				      enum pruss_pru_id pru_id, u8 *mux)
->> +{
->> +	int ret = 0;
->> +	u32 val;
->> +
->> +	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
->> +		return -EINVAL;
->> +
->> +	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(pru_id), &val);
->> +	if (!ret)
->> +		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
->> +			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
->> +	return ret;
->> +}
->> +
->> +/**
->> + * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
->> + * @pruss: pruss instance
->> + * @pru_id: PRU identifier (0-1)
->> + * @mux: new mux value for PRU
->> + *
->> + * Return: 0 on success, or an error code otherwise
->> + */
->> +static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
->> +				      enum pruss_pru_id pru_id, u8 mux)
->> +{
->> +	if (mux >= PRUSS_GP_MUX_SEL_MAX ||
->> +	    pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
->> +		return -EINVAL;
->> +
->> +	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
->> +				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
->> +				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
->> +}
->> +
->>  #endif	/* _PRUSS_DRIVER_H_ */
-> 
