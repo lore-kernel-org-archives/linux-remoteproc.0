@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF284C6FA8A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 05:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A59F6C6FA90
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Sep 2022 05:25:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbiINFZu (ORCPT
+        id S229561AbiINFZw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Sep 2022 01:25:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49664 "EHLO
+        Wed, 14 Sep 2022 01:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbiINFZt (ORCPT
+        with ESMTP id S229562AbiINFZt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 14 Sep 2022 01:25:49 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338DE20F6F;
-        Tue, 13 Sep 2022 22:25:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E9830562;
+        Tue, 13 Sep 2022 22:25:48 -0700 (PDT)
 Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E4RsJf009335;
-        Wed, 14 Sep 2022 05:25:36 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E4V0E6018305;
+        Wed, 14 Sep 2022 05:25:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=yDYjY7w/rh53UgZnAHFnAt1D1E0IvouyQhMoKWk0cWY=;
- b=ZE307Hw3B5JKyIFA4WCYNHiwGWXVX/+67M1kglZRJkYUjN9IKvH7OJXKpyYoUw70Gy4P
- pNxKzWh4sDFNIULCmGndrkwJ/zThdN46zOvuMJN6FPl/Aq1p95GAD0v28UHywcEvWKdv
- UIqMTzYsBBydxIQ0kDK2abttwTshqzLW8g2TtQv6KqHBpKMxHggtr9okNVchgS4Umz7q
- Oi/bTYrR9pp6mt7no+/swx0WiwNFa1lRpHu3roiTbGX9zRG30Zdfo/481t783CbvJUAr
- bupnQ9OzgbxZyz2qOGTMe6LW2y/2VAq5Q+aaP+j4DGuh4XTpoUy3xa4SsgT3hpseEfB8 Yg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjxys1cbf-1
+ bh=2ODHA0/Bsfqk0WjywQN7UbEvA7iK3s+RsjvJ7Jg3QSQ=;
+ b=Y3p8qT/U9KCGDIy1oklNJYBmzeSwJDkjcroZQp1yVL8oVP7zgHJ8uX6a8pz2jFlVeoTU
+ oA5NEb6kxQADZ0tkw9CZY+Gd18JUjaaNnjVH6DJRyxVrjauPYpj+m8XEG866fEgO7O4s
+ y/YZ5kE1dzmwsEOQVaOPT3xUmqdXk71PgtYrJUfu8BLedsLpmOb3h3QFDjHJpcgN/2GH
+ z96ME99lgI6J/yuCbjlO3vo1Z5OwbLbkewYF8QJoFldTuHAzh0vrCAl+mc56RIZOT69Z
+ kdylyD0TtbCIs2wtyu24450lwJFZNiuuMjV5aW5dq4UTPFlCAPAgOP+O10fzfiR6h5N4 6w== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjxys1cbq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 05:25:36 +0000
+        Wed, 14 Sep 2022 05:25:43 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E5PZns017126
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28E5PhGO028526
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 05:25:35 GMT
+        Wed, 14 Sep 2022 05:25:43 GMT
 Received: from deesin-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 13 Sep 2022 22:25:32 -0700
+ 15.2.986.29; Tue, 13 Sep 2022 22:25:39 -0700
 From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
 To:     <bjorn.andersson@linaro.org>, <arnaud.pouliquen@foss.st.com>,
         <swboyd@chromium.org>, <quic_clew@quicinc.com>,
@@ -47,9 +47,9 @@ To:     <bjorn.andersson@linaro.org>, <arnaud.pouliquen@foss.st.com>,
 CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>,
         Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: [PATCH V3 1/3] rpmsg: core: Add signal API support
-Date:   Wed, 14 Sep 2022 10:55:00 +0530
-Message-ID: <1663133102-10671-2-git-send-email-quic_deesin@quicinc.com>
+Subject: [PATCH V3 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+Date:   Wed, 14 Sep 2022 10:55:02 +0530
+Message-ID: <1663133102-10671-4-git-send-email-quic_deesin@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
 References: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
@@ -60,8 +60,8 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pEhYHXwU_TFwfX-_OVVfx3MJ9tm7Muyd
-X-Proofpoint-GUID: pEhYHXwU_TFwfX-_OVVfx3MJ9tm7Muyd
+X-Proofpoint-ORIG-GUID: 8LtGdvdWcqFW2jJ2eYnavo5OybGA_Abn
+X-Proofpoint-GUID: 8LtGdvdWcqFW2jJ2eYnavo5OybGA_Abn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-14_02,2022-09-13_01,2022-06-22_01
@@ -74,146 +74,129 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Some transports like Glink support the state notifications between
-clients using flow control signals similar to serial protocol signals.
-Local glink client drivers can send and receive flow control status
-to glink clients running on remote processors.
+Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
+to get/set the low level transport signals.
 
-Add APIs to support sending and receiving of flow control status by
-rpmsg clients.
-
+Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
 ---
- drivers/rpmsg/rpmsg_core.c     | 20 ++++++++++++++++++++
- drivers/rpmsg/rpmsg_internal.h |  2 ++
- include/linux/rpmsg.h          | 15 +++++++++++++++
- 3 files changed, 37 insertions(+)
+ drivers/rpmsg/rpmsg_char.c | 60 +++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 52 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index d6dde00e..0c5bf67 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -331,6 +331,24 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
- EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 4f21891..1eb6e9d 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -23,6 +23,7 @@
+ #include <linux/rpmsg.h>
+ #include <linux/skbuff.h>
+ #include <linux/slab.h>
++#include <linux/termios.h>
+ #include <linux/uaccess.h>
+ #include <uapi/linux/rpmsg.h>
  
- /**
-+ * rpmsg_set_flow_control() - sets/clears serial flow control signals
-+ * @ept:	the rpmsg endpoint
-+ * @enable:	enable or disable serial flow control
-+ *
-+ * Return: 0 on success and an appropriate error value on failure.
-+ */
-+int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+{
-+	if (WARN_ON(!ept))
-+		return -EINVAL;
-+	if (!ept->ops->set_flow_control)
-+		return -ENXIO;
+@@ -68,6 +69,8 @@ struct rpmsg_eptdev {
+ 	struct sk_buff_head queue;
+ 	wait_queue_head_t readq;
+ 
++	u32 rsigs;
++	bool sig_pending;
+ };
+ 
+ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+@@ -107,7 +110,22 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+ 	skb_queue_tail(&eptdev->queue, skb);
+ 	spin_unlock(&eptdev->queue_lock);
+ 
+-	/* wake up any blocking processes, waiting for new data */
++	wake_up_interruptible(&eptdev->readq);
 +
-+	return ept->ops->set_flow_control(ept, enable);
++	return 0;
 +}
-+EXPORT_SYMBOL(rpmsg_set_flow_control);
 +
-+/**
-  * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
-  * @ept: the rpmsg endpoint
-  *
-@@ -539,6 +557,8 @@ static int rpmsg_dev_probe(struct device *dev)
++static int rpmsg_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable)
++{
++	struct rpmsg_eptdev *eptdev = priv;
++
++	if (enable)
++		eptdev->rsigs = TIOCM_DSR | TIOCM_CTS;
++	else
++		eptdev->rsigs = 0;
++	
++	eptdev->sig_pending = true;
++
+ 	wake_up_interruptible(&eptdev->readq);
  
- 		rpdev->ept = ept;
- 		rpdev->src = ept->addr;
-+
-+		ept->flow_cb = rpdrv->flowcontrol;
+ 	return 0;
+@@ -144,6 +162,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 		return -EINVAL;
  	}
  
- 	err = rpdrv->probe(rpdev);
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 39b646d..4fea45a 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -55,6 +55,7 @@ struct rpmsg_device_ops {
-  * @trysendto:		see @rpmsg_trysendto(), optional
-  * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
-  * @poll:		see @rpmsg_poll(), optional
-+ * @set_flow_control:	see @rpmsg_set_flow_control(), optional
-  * @get_mtu:		see @rpmsg_get_mtu(), optional
-  *
-  * Indirection table for the operations that a rpmsg backend should implement.
-@@ -75,6 +76,7 @@ struct rpmsg_endpoint_ops {
- 			     void *data, int len);
- 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
- 			     poll_table *wait);
-+	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
- 	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
- };
++	ept->flow_cb = rpmsg_flow_cb;
+ 	eptdev->ept = ept;
+ 	filp->private_data = eptdev;
+ 	mutex_unlock(&eptdev->ept_lock);
+@@ -164,6 +183,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 		eptdev->ept = NULL;
+ 	}
+ 	mutex_unlock(&eptdev->ept_lock);
++	eptdev->sig_pending = false;
  
-diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-index 523c98b..cc7a917 100644
---- a/include/linux/rpmsg.h
-+++ b/include/linux/rpmsg.h
-@@ -64,12 +64,14 @@ struct rpmsg_device {
- };
+ 	/* Discard all SKBs */
+ 	skb_queue_purge(&eptdev->queue);
+@@ -277,6 +297,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+ 	if (!skb_queue_empty(&eptdev->queue))
+ 		mask |= EPOLLIN | EPOLLRDNORM;
  
- typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-+typedef int (*rpmsg_flowcontrol_cb_t)(struct rpmsg_device *, void *, bool);
- 
- /**
-  * struct rpmsg_endpoint - binds a local rpmsg address to its user
-  * @rpdev: rpmsg channel device
-  * @refcount: when this drops to zero, the ept is deallocated
-  * @cb: rx callback handler
-+ * @flow_cb: remote flow control callback handler
-  * @cb_lock: must be taken before accessing/changing @cb
-  * @addr: local rpmsg address
-  * @priv: private data for the driver's use
-@@ -92,6 +94,7 @@ struct rpmsg_endpoint {
- 	struct rpmsg_device *rpdev;
- 	struct kref refcount;
- 	rpmsg_rx_cb_t cb;
-+	rpmsg_flowcontrol_cb_t flow_cb;
- 	struct mutex cb_lock;
- 	u32 addr;
- 	void *priv;
-@@ -106,6 +109,7 @@ struct rpmsg_endpoint {
-  * @probe: invoked when a matching rpmsg channel (i.e. device) is found
-  * @remove: invoked when the rpmsg channel is removed
-  * @callback: invoked when an inbound message is received on the channel
-+ * @flowcontrol: invoked when remote side flow control status is received
-  */
- struct rpmsg_driver {
- 	struct device_driver drv;
-@@ -113,6 +117,7 @@ struct rpmsg_driver {
- 	int (*probe)(struct rpmsg_device *dev);
- 	void (*remove)(struct rpmsg_device *dev);
- 	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-+	int (*flowcontrol)(struct rpmsg_device *, void *, bool);
- };
- 
- static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
-@@ -192,6 +197,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
- 
- ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
- 
-+int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
++	if (eptdev->sig_pending)
++		mask |= EPOLLPRI;
 +
- #else
+ 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
  
- static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
-@@ -316,6 +323,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
- 	return -ENXIO;
+ 	return mask;
+@@ -287,14 +310,35 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+ {
+ 	struct rpmsg_eptdev *eptdev = fp->private_data;
+ 
+-	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+-		return -EINVAL;
+-
+-	/* Don't allow to destroy a default endpoint. */
+-	if (eptdev->default_ept)
+-		return -EINVAL;
++	bool set;
++	u32 val;
++	int ret;
++	
++	switch (cmd) {
++	case TIOCMGET:
++		eptdev->sig_pending = false;
++		ret = put_user(eptdev->rsigs, (int __user *)arg);
++		break;
++	case TIOCMSET:
++		ret = get_user(val, (int __user *)arg);
++		if (ret)
++			break;
++		set = (val & (TIOCM_DTR | TIOCM_RTS)) ? true : false;
++		ret = rpmsg_set_flow_control(eptdev->ept, set);
++		break;
++	case RPMSG_DESTROY_EPT_IOCTL:
++		/* Don't allow to destroy a default endpoint. */
++		if (eptdev->default_ept) {
++			ret = -EINVAL;
++			break;
++		}
++		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
++		break;
++	default:
++		ret = -EINVAL;
++	}
+ 
+-	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
++	return ret;
  }
  
-+static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-+{
-+	/* This shouldn't be possible */
-+	WARN_ON(1);
-+
-+	return -ENXIO;
-+}
-+
- #endif /* IS_ENABLED(CONFIG_RPMSG) */
- 
- /* use a macro to avoid include chaining to get THIS_MODULE */
+ static const struct file_operations rpmsg_eptdev_fops = {
 -- 
 2.7.4
 
