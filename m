@@ -2,119 +2,122 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90A8C6FA89
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Sep 2022 14:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F5AC6FA89
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Sep 2022 14:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbiIOO3v (ORCPT
+        id S229930AbiIOOeJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Sep 2022 10:29:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
+        Thu, 15 Sep 2022 10:34:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229837AbiIOO3t (ORCPT
+        with ESMTP id S229786AbiIOOeI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Sep 2022 10:29:49 -0400
+        Thu, 15 Sep 2022 10:34:08 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918402A737;
-        Thu, 15 Sep 2022 07:29:45 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28FEDPfa000440;
-        Thu, 15 Sep 2022 14:29:30 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B87F8A1D2;
+        Thu, 15 Sep 2022 07:34:07 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28FETS4k023581;
+        Thu, 15 Sep 2022 14:34:04 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=mfAVznhenN+fUjO2ERSmVwM0wPbw7UcNfLXipqpYnnY=;
- b=ciSThUvlpumLnMt6Kgh+gBmaaZFOWDptosuEsxpStd0RU/KdH52nSMWDX3Y2tKbXt3E6
- UXSMW8/KhlohKXXW8DEKqgmXZSTip9Jvrjl2drgNS/aZReYeUAWJvnpIafXX101dz0bK
- YcnEvIxLtxoRPq/9UuBICYIE8hl4f4QgFf7eQMuvxO3UllE3oPWCygL1MqGCd9+GZJey
- r6NV7xVFB09SN9XeujmIs8RsV/Su0Drcev3Nv743XgZrgxfd4t+J6CSFQmOlCmR1rXW7
- 8wOBSzqKlsYPHNF53wbbb5i5LJb45K06MIoylVnE9nOBlnwknqGPm+3v1Npt7y4yeOO/ XA== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jjy0gn80t-1
+ bh=RYPfsoQxc06tcZQunrZJdvK12bl48t2xonjXL0dWddA=;
+ b=jAj97wuU6LLfMwPGukrYpX2ecSRup0exDAWVLxSS1xANT7oUtkrD90mxoxxIrL3TUFkl
+ gBOj3aqKanwP72zHaNgAJWSf+rQHlgFyRH75gPq/col6OsMlhnpLrOp+LhLYOyccTJS+
+ sdk5pWlBvlbIRgxxwfOOT2SIO/SkGM7p4OFUDFg11Q7iohFwG9qKPISEtEC5xKs9oujl
+ kfa+7dDUtKpyS+2qm3IjoxrHZBafodssxq9FIAPSowo6atZ8nUO96EFZiZ/JGFVwj/PC
+ fv8PSbGCynT/XRSzGLoqBQSqS9jQirHHI2Nu28zahhgyeTF/fAuguiS8gQHc4QdsRmdW ig== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jm2r88g6r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 14:29:29 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28FEOSgg013591
+        Thu, 15 Sep 2022 14:34:03 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28FEY2Wo032605
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Sep 2022 14:24:28 GMT
-Received: from [10.216.25.163] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 15 Sep 2022 14:34:02 GMT
+Received: from [10.110.52.115] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Thu, 15 Sep
- 2022 07:24:26 -0700
-Message-ID: <73159947-55a5-7de8-bc26-a5beb62de741@quicinc.com>
-Date:   Thu, 15 Sep 2022 19:54:22 +0530
+ 2022 07:34:01 -0700
+Message-ID: <643bcf80-111e-d8b3-8965-2a27b9c6d642@quicinc.com>
+Date:   Thu, 15 Sep 2022 07:34:00 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH] remoteproc: harden rproc_handle_vdev() against integer
- overflow
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH V4 2/2] rpmsg: ctrl: Add lock to rpmsg_ctrldev_remove
 Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        <linux-remoteproc@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <YyMyoPoGOJUcEpZT@kili>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <YyMyoPoGOJUcEpZT@kili>
+To:     Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        <bjorn.andersson@linaro.org>, <arnaud.pouliquen@foss.st.com>,
+        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+References: <1663235055-3081-1-git-send-email-quic_deesin@quicinc.com>
+ <1663235055-3081-3-git-send-email-quic_deesin@quicinc.com>
+From:   Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <1663235055-3081-3-git-send-email-quic_deesin@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0cTZe27wgpq2eviM0KYF30R03aoRDUtM
-X-Proofpoint-GUID: 0cTZe27wgpq2eviM0KYF30R03aoRDUtM
+X-Proofpoint-ORIG-GUID: 1BiQdjyP1E_ao1gkSu2_Aa8CdsOv3D9x
+X-Proofpoint-GUID: 1BiQdjyP1E_ao1gkSu2_Aa8CdsOv3D9x
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-15_08,2022-09-14_04,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 bulkscore=0 impostorscore=0 mlxlogscore=999 spamscore=0
- malwarescore=0 suspectscore=0 clxscore=1011 adultscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 phishscore=0 clxscore=1011
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2208220000 definitions=main-2209150084
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+On 9/15/2022 2:44 AM, Deepak Kumar Singh wrote:
+> Call to rpmsg_ctrldev_ioctl() and rpmsg_ctrldev_remove() must be synchronized.
+> In present code rpmsg_ctrldev_remove() is not protected with lock, therefore
+> new char device creation can succeed through rpmsg_ctrldev_ioctl() call. At the
+> same time call to rpmsg_ctrldev_remove() funtion for ctrl device removal will
 
-On 9/15/2022 7:41 PM, Dan Carpenter wrote:
-> The struct_size() macro protects against integer overflows but adding
-> "+ rsc->config_len" introduces the risk of integer overflows again.
-> Use size_add() to be safe.
+nit: s/funtion/function/
+
+> free associated rpdev device. As char device creation already succeeded, user
+> space is free to issue open() call which maps to rpmsg_create_ept() in kernel.
+> rpmsg_create_ept() function tries to reference rpdev which has already been
+> freed through rpmsg_ctrldev_remove(). Issue is predominantly seen in aggressive
+> reboot tests where rpmsg_ctrldev_ioctl() and rpmsg_ctrldev_remove() can race with
+> each other.
 > 
-> Fixes: c87846571587 ("remoteproc: use struct_size() helper")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Adding lock in rpmsg_ctrldev_remove() avoids any new char device creation
+> throught rpmsg_ctrldev_ioctl() while remove call is already in progress.
+
+nit: s/throught/through/
+> 
+> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
 > ---
->   drivers/remoteproc/remoteproc_core.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+>   drivers/rpmsg/rpmsg_ctrl.c | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index e5279ed9a8d7..4fc5ce2187ac 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -520,12 +520,13 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->   	struct fw_rsc_vdev *rsc = ptr;
->   	struct device *dev = &rproc->dev;
->   	struct rproc_vdev *rvdev;
-> +	size_t rsc_size;
->   	int i, ret;
->   	char name[16];
+> diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
+> index 107da70..4332538 100644
+> --- a/drivers/rpmsg/rpmsg_ctrl.c
+> +++ b/drivers/rpmsg/rpmsg_ctrl.c
+> @@ -194,10 +194,12 @@ static void rpmsg_ctrldev_remove(struct rpmsg_device *rpdev)
+>   	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
+>   	int ret;
 >   
->   	/* make sure resource isn't truncated */
-> -	if (struct_size(rsc, vring, rsc->num_of_vrings) + rsc->config_len >
-> -			avail) {
-> +	rsc_size = struct_size(rsc, vring, rsc->num_of_vrings);
-> +	if (size_add(rsc_size, rsc->config_len) > avail) {
->   		dev_err(dev, "vdev rsc is truncated\n");
->   		return -EINVAL;
+> +	mutex_lock(&ctrldev->ctrl_lock);
+>   	/* Destroy all endpoints */
+>   	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
+>   	if (ret)
+>   		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
+> +	mutex_unlock(&ctrldev->ctrl_lock);
+>   
+>   	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
+>   	put_device(&ctrldev->dev);
 
-Looks Good.
-
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
--Mukesh
-
->   	}
