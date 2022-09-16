@@ -2,127 +2,128 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102A8ECAAD8
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Sep 2022 15:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D5EECAAD8
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Sep 2022 17:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231613AbiIPPVG (ORCPT
+        id S229765AbiIPRGF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 16 Sep 2022 11:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60878 "EHLO
+        Fri, 16 Sep 2022 13:06:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231562AbiIPPVE (ORCPT
+        with ESMTP id S229462AbiIPRGD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 16 Sep 2022 11:21:04 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFDB082FA2;
-        Fri, 16 Sep 2022 08:21:01 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28GD6xEl018195;
-        Fri, 16 Sep 2022 15:20:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=wBvc5kjqSvGVlMipQAv6v4gLaFz+BavyO2mTc58+5tg=;
- b=L3MZra1DCquB7AMvqvzOCBtHywAcHq/FnPAFQWo7MkoDYxThaVR1i8b/FPPq5a+H25st
- 58RkEocgYziqLrlqkRJY/WA42EeYK//9yKBzv2G1RzrvDtjSCjvGh5tuX5MQK4fUl51v
- tShMHyoufHbII7p0oXU/Qk2RWi+nfYhXuYqeauWdwN9I2rhUnzDZckJqe6TAA1Hjxsud
- /Ps2PI/KsWv03+16CVUWbudbO/Uykj5iUNakBsNFaoUprPRYdS0Ab34cR7kkaU0S/yWn
- sPB/NTQdycbawnIpp2Y3NuAsjK0HKDmOCqZkHeZnhwym7vA8Da/cBYSLKL/66+uTHmmt XA== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jm8xmunbt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Sep 2022 15:20:47 +0000
-Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 28GFFnGk008145;
-        Fri, 16 Sep 2022 15:20:46 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 3jkyc2dy25-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Sep 2022 15:20:46 +0000
-Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28GF4o0l026041;
-        Fri, 16 Sep 2022 15:20:45 GMT
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 28GFKjZP013121
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Sep 2022 15:20:45 +0000
-Received: from [10.110.7.80] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 16 Sep
- 2022 08:20:43 -0700
-Message-ID: <f5b2eaa8-70eb-21b2-e2e7-485aaa927a5d@quicinc.com>
-Date:   Fri, 16 Sep 2022 08:20:42 -0700
+        Fri, 16 Sep 2022 13:06:03 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8911B515B
+        for <linux-remoteproc@vger.kernel.org>; Fri, 16 Sep 2022 10:06:01 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id z21so32433740edi.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 16 Sep 2022 10:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=Jf4Jw0Mr6mHcpaxKKDf9yH/uSMECnB5VVFRTiPH6N2Y=;
+        b=czwRI/FM2jh6/kmaXuRlb1t3D0Z9udFPCg+05gGRsv5RMIGSlCeVGNpEzuO3KdaVGE
+         Vol5PkVs+tfj6ZXaZs58PUUXZhxv3/UUGlvr57iMDsRy/xUBlImv4eaDWYEk+9DxOWQq
+         bZnuqOyLj55lIXj3ap2mxO6/FKx++EtEQlWJbzBXtZAUy2phPXAnGuehyPZo+FaQX2zo
+         UKCB+IVONQJqyvPd2NT1sfNfnjpJ5LOt5dX5dciZxmCnEnt5Wtidyw3zgMKr61z3PA99
+         bqTgD1xjeC6RzjsnL0vnQC+aOa6gYSt+ZAaYd+wcswT1rYhwSj7XaDZBqZ8Z5GPkdnsj
+         aZ0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=Jf4Jw0Mr6mHcpaxKKDf9yH/uSMECnB5VVFRTiPH6N2Y=;
+        b=HRc80d4q7trmGrtFsdxY8CZ59qVj++JMseiSASeK2AkUXeR0VRcplpdN+ru6A0ijjr
+         YaAYItQGCwNzMmITeFzmY9m6jLu7kgMWg6n6e6nl83saHONtHQrUWwXlWJ/JKAb+1V/Q
+         pM/86b8GhFjG6rVziByz+xaLtHFkWA+dg2KYWd+q9iKasSVvpcd9th0KnL+6OH6XRlYg
+         of7WFKDZraSMv/6Yo5VtaKJHcj/9N5COHMgXcJCAriqLJf9swela5LXQ25b7DpSuIPDl
+         fxxi097IA6s4hbKC8eV6PVA20mNB+td4ncJ83pHA1e2g3EkElul3bMyy9U6lSDHjwB1e
+         wHKw==
+X-Gm-Message-State: ACrzQf3tSISGtayF4Z/WVjdWhNJWYjXtnUiWJA7VCr30xnIqMVWfxRPp
+        5ZYiyMKfwwiNyFdLMyTO122U0elIkeMX9LiYLiB/+w==
+X-Google-Smtp-Source: AMsMyM6IvbGdrxAK3FEcBKUBRjRQ7CJJ76UrRKk0kua5vRl4Px9VRUFVwlYnAqwUgMyDY0xJShAWO3UDN+jXMl7EsMw=
+X-Received: by 2002:a05:6402:40d1:b0:44f:e974:f981 with SMTP id
+ z17-20020a05640240d100b0044fe974f981mr4940790edb.222.1663347960267; Fri, 16
+ Sep 2022 10:06:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 3/4] slimbus: qcom-ngd-ctrl: Make QMI message rules const
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20220912232526.27427-1-quic_jjohnson@quicinc.com>
- <20220912232526.27427-2-quic_jjohnson@quicinc.com>
- <20220912232526.27427-3-quic_jjohnson@quicinc.com>
- <20220912232526.27427-4-quic_jjohnson@quicinc.com>
- <65f11ed1-f09f-e0a2-91f5-891394160c96@linaro.org>
-Content-Language: en-US
-From:   Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <65f11ed1-f09f-e0a2-91f5-891394160c96@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: N1YML4LhMNVhIb3BzHEaZ0fgMRS9KksY
-X-Proofpoint-ORIG-GUID: N1YML4LhMNVhIb3BzHEaZ0fgMRS9KksY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-16_09,2022-09-16_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- suspectscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=723 priorityscore=1501 clxscore=1015 impostorscore=0
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209160112
+References: <1662712413-38233-1-git-send-email-quic_aiquny@quicinc.com>
+ <20220909192357.GA319190@p14s> <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
+In-Reply-To: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 16 Sep 2022 11:05:48 -0600
+Message-ID: <CANLsYkx0fEyezax_bk50ORGb7vPY3sBegKJcfAmmu366MrQkYw@mail.gmail.com>
+Subject: Re: [PATCH v1] remoteproc: core: do pm relax when not first crash
+To:     "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_clew@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 9/16/2022 6:06 AM, Srinivas Kandagatla wrote:
-> 
-> 
-> On 13/09/2022 00:25, Jeff Johnson wrote:
->> Commit ff6d365898d ("soc: qcom: qmi: use con
-> 
-> SHA ID should be at least 12 chars long.
-> 
-> Same comment for all the patches in the series.
-> 
-> 
-> st for struct
->> qmi_elem_info") allows QMI message encoding/decoding rules to be
->> const, so do that for qcom-ngd-ctrl.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> Other than that it LGTM,
-> Once fixed:
-> 
-> Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> 
-> 
-> --srini
+On Tue, 13 Sept 2022 at 05:03, Aiqun(Maria) Yu <quic_aiquny@quicinc.com> wrote:
+>
+> Hi Mathieu,
+>
+> pm_awake and pm_relax needed to be used as a pair. There is chance that
+> pm_relax is not being called, and make the device always in cannot
+> suspend state.
+>
+> On 9/10/2022 3:23 AM, Mathieu Poirier wrote:
+> > Hi Maria,
+> >
+> > On Fri, Sep 09, 2022 at 04:33:33PM +0800, Maria Yu wrote:
+> >> Even if it is not first crash, need to relax the pm
+> >> wakelock otherwise the device will stay awake.
+> >>
+> >
+> > The goal is exactly to keep the device awake...
+> >
+> >> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> >> ---
+> >>   drivers/remoteproc/remoteproc_core.c | 1 +
+> >>   1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >> index e5279ed9a8d7..30078043e939 100644
+> >> --- a/drivers/remoteproc/remoteproc_core.c
+> >> +++ b/drivers/remoteproc/remoteproc_core.c
+> >> @@ -1956,6 +1956,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+> >>      if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+> >>              /* handle only the first crash detected */
+> >>              mutex_unlock(&rproc->lock);
+> >> +            pm_relax(rproc->dev.parent);
+> >
+> > If we are here it means that rproc_crash_handler_work() has already been called
+> > _and_ that a recovery is in process.  When the first crash handler completes
+> > pm_relax() will be called and the device will go to sleep as expected.
+> If the rproc->state cannot be changed to running state, the device will
+> always be awake from this return.
+> Also APROC_OFFLINE state can be given in other path like an shutdown
+> request is issued.
+>
+> While this patch is not considering carefully as well, I think I need to
+> upload a new patchset with an ordered workqueue to make each work have
+> each pm_relax before return.
+> what do you think?
 
-that was corrected in v2. thx for the ack
+I was travelling this week and as such did not have the time to
+follow-up with this thread, something I will do next week.
+
+>
+> >
+> > Thanks,
+> > Mathieu
+> >
+> >>              return;
+> >>      }
+> >>
+> >> --
+> >> 2.7.4
+> >>
+>
+>
+> --
+> Thx and BRs,
+> Aiqun(Maria) Yu
