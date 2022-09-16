@@ -2,122 +2,234 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A6FC54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Sep 2022 08:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A10C5ECAAD8
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Sep 2022 12:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230368AbiIPIsK (ORCPT
+        id S229600AbiIPMAG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 16 Sep 2022 04:48:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52470 "EHLO
+        Fri, 16 Sep 2022 08:00:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbiIPIsI (ORCPT
+        with ESMTP id S229557AbiIPMAF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 16 Sep 2022 04:48:08 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B06194C635;
-        Fri, 16 Sep 2022 01:48:07 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28G4RQKD008662;
-        Fri, 16 Sep 2022 08:48:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=BU9xiPtQh06aalOlVgaBQjQ1rGmIDxLbjWVT4cZPAMY=;
- b=L+MtZ/hX13mhImTqEGvB+mrWBQoaURx5Fp5hU6ZVaaeAnoEeDSs0iUi8Hk21t3hs3+Ub
- eXmHzUijqVjBeN95d6bw7MDoqK9R4FZBg8iJEwvE1DKPNCWpnx1yHuIPttsu5AyEPwLo
- GAwscZkvRpAnai4O5h4AtczMF03VcNZXhH10uQvYm1gyibYDpA1EDmWMRuC1SvRABvkW
- 3k5GfpDcmCXohPxG7Jz0gxpN8s65TiUuL8LmXBa6nb3M8MA8BGXkre25HsqA1VLkZq8k
- 9Sn0dV+yyAsmtuL/um2CWzR79U17Nfxpl0JeAZoyBYyeCY9AYjvuNj7i9GmiULtvJ8Cv 7w== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jm950tg9m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Sep 2022 08:48:06 +0000
-Received: from nasanex01c.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28G8m5Q7007992
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Sep 2022 08:48:06 GMT
-Received: from [10.216.40.140] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Fri, 16 Sep
- 2022 01:48:03 -0700
-Message-ID: <1cc9acbd-1576-ab2b-c51f-d2ab70cb1a45@quicinc.com>
-Date:   Fri, 16 Sep 2022 14:17:59 +0530
+        Fri, 16 Sep 2022 08:00:05 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E228C2E9E5;
+        Fri, 16 Sep 2022 04:59:59 -0700 (PDT)
+X-UUID: af663d45d92c4ba1a42c524ddf8e21a2-20220916
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=TYyYRhoJq7fWtmZNRUDZ326SnABMO3rCDovRyIC+c2k=;
+        b=kncM31WKnOLsgTEKsKE/RJkyDjYVEa2dPq9mKhAREVtlkwJYUSfwiR8ftWlIFGLUYMbALORkQEhe7LN3fj3cHlmc76KGL8/PlMpII6kHck8iqjzBGs7wZ+tz9Le0FFeOuIWwz2Hp56Ah186dUazIBSRGKIsw7ledlw75W6H60/M=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.11,REQID:b9341035-ea49-4508-98d5-94a38cd617c2,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:39a5ff1,CLOUDID:68faa8f6-6e85-48d9-afd8-0504bbfe04cb,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:nil,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: af663d45d92c4ba1a42c524ddf8e21a2-20220916
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 846511512; Fri, 16 Sep 2022 19:59:52 +0800
+Received: from mtkcas11.mediatek.inc (172.21.101.40) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.792.15; Fri, 16 Sep 2022 19:59:50 +0800
+Received: from mtksdccf07 (172.21.84.99) by mtkcas11.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 16 Sep 2022 19:59:50 +0800
+Message-ID: <a5ecd1dd567ca58807b289f2488d933f27e087dd.camel@mediatek.com>
+Subject: Re: [PATCH v2 4/9] remoteproc: mediatek: Support probing for the
+ 2nd core of dual-core SCP
+From:   TingHan Shen <tinghan.shen@mediatek.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        <bjorn.andersson@linaro.org>, <bleung@chromium.org>,
+        <chrome-platform@lists.linux.dev>, <devicetree@vger.kernel.org>,
+        <dnojiri@chromium.org>, <enric.balletbo@collabora.com>,
+        <groeck@chromium.org>, <gustavoars@kernel.org>,
+        <keescook@chromium.org>, <krzk+dt@kernel.org>,
+        <lee.jones@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <matthias.bgg@gmail.com>,
+        <pmalani@chromium.org>, <robh+dt@kernel.org>,
+        <sebastian.reichel@collabora.com>, <weishunc@google.com>
+Date:   Fri, 16 Sep 2022 19:59:50 +0800
+In-Reply-To: <CANLsYkx6kXk8u_ajFbnhdWTkZBLtrq_z02jryLBSVH0x--_ZFw@mail.gmail.com>
+References: <20220829194247.GC2264818@p14s>
+         <20220908111757.14633-1-tinghan.shen@mediatek.com>
+         <CANLsYkx6kXk8u_ajFbnhdWTkZBLtrq_z02jryLBSVH0x--_ZFw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
-Content-Language: en-US
-To:     Maria Yu <quic_aiquny@quicinc.com>, <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_clew@quicinc.com>
-References: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
- <1663312351-28476-1-git-send-email-quic_aiquny@quicinc.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <1663312351-28476-1-git-send-email-quic_aiquny@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TOP5r6r3Vmb0d0EgmGfQjUx2GTM31Nv-
-X-Proofpoint-ORIG-GUID: TOP5r6r3Vmb0d0EgmGfQjUx2GTM31Nv-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-16_04,2022-09-14_04,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- impostorscore=0 malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
- definitions=main-2209160064
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
-
-On 9/16/2022 12:42 PM, Maria Yu wrote:
-> RPROC_OFFLINE state indicate there is no recovery process
-> is in progress and no chance to do the pm_relax.
-> Because when recovering from crash, rproc->lock is held and
-> state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
-> and then unlock rproc->lock.
-> When the state is in RPROC_OFFLINE it means separate request
-> of rproc_stop was done and no need to hold the wakeup source
-> in crash handler to recover any more.
+On Thu, 2022-09-08 at 14:58 -0600, Mathieu Poirier wrote:
+> On Thu, 8 Sept 2022 at 05:21, Tinghan Shen <tinghan.shen@mediatek.com>
+> wrote:
 > 
-> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
-> ---
->   drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+> > Hi Mathieu,
+> > 
+> > > > The mtk_scp.c driver only supports the single core SCP and the
+> > > > 1st core of a dual-core SCP. This patch extends it for the 2nd core.
+> > > > 
+> > > > MT8195 SCP is a dual-core MCU. Both cores are housed in the same
+> > 
+> > subsys.
+> > > 
+> > > s/subsys/subsystem
+> > > 
+> > > > They have the same viewpoint of registers and memory.
+> > > > 
+> > > > Core 1 of the SCP features its own set of core configuration registers,
+> > > > interrupt controller, timers, and DMAs. The rest of the peripherals
+> > > > in this subsystem are shared by core 0 and core 1.
+> > > > 
+> > > > As for memory, core 1 has its own cache memory. the SCP SRAM is shared
+> > > 
+> > > /the/The
+> > > 
+> > > > by core 0 and core 1.
+> > > > 
+> > > > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> > > > ---
+> > > >  drivers/remoteproc/mtk_scp.c | 22 ++++++++++++++++++++--
+> > > >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/remoteproc/mtk_scp.c
+> > 
+> > b/drivers/remoteproc/mtk_scp.c
+> > > > index 3510c6d0bbc8..91b4aefde4ac 100644
+> > > > --- a/drivers/remoteproc/mtk_scp.c
+> > > > +++ b/drivers/remoteproc/mtk_scp.c
+> > > > @@ -23,6 +23,10 @@
+> > > >  #define MAX_CODE_SIZE 0x500000
+> > > >  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+> > > > 
+> > > > +#define SCP_CORE_0 0
+> > > > +#define SCP_CORE_1 1
+> > > > +#define SCP_CORE_SINGLE 0xF
+> > > > +
+> > > >  /**
+> > > >   * scp_get() - get a reference to SCP.
+> > > >   *
+> > > > @@ -836,6 +840,7 @@ static int scp_probe(struct platform_device *pdev)
+> > > >     struct resource *res;
+> > > >     const char *fw_name = "scp.img";
+> > > >     int ret, i;
+> > > > +   u32 core_id = SCP_CORE_SINGLE;
+> > > > 
+> > > >     ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+> > > >     if (ret < 0 && ret != -EINVAL)
+> > > > @@ -851,8 +856,16 @@ static int scp_probe(struct platform_device *pdev)
+> > > >     scp->data = of_device_get_match_data(dev);
+> > > >     platform_set_drvdata(pdev, scp);
+> > > > 
+> > > > +   ret = of_property_read_u32_index(dev->of_node,
+> > 
+> > "mediatek,scp-core", 1, &core_id);
+> > > > +   if (ret == 0)
+> > > > +           dev_info(dev, "Boot SCP dual core %u\n", core_id);
+> > > 
+> > > Why is the DT property "mediatek,scp-core" needed at all?  Since the
+> > 
+> > compatible
+> > > "mediatek,mt8195-scp-dual" has already been defined previously in this
+> > 
+> > patchset,
+> > > initialising the second core, if present, is a matter of looking at the
+> > > compatile string.
+> > 
+> > This idea of identify cores by the compatible looks workable.
+> > I'll update this series at next version.
+> > Thanks!
+> > 
+> > > 
+> > > > +
+> > > >     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+> > > > -   scp->sram_base = devm_ioremap_resource(dev, res);
+> > > > +   if (core_id == SCP_CORE_1)
+> > > > +           scp->sram_base = devm_ioremap(dev, res->start,
+> > 
+> > resource_size(res));
+> > > > +   else
+> > > > +           scp->sram_base = devm_ioremap_resource(dev, res);
+> > > > +
+> > > 
+> > > This looks very broken...  For this to work you would need to have two DT
+> > > entries with the "mediatek,mt8195-scp-dual" compatible properly, one with
+> > > "mediatek,scp-core = <&scp_dual1 0>;" and another one with
+> > 
+> > "mediatek,scp-core = <&scp_dual0 1>;".
+> > > 
+> > > Which is also very broken...  Here you have a binding whose first
+> > 
+> > argument is a
+> > > reference to the core sibling while the second argument is a
+> > 
+> > characteristic of
+> > > the current core, which is highly confusing.
+> > > 
+> > > I suggest what when you see the compatible binding
+> > 
+> > "mediatek,mt8195-scp", a
+> > > single core is initialized.  If you see "mediatek,mt8195-scp-dual", both
+> > 
+> > cores
+> > > are initialized as part of the _same_ probe.
+> > > 
+> > > If the above analysis is not correct it means I misinterpreted your
+> > > work and if so, a serious amount of comments is needed _and_ a very
+> > 
+> > detailed
+> > > example in "mtk,scp.yaml" that leaves no room for interpretation.
+> > > 
+> > > I will stop reviewing this patchset until you have clarified how this
+> > 
+> > works.
+> > > 
+> > > Thanks,
+> > > Mathieu
+> > 
+> > There's one problem of initializng the CORE1 using the same probe flow.
+> > The register space of CORE0 and CORE1 are overlapped in the device node.
+> > Both cores need to use the 'cfg' registers defined in scp yaml.
+> > The devm_ioremap_resource catches address overlapping and returns error
+> > when
+> > probing CORE1 driver.
+> > 
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index e5279ed9a8d7..6bc7b8b7d01e 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct work_struct *work)
->   	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
->   		/* handle only the first crash detected */
->   		mutex_unlock(&rproc->lock);
-> +		/*
-> +		 * RPROC_OFFLINE state indicate there is no recovery process
-> +		 * is in progress and no chance to have pm_relax in place.
-> +		 * Because when recovering from crash, rproc->lock is held and
-> +		 * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
-> +		 * and then unlock rproc->lock.
-> +		 * RPROC_OFFLINE is only an intermediate state in recovery
-> +		 * process.
-> +		 */
-> +		if (rproc->state == RPROC_OFFLINE)
-> +			pm_relax(rproc->dev.parent);
+> That is exactly why I suggest to initialise both cores within the same
+> probe() function.
+> 
+
+Hi Mathieu,
+
+I'm thinking about how to initialise in the same probe() function.
+I'm wondering if this implies that using one scp driver to initialize 2 cores?
+If it is, I assume the dts descriptions for both cores should be contained in one node.
+
+When there's one node for both cores, it looks like that there is a problem of 
+using dma_allocate_coherent(). Each core has its own reserved memory region. 
+When there's only one device for both cores, it's not able to identify the memory region 
+by the device parameter of dma_allocate_coherent().
+
+Is it acceptable to consider manually allocating core 1 device in the probe() when probing core 0?
 
 
-LGTM.
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Best regards,
+TingHan
 
--Mukesh
->   		return;
->   	}
->   
+
+
+
+
+
+
+
