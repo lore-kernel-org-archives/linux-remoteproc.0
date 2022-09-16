@@ -2,78 +2,96 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5B8C54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Sep 2022 06:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E786ECAAD8
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Sep 2022 07:12:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbiIPG6E (ORCPT
+        id S229457AbiIPHMo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 16 Sep 2022 02:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44246 "EHLO
+        Fri, 16 Sep 2022 03:12:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230120AbiIPG6A (ORCPT
+        with ESMTP id S229436AbiIPHMn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 16 Sep 2022 02:58:00 -0400
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178D7A3D2F;
-        Thu, 15 Sep 2022 23:57:58 -0700 (PDT)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9821A1A82EF;
-        Fri, 16 Sep 2022 08:57:57 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 62B2A1A82EC;
-        Fri, 16 Sep 2022 08:57:57 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2D2951820F5D;
-        Fri, 16 Sep 2022 14:57:56 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
-        arnaud.pouliquen@foss.st.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: [PATCH] rpmsg: char: Avoid double destroy of default endpoint
-Date:   Fri, 16 Sep 2022 14:39:26 +0800
-Message-Id: <1663310366-720-1-git-send-email-shengjiu.wang@nxp.com>
+        Fri, 16 Sep 2022 03:12:43 -0400
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C8E36849;
+        Fri, 16 Sep 2022 00:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1663312362; x=1694848362;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=5L6dIif8ingzv+vHB+hMzVyWir1OfL0FJ4UuSGWbKbQ=;
+  b=w2+w+hnP0SKo0we31kB3zqM6R4RL7LmZtdWMYPZVxAbp1H8YuBF8acC/
+   O5gV1Jy/L9SIjNJl8EdmmmWygSoRSmSGQJll7ecxXuGXBTLyXOCpUpUuL
+   /Kauu7rsCYAngQxN1tZoaYKtXqe47+Uk/tqHfv5CDm61XZdnKVkadLtRD
+   Y=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 16 Sep 2022 00:12:40 -0700
+X-QCInternal: smtphost
+Received: from unknown (HELO nasanex01a.na.qualcomm.com) ([10.52.223.231])
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2022 00:12:40 -0700
+Received: from ecbld-sh026-lnx.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.29; Fri, 16 Sep 2022 00:12:38 -0700
+From:   Maria Yu <quic_aiquny@quicinc.com>
+To:     <mathieu.poirier@linaro.org>
+CC:     Maria Yu <quic_aiquny@quicinc.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_clew@quicinc.com>
+Subject: [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
+Date:   Fri, 16 Sep 2022 15:12:31 +0800
+Message-ID: <1663312351-28476-1-git-send-email-quic_aiquny@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
+References: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The rpmsg_dev_remove() in rpmsg_core is the place for releasing
-this default endpoint.
+RPROC_OFFLINE state indicate there is no recovery process
+is in progress and no chance to do the pm_relax.
+Because when recovering from crash, rproc->lock is held and
+state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+and then unlock rproc->lock.
+When the state is in RPROC_OFFLINE it means separate request
+of rproc_stop was done and no need to hold the wakeup source
+in crash handler to recover any more.
 
-So need to avoid destroying the default endpoint in
-rpmsg_chrdev_eptdev_destroy(), this should be the same as
-rpmsg_eptdev_release(). Otherwise there will be double destroy
-issue that ept->refcount report warning:
-
-refcount_t: underflow; use-after-free.
-
-Call trace:
- refcount_warn_saturate+0xf8/0x150
- virtio_rpmsg_destroy_ept+0xd4/0xec
- rpmsg_dev_remove+0x60/0x70
-
-Fixes: bea9b79c2d10 ("rpmsg: char: Add possibility to use default endpoint of the rpmsg device")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
 ---
- drivers/rpmsg/rpmsg_char.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 0850ae34fb88..562d545ac0d3 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -76,7 +76,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
- 
- 	mutex_lock(&eptdev->ept_lock);
- 	if (eptdev->ept) {
--		rpmsg_destroy_ept(eptdev->ept);
-+		if (!eptdev->default_ept)
-+			rpmsg_destroy_ept(eptdev->ept);
- 		eptdev->ept = NULL;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index e5279ed9a8d7..6bc7b8b7d01e 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ 	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+ 		/* handle only the first crash detected */
+ 		mutex_unlock(&rproc->lock);
++		/*
++		 * RPROC_OFFLINE state indicate there is no recovery process
++		 * is in progress and no chance to have pm_relax in place.
++		 * Because when recovering from crash, rproc->lock is held and
++		 * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
++		 * and then unlock rproc->lock.
++		 * RPROC_OFFLINE is only an intermediate state in recovery
++		 * process.
++		 */
++		if (rproc->state == RPROC_OFFLINE)
++			pm_relax(rproc->dev.parent);
+ 		return;
  	}
- 	mutex_unlock(&eptdev->ept_lock);
+ 
 -- 
-2.34.1
+2.7.4
 
