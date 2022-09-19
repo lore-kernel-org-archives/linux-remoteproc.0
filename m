@@ -2,44 +2,43 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9630C6FA86
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Sep 2022 16:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C9BECAAA1
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Sep 2022 16:48:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229667AbiISQDW (ORCPT
+        id S229842AbiISQsT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 12:03:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52864 "EHLO
+        Mon, 19 Sep 2022 12:48:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229745AbiISQCu (ORCPT
+        with ESMTP id S229505AbiISQsR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 19 Sep 2022 12:02:50 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F4AD3CBF2;
-        Mon, 19 Sep 2022 09:01:09 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28JEe8QN010929;
-        Mon, 19 Sep 2022 16:00:54 GMT
+        Mon, 19 Sep 2022 12:48:17 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90C125E84;
+        Mon, 19 Sep 2022 09:48:16 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28JFU2ds010970;
+        Mon, 19 Sep 2022 16:48:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=uIUmkWWChmCj4RYxmInTFl1FXN/vdFc07v8DqwHSnI4=;
- b=j5r2GywuDTxVGe1u7XNqhZOo/CWbS6zA3C87dFEEyGP7QeRO0wP6js/AL/JOilWqK+bo
- 3tmqEfYl0eMIVayLGzQTHWoYlhXNj72gOo3eyiRdQGJZ/h9hR4aKxdbtVpXJrENwSTCD
- NBa7mLz9OC99LBs3/CU6RQDEqCtvptWJP7dM1vxYumqURqmYYG0PnjenQhDnGrH9GZeI
- TkTm9NMVXbnWkctocd8RVpRNkc3+gzOsPtWSkJYL3KCDCfLCXEy+3ZlCeFmpfgULZNjz
- 9ftuwKpOMxcQep3fQI52jDAuBsPzMl6M77AJyfdfvZT4mwmN9I4szaGkhznDcH3Pwksf gg== 
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=1XdBrH+AhkUaeI967z1Ko6Jl++k36BAjoZcbq8iueco=;
+ b=nUwKDFmpukzPBrsSRVT1XPrgFQZ07jj8EGZ7pFU1H2fIuB2eHa/ejwhZbSp2JYuVmjUO
+ T1uXwZnhEgg1GvbVGEy/WiNwzRzop1t9OG8tjChYFbTEvvd1pcZpRRFqf2eNulaGnqnG
+ 4RYaB6pl/UeM0tlnAx+fZtNPNtRE9JOHeOtOtOdoLOWVSj7DajW6LQGDau01WGUg7ybr
+ so31FKRqG7oXQMAyYVs7EjjaAzz9nhe20GEaZz0j/xzmGvjGsQwEfYp1xcXdyY9/uFSq
+ GEYt8qFWeXlRYgLSKWZ5vS4TWUFr6Z4eNJd2JtEgvPyWuCyhRCgWAcRoE4O5cKVu966o Ng== 
 Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jn6qkvud1-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jn6f85h3w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Sep 2022 16:00:53 +0000
+        Mon, 19 Sep 2022 16:48:10 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28JG0q1X013146
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28JGm9Fk003406
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Sep 2022 16:00:52 GMT
+        Mon, 19 Sep 2022 16:48:09 GMT
 Received: from hu-gokukris-sd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 19 Sep 2022 09:00:52 -0700
+ 15.2.986.29; Mon, 19 Sep 2022 09:48:08 -0700
 From:   Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -53,80 +52,131 @@ CC:     <linux-arm-msm@vger.kernel.org>,
         Elliot Berman <quic_eberman@quicinc.com>,
         "Guru Das Srinagesh" <quic_gurus@quicinc.com>,
         Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-Subject: [PATCH v1 2/3] remoteproc: qcom: q6v5: Do not report crash if SSR is disabled
-Date:   Mon, 19 Sep 2022 09:00:39 -0700
-Message-ID: <1a548f4e7373c12159f8d866dc0e12d224460036.1662995608.git.quic_gokukris@quicinc.com>
+Subject: [PATCH v1 1/1] remoteproc: qcom: Add sysfs entry to detect device shutdown
+Date:   Mon, 19 Sep 2022 09:48:01 -0700
+Message-ID: <42d3ab9227ac3d299abcedbbdd68c86e1dd6acce.1663604826.git.quic_gokukris@quicinc.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1662995608.git.quic_gokukris@quicinc.com>
-References: <cover.1662995608.git.quic_gokukris@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HGA1xbbZ1u1PYxzws-ESBRPuTNw9xOwx
-X-Proofpoint-GUID: HGA1xbbZ1u1PYxzws-ESBRPuTNw9xOwx
+X-Proofpoint-GUID: azU-nV8ugoeAnzh5BEVhM6NdXRff9g7J
+X-Proofpoint-ORIG-GUID: azU-nV8ugoeAnzh5BEVhM6NdXRff9g7J
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-19_05,2022-09-16_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 suspectscore=0 clxscore=1015 impostorscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=915 mlxscore=0 malwarescore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209190107
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 malwarescore=0 clxscore=1015 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209190112
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-Message-ID: <20220919160039.NyBvoz9AuEp-3j4CaoBPrqVOJ7ME-EnafLMmmR31frs@z>
 
-In case recovery is disabled, do not report the rproc crash
-to the framework. If recovery is enabled after we start the
-crash handler we may end up in a weird state by informing
-clients of a crash twice, resulting in undefined behaviour.
+This change adds a sysfs entry which indicates whether the device is being
+shutdown to the qcom remoteproc drivers. This is going to be used in the
+following patches.
 
-Change-Id: If0d9bf5aa2c6f9e25adcefaca14b2de60fcb1a7a
 Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
 ---
- drivers/remoteproc/qcom_q6v5.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/remoteproc/qcom_common.c | 58 ++++++++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_common.h |  1 +
+ 2 files changed, 59 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 89f5384..1b9e1e1 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -103,6 +103,8 @@ static void qcom_q6v5_crash_handler_work(struct work_struct *work)
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 020349f..7959e96 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -87,9 +87,32 @@ struct qcom_ssr_subsystem {
+ 	struct list_head list;
+ };
  
- 	mutex_lock(&rproc->lock);
- 
-+	rproc->state = RPROC_CRASHED;
++static struct kobject *sysfs_kobject;
++bool qcom_device_shutdown_in_progress;
++EXPORT_SYMBOL(qcom_device_shutdown_in_progress);
 +
- 	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
- 		if (subdev->stop)
- 			subdev->stop(subdev, true);
-@@ -139,8 +141,8 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
- 	q6v5->running = false;
- 	if (q6v5->rproc->recovery_disabled)
- 		schedule_work(&q6v5->crash_handler);
--
--	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
-+	else
-+		rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
+ static LIST_HEAD(qcom_ssr_subsystem_list);
+ static DEFINE_MUTEX(qcom_ssr_subsys_lock);
  
- 	return IRQ_HANDLED;
++static const char * const ssr_timeout_msg = "srcu notifier chain for %s:%s taking too long";
++
++static ssize_t qcom_rproc_shutdown_request_store(struct kobject *kobj, struct kobj_attribute *attr,
++						 const char *buf, size_t count)
++{
++	bool val;
++	int ret;
++
++	ret = kstrtobool(buf, &val);
++	if (ret)
++		return ret;
++
++	qcom_device_shutdown_in_progress = val;
++	pr_info("qcom rproc: Device shutdown requested: %s\n", val ? "true" : "false");
++	return count;
++}
++static struct kobj_attribute shutdown_requested_attr = __ATTR(shutdown_in_progress, 0220, NULL,
++							  qcom_rproc_shutdown_request_store);
++
+ static void qcom_minidump_cleanup(struct rproc *rproc)
+ {
+ 	struct rproc_dump_segment *entry, *tmp;
+@@ -505,5 +528,40 @@ void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr *ssr)
  }
-@@ -163,8 +165,8 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 	q6v5->running = false;
- 	if (q6v5->rproc->recovery_disabled)
- 		schedule_work(&q6v5->crash_handler);
--
--	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
-+	else
-+		rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
+ EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
  
- 	return IRQ_HANDLED;
- }
++static int __init qcom_common_init(void)
++{
++	int ret = 0;
++
++	qcom_device_shutdown_in_progress = false;
++
++	sysfs_kobject = kobject_create_and_add("qcom_rproc", kernel_kobj);
++	if (!sysfs_kobject) {
++		pr_err("qcom rproc: failed to create sysfs kobject\n");
++		return -EINVAL;
++	}
++
++	ret = sysfs_create_file(sysfs_kobject, &shutdown_requested_attr.attr);
++	if (ret) {
++		pr_err("qcom rproc: failed to create sysfs file\n");
++		goto remove_kobject;
++	}
++
++	return 0;
++
++	sysfs_remove_file(sysfs_kobject, &shutdown_requested_attr.attr);
++remove_kobject:
++	kobject_put(sysfs_kobject);
++	return ret;
++
++}
++module_init(qcom_common_init);
++
++static void __exit qcom_common_exit(void)
++{
++	sysfs_remove_file(sysfs_kobject, &shutdown_requested_attr.attr);
++	kobject_put(sysfs_kobject);
++}
++module_exit(qcom_common_exit);
++
+ MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/remoteproc/qcom_common.h b/drivers/remoteproc/qcom_common.h
+index c35adf7..90b79ce 100644
+--- a/drivers/remoteproc/qcom_common.h
++++ b/drivers/remoteproc/qcom_common.h
+@@ -34,6 +34,7 @@ struct qcom_rproc_ssr {
+ };
+ 
+ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id);
++extern bool qcom_device_shutdown_in_progress;
+ 
+ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
+ 			   const char *ssr_name);
 -- 
 2.7.4
 
