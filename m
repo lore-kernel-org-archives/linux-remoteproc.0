@@ -2,114 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2269C6FA82
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Sep 2022 10:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A03C54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Sep 2022 13:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229783AbiISK5Y (ORCPT
+        id S231154AbiISN6z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 06:57:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56734 "EHLO
+        Mon, 19 Sep 2022 09:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiISK5C (ORCPT
+        with ESMTP id S231201AbiISN6x (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 19 Sep 2022 06:57:02 -0400
+        Mon, 19 Sep 2022 09:58:53 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBFFE71;
-        Mon, 19 Sep 2022 03:54:29 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28J6Asgl024618;
-        Mon, 19 Sep 2022 10:54:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=szSyf/2tC+auA/OTvQr3j+RCEdfxlkRfmtAhj0CEsms=;
- b=Zv3qhF5urViDyt+eWZaZrtW/7qwvxfEAZ6bVTXDdhVcih0z+XQ45NX5l8V6R5LMlCzvu
- JguUOrE7pOpIA8ZcjJg+gzkz02ZV/mpojM0VhJW44IGUfiZU39FdxzWP0fv8EpB3Az1X
- pGtdtj8OVC0nzlai8/ARTW9s/PZd6zPkycynr9V1+79gDlBwxct4XIotANpX3gLYBPXt
- nNNdOdxqU3WQohWTRq9ZVy4mM02HpeCpLpIMwzcnK1XK/Mv95IuIuhU4nYUUkK/WMshk
- JfGar4OS38ZKW/3hODghHXEvOhMMl3p8R0DfhA4iklyuz1ndwrqUZMMyGJGI7QGmqQa/ Jw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jn70nm964-1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444912A733;
+        Mon, 19 Sep 2022 06:58:51 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28JD1hPO005695;
+        Mon, 19 Sep 2022 13:58:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=EXRFKA+jIFBhIkdXJ44/eTpvfW+ddnv7ZuRYuj2zRRw=;
+ b=XERH5R+Tt2Yn7uOFdfxPQYkQ5V++vhDxvEMA4IweZlxmtaKZsj2aumxIzyhhEfvlJmYL
+ vzS7xGXLCIFBLyZXTial4lk68i37182KA5aUvvE5yaBR40Re6XqftCwpMpob9q6IG/9r
+ PEVCQTy++DYUCGVPoAryVPz4ZR0e8viSxk8CSodsjgcBd9Re1UFmsN1IWAYbz+Jk1pvO
+ jLmlodFS9Zr6NgXbx26sHbfajPRHb4wn/ZOJ08YEW0dhFz1HrhJT8iZ/F7N9vI5eiyhY
+ vKBEYW0Fg/ocARptSfWkGvAFJPvU1E9wo6LJNC+wTl3nAMESCt3isS0Udz+//3+0XmTH NQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jn6b1vutg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Sep 2022 10:54:24 +0000
+        Mon, 19 Sep 2022 13:58:01 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28JAsNGO000703
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28JDw0PV021606
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Sep 2022 10:54:23 GMT
-Received: from deesin-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Mon, 19 Sep 2022 03:54:20 -0700
-From:   Deepak Kumar Singh <quic_deesin@quicinc.com>
-To:     <bjorn.andersson@linaro.org>, <arnaud.pouliquen@foss.st.com>,
-        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: [PATCH V5 2/2] rpmsg: ctrl: Add lock to rpmsg_ctrldev_remove
-Date:   Mon, 19 Sep 2022 16:24:00 +0530
-Message-ID: <1663584840-15762-3-git-send-email-quic_deesin@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1663584840-15762-1-git-send-email-quic_deesin@quicinc.com>
-References: <1663584840-15762-1-git-send-email-quic_deesin@quicinc.com>
+        Mon, 19 Sep 2022 13:58:00 GMT
+Received: from [10.216.41.172] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 19 Sep
+ 2022 06:57:55 -0700
+Message-ID: <85ee0b41-dfd0-8fc3-6d16-3d055ad18792@quicinc.com>
+Date:   Mon, 19 Sep 2022 19:27:52 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v6 4/8] remoteproc: qcom: Update rproc parse firmware
+ callback
+Content-Language: en-US
+To:     Stephen Boyd <swboyd@chromium.org>, <agross@kernel.org>,
+        <bgoswami@quicinc.com>, <bjorn.andersson@linaro.org>,
+        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <judyhsiao@chromium.org>, <lgirdwood@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <perex@perex.cz>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <robh+dt@kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <tiwai@suse.com>
+References: <1662643422-14909-1-git-send-email-quic_srivasam@quicinc.com>
+ <1662643422-14909-5-git-send-email-quic_srivasam@quicinc.com>
+ <CAE-0n50i7jqoA8rYhkvMEd_i13apA1ZWhHsXBj99Sn_8Hkywag@mail.gmail.com>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <CAE-0n50i7jqoA8rYhkvMEd_i13apA1ZWhHsXBj99Sn_8Hkywag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FZeMHd9suSf0SfHsBg3moRupKMeFnGYN
-X-Proofpoint-ORIG-GUID: FZeMHd9suSf0SfHsBg3moRupKMeFnGYN
+X-Proofpoint-GUID: _Lt2djVv0AlKeKrPgJ8IXs4lubkBcDET
+X-Proofpoint-ORIG-GUID: _Lt2djVv0AlKeKrPgJ8IXs4lubkBcDET
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-19_05,2022-09-16_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 phishscore=0 mlxscore=0
- mlxlogscore=917 impostorscore=0 priorityscore=1501 spamscore=0
- suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2209130000 definitions=main-2209190073
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0 spamscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
+ definitions=main-2209190093
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Call to rpmsg_ctrldev_ioctl() and rpmsg_ctrldev_remove() must be synchronized.
-In present code rpmsg_ctrldev_remove() is not protected with lock, therefore
-new char device creation can succeed through rpmsg_ctrldev_ioctl() call. At the
-same time call to rpmsg_ctrldev_remove() function for ctrl device removal will
-free associated rpdev device. As char device creation already succeeded, user
-space is free to issue open() call which maps to rpmsg_create_ept() in kernel.
-rpmsg_create_ept() function tries to reference rpdev which has already been
-freed through rpmsg_ctrldev_remove(). Issue is predominantly seen in aggressive
-reboot tests where rpmsg_ctrldev_ioctl() and rpmsg_ctrldev_remove() can race with
-each other.
 
-Adding lock in rpmsg_ctrldev_remove() avoids any new char device creation
-through rpmsg_ctrldev_ioctl() while remove call is already in progress.
-
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
----
- drivers/rpmsg/rpmsg_ctrl.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/rpmsg/rpmsg_ctrl.c b/drivers/rpmsg/rpmsg_ctrl.c
-index 107da70..4332538 100644
---- a/drivers/rpmsg/rpmsg_ctrl.c
-+++ b/drivers/rpmsg/rpmsg_ctrl.c
-@@ -194,10 +194,12 @@ static void rpmsg_ctrldev_remove(struct rpmsg_device *rpdev)
- 	struct rpmsg_ctrldev *ctrldev = dev_get_drvdata(&rpdev->dev);
- 	int ret;
- 
-+	mutex_lock(&ctrldev->ctrl_lock);
- 	/* Destroy all endpoints */
- 	ret = device_for_each_child(&ctrldev->dev, NULL, rpmsg_chrdev_eptdev_destroy);
- 	if (ret)
- 		dev_warn(&rpdev->dev, "failed to nuke endpoints: %d\n", ret);
-+	mutex_unlock(&ctrldev->ctrl_lock);
- 
- 	cdev_device_del(&ctrldev->cdev, &ctrldev->dev);
- 	put_device(&ctrldev->dev);
--- 
-2.7.4
-
+On 9/12/2022 4:25 AM, Stephen Boyd wrote:
+Thanks for your time Stephen!!!
+> Quoting Srinivasa Rao Mandadapu (2022-09-08 06:23:38)
+>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+>> index 02d17b4..207270d4 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+>> @@ -447,7 +447,7 @@ static unsigned long adsp_panic(struct rproc *rproc)
+>>          return qcom_q6v5_panic(&adsp->q6v5);
+>>   }
+>>
+>> -static const struct rproc_ops adsp_ops = {
+>> +static struct rproc_ops adsp_ops = {
+> This is sad.
+>
+>>          .start = adsp_start,
+>>          .stop = adsp_stop,
+>>          .da_to_va = adsp_da_to_va,
+>> @@ -590,6 +590,9 @@ static int adsp_probe(struct platform_device *pdev)
+>>                  return ret;
+>>          }
+>>
+>> +       if (desc->has_iommu)
+>> +               adsp_ops.parse_fw = rproc_elf_load_rsc_table;
+>> +
+> Why not have two different set of ops so that the function pointer table
+> can't be hijacked? One for the parse_fw callback? Or simply return from
+> rproc_elf_load_rsc_table() when has_iommu is false?
+Okay. Will change accordingly.
+>
+>>          rproc = rproc_alloc(&pdev->dev, pdev->name, &adsp_ops,
