@@ -2,183 +2,119 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12B4ECAAD3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Sep 2022 22:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFEDC54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Sep 2022 03:03:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbiISWad (ORCPT
+        id S229575AbiITDDt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 19 Sep 2022 18:30:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51944 "EHLO
+        Mon, 19 Sep 2022 23:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229761AbiISWac (ORCPT
+        with ESMTP id S229812AbiITDDn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 19 Sep 2022 18:30:32 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96CCD419A3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Sep 2022 15:30:31 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id a80so988772pfa.4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Sep 2022 15:30:31 -0700 (PDT)
+        Mon, 19 Sep 2022 23:03:43 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E6658527;
+        Mon, 19 Sep 2022 20:03:40 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id h188so1174973pgc.12;
+        Mon, 19 Sep 2022 20:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=6BkRaoihLoEElFg+IX7ChAv0K/VTWRTZJq+3zEWaWR4=;
-        b=zJ+koiUbsBA6nsMsJVF32pKjvNy/kMK5rlMM1FsSNse5e3DSA7Y0SsJg8C2OBi5OQ0
-         3CKkyobH21cMqvQlYFDGv9e+YyEQWF5j8/Aw+WU914rB1eX8PgxfExDMHYwhRf0mYzho
-         QEMzMU87Vm8m79L82Rcwh7xbBasJF+O2QSjDrn/2QZEeXdQ2BiPAV2sxQuQduHI9Mf0k
-         oKcLshk7Cqur2Z2v9BkbuG2jaCogpWoX/89bGPxZbfhjyTavclkkAEnFfpcG65AexljC
-         wzXFwxPO0Yj/e4pDOYNljWwfkNHcDR1+fQ5SZvc3L09RO0wjd/UH1RpuboRJfKkCDCd7
-         3B7A==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=IHv+se6PCST4Oao8xK2ZgRiscYBxXE1DiDrvnYlWrIY=;
+        b=NXCegjGzPUIaiuBhU/qR9JqeK5hJjCZdKxe3wIGzQwuVRmK/5e6xX2+wxJaBwDj7yQ
+         tFtt60TsXyCvkN2ZE+1jhh/y9C/6BtxTyNNhWupu2cJeAtUPgyVZrYqOQLAyro+Q0mrb
+         dk45XPlBec5QDZ5CFAE4zaZ5NgsfHGxjHKRCt2CrvwBYocc/SBOvHJulr1O+aQUdM/Ht
+         ZjJ4lgrdXP+ZhADVLpEk7OTiTDBxmCVqmKxlWRVobxQyQY7fST16LzN1/qqmJ/kUtB7p
+         CuUe0vc+XxvC0Bn6LxZEEDWN+4RWlz5CPLV57vbEGn0D63L52Ul2amMlOMq4KNU8p69L
+         N7AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=6BkRaoihLoEElFg+IX7ChAv0K/VTWRTZJq+3zEWaWR4=;
-        b=2oYkSU29GhWUXLeR+GiGTcQ1koEQNQxz49aKNdQbC/PtrCu6+qNOzEoabK+VRs8qVR
-         KE5DC5xwrnhAN8KIAIBArUmH0W2CQqzhPle/HHLHy1RD2CmaPhAm7hcaIC0sM5hGnbyq
-         Dp2xbxxXkgibV12zIIWFh2hoKoDF5byZjvHoKy1zOVf/IA3h+LS2x8lw0HiMbg3CywUM
-         sxcKZBfV4z92hncOcid9ck3PpJtBRP+sWXYok1vvSQJUh6WKBv5iPJ5TTjkF5PghsCpy
-         m/aE/X00C/QAR1HIAWpyyxLiZAsHDGc4ZEjUpvuTbXUN+BE+RVvaM8nLaJLNwoGFBKsM
-         DghA==
-X-Gm-Message-State: ACrzQf06l7Hif3OUVKaDS72+dXe756YvbLUb0mK9Q9Q7uqPC/t0zbRI1
-        OUMCj6fplSXpWPNPVblMC4cTE6TNESSKjg==
-X-Google-Smtp-Source: AMsMyM4OPn0S8DVKRo7cq8RhXwQfQL8LATxgVZWL84rVh41CP+oZh/QYqjWbOhyCP3zwiN7oUNwaZw==
-X-Received: by 2002:a05:6a00:1309:b0:535:d421:1347 with SMTP id j9-20020a056a00130900b00535d4211347mr20818684pfu.5.1663626631115;
-        Mon, 19 Sep 2022 15:30:31 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id j16-20020a170902da9000b0016dbdf7b97bsm21143620plx.266.2022.09.19.15.30.29
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=IHv+se6PCST4Oao8xK2ZgRiscYBxXE1DiDrvnYlWrIY=;
+        b=ZdDssZtXFJcj7wp0xFzfKo33PIc72iI/3rcRGsK5lknxKl8ggPIPh2ZCTXeh06FW4U
+         VNCDKL6vo8coK3H/CkLb+KN2/N8t7m+SmmLSQqT57+xjOl1chXBUcBsZ269Byw2KHwbj
+         F8+hNLhYUruwzaVNL/0wgW1Vrx9lal1FAe68zmjTQzvoeWIDZnaykZG7mWKgZgndnNSl
+         /mOIHVknTYQN8CRcrTVl/jqvLlwS+QozztFPmyb/RNcB6ocDluduNQg9XkaibspIgsSO
+         pQokFhKt5z1DxBFvm+2w/YQOjt5i5VPJCVAhVXJQab+2HAqQ/VB+D7+in+MsGBoTcXrj
+         m/iA==
+X-Gm-Message-State: ACrzQf1r3tj9bMB1ynZKehJ25ubTHrPopg7qqmqwqrzHa0/0WtC0WxXI
+        1bV+sNBHE2fPH2WO3XzzkpymFQwG/4nzHQ==
+X-Google-Smtp-Source: AMsMyM4GBHdSc51aiMUpdWHQNLXwGmTJWsrmxM0193CCuRgMdKWWwiKUm5a1KDhi/rol0HCopo+opA==
+X-Received: by 2002:a65:464d:0:b0:439:246e:8091 with SMTP id k13-20020a65464d000000b00439246e8091mr18510462pgr.295.1663643019989;
+        Mon, 19 Sep 2022 20:03:39 -0700 (PDT)
+Received: from skynet-linux.local ([2406:7400:61:8a0f:392d:db19:673c:627a])
+        by smtp.googlemail.com with ESMTPSA id t193-20020a635fca000000b0043a18cef977sm171083pgb.13.2022.09.19.20.03.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Sep 2022 15:30:29 -0700 (PDT)
-Date:   Mon, 19 Sep 2022 16:30:27 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Subject: Re: [PATCH v8 0/4] remoteproc: restructure the remoteproc VirtIO
- device
-Message-ID: <20220919223027.GG759648@p14s>
-References: <20220826115232.2163130-1-arnaud.pouliquen@foss.st.com>
+        Mon, 19 Sep 2022 20:03:39 -0700 (PDT)
+From:   Sireesh Kodali <sireeshkodali1@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     andersson@kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/4] remoteproc: qcom: qcom_wcnss: Add support for pronto-v3
+Date:   Tue, 20 Sep 2022 08:33:13 +0530
+Message-Id: <20220920030316.1619781-2-sireeshkodali1@gmail.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20220920030316.1619781-1-sireeshkodali1@gmail.com>
+References: <20220920030316.1619781-1-sireeshkodali1@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220826115232.2163130-1-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+From: Vladimir Lypak <vladimir.lypak@gmail.com>
 
-On Fri, Aug 26, 2022 at 01:52:28PM +0200, Arnaud Pouliquen wrote:
-> 1) Update from V7 [1]:
-> 
-> - rebase on rproc-next branch [2], commit 729c16326b7f ("remoteproc: imx_dsp_rproc: fix argument 2 of rproc_mem_entry_init")
->   The updates take into account the integration of the
->   commit 1404acbb7f68 ("remoteproc: Fix dma_mem leak after rproc_shutdown")
-> - add Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org> according to reviews on V7
-> 
-> 
-> [1] https://lkml.org/lkml/2022/7/13/663
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/log/?h=for-next
-> 
-> 2) Patchset description:
-> 
-> This series is a part of the work initiated a long time ago in 
-> the series "remoteproc: Decorelate virtio from core"[3]
-> 
-> Objective of the work:
-> - Update the remoteproc VirtIO device creation (use platform device)
-> - Allow to declare remoteproc VirtIO device in DT
->     - declare resources associated to a remote proc VirtIO
->     - declare a list of VirtIO supported by the platform.
-> - Prepare the enhancement to more VirtIO devices (e.g I2C, audio, video, ...).
->   For instance be able to declare a I2C device in a virtio-i2C node.
-> - Keep the legacy working!
-> - Try to improve the picture about concerns reported by Christoph Hellwing [4][5]
-> 
-> [3] https://lkml.org/lkml/2020/4/16/1817
-> [4] https://lkml.org/lkml/2021/6/23/607
-> [5] https://patchwork.kernel.org/project/linux-remoteproc/patch/AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch/
-> 
-> In term of device tree this would result in such hierarchy (stm32mp1 example with 2 virtio RPMSG):
-> 
-> 	m4_rproc: m4@10000000 {
-> 		compatible = "st,stm32mp1-m4";
-> 		reg = <0x10000000 0x40000>,
-> 		      <0x30000000 0x40000>,
-> 		      <0x38000000 0x10000>;
->         memory-region = <&retram>, <&mcuram>,<&mcuram2>;
->         mboxes = <&ipcc 2>, <&ipcc 3>;
->         mbox-names = "shutdown", "detach";
->         status = "okay";
-> 
->         #address-cells = <1>;
->         #size-cells = <0>;
->         
->         vdev@0 {
-> 		compatible = "rproc-virtio";
-> 		reg = <0>;
-> 		virtio,id = <7>;  /* RPMSG */
-> 		memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
-> 		mboxes = <&ipcc 0>, <&ipcc 1>;
-> 		mbox-names = "vq0", "vq1";
-> 		status = "okay";
->         };
-> 
->         vdev@1 {
-> 		compatible = "rproc-virtio";
-> 		reg = <1>;
-> 		virtio,id = <7>;  /*RPMSG */
-> 		memory-region = <&vdev1vring0>, <&vdev1vring1>, <&vdev1buffer>;
-> 		mboxes = <&ipcc 4>, <&ipcc 5>;
-> 		mbox-names = "vq0", "vq1";
-> 		status = "okay";
->         };
-> };
+Pronto-v3 is similar to pronto-v2. It requires two power domains, and it
+requires the xo clock. It is used on the MSM8953 platform.
 
-I was in the process of applying this set when the last patch gave me a
-checkpatch warning about "virtio,rproc" not being documented.
+Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
+---
+ drivers/remoteproc/qcom_wcnss.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-I suggest to introduce a new "virtio-rproc.yaml" based on this work[1], with the
-above in the example sections.
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 68f37296b151..ff18bfae5eb6 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -141,6 +141,18 @@ static const struct wcnss_data pronto_v2_data = {
+ 	.num_vregs = 1,
+ };
+ 
++static const struct wcnss_data pronto_v3_data = {
++	.pmu_offset = 0x1004,
++	.spare_offset = 0x1088,
++
++	.pd_names = { "mx", "cx" },
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddpx", 1800000, 1800000, 0 },
++	},
++	.num_pd_vregs = 2,
++	.num_vregs = 1,
++};
++
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+@@ -675,6 +687,7 @@ static const struct of_device_id wcnss_of_match[] = {
+ 	{ .compatible = "qcom,riva-pil", &riva_data },
+ 	{ .compatible = "qcom,pronto-v1-pil", &pronto_v1_data },
+ 	{ .compatible = "qcom,pronto-v2-pil", &pronto_v2_data },
++	{ .compatible = "qcom,pronto-v3-pil", &pronto_v3_data },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, wcnss_of_match);
+-- 
+2.37.3
 
-Thanks,
-Mathieu
-
-[1]. https://elixir.bootlin.com/linux/v6.0-rc6/source/Documentation/devicetree/bindings/virtio/virtio-device.yaml
-
-
-> 
-> I have divided the work in 4 steps to simplify the review, This series implements only
-> the step 1:
-> step 1: Redefine the remoteproc VirtIO device as a platform device
->   - migrate rvdev management in remoteproc virtio.c,
->   - create a remotproc virtio config ( can be disabled for platform that not use VirtIO IPC.
-> step 2: Add possibility to declare and probe a VirtIO sub node
->   - VirtIO bindings declaration,
->   - multi DT VirtIO devices support,
->   - introduction of a remote proc virtio bind device mechanism ,
-> => https://github.com/arnopo/linux/commits/step2-virtio-in-DT
-> step 3: Add memory declaration in VirtIO subnode
-> => https://github.com/arnopo/linux/commits/step3-virtio-memories
-> step 4: Add mailbox declaration in VirtIO subnode
-> => https://github.com/arnopo/linux/commits/step4-virtio-mailboxes
-> 
-> Arnaud Pouliquen (4):
->   remoteproc: core: Introduce rproc_rvdev_add_device function
->   remoteproc: core: Introduce rproc_add_rvdev function
->   remoteproc: Move rproc_vdev management to remoteproc_virtio.c
->   remoteproc: virtio: Create platform device for the remoteproc_virtio
-> 
->  drivers/remoteproc/remoteproc_core.c     | 154 +++---------------
->  drivers/remoteproc/remoteproc_internal.h |  23 ++-
->  drivers/remoteproc/remoteproc_virtio.c   | 189 ++++++++++++++++++++---
->  include/linux/remoteproc.h               |   6 +-
->  4 files changed, 210 insertions(+), 162 deletions(-)
-> 
-> -- 
-> 2.24.3
-> 
