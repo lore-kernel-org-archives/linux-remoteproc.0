@@ -2,79 +2,85 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B20ECAAD8
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Sep 2022 08:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7D9C54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Sep 2022 09:55:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbiITIV3 (ORCPT
+        id S230084AbiITJy7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Sep 2022 04:21:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58580 "EHLO
+        Tue, 20 Sep 2022 05:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbiITIUQ (ORCPT
+        with ESMTP id S230319AbiITJyy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Sep 2022 04:20:16 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAAF45599
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Sep 2022 01:18:57 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id a10so2131151ljq.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Sep 2022 01:18:57 -0700 (PDT)
+        Tue, 20 Sep 2022 05:54:54 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E32CE27FF5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Sep 2022 02:54:52 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id a8so2808441lff.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Sep 2022 02:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=N+juPwhYXygoVLZ5FwCYsXkZBxWv1f+ksi4NS5ClCSk=;
-        b=GIjpafKjmVIE02NDvn8jJD5yEpoRMt7fvlEC/QrNMJfTY18eQpR3fptNS5H06EsgnY
-         jGEj5W2D4t539YId8TVn+5bUEQlTf9kwKrXC9b2v6V4LjbClPdVxT3BvJcZIIzCkoFAx
-         E/w2YP6dLrkPT9+Mo/+blcg7qW9y3bmMFbdNd+jxng00rGrxkMVblg8y1f0iyMKYH5U/
-         /jWJUfnUpDN7EVe6XrxXJHeLVsVggp/MdNqeefbY2ByshZT52LTWAhlcblrbLgqqu8/n
-         1tkj7+SZbh60RlVwX7l7X7ruFLwCqpwLIfjivdW8RDcZIHbf0QBac9jIPLeOpzEA0sgL
-         dU3A==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date;
+        bh=zaiJOfQLVu73Ck1GD1MriF7Mol9UFK9xKfuzOqaBT4A=;
+        b=Jw/wO21Q4x/c5PtqYlxbn3TmvK1FXUJ7IayvEGytXCzNYKIVa8dlgeGHlu5l5ABHBl
+         nLCCNMdTPTpCDoL4ENYZ+mZl4nHu6cy2TIZDpx1ragarQdDHKmkjzZ1k2+ARO6YpLVRY
+         DzQaI0pxVkB05BXs5iIpatov7KhC1j+MaZKnNRx6MKfLIURTfMb2falryKInaCaMbZIh
+         8wsU3hacgoyCqPHcoWD0E0sKTN+5P05WnwvvEURHnxAUJI7ZsFDUi3yttSGeZEHaJV8I
+         4OPjhANihPng/LHLZQPi6AUfND/yovLT42sUAdw6rhA0VKwl0Kgj/4IDwAI51RYs72RH
+         vjng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=N+juPwhYXygoVLZ5FwCYsXkZBxWv1f+ksi4NS5ClCSk=;
-        b=v8qDhojIuXwAmZ10uHV0kMWfSdCYH4lNBLhlfOVNLjz8IPBowJ5FBt9ajQeEcuvUDB
-         V87cbl+6J85V02YCxbNoTVDykMUUPuiGIdMrXeA5sUUPiGJZXA76dv5J3Qii0xhkUWPu
-         ijxakzbSb2Gak2z+CKtDw/X8rV0dXM/hd62Xt0NwgTEMR8WHpELymxi/W4EyFeHU45Dh
-         OGvjpmEkC8mCc2NCfiVL72qm0hoiofdX5qZX6YM+SiTxavhG96X5ggl+ihDMS4kkN/PK
-         5EZqydrzgTXqKZmU3/uGNAZk2KM6xnoa/DtpI9+XYRjNw0g3u0+rdHPL0PQVTefLQyyi
-         eblg==
-X-Gm-Message-State: ACrzQf1OiuOdNlei8CbBbyLKNecGWM3LBhtdyDE1hh2RgltgcvQ0ovpT
-        vJxrHxtmqMiFzqDqRUKXmnIqXQ==
-X-Google-Smtp-Source: AMsMyM7t7rB1wfZCVKbIzHcTfNTU/VZVxlfoar57U8XOg0YONc2uBqrv0baYybgTz5uENGKttyDiuw==
-X-Received: by 2002:a2e:84ca:0:b0:25d:77e0:2566 with SMTP id q10-20020a2e84ca000000b0025d77e02566mr6839607ljh.78.1663661936144;
-        Tue, 20 Sep 2022 01:18:56 -0700 (PDT)
-Received: from krzk-bin (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id j10-20020ac2550a000000b0049a747d6156sm185928lfk.287.2022.09.20.01.18.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Sep 2022 01:18:55 -0700 (PDT)
-Date:   Tue, 20 Sep 2022 10:18:53 +0200
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sireesh Kodali <sireeshkodali1@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>, andersson@kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=zaiJOfQLVu73Ck1GD1MriF7Mol9UFK9xKfuzOqaBT4A=;
+        b=MHvuOo7yXUsPEfApYKQ1udHTpMTTHbatYOmrcxGCLb43tIBTl3SS6ZvpIzsZaGB02n
+         s1ijextFjcJYVKUHb4jsjeu1GpIveZbhEzYaUP6zEvfRadCRiFkyBsibJI4EVzDG410X
+         jg2J21QrPmPHOrff1bNLn9PLx3RYbjfvNtn11b9ipDqpUZ8C3PF9hKBxm+U39idw+Nj5
+         Mf9WpkqzJh1l+6lEtqBYueKm3VKRrYTrtvp8wjlfwsegFH7we74ldvCpkKxBAkLlcJ9n
+         5OqBkbezdFeCYAZG8z34vYHAyanLddPEjYqp3q0fDVl/+ccMYZ25paTYLg/53FIgJhNo
+         864A==
+X-Gm-Message-State: ACrzQf0v1eUeIXGeYwdOKQcyZWFPhJvgs2jBQF+AssHihFvJ10NnmrIq
+        nHKU5PEizSap41WrkfbwFEmXXA==
+X-Google-Smtp-Source: AMsMyM5CfftZngElwySLO5p8IGXRjK+YA25ghlxdDuiuHKTzdzeUgn57EGrNlet0OGabjvK1lKvOCA==
+X-Received: by 2002:a05:6512:234a:b0:49d:3155:45a7 with SMTP id p10-20020a056512234a00b0049d315545a7mr7259519lfu.245.1663667690971;
+        Tue, 20 Sep 2022 02:54:50 -0700 (PDT)
+Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
+        by smtp.gmail.com with ESMTPSA id t2-20020a2e8e62000000b0026a92616cd2sm184276ljk.35.2022.09.20.02.54.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Sep 2022 02:54:50 -0700 (PDT)
+Message-ID: <a047f284-9af4-d5f3-4cb0-5c9955237fbc@linaro.org>
+Date:   Tue, 20 Sep 2022 11:54:49 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
 Subject: Re: [PATCH v3 2/4] dt-bindings: remoteproc: qcom: Convert wcnss
  documentation to YAML
-Message-ID: <20220920081853.3rzq7wo6rnpao6p5@krzk-bin>
+Content-Language: en-US
+To:     Sireesh Kodali <sireeshkodali1@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Cc:     andersson@kernel.org, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>
 References: <20220920030316.1619781-1-sireeshkodali1@gmail.com>
  <20220920030316.1619781-3-sireeshkodali1@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 In-Reply-To: <20220920030316.1619781-3-sireeshkodali1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 20 Sep 2022 08:33:14 +0530, Sireesh Kodali wrote:
+On 20/09/2022 05:03, Sireesh Kodali wrote:
 > This is a direct conversion of the existing txt documentation to YAML.
 > It is in preparation for the addition of pronto-v3 to the docs. This
 > patch doesn't document any of the existing subnodes/properties that are
@@ -82,35 +88,11 @@ On Tue, 20 Sep 2022 08:33:14 +0530, Sireesh Kodali wrote:
 > patch.
 > 
 > Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-> ---
->  .../bindings/remoteproc/qcom,wcnss-pil.txt    | 177 ------------
->  .../bindings/remoteproc/qcom,wcnss-pil.yaml   | 267 ++++++++++++++++++
->  2 files changed, 267 insertions(+), 177 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-> 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+You did not CC me on cover letter. There is no changelog here.
 
-yamllint warnings/errors:
+Please resend following Linux kernel process, so be sure that people
+receive relevant patches, changelog and cover letter.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb: pronto@a21b000: compatible: ['qcom,pronto-v2-pil', 'qcom,pronto'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.example.dtb:0:0: /example-0/pronto@a21b000: failed to match any schema with compatible: ['qcom,pronto-v2-pil', 'qcom,pronto']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/patch/
-
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+Best regards,
+Krzysztof
