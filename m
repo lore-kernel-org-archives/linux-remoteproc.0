@@ -2,122 +2,287 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9249CC54EE9
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Sep 2022 16:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F56AC54EE9
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Sep 2022 19:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231593AbiITQVK (ORCPT
+        id S229598AbiITTvf (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Sep 2022 12:21:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32908 "EHLO
+        Tue, 20 Sep 2022 15:51:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231420AbiITQU3 (ORCPT
+        with ESMTP id S229575AbiITTve (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Sep 2022 12:20:29 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373746E2D2;
-        Tue, 20 Sep 2022 09:19:08 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28KDepPC000541;
-        Tue, 20 Sep 2022 18:18:53 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : from : subject : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=Fuzpo1KA9EIvuO1nutCFARCuxN7c93A8fo/K8BWKVew=;
- b=M1CQli7vwCwLhN5pNP82HDR2NS5W3gsGkUTVc4QXTsgvDroMBo2E9upVF2NU0s+MHpX9
- HK54VKgoiHjeBY2jjp9M2XJZNyAhrbpk5YuTYbncLGcUxIoubqKhO0EfzWGOHwI75GS4
- NEUb1jmgwk1nkl2clsoyMLF5ixBvicf1QjlgS9AHTKrrTFAQ4iTlXQ5WiwxZcPh4jEdk
- Osc1MZH7hF3oPx2TzCje0ksS2fq5+wuy8LUBNCf02wlQUEgPawx31Ns7pq3o5Zor/VI0
- 1cbIUv83paRUKoeUzCaycvAf0jBMbze/rjg1yvWELQsEHs3M+3jlJxeHbud7Mxs6Zjlj Wg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jn6atts7c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Sep 2022 18:18:53 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D2C6C10002A;
-        Tue, 20 Sep 2022 18:18:52 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CDF1824B8A4;
-        Tue, 20 Sep 2022 18:18:52 +0200 (CEST)
-Received: from [10.201.22.245] (10.75.127.45) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Tue, 20 Sep
- 2022 18:18:49 +0200
-Message-ID: <954af8b0-7bc2-b0ea-f5ec-8e25e24b7d95@foss.st.com>
-Date:   Tue, 20 Sep 2022 18:18:27 +0200
+        Tue, 20 Sep 2022 15:51:34 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891E47171F
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Sep 2022 12:51:32 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id s206so3751927pgs.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Sep 2022 12:51:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=eGGyCLmqX21PYqdoRyWCXIZnky3GHSCL5lT2ITrEJ5o=;
+        b=fGRN7oMYqwM1PFpJFhEf2J3FdHGmcF/3mhPXv22I6/QlpXysWafsy236UMit6vwapB
+         P4SzvDHIuRjpXCI1MJasoXhu0BlO+i4zbTc4RMZK5DAwnuwgNGWSuYPv4xshyEQT4Uun
+         VgmNn51mvUosSmQl8WyG9oduYzoGa1qaFLG3zLbqhZiBuNQvHPvZ1yX3TlYe6hyQsUl3
+         5hQyZ6ZCcP40OPqEIs76tPrTKJ3ymYw5HQBth0sunYxWb05aw1oolFxct8qtKQrTrbaH
+         rVjLur/lvegcsxthuC1xxoW/1qG4/rbI54a4zCuqwnUA6/zFrwm9TtSmvIm+ZMovbClT
+         bhJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=eGGyCLmqX21PYqdoRyWCXIZnky3GHSCL5lT2ITrEJ5o=;
+        b=oC5aRSyPJbuccF5old1Zynj1nYXD9AaR5Pn4uZ0B90srx49hvkXaMOlwZkdeE7vkzl
+         aO4PiVYyDAZA56SjPUSyDIw8RB0bjPYxIa9QkNHlYj6KNFly0IikvHfwIMEOdHE3xMgT
+         Ev+HGXn5gTusyyOiYHTR/6kbde2BJJUebGMCVO8hktyn1z/k1clOlmSul2DTCbf7xZs7
+         TD80v13Pa/5qYvCjoNeh1ujdjSziwIOz+LmtbY2/OBwi4NZRy56lRX8wCiarHQEzbuE8
+         0T7pOFGO4Z+4Ar0V+h3q7Wm/ThtErhnKWgME71FMcy4J337jYmWtbz1m+QF0cJMeK9tM
+         wcZw==
+X-Gm-Message-State: ACrzQf0CNC151SP4PsGdtL9XkAFBkvfgBy94UCEFDTJ5OiRyWHw92086
+        ggE4q4D4TbKpZY8mJLjehTdGIw==
+X-Google-Smtp-Source: AMsMyM5ljjWdLmiYY62ZaRyb/GnDmm7DWKg3HqBQSS9R7a6ES2Jo9jz0PTUiApZPurfllmut6lNqzw==
+X-Received: by 2002:a63:784f:0:b0:42b:4c9d:79ee with SMTP id t76-20020a63784f000000b0042b4c9d79eemr21185648pgc.65.1663703492032;
+        Tue, 20 Sep 2022 12:51:32 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id f11-20020a170902684b00b0016ee3d7220esm323798pln.24.2022.09.20.12.51.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Sep 2022 12:51:30 -0700 (PDT)
+Date:   Tue, 20 Sep 2022 13:51:28 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "andersson@kernel.org" <andersson@kernel.org>,
+        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V7 0/2] remoteproc: support self recovery
+Message-ID: <20220920195128.GA1042164@p14s>
+References: <20220705011527.2849057-1-peng.fan@oss.nxp.com>
+ <DU0PR04MB94177A3658A8B5E57D0C5DAC884C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <DU0PR04MB94171E5A5D7EFD79E3C2D950884C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Subject: Re: [PATCH] rpmsg: char: Avoid double destroy of default endpoint
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>,
-        <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <shengjiu.wang@gmail.com>
-References: <1663310366-720-1-git-send-email-shengjiu.wang@nxp.com>
-Content-Language: en-US
-In-Reply-To: <1663310366-720-1-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-20_06,2022-09-20_02,2022-06-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU0PR04MB94171E5A5D7EFD79E3C2D950884C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Shengjiu,
-
-On 9/16/22 08:39, Shengjiu Wang wrote:
-> The rpmsg_dev_remove() in rpmsg_core is the place for releasing
-> this default endpoint.
+On Tue, Sep 20, 2022 at 06:34:18AM +0000, Peng Fan wrote:
+> Correct Bjorn's mail address.
 > 
-> So need to avoid destroying the default endpoint in
-> rpmsg_chrdev_eptdev_destroy(), this should be the same as
-> rpmsg_eptdev_release(). Otherwise there will be double destroy
-> issue that ept->refcount report warning:
+> > Subject: RE: [PATCH V7 0/2] remoteproc: support self recovery
+> > 
+> > Hi Bjorn, Mathieu
+> > 
+> > It almost two and a half month until now, I not got any response.
+> > You accept or not accept or suggestion?
+> > 
+> > In V6, I got a typo  comment from Arnaud, then Mathieu replied dropped.
+> > 
+> > In V7, I add A-b from Arnaud and no more response.
+> > 
+> > I not understand why ignoring me.
+
+If you were subscribed to the remoteproc mailing list you would see that every
+two weeks I send an email that lists the patchsets in my queue and the order in
+which I intend to review them.
+
+That helps people know what kind of traffic maintainers currently deal with. If
+a patchset is not listed on that email it is likely because it slipped through
+the cracks, as it is the case with this set.  You did not notify me and as such
+it was impossible for me to know about it.
+
+Last but not least I do not recall you reviewing a single patchset on this list
+since the beginning of the year, which automatically negate your right to
+complain about how long it takes for patches to be reviewed.
+
+> > 
 > 
-> refcount_t: underflow; use-after-free.
+> Regards,
+> Peng.
+> > Regards,
+> > Peng.
+> > 
+> > > Subject: [PATCH V7 0/2] remoteproc: support self recovery
+> > >
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > V7:
+> > >  Per comments from Arnaud Pouliquen:
+> > >    Typo fixes
+> > >    Added A-b tag
+> > >
+> > > V6:
+> > >  Rename rproc_firmware_recovery to rproc_boot_recovery  Drop the
+> > > unlock/lock when do reproc_attach_recovery
+> > >
+> > > V5:
+> > >  Rename RPROC_FEAT_ATTACH_RECOVERY to
+> > > RPROC_FEAT_ATTACH_ON_RECOVERY  Add kerneldoc for rproc features
+> > Change
+> > > rproc_set_feature to return int type and add a max feature check Use
+> > > __rproc_detach and __rproc_attach when do attach recovery
+> > >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > > hwork.kernel.org%2Fproject%2Flinux-
+> > &amp;data=05%7C01%7Cpeng.fan%40nxp.
+> > >
+> > com%7C9dfde1d27090471a892208da9ab7bede%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301
+> > >
+> > 635%7C0%7C0%7C637992411213950582%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C
+> > %7C%7C&
+> > >
+> > amp;sdata=LHIDdh2f%2BKYD2dJmiEqBGV0D5p4qgiay5KhvuTdDjHQ%3D&a
+> > mp;reserve
+> > > d=0 remoteproc/cover/20220615032048.465486-1-
+> > peng.fan@oss.nxp.com/
+> > >
+> > > V4:
+> > >   Based on Bjorn's comments on V2-2
+> > >   Move the rproc_has_feature/rproc_set_feature to
+> > > remoteproc_internal.h and  Keep rproc_features still in remoteproc.h,
+> > > because we use RPROC_MAX_FEATURES to declare bitmap.
+> > >   Update commit log for patch 2/2, and add comments
+> > >
+> > >
+> > >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > > hwork.kernel.org%2Fproject%2Flinux-
+> > &amp;data=05%7C01%7Cpeng.fan%40nxp.
+> > >
+> > com%7C9dfde1d27090471a892208da9ab7bede%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301
+> > >
+> > 635%7C0%7C0%7C637992411213950582%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C
+> > %7C%7C&
+> > >
+> > amp;sdata=LHIDdh2f%2BKYD2dJmiEqBGV0D5p4qgiay5KhvuTdDjHQ%3D&a
+> > mp;reserve
+> > > d=0 remoteproc/cover/20220323034405.976643-1-
+> > peng.fan@oss.nxp.com/
+> > >
+> > > V3:
+> > >  Resend the wrong labeled patchset
+> > >
+> > >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > > hwork.kernel.org%2Fproject%2Flinux-
+> > &amp;data=05%7C01%7Cpeng.fan%40nxp.
+> > >
+> > com%7C9dfde1d27090471a892208da9ab7bede%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301
+> > >
+> > 635%7C0%7C0%7C637992411213950582%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C
+> > %7C%7C&
+> > >
+> > amp;sdata=LHIDdh2f%2BKYD2dJmiEqBGV0D5p4qgiay5KhvuTdDjHQ%3D&a
+> > mp;reserve
+> > > d=0
+> > > remoteproc/list/?series=621311
+> > >
+> > >  Write a cover-letter
+> > >  To i.MX8QM/QXP, they have a M4 core self-recovery capability without
+> > > Linux loading firmware. The self recovery is done by  SCU(System
+> > > Control Unit). Current remoteproc framework only support Linux  help
+> > > recovery remote processor(stop, loading firmware, start). This
+> > > patchset is support remote processor self recovery(attach recovery).
+> > >
+> > >  In order to avoid introducing a new variable(bool
+> > > support_self_recovery), patch 1 introduce a new function,
+> > > rproc_has_feature to make code easy to extend, cleaner, such as we
+> > > could move "bool has_iommu" to rproc_has_feature(rproc,
+> > RPROC_FEAT_IOMMU).
+> > >
+> > >  Patch 2 is introduce a new function rproc_attach_recovery for  self
+> > > recovery, the original logic move to rproc_firmware_recovery meaning
+> > > needs linux to help recovery.
+> > >
+> > >  V2-version 2:
+> > >
+> > >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > > hwork.kernel.org%2Fproject%2Flinux-
+> > &amp;data=05%7C01%7Cpeng.fan%40nxp.
+> > >
+> > com%7C9dfde1d27090471a892208da9ab7bede%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301
+> > >
+> > 635%7C0%7C0%7C637992411213950582%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C
+> > %7C%7C&
+> > >
+> > amp;sdata=LHIDdh2f%2BKYD2dJmiEqBGV0D5p4qgiay5KhvuTdDjHQ%3D&a
+> > mp;reserve
+> > > d=0
+> > > remoteproc/list/?series=621311
+> > >  Introduce rproc_has_feature
+> > >
+> > >  V2-version 1:
+> > >
+> > >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > > hwork.kernel.org%2Fproject%2Flinux-
+> > &amp;data=05%7C01%7Cpeng.fan%40nxp.
+> > >
+> > com%7C9dfde1d27090471a892208da9ab7bede%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301
+> > >
+> > 635%7C0%7C0%7C637992411213950582%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C
+> > %7C%7C&
+> > >
+> > amp;sdata=LHIDdh2f%2BKYD2dJmiEqBGV0D5p4qgiay5KhvuTdDjHQ%3D&a
+> > mp;reserve
+> > > d=0 remoteproc/patch/20220126085120.3397450-1-
+> > peng.fan@oss.nxp.com/
+> > >  Nothing change in V2.
+> > >  Only move this patch out from
+> > >
+> > >
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatc
+> > > hwork.kernel.org%2Fproject%2Flinux-
+> > &amp;data=05%7C01%7Cpeng.fan%40nxp.
+> > >
+> > com%7C9dfde1d27090471a892208da9ab7bede%7C686ea1d3bc2b4c6fa92c
+> > d99c5c301
+> > >
+> > 635%7C0%7C0%7C637992411213950582%7CUnknown%7CTWFpbGZsb3d8e
+> > yJWIjoiMC4wL
+> > >
+> > jAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C
+> > %7C%7C&
+> > >
+> > amp;sdata=LHIDdh2f%2BKYD2dJmiEqBGV0D5p4qgiay5KhvuTdDjHQ%3D&a
+> > mp;reserve
+> > > d=0
+> > > remoteproc/list/?series=604364
+> > >
+> > >
+> > > Peng Fan (2):
+> > >   remoteproc: introduce rproc features
+> > >   remoteproc: support attach recovery after rproc crash
+> > >
+> > >  drivers/remoteproc/remoteproc_core.c     | 62 ++++++++++++++++--------
+> > >  drivers/remoteproc/remoteproc_internal.h | 15 ++++++
+> > >  include/linux/remoteproc.h               | 16 ++++++
+> > >  3 files changed, 74 insertions(+), 19 deletions(-)
+> > >
+> > > --
+> > > 2.25.1
 > 
-> Call trace:
->  refcount_warn_saturate+0xf8/0x150
->  virtio_rpmsg_destroy_ept+0xd4/0xec
->  rpmsg_dev_remove+0x60/0x70
-> 
-> Fixes: bea9b79c2d10 ("rpmsg: char: Add possibility to use default endpoint of the rpmsg device")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/rpmsg/rpmsg_char.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 0850ae34fb88..562d545ac0d3 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -76,7 +76,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  
->  	mutex_lock(&eptdev->ept_lock);
->  	if (eptdev->ept) {
-> -		rpmsg_destroy_ept(eptdev->ept);
-> +		if (!eptdev->default_ept)
-> +			rpmsg_destroy_ept(eptdev->ept);
->  		eptdev->ept = NULL;
->  	}
->  	mutex_unlock(&eptdev->ept_lock);
-
-
-Good catch!
-I tried to reproduce it but without success. Do you set a specific config?
-
-Concerning the patch:
-
-Could you add a comment, to help to understand the condition?
-something like "The default endpoint is released by the rpmsg core"
-
-With that Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-Thanks,
-Arnaud
