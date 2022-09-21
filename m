@@ -2,120 +2,68 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C63FC6FA82
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Sep 2022 17:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B51C6FA82
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Sep 2022 17:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbiIUReK (ORCPT
+        id S230424AbiIURrv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 13:34:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58692 "EHLO
+        Wed, 21 Sep 2022 13:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbiIUReI (ORCPT
+        with ESMTP id S230474AbiIURru (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Sep 2022 13:34:08 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EFDFA1D5B
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:34:07 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id 78so6596578pgb.13
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:34:07 -0700 (PDT)
+        Wed, 21 Sep 2022 13:47:50 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2445A1D56
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:47:47 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id b35so9925383edf.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:47:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=tqW8IrEN/2v5/od3wWBPeJsmt7XPs5O3rrI2SPgUWJU=;
-        b=OV+pX2ADGO9Thd3w6cm3wsy6HdwQyBOvRf3huuNhr2e0lzE8RaczFP0LrefxluscY9
-         ZPCVPDcdkhtnnUZfzL7ttXlzZ85N/hsaAAFVphy/dScnDWmX9cgnmEr4d28k3H12SJDv
-         ch+plLUbtXcWNmsNJtbjOriDr4ATFMmz1WmnoUoIQ3l1bcOm7LlQ2WO1a2dhuyhR+oD3
-         UVnH3JrOVmFbwlAv7t8cC65sf5+dZuLd7HRKWWFLq1tsZIMitML2ga+3690alWtTGHSi
-         b6xihVujC5Bn2qvaStzOR6jWtE+yBBdoXICHz4rU6A9zXNuR1Me+6mjcyQhH4DxkWQ2X
-         AGBw==
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date;
+        bh=IhzlEO0THrG1SE6HbOTHTvIlgWVkA8nZcQ4nhBMF9VM=;
+        b=kUH0uLbdOTStyhAwWY6i2T2x3BCi2/R5wadBGaYOlUa1W5FuP8fKQEL9g8WxIGpr0m
+         pVxl0fSM2Iw67xD1q/pUY50anNiwIdjLvrQi3o44tPJy8jsEeCvOD6xHICxIyj6mTuAU
+         egDMlC+4lszSlKM4NYmAsEp7VVkwKL+c/nTwgyIJJJN9zmbLi6d8OMAW+/30DL3kziyy
+         jIrsRfxcoYNWpoEn2Hv6XbUEiyKqquK70kJtua+a/NSm5r6iWAPRzZ1McjR4/g95FgMs
+         IpYrHeSYbHmKPscpaLOKEAu9CcfvcrGKlch9HmaW+ZKmB1Hj7E22PU16WlUAVdH3Gapd
+         GZ9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=tqW8IrEN/2v5/od3wWBPeJsmt7XPs5O3rrI2SPgUWJU=;
-        b=1dd/K67d7Arbj/qzIKoywl8ZO5YAOUIVh5MYL1XHsm3hPLiEaxkwgL+gZGpVs4XS+0
-         g0mX8oXD7Bz5N5wYgR9Tpww4ocR7SdySKOBPEtqGjXMqKZmZI6NfPZBX4L2bIRrSpfht
-         yEhmunLx9W5+cYq6Ke1cdplFD4Iybv8e/oNJ7Kwa0+2bqrSF72GbKakpZU/pS3Zj5g3I
-         FTGjXbHfhw7MA1kInDdDtm+4heGMNvWfAdQvCTTJNcY666raqttr99U4k82V5Jx4QVB8
-         s6f4mQHLFbExXhDoXjp1l1IIn6fR9t4+6LMB/3AdNBkhnnlSwWIQm1ki8d1MFF+tV3Yk
-         lkHA==
-X-Gm-Message-State: ACrzQf2iEN6si6MS9/9va09K508JLlgCnEI0rv6BfaOq5orz5/jMV1Ns
-        2IM+ecc2oxbKhnymJAfUlLw4jw==
-X-Google-Smtp-Source: AMsMyM4pLXs9BEKjMLbhvSH92Rqr3M26qZQoo1sXp7W9nWSNMBersFVbi36c3lLwS/o5v+HDmjXqOg==
-X-Received: by 2002:a05:6a00:1781:b0:53a:8572:4453 with SMTP id s1-20020a056a00178100b0053a85724453mr30657060pfg.76.1663781647136;
-        Wed, 21 Sep 2022 10:34:07 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id f11-20020a170902e98b00b001751c61d3b8sm2288550plb.211.2022.09.21.10.34.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 10:34:05 -0700 (PDT)
-Date:   Wed, 21 Sep 2022 11:34:03 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     andersson@kernel.org, arnaud.pouliquen@foss.st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: Re: [PATCH v2] rpmsg: char: Avoid double destroy of default endpoint
-Message-ID: <20220921173403.GB1126145@p14s>
-References: <1663725523-6514-1-git-send-email-shengjiu.wang@nxp.com>
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=IhzlEO0THrG1SE6HbOTHTvIlgWVkA8nZcQ4nhBMF9VM=;
+        b=aaayiuslet1OgT1cmqkUZdum0oPEEZ+/ubUwrVjjMO6ADv53NNn5zhXxKLXjKf7InA
+         SLby8MOr3x9fIYsvplpNBPqZwEVcN0EAmwzjbL/bMZhYCnN7+kV7EGUWDUnZFgJrTy8R
+         /TZg9uKWVob/QOQ/9zIhWbDGrgbsGk4kcJlY9cC5T1PbTvyoKU53WH7rKp8MmBV6v0mp
+         3rov+7tAyr4e2Jzs+5bBcAJ2OTRThggVe/oMg5wNQdfRLzaLBD1YBh5oZfgJHYPEQs7x
+         MfOz8tD93GDdOU/JkFD1oCKzx09Jihtf0izXhS+8lv1oQOCVz4hJF3k61NjiNf6+Biey
+         hhRQ==
+X-Gm-Message-State: ACrzQf3un4LXgw57tL/Sv5ZEIHyeOLE2iY10dc+hIqULEdcBdtTqcyaN
+        fkdA9A0oNIkBVWMEyD0nw6WzwlZ+n0d+mPQiPTOX3+Mkqsw15g==
+X-Google-Smtp-Source: AMsMyM4GyfGfKZsHWzRujzVPr+kl3YPOyqjZ0borgYX8bBzWH4G0L6CWkVzyGhJ6q59WEjvxfLwywpqMVaiTmG561i8=
+X-Received: by 2002:a05:6402:493:b0:445:b5f0:7a0f with SMTP id
+ k19-20020a056402049300b00445b5f07a0fmr26079089edv.120.1663782465624; Wed, 21
+ Sep 2022 10:47:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1663725523-6514-1-git-send-email-shengjiu.wang@nxp.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 21 Sep 2022 11:47:34 -0600
+Message-ID: <CANLsYkzPfdHRHLSMzz=+b8Vdafr7oYdPqJozSNC2YfdyU1=V8g@mail.gmail.com>
+Subject: [INFO] Remoteproc/RPMSG patchset review order for September 21st 2022
+To:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        Kestrel seventyfour <kestrelseventyfour@gmail.com>,
+        Maria Yu <quic_aiquny@quicinc.com>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 09:58:43AM +0800, Shengjiu Wang wrote:
-> The rpmsg_dev_remove() in rpmsg_core is the place for releasing
-> this default endpoint.
-> 
-> So need to avoid destroying the default endpoint in
-> rpmsg_chrdev_eptdev_destroy(), this should be the same as
-> rpmsg_eptdev_release(). Otherwise there will be double destroy
-> issue that ept->refcount report warning:
-> 
-> refcount_t: underflow; use-after-free.
-> 
-> Call trace:
->  refcount_warn_saturate+0xf8/0x150
->  virtio_rpmsg_destroy_ept+0xd4/0xec
->  rpmsg_dev_remove+0x60/0x70
-> 
-> The issue can be reproduced by stopping remoteproc before
-> closing the /dev/rpmsgX.
-> 
-> Fixes: bea9b79c2d10 ("rpmsg: char: Add possibility to use default endpoint of the rpmsg device")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
-> changes in v2:
-> - Add comments
-> 
->  drivers/rpmsg/rpmsg_char.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 0850ae34fb88..3e0b8f3496ed 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -76,7 +76,9 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->  
->  	mutex_lock(&eptdev->ept_lock);
->  	if (eptdev->ept) {
-> -		rpmsg_destroy_ept(eptdev->ept);
-> +		/* The default endpoint is released by the rpmsg core */
-> +		if (!eptdev->default_ept)
-> +			rpmsg_destroy_ept(eptdev->ept);
-
-Applied.
-
-Thanks,
-Mathieu
-
->  		eptdev->ept = NULL;
->  	}
->  	mutex_unlock(&eptdev->ept_lock);
-> -- 
-> 2.34.1
-> 
+[PATCH V7 0/2] remoteproc: support self recovery
+[PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
+[PATCH V5 0/6] remoteproc: imx_rproc: support i.MX8QM/QXP
+[PATCH 0/2] remoteproc: imx: add start up delay
+[PATCH v5 0/3] Add support for WASP SoC on AVM router boards
+[PATCH V3 0/3] rpmsg signaling/flowcontrol patches (on hold)
