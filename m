@@ -2,171 +2,120 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2AAECAAD8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Sep 2022 17:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C63FC6FA82
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Sep 2022 17:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229437AbiIURRe (ORCPT
+        id S229945AbiIUReK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 13:17:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41688 "EHLO
+        Wed, 21 Sep 2022 13:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiIURRe (ORCPT
+        with ESMTP id S229691AbiIUReI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Sep 2022 13:17:34 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 130F79E691
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:17:33 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id j6-20020a17090a694600b00200bba67dadso6587628pjm.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:17:33 -0700 (PDT)
+        Wed, 21 Sep 2022 13:34:08 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EFDFA1D5B
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:34:07 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 78so6596578pgb.13
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 10:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=gwqmC4NuHafj5NpjpfTWwfVlcLnp7YqgtXIYrZ8UvIU=;
-        b=PiiyhcsWQFqUxuCDeFfp2lk9KFrX/5bsq/SThAtJAJJeNPohQT8R4aPO9yE3ANREP5
-         FPI4EdUTTSZTbWChu4N4TkBqgoh5nAcrgHsoSZkxUscYLzH7zRJwBdNROG7kiwjaVHKr
-         hz9Mw8e2R/+oJshVcYB1OfqTDMfSjLkhb+2EjerXVfQPMa6TPbfcH5ZS88G3yU7aSLb+
-         cx2SSvmgbl1TrDM6o1UKLUsi9dOJAw2Shp9yWFvIcoIq0vFFC1owuYa8SohYqmSmuhx2
-         SbzSKywgpC+/qoeTpHsk7ELOPyOsI2WY0kjafJDxpzbrmtSkZ2Pf0uUlNd37yyA5s93W
-         TuHg==
+        bh=tqW8IrEN/2v5/od3wWBPeJsmt7XPs5O3rrI2SPgUWJU=;
+        b=OV+pX2ADGO9Thd3w6cm3wsy6HdwQyBOvRf3huuNhr2e0lzE8RaczFP0LrefxluscY9
+         ZPCVPDcdkhtnnUZfzL7ttXlzZ85N/hsaAAFVphy/dScnDWmX9cgnmEr4d28k3H12SJDv
+         ch+plLUbtXcWNmsNJtbjOriDr4ATFMmz1WmnoUoIQ3l1bcOm7LlQ2WO1a2dhuyhR+oD3
+         UVnH3JrOVmFbwlAv7t8cC65sf5+dZuLd7HRKWWFLq1tsZIMitML2ga+3690alWtTGHSi
+         b6xihVujC5Bn2qvaStzOR6jWtE+yBBdoXICHz4rU6A9zXNuR1Me+6mjcyQhH4DxkWQ2X
+         AGBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=gwqmC4NuHafj5NpjpfTWwfVlcLnp7YqgtXIYrZ8UvIU=;
-        b=M3tbQsWt/gL3VxEl+DVLEEv8ZLZ5cGuJFyUKYnZA7uSmnkAXIe8n+u4mdEvv4Jvc2E
-         YdPEO1rkW18f1cGbKGLNkRoAeTr6b47Sl/hHC9eMnicGMPNaUuMQ2FVoyA9Yc0IgqI8M
-         7c5lcZsO8iKnA7VwvIW+NL2zt7d2cY/Golxh9HhuAtFxF3E8oOQcCYQjuAFSWKkNxfgD
-         N7MMhaWehZxaala+9M7QjRRSRuXvGA5b+/BIP5AwQztoN39ufgwrKuZzU4l6ebVwg3ek
-         QyMm3E6auzoGWHDGAsfWG6KPeJGo/gpnIiiCBgoUnkSbN+09CEYfsOh9BIE7wP6vfocB
-         9mKg==
-X-Gm-Message-State: ACrzQf1Yh322QEunXtOhpAI7gsVDDPcPOsi496rlH/lk9eCDT6xGp2S+
-        EwJx8iKW2eIIblmL5MBrhH/89g==
-X-Google-Smtp-Source: AMsMyM6HjQC0QJUFVRU0D109G/8mdTe39kBwFGdqjBEKgxhohkXgiJ1Efms3jEjlBFGKmITF60u2KQ==
-X-Received: by 2002:a17:902:f606:b0:172:6522:4bfc with SMTP id n6-20020a170902f60600b0017265224bfcmr5674724plg.133.1663780652546;
-        Wed, 21 Sep 2022 10:17:32 -0700 (PDT)
+        bh=tqW8IrEN/2v5/od3wWBPeJsmt7XPs5O3rrI2SPgUWJU=;
+        b=1dd/K67d7Arbj/qzIKoywl8ZO5YAOUIVh5MYL1XHsm3hPLiEaxkwgL+gZGpVs4XS+0
+         g0mX8oXD7Bz5N5wYgR9Tpww4ocR7SdySKOBPEtqGjXMqKZmZI6NfPZBX4L2bIRrSpfht
+         yEhmunLx9W5+cYq6Ke1cdplFD4Iybv8e/oNJ7Kwa0+2bqrSF72GbKakpZU/pS3Zj5g3I
+         FTGjXbHfhw7MA1kInDdDtm+4heGMNvWfAdQvCTTJNcY666raqttr99U4k82V5Jx4QVB8
+         s6f4mQHLFbExXhDoXjp1l1IIn6fR9t4+6LMB/3AdNBkhnnlSwWIQm1ki8d1MFF+tV3Yk
+         lkHA==
+X-Gm-Message-State: ACrzQf2iEN6si6MS9/9va09K508JLlgCnEI0rv6BfaOq5orz5/jMV1Ns
+        2IM+ecc2oxbKhnymJAfUlLw4jw==
+X-Google-Smtp-Source: AMsMyM4pLXs9BEKjMLbhvSH92Rqr3M26qZQoo1sXp7W9nWSNMBersFVbi36c3lLwS/o5v+HDmjXqOg==
+X-Received: by 2002:a05:6a00:1781:b0:53a:8572:4453 with SMTP id s1-20020a056a00178100b0053a85724453mr30657060pfg.76.1663781647136;
+        Wed, 21 Sep 2022 10:34:07 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id e22-20020a656496000000b0043be00f867fsm2123650pgv.60.2022.09.21.10.17.28
+        by smtp.gmail.com with ESMTPSA id f11-20020a170902e98b00b001751c61d3b8sm2288550plb.211.2022.09.21.10.34.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Sep 2022 10:17:28 -0700 (PDT)
-Date:   Wed, 21 Sep 2022 11:17:26 -0600
+        Wed, 21 Sep 2022 10:34:05 -0700 (PDT)
+Date:   Wed, 21 Sep 2022 11:34:03 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     andersson@kernel.org, arnaud.pouliquen@foss.st.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-Subject: Re: [PATCH v9 0/4] remoteproc: restructure the remoteproc VirtIO
- device
-Message-ID: <20220921171726.GA1126145@p14s>
-References: <20220921135044.917140-1-arnaud.pouliquen@foss.st.com>
+        shengjiu.wang@gmail.com
+Subject: Re: [PATCH v2] rpmsg: char: Avoid double destroy of default endpoint
+Message-ID: <20220921173403.GB1126145@p14s>
+References: <1663725523-6514-1-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220921135044.917140-1-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <1663725523-6514-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 21, 2022 at 03:50:40PM +0200, Arnaud Pouliquen wrote:
-> 1) Update from V8 [1]:
+On Wed, Sep 21, 2022 at 09:58:43AM +0800, Shengjiu Wang wrote:
+> The rpmsg_dev_remove() in rpmsg_core is the place for releasing
+> this default endpoint.
 > 
-> - rebase on for-next branch [2], to apply series on top of commit
->  7d7f8fe4e399 ("remoteproc: Harden rproc_handle_vdev() against integer overflow")
+> So need to avoid destroying the default endpoint in
+> rpmsg_chrdev_eptdev_destroy(), this should be the same as
+> rpmsg_eptdev_release(). Otherwise there will be double destroy
+> issue that ept->refcount report warning:
 > 
-> [1] https://lkml.org/lkml/2022/8/26/532
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/commit/?h=for-next&id=c81b67199cc4e2e4e8caf1abbbca1dc1b80bc642
+> refcount_t: underflow; use-after-free.
 > 
-> 2) Patchset description:
+> Call trace:
+>  refcount_warn_saturate+0xf8/0x150
+>  virtio_rpmsg_destroy_ept+0xd4/0xec
+>  rpmsg_dev_remove+0x60/0x70
 > 
-> This series is a part of the work initiated a long time ago in 
-> the series "remoteproc: Decorelate virtio from core"[3]
+> The issue can be reproduced by stopping remoteproc before
+> closing the /dev/rpmsgX.
 > 
-> Objective of the work:
-> - Update the remoteproc VirtIO device creation (use platform device)
-> - Allow to declare remoteproc VirtIO device in DT
->     - declare resources associated to a remote proc VirtIO
->     - declare a list of VirtIO supported by the platform.
-> - Prepare the enhancement to more VirtIO devices (e.g I2C, audio, video, ...).
->   For instance be able to declare a I2C device in a virtio-i2C node.
-> - Keep the legacy working!
-> - Try to improve the picture about concerns reported by Christoph Hellwing [4][5]
+> Fixes: bea9b79c2d10 ("rpmsg: char: Add possibility to use default endpoint of the rpmsg device")
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> changes in v2:
+> - Add comments
 > 
-> [3] https://lkml.org/lkml/2020/4/16/1817
-> [4] https://lkml.org/lkml/2021/6/23/607
-> [5] https://patchwork.kernel.org/project/linux-remoteproc/patch/AOKowLclCbOCKxyiJ71WeNyuAAj2q8EUtxrXbyky5E@cp7-web-042.plabs.ch/
+>  drivers/rpmsg/rpmsg_char.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> In term of device tree this would result in such hierarchy (stm32mp1 example with 2 virtio RPMSG):
-> 
-> 	m4_rproc: m4@10000000 {
-> 		compatible = "st,stm32mp1-m4";
-> 		reg = <0x10000000 0x40000>,
-> 		      <0x30000000 0x40000>,
-> 		      <0x38000000 0x10000>;
->         memory-region = <&retram>, <&mcuram>,<&mcuram2>;
->         mboxes = <&ipcc 2>, <&ipcc 3>;
->         mbox-names = "shutdown", "detach";
->         status = "okay";
-> 
->         #address-cells = <1>;
->         #size-cells = <0>;
->         
->         vdev@0 {
-> 		compatible = "rproc-virtio";
-> 		reg = <0>;
-> 		virtio,id = <7>;  /* RPMSG */
-> 		memory-region = <&vdev0vring0>, <&vdev0vring1>, <&vdev0buffer>;
-> 		mboxes = <&ipcc 0>, <&ipcc 1>;
-> 		mbox-names = "vq0", "vq1";
-> 		status = "okay";
->         };
-> 
->         vdev@1 {
-> 		compatible = "rproc-virtio";
-> 		reg = <1>;
-> 		virtio,id = <7>;  /*RPMSG */
-> 		memory-region = <&vdev1vring0>, <&vdev1vring1>, <&vdev1buffer>;
-> 		mboxes = <&ipcc 4>, <&ipcc 5>;
-> 		mbox-names = "vq0", "vq1";
-> 		status = "okay";
->         };
-> };
-> 
-> I have divided the work in 4 steps to simplify the review, This series implements only
-> the step 1:
-> step 1: Redefine the remoteproc VirtIO device as a platform device
->   - migrate rvdev management in remoteproc virtio.c,
->   - create a remotproc virtio config ( can be disabled for platform that not use VirtIO IPC.
-> step 2: Add possibility to declare and probe a VirtIO sub node
->   - VirtIO bindings declaration,
->   - multi DT VirtIO devices support,
->   - introduction of a remote proc virtio bind device mechanism ,
-> => https://github.com/arnopo/linux/commits/step2-virtio-in-DT
-> step 3: Add memory declaration in VirtIO subnode
-> => https://github.com/arnopo/linux/commits/step3-virtio-memories
-> step 4: Add mailbox declaration in VirtIO subnode
-> => https://github.com/arnopo/linux/commits/step4-virtio-mailboxes
-> 
-> Arnaud Pouliquen (4):
->   remoteproc: core: Introduce rproc_rvdev_add_device function
->   remoteproc: core: Introduce rproc_add_rvdev function
->   remoteproc: Move rproc_vdev management to remoteproc_virtio.c
->   remoteproc: virtio: Create platform device for the remoteproc_virtio
-> 
->  drivers/remoteproc/remoteproc_core.c     | 154 +++---------------
->  drivers/remoteproc/remoteproc_internal.h |  23 ++-
->  drivers/remoteproc/remoteproc_virtio.c   | 189 ++++++++++++++++++++---
->  include/linux/remoteproc.h               |   6 +-
->  4 files changed, 210 insertions(+), 162 deletions(-)
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 0850ae34fb88..3e0b8f3496ed 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -76,7 +76,9 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+>  
+>  	mutex_lock(&eptdev->ept_lock);
+>  	if (eptdev->ept) {
+> -		rpmsg_destroy_ept(eptdev->ept);
+> +		/* The default endpoint is released by the rpmsg core */
+> +		if (!eptdev->default_ept)
+> +			rpmsg_destroy_ept(eptdev->ept);
 
-Applied
+Applied.
 
 Thanks,
 Mathieu
 
-> 
+>  		eptdev->ept = NULL;
+>  	}
+>  	mutex_unlock(&eptdev->ept_lock);
 > -- 
-> 2.24.3
+> 2.34.1
 > 
