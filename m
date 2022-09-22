@@ -2,97 +2,118 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F093C32771
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Sep 2022 20:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63526C6FA91
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 22 Sep 2022 00:22:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229779AbiIUUzV (ORCPT
+        id S229695AbiIVAWy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 16:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50846 "EHLO
+        Wed, 21 Sep 2022 20:22:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiIUUzU (ORCPT
+        with ESMTP id S229720AbiIVAWx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Sep 2022 16:55:20 -0400
-Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2AB2A2AE3B;
-        Wed, 21 Sep 2022 13:55:17 -0700 (PDT)
-Received: from [192.168.20.2] (unknown [77.239.252.99])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id 88F6B14023D;
-        Wed, 21 Sep 2022 20:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-        s=donut; t=1663793715;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nGYXTPOt3zCzwp92JW8LyqdaThQz7kjvGR8CDOfHJf0=;
-        b=khdERCMXn98k8bYp7rsHWjm6DOW67jNr8VfAlgsY+kvPG+JkChAH2wwgUKv2EcbPf9+ei2
-        E/rYR2CbZriDsixJ2oMihcGo8PMGaHW7alVasFOJRvRO+VzfAoNqMqeKBSAwPmxwOY4swh
-        QNL8g8wjbyPhbZWU//9qGeJ5aidaaD4=
-Message-ID: <37ebdd21-e46a-fac9-7e87-57042ab67d5c@postmarketos.org>
-Date:   Wed, 21 Sep 2022 23:55:13 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Subject: Re: [PATCH v4 3/3] ARM: dts: qcom: msm8974: switch TCSR mutex to MMIO
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Wed, 21 Sep 2022 20:22:53 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A0EA5715;
+        Wed, 21 Sep 2022 17:22:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1663806172; x=1695342172;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=suI+CfiK0vZ0xqyxyfYRHjqOciiRcs1MgqvAcaA1Mcc=;
+  b=HXpwjos7rhOFq+eZJQr6/Nc6fi74yMqtYlDCyWYSzGUmKbKLE71pyEAE
+   6Ms9qO9pyod3NW/GkYNUF+0LUco0fVCsjzkEPhU4EIJ+2i15CcPF5GpxC
+   TF6FsPUdVqVJkAHkNUWsTtZQKfmT3+13oSyaXZtL8PHt25pWlGzvhzeXc
+   yBO/YS4rCq7EFGMbNERRjnk1sPDZf2LnnVW15QpA2ZFuXX/vDAVb6H236
+   FVlVzE1ypjty2yXtoSiEvYPwby1F7tGBDPC+H8nVBm5hi0Hrz9z0RJ9MZ
+   kP1HI/dGUXs3/YMiF3MYFVjV14VFjrPe05cGEsbKtLPbxF7wBU88zH3iy
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10477"; a="280530643"
+X-IronPort-AV: E=Sophos;i="5.93,334,1654585200"; 
+   d="scan'208";a="280530643"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2022 17:22:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.93,334,1654585200"; 
+   d="scan'208";a="761971990"
+Received: from lkp-server01.sh.intel.com (HELO c0a60f19fe7e) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Sep 2022 17:22:49 -0700
+Received: from kbuild by c0a60f19fe7e with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ob9zM-00046a-20;
+        Thu, 22 Sep 2022 00:22:48 +0000
+Date:   Thu, 22 Sep 2022 08:21:55 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220920150414.637634-1-krzysztof.kozlowski@linaro.org>
- <20220920150414.637634-4-krzysztof.kozlowski@linaro.org>
-From:   Alexey Minnekhanov <alexeymin@postmarketos.org>
-In-Reply-To: <20220920150414.637634-4-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org, Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+Subject: Re: [PATCH v1 1/1] remoteproc: qcom: Add sysfs entry to detect
+ device shutdown
+Message-ID: <202209220842.14LbOlkM-lkp@intel.com>
+References: <42d3ab9227ac3d299abcedbbdd68c86e1dd6acce.1663604826.git.quic_gokukris@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42d3ab9227ac3d299abcedbbdd68c86e1dd6acce.1663604826.git.quic_gokukris@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Hi Gokul,
 
-On 20.09.2022 18:04, Krzysztof Kozlowski wrote:
+Thank you for the patch! Perhaps something to improve:
 
-> -	tcsr_mutex: tcsr-mutex {
-> -		compatible = "qcom,tcsr-mutex";
-> -		syscon = <&tcsr_mutex_block 0 0x80>;
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on linus/master v6.0-rc6 next-20220921]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'm looking and don't understand where does this information go, is it 
-lost in the conversion? I mean those "0 0x80" parameters to syscon 
-reference.
+url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-krishna-Krishnakumar/remoteproc-qcom-Add-sysfs-entry-to-detect-device-shutdown/20220920-004947
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20220922/202209220842.14LbOlkM-lkp@intel.com/config)
+compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 791a7ae1ba3efd6bca96338e10ffde557ba83920)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install arm cross compiling tool for clang build
+        # apt-get install binutils-arm-linux-gnueabi
+        # https://github.com/intel-lab-lkp/linux/commit/dcf1afc28aee2a1770cdabe1f52d7e90532018c7
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Gokul-krishna-Krishnakumar/remoteproc-qcom-Add-sysfs-entry-to-detect-device-shutdown/20220920-004947
+        git checkout dcf1afc28aee2a1770cdabe1f52d7e90532018c7
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/remoteproc/
 
-Looking at the code of qcom_hwspinlock driver those seem to be read by 
-qcom_hwspinlock_probe_syscon() [1] using  of_property_read_u32_index() 
-as base and stride values and those would be 0 nad 0x80 respectively as 
-is now.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-But without syscon reference, in mmio mode, code goes through 
-qcom_hwspinlock_probe_mmio() few lines below, which says
+All warnings (new ones prefixed by >>):
 
-	/* All modern platform has offset 0 and stride of 4k */
-	*offset = 0;
-	*stride = 0x1000;
-
-So after this conversion stride value will jump from 0x80  to 0x1000, 
-which does not seem to be 1 to 1 identical conversion to me, unless I am 
-missing something.
-
-Perhaps msm8974 does not fall into category of "All modern platform"?
+>> drivers/remoteproc/qcom_common.c:97:27: warning: unused variable 'ssr_timeout_msg' [-Wunused-const-variable]
+   static const char * const ssr_timeout_msg = "srcu notifier chain for %s:%s taking too long";
+                             ^
+   1 warning generated.
 
 
-[1] 
-https://elixir.bootlin.com/linux/latest/source/drivers/hwspinlock/qcom_hwspinlock.c#L73
+vim +/ssr_timeout_msg +97 drivers/remoteproc/qcom_common.c
+
+    96	
+  > 97	static const char * const ssr_timeout_msg = "srcu notifier chain for %s:%s taking too long";
+    98	
 
 -- 
-Regards
-Alexey Minnekhanov
+0-DAY CI Kernel Test Service
+https://01.org/lkp
