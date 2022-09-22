@@ -2,58 +2,66 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FC8ECAAD8
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 22 Sep 2022 00:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB6EC32771
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 22 Sep 2022 01:11:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbiIVAzR (ORCPT
+        id S229819AbiIVBLw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Sep 2022 20:55:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39740 "EHLO
+        Wed, 21 Sep 2022 21:11:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiIVAzQ (ORCPT
+        with ESMTP id S229986AbiIVBLu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Sep 2022 20:55:16 -0400
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2066.outbound.protection.outlook.com [40.107.22.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0550583065
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Sep 2022 17:55:15 -0700 (PDT)
+        Wed, 21 Sep 2022 21:11:50 -0400
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com (mail-eopbgr50049.outbound.protection.outlook.com [40.107.5.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B24594CA0C;
+        Wed, 21 Sep 2022 18:11:47 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LTWhgqrJXOsCbEjo1+WrJppDEPoLkljMqD+x0H9iZNH1OAgSPe0twxfMroRT2DTg/DsTntjXVP3sNqbTq5COh3s2OaHzQPiKnQ3lPED8iSZ8RAnqESOdjYnGMqNPVIJdyPngcjVX83BWMXcshOrAYwNs/vs3iuIS8fNvkwbKNz0wYhTZ6KLG1P2dNXIsdKOaO7hETWP3EwWCP0AT4r0MthMODjVujoHX9GH9bxzPBX3wFPZUen+23cnc7bLh7W20LTE7xFSgGVeGIV3NwFb4sb0vHMwWwuGyAQVd+OEB1ZauMa857Go9zQC6DViRiOyga+mCJK2kRZ9JfJnGkFGyQA==
+ b=KpE4V+7Kx6qEwhb/32Y9oZXyNiHQ3SV1kNSjmkSXXle+S7vC3CcCxLOXFH8oTQS4/PQdXhUU3FbEz1pO+QXILDkpw2H0WcL84xtwXLbkJrb+ZJTiu5FxHFEp9Rkpi/CUBj3JDVtRjm4XgLtENJjsOZ4Tsy+mdnObELeEWMNmv4Uf58cCbbks/ZlKuC4aQ6iGWVli+WozRzOqycgak47rW5pbAqi4hwEk8CSUsLkf10JyX7Q/uOGZhSnu+zTiU544efoDQpou/z+AnVEIU3KZ5IF8/blMOXwGPg6JyMTkIEsaH66nu2zT276t4Yuso60z7kiwjNMbnqNLDSs8ED51ug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GvL999dXYTUFPXXWzfJuFJ/rOVtGLrTIVvtdlFVMWU8=;
- b=UtnBeYwuhaLIc8QS6NA4Cfx8hhHrUXdrNzmsceuxs18lxv14Xw4+uNGQeu69DGaX/mC0RceiMpwXxVsWWbtK9FvvzSCGAXfwIXU7qhEMv223ox4qJUdzcLmuBn2KwZYUoYGUItRow5BPnwiqoF9qNcKveYiX7N1/BtHwh98BRpscEIWxM3+jZIZDRzHY2AtVQ/Hhr4wpw/T5K/6KzyzGr8yusq3ToE5TeIrvCw7w1wNk3jYG1n2VYDyVROwt1lHvTIsKuEz2Ze1tpndV9KKPjXob665/g1NxolGIC9OnVuIc2lMuq1R0n1VyfNn8EHg2a4e6VKImwpmKr3tAhDPyOw==
+ bh=jrwnkemrR/YKQaFyjth2zbQCFDwhaaEEZmlUkTgHepo=;
+ b=FT7hpANcjmiL57w4PW1ueRR8DxLyYqoyTSty9mIeS8fVP8/ywUjj8rG5vCFwGbnt4FNOQ3/6PCSokulTpq87V7oFZAX98P+XGRWULqLmN/4latvf5vb0jhTvNbjHcIt643/kX79iALycLyWtj1nswGCrxaN9/GBMNu4Zkw6osT21kIcZk3GnBYC7DVTQyjWY6+psqIPkHLwop/R8ysZu8nMFgnFfofQuK2yP5FUJ53bXsGINx0DiWVr2PRYDVWaGLDtHs9t8vLLNZJzX7SJ+WorGoi2//y4u4JCcyVuGsUiWPpzqQoNBTEy+5NLeM+AtVCgcUtU+gpHBNbkctCiBTA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GvL999dXYTUFPXXWzfJuFJ/rOVtGLrTIVvtdlFVMWU8=;
- b=VM11AoPJEQF/dmcXZLs++xhqZoCkAMICL9bPSnpo/AW7SZiPux2HtSl2gYzj+pyP5IMCku8J0sDvONVuFg0mvBEg0Qzl0DAqc2zfp2NpEvVouBtYPm5qY/EfVHhh+rsLAmA+KoJKnQtMRrePAqLHpU7WiO2QcVAgx7jfZDvMQ90=
+ bh=jrwnkemrR/YKQaFyjth2zbQCFDwhaaEEZmlUkTgHepo=;
+ b=P+1Ev9cNCWGklELMAYB17DdjIrqVMITzVMqSJiEx3uZkvG2lUCp0LhZt79xWug6TMI8t70cB3FGEoOZme4AZ71V1nlv9l2JgPe2b/b/9VU+qyNCSnA9TUbTLb2Cq4DvnyDl3H/pD+2BIHLYnFIMQV9FyEsJcGnsowQnz6JJU5j8=
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DBAPR04MB7398.eurprd04.prod.outlook.com (2603:10a6:10:1a0::7) with
+ by AM9PR04MB8698.eurprd04.prod.outlook.com (2603:10a6:20b:43d::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5654.16; Thu, 22 Sep
- 2022 00:55:12 +0000
+ 2022 01:11:45 +0000
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::1eb:dcf:8fd7:867]) by DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::1eb:dcf:8fd7:867%5]) with mapi id 15.20.5654.018; Thu, 22 Sep 2022
- 00:55:12 +0000
+ 01:11:45 +0000
 From:   Peng Fan <peng.fan@nxp.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>
-CC:     Kestrel seventyfour <kestrelseventyfour@gmail.com>,
-        Maria Yu <quic_aiquny@quicinc.com>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: RE: [INFO] Remoteproc/RPMSG patchset review order for September 21st
- 2022
-Thread-Topic: [INFO] Remoteproc/RPMSG patchset review order for September 21st
- 2022
-Thread-Index: AQHYzeJDvtak9kjUrEOC0LdWH8F3363qnqSQ
-Date:   Thu, 22 Sep 2022 00:55:12 +0000
-Message-ID: <DU0PR04MB9417D52A272538C18E893FA7884E9@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <CANLsYkzPfdHRHLSMzz=+b8Vdafr7oYdPqJozSNC2YfdyU1=V8g@mail.gmail.com>
-In-Reply-To: <CANLsYkzPfdHRHLSMzz=+b8Vdafr7oYdPqJozSNC2YfdyU1=V8g@mail.gmail.com>
+To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>
+Subject: RE: [PATCH v1 1/1] remoteproc: qcom: Add sysfs entry to detect device
+ shutdown
+Thread-Topic: [PATCH v1 1/1] remoteproc: qcom: Add sysfs entry to detect
+ device shutdown
+Thread-Index: AQHYzEehbNqp+4WP5kC4mL0JhZ+SEa3qpRCw
+Date:   Thu, 22 Sep 2022 01:11:44 +0000
+Message-ID: <DU0PR04MB94171ADF7D72882F0B88AF78884E9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <42d3ab9227ac3d299abcedbbdd68c86e1dd6acce.1663604826.git.quic_gokukris@quicinc.com>
+In-Reply-To: <42d3ab9227ac3d299abcedbbdd68c86e1dd6acce.1663604826.git.quic_gokukris@quicinc.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -61,77 +69,198 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DBAPR04MB7398:EE_
-x-ms-office365-filtering-correlation-id: b3926c9d-0a15-400e-6278-08da9c351b00
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|AM9PR04MB8698:EE_
+x-ms-office365-filtering-correlation-id: 879076f6-b645-4fc5-68b6-08da9c376a81
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: AqmqvjLqzmJ8IwAyhnSbggktPNdkz0N0reQ3s2dBLI/n0/gkpWkilEYGJE7R7uez74lbfMTEsZ+RNDb66dvFiqPHYSGlexWI69KrvWQZ4qzgWu2s/zW8Pis5j6s3ZyJafDgY1DdXrBTzEzkO6kZ8G4HAq8C0x+fMYxUR+KqqvuDbiA/0GcVe+jKo2qpvyLXdck2AxNaWkdhj6PPLLiOxSX4UlCpsgnyefjWTTeuk8c73q2dznVnlvm30IVzbIa3rthwmqDqnCYo9JhTNFmDmAxyqH54p2hAlqay/Rwe9d/vrj0vCkzhkxSEkPfJacCVGrsRDUsileF5KKymALAusE2WrU8KlnaixrqUd9QmC5R4CKlak36j0rFpauAOQs15S6KXThQQWkKZjAYqQEcrOWcVjcTuS2bUdVlRCgSvN8JmA5EaHZEDclGcaanI9RAuQk/NFCvGMgJWwY5EoZPx7fdjkATU+WZ3MQynEQd66vUMuA5GplKk1FLvpnK02cGtQ6FwEBE5y8Fxkw3Yrl+AmQ2h/po1Bfk7nFdzbfX7YS83YNd52z+/rI5V3ENmsHap/aRGkyms+pignshbYzFUstFNa5tTOJne+EbRdnqZSb+pSt9hCHlfwprkUNvIZnSl1WhSTWu0QUFURbmsiop/xnBjqpz6p4XPi0SnMFMC9KKkAB8YuXBuHdWuwEW2kZAh4qfpn5f1fQpkE2SyqlSn4ESfNZOIMlsGXokoVTdS05pyci2yXHWbx0uBMQbOf3n2rSq8jex1PQUbnIJOlktUy9Q==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(136003)(366004)(396003)(39860400002)(451199015)(55016003)(38070700005)(4744005)(2906002)(86362001)(33656002)(38100700002)(8936002)(52536014)(54906003)(44832011)(186003)(110136005)(41300700001)(5660300002)(66574015)(478600001)(71200400001)(9686003)(7696005)(26005)(6506007)(66556008)(316002)(66476007)(66946007)(4326008)(66446008)(64756008)(122000001)(76116006)(83380400001)(8676002);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: KUTLYUX4qnIR64HlU4nVcYhBfk9majHo1WgqkT+0aHpif8cZ2ud7HUmHu9n5RIUB1qVy/G6HmWBbIxRVQPWvxoTe96LV1wzusznXVwOe3Fl1EEfKqFSRrzNS3cy9vlFV0GKzsKEOJ09+Jr5zMrjhBvEzW7Mk216pBj3oyFTUefYkqh9wuN15nxugRx4NFCqvAR/NxBqoI1jh0hnuNQWudZhy/qcLMYwVWl5qfrQBvbkn5h4HkpBwWTd23S7JWHjMKpjoUEMBL9jB4h/pBpPCn5JkKI//vX2BOLKl/U5EuA9FnOVRd6DLE8UaB3faP3H2T8i8X70Yr+Bg+BcH+qZtKidLtiCxoinqRbyulq5OzmlX5KjYmJPBnXuSI2Tmfs9oY9UQH1gZbyiGIEDb0AvJwqLT2Wnr+qVfend/ZZHQX+yTnM5uYhdb4dsSgMoWPaTjvaZFYZK4YulVVqi8fBcpcFmlYvPhoYsZLNHjzf6Ff/GAK6WWGdHmmzjqx5vClj7mZ68UiBvhYe6tvOzvulzADg0mUnjcxJZk/+4NNHBsAKFyMFtQuWnw9n6NrL6Q92d+Hrquiy7rqfV+Fd0DRpo2/v5etIOMq8PfW7D5lP9fvwws/ZmZ5zRZ+rdYaC+WFLn0d1VFNjplokqL9K9YukDguwScJ64keoxSwEk6w+e2zsNs9D7nVIwleDSSmXkpegrqcExTeVKdF9WtbrTgG908L9e0gPtdm7MgUAWjSmuNG3H3lMjcDTxCAw//HyyDJ5azmMn1dnhuXmpAuQBqbJamIA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(136003)(366004)(39860400002)(396003)(451199015)(8676002)(110136005)(66556008)(55016003)(64756008)(478600001)(5660300002)(66946007)(66476007)(52536014)(8936002)(7416002)(66446008)(316002)(6506007)(54906003)(4326008)(76116006)(9686003)(71200400001)(26005)(2906002)(38070700005)(186003)(83380400001)(7696005)(86362001)(33656002)(41300700001)(44832011)(38100700002)(122000001);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TUpzYjl5S0p6bjhES0FPa280L1FrVStBQTB4aGV1N29KUzZNZ2hpa1pFQWNM?=
- =?utf-8?B?RmtMbWVXd21WdHR2UUlqZkl1MW9LWUtjNEFZZStUMzdyRG5TOStPY3lZSFJT?=
- =?utf-8?B?V1E5MjBkSjRHdTc4K0l4dXlhTDhEQ3NLTkp6TjV4UThUa2ZjdlEyRW9wUGNQ?=
- =?utf-8?B?a2NXU2RFbnBuaDNyZG5TS2RwS3hjOGg5bElFbW1KL2tyaGRkWGVpQ1JlQ3Fj?=
- =?utf-8?B?UU5XcS9FV3B1NTMrM1VnVkh6YStoWEFOYytNM2NLQ3I1MDR2NHFtQ3Z5dU50?=
- =?utf-8?B?c0dnazluWlZkZVBLK0VTZjRsTUo1VStZTmU4a3RFeHJMUkhLeWdGdWppR3RF?=
- =?utf-8?B?aVJuek1qMWVDazNxSWVYQVBUWVlnMzJGaUFYWGJEaDE0N0wrNzRLenlkNzVR?=
- =?utf-8?B?aEo1dG1rVWpJNmVYKzlZcDRhekhoNmlIWEVKRHV6K1Z5dFhmRlZSOW5aQ2t5?=
- =?utf-8?B?WTlISzJOMXcvNFdtMVVwS2o5aWhPYlEzbzN4VTJNQ1RBR0gycE5MQVZuQWdh?=
- =?utf-8?B?eTRNdkY2ZmxON0tBaExzRWVTWHR2NUlkcmtqU2Q1Q0UxNnZjREFHOWdPaW0r?=
- =?utf-8?B?ZUVORGRJWE83dnFIZGZxMWNQdFZzNjcxc3kzMzZWdDlSaUFZYi81Y3BHUGts?=
- =?utf-8?B?c3JxU3JDdDYrVkErWlR6dzRXS3lSU3FOUzQvK2JYdDNNMzZ0ZVpLMTNrK3FX?=
- =?utf-8?B?SXFUMEozaG41RUVGT1FDek9NdkU2SUc5TGExVy90bzljOEJVRWU4VzZlNHZR?=
- =?utf-8?B?QjFGL3BtaGNPRS9vZ2pRUXZZVVVELzBvOVREU0VzY1NOb2R6QlM1YXZxdE9C?=
- =?utf-8?B?Z3ZXZFhVTU1EaHExRk1HbEdBMFFQcnQyeEJxTk00T2Ewb0tyeEUvTGE0SG5h?=
- =?utf-8?B?bG5hVk9SMzZJajdVc2c4eGdlTTNxQnBTSm05K1dGaDBVTHhiQlBTYmg3R3ZU?=
- =?utf-8?B?MTFPRk5yUUFrUUV0cHRDamVMYmxjVUJGc2tkUHA3bDdJaStSa2JOc1NGci9E?=
- =?utf-8?B?MU5td3lDZWdGOGxoZkliQ2xGWFZFUUZEcnZ4djU1bnJOMEZCQVNzdHJzUndz?=
- =?utf-8?B?d2ZKQzhRbUNZd05DdWpJT2lIdGJUU1NJWXdRQ0xOaTczYStYUW5LbTcybGo5?=
- =?utf-8?B?T28rSGpoTmJqUHgxVEdaTWdPSWdVQVA4SXVlS2pTRXpsS3pISCtaYVh2aGYy?=
- =?utf-8?B?SWtmNE1GejVmcnFZWkw0S3UramhiRUVlYjlsQlEwK0x2WHVnVUxFVXRaeGlS?=
- =?utf-8?B?MWtKeUI4aG0wSTZ3ZXZLc1hDaG9PVHpTV2lNMm9zSXYzcEI4ZmdsaWtMUWEz?=
- =?utf-8?B?Z1hJR2ZSQlRMYy9YNXZZL3ZwckpPZURrajhvSUFZcGJkVk9KZjhONVJuRk56?=
- =?utf-8?B?clc2VFpYZ0xmZW1oMzMxdWoyQytYSUUxTnRkU1NaZ1FFMk1iTVkrN1FQT2FV?=
- =?utf-8?B?UDExcG9VSXdYRzI5VHl1OWQ1UXlKdTR0OUJPbDRjVW0yVVZ4bG1XSnAxdHdj?=
- =?utf-8?B?SmszVHR2N0NvejJGdXVrdU9WVXJKZ0FINDZUbTZhN2NyUW13NFk2VkFUYUl1?=
- =?utf-8?B?cTlzckZQRkVKOFhCY1ljKzhodERzOCtvOUE0WnFEZUovUTNWcTJlZitSeU4w?=
- =?utf-8?B?SzdNWDRvakZNN0ExeW9RZnJxemsySHE0UHZPZnFtRUNYNHBXK05OQzNVeUZ4?=
- =?utf-8?B?MzFyWkhPbnRqN1lrY1RQWWhxQ0lnUFBrUVVnb24yeUZOM1BTbmtyRVlxeksv?=
- =?utf-8?B?ZFBkZytJWTJTY0prb2Y4UWJxYTh6RnluQkFsdE11MnNDdDF1dlFmcUg1YkZG?=
- =?utf-8?B?azRZb3Zodjdab2VncTB3cFRUdDJEWkNDWmRFaWFaSzRHeXVWeU0vOW53bGJF?=
- =?utf-8?B?OVdDQy9JRWY5QS9zdFJPN0p6TTdxYzd1dDA5UlZZZHB2Z25FUGxsd0c3Q1Bu?=
- =?utf-8?B?MEpqWlZrVDZydTh1YWFXMTJOWXY2d0kzSUdnL3N5dms4d1JZbkJBL2xaRzVB?=
- =?utf-8?B?bXZmL2JSdmpjWTF3TGtPTmtUWGd2M1RSTFg3K1MwYWlyTnhNWDBTUUhKaW1t?=
- =?utf-8?B?WmQxNWpxbjRJb1JnNFFOdjhJOXRrbDZ6TnhZOG9nTlY4RDJGU2VQY0FNVjcr?=
- =?utf-8?Q?3El0=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7mmgV2hLiF1Qg59d8VO1GLKcWQDf4NtQzURanDhXpBsrdRsI4yaicKhV2stB?=
+ =?us-ascii?Q?NkSxnr0wFzjVhtxfFg7u1+zHW4zGiU4r1kdYhcRxr8eUfCeg/rG0Peu3H/pQ?=
+ =?us-ascii?Q?0O234pE9gvBStlnFsZEfGsCuVgm636/EUahe67gYCAVcbUrYLD/Yw/X+LYnM?=
+ =?us-ascii?Q?j4HMBD+WWGLM4CsI6XFAP/P04CM1NbvfQ1G45ISXEhIO4mcBGR2GLVU++EGM?=
+ =?us-ascii?Q?oUyrADzPM/13frf1nSa5Zvufw1mkpZaQ8Z0TO73jt5sO/pwq2LDJuHqqLum9?=
+ =?us-ascii?Q?6jnmycq0leOzSA4ldYf/Oos/xxoLgHONylbB9vRbvy/Tz+l0LHtGcVLJkynB?=
+ =?us-ascii?Q?IFh2b8PRU73aF61Ok6/r44t4kT2Buo2toIjGoUXwjkYxKTQfap+UNuUpq3Cy?=
+ =?us-ascii?Q?ugmiceDAg6I7UXkH0jhpz4w6INJCTU2kfeoj1SmxnBGtLNS2JyOwqFyfruhT?=
+ =?us-ascii?Q?Srtd6Doh0TrBmBoigwBgaseJ3TECZjvHiNjxsZUEOyEorN/0s01JfIqEbrpi?=
+ =?us-ascii?Q?5rL1VsA9O49/HuMaG5hDKPYwIAiVbiy3h7VwHvxgRHUUNQROFssIyXHjXKFm?=
+ =?us-ascii?Q?yd1V+cQQyfSenuRlu/btp8Pr0y7GDGOgC4LUCssik5Ucs2BmMIb5ea2PtxP6?=
+ =?us-ascii?Q?OJYzBCJTtuqeGP5e3tKGE7/Oe1JNJcnPY1uCUdxkDjPsktNGcwMdI6bDGOZK?=
+ =?us-ascii?Q?MemEU3P/5fsL2M8tz04NyBntH91+y2GD4pYe9fk2MOrsE7IPkZdIdcdScTw2?=
+ =?us-ascii?Q?oWfL3Dskd+2FLeM8bgbENv14F1n7iUy8aP288Zl0orEJIzBg30A17tni5aln?=
+ =?us-ascii?Q?Nn+FVkokBm302GHSGZGfhrnubegXkn9jTlMdHnHu2ovEYO4bOXbQRXzkR/zb?=
+ =?us-ascii?Q?yIQpxAqrxt0dWfAln5jlf9yyKjhs+0iYSDSnJMcuRdWjw86eDqWdf2K/HU3h?=
+ =?us-ascii?Q?baQr+R6U3vUd8vqgm3CbvcF0BeJ0PaibnPtmdKeuRH2WNwXfs5zuCVmzrx9a?=
+ =?us-ascii?Q?0i62fBXEc2QSvUrDn3yP4LHEf3VPK5mdArmTGqCtHsReMjN3UwnOsHJvvPh5?=
+ =?us-ascii?Q?qXPbDO/zEdPO3iDGR7HdIKrv+Op8b5+m9FW0WEgzRztr13xcVFH1kQ7Ki5F1?=
+ =?us-ascii?Q?Hsf9fbaQEiDvV2O2s4lzCvLw1LF2cfX9g0FHh/7RH4YtR/gTct1m/ge6NAg4?=
+ =?us-ascii?Q?CW/An9t2simhgAwJvifYQlY7/lZs/xhg/D7+y4tKaLuwS/h5QS103X0Dro0i?=
+ =?us-ascii?Q?3rnvnrc7SHs90mkJFqWd3YUc9E664HEui4SeZ0pvGtYUYmQ58liKRauy70X8?=
+ =?us-ascii?Q?oXbTF/WvYgYrsoQmJVqB1646ZuqetBlhbaLPGIiNI3FYXqQ1Yt6673aqtPkx?=
+ =?us-ascii?Q?t7PDeneV5Li2PuogUrEeSa3R9AHGZY18LRzDIY+0aZHn5qLtPAUFEyLL0YOG?=
+ =?us-ascii?Q?7sGAwBXh9F05TkpXjX8DKeFtPLkjZ9sA9TlGnaSD61OJwbxXDEtpGvYInu7o?=
+ =?us-ascii?Q?9LNhMGqKA2sh+La2YPh3sExILgNcubMmeRaJyjmwx+Y8tVOq1XkwYDm1J6Mi?=
+ =?us-ascii?Q?GzqgjoIvo/StufQJIk8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3926c9d-0a15-400e-6278-08da9c351b00
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2022 00:55:12.6244
+X-MS-Exchange-CrossTenant-Network-Message-Id: 879076f6-b645-4fc5-68b6-08da9c376a81
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2022 01:11:44.9721
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j/ix+Edi1Gw8qpSFNtl+/OGVgzXtFA7s8bRFqkn1DfBbRtUBfjMtQ9QcMEagChGQICu4BRyDqoiPOpTkbZA3QQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7398
+X-MS-Exchange-CrossTenant-userprincipalname: R951k6Mb1v47/K7kZRpRSJtaVlfL+Ok9VYZSWLoPbnc86eJeo0YYwMDQ++FGRyZxaW2rc208R3daGBteQ72iew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8698
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-SGkgTWF0aGlldSwNCg0KPiBTdWJqZWN0OiBbSU5GT10gUmVtb3RlcHJvYy9SUE1TRyBwYXRjaHNl
-dCByZXZpZXcgb3JkZXIgZm9yIFNlcHRlbWJlcg0KPiAyMXN0IDIwMjINCj4gDQo+IFtQQVRDSCBW
-NyAwLzJdIHJlbW90ZXByb2M6IHN1cHBvcnQgc2VsZiByZWNvdmVyeSBbUEFUQ0ggdjRdIHJlbW90
-ZXByb2M6DQo+IGNvcmU6IGRvIHBtIHJlbGF4IHdoZW4gaW4gUlBST0NfT0ZGTElORSBbUEFUQ0gg
-VjUgMC82XSByZW1vdGVwcm9jOg0KPiBpbXhfcnByb2M6IHN1cHBvcnQgaS5NWDhRTS9RWFANCg0K
-W1BBVENIIDAvMl0gcmVtb3RlcHJvYzogaW14OiBhZGQgc3RhcnQNCj4gdXAgZGVsYXkNCg0KUGxl
-YXNlIGRyb3AgIltQQVRDSCAwLzJdIHJlbW90ZXByb2M6IGlteDogYWRkIHN0YXJ0IHVwIGRlbGF5
-Ig0KSSBvdmVybG9va2VkIFJvYidzIGNvbW1lbnQgb24gdGhlIERULCB3aWxsIHN0YXJ0IHYyIGxh
-dGVyIGFmdGVyDQp0aGUgaS5NWDhRTS9RWFAgc3VwcG9ydCBkb25lLg0KDQpUaGFua3MsDQpQZW5n
-Lg0KDQogW1BBVENIIHY1IDAvM10gQWRkIHN1cHBvcnQgZm9yIFdBU1AgU29DIG9uIEFWTSByb3V0
-ZXIgYm9hcmRzDQo+IFtQQVRDSCBWMyAwLzNdIHJwbXNnIHNpZ25hbGluZy9mbG93Y29udHJvbCBw
-YXRjaGVzIChvbiBob2xkKQ0K
+Hi Gokul,
+
+> Subject: [PATCH v1 1/1] remoteproc: qcom: Add sysfs entry to detect devic=
+e
+> shutdown
+>=20
+> This change adds a sysfs entry which indicates whether the device is bein=
+g
+> shutdown to the qcom remoteproc drivers. This is going to be used in the
+> following patches.
+
+I have no knowledge of qcom platform, just a few generic comments:
+
+I think it would be better if you post a link to give people a full picture=
+ on how
+this going to work.
+
+>=20
+> Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+> ---
+>  drivers/remoteproc/qcom_common.c | 58
+> ++++++++++++++++++++++++++++++++++++++++
+>  drivers/remoteproc/qcom_common.h |  1 +
+>  2 files changed, 59 insertions(+)
+>=20
+> diff --git a/drivers/remoteproc/qcom_common.c
+> b/drivers/remoteproc/qcom_common.c
+> index 020349f..7959e96 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -87,9 +87,32 @@ struct qcom_ssr_subsystem {
+>  	struct list_head list;
+>  };
+>=20
+> +static struct kobject *sysfs_kobject;
+> +bool qcom_device_shutdown_in_progress;
+> +EXPORT_SYMBOL(qcom_device_shutdown_in_progress);
+> +
+>  static LIST_HEAD(qcom_ssr_subsystem_list);
+>  static DEFINE_MUTEX(qcom_ssr_subsys_lock);
+>=20
+> +static const char * const ssr_timeout_msg =3D "srcu notifier chain for
+> +%s:%s taking too long";
+
+I not see this variable is being used anywhere.
+
+> +
+> +static ssize_t qcom_rproc_shutdown_request_store(struct kobject *kobj,
+> struct kobj_attribute *attr,
+> +						 const char *buf, size_t
+> count)
+> +{
+> +	bool val;
+> +	int ret;
+> +
+> +	ret =3D kstrtobool(buf, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	qcom_device_shutdown_in_progress =3D val;
+> +	pr_info("qcom rproc: Device shutdown requested: %s\n", val ?
+> "true" : "false");
+
+This is a sysfs write operation, how does it matter with device shutdown
+in progress?
+
+> +	return count;
+> +}
+> +static struct kobj_attribute shutdown_requested_attr =3D
+> __ATTR(shutdown_in_progress, 0220, NULL,
+
+How about DEVICE_ATTR_WO, but seems you use 0220, the generic
+marco use 0200.
+
+> +
+> qcom_rproc_shutdown_request_store);
+> +
+>  static void qcom_minidump_cleanup(struct rproc *rproc)  {
+>  	struct rproc_dump_segment *entry, *tmp; @@ -505,5 +528,40 @@
+> void qcom_remove_ssr_subdev(struct rproc *rproc, struct qcom_rproc_ssr
+> *ssr)  }  EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+>=20
+> +static int __init qcom_common_init(void) {
+> +	int ret =3D 0;
+> +
+> +	qcom_device_shutdown_in_progress =3D false;
+> +
+> +	sysfs_kobject =3D kobject_create_and_add("qcom_rproc",
+> kernel_kobj);
+> +	if (!sysfs_kobject) {
+> +		pr_err("qcom rproc: failed to create sysfs kobject\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret =3D sysfs_create_file(sysfs_kobject,
+> &shutdown_requested_attr.attr);
+> +	if (ret) {
+> +		pr_err("qcom rproc: failed to create sysfs file\n");
+> +		goto remove_kobject;
+> +	}
+> +
+> +	return 0;
+> +
+> +	sysfs_remove_file(sysfs_kobject, &shutdown_requested_attr.attr);
+> +remove_kobject:
+> +	kobject_put(sysfs_kobject);
+> +	return ret;
+> +
+> +}
+> +module_init(qcom_common_init);
+> +
+> +static void __exit qcom_common_exit(void) {
+> +	sysfs_remove_file(sysfs_kobject, &shutdown_requested_attr.attr);
+> +	kobject_put(sysfs_kobject);
+> +}
+> +module_exit(qcom_common_exit);
+> +
+>  MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+> MODULE_LICENSE("GPL v2");
+
+As I recall, checkpatch would report GPL is enough, no need v2.
+
+Regards,
+Peng.
+
+ diff --git
+> a/drivers/remoteproc/qcom_common.h
+> b/drivers/remoteproc/qcom_common.h
+> index c35adf7..90b79ce 100644
+> --- a/drivers/remoteproc/qcom_common.h
+> +++ b/drivers/remoteproc/qcom_common.h
+> @@ -34,6 +34,7 @@ struct qcom_rproc_ssr {  };
+>=20
+>  void qcom_minidump(struct rproc *rproc, unsigned int minidump_id);
+> +extern bool qcom_device_shutdown_in_progress;
+>=20
+>  void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink
+> *glink,
+>  			   const char *ssr_name);
+> --
+> 2.7.4
+
