@@ -2,61 +2,61 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE6DC04A95
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Sep 2022 17:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF59C6FA83
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Sep 2022 17:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiIWRZq (ORCPT
+        id S231255AbiIWR0k (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 23 Sep 2022 13:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36362 "EHLO
+        Fri, 23 Sep 2022 13:26:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbiIWRZo (ORCPT
+        with ESMTP id S229625AbiIWR0d (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 23 Sep 2022 13:25:44 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11AFCE6DEF
-        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Sep 2022 10:25:42 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id i26so1290638lfp.11
-        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Sep 2022 10:25:41 -0700 (PDT)
+        Fri, 23 Sep 2022 13:26:33 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E12114F28C
+        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Sep 2022 10:26:32 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id i26so1294151lfp.11
+        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Sep 2022 10:26:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date;
-        bh=OrcelPIHikTCgBXX07kdh3ldwNlBjgUvFNgGfB7EFeg=;
-        b=u/1/qxtErYtkN9+zPFiGnQdZwn2081IQed996TOtNe5sxlsZzGsy10AxB2KRGbfhmz
-         7vQfKDndmz60rAunU0+Y4BRbVp0PJlUB7GGlBBec8yK6fdFbvfPp+c3gRlQAa3wk4XYR
-         SsFglBZ7/2cBD6/ME3xZkN43TbL2oyKMS1aO4jUmHcIme0NfeFkfiXY2df8AUIYYMejA
-         5otfhLywGRZHGCJgZOgeAwOm9Hf61HX+zcC644y1aFRwi3HyOtsdvzRn00kFolsHIIT5
-         UUAb3s158TmWLdPOLnW6AxMYlahrK4NZzhiSEBeFfp2IupBLYz5W1XxeFFPNJRTvrg8K
-         zUVA==
+        bh=d2aMGH6UHNRKejwJPNEF8etSbQwBB3RTv4C2uFoQ+hQ=;
+        b=Rxm2qRqAZnLWxG+kWDcYrS34l/7LustMqorREHAh37L7BpSVEAe75br2Cga0STKUHa
+         mBzvUCgSYj1AXSH8JrCJ/PyICy+z6sDl4alwbLljG5XhYTcUSTYIZz00wGLa9XAAO1MY
+         HX/IEuup1VLNDKZl23dFQFmkzWB3LE0UwMJ3ptrhrJaHjLKRy/1He8PUQt/J6g84y5e8
+         CCcrlnPmk+Wpuu9YJrqd7aj151JMn1O8BQl1DT9E4j6p+xfFDgfP2OY/PRLYsQXsjxEb
+         X7NcAO75+UgZr0VdTFCL9mXE0fuXMZhP03tWOBXSS/RXDMgIxg3UwfnyuQsEP5QaimcI
+         qbkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date;
-        bh=OrcelPIHikTCgBXX07kdh3ldwNlBjgUvFNgGfB7EFeg=;
-        b=wqRazutdj9Vyxk1Knzc5rllQIBHiibvECRcIjwRT9y/IPrpRyQbGHxEJQJUr7gerWf
-         01bo+vxT7ctOJd7xbpNPFddUuYT981BxNZ6zbsc/FsFb0HNUCemwN4xwORJnOy/+K0ir
-         u4Ie/hXGUeObgDNFvlJaBwUDNoDLMJAwDGAUMfTR5XG7w6nvBWWd9ipjCVS1tMGL1iGp
-         50awwRjeafHmqb8XNr8qL5jo2E7so0e+sp81goCAhciK4VaHWN9Irxxqxj5zIrSNHw79
-         7Ji4MMPW/WRU9speH+NhYIItDJv46EQdfCXmSHoHVXj7naIhkaEJtIyvEonkF/zwYKXU
-         VMfg==
-X-Gm-Message-State: ACrzQf33KWLZixFJgAZcgtfg76yxS5yCMAT+rG2GlR6tffWhLV6BbkS7
-        aLzZIea7x8zL3RWbqkV5AKihjQ==
-X-Google-Smtp-Source: AMsMyM6ZPGbEHKg4/6Ep9HeLzcfVYce6BoygYO/+x80dFQl1w0hIDyL0uSoJRSq4dh2CzzhKH+lirg==
-X-Received: by 2002:a05:6512:10c8:b0:49c:14c5:e081 with SMTP id k8-20020a05651210c800b0049c14c5e081mr3718436lfg.615.1663953940276;
-        Fri, 23 Sep 2022 10:25:40 -0700 (PDT)
+        bh=d2aMGH6UHNRKejwJPNEF8etSbQwBB3RTv4C2uFoQ+hQ=;
+        b=voYCpN3NxOj6ndcuegUfd828ptaWVGoYish82BcL6+KLeBcR3ltvPnQbl/2KhGWKvd
+         cCzaMk9kF7xEsR+FxoIaLOrF7IX1dZUIuQAqZdJDLRuVm2k9cZFxI9y6j0G8oCbp3HCP
+         J4ecpuFT2kcrev9yMAfym254bqZbFoI7tDNTCxH6tur59wKmJlsW6Z6EPOKp15M57WZP
+         Qinu0UYndToowuiX4OX9BoGM9++W2RES/87pTmQumCd1tzZ7NJAGIlQ3NKQ4exqLMQ25
+         oiDOZYw8rUnreiXv+twrWuztk2d22TLWanUUMLMfaKAiDCl87ftuCI4WtyggCjt8nhJa
+         3agA==
+X-Gm-Message-State: ACrzQf1JqwwgXK0BbCuUaSDlNzoubKnEbjPQtS9ozzdUe/v52TFfcK/k
+        wZ4DdznVMWvCFvEMicgBjx+h6t4d1vfJcg==
+X-Google-Smtp-Source: AMsMyM6RSipJh6L8w0HLJBu4EMBCoIT3+KEpfBtSapvzTG4RRLReX34X6mW4Pz3ej2J0UKIzYk7uBg==
+X-Received: by 2002:a19:650f:0:b0:494:827e:5ef5 with SMTP id z15-20020a19650f000000b00494827e5ef5mr3487893lfb.411.1663953990513;
+        Fri, 23 Sep 2022 10:26:30 -0700 (PDT)
 Received: from [192.168.0.21] (78-11-189-27.static.ip.netia.com.pl. [78.11.189.27])
-        by smtp.gmail.com with ESMTPSA id y1-20020a05651c106100b0026c16e9e45bsm1480801ljm.17.2022.09.23.10.25.39
+        by smtp.gmail.com with ESMTPSA id p9-20020a2eba09000000b0026c037747bfsm1481226lja.3.2022.09.23.10.26.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Sep 2022 10:25:39 -0700 (PDT)
-Message-ID: <da5902dd-1a2d-7669-fb91-c7df5bb1addb@linaro.org>
-Date:   Fri, 23 Sep 2022 19:25:38 +0200
+        Fri, 23 Sep 2022 10:26:30 -0700 (PDT)
+Message-ID: <a15fa97e-de7d-c2a6-e39a-2dd7ba8caf31@linaro.org>
+Date:   Fri, 23 Sep 2022 19:26:29 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.0
-Subject: Re: [PATCH v8 6/7] remoteproc: qcom: Add efuse evb selection control
+Subject: Re: [PATCH v8 7/7] remoteproc: qcom: Add support for memory sandbox
 Content-Language: en-US
 To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         linux-remoteproc@vger.kernel.org, agross@kernel.org,
@@ -67,9 +67,9 @@ To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         linux-kernel@vger.kernel.org, swboyd@chromium.org,
         judyhsiao@chromium.org, devicetree@vger.kernel.org
 References: <1663938340-24345-1-git-send-email-quic_srivasam@quicinc.com>
- <1663938340-24345-7-git-send-email-quic_srivasam@quicinc.com>
+ <1663938340-24345-8-git-send-email-quic_srivasam@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1663938340-24345-7-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1663938340-24345-8-git-send-email-quic_srivasam@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -77,26 +77,20 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 23/09/2022 15:05, Srinivasa Rao Mandadapu wrote:
-> Add efuse evb selection control and enable it for starting ADSP.
+> Update pil driver with SMMU mapping for allowing authorised
+> memory access to ADSP firmware, by carveout reserved adsp memory
+> region from device tree file.
 > 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+
 
 Thank you for your patch. There is something to discuss/improve.
 
-> @@ -543,6 +549,17 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
->  		return PTR_ERR(adsp->qdsp6ss_base);
->  	}
->  
-> +	efuse_region = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +	if (!efuse_region) {
-> +		adsp->lpass_efuse = NULL;
-> +		dev_dbg(adsp->dev, "failed to get efuse memory region\n");
-> +	} else {
+> +	if (!rproc->domain)
+> +		return -EINVAL;
+> +
+> +	ret = of_parse_phandle_with_args(adsp->dev->of_node, "iommus", "#iommu-cells", 0, &args);
 
-This needs bindings updates in all users.
+I think your bindings do not allow iommus property.
 
 Best regards,
 Krzysztof
