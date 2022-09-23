@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE6DC6FA8B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Sep 2022 13:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9630CC6FA93
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Sep 2022 13:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232320AbiIWNHn (ORCPT
+        id S232146AbiIWNMP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 23 Sep 2022 09:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
+        Fri, 23 Sep 2022 09:12:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232040AbiIWNHX (ORCPT
+        with ESMTP id S231402AbiIWNL4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 23 Sep 2022 09:07:23 -0400
+        Fri, 23 Sep 2022 09:11:56 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D03C13AF2C;
-        Fri, 23 Sep 2022 06:07:22 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28NB6nwP024859;
-        Fri, 23 Sep 2022 13:06:41 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CC4AB060;
+        Fri, 23 Sep 2022 06:11:55 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28NCrcZu005589;
+        Fri, 23 Sep 2022 13:11:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=GydqGb27+64RCFiRn5sh0uPuMhU2BApFJTl+xlbCWOM=;
- b=X8FqxCa/jjX//YgR+Jud6OI+OJA+ZPqrkgsF/Nms7eo8k0wuQMPeM1wQOcIbVH4MjUiu
- eYhGmUWOjraHF2Rj2UfkCKYbtM0tcrLEoZ8nfXpgN3niJPam9KV3IX6zggziSFlzK13F
- 68CdCe3w4sZSGVg0Tz97yjjG/OzVKQAnXHyrSGWAPgtAliptz2BigbUVhULXWEtakRIq
- nS5mFkGWVtjBevvIi8PhOpT/D5szBfzOnJU7hBmK4oAbB/d3ZLUTKmI/p7o5vCzvtegz
- 9M0zv+VZ2LaBdzjfekEPapA3Hh/w3YNvmIMTa0jAlNM4rKgy6wAhwpS/i+QcPWIJ5uvA iQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jsbmxrg5s-1
+ bh=Jw+93L9yl+MXHlLAu6RoSlqR4AU/qbHR2SDfI72pg8E=;
+ b=TGwam6qL3wVLGQ5dnMiLpQGV6vRAaqjz8YX76QdnIiTmw961c/E7Uz0EJgEs1DN1h7yr
+ 7DUtRPhx92+O64qWAq+IWruTwpngpzjJjxvVZFKkyhHOTcng5Pv4kv30KaV8wUiV3ADj
+ iC9P21a1RBZvqyQTX1S+TEk3+hMidcxjdwAaGpwvCIoKFjLzCqJdeZfeVpWjeIUho/hR
+ awETdlMyyIgw4Qw2cvGLmKxwo1Tkcnyr2BH+8pPpmiH1txIXLT9NWn/yAqvp2fX/jbr/
+ F/ubTVpzYDqPJ1CiYukNXMyDEtNsPWuHONiTNSao8gT3XjhoMctr9MM6mIKaC6xqqFkv 2w== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jrmnf4fqa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 13:06:41 +0000
+        Fri, 23 Sep 2022 13:11:12 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28ND6e16018478
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28ND6Bms022456
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 13:06:40 GMT
+        Fri, 23 Sep 2022 13:06:11 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Fri, 23 Sep 2022 06:06:35 -0700
+ 15.2.986.29; Fri, 23 Sep 2022 06:06:05 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <andersson@kernel.org>, <lgirdwood@gmail.com>,
@@ -51,9 +51,9 @@ To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
         <krzysztof.kozlowski@linaro.org>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v8 7/7] remoteproc: qcom: Add support for memory sandbox
-Date:   Fri, 23 Sep 2022 18:35:40 +0530
-Message-ID: <1663938340-24345-8-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v8 2/7] remoteproc: qcom: Add flag in adsp private data structure
+Date:   Fri, 23 Sep 2022 18:35:35 +0530
+Message-ID: <1663938340-24345-3-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1663938340-24345-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1663938340-24345-1-git-send-email-quic_srivasam@quicinc.com>
@@ -64,155 +64,76 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZeHd-5lPbccMqPHsi-KEwZ2cnqmRZp6N
-X-Proofpoint-ORIG-GUID: ZeHd-5lPbccMqPHsi-KEwZ2cnqmRZp6N
+X-Proofpoint-GUID: oGFruMLXU9QeaDM0KojdxrmmwiUDPRPS
+X-Proofpoint-ORIG-GUID: oGFruMLXU9QeaDM0KojdxrmmwiUDPRPS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-23_04,2022-09-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 phishscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209230085
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2209230086
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update pil driver with SMMU mapping for allowing authorised
-memory access to ADSP firmware, by carveout reserved adsp memory
-region from device tree file.
+Add flag in qcom_adsp private data structure and initialize
+it to distinguish ADSP modules, which has iommu requirement,
+for using iommu selectively.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
 Changes since V6:
-	-- Update smmu map and unmap function names.
-	-- Revert adsp_ops const change.
-	-- Move iommu check to within smmu map/unmap functions.
+	-- Update commit message.
 Changes since V5:
-	-- Remove adsp_rproc_unmap_smmu, adsp_of_unmap_smmu, adsp_of_map_smmu and 
-	   adsp_rproc_map_smmu functions.
-	-- Remove find_loaded_rsc_table call back initialization.
 	-- Rename adsp_sandbox_needed to has_iommu.
-Changes since V4:
-	-- Split the code and add appropriate APIs for resource allocation and free.
-	-- Update adsp_unmap_smmu with missing free ops call.
-	-- Update normalizing length value in adsp_of_unmap_smmu.
 Changes since V3:
 	-- Rename is_adsp_sb_needed to adsp_sandbox_needed.
-	-- Add smmu unmapping in error case and in adsp stop.
 Changes since V2:
-	-- Replace platform_bus_type with adsp->dev->bus.
-	-- Use API of_parse_phandle_with_args() instead of of_parse_phandle_with_fixed_args().
-	-- Replace adsp->is_wpss with adsp->is_adsp.
-	-- Update error handling in adsp_start().
+	-- Add is_adsp_sb_needed flag instead of is_wpss.
 
- drivers/remoteproc/qcom_q6v5_adsp.c | 56 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index e463fbc..d89f3fa 100644
+index 2f3b9f5..fa2ccac 100644
 --- a/drivers/remoteproc/qcom_q6v5_adsp.c
 +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -9,6 +9,7 @@
- #include <linux/firmware.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iommu.h>
- #include <linux/iopoll.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
-@@ -48,6 +49,8 @@
- #define LPASS_PWR_ON_REG		0x10
- #define LPASS_HALTREQ_REG		0x0
+@@ -62,6 +62,7 @@ struct adsp_pil_data {
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+ 	bool is_wpss;
++	bool has_iommu;
+ 	bool auto_boot;
  
-+#define SID_MASK_DEFAULT        0xF
-+
- #define QDSP6SS_XO_CBCR		0x38
- #define QDSP6SS_CORE_CBCR	0x20
- #define QDSP6SS_SLEEP_CBCR	0x3c
-@@ -333,6 +336,47 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- 	return 0;
- }
+ 	const char **clk_ids;
+@@ -99,6 +100,7 @@ struct qcom_adsp {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
++	bool has_iommu;
  
-+static void adsp_unmap_carveout(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = rproc->priv;
-+
-+	if (adsp->has_iommu)
-+		iommu_unmap(rproc->domain, adsp->mem_phys, adsp->mem_size);
-+}
-+
-+static int adsp_map_carveout(struct rproc *rproc)
-+{
-+	struct qcom_adsp *adsp = rproc->priv;
-+	struct of_phandle_args args;
-+	long long sid;
-+	unsigned long iova;
-+	int ret;
-+
-+	if (!adsp->has_iommu)
-+		return 0;
-+
-+	if (!rproc->domain)
-+		return -EINVAL;
-+
-+	ret = of_parse_phandle_with_args(adsp->dev->of_node, "iommus", "#iommu-cells", 0, &args);
-+	if (ret < 0)
-+		return ret;
-+
-+	sid = args.args[0] & SID_MASK_DEFAULT;
-+
-+	/* Add SID configuration for ADSP Firmware to SMMU */
-+	iova =  adsp->mem_phys | (sid << 32);
-+
-+	ret = iommu_map(rproc->domain, iova, adsp->mem_phys,
-+			adsp->mem_size,	IOMMU_READ | IOMMU_WRITE);
-+	if (ret) {
-+		dev_err(adsp->dev, "Unable to map ADSP Physical Memory\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int adsp_start(struct rproc *rproc)
- {
- 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-@@ -343,9 +387,15 @@ static int adsp_start(struct rproc *rproc)
- 	if (ret)
- 		return ret;
+ 	struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
+ 	size_t proxy_pd_count;
+@@ -596,12 +598,15 @@ static int adsp_probe(struct platform_device *pdev)
+ 	}
  
-+	ret = adsp_map_carveout(rproc);
-+	if (ret) {
-+		dev_err(adsp->dev, "ADSP smmu mapping failed\n");
-+		goto disable_irqs;
-+	}
+ 	rproc->auto_boot = desc->auto_boot;
++	rproc->has_iommu = desc->has_iommu;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+ 	adsp = (struct qcom_adsp *)rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->info_name = desc->sysmon_name;
++	adsp->has_iommu = desc->has_iommu;
 +
- 	ret = clk_prepare_enable(adsp->xo);
- 	if (ret)
--		goto disable_irqs;
-+		goto adsp_smmu_unmap;
+ 	platform_set_drvdata(pdev, adsp);
  
- 	ret = qcom_rproc_pds_enable(adsp, adsp->proxy_pds,
- 				    adsp->proxy_pd_count);
-@@ -401,6 +451,8 @@ static int adsp_start(struct rproc *rproc)
- 	qcom_rproc_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- disable_xo_clk:
- 	clk_disable_unprepare(adsp->xo);
-+adsp_smmu_unmap:
-+	adsp_unmap_carveout(rproc);
- disable_irqs:
- 	qcom_q6v5_unprepare(&adsp->q6v5);
- 
-@@ -429,6 +481,8 @@ static int adsp_stop(struct rproc *rproc)
- 	if (ret)
- 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
- 
-+	adsp_unmap_carveout(rproc);
-+
- 	handover = qcom_q6v5_unprepare(&adsp->q6v5);
- 	if (handover)
- 		qcom_adsp_pil_handover(&adsp->q6v5);
+ 	if (desc->is_wpss)
 -- 
 2.7.4
 
