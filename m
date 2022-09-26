@@ -2,189 +2,304 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C02C07E9D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Sep 2022 22:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5393C6FA82
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Sep 2022 23:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229647AbiIZWGb (ORCPT
+        id S230234AbiIZXXj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Sep 2022 18:06:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38910 "EHLO
+        Mon, 26 Sep 2022 19:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231160AbiIZWGT (ORCPT
+        with ESMTP id S231175AbiIZXXX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Sep 2022 18:06:19 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EA194B0FD
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Sep 2022 15:06:14 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id q9so7752196pgq.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Sep 2022 15:06:14 -0700 (PDT)
+        Mon, 26 Sep 2022 19:23:23 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B585D0C6
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Sep 2022 16:21:31 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id u69so7905293pgd.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Sep 2022 16:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=UnO/3kkOs/CP235a1zfbUEKXqigkt8Jk8YNYN8ReTZk=;
-        b=siW2fwC43Rm6oxJEyctzqHPIDMg5ocZe6Y0wrNYY98T9RM0bfKXv9vzcTLfDPUypwR
-         +bjk6hZjC5sT3KENuiSJb70rjaKuYU1lzRI+bOYFAafyzE3HFrjwJv9hZMvG6AYfXIiP
-         7BdbqXywpjJ4q/XZzB4fd9yJw9I41GwoGv7/Pk5Xstz4WK7qbX63BX7vgOs/srieo0u8
-         SgFVWmYoAlfz/mOkYV79fuuXILSLJqSkwaLNAxnvkO0Hs+Hj8nYB+OkbbT8u3hmkrx55
-         dtZqMw4MD7w2z6AxzcuMp1LShlCVareVm5ZViyE+WtLW5Rga897qYAI5jFlzfaKa08iL
-         0jog==
+        bh=Vtd4ZxGAnl6/Vc1zcYUrAA8XLjrJ22nEb+ormUd5geU=;
+        b=jTrvz6bF/SB2nxH+poaFA5bWLDSCnsO21WNeMLlw76gVoxaXg7Gq/QZtdWQbRxcIax
+         bLN2vkIPNOA5RNLkDDH31sRCfVZQMIvu+bt7B4k/aBaXiW2+2mtJMPQ2Rqht+u0w+QQ+
+         Rsz8PsUlVS3oHYgW8J0gY85Jij0hPFZ6MRNtdBb4h9iqnsh0pYd/iUeGKdkOQ/SpGFKh
+         eSU+5gCfUuVLXCXLgb7997Vw6hXSsuRgbGdoqFO/oxEUYMmGCpzdlg1uKfdP7+lKDIFV
+         3kRuPIAgpIfJwGlHPdNkekGWNwU6H5s6jrve4RGVMEwZXdrxwEF+WGp6sjlO46h2ROqD
+         qaCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=UnO/3kkOs/CP235a1zfbUEKXqigkt8Jk8YNYN8ReTZk=;
-        b=e+0THdWIs9ZeWfJoM1vnU6KGjcn2COhEePnswGi/YgBOrbtRB0uVRKKoZaeKFlt7Ww
-         g+S1UkjZp/GWqJ2BpJG1jfcVkdocGNlY9D1e59m8jF1Dx3w3zgw2bhFlQ1wEf340o+Z1
-         dUAJEZf6sTO3UBWOleBPEOZO/4Dgz/Ny9RGpRmzGMGK+6Kd/F0wto/gHPDZ8zv2OvSfR
-         5QfZCcjWLj1uraTYPK0P5u4iEVUqkZjMifGMLsxeAmbMEZ277aqlxBFh0GWs7co4qOKs
-         6eJS3wEDNG9Ht/atlow63UgLZoiacA9whofw/+w6zEVkZDxX3iojJT1aOriDtwjj3GZb
-         rT2w==
-X-Gm-Message-State: ACrzQf2/kgGZvLjmEM7mDS/jAsmHYYWMwCmTL4hGSfk6+UZBPo5kZfGQ
-        QtIOf3yQSOGQudCSzGlFF284PA==
-X-Google-Smtp-Source: AMsMyM6Xzq30A4G87lqLkN+47hlMNOd5+rIsxCu3a/5o2rLuje1HrRWwjgby8ApwIP5LP/2ImHtlVA==
-X-Received: by 2002:a63:5511:0:b0:439:12f6:fb9a with SMTP id j17-20020a635511000000b0043912f6fb9amr22589394pgb.197.1664229973834;
-        Mon, 26 Sep 2022 15:06:13 -0700 (PDT)
+        bh=Vtd4ZxGAnl6/Vc1zcYUrAA8XLjrJ22nEb+ormUd5geU=;
+        b=rv79wu09LjH3rNi3aFq2Myo5rl9gAO84AmEQ5MSzvUrGUydSMpzMiMB1MBhyx2s+NB
+         U0SU6CQRTu5fJ1Axjd2/YVNXph/fki0HJ4f4uNs4LDp6REAZ+WoAONuy70vxGObFdP5U
+         fEWe+wPNQXh8ewK/0SCYxSjkwUZhXvJGerYDWA4cBwh0WXXVnIRFkgyuryyovkcRXmzn
+         UCG32vgciORzM7p+TE6udH3WyfSn+Uw6jMXF0g67Gk0UbKF13+gjF5BU1i7iOEL4RV9Y
+         6KxU6TsYXH2AxCNNH8r1VGbENbIL9vPNNBEG+dmOAeZ/hHt9tGN9DkKmpeg2sn44NT/J
+         C2LQ==
+X-Gm-Message-State: ACrzQf3437i+d3a/Qjr9eSiFPIhdEadZuG/WNiZ7Z4Is9fnI1FD/CBUB
+        pkLwGOHfIJGncr6KrPY7MLEnlw==
+X-Google-Smtp-Source: AMsMyM7uEKP/X9XnTuCliOHf/St+XChdIOBlG6o90bLgoFJ1qlMKifAyIXQz5ljUxD640uqP+my/dQ==
+X-Received: by 2002:a05:6a00:1346:b0:546:ff1e:26ae with SMTP id k6-20020a056a00134600b00546ff1e26aemr26387773pfu.45.1664234490690;
+        Mon, 26 Sep 2022 16:21:30 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id o196-20020a62cdcd000000b0054ad9c6b70fsm12246pfg.8.2022.09.26.15.06.11
+        by smtp.gmail.com with ESMTPSA id bg8-20020a056a02010800b004348bd693a8sm14706pgb.31.2022.09.26.16.21.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Sep 2022 15:06:12 -0700 (PDT)
-Date:   Mon, 26 Sep 2022 16:06:10 -0600
+        Mon, 26 Sep 2022 16:21:29 -0700 (PDT)
+Date:   Mon, 26 Sep 2022 17:21:27 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V7 2/2] remoteproc: support attach recovery after rproc
- crash
-Message-ID: <20220926220610.GA2817947@p14s>
-References: <20220705011527.2849057-1-peng.fan@oss.nxp.com>
- <20220705011527.2849057-3-peng.fan@oss.nxp.com>
+Cc:     bjorn.andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V5 3/6] remoteproc: imx_rproc: support attaching to
+ i.MX8QXP M4
+Message-ID: <20220926232127.GB2817947@p14s>
+References: <20220824011023.1493050-1-peng.fan@oss.nxp.com>
+ <20220824011023.1493050-4-peng.fan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220705011527.2849057-3-peng.fan@oss.nxp.com>
+In-Reply-To: <20220824011023.1493050-4-peng.fan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 05, 2022 at 09:15:27AM +0800, Peng Fan (OSS) wrote:
+On Wed, Aug 24, 2022 at 09:10:20AM +0800, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> Current logic only support main processor to stop/start the remote
-> processor after crash. However to SoC, such as i.MX8QM/QXP, the
-> remote processor could do attach recovery after crash and trigger watchdog
-> to reboot itself. It does not need main processor to load image, or
-> stop/start remote processor.
+> When M4 is kicked by SCFW, M4 runs in its own hardware partition, Linux
+> could only do IPC with M4, it could not start, stop, update image.
 > 
-> Introduce two functions: rproc_attach_recovery, rproc_boot_recovery
-> for the two cases. Boot recovery is as before, let main processor to
-> help recovery, while attach recovery is to recover itself without help.
-> To attach recovery, we only do detach and attach.
+> We disable recovery reboot when M4 is managed by SCFW, because
+> remoteproc core still not support M4 auto-recovery without loading
+> image.
 > 
-> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 62 +++++++++++++++++++---------
->  1 file changed, 43 insertions(+), 19 deletions(-)
+>  drivers/remoteproc/imx_rproc.c | 108 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 107 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index ed374c8bf14a..ef5b9310bc83 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1884,6 +1884,45 @@ static int __rproc_detach(struct rproc *rproc)
->  	return 0;
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 7cc4fd207e2d..bcba74e90020 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/arm-smccc.h>
+>  #include <linux/clk.h>
+>  #include <linux/err.h>
+> +#include <linux/firmware/imx/sci.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/kernel.h>
+>  #include <linux/mailbox_client.h>
+> @@ -59,6 +60,8 @@
+>  #define IMX_SIP_RPROC_STARTED		0x01
+>  #define IMX_SIP_RPROC_STOP		0x02
+>  
+> +#define IMX_SC_IRQ_GROUP_REBOOTED	5
+> +
+>  /**
+>   * struct imx_rproc_mem - slim internal memory structure
+>   * @cpu_addr: MPU virtual address of the memory region
+> @@ -89,6 +92,10 @@ struct imx_rproc {
+>  	struct work_struct		rproc_work;
+>  	struct workqueue_struct		*workqueue;
+>  	void __iomem			*rsc_table;
+> +	struct imx_sc_ipc		*ipc_handle;
+> +	struct notifier_block		rproc_nb;
+> +	u32				rproc_pt;	/* partition id */
+> +	u32				rsrc_id;	/* resource id */
+>  };
+>  
+>  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
+> @@ -117,6 +124,18 @@ static const struct imx_rproc_att imx_rproc_att_imx93[] = {
+>  	{ 0xD0000000, 0xa0000000, 0x10000000, 0 },
+>  };
+>  
+> +static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
+> +	{ 0x08000000, 0x08000000, 0x10000000, 0 },
+> +	/* TCML/U */
+> +	{ 0x1FFE0000, 0x34FE0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+> +	/* OCRAM(Low 96KB) */
+> +	{ 0x21000000, 0x00100000, 0x00018000, 0 },
+> +	/* OCRAM */
+> +	{ 0x21100000, 0x00100000, 0x00040000, 0 },
+> +	/* DDR (Data) */
+> +	{ 0x80000000, 0x80000000, 0x60000000, 0 },
+> +};
+> +
+>  static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+>  	/* dev addr , sys addr  , size	    , flags */
+>  	/* ITCM   */
+> @@ -255,6 +274,12 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mq = {
+>  	.method		= IMX_RPROC_MMIO,
+>  };
+>  
+> +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
+> +	.att		= imx_rproc_att_imx8qxp,
+> +	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8qxp),
+> +	.method		= IMX_RPROC_SCU_API,
+> +};
+> +
+>  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
+>  	.att		= imx_rproc_att_imx8ulp,
+>  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8ulp),
+> @@ -680,6 +705,37 @@ static void imx_rproc_free_mbox(struct rproc *rproc)
+>  	mbox_free_channel(priv->rx_ch);
 >  }
 >  
-> +static int rproc_attach_recovery(struct rproc *rproc)
+> +static void imx_rproc_put_scu(struct rproc *rproc)
 > +{
-> +	int ret;
+> +	struct imx_rproc *priv = rproc->priv;
+> +	const struct imx_rproc_dcfg *dcfg = priv->dcfg;
 > +
-> +	ret = __rproc_detach(rproc);
-> +	if (ret)
-> +		return ret;
+> +	if (dcfg->method != IMX_RPROC_SCU_API)
+> +		return;
+> +
+> +	if (!imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id))
+> +		return;
+> +
+> +	imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv->rproc_pt), false);
+> +	imx_scu_irq_unregister_notifier(&priv->rproc_nb);
+> +}
+> +
+> +static int imx_rproc_partition_notify(struct notifier_block *nb,
+> +				      unsigned long event, void *group)
+> +{
+> +	struct imx_rproc *priv = container_of(nb, struct imx_rproc, rproc_nb);
+> +
+> +	/* Ignore other irqs */
+> +	if (!((event & BIT(priv->rproc_pt)) && (*(u8 *)group == IMX_SC_IRQ_GROUP_REBOOTED)))
+> +		return 0;
+> +
+> +	rproc_report_crash(priv->rproc, RPROC_WATCHDOG);
+> +
+> +	pr_info("Partition%d reset!\n", priv->rproc_pt);
+> +
+> +	return 0;
+> +}
+> +
+>  static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  {
+>  	struct regmap_config config = { .name = "imx-rproc" };
+> @@ -689,6 +745,7 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  	struct arm_smccc_res res;
+>  	int ret;
+>  	u32 val;
+> +	u8 pt;
+>  
+>  	switch (dcfg->method) {
+>  	case IMX_RPROC_NONE:
+> @@ -699,6 +756,51 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+>  		if (res.a0)
+>  			priv->rproc->state = RPROC_DETACHED;
+>  		return 0;
+> +	case IMX_RPROC_SCU_API:
+> +		ret = imx_scu_get_handle(&priv->ipc_handle);
+> +		if (ret)
+> +			return ret;
+> +		ret = of_property_read_u32(dev->of_node, "fsl,resource-id", &priv->rsrc_id);
+> +		if (ret) {
+> +			dev_err(dev, "No fsl,resource-id property\n");
+> +			return ret;
+> +		}
+> +
+> +		/*
+> +		 * If Mcore resource is not owned by Acore partition, It is kicked by ROM,
+> +		 * and Linux could only do IPC with Mcore and nothing else.
+> +		 */
+> +		if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id))
+> +			return 0;
 
-I thought there was a specific reason to _not_ call rproc->ops->coredump() for
-processors that have been attached to but looking at the STM32 and IMX_DSP now, it
-would seem logical to do so.  Am I missing something?
+If imx_sc_rm_is_resource_owned() return '1' than the remote processor is under
+Linux's control and what follows below is not needed.  That is also coherent
+with the comment in [1].
 
-And this set will need a rebase.
+That is in contrast with what is happening in imx_rproc_put_scu().  There, if
+the remote processor is _not_ owned by Linux than the condition returns without
+calling imx_scu_irq_group_enable() and imx_scu_irq_unregister_notifier().  That
+seems to be a bug. 
+
+There is also a problem in patch 4/6 associated to that.
 
 Thanks,
 Mathieu
 
+
+[1]. https://elixir.bootlin.com/linux/v6.0-rc7/source/drivers/firmware/imx/rm.c#L24
+
 > +
-> +	return __rproc_attach(rproc);
-> +}
+> +		priv->rproc->state = RPROC_DETACHED;
+> +		priv->rproc->recovery_disabled = true;
 > +
-> +static int rproc_boot_recovery(struct rproc *rproc)
-> +{
-> +	const struct firmware *firmware_p;
-> +	struct device *dev = &rproc->dev;
-> +	int ret;
+> +		/* Get partition id and enable irq in SCFW */
+> +		ret = imx_sc_rm_get_resource_owner(priv->ipc_handle, priv->rsrc_id, &pt);
+> +		if (ret) {
+> +			dev_err(dev, "not able to get resource owner\n");
+> +			return ret;
+> +		}
 > +
-> +	ret = rproc_stop(rproc, true);
-> +	if (ret)
-> +		return ret;
+> +		priv->rproc_pt = pt;
+> +		priv->rproc_nb.notifier_call = imx_rproc_partition_notify;
 > +
-> +	/* generate coredump */
-> +	rproc->ops->coredump(rproc);
+> +		ret = imx_scu_irq_register_notifier(&priv->rproc_nb);
+> +		if (ret) {
+> +			dev_warn(dev, "register scu notifier failed.\n");
+> +			return ret;
+> +		}
 > +
-> +	/* load firmware */
-> +	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "request_firmware failed: %d\n", ret);
-> +		return ret;
-> +	}
+> +		ret = imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv->rproc_pt),
+> +					       true);
+> +		if (ret) {
+> +			imx_scu_irq_unregister_notifier(&priv->rproc_nb);
+> +			dev_warn(dev, "Enable irq failed.\n");
+> +			return ret;
+> +		}
 > +
-> +	/* boot the remote processor up again */
-> +	ret = rproc_start(rproc, firmware_p);
-> +
-> +	release_firmware(firmware_p);
-> +
-> +	return ret;
-> +}
-> +
->  /**
->   * rproc_trigger_recovery() - recover a remoteproc
->   * @rproc: the remote processor
-> @@ -1898,7 +1937,6 @@ static int __rproc_detach(struct rproc *rproc)
->   */
->  int rproc_trigger_recovery(struct rproc *rproc)
->  {
-> -	const struct firmware *firmware_p;
->  	struct device *dev = &rproc->dev;
->  	int ret;
+> +		return 0;
+>  	default:
+>  		break;
+>  	}
+> @@ -803,7 +905,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
 >  
-> @@ -1912,24 +1950,10 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  	ret = imx_rproc_clk_enable(priv);
+>  	if (ret)
+> -		goto err_put_mbox;
+> +		goto err_put_scu;
 >  
->  	dev_err(dev, "recovering %s\n", rproc->name);
+>  	INIT_WORK(&priv->rproc_work, imx_rproc_vq_work);
 >  
-> -	ret = rproc_stop(rproc, true);
-> -	if (ret)
-> -		goto unlock_mutex;
-> -
-> -	/* generate coredump */
-> -	rproc->ops->coredump(rproc);
-> -
-> -	/* load firmware */
-> -	ret = request_firmware(&firmware_p, rproc->firmware, dev);
-> -	if (ret < 0) {
-> -		dev_err(dev, "request_firmware failed: %d\n", ret);
-> -		goto unlock_mutex;
-> -	}
-> -
-> -	/* boot the remote processor up again */
-> -	ret = rproc_start(rproc, firmware_p);
-> -
-> -	release_firmware(firmware_p);
-> +	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-> +		ret = rproc_attach_recovery(rproc);
-> +	else
-> +		ret = rproc_boot_recovery(rproc);
+> @@ -820,6 +922,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
 >  
->  unlock_mutex:
->  	mutex_unlock(&rproc->lock);
+>  err_put_clk:
+>  	clk_disable_unprepare(priv->clk);
+> +err_put_scu:
+> +	imx_rproc_put_scu(rproc);
+>  err_put_mbox:
+>  	imx_rproc_free_mbox(rproc);
+>  err_put_wkq:
+> @@ -837,6 +941,7 @@ static int imx_rproc_remove(struct platform_device *pdev)
+>  
+>  	clk_disable_unprepare(priv->clk);
+>  	rproc_del(rproc);
+> +	imx_rproc_put_scu(rproc);
+>  	imx_rproc_free_mbox(rproc);
+>  	destroy_workqueue(priv->workqueue);
+>  	rproc_free(rproc);
+> @@ -852,6 +957,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
+>  	{ .compatible = "fsl,imx8mm-cm4", .data = &imx_rproc_cfg_imx8mq },
+>  	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
+>  	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
+> +	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
+>  	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
+>  	{ .compatible = "fsl,imx93-cm33", .data = &imx_rproc_cfg_imx93 },
+>  	{},
 > -- 
-> 2.25.1
+> 2.37.1
 > 
