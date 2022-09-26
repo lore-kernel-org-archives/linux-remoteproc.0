@@ -2,105 +2,78 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA52C07E9D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Sep 2022 13:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D42C07E9D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Sep 2022 19:49:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235520AbiIZNxE (ORCPT
+        id S230099AbiIZTtY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Sep 2022 09:53:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55760 "EHLO
+        Mon, 26 Sep 2022 15:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235534AbiIZNwo (ORCPT
+        with ESMTP id S230130AbiIZTtU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Sep 2022 09:52:44 -0400
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20EA51F8C1B;
-        Mon, 26 Sep 2022 05:08:34 -0700 (PDT)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DEB3C1A902E;
-        Mon, 26 Sep 2022 14:07:18 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A71A71A9027;
-        Mon, 26 Sep 2022 14:07:18 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7F028180222C;
-        Mon, 26 Sep 2022 20:07:17 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        arnaud.pouliquen@foss.st.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: [PATCH] remoteproc: imx_dsp_rproc: Add mutex protection for workqueue
-Date:   Mon, 26 Sep 2022 19:48:13 +0800
-Message-Id: <1664192893-14487-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 26 Sep 2022 15:49:20 -0400
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91EE833E39;
+        Mon, 26 Sep 2022 12:49:19 -0700 (PDT)
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-13122bfaea6so5592237fac.11;
+        Mon, 26 Sep 2022 12:49:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=UMwkKadJ0/5HLZm3zoj184hv2XmPHwMNmeiEsetgdTQ=;
+        b=b7SmT1hLGf+iXLH6V5cfo9SH8TXZjcmTqu0K3L5F/vR4HHX1/mvdPzdiuTH9x+l0YG
+         WTuQWLgpoEtFtuVN4S9a8VIH3pKRtHcJsu1wbVyWI7esbtAcjWVG739UIuxSs0MGJ50O
+         kz9O4x6ABwPBT+2RumV+lUUTDHb6lsmLXHo/Wc/BR7xdzL9aiwu/tBLFbDgbdmAwCsPI
+         xfoWKvhFSbFRW3K243hssmUIK9dWhzdyWyKYK3fGITzPLnwoq0AVcWrA6CCaFAdwueXW
+         ME38Bpw8uJ1JU+zUBvbixRpjOwh7mV98a/2H4Y6qtKHJaBTHyfJxwMAmFkjnej8kO5u8
+         3j0A==
+X-Gm-Message-State: ACrzQf2vlmM1QwTI8eU9g4R+xcK1ZkHULG8OWZCcGhKQw+TIupocs+GS
+        dx+/CZg3+3SI69eLS7FM2w==
+X-Google-Smtp-Source: AMsMyM5XE6C4Jth6p5sil02dicjWQ5cB+ydqIw6WBbiLhZ1bxYqGlBDsWpH9xYQrkLyO0D7PQLnHMw==
+X-Received: by 2002:a05:6870:b414:b0:130:ea11:761c with SMTP id x20-20020a056870b41400b00130ea11761cmr214439oap.62.1664221758824;
+        Mon, 26 Sep 2022 12:49:18 -0700 (PDT)
+Received: from robh.at.kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id cj26-20020a056830641a00b0065689e13f52sm8182679otb.71.2022.09.26.12.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Sep 2022 12:49:18 -0700 (PDT)
+Received: (nullmailer pid 2678987 invoked by uid 1000);
+        Mon, 26 Sep 2022 19:49:17 -0000
+Date:   Mon, 26 Sep 2022 14:49:17 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
+        linux-arm-msm@vger.kernel.org,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: hwlock: qcom-hwspinlock: add syscon
+ to MSM8974
+Message-ID: <20220926194917.GA2678852-robh@kernel.org>
+References: <20220920150414.637634-1-krzysztof.kozlowski@linaro.org>
+ <20220920150414.637634-2-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220920150414.637634-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The workqueue may execute late even after remoteproc is stopped or
-stopping, some resources (rpmsg device and endpoint) have been
-released in rproc_stop_subdevices(), then rproc_vq_interrupt()
-access these resources will cause kennel dump.
+On Tue, 20 Sep 2022 17:04:12 +0200, Krzysztof Kozlowski wrote:
+> The TCSR_MUTEX region contains two set of registers: mutex and halt.
+> Add syscon, so the TCSR mutex device (hwspinlock) can use MMIO based
+> method and in the same time share regmap with other devices for the halt
+> regs.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/hwlock/qcom-hwspinlock.yaml         | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
 
-Call trace:
- virtqueue_add_split+0x1ac/0x560
- virtqueue_add_inbuf+0x4c/0x60
- rpmsg_recv_done+0x15c/0x294
- vring_interrupt+0x6c/0xa4
- rproc_vq_interrupt+0x30/0x50
- imx_dsp_rproc_vq_work+0x24/0x40 [imx_dsp_rproc]
- process_one_work+0x1d0/0x354
- worker_thread+0x13c/0x470
- kthread+0x154/0x160
- ret_from_fork+0x10/0x20
-
-Add mutex protection in imx_dsp_rproc_vq_work(), if the state is
-not running, then just skip calling rproc_vq_interrupt().
-
-Also the flush workqueue operation can't be added in rproc stop
-for same reason.
-
-Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 899aa8dd12f0..95da1cbefacf 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -347,9 +347,6 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	int ret = 0;
- 
--	/* Make sure work is finished */
--	flush_work(&priv->rproc_work);
--
- 	if (rproc->state == RPROC_CRASHED) {
- 		priv->flags &= ~REMOTE_IS_READY;
- 		return 0;
-@@ -432,9 +429,18 @@ static void imx_dsp_rproc_vq_work(struct work_struct *work)
- {
- 	struct imx_dsp_rproc *priv = container_of(work, struct imx_dsp_rproc,
- 						  rproc_work);
-+	struct rproc *rproc = priv->rproc;
-+
-+	mutex_lock(&rproc->lock);
-+
-+	if (rproc->state != RPROC_RUNNING)
-+		goto unlock_mutex;
- 
- 	rproc_vq_interrupt(priv->rproc, 0);
- 	rproc_vq_interrupt(priv->rproc, 1);
-+
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
- }
- 
- /**
--- 
-2.34.1
-
+Acked-by: Rob Herring <robh@kernel.org>
