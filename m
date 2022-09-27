@@ -2,47 +2,47 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 771E0C6FA82
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Sep 2022 02:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CCCC6FA94
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Sep 2022 02:59:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbiI0C7a (ORCPT
+        id S231269AbiI0C7b (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Sep 2022 22:59:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50558 "EHLO
+        Mon, 26 Sep 2022 22:59:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230307AbiI0C7D (ORCPT
+        with ESMTP id S230383AbiI0C7D (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Mon, 26 Sep 2022 22:59:03 -0400
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55149A6AC9;
-        Mon, 26 Sep 2022 19:56:33 -0700 (PDT)
-X-UUID: ff0e6cd1f32f41ea899edde8d680b114-20220927
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8FFA6ACF;
+        Mon, 26 Sep 2022 19:56:34 -0700 (PDT)
+X-UUID: 06c75289373c400db0fe7552392e4a0d-20220927
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=SGV4Mh7EE7zp++AbZ62Qr7GojYfsLp9od1ijjZk+9Z0=;
-        b=uAU8reRiRyNr+OB05uqjAtfQbeqGqJyw0HUAKWo5vskweTc7Xm8eak4nGPjwCi410L+nBp4TtYRnP0f9MTlVu7ePN32QVZcjiGgzTbTXFEkSe1yg9WiPNmxT47Gtvq4b3unFlMF3q2zG8UkHst4w3SzWigBKE+bigZwmGXJz1oc=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=X5/g02O+FAb76avY7mpBFXThZP45BZFh3KJ/fyx8Lr4=;
+        b=tUcEPDvbmymY6ZOQPDv7DTn2C5mwgZsSIDk+3AXq4tFG3qA9gDEbNQGbStjsvJPNKmni62HECGNejXTlq44xMom52kQqPG1GlFgUnNSIuGek2Qm9Qy9JrY5umz3fDAnpcCEMSOX14yhFK2CzDoUZi/EeAQBWzlyTeOJYUzJ3hVc=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.11,REQID:f2b4fce9-de70-4ac1-8c06-4702e3962c20,IP:0,U
+X-CID-O-INFO: VERSION:1.1.11,REQID:322f05e1-dfbc-46de-92f9-5ca0bba05b94,IP:0,U
         RL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Release_Ham,ACTION
         :release,TS:95
-X-CID-INFO: VERSION:1.1.11,REQID:f2b4fce9-de70-4ac1-8c06-4702e3962c20,IP:0,URL
+X-CID-INFO: VERSION:1.1.11,REQID:322f05e1-dfbc-46de-92f9-5ca0bba05b94,IP:0,URL
         :0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTION
         :quarantine,TS:95
-X-CID-META: VersionHash:39a5ff1,CLOUDID:bb2b51e4-87f9-4bb0-97b6-34957dc0fbbe,B
-        ulkID:220927105630LRPANMO4,BulkQuantity:0,Recheck:0,SF:38|28|17|19|48|823|
+X-CID-META: VersionHash:39a5ff1,CLOUDID:bdbe1c07-1cee-4c38-b21b-a45f9682fdc0,B
+        ulkID:220927105630OU0029CL,BulkQuantity:0,Recheck:0,SF:38|28|17|19|48|823|
         824,TC:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,
         COL:0
-X-UUID: ff0e6cd1f32f41ea899edde8d680b114-20220927
+X-UUID: 06c75289373c400db0fe7552392e4a0d-20220927
 Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1169113129; Tue, 27 Sep 2022 10:56:27 +0800
+        with ESMTP id 398048684; Tue, 27 Sep 2022 10:56:27 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
  mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
- Tue, 27 Sep 2022 10:56:26 +0800
+ Tue, 27 Sep 2022 10:56:25 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Tue, 27 Sep 2022 10:56:26 +0800
+ 15.2.792.15 via Frontend Transport; Tue, 27 Sep 2022 10:56:25 +0800
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -58,9 +58,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH v3 09/11] remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
-Date:   Tue, 27 Sep 2022 10:56:04 +0800
-Message-ID: <20220927025606.26673-10-tinghan.shen@mediatek.com>
+Subject: [PATCH v3 01/11] dt-bindings: remoteproc: mediatek: Give the subnode a persistent name
+Date:   Tue, 27 Sep 2022 10:55:56 +0800
+Message-ID: <20220927025606.26673-2-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20220927025606.26673-1-tinghan.shen@mediatek.com>
 References: <20220927025606.26673-1-tinghan.shen@mediatek.com>
@@ -71,63 +71,88 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Because MT8195 SCP core 0 and core 1 both boot from head of SRAM and
-have the same viewpoint of SRAM, SCP has a "Core 1 SRAM offset"
-to control the viewpoint of SCP core 1 to allow core 1 boot
-from different SRAM location.
-
-The "Core 1 SRAM offset" configuration is composed by specifying a range
-and an offset. When SCP core 1 accesses a SRAM address located in the
-configured range, SCP bus adds the configured offset to the address to
-shift the final physical destination on SCP SRAM. This shift is
-transparent to the software running on SCP core 1.
+The node name doesn't matter to add the subnode as a cros-ec rpmsg device.
+Give it a clear persistent node name to simplify scp yaml.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 ---
- drivers/remoteproc/mtk_scp.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ .../bindings/remoteproc/mtk,scp.yaml          | 35 ++++++++++---------
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |  2 +-
+ 2 files changed, 20 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 2d43338b96da..0f1b587f8502 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -477,6 +477,8 @@ static int mt8195_scp_before_load(struct mtk_scp *scp)
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index 7e091eaffc18..786bed897916 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -58,6 +58,23 @@ properties:
+   memory-region:
+     maxItems: 1
  
- static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- {
-+	u32 sec_ctrl;
++  cros-ec-rpmsg:
++    type: object
++    description:
++      This subnode represents the rpmsg device. The names of the devices
++      are not important. The properties of this node are defined by the
++      individual bindings for the rpmsg devices.
 +
- 	scp_sram_power_on(scp->reg_base + MT8195_CPU1_SRAM_PD, 0);
++    properties:
++      mediatek,rpmsg-name:
++        $ref: /schemas/types.yaml#/definitions/string-array
++        description:
++          Contains the name for the rpmsg device. Used to match
++          the subnode to rpmsg device announced by SCP.
++
++    required:
++      - mediatek,rpmsg-name
++
+ required:
+   - compatible
+   - reg
+@@ -89,21 +106,7 @@ allOf:
+         reg-names:
+           maxItems: 2
  
- 	/* hold SCP in reset while loading FW. */
-@@ -485,6 +487,27 @@ static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->reg_base + MT8195_CORE1_MEM_ATT_PREDEF);
+-additionalProperties:
+-  type: object
+-  description:
+-    Subnodes of the SCP represent rpmsg devices. The names of the devices
+-    are not important. The properties of these nodes are defined by the
+-    individual bindings for the rpmsg devices.
+-  properties:
+-    mediatek,rpmsg-name:
+-      $ref: /schemas/types.yaml#/definitions/string-array
+-      description:
+-        Contains the name for the rpmsg device. Used to match
+-        the subnode to rpmsg device announced by SCP.
+-
+-  required:
+-    - mediatek,rpmsg-name
++additionalProperties: false
  
-+	/* The value of SRAM offset range is from the viewpoint of SCP core 1.
-+	 * This configuration adds an offset on SCP bus when SCP core 1 accesses SCP SRAM
-+	 * to solve the SCP core 0 and core 1 both fetch the 1st instruction from the same
-+	 * SRAM address.
-+	 *
-+	 * Because SCP core 0 and core 1 both boot from the head of sram, this must be
-+	 * configured before boot SCP core 1.
-+	 *
-+	 * Configure the range of SRAM addresses will be added offset.
-+	 */
-+	writel(0, scp->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_LOW);
-+	writel(scp->sram_size, scp->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_HIGH);
-+
-+	/* configure the offset value */
-+	writel(scp->sram_phys - scp->main_scp->sram_phys, scp->reg_base + MT8195_L2TCM_OFFSET);
-+
-+	/* enable adding sram offset when fetching instruction and data */
-+	sec_ctrl = readl(scp->reg_base + MT8195_SEC_CTRL);
-+	sec_ctrl |= MT8195_CORE_OFFSET_ENABLE_I | MT8195_CORE_OFFSET_ENABLE_D;
-+	writel(sec_ctrl, scp->reg_base + MT8195_SEC_CTRL);
-+
- 	return 0;
- }
+ examples:
+   - |
+@@ -118,7 +121,7 @@ examples:
+         clocks = <&infracfg CLK_INFRA_SCPSYS>;
+         clock-names = "main";
  
+-        cros_ec {
++        cros-ec-rpmsg {
+             mediatek,rpmsg-name = "cros-ec-rpmsg";
+         };
+     };
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index b4b86bb1f1a7..693ad5f2a82e 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -816,7 +816,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&scp_pins>;
+ 
+-	cros_ec {
++	cros-ec-rpmsg {
+ 		compatible = "google,cros-ec-rpmsg";
+ 		mediatek,rpmsg-name = "cros-ec-rpmsg";
+ 	};
 -- 
 2.18.0
 
