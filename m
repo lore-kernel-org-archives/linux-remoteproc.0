@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5634CC6FA92
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Sep 2022 13:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979EBC6FA95
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Sep 2022 13:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232314AbiI0N6m (ORCPT
+        id S232620AbiI0N6o (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Sep 2022 09:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56536 "EHLO
+        Tue, 27 Sep 2022 09:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232940AbiI0N6M (ORCPT
+        with ESMTP id S232941AbiI0N6M (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Tue, 27 Sep 2022 09:58:12 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92D4715E457;
-        Tue, 27 Sep 2022 06:58:00 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28RDcoax015161;
-        Tue, 27 Sep 2022 13:57:49 GMT
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E28D15D646;
+        Tue, 27 Sep 2022 06:58:04 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28RDMWl6013239;
+        Tue, 27 Sep 2022 13:57:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=7P8YZT3yaphJR4nO+RCpzKLfnxm9vhCYa0LPqa3e1og=;
- b=oZu3eUNQG2X7sTW9jSmrzXIAjlee53+szTqYdH9KRBvlwQgjcGg+H6H+qYTHYj4qnWBh
- tERoJR24+K2fTKO3zRDXMjvt8d0R5bavtKlQ1OKwnKGA1iiC6AsJI/WdeBaD9NW+bFrv
- +rt2I1IoV0uOJvV9lC7+6FXm/YHqep+SFhupvX82yOhg+ryGJM29IHRyWAPzh85iym0u
- +MZyndMpPcLHnVQIzE//jFTeFdCK46+cma35c0MVwVk/kChdld0X1LjczlnBJ8lDckX+
- dpCckcpB+4HEwKQEmOIwN5PNLYvAOQ50aHXlOUkgjMmzGElhdkuAj0KPnGst4YUFLz8N +A== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jv28a036h-1
+ bh=1af6fn6KEykryDxp6Gx/9KDXQY51jQYEqhEkaZgsPSI=;
+ b=TAQzcaOSbIThwbQLeVQwrSjCI3CrHOvu7BtJOsEfjbsYFnZdNaGPZBWvgj2VLY++VJsC
+ ojbaxfhKj+J+EeJew2KlENcV6E2+WI2q96p82klWhex5MlBTrXh2h0cHY+4eIkYIZQPP
+ DfgJIhZtHofHuauh+utDwtuISMGP6FX6II9pOo8UCDdDsYskMFwijxBWmMEl6kWySSM5
+ QwJ0t5tbcDFnKn9k8+RlMPC4XNkU7lhWwo/2TmZajsqyWBlaYpAiZMUw543DG4FTq0MT
+ nZviu+klUuxCo3TgHMufNCmP72nOqh6LHRIkigIXPiochHJNRA2dAqBvTNBAxTn84WtU jg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3juvnngw32-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 13:57:48 +0000
+        Tue, 27 Sep 2022 13:57:25 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28RDvmWt000482
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28RDvOeg016663
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Sep 2022 13:57:48 GMT
+        Tue, 27 Sep 2022 13:57:24 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Tue, 27 Sep 2022 06:57:42 -0700
+ 15.2.986.29; Tue, 27 Sep 2022 06:57:18 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <andersson@kernel.org>, <lgirdwood@gmail.com>,
@@ -51,9 +51,9 @@ To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
         <krzysztof.kozlowski@linaro.org>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v9 6/7] remoteproc: qcom: Add efuse evb selection control
-Date:   Tue, 27 Sep 2022 19:26:42 +0530
-Message-ID: <1664287003-31450-7-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v9 2/7] remoteproc: qcom: Add flag in adsp private data structure
+Date:   Tue, 27 Sep 2022 19:26:38 +0530
+Message-ID: <1664287003-31450-3-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1664287003-31450-1-git-send-email-quic_srivasam@quicinc.com>
 References: <1664287003-31450-1-git-send-email-quic_srivasam@quicinc.com>
@@ -64,88 +64,76 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xBrENL6GrETYGtLP35CH8WMpJV34QxyM
-X-Proofpoint-GUID: xBrENL6GrETYGtLP35CH8WMpJV34QxyM
+X-Proofpoint-ORIG-GUID: TbX9w8OrDIyRSECy4FHdnW2MWTnIPn4q
+X-Proofpoint-GUID: TbX9w8OrDIyRSECy4FHdnW2MWTnIPn4q
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-27_05,2022-09-27_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=996
- priorityscore=1501 malwarescore=0 clxscore=1015 adultscore=0 phishscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ clxscore=1015 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
  definitions=main-2209270085
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add efuse evb selection control and enable it for starting ADSP.
+Add flag in qcom_adsp private data structure and initialize
+it to distinguish ADSP modules, which has iommu requirement,
+for using iommu selectively.
 
 Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
 ---
+Changes since V6:
+	-- Update commit message.
 Changes since V5:
-	-- Split devm_platform_ioremap_resource_byname function.
+	-- Rename adsp_sandbox_needed to has_iommu.
+Changes since V3:
+	-- Rename is_adsp_sb_needed to adsp_sandbox_needed.
+Changes since V2:
+	-- Add is_adsp_sb_needed flag instead of is_wpss.
 
- drivers/remoteproc/qcom_q6v5_adsp.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 14c94af..4e70e76 100644
+index 4c9a1b9..fe385e8 100644
 --- a/drivers/remoteproc/qcom_q6v5_adsp.c
 +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -56,6 +56,7 @@
+@@ -62,6 +62,7 @@ struct adsp_pil_data {
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+ 	bool is_wpss;
++	bool has_iommu;
+ 	bool auto_boot;
  
- #define LPASS_BOOT_CORE_START	BIT(0)
- #define LPASS_BOOT_CMD_START	BIT(0)
-+#define LPASS_EFUSE_Q6SS_EVB_SEL 0x0
+ 	const char **clk_ids;
+@@ -99,6 +100,7 @@ struct qcom_adsp {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
++	bool has_iommu;
  
- struct adsp_pil_data {
- 	int crash_reason_smem;
-@@ -86,6 +87,7 @@ struct qcom_adsp {
- 	struct clk_bulk_data *clks;
- 
- 	void __iomem *qdsp6ss_base;
-+	void __iomem *lpass_efuse;
- 
- 	struct reset_control *pdc_sync_reset;
- 	struct reset_control *restart;
-@@ -367,6 +369,9 @@ static int adsp_start(struct rproc *rproc)
- 	/* Program boot address */
- 	writel(adsp->mem_phys >> 4, adsp->qdsp6ss_base + RST_EVB_REG);
- 
-+	if (adsp->lpass_efuse)
-+		writel(LPASS_EFUSE_Q6SS_EVB_SEL, adsp->lpass_efuse);
-+
- 	/* De-assert QDSP6 stop core. QDSP6 will execute after out of reset */
- 	writel(LPASS_BOOT_CORE_START, adsp->qdsp6ss_base + CORE_START_REG);
- 
-@@ -533,6 +538,7 @@ static int adsp_init_reset(struct qcom_adsp *adsp)
- static int adsp_init_mmio(struct qcom_adsp *adsp,
- 				struct platform_device *pdev)
- {
-+	struct resource *efuse_region;
- 	struct device_node *syscon;
- 	int ret;
- 
-@@ -542,6 +548,17 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
- 		return PTR_ERR(adsp->qdsp6ss_base);
+ 	struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
+ 	size_t proxy_pd_count;
+@@ -595,12 +597,15 @@ static int adsp_probe(struct platform_device *pdev)
  	}
  
-+	efuse_region = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (!efuse_region) {
-+		adsp->lpass_efuse = NULL;
-+		dev_dbg(adsp->dev, "failed to get efuse memory region\n");
-+	} else {
-+		adsp->lpass_efuse = devm_ioremap_resource(&pdev->dev, efuse_region);
-+		if (IS_ERR(adsp->lpass_efuse)) {
-+			dev_err(adsp->dev, "failed to map efuse registers\n");
-+			return PTR_ERR(adsp->lpass_efuse);
-+		}
-+	}
- 	syscon = of_parse_phandle(pdev->dev.of_node, "qcom,halt-regs", 0);
- 	if (!syscon) {
- 		dev_err(&pdev->dev, "failed to parse qcom,halt-regs\n");
+ 	rproc->auto_boot = desc->auto_boot;
++	rproc->has_iommu = desc->has_iommu;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+ 	adsp = (struct qcom_adsp *)rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->info_name = desc->sysmon_name;
++	adsp->has_iommu = desc->has_iommu;
++
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	if (desc->is_wpss)
 -- 
 2.7.4
 
