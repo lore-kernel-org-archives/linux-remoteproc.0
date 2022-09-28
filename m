@@ -2,152 +2,455 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BB1C04A95
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Sep 2022 17:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B1CC04A95
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Sep 2022 17:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233263AbiI1RUv (ORCPT
+        id S229951AbiI1RbG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Sep 2022 13:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53434 "EHLO
+        Wed, 28 Sep 2022 13:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234318AbiI1RUs (ORCPT
+        with ESMTP id S233831AbiI1RbB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Sep 2022 13:20:48 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53A754C80
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 10:20:46 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id a29so13111000pfk.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 10:20:46 -0700 (PDT)
+        Wed, 28 Sep 2022 13:31:01 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1AF519C36
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 10:30:59 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id y136so13146936pfb.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 10:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=9bN9My5ZbeHYHa+eCYmZ+EExYTqNfYOXwgsyfJBXZEE=;
-        b=lIcfhWxf/X2WYZb63vELVJjIY3gExm8RBaLCUYE4GSCgPjwFSlU/Ml6fHaC0ZJj3Bn
-         xkkQwKw108Nn8tp+fl66fVLDrUFymGhiarsw+vVbXLOqa0lhAxFg0MASxbUFSjtQ6jxV
-         +NNEMB1kpHyBVAqfcvaiCRbO7aqKvEfmZ3kBO1UIaRoBXTmXS4Zms9Px4cmQv6eFgIqj
-         99aB1eKsLA0iseQYp4uYeZCnLszRbs8jcC+5N1GpsN2QTY/4V6LwR5ImG3CoD51lxqzZ
-         HH/tILkrIhQOQj7r7cf7hyOUjeAOUYPGVEDlmjMhpL20aWYsXFrNVC0yp2+K2iNn/aZ6
-         ObmQ==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date;
+        bh=7SWYiaNKhmtQ3unxY0hqTaTEitWRnJQ84ZlYxegZMW0=;
+        b=zFXwTuD0zvolx0yhxmJHqDe0tV3PoaGUydiZZUunr1f1U6xKteTtDLNmm0npdDHHhW
+         M+5tpot5nePGujc6tvEVkXqMXFEGkb0rxmmcrr1JIjkpIEbkMFPRUbJVrzag1Dw+gHxW
+         l0UgRv4cKSVNiv/apd+GO5lVTCHanWWrghsth24xDupihXXmNpL/hAwK2d9mS2qS8UaZ
+         E5saFJoYXt8qLsHGvP/7SAVaHyw4OxnOYQoxgVnxkRbOMQsEyzyCx9dz72b6nYVM/f8n
+         PNde/3lCPxw6o24+COME0BUTzQTLoyW5VczhRIgwfEP+DAvnm5bGLUag0OzR05DQSwQo
+         FfoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=9bN9My5ZbeHYHa+eCYmZ+EExYTqNfYOXwgsyfJBXZEE=;
-        b=lh0UwWRvM5RDlJF6+Bi8e9Ky5WpObWK7/X1xsDr96a7PCsdIQ+nI8l00O02T+VV/LD
-         JTl+PRsP4pZDIbfBKCATG+DXZkWj4zXcxzW3uXhgPQ+zLKpP2xfCi5mQS1XIl4hXsOqi
-         7j3UGE6ewbwm7ewOMLvutf3B4yQOAbOb/fTHp69m5C4fy+yQMU0u7zG2DwZk63zzYW8V
-         ChAh8jtctbNLSCV7VNnbdOiiFM1ZI345FbK9knfk9aKUwljsGLaybubPxueJ4y/Skm/F
-         1N+A5bMCGhIhUa4xFSLt/pzXOghG7v3ZseuicMQVA8Psmg3MFdSjeBsN5S1WATR3l2Mh
-         YWbw==
-X-Gm-Message-State: ACrzQf3lxH8Vrv/YoCgzp81/mhWKCq1QvDXHy97Fb5YFEpP7k3bPD2UV
-        J2IQRQZZ40RXZDB5AeA61qGYBw==
-X-Google-Smtp-Source: AMsMyM5rDZE9lmdRZgTb8Kd897hQYYOoyyhWPiPshBDFwdCMNfgjTZZjvapXUc1p9NZiGqKPW4C8lg==
-X-Received: by 2002:a63:90c4:0:b0:43c:bc86:8ae7 with SMTP id a187-20020a6390c4000000b0043cbc868ae7mr13622186pge.398.1664385646157;
-        Wed, 28 Sep 2022 10:20:46 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=7SWYiaNKhmtQ3unxY0hqTaTEitWRnJQ84ZlYxegZMW0=;
+        b=PxtAyjxJMteJG8U7gCQ6UkbAVDPNNUCtk86r+cELxrbblvGJ/0iQ3SZlSYZyA3w6wW
+         12o8vzN6YBc0AAv6MytNtdsM7QjJOdRg+S+zOlBAu25TShfzbLPAEutZlaxo3Q/h6Q/Z
+         H9d4gMW3AFb/KxjWslpNLiXzmqqS5SKQQtSYMmzS1p5ciIAB3COHSGQiRCaWTP10eUR3
+         KQLj0IWaxrlauKwr5975n2tVraeINo5P/24alQQOrxbRpOPzMcoqYJDUnts54ETN+X2P
+         feRPrKc5u8qWI6tusHXSji2WdlJz/4EQmzqEtCx/BfjkyRKVnBAUHS+YzQOzx/tmCPiY
+         pALQ==
+X-Gm-Message-State: ACrzQf2jep2k1lLdylcwv2I247gHxhEPi36b67z9mbholMHD8TjP+lY4
+        nw2J2DgEhFwsheiqzHCZFo8pYQ==
+X-Google-Smtp-Source: AMsMyM7bRCSYw6DeUGvv/veAx1EPKfBAlxoP2JDdiafIdTOMoI049J4O0xHmgVdk/kUflWf6ekpN5w==
+X-Received: by 2002:a63:3e4a:0:b0:439:246d:e681 with SMTP id l71-20020a633e4a000000b00439246de681mr24051046pga.424.1664386259140;
+        Wed, 28 Sep 2022 10:30:59 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l10-20020a170903120a00b001780a528540sm4118002plh.93.2022.09.28.10.20.44
+        by smtp.gmail.com with ESMTPSA id v11-20020a17090a088b00b001f22647cb56sm1813582pjc.27.2022.09.28.10.30.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 10:20:45 -0700 (PDT)
-Date:   Wed, 28 Sep 2022 11:20:42 -0600
+        Wed, 28 Sep 2022 10:30:57 -0700 (PDT)
+Date:   Wed, 28 Sep 2022 11:30:54 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     andersson@kernel.org, arnaud.pouliquen@foss.st.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: Add mutex protection for
- workqueue
-Message-ID: <20220928172042.GB2990524@p14s>
-References: <1664192893-14487-1-git-send-email-shengjiu.wang@nxp.com>
+To:     Peng Fan <peng.fan@oss.nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH V5 3/6] remoteproc: imx_rproc: support attaching to
+ i.MX8QXP M4
+Message-ID: <20220928173054.GC2990524@p14s>
+References: <20220824011023.1493050-1-peng.fan@oss.nxp.com>
+ <20220824011023.1493050-4-peng.fan@oss.nxp.com>
+ <20220926232127.GB2817947@p14s>
+ <DU0PR04MB9417EABB1B0A9B550E94236288559@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <20220927175649.GB2883698@p14s>
+ <64c6bdc2-583d-a2d0-f8b8-c4487f8a4d97@oss.nxp.com>
+ <65b7224d-d3eb-4513-d733-ec781864fb7b@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1664192893-14487-1-git-send-email-shengjiu.wang@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <65b7224d-d3eb-4513-d733-ec781864fb7b@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Sep 26, 2022 at 07:48:13PM +0800, Shengjiu Wang wrote:
-> The workqueue may execute late even after remoteproc is stopped or
-> stopping, some resources (rpmsg device and endpoint) have been
-> released in rproc_stop_subdevices(), then rproc_vq_interrupt()
-> access these resources will cause kennel dump.
+On Wed, Sep 28, 2022 at 06:01:45PM +0800, Peng Fan wrote:
+> Hi Mathieu,
 > 
-> Call trace:
->  virtqueue_add_split+0x1ac/0x560
->  virtqueue_add_inbuf+0x4c/0x60
->  rpmsg_recv_done+0x15c/0x294
->  vring_interrupt+0x6c/0xa4
->  rproc_vq_interrupt+0x30/0x50
->  imx_dsp_rproc_vq_work+0x24/0x40 [imx_dsp_rproc]
->  process_one_work+0x1d0/0x354
->  worker_thread+0x13c/0x470
->  kthread+0x154/0x160
->  ret_from_fork+0x10/0x20
+> On 9/28/2022 3:39 PM, Peng Fan wrote:
+> > 
+> > 
+> > On 9/28/2022 1:56 AM, Mathieu Poirier wrote:
+> > > On Tue, Sep 27, 2022 at 02:48:02AM +0000, Peng Fan wrote:
+> > > > Hi Mathieu,
+> > > > 
+> > > > Thanks for reviewing this patchset.
+> > > > > Subject: Re: [PATCH V5 3/6] remoteproc: imx_rproc: support attaching to
+> > > > > i.MX8QXP M4
+> > > > > 
+> > > > > On Wed, Aug 24, 2022 at 09:10:20AM +0800, Peng Fan (OSS) wrote:
+> > > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > > > 
+> > > > > > When M4 is kicked by SCFW, M4 runs in its own hardware partition,
+> > > > > > Linux could only do IPC with M4, it could not start,
+> > > > > > stop, update image.
+> > > > > > 
+> > > > > > We disable recovery reboot when M4 is managed by SCFW, because
+> > > > > > remoteproc core still not support M4 auto-recovery without loading
+> > > > > > image.
+> > > > > > 
+> > > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > > ---
+> > > > > >   drivers/remoteproc/imx_rproc.c | 108
+> > > > > > ++++++++++++++++++++++++++++++++-
+> > > > > >   1 file changed, 107 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > > > > b/drivers/remoteproc/imx_rproc.c index 7cc4fd207e2d..bcba74e90020
+> > > > > > 100644
+> > > > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > > > @@ -6,6 +6,7 @@
+> > > > > >   #include <linux/arm-smccc.h>
+> > > > > >   #include <linux/clk.h>
+> > > > > >   #include <linux/err.h>
+> > > > > > +#include <linux/firmware/imx/sci.h>
+> > > > > >   #include <linux/interrupt.h>
+> > > > > >   #include <linux/kernel.h>
+> > > > > >   #include <linux/mailbox_client.h>
+> > > > > > @@ -59,6 +60,8 @@
+> > > > > >   #define IMX_SIP_RPROC_STARTED        0x01
+> > > > > >   #define IMX_SIP_RPROC_STOP        0x02
+> > > > > > 
+> > > > > > +#define IMX_SC_IRQ_GROUP_REBOOTED    5
+> > > > > > +
+> > > > > >   /**
+> > > > > >    * struct imx_rproc_mem - slim internal memory structure
+> > > > > >    * @cpu_addr: MPU virtual address of the memory region @@ -89,6
+> > > > > > +92,10 @@ struct imx_rproc {
+> > > > > >       struct work_struct        rproc_work;
+> > > > > >       struct workqueue_struct        *workqueue;
+> > > > > >       void __iomem            *rsc_table;
+> > > > > > +    struct imx_sc_ipc        *ipc_handle;
+> > > > > > +    struct notifier_block        rproc_nb;
+> > > > > > +    u32                rproc_pt;    /* partition id */
+> > > > > > +    u32                rsrc_id;    /* resource id */
+> > > > > >   };
+> > > > > > 
+> > > > > >   static const struct imx_rproc_att
+> > > > > > imx_rproc_att_imx93[] = { @@ -117,6
+> > > > > > +124,18 @@ static const struct imx_rproc_att imx_rproc_att_imx93[] = {
+> > > > > >       { 0xD0000000, 0xa0000000, 0x10000000, 0 },  };
+> > > > > > 
+> > > > > > +static const struct imx_rproc_att imx_rproc_att_imx8qxp[] = {
+> > > > > > +    { 0x08000000, 0x08000000, 0x10000000, 0 },
+> > > > > > +    /* TCML/U */
+> > > > > > +    { 0x1FFE0000, 0x34FE0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+> > > > > > +    /* OCRAM(Low 96KB) */
+> > > > > > +    { 0x21000000, 0x00100000, 0x00018000, 0 },
+> > > > > > +    /* OCRAM */
+> > > > > > +    { 0x21100000, 0x00100000, 0x00040000, 0 },
+> > > > > > +    /* DDR (Data) */
+> > > > > > +    { 0x80000000, 0x80000000, 0x60000000, 0 }, };
+> > > > > > +
+> > > > > >   static const struct imx_rproc_att imx_rproc_att_imx8mn[] = {
+> > > > > >       /* dev addr , sys addr  , size        , flags */
+> > > > > >       /* ITCM   */
+> > > > > > @@ -255,6 +274,12 @@ static const struct imx_rproc_dcfg
+> > > > > imx_rproc_cfg_imx8mq = {
+> > > > > >       .method        = IMX_RPROC_MMIO,
+> > > > > >   };
+> > > > > > 
+> > > > > > +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8qxp = {
+> > > > > > +    .att        = imx_rproc_att_imx8qxp,
+> > > > > > +    .att_size    = ARRAY_SIZE(imx_rproc_att_imx8qxp),
+> > > > > > +    .method        = IMX_RPROC_SCU_API,
+> > > > > > +};
+> > > > > > +
+> > > > > >   static const struct imx_rproc_dcfg imx_rproc_cfg_imx8ulp = {
+> > > > > >       .att        = imx_rproc_att_imx8ulp,
+> > > > > >       .att_size    = ARRAY_SIZE(imx_rproc_att_imx8ulp),
+> > > > > > @@ -680,6 +705,37 @@ static void imx_rproc_free_mbox(struct rproc
+> > > > > *rproc)
+> > > > > >       mbox_free_channel(priv->rx_ch);
+> > > > > >   }
+> > > > > > 
+> > > > > > +static void imx_rproc_put_scu(struct rproc *rproc) {
+> > > > > > +    struct imx_rproc *priv = rproc->priv;
+> > > > > > +    const struct imx_rproc_dcfg *dcfg = priv->dcfg;
+> > > > > > +
+> > > > > > +    if (dcfg->method != IMX_RPROC_SCU_API)
+> > > > > > +        return;
+> > > > > > +
+> > > > > > +    if (!imx_sc_rm_is_resource_owned(priv->ipc_handle,
+> > > > > > priv->rsrc_id))
+> > > > > > +        return;
+> > > > > > +
+> > > > > > +    imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED,
+> > > > > BIT(priv->rproc_pt), false);
+> > > > > > +    imx_scu_irq_unregister_notifier(&priv->rproc_nb);
+> > > > > > +}
+> > > > > > +
+> > > > > > +static int imx_rproc_partition_notify(struct notifier_block *nb,
+> > > > > > +                      unsigned long event, void *group) {
+> > > > > > +    struct imx_rproc *priv = container_of(nb, struct imx_rproc,
+> > > > > > +rproc_nb);
+> > > > > > +
+> > > > > > +    /* Ignore other irqs */
+> > > > > > +    if (!((event & BIT(priv->rproc_pt)) && (*(u8 *)group ==
+> > > > > IMX_SC_IRQ_GROUP_REBOOTED)))
+> > > > > > +        return 0;
+> > > > > > +
+> > > > > > +    rproc_report_crash(priv->rproc, RPROC_WATCHDOG);
+> > > > > > +
+> > > > > > +    pr_info("Partition%d reset!\n", priv->rproc_pt);
+> > > > > > +
+> > > > > > +    return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > >   static int imx_rproc_detect_mode(struct imx_rproc *priv)  {
+> > > > > >       struct regmap_config config = { .name = "imx-rproc" }; @@ -689,6
+> > > > > > +745,7 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
+> > > > > >       struct arm_smccc_res res;
+> > > > > >       int ret;
+> > > > > >       u32 val;
+> > > > > > +    u8 pt;
+> > > > > > 
+> > > > > >       switch (dcfg->method) {
+> > > > > >       case IMX_RPROC_NONE:
+> > > > > > @@ -699,6 +756,51 @@ static int imx_rproc_detect_mode(struct
+> > > > > imx_rproc *priv)
+> > > > > >           if (res.a0)
+> > > > > >               priv->rproc->state = RPROC_DETACHED;
+> > > > > >           return 0;
+> > > > > > +    case IMX_RPROC_SCU_API:
+> > > > > > +        ret = imx_scu_get_handle(&priv->ipc_handle);
+> > > > > > +        if (ret)
+> > > > > > +            return ret;
+> > > > > > +        ret = of_property_read_u32(dev->of_node, "fsl,resource-id",
+> > > > > &priv->rsrc_id);
+> > > > > > +        if (ret) {
+> > > > > > +            dev_err(dev, "No fsl,resource-id property\n");
+> > > > > > +            return ret;
+> > > > > > +        }
+> > > > > > +
+> > > > > > +        /*
+> > > > > > +         * If Mcore resource is not owned by Acore partition, It is
+> > > > > kicked by ROM,
+> > > > > > +         * and Linux could only do IPC with Mcore and nothing else.
+> > > > > > +         */
+> > > > > > +        if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv-
+> > > > > > rsrc_id))
+> > > > > > +            return 0;
+> > > > > 
+> > > > > If imx_sc_rm_is_resource_owned() return '1' than the remote
+> > > > > processor is
+> > > > > under Linux's control and what follows below is not needed. 
+> > > > > That is also
+> > > > > coherent with the comment in [1].
+> > > > 
+> > > > Case 1: If M4 is owned by Linux, here directly return 0.
+> > > > Case 2: If M4 is not owned by Linux, the following code after
+> > > > this line will set
+> > > > state as RPROC_DETACHED.
+> > > 
+> > > I understand that part.
+> > > 
+> > > > 
+> > > > Patch 3/6(this patch) is only to support case 2.
+> > > > Patch 4/6 is to support case 1.
+> > > > 
+> > > 
+> > > Let's leave the subsequent patches alone for now.
+> > > 
+> > > > > 
+> > > > > That is in contrast with what is happening in
+> > > > > imx_rproc_put_scu().  There, if
+> > > > > the remote processor is _not_ owned by Linux than the condition returns
+> > > > > without calling imx_scu_irq_group_enable() and
+> > > > > imx_scu_irq_unregister_notifier().  That seems to be a bug.
+> > > > 
+> > > > No. The two functions only needed when M4 is in a separate
+> > > > hardware partition.
+> > > > 
+> > > > The scu irq is only needed when M4 is out of linux control and need some
+> > > > notification such as M4 is reset by SCU(System Control Unit).
+> > > > That linux got
+> > > > notification that M4 is reset by SCU.
+> > > 
+> > > I also understand that part.
+> > > 
+> > > What I am underlining here is that when the M4 is independent, function
+> > > imx_scu_irq_register_notifier() and imx_scu_irq_group_enable() are
+> > > called but
+> > > their cleanup equivalent are not called in imx_rproc_put_scu()
+> > > because of the '!'
+> > > in the if() statement.
+> > 
+> > you are right, this is bug in my side. It should be as below based on
+> > patch 3/6.
+> > 
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c
+> > index bcba74e90020..a56aecae00c6 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -713,7 +713,7 @@ static void imx_rproc_put_scu(struct rproc *rproc)
+> >          if (dcfg->method != IMX_RPROC_SCU_API)
+> >                  return;
+> > 
+> > -       if (!imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id))
+> > +       if (imx_sc_rm_is_resource_owned(priv->ipc_handle, priv->rsrc_id))
+
+Indeed, which raises questions about how this patchset was tested.  And it is
+not the first time we touch base on that.
+
+> >                  return;
+> > 
+> > Thanks for detailed reviewing.
 > 
-> Add mutex protection in imx_dsp_rproc_vq_work(), if the state is
-> not running, then just skip calling rproc_vq_interrupt().
+> If you are fine with this change, I could send out V6. Anyway, I'll wait
+> to see if you have other comments in this patchset.
+>
+
+I am out of time for this patchset and as such will not provide more comments
+on this revision.
+
+> Thanks,
+> Peng.
 > 
-> Also the flush workqueue operation can't be added in rproc stop
-> for same reason.
-> 
-> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 899aa8dd12f0..95da1cbefacf 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -347,9 +347,6 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	int ret = 0;
->  
-> -	/* Make sure work is finished */
-> -	flush_work(&priv->rproc_work);
-> -
-
-The kernel documentation for this function [1] indicate that once it returns
-there will no more jobs to process in that queue, _unless_ another job has been
-queued _after_ the flush has started.  What I suspect is happening here is that
-a new job is queued between the time flush_work() returns and the remote processor
-is switched off, something that should not be happening since all the
-subdevices have been stopped in rproc_stop_subdevices().  
-
-[1]. https://elixir.bootlin.com/linux/v6.0-rc7/source/kernel/workqueue.c#L3092
-
-
->  	if (rproc->state == RPROC_CRASHED) {
->  		priv->flags &= ~REMOTE_IS_READY;
->  		return 0;
-> @@ -432,9 +429,18 @@ static void imx_dsp_rproc_vq_work(struct work_struct *work)
->  {
->  	struct imx_dsp_rproc *priv = container_of(work, struct imx_dsp_rproc,
->  						  rproc_work);
-> +	struct rproc *rproc = priv->rproc;
-> +
-> +	mutex_lock(&rproc->lock);
-> +
-> +	if (rproc->state != RPROC_RUNNING)
-> +		goto unlock_mutex;
->  
->  	rproc_vq_interrupt(priv->rproc, 0);
->  	rproc_vq_interrupt(priv->rproc, 1);
-
-These are not guaranteed to be atomic and sleeping with the mutex held is
-guaranteed to deadlock the system.
-
-Thanks,
-Mathieu
-
-> +
-> +unlock_mutex:
-> +	mutex_unlock(&rproc->lock);
->  }
->  
->  /**
-> -- 
-> 2.34.1
-> 
+> > 
+> > Thanks,
+> > Peng.
+> > 
+> > > 
+> > > > 
+> > > > > 
+> > > > > There is also a problem in patch 4/6 associated to that.
+> > > > 
+> > > > If the upper explanation eliminate your concern, "a problem in
+> > > > patch 4/6" should
+> > > > not be a problem.
+> > > > 
+> > > > When M4 is owned by Linux, Linux need handle the power domain.
+> > > > If M4 is not owned
+> > > > by Linux, SCU firmware will handle the power domain, and Linux
+> > > > has no permission to
+> > > > touch that.
+> > > > 
+> > > > Thanks
+> > > > Peng
+> > > > 
+> > > > > 
+> > > > > Thanks,
+> > > > > Mathieu
+> > > > > 
+> > > > > 
+> > > > > [1].
+> > > > > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Felixir
+> > > > > .bootlin.com%2Flinux%2Fv6.0-
+> > > > > rc7%2Fsource%2Fdrivers%2Ffirmware%2Fimx%2Frm.c%23L24&amp;data=0
+> > > > > 5%7C01%7Cpeng.fan%40nxp.com%7Cbe679e9a409a48b834b908daa015d92
+> > > > > c%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637998312946913
+> > > > > 710%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2lu
+> > > > > MzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=
+> > > > > JDRvoDGGgEiSmbhj3410V2DNxamZbDmMS0U2GvBnI74%3D&amp;reserved
+> > > > > =0
+> > > > > 
+> > > > > > +
+> > > > > > +        priv->rproc->state = RPROC_DETACHED;
+> > > > > > +        priv->rproc->recovery_disabled = true;
+> > > > > > +
+> > > > > > +        /* Get partition id and enable irq in SCFW */
+> > > > > > +        ret = imx_sc_rm_get_resource_owner(priv->ipc_handle,
+> > > > > priv->rsrc_id, &pt);
+> > > > > > +        if (ret) {
+> > > > > > +            dev_err(dev, "not able to get resource owner\n");
+> > > > > > +            return ret;
+> > > > > > +        }
+> > > > > > +
+> > > > > > +        priv->rproc_pt = pt;
+> > > > > > +        priv->rproc_nb.notifier_call = imx_rproc_partition_notify;
+> > > > > > +
+> > > > > > +        ret = imx_scu_irq_register_notifier(&priv->rproc_nb);
+> > > > > > +        if (ret) {
+> > > > > > +            dev_warn(dev, "register scu notifier failed.\n");
+> > > > > > +            return ret;
+> > > > > > +        }
+> > > > > > +
+> > > > > > +        ret =
+> > > > > imx_scu_irq_group_enable(IMX_SC_IRQ_GROUP_REBOOTED, BIT(priv-
+> > > > > > rproc_pt),
+> > > > > > +                           true);
+> > > > > > +        if (ret) {
+> > > > > > +            imx_scu_irq_unregister_notifier(&priv->rproc_nb);
+> > > > > > +            dev_warn(dev, "Enable irq failed.\n");
+> > > > > > +            return ret;
+> > > > > > +        }
+> > > > > > +
+> > > > > > +        return 0;
+> > > > > >       default:
+> > > > > >           break;
+> > > > > >       }
+> > > > > > @@ -803,7 +905,7 @@ static int imx_rproc_probe(struct platform_device
+> > > > > > *pdev)
+> > > > > > 
+> > > > > >       ret = imx_rproc_clk_enable(priv);
+> > > > > >       if (ret)
+> > > > > > -        goto err_put_mbox;
+> > > > > > +        goto err_put_scu;
+> > > > > > 
+> > > > > >       INIT_WORK(&priv->rproc_work, imx_rproc_vq_work);
+> > > > > > 
+> > > > > > @@ -820,6 +922,8 @@ static int imx_rproc_probe(struct platform_device
+> > > > > > *pdev)
+> > > > > > 
+> > > > > >   err_put_clk:
+> > > > > >       clk_disable_unprepare(priv->clk);
+> > > > > > +err_put_scu:
+> > > > > > +    imx_rproc_put_scu(rproc);
+> > > > > >   err_put_mbox:
+> > > > > >       imx_rproc_free_mbox(rproc);
+> > > > > >   err_put_wkq:
+> > > > > > @@ -837,6 +941,7 @@ static int imx_rproc_remove(struct
+> > > > > platform_device
+> > > > > > *pdev)
+> > > > > > 
+> > > > > >       clk_disable_unprepare(priv->clk);
+> > > > > >       rproc_del(rproc);
+> > > > > > +    imx_rproc_put_scu(rproc);
+> > > > > >       imx_rproc_free_mbox(rproc);
+> > > > > >       destroy_workqueue(priv->workqueue);
+> > > > > >       rproc_free(rproc);
+> > > > > > @@ -852,6 +957,7 @@ static const struct of_device_id
+> > > > > imx_rproc_of_match[] = {
+> > > > > >       { .compatible = "fsl,imx8mm-cm4", .data =
+> > > > > &imx_rproc_cfg_imx8mq },
+> > > > > >       { .compatible = "fsl,imx8mn-cm7", .data =
+> > > > > &imx_rproc_cfg_imx8mn },
+> > > > > >       { .compatible = "fsl,imx8mp-cm7", .data =
+> > > > > &imx_rproc_cfg_imx8mn },
+> > > > > > +    { .compatible = "fsl,imx8qxp-cm4", .data =
+> > > > > &imx_rproc_cfg_imx8qxp },
+> > > > > >       { .compatible = "fsl,imx8ulp-cm33", .data =
+> > > > > &imx_rproc_cfg_imx8ulp },
+> > > > > >       { .compatible = "fsl,imx93-cm33", .data =
+> > > > > > &imx_rproc_cfg_imx93 },
+> > > > > >       {},
+> > > > > > -- 
+> > > > > > 2.37.1
+> > > > > > 
