@@ -2,43 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29657C04A95
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Sep 2022 12:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C302C32771
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Sep 2022 12:29:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233665AbiI1M2n (ORCPT
+        id S233526AbiI1M32 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Sep 2022 08:28:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35942 "EHLO
+        Wed, 28 Sep 2022 08:29:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233644AbiI1M2j (ORCPT
+        with ESMTP id S233556AbiI1M3P (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Sep 2022 08:28:39 -0400
+        Wed, 28 Sep 2022 08:29:15 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B0E91D3F;
-        Wed, 28 Sep 2022 05:28:37 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SCRw7s015032;
-        Wed, 28 Sep 2022 12:28:20 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B98993520;
+        Wed, 28 Sep 2022 05:29:11 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28SCRih2021199;
+        Wed, 28 Sep 2022 12:28:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=LJiOaGL2VVuoViglQqnwwg6m1j1+ldTNGNUKoaPwF/A=;
- b=OrhXGJuv4TQxrN7njd0cDelmAUgflzjYQB5bNrMe7b60KpAxHb6u8GgWLJibnk9jWgQt
- 9a9++w5651q9pzXteD9mEBSToU7mHDDQIQmVOYQcSKX6TJ+fK8Qpw3O+aSTPjkdxQqdC
- fcY0OW+GjsM5LOz5LfHnkiRjP0ip0jn3HGhqAWc4rKp6pRPgezRhyQRcjmwx1TkVTfXw
- +Qb4z5ClIPNUtjYHxDL0KeN0tl72m2ifef/pzgEgFAU3hupWG72g+fN7Yqp4B90mtEeB
- 7Sc+n4lurdR9YSYuWKwGdTSnwVK6sXXNmlRNYZ7q6LY1bIgIbX//BZdWuZtWZS/4wcqJ 2w== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jvm4vg7p2-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=1af6fn6KEykryDxp6Gx/9KDXQY51jQYEqhEkaZgsPSI=;
+ b=jyPaKYuIjva4OcUI8JuOT+LiofuYrwqWwYovGYU6Yr45KI+X+BfemiR26wxNkZNXoAqs
+ SDxC2TbthkRc2+W3AoFQIc3U6z+rKv+dlvKEOLU3QUCd5UyFmAW6N4Pzaw7Bpsv8nCE+
+ 8enYS55y4YRgMiJk6ziqNBGBPPReL7QTjwRi7WcfMKw5VdDVTglr43b5/dMWIVv34U8J
+ G1hTgxv2kuDU+MYaQCNpNX4dgyNvBpJc1VQslDDvZa39OQPTjr45MWF2830TzOCzyq2g
+ L3+tsybWn/UDl/6dFYvTSRI0Th2Q5aLHi5tdU+HUQ0btfRYS+vVugy4vinmLebWf9EZN Mg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3jvja2ggtb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 12:28:19 +0000
+        Wed, 28 Sep 2022 12:28:31 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28SCSIrJ028982
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 28SCSUFO016341
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Sep 2022 12:28:18 GMT
+        Wed, 28 Sep 2022 12:28:30 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.29; Wed, 28 Sep 2022 05:28:12 -0700
+ 15.2.986.29; Wed, 28 Sep 2022 05:28:24 -0700
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <andersson@kernel.org>, <lgirdwood@gmail.com>,
@@ -50,10 +51,12 @@ To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
         <krzysztof.kozlowski@linaro.org>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v10 0/7] Update ADSP pil loader for SC7280 platform
-Date:   Wed, 28 Sep 2022 17:57:46 +0530
-Message-ID: <1664368073-13659-1-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v10 2/7] remoteproc: qcom: Add flag in adsp private data structure
+Date:   Wed, 28 Sep 2022 17:57:48 +0530
+Message-ID: <1664368073-13659-3-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1664368073-13659-1-git-send-email-quic_srivasam@quicinc.com>
+References: <1664368073-13659-1-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -61,89 +64,76 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 5ltP-N2xlDEkrKbm4mGJo01E7aDAeZDv
-X-Proofpoint-GUID: 5ltP-N2xlDEkrKbm4mGJo01E7aDAeZDv
+X-Proofpoint-ORIG-GUID: W_cWksWYxh_bwh7g2c3907jt8YFSCoDM
+X-Proofpoint-GUID: W_cWksWYxh_bwh7g2c3907jt8YFSCoDM
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-28_05,2022-09-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- suspectscore=0 clxscore=1015 adultscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ clxscore=1015 phishscore=0 mlxlogscore=999 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2209130000 definitions=main-2209280077
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update ADSP pil loader driver for SC7280 platforms.
+Add flag in qcom_adsp private data structure and initialize
+it to distinguish ADSP modules, which has iommu requirement,
+for using iommu selectively.
 
-Changes since V9:
-	-- Add missing unevaluatedProperties in dt-bindings glink-edge.
-Changes since V8:
-	-- Add glink-edge reference in dt-bindings.
-	-- Remove redundant glinke-edge properties in dt-bindings.
-	-- Make all reg propertioes as mandatory in dt-bindings.
-	-- Add iommus property in dt-bindings.
-Changes since V7:
-	-- Drop out of reset time out patch.
-	-- Remove redundant clocks in dt bindings.
-	-- Fix dt compilation error in dt bindings.
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
+---
 Changes since V6:
-	-- Update dt-bindings with glink-edge
-	-- Add qcom,qmp property.
-	-- Update parse firmware callback.
 	-- Update commit message.
-	-- Update smmu map and unmap function names.
-	-- Revert adsp_ops const change.
-	-- Move iommu check to within smmu map/unmap functions.
 Changes since V5:
-	-- Remove adsp_rproc_unmap_smmu, adsp_of_unmap_smmu, adsp_of_map_smmu and 
-	   adsp_rproc_map_smmu functions.
-	-- Remove find_loaded_rsc_table call back initialization.
 	-- Rename adsp_sandbox_needed to has_iommu.
-	-- Update parse_fw callback in rproc ops.
-	-- Remove qcom,adsp-memory-regions property in dt-bindings.
-	-- Change adsp binary extension name.
-Changes since V4:
-	-- Update halt registers description in dt bindings.
-	-- Update Memory sandboxing with proper APIs for resource
-	   allocation and free.
 Changes since V3:
 	-- Rename is_adsp_sb_needed to adsp_sandbox_needed.
-	-- Update sc7280 compatible name entry in sorted order.
-	-- Add smmu unmapping in error case and in adsp stop.
-	-- Revert converting sdm845 dt bindings to generic and 
-	   create new dt bindings for sc7280.
 Changes since V2:
-	-- Generated patch with -M flag.
-	-- Add Clock property in dt bindings.
-	-- Add qcom,adsp-memory-regions property.
 	-- Add is_adsp_sb_needed flag instead of is_wpss.
-	-- Initialize is_adsp_sb_needed flag.
-	-- Remove empty proxy pds array.
-	-- Replace platform_bus_type with adsp->dev->bus.
-	-- Use API of_parse_phandle_with_args() instead of 
-	    of_parse_phandle_with_fixed_args().
-	-- Replace adsp->is_wpss with adsp->is_adsp.
-	-- Update error handling in adsp_start().
-Changes since V1:
-	-- Change reg property maxItems to minItems and update description.
-	-- Fix typo errors.
 
-Srinivasa Rao Mandadapu (7):
-  dt-bindings: remoteproc: qcom: Add SC7280 ADSP support
-  remoteproc: qcom: Add flag in adsp private data structure
-  remoteproc: qcom: Add compatible name for SC7280 ADSP
-  remoteproc: qcom: Update rproc parse firmware callback
-  remoteproc: qcom: Replace hard coded values with macros
-  remoteproc: qcom: Add efuse evb selection control
-  remoteproc: qcom: Add support for memory sandbox
+ drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
- .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 195 +++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5_adsp.c                | 124 ++++++++++++-
- 2 files changed, 315 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 4c9a1b9..fe385e8 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -62,6 +62,7 @@ struct adsp_pil_data {
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+ 	bool is_wpss;
++	bool has_iommu;
+ 	bool auto_boot;
+ 
+ 	const char **clk_ids;
+@@ -99,6 +100,7 @@ struct qcom_adsp {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
++	bool has_iommu;
+ 
+ 	struct device *proxy_pds[QCOM_Q6V5_RPROC_PROXY_PD_MAX];
+ 	size_t proxy_pd_count;
+@@ -595,12 +597,15 @@ static int adsp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	rproc->auto_boot = desc->auto_boot;
++	rproc->has_iommu = desc->has_iommu;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+ 	adsp = (struct qcom_adsp *)rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->info_name = desc->sysmon_name;
++	adsp->has_iommu = desc->has_iommu;
++
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	if (desc->is_wpss)
 -- 
 2.7.4
 
