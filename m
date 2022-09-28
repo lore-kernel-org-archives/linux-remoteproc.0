@@ -2,146 +2,152 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C5EC32771
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Sep 2022 16:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BB1C04A95
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Sep 2022 17:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233713AbiI1Qth (ORCPT
+        id S233263AbiI1RUv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Sep 2022 12:49:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34880 "EHLO
+        Wed, 28 Sep 2022 13:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234278AbiI1Qsk (ORCPT
+        with ESMTP id S234318AbiI1RUs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Sep 2022 12:48:40 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C2E8E7E1B
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 09:48:39 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id b23so13007775pfp.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 09:48:39 -0700 (PDT)
+        Wed, 28 Sep 2022 13:20:48 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53A754C80
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 10:20:46 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id a29so13111000pfk.5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Sep 2022 10:20:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=XBBM5T3kVHHT7hpHVLU7V4Xrc0MtiKbWJ4TBJ3+cCpk=;
-        b=opVvXxvFqmzmhFSe3McNIRfbDxHZyLqwwfnN2oiJR0s8dEpM/VbkebaihvAOV5QXbL
-         c6xLPhIr9m81Z3kkYo2gBLy0HNfSOG/Vrs+D0JFk6qDRrM9SRvYBWftrgh+uo8fLQkzA
-         4QharKQprH3YHSKgGpdPz9o283cO+wM0j1VgT/mkvY20psp98F9aYGd+KOwF11IrtrCk
-         TijaoGWohBL/iqZsY2sOY6FhWuy/Yar2SXOXPIephM1jzv8tzqSyuMkM+jmvthdMSJBU
-         UGB3R+RVq0IVVmTG1IIJUgezPW7yHPDpcZqxkc9z0sg6UkssmsgjDRBZWeaUXOmhoMdP
-         9NUw==
+        bh=9bN9My5ZbeHYHa+eCYmZ+EExYTqNfYOXwgsyfJBXZEE=;
+        b=lIcfhWxf/X2WYZb63vELVJjIY3gExm8RBaLCUYE4GSCgPjwFSlU/Ml6fHaC0ZJj3Bn
+         xkkQwKw108Nn8tp+fl66fVLDrUFymGhiarsw+vVbXLOqa0lhAxFg0MASxbUFSjtQ6jxV
+         +NNEMB1kpHyBVAqfcvaiCRbO7aqKvEfmZ3kBO1UIaRoBXTmXS4Zms9Px4cmQv6eFgIqj
+         99aB1eKsLA0iseQYp4uYeZCnLszRbs8jcC+5N1GpsN2QTY/4V6LwR5ImG3CoD51lxqzZ
+         HH/tILkrIhQOQj7r7cf7hyOUjeAOUYPGVEDlmjMhpL20aWYsXFrNVC0yp2+K2iNn/aZ6
+         ObmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=XBBM5T3kVHHT7hpHVLU7V4Xrc0MtiKbWJ4TBJ3+cCpk=;
-        b=0n8rU9b8CoK6E/n9b0cEkhWiHJq2U9lcm2bCcmwBpDxOYCWT4cmXGUEQK84DV11mJt
-         MRtafjPvgy0bZItxRT/sQ0mNLsHLoGXjrg7ffZn+OhpXfVUz0XuSsg6EV0YoJ+FYhUc9
-         lalP012O57j16DGeCSbFZYSyvNwGLOdu+g66Jeb4pgTZYHtvrMQ/+XBTsaYlQngKIKz0
-         vwTsm+CU8QOa+MI/yxUU0YC5ofIoKy+kdK/rbZLDa+CpSV0/X1KAtt5a1U4h4WugKPen
-         vgmQCGbzIZQGdBCIhw873fefs3rY1dBzJXutxs91ftme2lwn8ZjDIawOnbLSwrNWZEPM
-         MbHw==
-X-Gm-Message-State: ACrzQf3bWwg+btRUI7wTV9lxPWQTMqUg5ItcRsJpgfQqw2wv0+X0FFBy
-        dKc3EVBm9JZ4w6m6zDpBiFUdIA==
-X-Google-Smtp-Source: AMsMyM5dru/zrIlWCWOMM3MR+PAPQVvCs5DEfgM87qvE7/g6h5FWngslHTI+i/+ewSbIZhUTwEzRQQ==
-X-Received: by 2002:a63:db4a:0:b0:43c:9d3b:9c4a with SMTP id x10-20020a63db4a000000b0043c9d3b9c4amr18325130pgi.474.1664383718552;
-        Wed, 28 Sep 2022 09:48:38 -0700 (PDT)
+        bh=9bN9My5ZbeHYHa+eCYmZ+EExYTqNfYOXwgsyfJBXZEE=;
+        b=lh0UwWRvM5RDlJF6+Bi8e9Ky5WpObWK7/X1xsDr96a7PCsdIQ+nI8l00O02T+VV/LD
+         JTl+PRsP4pZDIbfBKCATG+DXZkWj4zXcxzW3uXhgPQ+zLKpP2xfCi5mQS1XIl4hXsOqi
+         7j3UGE6ewbwm7ewOMLvutf3B4yQOAbOb/fTHp69m5C4fy+yQMU0u7zG2DwZk63zzYW8V
+         ChAh8jtctbNLSCV7VNnbdOiiFM1ZI345FbK9knfk9aKUwljsGLaybubPxueJ4y/Skm/F
+         1N+A5bMCGhIhUa4xFSLt/pzXOghG7v3ZseuicMQVA8Psmg3MFdSjeBsN5S1WATR3l2Mh
+         YWbw==
+X-Gm-Message-State: ACrzQf3lxH8Vrv/YoCgzp81/mhWKCq1QvDXHy97Fb5YFEpP7k3bPD2UV
+        J2IQRQZZ40RXZDB5AeA61qGYBw==
+X-Google-Smtp-Source: AMsMyM5rDZE9lmdRZgTb8Kd897hQYYOoyyhWPiPshBDFwdCMNfgjTZZjvapXUc1p9NZiGqKPW4C8lg==
+X-Received: by 2002:a63:90c4:0:b0:43c:bc86:8ae7 with SMTP id a187-20020a6390c4000000b0043cbc868ae7mr13622186pge.398.1664385646157;
+        Wed, 28 Sep 2022 10:20:46 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id x188-20020a6286c5000000b00537e40747adsm4209922pfd.36.2022.09.28.09.48.36
+        by smtp.gmail.com with ESMTPSA id l10-20020a170903120a00b001780a528540sm4118002plh.93.2022.09.28.10.20.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Sep 2022 09:48:37 -0700 (PDT)
-Date:   Wed, 28 Sep 2022 10:48:35 -0600
+        Wed, 28 Sep 2022 10:20:45 -0700 (PDT)
+Date:   Wed, 28 Sep 2022 11:20:42 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
 Cc:     andersson@kernel.org, arnaud.pouliquen@foss.st.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V8 0/2] remoteproc: support self recovery
-Message-ID: <20220928164835.GA2990524@p14s>
-References: <20220928064756.4059662-1-peng.fan@oss.nxp.com>
+        shengjiu.wang@gmail.com
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: Add mutex protection for
+ workqueue
+Message-ID: <20220928172042.GB2990524@p14s>
+References: <1664192893-14487-1-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220928064756.4059662-1-peng.fan@oss.nxp.com>
+In-Reply-To: <1664192893-14487-1-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 28, 2022 at 02:47:54PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Mon, Sep 26, 2022 at 07:48:13PM +0800, Shengjiu Wang wrote:
+> The workqueue may execute late even after remoteproc is stopped or
+> stopping, some resources (rpmsg device and endpoint) have been
+> released in rproc_stop_subdevices(), then rproc_vq_interrupt()
+> access these resources will cause kennel dump.
 > 
-> V8:
->  Rebased on linux-next/master tag: next-20220927
+> Call trace:
+>  virtqueue_add_split+0x1ac/0x560
+>  virtqueue_add_inbuf+0x4c/0x60
+>  rpmsg_recv_done+0x15c/0x294
+>  vring_interrupt+0x6c/0xa4
+>  rproc_vq_interrupt+0x30/0x50
+>  imx_dsp_rproc_vq_work+0x24/0x40 [imx_dsp_rproc]
+>  process_one_work+0x1d0/0x354
+>  worker_thread+0x13c/0x470
+>  kthread+0x154/0x160
+>  ret_from_fork+0x10/0x20
 > 
-> V7:
->  Per comments from Arnaud Pouliquen:
->    Typo fixes
->    Added A-b tag
+> Add mutex protection in imx_dsp_rproc_vq_work(), if the state is
+> not running, then just skip calling rproc_vq_interrupt().
 > 
-> V6:
->  Rename rproc_firmware_recovery to rproc_boot_recovery
->  Drop the unlock/lock when do reproc_attach_recovery
+> Also the flush workqueue operation can't be added in rproc stop
+> for same reason.
 > 
-> V5:
->  Rename RPROC_FEAT_ATTACH_RECOVERY to RPROC_FEAT_ATTACH_ON_RECOVERY
->  Add kerneldoc for rproc features
->  Change rproc_set_feature to return int type and add a max feature check
->  Use __rproc_detach and __rproc_attach when do attach recovery
->  https://patchwork.kernel.org/project/linux-remoteproc/cover/20220615032048.465486-1-peng.fan@oss.nxp.com/
+> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 > 
-> V4:
->   Based on Bjorn's comments on V2-2
->   Move the rproc_has_feature/rproc_set_feature to remoteproc_internal.h and
->  Keep rproc_features still in remoteproc.h, because we use
->  RPROC_MAX_FEATURES to declare bitmap.
->   Update commit log for patch 2/2, and add comments
-> 
->   https://patchwork.kernel.org/project/linux-remoteproc/cover/20220323034405.976643-1-peng.fan@oss.nxp.com/
-> 
-> V3:
->  Resend the wrong labeled patchset
->  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
-> 
->  Write a cover-letter
->  To i.MX8QM/QXP, they have a M4 core self-recovery capability without
->  Linux loading firmware. The self recovery is done by
->  SCU(System Control Unit). Current remoteproc framework only support Linux
->  help recovery remote processor(stop, loading firmware, start). This
->  patchset is support remote processor self recovery(attach recovery).
-> 
->  In order to avoid introducing a new variable(bool support_self_recovery),
->  patch 1 introduce a new function, rproc_has_feature to make code easy to
->  extend, cleaner, such as we could move "bool has_iommu" to
->  rproc_has_feature(rproc, RPROC_FEAT_IOMMU).
-> 
->  Patch 2 is introduce a new function rproc_attach_recovery for
->  self recovery, the original logic move to rproc_firmware_recovery meaning
->  needs linux to help recovery.
-> 
->  V2-version 2:
->  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=621311
->  Introduce rproc_has_feature
-> 
->  V2-version 1:
->  https://patchwork.kernel.org/project/linux-remoteproc/patch/20220126085120.3397450-1-peng.fan@oss.nxp.com/
->  Nothing change in V2.
->  Only move this patch out from
->  https://patchwork.kernel.org/project/linux-remoteproc/list/?series=604364
-> 
-> Peng Fan (2):
->   remoteproc: introduce rproc features
->   remoteproc: support attach recovery after rproc crash
-> 
->  drivers/remoteproc/remoteproc_core.c     | 62 ++++++++++++++++--------
->  drivers/remoteproc/remoteproc_internal.h | 15 ++++++
->  include/linux/remoteproc.h               | 16 ++++++
->  3 files changed, 74 insertions(+), 19 deletions(-)
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index 899aa8dd12f0..95da1cbefacf 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -347,9 +347,6 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+>  	struct device *dev = rproc->dev.parent;
+>  	int ret = 0;
+>  
+> -	/* Make sure work is finished */
+> -	flush_work(&priv->rproc_work);
+> -
 
-Applied.
+The kernel documentation for this function [1] indicate that once it returns
+there will no more jobs to process in that queue, _unless_ another job has been
+queued _after_ the flush has started.  What I suspect is happening here is that
+a new job is queued between the time flush_work() returns and the remote processor
+is switched off, something that should not be happening since all the
+subdevices have been stopped in rproc_stop_subdevices().  
+
+[1]. https://elixir.bootlin.com/linux/v6.0-rc7/source/kernel/workqueue.c#L3092
+
+
+>  	if (rproc->state == RPROC_CRASHED) {
+>  		priv->flags &= ~REMOTE_IS_READY;
+>  		return 0;
+> @@ -432,9 +429,18 @@ static void imx_dsp_rproc_vq_work(struct work_struct *work)
+>  {
+>  	struct imx_dsp_rproc *priv = container_of(work, struct imx_dsp_rproc,
+>  						  rproc_work);
+> +	struct rproc *rproc = priv->rproc;
+> +
+> +	mutex_lock(&rproc->lock);
+> +
+> +	if (rproc->state != RPROC_RUNNING)
+> +		goto unlock_mutex;
+>  
+>  	rproc_vq_interrupt(priv->rproc, 0);
+>  	rproc_vq_interrupt(priv->rproc, 1);
+
+These are not guaranteed to be atomic and sleeping with the mutex held is
+guaranteed to deadlock the system.
 
 Thanks,
 Mathieu
 
-> 
+> +
+> +unlock_mutex:
+> +	mutex_unlock(&rproc->lock);
+>  }
+>  
+>  /**
 > -- 
-> 2.37.1
+> 2.34.1
 > 
