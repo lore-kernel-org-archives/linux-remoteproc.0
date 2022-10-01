@@ -2,122 +2,94 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5C5C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Oct 2022 03:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAD7C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Oct 2022 03:23:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233266AbiJADX2 (ORCPT
+        id S233278AbiJADXb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Sep 2022 23:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45216 "EHLO
+        Fri, 30 Sep 2022 23:23:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232606AbiJADWo (ORCPT
+        with ESMTP id S233067AbiJADWo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 30 Sep 2022 23:22:44 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B35B16F555;
-        Fri, 30 Sep 2022 20:15:13 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id g130so5178364pfb.8;
-        Fri, 30 Sep 2022 20:15:13 -0700 (PDT)
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80959BC908;
+        Fri, 30 Sep 2022 20:15:22 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id b23so5752074pfp.9;
+        Fri, 30 Sep 2022 20:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=juW9wu13y489Hph7sR+dhrqUMWDs6TD8KFYBRB4JbO4=;
-        b=UkOShts6IW9u9T3yFTtjI42gi0TloGaPV7bC/5ddCl9hAmmPunhkNDifa3/wCzAVFW
-         6A1IZTMl1PxRXBs/zAPJ2TiwprwX93nBQ8mSS+eqQdc84vnX+zBCswUO0XVr6BhwPY3V
-         KpcB40QjlrkAy+0HpYoXWXh8H6ORb0zRQJlHBpXFCHt6kSAKPV+Vnwd7yKOt4MdXXY6Z
-         PEvOHoT1od5DKOOGtR9m92YgTgLLfFGx7yTG/z7lMYK4R8VWq6TS1nkj2aJ5HmBYhL4s
-         CSLBcLBSaOUeUombfP8ac/a4sOqlxS7+kKKQdo/ZMijWKbFcqgZSrTPQBEkmy3Wx1ZoV
-         oD8A==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=s85Rt60Mfq98bn/SHpgXXXzD93J670OfD27PDsE2EQE=;
+        b=OczrCJnpw4f612BkkHjpb6nxbr5u2LjcvKagDHPpjFvXhIITEU0Iey8bxPAtG+jY2V
+         loHbLeoYhjftRmMvO8BeYfdSXjgjKXZNQwOT13SaNP4SLrtoIrTMQF+jGZUQ7y7vNB+4
+         ixrM81Hq13Yk0oJiv53HhrIw4ECmP38j4gQshlwxSCyyDw6ZSNI3cXTVwhZo+neEPuSP
+         rlMFMuGuw4C9QGf1K+IYtmAKZ0lUFtwYIeJ8iPRrvrKj2NfrGnSE0Llgdnfgx5V1h+tZ
+         bmE2AmvFaGVqWgQBWWq289DvKDd1nqQW6Q5sxpmQ0L1ZpuuBLVzhBEt+Ac0wDy6bBAm8
+         dvmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=juW9wu13y489Hph7sR+dhrqUMWDs6TD8KFYBRB4JbO4=;
-        b=e56wSsfiJY62y3oVkQwUkwC0yhMv8A/VsfWkYHAZSzJHo33nSzXLXfFEUb2OjsBaGQ
-         gUZ7pYB1amCRNqSkIrKuUs9E/IH4m4pxC1JXi2XpL5vw6sj6Y80CceOhKKioFcT0b5WN
-         0lFqKw1tSzC6rQ2ZLqdIXyHzsHD/+7XkSeqO5b5j8X2tIwpiSdoSgwpusNsu9ojV6XOQ
-         W/itZNt2dP843PeE2nDvC2K3/CsatSJREG/fbHSZFC6w/CINs5sTcA2hVbFL7j/IQo6Y
-         W4WPhxjrFeiUYAqUWvZjyjUQIWhth5Sh9/dLiOlprTsuTKmYAneP+J7wD5qYn352kx6B
-         5mYA==
-X-Gm-Message-State: ACrzQf1fdGS36M1qxnN0iorc/SrSmIH1rUapOotleKRSywTMLuAU8V6L
-        0udHF4EwcZawXwG75SrmJZYFX7ASFoYFLadG
-X-Google-Smtp-Source: AMsMyM5D4l9JsGqXgs9A63E6didLWcsPaoFzBxMa/D8qX5FCUImVpo7wKrQKlyj/Z2649h6to7tzFA==
-X-Received: by 2002:aa7:880f:0:b0:558:12e9:178e with SMTP id c15-20020aa7880f000000b0055812e9178emr12167552pfo.23.1664594057305;
-        Fri, 30 Sep 2022 20:14:17 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=s85Rt60Mfq98bn/SHpgXXXzD93J670OfD27PDsE2EQE=;
+        b=ObsBUKhUGxi9h2VePk3E60mde3fjed4nUaPZ00m0tAbL1C+e701NZvRJuthdZu7ntk
+         DG4Q8isXHjjFSGWz+G9W92xRB9/1E/o5ItBmXj8hed7oYfpc7uccfuovE43s+i+H6SxL
+         l3IYPweDxe+dbjrzPKPBFbDUJBcEg0Ta/ya4N736Iai4dlsGB+hB0czCz/KWy9ZEoIfE
+         YkHRT/QwAjZNyUzURHA7XLwkmjvSUmD4wNa5Op9bZhiO8wOKQezMRx/0BYIYosRyM3Iu
+         8+bJyCoVI0ArrH5giehxJWMeXKI2q+EFmNhX/G6ifNcuXvJzT5pnnUiff5ja5yKtt1NA
+         104w==
+X-Gm-Message-State: ACrzQf0WgC2xjHhrRBuY/IkubmQ5637aHzshCQKbEhFnaj+x91JacVoe
+        aLrxNBpmK1GjQBIN8AjBaoCbRge/5/UPhrN2
+X-Google-Smtp-Source: AMsMyM6I0UsX6fFsD60St3/A+1+4GzgAAD/xDqa7v5cxn8QZrs4ASfUvHi/1vDy2A3nOVqE8EGS1yg==
+X-Received: by 2002:a63:2a02:0:b0:42b:2711:d534 with SMTP id q2-20020a632a02000000b0042b2711d534mr10078932pgq.176.1664594036934;
+        Fri, 30 Sep 2022 20:13:56 -0700 (PDT)
 Received: from skynet-linux.local ([2406:7400:61:5d7c:3fe4:8f6d:b1b6:f2bf])
-        by smtp.googlemail.com with ESMTPSA id cp1-20020a170902e78100b00172a567d910sm2627371plb.289.2022.09.30.20.14.13
+        by smtp.googlemail.com with ESMTPSA id cp1-20020a170902e78100b00172a567d910sm2627371plb.289.2022.09.30.20.13.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 20:14:16 -0700 (PDT)
+        Fri, 30 Sep 2022 20:13:56 -0700 (PDT)
 From:   Sireesh Kodali <sireeshkodali1@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
 Cc:     andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        Sireesh Kodali <sireeshkodali1@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v6 4/5] dt-bindings: remoteproc: qcom: wcnss: Add compatible for pronto v3
-Date:   Sat,  1 Oct 2022 08:43:43 +0530
-Message-Id: <20221001031345.31293-5-sireeshkodali1@gmail.com>
+        Sireesh Kodali <sireeshkodali1@gmail.com>
+Subject: [PATCH v6 0/5] remoteproc: qcom: Add support for pronto-v3
+Date:   Sat,  1 Oct 2022 08:43:39 +0530
+Message-Id: <20221001031345.31293-1-sireeshkodali1@gmail.com>
 X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20221001031345.31293-1-sireeshkodali1@gmail.com>
-References: <20221001031345.31293-1-sireeshkodali1@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The pronto v3 remoteproc is similar to pronto v2. It is found on the
-MSM8953 platform, which is used by SDM450, SDM625, SDM626, APQ8053 and
-other SoCs. Since the configuration is same on all SoCs, a single
-compatible is used.
+This patch series adds support for the pronto-v3 remoteproc found on the
+MSM8953 platform. It also converts the documentation for wcnss to YAML.
 
-Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../bindings/remoteproc/qcom,wcnss-pil.yaml      | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Changes since v5:
+ * Fixed memory corruption in driver patch
+ * Slightly improved driver patch's commit message
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-index 0eb2617e3482..2ba2b6cf11fb 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-@@ -22,6 +22,7 @@ properties:
-           - enum:
-               - qcom,pronto-v1-pil
-               - qcom,pronto-v2-pil
-+              - qcom,pronto-v3-pil
-           - const: qcom,pronto
-       - const: qcom,riva-pil
- 
-@@ -199,6 +200,21 @@ allOf:
-         - power-domains
-         - power-domain-names
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,pronto-v3-pil
-+    then:
-+      properties:
-+        vddmx-supply: false
-+        vddcx-supply: false
-+
-+      required:
-+        - power-domains
-+        - power-domain-names
-+
- examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
+Link to v5: https://lkml.org/lkml/2022/9/29/19
+
+Sireesh Kodali (4):
+  dt-bindings: remoteproc: qcom: Convert wcnss documentation to YAML
+  dt-bindings: remoteproc: qcom: wcnss: Add qcom,pronto compatible
+  dt-bindings: remoteproc: qcom: wcnss: Add compatible for pronto v3
+  dt-bindings: remoteproc: wcnss-pil: Make supplies optionally required
+
+Vladimir Lypak (1):
+  remoteproc: qcom: qcom_wcnss: Add support for pronto-v3
+
+ .../bindings/remoteproc/qcom,wcnss-pil.txt    | 177 -----------
+ .../bindings/remoteproc/qcom,wcnss-pil.yaml   | 294 ++++++++++++++++++
+ drivers/remoteproc/qcom_wcnss.c               |  12 +
+ 3 files changed, 306 insertions(+), 177 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+
 -- 
 2.37.3
 
