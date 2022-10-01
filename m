@@ -2,123 +2,118 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02AFC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Sep 2022 08:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2217CC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Oct 2022 03:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbiI3IJl (ORCPT
+        id S233223AbiJADW5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Sep 2022 04:09:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
+        Fri, 30 Sep 2022 23:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbiI3IJk (ORCPT
+        with ESMTP id S233175AbiJADWU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Sep 2022 04:09:40 -0400
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C057A1F8C00;
-        Fri, 30 Sep 2022 01:09:28 -0700 (PDT)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F6B72224A5;
-        Fri, 30 Sep 2022 10:09:27 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1303B22249E;
-        Fri, 30 Sep 2022 10:09:27 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 53203180031F;
-        Fri, 30 Sep 2022 16:09:25 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com,
+        Fri, 30 Sep 2022 23:22:20 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ED1A4BA54;
+        Fri, 30 Sep 2022 20:15:07 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id u69so5632960pgd.2;
+        Fri, 30 Sep 2022 20:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=WS8+aHrpEJcPx+GL0ClM0OpEIxuUEQEiHn73/H2YPtI=;
+        b=OifcXVKgL/Y2MR8NT6VuBy0ERXN+g28z9Z0Tn9ortQcDze37w0ZylmrF7KACE9WIkA
+         L65S0lgi3brOlvLdjUKvd+FsCfN1tI2Y51nePP5mDgt9wP5McLaSYSindE63TCH/jfmf
+         mk6e2IRb0K9ypp/aRAlcv9v/gNPW6QRuCXtnIXjrxQilcvkNUM2QHzoP+1pdO19OU8lq
+         gVSbeIl1HkMxJKfoNYxWc2r04Qz3zJoV+777ZfqCPjaiIY7kgeXHM2TXLXCojhH8JupY
+         lqDkePVV/P/1GE+otFYBWtZrtjxktKyqsYgzkKIbFDt5PPChDNAGd81mFMpRNh+60C9c
+         u5wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=WS8+aHrpEJcPx+GL0ClM0OpEIxuUEQEiHn73/H2YPtI=;
+        b=OwvHDqRj6EWeHuS0JnbSyEGSsK5gUY9iFxRP2zbUSat5r6Vkl5/9Iwx5CIcWYRi1H8
+         y6rmH72wZRK0S8PA2mJCyOVbZTKcGvjmjLTqRO3SPKvIy14T/GsS+9+lpIFMxUKZZpi+
+         pjjCxdmm/kHpoYD2gjY3urCO5uBdFK9npWJ4IWAG5kOnHI9HI6GquQ7MtpktYVxltr0n
+         DPbkPz8+aaW4ZRp82tnlVBB8aRqLw9ipzE4RtelA85nSAWIlWg2ivpr56CQ42e1MYfFk
+         bpzFyjGtJNSJnxeFdGQ1YAScLPO1BYsBKXQ4xSDlANHrRLd7SF1zKZtFt9tf70Dey5ga
+         GTfQ==
+X-Gm-Message-State: ACrzQf3TR1mdFe0Q4j4siYhRSjYYxTMmOPEFYm/SVlQIskypnfcBaFzj
+        lkdSJpyYsrFh2VvZyYlO4HFQncaUaUZoio5q
+X-Google-Smtp-Source: AMsMyM7Ya4zNiDzlQhvFBKSCqIoTqCJ+bIjL9mMOIXZ59mxgEuLN8Ft5BFS06JWUhvZx9/87kUmDWg==
+X-Received: by 2002:a05:6a02:4a:b0:447:f9d7:4e32 with SMTP id az10-20020a056a02004a00b00447f9d74e32mr608935pgb.412.1664594041901;
+        Fri, 30 Sep 2022 20:14:01 -0700 (PDT)
+Received: from skynet-linux.local ([2406:7400:61:5d7c:3fe4:8f6d:b1b6:f2bf])
+        by smtp.googlemail.com with ESMTPSA id cp1-20020a170902e78100b00172a567d910sm2627371plb.289.2022.09.30.20.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Sep 2022 20:14:01 -0700 (PDT)
+From:   Sireesh Kodali <sireeshkodali1@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: [PATCH v2] remoteproc: imx_dsp_rproc: Add mutex protection for workqueue
-Date:   Fri, 30 Sep 2022 15:50:16 +0800
-Message-Id: <1664524216-19949-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
+Cc:     andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Sireesh Kodali <sireeshkodali1@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: [PATCH v6 1/5] remoteproc: qcom: qcom_wcnss: Add support for pronto-v3
+Date:   Sat,  1 Oct 2022 08:43:40 +0530
+Message-Id: <20221001031345.31293-2-sireeshkodali1@gmail.com>
+X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20221001031345.31293-1-sireeshkodali1@gmail.com>
+References: <20221001031345.31293-1-sireeshkodali1@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The workqueue may execute late even after remoteproc is stopped or
-stopping, some resources (rpmsg device and endpoint) have been
-released in rproc_stop_subdevices(), then rproc_vq_interrupt()
-accessing these resources will cause kennel dump.
+From: Vladimir Lypak <vladimir.lypak@gmail.com>
 
-Call trace:
- virtqueue_add_split+0x1ac/0x560
- virtqueue_add_inbuf+0x4c/0x60
- rpmsg_recv_done+0x15c/0x294
- vring_interrupt+0x6c/0xa4
- rproc_vq_interrupt+0x30/0x50
- imx_dsp_rproc_vq_work+0x24/0x40 [imx_dsp_rproc]
- process_one_work+0x1d0/0x354
- worker_thread+0x13c/0x470
- kthread+0x154/0x160
- ret_from_fork+0x10/0x20
+Pronto-v3 is similar to pronto-v2. It requires two power domains, one
+regulator, and it requires the xo clock. It is used on the MSM8953
+platform.
 
-Add mutex protection in imx_dsp_rproc_vq_work(), if the state is
-not running, then just skip calling rproc_vq_interrupt().
-
-Also the flush workqueue operation can't be added in rproc stop
-for the same reason. The call sequence is
-
-rproc_shutdown
--> rproc_stop
-   ->rproc_stop_subdevices
-   ->rproc->ops->stop()
-     ->imx_dsp_rproc_stop
-       ->flush_work
-         -> rproc_vq_interrupt
-
-The resource needed by rproc_vq_interrupt has been released in
-rproc_stop_subdevices, so flush_work is not safe to be called in
-imx_dsp_rproc_stop.
-
-Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
 ---
-changes in v2:
-- update commit message
+ drivers/remoteproc/qcom_wcnss.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
- drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 899aa8dd12f0..95da1cbefacf 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -347,9 +347,6 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	int ret = 0;
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 68f37296b151..f599d5d5719d 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -141,6 +141,17 @@ static const struct wcnss_data pronto_v2_data = {
+ 	.num_vregs = 1,
+ };
  
--	/* Make sure work is finished */
--	flush_work(&priv->rproc_work);
--
- 	if (rproc->state == RPROC_CRASHED) {
- 		priv->flags &= ~REMOTE_IS_READY;
- 		return 0;
-@@ -432,9 +429,18 @@ static void imx_dsp_rproc_vq_work(struct work_struct *work)
++static const struct wcnss_data pronto_v3_data = {
++	.pmu_offset = 0x1004,
++	.spare_offset = 0x1088,
++
++	.pd_names = { "mx", "cx" },
++	.vregs = (struct wcnss_vreg_info[]) {
++		{ "vddpx", 1800000, 1800000, 0 },
++	},
++	.num_vregs = 1,
++};
++
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
  {
- 	struct imx_dsp_rproc *priv = container_of(work, struct imx_dsp_rproc,
- 						  rproc_work);
-+	struct rproc *rproc = priv->rproc;
-+
-+	mutex_lock(&rproc->lock);
-+
-+	if (rproc->state != RPROC_RUNNING)
-+		goto unlock_mutex;
- 
- 	rproc_vq_interrupt(priv->rproc, 0);
- 	rproc_vq_interrupt(priv->rproc, 1);
-+
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
- }
- 
- /**
+ 	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+@@ -675,6 +686,7 @@ static const struct of_device_id wcnss_of_match[] = {
+ 	{ .compatible = "qcom,riva-pil", &riva_data },
+ 	{ .compatible = "qcom,pronto-v1-pil", &pronto_v1_data },
+ 	{ .compatible = "qcom,pronto-v2-pil", &pronto_v2_data },
++	{ .compatible = "qcom,pronto-v3-pil", &pronto_v3_data },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, wcnss_of_match);
 -- 
-2.34.1
+2.37.3
 
