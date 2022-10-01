@@ -2,94 +2,112 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAD7C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Oct 2022 03:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AD0C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Oct 2022 16:00:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233278AbiJADXb (ORCPT
+        id S229690AbiJAQA5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Sep 2022 23:23:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36940 "EHLO
+        Sat, 1 Oct 2022 12:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233067AbiJADWo (ORCPT
+        with ESMTP id S229671AbiJAQAy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Sep 2022 23:22:44 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80959BC908;
-        Fri, 30 Sep 2022 20:15:22 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id b23so5752074pfp.9;
-        Fri, 30 Sep 2022 20:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=s85Rt60Mfq98bn/SHpgXXXzD93J670OfD27PDsE2EQE=;
-        b=OczrCJnpw4f612BkkHjpb6nxbr5u2LjcvKagDHPpjFvXhIITEU0Iey8bxPAtG+jY2V
-         loHbLeoYhjftRmMvO8BeYfdSXjgjKXZNQwOT13SaNP4SLrtoIrTMQF+jGZUQ7y7vNB+4
-         ixrM81Hq13Yk0oJiv53HhrIw4ECmP38j4gQshlwxSCyyDw6ZSNI3cXTVwhZo+neEPuSP
-         rlMFMuGuw4C9QGf1K+IYtmAKZ0lUFtwYIeJ8iPRrvrKj2NfrGnSE0Llgdnfgx5V1h+tZ
-         bmE2AmvFaGVqWgQBWWq289DvKDd1nqQW6Q5sxpmQ0L1ZpuuBLVzhBEt+Ac0wDy6bBAm8
-         dvmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=s85Rt60Mfq98bn/SHpgXXXzD93J670OfD27PDsE2EQE=;
-        b=ObsBUKhUGxi9h2VePk3E60mde3fjed4nUaPZ00m0tAbL1C+e701NZvRJuthdZu7ntk
-         DG4Q8isXHjjFSGWz+G9W92xRB9/1E/o5ItBmXj8hed7oYfpc7uccfuovE43s+i+H6SxL
-         l3IYPweDxe+dbjrzPKPBFbDUJBcEg0Ta/ya4N736Iai4dlsGB+hB0czCz/KWy9ZEoIfE
-         YkHRT/QwAjZNyUzURHA7XLwkmjvSUmD4wNa5Op9bZhiO8wOKQezMRx/0BYIYosRyM3Iu
-         8+bJyCoVI0ArrH5giehxJWMeXKI2q+EFmNhX/G6ifNcuXvJzT5pnnUiff5ja5yKtt1NA
-         104w==
-X-Gm-Message-State: ACrzQf0WgC2xjHhrRBuY/IkubmQ5637aHzshCQKbEhFnaj+x91JacVoe
-        aLrxNBpmK1GjQBIN8AjBaoCbRge/5/UPhrN2
-X-Google-Smtp-Source: AMsMyM6I0UsX6fFsD60St3/A+1+4GzgAAD/xDqa7v5cxn8QZrs4ASfUvHi/1vDy2A3nOVqE8EGS1yg==
-X-Received: by 2002:a63:2a02:0:b0:42b:2711:d534 with SMTP id q2-20020a632a02000000b0042b2711d534mr10078932pgq.176.1664594036934;
-        Fri, 30 Sep 2022 20:13:56 -0700 (PDT)
-Received: from skynet-linux.local ([2406:7400:61:5d7c:3fe4:8f6d:b1b6:f2bf])
-        by smtp.googlemail.com with ESMTPSA id cp1-20020a170902e78100b00172a567d910sm2627371plb.289.2022.09.30.20.13.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Sep 2022 20:13:56 -0700 (PDT)
-From:   Sireesh Kodali <sireeshkodali1@gmail.com>
-To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Sat, 1 Oct 2022 12:00:54 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4419870E64
+        for <linux-remoteproc@vger.kernel.org>; Sat,  1 Oct 2022 09:00:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1664639687;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wKZBd6Gka4D6vhdEJ/JXPv7waVGDQl1vHcwD3kgP+VU=;
+    b=Ub5dgY8VXnRkVbPddPrqjwDftCUgGZLZ6r9Jku5a5binaFKK4DYCLYCvZyIiBBj6Pv
+    tqO2lg2dE8cOo7XWIR/I0Cedygnkel0a9YF0L4LX+0NnDzEvIONNCAex9gPlyedC4A0o
+    ZBBY49cXoQyPIoOVbcS6OfU01yDACJmQ2ue21u6FlRxJVLr2jWPJcco894/hCrkgmXGh
+    nBaLsdigYuagKMzrxn+ATYKF00OfcbUk3y9bz9wP2YAkm95QK6i9FJ+rGSryGB1ykTT7
+    5NLiKcZ3Kt/hfeMQsLsoz8vB1VbALpEr6V4O1m+m01WWOQpWBvtIhd5nGjtFQLhPgYKt
+    SyrQ==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKw7/aY="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 48.1.3 AUTH)
+    with ESMTPSA id 06b848y91FslATX
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Sat, 1 Oct 2022 17:54:47 +0200 (CEST)
+Date:   Sat, 1 Oct 2022 17:54:41 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Sireesh Kodali <sireeshkodali1@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
-Cc:     andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        Sireesh Kodali <sireeshkodali1@gmail.com>
-Subject: [PATCH v6 0/5] remoteproc: qcom: Add support for pronto-v3
-Date:   Sat,  1 Oct 2022 08:43:39 +0530
-Message-Id: <20221001031345.31293-1-sireeshkodali1@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        ~postmarketos/upstreaming@lists.sr.ht,
+        linux-kernel@vger.kernel.org, andersson@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v6 1/5] remoteproc: qcom: qcom_wcnss: Add support for
+ pronto-v3
+Message-ID: <YzhiwXPTf6IQcOvb@gerhold.net>
+References: <20221001031345.31293-1-sireeshkodali1@gmail.com>
+ <20221001031345.31293-2-sireeshkodali1@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221001031345.31293-2-sireeshkodali1@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch series adds support for the pronto-v3 remoteproc found on the
-MSM8953 platform. It also converts the documentation for wcnss to YAML.
+On Sat, Oct 01, 2022 at 08:43:40AM +0530, Sireesh Kodali wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> 
+> Pronto-v3 is similar to pronto-v2. It requires two power domains, one
+> regulator, and it requires the xo clock. It is used on the MSM8953
+> platform.
+> 
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
 
-Changes since v5:
- * Fixed memory corruption in driver patch
- * Slightly improved driver patch's commit message
+Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
 
-Link to v5: https://lkml.org/lkml/2022/9/29/19
-
-Sireesh Kodali (4):
-  dt-bindings: remoteproc: qcom: Convert wcnss documentation to YAML
-  dt-bindings: remoteproc: qcom: wcnss: Add qcom,pronto compatible
-  dt-bindings: remoteproc: qcom: wcnss: Add compatible for pronto v3
-  dt-bindings: remoteproc: wcnss-pil: Make supplies optionally required
-
-Vladimir Lypak (1):
-  remoteproc: qcom: qcom_wcnss: Add support for pronto-v3
-
- .../bindings/remoteproc/qcom,wcnss-pil.txt    | 177 -----------
- .../bindings/remoteproc/qcom,wcnss-pil.yaml   | 294 ++++++++++++++++++
- drivers/remoteproc/qcom_wcnss.c               |  12 +
- 3 files changed, 306 insertions(+), 177 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.txt
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-
--- 
-2.37.3
-
+> ---
+>  drivers/remoteproc/qcom_wcnss.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index 68f37296b151..f599d5d5719d 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -141,6 +141,17 @@ static const struct wcnss_data pronto_v2_data = {
+>  	.num_vregs = 1,
+>  };
+>  
+> +static const struct wcnss_data pronto_v3_data = {
+> +	.pmu_offset = 0x1004,
+> +	.spare_offset = 0x1088,
+> +
+> +	.pd_names = { "mx", "cx" },
+> +	.vregs = (struct wcnss_vreg_info[]) {
+> +		{ "vddpx", 1800000, 1800000, 0 },
+> +	},
+> +	.num_vregs = 1,
+> +};
+> +
+>  static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
+> @@ -675,6 +686,7 @@ static const struct of_device_id wcnss_of_match[] = {
+>  	{ .compatible = "qcom,riva-pil", &riva_data },
+>  	{ .compatible = "qcom,pronto-v1-pil", &pronto_v1_data },
+>  	{ .compatible = "qcom,pronto-v2-pil", &pronto_v2_data },
+> +	{ .compatible = "qcom,pronto-v3-pil", &pronto_v3_data },
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, wcnss_of_match);
+> -- 
+> 2.37.3
+> 
