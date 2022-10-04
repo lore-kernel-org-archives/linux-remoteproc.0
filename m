@@ -2,163 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE30FC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 16:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30181C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 17:41:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229911AbiJDQYQ (ORCPT
+        id S229817AbiJDRlK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Oct 2022 12:24:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60964 "EHLO
+        Tue, 4 Oct 2022 13:41:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbiJDQYH (ORCPT
+        with ESMTP id S229747AbiJDRkk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Oct 2022 12:24:07 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C6F7DEF0;
-        Tue,  4 Oct 2022 09:24:06 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 294BuvS5022266;
-        Tue, 4 Oct 2022 18:23:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=yDMKyG65ckdC56hoAnM4nP4F4DEhQI3AW8B11BrUlAQ=;
- b=lH268rpkEPHoxuFVf3Cp3y9sJ/n2RIAc+d6vJA5LZac6+1UILc+iGaqk08+KYbyszyiO
- 8Lcp5NcB8rol/XYkSTDMFeLPsdF4Ot7L9hcGsYG5K4fyHlM43FemJR1i/YJi6W9kqxRw
- IXFM463RP4Zj9LrUpzAkCnlWD3gQ6G98dopMfNEKxlIcCWzrxdzNUZjG6XzNdiktiiGA
- 5SQatfa4tGsBcq7bSOehZsV0wSPwpEHaPlzBrFVFNkAypn8LRXMPwTUpc2pqWmUFXdzT
- DJ4zc0OIpYJtpoDLS4wJ6hRaOrUXXRbmH8BDVafsSxk4dpN7/JKBUg72jExPtmOcwgCN 4A== 
+        Tue, 4 Oct 2022 13:40:40 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D55221E32;
+        Tue,  4 Oct 2022 10:40:36 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 294GTKiJ011068;
+        Tue, 4 Oct 2022 19:40:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=giapiNY7TCRzpUo88U0f93okWpLLKpJ1FSwj1WrxUAs=;
+ b=JJcGzU9SS/qMFd/uT0HTdhAuUsnp96CrnRib9NWFhe+aduh3mBv9yEpVbBzzrapNQnqX
+ XOOgxAh3Ix269nuKYuqlOQOAwKkBA1NcwofP85BXMne6i5lIFK72tKQa9KLDN0h/JFe/
+ 8vypCt43d/csgUIuSlRUn85VcpSkbWaCV1CSnpMbzJXAXr6BzomEolF+SFOQJGYBh0Dk
+ aEO44vBxUcm3KKS594xbiBgmYDz8zy82YpLXFUwUmh/MEYZ47YdDSVQvDubdZvuCo8ma
+ /gZ4gJspqe9TxeZDNRJschL9fN3OLOuvVZ+Ct69L/+z1z8qt0IWEEtAC6nFBGOF8khBN Cg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jxapc1xda-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jxcw21qh2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Oct 2022 18:23:49 +0200
+        Tue, 04 Oct 2022 19:40:30 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 128A610002A;
-        Tue,  4 Oct 2022 18:23:43 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7433610002A;
+        Tue,  4 Oct 2022 19:40:24 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 848FF245510;
-        Tue,  4 Oct 2022 18:23:43 +0200 (CEST)
-Received: from [10.211.7.73] (10.75.127.121) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E5BA825225C;
+        Tue,  4 Oct 2022 19:40:24 +0200 (CEST)
+Received: from localhost (10.75.127.117) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Tue, 4 Oct
- 2022 18:23:40 +0200
-Message-ID: <97d1e574-ab68-cbd8-9300-b1a81f2dc2a9@foss.st.com>
-Date:   Tue, 4 Oct 2022 18:23:39 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v9 4/4] remoteproc: virtio: Create platform device for the
- remoteproc_virtio
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
+ 2022 19:40:24 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <stefanos@xilinx.com>,
-        Bruce Ashfield <bruce.ashfield@xilinx.com>
-References: <20220921135044.917140-1-arnaud.pouliquen@foss.st.com>
- <20220921135044.917140-5-arnaud.pouliquen@foss.st.com>
- <20221004143954.GA1479221-robh@kernel.org>
- <fa229aa5-5fb7-eb18-3b8a-59d8a98ccaba@foss.st.com>
- <CAL_JsqLnm7+YQAiSeCk5Db1oNcg=rwJd4Fnve4j+-ssC-dZOHQ@mail.gmail.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <CAL_JsqLnm7+YQAiSeCk5Db1oNcg=rwJd4Fnve4j+-ssC-dZOHQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.121]
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH] remoteproc: virtio: Fix warning on bindings by removing the of_match_table
+Date:   Tue, 4 Oct 2022 19:40:18 +0200
+Message-ID: <20221004174018.3319712-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.24.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.117]
 X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To SHFDAG1NODE2.st.com
  (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-10-04_07,2022-09-29_03,2022-06-22_01
+ definitions=2022-10-04_08,2022-09-29_03,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The checkpatch tool complains that "virtio,rproc" is not documented.
+But it is not possible to probe the device "rproc-virtio" by declaring
+it in the device tree. So documenting it in the bindings does not make
+sense.
+This commit solves the checkpatch warning by suppressing the useless
+of_match_table.
 
+Fix-suggested-by: Rob Herring <robh@kernel.org>
+Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
 
-On 10/4/22 17:43, Rob Herring wrote:
-> On Tue, Oct 4, 2022 at 10:18 AM Arnaud POULIQUEN
-> <arnaud.pouliquen@foss.st.com> wrote:
->>
->> Hello Rob,
->>
->> On 10/4/22 16:39, Rob Herring wrote:
->>> On Wed, Sep 21, 2022 at 03:50:44PM +0200, Arnaud Pouliquen wrote:
->>>> Define a platform driver to manage the remoteproc virtio device as
->>>> a platform devices.
->>>>
->>>> The platform device allows to pass rproc_vdev_data platform data to
->>>> specify properties that are stored in the rproc_vdev structure.
->>>>
->>>> Such approach will allow to preserve legacy remoteproc virtio device
->>>> creation but also to probe the device using device tree mechanism.
->>>>
->>>> remoteproc_virtio.c update:
->>>>   - Add rproc_virtio_driver platform driver. The probe ops replaces
->>>>     the rproc_rvdev_add_device function.
->>>>   - All reference to the rvdev->dev has been updated to rvdev-pdev->dev.
->>>>   - rproc_rvdev_release is removed as associated to the rvdev device.
->>>>   - The use of rvdev->kref counter is replaced by get/put_device on the
->>>>     remoteproc virtio platform device.
->>>>   - The vdev device no longer increments rproc device counter.
->>>>     increment/decrement is done in rproc_virtio_probe/rproc_virtio_remove
->>>>     function in charge of the vrings allocation/free.
->>>>
->>>> remoteproc_core.c update:
->>>>   Migrate from the rvdev device to the rvdev platform device.
->>>>   From this patch, when a vdev resource is found in the resource table
->>>>   the remoteproc core register a platform device.
->>>>
->>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> ---
->>>>  drivers/remoteproc/remoteproc_core.c     |  12 +-
->>>>  drivers/remoteproc/remoteproc_internal.h |   2 -
->>>>  drivers/remoteproc/remoteproc_virtio.c   | 143 ++++++++++++-----------
->>>>  include/linux/remoteproc.h               |   6 +-
->>>>  4 files changed, 82 insertions(+), 81 deletions(-)
->>>
->>> [...]
->>>
->>>> +/* Platform driver */
->>>> +static const struct of_device_id rproc_virtio_match[] = {
->>>> +    { .compatible = "virtio,rproc" },
->>>
->>> This is not documented. Add a binding schema if you need DT support.
->>
->>
->> Mathieu also pointed this out to me in V8, you can see the discussion here [1]
->>
->> Here is an extract:
->> "Yes I saw the warning, but for this first series it is not possible to declare
->> the associated "rproc-virtio" device in device tree.
->> So at this step it seems not make senses to create the devicetree bindings file.
->> More than that I don't know how I could justify the properties in bindings if
->> there is not driver code associated.
->>
->> So i would be in favor of not adding the bindings in this series but to define
->> bindings in the first patch of my "step 2" series; as done on my github:
->> https://github.com/arnopo/linux/commit/9616d89a4f478cf78865a244efcde108d900f69f
->> "
-> 
-> Okay, since I only just started checking this (in a more reliable way
-> than checkpatch does).
-> 
-> But why do you need the DT match entry if it is not usable yet? You
-> could just add that in later when the binding is defined. Review of
-> the binding could say that 'virtio,rproc' should be something else and
-> you'd have to change it.
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ drivers/remoteproc/remoteproc_virtio.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Probably because I am too formatted to add a compatible when I create a driver,
-this solution yet logical did not come to my mind...
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index a29e3b8ff69c..26a7d8c498bc 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
+ }
+ 
+ /* Platform driver */
+-static const struct of_device_id rproc_virtio_match[] = {
+-	{ .compatible = "virtio,rproc" },
+-	{},
+-};
+-
+ static struct platform_driver rproc_virtio_driver = {
+ 	.probe		= rproc_virtio_probe,
+ 	.remove		= rproc_virtio_remove,
+ 	.driver		= {
+ 		.name	= "rproc-virtio",
+-		.of_match_table	= rproc_virtio_match,
+ 	},
+ };
+ builtin_platform_driver(rproc_virtio_driver);
+-- 
+2.24.3
 
-I will send a fix to suppress the compatible.
-
-Thanks,
-Arnaud
-
-> 
-> Rob
