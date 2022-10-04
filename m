@@ -2,61 +2,57 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3045AC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 19:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEDCC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 20:25:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbiJDTwL (ORCPT
+        id S229531AbiJDUZd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Oct 2022 15:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
+        Tue, 4 Oct 2022 16:25:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbiJDTwK (ORCPT
+        with ESMTP id S229496AbiJDUZc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Oct 2022 15:52:10 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B273F65645
-        for <linux-remoteproc@vger.kernel.org>; Tue,  4 Oct 2022 12:51:56 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id y100so19757064ede.6
-        for <linux-remoteproc@vger.kernel.org>; Tue, 04 Oct 2022 12:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=7dAFZ0Dv74viOjab/o6SdVduwwf4JhWfgRlUOHBIw8s=;
-        b=p1Rf07UZ6nQSCG9E2dB1vRGVLdfDE6pwCDbvEiwzmXiNm8hJsNPkwiXVEXblsgcTMO
-         VD7elVi7Im7+BdHJKgOrYhC1xTHRHa6v75jV+Cj5KYkTaf2vqtTXohDgNbX5xUavrV0+
-         oR+j5h3G4GJaGr+QCRnFqEuAr95AIRhOWnhGhQH3PG3JdXHqZ6uUcn0icJxqTCJ8TWSN
-         W2NrDXPLKkw+1VBcphQbF2Q9Esii2ytqFi+A1ZJ8qPHSczRAp2pkyS3+7nRmsbflYICs
-         DKyBZrrJfVWF6hfc0ESiJYhiqC3TGVY99zj+NP/9rudqbBJeXwvQ8/mLhg+Zr6/c9SFU
-         Mbpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=7dAFZ0Dv74viOjab/o6SdVduwwf4JhWfgRlUOHBIw8s=;
-        b=QhnDNBqJWh7vf5gH14E9uDMvs5XTye5IoEYG2UyLpLtVhApwv462AvDgPO33u+8lOJ
-         ATllCp35saxKX2d3M6DfuQ5VrFEpMXIIe34COimDDBZEF7oPm/qcaaOMrmsB7NUe0gNa
-         wHRi0IkAzTPju0NFcPeuGNfjbrz/5E7Coh37HGhU6lXuQnT5B9HG37qq1k0/DFvAQSxl
-         n3EQxYTZ/NoPtP/AxnpDlhYW8gZmvcNyHV4hel3kKZOLX0sRxs0tTkLLIED1Vrup0bUu
-         q/pVCi8tDzvaG91H9SKBfSffkfBbmQC/4jP42aJjFTLzlLaVLVZpUlHDYek4SkSwJm3j
-         itNg==
-X-Gm-Message-State: ACrzQf0b8VB977o7iWXno7hd3oecBB4D4v4uFI6UGQKSd7ntZJBF0YFC
-        Sqjm2WNtniV86ODZFd1UQ7Do2CcTet6OFEaMeOsvxv4w2lA=
-X-Google-Smtp-Source: AMsMyM7tp161kPhb3d8RhOwSScAFsLy++rlzF6dUMDcpt01r082kRDSLrp9nYObjuNioSwTIh1BPKNN1kU8tq6QyjKY=
-X-Received: by 2002:a05:6402:40d1:b0:44f:e974:f981 with SMTP id
- z17-20020a05640240d100b0044fe974f981mr25889439edb.222.1664913115282; Tue, 04
- Oct 2022 12:51:55 -0700 (PDT)
+        Tue, 4 Oct 2022 16:25:32 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF9E5A3C2;
+        Tue,  4 Oct 2022 13:25:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 738ECB81BC2;
+        Tue,  4 Oct 2022 20:25:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 259F0C433B5;
+        Tue,  4 Oct 2022 20:25:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664915129;
+        bh=Gp9cdLKe6m1kFsqSy/5mBkVFGvqBOxid7eIAjNrmn4E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nmtazlZPq0y5BWW/hH+YOfV3we9ePhnGDhBq819JwdhXmgXfLP7wcAXri7odudhtb
+         K98sz/q2JC+nJPlk+dypfuB7MaijOfasddK4peYyZW3a4coNDviVrAl6DaP+ZavXGg
+         KVaobbZESAajfuSsoyROTYZ1xxFGtQauZ68ZHvUMb1+NxJObLAk8f5JaQ2xN+AwWpq
+         /RHmKWEoA3GeSVNBj+3qIqOofjGrUgY/8nbq8KYIbtg8j/gloAybY/fhwcli9a/EiE
+         DvC3ETiQhtI9dkMCLcRUAM+JZIpPrbARbga4puDl5NEihKycRhsVMl+a/FdKsYtPxF
+         ZhVVAm1O7obFg==
+Received: by mail-vs1-f45.google.com with SMTP id n186so10069543vsc.9;
+        Tue, 04 Oct 2022 13:25:29 -0700 (PDT)
+X-Gm-Message-State: ACrzQf0Lw+a+i9znoGe/Ol4m9F7zFAVXRhMTAaa9ivuloj2g0i4RCzpv
+        KQKBqOX6TQu1+4ASV3r1JySssDQLCxfZGG8SfA==
+X-Google-Smtp-Source: AMsMyM73U8/w0X5x9WHM1FGcPigF80k5hOdTK5S6tGVEPqEjkoUEvCSHJHfIqeA8+uStNeAYXF5Qul0qcPwrqqDMEF0=
+X-Received: by 2002:a05:6102:3fa7:b0:3a6:72a4:3188 with SMTP id
+ o39-20020a0561023fa700b003a672a43188mr6081434vsv.0.1664915128118; Tue, 04 Oct
+ 2022 13:25:28 -0700 (PDT)
 MIME-Version: 1.0
 References: <20221004174018.3319712-1-arnaud.pouliquen@foss.st.com>
 In-Reply-To: <20221004174018.3319712-1-arnaud.pouliquen@foss.st.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 4 Oct 2022 13:51:44 -0600
-Message-ID: <CANLsYkw357ajx8BnbykKiVD+BVv21VwAaYjvFDwqbvEw7cBDHQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 4 Oct 2022 15:25:17 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKohUguae=s8+eH8afPchtJMnXzE-V-QF+H=yEkD3WbOA@mail.gmail.com>
+Message-ID: <CAL_JsqKohUguae=s8+eH8afPchtJMnXzE-V-QF+H=yEkD3WbOA@mail.gmail.com>
 Subject: Re: [PATCH] remoteproc: virtio: Fix warning on bindings by removing
  the of_match_table
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
@@ -64,7 +60,7 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 4 Oct 2022 at 11:40, Arnaud Pouliquen
+On Tue, Oct 4, 2022 at 12:40 PM Arnaud Pouliquen
 <arnaud.pouliquen@foss.st.com> wrote:
 >
 > The checkpatch tool complains that "virtio,rproc" is not documented.
@@ -75,41 +71,13 @@ On Tue, 4 Oct 2022 at 11:40, Arnaud Pouliquen
 > of_match_table.
 >
 > Fix-suggested-by: Rob Herring <robh@kernel.org>
-
-I'll change that for "Suggested-by:"
-
 > Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
 >
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 > ---
 >  drivers/remoteproc/remoteproc_virtio.c | 6 ------
 >  1 file changed, 6 deletions(-)
->
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index a29e3b8ff69c..26a7d8c498bc 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
->  }
->
->  /* Platform driver */
-> -static const struct of_device_id rproc_virtio_match[] = {
-> -       { .compatible = "virtio,rproc" },
-> -       {},
-> -};
-> -
->  static struct platform_driver rproc_virtio_driver = {
->         .probe          = rproc_virtio_probe,
->         .remove         = rproc_virtio_remove,
->         .driver         = {
->                 .name   = "rproc-virtio",
-> -               .of_match_table = rproc_virtio_match,
 
-Yes, this is quite simple and slick.  Rob - is this what you meant earlier on?
+There might be an include you don't need anymore, but otherwise:
 
->         },
->  };
->  builtin_platform_driver(rproc_virtio_driver);
-> --
-> 2.24.3
->
+Reviewed-by: Rob Herring <robh@kernel.org>
