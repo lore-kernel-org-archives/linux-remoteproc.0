@@ -2,112 +2,118 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AD0C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  1 Oct 2022 16:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8295AC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 14:40:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229690AbiJAQA5 (ORCPT
+        id S229514AbiJDOkB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 1 Oct 2022 12:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
+        Tue, 4 Oct 2022 10:40:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbiJAQAy (ORCPT
+        with ESMTP id S229876AbiJDOj4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 1 Oct 2022 12:00:54 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4419870E64
-        for <linux-remoteproc@vger.kernel.org>; Sat,  1 Oct 2022 09:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1664639687;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=wKZBd6Gka4D6vhdEJ/JXPv7waVGDQl1vHcwD3kgP+VU=;
-    b=Ub5dgY8VXnRkVbPddPrqjwDftCUgGZLZ6r9Jku5a5binaFKK4DYCLYCvZyIiBBj6Pv
-    tqO2lg2dE8cOo7XWIR/I0Cedygnkel0a9YF0L4LX+0NnDzEvIONNCAex9gPlyedC4A0o
-    ZBBY49cXoQyPIoOVbcS6OfU01yDACJmQ2ue21u6FlRxJVLr2jWPJcco894/hCrkgmXGh
-    nBaLsdigYuagKMzrxn+ATYKF00OfcbUk3y9bz9wP2YAkm95QK6i9FJ+rGSryGB1ykTT7
-    5NLiKcZ3Kt/hfeMQsLsoz8vB1VbALpEr6V4O1m+m01WWOQpWBvtIhd5nGjtFQLhPgYKt
-    SyrQ==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u267FZF9PwpcNKLVrKw7/aY="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 48.1.3 AUTH)
-    with ESMTPSA id 06b848y91FslATX
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Sat, 1 Oct 2022 17:54:47 +0200 (CEST)
-Date:   Sat, 1 Oct 2022 17:54:41 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Sireesh Kodali <sireeshkodali1@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        linux-kernel@vger.kernel.org, andersson@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v6 1/5] remoteproc: qcom: qcom_wcnss: Add support for
- pronto-v3
-Message-ID: <YzhiwXPTf6IQcOvb@gerhold.net>
-References: <20221001031345.31293-1-sireeshkodali1@gmail.com>
- <20221001031345.31293-2-sireeshkodali1@gmail.com>
+        Tue, 4 Oct 2022 10:39:56 -0400
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40122BC06;
+        Tue,  4 Oct 2022 07:39:55 -0700 (PDT)
+Received: by mail-oi1-f182.google.com with SMTP id m81so14621082oia.1;
+        Tue, 04 Oct 2022 07:39:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=C9mbynAWhlZLPcnxIkEkUheYSWevkrIWO3ImSHgFO3g=;
+        b=aPWmumn63KfCi4DzqKxKDgUKewcEQJUhF5VuL+VWDaVTrgLIQeF99zC1sQzSdI2vVF
+         zRNUC+MzjlfqWAgKGkQ7oH9+xhXzph9B82JMaq/HQvwF1kPW9PCJ+l+odz1JNYVMVab9
+         BZ2fjBtxMX/qQ3d3vnXKN19OSPhKDomkrnsIMTMo/He08spWpmKeh75LS9gytIqcGBzV
+         F5jQWMWji11GfqK3t5NH8EEdAiuERUtCOGaveyqTNKnZam5HlNvaIgf+PsRj1L+mf8lD
+         WSIa3JecVgl9wJ0WIK9X/kUYUjO5a/BSUwIP1SvFOBiWpcxJ17zXpjJz0vo+fDGHEefW
+         DdKw==
+X-Gm-Message-State: ACrzQf3hduLZ5CK81c8J177SN9KPqYUXEt3FOQQtVK1trOAJkC1yt8dH
+        GSTIk/bIFZ/mtb+PmEDvTA==
+X-Google-Smtp-Source: AMsMyM4dYcbq8JBg1woswaO8pn7/MT/46qINQGQkx4GKIMhjqDJZvKjz8PjYZXzhbcBzLHD36o8Bgw==
+X-Received: by 2002:a05:6808:23c5:b0:34f:bba7:2949 with SMTP id bq5-20020a05680823c500b0034fbba72949mr34434oib.101.1664894394472;
+        Tue, 04 Oct 2022 07:39:54 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id s37-20020a0568302aa500b00636a8dafdc9sm3059486otu.2.2022.10.04.07.39.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Oct 2022 07:39:54 -0700 (PDT)
+Received: (nullmailer pid 1480570 invoked by uid 1000);
+        Tue, 04 Oct 2022 14:39:54 -0000
+Date:   Tue, 4 Oct 2022 09:39:54 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Christoph Hellwig <hch@lst.de>,
+        Stefano Stabellini <stefanos@xilinx.com>,
+        Bruce Ashfield <bruce.ashfield@xilinx.com>
+Subject: Re: [PATCH v9 4/4] remoteproc: virtio: Create platform device for
+ the remoteproc_virtio
+Message-ID: <20221004143954.GA1479221-robh@kernel.org>
+References: <20220921135044.917140-1-arnaud.pouliquen@foss.st.com>
+ <20220921135044.917140-5-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221001031345.31293-2-sireeshkodali1@gmail.com>
+In-Reply-To: <20220921135044.917140-5-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Oct 01, 2022 at 08:43:40AM +0530, Sireesh Kodali wrote:
-> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+On Wed, Sep 21, 2022 at 03:50:44PM +0200, Arnaud Pouliquen wrote:
+> Define a platform driver to manage the remoteproc virtio device as
+> a platform devices.
 > 
-> Pronto-v3 is similar to pronto-v2. It requires two power domains, one
-> regulator, and it requires the xo clock. It is used on the MSM8953
-> platform.
+> The platform device allows to pass rproc_vdev_data platform data to
+> specify properties that are stored in the rproc_vdev structure.
 > 
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> Signed-off-by: Sireesh Kodali <sireeshkodali1@gmail.com>
-
-Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
-
+> Such approach will allow to preserve legacy remoteproc virtio device
+> creation but also to probe the device using device tree mechanism.
+> 
+> remoteproc_virtio.c update:
+>   - Add rproc_virtio_driver platform driver. The probe ops replaces
+>     the rproc_rvdev_add_device function.
+>   - All reference to the rvdev->dev has been updated to rvdev-pdev->dev.
+>   - rproc_rvdev_release is removed as associated to the rvdev device.
+>   - The use of rvdev->kref counter is replaced by get/put_device on the
+>     remoteproc virtio platform device.
+>   - The vdev device no longer increments rproc device counter.
+>     increment/decrement is done in rproc_virtio_probe/rproc_virtio_remove
+>     function in charge of the vrings allocation/free.
+> 
+> remoteproc_core.c update:
+>   Migrate from the rvdev device to the rvdev platform device.
+>   From this patch, when a vdev resource is found in the resource table
+>   the remoteproc core register a platform device.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  drivers/remoteproc/qcom_wcnss.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-> index 68f37296b151..f599d5d5719d 100644
-> --- a/drivers/remoteproc/qcom_wcnss.c
-> +++ b/drivers/remoteproc/qcom_wcnss.c
-> @@ -141,6 +141,17 @@ static const struct wcnss_data pronto_v2_data = {
->  	.num_vregs = 1,
->  };
->  
-> +static const struct wcnss_data pronto_v3_data = {
-> +	.pmu_offset = 0x1004,
-> +	.spare_offset = 0x1088,
-> +
-> +	.pd_names = { "mx", "cx" },
-> +	.vregs = (struct wcnss_vreg_info[]) {
-> +		{ "vddpx", 1800000, 1800000, 0 },
-> +	},
-> +	.num_vregs = 1,
+>  drivers/remoteproc/remoteproc_core.c     |  12 +-
+>  drivers/remoteproc/remoteproc_internal.h |   2 -
+>  drivers/remoteproc/remoteproc_virtio.c   | 143 ++++++++++++-----------
+>  include/linux/remoteproc.h               |   6 +-
+>  4 files changed, 82 insertions(+), 81 deletions(-)
+
+[...]
+
+> +/* Platform driver */
+> +static const struct of_device_id rproc_virtio_match[] = {
+> +	{ .compatible = "virtio,rproc" },
+
+This is not documented. Add a binding schema if you need DT support.
+
+> +	{},
 > +};
 > +
->  static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
->  {
->  	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-> @@ -675,6 +686,7 @@ static const struct of_device_id wcnss_of_match[] = {
->  	{ .compatible = "qcom,riva-pil", &riva_data },
->  	{ .compatible = "qcom,pronto-v1-pil", &pronto_v1_data },
->  	{ .compatible = "qcom,pronto-v2-pil", &pronto_v2_data },
-> +	{ .compatible = "qcom,pronto-v3-pil", &pronto_v3_data },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, wcnss_of_match);
-> -- 
-> 2.37.3
-> 
+> +static struct platform_driver rproc_virtio_driver = {
+> +	.probe		= rproc_virtio_probe,
+> +	.remove		= rproc_virtio_remove,
+> +	.driver		= {
+> +		.name	= "rproc-virtio",
+> +		.of_match_table	= rproc_virtio_match,
+> +	},
+> +};
