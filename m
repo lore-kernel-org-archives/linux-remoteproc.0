@@ -2,107 +2,114 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30181C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 17:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3045AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Oct 2022 19:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbiJDRlK (ORCPT
+        id S229804AbiJDTwL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Oct 2022 13:41:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41290 "EHLO
+        Tue, 4 Oct 2022 15:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbiJDRkk (ORCPT
+        with ESMTP id S229795AbiJDTwK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Oct 2022 13:40:40 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D55221E32;
-        Tue,  4 Oct 2022 10:40:36 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 294GTKiJ011068;
-        Tue, 4 Oct 2022 19:40:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=giapiNY7TCRzpUo88U0f93okWpLLKpJ1FSwj1WrxUAs=;
- b=JJcGzU9SS/qMFd/uT0HTdhAuUsnp96CrnRib9NWFhe+aduh3mBv9yEpVbBzzrapNQnqX
- XOOgxAh3Ix269nuKYuqlOQOAwKkBA1NcwofP85BXMne6i5lIFK72tKQa9KLDN0h/JFe/
- 8vypCt43d/csgUIuSlRUn85VcpSkbWaCV1CSnpMbzJXAXr6BzomEolF+SFOQJGYBh0Dk
- aEO44vBxUcm3KKS594xbiBgmYDz8zy82YpLXFUwUmh/MEYZ47YdDSVQvDubdZvuCo8ma
- /gZ4gJspqe9TxeZDNRJschL9fN3OLOuvVZ+Ct69L/+z1z8qt0IWEEtAC6nFBGOF8khBN Cg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jxcw21qh2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Oct 2022 19:40:30 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7433610002A;
-        Tue,  4 Oct 2022 19:40:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E5BA825225C;
-        Tue,  4 Oct 2022 19:40:24 +0200 (CEST)
-Received: from localhost (10.75.127.117) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Tue, 4 Oct
- 2022 19:40:24 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] remoteproc: virtio: Fix warning on bindings by removing the of_match_table
-Date:   Tue, 4 Oct 2022 19:40:18 +0200
-Message-ID: <20221004174018.3319712-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.24.3
+        Tue, 4 Oct 2022 15:52:10 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B273F65645
+        for <linux-remoteproc@vger.kernel.org>; Tue,  4 Oct 2022 12:51:56 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id y100so19757064ede.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 04 Oct 2022 12:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=7dAFZ0Dv74viOjab/o6SdVduwwf4JhWfgRlUOHBIw8s=;
+        b=p1Rf07UZ6nQSCG9E2dB1vRGVLdfDE6pwCDbvEiwzmXiNm8hJsNPkwiXVEXblsgcTMO
+         VD7elVi7Im7+BdHJKgOrYhC1xTHRHa6v75jV+Cj5KYkTaf2vqtTXohDgNbX5xUavrV0+
+         oR+j5h3G4GJaGr+QCRnFqEuAr95AIRhOWnhGhQH3PG3JdXHqZ6uUcn0icJxqTCJ8TWSN
+         W2NrDXPLKkw+1VBcphQbF2Q9Esii2ytqFi+A1ZJ8qPHSczRAp2pkyS3+7nRmsbflYICs
+         DKyBZrrJfVWF6hfc0ESiJYhiqC3TGVY99zj+NP/9rudqbBJeXwvQ8/mLhg+Zr6/c9SFU
+         Mbpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=7dAFZ0Dv74viOjab/o6SdVduwwf4JhWfgRlUOHBIw8s=;
+        b=QhnDNBqJWh7vf5gH14E9uDMvs5XTye5IoEYG2UyLpLtVhApwv462AvDgPO33u+8lOJ
+         ATllCp35saxKX2d3M6DfuQ5VrFEpMXIIe34COimDDBZEF7oPm/qcaaOMrmsB7NUe0gNa
+         wHRi0IkAzTPju0NFcPeuGNfjbrz/5E7Coh37HGhU6lXuQnT5B9HG37qq1k0/DFvAQSxl
+         n3EQxYTZ/NoPtP/AxnpDlhYW8gZmvcNyHV4hel3kKZOLX0sRxs0tTkLLIED1Vrup0bUu
+         q/pVCi8tDzvaG91H9SKBfSffkfBbmQC/4jP42aJjFTLzlLaVLVZpUlHDYek4SkSwJm3j
+         itNg==
+X-Gm-Message-State: ACrzQf0b8VB977o7iWXno7hd3oecBB4D4v4uFI6UGQKSd7ntZJBF0YFC
+        Sqjm2WNtniV86ODZFd1UQ7Do2CcTet6OFEaMeOsvxv4w2lA=
+X-Google-Smtp-Source: AMsMyM7tp161kPhb3d8RhOwSScAFsLy++rlzF6dUMDcpt01r082kRDSLrp9nYObjuNioSwTIh1BPKNN1kU8tq6QyjKY=
+X-Received: by 2002:a05:6402:40d1:b0:44f:e974:f981 with SMTP id
+ z17-20020a05640240d100b0044fe974f981mr25889439edb.222.1664913115282; Tue, 04
+ Oct 2022 12:51:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.117]
-X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-10-04_08,2022-09-29_03,2022-06-22_01
+References: <20221004174018.3319712-1-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20221004174018.3319712-1-arnaud.pouliquen@foss.st.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 4 Oct 2022 13:51:44 -0600
+Message-ID: <CANLsYkw357ajx8BnbykKiVD+BVv21VwAaYjvFDwqbvEw7cBDHQ@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: virtio: Fix warning on bindings by removing
+ the of_match_table
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The checkpatch tool complains that "virtio,rproc" is not documented.
-But it is not possible to probe the device "rproc-virtio" by declaring
-it in the device tree. So documenting it in the bindings does not make
-sense.
-This commit solves the checkpatch warning by suppressing the useless
-of_match_table.
+On Tue, 4 Oct 2022 at 11:40, Arnaud Pouliquen
+<arnaud.pouliquen@foss.st.com> wrote:
+>
+> The checkpatch tool complains that "virtio,rproc" is not documented.
+> But it is not possible to probe the device "rproc-virtio" by declaring
+> it in the device tree. So documenting it in the bindings does not make
+> sense.
+> This commit solves the checkpatch warning by suppressing the useless
+> of_match_table.
+>
+> Fix-suggested-by: Rob Herring <robh@kernel.org>
 
-Fix-suggested-by: Rob Herring <robh@kernel.org>
-Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
+I'll change that for "Suggested-by:"
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/remoteproc/remoteproc_virtio.c | 6 ------
- 1 file changed, 6 deletions(-)
+> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
+>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/remoteproc/remoteproc_virtio.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index a29e3b8ff69c..26a7d8c498bc 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
+>  }
+>
+>  /* Platform driver */
+> -static const struct of_device_id rproc_virtio_match[] = {
+> -       { .compatible = "virtio,rproc" },
+> -       {},
+> -};
+> -
+>  static struct platform_driver rproc_virtio_driver = {
+>         .probe          = rproc_virtio_probe,
+>         .remove         = rproc_virtio_remove,
+>         .driver         = {
+>                 .name   = "rproc-virtio",
+> -               .of_match_table = rproc_virtio_match,
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index a29e3b8ff69c..26a7d8c498bc 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
- }
- 
- /* Platform driver */
--static const struct of_device_id rproc_virtio_match[] = {
--	{ .compatible = "virtio,rproc" },
--	{},
--};
--
- static struct platform_driver rproc_virtio_driver = {
- 	.probe		= rproc_virtio_probe,
- 	.remove		= rproc_virtio_remove,
- 	.driver		= {
- 		.name	= "rproc-virtio",
--		.of_match_table	= rproc_virtio_match,
- 	},
- };
- builtin_platform_driver(rproc_virtio_driver);
--- 
-2.24.3
+Yes, this is quite simple and slick.  Rob - is this what you meant earlier on?
 
+>         },
+>  };
+>  builtin_platform_driver(rproc_virtio_driver);
+> --
+> 2.24.3
+>
