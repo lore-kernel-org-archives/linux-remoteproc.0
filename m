@@ -2,133 +2,122 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 823E6C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 15:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98A7C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 16:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230404AbiJEP0L (ORCPT
+        id S230231AbiJEQyV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Oct 2022 11:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
+        Wed, 5 Oct 2022 12:54:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229991AbiJEP0K (ORCPT
+        with ESMTP id S230096AbiJEQyU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Oct 2022 11:26:10 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBE381B9DB
-        for <linux-remoteproc@vger.kernel.org>; Wed,  5 Oct 2022 08:26:07 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id g1-20020a17090a708100b00203c1c66ae3so2080060pjk.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Oct 2022 08:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=b2eDhIzvuJjsHv2/DwfAjBACGmEeoKasF0f+LJfWpy4=;
-        b=yDIJ8ZRMEYVCQFO1ONUXGEjRWvVcL4ThiGTz4epVKemVgaY5GzauwMHGAPuPetOFZd
-         1atCE/2CnumELCMAVeQRLc0q96EHO9X+08JgZNM1u4ryBBhLYR+W9J23gpfQ2PKMnxef
-         0J6f1eCd0/a4j2CDQgTJn5zjH9mLBnQNb8aSYf7qPclJdqSABVWrvM1f5nA2LMtUtXFU
-         svsrSdo0k7K6EK/uICxNBzkN26XLVDBzevv9Lo8h0ZkQkCnleoj3dypTWfA/aHApymbh
-         ybz6EN8VmbxmVT4akpxKjIl2EQEmTr16EbO78zJW2+RXq3Z1qbqeDQjzfr+SvX7KK+rW
-         jogw==
+        Wed, 5 Oct 2022 12:54:20 -0400
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168E24B9A8;
+        Wed,  5 Oct 2022 09:54:19 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id a26so7312736pfg.7;
+        Wed, 05 Oct 2022 09:54:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=b2eDhIzvuJjsHv2/DwfAjBACGmEeoKasF0f+LJfWpy4=;
-        b=1KzAzf+wmmzNXk9iqw4gRkNJJpDUkoVBpgJJgNjdIuX+hNLglGCbR249hGa/gSk2/0
-         Xy0cPTIrJr6uxuQVKwxyVJO43BsG0Cr9gI78GK07DlBQ5g+qn2i1WJkqe/AvQypKZQJK
-         HPoKZ2E79gReBDZAj5G/9v9eBcPNYqz1RPRbwErRJ/VdNxlOKgtxfywJvKYT8txwkQUj
-         XFQiwi8zcHVCR2jTc8gLiTOQTNMeSfKMr6XEXfJOZpaIYr0shN2xhAxbsucc9phxN2b9
-         buGHvBSz/RGkAxC8f08AhbECckQ2KR64A9oONlVzxLNqEnHIr17qErm02s5yoLTTD58H
-         z02A==
-X-Gm-Message-State: ACrzQf0HmrnBqfV564VaTRwJwQUo26PvjFLWj3miNYKzTe21RdtXCFmZ
-        uZdHhQgw8jmkkT9yrs4ITerZRKfaRvOc9Q==
-X-Google-Smtp-Source: AMsMyM6U1Tjop20XQFBtNuI8reRTz70L8Jz87X/3OM8EuLG/sMQ/s6TIjTbd9f/dOjM1BuBlaJx7AQ==
-X-Received: by 2002:a17:902:b693:b0:178:5fa6:4b3 with SMTP id c19-20020a170902b69300b001785fa604b3mr32658463pls.63.1664983567257;
-        Wed, 05 Oct 2022 08:26:07 -0700 (PDT)
-Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 23-20020a17090a0f1700b001efa9e83927sm1249541pjy.51.2022.10.05.08.26.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Oct 2022 08:26:06 -0700 (PDT)
-Date:   Wed, 5 Oct 2022 09:26:04 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2] remoteproc: virtio: Fix warning on bindings by
- removing the of_match_table
-Message-ID: <20221005152604.GA2666639@p14s>
-References: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=GFGmeXwzImdz1h+PmMN1s24FBEmejNYEC+q1xWfXEck=;
+        b=JWf5VAz03AB4CkFEpVkfUEWgtmAjJ4wGjWY6babOa0PJChJcZ0ezYXykprUlrHwiZI
+         v4HeZ+6jF5Zc9NjJfsUXsfGdHdhUlxn+xq8+UZhFtyFx10UOs5HuapVHHEEV1dBSSZKO
+         KJB5TzZHCYSU9kh0p88M7P0C8IefFbGGgDi1G1GSt1/qTXGXsuU46m0CugrWM7VM16Ij
+         RGFlghN5WfCPvJH5qA8zH13aK7nx54zJbv9rOfw076haEwshRGTTLkH5rvY0F/2rF6cE
+         SDmINa9yM5lYV92oWR8yDyMsUAg7unn74YelZwFnJPrRzziKhlqSe/C0uegYbM6TGUdR
+         Z4yA==
+X-Gm-Message-State: ACrzQf1lcWB49zedkrBYX6YwlzM9c5IM6GtxENQxzEP5otYjmzY10mkW
+        QrgsR6WdcKI8yP5lU4tDIQ4=
+X-Google-Smtp-Source: AMsMyM5oX6qSPQ4HG3bu8E8hjU3lPQSUd8WrMcNcjR4MljBf6naYCl5wsAAwQMON9m5RMKfn4/SRMQ==
+X-Received: by 2002:a62:2985:0:b0:544:77d4:f43b with SMTP id p127-20020a622985000000b0054477d4f43bmr726456pfp.9.1664988858370;
+        Wed, 05 Oct 2022 09:54:18 -0700 (PDT)
+Received: from [192.168.3.219] ([98.51.102.78])
+        by smtp.gmail.com with ESMTPSA id j16-20020a170902da9000b00176c6738d13sm10795484plx.169.2022.10.05.09.54.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Oct 2022 09:54:17 -0700 (PDT)
+Message-ID: <e0ea0b0a-5077-de37-046f-62902aca93b6@acm.org>
+Date:   Wed, 5 Oct 2022 09:54:11 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [RFC PATCH 01/21] block: add and use init tagset helper
+Content-Language: en-US
+To:     Chaitanya Kulkarni <kch@nvidia.com>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, axboe@kernel.dk, efremov@linux.com,
+        josef@toxicpanda.com, idryomov@gmail.com,
+        dongsheng.yang@easystack.cn, haris.iqbal@ionos.com,
+        jinpu.wang@ionos.com, mst@redhat.com, jasowang@redhat.com,
+        pbonzini@redhat.com, stefanha@redhat.com, ohad@wizery.com,
+        andersson@kernel.org, baolin.wang@linux.alibaba.com,
+        richard@nod.at, miquel.raynal@bootlin.com, vigneshr@ti.com,
+        marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, sth@linux.ibm.com,
+        hoeppner@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, hare@suse.de, bhelgaas@google.com,
+        john.garry@huawei.com, mcgrof@kernel.org,
+        christophe.jaillet@wanadoo.fr, vaibhavgupta40@gmail.com,
+        wsa+renesas@sang-engineering.com, johannes.thumshirn@wdc.com,
+        ming.lei@redhat.com, shinichiro.kawasaki@wdc.com,
+        vincent.fu@samsung.com, christoph.boehmwalder@linbit.com,
+        joel@jms.id.au, vincent.whitchurch@axis.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, asahi@lists.linux.dev
+References: <20221005032257.80681-1-kch@nvidia.com>
+ <20221005032257.80681-2-kch@nvidia.com>
+ <6fee2d7a-7fd1-73ee-2911-87a4ed3e8769@opensource.wdc.com>
+ <CAPDyKFpBpiydQn+=24CqtaH_qa3tQfN2gQSiUrHCjnLSuy4=Kg@mail.gmail.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <CAPDyKFpBpiydQn+=24CqtaH_qa3tQfN2gQSiUrHCjnLSuy4=Kg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Oct 05, 2022 at 10:13:17AM +0200, Arnaud Pouliquen wrote:
-> The checkpatch tool complains that "virtio,rproc" is not documented.
-> But it is not possible to probe the device "rproc-virtio" by declaring
-> it in the device tree. So documenting it in the bindings does not make
-> sense.
-> This commit solves the checkpatch warning by suppressing the useless
-> of_match_table.
+On 10/5/22 02:47, Ulf Hansson wrote:
+> On Wed, 5 Oct 2022 at 07:11, Damien Le Moal <damien.lemoal@opensource.wdc.com> wrote:
+>> On 10/5/22 12:22, Chaitanya Kulkarni wrote:
+>>> +void blk_mq_init_tag_set(struct blk_mq_tag_set *set,
+>>> +             const struct blk_mq_ops *ops, unsigned int nr_hw_queues,
+>>> +             unsigned int queue_depth, unsigned int cmd_size, int numa_node,
+>>> +             unsigned int timeout, unsigned int flags, void *driver_data)
+>>
+>> That is an awful lot of arguments... I would be tempted to say pack all
+>> these into a struct but then that would kind of negate this patchset goal.
+>> Using a function with that many arguments will be error prone, and hard to
+>> review... Not a fan.
 > 
-> Suggested-by: Rob Herring <robh@kernel.org>
-> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
+> I completely agree.
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
-> ---
-> Updates vs previous revision:
-> - replace the "of_platform.h" include by "platform_device.h",
-> - replace "Fix-suggested-by" by "Suggested-by",
-> - add Rob's Reviewed-by.
-> ---
->  drivers/remoteproc/remoteproc_virtio.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index a29e3b8ff69c..0e95525c1158 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -13,8 +13,8 @@
->  #include <linux/dma-map-ops.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/export.h>
-> -#include <linux/of_platform.h>
->  #include <linux/of_reserved_mem.h>
-> +#include <linux/platform_device.h>
->  #include <linux/remoteproc.h>
->  #include <linux/virtio.h>
->  #include <linux/virtio_config.h>
-> @@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
->  }
->  
->  /* Platform driver */
-> -static const struct of_device_id rproc_virtio_match[] = {
-> -	{ .compatible = "virtio,rproc" },
-> -	{},
-> -};
-> -
->  static struct platform_driver rproc_virtio_driver = {
->  	.probe		= rproc_virtio_probe,
->  	.remove		= rproc_virtio_remove,
->  	.driver		= {
->  		.name	= "rproc-virtio",
-> -		.of_match_table	= rproc_virtio_match,
+> But there is also another problem going down this route. If/when we
+> realize that there is another parameter needed in the blk_mq_tag_set.
+> Today that's quite easy to add (assuming the parameter can be
+> optional), without changing the blk_mq_init_tag_set() interface.
 
-Applied.
+Hi Chaitanya,
+
+Please consider to drop the entire patch series. In addition to the 
+disadvantages mentioned above I'd like to mention the following 
+disadvantages:
+* Replacing named member assignments with positional arguments in a
+   function call makes code harder to read and harder to verify.
+* This patch series makes tree-wide changes without improving the code
+   in a substantial way.
 
 Thanks,
-Mathieu
 
->  	},
->  };
->  builtin_platform_driver(rproc_virtio_driver);
-> -- 
-> 2.24.3
-> 
+Bart.
+
