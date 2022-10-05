@@ -2,157 +2,133 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D337C43219
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 09:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 823E6C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 15:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbiJEJsP (ORCPT
+        id S230404AbiJEP0L (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Oct 2022 05:48:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35156 "EHLO
+        Wed, 5 Oct 2022 11:26:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiJEJsM (ORCPT
+        with ESMTP id S229991AbiJEP0K (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Oct 2022 05:48:12 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D83B6CD0F
-        for <linux-remoteproc@vger.kernel.org>; Wed,  5 Oct 2022 02:48:11 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id lx7so15149862pjb.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Oct 2022 02:48:11 -0700 (PDT)
+        Wed, 5 Oct 2022 11:26:10 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBE381B9DB
+        for <linux-remoteproc@vger.kernel.org>; Wed,  5 Oct 2022 08:26:07 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id g1-20020a17090a708100b00203c1c66ae3so2080060pjk.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Oct 2022 08:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=uAiOjs73GnPtRWDKlCBYpOmHeG3ElDSPTXYVbLmJn3Y=;
-        b=dh/s9gbrJ1NP2il6j7m7392rb5m/0olUhLw6ywfYrwbm+b05mgthbXGVeHCne6faSe
-         nEB8FWIww9/Mh3TPJYBTwQxHk9YQhBfOYEWSgISGS3x2V+1PSzpPW0fGwHCNvRUrDmsC
-         V4LPjNBP1ZNWd2lWycmQ+cVlk2hOYpk0wbD3BQW90ktRdTfHVQoOGdzFfsVLA+UV8P0L
-         yaYjHeb70WMgWdHpn0iX5L8LgNN78O1ThcYXr+GHqSaFRNBAWLFYqLr8IpSUK6wbVOaM
-         BO7XUtm7Hdl6sqI52mxM7YweUuOKwjFV07IZc9k6gah2y9PsEzpdZlxqQ3TbFVT9xR+n
-         gOow==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=b2eDhIzvuJjsHv2/DwfAjBACGmEeoKasF0f+LJfWpy4=;
+        b=yDIJ8ZRMEYVCQFO1ONUXGEjRWvVcL4ThiGTz4epVKemVgaY5GzauwMHGAPuPetOFZd
+         1atCE/2CnumELCMAVeQRLc0q96EHO9X+08JgZNM1u4ryBBhLYR+W9J23gpfQ2PKMnxef
+         0J6f1eCd0/a4j2CDQgTJn5zjH9mLBnQNb8aSYf7qPclJdqSABVWrvM1f5nA2LMtUtXFU
+         svsrSdo0k7K6EK/uICxNBzkN26XLVDBzevv9Lo8h0ZkQkCnleoj3dypTWfA/aHApymbh
+         ybz6EN8VmbxmVT4akpxKjIl2EQEmTr16EbO78zJW2+RXq3Z1qbqeDQjzfr+SvX7KK+rW
+         jogw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=uAiOjs73GnPtRWDKlCBYpOmHeG3ElDSPTXYVbLmJn3Y=;
-        b=SuVT2k/2fMS1s1rqUoU3kUY6CrtykMbjeZ+VUzBEJxjBvW5hk8xMZyrJRjjXqnxlTI
-         gtmgXMakaM1r1j9n3dcfPDuQffknWgkygU9L8ooorpRs3kHkti/rhMx/PPVtB0pWXlnX
-         nBb6PUUlsRwr03lOv+pHkUUVA3T/jthldqOhIrPP2VDUNbqvuzF2FXX5r4JpYAgen6Jg
-         LmESM4laPRvZL9EiNyURooKs706WWHfFW4lUSc4CvXd0Jv/x+D4n+M/E0Vp6NQkpV179
-         OKSYNqpBmltfoiAuLZetOjxK7fplmfZwaNxAouRV7TKZg5xHNjI7a2w6PNB5pK7k7wrG
-         xVfQ==
-X-Gm-Message-State: ACrzQf1VQn/1PradbVC4b1MMzgObPx8jIESyqZZY6qBdZWk27sUpwKsz
-        yGXyAUi/+chJ5oEPqHHWPtcH2muDMFmqNFJnCCIfZQ==
-X-Google-Smtp-Source: AMsMyM6eqXlNc1atZOkkKgiG1yV3Y78Coz+AbzCXphLyt0GPdUFcokJxxEDnXeFGnrVe0bHv3fHf9rWqZFSPgK8TTJI=
-X-Received: by 2002:a17:90b:4d07:b0:1ef:521c:f051 with SMTP id
- mw7-20020a17090b4d0700b001ef521cf051mr4350723pjb.164.1664963290949; Wed, 05
- Oct 2022 02:48:10 -0700 (PDT)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=b2eDhIzvuJjsHv2/DwfAjBACGmEeoKasF0f+LJfWpy4=;
+        b=1KzAzf+wmmzNXk9iqw4gRkNJJpDUkoVBpgJJgNjdIuX+hNLglGCbR249hGa/gSk2/0
+         Xy0cPTIrJr6uxuQVKwxyVJO43BsG0Cr9gI78GK07DlBQ5g+qn2i1WJkqe/AvQypKZQJK
+         HPoKZ2E79gReBDZAj5G/9v9eBcPNYqz1RPRbwErRJ/VdNxlOKgtxfywJvKYT8txwkQUj
+         XFQiwi8zcHVCR2jTc8gLiTOQTNMeSfKMr6XEXfJOZpaIYr0shN2xhAxbsucc9phxN2b9
+         buGHvBSz/RGkAxC8f08AhbECckQ2KR64A9oONlVzxLNqEnHIr17qErm02s5yoLTTD58H
+         z02A==
+X-Gm-Message-State: ACrzQf0HmrnBqfV564VaTRwJwQUo26PvjFLWj3miNYKzTe21RdtXCFmZ
+        uZdHhQgw8jmkkT9yrs4ITerZRKfaRvOc9Q==
+X-Google-Smtp-Source: AMsMyM6U1Tjop20XQFBtNuI8reRTz70L8Jz87X/3OM8EuLG/sMQ/s6TIjTbd9f/dOjM1BuBlaJx7AQ==
+X-Received: by 2002:a17:902:b693:b0:178:5fa6:4b3 with SMTP id c19-20020a170902b69300b001785fa604b3mr32658463pls.63.1664983567257;
+        Wed, 05 Oct 2022 08:26:07 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id 23-20020a17090a0f1700b001efa9e83927sm1249541pjy.51.2022.10.05.08.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Oct 2022 08:26:06 -0700 (PDT)
+Date:   Wed, 5 Oct 2022 09:26:04 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2] remoteproc: virtio: Fix warning on bindings by
+ removing the of_match_table
+Message-ID: <20221005152604.GA2666639@p14s>
+References: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-References: <20221005032257.80681-1-kch@nvidia.com> <20221005032257.80681-2-kch@nvidia.com>
- <6fee2d7a-7fd1-73ee-2911-87a4ed3e8769@opensource.wdc.com>
-In-Reply-To: <6fee2d7a-7fd1-73ee-2911-87a4ed3e8769@opensource.wdc.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 5 Oct 2022 11:47:34 +0200
-Message-ID: <CAPDyKFpBpiydQn+=24CqtaH_qa3tQfN2gQSiUrHCjnLSuy4=Kg@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/21] block: add and use init tagset helper
-To:     Chaitanya Kulkarni <kch@nvidia.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, axboe@kernel.dk, efremov@linux.com,
-        josef@toxicpanda.com, idryomov@gmail.com,
-        dongsheng.yang@easystack.cn, haris.iqbal@ionos.com,
-        jinpu.wang@ionos.com, mst@redhat.com, jasowang@redhat.com,
-        pbonzini@redhat.com, stefanha@redhat.com, ohad@wizery.com,
-        andersson@kernel.org, baolin.wang@linux.alibaba.com,
-        richard@nod.at, miquel.raynal@bootlin.com, vigneshr@ti.com,
-        marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, sth@linux.ibm.com,
-        hoeppner@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, hare@suse.de, bhelgaas@google.com,
-        john.garry@huawei.com, mcgrof@kernel.org,
-        christophe.jaillet@wanadoo.fr, vaibhavgupta40@gmail.com,
-        wsa+renesas@sang-engineering.com, johannes.thumshirn@wdc.com,
-        bvanassche@acm.org, ming.lei@redhat.com,
-        shinichiro.kawasaki@wdc.com, vincent.fu@samsung.com,
-        christoph.boehmwalder@linbit.com, joel@jms.id.au,
-        vincent.whitchurch@axis.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, asahi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 5 Oct 2022 at 07:11, Damien Le Moal
-<damien.lemoal@opensource.wdc.com> wrote:
->
-> On 10/5/22 12:22, Chaitanya Kulkarni wrote:
-> > Add and use the helper to initialize the common fields of the tag_set
-> > such as blk_mq_ops, number of h/w queues, queue depth, command size,
-> > numa_node, timeout, BLK_MQ_F_XXX flags, driver data. This initialization
-> > is spread all over the block drivers. This avoids the code repetation of
-> > the inialization code of the tag set in current block drivers and any
->
-> s/inialization/initialization
-> s/repetation/repetition
->
-> > future ones.
-> >
-> > Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
-> > ---
-> >  block/blk-mq.c                | 20 ++++++++++++++++++++
-> >  drivers/block/null_blk/main.c | 10 +++-------
-> >  include/linux/blk-mq.h        |  5 +++++
-> >  3 files changed, 28 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/block/blk-mq.c b/block/blk-mq.c
-> > index 8070b6c10e8d..e3a8dd81bbe2 100644
-> > --- a/block/blk-mq.c
-> > +++ b/block/blk-mq.c
-> > @@ -4341,6 +4341,26 @@ static int blk_mq_alloc_tag_set_tags(struct blk_mq_tag_set *set,
-> >       return blk_mq_realloc_tag_set_tags(set, 0, new_nr_hw_queues);
-> >  }
-> >
-> > +void blk_mq_init_tag_set(struct blk_mq_tag_set *set,
-> > +             const struct blk_mq_ops *ops, unsigned int nr_hw_queues,
-> > +             unsigned int queue_depth, unsigned int cmd_size, int numa_node,
-> > +             unsigned int timeout, unsigned int flags, void *driver_data)
->
-> That is an awful lot of arguments... I would be tempted to say pack all
-> these into a struct but then that would kind of negate this patchset goal.
-> Using a function with that many arguments will be error prone, and hard to
-> review... Not a fan.
+On Wed, Oct 05, 2022 at 10:13:17AM +0200, Arnaud Pouliquen wrote:
+> The checkpatch tool complains that "virtio,rproc" is not documented.
+> But it is not possible to probe the device "rproc-virtio" by declaring
+> it in the device tree. So documenting it in the bindings does not make
+> sense.
+> This commit solves the checkpatch warning by suppressing the useless
+> of_match_table.
+> 
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> ---
+> Updates vs previous revision:
+> - replace the "of_platform.h" include by "platform_device.h",
+> - replace "Fix-suggested-by" by "Suggested-by",
+> - add Rob's Reviewed-by.
+> ---
+>  drivers/remoteproc/remoteproc_virtio.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index a29e3b8ff69c..0e95525c1158 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -13,8 +13,8 @@
+>  #include <linux/dma-map-ops.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/export.h>
+> -#include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/remoteproc.h>
+>  #include <linux/virtio.h>
+>  #include <linux/virtio_config.h>
+> @@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
+>  }
+>  
+>  /* Platform driver */
+> -static const struct of_device_id rproc_virtio_match[] = {
+> -	{ .compatible = "virtio,rproc" },
+> -	{},
+> -};
+> -
+>  static struct platform_driver rproc_virtio_driver = {
+>  	.probe		= rproc_virtio_probe,
+>  	.remove		= rproc_virtio_remove,
+>  	.driver		= {
+>  		.name	= "rproc-virtio",
+> -		.of_match_table	= rproc_virtio_match,
 
-I completely agree.
+Applied.
 
-But there is also another problem going down this route. If/when we
-realize that there is another parameter needed in the blk_mq_tag_set.
-Today that's quite easy to add (assuming the parameter can be
-optional), without changing the blk_mq_init_tag_set() interface.
+Thanks,
+Mathieu
 
->
-> > +{
-> > +     if (!set)
-> > +             return;
-> > +
-> > +     set->ops = ops;
-> > +     set->nr_hw_queues = nr_hw_queues;
-> > +     set->queue_depth = queue_depth;
-> > +     set->cmd_size = cmd_size;
-> > +     set->numa_node = numa_node;
-> > +     set->timeout = timeout;
-> > +     set->flags = flags;
-> > +     set->driver_data = driver_data;
-> > +}
-> > +
->
-
-[...]
-
-Kind regards
-Uffe
+>  	},
+>  };
+>  builtin_platform_driver(rproc_virtio_driver);
+> -- 
+> 2.24.3
+> 
