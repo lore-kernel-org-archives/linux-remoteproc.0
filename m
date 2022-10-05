@@ -2,225 +2,124 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFE3C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 05:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07574C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 08:13:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbiJEFLg (ORCPT
+        id S229935AbiJEINo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Oct 2022 01:11:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52786 "EHLO
+        Wed, 5 Oct 2022 04:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229662AbiJEFLa (ORCPT
+        with ESMTP id S229904AbiJEINm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Oct 2022 01:11:30 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C5B05F65
-        for <linux-remoteproc@vger.kernel.org>; Tue,  4 Oct 2022 22:11:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1664946689; x=1696482689;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=t4Ggk8JN7aJqaDrHkVXVhSu8+EOy8cvFecQ8rYNiwuM=;
-  b=rhw7d1USq800z6CPlx1HdGmsQPQKaKXItMr3O8CV28nUnIafOGI2J28y
-   dE3QZbToxjLg8CNAK+4zphlk86Rqgg19mfL5EqEFeqpc0hJBEmKLhGw5/
-   zna6vnh1xd7TchlMo7MzgXh2C95Omq6sIBe4DGYKSkKY+qVfXNF+/N8yt
-   jxERl5NIJbLA7UHcMunNKq3u8svAtfOkZrQsFvdcU0jnHigFYvkYEkIuM
-   YdkHl6bavECAjIGsVP6PXuvH/VDTCgakOkoy6WLvFUIJSxbE7mHoYAIta
-   mEdtfO89rq4Zk/aem+9xLEyL79wxsNllmjIK0ax6+yItE1GIqd0v4+bVY
-   A==;
-X-IronPort-AV: E=Sophos;i="5.95,159,1661788800"; 
-   d="scan'208";a="211366259"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 05 Oct 2022 13:11:26 +0800
-IronPort-SDR: BoHncGjJIc5eHyM9Fbg0TVS/lZixiVOAQZDue3odxHyPwcNRxqEa+kS8SmdgD+G2JhDF3yd4Aq
- WBYDi0/1Shn1J2KJlH2PgsuMfy8XcIbLC2kjTPZLi2uUg57WDq6+tJWLy6g6at42I+aBhkwik0
- L/x4U4FwxDxTGQDt+BChTPutUhKd30NIIW8ZsFsuv+tRXr9ZBl+5q2daUb5p7EXRW0cYxlTnbY
- zb+iIDgLqCSFoL7uFC6IWSXIr+mp6b3c0UZ8768lFJ3uIUwSERYh87K4UhKDOrWa8i6ofWtTkT
- 6ACKflFDauW5lA6jDJlxJ8M3
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Oct 2022 21:25:40 -0700
-IronPort-SDR: iWY7z/THTYuA1w8OYcWsYWTw2UMo79OpPEqSQASOMd681Z/y/t6iPhCgoIGGGsF7dRhBnU7rG8
- 4AeEF4eFn1e1ob0UxKkpwqiLdJFwncwcHdmGqQyhy/0BK3N8un3a9B49HJlxoM906aNynHGToi
- OQcR1otwwyzLw5g4RnihwvNpxKxWbc3NX1Z6qyUNB/cpOO+RDAYNzEClftw1WrGyXtDekZcuOO
- 02T0oUF0Xiap+6m2bra7t6zFuXfChLkyTyNpKKdX4xTEyFG3BaQGBxt4KC40z/MjKNTDxdbUJu
- Qdk=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Oct 2022 22:11:27 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Mj2jT6YrYz1Rwtl
-        for <linux-remoteproc@vger.kernel.org>; Tue,  4 Oct 2022 22:11:25 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1664946684; x=1667538685; bh=t4Ggk8JN7aJqaDrHkVXVhSu8+EOy8cvFecQ
-        8rYNiwuM=; b=sgivCK871BMg4AshEXZ5ughytDU0bxpZ952rpcrZSfcnz0xa3J0
-        4S5yyxbEpoyTB2ODcehKOafzaaJ2RQnhE5qmdchojjznbvWlfqJgpInrp8NHLKsE
-        1or4gREIAI5qmCHV4WjYfCrqM0L6F4PU7VQaz1eM2kucXXDCjlfjgwuM19smCBpe
-        qcyIZLuvZqAPwPORxd9SGK/P5ypxGxam13A8CIydzamHfsQTSrUdG9PKeNt7bpZv
-        m9O16Vulh7I6NDGzWgbiFXdbLkE89p1/W81xwyi9/N9E118tH3N40NJiep3hTVBK
-        B3dSIWy0Bj7qgjnZUbYjR70NwQE0yN1ZbRg==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id O7zo1T39wyGM for <linux-remoteproc@vger.kernel.org>;
-        Tue,  4 Oct 2022 22:11:24 -0700 (PDT)
-Received: from [10.225.163.106] (unknown [10.225.163.106])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Mj2jD37C6z1RvLy;
-        Tue,  4 Oct 2022 22:11:12 -0700 (PDT)
-Message-ID: <6fee2d7a-7fd1-73ee-2911-87a4ed3e8769@opensource.wdc.com>
-Date:   Wed, 5 Oct 2022 14:11:11 +0900
+        Wed, 5 Oct 2022 04:13:42 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA6472849;
+        Wed,  5 Oct 2022 01:13:40 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2955IX64022218;
+        Wed, 5 Oct 2022 10:13:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=D4Djt2WHWdTupc+oUzs5c1sYBFs2LXWtRbS/jfMJSUA=;
+ b=BaRRCZcHQpRHjovT77S1NPeHt7ajs0uc5NL9NpsujuiVcL/7ij4Uwpv2SPhioeY+n4/Q
+ KNWExwUxXF9g2HcvuC2tBFcfKWr/NPkWsvz/VnR/SRMD5cBJz7lo/CoR2Jt0mBAK7Y3c
+ eBBELNLszSXkHKIwfRwhA2f1SMjYAv0YDOiB6VIDbLMsluEC9H63WJRSSCSfEqrqjutF
+ tTLeDf3f5H458VuQXttE1sl0NCTYzABatr0J3hcYeSSZ7LeHg0ZLRCjwcyJW8ACHU8yP
+ IQ0nC6q55NGkZuTWCzmZycL10NT6+BluPD5VjQA2tNuEqn1573yqnOqNww69Y2PHfk1q kQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3jxapc5sdf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 05 Oct 2022 10:13:34 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0A66F10002A;
+        Wed,  5 Oct 2022 10:13:28 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7D850216830;
+        Wed,  5 Oct 2022 10:13:28 +0200 (CEST)
+Received: from localhost (10.75.127.117) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Wed, 5 Oct
+ 2022 10:13:26 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v2] remoteproc: virtio: Fix warning on bindings by removing the of_match_table
+Date:   Wed, 5 Oct 2022 10:13:17 +0200
+Message-ID: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.24.3
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [RFC PATCH 01/21] block: add and use init tagset helper
-Content-Language: en-US
-To:     Chaitanya Kulkarni <kch@nvidia.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Cc:     axboe@kernel.dk, efremov@linux.com, josef@toxicpanda.com,
-        idryomov@gmail.com, dongsheng.yang@easystack.cn,
-        haris.iqbal@ionos.com, jinpu.wang@ionos.com, mst@redhat.com,
-        jasowang@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
-        ohad@wizery.com, andersson@kernel.org,
-        baolin.wang@linux.alibaba.com, ulf.hansson@linaro.org,
-        richard@nod.at, miquel.raynal@bootlin.com, vigneshr@ti.com,
-        marcan@marcan.st, sven@svenpeter.dev, alyssa@rosenzweig.io,
-        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, sth@linux.ibm.com,
-        hoeppner@linux.ibm.com, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, hare@suse.de, bhelgaas@google.com,
-        john.garry@huawei.com, mcgrof@kernel.org,
-        christophe.jaillet@wanadoo.fr, vaibhavgupta40@gmail.com,
-        wsa+renesas@sang-engineering.com, johannes.thumshirn@wdc.com,
-        bvanassche@acm.org, ming.lei@redhat.com,
-        shinichiro.kawasaki@wdc.com, vincent.fu@samsung.com,
-        christoph.boehmwalder@linbit.com, joel@jms.id.au,
-        vincent.whitchurch@axis.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, asahi@lists.linux.dev
-References: <20221005032257.80681-1-kch@nvidia.com>
- <20221005032257.80681-2-kch@nvidia.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20221005032257.80681-2-kch@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.117]
+X-ClientProxiedBy: GPXDAG2NODE4.st.com (10.75.127.68) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-10-04_09,2022-09-29_03,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 10/5/22 12:22, Chaitanya Kulkarni wrote:
-> Add and use the helper to initialize the common fields of the tag_set
-> such as blk_mq_ops, number of h/w queues, queue depth, command size,
-> numa_node, timeout, BLK_MQ_F_XXX flags, driver data. This initialization
-> is spread all over the block drivers. This avoids the code repetation of
-> the inialization code of the tag set in current block drivers and any
+The checkpatch tool complains that "virtio,rproc" is not documented.
+But it is not possible to probe the device "rproc-virtio" by declaring
+it in the device tree. So documenting it in the bindings does not make
+sense.
+This commit solves the checkpatch warning by suppressing the useless
+of_match_table.
 
-s/inialization/initialization
-s/repetation/repetition
+Suggested-by: Rob Herring <robh@kernel.org>
+Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
 
-> future ones.
-> 
-> Signed-off-by: Chaitanya Kulkarni <kch@nvidia.com>
-> ---
->  block/blk-mq.c                | 20 ++++++++++++++++++++
->  drivers/block/null_blk/main.c | 10 +++-------
->  include/linux/blk-mq.h        |  5 +++++
->  3 files changed, 28 insertions(+), 7 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 8070b6c10e8d..e3a8dd81bbe2 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -4341,6 +4341,26 @@ static int blk_mq_alloc_tag_set_tags(struct blk_mq_tag_set *set,
->  	return blk_mq_realloc_tag_set_tags(set, 0, new_nr_hw_queues);
->  }
->  
-> +void blk_mq_init_tag_set(struct blk_mq_tag_set *set,
-> +		const struct blk_mq_ops *ops, unsigned int nr_hw_queues,
-> +		unsigned int queue_depth, unsigned int cmd_size, int numa_node,
-> +		unsigned int timeout, unsigned int flags, void *driver_data)
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-That is an awful lot of arguments... I would be tempted to say pack all
-these into a struct but then that would kind of negate this patchset goal.
-Using a function with that many arguments will be error prone, and hard to
-review... Not a fan.
+---
+Updates vs previous revision:
+- replace the "of_platform.h" include by "platform_device.h",
+- replace "Fix-suggested-by" by "Suggested-by",
+- add Rob's Reviewed-by.
+---
+ drivers/remoteproc/remoteproc_virtio.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> +{
-> +	if (!set)
-> +		return;
-> +
-> +	set->ops = ops;
-> +	set->nr_hw_queues = nr_hw_queues;
-> +	set->queue_depth = queue_depth;
-> +	set->cmd_size = cmd_size;
-> +	set->numa_node = numa_node;
-> +	set->timeout = timeout;
-> +	set->flags = flags;
-> +	set->driver_data = driver_data;
-> +}
-> +
-
-No blank line here.
-
-> +EXPORT_SYMBOL_GPL(blk_mq_init_tag_set);
-> +
->  /*
->   * Alloc a tag set to be associated with one or more request queues.
->   * May fail with EINVAL for various error conditions. May adjust the
-> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-> index 1f154f92f4c2..0b07aab980c4 100644
-> --- a/drivers/block/null_blk/main.c
-> +++ b/drivers/block/null_blk/main.c
-> @@ -1926,13 +1926,9 @@ static int null_init_tag_set(struct nullb *nullb, struct blk_mq_tag_set *set)
->  			flags |= BLK_MQ_F_BLOCKING;
->  	}
->  
-> -	set->ops = &null_mq_ops;
-> -	set->cmd_size	= sizeof(struct nullb_cmd);
-> -	set->flags = flags;
-> -	set->driver_data = nullb;
-> -	set->nr_hw_queues = hw_queues;
-> -	set->queue_depth = queue_depth;
-> -	set->numa_node = numa_node;
-> +	blk_mq_init_tag_set(set, &null_mq_ops, hw_queues, queue_depth,
-> +			sizeof(struct nullb_cmd), numa_node, 0, flags, nullb);
-> +
->  	if (poll_queues) {
->  		set->nr_hw_queues += poll_queues;
->  		set->nr_maps = 3;
-> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-> index ba18e9bdb799..06087a8e4398 100644
-> --- a/include/linux/blk-mq.h
-> +++ b/include/linux/blk-mq.h
-> @@ -708,6 +708,11 @@ int blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
->  		struct request_queue *q);
->  void blk_mq_destroy_queue(struct request_queue *);
->  
-> +
-
-No need for the extra whiteline.
-
-> +void blk_mq_init_tag_set(struct blk_mq_tag_set *set,
-> +		const struct blk_mq_ops *ops, unsigned int nr_hw_queues,
-> +		unsigned int queue_depth, unsigned int cmd_size, int numa_node,
-> +		unsigned int timeout, unsigned int flags, void *driver_data);
->  int blk_mq_alloc_tag_set(struct blk_mq_tag_set *set);
->  int blk_mq_alloc_sq_tag_set(struct blk_mq_tag_set *set,
->  		const struct blk_mq_ops *ops, unsigned int queue_depth,
-
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index a29e3b8ff69c..0e95525c1158 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -13,8 +13,8 @@
+ #include <linux/dma-map-ops.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/export.h>
+-#include <linux/of_platform.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
+ #include <linux/remoteproc.h>
+ #include <linux/virtio.h>
+ #include <linux/virtio_config.h>
+@@ -593,17 +593,11 @@ static int rproc_virtio_remove(struct platform_device *pdev)
+ }
+ 
+ /* Platform driver */
+-static const struct of_device_id rproc_virtio_match[] = {
+-	{ .compatible = "virtio,rproc" },
+-	{},
+-};
+-
+ static struct platform_driver rproc_virtio_driver = {
+ 	.probe		= rproc_virtio_probe,
+ 	.remove		= rproc_virtio_remove,
+ 	.driver		= {
+ 		.name	= "rproc-virtio",
+-		.of_match_table	= rproc_virtio_match,
+ 	},
+ };
+ builtin_platform_driver(rproc_virtio_driver);
 -- 
-Damien Le Moal
-Western Digital Research
+2.24.3
 
