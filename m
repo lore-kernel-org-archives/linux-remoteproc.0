@@ -2,65 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD73CC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Oct 2022 23:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E66C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Oct 2022 04:48:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbiJEXa5 (ORCPT
+        id S230006AbiJFEsE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Oct 2022 19:30:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
+        Thu, 6 Oct 2022 00:48:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbiJEXa4 (ORCPT
+        with ESMTP id S229946AbiJFEsD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Oct 2022 19:30:56 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C7085A8A
-        for <linux-remoteproc@vger.kernel.org>; Wed,  5 Oct 2022 16:30:55 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id z23so886411ejw.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Oct 2022 16:30:55 -0700 (PDT)
+        Thu, 6 Oct 2022 00:48:03 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F62880501;
+        Wed,  5 Oct 2022 21:48:02 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id e11-20020a17090a77cb00b00205edbfd646so3301147pjs.1;
+        Wed, 05 Oct 2022 21:48:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date;
-        bh=UX0bLlLCDe1devOFgZVR6xtbWzK0eJQ5Cn0PUZq0ZRg=;
-        b=qKahcJTfeRB3QWhzoqmc4NsVcYxraCzdUidmXg+0GzFuu6BQE1WMsbOMvE4rIqtIRt
-         FuqqbQuZmh89qidw59yTUbR6oZ9QHVbfAntc78VOxRLRk89osodVCD4BW9Ze9MCfDmIb
-         w+LaK5d4RMLgJV/RqCzhoRggdoC+Pcxb+m9G+nAukKWCm2z57Be5G3sGTvvKq0DWRdqA
-         IhQDAWplNzlnOXSKw+/jklTSIKQ5uzx3M1gWOfO39Cs9+/4P566wlEUDLuyg8pK/dIzw
-         arl9UEDQkOubn65V9PUntoJCG1hYLtm8RoVaFWT0RCgjWY/TA0wZ4xRG1w8JAASTe3hd
-         cDRA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date;
+        bh=cqozkcdy1i/H5aOkc5ySqk5Pl8xtgOw0l/BQI1/9P4c=;
+        b=OawMhD7oEUpclrETGGdRvETuw6Y0jZuuP7uv7+e1rIYqTWBMn7gO45HbIZduDt8oa7
+         Z7vx35bRNtglmkwWm6cee7/rxIEV0IBM6mbXvlWBaQUlbPf94ruIrnY9QiHVmoBfHFUa
+         Tbqr3/ER6PgwAY7bewEBmqdlc3IXJpe5hNgokotaPWpjABC7dYSfoX/nlinREsiFxwLm
+         cXx/BLMn8Yb5l5FZYijoHWwmM2RYU2vxFCS7p8Y6VY7wJDfw5lyqaG0Sz402Ehn1pW6J
+         w/jtuVmE4/LIHyGKduINhdRbalOZN29w69YlN5IN361NNmYeGa84rhVxAqGcd+70XOe0
+         6W/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date;
-        bh=UX0bLlLCDe1devOFgZVR6xtbWzK0eJQ5Cn0PUZq0ZRg=;
-        b=XDQJVM+QBuzKFdGkxJubT4G3YS75tk2peoapGzs1FY72q9XawiDDILsf1Y+K0IK/ZG
-         vlwMA+4TMzjYBqAQ7KUAHSzAMEjjtSJFEisrIhtmSHv+Afizw9HiBuR5clIYpLROyhX5
-         cvVBY989oBhwxQa0qk04yS/DXQlxA22nuAZA3w1+BwjhsEr+4qZlJHGN8NJrsksGbcMA
-         TDGgU10ip7DYYZryZFL+vtuvW3UUH6EcWoZou7HfjSLxXabat41+2V8xxtXDFjNdCI6f
-         LAXLstHSs9dYiTofJv3+w6fcxtC01xYaFzU71R6SW0x/luH3veXrNyjXU5HWaZZ2Sl1O
-         cS2g==
-X-Gm-Message-State: ACrzQf2TAwU/a8d7bZJ5tfR4WMiIgP8qWCRtI8CRiQTiE1OZvqXYPiMy
-        w9gGSnyifKSruziCvTQ69oJNFdnpKOX1YS56bqyAmAbGzec=
-X-Google-Smtp-Source: AMsMyM7qfDJTgk70VVrF5GTOVWU2pG++CSP4VmcltJY9jFj8fvSwQ5QLzqDrQA+90ckcO3kxYGMUwXwsGQ6PUrei2aU=
-X-Received: by 2002:a17:907:78d:b0:740:33e1:998 with SMTP id
- xd13-20020a170907078d00b0074033e10998mr1672894ejb.162.1665012653619; Wed, 05
- Oct 2022 16:30:53 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date;
+        bh=cqozkcdy1i/H5aOkc5ySqk5Pl8xtgOw0l/BQI1/9P4c=;
+        b=pzzW2IP6zpJsuP4L6i4I6lT2LoWYBCE7Y659HU/kIYzqHD4hZow+g4NQMAaK9pYoWz
+         zXRI2ekH4vMEsHpA4l8rpRAtCiMQra9QYbGtr2Gqj7y2RD0AKMwbnpXIGxvWrquf8s5Y
+         n2goIkTqiWmCZTnjFMev/iNKNZRbuKn7L1sEtApPFbdbk0aPMWE62no3DXcmq7TR+bWX
+         OAmaaJZPCuieQX/RN4Xq8UP1Ur0AGOzUqmQ36xW2qFUBO7eYNvO/yw8cst44Ifqbrmvs
+         6FA6x2LqxJf/+fNPYH8AwMM3Cgk2knvJKQ4pYlK57SgGrgvSJ+AbW+8tyNVwmRz/C2OA
+         c5WA==
+X-Gm-Message-State: ACrzQf1oHTkBRGC3BeLWQdoYxzI+2FK4KuNJS9R3MCFhNPQuhKDdad4C
+        TomnMz8sBBdUSjWUwGbASPDZjrA30nc=
+X-Google-Smtp-Source: AMsMyM4YUR0R64HhslYhamgxDewyUbp9eieOzxWnzQZUJRh5f3ejvZgNgIyoX3lVsWgA4TSizqQ43Q==
+X-Received: by 2002:a17:902:dad2:b0:179:ee21:22a8 with SMTP id q18-20020a170902dad200b00179ee2122a8mr2838054plx.70.1665031681265;
+        Wed, 05 Oct 2022 21:48:01 -0700 (PDT)
+Received: from skynet-linux.local ([2406:7400:61:5d7c:350b:1ad7:ecfb:8fec])
+        by smtp.googlemail.com with ESMTPSA id f7-20020aa79d87000000b0056232f5fba0sm2187448pfq.155.2022.10.05.21.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Oct 2022 21:48:00 -0700 (PDT)
+From:   Sireesh Kodali <sireeshkodali1@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
+Cc:     andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        dmitry.baryshkov@linaro.org,
+        Sireesh Kodali <sireeshkodali1@gmail.com>
+Subject: [PATCH v2 0/2] remoteproc: qcom: Add support for MSM8953 ADSP
+Date:   Thu,  6 Oct 2022 10:17:43 +0530
+Message-Id: <20221006044745.286264-1-sireeshkodali1@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 5 Oct 2022 17:30:42 -0600
-Message-ID: <CANLsYkxshqWUagQkXPKbiP2u=o0nJ2X-_pKp1KWFW1DQ0=AbYQ@mail.gmail.com>
-Subject: [INFO] Remoteproc/RPMSG patchset review order for October 5th 2022
-To:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-[PATCH v2] remoteproc: imx_dsp_rproc: Add mutex protection for
-workqueue (will queue when 6.1-rc2 gets released)
-[PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
-[PATCH V6 0/7] remoteproc: imx_rproc: support i.MX8QM/QXP
-[PATCH v5 0/3] Add support for WASP SoC on AVM router boards
-[PATCH v3 00/11] Add support for MT8195 SCP 2nd core
-[PATCH V3 0/3] rpmsg signaling/flowcontrol patches
+This patch series adds support for the ADSP PIL as found on the MSM8953
+platform. It is a subset of a previous patch series.
+
+Changes since v1:
+ * Properly rebased driver patch, no longer introducing deleted symbols
+
+Link to previous series:
+https://lkml.kernel.org/lkml/2d68e610-e8ae-9e08-257a-3c94c3697334@linaro.org/t/
+
+Sireesh Kodali (2):
+  remoteproc: qcom: pas: Add MSM8953 ADSP PIL support
+  dt-bindings: remoteproc: qcom: adsp: Add ADSP on MSM8953
+
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 5 +++++
+ drivers/remoteproc/qcom_q6v5_pas.c                          | 1 +
+ 2 files changed, 6 insertions(+)
+
+-- 
+2.37.3
+
