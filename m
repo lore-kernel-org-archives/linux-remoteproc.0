@@ -2,94 +2,92 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65974C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Oct 2022 16:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C47F7C43219
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Oct 2022 18:26:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229481AbiJGQjq (ORCPT
+        id S229646AbiJGS0d (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Oct 2022 12:39:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50368 "EHLO
+        Fri, 7 Oct 2022 14:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiJGQjp (ORCPT
+        with ESMTP id S229482AbiJGS0c (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Oct 2022 12:39:45 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24EFB659D;
-        Fri,  7 Oct 2022 09:39:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AA108B82405;
-        Fri,  7 Oct 2022 16:39:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EBCC433D6;
-        Fri,  7 Oct 2022 16:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1665160778;
-        bh=EVRiG8wrILRusZ071HgcPsFHaVuHPPSDKTYh/GkXZ2U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CQ7yT9UAZqegW/mofAinMziszqqOitMFZSC3AUUAtoPdtCYZjL0XNKBntXsSWrPXP
-         xad8rnCw2VUGFwtQR/74HdGoF4g7XkVnebPs0ex+uLvqGCWf+qS6LAuWYLYRQmnUTx
-         kN5aPDpYOXcTADj0hvE1eW4GYgDhd73becO0nwwc=
-Date:   Fri, 7 Oct 2022 18:40:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andrew Chernyakov <acherniakov@astralinux.ru>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        stable@vger.kernel.org, lvc-project@linuxtesting.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 5.10 1/1] rpmsg: qcom: glink: replace strncpy() with
- strscpy_pad()
-Message-ID: <Y0BWc6A8C++M9TWP@kroah.com>
-References: <20221007132931.123755-1-acherniakov@astralinux.ru>
- <20221007132931.123755-2-acherniakov@astralinux.ru>
+        Fri, 7 Oct 2022 14:26:32 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A38AC7050;
+        Fri,  7 Oct 2022 11:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IudIrA3q3WpPWuZzZUKujefONUnAfceTWjlveYaPvio=; b=y3TnHRe5LU2pfTWpYrKhFoSYbh
+        jboFN1RMi5CjIniehZGNTOJpkF2sr617jJ4vb6Ib6lSQpyC0ek2+SlWngTW1ubM41ZOvqG9t87RGe
+        LZXDSjCQvYJpbTl+VRQpi8LkTLFVyXqr+kFALUeMkSNjyvXp3VTfiu6Hin9S6c12kBhwJdLbNbYn4
+        4szHif4ftpjkLWks7RWt2NtkOf4pQQWV+FmMEugetSNijqYdLE8QwTu09Ycl6RznABM1+qPym5ADr
+        Od764RzqJQFgxId6v9nZqSWYrZBx/EX1oe/ZXXPNJJb8O2jtIyGdk61SSE07/zRW76XLArhkeRZ+1
+        ZC4+w/vg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ogs33-00A41Z-Ot; Fri, 07 Oct 2022 18:26:13 +0000
+Date:   Fri, 7 Oct 2022 11:26:13 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, axboe@kernel.dk, efremov@linux.com,
+        josef@toxicpanda.com, idryomov@gmail.com,
+        dongsheng.yang@easystack.cn, haris.iqbal@ionos.com,
+        jinpu.wang@ionos.com, mst@redhat.com, jasowang@redhat.com,
+        pbonzini@redhat.com, stefanha@redhat.com, ohad@wizery.com,
+        andersson@kernel.org, baolin.wang@linux.alibaba.com,
+        ulf.hansson@linaro.org, richard@nod.at, miquel.raynal@bootlin.com,
+        vigneshr@ti.com, marcan@marcan.st, sven@svenpeter.dev,
+        alyssa@rosenzweig.io, kbusch@kernel.org, hch@lst.de,
+        sagi@grimberg.me, sth@linux.ibm.com, hoeppner@linux.ibm.com,
+        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, hare@suse.de, bhelgaas@google.com,
+        john.garry@huawei.com, christophe.jaillet@wanadoo.fr,
+        vaibhavgupta40@gmail.com, wsa+renesas@sang-engineering.com,
+        damien.lemoal@opensource.wdc.com, johannes.thumshirn@wdc.com,
+        bvanassche@acm.org, ming.lei@redhat.com,
+        shinichiro.kawasaki@wdc.com, vincent.fu@samsung.com,
+        christoph.boehmwalder@linbit.com, joel@jms.id.au,
+        vincent.whitchurch@axis.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, asahi@lists.linux.dev
+Subject: Re: [RFC PATCH 00/21] block: add and use init tagset helper
+Message-ID: <Y0BvRaVO0iUVmHgB@bombadil.infradead.org>
+References: <20221005032257.80681-1-kch@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221007132931.123755-2-acherniakov@astralinux.ru>
+In-Reply-To: <20221005032257.80681-1-kch@nvidia.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Oct 07, 2022 at 04:29:31PM +0300, Andrew Chernyakov wrote:
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On Tue, Oct 04, 2022 at 08:22:36PM -0700, Chaitanya Kulkarni wrote:
+> Hi,
 > 
-> commit 766279a8f85df32345dbda03b102ca1ee3d5ddea upstream.
+> Add and use the helper to initialize the common fields of the tag_set
+> such as blk_mq_ops, number of h/w queues, queue depth, command size,
+> numa_node, timeout, BLK_MQ_F_XXX flags, driver data. This initialization
+> is spread all over the block drivers. This avoids repetation of
+> inialization code of the tag set in current block drivers and any future
+> ones.
 > 
-> The use of strncpy() is considered deprecated for NUL-terminated
-> strings[1]. Replace strncpy() with strscpy_pad(), to keep existing
-> pad-behavior of strncpy, similarly to commit 08de420a8014 ("rpmsg:
-> glink: Replace strncpy() with strscpy_pad()").  This fixes W=1 warning:
+> P.S. I'm aware of the EXPORT_SYMBOL_GPL() checkpatch warn just to make
+> get some feedback to so I can remove the RFC tag.
 > 
->   In function ‘qcom_glink_rx_close’,
->     inlined from ‘qcom_glink_work’ at ../drivers/rpmsg/qcom_glink_native.c:1638:4:
->   drivers/rpmsg/qcom_glink_native.c:1549:17: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
->    1549 |                 strncpy(chinfo.name, channel->name, sizeof(chinfo.name));
-> 
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Link: https://lore.kernel.org/r/20220519073330.7187-1-krzysztof.kozlowski@linaro.org
-> Signed-off-by: Andrew Chernyakov <acherniakov@astralinux.ru>
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 2 +-
->  drivers/rpmsg/qcom_smd.c          | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
 
-Why just this specific kernel branch?  We can't add patches to an older
-tree and have someone upgrade to a newer one and hit the same issue.
+*If* there were commonalities at init and these could be broken up into
+common groups, each having their own set of calls, then we simplify and
+can abstract these. I say this without doing a complete review of the
+removals, but if there really isn't much of commonalities I tend to
+agree with Bart that open coding this is better.
 
-So please provide backports for all active versions.  In this case that
-would be 5.15.y and 5.19.y.
-
-thanks,
-
-greg k-h
+  Luis
