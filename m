@@ -2,78 +2,77 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF9DC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Oct 2022 19:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B540AC433F5
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Oct 2022 01:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231881AbiJFTer (ORCPT
+        id S231672AbiJGB5N (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Oct 2022 15:34:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52546 "EHLO
+        Thu, 6 Oct 2022 21:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230286AbiJFTen (ORCPT
+        with ESMTP id S229505AbiJGB5M (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Oct 2022 15:34:43 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355BF13D0A
-        for <linux-remoteproc@vger.kernel.org>; Thu,  6 Oct 2022 12:34:42 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id 13so6860901ejn.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Oct 2022 12:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=45NJ1VQxfT4M8MbuTZ9qyXjLzW6kgKLyOJ6cBfR9SR8=;
-        b=VxuAVHtQ2s6acKn/Y7lWAi8VmFhj8bEw1N2fwT0P/2JRAusSqx7m5vO5QytmD5/smi
-         hFZY+GmpWbcgflWzq+2VLByAjMBMbiKJpvyzPMoRN8LrWgsY6+3A17pfLzI32f5tX1y4
-         wYSdjoeTTx3sXfVQJaDtIa8woAEXXeE07UN0rxJKYSS772o3BdGhOYWb3QYCyVlJlPCS
-         xQts2DEr3AIOlMYWq4xU1GNmYudPesGfiE2NCU68NyMhT9muhlYFSC80SkR2IR9/GYS8
-         nBfBwsnV2qXoSiEAeKPF6Ebv7z3JQ7K47hwEzvVhu15nCfIf37U/NHZYr0HCGhsPekaJ
-         fUoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=45NJ1VQxfT4M8MbuTZ9qyXjLzW6kgKLyOJ6cBfR9SR8=;
-        b=mXI7uLTvvtXHDhWgCpIAZFGZE3JmFvuE3MI4GfEllKiok4+qrIm36VTR7fPZDwAZpk
-         yzOTNRwwVAtiDRil50MlVdOVkRcU8FDf4VUqYuYD+eyYqX/enT6nee7vSQBI4ZgpIrWV
-         zo5yfQKklpOLNLspuLkUoLRsIwk/wRrpY9CSYzMRRtFP23Y9u2GVMwnhjCIWssl5b1vK
-         7GhV3LH8e4Q4EFlBlMPcRnswSwnkPcM0s/NY/6paKqngLpliJOhdi+nuw1FIiH8dnaCJ
-         L04wUk0es4ZGtslaS7npJ6/woKzNgyqBp5SIeyY7HhAtCLyWEVLvKVpCnXMxloTXBgtt
-         8CKA==
-X-Gm-Message-State: ACrzQf3kURKqQNR3nklZULVg4yu6+wvaBXc4XFiLJ9acL+AfXoCyibEn
-        4xar9IPDRTflZE7Oit7SSK3f1X3aj/S7ceSXaESLOYmtk2g=
-X-Google-Smtp-Source: AMsMyM4xnrEcSqjaXmLiyjoTfhKDmZkgwj+ePEnZgLuxfRT+JtVVgkBxOAy9d147XSPvWXyYGdc5zJ1GuuvIYGuo8lw=
-X-Received: by 2002:a17:907:2672:b0:780:8bb5:25a3 with SMTP id
- ci18-20020a170907267200b007808bb525a3mr1188472ejc.281.1665084880146; Thu, 06
- Oct 2022 12:34:40 -0700 (PDT)
+        Thu, 6 Oct 2022 21:57:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E21B48BC;
+        Thu,  6 Oct 2022 18:57:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6D269B8213D;
+        Fri,  7 Oct 2022 01:57:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0C43C433D6;
+        Fri,  7 Oct 2022 01:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665107829;
+        bh=Nbtxh6Kp8eMH/KHQ/XdCwo6T8ahCTWFYnsV8cpTj8/s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=q3CWFFaX4XTUrQ3Ha+k7KN+7SbFkb20lut0sFzGSKEfeSBCCeipcLczM9CiUO8NUi
+         oQyzQZ29RvgSUZVLtKTwqTgfjuwmWo7soyqSPHMDN29XMztcTtZLap+MlxqMhXXGP/
+         fU9n/Bnge6cgQr43ibXE5Ub3C8XfyGYkNIOKWPLrerQYuWXUOyan0dfa17ecH4rBrl
+         sN5KrAkwJML0F90GeVpSpnW61HpjGpogkWtpWZzNYZXQuKprjSBupcg5OxXG1ENKiM
+         2W4l/7/wUKC3keWxx2g4GW0u2Np0PPQMU/gpqadJI2ya36lHfqhEm7uupap6h+ypIj
+         sH1WufNjqGJnw==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>
+Subject: [GIT PULL] rpmsg updates for v6.1
+Date:   Thu,  6 Oct 2022 20:57:07 -0500
+Message-Id: <20221007015707.2583858-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-References: <CANLsYkxshqWUagQkXPKbiP2u=o0nJ2X-_pKp1KWFW1DQ0=AbYQ@mail.gmail.com>
-In-Reply-To: <CANLsYkxshqWUagQkXPKbiP2u=o0nJ2X-_pKp1KWFW1DQ0=AbYQ@mail.gmail.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Thu, 6 Oct 2022 13:34:28 -0600
-Message-ID: <CANLsYkw_We0rZ1sHk-AV_Oyp0yzTmdYsHZNmxRj4b-A6NYDONw@mail.gmail.com>
-Subject: Re: [INFO] Remoteproc/RPMSG patchset review order for October 5th 2022
-To:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The formatting came out wrong on this one...
+The following changes since commit 1c23f9e627a7b412978b4e852793c5e3c3efc555:
 
-On Wed, 5 Oct 2022 at 17:30, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> [PATCH v2] remoteproc: imx_dsp_rproc: Add mutex protection for
-> workqueue (will queue when 6.1-rc2 gets released)
+  Linux 6.0-rc2 (2022-08-21 17:32:54 -0700)
 
-The above two lines should have been a single line, meaning that I
-have reviewed this patch and will queue it when 6.1-rc2 comes out in a
-couple of weeks.
+are available in the Git repository at:
 
-> [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
-> [PATCH V6 0/7] remoteproc: imx_rproc: support i.MX8QM/QXP
-> [PATCH v5 0/3] Add support for WASP SoC on AVM router boards
-> [PATCH v3 00/11] Add support for MT8195 SCP 2nd core
-> [PATCH V3 0/3] rpmsg signaling/flowcontrol patches
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.1
 
-These are still on my list of patches to review.
+for you to fetch changes up to 467233a4ac29b215d492843d067a9f091e6bf0c5:
+
+  rpmsg: char: Avoid double destroy of default endpoint (2022-09-21 11:21:33 -0600)
+
+----------------------------------------------------------------
+rpmsg updates for v6.1
+
+This fixes a double free/destroy and drops an unnecessary local variable
+in the rpmsg char driver.
+
+----------------------------------------------------------------
+Shengjiu Wang (1):
+      rpmsg: char: Avoid double destroy of default endpoint
+
+ye xingchen (1):
+      rpmsg: char: Remove the unneeded result variable
+
+ drivers/rpmsg/rpmsg_char.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
