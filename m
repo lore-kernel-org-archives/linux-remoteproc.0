@@ -2,116 +2,66 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A39BC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Oct 2022 02:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51612C43219
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Oct 2022 10:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbiJGCK4 (ORCPT
+        id S229672AbiJGKwa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Oct 2022 22:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
+        Fri, 7 Oct 2022 06:52:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231984AbiJGCKz (ORCPT
+        with ESMTP id S229454AbiJGKw2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Oct 2022 22:10:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F18A4BAE;
-        Thu,  6 Oct 2022 19:10:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A5E37B821FA;
-        Fri,  7 Oct 2022 02:10:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69602C433C1;
-        Fri,  7 Oct 2022 02:10:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665108648;
-        bh=/2L93yu9h4AM1NVI3+iOZO/MK68ZsD8Z/BzSgx4lnvo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=edRQ1UqbsgxfquW31+Nhl/w4FAqE3jI2HFgYSxyz1H8liiYlf5IAW0EdpW9qh6hf1
-         N5r8Ya9MDH50lJBVOJs5sdJP3Yic6dS1KF+6e72M2qY771LxMGADU93HBLyD7inMFA
-         +njuXLjuAjxlYjgyWyDHDt9iQBWmjALIfVMREWQec/bcvwA2daf/dn44l6N11d/164
-         dUBbK+2+vTWbTJ2O5bH9mcZMr0806BMCuECuVGZUH+zD/wmFZgnzQFHzWTfBmzs5Qt
-         4K1yhWy8xKEPerbNdm0G7CrFj5LqOU89VOqupdTu1Kg6cm2HAumB+YEAXlUbgDPKMF
-         GgyLMVYg2bt7A==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        Fri, 7 Oct 2022 06:52:28 -0400
+Received: from mail.astralinux.ru (mail.astralinux.ru [217.74.38.119])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1CBA74E35;
+        Fri,  7 Oct 2022 03:52:24 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.astralinux.ru (Postfix) with ESMTP id EE0BD3140AD9;
+        Fri,  7 Oct 2022 13:43:01 +0300 (MSK)
+Received: from mail.astralinux.ru ([127.0.0.1])
+        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id fSDMqfgQr799; Fri,  7 Oct 2022 13:43:01 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.astralinux.ru (Postfix) with ESMTP id 6FAC4314001C;
+        Fri,  7 Oct 2022 13:43:01 +0300 (MSK)
+X-Virus-Scanned: amavisd-new at astralinux.ru
+Received: from mail.astralinux.ru ([127.0.0.1])
+        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Cohsg_jf7vM0; Fri,  7 Oct 2022 13:43:01 +0300 (MSK)
+Received: from work-laptop.astralinux.ru (unknown [10.177.20.36])
+        by mail.astralinux.ru (Postfix) with ESMTPSA id 8E5863140957;
+        Fri,  7 Oct 2022 13:43:00 +0300 (MSK)
+From:   Andrew Chernyakov <acherniakov@astralinux.ru>
+To:     acherniakov@astralinux.ru, stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        wangjianli <wangjianli@cdjrlc.com>
-Subject: [GIT PULL] remoteproc updates for v6.1
-Date:   Thu,  6 Oct 2022 21:10:46 -0500
-Message-Id: <20221007021046.2585078-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.37.1
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        lvc-project@linuxtesting.org
+Subject: [PATCH 5.10 0/1] Backport of rpmsg: qcom: glink: replace strncpy() with  strscpy_pad()
+Date:   Fri,  7 Oct 2022 13:41:19 +0300
+Message-Id: <20221007104120.75208-1-acherniakov@astralinux.ru>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The following changes since commit 1c23f9e627a7b412978b4e852793c5e3c3efc555:
+With static analisys tools we found that strncpy() is used in rpmsg. This
+function is not safe and can lead to buffer overflow. This patchset
+replaces strncpy() with strscpy_pad().
 
-  Linux 6.0-rc2 (2022-08-21 17:32:54 -0700)
+This patchset backports the following commit from v5.16:
+commit 766279a8f85d ("rpmsg: qcom: glink: replace strncpy() with strscpy_=
+pad()")
 
-are available in the Git repository at:
+Link: https://lore.kernel.org/all/20220519073330.7187-1-krzysztof.kozlows=
+ki@linaro.org/
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.1
-
-for you to fetch changes up to ccf22a48cc8789a35befea783448c259463a5eef:
-
-  remoteproc: virtio: Fix warning on bindings by removing the of_match_table (2022-10-05 09:20:44 -0600)
-
-----------------------------------------------------------------
-remoteproc updates for v6.1
-
-Support for remoteprocs that will perform recovery without help from
-Linux is introduced.
-
-The virtio integration is transitioned towards remoteproc_virtio.c and
-represented by a platform_device, in preparation for instantiating
-virtio instances from DeviceTree.
-
-The iMX remoteproc driver has a couple of sparse warnings corrected and
-a couple of error message printouts are cleaned up. The keystone driver
-is transitioned to use the gpiod API.
-
-----------------------------------------------------------------
-Arnaud Pouliquen (5):
-      remoteproc: core: Introduce rproc_rvdev_add_device function
-      remoteproc: core: Introduce rproc_add_rvdev function
-      remoteproc: Move rproc_vdev management to remoteproc_virtio.c
-      remoteproc: virtio: Create platform device for the remoteproc_virtio
-      remoteproc: virtio: Fix warning on bindings by removing the of_match_table
-
-Christophe JAILLET (1):
-      remoteproc: imx_rproc: Simplify some error message
-
-Dan Carpenter (1):
-      remoteproc: Harden rproc_handle_vdev() against integer overflow
-
-Dmitry Torokhov (1):
-      remoteproc/keystone: Switch to using gpiod API
-
-Peng Fan (2):
-      remoteproc: Introduce rproc features
-      remoteproc: Support attach recovery after rproc crash
-
-Shengjiu Wang (1):
-      remoteproc: imx_dsp_rproc: fix argument 2 of rproc_mem_entry_init
-
-wangjianli (1):
-      drivers/remoteproc: Fix repeated words in comments
-
- drivers/remoteproc/imx_dsp_rproc.c       |   4 +-
- drivers/remoteproc/imx_rproc.c           |  14 +-
- drivers/remoteproc/keystone_remoteproc.c |  16 ++-
- drivers/remoteproc/remoteproc_core.c     | 223 +++++++++----------------------
- drivers/remoteproc/remoteproc_internal.h |  38 +++++-
- drivers/remoteproc/remoteproc_virtio.c   | 183 ++++++++++++++++++++++---
- include/linux/remoteproc.h               |  22 ++-
- 7 files changed, 298 insertions(+), 202 deletions(-)
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
