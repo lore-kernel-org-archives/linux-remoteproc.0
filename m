@@ -2,77 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D885C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Oct 2022 19:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644E3C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  8 Oct 2022 17:47:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230457AbiJGTUz (ORCPT
+        id S230262AbiJHRrM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Oct 2022 15:20:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46092 "EHLO
+        Sat, 8 Oct 2022 13:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbiJGTUc (ORCPT
+        with ESMTP id S230309AbiJHRrL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Oct 2022 15:20:32 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC558E980;
-        Fri,  7 Oct 2022 12:20:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3B676B820D5;
-        Fri,  7 Oct 2022 19:20:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EEF69C43470;
-        Fri,  7 Oct 2022 19:20:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665170412;
-        bh=K3DQRzC/cZE+wRUrSERi+gL2f/D1qWbH5IQnLWXbYmw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=SIje80AX1c8uS6d5QlenbfmfyBQxR9TPxjtjvCqyNoejd8hUVopnc5jRtS8c6hDO1
-         fmwvszKTSxCZ9d05dvCpPclKAZg0wfntq5y01EWzw/4r7NAhyKf83pSePMwRRrh0MH
-         Ra5udgxH7ZjxxVCItDCVSzUJ5R+9lm54R/PafvorNKkDHifWwZuF4f5mTpVKJtPxrI
-         vXCJPNk69JVBDl+YpqlsCQPd4VJyroeFtUVhh6EHr2nIOVqW+DjBtjtpD687PTEWqY
-         qNXtQ4QaoN+VyMPWAhfTzBhODCl38TbuEgHYKtyhTkI4jRZqZqzCLCL3RM+Dkj9jWx
-         89CbNVUpEIxig==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D4C97E2A05C;
-        Fri,  7 Oct 2022 19:20:11 +0000 (UTC)
-Subject: Re: [GIT PULL] remoteproc updates for v6.1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221007021046.2585078-1-andersson@kernel.org>
-References: <20221007021046.2585078-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-remoteproc.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221007021046.2585078-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.1
-X-PR-Tracked-Commit-Id: ccf22a48cc8789a35befea783448c259463a5eef
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 94e8ca6ebd1bc20a193eb552dee4de884a954938
-Message-Id: <166517041186.8063.10728785589993602067.pr-tracker-bot@kernel.org>
-Date:   Fri, 07 Oct 2022 19:20:11 +0000
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        wangjianli <wangjianli@cdjrlc.com>
+        Sat, 8 Oct 2022 13:47:11 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0643641A;
+        Sat,  8 Oct 2022 10:47:10 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id d24so7135852pls.4;
+        Sat, 08 Oct 2022 10:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PjOpq6xMtwZ+a3cDZHo77w5YYPm/GULCq55aoUGSZUY=;
+        b=k2PdDqrMFH9TDVs4NNmkDNVW1tZ4DZI2Om3NlqRmVHq/ORP6Ek4CTPo2ChxBkffpqG
+         +exGCZ37mPRtxWvp6qBnqE51uk026LglhI9PMAO1O0WUkbcNgu4Y2BZXkX4t0sjQd2vv
+         6opOW+kcQSbdkSpElJuHFi30ya2mMiySGYPTaFGq0WxOmKGXV06z3yEjDfIXrmXuxfwG
+         LY02yLVqQiOuRSdG3YwNVAoAWHltYXP64dKm09HkasL6+NSyzt6Bu3TtVqj+KdzVFqrD
+         wkzEcXMbwaFHyPvrYgZndfNKbNlXQQI3cU0OG8RlRAKS1Hh8l7+Wf+c1raSlJVQu6xVB
+         w1dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PjOpq6xMtwZ+a3cDZHo77w5YYPm/GULCq55aoUGSZUY=;
+        b=Gz9JEEyc6WAgib6HJwb4+3Z6UQVpsqk18K4/sm5HjgTN7KrVBg5GJ6kGrgjNIVBoiR
+         NYhsCBKDEMfRE24zjdoXx8uDRX5PH+xAM6slwOlssfJPA81f92cd7Nx6TVZvkU6ze9sk
+         QlJaBrR3wyPPl9VFw32o1V/0UX+GSIipcQ+nxIezQ10yapN5GPKsbofO0IxYXuvDb1gt
+         +Kr30rSAd+JJ6Jwjq8qiY/zBzWxbxttKisgJZvKiv2wYUoGOvsBuHpldme91ZyS5fonb
+         prT/aoRetxUXxlE3JIlQcWGJ4gwthqpm0dzqpD/DbJ/znzvQBcsYKIhblFz5e7+Vd3PE
+         tq7g==
+X-Gm-Message-State: ACrzQf1mhYUfOxk6D3Cm5gLWH/Cr0mTO58oxcx3aWDW4QoQpKJ6n213l
+        oo4krmoopl+R1txDapLTokfvydvtyygNog==
+X-Google-Smtp-Source: AMsMyM5PNS0KaEXVCBl5n03E5vdpEpUJXbhW17H5h1iuFum/emGaclK/NUUxFJWQgBx3uTysCD1PQg==
+X-Received: by 2002:a17:90b:1d4c:b0:20a:8db1:da52 with SMTP id ok12-20020a17090b1d4c00b0020a8db1da52mr22216569pjb.98.1665251229287;
+        Sat, 08 Oct 2022 10:47:09 -0700 (PDT)
+Received: from skynet-linux.local ([2406:7400:61:5d7c:3fe4:8f6d:b1b6:f2bf])
+        by smtp.googlemail.com with ESMTPSA id o9-20020a170903210900b0017f7d7e95d3sm3583270ple.167.2022.10.08.10.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Oct 2022 10:47:08 -0700 (PDT)
+From:   Sireesh Kodali <sireeshkodali1@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
+Cc:     andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        dmitry.baryshkov@linaro.org,
+        Sireesh Kodali <sireeshkodali1@gmail.com>
+Subject: [PATCH v3 0/2] remoteproc: qcom: Add support for MSM8953 ADSP
+Date:   Sat,  8 Oct 2022 23:16:56 +0530
+Message-Id: <20221008174658.336470-1-sireeshkodali1@gmail.com>
+X-Mailer: git-send-email 2.37.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The pull request you sent on Thu,  6 Oct 2022 21:10:46 -0500:
+This patch series adds support for the ADSP PIL as found on the MSM8953
+platform. It is a subset of a previous patch series.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.1
+Changes since v2:
+ * Made ordering of compatible strings lexical in doc patch
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/94e8ca6ebd1bc20a193eb552dee4de884a954938
+Link to v1: https://lkml.org/lkml/2022/10/6/18
 
-Thank you!
+Sireesh Kodali (2):
+  remoteproc: qcom: pas: Add MSM8953 ADSP PIL support
+  dt-bindings: remoteproc: qcom: adsp: Add ADSP on MSM8953
+
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 5 +++++
+ drivers/remoteproc/qcom_q6v5_pas.c                          | 1 +
+ 2 files changed, 6 insertions(+)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.37.3
+
