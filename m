@@ -2,98 +2,117 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7FCC433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  9 Oct 2022 08:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FFAC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  9 Oct 2022 15:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbiJIIiS (ORCPT
+        id S230129AbiJIPZV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 9 Oct 2022 04:38:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43934 "EHLO
+        Sun, 9 Oct 2022 11:25:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbiJIIiR (ORCPT
+        with ESMTP id S230030AbiJIPZU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 9 Oct 2022 04:38:17 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C78F82D1F2;
-        Sun,  9 Oct 2022 01:38:14 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Mlb2c3ZRQzpVck;
-        Sun,  9 Oct 2022 16:35:04 +0800 (CST)
-Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sun, 9 Oct 2022 16:38:12 +0800
-Received: from [10.174.178.174] (10.174.178.174) by
- dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sun, 9 Oct 2022 16:38:11 +0800
-Subject: Re: [PATCH -next 1/3] remoteproc: qcom: wcss: check return value
- after calling platform_get_resource_byname()
-To:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <agross@kernel.org>, <andersson@kernel.org>
-CC:     Mukesh Ojha <quic_mojha@quicinc.com>, <bjorn.andersson@linaro.org>
-References: <20220826014511.2270433-1-yangyingliang@huawei.com>
- <63f86e67-23ce-0c53-e2dd-d7937584508b@quicinc.com>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <31e30a15-d48e-e900-2842-34f2b87c57a8@huawei.com>
-Date:   Sun, 9 Oct 2022 16:38:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Sun, 9 Oct 2022 11:25:20 -0400
+Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269701DA47
+        for <linux-remoteproc@vger.kernel.org>; Sun,  9 Oct 2022 08:25:19 -0700 (PDT)
+Received: by mail-qt1-x831.google.com with SMTP id hh9so5325766qtb.13
+        for <linux-remoteproc@vger.kernel.org>; Sun, 09 Oct 2022 08:25:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zMWBP42bcqYR/9/IcRRsvCkgoPBmDNpE4tq769Q64oI=;
+        b=hzPt6d3JeW0Footcf5s588X/R44BO81hmMDQLXWaFZJY5KbRKNCumivhg/rE96IjH2
+         Kw0XoDHKhAOlIOhvgoIrD7k8SILH88ecSk16n/o8Wg6aV25QILm+OGF1vXYxAT3e77FQ
+         Ew7GlZ/QGNq7w36LYmKwZFNscIEGwPkYA1qgHpBf1koWgvgZeM03ZIm1rqptWbZIAsE/
+         X1tYIXazKHgCvi13Dvhr3XD2f/0oLPr2loqEQJOBzPUwJ1svmyqKy6wL1eE8l80zrIPj
+         lN6u8JkgPlyu1zkDaYukKKjsJ1xvIbxYYq+bQhQ91CFCjJmBB5gE+lKOgF7WYjGjPIDX
+         0Atg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zMWBP42bcqYR/9/IcRRsvCkgoPBmDNpE4tq769Q64oI=;
+        b=xlvg2VhfcFPilKYv5Aoe9rg8+u9ohJjmXZ82scPatOJB9vqMgKN5lSJAYvOB7hPLqN
+         /pRWoUWJcRi7/VfIhHGygo8hjgwB9MTfDm1QDZf5JiifJ/YEcP2TeMdo/vTHnCRQeQTq
+         zYak0rxnyzCz9KQxh7M8x+l3mPOmS+U1QbtSnqID2H67fSsLpgOhzESFXm1JGO2SntuT
+         /PsMc7FNRF21nNODASXWxBSLQw3fUqB7qyp5QtzI6xBKrAKM24niPF1rcxN+M1PFdQ51
+         xNn6O9gzbTEfJ6LpUQjcitbVYHqKNKn4k7plFUaAjmXDE1IJ1r7U6veZVk8Np/fBYLx5
+         Lt8w==
+X-Gm-Message-State: ACrzQf082mAViZfqpAiELauu/K9Aze51pTmEYa56sKy520H2tPc3DUMR
+        L6kW57mkpc2jOgOkk1sQlHKKjg==
+X-Google-Smtp-Source: AMsMyM6WOzEKoFOz4nRaUQLwSDLVPIGwcjJ8aEcuHay/BBUrycXh6QCMWv6+memfJTEi64NCDRE5Tw==
+X-Received: by 2002:ac8:7e94:0:b0:38e:2bea:9dd9 with SMTP id w20-20020ac87e94000000b0038e2bea9dd9mr11825064qtj.67.1665329118301;
+        Sun, 09 Oct 2022 08:25:18 -0700 (PDT)
+Received: from [192.168.1.57] (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
+        by smtp.gmail.com with ESMTPSA id fp25-20020a05622a509900b0034305a91aaesm6549834qtb.83.2022.10.09.08.25.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 09 Oct 2022 08:25:17 -0700 (PDT)
+Message-ID: <e829329e-ac55-e04a-c8ab-4eeeec6217ab@linaro.org>
+Date:   Sun, 9 Oct 2022 17:23:06 +0200
 MIME-Version: 1.0
-In-Reply-To: <63f86e67-23ce-0c53-e2dd-d7937584508b@quicinc.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH 5.10 1/1] rpmsg: qcom: glink: replace strncpy() with
+ strscpy_pad()
 Content-Language: en-US
-X-Originating-IP: [10.174.178.174]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500007.china.huawei.com (7.185.36.183)
-X-CFilter-Loop: Reflected
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
+        Andrew Chernyakov <acherniakov@astralinux.ru>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+References: <20221007132931.123755-1-acherniakov@astralinux.ru>
+ <20221007132931.123755-2-acherniakov@astralinux.ru>
+ <Y0BWc6A8C++M9TWP@kroah.com>
+ <36f776cbc16f4e988d96b7bcb77cd559@AcuMS.aculab.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <36f776cbc16f4e988d96b7bcb77cd559@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
-Are these patches good for merge or any more suggestion ?
+On 08/10/2022 23:11, David Laight wrote:
+>>> ---
+>>>  drivers/rpmsg/qcom_glink_native.c | 2 +-
+>>>  drivers/rpmsg/qcom_smd.c          | 4 ++--
+>>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> Why just this specific kernel branch?  We can't add patches to an older
+>> tree and have someone upgrade to a newer one and hit the same issue.
+>>
+>> So please provide backports for all active versions.  In this case that
+>> would be 5.15.y and 5.19.y.
+> 
+> If it is only fixing a compile warning is it even stable material?
+> The generic commit message doesn't say whether the old code was
+> actually right or wrong.
+> 
+> At least one of these 'replace strncpy()' changes was definitely
+> broken (the copy needed to be equivalent to memcpy()).
+> 
+> So applying ANY of them to stable unless they actually fix
+> a real bug seems dubious.
 
-Thanks,
-Yang
-On 2022/8/26 13:33, Mukesh Ojha wrote:
->
->
-> On 8/26/2022 7:15 AM, Yang Yingliang wrote:
->> If platform_get_resource_byname() fails, 'res' will be set to null 
->> pointer,
->> it will cause null-ptr-deref when it used in devm_ioremap(), so we 
->> need check
->> the return value.
->>
->> Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 
->> support for QCS404")
->> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
->> ---
->>   drivers/remoteproc/qcom_q6v5_wcss.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c 
->> b/drivers/remoteproc/qcom_q6v5_wcss.c
->> index bb0947f7770e..017ee225dc32 100644
->> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
->> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
->> @@ -827,6 +827,8 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss 
->> *wcss,
->>       int ret;
->>         res = platform_get_resource_byname(pdev, IORESOURCE_MEM, 
->> "qdsp6");
->> +    if (!res)
->> +        return -EINVAL;
->
-> LGTM.
->
-> Reviewed-by:Mukesh Ojha <quic_mojha@quicinc.com>
->
-> -Mukesh
->
->>       wcss->reg_base = devm_ioremap(&pdev->dev, res->start,
->>                         resource_size(res));
->>       if (!wcss->reg_base)
-> .
+Except the warning from GCC, there was no bug to fix. The warning is
+about discouraged and risky practice, but no actual real risk was
+identified, so for me it matches stable rules poorly.
+
+It's basically backporting to silence automated code checkers...
+
+Best regards,
+Krzysztof
+
