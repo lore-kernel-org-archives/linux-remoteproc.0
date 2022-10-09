@@ -2,67 +2,40 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FFAC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  9 Oct 2022 15:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC88C433F5
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  9 Oct 2022 18:18:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230129AbiJIPZV (ORCPT
+        id S230229AbiJISSB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 9 Oct 2022 11:25:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59446 "EHLO
+        Sun, 9 Oct 2022 14:18:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbiJIPZU (ORCPT
+        with ESMTP id S229996AbiJISRh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 9 Oct 2022 11:25:20 -0400
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 269701DA47
-        for <linux-remoteproc@vger.kernel.org>; Sun,  9 Oct 2022 08:25:19 -0700 (PDT)
-Received: by mail-qt1-x831.google.com with SMTP id hh9so5325766qtb.13
-        for <linux-remoteproc@vger.kernel.org>; Sun, 09 Oct 2022 08:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zMWBP42bcqYR/9/IcRRsvCkgoPBmDNpE4tq769Q64oI=;
-        b=hzPt6d3JeW0Footcf5s588X/R44BO81hmMDQLXWaFZJY5KbRKNCumivhg/rE96IjH2
-         Kw0XoDHKhAOlIOhvgoIrD7k8SILH88ecSk16n/o8Wg6aV25QILm+OGF1vXYxAT3e77FQ
-         Ew7GlZ/QGNq7w36LYmKwZFNscIEGwPkYA1qgHpBf1koWgvgZeM03ZIm1rqptWbZIAsE/
-         X1tYIXazKHgCvi13Dvhr3XD2f/0oLPr2loqEQJOBzPUwJ1svmyqKy6wL1eE8l80zrIPj
-         lN6u8JkgPlyu1zkDaYukKKjsJ1xvIbxYYq+bQhQ91CFCjJmBB5gE+lKOgF7WYjGjPIDX
-         0Atg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zMWBP42bcqYR/9/IcRRsvCkgoPBmDNpE4tq769Q64oI=;
-        b=xlvg2VhfcFPilKYv5Aoe9rg8+u9ohJjmXZ82scPatOJB9vqMgKN5lSJAYvOB7hPLqN
-         /pRWoUWJcRi7/VfIhHGygo8hjgwB9MTfDm1QDZf5JiifJ/YEcP2TeMdo/vTHnCRQeQTq
-         zYak0rxnyzCz9KQxh7M8x+l3mPOmS+U1QbtSnqID2H67fSsLpgOhzESFXm1JGO2SntuT
-         /PsMc7FNRF21nNODASXWxBSLQw3fUqB7qyp5QtzI6xBKrAKM24niPF1rcxN+M1PFdQ51
-         xNn6O9gzbTEfJ6LpUQjcitbVYHqKNKn4k7plFUaAjmXDE1IJ1r7U6veZVk8Np/fBYLx5
-         Lt8w==
-X-Gm-Message-State: ACrzQf082mAViZfqpAiELauu/K9Aze51pTmEYa56sKy520H2tPc3DUMR
-        L6kW57mkpc2jOgOkk1sQlHKKjg==
-X-Google-Smtp-Source: AMsMyM6WOzEKoFOz4nRaUQLwSDLVPIGwcjJ8aEcuHay/BBUrycXh6QCMWv6+memfJTEi64NCDRE5Tw==
-X-Received: by 2002:ac8:7e94:0:b0:38e:2bea:9dd9 with SMTP id w20-20020ac87e94000000b0038e2bea9dd9mr11825064qtj.67.1665329118301;
-        Sun, 09 Oct 2022 08:25:18 -0700 (PDT)
-Received: from [192.168.1.57] (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id fp25-20020a05622a509900b0034305a91aaesm6549834qtb.83.2022.10.09.08.25.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Oct 2022 08:25:17 -0700 (PDT)
-Message-ID: <e829329e-ac55-e04a-c8ab-4eeeec6217ab@linaro.org>
-Date:   Sun, 9 Oct 2022 17:23:06 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH 5.10 1/1] rpmsg: qcom: glink: replace strncpy() with
- strscpy_pad()
-Content-Language: en-US
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
-        Andrew Chernyakov <acherniakov@astralinux.ru>
-Cc:     Andy Gross <agross@kernel.org>,
+        Sun, 9 Oct 2022 14:17:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8639CE1A;
+        Sun,  9 Oct 2022 11:17:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C35D9B80D13;
+        Sun,  9 Oct 2022 18:17:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093F1C433D6;
+        Sun,  9 Oct 2022 18:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1665339428;
+        bh=WlUVYWcv0RSfNrnisKDi/OW/RV7h0cjuQQ19bFBOoog=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Rw38q9pBwLqsPyZDDYNCUJVBM/wQdBpInwfKXrazRDvratMB1+6APuHPbMdcHL+tR
+         alh1uFrcM2QaDGYEEa9Ik0BNxthXgmQq9lBiv8sDxOxB4YOspqrAFf70S0yVAsH5yg
+         DoiwdVTyLl225YVSwhFR/J3E6MuPtUqjH3skq9iE=
+Date:   Sun, 9 Oct 2022 20:17:51 +0200
+From:   'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Andrew Chernyakov <acherniakov@astralinux.ru>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -73,46 +46,54 @@ Cc:     Andy Gross <agross@kernel.org>,
         "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH 5.10 1/1] rpmsg: qcom: glink: replace strncpy() with
+ strscpy_pad()
+Message-ID: <Y0MQT2z+nc8+0WPY@kroah.com>
 References: <20221007132931.123755-1-acherniakov@astralinux.ru>
  <20221007132931.123755-2-acherniakov@astralinux.ru>
  <Y0BWc6A8C++M9TWP@kroah.com>
  <36f776cbc16f4e988d96b7bcb77cd559@AcuMS.aculab.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <36f776cbc16f4e988d96b7bcb77cd559@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <e829329e-ac55-e04a-c8ab-4eeeec6217ab@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e829329e-ac55-e04a-c8ab-4eeeec6217ab@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 08/10/2022 23:11, David Laight wrote:
->>> ---
->>>  drivers/rpmsg/qcom_glink_native.c | 2 +-
->>>  drivers/rpmsg/qcom_smd.c          | 4 ++--
->>>  2 files changed, 3 insertions(+), 3 deletions(-)
->>
->> Why just this specific kernel branch?  We can't add patches to an older
->> tree and have someone upgrade to a newer one and hit the same issue.
->>
->> So please provide backports for all active versions.  In this case that
->> would be 5.15.y and 5.19.y.
+On Sun, Oct 09, 2022 at 05:23:06PM +0200, Krzysztof Kozlowski wrote:
+> On 08/10/2022 23:11, David Laight wrote:
+> >>> ---
+> >>>  drivers/rpmsg/qcom_glink_native.c | 2 +-
+> >>>  drivers/rpmsg/qcom_smd.c          | 4 ++--
+> >>>  2 files changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> Why just this specific kernel branch?  We can't add patches to an older
+> >> tree and have someone upgrade to a newer one and hit the same issue.
+> >>
+> >> So please provide backports for all active versions.  In this case that
+> >> would be 5.15.y and 5.19.y.
+> > 
+> > If it is only fixing a compile warning is it even stable material?
+> > The generic commit message doesn't say whether the old code was
+> > actually right or wrong.
+> > 
+> > At least one of these 'replace strncpy()' changes was definitely
+> > broken (the copy needed to be equivalent to memcpy()).
+> > 
+> > So applying ANY of them to stable unless they actually fix
+> > a real bug seems dubious.
 > 
-> If it is only fixing a compile warning is it even stable material?
-> The generic commit message doesn't say whether the old code was
-> actually right or wrong.
+> Except the warning from GCC, there was no bug to fix. The warning is
+> about discouraged and risky practice, but no actual real risk was
+> identified, so for me it matches stable rules poorly.
 > 
-> At least one of these 'replace strncpy()' changes was definitely
-> broken (the copy needed to be equivalent to memcpy()).
-> 
-> So applying ANY of them to stable unless they actually fix
-> a real bug seems dubious.
+> It's basically backporting to silence automated code checkers...
 
-Except the warning from GCC, there was no bug to fix. The warning is
-about discouraged and risky practice, but no actual real risk was
-identified, so for me it matches stable rules poorly.
+Are you sure?  Look at the code path here, there might be a way to
+overflow the string, from the virtio interface, but I might be wrong...
 
-It's basically backporting to silence automated code checkers...
+Anyway, I need all the backports before I can take this one, sorry.
 
-Best regards,
-Krzysztof
-
+greg k-h
