@@ -2,98 +2,74 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC88C433F5
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  9 Oct 2022 18:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 021EEC43219
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Oct 2022 07:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230229AbiJISSB (ORCPT
+        id S231360AbiJJHzQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 9 Oct 2022 14:18:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
+        Mon, 10 Oct 2022 03:55:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbiJISRh (ORCPT
+        with ESMTP id S229596AbiJJHzP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 9 Oct 2022 14:17:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8639CE1A;
-        Sun,  9 Oct 2022 11:17:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C35D9B80D13;
-        Sun,  9 Oct 2022 18:17:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093F1C433D6;
-        Sun,  9 Oct 2022 18:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1665339428;
-        bh=WlUVYWcv0RSfNrnisKDi/OW/RV7h0cjuQQ19bFBOoog=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rw38q9pBwLqsPyZDDYNCUJVBM/wQdBpInwfKXrazRDvratMB1+6APuHPbMdcHL+tR
-         alh1uFrcM2QaDGYEEa9Ik0BNxthXgmQq9lBiv8sDxOxB4YOspqrAFf70S0yVAsH5yg
-         DoiwdVTyLl225YVSwhFR/J3E6MuPtUqjH3skq9iE=
-Date:   Sun, 9 Oct 2022 20:17:51 +0200
-From:   'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Andrew Chernyakov <acherniakov@astralinux.ru>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH 5.10 1/1] rpmsg: qcom: glink: replace strncpy() with
- strscpy_pad()
-Message-ID: <Y0MQT2z+nc8+0WPY@kroah.com>
-References: <20221007132931.123755-1-acherniakov@astralinux.ru>
- <20221007132931.123755-2-acherniakov@astralinux.ru>
- <Y0BWc6A8C++M9TWP@kroah.com>
- <36f776cbc16f4e988d96b7bcb77cd559@AcuMS.aculab.com>
- <e829329e-ac55-e04a-c8ab-4eeeec6217ab@linaro.org>
+        Mon, 10 Oct 2022 03:55:15 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD4031DA70;
+        Mon, 10 Oct 2022 00:55:12 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 21BA768AA6; Mon, 10 Oct 2022 09:55:05 +0200 (CEST)
+Date:   Mon, 10 Oct 2022 09:55:04 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Chaitanya Kulkarni <kch@nvidia.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, axboe@kernel.dk, efremov@linux.com,
+        josef@toxicpanda.com, idryomov@gmail.com,
+        dongsheng.yang@easystack.cn, haris.iqbal@ionos.com,
+        jinpu.wang@ionos.com, mst@redhat.com, jasowang@redhat.com,
+        pbonzini@redhat.com, stefanha@redhat.com, ohad@wizery.com,
+        andersson@kernel.org, baolin.wang@linux.alibaba.com,
+        ulf.hansson@linaro.org, richard@nod.at, miquel.raynal@bootlin.com,
+        vigneshr@ti.com, marcan@marcan.st, sven@svenpeter.dev,
+        alyssa@rosenzweig.io, kbusch@kernel.org, hch@lst.de,
+        sagi@grimberg.me, sth@linux.ibm.com, hoeppner@linux.ibm.com,
+        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, hare@suse.de, bhelgaas@google.com,
+        john.garry@huawei.com, christophe.jaillet@wanadoo.fr,
+        vaibhavgupta40@gmail.com, wsa+renesas@sang-engineering.com,
+        damien.lemoal@opensource.wdc.com, johannes.thumshirn@wdc.com,
+        bvanassche@acm.org, ming.lei@redhat.com,
+        shinichiro.kawasaki@wdc.com, vincent.fu@samsung.com,
+        christoph.boehmwalder@linbit.com, joel@jms.id.au,
+        vincent.whitchurch@axis.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, asahi@lists.linux.dev
+Subject: Re: [RFC PATCH 00/21] block: add and use init tagset helper
+Message-ID: <20221010075504.GA21272@lst.de>
+References: <20221005032257.80681-1-kch@nvidia.com> <Y0BvRaVO0iUVmHgB@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e829329e-ac55-e04a-c8ab-4eeeec6217ab@linaro.org>
+In-Reply-To: <Y0BvRaVO0iUVmHgB@bombadil.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, Oct 09, 2022 at 05:23:06PM +0200, Krzysztof Kozlowski wrote:
-> On 08/10/2022 23:11, David Laight wrote:
-> >>> ---
-> >>>  drivers/rpmsg/qcom_glink_native.c | 2 +-
-> >>>  drivers/rpmsg/qcom_smd.c          | 4 ++--
-> >>>  2 files changed, 3 insertions(+), 3 deletions(-)
-> >>
-> >> Why just this specific kernel branch?  We can't add patches to an older
-> >> tree and have someone upgrade to a newer one and hit the same issue.
-> >>
-> >> So please provide backports for all active versions.  In this case that
-> >> would be 5.15.y and 5.19.y.
-> > 
-> > If it is only fixing a compile warning is it even stable material?
-> > The generic commit message doesn't say whether the old code was
-> > actually right or wrong.
-> > 
-> > At least one of these 'replace strncpy()' changes was definitely
-> > broken (the copy needed to be equivalent to memcpy()).
-> > 
-> > So applying ANY of them to stable unless they actually fix
-> > a real bug seems dubious.
-> 
-> Except the warning from GCC, there was no bug to fix. The warning is
-> about discouraged and risky practice, but no actual real risk was
-> identified, so for me it matches stable rules poorly.
-> 
-> It's basically backporting to silence automated code checkers...
+On Fri, Oct 07, 2022 at 11:26:13AM -0700, Luis Chamberlain wrote:
+> *If* there were commonalities at init and these could be broken up into
+> common groups, each having their own set of calls, then we simplify and
+> can abstract these. I say this without doing a complete review of the
+> removals, but if there really isn't much of commonalities I tend to
+> agree with Bart that open coding this is better.
 
-Are you sure?  Look at the code path here, there might be a way to
-overflow the string, from the virtio interface, but I might be wrong...
-
-Anyway, I need all the backports before I can take this one, sorry.
-
-greg k-h
+The commonality is that there are various required or optional
+fields to fill out.  I actually have a WIP series to make the tag_set
+dynamically allocated and refcounted to fix some long standing life time
+issues.  That creates a new alloc helper that will take a few mandatory
+arguments and would heavily clash with this series.
