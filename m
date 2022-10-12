@@ -2,200 +2,158 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C87C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Oct 2022 15:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742CFC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Oct 2022 15:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbiJLP1Q (ORCPT
+        id S229868AbiJLPcB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 12 Oct 2022 11:27:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35620 "EHLO
+        Wed, 12 Oct 2022 11:32:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbiJLP1P (ORCPT
+        with ESMTP id S229494AbiJLPcA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 12 Oct 2022 11:27:15 -0400
-Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C2894D17F
-        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Oct 2022 08:27:14 -0700 (PDT)
-Received: by mail-qk1-x72c.google.com with SMTP id f27so3032222qkh.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Oct 2022 08:27:14 -0700 (PDT)
+        Wed, 12 Oct 2022 11:32:00 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854738263D
+        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Oct 2022 08:31:59 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id f8so3255621qkg.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Oct 2022 08:31:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cyOn+XjhMrkROUZxuY81sZKNPsWKYHOGOyEQrBWv/Ko=;
-        b=ILJgM3xVO0tv24Z1liMTbC+6lSxwxapAMZoN0MXneb4BfPvujCP63uAv25AZdl/yKU
-         jTFPQoaN/IlwjiRq5nRvj3qfOniHoqBymUh6iYrsk9fHcbKizFtC6vSL3nkOMlVMtLzw
-         vsl/p81LPGTQcw+q6JFLVnuHByT0oz87QPnJRmQQBAe2WT5nzBT697gWXdKlp1tKwwMi
-         nBYaGiSs/T27onVYKKIeCSRXRx2VuJL6dSvLLQ8RslELgfYWbZ/3hjopXo3qH99ZnIlP
-         6i27+VGlYnZMZOH/9R1RHTwxcrxC6zq2O0d9ysHImx3X/KDNDofj8d5/NiAw1tufh7X3
-         BsEQ==
+        bh=CoV8mWntzVcAfAl3JXoUDwAhCZVSliB3wLU/NyVEXwU=;
+        b=VyuN/nNatDf74KMBwFIFfCSQivpKpSpD9ESjBMxz3NW6mCzQAywWGakXKDe/EwvhjA
+         UVSLYp2oqrC/g6Nd9S4QrRPNxYTvFwX4gl5R64orFhLCgpFV2B3neOVhY3I+0pyCfzcG
+         GijF9/JtQ19/haPSrgKp8eAHyPPcwWfc7xV7JwuLY+IvoeKO5eiHsvLKWSRiRG4V550r
+         9A1bU0IMAbl0jhI6RfWzlXSM8L2OTjujpNvxn/oU5hVh0+NgKiO7Wj0dJyM5XJ5VFlvl
+         YkYr6cv1jQ3PGWNMtNbcLNn/KJUi6Cuf8CdlfzHIXj7j6TrDisARjpOdWFOGC+0/3UkN
+         D7Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cyOn+XjhMrkROUZxuY81sZKNPsWKYHOGOyEQrBWv/Ko=;
-        b=o1g2o9ciGc0oGGBJPwrsdGc5/NzTAAcZSLdpZw4W9qTwEGY+vWlxGZDfTJpnifdJCV
-         Z0hUcnz6UIjRm/u09Z484BvZDs4vEhbGBqQ9M3gLRaJBdcZ5vrC5hosIym6eyT/E2+cT
-         LjrYrrbS38/U+VlgWHjfIJ29DpRCLZvNNQIfLmGkQougBJHpSdeHGSjSI/RINxPVLDmw
-         ORQl9AeQeg1PWwnVWEW7IWJd6oFg7SY+SZhjFPpVCL4tuufLel+810jwH0AFGPQPJHs1
-         QJtjH3n1Y2ZpX2j4rx/xVRdqwBpxOEHWonW0+Y0XUocWt1lLz1yN+sWHAKMdKsEzD5LJ
-         xrWg==
-X-Gm-Message-State: ACrzQf2VWIiUZql9omzeiE+lVtkN5hQvWu5IeLfAHVevlCa4N8/S8388
-        TEZcNYzEaQ6zJ+3Bo8FOOaZYTw==
-X-Google-Smtp-Source: AMsMyM4itbCgzgNfgASHz/vlYDDlKaHFmCfg/cUdJzUglgTaIjdWhaDmIdu8FQnnBvkHuxYUpZYr+w==
-X-Received: by 2002:a05:620a:4448:b0:6e2:5ec9:c697 with SMTP id w8-20020a05620a444800b006e25ec9c697mr20636959qkp.438.1665588433177;
-        Wed, 12 Oct 2022 08:27:13 -0700 (PDT)
+        bh=CoV8mWntzVcAfAl3JXoUDwAhCZVSliB3wLU/NyVEXwU=;
+        b=ndBuyupWSH51kTCODiJJFIiVcjzI5Egs9VXOFcstquE1UOXqLXZho6SrfDSuGwkfyS
+         lhln1JjOrQyDSu1NMtwE0/Y5wdP4gbJaYvo1znCXPuvHvUED+FAPp6QQdpmAfms9ahNR
+         vTZLx7fQ0QCTVTnHp8QRw83hMG2WjQP26GnvtQ7xXuHc6KDxMRT4Gr+9ISDwqt6XXFE2
+         K9oU0j/9+MzlstOGKLqao5NhfjCKFKS4gnCDnUc67OMWNnldMcaL/S09pRyxMu8PSez9
+         oOrQZBXjT7BcJWZFmxI0yg8g9JJ6Gp0lxP3yJEH6JKSBiOaciwi5n6C6Ym1BpVu8lsP0
+         RceQ==
+X-Gm-Message-State: ACrzQf34BwpkPlmz8g+65NQkWFEVG6xJpfZ84iSNGfUnVGXWz2BrRO0+
+        /2kbYwvfD3jpak3Ne41Ai7SIDa+2jSJjPQ==
+X-Google-Smtp-Source: AMsMyM6Rdj22kqr3e0wlZpFGK9jDuY9Gjwj7v+n72OmUgaqR6812NyzJhXQ8IbnACDj8n5J3lPCvuA==
+X-Received: by 2002:a37:e205:0:b0:6ee:834:1a1b with SMTP id g5-20020a37e205000000b006ee08341a1bmr8712931qki.342.1665588718677;
+        Wed, 12 Oct 2022 08:31:58 -0700 (PDT)
 Received: from [192.168.1.57] (cpe-72-225-192-120.nyc.res.rr.com. [72.225.192.120])
-        by smtp.gmail.com with ESMTPSA id y8-20020a05620a25c800b006cbe3be300esm15799584qko.12.2022.10.12.08.27.10
+        by smtp.gmail.com with ESMTPSA id n1-20020a05620a294100b006ee949b8051sm2360358qkp.51.2022.10.12.08.31.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Oct 2022 08:27:12 -0700 (PDT)
-Message-ID: <78805233-0802-7a7e-f1b1-84c566084833@linaro.org>
-Date:   Wed, 12 Oct 2022 11:24:59 -0400
+        Wed, 12 Oct 2022 08:31:58 -0700 (PDT)
+Message-ID: <fa60ba81-6cc7-7f78-55cc-9ca0053336b8@linaro.org>
+Date:   Wed, 12 Oct 2022 11:29:47 -0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.3.2
-Subject: Re: [PATCH v6 1/5] dt-bindings: remoteproc: Add PRU consumer bindings
+Subject: Re: [PATCH v10 1/6] dt-bindings: remoteproc: Add Xilinx RPU subsystem
+ bindings
 Content-Language: en-US
-To:     MD Danish Anwar <danishanwar@ti.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Tanmay Shah <tanmay.shah@amd.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
-        nm@ti.com, vigneshr@ti.com, srk@ti.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Tero Kristo <t-kristo@ti.com>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        Puranjay Mohan <p-mohan@ti.com>
-References: <20221012114429.2341215-1-danishanwar@ti.com>
- <20221012114429.2341215-2-danishanwar@ti.com>
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michal Simek <michal.simek@amd.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20221011212501.2661003-1-tanmay.shah@amd.com>
+ <20221011212501.2661003-2-tanmay.shah@amd.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221012114429.2341215-2-danishanwar@ti.com>
+In-Reply-To: <20221011212501.2661003-2-tanmay.shah@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/10/2022 07:44, MD Danish Anwar wrote:
-> From: Suman Anna <s-anna@ti.com>
+On 11/10/2022 17:24, Tanmay Shah wrote:
+> Xilinx ZynqMP platform has dual-core ARM Cortex R5 Realtime Processing
+> Unit(RPU) subsystem. This patch adds dt-bindings for RPU subsystem
+> (cluster).
 > 
-> Add a YAML binding document for PRU consumers. The binding includes
-
-Add a DT schema binding for ...
-
-Second thing: where is a user of this common binding? How do you apply
-this schema to anything?
-
-> all the common properties that can be used by different PRU consumer
-> or application nodes and supported by the PRU remoteproc driver.
-> These are used to configure the PRU hardware for specific user
-> applications.
-> 
-> The application nodes themselves should define their own bindings.
-> 
-> Co-developed-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 > ---
->  .../bindings/remoteproc/ti,pru-consumer.yaml  | 132 ++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> Changes in v10:
+>   - rename example node to remoteproc
+> 
+> Changes in v9:
+>   - remove power-domains property description
+>   - fix nitpicks in description of other properties
+> 
+> Changes in v8:
+>   - Add 'items:' for sram property
+> 
+> Changes in v7:
+>   - Add minItems in sram property
+> 
+> Changes in v6:
+>   - Add maxItems to sram and memory-region property
+> 
+> Changes in v5:
+> - Add constraints of the possible values of xlnx,cluster-mode property
+> - fix description of power-domains property for r5 core
+> - Remove reg, address-cells and size-cells properties as it is not required
+> - Fix description of mboxes property
+> - Add description of each memory-region and remove old .txt binding link
+>   reference in the description
+> 
+> Changes in v4:
+>   - Add memory-region, mboxes and mbox-names properties in example
+> 
+> Changes in v3:
+>   - None
+> 
+>  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   | 135 ++++++++++++++++++
+>  include/dt-bindings/power/xlnx-zynqmp-power.h |   6 +
+>  2 files changed, 141 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
 > new file mode 100644
-> index 000000000000..16be98b7d600
+> index 000000000000..8079b60b950e
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> @@ -0,0 +1,132 @@
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+
+The convention is to have filename matching the compatible, so:
+xlnx,zynqmp-r5fss.yaml
+
+> @@ -0,0 +1,135 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+> +$id: http://devicetree.org/schemas/remoteproc/xlnx,r5f-rproc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Common TI PRU Consumer Binding
+> +title: Xilinx R5F processor subsystem
 > +
 > +maintainers:
-> +  - Suman Anna <s-anna@ti.com>
+> +  - Ben Levinsky <ben.levinsky@amd.com>
+> +  - Tanmay Shah <tanmay.shah@amd.com>
 > +
 > +description: |
-> +  A PRU application/consumer/user node typically uses one or more PRU device
-> +  nodes to implement a PRU application/functionality. Each application/client
-> +  node would need a reference to at least a PRU node, and optionally define
-> +  some properties needed for hardware/firmware configuration. The below
-> +  properties are a list of common properties supported by the PRU remoteproc
-> +  infrastructure.
-> +
-> +  The application nodes shall define their own bindings like regular platform
-> +  devices, so below are in addition to each node's bindings.
+> +  The Xilinx platforms include a pair of Cortex-R5F processors (RPU) for
+> +  real-time processing based on the Cortex-R5F processor core from ARM.
+> +  The Cortex-R5F processor implements the Arm v7-R architecture and includes a
+> +  floating-point unit that implements the Arm VFPv3 instruction set.
 > +
 > +properties:
-> +  ti,prus:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
-> +    minItems: 1
-> +    maxItems: 6
-> +    items:
-> +      maxItems: 1
+> +  compatible:
+> +    const: xlnx,zynqmp-r5fss
 > +
-> +  firmware-name:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    minItems: 1
-> +    maxItems: 6
-> +    description: |
-> +      firmwares for the PRU cores, the default firmware for the core from
-> +      the PRU node will be used if not provided. The firmware names should
-> +      correspond to the PRU cores listed in the 'ti,prus' property
-> +
-> +  ti,pruss-gp-mux-sel:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 6
-> +    items:
-> +      enum: [0, 1, 2, 3, 4]
-> +    description: |
-> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
-> +      This selects the internal muxing scheme for the PRU instance. Values
-> +      should correspond to the PRU cores listed in the 'ti,prus' property. The
-> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
-> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
-> +      same slice in the associative array. If the array size is smaller than
-> +      the size of 'ti,prus' property, the default out-of-reset value (0) for the
-> +      PRU core is used.
-> +
-> +required:
-> +  - ti,prus
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    /* PRU application node full example */
-> +    icssg2_eth: icssg2-eth {
-> +      compatible = "ti,am654-icssg-prueth";
-> +      pinctrl-names = "default";
-> +      pinctrl-0 = <&icssg2_rgmii_pins_default>;
-> +      sram = <&msmc_ram>;
-> +      ti,prus = <&pru2_0>, <&rtu2_0>, <&tx_pru2_0>,
-> +        <&pru2_1>, <&rtu2_1>, <&tx_pru2_1>;
-
-Fix alignment. In other places as well.
 
 
-> +      firmware-name = "ti-pruss/am65x-sr2-pru0-prueth-fw.elf",
-> +          "ti-pruss/am65x-sr2-rtu0-prueth-fw.elf",
-> +          "ti-pruss/am65x-sr2-txpru0-prueth-fw.elf",
-> +          "ti-pruss/am65x-sr2-pru1-prueth-fw.elf",
-> +          "ti-pruss/am65x-sr2-rtu1-prueth-fw.elf",
-> +          "ti-pruss/am65x-sr2-txpru1-prueth-fw.elf";
-> +
 
 Best regards,
 Krzysztof
