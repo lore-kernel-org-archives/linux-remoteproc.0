@@ -2,69 +2,87 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B18C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 02:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B8BC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 04:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbiJMC4J (ORCPT
+        id S229496AbiJME2K (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 12 Oct 2022 22:56:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54158 "EHLO
+        Thu, 13 Oct 2022 00:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiJMC4I (ORCPT
+        with ESMTP id S229485AbiJME2D (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 12 Oct 2022 22:56:08 -0400
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 079BB112A99;
-        Wed, 12 Oct 2022 19:56:07 -0700 (PDT)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 910C720307D;
-        Thu, 13 Oct 2022 04:56:05 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5987720307A;
-        Thu, 13 Oct 2022 04:56:05 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 271131834869;
-        Thu, 13 Oct 2022 10:56:04 +0800 (+08)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        arnaud.pouliquen@foss.st.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: [PATCH] remoteproc: core: Auto select rproc-virtio device id
-Date:   Thu, 13 Oct 2022 10:28:07 +0800
-Message-Id: <1665628087-20829-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Thu, 13 Oct 2022 00:28:03 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2B4812D0F;
+        Wed, 12 Oct 2022 21:28:01 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id l1so737362pld.13;
+        Wed, 12 Oct 2022 21:28:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fYIg2WzOf03nIwqbYuPMBWLrzXyBCEb4x8ZfCAzdDu0=;
+        b=PB6hHHSd3+SuFQWbK6NTZO7GxvFQskAA6dAhhOpKXIzIUkmu0LDVSisLFpRfraApmG
+         ZQr5Am381sO9KaXYV2ZKKu9wvLU3AbfnWAkzzT0tRFUGRa9vSE3ZEmZMglCl3Ta286jg
+         jXu9WVFnTVSW7ZG1uCv1WtWuyY0vV7/OnWMZe9i52CU6A7rQrBcKyM4V/FLx2U5rf/a8
+         swUHsQQdoCBr3EgLWrkYla+bJwmH6bt8bRmlkB7UBBBnL1FTQ8eNdO1ro1LXzr91V77a
+         halV0HUwoBpAI/3S/viSP8KUMVGXnLRPnMHuzSL/gjIzRZKJ56ZOXUg4hLThRv9qEM06
+         Akiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fYIg2WzOf03nIwqbYuPMBWLrzXyBCEb4x8ZfCAzdDu0=;
+        b=7utCaIUmp+Owuwl5B6p3RuiATar+vylSs/LlPIqkUHi+qW8yS05daC/PVyhPTp4sB7
+         qxidtOPiPQ8E/NEeJXtVOGyMSCfpw3x+vLPdOkBwfPsqqcEA2YjDW3+9fEEzw7Nc6q9c
+         jxShQgP9TrPH5BC42CaRzlzxagxyHwHY2y0AWW2q1tFE9XV2qRexA+koqccKS80uPzn9
+         xbS22u0GBrA6gXJqwhKuo8unIgWhPjv8lw331O+UYLbfmhF2ZCFcnB3VvGYn8uxnrP3X
+         fYaV8R4RHmLG1GPkPPDXllT/kCEByq3S63HA0PUrp8HICNLwM5wNBBwtZu+D1k64ZILn
+         tQ0Q==
+X-Gm-Message-State: ACrzQf0Z3G2hHovGZmU24BaGt6AcjbYz89IUD/48THg7JYtthfkCwMpj
+        UkkG97sgnj7hX3EfCvNmQpz8Vk8FcWx25g==
+X-Google-Smtp-Source: AMsMyM5vIGCV8Tqdy5wnHnZQgZA4M21IavJpM74n0vLZn8SisXMe4S2DLvBTrkVJaZKPYwH2gdkMVw==
+X-Received: by 2002:a17:902:f706:b0:184:7a4c:fdd0 with SMTP id h6-20020a170902f70600b001847a4cfdd0mr6715091plo.98.1665635280609;
+        Wed, 12 Oct 2022 21:28:00 -0700 (PDT)
+Received: from skynet-linux.local ([2406:7400:61:b6fa:b70b:65a4:a699:40c8])
+        by smtp.googlemail.com with ESMTPSA id y9-20020a17090aca8900b001faafa42a9esm2192007pjt.26.2022.10.12.21.27.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Oct 2022 21:27:59 -0700 (PDT)
+From:   Sireesh Kodali <sireeshkodali1@gmail.com>
+To:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux-kernel@vger.kernel.org
+Cc:     andersson@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        dmitry.baryshkov@linaro.org,
+        Sireesh Kodali <sireeshkodali1@gmail.com>
+Subject: [PATCH v4 0/2] remoteproc: qcom: Add support for MSM8953 ADSP
+Date:   Thu, 13 Oct 2022 09:57:47 +0530
+Message-Id: <20221013042749.104668-1-sireeshkodali1@gmail.com>
+X-Mailer: git-send-email 2.38.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-With multiple remoteproc device, there will below error:
+This patch series adds support for the ADSP PIL as found on the MSM8953
+platform. It is a subset of a previous patch series.
 
-sysfs: cannot create duplicate filename '/bus/platform/devices/rproc-virtio.0'
+Changes since v3:
+ * Made ordering of compatible strings lexical in driver patch
 
-The rvdev_data.index is duplicate, that cause issue, so
-need to use the PLATFORM_DEVID_AUTO instead.
+Link to v3: https://lkml.org/lkml/2022/10/8/204
 
-Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/remoteproc/remoteproc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sireesh Kodali (2):
+  remoteproc: qcom: pas: Add MSM8953 ADSP PIL support
+  dt-bindings: remoteproc: qcom: adsp: Add ADSP on MSM8953
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 8768cb64f560..03a26498e879 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -509,7 +509,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
- 	rvdev_data.rsc_offset = offset;
- 	rvdev_data.rsc = rsc;
- 
--	pdev = platform_device_register_data(dev, "rproc-virtio", rvdev_data.index, &rvdev_data,
-+	pdev = platform_device_register_data(dev, "rproc-virtio", PLATFORM_DEVID_AUTO, &rvdev_data,
- 					     sizeof(rvdev_data));
- 	if (IS_ERR(pdev)) {
- 		dev_err(dev, "failed to create rproc-virtio device\n");
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 5 +++++
+ drivers/remoteproc/qcom_q6v5_pas.c                          | 1 +
+ 2 files changed, 6 insertions(+)
+
 -- 
-2.34.1
+2.38.0
 
