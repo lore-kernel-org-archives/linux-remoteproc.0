@@ -2,120 +2,142 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD972C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 08:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36D5C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 08:46:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbiJMI17 (ORCPT
+        id S229578AbiJMIqq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Oct 2022 04:27:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38614 "EHLO
+        Thu, 13 Oct 2022 04:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiJMI16 (ORCPT
+        with ESMTP id S229495AbiJMIqp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Oct 2022 04:27:58 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68045B97A1;
-        Thu, 13 Oct 2022 01:27:55 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29D3rG6q019788;
-        Thu, 13 Oct 2022 10:27:43 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=jbP99aAj4yZmJy7mMcp948NSkY8bJOqMeU8NBPr4IN4=;
- b=oXSKlnGJHZnXz/6wu1BrYqqQp0GrUyoZv6CcyBeVPgvUB+vqfP8gGlheE1qeLpS3ennh
- UoyEpyxdtg8ZLoISa8ynhz3T2bAnkbwA6Y1DZAcJZitTZEdm0xn0ZE4ci3YY/4d1lFuL
- lym1UiQfX+ASSazGt92AfbPR3cK4yvKZlzTcMt6zRF+/09Ko9O1PdLOZopHS+EKLviNG
- 8ERCvYZn0/dZ42HD61N3tjyAWEHBp3IzcuB2JTPM7MgJO3RUrmv4cskqrfJX1wJxtgmI
- xVXcThjjgluHBBi+UZhHvySMW9jk/qhqxKu1UdxNhStKbP9yghE5ajH3C1HDCj7dqAXo Eg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3k5v4my3fg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Oct 2022 10:27:43 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5016710002A;
-        Thu, 13 Oct 2022 10:27:40 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4A8D7215152;
-        Thu, 13 Oct 2022 10:27:40 +0200 (CEST)
-Received: from [10.201.22.54] (10.75.127.48) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2375.31; Thu, 13 Oct
- 2022 10:27:39 +0200
-Message-ID: <154222f3-39e4-a545-d820-fc3d6a8b2ab6@foss.st.com>
-Date:   Thu, 13 Oct 2022 10:27:38 +0200
+        Thu, 13 Oct 2022 04:46:45 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8897F15FD96;
+        Thu, 13 Oct 2022 01:46:40 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29D8kR7U037725;
+        Thu, 13 Oct 2022 03:46:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1665650787;
+        bh=ZqAvK0Bo9tuPdjUmWHMjOdEYetr/nCxAujiZNOn+ZdA=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=gpzRAdshxB8Jq1SvJX2TQUrWu8Ddg+vfb8VR3uyY3ayKQGtQkSw72IYeD3r2S5KwZ
+         u5Dw+QG0zOfFIr7hPL0Tp0oj4VKEVwsgfGFUh6qbcRYeVvGStVwNhbJ9GcAyT/qbDt
+         mP3KacX4qOtP51MKXEB0EOkPyHTKbxvO4mGtjVic=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29D8kRdh036671
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Oct 2022 03:46:27 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Thu, 13
+ Oct 2022 03:46:26 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Thu, 13 Oct 2022 03:46:27 -0500
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29D8kL0a002875;
+        Thu, 13 Oct 2022 03:46:22 -0500
+Message-ID: <531c3974-d4db-c2eb-62b6-0e74eee5f0c4@ti.com>
+Date:   Thu, 13 Oct 2022 14:16:21 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH] remoteproc: core: Auto select rproc-virtio device id
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [EXTERNAL] Re: [PATCH v6 1/5] dt-bindings: remoteproc: Add PRU
+ consumer bindings
 Content-Language: en-US
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <shengjiu.wang@gmail.com>
-References: <1665628087-20829-1-git-send-email-shengjiu.wang@nxp.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <1665628087-20829-1-git-send-email-shengjiu.wang@nxp.com>
+To:     Rob Herring <robh@kernel.org>, MD Danish Anwar <danishanwar@ti.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <srk@ti.com>,
+        Suman Anna <s-anna@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>, <nm@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Roger Quadros <rogerq@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>, <vigneshr@ti.com>
+References: <20221012114429.2341215-1-danishanwar@ti.com>
+ <20221012114429.2341215-2-danishanwar@ti.com>
+ <166558063092.1936865.1773120279875751081.robh@kernel.org>
+From:   Md Danish Anwar <a0501179@ti.com>
+In-Reply-To: <166558063092.1936865.1773120279875751081.robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-13_06,2022-10-12_01,2022-06-22_01
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Shengju,
+Hi Rob,
 
-On 10/13/22 04:28, Shengjiu Wang wrote:
-> With multiple remoteproc device, there will below error:
+On 12/10/22 18:49, Rob Herring wrote:
+> On Wed, 12 Oct 2022 17:14:25 +0530, MD Danish Anwar wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> Add a YAML binding document for PRU consumers. The binding includes
+>> all the common properties that can be used by different PRU consumer
+>> or application nodes and supported by the PRU remoteproc driver.
+>> These are used to configure the PRU hardware for specific user
+>> applications.
+>>
+>> The application nodes themselves should define their own bindings.
+>>
+>> Co-developed-by: Tero Kristo <t-kristo@ti.com>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  .../bindings/remoteproc/ti,pru-consumer.yaml  | 132 ++++++++++++++++++
+>>  1 file changed, 132 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>>
 > 
-> sysfs: cannot create duplicate filename '/bus/platform/devices/rproc-virtio.0'
-
-Good catch! 
-Previously the device created was 
-/sys/class/remoteproc/remoteproc0/remoteproc0#vdev0buffer/
-
-So with your fix it become something like 
-/bus/platform/devices/rproc-virtio.2.auto
-
-
-This works fine on my platform, also when creating two virtio devices for one
-remoteproc device.
- 
-Just a remark, could be nice to indicate in the commit message the result of
-your patch, means the name of the files created.
-
-With that:
-Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-Thanks,
-Arnaud
-
-
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
 > 
-> The rvdev_data.index is duplicate, that cause issue, so
-> need to use the PLATFORM_DEVID_AUTO instead.
+> yamllint warnings/errors:
 > 
-> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.example.dtb:0:0: /example-0/icssg2-eth: failed to match any schema with compatible: ['ti,am654-icssg-prueth']
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 8768cb64f560..03a26498e879 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -509,7 +509,7 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
->  	rvdev_data.rsc_offset = offset;
->  	rvdev_data.rsc = rsc;
->  
-> -	pdev = platform_device_register_data(dev, "rproc-virtio", rvdev_data.index, &rvdev_data,
-> +	pdev = platform_device_register_data(dev, "rproc-virtio", PLATFORM_DEVID_AUTO, &rvdev_data,
->  					     sizeof(rvdev_data));
->  	if (IS_ERR(pdev)) {
->  		dev_err(dev, "failed to create rproc-virtio device\n");
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/patch/
+> 
+> This check can fail if there are any dependencies. The base for a patch
+> series is generally the most recent rc1.
+> 
+
+This error is coming as this dt-schema has 'ti,am654-icssg-prueth' as
+compatible in the example section, which is introduced in [1] patch series.
+Including the full example section in this dt schema binding is causing this error.
+
+In v5 [2] of this series, only the 'ti,prus', 'firmware-name' and
+'ti,pruss-gp-mux-sel' properties were included in the example section. Mathieu
+had asked to include full example in the dt binding document.
+
+So I added full example section. But in full example I included compatible
+property as well which is not introduced in this series thus creating dt check
+binding error.
+
+I will remove the example section from here and add it to dt-schema binding of
+icssg-prueth.
+
+[1] https://lore.kernel.org/all/20220531095108.21757-2-p-mohan@ti.com/
+[2] https://lore.kernel.org/all/20220607045650.4999-2-p-mohan@ti.com/
+
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit.
+> 
