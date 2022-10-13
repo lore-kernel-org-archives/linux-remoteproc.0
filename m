@@ -2,69 +2,67 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36D5C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 08:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CFCC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 10:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229578AbiJMIqq (ORCPT
+        id S229548AbiJMKh7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Oct 2022 04:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51276 "EHLO
+        Thu, 13 Oct 2022 06:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiJMIqp (ORCPT
+        with ESMTP id S229511AbiJMKh6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Oct 2022 04:46:45 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8897F15FD96;
-        Thu, 13 Oct 2022 01:46:40 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29D8kR7U037725;
-        Thu, 13 Oct 2022 03:46:27 -0500
+        Thu, 13 Oct 2022 06:37:58 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42117E52D6;
+        Thu, 13 Oct 2022 03:37:55 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29DAbgde081195;
+        Thu, 13 Oct 2022 05:37:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1665650787;
-        bh=ZqAvK0Bo9tuPdjUmWHMjOdEYetr/nCxAujiZNOn+ZdA=;
+        s=ti-com-17Q1; t=1665657462;
+        bh=y2LZ3hY/sLVuCGWY1LGBLIkE/53Me85ywUgCqvqqef0=;
         h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=gpzRAdshxB8Jq1SvJX2TQUrWu8Ddg+vfb8VR3uyY3ayKQGtQkSw72IYeD3r2S5KwZ
-         u5Dw+QG0zOfFIr7hPL0Tp0oj4VKEVwsgfGFUh6qbcRYeVvGStVwNhbJ9GcAyT/qbDt
-         mP3KacX4qOtP51MKXEB0EOkPyHTKbxvO4mGtjVic=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29D8kRdh036671
+        b=uDWVG6cHjO50e0JjrHWFDFT1CiJsXN+dNISKIQJi65wusB5rIk6fF9LYmfcbqNMCF
+         zjsRaV9ZHj4JFIretQWOkLtqBn8jhKlub2fRU+NX4m+Cx6dezI1IJT/3oC3nvRlyRk
+         mpkM9ovzNSZMPbG6tuiIriTyl9X0d6az+5pDP+I8=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29DAbgfK085806
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Oct 2022 03:46:27 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 13 Oct 2022 05:37:42 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Thu, 13
- Oct 2022 03:46:26 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2022 05:37:41 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
- Frontend Transport; Thu, 13 Oct 2022 03:46:27 -0500
+ Frontend Transport; Thu, 13 Oct 2022 05:37:41 -0500
 Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29D8kL0a002875;
-        Thu, 13 Oct 2022 03:46:22 -0500
-Message-ID: <531c3974-d4db-c2eb-62b6-0e74eee5f0c4@ti.com>
-Date:   Thu, 13 Oct 2022 14:16:21 +0530
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29DAbbJf126088;
+        Thu, 13 Oct 2022 05:37:38 -0500
+Message-ID: <93b1644f-ed7c-9ded-978b-9da0d840cd1b@ti.com>
+Date:   Thu, 13 Oct 2022 16:07:37 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
 Subject: Re: [EXTERNAL] Re: [PATCH v6 1/5] dt-bindings: remoteproc: Add PRU
  consumer bindings
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>, MD Danish Anwar <danishanwar@ti.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <srk@ti.com>,
-        Suman Anna <s-anna@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>, <nm@ti.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Roger Quadros <rogerq@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, <vigneshr@ti.com>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        <nm@ti.com>, <vigneshr@ti.com>, <srk@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
 References: <20221012114429.2341215-1-danishanwar@ti.com>
  <20221012114429.2341215-2-danishanwar@ti.com>
- <166558063092.1936865.1773120279875751081.robh@kernel.org>
+ <78805233-0802-7a7e-f1b1-84c566084833@linaro.org>
 From:   Md Danish Anwar <a0501179@ti.com>
-In-Reply-To: <166558063092.1936865.1773120279875751081.robh@kernel.org>
+In-Reply-To: <78805233-0802-7a7e-f1b1-84c566084833@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -72,13 +70,34 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Rob,
+Hi Krzysztof,
 
-On 12/10/22 18:49, Rob Herring wrote:
-> On Wed, 12 Oct 2022 17:14:25 +0530, MD Danish Anwar wrote:
+
+On 12/10/22 20:54, Krzysztof Kozlowski wrote:
+> On 12/10/2022 07:44, MD Danish Anwar wrote:
 >> From: Suman Anna <s-anna@ti.com>
 >>
 >> Add a YAML binding document for PRU consumers. The binding includes
+> 
+> Add a DT schema binding for ...
+> 
+
+Sure I'll change it to that.
+
+> Second thing: where is a user of this common binding? How do you apply
+> this schema to anything?
+> 
+
+This dt binding will be included in 'ti,icssg-prueth.yaml' which is introduced
+in the series [1].
+
+in 'ti,icssg-prueth.yaml' file --
+allOf:
+  - $ref: /schemas/remoteproc/ti,pru-consumer.yaml#
+
+The consumer can apply the dt schema 'ti,icssg-prueth.yaml' and this schema
+will be applied with that as this schema is included in 'ti,icssg-prueth.yaml'.
+
 >> all the common properties that can be used by different PRU consumer
 >> or application nodes and supported by the PRU remoteproc driver.
 >> These are used to configure the PRU hardware for specific user
@@ -98,46 +117,102 @@ On 12/10/22 18:49, Rob Herring wrote:
 >>  1 file changed, 132 insertions(+)
 >>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 >>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>> new file mode 100644
+>> index 000000000000..16be98b7d600
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>> @@ -0,0 +1,132 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Common TI PRU Consumer Binding
+>> +
+>> +maintainers:
+>> +  - Suman Anna <s-anna@ti.com>
+>> +
+>> +description: |
+>> +  A PRU application/consumer/user node typically uses one or more PRU device
+>> +  nodes to implement a PRU application/functionality. Each application/client
+>> +  node would need a reference to at least a PRU node, and optionally define
+>> +  some properties needed for hardware/firmware configuration. The below
+>> +  properties are a list of common properties supported by the PRU remoteproc
+>> +  infrastructure.
+>> +
+>> +  The application nodes shall define their own bindings like regular platform
+>> +  devices, so below are in addition to each node's bindings.
+>> +
+>> +properties:
+>> +  ti,prus:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +    description: phandles to the PRU, RTU or Tx_PRU nodes used
+>> +    minItems: 1
+>> +    maxItems: 6
+>> +    items:
+>> +      maxItems: 1
+>> +
+>> +  firmware-name:
+>> +    $ref: /schemas/types.yaml#/definitions/string-array
+>> +    minItems: 1
+>> +    maxItems: 6
+>> +    description: |
+>> +      firmwares for the PRU cores, the default firmware for the core from
+>> +      the PRU node will be used if not provided. The firmware names should
+>> +      correspond to the PRU cores listed in the 'ti,prus' property
+>> +
+>> +  ti,pruss-gp-mux-sel:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
+>> +    maxItems: 6
+>> +    items:
+>> +      enum: [0, 1, 2, 3, 4]
+>> +    description: |
+>> +      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
+>> +      This selects the internal muxing scheme for the PRU instance. Values
+>> +      should correspond to the PRU cores listed in the 'ti,prus' property. The
+>> +      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
+>> +      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
+>> +      same slice in the associative array. If the array size is smaller than
+>> +      the size of 'ti,prus' property, the default out-of-reset value (0) for the
+>> +      PRU core is used.
+>> +
+>> +required:
+>> +  - ti,prus
+>> +
+>> +additionalProperties: true
+>> +
+>> +examples:
+>> +  - |
+>> +    /* PRU application node full example */
+>> +    icssg2_eth: icssg2-eth {
+>> +      compatible = "ti,am654-icssg-prueth";
+>> +      pinctrl-names = "default";
+>> +      pinctrl-0 = <&icssg2_rgmii_pins_default>;
+>> +      sram = <&msmc_ram>;
+>> +      ti,prus = <&pru2_0>, <&rtu2_0>, <&tx_pru2_0>,
+>> +        <&pru2_1>, <&rtu2_1>, <&tx_pru2_1>;
 > 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.example.dtb:0:0: /example-0/icssg2-eth: failed to match any schema with compatible: ['ti,am654-icssg-prueth']
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/patch/
-> 
-> This check can fail if there are any dependencies. The base for a patch
-> series is generally the most recent rc1.
+> Fix alignment. In other places as well.
 > 
 
-This error is coming as this dt-schema has 'ti,am654-icssg-prueth' as
-compatible in the example section, which is introduced in [1] patch series.
-Including the full example section in this dt schema binding is causing this error.
+Sure, I'll work on this.
 
-In v5 [2] of this series, only the 'ti,prus', 'firmware-name' and
-'ti,pruss-gp-mux-sel' properties were included in the example section. Mathieu
-had asked to include full example in the dt binding document.
-
-So I added full example section. But in full example I included compatible
-property as well which is not introduced in this series thus creating dt check
-binding error.
-
-I will remove the example section from here and add it to dt-schema binding of
-icssg-prueth.
+>> +      firmware-name = "ti-pruss/am65x-sr2-pru0-prueth-fw.elf",
+>> +          "ti-pruss/am65x-sr2-rtu0-prueth-fw.elf",
+>> +          "ti-pruss/am65x-sr2-txpru0-prueth-fw.elf",
+>> +          "ti-pruss/am65x-sr2-pru1-prueth-fw.elf",
+>> +          "ti-pruss/am65x-sr2-rtu1-prueth-fw.elf",
+>> +          "ti-pruss/am65x-sr2-txpru1-prueth-fw.elf";
+>> +
+> 
+> Best regards,
+> Krzysztof
+> 
 
 [1] https://lore.kernel.org/all/20220531095108.21757-2-p-mohan@ti.com/
-[2] https://lore.kernel.org/all/20220607045650.4999-2-p-mohan@ti.com/
 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit.
-> 
+Thanks and Regards,
+Danish.
