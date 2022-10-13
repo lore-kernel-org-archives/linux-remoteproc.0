@@ -2,174 +2,181 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263B0C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 17:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ADAC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Oct 2022 18:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbiJMRew (ORCPT
+        id S231390AbiJMSJs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Oct 2022 13:34:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34124 "EHLO
+        Thu, 13 Oct 2022 14:09:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229688AbiJMRew (ORCPT
+        with ESMTP id S229993AbiJMSI7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Oct 2022 13:34:52 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66E9712AFF
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Oct 2022 10:34:46 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id t12-20020a17090a3b4c00b0020b04251529so2483542pjf.5
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Oct 2022 10:34:46 -0700 (PDT)
+        Thu, 13 Oct 2022 14:08:59 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 037F2169CEA
+        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Oct 2022 11:06:13 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id cl1so2597216pjb.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Oct 2022 11:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i39DpSGkp8A10ysnMtqm1kXI7Ca0HoR3xGRlSs67Fps=;
-        b=YXn81mHbG8xm3NTs9AYPyPRj1ew4NX+TAeYudXTmcMoYjS8v3ilqkOEaW2ZudxtAkf
-         7Rm/34/MOhb4m1mWFeX1ijinGozag51xfloGfyD6oyyq0d0OoroQVAGKTgryBSouOKq3
-         /QJk5tb6peghBnxESaMWagIj+UWvHoh3wgxdRD2tE5Ji0eehu69uW7oGsEfPJHuyDJOd
-         okrTxt8qypBAQNkZ0Sy7nYYXJWEXle/fBqysIQNlODa0r9RyvrOAUWn36Eko5RTNrE8d
-         HPs+abmE2pKf0lGi5fWH2rN9sXcSBBX76zsZNYx6t5qQqmojSmSdJo6zHSIp+7xFdCKM
-         2/3g==
+        bh=xCWA1UQ/X9XLQRtiSBAZ35Ajn8E1QiW5dMdBJEYMpWU=;
+        b=bBeXLAx5gQTniWGq6WPRBxi37Ku76/7XU7c3PqqlcoUtL2cfoBADOu5zHduMl5CN+k
+         E3gvT6AGoioNizHj53DiUlPj8uKDXSd6V3ZvEkYQNuj4iNfIef/Wr5kM5aLv76LTm9YQ
+         jFqhhfH6Fe/VZ2etS1g9yAEpQTewdtoGjN3Vi57M2hcrF0I92yKCtyjjjZBsqbd+3aCX
+         SS2W7tRckXpffX3RMmwy2bo4E+h3lvuc+i36f7JAzUsd5vhjXCzECC95oPQXk1r3pgeQ
+         QHES/xiPox5LBmoVSuvq/uqNUggUBFPDQ0R8CqkQ9zjpeLPVk+tpxYjzYTWsOpK7DK3j
+         rF/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i39DpSGkp8A10ysnMtqm1kXI7Ca0HoR3xGRlSs67Fps=;
-        b=0GgdAcFIjpZSaO740m0k8LIFaYIa0LWu5G/0KyNWSWBdneeP57yQkVLSjkjqiD+y2o
-         tiPTsGjdHc4LJ8uEbrfGxI7TGRNFlQ61Lly+LoFvcyUwAD/ugCubSiCY/oe3mEs+63iF
-         vJesXyvYQ0vPXIWpQ9Mj3Wu2q6n9s/mS+FMaJTj5Upws/rNj6riT/34md61o6mUx68vv
-         jHixuHq5MtGOcMzEX25Dfsh0aLPUexH5vsg9GUnQ5258yNXbGiSaLzRXCAgg8koQZV6y
-         uCZGT/C91etBbu1Spwm+398Ku2OzP8vY/w/y/suE5KtM6UneGdUTwjbBL0PNiBtyA8oY
-         cGcQ==
-X-Gm-Message-State: ACrzQf3NjeSxm0AXxrJJ6TSti1EvyM113n1qQNWLR8K26cluOpFdaB3J
-        K4B2UMuojm8f/RNcAaqdkK2nJQ==
-X-Google-Smtp-Source: AMsMyM7nPsJ/hGKbjnknq8Z3lBs2WUWdwKBt5mW827Ilx/KIiaVgnOCY9zxfPvvaGzpHRx5M+QDNOQ==
-X-Received: by 2002:a17:90b:1e0b:b0:20d:85ca:b50e with SMTP id pg11-20020a17090b1e0b00b0020d85cab50emr12120186pjb.82.1665682485835;
-        Thu, 13 Oct 2022 10:34:45 -0700 (PDT)
+        bh=xCWA1UQ/X9XLQRtiSBAZ35Ajn8E1QiW5dMdBJEYMpWU=;
+        b=nw6WOPBYelCaxyU1TKxzHednNYIwaXfARWjpb4MXjE2QuTpNC54QzBFT91cp2mG9L8
+         sBw49unSRWRZsWeXXdOHLvGdHFPt+Sr9k3ch8KcjqxVwxD1KZCQbm1pKbe+jeXhtD+An
+         umbgIGrqymmrQzxTqD9CvUHd2uduj5jO+WR5Kqt859UMWdy/k+vIUSxp0NVHclP+aMXx
+         QobAxdan7IcAkRaZ5NcJTUdCXw6HJguV9pILw+9wp7CRAh9zBgSnQ+IYDDrd+EAF9w0X
+         Qo0E5Y5NVXlQCR9Yhw0vvauyOIlfqWu/djgEtSF9hRospW0NublcSSaFtL9phDw9Iwq9
+         S5fQ==
+X-Gm-Message-State: ACrzQf0dN/w3ZCbQL3nPjJxXreGeCpSOcsNtnC6rbTYPhmi30xGGmxTq
+        ahmGbOQ363iB7DRV6QhbbRBm2A==
+X-Google-Smtp-Source: AMsMyM7iJu2iTuL4rB5YO0BvSUxF8edDqk6gFEg3tC3Rh+Pe3l5RAYCCCA3fVPA9mGzKnUSClCiHIA==
+X-Received: by 2002:a17:902:7281:b0:178:388d:6f50 with SMTP id d1-20020a170902728100b00178388d6f50mr937853pll.127.1665684217314;
+        Thu, 13 Oct 2022 11:03:37 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id e2-20020a17090ab38200b0020aaa678098sm44499pjr.49.2022.10.13.10.34.44
+        by smtp.gmail.com with ESMTPSA id t2-20020a170902e84200b00185002f0c6csm153189plg.134.2022.10.13.11.03.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 10:34:44 -0700 (PDT)
-Date:   Thu, 13 Oct 2022 11:34:42 -0600
+        Thu, 13 Oct 2022 11:03:36 -0700 (PDT)
+Date:   Thu, 13 Oct 2022 12:03:34 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
 Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, quic_clew@quicinc.com
 Subject: Re: [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
-Message-ID: <20221013173442.GA1279972@p14s>
+Message-ID: <20221013180334.GB1279972@p14s>
 References: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
  <1663312351-28476-1-git-send-email-quic_aiquny@quicinc.com>
  <20221012204344.GA1178915@p14s>
  <792f05fc-995e-9a87-ab7d-bee03f15bc79@quicinc.com>
+ <20221013173442.GA1279972@p14s>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <792f05fc-995e-9a87-ab7d-bee03f15bc79@quicinc.com>
+In-Reply-To: <20221013173442.GA1279972@p14s>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Oct 13, 2022 at 09:40:09AM +0800, Aiqun(Maria) Yu wrote:
-> Hi Mathieu,
-> 
-> On 10/13/2022 4:43 AM, Mathieu Poirier wrote:
-> > Please add what has changed from one version to another, either in a cover
-> > letter or after the "Signed-off-by".  There are many examples on how to do that
-> > on the mailing list.
+On Thu, Oct 13, 2022 at 11:34:42AM -0600, Mathieu Poirier wrote:
+> On Thu, Oct 13, 2022 at 09:40:09AM +0800, Aiqun(Maria) Yu wrote:
+> > Hi Mathieu,
 > > 
-> Thx for the information, will take a note and benefit for next time.
-> 
-> > On Fri, Sep 16, 2022 at 03:12:31PM +0800, Maria Yu wrote:
-> > > RPROC_OFFLINE state indicate there is no recovery process
-> > > is in progress and no chance to do the pm_relax.
-> > > Because when recovering from crash, rproc->lock is held and
-> > > state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
-> > > and then unlock rproc->lock.
-> > 
-> > You are correct - because the lock is held rproc->state should be set to RPROC_RUNNING
-> > when rproc_trigger_recovery() returns.  If that is not the case then something
-> > went wrong.
-> > 
-> > Function rproc_stop() sets rproc->state to RPROC_OFFLINE just before returning,
-> > so we know the remote processor was stopped.  Therefore if rproc->state is set
-> > to RPROC_OFFLINE something went wrong in either request_firmware() or
-> > rproc_start().  Either way the remote processor is offline and the system probably
-> > in an unknown/unstable.  As such I don't see how calling pm_relax() can help
-> > things along.
-> > 
-> PROC_OFFLINE is possible that rproc_shutdown is triggered and successfully
-> finished.
-> Even if it is multi crash rproc_crash_handler_work contention issue, and
-> last rproc_trigger_recovery bailed out with only
-> rproc->state==RPROC_OFFLINE, it is still worth to do pm_relax in pair.
-> Since the subsystem may still can be recovered with customer's next trigger
-> of rproc_start, and we can make each error out path clean with pm resources.
-> 
-> > I suggest spending time understanding what leads to the failure when recovering
-> > from a crash and address that problem(s).
-> > 
-> In current case, the customer's information is that the issue happened when
-> rproc_shutdown is triggered at similar time. So not an issue from error out
-> of rproc_trigger_recovery.
-
-That is a very important element to consider and should have been mentioned from
-the beginning.  What I see happening is the following:
-
-rproc_report_crash()
-        pm_stay_awake()
-        queue_work() // current thread is suspended
-
-rproc_shutdown()
-        rproc_stop()
-                rproc->state = RPROC_OFFLINE;
-
-rproc_crash_handler_work()
-        if (rproc->state == RPROC_OFFLINE)
-                return // pm_relax() is not called
-
-The right way to fix this is to add a pm_relax() in rproc_shutdown() and
-rproc_detach(), along with a very descriptive comment as to why it is needed.
-
-
-> > Thanks,
-> > Mathieu
-> > 
-> > 
-> > > When the state is in RPROC_OFFLINE it means separate request
-> > > of rproc_stop was done and no need to hold the wakeup source
-> > > in crash handler to recover any more.
+> > On 10/13/2022 4:43 AM, Mathieu Poirier wrote:
+> > > Please add what has changed from one version to another, either in a cover
+> > > letter or after the "Signed-off-by".  There are many examples on how to do that
+> > > on the mailing list.
 > > > 
-> > > Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
-> > > ---
-> > >   drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
-> > >   1 file changed, 11 insertions(+)
+> > Thx for the information, will take a note and benefit for next time.
+> > 
+> > > On Fri, Sep 16, 2022 at 03:12:31PM +0800, Maria Yu wrote:
+> > > > RPROC_OFFLINE state indicate there is no recovery process
+> > > > is in progress and no chance to do the pm_relax.
+> > > > Because when recovering from crash, rproc->lock is held and
+> > > > state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+> > > > and then unlock rproc->lock.
 > > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index e5279ed9a8d7..6bc7b8b7d01e 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct work_struct *work)
-> > >   	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
-> > >   		/* handle only the first crash detected */
-> > >   		mutex_unlock(&rproc->lock);
-> > > +		/*
-> > > +		 * RPROC_OFFLINE state indicate there is no recovery process
-> > > +		 * is in progress and no chance to have pm_relax in place.
-> > > +		 * Because when recovering from crash, rproc->lock is held and
-> > > +		 * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
-> > > +		 * and then unlock rproc->lock.
-> > > +		 * RPROC_OFFLINE is only an intermediate state in recovery
-> > > +		 * process.
-> > > +		 */
-> > > +		if (rproc->state == RPROC_OFFLINE)
-> > > +			pm_relax(rproc->dev.parent);
-> > >   		return;
-> > >   	}
-> > > -- 
-> > > 2.7.4
+> > > You are correct - because the lock is held rproc->state should be set to RPROC_RUNNING
+> > > when rproc_trigger_recovery() returns.  If that is not the case then something
+> > > went wrong.
 > > > 
+> > > Function rproc_stop() sets rproc->state to RPROC_OFFLINE just before returning,
+> > > so we know the remote processor was stopped.  Therefore if rproc->state is set
+> > > to RPROC_OFFLINE something went wrong in either request_firmware() or
+> > > rproc_start().  Either way the remote processor is offline and the system probably
+> > > in an unknown/unstable.  As such I don't see how calling pm_relax() can help
+> > > things along.
+> > > 
+> > PROC_OFFLINE is possible that rproc_shutdown is triggered and successfully
+> > finished.
+> > Even if it is multi crash rproc_crash_handler_work contention issue, and
+> > last rproc_trigger_recovery bailed out with only
+> > rproc->state==RPROC_OFFLINE, it is still worth to do pm_relax in pair.
+> > Since the subsystem may still can be recovered with customer's next trigger
+> > of rproc_start, and we can make each error out path clean with pm resources.
+> > 
+> > > I suggest spending time understanding what leads to the failure when recovering
+> > > from a crash and address that problem(s).
+> > > 
+> > In current case, the customer's information is that the issue happened when
+> > rproc_shutdown is triggered at similar time. So not an issue from error out
+> > of rproc_trigger_recovery.
+> 
+> That is a very important element to consider and should have been mentioned from
+> the beginning.  What I see happening is the following:
+> 
+> rproc_report_crash()
+>         pm_stay_awake()
+>         queue_work() // current thread is suspended
+> 
+> rproc_shutdown()
+>         rproc_stop()
+>                 rproc->state = RPROC_OFFLINE;
+> 
+> rproc_crash_handler_work()
+>         if (rproc->state == RPROC_OFFLINE)
+>                 return // pm_relax() is not called
+> 
+> The right way to fix this is to add a pm_relax() in rproc_shutdown() and
+> rproc_detach(), along with a very descriptive comment as to why it is needed.
+
+Thinking about this further there are more ramifications to consider.  Please
+confirm the above scenario is what you are facing.  I will advise on how to move
+forward if that is the case.
+
 > 
 > 
-> -- 
-> Thx and BRs,
-> Aiqun(Maria) Yu
+> > > Thanks,
+> > > Mathieu
+> > > 
+> > > 
+> > > > When the state is in RPROC_OFFLINE it means separate request
+> > > > of rproc_stop was done and no need to hold the wakeup source
+> > > > in crash handler to recover any more.
+> > > > 
+> > > > Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> > > > ---
+> > > >   drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
+> > > >   1 file changed, 11 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > > index e5279ed9a8d7..6bc7b8b7d01e 100644
+> > > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > > @@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct work_struct *work)
+> > > >   	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+> > > >   		/* handle only the first crash detected */
+> > > >   		mutex_unlock(&rproc->lock);
+> > > > +		/*
+> > > > +		 * RPROC_OFFLINE state indicate there is no recovery process
+> > > > +		 * is in progress and no chance to have pm_relax in place.
+> > > > +		 * Because when recovering from crash, rproc->lock is held and
+> > > > +		 * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+> > > > +		 * and then unlock rproc->lock.
+> > > > +		 * RPROC_OFFLINE is only an intermediate state in recovery
+> > > > +		 * process.
+> > > > +		 */
+> > > > +		if (rproc->state == RPROC_OFFLINE)
+> > > > +			pm_relax(rproc->dev.parent);
+> > > >   		return;
+> > > >   	}
+> > > > -- 
+> > > > 2.7.4
+> > > > 
+> > 
+> > 
+> > -- 
+> > Thx and BRs,
+> > Aiqun(Maria) Yu
