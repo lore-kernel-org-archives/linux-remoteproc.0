@@ -2,51 +2,52 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AEAC43217
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Oct 2022 03:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D56C43217
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Oct 2022 03:18:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231372AbiJRDKt (ORCPT
+        id S231414AbiJRDSr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 17 Oct 2022 23:10:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36312 "EHLO
+        Mon, 17 Oct 2022 23:18:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231214AbiJRDJH (ORCPT
+        with ESMTP id S231443AbiJRDSF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 17 Oct 2022 23:09:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665FE85AB3;
-        Mon, 17 Oct 2022 20:07:13 -0700 (PDT)
+        Mon, 17 Oct 2022 23:18:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C529C7DB;
+        Mon, 17 Oct 2022 20:16:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BA2C5B81C68;
-        Tue, 18 Oct 2022 03:07:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E27DC43140;
-        Tue, 18 Oct 2022 03:07:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3446961422;
+        Tue, 18 Oct 2022 03:14:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76590C43141;
+        Tue, 18 Oct 2022 03:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666062430;
-        bh=QbfhMiFTuHQ6+i+uVVEzEGB913inwIVKnDB5NuZQZ+0=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=BelDDAZpP7Y3/vcftpcCwrt1xuGvDObR/twJjWzBQ3RdGO0a1ucjrPd6NBghv1sMs
-         05HMGBAuFY+rXeFCb2M2r1tMY1ylWEUP8HmMb8hs2UUfmKip0joS88/PjMo6gJAa3g
-         tPvfsbwcouGIvR6thtIbcIheeED5j/yCUYkuZzh+xeer3zEuAvf1/bxs6oTAViVp7b
-         BN2Vj1OgaVOKEKO81CLLEWC2ytzZBWDDA6djGgbfzijIMv0pG7bp7gv5iXHRJO6KIL
-         LH3wwpZDOpA3yH8bSLv1bm5OdbAuXdgIX32lKDhja8tlMAD9JOUDhZbhRdzZBl3E5F
-         3ySmtOjcm2YPQ==
+        s=k20201202; t=1666062878;
+        bh=KUiKr47b0U7BG8MHMA6x9yTYT7DWpF6dS63ARtGfCF0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=H7jsiAFbzP4JuXJyZqurlXGzTQ0FqvwY2WdeRdacspPbGEcg8kV4gn19U9akH08lR
+         Ej8kikb0MoYThUOzVaIEW2TQmLqqpXb8NzW64G1ggOlQ8NLC2JEtxM6osfiG8PlWRD
+         An27KT5zll6ZfSjupHvU0Z/qvUQ5QFOU6OlcFk/0Av6PGAm8SxkGLWOJkvMzOd7H0W
+         tM+invoJZw7rB6sPimsL8GibmCb/SC96gz+BiTowqEZjBLKAFbOndKlbeOdJNB4D2T
+         qS42Ld/ax78q7V/OkiT3HuGrQl87Rk5F6uhCTyPebOsAQ9j4fWE76mL1+cGkFeP3uf
+         1Y0NduoqX4XWQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-remoteproc@vger.kernel.org, baolin.wang@linux.alibaba.com,
-        ohad@wizery.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, agross@kernel.org,
-        krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: (subset) [PATCH v4 0/3] ARM/hwlock: qcom: switch TCSR mutex to MMIO (msm8974)
-Date:   Mon, 17 Oct 2022 22:05:43 -0500
-Message-Id: <166606235856.3553294.5768784056072332815.b4-ty@kernel.org>
+To:     pabeni@redhat.com, kuba@kernel.org, kvalo@kernel.org,
+        mathieu.poirier@linaro.org, elder@kernel.org,
+        quic_jjohnson@quicinc.com, edumazet@google.com,
+        srinivas.kandagatla@linaro.org, davem@davemloft.net,
+        agross@kernel.org, Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     alsa-devel@alsa-project.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Make QMI message rules const
+Date:   Mon, 17 Oct 2022 22:14:29 -0500
+Message-Id: <166606235855.3553294.15415652032581758108.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220920150414.637634-1-krzysztof.kozlowski@linaro.org>
-References: <20220920150414.637634-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220914234705.28405-1-quic_jjohnson@quicinc.com>
+References: <20220912232526.27427-1-quic_jjohnson@quicinc.com> <20220914234705.28405-1-quic_jjohnson@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -54,26 +55,28 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 20 Sep 2022 17:04:11 +0200, Krzysztof Kozlowski wrote:
-> Remaining patches from v3:
-> https://lore.kernel.org/all/20220909092035.223915-1-krzysztof.kozlowski@linaro.org/
+On Wed, 14 Sep 2022 16:47:01 -0700, Jeff Johnson wrote:
+> Commit ff6d365898d4 ("soc: qcom: qmi: use const for struct
+> qmi_elem_info") allows QMI message encoding/decoding rules to be
+> const. So now update the definitions in the various clients to take
+> advantage of this. Patches for ath10k and ath11k were previously sent
+> separately.
 > 
-> Not tested on hardware. Please kindly provide tests.
-> 
-> Changes since v3
-> ================
-> 1. Drop applied patches - remaining is only msm8974.
-> 2. Add syscon to TCSR mutex regs, after talk with Bjorn.
-> 3. New patch: bindings.
+> This series depends upon:
+> https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?h=for-next&id=ff6d365898d4d31bd557954c7fc53f38977b491c
 > 
 > [...]
 
 Applied, thanks!
 
-[2/3] ARM: dts: qcom: msm8974: add missing TCSR syscon compatible
-      commit: 118fa7657c29c5308268fe813c1fe6c763e56da3
-[3/3] ARM: dts: qcom: msm8974: switch TCSR mutex to MMIO
-      commit: 65eed754c9bf211c81007cb9a87526669274742f
+[1/4] net: ipa: Make QMI message rules const
+      (no commit info)
+[2/4] remoteproc: sysmon: Make QMI message rules const
+      (no commit info)
+[3/4] slimbus: qcom-ngd-ctrl: Make QMI message rules const
+      (no commit info)
+[4/4] soc: qcom: pdr: Make QMI message rules const
+      commit: afc7b849ebcf063ca84a79c749d4996a8781fc55
 
 Best regards,
 -- 
