@@ -2,167 +2,201 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D30C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Oct 2022 04:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B45CC3A59D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Oct 2022 19:35:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbiJUERP (ORCPT
+        id S229933AbiJUTfM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 21 Oct 2022 00:17:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43256 "EHLO
+        Fri, 21 Oct 2022 15:35:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229954AbiJUEQu (ORCPT
+        with ESMTP id S229448AbiJUTfL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 21 Oct 2022 00:16:50 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2060.outbound.protection.outlook.com [40.107.21.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE9321057FF
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Oct 2022 21:16:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j8RxTMwg6ljmBxOq7vWACeFIAbLFRC5ySQiapqiAd91+PC62o4Q5oXYqihVATxqoBI1dMZLSJevDscnaf8hI6OakBU9Q96M1LIzyTjb1Zh4Qs7R7oceZQc3GbpMO6r1aIktJuPGnBmzNegHytlL6bU0xQEiwBB3/LpE3MpeYyHf4AI4MkS4H1D3kv2g4BQoGSvI5rI3NTCaFkcWJo9ezYSGqyilzJpssAvJaw/gLTZjbV2WVXPgbN2+T8FHoMKeKZZyJzJcBN2hxiLjXVtKmzS0fbdPkxpxO/w6+zw4Nqfu0hYMRPeBLzyPC43Ysx3mUm5m7r5vjG+vj6kjwEqCh7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fVuXvlcr90gtXZntjTsIKicUJAVTcsP9yM3mDJZc1ws=;
- b=LUfxZrvmZH3XOAFnFMBNdOPIVQmtVL1iM4n7maTqPz6EUfshM6hYL/wiW563CxhJiVgmMARecMrJf6fZFkXXG3c3dWwBatOcpiayDjwI3AexX/cEJyGON7o9iBJkXd+RCmT15FW8nSK4nDjJG5uGUBDMZAd5v2sPl72urqPZoZGR26/IZsmOJj310k/gsqmjezxN4SSj1dYQa7DzKPMH5PeihtFTVyTQaYT662W7HdcEV/+acBbj9SkZuGnjrKiiQu2mnLCONYh++4Q1WUbuvczuXiW3yX6qRO4TzLFp/+FxdVqRj+bsjiOi7SrBUsCb4c7Mdxdq0I+STSvhtq6J3g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fVuXvlcr90gtXZntjTsIKicUJAVTcsP9yM3mDJZc1ws=;
- b=oC5finvwPPzA1c7uaXZtGHD8lrwv4winCv6aoTxHvHd7NiRBgkimCuy+JJYHJyySj9LoBnfZAAlCvFvTaa2+iYrncw0cj/e4GyphrWik90fXzfHmyU5DtSUeOy5g1A9HENkJp/Ilb5W+t+Cb1r36puFJTxFA8jI9Uk7EBPUPSEY=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PAXPR04MB8460.eurprd04.prod.outlook.com (2603:10a6:102:1db::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.32; Fri, 21 Oct
- 2022 04:16:16 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::a5ff:3d28:4bbc:e1ed]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::a5ff:3d28:4bbc:e1ed%6]) with mapi id 15.20.5723.032; Fri, 21 Oct 2022
- 04:16:16 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
-Subject: RE: [INFO] Remoteproc/RPMSG patchset review order for October 19th
- 2022
-Thread-Topic: [INFO] Remoteproc/RPMSG patchset review order for October 19th
- 2022
-Thread-Index: AQHY4+BjvTyoZ/8RPEqEzfezvXJ7Ja4Wp/cggADHIICAANBGgA==
-Date:   Fri, 21 Oct 2022 04:16:16 +0000
-Message-ID: <DU0PR04MB9417394A8135DF779668E5AC882D9@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <CANLsYkzjTnXxqqFxZp2ya7tRj0JWyifHHJvprTLysQWU-V1ksw@mail.gmail.com>
- <DU0PR04MB941792CF75BBE8A0C6E1D3D0882A9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <20221020154839.GA330801@p14s>
-In-Reply-To: <20221020154839.GA330801@p14s>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|PAXPR04MB8460:EE_
-x-ms-office365-filtering-correlation-id: d49672ce-005f-4695-dc3b-08dab31affcf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: yAgDu+Sm9/+eOKvM+1DTfMDY1U905LInLkK8Wxv8cQTjLZ+gywbMOJd08RqkOI+n+NeZAJ9u2wMJHDQpGNaXwhLoorCrZvrFfWBeLEC79LEZQT6KpxQmQwrF5WEmswijwIgVvfMpz12Edi0XD8vZTv0OEMIwLTGNufy+VPY7aDjrjxlsiUlzy7wmOe1MEiSfA7Cf+TQBnptjXBfcLRewiZSSyUdkE3Ke4yrgT6nLQncKnMvYNd7eZdZaNuhU+LAm2lytc0+xp2fmYEgP32sOaPO+BapMqq20BAXV6RAry8AH8FvF6yAbUxogu9sicyo632wcRdzcLt8DwONUh+wKXFI/PNdjkiMkb1h3ia0JAVvJXJ+1AHWw0vRvb7gCRB6JtRMTV2r1CfoBZT4peUqP+HLUIbuPAJWecMAF4Cjbevid3NeOyqwPfvtLSpw+F98SnAQBigxYI1iU/EBamDoTVqkcKSq605NZ9Ke4v7CZ+RlV8duppJMCtMJxR45pXwJJZJ8gCTfwhLJeTJ9ns4GE/2UBQDDdKWtnhxCE9JmfEK7IVn7pFwYqAEn6mAMoljYcjuSoQgrrzxhWKhFhp+9qrmdsR6eXqQmnHxPmIt6mGNaSkRt/Qei6j7qyyTrnpsKrRmVSHE0f1Xkozl1P291Zbg8mgybfBVec6UqbL4GRh9Uhuz+siAYKb8A1jrRU2Jdw9WExbF6NezUao4hVw7qYlA0+CHhuQmPGt68H6m0hGRE0cFMZBz8EzFt9Z9LayRKDgFow+wnJGhVlhcluWlSFfbuHk7S/m2qYks0N9D5n0cs=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(396003)(136003)(376002)(366004)(451199015)(86362001)(966005)(33656002)(122000001)(38070700005)(38100700002)(2906002)(83380400001)(5660300002)(55016003)(44832011)(7696005)(9686003)(186003)(66574015)(6506007)(26005)(316002)(52536014)(478600001)(45080400002)(76116006)(6916009)(71200400001)(64756008)(8936002)(8676002)(66946007)(41300700001)(66446008)(4326008)(66556008)(66476007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?49WqHrF+sdZFvSh8rf0rnfISjhXXF3KYKKBxrFILWHVKgGqMe4IyQXgcde2N?=
- =?us-ascii?Q?AzeotTtLW4mmsqaCnvUbdYFViXWi2TTst5ds8uhCWkc8cJjJuLjcwJf1yUiN?=
- =?us-ascii?Q?N77UP0x8qr8V/0sgcWbdIepA7dkR0OzUmqp3SAZiWyD23WnNL24gzj7dzole?=
- =?us-ascii?Q?MlKOVglB7IzxyeVBUEwrWjQkX34oqw0oDsaZ08tQysjPH1CJ9e0PuZQgTLVx?=
- =?us-ascii?Q?vB63DBxGDM1sFltp+2XLfEl2g5onQijU+CBa+dBLYZqqtSF4melFwtCJ9rtm?=
- =?us-ascii?Q?WPyy4M5sh9Z+R8CgPF+acd5cx3kp+t2iIehKeM7ZquacUekFzxCEpnRY43Qk?=
- =?us-ascii?Q?QjxTeWprUfQ2G+i0zR1J8X884Vm1PcT8/z1bRHKgFl3wP3pj/XpIrFbccm3d?=
- =?us-ascii?Q?wnDSW+wXuc3luKaNbWpB4Ak/Y5FDwF6Z9w7IlD9xsqxO8C4RpUPLYo+k4Ahl?=
- =?us-ascii?Q?aaCI21tup8OynMdXFVp4cHaHS5pwvoYJdGcOmk508YQeyH80nTQ+gkSw1Ocf?=
- =?us-ascii?Q?CAI3Cv4jBJDYsOtg/fjOa89Cn/ZkQoSw0gwZ0a0oFHf8yamuumClg7jPWTmM?=
- =?us-ascii?Q?bMj6Nkk3SXCn2lgvoZ3gQGkq0jWBvxpa/Z8X2qmDyGCwT6hwQJeojZlai9/B?=
- =?us-ascii?Q?v/UzWuzotZ3vsnrItfKTffMQ8vr121GF4Tmbl/XzZCNxNIYot8WC9oqjdKgi?=
- =?us-ascii?Q?jWVBfv/Uci3L+oIU2pU1OkmaS3ANwo2J0ru8zf/R/y8LuUGoXKoT7bWquWbI?=
- =?us-ascii?Q?OJ/3rrJlIMMXp+HtWiG1g/cTRoQp791haPj8rrcvrY/1MNMV7U9Ym/jLwXsL?=
- =?us-ascii?Q?CYZU2Tygnu+tMzKn06J/jXnQ8MEnihZod6Gdq3PSoj8IiuDL3VaLsRu2R3iX?=
- =?us-ascii?Q?kV8w69/2wT8aAib822PITvThctaM9gZt3ejIo+uYe4JAT5G69D+7O+N3kD+V?=
- =?us-ascii?Q?GYVjpMJVfGL2m46AY5dbMCxrg1egC3/ZEfJ/TwvvirRLOJhQkojr7GNtcX61?=
- =?us-ascii?Q?iaJi8Euz5WbN26jK7rW5nI9SgC03ie1j3J1pj15bvNMxXfMTPgjPD8044cTL?=
- =?us-ascii?Q?BpvLoC8Z+/w8qB6p9k/gILCF48RryLCdIZAdut87sxcRpaT4eIoT9yKr4/z4?=
- =?us-ascii?Q?WPyMjeCC7V6yxTB1/2JtgyfPC64qZZYkrO4FUfKvLpU48otu8UiTCaQ3miZq?=
- =?us-ascii?Q?lDR9gEaB6DOMa8WAuvMXOFLx26OEdd/T5TtNhBexlIgR1JubjtCrExdNn7dt?=
- =?us-ascii?Q?G07G4dj4iSg/UBqX0eCcfhFdcvma8i/p1P/4PGJkupcayBWpnR4suhzT63Z/?=
- =?us-ascii?Q?kjdEeHNqUA4h6MFY4Oe+6m8FiinT8WvGXBWPV/I3zBnbwUvvIEoXPXlylkam?=
- =?us-ascii?Q?PFNc1QgwXV+6eCk9voydnGdXkwSOK2sdY7ydaIjcsDzb2ghH/kU/Fasq8310?=
- =?us-ascii?Q?JCG6ITXm1teScKt/+dg0NkABfPhS0LJhf8nQvEhOQZOXqec2GKcjpYwB/7wH?=
- =?us-ascii?Q?9TYhrZf2xF1rJpD/Id+i/ZQwy3vg+XoAFPGHROKLR9x0nMp3UpPdN+5y+jZP?=
- =?us-ascii?Q?hCn+9HcJDJ3wEW/JwYM=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 21 Oct 2022 15:35:11 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD007AB0D
+        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Oct 2022 12:35:06 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id i9so2182076ilv.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Oct 2022 12:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ep8tCByFfUT/Tv/jGz8MVhMNgYEEnAHcpfl6q9bgIZA=;
+        b=PA0uXBeYg2xBYb490syGqLONmfChuiet5JBStCvpgW6ZCQfH18WDugcBgNE01slET4
+         2XYRENSoGcVK1snsnLZOs92zRLz1su6j9BfMLQfB9ps1gqKJSBtGuwFX0yWulUwLL67W
+         jn68uvFI0hnZYontatqIDy+nNcbcWqWZv0x+/S/edZK9bXEXmN/LpOfL1iYE21TRwWQ+
+         phCp1E1FUGniz5NrMHwQiCPo+5zcsv0UxQiW5QmvO+WzsKg50F+DGFqMZ1+ArO7tHehI
+         bqYer/T+rpJgSwQWwJjeOsAw8cn8QWz931haFSQXYb0WbpExAP4DmEbJcAwDXySNKt6r
+         6yvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ep8tCByFfUT/Tv/jGz8MVhMNgYEEnAHcpfl6q9bgIZA=;
+        b=Q+pElsFybViIQPS2eOy9fWv6ODdmTSasJECdDRD96wLYJiiSkELWWQGzH8HIdbq1qr
+         46H5+FWZh+QAFiSwJHOCv8sdKLR1ARodZqAq35iIwiPNKubK6WoH/aW6AXaycguu23CF
+         n7+jHsvT4Hu+Oka3N2tUV3jk8Iw9904Ue9qEIH1hoYPAWwVvDyeivXM6M4ZRNeAF03On
+         AvUUYC2fRyAz+3bRkgD2EE8ZwAPaFj+OBAV/tKfE/NCnbIbNIe+3tVinrhFyRdRRN7hw
+         cL9IWsmw/vR81PTlcZ73YVoSwomLbyS+4j6USlK/pe3Zdbu2ktymVYaVCFC5KPQBVqRL
+         JSJg==
+X-Gm-Message-State: ACrzQf233w+ccmB6nsbuQNDBmMNNfBZ9yj610hzWYXZDdgBNcUZseSD8
+        h1+O5VQI2TuT3Q35AoNsjO0Uf6uKVBBdLjK45ut8hQ==
+X-Google-Smtp-Source: AMsMyM7vQBW0f5ImtIKiiwTQqhNzMj7P4Hpvoujud9vD2xFA5kKWxBDQkvmb8bQ8jHt8zHuhNTeDPnzASWbfcFPdxPo=
+X-Received: by 2002:a05:6e02:1aaa:b0:2fa:542c:7538 with SMTP id
+ l10-20020a056e021aaa00b002fa542c7538mr15170376ilv.260.1666380905474; Fri, 21
+ Oct 2022 12:35:05 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d49672ce-005f-4695-dc3b-08dab31affcf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2022 04:16:16.8211
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lMsEZJmnvXP3DCFDtCHlACVqHz49/hT+j+HA32u/BxIk2nahcKRjY5C8KD+76eW9SmIWgKBK7qAcoBtEgp5cXQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8460
+References: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
+ <1663312351-28476-1-git-send-email-quic_aiquny@quicinc.com>
+ <20221012204344.GA1178915@p14s> <792f05fc-995e-9a87-ab7d-bee03f15bc79@quicinc.com>
+ <20221013173442.GA1279972@p14s> <20221013180334.GB1279972@p14s> <8807a9a6-d93d-aef5-15f4-88648a6ecbe2@quicinc.com>
+In-Reply-To: <8807a9a6-d93d-aef5-15f4-88648a6ecbe2@quicinc.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 21 Oct 2022 13:34:54 -0600
+Message-ID: <CANLsYkx8Vcha9FpfRvJEkq2pd+mSYFeZQBXj65YoiSBv+WEY4A@mail.gmail.com>
+Subject: Re: [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
+To:     "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_clew@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: Re: [INFO] Remoteproc/RPMSG patchset review order for October
-> 19th 2022
->=20
-> On Thu, Oct 20, 2022 at 03:59:33AM +0000, Peng Fan wrote:
-> > Hi Mathieu,
+On Wed, 19 Oct 2022 at 23:52, Aiqun(Maria) Yu <quic_aiquny@quicinc.com> wrote:
+>
+> On 10/14/2022 2:03 AM, Mathieu Poirier wrote:
+> > On Thu, Oct 13, 2022 at 11:34:42AM -0600, Mathieu Poirier wrote:
+> >> On Thu, Oct 13, 2022 at 09:40:09AM +0800, Aiqun(Maria) Yu wrote:
+> >>> Hi Mathieu,
+> >>>
+> >>> On 10/13/2022 4:43 AM, Mathieu Poirier wrote:
+> >>>> Please add what has changed from one version to another, either in a cover
+> >>>> letter or after the "Signed-off-by".  There are many examples on how to do that
+> >>>> on the mailing list.
+> >>>>
+> >>> Thx for the information, will take a note and benefit for next time.
+> >>>
+> >>>> On Fri, Sep 16, 2022 at 03:12:31PM +0800, Maria Yu wrote:
+> >>>>> RPROC_OFFLINE state indicate there is no recovery process
+> >>>>> is in progress and no chance to do the pm_relax.
+> >>>>> Because when recovering from crash, rproc->lock is held and
+> >>>>> state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+> >>>>> and then unlock rproc->lock.
+> >>>>
+> >>>> You are correct - because the lock is held rproc->state should be set to RPROC_RUNNING
+> >>>> when rproc_trigger_recovery() returns.  If that is not the case then something
+> >>>> went wrong.
+> >>>>
+> >>>> Function rproc_stop() sets rproc->state to RPROC_OFFLINE just before returning,
+> >>>> so we know the remote processor was stopped.  Therefore if rproc->state is set
+> >>>> to RPROC_OFFLINE something went wrong in either request_firmware() or
+> >>>> rproc_start().  Either way the remote processor is offline and the system probably
+> >>>> in an unknown/unstable.  As such I don't see how calling pm_relax() can help
+> >>>> things along.
+> >>>>
+> >>> PROC_OFFLINE is possible that rproc_shutdown is triggered and successfully
+> >>> finished.
+> >>> Even if it is multi crash rproc_crash_handler_work contention issue, and
+> >>> last rproc_trigger_recovery bailed out with only
+> >>> rproc->state==RPROC_OFFLINE, it is still worth to do pm_relax in pair.
+> >>> Since the subsystem may still can be recovered with customer's next trigger
+> >>> of rproc_start, and we can make each error out path clean with pm resources.
+> >>>
+> >>>> I suggest spending time understanding what leads to the failure when recovering
+> >>>> from a crash and address that problem(s).
+> >>>>
+> >>> In current case, the customer's information is that the issue happened when
+> >>> rproc_shutdown is triggered at similar time. So not an issue from error out
+> >>> of rproc_trigger_recovery.
+> >>
+> >> That is a very important element to consider and should have been mentioned from
+> >> the beginning.  What I see happening is the following:
+> >>
+> >> rproc_report_crash()
+> >>          pm_stay_awake()
+> >>          queue_work() // current thread is suspended
+> >>
+> >> rproc_shutdown()
+> >>          rproc_stop()
+> >>                  rproc->state = RPROC_OFFLINE;
+> >>
+> >> rproc_crash_handler_work()
+> >>          if (rproc->state == RPROC_OFFLINE)
+> >>                  return // pm_relax() is not called
+> >>
+> >> The right way to fix this is to add a pm_relax() in rproc_shutdown() and
+> >> rproc_detach(), along with a very descriptive comment as to why it is needed.
 > >
-> > > Subject: [INFO] Remoteproc/RPMSG patchset review order for October
-> > > 19th
-> > > 2022
+> > Thinking about this further there are more ramifications to consider.  Please
+> > confirm the above scenario is what you are facing.  I will advise on how to move
+> > forward if that is the case.
 > >
-> > I not see i.MX8QM/QXP in your queue.
->=20
-> I am done reviewing this revision.
->=20
-> > Do you need me send V8 for the i.MX8QM/QXP support with only
-> > addressing the comment in patch 2/7?
-> >
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Flore
-> > .kernel.org%2Fall%2F20221014031037.1070424-1-
-> peng.fan%40oss.nxp.com%2F
-> >
-> &amp;data=3D05%7C01%7Cpeng.fan%40nxp.com%7Cfc2c61b6c6f8486a0aaa0
-> 8dab2b29
-> >
-> 1a6%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6380187772620
-> 34593%7C
-> >
-> Unknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJB
-> TiI6Ik1h
-> >
-> aWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=3DLHwFW7HeGZ68i
-> 8qRJ8cKGFgA8
-> > WzUXPXMbSRSrsTo9o0%3D&amp;reserved=3D0
-> > Or I wait your comments on patch 6/7 and 7/7, then send V8?
-> >
->=20
-> I have clearly indicated the improvement I want so see in 6/7.
+> Not sure if the situation is clear or not. So resend the email again.
+>
+> The above senario is what customer is facing. crash hanppened while at
+> the same time shutdown is triggered.
 
-Just send out V8 which addresses Krzysztof's comment to patch 2/7 and=20
-adds comments in imx_rproc_xtr_mbox_init per your comment to patch 6/7.
+Unfortunately this is not enough details to address a problem as
+complex as this one.
 
-Thanks,
-Peng.
+> And the device cannto goes to suspend state after that.
+> the subsystem can still be start normally after this.
 
->=20
-> > Thanks,
-> > Peng.
-> > >
-> > > [PATCH v5 0/3] Add support for WASP SoC on AVM router boards
-> [PATCH
-> > > v3 00/11] Add support for MT8195 SCP 2nd core [PATCH v10 0/6] Add
-> > > Xilinx RPU subsystem support [PATCH v6 0/6] Introduce PRU remoteproc
-> > > consumer API [PATCH V3 0/3] rpmsg signaling/flowcontrol patches
+If the code flow I pasted above reflects the problem at hand, the
+current patch will not be sufficient to address the issue.  If Arnaud
+confirms my suspicions we will have to think about a better solution.
+
+>
+> >>
+> >>
+> >>>> Thanks,
+> >>>> Mathieu
+> >>>>
+> >>>>
+> >>>>> When the state is in RPROC_OFFLINE it means separate request
+> >>>>> of rproc_stop was done and no need to hold the wakeup source
+> >>>>> in crash handler to recover any more.
+> >>>>>
+> >>>>> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> >>>>> ---
+> >>>>>    drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
+> >>>>>    1 file changed, 11 insertions(+)
+> >>>>>
+> >>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> >>>>> index e5279ed9a8d7..6bc7b8b7d01e 100644
+> >>>>> --- a/drivers/remoteproc/remoteproc_core.c
+> >>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+> >>>>> @@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct work_struct *work)
+> >>>>>           if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+> >>>>>                   /* handle only the first crash detected */
+> >>>>>                   mutex_unlock(&rproc->lock);
+> >>>>> +         /*
+> >>>>> +          * RPROC_OFFLINE state indicate there is no recovery process
+> >>>>> +          * is in progress and no chance to have pm_relax in place.
+> >>>>> +          * Because when recovering from crash, rproc->lock is held and
+> >>>>> +          * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+> >>>>> +          * and then unlock rproc->lock.
+> >>>>> +          * RPROC_OFFLINE is only an intermediate state in recovery
+> >>>>> +          * process.
+> >>>>> +          */
+> >>>>> +         if (rproc->state == RPROC_OFFLINE)
+> >>>>> +                 pm_relax(rproc->dev.parent);
+> >>>>>                   return;
+> >>>>>           }
+> >>>>> --
+> >>>>> 2.7.4
+> >>>>>
+> >>>
+> >>>
+> >>> --
+> >>> Thx and BRs,
+> >>> Aiqun(Maria) Yu
+>
+>
+> --
+> Thx and BRs,
+> Aiqun(Maria) Yu
