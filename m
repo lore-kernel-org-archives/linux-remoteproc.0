@@ -2,159 +2,202 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75944ECAAA1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Oct 2022 18:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96470C67871
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Oct 2022 19:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231670AbiJXSWq (ORCPT
+        id S233260AbiJXTdX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 24 Oct 2022 14:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60036 "EHLO
+        Mon, 24 Oct 2022 15:33:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229971AbiJXSW3 (ORCPT
+        with ESMTP id S233259AbiJXTdF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 24 Oct 2022 14:22:29 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC522930B6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Oct 2022 10:03:19 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id b11so2447562pjp.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Oct 2022 10:03:19 -0700 (PDT)
+        Mon, 24 Oct 2022 15:33:05 -0400
+Received: from mail-vs1-xe30.google.com (mail-vs1-xe30.google.com [IPv6:2607:f8b0:4864:20::e30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C2ADFC27
+        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Oct 2022 11:03:33 -0700 (PDT)
+Received: by mail-vs1-xe30.google.com with SMTP id h4so8642994vsr.11
+        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Oct 2022 11:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HWp3TIeKZpGy6GkN3z1WruHhMlmRnuA03h7wokHamTc=;
-        b=ifD1VgrDLxCc8E7hOmtSPZILVWOKunssDgoKSoiRy1CHAZmOqOzu/uMCK6+tn+GMWY
-         nL6pb9yq7qaupMctBou9mUZx4bwcoTj0K/Z6L3AHmMEsc4FSCq1JRbgc6n7Y2gUDJiyY
-         rBfPEjIvx1SIN1qhSfY+94swzZiVmETFhdhdNolzI36SLsLbI90vIaFDbBRd3IVngJMh
-         i/BKM/IM7VdlYy9voCghRHXu+74Zj3bBoaCI4jCixbobobyZ06soVmwUIkwbTtSg4VDH
-         8tJ5/6fU66laIDsiGcPgv71tnRc/9M+Gx3MXYU8TJlYedmr16AUYA8wFjsLsOPALwDEh
-         prnA==
+        bh=Pja81Rhvf+nc30IgGNzM8/t/SC1TJPZW1TXOrzNAkS8=;
+        b=qTJiWOwtCxymrtgegTu8qvv9CQdcqJAnAFOAwO7MQXk/GJaub7uJ/Eo9q0C48PrnUu
+         MP1ShQyQApNeVovj42GXJkeeh9mmItsIVuPzDTI+LHQ5WRp6ygqy9areYbnXiLM3SGSt
+         p+M6IUYlNMaExbgkJQuay/n9YOqKV6WFhB3LE/DHQMMT5CAPrrqNeqhnUkJmrcDPrtZ1
+         TeRE6P2w9J2z7wd55BWM/8Awft62HD7Bx3ERnWveVIDnFrXRrgCHS4PFrFhe4cgCVXTZ
+         yQLdVet5mUrGLpG3cE6+4IwzzqcS+CYMaAbTIp4yUFB5oGmS1Kyb+/7sWyhx1VvAWJQy
+         fySQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HWp3TIeKZpGy6GkN3z1WruHhMlmRnuA03h7wokHamTc=;
-        b=LjMOEsgleX1pQXLibYL44f6nRfWeVNRxu9Dg9zz9doaJLcS4ZVXLLk3g3f7n8Uyo+a
-         PULQZxqYkrywycm+/XNAVuzQB+wWE39pcuJ2o5v7ARlIqOV0tO57Ciel+O92scyd7SHr
-         4MK12qREGT2VZ3Yg+4S6c7J6BP6Iil+FMzlkTqauDbqt5BfU6OBAW7zFAMAVztH2oFtu
-         mdb8gd2MVmgX7G8Eetue5svnpTzXsPwGbRvQ4i+RlBmTa7pidrTEfZE+rzrBo2x9JexG
-         p4zSifGyCf52AHO1gMabnfnbEmBFUwgn/ZsnrMVlM5DPbpw0Hi67N9seQrAjqCxVYHGZ
-         fBlg==
-X-Gm-Message-State: ACrzQf0QbBHpaVCx1HP0JnPtxB9jNE7JDs0vmsgEMdpj1dh3CMH7TYSH
-        09KAqHi0dCXxZ2IsQhY/atCpiBit0/+HhQ==
-X-Google-Smtp-Source: AMsMyM6PhPvK8EnzR1KXAMrq3tghFd4cT03OkXdxwzHQfXVqm16kPsN6qMQluFFrLYjD9A49RHG1Ew==
-X-Received: by 2002:a17:902:d903:b0:186:601a:a6fa with SMTP id c3-20020a170902d90300b00186601aa6famr25427302plz.102.1666628820837;
-        Mon, 24 Oct 2022 09:27:00 -0700 (PDT)
+        bh=Pja81Rhvf+nc30IgGNzM8/t/SC1TJPZW1TXOrzNAkS8=;
+        b=RnQ1h6xzNpod0pVoJWUIeBtqDib8FJC5iajUy1oW3EuYGcMy3JFChr7fjqNbjcxj3m
+         6Jhf8XxHllWTDD/HpORAb4PlzsWyZ+C4G09/jBAiMonSEM09AKPR5jNFwc7SXiHAjFnJ
+         oCE9OIkP8I9lMyItdiXPhp9CREJzcS1Hl4VL4HVWuQejHpwCBqey0kxvz3TwhFQiJ6xb
+         KxP3woXUC+nCWVlVChce28fy+Kv0op5O5JFJhkTFQnY9+Ae6RmNQtM98/G3GhntIDiMe
+         e4Rur09IFoHxD+0jFhrMBuXpCc99xlEd8aRueDfV1wS8lA6Mjcr95fwTvv3rOJHu+wao
+         tgEA==
+X-Gm-Message-State: ACrzQf3EG6quWUJPd8NtxQOibLB3tGifw6ExIKhH7N31CV9s0w3prVsR
+        Ii5oiDm45kTcs1jsmRL+7UogFVs6cM3d6A==
+X-Google-Smtp-Source: AMsMyM7eLs7/zR87TlE5CHm/Vgtm5DIknIDhVY1qdoVER2IP3IgEtQwxxU6jlkqJcxhX1/uU6N02qQ==
+X-Received: by 2002:a17:902:bf46:b0:179:eba5:90ba with SMTP id u6-20020a170902bf4600b00179eba590bamr34424895pls.16.1666629540969;
+        Mon, 24 Oct 2022 09:39:00 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id l8-20020a17090add8800b00210125b789dsm95720pjv.54.2022.10.24.09.26.59
+        by smtp.gmail.com with ESMTPSA id g5-20020a170902e38500b0017ca9f4d22fsm6103522ple.209.2022.10.24.09.38.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Oct 2022 09:27:00 -0700 (PDT)
-Date:   Mon, 24 Oct 2022 10:26:58 -0600
+        Mon, 24 Oct 2022 09:38:59 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 10:38:58 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        shengjiu.wang@gmail.com
-Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: Add mutex protection for
- workqueue
-Message-ID: <20221024162658.GA626419@p14s>
-References: <1664524216-19949-1-git-send-email-shengjiu.wang@nxp.com>
+To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] Add support for WASP SoC on AVM router boards
+Message-ID: <20221024163858.GB626419@p14s>
+References: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1664524216-19949-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 03:50:16PM +0800, Shengjiu Wang wrote:
-> The workqueue may execute late even after remoteproc is stopped or
-> stopping, some resources (rpmsg device and endpoint) have been
-> released in rproc_stop_subdevices(), then rproc_vq_interrupt()
-> accessing these resources will cause kennel dump.
-> 
-> Call trace:
->  virtqueue_add_split+0x1ac/0x560
->  virtqueue_add_inbuf+0x4c/0x60
->  rpmsg_recv_done+0x15c/0x294
->  vring_interrupt+0x6c/0xa4
->  rproc_vq_interrupt+0x30/0x50
->  imx_dsp_rproc_vq_work+0x24/0x40 [imx_dsp_rproc]
->  process_one_work+0x1d0/0x354
->  worker_thread+0x13c/0x470
->  kthread+0x154/0x160
->  ret_from_fork+0x10/0x20
-> 
-> Add mutex protection in imx_dsp_rproc_vq_work(), if the state is
-> not running, then just skip calling rproc_vq_interrupt().
-> 
-> Also the flush workqueue operation can't be added in rproc stop
-> for the same reason. The call sequence is
-> 
-> rproc_shutdown
-> -> rproc_stop
->    ->rproc_stop_subdevices
->    ->rproc->ops->stop()
->      ->imx_dsp_rproc_stop
->        ->flush_work
->          -> rproc_vq_interrupt
-> 
-> The resource needed by rproc_vq_interrupt has been released in
-> rproc_stop_subdevices, so flush_work is not safe to be called in
-> imx_dsp_rproc_stop.
-> 
-> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> changes in v2:
-> - update commit message
-> 
->  drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+Hi Daniel,
 
-Applied.
+I have started to review this patchset.  I expect the process to take several
+days and will clearly let you know when I am done.
 
 Thanks,
 Mathieu
 
+On Thu, Aug 04, 2022 at 11:08:03PM +0200, Daniel Kestrel wrote:
+> There is a popular set of Lantiq xrx200 router boards by AVM in
+> Germany (AVM Fritzbox 3390, 3490, 5490, 5491 and 7490) which
+> have the strange implementation of having the wifi cards
+> connected to a separate memory only ATH79 based SoC. It has no
+> persistent storage and no access to any resource on the Lantiq
+> host, but is connect to the Lantiq GSWIP switch on an additional
+> fixed internal network port.
+> This kernel module is to support booting the secondary SoC called
+> Wireless Assistant Support Processor (WASP).
+> After turning it on, a small network boot firmware is sent to
+> the SoC by using mdio and when it is started, an initramfs
+> linux image is sent to the SoC using raw ethernet frames.
 > 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 899aa8dd12f0..95da1cbefacf 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -347,9 +347,6 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	int ret = 0;
->  
-> -	/* Make sure work is finished */
-> -	flush_work(&priv->rproc_work);
-> -
->  	if (rproc->state == RPROC_CRASHED) {
->  		priv->flags &= ~REMOTE_IS_READY;
->  		return 0;
-> @@ -432,9 +429,18 @@ static void imx_dsp_rproc_vq_work(struct work_struct *work)
->  {
->  	struct imx_dsp_rproc *priv = container_of(work, struct imx_dsp_rproc,
->  						  rproc_work);
-> +	struct rproc *rproc = priv->rproc;
-> +
-> +	mutex_lock(&rproc->lock);
-> +
-> +	if (rproc->state != RPROC_RUNNING)
-> +		goto unlock_mutex;
->  
->  	rproc_vq_interrupt(priv->rproc, 0);
->  	rproc_vq_interrupt(priv->rproc, 1);
-> +
-> +unlock_mutex:
-> +	mutex_unlock(&rproc->lock);
->  }
->  
->  /**
+> The whole procedure takes about 6 seconds, if there is no error.
+> So far tested on 3490, 5490 and 7490 devices based on OpenWrt, 3390
+> takes about 20 seconds.
+> 
+> Patch 1/3 adds the vendor name
+> Patch 2/3 adds the dt-bindings
+> Patch 3/3 adds the remoteproc driver
+> 
+> To build and run, there is OpenWrt PR 5075.
+> 
+> Please review.
+> 
+> Changes in v5:
+>   - Replace names for properties and descriptions as requested in the
+>     device tree documentation and change the driver to accept them
+>   - Change example in the device tree documentation
+>   - Restructure constants and defines in the beginning of the driver
+>     source for better readability
+>   - Combine m_start_addr and m_exec_addr into a single constant and
+>     change avm_wasp_netboot_write_header to use only this one constant
+>   - Change variable startup_gpio to power_gpio in driver
+> 
+> Changes in v4:
+>   - Fix compiler warnings with W=2 option
+> 
+> Changes in v3:
+>   - Replace generic avm,fritzboxx490-wasp with actual device names for
+>     device tree documentation and change the driver to accept them
+>   - Add maxItems to device tree documentation
+>   - Change example in the device tree documentation
+>   - Fix wait time to make the Wasp upload work for 3390 more reliable
+>   - Enable the SOC on driver load, use reset instead of disable/enable
+>     while driver is loaded and disable on unloading the driver
+>   - Change some messages printed to adhere to standards (e.g. remove !)
+> 
+> Changes in v2:
+>   - Remove firmware names from dt-binding and add as kmod parameters
+>   - Rename other bindings with vender prefix and fix gpios suffix
+>   - Change descriptions in dt-binding
+>   - Replace/Remove asynch load of firmware with request_firmware_direct
+>   - Fix comments to use the errno define instead of the number
+>   - Implement wait loops with read_poll_timeout() macro
+>   - Wrap read_poll_timeout() macro in function saving 6k module size
+>   - Return -ETIMEDOUT for all errors returned by read_poll_timeout
+>   - Replace mdio writes/reads with mdiobus_write and mdiobus_read and add
+>     return codes and their handling
+>   - Remove mutex for mdiobus_lock and add return code checking for mdio ops
+>   - Replaced the mdio register array with directly specifying registers
+>   - As a result of the previous 3 changes remove the functions for mdio
+>   - Consolidate error messages for mdio writes into a single one saved 1k
+>     for module size
+>   - Replaced mdelay with usleep_range saved 0,7k module size
+>   - Remove unneeded include <linux/interrupt.h> and <linux/error.h>
+>   - Wrap all blocks with {} and fix some indentation errors
+>   - Change const len in to size_t in avm_wasp_netboot_write_chunk
+>   - Make all methods static to fix kernel bot warning
+>   - Change read variable name in avm_wasp_load_initramfs_image
+>   - Change ssize_t variables to size_t in avm_wasp_load_initramfs_image
+>   - avm_wasp_netboot_write_chunk change for loop for 2 byte divisibility
+>   - Change uint32_t to u32
+>   - Change int count = -1 to u32 with U32_MAX initialisation
+>   - Add check for firmware len divisable by 4
+>   - Replace big endian bit shift operations with be32_to_cpu
+>   - Change loop to write 14 byte firmware chuncks like suggested
+>   - Change WASP_CHUNK_SIZE to ARRAY_SIZE(mac_data) for readability
+>   - Change int done to boolean
+>   - Change unsigned ints to u32
+>   - Change int to size_t for send_len
+>   - Use int for numbytes because kernel_recvmsg returns error or number
+>   - Two sockets are not needed, so reduce to one socket usage
+>   - Remove struct timeval definition, replace with __kernel_old_timeval
+>   - __kernel_old_timeval is depracated, but arch mips is 32bit platform
+>   - Replace &avmwasp->pdev->dev with local dev
+>   - Check if wasp network interface is up and fail if not in start method
+>   - Remove setsockopt for SO_REUSEADDR and SO_BINDTODEVICE
+>   - Remove packet_counter
+>   - Move firmware and firmware_end out of RESP_DISCOVER to make sure that
+>     they are initialized if RESP_DISCOVER is not happening first
+>   - indend break;
+>   - Move second half of the send/receive paket while loop to RESP_OK and
+>     let RESP_DISCOVER fall through
+>   - Remove bringing up the wasp network interface
+>   - Check if wasp network interface is up in probe and defer if not
+>   - Remove the check for the root device and replace it with match data
+>     for WASP device identification
+>   - Move of_read and find of mdio bus to rproc_start but delete reference
+>     after using it in the rproc_start method
+>   - Replace dev_set_drvdata with platform_set_drvdata
+>   - Remove avm_wasp_rproc_boot_addr because its not needed and move
+>     setting the fw struct pointer to avm_wasp_rproc_load
+>   - Move avm_wasp.h definitions to kernel module
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> Daniel Kestrel (3):
+>   dt-bindings: vendor-prefixes: Add AVM
+>   dt-bindings: remoteproc: Add AVM WASP
+>   remoteproc: Add AVM WASP driver
+> 
+>  .../bindings/remoteproc/avm,wasp-rproc.yaml   |   61 +
+>  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+>  drivers/remoteproc/Kconfig                    |   10 +
+>  drivers/remoteproc/Makefile                   |    1 +
+>  drivers/remoteproc/avm_wasp.c                 | 1051 +++++++++++++++++
+>  5 files changed, 1125 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/avm,wasp-rproc.yaml
+>  create mode 100644 drivers/remoteproc/avm_wasp.c
+> 
 > -- 
-> 2.34.1
+> 2.17.1
 > 
