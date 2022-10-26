@@ -2,56 +2,56 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07507FA373E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Oct 2022 17:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37718C38A2D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Oct 2022 17:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230366AbiJYR7Y (ORCPT
+        id S234262AbiJZRzK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 Oct 2022 13:59:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47050 "EHLO
+        Wed, 26 Oct 2022 13:55:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbiJYR7X (ORCPT
+        with ESMTP id S234263AbiJZRzG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 Oct 2022 13:59:23 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7489E127411
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Oct 2022 10:59:21 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id q9-20020a17090a178900b00212fe7c6bbeso6787110pja.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Oct 2022 10:59:21 -0700 (PDT)
+        Wed, 26 Oct 2022 13:55:06 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D7C18B1F
+        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Oct 2022 10:55:00 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id u8-20020a17090a5e4800b002106dcdd4a0so3402087pji.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Oct 2022 10:55:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=jVAHovytPXTKCOMAWFCmh7iHh7eDsol/n5qDAVoHuAQ=;
-        b=HM0+2mM1AS0KbEoa3E6LCgj3cuj8Z+fqeT8loX/NsGMRv5pQqJdrElAxguDcoPKks+
-         9Tcoe68WIaSYVY8NIPT4g85IlW4PttFNnWYUdICo2jeH+xmza64MMZ5/oBDYdV6n8yjT
-         YSxAmwafSrjPfukr1XgfOcVfMV8NGnAS4BWp1YHAFDMnk7tozRavfwOiiR3XQMRL0Sga
-         /AhheHVXcLMPpUdTeJFfemMmHF/h/1X4eoiKPjmdjme0z2aEgeIInQOmpmQRcb2vZgt5
-         TNzMzatV5kd+QF5ZWpCJVMOiwfYY5jjw38RKW3gPkjd+jOXX/7+ENIDr8EkTwQegEhTd
-         03cg==
+        bh=plC5l3eW8NLTPswr03UrFtb1fJfJcQ4i9k2SpOtUr38=;
+        b=zZDxS9pn1W2QmACkqj07UdwIqFEDd9O44rzzvX8f8K4K5DPgO0tEsbVMoPmj4IK22N
+         k5h1pMqNmbGO1upupBC1JeUTVRjg62u7x/sXdLSyetEvKXTHZ5lct5OCTSfgs+UWu0A+
+         xCk/RKHcgP7JbU9coSSyd3WRthiuJWp7X4upphMQ89plnzVDyK+iw55YeJhJZON+o3+k
+         96P1E4yPL/U9qYCwXEXGu6sO0hz96J53SDHcQoMd+Z0jGM74OjKVgeA0DvSUt9Hk8dS5
+         usLKUTCE7N3NxCtkA1QUTsVrmDL9qq37flVeTIQysugGy9pN9crHwmhs65B7x1mZVpOi
+         bW0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVAHovytPXTKCOMAWFCmh7iHh7eDsol/n5qDAVoHuAQ=;
-        b=s4cB5OhkE6H9eGKF2l1dlkt3hML9fSjrlbClRTlpRJSU8kjO18ck69XW2qNwaTwKnU
-         4Y6sm8+vMAZGaCmKK86bNn+0KYr2MAJms7JABv6/4HHiGMN6OAFRqV14a8Df3xWzL5b5
-         KVPuqnCiquVT6eKBWOG8b4KA3CN/tBP9q4U9LaScq2fpPm1iBIavnAFA682Gmb9C8jM5
-         Xv4I22wdka6WfadZML24/CdaZlJIkrn22/3+jrnd8yN+7N6zZnbR34HaE9cW3/UixeeX
-         CxNKGgJ+OhUKPHFauS/0UcrbqsZ3tHHzOXyhgLpoSPVNuyB/jeOX7HK70OAWN1geZ8Kj
-         BmQw==
-X-Gm-Message-State: ACrzQf0/SdleWMzOBn8mcIuTR47fW6BE/G3QhYX9xSZoXIRb3wa69NYY
-        ASSoXGcnQ8yG59Z7TV3I7dU6j4MhWX/vPA==
-X-Google-Smtp-Source: AMsMyM4HNa42+5cieX/wRt61S4x///a7yQZD0JLAbwxmRtQUz4S/w8Vq96qHcaLVZkGNHl2B2hRPxA==
-X-Received: by 2002:a17:902:ccc2:b0:178:29e1:899e with SMTP id z2-20020a170902ccc200b0017829e1899emr39449324ple.114.1666720760733;
-        Tue, 25 Oct 2022 10:59:20 -0700 (PDT)
+        bh=plC5l3eW8NLTPswr03UrFtb1fJfJcQ4i9k2SpOtUr38=;
+        b=KKnF0876D1vekmBbslEyfMvopLUUKhvydQ1hk2qaMpB/QpMVMPFxv+cVmbKJkmbIi7
+         +zqGBKWEuI4WXTInPMyIQ8yO/lMFJ0Su68BXIfe02N+bkXpCy+fieYJ1s2WE2Z78U5sq
+         TD+to1QMOx2rhYEQIS4NgbNDGS/LG420Lpf+lH1DMrGYJK9F98YkXkUMHBp/JBZYNX6g
+         Oe6vDLrigZCg3pPfpyCyDL0r9Ht3IX61hEeEIwoiWmxgJbkmdl1My3VCj/20R+XOS0Iz
+         v06KEtMvJ3WWASw6kzeF+Q8H3mLi7UAxYBMs8Fw2EIVNhrET1sT8dAbTgQmTPFOv1ijG
+         UfhA==
+X-Gm-Message-State: ACrzQf0d2AIP0uQZNgqlZWtJiYxC2sUk8v+RQnhf1ndEOJjbFJny1uH4
+        EGf5S5UvTOeNv2uSETCKGJJrDtkq1/rX0Q==
+X-Google-Smtp-Source: AMsMyM6wjepfziEwpGXc/1nNckLqcF/KGnNqfopH/DxsG/4h0K520rOA/6LwfnH2dfCx/Z/YuA8fGg==
+X-Received: by 2002:a17:902:860a:b0:186:7eab:afa2 with SMTP id f10-20020a170902860a00b001867eabafa2mr27931705plo.46.1666806900081;
+        Wed, 26 Oct 2022 10:55:00 -0700 (PDT)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id q8-20020aa78428000000b005385e2e86eesm1716980pfn.18.2022.10.25.10.59.18
+        by smtp.gmail.com with ESMTPSA id c81-20020a621c54000000b0056abff42a8bsm3278491pfc.69.2022.10.26.10.54.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Oct 2022 10:59:19 -0700 (PDT)
-Date:   Tue, 25 Oct 2022 11:59:17 -0600
+        Wed, 26 Oct 2022 10:54:59 -0700 (PDT)
+Date:   Wed, 26 Oct 2022 11:54:57 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -59,7 +59,7 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v5 3/3] remoteproc: Add AVM WASP driver
-Message-ID: <20221025175917.GC626419@p14s>
+Message-ID: <20221026175457.GA1171927@p14s>
 References: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
  <20220804210806.4053-4-kestrelseventyfour@gmail.com>
 MIME-Version: 1.0
@@ -70,8 +70,6 @@ In-Reply-To: <20220804210806.4053-4-kestrelseventyfour@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
-
-Hi Daniel,
 
 On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > Some AVM Fritzbox router boards (3390, 3490, 5490, 5491, 7490),
@@ -342,12 +340,19 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > + */
 > +static int avm_wasp_netboot_write_header(struct avm_wasp_rproc *avmwasp,
 > +					 const u32 start_exec_addr,
+
+Do you see @start_exec_addr changing?  If so it should probably be taken from the
+device tree.  Otherwise I see little value in it being a function parameter.
+
 > +					 const u32 len)
 > +{
 > +	struct device *dev = &avmwasp->pdev->dev;
 > +	int ret;
 > +
 > +	ret = avm_wasp_netboot_mdio_write_u32_split(avmwasp, 0x2,
+
+Please use #defines rather than hard code values.
+
 > +						    start_exec_addr);
 > +	if (ret < 0)
 > +		goto err;
@@ -410,6 +415,11 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +		ret = mdiobus_write(avmwasp->mdio_bus, WASP_ADDR, 0x0,
 > +				    WASP_CMD_SET_CHECKSUM_X490);
 > +	}
+
+Seems like writing the checksum to the remote processor follows a different
+protocol based on the model.  Some comments, along with using #defines rather
+than hard coded values, would be useful.
+
 > +	if (ret < 0)
 > +		goto err;
 > +
@@ -531,6 +541,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +	p_firmware_end = p_firmware + avmwasp->fw_blob->size;
 > +
 > +	if ((avmwasp->fw_blob->size & WASP_CHECK_LEN_DIVBY4_MASK) ||
+
+Some comments as to what is happening here would be appreciated.
+
 > +	    avmwasp->fw_blob->size > U16_MAX) {
 > +		dev_err(dev, "error network boot firmware size\n");
 > +		return -EFAULT;
@@ -588,6 +601,11 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +	else if (m_model == MODEL_X490)
 > +		ret = mdiobus_write(mdio_bus, WASP_ADDR, 0x0,
 > +				    WASP_CMD_SET_CHECKSUM_X490);
+
+Are you sure this is WASP_CMD_SET_CHECKSUM_X490 and not
+WASP_CMD_START_FIRMWARE_X490?  It also raises the question as to why it is done
+twice in a row.
+
 > +	if (ret < 0) {
 > +		dev_err(dev, "writing command failed\n");
 > +		return ret;
@@ -642,6 +660,10 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +				cont = regval2;
 > +			else
 > +				cont--;
+
+What is this dance with @regval and @regval2 for X490?  The overall absence of
+documentation in this driver makes reviewing it quite difficult.
+
 > +		}
 > +
 > +		ret = avm_wasp_read_poll_timeout(avmwasp,
@@ -735,6 +757,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +
 > +	timeout.tv_sec = 10;
 > +	timeout.tv_usec = 0;
+
+10 seconds!  Why so much?
+
 > +	ret = sock_setsockopt(wasp_socket, SOL_SOCKET, SO_RCVTIMEO_OLD,
 > +			      KERNEL_SOCKPTR(&timeout), sizeof(timeout));
 > +	if (ret < 0) {
@@ -757,6 +782,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +	rcu_read_unlock();
 > +
 > +	if (IS_ERR_OR_NULL(send_netdev)) {
+
+Same comment as in my previous post.
+
 > +		dev_err(dev, "error accessing net device\n");
 > +		ret = -ENODEV;
 > +		goto err_socket;
@@ -819,6 +847,12 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +		memcpy(wasp_mac, packet->eh.h_source, sizeof(wasp_mac));
 > +
 > +		if (packet->hdr.packet_start == ETH_WASP_PACKET_ID) {
+
+		if (packet->hdr.packet_start != ETH_WASP_PACKET_ID) {
+                        continue;
+
+That way you can push back everything that follows.
+
 > +			switch (packet->hdr.response) {
 > +			case RESP_DISCOVER:
 > +				chunk_counter = 1;
@@ -844,19 +878,31 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +
 > +					if ((p_firmware_end - p_firmware) >=
 > +					     ETH_DATA_SIZE)
+
+Just put the above all on the same line.
+
 > +						bytestosend = ETH_DATA_SIZE;
 > +					else
 > +						bytestosend = p_firmware_end -
 > +									p_firmware;
+
+Same
+
 > +					memcpy(&packet->payload[data_offset],
 > +					       p_firmware, bytestosend);
 > +					p_firmware = p_firmware + ETH_DATA_SIZE;
 > +
 > +					packet->hdr.packet_start =
 > +							ETH_WASP_PACKET_ID;
+
+Same
+
 > +					if (chunk_counter == num_chunks) {
 > +						packet->hdr.response =
 > +							CMD_START_FIRMWARE;
+
+same
+
 > +						memcpy(&packet->payload
 > +						       [data_offset + bytestosend],
 > +						       &m_load_addr,
@@ -865,9 +911,15 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +					} else {
 > +						packet->hdr.command =
 > +							CMD_FIRMWARE_DATA;
+
+Same
+
 > +					}
 > +					packet->hdr.counter =
 > +							(chunk_counter - 1) * 4;
+
+Same
+
 > +
 > +					send_len = sizeof(struct ethhdr)
 > +						+ sizeof(packet->hdr) + bytestosend +
@@ -884,6 +936,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +						dev_err(dev,
 > +							"error sending to WASP %d\n",
 > +							ret);
+
+Same
+
 > +						goto err_socket;
 > +					}
 > +
@@ -893,6 +948,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +			case RESP_ERROR:
 > +				dev_err(dev,
 > +					"received an WASP error packet\n");
+
+Same
+
 > +				ret = -EFAULT;
 > +				goto err_socket;
 > +			case RESP_STARTING:
@@ -905,6 +963,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +				continue;
 > +				break;
 > +			}
+
+Overall the above is extremely hard to read.
+
 > +		}
 > +	}
 > +
@@ -1024,6 +1085,15 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +	struct avm_wasp_rproc *avmwasp = rproc->priv;
 > +
 > +	avmwasp->linux_blob = fw;
+
+Please add a comment to the effect that ->linux_blob is not valid outside of
+avm_wasp_rproc_start().
+
+I am done reviewing this set.
+
+Thanks for the patience,
+Mathieu
+
 > +
 > +	return 0;
 > +}
@@ -1044,17 +1114,9 @@ On Thu, Aug 04, 2022 at 11:08:06PM +0200, Daniel Kestrel wrote:
 > +	short interface_flags;
 > +	const u32 *match_data;
 > +	u32 pval;
-
-I normally don't fuss to much about those thing but since it is a new file might
-as well enact a clean reverse xmass tree.  Here and throughout the file.
-
 > +
 > +	match_data = of_device_get_match_data(dev);
 > +	if (IS_ERR_OR_NULL(match_data)) {
-
-Can @match_data can really carry an error message?  As far as I can see
-of_device_get_match_data() return either NULL or valid data.
-
 > +		dev_err_probe(dev, PTR_ERR(match_data),
 > +			      "model specific data is not defined\n");
 > +		ret = -ENODEV;
@@ -1080,9 +1142,6 @@ of_device_get_match_data() return either NULL or valid data.
 > +	if (ret)
 > +		dev_err(dev, "could not load ath9k firmware\n");
 > +	release_firmware(avmwasp->fw_blob);
-
-This is puzzling... Whey request a firmware image only to free it right after?
-
 > +
 > +	if (m_model == MODEL_X490) {
 > +		ret = request_firmware((const struct firmware **)
@@ -1091,9 +1150,6 @@ This is puzzling... Whey request a firmware image only to free it right after?
 > +			dev_err(dev, "could not load ath10k caldata\n");
 > +		release_firmware(avmwasp->fw_blob);
 > +	}
-
-Same here.
-
 > +
 > +	ret = of_property_read_u32(dev->of_node, "link-interface",
 > +				   &pval);
@@ -1101,10 +1157,6 @@ Same here.
 > +		dev_err(dev, "no wasp-port given\n");
 > +		goto err;
 > +	} else {
-
-There is no need for an @else statement here since the code branches to @err in
-case of error.
-
 > +		struct device_node *child = of_find_node_by_phandle(pval);
 > +
 > +		if (!child) {
@@ -1125,21 +1177,11 @@ case of error.
 > +
 > +	rcu_read_lock();
 > +	netdev = dev_get_by_name_rcu(&init_net, avmwasp->loader_port);
-
-Please add the proper header file for all functions that you are using.
-
 > +	if (netdev)
 > +		interface_flags = (short)dev_get_flags(netdev);
-
-Any reason for @interface_flags to be a short instead of an unsigned int?
-
 > +	rcu_read_unlock();
 > +
 > +	if (IS_ERR_OR_NULL(netdev)) {
-
-The documentation for dev_err_probe() indicate NULL is returned in case of
-error.  And that is already checked above so no need to do so twice.
-
 > +		dev_err_probe(dev, PTR_ERR(netdev),
 > +			      "error accessing net device\n");
 > +		ret = -ENODEV;
@@ -1177,15 +1219,6 @@ error.  And that is already checked above so no need to do so twice.
 > +
 > +	gpiod_set_value(avmwasp->power_gpio, 1);
 > +	usleep_range(WASP_WAIT_SLEEP_US_LOW, WASP_WAIT_SLEEP_US);
-
-Why is this needed?  Any kind of delay such as this is sure to raise eyebrows
-and as such requires a comment to justify it.
-
-More comments to come tomorrow.
-
-Thanks,
-Mathieu
-
 > +
 > +err:
 > +	return ret;
