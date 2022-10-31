@@ -2,238 +2,374 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41A4ECAAA1
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 30 Oct 2022 17:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFBAFA373D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Oct 2022 01:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbiJ3R6a (ORCPT
+        id S229544AbiJaBIo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 30 Oct 2022 13:58:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45450 "EHLO
+        Sun, 30 Oct 2022 21:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiJ3R62 (ORCPT
+        with ESMTP id S229935AbiJaBI3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 30 Oct 2022 13:58:28 -0400
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66C84B4AD;
-        Sun, 30 Oct 2022 10:58:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oO//KnHPkHJZvqir5mURJq+wyOmQVhONcvoSaDyLRPwN3Z5k/675ERh4G+QYaXaay84bBrIykx4+zlTe3GTinocZ3AMM2VjhkLBtm0/SZQHuZiRDhxsENEtANIH7zer/aSIKj3QO2DiyPnxkF8B6cbYlV/g5YW+uMJ2/luzA+sPOCS5/UcUstMkPKlLYmpADzIkT0e13v6Vb2XDRXqrehoEPzNMebjU6wLRjfCw2AG/Y+/wyFX+6B7Q/iS27l0StF/M5aziJPAp5UPs2u7NvZZWbBeyYI9iXDYmWmJaZGWg9bVIUluoZ+7F4SPj9byTfPS37YJV0jcecqIh5z9Sdfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ymrdIUvifsC9KJtz12JKJio7OGAuPA89S+QssFEu820=;
- b=MKGDTRYvybCp1GNvL/2UHPZJdgPSXL50rmwerdyq5fEusMz8XUQIw3I3xLca8syMS2DacAoQ1ySszmFs12Ca19grMk+EJ1J3nuwaA9RSdou0y6GKFzsAEkSqIO0nOyhXBqyOSNC/Lp9aKi67mCdpO9En3HHsRINciFPHvOx/nEtAGX68HKyBem5osrNC3Y4EohQ2DYeXML2QcvZfDJdlbexrOgoF4/n4gKbBEiuD6T2sQ/gUgVDjzQjwK0Rws3louh9kmz9RdHZRq70tcS/RxJJ8ZddnOJtwYCtZReZ7TN4EVf2+g9bfz94Y7VKHti/aE3YqgeVekQTXVz8G7pAVOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ymrdIUvifsC9KJtz12JKJio7OGAuPA89S+QssFEu820=;
- b=zTzJCYmSPcFKkfiKpd5rI/RyeNGdgWpkp9H6xyS0Ov9m4+edERYeSVK04DlSougFH/v3bRJVkz23Z5WaUOUnKqNCTYZyP0yZAHF5RG/sHOp8RwyW2RRmfE9B1zx/f9yJEvKbrJppVrqH7bt+Ehq5wOGP8S7Bjrz40GNohYM30m8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
- by DS7PR12MB5792.namprd12.prod.outlook.com (2603:10b6:8:77::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.15; Sun, 30 Oct
- 2022 17:58:24 +0000
-Received: from BY5PR12MB3683.namprd12.prod.outlook.com
- ([fe80::9886:d3ca:f03:18c6]) by BY5PR12MB3683.namprd12.prod.outlook.com
- ([fe80::9886:d3ca:f03:18c6%3]) with mapi id 15.20.5769.018; Sun, 30 Oct 2022
- 17:58:24 +0000
-Message-ID: <0a9e9a6a-71f6-0cff-b7c5-9270273d7747@amd.com>
-Date:   Sun, 30 Oct 2022 10:58:22 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.0
-Subject: Re: [PATCH v5 3/3] remoteproc: Add AVM WASP driver
-To:     Daniel Kestrel <kestrelseventyfour@gmail.com>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220804210806.4053-1-kestrelseventyfour@gmail.com>
- <20220804210806.4053-4-kestrelseventyfour@gmail.com>
-Content-Language: en-US
-From:   Tanmay Shah <tanmays@amd.com>
-In-Reply-To: <20220804210806.4053-4-kestrelseventyfour@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR02CA0043.namprd02.prod.outlook.com
- (2603:10b6:a03:54::20) To BY5PR12MB3683.namprd12.prod.outlook.com
- (2603:10b6:a03:1a5::16)
+        Sun, 30 Oct 2022 21:08:29 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F54EB1F7;
+        Sun, 30 Oct 2022 18:08:16 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 29V18B9o026082;
+        Mon, 31 Oct 2022 01:08:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=PeolC2rJSqgZiAemHRlpKxTblhT+Z2NpAf92p9HILVQ=;
+ b=mNjjOgGKlCdti2JU4Na/d2WM4DGBr7fZy3sD/e54tyccYQzVsh+h6B7HoNXFHeyABP+P
+ P8RLOimTQ2FWzazMJbtg4T728r05gYw36Ojbfs4uS0Fb5XN5cQ67Txzo29YWuYeDEbbr
+ sbraYwqkCj6PTZR/7iDyRp06RQ51jDdXqV0e5H1mDeN7uXzUhaPYAQs/b2PARspCWotx
+ CN6chFsUDhWd2dLTSTPJG7YTnygkQ5muTibN5IPEmJ2YW6igRAzb00k45X3v7hS6CpFu
+ njZdtcxwja8MLFC7Ea02YPpFmuXeqtIIvTWX0as7XNQ8195B5KzUgcrPd1hYrP9aHFi9 Kg== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3khcsc1dp0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Oct 2022 01:08:11 +0000
+Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 29V18AfD030789
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Oct 2022 01:08:10 GMT
+Received: from [10.239.133.73] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Sun, 30 Oct
+ 2022 18:08:08 -0700
+Message-ID: <84dcd7d5-c017-ce35-2db5-0ec0c4ace2ce@quicinc.com>
+Date:   Mon, 31 Oct 2022 09:08:05 +0800
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|DS7PR12MB5792:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7e56311-63d8-436f-a225-08dabaa0569c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +v1poFTZQh3MQnUowS0LSUyLA+BEBXpJEtDD/+QoZTLPRDk8dlDPMv/F1JCJBYCoUfkrPKZYlNrMHlb+Js95cQ1wyx+4vKEIFy5ewhf/s1ZV6c5Y+x8fdk73MWCwnIvZUBbdq+A7H8pOo6kHD7Q2YYrwQGosHQz8xtV8RMg4YTN3bRTjIOCka3bLIMZEqun4yWWSdzZgaC4VOPVU4/5caYlJ8igsyDkE74j4fFERpFajwyRZFQdQchL6zmk34oKXoJoHYDYpIn0R0tMvm1d7Y1ugIzPBR8ghsGGG3CaXB33Nz481yCWltwryLfpt/KiURIrqubm/JKyp10c9xdkDa9uRCG+IFr4X3L6ZW9mjX2mVXqeUZWdqN7bcwo9uC4wKR5iuAtmdDs6i65JmqT0gxNf7F2A/GuURLGpk2s1t+aGJX5xBk2dufbF6gN5Pv/Ke4MmP4/Vc5ppSwGqEVSqoDw5QEzEixVOixtu46dKTlk0P0UHOesTngJ6lcGZ+XX8tTYCXplMgOE4vc+xM0KMH5svdLi6ZGjrJQ0LhVR/x2DX2era4LL0mbIjEJxrVcyHxDp7cTF91FnzcTMNSqAaluLUzrV7WrPgywQZIXS/IGbq8yRKWEsXdoYC+9IFT7bbtlpfQYFPY63WdBJdc/VIAQI97WMU4KTFfKbm+Cfi07y6ZwehkscCkjyuwq+5QpaUyQ5VTznr4EbfhduDKW3SAieQgQefOfBThr24mqQ8zpCk6yhQKtA6ippA5OgjEDDfNYQyyJlqYvKyHMUHVDOHsEaSIEXAW9k6Fng3uYlmwdS4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(366004)(136003)(376002)(39860400002)(346002)(396003)(451199015)(83380400001)(4326008)(66476007)(66556008)(66946007)(186003)(8676002)(2616005)(316002)(41300700001)(66574015)(2906002)(6512007)(6486002)(38100700002)(8936002)(478600001)(6916009)(54906003)(36756003)(6506007)(31686004)(53546011)(5660300002)(31696002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cUg4VCs1TkpFU1I4bDYrbU9yOTl4Skx4Wmo3ZGlUR0ZGbHNONVc4cjdhaUtj?=
- =?utf-8?B?UVYvV3JFVVpOdWRiTFo2NWcvb0k1WGw0SUZQMk5GRHlsNDE1a0xhc2VWSHlN?=
- =?utf-8?B?NjhaRkEyUmtVL2p0b0hZV3hqeENuNmw1eVZ4aGZvRHpnb2M1anl1L0ZleTU2?=
- =?utf-8?B?cVJoNlNPZ2xFRldiNFViNCtJTzAxZlJYMEFJaytXbm04Rmd2WWsrMmxXNGRo?=
- =?utf-8?B?RU9kcE4vdDVlV2hDYm8vVVBSaG56OGxocWZUQkJ4QVpSQktGaUZhY3pPNy94?=
- =?utf-8?B?U3Rvdm5ZR1VWS3lSOS8wdVNHYmhpUUVsbkIvOG9YS1kyVUxlSC9qZjdLbmtk?=
- =?utf-8?B?ckRhUWFFdmNGaFJnZ1NpOUkzMmFUL2ZYTElxc1J1bS9paDdsRmpIZm05T1Zs?=
- =?utf-8?B?cDFSMlYreXFXTWtjdlhzVGZna20wSDVoLytQZ2VqbURla2x3dm16QkFWSklZ?=
- =?utf-8?B?eHN6YjV2bmRLeXNrQWk5dklLT2EwL2ljajlsN3ZEamJwc3YyMFl1YVpUOUJ6?=
- =?utf-8?B?Y0gydGR0bS9ncm0yVUJ1RS9MSkxvQmdMaXpwU040bFBVWll4VkFoY2preGVS?=
- =?utf-8?B?NDQ0b04xSW1rQkdrVUZKVXJWNURJVmREcWxONVhJbGVRNmRHVzFHSnJVK09X?=
- =?utf-8?B?aWxSeFc0ZE5SRVVZZ1lZdDE2MUtWbU1xenZiTHVUdEMvQ242SndCUW1rNi92?=
- =?utf-8?B?YUszcXJLSHB6SDMvdWpzTFMzaldab2FYSmtzeGRlY1lzWDh4a01iTzBSRFJm?=
- =?utf-8?B?RGpjMk5XbjU4OHhuYTZJK0F5MUptNndSWlpTVjRwVG1MeFNySTBIOUtmSDhw?=
- =?utf-8?B?YUNUc1FxSlhBenFjc3ZhU295M2tpc014anY0ak1KZ05CenFDQmhrazd6eUVt?=
- =?utf-8?B?RzQrZS9tcVpmWnRqMk1zbGlJbFVTS1Y3VmtKTy85dWg0QkJ2MDFWK1I0Ly9T?=
- =?utf-8?B?NVhNMFB2dU14OUlqUzZ1M3h6V2hTVDZUVGw4ZU5KRjNYRGJ1RzlnVk14c1Vs?=
- =?utf-8?B?M2tJVDVBVXhLemF6SmNzaVBOeDZxRzd0UklSVisyQ3IxYUxLWEd6MW5iQ3Jt?=
- =?utf-8?B?R091TDdYTFpMaE1YeHZEeW1sTGNUWXp5eFVaUy9XV2Z2a1ZmWU1pSW5oRzFK?=
- =?utf-8?B?eEd4QUI0SVVHSVN5b3VpYVNjL2tyV2FTNmJ1S2J6dEp4RFB1ZUk3YVUxcUR4?=
- =?utf-8?B?MmVpUTE2a1B6L1BTUi9xYzM3bVg3ZjBLcnZiUS9iOHpsK0JETkhCRnVLMGpT?=
- =?utf-8?B?TGc5SEVrM3dFaWtWeXcyWGNRaUVYVVBJa1k3bmM3aWp0endISE5GNGF1Znp0?=
- =?utf-8?B?dGZyMVZVUi9yOXJ6RjFoUmNsVk1GbFA1S2hhWTJKanpzeWg4Y3ZhcVlpSVJa?=
- =?utf-8?B?T05ZejUvd3MySlZrdUJweWRST1dSTHplZjJFd2RlWUdncXFaaGtPRldJbkZt?=
- =?utf-8?B?c0dUeFNBNS9ESHVFdEVUUnhxbWxYYUcvNGVGdTh3NkYraWFkcG55TDFnbW1k?=
- =?utf-8?B?RXArSFZ3ZFBlUitqNlloVWtRSEZML2FkSHNXdXNtV20xY1dObmFWQTBXcE43?=
- =?utf-8?B?UWd5djBhd3AvUUlVUWVUUmdkWENUTU9lNXEvTGdJTWNLNGhyMCtpMlRPUnRx?=
- =?utf-8?B?ZzNNMnlHOGM1SEZFWUUyRzlLMUJWQ0ZYQlJzZ21ncjdmRytUV1RPU2E0VmJu?=
- =?utf-8?B?TkEySHVYeHZQWEdHZk5pV004T3UvbHU2ZzBBNXQrcnlsZU16ZkhzcURsTlB0?=
- =?utf-8?B?UTE1eklybzEyNC9sMG5Ncm81UmRRUTR5TFdRbmJXOTFJWHlDeHJ2ZHhWRW0v?=
- =?utf-8?B?MUdrclRXMVZVdWN3VC9pODVEa3FVWW00Z1J5TFVKQzVXbHNMMEw1aWEyZ3dw?=
- =?utf-8?B?QWRVdW9pWHJ2bWFYNTZ5SXNZUXRmN2pLMUcxWjNWRGhUbFZ5dEE4cE9zRkNo?=
- =?utf-8?B?ZE1KcFhSZHBFUE1LZ3hEUDN2NU1iOEV3Ulp3MmtCRlk2Nk95b0VTU0dqWk8v?=
- =?utf-8?B?ZDAxSWtQelErSkhHU0JmOGprU25ybUY4dmladEM5cEdJdVZKc0FmNXpvdC9F?=
- =?utf-8?B?RUR6NEdQVzltQlV0Q2FSSis3MC9xM2NkTHRsOWdURVdCVGVmbG54OTB0aTR2?=
- =?utf-8?B?akVybEY2RVYzbjBzdUlxMTRxMmpZWGg5empEM2FsSXpwSEpZSDBwYlJhcHB6?=
- =?utf-8?Q?/xKsIssrc/H5u6/nfT89AUFSmBvkQapbPDaz5xRGdjmw?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7e56311-63d8-436f-a225-08dabaa0569c
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2022 17:58:23.8235
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: emFr023nUi2QEw9ap0biZtWBnEC/m0dV91KumGx5BGFw8/HLQT0oAHam7JPkkMxo
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5792
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_clew@quicinc.com>
+References: <128dc161-8949-1146-bf8b-310aa33c06a8@quicinc.com>
+ <1663312351-28476-1-git-send-email-quic_aiquny@quicinc.com>
+ <20221012204344.GA1178915@p14s>
+ <792f05fc-995e-9a87-ab7d-bee03f15bc79@quicinc.com>
+ <20221013173442.GA1279972@p14s> <20221013180334.GB1279972@p14s>
+ <8807a9a6-d93d-aef5-15f4-88648a6ecbe2@quicinc.com>
+ <CANLsYkx8Vcha9FpfRvJEkq2pd+mSYFeZQBXj65YoiSBv+WEY4A@mail.gmail.com>
+ <70828854-8427-8ce1-1535-e14261fd122d@quicinc.com>
+ <420faf00-d59e-57c6-55a5-fae08a411517@foss.st.com>
+From:   "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+In-Reply-To: <420faf00-d59e-57c6-55a5-fae08a411517@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Ei9v3v2Xi_gG9kcnOImcZjTKmi4dR0Qw
+X-Proofpoint-ORIG-GUID: Ei9v3v2Xi_gG9kcnOImcZjTKmi4dR0Qw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-30_16,2022-10-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 clxscore=1015 spamscore=0 phishscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2210310005
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello,
+Hi,
 
-Thanks for your patch. Please find my comments below.
+Thx for the detailed comments, here is my updated comments in below as well:
 
-On 8/4/22 2:08 PM, Daniel Kestrel wrote:
-> CAUTION: This message has originated from an External Source. Please use proper judgment and caution when opening attachments, clicking links, or responding to this email.
->
->
-> Some AVM Fritzbox router boards (3390, 3490, 5490, 5491, 7490),
-> that are Lantiq XRX200 based, have a memory only ATH79 based
-> WASP (Wireless Assistant Support Processor) SoC that has wifi
-> cards connected to it. It does not share anything with the
-> Lantiq host and has no persistent storage. It has an mdio based
-> connection for bringing up a small network boot firmware and is
-> connected to the Lantiq GSWIP switch via gigabit ethernet. This
-> is used to load an initramfs linux image to it, after the
-> network boot firmware was started.
->
-> In order to initialize this remote processor we need to:
-> - power on the SoC using power gpio
-> - reset the SoC using the reset gpio
-> - send the network boot firmware using mdio
-> - send the linux image using raw ethernet frames
->
-> This driver allows to start and stop the WASP SoC.
->
-> Signed-off-by: Daniel Kestrel <kestrelseventyfour@gmail.com>
-> Tested-by: Timo Dorfner <timo.capa@gmail.com> # tested on Fritzbox 7490
-> ---
->   drivers/remoteproc/Kconfig    |   10 +
->   drivers/remoteproc/Makefile   |    1 +
->   drivers/remoteproc/avm_wasp.c | 1051 +++++++++++++++++++++++++++++++++
->   3 files changed, 1062 insertions(+)
->   create mode 100644 drivers/remoteproc/avm_wasp.c
->
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 166019786653..a761186c5171 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -23,6 +23,16 @@ config REMOTEPROC_CDEV
->
->            It's safe to say N if you don't want to use this interface.
->
-> +config AVM_WASP_REMOTEPROC
-> +       tristate "AVM WASP remoteproc support"
-> +       depends on NET_DSA_LANTIQ_GSWIP
-> +       help
-> +         Say y here to support booting the secondary SoC ATH79 target
-> +         called Wireless Assistant Support Processor (WASP) that some
-> +         AVM Fritzbox devices (3390, 3490, 5490, 5491, 7490) have built in.
-> +
-> +         It's safe to say N here.
-> +
->   config IMX_REMOTEPROC
->          tristate "i.MX remoteproc support"
->          depends on ARCH_MXC
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 5478c7cb9e07..0ae175c6722f 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -11,6 +11,7 @@ remoteproc-y                          += remoteproc_sysfs.o
->   remoteproc-y                           += remoteproc_virtio.o
->   remoteproc-y                           += remoteproc_elf_loader.o
->   obj-$(CONFIG_REMOTEPROC_CDEV)          += remoteproc_cdev.o
-> +obj-$(CONFIG_AVM_WASP_REMOTEPROC)      += avm_wasp.o
->   obj-$(CONFIG_IMX_REMOTEPROC)           += imx_rproc.o
->   obj-$(CONFIG_IMX_DSP_REMOTEPROC)       += imx_dsp_rproc.o
->   obj-$(CONFIG_INGENIC_VPU_RPROC)                += ingenic_rproc.o
-> diff --git a/drivers/remoteproc/avm_wasp.c b/drivers/remoteproc/avm_wasp.c
-> new file mode 100644
-> index 000000000000..6eda4db5cf4d
-> --- /dev/null
-> +++ b/drivers/remoteproc/avm_wasp.c
-> @@ -0,0 +1,1051 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * AVM WASP Remote Processor driver
-> + *
-> + * Copyright (c) 2019-2020 Andreas Böhler
-> + * Copyright (c) 2021-2022 Daniel Kestrel
-> + *
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_mdio.h>
-> +#include <linux/of_gpio.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/timekeeping.h>
-> +#include <net/sock.h>
-> +#include <asm-generic/gpio.h>
-> +
-> +#include "remoteproc_internal.h"
-> [...]
-> +
-> +module_platform_driver(avm_wasp_rproc_driver);
-> +
-> +MODULE_LICENSE("GPL v2");
+For the contention of export function of rproc_detach and crash 
+interrupt handler is never take condition and well handlered in current 
+driver.
 
-Recently I ran into issue where checkpatch.pl script complained about 
-keeping MODULE_LICENSE("GPL v2").
+If this condition wanted to be take into consideration, what about we 
+have an extra change to support rproc_detach and crash contention senarios?
 
-In such case, It is completely fine to keep MODULE_LICENSE("GPL") and 
-SPDX-License-Identifier: GPL-2.0-only
+other use cases should be already well handler per my understanding.
+Let me know if there is any mis-understanding.
 
 
-> +MODULE_DESCRIPTION("AVM WASP remote processor boot driver");
-> +MODULE_AUTHOR("Daniel Kestrel <kestrelseventyfour@gmail.com>");
-> --
-> 2.17.1
->
+On 10/28/2022 11:31 PM, Arnaud POULIQUEN wrote:
+> Hi,
+> 
+> On 10/24/22 05:17, Aiqun(Maria) Yu wrote:
+>> On 10/22/2022 3:34 AM, Mathieu Poirier wrote:
+>>> On Wed, 19 Oct 2022 at 23:52, Aiqun(Maria) Yu <quic_aiquny@quicinc.com> wrote:
+>>>>
+>>>> On 10/14/2022 2:03 AM, Mathieu Poirier wrote:
+>>>>> On Thu, Oct 13, 2022 at 11:34:42AM -0600, Mathieu Poirier wrote:
+>>>>>> On Thu, Oct 13, 2022 at 09:40:09AM +0800, Aiqun(Maria) Yu wrote:
+>>>>>>> Hi Mathieu,
+>>>>>>>
+>>>>>>> On 10/13/2022 4:43 AM, Mathieu Poirier wrote:
+>>>>>>>> Please add what has changed from one version to another, either in a cover
+>>>>>>>> letter or after the "Signed-off-by".  There are many examples on how to
+>>>>>>>> do that
+>>>>>>>> on the mailing list.
+>>>>>>>>
+>>>>>>> Thx for the information, will take a note and benefit for next time.
+>>>>>>>
+>>>>>>>> On Fri, Sep 16, 2022 at 03:12:31PM +0800, Maria Yu wrote:
+>>>>>>>>> RPROC_OFFLINE state indicate there is no recovery process
+>>>>>>>>> is in progress and no chance to do the pm_relax.
+>>>>>>>>> Because when recovering from crash, rproc->lock is held and
+>>>>>>>>> state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+>>>>>>>>> and then unlock rproc->lock.
+>>>>>>>>
+>>>>>>>> You are correct - because the lock is held rproc->state should be set to
+>>>>>>>> RPROC_RUNNING
+>>>>>>>> when rproc_trigger_recovery() returns.  If that is not the case then
+>>>>>>>> something
+>>>>>>>> went wrong.
+>>>>>>>>
+>>>>>>>> Function rproc_stop() sets rproc->state to RPROC_OFFLINE just before
+>>>>>>>> returning,
+>>>>>>>> so we know the remote processor was stopped.  Therefore if rproc->state
+>>>>>>>> is set
+>>>>>>>> to RPROC_OFFLINE something went wrong in either request_firmware() or
+>>>>>>>> rproc_start().  Either way the remote processor is offline and the system
+>>>>>>>> probably
+>>>>>>>> in an unknown/unstable.  As such I don't see how calling pm_relax() can help
+>>>>>>>> things along.
+>>>>>>>>
+>>>>>>> PROC_OFFLINE is possible that rproc_shutdown is triggered and successfully
+>>>>>>> finished.
+>>>>>>> Even if it is multi crash rproc_crash_handler_work contention issue, and
+>>>>>>> last rproc_trigger_recovery bailed out with only
+>>>>>>> rproc->state==RPROC_OFFLINE, it is still worth to do pm_relax in pair.
+>>>>>>> Since the subsystem may still can be recovered with customer's next trigger
+>>>>>>> of rproc_start, and we can make each error out path clean with pm resources.
+>>>>>>>
+>>>>>>>> I suggest spending time understanding what leads to the failure when
+>>>>>>>> recovering
+>>>>>>>> from a crash and address that problem(s).
+>>>>>>>>
+>>>>>>> In current case, the customer's information is that the issue happened when
+>>>>>>> rproc_shutdown is triggered at similar time. So not an issue from error out
+>>>>>>> of rproc_trigger_recovery.
+>>>>>>
+>>>>>> That is a very important element to consider and should have been mentioned
+>>>>>> from
+>>>>>> the beginning.  What I see happening is the following:
+>>>>>>
+>>>>>> rproc_report_crash()
+>>>>>>            pm_stay_awake()
+>>>>>>            queue_work() // current thread is suspended
+>>>>>>
+>>>>>> rproc_shutdown()
+>>>>>>            rproc_stop()
+>>>>>>                    rproc->state = RPROC_OFFLINE;
+>>>>>>
+>>>>>> rproc_crash_handler_work()
+>>>>>>            if (rproc->state == RPROC_OFFLINE)
+>>>>>>                    return // pm_relax() is not called
+>>>>>>
+>>>>>> The right way to fix this is to add a pm_relax() in rproc_shutdown() and
+>>>>>> rproc_detach(), along with a very descriptive comment as to why it is needed.
+>>>>>
+>>>>> Thinking about this further there are more ramifications to consider.  Please
+>>>>> confirm the above scenario is what you are facing.  I will advise on how to
+>>>>> move
+>>>>> forward if that is the case.
+>>>>>
+>>>> Not sure if the situation is clear or not. So resend the email again.
+>>>>
+>>>> The above senario is what customer is facing. crash hanppened while at
+>>>> the same time shutdown is triggered.
+>>>
+>>> Unfortunately this is not enough details to address a problem as
+>>> complex as this one.
+>>>
+>>>> And the device cannto goes to suspend state after that.
+>>>> the subsystem can still be start normally after this.
+>>>
+>>> If the code flow I pasted above reflects the problem at hand, the
+>>> current patch will not be sufficient to address the issue.  If Arnaud
+>>> confirms my suspicions we will have to think about a better solution.
+>>>
+>>
+>> Hi Mathiew,
+>>
+>> Could you pls have more details of any side effects other then power issue of
+>> the current senario?
+>> Why the current patch is not sufficient pls?
+>>
+>>
+>> Have the current senario in details with rproc->lock information in details:
+>>
+>> | subsystem crashed interrupt issued      | user trigger shutdown
+>> | rproc_report_crash()                    |
+>> |          pm_stay_awake()                |
+>> |          queue_work()                   |
+>> |                                         |rproc_shutdown
+>> |                                         |mutex_lock(&rproc->lock);
+>> |                                         |rproc_stop()
+>> |rproc_crash_handler_work()               |rproc->state = RPROC_OFFLINE;
+>> |                                         |mutex_unlock(&rproc->lock);
+>> |mutex_lock(&rproc->lock);                |
+>> |if (rproc->state == RPROC_OFFLINE)       |
+>> |return // pm_relax() is not called       |rproc_boot
+>> |mutex_unlock(&rproc->lock);              |
+>> |                                         |mutex_lock(&rproc->lock);
+>> |                                         |rproc_start()
+>> |                                         |mutex_unlock(&rproc->lock);
+>>
+>>
+> 
+> Agree with Mathieu, this is not so simple.
+> 
+> Here is my view  hoping I haven't missed a point in your discussion or
+> an other corner cases.
+> 
+> I tried to analyze the issues (in what follows, the term "condition" means
+> the "if" condition in which Aiqun proposes to add the fix) :
+> 
+> I can see 4 use cases with race condition
+> 
+> 1) crash report while already one is treated (rproc_boot_recovery called)
+>       => not a real use case as if the remote processor is crashed we
+> 	      should not have a second crash report
+>   	
+The second crash report can be avoid via the current rproc->state check 
+within the protection of rproc->lock.
+> 2) rproc_stop executed between the queuing of the crash work and the call of
+>    rproc_crash_handler_work
+>     => rproc->state = RPROC_OFFLINE
+>     => we enter in the "condition" and the pm_relax has to be called
+>     => This commit fix should solve this use case
+> 
+> 3) rproc_detach executed between the queue of the crash work and the call of
+>    rproc_crash_handler_work
+>     => rproc->state = RPROC_DETACHED;
+>     => we don't go in "the condition" and issue because the recovery reattach
+>        to the remote processor
+>     => but pm_relax is called
+>     => probably need an extra fix to avoid to re-attach
+> 
+The RPROC_DETACHED state is never considered with crash contention in 
+current driver.
+if the subsystem is in RPROC_DETACHED state while it still received a 
+crash intterupt, should it ignore the current crash interrupt or 
+continue to do a rproc_boot and continue to attach?
+
+> 4) crash report while already one is treated (rproc_attach_recovery called)
+>     this one corresponds to an auto reboot of the remote processor, with a
+>     new crash
+>     => rproc->state = RPROC_CRASHED or rproc->state = RPROC_DETACHED;
+>     4)a) rproc->state = RPROC_CRASHED if rproc->recovery_disabled = true
+> 	=> should call pm_relax if rproc->recovery_disabled = true
+> 	=> commit does not work for this use case
+> 
+In the recovery_disabled==true case rproc_crash_handler_work will call 
+pm_relax directly.
+The senario was well handled.
+>     4)b) rproc->state = RPROC_DETACHED if recovery fails
+>         => error case with an unstable state
+>         => how to differentiate it from the use case 3) ?
+>         => introduce a RPROC_RECOVERY_FAIL state?		
+> 
+For every recvery fails senario, function rproc_crash_handler_work will 
+call pm_relax always.
+The senario was well handled.
+> 
+> Then pm_stay_awake is called when the crash work is queued.
+> It seems to me coherent to call the pm_relax in the work handler.
+> 
+> 
+> 
+> Here is a quick and dirty patch (not tested) that should take into account the
+> main use cases ( except 1) and 4)b) )
+> 
+> @@ -2009,8 +2009,18 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>   
+>   	mutex_lock(&rproc->lock);
+>   
+> -	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+> +	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE ||
+> +	    rproc->state == RPROC_DETACHED) {
+>   		/* handle only the first crash detected */
+> +
+> +		/*
+> +		 * call pm-relax in following use cases:
+> +		 * - the remote processor has been stopped by the user
+> +		 * - the remote processor is detached
+> +		 + - the remote proc has an autonomous reset but recovery_disabled is true.
+> +		 */
+> +		if(rproc->state != RPROC_CRASHED || rproc->recovery_disabled)
+> +			pm_relax(rproc->dev.parent);
+>   		mutex_unlock(&rproc->lock);
+>   		return;
+>   	}
+> 
+> Regards,
+> Arnaud
+> 
+>>>>
+>>>>>>
+>>>>>>
+>>>>>>>> Thanks,
+>>>>>>>> Mathieu
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> When the state is in RPROC_OFFLINE it means separate request
+>>>>>>>>> of rproc_stop was done and no need to hold the wakeup source
+>>>>>>>>> in crash handler to recover any more.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+>>>>>>>>> ---
+>>>>>>>>>      drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
+>>>>>>>>>      1 file changed, 11 insertions(+)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c
+>>>>>>>>> b/drivers/remoteproc/remoteproc_core.c
+>>>>>>>>> index e5279ed9a8d7..6bc7b8b7d01e 100644
+>>>>>>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>>>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>>>>>>> @@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct
+>>>>>>>>> work_struct *work)
+>>>>>>>>>             if (rproc->state == RPROC_CRASHED || rproc->state ==
+>>>>>>>>> RPROC_OFFLINE) {
+>>>>>>>>>                     /* handle only the first crash detected */
+>>>>>>>>>                     mutex_unlock(&rproc->lock);
+>>>>>>>>> +         /*
+>>>>>>>>> +          * RPROC_OFFLINE state indicate there is no recovery process
+>>>>>>>>> +          * is in progress and no chance to have pm_relax in place.
+>>>>>>>>> +          * Because when recovering from crash, rproc->lock is held and
+>>>>>>>>> +          * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+>>>>>>>>> +          * and then unlock rproc->lock.
+>>>>>>>>> +          * RPROC_OFFLINE is only an intermediate state in recovery
+>>>>>>>>> +          * process.
+>>>>>>>>> +          */
+>>>>>>>>> +         if (rproc->state == RPROC_OFFLINE)
+>>>>>>>>> +                 pm_relax(rproc->dev.parent);
+>>>>>>>>>                     return;
+>>>>>>>>>             }
+>>>>>>>>> -- 
+>>>>>>>>> 2.7.4
+>>>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> -- 
+>>>>>>> Thx and BRs,
+>>>>>>> Aiqun(Maria) Yu
+>>>>
+>>>>
+>>>> -- 
+>>>> Thx and BRs,
+>>>> Aiqun(Maria) Yu
+>>
+>>
+
+
+-- 
+Thx and BRs,
+Aiqun(Maria) Yu
