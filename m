@@ -2,48 +2,48 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F82CFA3743
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Oct 2022 07:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9896AFA3740
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Oct 2022 07:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbiJaHiT (ORCPT
+        id S229691AbiJaHiZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 Oct 2022 03:38:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58672 "EHLO
+        Mon, 31 Oct 2022 03:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiJaHiT (ORCPT
+        with ESMTP id S229487AbiJaHiV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 Oct 2022 03:38:19 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2402964E5;
-        Mon, 31 Oct 2022 00:38:17 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29V7c5rg043993;
-        Mon, 31 Oct 2022 02:38:05 -0500
+        Mon, 31 Oct 2022 03:38:21 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9704224;
+        Mon, 31 Oct 2022 00:38:20 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 29V7cEAu028748;
+        Mon, 31 Oct 2022 02:38:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1667201885;
-        bh=FMmTCnBDroUBUksIOE1zPfMTpovug+7RGbewpZqQFeA=;
-        h=From:To:CC:Subject:Date;
-        b=LGAIIWU75K4p5xqOXZa6efctluOpWTQduaL/hZInM3p948fCVB/5lKHvC9fQ9zrbu
-         r60YCJRKXOxSjIkFpM2hzvmy/Kx3lK/VGmhbHQRi16YtZEwzBt2jtUPzqc/j2ivBBl
-         09WHpClvMkCr7aFNWzLztY6s9HkV5P5tOU+QEeJk=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29V7c5mL032197
+        s=ti-com-17Q1; t=1667201894;
+        bh=zosTV+337dxVZj5RGDxl0uQj3sayrhu56Dfv762qcZU=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=b45HS78KPFeIK5v0JLW7SgdPo0J1AVC81np1nT/xRrYiyV6jp8HnoPbvzLmACDryp
+         qR6P1fgBZ4Dtyvwq4hGfmgTctQip9RNle4Xhx2iCwoOozpxhPgoQ8wNmd2zu8jr5VH
+         377haweHYJDNWkdbMfveQPdYX7j4a2QydeujS64I=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 29V7cEPj000624
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 31 Oct 2022 02:38:05 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 31 Oct 2022 02:38:14 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Mon, 31
- Oct 2022 02:38:05 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2022 02:38:13 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
- Frontend Transport; Mon, 31 Oct 2022 02:38:05 -0500
+ Frontend Transport; Mon, 31 Oct 2022 02:38:13 -0500
 Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29V7c5EA053400;
-        Mon, 31 Oct 2022 02:38:05 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 29V7cDva016253;
+        Mon, 31 Oct 2022 02:38:13 -0500
 Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 29V7c347012782;
-        Mon, 31 Oct 2022 02:38:04 -0500
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 29V7cB5X012833;
+        Mon, 31 Oct 2022 02:38:12 -0500
 From:   MD Danish Anwar <danishanwar@ti.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -54,10 +54,12 @@ CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         MD Danish Anwar <danishanwar@ti.com>
-Subject: [PATCH v7 0/5] Introduce PRU remoteproc consumer API
-Date:   Mon, 31 Oct 2022 13:07:56 +0530
-Message-ID: <20221031073801.130541-1-danishanwar@ti.com>
+Subject: [PATCH v7 3/5] remoteproc: pru: Make sysfs entries read-only for PRU client driven boots
+Date:   Mon, 31 Oct 2022 13:07:59 +0530
+Message-ID: <20221031073801.130541-4-danishanwar@ti.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221031073801.130541-1-danishanwar@ti.com>
+References: <20221031073801.130541-1-danishanwar@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -66,87 +68,45 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The Programmable Real-Time Unit and Industrial Communication Subsystem
-(PRU-ICSS or simply PRUSS) on various TI SoCs consists of dual 32-bit
-RISC cores (Programmable Real-Time Units, or PRUs) for program execution.
+From: Suman Anna <s-anna@ti.com>
 
-There are 3 foundation components for PRUSS subsystem: the PRUSS platform
-driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All were
-already merged and can be found under:
+The PRU remoteproc driver is not configured for 'auto-boot' by default,
+and allows to be booted either by in-kernel PRU client drivers or by
+userspace using the generic remoteproc sysfs interfaces. The sysfs
+interfaces should not be permitted to change the remoteproc firmwares
+or states when a PRU is being managed by an in-kernel client driver.
+Use the newly introduced remoteproc generic 'sysfs_read_only' flag to
+provide these restrictions by setting and clearing it appropriately
+during the PRU acquire and release steps.
 
-1) drivers/soc/ti/pruss.c
-   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-2) drivers/irqchip/irq-pruss-intc.c
-   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
-3) drivers/remoteproc/pru_rproc.c
-   Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+---
+ drivers/remoteproc/pru_rproc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-The programmable nature of the PRUs provide flexibility to implement custom
-peripheral interfaces, fast real-time responses, or specialized data handling.
-Example of a PRU consumer drivers will be:
-  - Software UART over PRUSS
-  - PRU-ICSS Ethernet EMAC
-
-In order to make usage of common PRU resources and allow the consumer drivers to
-configure the PRU hardware for specific usage the PRU API is introduced.
-
-This is the v7 of the patch series [1]. This version of the patchset 
-addresses the comments made on v6 [7] of the series. 
-
-Two more patch series have been posted ([2] and [3]) that depends on this
-series, one has been posted to the soc/ti/ tree and another  
-to the networking tree. All the 3 series including this one, has been 
-sent as RFC [4] to get comments and to explain the dependencies.
-
-Changes from v6 to v7 :
-
-*) Removed example section from ti,pru-consumer.yaml as the full example 
-included compatible property as well which is not introduced in this series 
-thus creating dt check binding error. Removing the example section fixes the
-dt binding check error. The example section will be included in 
-"ti,icssg-prueth.yaml" in the next version of series [3]
-*) Updated the commit message for patch 1/5 of this series to address Krzysztof's 
-comment.
-
-Changes from v5 to v6 :
-
-*) Added rproc_get_by_phandle() in pru_rproc_get() 
-*) Provided background of Ctable in the commit messege.
-*) Removed patch "" [6] (6th Patch of the previous version of this series)
-   as it has dependency on series [2], thus creating a cyclic dependency.
-
-The patch [6] will be sent along with the next version of series [2].
-
-[1] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220603121520.13730-1-p-mohan@ti.com/
-[2] https://lore.kernel.org/all/20220418123004.9332-1-p-mohan@ti.com/
-[3] https://lore.kernel.org/all/20220531095108.21757-1-p-mohan@ti.com/
-[4] https://patchwork.kernel.org/project/linux-remoteproc/cover/20220406094358.7895-1-p-mohan@ti.com/
-[5] https://lore.kernel.org/all/20220607045650.4999-1-p-mohan@ti.com/
-[6] https://lore.kernel.org/all/20220607045650.4999-7-p-mohan@ti.com/
-[7] https://lore.kernel.org/all/20221012114429.2341215-1-danishanwar@ti.com/
-
-Thanks and Regards,
-Md Danish Anwar
-
-Roger Quadros (1):
-  remoteproc: pru: Add pru_rproc_set_ctable() function
-
-Suman Anna (2):
-  dt-bindings: remoteproc: Add PRU consumer bindings
-  remoteproc: pru: Make sysfs entries read-only for PRU client driven
-    boots
-
-Tero Kristo (2):
-  remoteproc: pru: Add APIs to get and put the PRU cores
-  remoteproc: pru: Configure firmware based on client setup
-
- .../bindings/remoteproc/ti,pru-consumer.yaml  |  60 +++++
- drivers/remoteproc/pru_rproc.c                | 237 +++++++++++++++++-
- include/linux/pruss.h                         |  78 ++++++
- 3 files changed, 370 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
- create mode 100644 include/linux/pruss.h
-
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 9ba73cfc29e2..14eb27bb5f3f 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -230,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	}
+ 
+ 	pru->client_np = np;
++	rproc->sysfs_read_only = true;
+ 
+ 	mutex_unlock(&pru->lock);
+ 
+@@ -268,6 +269,7 @@ void pru_rproc_put(struct rproc *rproc)
+ 	}
+ 
+ 	pru->client_np = NULL;
++	rproc->sysfs_read_only = false;
+ 	mutex_unlock(&pru->lock);
+ 
+ 	rproc_put(rproc);
 -- 
 2.25.1
 
