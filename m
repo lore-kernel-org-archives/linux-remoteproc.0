@@ -2,185 +2,195 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824B4C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Nov 2022 03:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC92C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Nov 2022 03:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230425AbiKBDZq (ORCPT
+        id S231183AbiKBDbQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Nov 2022 23:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45022 "EHLO
+        Tue, 1 Nov 2022 23:31:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230431AbiKBDZo (ORCPT
+        with ESMTP id S231200AbiKBDau (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Nov 2022 23:25:44 -0400
+        Tue, 1 Nov 2022 23:30:50 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92CB25C74;
-        Tue,  1 Nov 2022 20:25:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CCFF26123;
+        Tue,  1 Nov 2022 20:30:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 56DDF617BA;
-        Wed,  2 Nov 2022 03:25:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E66F1C433C1;
-        Wed,  2 Nov 2022 03:25:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AACD61729;
+        Wed,  2 Nov 2022 03:30:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E1ECC433D6;
+        Wed,  2 Nov 2022 03:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667359542;
-        bh=uhR/DlRpSUjcRtpD0jN5O4vx7jpsbts14UNcdGd4dSo=;
+        s=k20201202; t=1667359847;
+        bh=wry1LO7EncSvzT2po4Kz5Wxy+/zg1TudxF1J/nm2d6w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RyE9etbXlfHDucYzKBP7VKyEKsTQ1Qs3vM00Nt1oiJmNgs8IEzwK3GH4T1k39BSTS
-         +5J+0c+qIyEjrKCq0xnRSb3pUWXeyYSn0Hof/XvRhU0LalrIYpFpmCy0kPJw8ULC31
-         P2UNdS9NS0LaPCFtXaLJTlzD2pDbQfyd5IIaJh8WenvIsK5mKKMI3AY1iU1njBIy/t
-         nesjgy+AM4efdKIismZjwMghrjZ7h0LG7kDpavEcuU6sf8CcLLewssevJ2vZXyHpNt
-         xRPDJiyUNQ3gN1nsMU+TIN/1jCUJo217swssNIq0NaHNaSF0K4TYyYXEP8hedHCBRe
-         DdWKnuo8Payww==
-Date:   Tue, 1 Nov 2022 22:25:39 -0500
+        b=RbcIKR2/8scZmlVdjFaDkU+UKhS1FT5Ic7H87S236JLzuiR97+tHbGEdVYOvA4AkM
+         /fRtRyHmt+87IZQ3H+KzaA2bbIJHeisUA2fKUEh6ZLAO+0WCs7t+JpTojrXQ69JCHG
+         PJaUdOZqamGBMkjWVPX4fGELd4aOj71dUzdsJuOonSQrE4Nyk/+zhSB0ZpvotowZ+q
+         TLFLDabVRI99h9EuCD7s6Tr4Ttrvu7HU4RXxQnt5UDYqSyc0TMTpeoH+WwF1qlqeTQ
+         YO6ZnHesnt2M598su5kt86FAfWCW/zzuc8rHhJWliYDyQm+YU1pXQPYXKTEn2zVAUZ
+         w7jMuT0/eR46g==
+Date:   Tue, 1 Nov 2022 22:30:45 -0500
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Deepak Kumar Singh <quic_deesin@quicinc.com>
 Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
         swboyd@chromium.org, quic_clew@quicinc.com,
         mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: [PATCH V3 2/3] rpmsg: glink: Add support to handle signals
- command
-Message-ID: <20221102032539.bxth6fcuxpbyxzii@builder.lan>
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH V3 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+Message-ID: <20221102033045.awxn5zlafdkatmta@builder.lan>
 References: <1663133102-10671-1-git-send-email-quic_deesin@quicinc.com>
- <1663133102-10671-3-git-send-email-quic_deesin@quicinc.com>
+ <1663133102-10671-4-git-send-email-quic_deesin@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1663133102-10671-3-git-send-email-quic_deesin@quicinc.com>
+In-Reply-To: <1663133102-10671-4-git-send-email-quic_deesin@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 10:55:01AM +0530, Deepak Kumar Singh wrote:
-> Remote peripherals send signal notifications over glink with commandID 15.
-> 
-> Add support to send and receive the signal command and based signals
-> enable or disable flow control with remote host.
+On Wed, Sep 14, 2022 at 10:55:02AM +0530, Deepak Kumar Singh wrote:
+> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
+> to get/set the low level transport signals.
 > 
 > Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 > Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
 > ---
->  drivers/rpmsg/qcom_glink_native.c | 63 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
+>  drivers/rpmsg/rpmsg_char.c | 60 +++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 52 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 115c0a1..01ee82a 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -17,6 +17,7 @@
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 4f21891..1eb6e9d 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -23,6 +23,7 @@
 >  #include <linux/rpmsg.h>
->  #include <linux/sizes.h>
+>  #include <linux/skbuff.h>
 >  #include <linux/slab.h>
 > +#include <linux/termios.h>
->  #include <linux/workqueue.h>
->  #include <linux/mailbox_client.h>
+>  #include <linux/uaccess.h>
+>  #include <uapi/linux/rpmsg.h>
 >  
-> @@ -203,9 +204,15 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
->  #define RPM_CMD_TX_DATA_CONT		12
->  #define RPM_CMD_READ_NOTIF		13
->  #define RPM_CMD_RX_DONE_W_REUSE		14
-> +#define RPM_CMD_SIGNALS			15
+> @@ -68,6 +69,8 @@ struct rpmsg_eptdev {
+>  	struct sk_buff_head queue;
+>  	wait_queue_head_t readq;
 >  
->  #define GLINK_FEATURE_INTENTLESS	BIT(1)
+> +	u32 rsigs;
+
+Please spell out remote_signals, or something like that.
+
+> +	bool sig_pending;
+
+signals_pending
+
+
+And please update the kernel-doc.
+
+>  };
 >  
-> +#define NATIVE_DTR_SIG			NATIVE_DSR_SIG
-> +#define NATIVE_DSR_SIG			BIT(31)
-> +#define NATIVE_RTS_SIG			NATIVE_CTS_SIG
-> +#define NATIVE_CTS_SIG			BIT(30)
-> +
->  static void qcom_glink_rx_done_work(struct work_struct *work);
+>  int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+> @@ -107,7 +110,22 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  	skb_queue_tail(&eptdev->queue, skb);
+>  	spin_unlock(&eptdev->queue_lock);
 >  
->  static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-> @@ -1001,6 +1008,57 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
->  	return 0;
->  }
->  
-> +/**
-> + * qcom_glink_set_flow_control() - convert a signal cmd to wire format and
-> + * 				   transmit
-> + * @ept:	Rpmsg endpoint for channel.
-> + * @enable:	True/False - enable or disable flow control
-> + *
-> + * Return: 0 on success or standard Linux error code.
-> + */
-> +static int qcom_glink_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-> +{
-> +	struct glink_channel *channel = to_glink_channel(ept);
-> +	struct qcom_glink *glink = channel->glink;
-> +	struct glink_msg msg;
-> +	u32 sigs;
-
-sigs needs to be zero-initialized.
-
-> +
-> +	if (enable)
-> +		sigs |= NATIVE_DTR_SIG | NATIVE_RTS_SIG;
-> +
-> +	msg.cmd = cpu_to_le16(RPM_CMD_SIGNALS);
-> +	msg.param1 = cpu_to_le16(channel->lcid);
-> +	msg.param2 = cpu_to_le32(sigs);
-> +
-> +	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-> +}
-> +
-> +static int qcom_glink_handle_signals(struct qcom_glink *glink,
-> +				     unsigned int rcid, unsigned int sigs)
-> +{
-> +	struct glink_channel *channel;
-> +	unsigned long flags;
-> +	bool enable = false;
-> +
-> +	spin_lock_irqsave(&glink->idr_lock, flags);
-> +	channel = idr_find(&glink->rcids, rcid);
-> +	spin_unlock_irqrestore(&glink->idr_lock, flags);
-> +	if (!channel) {
-> +		dev_err(glink->dev, "signal for non-existing channel\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!channel->ept.flow_cb)
-> +		return 0;
-> +
-> +	if (sigs & (NATIVE_DSR_SIG | NATIVE_CTS_SIG))
-> +		enable = true;
-> +		
-
-There are two stray tabs on this line.
-
-Regards,
-Bjorn
-
-> +	channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
+> -	/* wake up any blocking processes, waiting for new data */
+> +	wake_up_interruptible(&eptdev->readq);
 > +
 > +	return 0;
 > +}
 > +
->  static irqreturn_t qcom_glink_native_intr(int irq, void *data)
->  {
->  	struct qcom_glink *glink = data;
-> @@ -1065,6 +1123,10 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
->  			qcom_glink_handle_intent_req_ack(glink, param1, param2);
->  			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
->  			break;
-> +		case RPM_CMD_SIGNALS:
-> +			qcom_glink_handle_signals(glink, param1, param2);
-> +			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-> +			break;
->  		default:
->  			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
->  			ret = -EINVAL;
-> @@ -1440,6 +1502,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
->  	.sendto = qcom_glink_sendto,
->  	.trysend = qcom_glink_trysend,
->  	.trysendto = qcom_glink_trysendto,
-> +	.set_flow_control = qcom_glink_set_flow_control,
->  };
+> +static int rpmsg_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable)
+
+Please add "ept" to the function name.
+
+Regards,
+Bjorn
+
+> +{
+> +	struct rpmsg_eptdev *eptdev = priv;
+> +
+> +	if (enable)
+> +		eptdev->rsigs = TIOCM_DSR | TIOCM_CTS;
+> +	else
+> +		eptdev->rsigs = 0;
+> +	
+> +	eptdev->sig_pending = true;
+> +
+>  	wake_up_interruptible(&eptdev->readq);
 >  
->  static void qcom_glink_rpdev_release(struct device *dev)
+>  	return 0;
+> @@ -144,6 +162,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  		return -EINVAL;
+>  	}
+>  
+> +	ept->flow_cb = rpmsg_flow_cb;
+>  	eptdev->ept = ept;
+>  	filp->private_data = eptdev;
+>  	mutex_unlock(&eptdev->ept_lock);
+> @@ -164,6 +183,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+>  		eptdev->ept = NULL;
+>  	}
+>  	mutex_unlock(&eptdev->ept_lock);
+> +	eptdev->sig_pending = false;
+>  
+>  	/* Discard all SKBs */
+>  	skb_queue_purge(&eptdev->queue);
+> @@ -277,6 +297,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+>  	if (!skb_queue_empty(&eptdev->queue))
+>  		mask |= EPOLLIN | EPOLLRDNORM;
+>  
+> +	if (eptdev->sig_pending)
+> +		mask |= EPOLLPRI;
+> +
+>  	mask |= rpmsg_poll(eptdev->ept, filp, wait);
+>  
+>  	return mask;
+> @@ -287,14 +310,35 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  {
+>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+>  
+> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> -		return -EINVAL;
+> -
+> -	/* Don't allow to destroy a default endpoint. */
+> -	if (eptdev->default_ept)
+> -		return -EINVAL;
+> +	bool set;
+> +	u32 val;
+> +	int ret;
+> +	
+> +	switch (cmd) {
+> +	case TIOCMGET:
+> +		eptdev->sig_pending = false;
+> +		ret = put_user(eptdev->rsigs, (int __user *)arg);
+> +		break;
+> +	case TIOCMSET:
+> +		ret = get_user(val, (int __user *)arg);
+> +		if (ret)
+> +			break;
+> +		set = (val & (TIOCM_DTR | TIOCM_RTS)) ? true : false;
+> +		ret = rpmsg_set_flow_control(eptdev->ept, set);
+> +		break;
+> +	case RPMSG_DESTROY_EPT_IOCTL:
+> +		/* Don't allow to destroy a default endpoint. */
+> +		if (eptdev->default_ept) {
+> +			ret = -EINVAL;
+> +			break;
+> +		}
+> +		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+>  
+> -	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> +	return ret;
+>  }
+>  
+>  static const struct file_operations rpmsg_eptdev_fops = {
 > -- 
 > 2.7.4
 > 
