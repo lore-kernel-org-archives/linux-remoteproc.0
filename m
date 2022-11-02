@@ -2,112 +2,232 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF1CC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Nov 2022 19:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66795C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  2 Nov 2022 19:53:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231719AbiKBTBZ (ORCPT
+        id S231206AbiKBTx6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 2 Nov 2022 15:01:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
+        Wed, 2 Nov 2022 15:53:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231683AbiKBTBQ (ORCPT
+        with ESMTP id S231238AbiKBTxn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 2 Nov 2022 15:01:16 -0400
-Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C5E2C0
-        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Nov 2022 12:01:14 -0700 (PDT)
-Received: by mail-qk1-x736.google.com with SMTP id k4so9513837qkj.8
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Nov 2022 12:01:14 -0700 (PDT)
+        Wed, 2 Nov 2022 15:53:43 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A397E0DD
+        for <linux-remoteproc@vger.kernel.org>; Wed,  2 Nov 2022 12:53:36 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id g62so17345462pfb.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Nov 2022 12:53:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sVOm0gkttgsBAWPoT64yXGgGPw+pzS3zQxWBnd3fbbM=;
-        b=i/HQi3+YSYC4jl29Z8UKo0eGiXSyRDdGn4mkSvN62YT4Kv6F+iAA5WlbkShic6K7Ge
-         dpfcxIaQTgRrZWIyS0J60QvBV+WO9zPMfIl+beTkO3MBAJ9Sfu2qHgIkCc9rrVSOfNB4
-         wJ7PHYjlTi2SG6BrbqfSTnRlqwRYx8VgYcEEmoS6mZ6lNRElq9RYyY9T/LQkMEuQm2hY
-         QY/Fw0Mo0DdH3usOMcc0KfEwcjxiEnOhYSrfq7oo5GnqsWdJ/kWV9f8wPW8JXHnfljXy
-         3rwpmi2qMBH50/rjntk4qkn2aww2sKw6FRjXQcLURrNfKwDXr3NWDJxXHX7ahRdMEFMc
-         SG6w==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QJsXsIB9UUIjgG4Y32tIIraS06kk83j43Jwm1/Uz9iI=;
+        b=I0xZvH2KjFD7PC95HT4FcckR53yro4wwrzR5YBC85LS+DyRrCEiwyI6Roy/8C/T4m7
+         MkBbXcRpTefR/9pa60rg8cHe+DSgMKyOlpXBOAA52ExH7jekmYUXVBwv5jaYowztjfFi
+         3dSWoFlfm2pgkDZGL4KBTWVIm2ro01LW1Sv3494pSt12rh4uVJc0nnG3oTiSRqYuY1n3
+         0c3SC4La6zyPfGuDlDeUz+3yD7Ffy5Q2kKu9OY9YZuNUGR7kIk4LXljImGLe/6DZrUhK
+         zxzGcr3ui37mpBH/qn+tUL9zxk6jhMZcYaX4mLrWVPJ8v0WjQ/y+VFDWKsu5EZzUHvH6
+         4gfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sVOm0gkttgsBAWPoT64yXGgGPw+pzS3zQxWBnd3fbbM=;
-        b=2ynqu/04vYmqq6Jm1tAhbhfNh/Ie93ZIgiUW9CKVWX4rBgA2yExBEMaJsMg3ysGd1P
-         DN6ngLv6VKtFyGEJELxruoGlEE43BsFHfPzdVI914kuEHF9KB7HIoWu/MVRz83GcFvDC
-         feF0VXSdgM1PiscfwMN5vxPRfqFEppJnJgPIk0b+kM2p6VmpmyinnDH/WgEzwFeJPjmL
-         yNBrjqs+KsXUWJkYrLkkSSZ+1B+KNnuMFdUP+6vI8mIjtnUFanrpVpEl3mH2FQ3k/1vD
-         cmHq9gZM+MOjXJIJHuvpX3bA8DvxNEePWxcwaqZ+Nzl1gxqDvN6zMCxZmQj9Euaqj718
-         foKA==
-X-Gm-Message-State: ACrzQf1WhAUDsHMBJATgUsvXQ8Y7zNiNcUyQ1g+ucunozFoGIx5CZXur
-        3YCCfMNrge25gWBuEYDtpLmvoA==
-X-Google-Smtp-Source: AMsMyM5G/bzcAiZVcMOSMNvjC2XSgKcFvvH+T7uTTncVFc0P+4YkvEk+N6yFwcrX6orIRxb2K63QhQ==
-X-Received: by 2002:ae9:d806:0:b0:6f1:15cc:d870 with SMTP id u6-20020ae9d806000000b006f115ccd870mr18717294qkf.114.1667415673550;
-        Wed, 02 Nov 2022 12:01:13 -0700 (PDT)
-Received: from ?IPV6:2601:586:5000:570:28d9:4790:bc16:cc93? ([2601:586:5000:570:28d9:4790:bc16:cc93])
-        by smtp.gmail.com with ESMTPSA id de36-20020a05620a372400b006ce9e880c6fsm8844655qkb.111.2022.11.02.12.01.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Nov 2022 12:01:12 -0700 (PDT)
-Message-ID: <91ebdf1b-d6e2-47a2-ae1c-bc1848bb74c2@linaro.org>
-Date:   Wed, 2 Nov 2022 15:01:11 -0400
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QJsXsIB9UUIjgG4Y32tIIraS06kk83j43Jwm1/Uz9iI=;
+        b=pHigGzrfrmvhi4N0snUcmzmA73uJ93emmax9aXe69RvuWjFn+NwoY/aqcEpFVN09KM
+         lkeDp1CPwo2L4QhjBrcqeFTaxFP0qzUdbJnJ0WRM86BbWG8S01BpbgaqzyYIWF5YYgZp
+         q9E4EDvKk9T7J8nLM3hm2IV6qpPlOcU/+DBYoaHIMeeF4PyIJLPEBiRtBKemtfdn1VK9
+         2jTCn/TP7E82e5vPUqFkOQAQI2MllZOflh7zX7ZSZJ1CFWy2V7zGJKoH3KO8l39z+epd
+         jIW3iv4slb4ydgbElWT1Y1Vhcu1leFypToCQqAp+CFfsdOqmXDx22WSlzX+Np6SRQcw6
+         hV8g==
+X-Gm-Message-State: ACrzQf0I2l22bhTShn3P3wskEuupotOMcZpcgXK6TH0PH1wuFsEe/1fn
+        HZWSygKFrVXlQatX0qeprAFoNA==
+X-Google-Smtp-Source: AMsMyM53ebYvUgdz5+1V7nfv1iwrDX3L++Iyf/+QL9OUxvFnzVAoHc1t85WcrjsAlR54gPfE7+9OnQ==
+X-Received: by 2002:a63:fc4b:0:b0:46f:ed8d:7087 with SMTP id r11-20020a63fc4b000000b0046fed8d7087mr8834348pgk.135.1667418815990;
+        Wed, 02 Nov 2022 12:53:35 -0700 (PDT)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id d1-20020a17090a114100b0020dc318a43esm1831178pje.25.2022.11.02.12.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 12:53:34 -0700 (PDT)
+Date:   Wed, 2 Nov 2022 13:53:30 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michal Simek <michal.simek@amd.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v10 0/6]  Add Xilinx RPU subsystem support
+Message-ID: <20221102195330.GB1733006@p14s>
+References: <20221011212501.2661003-1-tanmay.shah@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH V2 1/2] dt-bindings: remoteproc: imx_rproc: add
- fsl,startup-delay-ms
-Content-Language: en-US
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-References: <20221102112451.128110-1-peng.fan@oss.nxp.com>
- <20221102112451.128110-2-peng.fan@oss.nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221102112451.128110-2-peng.fan@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221011212501.2661003-1-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 02/11/2022 07:24, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> add fsl,startup-delay-ms property indicating delay some time after just
-> kicks remote processor.
+I am done reviewing this set.  Other than the comments from yesterday things
+look good.  There is also the fact that this set doesn't apply to the current
+rproc-next.
 
-Start sentences with capital letter.
+I hope to see another patchset from you in the coming 2 weeks so that can get
+this in for the v6.2 cycle.
 
+Thanks,
+Mathieu
+
+On Tue, Oct 11, 2022 at 02:24:55PM -0700, Tanmay Shah wrote:
+> This patch series adds bindings document for RPU subsystem found on Xilinx
+> ZynqMP platforms. It also adds device nodes and driver to enable RPU
+> subsystem in split mode and lockstep mode.
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
+> contains two arm cortex r5f cores. RPU subsystem can be configured in
+> split mode, lockstep mode and single-cpu mode.
+> 
+> RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
+> In lockstep mode, all 4 banks are combined and total of 256KB memory is
+> made available to r5 core0. In split mode, both cores can access two
+> TCM banks i.e. 128 KB.
+> 
+> RPU can also fetch data and execute instructions from DDR memory along with
+> TCM memory.
 > ---
->  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4 ++++
->  1 file changed, 4 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index ad3b8d4ccd91..d99d3342ad52 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -76,6 +76,10 @@ properties:
->        This property is to specify the resource id of the remote processor in SoC
->        which supports SCFW
->  
-> +  fsl,startup-delay-ms:
-> +    $ref: "/schemas/types.yaml#/definitions/uint32"
-
-Drop quotes.
-
-> +    description: Startup time that remote processor ready for communication
-
-Looks quite hacky...
-
-Best regards,
-Krzysztof
-
+> Changes in v10:
+>   - bindings: rename example node to remoteproc
+>   - dts: Rename node name to remoteproc
+>   - switch to AMD email ID 
+>   - fix Kconfig unmet dependecy error reported by kernel test robot
+>   - fix r5_rproc object mem leak in function zynqmp_r5_add_rproc_core
+>   - add explanation of hardcoded TCM nodes
+>   - remove redundant ToDo comment
+>   - remove redundant check of tcm_bank_count and rmem_count
+>   - remove explicit free reserved_mem in zynqmp_r5_get_mem_region_node
+>   - fix leaked reference of child_dev during zynqmp_r5_cluster_init
+>     Also fix possible crash in exit path release_r5_cores 
+>   - do not remove mem-region and tcm carveouts explicitly in case of failure.
+>     It will be deleted as part of rproc_del. This also simplifies logic to
+>     use rproc_add_carveout
+>   - fix documentation all over the driver
+> 
+> Changes in v9:
+>   - bindings: remove power-domains property description
+>   - bindings: fix nitpicks in description of properties
+>   - dts: remove unused labels
+>   - replace devm_rproc_alloc with rproc_alloc
+>   - %s/until/while/r
+>   - %s/i > -1/i >=0/r
+>   - fix type of tcm_mode from int to enum rpu_tcm_comb
+>   - release &child_pdev->dev references
+>   - remove zynqmp_r5_core_exit()
+>   - undefined memory-region property isn't failure
+>   - remove tcm bank count check from ops
+>   - fix tcm bank turn-off sequence
+>   - fix parse_fw function documentation
+>   - do not use rproc_mem_entry_init on vdev0buffers
+>   - check tcm banks shouldn't be 0
+>   - declare variabls in reverse xmas tree order
+>   - remove extra line
+> 
+> Changes in v8:
+>   - add 'items:' for sram property
+> 
+> Changes in v7:
+>   - Add minItems in sram property
+> 
+> Changes in v6:
+>   - Add maxItems to sram and memory-region property
+> 
+> Changes in v5:
+>   - Add constraints of the possible values of xlnx,cluster-mode property
+>   - fix description of power-domains property for r5 core
+>   - Remove reg, address-cells and size-cells properties as it is not required
+>   - Fix description of mboxes property
+>   - Add description of each memory-region and remove old .txt binding link
+>     reference in the description
+>   - Remove optional reg property from r5fss node
+>   - Move r5fss node out of axi node
+> 
+> Changes in v4:
+>   - Add memory-region, mboxes and mbox-names properties in dt-bindings example
+>   - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
+>   - Remove redundant header files
+>   - use dev_err_probe() to report errors during probe
+>   - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
+>   - Fix memory leaks all over the driver when resource allocation fails for any core
+>   - make cluster mode check only at one place
+>   - remove redundant initialization of variable
+>   - remove redundant use of of_node_put() 
+>   - Fix Comment format problem
+>   - Assign offset of zynqmp_tcm_banks instead of duplicating it
+>   - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
+>   - Remove rproc_mem_entry object from r5_core
+>   - Use put_device() and rproc_del() APIs to fix memory leaks
+>   - Replace pr_* with dev_*. This was missed in v3, fix now.
+>   - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
+> 
+> Changes in v3:
+>   - Fix checkpatch script indentation warning
+>   - Remove unused variable from xilinx remoteproc driver
+>   - use C style comments, i.e /*...*/
+>   - Remove redundant debug information which can be derived using /proc/device-tree
+>   - Fix multiline comment format
+>   - s/"final fot TCM"/"final for TCM"
+>   - Function devm_kzalloc() does not return an code on error, just NULL.
+>     Remove redundant error check for this function throughout the driver.
+>   - Fix RPU mode configuration and add documentation accordingly
+>   - Get rid of the indentations to match function documentation style with rest of the driver
+>   - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
+>   - Use 'i' for the outer loop and 'j' for the inner one as per convention
+>   - Remove redundant error and NULL checks throughout the driver
+>   - Use devm_kcalloc() when more than one element is required
+>   - Add memory-regions carveouts during driver probe instead of parse_fw call
+>     This removes redundant copy of reserved_mem object in r5_core structure.
+>   - Fix memory leak by using of_node_put()
+>   - Fix indentation of tcm_mem_map function args
+>   - Remove redundant init of variables
+>   - Initialize tcm bank size variable for lockstep mode
+>   - Replace u32 with phys_addr_t for variable stroing memory bank address
+>   - Add documentation of TCM behavior in lockstep mode
+>   - Use dev_get_drvdata instead of platform driver API
+>   - Remove info level messages
+>   - Fix checkpatch.pl warnings
+>   - Add documentation for the Xilinx r5f platform to understand driver design
+> 
+> Changes in v2:
+>   - Remove proprietary copyright footer from cover letter
+> 
+> 
+> Ben Levinsky (3):
+>   firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+>     configuration.
+>   firmware: xilinx: Add shutdown/wakeup APIs
+>   firmware: xilinx: Add RPU configuration APIs
+> 
+> Tanmay Shah (3):
+>   dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+>   arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+>   drivers: remoteproc: Add Xilinx r5 remoteproc driver
+> 
+>  .../bindings/remoteproc/xlnx,r5f-rproc.yaml   |  135 +++
+>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   32 +
+>  drivers/firmware/xilinx/zynqmp.c              |   97 ++
+>  drivers/remoteproc/Kconfig                    |   13 +
+>  drivers/remoteproc/Makefile                   |    1 +
+>  drivers/remoteproc/xlnx_r5_remoteproc.c       | 1070 +++++++++++++++++
+>  include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
+>  include/linux/firmware/xlnx-zynqmp.h          |   60 +
+>  8 files changed, 1414 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,r5f-rproc.yaml
+>  create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
+> 
+> 
+> base-commit: abac55caaeaaabd31763a7c8a79c4cc096b415ae
+> -- 
+> 2.25.1
+> 
