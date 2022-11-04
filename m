@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1C7C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Nov 2022 12:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA5CC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  4 Nov 2022 13:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230164AbiKDM5P (ORCPT
+        id S230021AbiKDNDJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 4 Nov 2022 08:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37494 "EHLO
+        Fri, 4 Nov 2022 09:03:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbiKDM5O (ORCPT
+        with ESMTP id S229875AbiKDNDI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 4 Nov 2022 08:57:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 140E826129;
-        Fri,  4 Nov 2022 05:57:14 -0700 (PDT)
+        Fri, 4 Nov 2022 09:03:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A40C72E6B5;
+        Fri,  4 Nov 2022 06:03:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A70D462188;
-        Fri,  4 Nov 2022 12:57:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B904C433C1;
-        Fri,  4 Nov 2022 12:57:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 62ACDB82C13;
+        Fri,  4 Nov 2022 13:03:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AF96C433C1;
+        Fri,  4 Nov 2022 13:03:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667566633;
-        bh=KuVTIs698EEiMtO2v0TB5wgsiCGrjXYfsEWLWFVUQGM=;
+        s=k20201202; t=1667566985;
+        bh=ALmCpjpCS/ykvSqX4/VELe+zMeNymU+i5MuqAZHypXE=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=iOCFHVwzehKg74QV6hcvqhUwTAQe1qcPUkZoRmurL8Suu/DRTD1OD23PJK40Ue3/t
-         jLT3vofgYUSjxnZJj1G8Zq5NJdoOOdyUDNExdyDdFvwnmYMnqtRQZd00A8xYLDb10/
-         vITe3avFalS0HW7W2bE/idRKGp2lcsHOQ5X7u2gHYAGz9IsPMS+J1a4jlIQWClwzRI
-         zFCN3avf3xCocrlwKTwNgRFCE+3dwXRTRdL5Ep1XVnAOgf4Wf/CBfX8/DOtnMNMSYT
-         iSJdg9F1BEh33Xt4mWhO1cLh7BW0WihuNi5+GJu5BbB1fKy6ovBwcfCimy+3o11Yji
-         AbNQeHSY8SIww==
-Message-ID: <1f1552cd-d16b-fea0-2816-9bb3a2373ff5@kernel.org>
-Date:   Fri, 4 Nov 2022 14:57:08 +0200
+        b=G3fHilcQA8RyN8jGm8bdU55iRzJaYCTyp7ByDi2850X8WSy+D8vIvtdNa2zDzJThq
+         UEoOSYqULwIbuLzKHh14JCwLKxLDIEotnMr9OtLbmrgVcTqfOeQ/s+/Pv1d68J8z+A
+         5yQf6z2REU00J95xIfrAcK1edgMttATSWmfUvrtgi+gihui/LTTHTKKwBklF3fmNDn
+         ExZzktNOm10ZDMao0aMwyndMcy/SqAQs5Bv13sZDvN3IojeFKw+yoSxcpB52CL4+o+
+         1MikUneJI30HxTMGXfs6H/ST0fB7hLZEY0Q37Dbzkht44Yl9eqM2EEhTO820c8nvf+
+         6KNk7RiCCv0+A==
+Message-ID: <0f9dbaa5-10b8-1126-6df9-e87e81d3abac@kernel.org>
+Date:   Fri, 4 Nov 2022 15:02:59 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
-Subject: Re: [PATCH v7 3/5] remoteproc: pru: Make sysfs entries read-only for
- PRU client driven boots
+Subject: Re: [PATCH v7 5/5] remoteproc: pru: Configure firmware based on
+ client setup
 Content-Language: en-US
 To:     MD Danish Anwar <danishanwar@ti.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -50,9 +50,9 @@ Cc:     Suman Anna <s-anna@ti.com>, "Andrew F . Davis" <afd@ti.com>,
         linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20221031073801.130541-1-danishanwar@ti.com>
- <20221031073801.130541-4-danishanwar@ti.com>
+ <20221031073801.130541-6-danishanwar@ti.com>
 From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20221031073801.130541-4-danishanwar@ti.com>
+In-Reply-To: <20221031073801.130541-6-danishanwar@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -61,46 +61,101 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 31/10/2022 09:37, MD Danish Anwar wrote:
-> From: Suman Anna <s-anna@ti.com>
+On 31/10/2022 09:38, MD Danish Anwar wrote:
+> From: Tero Kristo <t-kristo@ti.com>
 > 
-> The PRU remoteproc driver is not configured for 'auto-boot' by default,
-> and allows to be booted either by in-kernel PRU client drivers or by
-> userspace using the generic remoteproc sysfs interfaces. The sysfs
-> interfaces should not be permitted to change the remoteproc firmwares
-> or states when a PRU is being managed by an in-kernel client driver.
-> Use the newly introduced remoteproc generic 'sysfs_read_only' flag to
-> provide these restrictions by setting and clearing it appropriately
-> during the PRU acquire and release steps.
+> Client device node property firmware-name is now used to configure
+> firmware for the PRU instances. The default firmware is also
+> restored once releasing the PRU resource.
 > 
+> Co-developed-by: Suman Anna <s-anna@ti.com>
 > Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 > Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 > Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 > Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  drivers/remoteproc/pru_rproc.c | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> index 3d1870e6b13b..15ffaeddd963 100644
+> --- a/drivers/remoteproc/pru_rproc.c
+> +++ b/drivers/remoteproc/pru_rproc.c
+> @@ -172,6 +172,23 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
+>  	spin_unlock_irqrestore(&pru->rmw_lock, flags);
+>  }
+>  
+> +/**
+> + * pru_rproc_set_firmware() - set firmware for a pru core
+
+s/pru/PRU
+
+> + * @rproc: the rproc instance of the PRU
+> + * @fw_name: the new firmware name, or NULL if default is desired
+> + *
+> + * Return: 0 on success, or errno in error case.
+> + */
+> +static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
+> +{
+> +	struct pru_rproc *pru = rproc->priv;
+> +
+> +	if (!fw_name)
+> +		fw_name = pru->fw_name;
+> +
+> +	return rproc_set_firmware(rproc, fw_name);
+> +}
+> +
+>  static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+>  {
+>  	struct rproc *rproc;
+> @@ -230,6 +247,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>  	struct rproc *rproc;
+>  	struct pru_rproc *pru;
+>  	struct device *dev;
+> +	const char *fw_name;
+>  	int ret;
+>  
+>  	rproc = __pru_rproc_get(np, index);
+> @@ -256,11 +274,25 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>  	if (pru_id)
+>  		*pru_id = pru->id;
+>  
+> +	ret = of_property_read_string_index(np, "firmware-name", index,
+> +					    &fw_name);
+> +	if (!ret) {
+> +		ret = pru_rproc_set_firmware(rproc, fw_name);
+> +		if (ret) {
+> +			dev_err(dev, "failed to set firmware: %d\n", ret);
+> +			goto err;
+> +		}
+> +	}
+> +
+>  	return rproc;
+>  
+>  err_no_rproc_handle:
+>  	rproc_put(rproc);
+>  	return ERR_PTR(ret);
+> +
+> +err:
+> +	pru_rproc_put(rproc);
+> +	return ERR_PTR(ret);
+>  }
+>  EXPORT_SYMBOL_GPL(pru_rproc_get);
+>  
+> @@ -280,6 +312,8 @@ void pru_rproc_put(struct rproc *rproc)
+>  
+>  	pru = rproc->priv;
+>  
+> +	pru_rproc_set_firmware(rproc, NULL);
+> +
+>  	mutex_lock(&pru->lock);
+>  
+>  	if (!pru->client_np) {
 
 Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
-> ---
->  drivers/remoteproc/pru_rproc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 9ba73cfc29e2..14eb27bb5f3f 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -230,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->  	}
->  
->  	pru->client_np = np;
-> +	rproc->sysfs_read_only = true;
->  
->  	mutex_unlock(&pru->lock);
->  
-> @@ -268,6 +269,7 @@ void pru_rproc_put(struct rproc *rproc)
->  	}
->  
->  	pru->client_np = NULL;
-> +	rproc->sysfs_read_only = false;
->  	mutex_unlock(&pru->lock);
->  
->  	rproc_put(rproc);
+--
+cheers,
+-roger
