@@ -2,139 +2,138 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981C0C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Nov 2022 11:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7197C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Nov 2022 15:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233533AbiKKLyc (ORCPT
+        id S234925AbiKKPGg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Nov 2022 06:54:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56002 "EHLO
+        Fri, 11 Nov 2022 10:06:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233514AbiKKLyb (ORCPT
+        with ESMTP id S234928AbiKKPEe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Nov 2022 06:54:31 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A3C623A9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Nov 2022 03:54:29 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id z18so7274669edb.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 11 Nov 2022 03:54:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NCVwunyaKvAdCSc7+ksCaN6h6L9GquZf6jiNJ/6LP7k=;
-        b=woOl93F0RydXcCB1h83FNgDeJ8OncI/BW8vFGImGW4/6S/7GFi5LhEUaT5zxeJT8NX
-         Pa2uIS8JPQ1UuRDTw1gsr8yNk+B1k8+8vcYuV+J416+/4ZN72i34mJf+rpaYP+XO88Ro
-         yOeD1ENrl/hubOCmzmGU/9aRde4Ni5DClG8NTDfkKCbdaSQkVRNzGKdtej8NjJyoXHmi
-         pkwCRFNfj2EHnSw7idU9KS0wiOJpIT+9pOtqQqkxmvafW4QNn0c0W9vKp3SBlyw4fju2
-         oFG5A/nPDCWoPlX7uD10pgGlb3tRHXfT7y4rJSv1NXebBPpD64Ikh4581/Q5CwH6hyYc
-         OzLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NCVwunyaKvAdCSc7+ksCaN6h6L9GquZf6jiNJ/6LP7k=;
-        b=wSqjI+SEblKmrHWWawX1Ztkw+qfLRJzmMC9grQBTuUSvaIyQ7dosrMszBt9vwa5gKx
-         KL+Gw1ecbT142+jReO1OT0PFv+xpuQYF34l6fdhmjsdSQSXAFpgjSW2NuOHgUK4QP+Y0
-         zJh7ubanFnSoIt3wr/h6qQZYjss+CVHE7ifwcvAF6OmaneaoAuNtbxvPvxTOXOq0Lnlr
-         Oqq9omd9VKkYMtNAQIwGCHPglAkols6jRFY79ikd/uR9blvoglHwBSNOwv8zprS7fuzK
-         64qeqYkI0n4wOtJrkAuYrYuKpK3r1Uz8tbCGqbs32ZeJfc1zxL39GZYU/u//rNe6hrId
-         I9tw==
-X-Gm-Message-State: ANoB5pmXrSu55xbaeLLc0yrxqqsuznrHpTo/s/gd5B+63gcSwNDVurp+
-        vLmJI4C7OgERkodP9dXl1mmfsg==
-X-Google-Smtp-Source: AA0mqf4M0ZcLgiTBE35+G/kyXf6GRpwJfYWwoAgBSfNcF+YK0DVIDxpQJeEH19gBVpmnPV62PR8jMQ==
-X-Received: by 2002:aa7:d5d4:0:b0:458:e00e:5a85 with SMTP id d20-20020aa7d5d4000000b00458e00e5a85mr1164414eds.171.1668167668306;
-        Fri, 11 Nov 2022 03:54:28 -0800 (PST)
-Received: from otso.arnhem.chello.nl (k10064.upc-k.chello.nl. [62.108.10.64])
-        by smtp.gmail.com with ESMTPSA id kz6-20020a17090777c600b007adb86a1e1csm770859ejc.186.2022.11.11.03.54.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Nov 2022 03:54:27 -0800 (PST)
-From:   Luca Weiss <luca.weiss@fairphone.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] remoteproc: qcom_q6v5_pas: detach power domains on remove
-Date:   Fri, 11 Nov 2022 12:54:14 +0100
-Message-Id: <20221111115414.153961-2-luca.weiss@fairphone.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221111115414.153961-1-luca.weiss@fairphone.com>
-References: <20221111115414.153961-1-luca.weiss@fairphone.com>
+        Fri, 11 Nov 2022 10:04:34 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8859670195;
+        Fri, 11 Nov 2022 07:02:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 00DE5B8262F;
+        Fri, 11 Nov 2022 15:02:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 285ECC433C1;
+        Fri, 11 Nov 2022 15:02:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1668178928;
+        bh=RHFd6lZBWi3UidtHgAb7H5B7CyFXKaoJYUnzOJpdDKI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wZKtfKCvtkAHcRqegBZ5rvf2fSNNT5Jp9nsa7tHBLJ1FunZbXoHExBErfTh3zuzNX
+         r4hkvCOmTK0QrFH0l20rbMnWE8AU+P8nmZyOgzviFZBoh2abXcFzInYkCbLbS13H++
+         MWXzls89wSjwmcEEze0qkRehIsJUzk/MHeWbOui4=
+Date:   Fri, 11 Nov 2022 16:02:05 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     haozhe.chang@mediatek.com
+Cc:     M Chetan Kumar <m.chetan.kumar@intel.com>,
+        Intel Corporation <linuxwwan@intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
+        Liu Haijun <haijun.liu@mediatek.com>,
+        Ricardo Martinez <ricardo.martinez@linux.intel.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        "open list:INTEL WWAN IOSM DRIVER" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR MESSAGING (RPMSG) WWAN CONTROL..." 
+        <linux-remoteproc@vger.kernel.org>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, lambert.wang@mediatek.com,
+        xiayu.zhang@mediatek.com, hua.yang@mediatek.com
+Subject: Re: [PATCH v3] wwan: core: Support slicing in port TX flow of WWAN
+ subsystem
+Message-ID: <Y25j7fTdvCRqr26k@kroah.com>
+References: <20221111100840.105305-1-haozhe.chang@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221111100840.105305-1-haozhe.chang@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-We need to detach from the power domains also on remove, not just on
-probe fail so a subsequent probe works as expected.
+On Fri, Nov 11, 2022 at 06:08:36PM +0800, haozhe.chang@mediatek.com wrote:
+> From: haozhe chang <haozhe.chang@mediatek.com>
+> 
+> wwan_port_fops_write inputs the SKB parameter to the TX callback of
+> the WWAN device driver. However, the WWAN device (e.g., t7xx) may
+> have an MTU less than the size of SKB, causing the TX buffer to be
+> sliced and copied once more in the WWAN device driver.
+> 
+> This patch implements the slicing in the WWAN subsystem and gives
+> the WWAN devices driver the option to slice(by frag_len) or not. By
+> doing so, the additional memory copy is reduced.
+> 
+> Meanwhile, this patch gives WWAN devices driver the option to reserve
+> headroom in fragments for the device-specific metadata.
+> 
+> Signed-off-by: haozhe chang <haozhe.chang@mediatek.com>
+> 
+> ---
+> Changes in v2
+>   -send fragments to device driver by skb frag_list.
+> 
+> Changes in v3
+>   -move frag_len and headroom_len setting to wwan_create_port.
+> ---
+>  drivers/net/wwan/iosm/iosm_ipc_port.c  |  3 +-
+>  drivers/net/wwan/mhi_wwan_ctrl.c       |  2 +-
+>  drivers/net/wwan/rpmsg_wwan_ctrl.c     |  2 +-
+>  drivers/net/wwan/t7xx/t7xx_port_wwan.c | 34 +++++++--------
+>  drivers/net/wwan/wwan_core.c           | 59 ++++++++++++++++++++------
+>  drivers/net/wwan/wwan_hwsim.c          |  2 +-
+>  drivers/usb/class/cdc-wdm.c            |  2 +-
+>  include/linux/wwan.h                   |  6 ++-
+>  8 files changed, 73 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/net/wwan/iosm/iosm_ipc_port.c b/drivers/net/wwan/iosm/iosm_ipc_port.c
+> index b6d81c627277..dc43b8f0d1af 100644
+> --- a/drivers/net/wwan/iosm/iosm_ipc_port.c
+> +++ b/drivers/net/wwan/iosm/iosm_ipc_port.c
+> @@ -63,7 +63,8 @@ struct iosm_cdev *ipc_port_init(struct iosm_imem *ipc_imem,
+>  	ipc_port->ipc_imem = ipc_imem;
+>  
+>  	ipc_port->iosm_port = wwan_create_port(ipc_port->dev, port_type,
+> -					       &ipc_wwan_ctrl_ops, ipc_port);
+> +					       &ipc_wwan_ctrl_ops, 0, 0,
+> +					       ipc_port);
 
-Otherwise the following error appears on re-probe:
+How is 0, 0 a valid option here?
 
-[   29.452005] sysfs: cannot create duplicate filename '/devices/genpd:0:3000000.remoteproc'
-[   29.477121] CPU: 1 PID: 483 Comm: sh Tainted: G        W          6.1.0-rc4-00075-g71a113770bda #78
-[   29.510319] Hardware name: Fairphone 4 (DT)
-[   29.538335] Call trace:
-[   29.564470]  dump_backtrace.part.0+0xe0/0xf0
-[   29.592602]  show_stack+0x18/0x30
-[   29.619616]  dump_stack_lvl+0x64/0x80
-[   29.646834]  dump_stack+0x18/0x34
-[   29.673541]  sysfs_warn_dup+0x60/0x7c
-[   29.700592]  sysfs_create_dir_ns+0xec/0x110
-[   29.728057]  kobject_add_internal+0xb8/0x374
-[   29.755530]  kobject_add+0x9c/0x104
-[   29.782072]  device_add+0xbc/0x8a0
-[   29.808445]  device_register+0x20/0x30
-[   29.835175]  genpd_dev_pm_attach_by_id+0xa4/0x190
-[   29.862851]  genpd_dev_pm_attach_by_name+0x3c/0xb0
-[   29.890472]  dev_pm_domain_attach_by_name+0x20/0x30
-[   29.918212]  adsp_probe+0x278/0x580
-[   29.944384]  platform_probe+0x68/0xc0
-[   29.970603]  really_probe+0xbc/0x2dc
-[   29.996662]  __driver_probe_device+0x78/0xe0
-[   30.023491]  device_driver_attach+0x48/0xac
-[   30.050215]  bind_store+0xb8/0x114
-[   30.075957]  drv_attr_store+0x24/0x3c
-[   30.101874]  sysfs_kf_write+0x44/0x54
-[   30.127751]  kernfs_fop_write_iter+0x120/0x1f0
-[   30.154448]  vfs_write+0x1ac/0x380
-[   30.179937]  ksys_write+0x70/0x104
-[   30.205274]  __arm64_sys_write+0x1c/0x2c
-[   30.231060]  invoke_syscall+0x48/0x114
-[   30.256594]  el0_svc_common.constprop.0+0x44/0xec
-[   30.283183]  do_el0_svc+0x2c/0xd0
-[   30.308320]  el0_svc+0x2c/0x84
-[   30.333059]  el0t_64_sync_handler+0xf4/0x120
-[   30.359001]  el0t_64_sync+0x18c/0x190
-[   30.384385] kobject_add_internal failed for genpd:0:3000000.remoteproc with -EEXIST, don't try to register things with the same name in the same directory.
-[   30.406029] remoteproc remoteproc0: releasing 3000000.remoteproc
-[   30.416064] qcom_q6v5_pas: probe of 3000000.remoteproc failed with error -17
+and if it is a valid option, shouldn't you just have 2 different
+functions, one that needs these values and one that does not?  That
+would make it more descriptive as to what those options are, and ensure
+that you get them right.
 
-Fixes: 17ee2fb4e856 ("remoteproc: qcom: pas: Vote for active/proxy power domains")
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 1 +
- 1 file changed, 1 insertion(+)
+> @@ -112,7 +117,6 @@ void wwan_port_rx(struct wwan_port *port, struct sk_buff *skb);
+>   */
+>  void wwan_port_txoff(struct wwan_port *port);
+>  
+> -
+>  /**
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index d830bf13c32c..747155c85085 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -573,6 +573,7 @@ static int adsp_remove(struct platform_device *pdev)
- 	qcom_remove_sysmon_subdev(adsp->sysmon);
- 	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
- 	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
-+	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
- 	rproc_free(adsp->rproc);
- 	device_init_wakeup(adsp->dev, false);
- 
--- 
-2.38.1
+Unneeded change.
 
+thanks,
+
+greg k-h
