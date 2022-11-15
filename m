@@ -2,431 +2,177 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B340AC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Nov 2022 18:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F267C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Nov 2022 18:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231183AbiKOS2i (ORCPT
+        id S230335AbiKOSdX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 13:28:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38566 "EHLO
+        Tue, 15 Nov 2022 13:33:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230005AbiKOS2h (ORCPT
+        with ESMTP id S230322AbiKOSdS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Nov 2022 13:28:37 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A86E1119
-        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Nov 2022 10:28:34 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id r18so14029638pgr.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Nov 2022 10:28:34 -0800 (PST)
+        Tue, 15 Nov 2022 13:33:18 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FAA303D2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Nov 2022 10:33:08 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id q71so14050860pgq.8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Nov 2022 10:33:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eN8Y8tmcXY1Sx8X/CKBIpdvOb7TPXPJYWBMc1VPUnfE=;
-        b=rXAHNSao3J24HGE7DiY019ib/78iKD4I9HRM2WnnP4fVWYL2LCHiU0trOH28PI+i59
-         Riijn7BvZ0tXXSV+xUCt/pqKrHKwpyP/Sh3s9iY+r9uMsSBKFm8STlW56JX+B/TWX9gW
-         GyKnGkdvPx4WsU/9AwbwdcNFQWXxGezce0A51L0/5pzX/zxC/U/LUkz6y2XWasW7Ze6b
-         NRd3IRxyf4A9I9JBSOtTiVM2EXFIvy0Ezsna1t2hYbuDvb8y9Jd5cgvJ53glj21/ANPR
-         pgg0coAy1ijKmfHrK425wh1JhGIuKuqN6G/AmW1c6F2x/5RcLh2Yw6Het2Ysi7IkRLFD
-         X6ag==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i9sKZ10Ykv4CJ84SfGJqUVfFHchCNyvWc7Bn7ZeArVk=;
+        b=nWY4GIyVWUzLwpnqKq+tVPfTpW4IdJ6Ym+rniKqcWT8tl1eie2BCPkXuZDOMrWtXxM
+         c6Xz1pUMDlcKhwil5S3lBCZ4Ancvm03ZRMpMAg3snc59s/lipr1MTjZdCVwP9NoNlqdt
+         gC/oj5Q2YzS8jcj5r6IBRD6EODAcMkDXwcyIpqzRpv3sLm2TYPgR/c5LeHgymFHS7ifz
+         Bl7AGqFV33JRsJu5ajoNOhZuqoY3kd8LfrNTpMqpKqurPyIEVwymCw+2Jxju8Pr8/W31
+         EZQdah0ci9NHFK0C9PMpbSsQ6GL4+xAKU7CWMZiIx5N40I1WSTxCvreVhMZ4pv8m3UD0
+         Qu/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eN8Y8tmcXY1Sx8X/CKBIpdvOb7TPXPJYWBMc1VPUnfE=;
-        b=7B7/EdZgxpX67gQfWR//IUZu68mkEbLqKZPDS/EJDxaoR3BC6npxFxFsHr+ob3dIEr
-         Uy1RaucATE814nu774eO3WJn/j4BXQwzQR+wnYGDB7kch5ysQy4xKrdUAcOXMJJv+sYU
-         dntwgF3r6f1ucD761QprWezNlQBATCZsExMVi2wH9K/W7FhKwQRhMrrbOHgE7IHmSB4K
-         mPuaXLaS1SpC4Vryk8CjVkVQVmvC3GUzrbL+d0+lCuItjkf4YZlADzr9bf85/Vu90cf/
-         M59ZOvVZKm6Nbrk5Tgar67mBTgzDe3r6IE4dIwnFpk4j2vE0wc2aFUDrp7dqzQzViyFQ
-         8N/g==
-X-Gm-Message-State: ANoB5pmHXGB7kyy3ELHJOhkoKnXmkpblSErMrOENnbUYHLh9yXe7yV4b
-        gwDqsLm9S9x0wd36ahfL/7+j4A==
-X-Google-Smtp-Source: AA0mqf76d87lFv9TGgIz9I/2+zNAKDJj01NBvRaRPkIKsREVZncSt6oyj/qVXHVy9h7pcGLErOpmow==
-X-Received: by 2002:a63:524b:0:b0:474:66fb:41fa with SMTP id s11-20020a63524b000000b0047466fb41famr16582322pgl.21.1668536913650;
-        Tue, 15 Nov 2022 10:28:33 -0800 (PST)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9sKZ10Ykv4CJ84SfGJqUVfFHchCNyvWc7Bn7ZeArVk=;
+        b=Ujpkn1exDZdMe1A/CzZ5cd97cpAWiWnSllXIK7Aojvpqk6/MIEVg4aW4kHYh3y8MY0
+         rJSLSsXT8kz/HMLLN1MHuZ3q78j55IB0GfA27n3SVyduLowB85hd25ZzxwFxS6uwQylb
+         3tSW4FGF2Ldv03+7WyfYg7+M08DROma97bep0MhyNZJyI742WoEKcSMcpbgPCxdIstZU
+         MKVHdPfQq2cmLkced9wWGYyuC6ppqAVun9EgtAQRaC2LWQV3r5PaAmo3GvN6SB0dRMDR
+         LEqQQIAfWpRBaHSF+uHopEiaGsM43iFVXFhoQ2h+0r/f5lUgeV35HsbkSnnay1tEkecz
+         dQyg==
+X-Gm-Message-State: ANoB5pl7JumFO/DREcuzCLCJl0oT+yGB2VMIky2djidtXKU0okO+fvdx
+        7Q/iI+/nZDsCgCrWW55hnMddxQ==
+X-Google-Smtp-Source: AA0mqf4wcV2CkrkjUfEGRnmxggjGCJg2GsNVQkQnC6/vwoiXbiTVw5KvWrpCHZp+4wmJbe8I81xm5w==
+X-Received: by 2002:aa7:8696:0:b0:571:ea17:e111 with SMTP id d22-20020aa78696000000b00571ea17e111mr13681360pfo.25.1668537187947;
+        Tue, 15 Nov 2022 10:33:07 -0800 (PST)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id m15-20020a656a0f000000b0045dc85c4a5fsm8048610pgu.44.2022.11.15.10.28.31
+        by smtp.gmail.com with ESMTPSA id e15-20020a170902784f00b00178acc7ef16sm10113525pln.253.2022.11.15.10.33.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 10:28:32 -0800 (PST)
-Date:   Tue, 15 Nov 2022 11:28:30 -0700
+        Tue, 15 Nov 2022 10:33:06 -0800 (PST)
+Date:   Tue, 15 Nov 2022 11:33:04 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Md Danish Anwar <a0501179@ti.com>
-Cc:     MD Danish Anwar <danishanwar@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>, nm@ti.com, vigneshr@ti.com,
-        srk@ti.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 2/5] remoteproc: pru: Add APIs to get and put the PRU
- cores
-Message-ID: <20221115182830.GA61935@p14s>
-References: <20221031073801.130541-1-danishanwar@ti.com>
- <20221031073801.130541-3-danishanwar@ti.com>
- <20221114205057.GA8042@p14s>
- <5e07e4e1-142e-1c48-6ee0-78c537e126b9@ti.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "andersson@kernel.org" <andersson@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: imx_rproc: correct i.MX93 DRAM mapping
+Message-ID: <20221115183304.GB61935@p14s>
+References: <20221102111410.38737-1-peng.fan@oss.nxp.com>
+ <CANLsYky+FPNi82kDwgJBzdoxS5=SBXBqiRRFNCvt4ihUpJS+9w@mail.gmail.com>
+ <DU0PR04MB9417B48835B77695D7BD535788389@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <20221104152732.GA1873068@p14s>
+ <DU0PR04MB9417DF72B41F79CCF63823DF883C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5e07e4e1-142e-1c48-6ee0-78c537e126b9@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DU0PR04MB9417DF72B41F79CCF63823DF883C9@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 11:29:19AM +0530, Md Danish Anwar wrote:
-> Hi Mathieu,
+On Mon, Nov 07, 2022 at 12:27:58AM +0000, Peng Fan wrote:
 > 
-> On 15/11/22 02:20, Mathieu Poirier wrote:
-> > On Mon, Oct 31, 2022 at 01:07:58PM +0530, MD Danish Anwar wrote:
-> >> From: Tero Kristo <t-kristo@ti.com>
-> >>
-> >> Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
-> >> driver to allow client drivers to acquire and release the remoteproc
-> >> device associated with a PRU core. The PRU cores are treated as
-> >> resources with only one client owning it at a time.
-> >>
-> >> The pru_rproc_get() function returns the rproc handle corresponding
-> >> to a PRU core identified by the device tree "ti,prus" property under
-> >> the client node. The pru_rproc_put() is the complementary function
-> >> to pru_rproc_get().
-> >>
-> >> Co-developed-by: Suman Anna <s-anna@ti.com>
-> >> Signed-off-by: Suman Anna <s-anna@ti.com>
-> >> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> >> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> >> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> >> Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
-> >> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
-> >> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> 
+> > -----Original Message-----
+> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Sent: 2022年11月4日 23:28
+> > To: Peng Fan <peng.fan@nxp.com>
+> > Cc: Peng Fan (OSS) <peng.fan@oss.nxp.com>; andersson@kernel.org;
+> > shawnguo@kernel.org; s.hauer@pengutronix.de; kernel@pengutronix.de;
+> > festevam@gmail.com; dl-linux-imx <linux-imx@nxp.com>; linux-
+> > remoteproc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org
+> > Subject: Re: [PATCH] remoteproc: imx_rproc: correct i.MX93 DRAM mapping
 > > 
-> > The above is very tedious to look at.  Other than yours, please replace all the
-> > SoBs with Co-developed-by tags.  Even that seems to be an overkill...  Anyways,
-> > for this patch and the other ones in this set.
+> > On Thu, Nov 03, 2022 at 06:11:46AM +0000, Peng Fan wrote:
+> > > > Subject: Re: [PATCH] remoteproc: imx_rproc: correct i.MX93 DRAM
+> > > > mapping
+> > > >
+> > > > On Wed, 2 Nov 2022 at 05:12, Peng Fan (OSS) <peng.fan@oss.nxp.com>
+> > > > wrote:
+> > > > >
+> > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > >
+> > > > > According to updated reference mannual, the M33 DRAM view of
+> > > > > 0x[C,D]0000000 maps to A55 0xC0000000, so correct it.
+> > > > >
+> > > > > Fixes: 9222fabf0e39 ("remoteproc: imx_rproc: Support i.MX93")
+> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > ---
+> > > > >  drivers/remoteproc/imx_rproc.c | 4 ++--
+> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > > > b/drivers/remoteproc/imx_rproc.c index 2c471e46f4ca..9fc978e0393c
+> > > > > 100644
+> > > > > --- a/drivers/remoteproc/imx_rproc.c
+> > > > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > > > @@ -134,8 +134,8 @@ static const struct imx_rproc_att
+> > > > imx_rproc_att_imx93[] = {
+> > > > >         { 0x80000000, 0x80000000, 0x10000000, 0 },
+> > > > >         { 0x90000000, 0x80000000, 0x10000000, 0 },
+> > > > >
+> > > > > -       { 0xC0000000, 0xa0000000, 0x10000000, 0 },
+> > > > > -       { 0xD0000000, 0xa0000000, 0x10000000, 0 },
+> > > > > +       { 0xC0000000, 0xC0000000, 0x10000000, 0 },
+> > > > > +       { 0xD0000000, 0xC0000000, 0x10000000, 0 },
+> > > >
+> > > > But how did this work before?  Were some SoC released with the old
+> > > > mapping?
 > > 
+> > As it is regularly the case, you have not answered all my questions.
 > 
-> Sure, I will replace all the SoBs (other than mine) with Co-developed by tags
-> for all the patches in this series.
-> 
-> >> ---
-> >>  drivers/remoteproc/pru_rproc.c | 142 +++++++++++++++++++++++++++++++--
-> >>  include/linux/pruss.h          |  56 +++++++++++++
-> >>  2 files changed, 193 insertions(+), 5 deletions(-)
-> >>  create mode 100644 include/linux/pruss.h
-> >>
-> >> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> >> index 128bf9912f2c..9ba73cfc29e2 100644
-> >> --- a/drivers/remoteproc/pru_rproc.c
-> >> +++ b/drivers/remoteproc/pru_rproc.c
-> >> @@ -2,12 +2,14 @@
-> >>  /*
-> >>   * PRU-ICSS remoteproc driver for various TI SoCs
-> >>   *
-> >> - * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
-> >> + * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
-> >>   *
-> >>   * Author(s):
-> >>   *	Suman Anna <s-anna@ti.com>
-> >>   *	Andrew F. Davis <afd@ti.com>
-> >>   *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
-> >> + *	Puranjay Mohan <p-mohan@ti.com>
-> >> + *	Md Danish Anwar <danishanwar@ti.com>
-> >>   */
-> >>  
-> >>  #include <linux/bitops.h>
-> >> @@ -16,6 +18,7 @@
-> >>  #include <linux/module.h>
-> >>  #include <linux/of_device.h>
-> >>  #include <linux/of_irq.h>
-> >> +#include <linux/pruss.h>
-> >>  #include <linux/pruss_driver.h>
-> >>  #include <linux/remoteproc.h>
-> >>  
-> >> @@ -111,6 +114,8 @@ struct pru_private_data {
-> >>   * @rproc: remoteproc pointer for this PRU core
-> >>   * @data: PRU core specific data
-> >>   * @mem_regions: data for each of the PRU memory regions
-> >> + * @client_np: client device node
-> >> + * @lock: mutex to protect client usage
-> >>   * @fw_name: name of firmware image used during loading
-> >>   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-> >>   * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-> >> @@ -126,6 +131,8 @@ struct pru_rproc {
-> >>  	struct rproc *rproc;
-> >>  	const struct pru_private_data *data;
-> >>  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
-> >> +	struct device_node *client_np;
-> >> +	struct mutex lock; /* client access lock */
-> > 
-> > Why is there a comment here when the field is already documented above?
-> > 
-> 
-> I will remove the comment from here.
-> 
-> > I will wait for you to address Roger's comments before looking at this set
-> > further.
-> > 
-> 
-> I had addressed two out of three of Roger's comments earlier. I missed one
-> comment. I have responded to that now. Please have a look at this set.
+> The DRAM mapping was not tested, I just wrote them down according
+> to the information I had.  In this patch, I just fix the mapping at address
+> 0xC0000000, I not add 0xA0000000, I may also add it or use a separate
+> patch, which would you prefer?
 
-I won't - spin off a new revision after addressing Roger's comments and I will
-look at that one.
+Seperate patch?  This is a seperate patch...
 
 > 
-> > Thanks,
-> > Mathieu
+> The i.MX93 SoC is still in pre-production phase, and there is no public
+> Information for now.
+>
+
+That is all I wanted to know.  Other implementation can't be affected by this
+change because the sillicon is still under development.  Simple isn't?
+
+I am applying this patch.
+
+> Regards,
+> Peng.
 > > 
-> >>  	const char *fw_name;
-> >>  	unsigned int *mapped_irq;
-> >>  	struct pru_irq_rsc *pru_interrupt_map;
-> >> @@ -146,6 +153,127 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
-> >>  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
-> >>  }
-> >>  
-> >> +static struct rproc *__pru_rproc_get(struct device_node *np, int index)
-> >> +{
-> >> +	struct rproc *rproc;
-> >> +	phandle rproc_phandle;
-> >> +	int ret;
-> >> +
-> >> +	ret = of_property_read_u32_index(np, "ti,prus", index, &rproc_phandle);
-> >> +	if (ret)
-> >> +		return ERR_PTR(ret);
-> >> +
-> >> +	rproc = rproc_get_by_phandle(rproc_phandle);
-> >> +	if (!rproc) {
-> >> +		ret = -EPROBE_DEFER;
-> >> +		goto err_no_rproc_handle;
-> >> +	}
-> >> +
-> >> +	/* make sure it is PRU rproc */
-> >> +	if (!is_pru_rproc(rproc->dev.parent)) {
-> >> +		rproc_put(rproc);
-> >> +		return ERR_PTR(-ENODEV);
-> >> +	}
-> >> +
-> >> +	get_device(&rproc->dev);
-> >> +
-> >> +	return rproc;
-> >> +
-> >> +err_no_rproc_handle:
-> >> +	rproc_put(rproc);
-> >> +	return ERR_PTR(ret);
-> >> +}
-> >> +
-> >> +/**
-> >> + * pru_rproc_get() - get the PRU rproc instance from a device node
-> >> + * @np: the user/client device node
-> >> + * @index: index to use for the ti,prus property
-> >> + * @pru_id: optional pointer to return the PRU remoteproc processor id
-> >> + *
-> >> + * This function looks through a client device node's "ti,prus" property at
-> >> + * index @index and returns the rproc handle for a valid PRU remote processor if
-> >> + * found. The function allows only one user to own the PRU rproc resource at a
-> >> + * time. Caller must call pru_rproc_put() when done with using the rproc, not
-> >> + * required if the function returns a failure.
-> >> + *
-> >> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
-> >> + * returned.
-> >> + *
-> >> + * Return: rproc handle on success, and an ERR_PTR on failure using one
-> >> + * of the following error values
-> >> + *    -ENODEV if device is not found
-> >> + *    -EBUSY if PRU is already acquired by anyone
-> >> + *    -EPROBE_DEFER is PRU device is not probed yet
-> >> + */
-> >> +struct rproc *pru_rproc_get(struct device_node *np, int index,
-> >> +			    enum pruss_pru_id *pru_id)
-> >> +{
-> >> +	struct rproc *rproc;
-> >> +	struct pru_rproc *pru;
-> >> +	struct device *dev;
-> >> +	int ret;
-> >> +
-> >> +	rproc = __pru_rproc_get(np, index);
-> >> +	if (IS_ERR(rproc))
-> >> +		return rproc;
-> >> +
-> >> +	pru = rproc->priv;
-> >> +	dev = &rproc->dev;
-> >> +
-> >> +	mutex_lock(&pru->lock);
-> >> +
-> >> +	if (pru->client_np) {
-> >> +		mutex_unlock(&pru->lock);
-> >> +		put_device(dev);
-> >> +		ret = -EBUSY;
-> >> +		goto err_no_rproc_handle;
-> >> +	}
-> >> +
-> >> +	pru->client_np = np;
-> >> +
-> >> +	mutex_unlock(&pru->lock);
-> >> +
-> >> +	if (pru_id)
-> >> +		*pru_id = pru->id;
-> >> +
-> >> +	return rproc;
-> >> +
-> >> +err_no_rproc_handle:
-> >> +	rproc_put(rproc);
-> >> +	return ERR_PTR(ret);
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(pru_rproc_get);
-> >> +
-> >> +/**
-> >> + * pru_rproc_put() - release the PRU rproc resource
-> >> + * @rproc: the rproc resource to release
-> >> + *
-> >> + * Releases the PRU rproc resource and makes it available to other
-> >> + * users.
-> >> + */
-> >> +void pru_rproc_put(struct rproc *rproc)
-> >> +{
-> >> +	struct pru_rproc *pru;
-> >> +
-> >> +	if (IS_ERR_OR_NULL(rproc) || !is_pru_rproc(rproc->dev.parent))
-> >> +		return;
-> >> +
-> >> +	pru = rproc->priv;
-> >> +
-> >> +	mutex_lock(&pru->lock);
-> >> +
-> >> +	if (!pru->client_np) {
-> >> +		mutex_unlock(&pru->lock);
-> >> +		return;
-> >> +	}
-> >> +
-> >> +	pru->client_np = NULL;
-> >> +	mutex_unlock(&pru->lock);
-> >> +
-> >> +	rproc_put(rproc);
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(pru_rproc_put);
-> >> +
-> >>  static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
-> >>  {
-> >>  	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
-> >> @@ -438,7 +566,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
-> >>  	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
-> >>  	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
-> >>  	/* PRU1 has its local RAM addresses reversed */
-> >> -	if (pru->id == 1)
-> >> +	if (pru->id == PRUSS_PRU1)
-> >>  		swap(dram0, dram1);
-> >>  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
-> >>  
-> >> @@ -747,14 +875,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
-> >>  	case RTU0_IRAM_ADDR_MASK:
-> >>  		fallthrough;
-> >>  	case PRU0_IRAM_ADDR_MASK:
-> >> -		pru->id = 0;
-> >> +		pru->id = PRUSS_PRU0;
-> >>  		break;
-> >>  	case TX_PRU1_IRAM_ADDR_MASK:
-> >>  		fallthrough;
-> >>  	case RTU1_IRAM_ADDR_MASK:
-> >>  		fallthrough;
-> >>  	case PRU1_IRAM_ADDR_MASK:
-> >> -		pru->id = 1;
-> >> +		pru->id = PRUSS_PRU1;
-> >>  		break;
-> >>  	default:
-> >>  		ret = -EINVAL;
-> >> @@ -816,6 +944,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
-> >>  	pru->pruss = platform_get_drvdata(ppdev);
-> >>  	pru->rproc = rproc;
-> >>  	pru->fw_name = fw_name;
-> >> +	pru->client_np = NULL;
-> >> +	mutex_init(&pru->lock);
-> >>  
-> >>  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
-> >>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-> >> @@ -904,7 +1034,7 @@ MODULE_DEVICE_TABLE(of, pru_rproc_match);
-> >>  
-> >>  static struct platform_driver pru_rproc_driver = {
-> >>  	.driver = {
-> >> -		.name   = "pru-rproc",
-> >> +		.name   = PRU_RPROC_DRVNAME,
-> >>  		.of_match_table = pru_rproc_match,
-> >>  		.suppress_bind_attrs = true,
-> >>  	},
-> >> @@ -916,5 +1046,7 @@ module_platform_driver(pru_rproc_driver);
-> >>  MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
-> >>  MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
-> >>  MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
-> >> +MODULE_AUTHOR("Puranjay Mohan <p-mohan@ti.com>");
-> >> +MODULE_AUTHOR("Md Danish Anwar <danishanwar@ti.com>");
-> >>  MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
-> >>  MODULE_LICENSE("GPL v2");
-> >> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-> >> new file mode 100644
-> >> index 000000000000..fdc719b43db0
-> >> --- /dev/null
-> >> +++ b/include/linux/pruss.h
-> >> @@ -0,0 +1,56 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0-only */
-> >> +/**
-> >> + * PRU-ICSS Subsystem user interfaces
-> >> + *
-> >> + * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
-> >> + *	Suman Anna <s-anna@ti.com>
-> >> + */
-> >> +
-> >> +#ifndef __LINUX_PRUSS_H
-> >> +#define __LINUX_PRUSS_H
-> >> +
-> >> +#include <linux/device.h>
-> >> +#include <linux/types.h>
-> >> +
-> >> +#define PRU_RPROC_DRVNAME "pru-rproc"
-> >> +
-> >> +/*
-> >> + * enum pruss_pru_id - PRU core identifiers
-> >> + */
-> >> +enum pruss_pru_id {
-> >> +	PRUSS_PRU0 = 0,
-> >> +	PRUSS_PRU1,
-> >> +	PRUSS_NUM_PRUS,
-> >> +};
-> >> +
-> >> +struct device_node;
-> >> +
-> >> +#if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
-> >> +
-> >> +struct rproc *pru_rproc_get(struct device_node *np, int index,
-> >> +			    enum pruss_pru_id *pru_id);
-> >> +void pru_rproc_put(struct rproc *rproc);
-> >> +
-> >> +#else
-> >> +
-> >> +static inline struct rproc *
-> >> +pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
-> >> +{
-> >> +	return ERR_PTR(-EOPNOTSUPP);
-> >> +}
-> >> +
-> >> +static inline void pru_rproc_put(struct rproc *rproc) { }
-> >> +
-> >> +#endif /* CONFIG_PRU_REMOTEPROC */
-> >> +
-> >> +static inline bool is_pru_rproc(struct device *dev)
-> >> +{
-> >> +	const char *drv_name = dev_driver_string(dev);
-> >> +
-> >> +	if (strncmp(drv_name, PRU_RPROC_DRVNAME, sizeof(PRU_RPROC_DRVNAME)))
-> >> +		return false;
-> >> +
-> >> +	return true;
-> >> +}
-> >> +
-> >> +#endif /* __LINUX_PRUSS_H */
-> >> -- 
-> >> 2.25.1
-> >>
-> 
-> Thanks,
-> Danish
+> > > The current m33 firmware release with Linux SDK only has TCM version,
+> > > so I not have image to test the DDR mapping.
+> > >
+> > > Initially we got the information that M33 mapping of DRAM.
+> > > DRAM (offset 0 MB)	DRAM	80000000
+> > > DRAM (offset 256 MB)	DRAM	A0000000
+> > > DRAM (offset 512 MB)	DRAM	C0000000
+> > >
+> > > However the information is wrong after we check more, there is an
+> > > 256MB hole, 0MB [0x80000000, 0x8fffffff], 512MB [0xa0000000,
+> > > 0xafffffff], 1024MB [0xc0000000, 0xcfffffff]
+> > >
+> > > I use JTAG to confirm it.
+> > >
+> > > Thanks,
+> > > Peng.
+> > > >
+> > > > >  };
+> > > > >
+> > > > >  static const struct imx_rproc_att imx_rproc_att_imx8qm[] = {
+> > > > > --
+> > > > > 2.37.1
+> > > > >
