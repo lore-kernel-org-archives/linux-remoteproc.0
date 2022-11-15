@@ -2,235 +2,421 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 914CEC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Nov 2022 06:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A31C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Nov 2022 08:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230023AbiKOGJq (ORCPT
+        id S232120AbiKOIep (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 01:09:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45308 "EHLO
+        Tue, 15 Nov 2022 03:34:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231602AbiKOGJo (ORCPT
+        with ESMTP id S229966AbiKOIeo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Nov 2022 01:09:44 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C9926F4;
-        Mon, 14 Nov 2022 22:09:43 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AF69clg087487;
-        Tue, 15 Nov 2022 00:09:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1668492578;
-        bh=rVVMhxq4qo4bdQ1NNFLzrQ20Hc3CbqX/ReH7NPfesr4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=lLSIMM2rfgXeT99+BkyNeNfonfYf9VUNBiTnk2XsEk0OwamARnc0AS3FCBv6fsV0v
-         x4/OI9V783W3M+yNyYIbozlDijjby7FT26EgnnSIBPenrRHcGhUNVZZTav9PtmpJ8Z
-         TtwvfLGAC1GckpfwSlFsOXD4C3vz0DRoQzt+AywA=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AF69cwQ047113
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Nov 2022 00:09:38 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Tue, 15
- Nov 2022 00:09:38 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
- Frontend Transport; Tue, 15 Nov 2022 00:09:38 -0600
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AF69bbs084882;
-        Tue, 15 Nov 2022 00:09:37 -0600
-From:   Devarsh Thakkar <devarsht@ti.com>
-To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>
-CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>
-Subject: [PATCH 2/2] remoteproc: k3-r5: Use separate compatible string for TI AM62 SoC family
-Date:   Tue, 15 Nov 2022 11:39:34 +0530
-Message-ID: <20221115060934.13279-3-devarsht@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221115060934.13279-1-devarsht@ti.com>
-References: <20221115060934.13279-1-devarsht@ti.com>
+        Tue, 15 Nov 2022 03:34:44 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A89FBA5;
+        Tue, 15 Nov 2022 00:34:42 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id C5919CE1278;
+        Tue, 15 Nov 2022 08:34:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08456C433D6;
+        Tue, 15 Nov 2022 08:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668501277;
+        bh=RPhqxSuLjnoiovOxDmBnRxxubrALwemxcVdK+oIlxZ4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=ZxcbK3mdK8q8mIY2JhKtNMQANaAT7TAyWUjq6xQqsHSC00w57hBhfyMVzWq4SefVb
+         B/esnMw2OEpMe03ez0T+VXMtyrfFGBgbSmBFWLZxYStg4jKw3dc9dWDHyIdk4hyZme
+         dBrj28MKfIaqt/h7UPpv8BoxTpcAlAjned58VHChlSn5ZqEF4zJLqUgj0Wqgoalzj0
+         oQQ3Ceo4teWy6/ZAs25fEAs1XgJKJ6nl65m6ZlBATwOtLP6jh6kOkHTabQGpeF2gqT
+         EM7n/WwPgmunZyCKSkJotFbmpTbYXolDmAgbo2fOazghk4VXb2Tgeq5iue9jKzDJPy
+         RkrYN2Xryh/dA==
+Message-ID: <9a1d6524-05b3-11f7-4f3b-794a3a44b5b8@kernel.org>
+Date:   Tue, 15 Nov 2022 10:34:30 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [EXTERNAL] Re: [PATCH v7 2/5] remoteproc: pru: Add APIs to get
+ and put the PRU cores
+Content-Language: en-US
+To:     Md Danish Anwar <a0501179@ti.com>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Suman Anna <s-anna@ti.com>, "Andrew F . Davis" <afd@ti.com>,
+        nm@ti.com, vigneshr@ti.com, srk@ti.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20221031073801.130541-1-danishanwar@ti.com>
+ <20221031073801.130541-3-danishanwar@ti.com>
+ <a729e4e2-2f2e-8c3e-af45-3b8276bc6522@kernel.org>
+ <10c7731d-c776-15ee-50e7-406a40e657c3@ti.com>
+From:   Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <10c7731d-c776-15ee-50e7-406a40e657c3@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-AM62 and AM62A SoCs use single core R5F which is a new scenario
-different than the one being used with CLUSTER_MODE_SINGLECPU
-which is for utilizing a single core from a set of cores available
-in R5F cluster present in the SoC.
+Danish,
 
-To support this single core scenario map it with
-newly defined CLUSTER_MODE_NONE and use it when
-compatible is set to ti,am62-r5fss.
+On 15/11/2022 07:53, Md Danish Anwar wrote:
+> 
+> Hi Roger,
+> 
+> I had responded to two of your comments on this patch earlier but missed one
+> comment. Responding to that comment now.
+> 
+> On 04/11/22 18:25, Roger Quadros wrote:
+>> Hi Danish,
+>>
+>> On 31/10/2022 09:37, MD Danish Anwar wrote:
+>>> From: Tero Kristo <t-kristo@ti.com>
+>>>
+>>> Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
+>>> driver to allow client drivers to acquire and release the remoteproc
+>>> device associated with a PRU core. The PRU cores are treated as
+>>> resources with only one client owning it at a time.
+>>>
+>>> The pru_rproc_get() function returns the rproc handle corresponding
+>>> to a PRU core identified by the device tree "ti,prus" property under
+>>> the client node. The pru_rproc_put() is the complementary function
+>>> to pru_rproc_get().
+>>>
+>>> Co-developed-by: Suman Anna <s-anna@ti.com>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>> Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
+>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> ---
+>>>  drivers/remoteproc/pru_rproc.c | 142 +++++++++++++++++++++++++++++++--
+>>>  include/linux/pruss.h          |  56 +++++++++++++
+>>>  2 files changed, 193 insertions(+), 5 deletions(-)
+>>>  create mode 100644 include/linux/pruss.h
+>>>
+>>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>>> index 128bf9912f2c..9ba73cfc29e2 100644
+>>> --- a/drivers/remoteproc/pru_rproc.c
+>>> +++ b/drivers/remoteproc/pru_rproc.c
+>>> @@ -2,12 +2,14 @@
+>>>  /*
+>>>   * PRU-ICSS remoteproc driver for various TI SoCs
+>>>   *
+>>> - * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
+>>> + * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
+>>>   *
+>>>   * Author(s):
+>>>   *	Suman Anna <s-anna@ti.com>
+>>>   *	Andrew F. Davis <afd@ti.com>
+>>>   *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
+>>> + *	Puranjay Mohan <p-mohan@ti.com>
+>>> + *	Md Danish Anwar <danishanwar@ti.com>
+>>>   */
+>>>  
+>>>  #include <linux/bitops.h>
+>>> @@ -16,6 +18,7 @@
+>>>  #include <linux/module.h>
+>>>  #include <linux/of_device.h>
+>>>  #include <linux/of_irq.h>
+>>> +#include <linux/pruss.h>
+>>>  #include <linux/pruss_driver.h>
+>>>  #include <linux/remoteproc.h>
+>>>  
+>>> @@ -111,6 +114,8 @@ struct pru_private_data {
+>>>   * @rproc: remoteproc pointer for this PRU core
+>>>   * @data: PRU core specific data
+>>>   * @mem_regions: data for each of the PRU memory regions
+>>> + * @client_np: client device node
+>>> + * @lock: mutex to protect client usage
+>>>   * @fw_name: name of firmware image used during loading
+>>>   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
+>>>   * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
+>>> @@ -126,6 +131,8 @@ struct pru_rproc {
+>>>  	struct rproc *rproc;
+>>>  	const struct pru_private_data *data;
+>>>  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
+>>> +	struct device_node *client_np;
+>>> +	struct mutex lock; /* client access lock */
+>>>  	const char *fw_name;
+>>>  	unsigned int *mapped_irq;
+>>>  	struct pru_irq_rsc *pru_interrupt_map;
+>>> @@ -146,6 +153,127 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+>>>  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
+>>>  }
+>>>  
+>>> +static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+>>> +{
+>>> +	struct rproc *rproc;
+>>> +	phandle rproc_phandle;
+>>> +	int ret;
+>>> +
+>>> +	ret = of_property_read_u32_index(np, "ti,prus", index, &rproc_phandle);
+>>> +	if (ret)
+>>> +		return ERR_PTR(ret);
+>>> +
+>>> +	rproc = rproc_get_by_phandle(rproc_phandle);
+>>> +	if (!rproc) {
+>>> +		ret = -EPROBE_DEFER;
+>>> +		goto err_no_rproc_handle;
+>>> +	}
+>>> +
+>>> +	/* make sure it is PRU rproc */
+>>> +	if (!is_pru_rproc(rproc->dev.parent)) {
+>>> +		rproc_put(rproc);
+>>> +		return ERR_PTR(-ENODEV);
+>>> +	}
+>>> +
+>>> +	get_device(&rproc->dev);
+>>
+>> Why do you need a get_device() here?
+>> rproc_get_by_phandle() does it right?
+>>
+>>> +
+>>> +	return rproc;
+>>> +
+>>> +err_no_rproc_handle:
+>>> +	rproc_put(rproc);
+>>> +	return ERR_PTR(ret);
+>>> +}
+>>> +
+>>> +/**
+>>> + * pru_rproc_get() - get the PRU rproc instance from a device node
+>>> + * @np: the user/client device node
+>>> + * @index: index to use for the ti,prus property
+>>> + * @pru_id: optional pointer to return the PRU remoteproc processor id
+>>> + *
+>>> + * This function looks through a client device node's "ti,prus" property at
+>>> + * index @index and returns the rproc handle for a valid PRU remote processor if
+>>> + * found. The function allows only one user to own the PRU rproc resource at a
+>>> + * time. Caller must call pru_rproc_put() when done with using the rproc, not
+>>> + * required if the function returns a failure.
+>>> + *
+>>> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
+>>> + * returned.
+>>> + *
+>>> + * Return: rproc handle on success, and an ERR_PTR on failure using one
+>>> + * of the following error values
+>>> + *    -ENODEV if device is not found
+>>> + *    -EBUSY if PRU is already acquired by anyone
+>>> + *    -EPROBE_DEFER is PRU device is not probed yet
+>>> + */
+>>> +struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>> +			    enum pruss_pru_id *pru_id)
+>>> +{
+>>> +	struct rproc *rproc;
+>>> +	struct pru_rproc *pru;
+>>> +	struct device *dev;
+>>> +	int ret;
+>>> +
+>>> +	rproc = __pru_rproc_get(np, index);
+>>> +	if (IS_ERR(rproc))
+>>> +		return rproc;
+>>
+>> Why bother doing __pru_rproc_get() if pru->client_np exists?
+>>
+>> You could do the below if check first and exit if pru->client_np exists.
+>>
+>>> +
+>>> +	pru = rproc->priv;
+>>> +	dev = &rproc->dev;
+>>> +
+>>> +	mutex_lock(&pru->lock);
+>>> +
+>>> +	if (pru->client_np) {
+>>> +		mutex_unlock(&pru->lock);
+>>> +		put_device(dev);
+>>> +		ret = -EBUSY;
+>>> +		goto err_no_rproc_handle;
+>>> +	}
+>>> +
+>>> +	pru->client_np = np;
+>>> +
+>>> +	mutex_unlock(&pru->lock);
+>>> +
+>>> +	if (pru_id)
+>>> +		*pru_id = pru->id;
+>>> +
+>>> +	return rproc;
+>>> +
+>>> +err_no_rproc_handle:
+>>> +	rproc_put(rproc);
+>>> +	return ERR_PTR(ret);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(pru_rproc_get);
+>>> +
+>>> +/**
+>>> + * pru_rproc_put() - release the PRU rproc resource
+>>> + * @rproc: the rproc resource to release
+>>> + *
+>>> + * Releases the PRU rproc resource and makes it available to other
+>>> + * users.
+>>> + */
+>>> +void pru_rproc_put(struct rproc *rproc)
+>>> +{
+>>> +	struct pru_rproc *pru;
+>>> +
+>>> +	if (IS_ERR_OR_NULL(rproc) || !is_pru_rproc(rproc->dev.parent))
+>>> +		return;
+>>> +
+>>> +	pru = rproc->priv;
+>>> +
+>>> +	mutex_lock(&pru->lock);
+>>> +
+>>> +	if (!pru->client_np) {
+>>> +		mutex_unlock(&pru->lock);
+>>> +		return;
+>>> +	}
+>>> +
+>>> +	pru->client_np = NULL;
+>>> +	mutex_unlock(&pru->lock);
+>>> +
+>>> +	rproc_put(rproc);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(pru_rproc_put);
+>>> +
+>>>  static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
+>>>  {
+>>>  	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
+>>> @@ -438,7 +566,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+>>>  	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
+>>>  	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
+>>>  	/* PRU1 has its local RAM addresses reversed */
+>>> -	if (pru->id == 1)
+>>> +	if (pru->id == PRUSS_PRU1)
+>>
+>> Introduction of PRUSS_PRU0/1 enum could have been a separate patch.
+>>
+> 
+> Yes, Introduction of PRUSS_PRU0/1 enum could have been a separated patch in the
+> same series. But from the v1 of this series, this enum has been part of this
+> patch and that's why I kept it that way. We can introduce a new patch for this
+> enum (and the APIs that are using the enum) in next version of the series if
+> it's okay with you and Mathieu.
+> 
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
----
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 55 ++++++++++++++++++------
- 1 file changed, 43 insertions(+), 12 deletions(-)
+Yes please. Thanks!
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 0481926c6975..b5adcaa3d3a4 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -74,11 +74,13 @@ struct k3_r5_mem {
-  *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
-  *   LockStep mode   : AM65x, J721E and J7200 SoCs
-  *   Single-CPU mode : AM64x SoCs only
-+ *   None            : AM62x, AM62A SoCs
-  */
- enum cluster_mode {
- 	CLUSTER_MODE_SPLIT = 0,
- 	CLUSTER_MODE_LOCKSTEP,
- 	CLUSTER_MODE_SINGLECPU,
-+	CLUSTER_MODE_NONE,
- };
- 
- /**
-@@ -86,11 +88,13 @@ enum cluster_mode {
-  * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
-  * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
-  * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
-+ * @is_single_core: flag to denote if SoC/IP has only single core R5
-  */
- struct k3_r5_soc_data {
- 	bool tcm_is_double;
- 	bool tcm_ecc_autoinit;
- 	bool single_cpu_mode;
-+	bool is_single_core;
- };
- 
- /**
-@@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
- 
- 	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
- 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
--	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
-+	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
-+		cluster->mode == CLUSTER_MODE_NONE) {
- 		core = core0;
- 	} else {
- 		core = kproc->core;
-@@ -853,7 +858,7 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
- 		boot_vec, cfg, ctrl, stat);
- 
- 	/* check if only Single-CPU mode is supported on applicable SoCs */
--	if (cluster->soc_data->single_cpu_mode) {
-+	if (cluster->soc_data->single_cpu_mode || cluster->soc_data->is_single_core) {
- 		single_cpu =
- 			!!(stat & PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
- 		if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
-@@ -1074,6 +1079,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
- 
- 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
- 	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
-+		cluster->mode == CLUSTER_MODE_NONE ||
- 	    !cluster->soc_data->tcm_is_double)
- 		return;
- 
-@@ -1147,7 +1153,9 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
- 	atcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_ATCM_EN ?  1 : 0;
- 	btcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_BTCM_EN ?  1 : 0;
- 	loczrama = cfg & PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE ?  1 : 0;
--	if (cluster->soc_data->single_cpu_mode) {
-+	if (cluster->soc_data->is_single_core) {
-+		mode = CLUSTER_MODE_NONE;
-+	} else if (cluster->soc_data->single_cpu_mode) {
- 		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
- 				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
- 	} else {
-@@ -1271,6 +1279,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 
- 		/* create only one rproc in lockstep mode or single-cpu mode */
- 		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
-+			cluster->mode == CLUSTER_MODE_NONE     ||
- 		    cluster->mode == CLUSTER_MODE_SINGLECPU)
- 			break;
- 	}
-@@ -1704,21 +1713,32 @@ static int k3_r5_probe(struct platform_device *pdev)
- 	 * default to most common efuse configurations - Split-mode on AM64x
- 	 * and LockStep-mode on all others
- 	 */
--	cluster->mode = data->single_cpu_mode ?
--				CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
-+	if (!data->is_single_core)
-+		cluster->mode = data->single_cpu_mode ?
-+						CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
-+	else
-+		cluster->mode = CLUSTER_MODE_NONE;
-+
- 	cluster->soc_data = data;
- 	INIT_LIST_HEAD(&cluster->cores);
- 
--	ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
--	if (ret < 0 && ret != -EINVAL) {
--		dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n",
--			ret);
--		return ret;
-+	if (!data->is_single_core) {
-+		ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
-+		if (ret < 0 && ret != -EINVAL) {
-+			dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	num_cores = of_get_available_child_count(np);
--	if (num_cores != 2) {
--		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
-+	if (num_cores != 2 && !data->is_single_core) {
-+		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
-+			num_cores);
-+		return -ENODEV;
-+	}
-+
-+	if (num_cores != 1 && data->is_single_core) {
-+		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
- 			num_cores);
- 		return -ENODEV;
- 	}
-@@ -1760,18 +1780,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
- 	.tcm_is_double = false,
- 	.tcm_ecc_autoinit = false,
- 	.single_cpu_mode = false,
-+	.is_single_core = false,
- };
- 
- static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
- 	.tcm_is_double = true,
- 	.tcm_ecc_autoinit = true,
- 	.single_cpu_mode = false,
-+	.is_single_core = false,
- };
- 
- static const struct k3_r5_soc_data am64_soc_data = {
- 	.tcm_is_double = true,
- 	.tcm_ecc_autoinit = true,
- 	.single_cpu_mode = true,
-+	.is_single_core = false,
-+};
-+
-+static const struct k3_r5_soc_data am62_soc_data = {
-+	.tcm_is_double = false,
-+	.tcm_ecc_autoinit = true,
-+	.single_cpu_mode = false,
-+	.is_single_core = true,
- };
- 
- static const struct of_device_id k3_r5_of_match[] = {
-@@ -1779,6 +1809,7 @@ static const struct of_device_id k3_r5_of_match[] = {
- 	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
- 	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
- 	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
-+	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
- 	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
- 	{ /* sentinel */ },
- };
--- 
-2.17.1
+>>>  		swap(dram0, dram1);
+>>>  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
+>>>  
+>>> @@ -747,14 +875,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
+>>>  	case RTU0_IRAM_ADDR_MASK:
+>>>  		fallthrough;
+>>>  	case PRU0_IRAM_ADDR_MASK:
+>>> -		pru->id = 0;
+>>> +		pru->id = PRUSS_PRU0;
+>>>  		break;
+>>>  	case TX_PRU1_IRAM_ADDR_MASK:
+>>>  		fallthrough;
+>>>  	case RTU1_IRAM_ADDR_MASK:
+>>>  		fallthrough;
+>>>  	case PRU1_IRAM_ADDR_MASK:
+>>> -		pru->id = 1;
+>>> +		pru->id = PRUSS_PRU1;
+>>>  		break;
+>>>  	default:
+>>>  		ret = -EINVAL;
+>>> @@ -816,6 +944,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
+>>>  	pru->pruss = platform_get_drvdata(ppdev);
+>>>  	pru->rproc = rproc;
+>>>  	pru->fw_name = fw_name;
+>>> +	pru->client_np = NULL;
+>>> +	mutex_init(&pru->lock);
+>>>  
+>>>  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+>>>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>>> @@ -904,7 +1034,7 @@ MODULE_DEVICE_TABLE(of, pru_rproc_match);
+>>>  
+>>>  static struct platform_driver pru_rproc_driver = {
+>>>  	.driver = {
+>>> -		.name   = "pru-rproc",
+>>> +		.name   = PRU_RPROC_DRVNAME,
+>>>  		.of_match_table = pru_rproc_match,
+>>>  		.suppress_bind_attrs = true,
+>>>  	},
+>>> @@ -916,5 +1046,7 @@ module_platform_driver(pru_rproc_driver);
+>>>  MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
+>>>  MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
+>>>  MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
+>>> +MODULE_AUTHOR("Puranjay Mohan <p-mohan@ti.com>");
+>>> +MODULE_AUTHOR("Md Danish Anwar <danishanwar@ti.com>");
+>>>  MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
+>>>  MODULE_LICENSE("GPL v2");
+>>> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+>>> new file mode 100644
+>>> index 000000000000..fdc719b43db0
+>>> --- /dev/null
+>>> +++ b/include/linux/pruss.h
+>>> @@ -0,0 +1,56 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>> +/**
+>>> + * PRU-ICSS Subsystem user interfaces
+>>> + *
+>>> + * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+>>> + *	Suman Anna <s-anna@ti.com>
+>>> + */
+>>> +
+>>> +#ifndef __LINUX_PRUSS_H
+>>> +#define __LINUX_PRUSS_H
+>>> +
+>>> +#include <linux/device.h>
+>>> +#include <linux/types.h>
+>>> +
+>>> +#define PRU_RPROC_DRVNAME "pru-rproc"
+>>> +
+>>> +/*
+>>> + * enum pruss_pru_id - PRU core identifiers
+>>> + */
+>>> +enum pruss_pru_id {
+>>> +	PRUSS_PRU0 = 0,
+>>> +	PRUSS_PRU1,
+>>> +	PRUSS_NUM_PRUS,
+>>> +};
+>>> +
+>>> +struct device_node;
+>>> +
+>>> +#if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+>>> +
+>>> +struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>> +			    enum pruss_pru_id *pru_id);
+>>> +void pru_rproc_put(struct rproc *rproc);
+>>> +
+>>> +#else
+>>> +
+>>> +static inline struct rproc *
+>>> +pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
+>>> +{
+>>> +	return ERR_PTR(-EOPNOTSUPP);
+>>> +}
+>>> +
+>>> +static inline void pru_rproc_put(struct rproc *rproc) { }
+>>> +
+>>> +#endif /* CONFIG_PRU_REMOTEPROC */
+>>> +
+>>> +static inline bool is_pru_rproc(struct device *dev)
+>>> +{
+>>> +	const char *drv_name = dev_driver_string(dev);
+>>> +
+>>> +	if (strncmp(drv_name, PRU_RPROC_DRVNAME, sizeof(PRU_RPROC_DRVNAME)))
+>>> +		return false;
+>>> +
+>>> +	return true;
+>>> +}
+>>> +
+>>> +#endif /* __LINUX_PRUSS_H */
+>>
+>> cheers,
+>> -roger
+> 
+> Thanks,
+> Danish.
 
+cheers,
+-roger
