@@ -2,222 +2,431 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE681C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Nov 2022 15:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B340AC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 15 Nov 2022 18:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231375AbiKOPiB (ORCPT
+        id S231183AbiKOS2i (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 15 Nov 2022 10:38:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
+        Tue, 15 Nov 2022 13:28:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230455AbiKOPiA (ORCPT
+        with ESMTP id S230005AbiKOS2h (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 15 Nov 2022 10:38:00 -0500
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F0F913DD3;
-        Tue, 15 Nov 2022 07:37:59 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=koZZqvICkxo5wSN2U6IH7sue5ZhIB0LClj302+fnhI/hKpXEHpSsY7Y6Y2W+O/Fa0pnu8BNvWMG36DVuTk+XLOXaP2Ex3HwsQm2maBioRAKJi65kyDH/r7s3GbyEUkqsBRoQpcOfVGBUFB0GoTyHkjGTdXdJ9z3e7Fvh95Jl7hvsHnLUaOzhweGQ9Ve9K4zxWgZTcTfjYu0mmOMWsoa91oHTr4gdgVjwcMyzaheCSoqwwVcrVxabGSZi8MhGhwrF5lS5go/ReJTS3o2n0r/7JfqWaDEba7FAjtcb1lmevwhp9tNXdDCBs3YpG6AluqgUmvKPFlj1WjXfJBvUu0R+mQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L3/ywTAvxs4WWhlYpj7nHZydtnnoBslqYVKjvd6UvcY=;
- b=TomVLbtIouEMUJgoDxNJOJv5zeI8GGjWGckXF/8QVYV78s1BntbcUdkKGkifMwcIWSkY3zyt5w5/FAvKtTycVWOvnCNKq5o2YHgTUv18cXagP+3hLMcQkGbg0S+5/D6hkWCTk4Kgih6ObICocmBKehQE9ecIbiU6rArDaQ30xb3+vV4TZH8y6SslH69PIEdQj+Yd7X1MTI8UPq64n4B84IPodWbFT+gkZ8b0QDx0wAJeaJCNXNn3+uNQO1AMYuS6T5FO6me/Nr5JJeRaEw5KAIOu5WuDrgV/u36T7u800sE6ijqt/3P/w9oB9ZuqbeV73VI1oKDTdOOVID1lsGlz/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.62.198) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=xilinx.com;
- dkim=none (message not signed); arc=none
+        Tue, 15 Nov 2022 13:28:37 -0500
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A86E1119
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Nov 2022 10:28:34 -0800 (PST)
+Received: by mail-pg1-x52d.google.com with SMTP id r18so14029638pgr.12
+        for <linux-remoteproc@vger.kernel.org>; Tue, 15 Nov 2022 10:28:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L3/ywTAvxs4WWhlYpj7nHZydtnnoBslqYVKjvd6UvcY=;
- b=nns82++7ojbb/5svH99pNRwvqw6bIGWoy4+AkMXPg+oKmx5KxP0KA/AiskcXPD34rAYmuLKfBHVCTMJiclevYm1lelhLY1NmOmN0TJYxVfuw81WJdg59MRAw3sFhj93k/K8RxggCKqJP3CZhufRTVX9clhci4IaZbMbFtZ1Kn4s=
-Received: from DM6PR13CA0007.namprd13.prod.outlook.com (2603:10b6:5:bc::20) by
- DM4PR02MB9070.namprd02.prod.outlook.com (2603:10b6:8:112::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5813.17; Tue, 15 Nov 2022 15:37:57 +0000
-Received: from DM3NAM02FT028.eop-nam02.prod.protection.outlook.com
- (2603:10b6:5:bc:cafe::48) by DM6PR13CA0007.outlook.office365.com
- (2603:10b6:5:bc::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17 via Frontend
- Transport; Tue, 15 Nov 2022 15:37:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.62.198)
- smtp.mailfrom=xilinx.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.62.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.62.198; helo=xsj-pvapexch01.xlnx.xilinx.com; pr=C
-Received: from xsj-pvapexch01.xlnx.xilinx.com (149.199.62.198) by
- DM3NAM02FT028.mail.protection.outlook.com (10.13.4.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5813.12 via Frontend Transport; Tue, 15 Nov 2022 15:37:56 +0000
-Received: from xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) by
- xsj-pvapexch01.xlnx.xilinx.com (172.19.86.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Tue, 15 Nov 2022 07:37:54 -0800
-Received: from smtp.xilinx.com (172.19.127.95) by
- xsj-pvapexch02.xlnx.xilinx.com (172.19.86.41) with Microsoft SMTP Server id
- 15.1.2507.9 via Frontend Transport; Tue, 15 Nov 2022 07:37:54 -0800
-Envelope-to: mathieu.poirier@linaro.org,
- arnaud.pouliquen@foss.st.com,
- bill.mills@linaro.com,
- tanmay.shah@amd.com,
- linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Received: from [172.19.2.206] (port=57936 helo=xsjblevinsk50.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <ben.levinsky@xilinx.com>)
-        id 1ouy0Y-0009M7-1B; Tue, 15 Nov 2022 07:37:54 -0800
-From:   Ben Levinsky <ben.levinsky@xilinx.com>
-To:     <mathieu.poirier@linaro.org>, <arnaud.pouliquen@foss.st.com>,
-        <bill.mills@linaro.com>, <tanmay.shah@amd.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 1/1] remoteproc: Introduce rproc_get_by_id API
-Date:   Tue, 15 Nov 2022 07:37:53 -0800
-Message-ID: <20221115153753.2065803-2-ben.levinsky@xilinx.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221115153753.2065803-1-ben.levinsky@xilinx.com>
-References: <20221115153753.2065803-1-ben.levinsky@xilinx.com>
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eN8Y8tmcXY1Sx8X/CKBIpdvOb7TPXPJYWBMc1VPUnfE=;
+        b=rXAHNSao3J24HGE7DiY019ib/78iKD4I9HRM2WnnP4fVWYL2LCHiU0trOH28PI+i59
+         Riijn7BvZ0tXXSV+xUCt/pqKrHKwpyP/Sh3s9iY+r9uMsSBKFm8STlW56JX+B/TWX9gW
+         GyKnGkdvPx4WsU/9AwbwdcNFQWXxGezce0A51L0/5pzX/zxC/U/LUkz6y2XWasW7Ze6b
+         NRd3IRxyf4A9I9JBSOtTiVM2EXFIvy0Ezsna1t2hYbuDvb8y9Jd5cgvJ53glj21/ANPR
+         pgg0coAy1ijKmfHrK425wh1JhGIuKuqN6G/AmW1c6F2x/5RcLh2Yw6Het2Ysi7IkRLFD
+         X6ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eN8Y8tmcXY1Sx8X/CKBIpdvOb7TPXPJYWBMc1VPUnfE=;
+        b=7B7/EdZgxpX67gQfWR//IUZu68mkEbLqKZPDS/EJDxaoR3BC6npxFxFsHr+ob3dIEr
+         Uy1RaucATE814nu774eO3WJn/j4BXQwzQR+wnYGDB7kch5ysQy4xKrdUAcOXMJJv+sYU
+         dntwgF3r6f1ucD761QprWezNlQBATCZsExMVi2wH9K/W7FhKwQRhMrrbOHgE7IHmSB4K
+         mPuaXLaS1SpC4Vryk8CjVkVQVmvC3GUzrbL+d0+lCuItjkf4YZlADzr9bf85/Vu90cf/
+         M59ZOvVZKm6Nbrk5Tgar67mBTgzDe3r6IE4dIwnFpk4j2vE0wc2aFUDrp7dqzQzViyFQ
+         8N/g==
+X-Gm-Message-State: ANoB5pmHXGB7kyy3ELHJOhkoKnXmkpblSErMrOENnbUYHLh9yXe7yV4b
+        gwDqsLm9S9x0wd36ahfL/7+j4A==
+X-Google-Smtp-Source: AA0mqf76d87lFv9TGgIz9I/2+zNAKDJj01NBvRaRPkIKsREVZncSt6oyj/qVXHVy9h7pcGLErOpmow==
+X-Received: by 2002:a63:524b:0:b0:474:66fb:41fa with SMTP id s11-20020a63524b000000b0047466fb41famr16582322pgl.21.1668536913650;
+        Tue, 15 Nov 2022 10:28:33 -0800 (PST)
+Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
+        by smtp.gmail.com with ESMTPSA id m15-20020a656a0f000000b0045dc85c4a5fsm8048610pgu.44.2022.11.15.10.28.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 10:28:32 -0800 (PST)
+Date:   Tue, 15 Nov 2022 11:28:30 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Md Danish Anwar <a0501179@ti.com>
+Cc:     MD Danish Anwar <danishanwar@ti.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>, nm@ti.com, vigneshr@ti.com,
+        srk@ti.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 2/5] remoteproc: pru: Add APIs to get and put the PRU
+ cores
+Message-ID: <20221115182830.GA61935@p14s>
+References: <20221031073801.130541-1-danishanwar@ti.com>
+ <20221031073801.130541-3-danishanwar@ti.com>
+ <20221114205057.GA8042@p14s>
+ <5e07e4e1-142e-1c48-6ee0-78c537e126b9@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM3NAM02FT028:EE_|DM4PR02MB9070:EE_
-X-MS-Office365-Filtering-Correlation-Id: 477d932f-f489-4f20-bf95-08dac71f5e82
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: AQj2RtxjDQ57xgfUBMIr9nuRDg0c3fIoUxgP33lc6JIEoEaRziLUrnO+CAWZHqot3Szq2aq72s0ZfSA4IGHkkBfyrAqEkbiIybOJIhqGRpqbAvuwdKYPXOo818pKaNDCWAHd320S3IrLo3cq+Rvk9QUM4biErnHrUq+EdcZC+uCB3Y43Jt6eTCsiZu8AckrohS+L8qZCZW1mXO2ZKHoXpc4c9sG2L8rgRSn430m2ypz/Tv7l1rXNvBDuqHDDMNi3LmrjqlGR+HULfpdzvZ75bs7+xZDOBEUGv/P5vFrfh18n2tPHMN4TMzI8yn10OUpPIQ0kCBYXNAUJLaUpNWdiMfdZcgQokFw1qg8T/5okRjZuC/f09lE16UGVBoskz6ju1zZ1bkVNTh0IFVLnirfQSRyzFJDOaSQWpVih/Cj4kvJNsGJ6EAvfh2zuD6XQUgOec4o/8vCkKac3xArF7ElRVXTparMdUBU51wryNsMQjqZqM9tUFbTTdum2Ed1Rj6ZZ58I+pUvY6Q343d0Su/IFApGfokktchKqvWyPENFpffz7dZM9TAcu2TF5N6NV0qspnxpYHO7VJeYPVJNcMvJpCliV/F7kV+LgGwgNICWwb3qXLWp7R6nDwyD2o2M3ycsZan4xKHjCpQvxNM4iEqjA2eYHTfgvWkzd1spCIdfAy7ZrjICxbkQMLhuA4dAtOzUEoyevzyBlvAYhu4OJoAhsJPPoTeIQGJch+h4jpVEIONmDksV/PMo9a853QuqyAvH90GV7SubTrxho7FT5LpB75Ubp15Pjbv1fWDvoLBSUlic=
-X-Forefront-Antispam-Report: CIP:149.199.62.198;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapexch01.xlnx.xilinx.com;PTR:unknown-62-198.xilinx.com;CAT:NONE;SFS:(13230022)(4636009)(136003)(346002)(396003)(376002)(39860400002)(451199015)(40470700004)(36840700001)(46966006)(8936002)(5660300002)(44832011)(41300700001)(4326008)(8676002)(70586007)(9786002)(70206006)(110136005)(356005)(54906003)(40480700001)(36756003)(36860700001)(316002)(7696005)(26005)(478600001)(186003)(2616005)(47076005)(426003)(1076003)(336012)(83380400001)(2906002)(7636003)(82740400003)(82310400005)(40460700003)(102446001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2022 15:37:56.8637
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 477d932f-f489-4f20-bf95-08dac71f5e82
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.62.198];Helo=[xsj-pvapexch01.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM3NAM02FT028.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR02MB9070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e07e4e1-142e-1c48-6ee0-78c537e126b9@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Allow users of remoteproc the ability to get a handle to an rproc by
-passing in node that has parent rproc device and an ID that matches
-an expected rproc struct's index field.
+On Tue, Nov 15, 2022 at 11:29:19AM +0530, Md Danish Anwar wrote:
+> Hi Mathieu,
+> 
+> On 15/11/22 02:20, Mathieu Poirier wrote:
+> > On Mon, Oct 31, 2022 at 01:07:58PM +0530, MD Danish Anwar wrote:
+> >> From: Tero Kristo <t-kristo@ti.com>
+> >>
+> >> Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
+> >> driver to allow client drivers to acquire and release the remoteproc
+> >> device associated with a PRU core. The PRU cores are treated as
+> >> resources with only one client owning it at a time.
+> >>
+> >> The pru_rproc_get() function returns the rproc handle corresponding
+> >> to a PRU core identified by the device tree "ti,prus" property under
+> >> the client node. The pru_rproc_put() is the complementary function
+> >> to pru_rproc_get().
+> >>
+> >> Co-developed-by: Suman Anna <s-anna@ti.com>
+> >> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> >> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> >> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> >> Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
+> >> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> >> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> > 
+> > The above is very tedious to look at.  Other than yours, please replace all the
+> > SoBs with Co-developed-by tags.  Even that seems to be an overkill...  Anyways,
+> > for this patch and the other ones in this set.
+> > 
+> 
+> Sure, I will replace all the SoBs (other than mine) with Co-developed by tags
+> for all the patches in this series.
+> 
+> >> ---
+> >>  drivers/remoteproc/pru_rproc.c | 142 +++++++++++++++++++++++++++++++--
+> >>  include/linux/pruss.h          |  56 +++++++++++++
+> >>  2 files changed, 193 insertions(+), 5 deletions(-)
+> >>  create mode 100644 include/linux/pruss.h
+> >>
+> >> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> >> index 128bf9912f2c..9ba73cfc29e2 100644
+> >> --- a/drivers/remoteproc/pru_rproc.c
+> >> +++ b/drivers/remoteproc/pru_rproc.c
+> >> @@ -2,12 +2,14 @@
+> >>  /*
+> >>   * PRU-ICSS remoteproc driver for various TI SoCs
+> >>   *
+> >> - * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
+> >> + * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
+> >>   *
+> >>   * Author(s):
+> >>   *	Suman Anna <s-anna@ti.com>
+> >>   *	Andrew F. Davis <afd@ti.com>
+> >>   *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
+> >> + *	Puranjay Mohan <p-mohan@ti.com>
+> >> + *	Md Danish Anwar <danishanwar@ti.com>
+> >>   */
+> >>  
+> >>  #include <linux/bitops.h>
+> >> @@ -16,6 +18,7 @@
+> >>  #include <linux/module.h>
+> >>  #include <linux/of_device.h>
+> >>  #include <linux/of_irq.h>
+> >> +#include <linux/pruss.h>
+> >>  #include <linux/pruss_driver.h>
+> >>  #include <linux/remoteproc.h>
+> >>  
+> >> @@ -111,6 +114,8 @@ struct pru_private_data {
+> >>   * @rproc: remoteproc pointer for this PRU core
+> >>   * @data: PRU core specific data
+> >>   * @mem_regions: data for each of the PRU memory regions
+> >> + * @client_np: client device node
+> >> + * @lock: mutex to protect client usage
+> >>   * @fw_name: name of firmware image used during loading
+> >>   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
+> >>   * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
+> >> @@ -126,6 +131,8 @@ struct pru_rproc {
+> >>  	struct rproc *rproc;
+> >>  	const struct pru_private_data *data;
+> >>  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
+> >> +	struct device_node *client_np;
+> >> +	struct mutex lock; /* client access lock */
+> > 
+> > Why is there a comment here when the field is already documented above?
+> > 
+> 
+> I will remove the comment from here.
+> 
+> > I will wait for you to address Roger's comments before looking at this set
+> > further.
+> > 
+> 
+> I had addressed two out of three of Roger's comments earlier. I missed one
+> comment. I have responded to that now. Please have a look at this set.
 
-This enables to get rproc structure for remoteproc drivers that manage
-more than 1 remote processor (e.g. TI and Xilinx R5 drivers).
+I won't - spin off a new revision after addressing Roger's comments and I will
+look at that one.
 
-Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
----
- drivers/remoteproc/remoteproc_core.c | 64 +++++++++++++++++++++++++++-
- include/linux/remoteproc.h           |  1 +
- 2 files changed, 64 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 775df165eb45..6f7058bcc80c 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -40,6 +40,7 @@
- #include <linux/virtio_ring.h>
- #include <asm/byteorder.h>
- #include <linux/platform_device.h>
-+#include <linux/of_platform.h>
- 
- #include "remoteproc_internal.h"
- 
-@@ -2203,13 +2204,74 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
- 
- 	return rproc;
- }
-+
-+/**
-+ * rproc_get_by_id() - find a remote processor by ID
-+ * @phandle: phandle to the rproc
-+ * @id: Index into rproc list that uniquely identifies the rproc struct
-+ *
-+ * Finds an rproc handle using the remote processor's index, and then
-+ * return a handle to the rproc. Before returning, ensure that the
-+ * parent node's driver is still loaded.
-+ *
-+ * This function increments the remote processor's refcount, so always
-+ * use rproc_put() to decrement it back once rproc isn't needed anymore.
-+ *
-+ * Return: rproc handle on success, and NULL on failure
-+ */
-+
-+struct rproc *rproc_get_by_id(phandle phandle, unsigned int id)
-+{
-+	struct rproc *rproc = NULL, *r;
-+	struct platform_device *parent_pdev;
-+	struct device_node *np;
-+
-+	np = of_find_node_by_phandle(phandle);
-+	if (!np)
-+		return NULL;
-+
-+	parent_pdev = of_find_device_by_node(np->parent);
-+	if (!parent_pdev) {
-+		dev_err(&parent_pdev->dev,
-+			"no platform device for node %pOF\n", np);
-+		of_node_put(np);
-+		return NULL;
-+	}
-+
-+	/* prevent underlying implementation from being removed */
-+	if (!try_module_get(parent_pdev->dev.driver->owner)) {
-+		dev_err(&parent_pdev->dev, "can't get owner\n");
-+		of_node_put(np);
-+		return NULL;
-+	}
-+
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(r, &rproc_list, node) {
-+		if (r->index == id) {
-+			rproc = r;
-+			get_device(&rproc->dev);
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	of_node_put(np);
-+
-+	return rproc;
-+}
-+EXPORT_SYMBOL(rproc_get_by_id);
- #else
- struct rproc *rproc_get_by_phandle(phandle phandle)
- {
- 	return NULL;
- }
--#endif
- EXPORT_SYMBOL(rproc_get_by_phandle);
-+struct rproc *rproc_get_by_id(phandle phandle, unsigned int id)
-+{
-+	return NULL;
-+}
-+EXPORT_SYMBOL(rproc_get_by_id);
-+#endif
- 
- /**
-  * rproc_set_firmware() - assign a new firmware
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 3cde845ba26e..10961fae0f77 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -645,6 +645,7 @@ struct rproc_vdev {
- };
- 
- struct rproc *rproc_get_by_phandle(phandle phandle);
-+struct rproc *rproc_get_by_id(phandle phandle, unsigned int id);
- struct rproc *rproc_get_by_child(struct device *dev);
- 
- struct rproc *rproc_alloc(struct device *dev, const char *name,
--- 
-2.25.1
-
+> 
+> > Thanks,
+> > Mathieu
+> > 
+> >>  	const char *fw_name;
+> >>  	unsigned int *mapped_irq;
+> >>  	struct pru_irq_rsc *pru_interrupt_map;
+> >> @@ -146,6 +153,127 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+> >>  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
+> >>  }
+> >>  
+> >> +static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+> >> +{
+> >> +	struct rproc *rproc;
+> >> +	phandle rproc_phandle;
+> >> +	int ret;
+> >> +
+> >> +	ret = of_property_read_u32_index(np, "ti,prus", index, &rproc_phandle);
+> >> +	if (ret)
+> >> +		return ERR_PTR(ret);
+> >> +
+> >> +	rproc = rproc_get_by_phandle(rproc_phandle);
+> >> +	if (!rproc) {
+> >> +		ret = -EPROBE_DEFER;
+> >> +		goto err_no_rproc_handle;
+> >> +	}
+> >> +
+> >> +	/* make sure it is PRU rproc */
+> >> +	if (!is_pru_rproc(rproc->dev.parent)) {
+> >> +		rproc_put(rproc);
+> >> +		return ERR_PTR(-ENODEV);
+> >> +	}
+> >> +
+> >> +	get_device(&rproc->dev);
+> >> +
+> >> +	return rproc;
+> >> +
+> >> +err_no_rproc_handle:
+> >> +	rproc_put(rproc);
+> >> +	return ERR_PTR(ret);
+> >> +}
+> >> +
+> >> +/**
+> >> + * pru_rproc_get() - get the PRU rproc instance from a device node
+> >> + * @np: the user/client device node
+> >> + * @index: index to use for the ti,prus property
+> >> + * @pru_id: optional pointer to return the PRU remoteproc processor id
+> >> + *
+> >> + * This function looks through a client device node's "ti,prus" property at
+> >> + * index @index and returns the rproc handle for a valid PRU remote processor if
+> >> + * found. The function allows only one user to own the PRU rproc resource at a
+> >> + * time. Caller must call pru_rproc_put() when done with using the rproc, not
+> >> + * required if the function returns a failure.
+> >> + *
+> >> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
+> >> + * returned.
+> >> + *
+> >> + * Return: rproc handle on success, and an ERR_PTR on failure using one
+> >> + * of the following error values
+> >> + *    -ENODEV if device is not found
+> >> + *    -EBUSY if PRU is already acquired by anyone
+> >> + *    -EPROBE_DEFER is PRU device is not probed yet
+> >> + */
+> >> +struct rproc *pru_rproc_get(struct device_node *np, int index,
+> >> +			    enum pruss_pru_id *pru_id)
+> >> +{
+> >> +	struct rproc *rproc;
+> >> +	struct pru_rproc *pru;
+> >> +	struct device *dev;
+> >> +	int ret;
+> >> +
+> >> +	rproc = __pru_rproc_get(np, index);
+> >> +	if (IS_ERR(rproc))
+> >> +		return rproc;
+> >> +
+> >> +	pru = rproc->priv;
+> >> +	dev = &rproc->dev;
+> >> +
+> >> +	mutex_lock(&pru->lock);
+> >> +
+> >> +	if (pru->client_np) {
+> >> +		mutex_unlock(&pru->lock);
+> >> +		put_device(dev);
+> >> +		ret = -EBUSY;
+> >> +		goto err_no_rproc_handle;
+> >> +	}
+> >> +
+> >> +	pru->client_np = np;
+> >> +
+> >> +	mutex_unlock(&pru->lock);
+> >> +
+> >> +	if (pru_id)
+> >> +		*pru_id = pru->id;
+> >> +
+> >> +	return rproc;
+> >> +
+> >> +err_no_rproc_handle:
+> >> +	rproc_put(rproc);
+> >> +	return ERR_PTR(ret);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(pru_rproc_get);
+> >> +
+> >> +/**
+> >> + * pru_rproc_put() - release the PRU rproc resource
+> >> + * @rproc: the rproc resource to release
+> >> + *
+> >> + * Releases the PRU rproc resource and makes it available to other
+> >> + * users.
+> >> + */
+> >> +void pru_rproc_put(struct rproc *rproc)
+> >> +{
+> >> +	struct pru_rproc *pru;
+> >> +
+> >> +	if (IS_ERR_OR_NULL(rproc) || !is_pru_rproc(rproc->dev.parent))
+> >> +		return;
+> >> +
+> >> +	pru = rproc->priv;
+> >> +
+> >> +	mutex_lock(&pru->lock);
+> >> +
+> >> +	if (!pru->client_np) {
+> >> +		mutex_unlock(&pru->lock);
+> >> +		return;
+> >> +	}
+> >> +
+> >> +	pru->client_np = NULL;
+> >> +	mutex_unlock(&pru->lock);
+> >> +
+> >> +	rproc_put(rproc);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(pru_rproc_put);
+> >> +
+> >>  static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
+> >>  {
+> >>  	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
+> >> @@ -438,7 +566,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+> >>  	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
+> >>  	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
+> >>  	/* PRU1 has its local RAM addresses reversed */
+> >> -	if (pru->id == 1)
+> >> +	if (pru->id == PRUSS_PRU1)
+> >>  		swap(dram0, dram1);
+> >>  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
+> >>  
+> >> @@ -747,14 +875,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
+> >>  	case RTU0_IRAM_ADDR_MASK:
+> >>  		fallthrough;
+> >>  	case PRU0_IRAM_ADDR_MASK:
+> >> -		pru->id = 0;
+> >> +		pru->id = PRUSS_PRU0;
+> >>  		break;
+> >>  	case TX_PRU1_IRAM_ADDR_MASK:
+> >>  		fallthrough;
+> >>  	case RTU1_IRAM_ADDR_MASK:
+> >>  		fallthrough;
+> >>  	case PRU1_IRAM_ADDR_MASK:
+> >> -		pru->id = 1;
+> >> +		pru->id = PRUSS_PRU1;
+> >>  		break;
+> >>  	default:
+> >>  		ret = -EINVAL;
+> >> @@ -816,6 +944,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
+> >>  	pru->pruss = platform_get_drvdata(ppdev);
+> >>  	pru->rproc = rproc;
+> >>  	pru->fw_name = fw_name;
+> >> +	pru->client_np = NULL;
+> >> +	mutex_init(&pru->lock);
+> >>  
+> >>  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+> >>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> >> @@ -904,7 +1034,7 @@ MODULE_DEVICE_TABLE(of, pru_rproc_match);
+> >>  
+> >>  static struct platform_driver pru_rproc_driver = {
+> >>  	.driver = {
+> >> -		.name   = "pru-rproc",
+> >> +		.name   = PRU_RPROC_DRVNAME,
+> >>  		.of_match_table = pru_rproc_match,
+> >>  		.suppress_bind_attrs = true,
+> >>  	},
+> >> @@ -916,5 +1046,7 @@ module_platform_driver(pru_rproc_driver);
+> >>  MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
+> >>  MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
+> >>  MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
+> >> +MODULE_AUTHOR("Puranjay Mohan <p-mohan@ti.com>");
+> >> +MODULE_AUTHOR("Md Danish Anwar <danishanwar@ti.com>");
+> >>  MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
+> >>  MODULE_LICENSE("GPL v2");
+> >> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+> >> new file mode 100644
+> >> index 000000000000..fdc719b43db0
+> >> --- /dev/null
+> >> +++ b/include/linux/pruss.h
+> >> @@ -0,0 +1,56 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0-only */
+> >> +/**
+> >> + * PRU-ICSS Subsystem user interfaces
+> >> + *
+> >> + * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+> >> + *	Suman Anna <s-anna@ti.com>
+> >> + */
+> >> +
+> >> +#ifndef __LINUX_PRUSS_H
+> >> +#define __LINUX_PRUSS_H
+> >> +
+> >> +#include <linux/device.h>
+> >> +#include <linux/types.h>
+> >> +
+> >> +#define PRU_RPROC_DRVNAME "pru-rproc"
+> >> +
+> >> +/*
+> >> + * enum pruss_pru_id - PRU core identifiers
+> >> + */
+> >> +enum pruss_pru_id {
+> >> +	PRUSS_PRU0 = 0,
+> >> +	PRUSS_PRU1,
+> >> +	PRUSS_NUM_PRUS,
+> >> +};
+> >> +
+> >> +struct device_node;
+> >> +
+> >> +#if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+> >> +
+> >> +struct rproc *pru_rproc_get(struct device_node *np, int index,
+> >> +			    enum pruss_pru_id *pru_id);
+> >> +void pru_rproc_put(struct rproc *rproc);
+> >> +
+> >> +#else
+> >> +
+> >> +static inline struct rproc *
+> >> +pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
+> >> +{
+> >> +	return ERR_PTR(-EOPNOTSUPP);
+> >> +}
+> >> +
+> >> +static inline void pru_rproc_put(struct rproc *rproc) { }
+> >> +
+> >> +#endif /* CONFIG_PRU_REMOTEPROC */
+> >> +
+> >> +static inline bool is_pru_rproc(struct device *dev)
+> >> +{
+> >> +	const char *drv_name = dev_driver_string(dev);
+> >> +
+> >> +	if (strncmp(drv_name, PRU_RPROC_DRVNAME, sizeof(PRU_RPROC_DRVNAME)))
+> >> +		return false;
+> >> +
+> >> +	return true;
+> >> +}
+> >> +
+> >> +#endif /* __LINUX_PRUSS_H */
+> >> -- 
+> >> 2.25.1
+> >>
+> 
+> Thanks,
+> Danish
