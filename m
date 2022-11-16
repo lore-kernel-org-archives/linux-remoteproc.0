@@ -2,177 +2,158 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0EEC4321E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 10:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D8AC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 12:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237500AbiKPKUh (ORCPT
+        id S233785AbiKPMTa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 05:20:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56012 "EHLO
+        Wed, 16 Nov 2022 07:19:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236124AbiKPKUe (ORCPT
+        with ESMTP id S233671AbiKPMS5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:20:34 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91322220EF
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 02:20:11 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id a11-20020a05600c2d4b00b003cf6f5fd9f1so1106566wmg.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 02:20:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ibv+5YEHVAYxDSspsvnfANXTqnasTlWYJgau3UGpbZg=;
-        b=oqwKO0I4oUXU/WX3HEjhUkL3jbBmIiKg/61u7OXDVcOxweWRas/AE/BwkSrn/jpxdg
-         UI5PEwwWlHkBh6grH+IYllAJBT51uRmLx68VUqiKXVjezJEfvOf/EZbzmKPxgIDnRiRs
-         4ZJQSBLkDX3p5VjaDbR1HM9eT/jAgRQSt8Tg5rJvTFNDRcCAdKjMkGzoSQNjdBrkPHs7
-         8UB24gSxoLXdgy/StL/IWW8R43CeOe61zvZy0hC06POFhZjYhKkKZBGUYJTdt+EuXEn5
-         yXoGZWRKL7bed5AbgsnSGCQ36nf6WBV72EcnlIFyiU3u3rGrc3+n7asKEtQwWik6IxeU
-         uARA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ibv+5YEHVAYxDSspsvnfANXTqnasTlWYJgau3UGpbZg=;
-        b=5QY4ghXdnl+OrOKtYoMXKtQwOeBgof0hAM1qIhJNmBEk1tV2WdlS2tjjIlWGyPlXqq
-         X8i4ZMWm8t0hgVdWfsMDUwJQmxweZJXWFMeckPBKSJErArQTWarrkbSoPr9PARl/OuWm
-         BDDiOYZG+CrQRjag9nQ0FIdxmRpsZU94f1wL/+X4XB43CMHVq1taLRMIO2fsUjF1LGn+
-         kn0kn/1c5Cocc6bvFkgqLunJEXKGzo8IlB5jXqJPnU0rppjWbhoVjST7ERsrGHYkzmAk
-         H3LGTRm1iA7GTr45wkwqxWuTVYQ0d5eokz+Jx2Aw5jxc/0Hm2noblsqTxfeAkYUAGepj
-         Z3nw==
-X-Gm-Message-State: ANoB5pnxN8+B+QgLsojxQT3v8Y/M+UqfZxWHTA6tItcG2H+sCngyUyJl
-        5OPmmCymnXffRKrpDCMEWHzzPw==
-X-Google-Smtp-Source: AA0mqf6fM7ZsDPtfpP7ah663PmKAcCanlgICfSh207kSCgxvqhSn88+AGeuSSxUDdN2XSjFioPrWRw==
-X-Received: by 2002:a7b:c04d:0:b0:3cf:a8a5:63ab with SMTP id u13-20020a7bc04d000000b003cfa8a563abmr1608489wmc.101.1668594010071;
-        Wed, 16 Nov 2022 02:20:10 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id l18-20020a05600c4f1200b003c6f3f6675bsm1709900wmq.26.2022.11.16.02.20.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 02:20:09 -0800 (PST)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Wed, 16 Nov 2022 11:20:07 +0100
-Subject: [PATCH 4/4] remoteproc: qcom_q6v5_pas: add sm8550 adsp, cdsp & mpss
- compatible & data
+        Wed, 16 Nov 2022 07:18:57 -0500
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2406193CC;
+        Wed, 16 Nov 2022 04:16:51 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AGCGdX4052358;
+        Wed, 16 Nov 2022 06:16:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1668600999;
+        bh=BF+tsQCFuK/g/ZI9zhDXY3LsoVevyuKZDDV49N2xlZE=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=jlQEeFe8uf/Max+pdHRTqZUxy9d2OcsNYUJsodaX1+ZY3OZ5y7BWEzopLwtdK1Sg/
+         9h6e5dAyX38UXP5vkHWSVbf+LOkRfP+XKbBcNWcFd72sGf21mqGha4JqYsmArqf8V7
+         hWXTDFwVUfV6HtGkL5/akKr4qSpmMmQJQlpnT/Jc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AGCGdKn019606
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 16 Nov 2022 06:16:39 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Wed, 16
+ Nov 2022 06:16:39 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
+ Frontend Transport; Wed, 16 Nov 2022 06:16:39 -0600
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AGCGd53015949;
+        Wed, 16 Nov 2022 06:16:39 -0600
+Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
+        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2AGCGbSb013713;
+        Wed, 16 Nov 2022 06:16:38 -0600
+From:   MD Danish Anwar <danishanwar@ti.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <srk@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+Subject: [PATCH v8 1/6] dt-bindings: remoteproc: Add PRU consumer bindings
+Date:   Wed, 16 Nov 2022 17:46:29 +0530
+Message-ID: <20221116121634.2901265-2-danishanwar@ti.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221116121634.2901265-1-danishanwar@ti.com>
+References: <20221116121634.2901265-1-danishanwar@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-4-104c34cb3b91@linaro.org>
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org>
-In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.10.1
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This adds the compatible & data for the aDSP, cDSP and MPSS found in
-the SM8550 SoC.
+From: Suman Anna <s-anna@ti.com>
 
-This platform requires the "Devicetree" firmware to be loaded along the
-main firmware.
+Add DT schema binding for PRU consumers. The binding includes
+all the common properties that can be used by different PRU consumer
+or application nodes and supported by the PRU remoteproc driver.
+These are used to configure the PRU hardware for specific user
+applications.
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+The application nodes themselves should define their own bindings.
+
+Co-developed-by: Tero Kristo <t-kristo@ti.com>
+Co-developed-by: Suman Anna <s-anna@ti.com>
+Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 65 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+ .../bindings/remoteproc/ti,pru-consumer.yaml  | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index e79a5fcbc986..15e740815da0 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1054,6 +1054,68 @@ static const struct adsp_data sm8450_mpss_resource = {
- 	.ssctl_id = 0x12,
- };
- 
-+static const struct adsp_data sm8550_adsp_resource = {
-+	.crash_reason_smem = 423,
-+	.firmware_name = "adsp.mdt",
-+	.dtb_firmware_name = "adsp_dtb.mdt",
-+	.pas_id = 1,
-+	.dtb_pas_id = 0x24,
-+	.minidump_id = 5,
-+	.has_aggre2_clk = false,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"lcx",
-+		"lmx",
-+		NULL
-+	},
-+	.load_state = "adsp",
-+	.ssr_name = "lpass",
-+	.sysmon_name = "adsp",
-+	.ssctl_id = 0x14,
-+};
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+new file mode 100644
+index 000000000000..c6d86964b72a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+static const struct adsp_data sm8550_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mdt",
-+	.dtb_firmware_name = "cdsp_dtb.mdt",
-+	.pas_id = 18,
-+	.dtb_pas_id = 0x25,
-+	.minidump_id = 7,
-+	.has_aggre2_clk = false,
-+	.auto_boot = false,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mxc",
-+		"nsp",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+};
++title: Common TI PRU Consumer Binding
 +
-+static const struct adsp_data sm8550_mpss_resource = {
-+	.crash_reason_smem = 421,
-+	.firmware_name = "modem.mdt",
-+	.dtb_firmware_name = "modem_dtb.mdt",
-+	.pas_id = 4,
-+	.dtb_pas_id = 0x26,
-+	.minidump_id = 3,
-+	.has_aggre2_clk = false,
-+	.auto_boot = false,
-+	.decrypt_shutdown = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mss",
-+		NULL
-+	},
-+	.load_state = "modem",
-+	.ssr_name = "mpss",
-+	.sysmon_name = "modem",
-+	.ssctl_id = 0x12,
-+};
++maintainers:
++  - Suman Anna <s-anna@ti.com>
 +
- static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,msm8226-adsp-pil", .data = &adsp_resource_init},
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
-@@ -1094,6 +1156,9 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
- 	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
- 	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
-+	{ .compatible = "qcom,sm8550-adsp-pas", .data = &sm8550_adsp_resource},
-+	{ .compatible = "qcom,sm8550-cdsp-pas", .data = &sm8550_cdsp_resource},
-+	{ .compatible = "qcom,sm8550-mpss-pas", .data = &sm8550_mpss_resource},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, adsp_of_match);
-
++description: |
++  A PRU application/consumer/user node typically uses one or more PRU device
++  nodes to implement a PRU application/functionality. Each application/client
++  node would need a reference to at least a PRU node, and optionally define
++  some properties needed for hardware/firmware configuration. The below
++  properties are a list of common properties supported by the PRU remoteproc
++  infrastructure.
++
++  The application nodes shall define their own bindings like regular platform
++  devices, so below are in addition to each node's bindings.
++
++properties:
++  ti,prus:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: phandles to the PRU, RTU or Tx_PRU nodes used
++    minItems: 1
++    maxItems: 6
++    items:
++      maxItems: 1
++
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    minItems: 1
++    maxItems: 6
++    description: |
++      firmwares for the PRU cores, the default firmware for the core from
++      the PRU node will be used if not provided. The firmware names should
++      correspond to the PRU cores listed in the 'ti,prus' property
++
++  ti,pruss-gp-mux-sel:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    minItems: 1
++    maxItems: 6
++    items:
++      enum: [0, 1, 2, 3, 4]
++    description: |
++      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
++      This selects the internal muxing scheme for the PRU instance. Values
++      should correspond to the PRU cores listed in the 'ti,prus' property. The
++      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
++      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
++      same slice in the associative array. If the array size is smaller than
++      the size of 'ti,prus' property, the default out-of-reset value (0) for the
++      PRU core is used.
++
++required:
++  - ti,prus
++
++additionalProperties: true
 -- 
-b4 0.10.1
+2.25.1
+
