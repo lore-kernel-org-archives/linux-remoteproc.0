@@ -2,114 +2,249 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03394C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 18:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683E0C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 18:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233941AbiKPSJ5 (ORCPT
+        id S233857AbiKPSiU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 13:09:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50068 "EHLO
+        Wed, 16 Nov 2022 13:38:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233931AbiKPSJ4 (ORCPT
+        with ESMTP id S238787AbiKPSiS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Nov 2022 13:09:56 -0500
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B7C60E9B
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 10:09:53 -0800 (PST)
-Received: by mail-pl1-x634.google.com with SMTP id b21so17152547plc.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 10:09:53 -0800 (PST)
+        Wed, 16 Nov 2022 13:38:18 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 955D960340
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 10:38:17 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id g62so18291266pfb.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 10:38:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uha19DGn1cipYAwBOyrw3AdHNrtOnbopGJxC7rXrQ/k=;
-        b=ZDqc3cq8Ax6Pt6u3GCJwqCQZVVe1CuQQnKni3FkP4DUVLls/bdpD3QXrmfOOLJ/OU+
-         Jfv4C5/TqWM2DDHgO720x5Xcq/Vqfv1/a4KOb90OGfQ6qrkPrsaGi1fUvHiX1KF9glmC
-         8V3yRUNVIGVUj/LQvT73c5YIIXHdiXQoBUdeFQJKy7n2L+ovNz88ysop7e8LvEn3+Ec+
-         +tg1la6B4pqMhnJR9x0Enmk075wDgOrbqks9VPnVj0POpmGvJTxRzOJCu4SjKweioIIE
-         8iBf5mr2Vlg8QBQllPtwzgMOAOEmnyoevookW7dt2aNmmznrCk+id7Mq9hj3iZ6GWgTQ
-         5UHA==
+        bh=GUX+eoqhaobDYypHKDLNxQx2E4TU2UsOgUeGPD8Shhc=;
+        b=cJggep3WypiFu97uTiQxi27LSCrirnxyXHR1b0Tlq9UyjOTwsrqeyXyPRiyKmMpKaz
+         JVyruvxvHL05x4mz2fqb5ehUfzKfEZzYlqcnDt7m2BWt5G4qYSDeNTbreUG8gLmCU2PB
+         7h8b1/gWj8FwFgM8b3qo3oeUpQ+txGN7/MW/lnAPtdwyrHjnQU2iG6F8PF8jBvweM9+1
+         S2aNIjnsuzPzFKd5Jtqx+ERaqvI5dGpE2MYS+dfw+vHfrJnuSEco7cVn5WccChzFMKg5
+         z31bFFxHxVzcsuGo/ug+1PVmQefish/hxuw4hJCr0Gw+fxy6aOobzyrCozx/LME2j/6A
+         DdPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Uha19DGn1cipYAwBOyrw3AdHNrtOnbopGJxC7rXrQ/k=;
-        b=dFeICqLq+uhKmBjm+H2QD5Ze4HaTaNFt1RZkxYOPEilAzGSyEqiEuK9IPEA1nZ2G7U
-         Mus1YlelG0PbfbDyQqwmDFtIGO7FB1waB9GII/yZv75YCIucR9ZXCnsWZzygtUemoVO/
-         k1XBin1q768LUI/pNCEcUR8tguZ9v7+McdeV+sHuvn2NSxTQUv5wWivNkbf6glWLWFB7
-         0E1roAxoP84QzFEu3cnnerm2igfL1iHJmPuuimwRKhpI3kknpQgKn0Ul7F6Gav99qjYe
-         o1ZDXsBGo/DUDWcKLTU3B3c6hgrBgXOQqCFFzrlJ5ylgOmhESOHkm0WkGdhVFzwJg/hZ
-         VUuQ==
-X-Gm-Message-State: ANoB5pmP25NS8ERu+gOqup3CO5WsjX7VR4eRxZ2Tl4C3AevSGPQNku0a
-        PpKX5Zz7TAgmdgXQLX8qm2qrWA==
-X-Google-Smtp-Source: AA0mqf4faQyRgiiosbyugC6bNzLWoQKMwQYCzT7xgnogs350R64d9WVcRuMgRBcxR8HLMnc+FSrCWw==
-X-Received: by 2002:a17:90a:6049:b0:218:4d16:cecf with SMTP id h9-20020a17090a604900b002184d16cecfmr4799475pjm.96.1668622192609;
-        Wed, 16 Nov 2022 10:09:52 -0800 (PST)
+        bh=GUX+eoqhaobDYypHKDLNxQx2E4TU2UsOgUeGPD8Shhc=;
+        b=6ldlmOIcvzMkoUpNAGj9vCRJVEmO+mszx88b+n5Oq+H4fIchJlAqocUUzQkUREiFxj
+         fzlyNDMHtXd9VYEMy7ZTtxdDdJ9v206SRXPUN/V0NdVF/VPJwRJWkQQk7/HcN2VfxIv1
+         RGGt873kyOZokXvf7BA5rvvynTXpoSrM7czKNbLJz2hwBaxg9CVdix9D71tD6FDk79dm
+         Csw+x6PKBoEtQULfue4F80xSuI/+hTMQEfnpcLT9fZ0U4NahgRMMjsBGWM94vZxiZOxk
+         LcYUwIYWBPgswJx1Wdyy1Yj+6tDxDGGDVMIT/jE8O3FJnSk9W/COZl/oQmAKfahmkTyY
+         n98A==
+X-Gm-Message-State: ANoB5pm5YAa14XvEG4BxcC9FhAdsJMcfwyQ7OY5TyWAF3V2nsQnzvvvM
+        mCqf8ShByIjCFCngP0rsQ8jO4Q==
+X-Google-Smtp-Source: AA0mqf47iRel6QWfF50NzK+cnQ+XtaZ1PjHo+WHMwlTuydaoRwswg2/AfVXLliBE1pkTGYoPzsupIg==
+X-Received: by 2002:a63:1348:0:b0:46e:96b9:ed63 with SMTP id 8-20020a631348000000b0046e96b9ed63mr22003555pgt.258.1668623897065;
+        Wed, 16 Nov 2022 10:38:17 -0800 (PST)
 Received: from p14s (S0106889e681aac74.cg.shawcable.net. [68.147.0.187])
-        by smtp.gmail.com with ESMTPSA id 16-20020a17090a19d000b0020ad53b5883sm1917200pjj.14.2022.11.16.10.09.51
+        by smtp.gmail.com with ESMTPSA id f15-20020a62380f000000b0056c360af4e3sm11169963pfa.9.2022.11.16.10.38.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 10:09:51 -0800 (PST)
-Date:   Wed, 16 Nov 2022 11:09:49 -0700
+        Wed, 16 Nov 2022 10:38:16 -0800 (PST)
+Date:   Wed, 16 Nov 2022 11:38:14 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     MD Danish Anwar <danishanwar@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>, nm@ti.com, vigneshr@ti.com,
-        srk@ti.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 1/6] dt-bindings: remoteproc: Add PRU consumer bindings
-Message-ID: <20221116180949.GC61935@p14s>
-References: <20221116121634.2901265-1-danishanwar@ti.com>
- <20221116121634.2901265-2-danishanwar@ti.com>
- <20221116160948.GA169555-robh@kernel.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, michal.simek@amd.com,
+        bill.mills@linaro.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/6] Add Xilinx RPU subsystem support
+Message-ID: <20221116183814.GD61935@p14s>
+References: <20221114233940.2096237-1-tanmay.shah@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221116160948.GA169555-robh@kernel.org>
+In-Reply-To: <20221114233940.2096237-1-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 10:09:48AM -0600, Rob Herring wrote:
-> On Wed, Nov 16, 2022 at 05:46:29PM +0530, MD Danish Anwar wrote:
-> > From: Suman Anna <s-anna@ti.com>
-> > 
-> > Add DT schema binding for PRU consumers. The binding includes
-> > all the common properties that can be used by different PRU consumer
-> > or application nodes and supported by the PRU remoteproc driver.
-> > These are used to configure the PRU hardware for specific user
-> > applications.
-> > 
-> > The application nodes themselves should define their own bindings.
-> > 
-> > Co-developed-by: Tero Kristo <t-kristo@ti.com>
-> > Co-developed-by: Suman Anna <s-anna@ti.com>
-> > Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> > Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
-> > Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> 
-> Run checkpatch.pl and fix the warnings with the tags.
+Hi Tanmay,
 
-My bad - I asked Danish to remove the SoBs to lighten the changelog
-presentation.  Danish, do you absolutely need to list everyone that touched that
-patchset?  If so I suppose just listing the SoBs would be a compromise.
+I think this patchset is ready to be merged.  Two things are missing though:
 
-> 
-> You didn't add review/ack tags either.
+Patches 1 and 2: We are missing a tag from one of the fellow in the DT brigade.
+They handle a lot of patches so let's give them time.
 
-Those are important.  
-
-Please send another patchset that clears checkpatch with review/acks and I'll
-look at it.
+Patches 4 and 5: Michal's ack.  He already reviewed that code in the previous
+iteration but it wasn't added to this set, probably because you did some
+modification to get the patches to apply.  In that case it is usually fine to
+carry the tag since there isn't any modification to the code you are
+introducing.  But you aired on the side of caution and that is also fine.
+Please reach out to him again for another review.
 
 Thanks,
 Mathieu
 
+
+On Mon, Nov 14, 2022 at 03:39:34PM -0800, Tanmay Shah wrote:
+> This patch series adds bindings document for RPU subsystem found on Xilinx
+> ZynqMP platforms. It also adds device nodes and driver to enable RPU
+> subsystem in split mode and lockstep mode.
 > 
-> > ---
-> >  .../bindings/remoteproc/ti,pru-consumer.yaml  | 60 +++++++++++++++++++
-> >  1 file changed, 60 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> Xilinx ZynqMP platform contains Remote Processing Unit(RPU). RPU subsystem
+> contains two arm cortex r5f cores. RPU subsystem can be configured in
+> split mode, lockstep mode and single-cpu mode.
+> 
+> RPU subsystem also contains 4 Tightly Coupled Memory(TCM) banks.
+> In lockstep mode, all 4 banks are combined and total of 256KB memory is
+> made available to r5 core0. In split mode, both cores can access two
+> TCM banks i.e. 128 KB.
+> 
+> RPU can also fetch data and execute instructions from DDR memory along with
+> TCM memory.
+> ---
+> 
+> Changes in v11:
+>   - rename binding filename to match with compatible string
+>   - change $id: value accordingly as well
+>   - Rebase on latest rproc-next branch and resolve merge conflicts
+>   - remove redundant < 0 check for function of_get_available_child_count()
+>   - return 'ret' variable rather than masking the real error code when
+>     parsing "xlnx,cluster-mode" property fails
+>   - remove redundant use of devm_free()
+>   - call  of_reserved_mem_device_release() to release reserved memory
+>     in case driver probe fails or driver is removed.
+> 
+> Changes in v10:
+>   - bindings: rename example node to remoteproc
+>   - dts: Rename node name to remoteproc
+>   - switch to AMD email ID 
+>   - fix Kconfig unmet dependecy error reported by kernel test robot
+>   - fix r5_rproc object mem leak in function zynqmp_r5_add_rproc_core
+>   - add explanation of hardcoded TCM nodes
+>   - remove redundant ToDo comment
+>   - remove redundant check of tcm_bank_count and rmem_count
+>   - remove explicit free reserved_mem in zynqmp_r5_get_mem_region_node
+>   - fix leaked reference of child_dev during zynqmp_r5_cluster_init
+>     Also fix possible crash in exit path release_r5_cores 
+>   - do not remove mem-region and tcm carveouts explicitly in case of failure.
+>     It will be deleted as part of rproc_del. This also simplifies logic to
+>     use rproc_add_carveout
+>   - fix documentation all over the driver
+> 
+> Changes in v9:
+>   - bindings: remove power-domains property description
+>   - bindings: fix nitpicks in description of properties
+>   - dts: remove unused labels
+>   - replace devm_rproc_alloc with rproc_alloc
+>   - %s/until/while/r
+>   - %s/i > -1/i >=0/r
+>   - fix type of tcm_mode from int to enum rpu_tcm_comb
+>   - release &child_pdev->dev references
+>   - remove zynqmp_r5_core_exit()
+>   - undefined memory-region property isn't failure
+>   - remove tcm bank count check from ops
+>   - fix tcm bank turn-off sequence
+>   - fix parse_fw function documentation
+>   - do not use rproc_mem_entry_init on vdev0buffers
+>   - check tcm banks shouldn't be 0
+>   - declare variabls in reverse xmas tree order
+>   - remove extra line
+> 
+> Changes in v8:
+>   - add 'items:' for sram property
+> 
+> Changes in v7:
+>   - Add minItems in sram property
+> 
+> Changes in v6:
+>   - Add maxItems to sram and memory-region property
+> 
+> Changes in v5:
+>   - Add constraints of the possible values of xlnx,cluster-mode property
+>   - fix description of power-domains property for r5 core
+>   - Remove reg, address-cells and size-cells properties as it is not required
+>   - Fix description of mboxes property
+>   - Add description of each memory-region and remove old .txt binding link
+>     reference in the description
+>   - Remove optional reg property from r5fss node
+>   - Move r5fss node out of axi node
+> 
+> Changes in v4:
+>   - Add memory-region, mboxes and mbox-names properties in dt-bindings example
+>   - Add reserved memory region node and use it in Xilinx dt RPU subsystem node
+>   - Remove redundant header files
+>   - use dev_err_probe() to report errors during probe
+>   - Fix missing check on error code returned by zynqmp_r5_add_rproc_core()
+>   - Fix memory leaks all over the driver when resource allocation fails for any core
+>   - make cluster mode check only at one place
+>   - remove redundant initialization of variable
+>   - remove redundant use of of_node_put() 
+>   - Fix Comment format problem
+>   - Assign offset of zynqmp_tcm_banks instead of duplicating it
+>   - Add tcm and memory regions rproc carveouts during prepare instead of parse_fw
+>   - Remove rproc_mem_entry object from r5_core
+>   - Use put_device() and rproc_del() APIs to fix memory leaks
+>   - Replace pr_* with dev_*. This was missed in v3, fix now.
+>   - Use "GPL" instead of "GPL v2" in MODULE_LICENSE macro. This was reported by checkpatch script.
+> 
+> Changes in v3:
+>   - Fix checkpatch script indentation warning
+>   - Remove unused variable from xilinx remoteproc driver
+>   - use C style comments, i.e /*...*/
+>   - Remove redundant debug information which can be derived using /proc/device-tree
+>   - Fix multiline comment format
+>   - s/"final fot TCM"/"final for TCM"
+>   - Function devm_kzalloc() does not return an code on error, just NULL.
+>     Remove redundant error check for this function throughout the driver.
+>   - Fix RPU mode configuration and add documentation accordingly
+>   - Get rid of the indentations to match function documentation style with rest of the driver
+>   - Fix memory leak by only using r5_rproc->priv and not replace it with new instance
+>   - Use 'i' for the outer loop and 'j' for the inner one as per convention
+>   - Remove redundant error and NULL checks throughout the driver
+>   - Use devm_kcalloc() when more than one element is required
+>   - Add memory-regions carveouts during driver probe instead of parse_fw call
+>     This removes redundant copy of reserved_mem object in r5_core structure.
+>   - Fix memory leak by using of_node_put()
+>   - Fix indentation of tcm_mem_map function args
+>   - Remove redundant init of variables
+>   - Initialize tcm bank size variable for lockstep mode
+>   - Replace u32 with phys_addr_t for variable stroing memory bank address
+>   - Add documentation of TCM behavior in lockstep mode
+>   - Use dev_get_drvdata instead of platform driver API
+>   - Remove info level messages
+>   - Fix checkpatch.pl warnings
+>   - Add documentation for the Xilinx r5f platform to understand driver design
+> 
+> Changes in v2:
+>   - Remove proprietary copyright footer from cover letter
+> 
+> Ben Levinsky (3):
+>   firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU
+>     configuration.
+>   firmware: xilinx: Add shutdown/wakeup APIs
+>   firmware: xilinx: Add RPU configuration APIs
+> 
+> Tanmay Shah (3):
+>   dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+>   arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+>   drivers: remoteproc: Add Xilinx r5 remoteproc driver
+> 
+>  .../remoteproc/xlnx,zynqmp-r5fss.yaml         |  135 +++
+>  arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |   33 +
+>  drivers/firmware/xilinx/zynqmp.c              |   97 ++
+>  drivers/remoteproc/Kconfig                    |   13 +
+>  drivers/remoteproc/Makefile                   |    1 +
+>  drivers/remoteproc/xlnx_r5_remoteproc.c       | 1067 +++++++++++++++++
+>  include/dt-bindings/power/xlnx-zynqmp-power.h |    6 +
+>  include/linux/firmware/xlnx-zynqmp.h          |   60 +
+>  8 files changed, 1412 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+>  create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
+> 
+> 
+> base-commit: 6eed169c7fefd9cdbbccb5ba7a98470cc0c09c63
+> -- 
+> 2.25.1
+> 
