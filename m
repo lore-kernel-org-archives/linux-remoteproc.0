@@ -2,346 +2,241 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B1CC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 12:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4EAC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 12:29:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231620AbiKPMTl (ORCPT
+        id S238693AbiKPM3m (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 07:19:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34758 "EHLO
+        Wed, 16 Nov 2022 07:29:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238559AbiKPMTC (ORCPT
+        with ESMTP id S238704AbiKPM31 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Nov 2022 07:19:02 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09AED178A1;
-        Wed, 16 Nov 2022 04:16:55 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AGCGfLu067343;
-        Wed, 16 Nov 2022 06:16:41 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1668601001;
-        bh=mebHWwZYkmyuLbj/Sp2mDWgZ+8//vh+/L7+nnLUhfC8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=yPIp2UgnFMVhtPw/c7DNsGDdbCT2OX4TxVFm8ZPRxp2RY8RxLSkmGfHoplPqelGCg
-         xC+IM/O49SayfF/BQ9AKcORcYz7O8X6OYl40fCXlpN7Ikag2kjjlsjRtEpHOEzNRNL
-         yJ7rlXqILVbEpMuyPTSquHT4cGoMPcH+ZRWnyf2Y=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AGCGftn019618
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Nov 2022 06:16:41 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6; Wed, 16
- Nov 2022 06:16:41 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.6 via
- Frontend Transport; Wed, 16 Nov 2022 06:16:41 -0600
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AGCGfnj015967;
-        Wed, 16 Nov 2022 06:16:41 -0600
-Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2AGCGeRi013721;
-        Wed, 16 Nov 2022 06:16:41 -0600
-From:   MD Danish Anwar <danishanwar@ti.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <srk@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        MD Danish Anwar <danishanwar@ti.com>
-Subject: [PATCH v8 2/6] remoteproc: pru: Add APIs to get and put the PRU cores
-Date:   Wed, 16 Nov 2022 17:46:30 +0530
-Message-ID: <20221116121634.2901265-3-danishanwar@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20221116121634.2901265-1-danishanwar@ti.com>
-References: <20221116121634.2901265-1-danishanwar@ti.com>
+        Wed, 16 Nov 2022 07:29:27 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C71B71B9E8
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 04:28:15 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id s8so12096133lfc.8
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 04:28:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iSU2gRCd8deSgp7KhY1hJreNe/Or7nQ7W/OeOaogKOo=;
+        b=M5TlC82JDoqLrHT1cFCghs+Xy9DyHtIL0sRR9FgSTAMxak8C9ujXC8JXwERL0Y1b0K
+         xYPwxqoApxWSDKN8cVRCDztMT9p2pldTrFnAJ0fmJNSZ71NdqOQSDmj18hadQ2KLiJWu
+         YNjDITC6Sc7YFHM+ADjz7WRQeK0paR6C27bJRteX6uLnpl033NYpp5FJD4fSabeK0Kk2
+         e6dYd+a7U67N4wuRiexIgv1odhTbFgJPd14HmSWq4DM2PzwCH4Xe7ckCdhUwF2/mmvVA
+         JglIfkwqgvjAICnDfIjI7Y8RExxKodKJTYKhlrW6ZvtKRmkzICuFhFK8BVUQXmM/nVZX
+         PKAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iSU2gRCd8deSgp7KhY1hJreNe/Or7nQ7W/OeOaogKOo=;
+        b=stqeQ+k4FvATMJSK6Ke9ohX7rLu0MwPSU3W3yC+4LW+01/2e0bn/HyHzv9zxjefrew
+         VFyfiDcFfO9I6TI9N16Au4JGs8yS0moj/D4y5SzLzXAojVRP3165JOkUGvinDT4kFlLl
+         IU1Z2gNUg/69PpVHbfq4HbuxxLJ4we2Mmg81Bq1sx8LtwnSUMwAeInsCrNSY25ZMf0DO
+         qkb82VBlabNjy914n1sd8LJavIoeSYhEujiVvrcILp5q412S5Gft+LyDw/Rw9aB69sRN
+         gpsAG8ZWeV69PLTGzIH5BkofUreB/Cazd/m49weJJzmb0oGXvaz8b9soFPJcDtkxL9b4
+         lgCQ==
+X-Gm-Message-State: ANoB5pk0z1FStkZ8+CCu3XcolioQyW8lpytAtYVsNYCVp2//WegMA9/G
+        qxNG233X4g6B0KCA5WtiHHm10A==
+X-Google-Smtp-Source: AA0mqf7MzuDwdDE7l56A6qn+5iBCm1QJcyF1YjLB8jglwYR/yRkh/TSAyGYNIcaK8f0EFA2crv9gJQ==
+X-Received: by 2002:a19:f704:0:b0:4a7:7d62:2807 with SMTP id z4-20020a19f704000000b004a77d622807mr8180796lfe.77.1668601694033;
+        Wed, 16 Nov 2022 04:28:14 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id d25-20020a19e619000000b004ab52b0bcf9sm2564149lfh.207.2022.11.16.04.28.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Nov 2022 04:28:13 -0800 (PST)
+Message-ID: <b6eac577-f3a7-d1a4-f492-74782c2e5ff1@linaro.org>
+Date:   Wed, 16 Nov 2022 13:28:11 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: qcom: adsp: document sm8550
+ adsp, cdsp & mpss compatible
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org>
+ <20221114-narmstrong-sm8550-upstream-remoteproc-v1-1-104c34cb3b91@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-1-104c34cb3b91@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+On 16/11/2022 11:20, Neil Armstrong wrote:
+> This documents the compatible for the component used to boot the
+> aDSP, cDSP and MPSS on the SM8550 SoC.
+> 
+> The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
+> firmware to be passed along the main Firmware, and the cDSP a new power
+> domain named "NSP".
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,adsp.yaml  | 60 +++++++++++++++++++++-
+>  1 file changed, 59 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+> index db9e0f0c2bea..678cb73f10de 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+> @@ -55,6 +55,9 @@ properties:
+>        - qcom,sm8450-cdsp-pas
+>        - qcom,sm8450-mpss-pas
+>        - qcom,sm8450-slpi-pas
+> +      - qcom,sm8550-adsp-pas
+> +      - qcom,sm8550-cdsp-pas
+> +      - qcom,sm8550-mpss-pas
+>  
+>    reg:
+>      maxItems: 1
+> @@ -116,8 +119,13 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/string
+>      description: Firmware name for the Hexagon core
+>  
+> +  qcom,dtb-firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: Devicetree Firmware name for the Hexagon core
 
-Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
-driver to allow client drivers to acquire and release the remoteproc
-device associated with a PRU core. The PRU cores are treated as
-resources with only one client owning it at a time.
+Not sure about this one.
 
-The pru_rproc_get() function returns the rproc handle corresponding
-to a PRU core identified by the device tree "ti,prus" property under
-the client node. The pru_rproc_put() is the complementary function
-to pru_rproc_get().
+Rob,
+Don't we want rather to have multiple items in firmware-name?
 
-Co-developed-by: Suman Anna <s-anna@ti.com>
-Co-developed-by: Tero Kristo <t-kristo@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Co-developed-by: Puranjay Mohan <p-mohan@ti.com>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/remoteproc/pru_rproc.c | 134 ++++++++++++++++++++++++++++++++-
- include/linux/pruss.h          |  47 ++++++++++++
- 2 files changed, 179 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/pruss.h
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 128bf9912f2c..4769ade9c316 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -2,12 +2,14 @@
- /*
-  * PRU-ICSS remoteproc driver for various TI SoCs
-  *
-- * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
-+ * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
-  *
-  * Author(s):
-  *	Suman Anna <s-anna@ti.com>
-  *	Andrew F. Davis <afd@ti.com>
-  *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
-+ *	Puranjay Mohan <p-mohan@ti.com>
-+ *	Md Danish Anwar <danishanwar@ti.com>
-  */
- 
- #include <linux/bitops.h>
-@@ -16,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-+#include <linux/pruss.h>
- #include <linux/pruss_driver.h>
- #include <linux/remoteproc.h>
- 
-@@ -111,6 +114,8 @@ struct pru_private_data {
-  * @rproc: remoteproc pointer for this PRU core
-  * @data: PRU core specific data
-  * @mem_regions: data for each of the PRU memory regions
-+ * @client_np: client device node
-+ * @lock: mutex to protect client usage
-  * @fw_name: name of firmware image used during loading
-  * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-  * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-@@ -126,6 +131,8 @@ struct pru_rproc {
- 	struct rproc *rproc;
- 	const struct pru_private_data *data;
- 	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
-+	struct device_node *client_np;
-+	struct mutex lock;
- 	const char *fw_name;
- 	unsigned int *mapped_irq;
- 	struct pru_irq_rsc *pru_interrupt_map;
-@@ -146,6 +153,125 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
- 	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
- }
- 
-+static struct rproc *__pru_rproc_get(struct device_node *np, int index)
-+{
-+	struct rproc *rproc;
-+	phandle rproc_phandle;
-+	int ret;
-+
-+	ret = of_property_read_u32_index(np, "ti,prus", index, &rproc_phandle);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	rproc = rproc_get_by_phandle(rproc_phandle);
-+	if (!rproc) {
-+		ret = -EPROBE_DEFER;
-+		goto err_no_rproc_handle;
-+	}
-+
-+	/* make sure it is PRU rproc */
-+	if (!is_pru_rproc(rproc->dev.parent)) {
-+		rproc_put(rproc);
-+		return ERR_PTR(-ENODEV);
-+	}
-+
-+	return rproc;
-+
-+err_no_rproc_handle:
-+	rproc_put(rproc);
-+	return ERR_PTR(ret);
-+}
-+
-+/**
-+ * pru_rproc_get() - get the PRU rproc instance from a device node
-+ * @np: the user/client device node
-+ * @index: index to use for the ti,prus property
-+ * @pru_id: optional pointer to return the PRU remoteproc processor id
-+ *
-+ * This function looks through a client device node's "ti,prus" property at
-+ * index @index and returns the rproc handle for a valid PRU remote processor if
-+ * found. The function allows only one user to own the PRU rproc resource at a
-+ * time. Caller must call pru_rproc_put() when done with using the rproc, not
-+ * required if the function returns a failure.
-+ *
-+ * When optional @pru_id pointer is passed the PRU remoteproc processor id is
-+ * returned.
-+ *
-+ * Return: rproc handle on success, and an ERR_PTR on failure using one
-+ * of the following error values
-+ *    -ENODEV if device is not found
-+ *    -EBUSY if PRU is already acquired by anyone
-+ *    -EPROBE_DEFER is PRU device is not probed yet
-+ */
-+struct rproc *pru_rproc_get(struct device_node *np, int index,
-+			    enum pruss_pru_id *pru_id)
-+{
-+	struct rproc *rproc;
-+	struct pru_rproc *pru;
-+	struct device *dev;
-+	int ret;
-+
-+	rproc = __pru_rproc_get(np, index);
-+	if (IS_ERR(rproc))
-+		return rproc;
-+
-+	pru = rproc->priv;
-+	dev = &rproc->dev;
-+
-+	mutex_lock(&pru->lock);
-+
-+	if (pru->client_np) {
-+		mutex_unlock(&pru->lock);
-+		put_device(dev);
-+		ret = -EBUSY;
-+		goto err_no_rproc_handle;
-+	}
-+
-+	pru->client_np = np;
-+
-+	mutex_unlock(&pru->lock);
-+
-+	if (pru_id)
-+		*pru_id = pru->id;
-+
-+	return rproc;
-+
-+err_no_rproc_handle:
-+	rproc_put(rproc);
-+	return ERR_PTR(ret);
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_get);
-+
-+/**
-+ * pru_rproc_put() - release the PRU rproc resource
-+ * @rproc: the rproc resource to release
-+ *
-+ * Releases the PRU rproc resource and makes it available to other
-+ * users.
-+ */
-+void pru_rproc_put(struct rproc *rproc)
-+{
-+	struct pru_rproc *pru;
-+
-+	if (IS_ERR_OR_NULL(rproc) || !is_pru_rproc(rproc->dev.parent))
-+		return;
-+
-+	pru = rproc->priv;
-+
-+	mutex_lock(&pru->lock);
-+
-+	if (!pru->client_np) {
-+		mutex_unlock(&pru->lock);
-+		return;
-+	}
-+
-+	pru->client_np = NULL;
-+	mutex_unlock(&pru->lock);
-+
-+	rproc_put(rproc);
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_put);
-+
- static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
- {
- 	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
-@@ -816,6 +942,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	pru->pruss = platform_get_drvdata(ppdev);
- 	pru->rproc = rproc;
- 	pru->fw_name = fw_name;
-+	pru->client_np = NULL;
-+	mutex_init(&pru->lock);
- 
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-@@ -904,7 +1032,7 @@ MODULE_DEVICE_TABLE(of, pru_rproc_match);
- 
- static struct platform_driver pru_rproc_driver = {
- 	.driver = {
--		.name   = "pru-rproc",
-+		.name   = PRU_RPROC_DRVNAME,
- 		.of_match_table = pru_rproc_match,
- 		.suppress_bind_attrs = true,
- 	},
-@@ -916,5 +1044,7 @@ module_platform_driver(pru_rproc_driver);
- MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
- MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
- MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
-+MODULE_AUTHOR("Puranjay Mohan <p-mohan@ti.com>");
-+MODULE_AUTHOR("Md Danish Anwar <danishanwar@ti.com>");
- MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-new file mode 100644
-index 000000000000..4909226f14a9
---- /dev/null
-+++ b/include/linux/pruss.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/**
-+ * PRU-ICSS Subsystem user interfaces
-+ *
-+ * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
-+ *	Suman Anna <s-anna@ti.com>
-+ */
-+
-+#ifndef __LINUX_PRUSS_H
-+#define __LINUX_PRUSS_H
-+
-+#include <linux/device.h>
-+#include <linux/types.h>
-+
-+#define PRU_RPROC_DRVNAME "pru-rproc"
-+
-+struct device_node;
-+
-+#if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
-+
-+struct rproc *pru_rproc_get(struct device_node *np, int index,
-+			    enum pruss_pru_id *pru_id);
-+void pru_rproc_put(struct rproc *rproc);
-+
-+#else
-+
-+static inline struct rproc *
-+pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
-+static inline void pru_rproc_put(struct rproc *rproc) { }
-+
-+#endif /* CONFIG_PRU_REMOTEPROC */
-+
-+static inline bool is_pru_rproc(struct device *dev)
-+{
-+	const char *drv_name = dev_driver_string(dev);
-+
-+	if (strncmp(drv_name, PRU_RPROC_DRVNAME, sizeof(PRU_RPROC_DRVNAME)))
-+		return false;
-+
-+	return true;
-+}
-+
-+#endif /* __LINUX_PRUSS_H */
--- 
-2.25.1
+> +
+>    memory-region:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
+>      description: Reference to the reserved-memory for the Hexagon core
+>  
+>    qcom,qmp:
+> @@ -212,6 +220,9 @@ allOf:
+>                - qcom,sm8450-cdsp-pas
+>                - qcom,sm8450-slpi-pas
+>                - qcom,sm8450-mpss-pas
+> +              - qcom,sm8550-adsp-pas
+> +              - qcom,sm8550-cdsp-pas
+> +              - qcom,sm8550-mpss-pas
+>      then:
+>        properties:
+>          clocks:
+> @@ -327,6 +338,8 @@ allOf:
+>                - qcom,sm8450-adsp-pas
+>                - qcom,sm8450-cdsp-pas
+>                - qcom,sm8450-slpi-pas
+> +              - qcom,sm8550-adsp-pas
+> +              - qcom,sm8550-cdsp-pas
+>      then:
+>        properties:
+>          interrupts:
+> @@ -347,6 +360,7 @@ allOf:
+>                - qcom,sm8150-mpss-pas
+>                - qcom,sm8350-mpss-pas
+>                - qcom,sm8450-mpss-pas
+> +              - qcom,sm8550-mpss-pas
+>      then:
+>        properties:
+>          interrupts:
+> @@ -448,6 +462,7 @@ allOf:
+>                - qcom,sm8150-mpss-pas
+>                - qcom,sm8350-mpss-pas
+>                - qcom,sm8450-mpss-pas
+> +              - qcom,sm8550-mpss-pas
+>      then:
+>        properties:
+>          power-domains:
+> @@ -475,6 +490,7 @@ allOf:
+>                - qcom,sm8350-slpi-pas
+>                - qcom,sm8450-adsp-pas
+>                - qcom,sm8450-slpi-pas
+> +              - qcom,sm8550-adsp-pas
+>      then:
+>        properties:
+>          power-domains:
+> @@ -504,6 +520,25 @@ allOf:
+>              - const: cx
+>              - const: mxc
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sm8550-cdsp-pas
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: CX power domain
+> +            - description: MXC power domain
+> +            - description: NSP power domain
+> +        power-domain-names:
+> +          items:
+> +            - const: cx
+> +            - const: mxc
+> +            - const: nsp
+> +
+
+You also need to update entry for resets. I think it is missing.
+
+>    - if:
+>        properties:
+>          compatible:
+> @@ -573,6 +608,29 @@ allOf:
+>        properties:
+>          qcom,qmp: false
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sm8550-adsp-pas
+> +              - qcom,sm8550-cdsp-pas
+> +              - qcom,sm8550-mpss-pas
+> +    then:
+> +      properties:
+> +        memory-region:
+> +          minItems: 2
+> +          description:
+> +            First entry is a phandle for a reserved memory area that holds
+> +            the main Firmware for authentication, and second entry a phandle for a
+> +            reserved memory area that holds the Devicetree Firmware for authentication.
+
+Instead of minItems and description:
+  items:
+    - description: Main Firmware for auth....
+    - description: Devicetree Firmware....
+
+> +    else:
+> +      properties:
+> +        qcom,dtb-firmware-name: false
+> +
+> +        memory-region:
+> +          maxItems: 1
+> +
+
+Best regards,
+Krzysztof
 
