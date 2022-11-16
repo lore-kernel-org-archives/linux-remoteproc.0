@@ -2,137 +2,136 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E308CC43217
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 09:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC247C43217
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 10:20:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbiKPJ4L (ORCPT
+        id S232888AbiKPKUL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 04:56:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38946 "EHLO
+        Wed, 16 Nov 2022 05:20:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbiKPJ4J (ORCPT
+        with ESMTP id S233202AbiKPKUJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Nov 2022 04:56:09 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F96D635F;
-        Wed, 16 Nov 2022 01:56:09 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AG8DXG0011111;
-        Wed, 16 Nov 2022 09:55:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AZYBM7yo5DAFdaVrtM8YSBmdlBbwjY0NigrJe0QAl2I=;
- b=QSRU7oeGFRv6gCjmY2WWvnQ888VSbBumaynIhZcXg4sJDdsX7do66ZvJXGx/4T/QYtSV
- /mLH8/LW9gR31CEerNTGFRLnSBpz+vFoLZPg4N5bO8IpF1G4w8AnKyTf+5BbEk0DrREX
- ZUcdpXFQJkfyyekZiMHxGsucn8goLTdbqMTNDY7a133X/Xw+RAlw0zVguYJKj5nhIkKM
- Mu0JmzPUG6/Sq3IUyQ6K+B09wNsvLbUqLfuBi+jfb879oAxRCsuV245yZPXAHQfCW5+M
- 1IcNEsAfElnXorF/ZdXtPQxECkEKKdQIuwyvKKfuvUD7GkqOwD6oV0UBRAawWKNSCorS lw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3kvt9d8n4e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 09:55:33 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2AG9tXkB031962
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 16 Nov 2022 09:55:33 GMT
-Received: from [10.79.43.91] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Wed, 16 Nov
- 2022 01:55:29 -0800
-Message-ID: <da77b6f8-a511-4e3d-ba59-ca4c41415312@quicinc.com>
-Date:   Wed, 16 Nov 2022 15:25:26 +0530
+        Wed, 16 Nov 2022 05:20:09 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF72201BD
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 02:20:07 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id w14so29101570wru.8
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Nov 2022 02:20:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=4GbCp2O6gNlxizJu7Tt319PycX9j6Cvapw5rEbbaWYE=;
+        b=RB85ZkAGAFgykfXmTuudVziBYc58FcKva7Q9NIeE4NNXNbDzCI+EBB5ZuflomH6jHu
+         JLh7DyBRLwEuRSq+ofCabRSVYbpQesOeg4RopB+BK0QlvglDJme3oRrccBfDF4K91GYL
+         Y1IfaspOXiJ8Hq9lWVU9VRYD+9v7jzYGLGB3fGCwsnAlFgqiuAqbL+yMV1I06a7ueH6w
+         gPV14v6ySprwnuZllMArBEjAhJTpDaT8eWlgfMGdkUZHewnF/EGHQVx9x0Nyoavtslx4
+         R8EsZ0OYWOLr4+o+RfaECQqZko/jO+FaNmSL+WR8DeuTMO88nAgBwhouVAfgz/qJPa24
+         3zZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4GbCp2O6gNlxizJu7Tt319PycX9j6Cvapw5rEbbaWYE=;
+        b=b3eZUkSHKdtecE/E8QUDZ5pBM4RHP39hrgpPLVoWNvdPkF4gmWx4oi4wzweiZM+zMM
+         f3kkLhFFnIotG5wHfAQIr/ecTHnU6t4Hv7WaJoURZ/nEwxmaiiyIuJ5jzwylVcIMZMoQ
+         I3shn3WVyahh5fppI64NrCdjUx9APZNJJxrZT1zg9SNIE52/Qs4yBa5Dirwk1yJ4UR4m
+         5DnvKODGtIGIZYg0+sVVBWoe+edpq/YOmMuJRHgY9o1es1lWRR76RMHuWeZflWJfOT+7
+         I8Z9NUvzumuYT2b0zHD0DHipf3flxpNuEK929OfGNTyXsMKUpGOPHwfLSmbpIwzZ4DqB
+         1I/w==
+X-Gm-Message-State: ANoB5pmXZg6g4TJ+uQqlAscFbKjHRsCprhoHy77wK+W5Q4xwBvV/lA4l
+        zyA31bpkVjZOdX+dq5sCplfoOQ==
+X-Google-Smtp-Source: AA0mqf6bXo/yUx9vllMy2Zq5WppjBrpj28lotzV7nTNpErTa+jQgcdFkjyxBPN6r37AINX/Qmu1lhg==
+X-Received: by 2002:adf:fcc7:0:b0:236:8dd7:1917 with SMTP id f7-20020adffcc7000000b002368dd71917mr12916241wrs.587.1668594005978;
+        Wed, 16 Nov 2022 02:20:05 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id l18-20020a05600c4f1200b003c6f3f6675bsm1709900wmq.26.2022.11.16.02.20.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 02:20:05 -0800 (PST)
+Subject: [PATCH 0/4] remoteproc: qcom_q6v5_pas: add support for SM8550 adsp, cdsp & mpss
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 1/2] remoteproc: qcom_q6v5_pas: disable wakeup on probe
- fail or remove
-Content-Language: en-US
-To:     Luca Weiss <luca.weiss@fairphone.com>,
-        <linux-arm-msm@vger.kernel.org>
-CC:     <~postmarketos/upstreaming@lists.sr.ht>,
-        <phone-devel@vger.kernel.org>, Andy Gross <agross@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-b4-tracking: H4sIAFO5dGMC/w3MQQ6EIAwAwK+YnrcJICbG3wAWJZFiWt2L8e9ynMs8oCSFFJbhAaF/0dK4w/4GSH
+ vgjbCs3eCMc9Zajxyk6iWNN9Q6T5PB++ymUFGototOaQln4/OYYxx9zNCvGJQwSuC0943v43jfD9pd TC58AAAA
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Date:   Wed, 16 Nov 2022 11:20:03 +0100
+Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Siddharth Gupta <sidgup@codeaurora.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221111115414.153961-1-luca.weiss@fairphone.com>
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <20221111115414.153961-1-luca.weiss@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: i7DjL4hW_YA6R5gDFurFX4kJ4vPO0ujD
-X-Proofpoint-GUID: i7DjL4hW_YA6R5gDFurFX4kJ4vPO0ujD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-15_08,2022-11-15_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 phishscore=0 clxscore=1011 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211160070
+        Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.10.1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Luca,
+This patchsets adds support for the aDSP, cDSP and MPSS found in the
+SM8550 SoC.
 
-Thanks for the patch.
+The aDSP, cDSP and MPSS boot process on SM8550 now requires a secondary
+"Devicetree" firmware to be passed along the main Firmware, and the cDSP
+a new power domain named "NSP".
 
-On 11/11/22 17:24, Luca Weiss wrote:
-> Leaving wakeup enabled during probe fail (-EPROBE_DEFER) or remove makes
-> the subsequent probe fail.
-> 
-> [    3.749454] remoteproc remoteproc0: releasing 3000000.remoteproc
-> [    3.752949] qcom_q6v5_pas: probe of 3000000.remoteproc failed with error -17
-> [    3.878935] remoteproc remoteproc0: releasing 4080000.remoteproc
-> [    3.887602] qcom_q6v5_pas: probe of 4080000.remoteproc failed with error -17
-> [    4.319552] remoteproc remoteproc0: releasing 8300000.remoteproc
-> [    4.332716] qcom_q6v5_pas: probe of 8300000.remoteproc failed with error -17
-> 
-> Fix this by disabling wakeup in both cases so the driver can properly
-> probe on the next try.
-> 
-> Fixes: a781e5aa5911 ("remoteproc: core: Prevent system suspend during remoteproc recovery")
-> Fixes: dc86c129b4fb ("remoteproc: qcom: pas: Mark devices as wakeup capable")
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 6afd0941e552..d830bf13c32c 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -557,6 +557,7 @@ static int adsp_probe(struct platform_device *pdev)
->   	adsp_pds_detach(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->   free_rproc:
->   	rproc_free(rproc);
-> +	device_init_wakeup(adsp->dev, false);
+In order to satisfy the load & authentication order required by the SM8550
+SoC, the following is implemented:
+- "Devicetree" firmware request & load in dedicated memory
+- Q6V5 prepare
+- Power Domain & Clocks enable
+- "Devicetree" firmware authentication
+- Main firmware load in dedicated memory
+- Main firmware authentication
+- Q6V5 startup
+- "Devicetree" firmware metadata release
+- Main metadata release
 
-You would want to do ^^ before rproc free since adsp is a
-private data of rproc struct.
+When booting older platforms, the "Devicetree" steps would be
+bypassed and the load & authentication order would still be valid.
 
->   
->   	return ret;
->   }
-> @@ -573,6 +574,7 @@ static int adsp_remove(struct platform_device *pdev)
->   	qcom_remove_smd_subdev(adsp->rproc, &adsp->smd_subdev);
->   	qcom_remove_ssr_subdev(adsp->rproc, &adsp->ssr_subdev);
->   	rproc_free(adsp->rproc);
-> +	device_init_wakeup(adsp->dev, false);
+To: Andy Gross <agross@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@somainline.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Amol Maheshwari <amahesh@qti.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-ditto.
+---
+Abel Vesa (1):
+      dt-bindings: misc: qcom,fastrpc: increase allowed iommus entries
 
->   
->   	return 0;
->   }
+Neil Armstrong (3):
+      dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp, cdsp & mpss compatible
+      remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading
+      remoteproc: qcom_q6v5_pas: add sm8550 adsp, cdsp & mpss compatible & data
 
-- Sibi
+ .../devicetree/bindings/misc/qcom,fastrpc.yaml     |   2 +-
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  60 ++++++-
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 199 +++++++++++++++++++--
+ 3 files changed, 246 insertions(+), 15 deletions(-)
+---
+base-commit: 3c1f24109dfc4fb1a3730ed237e50183c6bb26b3
+change-id: 20221114-narmstrong-sm8550-upstream-remoteproc-804f3fbb34bf
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
