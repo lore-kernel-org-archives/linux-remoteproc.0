@@ -2,117 +2,75 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE39C43219
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 16 Nov 2022 23:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2802CC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 17 Nov 2022 07:41:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234505AbiKPXjU (ORCPT
+        id S233651AbiKQHlP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 16 Nov 2022 18:39:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60726 "EHLO
+        Thu, 17 Nov 2022 02:41:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234139AbiKPXjH (ORCPT
+        with ESMTP id S229931AbiKQHlO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 16 Nov 2022 18:39:07 -0500
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38D5686B9;
-        Wed, 16 Nov 2022 15:39:06 -0800 (PST)
-Received: by mail-oi1-f181.google.com with SMTP id b124so136333oia.4;
-        Wed, 16 Nov 2022 15:39:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u6s4tcWtAUFsjBroYlDd5s5GJKQQ4LPC5QVVgj8A4GM=;
-        b=61ocBYGJheDSkzwtDRw71g0Ogtkj8JijAeBhbIcHTJSx51iosnQVhlfdMwL2SAmtL6
-         lH9cCH6SZ91jIhCa81YKxZzV90rBNaMx1oZJ8qsnhsC3ekOq3cMew3br/3qkQMTOiZuk
-         whxQZ4miNrUZIBBt8GOI7GUzyH0alOoPEBoF9WAxuvSOeuoSEw9aqakZRl3YSxx09Bk6
-         0gKgOz2OZdISae2//bjkMG5Xvv962qXTEqjTD7WDQGMU2dW8hqs9fq9WUNnMo/LC1pek
-         mpeGovpycum/BfQhKAPkZ5l35wsQy0N6M/8mz+RICJnIFMhCNQ3JK66HKwa3j5y9JMQv
-         ALZw==
-X-Gm-Message-State: ANoB5pl/BDdBb9jxSaovSJHnVluJUb8VFqYsphXv7VHB4qai01lKhxXX
-        aluPYXwmJiFBpgdyLCKTQw==
-X-Google-Smtp-Source: AA0mqf43xzoJ1xe+xrzJTvE2+mSfCD0TR8MqUBpy7LYxQ5OW20eQB64dUgBVeHO3fzRjLq2NPU751g==
-X-Received: by 2002:a05:6808:688:b0:35a:2de8:70b1 with SMTP id k8-20020a056808068800b0035a2de870b1mr41051oig.94.1668641945606;
-        Wed, 16 Nov 2022 15:39:05 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id s1-20020a4aad41000000b004968311a31asm6616574oon.39.2022.11.16.15.39.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 15:39:04 -0800 (PST)
-Received: (nullmailer pid 1231200 invoked by uid 1000);
-        Wed, 16 Nov 2022 23:39:07 -0000
-Date:   Wed, 16 Nov 2022 17:39:07 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: qcom: adsp: document sm8550
- adsp, cdsp & mpss compatible
-Message-ID: <20221116233907.GA1227164-robh@kernel.org>
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org>
- <20221114-narmstrong-sm8550-upstream-remoteproc-v1-1-104c34cb3b91@linaro.org>
- <b6eac577-f3a7-d1a4-f492-74782c2e5ff1@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6eac577-f3a7-d1a4-f492-74782c2e5ff1@linaro.org>
+        Thu, 17 Nov 2022 02:41:14 -0500
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C91F8333;
+        Wed, 16 Nov 2022 23:41:12 -0800 (PST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NCX0R2wwHz8R039;
+        Thu, 17 Nov 2022 15:41:11 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.40.50])
+        by mse-fl2.zte.com.cn with SMTP id 2AH7f4ZX014225;
+        Thu, 17 Nov 2022 15:41:04 +0800 (+08)
+        (envelope-from ye.xingchen@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+        by mapi (Zmail) with MAPI id mid31;
+        Thu, 17 Nov 2022 15:41:06 +0800 (CST)
+Date:   Thu, 17 Nov 2022 15:41:06 +0800 (CST)
+X-Zmail-TransId: 2af96375e5922f0755ff
+X-Mailer: Zmail v1.0
+Message-ID: <202211171541061366938@zte.com.cn>
+Mime-Version: 1.0
+From:   <ye.xingchen@zte.com.cn>
+To:     <andersson@kernel.org>
+Cc:     <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHJlbW90ZXByb2M6IGNvcmU6IFVzZSBkZXZpY2VfbWF0Y2hfb2Zfbm9kZSgp?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl2.zte.com.cn 2AH7f4ZX014225
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 6375E597.000 by FangMail milter!
+X-FangMail-Envelope: 1668670871/4NCX0R2wwHz8R039/6375E597.000/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6375E597.000/4NCX0R2wwHz8R039
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 01:28:11PM +0100, Krzysztof Kozlowski wrote:
-> On 16/11/2022 11:20, Neil Armstrong wrote:
-> > This documents the compatible for the component used to boot the
-> > aDSP, cDSP and MPSS on the SM8550 SoC.
-> > 
-> > The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
-> > firmware to be passed along the main Firmware, and the cDSP a new power
-> > domain named "NSP".
-> > 
-> > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > ---
-> >  .../devicetree/bindings/remoteproc/qcom,adsp.yaml  | 60 +++++++++++++++++++++-
-> >  1 file changed, 59 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-> > index db9e0f0c2bea..678cb73f10de 100644
-> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-> > @@ -55,6 +55,9 @@ properties:
-> >        - qcom,sm8450-cdsp-pas
-> >        - qcom,sm8450-mpss-pas
-> >        - qcom,sm8450-slpi-pas
-> > +      - qcom,sm8550-adsp-pas
-> > +      - qcom,sm8550-cdsp-pas
-> > +      - qcom,sm8550-mpss-pas
-> >  
-> >    reg:
-> >      maxItems: 1
-> > @@ -116,8 +119,13 @@ properties:
-> >      $ref: /schemas/types.yaml#/definitions/string
-> >      description: Firmware name for the Hexagon core
-> >  
-> > +  qcom,dtb-firmware-name:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    description: Devicetree Firmware name for the Hexagon core
-> 
-> Not sure about this one.
-> 
-> Rob,
-> Don't we want rather to have multiple items in firmware-name?
+From: ye xingchen <ye.xingchen@zte.com.cn>
 
-Yes, I think we already have that for some users. Should have been 
-'firmware-names' I guess but I don't think it's worth dealing with 
-another case of handling both (forever).
+Replace the open-code with device_match_of_node().
 
-Rob
+Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
+---
+ drivers/remoteproc/remoteproc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index cb1d414a2389..11c165ddf1fc 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2112,7 +2112,7 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(r, &rproc_list, node) {
+-		if (r->dev.parent && r->dev.parent->of_node == np) {
++		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+ 			/* prevent underlying implementation from being removed */
+ 			if (!try_module_get(r->dev.parent->driver->owner)) {
+ 				dev_err(&r->dev, "can't get owner\n");
+-- 
+2.25.1
