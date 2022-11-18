@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 265C8C43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91622C4167E
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Nov 2022 12:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241541AbiKRMer (ORCPT
+        id S241647AbiKRMes (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 07:34:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45586 "EHLO
+        Fri, 18 Nov 2022 07:34:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241645AbiKRMeW (ORCPT
+        with ESMTP id S241788AbiKRMea (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Nov 2022 07:34:22 -0500
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 228728A15B
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Nov 2022 04:34:18 -0800 (PST)
-Received: by mail-lj1-x22a.google.com with SMTP id a15so6594214ljb.7
-        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Nov 2022 04:34:18 -0800 (PST)
+        Fri, 18 Nov 2022 07:34:30 -0500
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F65F17
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Nov 2022 04:34:22 -0800 (PST)
+Received: by mail-lj1-x231.google.com with SMTP id d3so6637437ljl.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 18 Nov 2022 04:34:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HNUrtyWi9SF1WjiyydZUH0FXhTmFkl2HJ0ZGvBcvxwQ=;
-        b=DqLEqgzS8djRYyjCZbOCFDf9066kiDrERCr4nbmPHE3nrWgd6c30n+nam24y3ksANE
-         RYHg7SVKS0QBKWpQvlmrJBrLRRJgeQ55ycwqSi+pejQ18uoQbDxGq+cNt9/47RlamMJ0
-         hggUVjkxTlw/3X89F9AI/QmQNXpg8BJ8lTJur1W++X1pdiZCDRv3sgNkAuF48Aa4tQkk
-         6e13aR+p7YgLCvUISUmnwgImXRZxUVzYToOo72BS+99n7dUINfWcxKif9UG6Lyk4sRnJ
-         /gWvHZZtJBay7/AikZkyg2/M2mNq/vWzcBW8ETWmzui4/igF0KvRkWJoACVXLz/4I3bV
-         SUuw==
+        bh=OdC8m/lMtz6Ihsbauza6enft2sHpHF62AIG3huK1UyY=;
+        b=iRKseK3E9STbfjUAfLFyVeSqlTKKGgl56HTLsofDMmhP0SG0wnEHtMhYd14kutAycd
+         ii4Sn1va1I9I8ER4/jyaacUeygZc4j66Yt9TKVJ0kxltzBjHIxBA6UbnaiyeSn3p78jX
+         SDfybPJ7DeHA67Uw6tbIceR643VpAHiSjP9EkuLYTrJRdElOWq9y6pQ5fBXO27dczXDN
+         1rpZf32vQHtZbhLc6lP7SBM2UgzZqxk8KMQPWjrATKqI5TIDLw1BX4233S8XehiklYYF
+         /MlIzdvnk+ucnAk0LYo76f0V26ExjqUfPKpDaXw7slLYbuvgTT4LHeeunksi7sgRI9WF
+         Ybcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HNUrtyWi9SF1WjiyydZUH0FXhTmFkl2HJ0ZGvBcvxwQ=;
-        b=vFA6Pl3V8SoKrnUNhKntyEhxwkiwZJDzzS2gHCZwIKUy+cd9g7+Ob0nNEkyurB2nQ0
-         GQrD1cA1NNuZDpsTGOLtriKPK6J8oqAmL3+K5Vt6wTR4QR7zLGF4DeOxwu4l4NMON8RD
-         9ZoA13OBCqygX37ok+2xuKQ86xw21TPxFOGVoX9Yn8vauKzJcaUPjuFwgf8bCR3ll58w
-         CkBSTyfXprE67itYP6z9QMY7Vkdys2fv6wFr68PRA4zHFWOBahb0DpmF9IxJlWrzik4R
-         BOLaD9sTO1oGzz9AaMBuCMuKgGBPMx98DL0oxOxoAW8mbcVYYTEC/PREP8ST04oJzIy+
-         IZWA==
-X-Gm-Message-State: ANoB5pnH8stFimY/PLUp9BkEYc78Ti9R1rAm1FJo35XjathFGJVp2FFe
-        zGd4iCaYQwawmHu+J9L2/qC1cQ==
-X-Google-Smtp-Source: AA0mqf7poPaycrc0LgD1OwBMo23Mavn5v/JsTBrFJZfY9Kfm7tMbI+3x1/mqZuFYd/QDFqTB7Q9pyg==
-X-Received: by 2002:a2e:a885:0:b0:26e:768c:11ed with SMTP id m5-20020a2ea885000000b0026e768c11edmr2590348ljq.436.1668774856276;
-        Fri, 18 Nov 2022 04:34:16 -0800 (PST)
+        bh=OdC8m/lMtz6Ihsbauza6enft2sHpHF62AIG3huK1UyY=;
+        b=QDGlJMFjw3LPo2AQrRbpJXsdYgexBPKVM8s+AgvGe0Hv3T2cuAP10+Kvafd62RtZlF
+         fyAaPNlCLtlQ7fh7td7CP+OFpCfzNg7cNDYOZfK9gzbLSqqHebFbTbf0WEmPUYM7SvYC
+         fAOCEtqInHFWYDOZjno0HuEcjFnC6tdKSmCRmwzYdrFZbEqFQvJONlEKAwUoFCDipX+U
+         y2b2bB+js5TfCpJdtFCH8/Npowbg1Jve8UiW87AlTzpu0HxCVodLjSfZWypFDuMaJ10w
+         fzIpaaSufSLILbZYCzULoBl6YkTYt0LsP1QtyiofAy+4mGdBJIdgG/AfjR9s7XZ/jLN/
+         2IbQ==
+X-Gm-Message-State: ANoB5pmGxZW3OpXG3/Z3954o4rC1QYy9iSTDrc1s/83yIroV7FrSgPbc
+        mjV7IgZbiijocDghELyBvwENHA==
+X-Google-Smtp-Source: AA0mqf4XfLb3zRFi8VGhsHZSw934FHdT0ZFeWn4BIVcWVEE6vZbDi2K35F4H4DS2hqLaM5Lq6zKQ5w==
+X-Received: by 2002:a05:651c:2324:b0:277:64ad:383d with SMTP id bi36-20020a05651c232400b0027764ad383dmr2282966ljb.67.1668774861735;
+        Fri, 18 Nov 2022 04:34:21 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id m10-20020a19434a000000b004ac088fdfd2sm645833lfj.85.2022.11.18.04.34.15
+        by smtp.gmail.com with ESMTPSA id m10-20020a19434a000000b004ac088fdfd2sm645833lfj.85.2022.11.18.04.34.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 04:34:15 -0800 (PST)
+        Fri, 18 Nov 2022 04:34:21 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -62,9 +62,9 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 2/7] dt-bindings: remoteproc: qcom,sm8350-pas: split into separate file
-Date:   Fri, 18 Nov 2022 13:33:57 +0100
-Message-Id: <20221118123402.95784-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 6/7] dt-bindings: remoteproc: qcom,sc8180x-pas: split into separate file
+Date:   Fri, 18 Nov 2022 13:34:01 +0100
+Message-Id: <20221118123402.95784-7-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221118123402.95784-1-krzysztof.kozlowski@linaro.org>
 References: <20221118123402.95784-1-krzysztof.kozlowski@linaro.org>
@@ -74,156 +74,117 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Split SM8350 and SM8450 remote processor Peripheral Authentication
-Service bindings into their own file to reduce complexity and make
-maintenance easier.
+Split SC8180x remote processor Peripheral Authentication Service bindings
+into their own file to reduce complexity and make maintenance easier.
+
+The binding is incomplete due to lack of upstreamed DTS - no example and
+not all power domains defined.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
 Changes since v1:
-1. Add qcom,qmp (not part of qcom,pas-common.yaml# anymore).
-2. Add firmware-name to example.
+1. New patch.
 ---
- .../bindings/remoteproc/qcom,adsp.yaml        |  48 -----
- .../bindings/remoteproc/qcom,sm8350-pas.yaml  | 194 ++++++++++++++++++
- 2 files changed, 194 insertions(+), 48 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+ .../bindings/remoteproc/qcom,adsp.yaml        |  27 -----
+ .../bindings/remoteproc/qcom,sc8180x-pas.yaml | 101 ++++++++++++++++++
+ 2 files changed, 101 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index bd4082411bf5..7a562a9bcfad 100644
+index ea2c14a2f3f9..bb7646446881 100644
 --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
 +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -47,14 +47,6 @@ properties:
-       - qcom,sm8250-adsp-pas
-       - qcom,sm8250-cdsp-pas
-       - qcom,sm8250-slpi-pas
--      - qcom,sm8350-adsp-pas
--      - qcom,sm8350-cdsp-pas
--      - qcom,sm8350-slpi-pas
--      - qcom,sm8350-mpss-pas
--      - qcom,sm8450-adsp-pas
--      - qcom,sm8450-cdsp-pas
--      - qcom,sm8450-mpss-pas
--      - qcom,sm8450-slpi-pas
- 
-   reg:
-     maxItems: 1
-@@ -127,14 +119,6 @@ allOf:
-               - qcom,sm8250-adsp-pas
-               - qcom,sm8250-cdsp-pas
-               - qcom,sm8250-slpi-pas
--              - qcom,sm8350-adsp-pas
--              - qcom,sm8350-cdsp-pas
--              - qcom,sm8350-slpi-pas
--              - qcom,sm8350-mpss-pas
--              - qcom,sm8450-adsp-pas
--              - qcom,sm8450-cdsp-pas
--              - qcom,sm8450-slpi-pas
--              - qcom,sm8450-mpss-pas
+@@ -27,9 +27,6 @@ properties:
+       - qcom,qcs404-wcss-pas
+       - qcom,sc7180-mpss-pas
+       - qcom,sc7280-mpss-pas
+-      - qcom,sc8180x-adsp-pas
+-      - qcom,sc8180x-cdsp-pas
+-      - qcom,sc8180x-mpss-pas
+       - qcom,sdm660-adsp-pas
+       - qcom,sdm845-adsp-pas
+       - qcom,sdm845-cdsp-pas
+@@ -88,9 +85,6 @@ allOf:
+               - qcom,qcs404-adsp-pas
+               - qcom,qcs404-wcss-pas
+               - qcom,sc7280-mpss-pas
+-              - qcom,sc8180x-adsp-pas
+-              - qcom,sc8180x-cdsp-pas
+-              - qcom,sc8180x-mpss-pas
+               - qcom,sdm845-adsp-pas
+               - qcom,sdm845-cdsp-pas
      then:
-       properties:
-         clocks:
-@@ -244,12 +228,6 @@ allOf:
-               - qcom,sm8250-adsp-pas
-               - qcom,sm8250-cdsp-pas
-               - qcom,sm8250-slpi-pas
--              - qcom,sm8350-adsp-pas
--              - qcom,sm8350-cdsp-pas
--              - qcom,sm8350-slpi-pas
--              - qcom,sm8450-adsp-pas
--              - qcom,sm8450-cdsp-pas
--              - qcom,sm8450-slpi-pas
+@@ -187,8 +181,6 @@ allOf:
+               - qcom,qcs404-adsp-pas
+               - qcom,qcs404-cdsp-pas
+               - qcom,qcs404-wcss-pas
+-              - qcom,sc8180x-adsp-pas
+-              - qcom,sc8180x-cdsp-pas
+               - qcom,sdm845-adsp-pas
+               - qcom,sdm845-cdsp-pas
      then:
-       properties:
-         interrupts:
-@@ -268,8 +246,6 @@ allOf:
+@@ -205,7 +197,6 @@ allOf:
+             enum:
+               - qcom,sc7180-mpss-pas
+               - qcom,sc7280-mpss-pas
+-              - qcom,sc8180x-mpss-pas
                - qcom,sdx55-mpss-pas
-               - qcom,sm6350-mpss-pas
-               - qcom,sm8150-mpss-pas
--              - qcom,sm8350-mpss-pas
--              - qcom,sm8450-mpss-pas
      then:
        properties:
-         interrupts:
-@@ -369,8 +345,6 @@ allOf:
-               - qcom,sdx55-mpss-pas
-               - qcom,sm6350-mpss-pas
-               - qcom,sm8150-mpss-pas
--              - qcom,sm8350-mpss-pas
--              - qcom,sm8450-mpss-pas
-     then:
-       properties:
-         power-domains:
-@@ -394,10 +368,6 @@ allOf:
-               - qcom,sm8150-slpi-pas
-               - qcom,sm8250-adsp-pas
-               - qcom,sm8250-slpi-pas
--              - qcom,sm8350-adsp-pas
--              - qcom,sm8350-slpi-pas
--              - qcom,sm8450-adsp-pas
--              - qcom,sm8450-slpi-pas
-     then:
-       properties:
-         power-domains:
-@@ -409,24 +379,6 @@ allOf:
-             - const: lcx
-             - const: lmx
+@@ -296,24 +287,6 @@ allOf:
+             - const: cx
+             - const: mss
  
 -  - if:
 -      properties:
 -        compatible:
 -          contains:
 -            enum:
--              - qcom,sm8350-cdsp-pas
--              - qcom,sm8450-cdsp-pas
+-              - qcom,sc8180x-adsp-pas
+-              - qcom,sc8180x-cdsp-pas
 -    then:
 -      properties:
 -        power-domains:
 -          items:
--            - description: CX power domain
--            - description: MXC power domain
+-            - description: LCX power domain
+-            - description: LMX power domain
 -        power-domain-names:
 -          items:
--            - const: cx
--            - const: mxc
+-            - const: lcx
+-            - const: lmx
 -
    - if:
        properties:
          compatible:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
 new file mode 100644
-index 000000000000..bc7bd41b409e
+index 000000000000..f126fc862cfe
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-@@ -0,0 +1,194 @@
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
+@@ -0,0 +1,101 @@
 +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,sm8350-pas.yaml#
++$id: http://devicetree.org/schemas/remoteproc/qcom,sc8180x-pas.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Qualcomm SM8350/SM8450 Peripheral Authentication Service
++title: Qualcomm SC8180X Peripheral Authentication Service
 +
 +maintainers:
 +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 +
 +description:
-+  Qualcomm SM8350/SM8450 SoC Peripheral Authentication Service loads and boots
++  Qualcomm SC8180X SoC Peripheral Authentication Service loads and boots
 +  firmware on the Qualcomm DSP Hexagon cores.
 +
 +properties:
 +  compatible:
 +    enum:
-+      - qcom,sm8350-adsp-pas
-+      - qcom,sm8350-cdsp-pas
-+      - qcom,sm8350-slpi-pas
-+      - qcom,sm8350-mpss-pas
-+      - qcom,sm8450-adsp-pas
-+      - qcom,sm8450-cdsp-pas
-+      - qcom,sm8450-mpss-pas
-+      - qcom,sm8450-slpi-pas
++      - qcom,sc8180x-adsp-pas
++      - qcom,sc8180x-cdsp-pas
++      - qcom,sc8180x-mpss-pas
 +
 +  reg:
 +    maxItems: 1
@@ -244,14 +205,9 @@ index 000000000000..bc7bd41b409e
 +      properties:
 +        compatible:
 +          enum:
-+            - qcom,sm8350-adsp-pas
-+            - qcom,sm8350-cdsp-pas
-+            - qcom,sm8350-mpss-pas
-+            - qcom,sm8350-slpi-pas
-+            - qcom,sm8450-adsp-pas
-+            - qcom,sm8450-cdsp-pas
-+            - qcom,sm8450-mpss-pas
-+            - qcom,sm8450-slpi-pas
++            - qcom,sc8180x-adsp-pas
++            - qcom,sc8180x-cdsp-pas
++            - qcom,sc8180x-mpss-pas
 +    then:
 +      properties:
 +        clocks:
@@ -265,12 +221,8 @@ index 000000000000..bc7bd41b409e
 +      properties:
 +        compatible:
 +          enum:
-+            - qcom,sm8350-adsp-pas
-+            - qcom,sm8350-cdsp-pas
-+            - qcom,sm8350-slpi-pas
-+            - qcom,sm8450-adsp-pas
-+            - qcom,sm8450-cdsp-pas
-+            - qcom,sm8450-slpi-pas
++            - qcom,sc8180x-adsp-pas
++            - qcom,sc8180x-cdsp-pas
 +    then:
 +      properties:
 +        interrupts:
@@ -282,8 +234,7 @@ index 000000000000..bc7bd41b409e
 +      properties:
 +        compatible:
 +          enum:
-+            - qcom,sm8350-mpss-pas
-+            - qcom,sm8450-mpss-pas
++            - qcom,sc8180x-mpss-pas
 +    then:
 +      properties:
 +        interrupts:
@@ -295,27 +246,8 @@ index 000000000000..bc7bd41b409e
 +      properties:
 +        compatible:
 +          enum:
-+            - qcom,sm8350-mpss-pas
-+            - qcom,sm8450-mpss-pas
-+    then:
-+      properties:
-+        power-domains:
-+          items:
-+            - description: CX power domain
-+            - description: MSS power domain
-+        power-domain-names:
-+          items:
-+            - const: cx
-+            - const: mss
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sm8350-adsp-pas
-+            - qcom,sm8350-slpi-pas
-+            - qcom,sm8450-adsp-pas
-+            - qcom,sm8450-slpi-pas
++            - qcom,sc8180x-adsp-pas
++            - qcom,sc8180x-cdsp-pas
 +    then:
 +      properties:
 +        power-domains:
@@ -326,72 +258,13 @@ index 000000000000..bc7bd41b409e
 +          items:
 +            - const: lcx
 +            - const: lmx
-+
-+  - if:
++    else:
 +      properties:
-+        compatible:
-+          enum:
-+            - qcom,sm8350-cdsp-pas
-+            - qcom,sm8450-cdsp-pas
-+    then:
-+      properties:
-+        power-domains:
-+          items:
-+            - description: CX power domain
-+            - description: MXC power domain
-+        power-domain-names:
-+          items:
-+            - const: cx
-+            - const: mxc
++        # TODO: incomplete
++        power-domains: false
++        power-domain-names: false
 +
 +unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/mailbox/qcom-ipcc.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+
-+    remoteproc@30000000 {
-+        compatible = "qcom,sm8450-adsp-pas";
-+        reg = <0x030000000 0x100>;
-+
-+        clocks = <&rpmhcc RPMH_CXO_CLK>;
-+        clock-names = "xo";
-+
-+        firmware-name = "qcom/sm8450/adsp.mbn";
-+
-+        interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "wdog", "fatal", "ready",
-+                          "handover", "stop-ack";
-+
-+        memory-region = <&adsp_mem>;
-+
-+        power-domains = <&rpmhpd SM8450_LCX>,
-+                        <&rpmhpd SM8450_LMX>;
-+        power-domain-names = "lcx", "lmx";
-+
-+        qcom,qmp = <&aoss_qmp>;
-+        qcom,smem-states = <&smp2p_adsp_out 0>;
-+        qcom,smem-state-names = "stop";
-+
-+        glink-edge {
-+            interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
-+                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-+                                         IRQ_TYPE_EDGE_RISING>;
-+            mboxes = <&ipcc IPCC_CLIENT_LPASS IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+
-+            label = "lpass";
-+            qcom,remote-pid = <2>;
-+
-+            /* ... */
-+        };
-+    };
 -- 
 2.34.1
 
