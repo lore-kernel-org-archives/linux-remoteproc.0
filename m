@@ -2,48 +2,48 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9A8C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A505DC352A1
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 18 Nov 2022 11:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235289AbiKRLU7 (ORCPT
+        id S235328AbiKRLVA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 18 Nov 2022 06:20:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54926 "EHLO
+        Fri, 18 Nov 2022 06:21:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241873AbiKRLTx (ORCPT
+        with ESMTP id S241589AbiKRLTz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 18 Nov 2022 06:19:53 -0500
+        Fri, 18 Nov 2022 06:19:55 -0500
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 265A1140DA;
-        Fri, 18 Nov 2022 03:19:41 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AIBJav4117796;
-        Fri, 18 Nov 2022 05:19:36 -0600
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07A320984;
+        Fri, 18 Nov 2022 03:19:46 -0800 (PST)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AIBJgeT117817;
+        Fri, 18 Nov 2022 05:19:42 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1668770376;
-        bh=moSwcrtdc2VcL4UbDo5DFCfc4fFaFAeMJQwGjXExzgA=;
+        s=ti-com-17Q1; t=1668770382;
+        bh=AJIGQ1xf19B/ECiK/jFZy+fX171KnjSiBsh+JAXWCkg=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ObVNTPt8dXCRWhnW0cDdn1zGZrcZkV+aUs1PWT1F4TttHfq0rxlWjh2Oy+F/D6K3Y
-         CEmHk5M5yka7uFaTKMsFmHZ3EMvr+dduq7jmGfsy58YdRCJOnutHtpyYlwqfa7oeOv
-         LuMfIleWsK1FZPsECFOv50wiNYEstiH+SFrDYJmU=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AIBJaPV036864
+        b=mnJoOOJ1vX8gjNOTcH0pX5AhlRUr57hLd+OPKYHdL/IJOaYC77ujsURiaEdRhAFM7
+         SaAQLsU+EMBTO5iZndde9UpqWpKQf2w34TvrW8yH6iiBYDnP3ZWYJ9f7zzzULQi2Z3
+         9QVu6hOFiDYomhTHaArXrbu+feeF4n6wSTk+r88A=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AIBJgjR086423
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 18 Nov 2022 05:19:36 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 18 Nov 2022 05:19:42 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 18
- Nov 2022 05:19:35 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ Nov 2022 05:19:42 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 18 Nov 2022 05:19:36 -0600
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AIBJZ92031341;
-        Fri, 18 Nov 2022 05:19:35 -0600
+ Frontend Transport; Fri, 18 Nov 2022 05:19:42 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AIBJfSE028234;
+        Fri, 18 Nov 2022 05:19:41 -0600
 Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2AIBJYKi029490;
-        Fri, 18 Nov 2022 05:19:35 -0600
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2AIBJexp017154;
+        Fri, 18 Nov 2022 05:19:41 -0600
 From:   MD Danish Anwar <danishanwar@ti.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -54,9 +54,9 @@ CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         MD Danish Anwar <danishanwar@ti.com>
-Subject: [PATCH v9 4/6] remoteproc: pru: Make sysfs entries read-only for PRU client driven boots
-Date:   Fri, 18 Nov 2022 16:49:22 +0530
-Message-ID: <20221118111924.3277838-5-danishanwar@ti.com>
+Subject: [PATCH v9 6/6] remoteproc: pru: Configure firmware based on client setup
+Date:   Fri, 18 Nov 2022 16:49:24 +0530
+Message-ID: <20221118111924.3277838-7-danishanwar@ti.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221118111924.3277838-1-danishanwar@ti.com>
 References: <20221118111924.3277838-1-danishanwar@ti.com>
@@ -68,45 +68,92 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+From: Tero Kristo <t-kristo@ti.com>
 
-The PRU remoteproc driver is not configured for 'auto-boot' by default,
-and allows to be booted either by in-kernel PRU client drivers or by
-userspace using the generic remoteproc sysfs interfaces. The sysfs
-interfaces should not be permitted to change the remoteproc firmwares
-or states when a PRU is being managed by an in-kernel client driver.
-Use the newly introduced remoteproc generic 'sysfs_read_only' flag to
-provide these restrictions by setting and clearing it appropriately
-during the PRU acquire and release steps.
+Client device node property firmware-name is now used to configure
+firmware for the PRU instances. The default firmware is also
+restored once releasing the PRU resource.
 
 Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 Reviewed-by: Roger Quadros <rogerq@kernel.org>
 ---
- drivers/remoteproc/pru_rproc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/pru_rproc.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 7d4ed39b3772..bca7550d79d2 100644
+index f4a34cc6bcc6..39e05623a84e 100644
 --- a/drivers/remoteproc/pru_rproc.c
 +++ b/drivers/remoteproc/pru_rproc.c
-@@ -228,6 +228,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	}
+@@ -172,6 +172,23 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
+ 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
+ }
  
- 	pru->client_np = np;
-+	rproc->sysfs_read_only = true;
++/**
++ * pru_rproc_set_firmware() - set firmware for a PRU core
++ * @rproc: the rproc instance of the PRU
++ * @fw_name: the new firmware name, or NULL if default is desired
++ *
++ * Return: 0 on success, or errno in error case.
++ */
++static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
++{
++	struct pru_rproc *pru = rproc->priv;
++
++	if (!fw_name)
++		fw_name = pru->fw_name;
++
++	return rproc_set_firmware(rproc, fw_name);
++}
++
+ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+ {
+ 	struct rproc *rproc;
+@@ -228,6 +245,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	struct rproc *rproc;
+ 	struct pru_rproc *pru;
+ 	struct device *dev;
++	const char *fw_name;
+ 	int ret;
  
- 	mutex_unlock(&pru->lock);
+ 	rproc = __pru_rproc_get(np, index);
+@@ -254,11 +272,25 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	if (pru_id)
+ 		*pru_id = pru->id;
  
-@@ -266,6 +267,7 @@ void pru_rproc_put(struct rproc *rproc)
- 	}
++	ret = of_property_read_string_index(np, "firmware-name", index,
++					    &fw_name);
++	if (!ret) {
++		ret = pru_rproc_set_firmware(rproc, fw_name);
++		if (ret) {
++			dev_err(dev, "failed to set firmware: %d\n", ret);
++			goto err;
++		}
++	}
++
+ 	return rproc;
  
- 	pru->client_np = NULL;
-+	rproc->sysfs_read_only = false;
- 	mutex_unlock(&pru->lock);
- 
+ err_no_rproc_handle:
  	rproc_put(rproc);
+ 	return ERR_PTR(ret);
++
++err:
++	pru_rproc_put(rproc);
++	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL_GPL(pru_rproc_get);
+ 
+@@ -278,6 +310,8 @@ void pru_rproc_put(struct rproc *rproc)
+ 
+ 	pru = rproc->priv;
+ 
++	pru_rproc_set_firmware(rproc, NULL);
++
+ 	mutex_lock(&pru->lock);
+ 
+ 	if (!pru->client_np) {
 -- 
 2.25.1
 
