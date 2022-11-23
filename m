@@ -2,403 +2,428 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F72C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 22 Nov 2022 10:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 878ACC433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 23 Nov 2022 21:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232154AbiKVKHX (ORCPT
+        id S238609AbiKWVhD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 22 Nov 2022 05:07:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34342 "EHLO
+        Wed, 23 Nov 2022 16:37:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbiKVKHX (ORCPT
+        with ESMTP id S238437AbiKWVhB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 22 Nov 2022 05:07:23 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6932CE39;
-        Tue, 22 Nov 2022 02:07:20 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2AMA6xZd116018;
-        Tue, 22 Nov 2022 04:06:59 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1669111619;
-        bh=5KECzsV3oZ7XuJuaiJWcm4GxO0TJVgS0h98ei4XpzEQ=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=tZJFepw7T6e4rAuzU/dx3Fh1Y04hOvQYiMUAgl6aKsdRAe2kelN6iWNM0n3W1+Ehy
-         QHSqHJtvalxUOxGPXn/s+b/VqHRpkluRwlvV99w7YRZ/ZghuVh6ZumhP9BZgAVAPWK
-         mKFUrbFXFOOIZDQDATcTwc1SQ2bz4CvKblU8d48c=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2AMA6xM2007057
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 22 Nov 2022 04:06:59 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 22
- Nov 2022 04:06:58 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 22 Nov 2022 04:06:58 -0600
-Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2AMA6sb3058680;
-        Tue, 22 Nov 2022 04:06:54 -0600
-Message-ID: <e2b99af6-9367-0476-c013-9dfb381c6744@ti.com>
-Date:   Tue, 22 Nov 2022 15:36:53 +0530
+        Wed, 23 Nov 2022 16:37:01 -0500
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29DBBB08D5
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Nov 2022 13:36:59 -0800 (PST)
+Received: by mail-wr1-x431.google.com with SMTP id e11so18468911wru.8
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Nov 2022 13:36:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tcx1M2ln6C03CDrE4R32wXvKJlSJYxLrWbY3gEveVVg=;
+        b=WFLwmXxwxWO/UWFMOHR1wt+Gjn4aSlP38qFF233VV1iineFesHmWquc/neaH3fOLsw
+         QfYjLc5nC1fr+le8d0QbeAqMw6BayGAmOTnHFQb1pHpqZJlN2qa87hIgbVBCRjzH2Jc5
+         /J60Yl/q9hcw7Cdo8vq4x5YMcCMSdTZebkjcj0db7uUiIpU/o1VnF2eXMk3JUMdbRnVE
+         z6qILFqzPJnueSBUrAo4yfaOK3dYMWHFsKKNyc7YhiNWwgarnn1rXZvz3mLGRtcCvlUZ
+         n8GaMGIUBeexlqy0zHFN8riLOwVYYYDaRGbiuYxYZ+DrOsF3JDvr66ZZr8/Ba7wISYqP
+         HUmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tcx1M2ln6C03CDrE4R32wXvKJlSJYxLrWbY3gEveVVg=;
+        b=ZcedqPxhfbOkHt/qcQjCy2AutBWIlYhq3YaSFI4R5uTkpjntuZ0xNtLT6NIErsJ0ae
+         415/ad3292B0uDFKM+/HPsrmGletPPAgd+EyVqN2bYioXc0tvqn7uBqy1jTvUGOUUApN
+         eR/PkA57Zdg6sTMzoM1lqxNb/ROb6mYD4wtSwxH6jMJ76OAbrlMdEaCW+KBNlKZ4yUIE
+         +TQq5D2PHMJtvkb8nQKdZaoilKcZsNAh0pHaQNCYLphtL0zcHPvTjp9sSnjyCwcm+ZBg
+         Bbj9UVfa5XsfA2RZHiMoGzsoqhbeUXpQc8KtSh6sDgTKflpzw0D/xRv723BsS5r/dlUO
+         0GhQ==
+X-Gm-Message-State: ANoB5pmzChg5D8lPA4SVK8oblp4/8+DYbbzKYniqEG7pr0Xug3reGMV7
+        eRH4e76xlpKWB4Ewy8dLhLq6z/ygVVgGx2EVJOcpbA==
+X-Google-Smtp-Source: AA0mqf4VQBNjKLHuWtf4tzGFn3kGXhDRIGaove/c5NIeFooVGvh9+RLavQgMeVMCmCvx2NUTI5SvTW1GQ+ajd9/xRJ0=
+X-Received: by 2002:a05:6000:128c:b0:236:e512:1a9e with SMTP id
+ f12-20020a056000128c00b00236e5121a9emr9450830wrx.416.1669239417450; Wed, 23
+ Nov 2022 13:36:57 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [EXTERNAL] Re: [PATCH v9 2/6] remoteproc: pru: Add APIs to get
- and put the PRU cores
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        MD Danish Anwar <danishanwar@ti.com>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <srk@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20221118111924.3277838-1-danishanwar@ti.com>
- <20221118111924.3277838-3-danishanwar@ti.com> <20221121174938.GC457869@p14s>
-From:   Md Danish Anwar <a0501179@ti.com>
-In-Reply-To: <20221121174938.GC457869@p14s>
+References: <20221122082523.133974-1-haozhe.chang@mediatek.com>
+In-Reply-To: <20221122082523.133974-1-haozhe.chang@mediatek.com>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Wed, 23 Nov 2022 22:36:20 +0100
+Message-ID: <CAMZdPi_1tRDTVtfjfKXcwx==Bg-ieDSnB5nj2E9LbkKEtxv++g@mail.gmail.com>
+Subject: Re: [PATCH v4] wwan: core: Support slicing in port TX flow of WWAN subsystem
+To:     haozhe.chang@mediatek.com
+Cc:     M Chetan Kumar <m.chetan.kumar@intel.com>,
+        Intel Corporation <linuxwwan@intel.com>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
+        Liu Haijun <haijun.liu@mediatek.com>,
+        Ricardo Martinez <ricardo.martinez@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        "open list:INTEL WWAN IOSM DRIVER" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR MESSAGING (RPMSG) WWAN CONTROL..." 
+        <linux-remoteproc@vger.kernel.org>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, lambert.wang@mediatek.com,
+        xiayu.zhang@mediatek.com, hua.yang@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+On Tue, 22 Nov 2022 at 09:25, <haozhe.chang@mediatek.com> wrote:
+>
+> From: haozhe chang <haozhe.chang@mediatek.com>
+>
+> wwan_port_fops_write inputs the SKB parameter to the TX callback of
+> the WWAN device driver. However, the WWAN device (e.g., t7xx) may
+> have an MTU less than the size of SKB, causing the TX buffer to be
+> sliced and copied once more in the WWAN device driver.
+>
+> This patch implements the slicing in the WWAN subsystem and gives
+> the WWAN devices driver the option to slice(by frag_len) or not. By
+> doing so, the additional memory copy is reduced.
+>
+> Meanwhile, this patch gives WWAN devices driver the option to reserve
+> headroom in fragments for the device-specific metadata.
+>
+> Signed-off-by: haozhe chang <haozhe.chang@mediatek.com>
+>
+> ---
+> Changes in v2
+>   -send fragments to device driver by skb frag_list.
+>
+> Changes in v3
+>   -move frag_len and headroom_len setting to wwan_create_port.
+>
+> Changes in v4
+>   -change unreadable parameters to macro definition.
+> ---
+>  drivers/net/wwan/iosm/iosm_ipc_port.c  |  3 +-
+>  drivers/net/wwan/mhi_wwan_ctrl.c       |  3 +-
+>  drivers/net/wwan/rpmsg_wwan_ctrl.c     |  3 +-
+>  drivers/net/wwan/t7xx/t7xx_port_wwan.c | 34 +++++++--------
+>  drivers/net/wwan/wwan_core.c           | 59 ++++++++++++++++++++------
+>  drivers/net/wwan/wwan_hwsim.c          |  1 +
+>  drivers/usb/class/cdc-wdm.c            |  3 +-
+>  include/linux/wwan.h                   | 15 +++++++
+>  8 files changed, 86 insertions(+), 35 deletions(-)
+>
+> diff --git a/drivers/net/wwan/iosm/iosm_ipc_port.c b/drivers/net/wwan/iosm/iosm_ipc_port.c
+> index b6d81c627277..7798348f61d0 100644
+> --- a/drivers/net/wwan/iosm/iosm_ipc_port.c
+> +++ b/drivers/net/wwan/iosm/iosm_ipc_port.c
+> @@ -63,7 +63,8 @@ struct iosm_cdev *ipc_port_init(struct iosm_imem *ipc_imem,
+>         ipc_port->ipc_imem = ipc_imem;
+>
+>         ipc_port->iosm_port = wwan_create_port(ipc_port->dev, port_type,
+> -                                              &ipc_wwan_ctrl_ops, ipc_port);
+> +                                              &ipc_wwan_ctrl_ops, WWAN_NO_FRAGMENT,
+> +                                              WWAN_NO_HEADROOM, ipc_port);
+>
+>         return ipc_port;
+>  }
+> diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
+> index f7ca52353f40..c397aa53db5d 100644
+> --- a/drivers/net/wwan/mhi_wwan_ctrl.c
+> +++ b/drivers/net/wwan/mhi_wwan_ctrl.c
+> @@ -237,7 +237,8 @@ static int mhi_wwan_ctrl_probe(struct mhi_device *mhi_dev,
+>
+>         /* Register as a wwan port, id->driver_data contains wwan port type */
+>         port = wwan_create_port(&cntrl->mhi_dev->dev, id->driver_data,
+> -                               &wwan_pops, mhiwwan);
+> +                               &wwan_pops, WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM,
+> +                               mhiwwan);
+>         if (IS_ERR(port)) {
+>                 kfree(mhiwwan);
+>                 return PTR_ERR(port);
+> diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+> index 31c24420ab2e..fc6c228b7e1c 100644
+> --- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
+> +++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+> @@ -129,7 +129,8 @@ static int rpmsg_wwan_ctrl_probe(struct rpmsg_device *rpdev)
+>
+>         /* Register as a wwan port, id.driver_data contains wwan port type */
+>         port = wwan_create_port(parent, rpdev->id.driver_data,
+> -                               &rpmsg_wwan_pops, rpwwan);
+> +                               &rpmsg_wwan_pops, WWAN_NO_FRAGMENT,
+> +                               WWAN_NO_HEADROOM, rpwwan);
+>         if (IS_ERR(port))
+>                 return PTR_ERR(port);
+>
+> diff --git a/drivers/net/wwan/t7xx/t7xx_port_wwan.c b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+> index 33931bfd78fd..b75bb272f861 100644
+> --- a/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+> +++ b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+> @@ -54,13 +54,13 @@ static void t7xx_port_ctrl_stop(struct wwan_port *port)
+>  static int t7xx_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
+>  {
+>         struct t7xx_port *port_private = wwan_port_get_drvdata(port);
+> -       size_t len, offset, chunk_len = 0, txq_mtu = CLDMA_MTU;
+>         const struct t7xx_port_conf *port_conf;
+> +       struct sk_buff *cur = skb, *cloned;
+>         struct t7xx_fsm_ctl *ctl;
+>         enum md_state md_state;
+> +       int cnt = 0, ret;
+>
+> -       len = skb->len;
+> -       if (!len || !port_private->chan_enable)
+> +       if (!port_private->chan_enable)
+>                 return -EINVAL;
+>
+>         port_conf = port_private->port_conf;
+> @@ -72,23 +72,21 @@ static int t7xx_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
+>                 return -ENODEV;
+>         }
+>
+> -       for (offset = 0; offset < len; offset += chunk_len) {
+> -               struct sk_buff *skb_ccci;
+> -               int ret;
+> -
+> -               chunk_len = min(len - offset, txq_mtu - sizeof(struct ccci_header));
+> -               skb_ccci = t7xx_port_alloc_skb(chunk_len);
+> -               if (!skb_ccci)
+> -                       return -ENOMEM;
+> -
+> -               skb_put_data(skb_ccci, skb->data + offset, chunk_len);
+> -               ret = t7xx_port_send_skb(port_private, skb_ccci, 0, 0);
+> +       while (cur) {
+> +               cloned = skb_clone(cur, GFP_KERNEL);
+> +               cloned->len = skb_headlen(cur);
+> +               ret = t7xx_port_send_skb(port_private, cloned, 0, 0);
+>                 if (ret) {
+> -                       dev_kfree_skb_any(skb_ccci);
+> +                       dev_kfree_skb(cloned);
+>                         dev_err(port_private->dev, "Write error on %s port, %d\n",
+>                                 port_conf->name, ret);
+> -                       return ret;
+> +                       return cnt ? cnt + ret : ret;
+>                 }
+> +               cnt += cur->len;
+> +               if (cur == skb)
+> +                       cur = skb_shinfo(skb)->frag_list;
+> +               else
+> +                       cur = cur->next;
+>         }
+>
+>         dev_kfree_skb(skb);
+> @@ -154,13 +152,15 @@ static int t7xx_port_wwan_disable_chl(struct t7xx_port *port)
+>  static void t7xx_port_wwan_md_state_notify(struct t7xx_port *port, unsigned int state)
+>  {
+>         const struct t7xx_port_conf *port_conf = port->port_conf;
+> +       unsigned int header_len = sizeof(struct ccci_header);
+>
+>         if (state != MD_STATE_READY)
+>                 return;
+>
+>         if (!port->wwan_port) {
+>                 port->wwan_port = wwan_create_port(port->dev, port_conf->port_type,
+> -                                                  &wwan_ops, port);
+> +                                                  &wwan_ops, CLDMA_MTU - header_len,
+> +                                                  header_len, port);
+>                 if (IS_ERR(port->wwan_port))
+>                         dev_err(port->dev, "Unable to create WWWAN port %s", port_conf->name);
+>         }
+> diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
+> index 62e9f7d6c9fe..8d35513bcd4c 100644
+> --- a/drivers/net/wwan/wwan_core.c
+> +++ b/drivers/net/wwan/wwan_core.c
+> @@ -67,6 +67,8 @@ struct wwan_device {
+>   * @rxq: Buffer inbound queue
+>   * @waitqueue: The waitqueue for port fops (read/write/poll)
+>   * @data_lock: Port specific data access serialization
+> + * @headroom_len: SKB reserved headroom size
+> + * @frag_len: Length to fragment packet
+>   * @at_data: AT port specific data
+>   */
+>  struct wwan_port {
+> @@ -79,6 +81,8 @@ struct wwan_port {
+>         struct sk_buff_head rxq;
+>         wait_queue_head_t waitqueue;
+>         struct mutex data_lock; /* Port specific data access serialization */
+> +       size_t headroom_len;
+> +       size_t frag_len;
+>         union {
+>                 struct {
+>                         struct ktermios termios;
+> @@ -422,6 +426,8 @@ static int __wwan_port_dev_assign_name(struct wwan_port *port, const char *fmt)
+>  struct wwan_port *wwan_create_port(struct device *parent,
+>                                    enum wwan_port_type type,
+>                                    const struct wwan_port_ops *ops,
+> +                                  size_t frag_len,
+> +                                  unsigned int headroom_len,
+>                                    void *drvdata)
+>  {
+>         struct wwan_device *wwandev;
+> @@ -455,6 +461,8 @@ struct wwan_port *wwan_create_port(struct device *parent,
+>
+>         port->type = type;
+>         port->ops = ops;
+> +       port->frag_len = frag_len ? frag_len : SIZE_MAX;
+> +       port->headroom_len = headroom_len;
+>         mutex_init(&port->ops_lock);
+>         skb_queue_head_init(&port->rxq);
+>         init_waitqueue_head(&port->waitqueue);
+> @@ -698,30 +706,53 @@ static ssize_t wwan_port_fops_read(struct file *filp, char __user *buf,
+>  static ssize_t wwan_port_fops_write(struct file *filp, const char __user *buf,
+>                                     size_t count, loff_t *offp)
+>  {
+> +       struct sk_buff *skb, *head = NULL, *tail = NULL;
+>         struct wwan_port *port = filp->private_data;
+> -       struct sk_buff *skb;
+> +       size_t frag_len, remain = count;
+>         int ret;
+>
+>         ret = wwan_wait_tx(port, !!(filp->f_flags & O_NONBLOCK));
+>         if (ret)
+>                 return ret;
+>
+> -       skb = alloc_skb(count, GFP_KERNEL);
+> -       if (!skb)
+> -               return -ENOMEM;
+> +       do {
+> +               frag_len = min(remain, port->frag_len);
+> +               skb = alloc_skb(frag_len + port->headroom_len, GFP_KERNEL);
+> +               if (!skb) {
+> +                       ret = -ENOMEM;
+> +                       goto freeskb;
+> +               }
+> +               skb_reserve(skb, port->headroom_len);
+> +
+> +               if (!head) {
+> +                       head = skb;
+> +               } else if (!tail) {
+> +                       skb_shinfo(head)->frag_list = skb;
+> +                       tail = skb;
+> +               } else {
+> +                       tail->next = skb;
+> +                       tail = skb;
+> +               }
+>
+> -       if (copy_from_user(skb_put(skb, count), buf, count)) {
+> -               kfree_skb(skb);
+> -               return -EFAULT;
+> -       }
+> +               if (copy_from_user(skb_put(skb, frag_len), buf + count - remain, frag_len)) {
+> +                       ret = -EFAULT;
+> +                       goto freeskb;
+> +               }
+>
+> -       ret = wwan_port_op_tx(port, skb, !!(filp->f_flags & O_NONBLOCK));
+> -       if (ret) {
+> -               kfree_skb(skb);
+> -               return ret;
+> -       }
+> +               if (skb != head) {
+> +                       head->data_len += skb->len;
+> +                       head->len += skb->len;
+> +                       head->truesize += skb->truesize;
+> +               }
+> +       } while (remain -= frag_len);
+> +
+> +       ret = wwan_port_op_tx(port, head, !!(filp->f_flags & O_NONBLOCK));
+> +       if (!ret)
+> +               return count;
+>
+> -       return count;
+> +freeskb:
+> +       kfree_skb(head);
+> +       return ret;
+>  }
+>
+>  static __poll_t wwan_port_fops_poll(struct file *filp, poll_table *wait)
+> diff --git a/drivers/net/wwan/wwan_hwsim.c b/drivers/net/wwan/wwan_hwsim.c
+> index ff09a8cedf93..7fb54cb51628 100644
+> --- a/drivers/net/wwan/wwan_hwsim.c
+> +++ b/drivers/net/wwan/wwan_hwsim.c
+> @@ -205,6 +205,7 @@ static struct wwan_hwsim_port *wwan_hwsim_port_new(struct wwan_hwsim_dev *dev)
+>
+>         port->wwan = wwan_create_port(&dev->dev, WWAN_PORT_AT,
+>                                       &wwan_hwsim_port_ops,
+> +                                     WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM,
+>                                       port);
+>         if (IS_ERR(port->wwan)) {
+>                 err = PTR_ERR(port->wwan);
+> diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+> index 1f0951be15ab..e0f0bc878bbd 100644
+> --- a/drivers/usb/class/cdc-wdm.c
+> +++ b/drivers/usb/class/cdc-wdm.c
+> @@ -929,7 +929,8 @@ static void wdm_wwan_init(struct wdm_device *desc)
+>                 return;
+>         }
+>
+> -       port = wwan_create_port(&intf->dev, desc->wwanp_type, &wdm_wwan_port_ops, desc);
+> +       port = wwan_create_port(&intf->dev, desc->wwanp_type, &wdm_wwan_port_ops,
+> +                               WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM, desc);
+>         if (IS_ERR(port)) {
+>                 dev_err(&intf->dev, "%s: Unable to create WWAN port\n",
+>                         dev_name(intf->usb_dev));
+> diff --git a/include/linux/wwan.h b/include/linux/wwan.h
+> index 5ce2acf444fb..37f25ebb9733 100644
+> --- a/include/linux/wwan.h
+> +++ b/include/linux/wwan.h
+> @@ -62,11 +62,24 @@ struct wwan_port_ops {
+>                             poll_table *wait);
+>  };
+>
+> +/*
+> + * Used to indicate that the WWAN core should not fragment tx packages.
+> + */
+> +#define WWAN_NO_FRAGMENT       0
+> +
+> +/*
+> + * Used to indicate that the WWAN core should not reserve headroom in SKB.
+> + */
+> +#define WWAN_NO_HEADROOM       0
 
-On 21/11/22 23:19, Mathieu Poirier wrote:
-> On Fri, Nov 18, 2022 at 04:49:20PM +0530, MD Danish Anwar wrote:
->> From: Tero Kristo <t-kristo@ti.com>
->>
->> Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
->> driver to allow client drivers to acquire and release the remoteproc
->> device associated with a PRU core. The PRU cores are treated as
->> resources with only one client owning it at a time.
->>
->> The pru_rproc_get() function returns the rproc handle corresponding
->> to a PRU core identified by the device tree "ti,prus" property under
->> the client node. The pru_rproc_put() is the complementary function
->> to pru_rproc_get().
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> ---
->>  drivers/remoteproc/pru_rproc.c | 134 ++++++++++++++++++++++++++++++++-
->>  include/linux/pruss.h          |  47 ++++++++++++
->>  2 files changed, 179 insertions(+), 2 deletions(-)
->>  create mode 100644 include/linux/pruss.h
->>
->> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->> index 128bf9912f2c..4769ade9c316 100644
->> --- a/drivers/remoteproc/pru_rproc.c
->> +++ b/drivers/remoteproc/pru_rproc.c
->> @@ -2,12 +2,14 @@
->>  /*
->>   * PRU-ICSS remoteproc driver for various TI SoCs
->>   *
->> - * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
->> + * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
->>   *
->>   * Author(s):
->>   *	Suman Anna <s-anna@ti.com>
->>   *	Andrew F. Davis <afd@ti.com>
->>   *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
->> + *	Puranjay Mohan <p-mohan@ti.com>
->> + *	Md Danish Anwar <danishanwar@ti.com>
->>   */
->>  
->>  #include <linux/bitops.h>
->> @@ -16,6 +18,7 @@
->>  #include <linux/module.h>
->>  #include <linux/of_device.h>
->>  #include <linux/of_irq.h>
->> +#include <linux/pruss.h>
->>  #include <linux/pruss_driver.h>
->>  #include <linux/remoteproc.h>
->>  
->> @@ -111,6 +114,8 @@ struct pru_private_data {
->>   * @rproc: remoteproc pointer for this PRU core
->>   * @data: PRU core specific data
->>   * @mem_regions: data for each of the PRU memory regions
->> + * @client_np: client device node
->> + * @lock: mutex to protect client usage
->>   * @fw_name: name of firmware image used during loading
->>   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
->>   * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
->> @@ -126,6 +131,8 @@ struct pru_rproc {
->>  	struct rproc *rproc;
->>  	const struct pru_private_data *data;
->>  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
->> +	struct device_node *client_np;
->> +	struct mutex lock;
->>  	const char *fw_name;
->>  	unsigned int *mapped_irq;
->>  	struct pru_irq_rsc *pru_interrupt_map;
->> @@ -146,6 +153,125 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
->>  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
->>  }
->>  
->> +static struct rproc *__pru_rproc_get(struct device_node *np, int index)
->> +{
->> +	struct rproc *rproc;
->> +	phandle rproc_phandle;
->> +	int ret;
->> +
->> +	ret = of_property_read_u32_index(np, "ti,prus", index, &rproc_phandle);
->> +	if (ret)
->> +		return ERR_PTR(ret);
->> +
->> +	rproc = rproc_get_by_phandle(rproc_phandle);
->> +	if (!rproc) {
->> +		ret = -EPROBE_DEFER;
->> +		goto err_no_rproc_handle;
->> +	}
->> +
->> +	/* make sure it is PRU rproc */
->> +	if (!is_pru_rproc(rproc->dev.parent)) {
->> +		rproc_put(rproc);
->> +		return ERR_PTR(-ENODEV);
->> +	}
->> +
->> +	return rproc;
->> +
->> +err_no_rproc_handle:
->> +	rproc_put(rproc);
->> +	return ERR_PTR(ret);
->> +}
->> +
->> +/**
->> + * pru_rproc_get() - get the PRU rproc instance from a device node
->> + * @np: the user/client device node
->> + * @index: index to use for the ti,prus property
->> + * @pru_id: optional pointer to return the PRU remoteproc processor id
->> + *
->> + * This function looks through a client device node's "ti,prus" property at
->> + * index @index and returns the rproc handle for a valid PRU remote processor if
->> + * found. The function allows only one user to own the PRU rproc resource at a
->> + * time. Caller must call pru_rproc_put() when done with using the rproc, not
->> + * required if the function returns a failure.
->> + *
->> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
->> + * returned.
->> + *
->> + * Return: rproc handle on success, and an ERR_PTR on failure using one
->> + * of the following error values
->> + *    -ENODEV if device is not found
->> + *    -EBUSY if PRU is already acquired by anyone
->> + *    -EPROBE_DEFER is PRU device is not probed yet
->> + */
->> +struct rproc *pru_rproc_get(struct device_node *np, int index,
->> +			    enum pruss_pru_id *pru_id)
->> +{
->> +	struct rproc *rproc;
->> +	struct pru_rproc *pru;
->> +	struct device *dev;
->> +	int ret;
->> +
->> +	rproc = __pru_rproc_get(np, index);
->> +	if (IS_ERR(rproc))
->> +		return rproc;
->> +
->> +	pru = rproc->priv;
->> +	dev = &rproc->dev;
->> +
->> +	mutex_lock(&pru->lock);
->> +
->> +	if (pru->client_np) {
->> +		mutex_unlock(&pru->lock);
->> +		put_device(dev);
->> +		ret = -EBUSY;
->> +		goto err_no_rproc_handle;
->> +	}
->> +
->> +	pru->client_np = np;
->> +
->> +	mutex_unlock(&pru->lock);
->> +
->> +	if (pru_id)
->> +		*pru_id = pru->id;
->> +
->> +	return rproc;
->> +
->> +err_no_rproc_handle:
->> +	rproc_put(rproc);
->> +	return ERR_PTR(ret);
->> +}
->> +EXPORT_SYMBOL_GPL(pru_rproc_get);
->> +
->> +/**
->> + * pru_rproc_put() - release the PRU rproc resource
->> + * @rproc: the rproc resource to release
->> + *
->> + * Releases the PRU rproc resource and makes it available to other
->> + * users.
->> + */
->> +void pru_rproc_put(struct rproc *rproc)
->> +{
->> +	struct pru_rproc *pru;
->> +
->> +	if (IS_ERR_OR_NULL(rproc) || !is_pru_rproc(rproc->dev.parent))
->> +		return;
->> +
->> +	pru = rproc->priv;
->> +
->> +	mutex_lock(&pru->lock);
->> +
->> +	if (!pru->client_np) {
->> +		mutex_unlock(&pru->lock);
->> +		return;
->> +	}
->> +
->> +	pru->client_np = NULL;
->> +	mutex_unlock(&pru->lock);
->> +
->> +	rproc_put(rproc);
->> +}
->> +EXPORT_SYMBOL_GPL(pru_rproc_put);
->> +
->>  static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
->>  {
->>  	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
->> @@ -816,6 +942,8 @@ static int pru_rproc_probe(struct platform_device *pdev)
->>  	pru->pruss = platform_get_drvdata(ppdev);
->>  	pru->rproc = rproc;
->>  	pru->fw_name = fw_name;
->> +	pru->client_np = NULL;
->> +	mutex_init(&pru->lock);
->>  
->>  	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
->>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
->> @@ -904,7 +1032,7 @@ MODULE_DEVICE_TABLE(of, pru_rproc_match);
->>  
->>  static struct platform_driver pru_rproc_driver = {
->>  	.driver = {
->> -		.name   = "pru-rproc",
->> +		.name   = PRU_RPROC_DRVNAME,
->>  		.of_match_table = pru_rproc_match,
->>  		.suppress_bind_attrs = true,
->>  	},
->> @@ -916,5 +1044,7 @@ module_platform_driver(pru_rproc_driver);
->>  MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
->>  MODULE_AUTHOR("Andrew F. Davis <afd@ti.com>");
->>  MODULE_AUTHOR("Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>");
->> +MODULE_AUTHOR("Puranjay Mohan <p-mohan@ti.com>");
->> +MODULE_AUTHOR("Md Danish Anwar <danishanwar@ti.com>");
->>  MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
->>  MODULE_LICENSE("GPL v2");
->> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
->> new file mode 100644
->> index 000000000000..4909226f14a9
->> --- /dev/null
->> +++ b/include/linux/pruss.h
->> @@ -0,0 +1,47 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/**
->> + * PRU-ICSS Subsystem user interfaces
->> + *
->> + * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
->> + *	Suman Anna <s-anna@ti.com>
->> + */
->> +
->> +#ifndef __LINUX_PRUSS_H
->> +#define __LINUX_PRUSS_H
->> +
->> +#include <linux/device.h>
->> +#include <linux/types.h>
->> +
->> +#define PRU_RPROC_DRVNAME "pru-rproc"
->> +
->> +struct device_node;
->> +
->> +#if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
->> +
->> +struct rproc *pru_rproc_get(struct device_node *np, int index,
->> +			    enum pruss_pru_id *pru_id);
-> 
-> Did you really send me code that doesn't compile?  It sure looks that way... 
-> 
+It could be a bit misleading here; these values are only used as
+'control ports' parameters, and not for the 'regular' WWAN network
+payload. Make this more clear in the above comments/def-names.
 
-Previously patch 2/6 and patch 3/6 of this series were part of the same patch.
-In the previous version Roger asked to introduce the pruss_pru_id enum in a
-separate patch. So I split the older patch 2/6 into two parts ( "Add APIs to
-get and put the PRU cores" and "Add enum for PRU Core Identifiers").
+Regards,
+Loic
 
-I made the new patch as 3rd patch and kept this patch as second part of the
-series. I compiled all the patches together and it was getting compiled properly.
 
-There seems to be ordering issue, the current patch ([PATCH v9 2/6] remoteproc:
-pru: Add APIs to get and put the PRU cores  depends on the new patch ([PATCH v9
-3/6] remoteproc: pru: Add enum for PRU Core Identifiers). I should have added
-the current patch after the enum introduction patch. But my bad, I added them
-the other way around.
 
-I didn't compile patches individually. I compiled all 6 of them together and
-they got compiled. I'll reorder the patches and make sure each patch compiles
-properly.
 
-Thanks,
-Danish.
 
-> 
->   CC      drivers/remoteproc/pru_rproc.o
-> In file included from /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:21:
-> /home/mpoirier/work/remoteproc/kernel-review/include/linux/pruss.h:22:13: warning: ‘enum pruss_pru_id’ declared inside parameter list will not be visible outside of this definition or declaration
->    22 |        enum pruss_pru_id *pru_id);
->       |             ^~~~~~~~~~~~
-> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:207:13: warning: ‘enum pruss_pru_id’ declared inside parameter list will not be visible outside of this definition or declaration
->   207 |        enum pruss_pru_id *pru_id)
->       |             ^~~~~~~~~~~~
-> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:206:15: error: conflicting types for ‘pru_rproc_get’
->   206 | struct rproc *pru_rproc_get(struct device_node *np, int index,
->       |               ^~~~~~~~~~~~~
-> In file included from /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:21:
-> /home/mpoirier/work/remoteproc/kernel-review/include/linux/pruss.h:21:15: note: previous declaration of ‘pru_rproc_get’ was here
->    21 | struct rproc *pru_rproc_get(struct device_node *np, int index,
->       |               ^~~~~~~~~~~~~
-> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c: In function ‘pru_rproc_get’:
-> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:235:3: error: dereferencing pointer to incomplete type ‘enum pruss_pru_id’
->   235 |   *pru_id = pru->id;
->       |   ^~~~~~~
-> In file included from /home/mpoirier/work/remoteproc/kernel-review/include/linux/linkage.h:7,
->                  from /home/mpoirier/work/remoteproc/kernel-review/include/linux/fs.h:5,
->                  from /home/mpoirier/work/remoteproc/kernel-review/include/linux/debugfs.h:15,
->                  from /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:16:
-> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c: At top level:
-> /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/pru_rproc.c:243:19: error: conflicting types for ‘pru_rproc_get’
->   243 | EXPORT_SYMBOL_GPL(pru_rproc_get);
-> 
->> +void pru_rproc_put(struct rproc *rproc);
->> +
->> +#else
->> +
->> +static inline struct rproc *
->> +pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
->> +{
->> +	return ERR_PTR(-EOPNOTSUPP);
->> +}
->> +
->> +static inline void pru_rproc_put(struct rproc *rproc) { }
->> +
->> +#endif /* CONFIG_PRU_REMOTEPROC */
->> +
->> +static inline bool is_pru_rproc(struct device *dev)
->> +{
->> +	const char *drv_name = dev_driver_string(dev);
->> +
->> +	if (strncmp(drv_name, PRU_RPROC_DRVNAME, sizeof(PRU_RPROC_DRVNAME)))
->> +		return false;
->> +
->> +	return true;
->> +}
->> +
->> +#endif /* __LINUX_PRUSS_H */
->> -- 
->> 2.25.1
->>
+> +
+>  /**
+>   * wwan_create_port - Add a new WWAN port
+>   * @parent: Device to use as parent and shared by all WWAN ports
+>   * @type: WWAN port type
+>   * @ops: WWAN port operations
+> + * @frag_len: TX fragments length, if 0 is set,
+> + *            the WWAN core don't fragment the user package.
+> + * @headroom_len: TX fragments reserved headroom length
+>   * @drvdata: Pointer to caller driver data
+>   *
+>   * Allocate and register a new WWAN port. The port will be automatically exposed
+> @@ -84,6 +97,8 @@ struct wwan_port_ops {
+>  struct wwan_port *wwan_create_port(struct device *parent,
+>                                    enum wwan_port_type type,
+>                                    const struct wwan_port_ops *ops,
+> +                                  size_t frag_len,
+> +                                  unsigned int headroom_len,
+>                                    void *drvdata);
+>
+>  /**
+> --
+> 2.17.0
+>
