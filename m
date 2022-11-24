@@ -2,54 +2,55 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D3AC47089
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65726C47088
 	for <linux-remoteproc@archiver.kernel.org>; Thu, 24 Nov 2022 18:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbiKXSns (ORCPT
+        id S229450AbiKXSnt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 24 Nov 2022 13:43:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58330 "EHLO
+        Thu, 24 Nov 2022 13:43:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbiKXSnq (ORCPT
+        with ESMTP id S229718AbiKXSns (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 24 Nov 2022 13:43:46 -0500
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24155F8872
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Nov 2022 10:43:45 -0800 (PST)
-Received: by mail-lj1-x236.google.com with SMTP id z24so2849681ljn.4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Nov 2022 10:43:45 -0800 (PST)
+        Thu, 24 Nov 2022 13:43:48 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34FE310FEDF
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Nov 2022 10:43:47 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id p8so3664102lfu.11
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Nov 2022 10:43:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U7lP3qWDAVJuWZTBOEagOeM+IpWxGPuX90YrziM7c8o=;
-        b=qgJsAwsBj38fBI4eGgboaAwgTwE22X8i6M7t2Tb8nkxV80HVWPLRxtK6X1z+kNVbvr
-         WY2PsnJW+YHGx+A86HP9fWS4kGMxvY6xDe25WPQ2rw1CR+CaSBV7k91MirCMxznM2APS
-         qNA4o9qkvoo3PGzQ6o/ePDPlgCI0EQrqZI6Cpv/6nYSOyeqGZ1WoKXs4r4nxJJ2rzS4L
-         urynfKE+hqD5pmQ/ou92Ah8JwUjYksb9jDdQ7g4G0kTk2lmeUWQAeWn4f5NUdZZKNUN3
-         HjexgkuD0AqFOVES6KcYbuKk1nxdo4+hTO7m75N0ogrmeo338tX9xDS9sJjoxIQctGPo
-         wNkw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w7fAfdGZJ4QQ0eAIGZU6uPWE4+p29HD6e1RtlTmr/Hk=;
+        b=KwaG+BwTeIrxnQVvMPAylzBNcKGaHh2obrbXAQfyROv8ySuEeR1leKfufof4yzbKBZ
+         cv6P8aIYOdD+I8uZiKyVEZXMaE2rvMgeNLuR/nQNRAa4ledJ2JWYdiBaZThgmS1u7nQb
+         mZ6Wbz7mNt+TtQ58tpGQZeuY0tzmQncevopsdcTKVk6yRX2IBiE/yPk/ZCu6vHGF9P0Z
+         o1Wq/haHociLwqBMtth8Q8WyLI3wA/lI32yJHdIsJsAqLM7T2CUoIQlMpRBJ7TPnF1SF
+         nBbgdFQMZQQ2S59ex5qe9yjMbqmzhzBTKF+FDdqsOqw9ox9e41XRCqhuOUzFFdn6NRN5
+         yHdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U7lP3qWDAVJuWZTBOEagOeM+IpWxGPuX90YrziM7c8o=;
-        b=sUzO/HwBEYpX+Ab2decmeMe9MQfEiBsXZRkcm0w/WlzN+hY8b8ozcS3auoNQMULCOJ
-         sqGhjeq8r7LWL6iMwUqD1adq0U7bpASUTPK1RMx+1BhBaTXV1GPXdNs16hAPEZQJWqza
-         PLAXvd9Qo1mAmgcOyf4tUQsm31v9/jf4ZppGsbhIXEdkmuu+2myATfYCFAEViyeI4fHb
-         AIBSOyHmPwsuOlHc49GpT0ohrJBloAnPwJ4dK+0pAXeQNcs1RbLnT/cKyEJgiU1aG36K
-         IqFoY9Qk3xGbat15EXlTqeT0qqLRW8sPNhjsFj+esYeA6i8GcyqwjEYHqs1NAPwRvRjW
-         AWhA==
-X-Gm-Message-State: ANoB5pl3MxRBy+f+niysugDRiyIND6N0gqDb90XuiiB3SSL2HjpyRuA/
-        rzjyxi+Yn+prbov6/YP0IR7HYQ==
-X-Google-Smtp-Source: AA0mqf7CCiyKlkJuAKxtJUF1oNeQPY2vu4pE2i5FA/PB0d5fd0gh7n3qSPqZpOZDfmt0amkUkjlRKQ==
-X-Received: by 2002:a2e:8645:0:b0:279:7b24:641c with SMTP id i5-20020a2e8645000000b002797b24641cmr2591012ljj.344.1669315423434;
-        Thu, 24 Nov 2022 10:43:43 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w7fAfdGZJ4QQ0eAIGZU6uPWE4+p29HD6e1RtlTmr/Hk=;
+        b=hWYBYflp3qydHXT+rJlzEEbJ1wEZsO4Np1aoJdrob9zstwRog62fWAAdZ+uttzVwtN
+         0ONCH0LFDspYV3FJnLEWhENhWnN1AiT1pXCk0rlcIBCDw7my/GkinH66uZbb7yDVa3Za
+         EOgJbhCMO8V5vJpy/iDkfEJK98PTPFSaIqM4+CAKE/3neCIo5Gl4pA0GWriCXsUYDYVo
+         w2AbMPxMeCOV5X1uojHU6ak+Li+Ozvc2jdli4wLM/ugkseBAjwsCA6OvfsbrmeNBHoWN
+         Ykq0bMzucWlsauGb9ZAQ+JagoFW2prapizaGKTqh61vCfLyXZstb3w4e7wpyA3PipQOi
+         aMhw==
+X-Gm-Message-State: ANoB5pmLWoz6B4Zq4odVGi+75W0XLMrr84IEiVacMuWSqGtQONoVfoAd
+        MH3Wu6c+e5daFpYI15RW0XBv5Q==
+X-Google-Smtp-Source: AA0mqf4n6MC+K6mEwOwYA68QWwZSJvaV1aQhiNG9r04ux2Jbn/LZYoRnb0/wyh92uuRu6jaZUOOZ6w==
+X-Received: by 2002:ac2:47ec:0:b0:4a7:8b6b:2320 with SMTP id b12-20020ac247ec000000b004a78b6b2320mr4818704lfp.267.1669315425554;
+        Thu, 24 Nov 2022 10:43:45 -0800 (PST)
 Received: from krzk-bin.NAT.warszawa.vectranet.pl (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id v7-20020a2ea607000000b0026e0434eb1esm159098ljp.67.2022.11.24.10.43.41
+        by smtp.gmail.com with ESMTPSA id v7-20020a2ea607000000b0026e0434eb1esm159098ljp.67.2022.11.24.10.43.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Nov 2022 10:43:42 -0800 (PST)
+        Thu, 24 Nov 2022 10:43:45 -0800 (PST)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -61,93 +62,94 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 00/15] dt-bindings: remoteproc: qcom: split and reorganize PAS/PIL
-Date:   Thu, 24 Nov 2022 19:43:18 +0100
-Message-Id: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 02/15] arm64: dts: qcom: qcs404: align CDSP PAS node with bindings
+Date:   Thu, 24 Nov 2022 19:43:20 +0100
+Message-Id: <20221124184333.133911-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
+References: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Changes since v2
-================
-1. Allow only one or two clocks, after dropping clocks related to PIL binding.
-2. Drop if:then: for the clock and put it directly under properties
-3. Merge two if:then: clauses for setting interrupts.
-4. New patches: DTS fixes, qcom,adsp: drop resets and qcom,halt-regs,
-   qcom,qcs404-pas, qcom,sc7180-pas and last msm8996-slpi-pil fix.
+The QCS404 CDSP remote processor can be brought to life using two
+different bindings:
+1. qcom,qcs404-cdsp-pas - currently used in DTSI.
+2. qcom,qcs404-cdsp-pil.
 
-Changes since v1
-================
-1. Keep resets, reset-names, qcom,qmp and qcom,halt-regs in qcom,adsp, because
-   they are not shared with most of PAS bindings.
-2. Add firmware-name to examples.
-3. New patches: qcom,sc8180x-pas and qcom,sdx55-pas.
+Comment out the properties related to qcom,qcs404-cdsp-pil
+(qcom,halt-regs, resets and additional clocks), to silence DT schema
+warnings.
 
-Description
-===========
-The Qualcomm PAS/PIL (qcom,adsp.yaml) bindings grew considerably with huge
-amount of if:then:else blocks and 40 compatibles (still growing).   These
-if:then:else blocks constrain clocks, power-domains and interrupt per variants.
-Adding new variants is now tricky - it's easy to forget to add variant to one
-if:then: clause.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Split the bindings into reusable schema and per-soc bindings, groupping them
-when applicable.
+---
 
-This part is finished, but more and more compatibles should be moved out of
-qcom,adsp.yaml, eventually dropping the file.
+Changes since v2:
+1. New patch.
+---
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 46 +++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 21 deletions(-)
 
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (15):
-  arm64: dts: qcom: msm8996: drop address/size cells from smd-edge
-  arm64: dts: qcom: qcs404: align CDSP PAS node with bindings
-  arm64: dts: qcom: sc7180: align MPSS PAS node with bindings
-  arm64: dts: qcom: sc7280: align MPSS PAS node with bindings
-  dt-bindings: remoteproc: qcom,adsp: drop resets and qcom,halt-regs
-  dt-bindings: remoteproc: qcom,adsp: split common part
-  dt-bindings: remoteproc: qcom,sm8350-pas: split into separate file
-  dt-bindings: remoteproc: qcom,sm8150-pas: split into separate file
-  dt-bindings: remoteproc: qcom,sm6350-pas: split into separate file
-  dt-bindings: remoteproc: qcom,sc8280xp-pas: split into separate file
-  dt-bindings: remoteproc: qcom,sc8180x-pas: split into separate file
-  dt-bindings: remoteproc: qcom,sdx55-pas: split into separate file
-  dt-bindings: remoteproc: qcom,qcs404-pas: split into separate file
-  dt-bindings: remoteproc: qcom,sc7180-pas: split into separate file
-  dt-bindings: remoteproc: qcom,adsp: correct msm8996-slpi-pil clocks
-
- .../bindings/remoteproc/qcom,adsp.yaml        | 414 +-----------------
- .../bindings/remoteproc/qcom,pas-common.yaml  |  97 ++++
- .../bindings/remoteproc/qcom,qcs404-pas.yaml  |  86 ++++
- .../bindings/remoteproc/qcom,sc7180-pas.yaml  | 125 ++++++
- .../bindings/remoteproc/qcom,sc8180x-pas.yaml |  87 ++++
- .../remoteproc/qcom,sc8280xp-pas.yaml         | 139 ++++++
- .../bindings/remoteproc/qcom,sdx55-pas.yaml   | 101 +++++
- .../bindings/remoteproc/qcom,sm6350-pas.yaml  | 159 +++++++
- .../bindings/remoteproc/qcom,sm8150-pas.yaml  | 166 +++++++
- .../bindings/remoteproc/qcom,sm8350-pas.yaml  | 174 ++++++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |   3 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi          |  46 +-
- arch/arm64/boot/dts/qcom/sc7180-idp.dts       |  18 +
- arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi  |  18 +
- arch/arm64/boot/dts/qcom/sc7180.dtsi          |  20 +-
- .../dts/qcom/sc7280-herobrine-lte-sku.dtsi    |  17 +
- arch/arm64/boot/dts/qcom/sc7280.dtsi          |  16 +-
- 17 files changed, 1221 insertions(+), 465 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index a5324eecb50a..78a8ab29a0a9 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -485,27 +485,31 @@ remoteproc_cdsp: remoteproc@b00000 {
+ 			interrupt-names = "wdog", "fatal", "ready",
+ 					  "handover", "stop-ack";
+ 
+-			clocks = <&xo_board>,
+-				 <&gcc GCC_CDSP_CFG_AHB_CLK>,
+-				 <&gcc GCC_CDSP_TBU_CLK>,
+-				 <&gcc GCC_BIMC_CDSP_CLK>,
+-				 <&turingcc TURING_WRAPPER_AON_CLK>,
+-				 <&turingcc TURING_Q6SS_AHBS_AON_CLK>,
+-				 <&turingcc TURING_Q6SS_AHBM_AON_CLK>,
+-				 <&turingcc TURING_Q6SS_Q6_AXIM_CLK>;
+-			clock-names = "xo",
+-				      "sway",
+-				      "tbu",
+-				      "bimc",
+-				      "ahb_aon",
+-				      "q6ss_slave",
+-				      "q6ss_master",
+-				      "q6_axim";
+-
+-			resets = <&gcc GCC_CDSP_RESTART>;
+-			reset-names = "restart";
+-
+-			qcom,halt-regs = <&tcsr 0x19004>;
++			clocks = <&xo_board>;
++			clock-names = "xo";
++
++			/*
++			 * If the node was using the PIL binding, then include properties:
++			 * clocks = <&xo_board>,
++			 *          <&gcc GCC_CDSP_CFG_AHB_CLK>,
++			 *          <&gcc GCC_CDSP_TBU_CLK>,
++			 *          <&gcc GCC_BIMC_CDSP_CLK>,
++			 *          <&turingcc TURING_WRAPPER_AON_CLK>,
++			 *          <&turingcc TURING_Q6SS_AHBS_AON_CLK>,
++			 *          <&turingcc TURING_Q6SS_AHBM_AON_CLK>,
++			 *          <&turingcc TURING_Q6SS_Q6_AXIM_CLK>;
++			 * clock-names = "xo",
++			 *               "sway",
++			 *               "tbu",
++			 *               "bimc",
++			 *               "ahb_aon",
++			 *               "q6ss_slave",
++			 *               "q6ss_master",
++			 *               "q6_axim";
++			 * resets = <&gcc GCC_CDSP_RESTART>;
++			 * reset-names = "restart";
++			 * qcom,halt-regs = <&tcsr 0x19004>;
++			 */
+ 
+ 			memory-region = <&cdsp_fw_mem>;
+ 
 -- 
 2.34.1
 
