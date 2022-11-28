@@ -2,240 +2,266 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAA4C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Nov 2022 16:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33116C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 28 Nov 2022 17:16:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232439AbiK1Qie (ORCPT
+        id S232699AbiK1RQB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 28 Nov 2022 11:38:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34390 "EHLO
+        Mon, 28 Nov 2022 12:16:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232066AbiK1Qid (ORCPT
+        with ESMTP id S232688AbiK1RP4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 28 Nov 2022 11:38:33 -0500
-Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89DA624F12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Nov 2022 08:38:32 -0800 (PST)
-Received: by mail-il1-x133.google.com with SMTP id h15so138633ilh.12
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Nov 2022 08:38:32 -0800 (PST)
+        Mon, 28 Nov 2022 12:15:56 -0500
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308101F606
+        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Nov 2022 09:15:51 -0800 (PST)
+Received: by mail-pg1-x531.google.com with SMTP id q71so10501872pgq.8
+        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Nov 2022 09:15:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yXIPAzmyDAZ8+Yt+mdIKfYzYf8GpnFdRWmFlTziLPXg=;
-        b=AS242zFDSXrjnkDSDOd4HCh+DxQhjEj++DoANtzghOgH1Dhbr+D6SBJRVaUMJ2Hhr3
-         DBOE55TmEQsNUe3h0QEqbLWHv66CNpRkhh3KVULoHFjXmZ4HtUirB4INY02b2kvvvUkl
-         9turIca2kOmmbcLCY9s33Uphqh0Yn3tV488UgIWU9KjtFeyCW2gfwVgL++yWDcK0x//g
-         6T8Il64zJQ+pQ4ICgjpd/puAZI3rfOsQapqeGkAtSxCR8pxNQbAq5LUbN+fy+jjnsNXG
-         QWByrD8AHaYtay/CuVr6JaWtoA/KB2TNMd2bRXDwBjjWEDTbGAIZkAbmo+mq6ynQQiRx
-         cUUA==
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ddbBdpNulsR017n5E5YgcxOMQu/XEoBOW3P2/1F1co=;
+        b=YuMQpL0dv1TqpmeyTczz0+lHKypVBQGOTC6Eh54K9A2OOim19lAMI8f7qumUqwuVLc
+         fCzHYDb2mQeTszPnAToL5TDmRRlsmYmTLe49F+LKnYyu4U2BqvVnOjHUDlLxJrSNPI1W
+         InD7aab8AUTHkJEpgX4u6ze6B1vYS9cYjQROIRUszCYO7J1kGr82VP9Sd5C7BnknXfg5
+         Ig6LMrF2ucMR5BhviI7P/bouFPcDgeTxD7cmN/J1OK00wb2An9TEFOegYmCG3XyaB99j
+         oOZndMPeQro6nkdfCoosUPwc/2QAG66aBhDPwJw53ASVUs1pA5C5gXha45qAackwmvVA
+         KBQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yXIPAzmyDAZ8+Yt+mdIKfYzYf8GpnFdRWmFlTziLPXg=;
-        b=AfSjkLH7dEKK0Q5oR0hYYdyJli2xyaZxqYvV04i4tYhv+trrZcpaXK0MEzeNGh58GN
-         wxhN6yUWOWcbHwvub7YiYTVzmsS8s1t8jT5S5WOTCByYot3pAA2budgp5NSqwTJ3Xa64
-         NNvW7pvtTfLX7UeJrsDbDS47yOsYgxdCBxrxhW/yDrjCbF2dclNQDLUGvYDaVeHQw8bv
-         azyAZzO2N9XeYnem7ii1tVFw9Iww23Kw/utZcYdQ2fMs1suyw8lfpsd8fUSTaJ/FPBPN
-         rxPZJASoqJ2HqxT9ZDUxen4jM+z3ONo1rmCos4r67dL90is8TSTEw7i7SlMCs8bqhJiC
-         ZNKw==
-X-Gm-Message-State: ANoB5pmFt6QK30FQXAI0a57w1HSDTJi7WwNk6OOpJ0RcOH3dMXfmXei1
-        WRTl0+GTGVwV9U9pArdCi1bHZgtI0DRiA11eqJ25Tg==
-X-Google-Smtp-Source: AA0mqf5r5eWK1t05qxcUZ+jOLr71jb0rREp0k4Q9m03mLrkxwO85Ab05Wv/E06af1m1CqWAhynRdnEwTlpHGLp/2KRY=
-X-Received: by 2002:a92:1948:0:b0:302:4d37:9e66 with SMTP id
- e8-20020a921948000000b003024d379e66mr15861054ilm.277.1669653511879; Mon, 28
- Nov 2022 08:38:31 -0800 (PST)
-MIME-Version: 1.0
-References: <1669642093-20399-1-git-send-email-quic_sarannya@quicinc.com>
-In-Reply-To: <1669642093-20399-1-git-send-email-quic_sarannya@quicinc.com>
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ddbBdpNulsR017n5E5YgcxOMQu/XEoBOW3P2/1F1co=;
+        b=kw3nRR3uHDiEg0Ym8t9IHjVr1pKy+MeLATt0RtzX6++k8BDWKaIdemYg5G4PR5KnYC
+         yVR9y6Z6b+zttvn4KQdbwMlTQ0tdDihcpEbCXjEm6lm/vqpdodXrXeAVs0oq69zKvK2q
+         6JvYnxG8Co4Qr9rz02iZ2LnNgbr3AQ0TjWUP442tptYskoKLthKwuTVP3xASrQNmQBts
+         sknMSvetcBunHLNW1+dtf6ayjjZkNf8bRTKOMGwqXZKCu7F/1ntpg7GZJ3Ybj9A46xS5
+         3bMDqcCrbpub9a0QiMeVbbNx2iLnZQkFQzcoA1s+AV7CEHAbO8fRRNoL9Jeee/4pzXeq
+         Nleg==
+X-Gm-Message-State: ANoB5pkh53VKSbz238PUJ5jtwDjyklW11xr8MivwACZelBEgBhT/8N1D
+        vf5Cq8i5tk6H0fVoWnpzQzBH2w==
+X-Google-Smtp-Source: AA0mqf5sW47znWbvJ9Z/d/FaEVQXL7+HslesJb7PG8taPoT9CXtpOMmrKB1gj7QHXErlp7PXRJdatg==
+X-Received: by 2002:a63:f442:0:b0:477:ea30:7d6a with SMTP id p2-20020a63f442000000b00477ea307d6amr14005784pgk.212.1669655750968;
+        Mon, 28 Nov 2022 09:15:50 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:908e:93f3:e339:ae71])
+        by smtp.gmail.com with ESMTPSA id x25-20020aa79ad9000000b0056befcd7958sm8262895pfp.84.2022.11.28.09.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 09:15:49 -0800 (PST)
+Date:   Mon, 28 Nov 2022 10:15:47 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 28 Nov 2022 09:38:20 -0700
-Message-ID: <CANLsYkzwryAvo6rvT+4KyRX7deoB+QJ2gC0u2r0cN9HY1P3Daw@mail.gmail.com>
-Subject: Re: [PATCH V4 1/3] rpmsg: core: Add signal API support
-To:     Sarannya S <quic_sarannya@quicinc.com>
-Cc:     bjorn.andersson@linaro.org, arnaud.pouliquen@foss.st.com,
-        swboyd@chromium.org, quic_clew@quicinc.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Devarsh Thakkar <devarsht@ti.com>
+Cc:     andersson@kernel.org, p.zabel@pengutronix.de,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        s-anna@ti.com, hnagalla@ti.com, praneeth@ti.com, nm@ti.com,
+        vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com
+Subject: Re: [PATCH 2/2] remoteproc: k3-r5: Use separate compatible string
+ for TI AM62 SoC family
+Message-ID: <20221128171547.GA1010946@p14s>
+References: <20221115060934.13279-1-devarsht@ti.com>
+ <20221115060934.13279-3-devarsht@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221115060934.13279-3-devarsht@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Please send another revision with a proper cover letter that details
-the changes made between the last version.
+Hi Devarsh,
 
-On Mon, 28 Nov 2022 at 06:28, Sarannya S <quic_sarannya@quicinc.com> wrote:
->
-> Some transports like Glink support the state notifications between
-> clients using flow control signals similar to serial protocol signals.
-> Local glink client drivers can send and receive flow control status
-> to glink clients running on remote processors.
->
-> Add APIs to support sending and receiving of flow control status by
-> rpmsg clients.
->
-> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+On Tue, Nov 15, 2022 at 11:39:34AM +0530, Devarsh Thakkar wrote:
+> AM62 and AM62A SoCs use single core R5F which is a new scenario
+> different than the one being used with CLUSTER_MODE_SINGLECPU
+> which is for utilizing a single core from a set of cores available
+> in R5F cluster present in the SoC.
+> 
+> To support this single core scenario map it with
+> newly defined CLUSTER_MODE_NONE and use it when
+> compatible is set to ti,am62-r5fss.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 > ---
->  arch/arm64/configs/defconfig   |  2 ++
->  drivers/rpmsg/rpmsg_core.c     | 20 ++++++++++++++++++++
->  drivers/rpmsg/rpmsg_internal.h |  2 ++
->  include/linux/rpmsg.h          | 15 +++++++++++++++
->  4 files changed, 39 insertions(+)
->
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 0b6af33..2df3778 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -26,6 +26,8 @@ CONFIG_CGROUP_CPUACCT=y
->  CONFIG_CGROUP_PERF=y
->  CONFIG_CGROUP_BPF=y
->  CONFIG_USER_NS=y
-> +CONFIG_RPMSG=y
-> +CONFIG_RPMSG_CHAR=y
->  CONFIG_SCHED_AUTOGROUP=y
->  CONFIG_BLK_DEV_INITRD=y
->  CONFIG_KALLSYMS_ALL=y
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index d6dde00e..0c5bf67 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -331,6 +331,24 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
->  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
->
->  /**
-> + * rpmsg_set_flow_control() - sets/clears serial flow control signals
-> + * @ept:       the rpmsg endpoint
-> + * @enable:    enable or disable serial flow control
-> + *
-> + * Return: 0 on success and an appropriate error value on failure.
-> + */
-> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-> +{
-> +       if (WARN_ON(!ept))
-> +               return -EINVAL;
-> +       if (!ept->ops->set_flow_control)
-> +               return -ENXIO;
-> +
-> +       return ept->ops->set_flow_control(ept, enable);
-> +}
-> +EXPORT_SYMBOL(rpmsg_set_flow_control);
-> +
-> +/**
->   * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
->   * @ept: the rpmsg endpoint
->   *
-> @@ -539,6 +557,8 @@ static int rpmsg_dev_probe(struct device *dev)
->
->                 rpdev->ept = ept;
->                 rpdev->src = ept->addr;
-> +
-> +               ept->flow_cb = rpdrv->flowcontrol;
->         }
->
->         err = rpdrv->probe(rpdev);
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index 39b646d..4fea45a 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -55,6 +55,7 @@ struct rpmsg_device_ops {
->   * @trysendto:         see @rpmsg_trysendto(), optional
->   * @trysend_offchannel:        see @rpmsg_trysend_offchannel(), optional
->   * @poll:              see @rpmsg_poll(), optional
-> + * @set_flow_control:  see @rpmsg_set_flow_control(), optional
->   * @get_mtu:           see @rpmsg_get_mtu(), optional
->   *
->   * Indirection table for the operations that a rpmsg backend should implement.
-> @@ -75,6 +76,7 @@ struct rpmsg_endpoint_ops {
->                              void *data, int len);
->         __poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
->                              poll_table *wait);
-> +       int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable);
->         ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
->  };
->
-> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
-> index 523c98b..cc7a917 100644
-> --- a/include/linux/rpmsg.h
-> +++ b/include/linux/rpmsg.h
-> @@ -64,12 +64,14 @@ struct rpmsg_device {
->  };
->
->  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
-> +typedef int (*rpmsg_flowcontrol_cb_t)(struct rpmsg_device *, void *, bool);
->
->  /**
->   * struct rpmsg_endpoint - binds a local rpmsg address to its user
->   * @rpdev: rpmsg channel device
->   * @refcount: when this drops to zero, the ept is deallocated
->   * @cb: rx callback handler
-> + * @flow_cb: remote flow control callback handler
->   * @cb_lock: must be taken before accessing/changing @cb
->   * @addr: local rpmsg address
->   * @priv: private data for the driver's use
-> @@ -92,6 +94,7 @@ struct rpmsg_endpoint {
->         struct rpmsg_device *rpdev;
->         struct kref refcount;
->         rpmsg_rx_cb_t cb;
-> +       rpmsg_flowcontrol_cb_t flow_cb;
->         struct mutex cb_lock;
->         u32 addr;
->         void *priv;
-> @@ -106,6 +109,7 @@ struct rpmsg_endpoint {
->   * @probe: invoked when a matching rpmsg channel (i.e. device) is found
->   * @remove: invoked when the rpmsg channel is removed
->   * @callback: invoked when an inbound message is received on the channel
-> + * @flowcontrol: invoked when remote side flow control status is received
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 55 ++++++++++++++++++------
+>  1 file changed, 43 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 0481926c6975..b5adcaa3d3a4 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -74,11 +74,13 @@ struct k3_r5_mem {
+>   *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
+>   *   LockStep mode   : AM65x, J721E and J7200 SoCs
+>   *   Single-CPU mode : AM64x SoCs only
+> + *   None            : AM62x, AM62A SoCs
 >   */
->  struct rpmsg_driver {
->         struct device_driver drv;
-> @@ -113,6 +117,7 @@ struct rpmsg_driver {
->         int (*probe)(struct rpmsg_device *dev);
->         void (*remove)(struct rpmsg_device *dev);
->         int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
-> +       int (*flowcontrol)(struct rpmsg_device *, void *, bool);
+>  enum cluster_mode {
+>  	CLUSTER_MODE_SPLIT = 0,
+>  	CLUSTER_MODE_LOCKSTEP,
+>  	CLUSTER_MODE_SINGLECPU,
+> +	CLUSTER_MODE_NONE,
 >  };
->
->  static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
-> @@ -192,6 +197,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
->
->  ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
->
-> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable);
+>  
+>  /**
+> @@ -86,11 +88,13 @@ enum cluster_mode {
+>   * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
+>   * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
+>   * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
+> + * @is_single_core: flag to denote if SoC/IP has only single core R5
+>   */
+>  struct k3_r5_soc_data {
+>  	bool tcm_is_double;
+>  	bool tcm_ecc_autoinit;
+>  	bool single_cpu_mode;
+> +	bool is_single_core;
+>  };
+>  
+>  /**
+> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>  
+>  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+> -	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
+> +	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +		cluster->mode == CLUSTER_MODE_NONE) {
+
+Indentation problem.  
+
+
+>  		core = core0;
+>  	} else {
+>  		core = kproc->core;
+> @@ -853,7 +858,7 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>  		boot_vec, cfg, ctrl, stat);
+>  
+>  	/* check if only Single-CPU mode is supported on applicable SoCs */
+> -	if (cluster->soc_data->single_cpu_mode) {
+> +	if (cluster->soc_data->single_cpu_mode || cluster->soc_data->is_single_core) {
+>  		single_cpu =
+>  			!!(stat & PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
+>  		if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
+> @@ -1074,6 +1079,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
+>  
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>  	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +		cluster->mode == CLUSTER_MODE_NONE ||
+
+Indentation problem.
+
+>  	    !cluster->soc_data->tcm_is_double)
+>  		return;
+>  
+> @@ -1147,7 +1153,9 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  	atcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_ATCM_EN ?  1 : 0;
+>  	btcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_BTCM_EN ?  1 : 0;
+>  	loczrama = cfg & PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE ?  1 : 0;
+> -	if (cluster->soc_data->single_cpu_mode) {
+> +	if (cluster->soc_data->is_single_core) {
+> +		mode = CLUSTER_MODE_NONE;
+> +	} else if (cluster->soc_data->single_cpu_mode) {
+>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
+>  				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
+>  	} else {
+> @@ -1271,6 +1279,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>  
+>  		/* create only one rproc in lockstep mode or single-cpu mode */
+>  		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+> +			cluster->mode == CLUSTER_MODE_NONE     ||
+
+Indentation problem.
+
+Also, CLUSTER_MODE_NONE should be after CLUSTER_MODE_SINGLECPU as you did in
+k3_r5_adjust_tcm_sizes().
+
+>  		    cluster->mode == CLUSTER_MODE_SINGLECPU)
+>  			break;
+>  	}
+> @@ -1704,21 +1713,32 @@ static int k3_r5_probe(struct platform_device *pdev)
+>  	 * default to most common efuse configurations - Split-mode on AM64x
+>  	 * and LockStep-mode on all others
+>  	 */
+> -	cluster->mode = data->single_cpu_mode ?
+> -				CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
+> +	if (!data->is_single_core)
+> +		cluster->mode = data->single_cpu_mode ?
+> +						CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
+
+Indentation problem - the 'C' should be aligned with the 'd' on the previous
+line.
+
+
+> +	else
+> +		cluster->mode = CLUSTER_MODE_NONE;
 > +
->  #else
->
->  static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
-> @@ -316,6 +323,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->         return -ENXIO;
->  }
->
-> +static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable)
-> +{
-> +       /* This shouldn't be possible */
-> +       WARN_ON(1);
+>  	cluster->soc_data = data;
+>  	INIT_LIST_HEAD(&cluster->cores);
+>  
+> -	ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
+> -	if (ret < 0 && ret != -EINVAL) {
+> -		dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n",
+> -			ret);
+> -		return ret;
+> +	if (!data->is_single_core) {
+> +		ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
+> +		if (ret < 0 && ret != -EINVAL) {
+> +			dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n", ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	num_cores = of_get_available_child_count(np);
+> -	if (num_cores != 2) {
+> -		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
+> +	if (num_cores != 2 && !data->is_single_core) {
+> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
+> +			num_cores);
+> +		return -ENODEV;
+> +	}
 > +
-> +       return -ENXIO;
-> +}
+> +	if (num_cores != 1 && data->is_single_core) {
+> +		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
+>  			num_cores);
+>  		return -ENODEV;
+>  	}
+> @@ -1760,18 +1780,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
+>  	.tcm_is_double = false,
+>  	.tcm_ecc_autoinit = false,
+>  	.single_cpu_mode = false,
+> +	.is_single_core = false,
+>  };
+>  
+>  static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
+>  	.tcm_is_double = true,
+>  	.tcm_ecc_autoinit = true,
+>  	.single_cpu_mode = false,
+> +	.is_single_core = false,
+>  };
+>  
+>  static const struct k3_r5_soc_data am64_soc_data = {
+>  	.tcm_is_double = true,
+>  	.tcm_ecc_autoinit = true,
+>  	.single_cpu_mode = true,
+> +	.is_single_core = false,
+> +};
 > +
->  #endif /* IS_ENABLED(CONFIG_RPMSG) */
->
->  /* use a macro to avoid include chaining to get THIS_MODULE */
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+> +static const struct k3_r5_soc_data am62_soc_data = {
+> +	.tcm_is_double = false,
+> +	.tcm_ecc_autoinit = true,
+> +	.single_cpu_mode = false,
+> +	.is_single_core = true,
+>  };
+>  
+>  static const struct of_device_id k3_r5_of_match[] = {
+> @@ -1779,6 +1809,7 @@ static const struct of_device_id k3_r5_of_match[] = {
+>  	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
+>  	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
+>  	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
+> +	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
+>  	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
+>  	{ /* sentinel */ },
+>  };
+> -- 
+> 2.17.1
+> 
