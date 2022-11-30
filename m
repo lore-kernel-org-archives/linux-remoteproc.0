@@ -2,80 +2,80 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD5AC4321E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 29 Nov 2022 10:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3325C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Nov 2022 03:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232329AbiK2K5B (ORCPT
+        id S232697AbiK3DAv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Nov 2022 05:57:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40340 "EHLO
+        Tue, 29 Nov 2022 22:00:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231321AbiK2K4z (ORCPT
+        with ESMTP id S232655AbiK3DAu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Nov 2022 05:56:55 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABE815F872;
-        Tue, 29 Nov 2022 02:56:53 -0800 (PST)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NLzls44rqzHwGJ;
-        Tue, 29 Nov 2022 18:56:09 +0800 (CST)
-Received: from cgs.huawei.com (10.244.148.83) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 29 Nov 2022 18:56:50 +0800
-From:   Gaosheng Cui <cuigaosheng1@huawei.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
-        <sibis@codeaurora.org>, <cuigaosheng1@huawei.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH] remoteproc: sysmon: fix memory leak in qcom_add_sysmon_subdev()
-Date:   Tue, 29 Nov 2022 18:56:50 +0800
-Message-ID: <20221129105650.1539187-1-cuigaosheng1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 29 Nov 2022 22:00:50 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE9A6E571;
+        Tue, 29 Nov 2022 19:00:49 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 28D8CB819FA;
+        Wed, 30 Nov 2022 03:00:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37295C433C1;
+        Wed, 30 Nov 2022 03:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669777246;
+        bh=IWQo4SSdovd7II4a3BN6Ku/F6HwhfznsqvyOPegEjQQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SSXLjOXClSrRHvhJSt+ogmAoeLAldynncH1XLRJ+ffjNT8UxKTDkEZ1oYPQpsZd9Q
+         zr8jdwc42kmeFLnO2L/Ibj1J/S86zMjbP1BQNh6leYHwm5HKHFWsk7xrVpDd/iAisO
+         m4puiGZCQs0k4eU0WmEu0BcBSFxb+dB3pAtqD8WiFz1Bqj19SslIgv6WhQCN4bggT4
+         g7V7d4ZPGokkbMUIDBf3Zo4i8ggmwLKCHs9Scdqb/TZ6YnUCX6VzO9HN0wQDHPDcdz
+         1nexwS2WGelmKLj+Cmh2pgutaoBM5Jsglopv2chsz03+Tr0ZAihvVge9Z6v02rXx2Q
+         u773h4L2eUN+Q==
+Date:   Tue, 29 Nov 2022 21:00:44 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Sarannya S <quic_sarannya@quicinc.com>
+Cc:     quic_bjorande@quicinc.com, arnaud.pouliquen@foss.st.com,
+        swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH V4 0/3] rpmsg signaling/flowcontrol patches
+Message-ID: <20221130030044.hqp6vwovhgl37or5@builder.lan>
+References: <1669658575-21993-1-git-send-email-quic_sarannya@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.244.148.83]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1669658575-21993-1-git-send-email-quic_sarannya@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The kfree() should be called when of_irq_get_byname() fails or
-devm_request_threaded_irq() fails in qcom_add_sysmon_subdev(),
-otherwise there will be a memory leak, so add kfree() to fix it.
+On Mon, Nov 28, 2022 at 11:32:52PM +0530, Sarannya S wrote:
+> [Change from V3]:
+> Fixed review comments in previous set.
+> 
 
-Fixes: 027045a6e2b7 ("remoteproc: qcom: Add shutdown-ack irq")
-Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
----
- drivers/remoteproc/qcom_sysmon.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Please do list the actual changes that you did. This ensures that new
+people can focus on the new areas, if preferred, and that returning
+reviewers get confirmation that their feedback was addressed.
 
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 57dde2a69b9d..15af52f8499e 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -652,7 +652,9 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 		if (sysmon->shutdown_irq != -ENODATA) {
- 			dev_err(sysmon->dev,
- 				"failed to retrieve shutdown-ack IRQ\n");
--			return ERR_PTR(sysmon->shutdown_irq);
-+			ret = sysmon->shutdown_irq;
-+			kfree(sysmon);
-+			return ERR_PTR(ret);
- 		}
- 	} else {
- 		ret = devm_request_threaded_irq(sysmon->dev,
-@@ -663,6 +665,7 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct rproc *rproc,
- 		if (ret) {
- 			dev_err(sysmon->dev,
- 				"failed to acquire shutdown-ack IRQ\n");
-+			kfree(sysmon);
- 			return ERR_PTR(ret);
- 		}
- 	}
--- 
-2.25.1
+Thanks,
+Bjorn
 
+> Sarannya S (3):
+>   rpmsg: core: Add signal API support
+>   rpmsg: glink: Add support to handle signals command
+>   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+> 
+>  drivers/rpmsg/qcom_glink_native.c | 63 +++++++++++++++++++++++++++++++++++++++
+>  drivers/rpmsg/rpmsg_char.c        | 60 ++++++++++++++++++++++++++++++++-----
+>  drivers/rpmsg/rpmsg_core.c        | 20 +++++++++++++
+>  drivers/rpmsg/rpmsg_internal.h    |  2 ++
+>  include/linux/rpmsg.h             | 15 ++++++++++
+>  5 files changed, 152 insertions(+), 8 deletions(-)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
