@@ -2,80 +2,157 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3325C433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Nov 2022 03:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84503C433FE
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Nov 2022 10:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232697AbiK3DAv (ORCPT
+        id S235813AbiK3K3z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 29 Nov 2022 22:00:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35524 "EHLO
+        Wed, 30 Nov 2022 05:29:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232655AbiK3DAu (ORCPT
+        with ESMTP id S235665AbiK3K3u (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 29 Nov 2022 22:00:50 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE9A6E571;
-        Tue, 29 Nov 2022 19:00:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 28D8CB819FA;
-        Wed, 30 Nov 2022 03:00:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37295C433C1;
-        Wed, 30 Nov 2022 03:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669777246;
-        bh=IWQo4SSdovd7II4a3BN6Ku/F6HwhfznsqvyOPegEjQQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SSXLjOXClSrRHvhJSt+ogmAoeLAldynncH1XLRJ+ffjNT8UxKTDkEZ1oYPQpsZd9Q
-         zr8jdwc42kmeFLnO2L/Ibj1J/S86zMjbP1BQNh6leYHwm5HKHFWsk7xrVpDd/iAisO
-         m4puiGZCQs0k4eU0WmEu0BcBSFxb+dB3pAtqD8WiFz1Bqj19SslIgv6WhQCN4bggT4
-         g7V7d4ZPGokkbMUIDBf3Zo4i8ggmwLKCHs9Scdqb/TZ6YnUCX6VzO9HN0wQDHPDcdz
-         1nexwS2WGelmKLj+Cmh2pgutaoBM5Jsglopv2chsz03+Tr0ZAihvVge9Z6v02rXx2Q
-         u773h4L2eUN+Q==
-Date:   Tue, 29 Nov 2022 21:00:44 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Sarannya S <quic_sarannya@quicinc.com>
-Cc:     quic_bjorande@quicinc.com, arnaud.pouliquen@foss.st.com,
-        swboyd@chromium.org, quic_clew@quicinc.com,
-        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH V4 0/3] rpmsg signaling/flowcontrol patches
-Message-ID: <20221130030044.hqp6vwovhgl37or5@builder.lan>
-References: <1669658575-21993-1-git-send-email-quic_sarannya@quicinc.com>
+        Wed, 30 Nov 2022 05:29:50 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4605D40903
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Nov 2022 02:29:49 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 2-20020a1c0202000000b003d0760654d3so457759wmc.4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Nov 2022 02:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=HV1QfaDP0C7g5BpocQkUCoVZ1CZoBTScwwzZ9Edt3Z8=;
+        b=jUxkPncGz04s6ZN9p1vlHM8+rOLFjs1dCmiupHjklp+dZWYdl/GW7BTsk3vt9jSY4T
+         QWVS7mNK/Zv0PYAsM0wtozo2TnLvCpb42zL413Af7gf5/m8MLEqcGTKgpfINF2nvN2HF
+         zPWxjcXbT6b/dSjSD63JanHGYrVpqV6SuakDK8fgyooKaeIcccwWOAPeIJDfovEbYXhZ
+         x7R2A5GOOWPGxz5i6fyL9q7fgVhJ47LV1RtaVP+hPrm6V4Mqa1oVYRPKw4JvpC5ao8GP
+         AxQCQ2gpJUh6uVqnh26SWuRyWxOyL5RK80yRNteufCxM6DD6osMNljt6mxFF9LHsnpBr
+         JaNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HV1QfaDP0C7g5BpocQkUCoVZ1CZoBTScwwzZ9Edt3Z8=;
+        b=IDQwnbNKvL0ElBWsMdrcGGoD8pj0lPAAd+qNpvqA9oWAar3ZzFc6K6NC0+HYznT/BQ
+         99zkk9TQLXToX7pHxV3ESY3wcti7idHkUOYSxowexpz46GDCRI8I+KzwVNe8nC9veqyx
+         NvQFex20LsPcXQ8MBkol8MnlGIa/GsLWVTSfe9kHOFfcOa4OAH568HKClUbUu6LExG0Q
+         wSwsaK+ROp4inbqgOhIc8kWbwc5JUmRUvJ0/IPUb4eYcxwb36kwOBKRPGE3+BV2OkG0d
+         px7zx9YSKJAI58S82Nr4R82tjAe+lqbjQgplcaBZTFeR10BlkM4ZJCw5MPMvr2nWMT2v
+         UeBw==
+X-Gm-Message-State: ANoB5pnupt5aNmA5LXRrsOwvQA3KkdP0QR7OuIhu84m6xvl5hi+RK7Q5
+        qOSZaCAU6e7hrc7emu5MNV+06Q==
+X-Google-Smtp-Source: AA0mqf4/dHTBM+4OQ/uDSsGgNS1NkXPKVr3/NnGOggHORRxIuPv9PeZRGs5Mc37GAEIRN1Ewg28RvQ==
+X-Received: by 2002:a05:600c:4f90:b0:3c1:aeb9:29b6 with SMTP id n16-20020a05600c4f9000b003c1aeb929b6mr30434545wmq.97.1669804187778;
+        Wed, 30 Nov 2022 02:29:47 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id j33-20020a05600c1c2100b003b4ff30e566sm4313570wms.3.2022.11.30.02.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Nov 2022 02:29:47 -0800 (PST)
+Subject: [PATCH v2 0/5] remoteproc: qcom_q6v5_pas: add support for SM8550 adsp, cdsp & mpss
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1669658575-21993-1-git-send-email-quic_sarannya@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-b4-tracking: H4sIAJgwh2MC/5WNTQqDMBCFryJZd0r+BNtV71G6SNJRAyaRSRSKePcOvUFXj+/B+94hKlLEKu7dIQ
+ j3WGPJDPrSiTC7PCHEN7PQUmullIXsKNVGJU9Q09D3EraVGV0CwlQarlQCDNKOZvTeWD8KdnlXETy5
+ HGa25W1ZuJxjbYU+v+9dcTz/vdkVSFDSBmODN/6mHkvkZbkWmsTrPM8v9fiGHOAAAAA=
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Date:   Wed, 30 Nov 2022 11:29:44 +0100
+Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-0-12bc22255474@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        linux-remoteproc@vger.kernel.org
+X-Mailer: b4 0.10.1
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 11:32:52PM +0530, Sarannya S wrote:
-> [Change from V3]:
-> Fixed review comments in previous set.
-> 
+This patchsets adds support for the aDSP, cDSP and MPSS found in the
+SM8550 SoC.
 
-Please do list the actual changes that you did. This ensures that new
-people can focus on the new areas, if preferred, and that returning
-reviewers get confirmation that their feedback was addressed.
+The aDSP, cDSP and MPSS boot process on SM8550 now requires a secondary
+"Devicetree" firmware to be passed along the main Firmware, and the cDSP
+a new power domain named "NSP".
 
-Thanks,
-Bjorn
+In order to satisfy the load & authentication order required by the SM8550
+SoC, the following is implemented:
+- "Devicetree" firmware request & load in dedicated memory
+- Q6V5 prepare
+- Power Domain & Clocks enable
+- "Devicetree" firmware authentication
+- Main firmware load in dedicated memory
+- Main firmware authentication
+- Q6V5 startup
+- "Devicetree" firmware metadata release
+- Main metadata release
 
-> Sarannya S (3):
->   rpmsg: core: Add signal API support
->   rpmsg: glink: Add support to handle signals command
->   rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-> 
->  drivers/rpmsg/qcom_glink_native.c | 63 +++++++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_char.c        | 60 ++++++++++++++++++++++++++++++++-----
->  drivers/rpmsg/rpmsg_core.c        | 20 +++++++++++++
->  drivers/rpmsg/rpmsg_internal.h    |  2 ++
->  include/linux/rpmsg.h             | 15 ++++++++++
->  5 files changed, 152 insertions(+), 8 deletions(-)
-> 
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+When booting older platforms, the "Devicetree" steps would be
+bypassed and the load & authentication order would still be valid.
+
+Bindings changes depends on:
+- https://lore.kernel.org/all/20221124184333.133911-1-krzysztof.kozlowski@linaro.org/
+
+To: Andy Gross <agross@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@somainline.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Rob Herring <robh+dt@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+To: Manivannan Sadhasivam <mani@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To: Amol Maheshwari <amahesh@qti.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+---
+Changes in v2:
+- Moved the SM8550 pas bindings on top of "split and reorganize PAS/PIL" v3 patchset 
+- Incorporated DSM memory support into pas bindings & driver
+- Moved second DTB firmware into second entry of firmware-name
+- Dropped applied "qcom,fastrpc: increase allowed iommus entries" patch
+- Link to v1: https://lore.kernel.org/r/20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org
+
+---
+Neil Armstrong (5):
+      dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common
+      dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp, cdsp & mpss compatible
+      remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading
+      remoteproc: qcom_q6v5_pas: add support for assigning memory to firmware
+      remoteproc: qcom_q6v5_pas: add sm8550 adsp, cdsp & mpss compatible & data
+
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |   4 +
+ .../bindings/remoteproc/qcom,pas-common.yaml       |   8 -
+ .../bindings/remoteproc/qcom,qcs404-pas.yaml       |   8 +
+ .../bindings/remoteproc/qcom,sc7180-pas.yaml       |   8 +
+ .../bindings/remoteproc/qcom,sc8180x-pas.yaml      |   8 +
+ .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |   8 +
+ .../bindings/remoteproc/qcom,sdx55-pas.yaml        |   8 +
+ .../bindings/remoteproc/qcom,sm6350-pas.yaml       |   8 +
+ .../bindings/remoteproc/qcom,sm8150-pas.yaml       |   8 +
+ .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   8 +
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 195 +++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 271 ++++++++++++++++++++-
+ 12 files changed, 521 insertions(+), 21 deletions(-)
+---
+base-commit: 268975e1af25cd83994d24c46ad0d95753291f64
+change-id: 20221114-narmstrong-sm8550-upstream-remoteproc-804f3fbb34bf
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
