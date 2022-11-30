@@ -2,118 +2,207 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FAFC433FE
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Nov 2022 13:47:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0419C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 30 Nov 2022 15:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbiK3Nrt (ORCPT
+        id S229685AbiK3PEE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 30 Nov 2022 08:47:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49758 "EHLO
+        Wed, 30 Nov 2022 10:04:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229875AbiK3Nrk (ORCPT
+        with ESMTP id S229712AbiK3PED (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 30 Nov 2022 08:47:40 -0500
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8EC1101;
-        Wed, 30 Nov 2022 05:47:38 -0800 (PST)
-Received: by mail-oi1-f176.google.com with SMTP id t62so18728498oib.12;
-        Wed, 30 Nov 2022 05:47:38 -0800 (PST)
+        Wed, 30 Nov 2022 10:04:03 -0500
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BD932DAB4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Nov 2022 07:04:01 -0800 (PST)
+Received: by mail-lj1-x235.google.com with SMTP id q7so21164454ljp.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Nov 2022 07:04:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2MH/xIL39UefZX1P950jEjmgMlLKkAkSQV+GV99jQEk=;
+        b=Wu61ZnY2mnIScXdpJ1ckgMifDj8+Hw0dTYEwtj166q2eJfi3FCS9vg7uVGc+VfFu+J
+         agUg9po/GbADwjLrSz1FB9/ALdrRLSvAlngfrwQV5bwZpsoUxGy/Urxt+jgmHsErguHv
+         uNwc5Wr85E5U9KUBhro13k3xEzl6ejdhabEQwKVK9mfPunpBqI040hY/7liYSsvINezn
+         Y2897cHXcgYEzKiSM1DrDKSkQaetSchO5b9vVcp4WVDmg9o82lEGvrpLXE1Qw1OJnqGC
+         iMg3erW6Fb7U74VOnYlXLpg4rnLHt+x9lL2SbkvcWwXGqHDz6BsNw/WrpG4uEPM/3/FR
+         qnYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gak/3RKX7XYoG4HonhN+fE0X+MnSoJz/FUAaVKDSypw=;
-        b=DspuHJva8xCGOWNNyGrBt0tCvHOecmGce6tIWDMb68DIfgDd1V1xvRz7zm1LGakFub
-         DDRNevXn8ONh4yJRyk1JzuLjuTmdPkQHmxcmhbS1ZnGfn8p9pr9uQXcM1AUPEtRzGgYB
-         MisZiDnZcE4WTgn509ba5IjrMdgYHIxrf16PJRI7Degxk2f61PwHcP0RY/zPPRf72BpF
-         b2nS2opap0tD5k/fDjPhYB1Y+V40ub0hKcl6fMCPhND8ToJfKWwcSHvuCRraUxDpJ05+
-         Olj1YNTJsSBtSrz5HaV1rvoXTaz42LrxLYezFdYbU9OkWKh0W9UI9rTwFR/wJDmgqiAI
-         7iLQ==
-X-Gm-Message-State: ANoB5pn+VHPaw/wtRke9MA/Et0qnnOugW8r2Xn/EBhCZEMkP8/ptQWY5
-        IlZt4OauO7P/db3cOgjXjw==
-X-Google-Smtp-Source: AA0mqf6fMAoP/58oEsz3Wca9wUM11OobHl3sPwSCVzO8EB7MwtdlW8G2g9IbykGNOR0G2UCElHT3mw==
-X-Received: by 2002:aca:1004:0:b0:350:d543:7554 with SMTP id 4-20020aca1004000000b00350d5437554mr31513963oiq.251.1669816057469;
-        Wed, 30 Nov 2022 05:47:37 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id cv31-20020a056870c69f00b00143cfb377b4sm1214314oab.6.2022.11.30.05.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 05:47:36 -0800 (PST)
-Received: (nullmailer pid 1848613 invoked by uid 1000);
-        Wed, 30 Nov 2022 13:47:34 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2MH/xIL39UefZX1P950jEjmgMlLKkAkSQV+GV99jQEk=;
+        b=lQbf3GV8u53BOItr2xT62Lf7B18+va9L8RVlnOEiIQC3qLRbMAK1nLUDBtigE0wKms
+         7zVrwxhHQDPXhqfIbjvobE52/RwRgW+gOIFGTSYVythYIKmR25o5+MVsa7YYWV1Ry1/6
+         zWbzHpOYaTPGUFYvrldQC193TqK65PKGqKM2QTrhU4e7H/6tKzS4tM1aoPRcIONDhCZD
+         uASMAFSpTnu2TY1i71Kip3hc45tKogSPrPmXthsRWtxNQQdhbXAYeS8ofAz61kRj+yWi
+         xKUPMo7a192wEuQBeTzjwfD5xjJgrF5ksSBSimZKUSv2MEfuIAwL+WQXf4gTJCYh/A97
+         SF4A==
+X-Gm-Message-State: ANoB5plop4C+PoxCOv1CvrVhx7vh2qI+F667tba5ZIOp3UEMQxZhZSU9
+        pT+V4HG/UdfYRjymyJp/bQAZ6g==
+X-Google-Smtp-Source: AA0mqf5oBP6I+a4BRK5JuNH4t4XFn+zeh2TAVKMgTTo71M9V73ms7LplMdPcAaxcCceCy8gd6Q93KQ==
+X-Received: by 2002:a2e:9941:0:b0:26d:fe34:6dc0 with SMTP id r1-20020a2e9941000000b0026dfe346dc0mr15280302ljj.477.1669820639025;
+        Wed, 30 Nov 2022 07:03:59 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id 3-20020a05651c008300b0026c35c4720esm157362ljq.24.2022.11.30.07.03.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Nov 2022 07:03:58 -0800 (PST)
+Message-ID: <b4b608bf-e347-5500-eb94-bec3611f6a56@linaro.org>
+Date:   Wed, 30 Nov 2022 16:03:57 +0100
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-2-12bc22255474@linaro.org>
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-0-12bc22255474@linaro.org>
- <20221114-narmstrong-sm8550-upstream-remoteproc-v2-2-12bc22255474@linaro.org>
-Message-Id: <166981596760.1846592.11317546499813728073.robh@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom: adsp: document
- sm8550 adsp, cdsp & mpss compatible
-Date:   Wed, 30 Nov 2022 07:47:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 1/2] Documentation: dt-bindings: k3-r5f-rproc: Add new
+ compatible for AM62 SoC family
+Content-Language: en-US
+To:     Devarsh Thakkar <devarsht@ti.com>, andersson@kernel.org,
+        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, s-anna@ti.com
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        hnagalla@ti.com, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
+        a-bhatia1@ti.com, j-luthra@ti.com
+References: <20221130134052.7513-1-devarsht@ti.com>
+ <20221130134052.7513-2-devarsht@ti.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221130134052.7513-2-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On Wed, 30 Nov 2022 11:29:46 +0100, Neil Armstrong wrote:
-> This documents the compatible for the component used to boot the
-> aDSP, cDSP and MPSS on the SM8550 SoC.
+On 30/11/2022 14:40, Devarsh Thakkar wrote:
+> AM62 family of devices don't have a R5F cluster, instead
+> they have single core DM R5F.
+> Add new compatible string ti,am62-r5fss to support this scenario.
 > 
-> The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
-> firmware to be passed along the main Firmware, and the cDSP a new power
-> domain named "NSP".
+> When this new compatible is used don't allow cluster-mode
+> property usage in device-tree as this implies that there
+> is no R5F cluster available and only single R5F core
+> is present.
 > 
-> A third memory domain for the DSM memory zone is also needed for the MPSS
-> PAS bindings.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 > ---
->  .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 195 +++++++++++++++++++++
->  1 file changed, 195 insertions(+)
+> V2: Avoid acronyms, use "Device Manager" instead of "DM"
+
+Use subject prefixes matching the subsystem (git log --oneline -- ...).
+
+> ---
+>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 48 +++++++++++++------
+>  1 file changed, 34 insertions(+), 14 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> index fb9605f0655b..91357635025a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+> @@ -21,6 +21,9 @@ description: |
+>    called "Single-CPU" mode, where only Core0 is used, but with ability to use
+>    Core1's TCMs as well.
+>  
+> +  AM62 SoC family support a single R5F core only which runs Device Manager
+> +  firmware and can also be used as a remote processor with IPC communication.
+> +
+>    Each Dual-Core R5F sub-system is represented as a single DTS node
+>    representing the cluster, with a pair of child DT nodes representing
+>    the individual R5F cores. Each node has a number of required or optional
+> @@ -28,6 +31,9 @@ description: |
+>    the device management of the remote processor and to communicate with the
+>    remote processor.
+>  
+> +  Since AM62 SoC family only support a single core, there is no cluster-mode
+> +  property setting required for it.
+> +
+>  properties:
+>    $nodename:
+>      pattern: "^r5fss(@.*)?"
+> @@ -38,6 +44,7 @@ properties:
+>        - ti,j721e-r5fss
+>        - ti,j7200-r5fss
+>        - ti,am64-r5fss
+> +      - ti,am62-r5fss
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Some order? Alphabetical, so before am64? Same in other places.
 
-yamllint warnings/errors:
 
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,pas-common.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.example.dtb: remoteproc@30000000: False schema does not allow {'compatible': ['qcom,sm8550-adsp-pas'], 'reg': [[805306368, 256]], 'clocks': [[4294967295, 0]], 'clock-names': ['xo'], 'interrupts-extended': [[4294967295, 6, 1], [4294967295, 0, 1], [4294967295, 1, 1], [4294967295, 2, 1], [4294967295, 3, 1]], 'interrupt-names': ['wdog', 'fatal', 'ready', 'handover', 'stop-ack'], 'memory-region': [[4294967295], [4294967295]], 'firmware-name': ['qcom/sm8550/adsp.mbn', 'qcom/sm8550/adsp_dtb.mbn'], 'power-domains': [[4294967295], [4294967295]], 'power-domain-names': ['lcx', 'lmx'], 'qcom,qmp': [[4294967295]], 'qcom,smem-states': [[4294967295, 0]], 'qcom,smem-state-names': ['stop'], 'glink-edge': {'interrupts-extended': [[4294967295, 3, 0, 1]], 'mboxes': [[4294967295, 3, 0]], 'label': ['lpass'], 'qcom,remote-pid': [[2]]}, '$nodename': ['remoteproc@30000000']}
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.example.dtb: remoteproc@30000000: Unevaluated properties are not allowed ('glink-edge', 'qcom,smem-state-names', 'qcom,smem-states' were unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+>        - ti,j721s2-r5fss
+>  
+>    power-domains:
+> @@ -80,7 +87,8 @@ patternProperties:
+>        node representing a TI instantiation of the Arm Cortex R5F core. There
+>        are some specific integration differences for the IP like the usage of
+>        a Region Address Translator (RAT) for translating the larger SoC bus
+> -      addresses into a 32-bit address space for the processor.
+> +      addresses into a 32-bit address space for the processor. For AM62x,
+> +      should only define one R5F child node as it has only one core available.
+>  
+>        Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
+>        internal memories split between two banks - TCMA and TCMB (further
+> @@ -104,6 +112,7 @@ patternProperties:
+>            - ti,j721e-r5f
+>            - ti,j7200-r5f
+>            - ti,am64-r5f
+> +          - ti,am62-r5f
+>            - ti,j721s2-r5f
+>  
+>        reg:
+> @@ -207,20 +216,31 @@ patternProperties:
+>        - firmware-name
+>  
+>      unevaluatedProperties: false
 
-doc reference errors (make refcheckdocs):
+Blank line.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20221114-narmstrong-sm8550-upstream-remoteproc-v2-2-12bc22255474@linaro.org
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - ti,am64-r5fss
+> +    then:
+> +      properties:
+> +        ti,cluster-mode:
+> +          enum: [0, 2]
+> +
+> +    else:
+> +      properties:
+> +        ti,cluster-mode:
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+It's not really valid anymore for ti,am62-r5fss, so this cannot be
+simple "else".  Instead you need to list all compatibles.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+> +          enum: [0, 1]
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - ti,am62-r5fss
+> +    then:
+> +      properties:
+> +        ti,cluster-mode: false
+>  
+> -if:
+> -  properties:
+> -    compatible:
+> -      enum:
+> -        - ti,am64-r5fss
+> -then:
+> -  properties:
+> -    ti,cluster-mode:
+> -      enum: [0, 2]
+> -else:
+> -  properties:
+> -    ti,cluster-mode:
+> -      enum: [0, 1]
+>  
+>  required:
+>    - compatible
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+Krzysztof
 
