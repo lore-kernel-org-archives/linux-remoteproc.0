@@ -2,107 +2,107 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84376C4708C
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 09:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31512C47088
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 10:54:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230427AbiLAJ6S (ORCPT
+        id S229675AbiLAKyl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 04:58:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
+        Thu, 1 Dec 2022 05:54:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiLAJ5v (ORCPT
+        with ESMTP id S230429AbiLAKyU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Dec 2022 04:57:51 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B158B9951F
-        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Dec 2022 01:57:22 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id i81-20020a1c3b54000000b003d070274a61so3034174wma.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Dec 2022 01:57:22 -0800 (PST)
+        Thu, 1 Dec 2022 05:54:20 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245AEA0BC9
+        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Dec 2022 02:54:19 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id l8so1403029ljh.13
+        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Dec 2022 02:54:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1kx0jr6iQJBdI7n19m8fhu/gw5LbN1tE/Li1THtvucI=;
-        b=KEKMHsEb3yFB2gFZmV6K9MRknX/7TQp8PLqjSDztCIcOZmjK44ShfAtpydvOKHciza
-         LOOZWO4k7ZESZSSOOmpyFlTekAHYODH8gkS4EB8j4Ddz3JrwUFW9Tb1KLmJNXV/j3rVL
-         Sd1EC3kZG/mRFsIF7il3jAJ93BvMwipxG2nbW3xW9TU614kqsmkXhVswBHMLhl4cAq2T
-         CQtcdrDx8btPeUyvtUckJvE0xhkjpZaAH96+TluFpet/yEqQbVhad39RkBOJkfX4Uv2C
-         MbzoUBhTMvq97GMPYwOpRAdw8knSUbLbZv6vnvtWkYEOuYGJupSVgpSI4Vi2FkLRIIMw
-         czdw==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YUkuT7qxE8kAYriHyId/rWUFIG2b9T6cl4/xtuThfoQ=;
+        b=vt/ZAmUlrh/n3TVWFqM1sCBqY6z1kF8RYKwBpsD+IjHIhgIZFLTK1yj3mmbIcnu7By
+         D3pxw8lCsXm56THUPu817sf7S4RCY5eV+80RtSzMv/gdQx21xpYCoG7p+TEkJBdUe/ab
+         Tb01K//EpKTo/raZZlSrA++FFZfXnpHLJ0LHXYumQyKr7ePErgF7XBuW8lkCKWM85vOU
+         VZmrlr3tG9+pIZoCCg5bXpp8SGVK0dP9CYUE2IDF6BYwRR4zKKsrfDkq36GhRVhc/UA2
+         tISXUczHUi+jgHC/z0WyBqlkYzlhrWm/t9BOwaPj+Xc3LADUrdQcfJUtOFZM7fZHwKjA
+         efbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1kx0jr6iQJBdI7n19m8fhu/gw5LbN1tE/Li1THtvucI=;
-        b=zVJSEdpjbMM9whIvWxJNrK/5zvHRafY0Jp/ncnA0BpFftiqN2ej6j8Fdaldcu2gTkh
-         nI8MzOy5VwHc+onplPiKHoL7lkjS/MVnjIGuQ2VtJrGaingKvBvNUcaPUFg4SBCa3I3P
-         /S8K6t3KWWyXKnSyrlCEeyx9LmyBWAfHUqu+Rbc7sbfxhCOXUBGxoAKZ6IRto/cOvwSi
-         hxAmlKUgcv7nb5KE0BFPhH7lkllaagEkPAd32fAb6g3kfHdJgkC8rGnPSDVNVe7a+yrv
-         /fU07tb+E90QCZfKEyQapOTIXmpzFPtnvJk6QQqlXmtKswZiW4QMtbxUValCu10iAQ1+
-         Zvyw==
-X-Gm-Message-State: ANoB5pkXFoZmTlhIIf9Usz+YIgHZ0OT473uNWTeTaadEjHaoz30WCGNt
-        UiS8a+DzP5ozsxcoiqFt3paHbx34Tr5MB7LafJMuyg==
-X-Google-Smtp-Source: AA0mqf4RQuT3o5dVODYuifcFa7oAG27rTPoh0EMVG7YVp4qUfFAgO9EocfzkH2534iz0neovTigMa97nRDMKlUjfjG4=
-X-Received: by 2002:a05:600c:4f05:b0:3d0:3d33:a629 with SMTP id
- l5-20020a05600c4f0500b003d03d33a629mr24471844wmq.126.1669888641094; Thu, 01
- Dec 2022 01:57:21 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUkuT7qxE8kAYriHyId/rWUFIG2b9T6cl4/xtuThfoQ=;
+        b=PcWhPhEwCmDRVZ1ozPJD7PbObspcLsydCuDlB0Wo3Yzu2oKFM4FX5IFNlNeSwwsveH
+         fB/kxeerItEuKjP4yVi0RjvQugc+weeOdl3zWWsPpk5br2Kajs/i0pfA4+mYiSrYAek2
+         Ci3c8bnplAkmJO2mLC0CbxSlytg2m7UAiSEm/2W4IkB0h9/40zt2ZKH4VUOIoW0e/Eii
+         sxin05rtNPM1xBXCGobps5GNnVJDBDqMUWk1/0HTXEw3Sdx/xOT3o8QnLOCkK/AX8SMT
+         cXnWqpUJ/l/wV972y5t5JKF8AkuROm+YTqE3EFd+Fxzv9hcg+jMALl6XcXmtkcWfjDqU
+         7asA==
+X-Gm-Message-State: ANoB5pmjJzTGumhuc24itCYunWG0KrLkFEQI5xUyqRW7YehmYIzkIVgV
+        O1FJapZhi1FKkuJ1/Av9AJ5Jow==
+X-Google-Smtp-Source: AA0mqf5hX2bRGEmUHMhFXC6kE7q+UjEwENOExnYTivLz5oSpfXpXJygPHjtuuOi0RVR/lJZ2voGr3g==
+X-Received: by 2002:a05:651c:244:b0:277:d86:a36d with SMTP id x4-20020a05651c024400b002770d86a36dmr20635600ljn.288.1669892057521;
+        Thu, 01 Dec 2022 02:54:17 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id v1-20020a197401000000b0049876c1bb24sm601236lfe.225.2022.12.01.02.54.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Dec 2022 02:54:16 -0800 (PST)
+Message-ID: <a221bcc0-9cad-e2ad-62fc-a97fa3aa804c@linaro.org>
+Date:   Thu, 1 Dec 2022 11:54:13 +0100
 MIME-Version: 1.0
-References: <20221124074725.74325-1-haozhe.chang@mediatek.com>
-In-Reply-To: <20221124074725.74325-1-haozhe.chang@mediatek.com>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Thu, 1 Dec 2022 10:56:45 +0100
-Message-ID: <CAMZdPi9JOQpmhQepBMeG5jzncP8t5mp68O2nfSOFUUZ9e_fDsQ@mail.gmail.com>
-Subject: Re: [PATCH v5] wwan: core: Support slicing in port TX flow of WWAN subsystem
-To:     haozhe.chang@mediatek.com
-Cc:     M Chetan Kumar <m.chetan.kumar@intel.com>,
-        Intel Corporation <linuxwwan@intel.com>,
-        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
-        Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
-        Liu Haijun <haijun.liu@mediatek.com>,
-        Ricardo Martinez <ricardo.martinez@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        "open list:INTEL WWAN IOSM DRIVER" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR MESSAGING (RPMSG) WWAN CONTROL..." 
-        <linux-remoteproc@vger.kernel.org>,
-        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, lambert.wang@mediatek.com,
-        xiayu.zhang@mediatek.com, hua.yang@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v2 1/5] dt-bindings: remoteproc: qcom: adsp: move
+ memory-region and firmware-name out of pas-common
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+        linux-remoteproc@vger.kernel.org
+References: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-0-12bc22255474@linaro.org>
+ <20221114-narmstrong-sm8550-upstream-remoteproc-v2-1-12bc22255474@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-1-12bc22255474@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 24 Nov 2022 at 08:47, <haozhe.chang@mediatek.com> wrote:
->
-> From: haozhe chang <haozhe.chang@mediatek.com>
->
-> wwan_port_fops_write inputs the SKB parameter to the TX callback of
-> the WWAN device driver. However, the WWAN device (e.g., t7xx) may
-> have an MTU less than the size of SKB, causing the TX buffer to be
-> sliced and copied once more in the WWAN device driver.
->
-> This patch implements the slicing in the WWAN subsystem and gives
-> the WWAN devices driver the option to slice(by frag_len) or not. By
-> doing so, the additional memory copy is reduced.
->
-> Meanwhile, this patch gives WWAN devices driver the option to reserve
-> headroom in fragments for the device-specific metadata.
->
-> Signed-off-by: haozhe chang <haozhe.chang@mediatek.com>
+On 30/11/2022 11:29, Neil Armstrong wrote:
+> Move memory-region and firmware-name definitions out of qcom,pas-common.yaml
+> since they will be redefined differently for SM8550 PAS bindings documentation.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml       | 4 ++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml | 8 --------
+>  Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml | 8 ++++++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml | 8 ++++++++
+>  .../devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml          | 8 ++++++++
+>  .../devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml         | 8 ++++++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml  | 8 ++++++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml | 8 ++++++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml | 8 ++++++++
+>  Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml | 8 ++++++++
+>  10 files changed, 68 insertions(+), 8 deletions(-)
 
-Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
+Looks good. If my patchset is not merged soon, I will squash your change
+to my set.
+
+Best regards,
+Krzysztof
+
