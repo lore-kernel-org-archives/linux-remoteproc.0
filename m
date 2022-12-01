@@ -2,195 +2,108 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEC3C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 11:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7135C43217
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 12:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231216AbiLAL6k (ORCPT
+        id S231359AbiLAMV2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 06:58:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46856 "EHLO
+        Thu, 1 Dec 2022 07:21:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbiLAL6j (ORCPT
+        with ESMTP id S230525AbiLAMVZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Dec 2022 06:58:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3DBDF3B;
-        Thu,  1 Dec 2022 03:58:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 709D361FAF;
-        Thu,  1 Dec 2022 11:58:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD91C433C1;
-        Thu,  1 Dec 2022 11:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669895916;
-        bh=25enWOXWSxUHeG1IZJe+Ih0SWl3XZid+jpKEUF0YHyc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=AoCwcf0bz6tb7EVh9CHF6DmkPZFGozfl7p894cEkWDvxCw6c5ABoN0kp6PTMhKEI9
-         kv2a2CBe9ZuzdLORhZFI1hAla9bB+zL8DL06NLy0E7TZj7sa7q/eU1N61mZcqs/qcF
-         u/vmx6zmS9+GgAcWnEcwbxQDSMAJd5ZgBLF+QujloJO9pV22ISsXWyJecfFWZ+mCTM
-         xfVOBGcTXXqzEMZEGuw9EdtT6nrbU5B9IVUQ5+03uHcPpX8eA7GdYEXl0RqrWOykOy
-         8wc0CD5aB6L24r3jO/bVylPLFi0Z9pJ7Xig3TG66x2LX3/wnCOUBBnnbw2G3Xh/Ng1
-         F5C3wVT24RGzQ==
-Message-ID: <a32f817e-6b61-7666-94f9-cf11f1f2e0a8@kernel.org>
-Date:   Thu, 1 Dec 2022 13:58:31 +0200
+        Thu, 1 Dec 2022 07:21:25 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FACDAB029;
+        Thu,  1 Dec 2022 04:21:23 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B1ANOfC006098;
+        Thu, 1 Dec 2022 12:21:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=o35YdJaFszQepz90vSPHt6PmoQ0SOBopmc9imxmtMi4=;
+ b=QGD6d4tSFCEEPU7eOuvRDB85ZYZTtpthi1LrnlP9fhsaqDcMSgCarEGrs+FH1mUDP25c
+ WKXWp6mnjfEgy0toM1SS2GON2lKQ+zFGLZHmf6cvG5Qec2fXKbvPhR1g8mEYP8BQHlSq
+ 4CllCTsiQWrZeQ9chG8dB2LAO3ABX8NFhwGgr8b8FlauZsN25z4udiJJmKLqcECZfIA3
+ JMNsooZrpHcwyl6dkp2FZnNBSatq/e/7/UBoHc7NOOmWD3VMl0ODv3WGvGPiFeFJrWu+
+ lyT4ERMLamNLVgn5xjwltu4KJbW1eySagiukxL09I9IGOmEqvrD4LP/E+ia43adxNiES Qw== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3m6k3qs9nb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Dec 2022 12:21:09 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2B1CL8rB021799
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 1 Dec 2022 12:21:08 GMT
+Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Thu, 1 Dec 2022 04:21:02 -0800
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <mathieu.poirier@linaro.org>
+CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Subject: [PATCH] remoteproc: elf_loader: Update resource table name check
+Date:   Thu, 1 Dec 2022 17:50:48 +0530
+Message-ID: <1669897248-23052-1-git-send-email-quic_srivasam@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v10 3/6] remoteproc: pru: Add enum for PRU Core
- Indentifiers.
-Content-Language: en-US
-To:     MD Danish Anwar <danishanwar@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Suman Anna <s-anna@ti.com>, "Andrew F . Davis" <afd@ti.com>,
-        nm@ti.com, vigneshr@ti.com, srk@ti.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20221201110500.4017889-1-danishanwar@ti.com>
- <20221201110500.4017889-4-danishanwar@ti.com>
-From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20221201110500.4017889-4-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 92nkJW-q8lJX3ix6rnVlv9-0RirJcWu6
+X-Proofpoint-ORIG-GUID: 92nkJW-q8lJX3ix6rnVlv9-0RirJcWu6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-01_04,2022-12-01_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 spamscore=0 priorityscore=1501 clxscore=1011 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2212010088
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Danish,
+Update resource table name check with sub string search instead of
+complete string search.
+In general Qualcomm binary contains, section header name
+(e.g. .resource_table), amended with extra string to differentiate
+with other sections.
+So far Android adsp binaries are being authenticated using TZ,
+hence this mismatch hasn't created any problem.
+In recent developments, ADSP binary is being used in Chrome based
+platforms, which doesn't have TZ path, hence resource table is
+required for memory sandboxing.
 
-On 01/12/2022 13:04, MD Danish Anwar wrote:
-> Introducing enum pruss_pru_id for PRU Core Identifiers.
-> PRUSS_PRU0 indicates PRU Core 0.
-> PRUSS_PRU1 indicates PRU Core 1.
-> PRUSS_NUM_PRUS indicates the total number of PRU Cores.
-> 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->  drivers/remoteproc/pru_rproc.c | 16 ++++++++++++----
->  include/linux/pruss.h          | 19 +++++++++++++++++--
->  2 files changed, 29 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index b4498a505108..7d4ed39b3772 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -186,6 +186,7 @@ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
->   * pru_rproc_get() - get the PRU rproc instance from a device node
->   * @np: the user/client device node
->   * @index: index to use for the ti,prus property
-> + * @pru_id: optional pointer to return the PRU remoteproc processor id
->   *
->   * This function looks through a client device node's "ti,prus" property at
->   * index @index and returns the rproc handle for a valid PRU remote processor if
-> @@ -193,13 +194,17 @@ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
->   * time. Caller must call pru_rproc_put() when done with using the rproc, not
->   * required if the function returns a failure.
->   *
-> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
-> + * returned.
-> + *
->   * Return: rproc handle on success, and an ERR_PTR on failure using one
->   * of the following error values
->   *    -ENODEV if device is not found
->   *    -EBUSY if PRU is already acquired by anyone
->   *    -EPROBE_DEFER is PRU device is not probed yet
->   */
-> -struct rproc *pru_rproc_get(struct device_node *np, int index)
-> +struct rproc *pru_rproc_get(struct device_node *np, int index,
-> +			    enum pruss_pru_id *pru_id)
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+---
+ drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You just introduced pru_rproc_get() in the previous patch and are
-now updating it here.
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index 5a412d7..0feb120 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -272,7 +272,7 @@ find_table(struct device *dev, const struct firmware *fw)
+ 		u64 offset = elf_shdr_get_sh_offset(class, shdr);
+ 		u32 name = elf_shdr_get_sh_name(class, shdr);
+ 
+-		if (strcmp(name_table + name, ".resource_table"))
++		if (!strstr(name_table + name, ".resource_table"))
+ 			continue;
+ 
+ 		table = (struct resource_table *)(elf_data + offset);
+-- 
+2.7.4
 
-Instead, what you need to do is, first introduce enum pruss_pru_id
-and make any changes to code using hardcoded values for PRU ID.
-This patch will have to introduce <linux/pruss.h> as it doesn't exist yet.
-Hopefully this clears the chicken/egg situation.
-
-Then introduce pru_rproc_get() patch with the final desired arguments.
-
->  {
->  	struct rproc *rproc;
->  	struct pru_rproc *pru;
-> @@ -226,6 +231,9 @@ struct rproc *pru_rproc_get(struct device_node *np, int index)
->  
->  	mutex_unlock(&pru->lock);
->  
-> +	if (pru_id)
-> +		*pru_id = pru->id;
-> +
->  	return rproc;
->  
->  err_no_rproc_handle:
-> @@ -556,7 +564,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
->  	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
->  	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
->  	/* PRU1 has its local RAM addresses reversed */
-> -	if (pru->id == 1)
-> +	if (pru->id == PRUSS_PRU1)
->  		swap(dram0, dram1);
->  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
->  
-> @@ -865,14 +873,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
->  	case RTU0_IRAM_ADDR_MASK:
->  		fallthrough;
->  	case PRU0_IRAM_ADDR_MASK:
-> -		pru->id = 0;
-> +		pru->id = PRUSS_PRU0;
->  		break;
->  	case TX_PRU1_IRAM_ADDR_MASK:
->  		fallthrough;
->  	case RTU1_IRAM_ADDR_MASK:
->  		fallthrough;
->  	case PRU1_IRAM_ADDR_MASK:
-> -		pru->id = 1;
-> +		pru->id = PRUSS_PRU1;
->  		break;
->  	default:
->  		ret = -EINVAL;
-> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-> index 5c5d14b1249d..efe89c586b4b 100644
-> --- a/include/linux/pruss.h
-> +++ b/include/linux/pruss.h
-> @@ -14,17 +14,32 @@
->  
->  #define PRU_RPROC_DRVNAME "pru-rproc"
->  
-> +/**
-> + * enum pruss_pru_id - PRU core identifiers
-> + * @PRUSS_PRU0: PRU Core 0.
-> + * @PRUSS_PRU1: PRU Core 1.
-> + * @PRUSS_NUM_PRUS: Total number of PRU Cores available.
-> + *
-> + */
-> +
-> +enum pruss_pru_id {
-> +	PRUSS_PRU0 = 0,
-> +	PRUSS_PRU1,
-> +	PRUSS_NUM_PRUS,
-> +};
-> +
->  struct device_node;
->  
->  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
->  
-> -struct rproc *pru_rproc_get(struct device_node *np, int index);
-> +struct rproc *pru_rproc_get(struct device_node *np, int index,
-> +			    enum pruss_pru_id *pru_id);
->  void pru_rproc_put(struct rproc *rproc);
->  
->  #else
->  
->  static inline struct rproc *
-> -pru_rproc_get(struct device_node *np, int index)
-> +pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
->  {
->  	return ERR_PTR(-EOPNOTSUPP);
->  }
-
---
-cheers,
--roger
