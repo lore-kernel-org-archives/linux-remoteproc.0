@@ -2,159 +2,265 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3385C43217
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 11:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BA3C4321E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 11:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231205AbiLALAG (ORCPT
+        id S229722AbiLALHL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 06:00:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40610 "EHLO
+        Thu, 1 Dec 2022 06:07:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231128AbiLAK7f (ORCPT
+        with ESMTP id S231303AbiLALGK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Dec 2022 05:59:35 -0500
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F40095807
-        for <linux-remoteproc@vger.kernel.org>; Thu,  1 Dec 2022 02:58:53 -0800 (PST)
-Received: by mail-lj1-x229.google.com with SMTP id q7so1435405ljp.9
-        for <linux-remoteproc@vger.kernel.org>; Thu, 01 Dec 2022 02:58:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9CMzCUFTPRKosFugMwQr2rqsvUFi3ESa8CvF8qyIZfg=;
-        b=PnMhWd05zRtzaHExY2rIhP1gphf9RFJAl65SVxk7kbPa+KKK+YkkHzsGWPr8mMkYOo
-         B1MGjQ+pj1q4Kx/7s7aoVouh+wVLTCAWHkfmxk4R7uNkPYQnDoH5TDXb8pdeOupaamsT
-         OWtdq5m+qk8OSCfNdWBAwQyywOQEq9Q6ybtq3C86o71/VY+mamB2c8Rb3Xm//Uw72Mfa
-         kVejeEcmMBlV/ltrtl2ju+CEFUQQXCWi52ly3LkUQtjegnVl/Cz98bUZZjp1iAahSM4/
-         SzkueT61emF5X2sLvwL6BYpjqjmo1nQTjtPPkdbH6B/2hm3irS5gb3xavHr7QnLBKyEA
-         CU2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9CMzCUFTPRKosFugMwQr2rqsvUFi3ESa8CvF8qyIZfg=;
-        b=yQ6+yNbcSWmONMe7W1iJtqQ0iZfjQAhhi6Nb5LbnosKazk1eLELw4ktbPN06q5Haor
-         XZLN4qHa4f1+ubyZtCV3CAR9dLl146KMOz0XzU/vR+kUbTERVWIpXK9dNehU2qaw8gMN
-         azKJw9IcMDODlH7QP8H+sI5HaBHMwdPjwiJVkIer18uA/bBZKPfHMGDn+FgwAV+TnfHH
-         q9VeJRz444DKXKPrKzG3m2cn+U3VhimwjDQjCu+EFLC8iM2Vv+3GJj3rkNSJXbUBUKKe
-         V2UWG1bIFYtzBtVFMjnEFHMBrarWbc9OaAcG8+xA6kbLE7aDIggUeqMvJh4G33YRyrLL
-         QA6A==
-X-Gm-Message-State: ANoB5pnIJx17Vjz8dPjunEEzA15K0g6d8XNzednW89jfomIOyElz+Qzt
-        3cqW6Km/XR1WQZDnfa2hkVLbTw==
-X-Google-Smtp-Source: AA0mqf5ufFeOB1OMBaOMcApvYDpojjK4SFRwAd0IAmjOU7uHV8tnjvNQBKUnCedswt5pgds69ito8w==
-X-Received: by 2002:a2e:be06:0:b0:26f:c489:883e with SMTP id z6-20020a2ebe06000000b0026fc489883emr20653090ljq.281.1669892331406;
-        Thu, 01 Dec 2022 02:58:51 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id br33-20020a056512402100b004b1756a0ae9sm611811lfb.55.2022.12.01.02.58.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Dec 2022 02:58:50 -0800 (PST)
-Message-ID: <8d7367b2-126a-d8ba-b616-be1ef9c67122@linaro.org>
-Date:   Thu, 1 Dec 2022 11:58:49 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom: adsp: document
- sm8550 adsp, cdsp & mpss compatible
-Content-Language: en-US
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Thu, 1 Dec 2022 06:06:10 -0500
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F18AB006;
+        Thu,  1 Dec 2022 03:05:24 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2B1B5HVU014946;
+        Thu, 1 Dec 2022 05:05:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1669892717;
+        bh=+aS3dexsjegz9fnIBKQoR6xDU97JxOPzzkEs0OSphdQ=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=eZU6sNnfqSc5mWg2K02I57644z/Hfz5UogSODF8whshg2zdIP6r3umNu6Bv4DBWSh
+         6NlszD2zrLLHZU1jcQPV0UurjgIqZfPFgYrHHY54H8eeCaVr+QEpgTCNS/ByoLI4pB
+         S1nFiOc5bRnr3igcKjV5TO0fvUJLOSV9PTFkd4gU=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2B1B5HMH065041
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Dec 2022 05:05:17 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Thu, 1
+ Dec 2022 05:05:17 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Thu, 1 Dec 2022 05:05:17 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2B1B5HBB036422;
+        Thu, 1 Dec 2022 05:05:17 -0600
+Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2B1B5FF1032677;
+        Thu, 1 Dec 2022 05:05:16 -0600
+From:   MD Danish Anwar <danishanwar@ti.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        linux-remoteproc@vger.kernel.org
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-0-12bc22255474@linaro.org>
- <20221114-narmstrong-sm8550-upstream-remoteproc-v2-2-12bc22255474@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-2-12bc22255474@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh+dt@kernel.org>
+CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <srk@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+Subject: [PATCH v10 5/6] remoteproc: pru: Add pru_rproc_set_ctable() function
+Date:   Thu, 1 Dec 2022 16:34:59 +0530
+Message-ID: <20221201110500.4017889-6-danishanwar@ti.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221201110500.4017889-1-danishanwar@ti.com>
+References: <20221201110500.4017889-1-danishanwar@ti.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 30/11/2022 11:29, Neil Armstrong wrote:
-> This documents the compatible for the component used to boot the
-> aDSP, cDSP and MPSS on the SM8550 SoC.
-> 
-> The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
-> firmware to be passed along the main Firmware, and the cDSP a new power
-> domain named "NSP".
-> 
-> A third memory domain for the DSM memory zone is also needed for the MPSS
-> PAS bindings.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+From: Roger Quadros <rogerq@ti.com>
 
-Thank you for your patch. There is something to discuss/improve.
+Some firmwares expect the OS drivers to configure the CTABLE
+entries publishing dynamically allocated memory regions. For
+example, the PRU Ethernet firmwares use the C28 and C30 entries
+for retrieving the Shared RAM and System SRAM (OCMC) areas
+allocated by the PRU Ethernet client driver.
 
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8550-adsp-pas
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: LCX power domain
-> +            - description: LMX power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: lcx
-> +            - const: lmx
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8550-cdsp-pas
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: CX power domain
-> +            - description: MXC power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: cx
-> +            - const: mxc
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sm8550-cdsp-pas
+Provide a way for users to do that through a new API,
+pru_rproc_set_ctable(). The API returns 0 on success and
+a negative value on error.
 
-This entire if does not look valid - compatible is covered in the
-previous one. You should see `dtbs_check` warnings on your DTS.
+NOTE:
+The programmable CTABLE entries are typically re-programmed by
+the PRU firmwares when dealing with a certain block of memory
+during block processing. This API provides an interface to the
+PRU client drivers to publish a dynamically allocated memory
+block with the PRU firmware using a CTABLE entry instead of a
+negotiated address in shared memory. Additional synchronization
+may be needed between the PRU client drivers and firmwares if
+different addresses needs to be published at run-time reusing
+the same CTABLE entry.
 
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: CX power domain
-> +            - description: MXC power domain
-> +            - description: NSP power domain
-> +        power-domain-names:
-> +          items:
-> +            - const: cx
-> +            - const: mxc
-> +            - const: nsp
-> +
-> +unevaluatedProperties: false
-> +
+CTABLE for stands for "constant table".
+Each CTable entry just holds the upper address bits so PRU can
+reference to external memory with larger address bits.
 
-Best regards,
-Krzysztof
+For use case please see
+prueth_sw_emac_config() in "drivers/net/ethernet/ti/prueth_switch.c"
+
+            /* Set in constant table C28 of PRUn to ICSS Shared memory */
+             pru_rproc_set_ctable(prueth->pru0, PRU_C28, sharedramaddr);
+             pru_rproc_set_ctable(prueth->pru1, PRU_C28, sharedramaddr);
+
+            /* Set in constant table C30 of PRUn to OCMC memory */
+             pru_rproc_set_ctable(prueth->pru0, PRU_C30, ocmcaddr);
+             pru_rproc_set_ctable(prueth->pru1, PRU_C30, ocmcaddr);
+
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+---
+ drivers/remoteproc/pru_rproc.c | 59 ++++++++++++++++++++++++++++++++++
+ include/linux/pruss.h          | 22 +++++++++++++
+ 2 files changed, 81 insertions(+)
+
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index bca7550d79d2..f4a34cc6bcc6 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -120,6 +120,7 @@ struct pru_private_data {
+  * @mapped_irq: virtual interrupt numbers of created fw specific mapping
+  * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
+  * @pru_interrupt_map_sz: pru_interrupt_map size
++ * @rmw_lock: lock for read, modify, write operations on registers
+  * @dbg_single_step: debug state variable to set PRU into single step mode
+  * @dbg_continuous: debug state variable to restore PRU execution mode
+  * @evt_count: number of mapped events
+@@ -137,6 +138,7 @@ struct pru_rproc {
+ 	unsigned int *mapped_irq;
+ 	struct pru_irq_rsc *pru_interrupt_map;
+ 	size_t pru_interrupt_map_sz;
++	spinlock_t rmw_lock;
+ 	u32 dbg_single_step;
+ 	u32 dbg_continuous;
+ 	u8 evt_count;
+@@ -153,6 +155,23 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
+ 	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
+ }
+ 
++static inline
++void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
++			 u32 mask, u32 set)
++{
++	u32 val;
++	unsigned long flags;
++
++	spin_lock_irqsave(&pru->rmw_lock, flags);
++
++	val = pru_control_read_reg(pru, reg);
++	val &= ~mask;
++	val |= (set & mask);
++	pru_control_write_reg(pru, reg, val);
++
++	spin_unlock_irqrestore(&pru->rmw_lock, flags);
++}
++
+ static struct rproc *__pru_rproc_get(struct device_node *np, int index)
+ {
+ 	struct rproc *rproc;
+@@ -274,6 +293,45 @@ void pru_rproc_put(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL_GPL(pru_rproc_put);
+ 
++/**
++ * pru_rproc_set_ctable() - set the constant table index for the PRU
++ * @rproc: the rproc instance of the PRU
++ * @c: constant table index to set
++ * @addr: physical address to set it to
++ *
++ * Return: 0 on success, or errno in error case.
++ */
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
++{
++	struct pru_rproc *pru = rproc->priv;
++	unsigned int reg;
++	u32 mask, set;
++	u16 idx;
++	u16 idx_mask;
++
++	if (IS_ERR_OR_NULL(rproc))
++		return -EINVAL;
++
++	if (!rproc->dev.parent || !is_pru_rproc(rproc->dev.parent))
++		return -ENODEV;
++
++	/* pointer is 16 bit and index is 8-bit so mask out the rest */
++	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
++
++	/* ctable uses bit 8 and upwards only */
++	idx = (addr >> 8) & idx_mask;
++
++	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
++	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
++	mask = idx_mask << (16 * (c & 1));
++	set = idx << (16 * (c & 1));
++
++	pru_control_set_reg(pru, reg, mask, set);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
++
+ static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
+ {
+ 	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
+@@ -945,6 +1003,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
+ 	pru->rproc = rproc;
+ 	pru->fw_name = fw_name;
+ 	pru->client_np = NULL;
++	spin_lock_init(&pru->rmw_lock);
+ 	mutex_init(&pru->lock);
+ 
+ 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
+diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+index efe89c586b4b..5c20da98a4b8 100644
+--- a/include/linux/pruss.h
++++ b/include/linux/pruss.h
+@@ -28,13 +28,29 @@ enum pruss_pru_id {
+ 	PRUSS_NUM_PRUS,
+ };
+ 
++/*
++ * enum pru_ctable_idx - Configurable Constant table index identifiers
++ */
++enum pru_ctable_idx {
++	PRU_C24 = 0,
++	PRU_C25,
++	PRU_C26,
++	PRU_C27,
++	PRU_C28,
++	PRU_C29,
++	PRU_C30,
++	PRU_C31,
++};
++
+ struct device_node;
++struct rproc;
+ 
+ #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+ 
+ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 			    enum pruss_pru_id *pru_id);
+ void pru_rproc_put(struct rproc *rproc);
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
+ 
+ #else
+ 
+@@ -46,6 +62,12 @@ pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
+ 
+ static inline void pru_rproc_put(struct rproc *rproc) { }
+ 
++static inline int pru_rproc_set_ctable(struct rproc *rproc,
++				       enum pru_ctable_idx c, u32 addr)
++{
++	return -EOPNOTSUPP;
++}
++
+ #endif /* CONFIG_PRU_REMOTEPROC */
+ 
+ static inline bool is_pru_rproc(struct device *dev)
+-- 
+2.25.1
 
