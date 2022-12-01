@@ -2,48 +2,48 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BA3C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 11:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803B3C4708C
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Dec 2022 11:07:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbiLALHL (ORCPT
+        id S230345AbiLALHN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 06:07:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
+        Thu, 1 Dec 2022 06:07:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231303AbiLALGK (ORCPT
+        with ESMTP id S230383AbiLALGC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Dec 2022 06:06:10 -0500
+        Thu, 1 Dec 2022 06:06:02 -0500
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F18AB006;
-        Thu,  1 Dec 2022 03:05:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 037ACE4E;
+        Thu,  1 Dec 2022 03:05:21 -0800 (PST)
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2B1B5HVU014946;
-        Thu, 1 Dec 2022 05:05:17 -0600
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2B1B56Nn014765;
+        Thu, 1 Dec 2022 05:05:06 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1669892717;
-        bh=+aS3dexsjegz9fnIBKQoR6xDU97JxOPzzkEs0OSphdQ=;
+        s=ti-com-17Q1; t=1669892706;
+        bh=mkPjwEGogI62uJtihkwiClxeDM8LlzG5SN3BLcVtk3o=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=eZU6sNnfqSc5mWg2K02I57644z/Hfz5UogSODF8whshg2zdIP6r3umNu6Bv4DBWSh
-         6NlszD2zrLLHZU1jcQPV0UurjgIqZfPFgYrHHY54H8eeCaVr+QEpgTCNS/ByoLI4pB
-         S1nFiOc5bRnr3igcKjV5TO0fvUJLOSV9PTFkd4gU=
+        b=PR8XwgD7elmaCTE5P3bK7bITHN4w8vA5SYSH2KfahXJ65PUSHOwbyJq2bgWsRxNDd
+         w6GQt8KfnTlx6eNKIdpdhbcAO9WCxURkwfACdCipTEwXwPGR3f82/Xi3ikGJ48gx8X
+         CwYzRZ9bW6YhJW1stHfgdh2AODKFNrYCcbh8XztU=
 Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2B1B5HMH065041
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2B1B56Ta064969
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Dec 2022 05:05:17 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE111.ent.ti.com
+        Thu, 1 Dec 2022 05:05:06 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE111.ent.ti.com
  (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Thu, 1
- Dec 2022 05:05:17 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2022 05:05:06 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Thu, 1 Dec 2022 05:05:17 -0600
+ Frontend Transport; Thu, 1 Dec 2022 05:05:06 -0600
 Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2B1B5HBB036422;
-        Thu, 1 Dec 2022 05:05:17 -0600
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2B1B56rP088898;
+        Thu, 1 Dec 2022 05:05:06 -0600
 Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2B1B5FF1032677;
-        Thu, 1 Dec 2022 05:05:16 -0600
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 2B1B54M0032636;
+        Thu, 1 Dec 2022 05:05:05 -0600
 From:   MD Danish Anwar <danishanwar@ti.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -54,9 +54,9 @@ CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         MD Danish Anwar <danishanwar@ti.com>
-Subject: [PATCH v10 5/6] remoteproc: pru: Add pru_rproc_set_ctable() function
-Date:   Thu, 1 Dec 2022 16:34:59 +0530
-Message-ID: <20221201110500.4017889-6-danishanwar@ti.com>
+Subject: [PATCH v10 1/6] dt-bindings: remoteproc: Add PRU consumer bindings
+Date:   Thu, 1 Dec 2022 16:34:55 +0530
+Message-ID: <20221201110500.4017889-2-danishanwar@ti.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221201110500.4017889-1-danishanwar@ti.com>
 References: <20221201110500.4017889-1-danishanwar@ti.com>
@@ -68,199 +68,92 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Roger Quadros <rogerq@ti.com>
+From: Suman Anna <s-anna@ti.com>
 
-Some firmwares expect the OS drivers to configure the CTABLE
-entries publishing dynamically allocated memory regions. For
-example, the PRU Ethernet firmwares use the C28 and C30 entries
-for retrieving the Shared RAM and System SRAM (OCMC) areas
-allocated by the PRU Ethernet client driver.
+Add DT schema binding for PRU consumers. The binding includes
+all the common properties that can be used by different PRU consumer
+or application nodes and supported by the PRU remoteproc driver.
+These are used to configure the PRU hardware for specific user
+applications.
 
-Provide a way for users to do that through a new API,
-pru_rproc_set_ctable(). The API returns 0 on success and
-a negative value on error.
+The application nodes themselves should define their own bindings.
 
-NOTE:
-The programmable CTABLE entries are typically re-programmed by
-the PRU firmwares when dealing with a certain block of memory
-during block processing. This API provides an interface to the
-PRU client drivers to publish a dynamically allocated memory
-block with the PRU firmware using a CTABLE entry instead of a
-negotiated address in shared memory. Additional synchronization
-may be needed between the PRU client drivers and firmwares if
-different addresses needs to be published at run-time reusing
-the same CTABLE entry.
-
-CTABLE for stands for "constant table".
-Each CTable entry just holds the upper address bits so PRU can
-reference to external memory with larger address bits.
-
-For use case please see
-prueth_sw_emac_config() in "drivers/net/ethernet/ti/prueth_switch.c"
-
-            /* Set in constant table C28 of PRUn to ICSS Shared memory */
-             pru_rproc_set_ctable(prueth->pru0, PRU_C28, sharedramaddr);
-             pru_rproc_set_ctable(prueth->pru1, PRU_C28, sharedramaddr);
-
-            /* Set in constant table C30 of PRUn to OCMC memory */
-             pru_rproc_set_ctable(prueth->pru0, PRU_C30, ocmcaddr);
-             pru_rproc_set_ctable(prueth->pru1, PRU_C30, ocmcaddr);
-
-Signed-off-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
 Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/remoteproc/pru_rproc.c | 59 ++++++++++++++++++++++++++++++++++
- include/linux/pruss.h          | 22 +++++++++++++
- 2 files changed, 81 insertions(+)
+ .../bindings/remoteproc/ti,pru-consumer.yaml  | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index bca7550d79d2..f4a34cc6bcc6 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -120,6 +120,7 @@ struct pru_private_data {
-  * @mapped_irq: virtual interrupt numbers of created fw specific mapping
-  * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
-  * @pru_interrupt_map_sz: pru_interrupt_map size
-+ * @rmw_lock: lock for read, modify, write operations on registers
-  * @dbg_single_step: debug state variable to set PRU into single step mode
-  * @dbg_continuous: debug state variable to restore PRU execution mode
-  * @evt_count: number of mapped events
-@@ -137,6 +138,7 @@ struct pru_rproc {
- 	unsigned int *mapped_irq;
- 	struct pru_irq_rsc *pru_interrupt_map;
- 	size_t pru_interrupt_map_sz;
-+	spinlock_t rmw_lock;
- 	u32 dbg_single_step;
- 	u32 dbg_continuous;
- 	u8 evt_count;
-@@ -153,6 +155,23 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
- 	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
- }
- 
-+static inline
-+void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
-+			 u32 mask, u32 set)
-+{
-+	u32 val;
-+	unsigned long flags;
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+new file mode 100644
+index 000000000000..c6d86964b72a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	spin_lock_irqsave(&pru->rmw_lock, flags);
++title: Common TI PRU Consumer Binding
 +
-+	val = pru_control_read_reg(pru, reg);
-+	val &= ~mask;
-+	val |= (set & mask);
-+	pru_control_write_reg(pru, reg, val);
++maintainers:
++  - Suman Anna <s-anna@ti.com>
 +
-+	spin_unlock_irqrestore(&pru->rmw_lock, flags);
-+}
++description: |
++  A PRU application/consumer/user node typically uses one or more PRU device
++  nodes to implement a PRU application/functionality. Each application/client
++  node would need a reference to at least a PRU node, and optionally define
++  some properties needed for hardware/firmware configuration. The below
++  properties are a list of common properties supported by the PRU remoteproc
++  infrastructure.
 +
- static struct rproc *__pru_rproc_get(struct device_node *np, int index)
- {
- 	struct rproc *rproc;
-@@ -274,6 +293,45 @@ void pru_rproc_put(struct rproc *rproc)
- }
- EXPORT_SYMBOL_GPL(pru_rproc_put);
- 
-+/**
-+ * pru_rproc_set_ctable() - set the constant table index for the PRU
-+ * @rproc: the rproc instance of the PRU
-+ * @c: constant table index to set
-+ * @addr: physical address to set it to
-+ *
-+ * Return: 0 on success, or errno in error case.
-+ */
-+int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+	unsigned int reg;
-+	u32 mask, set;
-+	u16 idx;
-+	u16 idx_mask;
++  The application nodes shall define their own bindings like regular platform
++  devices, so below are in addition to each node's bindings.
 +
-+	if (IS_ERR_OR_NULL(rproc))
-+		return -EINVAL;
++properties:
++  ti,prus:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: phandles to the PRU, RTU or Tx_PRU nodes used
++    minItems: 1
++    maxItems: 6
++    items:
++      maxItems: 1
 +
-+	if (!rproc->dev.parent || !is_pru_rproc(rproc->dev.parent))
-+		return -ENODEV;
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    minItems: 1
++    maxItems: 6
++    description: |
++      firmwares for the PRU cores, the default firmware for the core from
++      the PRU node will be used if not provided. The firmware names should
++      correspond to the PRU cores listed in the 'ti,prus' property
 +
-+	/* pointer is 16 bit and index is 8-bit so mask out the rest */
-+	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
++  ti,pruss-gp-mux-sel:
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    minItems: 1
++    maxItems: 6
++    items:
++      enum: [0, 1, 2, 3, 4]
++    description: |
++      array of values for the GP_MUX_SEL under PRUSS_GPCFG register for a PRU.
++      This selects the internal muxing scheme for the PRU instance. Values
++      should correspond to the PRU cores listed in the 'ti,prus' property. The
++      GP_MUX_SEL setting is a per-slice setting (one setting for PRU0, RTU0,
++      and Tx_PRU0 on K3 SoCs). Use the same value for all cores within the
++      same slice in the associative array. If the array size is smaller than
++      the size of 'ti,prus' property, the default out-of-reset value (0) for the
++      PRU core is used.
 +
-+	/* ctable uses bit 8 and upwards only */
-+	idx = (addr >> 8) & idx_mask;
++required:
++  - ti,prus
 +
-+	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
-+	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
-+	mask = idx_mask << (16 * (c & 1));
-+	set = idx << (16 * (c & 1));
-+
-+	pru_control_set_reg(pru, reg, mask, set);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
-+
- static inline u32 pru_debug_read_reg(struct pru_rproc *pru, unsigned int reg)
- {
- 	return readl_relaxed(pru->mem_regions[PRU_IOMEM_DEBUG].va + reg);
-@@ -945,6 +1003,7 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	pru->rproc = rproc;
- 	pru->fw_name = fw_name;
- 	pru->client_np = NULL;
-+	spin_lock_init(&pru->rmw_lock);
- 	mutex_init(&pru->lock);
- 
- 	for (i = 0; i < ARRAY_SIZE(mem_names); i++) {
-diff --git a/include/linux/pruss.h b/include/linux/pruss.h
-index efe89c586b4b..5c20da98a4b8 100644
---- a/include/linux/pruss.h
-+++ b/include/linux/pruss.h
-@@ -28,13 +28,29 @@ enum pruss_pru_id {
- 	PRUSS_NUM_PRUS,
- };
- 
-+/*
-+ * enum pru_ctable_idx - Configurable Constant table index identifiers
-+ */
-+enum pru_ctable_idx {
-+	PRU_C24 = 0,
-+	PRU_C25,
-+	PRU_C26,
-+	PRU_C27,
-+	PRU_C28,
-+	PRU_C29,
-+	PRU_C30,
-+	PRU_C31,
-+};
-+
- struct device_node;
-+struct rproc;
- 
- #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
- 
- struct rproc *pru_rproc_get(struct device_node *np, int index,
- 			    enum pruss_pru_id *pru_id);
- void pru_rproc_put(struct rproc *rproc);
-+int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
- 
- #else
- 
-@@ -46,6 +62,12 @@ pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
- 
- static inline void pru_rproc_put(struct rproc *rproc) { }
- 
-+static inline int pru_rproc_set_ctable(struct rproc *rproc,
-+				       enum pru_ctable_idx c, u32 addr)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- #endif /* CONFIG_PRU_REMOTEPROC */
- 
- static inline bool is_pru_rproc(struct device *dev)
++additionalProperties: true
 -- 
 2.25.1
 
