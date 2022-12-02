@@ -2,806 +2,416 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7464C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Dec 2022 01:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25085C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Dec 2022 06:41:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231511AbiLBBSB (ORCPT
+        id S232392AbiLBGlX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Dec 2022 20:18:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38098 "EHLO
+        Fri, 2 Dec 2022 01:41:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231195AbiLBBR5 (ORCPT
+        with ESMTP id S231913AbiLBGlQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Dec 2022 20:17:57 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A87EB0A05;
-        Thu,  1 Dec 2022 17:17:53 -0800 (PST)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B201Ndg023043;
-        Fri, 2 Dec 2022 01:17:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=xAuFxSgMioDVxFFxIq2TZV+I7nSPX/VnWeBp2cuf17Q=;
- b=EJU5bzarAxp1AhM7/jemNI4jgUKkCKA1OC1PnMt0Qfyt7knFWckTeyJlglPGtosmxfoT
- c40lnCrqfCa2b0lDvbqg7rC6222VC8DQkBRbXa+jnpcRimt5iwAStt4Af4NOHcWAm+vS
- YiCEjIlw4BciGv2+FIJNdg207fPDZLNHR2WDAvNc4hQ9TlZuPpAYfBGm4Kr+rsVxjRgG
- mGvvYs1pw1n2WDu4E93E3WQhFM6Pn9GwR6vfeyDVk/UaFxG1Fpdl8/rEIEZzen1X2ycd
- cuu8lNK+l2g3LNql2rQxffoOwML/EuJcZWWoVMSU9wpHeB+G1AKtTk2RCPy5xciqryks Tg== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3m6k3que60-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 02 Dec 2022 01:17:50 +0000
-Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2B21HnUo023368
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 2 Dec 2022 01:17:49 GMT
-Received: from [10.239.133.73] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 1 Dec 2022
- 17:17:47 -0800
-Message-ID: <1bcd3fe8-f68d-ea7f-c0f9-68771e3421d5@quicinc.com>
-Date:   Fri, 2 Dec 2022 09:17:44 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.3.0
-Subject: Re: [PATCH v4] remoteproc: core: do pm relax when in RPROC_OFFLINE
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+        Fri, 2 Dec 2022 01:41:16 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 351B45EFBB;
+        Thu,  1 Dec 2022 22:41:10 -0800 (PST)
+X-UUID: dded30668e414bf39e0e357b588b2a73-20221202
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=vgduVIOHUsmEHqgZONx8uKnlTWsJSWncFzmVVWh4R04=;
+        b=LnHtU8iTqzY3Q7b2poOLpiPvOdsLGF+NwZkCTxJOBNGvv9gL1qpmZuS/z38lPBTGlPE4w+R6k4JoCvsBuLi1jBwVchW3OqfqoAhebZkLTiTLiG1YKC5na2jv+K/HvCIr07MaWOanpe57oKymhXbuecHDizO1mpAutd1CfVuuqM8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.14,REQID:e6f3de1e-b5ff-49de-bbe4-bdb0be9bda0c,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+        N:release,TS:-25
+X-CID-META: VersionHash:dcaaed0,CLOUDID:339f5b6c-41fe-47b6-8eb4-ec192dedaf7d,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+X-UUID: dded30668e414bf39e0e357b588b2a73-20221202
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+        (envelope-from <haozhe.chang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1746887621; Fri, 02 Dec 2022 14:41:04 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.792.15; Fri, 2 Dec 2022 14:41:03 +0800
+Received: from mcddlt001.gcn.mediatek.inc (10.19.240.15) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.792.15 via Frontend Transport; Fri, 2 Dec 2022 14:41:00 +0800
+From:   <haozhe.chang@mediatek.com>
+To:     M Chetan Kumar <m.chetan.kumar@intel.com>,
+        Intel Corporation <linuxwwan@intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
+        Liu Haijun <haijun.liu@mediatek.com>,
+        Ricardo Martinez <ricardo.martinez@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        haozhe chang <haozhe.chang@mediatek.com>,
+        "open list:INTEL WWAN IOSM DRIVER" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR MESSAGING (RPMSG) WWAN CONTROL..." 
         <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_clew@quicinc.com>
-References: <4c3d38c9-a43e-97bd-c7f9-3d21240e9d0e@quicinc.com>
- <20221104155915.GC1873068@p14s>
- <0f2b805c-5b01-138d-3e76-f6ed866be7ef@quicinc.com>
- <CANLsYkwxY_UPw4552XdM=jcGS7NGC1L9OsVYG_D9C4JFHXSE=Q@mail.gmail.com>
- <18baf686-ab5f-3d5b-fb9e-c8edb8e2ca4e@quicinc.com>
- <20221114211830.GB8042@p14s>
- <9a64696f-5cd1-56af-3a1f-19d0b3420f46@quicinc.com>
- <20221118185246.GB262671@p14s> <20221125183723.GB622847@p14s>
- <3c166721-2957-95c4-eb5e-a7ec9ffe00f0@quicinc.com>
- <20221201230055.GA120786@p14s>
-From:   "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
-In-Reply-To: <20221201230055.GA120786@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qVtwf0SpGXNE9XKoAnDMnWYJ9psKjE7a
-X-Proofpoint-ORIG-GUID: qVtwf0SpGXNE9XKoAnDMnWYJ9psKjE7a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-01_14,2022-12-01_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=999 bulkscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 spamscore=0 priorityscore=1501 clxscore=1011 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2212020009
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+CC:     <lambert.wang@mediatek.com>, <xiayu.zhang@mediatek.com>,
+        <hua.yang@mediatek.com>
+Subject: [PATCH v6] wwan: core: Support slicing in port TX flow of WWAN subsystem
+Date:   Fri, 2 Dec 2022 14:40:32 +0800
+Message-ID: <20221202064035.57197-1-haozhe.chang@mediatek.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/2/2022 7:00 AM, Mathieu Poirier wrote:
-> On Mon, Nov 28, 2022 at 10:18:28AM +0800, Aiqun(Maria) Yu wrote:
->> On 11/26/2022 2:37 AM, Mathieu Poirier wrote:
->>> On Fri, Nov 18, 2022 at 11:52:46AM -0700, Mathieu Poirier wrote:
->>>> On Tue, Nov 15, 2022 at 09:30:58AM +0800, Aiqun(Maria) Yu wrote:
->>>>> Hi,
->>>>>
->>>>> On 11/15/2022 5:18 AM, Mathieu Poirier wrote:
->>>>>> On Fri, Nov 11, 2022 at 08:52:11AM +0800, Aiqun(Maria) Yu wrote:
->>>>>>> On 11/11/2022 4:50 AM, Mathieu Poirier wrote:
->>>>>>>> I had a couple of good discussions with our power management expert
->>>>>>>> and even then, the way forward isn't as clear as I would have liked.
->>>>>>>> I am currently travelling and as such don't have the required time to
->>>>>>>> go into greater details, something I will be doing next week.
->>>>>>>>
->>>>>>> Thx Mathieu for the info updated.
->>>>>>> I'll wait for your update next week then.
->>>>>>> let me know any initial questions that you have, perhaps I can also discuss
->>>>>>> that with our power team at the same time.
->>>>>>
->>>>>> The problem is to determine exactly what the WQ_FREEZABLE flag does to the
->>>>>> rproc_recovery_wq workueue.  The documentation [1] indicate that work items on the WQ are
->>>>>> drained before the system is suspended.  What I understand from this is that if
->>>>>> two work items are queued and one is executing at the time a system suspend is
->>>>>> initiated, all three items will be executed before the system is allowed to be
->>>>>> suspended.  _If_ that is the case, there would not be a need to call
->>>>>> pm_stay_awake() and pm_relax() at all.
->>>>>>
->>>>>> On the other hand, the PM resource I spoke to thought that in reality things
->>>>>> don't happen that way.  Taking the same above scenario where 2 work items are
->>>>>> queued and one is executing at the time of the suspend, only the work item that
->>>>>> is executing will be allowed to execute to completion before the system is
->>>>>> suspended.  The remaining two items that were queued will not execute.
->>>>>>
->>>>>> If that is the case then we do need to call pm_stay_awake() and pm_relax(), and
->>>>>> find another strategy to fix this situation.
->>>>>>
->>>>>> Until we have a clear view of how the WQ_FREEZABLE flag works, we won't be able
->>>>>> to move forward with this patchset.  Unfortunately, I currently do not have the
->>>>>> time to look into this.
->>>>> I had a check on the WQ_FREEZABLE flag, here is my understanding:
->>>>>
->>>>> when the interrupt happened, it still need pm_stay_awake to make sure
->>>>> queue_work action can active the work instead of susepend the device.
->>>>>
->>>>> 1. If  WQ_FREEZABLE, pwq->max_active = 0; // maximum number of in-flight
->>>>> work items is set to 0.
->>>>>
->>>>> [1].
->>>>> https://elixir.bootlin.com/linux/v6.1-rc4/source/kernel/workqueue.c#L3748
->>>>>
->>>>> 2. If  WQ_FREEZABLE, will only check pwq->nr_active to see if there is still
->>>>> freeze_workqueues_busy.
->>>>> [2].
->>>>> https://elixir.bootlin.com/linux/v6.1-rc4/source/kernel/workqueue.c#L5270
->>>>>
->>>>> 3. When in queue_work, if max_active is 0, when do queue_work it will not
->>>>> actually active the work.
->>>>> [3].
->>>>> https://elixir.bootlin.com/linux/v6.1-rc4/source/kernel/workqueue.c#L1418
->>>>>
->>>>> for the current issue, the work is already complete and forget to set
->>>>> pm_relax in some condition that make the system cannot be suspended.
->>>>
->>>> What you have above does not describe what happens to work already queue to a
->>>> WQ_FREEZABLE workqueue when the system gets suspended, and that is the most
->>>> important thing.
->>>>
->>>> I ended up doing that investigation myself and found the documentation on
->>>> WQ_FREEZABLE seems to be accurate.  I am still discussing this with the Linaro
->>>> power management team and will get back to you when we reach a conclusion.
->>>>
->>>
->>> I finally have time to get back to this problem...
->>>
->>> As I reported above I went down to the bottom of how WQ_FREEZABLE workqueues
->>> work.  The conclusion of that research is that _any_ work, queued or currently
->>> executing, will finish before the system is suspended.  As such, as soon as
->>> queue_work() returns in rproc_report_crash(), you can be guaranteed what was
->>> just queued will be executed.  Therefore, calling pm_stay_awake() in
->>> rproc_report_crash() and pm_relax() in rproc_crash_handler_work() should not be
->>> needed because the system will not suspend for as long as there is work to be
->>> done by the freezable worqueues.
->>>
->> The problem is when crash interrupt happened in a later point(after
->> freeze_kernel_thread), the queue_work will result with the state of
->> WORK_STRUCT_INACTIVE and insert to inactive_works.
->> And this is the senario that pm_stay_awake wanted to address inside the
->> interrupt handler call.
->>
->> refer to:
->> [1]
->> https://elixir.bootlin.com/linux/v6.1-rc4/source/kernel/workqueue.c#L1512
->>
->> the current suspend simple flow can be:
->>
->>          +-+-------------------+
->>          |   freeze_processes  |
->>          +----------+----------+
->>                     |
->>                     |
->>         +-----------|-----------+
->>         | freeze_kernel_thread  |
->>         +-----------+-----------+
->>                     |
->>          +-+--------|----------+
->>          |   device_suspend    |
->>          +----------|----------+
->>                     |
->>                     |
->>         +-----------+-----------+
->>         | pm_wakeup_pending     |
->>         +-----------|-----------+
->>                     |
->>                     |
->>   +-----------------+-------------------+
->>   | suspend_ops->enter (machine suspend)|
->>   +-------------------------------------+
->>
->>
->> refer to:
->> suspend_prepare -> suspend_freeze_processes -->freeze_processes and
->> freeze_kernel_threads
->>
->>
->>
->> refer to:
->>
->> suspend_devices_and_enter -->
->> dpm_suspend_start -> dpm_suspend --> device_suspend --> device suspend
->> callbacks
->> suspend_enter -->dpm_suspend_late-->device_suspend_late
->>
->> [2]
->> https://elixir.bootlin.com/linux/v6.1-rc4/source/kernel/power/suspend.c#L582
->>
->>> I don't have details on what Rishabh - the author of the patch that added the
->>> calls - was facing but based on the my understanding of freezable workqueues, it
->>> seem to have been the wrong solution.
->> In my opinion, the freezable workqueues are in the right solution. It only
->> protect for the system freeze state.
->> While if we want the crash interrupt to be handled to prevent current
->> suspend process, it still need to deal with other suspend state to machin
->> suspend senarios.
->> Typical example can be before disable the device interrupt in device suspend
->> callbacks, it will flush the necessary workqueues.
->>
->> while in our case, since the crash handler will invoke a subsystem restart
->> process which reply on user thread uevent firmware loaders, so it need to
->> abort the suspend process with pm_stay_awake called.
->>
->> So in a word, pm_stay_awake is necessary per my understanding.
->>
-> 
-> I see your point - thanks for being perseverant.  What is important to
-> understand is that pm_stay_awake() can stop and reverse the suspend process that
-> is currently underway.
-Thx for the understanding as well.
-Perseverant in most of time can be a win win result.
-> 
-> With the code you had for V4 in mind, I suggest to modify
-> rproc_crash_handler_work() to be:
-> 
-> ...
-> ...
-> ...
-> 
-> if (rproc->state == RPROC_CRASHED) {
->          /* handle only the first crash detected */
->          mutex_unlock(&rproc->lock);
->          return;
-> }
-> 
-> if (rproc->state == RPROC_OFFLINE) {
->          /* The remote processor is offline, no need to recover anything */
->          mutex_unlock(&rproc->lock);
->          goto out;
-> }
-> 
-> ...
-> ...
-> ...
-> 
-> out:
->          pm_relax();
-> > Do you think that will work for you?
-> 
-This is good.
+From: haozhe chang <haozhe.chang@mediatek.com>
 
-Also, alloc_ordered_workqueue instead of alloc_workqueue is suggested in 
-the same patch.
-Because with alloc_ordered_workqueue, only 1 work will be actively 
-executing. It is to avoid unnecessary contentions which have multi crash 
-work executing at the same time.
+wwan_port_fops_write inputs the SKB parameter to the TX callback of
+the WWAN device driver. However, the WWAN device (e.g., t7xx) may
+have an MTU less than the size of SKB, causing the TX buffer to be
+sliced and copied once more in the WWAN device driver.
 
-I will upload new patchset for discussion.
-> 
->>>
->>> Until we have a clear vision on what Rishabh was trying to fix, nothing in that
->>> area will be changing.  I suggest you touch base with him and sort it out.  If
->>> that is not possible then calls to pm_stay_awake() and pm_relax() should be
->>> removed.
->>>
->>>>>
->>>>>>
->>>>>> If you want to take on this investigation, keep in mind that any conclusion will
->>>>>> need to be backed by a proof.  That can be debug messages on a console output or
->>>>>> a code reference in the workqueue core.
->>>>>>
->>>>>> [1]. https://elixir.bootlin.com/linux/v6.1-rc4/source/Documentation/core-api/workqueue.rst#L184
->>>>>>
->>>>>>
->>>>>>>> On Sun, 6 Nov 2022 at 18:14, Aiqun(Maria) Yu <quic_aiquny@quicinc.com> wrote:
->>>>>>>>>
->>>>>>>>> Hi,
->>>>>>>>> On 11/4/2022 11:59 PM, Mathieu Poirier wrote:
->>>>>>>>>> On Thu, Nov 03, 2022 at 10:03:49AM +0800, Aiqun(Maria) Yu wrote:
->>>>>>>>>>> On 11/3/2022 2:03 AM, Mathieu Poirier wrote:
->>>>>>>>>>>> On Wed, Nov 02, 2022 at 06:53:49PM +0800, Aiqun(Maria) Yu wrote:
->>>>>>>>>>>>> Hi,
->>>>>>>>>>>>>
->>>>>>>>>>>>> Let me think about this carefully.
->>>>>>>>>>>>>
->>>>>>>>>>>>> When in RPROC_RECOVERY_FAIL case we want to re-do the recovery process again
->>>>>>>>>>>>> or just leave the pm_relax?
->>>>>>>>>>>>
->>>>>>>>>>>> Neither.
->>>>>>>>>>>>
->>>>>>>>>>>> When a recovery fail we don't want to call pm_relax().  The code in
->>>>>>>>>>>> rproc_crash_handler_work() becomes:
->>>>>>>>>>>>
->>>>>>>>>>>>         if (rproc->state == RPROC_OFFLINE) {
->>>>>>>>>>>>                       /* We have raced with rproc_shutdown() */
->>>>>>>>>>>>                       pm_relax()
->>>>>>>>>>>>                 mutex_unlock(&rproc->lock);
->>>>>>>>>>>>                 return;
->>>>>>>>>>>>               }
->>>>>>>>>>>>
->>>>>>>>>>>>         if (rproc->state == RPROC_CRASHED ||
->>>>>>>>>>>>                   rproc->state == RPROC_RECOVERY_FAILED) {
->>>>>>>>>>>>                 /* handle only the first crash detected */
->>>>>>>>>>>>                 mutex_unlock(&rproc->lock);
->>>>>>>>>>>>                 return;
->>>>>>>>>>>>         }
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> RPROC_RECOVERY_FAILED gets set in rproc_boot_recovery() if request_firmware() or
->>>>>>>>>>>> rproc_start() fail.  Function rproc_trigger_recovery() needs to allow for the
->>>>>>>>>>>> recovery the the remote processor is in RPROC_RECOVERY_FAILED state.  As such
->>>>>>>>>>>> the condition becomes:
->>>>>>>>>>>>
->>>>>>>>>>>>               /* State could have changed before we got the mutex */
->>>>>>>>>>>>         if (rproc->state != RPROC_CRASHED &&
->>>>>>>>>>>>                   rproc->state != RPROC_RECOVERY_FAILED)
->>>>>>>>>>>>                 goto unlock_mutex;
->>>>>>>>>>>>
->>>>>>>>>>>> Start with that and we can look at corner cases (if some exists) with a fresh
->>>>>>>>>>>> patchset.  Note that I have not addressed the attach/detach() scenario in the
->>>>>>>>>>>> above.
->>>>>>>>>>>
->>>>>>>>>>> If we didn't deal with the recovery failed case with correct pm_relax call,
->>>>>>>>>>> it may left the device in a state that cannot enter to suspend state.
->>>>>>>>>>
->>>>>>>>>> That is what I am looking for.  We don't want to give the impression that
->>>>>>>>>> everything is fine by allowing the device to suspend.  If the remote processor
->>>>>>>>>> can't be recovered than it needs to be dealth with.
->>>>>>>>> For the normal recovery failed case, it still need to do pm_relax to not
->>>>>>>>> prevent the device goes to suspend. It is what in normal recovery failed
->>>>>>>>> case we do in rproc_crash_handler_work as well.
->>>>>>>>> rproc_crash_handler_work will not check the result of the
->>>>>>>>> rproc_trigger_recovery return value, and will always do pm_relax.
->>>>>>>>>
->>>>>>>>> For current conconrency cornor case as well, it is better to consistant
->>>>>>>>> with the current design of recovery fail senarios in normal cases.
->>>>>>>>>
->>>>>>>>> I personally agree that we shouldn't do nothing when it is a
->>>>>>>>> RPROC_RECOVERY_FAILED senario when it is in rproc_crash_handler_work
->>>>>>>>> check, because it maybe crash happened when it is trying to do the recovery.
->>>>>>>>> So I suggested to do a continue try of trigger recovery again instead of
->>>>>>>>> doing nothing and bail out if it is a RPROC_RECOVERY_FAILED state.
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>>> Because first PROC_RECOVERY_FAIL case cannot ensure it have pm_relax called
->>>>>>>>>>> before the second crash handler call pm_stay_awake or not.
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> I've been thinking about that part.  I don't think adding a wake_count to
->>>>>>>>>> control calls to pm_stay_awake()/pm_relax() is the best way to go.  There is a
->>>>>>>>>> similar count happening in the PM runtime subsystem and that is what we should
->>>>>>>>>> be using.  I have asked a power management expert at Linaro for guidance with
->>>>>>>>>> this matter.  I should be able to get back to you with a way forward by the end
->>>>>>>>>> of next week.
->>>>>>>>>>
->>>>>>>>> Thx for the specific date provided as well. I will wait until your reply
->>>>>>>>> for next patchset then.
->>>>>>>>>
->>>>>>>>>>> So, What about the atomic count along with pm_relax and pm_stay_awake ?
->>>>>>>>>>>
->>>>>>>>>>> struct rproc{
->>>>>>>>>>> ...
->>>>>>>>>>> atomic_t wake_count;
->>>>>>>>>>> ...
->>>>>>>>>>> }
->>>>>>>>>>>
->>>>>>>>>>> rproc_pm_stay_awake()
->>>>>>>>>>> {
->>>>>>>>>>>          atomic_inc(&wake_count);
->>>>>>>>>>>          pm_stay_awake();
->>>>>>>>>>> }
->>>>>>>>>>>
->>>>>>>>>>> rproc_pm_relax()
->>>>>>>>>>> {
->>>>>>>>>>>          if (atomic_dec_return(&wake_count) == 0)
->>>>>>>>>>>                  pm_stay_awake();
->>>>>>>>>>> }
->>>>>>>>>>>
->>>>>>>>>>> can refer code like:
->>>>>>>>>>>
->>>>>>>>>>> rproc_report_crash()
->>>>>>>>>>> {
->>>>>>>>>>>          ...
->>>>>>>>>>>          rproc_pm_stay_awake();
->>>>>>>>>>>          queue_work();
->>>>>>>>>>>          ...
->>>>>>>>>>> }
->>>>>>>>>>>
->>>>>>>>>>> rproc_crash_handler_work()
->>>>>>>>>>> {
->>>>>>>>>>>          ...
->>>>>>>>>>>          if (rproc->state == RPROC_OFFLINE || rproc->state == RPROC_CRASHED) {
->>>>>>>>>>>                        /* We have raced with rproc_shutdown() */
->>>>>>>>>>>                        rproc_pm_relax();
->>>>>>>>>>>                  mutex_unlock(&rproc->lock);
->>>>>>>>>>>                  return;
->>>>>>>>>>>                }
->>>>>>>>>>>          ...
->>>>>>>>>>> }
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Thanks,
->>>>>>>>>>>> Mathieu
->>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>> recovery fail case 1:
->>>>>>>>>>>>> |                                      |firstcrash interrupt issued
->>>>>>>>>>>>> | second crashed interrupt issued      | rproc_report_crash()
->>>>>>>>>>>>> | rproc_report_crash()                 |          pm_stay_awake()
->>>>>>>>>>>>> |          pm_stay_awake()             |          queue_work()
->>>>>>>>>>>>> |          queue_work()                |rproc_crash_handler_work()
->>>>>>>>>>>>> |                                      |mutex_lock(&rproc->lock);
->>>>>>>>>>>>> |                                      |rproc_stop()
->>>>>>>>>>>>> |rproc_crash_handler_work()            |rproc->state = RPROC_OFFLINE;
->>>>>>>>>>>>> |                                      |RPROC_RECOVERY_FAIL //new
->>>>>>>>>>>>> |                                      |mutex_unlock(&rproc->lock);
->>>>>>>>>>>>> |mutex_lock(&rproc->lock);             |pm_relax()
->>>>>>>>>>>>> |if (rproc->state == RPROC_OFFLINE)    |
->>>>>>>>>>>>> |return // shouldn't do pm_relax if RPROC_RECOVERY_FAIL?  |
->>>>>>>>>>>>> |mutex_unlock(&rproc->lock);           |
->>>>>>>>>>>>> |                                      |
->>>>>>>>>>>>> |                                      |
->>>>>>>>>>>>> |                                      |
->>>>>>>>>>>>>
->>>>>>>>>>>>> recovery fail case 2:
->>>>>>>>>>>>> |                                      |firstcrash interrupt issued
->>>>>>>>>>>>> |                                      | rproc_report_crash()
->>>>>>>>>>>>> |                                      |          pm_stay_awake()
->>>>>>>>>>>>> |                                      |          queue_work()
->>>>>>>>>>>>> |                                      |rproc_crash_handler_work()
->>>>>>>>>>>>> |                                      |mutex_lock(&rproc->lock);
->>>>>>>>>>>>> |                                      |rproc_stop()
->>>>>>>>>>>>> |                                      |rproc->state = RPROC_OFFLINE;
->>>>>>>>>>>>> |                                      |RPROC_RECOVERY_FAIL //new
->>>>>>>>>>>>> |                                      |mutex_unlock(&rproc->lock);
->>>>>>>>>>>>> |                                      |pm_relax()
->>>>>>>>>>>>> |
->>>>>>>>>>>>> | second crashed interrupt issued      |
->>>>>>>>>>>>> | rproc_report_crash()                 |
->>>>>>>>>>>>> |          pm_stay_awake()             |
->>>>>>>>>>>>> |          queue_work()                |
->>>>>>>>>>>>> |pm_stay_awake()
->>>>>>>>>>>>> |mutex_lock(&rproc->lock);
->>>>>>>>>>>>> |if (rproc->state == RPROC_OFFLINE)    |
->>>>>>>>>>>>> |return // still need do pm_relax if RPROC_RECOVERY_FAIL?  |
->>>>>>>>>>>>> |mutex_unlock(&rproc->lock);           |
->>>>>>>>>>>>> |                                      |
->>>>>>>>>>>>> |                                      |
->>>>>>>>>>>>> |                                      |
->>>>>>>>>>>>>
->>>>>>>>>>>>> Maybe I can have:
->>>>>>>>>>>>> 1. the pm_stay_awake and pm_relax with count based and call with paired for
->>>>>>>>>>>>> fix current concurency issue.
->>>>>>>>>>>>> 2. RPROC_RECOVERY_FAIL can be another patch for continue try to do recovery
->>>>>>>>>>>>> work.
->>>>>>>>>>>>> 3. handle RPROC_DETACHED case.
->>>>>>>>>>>>>
->>>>>>>>>>>>> On 11/2/2022 4:11 AM, Mathieu Poirier wrote:
->>>>>>>>>>>>>> On Fri, 28 Oct 2022 at 09:31, Arnaud POULIQUEN
->>>>>>>>>>>>>> <arnaud.pouliquen@foss.st.com> wrote:
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Hi,
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> On 10/24/22 05:17, Aiqun(Maria) Yu wrote:
->>>>>>>>>>>>>>>> On 10/22/2022 3:34 AM, Mathieu Poirier wrote:
->>>>>>>>>>>>>>>>> On Wed, 19 Oct 2022 at 23:52, Aiqun(Maria) Yu <quic_aiquny@quicinc.com> wrote:
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> On 10/14/2022 2:03 AM, Mathieu Poirier wrote:
->>>>>>>>>>>>>>>>>>> On Thu, Oct 13, 2022 at 11:34:42AM -0600, Mathieu Poirier wrote:
->>>>>>>>>>>>>>>>>>>> On Thu, Oct 13, 2022 at 09:40:09AM +0800, Aiqun(Maria) Yu wrote:
->>>>>>>>>>>>>>>>>>>>> Hi Mathieu,
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> On 10/13/2022 4:43 AM, Mathieu Poirier wrote:
->>>>>>>>>>>>>>>>>>>>>> Please add what has changed from one version to another, either in a cover
->>>>>>>>>>>>>>>>>>>>>> letter or after the "Signed-off-by".  There are many examples on how to
->>>>>>>>>>>>>>>>>>>>>> do that
->>>>>>>>>>>>>>>>>>>>>> on the mailing list.
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> Thx for the information, will take a note and benefit for next time.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> On Fri, Sep 16, 2022 at 03:12:31PM +0800, Maria Yu wrote:
->>>>>>>>>>>>>>>>>>>>>>> RPROC_OFFLINE state indicate there is no recovery process
->>>>>>>>>>>>>>>>>>>>>>> is in progress and no chance to do the pm_relax.
->>>>>>>>>>>>>>>>>>>>>>> Because when recovering from crash, rproc->lock is held and
->>>>>>>>>>>>>>>>>>>>>>> state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
->>>>>>>>>>>>>>>>>>>>>>> and then unlock rproc->lock.
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> You are correct - because the lock is held rproc->state should be set to
->>>>>>>>>>>>>>>>>>>>>> RPROC_RUNNING
->>>>>>>>>>>>>>>>>>>>>> when rproc_trigger_recovery() returns.  If that is not the case then
->>>>>>>>>>>>>>>>>>>>>> something
->>>>>>>>>>>>>>>>>>>>>> went wrong.
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> Function rproc_stop() sets rproc->state to RPROC_OFFLINE just before
->>>>>>>>>>>>>>>>>>>>>> returning,
->>>>>>>>>>>>>>>>>>>>>> so we know the remote processor was stopped.  Therefore if rproc->state
->>>>>>>>>>>>>>>>>>>>>> is set
->>>>>>>>>>>>>>>>>>>>>> to RPROC_OFFLINE something went wrong in either request_firmware() or
->>>>>>>>>>>>>>>>>>>>>> rproc_start().  Either way the remote processor is offline and the system
->>>>>>>>>>>>>>>>>>>>>> probably
->>>>>>>>>>>>>>>>>>>>>> in an unknown/unstable.  As such I don't see how calling pm_relax() can help
->>>>>>>>>>>>>>>>>>>>>> things along.
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> PROC_OFFLINE is possible that rproc_shutdown is triggered and successfully
->>>>>>>>>>>>>>>>>>>>> finished.
->>>>>>>>>>>>>>>>>>>>> Even if it is multi crash rproc_crash_handler_work contention issue, and
->>>>>>>>>>>>>>>>>>>>> last rproc_trigger_recovery bailed out with only
->>>>>>>>>>>>>>>>>>>>> rproc->state==RPROC_OFFLINE, it is still worth to do pm_relax in pair.
->>>>>>>>>>>>>>>>>>>>> Since the subsystem may still can be recovered with customer's next trigger
->>>>>>>>>>>>>>>>>>>>> of rproc_start, and we can make each error out path clean with pm resources.
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> I suggest spending time understanding what leads to the failure when
->>>>>>>>>>>>>>>>>>>>>> recovering
->>>>>>>>>>>>>>>>>>>>>> from a crash and address that problem(s).
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> In current case, the customer's information is that the issue happened when
->>>>>>>>>>>>>>>>>>>>> rproc_shutdown is triggered at similar time. So not an issue from error out
->>>>>>>>>>>>>>>>>>>>> of rproc_trigger_recovery.
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> That is a very important element to consider and should have been mentioned
->>>>>>>>>>>>>>>>>>>> from
->>>>>>>>>>>>>>>>>>>> the beginning.  What I see happening is the following:
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> rproc_report_crash()
->>>>>>>>>>>>>>>>>>>>                  pm_stay_awake()
->>>>>>>>>>>>>>>>>>>>                  queue_work() // current thread is suspended
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> rproc_shutdown()
->>>>>>>>>>>>>>>>>>>>                  rproc_stop()
->>>>>>>>>>>>>>>>>>>>                          rproc->state = RPROC_OFFLINE;
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> rproc_crash_handler_work()
->>>>>>>>>>>>>>>>>>>>                  if (rproc->state == RPROC_OFFLINE)
->>>>>>>>>>>>>>>>>>>>                          return // pm_relax() is not called
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>> The right way to fix this is to add a pm_relax() in rproc_shutdown() and
->>>>>>>>>>>>>>>>>>>> rproc_detach(), along with a very descriptive comment as to why it is needed.
->>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>> Thinking about this further there are more ramifications to consider.  Please
->>>>>>>>>>>>>>>>>>> confirm the above scenario is what you are facing.  I will advise on how to
->>>>>>>>>>>>>>>>>>> move
->>>>>>>>>>>>>>>>>>> forward if that is the case.
->>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> Not sure if the situation is clear or not. So resend the email again.
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> The above senario is what customer is facing. crash hanppened while at
->>>>>>>>>>>>>>>>>> the same time shutdown is triggered.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> Unfortunately this is not enough details to address a problem as
->>>>>>>>>>>>>>>>> complex as this one.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> And the device cannto goes to suspend state after that.
->>>>>>>>>>>>>>>>>> the subsystem can still be start normally after this.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> If the code flow I pasted above reflects the problem at hand, the
->>>>>>>>>>>>>>>>> current patch will not be sufficient to address the issue.  If Arnaud
->>>>>>>>>>>>>>>>> confirms my suspicions we will have to think about a better solution.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> Hi Mathiew,
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> Could you pls have more details of any side effects other then power issue of
->>>>>>>>>>>>>>>> the current senario?
->>>>>>>>>>>>>>>> Why the current patch is not sufficient pls?
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> Have the current senario in details with rproc->lock information in details:
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> | subsystem crashed interrupt issued      | user trigger shutdown
->>>>>>>>>>>>>>>> | rproc_report_crash()                    |
->>>>>>>>>>>>>>>> |          pm_stay_awake()                |
->>>>>>>>>>>>>>>> |          queue_work()                   |
->>>>>>>>>>>>>>>> |                                         |rproc_shutdown
->>>>>>>>>>>>>>>> |                                         |mutex_lock(&rproc->lock);
->>>>>>>>>>>>>>>> |                                         |rproc_stop()
->>>>>>>>>>>>>>>> |rproc_crash_handler_work()               |rproc->state = RPROC_OFFLINE;
->>>>>>>>>>>>>>>> |                                         |mutex_unlock(&rproc->lock);
->>>>>>>>>>>>>>>> |mutex_lock(&rproc->lock);                |
->>>>>>>>>>>>>>>> |if (rproc->state == RPROC_OFFLINE)       |
->>>>>>>>>>>>>>>> |return // pm_relax() is not called       |rproc_boot
->>>>>>>>>>>>>>>> |mutex_unlock(&rproc->lock);              |
->>>>>>>>>>>>>>>> |                                         |mutex_lock(&rproc->lock);
->>>>>>>>>>>>>>>> |                                         |rproc_start()
->>>>>>>>>>>>>>>> |                                         |mutex_unlock(&rproc->lock);
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Agree with Mathieu, this is not so simple.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Thanks for looking into this.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Here is my view  hoping I haven't missed a point in your discussion or
->>>>>>>>>>>>>>> an other corner cases.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> I tried to analyze the issues (in what follows, the term "condition" means
->>>>>>>>>>>>>>> the "if" condition in which Aiqun proposes to add the fix) :
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> I can see 4 use cases with race condition
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> 1) crash report while already one is treated (rproc_boot_recovery called)
->>>>>>>>>>>>>>>             => not a real use case as if the remote processor is crashed we
->>>>>>>>>>>>>>>                      should not have a second crash report
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> That part is of great concern to me.  *Theoretically* we should not
->>>>>>>>>>>>>> get a new crash report while one has already been dispatched but the
->>>>>>>>>>>>>> current code accounts for this scenario and as such the possibility
->>>>>>>>>>>>>> can't be dismissed.  Therefore we need to expect rproc_report_crash()
->>>>>>>>>>>>>> to be called multiple times before a single instance of
->>>>>>>>>>>>>> rproc_boot_recovery() is scheduled.
->>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>>> 2) rproc_stop executed between the queuing of the crash work and the call of
->>>>>>>>>>>>>>>          rproc_crash_handler_work
->>>>>>>>>>>>>>>           => rproc->state = RPROC_OFFLINE
->>>>>>>>>>>>>>>           => we enter in the "condition" and the pm_relax has to be called
->>>>>>>>>>>>>>>           => This commit fix should solve this use case
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> 3) rproc_detach executed between the queue of the crash work and the call of
->>>>>>>>>>>>>>>          rproc_crash_handler_work
->>>>>>>>>>>>>>>           => rproc->state = RPROC_DETACHED;
->>>>>>>>>>>>>>>           => we don't go in "the condition" and issue because the recovery reattach
->>>>>>>>>>>>>>>              to the remote processor
->>>>>>>>>>>>>>>           => but pm_relax is called
->>>>>>>>>>>>>>>           => probably need an extra fix to avoid to re-attach
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> 4) crash report while already one is treated (rproc_attach_recovery called)
->>>>>>>>>>>>>>>           this one corresponds to an auto reboot of the remote processor, with a
->>>>>>>>>>>>>>>           new crash
->>>>>>>>>>>>>>>           => rproc->state = RPROC_CRASHED or rproc->state = RPROC_DETACHED;
->>>>>>>>>>>>>>>           4)a) rproc->state = RPROC_CRASHED if rproc->recovery_disabled = true
->>>>>>>>>>>>>>>                => should call pm_relax if rproc->recovery_disabled = true
->>>>>>>>>>>>>>>                => commit does not work for this use case
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>           4)b) rproc->state = RPROC_DETACHED if recovery fails
->>>>>>>>>>>>>>>               => error case with an unstable state
->>>>>>>>>>>>>>>               => how to differentiate it from the use case 3) ?
->>>>>>>>>>>>>>>               => introduce a RPROC_RECOVERY_FAIL state?
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> The case where a recovery fails needs to be considered and is the
->>>>>>>>>>>>>> reason the original patch doesn't work.  Right now in
->>>>>>>>>>>>>> rproc_crash_handler_work(), it is not possible to differentiate
->>>>>>>>>>>>>> between a legitimate shutdown request (scenario #2 above) and a
->>>>>>>>>>>>>> recovery that went wrong.  I think introducing RPROC_RECOVERY_FAIL
->>>>>>>>>>>>>> would greatly simplify things.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> My initial evaluation had not considered the attach/detach scenarios -
->>>>>>>>>>>>>> thanks for adding that in the mix.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Aiqun, please send a new patchset that adds a new remote processor
->>>>>>>>>>>>>> state, i.e RPROC_RECOVERY_FAIL.  There should also be another patch in
->>>>>>>>>>>>>> that set that takes attach/detach scenarios into account.  The code
->>>>>>>>>>>>>> between the v6.0 and v6.1 cycle has changed a lot in that area so make
->>>>>>>>>>>>>> sure to properly rebase.
->>>>>>>>>>>>>>
->>>>>>>>>>>>> I will try.
->>>>>>>>>>>>>
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Then pm_stay_awake is called when the crash work is queued.
->>>>>>>>>>>>>>> It seems to me coherent to call the pm_relax in the work handler.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Here is a quick and dirty patch (not tested) that should take into account the
->>>>>>>>>>>>>>> main use cases ( except 1) and 4)b) )
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> @@ -2009,8 +2009,18 @@ static void rproc_crash_handler_work(struct work_struct *work)
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>                mutex_lock(&rproc->lock);
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> -       if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
->>>>>>>>>>>>>>> +       if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE ||
->>>>>>>>>>>>>>> +           rproc->state == RPROC_DETACHED) {
->>>>>>>>>>>>>>>                        /* handle only the first crash detected */
->>>>>>>>>>>>>>> +
->>>>>>>>>>>>>>> +               /*
->>>>>>>>>>>>>>> +                * call pm-relax in following use cases:
->>>>>>>>>>>>>>> +                * - the remote processor has been stopped by the user
->>>>>>>>>>>>>>> +                * - the remote processor is detached
->>>>>>>>>>>>>>> +                + - the remote proc has an autonomous reset but recovery_disabled is true.
->>>>>>>>>>>>>>> +                */
->>>>>>>>>>>>>>> +               if(rproc->state != RPROC_CRASHED || rproc->recovery_disabled)
->>>>>>>>>>>>>>> +                       pm_relax(rproc->dev.parent);
->>>>>>>>>>>>>>>                        mutex_unlock(&rproc->lock);
->>>>>>>>>>>>>>>                        return;
->>>>>>>>>>>>>>>                }
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Regards,
->>>>>>>>>>>>>>> Arnaud
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>> Thanks,
->>>>>>>>>>>>>>>>>>>>>> Mathieu
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>> When the state is in RPROC_OFFLINE it means separate request
->>>>>>>>>>>>>>>>>>>>>>> of rproc_stop was done and no need to hold the wakeup source
->>>>>>>>>>>>>>>>>>>>>>> in crash handler to recover any more.
->>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
->>>>>>>>>>>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>>>>>>>>>>            drivers/remoteproc/remoteproc_core.c | 11 +++++++++++
->>>>>>>>>>>>>>>>>>>>>>>            1 file changed, 11 insertions(+)
->>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c
->>>>>>>>>>>>>>>>>>>>>>> b/drivers/remoteproc/remoteproc_core.c
->>>>>>>>>>>>>>>>>>>>>>> index e5279ed9a8d7..6bc7b8b7d01e 100644
->>>>>>>>>>>>>>>>>>>>>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>>>>>>>>>>>>>>>>>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>>>>>>>>>>>>>>>>>>>>> @@ -1956,6 +1956,17 @@ static void rproc_crash_handler_work(struct
->>>>>>>>>>>>>>>>>>>>>>> work_struct *work)
->>>>>>>>>>>>>>>>>>>>>>>                   if (rproc->state == RPROC_CRASHED || rproc->state ==
->>>>>>>>>>>>>>>>>>>>>>> RPROC_OFFLINE) {
->>>>>>>>>>>>>>>>>>>>>>>                           /* handle only the first crash detected */
->>>>>>>>>>>>>>>>>>>>>>>                           mutex_unlock(&rproc->lock);
->>>>>>>>>>>>>>>>>>>>>>> +         /*
->>>>>>>>>>>>>>>>>>>>>>> +          * RPROC_OFFLINE state indicate there is no recovery process
->>>>>>>>>>>>>>>>>>>>>>> +          * is in progress and no chance to have pm_relax in place.
->>>>>>>>>>>>>>>>>>>>>>> +          * Because when recovering from crash, rproc->lock is held and
->>>>>>>>>>>>>>>>>>>>>>> +          * state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
->>>>>>>>>>>>>>>>>>>>>>> +          * and then unlock rproc->lock.
->>>>>>>>>>>>>>>>>>>>>>> +          * RPROC_OFFLINE is only an intermediate state in recovery
->>>>>>>>>>>>>>>>>>>>>>> +          * process.
->>>>>>>>>>>>>>>>>>>>>>> +          */
->>>>>>>>>>>>>>>>>>>>>>> +         if (rproc->state == RPROC_OFFLINE)
->>>>>>>>>>>>>>>>>>>>>>> +                 pm_relax(rproc->dev.parent);
->>>>>>>>>>>>>>>>>>>>>>>                           return;
->>>>>>>>>>>>>>>>>>>>>>>                   }
->>>>>>>>>>>>>>>>>>>>>>> --
->>>>>>>>>>>>>>>>>>>>>>> 2.7.4
->>>>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>>>> --
->>>>>>>>>>>>>>>>>>>>> Thx and BRs,
->>>>>>>>>>>>>>>>>>>>> Aiqun(Maria) Yu
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> --
->>>>>>>>>>>>>>>>>> Thx and BRs,
->>>>>>>>>>>>>>>>>> Aiqun(Maria) Yu
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>>
->>>>>>>>>>>>> --
->>>>>>>>>>>>> Thx and BRs,
->>>>>>>>>>>>> Aiqun(Maria) Yu
->>>>>>>>>>>
->>>>>>>>>>>
->>>>>>>>>>> --
->>>>>>>>>>> Thx and BRs,
->>>>>>>>>>> Aiqun(Maria) Yu
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> --
->>>>>>>>> Thx and BRs,
->>>>>>>>> Aiqun(Maria) Yu
->>>>>>>
->>>>>>>
->>>>>>> -- 
->>>>>>> Thx and BRs,
->>>>>>> Aiqun(Maria) Yu
->>>>>
->>>>>
->>>>> -- 
->>>>> Thx and BRs,
->>>>> Aiqun(Maria) Yu
->>
->>
->> -- 
->> Thx and BRs,
->> Aiqun(Maria) Yu
+This patch implements the slicing in the WWAN subsystem and gives
+the WWAN devices driver the option to slice(by frag_len) or not. By
+doing so, the additional memory copy is reduced.
 
+Meanwhile, this patch gives WWAN devices driver the option to reserve
+headroom in fragments for the device-specific metadata.
 
+Signed-off-by: haozhe chang <haozhe.chang@mediatek.com>
+Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
+
+---
+Changes in v2
+  -send fragments to device driver by skb frag_list.
+
+Changes in v3
+  -move frag_len and headroom_len setting to wwan_create_port.
+
+Changes in v4
+  -change unreadable parameters to macro definition.
+
+Changes in v5
+  -optimize comments for WWAN_NO_HEADROOM, WWAN_NO_FRAGMENT.
+
+Changes in v6
+  -add reviewer to patch commit.
+---
+ drivers/net/wwan/iosm/iosm_ipc_port.c  |  3 +-
+ drivers/net/wwan/mhi_wwan_ctrl.c       |  3 +-
+ drivers/net/wwan/rpmsg_wwan_ctrl.c     |  3 +-
+ drivers/net/wwan/t7xx/t7xx_port_wwan.c | 34 +++++++--------
+ drivers/net/wwan/wwan_core.c           | 59 ++++++++++++++++++++------
+ drivers/net/wwan/wwan_hwsim.c          |  1 +
+ drivers/usb/class/cdc-wdm.c            |  3 +-
+ include/linux/wwan.h                   | 16 +++++++
+ 8 files changed, 87 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_port.c b/drivers/net/wwan/iosm/iosm_ipc_port.c
+index b6d81c627277..7798348f61d0 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_port.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_port.c
+@@ -63,7 +63,8 @@ struct iosm_cdev *ipc_port_init(struct iosm_imem *ipc_imem,
+ 	ipc_port->ipc_imem = ipc_imem;
+ 
+ 	ipc_port->iosm_port = wwan_create_port(ipc_port->dev, port_type,
+-					       &ipc_wwan_ctrl_ops, ipc_port);
++					       &ipc_wwan_ctrl_ops, WWAN_NO_FRAGMENT,
++					       WWAN_NO_HEADROOM, ipc_port);
+ 
+ 	return ipc_port;
+ }
+diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
+index f7ca52353f40..c397aa53db5d 100644
+--- a/drivers/net/wwan/mhi_wwan_ctrl.c
++++ b/drivers/net/wwan/mhi_wwan_ctrl.c
+@@ -237,7 +237,8 @@ static int mhi_wwan_ctrl_probe(struct mhi_device *mhi_dev,
+ 
+ 	/* Register as a wwan port, id->driver_data contains wwan port type */
+ 	port = wwan_create_port(&cntrl->mhi_dev->dev, id->driver_data,
+-				&wwan_pops, mhiwwan);
++				&wwan_pops, WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM,
++				mhiwwan);
+ 	if (IS_ERR(port)) {
+ 		kfree(mhiwwan);
+ 		return PTR_ERR(port);
+diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+index 31c24420ab2e..fc6c228b7e1c 100644
+--- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
++++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+@@ -129,7 +129,8 @@ static int rpmsg_wwan_ctrl_probe(struct rpmsg_device *rpdev)
+ 
+ 	/* Register as a wwan port, id.driver_data contains wwan port type */
+ 	port = wwan_create_port(parent, rpdev->id.driver_data,
+-				&rpmsg_wwan_pops, rpwwan);
++				&rpmsg_wwan_pops, WWAN_NO_FRAGMENT,
++				WWAN_NO_HEADROOM, rpwwan);
+ 	if (IS_ERR(port))
+ 		return PTR_ERR(port);
+ 
+diff --git a/drivers/net/wwan/t7xx/t7xx_port_wwan.c b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+index 33931bfd78fd..b75bb272f861 100644
+--- a/drivers/net/wwan/t7xx/t7xx_port_wwan.c
++++ b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+@@ -54,13 +54,13 @@ static void t7xx_port_ctrl_stop(struct wwan_port *port)
+ static int t7xx_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
+ {
+ 	struct t7xx_port *port_private = wwan_port_get_drvdata(port);
+-	size_t len, offset, chunk_len = 0, txq_mtu = CLDMA_MTU;
+ 	const struct t7xx_port_conf *port_conf;
++	struct sk_buff *cur = skb, *cloned;
+ 	struct t7xx_fsm_ctl *ctl;
+ 	enum md_state md_state;
++	int cnt = 0, ret;
+ 
+-	len = skb->len;
+-	if (!len || !port_private->chan_enable)
++	if (!port_private->chan_enable)
+ 		return -EINVAL;
+ 
+ 	port_conf = port_private->port_conf;
+@@ -72,23 +72,21 @@ static int t7xx_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
+ 		return -ENODEV;
+ 	}
+ 
+-	for (offset = 0; offset < len; offset += chunk_len) {
+-		struct sk_buff *skb_ccci;
+-		int ret;
+-
+-		chunk_len = min(len - offset, txq_mtu - sizeof(struct ccci_header));
+-		skb_ccci = t7xx_port_alloc_skb(chunk_len);
+-		if (!skb_ccci)
+-			return -ENOMEM;
+-
+-		skb_put_data(skb_ccci, skb->data + offset, chunk_len);
+-		ret = t7xx_port_send_skb(port_private, skb_ccci, 0, 0);
++	while (cur) {
++		cloned = skb_clone(cur, GFP_KERNEL);
++		cloned->len = skb_headlen(cur);
++		ret = t7xx_port_send_skb(port_private, cloned, 0, 0);
+ 		if (ret) {
+-			dev_kfree_skb_any(skb_ccci);
++			dev_kfree_skb(cloned);
+ 			dev_err(port_private->dev, "Write error on %s port, %d\n",
+ 				port_conf->name, ret);
+-			return ret;
++			return cnt ? cnt + ret : ret;
+ 		}
++		cnt += cur->len;
++		if (cur == skb)
++			cur = skb_shinfo(skb)->frag_list;
++		else
++			cur = cur->next;
+ 	}
+ 
+ 	dev_kfree_skb(skb);
+@@ -154,13 +152,15 @@ static int t7xx_port_wwan_disable_chl(struct t7xx_port *port)
+ static void t7xx_port_wwan_md_state_notify(struct t7xx_port *port, unsigned int state)
+ {
+ 	const struct t7xx_port_conf *port_conf = port->port_conf;
++	unsigned int header_len = sizeof(struct ccci_header);
+ 
+ 	if (state != MD_STATE_READY)
+ 		return;
+ 
+ 	if (!port->wwan_port) {
+ 		port->wwan_port = wwan_create_port(port->dev, port_conf->port_type,
+-						   &wwan_ops, port);
++						   &wwan_ops, CLDMA_MTU - header_len,
++						   header_len, port);
+ 		if (IS_ERR(port->wwan_port))
+ 			dev_err(port->dev, "Unable to create WWWAN port %s", port_conf->name);
+ 	}
+diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
+index 62e9f7d6c9fe..8d35513bcd4c 100644
+--- a/drivers/net/wwan/wwan_core.c
++++ b/drivers/net/wwan/wwan_core.c
+@@ -67,6 +67,8 @@ struct wwan_device {
+  * @rxq: Buffer inbound queue
+  * @waitqueue: The waitqueue for port fops (read/write/poll)
+  * @data_lock: Port specific data access serialization
++ * @headroom_len: SKB reserved headroom size
++ * @frag_len: Length to fragment packet
+  * @at_data: AT port specific data
+  */
+ struct wwan_port {
+@@ -79,6 +81,8 @@ struct wwan_port {
+ 	struct sk_buff_head rxq;
+ 	wait_queue_head_t waitqueue;
+ 	struct mutex data_lock;	/* Port specific data access serialization */
++	size_t headroom_len;
++	size_t frag_len;
+ 	union {
+ 		struct {
+ 			struct ktermios termios;
+@@ -422,6 +426,8 @@ static int __wwan_port_dev_assign_name(struct wwan_port *port, const char *fmt)
+ struct wwan_port *wwan_create_port(struct device *parent,
+ 				   enum wwan_port_type type,
+ 				   const struct wwan_port_ops *ops,
++				   size_t frag_len,
++				   unsigned int headroom_len,
+ 				   void *drvdata)
+ {
+ 	struct wwan_device *wwandev;
+@@ -455,6 +461,8 @@ struct wwan_port *wwan_create_port(struct device *parent,
+ 
+ 	port->type = type;
+ 	port->ops = ops;
++	port->frag_len = frag_len ? frag_len : SIZE_MAX;
++	port->headroom_len = headroom_len;
+ 	mutex_init(&port->ops_lock);
+ 	skb_queue_head_init(&port->rxq);
+ 	init_waitqueue_head(&port->waitqueue);
+@@ -698,30 +706,53 @@ static ssize_t wwan_port_fops_read(struct file *filp, char __user *buf,
+ static ssize_t wwan_port_fops_write(struct file *filp, const char __user *buf,
+ 				    size_t count, loff_t *offp)
+ {
++	struct sk_buff *skb, *head = NULL, *tail = NULL;
+ 	struct wwan_port *port = filp->private_data;
+-	struct sk_buff *skb;
++	size_t frag_len, remain = count;
+ 	int ret;
+ 
+ 	ret = wwan_wait_tx(port, !!(filp->f_flags & O_NONBLOCK));
+ 	if (ret)
+ 		return ret;
+ 
+-	skb = alloc_skb(count, GFP_KERNEL);
+-	if (!skb)
+-		return -ENOMEM;
++	do {
++		frag_len = min(remain, port->frag_len);
++		skb = alloc_skb(frag_len + port->headroom_len, GFP_KERNEL);
++		if (!skb) {
++			ret = -ENOMEM;
++			goto freeskb;
++		}
++		skb_reserve(skb, port->headroom_len);
++
++		if (!head) {
++			head = skb;
++		} else if (!tail) {
++			skb_shinfo(head)->frag_list = skb;
++			tail = skb;
++		} else {
++			tail->next = skb;
++			tail = skb;
++		}
+ 
+-	if (copy_from_user(skb_put(skb, count), buf, count)) {
+-		kfree_skb(skb);
+-		return -EFAULT;
+-	}
++		if (copy_from_user(skb_put(skb, frag_len), buf + count - remain, frag_len)) {
++			ret = -EFAULT;
++			goto freeskb;
++		}
+ 
+-	ret = wwan_port_op_tx(port, skb, !!(filp->f_flags & O_NONBLOCK));
+-	if (ret) {
+-		kfree_skb(skb);
+-		return ret;
+-	}
++		if (skb != head) {
++			head->data_len += skb->len;
++			head->len += skb->len;
++			head->truesize += skb->truesize;
++		}
++	} while (remain -= frag_len);
++
++	ret = wwan_port_op_tx(port, head, !!(filp->f_flags & O_NONBLOCK));
++	if (!ret)
++		return count;
+ 
+-	return count;
++freeskb:
++	kfree_skb(head);
++	return ret;
+ }
+ 
+ static __poll_t wwan_port_fops_poll(struct file *filp, poll_table *wait)
+diff --git a/drivers/net/wwan/wwan_hwsim.c b/drivers/net/wwan/wwan_hwsim.c
+index ff09a8cedf93..7fb54cb51628 100644
+--- a/drivers/net/wwan/wwan_hwsim.c
++++ b/drivers/net/wwan/wwan_hwsim.c
+@@ -205,6 +205,7 @@ static struct wwan_hwsim_port *wwan_hwsim_port_new(struct wwan_hwsim_dev *dev)
+ 
+ 	port->wwan = wwan_create_port(&dev->dev, WWAN_PORT_AT,
+ 				      &wwan_hwsim_port_ops,
++				      WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM,
+ 				      port);
+ 	if (IS_ERR(port->wwan)) {
+ 		err = PTR_ERR(port->wwan);
+diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+index 1f0951be15ab..e0f0bc878bbd 100644
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -929,7 +929,8 @@ static void wdm_wwan_init(struct wdm_device *desc)
+ 		return;
+ 	}
+ 
+-	port = wwan_create_port(&intf->dev, desc->wwanp_type, &wdm_wwan_port_ops, desc);
++	port = wwan_create_port(&intf->dev, desc->wwanp_type, &wdm_wwan_port_ops,
++				WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM, desc);
+ 	if (IS_ERR(port)) {
+ 		dev_err(&intf->dev, "%s: Unable to create WWAN port\n",
+ 			dev_name(intf->usb_dev));
+diff --git a/include/linux/wwan.h b/include/linux/wwan.h
+index 5ce2acf444fb..adaf1f4a8652 100644
+--- a/include/linux/wwan.h
++++ b/include/linux/wwan.h
+@@ -62,11 +62,25 @@ struct wwan_port_ops {
+ 			    poll_table *wait);
+ };
+ 
++/*
++ * Used to indicate that the WWAN core should not fragment control packages.
++ */
++#define WWAN_NO_FRAGMENT	0
++
++/*
++ * Used to indicate that the WWAN core should not reserve headroom in control packages.
++ */
++#define WWAN_NO_HEADROOM	0
++
+ /**
+  * wwan_create_port - Add a new WWAN port
+  * @parent: Device to use as parent and shared by all WWAN ports
+  * @type: WWAN port type
+  * @ops: WWAN port operations
++ * @frag_len: WWAN port TX fragments length, if WWAN_NO_FRAGMENT is set,
++ *            the WWAN core don't fragment control packages.
++ * @headroom_len: WWAN port TX fragments reserved headroom length, if WWAN_NO_HEADROOM
++ *                is set, the WWAN core don't reserve headroom in control packages.
+  * @drvdata: Pointer to caller driver data
+  *
+  * Allocate and register a new WWAN port. The port will be automatically exposed
+@@ -84,6 +98,8 @@ struct wwan_port_ops {
+ struct wwan_port *wwan_create_port(struct device *parent,
+ 				   enum wwan_port_type type,
+ 				   const struct wwan_port_ops *ops,
++				   size_t frag_len,
++				   unsigned int headroom_len,
+ 				   void *drvdata);
+ 
+ /**
 -- 
-Thx and BRs,
-Aiqun(Maria) Yu
+2.17.0
+
