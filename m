@@ -2,125 +2,271 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC174C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Dec 2022 10:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291ADC4321E
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Dec 2022 17:01:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232381AbiLBKpB (ORCPT
+        id S233928AbiLBRBN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 05:45:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57676 "EHLO
+        Fri, 2 Dec 2022 12:01:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232873AbiLBKpA (ORCPT
+        with ESMTP id S233773AbiLBRA5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 2 Dec 2022 05:45:00 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03EC2A277
-        for <linux-remoteproc@vger.kernel.org>; Fri,  2 Dec 2022 02:44:58 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id p8so6770541lfu.11
-        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Dec 2022 02:44:58 -0800 (PST)
+        Fri, 2 Dec 2022 12:00:57 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FB30E1741
+        for <linux-remoteproc@vger.kernel.org>; Fri,  2 Dec 2022 09:00:45 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id k7so5155591pll.6
+        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Dec 2022 09:00:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g6zxPDSTjg1DFl2wCGVSiXLCEZRvZ4uYKfSzwxBPZ7Y=;
-        b=hTllzCZnIWReN45CdtlN9izfIGriquhF2fvMXWAX95N2CEufn2h0revuuhP283Yzm0
-         Ir5LqoQIag2dEGbkIgs0TOW5N5aPd83Z/xCKsBRPok3qIB6BbhjHL2Q1b+ikMFqezA7D
-         TB2N5AIAXoVKJVhA7F+SuGjw3Gsxhk4WlQndEfWLF03a3DoAzJOneb9n20fb3rI7Aib5
-         JAdKWz5LYSNUKUIBGSe7MKjsG/T39O4uzjcHFORTUSKBW18RJf0pcp/Vxj5UgKYv+DKi
-         rRQMEbn1oeEgx7bDzG7P8/2cWyrRROLfr4nRtCiiYLqZuvPLFo3BUtEn0U7xAbC9dgCP
-         yUzw==
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xyTIyEMVlwgZq2rM7w209h8Hdpm+1DB4EPixVA3vlTk=;
+        b=NBPMQ7HPa2s9Qver+tuGkfT6bxv1SlXuw6uiM3kaBhKJHPSBgsH+PQDwJASmMKJ2rl
+         YWuKuDvsDdYJbTJMa6dVw2CW01SWyZcpPHMiyVB1PqEy2KUGfpbRRXETfebtXrU7EWtl
+         KBubpJZzol6K5o9dYwwk4XIaRkyghT8eYSbze69n7vXEIrAoFr2RYEozPjsZLa/myYpW
+         X8yXcmNu8srGwbtl/NxAG12+PFtGRnruQSiyIzSz7vN7Tq1gFmOUR9cdSRaktkSd0zed
+         tgxPrMbLzAU0o0xSAl2noZOkum80jNxC7yBru1mmuZ5XcURNfEa8ef3wH9OoWI8UqHir
+         5Tlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g6zxPDSTjg1DFl2wCGVSiXLCEZRvZ4uYKfSzwxBPZ7Y=;
-        b=sjZ3pzjBCOmoBnaU7oEx5sh5vPTWH0cQIxFyuEWqztPIEnBKJ4CUU4lYQtZhFbYedj
-         hsHrcZjpW5v0cpKG07/mp270FuCVVw5q3IFVSSTfQudgIa0g9CH6QDwjx0te5Z5OpTWH
-         Z7nNOCFTZbPZlTc6fyQkpdIJIZTKPvvfkyyezfOh0JLQmHY7lIe80+vhWYB9VuMqasPe
-         mpuKWXMejHbP7Vgg7Rm1+euLKCiKTD8Ntv3lj8VoXctXAkphumID1TyaVvFXnp/p66iZ
-         8TcE7hL28eali5qgfhJHVqI2jk3S8UAhFpd0wjuvZm0sgRznEqlUjcSa9TRn35/1WKFT
-         +MOw==
-X-Gm-Message-State: ANoB5pnoaXVGxJSAdLqYiuKSengaywi/9aOB1Zw09u7hAdjIrgfNYSp1
-        zFdCKzRHHeQhZDITSNZ006Ny4A==
-X-Google-Smtp-Source: AA0mqf7E7XTvFGo37Mzgoj/Dq76JprZ8qaXYv8xDBz7wwPg4PWn6n4dzH+ZmPdOnqVyhJQMCQy/XmQ==
-X-Received: by 2002:a05:6512:ea8:b0:4b4:f6f4:df2b with SMTP id bi40-20020a0565120ea800b004b4f6f4df2bmr14973823lfb.321.1669977897025;
-        Fri, 02 Dec 2022 02:44:57 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id t11-20020ac24c0b000000b004afeacffb84sm979853lfq.98.2022.12.02.02.44.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Dec 2022 02:44:56 -0800 (PST)
-Message-ID: <7015b64a-e73c-87aa-4e1f-a0034638c6ec@linaro.org>
-Date:   Fri, 2 Dec 2022 11:44:54 +0100
+        bh=xyTIyEMVlwgZq2rM7w209h8Hdpm+1DB4EPixVA3vlTk=;
+        b=LAyGUv9q2q6wOULGyo0+HV5aYcZPksj7eXujGUTGNYKkZTeYltjPPJfii3dRcL3DzV
+         ZNNYw+v2gWc5nbh7qCVUFKjEi4s/usTxBZcX4hKG+dqsYibH+Hwiak+NbbZvD+BsjCMr
+         HCT/mYZizSxfaNiNkF2p4m2q3eMhFSDJ4QEIxrQ/BQ/UtQvee6Bi9r3VgiukJtVc1Cu0
+         OzsaVi927SfbA63KjZswxXkk8k9iSlvegHxjyplfZpL37vOybBxf/C5iYm8id3ahnGIf
+         hRfp/iy7xt+2LiEr90B9tfC1DEyGF88LM2Er0t2LwTJJHCGITWL9wEVmqJj292/dog9z
+         BAVg==
+X-Gm-Message-State: ANoB5plXE2eQ+BLUuMWA4shBQd5VKDmquzFQXq1qpl1MvCSBDHYW+NsB
+        rz05r+1JyP72OQGY/ldNS7o7sg==
+X-Google-Smtp-Source: AA0mqf4FjagDx8emkOO+pyp69cANsJmhy9xKUNfvFjaXuSNOavu8/8gZbTw6JDM6pGH2jq14X1FOyg==
+X-Received: by 2002:a17:90a:e28d:b0:219:26b6:e8d8 with SMTP id d13-20020a17090ae28d00b0021926b6e8d8mr32313389pjz.74.1670000444890;
+        Fri, 02 Dec 2022 09:00:44 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:a85e:8886:e9cb:3b71])
+        by smtp.gmail.com with ESMTPSA id h11-20020a170902f54b00b00177faf558b5sm5811939plf.250.2022.12.02.09.00.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Dec 2022 09:00:43 -0800 (PST)
+Date:   Fri, 2 Dec 2022 10:00:42 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     "Levinsky, Ben" <ben.levinsky@amd.com>
+Cc:     "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
+        "bill.mills@linaro.com" <bill.mills@linaro.com>,
+        "Shah, Tanmay" <tanmay.shah@amd.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 1/1] remoteproc: Introduce rproc_get_by_id API
+Message-ID: <20221202170042.GA165812@p14s>
+References: <20221115153753.2065803-1-ben.levinsky@xilinx.com>
+ <20221115153753.2065803-2-ben.levinsky@xilinx.com>
+ <20221125180509.GA622847@p14s>
+ <C981698C-5B9B-49B6-9EC2-CC7A0737B155@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v2 2/5] dt-bindings: remoteproc: qcom: adsp: document
- sm8550 adsp, cdsp & mpss compatible
-Content-Language: en-US
-To:     neil.armstrong@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        linux-remoteproc@vger.kernel.org
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v2-0-12bc22255474@linaro.org>
- <20221114-narmstrong-sm8550-upstream-remoteproc-v2-2-12bc22255474@linaro.org>
- <8d7367b2-126a-d8ba-b616-be1ef9c67122@linaro.org>
- <ace35de2-9aa8-8cfa-1f4c-46480fbbc442@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ace35de2-9aa8-8cfa-1f4c-46480fbbc442@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <C981698C-5B9B-49B6-9EC2-CC7A0737B155@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 02/12/2022 11:33, Neil Armstrong wrote:
->>> +
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          enum:
->>> +            - qcom,sm8550-cdsp-pas
->>> +    then:
->>> +      properties:
->>> +        power-domains:
->>> +          items:
->>> +            - description: CX power domain
->>> +            - description: MXC power domain
->>> +        power-domain-names:
->>> +          items:
->>> +            - const: cx
->>> +            - const: mxc
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - qcom,sm8550-cdsp-pas
->>
->> This entire if does not look valid - compatible is covered in the
->> previous one. You should see `dtbs_check` warnings on your DTS.
+On Wed, Nov 30, 2022 at 09:39:33PM +0000, Levinsky, Ben wrote:
+> Hi Mathieu,
 > 
-> Wow indeed, this should be mpss-pas...
+> Thank you for your review. Please see my reply inline.
+> 
+> Thanks
+> Ben
+> 
+> ﻿On 11/25/22, 10:05 AM, "Mathieu Poirier" <mathieu.poirier@linaro.org> wrote:
+> 
+>     CAUTION: This message has originated from an External Source. Please use proper judgment and caution when opening attachments, clicking links, or responding to this email.
+> 
+> 
+>     Hi Ben,
+> 
+>     On Tue, Nov 15, 2022 at 07:37:53AM -0800, Ben Levinsky wrote:
+>     > Allow users of remoteproc the ability to get a handle to an rproc by
+>     > passing in node that has parent rproc device and an ID that matches
+>     > an expected rproc struct's index field.
+>     >
+>     > This enables to get rproc structure for remoteproc drivers that manage
+>     > more than 1 remote processor (e.g. TI and Xilinx R5 drivers).
+>     >
+>     > Signed-off-by: Ben Levinsky <ben.levinsky@xilinx.com>
+>     > ---
+>     >  drivers/remoteproc/remoteproc_core.c | 64 +++++++++++++++++++++++++++-
+>     >  include/linux/remoteproc.h           |  1 +
+>     >  2 files changed, 64 insertions(+), 1 deletion(-)
+>     >
+>     > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>     > index 775df165eb45..6f7058bcc80c 100644
+>     > --- a/drivers/remoteproc/remoteproc_core.c
+>     > +++ b/drivers/remoteproc/remoteproc_core.c
+>     > @@ -40,6 +40,7 @@
+>     >  #include <linux/virtio_ring.h>
+>     >  #include <asm/byteorder.h>
+>     >  #include <linux/platform_device.h>
+>     > +#include <linux/of_platform.h>
+>     >
+>     >  #include "remoteproc_internal.h"
+>     >
+>     > @@ -2203,13 +2204,74 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+>     >
+>     >       return rproc;
+>     >  }
+>     > +
+>     > +/**
+>     > + * rproc_get_by_id() - find a remote processor by ID
+>     > + * @phandle: phandle to the rproc
+>     > + * @id: Index into rproc list that uniquely identifies the rproc struct
+>     > + *
+>     > + * Finds an rproc handle using the remote processor's index, and then
+>     > + * return a handle to the rproc. Before returning, ensure that the
+>     > + * parent node's driver is still loaded.
+>     > + *
+>     > + * This function increments the remote processor's refcount, so always
+>     > + * use rproc_put() to decrement it back once rproc isn't needed anymore.
+>     > + *
+>     > + * Return: rproc handle on success, and NULL on failure
+>     > + */
+>     > +
+>     > +struct rproc *rproc_get_by_id(phandle phandle, unsigned int id)
+>     > +{
+>     > +     struct rproc *rproc = NULL, *r;
+>     > +     struct platform_device *parent_pdev;
+>     > +     struct device_node *np;
+>     > +
+>     > +     np = of_find_node_by_phandle(phandle);
+>     > +     if (!np)
+>     > +             return NULL;
+>     > +
+>     > +     parent_pdev = of_find_device_by_node(np->parent);
+>     > +     if (!parent_pdev) {
+>     > +             dev_err(&parent_pdev->dev,
+>     > +                     "no platform device for node %pOF\n", np);
+>     > +             of_node_put(np);
+>     > +             return NULL;
+>     > +     }
+>     > +
+>     > +     /* prevent underlying implementation from being removed */
+>     > +     if (!try_module_get(parent_pdev->dev.driver->owner)) {
+>     > +             dev_err(&parent_pdev->dev, "can't get owner\n");
+>     > +             of_node_put(np);
+>     > +             return NULL;
+>     > +     }
+>     > +
+>     > +     rcu_read_lock();
+>     > +     list_for_each_entry_rcu(r, &rproc_list, node) {
+>     > +             if (r->index == id) {
+>     > +                     rproc = r;
+>     > +                     get_device(&rproc->dev);
+>     > +                     break;
+>     > +             }
+>     > +     }
+> 
+>     This won't work because several remote processors can be on the list.  If
+>     another remote processor was discovered before the one @phandle is associated
+>     with, the remote processor pertaining to that previous one will returned.
+> 
+> I didn't understand. From my point of view passing in the phandle of the child-platform device here will work because each child-platform will have its own entry in the remoteproc list.
 
-Then also drop "contains" to match other places (and other files).
+You are correct, each child platform device will have its own entry in
+@rproc_list.  The problem is that r->index may not match @id that is passed as a
+parameter.  
 
 > 
-> The main changes here was firmware-name and memory-region to handle
-> the dtb firmware and the DSM memory region, are those OK ?
+> Also " If    another remote processor was discovered before the one" Here this prevented from what I can see because the remoteproc_list is protected by a mutex_lock. See https://github.com/torvalds/linux/blob/master/drivers/remoteproc/remoteproc_core.c#L2288 for the mutex_lock. 
+> 
+> Additionally the calls to zynqmp_r5_add_rproc_core() are called sequentially so this also prevents the race condition.
+> 
+> I think I am missing something in your paragraph above. Can you expand on this issue?
+
+As explained above, the issue is not about race conditions but the value of
+r->index and @id.  
+
+> 
+>  Do you mean to say that if we use the cluster platform device you think using one of the existing APIs will work? For example rproc_get_by_child() or rproc_get_by_phandle() 
+> 
+> At https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/remoteproc/xlnx_r5_remoteproc.c?h=rproc-next#n923 " zynqmp_r5_add_rproc_core(&child_pdev->dev);" Here if we use cluster->dev this will work? To dig deeper into this for both the Xilinx and TI R5 remoteproc drivers, I think this proposed solution will create an issue in that for Split modes, the existing getter APIs will not be able to return one of the corresponding rproc instances because both cores will refer to the same platform-device structure. 
+> 
+> I can bring up the above in the community call.
+> 
+>     There is also an issue with rproc_put().
+> 
+> If passing the cluster platform device works for the above then rproc_put() should work correct? We can test this on our side as well. That being said I can bring this up in the community call 
+
+Yes, using the cluster platform device will work with rproc_put(). 
+
+> 
+> 
+>     I think your description of the problem is mostly correct.  The intermediate
+>     devices created by the cascading entries for individual remote processors in the
+>     device tree are causing an issue.  The "compatible" string for each remote
+>     processor can't be handled by any platform drivers (as it should be), which
+>     makes try_module_get() fail because r->dev.parent->driver is not bound to
+>     anything.
+> 
+>     Looking at the code for Xilinx's R5F support that I just queued[1], the simplest
+>     solution may be to pass @dev, which is in fact @cluster->dev, to
+>     zynqmp_r5_add_rproc_core() rather than the device associated with the
+>     intermediate platform device.
+> 
+>     That _should_ work.  It is hard for me to know for sure since I don't have a
+>     platform that has dual core remote processor to test with.
+> 
+>     Get back to me with how that turned out and we'll go from there.
+> 
+>     Thanks,
+>     Mathieu
+> 
+> 
+> 
+> 
+>     [1]. https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/remoteproc/xlnx_r5_remoteproc.c?h=rproc-next#n923
+> 
+>     > +     rcu_read_unlock();
+>     > +
+>     > +     of_node_put(np);
+>     > +
+>     > +     return rproc;
+>     > +}
+>     > +EXPORT_SYMBOL(rproc_get_by_id);
+>     >  #else
+>     >  struct rproc *rproc_get_by_phandle(phandle phandle)
+>     >  {
+>     >       return NULL;
+>     >  }
+>     > -#endif
+>     >  EXPORT_SYMBOL(rproc_get_by_phandle);
+>     > +struct rproc *rproc_get_by_id(phandle phandle, unsigned int id)
+>     > +{
+>     > +     return NULL;
+>     > +}
+>     > +EXPORT_SYMBOL(rproc_get_by_id);
+>     > +#endif
+>     >
+>     >  /**
+>     >   * rproc_set_firmware() - assign a new firmware
+>     > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>     > index 3cde845ba26e..10961fae0f77 100644
+>     > --- a/include/linux/remoteproc.h
+>     > +++ b/include/linux/remoteproc.h
+>     > @@ -645,6 +645,7 @@ struct rproc_vdev {
+>     >  };
+>     >
+>     >  struct rproc *rproc_get_by_phandle(phandle phandle);
+>     > +struct rproc *rproc_get_by_id(phandle phandle, unsigned int id);
+>     >  struct rproc *rproc_get_by_child(struct device *dev);
+>     >
+>     >  struct rproc *rproc_alloc(struct device *dev, const char *name,
+>     > --
+>     > 2.25.1
+>     >
 > 
 
-Yes.
-
-Best regards,
-Krzysztof
 
