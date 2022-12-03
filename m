@@ -2,104 +2,67 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D61DC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  2 Dec 2022 18:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F112C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  3 Dec 2022 07:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233041AbiLBSQO (ORCPT
+        id S230232AbiLCHJB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 2 Dec 2022 13:16:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44186 "EHLO
+        Sat, 3 Dec 2022 02:09:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234313AbiLBSQJ (ORCPT
+        with ESMTP id S229522AbiLCHJA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 2 Dec 2022 13:16:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15EFEF0EA;
-        Fri,  2 Dec 2022 10:16:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 96298B82228;
-        Fri,  2 Dec 2022 18:16:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD1EC433D6;
-        Fri,  2 Dec 2022 18:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670004965;
-        bh=soJj4Ja/1hLNJVg1joV3xhFw9ylDyPn1XfDLP4/kIRM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jYDIiXa9lXbGjs687sFNH1CDkOd3vfzs0q69QlgN880mquCk6A/smAb4tKUD/wLZz
-         ZYtmZHt+FLot5zMP91bBiu/KvgHcjwafLkYYdX5bmhGIUd44ajOHaAAmV5LEDjjDQD
-         nDHTYLKYbT5B5ug+Su5xZikdxLsf35MT6tzgn8l6dbfERoqfcIbFHZVFOJSH5stPCB
-         STCfHET1RPcjjkRrxnrqXXAnwAcuXVPOTEr+BHqhBDb3fYsR2tJba9tV+VeGNzJRfz
-         lIGbvhm4QMETrAjiTJBDUhYLEiHfab/jie4WTPjmpX9VunNKuZG2qVDWHPPKcPJHax
-         1u+wX56aq15BQ==
-Date:   Fri, 2 Dec 2022 12:16:02 -0600
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Maria Yu <quic_aiquny@quicinc.com>
-Cc:     mathieu.poirier@linaro.org, arnaud.pouliquen@foss.st.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        quic_clew@quicinc.com
-Subject: Re: [PATCH v5 2/2] remoteproc: core: change to ordered workqueue for
- crash handler
-Message-ID: <20221202181602.sg2pbgl5br2hw2rh@builder.lan>
-References: <20221202094532.2925-1-quic_aiquny@quicinc.com>
- <20221202094532.2925-3-quic_aiquny@quicinc.com>
+        Sat, 3 Dec 2022 02:09:00 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72FD4140F5;
+        Fri,  2 Dec 2022 23:08:59 -0800 (PST)
+Received: from dggpeml500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NPLW03s6bzFprd;
+        Sat,  3 Dec 2022 15:08:12 +0800 (CST)
+Received: from huawei.com (10.175.112.208) by dggpeml500024.china.huawei.com
+ (7.185.36.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Sat, 3 Dec
+ 2022 15:08:57 +0800
+From:   Yuan Can <yuancan@huawei.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     <yuancan@huawei.com>
+Subject: [PATCH] remoteproc: qcom_q6v5_pas: Fix missing of_node_put() in adsp_alloc_memory_region()
+Date:   Sat, 3 Dec 2022 07:06:39 +0000
+Message-ID: <20221203070639.15128-1-yuancan@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221202094532.2925-3-quic_aiquny@quicinc.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.112.208]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500024.china.huawei.com (7.185.36.10)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 05:45:32PM +0800, Maria Yu wrote:
-> Only the first detected crash needed to be handled, so change
-> to ordered workqueue to avoid unnecessary multi active work at
-> the same time.
+The pointer node is returned by of_parse_phandle() with refcount
+incremented. We should use of_node_put() on it when done.
 
-In cab8300b5621 ("remoteproc: Use unbounded workqueue for recovery
-work") Mukesh specifically said that it was required that multiple
-remoteproc instances should be allowed to recover concurrently.
+Fixes: b9e718e950c3 ("remoteproc: Introduce Qualcomm ADSP PIL")
+Signed-off-by: Yuan Can <yuancan@huawei.com>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Is this no longer the case? Or am I perhaps misunderstanding the
-nuances of the different work queue models?
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 6afd0941e552..24439a6396cc 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -449,6 +449,7 @@ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+ 	}
+ 
+ 	ret = of_address_to_resource(node, 0, &r);
++	of_node_put(node);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.17.1
 
-> This will reduce the pm_relax unnecessary concurrency.
-
-I'm not sure I understand this sentence, unless I remove the word
-"pm_relax", was it added by mistake?
-
-
-If so, is the support for concurrent recovery really unnecessary?
-
-I know we have cases where we spend time in the recovery process just
-waiting for things to happen, so allowing recovery to run concurrent
-between instances sounds like a good idea.
-
-Regards,
-Bjorn
-
-> 
-> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c2d0af048c69..4b973eea10bb 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2728,8 +2728,8 @@ static void __exit rproc_exit_panic(void)
->  
->  static int __init remoteproc_init(void)
->  {
-> -	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
-> -						WQ_UNBOUND | WQ_FREEZABLE, 0);
-> +	rproc_recovery_wq = alloc_ordered_workqueue("rproc_recovery_wq",
-> +						WQ_FREEZABLE, 0);
->  	if (!rproc_recovery_wq) {
->  		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
->  		return -ENOMEM;
-> -- 
-> 2.17.1
-> 
