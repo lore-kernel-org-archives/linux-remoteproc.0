@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29494C3A5A7
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Dec 2022 08:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CB0C3A5A7
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Dec 2022 09:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234322AbiLFIum (ORCPT
+        id S234606AbiLFJj2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Dec 2022 03:50:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44956 "EHLO
+        Tue, 6 Dec 2022 04:39:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234277AbiLFIud (ORCPT
+        with ESMTP id S234609AbiLFJjZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Dec 2022 03:50:33 -0500
+        Tue, 6 Dec 2022 04:39:25 -0500
 Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C96218E35
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Dec 2022 00:50:31 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id b13so11656452lfo.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Dec 2022 00:50:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59B8817A91
+        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Dec 2022 01:39:23 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id c1so22755767lfi.7
+        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Dec 2022 01:39:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=timesys-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EbhyIR5iqOHGIwbpWPeuDBH9qoKo5A/INqe+aQ5y4vo=;
-        b=5NGK/yeiJ0K6G5YOutDLflZmhU/ZvdLbI7KsGD9KQwuSRwHBlgc+hcoXLdfLslQKlk
-         XZB92ji5j+hXYfzjV6yveuKkMB4XAjNHN2RMBYfwWabNR+hF/m7AMrrmEl1o2rye5BjM
-         Lo3NU8DaFvgzgdxqZv9grCTWun77NuIXzQEfUf0QXBxhKVmPKb2n9IXqMYvT1lYmamN+
-         agy9TU4oHjQO7asyx0Mup87TOAPgVMK6BoNEUngrcaHmQTCv4j0k6uQXDGqF86D9kKh7
-         Hp31MKtOLgf1Vsu/cCJgfZ8oA3C2t8BjMaLTfo5X1Sw4JdqR6o1Oyz7jwpeVO0wciaum
-         hBgQ==
+        bh=yFc2eJVqHcILb5tFkpDwv7IVs2FB1/IIl0iM/zEMppo=;
+        b=pU4OP9p9F+OHG7qupD3P8uyksEhCnxPlXzc2xK1doegNJ/HRKlLlnQz6iIXjYKT0dW
+         /7EX+tBt5pmh0aLUN/sLscnaWI4BQiiXQe7C/2OYJvHo7PctX3NwA8qCyr6zGgZSpw3/
+         08LgNHUYNf1Rw8FWSyLMxhE1DyuFeSa/qGkdo12eNy14sWI8L6ioBmkd3GDYXG7Gp00o
+         6uaFWBH3A2O5i2bToT8JYL4Psexk0zxJEy9LVXQkTOgG+al8y5lG36DEvpaHvYQNt62t
+         pL+K4fJTsDnxZLqgB6PAadHkTyLUmRswaTofJ7fGfJQMuv8+RhG6uNoDw0BxVzpS3UBd
+         eqGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EbhyIR5iqOHGIwbpWPeuDBH9qoKo5A/INqe+aQ5y4vo=;
-        b=6sTwJgJiaDx73In2+ucbXGdruoWO/jgwMJNbAjZhya/oeTzukgdmN7qcnh0DaH/DIp
-         Pqw1tCvL3D7G3NVfxFvUIC2/asV/KUCbURShglSW6pgA10yCl3s5AX+Cu/wvA+JFNk/w
-         HkLPX7oDYNidjg89B+BN9VeeSHH7gfzjI7u/EsCwYpk4V4dKWMhm0CPi7NZlPu4FbkQj
-         ZZfm58dpM2szSrivHqlM1v6jRmmv830Ix8gu0IT7v4n3bEIIM9MYJcC041Q0Mc97EqVr
-         Px+s4JnZEt8R5B6L5JaJaJfCNpZhPo7o43l7TkI41eA/U/IXBXPP7RuGGsWwDvrrpfiP
-         lOTQ==
-X-Gm-Message-State: ANoB5pkI2evvWYkCHVvdYqjWczfc3ak3dn+3LvDS3nwcWve+K8rULaIs
-        4LKSMf1cjajCs02l8DzTPnUgSg==
-X-Google-Smtp-Source: AA0mqf4wpY92b8b9H+cbs8Ud1iTWWobIal0QmagWuTV4S8YirCzVn85vCbJNiW4nOtDloiErrWqmzA==
-X-Received: by 2002:a05:6512:10c3:b0:4b5:853b:73d with SMTP id k3-20020a05651210c300b004b5853b073dmr628184lfg.672.1670316629673;
-        Tue, 06 Dec 2022 00:50:29 -0800 (PST)
+        bh=yFc2eJVqHcILb5tFkpDwv7IVs2FB1/IIl0iM/zEMppo=;
+        b=vdBQ6KWos5meTK6CT1yZs/3r5DViq0oUvKIdTPehNeG25gjvhOFSmKe/qwM+F1Ar5M
+         hAq0wtZ6+RIM1japbuCz7ZqTbKn12ARFnIQIjlgTQJg9pvFrPVaz29+qCxselfnY13IW
+         zhR1hmJ8i6j65z2xpM74rKdUlR5ejulqGGcx0MSV42OmV+CKywMX5WNzzvBFMdXUKY8o
+         ykO+VDme+VRqlYqsdL08j5A1JvNJpa9HeT3HucSd864tulHByoYakUCC0Xf1LcXfr1cg
+         DQfP0GjgJ3H+YEXz+1iVdzqKiJZ8DG2G5nT1IWjRhIgZDHI12FfyAQ2LZLqJ1dDwuTQa
+         Ftcw==
+X-Gm-Message-State: ANoB5plF6i1V8JCY1kWSgWaHzIf0afiYPhf3ms5gg/Yn475wmcb3ve17
+        hxf7eR0Xkknn4672gzVQqDdaQQ==
+X-Google-Smtp-Source: AA0mqf4F1Jkzi6oqTTO2ABvBXReofhL02v26NcvCZ7zcYjeujELxBTeV3pbRcgbj/6z09CIpfYanDA==
+X-Received: by 2002:ac2:545b:0:b0:4af:ad16:8a08 with SMTP id d27-20020ac2545b000000b004afad168a08mr24831100lfn.664.1670319561529;
+        Tue, 06 Dec 2022 01:39:21 -0800 (PST)
 Received: from localhost.localdomain ([91.216.213.152])
-        by smtp.gmail.com with ESMTPSA id f28-20020a05651c03dc00b0027730261350sm1578489ljp.131.2022.12.06.00.50.29
+        by smtp.gmail.com with ESMTPSA id k26-20020ac2457a000000b0049462af8614sm2415833lfm.145.2022.12.06.01.39.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Dec 2022 00:50:29 -0800 (PST)
+        Tue, 06 Dec 2022 01:39:21 -0800 (PST)
 From:   Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc:     Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: [PATCH] rpmsg: char: Use preallocated SKBs.
-Date:   Tue,  6 Dec 2022 09:50:07 +0100
-Message-Id: <20221206085008.25388-1-piotr.wojtaszczyk@timesys.com>
+Date:   Tue,  6 Dec 2022 10:38:41 +0100
+Message-Id: <20221206093840.32181-1-piotr.wojtaszczyk@timesys.com>
 X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -71,21 +71,22 @@ During high rpmsg traffic this reduces consumed CPU time noticeably.
 
 Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
 ---
- drivers/rpmsg/rpmsg_char.c       | 58 ++++++++++++++++++++++++++++----
- drivers/rpmsg/rpmsg_internal.h   | 21 ++++++++++++
- drivers/rpmsg/virtio_rpmsg_bus.c | 21 ------------
- 3 files changed, 72 insertions(+), 28 deletions(-)
+ drivers/rpmsg/rpmsg_char.c       | 46 +++++++++++++++++++++++++++++---
+ drivers/rpmsg/rpmsg_internal.h   | 21 +++++++++++++++
+ drivers/rpmsg/virtio_rpmsg_bus.c | 21 ---------------
+ 3 files changed, 64 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index ac50ed757765..76546ba72cdc 100644
+index 3e0b8f3496ed..51b1b077687e 100644
 --- a/drivers/rpmsg/rpmsg_char.c
 +++ b/drivers/rpmsg/rpmsg_char.c
-@@ -75,9 +75,44 @@ struct rpmsg_eptdev {
+@@ -66,10 +66,37 @@ struct rpmsg_eptdev {
  
  	spinlock_t queue_lock;
  	struct sk_buff_head queue;
 +	struct sk_buff_head skb_pool;
  	wait_queue_head_t readq;
+ 
  };
  
 +static inline
@@ -110,22 +111,14 @@ index ac50ed757765..76546ba72cdc 100644
 +
 +static void rpmsg_eptdev_free_all_skb(struct rpmsg_eptdev *eptdev)
 +{
-+	struct sk_buff *skb;
-+
-+	while (!skb_queue_empty(&eptdev->queue)) {
-+		skb = skb_dequeue(&eptdev->queue);
-+		kfree_skb(skb);
-+	}
-+	while (!skb_queue_empty(&eptdev->skb_pool)) {
-+		skb = skb_dequeue(&eptdev->skb_pool);
-+		kfree_skb(skb);
-+	}
++	skb_queue_purge(&eptdev->queue);
++	skb_queue_purge(&eptdev->skb_pool);
 +}
 +
- static int rpmsg_eptdev_destroy(struct device *dev, void *data)
+ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
  {
  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
-@@ -104,7 +139,7 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+@@ -99,7 +126,7 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
  	struct rpmsg_eptdev *eptdev = priv;
  	struct sk_buff *skb;
  
@@ -134,7 +127,7 @@ index ac50ed757765..76546ba72cdc 100644
  	if (!skb)
  		return -ENOMEM;
  
-@@ -126,6 +161,18 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+@@ -121,6 +148,18 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
  	struct rpmsg_endpoint *ept;
  	struct rpmsg_device *rpdev = eptdev->rpdev;
  	struct device *dev = &eptdev->dev;
@@ -151,29 +144,18 @@ index ac50ed757765..76546ba72cdc 100644
 +		rpmsg_eptdev_put_skb(eptdev, skb);
 +	}
  
- 	get_device(dev);
- 
-@@ -146,7 +193,6 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
- 	struct device *dev = &eptdev->dev;
--	struct sk_buff *skb;
- 
- 	/* Close the endpoint, if it's not already destroyed by the parent */
  	mutex_lock(&eptdev->ept_lock);
-@@ -157,10 +203,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ 	if (eptdev->ept) {
+@@ -168,7 +207,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
  	mutex_unlock(&eptdev->ept_lock);
  
  	/* Discard all SKBs */
--	while (!skb_queue_empty(&eptdev->queue)) {
--		skb = skb_dequeue(&eptdev->queue);
--		kfree_skb(skb);
--	}
+-	skb_queue_purge(&eptdev->queue);
 +	rpmsg_eptdev_free_all_skb(eptdev);
  
  	put_device(dev);
  
-@@ -209,7 +252,7 @@ static ssize_t rpmsg_eptdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+@@ -217,7 +256,7 @@ static ssize_t rpmsg_eptdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
  	if (copy_to_iter(skb->data, use, to) != use)
  		use = -EFAULT;
  
@@ -182,7 +164,7 @@ index ac50ed757765..76546ba72cdc 100644
  
  	return use;
  }
-@@ -358,6 +401,7 @@ static int rpmsg_eptdev_create(struct rpmsg_ctrldev *ctrldev,
+@@ -370,6 +409,7 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
  	mutex_init(&eptdev->ept_lock);
  	spin_lock_init(&eptdev->queue_lock);
  	skb_queue_head_init(&eptdev->queue);
@@ -191,7 +173,7 @@ index ac50ed757765..76546ba72cdc 100644
  
  	device_initialize(dev);
 diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index 3fc83cd50e98..5acaa54a277a 100644
+index 39b646d0d40d..b30bfe01db69 100644
 --- a/drivers/rpmsg/rpmsg_internal.h
 +++ b/drivers/rpmsg/rpmsg_internal.h
 @@ -15,6 +15,27 @@
@@ -223,10 +205,10 @@ index 3fc83cd50e98..5acaa54a277a 100644
  #define to_rpmsg_driver(d) container_of(d, struct rpmsg_driver, drv)
  
 diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 3d9e442883e1..6552928a440d 100644
+index 905ac7910c98..5369669d3327 100644
 --- a/drivers/rpmsg/virtio_rpmsg_bus.c
 +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -133,27 +133,6 @@ struct virtio_rpmsg_channel {
+@@ -109,27 +109,6 @@ struct virtio_rpmsg_channel {
  #define to_virtio_rpmsg_channel(_rpdev) \
  	container_of(_rpdev, struct virtio_rpmsg_channel, rpdev)
  
