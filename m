@@ -2,87 +2,135 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67718C4321E
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Dec 2022 19:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7D7C4708C
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Dec 2022 00:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235044AbiLETyx (ORCPT
+        id S230154AbiLFA6M (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Dec 2022 14:54:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60316 "EHLO
+        Mon, 5 Dec 2022 19:58:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233084AbiLETyW (ORCPT
+        with ESMTP id S230437AbiLFA6L (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Dec 2022 14:54:22 -0500
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6338CB7F7;
-        Mon,  5 Dec 2022 11:53:15 -0800 (PST)
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-12c8312131fso14757642fac.4;
-        Mon, 05 Dec 2022 11:53:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CtM2aZf2zZAFjHPoQ/E6ZGb3yRF0xN5gv6sCCUEu8bg=;
-        b=zt/omViabR4ftVodxEc5hpggz3c529sCnfFBfk299qf5ZqVaJWc5kho++pipnpRbIL
-         1D4sbKL42S8RSqmoVtTD/5le8YUM7xemT0WZ1fp2jvulH1cAJbzsA5LfXBILCliUBy8I
-         fDiHCLwtWGaZT6tlmgZBNPnfdltLJV8pW29TWBIAbcb+7fH4SWCzbvGOQrh+xfiHedyJ
-         nJpAExyGcP9Wz8bBTLKJDl5iOR1A8kOL4eb+el7ZH6qSnfaAUseVjTnaZGPxrStulIYs
-         Zd/ZuFNzIu49n2juxxarYDKwJKK/6jyna1BKHP6BWM8PFgkQs9nxEtVN9CSZ+E0GxnG1
-         vqNA==
-X-Gm-Message-State: ANoB5plRDaisiMxHveaN6mE12HhLpZqKBYfn8zQO/32mrDIVrNoWkQve
-        rEj7oeJgMvajawXML3GqLg==
-X-Google-Smtp-Source: AA0mqf5gJMGNDylXQlLJ8q6y60B/bKAPJN3gQeW3BBsHP8siiUGCTtQym0mi+kxygrF2/EDnQ6A7qA==
-X-Received: by 2002:a05:6870:c688:b0:13b:e41d:290b with SMTP id cv8-20020a056870c68800b0013be41d290bmr37753929oab.64.1670269994521;
-        Mon, 05 Dec 2022 11:53:14 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id l3-20020a9d7083000000b0066ec7348974sm1863739otj.37.2022.12.05.11.53.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 11:53:14 -0800 (PST)
-Received: (nullmailer pid 2486978 invoked by uid 1000);
-        Mon, 05 Dec 2022 19:53:13 -0000
-Date:   Mon, 5 Dec 2022 13:53:13 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Subject: Re: [PATCH v3 15/15] dt-bindings: remoteproc: qcom,adsp: correct
- msm8996-slpi-pil clocks
-Message-ID: <167026999306.2486908.12917512847992232424.robh@kernel.org>
-References: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
- <20221124184333.133911-16-krzysztof.kozlowski@linaro.org>
+        Mon, 5 Dec 2022 19:58:11 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17C9E1659F;
+        Mon,  5 Dec 2022 16:58:10 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B60UPbb003507;
+        Tue, 6 Dec 2022 00:58:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=eP+qjCpVSwTpKL9I/QMjstOFGXExH6+QOeU2OjjmWk4=;
+ b=fTfPTeU1nlGPzeY4GUUgURZeIW4RctAUIPtCwSmbfzoPFM/ExO1u4zIca23NLxrFk8Lo
+ 7gBqGTkp1bMXxWKmSTZFwciP+2Pljj9bFqgZLsE8+ypiFXpivxUcPquXax87u7o55ePq
+ 7keJZtVZm/XIJjbDKFsKONUJTA63dcsG4CI7sUTER2VuTzcZ9elkEuuNfqRaRL9c8CH/
+ lLEMXc8XKJwCdSRpw3CalclDhd1icZIg3NvDJn5npsrrOpNrI0f7SYSydVDlsC3hqBbU
+ n3nl2DHJbQ/zWJD+YDxgYowwy7ZQnZvni5hLY7xgPtzAumMsDkXKt7dw0CfDiMWQNifU NA== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3m9eev2200-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Dec 2022 00:58:05 +0000
+Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2B60w54I002632
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 6 Dec 2022 00:58:05 GMT
+Received: from [10.239.133.73] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 5 Dec 2022
+ 16:58:03 -0800
+Message-ID: <fa62ad12-7b37-67b0-fbfa-4050b994371a@quicinc.com>
+Date:   Tue, 6 Dec 2022 08:58:01 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221124184333.133911-16-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v5 1/2] remoteproc: core: do pm relax when in
+ RPROC_OFFLINE
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <arnaud.pouliquen@foss.st.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <quic_clew@quicinc.com>
+References: <20221202094532.2925-1-quic_aiquny@quicinc.com>
+ <20221202094532.2925-2-quic_aiquny@quicinc.com>
+ <20221202173015.GC165812@p14s>
+From:   "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+In-Reply-To: <20221202173015.GC165812@p14s>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6d4fHINzsKDwEK1BJp-FJmkEFaOjg0ei
+X-Proofpoint-GUID: 6d4fHINzsKDwEK1BJp-FJmkEFaOjg0ei
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-05_01,2022-12-05_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ adultscore=0 clxscore=1015 priorityscore=1501 phishscore=0 suspectscore=0
+ spamscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
+ definitions=main-2212060003
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On 12/3/2022 1:30 AM, Mathieu Poirier wrote:
+> On Fri, Dec 02, 2022 at 05:45:31PM +0800, Maria Yu wrote:
+>> RPROC_OFFLINE state indicate there is no recovery process
+>> is in progress and no chance to do the pm_relax.
+>> Because when recovering from crash, rproc->lock is held and
+>> state is RPROC_CRASHED -> RPROC_OFFLINE -> RPROC_RUNNING,
+>> and then unlock rproc->lock.
+>> When the state is in RPROC_OFFLINE it means separate request
+>> of rproc_stop was done and no need to hold the wakeup source
+>> in crash handler to recover any more.
+>>
+>> Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+>> ---
+>>   drivers/remoteproc/remoteproc_core.c | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 8768cb64f560..c2d0af048c69 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1862,11 +1862,16 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>>   
+>>   	mutex_lock(&rproc->lock);
+>>   
+>> -	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
+>> +	if (rproc->state == RPROC_CRASHED) {
+>>   		/* handle only the first crash detected */
+>>   		mutex_unlock(&rproc->lock);
+>>   		return;
+>>   	}
+> 
+> Please add a newline here.
+> 
+Will be addressed in new patchset. Thx.
+>> +	if (rproc->state == RPROC_OFFLINE) {
+>> +		/* no need to recover if remote processor is offline */
+>> +		mutex_unlock(&rproc->lock);
+>> +		goto out;
+>> +	}
+>>   
+>>   	rproc->state = RPROC_CRASHED;
+>>   	dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
+>> @@ -1877,6 +1882,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>>   	if (!rproc->recovery_disabled)
+>>   		rproc_trigger_recovery(rproc);
+>>   
+>> +out:
+>>   	pm_relax(rproc->dev.parent);
+>>   }
+>>   
+>> -- 
+>> 2.17.1
+>>
 
-On Thu, 24 Nov 2022 19:43:33 +0100, Krzysztof Kozlowski wrote:
-> According to DTS and Linux driver, the MSM8996 SLPI PIL takes two clocks
-> - xo and aggre2:
-> 
->   qcom/msm8996-oneplus3t.dtb: remoteproc@1c00000: clocks: [[20], [3, 64]] is too long
->   qcom/msm8996-oneplus3t.dtb: remoteproc@1c00000: clock-names: ['xo', 'aggre2'] is too long
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes since v2:
-> 1. New patch.
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+-- 
+Thx and BRs,
+Aiqun(Maria) Yu
