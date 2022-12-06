@@ -2,116 +2,153 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D273C47089
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Dec 2022 02:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787D1C352A1
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Dec 2022 07:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233467AbiLFCAZ (ORCPT
+        id S230480AbiLFH6q (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Dec 2022 21:00:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33412 "EHLO
+        Tue, 6 Dec 2022 02:58:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbiLFCAZ (ORCPT
+        with ESMTP id S230293AbiLFH6p (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Dec 2022 21:00:25 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8535213E06;
-        Mon,  5 Dec 2022 18:00:24 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B61qDeO027449;
-        Tue, 6 Dec 2022 02:00:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=ZjCqy0ftJDbg3rlALbusHYYHmUH+soAqAEw5gjrlgLQ=;
- b=bQ8JXmofmXdUIjoLVSVDe93IxEYaK7s83tGp9V9JWLbmP6AqK/FZvTpjcU49LkGguICG
- j9spwB7ThQTmRCZK6VRwG563cGv3rufq7tbz2MMgPAe6538anECli6vF/Hmt5ERj+WGE
- s5giq0LdGVbpPOd7xEX7/VnArTzpEBbVPAKJHB1cr4YGNnMx10OKJX0GCt154tv/rNT7
- 1zTqoS5HkIglOWHJw8NAsDcMkZyzfAH45p18yw6c3iZmfa65QxKhjN0zWnlaxNK5Fbb5
- GNW9gTMfgaWCcDslQjDqGEIi1C+B1rtFCfZ5TIK2y8+oYwKYna4J7nolzsC1jLh6W13h rA== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3m7wdxwy0j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Dec 2022 02:00:19 +0000
-Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2B620JRA020494
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 6 Dec 2022 02:00:19 GMT
-Received: from aiquny2-gv.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 5 Dec 2022 18:00:17 -0800
-From:   Maria Yu <quic_aiquny@quicinc.com>
-To:     <mathieu.poirier@linaro.org>, <andersson@kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Maria Yu <quic_aiquny@quicinc.com>, <quic_clew@quicinc.com>,
-        <quic_mojha@quicinc.com>
-Subject: [PATCH v6 1/1] remoteproc: core: do pm_relax when in RPROC_OFFLINE state
-Date:   Tue, 6 Dec 2022 09:59:57 +0800
-Message-ID: <20221206015957.2616-2-quic_aiquny@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221206015957.2616-1-quic_aiquny@quicinc.com>
-References: <20221206015957.2616-1-quic_aiquny@quicinc.com>
+        Tue, 6 Dec 2022 02:58:45 -0500
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3A98765D
+        for <linux-remoteproc@vger.kernel.org>; Mon,  5 Dec 2022 23:58:43 -0800 (PST)
+Received: by mail-lf1-x12e.google.com with SMTP id g7so22430855lfv.5
+        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Dec 2022 23:58:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kuxMKSbqC/Jgu5E4lIjy0a2xiVCLdx5Bzf0OSzdJ9K4=;
+        b=gGYhjUU2P1UY3m/14PaCJ9X0vDZV735yOUxXjy6fkwqf0urvMLYvdOZu8W+2LnUpYE
+         g9czDvAqWIgftLA+YWCRI7RHT17qnLtPgaZIS2VArFuk23wHsU6wtjN1Ir1UmfDu0NPD
+         q2VsHpfsEK4R7Rdect34HbJALcStt2SWbF9s+hE50UBjTJ/F9sSr+Mt6KnBdULGvccsb
+         HrByjPeBAUs8HLXuf9RUaNNRu+3na4I/8ezrqiw/J7uy9JFK31/QeDt3ZnWpvQoguTSw
+         EmOQPnBu8BkT47yS7tVdEhmDAr11ZapcF+zgPhEWdKTgPIDPDGt3LgHqqOZyWBhfKwis
+         qPaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kuxMKSbqC/Jgu5E4lIjy0a2xiVCLdx5Bzf0OSzdJ9K4=;
+        b=4gHgryHPaQGHCGAMuQLB9+qFYe8YNgyHvecZk1CpEh5tbmXeaKmdECaQ9xLuMoicvB
+         mHEo+KQzor4slKvt9OpBC+ucvBzOh13gECZwYSc9bgbTckTdSOX028a8uHQ28Ko0Wh27
+         g/88FBrl+gpxxlTsmoQFnrWWkEl0MIC3Vyv4TlTI65RUrQasM3CNgcEVnK5sF+3rwiHi
+         eRU8sJrWw3hpyhOnwu9oLI6FOKFE2VYpntofVZGFrJ9VT325ZqcbgOVYr+ngtJw4o2Sj
+         0+vpdmypogRh8rNxCtb5s+1b8uA9znsD3D7mGjKx3Cs3qPagripV/9mktdeNtk21DIf3
+         SbUg==
+X-Gm-Message-State: ANoB5plSU7h+4Qjqw+159MVK9VBuTH5a4RcLOrt1CDFoSMQ0Tozugrn9
+        e3btRrDDnUqVtAYwJ25csoPVHQ==
+X-Google-Smtp-Source: AA0mqf7q59b2daQSmHIbeePPXZzwACGd8uOQbPwr12ZU/qnQ2r8IuZVlVwJQ3jj5MPPt9ZSJVrkAtw==
+X-Received: by 2002:a05:6512:1112:b0:4b5:6375:32d9 with SMTP id l18-20020a056512111200b004b5637532d9mr4282236lfg.480.1670313521912;
+        Mon, 05 Dec 2022 23:58:41 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id r10-20020a19ac4a000000b00499cf3e3edcsm2391600lfc.296.2022.12.05.23.58.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Dec 2022 23:58:41 -0800 (PST)
+Message-ID: <26091130-1572-6a86-8590-7f3ec7654100@linaro.org>
+Date:   Tue, 6 Dec 2022 08:58:40 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: _A-JQLjfrjqpDngPxYjnDoKQjYTfF0bF
-X-Proofpoint-ORIG-GUID: _A-JQLjfrjqpDngPxYjnDoKQjYTfF0bF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-05_01,2022-12-05_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- clxscore=1015 adultscore=0 mlxscore=0 phishscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2212060012
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v3 08/15] dt-bindings: remoteproc: qcom,sm8150-pas: split
+ into separate file
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
+ <20221124184333.133911-9-krzysztof.kozlowski@linaro.org>
+ <20221205194934.GA2476927-robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221205194934.GA2476927-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Make sure that pm_relax() happens even when the remoteproc
-is stopped before the crash handler work is scheduled.
+On 05/12/2022 20:49, Rob Herring wrote:
 
-Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
----
- drivers/remoteproc/remoteproc_core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Hi Rob,
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 8768cb64f560..7419e1460f2a 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1862,12 +1862,18 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>> +  clocks:
+>> +    items:
+>> +      - description: XO clock
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: xo
+>> +
+>> +  qcom,qmp:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description: Reference to the AOSS side-channel message RAM.
+> 
+> Not ideal that we are defining the type here multiple times.
+
+
+I was thinking to add it to the common file (qcom,pas-common.yaml,
+created in patch 6/15) and just disallow it for other variants,
+but that does not work that good:
+
+Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml: properties:qcom,qmp: False is not of type 'object'
+	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml: properties:qcom,qmp: More than one condition true in oneOf schema:
+	{'description': 'Vendor specific properties must have a type and '
+	                'description unless they have a defined, common '
+	                'suffix.',
+
+
+qcom,qcs404-pas.yaml has "com,qmp: false" and it references
+"qcom,pas-common.yaml" which has the definition of the property.
+However it seems it is treated as new bool property.
+
+
+----------------------------
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
+index 007349ef51ed..62126e96d2f5 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
+@@ -39,6 +39,7 @@ properties:
  
- 	mutex_lock(&rproc->lock);
+   power-domains: false
+   power-domain-names: false
++  qcom,qmp: false
+   smd-edge: false
  
--	if (rproc->state == RPROC_CRASHED || rproc->state == RPROC_OFFLINE) {
-+	if (rproc->state == RPROC_CRASHED) {
- 		/* handle only the first crash detected */
- 		mutex_unlock(&rproc->lock);
- 		return;
- 	}
+ required:
+
+
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+index 1d5e01c8d8bc..72cdcc2b157d 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+@@ -60,6 +60,10 @@ properties:
+     maxItems: 1
+     description: Reference to the reserved-memory for the Hexagon core
  
-+	if (rproc->state == RPROC_OFFLINE) {
-+		/* Don't recover if the remote processor was stopped */
-+		mutex_unlock(&rproc->lock);
-+		goto out;
-+	}
++  qcom,qmp:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Reference to the AOSS side-channel message RAM.
 +
- 	rproc->state = RPROC_CRASHED;
- 	dev_err(dev, "handling crash #%u in %s\n", ++rproc->crash_cnt,
- 		rproc->name);
-@@ -1877,6 +1883,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
- 	if (!rproc->recovery_disabled)
- 		rproc_trigger_recovery(rproc);
- 
-+out:
- 	pm_relax(rproc->dev.parent);
- }
- 
--- 
-2.17.1
+   qcom,smem-states:
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     description: States used by the AP to signal the Hexagon core
+----------------------------
+
+Best regards,
+Krzysztof
 
