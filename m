@@ -2,64 +2,65 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38823C4708D
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 19:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECBBC63709
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 19:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbiLGTXi (ORCPT
+        id S229808AbiLGTXk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Dec 2022 14:23:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
+        Wed, 7 Dec 2022 14:23:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229623AbiLGTXf (ORCPT
+        with ESMTP id S229676AbiLGTXh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Dec 2022 14:23:35 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1416663CE
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Dec 2022 11:23:32 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id q7so29528583wrr.8
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Dec 2022 11:23:32 -0800 (PST)
+        Wed, 7 Dec 2022 14:23:37 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5D1B663EE
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Dec 2022 11:23:34 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id m14so29504300wrh.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Dec 2022 11:23:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
-         :subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=C/ucFAOI2Iw49PsMpiLJ1W8f9WPorHFdTdwmC6zDH1Q=;
-        b=xZcGUw7j/udNJzp6q3v9DnUQWnrnBHrOYufYXtsJ11DOBsBVl/aA7pLZMQwWVGUDcO
-         GH99Jd7+2wXr9IlQRN/nL5tdSYmJ1Q3KAPLKvhO5bFoUdnvvpPGK6arrHluEu1yjUSEd
-         ikqYxDgj+iJkfRhPQYjrL368LyVoGdnSwJnXA9SAABpiyA4ifSi17L9F7KoB/bi3iLHF
-         np6OYplDTy7zLgw+6U/HpRLl/YS7uidTY5hhdWW7f853HhWLJuv4sSYpeYK3OKABHV7p
-         +hv69RTRQpHkImI6bRmhcZllEpOvRs68tFWtRiile+Xvpv5mDD6VL/Ke52Z/LCbBOwZY
-         Tkwg==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IKTKywHyIPCXBSUcfJeW1/Q8bxFrGPEAhsZglTH+lJs=;
+        b=VhLcSFA69TfU3tTYA+KzSGAqs4oCfIasSQUJtqfnLkN4gidG2uNmUyFHUtyWx4ay3D
+         jwBIfv/CSvkPZHF9dGZ3ISZpKtzbpSC30XzcGCxyDYsUezcyoeKhnnD4TPfVDyV77b7K
+         wqM4mazTIvYP5WGQHISThrK0SSCTEUW1Ap3wvktC9o/nKK+aD6y0rFqecEVU/sXXCrGl
+         3fEjksXD2bAmWXTCXjPP7nqa5hfF0cH53QNBhwfCAD+xQ3qS0Wl3kbNpxWDPR/3jUW7a
+         V7FzY7IoZcBP4vAN0cCs6ytpq4/+FeHGH8WH3VuIoYrt6f+/i+PM12hIgLkFsHnKn0bJ
+         PLSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:message-id:date:from:content-transfer-encoding:mime-version
-         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C/ucFAOI2Iw49PsMpiLJ1W8f9WPorHFdTdwmC6zDH1Q=;
-        b=k35r1uv+ABjWVGb3R9AKWl1zqm9Kll/AinrNyVRCrULA7ZYvF19NTT4roGc9HuniHW
-         x6K/24FPUQr7BKjjeIYHFXK3Ub+meuD/HSVufKjzvEhUQVDjHMgYE684BKRfN7jCEC6T
-         6x5NmaZveQl7AMKsKHua951yfYgO2KjU1ZfymhsnJjtaPGzYLjDYwoPF/v6bO662WrFA
-         MnzT5O6enCiBTuXZGdI1tbBmNhzmIwJz9L/yyWMmA1YkgRRIc3bBuIyOL0EWpgVmzhbu
-         S98HyzK6/KMTuDAq1oaoZI1OUTgFkhmrC6qbAYRl/pXbyuay8GwYuCfqngID31lB04YD
-         W22Q==
-X-Gm-Message-State: ANoB5pldO75vB7IzctZwyg1iBVlvM9sCTpMIWuJIvJ8OxWVWJboj8eub
-        dxSxezRvmIkaxLOezjhmee70QVrEhVnnDzXTCMM=
-X-Google-Smtp-Source: AA0mqf7lUzeg/Mb/Jc7Mj6zbY1CYia5Xmj0KlBbI1SWWuFUnP5qsvIXERkQSaTKgQltRJR1knP0y0w==
-X-Received: by 2002:a5d:610d:0:b0:242:4fd1:1f5c with SMTP id v13-20020a5d610d000000b002424fd11f5cmr12540012wrt.376.1670441011388;
-        Wed, 07 Dec 2022 11:23:31 -0800 (PST)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IKTKywHyIPCXBSUcfJeW1/Q8bxFrGPEAhsZglTH+lJs=;
+        b=21oOrnW3KEwF+931VXhg6XuvQs9lSw+5tU3og1VBuqITS9PST//PIromL/1hdUDrZD
+         LJx+bs9RiiC2aWznHBIb40Gxq5r9ca0+xdZD1rM/luffcS0tDgVNYDIKXynHjvT3Q2Q+
+         G7cSup24cAIy2kUfcDSeF5rVQs1xiumPhuDDag1ikzltK9VOtdv/OsuSK7iaM2nkZQMM
+         p1NTaQ/U4jGc1VpzfTyTzt1c3wz6zygQ+8pZjTCCZWYs2NXLCElTDiR33klaGozHGHiF
+         AXk/gDsDfplWc7POuqOea01ccXYSdtzYRV4qphfJDnLQiTA0yBmbOpcaLjQviurryM7A
+         lAyA==
+X-Gm-Message-State: ANoB5pmRfQOhbH0d53Cdo5YLv86JXwOy2aAY2Dbeij1d7yfsPVBJf+m8
+        JUQCeWOjwPi6Ew8VcvzeUBbJrg==
+X-Google-Smtp-Source: AA0mqf61O+6qmFAt/ReXwL6EYsS8v7RI0vpNMnZgQa158zyNM8AudnisBmfCAS/cr+4SfAq9+JJw7A==
+X-Received: by 2002:adf:eb02:0:b0:236:5e6a:7ee with SMTP id s2-20020adfeb02000000b002365e6a07eemr57392748wrn.618.1670441013364;
+        Wed, 07 Dec 2022 11:23:33 -0800 (PST)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id w1-20020a5d5441000000b002422b462975sm19400355wrv.34.2022.12.07.11.23.30
+        by smtp.gmail.com with ESMTPSA id w1-20020a5d5441000000b002422b462975sm19400355wrv.34.2022.12.07.11.23.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 11:23:31 -0800 (PST)
-Subject: [PATCH v3 0/5] remoteproc: qcom_q6v5_pas: add support for SM8550 adsp, cdsp & mpss
+        Wed, 07 Dec 2022 11:23:33 -0800 (PST)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Date:   Wed, 07 Dec 2022 20:23:24 +0100
+Subject: [PATCH v3 2/5] dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp,
+ cdsp & mpss compatible
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-b4-tracking: H4sIACrokGMC/52NQQ6CMBBFr0K6dkw7LRFdeQ/joq0FmkBLpkBiCHd3dOdSV5M3yX9vEyVQDEVcqk
- 1QWGOJOTHoQyV8b1MXID6YBUpEpZSBZGksM+XUQRmbupawTMzBjkBhzHOYKHtopGl165w2rhXscrYE
- cGST79mWlmHgZx/LnOn5aa+Kz+3XzKpAgpLGa+Oddmd1HSIv8zFTJ+6cWPEvLb616Dwi1rU5mS/tvu 8vabEcQjcBAAA=
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Wed, 07 Dec 2022 20:23:22 +0100
-Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-0-62162a1df718@linaro.org>
+Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-2-62162a1df718@linaro.org>
+References: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-0-62162a1df718@linaro.org>
+In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-0-62162a1df718@linaro.org>
 To:     Amol Maheshwari <amahesh@qti.qualcomm.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -78,84 +79,205 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patchsets adds support for the aDSP, cDSP and MPSS found in the
-SM8550 SoC.
+This documents the compatible for the component used to boot the
+aDSP, cDSP and MPSS on the SM8550 SoC.
 
-The aDSP, cDSP and MPSS boot process on SM8550 now requires a secondary
-"Devicetree" firmware to be passed along the main Firmware, and the cDSP
-a new power domain named "NSP".
+The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
+firmware to be passed along the main Firmware, and the cDSP a new power
+domain named "NSP".
 
-In order to satisfy the load & authentication order required by the SM8550
-SoC, the following is implemented:
-- "Devicetree" firmware request & load in dedicated memory
-- Q6V5 prepare
-- Power Domain & Clocks enable
-- "Devicetree" firmware authentication
-- Main firmware load in dedicated memory
-- Main firmware authentication
-- Q6V5 startup
-- "Devicetree" firmware metadata release
-- Main metadata release
+A third memory domain for the DSM memory zone is also needed for the MPSS
+PAS bindings.
 
-When booting older platforms, the "Devicetree" steps would be
-bypassed and the load & authentication order would still be valid.
-
-Bindings changes depends on:
-- https://lore.kernel.org/all/20221124184333.133911-1-krzysztof.kozlowski@linaro.org/
-
-To: Andy Gross <agross@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@somainline.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Amol Maheshwari <amahesh@qti.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-remoteproc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Abel Vesa <abel.vesa@linaro.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-
 ---
-Changes in v3:
-- fix mpss matching in bindings, tested against DT
-- Link to v2: https://lore.kernel.org/r/20221114-narmstrong-sm8550-upstream-remoteproc-v2-0-12bc22255474@linaro.org
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 178 +++++++++++++++++++++
+ 1 file changed, 178 insertions(+)
 
-Changes in v2:
-- Moved the SM8550 pas bindings on top of "split and reorganize PAS/PIL" v3 patchset 
-- Incorporated DSM memory support into pas bindings & driver
-- Moved second DTB firmware into second entry of firmware-name
-- Dropped applied "qcom,fastrpc: increase allowed iommus entries" patch
-- Link to v1: https://lore.kernel.org/r/20221114-narmstrong-sm8550-upstream-remoteproc-v1-0-104c34cb3b91@linaro.org
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+new file mode 100644
+index 000000000000..ae612809e260
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+@@ -0,0 +1,178 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/qcom,sm8550-pas.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm SM8550 Peripheral Authentication Service
++
++maintainers:
++  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++
++description:
++  Qualcomm SM8550 SoC Peripheral Authentication Service loads and boots firmware
++  on the Qualcomm DSP Hexagon cores.
++
++properties:
++  compatible:
++    enum:
++      - qcom,sm8550-adsp-pas
++      - qcom,sm8550-cdsp-pas
++      - qcom,sm8550-mpss-pas
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: XO clock
++
++  clock-names:
++    items:
++      - const: xo
++
++  qcom,qmp:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Reference to the AOSS side-channel message RAM.
++
++  smd-edge: false
++
++  firmware-name:
++    $ref: /schemas/types.yaml#/definitions/string-array
++    items:
++      - description: Firmware name of the Hexagon core
++      - description: Firmware name of the Hexagon Devicetree
++
++  memory-region:
++    minItems: 2
++    items:
++      - description: Memory region for main Firmware authentication
++      - description: Memory region for Devicetree Firmware authentication
++      - description: DSM Memory region
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sm8550-adsp-pas
++            - qcom,sm8550-cdsp-pas
++    then:
++      properties:
++        interrupts:
++          maxItems: 5
++        interrupt-names:
++          maxItems: 5
++        memory-region:
++          maxItems: 2
++    else:
++      properties:
++        interrupts:
++          minItems: 6
++        interrupt-names:
++          minItems: 6
++        memory-region:
++          minItems: 3
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sm8550-adsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: LCX power domain
++            - description: LMX power domain
++        power-domain-names:
++          items:
++            - const: lcx
++            - const: lmx
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sm8550-cdsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MXC power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mxc
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,sm8550-mpss-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MXC power domain
++            - description: NSP power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mxc
++            - const: nsp
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/mailbox/qcom-ipcc.h>
++
++    remoteproc@30000000 {
++        compatible = "qcom,sm8550-adsp-pas";
++        reg = <0x030000000 0x100>;
++
++        clocks = <&rpmhcc RPMH_CXO_CLK>;
++        clock-names = "xo";
++
++        interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "wdog", "fatal", "ready",
++                          "handover", "stop-ack";
++
++        memory-region = <&adsp_mem>, <&dtb_adsp_mem>;
++
++        firmware-name = "qcom/sm8550/adsp.mbn",
++                        "qcom/sm8550/adsp_dtb.mbn";
++
++        power-domains = <&rpmhpd_sm8550_lcx>,
++                        <&rpmhpd_sm8550_lmx>;
++        power-domain-names = "lcx", "lmx";
++
++        qcom,qmp = <&aoss_qmp>;
++        qcom,smem-states = <&smp2p_adsp_out 0>;
++        qcom,smem-state-names = "stop";
++
++        glink-edge {
++            interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++                                         IPCC_MPROC_SIGNAL_GLINK_QMP
++                                         IRQ_TYPE_EDGE_RISING>;
++            mboxes = <&ipcc IPCC_CLIENT_LPASS IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++            label = "lpass";
++            qcom,remote-pid = <2>;
++
++            /* ... */
++        };
++    };
 
----
-Neil Armstrong (5):
-      dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common
-      dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp, cdsp & mpss compatible
-      remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading
-      remoteproc: qcom_q6v5_pas: add support for assigning memory to firmware
-      remoteproc: qcom_q6v5_pas: add sm8550 adsp, cdsp & mpss compatible & data
-
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |   4 +
- .../bindings/remoteproc/qcom,pas-common.yaml       |   8 -
- .../bindings/remoteproc/qcom,qcs404-pas.yaml       |   8 +
- .../bindings/remoteproc/qcom,sc7180-pas.yaml       |   8 +
- .../bindings/remoteproc/qcom,sc8180x-pas.yaml      |   8 +
- .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |   8 +
- .../bindings/remoteproc/qcom,sdx55-pas.yaml        |   8 +
- .../bindings/remoteproc/qcom,sm6350-pas.yaml       |   8 +
- .../bindings/remoteproc/qcom,sm8150-pas.yaml       |   8 +
- .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   8 +
- .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 178 ++++++++++++++
- drivers/remoteproc/qcom_q6v5_pas.c                 | 271 ++++++++++++++++++++-
- 12 files changed, 504 insertions(+), 21 deletions(-)
----
-base-commit: 268975e1af25cd83994d24c46ad0d95753291f64
-change-id: 20221114-narmstrong-sm8550-upstream-remoteproc-804f3fbb34bf
-
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+b4 0.10.1
