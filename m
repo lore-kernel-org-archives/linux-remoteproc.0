@@ -2,63 +2,63 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201CAC63705
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 19:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C21EC352A1
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 19:23:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbiLGTXi (ORCPT
+        id S229676AbiLGTXl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Dec 2022 14:23:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44646 "EHLO
+        Wed, 7 Dec 2022 14:23:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229636AbiLGTXg (ORCPT
+        with ESMTP id S229690AbiLGTXh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Dec 2022 14:23:36 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C26663E5
-        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Dec 2022 11:23:33 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id co23so2057909wrb.4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Dec 2022 11:23:33 -0800 (PST)
+        Wed, 7 Dec 2022 14:23:37 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3627663EB
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Dec 2022 11:23:35 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id h12so29474453wrv.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Dec 2022 11:23:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GUly8uO1OUcoSESV+o668Tkb+5x4qUzBcDjwS5bQlu4=;
-        b=qIlMt8qo1eeKSh1mVdnpDD4P/cGqRQrED9Utsx1lcz4jajJ+h51LAdNxNpUc1Pgs5C
-         SUzG1G7F29TUO3MPa1vprsFU65xh+L/6qpV37Ms0avq1bsA2J53M8c4NhnDuaeJugm78
-         2vGnr4UVVTy1PXmU/4ATqb7PveHBvts+q2M/mxsJrnNosCOyqmvBtP57bZ6fuyc8k+dk
-         vIhAgYB5kNVREdqDLjueOTQRBuKI9dO7YX3QN3RQ9xrk79em+XSJ0SM+0XG/BUMTWWhH
-         UQkhbRh64Jnf6NgGot7kY1nnwpw/2+MDo0Pr6BnVuE8XapCaE+/9RLGm5aNmoQcuoqNP
-         wJ/Q==
+        bh=F81FRtQTN8/7lBiZFQTJl8otEU1xztcn6GaL7O0kwpk=;
+        b=iAh0f4iz+mX0i09dzivwvQxrpSJ6tUWuWNs3dyxy97ztn1j5QdDwFGk7N2z766Ug+7
+         CnGS1l9AgK5ONp97E1WaKIlY+JtVy07JNKqL//axFk+tjBlCqsOkI6YZRu/thexArcLF
+         NjoRBN6dmeeRwtBwnxOjvsMF7/kWu6ZMjV6mcNXjUsJjJ106lS4y8auehN0OyuOEzL3t
+         5MXWBV+o6E5+rqbN9QtdMucG8839zdRsreaW340NC3VfJempb86shfmcJtibrZnWCZeb
+         0VAu4fHDxnIstWU/2tDdvQMHjcLCWhnzACut5wBnUTYDx8kcNlTVzrqwKQIXPOA5RrFb
+         mIXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GUly8uO1OUcoSESV+o668Tkb+5x4qUzBcDjwS5bQlu4=;
-        b=Zp6XpFXtabVyPxJhhAJ1XdQaHZXiblgcJFFLtD5JCXBVoh+kyXhBI+4FJtJEsA52Rx
-         HlyeImdGKjBptXl1723QATYKDWimPYPUZ67C3L6ct6fmv5RNJwxA5mavC9+zJWueeGrH
-         8mOxRl8s9rLtSdoN39tIcGBX3/ixY2TG9yCr9wG46kCWyxGrE6ub0rz3eCCVjvBQY85K
-         xQh+IBmfQKXyfnuy359DoOQMmSaSfxj4MZUb0GYIJlUfR58ELOptJ0x0dhi99nGi5PFw
-         stO9mjJknxijRNOOrOTs4KO/J3SyzdmR8UWo9zd22V4FKuknxGkA+h+0JDNg5YbBKiZo
-         qvcg==
-X-Gm-Message-State: ANoB5pnGaMd4jdEk1wEDlL+XufKDTZEYsUG8S602Sxa3aoTgbVrTBt3l
-        j80uzagfBHm0k0JH0LpE6Itwlw==
-X-Google-Smtp-Source: AA0mqf578qz1XUgN6HFBVYwJAXNHPJ3BBOD/Wkd1Rvq4auQ4eWm7K69XG3NJMUYIVtLB9QZwVqgcoA==
-X-Received: by 2002:adf:ded1:0:b0:242:673a:d9e0 with SMTP id i17-20020adfded1000000b00242673ad9e0mr8087914wrn.134.1670441012430;
-        Wed, 07 Dec 2022 11:23:32 -0800 (PST)
+        bh=F81FRtQTN8/7lBiZFQTJl8otEU1xztcn6GaL7O0kwpk=;
+        b=kCkkk8ggXZvvRn/t46gdM9LvyyWlr4Sw0gY6FDOK6Ajn/hE/mUiQUkh3o616vYuFJC
+         6bmQiFauSr28tSS4IzcI13iInJb9M7c2v87vc065uMTlpcn7iOtuXNfjB6nTvzW+ueyN
+         6Rtb46uX89CZjp2DfPiFLNYTkkUgO1xxsNVt7OlGVbjM5V7UqbCW2c3stWZeiXWBprP/
+         PWNJNJsZFjGuSwlaZuFeL8VncWwipdaY6+YBe8UhQmSuBBjNIZs81XOkR44MduOJ50H0
+         tlnG7PuEGJvXhmwd2OCbFfL+KffFUmEjcG6WUoECS8seEavYI4BqucpnjvVnR6cdnkpZ
+         0sLw==
+X-Gm-Message-State: ANoB5pl4+f7XKOCdvqh09R/7+V3DkLYI5aR7fgwe4A4uu7CVZkE6LpdY
+        n0mpuIei3tEcW0KtZOanOHOyIQ==
+X-Google-Smtp-Source: AA0mqf43TW90DmKSOEt5s58/34WMr7FrxXo32ymy6tFNbD5920tWiFvNHDOBWUnj4roJ+Px/PsfwgQ==
+X-Received: by 2002:a5d:4281:0:b0:22e:3c69:f587 with SMTP id k1-20020a5d4281000000b0022e3c69f587mr50242752wrq.670.1670441014520;
+        Wed, 07 Dec 2022 11:23:34 -0800 (PST)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id w1-20020a5d5441000000b002422b462975sm19400355wrv.34.2022.12.07.11.23.31
+        by smtp.gmail.com with ESMTPSA id w1-20020a5d5441000000b002422b462975sm19400355wrv.34.2022.12.07.11.23.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Dec 2022 11:23:31 -0800 (PST)
+        Wed, 07 Dec 2022 11:23:34 -0800 (PST)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Wed, 07 Dec 2022 20:23:23 +0100
-Subject: [PATCH v3 1/5] dt-bindings: remoteproc: qcom: adsp: move memory-region and
- firmware-name out of pas-common
+Date:   Wed, 07 Dec 2022 20:23:25 +0100
+Subject: [PATCH v3 3/5] remoteproc: qcom_q6v5_pas: add support for dtb co-firmware
+ loading
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-1-62162a1df718@linaro.org>
+Message-Id: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-3-62162a1df718@linaro.org>
 References: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-0-62162a1df718@linaro.org>
 In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-0-62162a1df718@linaro.org>
 To:     Amol Maheshwari <amahesh@qti.qualcomm.com>,
@@ -79,225 +79,286 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Move memory-region and firmware-name definitions out of qcom,pas-common.yaml
-since they will be redefined differently for SM8550 PAS bindings documentation.
+Starting from the SM8550 SoC, starting the aDSP, cDSP and MPSS will
+require loading a separate "Devicetree" firmware.
+
+In order to satisfy the load & authentication order required by the SM8550
+SoC, the following is implemented:
+- "Devicetree" firmware request & load in dedicated memory
+- Q6V5 prepare
+- Power Domain & Clocks enable
+- "Devicetree" firmware authentication
+- Main firmware load in dedicated memory
+- Main firmware authentication
+- Q6V5 startup
+- "Devicetree" firmware metadata release
+- Main metadata release
+
+When booting older platforms, the "Devicetree" steps would be
+bypassed and the load & authentication order would still be valid.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml       | 4 ++++
- Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml | 8 --------
- Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml | 8 ++++++++
- Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml | 8 ++++++++
- .../devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml          | 8 ++++++++
- .../devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml         | 8 ++++++++
- Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml  | 8 ++++++++
- Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml | 8 ++++++++
- Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml | 8 ++++++++
- Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml | 8 ++++++++
- 10 files changed, 68 insertions(+), 8 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pas.c | 134 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 121 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 9af2db72b337..5b55a22182ce 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -39,6 +39,10 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: Reference to the AOSS side-channel message RAM.
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 6afd0941e552..4fe09c7f25bd 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -35,7 +35,9 @@
+ struct adsp_data {
+ 	int crash_reason_smem;
+ 	const char *firmware_name;
++	const char *dtb_firmware_name;
+ 	int pas_id;
++	int dtb_pas_id;
+ 	unsigned int minidump_id;
+ 	bool has_aggre2_clk;
+ 	bool auto_boot;
+@@ -65,20 +67,29 @@ struct qcom_adsp {
  
-+  memory-region:
-+    maxItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
+ 	int proxy_pd_count;
+ 
++	const char *dtb_firmware_name;
+ 	int pas_id;
++	int dtb_pas_id;
+ 	unsigned int minidump_id;
+ 	int crash_reason_smem;
+ 	bool has_aggre2_clk;
+ 	bool decrypt_shutdown;
+ 	const char *info_name;
+ 
++	const struct firmware *firmware;
++	const struct firmware *dtb_firmware;
 +
- required:
-   - compatible
+ 	struct completion start_done;
+ 	struct completion stop_done;
  
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-index 1d5e01c8d8bc..171ef85de193 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-@@ -52,14 +52,6 @@ properties:
-     minItems: 1
-     maxItems: 3
+ 	phys_addr_t mem_phys;
++	phys_addr_t dtb_mem_phys;
+ 	phys_addr_t mem_reloc;
++	phys_addr_t dtb_mem_reloc;
+ 	void *mem_region;
++	void *dtb_mem_region;
+ 	size_t mem_size;
++	size_t dtb_mem_size;
  
--  firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
--    description: Firmware name for the Hexagon core
--
--  memory-region:
--    maxItems: 1
--    description: Reference to the reserved-memory for the Hexagon core
--
-   qcom,smem-states:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     description: States used by the AP to signal the Hexagon core
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-index 007349ef51ed..5efa0e5c0439 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-@@ -41,6 +41,14 @@ properties:
-   power-domain-names: false
-   smd-edge: false
+ 	struct qcom_rproc_glink glink_subdev;
+ 	struct qcom_rproc_subdev smd_subdev;
+@@ -86,6 +97,7 @@ struct qcom_adsp {
+ 	struct qcom_sysmon *sysmon;
  
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
+ 	struct qcom_scm_pas_metadata pas_metadata;
++	struct qcom_scm_pas_metadata dtb_pas_metadata;
+ };
+ 
+ static void adsp_minidump(struct rproc *rproc)
+@@ -160,6 +172,8 @@ static int adsp_unprepare(struct rproc *rproc)
+ 	 * here.
+ 	 */
+ 	qcom_scm_pas_metadata_release(&adsp->pas_metadata);
++	if (adsp->dtb_pas_id)
++		qcom_scm_pas_metadata_release(&adsp->dtb_pas_metadata);
+ 
+ 	return 0;
+ }
+@@ -169,20 +183,40 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ 	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+ 	int ret;
+ 
+-	ret = qcom_mdt_pas_init(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+-				adsp->mem_phys, &adsp->pas_metadata);
+-	if (ret)
+-		return ret;
++	/* Store firmware handle to be used in adsp_start() */
++	adsp->firmware = fw;
+ 
+-	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+-				    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+-				    &adsp->mem_reloc);
+-	if (ret)
+-		return ret;
++	if (adsp->dtb_pas_id) {
++		ret = request_firmware(&adsp->dtb_firmware, adsp->dtb_firmware_name, adsp->dev);
++		if (ret) {
++			dev_err(adsp->dev, "request_firmware failed for %s: %d\n",
++				adsp->dtb_firmware_name, ret);
++			return ret;
++		}
+ 
+-	qcom_pil_info_store(adsp->info_name, adsp->mem_phys, adsp->mem_size);
++		ret = qcom_mdt_pas_init(adsp->dev, adsp->dtb_firmware, adsp->dtb_firmware_name,
++					adsp->dtb_pas_id, adsp->dtb_mem_phys,
++					&adsp->dtb_pas_metadata);
++		if (ret)
++			goto release_dtb_firmware;
 +
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
++		ret = qcom_mdt_load_no_init(adsp->dev, adsp->dtb_firmware, adsp->dtb_firmware_name,
++					    adsp->dtb_pas_id, adsp->dtb_mem_region,
++					    adsp->dtb_mem_phys, adsp->dtb_mem_size,
++					    &adsp->dtb_mem_reloc);
++		if (ret)
++			goto release_dtb_metadata;
++	}
+ 
+ 	return 0;
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-index 6fd768609a66..5cefd2c58593 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-@@ -50,12 +50,20 @@ properties:
-       - const: mx
-       - const: mss
- 
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
++release_dtb_metadata:
++	qcom_scm_pas_metadata_release(&adsp->dtb_pas_metadata);
 +
-   qcom,qmp:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: Reference to the AOSS side-channel message RAM.
- 
-   smd-edge: false
- 
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
++release_dtb_firmware:
++	release_firmware(adsp->dtb_firmware);
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-index 3026cfde5582..c1f8dd8d0e4c 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-@@ -37,6 +37,14 @@ properties:
++	return ret;
+ }
  
-   smd-edge: false
+ static int adsp_start(struct rproc *rproc)
+@@ -218,24 +252,55 @@ static int adsp_start(struct rproc *rproc)
+ 			goto disable_cx_supply;
+ 	}
  
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
++	if (adsp->dtb_pas_id) {
++		ret = qcom_scm_pas_auth_and_reset(adsp->dtb_pas_id);
++		if (ret) {
++			dev_err(adsp->dev,
++				"failed to authenticate dtb image and release reset\n");
++			goto disable_px_supply;
++		}
++	}
 +
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
++	ret = qcom_mdt_pas_init(adsp->dev, adsp->firmware, rproc->firmware, adsp->pas_id,
++				adsp->mem_phys, &adsp->pas_metadata);
++	if (ret)
++		goto disable_px_supply;
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-index c08274aaa6f8..f6fbc531dc28 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-@@ -37,6 +37,14 @@ properties:
- 
-   smd-edge: false
- 
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
++	ret = qcom_mdt_load_no_init(adsp->dev, adsp->firmware, rproc->firmware, adsp->pas_id,
++				    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
++				    &adsp->mem_reloc);
++	if (ret)
++		goto release_pas_metadata;
 +
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
++	qcom_pil_info_store(adsp->info_name, adsp->mem_phys, adsp->mem_size);
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-index cbeaa00ca4d4..c66e298462c7 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-@@ -45,12 +45,20 @@ properties:
-       - const: cx
-       - const: mss
+ 	ret = qcom_scm_pas_auth_and_reset(adsp->pas_id);
+ 	if (ret) {
+ 		dev_err(adsp->dev,
+ 			"failed to authenticate image and release reset\n");
+-		goto disable_px_supply;
++		goto release_pas_metadata;
+ 	}
  
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
+ 	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
+ 	if (ret == -ETIMEDOUT) {
+ 		dev_err(adsp->dev, "start timed out\n");
+ 		qcom_scm_pas_shutdown(adsp->pas_id);
+-		goto disable_px_supply;
++		goto release_pas_metadata;
+ 	}
+ 
+ 	qcom_scm_pas_metadata_release(&adsp->pas_metadata);
++	if (adsp->dtb_pas_id)
++		qcom_scm_pas_metadata_release(&adsp->dtb_pas_metadata);
 +
-   qcom,qmp:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: Reference to the AOSS side-channel message RAM.
++	/* Remove pointer to the loaded firmware, only valid in adsp_load() & adsp_start() */
++	adsp->firmware = NULL;
  
-   smd-edge: false
+ 	return 0;
  
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
++release_pas_metadata:
++	qcom_scm_pas_metadata_release(&adsp->pas_metadata);
++	if (adsp->dtb_pas_id)
++		qcom_scm_pas_metadata_release(&adsp->dtb_pas_metadata);
+ disable_px_supply:
+ 	if (adsp->px_supply)
+ 		regulator_disable(adsp->px_supply);
+@@ -251,6 +316,9 @@ static int adsp_start(struct rproc *rproc)
+ disable_irqs:
+ 	qcom_q6v5_unprepare(&adsp->q6v5);
+ 
++	/* Remove pointer to the loaded firmware, only valid in adsp_load() & adsp_start() */
++	adsp->firmware = NULL;
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-index 911529400142..fee02fa800b5 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-@@ -35,8 +35,16 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: Reference to the AOSS side-channel message RAM.
+ 	return ret;
+ }
  
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
-+
-   smd-edge: false
+@@ -284,6 +352,12 @@ static int adsp_stop(struct rproc *rproc)
+ 	if (ret)
+ 		dev_err(adsp->dev, "failed to shutdown: %d\n", ret);
  
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
++	if (adsp->dtb_pas_id) {
++		ret = qcom_scm_pas_shutdown(adsp->dtb_pas_id);
++		if (ret)
++			dev_err(adsp->dev, "failed to shutdown dtb: %d\n", ret);
++	}
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index b934252cf02b..2c085ac2c3fb 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -39,8 +39,16 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: Reference to the AOSS side-channel message RAM.
+ 	handover = qcom_q6v5_unprepare(&adsp->q6v5);
+ 	if (handover)
+ 		qcom_pas_handover(&adsp->q6v5);
+@@ -461,6 +535,28 @@ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+ 		return -EBUSY;
+ 	}
  
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
++	if (!adsp->dtb_pas_id)
++		return 0;
 +
-   smd-edge: false
++	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 1);
++	if (!node) {
++		dev_err(adsp->dev, "no dtb memory-region specified\n");
++		return -EINVAL;
++	}
++
++	ret = of_address_to_resource(node, 0, &r);
++	if (ret)
++		return ret;
++
++	adsp->dtb_mem_phys = adsp->dtb_mem_reloc = r.start;
++	adsp->dtb_mem_size = resource_size(&r);
++	adsp->dtb_mem_region = devm_ioremap_wc(adsp->dev, adsp->dtb_mem_phys, adsp->dtb_mem_size);
++	if (!adsp->dtb_mem_region) {
++		dev_err(adsp->dev, "unable to map dtb memory region: %pa+%zx\n",
++			&r.start, adsp->dtb_mem_size);
++		return -EBUSY;
++	}
++
+ 	return 0;
+ }
  
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-index 853f97d6879f..af24f9a3cdf1 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-@@ -42,6 +42,14 @@ properties:
+@@ -469,7 +565,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	const struct adsp_data *desc;
+ 	struct qcom_adsp *adsp;
+ 	struct rproc *rproc;
+-	const char *fw_name;
++	const char *fw_name, *dtb_fw_name = NULL;
+ 	const struct rproc_ops *ops = &adsp_ops;
+ 	int ret;
  
-   smd-edge: false
+@@ -486,6 +582,14 @@ static int adsp_probe(struct platform_device *pdev)
+ 	if (ret < 0 && ret != -EINVAL)
+ 		return ret;
  
-+  memory-region:
-+    minItems: 1
-+    description: Reference to the reserved-memory for the Hexagon core
++	if (desc->dtb_firmware_name) {
++		dtb_fw_name = desc->dtb_firmware_name;
++		ret = of_property_read_string_index(pdev->dev.of_node, "firmware-name", 1,
++					      &dtb_fw_name);
++		if (ret < 0 && ret != -EINVAL)
++			return ret;
++	}
 +
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Firmware name for the Hexagon core
-+
- required:
-   - compatible
-   - reg
+ 	if (desc->minidump_id)
+ 		ops = &adsp_minidump_ops;
+ 
+@@ -507,6 +611,10 @@ static int adsp_probe(struct platform_device *pdev)
+ 	adsp->has_aggre2_clk = desc->has_aggre2_clk;
+ 	adsp->info_name = desc->sysmon_name;
+ 	adsp->decrypt_shutdown = desc->decrypt_shutdown;
++	if (dtb_fw_name) {
++		adsp->dtb_firmware_name = dtb_fw_name;
++		adsp->dtb_pas_id = desc->dtb_pas_id;
++	}
+ 	platform_set_drvdata(pdev, adsp);
+ 
+ 	ret = device_init_wakeup(adsp->dev, true);
 
 -- 
 b4 0.10.1
