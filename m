@@ -2,151 +2,238 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066E1C352A1
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 09:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8B4C352A1
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 10:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbiLGJAZ (ORCPT
+        id S229815AbiLGKvj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Dec 2022 04:00:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50764 "EHLO
+        Wed, 7 Dec 2022 05:51:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbiLGI7v (ORCPT
+        with ESMTP id S229732AbiLGKvd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Dec 2022 03:59:51 -0500
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDBD5B64;
-        Wed,  7 Dec 2022 00:59:49 -0800 (PST)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B73eoE9005999;
-        Wed, 7 Dec 2022 09:59:38 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=nv6CSPzVcW61iwkrykBZRIYhH/dOHXw9fTiSF2/SiQM=;
- b=K5E2/ZFV72JXYOOO2qm+i5qqzlKR3RZqMka9beO8GWMopK6Ec60Rw26b05aEI+TmNL3+
- y89RUzlNV7+NxHi1aVgXIZj9ggtiZtTC7rbOhDjm/i1bhiCtSjN/VP5atSJL2TNyXBOb
- yeAxPa+bWYzV4kC5GpUj0WfR6AIRD337HG7A5CF/DrU4Yzd2c5yX58xO6nj0HlsrTAX4
- jFAWC4s7M7nLNHxIqBWl/lVbYKequzvRzGjjYRyian+ZzsFulCaOxvsIkJUJRJgdA4zl
- KpEvqV+cgnI9DrZB14/SUlsRkaxgW8ZKmFr4Xvwgbnn8NVZp6JFANPBTV6QIZB8FGP+/ 7Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3m7x7py2bc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Dec 2022 09:59:38 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 290B010002A;
-        Wed,  7 Dec 2022 09:59:33 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0F79D21BF66;
-        Wed,  7 Dec 2022 09:59:33 +0100 (CET)
-Received: from [10.201.20.73] (10.201.20.73) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Wed, 7 Dec
- 2022 09:59:32 +0100
-Message-ID: <9dbc355c-2f73-cfb9-4808-fce65d7860e3@foss.st.com>
-Date:   Wed, 7 Dec 2022 09:59:30 +0100
+        Wed, 7 Dec 2022 05:51:33 -0500
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77ACA4908E;
+        Wed,  7 Dec 2022 02:51:31 -0800 (PST)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2B7ApCXA076319;
+        Wed, 7 Dec 2022 04:51:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1670410272;
+        bh=AqKUNtrpADpTjwQ4iK0ZGfqwTt2pZSBNCx2ItPgxtFA=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=e1Bt+v+X8esXCmav28gUuMDsjbWVQdJNyNkoJJo2zwST3ikXb4V/cHtU9086rqco9
+         S5WJbSsDRfNCuigMS1HLP47muE7Jd3yvA3EquCemtaNp1O8lWLWzxc8vHcKdEItDvD
+         PYmE4nHJSQIXmk3GSKX9K5cLI8X1u8FEze2bFxqo=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2B7ApCVg099037
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Dec 2022 04:51:12 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 7
+ Dec 2022 04:51:11 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Wed, 7 Dec 2022 04:51:11 -0600
+Received: from [10.24.69.114] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2B7Ap7ao007541;
+        Wed, 7 Dec 2022 04:51:08 -0600
+Message-ID: <74e13b7a-67d3-efbd-6de5-01b6c71be8f4@ti.com>
+Date:   Wed, 7 Dec 2022 16:21:07 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH] rpmsg: char: Use preallocated SKBs.
+Subject: Re: [EXTERNAL] Re: [PATCH v10 3/6] remoteproc: pru: Add enum for PRU
+ Core Indentifiers.
 Content-Language: en-US
-To:     Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-CC:     Ohad Ben-Cohen <ohad@wizery.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>
-References: <20221206085008.25388-1-piotr.wojtaszczyk@timesys.com>
- <0987cae3-0edc-918b-5b23-22f238f22aa2@foss.st.com>
- <CAG+cZ05b9W4e=AhoiAgehW7V7uWTPaBReAcQkTcVQmDsXwUYFw@mail.gmail.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <CAG+cZ05b9W4e=AhoiAgehW7V7uWTPaBReAcQkTcVQmDsXwUYFw@mail.gmail.com>
+From:   Md Danish Anwar <a0501179@ti.com>
+To:     Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Suman Anna <s-anna@ti.com>, "Andrew F . Davis" <afd@ti.com>,
+        <nm@ti.com>, <vigneshr@ti.com>, <srk@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20221201110500.4017889-1-danishanwar@ti.com>
+ <20221201110500.4017889-4-danishanwar@ti.com>
+ <a32f817e-6b61-7666-94f9-cf11f1f2e0a8@kernel.org>
+ <15846a05-acb7-126e-eb4f-4057c77ce696@ti.com>
+In-Reply-To: <15846a05-acb7-126e-eb4f-4057c77ce696@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.20.73]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-07_04,2022-12-06_01,2022-06-22_01
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Roger,
 
+On 01/12/22 19:13, Md Danish Anwar wrote:
+> Hi Roger,
+> 
+> On 01/12/22 5:28 pm, Roger Quadros wrote:
+>> Danish,
+>>
+>> On 01/12/2022 13:04, MD Danish Anwar wrote:
+>>> Introducing enum pruss_pru_id for PRU Core Identifiers.
+>>> PRUSS_PRU0 indicates PRU Core 0.
+>>> PRUSS_PRU1 indicates PRU Core 1.
+>>> PRUSS_NUM_PRUS indicates the total number of PRU Cores.
+>>>
+>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> ---
+>>>   drivers/remoteproc/pru_rproc.c | 16 ++++++++++++----
+>>>   include/linux/pruss.h          | 19 +++++++++++++++++--
+>>>   2 files changed, 29 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>>> index b4498a505108..7d4ed39b3772 100644
+>>> --- a/drivers/remoteproc/pru_rproc.c
+>>> +++ b/drivers/remoteproc/pru_rproc.c
+>>> @@ -186,6 +186,7 @@ static struct rproc *__pru_rproc_get(struct device_node
+>>> *np, int index)
+>>>    * pru_rproc_get() - get the PRU rproc instance from a device node
+>>>    * @np: the user/client device node
+>>>    * @index: index to use for the ti,prus property
+>>> + * @pru_id: optional pointer to return the PRU remoteproc processor id
+>>>    *
+>>>    * This function looks through a client device node's "ti,prus" property at
+>>>    * index @index and returns the rproc handle for a valid PRU remote
+>>> processor if
+>>> @@ -193,13 +194,17 @@ static struct rproc *__pru_rproc_get(struct
+>>> device_node *np, int index)
+>>>    * time. Caller must call pru_rproc_put() when done with using the rproc, not
+>>>    * required if the function returns a failure.
+>>>    *
+>>> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
+>>> + * returned.
+>>> + *
+>>>    * Return: rproc handle on success, and an ERR_PTR on failure using one
+>>>    * of the following error values
+>>>    *    -ENODEV if device is not found
+>>>    *    -EBUSY if PRU is already acquired by anyone
+>>>    *    -EPROBE_DEFER is PRU device is not probed yet
+>>>    */
+>>> -struct rproc *pru_rproc_get(struct device_node *np, int index)
+>>> +struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>> +                enum pruss_pru_id *pru_id)
+>>
+>> You just introduced pru_rproc_get() in the previous patch and are
+>> now updating it here.
+>>
+> 
+> That's because there is dependency between these two patches. The enum
+> pruss_pru_id is declared inside linux/pruss.h file which is introduced in
+> pru_rproc_get() patch. But pru_rproc_get() and pru_rproc_put() APIs use the
+> enum as function argument. So I decided to keep pru_rproc_get() patch as second
+> patch of this series(as it introduces <linux/pruss.h> where eventually the enum
+> will be introduced).
+> 
+> Then I kept the enum introduction patch as third patch of the series and with
+> this patch I modified pru_rproc_get() API by adding pru_id field in the
+> function argument.
+> 
+>> Instead, what you need to do is, first introduce enum pruss_pru_id
+>> and make any changes to code using hardcoded values for PRU ID.
+>> This patch will have to introduce <linux/pruss.h> as it doesn't exist yet.
+> 
 
-On 12/6/22 15:40, Piotr Wojtaszczyk wrote:
-> Hi Arnaud,
-> 
-> On Tue, Dec 6, 2022 at 1:54 PM Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com
-> <mailto:arnaud.pouliquen@foss.st.com>> wrote:
->> On 12/6/22 09:50, Piotr Wojtaszczyk wrote:
->> > On a message reception copy the message to a SKB taken from preallocated
->> > pool instead of allocating a new SKB each time.
->> > During high rpmsg traffic this reduces consumed CPU time noticeably.
->>
->> Do you have any metrics to share?
-> Tested on 1GHZ single core ARM Cortex-A55 (64bit), virtio backend.
-> Ping-pong pair messages (receive + send) every 125us reduced cpu load from 7% to 6%.
-> 
->> > +static inline
->> > +struct sk_buff *rpmsg_eptdev_get_skb(struct rpmsg_eptdev *eptdev)
->> > +{
->> > +     struct sk_buff *skb;
->> > +
->> > +     skb = skb_dequeue(&eptdev->skb_pool);
->> > +     if (!skb)
->> > +             skb = alloc_skb(MAX_RPMSG_BUF_SIZE, GFP_ATOMIC);
->>
->> The "get_mtu" endpoint ops should be used here.
->> But in any case this works for the virtio backend which defines get_mtu ops
->> (asit define the MAX_RPMSG_BUF_SIZE), but not for other backend such as glink.
->> Your proposal needs to be compatible with the legacy.
->>
->> Here is a proposal:
->>
->> static struct
->> sk_buff *rpmsg_eptdev_get_skb(struct rpmsg_eptdev *eptdev, int len)
->> {
->>         struct sk_buff *skb;
->>
->>         if (eptdev->ept->ops->get_mtu) {
->>                 skb = skb_dequeue(&eptdev->skb_pool);
->>                 if (!skb)
->>                         skb = alloc_skb(eptdev->ept->ops->get_mtu(eptdev->ept),
->>                                         GFP_ATOMIC);
->>         } else {
->>                 alloc_skb (len);
->>         }
->> }
-> The received messages can have different lengths, if we try to reuse skb
-> which was allocated for smaller a message previously, that is a problem, isn't it?
-> I went for the worst case scenario in the virtio backend.
+I will be posting this series again with your suggestion by keeping enum patch
+first and then the pru_rproc_get() patch.
 
-The get_mtu give you the max transmit unit which should be > len, but some
-checks can be added
-
-Regards,
-Arnaud
+> This also came to my mind. But I thought introduction of enum pruss_pru_id
+> patch should just introduce the enum and modify APIs which uses the enum
+> accordingly. I wanted to keep the introduction of <linux/pruss.h> file with the
+> pru_rproc_get() patch as it was. That's why I kept pru_rproc_get() patch ahead
+> of enum patch.
 > 
-> 
->> > @@ -126,6 +161,18 @@ static int rpmsg_eptdev_open(struct inode *inode,
-> struct file *filp)
->> >       struct rpmsg_endpoint *ept;
->> >       struct rpmsg_device *rpdev = eptdev->rpdev;
->> >       struct device *dev = &eptdev->dev;
->> > +     struct sk_buff *skb;
->> > +     int i;
->> > +
->> > +     /* Preallocate 8 SKBs */
->> > +     for (i = 0; i < 8; i++) {
+>> Hopefully this clears the chicken/egg situation.
 >>
->> Do you need to preallocate them?
->> during runtime, it will try to reuse SKBs of the skb_pool and if no more
->> available it will create a new one.
->> This would also help to solve the issue of using MAX_RPMSG_BUF_SIZE
-> Agree, we can allocate SKBs at run time if needed. I thought it would be better
-> to start with some SKBs but I think now it's an overkill.
+>> Then introduce pru_rproc_get() patch with the final desired arguments.
+>>
+>>>   {
+>>>       struct rproc *rproc;
+>>>       struct pru_rproc *pru;
+>>> @@ -226,6 +231,9 @@ struct rproc *pru_rproc_get(struct device_node *np, int
+>>> index)
+>>>         mutex_unlock(&pru->lock);
+>>>   +    if (pru_id)
+>>> +        *pru_id = pru->id;
+>>> +
+>>>       return rproc;
+>>>     err_no_rproc_handle:
+>>> @@ -556,7 +564,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32
+>>> da, size_t len)
+>>>       dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
+>>>       dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
+>>>       /* PRU1 has its local RAM addresses reversed */
+>>> -    if (pru->id == 1)
+>>> +    if (pru->id == PRUSS_PRU1)
+>>>           swap(dram0, dram1);
+>>>       shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
+>>>   @@ -865,14 +873,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
+>>>       case RTU0_IRAM_ADDR_MASK:
+>>>           fallthrough;
+>>>       case PRU0_IRAM_ADDR_MASK:
+>>> -        pru->id = 0;
+>>> +        pru->id = PRUSS_PRU0;
+>>>           break;
+>>>       case TX_PRU1_IRAM_ADDR_MASK:
+>>>           fallthrough;
+>>>       case RTU1_IRAM_ADDR_MASK:
+>>>           fallthrough;
+>>>       case PRU1_IRAM_ADDR_MASK:
+>>> -        pru->id = 1;
+>>> +        pru->id = PRUSS_PRU1;
+>>>           break;
+>>>       default:
+>>>           ret = -EINVAL;
+>>> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+>>> index 5c5d14b1249d..efe89c586b4b 100644
+>>> --- a/include/linux/pruss.h
+>>> +++ b/include/linux/pruss.h
+>>> @@ -14,17 +14,32 @@
+>>>     #define PRU_RPROC_DRVNAME "pru-rproc"
+>>>   +/**
+>>> + * enum pruss_pru_id - PRU core identifiers
+>>> + * @PRUSS_PRU0: PRU Core 0.
+>>> + * @PRUSS_PRU1: PRU Core 1.
+>>> + * @PRUSS_NUM_PRUS: Total number of PRU Cores available.
+>>> + *
+>>> + */
+>>> +
+>>> +enum pruss_pru_id {
+>>> +    PRUSS_PRU0 = 0,
+>>> +    PRUSS_PRU1,
+>>> +    PRUSS_NUM_PRUS,
+>>> +};
+>>> +
+>>>   struct device_node;
+>>>     #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+>>>   -struct rproc *pru_rproc_get(struct device_node *np, int index);
+>>> +struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>> +                enum pruss_pru_id *pru_id);
+>>>   void pru_rproc_put(struct rproc *rproc);
+>>>     #else
+>>>     static inline struct rproc *
+>>> -pru_rproc_get(struct device_node *np, int index)
+>>> +pru_rproc_get(struct device_node *np, int index, enum pruss_pru_id *pru_id)
+>>>   {
+>>>       return ERR_PTR(-EOPNOTSUPP);
+>>>   }
+>>
+>> -- 
+>> cheers,
+>> -roger
 > 
-> 
-> -- 
-> Piotr Wojtaszczyk
-> Timesys
+> Thanks,
+> Danish.
+
+Thanks,
+Danish.
