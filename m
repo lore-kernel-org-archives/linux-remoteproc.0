@@ -2,66 +2,152 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC90C6370B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 15:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0DDC352A1
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Dec 2022 18:16:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbiLGPyD (ORCPT
+        id S229728AbiLGSQh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Dec 2022 10:54:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
+        Wed, 7 Dec 2022 13:16:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiLGPxk (ORCPT
+        with ESMTP id S229671AbiLGSQg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Dec 2022 10:53:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F7F391EB;
-        Wed,  7 Dec 2022 07:53:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0AB05B81EC3;
-        Wed,  7 Dec 2022 15:53:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C2FC43470;
-        Wed,  7 Dec 2022 15:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670428414;
-        bh=2zXahfD5vUZM7d/s/Tdrpzp4i+oN9eQBYio2SqPoCX8=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=kE1jcNjlckoeV+ZismXjsSJeZ7DORJXA6iJJ66+QIiCLO4/9e9Iqvr1n8aDlkHKyk
-         rPi6KNZV/P1n4ExqMbEEInTcRqaWBWWVAIDQYjgLFmZYqTmlTxgqHcYiufkNkGU7VP
-         ggTt15sQZ6q5wIaaXS+yaEkyP9QFAK+I2QtBcPgvmLbX8fAW78QSuBcghJ9kebRssw
-         BD8yOdGfC5wpkfzhZbg3zNiuLo69ZXo9yWBY0z0QJ7RxwSxTVHl/ry8h+WFQMhvBZX
-         DDlEJcJq/Jge8UBtnu2KUJ/howddorFz3J5uxtkHY5Y8NdORZqr+RO6+cH2DzO+8HI
-         oHnu87JT6Jung==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-remoteproc@vger.kernel.org, konrad.dybcio@somainline.org,
-        shangxiaojing@huawei.com, govinds@codeaurora.org,
-        mathieu.poirier@linaro.org, gokulsri@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, agross@kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: q6v5: Fix missing clk_disable_unprepare() in q6v5_wcss_qcs404_power_on()
-Date:   Wed,  7 Dec 2022 09:53:27 -0600
-Message-Id: <167042840345.3235426.8656802921250254848.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221204082757.18850-1-shangxiaojing@huawei.com>
-References: <20221204082757.18850-1-shangxiaojing@huawei.com>
+        Wed, 7 Dec 2022 13:16:36 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD6066C86
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Dec 2022 10:16:35 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id h193so17070103pgc.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Dec 2022 10:16:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Mj3UWzkvZ7OX2zJubhP3xmlv8QJPpAA21OIPnzcsPoc=;
+        b=dAmpXo7NBBUyykN9w5qZC2bmk3g136WdBboo4QPjpizGBkGZpyndQRdGighL/hkjP7
+         4lg6HgtJExMFM8/Uc5DW4rtyuuHmqk9HpB3siHNOBTJdVBz7oyjSyHyICXj5yfpyEI6w
+         4AfuOh8QkF1aTQ4k9Igf8wSLMLWhZPpdHZna7F6PY7PqVm/A2gFGZqdwLfgrZJAxwwD2
+         M5hMRrznLBLA4hA3VEFOAkqdXzAuWp4zyn5fU0eUUHSIlgRffTcKnmBjoruE3NjnIQRZ
+         U2GXwCWf2S5bqeGmG55Zx/X1kPZV06/cclKuwWK5+0EwGPWRqLXNzWjZmOxresDyUzZQ
+         GpOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mj3UWzkvZ7OX2zJubhP3xmlv8QJPpAA21OIPnzcsPoc=;
+        b=HpxZDSQw7L74mURWgcRIgU7IT2EZ2MeoQYQQH//HVVdpX5LUNpSKHIL2SsZgB+xfgr
+         doL3eAqlv3t5Qfq4LBgGtivzmv6mpixHdaS3eof3wor5Zn0H3estAAkGqO2a37xZADz8
+         kncl3/i9acfsckz0sTQU2aubGR59CePNdMzw2TTm5iTap3Wrb9TRyiXcqch7BseQdaEA
+         IleZ/JwyU9oh814YYn5XCJly1gl1qGt1vP3JabXFoKSn0dGv/RsxgeaFzvFjicRoJ4DW
+         tHwF9GqIR3moYLFjueiqCvbVOlZJix8L7LiOHSiJhpfVkiOW6C8maQnETlwhDsp+FZPx
+         Jvzg==
+X-Gm-Message-State: ANoB5pkIKehf839V73uM3apAKIgefXQeu8QAxPL7VGwBVbYIpGhwpxtm
+        SD9fEhEyTnzhPS4tKJf8VJcUOxGjQ17JsMqN
+X-Google-Smtp-Source: AA0mqf4t/o34q9VHa/gWCN16xPhbYWOxeeB/QSdmQn2mhcv2rnOsmYb6HSRa2rxcHo+1hgP9yp8C7Q==
+X-Received: by 2002:a63:5146:0:b0:477:86c1:640f with SMTP id r6-20020a635146000000b0047786c1640fmr66827029pgl.231.1670436995047;
+        Wed, 07 Dec 2022 10:16:35 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:5942:e1b3:57a1:f106])
+        by smtp.gmail.com with ESMTPSA id gt14-20020a17090af2ce00b00219bf165b5fsm1500195pjb.21.2022.12.07.10.16.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Dec 2022 10:16:34 -0800 (PST)
+Date:   Wed, 7 Dec 2022 11:16:32 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
+Cc:     arnaud.pouliquen@foss.st.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, quic_clew@quicinc.com
+Subject: Re: [PATCH v5 2/2] remoteproc: core: change to ordered workqueue for
+ crash handler
+Message-ID: <20221207181632.GA527346@p14s>
+References: <20221202094532.2925-1-quic_aiquny@quicinc.com>
+ <20221202094532.2925-3-quic_aiquny@quicinc.com>
+ <20221202173403.GD165812@p14s>
+ <780b40df-809a-67bf-0b0b-f56df70e6343@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <780b40df-809a-67bf-0b0b-f56df70e6343@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, 4 Dec 2022 16:27:57 +0800, Shang XiaoJing wrote:
-> q6v5_wcss_qcs404_power_on() have no fail path for readl_poll_timeout().
-> Add fail path for readl_poll_timeout().
+On Tue, Dec 06, 2022 at 09:28:23AM +0800, Aiqun(Maria) Yu wrote:
+> On 12/3/2022 1:34 AM, Mathieu Poirier wrote:
+> > On Fri, Dec 02, 2022 at 05:45:32PM +0800, Maria Yu wrote:
+> > > Only the first detected crash needed to be handled, so change
+> > > to ordered workqueue to avoid unnecessary multi active work at
+> > > the same time. This will reduce the pm_relax unnecessary concurrency.
+> > > 
+> > > Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+> > > ---
+> > >   drivers/remoteproc/remoteproc_core.c | 4 ++--
+> > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > index c2d0af048c69..4b973eea10bb 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -2728,8 +2728,8 @@ static void __exit rproc_exit_panic(void)
+> > >   static int __init remoteproc_init(void)
+> > >   {
+> > > -	rproc_recovery_wq = alloc_workqueue("rproc_recovery_wq",
+> > > -						WQ_UNBOUND | WQ_FREEZABLE, 0);
+> > > +	rproc_recovery_wq = alloc_ordered_workqueue("rproc_recovery_wq",
+> > > +						WQ_FREEZABLE, 0);
+> > 
+> > There is an indentation issue with the second line and this patch doesn't
+> > compile:
+> > 
+> My Clang 14.0.7 didn't have such kind of compilation error.
+> what's your CC version pls? Maybe I can have a try to reproduce.
+
+I was either:
+
+arm-linux-gnueabihf-gcc 9.4.0
+
+or 
+
+aarch64-linux-gnu-gcc 9.4.0
+
+I can't remember if I was compiling for 32 or 64 bit.
+
+> 
+> Anyway, I will double confirm if there is any difference with current
+> patchset with my compile tested patchset as well.
+> 
+> >    CC      drivers/remoteproc/imx_dsp_rproc.o
+> >    AR      drivers/hwspinlock/built-in.a
+> > In file included from /home/mpoirier/work/remoteproc/kernel-review/include/linux/rhashtable-types.h:15,
+> >                   from /home/mpoirier/work/remoteproc/kernel-review/include/linux/ipc.h:7,
+> >                   from /home/mpoirier/work/remoteproc/kernel-review/include/uapi/linux/sem.h:5,
+> >                   from /home/mpoirier/work/remoteproc/kernel-review/include/linux/sem.h:5,
+> >                   from /home/mpoirier/work/remoteproc/kernel-review/include/linux/sched.h:15,
+> >                   from /home/mpoirier/work/remoteproc/kernel-review/include/linux/delay.h:23,
+> >                   from /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/remoteproc_core.c:19:
+> > /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/remoteproc_core.c: In function ‘remoteproc_init’:
+> > /home/mpoirier/work/remoteproc/kernel-review/drivers/remoteproc/remoteproc_core.c:2738:46: warning: too many arguments for format [-Wformat-extra-args]
+> >   2738 |  rproc_recovery_wq = alloc_ordered_workqueue("rproc_recovery_wq",
+> >        |                                              ^~~~~~~~~~~~~~~~~~~
+> > /home/mpoirier/work/remoteproc/kernel-review/include/linux/workqueue.h:419:18: note: in definition of macro ‘alloc_ordered_workqueue’
+> >    419 |  alloc_workqueue(fmt, WQ_UNBOUND | __WQ_ORDERED |  \
+> >        |                  ^~~
+> > 
+> > Last but not least, please use the get_maintainer.pl script to make sure the
+> > right people are CC'ed on your patchsets.get_maintainer.pl will be re-run for next patchset uploading.
+> Thank you for reminder!
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> > >   	if (!rproc_recovery_wq) {
+> > >   		pr_err("remoteproc: creation of rproc_recovery_wq failed\n");
+> > >   		return -ENOMEM;
+> > > -- 
+> > > 2.17.1
+> > > 
 > 
 > 
-
-Applied, thanks!
-
-[1/1] remoteproc: qcom: q6v5: Fix missing clk_disable_unprepare() in q6v5_wcss_qcs404_power_on()
-      commit: 7ff5d60f18bba5cbaf17b2926aa9da44d5beca01
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+> -- 
+> Thx and BRs,
+> Aiqun(Maria) Yu
