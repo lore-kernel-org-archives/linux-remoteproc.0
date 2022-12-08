@@ -2,103 +2,130 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4B2C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Dec 2022 10:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF6BC3A5A7
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Dec 2022 13:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbiLHKmV (ORCPT
+        id S230221AbiLHNm2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Dec 2022 05:42:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46852 "EHLO
+        Thu, 8 Dec 2022 08:42:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230289AbiLHKl4 (ORCPT
+        with ESMTP id S230372AbiLHNmG (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 8 Dec 2022 05:41:56 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C52E81D91
-        for <linux-remoteproc@vger.kernel.org>; Thu,  8 Dec 2022 02:38:11 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id cf42so1418148lfb.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 08 Dec 2022 02:38:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RnjXh6srzA4hNTFwgK5oMRB4A7wsXpdJZ0W8ZXTddYA=;
-        b=VzMA2sy/yYjMfgvLGX1epBgYu/dA3s6XjiuLDRqPBkE7WbF7tGDunaV1r7DEb4FN5S
-         QjjnaAIYZevKBIbOhVNoI6ghLhc7MN1XbwZ9wB5aUwS29e+X11+ZsByhDVv25wj/72KB
-         w8Th2wOMfE0GGHReL6yiUJqLNEdakg8c09JgvQv64COtnm4FGqfzRV2ZT8XHcPBEgKgh
-         40ubl33Bii3JnJU30rE2WuLKBuPNEZ+D9Bv1Rljg5745Uk+6URwyPnqP5TkNJhT/lu66
-         4dZbdbRcQAGOEavIRRiSw8cHiDwocU43ZCldGiFALkK9jPCemeNcX+89YEJF/+y4q9kV
-         +fAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RnjXh6srzA4hNTFwgK5oMRB4A7wsXpdJZ0W8ZXTddYA=;
-        b=Kni3feVDpr0sD5MPwfDsL1xleBYE8s9Own4qIcI1gOulml5NWh8RKMCFspdLw6W9s4
-         JdOqSaCHJEj8+luJivbQFrrTss4+YtBBzBWMF8h9y0rZ3AEqjs/XTfysOloGdy3v6G9A
-         CpFB860P1bHsqxtOsf7XSDiNSFD4V440RV6cIlqPiwi9BMV+gfJ3EeKe23utGmmVXNBl
-         /AWjnJdlUijEIDD2dMnDtSZpheS7W9CnN7BSfvgUjExZCEMqNoJpNmLkPEcwDbO2M8rR
-         SOOJY+8cWKXWSKWKEa2K4QKIDzosMxWMSDdS4SzRNTQVgohwjARD5V5Rx33mW33ZsXV7
-         Tg2A==
-X-Gm-Message-State: ANoB5pn+1CzHOyrlMG8xEwjuR+jEnqyUU5mVS6ff9o1KGzIN2aSCU3V3
-        19vEMFIZGG/zDXcnriG1pxSnYA==
-X-Google-Smtp-Source: AA0mqf6E0jLO5LLaLBE4f0zVPvXynee8OE3sUTA1JN58Zl1sfJhuv++Y/uM1QeorAs7UsOD/Hr83bA==
-X-Received: by 2002:a05:6512:39d4:b0:4b3:b6db:8cb5 with SMTP id k20-20020a05651239d400b004b3b6db8cb5mr30264632lfu.599.1670495889427;
-        Thu, 08 Dec 2022 02:38:09 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id v1-20020a056512348100b004b575d239besm1553607lfr.237.2022.12.08.02.38.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Dec 2022 02:38:09 -0800 (PST)
-Message-ID: <7df45cef-ce99-5931-b3a5-32ded8df6d2f@linaro.org>
-Date:   Thu, 8 Dec 2022 11:38:07 +0100
+        Thu, 8 Dec 2022 08:42:06 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C804B8B39F;
+        Thu,  8 Dec 2022 05:41:53 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2B8CIeXh003845;
+        Thu, 8 Dec 2022 13:41:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=bGawsvtpYEDznEm4b8jKPt0VkPsUz0y02oBiQf+JrC4=;
+ b=aV0uUH/VGVH8VcllqZ7OxTWHlotsxL1I/kCPZW+bAV6WLdw+kUUWj+rgt6/qLP7k6vZv
+ aalN4Aq+AUuk2rHv+DiAVZSNkkTbvwz4LRZez0mLsbBSHX1RfIp+dqglFTS34nDJ+IOO
+ eGDtNJ683D/NtngtsiwS544Dbk4p69N25K19oNJtNcwmJA4OaLHeWKDr5wRK4hKH+5QE
+ /Z+esdcoIaDBWy3D5orFU6YrQGZz9bxxMY/BM4BBwCCnuhzF2cW0u2dz96w14bL1wWxV
+ 5rypCzGe5RrquLsbp3kPM2JreFYBd5LLmd4K/djXl+YeI5gYRzH0IdY3wdyCi0mFdnT3 cQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mbffs880v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Dec 2022 13:41:04 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2B8Df3bT015445
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 8 Dec 2022 13:41:03 GMT
+Received: from [10.216.30.208] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 8 Dec 2022
+ 05:40:57 -0800
+Message-ID: <ec403926-24ef-947d-2a1c-6cbf0e31ab89@quicinc.com>
+Date:   Thu, 8 Dec 2022 19:10:54 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v3 2/5] dt-bindings: remoteproc: qcom: adsp: document
- sm8550 adsp, cdsp & mpss compatible
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] remoteproc: elf_loader: Update resource table name check
 Content-Language: en-US
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
-        linux-kernel@vger.kernel.org
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-0-62162a1df718@linaro.org>
- <20221114-narmstrong-sm8550-upstream-remoteproc-v3-2-62162a1df718@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v3-2-62162a1df718@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Stephen Boyd <swboyd@chromium.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <bgoswami@quicinc.com>,
+        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <judyhsiao@chromium.org>, <krzysztof.kozlowski@linaro.org>,
+        <lgirdwood@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <mathieu.poirier@linaro.org>, <perex@perex.cz>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <robh+dt@kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <tiwai@suse.com>
+References: <1669897248-23052-1-git-send-email-quic_srivasam@quicinc.com>
+ <CAE-0n520=mjdc4H1m8au0iBo2qEeaL8OrF1HCP0bXORe2Wa_7w@mail.gmail.com>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <CAE-0n520=mjdc4H1m8au0iBo2qEeaL8OrF1HCP0bXORe2Wa_7w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: u0MLp0o3BE-g2iuoQLX6FffRLsAyL9lZ
+X-Proofpoint-GUID: u0MLp0o3BE-g2iuoQLX6FffRLsAyL9lZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-08_07,2022-12-08_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 spamscore=0 malwarescore=0 suspectscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2212080115
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 07/12/2022 20:23, Neil Armstrong wrote:
-> This documents the compatible for the component used to boot the
-> aDSP, cDSP and MPSS on the SM8550 SoC.
-> 
-> The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
-> firmware to be passed along the main Firmware, and the cDSP a new power
-> domain named "NSP".
-> 
-> A third memory domain for the DSM memory zone is also needed for the MPSS
-> PAS bindings.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
 
+On 12/7/2022 7:25 AM, Stephen Boyd wrote:
+Thanks for Your Time Stephen!!!
+> Quoting Srinivasa Rao Mandadapu (2022-12-01 04:20:48)
+>> Update resource table name check with sub string search instead of
+>> complete string search.
+>> In general Qualcomm binary contains, section header name
+>> (e.g. .resource_table), amended with extra string to differentiate
+>> with other sections.
+>> So far Android adsp binaries are being authenticated using TZ,
+>> hence this mismatch hasn't created any problem.
+>> In recent developments, ADSP binary is being used in Chrome based
+>> platforms, which doesn't have TZ path, hence resource table is
+>> required for memory sandboxing.
+>>
+> Does this need a Fixes tag?
+I don't think so. I feel It's kind of enhancement.
+>
+>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> ---
+>>   drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+>> index 5a412d7..0feb120 100644
+>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+>> @@ -272,7 +272,7 @@ find_table(struct device *dev, const struct firmware *fw)
+>>                  u64 offset = elf_shdr_get_sh_offset(class, shdr);
+>>                  u32 name = elf_shdr_get_sh_name(class, shdr);
+>>
+>> -               if (strcmp(name_table + name, ".resource_table"))
+>> +               if (!strstr(name_table + name, ".resource_table"))
+> Was the strcmp not working before because the 'name_table' has something
+> else in it? It really looks like your elf file is malformed.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Actually, DSP binary is prepared by combining different elfs. So Section 
+header names are appended with
 
-Best regards,
-Krzysztof
+something else to distinguish same section name of different elfs, by 
+using some Qualcomm specific QURT scripts.
+Hence final binary contains resource_table name appended with module 
+specific name.
+
+So this patch is required to handle such modified name.
 
