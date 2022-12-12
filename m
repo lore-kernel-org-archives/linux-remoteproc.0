@@ -2,68 +2,66 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F7CC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Dec 2022 13:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70DDC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Dec 2022 14:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233069AbiLLNvd (ORCPT
+        id S232054AbiLLO3F (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Dec 2022 08:51:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52934 "EHLO
+        Mon, 12 Dec 2022 09:29:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233186AbiLLNvQ (ORCPT
+        with ESMTP id S231880AbiLLO3E (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Dec 2022 08:51:16 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7343A1648C;
-        Mon, 12 Dec 2022 05:50:27 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BCD6WYf020215;
-        Mon, 12 Dec 2022 13:49:43 GMT
+        Mon, 12 Dec 2022 09:29:04 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399A312ABB;
+        Mon, 12 Dec 2022 06:28:59 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BCBUgBH022168;
+        Mon, 12 Dec 2022 14:28:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=KBr2nujL/8WgecDyy2hO8xRFUeux4gt+CP0RVpGPESg=;
- b=DnRcaVdMpRKuuhSLsi0/9uhxNG2YoUHMBi8H3POFMK9R0TQnQs3h5dDqymOfLUP+5bq7
- OALuv2Hsc5VUZ982BbzBLk883X2ZF/kBbkx61b7eSd+OlZ/A62AHDXSyQOe882UxMwAQ
- GBHhk0txiCV6yYuBZo6prCNZUsEugZWIa37QGWnNm7tyfxvQcPjCf5gn7/ZRUc7zkoH+
- a1gkC6FT69tGgKc4qBHhP/CUkdbnkvAZKL6Dg14gCeVCpRJGOe0nr3pv9RteSs/NMRa8
- R/PgqYmVNLeGOZinvuzNsmjklPCTdFdB+9q5GMrNH7pn/OvTD9/cKm4N/385hCitORG9 Ng== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mchesc8rd-1
+ bh=X6tkhFxmvU4NUYJxmev1CkaxZ/8skwIMbfGZNf44NrU=;
+ b=L4auqA4bceTr4glQ68eq8W2DwyqaItWeZD2/8C8nT1stfye7pHxCTNWmJTZI0Uwg5QBo
+ P8g+Ewh+Q3DQtnsh2LTtrmEu4D2ZgCi8bgdyeg5hnF4MSR+13vHRjMASeYvFN7iM+0Ob
+ xcNhPdU81Pm6H6OJF3n7wk/dgeR7Bg4eHmC9T2EaHzvK6CTiH7xWbEUec5GFXLVjVPcZ
+ M6wVRPn/1wtTK+ui49jRv0YWT87Vm7/HSPfZxsDBdaDbMGEWhjqmojRC57SLGKjGyhxL
+ WvnJ4OVOaMDJWeLGspCO4mjjIPHyw3vs59kPMu1CqsvyROx3xff3loeUi2iWz4XwuQta 1g== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3me09g8wut-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Dec 2022 13:49:43 +0000
+        Mon, 12 Dec 2022 14:28:12 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BCDng9V019327
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BCESB5k002354
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Dec 2022 13:49:42 GMT
+        Mon, 12 Dec 2022 14:28:12 GMT
 Received: from [10.216.26.32] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 12 Dec
- 2022 05:49:34 -0800
-Message-ID: <60034623-a681-4398-fe19-660006245e3b@quicinc.com>
-Date:   Mon, 12 Dec 2022 19:19:29 +0530
+ 2022 06:28:04 -0800
+Message-ID: <bbd462ec-33ed-1302-6532-8efb1af91017@quicinc.com>
+Date:   Mon, 12 Dec 2022 19:57:59 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
 Subject: Re: [PATCH] remoteproc: elf_loader: Update resource table name check
 Content-Language: en-US
-To:     Stephen Boyd <swboyd@chromium.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <bgoswami@quicinc.com>,
-        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
-        <judyhsiao@chromium.org>, <krzysztof.kozlowski@linaro.org>,
-        <lgirdwood@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <perex@perex.cz>,
-        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
-        <robh+dt@kernel.org>, <srinivas.kandagatla@linaro.org>,
-        <tiwai@suse.com>
+To:     Peng Fan <peng.fan@oss.nxp.com>,
+        <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <mathieu.poirier@linaro.org>
 References: <1669897248-23052-1-git-send-email-quic_srivasam@quicinc.com>
- <CAE-0n520=mjdc4H1m8au0iBo2qEeaL8OrF1HCP0bXORe2Wa_7w@mail.gmail.com>
- <ec403926-24ef-947d-2a1c-6cbf0e31ab89@quicinc.com>
- <CAE-0n50VYGNF_rGzyb_2Jd8dY8cFx3BeOw0s-ywELkRqEEig4g@mail.gmail.com>
+ <24361a63-ee96-4291-175e-f25c1380cd49@oss.nxp.com>
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 Organization: Qualcomm
-In-Reply-To: <CAE-0n50VYGNF_rGzyb_2Jd8dY8cFx3BeOw0s-ywELkRqEEig4g@mail.gmail.com>
+In-Reply-To: <24361a63-ee96-4291-175e-f25c1380cd49@oss.nxp.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
@@ -71,144 +69,67 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _9CkMgZBuPbRZETnGVxJhFgF7dIGtIlc
-X-Proofpoint-GUID: _9CkMgZBuPbRZETnGVxJhFgF7dIGtIlc
+X-Proofpoint-ORIG-GUID: gvYhcOw7hzKeY9Q9gsNuXA8-xtSod5Ch
+X-Proofpoint-GUID: gvYhcOw7hzKeY9Q9gsNuXA8-xtSod5Ch
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-12-12_02,2022-12-12_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 spamscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2212120127
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
+ bulkscore=0 phishscore=0 adultscore=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2212120132
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On 12/10/2022 2:22 AM, Stephen Boyd wrote:
-Thanks for your time Stephen!!!
-> Quoting Srinivasa Rao Mandadapu (2022-12-08 05:40:54)
->> On 12/7/2022 7:25 AM, Stephen Boyd wrote:
->> Thanks for Your Time Stephen!!!
->>> Quoting Srinivasa Rao Mandadapu (2022-12-01 04:20:48)
->>>> Update resource table name check with sub string search instead of
->>>> complete string search.
->>>> In general Qualcomm binary contains, section header name
->>>> (e.g. .resource_table), amended with extra string to differentiate
->>>> with other sections.
->>>> So far Android adsp binaries are being authenticated using TZ,
->>>> hence this mismatch hasn't created any problem.
->>>> In recent developments, ADSP binary is being used in Chrome based
->>>> platforms, which doesn't have TZ path, hence resource table is
->>>> required for memory sandboxing.
->>>>
->>> Does this need a Fixes tag?
->> I don't think so. I feel It's kind of enhancement.
->>>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
->>>> ---
->>>>    drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
->>>> index 5a412d7..0feb120 100644
->>>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
->>>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
->>>> @@ -272,7 +272,7 @@ find_table(struct device *dev, const struct firmware *fw)
->>>>                   u64 offset = elf_shdr_get_sh_offset(class, shdr);
->>>>                   u32 name = elf_shdr_get_sh_name(class, shdr);
->>>>
->>>> -               if (strcmp(name_table + name, ".resource_table"))
->>>> +               if (!strstr(name_table + name, ".resource_table"))
->>> Was the strcmp not working before because the 'name_table' has something
->>> else in it? It really looks like your elf file is malformed.
->> Actually, DSP binary is prepared by combining different elfs. So Section
->> header names are appended with
+On 12/10/2022 8:36 AM, Peng Fan wrote:
+Thanks for your time and valuable suggestion Pang!!!
+>
+> On 12/1/2022 8:20 PM, Srinivasa Rao Mandadapu wrote:
+>> Update resource table name check with sub string search instead of
+>> complete string search.
+>> In general Qualcomm binary contains, section header name
+>> (e.g. .resource_table), amended with extra string to differentiate
+>> with other sections.
+>> So far Android adsp binaries are being authenticated using TZ,
+>> hence this mismatch hasn't created any problem.
+>> In recent developments, ADSP binary is being used in Chrome based
+>> platforms, which doesn't have TZ path, hence resource table is
+>> required for memory sandboxing.
 >>
->> something else to distinguish same section name of different elfs, by
->> using some Qualcomm specific QURT scripts.
->> Hence final binary contains resource_table name appended with module
->> specific name.
+>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+>> ---
+>>   drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> So this patch is required to handle such modified name.
->>
-> Can you clarify how the section header name looks? Probably you can
-> objdump the section here and provide that information to help us
-> understand.
+>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c 
+>> b/drivers/remoteproc/remoteproc_elf_loader.c
+>> index 5a412d7..0feb120 100644
+>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+>> @@ -272,7 +272,7 @@ find_table(struct device *dev, const struct 
+>> firmware *fw)
+>>           u64 offset = elf_shdr_get_sh_offset(class, shdr);
+>>           u32 name = elf_shdr_get_sh_name(class, shdr);
+>>   -        if (strcmp(name_table + name, ".resource_table"))
+>> +        if (!strstr(name_table + name, ".resource_table"))
+>>               continue;
+>
+> How about ?
+>     if (strcmp(name_table + name, ".resource_table")) {
+>         if (strstr(name_table + name, ".resource_table"))
+>               break;
+>         continue;
+>     }
 
-Here is the Section header info.
+It looks valid approach to me. But other reviewers may object on double 
+check. Let's see Stephen Boyd comments also,
 
-$ readelf -SW bootimage_relocflag_kodiak.adsp.prodQ.pbn
-There are 65 section headers, starting at offset 0x434:
-readelf: Error: File contains multiple dynamic symbol tables
-
-Section Headers:
-   [Nr] Name              Type
-   [ 0]                   NULL
-   [ 1] .shstrtab         STRTAB
-   [ 2] .text.ukernel.island PROGBITS
-   [ 3] .data.ukernel.island PROGBITS
-   [ 4] .qskernel_exports.island PROGBITS
-   [ 5] .start            PROGBITS
-   [ 6] .qskernel_main    PROGBITS
-   [ 7] .qskernel_rest    PROGBITS
-   [ 8] .comment          PROGBITS
-   [ 9] .data.common.island PROGBITS
-   [10] .rodata.common.island PROGBITS
-   [11] .data.va.island   NOBITS
-   [12] .rodata.va.island PROGBITS
-   [13] .text.common.island PROGBITS
-   [14] .text.va.island   PROGBITS
-   [15] .start            PROGBITS
-   [16] .ukernel.main     PROGBITS
-   [17] .init             PROGBITS
-   [18] .text             PROGBITS
-   [19] .fini             PROGBITS
-   [20] .interp           PROGBITS
-   [21] .hash             HASH
-   [22] .dynsym           DYNSYM
-   [23] .dynstr           STRTAB
-   [24] .rodata           PROGBITS
-   [25] .eh_frame         PROGBITS
-   [26] .ctors            PROGBITS
-   [27] .dtors            PROGBITS
-   [28] .dynamic          DYNAMIC
-   [29] .data             PROGBITS
-   [30] .bss              NOBITS
-   [31] .sdata            PROGBITS
-   [32] QSR_STRING        PROGBITS
-   [33] .comment          PROGBITS
-   [34] .tcm_island.audio_process PROGBITS
-   [35] .data.common.island.audio_process PROGBITS
-   [36] .rodata.common.island.audio_process PROGBITS
-   [37] .data.va.island.audio_process PROGBITS
-   [38] .rodata.va.island.audio_process PROGBITS
-   [39] .text.common.island.audio_process PROGBITS
-   [40] .text.va.island.audio_process PROGBITS
-   [41] .start.audio_process PROGBITS
-   [42] .init.audio_process PROGBITS
-   [43] .text.audio_process PROGBITS
-   [44] .fini.audio_process PROGBITS
-   [45] .interp.audio_process PROGBITS
-   [46] .hash.audio_process HASH
-   [47] .dynsym.audio_process DYNSYM
-   [48] .dynstr.audio_process STRTAB
-   [49] .rodata.audio_process PROGBITS
-   [50] .eh_frame.audio_process PROGBITS
-   [51] .ctors.audio_process PROGBITS
-   [52] .dtors.audio_process PROGBITS
-   [53] .data.rel.ro.audio_process PROGBITS
-   [54] .dynamic.audio_process DYNAMIC
-   [55] .data.audio_process PROGBITS
-   [56] .bss.audio_process NOBITS
-   [57] .sdata.audio_process PROGBITS
-   [58] QSR_STRING.audio_process PROGBITS
-   [59] .comment.audio_process PROGBITS
-   [60] .start.ac_bin_process PROGBITS
-   [61] .resource_table.ac_bin_process PROGBITS
-   [62] .comment.ac_bin_process PROGBITS
+and handle it accordingly.
 
 >
-> I think remoteproc_elf_loader.c assumes the ELF file is properly formed.
-> There should be a section named '.resource_table', so the strcmp will
-> find it by looking at the section header names.
+> Regards,
+> Peng.
+>>             table = (struct resource_table *)(elf_data + offset);
