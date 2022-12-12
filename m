@@ -2,276 +2,213 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C30AC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Dec 2022 09:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F7CC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Dec 2022 13:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231902AbiLLJ5v (ORCPT
+        id S233069AbiLLNvd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Dec 2022 04:57:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35296 "EHLO
+        Mon, 12 Dec 2022 08:51:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiLLJ5u (ORCPT
+        with ESMTP id S233186AbiLLNvQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Dec 2022 04:57:50 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD2FBED;
-        Mon, 12 Dec 2022 01:57:46 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BC9vb5s008226;
-        Mon, 12 Dec 2022 03:57:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1670839057;
-        bh=f/8EKndXfsEThqDxyjK53OX/DBlEEp1jFw0Ih8fPlUc=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=dZlEz6CIDeEc1EMD+H1xDuc7cfYDgjoEDb21weRQlvb52FZONmpbHd3Ec5DoO/jRF
-         V6+BKudL6/XsoPYsipIfXIanV3h07xosBFPGoUQt1Vw0gRIZCy0a0ORqrofHafmdrM
-         Vq6FKSR1oYkBIoDpKkv3fGkEanf4Yn9R5koexgtg=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BC9vbu7005408
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Dec 2022 03:57:37 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 12
- Dec 2022 03:57:37 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 12 Dec 2022 03:57:37 -0600
-Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BC9vW2p027584;
-        Mon, 12 Dec 2022 03:57:33 -0600
-Message-ID: <aeea24c9-ab6c-c524-fd88-fc11f844cfa6@ti.com>
-Date:   Mon, 12 Dec 2022 15:27:32 +0530
+        Mon, 12 Dec 2022 08:51:16 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7343A1648C;
+        Mon, 12 Dec 2022 05:50:27 -0800 (PST)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BCD6WYf020215;
+        Mon, 12 Dec 2022 13:49:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=KBr2nujL/8WgecDyy2hO8xRFUeux4gt+CP0RVpGPESg=;
+ b=DnRcaVdMpRKuuhSLsi0/9uhxNG2YoUHMBi8H3POFMK9R0TQnQs3h5dDqymOfLUP+5bq7
+ OALuv2Hsc5VUZ982BbzBLk883X2ZF/kBbkx61b7eSd+OlZ/A62AHDXSyQOe882UxMwAQ
+ GBHhk0txiCV6yYuBZo6prCNZUsEugZWIa37QGWnNm7tyfxvQcPjCf5gn7/ZRUc7zkoH+
+ a1gkC6FT69tGgKc4qBHhP/CUkdbnkvAZKL6Dg14gCeVCpRJGOe0nr3pv9RteSs/NMRa8
+ R/PgqYmVNLeGOZinvuzNsmjklPCTdFdB+9q5GMrNH7pn/OvTD9/cKm4N/385hCitORG9 Ng== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mchesc8rd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Dec 2022 13:49:43 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BCDng9V019327
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Dec 2022 13:49:42 GMT
+Received: from [10.216.26.32] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 12 Dec
+ 2022 05:49:34 -0800
+Message-ID: <60034623-a681-4398-fe19-660006245e3b@quicinc.com>
+Date:   Mon, 12 Dec 2022 19:19:29 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [EXTERNAL] Re: [EXTERNAL] Re: [PATCH v11 3/6] remoteproc: pru:
- Add APIs to get and put the PRU cores
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH] remoteproc: elf_loader: Update resource table name check
 Content-Language: en-US
-To:     Roger Quadros <rogerq@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Suman Anna <s-anna@ti.com>, "Andrew F . Davis" <afd@ti.com>,
-        <nm@ti.com>, <vigneshr@ti.com>, <srk@ti.com>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20221207110411.441692-1-danishanwar@ti.com>
- <20221207110411.441692-4-danishanwar@ti.com>
- <77d79939-53bb-bc27-a8f8-ea5bf509a15f@kernel.org>
- <a8b8ba60-0413-5568-ae9a-57c25840dca7@ti.com>
- <7d73a0a4-c5e2-74bb-4ef9-9bc2dadd6272@kernel.org>
-From:   Md Danish Anwar <a0501179@ti.com>
-In-Reply-To: <7d73a0a4-c5e2-74bb-4ef9-9bc2dadd6272@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+To:     Stephen Boyd <swboyd@chromium.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <bgoswami@quicinc.com>,
+        <broonie@kernel.org>, <devicetree@vger.kernel.org>,
+        <judyhsiao@chromium.org>, <krzysztof.kozlowski@linaro.org>,
+        <lgirdwood@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <mathieu.poirier@linaro.org>, <perex@perex.cz>,
+        <quic_plai@quicinc.com>, <quic_rohkumar@quicinc.com>,
+        <robh+dt@kernel.org>, <srinivas.kandagatla@linaro.org>,
+        <tiwai@suse.com>
+References: <1669897248-23052-1-git-send-email-quic_srivasam@quicinc.com>
+ <CAE-0n520=mjdc4H1m8au0iBo2qEeaL8OrF1HCP0bXORe2Wa_7w@mail.gmail.com>
+ <ec403926-24ef-947d-2a1c-6cbf0e31ab89@quicinc.com>
+ <CAE-0n50VYGNF_rGzyb_2Jd8dY8cFx3BeOw0s-ywELkRqEEig4g@mail.gmail.com>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
+In-Reply-To: <CAE-0n50VYGNF_rGzyb_2Jd8dY8cFx3BeOw0s-ywELkRqEEig4g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _9CkMgZBuPbRZETnGVxJhFgF7dIGtIlc
+X-Proofpoint-GUID: _9CkMgZBuPbRZETnGVxJhFgF7dIGtIlc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-12_02,2022-12-12_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 spamscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
+ definitions=main-2212120127
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Roger,
 
-On 12/12/22 14:47, Roger Quadros wrote:
-> Danish,
-> 
-> On 09/12/2022 06:55, Md Danish Anwar wrote:
->> Hi Roger,
->>
->> On 08/12/22 16:05, Roger Quadros wrote:
->>> Hi,
->>>
->>> On 07/12/2022 13:04, MD Danish Anwar wrote:
->>>> Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
->>>> driver to allow client drivers to acquire and release the remoteproc
->>>> device associated with a PRU core. The PRU cores are treated as
->>>> resources with only one client owning it at a time.
+On 12/10/2022 2:22 AM, Stephen Boyd wrote:
+Thanks for your time Stephen!!!
+> Quoting Srinivasa Rao Mandadapu (2022-12-08 05:40:54)
+>> On 12/7/2022 7:25 AM, Stephen Boyd wrote:
+>> Thanks for Your Time Stephen!!!
+>>> Quoting Srinivasa Rao Mandadapu (2022-12-01 04:20:48)
+>>>> Update resource table name check with sub string search instead of
+>>>> complete string search.
+>>>> In general Qualcomm binary contains, section header name
+>>>> (e.g. .resource_table), amended with extra string to differentiate
+>>>> with other sections.
+>>>> So far Android adsp binaries are being authenticated using TZ,
+>>>> hence this mismatch hasn't created any problem.
+>>>> In recent developments, ADSP binary is being used in Chrome based
+>>>> platforms, which doesn't have TZ path, hence resource table is
+>>>> required for memory sandboxing.
 >>>>
->>>> The pru_rproc_get() function returns the rproc handle corresponding
->>>> to a PRU core identified by the device tree "ti,prus" property under
->>>> the client node. The pru_rproc_put() is the complementary function
->>>> to pru_rproc_get().
->>>>
->>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> Does this need a Fixes tag?
+>> I don't think so. I feel It's kind of enhancement.
+>>>> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 >>>> ---
->>>>  drivers/remoteproc/pru_rproc.c | 133 ++++++++++++++++++++++++++++++++-
->>>>  include/linux/pruss.h          |  29 +++++++
->>>>  2 files changed, 160 insertions(+), 2 deletions(-)
+>>>>    drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
 >>>>
->>>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->>>> index a1a208b31846..7d4ed39b3772 100644
->>>> --- a/drivers/remoteproc/pru_rproc.c
->>>> +++ b/drivers/remoteproc/pru_rproc.c
->>>> @@ -2,12 +2,14 @@
->>>>  /*
->>>>   * PRU-ICSS remoteproc driver for various TI SoCs
->>>>   *
->>>> - * Copyright (C) 2014-2020 Texas Instruments Incorporated - https://www.ti.com/
->>>> + * Copyright (C) 2014-2022 Texas Instruments Incorporated - https://www.ti.com/
->>>>   *
->>>>   * Author(s):
->>>>   *	Suman Anna <s-anna@ti.com>
->>>>   *	Andrew F. Davis <afd@ti.com>
->>>>   *	Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org> for Texas Instruments
->>>> + *	Puranjay Mohan <p-mohan@ti.com>
->>>> + *	Md Danish Anwar <danishanwar@ti.com>
->>>>   */
->>>>  
->>>>  #include <linux/bitops.h>
->>>> @@ -112,6 +114,8 @@ struct pru_private_data {
->>>>   * @rproc: remoteproc pointer for this PRU core
->>>>   * @data: PRU core specific data
->>>>   * @mem_regions: data for each of the PRU memory regions
->>>> + * @client_np: client device node
->>>> + * @lock: mutex to protect client usage
->>>>   * @fw_name: name of firmware image used during loading
->>>>   * @mapped_irq: virtual interrupt numbers of created fw specific mapping
->>>>   * @pru_interrupt_map: pointer to interrupt mapping description (firmware)
->>>> @@ -127,6 +131,8 @@ struct pru_rproc {
->>>>  	struct rproc *rproc;
->>>>  	const struct pru_private_data *data;
->>>>  	struct pruss_mem_region mem_regions[PRU_IOMEM_MAX];
->>>> +	struct device_node *client_np;
->>>> +	struct mutex lock;
->>>>  	const char *fw_name;
->>>>  	unsigned int *mapped_irq;
->>>>  	struct pru_irq_rsc *pru_interrupt_map;
->>>> @@ -147,6 +153,125 @@ void pru_control_write_reg(struct pru_rproc *pru, unsigned int reg, u32 val)
->>>>  	writel_relaxed(val, pru->mem_regions[PRU_IOMEM_CTRL].va + reg);
->>>>  }
->>>>  
->>>> +static struct rproc *__pru_rproc_get(struct device_node *np, int index)
->>>> +{
->>>> +	struct rproc *rproc;
->>>> +	phandle rproc_phandle;
->>>> +	int ret;
->>>> +
->>>> +	ret = of_property_read_u32_index(np, "ti,prus", index, &rproc_phandle);
->>>> +	if (ret)
->>>> +		return ERR_PTR(ret);
->>>> +
->>>> +	rproc = rproc_get_by_phandle(rproc_phandle);
->>>> +	if (!rproc) {
->>>> +		ret = -EPROBE_DEFER;
->>>> +		goto err_no_rproc_handle;
->>>> +	}
->>>> +
->>>> +	/* make sure it is PRU rproc */
->>>> +	if (!is_pru_rproc(rproc->dev.parent)) {
->>>> +		rproc_put(rproc);
->>>> +		return ERR_PTR(-ENODEV);
->>>> +	}
->>>> +
->>>> +	return rproc;
->>>> +
->>>> +err_no_rproc_handle:
->>>> +	rproc_put(rproc);
->>>> +	return ERR_PTR(ret);
->>>> +}
->>>> +
->>>> +/**
->>>> + * pru_rproc_get() - get the PRU rproc instance from a device node
->>>> + * @np: the user/client device node
->>>> + * @index: index to use for the ti,prus property
->>>> + * @pru_id: optional pointer to return the PRU remoteproc processor id
->>>> + *
->>>> + * This function looks through a client device node's "ti,prus" property at
->>>> + * index @index and returns the rproc handle for a valid PRU remote processor if
->>>> + * found. The function allows only one user to own the PRU rproc resource at a
->>>> + * time. Caller must call pru_rproc_put() when done with using the rproc, not
->>>> + * required if the function returns a failure.
->>>> + *
->>>> + * When optional @pru_id pointer is passed the PRU remoteproc processor id is
->>>> + * returned.
->>>> + *
->>>> + * Return: rproc handle on success, and an ERR_PTR on failure using one
->>>> + * of the following error values
->>>> + *    -ENODEV if device is not found
->>>> + *    -EBUSY if PRU is already acquired by anyone
->>>> + *    -EPROBE_DEFER is PRU device is not probed yet
->>>> + */
->>>> +struct rproc *pru_rproc_get(struct device_node *np, int index,
->>>> +			    enum pruss_pru_id *pru_id)
->>>> +{
->>>> +	struct rproc *rproc;
->>>> +	struct pru_rproc *pru;
->>>> +	struct device *dev;
->>>> +	int ret;
->>>> +
->>>> +	rproc = __pru_rproc_get(np, index);
->>>> +	if (IS_ERR(rproc))
->>>> +		return rproc;
->>>> +
->>>> +	pru = rproc->priv;
->>>> +	dev = &rproc->dev;
->>>> +
->>>> +	mutex_lock(&pru->lock);
->>>> +
->>>> +	if (pru->client_np) {
->>>> +		mutex_unlock(&pru->lock);
->>>> +		put_device(dev);
->>>
->>> Is this put_device() to counter balance the get_device() you had earlier?
->>> Is it still needed?
->>>> Did we do the right thing by getting rid of the additional get_device()?
->>> I didn't see a reason for it.
->>>
+>>>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+>>>> index 5a412d7..0feb120 100644
+>>>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+>>>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+>>>> @@ -272,7 +272,7 @@ find_table(struct device *dev, const struct firmware *fw)
+>>>>                   u64 offset = elf_shdr_get_sh_offset(class, shdr);
+>>>>                   u32 name = elf_shdr_get_sh_name(class, shdr);
+>>>>
+>>>> -               if (strcmp(name_table + name, ".resource_table"))
+>>>> +               if (!strstr(name_table + name, ".resource_table"))
+>>> Was the strcmp not working before because the 'name_table' has something
+>>> else in it? It really looks like your elf file is malformed.
+>> Actually, DSP binary is prepared by combining different elfs. So Section
+>> header names are appended with
 >>
->> The previous get_device() in __pru_rproc_get() was additional/not required as
->> the same get_device() was called by rproc_get_by_phandle() API before it's
->> completion.
+>> something else to distinguish same section name of different elfs, by
+>> using some Qualcomm specific QURT scripts.
+>> Hence final binary contains resource_table name appended with module
+>> specific name.
 >>
->> So that get_device() is not needed.
+>> So this patch is required to handle such modified name.
 >>
->> The put_device() here is to counter the get_device() called by
->> rproc_get_by_phandle() in the API __pru_rproc_get().
->>
->> So I think, this put_device() is still needed.
-> 
-> But at the end of this function we are calling rproc_put()
-> which also does a put_device(), right?
-> 
+> Can you clarify how the section header name looks? Probably you can
+> objdump the section here and provide that information to help us
+> understand.
 
-Yes, from here we are going to the label err_no_rproc_handle where rproc_put()
-API is called. Which is further calling put_device(). So essentially we are
-doing two put device instead of one.
+Here is the Section header info.
 
-So I think, I should remove the put_device() from the below if block
+$ readelf -SW bootimage_relocflag_kodiak.adsp.prodQ.pbn
+There are 65 section headers, starting at offset 0x434:
+readelf: Error: File contains multiple dynamic symbol tables
 
-if (pru->client_np) {
-    mutex_unlock(&pru->lock);
-    put_device(dev);
-    ret = -EBUSY;
-    goto err_no_rproc_handle;
-}
+Section Headers:
+   [Nr] Name              Type
+   [ 0]                   NULL
+   [ 1] .shstrtab         STRTAB
+   [ 2] .text.ukernel.island PROGBITS
+   [ 3] .data.ukernel.island PROGBITS
+   [ 4] .qskernel_exports.island PROGBITS
+   [ 5] .start            PROGBITS
+   [ 6] .qskernel_main    PROGBITS
+   [ 7] .qskernel_rest    PROGBITS
+   [ 8] .comment          PROGBITS
+   [ 9] .data.common.island PROGBITS
+   [10] .rodata.common.island PROGBITS
+   [11] .data.va.island   NOBITS
+   [12] .rodata.va.island PROGBITS
+   [13] .text.common.island PROGBITS
+   [14] .text.va.island   PROGBITS
+   [15] .start            PROGBITS
+   [16] .ukernel.main     PROGBITS
+   [17] .init             PROGBITS
+   [18] .text             PROGBITS
+   [19] .fini             PROGBITS
+   [20] .interp           PROGBITS
+   [21] .hash             HASH
+   [22] .dynsym           DYNSYM
+   [23] .dynstr           STRTAB
+   [24] .rodata           PROGBITS
+   [25] .eh_frame         PROGBITS
+   [26] .ctors            PROGBITS
+   [27] .dtors            PROGBITS
+   [28] .dynamic          DYNAMIC
+   [29] .data             PROGBITS
+   [30] .bss              NOBITS
+   [31] .sdata            PROGBITS
+   [32] QSR_STRING        PROGBITS
+   [33] .comment          PROGBITS
+   [34] .tcm_island.audio_process PROGBITS
+   [35] .data.common.island.audio_process PROGBITS
+   [36] .rodata.common.island.audio_process PROGBITS
+   [37] .data.va.island.audio_process PROGBITS
+   [38] .rodata.va.island.audio_process PROGBITS
+   [39] .text.common.island.audio_process PROGBITS
+   [40] .text.va.island.audio_process PROGBITS
+   [41] .start.audio_process PROGBITS
+   [42] .init.audio_process PROGBITS
+   [43] .text.audio_process PROGBITS
+   [44] .fini.audio_process PROGBITS
+   [45] .interp.audio_process PROGBITS
+   [46] .hash.audio_process HASH
+   [47] .dynsym.audio_process DYNSYM
+   [48] .dynstr.audio_process STRTAB
+   [49] .rodata.audio_process PROGBITS
+   [50] .eh_frame.audio_process PROGBITS
+   [51] .ctors.audio_process PROGBITS
+   [52] .dtors.audio_process PROGBITS
+   [53] .data.rel.ro.audio_process PROGBITS
+   [54] .dynamic.audio_process DYNAMIC
+   [55] .data.audio_process PROGBITS
+   [56] .bss.audio_process NOBITS
+   [57] .sdata.audio_process PROGBITS
+   [58] QSR_STRING.audio_process PROGBITS
+   [59] .comment.audio_process PROGBITS
+   [60] .start.ac_bin_process PROGBITS
+   [61] .resource_table.ac_bin_process PROGBITS
+   [62] .comment.ac_bin_process PROGBITS
 
->>
->>>> +		ret = -EBUSY;
->>>> +		goto err_no_rproc_handle;
->>>> +	}
->>>> +
->>>> +	pru->client_np = np;
->>>> +
->>>> +	mutex_unlock(&pru->lock);
->>>> +
->>>> +	if (pru_id)
->>>> +		*pru_id = pru->id;
->>>> +
->>>> +	return rproc;
->>>> +
->>>> +err_no_rproc_handle:
->>>> +	rproc_put(rproc);
->>>> +	return ERR_PTR(ret);
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(pru_rproc_get);
-> 
-> <snip>
-> 
-> cheers,
-> -roger
+>
+> I think remoteproc_elf_loader.c assumes the ELF file is properly formed.
+> There should be a section named '.resource_table', so the strcmp will
+> find it by looking at the section header names.
