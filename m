@@ -2,138 +2,341 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0A1C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Dec 2022 09:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3537EC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Dec 2022 11:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237767AbiLNJLg (ORCPT
+        id S238232AbiLNLBo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Dec 2022 04:11:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33480 "EHLO
+        Wed, 14 Dec 2022 06:01:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237773AbiLNJLd (ORCPT
+        with ESMTP id S238156AbiLNLB0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Dec 2022 04:11:33 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD3E1DF2E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 01:11:31 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id ay40so10729081wmb.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 01:11:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZeychOEoq7Zx2fAKmiJJqkfIh0+9mZMjXMwWbS//l/Q=;
-        b=OXFVZCylX/4bT+jsLBPms7oXz7QPabkjEgubvKA5voELoHfDi00peMTghNLCzd8eaq
-         nP2ibgokYJBj2KWiBZjEhKQ+zdmJm+v6RlifmQdsO8suBtWGnxKbf4CZsTyvWffB4Xzk
-         CP3ibLqZDT/ds1dpodM9ahZo2PdJUUORzc2JLPe003BODyIMy6Euf0GauL3sERFOo6Tk
-         ocbUZXufRgpRSvXRXJdlr5yjxhhP7goz0joVE3Ti48T/ApcY1JbsyFQe1viina/MkBUX
-         uu6xSSyMCQBH1l6fEHWCCwz0qhfylUeTZSHlVGhgvKIfvrRA8OZeVMdqZHiZgovSOzJV
-         hByA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZeychOEoq7Zx2fAKmiJJqkfIh0+9mZMjXMwWbS//l/Q=;
-        b=VdblI05OtWTGI2bR53+RgeNpilgdz6rBycGbEloTlV86eLsb4UvclQAxxPKQrwtxZn
-         KuI65hBOKuq+RZ2SxVBZQNgl+xhZ8gUjymhqJGzg/FCsb74djwAtI1amHX3njEMjq7Qc
-         4j6oE/oWHVSLNbpbauuADro/9Ll+XbCc25JPms4stu3gnJAoxsDdd7v1Rgq/rLgdFJYv
-         TlsZYz+a14OqBswZibcJOQR641udfoI7VjfKTLyniKqj9DMHrJ7UAhmYlq/DFk3I3O1R
-         OulQvZMu9kSypg3GQBy7TtFcNej/inTfg4GcD5GqB8HqWLimFqQzSsK8yXnOPqvsczLX
-         9zIQ==
-X-Gm-Message-State: ANoB5pkCBClKvoVVROjH9zDbRBl2/LOau8ShGP81NyMWIEU777A7oomy
-        y+yFM40OXC6AVAFGyy7xELLoeNY86evASRg9kF1KCg==
-X-Google-Smtp-Source: AA0mqf7lFwCf3f1u4ql2QYub40j2Jn+xpyaWCbFrBIxrz+GPM5OrSo5cjZ+bxnr0nuG4jOrNfiMuxCV5PCxKqjmsLpU=
-X-Received: by 2002:a05:600c:3b91:b0:3d0:3d33:a629 with SMTP id
- n17-20020a05600c3b9100b003d03d33a629mr73994wms.126.1671009090250; Wed, 14 Dec
- 2022 01:11:30 -0800 (PST)
+        Wed, 14 Dec 2022 06:01:26 -0500
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E041E3E0;
+        Wed, 14 Dec 2022 03:01:20 -0800 (PST)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BEB1441011153;
+        Wed, 14 Dec 2022 05:01:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1671015664;
+        bh=oWDrn225LgGaetMJ4YUTBvm8za4MYf4qSv1L0flJXeM=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=gPHUjD6aAm0m9z9DKacPPWYCHWMjWAzsxEo5cRkyPAtjpviShodath2e1KxVYPqyl
+         eg8XN70S9H6WkjlQ4CbDVYcrFkFKNud7XZI1oOJC/WxQ9T7GGoi2lY8hcUkG6dmkA1
+         5SjsjD9QhjhYEyZol2/UJKEitFpVI9XR70sNuFjI=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BEB14ar103240
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 14 Dec 2022 05:01:04 -0600
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 14
+ Dec 2022 05:01:03 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Wed, 14 Dec 2022 05:01:03 -0600
+Received: from [172.24.145.199] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BEB0wAh030294;
+        Wed, 14 Dec 2022 05:00:59 -0600
+Message-ID: <2ec29f46-9e0d-7387-6744-a165917fcad4@ti.com>
+Date:   Wed, 14 Dec 2022 16:30:57 +0530
 MIME-Version: 1.0
-References: <20221124074725.74325-1-haozhe.chang@mediatek.com>
- <CAMZdPi9JOQpmhQepBMeG5jzncP8t5mp68O2nfSOFUUZ9e_fDsQ@mail.gmail.com> <54c37c8f8eb7f35e4bb983b9104bd232758bae7b.camel@mediatek.com>
-In-Reply-To: <54c37c8f8eb7f35e4bb983b9104bd232758bae7b.camel@mediatek.com>
-From:   Loic Poulain <loic.poulain@linaro.org>
-Date:   Wed, 14 Dec 2022 10:10:54 +0100
-Message-ID: <CAMZdPi8NOfMn99yy043oYGrO1=UrnhhRvpZq-zWe4BfiU_08NA@mail.gmail.com>
-Subject: Re: [PATCH v5] wwan: core: Support slicing in port TX flow of WWAN subsystem
-To:     =?UTF-8?B?SGFvemhlIENoYW5nICjluLjmtanlk7Ip?= 
-        <Haozhe.Chang@mediatek.com>
-Cc:     "stephan@gerhold.net" <stephan@gerhold.net>,
-        "oneukum@suse.com" <oneukum@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linuxwwan@intel.com" <linuxwwan@intel.com>,
-        "m.chetan.kumar@intel.com" <m.chetan.kumar@intel.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        =?UTF-8?B?SHVhIFlhbmcgKOadqOWNjik=?= <Hua.Yang@mediatek.com>,
-        "chiranjeevi.rapolu@linux.intel.com" 
-        <chiranjeevi.rapolu@linux.intel.com>,
-        =?UTF-8?B?SGFpanVuIExpdSAo5YiY5rW35YabKQ==?= 
-        <haijun.liu@mediatek.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "ryazanov.s.a@gmail.com" <ryazanov.s.a@gmail.com>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        =?UTF-8?B?WGlheXUgWmhhbmcgKOW8oOWkj+Wuhyk=?= 
-        <Xiayu.Zhang@mediatek.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "chandrashekar.devegowda@intel.com" 
-        <chandrashekar.devegowda@intel.com>,
-        "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "shangxiaojing@huawei.com" <shangxiaojing@huawei.com>,
-        =?UTF-8?B?TGFtYmVydCBXYW5nICjnjovkvJ8p?= 
-        <Lambert.Wang@mediatek.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "ricardo.martinez@linux.intel.com" <ricardo.martinez@linux.intel.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v2 2/2] remoteproc: k3-r5: Use separate compatible string
+ for TI AM62 SoC family
+To:     Tanmay Shah <tanmays@amd.com>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <s-anna@ti.com>
+CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>
+References: <20221130134052.7513-1-devarsht@ti.com>
+ <20221130134052.7513-3-devarsht@ti.com>
+ <d95ee066-424c-1a0b-cffd-45e16bc7f8da@amd.com>
+Content-Language: en-US
+From:   Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <d95ee066-424c-1a0b-cffd-45e16bc7f8da@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> On Thu, 2022-12-01 at 10:56 +0100, Loic Poulain wrote:
-> > On Thu, 24 Nov 2022 at 08:47, <haozhe.chang@mediatek.com> wrote:
-> > >
-> > > From: haozhe chang <haozhe.chang@mediatek.com>
-> > >
-> > > wwan_port_fops_write inputs the SKB parameter to the TX callback of
-> > > the WWAN device driver. However, the WWAN device (e.g., t7xx) may
-> > > have an MTU less than the size of SKB, causing the TX buffer to be
-> > > sliced and copied once more in the WWAN device driver.
-> > >
-> > > This patch implements the slicing in the WWAN subsystem and gives
-> > > the WWAN devices driver the option to slice(by frag_len) or not. By
-> > > doing so, the additional memory copy is reduced.
-> > >
-> > > Meanwhile, this patch gives WWAN devices driver the option to
-> > > reserve
-> > > headroom in fragments for the device-specific metadata.
-> > >
-> > > Signed-off-by: haozhe chang <haozhe.chang@mediatek.com>
-> >
-> > Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
->
-> I have submitted patch V6 to add a reviewer, do you have any other
-> suggestions about the patch?
+Hi Tanmay,
 
-You normally don't need to resubmit a version just for adding review
-tags, as it is well tracked. You can see status of netdev changes from
-patchwork:
-https://patchwork.kernel.org/project/netdevbpf/list/?series=&submitter=207580&state=*&q=&archive=both&delegate=
+Thanks for the review and sorry for the delay. Please find my response 
+inline.
+On 30/11/22 23:27, Tanmay Shah wrote:
+> Hi Devarsh,
+> 
+> Please find my comments below.
+> 
+> On 11/30/22 6:40 PM, Devarsh Thakkar wrote:
+>>
+>>
+>> AM62 and AM62A SoCs use single core R5F which is a new scenario
+>> different than the one being used with CLUSTER_MODE_SINGLECPU
+>> which is for utilizing a single core from a set of cores available
+>> in R5F cluster present in the SoC.
+>>
+>> To support this single core scenario map it with
+>> newly defined CLUSTER_MODE_NONE and use it when
+>> compatible is set to ti,am62-r5fss.
+>>
+>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>> ---
+>> V2: Fix indentation and ordering issues as per review comments
+>> ---
+>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 55 ++++++++++++++++++------
+>>   1 file changed, 43 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c 
+>> b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index 0481926c6975..9698b29a0b56 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -74,11 +74,13 @@ struct k3_r5_mem {
+>>    *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
+>>    *   LockStep mode   : AM65x, J721E and J7200 SoCs
+>>    *   Single-CPU mode : AM64x SoCs only
+>> + *   None            : AM62x, AM62A SoCs
+>>    */
+>>   enum cluster_mode {
+>>          CLUSTER_MODE_SPLIT = 0,
+>>          CLUSTER_MODE_LOCKSTEP,
+>>          CLUSTER_MODE_SINGLECPU,
+>> +       CLUSTER_MODE_NONE,
+>>   };
+>>
+>>   /**
+>> @@ -86,11 +88,13 @@ enum cluster_mode {
+>>    * @tcm_is_double: flag to denote the larger unified TCMs in certain 
+>> modes
+>>    * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs 
+>> for ECC
+>>    * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
+>> + * @is_single_core: flag to denote if SoC/IP has only single core R5
+>>    */
+>>   struct k3_r5_soc_data {
+>>          bool tcm_is_double;
+>>          bool tcm_ecc_autoinit;
+>>          bool single_cpu_mode;
+>> +       bool is_single_core;
+> 
+> 
+> If you are providing this data, then ignore parsing cluster-mode 
+> property. This will make change very simple.
+Yes, I think we are doing the same thing here. AM62x is modeled as a 
+cluster with a single core child but since it is single core there is no 
+cluster mode applicable as such and hence no cluster-mode required to be 
+set in device-tree for AM62x.
 
-Regarding this change you should however resubmit for the net-next
-tree with appropriate subject since it is not a bug fix:
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html?highlight=netdev#how-do-i-indicate-which-tree-net-vs-net-next-my-patch-should-be-in
 
-Then it should be picked by netdev maintainer(s). But note that we're
-currently in the Linux 6.2 merge window, so merging for net-next can
-be delayed until the mainline merge window is closed (and net-next
-open):
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html?highlight=netdev#how-often-do-changes-from-these-trees-make-it-to-the-mainline-linus-tree
+> I believe this would save you any modification in bindings as well as 
+> cluster-mode property is optional anyway.
+> 
+> Also, "enum cluster_mode" reflects cluster-mode values from bindings 
+> document except proper soc compatible. I don't see new value added in 
+> bindings document i.e. only
+> 
+> [0 -> split, 1 -> lockstep, 2 -> single cpu] are defined. If new enum is 
+> introduced in driver, it is expected to reflect in bindings i.e. [3 -> 
+> cluster-mode none] to avoid any confusion.
+To support backward compatibility we introduced CLUSTER_MODE_NONE at 3, 
+but I think we can use -1 index and maybe another name say 
+CLUSTER_MODE_INVALID to make it less confusing. The cluster-mode 
+property doesn't apply to AM62x since it uses CLUSTER_MODE_INVALID, my 
+understanding is we don't need to describe CLUSTER_MODE_INVALID in 
+dt-binding since it will be only used internally by driver as -1 and need
+not be set at all in device-tree since for AM62x there won't be any 
+cluster-mode property required to be set in the devicetree.
+
+> 
+> I believe it is duplicate logic if you are providing "is_single_core" 
+> information here and introduce CLUSTER_MODE_NONE as well.
+> 
+> May be I am missing something, but I don't see any use of providing 
+> extra value CLUSTER_MODE_NONE if "is_single_core" is set in the driver. 
+> So, simple solutions is just to avoid parsing cluster-mode property if 
+> is_single_core is set in the driver. Hope this helps.
+Fair point, we could have used soc data's is_single_core check instead 
+of adding a new enum and used that check and that would have worked too. 
+But in that case, cluster-mode by default would be set to 0 with  as 
+part of allocation of k3_r5_cluster struct during probe which would 
+imply incorrectly CLUSTER_MODE_SPLIT for AM62x. I think it is better
+to have another enum say CLUSTER_MODE_INVALID and use it for SoC's like 
+AM62x to make it less confusing.
 
 Regards,
-Loic
+Devarsh
+> 
+> 
+> Thanks,
+> 
+> Tanmay
+> 
+> 
+>>   };
+>>
+>>   /**
+>> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct 
+>> k3_r5_rproc *kproc)
+>>
+>>          core0 = list_first_entry(&cluster->cores, struct k3_r5_core, 
+>> elem);
+>>          if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>> -           cluster->mode == CLUSTER_MODE_SINGLECPU) {
+>> +           cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +           cluster->mode == CLUSTER_MODE_NONE) {
+>>                  core = core0;
+>>          } else {
+>>                  core = kproc->core;
+>> @@ -853,7 +858,7 @@ static int k3_r5_rproc_configure(struct 
+>> k3_r5_rproc *kproc)
+>>                  boot_vec, cfg, ctrl, stat);
+>>
+>>          /* check if only Single-CPU mode is supported on applicable 
+>> SoCs */
+>> -       if (cluster->soc_data->single_cpu_mode) {
+>> +       if (cluster->soc_data->single_cpu_mode || 
+>> cluster->soc_data->is_single_core) {
+>>                  single_cpu =
+>>                          !!(stat & 
+>> PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
+>>                  if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
+>> @@ -1074,6 +1079,7 @@ static void k3_r5_adjust_tcm_sizes(struct 
+>> k3_r5_rproc *kproc)
+>>
+>>          if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>>              cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +           cluster->mode == CLUSTER_MODE_NONE ||
+>>              !cluster->soc_data->tcm_is_double)
+>>                  return;
+>>
+>> @@ -1147,7 +1153,9 @@ static int k3_r5_rproc_configure_mode(struct 
+>> k3_r5_rproc *kproc)
+>>          atcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_ATCM_EN ?  1 : 0;
+>>          btcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_BTCM_EN ?  1 : 0;
+>>          loczrama = cfg & PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE ?  1 : 0;
+>> -       if (cluster->soc_data->single_cpu_mode) {
+>> +       if (cluster->soc_data->is_single_core) {
+>> +               mode = CLUSTER_MODE_NONE;
+>> +       } else if (cluster->soc_data->single_cpu_mode) {
+>>                  mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
+>>                                  CLUSTER_MODE_SINGLECPU : 
+>> CLUSTER_MODE_SPLIT;
+>>          } else {
+>> @@ -1271,7 +1279,8 @@ static int k3_r5_cluster_rproc_init(struct 
+>> platform_device *pdev)
+>>
+>>                  /* create only one rproc in lockstep mode or 
+>> single-cpu mode */
+>>                  if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>> -                   cluster->mode == CLUSTER_MODE_SINGLECPU)
+>> +                   cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +                   cluster->mode == CLUSTER_MODE_NONE)
+>>                          break;
+>>          }
+>>
+>> @@ -1704,21 +1713,32 @@ static int k3_r5_probe(struct platform_device 
+>> *pdev)
+>>           * default to most common efuse configurations - Split-mode 
+>> on AM64x
+>>           * and LockStep-mode on all others
+>>           */
+>> -       cluster->mode = data->single_cpu_mode ?
+>> +       if (!data->is_single_core)
+>> +               cluster->mode = data->single_cpu_mode ?
+>>                                  CLUSTER_MODE_SPLIT : 
+>> CLUSTER_MODE_LOCKSTEP;
+>> +       else
+>> +               cluster->mode = CLUSTER_MODE_NONE;
+>> +
+>>          cluster->soc_data = data;
+>>          INIT_LIST_HEAD(&cluster->cores);
+>>
+>> -       ret = of_property_read_u32(np, "ti,cluster-mode", 
+>> &cluster->mode);
+>> -       if (ret < 0 && ret != -EINVAL) {
+>> -               dev_err(dev, "invalid format for ti,cluster-mode, ret 
+>> = %d\n",
+>> -                       ret);
+>> -               return ret;
+>> +       if (!data->is_single_core) {
+>> +               ret = of_property_read_u32(np, "ti,cluster-mode", 
+>> &cluster->mode);
+>> +               if (ret < 0 && ret != -EINVAL) {
+>> +                       dev_err(dev, "invalid format for 
+>> ti,cluster-mode, ret = %d\n", ret);
+>> +                       return ret;
+>> +               }
+>>          }
+>>
+>>          num_cores = of_get_available_child_count(np);
+>> -       if (num_cores != 2) {
+>> -               dev_err(dev, "MCU cluster requires both R5F cores to 
+>> be enabled, num_cores = %d\n",
+>> +       if (num_cores != 2 && !data->is_single_core) {
+>> +               dev_err(dev, "MCU cluster requires both R5F cores to 
+>> be enabled but num_cores is set to = %d\n",
+>> +                       num_cores);
+>> +               return -ENODEV;
+>> +       }
+>> +
+>> +       if (num_cores != 1 && data->is_single_core) {
+>> +               dev_err(dev, "SoC supports only single core R5 but 
+>> num_cores is set to %d\n",
+>>                          num_cores);
+>>                  return -ENODEV;
+>>          }
+>> @@ -1760,18 +1780,28 @@ static const struct k3_r5_soc_data 
+>> am65_j721e_soc_data = {
+>>          .tcm_is_double = false,
+>>          .tcm_ecc_autoinit = false,
+>>          .single_cpu_mode = false,
+>> +       .is_single_core = false,
+>>   };
+>>
+>>   static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
+>>          .tcm_is_double = true,
+>>          .tcm_ecc_autoinit = true,
+>>          .single_cpu_mode = false,
+>> +       .is_single_core = false,
+>>   };
+>>
+>>   static const struct k3_r5_soc_data am64_soc_data = {
+>>          .tcm_is_double = true,
+>>          .tcm_ecc_autoinit = true,
+>>          .single_cpu_mode = true,
+>> +       .is_single_core = false,
+>> +};
+>> +
+>> +static const struct k3_r5_soc_data am62_soc_data = {
+>> +       .tcm_is_double = false,
+>> +       .tcm_ecc_autoinit = true,
+>> +       .single_cpu_mode = false,
+>> +       .is_single_core = true,
+>>   };
+>>
+>>   static const struct of_device_id k3_r5_of_match[] = {
+>> @@ -1779,6 +1809,7 @@ static const struct of_device_id 
+>> k3_r5_of_match[] = {
+>>          { .compatible = "ti,j721e-r5fss", .data = 
+>> &am65_j721e_soc_data, },
+>>          { .compatible = "ti,j7200-r5fss", .data = 
+>> &j7200_j721s2_soc_data, },
+>>          { .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
+>> +       { .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
+>>          { .compatible = "ti,j721s2-r5fss",  .data = 
+>> &j7200_j721s2_soc_data, },
+>>          { /* sentinel */ },
+>>   };
+>> -- 
+>> 2.17.1
+>>
