@@ -2,159 +2,60 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A5FC4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Dec 2022 22:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 967E9C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Dec 2022 22:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbiLNWQs (ORCPT
+        id S229560AbiLNWXm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Dec 2022 17:16:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51118 "EHLO
+        Wed, 14 Dec 2022 17:23:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbiLNWQr (ORCPT
+        with ESMTP id S229788AbiLNWXh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Dec 2022 17:16:47 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 356422CC80
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 14:16:46 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id d3so4853720plr.10
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 14:16:46 -0800 (PST)
+        Wed, 14 Dec 2022 17:23:37 -0500
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721D32BB2A
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 14:23:36 -0800 (PST)
+Received: by mail-lf1-x130.google.com with SMTP id q6so12780136lfm.10
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 14:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NT/9Rh2N/j7novKGPUvYbhzVIukro1B6crk90dTmnGQ=;
-        b=s6WmaR8nRnLYRP5mH3tZ1rUXeH2OVIT5OczB6E70qlbNeNXisqFCUdt275otNaFxQN
-         t5kWSWch7rBqcHFERw3RFOL1UkmLET8H0cZSVjkiEFU4VG4NseulOBsb+9B9UY4OkAZU
-         kLaj25J6znJ/E6Z1SXQwkuX44R5PyQED2i3WBQ/xtyi/+8WHphZoWJSTReIDm+gQ7eE5
-         c0uy6o3Bf5xD0N3Nt++3nwsTltv+3ZoYgFHtWtsJfsqxKfJiQsxj+bn4NPYvPnxIDq7w
-         B9R3dGX72tY1o5fZ17e9JUih+y6Ds6nxkOrCHHyxew0M8Co8ilgoedtSSg0KxrtY/vqW
-         b3fQ==
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sw9bdlx8q6flaMAHigpia1xik10R3BxkYaZ+4MWS5Ck=;
+        b=Tmz+FwqCNM+ivBZ/MzI7NRDy5eqmPDE1Jlt8p+gjyQDWiFWj7q3yec9QpJ9b09OhMI
+         3YSAlv611/JZk/Hi1SGtTaEXqy5h1az0GuWSpcCHIko7yjH4LSLhsARf0piqkR9fkFoG
+         FhZyvLlFFfYzhnlW2yzMcUVku0Kyr6l9I3FPSoVWz+oKWiD8feZxIp9If8VG52873ccz
+         w+aj16eGDBHPdauWQnqWQo4b24APlsnxzxGNa/hiekMDgGhovJlqjMzFl9CIhR9syhU3
+         PQLYZxgVoPyp9Sag7gntJrBEjQRcqgSkl0Qf+E0hzbU9kAzdYxKcaD5KQs8oxAdV5jZC
+         2CEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NT/9Rh2N/j7novKGPUvYbhzVIukro1B6crk90dTmnGQ=;
-        b=BhrC4UKt+QOXmxVMWn4jXB38FM40V+uTncdgl30p/tO37iwR1JZGLnPWHZ/6fd6Dtn
-         GOXzFTFECCjNl/1IpuJH+W9kKnjrtCMPhuYp7rGQaaqhuBsHpSftF8VLVfYho2mujws5
-         5hjm704jW6ToOVdD+9yycOKXsG0bErmLZKeCpLPDxoBAn58slGSBSLEaoURKwe9ry+7h
-         OJiZKb7vdsU8oMlrVmmyAVmsxMW0PeX5U/SWp9ZFFX3tsqyaIIjFgcmlds6bkYIVfvBF
-         p4NEhMVwWwbbHpOHVNcbAqpXi5+0hT1oZgk9krM1Hj+85xwEo6iKUS7YYEz2KyFHCR8A
-         antQ==
-X-Gm-Message-State: ANoB5pmyfleiumKOWTTGcJslxrQE6kR0wYALbVHlcyunR/9kQ1gomiQE
-        nnSKc9QdoAh2l+hVGN1zANIPPA==
-X-Google-Smtp-Source: AA0mqf6mKMITSx1PZVCVX96+zgkHuPvBD74UELeBi73qE4jfP8OeGEEO9Jau3nRjY0bXhNqZX8DHww==
-X-Received: by 2002:a17:903:26c7:b0:189:b2b8:dbeb with SMTP id jg7-20020a17090326c700b00189b2b8dbebmr26211044plb.61.1671056205739;
-        Wed, 14 Dec 2022 14:16:45 -0800 (PST)
-Received: from p14s.cg.shawcable.net ([2604:3d09:148c:c800:dd50:d021:2d62:a2ee])
-        by smtp.gmail.com with ESMTPSA id o15-20020a170902d4cf00b0017f7c4e260fsm2337263plg.150.2022.12.14.14.16.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Dec 2022 14:16:44 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     andersson@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ben.levinsky@xilinx.com
-Subject: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
-Date:   Wed, 14 Dec 2022 15:16:43 -0700
-Message-Id: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sw9bdlx8q6flaMAHigpia1xik10R3BxkYaZ+4MWS5Ck=;
+        b=YPOBGfbPvDqlJ1Reem2fUnjA+R0bTWgxV/kzGt7Zx6uJhY2joDL3dAYEPFOF/oBOw7
+         5PgLPyXrIDsuuVTj8v86uiR+432kKe/cMstDKynMFuC/mieWgAuEYkyL4TCD83AMktFI
+         DVO4ptSRLlGAhkX9nq0v8J/b0CyX25GEfC/2C+ypZDYAcYIg09lnkJuLKfxZeZge1cJz
+         zCf7bSHESU6tAa9vvI1BHMvifEaNlKGNCUYkeQxrG8QOPAB9FQKnhgq/l13Op58Pkh3Q
+         nJWdgxQN/j7GkTXiN8G+a4znLKoiwxCusJJaMaBcPvS0COOKMexjqYph893OXSv3IwkM
+         o/lA==
+X-Gm-Message-State: ANoB5pn/HufSGI4JKQprRitOPYNx5VQFQHwgPjef/ddIF4INAWhBXJhC
+        +WhNc0/uMFo0yVwmWdeb7hgPvH+afZiX4aXqv2GhuOOjMmBjI2dD
+X-Google-Smtp-Source: AA0mqf5pZfUIx2oX+stgCGiopHt8XEu1k4SUWmFGsfgIvJ6vNdaW3V5sYiNHBGvA7m39Ra5Vbxhhemm/DG3m7vyjWpk=
+X-Received: by 2002:ac2:4565:0:b0:4b5:2bbc:e121 with SMTP id
+ k5-20020ac24565000000b004b52bbce121mr12981654lfm.686.1671056614259; Wed, 14
+ Dec 2022 14:23:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 14 Dec 2022 15:23:22 -0700
+Message-ID: <CANLsYkzcC-f7xd5Gi8bEfNRAL+=hAaNGznpBa1Z_M7K7BsM_Zw@mail.gmail.com>
+Subject: [INFO] Remoteproc/RPMSG patchset review order for December 14th 2022
+To:     linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Multi-cluster remoteproc designs typically have the following DT
-declaration:
-
-	remoteproc_cluster {
-		compatible = "soc,remoteproc-cluster";
-
-                core0: core0 {
-			compatible = "soc,remoteproc-core"
-                        memory-region;
-                        sram;
-                };
-
-                core1: core1 {
-			compatible = "soc,remoteproc-core"
-                        memory-region;
-                        sram;
-                }
-        };
-
-A driver exists for the cluster rather than the individual cores
-themselves so that operation mode and HW specific configurations
-applicable to the cluster can be made.
-
-Because the driver exists at the cluster level and not the individual
-core level, function rproc_get_by_phandle() fails to return the
-remoteproc associated with the phandled it is called for.
-
-This patch enhances rproc_get_by_phandle() by looking for the cluster's
-driver when the driver for the immediate remoteproc's parent is not
-found.
-
-Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 1cd4815a6dd1..91f82886add9 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -33,6 +33,7 @@
- #include <linux/idr.h>
- #include <linux/elf.h>
- #include <linux/crc32.h>
-+#include <linux/of_platform.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/virtio_ids.h>
- #include <linux/virtio_ring.h>
-@@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
- #ifdef CONFIG_OF
- struct rproc *rproc_get_by_phandle(phandle phandle)
- {
-+	struct platform_device *cluster_pdev;
- 	struct rproc *rproc = NULL, *r;
-+	struct device_driver *driver;
- 	struct device_node *np;
- 
- 	np = of_find_node_by_phandle(phandle);
-@@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
- 	list_for_each_entry_rcu(r, &rproc_list, node) {
- 		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
- 			/* prevent underlying implementation from being removed */
--			if (!try_module_get(r->dev.parent->driver->owner)) {
-+
-+			/*
-+			 * If the remoteproc's parent has a driver, the
-+			 * remoteproc is not part of a cluster and we can use
-+			 * that driver.
-+			 */
-+			driver = r->dev.parent->driver;
-+
-+			/*
-+			 * If the remoteproc's parent does not have a driver,
-+			 * look for the driver associated with the cluster.
-+			 */
-+			if (!driver) {
-+				cluster_pdev = of_find_device_by_node(np->parent);
-+				if (!cluster_pdev) {
-+					dev_err(&r->dev, "can't get parent\n");
-+					break;
-+				}
-+
-+				driver = cluster_pdev->dev.driver;
-+				put_device(&cluster_pdev->dev);
-+			}
-+
-+			if (!try_module_get(driver->owner)) {
- 				dev_err(&r->dev, "can't get owner\n");
- 				break;
- 			}
--- 
-2.25.1
-
+[PATCH V4 0/3] rpmsg signaling/flowcontrol patches
+[PATCH v2 0/2] Update section header name check
