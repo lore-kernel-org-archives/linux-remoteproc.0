@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C63DC00145
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Dec 2022 07:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FD8C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Dec 2022 07:26:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229755AbiLOHLC (ORCPT
+        id S229623AbiLOH0D (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Dec 2022 02:11:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34310 "EHLO
+        Thu, 15 Dec 2022 02:26:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229904AbiLOHKj (ORCPT
+        with ESMTP id S229543AbiLOH0B (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Dec 2022 02:10:39 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B431C1583B
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 23:06:19 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id ay2-20020a05600c1e0200b003d22e3e796dso1145329wmb.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 23:06:19 -0800 (PST)
+        Thu, 15 Dec 2022 02:26:01 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE0020345
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 23:25:58 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id w15so2089798wrl.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 23:25:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lfjjP8THPoyFgCibBkqO0thZLZlFewfYPO1zpSWCYew=;
-        b=dYwKhXvbyv4dYhoR646FuKyuPpG0WotUkiZBF1Vhaun+U97tDRtcBuIwAoW2n7wio6
-         fqX1jeW+rLHR1RLF2kepIPZOnjlIyn/EzPHyfv/ti8q1XN1AU9+MkwrQ2AEUfBImfZI4
-         jZ0wC9f69CpeTxhxFhPnV+pjQY9v9n+KXgyKgMn4CLYEoSLLxycwtz1uQIIdJSCEQ4hV
-         BrKWHDujEjJHlQhfauRmzAKy77pR5WWQao7eADa3sDBAvqhKOq6NJDahPnR+BuyM/y0V
-         B6y9WVm8X6XuI0LYmhLul4DjVFAmSIhyRQnLYKZnc8zOKgMUmirMzQrSgfSzpiZbkgFU
-         eYWw==
+        bh=Mm2wMOJBU0KY5CK4G5XuPJWnbMPqw3bzwZnGj//J0bc=;
+        b=IJ027xJjO2+v9bEloG9slnX6gLRHg9t1MMvGfOevcGjukcWsGVH+SAPCaW5j18HGrf
+         mSgKQ8uYEIFewcYpKNLqjLRCJmDZ7Hf08tzaGsZCcYE3ktur3K1fNrOy4+PcNT2SAhRr
+         gxG5rA8umj7lHwqtDJIGp4Moa0b7Re2Z1+NGxDwQJJEn1DD7aj0XbCGfzk0ChWBYoAwE
+         jmpbTzF1TSUCKxVBlI90TX59HuE+t4WHUMgtFRg0V1tWTFMHs5sqE6azh0haI7p2DGCb
+         2uDakyUpVab9ClcmoHWANWAkdm8bHEQ1NARrvXHcu1d6HqcYaaBsYGqWEuKDVz7BEWXd
+         7YGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lfjjP8THPoyFgCibBkqO0thZLZlFewfYPO1zpSWCYew=;
-        b=MpGnY3h/NEY8p5i9q7RU6G25MFBMkQ+vxO7j5iRawfwvLcGww5GLy0EygjwQrGJIQb
-         FlelUnt9o6/kWE85ovNzzP0bQgQNxex6HUGLQKG7r2IiiakScC/vg0kTHayTg7brLO9A
-         4BiU7E2W1o1rSVlc03vV1PgaGe/UQsczLFE1TNeAhVgO8AzKWuYOanw/EeGkpl/xK865
-         ePlZ1KF+d9FJ8qLKBIMUEbJaiWrpS9IHe6HkoehzUoErtIH3O2v/gMFrbIaINqdp5nBO
-         WLaDLrO5XfVWzGaV1fiANXyM8k737KTFYwf9WyrJnC6zTzBE4Rhj66MBWdRtsI0Mwzt9
-         dCEA==
-X-Gm-Message-State: ANoB5plCAYg0nB8lzbmibk3Q/6/KWFnQewPL3EFabrvt12IRngQpCTLW
-        K+Z79rXDroAaOJcv9n3Dgtm7FQ==
-X-Google-Smtp-Source: AA0mqf5L9xWcoidg/+YgWM0D0dqEkMCFolFMFJ5l9KLYHxcRvtmaqf1hE/FwKrgjIFlni3sR+9UxNg==
-X-Received: by 2002:a7b:c017:0:b0:3cf:8e5d:7184 with SMTP id c23-20020a7bc017000000b003cf8e5d7184mr20737074wmb.28.1671087978562;
-        Wed, 14 Dec 2022 23:06:18 -0800 (PST)
+        bh=Mm2wMOJBU0KY5CK4G5XuPJWnbMPqw3bzwZnGj//J0bc=;
+        b=N3AoxwBmtGzXB3GhV7q86oc6cSLzlr38w8Xc8GRO1YGL3uEXC3QZRRQ//ORQ2M6Z1O
+         Q9UPkLu41yCXS9SbwxRFjHRc3Cfbhghhx1WFQDelzTMIQ8slIpEfMTMFG+rJS+Fdvuhp
+         Byd5NAsQUj2TTzbpG7ct7IX+iIUJE9umca5oqnLhTQf4qqtJORCtTaNxx+S8xHVPkrpi
+         L/yf41lvFOcQwdUuRmDie4ZKn0LKYIr/61u/dbANw2z5OIzIH53QLhYjsJMimQPzwdTj
+         qyJyu6WGlNorotWlB0Fo+XqvgCLSISp9iJE2RSzEyMSyKMz+90tp02xnF9BIrsfCnsvI
+         zzSw==
+X-Gm-Message-State: ANoB5pknKZSIbt4xtVX20CSxNQ+/PL95tTX0riRFfmz7LWu265yLVHHs
+        87KcXQzWrDjE8C4UyZA6WacNNQ==
+X-Google-Smtp-Source: AA0mqf6FUW6cVCTyvzhNaccE170mxSEmlyha2ZZvhJLzGO2eAwd7HoAqxqtaPydtZy7SLmvbY+rnjg==
+X-Received: by 2002:a5d:5187:0:b0:242:9e8:84b6 with SMTP id k7-20020a5d5187000000b0024209e884b6mr16499660wrv.13.1671089157351;
+        Wed, 14 Dec 2022 23:25:57 -0800 (PST)
 Received: from [192.168.30.216] ([81.0.6.76])
-        by smtp.gmail.com with ESMTPSA id o13-20020a05600c4fcd00b003b4868eb71bsm5987273wmq.25.2022.12.14.23.06.16
+        by smtp.gmail.com with ESMTPSA id n9-20020a5d67c9000000b00228dbf15072sm5082277wrw.62.2022.12.14.23.25.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Dec 2022 23:06:18 -0800 (PST)
-Message-ID: <fe761bbe-96f9-75ae-b4be-e94b718abac3@linaro.org>
-Date:   Thu, 15 Dec 2022 08:06:16 +0100
+        Wed, 14 Dec 2022 23:25:56 -0800 (PST)
+Message-ID: <ac2d90e2-6fc3-98dc-8c73-936132b6c8d5@linaro.org>
+Date:   Thu, 15 Dec 2022 08:25:54 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.5.1
-Subject: Re: [PATCH v2 1/2] remoteproc: elf_loader: Update resource table name
- check
+Subject: Re: [PATCH v2 2/2] docs: remoteproc: Update section header name
+ requirement
 Content-Language: en-US
 To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         linux-remoteproc@vger.kernel.org, agross@kernel.org,
@@ -65,14 +65,14 @@ To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
         robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
         perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
         quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, judyhsiao@chromium.org,
-        devicetree@vger.kernel.org, krzysztof.kozlowski@linaro.org,
-        mathieu.poirier@linaro.org, corbet@lwn.net,
-        Stephen Boyd <swboyd@chromium.org>
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, devicetree@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, mathieu.poirier@linaro.org,
+        corbet@lwn.net
 References: <1670924929-26507-1-git-send-email-quic_srivasam@quicinc.com>
- <1670924929-26507-2-git-send-email-quic_srivasam@quicinc.com>
+ <1670924929-26507-3-git-send-email-quic_srivasam@quicinc.com>
 From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
-In-Reply-To: <1670924929-26507-2-git-send-email-quic_srivasam@quicinc.com>
+In-Reply-To: <1670924929-26507-3-git-send-email-quic_srivasam@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -80,39 +80,32 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 13/12/22 10:48, Srinivasa Rao Mandadapu wrote:
-> Update the way of checking resource table name with prefix
-> substring search instead of complete string search.
-> In general Qualcomm DSP binary is prepared by combining different elfs,
-
-Maybe 'ELFs'? (twice).
-
-> hence section header name (e.g. .resource_table), appended with elf name
-> to differentiate with same section of different elfs.
-
-Please include here the section info parsed by readelf as an example,
-as suggested by Stephen in your v1:
-https://lore.kernel.org/linux-remoteproc/CAE-0n52cNite8-4HDoQcsZ+UvZFkJU8c5oUjxPB5ag5WP6E9=g@mail.gmail.com/
-
+> Add section header name requirement specification in elf segments.
+> 
 > Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 > ---
-> Changes since v1:
->      -- Update the commit message.
-> 	-- Use strstarts instead of strstr.
+>   Documentation/staging/remoteproc.rst | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
->   drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index 5a412d7..77330d6 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -272,7 +272,7 @@ find_table(struct device *dev, const struct firmware *fw)
->   		u64 offset = elf_shdr_get_sh_offset(class, shdr);
->   		u32 name = elf_shdr_get_sh_name(class, shdr);
+> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+> index 348ee7e..3125030 100644
+> --- a/Documentation/staging/remoteproc.rst
+> +++ b/Documentation/staging/remoteproc.rst
+> @@ -245,6 +245,8 @@ if the remote processor is accessing memory directly).
 >   
-> -		if (strcmp(name_table + name, ".resource_table"))
-> +		if (!strstarts(name_table + name, ".resource_table"))
->   			continue;
->   
->   		table = (struct resource_table *)(elf_data + offset);
+>   In addition to the standard ELF segments, most remote processors would
+>   also include a special section which we call "the resource table".
+> +This resource table section name may have anything appended after it,
+> +but it must start with ".resource_table"
 
+What do you think of:
+
+    In addition to the standard ELF segments, most remote processors would
+    also include a special section which we call the "resource table".
+    A "resource table" section name must start with the ".resource_table"
+    prefix, optionally having a more descriptive string appended. For
+    example, ".resource_table.my_rproc" is a valid section name.
+
+Regards,
+
+Phil.
