@@ -2,110 +2,171 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FD8C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Dec 2022 07:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CC3C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Dec 2022 15:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbiLOH0D (ORCPT
+        id S229704AbiLOP5x (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Dec 2022 02:26:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
+        Thu, 15 Dec 2022 10:57:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbiLOH0B (ORCPT
+        with ESMTP id S229583AbiLOP5v (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Dec 2022 02:26:01 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE0020345
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 23:25:58 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id w15so2089798wrl.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Dec 2022 23:25:58 -0800 (PST)
+        Thu, 15 Dec 2022 10:57:51 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E112DA93
+        for <linux-remoteproc@vger.kernel.org>; Thu, 15 Dec 2022 07:57:50 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id p8so16309779lfu.11
+        for <linux-remoteproc@vger.kernel.org>; Thu, 15 Dec 2022 07:57:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mm2wMOJBU0KY5CK4G5XuPJWnbMPqw3bzwZnGj//J0bc=;
-        b=IJ027xJjO2+v9bEloG9slnX6gLRHg9t1MMvGfOevcGjukcWsGVH+SAPCaW5j18HGrf
-         mSgKQ8uYEIFewcYpKNLqjLRCJmDZ7Hf08tzaGsZCcYE3ktur3K1fNrOy4+PcNT2SAhRr
-         gxG5rA8umj7lHwqtDJIGp4Moa0b7Re2Z1+NGxDwQJJEn1DD7aj0XbCGfzk0ChWBYoAwE
-         jmpbTzF1TSUCKxVBlI90TX59HuE+t4WHUMgtFRg0V1tWTFMHs5sqE6azh0haI7p2DGCb
-         2uDakyUpVab9ClcmoHWANWAkdm8bHEQ1NARrvXHcu1d6HqcYaaBsYGqWEuKDVz7BEWXd
-         7YGw==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7k/AHx9sIHaw32Pe0dA2eE03z43VrbqeQoa3ShJCk/k=;
+        b=pLz0jTSycXFgOHwa8XCsuJC8wZc+R0cGlgWphKESpF4Gi75FxLs6MFYAthhzoF9ucL
+         4ZY+nrPRbDbiWOFGKv15/QXvU0Tz13Jf1SYp+zyo1r/I9fNlEyILPg12I4QQGEKKZyUR
+         ORv4Kl2Hjn/oV5WFudPN3Hl4BLOe2oRujyOTm3LizYoMJ5Ikyk32L1NVfmz0KfBtHzzS
+         RecSKueHf8MfidzChdKoIZnqu7C5o5kKb4ddRHcky/xat8jMH0n4fnoP4EZstq+zFvnQ
+         +TeI8+2MJKkT5gtKnN1K2MrqJRtmfX45QBA2UOc6lmYzifIMbPF3EKqeP/6xl3kI7HCj
+         Tt2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mm2wMOJBU0KY5CK4G5XuPJWnbMPqw3bzwZnGj//J0bc=;
-        b=N3AoxwBmtGzXB3GhV7q86oc6cSLzlr38w8Xc8GRO1YGL3uEXC3QZRRQ//ORQ2M6Z1O
-         Q9UPkLu41yCXS9SbwxRFjHRc3Cfbhghhx1WFQDelzTMIQ8slIpEfMTMFG+rJS+Fdvuhp
-         Byd5NAsQUj2TTzbpG7ct7IX+iIUJE9umca5oqnLhTQf4qqtJORCtTaNxx+S8xHVPkrpi
-         L/yf41lvFOcQwdUuRmDie4ZKn0LKYIr/61u/dbANw2z5OIzIH53QLhYjsJMimQPzwdTj
-         qyJyu6WGlNorotWlB0Fo+XqvgCLSISp9iJE2RSzEyMSyKMz+90tp02xnF9BIrsfCnsvI
-         zzSw==
-X-Gm-Message-State: ANoB5pknKZSIbt4xtVX20CSxNQ+/PL95tTX0riRFfmz7LWu265yLVHHs
-        87KcXQzWrDjE8C4UyZA6WacNNQ==
-X-Google-Smtp-Source: AA0mqf6FUW6cVCTyvzhNaccE170mxSEmlyha2ZZvhJLzGO2eAwd7HoAqxqtaPydtZy7SLmvbY+rnjg==
-X-Received: by 2002:a5d:5187:0:b0:242:9e8:84b6 with SMTP id k7-20020a5d5187000000b0024209e884b6mr16499660wrv.13.1671089157351;
-        Wed, 14 Dec 2022 23:25:57 -0800 (PST)
-Received: from [192.168.30.216] ([81.0.6.76])
-        by smtp.gmail.com with ESMTPSA id n9-20020a5d67c9000000b00228dbf15072sm5082277wrw.62.2022.12.14.23.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Dec 2022 23:25:56 -0800 (PST)
-Message-ID: <ac2d90e2-6fc3-98dc-8c73-936132b6c8d5@linaro.org>
-Date:   Thu, 15 Dec 2022 08:25:54 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7k/AHx9sIHaw32Pe0dA2eE03z43VrbqeQoa3ShJCk/k=;
+        b=dt1jUIrojakx1SfbEcdet2FEROwJlWuK5S35HMmzrY+IDU0+1yfX59XxbDFC+9Bv8C
+         cTSDusmTa6v1vqkucCa2lP6u4y/iAHVw8+e/afpqjuhXS7UOz66QfKHPPXEqdPUNaB69
+         k0xAUdA9iMWU5W+SogkIlVtXHKwvv/I7jRWFfQ92OXdJRjhwS9wE9mplyF/NZxElFouk
+         qb3zOu4SlLlwd85T2EknnJbXXMZcVGDC7i35SOYL1GF/d0yQ3Q5yj2miNwTpWamVqzSa
+         34DVvpoWQT8v6hXgFugJYHJJjshRs38R8M+0mhLZRwPBEAgLHxhrwyYr+UkjsqWnWLN8
+         z8Zw==
+X-Gm-Message-State: ANoB5plDynKDnBdtY1YYb6AMGM8dYtULP7nS7zDDzFnizVIXfzSOXMj8
+        o72dut6DUxETg7sBfUzNP6a+Y7mvbekug3n/TgGJbQ==
+X-Google-Smtp-Source: AA0mqf6DQQ9SfaJViAGGy3snbd9DuSVfN7MeD8Unnxs+XD3ETc6xAtXlqll2YOYrwIT+R+/pJtwz7jCCVod+oeRktF4=
+X-Received: by 2002:a05:6512:104e:b0:4b5:604a:5b24 with SMTP id
+ c14-20020a056512104e00b004b5604a5b24mr9608434lfb.550.1671119868440; Thu, 15
+ Dec 2022 07:57:48 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.5.1
-Subject: Re: [PATCH v2 2/2] docs: remoteproc: Update section header name
- requirement
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        andersson@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
-        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
-        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, swboyd@chromium.org,
-        judyhsiao@chromium.org, devicetree@vger.kernel.org,
-        krzysztof.kozlowski@linaro.org, mathieu.poirier@linaro.org,
-        corbet@lwn.net
-References: <1670924929-26507-1-git-send-email-quic_srivasam@quicinc.com>
- <1670924929-26507-3-git-send-email-quic_srivasam@quicinc.com>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
-In-Reply-To: <1670924929-26507-3-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
+In-Reply-To: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 15 Dec 2022 08:57:37 -0700
+Message-ID: <CANLsYkwPvkr8bujPsRD+4g2Lrwiu5dB7-k-biXaQRMm70ANBVg@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
+To:     Suman Anna <s-anna@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+        Hari Nagalla <hnagalla@ti.com>,
+        "Bajjuri, Praneeth" <praneeth@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, a-bhatia1@ti.com,
+        j-luthra@ti.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ben.levinsky@xilinx.com, andersson@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 13/12/22 10:48, Srinivasa Rao Mandadapu wrote:
-> Add section header name requirement specification in elf segments.
-> 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+People at TI - please test this patch for AM3352.  Theoretically
+things should be fine but I would certainly appreciate a T-B from
+someone at TI.
+
+Thanks,
+Mathieu
+
+On Wed, 14 Dec 2022 at 15:16, Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Multi-cluster remoteproc designs typically have the following DT
+> declaration:
+>
+>         remoteproc_cluster {
+>                 compatible = "soc,remoteproc-cluster";
+>
+>                 core0: core0 {
+>                         compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 };
+>
+>                 core1: core1 {
+>                         compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 }
+>         };
+>
+> A driver exists for the cluster rather than the individual cores
+> themselves so that operation mode and HW specific configurations
+> applicable to the cluster can be made.
+>
+> Because the driver exists at the cluster level and not the individual
+> core level, function rproc_get_by_phandle() fails to return the
+> remoteproc associated with the phandled it is called for.
+>
+> This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> driver when the driver for the immediate remoteproc's parent is not
+> found.
+>
+> Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->   Documentation/staging/remoteproc.rst | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-> index 348ee7e..3125030 100644
-> --- a/Documentation/staging/remoteproc.rst
-> +++ b/Documentation/staging/remoteproc.rst
-> @@ -245,6 +245,8 @@ if the remote processor is accessing memory directly).
->   
->   In addition to the standard ELF segments, most remote processors would
->   also include a special section which we call "the resource table".
-> +This resource table section name may have anything appended after it,
-> +but it must start with ".resource_table"
-
-What do you think of:
-
-    In addition to the standard ELF segments, most remote processors would
-    also include a special section which we call the "resource table".
-    A "resource table" section name must start with the ".resource_table"
-    prefix, optionally having a more descriptive string appended. For
-    example, ".resource_table.my_rproc" is a valid section name.
-
-Regards,
-
-Phil.
+>  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 1cd4815a6dd1..91f82886add9 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/idr.h>
+>  #include <linux/elf.h>
+>  #include <linux/crc32.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_ring.h>
+> @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
+>  #ifdef CONFIG_OF
+>  struct rproc *rproc_get_by_phandle(phandle phandle)
+>  {
+> +       struct platform_device *cluster_pdev;
+>         struct rproc *rproc = NULL, *r;
+> +       struct device_driver *driver;
+>         struct device_node *np;
+>
+>         np = of_find_node_by_phandle(phandle);
+> @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+>         list_for_each_entry_rcu(r, &rproc_list, node) {
+>                 if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+>                         /* prevent underlying implementation from being removed */
+> -                       if (!try_module_get(r->dev.parent->driver->owner)) {
+> +
+> +                       /*
+> +                        * If the remoteproc's parent has a driver, the
+> +                        * remoteproc is not part of a cluster and we can use
+> +                        * that driver.
+> +                        */
+> +                       driver = r->dev.parent->driver;
+> +
+> +                       /*
+> +                        * If the remoteproc's parent does not have a driver,
+> +                        * look for the driver associated with the cluster.
+> +                        */
+> +                       if (!driver) {
+> +                               cluster_pdev = of_find_device_by_node(np->parent);
+> +                               if (!cluster_pdev) {
+> +                                       dev_err(&r->dev, "can't get parent\n");
+> +                                       break;
+> +                               }
+> +
+> +                               driver = cluster_pdev->dev.driver;
+> +                               put_device(&cluster_pdev->dev);
+> +                       }
+> +
+> +                       if (!try_module_get(driver->owner)) {
+>                                 dev_err(&r->dev, "can't get owner\n");
+>                                 break;
+>                         }
+> --
+> 2.25.1
+>
