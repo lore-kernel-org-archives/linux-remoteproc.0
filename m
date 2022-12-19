@@ -2,79 +2,272 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66237C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Dec 2022 20:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9624BC46467
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Dec 2022 23:05:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231531AbiLSUUc (ORCPT
+        id S233215AbiLSXFq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 19 Dec 2022 15:20:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45332 "EHLO
+        Mon, 19 Dec 2022 18:05:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232283AbiLSUUL (ORCPT
+        with ESMTP id S232054AbiLSXDs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 19 Dec 2022 15:20:11 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB002140FE;
-        Mon, 19 Dec 2022 12:19:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7E20AB80EF7;
-        Mon, 19 Dec 2022 20:19:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 668BDC433EF;
-        Mon, 19 Dec 2022 20:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671481192;
-        bh=tTePxdA+CAo0HaKkeJhMsyhOGYdEA4fxoVpt8swbBoc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=sV6eZbQ7OQO4BbD66TmrU+8AHX03VTOHKMRBS/nFZ0CG64//0g4lajH+VAVk8F47K
-         LMRUuiRoZCIkjRREHqI6tDcm3gAjAKjax4c9NJYJKLeUgUc32NWwEH7k1aFvk4MRRP
-         C+y9PQQlAFhrvxmMOfb2wIaKTi9BTC36xN2MxYh7TGAFUumqT00dG7jR2E5HYGHFsR
-         f1e6I/wzYK09eYBdA2jKY+BsGLCOBSjRhWx7m9Ot5Owo5bA/6K+A/a8qSd0JHudAFu
-         08G3x0/vu9x4WEGUTkb83JWRQNWn3N6St5j5606e6hNKwOltW66A3QMrDbmP55n6tl
-         3AMJJ+6ISEXAw==
-Message-ID: <da0a1ee5-0f95-f10f-9d87-afd298df2e40@kernel.org>
-Date:   Mon, 19 Dec 2022 22:19:46 +0200
+        Mon, 19 Dec 2022 18:03:48 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7722617047;
+        Mon, 19 Dec 2022 15:01:20 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BJIKvmX015286;
+        Mon, 19 Dec 2022 23:00:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=SWJzjgVg9CxBHb/tHJ5rN/ghb1Be0SCQGn7z+gHv/Rw=;
+ b=fH3cB2T1WJreeiJ/LAGY71vNdTnLJyvOqSGyObN9BGM7zDLU87yKQ/xEMExPM3HvJmzh
+ NAnJRSEX9A98VAA932urzSj6HVTDq7KfRCoDHQUdZm8d3L0ATLdddnBhxcHoker8qmgV
+ MHGdpie/Y8/NwFmxH6WeGONd0CLlkhgnd7l+gWTuU9X97AfpW94HO2hMCJ9CQMWfpHKw
+ uGqDzuO5wyf/XWpig8+NRpCu71VNVhYs/Z15bi33YJIi1lXzg+VuPugEbFq+/6OIbZRP
+ dj/GfsRpJvgRS9M+0ikdc+Ae//Pqe7W5ebkW6WVbAe2Lbj8iPPTf/tM1N8LtuxhWP289 cg== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mh72gd4dg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Dec 2022 23:00:46 +0000
+Received: from nasanex01b.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BJN0gBV006331
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Dec 2022 23:00:42 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Mon, 19 Dec 2022 15:00:41 -0800
+From:   Elliot Berman <quic_eberman@quicinc.com>
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Elliot Berman <quic_eberman@quicinc.com>,
+        Murali Nalajala <quic_mnalajal@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Srivatsa Vaddagiri" <quic_svaddagi@quicinc.com>,
+        Carl van Schaik <quic_cvanscha@quicinc.com>,
+        Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-acpi@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+Subject: [PATCH v8 18/28] firmware: qcom_scm: Use fixed width src vm bitmap
+Date:   Mon, 19 Dec 2022 14:58:39 -0800
+Message-ID: <20221219225850.2397345-19-quic_eberman@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221219225850.2397345-1-quic_eberman@quicinc.com>
+References: <20221219225850.2397345-1-quic_eberman@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v12 3/6] remoteproc: pru: Add APIs to get and put the PRU
- cores
-To:     MD Danish Anwar <danishanwar@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Suman Anna <s-anna@ti.com>, "Andrew F . Davis" <afd@ti.com>,
-        nm@ti.com, vigneshr@ti.com, srk@ti.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20221216053313.2974826-1-danishanwar@ti.com>
- <20221216053313.2974826-4-danishanwar@ti.com>
-Content-Language: en-US
-From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20221216053313.2974826-4-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rAJFpKPyIcVWf8l1hxpOMIY0DGylboWS
+X-Proofpoint-ORIG-GUID: rAJFpKPyIcVWf8l1hxpOMIY0DGylboWS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-19_01,2022-12-15_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ suspectscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2212190202
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The maximum VMID for assign_mem is 63. Use a u64 to represent this
+bitmap instead of architecture-dependent "unsigned int" which varies in
+size on 32-bit and 64-bit platforms.
 
+Acked-by: Kalle Valo <kvalo@kernel.org> [ath10k]
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+---
+ drivers/firmware/qcom_scm.c           | 12 +++++++-----
+ drivers/misc/fastrpc.c                |  6 ++++--
+ drivers/net/wireless/ath/ath10k/qmi.c |  4 ++--
+ drivers/remoteproc/qcom_q6v5_mss.c    |  8 ++++----
+ drivers/soc/qcom/rmtfs_mem.c          |  2 +-
+ include/linux/qcom_scm.h              |  2 +-
+ 6 files changed, 19 insertions(+), 15 deletions(-)
 
-On 16/12/2022 07:33, MD Danish Anwar wrote:
-> Add two new APIs, pru_rproc_get() and pru_rproc_put(), to the PRU
-> driver to allow client drivers to acquire and release the remoteproc
-> device associated with a PRU core. The PRU cores are treated as
-> resources with only one client owning it at a time.
-> 
-> The pru_rproc_get() function returns the rproc handle corresponding
-> to a PRU core identified by the device tree "ti,prus" property under
-> the client node. The pru_rproc_put() is the complementary function
-> to pru_rproc_get().
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index cdbfe54c8146..92763dce6477 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -898,7 +898,7 @@ static int __qcom_scm_assign_mem(struct device *dev, phys_addr_t mem_region,
+  * Return negative errno on failure or 0 on success with @srcvm updated.
+  */
+ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+-			unsigned int *srcvm,
++			u64 *srcvm,
+ 			const struct qcom_scm_vmperm *newvm,
+ 			unsigned int dest_cnt)
+ {
+@@ -915,9 +915,9 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	__le32 *src;
+ 	void *ptr;
+ 	int ret, i, b;
+-	unsigned long srcvm_bits = *srcvm;
++	u64 srcvm_bits = *srcvm;
+ 
+-	src_sz = hweight_long(srcvm_bits) * sizeof(*src);
++	src_sz = hweight64(srcvm_bits) * sizeof(*src);
+ 	mem_to_map_sz = sizeof(*mem_to_map);
+ 	dest_sz = dest_cnt * sizeof(*destvm);
+ 	ptr_sz = ALIGN(src_sz, SZ_64) + ALIGN(mem_to_map_sz, SZ_64) +
+@@ -930,8 +930,10 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+ 	/* Fill source vmid detail */
+ 	src = ptr;
+ 	i = 0;
+-	for_each_set_bit(b, &srcvm_bits, BITS_PER_LONG)
+-		src[i++] = cpu_to_le32(b);
++	for (b = 0; b < BITS_PER_TYPE(u64); b++) {
++		if (srcvm_bits & BIT(b))
++			src[i++] = cpu_to_le32(b);
++	}
+ 
+ 	/* Fill details of mem buff to map */
+ 	mem_to_map = ptr + ALIGN(src_sz, SZ_64);
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index 7ff0b63c25e3..2ad388f99fe1 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -299,11 +299,13 @@ static void fastrpc_free_map(struct kref *ref)
+ 		if (map->attr & FASTRPC_ATTR_SECUREMAP) {
+ 			struct qcom_scm_vmperm perm;
+ 			int err = 0;
++			u64 src;
+ 
++			src = BIT(map->fl->cctx->vmperms[0].vmid);
+ 			perm.vmid = QCOM_SCM_VMID_HLOS;
+ 			perm.perm = QCOM_SCM_PERM_RWX;
+ 			err = qcom_scm_assign_mem(map->phys, map->size,
+-				&(map->fl->cctx->vmperms[0].vmid), &perm, 1);
++				&src, &perm, 1);
+ 			if (err) {
+ 				dev_err(map->fl->sctx->dev, "Failed to assign memory phys 0x%llx size 0x%llx err %d",
+ 						map->phys, map->size, err);
+@@ -744,7 +746,7 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
+ 		 * If subsystem VMIDs are defined in DTSI, then do
+ 		 * hyp_assign from HLOS to those VM(s)
+ 		 */
+-		unsigned int perms = BIT(QCOM_SCM_VMID_HLOS);
++		u64 perms = BIT(QCOM_SCM_VMID_HLOS);
+ 
+ 		map->attr = attr;
+ 		err = qcom_scm_assign_mem(map->phys, (u64)map->size, &perms,
+diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
+index 66cb7a1e628a..6d1d87e1cdde 100644
+--- a/drivers/net/wireless/ath/ath10k/qmi.c
++++ b/drivers/net/wireless/ath/ath10k/qmi.c
+@@ -28,7 +28,7 @@ static int ath10k_qmi_map_msa_permission(struct ath10k_qmi *qmi,
+ {
+ 	struct qcom_scm_vmperm dst_perms[3];
+ 	struct ath10k *ar = qmi->ar;
+-	unsigned int src_perms;
++	u64 src_perms;
+ 	u32 perm_count;
+ 	int ret;
+ 
+@@ -60,7 +60,7 @@ static int ath10k_qmi_unmap_msa_permission(struct ath10k_qmi *qmi,
+ {
+ 	struct qcom_scm_vmperm dst_perms;
+ 	struct ath10k *ar = qmi->ar;
+-	unsigned int src_perms;
++	u64 src_perms;
+ 	int ret;
+ 
+ 	src_perms = BIT(QCOM_SCM_VMID_MSS_MSA) | BIT(QCOM_SCM_VMID_WLAN);
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index fddb63cffee0..9e8bde7a7ec4 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -227,8 +227,8 @@ struct q6v5 {
+ 	bool has_qaccept_regs;
+ 	bool has_ext_cntl_regs;
+ 	bool has_vq6;
+-	int mpss_perm;
+-	int mba_perm;
++	u64 mpss_perm;
++	u64 mba_perm;
+ 	const char *hexagon_mdt_image;
+ 	int version;
+ };
+@@ -404,7 +404,7 @@ static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
+ 	}
+ }
+ 
+-static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
++static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, u64 *current_perm,
+ 				   bool local, bool remote, phys_addr_t addr,
+ 				   size_t size)
+ {
+@@ -939,7 +939,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
+ 	struct page *page;
+ 	dma_addr_t phys;
+ 	void *metadata;
+-	int mdata_perm;
++	u64 mdata_perm;
+ 	int xferop_ret;
+ 	size_t size;
+ 	void *vaddr;
+diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+index 0feaae357821..69991e47aa23 100644
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -30,7 +30,7 @@ struct qcom_rmtfs_mem {
+ 
+ 	unsigned int client_id;
+ 
+-	unsigned int perms;
++	u64 perms;
+ };
+ 
+ static ssize_t qcom_rmtfs_mem_show(struct device *dev,
+diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+index f8335644a01a..77f7b5837216 100644
+--- a/include/linux/qcom_scm.h
++++ b/include/linux/qcom_scm.h
+@@ -96,7 +96,7 @@ extern int qcom_scm_mem_protect_video_var(u32 cp_start, u32 cp_size,
+ 					  u32 cp_nonpixel_start,
+ 					  u32 cp_nonpixel_size);
+ extern int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+-			       unsigned int *src,
++			       u64 *src,
+ 			       const struct qcom_scm_vmperm *newvm,
+ 			       unsigned int dest_cnt);
+ 
+-- 
+2.25.1
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
