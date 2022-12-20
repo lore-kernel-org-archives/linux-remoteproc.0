@@ -2,43 +2,44 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7217C10F1E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 08:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAC2C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 08:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233495AbiLTIDD (ORCPT
+        id S233789AbiLTIDW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Dec 2022 03:03:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
+        Tue, 20 Dec 2022 03:03:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233639AbiLTICv (ORCPT
+        with ESMTP id S233378AbiLTIC6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Dec 2022 03:02:51 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55ABB178B7;
-        Tue, 20 Dec 2022 00:02:17 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BK5nb29016728;
-        Tue, 20 Dec 2022 08:01:35 GMT
+        Tue, 20 Dec 2022 03:02:58 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C66717E26;
+        Tue, 20 Dec 2022 00:02:28 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BK7oWm5019245;
+        Tue, 20 Dec 2022 08:01:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=MHWNQ9PPrAaVQZhymXM7YbjcgyJEHKlcNiBCwgTTUjk=;
- b=YVlqCe1JWpI2MrbfE5466EUyYJTZ5HaC7CCD3M3jGxQK/OeszZFL2Z5XMUSUwL8LT76g
- sWuBzd1JUOC08FgGtHTkAKnzhRyjkfbFVsTweSGMN7j4PF75uS5u81+ZPjtL7JpPxTpw
- ucrJTPoqI8bOVlp2iGnc09ivlUMb26KpusHEBAo8+OgVekaQ3voeYVy2Fo0Z2bNVT5UU
- KCM2qh5ZhU1pmCjl7b8ypdTyqfqDm0l5XuAdfPrObsJ0A4SYAYtKmL4ATm5eSY+Vjotb
- v/AyD2Pue3/JXwLPh0dIQqaI9W2/MqNSUqJwnury0DoqePGcfjGv+4F5CYO+Qq6nvJzX 1A== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mk39t8pm9-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=RWNYQELDuJdjBZjU9909plvJTURaDrBiquSEdfoqLCI=;
+ b=DglHDlYTQDj0rnh5N/62WP2BmdQSvwaK4jEcHZ2U3tQgThjHocMYIx9PL/L0XECPY5DF
+ /wJTNt4yDKSDvMtd6910XRxTiAMDstCsdi1I1ne/NPSTbdMidni1IenUDO4qYM1z2XAl
+ ufLN6Ol786tAoLzH4HUn8iddsD8/hyHSxSGzsLCz13hDeyl73N1+xGCE7W1QgFiA3nEA
+ ksXwsNrrTNNZHOby4YLDcWm7W9jp++7sih1ML5lWhk+ai34OaUBQEDl003Czt8oSU+94
+ TR+HfCYaGLs0tQlOQtcDpkaucRYcDCC1azFM7H7dBR9nzwfnAc4eGqPCnqqEZn7nR3c1 uQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mk90t00xw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Dec 2022 08:01:35 +0000
+        Tue, 20 Dec 2022 08:01:49 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BK81Zgm030086
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BK81lSl015306
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Dec 2022 08:01:35 GMT
+        Tue, 20 Dec 2022 08:01:47 GMT
 Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Tue, 20 Dec 2022 00:01:28 -0800
+ 15.2.986.36; Tue, 20 Dec 2022 00:01:41 -0800
 From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <andersson@kernel.org>, <lgirdwood@gmail.com>,
@@ -51,10 +52,12 @@ To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <krzysztof.kozlowski@linaro.org>, <mathieu.poirier@linaro.org>,
         <corbet@lwn.net>
 CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH v3 0/2] Update section header name check
-Date:   Tue, 20 Dec 2022 13:31:07 +0530
-Message-ID: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
+Subject: [PATCH v3 2/2] docs: remoteproc: Update section header name requirement
+Date:   Tue, 20 Dec 2022 13:31:09 +0530
+Message-ID: <1671523269-21154-3-git-send-email-quic_srivasam@quicinc.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
+References: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -62,37 +65,43 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: s37TnQoVKzinMWq-isR93__7IKXJw4RB
-X-Proofpoint-GUID: s37TnQoVKzinMWq-isR93__7IKXJw4RB
+X-Proofpoint-GUID: rNOXVIZj8LYgCLL84HbaV5Sask0igh1f
+X-Proofpoint-ORIG-GUID: rNOXVIZj8LYgCLL84HbaV5Sask0igh1f
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-12-20_01,2022-12-15_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=930 spamscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ spamscore=0 impostorscore=0 mlxscore=0 phishscore=0 mlxlogscore=910
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2212200065
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update section header name check and corresponding documentation.
-Changes since v2:
-    -- Update the commit message with example.
-    -- Update the documentation text appropriately.
-Changes since v1:
-    -- Update the commit message.
-    -- Use strstarts instead of strstr.
-    -- Update documentation file.
+Add section header name requirement specification in elf segments.
 
-Srinivasa Rao Mandadapu (2):
-  remoteproc: elf_loader: Update resource table name check
-  docs: remoteproc: Update section header name requirement
+Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+---
+ Documentation/staging/remoteproc.rst | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- Documentation/staging/remoteproc.rst       | 5 ++++-
- drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
- 2 files changed, 5 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+index 348ee7e..0c9c10a 100644
+--- a/Documentation/staging/remoteproc.rst
++++ b/Documentation/staging/remoteproc.rst
+@@ -244,7 +244,10 @@ according to the specified device address (might be a physical address
+ if the remote processor is accessing memory directly).
+ 
+ In addition to the standard ELF segments, most remote processors would
+-also include a special section which we call "the resource table".
++also include a special section which we call the "resource table".
++A "resource table" section name must start with the ".resource_table" prefix,
++optionally having a more descriptive string appended. For example,
++".resource_table.my_rproc" is a valid section name.
+ 
+ The resource table contains system resources that the remote processor
+ requires before it should be powered on, such as allocation of physically
 -- 
 2.7.4
 
