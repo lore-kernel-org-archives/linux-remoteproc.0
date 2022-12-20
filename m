@@ -2,183 +2,144 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B31C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 18:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AC7C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 22:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229619AbiLTSIl (ORCPT
+        id S230130AbiLTW1Z (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Dec 2022 13:08:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51600 "EHLO
+        Tue, 20 Dec 2022 17:27:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229514AbiLTSIj (ORCPT
+        with ESMTP id S229572AbiLTW1X (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Dec 2022 13:08:39 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D3B1030;
-        Tue, 20 Dec 2022 10:08:37 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5B316B81730;
-        Tue, 20 Dec 2022 18:08:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC06C433EF;
-        Tue, 20 Dec 2022 18:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671559714;
-        bh=lB2f0VZzRDnpVDFsJZNCkOFilXouYW8XaLO5xKfkXA4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Xw//83I4T5G2s6zbNzvr18lw1tHHR40FeD4UhkSkUEA2LVGVg7/LbJ9cdQNHj0sbA
-         9nr5OU9rLt9Kwol0x4qxknbedboIxIl5bbY17dChjDZEMsywibP6trM6j/EcyF8Pxv
-         pwyfdOqNyhiYjSbDRrHV8XQ38rEdgxSgcq8nVLRCPG0lT8OCDwZdz4L6+GnWrejWPe
-         QxYWtJe3kgf9QowiSdShhwoUYP9gn16Y1rJAWx/TlfZZT2WKssv9vTaf89vkWThnhl
-         SADRmdYcg8Dv+s8AmQ+1ifAarXSca55D3Hke/OSOERFCvHyaSWXE2wsv5onet2rtns
-         sZ2CTvEx4ZAEQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-        Ben Levinsky <ben.levinsky@amd.com>,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Maria Yu <quic_aiquny@quicinc.com>,
-        Yuan Can <yuancan@huawei.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>
-Subject: [GIT PULL] remoteproc updates for v6.2
-Date:   Tue, 20 Dec 2022 12:08:32 -0600
-Message-Id: <20221220180832.93801-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.37.1
+        Tue, 20 Dec 2022 17:27:23 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DD8C15
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Dec 2022 14:27:21 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id r26so19560636edc.10
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Dec 2022 14:27:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vDN/5v5x3AD8aunYp6Yw+XZt6VK6NcKKWKn7atc35rQ=;
+        b=hU83RSV9Vh0OlsC1VfiC3slmpdenrSL3zgNGmjJMSnkdfHdlGR1siYMFX3L1d7HkeJ
+         cDbQ3svzofPMbLnjrRJFTstudiEuav80Yn5/3Hp6wCn45r37QvTMqZiJBJ6r8Du7IsvM
+         76iVjt5ib665gPgLruBPzByzfHhwyM0ADXMWY5NrK7O2FfkfvMLT/6wcaSRRHoG1cv71
+         eryFUR/OLlY/C4n7wZ9OtSb1er9TCGeo3LXQWjMhQRAd+Uwuz2rDwa+Va3m3Q9fF6n08
+         1PprID5zblHKtoMdHb8bl8SMe8UxP62i3vKtH9K4ncQ983lh91FwEsFMtnnOOsG5uvi6
+         S8dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vDN/5v5x3AD8aunYp6Yw+XZt6VK6NcKKWKn7atc35rQ=;
+        b=KkGWvHwLFKtpDBQ1wbEAtKuNN0k0TbEKeGWCalJ1iacdU9Ixqr1ByAaw6aEpZYTIYu
+         3POECIAxrd3Lc+7ZZ54UDOMlGldeAEMavtzRLMi636bNpvnZQKV1W9c5INg6IaRFOifh
+         rTr4kShEMrXisr2GA0tAsGzPeL9Cr5/UvxQ25izD0rd5PJxGNY1AmZxiQsmveJjiw4S4
+         wyxYhXLzr2YzuswcVQQ4MF7LFk/GS7CP6u1HfleiHvPxvgmbwpRREAGohA7ZI2XUG50o
+         jlU9aOwVIiZ6at45X4d05FIwn39dzb2XZtvizP3OzsEAhtqmrvTG6Du2rg/usvEBI/VX
+         6s8g==
+X-Gm-Message-State: ANoB5plXeWjdvhwlvcIcCtYjsUrCz3s+LWNDmK+zsxQc5A0XoDpSyYon
+        GKvc8QBz+OfmZn9PboucyXXC7g==
+X-Google-Smtp-Source: AA0mqf7SLZvw2edI/x/p/oBKjSA6C0c+O6TQ6txc3QQJmXfuXeQ6PyPEU3ctG4om5l/tkc4VbK0qag==
+X-Received: by 2002:aa7:d403:0:b0:470:31fb:cdcc with SMTP id z3-20020aa7d403000000b0047031fbcdccmr28813524edq.6.1671575240162;
+        Tue, 20 Dec 2022 14:27:20 -0800 (PST)
+Received: from [192.168.1.115] ([185.126.107.38])
+        by smtp.gmail.com with ESMTPSA id t21-20020a056402021500b00463bc1ddc76sm6206860edv.28.2022.12.20.14.27.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Dec 2022 14:27:19 -0800 (PST)
+Message-ID: <7549c8a8-bad0-7f7b-b07a-4a80d44d1ec3@linaro.org>
+Date:   Tue, 20 Dec 2022 23:27:17 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.0
+Subject: Re: [PATCH v3 1/2] remoteproc: elf_loader: Update resource table name
+ check
+Content-Language: en-US
+To:     Mukesh Ojha <quic_mojha@quicinc.com>,
+        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        linux-remoteproc@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
+        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
+        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, devicetree@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, mathieu.poirier@linaro.org,
+        corbet@lwn.net
+References: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
+ <1671523269-21154-2-git-send-email-quic_srivasam@quicinc.com>
+ <0d683526-5707-d5b4-e96d-b2d982d4b5da@quicinc.com>
+From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
+In-Reply-To: <0d683526-5707-d5b4-e96d-b2d982d4b5da@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Linus,
+On 20/12/22 13:50, Mukesh Ojha wrote:
+> Hi,
+> 
+> On 12/20/2022 1:31 PM, Srinivasa Rao Mandadapu wrote:
+>> Update the way of checking resource table name with prefix
+>> substring search instead of complete string search.
+>> In general Qualcomm DSP binary is prepared by combining different ELFs',
+>> hence section header name (e.g. .resource_table), appended with ELF name
+>> to differentiate with same section(e.g. resource_table.ac_bin_process) of
+>> different ELFs'.
+>> Example readelf output of DSP binary:
+>>      [60] .start.ac_bin_process PROGBITS
+>>      [61] .resource_table.ac_bin_process PROGBITS
+>>      [62] .comment.ac_bin_process PROGBITS
+>>
+> 
+> Could we rephrase above like below ?
 
-There's a trivial merge conflict between this pull and the SPI tree.
-Courtesy of Stephen Rothwell, here's the expected resolution:
+FWIW I agree :) I assumed Srinivasa was using a broken email client
+that strips newlines and packs everything.
 
-> diff --cc include/linux/firmware/xlnx-zynqmp.h
-> index fac37680ffe7,cf92e739fa3b..000000000000
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@@ -135,7 -138,10 +138,11 @@@ enum pm_ret_status
->   };
->
->   enum pm_ioctl_id {
-> +       IOCTL_GET_RPU_OPER_MODE = 0,
-> +       IOCTL_SET_RPU_OPER_MODE = 1,
-> +       IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
-> +       IOCTL_TCM_COMB_CONFIG = 3,
->  +      IOCTL_SET_TAPDELAY_BYPASS = 4,
->         IOCTL_SD_DLL_RESET = 6,
->         IOCTL_SET_SD_TAPDELAY = 7,
->         IOCTL_SET_PLL_FRAC_MODE = 8,
+> It could be also taken why applying 
+> the patch.
+> 
+> Update the way of checking resource table name with prefix substring 
+> search instead of complete string search.
+> 
+> In general, Qualcomm DSP binary is prepared by combining different 
+> ELF's. Hence, section header name (e.g. .resource_table), appended
+> with ELF name to differentiate with same section(e.g. 
+> resource_table.ac_bin_process) of different ELFs'.
+> 
+> Example readelf output of DSP binary:
+>        [60] .start.ac_bin_process PROGBITS
+>        [61] .resource_table.ac_bin_process PROGBITS
+>        [62] .comment.ac_bin_process PROGBITS
+> 
+> 
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> 
+> Otherwise, LGTM.
+> Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> 
+> -Mukesh
+>> ---
+>>   drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c 
+>> b/drivers/remoteproc/remoteproc_elf_loader.c
+>> index 5a412d7..77330d6 100644
+>> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+>> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+>> @@ -272,7 +272,7 @@ find_table(struct device *dev, const struct 
+>> firmware *fw)
+>>           u64 offset = elf_shdr_get_sh_offset(class, shdr);
+>>           u32 name = elf_shdr_get_sh_name(class, shdr);
+>> -        if (strcmp(name_table + name, ".resource_table"))
+>> +        if (!strstarts(name_table + name, ".resource_table"))
+>>               continue;
+>>           table = (struct resource_table *)(elf_data + offset);
 
-Regards,
-Bjorn
-
-The following changes since commit 247f34f7b80357943234f93f247a1ae6b6c3a740:
-
-  Linux 6.1-rc2 (2022-10-23 15:27:33 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.2
-
-for you to fetch changes up to 11c7f9e3131ad14b27a957496088fa488b153a48:
-
-  remoteproc: core: Do pm_relax when in RPROC_OFFLINE state (2022-12-07 11:20:55 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v6.2
-
-rproc-virtio device names are now auto generated, to avoid conflicts
-between remoteproc instances.
-
-The imx_rproc driver is extended with support for communicating with and
-attaching to a running M4 on i.MX8QXP, as well as support for
-attaching to the M4 after self-recovering from a crash. Support is
-added for i.MX8QM and mailbox channels are reconnected during the
-recovery process, in order to avoid data corruption.
-
-The Xilinx Zynqmp firmware interface is extended and support for the
-Xilinx R5 RPU is introduced.
-
-Various resources leaks, primarily in error paths, throughout the
-Qualcomm drivers are corrected.
-
-Lastly a fix to ensure that pm_relax is invoked even if the remoteproc
-instance is stopped between a crash is being reported and the recovery
-handler is scheduled.
-
-----------------------------------------------------------------
-Ben Levinsky (3):
-      firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
-      firmware: xilinx: Add shutdown/wakeup APIs
-      firmware: xilinx: Add RPU configuration APIs
-
-Gaosheng Cui (1):
-      remoteproc: sysmon: fix memory leak in qcom_add_sysmon_subdev()
-
-Jeff Johnson (1):
-      remoteproc: sysmon: Make QMI message rules const
-
-Luca Weiss (2):
-      remoteproc: qcom_q6v5_pas: disable wakeup on probe fail or remove
-      remoteproc: qcom_q6v5_pas: detach power domains on remove
-
-Maria Yu (1):
-      remoteproc: core: Do pm_relax when in RPROC_OFFLINE state
-
-Peng Fan (8):
-      dt-bindings: remoteproc: imx_rproc: Support i.MX8QXP
-      dt-bindings: remoteproc: imx_rproc: Support i.MX8QM
-      remoteproc: imx_rproc: Support attaching to i.MX8QXP M4
-      remoteproc: imx_rproc: Support kicking Mcore from Linux for i.MX8QXP
-      remoteproc: imx_rproc: Support i.MX8QM
-      remoteproc: imx_rproc: Request mbox channel later
-      remoteproc: imx_rproc: Enable attach recovery for i.MX8QM/QXP
-      remoteproc: imx_rproc: Correct i.MX93 DRAM mapping
-
-Shang XiaoJing (2):
-      remoteproc: qcom: q6v5: Fix potential null-ptr-deref in q6v5_wcss_init_mmio()
-      remoteproc: qcom: q6v5: Fix missing clk_disable_unprepare() in q6v5_wcss_qcs404_power_on()
-
-Shengjiu Wang (2):
-      remoteproc: core: Auto select rproc-virtio device id
-      remoteproc: imx_dsp_rproc: Add mutex protection for workqueue
-
-Tanmay Shah (3):
-      dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
-      arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
-      drivers: remoteproc: Add Xilinx r5 remoteproc driver
-
-Yuan Can (1):
-      remoteproc: qcom_q6v5_pas: Fix missing of_node_put() in adsp_alloc_memory_region()
-
-ye xingchen (1):
-      remoteproc: core: Use device_match_of_node()
-
- .../bindings/remoteproc/fsl,imx-rproc.yaml         |   16 +
- .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     |  135 +++
- arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |   33 +
- drivers/firmware/xilinx/zynqmp.c                   |   97 ++
- drivers/remoteproc/Kconfig                         |   13 +
- drivers/remoteproc/Makefile                        |    1 +
- drivers/remoteproc/imx_dsp_rproc.c                 |   12 +-
- drivers/remoteproc/imx_rproc.c                     |  298 +++++-
- drivers/remoteproc/qcom_q6v5_pas.c                 |    4 +
- drivers/remoteproc/qcom_q6v5_wcss.c                |    6 +-
- drivers/remoteproc/qcom_sysmon.c                   |   13 +-
- drivers/remoteproc/remoteproc_core.c               |   19 +-
- drivers/remoteproc/xlnx_r5_remoteproc.c            | 1067 ++++++++++++++++++++
- include/dt-bindings/power/xlnx-zynqmp-power.h      |    6 +
- include/linux/firmware/xlnx-zynqmp.h               |   60 ++
- 15 files changed, 1760 insertions(+), 20 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
- create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
