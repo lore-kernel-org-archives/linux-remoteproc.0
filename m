@@ -2,100 +2,183 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79540C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 12:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B31C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 18:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233217AbiLTMvu (ORCPT
+        id S229619AbiLTSIl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Dec 2022 07:51:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58650 "EHLO
+        Tue, 20 Dec 2022 13:08:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233507AbiLTMvt (ORCPT
+        with ESMTP id S229514AbiLTSIj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Dec 2022 07:51:49 -0500
-Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 029A1B85E;
-        Tue, 20 Dec 2022 04:51:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
-  t=1671540704; x=1703076704;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=vHdfASFYTb+WMKgS3aMJpiVanrEiSZPCZ0RtpyOP1h8=;
-  b=kB9aSDyM8L2n/qt/d2c9O6AEh2zRdJoWVuEuIl86WYZEYZhaAAFZdBRO
-   IpBR9X5T1XMi5XRq9VzeIUUEm2szFu6ZOHz/5DOpi0SxvvX1uxdkpgY/d
-   Q7ZztGOizzEP0UMQ656yrTUbrnjrxIQnhV0Z0Wsy/lAr9TPN/ibu+y6xC
-   o=;
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 20 Dec 2022 04:51:43 -0800
-X-QCInternal: smtphost
-Received: from nasanex01c.na.qualcomm.com ([10.45.79.139])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2022 04:51:43 -0800
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 20 Dec
- 2022 04:51:37 -0800
-Message-ID: <bd62a454-3e55-28de-4b33-d5c54ba0a0b1@quicinc.com>
-Date:   Tue, 20 Dec 2022 18:21:35 +0530
+        Tue, 20 Dec 2022 13:08:39 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D3B1030;
+        Tue, 20 Dec 2022 10:08:37 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5B316B81730;
+        Tue, 20 Dec 2022 18:08:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC06C433EF;
+        Tue, 20 Dec 2022 18:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671559714;
+        bh=lB2f0VZzRDnpVDFsJZNCkOFilXouYW8XaLO5xKfkXA4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Xw//83I4T5G2s6zbNzvr18lw1tHHR40FeD4UhkSkUEA2LVGVg7/LbJ9cdQNHj0sbA
+         9nr5OU9rLt9Kwol0x4qxknbedboIxIl5bbY17dChjDZEMsywibP6trM6j/EcyF8Pxv
+         pwyfdOqNyhiYjSbDRrHV8XQ38rEdgxSgcq8nVLRCPG0lT8OCDwZdz4L6+GnWrejWPe
+         QxYWtJe3kgf9QowiSdShhwoUYP9gn16Y1rJAWx/TlfZZT2WKssv9vTaf89vkWThnhl
+         SADRmdYcg8Dv+s8AmQ+1ifAarXSca55D3Hke/OSOERFCvHyaSWXE2wsv5onet2rtns
+         sZ2CTvEx4ZAEQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+        Ben Levinsky <ben.levinsky@amd.com>,
+        Tanmay Shah <tanmay.shah@amd.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Gaosheng Cui <cuigaosheng1@huawei.com>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Maria Yu <quic_aiquny@quicinc.com>,
+        Yuan Can <yuancan@huawei.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>
+Subject: [GIT PULL] remoteproc updates for v6.2
+Date:   Tue, 20 Dec 2022 12:08:32 -0600
+Message-Id: <20221220180832.93801-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.37.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v3 2/2] docs: remoteproc: Update section header name
- requirement
-Content-Language: en-US
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
-        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
-        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <mathieu.poirier@linaro.org>,
-        <corbet@lwn.net>
-References: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
- <1671523269-21154-3-git-send-email-quic_srivasam@quicinc.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <1671523269-21154-3-git-send-email-quic_srivasam@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Hi Linus,
 
-On 12/20/2022 1:31 PM, Srinivasa Rao Mandadapu wrote:
-> Add section header name requirement specification in elf segments.
-> 
-> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+There's a trivial merge conflict between this pull and the SPI tree.
+Courtesy of Stephen Rothwell, here's the expected resolution:
 
+> diff --cc include/linux/firmware/xlnx-zynqmp.h
+> index fac37680ffe7,cf92e739fa3b..000000000000
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@@ -135,7 -138,10 +138,11 @@@ enum pm_ret_status
+>   };
+>
+>   enum pm_ioctl_id {
+> +       IOCTL_GET_RPU_OPER_MODE = 0,
+> +       IOCTL_SET_RPU_OPER_MODE = 1,
+> +       IOCTL_RPU_BOOT_ADDR_CONFIG = 2,
+> +       IOCTL_TCM_COMB_CONFIG = 3,
+>  +      IOCTL_SET_TAPDELAY_BYPASS = 4,
+>         IOCTL_SD_DLL_RESET = 6,
+>         IOCTL_SET_SD_TAPDELAY = 7,
+>         IOCTL_SET_PLL_FRAC_MODE = 8,
 
-LGTM.
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Regards,
+Bjorn
 
--Mukesh
-> ---
->   Documentation/staging/remoteproc.rst | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-> index 348ee7e..0c9c10a 100644
-> --- a/Documentation/staging/remoteproc.rst
-> +++ b/Documentation/staging/remoteproc.rst
-> @@ -244,7 +244,10 @@ according to the specified device address (might be a physical address
->   if the remote processor is accessing memory directly).
->   
->   In addition to the standard ELF segments, most remote processors would
-> -also include a special section which we call "the resource table".
-> +also include a special section which we call the "resource table".
-> +A "resource table" section name must start with the ".resource_table" prefix,
-> +optionally having a more descriptive string appended. For example,
-> +".resource_table.my_rproc" is a valid section name.
->   
->   The resource table contains system resources that the remote processor
->   requires before it should be powered on, such as allocation of physically
+The following changes since commit 247f34f7b80357943234f93f247a1ae6b6c3a740:
+
+  Linux 6.1-rc2 (2022-10-23 15:27:33 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.2
+
+for you to fetch changes up to 11c7f9e3131ad14b27a957496088fa488b153a48:
+
+  remoteproc: core: Do pm_relax when in RPROC_OFFLINE state (2022-12-07 11:20:55 -0700)
+
+----------------------------------------------------------------
+remoteproc updates for v6.2
+
+rproc-virtio device names are now auto generated, to avoid conflicts
+between remoteproc instances.
+
+The imx_rproc driver is extended with support for communicating with and
+attaching to a running M4 on i.MX8QXP, as well as support for
+attaching to the M4 after self-recovering from a crash. Support is
+added for i.MX8QM and mailbox channels are reconnected during the
+recovery process, in order to avoid data corruption.
+
+The Xilinx Zynqmp firmware interface is extended and support for the
+Xilinx R5 RPU is introduced.
+
+Various resources leaks, primarily in error paths, throughout the
+Qualcomm drivers are corrected.
+
+Lastly a fix to ensure that pm_relax is invoked even if the remoteproc
+instance is stopped between a crash is being reported and the recovery
+handler is scheduled.
+
+----------------------------------------------------------------
+Ben Levinsky (3):
+      firmware: xilinx: Add ZynqMP firmware ioctl enums for RPU configuration.
+      firmware: xilinx: Add shutdown/wakeup APIs
+      firmware: xilinx: Add RPU configuration APIs
+
+Gaosheng Cui (1):
+      remoteproc: sysmon: fix memory leak in qcom_add_sysmon_subdev()
+
+Jeff Johnson (1):
+      remoteproc: sysmon: Make QMI message rules const
+
+Luca Weiss (2):
+      remoteproc: qcom_q6v5_pas: disable wakeup on probe fail or remove
+      remoteproc: qcom_q6v5_pas: detach power domains on remove
+
+Maria Yu (1):
+      remoteproc: core: Do pm_relax when in RPROC_OFFLINE state
+
+Peng Fan (8):
+      dt-bindings: remoteproc: imx_rproc: Support i.MX8QXP
+      dt-bindings: remoteproc: imx_rproc: Support i.MX8QM
+      remoteproc: imx_rproc: Support attaching to i.MX8QXP M4
+      remoteproc: imx_rproc: Support kicking Mcore from Linux for i.MX8QXP
+      remoteproc: imx_rproc: Support i.MX8QM
+      remoteproc: imx_rproc: Request mbox channel later
+      remoteproc: imx_rproc: Enable attach recovery for i.MX8QM/QXP
+      remoteproc: imx_rproc: Correct i.MX93 DRAM mapping
+
+Shang XiaoJing (2):
+      remoteproc: qcom: q6v5: Fix potential null-ptr-deref in q6v5_wcss_init_mmio()
+      remoteproc: qcom: q6v5: Fix missing clk_disable_unprepare() in q6v5_wcss_qcs404_power_on()
+
+Shengjiu Wang (2):
+      remoteproc: core: Auto select rproc-virtio device id
+      remoteproc: imx_dsp_rproc: Add mutex protection for workqueue
+
+Tanmay Shah (3):
+      dt-bindings: remoteproc: Add Xilinx RPU subsystem bindings
+      arm64: dts: xilinx: zynqmp: Add RPU subsystem device node
+      drivers: remoteproc: Add Xilinx r5 remoteproc driver
+
+Yuan Can (1):
+      remoteproc: qcom_q6v5_pas: Fix missing of_node_put() in adsp_alloc_memory_region()
+
+ye xingchen (1):
+      remoteproc: core: Use device_match_of_node()
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         |   16 +
+ .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     |  135 +++
+ arch/arm64/boot/dts/xilinx/zynqmp.dtsi             |   33 +
+ drivers/firmware/xilinx/zynqmp.c                   |   97 ++
+ drivers/remoteproc/Kconfig                         |   13 +
+ drivers/remoteproc/Makefile                        |    1 +
+ drivers/remoteproc/imx_dsp_rproc.c                 |   12 +-
+ drivers/remoteproc/imx_rproc.c                     |  298 +++++-
+ drivers/remoteproc/qcom_q6v5_pas.c                 |    4 +
+ drivers/remoteproc/qcom_q6v5_wcss.c                |    6 +-
+ drivers/remoteproc/qcom_sysmon.c                   |   13 +-
+ drivers/remoteproc/remoteproc_core.c               |   19 +-
+ drivers/remoteproc/xlnx_r5_remoteproc.c            | 1067 ++++++++++++++++++++
+ include/dt-bindings/power/xlnx-zynqmp-power.h      |    6 +
+ include/linux/firmware/xlnx-zynqmp.h               |   60 ++
+ 15 files changed, 1760 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+ create mode 100644 drivers/remoteproc/xlnx_r5_remoteproc.c
