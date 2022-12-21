@@ -2,86 +2,92 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AC7C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 20 Dec 2022 22:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AD3C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 05:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230130AbiLTW1Z (ORCPT
+        id S234422AbiLUFrI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 20 Dec 2022 17:27:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
+        Wed, 21 Dec 2022 00:47:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiLTW1X (ORCPT
+        with ESMTP id S229436AbiLUFrE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 20 Dec 2022 17:27:23 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4DD8C15
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Dec 2022 14:27:21 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id r26so19560636edc.10
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Dec 2022 14:27:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vDN/5v5x3AD8aunYp6Yw+XZt6VK6NcKKWKn7atc35rQ=;
-        b=hU83RSV9Vh0OlsC1VfiC3slmpdenrSL3zgNGmjJMSnkdfHdlGR1siYMFX3L1d7HkeJ
-         cDbQ3svzofPMbLnjrRJFTstudiEuav80Yn5/3Hp6wCn45r37QvTMqZiJBJ6r8Du7IsvM
-         76iVjt5ib665gPgLruBPzByzfHhwyM0ADXMWY5NrK7O2FfkfvMLT/6wcaSRRHoG1cv71
-         eryFUR/OLlY/C4n7wZ9OtSb1er9TCGeo3LXQWjMhQRAd+Uwuz2rDwa+Va3m3Q9fF6n08
-         1PprID5zblHKtoMdHb8bl8SMe8UxP62i3vKtH9K4ncQ983lh91FwEsFMtnnOOsG5uvi6
-         S8dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vDN/5v5x3AD8aunYp6Yw+XZt6VK6NcKKWKn7atc35rQ=;
-        b=KkGWvHwLFKtpDBQ1wbEAtKuNN0k0TbEKeGWCalJ1iacdU9Ixqr1ByAaw6aEpZYTIYu
-         3POECIAxrd3Lc+7ZZ54UDOMlGldeAEMavtzRLMi636bNpvnZQKV1W9c5INg6IaRFOifh
-         rTr4kShEMrXisr2GA0tAsGzPeL9Cr5/UvxQ25izD0rd5PJxGNY1AmZxiQsmveJjiw4S4
-         wyxYhXLzr2YzuswcVQQ4MF7LFk/GS7CP6u1HfleiHvPxvgmbwpRREAGohA7ZI2XUG50o
-         jlU9aOwVIiZ6at45X4d05FIwn39dzb2XZtvizP3OzsEAhtqmrvTG6Du2rg/usvEBI/VX
-         6s8g==
-X-Gm-Message-State: ANoB5plXeWjdvhwlvcIcCtYjsUrCz3s+LWNDmK+zsxQc5A0XoDpSyYon
-        GKvc8QBz+OfmZn9PboucyXXC7g==
-X-Google-Smtp-Source: AA0mqf7SLZvw2edI/x/p/oBKjSA6C0c+O6TQ6txc3QQJmXfuXeQ6PyPEU3ctG4om5l/tkc4VbK0qag==
-X-Received: by 2002:aa7:d403:0:b0:470:31fb:cdcc with SMTP id z3-20020aa7d403000000b0047031fbcdccmr28813524edq.6.1671575240162;
-        Tue, 20 Dec 2022 14:27:20 -0800 (PST)
-Received: from [192.168.1.115] ([185.126.107.38])
-        by smtp.gmail.com with ESMTPSA id t21-20020a056402021500b00463bc1ddc76sm6206860edv.28.2022.12.20.14.27.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Dec 2022 14:27:19 -0800 (PST)
-Message-ID: <7549c8a8-bad0-7f7b-b07a-4a80d44d1ec3@linaro.org>
-Date:   Tue, 20 Dec 2022 23:27:17 +0100
+        Wed, 21 Dec 2022 00:47:04 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6D85F87;
+        Tue, 20 Dec 2022 21:47:00 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BL1bOZR014040;
+        Wed, 21 Dec 2022 05:46:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=RA7Hd+cZC/9X/zleey9EVeBsRmig/cD6MmzKzXQ4/t4=;
+ b=Nm92RqXRBm4EL3IOXCLuDzXzW1O9mfOi/xdrq3zV8cMQkyg/6qMA/Jzw16HBSXizuPbk
+ 8jOUXLyCTYM2oFQgRENNWic1Zg5s0yAFb40tqSxQRaBxA66XsdMkZNczNhesFdtk+0dK
+ VuxiiaP2qr9JMRQ+glowsALgJhR7kZxwI3pTMjMXZtgc9gWBjO3U+em4kPqIKgD3lEka
+ UBKkot+OA0oXbzLn90hq0qi4RzcWantlD2rPQVdPEgp8j5qW5vOiv8tPxNs8zKsUZcdW
+ qxATCr0rt8YGdokLcXpP6gwLkn98T/Se1USFQdYFljI6m0vSHZPvu3lgD/wGBIh0JzDt bQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mkcxv9w37-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 05:46:15 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BL5kEdJ006256
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Dec 2022 05:46:14 GMT
+Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 20 Dec
+ 2022 21:46:08 -0800
+Message-ID: <e54d0094-5cbd-8710-4fce-5f2d8414bbb7@quicinc.com>
+Date:   Wed, 21 Dec 2022 11:16:06 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
 Subject: Re: [PATCH v3 1/2] remoteproc: elf_loader: Update resource table name
  check
 Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>,
-        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
-        linux-remoteproc@vger.kernel.org, agross@kernel.org,
-        andersson@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
-        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
-        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, swboyd@chromium.org,
-        judyhsiao@chromium.org, devicetree@vger.kernel.org,
-        krzysztof.kozlowski@linaro.org, mathieu.poirier@linaro.org,
-        corbet@lwn.net
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
+        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
+        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <mathieu.poirier@linaro.org>,
+        <corbet@lwn.net>
 References: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
  <1671523269-21154-2-git-send-email-quic_srivasam@quicinc.com>
  <0d683526-5707-d5b4-e96d-b2d982d4b5da@quicinc.com>
-From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
 In-Reply-To: <0d683526-5707-d5b4-e96d-b2d982d4b5da@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9OlD3RSog9t6gYd-90mAm-eBPN7ewSbF
+X-Proofpoint-ORIG-GUID: 9OlD3RSog9t6gYd-90mAm-eBPN7ewSbF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-21_01,2022-12-20_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212210040
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 20/12/22 13:50, Mukesh Ojha wrote:
+Hi,
+
+On 12/20/2022 6:20 PM, Mukesh Ojha wrote:
 > Hi,
 > 
 > On 12/20/2022 1:31 PM, Srinivasa Rao Mandadapu wrote:
@@ -97,12 +103,7 @@ On 20/12/22 13:50, Mukesh Ojha wrote:
 >>      [62] .comment.ac_bin_process PROGBITS
 >>
 > 
-> Could we rephrase above like below ?
-
-FWIW I agree :) I assumed Srinivasa was using a broken email client
-that strips newlines and packs everything.
-
-> It could be also taken why applying 
+> Could we rephrase above like below ? It could be also taken why applying 
 > the patch.
 > 
 > Update the way of checking resource table name with prefix substring 
@@ -119,6 +120,14 @@ that strips newlines and packs everything.
 >        [62] .comment.ac_bin_process PROGBITS
 > 
 > 
+
+Looks like my email client did not honour new line
+put by me in rephrased text. Sorry for that.
+
+Please run checkpatch.pl before sending the patch.
+
+-Mukesh
+
 > Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
 > 
 > Otherwise, LGTM.
@@ -142,4 +151,3 @@ that strips newlines and packs everything.
 >> +        if (!strstarts(name_table + name, ".resource_table"))
 >>               continue;
 >>           table = (struct resource_table *)(elf_data + offset);
-
