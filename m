@@ -2,222 +2,209 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCD9C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 07:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D3DC4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 09:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbiLUHmq (ORCPT
+        id S229889AbiLUJhS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Dec 2022 02:42:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35068 "EHLO
+        Wed, 21 Dec 2022 04:37:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiLUHmp (ORCPT
+        with ESMTP id S234585AbiLUJgz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Dec 2022 02:42:45 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C86B6555;
-        Tue, 20 Dec 2022 23:42:43 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BL7gYlk113506;
-        Wed, 21 Dec 2022 01:42:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1671608554;
-        bh=Ez96FijQFklJTz8IMFPnWCRlr1eR4+kdyeMz2055puc=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=lKl5Rz3dGRDIv9eNmOQzwZ70i4kCtD4rcddfn3n5Y3Ub/1/1M+L+wH9IDjXoiykb7
-         nAXfnQHGqJZJV1mOgGqEtZOGx8A2p8FNwd5LMh6eoijxiL1sG7yD4ymbTCshJzBt6P
-         DqtsLC9fy75iLCfL2JD6LrBSf9o7Ey6e5lAj1slQ=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BL7gYAo003429
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Dec 2022 01:42:34 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 21
- Dec 2022 01:42:33 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Wed, 21 Dec 2022 01:42:33 -0600
-Received: from [10.0.2.15] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BL7gS8P100590;
-        Wed, 21 Dec 2022 01:42:28 -0600
-Message-ID: <645aca4d-b19c-390d-b899-fd40a924a096@ti.com>
-Date:   Wed, 21 Dec 2022 13:12:14 +0530
+        Wed, 21 Dec 2022 04:36:55 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8F3183AB
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Dec 2022 01:36:52 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id x11so15032582ljh.7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Dec 2022 01:36:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kfew9wJ0oRi5oX+KFDxohLP0QngFqNUymSxspt40HIs=;
+        b=GwqduvWfwfh66g5ezo8U34l72xvIPaGCvMTRu9wchEopW4pLBCFv3qilVFtSaJGnNp
+         NBubi4F/fq2ST2DAdg95tZLsfoDTmC7WmrbclkKVXdO5EgjWu2yjGxy6qayTXhHUc090
+         g/jE4U6lduuKJAyVJIZAruS0szB71nqwjN//zSIOMIY8hDTnZJjKyZOOQU4DmGfHIHMw
+         ObrzYar87lC+f7re0mkd3pnLbwUW1l65Wbv80V01sgh4sAhUCELUuvUZoH2XqyA9ad6T
+         X4/hFuAGkbUUqRJmcLg+fCL/VlkaICnGvSa7nL/mYM9JtqB+fPwwZHU9THMwB5X8KOu2
+         EBVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfew9wJ0oRi5oX+KFDxohLP0QngFqNUymSxspt40HIs=;
+        b=B/q6z94HTLXxtPQP6B9oxd0KI5HCtKvt46uT88wzBeDmgxsy/Kb0jgauxZLcO+WK/G
+         hFEFdMJORpIzxN6FjL1Bu5AFgpKop9H/lttClQ+N2C/2mwM7X23VqiD3MXgIJLzK7s+D
+         qeAqXp715dAdZAPgcvzgeNX+9ob6ufmwW4SFY9mCwBnsjqCCA031p+BBsiZQeH5P9mgF
+         pJAMiej7aVlWvxkq4movQiGilbUol1go6HKr+3prQd8Psqj3SesP3H+QS3fW2Y9+fwdw
+         DSI9L2eKTJFMxy/VVw0I+0N3kuOPX6PxN+TihDOxkDYD5uGNnd1jRCwCrcbQDulo+KSH
+         aZ0A==
+X-Gm-Message-State: AFqh2krHHc6nHkaHO1CwbI8bC7QaEKUqzdC16zO/p22SsEOmx8dh57JN
+        MdMAE8ce4oBEryv2NyEfg8Bt3g==
+X-Google-Smtp-Source: AMrXdXtQuZJNcV1LmALPRvX6mBpvq5V5jt1kqL+XjtL6N/6kIwfc+JdfHMLzYaACOJrzxL3mqWkQEA==
+X-Received: by 2002:a2e:8191:0:b0:277:77e:6027 with SMTP id e17-20020a2e8191000000b00277077e6027mr269589ljg.12.1671615411145;
+        Wed, 21 Dec 2022 01:36:51 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id f10-20020a2eb5aa000000b0027a0ec1f01asm1265959ljn.56.2022.12.21.01.36.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Dec 2022 01:36:50 -0800 (PST)
+Message-ID: <12010f8f-d1d2-be18-8d4e-e1d282cb1670@linaro.org>
+Date:   Wed, 21 Dec 2022 10:36:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
+ Thunderbird/102.6.0
 Subject: Re: [PATCH v2 1/2] Documentation: dt-bindings: k3-r5f-rproc: Add new
  compatible for AM62 SoC family
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <s-anna@ti.com>
-CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>
+To:     Devarsh Thakkar <devarsht@ti.com>, andersson@kernel.org,
+        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, s-anna@ti.com
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        hnagalla@ti.com, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
+        a-bhatia1@ti.com, j-luthra@ti.com
 References: <20221130134052.7513-1-devarsht@ti.com>
  <20221130134052.7513-2-devarsht@ti.com>
  <b4b608bf-e347-5500-eb94-bec3611f6a56@linaro.org>
-From:   Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <b4b608bf-e347-5500-eb94-bec3611f6a56@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+ <645aca4d-b19c-390d-b899-fd40a924a096@ti.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <645aca4d-b19c-390d-b899-fd40a924a096@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Krzysztof,
-
-Thanks for the review. Please find my response inline.
-
-On 30/11/22 20:33, Krzysztof Kozlowski wrote:
-> On 30/11/2022 14:40, Devarsh Thakkar wrote:
->> AM62 family of devices don't have a R5F cluster, instead
->> they have single core DM R5F.
->> Add new compatible string ti,am62-r5fss to support this scenario.
+On 21/12/2022 08:42, Devarsh Thakkar wrote:
+> Hi Krzysztof,
+> 
+> Thanks for the review. Please find my response inline.
+> 
+> On 30/11/22 20:33, Krzysztof Kozlowski wrote:
+>> On 30/11/2022 14:40, Devarsh Thakkar wrote:
+>>> AM62 family of devices don't have a R5F cluster, instead
+>>> they have single core DM R5F.
+>>> Add new compatible string ti,am62-r5fss to support this scenario.
+>>>
+>>> When this new compatible is used don't allow cluster-mode
+>>> property usage in device-tree as this implies that there
+>>> is no R5F cluster available and only single R5F core
+>>> is present.
+>>>
+>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>>> ---
+>>> V2: Avoid acronyms, use "Device Manager" instead of "DM"
 >>
->> When this new compatible is used don't allow cluster-mode
->> property usage in device-tree as this implies that there
->> is no R5F cluster available and only single R5F core
->> is present.
+>> Use subject prefixes matching the subsystem (git log --oneline -- ...).
+> Agreed, I will update the prefix as dt-bindings: remoteproc: k3-r5f: in V3.
 >>
->> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->> ---
->> V2: Avoid acronyms, use "Device Manager" instead of "DM"
-> 
-> Use subject prefixes matching the subsystem (git log --oneline -- ...).
-Agreed, I will update the prefix as dt-bindings: remoteproc: k3-r5f: in V3.
-> 
->> ---
->>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 48 +++++++++++++------
->>  1 file changed, 34 insertions(+), 14 deletions(-)
+>>> ---
+>>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 48 +++++++++++++------
+>>>  1 file changed, 34 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> index fb9605f0655b..91357635025a 100644
+>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>>> @@ -21,6 +21,9 @@ description: |
+>>>    called "Single-CPU" mode, where only Core0 is used, but with ability to use
+>>>    Core1's TCMs as well.
+>>>  
+>>> +  AM62 SoC family support a single R5F core only which runs Device Manager
+>>> +  firmware and can also be used as a remote processor with IPC communication.
+>>> +
+>>>    Each Dual-Core R5F sub-system is represented as a single DTS node
+>>>    representing the cluster, with a pair of child DT nodes representing
+>>>    the individual R5F cores. Each node has a number of required or optional
+>>> @@ -28,6 +31,9 @@ description: |
+>>>    the device management of the remote processor and to communicate with the
+>>>    remote processor.
+>>>  
+>>> +  Since AM62 SoC family only support a single core, there is no cluster-mode
+>>> +  property setting required for it.
+>>> +
+>>>  properties:
+>>>    $nodename:
+>>>      pattern: "^r5fss(@.*)?"
+>>> @@ -38,6 +44,7 @@ properties:
+>>>        - ti,j721e-r5fss
+>>>        - ti,j7200-r5fss
+>>>        - ti,am64-r5fss
+>>> +      - ti,am62-r5fss
 >>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->> index fb9605f0655b..91357635025a 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
->> @@ -21,6 +21,9 @@ description: |
->>    called "Single-CPU" mode, where only Core0 is used, but with ability to use
->>    Core1's TCMs as well.
->>  
->> +  AM62 SoC family support a single R5F core only which runs Device Manager
->> +  firmware and can also be used as a remote processor with IPC communication.
->> +
->>    Each Dual-Core R5F sub-system is represented as a single DTS node
->>    representing the cluster, with a pair of child DT nodes representing
->>    the individual R5F cores. Each node has a number of required or optional
->> @@ -28,6 +31,9 @@ description: |
->>    the device management of the remote processor and to communicate with the
->>    remote processor.
->>  
->> +  Since AM62 SoC family only support a single core, there is no cluster-mode
->> +  property setting required for it.
->> +
->>  properties:
->>    $nodename:
->>      pattern: "^r5fss(@.*)?"
->> @@ -38,6 +44,7 @@ properties:
->>        - ti,j721e-r5fss
->>        - ti,j7200-r5fss
->>        - ti,am64-r5fss
->> +      - ti,am62-r5fss
+>> Some order? Alphabetical, so before am64? Same in other places.
+> Agreed, I will update in V3 accordingly.
+>>
+>>
+>>>        - ti,j721s2-r5fss
+>>>  
+>>>    power-domains:
+>>> @@ -80,7 +87,8 @@ patternProperties:
+>>>        node representing a TI instantiation of the Arm Cortex R5F core. There
+>>>        are some specific integration differences for the IP like the usage of
+>>>        a Region Address Translator (RAT) for translating the larger SoC bus
+>>> -      addresses into a 32-bit address space for the processor.
+>>> +      addresses into a 32-bit address space for the processor. For AM62x,
+>>> +      should only define one R5F child node as it has only one core available.
+>>>  
+>>>        Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
+>>>        internal memories split between two banks - TCMA and TCMB (further
+>>> @@ -104,6 +112,7 @@ patternProperties:
+>>>            - ti,j721e-r5f
+>>>            - ti,j7200-r5f
+>>>            - ti,am64-r5f
+>>> +          - ti,am62-r5f
+>>>            - ti,j721s2-r5f
+>>>  
+>>>        reg:
+>>> @@ -207,20 +216,31 @@ patternProperties:
+>>>        - firmware-name
+>>>  
+>>>      unevaluatedProperties: false
+>>
+>> Blank line.
+> Agreed, I will remove it in V3.
+>>
+>>> +allOf:
+>>> +  - if:
+>>> +      properties:
+>>> +        compatible:
+>>> +          enum:
+>>> +            - ti,am64-r5fss
+>>> +    then:
+>>> +      properties:
+>>> +        ti,cluster-mode:
+>>> +          enum: [0, 2]
+>>> +
+>>> +    else:
+>>> +      properties:
+>>> +        ti,cluster-mode:
+>>
+>> It's not really valid anymore for ti,am62-r5fss, so this cannot be
+>> simple "else".  Instead you need to list all compatibles.
+> I agree that the else block is not valid for am62x, but my understanding is that since all the blocks under allOf are checked for validity,
+> I thought to add a separate if block only for am62x to set cluster-mode to false [1], which I believe would negate the effect of above else condition for am62x,
+> so that we don't have to list all compatibles under separate if blocks.
 > 
-> Some order? Alphabetical, so before am64? Same in other places.
-Agreed, I will update in V3 accordingly.
+> Just to verify this, I deliberately set cluster-mode=1 in am62x devicetree and then ran a dtbs-check and got below log : 
+> "linux-next/arch/arm64/boot/dts/ti/k3-am625-sk.dtb: r5fss@78000000: ti,cluster-mode: False schema does not allow [[1]]"
 > 
-> 
->>        - ti,j721s2-r5fss
->>  
->>    power-domains:
->> @@ -80,7 +87,8 @@ patternProperties:
->>        node representing a TI instantiation of the Arm Cortex R5F core. There
->>        are some specific integration differences for the IP like the usage of
->>        a Region Address Translator (RAT) for translating the larger SoC bus
->> -      addresses into a 32-bit address space for the processor.
->> +      addresses into a 32-bit address space for the processor. For AM62x,
->> +      should only define one R5F child node as it has only one core available.
->>  
->>        Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
->>        internal memories split between two banks - TCMA and TCMB (further
->> @@ -104,6 +112,7 @@ patternProperties:
->>            - ti,j721e-r5f
->>            - ti,j7200-r5f
->>            - ti,am64-r5f
->> +          - ti,am62-r5f
->>            - ti,j721s2-r5f
->>  
->>        reg:
->> @@ -207,20 +216,31 @@ patternProperties:
->>        - firmware-name
->>  
->>      unevaluatedProperties: false
-> 
-> Blank line.
-Agreed, I will remove it in V3.
-> 
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - ti,am64-r5fss
->> +    then:
->> +      properties:
->> +        ti,cluster-mode:
->> +          enum: [0, 2]
->> +
->> +    else:
->> +      properties:
->> +        ti,cluster-mode:
-> 
-> It's not really valid anymore for ti,am62-r5fss, so this cannot be
-> simple "else".  Instead you need to list all compatibles.
-I agree that the else block is not valid for am62x, but my understanding is that since all the blocks under allOf are checked for validity,
-I thought to add a separate if block only for am62x to set cluster-mode to false [1], which I believe would negate the effect of above else condition for am62x,
-so that we don't have to list all compatibles under separate if blocks.
+> and above warning log goes away when i remove the cluster-mode node in am62x devicetree.
+> But please do let me know if I am missing something here or there is a better/more proper way to do this.
 
-Just to verify this, I deliberately set cluster-mode=1 in am62x devicetree and then ran a dtbs-check and got below log : 
-"linux-next/arch/arm64/boot/dts/ti/k3-am625-sk.dtb: r5fss@78000000: ti,cluster-mode: False schema does not allow [[1]]"
+This was three weeks ago, so hundreds of patches ago, I don't remember
+anymore.
 
-and above warning log goes away when i remove the cluster-mode node in am62x devicetree.
-But please do let me know if I am missing something here or there is a better/more proper way to do this.
+Just look at your patch - it is clearly incorrect. You said in the patch
+that for compatibles other than ti,am64-r5fss cluster mode is BOTH [0,
+1] AND false.
 
-Best Regards,
-Devarsh
+I gave you the way to fix it. Feel free to fix it other ways if it gives
+correct result.
 
-> 
->> +          enum: [0, 1]
->> +
-[1]
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - ti,am62-r5fss
->> +    then:
->> +      properties:
->> +        ti,cluster-mode: false
->>  
->> -if:
->> -  properties:
->> -    compatible:
->> -      enum:
->> -        - ti,am64-r5fss
->> -then:
->> -  properties:
->> -    ti,cluster-mode:
->> -      enum: [0, 2]
->> -else:
->> -  properties:
->> -    ti,cluster-mode:
->> -      enum: [0, 1]
->>  
->>  required:
->>    - compatible
-> 
-> Best regards,
-> Krzysztof
-> 
+Best regards,
+Krzysztof
+
