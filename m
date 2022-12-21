@@ -2,54 +2,53 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AD3C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 05:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D24C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 05:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234422AbiLUFrI (ORCPT
+        id S234366AbiLUFzg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Dec 2022 00:47:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53580 "EHLO
+        Wed, 21 Dec 2022 00:55:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiLUFrE (ORCPT
+        with ESMTP id S233820AbiLUFze (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Dec 2022 00:47:04 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6D85F87;
-        Tue, 20 Dec 2022 21:47:00 -0800 (PST)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BL1bOZR014040;
-        Wed, 21 Dec 2022 05:46:15 GMT
+        Wed, 21 Dec 2022 00:55:34 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 764531DA6F;
+        Tue, 20 Dec 2022 21:55:33 -0800 (PST)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BL3u1Y0008754;
+        Wed, 21 Dec 2022 05:54:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : from : to : references : in-reply-to :
+ mime-version : subject : to : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=RA7Hd+cZC/9X/zleey9EVeBsRmig/cD6MmzKzXQ4/t4=;
- b=Nm92RqXRBm4EL3IOXCLuDzXzW1O9mfOi/xdrq3zV8cMQkyg/6qMA/Jzw16HBSXizuPbk
- 8jOUXLyCTYM2oFQgRENNWic1Zg5s0yAFb40tqSxQRaBxA66XsdMkZNczNhesFdtk+0dK
- VuxiiaP2qr9JMRQ+glowsALgJhR7kZxwI3pTMjMXZtgc9gWBjO3U+em4kPqIKgD3lEka
- UBKkot+OA0oXbzLn90hq0qi4RzcWantlD2rPQVdPEgp8j5qW5vOiv8tPxNs8zKsUZcdW
- qxATCr0rt8YGdokLcXpP6gwLkn98T/Se1USFQdYFljI6m0vSHZPvu3lgD/wGBIh0JzDt bQ== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mkcxv9w37-1
+ bh=2+wlnUDmpXmr22tEs76QyJbJB6YDA1VcuJOtP00XjZE=;
+ b=D1TZk6Wge5RaM49p2e4DXPI7rNsIArBfrSed0MNdmkDgjpqD2YVEon9GFS1BBsCjvW0M
+ 5iSAxGP7jN1rhPnOBQtYe7f3UFcXbDBVekQfjEM2Ft79xwPaBSstjiDmeeXZ3ArTR57y
+ yf+m3p9DVU/5JcFy/ety/QBBG6WAkCIcBfSlkK80uU644a4JCxiy6onno5VwHYlPmi0G
+ O5QXJwR7sqYTlx0QwP+Uyb4n3FNonHf6TkBu5rOlB72mxlakZAClMwmC7D58oMHczVED
+ Jch8NqJyj606Jhx2CtZm50AhM3kDevmk6BacAQxmdDPazw97nhknNda40PL68hBgMibX HA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mkd379vbp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Dec 2022 05:46:15 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BL5kEdJ006256
+        Wed, 21 Dec 2022 05:54:51 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BL5soEG005960
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Dec 2022 05:46:14 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 21 Dec 2022 05:54:50 GMT
+Received: from [10.216.2.240] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 20 Dec
- 2022 21:46:08 -0800
-Message-ID: <e54d0094-5cbd-8710-4fce-5f2d8414bbb7@quicinc.com>
-Date:   Wed, 21 Dec 2022 11:16:06 +0530
+ 2022 21:54:43 -0800
+Message-ID: <eb8818a5-1f81-561a-b3ee-2f45b3d24355@quicinc.com>
+Date:   Wed, 21 Dec 2022 11:24:40 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
+ Thunderbird/91.11.0
 Subject: Re: [PATCH v3 1/2] remoteproc: elf_loader: Update resource table name
  check
 Content-Language: en-US
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+To:     Mukesh Ojha <quic_mojha@quicinc.com>,
         <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
         <andersson@kernel.org>, <lgirdwood@gmail.com>,
         <broonie@kernel.org>, <robh+dt@kernel.org>,
@@ -63,76 +62,72 @@ To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
 References: <1671523269-21154-1-git-send-email-quic_srivasam@quicinc.com>
  <1671523269-21154-2-git-send-email-quic_srivasam@quicinc.com>
  <0d683526-5707-d5b4-e96d-b2d982d4b5da@quicinc.com>
+From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+Organization: Qualcomm
 In-Reply-To: <0d683526-5707-d5b4-e96d-b2d982d4b5da@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9OlD3RSog9t6gYd-90mAm-eBPN7ewSbF
-X-Proofpoint-ORIG-GUID: 9OlD3RSog9t6gYd-90mAm-eBPN7ewSbF
+X-Proofpoint-GUID: HKnq-NSCI6R5HIlgieDBV5ikftIZ5vUk
+X-Proofpoint-ORIG-GUID: HKnq-NSCI6R5HIlgieDBV5ikftIZ5vUk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-12-21_01,2022-12-20_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2212210040
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 malwarescore=0
+ bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2212210041
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
 
 On 12/20/2022 6:20 PM, Mukesh Ojha wrote:
+Thanks for your time Mukesh!!!
 > Hi,
-> 
+>
 > On 12/20/2022 1:31 PM, Srinivasa Rao Mandadapu wrote:
 >> Update the way of checking resource table name with prefix
 >> substring search instead of complete string search.
 >> In general Qualcomm DSP binary is prepared by combining different ELFs',
 >> hence section header name (e.g. .resource_table), appended with ELF name
->> to differentiate with same section(e.g. resource_table.ac_bin_process) of
+>> to differentiate with same section(e.g. 
+>> resource_table.ac_bin_process) of
 >> different ELFs'.
 >> Example readelf output of DSP binary:
 >>      [60] .start.ac_bin_process PROGBITS
 >>      [61] .resource_table.ac_bin_process PROGBITS
 >>      [62] .comment.ac_bin_process PROGBITS
 >>
-> 
-> Could we rephrase above like below ? It could be also taken why applying 
-> the patch.
-> 
+>
+> Could we rephrase above like below ? It could be also taken why 
+> applying the patch.
+>
 > Update the way of checking resource table name with prefix substring 
 > search instead of complete string search.
-> 
+>
 > In general, Qualcomm DSP binary is prepared by combining different 
 > ELF's. Hence, section header name (e.g. .resource_table), appended
 > with ELF name to differentiate with same section(e.g. 
 > resource_table.ac_bin_process) of different ELFs'.
-> 
+>
 > Example readelf output of DSP binary:
->        [60] .start.ac_bin_process PROGBITS
->        [61] .resource_table.ac_bin_process PROGBITS
->        [62] .comment.ac_bin_process PROGBITS
-> 
-> 
-
-Looks like my email client did not honour new line
-put by me in rephrased text. Sorry for that.
-
-Please run checkpatch.pl before sending the patch.
-
--Mukesh
-
+>       [60] .start.ac_bin_process PROGBITS
+>       [61] .resource_table.ac_bin_process PROGBITS
+>       [62] .comment.ac_bin_process PROGBITS
+>
+Okay. will change accordingly.
+>
 > Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-> 
+>
 > Otherwise, LGTM.
 > Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> 
+>
 > -Mukesh
 >> ---
 >>   drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
@@ -147,7 +142,7 @@ Please run checkpatch.pl before sending the patch.
 >> firmware *fw)
 >>           u64 offset = elf_shdr_get_sh_offset(class, shdr);
 >>           u32 name = elf_shdr_get_sh_name(class, shdr);
->> -        if (strcmp(name_table + name, ".resource_table"))
+>>   -        if (strcmp(name_table + name, ".resource_table"))
 >> +        if (!strstarts(name_table + name, ".resource_table"))
 >>               continue;
->>           table = (struct resource_table *)(elf_data + offset);
+>>             table = (struct resource_table *)(elf_data + offset);
