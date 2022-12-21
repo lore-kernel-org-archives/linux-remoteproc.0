@@ -2,118 +2,81 @@ Return-Path: <linux-remoteproc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F03C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 17:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE4FC3DA79
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 17:44:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234902AbiLURSy (ORCPT
+        id S234811AbiLURos (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Dec 2022 12:18:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59968 "EHLO
+        Wed, 21 Dec 2022 12:44:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234756AbiLURSM (ORCPT
+        with ESMTP id S234927AbiLURop (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Dec 2022 12:18:12 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F5FA25C53
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Dec 2022 09:17:34 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id p36so24426587lfa.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Dec 2022 09:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tKrXA3voEyFjOSrPuBw4po5+0nfjKm1BQpiqywMAE3I=;
-        b=NlBiJ/E2Yt54PywlbOIicO7rwtW4PNGs+g7ySrU2NYEZwf1bSGkOmtZM0sOXo7JGhk
-         KMZoxHAFWaeSFdSflnFBxul8GRG/nxMQd6syUDZzpeN5nx/N+15TKDVFQuX13ggGGO02
-         AUR+994xKO/SA3vki124lTk27purDRB3hFGlh43QJsdQB9J3yUIZfLKEZgQFjhzekYXh
-         xPj2KhYI3duexmodZHXqr7FX0j4AcMR4ck4nN6a1QBG26Pau+b+5+V38ABlmwmQsC/Rn
-         aZO6dtCC4/4tP3fnA7LkgNz7DsCsafFvM6knQjJPaD5VgNuiBuxOYARgWOWElDuQeYQp
-         1Ygw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKrXA3voEyFjOSrPuBw4po5+0nfjKm1BQpiqywMAE3I=;
-        b=wG9EQS2J/qOAliSsvH3wMhgle4CO59+34JvswUiGLiSxVET/AsT7uE+46s1SxqIioB
-         DHILftQIyjO0xpvt8+OUEFtDxhrV41x7rBe7KhvQTJgMDBhVyL/LHCVlauJAqrQGe/zt
-         nLIaaTH/9pbWQKL6pv6gE+Pn6eKzIpicWPqK8Ru5X20KgwkDeOby/id8CCiVmscC3qfd
-         /5Lg98jgsa5RsNVEwTdjHT1uKhWtkiEdW33WT+sLvRUn909gbKV84L6MY5YHv/ouOnFr
-         izpMgpnwYi+v8y6aLXM9DO1PuIVOy3RgTwUaZFp/uN4C5V0NuZtUTtxwWewkRlDvr0Zl
-         cNcg==
-X-Gm-Message-State: AFqh2koN4glNClvjEm5lWJhErAs2v7nEE62/nyfvbABtPmCGAApw59Mk
-        HgUI+FXjwVVHcdfewubWbhDL62j6JeXK/BXQ
-X-Google-Smtp-Source: AMrXdXv0h1y45BNYGw8hhIOuFkrv1kqp6WAk9k2Cmkc5TZSFOwNFKAj7Xt+aeHOHZ0hRo23tSSFRUw==
-X-Received: by 2002:a05:6512:b25:b0:4b4:b8fc:4ac5 with SMTP id w37-20020a0565120b2500b004b4b8fc4ac5mr908022lfu.3.1671643052449;
-        Wed, 21 Dec 2022 09:17:32 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id q27-20020ac25a1b000000b004b4b5da5f80sm1895027lfn.219.2022.12.21.09.17.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Dec 2022 09:17:31 -0800 (PST)
-Message-ID: <621910a0-d851-409b-99e8-7bdf95dc539d@linaro.org>
-Date:   Wed, 21 Dec 2022 18:17:30 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH v2 1/2] Documentation: dt-bindings: k3-r5f-rproc: Add new
- compatible for AM62 SoC family
-Content-Language: en-US
-To:     Devarsh Thakkar <devarsht@ti.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
+        Wed, 21 Dec 2022 12:44:45 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1FDF233AD;
+        Wed, 21 Dec 2022 09:44:44 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 25129CE1818;
+        Wed, 21 Dec 2022 17:44:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 63232C433F1;
+        Wed, 21 Dec 2022 17:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671644681;
+        bh=DpQ4h0EGGCGKxyzcgAhk0mF2+ad8ywsb56AGt7rrpAU=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Ll73BtDm4TiRLysBOSflJlEIKVUgcNdEM0feDQsH3xEO6E3NBxXrjYF9z/EInekuU
+         IPbARLpgh2+MHUP6qOiZeGPAUB4dzArU7TOiy9o8Bom97KPu9gvJ8xVO/xI+/ipanc
+         UZjFlB1JfM83uBJThMrFDcXiA2G6XHZ55+8FN6RrrdmUoL5WQJTxS1JZFuDQdM2SAX
+         pOOOQztslaj61Mdt6pt3hG5bou/HJWbcfZniycSSyV0kdhp4EWno7Ugh7t0vyTF+6Q
+         5taJhVWr8Pe8moq3LYlJQSVOK8zh5w/Z1DIWgu77MT580L9pbx732/e1u6sOYQmndr
+         mgC8UmUTvpFTQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4E4D6C43141;
+        Wed, 21 Dec 2022 17:44:41 +0000 (UTC)
+Subject: Re: [GIT PULL] remoteproc updates for v6.2
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20221220180832.93801-1-andersson@kernel.org>
+References: <20221220180832.93801-1-andersson@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20221220180832.93801-1-andersson@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.2
+X-PR-Tracked-Commit-Id: 11c7f9e3131ad14b27a957496088fa488b153a48
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9cf5b508bd260d5693d337bcf1f9b82b961b6137
+Message-Id: <167164468130.23021.6887596002060025560.pr-tracker-bot@kernel.org>
+Date:   Wed, 21 Dec 2022 17:44:41 +0000
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, s-anna@ti.com
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        hnagalla@ti.com, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
-        a-bhatia1@ti.com, j-luthra@ti.com
-References: <20221130134052.7513-1-devarsht@ti.com>
- <20221130134052.7513-2-devarsht@ti.com>
- <b4b608bf-e347-5500-eb94-bec3611f6a56@linaro.org>
- <645aca4d-b19c-390d-b899-fd40a924a096@ti.com>
- <12010f8f-d1d2-be18-8d4e-e1d282cb1670@linaro.org>
- <2c058ebf-c39c-9cb5-4a6f-afe88940104a@ti.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <2c058ebf-c39c-9cb5-4a6f-afe88940104a@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Peng Fan <peng.fan@nxp.com>,
+        Ben Levinsky <ben.levinsky@amd.com>,
+        Tanmay Shah <tanmay.shah@amd.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Gaosheng Cui <cuigaosheng1@huawei.com>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>,
+        Maria Yu <quic_aiquny@quicinc.com>,
+        Yuan Can <yuancan@huawei.com>,
+        ye xingchen <ye.xingchen@zte.com.cn>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 21/12/2022 17:29, Devarsh Thakkar wrote:
->>
->> Just look at your patch - it is clearly incorrect. You said in the patch
->> that for compatibles other than ti,am64-r5fss cluster mode is BOTH [0,
->> 1] AND false.
-> 
-> cluster-mode is BOTH [0,1] and false only in case of AM62x as per below snippet
+The pull request you sent on Tue, 20 Dec 2022 12:08:32 -0600:
 
-Yes, for that variant you have conflicting approach.
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.2
 
-, but since it's under allOf the impact of latter will supersede, schema
-validation will fail even if cluster-mode set to 0 or 1 for am62x due to
-below snippet as shared in obesrvation log above [2].
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9cf5b508bd260d5693d337bcf1f9b82b961b6137
 
-Yeah, but the code is confusing. So again - you are saying with allOf
-that both conditions are applicable. Your intentions of superseding do
-not matter here - you said that allOf conditions must be taken into
-account. These conditions can be reversed any time, don't you think?
+Thank you!
 
-
-> 
-> "  - if:
->       properties:
->         compatible:
->           enum:
->             - ti,am62-r5fss
->     then:
->       properties:
->         ti,cluster-mode: false"
-> 
-> Sorry for the back and forth, I just thought to describe more clearly what I was up-to as I thought above should be functionally fine and it also saves us from having separate if blocks for each compatible, but I am open to adding separate if blocks as you earlier suggested if that seems more cleaner solution.
-
-You need to fix your email client to properly wrap messages.
-
-Best regards,
-Krzysztof
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
