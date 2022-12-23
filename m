@@ -1,82 +1,81 @@
-Return-Path: <linux-remoteproc-owner@kernel.org>
+Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE4FC3DA79
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Dec 2022 17:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520C4C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 23 Dec 2022 02:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234811AbiLURos (ORCPT
+        id S230444AbiLWCoW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Dec 2022 12:44:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49422 "EHLO
+        Thu, 22 Dec 2022 21:44:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234927AbiLURop (ORCPT
+        with ESMTP id S229524AbiLWCoV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Dec 2022 12:44:45 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1FDF233AD;
-        Wed, 21 Dec 2022 09:44:44 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 22 Dec 2022 21:44:21 -0500
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DA11BE93;
+        Thu, 22 Dec 2022 18:44:20 -0800 (PST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 25129CE1818;
-        Wed, 21 Dec 2022 17:44:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 63232C433F1;
-        Wed, 21 Dec 2022 17:44:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671644681;
-        bh=DpQ4h0EGGCGKxyzcgAhk0mF2+ad8ywsb56AGt7rrpAU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Ll73BtDm4TiRLysBOSflJlEIKVUgcNdEM0feDQsH3xEO6E3NBxXrjYF9z/EInekuU
-         IPbARLpgh2+MHUP6qOiZeGPAUB4dzArU7TOiy9o8Bom97KPu9gvJ8xVO/xI+/ipanc
-         UZjFlB1JfM83uBJThMrFDcXiA2G6XHZ55+8FN6RrrdmUoL5WQJTxS1JZFuDQdM2SAX
-         pOOOQztslaj61Mdt6pt3hG5bou/HJWbcfZniycSSyV0kdhp4EWno7Ugh7t0vyTF+6Q
-         5taJhVWr8Pe8moq3LYlJQSVOK8zh5w/Z1DIWgu77MT580L9pbx732/e1u6sOYQmndr
-         mgC8UmUTvpFTQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4E4D6C43141;
-        Wed, 21 Dec 2022 17:44:41 +0000 (UTC)
-Subject: Re: [GIT PULL] remoteproc updates for v6.2
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221220180832.93801-1-andersson@kernel.org>
-References: <20221220180832.93801-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221220180832.93801-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.2
-X-PR-Tracked-Commit-Id: 11c7f9e3131ad14b27a957496088fa488b153a48
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9cf5b508bd260d5693d337bcf1f9b82b961b6137
-Message-Id: <167164468130.23021.6887596002060025560.pr-tracker-bot@kernel.org>
-Date:   Wed, 21 Dec 2022 17:44:41 +0000
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>,
-        Ben Levinsky <ben.levinsky@amd.com>,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Maria Yu <quic_aiquny@quicinc.com>,
-        Yuan Can <yuancan@huawei.com>,
-        ye xingchen <ye.xingchen@zte.com.cn>
+        by mxct.zte.com.cn (FangMail) with ESMTPS id 4NdWjH0chxz4y3ZP;
+        Fri, 23 Dec 2022 10:44:19 +0800 (CST)
+Received: from szxlzmapp06.zte.com.cn ([10.5.230.252])
+        by mse-fl1.zte.com.cn with SMTP id 2BN2i9Jc072538;
+        Fri, 23 Dec 2022 10:44:09 +0800 (+08)
+        (envelope-from yang.yang29@zte.com.cn)
+Received: from mapi (szxlzmapp02[null])
+        by mapi (Zmail) with MAPI id mid14;
+        Fri, 23 Dec 2022 10:44:10 +0800 (CST)
+Date:   Fri, 23 Dec 2022 10:44:10 +0800 (CST)
+X-Zmail-TransId: 2b0463a515fa3ad9749c
+X-Mailer: Zmail v1.0
+Message-ID: <202212231044105692444@zte.com.cn>
+Mime-Version: 1.0
+From:   <yang.yang29@zte.com.cn>
+To:     <andersson@kernel.org>
+Cc:     <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xu.panda@zte.com.cn>,
+        <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHJwbXNnOiB1c2Ugc3Ryc2NweSgpIHRvIGluc3RlYWQgb2Ygc3RybmNweSgp?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl1.zte.com.cn 2BN2i9Jc072538
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.251.13.novalocal with ID 63A51603.000 by FangMail milter!
+X-FangMail-Envelope: 1671763459/4NdWjH0chxz4y3ZP/63A51603.000/10.5.228.132/[10.5.228.132]/mse-fl1.zte.com.cn/<yang.yang29@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 63A51603.000/4NdWjH0chxz4y3ZP
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The pull request you sent on Tue, 20 Dec 2022 12:08:32 -0600:
+From: Xu Panda <xu.panda@zte.com.cn>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.2
+The implementation of strscpy() is more robust and safer.
+That's now the recommended way to copy NUL-terminated strings.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9cf5b508bd260d5693d337bcf1f9b82b961b6137
+Signed-off-by: Xu Panda <xu.panda@zte.com.cn>
+Signed-off-by: Yang Yang <yang.yang29@zte.com>
+---
+ drivers/rpmsg/rpmsg_ns.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Thank you!
+diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+index c70ad03ff2e9..c7b5b60aef4d 100644
+--- a/drivers/rpmsg/rpmsg_ns.c
++++ b/drivers/rpmsg/rpmsg_ns.c
+@@ -48,9 +48,7 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 	}
+
+ 	/* don't trust the remote processor for null terminating the name */
+-	msg->name[RPMSG_NAME_SIZE - 1] = '\0';
+-
+-	strncpy(chinfo.name, msg->name, sizeof(chinfo.name));
++	strscpy(chinfo.name, msg->name, sizeof(chinfo.name));
+ 	chinfo.src = RPMSG_ADDR_ANY;
+ 	chinfo.dst = rpmsg32_to_cpu(rpdev, msg->addr);
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.15.2
