@@ -2,121 +2,228 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAEFC10F1B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 08:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E9AC46467
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 09:38:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230203AbiL0I4Y (ORCPT
+        id S229929AbiL0Jio (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Dec 2022 03:56:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41150 "EHLO
+        Tue, 27 Dec 2022 04:38:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiL0I4X (ORCPT
+        with ESMTP id S230375AbiL0Jil (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 27 Dec 2022 03:56:23 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB9D64CC;
-        Tue, 27 Dec 2022 00:56:21 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BR5sFMq012005;
-        Tue, 27 Dec 2022 08:56:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=vOJfLNIhfso9l2s3VZeawR3CLuvnu+SogGq4Uicjcag=;
- b=U964bRlJFv92pzZRLFdOMMSExnSFf35wnhzzqmH8NuG0tIkto7weM8CDKCk1d/JzJWHl
- tqMHvEfAdXLCeBCeSRMwTqlym8ZIn4cEDB+wQicAvqcVnR9UMmCj1VNJqrdsu/ca0MAr
- waOu5MgTkjlMXaPlxW8DaosFOFdfT+bruvI/jcxJfvw23mOOM0CMbzoNxTzq1K0KWlnh
- 9MQY5FdlILxm+mXHkvQI4HAOuUVlkIcaXHS7PCopbIsmmoqguKfenST1ptuG05Nncsdl
- j8l9U9Y6phcBJxFjR2lamQP+CgqvL3ysCxP/zIfgsPch7nY0DSMbb3twTHJXU62hD6+A oQ== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mnt6s45dx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Dec 2022 08:56:18 +0000
-Received: from nasanex01c.na.qualcomm.com (corens_vlan604_snip.qualcomm.com [10.53.140.1])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 2BR8uIwi001095
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Dec 2022 08:56:18 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 27 Dec
- 2022 00:56:15 -0800
-Message-ID: <ead97313-c147-ae8b-dda6-c872475a9dd5@quicinc.com>
-Date:   Tue, 27 Dec 2022 14:26:12 +0530
+        Tue, 27 Dec 2022 04:38:41 -0500
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B633095AE;
+        Tue, 27 Dec 2022 01:38:38 -0800 (PST)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BR9cTJK129802;
+        Tue, 27 Dec 2022 03:38:29 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1672133909;
+        bh=sBFcxIfmVFWwHDXc/9DJHMlWRkChsqo7NpNib9YU6Gc=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=u6tJmSvTadIK9mmTL8LeKqS5+wRL5N4avWLv/FaHU16eGvfThFxnOr4VYnKcLDdg+
+         QWrCssyHVrf2BnahCb0k3OAXNOWwLalQJfr95+98o636bhpvsjnDY6yPOnT1/itfUu
+         Natw49NKRRNtHvCExBrOybXhOgjbP3yZAWSmCGN8=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BR9cTfd026954
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Dec 2022 03:38:29 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 27
+ Dec 2022 03:38:28 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Tue, 27 Dec 2022 03:38:28 -0600
+Received: from [172.24.145.199] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BR9cOqu080668;
+        Tue, 27 Dec 2022 03:38:25 -0600
+Message-ID: <01a0ee96-051d-9f0b-88e6-8b6feaffacb8@ti.com>
+Date:   Tue, 27 Dec 2022 15:08:23 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH] remoteproc: qcom: pas: Fix subdevice add order
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: ti: Add new compatible
+ for AM62 SoC family
 Content-Language: en-US
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1671024983-22634-1-git-send-email-quic_mojha@quicinc.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <1671024983-22634-1-git-send-email-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <andersson@kernel.org>, <devicetree@vger.kernel.org>,
+        <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>
+References: <20221223115638.20192-1-devarsht@ti.com>
+ <20221223115638.20192-2-devarsht@ti.com>
+ <374d0b5c-55f4-ee30-c804-4488a3fedb48@linaro.org>
+From:   Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <374d0b5c-55f4-ee30-c804-4488a3fedb48@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9_NDah0Y1Q47XFfSeo2XgP2KeocUJtWN
-X-Proofpoint-ORIG-GUID: 9_NDah0Y1Q47XFfSeo2XgP2KeocUJtWN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-27_05,2022-12-23_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 priorityscore=1501 mlxscore=0 phishscore=0 spamscore=0
- adultscore=0 lowpriorityscore=0 malwarescore=0 clxscore=1011
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2212270073
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
 
-Friendly reminder for review.
 
--Mukesh
+On 26/12/22 17:48, Krzysztof Kozlowski wrote:
+> On 23/12/2022 12:56, Devarsh Thakkar wrote:
+>> AM62 family of devices don't have a R5F cluster, instead
+>> they have single core DM R5F.
+>> Add new compatible string ti,am62-r5fss to support this scenario.
+>>
+>> When this new compatible is used don't allow cluster-mode
+>> property usage in device-tree as this implies that there
+>> is no R5F cluster available and only single R5F core
+>> is present.
+>>
+>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>> ---
+>> V2: Avoid acronyms, use "Device Manager" instead of "DM"
+>> V3:
+>> - Use separate if block for each compatible for ti,cluster-mode property
+>> - Rearrange compatibles as per alphabatical order
+>> ---
+>>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 68 +++++++++++++------
+>>  1 file changed, 47 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>> index fb9605f0655b..e8a861179bd9 100644
+>> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+>> @@ -21,6 +21,9 @@ description: |
+>>    called "Single-CPU" mode, where only Core0 is used, but with ability to use
+>>    Core1's TCMs as well.
+>>  
+>> +  AM62 SoC family support a single R5F core only which runs Device Manager
+>> +  firmware and can also be used as a remote processor with IPC communication.
+>> +
+>>    Each Dual-Core R5F sub-system is represented as a single DTS node
+>>    representing the cluster, with a pair of child DT nodes representing
+>>    the individual R5F cores. Each node has a number of required or optional
+>> @@ -28,16 +31,20 @@ description: |
+>>    the device management of the remote processor and to communicate with the
+>>    remote processor.
+>>  
+>> +  Since AM62 SoC family only support a single core, there is no cluster-mode
+>> +  property setting required for it.
+>> +
+>>  properties:
+>>    $nodename:
+>>      pattern: "^r5fss(@.*)?"
+>>  
+>>    compatible:
+>>      enum:
+>> +      - ti,am62-r5fss
+>> +      - ti,am64-r5fss
+>>        - ti,am654-r5fss
+>> -      - ti,j721e-r5fss
+>>        - ti,j7200-r5fss
+>> -      - ti,am64-r5fss
+>> +      - ti,j721e-r5fss
+>>        - ti,j721s2-r5fss
+>>  
+>>    power-domains:
+>> @@ -80,7 +87,9 @@ patternProperties:
+>>        node representing a TI instantiation of the Arm Cortex R5F core. There
+>>        are some specific integration differences for the IP like the usage of
+>>        a Region Address Translator (RAT) for translating the larger SoC bus
+>> -      addresses into a 32-bit address space for the processor.
+>> +      addresses into a 32-bit address space for the processor. For AM62x,
+>> +      the R5F Sub-System device node should only define one R5F child node
+>> +      as it has only one core available.
+>>  
+>>        Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
+>>        internal memories split between two banks - TCMA and TCMB (further
+>> @@ -100,11 +109,12 @@ patternProperties:
+>>      properties:
+>>        compatible:
+>>          enum:
+>> -          - ti,am654-r5f
+>> -          - ti,j721e-r5f
+>> -          - ti,j7200-r5f
+>> -          - ti,am64-r5f
+>> -          - ti,j721s2-r5f
+>> +          - ti,am62-r5fss
+>> +          - ti,am64-r5fss
+>> +          - ti,am654-r5fss
+>> +          - ti,j7200-r5fss
+>> +          - ti,j721e-r5fss
+>> +          - ti,j721s2-r5fss
+>>  
+There is a problem here, the compatibles still need to be "-r5f" I will
+correct it in V4.
+>>        reg:
+>>          items:
+>> @@ -208,19 +218,35 @@ patternProperties:
+>>  
+>>      unevaluatedProperties: false
+>>  
+>> -if:
+>> -  properties:
+>> -    compatible:
+>> -      enum:
+>> -        - ti,am64-r5fss
+>> -then:
+>> -  properties:
+>> -    ti,cluster-mode:
+>> -      enum: [0, 2]
+>> -else:
+>> -  properties:
+>> -    ti,cluster-mode:
+>> -      enum: [0, 1]
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          enum:
+>> +            - ti,am64-r5fss
+>> +    then:
+>> +      properties:
+>> +        ti,cluster-mode:
+>> +          enum: [0, 2]
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          enum: ["ti,am654-r5fss", "ti,j7200-r5fss", "ti,j721e-r5fss",  "ti,j721s2-r5fss"]
+> 
+> That's not how enums are spelled for such cases. Git grep for examples -
+> this should be a enum with each item in new entry, no quotes.
+Yeah, that was my initial thought but then I looked at section 4.9.3 of
+https://json-schema.org/understanding-json-schema/UnderstandingJSONSchema.pdf
+which had below example and based on that did this change thus avoiding
+separate entries for each enum.
 
-On 12/14/2022 7:06 PM, Mukesh Ojha wrote:
-> Currently, the notification like QCOM_SSR_BEFORE_SHUTDOWN is not exactly
-> sent before starting shutdown activity on remote subsystem but it is
-> getting sent after sysmon shutdown request to remote.
+Example:
+{
+"enum": ["red", "amber", "green", null, 42]
+}
+
+To confirm whether the change works fine, I deliberately modified cluster-mode
+values for each of the SoC's beyond acceptable ranges as seen in
+https://gist.github.com/devarsht/1956063c8e39f1bdbad3574ea96b95a3
+and then ran "make dtbs_check" and it was able to catch the inappropriate
+values of cluster-mode as seen in below logs :
+
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L392
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L500
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L712
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L741
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L750
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L766
+https://gist.github.com/devarsht/bc8cfb82c55b75d85649585d3fd536a0#file-gistfile1-txt-L773
+
+Kindly let me know if you see some issues with this approach.
+
+Best Regards,
+Devarsh
+
 > 
-> On getting QCOM_SSR_BEFORE_SHUTDOWN, some client want remote subsystem
-> to be alive to communicate but as sysmon shutdown request is getting
-> sent to remote before QCOM_SSR_BEFORE_SHUTDOWN notification sent to
-> kernel client due to which remote is not in a condition to communicate
-> with kernel clients.
+> Best regards,
+> Krzysztof
 > 
-> Fixing the subdevice ordering will fix this as ssr subdevice will be
-> first one to get triggered in shutdown/stop path.
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 6afd094..5e34d59 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -538,7 +538,6 @@ static int adsp_probe(struct platform_device *pdev)
->   
->   	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
->   	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
-> -	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
->   	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
->   					      desc->sysmon_name,
->   					      desc->ssctl_id);
-> @@ -547,6 +546,7 @@ static int adsp_probe(struct platform_device *pdev)
->   		goto detach_proxy_pds;
->   	}
->   
-> +	qcom_add_ssr_subdev(rproc, &adsp->ssr_subdev, desc->ssr_name);
->   	ret = rproc_add(rproc);
->   	if (ret)
->   		goto detach_proxy_pds;
