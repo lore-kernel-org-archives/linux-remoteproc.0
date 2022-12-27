@@ -2,49 +2,51 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A31C10F1B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 17:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF9D6C53210
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 17:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232050AbiL0RmY (ORCPT
+        id S232063AbiL0RmZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Dec 2022 12:42:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
+        Tue, 27 Dec 2022 12:42:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232007AbiL0RmW (ORCPT
+        with ESMTP id S232042AbiL0RmY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 27 Dec 2022 12:42:22 -0500
+        Tue, 27 Dec 2022 12:42:24 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00BBAA47F;
-        Tue, 27 Dec 2022 09:42:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97818FC9;
+        Tue, 27 Dec 2022 09:42:23 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A3F45B80E98;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 598BDB80E8B;
+        Tue, 27 Dec 2022 17:42:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30586C43392;
         Tue, 27 Dec 2022 17:42:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4CEC433D2;
-        Tue, 27 Dec 2022 17:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672162939;
-        bh=bsxu3cQIxJCAmoMyRaPk0vJ+C2smV1odvrSTgHAcz18=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=cAWM3Cortrfl5c7Yq3Gh+WS44R1WC9K637uwBNrztE2LtKnBQaSYc8jFn8eNB5pu4
-         ah3y7NOVFKDuahx31Z6JRe6Jtczoax6lbrcqPWThxYtemaYPifU0SJ+/TWfFDS/dYH
-         Lc4PjLh9q6OVhgs5nc+Z6qVsXkVbhmiGy4GYxZhKMZifqUnM7TFWYz2h4ljZ3tr8js
-         /NWqzeqeQAhVl+FK+7sUsF545P7baIVV3modJPQ1bBAI58Jay6xgxDPqy4A6zj7fAT
-         6Nctty1QLBW3oorDXrQBWqEco9uNzs4enX9aa3MXMEJiSD+pKnyGCA1IuIxqjG5k1u
-         iOiDrkVUB6Ltg==
+        s=k20201202; t=1672162941;
+        bh=RWFdEDGiVVH5Zrk9szcOUJD4PkhACqIEThY3u6Slsos=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZqoM6Ci/QsebDnsYLKHiYtFJfAV+Lyhxfb6CGAj65ecPlZFBAP9egD+IkTsv++pUM
+         7wnEiYCUtAZVQlmy8h4klVteFpVoIRgbufJMnZGXzaEH6AaNhDv9NU3B+8X0Mo4gxM
+         YV72o1P3IJSvig/M8oNUFrHVPs+PBRYvy17GjopReIrM/0TCoShVjPJsC+7czakgV1
+         6zPaa27RCJN1Cow35yhLY+X2SPo9dc7vrosdKFc4ccdIgIz7vFMIUCrf2cswDg0awD
+         pjODdhJStFUUqQ7BX2zr49u7miHpKeAZ7rJHADcla03ps4mY/TZ9e7uw+8uZoZIKlX
+         ovPsRS6EFzhsg==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
+To:     stephan.gerhold@kernkonzept.com
+Cc:     krzysztof.kozlowski+dt@linaro.org, agross@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        krzysztof.kozlowski@linaro.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, konrad.dybcio@linaro.org
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,glink-edge: add GPR node
-Date:   Tue, 27 Dec 2022 11:42:15 -0600
-Message-Id: <167216232799.738877.18279130764991980992.b4-ty@kernel.org>
+        stephan@gerhold.net, robh+dt@kernel.org,
+        konrad.dybcio@somainline.org, mathieu.poirier@linaro.org,
+        devicetree@vger.kernel.org, luca@z3ntu.xyz,
+        sireeshkodali1@gmail.com
+Subject: Re: (subset) [PATCH v4 0/7] remoteproc: qcom_q6v5_mss: Add MSM8909 and MSM8953
+Date:   Tue, 27 Dec 2022 11:42:17 -0600
+Message-Id: <167216232800.738877.17567287056128563074.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221223132213.81273-1-krzysztof.kozlowski@linaro.org>
-References: <20221223132213.81273-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20220908182433.466908-1-stephan.gerhold@kernkonzept.com>
+References: <20220908182433.466908-1-stephan.gerhold@kernkonzept.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,20 +54,31 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 23 Dec 2022 14:22:13 +0100, Krzysztof Kozlowski wrote:
-> The existing SM8450 DTS (and newer platforms) come with a "gpr" child node,
-> not "apr":
-> 
->   sm8450-sony-xperia-nagara-pdx224.dtb: remoteproc@30000000: glink-edge: Unevaluated properties are not allowed ('gpr' was unexpected)
->     From schema: Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-> 
+On Thu, 8 Sep 2022 20:24:26 +0200, Stephan Gerhold wrote:
+> Convert parts of the qcom,q6v5.txt binding documentation to a DT schema
+> (together with some DT fixes) in preparation of adding new compatibles
+> for MSM8909 and MSM8953. The schema can be easily shared between
+> MSM8916, MSM8974, MSM8909 and MSM8953 because they have almost the same
+> requirements. The other SoCs are quite different and are likely more
+> clearly described in separate DT schema(s) to avoid a lot of complicated
+> if statements.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: remoteproc: qcom,glink-edge: add GPR node
-      commit: 1135e93682db5f66909f4785b1bfbd798955b2b1
+[2/7] dt-bindings: remoteproc: qcom,q6v5: Move MSM8916 to schema
+      commit: b9880532d0cdf54dc6cc0e028afe47d829873b20
+[3/7] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8974
+      commit: ac686cbc6f8bb7810058955e3bb5b5635ca9331a
+[4/7] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8909
+      commit: f8fb0b3d453e8a0a3b94c18001ce8f1e86d95036
+[5/7] remoteproc: qcom: q6v5-mss: Add support for MSM8909
+      commit: ed71c47f0000ec17b4ce167bce0d44dff8e144e1
+[6/7] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8953
+      commit: 43baa1a2215998ecb2ba64bb6d435d07541c7184
+[7/7] remoteproc: qcom: q6v5-mss: Add modem support on MSM8953
+      commit: 0201f759594b1248635185a92a5e39f47441ad6a
 
 Best regards,
 -- 
