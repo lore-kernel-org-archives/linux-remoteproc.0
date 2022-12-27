@@ -2,243 +2,157 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F473C4708E
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 14:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D80C4167B
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 15:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231550AbiL0Ow3 (ORCPT
+        id S229987AbiL0PLg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Dec 2022 09:52:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59030 "EHLO
+        Tue, 27 Dec 2022 10:11:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbiL0Ow2 (ORCPT
+        with ESMTP id S231289AbiL0PLf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 27 Dec 2022 09:52:28 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB0CD6D;
-        Tue, 27 Dec 2022 06:52:26 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BREqLCO090278;
-        Tue, 27 Dec 2022 08:52:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1672152741;
-        bh=RcSGEFcVj7pv+eLNj/KmSgYTFlVzg3/GloZZFkQeE5o=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=TLVQEMAOZzPykaw3yj6H7v8u7o37sn3Yr4IyAWRihXEaCX58N1b+odTe3nQPeOpjq
-         jMdiDkkPVIhr+d2ab5aQDHau9K36qzRvl4D+KN6fRrNAVQ6zN8vmb8JQEUgcM9SmUb
-         Lvdip8H2adBxNhrkCA3eYdSLro2MHse+LU9CDokg=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BREqL6I019929
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Dec 2022 08:52:21 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 27
- Dec 2022 08:52:20 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 27 Dec 2022 08:52:20 -0600
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BREqKij071038;
-        Tue, 27 Dec 2022 08:52:20 -0600
-From:   Devarsh Thakkar <devarsht@ti.com>
-To:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
-        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
-CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <devarsht@ti.com>
-Subject: [PATCH v5 2/2] remoteproc: k3-r5: Use separate compatible string for TI AM62 SoC family
-Date:   Tue, 27 Dec 2022 20:22:16 +0530
-Message-ID: <20221227145216.1524-3-devarsht@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221227145216.1524-1-devarsht@ti.com>
-References: <20221227145216.1524-1-devarsht@ti.com>
+        Tue, 27 Dec 2022 10:11:35 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C37ACE60;
+        Tue, 27 Dec 2022 07:11:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 571A16119F;
+        Tue, 27 Dec 2022 15:11:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BFB9C433F0;
+        Tue, 27 Dec 2022 15:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672153893;
+        bh=DHLRnGECifdavsvYK5VFXIuHRMp7XChg8MchINFR/Nw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k0cs3nNgJMh+lStCiVtmD4AqgBJSb18dB3d8fI0vne6+tEKmcZ+cuB2rKUbE5goJB
+         puXU7zd3URnsyN8r1QwMr+Ceh8M+4R2bk1OJEyFEuvE/gd4EFgIwzAD3BuOCvF1RC3
+         Jfeik2yits8prTqa09xl+ZTS/eqdzXkekOD0xZyyuB7b9h/rAa/d2V48Y1dolHEHes
+         wBq/kaeXKoSXqedq1uVSjuq3RWzb/n2d3gO1ShqYo1bZeykuEYouE/t0fv4uLD1Q8e
+         OGosodtuPPM7bvWspAuqw6FozNWUCdu6sY5eUV/BItrkfqtbVvQ8o76AuIRKw4jOMB
+         FOnx3JI8zakmg==
+Date:   Tue, 27 Dec 2022 09:11:31 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ben.levinsky@xilinx.com
+Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
+Message-ID: <20221227151131.hkezt4j2om5volnu@builder.lan>
+References: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-AM62 and AM62A SoCs use single core R5F which is a new scenario
-different than the one being used with CLUSTER_MODE_SINGLECPU
-which is for utilizing a single core from a set of cores available
-in R5F cluster present in the SoC.
+On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
+> Multi-cluster remoteproc designs typically have the following DT
+> declaration:
+> 
+> 	remoteproc_cluster {
+> 		compatible = "soc,remoteproc-cluster";
+> 
+>                 core0: core0 {
+> 			compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 };
+> 
+>                 core1: core1 {
+> 			compatible = "soc,remoteproc-core"
+>                         memory-region;
+>                         sram;
+>                 }
+>         };
+> 
+> A driver exists for the cluster rather than the individual cores
+> themselves so that operation mode and HW specific configurations
+> applicable to the cluster can be made.
+> 
+> Because the driver exists at the cluster level and not the individual
+> core level, function rproc_get_by_phandle() fails to return the
+> remoteproc associated with the phandled it is called for.
+> 
+> This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> driver when the driver for the immediate remoteproc's parent is not
+> found.
+> 
 
-To support this single core scenario map it with
-newly defined CLUSTER_MODE_NONE and use it when
-compatible is set to ti,am62-r5fss.
+Can you please help me understand why zynqmp_r5_remoteproc_probe()
+invokes devm_of_platform_populate() to create platform_device instances
+for the clusters?
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
----
-V2: Fix indentation and ordering issues as per review comments
-V3: Change CLUSTER_MODE_NONE value to -1
-V4: No change
-V5: No change (fixing typo in email address)
----
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 57 ++++++++++++++++++------
- 1 file changed, 44 insertions(+), 13 deletions(-)
+Why can't the platform_device for the cluster be used as parent for both
+remoteprocs and then the driver deal with the subnodes within the
+driver?
 
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 0481926c6975..127f1f68e592 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -74,9 +74,11 @@ struct k3_r5_mem {
-  *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
-  *   LockStep mode   : AM65x, J721E and J7200 SoCs
-  *   Single-CPU mode : AM64x SoCs only
-+ *   None            : AM62x, AM62A SoCs
-  */
- enum cluster_mode {
--	CLUSTER_MODE_SPLIT = 0,
-+	CLUSTER_MODE_NONE = -1,
-+	CLUSTER_MODE_SPLIT,
- 	CLUSTER_MODE_LOCKSTEP,
- 	CLUSTER_MODE_SINGLECPU,
- };
-@@ -86,11 +88,13 @@ enum cluster_mode {
-  * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
-  * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
-  * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
-+ * @is_single_core: flag to denote if SoC/IP has only single core R5
-  */
- struct k3_r5_soc_data {
- 	bool tcm_is_double;
- 	bool tcm_ecc_autoinit;
- 	bool single_cpu_mode;
-+	bool is_single_core;
- };
- 
- /**
-@@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
- 
- 	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
- 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
--	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
-+	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
-+	    cluster->mode == CLUSTER_MODE_NONE) {
- 		core = core0;
- 	} else {
- 		core = kproc->core;
-@@ -853,7 +858,7 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
- 		boot_vec, cfg, ctrl, stat);
- 
- 	/* check if only Single-CPU mode is supported on applicable SoCs */
--	if (cluster->soc_data->single_cpu_mode) {
-+	if (cluster->soc_data->single_cpu_mode || cluster->soc_data->is_single_core) {
- 		single_cpu =
- 			!!(stat & PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
- 		if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
-@@ -1074,6 +1079,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
- 
- 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
- 	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
-+	    cluster->mode == CLUSTER_MODE_NONE ||
- 	    !cluster->soc_data->tcm_is_double)
- 		return;
- 
-@@ -1147,7 +1153,9 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
- 	atcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_ATCM_EN ?  1 : 0;
- 	btcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_BTCM_EN ?  1 : 0;
- 	loczrama = cfg & PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE ?  1 : 0;
--	if (cluster->soc_data->single_cpu_mode) {
-+	if (cluster->soc_data->is_single_core) {
-+		mode = CLUSTER_MODE_NONE;
-+	} else if (cluster->soc_data->single_cpu_mode) {
- 		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
- 				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
- 	} else {
-@@ -1271,7 +1279,8 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 
- 		/* create only one rproc in lockstep mode or single-cpu mode */
- 		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
--		    cluster->mode == CLUSTER_MODE_SINGLECPU)
-+		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
-+		    cluster->mode == CLUSTER_MODE_NONE)
- 			break;
- 	}
- 
-@@ -1704,21 +1713,32 @@ static int k3_r5_probe(struct platform_device *pdev)
- 	 * default to most common efuse configurations - Split-mode on AM64x
- 	 * and LockStep-mode on all others
- 	 */
--	cluster->mode = data->single_cpu_mode ?
-+	if (!data->is_single_core)
-+		cluster->mode = data->single_cpu_mode ?
- 				CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
-+	else
-+		cluster->mode = CLUSTER_MODE_NONE;
-+
- 	cluster->soc_data = data;
- 	INIT_LIST_HEAD(&cluster->cores);
- 
--	ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
--	if (ret < 0 && ret != -EINVAL) {
--		dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n",
--			ret);
--		return ret;
-+	if (!data->is_single_core) {
-+		ret = of_property_read_s32(np, "ti,cluster-mode", &cluster->mode);
-+		if (ret < 0 && ret != -EINVAL) {
-+			dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n", ret);
-+			return ret;
-+		}
- 	}
- 
- 	num_cores = of_get_available_child_count(np);
--	if (num_cores != 2) {
--		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
-+	if (num_cores != 2 && !data->is_single_core) {
-+		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
-+			num_cores);
-+		return -ENODEV;
-+	}
-+
-+	if (num_cores != 1 && data->is_single_core) {
-+		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
- 			num_cores);
- 		return -ENODEV;
- 	}
-@@ -1760,18 +1780,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
- 	.tcm_is_double = false,
- 	.tcm_ecc_autoinit = false,
- 	.single_cpu_mode = false,
-+	.is_single_core = false,
- };
- 
- static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
- 	.tcm_is_double = true,
- 	.tcm_ecc_autoinit = true,
- 	.single_cpu_mode = false,
-+	.is_single_core = false,
- };
- 
- static const struct k3_r5_soc_data am64_soc_data = {
- 	.tcm_is_double = true,
- 	.tcm_ecc_autoinit = true,
- 	.single_cpu_mode = true,
-+	.is_single_core = false,
-+};
-+
-+static const struct k3_r5_soc_data am62_soc_data = {
-+	.tcm_is_double = false,
-+	.tcm_ecc_autoinit = true,
-+	.single_cpu_mode = false,
-+	.is_single_core = true,
- };
- 
- static const struct of_device_id k3_r5_of_match[] = {
-@@ -1779,6 +1809,7 @@ static const struct of_device_id k3_r5_of_match[] = {
- 	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
- 	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
- 	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
-+	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
- 	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
- 	{ /* sentinel */ },
- };
--- 
-2.17.1
+Regards,
+Bjorn
 
+> Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 1cd4815a6dd1..91f82886add9 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/idr.h>
+>  #include <linux/elf.h>
+>  #include <linux/crc32.h>
+> +#include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/virtio_ids.h>
+>  #include <linux/virtio_ring.h>
+> @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
+>  #ifdef CONFIG_OF
+>  struct rproc *rproc_get_by_phandle(phandle phandle)
+>  {
+> +	struct platform_device *cluster_pdev;
+>  	struct rproc *rproc = NULL, *r;
+> +	struct device_driver *driver;
+>  	struct device_node *np;
+>  
+>  	np = of_find_node_by_phandle(phandle);
+> @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+>  	list_for_each_entry_rcu(r, &rproc_list, node) {
+>  		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+>  			/* prevent underlying implementation from being removed */
+> -			if (!try_module_get(r->dev.parent->driver->owner)) {
+> +
+> +			/*
+> +			 * If the remoteproc's parent has a driver, the
+> +			 * remoteproc is not part of a cluster and we can use
+> +			 * that driver.
+> +			 */
+> +			driver = r->dev.parent->driver;
+> +
+> +			/*
+> +			 * If the remoteproc's parent does not have a driver,
+> +			 * look for the driver associated with the cluster.
+> +			 */
+> +			if (!driver) {
+> +				cluster_pdev = of_find_device_by_node(np->parent);
+> +				if (!cluster_pdev) {
+> +					dev_err(&r->dev, "can't get parent\n");
+> +					break;
+> +				}
+> +
+> +				driver = cluster_pdev->dev.driver;
+> +				put_device(&cluster_pdev->dev);
+> +			}
+> +
+> +			if (!try_module_get(driver->owner)) {
+>  				dev_err(&r->dev, "can't get owner\n");
+>  				break;
+>  			}
+> -- 
+> 2.25.1
+> 
