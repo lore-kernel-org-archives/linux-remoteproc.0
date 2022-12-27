@@ -2,157 +2,275 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D80C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 15:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF80C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 15:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229987AbiL0PLg (ORCPT
+        id S229762AbiL0PdI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Dec 2022 10:11:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34042 "EHLO
+        Tue, 27 Dec 2022 10:33:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231289AbiL0PLf (ORCPT
+        with ESMTP id S229608AbiL0PdH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 27 Dec 2022 10:11:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C37ACE60;
-        Tue, 27 Dec 2022 07:11:34 -0800 (PST)
+        Tue, 27 Dec 2022 10:33:07 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB21E1145;
+        Tue, 27 Dec 2022 07:32:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 571A16119F;
-        Tue, 27 Dec 2022 15:11:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BFB9C433F0;
-        Tue, 27 Dec 2022 15:11:33 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6010EB80E8C;
+        Tue, 27 Dec 2022 15:32:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60393C433EF;
+        Tue, 27 Dec 2022 15:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672153893;
-        bh=DHLRnGECifdavsvYK5VFXIuHRMp7XChg8MchINFR/Nw=;
+        s=k20201202; t=1672155175;
+        bh=GdfI/dQPksQtroVHatnB3fKUKa3tqu+G4L1ZVgykvRQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k0cs3nNgJMh+lStCiVtmD4AqgBJSb18dB3d8fI0vne6+tEKmcZ+cuB2rKUbE5goJB
-         puXU7zd3URnsyN8r1QwMr+Ceh8M+4R2bk1OJEyFEuvE/gd4EFgIwzAD3BuOCvF1RC3
-         Jfeik2yits8prTqa09xl+ZTS/eqdzXkekOD0xZyyuB7b9h/rAa/d2V48Y1dolHEHes
-         wBq/kaeXKoSXqedq1uVSjuq3RWzb/n2d3gO1ShqYo1bZeykuEYouE/t0fv4uLD1Q8e
-         OGosodtuPPM7bvWspAuqw6FozNWUCdu6sY5eUV/BItrkfqtbVvQ8o76AuIRKw4jOMB
-         FOnx3JI8zakmg==
-Date:   Tue, 27 Dec 2022 09:11:31 -0600
+        b=PNeC7dCbThs/50J9lFfihjVvVH4mIdXs+K2DhiDo8nxsHUVjbyTvpSMmfuaDNxHwF
+         xHBH9fC0x4iwZ+1uNStDQWdmICrNSokDhMY8Ce78eeoo70qf2tRhYLLZ1QHR/2Mj1A
+         Q0r4gKJV5OTFMMBsgQItC2JkOuNdXkvBcm4dF/bm8RMEw3fsxjZW2jYtRO6cpAmf5q
+         sSyIMWHEXbAifHlwO7KEHjAKZe6YgJmlD7BnqWrybEdZkIGnerBzYtnVJtqnIBtLGG
+         R7JO0X8m9NJrrRaeVNTUl1yiljzP7s6KLr+GDYWDhoJnNMyegk57i/cx+HFuM+XOe2
+         x2RBjQZRatjSg==
+Date:   Tue, 27 Dec 2022 09:32:52 -0600
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ben.levinsky@xilinx.com
-Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
-Message-ID: <20221227151131.hkezt4j2om5volnu@builder.lan>
-References: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+        swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: Re: [PATCH V4 1/3] rpmsg: core: Add signal API support
+Message-ID: <20221227153252.ufenietw5wgsk7kj@builder.lan>
+References: <1670418258-11502-1-git-send-email-quic_sarannya@quicinc.com>
+ <1670418258-11502-2-git-send-email-quic_sarannya@quicinc.com>
+ <6ba10328-bc48-c953-49e7-29e079fb6406@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
+In-Reply-To: <6ba10328-bc48-c953-49e7-29e079fb6406@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
-> Multi-cluster remoteproc designs typically have the following DT
-> declaration:
+On Wed, Dec 21, 2022 at 05:12:22PM +0100, Arnaud POULIQUEN wrote:
+> Hello,
 > 
-> 	remoteproc_cluster {
-> 		compatible = "soc,remoteproc-cluster";
+> On 12/7/22 14:04, Sarannya S wrote:
+> > Some transports like Glink support the state notifications between
+> > clients using flow control signals similar to serial protocol signals.
+> > Local glink client drivers can send and receive flow control status
+> > to glink clients running on remote processors.
+> > 
+> > Add APIs to support sending and receiving of flow control status by
+> > rpmsg clients.
+> > 
+> > Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> > Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+> > ---
+> >  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
+> >  drivers/rpmsg/rpmsg_internal.h |  2 ++
+> >  include/linux/rpmsg.h          | 15 +++++++++++++++
+> >  3 files changed, 38 insertions(+)
+> > 
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index d6dde00e..77aeba0 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -331,6 +331,25 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> >  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+> >  
+> >  /**
+> > + * rpmsg_set_flow_control() - sets/clears serial flow control signals
+> > + * @ept:	the rpmsg endpoint
+> > + * @enable:	enable or disable serial flow control
 > 
->                 core0: core0 {
-> 			compatible = "soc,remoteproc-core"
->                         memory-region;
->                         sram;
->                 };
-> 
->                 core1: core1 {
-> 			compatible = "soc,remoteproc-core"
->                         memory-region;
->                         sram;
->                 }
->         };
-> 
-> A driver exists for the cluster rather than the individual cores
-> themselves so that operation mode and HW specific configurations
-> applicable to the cluster can be made.
-> 
-> Because the driver exists at the cluster level and not the individual
-> core level, function rproc_get_by_phandle() fails to return the
-> remoteproc associated with the phandled it is called for.
-> 
-> This patch enhances rproc_get_by_phandle() by looking for the cluster's
-> driver when the driver for the immediate remoteproc's parent is not
-> found.
+> What does it mean "enable and disable serial flow control"?
+> Do you speak about the flow control feature or the data flow itself?
 > 
 
-Can you please help me understand why zynqmp_r5_remoteproc_probe()
-invokes devm_of_platform_populate() to create platform_device instances
-for the clusters?
+Good point, the purpose of the boolean is to "request throttling of the
+incoming data flow".
 
-Why can't the platform_device for the cluster be used as parent for both
-remoteprocs and then the driver deal with the subnodes within the
-driver?
+> I guess it is the activation/deactivation of the data stream
+> regarding Bjorn's comment in V1:
+> 
+> "I therefore asked Deepak to change it so the rpmsg api would contain a
+> single "pause incoming data"/"resume incoming data" - given that this is
+> a wish that we've seen in a number of discussions."
+> 
+> For me this is the software flow control:
+> https://en.wikipedia.org/wiki/Software_flow_control
+> 
+> I would suggest not limiting the control only to activation/deactivation but to
+> offer more flexibility in terms of services. replace the boolean by a bitmap
+> would allow to extend it later.
+> 
+> For instance by introducing 2 definitions:
+> 
+> /* RPMSG pause transmission request:
+>  * sent to the remote endpoint to request to suspend its transmission */
+>  */
+> #define RPMSG_FC_PT_REQ  (1 << 0)
+
+enable = true
+
+> 
+> /* RPMSG resume transmission request
+>  * sent to the remote endpoint to allow to resume its transmission
+>  */
+> #define RPMSG_FC_RT_REQ  (1 << 1)
+> 
+
+enable = false
+
+> Then we could add (in a next step) some other flow controls such as
+> /* RPMSG pause transmission information
+>  * Sent to the remote endpoint to inform that no more data will be sent
+>  * until the reception of RPMSG_FC_RT_INFO
+>  */
+> #define RPMSG_FC_PT_INFO  (1 << 16)
+> #define RPMSG_FC_RT_INFO  (1 << 16)
+> 
+
+I presume you're looking for a usage pattern where the client would send
+this to the remote and then the flow control mechanism would be used for
+the remote end to request more data.
+
+I find Deepak's (adjusted) proposal to be generic and to the point, and
+your proposal builds unnecessary "flexibility" into this same mechanism.
+
+If you have a rpmsg protocol where the client is expected to sit
+waiting, and upon a request from the remote side send another piece of
+data, why don't you just build this into the application protocol?  That
+way your application would work over both transports with and without
+flow control...
+
+
+Perhaps I'm misunderstanding what you're asking for?
 
 Regards,
 Bjorn
 
-> Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
+> > + * @dst:	destination address of the endpoint
 > 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 1cd4815a6dd1..91f82886add9 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -33,6 +33,7 @@
->  #include <linux/idr.h>
->  #include <linux/elf.h>
->  #include <linux/crc32.h>
-> +#include <linux/of_platform.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/virtio_ids.h>
->  #include <linux/virtio_ring.h>
-> @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
->  #ifdef CONFIG_OF
->  struct rproc *rproc_get_by_phandle(phandle phandle)
->  {
-> +	struct platform_device *cluster_pdev;
->  	struct rproc *rproc = NULL, *r;
-> +	struct device_driver *driver;
->  	struct device_node *np;
->  
->  	np = of_find_node_by_phandle(phandle);
-> @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
->  	list_for_each_entry_rcu(r, &rproc_list, node) {
->  		if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
->  			/* prevent underlying implementation from being removed */
-> -			if (!try_module_get(r->dev.parent->driver->owner)) {
-> +
-> +			/*
-> +			 * If the remoteproc's parent has a driver, the
-> +			 * remoteproc is not part of a cluster and we can use
-> +			 * that driver.
-> +			 */
-> +			driver = r->dev.parent->driver;
-> +
-> +			/*
-> +			 * If the remoteproc's parent does not have a driver,
-> +			 * look for the driver associated with the cluster.
-> +			 */
-> +			if (!driver) {
-> +				cluster_pdev = of_find_device_by_node(np->parent);
-> +				if (!cluster_pdev) {
-> +					dev_err(&r->dev, "can't get parent\n");
-> +					break;
-> +				}
-> +
-> +				driver = cluster_pdev->dev.driver;
-> +				put_device(&cluster_pdev->dev);
-> +			}
-> +
-> +			if (!try_module_get(driver->owner)) {
->  				dev_err(&r->dev, "can't get owner\n");
->  				break;
->  			}
-> -- 
-> 2.25.1
+> Thanks to have integrated this in your patch!
 > 
+> Regards,
+> Arnaud
+> 
+> > + *
+> > + * Return: 0 on success and an appropriate error value on failure.
+> > + */
+> > +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
+> > +{
+> > +	if (WARN_ON(!ept))
+> > +		return -EINVAL;
+> > +	if (!ept->ops->set_flow_control)
+> > +		return -ENXIO;
+> > +
+> > +	return ept->ops->set_flow_control(ept, enable, dst);
+> > +}
+> > +EXPORT_SYMBOL(rpmsg_set_flow_control);
+> > +
+> > +/**
+> >   * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
+> >   * @ept: the rpmsg endpoint
+> >   *
+> > @@ -539,6 +558,8 @@ static int rpmsg_dev_probe(struct device *dev)
+> >  
+> >  		rpdev->ept = ept;
+> >  		rpdev->src = ept->addr;
+> > +
+> > +		ept->flow_cb = rpdrv->flowcontrol;
+> >  	}
+> >  
+> >  	err = rpdrv->probe(rpdev);
+> > diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> > index 39b646d..b6efd3e 100644
+> > --- a/drivers/rpmsg/rpmsg_internal.h
+> > +++ b/drivers/rpmsg/rpmsg_internal.h
+> > @@ -55,6 +55,7 @@ struct rpmsg_device_ops {
+> >   * @trysendto:		see @rpmsg_trysendto(), optional
+> >   * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+> >   * @poll:		see @rpmsg_poll(), optional
+> > + * @set_flow_control:	see @rpmsg_set_flow_control(), optional
+> >   * @get_mtu:		see @rpmsg_get_mtu(), optional
+> >   *
+> >   * Indirection table for the operations that a rpmsg backend should implement.
+> > @@ -75,6 +76,7 @@ struct rpmsg_endpoint_ops {
+> >  			     void *data, int len);
+> >  	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+> >  			     poll_table *wait);
+> > +	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool enable, u32 dst);
+> >  	ssize_t (*get_mtu)(struct rpmsg_endpoint *ept);
+> >  };
+> >  
+> > diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+> > index 523c98b..a0e9d38 100644
+> > --- a/include/linux/rpmsg.h
+> > +++ b/include/linux/rpmsg.h
+> > @@ -64,12 +64,14 @@ struct rpmsg_device {
+> >  };
+> >  
+> >  typedef int (*rpmsg_rx_cb_t)(struct rpmsg_device *, void *, int, void *, u32);
+> > +typedef int (*rpmsg_flowcontrol_cb_t)(struct rpmsg_device *, void *, bool);
+> >  
+> >  /**
+> >   * struct rpmsg_endpoint - binds a local rpmsg address to its user
+> >   * @rpdev: rpmsg channel device
+> >   * @refcount: when this drops to zero, the ept is deallocated
+> >   * @cb: rx callback handler
+> > + * @flow_cb: remote flow control callback handler
+> >   * @cb_lock: must be taken before accessing/changing @cb
+> >   * @addr: local rpmsg address
+> >   * @priv: private data for the driver's use
+> > @@ -92,6 +94,7 @@ struct rpmsg_endpoint {
+> >  	struct rpmsg_device *rpdev;
+> >  	struct kref refcount;
+> >  	rpmsg_rx_cb_t cb;
+> > +	rpmsg_flowcontrol_cb_t flow_cb;
+> >  	struct mutex cb_lock;
+> >  	u32 addr;
+> >  	void *priv;
+> > @@ -106,6 +109,7 @@ struct rpmsg_endpoint {
+> >   * @probe: invoked when a matching rpmsg channel (i.e. device) is found
+> >   * @remove: invoked when the rpmsg channel is removed
+> >   * @callback: invoked when an inbound message is received on the channel
+> > + * @flowcontrol: invoked when remote side flow control status is received
+> >   */
+> >  struct rpmsg_driver {
+> >  	struct device_driver drv;
+> > @@ -113,6 +117,7 @@ struct rpmsg_driver {
+> >  	int (*probe)(struct rpmsg_device *dev);
+> >  	void (*remove)(struct rpmsg_device *dev);
+> >  	int (*callback)(struct rpmsg_device *, void *, int, void *, u32);
+> > +	int (*flowcontrol)(struct rpmsg_device *, void *, bool);
+> >  };
+> >  
+> >  static inline u16 rpmsg16_to_cpu(struct rpmsg_device *rpdev, __rpmsg16 val)
+> > @@ -192,6 +197,8 @@ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+> >  
+> >  ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+> >  
+> > +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst);
+> > +
+> >  #else
+> >  
+> >  static inline int rpmsg_register_device_override(struct rpmsg_device *rpdev,
+> > @@ -316,6 +323,14 @@ static inline ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+> >  	return -ENXIO;
+> >  }
+> >  
+> > +static inline int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
+> > +{
+> > +	/* This shouldn't be possible */
+> > +	WARN_ON(1);
+> > +
+> > +	return -ENXIO;
+> > +}
+> > +
+> >  #endif /* IS_ENABLED(CONFIG_RPMSG) */
+> >  
+> >  /* use a macro to avoid include chaining to get THIS_MODULE */
