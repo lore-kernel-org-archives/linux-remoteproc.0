@@ -2,48 +2,51 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C98BC4708D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 18:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34408C4708E
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 18:18:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233337AbiL1SSy (ORCPT
+        id S233830AbiL1SS4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Dec 2022 13:18:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55264 "EHLO
+        Wed, 28 Dec 2022 13:18:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233445AbiL1SSl (ORCPT
+        with ESMTP id S233455AbiL1SSl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 28 Dec 2022 13:18:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9582C13D12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Dec 2022 10:18:40 -0800 (PST)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B47817423;
+        Wed, 28 Dec 2022 10:18:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4626BB818BB
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Dec 2022 18:18:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CAB1C433F1;
-        Wed, 28 Dec 2022 18:18:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB18461582;
+        Wed, 28 Dec 2022 18:18:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302DCC433D2;
+        Wed, 28 Dec 2022 18:18:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672251518;
-        bh=o8+mPQjNYaGdZ9v/dWvFWoFoJ4Nbi0pZN96QcnkpXAo=;
+        s=k20201202; t=1672251520;
+        bh=o+/1jupD/MomdUxX2T76IB/QJVChdHctQWcYzha4Knw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jJ6mP0bd2fEOh/kzBIrdUv6YLoaGUddJ/T7MRp8aAhJKBB0IkCwXStE/ZzlD2MR4/
-         Wmq+faHyqkXy3uhfIflQi2BjGC9jysoVLVwqheC/8tT3jHDvvTGtScE/83gASEpLWq
-         XbW3mu9pvVlsXRQYzc6tRFYDJS0FHciJNd++A0MS7WuczIZ/lL2U/furoQYvXftGam
-         IekZL30DMaePLUwN5No6NNFFr6lP21zoai8zz1hpQpkdC3wsHhnlxYvPd04U7dJtF+
-         VjnNcny8msfpFOoE2W0fg4Rmv0o1lDnqipEzTS8yHLchrrsh9tLn1UmEar7r8m60J0
-         nXdSC+JXGUzHA==
+        b=phcYOiX8Vf6q1BpIZy/u09BRBL0fi9zmDBP8eDu3tq9GV1/01/iqCCjfJjo4QTpiJ
+         i9GNGxQXUJ4sFKi0u50gQ5Qkp/C53her9YdDGuGOAKTyCUAgtlWXRrmXDL66dIViIP
+         1JJOqjs8zj8gbJECJFQkwc30ymIGPS0rLct8ks7gdsXzETrpFP+Z7DMLud5fjgWwyJ
+         wvg3HlP6aFhgmLaQ2ctNx0r4FmrKmqmJ2Bv6XH74dbeXTxY0VKtz1BmVbdHWniiz4R
+         wEZkqoGUz1xYT7HuKGHpfUNNZJG4xCzUQELVN0QKCdgEux9woGZU6j1Se22dnr2Xfv
+         w0oeAXkpkMMZw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     cuigaosheng1@huawei.com, mathieu.poirier@linaro.org,
+To:     quic_gokukris@quicinc.com, mathieu.poirier@linaro.org,
         Bjorn Andersson <andersson@kernel.org>,
         konrad.dybcio@somainline.org, agross@kernel.org
-Cc:     linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: wcnss: remove unused qcom_iris_driver declaration
-Date:   Wed, 28 Dec 2022 12:18:27 -0600
-Message-Id: <167225151224.950465.1541214434488486569.b4-ty@kernel.org>
+Cc:     quic_tsoni@quicinc.com, quic_satyap@quicinc.com,
+        quic_eberman@quicinc.com, quic_gurus@quicinc.com,
+        linux-arm-msm@vger.kernel.org, quic_rjendra@quicinc.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v1 0/3] Handle coprocessor crash
+Date:   Wed, 28 Dec 2022 12:18:29 -0600
+Message-Id: <167225151228.950465.9671261925340567778.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220911090637.3208939-1-cuigaosheng1@huawei.com>
-References: <20220911090637.3208939-1-cuigaosheng1@huawei.com>
+In-Reply-To: <cover.1662995608.git.quic_gokukris@quicinc.com>
+References: <cover.1662995608.git.quic_gokukris@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -51,17 +54,24 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, 11 Sep 2022 17:06:37 +0800, Gaosheng Cui wrote:
-> qcom_iris_driver has been removed since
-> commit 1fcef985c8bd ("remoteproc: qcom: wcnss: Fix race
-> with iris probe"), so remove it.
+On Tue, 13 Sep 2022 11:35:41 -0700, Gokul krishna Krishnakumar wrote:
+> Make the following changes in case of coprocessor crash:
+> 1. Send subdevice notifications before panic
+> 2. Do not report crash if SSR is disabled
+> 3. Avoid setting smem bit in case of crash
 > 
+> Gokul krishna Krishnakumar (3):
+>   remoteproc: qcom: q6v5: Send subdevice notifications before panic
+>   remoteproc: qcom: q6v5: Do not report crash if SSR is disabled
+>   remoteproc: qcom: q6v5: Avoid setting smem bit in case of crash
+>     shutdown
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] remoteproc: qcom: wcnss: remove unused qcom_iris_driver declaration
-      commit: b27aa4d87809b3d7ac5b792dd059108283044e3b
+[3/3] remoteproc: qcom: q6v5: Avoid setting smem bit in case of crash shutdown
+      commit: 3cc889eb83f59b5a6a869a685da11f79ffbb4e4d
 
 Best regards,
 -- 
