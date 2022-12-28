@@ -2,102 +2,194 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD74C3DA7D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 15:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B7EC4167B
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 16:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233464AbiL1PDz (ORCPT
+        id S233259AbiL1QYh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Dec 2022 10:03:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51564 "EHLO
+        Wed, 28 Dec 2022 11:24:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233465AbiL1PDw (ORCPT
+        with ESMTP id S234747AbiL1QX4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Dec 2022 10:03:52 -0500
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B0E1263D
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Dec 2022 07:03:52 -0800 (PST)
-Received: by mail-lj1-x233.google.com with SMTP id z7so11106162ljq.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Dec 2022 07:03:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SAbzxvN7k7Z+MqJtpUCy5OzE3SxNhCKQRAfcgxSuip4=;
-        b=fve/cbRfJt92/4S525YpOouK05jLG+FBs3Y6nuxqrBIKoi8ogCwVwpk3nFXM7zF0T+
-         YxTOD1O6syEva8FXpmEJ3KnlqAOqODDxgC7YGlqdwGL3W9pRMvhym7uIQC2BvNYegyJZ
-         81PDtib/pENDFyxS9G9VoIKANxeoi8xlLIgA6TJcosWu3PPhUpAlviIVITM0h/NDdC+c
-         cXLqPG6EchvCnJZ54toDlhivhf+Nu4wS+BXQgwQMKJBBlbeF8ezKhUNJijynx7bpUhHD
-         KQMA4Mj9yElhH/BTHyhJNidDs1ZMKwdNQ0VjQUZx1C/RrjBAzcnCjt5KrAcaYlCnVbQ1
-         2Y7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SAbzxvN7k7Z+MqJtpUCy5OzE3SxNhCKQRAfcgxSuip4=;
-        b=CAxovNPlL1aCLPSjnkqjVWS675epxWJ/wFBQqlsU6qAQ/cHxZpHayO57Mj4DjRBFsk
-         IpI03ZHfXrRnh15eH9/KwlQqvcBzQGNFGjrhb3PeZeSsWiucQvLZvsnUfPNP6HnEemlA
-         6x8z8vDvfzW6Op4JvJj8kdZueGPIzsXKVTViT9OucwA/DYzIf69WsXHABfNvvrnTqJka
-         HDK1thmoog3nrv4qBMjXlp4Y0eNw56GSBID/HPSRFBNjMBSY+/5Hubb+aqY7OEj17wyb
-         a/pldCjvG1q0k+mciAOaiPlJVDQaiZS7F+hqbP8kCOQthspVvMBFyKEclJ7JCmIOaPOv
-         pq2Q==
-X-Gm-Message-State: AFqh2krUsHU/D3Perza5FmuIBu0VQLUmCjCIA9F8y/WScc2sCC4CFGD1
-        wY2GJlCmgEiksAoHxcrBYbtmHA==
-X-Google-Smtp-Source: AMrXdXvsrrnyubkoIRIiOl73MBcjF0zDuUkzvwjCmhdDcM21TH3Nrtmj7W8mmeJ6UUuTMkXw3WvJfQ==
-X-Received: by 2002:a2e:8188:0:b0:27f:cc2b:7048 with SMTP id e8-20020a2e8188000000b0027fcc2b7048mr1291129ljg.13.1672239830263;
-        Wed, 28 Dec 2022 07:03:50 -0800 (PST)
-Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
-        by smtp.gmail.com with ESMTPSA id x10-20020a2e880a000000b002771057e0e5sm1948121ljh.76.2022.12.28.07.03.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Dec 2022 07:03:49 -0800 (PST)
-Message-ID: <f1d07761-9ead-7275-30f0-34a10f012dd8@linaro.org>
-Date:   Wed, 28 Dec 2022 16:03:48 +0100
+        Wed, 28 Dec 2022 11:23:56 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A56D2189;
+        Wed, 28 Dec 2022 08:20:45 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 83945B816F4;
+        Wed, 28 Dec 2022 16:20:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51644C433F0;
+        Wed, 28 Dec 2022 16:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672244443;
+        bh=n+AL8sJppicQ0AnwFa/E3rCM32uk82yPOrot2Ng0Yc0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T2vmrUTGqESNwoNT9N51PkG4DvFWQx4y3mrZ20VufCuy4/jQQ8q2di13kbhd2G77J
+         e0zTCPJEYuIRw1SMRqmL8kyQrmSHgzx40IrtrMlmEjLMedyNWFm1LDZ06eV5Cyw8bP
+         QYJUcSGjGTZlE7g99qM117n4iTIlFC7hq7scH42WtpQvaZ4xUkwsMhCxN08AjGN3tR
+         +O1YkzpRP1d5EjigucUS6u0rK4KWHBfFbBLIoeFvrOsaoJhpQTYTHRP9Q1N9ctuSO1
+         Z8pqpWHJYulompAbH3zQtRZShfMFVpGzo6tu5TA8Jxm08Si/xj0QAiy5AN00Lw1Boz
+         i/Dh8S7OOFNIA==
+Date:   Wed, 28 Dec 2022 10:20:40 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>
+Subject: Re: [PATCH v1 1/3] remoteproc: qcom: q6v5: Send subdevice
+ notifications before panic
+Message-ID: <20221228162040.m3ucsyau3s55rkfn@builder.lan>
+References: <cover.1662995608.git.quic_gokukris@quicinc.com>
+ <842a6b6307d26874959d29f2065aad544ff0b86c.1662995608.git.quic_gokukris@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v5 1/2] dt-bindings: remoteproc: ti: Add new compatible
- for AM62 SoC family
-Content-Language: en-US
-To:     Devarsh Thakkar <devarsht@ti.com>, andersson@kernel.org,
-        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com
-Cc:     hnagalla@ti.com, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
-        a-bhatia1@ti.com, j-luthra@ti.com
-References: <20221227145216.1524-1-devarsht@ti.com>
- <20221227145216.1524-2-devarsht@ti.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20221227145216.1524-2-devarsht@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <842a6b6307d26874959d29f2065aad544ff0b86c.1662995608.git.quic_gokukris@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 27/12/2022 15:52, Devarsh Thakkar wrote:
-> AM62 family of devices don't have a R5F cluster, instead
-> they have single core DM R5F.
-> Add new compatible string ti,am62-r5fss to support this scenario.
+On Mon, Sep 19, 2022 at 09:00:38AM -0700, Gokul krishna Krishnakumar wrote:
+
+Looking back, I don't think I gave you proper feedback on this feature.
+Sorry about that Gokul.
+
+> Subdevice notifications after a remoteproc has crashed are useful to any
+> clients that might want to preserve data pertaining to the driver after the
+> remoteproc crashed. Sending subdevice notifications before triggering a
+> kernel panic gives these drivers the time to do collect this information.
+
+The elephant in the room here is the call to panic(), this deserves more
+attention in the commit messages.
+
 > 
-> When this new compatible is used don't allow cluster-mode
-> property usage in device-tree as this implies that there
-> is no R5F cluster available and only single R5F core
-> is present.
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Change-Id: Id6e55fb038b70f54ff5854d2adff72b74b6a9570
+
+Please remember to remove your Gerrit Change-Id when posting to the
+list.
+
+> Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
 > ---
-> V2: Avoid acronyms, use "Device Manager" instead of "DM"
-> V3:
-> - Use separate if block for each compatible for ti,cluster-mode property
-> - Rearrange compatibles as per alphabatical order
-> V4: Place each enum in separate line in allOf
-> V5: No change (fixing typo in email address)
+>  drivers/remoteproc/qcom_q6v5.c | 31 +++++++++++++++++++++++++++++++
+>  drivers/remoteproc/qcom_q6v5.h |  2 ++
+>  2 files changed, 33 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index 497acfb..89f5384 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/soc/qcom/smem.h>
+>  #include <linux/soc/qcom/smem_state.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/delay.h>
+>  #include "qcom_common.h"
+>  #include "qcom_q6v5.h"
+>  
+> @@ -94,6 +95,29 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_q6v5_unprepare);
+>  
+> +static void qcom_q6v5_crash_handler_work(struct work_struct *work)
+> +{
+> +	struct qcom_q6v5 *q6v5 = container_of(work, struct qcom_q6v5, crash_handler);
+> +	struct rproc *rproc = q6v5->rproc;
+> +	struct rproc_subdev *subdev;
+> +
+> +	mutex_lock(&rproc->lock);
+> +
+> +	list_for_each_entry_reverse(subdev, &rproc->subdevs, node) {
+> +		if (subdev->stop)
+> +			subdev->stop(subdev, true);
+> +	}
+> +
+> +	mutex_unlock(&rproc->lock);
+> +
+> +	/*
+> +	 * Temporary workaround until ramdump userspace application calls
+> +	 * sync() and fclose() on attempting the dump.
+> +	 */
 
+I'm not able to see how this would happen, you only schedule_work() if
+rproc->recovery_disabled and the coredump generation will only happen if
+!rproc->recovery_disabled.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Also, the reason I can see for invoking panic() here would be to gather
+a full system coredump to do post mortem analysis of all systems
+involved. So why would you capture a coredump as well? (This needs to be
+documented clearly...)
 
-Best regards,
-Krzysztof
+> +	msleep(100);
+> +	panic("Panicking, remoteproc %s crashed\n", q6v5->rproc->name);
 
+As you might know, calling panic() is frowned upon. But I can see the
+benefit of being able to do full system post mortem analysis.
+
+I do however think that your patch indicates a shortcoming (to you) in
+the remoteproc_core's recovery logic. So please fix that shortcoming,
+rather than circumventing it in your driver.
+
+I.e. make it possible to get rproc_crash_handler_work() behave like you
+want it to, with a good motivation to why you want that.
+
+Regards,
+Bjorn
+
+> +}
+> +
+>  static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+>  {
+>  	struct qcom_q6v5 *q6v5 = data;
+> @@ -113,6 +137,9 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
+>  		dev_err(q6v5->dev, "watchdog without message\n");
+>  
+>  	q6v5->running = false;
+> +	if (q6v5->rproc->recovery_disabled)
+> +		schedule_work(&q6v5->crash_handler);
+> +
+>  	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
+>  
+>  	return IRQ_HANDLED;
+> @@ -134,6 +161,9 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>  		dev_err(q6v5->dev, "fatal error without message\n");
+>  
+>  	q6v5->running = false;
+> +	if (q6v5->rproc->recovery_disabled)
+> +		schedule_work(&q6v5->crash_handler);
+> +
+>  	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
+>  
+>  	return IRQ_HANDLED;
+> @@ -354,6 +384,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>  	if (IS_ERR(q6v5->path))
+>  		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
+>  				     "failed to acquire interconnect path\n");
+> +	INIT_WORK(&q6v5->crash_handler, qcom_q6v5_crash_handler_work);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 5a859c4..b1654be 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -29,6 +29,8 @@ struct qcom_q6v5 {
+>  	int handover_irq;
+>  	int stop_irq;
+>  
+> +	struct work_struct crash_handler;
+> +
+>  	bool handover_issued;
+>  
+>  	struct completion start_done;
+> -- 
+> 2.7.4
+> 
