@@ -2,125 +2,102 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B83E8C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 13:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD74C3DA7D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 15:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232883AbiL1Nd1 (ORCPT
+        id S233464AbiL1PDz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Dec 2022 08:33:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42146 "EHLO
+        Wed, 28 Dec 2022 10:03:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232965AbiL1NdH (ORCPT
+        with ESMTP id S233465AbiL1PDw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Dec 2022 08:33:07 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4950F5A7;
-        Wed, 28 Dec 2022 05:33:05 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BSDWoW8088719;
-        Wed, 28 Dec 2022 07:32:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1672234370;
-        bh=4YCOxMJnjSsz8u4Iw6/xtyCElou+fLA9tDITLKKOMqw=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=ShTRw6k8y1e0JYEvJc8bCoWCUysLdttyJ/GJTiuVktaT7vBS3/imG9pArdp7s0UdM
-         S+iEuZ8sCfyeOK13EHLcTAHcaFd/fi05HaEJM6MudEKugDFacWPX2OXeKHt4k3VeGd
-         yLxClkbTgw2LLMA/OZm0pBJYbF1Y3sJv/pXwM1NI=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BSDWoHa083769
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Dec 2022 07:32:50 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 28
- Dec 2022 07:32:49 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Wed, 28 Dec 2022 07:32:50 -0600
-Received: from [10.250.235.211] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BSDWhKb043709;
-        Wed, 28 Dec 2022 07:32:44 -0600
-Message-ID: <617decfc-bab6-2ba9-53de-c9a0462a2c2a@ti.com>
-Date:   Wed, 28 Dec 2022 19:02:43 +0530
+        Wed, 28 Dec 2022 10:03:52 -0500
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B0E1263D
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Dec 2022 07:03:52 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id z7so11106162ljq.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Dec 2022 07:03:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SAbzxvN7k7Z+MqJtpUCy5OzE3SxNhCKQRAfcgxSuip4=;
+        b=fve/cbRfJt92/4S525YpOouK05jLG+FBs3Y6nuxqrBIKoi8ogCwVwpk3nFXM7zF0T+
+         YxTOD1O6syEva8FXpmEJ3KnlqAOqODDxgC7YGlqdwGL3W9pRMvhym7uIQC2BvNYegyJZ
+         81PDtib/pENDFyxS9G9VoIKANxeoi8xlLIgA6TJcosWu3PPhUpAlviIVITM0h/NDdC+c
+         cXLqPG6EchvCnJZ54toDlhivhf+Nu4wS+BXQgwQMKJBBlbeF8ezKhUNJijynx7bpUhHD
+         KQMA4Mj9yElhH/BTHyhJNidDs1ZMKwdNQ0VjQUZx1C/RrjBAzcnCjt5KrAcaYlCnVbQ1
+         2Y7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SAbzxvN7k7Z+MqJtpUCy5OzE3SxNhCKQRAfcgxSuip4=;
+        b=CAxovNPlL1aCLPSjnkqjVWS675epxWJ/wFBQqlsU6qAQ/cHxZpHayO57Mj4DjRBFsk
+         IpI03ZHfXrRnh15eH9/KwlQqvcBzQGNFGjrhb3PeZeSsWiucQvLZvsnUfPNP6HnEemlA
+         6x8z8vDvfzW6Op4JvJj8kdZueGPIzsXKVTViT9OucwA/DYzIf69WsXHABfNvvrnTqJka
+         HDK1thmoog3nrv4qBMjXlp4Y0eNw56GSBID/HPSRFBNjMBSY+/5Hubb+aqY7OEj17wyb
+         a/pldCjvG1q0k+mciAOaiPlJVDQaiZS7F+hqbP8kCOQthspVvMBFyKEclJ7JCmIOaPOv
+         pq2Q==
+X-Gm-Message-State: AFqh2krUsHU/D3Perza5FmuIBu0VQLUmCjCIA9F8y/WScc2sCC4CFGD1
+        wY2GJlCmgEiksAoHxcrBYbtmHA==
+X-Google-Smtp-Source: AMrXdXvsrrnyubkoIRIiOl73MBcjF0zDuUkzvwjCmhdDcM21TH3Nrtmj7W8mmeJ6UUuTMkXw3WvJfQ==
+X-Received: by 2002:a2e:8188:0:b0:27f:cc2b:7048 with SMTP id e8-20020a2e8188000000b0027fcc2b7048mr1291129ljg.13.1672239830263;
+        Wed, 28 Dec 2022 07:03:50 -0800 (PST)
+Received: from [192.168.0.20] (088156142067.dynamic-2-waw-k-3-2-0.vectranet.pl. [88.156.142.67])
+        by smtp.gmail.com with ESMTPSA id x10-20020a2e880a000000b002771057e0e5sm1948121ljh.76.2022.12.28.07.03.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Dec 2022 07:03:49 -0800 (PST)
+Message-ID: <f1d07761-9ead-7275-30f0-34a10f012dd8@linaro.org>
+Date:   Wed, 28 Dec 2022 16:03:48 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH 2/2] remoteproc: k3-c7x: Add support for C7xv DSP on AM62A
- SoC
+Subject: Re: [PATCH v5 1/2] dt-bindings: remoteproc: ti: Add new compatible
+ for AM62 SoC family
 Content-Language: en-US
-To:     Hari Nagalla <hnagalla@ti.com>, <andersson@kernel.org>,
-        <devicetree@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
-CC:     <praneeth@ti.com>, <nm@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <devarsht@ti.com>
-References: <20221228123655.15384-1-hnagalla@ti.com>
- <20221228123655.15384-3-hnagalla@ti.com>
-From:   "Raghavendra, Vignesh" <vigneshr@ti.com>
-In-Reply-To: <20221228123655.15384-3-hnagalla@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Devarsh Thakkar <devarsht@ti.com>, andersson@kernel.org,
+        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
+        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com
+Cc:     hnagalla@ti.com, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
+        a-bhatia1@ti.com, j-luthra@ti.com
+References: <20221227145216.1524-1-devarsht@ti.com>
+ <20221227145216.1524-2-devarsht@ti.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20221227145216.1524-2-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Hari,
-
-On 12/28/2022 6:06 PM, Hari Nagalla wrote:
-> Add support to the K3 DSP remoteproc driver to configure the C7xv
-> subsystem core on AM62A SoCs. The C7xv susbsytem is based on C71 DSP
-> with anlytics engine for deep leraning purposes. The remoteproc
-> handling for device management is similar to the C66/C71 DSPs on K3
-> J7 family SoCs, even though there are additional hardware accelerators
-> and IP updates to C7xv subsystem.
+On 27/12/2022 15:52, Devarsh Thakkar wrote:
+> AM62 family of devices don't have a R5F cluster, instead
+> they have single core DM R5F.
+> Add new compatible string ti,am62-r5fss to support this scenario.
 > 
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> When this new compatible is used don't allow cluster-mode
+> property usage in device-tree as this implies that there
+> is no R5F cluster available and only single R5F core
+> is present.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 > ---
+> V2: Avoid acronyms, use "Device Manager" instead of "DM"
+> V3:
+> - Use separate if block for each compatible for ti,cluster-mode property
+> - Rearrange compatibles as per alphabatical order
+> V4: Place each enum in separate line in allOf
+> V5: No change (fixing typo in email address)
 
-Signed-off-by of submitter should be at the last.
 
-I see original author of the patch is Jai here. So you need to amend the
-patch such that original author is set to Jai. His Signed-off-by should
-be the first and then yours.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index eb9c64f7b9b4..ec626a37fef6 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -870,6 +870,10 @@ static const struct k3_dsp_mem_data c71_mems[] = {
->  	{ .name = "l1dram", .dev_addr = 0xe00000 },
->  };
->  
-> +static const struct k3_dsp_mem_data c7xv_mems[] = {
-> +	{ .name = "l2sram", .dev_addr = 0x800000 },
-> +};
-> +
->  static const struct k3_dsp_dev_data c66_data = {
->  	.mems = c66_mems,
->  	.num_mems = ARRAY_SIZE(c66_mems),
-> @@ -884,10 +888,18 @@ static const struct k3_dsp_dev_data c71_data = {
->  	.uses_lreset = false,
->  };
->  
-> +static const struct k3_dsp_dev_data c7xv_data = {
-> +	.mems = c7xv_mems,
-> +	.num_mems = ARRAY_SIZE(c7xv_mems),
-> +	.boot_align_addr = SZ_2M,
-> +	.uses_lreset = false,
-> +};
-> +
->  static const struct of_device_id k3_dsp_of_match[] = {
->  	{ .compatible = "ti,j721e-c66-dsp", .data = &c66_data, },
->  	{ .compatible = "ti,j721e-c71-dsp", .data = &c71_data, },
->  	{ .compatible = "ti,j721s2-c71-dsp", .data = &c71_data, },
-> +	{ .compatible = "ti,am62a-c7xv-dsp", .data = &c7xv_data, },
->  	{ /* sentinel */ },
->  };
->  MODULE_DEVICE_TABLE(of, k3_dsp_of_match);
+Best regards,
+Krzysztof
+
