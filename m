@@ -2,47 +2,48 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EAECC4708E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE66C46467
 	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 18:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234195AbiL1STC (ORCPT
+        id S233083AbiL1STB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Dec 2022 13:19:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55308 "EHLO
+        Wed, 28 Dec 2022 13:19:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233814AbiL1SSr (ORCPT
+        with ESMTP id S233819AbiL1SSs (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Dec 2022 13:18:47 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBFE17423;
+        Wed, 28 Dec 2022 13:18:48 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5AA5175B4;
         Wed, 28 Dec 2022 10:18:46 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3BABD615A1;
-        Wed, 28 Dec 2022 18:18:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E197C433D2;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 66E6FB818B9;
         Wed, 28 Dec 2022 18:18:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA56C43396;
+        Wed, 28 Dec 2022 18:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672251525;
-        bh=aNKyAgWgpmtQpKcS0+jnYT2a9bIILcxM4UnC04+pZXI=;
+        s=k20201202; t=1672251524;
+        bh=mTgGNOz3lU8l1LaN8BP5RhWmlCmyOy9J4H3DcGvheHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UibUX7cDn32xH8apwdc6g8NESXE9kE4Pwzj3ZoXV5NV2LnveTOoLYH3yz8QYSkQFn
-         pZ6QDfXGgIMpn4BWFBQghnUhImBZp/fhVYbWARRBEFVSKbh8wjh7erKx4VIvbZzid5
-         9qk9lXB1i1Vs5przlx0hC1qnO2sxDUEQsSCXI58WkhaSlcMFkKdhJvFz3ufFstvb1W
-         2g9lTDw+OnGRYacy5AhYxj+lfEZED23860mJ9rrC+kUfUlGwRt6ma8Z/rVJD4sP0bd
-         804SLWGKzNukcMtukcozpQZZmEr9B91Bx3rwP3U6aIemMU//lGX62CW4YPqciJcc8F
-         3bvO6T+annYnQ==
+        b=lkgP/vVAEXVq+ZqAyXnoi2l27whpd54Vh6wscvvT0C4wZGrYoEy1thvScbzqzKi2e
+         gdE61hcV1T2y71h9uMCQ6IyrOBtAh4fIYVzh/GJvTymBrCIwBHL/kSbOEnXwbRw4ni
+         NR4KHdl5BcGEXepW1qE/Wc+qd/UVrjMxXepm0GDe6Gp2GlS3QgpjknmWXgxiUOYLVe
+         CeKLP4WqH67wc1UHpMZFErTYPb4AvC0mO2R1OJ2tuNI/fcHZ+Jqq4/NBombGbpYbms
+         2iKb6j8MMIS8Qkoka+/kXIcRcqn+HMCYLtlSa4mZ8GzbINU7mB1U1ie98lb0vDj7hD
+         DGfr+B5E6CeHg==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     ye.xingchen@zte.com.cn
-Cc:     linux-kernel@vger.kernel.org, ohad@wizery.com,
-        baolin.wang@linux.alibaba.com, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] hwspinlock: Use device_match_of_node()
-Date:   Wed, 28 Dec 2022 12:18:35 -0600
-Message-Id: <167225151235.950465.4943773240400997708.b4-ty@kernel.org>
+To:     linux-kernel@vger.kernel.org, wsa+renesas@sang-engineering.com
+Cc:     mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, konrad.dybcio@somainline.org,
+        agross@kernel.org
+Subject: Re: [PATCH] remoteproc: move from strlcpy with unused retval to strscpy
+Date:   Wed, 28 Dec 2022 12:18:33 -0600
+Message-Id: <167225151224.950465.17763103861662931886.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <202211251544369078587@zte.com.cn>
-References: <202211251544369078587@zte.com.cn>
+In-Reply-To: <20220818210059.7253-1-wsa+renesas@sang-engineering.com>
+References: <20220818210059.7253-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -50,17 +51,17 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 25 Nov 2022 15:44:36 +0800 (CST), ye.xingchen@zte.com.cn wrote:
-> From: ye xingchen <ye.xingchen@zte.com.cn>
-> 
-> Replace the open-code with device_match_of_node().
+On Thu, 18 Aug 2022 23:00:59 +0200, Wolfram Sang wrote:
+> Follow the advice of the below link and prefer 'strscpy' in this
+> subsystem. Conversion is 1:1 because the return value is not used.
+> Generated by a coccinelle script.
 > 
 > 
 
 Applied, thanks!
 
-[1/1] hwspinlock: Use device_match_of_node()
-      commit: ec5c05e5ac8bcb4a6bcd92970e15494a85400d34
+[1/1] remoteproc: move from strlcpy with unused retval to strscpy
+      commit: 1b0f00d3b1fc25525e1fcd8c5845e362f5688849
 
 Best regards,
 -- 
