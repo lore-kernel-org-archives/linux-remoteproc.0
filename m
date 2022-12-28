@@ -2,51 +2,48 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34408C4708E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 18:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A078C54EBC
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 18:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233830AbiL1SS4 (ORCPT
+        id S233227AbiL1SS6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Dec 2022 13:18:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55270 "EHLO
+        Wed, 28 Dec 2022 13:18:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233455AbiL1SSl (ORCPT
+        with ESMTP id S233763AbiL1SSo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Dec 2022 13:18:41 -0500
+        Wed, 28 Dec 2022 13:18:44 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B47817423;
-        Wed, 28 Dec 2022 10:18:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50098175B4;
+        Wed, 28 Dec 2022 10:18:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BB18461582;
-        Wed, 28 Dec 2022 18:18:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302DCC433D2;
-        Wed, 28 Dec 2022 18:18:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E1A466159C;
+        Wed, 28 Dec 2022 18:18:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB54CC43392;
+        Wed, 28 Dec 2022 18:18:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672251520;
-        bh=o+/1jupD/MomdUxX2T76IB/QJVChdHctQWcYzha4Knw=;
+        s=k20201202; t=1672251523;
+        bh=wQu6V4JXnEqzKaCGFiH6e/Jze+gbQn7pV1zFXUHplkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=phcYOiX8Vf6q1BpIZy/u09BRBL0fi9zmDBP8eDu3tq9GV1/01/iqCCjfJjo4QTpiJ
-         i9GNGxQXUJ4sFKi0u50gQ5Qkp/C53her9YdDGuGOAKTyCUAgtlWXRrmXDL66dIViIP
-         1JJOqjs8zj8gbJECJFQkwc30ymIGPS0rLct8ks7gdsXzETrpFP+Z7DMLud5fjgWwyJ
-         wvg3HlP6aFhgmLaQ2ctNx0r4FmrKmqmJ2Bv6XH74dbeXTxY0VKtz1BmVbdHWniiz4R
-         wEZkqoGUz1xYT7HuKGHpfUNNZJG4xCzUQELVN0QKCdgEux9woGZU6j1Se22dnr2Xfv
-         w0oeAXkpkMMZw==
+        b=LT5oq6Zm8kCP0xN2Fh7fvIzJHNmLVvSzL6kGqG6ZgShSvLC5CcNgSA/YuGZyhrPr8
+         8r9SxpU1oWKtqXs6/df6abcWGq3WTDYqrJFXt8uiznax9z8qWhvlFGJAkcqo5KeTMT
+         GNq6fTEePDHP0VaTovWYW11VlGj3Fs+9zIIb0VZebM+2RRP8eu4jGidENUdrG0+52z
+         2lfTq4ucNJcU88UMxHcVO1GVksAZsYW+O96HsrG8A9nbeCsKF+7qien3rA08KLY/ES
+         04sCBsb+ou4FQ0GYGJU9Nz0ApfXb1EnycmpQXlVlHf5ijynfKqS5V5L86j0iFcAjxX
+         ou7Iv+DVOcSxw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     quic_gokukris@quicinc.com, mathieu.poirier@linaro.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        konrad.dybcio@somainline.org, agross@kernel.org
-Cc:     quic_tsoni@quicinc.com, quic_satyap@quicinc.com,
-        quic_eberman@quicinc.com, quic_gurus@quicinc.com,
-        linux-arm-msm@vger.kernel.org, quic_rjendra@quicinc.com,
+To:     sireeshkodali1@gmail.com, ~postmarketos/upstreaming@lists.sr.ht,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v1 0/3] Handle coprocessor crash
-Date:   Wed, 28 Dec 2022 12:18:29 -0600
-Message-Id: <167225151228.950465.9671261925340567778.b4-ty@kernel.org>
+Cc:     dmitry.baryshkov@linaro.org, krzysztof.kozlowski+dt@linaro.org
+Subject: Re: [PATCH v4 0/2] remoteproc: qcom: Add support for MSM8953 ADSP
+Date:   Wed, 28 Dec 2022 12:18:32 -0600
+Message-Id: <167225151234.950465.1055044011318869402.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.37.1
-In-Reply-To: <cover.1662995608.git.quic_gokukris@quicinc.com>
-References: <cover.1662995608.git.quic_gokukris@quicinc.com>
+In-Reply-To: <20221013042749.104668-1-sireeshkodali1@gmail.com>
+References: <20221013042749.104668-1-sireeshkodali1@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -54,24 +51,23 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 13 Sep 2022 11:35:41 -0700, Gokul krishna Krishnakumar wrote:
-> Make the following changes in case of coprocessor crash:
-> 1. Send subdevice notifications before panic
-> 2. Do not report crash if SSR is disabled
-> 3. Avoid setting smem bit in case of crash
+On Thu, 13 Oct 2022 09:57:47 +0530, Sireesh Kodali wrote:
+> This patch series adds support for the ADSP PIL as found on the MSM8953
+> platform. It is a subset of a previous patch series.
 > 
-> Gokul krishna Krishnakumar (3):
->   remoteproc: qcom: q6v5: Send subdevice notifications before panic
->   remoteproc: qcom: q6v5: Do not report crash if SSR is disabled
->   remoteproc: qcom: q6v5: Avoid setting smem bit in case of crash
->     shutdown
+> Changes since v3:
+>  * Made ordering of compatible strings lexical in driver patch
+> 
+> Link to v3: https://lkml.org/lkml/2022/10/8/204
 > 
 > [...]
 
 Applied, thanks!
 
-[3/3] remoteproc: qcom: q6v5: Avoid setting smem bit in case of crash shutdown
-      commit: 3cc889eb83f59b5a6a869a685da11f79ffbb4e4d
+[1/2] remoteproc: qcom: pas: Add MSM8953 ADSP PIL support
+      commit: 1cfaa13b82c73977e8ddaca63c791203addc39c1
+[2/2] dt-bindings: remoteproc: qcom: adsp: Add ADSP on MSM8953
+      commit: 4a0510a46c4447ad3e807a1e4d6cf195fd604c1d
 
 Best regards,
 -- 
