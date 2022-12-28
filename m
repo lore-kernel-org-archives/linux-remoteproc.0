@@ -2,92 +2,108 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F522C4167B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 27 Dec 2022 18:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C418C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 07:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230004AbiL0SIj (ORCPT
+        id S230298AbiL1HLK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 27 Dec 2022 13:08:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55338 "EHLO
+        Wed, 28 Dec 2022 02:11:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230178AbiL0SIa (ORCPT
+        with ESMTP id S229668AbiL1HLK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 27 Dec 2022 13:08:30 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC5A6F22;
-        Tue, 27 Dec 2022 10:08:29 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 96888B8117A;
-        Tue, 27 Dec 2022 18:08:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 692BEC433EF;
-        Tue, 27 Dec 2022 18:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672164507;
-        bh=Dk53CrhfhfmbIX1qYUefjJ5yOfddXAGZ6MMYK4h0Pl0=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=A5d28eAKT2f1nkoZZh4cBix3FJwqkMpFyoyiC396ciF+D/iiGcLERFQRjY/Fpz4dd
-         ruTysSEEjHCdd+RAUsfnSVcUpWOGoU5fd7o8CkvmiuD48QWeP6/2PwfbI5POME4iM2
-         uwNt/Zytos5Kel4NDu4NP3YFXKM/Z9f9XkyPjsvBwR0CVSIlaXT5p2OXaDnIVf30Vn
-         Oc4QMD2nOIlm9vbfTtKxnBk6/Mb5co/BW+NaqD2tuzFBwoNpgrGsE9UAK/nlBnlTbW
-         eywu0qHvroThNMbm+osyVL0MlAexqbYEfTTanr57gT37ufeMRsrqmSAwetj7v8dbhL
-         lju8nxJk1ZHGA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-arm-msm@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        mani@kernel.org, devicetree@vger.kernel.org,
-        konrad.dybcio@linaro.org, agross@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski@linaro.org, mathieu.poirier@linaro.org
-Subject: Re: (subset) [PATCH v3 00/15] dt-bindings: remoteproc: qcom: split and reorganize PAS/PIL
-Date:   Tue, 27 Dec 2022 12:08:25 -0600
-Message-Id: <167216450118.745591.6304578385014026556.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
-References: <20221124184333.133911-1-krzysztof.kozlowski@linaro.org>
+        Wed, 28 Dec 2022 02:11:10 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65531E59
+        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Dec 2022 23:11:08 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id y8so14152893wrl.13
+        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Dec 2022 23:11:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BoevkCqm0C5XWODDQxiTKlCd9+LFUjRXCitTr69DptE=;
+        b=uquiVL9NoYOszkI6bFc7kKQ24G0gAWYpSyGFNLCpco3sci1FSm+lJmoz9FHastz+7W
+         U7kNSmACNWFQfonyKWbOpBg3Tfy7gkWkPTsSwzb1fpgPujs01WTbcl5S/0dkPz+xVYkb
+         9CG+UoORXOA9XBJLngiNVW1EOh9PdQoh7Y6KJ1xz83uDoTSkFF3fW/T5yEIr6w94vLg5
+         B3O6pAlokeHugK/VYHd+1c0vNzRyUn9dv4x6oq4xT6sx7Z6O7eecFAPZ1kTWxtrhdAHg
+         BPbDQEP8vMH86Z9BtSOySt/qyvLIT+ybMSKwepuzQnqfkvjuDOMp59YQkW/au/AAHqO4
+         7a/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BoevkCqm0C5XWODDQxiTKlCd9+LFUjRXCitTr69DptE=;
+        b=1Pa1LkoXgp80dKB61ikbF/YWN56WBzwChIB1y7gjCgVKqfTDLuWvT+2M1mkzDansyB
+         VSWPUxy2ATFsry41t8tPWWXwdmGI7E4ebl2rzcVC1Ucx/hnUlVOW6ihRpZWIwOfI1HW7
+         VHWQfmiNFghvdSUV08HtT7rZDSVoo6u1TbunrpGHOkX3fGsV9eb8EfAXDL6a8UoUK2a7
+         iHPNPTbc2rJjOmnglTysV/nHeruyiQcejpJDyaQl+mEd8CfOi5ERXUieaQwJDI7KimQc
+         bo85DOb4BQnaLvOZLNM0iJ78NaX31lrviUPBEDQbPcxz9Z43WWqmPZxxCcobRBfTaGfK
+         +QDQ==
+X-Gm-Message-State: AFqh2kosQMmcH+1gaDR6Bnim2tm5uLd2z1eX3rHwEL0XG2LhiBNiUcUq
+        2VdPIud+F9+Rwj1aEdBOsx7PEQ==
+X-Google-Smtp-Source: AMrXdXvbxe80HMxQjahLobDGkaTAMYMLKpxTJYeUbPE4yE/3SpjMedOXnc0L41IobhefT19PF0eBjg==
+X-Received: by 2002:adf:d4c7:0:b0:25d:6628:debc with SMTP id w7-20020adfd4c7000000b0025d6628debcmr15680346wrk.10.1672211466922;
+        Tue, 27 Dec 2022 23:11:06 -0800 (PST)
+Received: from [192.168.30.216] ([81.0.6.76])
+        by smtp.gmail.com with ESMTPSA id d12-20020a5d4f8c000000b002421a8f4fa6sm14107330wru.92.2022.12.27.23.11.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Dec 2022 23:11:06 -0800 (PST)
+Message-ID: <0acebf30-59a1-c336-1a44-19a74b4f244f@linaro.org>
+Date:   Wed, 28 Dec 2022 08:11:05 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH v2] remoteproc: virtio: Fix warning on bindings by
+ removing the of_match_table
+Content-Language: en-US
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+References: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
+From:   =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <philmd@linaro.org>
+In-Reply-To: <20221005081317.3411684-1-arnaud.pouliquen@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 24 Nov 2022 19:43:18 +0100, Krzysztof Kozlowski wrote:
-> Changes since v2
-> ================
-> 1. Allow only one or two clocks, after dropping clocks related to PIL binding.
-> 2. Drop if:then: for the clock and put it directly under properties
-> 3. Merge two if:then: clauses for setting interrupts.
-> 4. New patches: DTS fixes, qcom,adsp: drop resets and qcom,halt-regs,
->    qcom,qcs404-pas, qcom,sc7180-pas and last msm8996-slpi-pil fix.
+On 5/10/22 10:13, Arnaud Pouliquen wrote:
+> The checkpatch tool complains that "virtio,rproc" is not documented.
+> But it is not possible to probe the device "rproc-virtio" by declaring
+> it in the device tree. So documenting it in the bindings does not make
+> sense.
+
+Perhaps reworded a bit as:
+
+   "Since it is not possible to probe the device "rproc-virtio" by
+   declaring it in the device tree, documenting it in the bindings
+   does not make sense."
+
+Otherwise:
+Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org>
+
+> This commit solves the checkpatch warning by suppressing the useless
+> of_match_table.
 > 
-> [...]
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> ---
+> Updates vs previous revision:
+> - replace the "of_platform.h" include by "platform_device.h",
+> - replace "Fix-suggested-by" by "Suggested-by",
+> - add Rob's Reviewed-by.
+> ---
+>   drivers/remoteproc/remoteproc_virtio.c | 8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
 
-Applied, thanks!
-
-[05/15] dt-bindings: remoteproc: qcom,adsp: drop resets and qcom,halt-regs
-        commit: c97c4b480fcba2e6ebfacb3990d8b9092916d986
-[06/15] dt-bindings: remoteproc: qcom,adsp: split common part
-        commit: ea5a10ae295425c9f52577d91b2e45290291d242
-[07/15] dt-bindings: remoteproc: qcom,sm8350-pas: split into separate file
-        commit: 4e8b39a4d38ebb192ebff977d8a961fd97e7ce5f
-[08/15] dt-bindings: remoteproc: qcom,sm8150-pas: split into separate file
-        commit: db292776589f1fcbcf2fc6eaebe40a3a2abb4521
-[09/15] dt-bindings: remoteproc: qcom,sm6350-pas: split into separate file
-        commit: 41729b772c13105ee126ee6fe1bf2cd93c7bd258
-[10/15] dt-bindings: remoteproc: qcom,sc8280xp-pas: split into separate file
-        commit: 397c619cad8109f5904466ee76d5a1533d2f1590
-[11/15] dt-bindings: remoteproc: qcom,sc8180x-pas: split into separate file
-        commit: 4b4157518f1ab1276cd08dfab0e51b1409c22e40
-[12/15] dt-bindings: remoteproc: qcom,sdx55-pas: split into separate file
-        commit: b6f8410eab9270000b8b13b88bc038e9f27c2c45
-[13/15] dt-bindings: remoteproc: qcom,qcs404-pas: split into separate file
-        commit: 255d7a9581ed4506dddf993aad9dc27bff8296d1
-[14/15] dt-bindings: remoteproc: qcom,sc7180-pas: split into separate file
-        commit: 8bb92d6fd0b3788b4270eff547cb42cb64db1bff
-[15/15] dt-bindings: remoteproc: qcom,adsp: correct msm8996-slpi-pil clocks
-        commit: 569d3a7580bcbc463920b0d84ca5caf23e808f90
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
