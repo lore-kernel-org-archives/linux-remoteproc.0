@@ -2,85 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F6DC4708E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Dec 2022 13:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC563C4167B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Dec 2022 13:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbiL3NWn (ORCPT
+        id S231392AbiL3NZS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Dec 2022 08:22:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35324 "EHLO
+        Fri, 30 Dec 2022 08:25:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiL3NWm (ORCPT
+        with ESMTP id S229761AbiL3NZB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Dec 2022 08:22:42 -0500
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEC331A05B;
-        Fri, 30 Dec 2022 05:22:41 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDMSVq001704;
-        Fri, 30 Dec 2022 07:22:28 -0600
+        Fri, 30 Dec 2022 08:25:01 -0500
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 578BC1ADBB;
+        Fri, 30 Dec 2022 05:25:00 -0800 (PST)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDOsWw049180;
+        Fri, 30 Dec 2022 07:24:54 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1672406548;
-        bh=+D7sQawiDcYXeRgnc/n9jTpgspxAmapRIOe8XeRxsJs=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=DtU6UL0OVvTcjoc9tnrfYU4un1sX0onWzbiJQVm6E5wGJmBFdlSB1et9qJKOxQj6I
-         WP1A44LYtf+nWu1IUe28kC3RQQ23b+6dPsep4v7OBuaIppNxwQExHeVe/FKELAdWfx
-         gyLPnOHOZU1VbMwqXUiB5HlvwwWfw23Gm7Od917I=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BUDMSU7098933
+        s=ti-com-17Q1; t=1672406694;
+        bh=4q9ZMuP5XyaMk39sAjDAxTfJTHxsXiUyfKRXYVMkn3A=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=j2hVpZPOawIReqkqozeAMhsCkpWYq/2ymyA5Mj5zExwIPjhirpJYN4UbCr5V6l6Wu
+         86wt6GGilNKhpGpe4aMzwulDiL/RzdhIyxMMMmP1rK/c6Dzrv78PaIyQCyYiVak9d+
+         W5a6upLiQO5/QjIEgzQO4A+lrb/MKSY8jPqOsgf4=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BUDOsxb042916
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Dec 2022 07:22:28 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 30 Dec 2022 07:24:54 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 30
- Dec 2022 07:22:28 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2022 07:24:54 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 30 Dec 2022 07:22:28 -0600
-Received: from [10.249.48.175] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDMSAE018844;
-        Fri, 30 Dec 2022 07:22:28 -0600
-Message-ID: <8b954442-40cd-1b2a-3682-248496e38462@ti.com>
-Date:   Fri, 30 Dec 2022 07:22:28 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH 2/2] remoteproc: k3-c7x: Add support for C7xv DSP on AM62A
- SoC
-Content-Language: en-US
-To:     "Raghavendra, Vignesh" <vigneshr@ti.com>, <andersson@kernel.org>,
-        <devicetree@vger.kernel.org>, <mathieu.poirier@linaro.org>,
-        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
-CC:     <praneeth@ti.com>, <nm@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <devarsht@ti.com>
-References: <20221228123655.15384-1-hnagalla@ti.com>
- <20221228123655.15384-3-hnagalla@ti.com>
- <617decfc-bab6-2ba9-53de-c9a0462a2c2a@ti.com>
+ Frontend Transport; Fri, 30 Dec 2022 07:24:54 -0600
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDOsmp044619;
+        Fri, 30 Dec 2022 07:24:54 -0600
 From:   Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <617decfc-bab6-2ba9-53de-c9a0462a2c2a@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
+        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
+        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
+CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <devarsht@ti.com>
+Subject: [PATCH v2 1/2] dt-bindings: remoteproc: k3-dsp: update bindings for AM62A SoCs
+Date:   Fri, 30 Dec 2022 07:24:52 -0600
+Message-ID: <20221230132453.32022-2-hnagalla@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20221230132453.32022-1-hnagalla@ti.com>
+References: <20221230132453.32022-1-hnagalla@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/28/22 07:32, Raghavendra, Vignesh wrote:
->> with anlytics engine for deep leraning purposes. The remoteproc
->> handling for device management is similar to the C66/C71 DSPs on K3
->> J7 family SoCs, even though there are additional hardware accelerators
->> and IP updates to C7xv subsystem.
->>
->> Signed-off-by: Hari Nagalla<hnagalla@ti.com>
->> Signed-off-by: Jai Luthra<j-luthra@ti.com>
->> ---
-> Signed-off-by of submitter should be at the last.
-> 
-> I see original author of the patch is Jai here. So you need to amend the
-> patch such that original author is set to Jai. His Signed-off-by should
-> be the first and then yours.
-> 
-Thanks for pointing it out. Fixed, sending v2 with the corrections.
+The TI AM62A SoCs have a C7xv DSP and Analytics engine for deep
+learning purposes. The DSP part is similar to the C71x DSP found on
+K3 J7 SoCs, but additional hardware accelerators and IP are added to
+the subsystem for deep learning.
+
+Compatible info is updated to match AM62A SoCs.
+
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+---
+V2: Fix indentation and review comments.
+---
+ .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml        | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+index cedbc5efdc56..f16e90380df1 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+@@ -31,10 +31,12 @@ allOf:
+ properties:
+   compatible:
+     enum:
++      - ti,am62a-c7xv-dsp
+       - ti,j721e-c66-dsp
+       - ti,j721e-c71-dsp
+       - ti,j721s2-c71-dsp
+     description:
++      Use "ti,am62a-c7xv-dsp" for AM62A Deep learning DSPs on K3 AM62A SoCs
+       Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
+       Use "ti,j721e-c71-dsp" for C71x DSPs on K3 J721E SoCs
+       Use "ti,j721s2-c71-dsp" for C71x DSPs on K3 J721S2 SoCs
+@@ -109,6 +111,7 @@ else:
+     properties:
+       compatible:
+         enum:
++          - ti,am62a-c7xv-dsp
+           - ti,j721e-c71-dsp
+           - ti,j721s2-c71-dsp
+   then:
+-- 
+2.17.1
+
