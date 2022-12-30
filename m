@@ -2,66 +2,65 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE3FC4167B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Dec 2022 13:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F6DC4708E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Dec 2022 13:22:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231439AbiL3NVe (ORCPT
+        id S229895AbiL3NWn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 30 Dec 2022 08:21:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34814 "EHLO
+        Fri, 30 Dec 2022 08:22:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229505AbiL3NVe (ORCPT
+        with ESMTP id S229456AbiL3NWm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 30 Dec 2022 08:21:34 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA641A05B;
-        Fri, 30 Dec 2022 05:21:32 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDLIq2048320;
-        Fri, 30 Dec 2022 07:21:18 -0600
+        Fri, 30 Dec 2022 08:22:42 -0500
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEC331A05B;
+        Fri, 30 Dec 2022 05:22:41 -0800 (PST)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDMSVq001704;
+        Fri, 30 Dec 2022 07:22:28 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1672406478;
-        bh=dgtWKiypkfZyZIMMgNnZ1rCIMvsBKWgzAMtTZGyqJDk=;
+        s=ti-com-17Q1; t=1672406548;
+        bh=+D7sQawiDcYXeRgnc/n9jTpgspxAmapRIOe8XeRxsJs=;
         h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=HvaHtmfz5BgNpQkmjKlxkohl6ShTXsWaahJ7uP+LOgwdiiTPIqDEa7xdM8DR6UqNO
-         lDiOoyBrki4D54sCEZTFgUX6QVKJH8yLEi1XdYNM/V0bWjkUlh6UaOn1+UuS9mc199
-         2GODsgjbazU/O4BYeyZcEAEOBupPUly9Yoncb8JM=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BUDLIxO011205
+        b=DtU6UL0OVvTcjoc9tnrfYU4un1sX0onWzbiJQVm6E5wGJmBFdlSB1et9qJKOxQj6I
+         WP1A44LYtf+nWu1IUe28kC3RQQ23b+6dPsep4v7OBuaIppNxwQExHeVe/FKELAdWfx
+         gyLPnOHOZU1VbMwqXUiB5HlvwwWfw23Gm7Od917I=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BUDMSU7098933
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Dec 2022 07:21:18 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 30 Dec 2022 07:22:28 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 30
- Dec 2022 07:21:18 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2022 07:22:28 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 30 Dec 2022 07:21:17 -0600
-Received: from [10.249.48.175] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDLHft130087;
-        Fri, 30 Dec 2022 07:21:17 -0600
-Message-ID: <b746fd70-95eb-307e-0f95-28d009d95f85@ti.com>
-Date:   Fri, 30 Dec 2022 07:21:17 -0600
+ Frontend Transport; Fri, 30 Dec 2022 07:22:28 -0600
+Received: from [10.249.48.175] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDMSAE018844;
+        Fri, 30 Dec 2022 07:22:28 -0600
+Message-ID: <8b954442-40cd-1b2a-3682-248496e38462@ti.com>
+Date:   Fri, 30 Dec 2022 07:22:28 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: k3-dsp: update bindings for
- AM62A SoCs
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <andersson@kernel.org>, <devicetree@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
-        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
-CC:     <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <a-bhatia1@ti.com>, <j-luthra@ti.com>, <devarsht@ti.com>
-References: <20221228123655.15384-1-hnagalla@ti.com>
- <20221228123655.15384-2-hnagalla@ti.com>
- <18a2fd76-c708-0c14-2d5c-b771ab8baee5@linaro.org>
+Subject: Re: [PATCH 2/2] remoteproc: k3-c7x: Add support for C7xv DSP on AM62A
+ SoC
 Content-Language: en-US
+To:     "Raghavendra, Vignesh" <vigneshr@ti.com>, <andersson@kernel.org>,
+        <devicetree@vger.kernel.org>, <mathieu.poirier@linaro.org>,
+        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
+CC:     <praneeth@ti.com>, <nm@ti.com>, <a-bhatia1@ti.com>,
+        <j-luthra@ti.com>, <devarsht@ti.com>
+References: <20221228123655.15384-1-hnagalla@ti.com>
+ <20221228123655.15384-3-hnagalla@ti.com>
+ <617decfc-bab6-2ba9-53de-c9a0462a2c2a@ti.com>
 From:   Hari Nagalla <hnagalla@ti.com>
-In-Reply-To: <18a2fd76-c708-0c14-2d5c-b771ab8baee5@linaro.org>
+In-Reply-To: <617decfc-bab6-2ba9-53de-c9a0462a2c2a@ti.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -69,20 +68,19 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/28/22 06:38, Krzysztof Kozlowski wrote:
->>   
->>     resets:
->>       description: |
->> @@ -111,6 +113,7 @@ else:
->>           enum:
->>             - ti,j721e-c71-dsp
->>             - ti,j721s2-c71-dsp
->> +	  - ti,am62a-c7xv-dsp
-> Does not look like you tested the bindings. Please run `make
-> dt_binding_check` (see
-> Documentation/devicetree/bindings/writing-schema.rst for instructions).
+On 12/28/22 07:32, Raghavendra, Vignesh wrote:
+>> with anlytics engine for deep leraning purposes. The remoteproc
+>> handling for device management is similar to the C66/C71 DSPs on K3
+>> J7 family SoCs, even though there are additional hardware accelerators
+>> and IP updates to C7xv subsystem.
+>>
+>> Signed-off-by: Hari Nagalla<hnagalla@ti.com>
+>> Signed-off-by: Jai Luthra<j-luthra@ti.com>
+>> ---
+> Signed-off-by of submitter should be at the last.
 > 
-> Wrong indentation.
-Seems, i used a wrong option in our patch verify script. Used the 
-correct options and fixed it. sending v2 with review comment updates. Thanks
-
+> I see original author of the patch is Jai here. So you need to amend the
+> patch such that original author is set to Jai. His Signed-off-by should
+> be the first and then yours.
+> 
+Thanks for pointing it out. Fixed, sending v2 with the corrections.
