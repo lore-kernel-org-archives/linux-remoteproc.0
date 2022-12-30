@@ -2,67 +2,87 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE66C46467
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Dec 2022 18:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE3FC4167B
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 30 Dec 2022 13:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233083AbiL1STB (ORCPT
+        id S231439AbiL3NVe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Dec 2022 13:19:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55314 "EHLO
+        Fri, 30 Dec 2022 08:21:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233819AbiL1SSs (ORCPT
+        with ESMTP id S229505AbiL3NVe (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Dec 2022 13:18:48 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5AA5175B4;
-        Wed, 28 Dec 2022 10:18:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 66E6FB818B9;
-        Wed, 28 Dec 2022 18:18:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA56C43396;
-        Wed, 28 Dec 2022 18:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672251524;
-        bh=mTgGNOz3lU8l1LaN8BP5RhWmlCmyOy9J4H3DcGvheHY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lkgP/vVAEXVq+ZqAyXnoi2l27whpd54Vh6wscvvT0C4wZGrYoEy1thvScbzqzKi2e
-         gdE61hcV1T2y71h9uMCQ6IyrOBtAh4fIYVzh/GJvTymBrCIwBHL/kSbOEnXwbRw4ni
-         NR4KHdl5BcGEXepW1qE/Wc+qd/UVrjMxXepm0GDe6Gp2GlS3QgpjknmWXgxiUOYLVe
-         CeKLP4WqH67wc1UHpMZFErTYPb4AvC0mO2R1OJ2tuNI/fcHZ+Jqq4/NBombGbpYbms
-         2iKb6j8MMIS8Qkoka+/kXIcRcqn+HMCYLtlSa4mZ8GzbINU7mB1U1ie98lb0vDj7hD
-         DGfr+B5E6CeHg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-kernel@vger.kernel.org, wsa+renesas@sang-engineering.com
-Cc:     mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, konrad.dybcio@somainline.org,
-        agross@kernel.org
-Subject: Re: [PATCH] remoteproc: move from strlcpy with unused retval to strscpy
-Date:   Wed, 28 Dec 2022 12:18:33 -0600
-Message-Id: <167225151224.950465.17763103861662931886.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20220818210059.7253-1-wsa+renesas@sang-engineering.com>
-References: <20220818210059.7253-1-wsa+renesas@sang-engineering.com>
+        Fri, 30 Dec 2022 08:21:34 -0500
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA641A05B;
+        Fri, 30 Dec 2022 05:21:32 -0800 (PST)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDLIq2048320;
+        Fri, 30 Dec 2022 07:21:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1672406478;
+        bh=dgtWKiypkfZyZIMMgNnZ1rCIMvsBKWgzAMtTZGyqJDk=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=HvaHtmfz5BgNpQkmjKlxkohl6ShTXsWaahJ7uP+LOgwdiiTPIqDEa7xdM8DR6UqNO
+         lDiOoyBrki4D54sCEZTFgUX6QVKJH8yLEi1XdYNM/V0bWjkUlh6UaOn1+UuS9mc199
+         2GODsgjbazU/O4BYeyZcEAEOBupPUly9Yoncb8JM=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 2BUDLIxO011205
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 30 Dec 2022 07:21:18 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 30
+ Dec 2022 07:21:18 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Fri, 30 Dec 2022 07:21:17 -0600
+Received: from [10.249.48.175] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 2BUDLHft130087;
+        Fri, 30 Dec 2022 07:21:17 -0600
+Message-ID: <b746fd70-95eb-307e-0f95-28d009d95f85@ti.com>
+Date:   Fri, 30 Dec 2022 07:21:17 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: k3-dsp: update bindings for
+ AM62A SoCs
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <andersson@kernel.org>, <devicetree@vger.kernel.org>,
+        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
+        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
+CC:     <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <a-bhatia1@ti.com>, <j-luthra@ti.com>, <devarsht@ti.com>
+References: <20221228123655.15384-1-hnagalla@ti.com>
+ <20221228123655.15384-2-hnagalla@ti.com>
+ <18a2fd76-c708-0c14-2d5c-b771ab8baee5@linaro.org>
+Content-Language: en-US
+From:   Hari Nagalla <hnagalla@ti.com>
+In-Reply-To: <18a2fd76-c708-0c14-2d5c-b771ab8baee5@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 18 Aug 2022 23:00:59 +0200, Wolfram Sang wrote:
-> Follow the advice of the below link and prefer 'strscpy' in this
-> subsystem. Conversion is 1:1 because the return value is not used.
-> Generated by a coccinelle script.
+On 12/28/22 06:38, Krzysztof Kozlowski wrote:
+>>   
+>>     resets:
+>>       description: |
+>> @@ -111,6 +113,7 @@ else:
+>>           enum:
+>>             - ti,j721e-c71-dsp
+>>             - ti,j721s2-c71-dsp
+>> +	  - ti,am62a-c7xv-dsp
+> Does not look like you tested the bindings. Please run `make
+> dt_binding_check` (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
 > 
-> 
+> Wrong indentation.
+Seems, i used a wrong option in our patch verify script. Used the 
+correct options and fixed it. sending v2 with review comment updates. Thanks
 
-Applied, thanks!
-
-[1/1] remoteproc: move from strlcpy with unused retval to strscpy
-      commit: 1b0f00d3b1fc25525e1fcd8c5845e362f5688849
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
