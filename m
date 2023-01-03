@@ -2,286 +2,185 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569F9C53210
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Jan 2023 14:50:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94221C4708D
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Jan 2023 18:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237846AbjACOu1 (ORCPT
+        id S238656AbjACSuF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 Jan 2023 09:50:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57116 "EHLO
+        Tue, 3 Jan 2023 13:50:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232179AbjACOu0 (ORCPT
+        with ESMTP id S238807AbjACStY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 Jan 2023 09:50:26 -0500
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630422BDB;
-        Tue,  3 Jan 2023 06:50:25 -0800 (PST)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 303BF7Dn015497;
-        Tue, 3 Jan 2023 15:50:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=N+7XrpvtkCAvSahMsoTBDO1zGgn4UyQ0bJMGg6cxkmM=;
- b=Y2dZ604I4L9v4/7lX/JYuudqvoJg8aUKzpC0u8F6mw+1ZCVvoaiPRqBCjexZlvrRskqm
- RakERtmlu/whUo0iOhr/gXeluYntG+0MhgyA8C64Cj2FEMCyJbqVx1C4ZQaqITCIhnz2
- /83Muiopj5NdhF0fwMvz7HgPxsP/1wG+lxk/mVMsi3LIjXmnfnQGb8e/ob5lemqy+/jZ
- BblMm9YxfvDHzgIaXdL5X/x9bgN3ZEWa5rXXd46PIXN7FxyfBVjfdP3OcEPVDW8O1Tvg
- CA4H/G/8DZ5jkewGCtfKMvAuKoMZteBpiA/1CSEUbWU8mjpMvv3XXhj+CCIuG8VyHUSF UA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3mtda65fc3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Jan 2023 15:50:16 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C268210002A;
-        Tue,  3 Jan 2023 15:50:11 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B9C01226FA3;
-        Tue,  3 Jan 2023 15:50:11 +0100 (CET)
-Received: from [10.252.14.6] (10.252.14.6) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.13; Tue, 3 Jan
- 2023 15:50:10 +0100
-Message-ID: <45444451-26e3-c203-bdeb-59170b6cc5ba@foss.st.com>
-Date:   Tue, 3 Jan 2023 15:50:10 +0100
+        Tue, 3 Jan 2023 13:49:24 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A415713D3C
+        for <linux-remoteproc@vger.kernel.org>; Tue,  3 Jan 2023 10:49:08 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id t15so21712688wro.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Jan 2023 10:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EClO0eHZ1ZJTRLCT268bG05mzbFFKh0lHqO8s/xO1kk=;
+        b=k7FQg5RzPgxmKbPgb5mNDLxvWLIeik0YusJeYvDd/AvjkCX7QT89J8ToSCvh1FzaEl
+         PN3NapKsfaLIJptreMlTSBtqH1JTfn6HuSLCTvkwBSPbta8Uh+7NwUZpUE0cWKftgdrE
+         s9x8R9JyLehSOxhrB6wlnGzlksrOEbcydJgiobN7G9TGKOIXa0ceAspZxwZanb9azXmU
+         voHYHUbBNDfBnuTWTzFS1rMK5qNtahmEL3ZApYJt+OhAsKUawqmKos9ilJ3Hnt/Inetp
+         4oK2LX6bfmTQ5Ck0hN/oW3Sk4LCp9Z21VeWgS42GHbw1zvDoKzhv6cOnzWMgPefUBgr0
+         f26A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EClO0eHZ1ZJTRLCT268bG05mzbFFKh0lHqO8s/xO1kk=;
+        b=tYX/EwwkscuASBEocHRsfOeJIeMFaH88tHRyRmM1iingdbCAuSpf0nmZKm1LG5c+jI
+         aE9MpSnMEbBMVPfxgN8VnvwBohUcFwx0b400qJnN9WqPAUSlCv4ceieyd8G6FlUeG6Jo
+         /BOvL1oZWudwGAalwXZXcbuqPfJ5j6AC5K+NQTGFcPN2Y949pZkz7TRBJnbJ4D9cD+Vm
+         0WsfuZUR0NMax0MfFIVxjzp5/j6Eas580wVz7I1IZxusUA2hxLJAQGDjDGu3Wvphlza+
+         4GtYjWVbH3knd3OyETm0da5Q9eCIWU+g32TX2mzwQQha2O+XRbvMcotZbuGu8yhc2ZvJ
+         89zQ==
+X-Gm-Message-State: AFqh2krdQCQzNqg0edvX3uy9q1utrmydkGK07GSPCwRhZdshKne54uDe
+        BZ+LU/CmfnuS2hWAbg6wCxKGjYFMzagCoo/Coqwwig==
+X-Google-Smtp-Source: AMrXdXvCMhSN98FeNpcisc6mzx12pLOOnLKrYEUr+nxMFAz4ph9VTNujcEWbOf7kYXCzitxDDwl1bnNOcRDQy69jmPk=
+X-Received: by 2002:a5d:4305:0:b0:29d:780d:182c with SMTP id
+ h5-20020a5d4305000000b0029d780d182cmr149100wrq.251.1672771747211; Tue, 03 Jan
+ 2023 10:49:07 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH V4 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Content-Language: en-US
+References: <20221214221643.1286585-1-mathieu.poirier@linaro.org> <20221227151131.hkezt4j2om5volnu@builder.lan>
+In-Reply-To: <20221227151131.hkezt4j2om5volnu@builder.lan>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 3 Jan 2023 11:48:56 -0700
+Message-ID: <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
 To:     Bjorn Andersson <andersson@kernel.org>
-CC:     Sarannya S <quic_sarannya@quicinc.com>,
-        <quic_bjorande@quicinc.com>, <swboyd@chromium.org>,
-        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-References: <1670418258-11502-1-git-send-email-quic_sarannya@quicinc.com>
- <1670418258-11502-4-git-send-email-quic_sarannya@quicinc.com>
- <12f53ff1-a358-7129-c9ed-9b9fd7dad7e7@foss.st.com>
- <20221227155641.xlkel7uhk7jr4qru@builder.lan>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20221227155641.xlkel7uhk7jr4qru@builder.lan>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ben.levinsky@xilinx.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.252.14.6]
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-03_05,2023-01-03_02,2022-06-22_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 12/27/22 16:56, Bjorn Andersson wrote:
-> On Wed, Dec 21, 2022 at 05:28:16PM +0100, Arnaud POULIQUEN wrote:
->>
->>
->> On 12/7/22 14:04, Sarannya S wrote:
->>> Add TICOMGET and TIOCMSET ioctl support for rpmsg char device nodes
->>> to get/set the low level transport signals.
->>>
->>> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
->>> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
->>> Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
->>> ---
->>>  drivers/rpmsg/rpmsg_char.c | 60 +++++++++++++++++++++++++++++++++++++++-------
->>>  1 file changed, 52 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->>> index 3e0b8f3..8109d18 100644
->>> --- a/drivers/rpmsg/rpmsg_char.c
->>> +++ b/drivers/rpmsg/rpmsg_char.c
->>> @@ -23,6 +23,7 @@
->>>  #include <linux/rpmsg.h>
->>>  #include <linux/skbuff.h>
->>>  #include <linux/slab.h>
->>> +#include <linux/termios.h>
->>>  #include <linux/uaccess.h>
->>>  #include <uapi/linux/rpmsg.h>
->>>  
->>> @@ -68,6 +69,8 @@ struct rpmsg_eptdev {
->>>  	struct sk_buff_head queue;
->>>  	wait_queue_head_t readq;
->>>  
->>> +	u32 remote_signals;
->>> +	bool signals_pending;
->>
->> Could you detail the need/use of signals_pending, in your implementation?
->> This is not obvious (at least for me)...
->>
-> 
-> I agree. With the move to use the concept of flow control in the rpmsg
-> API, there's no longer any "signals" in this client driver.
-> 
->>>  };
->>>  
->>>  int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
->>> @@ -109,7 +112,22 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
->>>  	skb_queue_tail(&eptdev->queue, skb);
->>>  	spin_unlock(&eptdev->queue_lock);
->>>  
->>> -	/* wake up any blocking processes, waiting for new data */
->>> +	wake_up_interruptible(&eptdev->readq);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable)
->>> +{
->>> +	struct rpmsg_eptdev *eptdev = priv;
->>> +
->>> +	if (enable)
->>> +		eptdev->remote_signals = TIOCM_DSR | TIOCM_CTS;
->>> +	else
->>> +		eptdev->remote_signals = 0;
->>> +
->>> +	eptdev->signals_pending = true;
->>> +
->>>  	wake_up_interruptible(&eptdev->readq);
->>>  
->>>  	return 0;
->>> @@ -146,6 +164,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
->>>  		return -EINVAL;
->>>  	}
->>>  
->>> +	ept->flow_cb = rpmsg_ept_flow_cb;
->>>  	eptdev->ept = ept;
->>>  	filp->private_data = eptdev;
->>>  	mutex_unlock(&eptdev->ept_lock);
->>> @@ -166,6 +185,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
->>>  		eptdev->ept = NULL;
->>>  	}
->>>  	mutex_unlock(&eptdev->ept_lock);
->>> +	eptdev->signals_pending = false;
->>>  
->>>  	/* Discard all SKBs */
->>>  	skb_queue_purge(&eptdev->queue);
->>> @@ -279,6 +299,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
->>>  	if (!skb_queue_empty(&eptdev->queue))
->>>  		mask |= EPOLLIN | EPOLLRDNORM;
->>>  
->>> +	if (eptdev->signals_pending)
->>> +		mask |= EPOLLPRI;
->>> +
->>>  	mask |= rpmsg_poll(eptdev->ept, filp, wait);
->>>  
->>>  	return mask;
->>> @@ -289,14 +312,35 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->>>  {
->>>  	struct rpmsg_eptdev *eptdev = fp->private_data;
->>>  
->>> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
->>> -		return -EINVAL;
->>> -
->>> -	/* Don't allow to destroy a default endpoint. */
->>> -	if (eptdev->default_ept)
->>> -		return -EINVAL;
->>> +	bool set;
->>> +	u32 val;
->>> +	int ret;
->>> +	
->>> +	switch (cmd) {
->>> +	case TIOCMGET:
->>> +		eptdev->signals_pending = false;
->>> +		ret = put_user(eptdev->remote_signals, (int __user *)arg);
->>> +		break;
->>> +	case TIOCMSET:
->>> +		ret = get_user(val, (int __user *)arg);
->>> +		if (ret)
->>> +			break;
->>> +		set = (val & (TIOCM_DTR | TIOCM_RTS)) ? true : false;
->>> +		ret = rpmsg_set_flow_control(eptdev->ept, set, 0);
->>> +		break;
->>
->> I still wonder if it makes sense to implement serial IOCTRL in rpmsg_char.
-> 
-> I've thinking about this since v1 as well...
-> 
->> I think it is quite dangerous to have such kind of mixed interface.
->> User application would want to use the serial interface should use the tty
->> interface.
->>
-> 
-> Can you please elaborate on this statement, because I have a hard time
-> to state why the user space application must use the tty interface
-> instead of rpmsg_char.
-> 
-> And in particular, I don't think this is a question for the "user
-> application", but rather for the system configuration.
-> 
-> In order to move an application that works with rpmsg_char to the tty
-> driver ("because it's the right thing to do..."?) means that the system
-> needs to be reconfigured, such that the given rpmsg channel is exposed
-> through the tty driver instead.
-> 
-> This in turn either implies that the firmware needs to be changed to
-> expose these channels with the name "rpmsg-tty" - and the application
-> taught how to figure out which ttyRPMSGn to open - or the rpmsg_ctrl
-> interface needs to be extended to allow the Linux side to request a
-> particular channel to be exposed as rpmsg_char vs rpmsg-tty...
-> 
+On Tue, 27 Dec 2022 at 08:11, Bjorn Andersson <andersson@kernel.org> wrote:
+>
+> On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
+> > Multi-cluster remoteproc designs typically have the following DT
+> > declaration:
+> >
+> >       remoteproc_cluster {
+> >               compatible = "soc,remoteproc-cluster";
+> >
+> >                 core0: core0 {
+> >                       compatible = "soc,remoteproc-core"
+> >                         memory-region;
+> >                         sram;
+> >                 };
+> >
+> >                 core1: core1 {
+> >                       compatible = "soc,remoteproc-core"
+> >                         memory-region;
+> >                         sram;
+> >                 }
+> >         };
+> >
+> > A driver exists for the cluster rather than the individual cores
+> > themselves so that operation mode and HW specific configurations
+> > applicable to the cluster can be made.
+> >
+> > Because the driver exists at the cluster level and not the individual
+> > core level, function rproc_get_by_phandle() fails to return the
+> > remoteproc associated with the phandled it is called for.
+> >
+> > This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> > driver when the driver for the immediate remoteproc's parent is not
+> > found.
+> >
+>
+> Can you please help me understand why zynqmp_r5_remoteproc_probe()
+> invokes devm_of_platform_populate() to create platform_device instances
+> for the clusters?
+>
 
-You are right, it can be not straightforward to migrate to rpmsg_tty. That's why
-it also makes sense to implement flow control in the rpmsg char.
+Platform device instances are created for the individual cores found
+in the cluster, following the work done on TI's K3-R5[1].
 
-What I try to highlight is the use of the RS232 signaling(e.g TIOCM_DTR) and
-TIOCMGET/TIOCMSE  terminal IOCTL in this patch.
-Please tell me if I wrong, but seems to me that such interface is dedicated to
-the serial/TTY frameworks [1].
-So does it make sense to reuse this interface for the rpmsg char?
+> Why can't the platform_device for the cluster be used as parent for both
+> remoteprocs and then the driver deal with the subnodes within the
+> driver?
+>
 
-[1]https://elixir.bootlin.com/linux/latest/source/include/uapi/asm-generic/ioctls.h#L8
+That is exactly how things work for both K3-R5 and R5F architectures.
+That said, if we use the cluster's platform device as parent of the
+remote processors inside the cluster, function rproc_get_by_phandle()
+will return the first remote processor it finds with a matching parent
+rather than the remote processor referenced by the phandle parameter.
 
-Instead we could have generic RPMSG IOCTLs that can be implemented on different
-rpmsg clients whatever the rpmsg channel (so not only the rpmsg char). This is
-the proposal below.
+[1]. https://elixir.bootlin.com/linux/v6.2-rc2/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1728
 
-Regards,
-Arnaud
-
->> For the rpmsg char, I would be in favor of creating a specific RPMSG IOCTRLs
->> to avoid confusion.
->>
->> For instance:
->>
->>  - RPMSG_GET_SIGN_IOCTRL
->>  - RPMSG_SET_SIGN_IOCTRL
->>
-> 
-> Again, we're talking "flow control" at this level. So either we follow
-> the standard IOCTL and make it easy for existing applications to use
-> rpmsg_char, or we provide a _good_ explanation why they must use the
-> tty interface instead (and if so solve above mentioned problems).
-> 
 > Regards,
 > Bjorn
-> 
->> With associated parameter corresponding to the bitmap proposed in my comment of
->> your patch 1/4.
->>
->> Of course, this is only a suggestion, I let Bjorn and Mathieu comment.
->>
->> Regards,
->> Arnaud
->>
->>
->>> +	case RPMSG_DESTROY_EPT_IOCTL:
->>> +		/* Don't allow to destroy a default endpoint. */
->>> +		if (eptdev->default_ept) {
->>> +			ret = -EINVAL;
->>> +			break;
->>> +		}
->>> +		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
->>> +		break;
->>> +	default:
->>> +		ret = -EINVAL;
->>> +	}
->>>  
->>> -	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
->>> +	return ret;
->>>  }
->>>  
->>>  static const struct file_operations rpmsg_eptdev_fops = {
+>
+> > Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > ---
+> >  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
+> >  1 file changed, 27 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > index 1cd4815a6dd1..91f82886add9 100644
+> > --- a/drivers/remoteproc/remoteproc_core.c
+> > +++ b/drivers/remoteproc/remoteproc_core.c
+> > @@ -33,6 +33,7 @@
+> >  #include <linux/idr.h>
+> >  #include <linux/elf.h>
+> >  #include <linux/crc32.h>
+> > +#include <linux/of_platform.h>
+> >  #include <linux/of_reserved_mem.h>
+> >  #include <linux/virtio_ids.h>
+> >  #include <linux/virtio_ring.h>
+> > @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
+> >  #ifdef CONFIG_OF
+> >  struct rproc *rproc_get_by_phandle(phandle phandle)
+> >  {
+> > +     struct platform_device *cluster_pdev;
+> >       struct rproc *rproc = NULL, *r;
+> > +     struct device_driver *driver;
+> >       struct device_node *np;
+> >
+> >       np = of_find_node_by_phandle(phandle);
+> > @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+> >       list_for_each_entry_rcu(r, &rproc_list, node) {
+> >               if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+> >                       /* prevent underlying implementation from being removed */
+> > -                     if (!try_module_get(r->dev.parent->driver->owner)) {
+> > +
+> > +                     /*
+> > +                      * If the remoteproc's parent has a driver, the
+> > +                      * remoteproc is not part of a cluster and we can use
+> > +                      * that driver.
+> > +                      */
+> > +                     driver = r->dev.parent->driver;
+> > +
+> > +                     /*
+> > +                      * If the remoteproc's parent does not have a driver,
+> > +                      * look for the driver associated with the cluster.
+> > +                      */
+> > +                     if (!driver) {
+> > +                             cluster_pdev = of_find_device_by_node(np->parent);
+> > +                             if (!cluster_pdev) {
+> > +                                     dev_err(&r->dev, "can't get parent\n");
+> > +                                     break;
+> > +                             }
+> > +
+> > +                             driver = cluster_pdev->dev.driver;
+> > +                             put_device(&cluster_pdev->dev);
+> > +                     }
+> > +
+> > +                     if (!try_module_get(driver->owner)) {
+> >                               dev_err(&r->dev, "can't get owner\n");
+> >                               break;
+> >                       }
+> > --
+> > 2.25.1
+> >
