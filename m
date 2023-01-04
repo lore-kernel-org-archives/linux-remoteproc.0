@@ -2,38 +2,38 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F22C46467
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 16:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA51C4708E
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 16:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235046AbjADQDk (ORCPT
+        id S235388AbjADQaQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 11:03:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56438 "EHLO
+        Wed, 4 Jan 2023 11:30:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235151AbjADQDi (ORCPT
+        with ESMTP id S235307AbjADQaE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Jan 2023 11:03:38 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3B0B86;
-        Wed,  4 Jan 2023 08:03:37 -0800 (PST)
+        Wed, 4 Jan 2023 11:30:04 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE52233D74;
+        Wed,  4 Jan 2023 08:30:03 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C6C5AB815C9;
-        Wed,  4 Jan 2023 16:03:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B69C433D2;
-        Wed,  4 Jan 2023 16:03:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 768CA617A2;
+        Wed,  4 Jan 2023 16:30:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 196D8C433D2;
+        Wed,  4 Jan 2023 16:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672848214;
-        bh=qwVm6Ey+pId0r7wPricoXhTqRlRKCe/YHgGXKdhvpjU=;
+        s=k20201202; t=1672849802;
+        bh=xnOCzG4x3mzE/Q5tiZn6gSjOTpXMSm3tByuio0JtZsQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uqWdfQbvRSOxXRhuVMlJTNvvt0WYb25FBVMeIk2cde4zbaEhsbT5WoTdZLqY7HRTY
-         k7mG9BQu5gHKhhtyGIY/deZmcT8B8HewKtl3U2CN12xLPOsnOp6Mqnq15MsnXEA+7g
-         Xy0tXkDSsIEgbrYk30d1CjEk3Y4DmmF2qXttRHlIuSsRoPd9IuWHAo6VcnxmnMSGNH
-         lbOhCPsba4FISM0vdZvkWV6pg8sGmXpon1gOrFfzV3MIHFNmpfPLLUeWcvOFFUiGp9
-         f/4tpm1REe52ZWvwbraRL1d0Ccwu/A8V4Aqf/YrT4j9Zy3a6YQm1QycNX30AgFvnNJ
-         faLWT0jz4fXuA==
-Date:   Wed, 4 Jan 2023 10:03:31 -0600
+        b=WNw4LQFd8WODdQn37Z8ntM7xcTSztBu7D4rr9xbvK4N/4XXK87+jb7PER2jOHzBGd
+         VCAPhkGMeRAqQ35G7yMm8xZX+Sgv1ebang2vEWPICgNJ/jepYfYlq8qAJ3SElKU0Eq
+         l4HXDp/mutw/NHVkf64r9FMP/n6P7rMANFIz1ffQ3Yjb/xqHzMADz4mlLYpnxp6sdN
+         o1fOiJEBkRKX/PxUVphN0joraHnl6mta9fBzo8WyPS/Tj9kMC+2POlKncBeAXYvcVq
+         w39nDfdlW8YVRiRHfoH1sQOhYRuJ04RhsV+nUc3MVPtN2smwMc0SJB93mOaLj1P89n
+         3sXKWUh33Z5rA==
+Date:   Wed, 4 Jan 2023 10:30:00 -0600
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
 Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
@@ -41,152 +41,164 @@ Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
         mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: Re: [PATCH V4 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
-Message-ID: <20230104160331.w2sicwlqiygr42hl@builder.lan>
+Subject: Re: [PATCH V4 1/3] rpmsg: core: Add signal API support
+Message-ID: <20230104163000.hi6zehbbxpubeqfe@builder.lan>
 References: <1670418258-11502-1-git-send-email-quic_sarannya@quicinc.com>
- <1670418258-11502-4-git-send-email-quic_sarannya@quicinc.com>
- <12f53ff1-a358-7129-c9ed-9b9fd7dad7e7@foss.st.com>
- <20221227155641.xlkel7uhk7jr4qru@builder.lan>
- <45444451-26e3-c203-bdeb-59170b6cc5ba@foss.st.com>
+ <1670418258-11502-2-git-send-email-quic_sarannya@quicinc.com>
+ <6ba10328-bc48-c953-49e7-29e079fb6406@foss.st.com>
+ <20221227153252.ufenietw5wgsk7kj@builder.lan>
+ <1cbcd57c-ba6d-390f-a28c-fa651d1d7262@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <45444451-26e3-c203-bdeb-59170b6cc5ba@foss.st.com>
+In-Reply-To: <1cbcd57c-ba6d-390f-a28c-fa651d1d7262@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jan 03, 2023 at 03:50:10PM +0100, Arnaud POULIQUEN wrote:
-> On 12/27/22 16:56, Bjorn Andersson wrote:
-> > On Wed, Dec 21, 2022 at 05:28:16PM +0100, Arnaud POULIQUEN wrote:
-> >>
+On Tue, Jan 03, 2023 at 02:50:13PM +0100, Arnaud POULIQUEN wrote:
+> Hello,
+> 
+> On 12/27/22 16:32, Bjorn Andersson wrote:
+> > On Wed, Dec 21, 2022 at 05:12:22PM +0100, Arnaud POULIQUEN wrote:
+> >> Hello,
 > >>
 > >> On 12/7/22 14:04, Sarannya S wrote:
-[..]
-> >>>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+> >>> Some transports like Glink support the state notifications between
+> >>> clients using flow control signals similar to serial protocol signals.
+> >>> Local glink client drivers can send and receive flow control status
+> >>> to glink clients running on remote processors.
+> >>>
+> >>> Add APIs to support sending and receiving of flow control status by
+> >>> rpmsg clients.
+> >>>
+> >>> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> >>> Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+> >>> ---
+> >>>  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
+> >>>  drivers/rpmsg/rpmsg_internal.h |  2 ++
+> >>>  include/linux/rpmsg.h          | 15 +++++++++++++++
+> >>>  3 files changed, 38 insertions(+)
+> >>>
+> >>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> >>> index d6dde00e..77aeba0 100644
+> >>> --- a/drivers/rpmsg/rpmsg_core.c
+> >>> +++ b/drivers/rpmsg/rpmsg_core.c
+> >>> @@ -331,6 +331,25 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> >>>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
 > >>>  
-> >>> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
-> >>> -		return -EINVAL;
-> >>> -
-> >>> -	/* Don't allow to destroy a default endpoint. */
-> >>> -	if (eptdev->default_ept)
-> >>> -		return -EINVAL;
-> >>> +	bool set;
-> >>> +	u32 val;
-> >>> +	int ret;
-> >>> +	
-> >>> +	switch (cmd) {
-> >>> +	case TIOCMGET:
-> >>> +		eptdev->signals_pending = false;
-> >>> +		ret = put_user(eptdev->remote_signals, (int __user *)arg);
-> >>> +		break;
-> >>> +	case TIOCMSET:
-> >>> +		ret = get_user(val, (int __user *)arg);
-> >>> +		if (ret)
-> >>> +			break;
-> >>> +		set = (val & (TIOCM_DTR | TIOCM_RTS)) ? true : false;
-> >>> +		ret = rpmsg_set_flow_control(eptdev->ept, set, 0);
-> >>> +		break;
+> >>>  /**
+> >>> + * rpmsg_set_flow_control() - sets/clears serial flow control signals
+> >>> + * @ept:	the rpmsg endpoint
+> >>> + * @enable:	enable or disable serial flow control
 > >>
-> >> I still wonder if it makes sense to implement serial IOCTRL in rpmsg_char.
-> > 
-> > I've thinking about this since v1 as well...
-> > 
-> >> I think it is quite dangerous to have such kind of mixed interface.
-> >> User application would want to use the serial interface should use the tty
-> >> interface.
+> >> What does it mean "enable and disable serial flow control"?
+> >> Do you speak about the flow control feature or the data flow itself?
 > >>
 > > 
-> > Can you please elaborate on this statement, because I have a hard time
-> > to state why the user space application must use the tty interface
-> > instead of rpmsg_char.
+> > Good point, the purpose of the boolean is to "request throttling of the
+> > incoming data flow".
 > > 
-> > And in particular, I don't think this is a question for the "user
-> > application", but rather for the system configuration.
+> >> I guess it is the activation/deactivation of the data stream
+> >> regarding Bjorn's comment in V1:
+> >>
+> >> "I therefore asked Deepak to change it so the rpmsg api would contain a
+> >> single "pause incoming data"/"resume incoming data" - given that this is
+> >> a wish that we've seen in a number of discussions."
+> >>
+> >> For me this is the software flow control:
+> >> https://en.wikipedia.org/wiki/Software_flow_control
+> >>
+> >> I would suggest not limiting the control only to activation/deactivation but to
+> >> offer more flexibility in terms of services. replace the boolean by a bitmap
+> >> would allow to extend it later.
+> >>
+> >> For instance by introducing 2 definitions:
+> >>
+> >> /* RPMSG pause transmission request:
+> >>  * sent to the remote endpoint to request to suspend its transmission */
+> >>  */
+> >> #define RPMSG_FC_PT_REQ  (1 << 0)
 > > 
-> > In order to move an application that works with rpmsg_char to the tty
-> > driver ("because it's the right thing to do..."?) means that the system
-> > needs to be reconfigured, such that the given rpmsg channel is exposed
-> > through the tty driver instead.
+> > enable = true
 > > 
-> > This in turn either implies that the firmware needs to be changed to
-> > expose these channels with the name "rpmsg-tty" - and the application
-> > taught how to figure out which ttyRPMSGn to open - or the rpmsg_ctrl
-> > interface needs to be extended to allow the Linux side to request a
-> > particular channel to be exposed as rpmsg_char vs rpmsg-tty...
+> >>
+> >> /* RPMSG resume transmission request
+> >>  * sent to the remote endpoint to allow to resume its transmission
+> >>  */
+> >> #define RPMSG_FC_RT_REQ  (1 << 1)
+> >>
 > > 
+> > enable = false
 > 
-> You are right, it can be not straightforward to migrate to rpmsg_tty. That's why
-> it also makes sense to implement flow control in the rpmsg char.
-> 
-> What I try to highlight is the use of the RS232 signaling(e.g TIOCM_DTR) and
-> TIOCMGET/TIOCMSE  terminal IOCTL in this patch.
-> Please tell me if I wrong, but seems to me that such interface is dedicated to
-> the serial/TTY frameworks [1].
-> So does it make sense to reuse this interface for the rpmsg char?
+> Do you mean that it should be only one definition? If yes you are right
+> only one definition is sufficient for the pause/resume
 > 
 
-We're in understanding of the usefulness and the question about the
-validity of reusing the tty's TIOCM{GET,SET} ioctl here. I don't know
-the answer to the latter, and haven't pushed on this point.
+Yes, I envision this being used for cases such as rpmsg_char being able
+to send a "I already have 1MB of data in my sk_buf_head queue, please
+don't send me any more data for now".
 
-> [1]https://elixir.bootlin.com/linux/latest/source/include/uapi/asm-generic/ioctls.h#L8
+> > 
+> >> Then we could add (in a next step) some other flow controls such as
+> >> /* RPMSG pause transmission information
+> >>  * Sent to the remote endpoint to inform that no more data will be sent
+> >>  * until the reception of RPMSG_FC_RT_INFO
+> >>  */
+> >> #define RPMSG_FC_PT_INFO  (1 << 16)
+> >> #define RPMSG_FC_RT_INFO  (1 << 16)
+> >>
+> > 
+> > I presume you're looking for a usage pattern where the client would send
+> > this to the remote and then the flow control mechanism would be used for
+> > the remote end to request more data.
+> > 
+> > I find Deepak's (adjusted) proposal to be generic and to the point, and
+> > your proposal builds unnecessary "flexibility" into this same mechanism.
+> > 
+> > If you have a rpmsg protocol where the client is expected to sit
+> > waiting, and upon a request from the remote side send another piece of
+> > data, why don't you just build this into the application protocol?  That
+> > way your application would work over both transports with and without
+> > flow control...
+> > 
+> > 
+> > Perhaps I'm misunderstanding what you're asking for?
 > 
-> Instead we could have generic RPMSG IOCTLs that can be implemented on different
-> rpmsg clients whatever the rpmsg channel (so not only the rpmsg char). This is
-> the proposal below.
+> With the RPMSG_FC_PT_INFO example I had in mind the possibility to implement PM
+> runtime.
 > 
 
-Using a new pair of rpmsg_char ioctls for "set/get flow enable/disable"
-would, IMHO, be easier to understand and it would avoid assumptions
-inherited about all the other bits in the TIOCMSET ioctl.
+Which device/part are you going to runtime PM suspend using this?
+
+> But my main point here is to allow to extend the flow control in future.
+> or instance an comment in OpenAMP PR part [1] was:
+> 
+> "ON/OFF info isn't enough in the advanced flow control since the additional info
+> is required(e.g. the slide window, round trip delay, congestion etc..)."
+> 
+> [1]https://github.com/OpenAMP/open-amp/pull/394#discussion_r878363627
+
+We don't have a way to apply back pressure today, so I have a hard time
+imagining the use cases and the implementation of such advanced flow
+control.
+
+Reading your proposal again, I don't think that's flow control, that's a
+mechanism for requesting notifications. Either way, the mechanism seems
+orthogonal to rpmsg_set_flow_control() - even if they were implemented
+using the same mechanism in the underlying transport.
+
+> 
+> Using a @enable boolean would imply to create new ops if someone want to extend
+> the flow control (to keep legacy compatibility). Using a bit map for the
+> parameter could ease a future extension.
+> 
+
+This is a kernel-internal API, a boolean "flow or now flow" is
+sufficient for what Qualcomm is asking and the ioctl is the only new
+external mechanism introduced.
+
+I have no concerns extending or altering this as the use cases appear.
 
 Regards,
 Bjorn
-
-> Regards,
-> Arnaud
-> 
-> >> For the rpmsg char, I would be in favor of creating a specific RPMSG IOCTRLs
-> >> to avoid confusion.
-> >>
-> >> For instance:
-> >>
-> >>  - RPMSG_GET_SIGN_IOCTRL
-> >>  - RPMSG_SET_SIGN_IOCTRL
-> >>
-> > 
-> > Again, we're talking "flow control" at this level. So either we follow
-> > the standard IOCTL and make it easy for existing applications to use
-> > rpmsg_char, or we provide a _good_ explanation why they must use the
-> > tty interface instead (and if so solve above mentioned problems).
-> > 
-> > Regards,
-> > Bjorn
-> > 
-> >> With associated parameter corresponding to the bitmap proposed in my comment of
-> >> your patch 1/4.
-> >>
-> >> Of course, this is only a suggestion, I let Bjorn and Mathieu comment.
-> >>
-> >> Regards,
-> >> Arnaud
-> >>
-> >>
-> >>> +	case RPMSG_DESTROY_EPT_IOCTL:
-> >>> +		/* Don't allow to destroy a default endpoint. */
-> >>> +		if (eptdev->default_ept) {
-> >>> +			ret = -EINVAL;
-> >>> +			break;
-> >>> +		}
-> >>> +		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
-> >>> +		break;
-> >>> +	default:
-> >>> +		ret = -EINVAL;
-> >>> +	}
-> >>>  
-> >>> -	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
-> >>> +	return ret;
-> >>>  }
-> >>>  
-> >>>  static const struct file_operations rpmsg_eptdev_fops = {
