@@ -2,94 +2,203 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2FFC4708E
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 11:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD279C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 15:56:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239083AbjADLxz (ORCPT
+        id S235286AbjADP4S (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 06:53:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59538 "EHLO
+        Wed, 4 Jan 2023 10:56:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234981AbjADLxy (ORCPT
+        with ESMTP id S234370AbjADP4R (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Jan 2023 06:53:54 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 392361ADB0;
-        Wed,  4 Jan 2023 03:53:53 -0800 (PST)
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Wed, 4 Jan 2023 10:56:17 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7956D11A;
+        Wed,  4 Jan 2023 07:56:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8DC066602D0F;
-        Wed,  4 Jan 2023 11:53:51 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1672833232;
-        bh=2wlL/l4UVdjL1Sgoaf9FkMG8l//bAlIIYXjMNm/jsVI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nG9YtxlCpjBCeQOKrMwEtYzNapyLY6ccOPHmL66vj0KAIBNw72cQvDIaARvyeFDaL
-         yYNo7gzc8J8hgzJX9qwqb/3CHf28jwOdr4e36SnO5d6gmSoiiSpDozdp6wlj+B90oM
-         mj37MP7AlorWVTwZLmQzYwRz/sfuAobepb9Sw8TPRTk8Ed6aLcPnDeoJphwmYQhhlU
-         cnbVpVFvFM76Hu/cy03ym3Bbh2qJjEIRtkrayygYRVtG2OJqEwzoYDLpslteYrzU9u
-         DJTQrLYpAO2s7LxbJ7AZowZj7cPJW6e96VS4e3/Mcox5bxnTkUzkHI61kBhWrceozk
-         Pr3ijnFVb6kYQ==
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-To:     andersson@kernel.org
-Cc:     mathieu.poirier@linaro.org, matthias.bgg@gmail.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        wenst@chromium.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH 2/2] remoteproc/mtk_scp: Remove timeout variable from scp_ipi_send()
-Date:   Wed,  4 Jan 2023 12:53:41 +0100
-Message-Id: <20230104115341.320951-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230104115341.320951-1-angelogioacchino.delregno@collabora.com>
-References: <20230104115341.320951-1-angelogioacchino.delregno@collabora.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 154886177E;
+        Wed,  4 Jan 2023 15:56:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246EEC433F0;
+        Wed,  4 Jan 2023 15:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672847775;
+        bh=BFhoNEODuOM6811znfG4kUmLy5V2WTxufRli/c+8ciQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HWCZl62LYN2Ze88Ll8ir8Q/NNeuw1cJqW/Zz3vMDPWfQGcIB99TpvdsPVmo5gQaky
+         DQcsbaVkoZEKQytVnjdlffC0Dx6XdGHjROBGoZDf9DgRR7AOsCNlw+k4Rcd6k5a3fh
+         qe+xVdHOayfuo51KNDtyPjlUSds5IZTXX93kHfy8tjVsYX8OjkNxUFw2DGyY9h9Hh9
+         YyMUucpy2+pltBwZqIhopzeupYm6nqAyTvxcpOO3mjhro2gCuCSy2WlabrRlpFJCFU
+         ZjDqFufWk0pSIvsKPBFd51bQCtUYtFHq/YqYnnd49ct/CHQNodzUHXT/WzTVK6JQxF
+         j8c+3SmIOAawA==
+Date:   Wed, 4 Jan 2023 09:56:13 -0600
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ben.levinsky@xilinx.com
+Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
+Message-ID: <20230104155613.xclae5hup2ybypdo@builder.lan>
+References: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
+ <20221227151131.hkezt4j2om5volnu@builder.lan>
+ <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-That variable was used twice, but now it's just used once to store
-msecs_to_jiffies(wait), fed to wait_event_timeout(): we might as
-well remove it for the sake of cleaning up.
+On Tue, Jan 03, 2023 at 11:48:56AM -0700, Mathieu Poirier wrote:
+> On Tue, 27 Dec 2022 at 08:11, Bjorn Andersson <andersson@kernel.org> wrote:
+> >
+> > On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
+> > > Multi-cluster remoteproc designs typically have the following DT
+> > > declaration:
+> > >
+> > >       remoteproc_cluster {
+> > >               compatible = "soc,remoteproc-cluster";
+> > >
+> > >                 core0: core0 {
+> > >                       compatible = "soc,remoteproc-core"
+> > >                         memory-region;
+> > >                         sram;
+> > >                 };
+> > >
+> > >                 core1: core1 {
+> > >                       compatible = "soc,remoteproc-core"
+> > >                         memory-region;
+> > >                         sram;
+> > >                 }
+> > >         };
+> > >
+> > > A driver exists for the cluster rather than the individual cores
+> > > themselves so that operation mode and HW specific configurations
+> > > applicable to the cluster can be made.
+> > >
+> > > Because the driver exists at the cluster level and not the individual
+> > > core level, function rproc_get_by_phandle() fails to return the
+> > > remoteproc associated with the phandled it is called for.
+> > >
+> > > This patch enhances rproc_get_by_phandle() by looking for the cluster's
+> > > driver when the driver for the immediate remoteproc's parent is not
+> > > found.
+> > >
+> >
+> > Can you please help me understand why zynqmp_r5_remoteproc_probe()
+> > invokes devm_of_platform_populate() to create platform_device instances
+> > for the clusters?
+> >
+> 
+> Platform device instances are created for the individual cores found
+> in the cluster, following the work done on TI's K3-R5[1].
+> 
 
-This brings no functional changes.
+Right, and this is a design pattern that I've been bitten by several
+times by now. There's no real purpose of spinning up platform_devices
+for those nodes.
 
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/remoteproc/mtk_scp_ipi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> > Why can't the platform_device for the cluster be used as parent for both
+> > remoteprocs and then the driver deal with the subnodes within the
+> > driver?
+> >
+> 
+> That is exactly how things work for both K3-R5 and R5F architectures.
+> That said, if we use the cluster's platform device as parent of the
+> remote processors inside the cluster, function rproc_get_by_phandle()
+> will return the first remote processor it finds with a matching parent
+> rather than the remote processor referenced by the phandle parameter.
+> 
 
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index af47504bdb61..fc55df649b40 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -160,7 +160,6 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 		 unsigned int wait)
- {
- 	struct mtk_share_obj __iomem *send_obj = scp->send_buf;
--	unsigned long timeout;
- 	u32 val;
- 	int ret;
- 
-@@ -197,10 +196,9 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 
- 	if (wait) {
- 		/* wait for SCP's ACK */
--		timeout = msecs_to_jiffies(wait);
- 		ret = wait_event_timeout(scp->ack_wq,
- 					 scp->ipi_id_ack[id],
--					 timeout);
-+					 msecs_to_jiffies(wait));
- 		scp->ipi_id_ack[id] = false;
- 		if (WARN(!ret, "scp ipi %d ack time out !", id))
- 			ret = -EIO;
--- 
-2.39.0
+I missed the fact that we don't associate either the rproc or the rproc
+device with the of_node, but rather just rely on the fact that
+rproc->dev->parent->of_node is typically is the handle we're looking
+for.
 
+And I don't think we'll return the first instance, because
+rproc->dev->parent->of_node will never match the instance's of_node.
+
+
+I think it would be cleaner to add a of_node to struct rproc and use
+this for matching.
+
+And I do suggest that we don't of_platform_populate() in the TI driver.
+If nothing else, doing so saves ~2kb of wasted RAM...
+
+> [1]. https://elixir.bootlin.com/linux/v6.2-rc2/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1728
+> 
+> > Regards,
+> > Bjorn
+> >
+> > > Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
+> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
+> > >  1 file changed, 27 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> > > index 1cd4815a6dd1..91f82886add9 100644
+> > > --- a/drivers/remoteproc/remoteproc_core.c
+> > > +++ b/drivers/remoteproc/remoteproc_core.c
+> > > @@ -33,6 +33,7 @@
+> > >  #include <linux/idr.h>
+> > >  #include <linux/elf.h>
+> > >  #include <linux/crc32.h>
+> > > +#include <linux/of_platform.h>
+> > >  #include <linux/of_reserved_mem.h>
+> > >  #include <linux/virtio_ids.h>
+> > >  #include <linux/virtio_ring.h>
+> > > @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
+> > >  #ifdef CONFIG_OF
+> > >  struct rproc *rproc_get_by_phandle(phandle phandle)
+> > >  {
+> > > +     struct platform_device *cluster_pdev;
+> > >       struct rproc *rproc = NULL, *r;
+> > > +     struct device_driver *driver;
+> > >       struct device_node *np;
+> > >
+> > >       np = of_find_node_by_phandle(phandle);
+> > > @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
+> > >       list_for_each_entry_rcu(r, &rproc_list, node) {
+> > >               if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
+> > >                       /* prevent underlying implementation from being removed */
+> > > -                     if (!try_module_get(r->dev.parent->driver->owner)) {
+> > > +
+> > > +                     /*
+> > > +                      * If the remoteproc's parent has a driver, the
+> > > +                      * remoteproc is not part of a cluster and we can use
+> > > +                      * that driver.
+> > > +                      */
+> > > +                     driver = r->dev.parent->driver;
+> > > +
+> > > +                     /*
+> > > +                      * If the remoteproc's parent does not have a driver,
+> > > +                      * look for the driver associated with the cluster.
+> > > +                      */
+> > > +                     if (!driver) {
+> > > +                             cluster_pdev = of_find_device_by_node(np->parent);
+
+Doing so also has the added benefit that we don't add an implicitly
+requirement on the rproc-device's parent being a platform_driver.
+
+Regards,
+Bjorn
+
+> > > +                             if (!cluster_pdev) {
+> > > +                                     dev_err(&r->dev, "can't get parent\n");
+> > > +                                     break;
+> > > +                             }
+> > > +
+> > > +                             driver = cluster_pdev->dev.driver;
+> > > +                             put_device(&cluster_pdev->dev);
+> > > +                     }
+> > > +
+> > > +                     if (!try_module_get(driver->owner)) {
+> > >                               dev_err(&r->dev, "can't get owner\n");
+> > >                               break;
+> > >                       }
+> > > --
+> > > 2.25.1
+> > >
