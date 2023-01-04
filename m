@@ -2,203 +2,191 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD279C4332F
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 15:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F22C46467
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 16:03:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235286AbjADP4S (ORCPT
+        id S235046AbjADQDk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 10:56:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50922 "EHLO
+        Wed, 4 Jan 2023 11:03:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234370AbjADP4R (ORCPT
+        with ESMTP id S235151AbjADQDi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Jan 2023 10:56:17 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7956D11A;
-        Wed,  4 Jan 2023 07:56:16 -0800 (PST)
+        Wed, 4 Jan 2023 11:03:38 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A3B0B86;
+        Wed,  4 Jan 2023 08:03:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 154886177E;
-        Wed,  4 Jan 2023 15:56:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246EEC433F0;
-        Wed,  4 Jan 2023 15:56:15 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C6C5AB815C9;
+        Wed,  4 Jan 2023 16:03:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B69C433D2;
+        Wed,  4 Jan 2023 16:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672847775;
-        bh=BFhoNEODuOM6811znfG4kUmLy5V2WTxufRli/c+8ciQ=;
+        s=k20201202; t=1672848214;
+        bh=qwVm6Ey+pId0r7wPricoXhTqRlRKCe/YHgGXKdhvpjU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HWCZl62LYN2Ze88Ll8ir8Q/NNeuw1cJqW/Zz3vMDPWfQGcIB99TpvdsPVmo5gQaky
-         DQcsbaVkoZEKQytVnjdlffC0Dx6XdGHjROBGoZDf9DgRR7AOsCNlw+k4Rcd6k5a3fh
-         qe+xVdHOayfuo51KNDtyPjlUSds5IZTXX93kHfy8tjVsYX8OjkNxUFw2DGyY9h9Hh9
-         YyMUucpy2+pltBwZqIhopzeupYm6nqAyTvxcpOO3mjhro2gCuCSy2WlabrRlpFJCFU
-         ZjDqFufWk0pSIvsKPBFd51bQCtUYtFHq/YqYnnd49ct/CHQNodzUHXT/WzTVK6JQxF
-         j8c+3SmIOAawA==
-Date:   Wed, 4 Jan 2023 09:56:13 -0600
+        b=uqWdfQbvRSOxXRhuVMlJTNvvt0WYb25FBVMeIk2cde4zbaEhsbT5WoTdZLqY7HRTY
+         k7mG9BQu5gHKhhtyGIY/deZmcT8B8HewKtl3U2CN12xLPOsnOp6Mqnq15MsnXEA+7g
+         Xy0tXkDSsIEgbrYk30d1CjEk3Y4DmmF2qXttRHlIuSsRoPd9IuWHAo6VcnxmnMSGNH
+         lbOhCPsba4FISM0vdZvkWV6pg8sGmXpon1gOrFfzV3MIHFNmpfPLLUeWcvOFFUiGp9
+         f/4tpm1REe52ZWvwbraRL1d0Ccwu/A8V4Aqf/YrT4j9Zy3a6YQm1QycNX30AgFvnNJ
+         faLWT0jz4fXuA==
+Date:   Wed, 4 Jan 2023 10:03:31 -0600
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ben.levinsky@xilinx.com
-Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
-Message-ID: <20230104155613.xclae5hup2ybypdo@builder.lan>
-References: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
- <20221227151131.hkezt4j2om5volnu@builder.lan>
- <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+        swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: Re: [PATCH V4 3/3] rpmsg: char: Add TIOCMGET/TIOCMSET ioctl support
+Message-ID: <20230104160331.w2sicwlqiygr42hl@builder.lan>
+References: <1670418258-11502-1-git-send-email-quic_sarannya@quicinc.com>
+ <1670418258-11502-4-git-send-email-quic_sarannya@quicinc.com>
+ <12f53ff1-a358-7129-c9ed-9b9fd7dad7e7@foss.st.com>
+ <20221227155641.xlkel7uhk7jr4qru@builder.lan>
+ <45444451-26e3-c203-bdeb-59170b6cc5ba@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
+In-Reply-To: <45444451-26e3-c203-bdeb-59170b6cc5ba@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jan 03, 2023 at 11:48:56AM -0700, Mathieu Poirier wrote:
-> On Tue, 27 Dec 2022 at 08:11, Bjorn Andersson <andersson@kernel.org> wrote:
-> >
-> > On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
-> > > Multi-cluster remoteproc designs typically have the following DT
-> > > declaration:
-> > >
-> > >       remoteproc_cluster {
-> > >               compatible = "soc,remoteproc-cluster";
-> > >
-> > >                 core0: core0 {
-> > >                       compatible = "soc,remoteproc-core"
-> > >                         memory-region;
-> > >                         sram;
-> > >                 };
-> > >
-> > >                 core1: core1 {
-> > >                       compatible = "soc,remoteproc-core"
-> > >                         memory-region;
-> > >                         sram;
-> > >                 }
-> > >         };
-> > >
-> > > A driver exists for the cluster rather than the individual cores
-> > > themselves so that operation mode and HW specific configurations
-> > > applicable to the cluster can be made.
-> > >
-> > > Because the driver exists at the cluster level and not the individual
-> > > core level, function rproc_get_by_phandle() fails to return the
-> > > remoteproc associated with the phandled it is called for.
-> > >
-> > > This patch enhances rproc_get_by_phandle() by looking for the cluster's
-> > > driver when the driver for the immediate remoteproc's parent is not
-> > > found.
-> > >
-> >
-> > Can you please help me understand why zynqmp_r5_remoteproc_probe()
-> > invokes devm_of_platform_populate() to create platform_device instances
-> > for the clusters?
-> >
+On Tue, Jan 03, 2023 at 03:50:10PM +0100, Arnaud POULIQUEN wrote:
+> On 12/27/22 16:56, Bjorn Andersson wrote:
+> > On Wed, Dec 21, 2022 at 05:28:16PM +0100, Arnaud POULIQUEN wrote:
+> >>
+> >>
+> >> On 12/7/22 14:04, Sarannya S wrote:
+[..]
+> >>>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+> >>>  
+> >>> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> >>> -		return -EINVAL;
+> >>> -
+> >>> -	/* Don't allow to destroy a default endpoint. */
+> >>> -	if (eptdev->default_ept)
+> >>> -		return -EINVAL;
+> >>> +	bool set;
+> >>> +	u32 val;
+> >>> +	int ret;
+> >>> +	
+> >>> +	switch (cmd) {
+> >>> +	case TIOCMGET:
+> >>> +		eptdev->signals_pending = false;
+> >>> +		ret = put_user(eptdev->remote_signals, (int __user *)arg);
+> >>> +		break;
+> >>> +	case TIOCMSET:
+> >>> +		ret = get_user(val, (int __user *)arg);
+> >>> +		if (ret)
+> >>> +			break;
+> >>> +		set = (val & (TIOCM_DTR | TIOCM_RTS)) ? true : false;
+> >>> +		ret = rpmsg_set_flow_control(eptdev->ept, set, 0);
+> >>> +		break;
+> >>
+> >> I still wonder if it makes sense to implement serial IOCTRL in rpmsg_char.
+> > 
+> > I've thinking about this since v1 as well...
+> > 
+> >> I think it is quite dangerous to have such kind of mixed interface.
+> >> User application would want to use the serial interface should use the tty
+> >> interface.
+> >>
+> > 
+> > Can you please elaborate on this statement, because I have a hard time
+> > to state why the user space application must use the tty interface
+> > instead of rpmsg_char.
+> > 
+> > And in particular, I don't think this is a question for the "user
+> > application", but rather for the system configuration.
+> > 
+> > In order to move an application that works with rpmsg_char to the tty
+> > driver ("because it's the right thing to do..."?) means that the system
+> > needs to be reconfigured, such that the given rpmsg channel is exposed
+> > through the tty driver instead.
+> > 
+> > This in turn either implies that the firmware needs to be changed to
+> > expose these channels with the name "rpmsg-tty" - and the application
+> > taught how to figure out which ttyRPMSGn to open - or the rpmsg_ctrl
+> > interface needs to be extended to allow the Linux side to request a
+> > particular channel to be exposed as rpmsg_char vs rpmsg-tty...
+> > 
 > 
-> Platform device instances are created for the individual cores found
-> in the cluster, following the work done on TI's K3-R5[1].
+> You are right, it can be not straightforward to migrate to rpmsg_tty. That's why
+> it also makes sense to implement flow control in the rpmsg char.
+> 
+> What I try to highlight is the use of the RS232 signaling(e.g TIOCM_DTR) and
+> TIOCMGET/TIOCMSE  terminal IOCTL in this patch.
+> Please tell me if I wrong, but seems to me that such interface is dedicated to
+> the serial/TTY frameworks [1].
+> So does it make sense to reuse this interface for the rpmsg char?
 > 
 
-Right, and this is a design pattern that I've been bitten by several
-times by now. There's no real purpose of spinning up platform_devices
-for those nodes.
+We're in understanding of the usefulness and the question about the
+validity of reusing the tty's TIOCM{GET,SET} ioctl here. I don't know
+the answer to the latter, and haven't pushed on this point.
 
-> > Why can't the platform_device for the cluster be used as parent for both
-> > remoteprocs and then the driver deal with the subnodes within the
-> > driver?
-> >
+> [1]https://elixir.bootlin.com/linux/latest/source/include/uapi/asm-generic/ioctls.h#L8
 > 
-> That is exactly how things work for both K3-R5 and R5F architectures.
-> That said, if we use the cluster's platform device as parent of the
-> remote processors inside the cluster, function rproc_get_by_phandle()
-> will return the first remote processor it finds with a matching parent
-> rather than the remote processor referenced by the phandle parameter.
+> Instead we could have generic RPMSG IOCTLs that can be implemented on different
+> rpmsg clients whatever the rpmsg channel (so not only the rpmsg char). This is
+> the proposal below.
 > 
 
-I missed the fact that we don't associate either the rproc or the rproc
-device with the of_node, but rather just rely on the fact that
-rproc->dev->parent->of_node is typically is the handle we're looking
-for.
-
-And I don't think we'll return the first instance, because
-rproc->dev->parent->of_node will never match the instance's of_node.
-
-
-I think it would be cleaner to add a of_node to struct rproc and use
-this for matching.
-
-And I do suggest that we don't of_platform_populate() in the TI driver.
-If nothing else, doing so saves ~2kb of wasted RAM...
-
-> [1]. https://elixir.bootlin.com/linux/v6.2-rc2/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1728
-> 
-> > Regards,
-> > Bjorn
-> >
-> > > Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > ---
-> > >  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
-> > >  1 file changed, 27 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index 1cd4815a6dd1..91f82886add9 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -33,6 +33,7 @@
-> > >  #include <linux/idr.h>
-> > >  #include <linux/elf.h>
-> > >  #include <linux/crc32.h>
-> > > +#include <linux/of_platform.h>
-> > >  #include <linux/of_reserved_mem.h>
-> > >  #include <linux/virtio_ids.h>
-> > >  #include <linux/virtio_ring.h>
-> > > @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
-> > >  #ifdef CONFIG_OF
-> > >  struct rproc *rproc_get_by_phandle(phandle phandle)
-> > >  {
-> > > +     struct platform_device *cluster_pdev;
-> > >       struct rproc *rproc = NULL, *r;
-> > > +     struct device_driver *driver;
-> > >       struct device_node *np;
-> > >
-> > >       np = of_find_node_by_phandle(phandle);
-> > > @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
-> > >       list_for_each_entry_rcu(r, &rproc_list, node) {
-> > >               if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
-> > >                       /* prevent underlying implementation from being removed */
-> > > -                     if (!try_module_get(r->dev.parent->driver->owner)) {
-> > > +
-> > > +                     /*
-> > > +                      * If the remoteproc's parent has a driver, the
-> > > +                      * remoteproc is not part of a cluster and we can use
-> > > +                      * that driver.
-> > > +                      */
-> > > +                     driver = r->dev.parent->driver;
-> > > +
-> > > +                     /*
-> > > +                      * If the remoteproc's parent does not have a driver,
-> > > +                      * look for the driver associated with the cluster.
-> > > +                      */
-> > > +                     if (!driver) {
-> > > +                             cluster_pdev = of_find_device_by_node(np->parent);
-
-Doing so also has the added benefit that we don't add an implicitly
-requirement on the rproc-device's parent being a platform_driver.
+Using a new pair of rpmsg_char ioctls for "set/get flow enable/disable"
+would, IMHO, be easier to understand and it would avoid assumptions
+inherited about all the other bits in the TIOCMSET ioctl.
 
 Regards,
 Bjorn
 
-> > > +                             if (!cluster_pdev) {
-> > > +                                     dev_err(&r->dev, "can't get parent\n");
-> > > +                                     break;
-> > > +                             }
-> > > +
-> > > +                             driver = cluster_pdev->dev.driver;
-> > > +                             put_device(&cluster_pdev->dev);
-> > > +                     }
-> > > +
-> > > +                     if (!try_module_get(driver->owner)) {
-> > >                               dev_err(&r->dev, "can't get owner\n");
-> > >                               break;
-> > >                       }
-> > > --
-> > > 2.25.1
-> > >
+> Regards,
+> Arnaud
+> 
+> >> For the rpmsg char, I would be in favor of creating a specific RPMSG IOCTRLs
+> >> to avoid confusion.
+> >>
+> >> For instance:
+> >>
+> >>  - RPMSG_GET_SIGN_IOCTRL
+> >>  - RPMSG_SET_SIGN_IOCTRL
+> >>
+> > 
+> > Again, we're talking "flow control" at this level. So either we follow
+> > the standard IOCTL and make it easy for existing applications to use
+> > rpmsg_char, or we provide a _good_ explanation why they must use the
+> > tty interface instead (and if so solve above mentioned problems).
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> >> With associated parameter corresponding to the bitmap proposed in my comment of
+> >> your patch 1/4.
+> >>
+> >> Of course, this is only a suggestion, I let Bjorn and Mathieu comment.
+> >>
+> >> Regards,
+> >> Arnaud
+> >>
+> >>
+> >>> +	case RPMSG_DESTROY_EPT_IOCTL:
+> >>> +		/* Don't allow to destroy a default endpoint. */
+> >>> +		if (eptdev->default_ept) {
+> >>> +			ret = -EINVAL;
+> >>> +			break;
+> >>> +		}
+> >>> +		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> >>> +		break;
+> >>> +	default:
+> >>> +		ret = -EINVAL;
+> >>> +	}
+> >>>  
+> >>> -	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> >>> +	return ret;
+> >>>  }
+> >>>  
+> >>>  static const struct file_operations rpmsg_eptdev_fops = {
