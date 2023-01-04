@@ -2,185 +2,136 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94221C4708D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  3 Jan 2023 18:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B791C4332F
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  4 Jan 2023 08:31:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238656AbjACSuF (ORCPT
+        id S229658AbjADIbn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 3 Jan 2023 13:50:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57538 "EHLO
+        Wed, 4 Jan 2023 03:31:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238807AbjACStY (ORCPT
+        with ESMTP id S234029AbjADIb2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 3 Jan 2023 13:49:24 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A415713D3C
-        for <linux-remoteproc@vger.kernel.org>; Tue,  3 Jan 2023 10:49:08 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id t15so21712688wro.9
-        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Jan 2023 10:49:08 -0800 (PST)
+        Wed, 4 Jan 2023 03:31:28 -0500
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E6F1869B
+        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Jan 2023 00:31:26 -0800 (PST)
+Received: by mail-pl1-x635.google.com with SMTP id n4so35228989plp.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Jan 2023 00:31:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EClO0eHZ1ZJTRLCT268bG05mzbFFKh0lHqO8s/xO1kk=;
-        b=k7FQg5RzPgxmKbPgb5mNDLxvWLIeik0YusJeYvDd/AvjkCX7QT89J8ToSCvh1FzaEl
-         PN3NapKsfaLIJptreMlTSBtqH1JTfn6HuSLCTvkwBSPbta8Uh+7NwUZpUE0cWKftgdrE
-         s9x8R9JyLehSOxhrB6wlnGzlksrOEbcydJgiobN7G9TGKOIXa0ceAspZxwZanb9azXmU
-         voHYHUbBNDfBnuTWTzFS1rMK5qNtahmEL3ZApYJt+OhAsKUawqmKos9ilJ3Hnt/Inetp
-         4oK2LX6bfmTQ5Ck0hN/oW3Sk4LCp9Z21VeWgS42GHbw1zvDoKzhv6cOnzWMgPefUBgr0
-         f26A==
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+dLuHlcC9jnNQMQw94DnzReVIGUmjOcxr5KvYMev8U=;
+        b=Y6p8ZQAFtVMjaWUXOOmJW3dVg7sTCZDpqgmsww1yv78ELTsTvUOzzh1vI4HKCoA/I/
+         YDKeO3dbrEB3Uxq4ikf+PWOZI49nPxuRhtLY//2wK2Jj4JLmZE8cxt4ADlPRaqFJRfJd
+         LTxf/SNUMnvBAqj9hsojG7XuTAN2ANr3weauE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EClO0eHZ1ZJTRLCT268bG05mzbFFKh0lHqO8s/xO1kk=;
-        b=tYX/EwwkscuASBEocHRsfOeJIeMFaH88tHRyRmM1iingdbCAuSpf0nmZKm1LG5c+jI
-         aE9MpSnMEbBMVPfxgN8VnvwBohUcFwx0b400qJnN9WqPAUSlCv4ceieyd8G6FlUeG6Jo
-         /BOvL1oZWudwGAalwXZXcbuqPfJ5j6AC5K+NQTGFcPN2Y949pZkz7TRBJnbJ4D9cD+Vm
-         0WsfuZUR0NMax0MfFIVxjzp5/j6Eas580wVz7I1IZxusUA2hxLJAQGDjDGu3Wvphlza+
-         4GtYjWVbH3knd3OyETm0da5Q9eCIWU+g32TX2mzwQQha2O+XRbvMcotZbuGu8yhc2ZvJ
-         89zQ==
-X-Gm-Message-State: AFqh2krdQCQzNqg0edvX3uy9q1utrmydkGK07GSPCwRhZdshKne54uDe
-        BZ+LU/CmfnuS2hWAbg6wCxKGjYFMzagCoo/Coqwwig==
-X-Google-Smtp-Source: AMrXdXvCMhSN98FeNpcisc6mzx12pLOOnLKrYEUr+nxMFAz4ph9VTNujcEWbOf7kYXCzitxDDwl1bnNOcRDQy69jmPk=
-X-Received: by 2002:a5d:4305:0:b0:29d:780d:182c with SMTP id
- h5-20020a5d4305000000b0029d780d182cmr149100wrq.251.1672771747211; Tue, 03 Jan
- 2023 10:49:07 -0800 (PST)
+        bh=4+dLuHlcC9jnNQMQw94DnzReVIGUmjOcxr5KvYMev8U=;
+        b=KdOuxtpp3fDRXsyHXWjKUeTZYzqJN+vafbUP7nNDvVk0k2Rtjjp/wbgkOz07cjT7vs
+         HOlRYz+4+2ZOUdTnYhNODlLxjqJ3VuuMe7Heelk3cjumdbCSnQcL0ClyZNP1k1o1ES8M
+         O8VRgNH8D05v0SfltQ+Rex7E/R9LTHU1J/YEeF4neLzlKxvrr5vP0UFii09SjXh9MafD
+         DgDbcUbcThKtF8IFNVxBT8pbXEvcVdE/v7K0s0Yir9iH0JnOwMrPeAYnrkopwTLk6183
+         AoWXYyCC9Ym0rhQ9/5evGSLX1B6IAuzZt8PYl7ClJqxME+xa4I88bRp8qOQKhCx05h/6
+         INhg==
+X-Gm-Message-State: AFqh2krhwE1hAkATPzm3sik/UIL/dbXiqtqL5kek4gKv4P7Dt0KYVECW
+        mQhk3Yz2ITVb5k11hMeA2YEIGzjn3iIahUht
+X-Google-Smtp-Source: AMrXdXujFnG7dDV9MJtsjkA59x1G95RzXq9CimM7pdZKe0Di/GVPavoCYPnyhRWzT/EOvKLsFiYF/g==
+X-Received: by 2002:a05:6a20:1e55:b0:a2:a636:70c2 with SMTP id cy21-20020a056a201e5500b000a2a63670c2mr66048817pzb.24.1672821085870;
+        Wed, 04 Jan 2023 00:31:25 -0800 (PST)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:9ef5:c3c1:77a5:2cd])
+        by smtp.gmail.com with ESMTPSA id g16-20020a63fa50000000b0046b1dabf9a8sm19781604pgk.70.2023.01.04.00.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jan 2023 00:31:25 -0800 (PST)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Tzung-Bi Shih <tzungbi@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+Subject: [PATCH] remoteproc/mtk_scp: Move clk ops outside send_lock
+Date:   Wed,  4 Jan 2023 16:31:10 +0800
+Message-Id: <20230104083110.736377-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
 MIME-Version: 1.0
-References: <20221214221643.1286585-1-mathieu.poirier@linaro.org> <20221227151131.hkezt4j2om5volnu@builder.lan>
-In-Reply-To: <20221227151131.hkezt4j2om5volnu@builder.lan>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 3 Jan 2023 11:48:56 -0700
-Message-ID: <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ben.levinsky@xilinx.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 27 Dec 2022 at 08:11, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
-> > Multi-cluster remoteproc designs typically have the following DT
-> > declaration:
-> >
-> >       remoteproc_cluster {
-> >               compatible = "soc,remoteproc-cluster";
-> >
-> >                 core0: core0 {
-> >                       compatible = "soc,remoteproc-core"
-> >                         memory-region;
-> >                         sram;
-> >                 };
-> >
-> >                 core1: core1 {
-> >                       compatible = "soc,remoteproc-core"
-> >                         memory-region;
-> >                         sram;
-> >                 }
-> >         };
-> >
-> > A driver exists for the cluster rather than the individual cores
-> > themselves so that operation mode and HW specific configurations
-> > applicable to the cluster can be made.
-> >
-> > Because the driver exists at the cluster level and not the individual
-> > core level, function rproc_get_by_phandle() fails to return the
-> > remoteproc associated with the phandled it is called for.
-> >
-> > This patch enhances rproc_get_by_phandle() by looking for the cluster's
-> > driver when the driver for the immediate remoteproc's parent is not
-> > found.
-> >
->
-> Can you please help me understand why zynqmp_r5_remoteproc_probe()
-> invokes devm_of_platform_populate() to create platform_device instances
-> for the clusters?
->
+Clocks are properly reference counted and do not need to be inside the
+lock range.
 
-Platform device instances are created for the individual cores found
-in the cluster, following the work done on TI's K3-R5[1].
+Right now this triggers a false-positive lockdep warning on MT8192 based
+Chromebooks, through a combination of mtk-scp that has a cros-ec-rpmsg
+sub-device, the (actual) cros-ec I2C adapter registration, I2C client
+(not on cros-ec) probe doing i2c transfers and enabling clocks.
 
-> Why can't the platform_device for the cluster be used as parent for both
-> remoteprocs and then the driver deal with the subnodes within the
-> driver?
->
+This is a false positive because the cros-ec-rpmsg under mtk-scp does
+not have an I2C adapter, and also each I2C adapter and cros-ec instance
+have their own mutex.
 
-That is exactly how things work for both K3-R5 and R5F architectures.
-That said, if we use the cluster's platform device as parent of the
-remote processors inside the cluster, function rproc_get_by_phandle()
-will return the first remote processor it finds with a matching parent
-rather than the remote processor referenced by the phandle parameter.
+Move the clk operations outside of the send_lock range.
 
-[1]. https://elixir.bootlin.com/linux/v6.2-rc2/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1728
+Fixes: ("63c13d61eafe remoteproc/mediatek: add SCP support for mt8183")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ drivers/remoteproc/mtk_scp_ipi.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-> Regards,
-> Bjorn
->
-> > Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
-> >  1 file changed, 27 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 1cd4815a6dd1..91f82886add9 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -33,6 +33,7 @@
-> >  #include <linux/idr.h>
-> >  #include <linux/elf.h>
-> >  #include <linux/crc32.h>
-> > +#include <linux/of_platform.h>
-> >  #include <linux/of_reserved_mem.h>
-> >  #include <linux/virtio_ids.h>
-> >  #include <linux/virtio_ring.h>
-> > @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
-> >  #ifdef CONFIG_OF
-> >  struct rproc *rproc_get_by_phandle(phandle phandle)
-> >  {
-> > +     struct platform_device *cluster_pdev;
-> >       struct rproc *rproc = NULL, *r;
-> > +     struct device_driver *driver;
-> >       struct device_node *np;
-> >
-> >       np = of_find_node_by_phandle(phandle);
-> > @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
-> >       list_for_each_entry_rcu(r, &rproc_list, node) {
-> >               if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
-> >                       /* prevent underlying implementation from being removed */
-> > -                     if (!try_module_get(r->dev.parent->driver->owner)) {
-> > +
-> > +                     /*
-> > +                      * If the remoteproc's parent has a driver, the
-> > +                      * remoteproc is not part of a cluster and we can use
-> > +                      * that driver.
-> > +                      */
-> > +                     driver = r->dev.parent->driver;
-> > +
-> > +                     /*
-> > +                      * If the remoteproc's parent does not have a driver,
-> > +                      * look for the driver associated with the cluster.
-> > +                      */
-> > +                     if (!driver) {
-> > +                             cluster_pdev = of_find_device_by_node(np->parent);
-> > +                             if (!cluster_pdev) {
-> > +                                     dev_err(&r->dev, "can't get parent\n");
-> > +                                     break;
-> > +                             }
-> > +
-> > +                             driver = cluster_pdev->dev.driver;
-> > +                             put_device(&cluster_pdev->dev);
-> > +                     }
-> > +
-> > +                     if (!try_module_get(driver->owner)) {
-> >                               dev_err(&r->dev, "can't get owner\n");
-> >                               break;
-> >                       }
-> > --
-> > 2.25.1
-> >
+diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+index 00f041ebcde6..4c0d121c2f54 100644
+--- a/drivers/remoteproc/mtk_scp_ipi.c
++++ b/drivers/remoteproc/mtk_scp_ipi.c
+@@ -164,21 +164,21 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
+ 	    WARN_ON(len > sizeof(send_obj->share_buf)) || WARN_ON(!buf))
+ 		return -EINVAL;
+ 
+-	mutex_lock(&scp->send_lock);
+-
+ 	ret = clk_prepare_enable(scp->clk);
+ 	if (ret) {
+ 		dev_err(scp->dev, "failed to enable clock\n");
+-		goto unlock_mutex;
++		return ret;
+ 	}
+ 
++	mutex_lock(&scp->send_lock);
++
+ 	 /* Wait until SCP receives the last command */
+ 	timeout = jiffies + msecs_to_jiffies(2000);
+ 	do {
+ 		if (time_after(jiffies, timeout)) {
+ 			dev_err(scp->dev, "%s: IPI timeout!\n", __func__);
+ 			ret = -ETIMEDOUT;
+-			goto clock_disable;
++			goto unlock_mutex;
+ 		}
+ 	} while (readl(scp->reg_base + scp->data->host_to_scp_reg));
+ 
+@@ -205,10 +205,9 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
+ 			ret = 0;
+ 	}
+ 
+-clock_disable:
+-	clk_disable_unprepare(scp->clk);
+ unlock_mutex:
+ 	mutex_unlock(&scp->send_lock);
++	clk_disable_unprepare(scp->clk);
+ 
+ 	return ret;
+ }
+-- 
+2.39.0.314.g84b9a713c41-goog
+
