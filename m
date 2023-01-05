@@ -2,101 +2,183 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F3BC53210
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Jan 2023 03:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CADC3DA7A
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Jan 2023 06:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbjAEDBE (ORCPT
+        id S230495AbjAEG5o (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 4 Jan 2023 22:01:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
+        Thu, 5 Jan 2023 01:57:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230034AbjAEDAe (ORCPT
+        with ESMTP id S230489AbjAEG5X (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 4 Jan 2023 22:00:34 -0500
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9907E48810
-        for <linux-remoteproc@vger.kernel.org>; Wed,  4 Jan 2023 19:00:33 -0800 (PST)
-Received: by mail-vk1-xa2b.google.com with SMTP id v81so17643445vkv.5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Jan 2023 19:00:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wXPv40UKiN0pdjRRG3IPp8PXZI0C6Sv6kiLqHzLCQIs=;
-        b=Tfo7xSTMp3ZHBuKhEdl6YQmRWSu9evEhRA9jVD+XEmZAmX3OhILMv6/tagqg5JrWyJ
-         O27AQX6qVsvvx/aztU+FHrYmR+DDWnZD4lWiXg21skl/w2F3cMa1s5PhiEFOum8ACThm
-         bpho+D4ObOmG3/lykf3rbUDD+0e+0muT1Zxpc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wXPv40UKiN0pdjRRG3IPp8PXZI0C6Sv6kiLqHzLCQIs=;
-        b=b+q9j/y4kFpGm3EFwEH5VNDmpaZq/51fMqS9x68CwA6ZGA1hA7xth8eB5aHIRA1x2s
-         bASbEl3i58Xp8jnb5sKHT7e4zRTJ1G5YxX/+T0TsmypNqQ3YrAsuQVL8suhm69h4z2VD
-         C7ckZa8R48vQ89L/u9SQR59vgxwC691iygwgib/PtYeJFlSZsEXQr/rTuzDJzRtgScWB
-         wUP62phkIBK7o520XXhh0jKwgU8GQxA0iwnsgrlZm4Nd8y0TK4QkgbPEycegXpmCTkud
-         a1DDZ/rzoU6XmHWsYTtqxmQuCQksRFu+26JgCTHlLHvssZ2z7gwQeUuM4+IwHLgpr/s7
-         sqPQ==
-X-Gm-Message-State: AFqh2kp7GA97RNLOIqmxbVz/sQ2tiJEmYj7tn10G+XQ37UihQqmWjcSF
-        AexEEV7w58X+Ouc3CBz9xpkRHPxsX+wcjLnpdWYigg==
-X-Google-Smtp-Source: AMrXdXv0eISHRGoQ1TN64WNdAr9dqLbmh2OyMms0GAzinCpYIPmx7WL0T/abKXd9uqh1oh8lQogUYj5HtSiUBb7k+Cc=
-X-Received: by 2002:a1f:df84:0:b0:3d5:9e3a:538 with SMTP id
- w126-20020a1fdf84000000b003d59e3a0538mr2154545vkg.22.1672887632729; Wed, 04
- Jan 2023 19:00:32 -0800 (PST)
+        Thu, 5 Jan 2023 01:57:23 -0500
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7345A5274A;
+        Wed,  4 Jan 2023 22:57:21 -0800 (PST)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3056v22j125663;
+        Thu, 5 Jan 2023 00:57:02 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1672901822;
+        bh=lApiIuTNjR6+fOleqQdOeGBS8C+PUb0O1jZIgzhKcrE=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=auuS9WTGga4p1i9YsEa+8DLocA2OZD/+jcOR9RlMzYCfvRUyyBOLe4UMPX4QEnAVN
+         ZPkWW6N9B4s28Mudy467gN1hxxjrWOOjQHboAci5TLDt/Y3rHecwKpQ+Fs7i5QYZaZ
+         t8S/bgVYnmLThe+HxXtlR5Tfiyl4/NRbOT0us8do=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3056v2QQ030420
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 5 Jan 2023 00:57:02 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Thu, 5
+ Jan 2023 00:57:02 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Thu, 5 Jan 2023 00:57:02 -0600
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3056uwuq014589;
+        Thu, 5 Jan 2023 00:56:58 -0600
+Message-ID: <49f03742-82a4-7748-0b4a-c557006b04cc@ti.com>
+Date:   Thu, 5 Jan 2023 12:26:57 +0530
 MIME-Version: 1.0
-References: <20230104083110.736377-1-wenst@chromium.org> <20230104222213.GB2112402@p14s>
-In-Reply-To: <20230104222213.GB2112402@p14s>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 5 Jan 2023 11:00:21 +0800
-Message-ID: <CAGXv+5Fh13ciPjrfK2F89QJavePHcBwMwThSALxEF+5CUdA_Yg@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc/mtk_scp: Move clk ops outside send_lock
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Tinghan Shen <tinghan.shen@mediatek.com>,
-        Tzung-Bi Shih <tzungbi@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Allen-KH Cheng <allen-kh.cheng@mediatek.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [EXTERNAL] Re: [PATCH v12 2/6] remoteproc: pru: Add enum for PRU
+ Core Identifiers.
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <srk@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20221216053313.2974826-1-danishanwar@ti.com>
+ <20221216053313.2974826-3-danishanwar@ti.com> <20230105002240.GE2112402@p14s>
+Content-Language: en-US
+From:   Md Danish Anwar <a0501179@ti.com>
+In-Reply-To: <20230105002240.GE2112402@p14s>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jan 5, 2023 at 6:22 AM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Wed, Jan 04, 2023 at 04:31:10PM +0800, Chen-Yu Tsai wrote:
-> > Clocks are properly reference counted and do not need to be inside the
-> > lock range.
-> >
-> > Right now this triggers a false-positive lockdep warning on MT8192 based
-> > Chromebooks, through a combination of mtk-scp that has a cros-ec-rpmsg
-> > sub-device, the (actual) cros-ec I2C adapter registration, I2C client
-> > (not on cros-ec) probe doing i2c transfers and enabling clocks.
-> >
-> > This is a false positive because the cros-ec-rpmsg under mtk-scp does
-> > not have an I2C adapter, and also each I2C adapter and cros-ec instance
-> > have their own mutex.
-> >
-> > Move the clk operations outside of the send_lock range.
->
-> Thanks for providing such a clear explanation - it makes my job a lot easier.
->
-> >
-> > Fixes: ("63c13d61eafe remoteproc/mediatek: add SCP support for mt8183")
->
-> This is the wrong format for a "Fixes:" tag.  Please see
-> Documentation/process/submitting-patches.rst for details.
->
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->
-> I have fixed the above and applied this patch.
+Hi Mathieu,
 
-Thanks, and sorry about the brain fart on my end.
+On 05/01/23 05:52, Mathieu Poirier wrote:
+> On Fri, Dec 16, 2022 at 11:03:09AM +0530, MD Danish Anwar wrote:
+>> Introducing enum pruss_pru_id for PRU Core Identifiers.
+>> PRUSS_PRU0 indicates PRU Core 0.
+>> PRUSS_PRU1 indicates PRU Core 1.
+>> PRUSS_NUM_PRUS indicates the total number of PRU Cores.
+>>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+>> ---
+>>  drivers/remoteproc/pru_rproc.c |  7 ++++---
+>>  include/linux/pruss.h          | 32 ++++++++++++++++++++++++++++++++
+>>  2 files changed, 36 insertions(+), 3 deletions(-)
+>>  create mode 100644 include/linux/pruss.h
+>>
+>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>> index 128bf9912f2c..a1a208b31846 100644
+>> --- a/drivers/remoteproc/pru_rproc.c
+>> +++ b/drivers/remoteproc/pru_rproc.c
+>> @@ -16,6 +16,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/of_device.h>
+>>  #include <linux/of_irq.h>
+>> +#include <linux/pruss.h>
+>>  #include <linux/pruss_driver.h>
+>>  #include <linux/remoteproc.h>
+>>  
+>> @@ -438,7 +439,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+>>  	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
+>>  	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
+>>  	/* PRU1 has its local RAM addresses reversed */
+>> -	if (pru->id == 1)
+>> +	if (pru->id == PRUSS_PRU1)
+>>  		swap(dram0, dram1);
+>>  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
+>>  
+>> @@ -747,14 +748,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
+>>  	case RTU0_IRAM_ADDR_MASK:
+>>  		fallthrough;
+>>  	case PRU0_IRAM_ADDR_MASK:
+>> -		pru->id = 0;
+>> +		pru->id = PRUSS_PRU0;
+>>  		break;
+>>  	case TX_PRU1_IRAM_ADDR_MASK:
+>>  		fallthrough;
+>>  	case RTU1_IRAM_ADDR_MASK:
+>>  		fallthrough;
+>>  	case PRU1_IRAM_ADDR_MASK:
+>> -		pru->id = 1;
+>> +		pru->id = PRUSS_PRU1;
+>>  		break;
+>>  	default:
+>>  		ret = -EINVAL;
+>> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+>> new file mode 100644
+>> index 000000000000..fbe4fbb45807
+>> --- /dev/null
+>> +++ b/include/linux/pruss.h
+>> @@ -0,0 +1,32 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/**
+>> + * PRU-ICSS Subsystem user interfaces
+>> + *
+>> + * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+>> + *	Suman Anna <s-anna@ti.com>
+>> + */
+>> +
+>> +#ifndef __LINUX_PRUSS_H
+>> +#define __LINUX_PRUSS_H
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/types.h>
+>> +
+>> +#define PRU_RPROC_DRVNAME "pru-rproc"
+>> +
+>> +/**
+>> + * enum pruss_pru_id - PRU core identifiers
+>> + * @PRUSS_PRU0: PRU Core 0.
+>> + * @PRUSS_PRU1: PRU Core 1.
+>> + * @PRUSS_NUM_PRUS: Total number of PRU Cores available.
+>> + *
+>> + */
+>> +
+>> +enum pruss_pru_id {
+>> +	PRUSS_PRU0 = 0,
+>> +	PRUSS_PRU1,
+>> +	PRUSS_NUM_PRUS,
+>> +};
+>> +
+>> +
+>> +#endif /* __LINUX_PRUSS_H */
+>> \ No newline at end of file
+> 
+> I fixed the checkpatch warning associated with this patch but it has a cascading
+> effect on the other patches.  Please address and send a new revision.  Aside
+> from this I am good with this patchset.
+> 
+> Thanks,
+> Mathieu
+> 
 
-ChenYu
+Sure Mathieu.
+I will fix the checkpatch warning associated with this patch and send a new
+revision.
+
+Thanks,
+Danish.
+
+>> -- 
+>> 2.25.1
+>>
