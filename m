@@ -2,118 +2,173 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D5EC3DA7D
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Jan 2023 13:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CCAC54EBC
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  5 Jan 2023 20:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231802AbjAENOP (ORCPT
+        id S235248AbjAEUYU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 5 Jan 2023 08:14:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34782 "EHLO
+        Thu, 5 Jan 2023 15:24:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232016AbjAENOB (ORCPT
+        with ESMTP id S235666AbjAEUYB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 5 Jan 2023 08:14:01 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2195D11C;
-        Thu,  5 Jan 2023 05:14:00 -0800 (PST)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 305D1hXl018927;
-        Thu, 5 Jan 2023 13:13:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=vjNXt612J0wjxSScDAWcbAirmr6yc+Fg0zIzMh3vWes=;
- b=VN63+5QeLYUcQEVEcQduORyJVSgelIWsrnOST4Mh4jyIz+DecD/ia6clMs9emPjgBmVc
- Tu5Rd947gDkDSQ83zmSb4c0b4znhxGucPMMV9jbn3pbFzBtTqWfVASe4VdBmIDQZ6byj
- 7X18mK/Cfd4Yl0RUw1jqrW2EclklN2EB7eXF9T1cXG9ywiCmnlKmMTaS1X9vSvA7dpWa
- gTE/no9kXq8lvLlA6r+Dh02R14W98X3LAegK45NpFCM062Si3EzUt8ywjHkJjYq17yp0
- t0Tvs2kLFPtLpwXd8gHyP2MNMDPiXtmAyqCQWmGYe61ZLi1JsbqQkt0Znu4Q8J+1ZFLf Ag== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mwu4vrehe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Jan 2023 13:13:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 305DDCSD002403
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Jan 2023 13:13:12 GMT
-Received: from hu-srivasam-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Thu, 5 Jan 2023 05:13:05 -0800
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-To:     <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
-        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
-        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <mathieu.poirier@linaro.org>,
-        <corbet@lwn.net>
-CC:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Subject: [PATCH] dt-bindings: remoteproc: qcom: Add reg-names and power-domain-names
-Date:   Thu, 5 Jan 2023 18:42:43 +0530
-Message-ID: <1672924363-22938-1-git-send-email-quic_srivasam@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 5 Jan 2023 15:24:01 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D729463395
+        for <linux-remoteproc@vger.kernel.org>; Thu,  5 Jan 2023 12:24:00 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id o1-20020a17090a678100b00219cf69e5f0so3140837pjj.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Jan 2023 12:24:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BdPQnZPsNbU7v8vdnBDPJX4Ei7uk+/hU47MzzdZv4JY=;
+        b=ZJHtyhEbEExG2mK0lt1w8Q95zOYeqLbYfa2RGWpffEkSjaoUfhTWukEDeXUBn1RHCM
+         fpt/aRXL7SJietjXBvp3Qdpm7J8Xd3BeZdDX7EKMJEhuic0nFlOveIf+X7mLwyIi5ep2
+         B60IIcWgy33ab0hKe1nIEGIRLXP/Zqq7i0auZB0hKMF0wCXyYupOmr0GorHRDLETpQcR
+         HqnLX9VK100Ft4wEykjD/Pp8UrkpsaRHRSKc74MRDpr+YZQyvGJOlQt9zyrUyALJsT8P
+         1Ik0zpFAlUB6sV0TG3P5zFVUMPUKeMGHniNV98i4EHVRhgZ/dARSooUlS5xbCYRFzaIx
+         dkgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BdPQnZPsNbU7v8vdnBDPJX4Ei7uk+/hU47MzzdZv4JY=;
+        b=ldxZOWyb1Q+jfMlO0ID8ZB6ojNy4xZ7lzIgviwskijtRKl3G7osecepyPXCLySnafs
+         yR8CgQfNbZDGFUNBtUr0jRiaMxPe+NKVj9UVWQlvj/W/EvHYA/KmgIwrphDwVRkbJbln
+         fHVtCHGQZ4MAzngxsaNMhelpO97qbn7j27oN8Mh2q+YI2pI2Lcm2XbIdEoEFIChIj/03
+         MC3KJwYSocaQyjVTQ0xsHpaFnT/lSKEmtTVuLxpgaIxcHJ/wb2XzEpOfbYHc9REB7SPA
+         8bUVnKYmnSRDApLZaD4fWyj3Z9kSyVwEBOLWmxup0/sBobga8HfjtVMj+e2hkRRTXoEY
+         v7uQ==
+X-Gm-Message-State: AFqh2kqR6qLuPFrO5LX1dm66mHnW9qluu7cTCIWJ8U07kdLm6Gn1hmtS
+        PSJ6DsKEk+LBrEZsk0lDRl6LaQ==
+X-Google-Smtp-Source: AMrXdXsSdNJpdEDK6HJVJgTdEB6KWYZUS7shO4sAk0iXvj/JheXjC6QWpmD7mmCU+NMPyL2hCoJzYg==
+X-Received: by 2002:a17:902:c102:b0:192:8e05:1505 with SMTP id 2-20020a170902c10200b001928e051505mr36182840pli.31.1672950240412;
+        Thu, 05 Jan 2023 12:24:00 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:1328:ca09:d4c2:fcbc])
+        by smtp.gmail.com with ESMTPSA id d12-20020a170903230c00b00187033cac81sm19030920plh.145.2023.01.05.12.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jan 2023 12:23:59 -0800 (PST)
+Date:   Thu, 5 Jan 2023 13:23:56 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     MD Danish Anwar <danishanwar@ti.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>, nm@ti.com, vigneshr@ti.com,
+        srk@ti.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v13 2/6] remoteproc: pru: Add enum for PRU Core
+ Identifiers.
+Message-ID: <20230105202356.GA2281956@p14s>
+References: <20230105092149.686201-1-danishanwar@ti.com>
+ <20230105092149.686201-3-danishanwar@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eCrg1MeUS0K4j-1wRT4HGlgxtnJnq4iL
-X-Proofpoint-ORIG-GUID: eCrg1MeUS0K4j-1wRT4HGlgxtnJnq4iL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-05_04,2023-01-04_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- impostorscore=0 spamscore=0 malwarescore=0 mlxscore=0 adultscore=0
- bulkscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301050104
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230105092149.686201-3-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add reg-names and power-domain-names for remoteproc ADSP pheripheral
-loader. This is to make compatible with remoteproc ADSP PIL driver.
-Also change power domain from LCX to CX.
+On Thu, Jan 05, 2023 at 02:51:45PM +0530, MD Danish Anwar wrote:
+> Introducing enum pruss_pru_id for PRU Core Identifiers.
+> PRUSS_PRU0 indicates PRU Core 0.
+> PRUSS_PRU1 indicates PRU Core 1.
+> PRUSS_NUM_PRUS indicates the total number of PRU Cores.
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> ---
+>  drivers/remoteproc/pru_rproc.c |  7 ++++---
+>  include/linux/pruss.h          | 31 +++++++++++++++++++++++++++++++
 
-Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
----
- .../devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Please add this under include/linux/remoteproc/ to avoid adding an orphan file
+under include/linux/.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-index 94ca7a0..b5bee2c 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-@@ -23,6 +23,11 @@ properties:
-       - description: qdsp6ss register
-       - description: efuse q6ss register
- 
-+  reg-names:
-+    items:
-+      - const: qdsp6ss_base
-+      - const: lpass_efuse
-+
-   iommus:
-     items:
-       - description: Phandle to apps_smmu node with sid mask
-@@ -57,7 +62,11 @@ properties:
- 
-   power-domains:
-     items:
--      - description: LCX power domain
-+      - description: CX power domain
-+
-+  power-domain-names:
-+    items:
-+      - const: cx
- 
-   resets:
-     items:
--- 
-2.7.4
+Thanks,
+Mathieu
 
+>  2 files changed, 35 insertions(+), 3 deletions(-)
+>  create mode 100644 include/linux/pruss.h
+> 
+> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> index 128bf9912f2c..a1a208b31846 100644
+> --- a/drivers/remoteproc/pru_rproc.c
+> +++ b/drivers/remoteproc/pru_rproc.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of_device.h>
+>  #include <linux/of_irq.h>
+> +#include <linux/pruss.h>
+>  #include <linux/pruss_driver.h>
+>  #include <linux/remoteproc.h>
+>  
+> @@ -438,7 +439,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+>  	dram0 = pruss->mem_regions[PRUSS_MEM_DRAM0];
+>  	dram1 = pruss->mem_regions[PRUSS_MEM_DRAM1];
+>  	/* PRU1 has its local RAM addresses reversed */
+> -	if (pru->id == 1)
+> +	if (pru->id == PRUSS_PRU1)
+>  		swap(dram0, dram1);
+>  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
+>  
+> @@ -747,14 +748,14 @@ static int pru_rproc_set_id(struct pru_rproc *pru)
+>  	case RTU0_IRAM_ADDR_MASK:
+>  		fallthrough;
+>  	case PRU0_IRAM_ADDR_MASK:
+> -		pru->id = 0;
+> +		pru->id = PRUSS_PRU0;
+>  		break;
+>  	case TX_PRU1_IRAM_ADDR_MASK:
+>  		fallthrough;
+>  	case RTU1_IRAM_ADDR_MASK:
+>  		fallthrough;
+>  	case PRU1_IRAM_ADDR_MASK:
+> -		pru->id = 1;
+> +		pru->id = PRUSS_PRU1;
+>  		break;
+>  	default:
+>  		ret = -EINVAL;
+> diff --git a/include/linux/pruss.h b/include/linux/pruss.h
+> new file mode 100644
+> index 000000000000..e94a81e97a4c
+> --- /dev/null
+> +++ b/include/linux/pruss.h
+> @@ -0,0 +1,31 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/**
+> + * PRU-ICSS Subsystem user interfaces
+> + *
+> + * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+> + *	Suman Anna <s-anna@ti.com>
+> + */
+> +
+> +#ifndef __LINUX_PRUSS_H
+> +#define __LINUX_PRUSS_H
+> +
+> +#include <linux/device.h>
+> +#include <linux/types.h>
+> +
+> +#define PRU_RPROC_DRVNAME "pru-rproc"
+> +
+> +/**
+> + * enum pruss_pru_id - PRU core identifiers
+> + * @PRUSS_PRU0: PRU Core 0.
+> + * @PRUSS_PRU1: PRU Core 1.
+> + * @PRUSS_NUM_PRUS: Total number of PRU Cores available.
+> + *
+> + */
+> +
+> +enum pruss_pru_id {
+> +	PRUSS_PRU0 = 0,
+> +	PRUSS_PRU1,
+> +	PRUSS_NUM_PRUS,
+> +};
+> +
+> +#endif /* __LINUX_PRUSS_H */
+> -- 
+> 2.25.1
+> 
