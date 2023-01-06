@@ -2,158 +2,104 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AE7C4708D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Jan 2023 12:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE9AC5479D
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Jan 2023 16:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233726AbjAFMLs (ORCPT
+        id S234216AbjAFQe0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 Jan 2023 07:11:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49026 "EHLO
+        Fri, 6 Jan 2023 11:34:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233101AbjAFMLS (ORCPT
+        with ESMTP id S233925AbjAFQeZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 Jan 2023 07:11:18 -0500
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14B5736D9;
-        Fri,  6 Jan 2023 04:11:15 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 306CB3ua099628;
-        Fri, 6 Jan 2023 06:11:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1673007063;
-        bh=uTiut5o/7iFdu8/u+NPuwcc+4LBeafBX8Rz7JMBS3zI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=YqaHGNANO0nf47w2o9bZFTYV56O/kDwGMct/9U1Bvh+U4T+QNEURqvREY6+rcHZnk
-         OP8YziWpcx0FQi1Zk09iW98Rl5kZoJo0Vu/IAbKDzY6kUUizf2cun98aoutk9Ub9Iz
-         j9gHhiO4Nyh/ga4sJ+aLGtpY1hIgB/8mpS36SPng=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 306CB39P119074
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 6 Jan 2023 06:11:03 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 6
- Jan 2023 06:11:03 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 6 Jan 2023 06:11:03 -0600
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 306CB3Lu020441;
-        Fri, 6 Jan 2023 06:11:03 -0600
-Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 306CB2Z2028627;
-        Fri, 6 Jan 2023 06:11:02 -0600
-From:   MD Danish Anwar <danishanwar@ti.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Suman Anna <s-anna@ti.com>, Roger Quadros <rogerq@kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <srk@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        MD Danish Anwar <danishanwar@ti.com>
-Subject: [PATCH v14 6/6] remoteproc: pru: Configure firmware based on client setup
-Date:   Fri, 6 Jan 2023 17:40:46 +0530
-Message-ID: <20230106121046.886863-7-danishanwar@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230106121046.886863-1-danishanwar@ti.com>
+        Fri, 6 Jan 2023 11:34:25 -0500
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBF276EFA
+        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Jan 2023 08:34:24 -0800 (PST)
+Received: by mail-pg1-x533.google.com with SMTP id r18so1467512pgr.12
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Jan 2023 08:34:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GLC5QUeUL2afI6fkE2hQgTHlKSoxUZrTGJ/pG2j0kWA=;
+        b=w3VSh96pSDfPKxhIYAAO/vefawk9pjXMQGzqCj1VBVod2nSAHd1botoFl8A65MufYq
+         6SKlVedRvbrkaU1TSRV26Ku27uPwGEW5R5z6vGEVyIp2IaUiprGgLpteQgkZbXTUoukO
+         Oh6UfkIoTM7Pgaui3yR2ulrqvpaU50RoCVDkoXfJCpK1V5Yd8XhoFz2r2Z0DwM709xRz
+         7CuezLqYehdDIu33yTk1OGc7dOaVYJ7UOUjT6+/mJ4VfSRdgCU0u/4x3eSL30r4+p346
+         v6u+/LgwGvJbWk5C1xUB/5nB98H7F4ycfdPFQNdgNdX4lptWf7czUZ8HtUDohCh+gBKZ
+         2GmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GLC5QUeUL2afI6fkE2hQgTHlKSoxUZrTGJ/pG2j0kWA=;
+        b=wxqRXoXxYy/lkKSnsXcBR99xEvKHZs/RX7dHKWsI4H25XoiQM4hwrxj+Qv+UROqoel
+         sX9hz3K/0GCpOM5VZNMfbC4aNYXWD0cw32c1qey9VBtgBeWItBOp3oaf/8IjQ+dftyeR
+         JWw7OMQ86ITP9AaEGXeqkJjz4MWqsu1UcBw79NwYUtv72wq9wnYJs+DAN2j69IylirpN
+         6z6wenMCPxvFGPHNstpa02P64eSca9HJiaOz0wbnn4vMmdgj+DxzKkmujn398L9oky3c
+         mqvC315/ESeitrOA0c4BUiL2xx9+s4KQRNK/goanPcO296Sv2i1lgy9KrQnmaVi0Fg9p
+         Mdcg==
+X-Gm-Message-State: AFqh2kpG2eIDwJWMZWvzIEjLgA7XLn093qBT51QrpczMz77G+/YWHBDh
+        nL7ridDB+c9I3Uy1umL/QoAvtQ==
+X-Google-Smtp-Source: AMrXdXupbQ23NlCXQq5N5/pRiwBTmYJq6n3/vRFF0HtTT9Bx4yoTaJfrihJF+V5rhcHAnyIj6AYxag==
+X-Received: by 2002:a62:1c42:0:b0:582:7d77:7fa2 with SMTP id c63-20020a621c42000000b005827d777fa2mr18705684pfc.11.1673022864134;
+        Fri, 06 Jan 2023 08:34:24 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:36e4:cfb6:3705:ebd9])
+        by smtp.gmail.com with ESMTPSA id 195-20020a6216cc000000b00580c51341fasm1346020pfw.177.2023.01.06.08.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jan 2023 08:34:23 -0800 (PST)
+Date:   Fri, 6 Jan 2023 09:34:21 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     MD Danish Anwar <danishanwar@ti.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>, nm@ti.com, vigneshr@ti.com,
+        srk@ti.com, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v14 0/6] Introduce PRU remoteproc consumer API
+Message-ID: <20230106163421.GA2351214@p14s>
 References: <20230106121046.886863-1-danishanwar@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230106121046.886863-1-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+> 
+> MD Danish Anwar (2):
+>   remoteproc: pru: Add enum for PRU Core Identifiers.
+>   remoteproc: pru: Add APIs to get and put the PRU cores
+> 
+> Roger Quadros (1):
+>   remoteproc: pru: Add pru_rproc_set_ctable() function
+> 
+> Suman Anna (2):
+>   dt-bindings: remoteproc: Add PRU consumer bindings
+>   remoteproc: pru: Make sysfs entries read-only for PRU client driven
+>     boots
+> 
+> Tero Kristo (1):
+>   remoteproc: pru: Configure firmware based on client setup
+> 
+>  .../bindings/remoteproc/ti,pru-consumer.yaml  |  60 +++++
+>  drivers/remoteproc/pru_rproc.c                | 230 +++++++++++++++++-
+>  include/linux/remoteproc/pruss.h              |  83 +++++++
+>  3 files changed, 368 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>  create mode 100644 include/linux/remoteproc/pruss.h
+>
 
-Client device node property firmware-name is now used to configure
-firmware for the PRU instances. The default firmware is also
-restored once releasing the PRU resource.
+I have applied this set.
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/remoteproc/pru_rproc.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Thanks,
+Mathieu
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index f6ea445d2fa2..b76db7fa693d 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -172,6 +172,23 @@ void pru_control_set_reg(struct pru_rproc *pru, unsigned int reg,
- 	spin_unlock_irqrestore(&pru->rmw_lock, flags);
- }
- 
-+/**
-+ * pru_rproc_set_firmware() - set firmware for a PRU core
-+ * @rproc: the rproc instance of the PRU
-+ * @fw_name: the new firmware name, or NULL if default is desired
-+ *
-+ * Return: 0 on success, or errno in error case.
-+ */
-+static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-+{
-+	struct pru_rproc *pru = rproc->priv;
-+
-+	if (!fw_name)
-+		fw_name = pru->fw_name;
-+
-+	return rproc_set_firmware(rproc, fw_name);
-+}
-+
- static struct rproc *__pru_rproc_get(struct device_node *np, int index)
- {
- 	struct rproc *rproc;
-@@ -224,6 +241,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	struct rproc *rproc;
- 	struct pru_rproc *pru;
- 	struct device *dev;
-+	const char *fw_name;
- 	int ret;
- 
- 	rproc = __pru_rproc_get(np, index);
-@@ -249,11 +267,25 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	if (pru_id)
- 		*pru_id = pru->id;
- 
-+	ret = of_property_read_string_index(np, "firmware-name", index,
-+					    &fw_name);
-+	if (!ret) {
-+		ret = pru_rproc_set_firmware(rproc, fw_name);
-+		if (ret) {
-+			dev_err(dev, "failed to set firmware: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
- 	return rproc;
- 
- err_no_rproc_handle:
- 	rproc_put(rproc);
- 	return ERR_PTR(ret);
-+
-+err:
-+	pru_rproc_put(rproc);
-+	return ERR_PTR(ret);
- }
- EXPORT_SYMBOL_GPL(pru_rproc_get);
- 
-@@ -273,6 +305,8 @@ void pru_rproc_put(struct rproc *rproc)
- 
- 	pru = rproc->priv;
- 
-+	pru_rproc_set_firmware(rproc, NULL);
-+
- 	mutex_lock(&pru->lock);
- 
- 	if (!pru->client_np) {
--- 
-2.25.1
-
+> -- 
+> 2.25.1
+> 
