@@ -2,104 +2,114 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE9AC5479D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Jan 2023 16:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6EBC3DA7A
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Jan 2023 16:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234216AbjAFQe0 (ORCPT
+        id S229452AbjAFQhX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 Jan 2023 11:34:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52232 "EHLO
+        Fri, 6 Jan 2023 11:37:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233925AbjAFQeZ (ORCPT
+        with ESMTP id S235330AbjAFQhW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 Jan 2023 11:34:25 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBF276EFA
-        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Jan 2023 08:34:24 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id r18so1467512pgr.12
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Jan 2023 08:34:24 -0800 (PST)
+        Fri, 6 Jan 2023 11:37:22 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFB178A4E
+        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Jan 2023 08:37:20 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id m8-20020a05600c3b0800b003d96f801c48so3946785wms.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Jan 2023 08:37:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GLC5QUeUL2afI6fkE2hQgTHlKSoxUZrTGJ/pG2j0kWA=;
-        b=w3VSh96pSDfPKxhIYAAO/vefawk9pjXMQGzqCj1VBVod2nSAHd1botoFl8A65MufYq
-         6SKlVedRvbrkaU1TSRV26Ku27uPwGEW5R5z6vGEVyIp2IaUiprGgLpteQgkZbXTUoukO
-         Oh6UfkIoTM7Pgaui3yR2ulrqvpaU50RoCVDkoXfJCpK1V5Yd8XhoFz2r2Z0DwM709xRz
-         7CuezLqYehdDIu33yTk1OGc7dOaVYJ7UOUjT6+/mJ4VfSRdgCU0u/4x3eSL30r4+p346
-         v6u+/LgwGvJbWk5C1xUB/5nB98H7F4ycfdPFQNdgNdX4lptWf7czUZ8HtUDohCh+gBKZ
-         2GmA==
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G2/wW8oWU2UO8G+hBvXbq+ylbwBDQdJAzgI/Jam/m+c=;
+        b=P0csNwpg9MOjalR15dbOZ1LUq6TdUofEE7438rE/cpAX6qEn5+mMoWvJXJC6ZpwDXi
+         EARyvmG1YWxE3zP8yqecpslPwHBQqDrVX25OOeNKcNA4wogZKUTF21SDNUxtcohel9tV
+         uyrmTwytfXzK01YXqFqnvwRbqTmq1slYryNo/Rr9NvXFfeJfSIv/Vmi2tlxrQ/Vq6vX8
+         2FVWVdbganGHT5PwcT5KSp1Z2Bh+9KufRjFHVx4f1iL9FdE9z650VAAIsK053hbFtN38
+         WjudDhMIuOe+JqvyoB12nLnQzAfugau3CkZyjmbbxBmEnWdKrqVrcPp3S78J0Vydyz/y
+         FWmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GLC5QUeUL2afI6fkE2hQgTHlKSoxUZrTGJ/pG2j0kWA=;
-        b=wxqRXoXxYy/lkKSnsXcBR99xEvKHZs/RX7dHKWsI4H25XoiQM4hwrxj+Qv+UROqoel
-         sX9hz3K/0GCpOM5VZNMfbC4aNYXWD0cw32c1qey9VBtgBeWItBOp3oaf/8IjQ+dftyeR
-         JWw7OMQ86ITP9AaEGXeqkJjz4MWqsu1UcBw79NwYUtv72wq9wnYJs+DAN2j69IylirpN
-         6z6wenMCPxvFGPHNstpa02P64eSca9HJiaOz0wbnn4vMmdgj+DxzKkmujn398L9oky3c
-         mqvC315/ESeitrOA0c4BUiL2xx9+s4KQRNK/goanPcO296Sv2i1lgy9KrQnmaVi0Fg9p
-         Mdcg==
-X-Gm-Message-State: AFqh2kpG2eIDwJWMZWvzIEjLgA7XLn093qBT51QrpczMz77G+/YWHBDh
-        nL7ridDB+c9I3Uy1umL/QoAvtQ==
-X-Google-Smtp-Source: AMrXdXupbQ23NlCXQq5N5/pRiwBTmYJq6n3/vRFF0HtTT9Bx4yoTaJfrihJF+V5rhcHAnyIj6AYxag==
-X-Received: by 2002:a62:1c42:0:b0:582:7d77:7fa2 with SMTP id c63-20020a621c42000000b005827d777fa2mr18705684pfc.11.1673022864134;
-        Fri, 06 Jan 2023 08:34:24 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:36e4:cfb6:3705:ebd9])
-        by smtp.gmail.com with ESMTPSA id 195-20020a6216cc000000b00580c51341fasm1346020pfw.177.2023.01.06.08.34.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jan 2023 08:34:23 -0800 (PST)
-Date:   Fri, 6 Jan 2023 09:34:21 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     MD Danish Anwar <danishanwar@ti.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>, nm@ti.com, vigneshr@ti.com,
-        srk@ti.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v14 0/6] Introduce PRU remoteproc consumer API
-Message-ID: <20230106163421.GA2351214@p14s>
-References: <20230106121046.886863-1-danishanwar@ti.com>
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G2/wW8oWU2UO8G+hBvXbq+ylbwBDQdJAzgI/Jam/m+c=;
+        b=Dpj+SdjVYQLkJkEuipW7QKMxyQcg8c4cXxzFjKrgc7qeWkzcTOH4wFwtkfvGXIBshJ
+         r40eNF4RfCdnVfowHLdXgFU4KUQrGik5cHIc7DdSPm/47HWE2bv5am7IMCwnDbbS3TS1
+         sph62tw9djdPHm7rOKVdOzph5wj2Y5k/CK+6i4ZEZVZDJfRvrALv2CDPoWAKhEJ+nbpS
+         JSmUMR/xB2dtr9rywYj1Q4H/eNsw1p3dEVHT6xjR6ma/hT1peiJwEyMI/TJg21gbaDzm
+         aeRXAegVEvo9AHszAMcDyPxB2OKXlcn8rO7S1krXSTw+2o0WqRqH65IQEeAL0I9fQHQx
+         fYWw==
+X-Gm-Message-State: AFqh2krJqNWKwetpJv2bxpZdopbYBSIehecKK0BRrUEjCELMKzfXdWUJ
+        Kn8/S6oegJyfU3i/pk2BzJ10WQ==
+X-Google-Smtp-Source: AMrXdXvPO6YvRPMFNA4tbcS1PTYl42JBHmgSt22BHUKuhzVUtPqixbPCPJIe9ANjVG/6QbqyJYPZYw==
+X-Received: by 2002:a05:600c:4d21:b0:3d2:2a72:2573 with SMTP id u33-20020a05600c4d2100b003d22a722573mr40022929wmp.11.1673023039183;
+        Fri, 06 Jan 2023 08:37:19 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id l7-20020a5d6747000000b002b57bae7174sm1617699wrw.5.2023.01.06.08.37.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Jan 2023 08:37:18 -0800 (PST)
+Message-ID: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
+Date:   Fri, 6 Jan 2023 17:37:17 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230106121046.886863-1-danishanwar@ti.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        "agross@kernel.org" <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        linux-remoteproc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Annoying message on the console for the db845c board
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> 
-> MD Danish Anwar (2):
->   remoteproc: pru: Add enum for PRU Core Identifiers.
->   remoteproc: pru: Add APIs to get and put the PRU cores
-> 
-> Roger Quadros (1):
->   remoteproc: pru: Add pru_rproc_set_ctable() function
-> 
-> Suman Anna (2):
->   dt-bindings: remoteproc: Add PRU consumer bindings
->   remoteproc: pru: Make sysfs entries read-only for PRU client driven
->     boots
-> 
-> Tero Kristo (1):
->   remoteproc: pru: Configure firmware based on client setup
-> 
->  .../bindings/remoteproc/ti,pru-consumer.yaml  |  60 +++++
->  drivers/remoteproc/pru_rproc.c                | 230 +++++++++++++++++-
->  include/linux/remoteproc/pruss.h              |  83 +++++++
->  3 files changed, 368 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
->  create mode 100644 include/linux/remoteproc/pruss.h
->
 
-I have applied this set.
+Hi all,
 
-Thanks,
-Mathieu
+Does anyone have an idea on how to fix these timeout messages ? They are 
+displayed again and again every 5 seconds and that saturates the 
+filesystem after awhile.
 
-> -- 
-> 2.25.1
-> 
+...
+[   24.662181] qcom-q6v5-mss 4080000.remoteproc: start timed out
+[   24.768150] qcom-q6v5-mss 4080000.remoteproc: port failed halt
+[   24.777618] remoteproc remoteproc0: can't start rproc 
+4080000.remoteproc: -110
+[   24.785022] remoteproc remoteproc0: Boot failed: -110
+[   24.833657] remoteproc remoteproc0: powering up 4080000.remoteproc
+[   24.840126] remoteproc remoteproc0: Booting fw image 
+qcom/sdm845/mba.mbn, size 238304
+[   24.897361] qcom-q6v5-mss 4080000.remoteproc: MBA booted without 
+debug policy, loading mpss
+[   31.573938] qcom-q6v5-mss 4080000.remoteproc: start timed out
+[   31.680229] qcom-q6v5-mss 4080000.remoteproc: port failed halt
+[   31.689683] remoteproc remoteproc0: can't start rproc 
+4080000.remoteproc: -110
+[   31.697070] remoteproc remoteproc0: Boot failed: -110
+[   31.765283] remoteproc remoteproc0: powering up 4080000.remoteproc
+[   31.771758] remoteproc remoteproc0: Booting fw image 
+qcom/sdm845/mba.mbn, size 238304
+[   31.820553] qcom-q6v5-mss 4080000.remoteproc: MBA booted without 
+debug policy, loading mpss
+....
+
+Thanks
+   -- Daniel
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
