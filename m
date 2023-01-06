@@ -2,59 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50027C3DA7A
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Jan 2023 18:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F6AC3DA7A
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  6 Jan 2023 20:08:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjAFSOd (ORCPT
+        id S235657AbjAFUIn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 6 Jan 2023 13:14:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52346 "EHLO
+        Fri, 6 Jan 2023 15:08:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjAFSOb (ORCPT
+        with ESMTP id S236301AbjAFUI1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 6 Jan 2023 13:14:31 -0500
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC14C78A4F
-        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Jan 2023 10:14:28 -0800 (PST)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-4c1073f545bso33179427b3.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Jan 2023 10:14:28 -0800 (PST)
+        Fri, 6 Jan 2023 15:08:27 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CCB84080
+        for <linux-remoteproc@vger.kernel.org>; Fri,  6 Jan 2023 12:08:25 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id k26-20020a05600c1c9a00b003d972646a7dso4328291wms.5
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Jan 2023 12:08:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xP3geULSyX4lV8d6R9rMjnULV5w7kHHpTYX3xrPNxuU=;
-        b=UsNe0gNyAmOwYoDLj/i8PWxRee4X8jVDyisS53x003xJU8GpJ9FGr7LBLz9Q7mCcuZ
-         FP3rrd6blhEJhWHOaKCHN4riLuLTcrxVNIBsFEt8yoKjUhMM61KI6jRYNZZUZcDLsxHd
-         YhexIyBurtEAKJ0MtEO5v0WzSugvXSGoaDyejb3le0GET1TY5oD0cvBHWRuCZif2br2K
-         LxVd565xq0N7YcPuCC2Nzv/5fcsQAbUXVBZNE8abWQjr6DdDbpvbkkCdgDnZyVM4X0DL
-         bB5JTEjH/tCsNe8cTCWMiF9KG+7nl6HOBNhqYHa6z9w/U5HsrMW9a7y9LumOrzpeuivT
-         IgSg==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i9+HW72JLcvyRBnz5C5bVByBYZYS05ui/XR6+SsBR3c=;
+        b=rNTzkWFrVk6h1c0XbWOX5bDusbJf+Ejjkg+kpICiEEPo7tuDA4cWbu1f8LqFnmtk/O
+         vCxNkjfCwh4XX5GK/ka812+vSjyV1zbvzZCwHI86jW2fvgAwYgFYpWkTdNomnRi3+YC/
+         gV4v5AEQaoFHU/bY/5JIE/aQgb+z1Oyxvl1vnXx8G22XqGBi0i1n0tLQQtkLIf8zKLga
+         2AtQbmSHdOrp9EpNw7DH6Ts+8+ZHNuuz5geJbXCHLe+Mnyp/GJUttdOfpRv+IRYFQ1m2
+         vq2Dg0g756Th5rSnojaY/LLLf49b3rrniUfYCe3zlgavzBRalSHbWbHzRLXXuGUSZ4xC
+         y2rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xP3geULSyX4lV8d6R9rMjnULV5w7kHHpTYX3xrPNxuU=;
-        b=Rd4uskZ7db0jbK2eNfRfp5/5RyiO2cPm/aqdKp727QclpJeDEFmB6xJAtkz5bOT9hC
-         rGc61CNy8+plENroefl9btHfjiotIqJIyDIJa2waWvbJELXWcCQYqKIu+a0svNojvVtI
-         lIRcEXMjhsidB3NF6skp4PZ0AHGHLYX9sKNRqSMrOO6aM590iaQAE5yl6F0EtC/0vd9n
-         1mQQoke4WXYHoPt+ubXYCe4v/5qaTxaD+LwN81JCO8ajQpnhuUe+DfDYNWksRAJObYB0
-         +j8aBbXOBTjk4Ryep9PR5Ccxi5c2neGCnSnFWLx3g9J1nm1TZmD1WXDJcBK16yiwXnhL
-         ERXg==
-X-Gm-Message-State: AFqh2kpzbdT5L+gXl2eEF82KlYLmwXA5cMl4HeKbQLUDGU9CW6pNQlcr
-        nGTTICoF1ppW491BiUzBy9SIhkhQeQIDp2dsSHOgIg==
-X-Google-Smtp-Source: AMrXdXslvebv24QddXX/TLgWhNaCTYaNYEw3yuKcUZCybMMAI19TPi0KCw62PgInbStQYarDYBZo8VgZN7ECFstTgWU=
-X-Received: by 2002:a81:6702:0:b0:477:b56e:e1d6 with SMTP id
- b2-20020a816702000000b00477b56ee1d6mr5205418ywc.188.1673028867810; Fri, 06
- Jan 2023 10:14:27 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9+HW72JLcvyRBnz5C5bVByBYZYS05ui/XR6+SsBR3c=;
+        b=Xgse3mp4B5ZlMsx0TfAN9DIF3iVX7JOjnFJbeRzurWaQTT3kB5BmlncviUGUz0B7z9
+         TgIUfn9JPN1HtFWM8Czmf+HkO3bZKApAtg4H/lH9FAOn5H/HzNGZlrfQLedL0019Ob3B
+         7G8QzgeiFzxYAvP60WEkOhPFVFmxMrasdBsNDIzdYV6DActQSdVGeY+uk6tu75iukhvf
+         F5o3FZNJ2jlxr/XpuUzteNlm/OS8TA6p3ob+6X4MQkNNfwXswPlVUexaduytwd67yJaF
+         bfffiQoLMJtfXbWkDX7LpPeUn+l19CsK6UpzHJh/kzXh8ZrVdm4cVMcUwnKAZmCsgL3B
+         L0Mg==
+X-Gm-Message-State: AFqh2kov3xvN9BZyGz075YuOqQqehcm2NF/yr1qa+m2KHu2Mo8I0rRmG
+        e90GgESVxx6LGgkQOCuzeKZnBQ==
+X-Google-Smtp-Source: AMrXdXs3tTUj9ID+GCgF+VYiLKuPcIGiS2TOdonsG3ogg03JBTKudMK8+1+shmcuLiHK1HgBdO/wng==
+X-Received: by 2002:a05:600c:4f83:b0:3d2:3f55:f73f with SMTP id n3-20020a05600c4f8300b003d23f55f73fmr40568114wmq.8.1673035704091;
+        Fri, 06 Jan 2023 12:08:24 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id az28-20020a05600c601c00b003cf57329221sm7304548wmb.14.2023.01.06.12.08.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Jan 2023 12:08:23 -0800 (PST)
+Message-ID: <17e2d99d-31e5-b29a-e729-4f4d70b2efbc@linaro.org>
+Date:   Fri, 6 Jan 2023 21:08:22 +0100
 MIME-Version: 1.0
-References: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
-In-Reply-To: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 6 Jan 2023 20:14:16 +0200
-Message-ID: <CAA8EJpr0A=VjWEv6NPaZ-t_3TgNaWpsVO8_inJhxqoThry_zZA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
 Subject: Re: Annoying message on the console for the db845c board
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         "agross@kernel.org" <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
@@ -63,49 +67,45 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
         linux-remoteproc@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
+ <CAA8EJpr0A=VjWEv6NPaZ-t_3TgNaWpsVO8_inJhxqoThry_zZA@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAA8EJpr0A=VjWEv6NPaZ-t_3TgNaWpsVO8_inJhxqoThry_zZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 6 Jan 2023 at 18:37, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
->
-> Hi all,
->
-> Does anyone have an idea on how to fix these timeout messages ? They are
-> displayed again and again every 5 seconds and that saturates the
-> filesystem after awhile.
+On 06/01/2023 19:14, Dmitry Baryshkov wrote:
+> On Fri, 6 Jan 2023 at 18:37, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>
+>>
+>> Hi all,
+>>
+>> Does anyone have an idea on how to fix these timeout messages ? They are
+>> displayed again and again every 5 seconds and that saturates the
+>> filesystem after awhile.
+> 
+> Could you please check that you have CONFIG_QCOM_RMTFS_MEM enabled and
+> the rmtfs daemon running?
+> I think that's the usual cause of such messages.
 
-Could you please check that you have CONFIG_QCOM_RMTFS_MEM enabled and
-the rmtfs daemon running?
-I think that's the usual cause of such messages.
+Yes, I have the option and the daemon running:
 
->
-> ...
-> [   24.662181] qcom-q6v5-mss 4080000.remoteproc: start timed out
-> [   24.768150] qcom-q6v5-mss 4080000.remoteproc: port failed halt
-> [   24.777618] remoteproc remoteproc0: can't start rproc
-> 4080000.remoteproc: -110
-> [   24.785022] remoteproc remoteproc0: Boot failed: -110
-> [   24.833657] remoteproc remoteproc0: powering up 4080000.remoteproc
-> [   24.840126] remoteproc remoteproc0: Booting fw image
-> qcom/sdm845/mba.mbn, size 238304
-> [   24.897361] qcom-q6v5-mss 4080000.remoteproc: MBA booted without
-> debug policy, loading mpss
-> [   31.573938] qcom-q6v5-mss 4080000.remoteproc: start timed out
-> [   31.680229] qcom-q6v5-mss 4080000.remoteproc: port failed halt
-> [   31.689683] remoteproc remoteproc0: can't start rproc
-> 4080000.remoteproc: -110
-> [   31.697070] remoteproc remoteproc0: Boot failed: -110
-> [   31.765283] remoteproc remoteproc0: powering up 4080000.remoteproc
-> [   31.771758] remoteproc remoteproc0: Booting fw image
-> qcom/sdm845/mba.mbn, size 238304
-> [   31.820553] qcom-q6v5-mss 4080000.remoteproc: MBA booted without
-> debug policy, loading mpss
-> ....
+zcat /proc/config.gz | grep CONFIG_QCOM_RMTFS_MEM
+CONFIG_QCOM_RMTFS_MEM=y
+
+ps -ef | grep rmtfs
+root      9888     1  2 20:07 ?        00:00:00 /usr/bin/rmtfs -r -P -s
+
+
 
 
 -- 
-With best wishes
-Dmitry
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
