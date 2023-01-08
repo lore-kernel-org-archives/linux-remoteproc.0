@@ -2,104 +2,130 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 074A7C53210
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  8 Jan 2023 04:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A99C54EBE
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  8 Jan 2023 15:36:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231252AbjAHEaq (ORCPT
+        id S233375AbjAHPgg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 7 Jan 2023 23:30:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48320 "EHLO
+        Sun, 8 Jan 2023 10:36:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229989AbjAHEap (ORCPT
+        with ESMTP id S232624AbjAHPge (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 7 Jan 2023 23:30:45 -0500
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9EEBEE
-        for <linux-remoteproc@vger.kernel.org>; Sat,  7 Jan 2023 20:30:44 -0800 (PST)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-482363a1232so73323267b3.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 07 Jan 2023 20:30:44 -0800 (PST)
+        Sun, 8 Jan 2023 10:36:34 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1240460C4
+        for <linux-remoteproc@vger.kernel.org>; Sun,  8 Jan 2023 07:36:33 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id m26-20020a05600c3b1a00b003d9811fcaafso4722855wms.5
+        for <linux-remoteproc@vger.kernel.org>; Sun, 08 Jan 2023 07:36:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kt9p2IMAmrSyERl3/U7i0v+zp4np9fq2eUdHApu7VTU=;
-        b=pT9oB3gCOh9Olem1CL4ZptIfhZu3ih/w0CHNl5txBD6uDO8QZc5/YamNprQliZoQdn
-         GpMmZH9faKqCTcf00MjGdwIdvu2ugw44fia5VL8KMrIBfoKtwN6FKALj0Yc7NuCpRIU9
-         UyOZgNyiirnDctamK78u0sveWraO+Ewj4rbQI6m6+7eNdqtDIn4bSHzPaGobOvTv36IG
-         9Uz7PKhWZr6+2WCYNS0TMyIz8TzykOMZv+mQXS9+6awNyr5m015mtPN+8GIMMfPj/EoB
-         EN/4PcxZ7z/SYHaX/bXg7leyo1MY2W6JXSP8RDyPe4EDyO6YH98fFqG19PNe+Tx6CerP
-         5xQA==
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d0Y9NXW1uR93OzQg0aE5HzcgNDOO8kxrR8xgvwlZmQg=;
+        b=Fq2GBqZV+dO0qub33W4gajEmbdeDSPTSo5gcqjMty85eLhO3UiUDK7Oy6uJMZjXFad
+         GarIRvry7ORaDD4PmTS2xk1esmBDzDruWmN++UHY5MSaF7zpez4dwf/JzBvuY7T0DWPP
+         exzhHKudLSF+Uj7nGTXQtUJuJsCqZFW3fjdHB4IfEAMmivNBbsqPcxS9sHCKx8J3usHv
+         60FxgdCgLn1wOULtb8e/hDD5SMLCrBV44iv0wFtsy7Vec10p8S6KVU5jY9rBuNCvYSye
+         THgRWtarbzVliNpUuQcr/7vbT537cz3DZ6u7Eelg8Gd+wrn7YCUmCZVcaqY6oehwREvY
+         W/oA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kt9p2IMAmrSyERl3/U7i0v+zp4np9fq2eUdHApu7VTU=;
-        b=Sxyt1SZGXoLIq/my0sZgX7csOMM5bonK2pi0pGwWPcVImCgMjH/lJKoJIZzayVpQPd
-         sw1qBbGWFJjoV0muThR5H++jvf6JuWMuy4Kwr0Y59clpOB0oM6Rc9AssBTDypYWAUbAZ
-         /dzBJCosaCzeK0tbBkigPjxVue/tLMIo1js7lIsKsYbo6NJw2BABy+YGDLf5ttFKmIYt
-         jROLDzVWYNsyDJk/fsQtJjl4GYmbhZLZF9akZDTfQb6001krbdi1P6IPKdFO6CjAh4p1
-         pIFotEr/1GdTMNa1GoDxlXws9OVgz5e5l3FCBlQA+dE4jRx/l5Rx3Yn1/KQrv9oio7L+
-         yC7A==
-X-Gm-Message-State: AFqh2kqqVk/NMp4oqxd37T8fz3CGNzelLyzfbTzAbirNM0lP3FYQ7fYv
-        YZLrk5QeNmavSvaqJ6mqLCS0TsgbommqY+iMazqDbA==
-X-Google-Smtp-Source: AMrXdXupKOrz3kfWpdoIVvgaHEW/1EFkbbRv7qhXGij2SiXMJYFOMgAAq+lAoxnV+wvlFubmGSDdQAW+GkFJDC7oHQk=
-X-Received: by 2002:a81:6702:0:b0:477:b56e:e1d6 with SMTP id
- b2-20020a816702000000b00477b56ee1d6mr5927657ywc.188.1673152243641; Sat, 07
- Jan 2023 20:30:43 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d0Y9NXW1uR93OzQg0aE5HzcgNDOO8kxrR8xgvwlZmQg=;
+        b=56L0XuBy4zQrx+WZU+SW2vLUo+IZiKd//00sGWZjX83WN0j1xaMY+XgKgjAprTAWoM
+         0zrWct5/pqe7kA8VcpJ0Im0M7FdZdgM/9bUjLNikL2H27ZIfttj7IRBoWRe6PQ1xlypO
+         g2n+LDwirDJ4cQKn+IONoFU7TRkJhnAs1xmxve3WJTSxLYfvrD+z7IB2Cz0mjba/i+E3
+         LrMUJ+eUvzZkMZTGGU+I2P8LpJ+RutLPeYFV2Q3PDTGwQiN6/wzmw5MPEpoMoOFkpUIr
+         MZs12eghLo81Jfw5IYwhB9D1jqto9NAq6whclNrRMzNzIWg3u/B+7QeGh0JrR1XvvbNa
+         XI6A==
+X-Gm-Message-State: AFqh2kqtxnBfH5HdgxSLr6cIy+maHAEfLZDUVhDnH1RT8VQ8yKvcyzG0
+        HJruY/iQvxfN8YQGN9xu1r0jgA==
+X-Google-Smtp-Source: AMrXdXs7B9K+/qUy69qOI8OZeEAnJUYC7tslNm8V5WNaRoYfPvoX2f4B1yNlMUiw7m6xWYM5pp8mPw==
+X-Received: by 2002:a05:600c:4f11:b0:3d9:ee01:ae5b with SMTP id l17-20020a05600c4f1100b003d9ee01ae5bmr1147386wmq.12.1673192191645;
+        Sun, 08 Jan 2023 07:36:31 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id az28-20020a05600c601c00b003cf57329221sm12935721wmb.14.2023.01.08.07.36.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Jan 2023 07:36:31 -0800 (PST)
+Message-ID: <c6ea3f37-fe5a-9a61-3a02-99bc036fd23e@linaro.org>
+Date:   Sun, 8 Jan 2023 16:36:29 +0100
 MIME-Version: 1.0
-References: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
- <CAA8EJpr0A=VjWEv6NPaZ-t_3TgNaWpsVO8_inJhxqoThry_zZA@mail.gmail.com>
- <17e2d99d-31e5-b29a-e729-4f4d70b2efbc@linaro.org> <CAA8EJprcVT=vyEhU0Nbtr4Wu1YxcGs+NLNxtpTaFtaJSTqvgYw@mail.gmail.com>
- <3afcb445-7a62-ced7-eb54-1b2d8a9085ce@linaro.org> <CAA8EJpp8jnZV1Wkw1T6g95s0QNZLKKN_ve+tqmNsFVCFo0wudg@mail.gmail.com>
- <dd8ce88f-63ab-274a-7992-268003411da1@linaro.org>
-In-Reply-To: <dd8ce88f-63ab-274a-7992-268003411da1@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sun, 8 Jan 2023 06:30:32 +0200
-Message-ID: <CAA8EJprG9e_wHrM3BNs5bc+8dFbB22iYbJk7MWb8SZwuF=s5+w@mail.gmail.com>
-Subject: Re: Annoying message on the console for the db845c board
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        "agross@kernel.org" <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom: sc7280-adsp-pil: Add
+ reg-names and power-domain-names
+Content-Language: en-US
+To:     Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        linux-remoteproc@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
+        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
+        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, devicetree@vger.kernel.org,
+        mathieu.poirier@linaro.org, corbet@lwn.net
+References: <1672991425-898-1-git-send-email-quic_srivasam@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1672991425-898-1-git-send-email-quic_srivasam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, 8 Jan 2023 at 00:51, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->
-> On 07/01/2023 23:07, Dmitry Baryshkov wrote:
->
-> [ ... ]
->
-> > I've tested the v6.2-rc1. With the firmware from linux-firmware I do
-> > not see these message. I posted the output of savedefconfig for my
-> > .config to https://pastebin.ubuntu.com/p/t4KzQ4QWSF/
-> >
-> > Could you please recheck with this input? Maybe something is missing?
->
-> Yes, with your config, that has been fixed
->
-> Thanks!
->
-> Would it make sense to ensure defconfig has the same options to run this
-> platform ?
+On 06/01/2023 08:50, Srinivasa Rao Mandadapu wrote:
+> Add reg-names and power-domain-names for remoteproc ADSP pheripheral
+> loader. This is to make compatible with remoteproc ADSP PIL driver.
 
-Yes, please send a patch. We might have missed something in the defconfig.
+I don't understand the reasoning. Before binding was "incompatible"?
 
->
-> BTW I noted a lock issue: https://pastebin.com/274Xz7Aa
->
-> Thanks again for your help
+> Also change power domain from LCX to CX.
 
-You are welcome.
+Why? Hardware changed?
 
--- 
-With best wishes
-Dmitry
+> 
+> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
+> ---
+> Changes Since v1:
+>     -- Modify subject line to SoC specific.
+> 
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+> index 94ca7a0..b5bee2c 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+> @@ -23,6 +23,11 @@ properties:
+>        - description: qdsp6ss register
+>        - description: efuse q6ss register
+>  
+> +  reg-names:
+> +    items:
+> +      - const: qdsp6ss_base
+> +      - const: lpass_efuse
+> +
+>    iommus:
+>      items:
+>        - description: Phandle to apps_smmu node with sid mask
+> @@ -57,7 +62,11 @@ properties:
+>  
+>    power-domains:
+>      items:
+> -      - description: LCX power domain
+> +      - description: CX power domain
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: cx
+>  
+>    resets:
+>      items:
+
+Best regards,
+Krzysztof
+
