@@ -2,63 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E322C46467
-	for <linux-remoteproc@archiver.kernel.org>; Sat,  7 Jan 2023 22:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074A7C53210
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  8 Jan 2023 04:30:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230170AbjAGWv0 (ORCPT
+        id S231252AbjAHEaq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 7 Jan 2023 17:51:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55072 "EHLO
+        Sat, 7 Jan 2023 23:30:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjAGWvZ (ORCPT
+        with ESMTP id S229989AbjAHEap (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 7 Jan 2023 17:51:25 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D0941DDEB
-        for <linux-remoteproc@vger.kernel.org>; Sat,  7 Jan 2023 14:51:23 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id m26-20020a05600c3b1a00b003d9811fcaafso3618574wms.5
-        for <linux-remoteproc@vger.kernel.org>; Sat, 07 Jan 2023 14:51:23 -0800 (PST)
+        Sat, 7 Jan 2023 23:30:45 -0500
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9EEBEE
+        for <linux-remoteproc@vger.kernel.org>; Sat,  7 Jan 2023 20:30:44 -0800 (PST)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-482363a1232so73323267b3.3
+        for <linux-remoteproc@vger.kernel.org>; Sat, 07 Jan 2023 20:30:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fOKkQl332/KMyUkOBbDdjywetIj7rvU1Tibnhf65dW4=;
-        b=iYL+ue72Rh5jq/13fMm/7HRI2HVfNwcbS+X+gFbahVq/Rv+VrWs3C9uBmC9IEnvPcy
-         e1UV54eyQCBNYDcj+piiokTuXaGJwNYhYEVFdeSpQAZSTJikm2as14ajUMduyW+oQADp
-         GAb1/Rc27dx06yFd9TBbZGuDMNNIzLULkD1wV91MZLqK5XUgsRVHAgZqrGnM4+Ttl5RE
-         76Qcu1w1hIcnvH2vIUWFiGFgTpUsv4vwhTlpL7Ycs3wvWLl1SqkmEJcTpyciZL5hTYYo
-         ExTsp/Bq/VDl3gGEI+btFEoSigl/6FLRiNdrwrBLnWUwIgOCRpUVKa8/rxerfCo++3f/
-         atDg==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kt9p2IMAmrSyERl3/U7i0v+zp4np9fq2eUdHApu7VTU=;
+        b=pT9oB3gCOh9Olem1CL4ZptIfhZu3ih/w0CHNl5txBD6uDO8QZc5/YamNprQliZoQdn
+         GpMmZH9faKqCTcf00MjGdwIdvu2ugw44fia5VL8KMrIBfoKtwN6FKALj0Yc7NuCpRIU9
+         UyOZgNyiirnDctamK78u0sveWraO+Ewj4rbQI6m6+7eNdqtDIn4bSHzPaGobOvTv36IG
+         9Uz7PKhWZr6+2WCYNS0TMyIz8TzykOMZv+mQXS9+6awNyr5m015mtPN+8GIMMfPj/EoB
+         EN/4PcxZ7z/SYHaX/bXg7leyo1MY2W6JXSP8RDyPe4EDyO6YH98fFqG19PNe+Tx6CerP
+         5xQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fOKkQl332/KMyUkOBbDdjywetIj7rvU1Tibnhf65dW4=;
-        b=wdcx0vORb8jlgq1JtsUJLsLn4wvVtLVY021QlXSpZcavPy5z08VzK8NGJT83YYRZgY
-         rp6bOJAiPHbbyvpxeGbW7MKtA981yF8rsVsC37++gOi92YpEhoAMtVwHea9f+mpNdDq4
-         S4F6mc7QYsxI0FrqXorw9izrtDrdIYxkY93XX5aBq9k73dlw/IFmn+YTBFEZiGr5T+cL
-         a9xKJigubAdySjdXAvrQnw6SPmsiuA2Wh+HTp9RqyvFvt11YNj0zqUh1HKMa28/RfFlZ
-         yhPLNp/lqmBE1PT4Jteay0VSY6Zb0nqosRvZ9lqdaymn6B/PSCaS0GmU0z/qsDlLlwFb
-         nwag==
-X-Gm-Message-State: AFqh2kphgLmfCCCrokEM7o0za+nc6AWWnDoeOdB5Eb3tjUDozj9YqdRc
-        dYza0QA+qk49sT4ZXQRpEdmeTQ==
-X-Google-Smtp-Source: AMrXdXsa0i7acT+hld5/zUZxm8h+jgNoU4o2b6B3Boir7+Bwo8FSpw0ObVN7xutAJhH9CbpBb/gdZQ==
-X-Received: by 2002:a7b:c7ca:0:b0:3d3:4cbf:3a51 with SMTP id z10-20020a7bc7ca000000b003d34cbf3a51mr42474919wmk.14.1673131881801;
-        Sat, 07 Jan 2023 14:51:21 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id l27-20020a05600c2cdb00b003a84375d0d1sm11705997wmc.44.2023.01.07.14.51.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Jan 2023 14:51:20 -0800 (PST)
-Message-ID: <dd8ce88f-63ab-274a-7992-268003411da1@linaro.org>
-Date:   Sat, 7 Jan 2023 23:51:19 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kt9p2IMAmrSyERl3/U7i0v+zp4np9fq2eUdHApu7VTU=;
+        b=Sxyt1SZGXoLIq/my0sZgX7csOMM5bonK2pi0pGwWPcVImCgMjH/lJKoJIZzayVpQPd
+         sw1qBbGWFJjoV0muThR5H++jvf6JuWMuy4Kwr0Y59clpOB0oM6Rc9AssBTDypYWAUbAZ
+         /dzBJCosaCzeK0tbBkigPjxVue/tLMIo1js7lIsKsYbo6NJw2BABy+YGDLf5ttFKmIYt
+         jROLDzVWYNsyDJk/fsQtJjl4GYmbhZLZF9akZDTfQb6001krbdi1P6IPKdFO6CjAh4p1
+         pIFotEr/1GdTMNa1GoDxlXws9OVgz5e5l3FCBlQA+dE4jRx/l5Rx3Yn1/KQrv9oio7L+
+         yC7A==
+X-Gm-Message-State: AFqh2kqqVk/NMp4oqxd37T8fz3CGNzelLyzfbTzAbirNM0lP3FYQ7fYv
+        YZLrk5QeNmavSvaqJ6mqLCS0TsgbommqY+iMazqDbA==
+X-Google-Smtp-Source: AMrXdXupKOrz3kfWpdoIVvgaHEW/1EFkbbRv7qhXGij2SiXMJYFOMgAAq+lAoxnV+wvlFubmGSDdQAW+GkFJDC7oHQk=
+X-Received: by 2002:a81:6702:0:b0:477:b56e:e1d6 with SMTP id
+ b2-20020a816702000000b00477b56ee1d6mr5927657ywc.188.1673152243641; Sat, 07
+ Jan 2023 20:30:43 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
+References: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
+ <CAA8EJpr0A=VjWEv6NPaZ-t_3TgNaWpsVO8_inJhxqoThry_zZA@mail.gmail.com>
+ <17e2d99d-31e5-b29a-e729-4f4d70b2efbc@linaro.org> <CAA8EJprcVT=vyEhU0Nbtr4Wu1YxcGs+NLNxtpTaFtaJSTqvgYw@mail.gmail.com>
+ <3afcb445-7a62-ced7-eb54-1b2d8a9085ce@linaro.org> <CAA8EJpp8jnZV1Wkw1T6g95s0QNZLKKN_ve+tqmNsFVCFo0wudg@mail.gmail.com>
+ <dd8ce88f-63ab-274a-7992-268003411da1@linaro.org>
+In-Reply-To: <dd8ce88f-63ab-274a-7992-268003411da1@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Sun, 8 Jan 2023 06:30:32 +0200
+Message-ID: <CAA8EJprG9e_wHrM3BNs5bc+8dFbB22iYbJk7MWb8SZwuF=s5+w@mail.gmail.com>
 Subject: Re: Annoying message on the console for the db845c board
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         "agross@kernel.org" <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
@@ -67,47 +67,39 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
         linux-remoteproc@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <e0ced334-e6c1-caeb-322a-f67a23ee58da@linaro.org>
- <CAA8EJpr0A=VjWEv6NPaZ-t_3TgNaWpsVO8_inJhxqoThry_zZA@mail.gmail.com>
- <17e2d99d-31e5-b29a-e729-4f4d70b2efbc@linaro.org>
- <CAA8EJprcVT=vyEhU0Nbtr4Wu1YxcGs+NLNxtpTaFtaJSTqvgYw@mail.gmail.com>
- <3afcb445-7a62-ced7-eb54-1b2d8a9085ce@linaro.org>
- <CAA8EJpp8jnZV1Wkw1T6g95s0QNZLKKN_ve+tqmNsFVCFo0wudg@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAA8EJpp8jnZV1Wkw1T6g95s0QNZLKKN_ve+tqmNsFVCFo0wudg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 07/01/2023 23:07, Dmitry Baryshkov wrote:
+On Sun, 8 Jan 2023 at 00:51, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>
+> On 07/01/2023 23:07, Dmitry Baryshkov wrote:
+>
+> [ ... ]
+>
+> > I've tested the v6.2-rc1. With the firmware from linux-firmware I do
+> > not see these message. I posted the output of savedefconfig for my
+> > .config to https://pastebin.ubuntu.com/p/t4KzQ4QWSF/
+> >
+> > Could you please recheck with this input? Maybe something is missing?
+>
+> Yes, with your config, that has been fixed
+>
+> Thanks!
+>
+> Would it make sense to ensure defconfig has the same options to run this
+> platform ?
 
-[ ... ]
+Yes, please send a patch. We might have missed something in the defconfig.
 
-> I've tested the v6.2-rc1. With the firmware from linux-firmware I do
-> not see these message. I posted the output of savedefconfig for my
-> .config to https://pastebin.ubuntu.com/p/t4KzQ4QWSF/
-> 
-> Could you please recheck with this input? Maybe something is missing?
+>
+> BTW I noted a lock issue: https://pastebin.com/274Xz7Aa
+>
+> Thanks again for your help
 
-Yes, with your config, that has been fixed
-
-Thanks!
-
-Would it make sense to ensure defconfig has the same options to run this 
-platform ?
-
-BTW I noted a lock issue: https://pastebin.com/274Xz7Aa
-
-Thanks again for your help
-
-   -- Daniel
+You are welcome.
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+With best wishes
+Dmitry
