@@ -2,52 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B01C63797
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Jan 2023 22:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7075C678D5
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Jan 2023 22:38:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237852AbjAIWiM (ORCPT
+        id S237872AbjAIWip (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Jan 2023 17:38:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55468 "EHLO
+        Mon, 9 Jan 2023 17:38:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237795AbjAIWh4 (ORCPT
+        with ESMTP id S237882AbjAIWi2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Jan 2023 17:37:56 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2AA6F58C;
-        Mon,  9 Jan 2023 14:37:55 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 309MUwaX004997;
-        Mon, 9 Jan 2023 22:37:52 GMT
+        Mon, 9 Jan 2023 17:38:28 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E573CF58C;
+        Mon,  9 Jan 2023 14:38:27 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 309MbkGu032609;
+        Mon, 9 Jan 2023 22:38:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : mime-version : content-transfer-encoding :
  content-type; s=qcppdkim1;
- bh=FXKWheEKsOqDLciNq8NL6PwL8zGg9RIgA0fkugOCKLQ=;
- b=Mn8V4AIE8m1jEaOcMhL8Mnn/QJEDTxVnS0+FozA58emSMcnw0tLsImRuP5a5ATR8bhd/
- vWb2m91R+us6lT+6JUu7XCG/FRrpQS4n26pUvg4QLLcHfezjwn9pHM6hukIA7U81x4w+
- obXG5M1jKBrwXZXgubKY1CaXtZY/wNntNz/1fFabsUFZUdwDxhc9Ht/f9EQFQRdV6mwq
- ULXeDHjoadM4CMNZxymosEfzAq8m4XEARJ8imaFy0HFZ9OxuUpiGPp6iX1AD/Af3j+Fz
- YmPwdRi3ifT+jUvkc14R4A0QPm6RgZkMwE/qYNaynbPeNVSe5X9FlGQW8I0d7svhyP+K GQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3my0u147cq-1
+ bh=KHkX2qla0WMOOX/Cuolafu0c+RlMeR7/ZIVBb5MV4Ko=;
+ b=jya0sKnHJkQ5JI8Q/oitsEKrmKpov4SpaPWC2EUDY5kOCjS77IqJnmbJiNabQIMPyQOR
+ K7gRbtcdIcXUMqYZwP6DwlRWjZNKEPx6429JtdK3IJuPzy8PC7axRjdPOHwdzUqb82TB
+ zrcrJgDm9J2B9dqlOvjQyB2tULpZDu8yisJR9JxZkcD0D3reFv2oDnJ+N5d3AMvsIEAM
+ bUZ/lZ/x0IBJe8IXfUAapBD86/uttwORG+yzviAkS+PZf+HqLIu/qtZu7PUiYt66pylF
+ IIw/90Jx1EJb64/nbDA0ZLD9dwbOMWOxDSxqe6eudV3vM/1i0jyainw9NtCfv31onYYv +Q== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n0q28gk67-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 09 Jan 2023 22:37:52 +0000
+        Mon, 09 Jan 2023 22:38:24 +0000
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 309MbpqU023826
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 309McNRa024995
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 9 Jan 2023 22:37:51 GMT
+        Mon, 9 Jan 2023 22:38:23 GMT
 Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
  nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 9 Jan 2023 14:37:50 -0800
+ 15.2.986.36; Mon, 9 Jan 2023 14:38:23 -0800
 From:   Bjorn Andersson <quic_bjorande@quicinc.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Chris Lew <quic_clew@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] rpmsg: glink: Include types in qcom_glink_native.h
-Date:   Mon, 9 Jan 2023 14:37:45 -0800
-Message-ID: <20230109223745.1706152-1-quic_bjorande@quicinc.com>
+CC:     "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Chris Lew <quic_clew@quicinc.com>
+Subject: [PATCH] rpmsg: glink: Release driver_override
+Date:   Mon, 9 Jan 2023 14:38:18 -0800
+Message-ID: <20230109223818.1706292-1-quic_bjorande@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -57,49 +60,50 @@ X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zDIFjFwK5AEcKKT2OC1QcyzOoPL6xU2p
-X-Proofpoint-ORIG-GUID: zDIFjFwK5AEcKKT2OC1QcyzOoPL6xU2p
+X-Proofpoint-ORIG-GUID: PuYziX5vupY8zLrEIGuaYFJ_z57zMPZ8
+X-Proofpoint-GUID: PuYziX5vupY8zLrEIGuaYFJ_z57zMPZ8
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2023-01-09_14,2023-01-09_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- adultscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2301090157
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Ensure that the used data types are available in qcom_glink_native.h, to
-silence LSP warnings.
+Upon termination of the rpmsg_device, driver_override needs to be freed
+to avoid leaking the potentially assigned string.
 
+Fixes: 42cd402b8fd4 ("rpmsg: Fix kfree() of static memory on setting driver_override")
+Fixes: 39e47767ec9b ("rpmsg: Add driver_override device attribute for rpmsg_device")
 Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 ---
- drivers/rpmsg/qcom_glink_native.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/rpmsg/qcom_glink_native.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.h b/drivers/rpmsg/qcom_glink_native.h
-index 624184fc458e..e9a8671616c7 100644
---- a/drivers/rpmsg/qcom_glink_native.h
-+++ b/drivers/rpmsg/qcom_glink_native.h
-@@ -6,6 +6,8 @@
- #ifndef __QCOM_GLINK_NATIVE_H__
- #define __QCOM_GLINK_NATIVE_H__
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 8620eea1dc8a..046271e439c5 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1454,6 +1454,7 @@ static void qcom_glink_rpdev_release(struct device *dev)
+ {
+ 	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
  
-+#include <linux/types.h>
-+
- #define GLINK_FEATURE_INTENT_REUSE	BIT(0)
- #define GLINK_FEATURE_MIGRATION		BIT(1)
- #define GLINK_FEATURE_TRACER_PKT	BIT(2)
-@@ -24,6 +26,7 @@ struct qcom_glink_pipe {
- 		      const void *data, size_t dlen);
- };
++	kfree(rpdev->driver_override);
+ 	kfree(rpdev);
+ }
  
-+struct device;
- struct qcom_glink;
+@@ -1697,6 +1698,7 @@ static void qcom_glink_device_release(struct device *dev)
  
- struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+ 	/* Release qcom_glink_alloc_channel() reference */
+ 	kref_put(&channel->refcount, qcom_glink_channel_release);
++	kfree(rpdev->driver_override);
+ 	kfree(rpdev);
+ }
+ 
 -- 
 2.37.3
 
