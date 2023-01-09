@@ -2,53 +2,53 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332BCC54EBD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949E8C678D8
 	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Jan 2023 22:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232796AbjAIWka (ORCPT
+        id S237900AbjAIWkc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Jan 2023 17:40:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56574 "EHLO
+        Mon, 9 Jan 2023 17:40:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237876AbjAIWkO (ORCPT
+        with ESMTP id S237926AbjAIWkP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Jan 2023 17:40:14 -0500
+        Mon, 9 Jan 2023 17:40:15 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A3013DD2;
-        Mon,  9 Jan 2023 14:40:13 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 309LaGkU011502;
-        Mon, 9 Jan 2023 22:40:10 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2780613FA2;
+        Mon,  9 Jan 2023 14:40:14 -0800 (PST)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 309MdkFf006180;
+        Mon, 9 Jan 2023 22:40:09 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=Glrtv76v1bUv28bnY+eZovy/+aP3haJt+dyyflPqbj4=;
- b=lCtRi4+f1azhFm3NYPuzOdrU2NgHeyxLxNmrCkMKXR1+bFu67su1ys4jnraIzYRAKoxc
- TaVKCIIFgXsMchmLDC/pUDtTcJ9OLwNaZxHzEGAaMWzGX3MIjflFPrSJ3ys6q/mKkJUm
- fyfAEDKCgRWi2GJHuEykeaTbt4A0Vr9SXkmASEhf8OfiRvRAQGx+AfTSLnE/zXRmUC0m
- tUlXlbimTeHhYMWk+j/IzIbc5vm5ooswfSx3bfVuYXiX2oScT9nSEAobB+DjIajAxY/4
- 9sO8b7A8NwK04TMxP1hSWvuCo4ea8f/GGvqNJ0bm/zue3sgeBECWYt1YjZsOW/UwQapm tg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3my0u147fm-1
+ bh=Fo+XDG1NWFHnUwew+NJYKC5jDr9wAAH4NTYJKeieCi0=;
+ b=W7TtcXJrQCe9JzF1PtgbKg3l1289i15yKC8c18ZLRQIYNZ1E3ygVtxCwK8aGbPq/ec7o
+ SiXUbjCZTcaAb/g20ONw0u0JFC3vGnkpAfHGCcT4ovtW3qPK1+vXM9t8P28+wpTNbyMz
+ riAG5YI6wfNYzKB7R+i/QgnjMnFE8BbUGg/z+848y501ZJm+4d5ATvOkm+iJstWv6P2q
+ CQII8LPsmplQf1S7tvN6vdJzkDOtboqQvSvEA5ZNdUTtH5e3OwxAKnRGyCmOxMGTesnu
+ hsIbsb8vZRDXN8FFVrnMIg4ntUs/TN1DRdCcWSdgF03E4G4ghK5il7Fh9e3UykchL1iN JQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3mxx3w4ecx-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 09 Jan 2023 22:40:09 +0000
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 309Me88L027303
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 309Me8sx026536
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 9 Jan 2023 22:40:08 GMT
 Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
  nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 9 Jan 2023 14:40:08 -0800
+ 15.2.986.36; Mon, 9 Jan 2023 14:40:07 -0800
 From:   Bjorn Andersson <quic_bjorande@quicinc.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Chris Lew <quic_clew@quicinc.com>
 CC:     <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/6] rpmsg: glink: Fail qcom_glink_tx() once remove has been initiated
-Date:   Mon, 9 Jan 2023 14:40:00 -0800
-Message-ID: <20230109224001.1706516-6-quic_bjorande@quicinc.com>
+Subject: [PATCH 3/6] rpmsg: glink: rpm: Wrap driver context
+Date:   Mon, 9 Jan 2023 14:39:58 -0800
+Message-ID: <20230109224001.1706516-4-quic_bjorande@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230109224001.1706516-1-quic_bjorande@quicinc.com>
 References: <20230109224001.1706516-1-quic_bjorande@quicinc.com>
@@ -60,98 +60,122 @@ X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BFabGhtaB_nTNpYI2eFPRkM3WKEDJ2Rl
-X-Proofpoint-ORIG-GUID: BFabGhtaB_nTNpYI2eFPRkM3WKEDJ2Rl
+X-Proofpoint-ORIG-GUID: a-8e6U_0kPQ2TBsYH21HLqpya64i3SJd
+X-Proofpoint-GUID: a-8e6U_0kPQ2TBsYH21HLqpya64i3SJd
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2023-01-09_14,2023-01-09_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- adultscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=808
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301090157
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 mlxscore=0 phishscore=0
+ impostorscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2301090157
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Upon removing the glink edge communication is at best one-way. This
-means that the very common scenario of glink requesting intents will not
-be possible to serve.
-
-Typically a successful transmission results in the client waiting for a
-response, with some timeout and a mechanism for aborting that timeout.
-
-Because of this, once the glink edge is defunct once removal is
-commenced it's better to fail transmissions fast.
+As with the SMEM driver update, wrap the RPM context in a struct to
+facilitate the upcoming changes of moving IRQ and mailbox registration
+to the driver.
 
 Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 ---
- drivers/rpmsg/qcom_glink_native.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/rpmsg/qcom_glink_rpm.c | 44 ++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index db5d946d5901..d81d0729493e 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -90,6 +90,7 @@ struct glink_core_rx_intent {
-  * @intentless:	flag to indicate that there is no intent
-  * @tx_avail_notify: Waitqueue for pending tx tasks
-  * @sent_read_notify: flag to check cmd sent or not
-+ * @abort_tx:	flag indicating that all tx attempts should fail
-  */
- struct qcom_glink {
- 	struct device *dev;
-@@ -111,6 +112,8 @@ struct qcom_glink {
- 	bool intentless;
- 	wait_queue_head_t tx_avail_notify;
- 	bool sent_read_notify;
-+
-+	bool abort_tx;
+diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
+index f64f45d1a735..6443843df6ca 100644
+--- a/drivers/rpmsg/qcom_glink_rpm.c
++++ b/drivers/rpmsg/qcom_glink_rpm.c
+@@ -53,6 +53,13 @@ struct glink_rpm_pipe {
+ 	void __iomem *fifo;
  };
  
- enum {
-@@ -326,12 +329,22 @@ static int qcom_glink_tx(struct qcom_glink *glink,
- 
- 	spin_lock_irqsave(&glink->tx_lock, flags);
- 
-+	if (glink->abort_tx) {
-+		ret = -EIO;
-+		goto out;
-+	}
++struct glink_rpm {
++	struct qcom_glink *glink;
 +
- 	while (qcom_glink_tx_avail(glink) < tlen) {
- 		if (!wait) {
- 			ret = -EAGAIN;
- 			goto out;
- 		}
- 
-+		if (glink->abort_tx) {
-+			ret = -EIO;
-+			goto out;
-+		}
++	struct glink_rpm_pipe rx_pipe;
++	struct glink_rpm_pipe tx_pipe;
++};
 +
- 		if (!glink->sent_read_notify) {
- 			glink->sent_read_notify = true;
- 			qcom_glink_send_read_notify(glink);
-@@ -1763,11 +1776,18 @@ static int qcom_glink_remove_device(struct device *dev, void *data)
- void qcom_glink_native_remove(struct qcom_glink *glink)
+ static size_t glink_rpm_rx_avail(struct qcom_glink_pipe *glink_pipe)
  {
- 	struct glink_channel *channel;
-+	unsigned long flags;
- 	int cid;
+ 	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
+@@ -257,8 +264,7 @@ static int glink_rpm_parse_toc(struct device *dev,
+ static int glink_rpm_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_glink *glink;
+-	struct glink_rpm_pipe *rx_pipe;
+-	struct glink_rpm_pipe *tx_pipe;
++	struct glink_rpm *rpm;
+ 	struct device_node *np;
+ 	void __iomem *msg_ram;
+ 	size_t msg_ram_size;
+@@ -266,9 +272,8 @@ static int glink_rpm_probe(struct platform_device *pdev)
+ 	struct resource r;
  	int ret;
  
- 	qcom_glink_cancel_rx_work(glink);
+-	rx_pipe = devm_kzalloc(&pdev->dev, sizeof(*rx_pipe), GFP_KERNEL);
+-	tx_pipe = devm_kzalloc(&pdev->dev, sizeof(*tx_pipe), GFP_KERNEL);
+-	if (!rx_pipe || !tx_pipe)
++	rpm = devm_kzalloc(&pdev->dev, sizeof(*rpm), GFP_KERNEL);
++	if (!rpm)
+ 		return -ENOMEM;
  
-+	/* Fail all attempts at sending messages */
-+	spin_lock_irqsave(&glink->tx_lock, flags);
-+	glink->abort_tx = true;
-+	wake_up_all(&glink->tx_avail_notify);
-+	spin_unlock_irqrestore(&glink->tx_lock, flags);
-+
- 	ret = device_for_each_child(glink->dev, NULL, qcom_glink_remove_device);
+ 	np = of_parse_phandle(dev->of_node, "qcom,rpm-msg-ram", 0);
+@@ -283,36 +288,39 @@ static int glink_rpm_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	ret = glink_rpm_parse_toc(dev, msg_ram, msg_ram_size,
+-				  rx_pipe, tx_pipe);
++				  &rpm->rx_pipe, &rpm->tx_pipe);
  	if (ret)
- 		dev_warn(glink->dev, "Can't remove GLINK devices: %d\n", ret);
+ 		return ret;
+ 
+ 	/* Pipe specific accessors */
+-	rx_pipe->native.avail = glink_rpm_rx_avail;
+-	rx_pipe->native.peak = glink_rpm_rx_peak;
+-	rx_pipe->native.advance = glink_rpm_rx_advance;
+-	tx_pipe->native.avail = glink_rpm_tx_avail;
+-	tx_pipe->native.write = glink_rpm_tx_write;
++	rpm->rx_pipe.native.avail = glink_rpm_rx_avail;
++	rpm->rx_pipe.native.peak = glink_rpm_rx_peak;
++	rpm->rx_pipe.native.advance = glink_rpm_rx_advance;
++	rpm->tx_pipe.native.avail = glink_rpm_tx_avail;
++	rpm->tx_pipe.native.write = glink_rpm_tx_write;
+ 
+-	writel(0, tx_pipe->head);
+-	writel(0, rx_pipe->tail);
++	writel(0, rpm->tx_pipe.head);
++	writel(0, rpm->rx_pipe.tail);
+ 
+-	glink = qcom_glink_native_probe(&pdev->dev,
++	glink = qcom_glink_native_probe(dev,
+ 					0,
+-					&rx_pipe->native,
+-					&tx_pipe->native,
++					&rpm->rx_pipe.native,
++					&rpm->tx_pipe.native,
+ 					true);
+ 	if (IS_ERR(glink))
+ 		return PTR_ERR(glink);
+ 
+-	platform_set_drvdata(pdev, glink);
++	rpm->glink = glink;
++
++	platform_set_drvdata(pdev, rpm);
+ 
+ 	return 0;
+ }
+ 
+ static int glink_rpm_remove(struct platform_device *pdev)
+ {
+-	struct qcom_glink *glink = platform_get_drvdata(pdev);
++	struct glink_rpm *rpm = platform_get_drvdata(pdev);
++	struct qcom_glink *glink = rpm->glink;
+ 
+ 	qcom_glink_native_remove(glink);
+ 
 -- 
 2.37.3
 
