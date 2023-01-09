@@ -2,111 +2,114 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F1AC6379F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Jan 2023 17:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549D1C67871
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  9 Jan 2023 22:38:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233666AbjAIRdC (ORCPT
+        id S237795AbjAIWip (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 9 Jan 2023 12:33:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54492 "EHLO
+        Mon, 9 Jan 2023 17:38:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234370AbjAIRc7 (ORCPT
+        with ESMTP id S232796AbjAIWiM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 9 Jan 2023 12:32:59 -0500
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5554A47E;
-        Mon,  9 Jan 2023 09:32:57 -0800 (PST)
-Received: by mail-ot1-f52.google.com with SMTP id p17-20020a9d6951000000b00678306ceb94so5559832oto.5;
-        Mon, 09 Jan 2023 09:32:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Vt7DGUy1KFLtewCdpYO+kWiUzbW5gAuQvl+L5yBlJLE=;
-        b=zRW6h1FrGcT/RtZxhetriTbBWWfyM1qn+8fc3e/53flwkssqgXZrhemknrrdBuClj7
-         xJjFliZ6/68TYRQd0jdN2VeIlWKzHxb8/+9DP+LjhQH3sQn44a+XKfaLkJtAw2/gZqTO
-         rzfZXsKUrG5FHbSsv9E5IM5nDAXw78jZlHJ2YNHoRtvst5gxZIh2ph5AJq3INxYK0I7a
-         jmxBa1hDfBe8/EE/Pu0mK+mvuoKfNgnQHNCw3u1Quq9EdFTRZ7aW71HrmTzQWTGOeYxF
-         a7/IgOEQGWkHO7MBG3toDsqETPmvFUifJk0pUfDI/XVdpP0TJ+OEujFEo3DkmOFet5b8
-         Scag==
-X-Gm-Message-State: AFqh2kpc66u6C6lUbQczoG7UcvwIHl9MhY+/6ZlmzObcSasuOx4d/KLz
-        l2wTeJh3hVevJ7YbgBl+sA==
-X-Google-Smtp-Source: AMrXdXsB5bdrYW28/WMqpdBRZNzuh/dd8EtxEGTo5RAGR3aEt6h3yJn+AQWoPreURt1SOKrddRdd/A==
-X-Received: by 2002:a05:6830:612:b0:670:97e8:bb88 with SMTP id w18-20020a056830061200b0067097e8bb88mr39230591oti.28.1673285577072;
-        Mon, 09 Jan 2023 09:32:57 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id k8-20020a9d7608000000b006708a6274afsm4847417otl.25.2023.01.09.09.32.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 09:32:56 -0800 (PST)
-Received: (nullmailer pid 1013201 invoked by uid 1000);
-        Mon, 09 Jan 2023 17:32:55 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 9 Jan 2023 17:38:12 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FF913CD5;
+        Mon,  9 Jan 2023 14:38:11 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 309MAFWq007787;
+        Mon, 9 Jan 2023 22:38:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=xNmq2amEAaDSoGgyKipzBeMrrepKqdha60mmZHAS8mM=;
+ b=ZKodMA9Q+E6aQIUMy5KI+605afwjN1sOgFwDqvcRdxWLuG9XYu+LZcH1uSJyoFlm6sF1
+ X5SGswFpNdW1GyPhCmcU3JZkK/ycYl4f104cEYpcQCJZjn5VbnJAGQdr4b/3V9EorsaX
+ RjJ4SfFdyKYnumxtrITBPZFPFqgkDagyWPhZf3yfhP6g4MwIhkWZFBzyCiffyA+suqZk
+ zLhAveVKJjDg5XpL6XiM1kZ+n5oPkHdJ8IhxY7V7e/T3B0p6S57p36izp1XGl7PsmYK/
+ J+Ag/zbnk/mjsskZISp/kImCPW6TBLTZ6BJqL9Qq5wmZnqUx4SR1e64EQrfmdv8Rqmle Ig== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3my0u147d7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 09 Jan 2023 22:38:08 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 309Mc76P001427
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 9 Jan 2023 22:38:07 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Mon, 9 Jan 2023 14:38:06 -0800
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Arun Kumar Neelakantam <quic_aneelaka@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] rpmsg: glink: Avoid infinite loop on intent for missing channel
+Date:   Mon, 9 Jan 2023 14:38:01 -0800
+Message-ID: <20230109223801.1706213-1-quic_bjorande@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, andersson@kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        marijn.suijten@somainline.org, linux-arm-msm@vger.kernel.org,
-        agross@kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski@linaro.org,
-        Manivannan Sadhasivam <mani@kernel.org>
-In-Reply-To: <20230109135647.339224-2-konrad.dybcio@linaro.org>
-References: <20230109135647.339224-1-konrad.dybcio@linaro.org>
- <20230109135647.339224-2-konrad.dybcio@linaro.org>
-Message-Id: <167328555792.1012753.8015526796598804432.robh@kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: remoteproc: qcom,sm6375-pas: Document
- remoteprocs
-Date:   Mon, 09 Jan 2023 11:32:55 -0600
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YZ0Yza90uwMSDQFPdzaaRZU9dnscC1jH
+X-Proofpoint-ORIG-GUID: YZ0Yza90uwMSDQFPdzaaRZU9dnscC1jH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2023-01-09_14,2023-01-09_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ adultscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301090157
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+In the event that an intent advertisement arrives on an unknown channel
+the fifo is not advanced, resulting in the same message being handled
+over and over.
 
-On Mon, 09 Jan 2023 14:56:44 +0100, Konrad Dybcio wrote:
-> SM6375 hosts an ADSP, CDSP and modem as remote processors. Create
-> related bindings.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
-> v2 -> v3:
-> - Separate out 6375 bindings
-> 
->  .../bindings/remoteproc/qcom,sm6375-pas.yaml  | 137 ++++++++++++++++++
->  1 file changed, 137 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-> 
+Fixes: dacbb35e930f ("rpmsg: glink: Receive and store the remote intent buffers")
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+ drivers/rpmsg/qcom_glink_native.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,pas-common.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.example.dtb: remoteproc@a400000: False schema does not allow {'compatible': ['qcom,sm6375-adsp-pas'], 'reg': [[171966464, 256]], 'interrupts-extended': [[4294967295, 0, 282, 4], [4294967295, 0, 1], [4294967295, 1, 1], [4294967295, 2, 1], [4294967295, 3, 1]], 'interrupt-names': ['wdog', 'fatal', 'ready', 'handover', 'stop-ack'], 'clocks': [[4294967295, 0]], 'clock-names': ['xo'], 'power-domains': [[4294967295, 8], [4294967295, 9]], 'power-domain-names': ['lcx', 'lmx'], 'memory-region': [[4294967295]], 'qcom,smem-states': [[4294967295, 0]], 'qcom,smem-state-names': ['stop'], 'glink-edge': {'interrupts-extended': [[4294967295, 3, 0, 1]], 'mboxes': [[4294967295, 3, 0]], 'label': ['lpass'], 'qcom,remote-pid': [[2]]}, '$nodename': ['remoteproc@a400000']}
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.example.dtb: remoteproc@a400000: Unevaluated properties are not allowed ('glink-edge', 'memory-region', 'qcom,smem-state-names', 'qcom,smem-states' were unexpected)
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230109135647.339224-2-konrad.dybcio@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index f36740cb6866..7b1320b1579e 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -946,12 +946,12 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+ 	if (!channel) {
+ 		dev_err(glink->dev, "intents for non-existing channel\n");
+-		return;
++		goto advance_rx;
+ 	}
+ 
+ 	msg = kmalloc(msglen, GFP_ATOMIC);
+ 	if (!msg)
+-		return;
++		goto advance_rx;
+ 
+ 	qcom_glink_rx_peak(glink, msg, 0, msglen);
+ 
+@@ -973,6 +973,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
+ 	}
+ 
+ 	kfree(msg);
++advance_rx:
+ 	qcom_glink_rx_advance(glink, ALIGN(msglen, 8));
+ }
+ 
+-- 
+2.37.3
 
