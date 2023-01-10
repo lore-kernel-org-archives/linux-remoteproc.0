@@ -2,148 +2,272 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA8DC54EBE
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Jan 2023 06:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32A77C54EBE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 10 Jan 2023 18:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234887AbjAJG2M (ORCPT
+        id S239339AbjAJSlu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 10 Jan 2023 01:28:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50144 "EHLO
+        Tue, 10 Jan 2023 13:41:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234576AbjAJG2G (ORCPT
+        with ESMTP id S239679AbjAJSlZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 10 Jan 2023 01:28:06 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA7CC395D1;
-        Mon,  9 Jan 2023 22:28:04 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30A44UGd023823;
-        Tue, 10 Jan 2023 06:27:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=p7LDM4ETC4g9nquHCDAtm666lp1vxWqVcTJq9/Y0Jgc=;
- b=RjN3bopGd2Hjh8O9TruUew0mpVSIhRQCPHxtjyy6eInPvz2LIrjAHO7wjzPHccTNqYfY
- 4GJJQoL463uTjFxR3GS+2H0/d0j4rdnlypyU9I8gQ/pO+DkKammQqvBGZBQhWlM618Jq
- uocNgSIXZ7wEgQ1g/W2EZFPLxSHfy4N2oZPP/WJIgvp+WHIs8JCQ8woUZvqn4F+hB9Ey
- TnhV/dV+LcBeXehXNgL4ICO8ExCv1kMiZ4M5HHibgn6gjmHuA77zx5x8EGSEVvvva4fR
- 7Axb6q9h80pRbRZuGCq+ptud5anKNRKAt0wYQlIhM5zIQLG6KF0GuxvwCuU1yw4A7IvV Hw== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n0x0jgh3u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Jan 2023 06:27:20 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30A6RKfT017257
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 10 Jan 2023 06:27:20 GMT
-Received: from [10.216.32.170] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 9 Jan 2023
- 22:27:13 -0800
-Message-ID: <1c6ce9e4-b9a4-9252-566a-f48c8e675d6b@quicinc.com>
-Date:   Tue, 10 Jan 2023 11:57:10 +0530
+        Tue, 10 Jan 2023 13:41:25 -0500
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1357D5EC15
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Jan 2023 10:35:09 -0800 (PST)
+Received: by mail-pg1-x52c.google.com with SMTP id v3so8850928pgh.4
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Jan 2023 10:35:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g52wDQR8/IIDDs4StQuzSV2ua8NLfetdd275k+8B5dM=;
+        b=cD32zmqroBWxd8Rr7zVcOTbU+5VannjE8t2cnjJxlHRjAkkf4+KjVLscm2qGdFUbo2
+         K9cwjru/GH6tPTm7JzrVYYwCNztERSce3Nyy+VcE8F0eQTObMgwX7Kd0sJiaGvCw/saY
+         7vjG3QHmYGE986WlemST8r7i1jYut8m9qkNjplF3alpv02ATj4E1fX5wQV/Qie7gcuXT
+         RIFoQWdZ+/wf6YzPpeP1bqZ4HmImEEP6UzW6mU8u8I32sAFbejOO97L2JswA5alKbrG4
+         CDa6fqvioSEsQ35+yaIbzrAyb1SzcI895q5yRVBroJmuBCEhqMfPZv0xnQ/tRHf1bjJ6
+         jM8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g52wDQR8/IIDDs4StQuzSV2ua8NLfetdd275k+8B5dM=;
+        b=bJMG2mJoXS9ygF/ik2Ftt5nRzhHjv14q15PbaZMSStPQQvxAq6LPO1X/Dg7K3F2NYg
+         RBBO6H8NI4e70BDQsACRM8VD5eWxjohlx8t1JidBjOfTmuF6ED6hzbUp8zaXyllVGZLg
+         mIoWoVcgPgx9e9A+snKmygePIhlv0dacwksPviRsmk2FcHUGp2EH7Ozs1KuIU+n//VGw
+         EXhGwkKpoief3Uy4YDM+eKb5KfQ88gkyG5H1FDSiy3XiLdJ5RObSeTt7JVQBJL3FtAQi
+         6i/drzL8fsiJjU2T3yM2EkI9eudMD3IhXe+ACLRP9K5IOuaEw/rcWomRogPcpPtRl1oe
+         QZvA==
+X-Gm-Message-State: AFqh2koMWhxUfb/1WN+jEtu6rNKHDK4N3eP3SHBIUxaPqbN4J4W4BRN2
+        +JGCmm0lV5RGgbbVkg1oZFH8DQ==
+X-Google-Smtp-Source: AMrXdXtKOknjNWVmAs9h7nmS8UbdLQIT0fCBX7CP9/j+Zq27bBae9rPRYTblI9ZsBzlG3n/d3KSewQ==
+X-Received: by 2002:a05:6a00:450a:b0:56e:664f:a5f5 with SMTP id cw10-20020a056a00450a00b0056e664fa5f5mr83432498pfb.8.1673375708461;
+        Tue, 10 Jan 2023 10:35:08 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:339:119d:e561:2d7d])
+        by smtp.gmail.com with ESMTPSA id 3-20020a621503000000b00581c741f95csm6634963pfv.46.2023.01.10.10.35.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jan 2023 10:35:08 -0800 (PST)
+Date:   Tue, 10 Jan 2023 11:35:05 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Devarsh Thakkar <devarsht@ti.com>
+Cc:     andersson@kernel.org, devicetree@vger.kernel.org,
+        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com, hnagalla@ti.com,
+        praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+        j-luthra@ti.com
+Subject: Re: [PATCH v5 2/2] remoteproc: k3-r5: Use separate compatible string
+ for TI AM62 SoC family
+Message-ID: <20230110183505.GA2741090@p14s>
+References: <20221227145216.1524-1-devarsht@ti.com>
+ <20221227145216.1524-3-devarsht@ti.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom: sc7280-adsp-pil: Add
- reg-names and power-domain-names
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <quic_plai@quicinc.com>, <bgoswami@quicinc.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <srinivas.kandagatla@linaro.org>,
-        <quic_rohkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <swboyd@chromium.org>,
-        <judyhsiao@chromium.org>, <devicetree@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <corbet@lwn.net>
-References: <1672991425-898-1-git-send-email-quic_srivasam@quicinc.com>
- <c6ea3f37-fe5a-9a61-3a02-99bc036fd23e@linaro.org>
-From:   Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
-Organization: Qualcomm
-In-Reply-To: <c6ea3f37-fe5a-9a61-3a02-99bc036fd23e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -LDfi5XHiq2SAKxP_9qL3TafB4WSO33R
-X-Proofpoint-ORIG-GUID: -LDfi5XHiq2SAKxP_9qL3TafB4WSO33R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2023-01-10_01,2023-01-09_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 mlxscore=0 adultscore=0 mlxlogscore=999
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301100041
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221227145216.1524-3-devarsht@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Tue, Dec 27, 2022 at 08:22:16PM +0530, Devarsh Thakkar wrote:
+> AM62 and AM62A SoCs use single core R5F which is a new scenario
+> different than the one being used with CLUSTER_MODE_SINGLECPU
+> which is for utilizing a single core from a set of cores available
+> in R5F cluster present in the SoC.
+> 
+> To support this single core scenario map it with
+> newly defined CLUSTER_MODE_NONE and use it when
+> compatible is set to ti,am62-r5fss.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> ---
+> V2: Fix indentation and ordering issues as per review comments
+> V3: Change CLUSTER_MODE_NONE value to -1
+> V4: No change
+> V5: No change (fixing typo in email address)
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 57 ++++++++++++++++++------
+>  1 file changed, 44 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 0481926c6975..127f1f68e592 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -74,9 +74,11 @@ struct k3_r5_mem {
+>   *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
+>   *   LockStep mode   : AM65x, J721E and J7200 SoCs
+>   *   Single-CPU mode : AM64x SoCs only
+> + *   None            : AM62x, AM62A SoCs
+>   */
+>  enum cluster_mode {
+> -	CLUSTER_MODE_SPLIT = 0,
+> +	CLUSTER_MODE_NONE = -1,
 
-On 1/8/2023 9:06 PM, Krzysztof Kozlowski wrote:
-Thanks for Your Time Krzyszto!!!
-> On 06/01/2023 08:50, Srinivasa Rao Mandadapu wrote:
->> Add reg-names and power-domain-names for remoteproc ADSP pheripheral
->> loader. This is to make compatible with remoteproc ADSP PIL driver.
-> I don't understand the reasoning. Before binding was "incompatible"?
+s/CLUSTER_MODE_NONE/CLUSTER_MODE_ONECORE
 
-Yes. Previous bindings needs fixes. Will add fixes tag for the same. So 
-far corresponding device tree not
+And add it after CLUSTER_MODE_SINGLECPU
 
-mainlined and no user till now, hence these missing errors not found.
+> +	CLUSTER_MODE_SPLIT,
+>  	CLUSTER_MODE_LOCKSTEP,
+>  	CLUSTER_MODE_SINGLECPU,
+>  };
+> @@ -86,11 +88,13 @@ enum cluster_mode {
+>   * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
+>   * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
+>   * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
+> + * @is_single_core: flag to denote if SoC/IP has only single core R5
+>   */
+>  struct k3_r5_soc_data {
+>  	bool tcm_is_double;
+>  	bool tcm_ecc_autoinit;
+>  	bool single_cpu_mode;
+> +	bool is_single_core;
+>  };
+>  
+>  /**
+> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>  
+>  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+> -	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
+> +	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +	    cluster->mode == CLUSTER_MODE_NONE) {
+>  		core = core0;
+>  	} else {
+>  		core = kproc->core;
+> @@ -853,7 +858,7 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>  		boot_vec, cfg, ctrl, stat);
+>  
+>  	/* check if only Single-CPU mode is supported on applicable SoCs */
+> -	if (cluster->soc_data->single_cpu_mode) {
+> +	if (cluster->soc_data->single_cpu_mode || cluster->soc_data->is_single_core) {
 
->
->> Also change power domain from LCX to CX.
-> Why? Hardware changed?
+Everywhere other than k3_r5_probe(), cluster->mode should be used.  Otherwise it
+is wildly confusing and error prone.  Please resend this set with an extra
+preamble patch that fixes this.
 
-No, basically it's a fix. The power domain name wrongly mentioned in 
-previous bindings.
+>  		single_cpu =
+>  			!!(stat & PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
+>  		if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
+> @@ -1074,6 +1079,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
+>  
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>  	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +	    cluster->mode == CLUSTER_MODE_NONE ||
+>  	    !cluster->soc_data->tcm_is_double)
+>  		return;
+>  
+> @@ -1147,7 +1153,9 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  	atcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_ATCM_EN ?  1 : 0;
+>  	btcm_enable = cfg & PROC_BOOT_CFG_FLAG_R5_BTCM_EN ?  1 : 0;
+>  	loczrama = cfg & PROC_BOOT_CFG_FLAG_R5_TCM_RSTBASE ?  1 : 0;
+> -	if (cluster->soc_data->single_cpu_mode) {
+> +	if (cluster->soc_data->is_single_core) {
+> +		mode = CLUSTER_MODE_NONE;
+> +	} else if (cluster->soc_data->single_cpu_mode) {
+>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
+>  				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
 
-The fixes tag mentioned above will be applicable here also.
+Same comment as above.
 
->
->> Signed-off-by: Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>
->> ---
->> Changes Since v1:
->>      -- Modify subject line to SoC specific.
->>
->>   .../devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml  | 11 ++++++++++-
->>   1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
->> index 94ca7a0..b5bee2c 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
->> @@ -23,6 +23,11 @@ properties:
->>         - description: qdsp6ss register
->>         - description: efuse q6ss register
->>   
->> +  reg-names:
->> +    items:
->> +      - const: qdsp6ss_base
->> +      - const: lpass_efuse
->> +
->>     iommus:
->>       items:
->>         - description: Phandle to apps_smmu node with sid mask
->> @@ -57,7 +62,11 @@ properties:
->>   
->>     power-domains:
->>       items:
->> -      - description: LCX power domain
->> +      - description: CX power domain
->> +
->> +  power-domain-names:
->> +    items:
->> +      - const: cx
->>   
->>     resets:
->>       items:
-> Best regards,
-> Krzysztof
->
+>  	} else {
+> @@ -1271,7 +1279,8 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>  
+>  		/* create only one rproc in lockstep mode or single-cpu mode */
+>  		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+> -		    cluster->mode == CLUSTER_MODE_SINGLECPU)
+> +		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +		    cluster->mode == CLUSTER_MODE_NONE)
+>  			break;
+>  	}
+>  
+> @@ -1704,21 +1713,32 @@ static int k3_r5_probe(struct platform_device *pdev)
+>  	 * default to most common efuse configurations - Split-mode on AM64x
+>  	 * and LockStep-mode on all others
+>  	 */
+
+The above comment needs to be adjusted.
+
+Thanks,
+Mathieu
+
+> -	cluster->mode = data->single_cpu_mode ?
+> +	if (!data->is_single_core)
+> +		cluster->mode = data->single_cpu_mode ?
+>  				CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
+> +	else
+> +		cluster->mode = CLUSTER_MODE_NONE;
+> +
+>  	cluster->soc_data = data;
+>  	INIT_LIST_HEAD(&cluster->cores);
+>  
+> -	ret = of_property_read_u32(np, "ti,cluster-mode", &cluster->mode);
+> -	if (ret < 0 && ret != -EINVAL) {
+> -		dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n",
+> -			ret);
+> -		return ret;
+> +	if (!data->is_single_core) {
+> +		ret = of_property_read_s32(np, "ti,cluster-mode", &cluster->mode);
+> +		if (ret < 0 && ret != -EINVAL) {
+> +			dev_err(dev, "invalid format for ti,cluster-mode, ret = %d\n", ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	num_cores = of_get_available_child_count(np);
+> -	if (num_cores != 2) {
+> -		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
+> +	if (num_cores != 2 && !data->is_single_core) {
+> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
+> +			num_cores);
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (num_cores != 1 && data->is_single_core) {
+> +		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
+>  			num_cores);
+>  		return -ENODEV;
+>  	}
+> @@ -1760,18 +1780,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
+>  	.tcm_is_double = false,
+>  	.tcm_ecc_autoinit = false,
+>  	.single_cpu_mode = false,
+> +	.is_single_core = false,
+>  };
+>  
+>  static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
+>  	.tcm_is_double = true,
+>  	.tcm_ecc_autoinit = true,
+>  	.single_cpu_mode = false,
+> +	.is_single_core = false,
+>  };
+>  
+>  static const struct k3_r5_soc_data am64_soc_data = {
+>  	.tcm_is_double = true,
+>  	.tcm_ecc_autoinit = true,
+>  	.single_cpu_mode = true,
+> +	.is_single_core = false,
+> +};
+> +
+> +static const struct k3_r5_soc_data am62_soc_data = {
+> +	.tcm_is_double = false,
+> +	.tcm_ecc_autoinit = true,
+> +	.single_cpu_mode = false,
+> +	.is_single_core = true,
+>  };
+>  
+>  static const struct of_device_id k3_r5_of_match[] = {
+> @@ -1779,6 +1809,7 @@ static const struct of_device_id k3_r5_of_match[] = {
+>  	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
+>  	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
+>  	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
+> +	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
+>  	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
+>  	{ /* sentinel */ },
+>  };
+> -- 
+> 2.17.1
+> 
