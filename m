@@ -2,357 +2,193 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB0DC678D6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 Jan 2023 20:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F36DC677F1
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 12 Jan 2023 22:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240643AbjALUxo (ORCPT
+        id S240210AbjALWLx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 12 Jan 2023 15:53:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55798 "EHLO
+        Thu, 12 Jan 2023 17:11:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233742AbjALUwz (ORCPT
+        with ESMTP id S240216AbjALWLD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 12 Jan 2023 15:52:55 -0500
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 447BD12767;
-        Thu, 12 Jan 2023 12:26:39 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id b3so30102957lfv.2;
-        Thu, 12 Jan 2023 12:26:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vJCpyBbrHQkjpmMb4tYSA1N8+xnQnzEWycA9Mz5viu8=;
-        b=B8Fsq7wp1ePtnRbS3DgVbJQtNEHM70J0Fod7oWEw+9JClEt1Px+YJ66uERjuHVP0nh
-         T4deO8UTUJ/zyCRJtkLPiMPW11T4YYawa48yPxzk8e6qtLs8xsiHGHP7KmGL3VgC4nGt
-         vi2CyzKvNZlIUPqrFd+bz61Z3Id4ew0mb9Gja1QLHIDlbVJtWhB4VIXXpi83DwDkxUXH
-         NbHbDNWgWu4E0XqGtmX2UZrgLW6XnjZJ3Yfmqtf16HC5RIafTLa3YXL/Xod0Uw2yp6Q0
-         kkx/2GuPF3e7uh/H0GU8oPDrMRDCM/bGPwL6Vvkm/takGTQ9RU0BLV9DFIkmcR6l4kLU
-         qaiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vJCpyBbrHQkjpmMb4tYSA1N8+xnQnzEWycA9Mz5viu8=;
-        b=gdUyEdBIQMWVrgactMkQiiuH6XGPO+G0Sr5dGw+/Gm5ZGU6A6KoXnP3aKgNh08CIiZ
-         vOXce1Cml1yMN2SeqCXE7CJMExFRqDg1tn/bZr5SxFOlvI7Te4xLpyv+Rs0tPldOLjQY
-         IyF3unnHAZjiZ601yHc0CWcoBtxGz1XSk2pNwhjG2jmXB/eZEL8SDk6Ghs52InU94be0
-         RLAWkytnga0yAJxAd0TwRzCqdzP8/hprRLm/505owl6xLFAEsXcJ/LwEMt+8e7EnqtC/
-         ctY2q5U15Ue4PrGt5k0O5A4FDlZLZo16YO/vs0RGORQZKf8YX8z0qLOIEJ+cEnn0NbIp
-         /CFA==
-X-Gm-Message-State: AFqh2kot8+YFVUSEHY6KHR0LLN6WYuApEa8A5Z8qGswbtUmxQjcaDWuU
-        ghIhcqXjWqcUD1RE1kehwWMzgpJTwCrM1Q==
-X-Google-Smtp-Source: AMrXdXuJ+YeGNHyW4gFcD7sEpMpnIgJGzNqHRdBoZidR3Jf6ePGYhrVcd6kvF/kpT5NMKYQ04eEZpg==
-X-Received: by 2002:ac2:4f13:0:b0:4b6:f3b3:fe14 with SMTP id k19-20020ac24f13000000b004b6f3b3fe14mr21224419lfr.1.1673555197512;
-        Thu, 12 Jan 2023 12:26:37 -0800 (PST)
-Received: from i-vetokaappi.home.lan (dsl-hkibng42-56733b-36.dhcp.inet.fi. [86.115.59.36])
-        by smtp.gmail.com with ESMTPSA id k6-20020a2eb746000000b00281350bb5fbsm2346731ljo.2.2023.01.12.12.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Jan 2023 12:26:37 -0800 (PST)
-From:   =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Luca Weiss <luca@z3ntu.xyz>,
-        =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+        Thu, 12 Jan 2023 17:11:03 -0500
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F97B4AA;
+        Thu, 12 Jan 2023 14:03:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1673561002; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=emLjTGbwx0btbz+xhmtt/yg9dHdbNY9EfoXCucecWwSAZbnnZCyQKF9q4GCSMrCNKK
+    1axdrthj/VHoGztPtsHq9YDs1XzRwswOQOl0X+g+mgHiDjCvPgK1+L1doNOYAuB9eGeM
+    lxppx/wETHzbrWSUUwkYgrnMcv4j43WgdAAgrebMnZTD+y3jZkPOZ5xWhegO0x6vg5Um
+    UII4azAKt9blBH4DRFZp2D6Z2rVwYJb4+I5VH/6a+OpWvob8AMlZrIgNpyI/zPiUqhBb
+    a9x0b8SYSlelgqLwlnnPBdE7FDo26pBE3F+Iu2+K5607JsSBJKuBYU9Ivxzf2vEqR5G6
+    xB5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1673561002;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rjM2Ovo73mTF+d+xK7MGawlB/cNEYrJxwgPYAP8YQ+M=;
+    b=bZeEt8i91uR6WRelULcO8KLIxM/z0j0ZbtBVY7kOJ32x4xj49T5EOgcYjf+02tHq3C
+    5/y/vj82you2g0VMsVyKk5IpvLNrjayllZFgMhlkxImAk0GLiSRNLxltyFVgvCFooGzY
+    G0EKDoj5gTKyHOD6LS171rVtLHen9kxnQMP6O9yWHoyY/7nRKij8/4Fw4N4h5SuC0KV7
+    6dx9Piunl6woPRtHB7+7S5cPVKXEi3A6LJc/xTb53O3rU9s4IZZRjOQDMyvRlZyJUPiM
+    /zMr8/tyn57lo28403itanEb8gKIeot7nt6g1agsPtZDOKKvB54tGDKC5fjPTgnL09Fa
+    hICg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1673561002;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=rjM2Ovo73mTF+d+xK7MGawlB/cNEYrJxwgPYAP8YQ+M=;
+    b=dGwLPsSgnvsu3uPfLmkShE9fadtjwgszL02BmM5SXoUZKOoXaHSJbnRSKuTPyLW8X5
+    rAtYSQYXvvZFw3OWqo/etALhUAGUVXyJiSiuMM7pzsMBf9Dudj5aD71uOaWy6N9/8Zug
+    VnMyoa0S5BD2lH9CP4GBZN9MZOUKrP16bGESi2MRA1yCzWQ3Df5aT/0fLGME1Yvi/3U6
+    cx9yHbi2xOk0bbI1MZxqaIQnPyUfbs40ndsJ1nFTJzEAryvWLa1WnyUBI6cDybao7JgV
+    cEoL6QDVWE7A+oPJhu43WW2mSSm3jErKVESViagKnuyl6XEyoT8aVMpcSz2c95khn/dr
+    Srtg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJAhdlWwfGjtQ=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 48.6.2 DYNA|AUTH)
+    with ESMTPSA id yacdeez0CM3M4fq
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Thu, 12 Jan 2023 23:03:22 +0100 (CET)
+Date:   Thu, 12 Jan 2023 23:03:15 +0100
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Matti =?iso-8859-1?Q?Lehtim=E4ki?= <matti.lehtimaki@gmail.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/8] remoteproc: qcom_q6v5_mss: Add modem support on MSM8226
-Date:   Thu, 12 Jan 2023 22:26:06 +0200
-Message-Id: <20230112202612.791455-4-matti.lehtimaki@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230112202612.791455-1-matti.lehtimaki@gmail.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add
+ MSM8226
+Message-ID: <Y8CDo0jI/ygpnNtR@gerhold.net>
 References: <20230112202612.791455-1-matti.lehtimaki@gmail.com>
+ <20230112202612.791455-2-matti.lehtimaki@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230112202612.791455-2-matti.lehtimaki@gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Luca Weiss <luca@z3ntu.xyz>
+Hi Matti,
 
-Add support for the external power block headswitch register needed by
-MSM8226 and some other qcom platforms.
+On Thu, Jan 12, 2023 at 10:26:04PM +0200, Matti Lehtim‰ki wrote:
+> Adds support for platforms with only single power domain.
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-Co-developed-by: Matti Lehtim√§ki <matti.lehtimaki@gmail.com>
-Signed-off-by: Matti Lehtim√§ki <matti.lehtimaki@gmail.com>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 123 +++++++++++++++++++++++++++++
- 1 file changed, 123 insertions(+)
+This sentence is a bit misleading. MSM8226 also has both CX and MX power
+domains. The difference is only the way they are exposed by the firmware
+and the drivers in Linux.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 745627a36bcf..0dff7e811736 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -131,6 +131,11 @@
- #define QDSP6SS_BOOT_CMD                0x404
- #define BOOT_FSM_TIMEOUT                10000
- 
-+/* External power block headswitch */
-+#define EXTERNAL_BHS_ON			BIT(0)
-+#define EXTERNAL_BHS_STATUS		BIT(4)
-+#define EXTERNAL_BHS_TIMEOUT_US		50
-+
- struct reg_info {
- 	struct regulator *reg;
- 	int uV;
-@@ -158,6 +163,7 @@ struct rproc_hexagon_res {
- 	bool has_mba_logs;
- 	bool has_spare_reg;
- 	bool has_qaccept_regs;
-+	bool has_ext_bhs_reg;
- 	bool has_ext_cntl_regs;
- 	bool has_vq6;
- };
-@@ -177,6 +183,7 @@ struct q6v5 {
- 	u32 halt_nc;
- 	u32 halt_vq6;
- 	u32 conn_box;
-+	u32 ext_bhs;
- 
- 	u32 qaccept_mdm;
- 	u32 qaccept_cx;
-@@ -230,6 +237,7 @@ struct q6v5 {
- 	bool has_mba_logs;
- 	bool has_spare_reg;
- 	bool has_qaccept_regs;
-+	bool has_ext_bhs_reg;
- 	bool has_ext_cntl_regs;
- 	bool has_vq6;
- 	int mpss_perm;
-@@ -239,6 +247,7 @@ struct q6v5 {
- };
- 
- enum {
-+	MSS_MSM8226,
- 	MSS_MSM8909,
- 	MSS_MSM8916,
- 	MSS_MSM8953,
-@@ -1738,6 +1747,23 @@ static int q6v5_init_mem(struct q6v5 *qproc, struct platform_device *pdev)
- 		qproc->qaccept_axi = args.args[2];
- 	}
- 
-+	if (qproc->has_ext_bhs_reg) {
-+		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
-+						       "qcom,ext-bhs-reg",
-+						       1, 0, &args);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "failed to parse ext-bhs-reg index 0\n");
-+			return -EINVAL;
-+		}
-+
-+		qproc->conn_map = syscon_node_to_regmap(args.np);
-+		of_node_put(args.np);
-+		if (IS_ERR(qproc->conn_map))
-+			return PTR_ERR(qproc->conn_map);
-+
-+		qproc->ext_bhs = args.args[0];
-+	}
-+
- 	if (qproc->has_ext_cntl_regs) {
- 		ret = of_parse_phandle_with_fixed_args(pdev->dev.of_node,
- 						       "qcom,ext-regs",
-@@ -1863,6 +1889,36 @@ static void q6v5_pds_detach(struct q6v5 *qproc, struct device **pds,
- 		dev_pm_domain_detach(pds[i], false);
- }
- 
-+static int q6v5_external_bhs_enable(struct q6v5 *qproc)
-+{
-+	u32 val;
-+	int ret = 0;
-+
-+	/*
-+	 * Enable external power block headswitch and wait for it to
-+	 * stabilize
-+	 */
-+	regmap_update_bits(qproc->conn_map, qproc->ext_bhs,
-+			   EXTERNAL_BHS_ON, 1);
-+
-+	ret = regmap_read_poll_timeout(qproc->conn_map, qproc->ext_bhs,
-+				       val, val & EXTERNAL_BHS_STATUS,
-+				       1, EXTERNAL_BHS_TIMEOUT_US);
-+
-+	if (ret) {
-+		dev_err(qproc->dev, "External BHS timed out\n");
-+		ret = -ETIMEDOUT;
-+	}
-+
-+	return ret;
-+}
-+
-+static void q6v5_external_bhs_disable(struct q6v5 *qproc)
-+{
-+	regmap_update_bits(qproc->conn_map, qproc->ext_bhs,
-+			   EXTERNAL_BHS_ON, 0);
-+}
-+
- static int q6v5_init_reset(struct q6v5 *qproc)
- {
- 	qproc->mss_restart = devm_reset_control_get_exclusive(qproc->dev,
-@@ -1984,6 +2040,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, qproc);
- 
- 	qproc->has_qaccept_regs = desc->has_qaccept_regs;
-+	qproc->has_ext_bhs_reg = desc->has_ext_bhs_reg;
- 	qproc->has_ext_cntl_regs = desc->has_ext_cntl_regs;
- 	qproc->has_vq6 = desc->has_vq6;
- 	qproc->has_spare_reg = desc->has_spare_reg;
-@@ -2054,6 +2111,14 @@ static int q6v5_probe(struct platform_device *pdev)
- 		qproc->proxy_pd_count = ret;
- 	}
- 
-+	if (qproc->has_ext_bhs_reg) {
-+		ret = q6v5_external_bhs_enable(qproc);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "Failed to enable external BHS.\n");
-+			goto detach_proxy_pds;
-+		}
-+	}
-+
- 	qproc->has_alt_reset = desc->has_alt_reset;
- 	ret = q6v5_init_reset(qproc);
- 	if (ret)
-@@ -2118,6 +2183,9 @@ static int q6v5_remove(struct platform_device *pdev)
- 	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
- 	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
- 
-+	if (qproc->has_ext_bhs_reg)
-+		q6v5_external_bhs_disable(qproc);
-+
- 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
- 
- 	rproc_free(rproc);
-@@ -2153,6 +2221,7 @@ static const struct rproc_hexagon_res sc7180_mss = {
- 	.has_mba_logs = true,
- 	.has_spare_reg = true,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_SC7180,
-@@ -2181,6 +2250,7 @@ static const struct rproc_hexagon_res sc7280_mss = {
- 	.has_mba_logs = true,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = true,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = true,
- 	.has_vq6 = true,
- 	.version = MSS_SC7280,
-@@ -2216,6 +2286,7 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_SDM845,
-@@ -2247,6 +2318,7 @@ static const struct rproc_hexagon_res msm8998_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_MSM8998,
-@@ -2286,6 +2358,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_MSM8996,
-@@ -2320,6 +2393,7 @@ static const struct rproc_hexagon_res msm8909_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_MSM8909,
-@@ -2365,6 +2439,7 @@ static const struct rproc_hexagon_res msm8916_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_MSM8916,
-@@ -2400,6 +2475,7 @@ static const struct rproc_hexagon_res msm8953_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_MSM8953,
-@@ -2453,13 +2529,60 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
- 	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = false,
- 	.has_ext_cntl_regs = false,
- 	.has_vq6 = false,
- 	.version = MSS_MSM8974,
- };
- 
-+static const struct rproc_hexagon_res msm8226_mss = {
-+	.hexagon_mba_image = "mba.b00",
-+	.proxy_supply = (struct qcom_mss_reg_res[]) {
-+		{
-+			.supply = "pll",
-+			.uA = 100000,
-+		},
-+		{
-+			.supply = "mx",
-+			.uV = 1050000,
-+		},
-+		{}
-+	},
-+	.fallback_proxy_supply = (struct qcom_mss_reg_res[]) {
-+		{
-+			.supply = "cx",
-+			.uA = 100000,
-+		},
-+		{}
-+	},
-+	.proxy_clk_names = (char*[]){
-+		"xo",
-+		NULL
-+	},
-+	.active_clk_names = (char*[]){
-+		"iface",
-+		"bus",
-+		"mem",
-+		NULL
-+	},
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		NULL
-+	},
-+	.need_mem_protection = false,
-+	.has_alt_reset = false,
-+	.has_mba_logs = false,
-+	.has_spare_reg = false,
-+	.has_qaccept_regs = false,
-+	.has_ext_bhs_reg = true,
-+	.has_ext_cntl_regs = false,
-+	.has_vq6 = false,
-+	.version = MSS_MSM8226,
-+};
-+
- static const struct of_device_id q6v5_of_match[] = {
- 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
-+	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss},
- 	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
- 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
- 	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss},
--- 
-2.34.1
+The RPM firmware allows Linux to vote for either
+ - Voltages (exposed as regulators in Linux), or
+ - Performance states/"voltage corners" (exposed as power domains in Linux)
 
+For the hardware there is no difference: When using power domains the
+performance states are simply translated to corresponding voltages
+within the RPM firmware.
+
+All newer platforms have moved towards using power domains for CX and
+MX, so for consistency it would be preferable to do the same for MSM8226
+and MSM8974. Perhaps the RPM firmware even allows using them with
+voltage corners? In that case you could just add PM8226 L3 to rpmpd and
+use it as power domain like on other platforms.
+
+For some reason I assumed this is the case for MSM8974 2.5 years ago.
+I have to admit I no longer remember why, and verifying this reliably is
+probably hard... :/
+
+But the VDD_MX setup looks identical for MSM8974 and MSM8226 to me, so
+please also apply the same changes for MSM8974. I would also appreciate
+a small comment in the commit message that the MX voltage rail is still
+represented as regulator on these platforms. Also, perhaps this should
+even be a separate patch given that it kind of fixes what I added for
+MSM8974 back then.
+
+> Adds support for external power block headswitch (BHS) registers
+> 
+> Signed-off-by: Matti Lehtim‰ki <matti.lehtimaki@gmail.com>
+> ---
+>  .../remoteproc/qcom,msm8916-mss-pil.yaml      | 41 +++++++++++++++++--
+>  1 file changed, 37 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+> index 6e6e69ad9cd7..6a921f2711b2 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+> [...]
+> @@ -106,6 +108,15 @@ properties:
+>      items:
+>        - const: stop
+>  
+> +  qcom,ext-bhs-reg:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: External power block headswitch (BHS) register
+> +                 (only valid for qcom,msm8226-mss-pil)
+> +    items:
+> +      - items:
+> +          - description: phandle to external BHS syscon region
+> +          - description: offset to the external BHS register
+> +
+
+Please disallow this (qcom,ext-bhs-reg: false) for everything except
+qcom,msm8226-mss-pil.
+
+>    qcom,halt-regs:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      description:
+> @@ -205,13 +216,35 @@ allOf:
+>        required:
+>          - power-domains
+>          - power-domain-names
+> -    else:
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,msm8909-mss-pil
+> +              - qcom,msm8916-mss-pil
+> +              - qcom,msm8974-mss-pil
+> +    then:
+>        properties:
+>          power-domains:
+>            maxItems: 2
+>          power-domain-names:
+>            maxItems: 2
+>  
+
+You also need to add minItems here now.
+
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: qcom,msm8226-mss-pil
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          maxItems: 1
+> +        power-domain-names:
+> +          maxItems: 1
+> +      required:
+> +        - qcom,ext-bhs-reg
+
+And here you need to add the mx-supply as required, since you don't have
+it as power domain.
+
+Thanks,
+Stephan
