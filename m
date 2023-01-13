@@ -2,57 +2,57 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE625C54EBE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Jan 2023 07:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066DBC54EBE
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Jan 2023 07:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234479AbjAMHwR (ORCPT
+        id S234352AbjAMHw4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 02:52:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40780 "EHLO
+        Fri, 13 Jan 2023 02:52:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232184AbjAMHwO (ORCPT
+        with ESMTP id S231594AbjAMHwz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Jan 2023 02:52:14 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220F66147A
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jan 2023 23:52:12 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id ud5so50428525ejc.4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jan 2023 23:52:12 -0800 (PST)
+        Fri, 13 Jan 2023 02:52:55 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE676147A
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jan 2023 23:52:53 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id mp20so3775680ejc.7
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Jan 2023 23:52:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=iBghY86jJuEVQ+AH+91zNe2AIXF3nPFzvcmXm4jdEbQ=;
-        b=qrQtVENj71y4qXu0yz0Y3sXQ4A/TRVKwjpPaSmS9OHf1H6c/xj1qF1HhbGiqxXbskA
-         s1BNaIB/Ebf2aew2Bff8cTa//o6Chk6g4qqke0WwIbMCvnS5sfvTC58UWHFBxRWnYCQs
-         CChymXkI6bnQOGRX+0NZ3ieHcKDbBNnC7VJp95THNKKS1JyjQ/3ShS42gKcVnlK40L36
-         OBmfSg11a4Cz3CoyWm17rDr6/ax6bcLCsjyei0P6ZeLd9KLzlO+be061piadNMg7L+zi
-         RyPwmMXIGtt+Ya36mzbguUexyLcCfM4vgbnCCCXb9oFzif4bUOwU/Hicd6PyfTWyFvdj
-         b58A==
+        bh=hsW10UAQdG3igNdNi26Jys3iRtenHKlkdEyDQRN/BnQ=;
+        b=ZebeW9H97F9fWhdeRZ9sF/CDFwFkrKI5aiO6Xr8jew7hqZRK2cZbZnkOw4K3ajQkU7
+         XaD22IznntPJOHT8RzYQT/QvTDTPbLSbyfwDx3vD1cqC9NfQO8A/5oh66ndDtMmJRvu0
+         C4H9lkD+B9DnNhmdPCONmsab1plYSVHB4DjVLr18T9mUwNAi8u1arHs/a/RQ+t6zN8gQ
+         vWM5lQsCRsSEyyoO+6uzEYOTbWPYAZJ1ctfrQxZUcItWf41R33hbeBu1MluQmGBFHdjx
+         0ulMHnnTUyoBBJmzOzJg5EXrF6+MjbbK67kqxRGBk7h5TM4YmwhxcfP7FNWxYJnmG8mx
+         IZ2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBghY86jJuEVQ+AH+91zNe2AIXF3nPFzvcmXm4jdEbQ=;
-        b=Wv3eH4sTM13S+09NX49s1fnmPEPc2ys6TBvRb4NH3XLR9tuyG/LYGGdu/0JQvjLfeJ
-         fPGAQtcWKJCvJ6uCYZxHMunKEZMj9MPU8RSe3StgaZKazxP574p3mCvwFKTjMJMT/Sdz
-         ggHGgM8g8vCH3aLkfCHefqqrudd0S4f8T/BP1A3YebMQfrlLcKbAjb6ec3GT++SLLdzP
-         4E6bWAlyQ67BcljGc9XFcP9EOmGPd9+CHWBvVDZ9WDOu0zsUMet92RZQU5P507BsfymH
-         Fx4OWbcqe/G9YXPoxcgXr6D6DRAn1zecUDRnIRNRJ7A2+rOUZt0dcj4gHRLOHWDNpwW7
-         vh9Q==
-X-Gm-Message-State: AFqh2ko7+F5nyoQZ7crIu6qEqz9AS8aPEbFtt1FfDkJewcD/Mb3WxE/Y
-        sY9n5k1f24ltDraDZRPAYtifLQ==
-X-Google-Smtp-Source: AMrXdXsEEkA/Hk4h+bKI2b+6ohFfmnxdxyLhgZVNraLrg8zBIS8U5vNBD9c95jtXqkX/bSR+jBXT3g==
-X-Received: by 2002:a17:907:7e83:b0:7c0:f558:e518 with SMTP id qb3-20020a1709077e8300b007c0f558e518mr83747934ejc.51.1673596330697;
-        Thu, 12 Jan 2023 23:52:10 -0800 (PST)
+        bh=hsW10UAQdG3igNdNi26Jys3iRtenHKlkdEyDQRN/BnQ=;
+        b=ORykjRALcNYS+9zv9hXC6Ipl3bzFH9XPr7uQijtmWodHENlHgfuULBX6sIOMC21lL2
+         zAZf4r0ecZhi7fqbYJR2eN6OcaVjkgkU7tAtx07ReilZPKsYmp/yRkwH5DlY7G4QK42L
+         BjDaIvJE7BXc5tKjV2aKCYAI1iAcCZFxnEWf+3DvA86yaFC/gNijAx5ADgrM9YKmYN93
+         TTJbmeU7N1NzAM4sQmJQxtFRca/Vi5FMYWfSbBI6HrNVMacV2OwLviFIB+JVRVACzPed
+         rByrs12efty50CKdNp7m2XvRWIzPehbZAPOAetDUt18HCv998UXiYOJeS0oBJrYigrti
+         jWWQ==
+X-Gm-Message-State: AFqh2kp2AmhJb5SM8ZLDGKx4Jst01DuvGdOrO+zh9c6OnL957JlhMRm/
+        6gFvaKPA1/rSqxQhG6dzSR1OEA==
+X-Google-Smtp-Source: AMrXdXvFcFySV/UWF5uK5kT1Z9lr0NMGSrouHFEzaEhWrUju16eu55UjsDfLgGZD9zKT+xwn17ZPCQ==
+X-Received: by 2002:a17:906:dfcd:b0:7ff:7876:9c5d with SMTP id jt13-20020a170906dfcd00b007ff78769c5dmr65956916ejc.62.1673596372469;
+        Thu, 12 Jan 2023 23:52:52 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n12-20020a1709062bcc00b007ae38d837c5sm8347522ejg.174.2023.01.12.23.52.09
+        by smtp.gmail.com with ESMTPSA id g18-20020a1709061c9200b007c1675d2626sm8373407ejh.96.2023.01.12.23.52.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Jan 2023 23:52:10 -0800 (PST)
-Message-ID: <df4fdecb-6ca7-d96b-bcad-02cefb52ce4e@linaro.org>
-Date:   Fri, 13 Jan 2023 08:52:08 +0100
+        Thu, 12 Jan 2023 23:52:52 -0800 (PST)
+Message-ID: <6f43e320-b533-e5fb-3886-1b6ccc7f9548@linaro.org>
+Date:   Fri, 13 Jan 2023 08:52:50 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
@@ -77,188 +77,11 @@ On 13/01/2023 08:30, Tanmay Shah wrote:
 > driver. This bindings will help in defining TCM in device-tree and
 > make it's access platform agnostic and data-driven from the driver.
 > 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->  .../devicetree/bindings/sram/xlnx,tcm.yaml    | 137 ++++++++++++++++++
->  1 file changed, 137 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml b/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
-> new file mode 100644
-> index 000000000000..02d17026fb1f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
-> @@ -0,0 +1,137 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sram/xlnx,tcm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Tightly Coupled Memory (TCM)
-> +
-> +maintainers:
-> +  - Tanmay Shah <tanmay.shah@amd.com>
-> +
-> +description: |
-> +  Tightly Coupled Memory(TCM) is available on AMD-Xilinx paltforms for ARM
-> +  cortex remote processors to use. It is low-latency memory that provide
-> +  predictable instruction execution and predictable data load/store timing.
-> +  TCM can be configured in lockstep mode or split mode. In split mode
-> +  configuration each RPU core has its own set of ATCM and BTCM memories and in
-> +  lockstep mode redundant processor's TCM become available to lockstep
-> +  processor. So In lockstep mode ATCM and BTCM size is increased.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "sram-[0-9a-f]+$"
 
-Drop node name requirement.
+Subject: drop second/last, redundant "bindings". The "dt-bindings"
+prefix is already stating that these are bindings.
 
-Why do you need sram node at all?
-
-> +
-> +patternProperties:
-> +  "^tcm-[a-z]+@[0-9a-f]+$":
-> +    type: object
-> +    description: |
-> +      During the split mode, each RPU core has its own set of ATCM and BTCM memory
-> +
-> +      During the lock-step operation, the TCMs that are associated with the
-> +      redundant processor become available to the lock-step processor.
-> +      For example if each individual processor has 64KB ATCM, then in lockstep mode
-> +      The size of ATCM become 128KB. Same for BTCM. tcm-lockstep node represents
-> +      TCM address space in lockstep mode. tcm-core@x node specfies each core's
-> +      TCM address space in split mode.
-> +
-> +    properties:
-> +      compatible:
-> +        oneOf:
-
-This is not oneOf.
-
-> +          - items:
-
-and you do not have more than one item.
-
-> +              - enum:
-> +                  - xlnx,tcm-lockstep
-> +                  - xlnx,tcm-split
-
-compatible describes hardware, not configuration. What you encode here
-does not fit compatible.
-
-> +
-> +      "#address-cells":
-
-Use consistent quotes, either " or '
-
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 1
-> +
-> +      reg:
-> +        items:
-> +          - description: |
-> +              ATCM Memory address space. An ATCM typically holds interrupt or
-> +              exception code that must be accessed at high speed, without any
-> +              potential delay resulting from a cache miss.
-> +              RPU on AMD-Xilinx platform can also fetch data from ATCM
-> +          - description: |
-> +              BTCM Memory address space. A BTCM typically holds a block of data
-> +              for intensive processing, such as audio or video processing. RPU on
-> +              AMD-Xilinx Platforms can also fetch Code (Instructions) from BTCM
-> +
-> +      reg-names:
-> +        items:
-> +          - const: atcm
-> +          - const: btcm
-> +
-> +      ranges: true
-> +
-> +      power-domains:
-> +        maxItems: 8
-> +        items:
-> +          - description: list of ATCM Power domains
-> +          - description: list of BTCM Power domains
-> +        additionalItems: true
-
-And what are the rest?
-
-> +
-> +    required:
-> +      - compatible
-> +      - '#address-cells'
-> +      - '#size-cells'
-> +      - reg
-> +      - ranges
-> +      - power-domains
-> +    unevaluatedProperties: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/power/xlnx-zynqmp-power.h>
-> +
-> +    amba {
-
-Drop.
-
-> +        sram@ffe00000 {
-
-This does not match your bindings.
-
-> +            tcm-lockstep@ffe00000 {
-> +                compatible = "xlnx,tcm-lockstep";
-> +
-> +                #address-cells = <1>;
-> +                #size-cells = <1>;
-> +
-> +                reg = <0xffe00000 0x20000>, <0xffe20000 0x20000>;
-> +                reg-names = "atcm", "btcm";
-> +                ranges = <0x0 0xffe00000 0x20000>, <0x20000 0xffe20000 0x20000>;
-> +                power-domains = <&zynqmp_firmware PD_R5_0_ATCM>,
-> +                                <&zynqmp_firmware PD_R5_1_ATCM>,
-
-This is BTCM domain according to your binding. Your binding here is
-probably wrong and does not match real DTS.
-
-> +                                <&zynqmp_firmware PD_R5_0_BTCM>,
-> +                                <&zynqmp_firmware PD_R5_1_BTCM>;
-> +            };
-> +
-> +            tcm-core@0 {
-> +                compatible = "xlnx,tcm-split";
-> +
-> +                #address-cells = <1>;
-> +                #size-cells = <1>;
-> +
-> +                reg = <0xffe00000 0x10000>, <0xffe20000 0x10000>;
-> +                reg-names = "atcm", "btcm";
-> +                ranges = <0x0 0xffe00000 0x10000>, <0x20000 0xffe20000 0x10000>;
-> +                power-domains = <&zynqmp_firmware PD_R5_0_ATCM>,
-> +                                <&zynqmp_firmware PD_R5_0_BTCM>;
-> +            };
-> +
-> +            tcm-core@1 {
-> +                compatible = "xlnx,tcm-split";
-> +
-> +                #address-cells = <1>;
-> +                #size-cells = <1>;
-> +
-> +                reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
-> +                reg-names = "atcm", "btcm";
-> +                ranges = <0x0 0xffe90000 0x10000>, <0x20000 0xffeb0000 0x10000>;
-> +                power-domains = <&zynqmp_firmware PD_R5_1_ATCM>,
-> +                                <&zynqmp_firmware PD_R5_1_BTCM>;
-> +            };
-> +        };
-> +    };
-> +...
-> 
-> base-commit: 6b31ffe9c8b9947d6d3552d6e10752fd96d0f80f
+Where is driver or DTS? Are you now adding a dead binding without users?
 
 Best regards,
 Krzysztof
