@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335F2C54EBE
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Jan 2023 06:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AF1C61DB3
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Jan 2023 07:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236952AbjAMGwJ (ORCPT
+        id S240323AbjAMHej (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 01:52:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55858 "EHLO
+        Fri, 13 Jan 2023 02:34:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231154AbjAMGvf (ORCPT
+        with ESMTP id S241086AbjAMHdh (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Jan 2023 01:51:35 -0500
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2078.outbound.protection.outlook.com [40.107.100.78])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 793337FEC1;
-        Thu, 12 Jan 2023 22:35:30 -0800 (PST)
+        Fri, 13 Jan 2023 02:33:37 -0500
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4889111165;
+        Thu, 12 Jan 2023 23:31:46 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RWaCXRivAWvzW/8Oea7A6GW55Ma/plzlgolmWpCh/KFxKi8ti97tz+/HeKyMtfzib+24JTSNqP8kvtNg0+HBs4C/1pTnh2OJkcvU/+/flxZ5Ufqcj7Y/N7PZU8o3ppir30eLBidXpQ7BLSzftkh/bw35e0zwspGQqf+psur9RL/6pfDCS9KwfvM24nqw0McZweSYZy6Mr0Dg8CzaOeAYkKKX0P8+SvmSC0IegFXKW4T8w0wjJ8D9U7tQeL+pDvtpZuAfjLb56SweuZrE5z5PiiKuLyi99yhq5CcXXWn2BUBesJbTKx4JyC5m8+ofyi5miGYIzZUk/ungOUD0tZoHNQ==
+ b=W/IHAf6xpp/J+7+TeyUogtmVDthztbYNzsOjzYmgSeF7jyAueoueWaZx08b6Gp3W8fvmHR4kZFXuBXYNBup+Eq98Rj8O4wMyOQkTg7UTCdnFvkq4j+0Vr6KGw1F4c2ixVv4i+N9Vzq9I1SCP6u+Xh2SMVJUhe+FISzLeCJ9ebY6hDHYFitBuOnloInAlW30l082mEf2MEaB6/PzDBNhvr2Z+QXrOU09yTrDjRODBcKrFPda0xGEgfS7OiifhTuPoZIOwifcKbG0GIxuslWsyit9R8DEy7Sjep8zckhBJnlWwzbRqhpk47t3Y7YFQ9kxlhueiWn5MXSSiElSM2A8emA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PMj0RhSDXChHj4XC5MhckVVBDv23nezErj264jUMfBA=;
- b=Py9OpOCPKni472YCtfYU+M2A/pxhy396oK+qYfSdY0sP9Snrxej0jxBikl3/aX45AYzrS1VHJBRCAQqiaxQa08TafXBX+XvXatfOsn2KzwkHZJVgsQs1sFvGwgiMScHV2hJIQqbZ05FpmwOE+zqPqsDna/atL7CK5QgSnSz1sKx5SrKqt8qEd/XjSb4etlG17DJvGmI4NG1pKPfgoAN0D+emcwwxFwNhZoNAFoZ3ixBUGOHdg1BzD7hOiHmmQhINTvg7iEogv2a4BIn7JCbPBvz6g6awkINBU64vd8UcNnKGqKpTeX37UsWaXK8NM1elKNGFsBLsupN+ZmSGRlchGA==
+ bh=XLtly/pVIDJj8inooB/0YSXTqbtqYBaC7zX3HoN5gtw=;
+ b=E8s1UudS6Orz1i4Z4h/66nQwxI881KGOwGWmPz8MdWJmXuE7AB/sHEYhCvfkKroq5guXsBVPI4EutppCmlNko/D7hNYwr9IV2wOpOHB0ajEXkOf83hUMLhzLEliU7IqxM1OG9lXtqqLlZnWgaLvIsy0oW+iH/Bjf6QP7VclePG1ECX3fxc8Tp2Gbfa0v1KB8dxdv+dIGB8TkDvPF0srd7DTL3IGKe/THG6IketpJd3KLd3g0l1noHpl6rTtU0xozR+g34QueD1fvJHen7GRCZN+u9/9fSF0B7HFaosl35Nr+HiyXOvZ9WfNAbTA0XqiGNVFi74fTJIPRO/G4gOwZKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PMj0RhSDXChHj4XC5MhckVVBDv23nezErj264jUMfBA=;
- b=fsMQYqCORBsvMgNr6tTi/n/7hsXbYiQj1Q/Ra2cORortAZN79KjqOAQ2ugpeC78selSeahZlTuONXlX1Dd2PXlfZdb/SoATPcq6w6vkWCvuvb2AksbyUT05vo2DVg3UcLXLubg0+carbREbJ9v/hJXE/Mp1qV+4453/ijtm204g=
-Received: from DM6PR04CA0013.namprd04.prod.outlook.com (2603:10b6:5:334::18)
- by DS0PR12MB6461.namprd12.prod.outlook.com (2603:10b6:8:c7::22) with
+ bh=XLtly/pVIDJj8inooB/0YSXTqbtqYBaC7zX3HoN5gtw=;
+ b=IIYNYIgoDhkcpMGXvaOBHFJEiBw8zgumOfXO94I9B3uurwR2A8OvWVn84gA/qqGQbPE8ckQ4P46877p8YdgoIuxR90bouaG0Z9KYA9wFcKnSJjYBTEpBweGPQLwBuMsP4dagADOR2+sIt/MtPcP/GEbpjMlgcH1bz0miW4Lg1ys=
+Received: from DM6PR08CA0055.namprd08.prod.outlook.com (2603:10b6:5:1e0::29)
+ by CH2PR12MB4876.namprd12.prod.outlook.com (2603:10b6:610:67::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Fri, 13 Jan
- 2023 06:32:44 +0000
-Received: from DS1PEPF0000E648.namprd02.prod.outlook.com
- (2603:10b6:5:334:cafe::89) by DM6PR04CA0013.outlook.office365.com
- (2603:10b6:5:334::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13 via Frontend
- Transport; Fri, 13 Jan 2023 06:32:44 +0000
+ 2023 07:31:44 +0000
+Received: from DM6NAM11FT032.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:1e0:cafe::b1) by DM6PR08CA0055.outlook.office365.com
+ (2603:10b6:5:1e0::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.16 via Frontend
+ Transport; Fri, 13 Jan 2023 07:31:44 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -48,480 +48,210 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0000E648.mail.protection.outlook.com (10.167.18.38) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6002.11 via Frontend Transport; Fri, 13 Jan 2023 06:32:44 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ DM6NAM11FT032.mail.protection.outlook.com (10.13.173.93) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6002.13 via Frontend Transport; Fri, 13 Jan 2023 07:31:43 +0000
+Received: from SATLEXMB07.amd.com (10.181.41.45) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Fri, 13 Jan
- 2023 00:32:44 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Fri, 13 Jan
- 2023 00:32:43 -0600
+ 2023 01:31:42 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB07.amd.com
+ (10.181.41.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 12 Jan
+ 2023 23:31:05 -0800
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Fri, 13 Jan 2023 00:32:43 -0600
+ Transport; Fri, 13 Jan 2023 01:31:05 -0600
 From:   Tanmay Shah <tanmay.shah@amd.com>
-To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <michal.simek@amd.com>,
-        <openamp-system-reference@lists.openampproject.org>,
-        <tanmay.shah@amd.com>
-Subject: [PATCH] remoteproc: xilinx: add mailbox channels for rpmsg
-Date:   Thu, 12 Jan 2023 22:32:04 -0800
-Message-ID: <20230113063203.3993235-1-tanmay.shah@amd.com>
+To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <tanmay.shah@amd.com>
+Subject: [PATCH] dt-bindings: sram: Tightly Coupled Memory (TCM) bindings
+Date:   Thu, 12 Jan 2023 23:30:46 -0800
+Message-ID: <20230113073045.4008853-1-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0000E648:EE_|DS0PR12MB6461:EE_
-X-MS-Office365-Filtering-Correlation-Id: 115df53b-0494-4d08-daf6-08daf52ffac5
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT032:EE_|CH2PR12MB4876:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0eaad9f8-adca-49f0-6323-08daf538386f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Wcf3o3k4eJVTGGR80NBZ2LkInXEpV+ZfKsczNtr6NdaAx+Hn7Lf+urYtyPHOj7GYzb2/7rgcuJkfjqhIKF9QlJFEJyyKSmbhjTZ8wnS+i1WfkPy8+tn+QD7YKNYdtlLquADQt+m7Nj+26J5Hq/rWCEdAQPSOhvMLdk+02vY2gOaY0nfcgLWZNduyDefdLND7O3u/eOB+Z59HpU4y1+d8MSHJMTagYJ1aGpy4qpkVLAz+oYaghgaJXFDug/syZBOcrOyqOoD4W1GUDA7CR2FNN3BMSMLx0f2cvVfUCV0zPfoiWjB+7EFBK1cyQMG3FPtXJR+E7WE7kVFptM/ZGPE6IrHm2fB6H7p3lgScKO1yNvWtpp6oedaEBzlFqCh8Gj7M4DrRRb6hACx+78T/3Eyl8RczJ/ilCLMWaulu87QVZtSR4uDmkztaCMCfAj+GuHWWvpvrjB7iMaUfzOrUPJfdBSfGd87Nc2Q8PIxxt9bzw2kz2mdDSMsZgCb74YH00KIegpb/mMorXGbRaHtoFmP5AhV0XBm8O5BDCh/v2vb8dmGQEn/pxRG7HDtxFbImbDAvTDxDsUforMb+Iw9fK0LYw2IOlsTvIILuUEcNtQo8A8SyctYPzi4g+5A36RheTDqfGOFgt3cIC0B8auI/ZmLGT4bQQbnOxeK3DXoxmzIxjSVvafFhOf52sb0RpHCtPK4EyHH0fVxLU1cjE0ne7zJ9ev21/2oWTm8i8gul2brUPMqUdoVDeqITIcyo4VZPf4DM
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(376002)(136003)(39860400002)(346002)(396003)(451199015)(46966006)(36840700001)(40470700004)(6666004)(26005)(2906002)(15650500001)(478600001)(47076005)(186003)(8676002)(336012)(83380400001)(426003)(40460700003)(8936002)(44832011)(82740400003)(1076003)(82310400005)(30864003)(110136005)(2616005)(36756003)(54906003)(86362001)(70586007)(316002)(70206006)(81166007)(36860700001)(356005)(41300700001)(40480700001)(4326008)(5660300002)(17423001)(36900700001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: WaYAmeddtHAZjQ13qnaIjw2IOVS7IDQEy7h5tf3llE4SoX1I+/RyiVSb+8b2O7EKPPyX3/mOKtVNb9AFwzJU927pXt7Iy4ZwTvwElahlgZQoE/ydb9wRiDNZDWgKrtEdBd4UL6Hur2QTTh4SP2SWNQ4doCaMYSqpMgoqJ3IjX5RKSeak+1OE1DVD0ECrVcCSGMRRV70CV6XsS74gZVB/e8RzRf/ARIkamUDrhgw8Em0A23gURahPpOxGPCHaf3o/OzoeMxo+u6wrtsF0dNxKSP1RBFg4lQq8mm/TUgzeESbfxhy5AAw23YsQl6h0V0KI5/1EH4iR+dL1+1sFaGGOkayQHuH7CcF/OTdhqcHo8qcQT32pGZalGGOGDknzObCEEeMLQ4fhlIrygLJC7MLAQmYWfW92LBqu8ZDnx8HM1NsgpEwkLesNswXZTIlideRVFik3ZIrNn94BQmzuIVXBdzIYkct6foGgtapmMHV4pNo/3VZKdvSxqbI6mibO0/Eif0jEEBDtO51YRw6cd3n2DGaooMbEKYs1DV5ihMjDntOCNTOa/8FyhwB9QIAXLSYfN77NgcEmsjEuv6AaZ41fouvTdXW+qAnPsVL09thS0CpKvLAFAKGfm9vXsOOOtRDaFarxM1K9K9n88ni1CYC1sIXBrF0ScHQ673ERtnRvBl88RblBA8E4S2oQB3TMXT0TH5Jw2ax5sstdJaJ/FjOWFRBLIa7K3OUXsC4CvkyAbYZmDvdCgolrfTgch1HLiKsKmHSm2q4jZO6AgmDCXBjOzieIS7zio+huhpFL35QDwx8=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(396003)(376002)(136003)(346002)(451199015)(46966006)(40470700004)(36840700001)(2906002)(6666004)(186003)(966005)(26005)(478600001)(336012)(2616005)(54906003)(4326008)(1076003)(70586007)(8676002)(40460700003)(41300700001)(426003)(70206006)(47076005)(110136005)(44832011)(40480700001)(82740400003)(8936002)(5660300002)(316002)(83380400001)(36756003)(356005)(82310400005)(36860700001)(86362001)(81166007)(36900700001);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2023 06:32:44.5103
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2023 07:31:43.9362
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 115df53b-0494-4d08-daf6-08daf52ffac5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0eaad9f8-adca-49f0-6323-08daf538386f
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF0000E648.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT032.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6461
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4876
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch makes each r5 core mailbox client and uses
-tx and rx channels to send and receive data to/from
-remote processor respectively. This is needed for rpmsg
-communication to remote processor.
+This patch introduces bindings for TCM memory address space on AMD-xilinx
+platforms. As of now TCM addresses are hardcoded in xilinx remoteproc
+driver. This bindings will help in defining TCM in device-tree and
+make it's access platform agnostic and data-driven from the driver.
 
 Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 329 +++++++++++++++++++-----
- 1 file changed, 271 insertions(+), 58 deletions(-)
+ .../devicetree/bindings/sram/xlnx,tcm.yaml    | 137 ++++++++++++++++++
+ 1 file changed, 137 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 2db57d394155..1e797c5ffc06 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -8,16 +8,23 @@
- #include <linux/dma-mapping.h>
- #include <linux/firmware/xlnx-zynqmp.h>
- #include <linux/kernel.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/mailbox/zynqmp-ipi-message.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
--#include <linux/slab.h>
- 
- #include "remoteproc_internal.h"
- 
-+/* IPI buffer MAX length */
-+#define IPI_BUF_LEN_MAX	32U
+diff --git a/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml b/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
+new file mode 100644
+index 000000000000..02d17026fb1f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
+@@ -0,0 +1,137 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sram/xlnx,tcm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/* RX mailbox client buffer max length */
-+#define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
-+				 sizeof(struct zynqmp_ipi_message))
- /*
-  * settings for RPU cluster mode which
-  * reflects possible values of xlnx,cluster-mode dt-property
-@@ -65,6 +72,12 @@ static const struct mem_bank_data zynqmp_tcm_banks[] = {
-  * @rmem: reserved memory region nodes from device tree
-  * @rproc: rproc handle
-  * @pm_domain_id: RPU CPU power domain id
-+ * @rx_mc_buf: to copy data from mailbox rx channel
-+ * @tx_mc_buf: to copy data to mailbox tx channel
-+ * @mbox_work: schedule work after receiving data from mailbox
-+ * @mbox_cl: mailbox client
-+ * @tx_chan: mailbox tx channel
-+ * @rx_chan: mailbox rx channel
-  */
- struct zynqmp_r5_core {
- 	struct device *dev;
-@@ -75,6 +88,14 @@ struct zynqmp_r5_core {
- 	struct reserved_mem **rmem;
- 	struct rproc *rproc;
- 	u32 pm_domain_id;
++title: Tightly Coupled Memory (TCM)
 +
-+	/* mailbox related data structures */
-+	unsigned char rx_mc_buf[MBOX_CLIENT_BUF_MAX];
-+	unsigned char tx_mc_buf[MBOX_CLIENT_BUF_MAX];
-+	struct work_struct mbox_work;
-+	struct mbox_client mbox_cl;
-+	struct mbox_chan *tx_chan;
-+	struct mbox_chan *rx_chan;
- };
- 
- /**
-@@ -92,6 +113,181 @@ struct zynqmp_r5_cluster {
- 	struct zynqmp_r5_core **r5_cores;
- };
- 
-+/**
-+ * event_notified_idr_cb() - callback for vq_interrupt per notifyid
-+ * @id: rproc->notify id
-+ * @ptr: pointer to idr private data
-+ * @data: data passed to idr_for_each callback
-+ *
-+ * Pass notification to remoteproc virtio
-+ *
-+ * Return: 0. having return is to satisfy the idr_for_each() function
-+ *          pointer input argument requirement.
-+ **/
-+static int event_notified_idr_cb(int id, void *ptr, void *data)
-+{
-+	struct rproc *rproc = data;
++maintainers:
++  - Tanmay Shah <tanmay.shah@amd.com>
 +
-+	if (rproc_vq_interrupt(rproc, id) == IRQ_NONE)
-+		dev_dbg(&rproc->dev, "data not found for vqid=%d\n", id);
++description: |
++  Tightly Coupled Memory(TCM) is available on AMD-Xilinx paltforms for ARM
++  cortex remote processors to use. It is low-latency memory that provide
++  predictable instruction execution and predictable data load/store timing.
++  TCM can be configured in lockstep mode or split mode. In split mode
++  configuration each RPU core has its own set of ATCM and BTCM memories and in
++  lockstep mode redundant processor's TCM become available to lockstep
++  processor. So In lockstep mode ATCM and BTCM size is increased.
 +
-+	return 0;
-+}
++properties:
++  $nodename:
++    pattern: "sram-[0-9a-f]+$"
 +
-+/**
-+ * handle_event_notified() - remoteproc notification work function
-+ * @work: pointer to the work structure
-+ *
-+ * It checks each registered remoteproc notify IDs.
-+ */
-+static void handle_event_notified(struct work_struct *work)
-+{
-+	struct zynqmp_r5_core *r5_core;
-+	struct rproc *rproc;
++patternProperties:
++  "^tcm-[a-z]+@[0-9a-f]+$":
++    type: object
++    description: |
++      During the split mode, each RPU core has its own set of ATCM and BTCM memory
 +
-+	r5_core = container_of(work, struct zynqmp_r5_core, mbox_work);
-+	rproc = r5_core->rproc;
++      During the lock-step operation, the TCMs that are associated with the
++      redundant processor become available to the lock-step processor.
++      For example if each individual processor has 64KB ATCM, then in lockstep mode
++      The size of ATCM become 128KB. Same for BTCM. tcm-lockstep node represents
++      TCM address space in lockstep mode. tcm-core@x node specfies each core's
++      TCM address space in split mode.
 +
-+	/*
-+	 * We only use IPI for interrupt. The RPU firmware side may or may
-+	 * not write the notifyid when it trigger IPI.
-+	 * And thus, we scan through all the registered notifyids and
-+	 * find which one is valid to get the message.
-+	 * Even if message from firmware is NULL, we attempt to get vqid
-+	 */
-+	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
-+}
++    properties:
++      compatible:
++        oneOf:
++          - items:
++              - enum:
++                  - xlnx,tcm-lockstep
++                  - xlnx,tcm-split
 +
-+/**
-+ * zynqmp_r5_mb_rx_cb() - receive channel mailbox callback
-+ * @cl: mailbox client
-+ * @msg: message pointer
-+ *
-+ * Receive data from ipi buffer, ack interrupt and then
-+ * it will schedule the R5 notification work.
-+ */
-+static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
-+{
-+	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
-+	struct zynqmp_r5_core *r5_core;
-+	size_t len;
++      "#address-cells":
++        const: 1
 +
-+	r5_core = container_of(cl, struct zynqmp_r5_core, mbox_cl);
++      "#size-cells":
++        const: 1
 +
-+	/* copy data from ipi buffer to r5_core */
-+	ipi_msg = (struct zynqmp_ipi_message *)msg;
-+	buf_msg = (struct zynqmp_ipi_message *)r5_core->rx_mc_buf;
-+	len = ipi_msg->len;
-+	if (len > IPI_BUF_LEN_MAX) {
-+		dev_warn(r5_core->dev, "msg size exceeded than %d\n",
-+			 IPI_BUF_LEN_MAX);
-+		len = IPI_BUF_LEN_MAX;
-+	}
-+	buf_msg->len = len;
-+	memcpy(buf_msg->data, ipi_msg->data, len);
++      reg:
++        items:
++          - description: |
++              ATCM Memory address space. An ATCM typically holds interrupt or
++              exception code that must be accessed at high speed, without any
++              potential delay resulting from a cache miss.
++              RPU on AMD-Xilinx platform can also fetch data from ATCM
++          - description: |
++              BTCM Memory address space. A BTCM typically holds a block of data
++              for intensive processing, such as audio or video processing. RPU on
++              AMD-Xilinx Platforms can also fetch Code (Instructions) from BTCM
 +
-+	/* received and processed interrupt ack */
-+	if (mbox_send_message(r5_core->rx_chan, NULL) < 0)
-+		dev_err(r5_core->dev, "ack failed to mbox rx_chan\n");
++      reg-names:
++        items:
++          - const: atcm
++          - const: btcm
 +
-+	schedule_work(&r5_core->mbox_work);
-+}
++      ranges: true
 +
-+/**
-+ * zynqmp_r5_setup_mbox() - Setup mailboxes related properties
-+ *			    this is used for each individual R5 core
-+ *
-+ * @r5_core: pointer to the ZynqMP r5 core data
-+ *
-+ * Function to setup mailboxes related properties
-+ *
-+ */
-+static void zynqmp_r5_setup_mbox(struct zynqmp_r5_core *r5_core)
-+{
-+	struct zynqmp_r5_cluster *cluster;
-+	struct mbox_client *mbox_cl;
++      power-domains:
++        maxItems: 8
++        items:
++          - description: list of ATCM Power domains
++          - description: list of BTCM Power domains
++        additionalItems: true
 +
-+	cluster = dev_get_drvdata(r5_core->dev->parent);
++    required:
++      - compatible
++      - '#address-cells'
++      - '#size-cells'
++      - reg
++      - ranges
++      - power-domains
++    unevaluatedProperties: false
 +
-+	/**
-+	 * ToDo: Use only one IPI channel for APU to communicate with both RPUs
-+	 * in split mode. As of now, two IPI channels are expeceted for APU
-+	 * to communicate with RPU. for example, APU(IPI0)<-> RPU0(IPI1) and
-+	 * APU(IPI7)<->RPU1(IPI2). However, this is not the optimized use
-+	 * of the hardware. As per hardware reference manual, each IPI channel
-+	 * can receive interrupt from another IPI channel. So APU must be able
-+	 * to communicate with both RPUs simultaneously using same IPI channel.
-+	 * For example, this is valid case: APU(IPI0)<->RPU0(IPI1) and
-+	 * APU(IPI0)<->RPU1(IPI2). However, with current available examples
-+	 * and RPU firmware, this configuration in device-tree is causing system-crash.
-+	 * And so, using extra IPI channel is required in device-tree. In split
-+	 * mode explicitly inform user about this limitation and requirement.
-+	 */
-+	if (cluster->mode == SPLIT_MODE)
-+		dev_warn(r5_core->dev, "split mode: APU should use two IPI channels\n");
++additionalProperties: false
 +
-+	mbox_cl = &r5_core->mbox_cl;
-+	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
-+	mbox_cl->tx_block = false;
-+	mbox_cl->knows_txdone = false;
-+	mbox_cl->tx_done = NULL;
-+	mbox_cl->dev = r5_core->dev;
++examples:
++  - |
++    #include <dt-bindings/power/xlnx-zynqmp-power.h>
 +
-+	/* Request TX and RX channels */
-+	r5_core->tx_chan = mbox_request_channel_byname(mbox_cl, "tx");
-+	if (IS_ERR(r5_core->tx_chan)) {
-+		r5_core->tx_chan = NULL;
-+		return;
-+	}
++    amba {
++        sram@ffe00000 {
++            tcm-lockstep@ffe00000 {
++                compatible = "xlnx,tcm-lockstep";
 +
-+	r5_core->rx_chan = mbox_request_channel_byname(mbox_cl, "rx");
-+	if (IS_ERR(r5_core->rx_chan)) {
-+		mbox_free_channel(r5_core->tx_chan);
-+		r5_core->rx_chan = NULL;
-+		r5_core->tx_chan = NULL;
-+		return;
-+	}
++                #address-cells = <1>;
++                #size-cells = <1>;
 +
-+	INIT_WORK(&r5_core->mbox_work, handle_event_notified);
-+}
++                reg = <0xffe00000 0x20000>, <0xffe20000 0x20000>;
++                reg-names = "atcm", "btcm";
++                ranges = <0x0 0xffe00000 0x20000>, <0x20000 0xffe20000 0x20000>;
++                power-domains = <&zynqmp_firmware PD_R5_0_ATCM>,
++                                <&zynqmp_firmware PD_R5_1_ATCM>,
++                                <&zynqmp_firmware PD_R5_0_BTCM>,
++                                <&zynqmp_firmware PD_R5_1_BTCM>;
++            };
 +
-+static void zynqmp_r5_free_mbox(struct zynqmp_r5_core *r5_core)
-+{
-+	if (r5_core->tx_chan) {
-+		mbox_free_channel(r5_core->tx_chan);
-+		r5_core->tx_chan = NULL;
-+	}
++            tcm-core@0 {
++                compatible = "xlnx,tcm-split";
 +
-+	if (r5_core->rx_chan) {
-+		mbox_free_channel(r5_core->rx_chan);
-+		r5_core->rx_chan = NULL;
-+	}
-+}
++                #address-cells = <1>;
++                #size-cells = <1>;
 +
-+/*
-+ * zynqmp_r5_core_kick() - kick a firmware if mbox is provided
-+ * @rproc: r5 core's corresponding rproc structure
-+ * @vqid: virtqueue ID
-+ */
-+static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+	struct device *dev = r5_core->dev;
-+	struct zynqmp_ipi_message *mb_msg;
-+	int ret;
++                reg = <0xffe00000 0x10000>, <0xffe20000 0x10000>;
++                reg-names = "atcm", "btcm";
++                ranges = <0x0 0xffe00000 0x10000>, <0x20000 0xffe20000 0x10000>;
++                power-domains = <&zynqmp_firmware PD_R5_0_ATCM>,
++                                <&zynqmp_firmware PD_R5_0_BTCM>;
++            };
 +
-+	/* don't handle kick if mbox setup failed for this core */
-+	if (!r5_core->tx_chan && !r5_core->rx_chan)
-+		return;
++            tcm-core@1 {
++                compatible = "xlnx,tcm-split";
 +
-+	mb_msg = (struct zynqmp_ipi_message *)r5_core->tx_mc_buf;
-+	memcpy(mb_msg->data, &vqid, sizeof(vqid));
-+	mb_msg->len = sizeof(vqid);
-+	ret = mbox_send_message(r5_core->tx_chan, mb_msg);
-+	if (ret < 0)
-+		dev_warn(dev, "failed to send message\n");
-+}
++                #address-cells = <1>;
++                #size-cells = <1>;
 +
- /*
-  * zynqmp_r5_set_mode()
-  *
-@@ -227,6 +423,63 @@ static int zynqmp_r5_mem_region_unmap(struct rproc *rproc,
- 	return 0;
- }
- 
-+/**
-+ * zynqmp_r5_get_mem_region_node()
-+ * parse memory-region property and get reserved mem regions
-+ *
-+ * @r5_core: pointer to zynqmp_r5_core type object
-+ *
-+ * Return: 0 for success and error code for failure.
-+ */
-+static int zynqmp_r5_get_mem_region_node(struct zynqmp_r5_core *r5_core)
-+{
-+	struct device_node *np, *rmem_np;
-+	struct reserved_mem **rmem;
-+	int res_mem_count, i;
-+	struct device *dev;
-+
-+	dev = r5_core->dev;
-+	np = r5_core->np;
-+
-+	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
-+							sizeof(phandle));
-+
-+	if (res_mem_count <= 0) {
-+		dev_warn(dev, "failed to get memory-region property %d\n",
-+			 res_mem_count);
-+		return 0;
-+	}
-+
-+	if (!r5_core->tx_chan && !r5_core->rx_chan)
-+		res_mem_count = 1;
-+
-+	rmem = devm_kcalloc(dev, res_mem_count,
-+			    sizeof(struct reserved_mem *), GFP_KERNEL);
-+	if (!rmem)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < res_mem_count; i++) {
-+		rmem_np = of_parse_phandle(np, "memory-region", i);
-+		if (!rmem_np)
-+			goto release_rmem;
-+
-+		rmem[i] = of_reserved_mem_lookup(rmem_np);
-+		if (!rmem[i]) {
-+			of_node_put(rmem_np);
-+			goto release_rmem;
-+		}
-+
-+		of_node_put(rmem_np);
-+	}
-+
-+	r5_core->rmem_count = res_mem_count;
-+	r5_core->rmem = rmem;
-+	return 0;
-+
-+release_rmem:
-+	return -EINVAL;
-+}
-+
- /*
-  * add_mem_regions_carveout()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -572,6 +825,20 @@ static int zynqmp_r5_rproc_prepare(struct rproc *rproc)
- 		return ret;
- 	}
- 
-+	/*
-+	 * If mailbox nodes are disabled using "status" property then setting up
-+	 * mailbox channels will be failed and in that case, we don't need vrings
-+	 * and vdevbuffer for this core. So, setup mailbox before parsing
-+	 * memory-region property. If "tx" and "rx" mailboxes are not setup, then
-+	 * only parse and add first memory-region carveout. As per bindings, it
-+	 * must be firmware load region
-+	 */
-+	zynqmp_r5_setup_mbox(rproc->priv);
-+
-+	ret = zynqmp_r5_get_mem_region_node(rproc->priv);
-+	if (ret)
-+		dev_warn(&rproc->dev, "memory-region prop failed %d\n", ret);
-+
- 	ret = add_mem_regions_carveout(rproc);
- 	if (ret) {
- 		dev_err(&rproc->dev, "failed to get reserve mem regions %d\n", ret);
-@@ -597,6 +864,8 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 
- 	r5_core = (struct zynqmp_r5_core *)rproc->priv;
- 
-+	zynqmp_r5_free_mbox(r5_core);
-+
- 	for (i = 0; i < r5_core->tcm_bank_count; i++) {
- 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
- 		if (zynqmp_pm_release_node(pm_domain_id))
-@@ -617,6 +886,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
-+	.kick		= zynqmp_r5_rproc_kick,
- };
- 
- /**
-@@ -726,59 +996,6 @@ static int zynqmp_r5_get_tcm_node(struct zynqmp_r5_cluster *cluster)
- 	return 0;
- }
- 
--/**
-- * zynqmp_r5_get_mem_region_node()
-- * parse memory-region property and get reserved mem regions
-- *
-- * @r5_core: pointer to zynqmp_r5_core type object
-- *
-- * Return: 0 for success and error code for failure.
-- */
--static int zynqmp_r5_get_mem_region_node(struct zynqmp_r5_core *r5_core)
--{
--	struct device_node *np, *rmem_np;
--	struct reserved_mem **rmem;
--	int res_mem_count, i;
--	struct device *dev;
--
--	dev = r5_core->dev;
--	np = r5_core->np;
--
--	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
--							sizeof(phandle));
--	if (res_mem_count <= 0) {
--		dev_warn(dev, "failed to get memory-region property %d\n",
--			 res_mem_count);
--		return 0;
--	}
--
--	rmem = devm_kcalloc(dev, res_mem_count,
--			    sizeof(struct reserved_mem *), GFP_KERNEL);
--	if (!rmem)
--		return -ENOMEM;
--
--	for (i = 0; i < res_mem_count; i++) {
--		rmem_np = of_parse_phandle(np, "memory-region", i);
--		if (!rmem_np)
--			goto release_rmem;
--
--		rmem[i] = of_reserved_mem_lookup(rmem_np);
--		if (!rmem[i]) {
--			of_node_put(rmem_np);
--			goto release_rmem;
--		}
--
--		of_node_put(rmem_np);
--	}
--
--	r5_core->rmem_count = res_mem_count;
--	r5_core->rmem = rmem;
--	return 0;
--
--release_rmem:
--	return -EINVAL;
--}
--
- /*
-  * zynqmp_r5_core_init()
-  * Create and initialize zynqmp_r5_core type object
-@@ -806,10 +1023,6 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 	for (i = 0; i < cluster->core_count; i++) {
- 		r5_core = cluster->r5_cores[i];
- 
--		ret = zynqmp_r5_get_mem_region_node(r5_core);
--		if (ret)
--			dev_warn(dev, "memory-region prop failed %d\n", ret);
--
- 		/* Initialize r5 cores with power-domains parsed from dts */
- 		ret = of_property_read_u32_index(r5_core->np, "power-domains",
- 						 1, &r5_core->pm_domain_id);
++                reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
++                reg-names = "atcm", "btcm";
++                ranges = <0x0 0xffe90000 0x10000>, <0x20000 0xffeb0000 0x10000>;
++                power-domains = <&zynqmp_firmware PD_R5_1_ATCM>,
++                                <&zynqmp_firmware PD_R5_1_BTCM>;
++            };
++        };
++    };
++...
 
-base-commit: 90d6db82626be5e5fe085f4f58c49a080c420fa6
+base-commit: 6b31ffe9c8b9947d6d3552d6e10752fd96d0f80f
 -- 
 2.25.1
 
