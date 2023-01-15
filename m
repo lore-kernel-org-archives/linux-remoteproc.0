@@ -2,94 +2,103 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D05C3DA78
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 13 Jan 2023 21:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBF0C3DA78
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 15 Jan 2023 14:38:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbjAMVpu (ORCPT
+        id S230137AbjAOOij (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 13 Jan 2023 16:45:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41388 "EHLO
+        Sun, 15 Jan 2023 09:38:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbjAMVpt (ORCPT
+        with ESMTP id S231199AbjAOOii (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 13 Jan 2023 16:45:49 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA557CDF3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 13 Jan 2023 13:45:48 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id b12so15860019pgj.6
-        for <linux-remoteproc@vger.kernel.org>; Fri, 13 Jan 2023 13:45:48 -0800 (PST)
+        Sun, 15 Jan 2023 09:38:38 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32C42113F8
+        for <linux-remoteproc@vger.kernel.org>; Sun, 15 Jan 2023 06:38:37 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id hw16so50749500ejc.10
+        for <linux-remoteproc@vger.kernel.org>; Sun, 15 Jan 2023 06:38:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fLpE4svXD3XQQRSXVJzXdGhWxSRO6yXuEUgvAKhMVl4=;
-        b=seXJpHkX75LLjeAQGGDYlo3npZTN5KBqgznJsS+O6gpK2NmQ8Yi8U38tzdE+sC0EtR
-         5QNoTpmSeSffYXeoVSQnn2DDfEUU15bx7u8Rc9mQ7+nG4BrIVuqxpf1JQJStGuZpibXL
-         us0R/zMDHhkDokII30bM1n/PGIAWgWXSABq5bm53ejqYhpqMuyX2VG9tuy7tkBOcBPXr
-         IG/Grxqr1iz8WOBM4TaI5wMisBoRkN7/HNxFv0u7XrxoEJZ8VtsAoxndPL1Ch+k+o3w2
-         q2AwPfjhCwZUciSBXNwm+cYaZBpI27vZHdYtB1+MOOaRomdw7nEBN/HbhoNBnskedaKr
-         hCSw==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ciei+9RK1lP1ir2O6VrlKkT6Olp4GCKQ9yN4RQZHNxc=;
+        b=UF9T6/XDnO2y+7mSMLLO3flansazxWXJIU1S3Uardt/Isqon5iFZ1kyCnrEH3ZsyuH
+         7u6t8k5yY0F3qhqmXu8T9wJcZaWEx6qpbd5MkZe9KoMyTcU3m80HXiKmTMXPhHGPo2Ge
+         s51mkktv4D+9gwg2+kfo5a4sMaAsM0f27EaLfC6cWbyHABXJED9Sa0kUw8BOxe+qH7/D
+         FuJi9WcxM3ZPdlbLJdRekr7MxWFulU4d+HC49WSjK8fJLUID/wPj+4WIpdLV5LdhHVg2
+         ro4cdQU00K3bNnb6+/b57X2uMYU1sTdrYfiNlZ5e/QFtGep1fqwXB6nI8wlbzfOM8CcA
+         YbpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fLpE4svXD3XQQRSXVJzXdGhWxSRO6yXuEUgvAKhMVl4=;
-        b=pt3W+oKVW5x15/KBjhdUTs0svykgWJn9HM+hJdqVoGkrTg/qmKa2zcaAnxKztd5ItK
-         SosYj7QwvFQzRpYqwaThUEYvD/X50vaQu/siKhIzxnKoawrB/5ovyhEOpzJOfr9evbDP
-         bxDrTR8uKOrS+vvQo/fFII8kzdHIQr+TzrwcdPlGz7YzPY3HL3NTsDNlhH3gcsr/8cM5
-         GDL01Nza47H1Nt2acDDn1TKEcvfSnTHkzGUpbki+219c8Do8BiW/j/pApom3zUU01AOl
-         DZYqMK3e6uCwEDQjdWsnG10U/u1RofXEoaR4PXQpEy52iW+uoTrUauLgzIvEQUuJ/+JG
-         0BPA==
-X-Gm-Message-State: AFqh2koZhye2mE1T16atmhF1XzRnrWh7dYSSOBVMupB5DngsByOZ2d8K
-        /83K+/E/fCuHbfRKrHdzBkcYRw==
-X-Google-Smtp-Source: AMrXdXsrIOvOzBb3717HQB1WC3lU2RR/DE+Mjyapbas+eMRFoGzQr3ZhpTdppsDT513yxfgfdqZIMg==
-X-Received: by 2002:a62:6001:0:b0:582:33b4:4c57 with SMTP id u1-20020a626001000000b0058233b44c57mr11213692pfb.33.1673646347798;
-        Fri, 13 Jan 2023 13:45:47 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:d88b:1f:16ba:1ee7])
-        by smtp.gmail.com with ESMTPSA id e8-20020aa79808000000b005897f5436c0sm9309127pfl.118.2023.01.13.13.45.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 13:45:47 -0800 (PST)
-Date:   Fri, 13 Jan 2023 14:45:44 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Hari Nagalla <hnagalla@ti.com>
-Cc:     andersson@kernel.org, devicetree@vger.kernel.org,
-        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com, praneeth@ti.com,
-        nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com,
-        devarsht@ti.com
-Subject: Re: [PATCH v2 0/2] Add C7xv DSP for AM62A
-Message-ID: <20230113214544.GA2956142@p14s>
-References: <20221230132453.32022-1-hnagalla@ti.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ciei+9RK1lP1ir2O6VrlKkT6Olp4GCKQ9yN4RQZHNxc=;
+        b=jCOlG9YkuddY/AvoWNTqXJlARM5clsqD7z5UZJuI/p6Jm/yr1qUBeYCFfgyXGhHT8Z
+         ue1Tx/SMPGSxaxTEGyWbKvFis3cTDkv3WzFGO90BLZ6OAGjwn5vdS7kKld97nlQ+Fs+4
+         +5Uskgx20qFTe1U2sC0yTv1ZUnzxfUrQch9Xr0OA1uJUIOg0kq3/NrIFllK2c6QZqoj5
+         kqbjfyr9z6gTsPSNZlNICvskn8q0VSenWWHmqh4QbfoB/EgzwR+elRgyCjt2wihEINc5
+         +7lzWbHXrAEZgWob2ZsvoAhf/A5nNAX5wl2FyKNYsh6jcJVp3B4PSAzpR3056ZGVHKRN
+         m6Sw==
+X-Gm-Message-State: AFqh2krGz4Bca5fg5NlYPgOY/QKJoyzvuty9LWWZRUkj/TU2N3Mt50IS
+        t1+N1fCsrz5uCfoDh0bTrAl+zg==
+X-Google-Smtp-Source: AMrXdXuA43mEvs+xddNRHWH4r6rh3XmWCN4ygPgTA2hYxPxnsVuVFNHY9JTMig4VsAowVle69yinow==
+X-Received: by 2002:a17:906:2993:b0:86c:e53a:d20b with SMTP id x19-20020a170906299300b0086ce53ad20bmr5286286eje.21.1673793515741;
+        Sun, 15 Jan 2023 06:38:35 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id p14-20020a17090653ce00b0085ea718a81bsm5362037ejo.198.2023.01.15.06.38.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Jan 2023 06:38:35 -0800 (PST)
+Message-ID: <9f4994de-e468-43ea-f8db-d4a37ebc30e0@linaro.org>
+Date:   Sun, 15 Jan 2023 15:38:33 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221230132453.32022-1-hnagalla@ti.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] dt-bindings: sram: Tightly Coupled Memory (TCM) bindings
+Content-Language: en-US
+To:     Tanmay Shah <tanmays@amd.com>, Tanmay Shah <tanmay.shah@amd.com>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20230113073045.4008853-1-tanmay.shah@amd.com>
+ <6f43e320-b533-e5fb-3886-1b6ccc7f9548@linaro.org>
+ <b79f7e0a-8048-d0e1-ad0b-d15d72288fde@amd.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <b79f7e0a-8048-d0e1-ad0b-d15d72288fde@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Dec 30, 2022 at 07:24:51AM -0600, Hari Nagalla wrote:
-> AM62A SoC family has a C7xv DSP subsystem with Analytics engine. This
-> susbystem is intended for deep learning purposes. C7xv is similar to C71
-> DSPs on K3 J7 SoCs with additional harware accelerators and IP updates
-> for deep learining.
+On 13/01/2023 19:08, Tanmay Shah wrote:
 > 
-> Hari Nagalla (1):
->   dt-bindings: remoteproc: k3-dsp: update bindings for AM62A SoCs
+> On 1/12/23 11:52 PM, Krzysztof Kozlowski wrote:
+>> On 13/01/2023 08:30, Tanmay Shah wrote:
+>>> This patch introduces bindings for TCM memory address space on AMD-xilinx
+>>> platforms. As of now TCM addresses are hardcoded in xilinx remoteproc
+>>> driver. This bindings will help in defining TCM in device-tree and
+>>> make it's access platform agnostic and data-driven from the driver.
+>>>
+>> Subject: drop second/last, redundant "bindings". The "dt-bindings"
+>> prefix is already stating that these are bindings.
 > 
-> Jai Luthra (1):
->   remoteproc: k3-c7x: Add support for C7xv DSP on AM62A SoC
+> Ack.
 > 
->  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml         |  3 +++
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c            | 12 ++++++++++++
->  2 files changed, 15 insertions(+)
->
+> 
+>>
+>> Where is driver or DTS? Are you now adding a dead binding without users?
+> 
+> 
+> TCM is used by drivers/remoteproc/xlnx_r5_remoteproc.c driver. Howerver, 
+> we have hardcode addresses in TCM as bindings are not available yet.
 
-Applied - thanks
-Mathieu
+I don't see usage of these compatibles there. You also did not supply
+DTS here. Please provide users of bindings within the same patchset.
 
-> -- 
-> 2.17.1
-> 
+
+Best regards,
+Krzysztof
+
