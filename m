@@ -2,220 +2,124 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293C3C678DB
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Jan 2023 15:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2853C67871
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Jan 2023 17:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231570AbjAPPWp (ORCPT
+        id S234171AbjAPRAq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 10:22:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40488 "EHLO
+        Mon, 16 Jan 2023 12:00:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232049AbjAPPVw (ORCPT
+        with ESMTP id S234104AbjAPRAW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 Jan 2023 10:21:52 -0500
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37DBB22DC5;
-        Mon, 16 Jan 2023 07:19:24 -0800 (PST)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 30GFJBqb009706;
-        Mon, 16 Jan 2023 09:19:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1673882351;
-        bh=vHrxstu4j6B6NPSRXPP63UQmzs8+3dWvGgCFr8Nrku4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=m28/A0UWW35F4UNxgXkNey9exUtIcFaI74SVyloqNTaakfgM6VtWMGWzTGRIlZyH8
-         40fdPoZvziwSwvRQUqFI9uahIk18zDcjPppEHkyTN36UAGjE3U+nXogFctgS72FNIl
-         XLvpldDIw2Fe1vsB7hPZ6qSvPYb/dZ9l639zJX4s=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 30GFJBSn039175
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Jan 2023 09:19:11 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 16
- Jan 2023 09:19:10 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 16 Jan 2023 09:19:10 -0600
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 30GFJ9nX007251;
-        Mon, 16 Jan 2023 09:19:10 -0600
-From:   Devarsh Thakkar <devarsht@ti.com>
-To:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
-        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
-CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <devarsht@ti.com>
-Subject: [PATCH v6 2/3] dt-bindings: remoteproc: ti: Add new compatible for AM62 SoC family
-Date:   Mon, 16 Jan 2023 20:49:05 +0530
-Message-ID: <20230116151906.549384-3-devarsht@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230116151906.549384-1-devarsht@ti.com>
+        Mon, 16 Jan 2023 12:00:22 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CBC559E44
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jan 2023 08:43:05 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id 7so20050487pga.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Jan 2023 08:43:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikxZNlHUgNrbKf+8U/yVt2M8Gk6i+Q3n7f7a9saNKsI=;
+        b=Rtmn/zdGuLDgMj9Slnnpf/54DTVzbMzb9eHnyHiw5BIn7frY+F06y/ZUr7E2DEiGju
+         0OLsAEXiAIesVl3aafeOMfq1wvVH5CIgDcXikCoKMenFqkwvcpsnnHIbJlZc2Ng5s6JF
+         68+3y6ajiz5CKq+RXJ6oQW7/Yqq6cnXskjOg60jZmKhqcc6FrKjfu3M/jw2yT06dr4Ix
+         lKPmxGQnowZBWOFQ3HXiTsLMmZdQcMLExfpj905OpC9K/cnV5MOI3zELibeReHU4OepM
+         ZRwUw//CFbaOWL/A68cWT7cbUcuHMztzkjRDfluApD9d2CuSG4LMouUwUkPXwOynzJ6/
+         tWxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ikxZNlHUgNrbKf+8U/yVt2M8Gk6i+Q3n7f7a9saNKsI=;
+        b=3zWY8TSgUN/5rbPTY1xNxMkZ4TBupPEzPMN8eyswmvTNWU051Ksn+Ml5O+pUJiybu4
+         E9MR3MZ6uLVFLVlIq0f20JUL3P59SW5/kpczBOlOGG62GPhGoMMZCkyrUgBWJXJdctSH
+         Jzc1QbKHysYIoc7a+mejlYpFqREvvAmys+fKO3JSzP1rPdmblDXlV05O1dS3mGU+jeU0
+         BDalWJcMgybBjqUMMAXxioOvFNVI+IEuo/M0JUYUnXxsb+mUZThfnfjuOkY6ui22L38p
+         PITUdw/L2tLiPELJb8admv4DhZ0CEyH4NMr5m15OOqEgCZd1MrzE3smJZdP3ISKxrhPJ
+         wcYg==
+X-Gm-Message-State: AFqh2koFoqN7NMQ7uyXjKlmV5LpF57XA3CDHz1AHlz70BQpvTRI0SI1a
+        s3GjqaXorbZ7rdNV2TB7eO9/pA==
+X-Google-Smtp-Source: AMrXdXsGM+JKHBOueEKiRd1ruDWOukTMmYx3k3dePs3jQNUQPeyMRIKpRFmIUfTREkNd6WyzHXbCbg==
+X-Received: by 2002:a05:6a00:179a:b0:58b:bc3a:622a with SMTP id s26-20020a056a00179a00b0058bbc3a622amr16498632pfg.21.1673887385170;
+        Mon, 16 Jan 2023 08:43:05 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:32ab:eb7f:cea:1014])
+        by smtp.gmail.com with ESMTPSA id w124-20020a626282000000b005769b23260fsm18932094pfb.18.2023.01.16.08.43.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 08:43:04 -0800 (PST)
+Date:   Mon, 16 Jan 2023 09:43:01 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Devarsh Thakkar <devarsht@ti.com>
+Cc:     andersson@kernel.org, devicetree@vger.kernel.org,
+        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com, hnagalla@ti.com,
+        praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+        j-luthra@ti.com
+Subject: Re: [PATCH v6 1/3] remoteproc: k3-r5: Simplify single core config set
+Message-ID: <20230116164301.GA3239767@p14s>
 References: <20230116151906.549384-1-devarsht@ti.com>
+ <20230116151906.549384-2-devarsht@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230116151906.549384-2-devarsht@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-AM62 family of devices don't have a R5F cluster, instead
-they have single core DM R5F.
-Add new compatible string ti,am62-r5fss to support this scenario.
+On Mon, Jan 16, 2023 at 08:49:04PM +0530, Devarsh Thakkar wrote:
+> The config PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE
+> is set only when cluster mode is set to
+> CLUSTER_MODE_SINGLECPU and cluster mode
+> is already configured before setting this config.
+> 
+> So directly check for cluster mode instead of checking
+> soc_data->single_cpu_mode first and then checking
+> cluster mode.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> ---
+> V6: No change
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 0481926c6975..036c9dc217f3 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -875,15 +875,14 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>  	boot_vec = 0x0;
+>  	if (core == core0) {
+>  		clr_cfg = PROC_BOOT_CFG_FLAG_R5_TEINIT;
+> -		if (cluster->soc_data->single_cpu_mode) {
+> -			/*
+> -			 * Single-CPU configuration bit can only be configured
+> -			 * on Core0 and system firmware will NACK any requests
+> -			 * with the bit configured, so program it only on
+> -			 * permitted cores
+> -			 */
+> -			if (cluster->mode == CLUSTER_MODE_SINGLECPU)
+> -				set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
+> +		/*
+> +		 * Single-CPU configuration bit can only be configured
+> +		 * on Core0 and system firmware will NACK any requests
+> +		 * with the bit configured, so program it only on
+> +		 * permitted cores
+> +		 */
+> +		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
+> +			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
 
-When this new compatible is used cluster-mode
-property can only be set to value 3 i.e.
-CLUSTER_MODE_SINGLECORE which is also the default value
-in case cluster-mode is not defined in device-tree.
+This is exactly the kind of buggy situation I want to avoid by asking to use
+soc_data->single_cpu_mode only in probe().
 
-While at it, also sort the compatible lists in alphabetical order.
-
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
----
-V2: Avoid acronyms, use "Device Manager" instead of "DM"
-V3:
-- Use separate if block for each compatible for ti,cluster-mode
-property
-- Rearrange compatibles as per alphabatical order
-V4: Place each enum in separate line in allOf
-V5: No change (fixing typo in email address)
-V6: Use cluster-mode=3 for am62x
----
- .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  | 76 ++++++++++++++-----
- 1 file changed, 55 insertions(+), 21 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-index fb9605f0655b..fcc3db97fe8f 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-@@ -21,6 +21,9 @@ description: |
-   called "Single-CPU" mode, where only Core0 is used, but with ability to use
-   Core1's TCMs as well.
- 
-+  AM62 SoC family support a single R5F core only which runs Device Manager
-+  firmware and can also be used as a remote processor with IPC communication.
-+
-   Each Dual-Core R5F sub-system is represented as a single DTS node
-   representing the cluster, with a pair of child DT nodes representing
-   the individual R5F cores. Each node has a number of required or optional
-@@ -34,10 +37,11 @@ properties:
- 
-   compatible:
-     enum:
-+      - ti,am62-r5fss
-+      - ti,am64-r5fss
-       - ti,am654-r5fss
--      - ti,j721e-r5fss
-       - ti,j7200-r5fss
--      - ti,am64-r5fss
-+      - ti,j721e-r5fss
-       - ti,j721s2-r5fss
- 
-   power-domains:
-@@ -64,10 +68,17 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     description: |
-       Configuration Mode for the Dual R5F cores within the R5F cluster.
--      Should be either a value of 1 (LockStep mode) or 0 (Split mode) on
-+      For most SoCs (AM65x, J721E, J7200, J721s2),
-+      It should be either a value of 1 (LockStep mode) or 0 (Split mode) on
-       most SoCs (AM65x, J721E, J7200, J721s2), default is LockStep mode if
--      omitted; and should be either a value of 0 (Split mode) or 2
--      (Single-CPU mode) on AM64x SoCs, default is Split mode if omitted.
-+      omitted.
-+      For AM64x SoCs,
-+      It  should be either a value of 0 (Split mode) or 2 (Single-CPU mode) and
-+      default is Split mode if omitted.
-+      For AM62x SoCs,
-+      It should be set as 3 (Single-Core mode) which is also the default if
-+      omitted.
-+
- 
- # R5F Processor Child Nodes:
- # ==========================
-@@ -80,7 +91,9 @@ patternProperties:
-       node representing a TI instantiation of the Arm Cortex R5F core. There
-       are some specific integration differences for the IP like the usage of
-       a Region Address Translator (RAT) for translating the larger SoC bus
--      addresses into a 32-bit address space for the processor.
-+      addresses into a 32-bit address space for the processor. For AM62x,
-+      the R5F Sub-System device node should only define one R5F child node
-+      as it has only one core available.
- 
-       Each R5F core has an associated 64 KB of Tightly-Coupled Memory (TCM)
-       internal memories split between two banks - TCMA and TCMB (further
-@@ -100,10 +113,11 @@ patternProperties:
-     properties:
-       compatible:
-         enum:
-+          - ti,am62-r5f
-+          - ti,am64-r5f
-           - ti,am654-r5f
--          - ti,j721e-r5f
-           - ti,j7200-r5f
--          - ti,am64-r5f
-+          - ti,j721e-r5f
-           - ti,j721s2-r5f
- 
-       reg:
-@@ -208,19 +222,39 @@ patternProperties:
- 
-     unevaluatedProperties: false
- 
--if:
--  properties:
--    compatible:
--      enum:
--        - ti,am64-r5fss
--then:
--  properties:
--    ti,cluster-mode:
--      enum: [0, 2]
--else:
--  properties:
--    ti,cluster-mode:
--      enum: [0, 1]
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - ti,am64-r5fss
-+    then:
-+      properties:
-+        ti,cluster-mode:
-+          enum: [0, 2]
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - ti,am654-r5fss
-+            - ti,j7200-r5fss
-+            - ti,j721e-r5fss
-+            - ti,j721s2-r5fss
-+    then:
-+      properties:
-+        ti,cluster-mode:
-+          enum: [0, 1]
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - ti,am62-r5fss
-+    then:
-+      properties:
-+        ti,cluster-mode:
-+          enum: [3]
- 
- required:
-   - compatible
--- 
-2.34.1
-
+>  		} else {
+>  			/*
+>  			 * LockStep configuration bit is Read-only on Split-mode
+> -- 
+> 2.34.1
+> 
