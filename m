@@ -2,166 +2,394 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F04C677F1
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Jan 2023 18:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67600C46467
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 16 Jan 2023 18:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234123AbjAPSZi (ORCPT
+        id S234619AbjAPSby (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 16 Jan 2023 13:25:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39242 "EHLO
+        Mon, 16 Jan 2023 13:31:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232033AbjAPSZB (ORCPT
+        with ESMTP id S233745AbjAPSbd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 16 Jan 2023 13:25:01 -0500
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2088.outbound.protection.outlook.com [40.107.244.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C382B623;
-        Mon, 16 Jan 2023 10:12:10 -0800 (PST)
+        Mon, 16 Jan 2023 13:31:33 -0500
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2060.outbound.protection.outlook.com [40.107.212.60])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056031A484;
+        Mon, 16 Jan 2023 10:17:48 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=J/UFsE4V5qEKX9nrM3Fpp9lsN2qLBmN8tD/NG9PeD4cGYzEXv1QZSuYdVFE//4FHg1Ma6T493XFEtRpkTM4FqlWZbGPCrc/cFfLLwxrTpsm8lsqsvFQtLS4yyyafn+voFdFFcrG0TTMojV4pntd025SSnrLr7POBE4YrDa1OjhuZHbBa3+gGFn0+f38Lr8xkjk2JgNY0muxgYGNi6OVVVLgtHxwJ+rwUlfqWt4R5GL48KJ7Z7XHI5FQ1n1M8ni9pLs2w1p/GiIotRkuH9ZGvQWeop4vV5shMhfTnxwdP2AiB4x4gZ/nurtq0Lidgut0ef/41TY9EMaV9O3hnEfLh6A==
+ b=IEhGk8vPCpLeDRWmo4IqN/HWYfM4XgxeuWF3mCu/rqUHs0rR7/NXfd3ob+92Rk7X91qZUCNUvCOXVTE+NtfOnwq4X48vlLpoJMYMsJ4BeKOgiYy9/blQzhDQ3fn+RbO3hFqM6sKzsXrFaxF33rBpmJ651aYvNdwzBJVU+dGv4vTbNu9kBGhgj0DEIz7XG/Iwomv/Mq0V3sacxD6YvFr1/nId87SxSW9O0CjqSoEIuvVYuRx3Z7Cust5JKq5pH3MMP5d3Vp9olkYUrNkTqGcx6M1RjKCePPz69qEdrD1tFWdoQw1pKktyz0YyLSkh7PAdTksjVsIANWSyQG4nE1x5nA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JukM/nUwbNRHihOph/niRlYy7rWrM+EGivCRaFHD5aY=;
- b=Y12J4+7KNZig5wXRTLQsekR1C7a7ZqAgeBNtWEVpqcVctVkpxoZtSjPW+ecBi53DohA0RBb+RCTb2917d19S8pETmpUF7v4H2J1r1XOWprT5Y7jCqvc4Ckv2km4Nhw2b+zEV2d3giSiExeLOv2/yNjnNJFCSncIWHBfaYExdt5QvVTSLzMM2LFFo1zXXXi7PYLRZGHhnfCWKXdr56hGiQSBtmXVgUkL1Ou2o2CMs+z0OWqkdJqGyQ7d+6x9Bm36tIlyZCFU+iTTGha23narqdjPCoh22MA6IOXGnajumQeBWlgun5uPNBLx2GAHUQco0Mh8AxDgA7HKoTta/Ipww0A==
+ bh=jAfzsRVznS77LQeGD6ZPfuvE0fDr86Etk8UIxtib83g=;
+ b=VjH0VbmFFo3e4/Fk07XsGFMplLZL/4Tl4emVVYYR7qQzXuTntpYIUSMscrPdCZs4jh4Fhjllzx0nRxAIToSZckoxv4vxgKzIP9YFP6voSe3rYcAjs2GyH5AB4V8vyyITV1ZSDR9NgvkTim7iUtLrou/w9Qb2PXz0Cosgq2i1URIMKEx+Sr+HduFTkQ39HhNXXLJa3Ytb8RGjH/wfcQIUcOn1giaeW+nwPsnlmzV0w/b7RscDZwRTkAp3nd04JzaL5+FTfB7rNWdMI5hF64elnHhKrTnKEePvMmECQePlYOneM6D5RAUbgE8w8g5qkon7yBJdpnzEJe5W/mjNePvn6A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JukM/nUwbNRHihOph/niRlYy7rWrM+EGivCRaFHD5aY=;
- b=lLUfFeJptDqLiyc5ppxVzU+amLhp9JlBmfd7Z3f4RIo1vZ33EKKlCx5fcG9Q9+hfk+SaZynmxNmQHCd5VKgtbCRDpOBKtWz4wBXZBaCDgZyO8m5k3ibIA/Z0PTrnifhDMtnvf5XL4qTK5y2+PnLnEm7Adib2B206h4Kq6ZL7Tm3xSp6oOscoaoU0aHhwTls5zwwjRUDRyrZKSdLpODmcW6Vm+14gICppJsHMxS1ioASUFhtRq/+Xz7B1P2fRFhNL1ZGkohOgn3hBTBhb7MwDPvUMHKTRNxKTDgI85ReVJtTTsVHYYKriBONbyBFKsNyRvwUjenU9O57q3oq0NGAVyQ==
+ bh=jAfzsRVznS77LQeGD6ZPfuvE0fDr86Etk8UIxtib83g=;
+ b=UgNDnsAf/cI23V48ydwM8MRP2NJ8AThBzALksviLJwkgLTNz8O3xELpS1fZ5sRcV0h1/IsLaMliOr8PXWFJBMo8w+7Uy5gKhfaAlJSCbD7jCGrib4OHqB1Ut1tR2VGCjMysjNe/vXO24VrYOTwoEaMCgEiE/j5cc6gjRNQRE+vk=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by DM6PR12MB4926.namprd12.prod.outlook.com (2603:10b6:5:1bb::15) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
+ by CH0PR12MB5155.namprd12.prod.outlook.com (2603:10b6:610:ba::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.23; Mon, 16 Jan
- 2023 18:12:08 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f8b0:df13:5f8d:12a]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::f8b0:df13:5f8d:12a%9]) with mapi id 15.20.6002.013; Mon, 16 Jan 2023
- 18:12:08 +0000
-Date:   Mon, 16 Jan 2023 14:12:07 -0400
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 1/8] iommu: Add a gfp parameter to iommu_map()
-Message-ID: <Y8WTd/37G6lWA8c5@nvidia.com>
-References: <1-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
- <4fd1b194-29ef-621d-4059-a8336058f217@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4fd1b194-29ef-621d-4059-a8336058f217@arm.com>
-X-ClientProxiedBy: MN2PR03CA0015.namprd03.prod.outlook.com
- (2603:10b6:208:23a::20) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13; Mon, 16 Jan
+ 2023 18:17:45 +0000
+Received: from BY5PR12MB3683.namprd12.prod.outlook.com
+ ([fe80::3ddf:d47:b37a:5a7a]) by BY5PR12MB3683.namprd12.prod.outlook.com
+ ([fe80::3ddf:d47:b37a:5a7a%3]) with mapi id 15.20.5986.023; Mon, 16 Jan 2023
+ 18:17:45 +0000
+Message-ID: <42c34b1a-3ea6-350a-86fe-89f93f32e893@amd.com>
+Date:   Mon, 16 Jan 2023 10:17:42 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0)
+ Gecko/20100101 Thunderbird/109.0
+Subject: Re: [PATCH] dt-bindings: sram: Tightly Coupled Memory (TCM) bindings
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Tanmay Shah <tanmay.shah@amd.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20230113073045.4008853-1-tanmay.shah@amd.com>
+ <df4fdecb-6ca7-d96b-bcad-02cefb52ce4e@linaro.org>
+ <e675a037-3c07-a8bb-19d4-781ab881c920@amd.com>
+ <39b55b55-b0fd-95fc-5f68-e00cd20f076d@linaro.org>
+From:   Tanmay Shah <tanmays@amd.com>
+In-Reply-To: <39b55b55-b0fd-95fc-5f68-e00cd20f076d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR05CA0010.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::23) To BY5PR12MB3683.namprd12.prod.outlook.com
+ (2603:10b6:a03:1a5::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|DM6PR12MB4926:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ae353bf-8a49-4427-7886-08daf7ed2e65
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|CH0PR12MB5155:EE_
+X-MS-Office365-Filtering-Correlation-Id: a9f5808c-028f-4740-04f7-08daf7edf701
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: LmqdVF6nmcepiFbzShVZrJtLnSMQtb5ZdL37qrVJuCEgC325K55hyxaaBgAeh1t0EuwOn2PZTw0fRVHCfjcGLtJKimxxGoDbIe6mAfVs2zTkRFuuOg0c3dIhgTem3blhJyHtVD3q4purpoMAkOlxNEDU+4KWrT2ZRgTBy7cCkZ9g5lLw0Miff9dah0hYz12zkDGOpQ8WfktTBTBzdIGX+Any+qP6d9u9ekNKJEsfZj92+BXKzqpr4PyfuE54C4K3z86b7KD695lmN+by7cCSVdVlnI/gyFiGDkI2LGcMGN/6aMAFivTpaFCzCAHpVNYS4XPn7m63dTNa7vqz5jC+dng5znQjMQ0N2E4+V5JVhIAKJWZAFKLFDD0j+hqXOa8N4DL1xrIFbhPBSf+fZkk6ErELg263Jrt2PHX9if7D0n8j8pw2mDhlcOhLd36lf+2TdsV5NiFBva1kPCfxSCyqCaS4NW/znjJgcT+uLe0FYupZe0EVCkxPdugrzZOkGVEj4UzhqM6AwMyeips9jtXF3sBdOAMWqhve+TQeIqZk+qyHd4hRWAv0AXxOh0u9XVSODNHMp15HVVmTPjS/DqTCtSV6MjE2KB4plAWjkUsgDLyyQA4UKeKAAMr01Um8NW1kUs2wFu/mMtGEc6eHsJKvvg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(366004)(136003)(376002)(39860400002)(396003)(451199015)(83380400001)(38100700002)(86362001)(5660300002)(4326008)(2906002)(7416002)(6916009)(8936002)(8676002)(66946007)(66476007)(66556008)(41300700001)(2616005)(186003)(6506007)(26005)(6512007)(316002)(54906003)(478600001)(6486002)(36756003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: ZLmLYJcDQpEQWGTHfu7VR0exnVSCi0PnviVgLAxpz2OrFrWpG7xzoCh/gf4xacwuPxTU3PhWdwOL9i9fyn4LiJmTnO28jR5s7ZfPeL+DAi1v2h51BK2VMX72motmNWE3wRaFO02XjhdelMtNf/vxRppiGTT01/a4VwOuToWoIQD2plpcDFPDr1AgFygGiFhXNzDg2pZJ0HUXHLmDie+J3v4wO7/9/wgzHPyzVoCjSDIu7i2YI4O5ptKsPUeCgyQ91b/605SPL7CSWWKbIXcPdeg/M8A2CQCna5MzKcWCif6B6h8CQaC+eHOCAZCoYHDwg+aCCoc6zpTsuFy9QP946JdrLy1Zihs4vV/OAba2gNlJVhQR10QrZPXljmXB5FC+MjZ4tOfwHhk/KcOWoyEyzuUxLJXE4/5ubLQVqYEYeQpO5ZEvdmkVMAh4WFsUnY7RXAE6XodlpWfs/ZjUUvty2z5DNy8TDFhhBzj0vZCa4jVNdJ6JXwxS0obKdOZmYZduRXpepjHGFKJgjoY6EjqbTKnDp9Uv76QQpXEPOJ7SdDo/GENzBo5k8W4cSgFhRUV5uqHPhLoEGHSdEjPqhv2yLrMKuEuR3KDYfNXV7ZANvtH8jjMQdvtD5yqEIEmUZwXaqJa5hAJlAvXirQ+dxK/du4Ikq0Kc7ufX2Vu0Rrj1aZnetg2VSUOKEhIINqsKXLtzZUcn4tcmZNSklKxtDepn20pUDl9dd+r5iAH4n43NkSlp2D54mN5Hfts3fHVfOhpxYZXYldS4Hhbye2YcKLrERHqnP8YchjqcDRZn0oHAtgs=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(376002)(346002)(136003)(396003)(366004)(451199015)(6506007)(36756003)(53546011)(6512007)(6666004)(186003)(966005)(6486002)(38100700002)(478600001)(31696002)(83380400001)(2616005)(66899015)(5660300002)(8936002)(31686004)(66946007)(66556008)(4326008)(2906002)(66476007)(316002)(8676002)(110136005)(41300700001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iqLAhGaMK9tC+iiHkUjnDk7PDlkLuXKmkZmL4X7DdETvVwXCClv3dh9CD5IO?=
- =?us-ascii?Q?OAdmaSHpwHYUh0LqFdcZH0zowcypIlCdqTrsNNZMT96amSHGPJIYo5xPNRN4?=
- =?us-ascii?Q?pB5QFs6HiioMgaUjam5Jz4jMHxHoss0voiYpOTM764ifpZ84u06IJv7O9xCs?=
- =?us-ascii?Q?zn9mWOn9wdBmZWKi+CPZig8OGUaEf8b2aWbU12AL8cmdhKyl1Tu3m3MMyhu6?=
- =?us-ascii?Q?nl8W1qlu7VS6SXjO2+ouAewOW8VoLVfYCjnWysa16xezT8v094Ei0iP/pd2L?=
- =?us-ascii?Q?u/x878vo3gXupx2g0ne2hm73bHqMXDswuyuj3+6khPiIV63faNnY7o+QmW2c?=
- =?us-ascii?Q?ceRHUZaloaBGVxBGmTif6jj8zbevnBKIqPxyJWR6F/LwjdHd4MVeskByB8dY?=
- =?us-ascii?Q?u3HLzdWggMZtyKgMxZksTekSbTSv9ZwsGl+PDOlsby3lvHT8UQMYKnCObafs?=
- =?us-ascii?Q?kG7ZqYzCBLZzHK/003WYjhheXBMd0KVec2OVA7geCliPO4IjOONDhjsl/h55?=
- =?us-ascii?Q?UmBRczwl1vxBWtZb2AwR6AnCqfuI708NQFDoQyDeu5d0P1iVEMCTCB7xojTT?=
- =?us-ascii?Q?raRqbsx2fvSz2woUHEHQxMGskA4P1OeS5kC7QI1DI2qiyJxQmkAlgPF2qXGj?=
- =?us-ascii?Q?gAA7YWm3nPO3j/M6Wip/8Vyscy9NKq8WvnpDSnS5HQR6E3yonGrcEmZqvHJW?=
- =?us-ascii?Q?1MDtfnUmzQQ6tkvYPZYkNntQ4pXz7yr0feHriDuu3oe1Hv7D4Mu1xwycdAkd?=
- =?us-ascii?Q?IWvHBMntrbpKSZr/5L8Z14Trfau8Pv3twD0hshgTGmTs7jKRCxiGImkjujma?=
- =?us-ascii?Q?ZaXAHmcOtUeudgUTWkbY99n8k3qQJkKkFZi6s5a54t1Xb9TaPEiXbFpsz1Xe?=
- =?us-ascii?Q?iieKK2X3CatUTcllRyGScR+ZI4HlTSZQkxOMpHTTezSrSq5DozxmeHApoQjp?=
- =?us-ascii?Q?qtTl6P+u5iPvslVGtzY4jnjydvVC+Jdelcj/PdE0l8tJcwg3Ta+kY2FoitrJ?=
- =?us-ascii?Q?DFc3HfUaQwmoxr9elXLHpLlMyomu2WzcyBuOJdWkfVF4o3scP5dwPywqt65+?=
- =?us-ascii?Q?X98pH36r6lOrOxdOgu0nnT42YZfb7GY9+VPByVUMmqkBuraljtzBpLG3gKw9?=
- =?us-ascii?Q?XmelyLXaTD6j6vDX3juV8dPW9sknkm8XYbCA+VsJLG1jgAKsRjQ/E2uSALbw?=
- =?us-ascii?Q?6NMStnh2DJUVYOb004rlbeRhsLRmxyP/YlZPVnXZ0CazxNUjJniUkpl3ppv2?=
- =?us-ascii?Q?ycxOZw8ce+O6Zolyebv6OtadcG1tyfmsOeCJq9u3FFC/KcOkvHvLTFJQmh0T?=
- =?us-ascii?Q?nDrIgLqhZxaebgzsIyz79fxuWGfzg5cz1lRfJQLFFAZsbScijd7AL1/3CEbI?=
- =?us-ascii?Q?OZfkLHXbwDYoq+i/ISmZLiwZkaOp9i7Rg6c87wGgInyeIhoncTGnX0iFaXMR?=
- =?us-ascii?Q?T1OvHR8rBeIcCrvjtSQzH5QzVYvB/BfDOTE+1Cvnm6TzVfCn+YqicLfodwVL?=
- =?us-ascii?Q?YKZJiuXxQ4Y4PGN7jDpWCrLry4zDi32WkF9JWBX72aRs99Aemolr2W65lSFV?=
- =?us-ascii?Q?lLH7gpbO42lZbGwhxobDZrm93gHOuayDu0lh5hnC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ae353bf-8a49-4427-7886-08daf7ed2e65
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bGp5YjBNMWpPM0xxZzFValhuMC9vc1RyQjNFam14THdlNEhvUnBERzlRb1p6?=
+ =?utf-8?B?UXh4cUdjVXZ3NHhaSzQ2VkVaNVJEN08zaUJBOVlxRnIvQ1dWVXRSaTRsMWo1?=
+ =?utf-8?B?WnkxbHlVRmlSK1BvTWVDOE5zSURtWjBuMHRkc28wdzdvZW4wNzJXWVplaU1K?=
+ =?utf-8?B?MGxQMVRBZm1kandONDFYTG9ZTGlVMTArZldkNUphT2thaFdhNXViM01HdDhU?=
+ =?utf-8?B?ZzJ1a2RXMmVPaUEzdHZrTlBGRGZoMWd4RXlPN1h4bllWSkZDbUJLVC9vS2pX?=
+ =?utf-8?B?OFZqRU5zOWFmSm5rZElrWGNtblIvSjliaG9oMHZSeCtQTGZGMVVicHg2cHFU?=
+ =?utf-8?B?Yk9RRHdQeFZhK0hYSW5ycTBoRExwSS9aRHhVeGpSWU9DU2pKUkdJTy9xZFEy?=
+ =?utf-8?B?alkweGhoblBlZFZYZjhHYjBBQ3NTQzdwc2Vud2VxT09vTGVMZ3FqSzlZTmdN?=
+ =?utf-8?B?Ukd2d3RoUEdVOEJDKzNGRGJXa0dWK3N0SnlHeHF2ZjBHVmpmYkdWWGpuZDVq?=
+ =?utf-8?B?bDg1cDcxTmdxdktqQU96eDRIVFl2MGc1cjUwUXkxeDZIRE03WVVZQStWUmNr?=
+ =?utf-8?B?SUhCNy9zUnZFdnc2MXA1dmJxQS9PckFpYjZlVnBZN3MvNTA4c2hFcVQvdTd0?=
+ =?utf-8?B?SFVxUE1yY2VubENIRU82ZzlIcmxiUmRIQjc4S0NhVDd3VWJETk8vNjBkaXVF?=
+ =?utf-8?B?K2JQR0RHcjdKTko3TmtzcUxBSlVEY05rRldsRUpGNGtKUFAwZWxuc2lVeXQw?=
+ =?utf-8?B?cmh5RFd5a3ZGcjlVeWlITjNWSmJPdll1Q1lMaXZtKzNHSWFtYWxHZVA3Rmh3?=
+ =?utf-8?B?blJzV25JbFZUczRZRTk5ZFJ6S2JZU3JoOVdBODRXUTRYUUNoakI1Ym1Kazc0?=
+ =?utf-8?B?S0dhc3hZUXJEQlBTRXN4dHhhQXFUOS9YRlNwYnpya1VObEJZckNNTk9qeGpq?=
+ =?utf-8?B?aGNwcE1yaGw3aHJBelNObEJpcVlJb3grTERiMjR3SEYzV2JtVDR4RUc2ckVs?=
+ =?utf-8?B?L0gzWFd5ZG1ybHNiSjNJZGkxdG1adExRVEVycXlTMXlaeW5ROE5mMUhwRnFI?=
+ =?utf-8?B?OUMyOGtUaWNPSDV2SVhpVXlwYVNPVFlhby9Ga2JveXNTWWliNS90QWJYc0xI?=
+ =?utf-8?B?MHpYQXBSazhaT2FSU2V0QlRZc2s4anFXdkwwSVc0YU9IOVpMVlNZbWlCRXJS?=
+ =?utf-8?B?RmhWT2E3ZVhzTCs1QW9RTitvVG5rdEg3K3JkTTZ3eFBKb2Q3ZkdWeHdyWm9V?=
+ =?utf-8?B?d1JraVFBcUUyVytRSXZQTTcweFhiQXhETFFJL3NIQlZUN2Z3UG5OWE9qV3lz?=
+ =?utf-8?B?Ui9taFgrY3FGS0kxSzBDTldBN05MRFM3TW0vcG96UTl3djI2eHJ4amFvbkVH?=
+ =?utf-8?B?RE1ONS9jbFE2VVFUUGpzZ3JNQUkrQmhmK1ZjV3B2SVJPaXlRbXFyZkNYZ2hT?=
+ =?utf-8?B?S21xTHFaRjg0ZjBPUVErclpJZGhHQU41YjlWZ2RkMzQwZ3JWOU5XUnRlWGhp?=
+ =?utf-8?B?dWFsN21Vdmc4NjgwaEtkQjlRaXlFKzd2UVV1Mmx5anM5dURwMEZNR2FkYUEv?=
+ =?utf-8?B?R3Y4UDh4M0tySG5EOFNVWG92OGNmQ2lFVnZFUXpQaktiRmo3S0NjNWxaZFFp?=
+ =?utf-8?B?bjFQNGRYR1hxRnVCM3R1dGwzZ1IwMWV1a25yTG9OVFhYZmxtZE1LT3dhblp5?=
+ =?utf-8?B?K0lncXlrSW45QTZhLytYRmxVTWRnc2cwaDZYOUtSZlFKendzcDRCM0czNC9G?=
+ =?utf-8?B?eW1jcG5PRkFFNEtkdXFFMlV1RzVYR0ttSE8xbXpVb1pWUmIwNDNvZXVzNmM4?=
+ =?utf-8?B?eVhTL3gvejlVcjNDb292TkJaeXJPMFZzVFpoNlFENW9jMmhJUTJEQjNQbmpV?=
+ =?utf-8?B?UlBGMER3WGdsMUNPZ2tFODY3WFg1elRCMzVDUno3bWo5UUgwQlNvdWtRUGZM?=
+ =?utf-8?B?azcwUHdyMGY1MUh0aE80dk0zRGVSOUY3TlVqNWlmd0VVc2tIMFBuQUxJK3Br?=
+ =?utf-8?B?SG1OOERhVjk2UlFCb09jeTkyV0pNWWJpQ2RWaVcvQ1hFbW5pM1FTdXFrMVdR?=
+ =?utf-8?B?KzI4REZNaTBGV2thTVlTc0o5eXJWNi9BTTNudUQzZk54V0NHYnhxSGRaeWJo?=
+ =?utf-8?B?QjhjMkFCZFg0cmxOTGZFSGdXZ091d2Y2TkVxdUpqL1RRSzc1a00wdXdXWmNH?=
+ =?utf-8?Q?pyqq0I7uSUd/axzkIZIht9JcnukLUpUPrB39kKoNM4ub?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9f5808c-028f-4740-04f7-08daf7edf701
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2023 18:12:08.6557
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2023 18:17:45.1101
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bFw+JuKwM3CCPS5ceNOeGkRx0q3WgfvLvvzHQWweGpEiQdpepnDQCDP7V2Q/rULz
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4926
+X-MS-Exchange-CrossTenant-UserPrincipalName: p+8gH1RCmqGjIHsSp4rnfGEJtMXU5hRCqht5lW08Tafuod6fhrjpwZENP+EttBtR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5155
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jan 06, 2023 at 05:15:28PM +0000, Robin Murphy wrote:
+Hi Kryzsztop Thanks for reviews. Please find my comments below.
 
-> However, echoing the recent activity over on the DMA API side of things, I
-> think it's still worth proactively constraining the set of permissible
-> flags, lest we end up with more weird problems if stuff that doesn't really
-> make sense, like GFP_COMP or zone flags, manages to leak through (that may
-> have been part of the reason for having the current wrappers rather than a
-> bare gfp argument in the first place, I forget now).
+On 1/15/23 6:45 AM, Krzysztof Kozlowski wrote:
+> On 13/01/2023 19:04, Tanmay Shah wrote:
+>> Hi Krzysztof Thanks for your reviews.
+>>
+>> Please find my comments below.
+>>
+>> On 1/12/23 11:52 PM, Krzysztof Kozlowski wrote:
+>>> On 13/01/2023 08:30, Tanmay Shah wrote:
+>>>> This patch introduces bindings for TCM memory address space on AMD-xilinx
+>>>> platforms. As of now TCM addresses are hardcoded in xilinx remoteproc
+>>>> driver. This bindings will help in defining TCM in device-tree and
+>>>> make it's access platform agnostic and data-driven from the driver.
+>>>>
+>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>>> ---
+>>>>    .../devicetree/bindings/sram/xlnx,tcm.yaml    | 137 ++++++++++++++++++
+>>>>    1 file changed, 137 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml b/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..02d17026fb1f
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/sram/xlnx,tcm.yaml
+>>>> @@ -0,0 +1,137 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/sram/xlnx,tcm.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Tightly Coupled Memory (TCM)
+>>>> +
+>>>> +maintainers:
+>>>> +  - Tanmay Shah <tanmay.shah@amd.com>
+>>>> +
+>>>> +description: |
+>>>> +  Tightly Coupled Memory(TCM) is available on AMD-Xilinx paltforms for ARM
+>>>> +  cortex remote processors to use. It is low-latency memory that provide
+>>>> +  predictable instruction execution and predictable data load/store timing.
+>>>> +  TCM can be configured in lockstep mode or split mode. In split mode
+>>>> +  configuration each RPU core has its own set of ATCM and BTCM memories and in
+>>>> +  lockstep mode redundant processor's TCM become available to lockstep
+>>>> +  processor. So In lockstep mode ATCM and BTCM size is increased.
+>>>> +
+>>>> +properties:
+>>>> +  $nodename:
+>>>> +    pattern: "sram-[0-9a-f]+$"
+>>> Drop node name requirement.
+>>> Why do you need sram node at all?
+>>
+>> I will remove sram- node. However, it device-tree I was planning to put
+>>
+>> all TCM nodes under single node for example:
+>>
+>> tcm {
+>>
+>>       tcm-lockstep {
+>>
+>>       };
+>>
+>>       tcm-core@0 {
+> Mix of nodes with and without unit address is pointing to some design
+> issues.
 
-I did it like this:
 
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2368,6 +2368,11 @@ int iommu_map(struct iommu_domain *domain, unsigned long iova,
- 
- 	might_sleep_if(gfpflags_allow_blocking(gfp));
- 
-+	/* Discourage passing strange GFP flags */
-+	if (WARN_ON_ONCE(gfp & (__GFP_COMP | __GFP_DMA | __GFP_DMA32 |
-+				__GFP_HIGHMEM)))
-+		return -EINVAL;
-+
- 	ret = __iommu_map(domain, iova, paddr, size, prot, gfp);
- 	if (ret == 0 && ops->iotlb_sync_map)
- 		ops->iotlb_sync_map(domain, iova, size);
-@@ -2477,6 +2482,11 @@ ssize_t iommu_map_sg(struct iommu_domain *domain, unsigned long iova,
- 
- 	might_sleep_if(gfpflags_allow_blocking(gfp));
- 
-+	/* Discourage passing strange GFP flags */
-+	if (WARN_ON_ONCE(gfp & (__GFP_COMP | __GFP_DMA | __GFP_DMA32 |
-+				__GFP_HIGHMEM)))
-+		return -EINVAL;
-+
- 	while (i <= nents) {
- 		phys_addr_t s_phys = sg_phys(sg);
- 
-Will post a v2 when the driver people take a look
+The design currently tries to accommodate physical relocation of the 
+memory. May be there is another way to represent this.
+
+Here is address space of TCM memory on zynqmp platform: 
+https://docs.xilinx.com/r/en-US/ug1085-zynq-ultrascale-trm/Tightly-Coupled-Memory-Address-Map
+
+As per above address map, there are 4 TCM banks, each 64KB ( 0x10000 ) 
+size at following addresses:
+
+*In split mode*:
+
+ATCM0: 0xFFE00000---|---> Assigned to RPU core0
+BTCM0: 0xFFE20000---|
+
+ATCM1: 0xFFE90000---|---> Assigned to RPU 1
+BTCM1: 0xFFEB0000---|
+
+However, In lockstep mode, ATCM1 and BTCM1 relocates to different 
+addresses (i.e. 0xFFE10000 and 0xFFE30000 respectively)
+
+and becomes available for RPU core 0:
+
+
+*In lockstep mode Both used by RPU core 0*:
+
+ATCM0: 0xFFE00000-----|
+                                          |----> ATCM: 0xFFE00000 size: 
+128KB
+ATCM1: 0xFFE10000-----|
+
+BTCM0: 0xFFE20000-----|
+                                          |----> BTCM: 0xFFE20000 size: 
+128KB
+BTCM1: 0xFFE30000-----|
+
+
+I am not sure how to represent this physical relocation of addresses in 
+device-tree.
+
+Ideally such sram nodes can be represented as following:
+
+[1] Representation of TCM in split mode:
+
+[ a|b ]tcm[ 0|1 ] {
+
+    compatible = "xlnx,zynqmp-tcm";
+
+     reg <>;
+
+     ranges <>;
+
+     power-domain: (only 1 power domain for current bank)
+
+}
+
+However, to represent TCM in lockstep mode as well, I might have to add 
+platform specific optional reg and ranges property which optionally 
+represent address space of lockstep mode for atcm and btcm.
+
+For example, ATCM0 and BTCM0 will be represented as above [1] However, 
+ATCM1 and BTCM1 will have following extra properties:
+
+[a|b]tcm1 {
+
+    compatible = "xlnx,zynqmp-tcm";
+
+     reg <>;
+
+     lockstep-reg <>; /* represent address space of this bank in 
+lockstep mode */
+
+     ranges <>;
+
+     lockstep-ranges <>; /* represent address space ranges of this bank 
+in lockstep mode */
+
+     power-domain: (only 1 power domain for current bank)
+
+};
+
+
+Does above approach looks good? If some other standard way is already 
+available to represent this could you please suggest?
+
 
 Thanks,
-Jason
+
+Tanmay
+
+
+>
+>>       };
+>>
+>> };
+>>
+>> The top-most tcm node I assumed sram node. So I kept sram@xxxx
+>>
+>>>> +
+>>>> +patternProperties:
+>>>> +  "^tcm-[a-z]+@[0-9a-f]+$":
+>>>> +    type: object
+>>>> +    description: |
+>>>> +      During the split mode, each RPU core has its own set of ATCM and BTCM memory
+>>>> +
+>>>> +      During the lock-step operation, the TCMs that are associated with the
+>>>> +      redundant processor become available to the lock-step processor.
+>>>> +      For example if each individual processor has 64KB ATCM, then in lockstep mode
+>>>> +      The size of ATCM become 128KB. Same for BTCM. tcm-lockstep node represents
+>>>> +      TCM address space in lockstep mode. tcm-core@x node specfies each core's
+>>>> +      TCM address space in split mode.
+>>>> +
+>>>> +    properties:
+>>>> +      compatible:
+>>>> +        oneOf:
+>>> This is not oneOf.
+>>>
+>>>> +          - items:
+>>> and you do not have more than one item.
+>>>
+>>>> +              - enum:
+>>>> +                  - xlnx,tcm-lockstep
+>>>> +                  - xlnx,tcm-split
+>>> compatible describes hardware, not configuration. What you encode here
+>>> does not fit compatible.
+>>
+>> I see. So, only xlnx,tcm is enough.
+> No, it must be specific to SoC.
+
+
+Ok. Then xlnx,zynqmp-tcm. I will change file name accordingly as well.
+
+
+>
+>>
+>>>> +
+>>>> +      "#address-cells":
+>>> Use consistent quotes, either " or '
+>>
+>> Ack.
+>>
+>>
+>>>> +        const: 1
+>>>> +
+>>>> +      "#size-cells":
+>>>> +        const: 1
+>>>> +
+>>>> +      reg:
+>>>> +        items:
+>>>> +          - description: |
+>>>> +              ATCM Memory address space. An ATCM typically holds interrupt or
+>>>> +              exception code that must be accessed at high speed, without any
+>>>> +              potential delay resulting from a cache miss.
+>>>> +              RPU on AMD-Xilinx platform can also fetch data from ATCM
+>>>> +          - description: |
+>>>> +              BTCM Memory address space. A BTCM typically holds a block of data
+>>>> +              for intensive processing, such as audio or video processing. RPU on
+>>>> +              AMD-Xilinx Platforms can also fetch Code (Instructions) from BTCM
+>>>> +
+>>>> +      reg-names:
+>>>> +        items:
+>>>> +          - const: atcm
+>>>> +          - const: btcm
+>>>> +
+>>>> +      ranges: true
+>>>> +
+>>>> +      power-domains:
+>>>> +        maxItems: 8
+>>>> +        items:
+>>>> +          - description: list of ATCM Power domains
+>>>> +          - description: list of BTCM Power domains
+>>>> +        additionalItems: true
+>>> And what are the rest?
+>> As both items are list, we should be able to include more than one
+>> power-domain I believe.
+>>
+>>
+>> So first item I am trying to create list of ATCM power domains.
+>>
+>> In split mode, first item is ATCM power-domain and second item is BTCM
+>> power domain.
+>>
+>> However, In lockstep mode, second core's TCM physically relocates and
+>> two ATCM combines and
+> Why power domains of a device depend on the mode? This does not look
+> like binding describing hardware.
+>
+>> makes single region of ATCM. However, their power-domains remains same.
+>>
+>> So, In lockstep mode, first two banks are ATCM and so, first two items
+>> are ATCM power-domains.
+>>
+>> I am not sure best way to represent this. But, first itmes is list.
+>>
+>> So, I am assuming list of all ATCM power-domains possible.
+> List all items. Order is fixed, you cannot say BTCM is second item and
+> then put here something else.
+>
+> Best regards,
+> Krzysztof
+>
