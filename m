@@ -2,188 +2,152 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11930C3DA78
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Jan 2023 11:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065DFC63797
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Jan 2023 11:06:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236262AbjAQLEV (ORCPT
+        id S236667AbjAQLGo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 Jan 2023 06:04:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57810 "EHLO
+        Tue, 17 Jan 2023 06:06:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236237AbjAQLES (ORCPT
+        with ESMTP id S236633AbjAQLFy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 Jan 2023 06:04:18 -0500
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2050.outbound.protection.outlook.com [40.107.7.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B417D30B16;
-        Tue, 17 Jan 2023 03:04:17 -0800 (PST)
+        Tue, 17 Jan 2023 06:05:54 -0500
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2049.outbound.protection.outlook.com [40.107.13.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7184F3252F;
+        Tue, 17 Jan 2023 03:05:47 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Eh7izjd4eJcwQ2qWlWDheAvqxyzcN8SQn2N8ztYapjfZFV/XEnnppXDcEGA8+Y+o6bwdMkvjYiSziKrfrRtT+pyQClrGYbm0I0b2yQrko4jasYGEdqM2I2ayNIcgoH+81JwNDe6kHO4ZH3w02glAv6cInUkp2i5hYJE/gZLLUs/0v6PK/IZUH73DySEaGiSEiUOzAQ/U2FhDiwpuKG8NqRVYhN58OQJYb8y7hyc9SJHt8equrttLwUvZ8gwbK8qYnG/ISFA3T/MWacYTS/X3vdt4zY+v4299GE5Ai2aJMy7pGbGf+KAIoHFtWEHZ5QJXQJ/cRCw/+y3AFyj2uWxFww==
+ b=YpPh0wX17CuN3GYW7YqlQ3jlTVC7vp7NwkcctVmhvyI4iHakrjwBC7rwU5Xle3rzeZHjbXcSuhLiqT1wWtgwpRRhjZ+UiRwh8S2NM+7IAGd1ZGO2CmR21HaseZof01hUnR7oaSj9jdmqPo1yp2E57T5jpEOnu9ARKxf4cm0okwvvltFj5d/qrXJrJ44kS2smec+OnvycTO/eWSXiFJXN9nIhcTZJyaRNo+zTmMMwIU4IGeZnhBLiPqBQs6MOk22A9XfIpc7dvvD4CTetxX95/W8qRTE5yC1Ll+7SVfeGw/NtDJnhEU7x1J0iQOzyU7rfYgX7gcAtT36KRomMpO1g2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KgZm1XDCRtcGcO9Zu8p7hi4wtccKse1dlKs9zTMIDp8=;
- b=FE8q2Z5mbzv7rW2pMZkYUJOYBvqrlAlYZvgNT0mSKzKj7p3gaJQcLfB+ifZZlRtBKExHmZpoBIQHc0menVG7MMEIdVfka1lFQ0jcZJgrbpVNfbbRW4O4FsGY5a3WL9535O5SWc6vMmkkLMmwWsLoHzh5PgRu1h6h55TnoW/yoZrjVa7TEWjH+BB8eBN9a7/6Imn/p9lWhbQTJ5wVLz8xfqgnytWRZKid1heFss/r8qo9EfAwvoQXwpdqa3cdUMvOBiFxxDSmNP7tzQHxPAeSrX+6zgLNUX35+2UkjOd13wlZBkc8CA48J19tHC59u6BEuQs6puV3MJJsqSmLiE0nAg==
+ bh=BF1ReVoipSviDNh72W02zjF4ntKrrTbNrxbMl8zUSFI=;
+ b=luJJ2EkcMiRmL67o2G0Eqh+uwXrAYunG/djFORni9uLrqUceSj86FaofoYULOjlB4BZuqgZTrmofz3pMmB50e5rG35rMzu0VIn9Aip80UkQFUj9Udc7pP7iwX8A55+G9Ohou4rQNNSKYV3st+h/iq5eAXey1iGfd454E/2ARH2zKT/wsKYRzYlpwmHCAeSijR8Vzk7bhA5/mjwsWWXCXXUxsYRhkt1SSMomI/KqOCM5loXpb97BroGjyaO4UyzlHu1Kb9cYdksKtc89Swb+U/k69MzRxDqNijy7tAFMvNWs9XnrxeAHyTmuXCgsuVf0N6+JmYZkLREucTn2MHggZMw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KgZm1XDCRtcGcO9Zu8p7hi4wtccKse1dlKs9zTMIDp8=;
- b=ddDcJBfG2YlQuAMgsVUe3qojZOrnCr54MPmdrKogM+yG5FGUspN6eV5VAdeFNhwPzDWOayv2TYIDYlVhUfAp+lpnyRRztjQqDg1qKRApGAqdg0xkKyq+bp42u93dWXQAzgiSIr4nlbeKSDGpaNfo73pf3rVpj3VdRpyxb6lYAL0=
+ bh=BF1ReVoipSviDNh72W02zjF4ntKrrTbNrxbMl8zUSFI=;
+ b=FW1MVXPVuHJh09D5Os20vjNaDWr0ROENAOiXUFseFOorALDoMm9YqoEPZgFzdPM+MaiI+kE5hHbujn7FhTkmjUVmmEzbmEftSaDzHgFgkWT81Ig4BRo+iKs/EiB14rkE52paEXO1DuZDWHmrqWHxDMT6NtV4o6nWefcJdrMflks=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+ header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from DB9PR04MB9628.eurprd04.prod.outlook.com (2603:10a6:10:30b::14)
- by AS1PR04MB9629.eurprd04.prod.outlook.com (2603:10a6:20b:474::8) with
+ by AM8PR04MB7812.eurprd04.prod.outlook.com (2603:10a6:20b:245::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.13; Tue, 17 Jan
- 2023 11:04:14 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.22; Tue, 17 Jan
+ 2023 11:05:44 +0000
 Received: from DB9PR04MB9628.eurprd04.prod.outlook.com
  ([fe80::aec2:20b6:cf99:2886]) by DB9PR04MB9628.eurprd04.prod.outlook.com
  ([fe80::aec2:20b6:cf99:2886%4]) with mapi id 15.20.5986.019; Tue, 17 Jan 2023
- 11:04:14 +0000
-From:   "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
+ 11:05:44 +0000
+Message-ID: <e95a0155-54b6-5aaa-ab4e-10cc3a74f1b6@nxp.com>
+Date:   Tue, 17 Jan 2023 13:05:40 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: add module parameter to ignore
+ ready flag from remote processor
+Content-Language: en-US
+To:     Daniel Baluta <daniel.baluta@gmail.com>,
+        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         "S.J. Wang" <shengjiu.wang@nxp.com>,
         Fabio Estevam <festevam@gmail.com>,
         Daniel Baluta <daniel.baluta@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v3] remoteproc: imx_dsp_rproc: add module parameter to ignore ready flag from remote processor
-Date:   Tue, 17 Jan 2023 13:03:57 +0200
-Message-Id: <20230117110357.15091-1-iuliana.prodan@oss.nxp.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: AM9P192CA0004.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:21d::9) To DB9PR04MB9628.eurprd04.prod.outlook.com
+References: <20230116225343.26336-1-iuliana.prodan@oss.nxp.com>
+ <CAEnQRZDXPtE096aPHRcggdzeha5MeUaWsXqncYE33cdYBByV6Q@mail.gmail.com>
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+In-Reply-To: <CAEnQRZDXPtE096aPHRcggdzeha5MeUaWsXqncYE33cdYBByV6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM4PR07CA0030.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::43) To DB9PR04MB9628.eurprd04.prod.outlook.com
  (2603:10a6:10:30b::14)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9628:EE_|AS1PR04MB9629:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3403423c-cebc-4702-2044-08daf87a9187
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9628:EE_|AM8PR04MB7812:EE_
+X-MS-Office365-Filtering-Correlation-Id: ecabc197-4724-4603-a333-08daf87ac770
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: n+pk6jNU+JHWU/NEi6RmoCABATNbCDSQ8NI8yNIvhmAH+4O2asv9iq9AcxOoCwBp+ZLvlJ0IEMzmDn9yc3UyHW49Q9ZgzIu3xkw6JrMqwA3oiEW0CqLjhnd1MMbmD3dZc4n0pggAXz/IqUL1TRLmMP1kh4CJmxb6s5Gkcf2FUPjxFmGdly6+O7rngAFvRb7IlGeTVUwXbyg2tDxbNvlWnIj7aajZdRBI3aPT9YDCxkqYxg/KSlLui5aU558yl/dINRCMy6EtpQqo08jytB13unK22/s78CWPiCNX7cSZC5a0kkUXwWvMjThfx1scfHFqfjmwqpQ8BMuzEtoT15L0TG4EZBfiy0Pf9+e7avYuN8oXPrMxg6bNpLciO+YGBeGUxHPRBx6z/TiCmL1kK1MjpXpa2O60+zuLUZmVSJHlpIipH97ctlZJZQfIR/kDJltfYBfBTpXijUeCndqhH8Rhe6Si0Eqm2p6AfSdjw3r3XX/WgcRhSkm+roHUFeaPGbk1Uul7ie2g9XdO9F4fI93+M33Fn+Xh2/LNjkH9ieYA5A097lq7PNTdJwAiry2kfelIILLe4cI4lC+JXNVbEWsN34fNaWgLi5A//cJL+9SmFxM216qWkqnwGAzQgD1o7GSLqx37Adach6ue3VyaBBq87sPkkfk74nHjsnvw7xW0LLah9saU+Cdq6nJPxHDd0tYis1rf5Jwj0HD6+od6pmwRBQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9628.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(366004)(136003)(396003)(39860400002)(346002)(451199015)(6486002)(478600001)(41300700001)(6512007)(52116002)(38100700002)(38350700002)(186003)(86362001)(1076003)(316002)(110136005)(54906003)(2616005)(66476007)(66556008)(26005)(66946007)(4326008)(5660300002)(6506007)(2906002)(6666004)(8936002)(8676002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: nt0/fQh2YW9wuU04QmyWYoaxHYX04x/U1OxhFHxJ6/cwRnDBpWLXiv4NivalIxYlx0TgjApctRpnMCod7J4i1nbJ5CScCybH0iiEc5Nw4ftC+MAUMYuVVC9utvEF5GCNfKIXQ1JzNE2E3cgmVh6+TL4AKvO9+jhGS8O1rL3Fi4HnPOttFZUGXtAvMGFAatzFxV+A36n3r6DIOeUNcUUN14P3xJRaav9IRQgfwKQe+7Sisa+md2epbDLCAtbuhvkQYdbUE7zzz9YpLlPul7TLPTi7gHGiaKeWPePfLFLr0lwBF2UJo/SeCF2hREzMLvsH2OzuKZAhc/nFSkYVx78gf1KYWwC1EJf2YCJt9ii03rwPIu7q4coE20TogxTj8YjIuxg82XfgIdeT6zXvAJclxIowaREjjT1GhySOV0W99Hp/OVs2TIL/wAMy4RvYM8I1hyjOOysE/Z0XzkOykCd81mZ8EV267TbJeOh4qpupQjQLwd6HJDNWGvMOhcMyrnuOMWtj+T6ojQ9iCxBf6sL2r7F+XW68RltcmuhYa4/1+x6A3GjcythRVW6lgiaDhCVQk8EeYxbQyruBEkLau5+fCRfjoc62qvkSs0+uhpyDrpk5VPizVTTZcnE1n+GI9D37lkSC0ck67bRnFC4yOBkPQYRg+aYuekef4Q3ESxojYsKHWHXk6eNsDWq3+ZkSiGXcu7GZBhGCai8TB7Ih+yvM8UmlNNRZHDSYqTXDl6EICL8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9628.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(39860400002)(346002)(136003)(376002)(366004)(451199015)(44832011)(4744005)(7416002)(5660300002)(8936002)(31686004)(2906002)(36756003)(4326008)(86362001)(66556008)(8676002)(66946007)(66476007)(54906003)(316002)(31696002)(110136005)(41300700001)(2616005)(26005)(6486002)(186003)(53546011)(6512007)(6506007)(38100700002)(478600001)(6666004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xI6EvNfTgeEJyZJfgborKJCz4T2e0hY261jaomiNRV/G5HeL99u2dGjRJNOQ?=
- =?us-ascii?Q?/EbhWkvXzwR1k/hZ3DTZkuPGrdGNZ9j97+7cwesC1WQGFVLtx3FmTaD4y2TC?=
- =?us-ascii?Q?NgoeC7ftKBElRHRXVunHUbzz/wsGqGSEJAF84nDwuOkW4goCb1Sfshpjhga6?=
- =?us-ascii?Q?x3g3QZudj2Bnu6z8kgib26lhiD5DPDQoKHJxl90a+QDYRYad8A5Qrz1bxWW+?=
- =?us-ascii?Q?DTrbFfhzW8g4JhjwzUhKpIlowJoQwrDKzOudg+4VOWPKAAEelknOX5iT8KUc?=
- =?us-ascii?Q?kzcUzb5fvCll7Dw4dezMflXaA5JyNHpKanyiOIbCbdq1U8uMHfZVwRPxVObb?=
- =?us-ascii?Q?JnFbQJaixD1c4yEMKUV5E5TnAFWPUJi7uzVnEhbDEgQSAf1eRTtQdrxNZHxV?=
- =?us-ascii?Q?ZDhdp90r9XOWHlEdAOspp1DTVRAFtABZYk2OAznuPgZ9iFnAUAQmIV6Jsnga?=
- =?us-ascii?Q?GUoxxwIyZydnDcJAPaQKGYjnmsMEkRHW0gEv4RWoQazrztrfFR+2SC1Q+sEA?=
- =?us-ascii?Q?sje061vC0EMR0XOOEfqvIiPxzA+C2FR0vIZ2U2kNEkt50NqpHp7ocEJnWK2x?=
- =?us-ascii?Q?VOkWJOQMUePYQfSYzYPN6JBFDwVKlXSDvDfze1lvZh2f21JNccnA4tFr3mXv?=
- =?us-ascii?Q?T33Ux//vJefuIx8XAe5Ou+BzWNC3LHU1rgWGHINF9frMudbficttVKar04zm?=
- =?us-ascii?Q?3EzAbaoKQmukmvMz+bzjU0tI6mR1QR9IKb4VGmbf/p61UbjYqNjmmGAje1sp?=
- =?us-ascii?Q?wcXGssCiZDjbDYNvwSWClHYLTaaQ4kxZH/LgQlqfuJDWt42DYZzY3F9zf+QL?=
- =?us-ascii?Q?tcPD4UdbB2h7+3hfmOQFEXgjW3+d2c9gbcR28y5ga1Gv2ij1tv1JWcUpBIUm?=
- =?us-ascii?Q?5kxLd5+uhkZYsSHe6M5FI2NMgro+ITvydcC2cBA2XoDNQT7kzt2CJFebtgg6?=
- =?us-ascii?Q?HvANsDw2jngpDjafINXOI2wLN+hvqWD4YhmLkOu3kj+tW+8rvVRh3v9ra/pw?=
- =?us-ascii?Q?smphtUyDFkzKEXDfnZnXH1r8MlF1JnOpw9xRWAl3qJ/eKPnM/1Gzozu1loIC?=
- =?us-ascii?Q?kCOFESBaNc/P+1laXYIsjY0GiNg6leDWigt+h3u7BH27qESIw2fiS9mQAMiu?=
- =?us-ascii?Q?GuqvmeIqkWoTrgv5F4GRzylmCX10gC6jrSjzegcoIBCJZxRv0hJb7GRCIP6b?=
- =?us-ascii?Q?RwzkvZmQ3fzd1bsMmPFS5AJTE38xNM20yUui2qxvDel9igQVbuUUdC+8ZyC7?=
- =?us-ascii?Q?8PDHcsSPX6qnLgJ4rlt2PT4BhIr212jPQH72L9LkeLPG9jadrid09aQVDe68?=
- =?us-ascii?Q?qrEbISxbw+4o6QaOUhTa8Gne+l1QoKdmWFOQVZA3X3+zSXWCqjTt0lR7iMCv?=
- =?us-ascii?Q?B9gVMGtM2WFumg1W9+IIhUk3071oOObJVZDLnCrWYeBRYjgpSQDrl30W/e6g?=
- =?us-ascii?Q?uu+mVYApVIzJ6yGAT24uETsqRaRsix/r0lieBm1iQCDTNGpwGY/4BnSgLo22?=
- =?us-ascii?Q?bEkCxYiYGrpspLfRRrz7E8hNDsQsckzraQLGqkWsftCwBKWgWkdSJbjG3tsl?=
- =?us-ascii?Q?k8b88jBqHK1gBOaDlhmv0RaAJ/bI+2Yd837665Xk?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3403423c-cebc-4702-2044-08daf87a9187
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aXovSitybmJRWVZDUGV6QjNoLzNPVlM5ZGU3cUhERXJEaDlxc09Ibm1salFw?=
+ =?utf-8?B?RjdCcHJLT3UyamsrSFJkNE1nNGR2RUc2SFlnbGNIa2Y1U3FGQWRsbCtZSTJU?=
+ =?utf-8?B?U2NYMFFyaWEzdTVFaTN3R0cyTFlrSUt4Z2g0QWZDek42NTAwd21JWDl5cEVm?=
+ =?utf-8?B?T3dIbmE4eGErbE5DTWlNaHlhRFAxckczeHNSN0N5RlBWMUJWSFBJRndrVXIw?=
+ =?utf-8?B?VHJ2QXd4amMyb3BYYiswYjdiYkdHbzNncjdUN3JOKzZ5RDk0a2VxczNPOWNw?=
+ =?utf-8?B?UzhyWUJpck9TYjl4MDBBOGtMTUcydVFGb1IyUzczU0lOUHljbnZ5ZzRZbm03?=
+ =?utf-8?B?bkhFVVFab1BtZkZkRkp0VDVQeEJkYXRIY3llYnQyR3hHZ0piZ2s0ME5WWW5k?=
+ =?utf-8?B?MittL2RVckNuc3ZuaS8zNzBBZHV3c1Bza2ZZUzVvUGhJbVh5Ui9zek9uL0Np?=
+ =?utf-8?B?ZUxaRUIyRVZ5R3ZRd2hHKzgxK3RzbVQ3SGNnVlNNN0FLc1VmRXE1OWxtYzFK?=
+ =?utf-8?B?MUY3eC9MTWtwRDhaTm52amZlSm1DeEZFbWtHMFgvTEpVc3c2aVZON3ErK0xa?=
+ =?utf-8?B?c1hkWFdYNitTa3ZRaTg0QjhHelBHMllwWW10RDZSU1N2Vy9hVElzUHd2aE1N?=
+ =?utf-8?B?ejJSQ21pTFNCMXZabExHc2Fuam5UckVQTHdyMW9BSlZqRnpEbWlJenZlNHh3?=
+ =?utf-8?B?SFMrUm9tZVRoUkpOQ29VejgzcnhJejdNNVhGd29oN1l0NHlVNnhkZ1hpcDF0?=
+ =?utf-8?B?TGx6eVBCRGVtNE9kd3lVd0I3Qk50c2JhZGVwWGRQb2tBd2Uvc3VVTmJFLzE0?=
+ =?utf-8?B?YkJ6d3hYdkhaakhyYU4wT2VJT0xBa05yNzZNVjMxa3dJMXJ4WWl3c2dySE8v?=
+ =?utf-8?B?K2pRTXM3UjNJck1pZmxaVmwyeGQ2Kys5dWIrU3UxVmhaUVRWZzNncVprTHVi?=
+ =?utf-8?B?TlNHdGNuemZ5STdGQVRFTWN5SlVsL09uOGZOcXdWSlpGamhVbVpOWXp2UXBq?=
+ =?utf-8?B?ZDFLR2FYWmtiVFg3Uk5oSG5YdmFJM0dpbE9BWUlBUGZFNGpsS2xkWlBWd0pz?=
+ =?utf-8?B?NDRYOFYzYVB5R2V2ZlFvNW9lMmhTUnVsZGFYRmdxK1o0NGJjRWY3ckx3a3Iy?=
+ =?utf-8?B?NFhqWVBEeEFEQlNQZHZhWGV2Ykw5UWhPdGYrSFRxQUpxSHZNeW1GZ2lsb09n?=
+ =?utf-8?B?UW9qYm5uaDljdHhVa3dHNGdjbkRpU0syT1FoTVBBaUNIdSt5TFkzNEg1eE1l?=
+ =?utf-8?B?d09VTU9VSThGc3ZWLzZDTzlzQ055YnZDVjMwT1Q0Y3dCaTRoM0FiNGEzWkRL?=
+ =?utf-8?B?SHVKUkw2MlJwSzNONVhDaGl0c2pIdDhHTXAycllzbHBGMjRQQXJYZzNyQ1pE?=
+ =?utf-8?B?Y2J1L1Z4M3JHbVNWR2lQblk1a0dlMzFtTVMva2tOc3M0MWJuWWlCT0JvQ1F4?=
+ =?utf-8?B?Y2F2WTg5Syt6eFRuRzdqNmh0U3pneVVSVUF0VmJSRzJ4RFVsWnIrVUcwZWw5?=
+ =?utf-8?B?akNoZndyazNaZmMzL003aFdsbU5zU1NtMmgyTTlkRHltaTRaTWdMNEZYem9s?=
+ =?utf-8?B?Nlh6ZFhLaWNhUkhIbHY0Rnp5NEw2TENuYnhNQllVc3RTeFQ4dnlOQlNPMGox?=
+ =?utf-8?B?OUdVU1N4aUFOTzR0TkxycXIvUkgrTm5RQUlHcXVSSlNyMUVYaDYzNm1iNmJ4?=
+ =?utf-8?B?L1pqSGJjQ0VhZlp6ZXFGUWc2d25oRGhXVU1ocU5aNmRPNWwzMVhEeXhmK3F0?=
+ =?utf-8?B?QTM4Tnc0MUcxVWQxdmp4TDlvNmQraVl4ZDhsVklZSXdvTUdyTEROWUxQcm82?=
+ =?utf-8?B?SEYzanZPa21LMXlIcERyZ05sSlRidHRKTE5zd1VhZTJ2WkpWTEQ2QlpwbHJZ?=
+ =?utf-8?B?by9VeHlRU05CQ09WRUVFbXlvQXNDeU9vWEl1T0FhTFhOdlFWQkVkeDd3UFRh?=
+ =?utf-8?B?ZTdsLy81eXJqUzRHWmgyc0FReHdPdFdtUU1FWDlVRk1UTHIwemY2VUpqSG15?=
+ =?utf-8?B?bnR5cXRzOEpiVjRna1J2Y2VLcEhVOGJOZ1FLT21kS0VSdHlhWDVGdDVvQ0Nh?=
+ =?utf-8?B?Vy9oRFIzcWhEcG9sdmtCV2tFQ3hTWStubmRtcDlMS1ZEVkRBYjRiV3YzbUp2?=
+ =?utf-8?B?b05oc0FUeGhzc1JEVU5mbFdOVmp4aGpEUjJGY2JqeDNZMitpLzZ3WFBDc0hD?=
+ =?utf-8?B?bkE9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecabc197-4724-4603-a333-08daf87ac770
 X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9628.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2023 11:04:14.1033
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2023 11:05:44.3654
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xLCfTK2icsRl437MKvuiP/TN9OveAiNxp++KEMij1D6ccN6+QaKfI9Y2YBwIIsU4aDoXRElG+FaKBVjyEhThHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9629
+X-MS-Exchange-CrossTenant-UserPrincipalName: iX0bTPmIdSFH47Or19aKeBq15fCDzUPXxQ5dUk2pXTwgAZD+Igqvaed/99NU+LDslPRkAbABvvmfF8WlBKCwhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7812
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
+On 1/17/2023 11:28 AM, Daniel Baluta wrote:
+> On Tue, Jan 17, 2023 at 1:21 AM Iuliana Prodan (OSS)
+> <iuliana.prodan@oss.nxp.com> wrote:
+>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>
+>> There are cases when we want to test a simple "hello world"
+>> application on the DSP and we don't have IPC between the cores.
+>> Therefore, skip the wait for remote processor to start.
+>>
+>> Added "ignoreready" flag while inserting the module to ignore
+>> remote processor reply after start.
+>> By default, this is off - do not ignore reply from rproc.
+> I think that ignore_dsp_ready would be a clearer name flag.
 
-There are cases when we want to test a simple "hello world"
-application on the DSP and we don't have IPC between the cores.
-Therefore, skip the wait for remote processor to start.
+Done, I've sent a v3.
 
-Added "ignore_dsp_ready" flag while inserting the module to ignore
-remote processor reply after start.
-By default, this is off - do not ignore reply from rproc.
+Thanks,
 
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-
----
-Changes since v2
-- s/ignoreready/ignore_dsp_ready
-
-Changes since v1
-- change BIT(31) to BIT(1) for REMOTE_SKIP_WAIT
-
----
- drivers/remoteproc/imx_dsp_rproc.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 95da1cbefacf..22e2ef068c67 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -26,9 +26,20 @@
- #include "remoteproc_elf_helpers.h"
- #include "remoteproc_internal.h"
- 
-+#define IMX_DSP_IGNORE_REMOTE_READY		0
-+
-+/*
-+ * Module parameters
-+ */
-+static unsigned int imx_dsp_rproc_ignore_ready = IMX_DSP_IGNORE_REMOTE_READY;
-+module_param_named(ignore_dsp_ready, imx_dsp_rproc_ignore_ready, int, 0644);
-+MODULE_PARM_DESC(ignore_dsp_ready,
-+		 "Ignore remote proc reply after start, default is 0 (off).");
-+
- #define DSP_RPROC_CLK_MAX			5
- 
- #define REMOTE_IS_READY				BIT(0)
-+#define REMOTE_SKIP_WAIT			BIT(1)
- #define REMOTE_READY_WAIT_MAX_RETRIES		500
- 
- /* att flags */
-@@ -285,6 +296,9 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
- 	if (!priv->rxdb_ch)
- 		return 0;
- 
-+	if (priv->flags & REMOTE_SKIP_WAIT)
-+		return 0;
-+
- 	for (i = 0; i < REMOTE_READY_WAIT_MAX_RETRIES; i++) {
- 		if (priv->flags & REMOTE_IS_READY)
- 			return 0;
-@@ -903,6 +917,9 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
- 	priv->rproc = rproc;
- 	priv->dsp_dcfg = dsp_dcfg;
- 
-+	if (imx_dsp_rproc_ignore_ready)
-+		priv->flags |= REMOTE_SKIP_WAIT;
-+
- 	dev_set_drvdata(dev, rproc);
- 
- 	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
--- 
-2.17.1
+Iulia
 
