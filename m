@@ -2,115 +2,113 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC86EC677F1
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 17 Jan 2023 14:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789DBC00A5A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Jan 2023 00:53:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231955AbjAQOta (ORCPT
+        id S229865AbjARAxh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 17 Jan 2023 09:49:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35492 "EHLO
+        Tue, 17 Jan 2023 19:53:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbjAQOt3 (ORCPT
+        with ESMTP id S229947AbjARAxN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 17 Jan 2023 09:49:29 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C943B0C5;
-        Tue, 17 Jan 2023 06:49:27 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 30HEnLro057971;
-        Tue, 17 Jan 2023 08:49:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1673966961;
-        bh=5+/kXxi2YlDMZkueyyvxa62mN6egOAn9YBd8b5IS9Yc=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=bhMYtKG3lfgAhsuKJ0HQIjnjkVHGT49W6qCtEJO5ECcAvCbHKnKsU1ZbN+uMgl/Z8
-         eNWMOGpTMt8ySGdPEhLPlgnn5S9pkM6E1yjkMpAt4dVdxwC1uN2Tye0b+owKEUJ5/K
-         nQnFW7RnGkx4B/sX1S+aQNSK2sa7UquNhThpE31A=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 30HEnLYB024635
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Jan 2023 08:49:21 -0600
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 17
- Jan 2023 08:49:21 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 17 Jan 2023 08:49:21 -0600
-Received: from [10.250.235.217] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 30HEnGZ3019770;
-        Tue, 17 Jan 2023 08:49:16 -0600
-Message-ID: <cfd56381-e9b1-b316-319c-c1f504daf1d9@ti.com>
-Date:   Tue, 17 Jan 2023 20:19:15 +0530
+        Tue, 17 Jan 2023 19:53:13 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FD653669E;
+        Tue, 17 Jan 2023 16:41:48 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30I0MERL018012;
+        Wed, 18 Jan 2023 00:41:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=5MQzEZd4AeVhh3IUiPUmYg+RWHINIh1L+xW2wnfXCvc=;
+ b=nuizibQ9tAfzZtQSfO9gjkK7eCCRv9FbEyh4d5fINoVnenLYexQOjfXecAy11ZE0jh6x
+ n4ikjso5oGQ2EkwrvLHzvgoFUWIn/7iRdOjSsQmgIPDFpz17VVLBt2HPExu8nh5JvLQT
+ 0TuL1cl6qMA3h6oBNNIVSbme39gOq5q7cy8F6VWVNAfvMNd/GiKBkY2NSkNUph2fuJXd
+ 6W+2zeFIDC6QXAEA4u1tMxDs8v57q4z1g+KAMicoTKINL4FNI95vrNg8mIbWGANMh4L9
+ dy4bKQ5g9pryI367L0MevW5Nc2IU1lXtTbPcva9tMwHQJU2elGXpY+ropqnhjPULaeaG eg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n3mm9xqnj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Jan 2023 00:41:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30I0fjnR001310
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 18 Jan 2023 00:41:45 GMT
+Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 17 Jan
+ 2023 16:41:44 -0800
+Subject: Re: [PATCH] rpmsg: glink: Include types in qcom_glink_native.h
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230109223745.1706152-1-quic_bjorande@quicinc.com>
+From:   Chris Lew <quic_clew@quicinc.com>
+Message-ID: <71789b4c-016d-835d-8b1e-3b962918eefc@quicinc.com>
+Date:   Tue, 17 Jan 2023 16:41:23 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v6 2/3] dt-bindings: remoteproc: ti: Add new compatible
- for AM62 SoC family
+In-Reply-To: <20230109223745.1706152-1-quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-To:     Devarsh Thakkar <devarsht@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <andersson@kernel.org>, <devicetree@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
-        <linux-remoteproc@vger.kernel.org>, <robh+dt@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>
-CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <a-bhatia1@ti.com>, <j-luthra@ti.com>
-References: <20230116151906.549384-1-devarsht@ti.com>
- <20230116151906.549384-3-devarsht@ti.com>
- <1a70a28b-b406-4d84-ced9-4d66bad94652@linaro.org>
- <bd0460de-eff2-9162-4edb-d3527041d7a6@ti.com>
-From:   "Raghavendra, Vignesh" <vigneshr@ti.com>
-In-Reply-To: <bd0460de-eff2-9162-4edb-d3527041d7a6@ti.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wwpOKSGOq4syHLVA27oW3sa0SXzCLuu_
+X-Proofpoint-ORIG-GUID: wwpOKSGOq4syHLVA27oW3sa0SXzCLuu_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-17_11,2023-01-17_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ spamscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ impostorscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1011
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301180001
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Devarsh,
 
-On 1/17/2023 10:54 AM, Devarsh Thakkar wrote:
-> Hi Krzysztof,
+
+On 1/9/2023 2:37 PM, Bjorn Andersson wrote:
+> Ensure that the used data types are available in qcom_glink_native.h, to
+> silence LSP warnings.
 > 
-> On 17/01/23 00:36, Krzysztof Kozlowski wrote:
->> On 16/01/2023 16:19, Devarsh Thakkar wrote:
->>> AM62 family of devices don't have a R5F cluster, instead
->>> they have single core DM R5F.
->>> Add new compatible string ti,am62-r5fss to support this scenario.
->>>
->>
->> This is a friendly reminder during the review process.
->>
->> It looks like you received a tag and forgot to add it.
->>
->> If you do not know the process, here is a short explanation:
->> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
->> versions. However, there's no need to repost patches *only* to add the
->> tags. The upstream maintainer will do that for acks received on the
->> version they apply.
->>
->> https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
->>
->> If a tag was not added on purpose, please state why and what changed.
-> I apologize if it was not clear but yes I didn't put the tag as
-> patch was updated to use cluster-mode=3 for am62x as per review comments on
-> https://lore.kernel.org/all/20230110183505.GA2741090@p14s/
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 
-It would be helpful in future if you document why tag was dropped as
-part of change log (below tearline) to indicate its intentional.
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
+> ---
+>   drivers/rpmsg/qcom_glink_native.h | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> I'll append a note below commit message on Reviewed-By
-> removal when I post the next series.
-
-> Regards
-> Devarsh
->>
->>
->> Best regards,
->> Krzysztof
->>
+> diff --git a/drivers/rpmsg/qcom_glink_native.h b/drivers/rpmsg/qcom_glink_native.h
+> index 624184fc458e..e9a8671616c7 100644
+> --- a/drivers/rpmsg/qcom_glink_native.h
+> +++ b/drivers/rpmsg/qcom_glink_native.h
+> @@ -6,6 +6,8 @@
+>   #ifndef __QCOM_GLINK_NATIVE_H__
+>   #define __QCOM_GLINK_NATIVE_H__
+>   
+> +#include <linux/types.h>
+> +
+>   #define GLINK_FEATURE_INTENT_REUSE	BIT(0)
+>   #define GLINK_FEATURE_MIGRATION		BIT(1)
+>   #define GLINK_FEATURE_TRACER_PKT	BIT(2)
+> @@ -24,6 +26,7 @@ struct qcom_glink_pipe {
+>   		      const void *data, size_t dlen);
+>   };
+>   
+> +struct device;
+>   struct qcom_glink;
+>   
+>   struct qcom_glink *qcom_glink_native_probe(struct device *dev,
+> 
