@@ -2,254 +2,82 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D43C38147
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Jan 2023 17:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 147C5C46467
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 18 Jan 2023 17:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229566AbjARRkG (ORCPT
+        id S230213AbjARRs1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 18 Jan 2023 12:40:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37318 "EHLO
+        Wed, 18 Jan 2023 12:48:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231245AbjARRjO (ORCPT
+        with ESMTP id S230247AbjARRry (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 18 Jan 2023 12:39:14 -0500
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8B159761
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Jan 2023 09:39:11 -0800 (PST)
-Received: by mail-wr1-x42d.google.com with SMTP id h16so34708618wrz.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Jan 2023 09:39:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSGboknKGt/v97Q9vnlsbZzlLwS3DVaa01pAelrahrg=;
-        b=fCoG1ap/QVvYXCsNdIJluv3W2A/WmR2a0VJLmKy6TYRbn0Wh0vCO5PRr/UhRpRAQx2
-         Nz2R218W5mKK4Q3olpYDNqfALaiELbmLCPUK/D+68N6iR0y+MHIP7BEmIgI4UP1CwIyD
-         lOvvj1+yI7bpeZis/Rmmb622M0lhj5K1bu7aIlWPkq+xAyg5bP6Pc8aUlAPBeP/r0zXx
-         u75hkC5EsnkWCOAikmAbFm51Td2OIOf8KwLiL09zuOP7eTXww9qkHdNoEWgRTXj63b70
-         xL8zm5Eo2XEOy/D+t1fG1vujs1kxhzWbkZXPW/PXeVMhnMiZBcuhIBydUKuL/T5seFk7
-         Tt3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WSGboknKGt/v97Q9vnlsbZzlLwS3DVaa01pAelrahrg=;
-        b=x1H1y3W3uYdPESWcv7q3xAV8ry2piXDtOS+sjRNarHgFAAKqUbTK+kf8s4iE1BHozB
-         RS8daZQmITO+bNeqwUc9mGP+SHVDacyZwWKnEMDRLDLrPsVSS8r/WzxxvPBDvYcL+brA
-         +iZSQ3y+QwobVrMaiUJEFrCAmkeLPylSANdQBYJfd+8hj7zX8YYQCXaH4Kbtm7CBKf4i
-         uXISOQ5Th018riPqCV5GWWN5QxUmLVtdPlvw7l38hjq53GYoQVxv/TG/30OYapJHYLST
-         HOSWNk9EJi+kiqI/p9O6MKci5lXG/UpWLhed3/RDGPmKX9NLOhe+/IgvtOO5gxwum5iO
-         iV/A==
-X-Gm-Message-State: AFqh2krdQupY4KrTRXroJz3jeOb53YyEIh42LNwVc85NNuSmTYh6JFE2
-        mcqeachUvHZnxZs70uA9yISKaabSDf9/cZuMNqz5NA==
-X-Google-Smtp-Source: AMrXdXtFjML2kMeAcVvj1MtxenYnvk4kkEcOiam/ZVVFpKAA2cBZAoWXiLMQIKspZtAXBpxXCHqfqukGXuzn19ybzHM=
-X-Received: by 2002:a5d:4144:0:b0:2ba:8d6c:11d0 with SMTP id
- c4-20020a5d4144000000b002ba8d6c11d0mr283005wrq.477.1674063549930; Wed, 18 Jan
- 2023 09:39:09 -0800 (PST)
+        Wed, 18 Jan 2023 12:47:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551A63CE0D;
+        Wed, 18 Jan 2023 09:47:50 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E973161944;
+        Wed, 18 Jan 2023 17:47:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C15EC433EF;
+        Wed, 18 Jan 2023 17:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674064069;
+        bh=dTOao7OTnDD2Bljll1cIh3aZadqaefZ1UzKEm/3O13s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iT9y7TEGJZWJK/D9ZgOxj5SpFsBm9v0WjU7S38iXzcBR1FgigHN9MHeM0yaPntq7Q
+         g1H1dET0MsaTIHxWIZiLxvpDbso5Hso6mUsUylgH2M6wc0GosV82ee/BNvhviIt/KI
+         ILtW5yYOB4RrF4BumnY2jK7vq4YmY6sPooHzsjWRgJNI/v/dm+9AN9XdfSVmmPypO1
+         ijyf7ScoBCof2ZN0IcsF+AYAMV7vtvAkrRnWoQalqhAy0ge60BVoM5MwjJkngjZq6z
+         mJrtEYCtVP79xafZcEdcbxtHbilFsH4+D+90tkE/vsRx6HyyOLsIQLSKVnppepinWc
+         5EgLJv1JXFbqQ==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     agross@kernel.org, robh+dt@kernel.org, neil.armstrong@linaro.org,
+        mani@kernel.org, srinivas.kandagatla@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, amahesh@qti.qualcomm.com,
+        mathieu.poirier@linaro.org, konrad.dybcio@somainline.org
+Cc:     linux-arm-msm@vger.kernel.org, krzysztof.kozlowski@linaro.org,
+        elder@linaro.org, abel.vesa@linaro.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v4 0/5] remoteproc: qcom_q6v5_pas: add support for SM8550 adsp, cdsp & mpss
+Date:   Wed, 18 Jan 2023 11:47:47 -0600
+Message-Id: <167406406337.2924867.12230424280288709048.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20221114-narmstrong-sm8550-upstream-remoteproc-v4-0-54154c08c0b7@linaro.org>
+References: <20221114-narmstrong-sm8550-upstream-remoteproc-v4-0-54154c08c0b7@linaro.org>
 MIME-Version: 1.0
-References: <20221214221643.1286585-1-mathieu.poirier@linaro.org>
- <20221227151131.hkezt4j2om5volnu@builder.lan> <CANLsYkwrCoX=Mw5YDJq-1hvmB3tH2admCC5GodwU0=jggmZg0w@mail.gmail.com>
- <20230104155613.xclae5hup2ybypdo@builder.lan> <20230104214541.GA2112402@p14s>
-In-Reply-To: <20230104214541.GA2112402@p14s>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 18 Jan 2023 10:38:59 -0700
-Message-ID: <CANLsYkz1qq7xLd1PHLwNu79TvH8+2+X0-ZrnNNSTOZiDUgcSuQ@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: Make rproc_get_by_phandle() work for clusters
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ben.levinsky@xilinx.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Bjorn,
+On Wed, 18 Jan 2023 17:22:39 +0100, Neil Armstrong wrote:
+> This patchsets adds support for the aDSP, cDSP and MPSS found in the
+> SM8550 SoC.
+> 
+> The aDSP, cDSP and MPSS boot process on SM8550 now requires a secondary
+> "Devicetree" firmware to be passed along the main Firmware, and the cDSP
+> a new power domain named "NSP".
+> 
+> [...]
 
-Did you have more comments on this?  Given that we are at rc4, it
-would be nice to get this to simmer in linux-next for a while.
+Applied, thanks!
 
-Thanks,
-Mathieu
+[1/5] dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common
+      commit: cee616c6884616aea3be72a9debafd0614332682
+[2/5] dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp, cdsp & mpss compatible
+      commit: 084258d607128a7486311daf5e67ca414ee07cc9
+[3/5] remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading
+      commit: 29814986b82e820ae9d3eb7474cdcf66605bd114
+[4/5] remoteproc: qcom_q6v5_pas: add support for assigning memory to firmware
+      commit: c63c0a7cab91b930a6ee78c28b481b84bfa98b7f
+[5/5] remoteproc: qcom_q6v5_pas: add sm8550 adsp, cdsp & mpss compatible & data
+      commit: 7eddedc975638f9bf427e7964c74276450a3021d
 
-On Wed, 4 Jan 2023 at 14:45, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> On Wed, Jan 04, 2023 at 09:56:13AM -0600, Bjorn Andersson wrote:
-> > On Tue, Jan 03, 2023 at 11:48:56AM -0700, Mathieu Poirier wrote:
-> > > On Tue, 27 Dec 2022 at 08:11, Bjorn Andersson <andersson@kernel.org> wrote:
-> > > >
-> > > > On Wed, Dec 14, 2022 at 03:16:43PM -0700, Mathieu Poirier wrote:
-> > > > > Multi-cluster remoteproc designs typically have the following DT
-> > > > > declaration:
-> > > > >
-> > > > >       remoteproc_cluster {
-> > > > >               compatible = "soc,remoteproc-cluster";
-> > > > >
-> > > > >                 core0: core0 {
-> > > > >                       compatible = "soc,remoteproc-core"
-> > > > >                         memory-region;
-> > > > >                         sram;
-> > > > >                 };
-> > > > >
-> > > > >                 core1: core1 {
-> > > > >                       compatible = "soc,remoteproc-core"
-> > > > >                         memory-region;
-> > > > >                         sram;
-> > > > >                 }
-> > > > >         };
-> > > > >
-> > > > > A driver exists for the cluster rather than the individual cores
-> > > > > themselves so that operation mode and HW specific configurations
-> > > > > applicable to the cluster can be made.
-> > > > >
-> > > > > Because the driver exists at the cluster level and not the individual
-> > > > > core level, function rproc_get_by_phandle() fails to return the
-> > > > > remoteproc associated with the phandled it is called for.
-> > > > >
-> > > > > This patch enhances rproc_get_by_phandle() by looking for the cluster's
-> > > > > driver when the driver for the immediate remoteproc's parent is not
-> > > > > found.
-> > > > >
-> > > >
-> > > > Can you please help me understand why zynqmp_r5_remoteproc_probe()
-> > > > invokes devm_of_platform_populate() to create platform_device instances
-> > > > for the clusters?
-> > > >
-> > >
-> > > Platform device instances are created for the individual cores found
-> > > in the cluster, following the work done on TI's K3-R5[1].
-> > >
-> >
-> > Right, and this is a design pattern that I've been bitten by several
-> > times by now. There's no real purpose of spinning up platform_devices
-> > for those nodes.
-> >
->
-> Calling of_platform_populate() happened before my time in this subsystem.  I
-> thought you were favourable to it.  Can you give one or two examples where it caused
-> you grief?
->
-> > > > Why can't the platform_device for the cluster be used as parent for both
-> > > > remoteprocs and then the driver deal with the subnodes within the
-> > > > driver?
-> > > >
-> > >
-> > > That is exactly how things work for both K3-R5 and R5F architectures.
-> > > That said, if we use the cluster's platform device as parent of the
-> > > remote processors inside the cluster, function rproc_get_by_phandle()
-> > > will return the first remote processor it finds with a matching parent
-> > > rather than the remote processor referenced by the phandle parameter.
-> > >
-> >
-> > I missed the fact that we don't associate either the rproc or the rproc
-> > device with the of_node, but rather just rely on the fact that
-> > rproc->dev->parent->of_node is typically is the handle we're looking
-> > for.
-> >
-> > And I don't think we'll return the first instance, because
-> > rproc->dev->parent->of_node will never match the instance's of_node.
-> >
->
-> My first suggestion was also to use the cluster's device as parent to the remote
-> processors inside the cluster but it didn't work, though the exact details are
-> lost in the holiday's fairy dust.  Looking more closely at the code I think you
-> are correct.
->
-> >
-> > I think it would be cleaner to add a of_node to struct rproc and use
-> > this for matching.
-> >
->
-> I also considered that option but decided to proceed differently because it
-> duplicates of_node information that is already available and requires
-> modifications to the drivers already using rproc_get_by_phandle().   Unless
-> I'm missing something we would still have to call of_platform_populate() to get
-> the of_node information...  And modify the parameters to rproc_alloc(), which
-> cascades exponentially.
->
-> > And I do suggest that we don't of_platform_populate() in the TI driver.
-> > If nothing else, doing so saves ~2kb of wasted RAM...
-> >
->
-> And that would require a serious refactoring exercise that, in my opinion, far
-> outweigh the benefits.
->
-> Thanks,
-> Mathieu
->
->
-> > > [1]. https://elixir.bootlin.com/linux/v6.2-rc2/source/drivers/remoteproc/ti_k3_r5_remoteproc.c#L1728
-> > >
-> > > > Regards,
-> > > > Bjorn
-> > > >
-> > > > > Reported-by: Ben Levinsky <ben.levinsky@xilinx.com>
-> > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > > > ---
-> > > > >  drivers/remoteproc/remoteproc_core.c | 28 +++++++++++++++++++++++++++-
-> > > > >  1 file changed, 27 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > > > index 1cd4815a6dd1..91f82886add9 100644
-> > > > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > > > @@ -33,6 +33,7 @@
-> > > > >  #include <linux/idr.h>
-> > > > >  #include <linux/elf.h>
-> > > > >  #include <linux/crc32.h>
-> > > > > +#include <linux/of_platform.h>
-> > > > >  #include <linux/of_reserved_mem.h>
-> > > > >  #include <linux/virtio_ids.h>
-> > > > >  #include <linux/virtio_ring.h>
-> > > > > @@ -2110,7 +2111,9 @@ EXPORT_SYMBOL(rproc_detach);
-> > > > >  #ifdef CONFIG_OF
-> > > > >  struct rproc *rproc_get_by_phandle(phandle phandle)
-> > > > >  {
-> > > > > +     struct platform_device *cluster_pdev;
-> > > > >       struct rproc *rproc = NULL, *r;
-> > > > > +     struct device_driver *driver;
-> > > > >       struct device_node *np;
-> > > > >
-> > > > >       np = of_find_node_by_phandle(phandle);
-> > > > > @@ -2121,7 +2124,30 @@ struct rproc *rproc_get_by_phandle(phandle phandle)
-> > > > >       list_for_each_entry_rcu(r, &rproc_list, node) {
-> > > > >               if (r->dev.parent && device_match_of_node(r->dev.parent, np)) {
-> > > > >                       /* prevent underlying implementation from being removed */
-> > > > > -                     if (!try_module_get(r->dev.parent->driver->owner)) {
-> > > > > +
-> > > > > +                     /*
-> > > > > +                      * If the remoteproc's parent has a driver, the
-> > > > > +                      * remoteproc is not part of a cluster and we can use
-> > > > > +                      * that driver.
-> > > > > +                      */
-> > > > > +                     driver = r->dev.parent->driver;
-> > > > > +
-> > > > > +                     /*
-> > > > > +                      * If the remoteproc's parent does not have a driver,
-> > > > > +                      * look for the driver associated with the cluster.
-> > > > > +                      */
-> > > > > +                     if (!driver) {
-> > > > > +                             cluster_pdev = of_find_device_by_node(np->parent);
-> >
-> > Doing so also has the added benefit that we don't add an implicitly
-> > requirement on the rproc-device's parent being a platform_driver.
-> >
-> > Regards,
-> > Bjorn
-> >
-> > > > > +                             if (!cluster_pdev) {
-> > > > > +                                     dev_err(&r->dev, "can't get parent\n");
-> > > > > +                                     break;
-> > > > > +                             }
-> > > > > +
-> > > > > +                             driver = cluster_pdev->dev.driver;
-> > > > > +                             put_device(&cluster_pdev->dev);
-> > > > > +                     }
-> > > > > +
-> > > > > +                     if (!try_module_get(driver->owner)) {
-> > > > >                               dev_err(&r->dev, "can't get owner\n");
-> > > > >                               break;
-> > > > >                       }
-> > > > > --
-> > > > > 2.25.1
-> > > > >
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
