@@ -2,118 +2,90 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666A9C38142
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Jan 2023 07:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B06C00A5A
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 19 Jan 2023 11:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjASHj5 (ORCPT
+        id S229905AbjASL7I (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 02:39:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46856 "EHLO
+        Thu, 19 Jan 2023 06:59:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbjASHjm (ORCPT
+        with ESMTP id S231251AbjASL6Z (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 Jan 2023 02:39:42 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A688446BF
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Jan 2023 23:39:40 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id f25-20020a1c6a19000000b003da221fbf48so593265wmc.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Jan 2023 23:39:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XOqMBPf6wiOYpq42Y7vvNbvEHVfamUmViAnQdTcUnGg=;
-        b=tv/mH1UJvXzxAbv6ZPc9KMTXNvWLoYO5uSrBdgj9jfOhJTpBXPD+0c3/kgrRv/naa2
-         5iCQl26NSQ3eH/V44N1RfcNV5mKW+NX4ZcNBTZTgDIXCt7r28z/grzeB7Fzru7X/oAHD
-         eJBQufWsXW6XxbpRoT3o4hJiMUBOmrRql+WNWsIUzcqhC9axcCB+i9xwC1hQBAFavaQj
-         Azrgn7mp+DUdkgGjaU87ljwX0BnBDwYV6KWidP+d5u5Gyfp/0mtSocf31OBPkuFEbyMU
-         Y+BeyI6N8vrzNjbkQzxJlhlBl3YWKqmWa2I/O4qD5hjF+4M+ciO7Pt/9UJOOdjCuPH77
-         gMuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOqMBPf6wiOYpq42Y7vvNbvEHVfamUmViAnQdTcUnGg=;
-        b=IEmccWXgAdwWnBRXOS2Bjp2zsEfQQSCT8bTNRTFnyEtbjx2cRXg3GmG7H0wywi9UWj
-         2WD/OrLtpfAaMxE/fu3l6KV2zqz+x8WGttnRrNP9vVE5FYe0Qy9TLUyHlXIK3gzsmHQm
-         Pd8gw7qveswh+t0mxG95XmbZCktrsXgilHignQkRBbwxfchutve7aaFI23U0LNq2pyGq
-         Gdftp58wf4Ub+WvWqvV4Gm495QfgBkA8MAnm+ylcS7NApiGikxbF+Hta5rKTAfFALemf
-         Yr/+P6PSlrwyDMvqbaaI9HytNuMBbNtxgwsAtdUAepDz+LNjO3FEdKasYd6VUA3x5pGw
-         pyug==
-X-Gm-Message-State: AFqh2ko1++LVCSqoeCS6knwpkxrdEV9rUk5+QcV/d71kiA2W29q4nFrA
-        GzRCIr9rsU9GXioQHj765XVduw==
-X-Google-Smtp-Source: AMrXdXsLa136dUX8LJKmaxPMIl3hWRQ+ADsEngQaV8UyI/bzAEKD6aaJugxecTle6AogEUDWgkx67w==
-X-Received: by 2002:a05:600c:4fcb:b0:3db:1919:41b5 with SMTP id o11-20020a05600c4fcb00b003db191941b5mr3514893wmq.21.1674113979165;
-        Wed, 18 Jan 2023 23:39:39 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id r9-20020a05600c458900b003d35acb0fd7sm4182561wmo.34.2023.01.18.23.39.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jan 2023 23:39:38 -0800 (PST)
-Message-ID: <6793b9f0-18ba-56af-2e4d-202ad52b0951@linaro.org>
-Date:   Thu, 19 Jan 2023 08:39:36 +0100
+        Thu, 19 Jan 2023 06:58:25 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4206F30A;
+        Thu, 19 Jan 2023 03:57:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674129457; x=1705665457;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OOSuI8Ptgbyop0bHqYWl6Cev1ihhKUlYoWWsszEriiM=;
+  b=Ld6BNIAxy62CgK+XmkZEcn8u2OyXgy38RzLrI62u+91zbhwkJHL7M/DM
+   6qLa4Jgtz/ZYP+Kq6YpEvUjCPAccKhRPgDkNEMUtuQ1rTpPjMPUpqZSOl
+   DNt12/diIZKjyxD2dc4yRIaL1QpRBiLaX6hnu8SbQNIBFjH1rrwdRn1LD
+   MBlcd8hdxlG7g/3OKpiWe3ldRGFLu2P5tdd8q6LxwkUyHbuSrDm9N9P7v
+   K2d2G6jP0ZFCd1vgXbBnlCTViTLds66WXqvfckl8b+CmSxRHpP9OXVuZ2
+   SAZrKRw+7liKWUHn+GGoVMvS2zZBpLlUpRTF7HhIWG2vCq7bMVBEgnUdw
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="305637388"
+X-IronPort-AV: E=Sophos;i="5.97,229,1669104000"; 
+   d="scan'208";a="305637388"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2023 03:57:29 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="692393155"
+X-IronPort-AV: E=Sophos;i="5.97,229,1669104000"; 
+   d="scan'208";a="692393155"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.252.185.248]) ([10.252.185.248])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2023 03:57:23 -0800
+Message-ID: <e44077a7-e275-4e34-b7ad-3e1382ea974d@linux.intel.com>
+Date:   Thu, 19 Jan 2023 19:57:20 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH v4 2/5] dt-bindings: remoteproc: qcom: adsp: document
- sm8550 adsp, cdsp & mpss compatible
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Cc:     baolu.lu@linux.intel.com,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 07/10] iommu/intel: Support the gfp argument to the
+ map_pages op
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Alex Elder <elder@linaro.org>, Andy Gross <agross@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v4-0-54154c08c0b7@linaro.org>
- <20221114-narmstrong-sm8550-upstream-remoteproc-v4-2-54154c08c0b7@linaro.org>
- <167407681596.873892.9837637729592866883.robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <167407681596.873892.9837637729592866883.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <7-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <7-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 18/01/2023 22:21, Rob Herring wrote:
+On 2023/1/19 2:00, Jason Gunthorpe wrote:
+> Flow it down to alloc_pgtable_page() via pfn_to_dma_pte() and
+> __domain_mapping().
 > 
-> On Wed, 18 Jan 2023 17:22:40 +0100, Neil Armstrong wrote:
->> This documents the compatible for the component used to boot the
->> aDSP, cDSP and MPSS on the SM8550 SoC.
->>
->> The SM8550 boot process on SM8550 now requires a secondary "Devicetree"
->> firmware to be passed along the main Firmware, and the cDSP a new power
->> domain named "NSP".
->>
->> A third memory domain for the DSM memory zone is also needed for the MPSS
->> PAS bindings.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>  .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 178 +++++++++++++++++++++
->>  1 file changed, 178 insertions(+)
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> ./Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,pas-common.yaml
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
 
-That's ok, expected. There was a dependency.
+Irrelevant to this patch, GFP_ATOMIC could be changed to GFP_KERNEL in
+some places. I will follow up further to clean it up.
+
+For this patch,
+
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
 Best regards,
-Krzysztof
-
+baolu
