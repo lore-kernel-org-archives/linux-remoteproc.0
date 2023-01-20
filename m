@@ -2,49 +2,43 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD482C678DC
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Jan 2023 04:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D081C27C76
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Jan 2023 09:27:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbjATEyK (ORCPT
+        id S230421AbjATJ1P (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 19 Jan 2023 23:54:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49232 "EHLO
+        Fri, 20 Jan 2023 04:27:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230481AbjATExr (ORCPT
+        with ESMTP id S230204AbjATJ1N (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 19 Jan 2023 23:53:47 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA3BCE8A2;
-        Thu, 19 Jan 2023 20:45:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674189914; x=1705725914;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=DuOBg1V/kEEpNk+BV4bYqVrWJSOOFRR3sdWDamFrvt0=;
-  b=DpH5Gz6m8iV2ch09fwLFA5GAnqlxbeNoa7S3bI/YFsVgN87LhKKoHb0Q
-   cSCYdT3KmY8GtvjtNyqfoyZjFlZdvPRAzezNcOKx6+isXeCmUB45fV3DF
-   026+DbQtNrLVHraaQW0P2BkA1avJfJCRa80U8itPz7XQ3IEFFPIYbClxs
-   28pG13X7QphCrYMsq60VrkQyCLoGnlbwbBVjTPl45e3wWdRgqLxggzixe
-   SAA5swOR1eMGWiVdWM7YFfhsxGvQQy2A0iZNyMvQ//2lqzy3XrGkXktPN
-   QJ1loYld9EDGI/1Qb4zzbto8KYzzKZkmUqKFZsbc6A6sRmm5zTKHoGxD2
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="308821076"
-X-IronPort-AV: E=Sophos;i="5.97,229,1669104000"; 
-   d="scan'208";a="308821076"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2023 03:47:51 -0800
-X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="988957189"
-X-IronPort-AV: E=Sophos;i="5.97,229,1669104000"; 
-   d="scan'208";a="988957189"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.252.185.248]) ([10.252.185.248])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jan 2023 03:47:45 -0800
-Message-ID: <08c874f6-0c59-0b74-a2c8-7ad61356af6f@linux.intel.com>
-Date:   Thu, 19 Jan 2023 19:47:42 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Cc:     baolu.lu@linux.intel.com,
+        Fri, 20 Jan 2023 04:27:13 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 055A0A19A5;
+        Fri, 20 Jan 2023 01:26:42 -0800 (PST)
+Received: from 8bytes.org (p200300c27714bc0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7714:bc00:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id E12D62626D1;
+        Fri, 20 Jan 2023 10:24:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1674206697;
+        bh=N0Ez9jlBhYWiOK7+xYABfIe0+VmfRPgpACpzUje2F4A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lOLKVLD4dyMYfuGfszt0Aqi18MMtbwUvgwVbHoDO6hE/pu3jlsoFnfOvfV2sSJ6i8
+         k3lOBgDA7x9bkKbnD+qVSk6qrzEVOc/9/JS99/CzblV3IjUWMNUsDLegoejr0hYkyT
+         NIAGgbjvSNtqhO8clUAYjH7vWYcGoTKi2kDTgKFmFcsSDinl9Vo2l2M2oUTe7UNJh3
+         4hHtdAX4so62XBRGFWlRKgCJW94p/lPduMMBp2SCZ238xwGOe1m0xh9F5SouN8x7NO
+         06U5w+umYu9ogUcIQK1YpQ4ciXMhW+H2quzpMMrP7f3cTLkb2U0hf6Ab3xk/GMJY5E
+         1P63Vv4/HChRw==
+Date:   Fri, 20 Jan 2023 10:24:55 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
         Alex Williamson <alex.williamson@redhat.com>,
         ath10k@lists.infradead.org, ath11k@lists.infradead.org,
         Christian Borntraeger <borntraeger@linux.ibm.com>,
@@ -58,29 +52,32 @@ Cc:     baolu.lu@linux.intel.com,
         netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 06/10] iommu/intel: Add a gfp parameter to
- alloc_pgtable_page()
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-        Kevin Tian <kevin.tian@intel.com>,
-        Matthew Rosato <mjrosato@linux.ibm.com>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <6-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
-From:   Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <6-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/8] iommu: Add a gfp parameter to iommu_map()
+Message-ID: <Y8pd50mdNShTyVRX@8bytes.org>
+References: <1-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
+ <4fd1b194-29ef-621d-4059-a8336058f217@arm.com>
+ <Y7hZOwerwljDKoQq@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y7hZOwerwljDKoQq@nvidia.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2023/1/19 2:00, Jason Gunthorpe wrote:
-> This is eventually called by iommufd through intel_iommu_map_pages() and
-> it should not be forced to atomic. Push the GFP_ATOMIC to all callers.
-> 
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+On Fri, Jan 06, 2023 at 01:24:11PM -0400, Jason Gunthorpe wrote:
+> I think it is just better to follow kernel convention and have
+> allocation functions include the GFP because it is a clear signal to
+> the user that there is an allocation hidden inside the API. The whole
+> point of gfp is not to have multitudes of every function for every
+> allocation mode.
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Well, having GFP parameters is not a strict kernel convention. There are
+places doing it differently and have sleeping and atomic variants of
+APIs. I have to say I like the latter more. But given that this leads to
+an invasion of API functions here which all do the same under the hood, I
+agree it is better to go with a GFP parameter here.
 
-Best regards,
-baolu
+Regards,
+
+	Joerg
