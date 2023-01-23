@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1713C61D97
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Jan 2023 20:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85242C636BD
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Jan 2023 20:36:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232769AbjAWUgY (ORCPT
+        id S232789AbjAWUgd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 23 Jan 2023 15:36:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36918 "EHLO
+        Mon, 23 Jan 2023 15:36:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232656AbjAWUgU (ORCPT
+        with ESMTP id S232753AbjAWUgX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 23 Jan 2023 15:36:20 -0500
+        Mon, 23 Jan 2023 15:36:23 -0500
 Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2046.outbound.protection.outlook.com [40.107.94.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB73CE04C;
-        Mon, 23 Jan 2023 12:36:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D6F1E289;
+        Mon, 23 Jan 2023 12:36:20 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IQdu4X9gOvGj2p5R0XxOcYhdXz7lqP+SROcbR02rgVqtE1YSsPDymzODdvzXgo+YQRLSp+CxwpKZWUyRaMu4eWjruxHde1AcdwFtGFeF+80tJ5kbe7AsVMOD7GV6djq2IAEtqjSBOEJXJvI3r/VorbAeBEbUCkp+bAK927tMrYUTre6AJ4EQBfb3mb9eT3akkVfMkubTpKRe0XGt71gifHcsoKqYEzGOe2xyANSQWT8uHi5xupnqNGq/QvXeNI36DouZe7jO07VA2qyEOh3R4nvpoMw1s89JYEe5D+fqyPDpCrYZJZQROB640DXC8ONNF0nKFaRmXM9G2Ut9MAHWXg==
+ b=SJecD9vEyZ+TP3fm+1ackrYY9PSN2nSEuvrs93iG8LwVUcxoxpfYDZ/gzrvu1NGU+b4BV9akzLXTpRkLXfwLM9nFIM/T1CkCRF+KeLmxCgd0k5XMrX7n7okCSNTI+DJYjFtUfJqG/cfE6WxQWs/WiELgIDBLHJeetULBX1Ir1297CoCTGsfntakjV4tW0f1WzKJ9DNgRXGVWWK/ni6/TsSE+14aj7hInLGtCkj4eTwjAl3CJiMuMDjCQA8Js9nzrMLS0j8cnb0n1NxU+8NSL+iWa/CDn7l8Gia/sEAZet+SSHi7ptwDjNMN2x6jyLlW9Wkqaw0adNJqoUTeARVTT2A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yr3Vh37QBYLrjm83cKMD5EEuq4JtjyN4kOlmHNMMt5g=;
- b=NaULF8rNUgeGClO3gXp0ZsU3BjgxXpk8bpAsAUEiUYf0/DruD6ifCGMIxpirj28coe4aoJc1aDWnURGKMFsAqkVeKb2eS2midMY0q5fVLVwU6gA17HQufli5M80OBY0agyCwbVko3cKI/s5g5qgxNgC7+pj9Nojl9e3dvOHBg6RpfP6blbDdCZAJUPMM0GJIEX600VYfADlt5haZglT9LikX3qJlB6wMH7DVFTDtO55o9hCi9fWrQ/kHjkeZQsBiKy+10GQfIvas4xFpD5RtaodG+fg71Ajyt6clQ2wqHHNfhe9uYbQE0o58hhqcWj+Wr3hDne7yDO2DVrlbmG1WDA==
+ bh=4nBCMHMAOxVyylbTsSdPtuYEtvKe4RbQ5AcPHuPFZVo=;
+ b=cn2ljKgG/WEQci9wtjfdnkbsgzHa33dCK6XsgcSsb929VLkA0gLcOstCCYSRB9SfWVYiOix/FWokyM6yKuJguQVKrwVVoUE0HgM39TBdi5E/e8W+zSqGYGhakh51L/Gw2i7c/yUqZ5W8rAaLGb/lRm9LLQQAnbZiilmoFKId0mKSlyUW9cRKanjSOYNtuMpVUbx2ns/WVDyxKFb6xwQS1OC4cdMFxgKrvcjhOHjrAa8/HlbziCw7Mcf9C7JPQbsUm0pWfwwDr7v3p4aIUCZuabhqbJYCFmHj8BM1qwfQGUmXfKgCfAEJNru/ULYTsaaZurmCIni/VKzI+yvJzBgFEQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yr3Vh37QBYLrjm83cKMD5EEuq4JtjyN4kOlmHNMMt5g=;
- b=TE7K2h2vcxo6KbxJTIMMjovxnLd391F0RrDRpGZTdqYcbqXs2DC50wy5idi2k/5cNnYkb589SJEByoSBYTDBHJoJBWUDuQnjf5idh1sN42bDHGQEtlwrL6fRN70N88PpP1pRQf6C1OmZgaWpRHDvwV2juGuP4Gz/Xdxws5HODnZBd1AKJNswzl7u8SMcZQRpNZIOXAHRUsynTrE+8/z1J/tw5XRj1GlhxydJJFvlLwxufxmFTxPQ6eR109VLSF1+BoEoIDSGNAWIV3hpHiZYRQ019Mctmfg19VAgCLmpU3aczxwIu9L9RStY3Wxo6pACN94LL8dM9cILVc5ijTLRaQ==
+ bh=4nBCMHMAOxVyylbTsSdPtuYEtvKe4RbQ5AcPHuPFZVo=;
+ b=dHYzSnHRsFgUz268YImx5p70dQ1uAHvif3tiOJGVheKfdzRe+S/LxU9ps3/q8xmPWilWnBzzcrL8TNB+QPTdrYFFIADDaeYymjBWf5mbbuoq2fhWO6oG2YBxGXS/gCcNhhiHRJZRfjcu+7jesocqe10OxBT7MBW9xwkmdH+IfDwpCErObhcfUq8Hoot6t0oluCne6oAungZ+LIG87sZwZU3P8BJv4pIA0osA6y34P7QBXMKhGhLr1K60ylXzCvLuDyIgRDIcut7FXNPMWdldr8MnYRYz40cRe2B6ZTIoDfYX4LOuOHmDw0rOOnhajokD+XvUZSttF8OZJCACr3iUQA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
  by BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.25; Mon, 23 Jan
- 2023 20:36:04 +0000
+ 2023 20:36:05 +0000
 Received: from LV2PR12MB5869.namprd12.prod.outlook.com
  ([fe80::3cb3:2fce:5c8f:82ee]) by LV2PR12MB5869.namprd12.prod.outlook.com
  ([fe80::3cb3:2fce:5c8f:82ee%4]) with mapi id 15.20.6002.033; Mon, 23 Jan 2023
- 20:36:04 +0000
+ 20:36:05 +0000
 From:   Jason Gunthorpe <jgg@nvidia.com>
 To:     Lu Baolu <baolu.lu@linux.intel.com>,
         Joerg Roedel <joro@8bytes.org>,
@@ -61,143 +61,169 @@ Cc:     Alex Williamson <alex.williamson@redhat.com>,
         netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
         Niklas Schnelle <schnelle@linux.ibm.com>,
         virtualization@lists.linux-foundation.org
-Subject: [PATCH v3 00/10] Let iommufd charge IOPTE allocations to the memory cgroup
-Date:   Mon, 23 Jan 2023 16:35:53 -0400
-Message-Id: <0-v3-76b587fe28df+6e3-iommu_map_gfp_jgg@nvidia.com>
+Subject: [PATCH v3 07/10] iommu/intel: Support the gfp argument to the map_pages op
+Date:   Mon, 23 Jan 2023 16:36:00 -0400
+Message-Id: <7-v3-76b587fe28df+6e3-iommu_map_gfp_jgg@nvidia.com>
+In-Reply-To: <0-v3-76b587fe28df+6e3-iommu_map_gfp_jgg@nvidia.com>
+References: 
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: BLAPR05CA0020.namprd05.prod.outlook.com
- (2603:10b6:208:36e::23) To LV2PR12MB5869.namprd12.prod.outlook.com
+X-ClientProxiedBy: BL1PR13CA0151.namprd13.prod.outlook.com
+ (2603:10b6:208:2bd::6) To LV2PR12MB5869.namprd12.prod.outlook.com
  (2603:10b6:408:176::16)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|BL3PR12MB6571:EE_
-X-MS-Office365-Filtering-Correlation-Id: 808b6e2a-c9d1-4ffd-852f-08dafd81729a
+X-MS-Office365-Filtering-Correlation-Id: c0970f0b-4045-4727-0b34-08dafd8172c3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /qwTNrBFLnOuOvrtPPzK6WNp4+MzYoRMe7/K+868I50KEqOI/9cZ9jS6MYKqXkKAwnjXz2UcjznWeywRVoCOg1JfxpZ6iEwdxeHCIx/Tfa3siFs6O1xYxw5thRoG4mKcjpTY+5k8t810ZlCwHWVhU9rNtUwL+DhL/5VeazIfha/AJWqbdoTYEG7eQEhFWk5VZix+D/kUBA/jRSwUmcjs4ItQUnHUQNkGiefll4vrXyFxx1Ljc8lb98opVkSauDaNnGP5C3iMkjf3YtgnrwpoVLUSq6lx/F32949ODqIW1xnrE8PSF1syCTlzlycjJUrPReg7NKnzGnCtQMlbgnb7bPbkM6iaP+rLBXA27N/IJoT9cC2zDPcK8IdfgkX4CWgwCk/7w7aQ2fQb+6kGLFqd5qV4gBHIS+yzt/jlnlup5W78wH24g8RKnE2tf8gqLAryW3pf3hvqIvjLCoo551rz2aYmYLqeUQshia7Z2jV6bWm1+13ELEETLMl2+BUMOMnbxfyENLSaYJMZbIwiVJ/86a6+EGMKN9zFsEvv3rWm+yOXYyu0h7YtNkt+rD4vTY8TuB9Vw8LtFasctYopcl4pGGY7Ip6MxocUoGxjulOjmoUdaNjGeAz5gQ35N/LAaVcI6dSwcTBKOXmq+XJNtuB/Hygn4S+oCrPWEAVWfxlX71NtLuk+fYsfBdgZuufN4n3KC3/eraukHWYhgHdEaYc3L4qn+7475FfjgO2O9a0D2DC+km8Aow0IHLQ3GfBK9qcALQ2v71UneT3zU3c/GXA6ruFiRi19ckfpLFWYuoCAQtkmhfTgx9E5i2w7aNp7QJOg
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(136003)(366004)(376002)(396003)(451199015)(5660300002)(316002)(8936002)(7416002)(41300700001)(38100700002)(110136005)(36756003)(186003)(83380400001)(478600001)(6666004)(86362001)(6512007)(6506007)(6486002)(26005)(66476007)(8676002)(66946007)(966005)(4326008)(2616005)(54906003)(2906002)(66556008)(4216001);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: AHAczyS1HvFGvl6QJN292omfdyNi4az+MsfOAYEClFNQoH7zTFZsR8EY96XVsLwrf6oe5RKD+JG2PzkrpMzU6TkaPeuEVmQpL1W+nWr78YcAOKFIU7PDC/I9SfmAqvGS4Q7maynoqdhXkrcVuGz+yJMmFmA8jX2sl0Q8J1/O3zx5fLCYD7w3hxxDwHiPmC5w33UeB9pYppDqy6mgtau2BP2D5D1lfGieQguY2dX1leGheSDCpayMfLYrAIgu0Q1N/0zohn93VBTHeVZGiszX2RnRugohiIXMxBffCz4lpdsteV2Mx6Xl6MIA5tourFfGlv/osfLUjpYXXbt8ICkn2QDx0LqloCzb43e+Ro8WotpDS95rpdgaSG6kpi4VGF/+DEFQARFD0I1L0c5bEIaq02xPBDD1g46ZMc22LFFG+GGiQuksgFbcWpSgph3b0kjBSKusp800br4bAT2S3xWVFx/Pyb9jYCKVvc17mefyB6oCvOUDPPKu4ttXb5WLisx6AyZq3S6ereyN2jjM6jpdDN2dOf8Bc7X0IIgghEq8gc/kKkNr0oRwshFvMAvpcGDdcm0dzEmQA+M5OUL+YKtPNdgNy7qHRO3C0H/8afDbPKVWPlK1OEAVfI99nEwOTFQjRAN45XbM+0AsjvkmCt2/UoMJHiw1NGWMiTLyl5I1xG5oMbFPHMIukLSclO8A181/
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(136003)(366004)(376002)(396003)(451199015)(5660300002)(316002)(8936002)(7416002)(41300700001)(38100700002)(110136005)(36756003)(186003)(83380400001)(478600001)(6666004)(86362001)(6512007)(6506007)(6486002)(26005)(66476007)(8676002)(66946007)(4326008)(2616005)(54906003)(2906002)(66556008)(4216001);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?vAYN7Tx1dy3bge4mTiovHW5AvAtW/Q/us19gbM+Xj2rF+dIgfj8H7TR2REl2?=
- =?us-ascii?Q?rnP48CBsKksfFrkJPe0xs9u2n6flUSkJ+70OcnVZILDytdebIWhsEyrExEZs?=
- =?us-ascii?Q?7Ck/3J0StPL2PqX1P5ShpUNG3K5yqUQINzXKMymMaevms088OM1xdaSJxDxv?=
- =?us-ascii?Q?+v5ZIGC/8y56FY/rVRy54vRITTI/ukKfsaBU1c/9851HZzt+GqmBzxV/ZZV/?=
- =?us-ascii?Q?w7mSsbCeAB/MqfjcDqRivnDmM6RBtzip/QRliWsTWvcw7MKigMdT/8VWdcrh?=
- =?us-ascii?Q?BqOiTDbZp7P1dRtyzpzijgsWHQ5XrozWRWEYMbYQlpw922UEl2kp+D6hz+Kd?=
- =?us-ascii?Q?IYkeDP//F0RiUdQPmByuhgoIFnhfYGYeT5O7ag4jIH+7QZgoU2rSS56dhuxZ?=
- =?us-ascii?Q?9Ji/eAuNnyGRt+NUsve1RXr9NgrleEts52w3Iz8sPKdL5F2zmiW+R3smJN09?=
- =?us-ascii?Q?ZAN2SM+8kmOj3arbaaU8cU5XQG2IFb7+/2cxnVtz4iGIIeK26bkeLJrOtrMe?=
- =?us-ascii?Q?ZLOmlFpo25DDjYUFHPe1AphcqLskkgIVu5DvnMctngzBNVUivgrSOD/1ofPa?=
- =?us-ascii?Q?FcaKNYWH3K+Ro304hd2EH0b59canUMBcuWR+hHNE+ISY9tDrnCR1HhC/rj1q?=
- =?us-ascii?Q?AZ8KT9woEpXdvDkl1nY+JCyciOnipfb193jwZX1kY0W5ZjNhPGx+Ijnl9TR8?=
- =?us-ascii?Q?ZetMN53tz3xwBin+wCILJtjyMN+xT5QTp0t5y78TFN54FmqN7DDNOW09TVLn?=
- =?us-ascii?Q?ZyuRalFWH2o6winaaAhzFCSWjUKFlnv1CNjms6MFZnUDV/q305jfPRaOYkMO?=
- =?us-ascii?Q?1t6uDKEjUH/931luA1A6A40fHISReAcWptwjszxXtBaY5ws93d9DHGnmI7Mu?=
- =?us-ascii?Q?D4sgr+fNOazAFYN06/rRdOd57mxt5RM264pE2VZhi2SFgoRhdnjm/fFoo4/7?=
- =?us-ascii?Q?DKIBDK00owEms33MYf5ppanK/Q3kDl6mOpT3854fGe1LD+XrsoFNFNirMEx9?=
- =?us-ascii?Q?PBwzoSnhHNt4dRB9FGAZp8DzvT0nK2eS6lb6eyEGhSCvRGqtTMGUy6Xzv3TH?=
- =?us-ascii?Q?toLV1ZjijT4JoP/wlNRhmILJ6E8lq5l/YCOj0BfHwc6ETsHdHfqlnvPMFBuO?=
- =?us-ascii?Q?JlmUskvgbjznpUTceoWcYx2qFGKwdHZygPJhDFywMywUa6m/Lb9b2HTqidMk?=
- =?us-ascii?Q?ESnoyiHqlu+94KBIM6d40rqpT1ndJw/SXgE7O9Fd9/lCtCaXNiFkFQ6WhIas?=
- =?us-ascii?Q?9Z+mXP4cOdME7UzrdYhl399F+O2zQ9/AX7D0GFZZ7qEE5J8r3pS0Q/KwBFyX?=
- =?us-ascii?Q?TBK/mBNM2V5Wpnhb/DOXURImaahv4sxrOiTc5SctUUW6b99SR8PiOQyGwXaw?=
- =?us-ascii?Q?2nV+Qp7yAYBL/FNaTHz+AluAwppirNQseoLxun+n/c24vNcR3YpMncUBDHG/?=
- =?us-ascii?Q?QJWCcRR72g5IM3LPlJcqnvyLa/Kf8NRBVM1sSby4VbEMip+69HSifZ7M1VAK?=
- =?us-ascii?Q?gf8aax1FVqlhqDGAtw64dAyeFuqc6jVVp+bd7l5lFsWsRA7o2rrE1/Ianv8J?=
- =?us-ascii?Q?CLbfEWMkzgIWBjbMb8orOxI0t52l7pljMDGACsua?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?u1Z0FIO50yE2Qyuu8nK1YS6zldly+J7CC4qTvSsD10w2BrO3Uhgpwsa6lkr4?=
+ =?us-ascii?Q?PPo1xFXrjVH7M8kSGjh4VxHLzhjrStFFLrV5Cl25S9ljkqU3aksJ0Urmihjv?=
+ =?us-ascii?Q?1/nKEsdgdKo+WrN4TyU3p70ZVArMvzJcHr1VhWs8ThHm5ZDjCb1Hs6RRJ5pf?=
+ =?us-ascii?Q?w4oARHgbRcxXcWi+yCOuS5Cep1GEHMaL2ZIE4QwnpdCDSghTU4OwRYqIXSZZ?=
+ =?us-ascii?Q?w1H8ADpWQXLWra1yIFKK3HU/jcD1Gz+VudGaPh2fbeM/6X5J/elZkntGd6o/?=
+ =?us-ascii?Q?3o/jFEZcqjcDwG+mvNIpWsJn6ZtT6XTZGYpHnp2ugXB91Fz6k3O9IWF5SCL6?=
+ =?us-ascii?Q?Qk2NwqgVaoH4ChfgV8RTXbNPLjTPX48stqocPTxDsxCsXlB7zvipnUEzJmIX?=
+ =?us-ascii?Q?K3xnrxsZflj8suzKqiWvVvEx/+OD6dUpqu5E0UbJEzzghz0CaSbDibJE+c0S?=
+ =?us-ascii?Q?QhPdYrXDvayuWbmTIHEBNZkCtmxadGsBeQ1LCCapIEq16+WPM12dN0wj03NY?=
+ =?us-ascii?Q?aBgd7JmsG7EhgHqP2IP8wBQpfOwpshrLmLH9HTUrfDGTFYDftPIIz/lIKyBH?=
+ =?us-ascii?Q?2cMQVrOKhSGQ6+zYSAg77p8jMqeMTAhE7i8eqVDMxFQbUabo9UgG0mW8PXNJ?=
+ =?us-ascii?Q?b9syn1jKOGs4K0vkjw6G04SY1kAaJyBHQeTsnAREAW3HHf8Jbr4SjpqlJBK/?=
+ =?us-ascii?Q?2Zk2hNK9va0Mji/OjfvKovHyk0gdXGkRsqO8k43Bq+tfZC7lbT3NukgaHrWH?=
+ =?us-ascii?Q?3kFHIhp4wNX4qbxzbtaiWYgZVjLfeKRe/uqlrNU/zy/0q9UkS1MteuVE2tSM?=
+ =?us-ascii?Q?VKWAlTAjJCD4L9mRhhCMOsY9QZ8KUVm2/jbGZyp0CBUP/r1QbO/KQCr9dryk?=
+ =?us-ascii?Q?A772IhGH7E8WP9iao/iTdC+13w7tl4ZTxd+m6THmWvND+WYW8VViR/oujihM?=
+ =?us-ascii?Q?uP3wp1QB/IC0ig/unugOJc+faKza/2/t/QSOs370ZIfknQOi4Hrq5gJl0kI7?=
+ =?us-ascii?Q?YGoXUtH5RBQpXuZsOwiwj34VRqLreErHVcUUWISAZICZlfAcaMetpV0DyQeD?=
+ =?us-ascii?Q?YHBVmjuoij25aHz8heXf2vNhs4K3AuwhQ4znQLo7bQ1SF4z9BlSNyCsyAmOr?=
+ =?us-ascii?Q?klhy2j82uxaQBthZnEksXA6D9Fo4SMU+j2xxlj+J7tyIhjBZUotMOsQeLPrX?=
+ =?us-ascii?Q?mU/1GbTEaU6zdkNtpo+ZZU37spq7yMmQKLl69IxKm+ubcrymPZImjocZHFR9?=
+ =?us-ascii?Q?y0+fP/Xbmo10+rboBqGqA2G+mbIOPX2qOaGvlM0W5s5gDi/Zpl3xTHLVIUix?=
+ =?us-ascii?Q?uCazNKW+8azWRGtEKIWF+YIX6rN8i1EFg8M4Z2i2Xp2S6nTwf0zjlGcIYJ04?=
+ =?us-ascii?Q?cKFvNx/GUyLs923vipzOe6yH96U1BfXcw3fUzL6g3kS1JIArcnmXUIQpbwwk?=
+ =?us-ascii?Q?Ere1AzFXv1zPC+P1cyOeIGHUh8GaFOm50fP/rwhm6BwHnm5a13ZcqweJvqQg?=
+ =?us-ascii?Q?guifWn3CzTDs+GeOm+Wu5ZnzoP74yXXqv7tL9lsBaZGBIkYNPQw/AY/PVRHv?=
+ =?us-ascii?Q?wGwC8rQpUvgb1z+hA57Xta7CX7b5Exr+TT8nb8a/?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 808b6e2a-c9d1-4ffd-852f-08dafd81729a
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0970f0b-4045-4727-0b34-08dafd8172c3
 X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2023 20:36:04.2777
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2023 20:36:04.5433
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zHlL7iwdfLJOVwSWdoQkotYBVZTbCXUsK2C6oTuCQxNQ86RydNUUAETqqJ+VfKlL
+X-MS-Exchange-CrossTenant-UserPrincipalName: SdKKK3P61Y5dSOAs/ZithmyXc4aMUd7VB05fVxVwtqpjALbNbMQbr8J/BNhCz3HW
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6571
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-iommufd follows the same design as KVM and uses memory cgroups to limit
-the amount of kernel memory a iommufd file descriptor can pin down. The
-various internal data structures already use GFP_KERNEL_ACCOUNT to charge
-its own memory.
+Flow it down to alloc_pgtable_page() via pfn_to_dma_pte() and
+__domain_mapping().
 
-However, one of the biggest consumers of kernel memory is the IOPTEs
-stored under the iommu_domain and these allocations are not tracked.
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+---
+ drivers/iommu/intel/iommu.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-This series is the first step in fixing it.
-
-The iommu driver contract already includes a 'gfp' argument to the
-map_pages op, allowing iommufd to specify GFP_KERNEL_ACCOUNT and then
-having the driver allocate the IOPTE tables with that flag will capture a
-significant amount of the allocations.
-
-Update the iommu_map() API to pass in the GFP argument, and fix all call
-sites. Replace iommu_map_atomic().
-
-Audit the "enterprise" iommu drivers to make sure they do the right thing.
-Intel and S390 ignore the GFP argument and always use GFP_ATOMIC. This is
-problematic for iommufd anyhow, so fix it. AMD and ARM SMMUv2/3 are
-already correct.
-
-A follow up series will be needed to capture the allocations made when the
-iommu_domain itself is allocated, which will complete the job.
-
-v3:
- - Leave a GFP_ATOMIC in "Add a gfp parameter to iommu_map_sg()"
-   and move the conversion to gfp argument to "Use the gfp parameter in
-   __iommu_dma_alloc_noncontiguous()"
- - Mask off the zone/policy flags from gfp before doing internal
-   allocations and add a comment about Robin's note that this is to keep
-   the buffer and internal seperate.
-v2: https://lore.kernel.org/r/0-v2-ce66f632bd0d+484-iommu_map_gfp_jgg@nvidia.com
- - Prohibit bad GFP flags in the iommu wrappers
- - Split out the new GFP_KERNEL usages into dedicated patches so it is
-   easier to check. No code change after the full series
-v1: https://lore.kernel.org/r/0-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com
-
-Jason Gunthorpe (10):
-  iommu: Add a gfp parameter to iommu_map()
-  iommu: Remove iommu_map_atomic()
-  iommu: Add a gfp parameter to iommu_map_sg()
-  iommu/dma: Use the gfp parameter in __iommu_dma_alloc_noncontiguous()
-  iommufd: Use GFP_KERNEL_ACCOUNT for iommu_map()
-  iommu/intel: Add a gfp parameter to alloc_pgtable_page()
-  iommu/intel: Support the gfp argument to the map_pages op
-  iommu/intel: Use GFP_KERNEL in sleepable contexts
-  iommu/s390: Push the gfp parameter to the kmem_cache_alloc()'s
-  iommu/s390: Use GFP_KERNEL in sleepable contexts
-
- arch/arm/mm/dma-mapping.c                     | 11 ++--
- arch/s390/include/asm/pci_dma.h               |  5 +-
- arch/s390/pci/pci_dma.c                       | 31 ++++++-----
- .../drm/nouveau/nvkm/subdev/instmem/gk20a.c   |  3 +-
- drivers/gpu/drm/tegra/drm.c                   |  2 +-
- drivers/gpu/host1x/cdma.c                     |  2 +-
- drivers/infiniband/hw/usnic/usnic_uiom.c      |  4 +-
- drivers/iommu/dma-iommu.c                     | 18 +++++--
- drivers/iommu/intel/iommu.c                   | 36 +++++++------
- drivers/iommu/intel/iommu.h                   |  2 +-
- drivers/iommu/intel/pasid.c                   |  2 +-
- drivers/iommu/iommu.c                         | 53 +++++++------------
- drivers/iommu/iommufd/pages.c                 |  6 ++-
- drivers/iommu/s390-iommu.c                    | 15 +++---
- drivers/media/platform/qcom/venus/firmware.c  |  2 +-
- drivers/net/ipa/ipa_mem.c                     |  6 ++-
- drivers/net/wireless/ath/ath10k/snoc.c        |  2 +-
- drivers/net/wireless/ath/ath11k/ahb.c         |  4 +-
- drivers/remoteproc/remoteproc_core.c          |  5 +-
- drivers/vfio/vfio_iommu_type1.c               |  9 ++--
- drivers/vhost/vdpa.c                          |  2 +-
- include/linux/iommu.h                         | 31 +++--------
- 22 files changed, 126 insertions(+), 125 deletions(-)
-
-
-base-commit: 5dc4c995db9eb45f6373a956eb1f69460e69e6d4
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index aa29561d3549b3..e95f7703ce7b83 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -908,7 +908,8 @@ void dmar_fault_dump_ptes(struct intel_iommu *iommu, u16 source_id,
+ #endif
+ 
+ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+-				      unsigned long pfn, int *target_level)
++				      unsigned long pfn, int *target_level,
++				      gfp_t gfp)
+ {
+ 	struct dma_pte *parent, *pte;
+ 	int level = agaw_to_level(domain->agaw);
+@@ -935,7 +936,7 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+ 		if (!dma_pte_present(pte)) {
+ 			uint64_t pteval;
+ 
+-			tmp_page = alloc_pgtable_page(domain->nid, GFP_ATOMIC);
++			tmp_page = alloc_pgtable_page(domain->nid, gfp);
+ 
+ 			if (!tmp_page)
+ 				return NULL;
+@@ -2150,7 +2151,8 @@ static void switch_to_super_page(struct dmar_domain *domain,
+ 
+ 	while (start_pfn <= end_pfn) {
+ 		if (!pte)
+-			pte = pfn_to_dma_pte(domain, start_pfn, &level);
++			pte = pfn_to_dma_pte(domain, start_pfn, &level,
++					     GFP_ATOMIC);
+ 
+ 		if (dma_pte_present(pte)) {
+ 			dma_pte_free_pagetable(domain, start_pfn,
+@@ -2172,7 +2174,8 @@ static void switch_to_super_page(struct dmar_domain *domain,
+ 
+ static int
+ __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
+-		 unsigned long phys_pfn, unsigned long nr_pages, int prot)
++		 unsigned long phys_pfn, unsigned long nr_pages, int prot,
++		 gfp_t gfp)
+ {
+ 	struct dma_pte *first_pte = NULL, *pte = NULL;
+ 	unsigned int largepage_lvl = 0;
+@@ -2202,7 +2205,8 @@ __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
+ 			largepage_lvl = hardware_largepage_caps(domain, iov_pfn,
+ 					phys_pfn, nr_pages);
+ 
+-			pte = pfn_to_dma_pte(domain, iov_pfn, &largepage_lvl);
++			pte = pfn_to_dma_pte(domain, iov_pfn, &largepage_lvl,
++					     gfp);
+ 			if (!pte)
+ 				return -ENOMEM;
+ 			first_pte = pte;
+@@ -2368,7 +2372,7 @@ static int iommu_domain_identity_map(struct dmar_domain *domain,
+ 
+ 	return __domain_mapping(domain, first_vpfn,
+ 				first_vpfn, last_vpfn - first_vpfn + 1,
+-				DMA_PTE_READ|DMA_PTE_WRITE);
++				DMA_PTE_READ|DMA_PTE_WRITE, GFP_ATOMIC);
+ }
+ 
+ static int md_domain_init(struct dmar_domain *domain, int guest_width);
+@@ -4298,7 +4302,7 @@ static int intel_iommu_map(struct iommu_domain *domain,
+ 	   the low bits of hpa would take us onto the next page */
+ 	size = aligned_nrpages(hpa, size);
+ 	return __domain_mapping(dmar_domain, iova >> VTD_PAGE_SHIFT,
+-				hpa >> VTD_PAGE_SHIFT, size, prot);
++				hpa >> VTD_PAGE_SHIFT, size, prot, gfp);
+ }
+ 
+ static int intel_iommu_map_pages(struct iommu_domain *domain,
+@@ -4333,7 +4337,8 @@ static size_t intel_iommu_unmap(struct iommu_domain *domain,
+ 
+ 	/* Cope with horrid API which requires us to unmap more than the
+ 	   size argument if it happens to be a large-page mapping. */
+-	BUG_ON(!pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level));
++	BUG_ON(!pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level,
++			       GFP_ATOMIC));
+ 
+ 	if (size < VTD_PAGE_SIZE << level_to_offset_bits(level))
+ 		size = VTD_PAGE_SIZE << level_to_offset_bits(level);
+@@ -4392,7 +4397,8 @@ static phys_addr_t intel_iommu_iova_to_phys(struct iommu_domain *domain,
+ 	int level = 0;
+ 	u64 phys = 0;
+ 
+-	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level);
++	pte = pfn_to_dma_pte(dmar_domain, iova >> VTD_PAGE_SHIFT, &level,
++			     GFP_ATOMIC);
+ 	if (pte && dma_pte_present(pte))
+ 		phys = dma_pte_addr(pte) +
+ 			(iova & (BIT_MASK(level_to_offset_bits(level) +
 -- 
 2.39.0
 
