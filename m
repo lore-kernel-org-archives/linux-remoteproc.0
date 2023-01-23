@@ -2,254 +2,86 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E10AC52D11
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 20 Jan 2023 22:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97F9C38142
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 23 Jan 2023 10:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbjATWuH (ORCPT
+        id S231532AbjAWKAW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 20 Jan 2023 17:50:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58470 "EHLO
+        Mon, 23 Jan 2023 05:00:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbjATWuF (ORCPT
+        with ESMTP id S231560AbjAWKAV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 20 Jan 2023 17:50:05 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08B9DF940;
-        Fri, 20 Jan 2023 14:49:14 -0800 (PST)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30KMgexg021199;
-        Fri, 20 Jan 2023 22:47:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=pgm72xy3Fu/eOIqzOX83nJcOfePswS4HnP+yNaRXne0=;
- b=hnb0eIwH13Q/9z265+nOCEqV44dPOxoyf5oiru8UpxNt5lvaTXIuZiu1ocx+wXux54+p
- u4DG3i/2DRYyAEbaJj1ep9fYPfLjqybXNh7gk4DmuSh5UCJPQFSTducg5FgopY1TNtNn
- nmqjYFCgION59iDyI8aSMySRZOK6jPgXgnf1BNslLbXkLXoZE1Ct8VdxGJI39nej7EBc
- hqaueZndC1fVLfMxcUeIrP6iDgTZS9C6ii07fh4G6jI28dB3I8m3XswwMz9QFvO/CPMl
- DxcA6gi9TI1cLi5ZBrBa9bkQ+OGe0W2b+0/GQMnWDfV9WXwPhgymRL5+cBYiNtd0b/+q HA== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3n7593uqya-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Jan 2023 22:47:58 +0000
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30KMlvLG005336
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Jan 2023 22:47:57 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Fri, 20 Jan 2023 14:47:55 -0800
-From:   Elliot Berman <quic_eberman@quicinc.com>
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Alex Elder <elder@linaro.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Srinivas Kandagatla" <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kalle Valo <kvalo@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub Kicinski" <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Elliot Berman <quic_eberman@quicinc.com>,
-        Murali Nalajala <quic_mnalajal@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Srivatsa Vaddagiri" <quic_svaddagi@quicinc.com>,
-        Carl van Schaik <quic_cvanscha@quicinc.com>,
-        Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Bagas Sanjaya" <bagasdotme@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH v9 17/27] firmware: qcom_scm: Use fixed width src vm bitmap
-Date:   Fri, 20 Jan 2023 14:46:16 -0800
-Message-ID: <20230120224627.4053418-18-quic_eberman@quicinc.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230120224627.4053418-1-quic_eberman@quicinc.com>
-References: <20230120224627.4053418-1-quic_eberman@quicinc.com>
+        Mon, 23 Jan 2023 05:00:21 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1F5178A72;
+        Mon, 23 Jan 2023 01:59:53 -0800 (PST)
+Received: from 8bytes.org (p5b006afb.dip0.t-ipconnect.de [91.0.106.251])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id 9A316262C2B;
+        Mon, 23 Jan 2023 10:59:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1674467975;
+        bh=0KQBObUcnpg5GrqXq3hC5RyjGf2zS6TIXg2zcVgFWn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tr3JGNsZMXVI480xgKW5iIBnC2CS9vyEqh9gWSstha079Y/cRMHa9gi+uxnReHb5d
+         fwek2sY7wwUJnFwFFwIvWemH12HdN0YbgdSZ2RWwC0269UqDUwGwB35CRDyXhq60AT
+         USyIwI3wP05/5oGtUOpS94M53A08jNcPckKA5ZXpZIPRaNJ96Q+BFkTkmpgSNGCPm5
+         YogHT95t/tBdYhxC9Y35A2TokJihCUBd4VwOl8Pa35zfKfyCatWPy6AY7P+apvfw5a
+         T/W6TQnG+GLz390G6KRQWUX8KnoKg77Sxn7JUzcugID6/sS1m397rjmidCEXxQK2Lj
+         1j8HX1fY4eNAw==
+Date:   Mon, 23 Jan 2023 10:59:32 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 1/8] iommu: Add a gfp parameter to iommu_map()
+Message-ID: <Y85ahCk3sRTVAU8O@8bytes.org>
+References: <1-v1-6e8b3997c46d+89e-iommu_map_gfp_jgg@nvidia.com>
+ <4fd1b194-29ef-621d-4059-a8336058f217@arm.com>
+ <Y7hZOwerwljDKoQq@nvidia.com>
+ <Y8pd50mdNShTyVRX@8bytes.org>
+ <Y8rVJGyTKAjXjLwV@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Czb8svzwwF-6YkTntGFc2n6bBK9YYHOP
-X-Proofpoint-ORIG-GUID: Czb8svzwwF-6YkTntGFc2n6bBK9YYHOP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-20_11,2023-01-20_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 adultscore=0
- clxscore=1011 impostorscore=0 priorityscore=1501 bulkscore=0
- malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2301200218
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8rVJGyTKAjXjLwV@nvidia.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The maximum VMID for assign_mem is 63. Use a u64 to represent this
-bitmap instead of architecture-dependent "unsigned int" which varies in
-size on 32-bit and 64-bit platforms.
+On Fri, Jan 20, 2023 at 01:53:40PM -0400, Jason Gunthorpe wrote:
+> > Well, having GFP parameters is not a strict kernel convention. There are
+> > places doing it differently and have sleeping and atomic variants of
+> > APIs. I have to say I like the latter more. But given that this leads to
+> > an invasion of API functions here which all do the same under the hood, I
+> > agree it is better to go with a GFP parameter here.
+> 
+> Ok, I think we are done with this series, I'll stick it in linux-next
+> for a bit and send you a PR so the trees stay in sync
 
-Acked-by: Kalle Valo <kvalo@kernel.org> [ath10k]
-Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
----
- drivers/firmware/qcom_scm.c           | 12 +++++++-----
- drivers/misc/fastrpc.c                |  2 +-
- drivers/net/wireless/ath/ath10k/qmi.c |  4 ++--
- drivers/remoteproc/qcom_q6v5_mss.c    |  8 ++++----
- drivers/soc/qcom/rmtfs_mem.c          |  2 +-
- include/linux/qcom_scm.h              |  2 +-
- 6 files changed, 16 insertions(+), 14 deletions(-)
+This series mostly touches parts outside of IOMMUFD, so we should follow
+the process here and let this reach linux-next via the IOMMU tree.
+Please send me a new version and I will put it into a separate branch
+where you can pull it from.
 
-diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-index cdbfe54c8146..92763dce6477 100644
---- a/drivers/firmware/qcom_scm.c
-+++ b/drivers/firmware/qcom_scm.c
-@@ -898,7 +898,7 @@ static int __qcom_scm_assign_mem(struct device *dev, phys_addr_t mem_region,
-  * Return negative errno on failure or 0 on success with @srcvm updated.
-  */
- int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
--			unsigned int *srcvm,
-+			u64 *srcvm,
- 			const struct qcom_scm_vmperm *newvm,
- 			unsigned int dest_cnt)
- {
-@@ -915,9 +915,9 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
- 	__le32 *src;
- 	void *ptr;
- 	int ret, i, b;
--	unsigned long srcvm_bits = *srcvm;
-+	u64 srcvm_bits = *srcvm;
- 
--	src_sz = hweight_long(srcvm_bits) * sizeof(*src);
-+	src_sz = hweight64(srcvm_bits) * sizeof(*src);
- 	mem_to_map_sz = sizeof(*mem_to_map);
- 	dest_sz = dest_cnt * sizeof(*destvm);
- 	ptr_sz = ALIGN(src_sz, SZ_64) + ALIGN(mem_to_map_sz, SZ_64) +
-@@ -930,8 +930,10 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
- 	/* Fill source vmid detail */
- 	src = ptr;
- 	i = 0;
--	for_each_set_bit(b, &srcvm_bits, BITS_PER_LONG)
--		src[i++] = cpu_to_le32(b);
-+	for (b = 0; b < BITS_PER_TYPE(u64); b++) {
-+		if (srcvm_bits & BIT(b))
-+			src[i++] = cpu_to_le32(b);
-+	}
- 
- 	/* Fill details of mem buff to map */
- 	mem_to_map = ptr + ALIGN(src_sz, SZ_64);
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 5310606113fe..67c24b4002b8 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -262,7 +262,7 @@ struct fastrpc_channel_ctx {
- 	int domain_id;
- 	int sesscount;
- 	int vmcount;
--	u32 perms;
-+	u64 perms;
- 	struct qcom_scm_vmperm vmperms[FASTRPC_MAX_VMIDS];
- 	struct rpmsg_device *rpdev;
- 	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
-diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
-index 3f94fbf83702..a8497a6ea03c 100644
---- a/drivers/net/wireless/ath/ath10k/qmi.c
-+++ b/drivers/net/wireless/ath/ath10k/qmi.c
-@@ -33,7 +33,7 @@ static int ath10k_qmi_map_msa_permission(struct ath10k_qmi *qmi,
- {
- 	struct qcom_scm_vmperm dst_perms[3];
- 	struct ath10k *ar = qmi->ar;
--	unsigned int src_perms;
-+	u64 src_perms;
- 	u32 perm_count;
- 	int ret;
- 
-@@ -65,7 +65,7 @@ static int ath10k_qmi_unmap_msa_permission(struct ath10k_qmi *qmi,
- {
- 	struct qcom_scm_vmperm dst_perms;
- 	struct ath10k *ar = qmi->ar;
--	unsigned int src_perms;
-+	u64 src_perms;
- 	int ret;
- 
- 	src_perms = BIT(QCOM_SCM_VMID_MSS_MSA) | BIT(QCOM_SCM_VMID_WLAN);
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index fddb63cffee0..9e8bde7a7ec4 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -227,8 +227,8 @@ struct q6v5 {
- 	bool has_qaccept_regs;
- 	bool has_ext_cntl_regs;
- 	bool has_vq6;
--	int mpss_perm;
--	int mba_perm;
-+	u64 mpss_perm;
-+	u64 mba_perm;
- 	const char *hexagon_mdt_image;
- 	int version;
- };
-@@ -404,7 +404,7 @@ static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
- 	}
- }
- 
--static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
-+static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, u64 *current_perm,
- 				   bool local, bool remote, phys_addr_t addr,
- 				   size_t size)
- {
-@@ -939,7 +939,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
- 	struct page *page;
- 	dma_addr_t phys;
- 	void *metadata;
--	int mdata_perm;
-+	u64 mdata_perm;
- 	int xferop_ret;
- 	size_t size;
- 	void *vaddr;
-diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
-index 0feaae357821..69991e47aa23 100644
---- a/drivers/soc/qcom/rmtfs_mem.c
-+++ b/drivers/soc/qcom/rmtfs_mem.c
-@@ -30,7 +30,7 @@ struct qcom_rmtfs_mem {
- 
- 	unsigned int client_id;
- 
--	unsigned int perms;
-+	u64 perms;
- };
- 
- static ssize_t qcom_rmtfs_mem_show(struct device *dev,
-diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-index f8335644a01a..77f7b5837216 100644
---- a/include/linux/qcom_scm.h
-+++ b/include/linux/qcom_scm.h
-@@ -96,7 +96,7 @@ extern int qcom_scm_mem_protect_video_var(u32 cp_start, u32 cp_size,
- 					  u32 cp_nonpixel_start,
- 					  u32 cp_nonpixel_size);
- extern int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
--			       unsigned int *src,
-+			       u64 *src,
- 			       const struct qcom_scm_vmperm *newvm,
- 			       unsigned int dest_cnt);
- 
--- 
-2.39.0
+Regards,
 
+	Joerg
