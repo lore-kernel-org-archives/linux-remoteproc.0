@@ -2,186 +2,87 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D66AC54E94
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 25 Jan 2023 07:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E585FC27C76
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 25 Jan 2023 10:59:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231563AbjAYHLG (ORCPT
+        id S235092AbjAYK7e (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 25 Jan 2023 02:11:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52964 "EHLO
+        Wed, 25 Jan 2023 05:59:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229783AbjAYHLG (ORCPT
+        with ESMTP id S234182AbjAYK7d (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 25 Jan 2023 02:11:06 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98CA05260;
-        Tue, 24 Jan 2023 23:11:01 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30P5wYg8018646;
-        Wed, 25 Jan 2023 07:10:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=RBqV54Nrv3kEwv1XiZhZaXvmfcZ+NG4YbScD4yT8hfY=;
- b=TPn1qqnRFxfPfz1TlM7g2K1qT46MS3mCAp3/jZ/KsgncT4lju4RmYqPvzlTzx2Qvi1s1
- zbKWCZmwf628mgWa2ZjsCBebAb8EgqOY/dE3DFHUkdRIgIImQaik0yNDsziqKbSXbG/+
- TBUI+YMfJPyMrstLuaT3nks09MhRyVaUt5UGgt2SY/S/nrfElDXSJXbHDkTU3xwFF28/
- AwLPgaaVaw4lu0ZcO/LYo4K1uVFTkp3oJC2BahvjTy8dQZGErVCMOxB99u+daTH2HRja
- BIBpv77aDGT6CYUUVawODdwCLsHb7ZerXJ1Jgr8xJv5Rw+ZEyad75TOl9GieCMY9f4Bd Ig== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3napvhgqv2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Jan 2023 07:10:57 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30P7AuLI010384
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Jan 2023 07:10:56 GMT
-Received: from [10.110.119.13] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 24 Jan
- 2023 23:10:56 -0800
-Message-ID: <6289c682-d5e0-8871-36a2-f9a02d98829d@quicinc.com>
-Date:   Tue, 24 Jan 2023 23:10:55 -0800
+        Wed, 25 Jan 2023 05:59:33 -0500
+Received: from mail.8bytes.org (mail.8bytes.org [IPv6:2a01:238:42d9:3f00:e505:6202:4f0c:f051])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0343839B95;
+        Wed, 25 Jan 2023 02:59:30 -0800 (PST)
+Received: from 8bytes.org (p200300c27714bc0086ad4f9d2505dd0d.dip0.t-ipconnect.de [IPv6:2003:c2:7714:bc00:86ad:4f9d:2505:dd0d])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.8bytes.org (Postfix) with ESMTPSA id EA1A7262E65;
+        Wed, 25 Jan 2023 11:59:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+        s=default; t=1674644369;
+        bh=T38KYBmqOO/YysbFxidRcHI2EqxeKT2mSwZbXhYqf1E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xjLIYBe2Reb4sUbyDIO/QWp7US6P8C31V+nRPiKC12bUvIf7ZM2sEz6rexMly82MG
+         SdqC2ipNyx624847dznAPsTr5JegX+avBcrYfRuhpCCtUCj00j5UMMKFv2s5yqcp78
+         M0y7wdWzVXQ3svUwvlcuJMoxQJuspChvYRhYbBD4VgYfSxytDzzifVhHBhI3LbACxs
+         T3fe0NZnfc4OI4+mzTVEq4TCO9vBUsWz4/KYFySgVFLjFM48o+FEL/Pas2FYAxM+s5
+         h6WCzD311EPYK4UyWDMAMAz7XrOhVE163Ksfw3L/LtMiYeejlNUntipX85M2JSVOt+
+         8KBgiGtflHGcg==
+Date:   Wed, 25 Jan 2023 11:59:27 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Kevin Tian <kevin.tian@intel.com>,
+        Matthew Rosato <mjrosato@linux.ibm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        ath10k@lists.infradead.org, ath11k@lists.infradead.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, nouveau@lists.freedesktop.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v3 00/10] Let iommufd charge IOPTE allocations to the
+ memory cgroup
+Message-ID: <Y9ELj1yKsE58mlgi@8bytes.org>
+References: <0-v3-76b587fe28df+6e3-iommu_map_gfp_jgg@nvidia.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.2
-Subject: Re: [PATCH 3/6] rpmsg: glink: rpm: Wrap driver context
-Content-Language: en-US
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230109224001.1706516-1-quic_bjorande@quicinc.com>
- <20230109224001.1706516-4-quic_bjorande@quicinc.com>
-From:   Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20230109224001.1706516-4-quic_bjorande@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -HQpqmMNeT3IMh7e-5SX6wsEx7u13S08
-X-Proofpoint-ORIG-GUID: -HQpqmMNeT3IMh7e-5SX6wsEx7u13S08
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-25_03,2023-01-24_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
- adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301250065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0-v3-76b587fe28df+6e3-iommu_map_gfp_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Mon, Jan 23, 2023 at 04:35:53PM -0400, Jason Gunthorpe wrote:
+> Jason Gunthorpe (10):
+>   iommu: Add a gfp parameter to iommu_map()
+>   iommu: Remove iommu_map_atomic()
+>   iommu: Add a gfp parameter to iommu_map_sg()
+>   iommu/dma: Use the gfp parameter in __iommu_dma_alloc_noncontiguous()
+>   iommufd: Use GFP_KERNEL_ACCOUNT for iommu_map()
+>   iommu/intel: Add a gfp parameter to alloc_pgtable_page()
+>   iommu/intel: Support the gfp argument to the map_pages op
+>   iommu/intel: Use GFP_KERNEL in sleepable contexts
+>   iommu/s390: Push the gfp parameter to the kmem_cache_alloc()'s
+>   iommu/s390: Use GFP_KERNEL in sleepable contexts
 
+Merged into branch iommu-memory-accounting and merged that branch into
+core.
 
-On 1/9/2023 2:39 PM, Bjorn Andersson wrote:
-> As with the SMEM driver update, wrap the RPM context in a struct to
-> facilitate the upcoming changes of moving IRQ and mailbox registration
-> to the driver.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
+The merge commit contains your cover-letter descriptions. Given all
+tests pass I will push it out later today.
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+Regards,
 
->   drivers/rpmsg/qcom_glink_rpm.c | 44 ++++++++++++++++++++--------------
->   1 file changed, 26 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-> index f64f45d1a735..6443843df6ca 100644
-> --- a/drivers/rpmsg/qcom_glink_rpm.c
-> +++ b/drivers/rpmsg/qcom_glink_rpm.c
-> @@ -53,6 +53,13 @@ struct glink_rpm_pipe {
->   	void __iomem *fifo;
->   };
->   
-> +struct glink_rpm {
-> +	struct qcom_glink *glink;
-> +
-> +	struct glink_rpm_pipe rx_pipe;
-> +	struct glink_rpm_pipe tx_pipe;
-> +};
-> +
->   static size_t glink_rpm_rx_avail(struct qcom_glink_pipe *glink_pipe)
->   {
->   	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
-> @@ -257,8 +264,7 @@ static int glink_rpm_parse_toc(struct device *dev,
->   static int glink_rpm_probe(struct platform_device *pdev)
->   {
->   	struct qcom_glink *glink;
-> -	struct glink_rpm_pipe *rx_pipe;
-> -	struct glink_rpm_pipe *tx_pipe;
-> +	struct glink_rpm *rpm;
->   	struct device_node *np;
->   	void __iomem *msg_ram;
->   	size_t msg_ram_size;
-> @@ -266,9 +272,8 @@ static int glink_rpm_probe(struct platform_device *pdev)
->   	struct resource r;
->   	int ret;
->   
-> -	rx_pipe = devm_kzalloc(&pdev->dev, sizeof(*rx_pipe), GFP_KERNEL);
-> -	tx_pipe = devm_kzalloc(&pdev->dev, sizeof(*tx_pipe), GFP_KERNEL);
-> -	if (!rx_pipe || !tx_pipe)
-> +	rpm = devm_kzalloc(&pdev->dev, sizeof(*rpm), GFP_KERNEL);
-> +	if (!rpm)
->   		return -ENOMEM;
->   
->   	np = of_parse_phandle(dev->of_node, "qcom,rpm-msg-ram", 0);
-> @@ -283,36 +288,39 @@ static int glink_rpm_probe(struct platform_device *pdev)
->   		return -ENOMEM;
->   
->   	ret = glink_rpm_parse_toc(dev, msg_ram, msg_ram_size,
-> -				  rx_pipe, tx_pipe);
-> +				  &rpm->rx_pipe, &rpm->tx_pipe);
->   	if (ret)
->   		return ret;
->   
->   	/* Pipe specific accessors */
-> -	rx_pipe->native.avail = glink_rpm_rx_avail;
-> -	rx_pipe->native.peak = glink_rpm_rx_peak;
-> -	rx_pipe->native.advance = glink_rpm_rx_advance;
-> -	tx_pipe->native.avail = glink_rpm_tx_avail;
-> -	tx_pipe->native.write = glink_rpm_tx_write;
-> +	rpm->rx_pipe.native.avail = glink_rpm_rx_avail;
-> +	rpm->rx_pipe.native.peak = glink_rpm_rx_peak;
-> +	rpm->rx_pipe.native.advance = glink_rpm_rx_advance;
-> +	rpm->tx_pipe.native.avail = glink_rpm_tx_avail;
-> +	rpm->tx_pipe.native.write = glink_rpm_tx_write;
->   
-> -	writel(0, tx_pipe->head);
-> -	writel(0, rx_pipe->tail);
-> +	writel(0, rpm->tx_pipe.head);
-> +	writel(0, rpm->rx_pipe.tail);
->   
-> -	glink = qcom_glink_native_probe(&pdev->dev,
-> +	glink = qcom_glink_native_probe(dev,
->   					0,
-> -					&rx_pipe->native,
-> -					&tx_pipe->native,
-> +					&rpm->rx_pipe.native,
-> +					&rpm->tx_pipe.native,
->   					true);
->   	if (IS_ERR(glink))
->   		return PTR_ERR(glink);
->   
-> -	platform_set_drvdata(pdev, glink);
-> +	rpm->glink = glink;
-> +
-> +	platform_set_drvdata(pdev, rpm);
->   
->   	return 0;
->   }
->   
->   static int glink_rpm_remove(struct platform_device *pdev)
->   {
-> -	struct qcom_glink *glink = platform_get_drvdata(pdev);
-> +	struct glink_rpm *rpm = platform_get_drvdata(pdev);
-> +	struct qcom_glink *glink = rpm->glink;
->   
->   	qcom_glink_native_remove(glink);
->   
+	Joerg
