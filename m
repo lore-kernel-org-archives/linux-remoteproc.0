@@ -2,114 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047ADC54EAA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 27 Jan 2023 11:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6480BC38142
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 27 Jan 2023 14:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232303AbjA0LDM (ORCPT
+        id S231404AbjA0ONI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 27 Jan 2023 06:03:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45258 "EHLO
+        Fri, 27 Jan 2023 09:13:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231579AbjA0LDL (ORCPT
+        with ESMTP id S234018AbjA0OND (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 27 Jan 2023 06:03:11 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 838994F353
-        for <linux-remoteproc@vger.kernel.org>; Fri, 27 Jan 2023 03:03:08 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id d14so4613877wrr.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 27 Jan 2023 03:03:08 -0800 (PST)
+        Fri, 27 Jan 2023 09:13:03 -0500
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6B47376A;
+        Fri, 27 Jan 2023 06:13:02 -0800 (PST)
+Received: by mail-ed1-x534.google.com with SMTP id z11so4865907ede.1;
+        Fri, 27 Jan 2023 06:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6WecBPN5Z8fIrzgNM6687sCUjCeNc3gPd9HUiHww7Wk=;
-        b=OBf+O2j/9x9He+KEFDkRIkjuVrzJXuxA4H3bMwqUDxkjdcmPMZfFo/EPdCiuJ0RJGf
-         4WqNjLFcv3q3LuZ3eILsP5MSYMWCoHE0n5SjthGN1+PEbMbXKOA0Gn40GyEJWWkeGoZ9
-         cKqgHqtr0lj3Rl+b9xaP2a4TWfCl7TUoroOKPg93PC3K1UmVXKw1Naf+ESEtFADVjcuC
-         ycmjIZs8Gaa5hQjiAcO76hgURMfYFRcVNjvCga2MNz1gQNSmYoPs3eKHjuMEChLhZNmX
-         QKK4K+FM8h6QCV+ApeE/JY3jZoI5AsRJ9gLaQ+HIIW8+DIMR/b7Uj6Qg/ExXFcBPpZjs
-         eDsg==
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RpJCF71ARWA/yf7MzaIgSXT0iJjBQSiN6LodGI6rwAA=;
+        b=bWa2YUKQNMGXcuVXkuL3Jnc1Z9G/nb/kqFBg8e4HC+T6HBjLglQ0GuTDCy+Gjc+Q0u
+         dcxgFZT9clLO7NQPxvvsFN/6+XQf38kVIkAXZb0kkMB0m1mBqV0/KUR2wwovN3ClOQer
+         Nk7C/SVY2OwgixcDi+zazyzgYodzboeuJ/E2oYbBooRq0eGfKwDU/5aYjU25Aysei08A
+         Z/V8GOIxeEdCgwmz23+TQ/vAz9WLOfA5HUYXtE3yNixzdTw38aKuuH5KCLfC4dV1TZLw
+         Bc+B46m9kdoxpijKJYFDXPn6x+hItJsglS3ek4TkRn6JOqITZC8oIkE9x3LxXMt8CLKz
+         Am+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6WecBPN5Z8fIrzgNM6687sCUjCeNc3gPd9HUiHww7Wk=;
-        b=uC33undCDYqikzd4aYUUsYJdN3Y5ZLxxW04PwECZhMejD/LpVU54jB3selw3al9e5U
-         ES0m/yUWz5cR2XmLjYEqiOAAzlgguWMY8Mm0ArpWILqB1Fu5ke+Dto75WI3CQkkadsUQ
-         BXAP+SAiBuojNmZeXRc1uutpdrRL7q9DcumBughu9wfBkJp7rOav4+e8dLBQg8CUz+rb
-         IZIC/c824OE8NIJHN8UeKKEqLLM34ksqFRBsizZwyWUE4SWET4vyjI3l35rC3VNbHw0e
-         qpGcWYi2BRXFaQJ0hl5sMAdt2GLWt23ehBOWBlFx22ILLXkS2CNkacCbOzkKphcX795x
-         8Bew==
-X-Gm-Message-State: AFqh2kqJwUiMuFCBlO29C9bqGH21uMTQ1CNLMrg8ZIxgA6/ycqBQ+5u6
-        KGmaADDc8AJqPOJ/9Mdp7Qnulw==
-X-Google-Smtp-Source: AMrXdXv1lUyHNCHx29DyxMxXVX+IbwzXZxWV8IkNWDcUSyNoeC1L0J8VhZEhpvrzdFiL8GYHKEc0Pw==
-X-Received: by 2002:a05:6000:4f:b0:2bf:94c3:19ac with SMTP id k15-20020a056000004f00b002bf94c319acmr21429083wrx.31.1674817387043;
-        Fri, 27 Jan 2023 03:03:07 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id e10-20020a5d500a000000b002be0b1e556esm3674567wrt.59.2023.01.27.03.03.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Jan 2023 03:03:06 -0800 (PST)
-Message-ID: <795b6ac2-9745-7992-566e-950037e622e4@linaro.org>
-Date:   Fri, 27 Jan 2023 12:03:04 +0100
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RpJCF71ARWA/yf7MzaIgSXT0iJjBQSiN6LodGI6rwAA=;
+        b=uoD1JiD5XkWtwA5eq6xSsO9mMQRM96LcEuHWEel8VBnXlAksGYSbSFZWif7w4EzBVg
+         esv0eq6wUypWYeRvmOelWD5DPauFPdzyxXgEzjtVkk0wpm4rM+1jpBtshCe58o7spt7L
+         oufYSosKve/TcIENFVSRO7tInpMUeh4Xy1jntc0yZ6G7SBnWJxVNVN77FueE+/BM4UP5
+         FZI8OqacgrINBLsqCFPWmXU2b6Nv7eqxTNtQxIwtLTI/ymCfWTEGByQM8wJv27CMkhyk
+         sIdvMEdTZjDIvpd2LhJDXVP7cyYJL64Kjdy2DcfYJ+FoDNJkyIRPFGu37e05ffgMSRJh
+         qrdA==
+X-Gm-Message-State: AO0yUKVHr8oj0AlfzHABaPUB8Yn7Vobc8fJ5mc8/9xMOclBtmjvmhGKm
+        fFW4xybSlTGfqc15XisSmGXuOBuDiXTtgrw3P9o=
+X-Google-Smtp-Source: AK7set8W52mQo3SejTyD7HLfhbgO9s38gopDG87i63d5LRiPYavANgiN55NvvJUs89Rl10+/kTsijANBiyfdE0k8Chk=
+X-Received: by 2002:a05:6402:175c:b0:4a0:8f64:cddc with SMTP id
+ v28-20020a056402175c00b004a08f64cddcmr2903568edx.58.1674828780914; Fri, 27
+ Jan 2023 06:13:00 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH v4 0/5] remoteproc: qcom_q6v5_pas: add support for SM8550
- adsp, cdsp & mpss
-Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>, agross@kernel.org,
-        robh+dt@kernel.org, neil.armstrong@linaro.org, mani@kernel.org,
-        srinivas.kandagatla@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        amahesh@qti.qualcomm.com, mathieu.poirier@linaro.org,
-        konrad.dybcio@somainline.org
-Cc:     linux-arm-msm@vger.kernel.org, elder@linaro.org,
-        abel.vesa@linaro.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20221114-narmstrong-sm8550-upstream-remoteproc-v4-0-54154c08c0b7@linaro.org>
- <167406406337.2924867.12230424280288709048.b4-ty@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <167406406337.2924867.12230424280288709048.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230125110100.14647-1-iuliana.prodan@oss.nxp.com> <20230126224905.GA4020499@p14s>
+In-Reply-To: <20230126224905.GA4020499@p14s>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Fri, 27 Jan 2023 16:12:48 +0200
+Message-ID: <CAEnQRZDOvcnr0NtJJp40DvTsUggmmPd3UsVramWxwj35OYfR6g@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: add custom memory copy
+ implementation for i.MX DSP Cores
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Paul Olaru <paul.olaru@nxp.com>,
+        Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 18/01/2023 18:47, Bjorn Andersson wrote:
-> On Wed, 18 Jan 2023 17:22:39 +0100, Neil Armstrong wrote:
->> This patchsets adds support for the aDSP, cDSP and MPSS found in the
->> SM8550 SoC.
->>
->> The aDSP, cDSP and MPSS boot process on SM8550 now requires a secondary
->> "Devicetree" firmware to be passed along the main Firmware, and the cDSP
->> a new power domain named "NSP".
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/5] dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common
->       commit: cee616c6884616aea3be72a9debafd0614332682
-> [2/5] dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp, cdsp & mpss compatible
->       commit: 084258d607128a7486311daf5e67ca414ee07cc9
-> [3/5] remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading
->       commit: 29814986b82e820ae9d3eb7474cdcf66605bd114
-> [4/5] remoteproc: qcom_q6v5_pas: add support for assigning memory to firmware
->       commit: c63c0a7cab91b930a6ee78c28b481b84bfa98b7f
-> [5/5] remoteproc: qcom_q6v5_pas: add sm8550 adsp, cdsp & mpss c
+<snip>
 
+>
+> This patchset from last year[1] goes to great length to avoid using a driver
+> specific function and now you are trying to bring that back...  So how was it
+> working before and why are things broken now?  Moreover, function
+> rproc_elf_load_segments() deals with situations where the memory slot is bigger
+> than the file size[2], which is omitted here.
 
-The bindings were not tested against their own DTS:
+As I mentioned in [1] the problem was and it is still there if an elf
+section has a size which
+is not a multiple of 4.
 
-sm8550-mtp.dtb: remoteproc@32300000: power-domain-names: ['cx', 'mxc',
-'nsp'] is too long
+And we do notice this when compiling Sound Open Firmware and loading
+it via rproc interface.
 
-so now it throws fresh warnings... I don't know what is wrong here -
-either DTS or the bindings - but they probably were never used together.
+This is a hardware limitation! And we need to address it. The
+limitation happens for IRAM address range
+of HIFI4 DSP integration with I.MX.
 
+Some call it a limitation, others call it an optimization. Either way
+we need to avoid crashing the kernel.
 
-Best regards,
-Krzysztof
+We have two options:
 
+1) Fully address it in rproc driver (like the present patch).
+2) Partially address it in rproc driver (by returning an error for
+section with wrong sizes) and then
+making all linker scripts to force elf sections to be a multiple of 4.
+
+I would go for option 1) even if we go back to use our custom `load` function.
