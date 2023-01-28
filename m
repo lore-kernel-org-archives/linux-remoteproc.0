@@ -2,92 +2,104 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522AAC38142
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 28 Jan 2023 10:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4655AC27C76
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 28 Jan 2023 14:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233971AbjA1KVt (ORCPT
+        id S234389AbjA1OUp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 28 Jan 2023 05:21:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39364 "EHLO
+        Sat, 28 Jan 2023 09:20:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233018AbjA1KVs (ORCPT
+        with ESMTP id S233962AbjA1OUo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 28 Jan 2023 05:21:48 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBAA972AE
-        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Jan 2023 02:21:46 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id m7so7049154wru.8
-        for <linux-remoteproc@vger.kernel.org>; Sat, 28 Jan 2023 02:21:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KyK61PIIynqyzfMBCuw7rB8JAyotjQ6xTZX0sXTvwv4=;
-        b=aKI/K7Rv941xqFlZ19JayXGiBsYMAlSpyJe9VmKmlpQNAInd1AjU1VlLuYYmCym/b5
-         n7FEjWHH1hzLXKNB4BGFKA950L3HNQco+O0B7TmUI8zQSOmeXc8895k41hLsrQU34krD
-         khQt2o05MdDWqYHgeanECTDWS1akJMh0GPMFDAix8uf09zGnk1YFW4+UcQcLGWil3B95
-         nC9Piu/KtnLRVm5fPvqTXf+64WaBSiQHc56ti19SrN2IPRE5h+gPuYi/ELXRU5+LVIPx
-         yCP87txSIyvuPME3WExIWG/TkRzoVAhMc0ZsGCbDp1NVuQp/ErSKcOZjFvIuWdN0lqXE
-         hqUw==
+        Sat, 28 Jan 2023 09:20:44 -0500
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D6A424105;
+        Sat, 28 Jan 2023 06:20:43 -0800 (PST)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-12c8312131fso10038856fac.4;
+        Sat, 28 Jan 2023 06:20:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KyK61PIIynqyzfMBCuw7rB8JAyotjQ6xTZX0sXTvwv4=;
-        b=c6DpVmCItHyQEjawf9BryqzjFZgrZgK5m0ZsuYFfQtkjUxA8evleCnwvUHm7e/BsIR
-         aUj1zgBxAoh8ybOkMaO4U6xX80Evuz3s66CJ8j9hNCGykPH3Tm8r6pu5LwOfOWJRl6Dm
-         NLzZEAsod8G+H3dQE4iVblYGsepraPf76StQKgXZwLTaiMEAMMZf1dDzVs3i7qd3Kzdw
-         Ok1hPjbHP3HAH0PQ5V/8Es5D6JTc6gE/PwvcMkQcNQjD4IYx5XJ5sv2fP3+TD12EcUP6
-         kdE9pLpn5f07+mxEMity+A0jHfu08qhrdLhYgsyKWnPyCcjlD9VjFYxRZUDinePyf/yL
-         fNrQ==
-X-Gm-Message-State: AO0yUKULYFGTIprYXiSUXdgwymi+Qs+aU3hZkmWa1VUOYU5trjX3JjH8
-        sApA15h8jhGinBgQ8ktirPlkWQ==
-X-Google-Smtp-Source: AK7set//WJfcsdQmnDUXUYzjIqHvzDXemfS6nhNxgE7JDvSqI2eYOResaLvFmYGXsKvGS1vDDCYfKQ==
-X-Received: by 2002:a05:6000:1814:b0:2bf:c851:bf8c with SMTP id m20-20020a056000181400b002bfc851bf8cmr8363720wrh.48.1674901305408;
-        Sat, 28 Jan 2023 02:21:45 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id p17-20020a056000019100b002bddaea7a0bsm6148579wrx.57.2023.01.28.02.21.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Jan 2023 02:21:45 -0800 (PST)
-Message-ID: <3ecfbb0a-6c24-6d72-f9f7-5c9dc4a080b4@linaro.org>
-Date:   Sat, 28 Jan 2023 11:21:43 +0100
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=U1l2mLLlYbX5FcvROmBDp2G5YK69Z7RGJjObdICpK6U=;
+        b=UmS7JAaMsaaOzBoPQup43DzerNiBxnVTe+8Ohbli46rziklAwUW5cgbO2H8ucYnP0w
+         72wP4RY8F8FKIbYsNqWqXJmGmqkqN8E7zx1Kpe5i7p+rsKNLnaaiAQgh8GwYBcWYSWi7
+         onTR6AzMcU6jTJGyjC+hB0rPgz3tkcwX+S0mCig75grhZf++UHJREj2PvsttCYOmBvY3
+         qj8Kw8mbFXu2Kzd6eJ5oZ+48aU0BXr74/zY8m0RB7DuMLkSayU5Jau6B0khS3wnLQb9T
+         f9YflkelF7EymagO6Ls0+HtwBHd8bJ7NIeywpUIaaiUEFjoa3LVBk5cyTxOCeG2O535X
+         GzvQ==
+X-Gm-Message-State: AO0yUKUY8dyvofrVg9VB9xn5yLo2pLNiqsIxSyeMZZz9F8DDchzsJbyu
+        u9tvfq2nnU5FU50etO5oNQ==
+X-Google-Smtp-Source: AK7set9snY+ZQB5PPhgta+nT8AEZXDh26Q1FH5AQJm9pwv4Wt6Jc8SYXcZ2lKHyDq8Xg+tmvF9HQvg==
+X-Received: by 2002:a05:6870:f687:b0:160:30d2:e937 with SMTP id el7-20020a056870f68700b0016030d2e937mr10683340oab.32.1674915642187;
+        Sat, 28 Jan 2023 06:20:42 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id fr15-20020a056870f80f00b0013bc95650c8sm3102868oab.54.2023.01.28.06.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Jan 2023 06:20:41 -0800 (PST)
+Received: (nullmailer pid 2366813 invoked by uid 1000);
+        Sat, 28 Jan 2023 14:20:40 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 2/2] dt-bindings: remoteproc: qcom: Add sm6115 pas yaml
- file
-Content-Language: en-US
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     mani@kernel.org, mathieu.poirier@linaro.org, agross@kernel.org,
+From:   Rob Herring <robh@kernel.org>
+To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org, bhupesh.linux@gmail.com,
+        agross@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mathieu.poirier@linaro.org, mani@kernel.org, robh+dt@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+In-Reply-To: <20230128053504.2099620-2-bhupesh.sharma@linaro.org>
 References: <20230128053504.2099620-1-bhupesh.sharma@linaro.org>
  <20230128053504.2099620-2-bhupesh.sharma@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230128053504.2099620-2-bhupesh.sharma@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <167491555142.2364868.11831106421472878617.robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: remoteproc: qcom: Add sm6115 pas yaml file
+Date:   Sat, 28 Jan 2023 08:20:40 -0600
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 28/01/2023 06:35, Bhupesh Sharma wrote:
+
+On Sat, 28 Jan 2023 11:05:04 +0530, Bhupesh Sharma wrote:
 > This documents the aDSP, cDSP and MPSS DSPs present
 > on the SM6115 SoC.
+> 
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> ---
+>  .../bindings/remoteproc/qcom,sm6115-pas.yaml  | 143 ++++++++++++++++++
+>  1 file changed, 143 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+> 
 
-This should be patch #1 - before you start using compatibles.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-Subject: drop second/last, redundant "yaml file". The "dt-bindings"
-prefix is already stating that these are bindings and their expected format.
+yamllint warnings/errors:
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+dtschema/dtc warnings/errors:
+./Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,pas-common.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.example.dtb: remoteproc@ab00000: False schema does not allow {'compatible': ['qcom,sm6115-adsp-pas'], 'reg': [[179306496, 256]], 'clocks': [[4294967295, 0]], 'clock-names': ['xo'], 'firmware-name': ['qcom/sm6115/adsp.mdt'], 'interrupts-extended': [[4294967295, 0, 282, 1], [4294967295, 0, 1], [4294967295, 1, 1], [4294967295, 2, 1], [4294967295, 3, 1]], 'interrupt-names': ['wdog', 'fatal', 'ready', 'handover', 'stop-ack'], 'memory-region': [[4294967295]], 'power-domains': [[4294967295, 6], [4294967295, 7]], 'qcom,smem-states': [[4294967295, 0]], 'qcom,smem-state-names': ['stop'], 'glink-edge': {'interrupts': [[0, 277, 1]], 'label': ['lpass'], 'qcom,remote-pid': [[2]], 'mboxes': [[4294967295, 8]]}, '$nodename': ['remoteproc@ab00000']}
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.example.dtb: remoteproc@ab00000: Unevaluated properties are not allowed ('glink-edge', 'qcom,smem-state-names', 'qcom,smem-states' were unexpected)
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
 
+doc reference errors (make refcheckdocs):
 
-Best regards,
-Krzysztof
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230128053504.2099620-2-bhupesh.sharma@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
