@@ -2,106 +2,96 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6480BC38142
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 27 Jan 2023 14:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EBCC61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 28 Jan 2023 05:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231404AbjA0ONI (ORCPT
+        id S229712AbjA1Ff2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 27 Jan 2023 09:13:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57434 "EHLO
+        Sat, 28 Jan 2023 00:35:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234018AbjA0OND (ORCPT
+        with ESMTP id S231563AbjA1Ff2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 27 Jan 2023 09:13:03 -0500
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D6B47376A;
-        Fri, 27 Jan 2023 06:13:02 -0800 (PST)
-Received: by mail-ed1-x534.google.com with SMTP id z11so4865907ede.1;
-        Fri, 27 Jan 2023 06:13:02 -0800 (PST)
+        Sat, 28 Jan 2023 00:35:28 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E797AE74
+        for <linux-remoteproc@vger.kernel.org>; Fri, 27 Jan 2023 21:35:26 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id lp10so6541327pjb.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 27 Jan 2023 21:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpJCF71ARWA/yf7MzaIgSXT0iJjBQSiN6LodGI6rwAA=;
-        b=bWa2YUKQNMGXcuVXkuL3Jnc1Z9G/nb/kqFBg8e4HC+T6HBjLglQ0GuTDCy+Gjc+Q0u
-         dcxgFZT9clLO7NQPxvvsFN/6+XQf38kVIkAXZb0kkMB0m1mBqV0/KUR2wwovN3ClOQer
-         Nk7C/SVY2OwgixcDi+zazyzgYodzboeuJ/E2oYbBooRq0eGfKwDU/5aYjU25Aysei08A
-         Z/V8GOIxeEdCgwmz23+TQ/vAz9WLOfA5HUYXtE3yNixzdTw38aKuuH5KCLfC4dV1TZLw
-         Bc+B46m9kdoxpijKJYFDXPn6x+hItJsglS3ek4TkRn6JOqITZC8oIkE9x3LxXMt8CLKz
-         Am+g==
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NNHRpc9kf9/6kdgtzVSDtrmKb3BBPZiSyauIlTgUR/g=;
+        b=DTon+Ap5C4a/ZEInyw+981CO4aFtLOxviGlg/0WzeLvABXVv1YyQ6CFGVvTJLTJ/up
+         0SL4TIAB0uQ/YDQudC+8/5JjyKP55wUwZr0QS7CIKY7THHGQiByaf8O2cG8uZ4yLFj5H
+         MQNelhjx1dN1ojnv8KXKC14FQo6gadyaDzyHAMCWu2j0Vpz6akV76aMOgzDQ+9RzjMzv
+         ulsJqnIojmnmkQmibEqxZDQ3qguMqXudiJggjyKDV65u3hQsZLY8IeJYUGXwGWNGNygh
+         bSyZ25+aVw8EtazqfvxAUlT++s8Dq74A1KGF78i6j7wtz42xL6X53X8quG0NsIIt2qyf
+         7PHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RpJCF71ARWA/yf7MzaIgSXT0iJjBQSiN6LodGI6rwAA=;
-        b=uoD1JiD5XkWtwA5eq6xSsO9mMQRM96LcEuHWEel8VBnXlAksGYSbSFZWif7w4EzBVg
-         esv0eq6wUypWYeRvmOelWD5DPauFPdzyxXgEzjtVkk0wpm4rM+1jpBtshCe58o7spt7L
-         oufYSosKve/TcIENFVSRO7tInpMUeh4Xy1jntc0yZ6G7SBnWJxVNVN77FueE+/BM4UP5
-         FZI8OqacgrINBLsqCFPWmXU2b6Nv7eqxTNtQxIwtLTI/ymCfWTEGByQM8wJv27CMkhyk
-         sIdvMEdTZjDIvpd2LhJDXVP7cyYJL64Kjdy2DcfYJ+FoDNJkyIRPFGu37e05ffgMSRJh
-         qrdA==
-X-Gm-Message-State: AO0yUKVHr8oj0AlfzHABaPUB8Yn7Vobc8fJ5mc8/9xMOclBtmjvmhGKm
-        fFW4xybSlTGfqc15XisSmGXuOBuDiXTtgrw3P9o=
-X-Google-Smtp-Source: AK7set8W52mQo3SejTyD7HLfhbgO9s38gopDG87i63d5LRiPYavANgiN55NvvJUs89Rl10+/kTsijANBiyfdE0k8Chk=
-X-Received: by 2002:a05:6402:175c:b0:4a0:8f64:cddc with SMTP id
- v28-20020a056402175c00b004a08f64cddcmr2903568edx.58.1674828780914; Fri, 27
- Jan 2023 06:13:00 -0800 (PST)
+        bh=NNHRpc9kf9/6kdgtzVSDtrmKb3BBPZiSyauIlTgUR/g=;
+        b=K96Vgno2cB9LaTuWWixINKRPYJnQUl+thup/n+9w4/CLMTZ8TvdHozUm3L6oDKrXwU
+         nntmZBnKBGYtd1zZ3Y0wjAByhdhtCDH0zevAPoCtx0TaUYCWsh7YybgDHciB0nIXqDQl
+         0jTL7aA/Gaec36JPj/9l43TV0Z/IoaN2FStOrhVsPBBIstNzbbPDP0nQGwBsqBN2Q57D
+         0qgGUtNcHKgpyXtBe5VC84Z67Exvg4TtrUudOzpQv/GPvwcck2RT/sWkRE+7/B0mmn5g
+         aFs3i+SPVoD9QaYOe/ojDgFjKfONllNnRixLtsSjNtnEKBfhTfAeI/fscL53Uhzb8EvB
+         i+PA==
+X-Gm-Message-State: AO0yUKWSRgPv6cPX/SfZMOLAAadjyhPakEfuzCY/oX6NrH4x0o66zRrL
+        JTL6gqZiUkgOrzAHHKoNqjSK3q4tNMGFo3ce
+X-Google-Smtp-Source: AK7set/+b+nUnrATMl0IfNK7E8wSsKjtGZxc41xjlUwaDohKkimv0iLiwT7nDf78J1Gd4rQR4v2bhA==
+X-Received: by 2002:a17:902:d4d1:b0:193:a5b:ccf6 with SMTP id o17-20020a170902d4d100b001930a5bccf6mr1215108plg.0.1674884125337;
+        Fri, 27 Jan 2023 21:35:25 -0800 (PST)
+Received: from localhost.localdomain ([223.233.74.24])
+        by smtp.gmail.com with ESMTPSA id p15-20020a170902a40f00b00195e77c20a9sm3726841plq.163.2023.01.27.21.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Jan 2023 21:35:24 -0800 (PST)
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+To:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     mani@kernel.org, mathieu.poirier@linaro.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bhupesh.linux@gmail.com, bhupesh.sharma@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Subject: [PATCH 1/2] remoteproc: qcom: pas: Add sm6115 remoteprocs
+Date:   Sat, 28 Jan 2023 11:05:03 +0530
+Message-Id: <20230128053504.2099620-1-bhupesh.sharma@linaro.org>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-References: <20230125110100.14647-1-iuliana.prodan@oss.nxp.com> <20230126224905.GA4020499@p14s>
-In-Reply-To: <20230126224905.GA4020499@p14s>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Fri, 27 Jan 2023 16:12:48 +0200
-Message-ID: <CAEnQRZDOvcnr0NtJJp40DvTsUggmmPd3UsVramWxwj35OYfR6g@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: add custom memory copy
- implementation for i.MX DSP Cores
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Paul Olaru <paul.olaru@nxp.com>,
-        Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-<snip>
+Among the subsystems in the Qualcomm sm6115 platform we find
+audio, compute and modem DSPs.
 
->
-> This patchset from last year[1] goes to great length to avoid using a driver
-> specific function and now you are trying to bring that back...  So how was it
-> working before and why are things broken now?  Moreover, function
-> rproc_elf_load_segments() deals with situations where the memory slot is bigger
-> than the file size[2], which is omitted here.
+Add support for controlling these using the peripheral
+authentication service (PAS) remoteproc driver.
 
-As I mentioned in [1] the problem was and it is still there if an elf
-section has a size which
-is not a multiple of 4.
+Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-And we do notice this when compiling Sound Open Firmware and loading
-it via rproc interface.
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 4e1d9b08def4..9eb5a92bf5f6 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1184,6 +1184,9 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
+ 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
+ 	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
++	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
++	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
++	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource},
+ 	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
+ 	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
+ 	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
+-- 
+2.38.1
 
-This is a hardware limitation! And we need to address it. The
-limitation happens for IRAM address range
-of HIFI4 DSP integration with I.MX.
-
-Some call it a limitation, others call it an optimization. Either way
-we need to avoid crashing the kernel.
-
-We have two options:
-
-1) Fully address it in rproc driver (like the present patch).
-2) Partially address it in rproc driver (by returning an error for
-section with wrong sizes) and then
-making all linker scripts to force elf sections to be a multiple of 4.
-
-I would go for option 1) even if we go back to use our custom `load` function.
