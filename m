@@ -2,105 +2,112 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDF7C61D97
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 29 Jan 2023 11:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF320C54EED
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 29 Jan 2023 22:51:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbjA2LIm (ORCPT
+        id S235451AbjA2Wvo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 29 Jan 2023 06:08:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44402 "EHLO
+        Sun, 29 Jan 2023 17:51:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjA2LIl (ORCPT
+        with ESMTP id S230206AbjA2Wvn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 29 Jan 2023 06:08:41 -0500
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C461BAF0
-        for <linux-remoteproc@vger.kernel.org>; Sun, 29 Jan 2023 03:08:38 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id l41-20020a05600c1d2900b003daf986faaeso6326378wms.3
-        for <linux-remoteproc@vger.kernel.org>; Sun, 29 Jan 2023 03:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=efubKMvWfrd4LP5LHAcichChi11fqqmftCbLrF0d7BQ=;
-        b=dHBTwmmnEpfL+HTen9nimha3UxbiMdQGL1KCdR79axLVHODJbBLNcsQsP3dQ4PFriA
-         b7Ia2CnHXH5efdqrsIAz2nkFzXe5L+bgTfsIAkOIcSuQJhAPlEF0znzTPrKXC23z32da
-         95jTIt9flq7WiHD6Gdznf4BI1FtquCKKNuuBsdEUDpEm+5V+WSSdUoAMvCTxwUzoLyf+
-         6aylHP74uSdD5Pr2Mc+jnuiXlTJTDfFVNVjF7Q/tRbfSgrHs7iSefjUDZC3W1Lm7WHSn
-         sHCVB4wOzxnMLy8cMGsBe5ezeTYj7AQWkFM/7B/3ZfBjqxVEicCWIh7BCTBhtDic7ih+
-         WRCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=efubKMvWfrd4LP5LHAcichChi11fqqmftCbLrF0d7BQ=;
-        b=7YQhSC9UORQB22zqklA64NRw73wpbiz+NaDSQpaIRw+ja3omT5dacZ3lxQJzkZL5Wh
-         3qbBNCYw6EtmQRhGQ5IXGjodlgN8MGG+xFQe5tfagGkwJ1k3Ksa5xVufAx+8DgLlkR1r
-         O5zS3Qygzfyoi/YPs0sOzi7wUb98NAwhR9lh/XA7WPnQJv/ssPAbXqGs1oJ/pCGOe+EY
-         2n5K6gLQ/PSTeJXg/Apu+XTj5wznkIARs6LzYAR7T7+kNjZnZkvjTgdrX89JGAvahNaG
-         OPo+Af+hpWwxwaBWmSheh4QG+cK2a0PrHHxCmGSKxknQFeqsMDqXuWNbjgGlWkQcj+XG
-         4C2g==
-X-Gm-Message-State: AO0yUKX6YQaWks4Dlscd9o2JP4wtyNAZlp/d3aPinBHkdj06Kp/WdQBH
-        ipToTh5h5HgULDoEo/UFQXLm2A==
-X-Google-Smtp-Source: AK7set8wlmz0KdXxTFAC3ncKV//zQS6LC+B/If4WyhUu9yUhINaZupYsuJw3bb/zcPBPTCxA6qHSaA==
-X-Received: by 2002:a05:600c:4e02:b0:3dc:50dd:361b with SMTP id b2-20020a05600c4e0200b003dc50dd361bmr3010328wmq.5.1674990517044;
-        Sun, 29 Jan 2023 03:08:37 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id z24-20020a1cf418000000b003dc36981727sm7404688wma.14.2023.01.29.03.08.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Jan 2023 03:08:36 -0800 (PST)
-Message-ID: <8c954218-bba4-54c8-59a2-86371610aa03@linaro.org>
-Date:   Sun, 29 Jan 2023 12:08:34 +0100
+        Sun, 29 Jan 2023 17:51:43 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 763F94204;
+        Sun, 29 Jan 2023 14:51:42 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30TMigc6021440;
+        Sun, 29 Jan 2023 22:51:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=06UAkjv2IQRsahvZGsFUmQxlW+avpP/PI5OpkRrwtG4=;
+ b=GnvvsbxR4SmJN7PnVeItVpLRck3ebSKSBdTFxuixm9k+w/+0u+5VmA8zdptXYtyU7IBH
+ jCYNwiQQH27j188fgLSlZrc8JhYrf87Eh5q54auqIIxJPJYvXXnqApj3w7C6dCY8AR9K
+ bFkiFtrS2cmROelVIlx8dwQL302Ai3MgbB9uE4KQchzpS20M1rUKq2GteJZZOO4TNsgE
+ mXMPUJioI/uxXQN2OfWy4pymAycj4hrGqYR8zEhvqexDJsbRqcpxaFUltQZQO3yJSuJu
+ Ng8UCSyUMjANApCV/55wjS1seNXx9y7q05uIYurwZGIA7k1purf7bgfE1I1DH5xUTGMN Qg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncvvu2ajc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 29 Jan 2023 22:51:39 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30TMpcoB029252
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 29 Jan 2023 22:51:38 GMT
+Received: from hu-satyap-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Sun, 29 Jan 2023 14:51:38 -0800
+From:   Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC:     Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH] remoteproc: sysfs: fix race while updating recovery flag
+Date:   Sun, 29 Jan 2023 14:51:06 -0800
+Message-ID: <20230129225106.10606-1-quic_satyap@quicinc.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 2/2] dt-bindings: remoteproc: qcom: Add sm6115 pas yaml
- file
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, bhupesh.linux@gmail.com,
-        agross@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        mathieu.poirier@linaro.org, mani@kernel.org, robh+dt@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20230128053504.2099620-1-bhupesh.sharma@linaro.org>
- <20230128053504.2099620-2-bhupesh.sharma@linaro.org>
- <167491555142.2364868.11831106421472878617.robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <167491555142.2364868.11831106421472878617.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: z8nN0swIQBXRgLgv8Ihe2m89wHk5fivW
+X-Proofpoint-ORIG-GUID: z8nN0swIQBXRgLgv8Ihe2m89wHk5fivW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-29_13,2023-01-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
+ clxscore=1011 lowpriorityscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2301290227
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 28/01/2023 15:20, Rob Herring wrote:
-> 
-> On Sat, 28 Jan 2023 11:05:04 +0530, Bhupesh Sharma wrote:
->> This documents the aDSP, cDSP and MPSS DSPs present
->> on the SM6115 SoC.
->>
->> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
->> ---
->>  .../bindings/remoteproc/qcom,sm6115-pas.yaml  | 143 ++++++++++++++++++
->>  1 file changed, 143 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> ./Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,pas-common.yaml
+When multiple clients try to update the recovery flag, it is
+possible that, race condition would lead to undesired results
+as updates to recovery flag isn't protected by any mechanism
+today. To avoid such issues, take remoteproc mutex lock before
+updating recovery flag and release the lock once done.
 
-This is expected - the qcom,pas-common.yaml is in remoteproc repo.
+Signed-off-by: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+---
+ drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 8c7ea8922638..ec37176e1589 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -48,16 +48,21 @@ static ssize_t recovery_store(struct device *dev,
+ {
+ 	struct rproc *rproc = to_rproc(dev);
+ 
++	mutex_lock(&rproc->lock);
+ 	if (sysfs_streq(buf, "enabled")) {
+ 		/* change the flag and begin the recovery process if needed */
+ 		rproc->recovery_disabled = false;
++		mutex_unlock(&rproc->lock);
+ 		rproc_trigger_recovery(rproc);
+ 	} else if (sysfs_streq(buf, "disabled")) {
+ 		rproc->recovery_disabled = true;
++		mutex_unlock(&rproc->lock);
+ 	} else if (sysfs_streq(buf, "recover")) {
+ 		/* begin the recovery process without changing the flag */
++		mutex_unlock(&rproc->lock);
+ 		rproc_trigger_recovery(rproc);
+ 	} else {
++		mutex_unlock(&rproc->lock);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.38.1
 
