@@ -2,111 +2,95 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8819C54EED
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Jan 2023 09:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A26C54EED
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Jan 2023 15:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235594AbjA3JCU (ORCPT
+        id S237966AbjA3PLM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 04:02:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44236 "EHLO
+        Mon, 30 Jan 2023 10:11:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235718AbjA3JCU (ORCPT
+        with ESMTP id S236713AbjA3PLL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 Jan 2023 04:02:20 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 386072CFC2;
-        Mon, 30 Jan 2023 01:02:15 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30U6MZx0022015;
-        Mon, 30 Jan 2023 09:02:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=xKtZx1PvWVMSYwvF3G8Rfh6Hg16qCtA/1CnGxqUfAsM=;
- b=QYwlZLpctEHTHicfAz7Kf2mRmAV2gt3ixAWCNTPQteQiYDHeU+c8h+hhZudrQY2bD4zR
- mTYFE617T870eNtqPkel5AtM0BEL8Gd5lo2JNuLTrhIwM5e4KYta3AFoahzSPIHkkHQj
- gSDXsgyEz/wVosMq2YUp4WUd4pwmYJY/5nYDUYnbCi8V08tJ+zHIcWVfcm8HEGqT1hQ6
- arXtQptu9T3lvzPztBxUyEJlCgEOCrL/1D1Sx2a731emQu7d86jVvDzsvMNWWXicacUQ
- mVP7A1LjjNGcIyKH2L8UQMNf79o1KkMxvkvuNojTFJ+k3o6OYRBDbMELNqPQR3bAAu5P fw== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nctnyk6xt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Jan 2023 09:02:10 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30U929U7025399
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Jan 2023 09:02:09 GMT
-Received: from [10.216.24.235] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 30 Jan
- 2023 01:02:05 -0800
-Message-ID: <72285901-29a4-1491-6df5-1f0315cb99ee@quicinc.com>
-Date:   Mon, 30 Jan 2023 14:32:02 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH 1/2] remoteproc: qcom: pas: Add sm6115 remoteprocs
-Content-Language: en-US
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC:     <mani@kernel.org>, <mathieu.poirier@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bhupesh.linux@gmail.com>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
+        Mon, 30 Jan 2023 10:11:11 -0500
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A9D39282;
+        Mon, 30 Jan 2023 07:11:10 -0800 (PST)
+Received: by mail-oi1-f179.google.com with SMTP id r9so10285680oig.12;
+        Mon, 30 Jan 2023 07:11:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1lHdh1CkCtIdFTXxL0MnkKjoUkZTHAxzc6MiEiiVEVU=;
+        b=OpGvB8hT5gecMjpBgt8xQtyc0v6FByV2BugfTvXxJcR+0ppB8wqzgWc5e8o1PemL+V
+         ksC/uLec7i01ia0ECT7LZuZqQ52wxwcqKnNsxtYWSJltHWZUxMAW1gunci/Vr9OhZirp
+         7jXLyWGDwH1PatYB91uFXpmFnyK2hsbC+QH0Zt+Q1II66OQE2qTeIZTaG3SvGl3eFAxt
+         5gQg9CGP8/f4jNMUk+9T5nz1Z6WKQXJLMBe8ZOfda8XOnwoRjsj1Cdny2XUfMSyt+mTz
+         wLVN1af0KhMoFfBtvEVsdwXBM5XHXHNcu6nTxhvP3ajvnjqQwZNLmc8Bm1u/q9YheJtO
+         iVzQ==
+X-Gm-Message-State: AFqh2koc56n2sSONs8eRpbGg7bBmH0Mr7o7EthJ8/Un3yoCRFV0gekum
+        uBtZbTULhGe1MEJo96YUFA==
+X-Google-Smtp-Source: AMrXdXtih+BIOtVOCT9uywHOqVTZZLIqiwGALi32V+KKFVD5odraFJnotVWrWvyiMnBWA25gnXCZQA==
+X-Received: by 2002:aca:c2c6:0:b0:363:a5fd:9cc7 with SMTP id s189-20020acac2c6000000b00363a5fd9cc7mr21476755oif.13.1675091469441;
+        Mon, 30 Jan 2023 07:11:09 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id s9-20020acadb09000000b00363ea5be014sm4839405oig.3.2023.01.30.07.11.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Jan 2023 07:11:09 -0800 (PST)
+Received: (nullmailer pid 2585826 invoked by uid 1000);
+        Mon, 30 Jan 2023 15:11:08 -0000
+Date:   Mon, 30 Jan 2023 09:11:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        linux-remoteproc@vger.kernel.org, bhupesh.linux@gmail.com,
+        agross@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        mathieu.poirier@linaro.org, mani@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: remoteproc: qcom: Add sm6115 pas yaml
+ file
+Message-ID: <20230130151108.GA2548714-robh@kernel.org>
 References: <20230128053504.2099620-1-bhupesh.sharma@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20230128053504.2099620-1-bhupesh.sharma@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5G9aKFGHDwbLAJrAymIhAc2WkMtvqs-5
-X-Proofpoint-ORIG-GUID: 5G9aKFGHDwbLAJrAymIhAc2WkMtvqs-5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-30_07,2023-01-27_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- bulkscore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=999 clxscore=1011
- impostorscore=0 priorityscore=1501 phishscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301300085
+ <20230128053504.2099620-2-bhupesh.sharma@linaro.org>
+ <167491555142.2364868.11831106421472878617.robh@kernel.org>
+ <8c954218-bba4-54c8-59a2-86371610aa03@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8c954218-bba4-54c8-59a2-86371610aa03@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 1/28/2023 11:05 AM, Bhupesh Sharma wrote:
-> Among the subsystems in the Qualcomm sm6115 platform we find
-> audio, compute and modem DSPs.
+On Sun, Jan 29, 2023 at 12:08:34PM +0100, Krzysztof Kozlowski wrote:
+> On 28/01/2023 15:20, Rob Herring wrote:
+> > 
+> > On Sat, 28 Jan 2023 11:05:04 +0530, Bhupesh Sharma wrote:
+> >> This documents the aDSP, cDSP and MPSS DSPs present
+> >> on the SM6115 SoC.
+> >>
+> >> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> >> ---
+> >>  .../bindings/remoteproc/qcom,sm6115-pas.yaml  | 143 ++++++++++++++++++
+> >>  1 file changed, 143 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
+> >>
+> > 
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > ./Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/remoteproc/qcom,pas-common.yaml
 > 
-> Add support for controlling these using the peripheral
-> authentication service (PAS) remoteproc driver.
-> 
-> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> This is expected - the qcom,pas-common.yaml is in remoteproc repo.
 
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Where is that dependency mentioned in this patch? If not mentioned, I 
+will mention it for you with the error report.
 
--Mukesh
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 4e1d9b08def4..9eb5a92bf5f6 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -1184,6 +1184,9 @@ static const struct of_device_id adsp_of_match[] = {
->   	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
->   	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
->   	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
-> +	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
-> +	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
-> +	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource},
->   	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
->   	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
->   	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
+Rob
+
