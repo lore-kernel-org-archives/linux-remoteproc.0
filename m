@@ -2,146 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D467DC54EED
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 30 Jan 2023 17:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C91C636CC
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 31 Jan 2023 16:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237908AbjA3Rns (ORCPT
+        id S230138AbjAaQBx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 30 Jan 2023 12:43:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58596 "EHLO
+        Tue, 31 Jan 2023 11:01:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237855AbjA3Rnr (ORCPT
+        with ESMTP id S230098AbjAaQBw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 30 Jan 2023 12:43:47 -0500
+        Tue, 31 Jan 2023 11:01:52 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C03412861;
-        Mon, 30 Jan 2023 09:43:45 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30UDc0N1003605;
-        Mon, 30 Jan 2023 17:43:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=SMg5fZWjmH7Mss820pAqb7ZUrjtwWWTAwGNzWfphj+U=;
- b=ZAZL35vHMZGVKqbsfViWruO5O8Qc73AyanoN1S4v+Cv59UKDG1CMK4x4GN6p4YgvRN9E
- +/OIBACsDAIfrDCGPPrMypyTPa+WdPBTMVPWOFataB9jW4xVQutVYWCblWKJowMIu06q
- SH519zU0HzzB53PNdVw//jk1qsIQzvS3o77u3thczrdL1qTeS19lGqIPOEOanDF/3X5+
- 7U/asP8khvMyEBpw1f+WSH12qWQkTB0saPVp/PRWgrZIfBFmSQqFjgU58A8KqNxQhSkX
- lZ2KTnrex+wZnFUZhYl7bxWIH3PDP6iPyjrryMhussSVcR31heEPtBEU1vzEkg94Rokg kw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncsdpvg7t-1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81FC8521F1;
+        Tue, 31 Jan 2023 08:01:49 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30VCikqS028282;
+        Tue, 31 Jan 2023 16:01:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=62OuHyosEYJ1cEOsXAgd/j7oZ9RaFGpVr3bJhayjsoo=;
+ b=TxznM+SLJdgWVjodU4uvjvuaSzPZVpuyUX6IQ6SOYzPosQgIToSaawtTxAlp5+wuY2ZV
+ WeEMBUWeWNr40sNdGXlsLfGtLU5PlwerwEk8C56+LS1UZfljLNTxspFDPTHn4N+aGrhi
+ PJPc1aZTDj2L9H8dZzt1IYW6gL2DC9dKnzfUs6lF+O0S0mHl3hUSm64zHxy+QMgJMFDb
+ 9LlxQZ40IZdVCb+7P5lEod2yyiUtfE828dyYhS4SdQ8by7LbhMJv71nEnNJTqvdstLN/
+ 6WOA9/wIV7wcmbJ8QlfJIlCKYQuHUKY6ZJvslNu7tYu5hXjjHJFkRvhfIHN68A+N/hjV 7w== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ncuxapsbn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Jan 2023 17:43:42 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30UHhbAM005333
+        Tue, 31 Jan 2023 16:01:36 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 30VG1ZO6029889
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Jan 2023 17:43:37 GMT
-Received: from [10.47.234.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 30 Jan
- 2023 09:43:37 -0800
-Subject: Re: [PATCH] remoteproc: sysfs: fix race while updating recovery flag
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20230129225106.10606-1-quic_satyap@quicinc.com>
- <d9708f4b-e533-e400-acbf-3d8e816f242e@quicinc.com>
-From:   Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Message-ID: <941b8600-9f7c-b646-9f8a-c30a2a332e37@quicinc.com>
-Date:   Mon, 30 Jan 2023 09:43:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 31 Jan 2023 16:01:35 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Tue, 31 Jan 2023 08:01:32 -0800
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <konrad.dybcio@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [PATCH] remoteproc: qcom: fix sparse warnings
+Date:   Tue, 31 Jan 2023 21:31:06 +0530
+Message-ID: <1675180866-16695-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <d9708f4b-e533-e400-acbf-3d8e816f242e@quicinc.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NwER8QJqwMNSBBQHF_SmcEdJJl8CW-KI
-X-Proofpoint-ORIG-GUID: NwER8QJqwMNSBBQHF_SmcEdJJl8CW-KI
+X-Proofpoint-ORIG-GUID: jivvLcm3wu7xwPqOccHcB2vgxulpraP_
+X-Proofpoint-GUID: jivvLcm3wu7xwPqOccHcB2vgxulpraP_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-30_16,2023-01-30_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=0 mlxlogscore=914
- spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301300171
+ definitions=2023-01-31_08,2023-01-31_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 mlxlogscore=767 impostorscore=0 phishscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2301310142
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+This patch try to address below sparse warnings.
 
+drivers/remoteproc/qcom_common.c:126:27: warning: restricted __le32 degrades to integer
+drivers/remoteproc/qcom_common.c:133:32: warning: cast to restricted __le32
+drivers/remoteproc/qcom_common.c:133:32: warning: cast from restricted __le64
 
-On 1/30/23 12:03 AM, Mukesh Ojha wrote:
->
-> On 1/30/2023 4:21 AM, Satya Durga Srinivasu Prabhala wrote:
->> When multiple clients try to update the recovery flag, it is
->
-> Multiple user-space clients ?
->
-Yes, on SMP systems, it is possible that there can be multiple user 
-space clients (can simply be fuzzing kind of scripts) which could be 
-updating the recovery flag.
->> possible that, race condition would lead to undesired results
->> as updates to recovery flag isn't protected by any mechanism
->> today. To avoid such issues, take remoteproc mutex lock before
->> updating recovery flag and release the lock once done.
->
-> But your patch also adds locks for the case which does not update
-> recovery flag..
-Yes, was trying to cover entire function, can be restricted to only when 
-recovery flag is being updated as well.
->>
->> Signed-off-by: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
->> ---
->>   drivers/remoteproc/remoteproc_sysfs.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/drivers/remoteproc/remoteproc_sysfs.c 
->> b/drivers/remoteproc/remoteproc_sysfs.c
->> index 8c7ea8922638..ec37176e1589 100644
->> --- a/drivers/remoteproc/remoteproc_sysfs.c
->> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->> @@ -48,16 +48,21 @@ static ssize_t recovery_store(struct device *dev,
->>   {
->>       struct rproc *rproc = to_rproc(dev);
->>
->> +    mutex_lock(&rproc->lock);
->>       if (sysfs_streq(buf, "enabled")) {
->>           /* change the flag and begin the recovery process if needed */
->>           rproc->recovery_disabled = false;
->> +        mutex_unlock(&rproc->lock);
->>           rproc_trigger_recovery(rproc);
->>       } else if (sysfs_streq(buf, "disabled")) {
->>           rproc->recovery_disabled = true;
->> +        mutex_unlock(&rproc->lock);
->>       } else if (sysfs_streq(buf, "recover")) {
->>           /* begin the recovery process without changing the flag */
->> +        mutex_unlock(&rproc->lock);
->
-> is it really needed for this case?
-As mentioned above, was trying to cover entire function. Not really 
-needed in this case as such.
->
->>           rproc_trigger_recovery(rproc);
->>       } else {
->> +        mutex_unlock(&rproc->lock);
->
-> same here..
->
->>           return -EINVAL;
->>       }
->>
->
-> Do you also need to add lock for rproc_recovery_write in
-> drivers/remoteproc/remoteproc_debugfs.c ?
->
-Thanks, yes. Debug FS needs to be updated too.
-> -Mukesh
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+ drivers/remoteproc/qcom_common.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 020349f..7133c1f 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -123,14 +123,14 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+ 
+ 	for (i = 0; i < seg_cnt; i++) {
+ 		memcpy_fromio(&region, ptr + i, sizeof(region));
+-		if (region.valid == MD_REGION_VALID) {
++		if (le32_to_cpu(region.valid) == MD_REGION_VALID) {
+ 			name = kstrdup(region.name, GFP_KERNEL);
+ 			if (!name) {
+ 				iounmap(ptr);
+ 				return -ENOMEM;
+ 			}
+ 			da = le64_to_cpu(region.address);
+-			size = le32_to_cpu(region.size);
++			size = le64_to_cpu(region.size);
+ 			rproc_coredump_add_custom_segment(rproc, da, size, NULL, name);
+ 		}
+ 	}
+-- 
+2.7.4
 
