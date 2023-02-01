@@ -2,168 +2,124 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03D6C05027
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Feb 2023 08:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B7DBC05027
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Feb 2023 12:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbjBAIln (ORCPT
+        id S231567AbjBAMFo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Feb 2023 03:41:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47490 "EHLO
+        Wed, 1 Feb 2023 07:05:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231802AbjBAIlk (ORCPT
+        with ESMTP id S230261AbjBAMFn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Feb 2023 03:41:40 -0500
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2069.outbound.protection.outlook.com [40.107.241.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8B1360C8A;
-        Wed,  1 Feb 2023 00:41:38 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lqfru936AN33yhQUegxvYqd0MlSI0SuJWtcTYi8myCgs48wjO/2+8oTtH3STbargNinyvZOzXjNluNyNGhCgZ1idN2EY+RaGPHm2w5ye/0ZWorha4P+eED2dsV9Qb6okSMfcTgXWNXl/AMDh0XZAU+BovIvk2jx0I9U0eBUJVe5DSMiRGYrKBsxtzIyz58JmYaFq7jKU2JK9pUMsOevjvlJZlSXkem95lVk9iE9+3rzouF/nYBMR0d1mABjvUxXrJpWYLIbKanoPrmeutGHwq7haKnC3LB3Z335YQa42LlIBDAtyVbuSWD3VdIaqLeFPAVuZS+u7CX+sRV5hGjV4bA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CxfyGVHaxg6QtbRsrBEg0EL95DEQg4p1DJnJN7JgoJk=;
- b=C9fP5XH/tdaZr/2MEh2Iq6dC51aNL2wZaIY2ub5XHIZlXpEjtvvWAqzevhNg+ZYtme7V94Fn68RQ5vO7WuMK1uj7CIUYy0gUjdBUKGfchMLHOeQeiT0iUTqH0DepNATTcEGHgNpiTW8YVKz0nRJ7Hfrj4KMUIhZX6Hh6XJRxpkn+rTgyJSJem50XJ5UFKuRY9XYHNQymDPt0fTJXc+4OH4/rh36OrQV/RaZouGqUzpT/iAJwagrkj+tPKXbq/W3gH7HL3nblj3gVH29+IgOYQSBbT2R98kvLdXHEdhVW2ONaqkzJJEcqfysEDhu3tU4sZXHPkZ+Clx+QDDmtsSVFsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CxfyGVHaxg6QtbRsrBEg0EL95DEQg4p1DJnJN7JgoJk=;
- b=N3UqOfUVfRhmNhTFwkPswjk/ek8XCVI0Uq/jvnI3OyIFzIp8zvSmWTkE6SVJEKAP8ppfFGO02GkTBZ5nN4t9eqErLrK8J0e1bPXK9cDssf7cLbfHN/LAQHSCiAS5LPT0IUnZBNfIAdNn6DE5RskjHVFoeIRSp1Eqy3bVyi8gYvA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9628.eurprd04.prod.outlook.com (2603:10a6:10:30b::14)
- by DB9PR04MB9449.eurprd04.prod.outlook.com (2603:10a6:10:36a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.36; Wed, 1 Feb
- 2023 08:41:36 +0000
-Received: from DB9PR04MB9628.eurprd04.prod.outlook.com
- ([fe80::aec2:20b6:cf99:2886]) by DB9PR04MB9628.eurprd04.prod.outlook.com
- ([fe80::aec2:20b6:cf99:2886%5]) with mapi id 15.20.6043.038; Wed, 1 Feb 2023
- 08:41:36 +0000
-Message-ID: <30b1aa51-2fac-16b8-8fba-e82a88e3219d@nxp.com>
-Date:   Wed, 1 Feb 2023 10:41:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: add custom memory copy
- implementation for i.MX DSP Cores
-To:     Peng Fan <peng.fan@oss.nxp.com>,
-        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Paul Olaru <paul.olaru@nxp.com>,
-        Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Cc:     linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20230131170436.31280-1-iuliana.prodan@oss.nxp.com>
- <abd74bb6-9131-3769-513f-954234981403@oss.nxp.com>
-Content-Language: en-US
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <abd74bb6-9131-3769-513f-954234981403@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P251CA0005.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d2::10) To DB9PR04MB9628.eurprd04.prod.outlook.com
- (2603:10a6:10:30b::14)
+        Wed, 1 Feb 2023 07:05:43 -0500
+Received: from alexa-out-sd-02.qualcomm.com (alexa-out-sd-02.qualcomm.com [199.106.114.39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D263D38B78;
+        Wed,  1 Feb 2023 04:05:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=quicinc.com; i=@quicinc.com; q=dns/txt; s=qcdkim;
+  t=1675253142; x=1706789142;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IUmTbh4hUQOuFl5FodoOUryg4j8Mjb0onvpio+YorNs=;
+  b=EPOSPfW6OF0iyuJmRLWYsV3KmbQSEv82AGLxeFdsZjybiWRhu6OumrZM
+   J7eEcNX3j2NV6y+AZh74cbajXYgISYPkP/9ZEylgJrsmifryhMdndeHTp
+   C/G6I/uI8/D6ktWpmpqfGaeL1SDEmHfjsE8aECjM37dX324oHdwsKNn85
+   4=;
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 01 Feb 2023 04:05:41 -0800
+X-QCInternal: smtphost
+Received: from nasanex01c.na.qualcomm.com ([10.45.79.139])
+  by ironmsg04-sd.qualcomm.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Feb 2023 04:05:41 -0800
+Received: from [10.216.32.242] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 1 Feb 2023
+ 04:05:38 -0800
+Message-ID: <22bcf613-5c0f-3043-f8ad-41bf45c5dc07@quicinc.com>
+Date:   Wed, 1 Feb 2023 17:35:35 +0530
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9628:EE_|DB9PR04MB9449:EE_
-X-MS-Office365-Filtering-Correlation-Id: 64189862-a671-449c-c12a-08db043020b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 5Aj3MCpgihb70OUjbMRTy/xJFRkNLefP/mpLvhZ0ScYEYO/nka8blbVzR0V8TWJ/qCmPI0cilf3c66bzAkXctVHMSb/NN3z7TrQ1s2Kykild+jCGCJpEsKE1hJpsMXu1V7drqHXIckM0ERvB1X0kP9H+dsO/I3iZC508N0wAiYhhkWYtdwaB/7eXcp3+YZ7eBK236BYCkKmHiZod4+GhAITBMZmx9ZZWEhQ+UpYBNAkZygXHg2os8xvqvmUTFw0cdvbeRSKi/hQYwQ7/akRFMLEWXewiZA6b9TA9xxrXcVD6Jk3nrpaLkhCvU5h9po+68wdfhc3raCdMRMYLkg4RiW2koLF/3gZyX09Fw88Jo73MvLioi02gsrVZqpnhPBZeIK0RRKqZrmu4Hw/JND7D9kPqAZw4Mlqfv86/zHuNUK/8UPIJeCmF8rkCV+DvZenVGLehB3XrSCqW3mwAvajBShfaTP31ZL4PYd03Rrziu1CDTEsCvzLVSSm/6LpmsNW7Fi07GBjcxuNPbIY/0ozp8TjYGXSe0WduBfJ6utmR2Fx6GfOpAuVsvtCg+dmKGzWB12fwwPsqEZTCzUCjxJwz3YLmdxvdO+QnTt0SC1P9d6ivpO7/1ra0CtChtMSjJnrAyhrMYSl9jnZSFoSj9SF1rAIzor8U3UrNmYHyjsGYgK8rLyHd/HI+LOJbM+1oWq7w93g0dIjQmimxwksNlsXzIMBDRfz1HBzU8NBpgLhUVi1NmoVkCIPSKiV2iGCnx+Yr
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9628.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(396003)(136003)(366004)(346002)(376002)(39860400002)(451199018)(31686004)(2906002)(86362001)(921005)(4744005)(44832011)(83380400001)(8936002)(41300700001)(31696002)(6512007)(54906003)(36756003)(478600001)(26005)(6666004)(186003)(55236004)(53546011)(5660300002)(66899018)(6506007)(110136005)(66476007)(6486002)(2616005)(4326008)(66946007)(66556008)(8676002)(38100700002)(316002)(6636002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QmEyblNWeUcyQ2FFOHBCRkY3RWR1WVltekZ5UmFVb2lqNmc3K3BOeWRRSkJM?=
- =?utf-8?B?STR1V3V5dE8yYUgyZGZEc2Q5L2tPT1NubFZmbndsVml1WjYyOFVtaEpaaTFi?=
- =?utf-8?B?bXRlVUMzemM1RGFJS1lXZVo0VXhDSDErU3duRERPQ3JaV3RLTytHclh2MHZD?=
- =?utf-8?B?WVJRL0NWTzNGTHlOdGs1NFZOVGRZSHRQa3Z1eHFLR1VITU4zRTcwZHNxTnVX?=
- =?utf-8?B?UnBIUFBJMVQydkhaRSsvWGNya0tsWTJ1aVREZ1kxZEp5d0RBTkxCM2pXNWQr?=
- =?utf-8?B?ZGNiSEMwU0UvZ2FHcnRpWjRCSE5zdFVNUHFqbHpXSkdQa2hQRnFrMWV0VE1N?=
- =?utf-8?B?YlZ4dktOc0FyeWNBa25sbkttcHJwZlkxQllFTVo1NTF3UzExVmFqNXJvczd5?=
- =?utf-8?B?Q3dYNWsrOFNCM0JOOUlRM3J3bUxmQmdZeWZqVVZ1eUFiS0I1YkpOOGFoRU1s?=
- =?utf-8?B?eDI5L2M4QTIxMjltWHhhK3JVQ2FralI5RHRwbWlaQmpGQW9BdDJudmZaY0xB?=
- =?utf-8?B?N1dmQTM5RDZvbEJjejBNK091UHNManhCSHVWWE0valE1L2hjTlo3SDlHUnVV?=
- =?utf-8?B?QXV4Z1NIcENOUlNYMVN1c1Zxc0xzR1B6Z21Qcy95bEwwUGNRK2JBbnQ3YS94?=
- =?utf-8?B?WENGMVBtVHlpNXVFZUhKUFVIdURGeXY5VHRFcDNNNWYxVWlzTm94NlpBUE9m?=
- =?utf-8?B?M1hqQkFJaFBpRG5Eem5teHNkaEtpcVRNc1BocW93KytMZzkvNXNKQ1c4bFdi?=
- =?utf-8?B?bXZlZmFISXM1aXoxcW01WUJkd1dFTkdmVjY3L2lJVzlnbkszVmlhVnArdGlP?=
- =?utf-8?B?MGpUUE1uUWZQT2ZXVXhWdjE2N3dzQWRNQzhkaE4rY3cvbU95cUZnMGxRUjU5?=
- =?utf-8?B?amRpQ09PL1NLWGR4UTdWWGUzOXIrOGhGMVk3eExYZlJvMGZESjlvRG16R2JN?=
- =?utf-8?B?cll5L00xVnFHSngyMzh5bnc1MG1Ub0lDQkR1d1VvMlk3QjZZUS8zc3RqVkxt?=
- =?utf-8?B?NG9jNjQwWVpUNVdJeUp6bmF5SFlsdU0xWkdhMS82cDhPNHdGeVk4eHVLa3Iy?=
- =?utf-8?B?Qjk1dFVUY2ZQUUlRTWN0a0N0ZVlBTW9VSmJWWVE1MUZLZm9NbnVHSFRtckE2?=
- =?utf-8?B?QzR2SEJnWFdEcHI1a3FaMWFWSDAxK1dCTW9sVmREZFpWdzNMd2tWUlRaRi8w?=
- =?utf-8?B?NVIwNkJsc1BPSHJyTVJCaUpQNWFwelFlUUU2QzE2UW1YRENTT25mQWtETlh1?=
- =?utf-8?B?SVg3VTBtN2FjcXF6UTE5cVNhZmI4ZnFGNUpuMGdPc0Q3S1JwOVBWWmJnRE13?=
- =?utf-8?B?bm5wWWRVY1dXdm1nTFdmNVlYdEM5V3FTSHVFWXFRQ200d2hBdnVPbXI4YjJD?=
- =?utf-8?B?REFLUWV2YkFCbnY5d01FbWVoeGhNKy9BaDArWDh2WHB2RmgyWkxJR20rOGF2?=
- =?utf-8?B?WW14STlDRzNLWW5FcHQvMHNLelpjZDVhYzMxWm5wZzRNMFpMZ21NY0NSUWNa?=
- =?utf-8?B?THgvOG5QYXh4ajl5cmNpUlhhNGloMFhqRW9LOGNvLzJ0bHBaSkQ2VjlQMjhP?=
- =?utf-8?B?eFlQUVhhaDF6Uyt6MUVCRjgzYkRVY0NOTTQ2akZvSy9lWWxIQUdKY25pK2th?=
- =?utf-8?B?Qmxpa3NLRy9iMk5WeUJlYjB1RHo0ZCtaM1pIYml0dG1xOFI2ZzEzSlpLdE9m?=
- =?utf-8?B?SzJERXZyQnE0N1RCd0RuMHNrMm4zSk9kTHFoTGJac3Q0Tml3MlptRlo1d1Fx?=
- =?utf-8?B?cmV6cUhsczcyVkpaeURvS2Q2aW9EZHR2REVZcFBaZWZQSHVSYkxabk1uV3Ax?=
- =?utf-8?B?L0s1VUZmdVhXMXowQmhkN2IvWXVIdVJJU29kSnRwSVFaYkgxTTRaVFNUTDVl?=
- =?utf-8?B?VHJCNWhmajNTMENKS1laVjBQc1Z2WHVCMlZpdGRQM3I4YmJ1Y2Z2aGI0eU1K?=
- =?utf-8?B?THMvQkU0YmU0SjFCTW5VT2pZcDFOa283cjZ6b2NEcVZaTnhOZ0lieWNuOVNu?=
- =?utf-8?B?d2FrTUFjR3NsdFlWYkkvUllWTHd1cmt0OFFSanN1K21EamJ2cURxbmtBei9p?=
- =?utf-8?B?NDJQZFdIOFRUNSs5Q2pUa1Y0a2dQZEdlSVhRSlNZbEhoeXhoWlZ2Q05ldFAx?=
- =?utf-8?B?MU1VNUN0Ylg4SEVDSjdsUDBGellLQllhZXlsL0llQ0pJZmdLVjQ1OEpLZDY1?=
- =?utf-8?B?QUE9PQ==?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64189862-a671-449c-c12a-08db043020b6
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9628.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2023 08:41:35.8252
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /SiwY3+LAkEvrQoOBRjiQdIRhlZIpi00TRjhgJp+y3h5nWp+BMRa7wh9ONx78tFzsH9fOLBsc331mkNN+xt9zg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9449
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v2] remoteproc: sysfs/debugfs: fix race while updating
+ recovery flag
+Content-Language: en-US
+To:     Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+References: <20230201054609.14575-1-quic_satyap@quicinc.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20230201054609.14575-1-quic_satyap@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Peng,
 
-On 2/1/2023 2:27 AM, Peng Fan wrote:
->
->
-> On 2/1/2023 1:04 AM, Iuliana Prodan (OSS) wrote:
->> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->>
->> The IRAM is part of the HiFi DSP.
->> According to hardware specification only 32-bits write are allowed
->> otherwise we get a Kernel panic.
->>
->> Therefore add a custom memory copy and memset functions to deal with
->> the above restriction.
->
-> Which platform has this limitation? This driver has been landed for
-> quite some time, is there any specific condition to trigger the issue?
->
-> Regards,
-> Peng.
->
-Any platform with HiFi DSP.
 
-As I explained in the previous version, until now, it was used in a 
-limited scenario and the firmware was correctly built to respect the 
-write restriction - having the IRAM sections size a multiple of 4bytes.
+On 2/1/2023 11:16 AM, Satya Durga Srinivasu Prabhala wrote:
+> When multiple clients try to update the recovery flag, it is
+> possible that, race condition would lead to undesired results
+> as updates to recovery flag isn't protected by any mechanism
+> today. To avoid such issues, take remoteproc mutex lock before
+> updating recovery flag and release the lock once done.
+> 
+> Signed-off-by: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
 
-Now, I was trying a simple hello_world sample from Zephyr, compiled with 
-GCC and I crashed the Kernel trying to load it on the hifi4 DSP.
+LGTM.
 
-Thanks,
+Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
-Iulia
-
+-Mukesh
+> ---
+> v1 -> v2:
+> - addressed comments from Mukesh Ojha
+>    1. take & release lock only while updating recovery flag
+>    2. update debugfs
+> 
+>   drivers/remoteproc/remoteproc_debugfs.c | 4 ++++
+>   drivers/remoteproc/remoteproc_sysfs.c   | 4 ++++
+>   2 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> index b86c1d09c70c..2c44d375024e 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -226,10 +226,14 @@ rproc_recovery_write(struct file *filp, const char __user *user_buf,
+>   
+>   	if (!strncmp(buf, "enabled", count)) {
+>   		/* change the flag and begin the recovery process if needed */
+> +		mutex_lock(&rproc->lock);
+>   		rproc->recovery_disabled = false;
+> +		mutex_unlock(&rproc->lock);
+>   		rproc_trigger_recovery(rproc);
+>   	} else if (!strncmp(buf, "disabled", count)) {
+> +		mutex_lock(&rproc->lock);
+>   		rproc->recovery_disabled = true;
+> +		mutex_unlock(&rproc->lock);
+>   	} else if (!strncmp(buf, "recover", count)) {
+>   		/* begin the recovery process without changing the flag */
+>   		rproc_trigger_recovery(rproc);
+> diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+> index 8c7ea8922638..628e0de9a132 100644
+> --- a/drivers/remoteproc/remoteproc_sysfs.c
+> +++ b/drivers/remoteproc/remoteproc_sysfs.c
+> @@ -50,10 +50,14 @@ static ssize_t recovery_store(struct device *dev,
+>   
+>   	if (sysfs_streq(buf, "enabled")) {
+>   		/* change the flag and begin the recovery process if needed */
+> +		mutex_lock(&rproc->lock);
+>   		rproc->recovery_disabled = false;
+> +		mutex_unlock(&rproc->lock);
+>   		rproc_trigger_recovery(rproc);
+>   	} else if (sysfs_streq(buf, "disabled")) {
+> +		mutex_lock(&rproc->lock);
+>   		rproc->recovery_disabled = true;
+> +		mutex_unlock(&rproc->lock);
+>   	} else if (sysfs_streq(buf, "recover")) {
+>   		/* begin the recovery process without changing the flag */
+>   		rproc_trigger_recovery(rproc);
