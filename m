@@ -2,43 +2,43 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA779C636D6
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Feb 2023 00:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FBAC61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Feb 2023 00:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232704AbjBCAEi (ORCPT
+        id S232932AbjBCAMU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Feb 2023 19:04:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
+        Thu, 2 Feb 2023 19:12:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233423AbjBCAEf (ORCPT
+        with ESMTP id S233392AbjBCAMT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Feb 2023 19:04:35 -0500
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on20626.outbound.protection.outlook.com [IPv6:2a01:111:f400:7d00::626])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45912332C;
-        Thu,  2 Feb 2023 16:04:31 -0800 (PST)
+        Thu, 2 Feb 2023 19:12:19 -0500
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2085.outbound.protection.outlook.com [40.107.249.85])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1015C29158;
+        Thu,  2 Feb 2023 16:12:18 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XbgU6OaSBDzTLZUzbbwMieCMz5fV879KquE4Gv5wr1BbNQiYfgxd441z6W6jSIyshVwRJTykdZMcO0bylSQvDRD75h85sGxNJQb+7dAplUHwYi5rTD3KhgYqEFM2zje1RFktK9zq19QeM4Qxx6WbKzcJ/6ep49sVi5pY9GoUiI9GHJaiS5yURTZyNsA88JhsWh7qvjE+fQzsKAD92LtapxK/5f+MYb0/j8nl70J871JdlNzo3HhPa9oDox+3JGc+wiIf3xc403PjuHdMmTgmHxD2f9x8MJNGUqKgfH8nfe9vQV2vFmreHfgOgltgxtujWhNFEkv1CaCSzrkuf5gK+g==
+ b=bkepByXD72g8o3TLMkzXf9wBJbGejSlu41MzwmxcJ2aDsnsQIRvRGlOheLIGA1lMywldLgKYOgTqawCz9ExmPVQzH9r652xKbbnG04ZwMdSLl5rdcnfNJgoTvYpHa+yKP29PoH60zvkIOBCUktXjZqy8vBVqjZ5B5YFCsz/PSqyG2zh8faCBZJoUFGv/fX4GVsEQn4hBfIAGiHg92WQVmXtX1rgL/qOwmyhs0xC5iLaHgpzAtV5J8M6vHvfMwM8aWlZ5INaHiWD+qUnRdg+JVfMNrzEBCaA/gf+ljOWxCVPZKEw2Jgr3wl5JqQsrxBlVLQZlHPsjt7+pvTJ7Mk2V6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TQBfP7QQjKIG0o3Pg9WIkZVuXKxrDOf0OgFZeVCbQFg=;
- b=acERzL19PF9ERCD3lv9HiuWYEeR9oX5Qxf20TF8WFhy4zBjn33Ir8KpactpBZ9i2Bxo4Q5qRaPoQXNIIJnWp6nfB5V0RXKqXS1ow//1jMoYZ4UoOz71JHl7Kxp+diERdOyU6iOAIEqQPUbOdzfPry2tQJzvUiXy8wrnlITWN6on1Tb9qKBLFwM5x+FtOZ42Z7BmLHvx5STofAvzC1veilLx3InxqIRRYXKSagJkya5SJ7KubGrk0HN8+OHpMFoEuy0b0eN5apjhoXGsKQ8Ht2ARhJgNkui9KOxhXxYx/7AGFKGENKabc16ar9JLeK9swkpdculHwhl2Rq+IOQ5NHHQ==
+ bh=eLmfRKmwBwAf+cxy8SMheREm78cCmGmQQpqHsg3ZAZU=;
+ b=bNXIizEp7JUlN8eGoZZ5eIYdc11WSXuLrYVRgV3IanPDe8tlMTv0OGgUGToou9J3/S28J7YvNKXLSWDV8drLtLvndJjWvXl65nsjyiWJkKaD45vJ4Unkla1r8MKE2yvg6g0DO9n5y2l7HaKyB6wdTzZ52/Ou6Jeuv4G1Wwp57nrHF15kqff+zxNNrzzdAZRMjbw49TKXLKk2/03AsxJRu2V4KE6Nj3QucmcfwJjx3l6AW91W6ADflB/kyb79oT3pLyok+aah/WMgF3ZRC3FC+ezOEbTUhh/qCyW5zspja8HpzSphiuzDsGrEKmTAZ954ske69jrK72K9CbSW7+c5ww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TQBfP7QQjKIG0o3Pg9WIkZVuXKxrDOf0OgFZeVCbQFg=;
- b=su/K7Ln4hkRVlfwYmy7EYXcrAYJ7z4QM7GEPVpdKb/csocy3E57gkaiWUhy9XisOR78PSApf8tAL+JYT3XZkgecFp9cedd4TgCKmkF9HQuqNnYWUYsI36v8dP4nmkXXubl/AfQQN3k4lVkSYmj7ofqJ5MIoyQZkiN1dY9mOmiUw=
+ bh=eLmfRKmwBwAf+cxy8SMheREm78cCmGmQQpqHsg3ZAZU=;
+ b=jIshPU/DQ6wxikguP+iFY8rtrJlr85T+UbxKX+vCgerbIPsvcaDXolUAsJQV0XnIHh99BhdjcU7ojdaqfrqLE7VYP7N+HUd7MEfIFEB1k1GyRVbozYrFyPL32FuqXMAByPQN76L+P08VxGnI277Acgz2zPJx/tToZn4l0oqDmFE=
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PAXPR04MB8176.eurprd04.prod.outlook.com (2603:10a6:102:1c9::15) with
+ by VE1PR04MB7424.eurprd04.prod.outlook.com (2603:10a6:800:1a7::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.24; Fri, 3 Feb
- 2023 00:04:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6064.27; Fri, 3 Feb
+ 2023 00:12:15 +0000
 Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::e203:47be:36e4:c0c3]) by DU0PR04MB9417.eurprd04.prod.outlook.com
  ([fe80::e203:47be:36e4:c0c3%9]) with mapi id 15.20.6043.025; Fri, 3 Feb 2023
- 00:04:27 +0000
+ 00:12:15 +0000
 From:   Peng Fan <peng.fan@nxp.com>
 To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
@@ -52,18 +52,20 @@ CC:     "andersson@kernel.org" <andersson@kernel.org>,
         "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH V2 5/6] remoteproc: imx_rproc: set Cortex-M stack/pc to
- TCML
-Thread-Topic: [PATCH V2 5/6] remoteproc: imx_rproc: set Cortex-M stack/pc to
- TCML
-Thread-Index: AQHZMjDJzgt7cVgC9UWv0kJgugWwrq68PgaAgAAiy7A=
-Date:   Fri, 3 Feb 2023 00:04:27 +0000
-Message-ID: <DU0PR04MB9417620B668E43118933821388D79@DU0PR04MB9417.eurprd04.prod.outlook.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Subject: RE: [PATCH V2 6/6] remoteproc: imx_rproc: set address of .interrupts
+ section as bootaddr
+Thread-Topic: [PATCH V2 6/6] remoteproc: imx_rproc: set address of .interrupts
+ section as bootaddr
+Thread-Index: AQHZMjDLa30Jfx3KJki7iAzCkmrKAq68QKuAgAAhn6A=
+Date:   Fri, 3 Feb 2023 00:12:15 +0000
+Message-ID: <DU0PR04MB94178BB971E5107E907C743B88D79@DU0PR04MB9417.eurprd04.prod.outlook.com>
 References: <20230127092246.1470865-1-peng.fan@oss.nxp.com>
- <20230127092246.1470865-6-peng.fan@oss.nxp.com>
- <20230202215629.GC1147631@p14s>
-In-Reply-To: <20230202215629.GC1147631@p14s>
+ <20230127092246.1470865-7-peng.fan@oss.nxp.com>
+ <20230202220557.GD1147631@p14s>
+In-Reply-To: <20230202220557.GD1147631@p14s>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -71,175 +73,144 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|PAXPR04MB8176:EE_
-x-ms-office365-filtering-correlation-id: e0018c0c-bfdf-4456-816b-08db057a3767
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|VE1PR04MB7424:EE_
+x-ms-office365-filtering-correlation-id: 1670733f-a315-4ffc-f800-08db057b4e31
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +kjSK0Shu2JpbiSUaOhBLaVqMAoASJcnpun5niu91nNNZeOzZrfOERQnUZ6so9kMvf6F3/7u+bNuu0CBapCgsGTbN5MY8bvX2++oFVg4gfIgaDjNasmrQElN8qtwy5JiFKJmmUj614fGtwFXhQ6K5kvQO1yRPOG1klu3/9tkDNgUW+yXMmSsfZF32QLHOgW5Is0BHsPIgyBC0fb2CnLMzFPeuE3EqJqHc3NqfFn37goFv/cOhZFECi9Ssanbe9O4zI+3mM/08f1ZhOQb7GH8YaRIz4TALtTSI/nbiBOw11UEC1jS+4u4UvSDdI72B01lEgqFjR+BzrxmO/OOmhLy7YSRxGoIn2J+P7O8OuGKBE1o5kuoW2KeMZie8SXRpaq7107YSZU8OCjhsu5sTryi1LyAKW/5IIujiszhLfcqHSjAGHwQhGhTSMJNI8nWpbJ9M9RI+O/PLLwP0btajLqSeKEmSIYjcfkr6JrOQNTXTZEZVpvenMfbX0Lfw/bcZXFmZrMzfneWPOw0fh0OgRR/Yi+69FQsWAwmaUoraUx7sdYF8po2eIPNC8ZVFdLclEFLIpGhSf06m0GGYRzPirLPxnJGYqJxahFV7W4xsO7dmk6Gjxv0kqzXweH5MJHs/BaYqdAnBYkEbrOJiannYAa7Rkus5fRuOapXARUapauh2bGgprt5HsirCiaWkzSId/p2R6osXbAAf5ZIIfj0uy6t3A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(136003)(39860400002)(376002)(366004)(396003)(346002)(451199018)(316002)(52536014)(186003)(9686003)(38100700002)(38070700005)(26005)(83380400001)(44832011)(54906003)(55016003)(7416002)(5660300002)(2906002)(33656002)(122000001)(110136005)(6506007)(478600001)(66556008)(86362001)(66946007)(66446008)(66476007)(71200400001)(64756008)(8676002)(8936002)(41300700001)(7696005)(76116006)(4326008);DIR:OUT;SFP:1101;
+x-microsoft-antispam-message-info: TKLh0CyCapRYSxmiWbuoTc8MuTtTa1Y6kauqCVTRtcjNn4QCek8165HaIvdYL11FId4qUOQI7SZgyedfW5OkDu+9XMMfH2Qg6rFH2qzaSOWvI0OkzBRhfhS8mBM7W5N9V6lBuczzevQKQPzTk9drn4JkQhRk1z6kzpAo7O8qeYZQdC+ZDmzzQROCjWtLx880aCI6OZrIigN0zItTmmgi3WAqBeVzK1aPMFvUyhqOHn7idXBOmfMnGtWMMH+SQ9iej2hjZAxaWDHS6co+QBTJNNIfDm8E50wYIJ//AYP7PP4JfZeb5/a1ECZPsazRLJ76CDHVzdWbKN+/ZxfyNtStW28YYaICOSbRX6g4CVWTll+dQUITVgcxusRjNogmOTUmsjJwKS/Q2py3FWxxRpNAp80lraMiE+KjL+/IAcOmhGJIZB0Pu2r3qzoJjIx5Ei1UgBbdJw9SRBSTU5pmUo6IM3LIY8NCnm1dsbqTwCmKmfUYctHr/Dj+YyU5g6uCFo5J10E7hRkQA1z0cqvDw6AG82r0/ysnu48ENkCA4gAuDKIdtpjKf2fBtJtcClTadLKiiYze2yYffvYwpufDYa4SKJ4mbwZUg5lf3FhvNOuqitgzwAMLX/ZdY2oPCYMKx3ptT/7ZnzeSfubFdekY5t2v6hNpPPmDu/SLbLwz9Ww11YXt3v8ESkVv4S6SnZurSDa4b94Yqfzh05egY3iJUzL5Sf8xxBTRqCT1qr4p7jkMOgM=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(136003)(346002)(39860400002)(396003)(366004)(451199018)(38100700002)(86362001)(54906003)(5660300002)(7416002)(316002)(110136005)(83380400001)(38070700005)(122000001)(33656002)(55016003)(52536014)(9686003)(7696005)(186003)(26005)(2906002)(71200400001)(478600001)(44832011)(76116006)(66476007)(66946007)(66446008)(4326008)(66556008)(8676002)(64756008)(6506007)(8936002)(41300700001)(142923001);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?lWm63t75sN0usCiFsX68FWID7uSaBM9OWQMl7IMUaA1x1RAJWtM0bnoHK7Xi?=
- =?us-ascii?Q?2VhoGYFOIJlGl7Z9MegjULxXn8OwVid1M7eG5wvBkc51oMAUxzLMVN8Mdmfv?=
- =?us-ascii?Q?8pEyMQryuOlGmTKtyEP8YSH+Xxk2R/V5WoyTg5g+5itemURJZWq8iWA4bN/2?=
- =?us-ascii?Q?scC386ZacY8tzkiSAQ7vvv1PHAZEFjIGXeclKL1uDMefhBrjAZf61FZMF0Ql?=
- =?us-ascii?Q?fNMIwAK1UXKOFtINYsn/TUaps7czu1Vu2ZmoO2WdiOSpAFPNJBhVhjRNX3By?=
- =?us-ascii?Q?8FV/9PlaVccX7Oi3VbkZaEh8KwyoTIC8KPa3dDArNL82HJ8m2TEwQVopioo3?=
- =?us-ascii?Q?6ZQgMDhDbrDkJ1xhXioBn0P/IUOj8XNZL/d5LQkVnVexw/2nxN/o4EfN14FO?=
- =?us-ascii?Q?0ItCO+9C6EmuwuzyAbxRvFRC6txfTJf9TIMb4ns/Oq6Myneai5KFmcPG049g?=
- =?us-ascii?Q?cywHWXLqKkzMol0RxIe7pfS3AnhxnnkONb2s3ZZ7BVtBJESsa/ESZa7po/ng?=
- =?us-ascii?Q?Mod6wnyjyRVEvu6GefqfFyNBhDBFtar1MyGCEgkqinvUCWoXOJ8mjQ4XfuLP?=
- =?us-ascii?Q?U4EUf+9TFCVLfEA7iYw+KClBdEvUBPeRJsbclEDa+wTri70aH9WOK8Wih8pE?=
- =?us-ascii?Q?6zyPLdqR9Gu74t2ocPAAp28Zq5MoGK4tWgqd4/taInhkYJlqzKtQFYrrRTmV?=
- =?us-ascii?Q?ZaAmRLG2bg7ONpZ4p8kXXdOSMEkSrPiVzRRm+r2xEdbLqz/rYlMBI/+0h8XB?=
- =?us-ascii?Q?oaLrR+4jhZmV6lEa66hFg66blrVP5/lPRCrQVyFfdx8pptpb0KQnS/UnCxf5?=
- =?us-ascii?Q?/fteoMt5q0y+okY8mftBq+RqALo+fnLtOKdP+0iY5pKrOSDzyNBkhj1rjN1O?=
- =?us-ascii?Q?KU1V+GuXs57XC52Ze+Rv4V1LoiWAXl58XiK7pFNdQY9fO77eujk6nd8BYZNM?=
- =?us-ascii?Q?PDEKWWVQxOKA6OwJDx6AAOzpe0oP2/10hTosClnzcKcZrwaOKZmjcYEIrvc7?=
- =?us-ascii?Q?0kSqCsi84cJQ23Cvxyd2pcIq6uxX8u7ynVe6DvCkC6o0iX5iXQpq8zhCLx5l?=
- =?us-ascii?Q?y+o8B0D6qR6c1SXLWzO0nUvmdneukc8pjazjXtOzYpA+nP1gWtXABEFWJmPO?=
- =?us-ascii?Q?2RvwI9Xd6G7qaN3dA5Np3h19MYX+NhTg45Q6EUUKTTLaWQ8pCtnQ1nRk+4Ik?=
- =?us-ascii?Q?erpB8wtqkpZaCT4APE5VasxjzcEIxsQYSEvj86OJcb2DoC6Wm3jhjvWi/14o?=
- =?us-ascii?Q?cVY+2zCCq5s7Z2HHEIYGmffL5SEN5ZEC7Ojhp9vmP6/2Ln6vZny+Od8WlM5h?=
- =?us-ascii?Q?IQR5hquJMoT4IUlEFrKViBN37rIgoy92wUb6914HRXXH8as5bNk48ks9e4v/?=
- =?us-ascii?Q?o30ofi8+kv4YQXkUoUa53YCPL7fwSzOAZrKEZ2p3FLKCcLj6cw24hJOJo3MC?=
- =?us-ascii?Q?ibcUSAVduXcJo8+bN9l0nTgomU6zGiRMsChjggcF0lvKp1vcYMUJZ6haWub/?=
- =?us-ascii?Q?NBgjtU7hTfjU+kUfUMjA6m2WkURTNF17yFUcq8DA/La4mubLwwHuIa+Mm5IV?=
- =?us-ascii?Q?bkB1HK+xXhi5gtXRblw=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?F5+Mxw9ViJYnQAg7Z/t6WFQdD3OiMNEDkWEETsshhN7OAnTrRVyN1I0W2y35?=
+ =?us-ascii?Q?fFppinVavuCQquooI3KsJOYyamtJt8N+vshRAdsNH1EiFCrG9y6NjTrF6XcD?=
+ =?us-ascii?Q?rm204j3g3Os9h1qc9/JH1Dj9FUg/TJh6cwj7SuSNGWkM5XA0RBVUrFmPSDHA?=
+ =?us-ascii?Q?IHTrxxkVUWPabFRKiGp08WfTDIsn2i+Mz1uLG4kG4tW69Rpo8fdhgRFj0y6m?=
+ =?us-ascii?Q?4PuhUjJ2dEqrCPMLCJlGYvSYC8dsaGic+lYR3AdnzY+wmd5QxVInu/p+0as2?=
+ =?us-ascii?Q?DWwxpupZmE6b+rFPtQPPHR41vlWQr4XYRdDADAwOHYsUb+r2u4YggbqQfsZg?=
+ =?us-ascii?Q?25CBuI0QmUVl0rXeoL3GtemLgYRO9yKOd3RIpvN0s+gXmXwVWklYPu87G/9q?=
+ =?us-ascii?Q?4jNklDp0Y2sEOR0WNUqDnPyWZTXQRZzPiOxU14MOrBcHpAsyrwAHxpPKhdBM?=
+ =?us-ascii?Q?Pd8IaoXKqtUfN6vV9I5qQ/RkNxx/oUyem4r5Gnfump68KI1k9H8I/IP+7V/j?=
+ =?us-ascii?Q?DTUQtE00QaflUQXgLDRgzae7fhJDtrj5DPJzqgt4oJymop3ttYBSv8Skm5Bd?=
+ =?us-ascii?Q?1pp3QaxLY3jPgstPZwcUEwalnRNpS3rKZSpata0ZG/hSZVxKSypc+nqokUox?=
+ =?us-ascii?Q?p5/k7n22JerSQdD4tLtT1e8oSMf3zhlXkIDLp1XTqnr8jjeQ7ZJ+2zBy+mC6?=
+ =?us-ascii?Q?mGX5HI/x3fJ/ujioqISU7I9Oy6p8dB6KReqyLg/VibduFEQZBeLyEWb+SRyB?=
+ =?us-ascii?Q?Lsg5MlKg39pt5jSZJTRf5a7IMicOdT/qplcOvJtyyn+imk3bqUiRUmquBt+H?=
+ =?us-ascii?Q?AXGjsyZQ832FHdzy+BdQMjma9Tnn/hk6DAFvDimkBiIYpJHr0WtMWm6b4QYT?=
+ =?us-ascii?Q?yp1ZHLiWONQavoAQAG2PhKFYf1peHQzmBy4D4YhGNX2dzd3baT4zs7QWdbsr?=
+ =?us-ascii?Q?JtygfAYET+jvWqIghIpMjqgteZwJnRplKTkEXp9WppI5C+4cq4qSat2au1it?=
+ =?us-ascii?Q?PLwUS6dSp5OPSKThIuPbaO24t0KdOroQsy1A4j/b6hR8Nul2JIHZwRuDD1Rh?=
+ =?us-ascii?Q?nQjO12+kYViDDJX2pV64nfJvuS9+Rv0ALEQY6eUVN+hvtGQZ+ZoC091f0p6u?=
+ =?us-ascii?Q?GhXJEV1bsgBAPte4Rtx4Ec/J9b3LKTEQ/OPQIrClW8eSNaKzgO33MChE2uFK?=
+ =?us-ascii?Q?H6IH1pqMdmbu2lIUdGSEEbrzJgkeienvsAuABgyy853bT92IkU4a+o+XswUY?=
+ =?us-ascii?Q?sEe9swDg8Fm8dHSBvUuoN7UNUnsot5hzAHmyXiKAwiJzYxM8dsITVxtK2OjL?=
+ =?us-ascii?Q?AImPWg09EiPmNtuXHTpKq4Nh/WljbQRQHju2wWDszbnLzCOyX8d8dipbK+Dj?=
+ =?us-ascii?Q?rZkKHHDaxPAQSTOacpz2F5HGE6EBdmcjN2YCszV6xHFXGiHbNLKbo50kfdEa?=
+ =?us-ascii?Q?9+tgJ8Uur1ULx35oY1L1e0hcgZAbpZkpv9kDChvmQNW/hwAToQ3IacHIKNLR?=
+ =?us-ascii?Q?xu0/8PT8vIOeotixW1AUuDQGgoqzfKySdtHK7oXowfJ7ejit8EIHLJTmLnmC?=
+ =?us-ascii?Q?zSBWENBe+IzHN1mW/yQ=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0018c0c-bfdf-4456-816b-08db057a3767
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2023 00:04:27.6580
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1670733f-a315-4ffc-f800-08db057b4e31
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Feb 2023 00:12:15.3446
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: o/oobiCrnqqHWfOissi/jpaCCg0JT9gnHNbAjL0ONuZ92UyIdYB2swGP2ghQAxlL4OZIrIMYj8i78Su7MUa3yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8176
+X-MS-Exchange-CrossTenant-userprincipalname: K6PyeqKSK50aGAC/czcd7f/VR6rtVoyb2/pBKAUjbhrmCpfmsspgQ28N0U5uQs6z0Sadx9NjRjUPn9759AmL/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7424
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: Re: [PATCH V2 5/6] remoteproc: imx_rproc: set Cortex-M stack/pc
-> to TCML
+> Subject: Re: [PATCH V2 6/6] remoteproc: imx_rproc: set address
+> of .interrupts section as bootaddr
 >=20
-> On Fri, Jan 27, 2023 at 05:22:45PM +0800, Peng Fan (OSS) wrote:
+> On Fri, Jan 27, 2023 at 05:22:46PM +0800, Peng Fan (OSS) wrote:
 > > From: Peng Fan <peng.fan@nxp.com>
 > >
-> > The i.MX8M Cortex-M core not has ROM. It has a requirement is the
-> > stack, pc value should be set in address 0 and 4 from the view of
-> > itself. From Cortex-A core view, the region is at TCML start address.
+> > i.MX93 M33 has ROM, it needs the ".interrupts" section address to
+> > start
+> > M33 firmware. In current design, the Arm Trusted Firmware(ATF) use
+> > TCML start address when the 2nd arg is 0 when SMC call. So When the
+> > M33 firmware is built with TCML address, it works well.
 > >
-> > The stack and pc value are the first two words stored in section
-> > ".interrupts" of the firmware, and the section is the first section in
-> > the firmware.
-> >
-> > When the firmware is built to run in TCML, there is no issue, because
-> > when copying elf segments, the first two words are copied to TCML also.
-> >
-> > However when the firmware is built ro run in DDR, the first two words
-> > are not copied to TCML start address.
-> >
-> > This patch is to find the ".interrupts" section, read out the first
-> > two words and write to TCML start address at offset 0 and 4.
+> > However when M33 firmware is built to run in DDR, we need pass the
+> > ".interrupts" address as 2nd arg to ATF to start M33 firmwrae.
 > >
 > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > > ---
-> >  drivers/remoteproc/imx_rproc.c | 37
-> > +++++++++++++++++++++++++++++++++-
-> >  1 file changed, 36 insertions(+), 1 deletion(-)
+> >  drivers/remoteproc/imx_rproc.c | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
 > >
 > > diff --git a/drivers/remoteproc/imx_rproc.c
-> > b/drivers/remoteproc/imx_rproc.c index 295e0e0e869a..f5ee0c9bb09d
+> > b/drivers/remoteproc/imx_rproc.c index f5ee0c9bb09d..59cca5ac3045
 > > 100644
 > > --- a/drivers/remoteproc/imx_rproc.c
 > > +++ b/drivers/remoteproc/imx_rproc.c
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/arm-smccc.h>
-> >  #include <linux/clk.h>
-> >  #include <linux/err.h>
-> > +#include <linux/firmware.h>
-> >  #include <linux/firmware/imx/sci.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/kernel.h>
-> > @@ -23,6 +24,7 @@
-> >  #include <linux/workqueue.h>
-> >
-> >  #include "imx_rproc.h"
-> > +#include "remoteproc_elf_helpers.h"
-> >  #include "remoteproc_internal.h"
-> >
-> >  #define IMX7D_SRC_SCR			0x0C
-> > @@ -634,6 +636,39 @@ static struct resource_table
-> *imx_rproc_get_loaded_rsc_table(struct rproc *rproc
-> >  	return (struct resource_table __force *)priv->rsc_table;  }
-> >
-> > +static u64 imx_rproc_get_boot_addr(struct rproc *rproc, const struct
-> > +firmware *fw) {
-> > +	struct imx_rproc *priv =3D rproc->priv;
-> > +	const u8 *elf_data =3D (void *)fw->data;
-> > +	u8 class =3D fw_elf_get_class(fw);
-> > +	u64 bootaddr =3D rproc_elf_get_boot_addr(rproc, fw);
-> > +	const void *shdr;
-> > +	void __iomem *va;
-> > +	u64 sh_addr, offset;
-> > +
-> > +	if (priv->dcfg->devtype =3D=3D IMX_RPROC_IMX8M) {
-> > +		/*
-> > +		 * i.MX8M Cortex-M requires [stack, pc] be put in address
-> > +		 * [0, 4], so the da address is 0, size is 8 words.
-> > +		 */
-> > +		va =3D (__force void __iomem *)rproc_da_to_va(rproc, 0, 8,
-> NULL);
+> > @@ -374,7 +374,8 @@ static int imx_rproc_start(struct rproc *rproc)
+> >  					 dcfg->src_start);
+> >  		break;
+> >  	case IMX_RPROC_SMC:
+> > -		arm_smccc_smc(IMX_SIP_RPROC, IMX_SIP_RPROC_START, 0,
+> 0, 0, 0, 0, 0, &res);
+> > +		arm_smccc_smc(IMX_SIP_RPROC, IMX_SIP_RPROC_START,
+> rproc->bootaddr,
+> > +			      0, 0, 0, 0, 0, &res);
+> >  		ret =3D res.a0;
+> >  		break;
+> >  	case IMX_RPROC_SCU_API:
+> > @@ -664,6 +665,13 @@ static u64 imx_rproc_get_boot_addr(struct rproc
+> *rproc, const struct firmware *f
+> >  		 */
+> >  		writel(*(u32 *)(elf_data + offset), va);
+> >  		writel(*(u32 *)(elf_data + offset + 4), va + 4);
+> > +	} else if (priv->dcfg->devtype =3D=3D IMX_RPROC_IMX93) {
+> > +		/* i.MX93 Cortex-M33 has ROM, it only needs the section
+> address */
 > > +		shdr =3D rproc_elf_find_shdr(rproc, fw, ".interrupts");
-> > +		if (!shdr || !va)
+> > +		if (!shdr)
 > > +			return bootaddr;
-> > +		sh_addr =3D elf_shdr_get_sh_addr(class, shdr);
 >=20
-> This isn't used - why is it still there?
+> This contradicts what you wrote in the cover letter of the patchset about=
+ an
+> ".interrupts" section always being present.
 
-will drop it.
+Yes, from the initial beginning for supporting Cortex-M firmware, the secti=
+on
+is there. I just think whether people build their own firmware, not has
+this section, and just put firmware in TCM, there is no need to explicitly =
+set
+word 0 and 4 again. This maybe a fake assumption, I could refine this piece
+code.
 
 >=20
-> > +		offset =3D elf_shdr_get_sh_offset(class, shdr);
-> > +
-> > +		/*
-> > +		 * Write stack, pc to TCML start address. The TCML region
-> > +		 * is marked with ATT_IOMEM, so use writel.
-> > +		 */
-> > +		writel(*(u32 *)(elf_data + offset), va);
-> > +		writel(*(u32 *)(elf_data + offset + 4), va + 4);
->=20
-> Here you are writing 2 words at address 0x0 and 2 words at address 0x4.
-> Why are you saying the size is 8 words in the comment above?
+> There is enough in this patchset to make me look for a second opinion.  A=
+s
+> such I am CC'ing Iuliana and Daniel.  Please respin this, adding both of =
+them
+> to the recipient list.  I will do another revision only when they have pr=
+ovided
+> an RB tag.
 
-Typo. I should mean 8 bytes.
+They not work on other areas, not same as me. Anyway I could ask them to
+help review.=20
 
 Thanks,
 Peng.
 
 >=20
-> > +	}
+> Thanks,
+> Mathieu
+>=20
 > > +
-> > +	return bootaddr;
-> > +}
-> > +
-> >  static const struct rproc_ops imx_rproc_ops =3D {
-> >  	.prepare	=3D imx_rproc_prepare,
-> >  	.attach		=3D imx_rproc_attach,
-> > @@ -647,7 +682,7 @@ static const struct rproc_ops imx_rproc_ops =3D {
-> >  	.find_loaded_rsc_table =3D rproc_elf_find_loaded_rsc_table,
-> >  	.get_loaded_rsc_table =3D imx_rproc_get_loaded_rsc_table,
-> >  	.sanity_check	=3D rproc_elf_sanity_check,
-> > -	.get_boot_addr	=3D rproc_elf_get_boot_addr,
-> > +	.get_boot_addr	=3D imx_rproc_get_boot_addr,
-> >  };
+> > +		return elf_shdr_get_sh_addr(class, shdr);
+> >  	}
 > >
-> >  static int imx_rproc_addr_init(struct imx_rproc *priv,
+> >  	return bootaddr;
 > > --
 > > 2.37.1
 > >
