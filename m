@@ -2,128 +2,481 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34CEC61DA4
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Feb 2023 13:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DB7C64EC3
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Feb 2023 21:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231732AbjBCNDZ (ORCPT
+        id S233272AbjBCVL0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 08:03:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
+        Fri, 3 Feb 2023 16:11:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232327AbjBCNDX (ORCPT
+        with ESMTP id S232237AbjBCVLX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Feb 2023 08:03:23 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51AB13D6D;
-        Fri,  3 Feb 2023 05:03:21 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id hx15so15064926ejc.11;
-        Fri, 03 Feb 2023 05:03:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mhw606rE28kJkerg6webpCcTMHL9GNutaEWEkICkP4A=;
-        b=dWAat21FSCa+ly38JnA6kNDPMfUkpj2HPBcqphl2Tph4+firr4q+JxKSF1FoooSloK
-         oHJABjdQekom3WQGVRnrTJqvyWJE9ZDVAa/Cn6rfA8GFqtFSHbrps/eaRgblnoPJlibx
-         7hffzcWoaQaUoaoYbXtHsYr6na5lwCDC2vwvMQXUTgflvTfxKfWdx0OIXQhdFEntWpxN
-         xeocA8eK+blhIi792omSvidtSaKb85OVzsGe7T8bZ5pt/+0UA20DMjwcH0WA2xecIyjd
-         ab/tr++iLyYr9sAOpZtfzDlWeQ2a02ceipWASZBVGTPUN+iLfeMWjkSe/vNUqNxiFX8Q
-         IlxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mhw606rE28kJkerg6webpCcTMHL9GNutaEWEkICkP4A=;
-        b=fZ5euVCPAcmWJ8YPdKGWJ+wU5Jxyevx6M555DNIIBXIKBf/fleXqnuMXN2LRoBLQa+
-         KRZEw8NKLqszsGN5wHzjq9gfJt0uLezwgtD/5UFc5NBCWzakYPCOe2rkLKEaOy/+PZOm
-         W3my12WbAadAfwlKVrfR2FgRr0cBlskX7OOdNbs2h5D1CZZJw1xbX8RrD904uNSouMvf
-         VCVIlA0r7WsQrPD3blj0k5OATea+NF1eiN9aMOhp3b4QzGoymYBu8bGW6Y7O8x7Tg8i/
-         v35hkQpqiLZ9fC7qeH9i6ncsYqnH7GkkMBZxhEjItndnTl74Rzl6FKMwj5ftzwn7KpyY
-         LddA==
-X-Gm-Message-State: AO0yUKURg2FEV+sGW9OUNHGWNk/HoJYeF8T8wR7VLFQYSYCKBZg9795C
-        syE6IlKJr4QqKxBtXngV13ToMIGbOFAtLwP6Gvg=
-X-Google-Smtp-Source: AK7set+GT28lvuIdrbuFkNyv98dve6hfJTkOGU/HVRCnNu1qb7iwfUz7ktL1kTisAd1J43RlxafLdC/jh8jQfopFLe4=
-X-Received: by 2002:a17:906:139b:b0:88c:1d3d:6fab with SMTP id
- f27-20020a170906139b00b0088c1d3d6fabmr2969827ejc.299.1675429400191; Fri, 03
- Feb 2023 05:03:20 -0800 (PST)
-MIME-Version: 1.0
-References: <20230127092246.1470865-1-peng.fan@oss.nxp.com>
- <CAEnQRZB4ZLWcz-2jqZ7UDFxc60U9BFu_QuV9AvRYdqvC=Y-zwg@mail.gmail.com> <DU0PR04MB9417C6008B6352F7FB34355F88D79@DU0PR04MB9417.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9417C6008B6352F7FB34355F88D79@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Fri, 3 Feb 2023 15:03:08 +0200
-Message-ID: <CAEnQRZDbC3MzcQ69yUzM9L71mP0CT5EAQWCpzafvsxaWeUwj4w@mail.gmail.com>
-Subject: Re: [PATCH V2 0/6] remoteproc: imx_rproc: support firmware in DDR
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        Fri, 3 Feb 2023 16:11:23 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B5FC71BF5;
+        Fri,  3 Feb 2023 13:11:10 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 313KenUI024989;
+        Fri, 3 Feb 2023 21:10:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=ZrXUH0Omg6RzsJR3syi23SBibtjJaDRCIYaiu1onFk0=;
+ b=TsbV0n6AKPZDBX9pHKYLr9Madn8vG3vbMLbAm4A+gQ8v/KOg1ZnO7/TQahQjVPOcHgYY
+ z/fE29YA0YqUmTv68hyF7t4bTKi4+omTtvdjOjoYeoyzd5yVU1S8TSM0iu8vrtT5KDuR
+ 2QQ1mM+JDM8SsHmr8poKHTRRGTfdxXd2vxlW/rfzTF0upDrUM3WIj83wbQLMdwIQdE9h
+ xPwMJ1w68OJx2Jkc2izXQGhqwNO96KekmCMSysTZqXQpT6Ri7W16PTw8N1cLax5+1rfh
+ z1JZzaaXVJBvx89jutvc2jFYPgMmimgCwXUAIKPuu69EQBWR+t8Y1o28dsJOb43KA9ZN tQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ngns2jha8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Feb 2023 21:10:17 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 313LAGUp006424
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 3 Feb 2023 21:10:16 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Fri, 3 Feb 2023 13:10:15 -0800
+From:   Elliot Berman <quic_eberman@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        "Abhinav Kumar" <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        "Vikash Garodia" <quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Alex Elder <elder@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Kalle Valo <kvalo@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     Elliot Berman <quic_eberman@quicinc.com>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <iommu@lists.linux.dev>,
+        <linux-media@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: [PATCH] firmware: qcom_scm: Move qcom_scm.h to include/linux/firmware/qcom/
+Date:   Fri, 3 Feb 2023 13:09:52 -0800
+Message-ID: <20230203210956.3580811-1-quic_eberman@quicinc.com>
+X-Mailer: git-send-email 2.39.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZlK216WrMbhK0f96yjsuQBwOakhKfBhG
+X-Proofpoint-ORIG-GUID: ZlK216WrMbhK0f96yjsuQBwOakhKfBhG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-02-03_19,2023-02-03_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
+ spamscore=0 malwarescore=0 priorityscore=1501 suspectscore=0 mlxscore=0
+ adultscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302030190
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Feb 3, 2023 at 2:55 PM Peng Fan <peng.fan@nxp.com> wrote:
->
-> Hi Daniel
-> > Subject: Re: [PATCH V2 0/6] remoteproc: imx_rproc: support firmware in
-> > DDR
-> >
-> > On Fri, Jan 27, 2023 at 11:26 AM Peng Fan (OSS) <peng.fan@oss.nxp.com>
-> > wrote:
-> > >
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > V2:
-> > >  patch 4 is introduced for sparse check warning fix
-> > >
-> > > This pachset is to support i.MX8M and i.MX93 Cortex-M core firmware
-> > > could be in DDR, not just the default TCM.
-> > >
-> > > i.MX8M needs stack/pc value be stored in TCML entry address[0,4], the
-> > > initial value could be got from firmware first section ".interrupts".
-> > > i.MX93 is a bit different, it just needs the address of .interrupts
-> > > section. NXP SDK always has .interrupts section.
-> > >
-> > > So first we need find the .interrupts section from firmware, so patch
-> > > 1 is to reuse the code of find_table to introduce a new API
-> > > rproc_elf_find_shdr to find shdr, the it could reused by i.MX driver.
-> > >
-> > > Patch 2 is introduce devtype for i.MX8M/93
-> > >
-> > > Although patch 3 is correct the mapping, but this area was never used
-> > > by NXP SW team, we directly use the DDR region, not the alias region.
-> > > Since this patchset is first to support firmware in DDR, mark this
-> > > patch as a fix does not make much sense.
-> > >
-> > > patch 4 and 5 is support i.MX8M/93 firmware in DDR with parsing
-> > > .interrupts section. Detailed information in each patch commit message.
-> > >
-> > > Patches were tested on i.MX8MQ-EVK i.MX8MP-EVK i.MX93-11x11-EVK
-> >
-> > Hi Peng,
-> >
-> > Few observations:
-> >
-> > - bugfixes should come first in the series.
-> > - in case we want to patches to be pushed back into stable releases please
-> > add "Fixes: " tag.
->
-> You mean patch 4: sparse warning fix?
-> Or patch 3 is correct the mapping? Or both? For patch 3, I would not take
-> it as fix, I just think there is no people using this ddr alias address. If you
-> prefer, I could add a fix tag for patch 3.
+Move include/linux/qcom_scm.h to include/linux/firmware/qcom/qcom_scm.h.
+This removes 1 of a few remaining Qualcomm-specific headers into a more
+approciate subdirectory under include/.
 
-Yes, I mean patch 3) which is definitely a thing that stable versions
-could benefit.
+Suggested-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+---
+ arch/arm/mach-qcom/platsmp.c                     | 2 +-
+ drivers/cpuidle/cpuidle-qcom-spm.c               | 2 +-
+ drivers/firmware/qcom_scm-legacy.c               | 2 +-
+ drivers/firmware/qcom_scm-smc.c                  | 2 +-
+ drivers/firmware/qcom_scm.c                      | 2 +-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c            | 2 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c          | 2 +-
+ drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c             | 2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c | 2 +-
+ drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c       | 2 +-
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c          | 2 +-
+ drivers/media/platform/qcom/venus/firmware.c     | 2 +-
+ drivers/misc/fastrpc.c                           | 2 +-
+ drivers/mmc/host/sdhci-msm.c                     | 2 +-
+ drivers/net/ipa/ipa_main.c                       | 2 +-
+ drivers/net/wireless/ath/ath10k/qmi.c            | 2 +-
+ drivers/pinctrl/qcom/pinctrl-msm.c               | 2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c               | 2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c               | 2 +-
+ drivers/remoteproc/qcom_wcnss.c                  | 2 +-
+ drivers/soc/qcom/mdt_loader.c                    | 2 +-
+ drivers/soc/qcom/ocmem.c                         | 2 +-
+ drivers/soc/qcom/rmtfs_mem.c                     | 2 +-
+ drivers/thermal/qcom/lmh.c                       | 2 +-
+ drivers/ufs/host/ufs-qcom-ice.c                  | 2 +-
+ include/linux/{ => firmware/qcom}/qcom_scm.h     | 0
+ 26 files changed, 25 insertions(+), 25 deletions(-)
+ rename include/linux/{ => firmware/qcom}/qcom_scm.h (100%)
+
+diff --git a/arch/arm/mach-qcom/platsmp.c b/arch/arm/mach-qcom/platsmp.c
+index 5d2f386a46d8..eca2fe0f4314 100644
+--- a/arch/arm/mach-qcom/platsmp.c
++++ b/arch/arm/mach-qcom/platsmp.c
+@@ -14,7 +14,7 @@
+ #include <linux/of_address.h>
+ #include <linux/smp.h>
+ #include <linux/io.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #include <asm/smp_plat.h>
+ 
+diff --git a/drivers/cpuidle/cpuidle-qcom-spm.c b/drivers/cpuidle/cpuidle-qcom-spm.c
+index beedf22cbe78..4ac83918edf2 100644
+--- a/drivers/cpuidle/cpuidle-qcom-spm.c
++++ b/drivers/cpuidle/cpuidle-qcom-spm.c
+@@ -17,7 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/cpuidle.h>
+ #include <linux/cpu_pm.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <soc/qcom/spm.h>
+ 
+ #include <asm/proc-fns.h>
+diff --git a/drivers/firmware/qcom_scm-legacy.c b/drivers/firmware/qcom_scm-legacy.c
+index 9f918b9e6f8f..029e6d117cb8 100644
+--- a/drivers/firmware/qcom_scm-legacy.c
++++ b/drivers/firmware/qcom_scm-legacy.c
+@@ -9,7 +9,7 @@
+ #include <linux/mutex.h>
+ #include <linux/errno.h>
+ #include <linux/err.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/arm-smccc.h>
+ #include <linux/dma-mapping.h>
+ 
+diff --git a/drivers/firmware/qcom_scm-smc.c b/drivers/firmware/qcom_scm-smc.c
+index bb3235a64b8f..16cf88acfa8e 100644
+--- a/drivers/firmware/qcom_scm-smc.c
++++ b/drivers/firmware/qcom_scm-smc.c
+@@ -8,7 +8,7 @@
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/arm-smccc.h>
+ #include <linux/dma-mapping.h>
+ 
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 2000323722bf..468d4d5ab550 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -12,7 +12,7 @@
+ #include <linux/interconnect.h>
+ #include <linux/module.h>
+ #include <linux/types.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+index 660ba0db8900..d09221f97f71 100644
+--- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+@@ -5,7 +5,7 @@
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/cpumask.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/pm_opp.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/slab.h>
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index 57586c794b84..89ff978b81bb 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -8,7 +8,7 @@
+ 
+ #include <linux/ascii85.h>
+ #include <linux/interconnect.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/kernel.h>
+ #include <linux/of_address.h>
+ #include <linux/pm_opp.h>
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c b/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
+index e7748461cffc..0752fe373351 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_hdcp.c
+@@ -3,7 +3,7 @@
+  */
+ 
+ #include "hdmi.h"
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #define HDCP_REG_ENABLE 0x01
+ #define HDCP_REG_DISABLE 0x00
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+index 74e9ef2fd580..b5b14108e086 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ #include <linux/of_device.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/ratelimit.h>
+ 
+ #include "arm-smmu.h"
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+index 91d404deb115..ef42329e82ce 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+@@ -7,7 +7,7 @@
+ #include <linux/adreno-smmu-priv.h>
+ #include <linux/delay.h>
+ #include <linux/of_device.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #include "arm-smmu.h"
+ #include "arm-smmu-qcom.h"
+diff --git a/drivers/iommu/arm/arm-smmu/qcom_iommu.c b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
+index 270c3d9128ba..1e0b7b2e9fbd 100644
+--- a/drivers/iommu/arm/arm-smmu/qcom_iommu.c
++++ b/drivers/iommu/arm/arm-smmu/qcom_iommu.c
+@@ -27,7 +27,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+index 142d4c74017c..e5759d7e9ede 100644
+--- a/drivers/media/platform/qcom/venus/firmware.c
++++ b/drivers/media/platform/qcom/venus/firmware.c
+@@ -12,7 +12,7 @@
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_device.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/sizes.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+ 
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index c9902a1dcf5d..04f80e754477 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -18,7 +18,7 @@
+ #include <linux/rpmsg.h>
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <uapi/misc/fastrpc.h>
+ #include <linux/of_reserved_mem.h>
+ 
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 4ac8651d0b29..8ac81d57a3df 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -13,7 +13,7 @@
+ #include <linux/pm_opp.h>
+ #include <linux/slab.h>
+ #include <linux/iopoll.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/interconnect.h>
+ #include <linux/pinctrl/consumer.h>
+diff --git a/drivers/net/ipa/ipa_main.c b/drivers/net/ipa/ipa_main.c
+index 4fb92f771974..90baf7a54d9a 100644
+--- a/drivers/net/ipa/ipa_main.c
++++ b/drivers/net/ipa/ipa_main.c
+@@ -16,7 +16,7 @@
+ #include <linux/of_device.h>
+ #include <linux/of_address.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+ 
+ #include "ipa.h"
+diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
+index 3f94fbf83702..90f457b8e1fe 100644
+--- a/drivers/net/wireless/ath/ath10k/qmi.c
++++ b/drivers/net/wireless/ath/ath10k/qmi.c
+@@ -13,7 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/net.h>
+ #include <linux/platform_device.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/soc/qcom/smem.h>
+ #include <linux/string.h>
+ #include <net/sock.h>
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 47e9a8b0d474..e0128c69bfbf 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -14,7 +14,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/reboot.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index fddb63cffee0..da2513bb6387 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -34,7 +34,7 @@
+ #include "qcom_pil_info.h"
+ #include "qcom_q6v5.h"
+ 
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #define MPSS_CRASH_REASON_SMEM		421
+ 
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index dc6f07ca8341..d5a049669616 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -18,7 +18,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/remoteproc.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 68f37296b151..9881443cb8df 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -19,7 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/remoteproc.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index 3f11554df2f3..33dd8c315eb7 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -12,7 +12,7 @@
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/mdt_loader.h>
+diff --git a/drivers/soc/qcom/ocmem.c b/drivers/soc/qcom/ocmem.c
+index c92d26b73e6f..199fe9872035 100644
+--- a/drivers/soc/qcom/ocmem.c
++++ b/drivers/soc/qcom/ocmem.c
+@@ -16,7 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+index 9d59ad509a5c..2d3ee22b9249 100644
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -14,7 +14,7 @@
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ #include <linux/io.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #define QCOM_RMTFS_MEM_DEV_MAX	(MINORMASK + 1)
+ #define NUM_MAX_VMIDS		2
+diff --git a/drivers/thermal/qcom/lmh.c b/drivers/thermal/qcom/lmh.c
+index 4122a51e9874..f6edb12ec004 100644
+--- a/drivers/thermal/qcom/lmh.c
++++ b/drivers/thermal/qcom/lmh.c
+@@ -10,7 +10,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/of_platform.h>
+ #include <linux/slab.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #define LMH_NODE_DCVS			0x44435653
+ #define LMH_CLUSTER0_NODE_ID		0x6370302D
+diff --git a/drivers/ufs/host/ufs-qcom-ice.c b/drivers/ufs/host/ufs-qcom-ice.c
+index 62387ccd5b30..453978877ae9 100644
+--- a/drivers/ufs/host/ufs-qcom-ice.c
++++ b/drivers/ufs/host/ufs-qcom-ice.c
+@@ -8,7 +8,7 @@
+ 
+ #include <linux/delay.h>
+ #include <linux/platform_device.h>
+-#include <linux/qcom_scm.h>
++#include <linux/firmware/qcom/qcom_scm.h>
+ 
+ #include "ufs-qcom.h"
+ 
+diff --git a/include/linux/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+similarity index 100%
+rename from include/linux/qcom_scm.h
+rename to include/linux/firmware/qcom/qcom_scm.h
+
+base-commit: 3866989ec2c319341e2cf69ec6116269b634a271
+-- 
+2.39.1
+
