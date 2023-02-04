@@ -2,122 +2,188 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22B3C63797
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Feb 2023 21:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B33C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Sat,  4 Feb 2023 07:24:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233847AbjBCV4Q (ORCPT
+        id S230052AbjBDHYr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Feb 2023 16:56:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51244 "EHLO
+        Sat, 4 Feb 2023 02:24:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233071AbjBCV4O (ORCPT
+        with ESMTP id S229877AbjBDHYq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Feb 2023 16:56:14 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D1779CAE;
-        Fri,  3 Feb 2023 13:56:12 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 313KTSjW025071;
-        Fri, 3 Feb 2023 21:55:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=zXDLHevRmbNSieNjjZ1itBUbVMHRS4dQ8ncRciz05CU=;
- b=FnAt2NZyHNV925FRMJKX5HNFpbtGl80xJ5Simzd4dnspOfwMwmJY3Kq/mxJkJYucCcM5
- ZrhNIHiMbmasCmA+UdX35t4SvXC3y//w9S0LXF8zViotoGYqj3OS4TMFPlxLKVWRm2Sb
- S74EUPFZJEbnmYukTsRs75yWT0n1UEAzFeqdEtOGZ0CAjUAusSbb7RlU/C5+zYoWzf+3
- UZBV7FdzQl84NnWUgpDVWIhzXwFgYB3XpHwpHwkrNj+5OcIFqU34wjW5EeP/Ev207PNW
- vV42m8XCBn1squCKUoXdorylZE2Y3lNSWd2RsmFrF00WR+bdSkVYJNCrKSo/35wP8dFA QA== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ngw4p9thc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Feb 2023 21:55:35 +0000
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 313LtYE4001279
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 3 Feb 2023 21:55:34 GMT
-Received: from quicinc.com (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 3 Feb 2023
- 13:55:33 -0800
-Date:   Fri, 3 Feb 2023 13:55:32 -0800
-From:   Guru Das Srinagesh <quic_gurus@quicinc.com>
-To:     Elliot Berman <quic_eberman@quicinc.com>
-CC:     Andy Gross <agross@kernel.org>,
+        Sat, 4 Feb 2023 02:24:46 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF1528857;
+        Fri,  3 Feb 2023 23:24:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1675495484; x=1707031484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xv4erXaIjU/U2PyCOdDnNNxcvF32iclosxBe50Xccfk=;
+  b=U0LcpJyvbI0NHYOoqdfJqmwHBi3ghev6ELepUl5IuyieNzrpctCPIU2Z
+   8fGGEOKYsvlIDJC3xsXKe2U2q0UqQ8SiuYCgVfZ4X1u5SW9H/UcXLWsqS
+   qbFkb0ipemF1E6yGrgS/gYn0pnp+Q7GK7PprmXM3VU7ceaCv8Va3F6REG
+   b9mv4taUuPsxN6WUwzZvzXKcRg+ZpisOrYEc2VKGt/DTGOebBS94TY2vd
+   e5z1/7SoZGgL4I+FgxET6P2aqH4KKWiorsNMFA0KsuU39yWcyD/y/vQ1U
+   4bpr8zz9gF4IJC9DzM08P9bYFg6ykj8RTsp5SZp1mNdWFhOv6irARnGSy
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10610"; a="308566331"
+X-IronPort-AV: E=Sophos;i="5.97,272,1669104000"; 
+   d="scan'208";a="308566331"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2023 23:24:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10610"; a="659346575"
+X-IronPort-AV: E=Sophos;i="5.97,272,1669104000"; 
+   d="scan'208";a="659346575"
+Received: from lkp-server01.sh.intel.com (HELO 4455601a8d94) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 03 Feb 2023 23:24:36 -0800
+Received: from kbuild by 4455601a8d94 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pOCuZ-00017z-2L;
+        Sat, 04 Feb 2023 07:24:35 +0000
+Date:   Sat, 4 Feb 2023 15:23:49 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        "Abhinav Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        "Vikash Garodia" <quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Kalle Valo <kvalo@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <iommu@lists.linux.dev>,
-        <linux-media@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <ath10k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH] firmware: qcom_scm: Move qcom_scm.h to
- include/linux/firmware/qcom/
-Message-ID: <20230203215532.GA10258@quicinc.com>
-References: <20230203210956.3580811-1-quic_eberman@quicinc.com>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Paul Olaru <paul.olaru@nxp.com>,
+        Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     oe-kbuild-all@lists.linux.dev, linux-imx <linux-imx@nxp.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: add custom memory copy
+ implementation for i.MX DSP Cores
+Message-ID: <202302041520.m9CY8p6U-lkp@intel.com>
+References: <20230131170436.31280-1-iuliana.prodan@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230203210956.3580811-1-quic_eberman@quicinc.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IakSQGYsVJaEfb-gAExeEyYclWwLMuK5
-X-Proofpoint-ORIG-GUID: IakSQGYsVJaEfb-gAExeEyYclWwLMuK5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-03_19,2023-02-03_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 impostorscore=0 spamscore=0 suspectscore=0 adultscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302030197
+In-Reply-To: <20230131170436.31280-1-iuliana.prodan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Feb 03 2023 13:09, Elliot Berman wrote:
-> Move include/linux/qcom_scm.h to include/linux/firmware/qcom/qcom_scm.h.
-> This removes 1 of a few remaining Qualcomm-specific headers into a more
-> approciate subdirectory under include/.
-> 
-> Suggested-by: Bjorn Andersson <andersson@kernel.org>
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+Hi Iuliana,
 
-Reviewed-by: Guru Das Srinagesh <quic_gurus@quicinc.com>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on linus/master v6.2-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Iuliana-Prodan-OSS/remoteproc-imx_dsp_rproc-add-custom-memory-copy-implementation-for-i-MX-DSP-Cores/20230201-011011
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20230131170436.31280-1-iuliana.prodan%40oss.nxp.com
+patch subject: [PATCH v2] remoteproc: imx_dsp_rproc: add custom memory copy implementation for i.MX DSP Cores
+config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20230204/202302041520.m9CY8p6U-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/65bca8739891378a92cf6a5774e2ad72630a4276
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Iuliana-Prodan-OSS/remoteproc-imx_dsp_rproc-add-custom-memory-copy-implementation-for-i-MX-DSP-Cores/20230201-011011
+        git checkout 65bca8739891378a92cf6a5774e2ad72630a4276
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/remoteproc/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/kernel.h:15,
+                    from include/linux/clk.h:13,
+                    from drivers/remoteproc/imx_dsp_rproc.c:6:
+   drivers/remoteproc/imx_dsp_rproc.c: In function 'imx_dsp_rproc_memcpy':
+>> drivers/remoteproc/imx_dsp_rproc.c:732:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     732 |         if (!IS_ALIGNED((u64)dest, 4))
+         |                         ^
+   include/linux/align.h:13:44: note: in definition of macro 'IS_ALIGNED'
+      13 | #define IS_ALIGNED(x, a)                (((x) & ((typeof(x))(a) - 1)) == 0)
+         |                                            ^
+>> drivers/remoteproc/imx_dsp_rproc.c:732:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     732 |         if (!IS_ALIGNED((u64)dest, 4))
+         |                         ^
+   include/linux/align.h:13:58: note: in definition of macro 'IS_ALIGNED'
+      13 | #define IS_ALIGNED(x, a)                (((x) & ((typeof(x))(a) - 1)) == 0)
+         |                                                          ^
+   drivers/remoteproc/imx_dsp_rproc.c: In function 'imx_dsp_rproc_memset':
+   drivers/remoteproc/imx_dsp_rproc.c:776:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     776 |         if (!IS_ALIGNED((u64)addr, 4))
+         |                         ^
+   include/linux/align.h:13:44: note: in definition of macro 'IS_ALIGNED'
+      13 | #define IS_ALIGNED(x, a)                (((x) & ((typeof(x))(a) - 1)) == 0)
+         |                                            ^
+   drivers/remoteproc/imx_dsp_rproc.c:776:25: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+     776 |         if (!IS_ALIGNED((u64)addr, 4))
+         |                         ^
+   include/linux/align.h:13:58: note: in definition of macro 'IS_ALIGNED'
+      13 | #define IS_ALIGNED(x, a)                (((x) & ((typeof(x))(a) - 1)) == 0)
+         |                                                          ^
+
+
+vim +732 drivers/remoteproc/imx_dsp_rproc.c
+
+   717	
+   718	/*
+   719	 * Custom memory copy implementation for i.MX DSP Cores
+   720	 *
+   721	 * The IRAM is part of the HiFi DSP.
+   722	 * According to hw specs only 32-bits writes are allowed.
+   723	 */
+   724	static int imx_dsp_rproc_memcpy(void *dest, const void *src, size_t size)
+   725	{
+   726		const u8 *src_byte = src;
+   727		u32 affected_mask;
+   728		u32 tmp;
+   729		int i, q, r;
+   730	
+   731		/* destination must be 32bit aligned */
+ > 732		if (!IS_ALIGNED((u64)dest, 4))
+   733			return -EINVAL;
+   734	
+   735		q = size / 4;
+   736		r = size % 4;
+   737	
+   738		/* __iowrite32_copy use 32bit size values so divide by 4 */
+   739		__iowrite32_copy(dest, src, q);
+   740	
+   741		if (r) {
+   742			affected_mask = (1 << (8 * r)) - 1;
+   743	
+   744			/* first read the 32bit data of dest, then change affected
+   745			 * bytes, and write back to dest.
+   746			 * For unaffected bytes, it should not be changed
+   747			 */
+   748			tmp = ioread32(dest + q * 4);
+   749			tmp &= ~affected_mask;
+   750	
+   751			/* avoid reading after end of source */
+   752			for (i = 0; i < r; i++)
+   753				tmp |= (src_byte[q * 4 + i] << (8 * i));
+   754	
+   755			iowrite32(tmp, dest + q * 4);
+   756		}
+   757	
+   758		return 0;
+   759	}
+   760	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
