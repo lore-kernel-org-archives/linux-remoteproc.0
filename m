@@ -2,64 +2,65 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA54DC636CC
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 10:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F057C636CC
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 10:28:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231843AbjBGKAl (ORCPT
+        id S231341AbjBGK2c (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 05:00:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58934 "EHLO
+        Tue, 7 Feb 2023 05:28:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231848AbjBGKAU (ORCPT
+        with ESMTP id S231152AbjBGK2b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Feb 2023 05:00:20 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5959D12F0F
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Feb 2023 01:59:21 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id y1so12982168wru.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Feb 2023 01:59:21 -0800 (PST)
+        Tue, 7 Feb 2023 05:28:31 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AB424CB8
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Feb 2023 02:28:29 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id sa10so11524384ejc.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Feb 2023 02:28:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gyxo1SYfYxqaPFoqXEgYr/ocAyDp0P/Afe4B05MrX2g=;
-        b=KzUsPTYWPFHfbLnnGsjoPYvqAu0p4zXIIyFAyQZ7lM/tW0/LideTaa5ZkrAqRI26GH
-         GH1/SBpFezyNWMSdg0lcwdwBVPj9PnB44iaNkrCU7HZCAq9KD04+1zceZS7NpkGGbg5T
-         49lDY1s6A0TjFPNDmGQq3I8kZhT7cNTRMoRuv71V4amdrb9f+B3BzVizxeTPLmKtG2Zk
-         jqREe0/ffmG2XeH67rlJtXrgkVKC5mpgXrVq+Z/e5bDcacOGtwetl10GLbVqdBLhq0ht
-         q2pi2euEWKbuBZWSHy8sQrTKfWZGmjJGO3dBXzAsJbE0A31Ga4sjM23sNyL3m/hdDFW4
-         BtTA==
+        bh=Ts0acRxUBjbRENNqOH3ml+/mZlOaH3hAaRGG4xxO/dA=;
+        b=LUHCt0+T2Hf0ZKwD43H5lkjLO6ulP5eagMt47wgdb69tnWD89AQ/JExXLTGnhvzQ2t
+         ue9Jzr2h+XtHybrUklYYZXOZ53YxaIvgACuEvFuXIQZ1GlRIITUK5Sn1+8d/6AyTkz1d
+         pW7c2KM1Dvcfx6R443sEW5NP6+7q/1hFp02tRVTTIKWFZSk+0nkGQaaUpiJVuEq2ufxG
+         8EvMaE1bvTC0jMA8qSgzFEMgyQH4/1iTMkT7ndg6MDsVs/PY2vjegnUBMXTRk6GeiVvv
+         GK8a5m/kYH9ngXdCB5HqR3WvjbGJ9hLfKBhpiOAIxNkbBbqLmmwheUPI+6JePtroVSa3
+         B9FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gyxo1SYfYxqaPFoqXEgYr/ocAyDp0P/Afe4B05MrX2g=;
-        b=74V611sInvCiPJ6sMNlbuKz+vJn8CyiK8ehQTuWQvbEkS7apLn9swN8mHsHLDgMphw
-         w0XG1ACsBSIlYkkEhCBfILuZlsrgPvGIg64FKTkJDO/HG8avECHXvJdP+o/pkeujmOov
-         5oUiG5sR0Vo3TouwJF/zxU6OY8TAZtQuodwt9X4LL7O9YrQH3TkIjiL3Cs56SPk6PvKZ
-         jfcmgtG/s7zSQJmvizqKuYMbLCNRNq1ob7PojxySGpu7Ed6uKy9lFKcQsWK9/3bIwSOa
-         MsD2Z7JW8aUYzZQeg/9lDZTjU0BYGI7tqgAhC0TmEQaalCzEkcweVogmV+rKBv9NjR2P
-         CzQg==
-X-Gm-Message-State: AO0yUKVrn625rGLq7hYVl4rmqWNmxdvvd1HOellu0NjT2kKkZ1xei2XT
-        /mi+hcnizn1sFCImBuoSMLM2kQ==
-X-Google-Smtp-Source: AK7set9AGUr02MY4TirPrz8+iYHIBelGFh4xaIZhKWPYG47xjHnOe3bmka69hBvzuOpVUsCNtFRL7Q==
-X-Received: by 2002:a5d:4a0d:0:b0:2c3:ea81:64bf with SMTP id m13-20020a5d4a0d000000b002c3ea8164bfmr1877549wrq.56.1675763959917;
-        Tue, 07 Feb 2023 01:59:19 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id l11-20020a05600002ab00b002bfb5ebf8cfsm11408275wry.21.2023.02.07.01.59.14
+        bh=Ts0acRxUBjbRENNqOH3ml+/mZlOaH3hAaRGG4xxO/dA=;
+        b=rEVCg7KXY9pe80+ZmxrjqGlfXEOq3KX8+lOEVEgyMoqMOYk5M9s/5PBLfCsQxThNHy
+         oSDlJ0MyCY2qpRXajBBCRmL1BCZIAf4v8hRR5VUX1pPHSKBhVDWY8EoeEPgHYmIDF2kO
+         tVsyk5lBpkSGNoLOtbVtBilyPQj7HTt9MxhOfl296tMTJwq0bXXIX/AGR6e0HB1mpBUL
+         Bnlek+dBWufMLvGnTxJ9SiHdIlEDACh7Xwxi5w+130Y6UuaDv2uQpg67uHsLkw8DZo/c
+         76+56Elc9lmnH207WCqQB/iZiUDW10eBHjvEWnTOR0J/YQqIqN3G52zIOvXODGzKO1hG
+         sx4Q==
+X-Gm-Message-State: AO0yUKXOpPVIQra4qnGYfE2ZIlBd8C5Srtm6qjjCVy5ebInCKEOOBAMn
+        635TDGAjAEu4XW76w1HGzBYt9Q==
+X-Google-Smtp-Source: AK7set9/juo6jZwynfeVJKi6dbEl+eEIfDse1Ww3gi5cTUFdnPobV93AbPuSQ2zBPXVlSBoFdRmWtA==
+X-Received: by 2002:a17:906:1d44:b0:889:b6ae:75ff with SMTP id o4-20020a1709061d4400b00889b6ae75ffmr2792898ejh.53.1675765708568;
+        Tue, 07 Feb 2023 02:28:28 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id y19-20020a17090668d300b00880d9530761sm6652434ejr.209.2023.02.07.02.28.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 01:59:19 -0800 (PST)
-Message-ID: <9f0e05ee-de21-c234-7c8e-e6105e98c0ac@linaro.org>
-Date:   Tue, 7 Feb 2023 10:59:06 +0100
+        Tue, 07 Feb 2023 02:28:28 -0800 (PST)
+Message-ID: <2649a9f2-236b-7108-8f68-7eeaf7f1a0fa@linaro.org>
+Date:   Tue, 7 Feb 2023 12:28:26 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 4/5] dt-bindings: remoteproc: qcom,glink-rpm-edge: convert
- to DT schema
-Content-Language: en-US
-To:     Andy Gross <agross@kernel.org>,
+Subject: Re: [PATCH 1/5] arm64: dts: qcom: ipq6018: align RPM G-Link node with
+ bindings
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -68,31 +69,26 @@ To:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230207090852.28421-1-krzysztof.kozlowski@linaro.org>
- <20230207090852.28421-4-krzysztof.kozlowski@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230207090852.28421-4-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230207090852.28421-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 07/02/2023 10:08, Krzysztof Kozlowski wrote:
-> Convert Qualcomm G-Link RPM edge binding to DT schema.  Move it to
-> remoteproc as it better suits the purpose - communication channel with
-> remote processor.
+On 07/02/2023 11:08, Krzysztof Kozlowski wrote:
+> Bindings expect (and most of DTS use) the RPM G-Link node name to be
+> "rpm-requests".
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../remoteproc/qcom,glink-rpm-edge.yaml       | 92 ++++++++++++++++++
->  .../bindings/soc/qcom/qcom,glink.txt          | 94 -------------------
->  2 files changed, 92 insertions(+), 94 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
->  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
+>   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-This is expected to trigger warning in other bindings, being fixed here:
-https://lore.kernel.org/linux-arm-msm/20230207095639.36537-1-krzysztof.kozlowski@linaro.org/T/#u
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
 
