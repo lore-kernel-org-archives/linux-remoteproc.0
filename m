@@ -2,159 +2,95 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D304C05027
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 02:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3853AC636D4
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 09:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229582AbjBGCMe (ORCPT
+        id S231354AbjBGJJD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 6 Feb 2023 21:12:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57146 "EHLO
+        Tue, 7 Feb 2023 04:09:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjBGCMd (ORCPT
+        with ESMTP id S231374AbjBGJJA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Feb 2023 21:12:33 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4CDC126C1;
-        Mon,  6 Feb 2023 18:12:31 -0800 (PST)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3171GB0B012041;
-        Tue, 7 Feb 2023 02:12:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=XTTWQtZoYmVoGEp5Gmczx1y7XWAsgOIeUt0psqpyjrQ=;
- b=h/faE0wUzozkVgslJmdm1jtotUCEJRRsyRl0y26MUJOC5BReC8DzJLCxx6OjOe6Yb2Lb
- rXFKrYV5KhV2cm8uVugCpYyb/qvBPWYceUu1ELKGzJ+ym7nuNaAIEF3/nr++LE4OObMv
- DIsUgNFH71RcqfxYioy+z8N2LJO8QF8BcU2aaiflnU5d0YhuF78gNLgIEVeoywtqy52z
- 1nlLXYI6coWhl4FDgbQ5eW2+o5CsdeuMtDNX29XAwWlnKbqs7xb2J8G4GnT6QpeAzVYk
- ijvOXHU8dUu9ZU80vOCHj6wDBSeDaNTObn0EKX1byDtfbZTeKXOxSzGLehEUAYfjzZoB HA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nhg4rn1jc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Feb 2023 02:12:28 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3172CSRB017817
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Feb 2023 02:12:28 GMT
-Received: from [10.47.234.156] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Mon, 6 Feb 2023
- 18:12:27 -0800
-Subject: Re: [PATCH v2] remoteproc: sysfs/debugfs: fix race while updating
- recovery flag
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20230201054609.14575-1-quic_satyap@quicinc.com>
- <22bcf613-5c0f-3043-f8ad-41bf45c5dc07@quicinc.com>
-From:   Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Message-ID: <94e7154d-8c87-47e3-1f57-b84eb7522db6@quicinc.com>
-Date:   Mon, 6 Feb 2023 18:12:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 7 Feb 2023 04:09:00 -0500
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B303800D
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Feb 2023 01:08:57 -0800 (PST)
+Received: by mail-wr1-x42f.google.com with SMTP id a2so12549337wrd.6
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Feb 2023 01:08:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+OyK3vHKrq6gGpuhtDDtXY/KeObiiU6Y5ZZooZk7kW0=;
+        b=jvYb8Fe/lnTEFnJlPtF6I60aWZs5FQ7b5+0QoXEFHNDvcKOqUCx3nNYwzsL0/noqxH
+         a03kWTOnwWz6/E7oc/YlW5Jls8zocALS+HCKiKP55mK8d1hKLQTuwZxPOFGcSXsdkFLq
+         YQb3xWzTKUxAQ8aM06KmVBYbU4A/rPG2PTRG5jsIDQMrI8np41wXzYgaVWmk9gDyIFX/
+         FTMrX9gMG4jjFpPY+PnPmxhr+mdrl5WbtTQSo/s8K8v8UxJ4URORMGZsQLU28+aICQE+
+         P4p9okzVhyFqVBZOI0jkmKK6T4v3q2uC56afboZ6PVcKSFe8U4K4G8vgC4RiykuFoA03
+         etzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+OyK3vHKrq6gGpuhtDDtXY/KeObiiU6Y5ZZooZk7kW0=;
+        b=aJZgn1c14rYDl7E4qgnuYy3OL3TvfkUegjDWW+byzKawvk+mI36P5ly31NFgk3L5qE
+         9rOLE2YmiTRbq96Zew1OIb755hFf2C1/4JFmnsSq3tLLMczcjULHUNcj7hsmPL1jsntv
+         xsc3fkriwFyDv/jamY0TdXbnJ75HhwyDqBo3LCVJkogz3y1baydFsqsRx8ExWgmG7X2X
+         agd2ZEKsbN2GRycw9bfxH7WJ4/rHL4sNInOurUqb/9HDEXReh986bHn3qvtkL+H3DQ39
+         kaVGTSX+eeC3wAOMCYNu4VnU//XzXASTsSEvKaGvNpxyLeFtkC+tRc3yK5IJ0HYhD/NJ
+         /KoQ==
+X-Gm-Message-State: AO0yUKWxz3ErjVFLMUJZRLlg1RZpME0KLGidikHNZInRHGoHvxEzAW2f
+        a2toqwBYcdsZw7c04ZK404Ca53gGbfie5mg8
+X-Google-Smtp-Source: AK7set/haKDLFxsOjIZu8mPzMNM4u94WH0hfDFhysehqvw49MWps3ViRosdVgx0jgK+3OdqNJMYa/g==
+X-Received: by 2002:adf:f80f:0:b0:2c3:f0a3:bd91 with SMTP id s15-20020adff80f000000b002c3f0a3bd91mr1970384wrp.11.1675760936014;
+        Tue, 07 Feb 2023 01:08:56 -0800 (PST)
+Received: from krzk-bin.. ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id h3-20020a056000000300b002c3e5652744sm5081955wrx.46.2023.02.07.01.08.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Feb 2023 01:08:55 -0800 (PST)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/5] arm64: dts: qcom: ipq6018: align RPM G-Link node with bindings
+Date:   Tue,  7 Feb 2023 10:08:48 +0100
+Message-Id: <20230207090852.28421-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-In-Reply-To: <22bcf613-5c0f-3043-f8ad-41bf45c5dc07@quicinc.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4oVKKycegy2UlsRmvPcfl5fJjPRQqRss
-X-Proofpoint-GUID: 4oVKKycegy2UlsRmvPcfl5fJjPRQqRss
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-02-06_07,2023-02-06_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 mlxscore=0 impostorscore=0 phishscore=0 suspectscore=0
- clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302070018
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Bindings expect (and most of DTS use) the RPM G-Link node name to be
+"rpm-requests".
 
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2/1/23 4:05 AM, Mukesh Ojha wrote:
->
->
-> On 2/1/2023 11:16 AM, Satya Durga Srinivasu Prabhala wrote:
->> When multiple clients try to update the recovery flag, it is
->> possible that, race condition would lead to undesired results
->> as updates to recovery flag isn't protected by any mechanism
->> today. To avoid such issues, take remoteproc mutex lock before
->> updating recovery flag and release the lock once done.
->>
->> Signed-off-by: Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
->
-> LGTM.
->
-> Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
-Thanks Mukesh.
-
-Hi Bjorn,
-
-Can you help cross check?
-
-Best,
-Satya
-
->
-> -Mukesh
->> ---
->> v1 -> v2:
->> - addressed comments from Mukesh Ojha
->>    1. take & release lock only while updating recovery flag
->>    2. update debugfs
->>
->>   drivers/remoteproc/remoteproc_debugfs.c | 4 ++++
->>   drivers/remoteproc/remoteproc_sysfs.c   | 4 ++++
->>   2 files changed, 8 insertions(+)
->>
->> diff --git a/drivers/remoteproc/remoteproc_debugfs.c 
->> b/drivers/remoteproc/remoteproc_debugfs.c
->> index b86c1d09c70c..2c44d375024e 100644
->> --- a/drivers/remoteproc/remoteproc_debugfs.c
->> +++ b/drivers/remoteproc/remoteproc_debugfs.c
->> @@ -226,10 +226,14 @@ rproc_recovery_write(struct file *filp, const 
->> char __user *user_buf,
->>
->>       if (!strncmp(buf, "enabled", count)) {
->>           /* change the flag and begin the recovery process if needed */
->> +        mutex_lock(&rproc->lock);
->>           rproc->recovery_disabled = false;
->> +        mutex_unlock(&rproc->lock);
->>           rproc_trigger_recovery(rproc);
->>       } else if (!strncmp(buf, "disabled", count)) {
->> +        mutex_lock(&rproc->lock);
->>           rproc->recovery_disabled = true;
->> +        mutex_unlock(&rproc->lock);
->>       } else if (!strncmp(buf, "recover", count)) {
->>           /* begin the recovery process without changing the flag */
->>           rproc_trigger_recovery(rproc);
->> diff --git a/drivers/remoteproc/remoteproc_sysfs.c 
->> b/drivers/remoteproc/remoteproc_sysfs.c
->> index 8c7ea8922638..628e0de9a132 100644
->> --- a/drivers/remoteproc/remoteproc_sysfs.c
->> +++ b/drivers/remoteproc/remoteproc_sysfs.c
->> @@ -50,10 +50,14 @@ static ssize_t recovery_store(struct device *dev,
->>
->>       if (sysfs_streq(buf, "enabled")) {
->>           /* change the flag and begin the recovery process if needed */
->> +        mutex_lock(&rproc->lock);
->>           rproc->recovery_disabled = false;
->> +        mutex_unlock(&rproc->lock);
->>           rproc_trigger_recovery(rproc);
->>       } else if (sysfs_streq(buf, "disabled")) {
->> +        mutex_lock(&rproc->lock);
->>           rproc->recovery_disabled = true;
->> +        mutex_unlock(&rproc->lock);
->>       } else if (sysfs_streq(buf, "recover")) {
->>           /* begin the recovery process without changing the flag */
->>           rproc_trigger_recovery(rproc);
+diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+index d32c9b2515ee..bbd94025ff5d 100644
+--- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+@@ -176,7 +176,7 @@ rpm-glink {
+ 		qcom,rpm-msg-ram = <&rpm_msg_ram>;
+ 		mboxes = <&apcs_glb 0>;
+ 
+-		rpm_requests: glink-channel {
++		rpm_requests: rpm-requests {
+ 			compatible = "qcom,rpm-ipq6018";
+ 			qcom,glink-channels = "rpm_requests";
+ 
+-- 
+2.34.1
 
