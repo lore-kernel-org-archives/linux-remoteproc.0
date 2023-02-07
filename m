@@ -2,106 +2,92 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD590C636D6
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 13:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A72C636D6
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 13:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231976AbjBGNBX (ORCPT
+        id S232444AbjBGNNJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 08:01:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46642 "EHLO
+        Tue, 7 Feb 2023 08:13:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231977AbjBGNBH (ORCPT
+        with ESMTP id S232562AbjBGNMv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Feb 2023 08:01:07 -0500
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B406D39B8B;
-        Tue,  7 Feb 2023 05:00:28 -0800 (PST)
-Received: by mail-ot1-f49.google.com with SMTP id r34-20020a05683044a200b0068d4a8a8d2dso4135414otv.12;
-        Tue, 07 Feb 2023 05:00:28 -0800 (PST)
+        Tue, 7 Feb 2023 08:12:51 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38F0E279B1;
+        Tue,  7 Feb 2023 05:11:56 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id m8so15384690edd.10;
+        Tue, 07 Feb 2023 05:11:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDyA4ggqisB45/w/0REkOlZ81YKrrNesSQZoTA7f6To=;
+        b=UIh8SrGt8+V5BJZAYpFdffjM72nB+aFHeNjz1XnZV8VZpiZS7pC6e5xmG9iQZxW129
+         ZIxdVyIOS3zPJI0+SKripsm1FqcNKprWTJi3PAQ9Emo2Aw214Ez8pctFp3ktPTTMmR/Q
+         65d4fTWG8yvQiqaNRGCVScTeIGLemW2jjyRGzhcs7VAKPFjGsqSNvkQEGxjOveq3K7tZ
+         0uMVfIZqMQ5k+uQL87fQxmsWZW0R17S5ntL1rxFs+gnEnRnmRl9JF8CPAozgHmuF8wi4
+         UCdzr4yfMvyDKl+O/tt1UyZna8ORFzrHw0CQnpVGQi/x+LXyKNUrroNy8FcwScjD+eox
+         RVSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ium/4IrRsQ+k51z0fDzl0DiGIY9oKjxvrSc3Z2yZ6vU=;
-        b=OXk+TPLfalbxityzGEMXxwy2UqzZiRsEBFHmgxk/K0n+aEv3AMcxqoGsZoIH049iLF
-         4Akz1+txCUFQhccZvINDTHcheJ1yrzTezcMNUi1UNWaTgaUYoQZCct7eIN5qPTirYYoQ
-         4ZriJ9GTNu1P5QEKCaLFLO7jzBnHRghnzL8v/LjqdICxNS8a65f79jBb8vw64sDF6qYY
-         GEsh4Jcj0mPCxLBXUZTod6hGwtMez6Nqe6BvHS8v0wOo1CKC6FKPi8QFIaCHmWLmL0w4
-         QNQvQBE+ttLW7bs8uWwHrh5n8mKIKF90VxyE9hO2iX9n0ADUwLcs5g4a4mkJh6mTmem3
-         Okkw==
-X-Gm-Message-State: AO0yUKUrKZ/HaWg+hP1eu/tQpu+GvIqwL3SIN/FOt36z2TXOS3TghXtJ
-        KkTa/PHu8Kfm4sJvgGt/rQpzIK+cDA==
-X-Google-Smtp-Source: AK7set9Voa0znJ6rIxJzug0AagTM9zQ35ONNyQ4dz2EhC9yj1CDlYyczSrfaLArtFj/3ZM5bvTmtWw==
-X-Received: by 2002:a05:6830:d19:b0:68d:972c:478d with SMTP id bu25-20020a0568300d1900b0068d972c478dmr2146993otb.16.1675774827878;
-        Tue, 07 Feb 2023 05:00:27 -0800 (PST)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id do20-20020a0568300e1400b0068bce6239a3sm2395029otb.38.2023.02.07.05.00.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Feb 2023 05:00:27 -0800 (PST)
-Received: (nullmailer pid 3216441 invoked by uid 1000);
-        Tue, 07 Feb 2023 13:00:23 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IDyA4ggqisB45/w/0REkOlZ81YKrrNesSQZoTA7f6To=;
+        b=WzY1vyiTEjRoX08VASgOanT6P+f6ok56T+0Ex1HbO+digMC3XqACD1xAnTwDc1fV1M
+         xxKq+O6BkIK4kYhOwOnMQjuWHAbiCPrMSREJmU5jLpIUJyJoI2sINHRu84mMqu7+cNdw
+         +KPMbtcSGGmJewOeEcno56DPDF6YHr8s4ZEjemPqk/xLXsYLtnS/VXOuSzLTU1fKbAIR
+         T6rdbW5F9d24Se8IFBp0xfmvFfdZVZlJmousdhns6lq6yjd0Xd8/a1gBsfMByJ/5GQvy
+         rGvjxWcfTwLoOa/fo+GUdB8anFMfPgf7w8+e5xCF+AL+V4QZDM5wNDf2vAekIQ5BuXRt
+         01yg==
+X-Gm-Message-State: AO0yUKUPgmofxo1PHyOSPSfODY9SfkuzPYJDVHGmkXSRvzZa03NGuVs3
+        FHWv7oPmvG61hs7WZ3ONkm82EWa71uD/Wm6+V5o=
+X-Google-Smtp-Source: AK7set8+3AsI8dOzNizw0yiS9RSPpB1Vb9Xa7G32ZNeTI052jTnUlRWYw69vyq1+8Iq9SS65J0zL7dOTlzHJyGcWixg=
+X-Received: by 2002:a50:9ee2:0:b0:4a2:4e5c:6b2f with SMTP id
+ a89-20020a509ee2000000b004a24e5c6b2fmr600275edf.2.1675775509214; Tue, 07 Feb
+ 2023 05:11:49 -0800 (PST)
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20230206150751.28618-1-iuliana.prodan@oss.nxp.com>
+In-Reply-To: <20230206150751.28618-1-iuliana.prodan@oss.nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Tue, 7 Feb 2023 15:11:37 +0200
+Message-ID: <CAEnQRZBc2EWHWev_OCsiQKj2kYZZ2vmoBpJaLJX1nBpDN=AQEg@mail.gmail.com>
+Subject: Re: [PATCH v3] remoteproc: imx_dsp_rproc: add custom memory copy
+ implementation for i.MX DSP Cores
+To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-In-Reply-To: <20230207090852.28421-4-krzysztof.kozlowski@linaro.org>
-References: <20230207090852.28421-1-krzysztof.kozlowski@linaro.org>
- <20230207090852.28421-4-krzysztof.kozlowski@linaro.org>
-Message-Id: <167577470912.3213891.8305591559369987935.robh@kernel.org>
-Subject: Re: [PATCH 4/5] dt-bindings: remoteproc: qcom,glink-rpm-edge:
- convert to DT schema
-Date:   Tue, 07 Feb 2023 07:00:23 -0600
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Mon, Feb 6, 2023 at 5:28 PM Iuliana Prodan (OSS)
+<iuliana.prodan@oss.nxp.com> wrote:
+>
+> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+>
+> The IRAM is part of the HiFi DSP.
+> According to hardware specification only 32-bits write are allowed
+> otherwise we get a Kernel panic.
+>
+> Therefore add a custom memory copy and memset functions to deal with
+> the above restriction.
+>
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> Reported-by: kernel test robot <lkp@intel.com>
 
-On Tue, 07 Feb 2023 10:08:51 +0100, Krzysztof Kozlowski wrote:
-> Convert Qualcomm G-Link RPM edge binding to DT schema.  Move it to
-> remoteproc as it better suits the purpose - communication channel with
-> remote processor.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../remoteproc/qcom,glink-rpm-edge.yaml       | 92 ++++++++++++++++++
->  .../bindings/soc/qcom/qcom,glink.txt          | 94 -------------------
->  2 files changed, 92 insertions(+), 94 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
->  delete mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,glink.txt
-> 
+The reported-by shouldn't be here, as LKP only reported some warnings
+to your original patch.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.example.dtb: rpm-glink: 'mbox-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230207090852.28421-4-krzysztof.kozlowski@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+I think it is enough to credit it inside version history.
