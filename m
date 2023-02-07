@@ -2,61 +2,61 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F057C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 10:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C73C636CC
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Feb 2023 10:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbjBGK2c (ORCPT
+        id S231375AbjBGK2p (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Feb 2023 05:28:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53038 "EHLO
+        Tue, 7 Feb 2023 05:28:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231152AbjBGK2b (ORCPT
+        with ESMTP id S231217AbjBGK2n (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Feb 2023 05:28:31 -0500
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AB424CB8
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Feb 2023 02:28:29 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id sa10so11524384ejc.9
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Feb 2023 02:28:29 -0800 (PST)
+        Tue, 7 Feb 2023 05:28:43 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9742128D13
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Feb 2023 02:28:41 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id m2so41945192ejb.8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Feb 2023 02:28:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ts0acRxUBjbRENNqOH3ml+/mZlOaH3hAaRGG4xxO/dA=;
-        b=LUHCt0+T2Hf0ZKwD43H5lkjLO6ulP5eagMt47wgdb69tnWD89AQ/JExXLTGnhvzQ2t
-         ue9Jzr2h+XtHybrUklYYZXOZ53YxaIvgACuEvFuXIQZ1GlRIITUK5Sn1+8d/6AyTkz1d
-         pW7c2KM1Dvcfx6R443sEW5NP6+7q/1hFp02tRVTTIKWFZSk+0nkGQaaUpiJVuEq2ufxG
-         8EvMaE1bvTC0jMA8qSgzFEMgyQH4/1iTMkT7ndg6MDsVs/PY2vjegnUBMXTRk6GeiVvv
-         GK8a5m/kYH9ngXdCB5HqR3WvjbGJ9hLfKBhpiOAIxNkbBbqLmmwheUPI+6JePtroVSa3
-         B9FQ==
+        bh=s7J7u2Qz+7H4Ix8Zm45ziYf6fCeHhyW1BziAA2F0ItQ=;
+        b=aj7HB7Pu427gQQvGUJlnNvf14ZCXd/FJAiIsyltyKM1WCE1KfkS/9ITk8ls280ce8r
+         NprARlQSCzuxZLqwJxCNZERR1H9rGpw1vt8sDLlNFiOM9G97CAh4pvRk4d7kPGl0/1xs
+         APUm/CP7her/HodDE2OBj3evbfnfdBzo6zfGiX42Dhl5uPpn/hN8b41bX6nEglV3zOra
+         MEmhxn67hQ63EuoNpdRBhX5S4fufEMKWblQecPiAIVIkiVxDJNKe0l/j/dmFo6j5fOw4
+         Eopa67LRlJ+FpN3BzgnaSMoW/EKoy9I0ss52u+Lq5/pvW9XXoEceFvA6C9FOsKoA5YCl
+         q/3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ts0acRxUBjbRENNqOH3ml+/mZlOaH3hAaRGG4xxO/dA=;
-        b=rEVCg7KXY9pe80+ZmxrjqGlfXEOq3KX8+lOEVEgyMoqMOYk5M9s/5PBLfCsQxThNHy
-         oSDlJ0MyCY2qpRXajBBCRmL1BCZIAf4v8hRR5VUX1pPHSKBhVDWY8EoeEPgHYmIDF2kO
-         tVsyk5lBpkSGNoLOtbVtBilyPQj7HTt9MxhOfl296tMTJwq0bXXIX/AGR6e0HB1mpBUL
-         Bnlek+dBWufMLvGnTxJ9SiHdIlEDACh7Xwxi5w+130Y6UuaDv2uQpg67uHsLkw8DZo/c
-         76+56Elc9lmnH207WCqQB/iZiUDW10eBHjvEWnTOR0J/YQqIqN3G52zIOvXODGzKO1hG
-         sx4Q==
-X-Gm-Message-State: AO0yUKXOpPVIQra4qnGYfE2ZIlBd8C5Srtm6qjjCVy5ebInCKEOOBAMn
-        635TDGAjAEu4XW76w1HGzBYt9Q==
-X-Google-Smtp-Source: AK7set9/juo6jZwynfeVJKi6dbEl+eEIfDse1Ww3gi5cTUFdnPobV93AbPuSQ2zBPXVlSBoFdRmWtA==
-X-Received: by 2002:a17:906:1d44:b0:889:b6ae:75ff with SMTP id o4-20020a1709061d4400b00889b6ae75ffmr2792898ejh.53.1675765708568;
-        Tue, 07 Feb 2023 02:28:28 -0800 (PST)
+        bh=s7J7u2Qz+7H4Ix8Zm45ziYf6fCeHhyW1BziAA2F0ItQ=;
+        b=r0J4oNeit377uelyWC14wM/pOIqh3q4bzEUOWwzjO6Q8uxaVUfAWyVnJqHjb86ha4Q
+         qefT9U3UlnQdGZ7KXjaqUqecR9CSsDhyZCXwIm6s/KvmxHPPwqx/o6D3rCVzjfBdD0FB
+         SD5S5H8VLABUzjnqZGa5sHDqxpa3J088e7YAqHOgMPm5VPH3xqXufwH8gJrIdnm0ppne
+         EstwsbGaFEffN+Tiwo3PIFbeUjhn9XJSNrBVtZX0wRWr7MTNzLmRKNIewITKBndu58UA
+         1yl2ZEh8pxzHg/rjCuRcJcsSFHq0CnZw1O9O1FLJIWcPrMwknk+DSjk4d0+9+Da4CVlu
+         7DIw==
+X-Gm-Message-State: AO0yUKWfDxxkJdXwuB//ueGo1GHIGFhaLB6mwn+MhGhpvtGPonNCM9iV
+        kc/XYHPFLIaGKormWGZ4/WI2xczkPDDULE1O
+X-Google-Smtp-Source: AK7set/EaBqF8xouQOIgcekGCjY7OPCOUlvuNohdQhhV7OuM4LjIS1dJcWL3P01Kpq+8GLKa2pMfxQ==
+X-Received: by 2002:a17:907:d090:b0:88d:ba89:183d with SMTP id vc16-20020a170907d09000b0088dba89183dmr15187515ejc.14.1675765720124;
+        Tue, 07 Feb 2023 02:28:40 -0800 (PST)
 Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id y19-20020a17090668d300b00880d9530761sm6652434ejr.209.2023.02.07.02.28.27
+        by smtp.gmail.com with ESMTPSA id m19-20020a1709061ed300b0088ed7de4821sm6710003ejj.158.2023.02.07.02.28.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Feb 2023 02:28:28 -0800 (PST)
-Message-ID: <2649a9f2-236b-7108-8f68-7eeaf7f1a0fa@linaro.org>
-Date:   Tue, 7 Feb 2023 12:28:26 +0200
+        Tue, 07 Feb 2023 02:28:39 -0800 (PST)
+Message-ID: <a753b416-1f36-0104-8b50-f0485c732d6a@linaro.org>
+Date:   Tue, 7 Feb 2023 12:28:38 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 1/5] arm64: dts: qcom: ipq6018: align RPM G-Link node with
+Subject: Re: [PATCH 2/5] arm64: dts: qcom: qcs404: align RPM G-Link node with
  bindings
 Content-Language: en-GB
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -69,8 +69,9 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230207090852.28421-1-krzysztof.kozlowski@linaro.org>
+ <20230207090852.28421-2-krzysztof.kozlowski@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230207090852.28421-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230207090852.28421-2-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,7 +84,7 @@ On 07/02/2023 11:08, Krzysztof Kozlowski wrote:
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 2 +-
+>   arch/arm64/boot/dts/qcom/qcs404.dtsi | 2 +-
 >   1 file changed, 1 insertion(+), 1 deletion(-)
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
