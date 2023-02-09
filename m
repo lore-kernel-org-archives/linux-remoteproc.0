@@ -2,83 +2,94 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1659C61DA4
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 14:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85378C636D7
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 18:01:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbjBIOEn (ORCPT
+        id S230207AbjBISB4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 09:04:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
+        Thu, 9 Feb 2023 13:01:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230362AbjBIOEk (ORCPT
+        with ESMTP id S230212AbjBISBz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Feb 2023 09:04:40 -0500
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECAC2ED6E;
-        Thu,  9 Feb 2023 06:04:36 -0800 (PST)
-Received: by mail-ej1-x630.google.com with SMTP id c26so1850701ejz.10;
-        Thu, 09 Feb 2023 06:04:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzW3nHnj5fnCOtN0H8my2p/N7+ndBtsZe+8QmFNNzxc=;
-        b=FjgF9QzbI9ls1j3RjwuZ3Eu7DLlUdjb0a1Ja5oiN2IZu3YRwoyPepCiWVDPUZ4mpkC
-         z1bdOCYN4zXLJkkR+yG/x/l6rrhec4TV0zHqZaAqC1uHYtPy9pXmLpyzUFkA9D05gmgU
-         HtGEiF7Ynp9iNThtr67gyBJlCOJ0aNeNHZicIvmUZZDvhMMbyzIPx1faQb+vfbeYXupV
-         e/7yQxEQq/nqSXtb6F0Pu8FeRTTKYmgRIt8hiRxZUx6vl93gwkIEDCIXqwOm7yLCxmZs
-         rNXVyjyyYjHAMZ4CmGy95Q+WBmNo+nFyL6iBEooD4dx0WWUNGsQ+8+x3aVcDgLX6YBXU
-         e/2Q==
+        Thu, 9 Feb 2023 13:01:55 -0500
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A811EC6E;
+        Thu,  9 Feb 2023 10:01:54 -0800 (PST)
+Received: by mail-oo1-f44.google.com with SMTP id y13-20020a4ae7cd000000b0051a750e2ebdso284667oov.5;
+        Thu, 09 Feb 2023 10:01:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uzW3nHnj5fnCOtN0H8my2p/N7+ndBtsZe+8QmFNNzxc=;
-        b=u/sEGTANBSyB6kQ5LZE6JU35uPsUuhElkEBnlRS6ckaJ1OvzXa8WE/hd2TCMpval3b
-         0OY5R6yXqUMzYVfHypJpIxFzNuSeZcwcNQgqpBniJu/yJMypJeHChWAMxvnbZXPbprIE
-         lSAWuT4RXtuWX6FgWrASpIWSLmUIQVBvbK8h1NYaTXMTNssmcp2JwJe5eCFPflNWPxCh
-         D81cC1rMsKTcd7QxYFWGQvmTwNNOARQtsXuMkBAHSIR1Sh0vuV1idp1tsZMoX4aRErfV
-         5/gCv4jgEy5GVyLxK20X+Kp14r2ta2RRVC6Wh3RAtu117a2BrQq0xIKgw3bkG0EOYXaX
-         tKkg==
-X-Gm-Message-State: AO0yUKW8MS054ojQTJd6enJZLjDGpw4OF6Lsn4HzR1ndOSNpF0grSmNC
-        zWYsN2yXxH2F74w229QNcOdmmeZpLebPzT62mMo=
-X-Google-Smtp-Source: AK7set/PSdiSfBCDekP8ENL67NJDJ1IrBpGhWtaVGMJMrBob/HECbFNRvkTu4UlbkRUzt+8+CArqPrFy/+UGI25NkOc=
-X-Received: by 2002:a17:906:17d2:b0:889:dc4d:e637 with SMTP id
- u18-20020a17090617d200b00889dc4de637mr538111eje.6.1675951474566; Thu, 09 Feb
- 2023 06:04:34 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1uXKMw3CnWvd07yk4D0CawzeJ8k3+epYck/BaWq0jMo=;
+        b=t3l5jlpXLw0PNpO/TiJdWZfGvE/xgoQeJupYgwn/GFbo/evUO5wAJqll7uBddZVhOg
+         kwIqhoQgs25+YwdjQD1JzoAvm6VuduFkpJSn5NnawBXopMKk2kta4BbD8IbpmWlAy5aL
+         4H16uGQ/7rzS//7jXTQwEGFzAPKBGcO6o9crbJ7HJ/eNQ5cHMQCc4dSIBA2FUFsR7jeD
+         6KcOO3GWu+7zu6rYXbIY+WTNs2HuPz1nJnsK7Vh2u6EwV+X93haRhBFVmwtTfcAgIREm
+         3P5/ZxQuKw0hIWYl3Bp+bpXOEF45CE2HZGEdQeX1YTyCTUQeMZ3mFeUoN03UNegoYkIe
+         6bRw==
+X-Gm-Message-State: AO0yUKXQvGRO9HFTdp608+PQMC9EhVcYHD307ajRcc3J8wWpPrSmz6Fn
+        RfefnqD/NmK3W3YwcNncqs8nWQ5xoQ==
+X-Google-Smtp-Source: AK7set8BHwi2Mg/9TH0yoo5yqFdLv/jANs3r1F3Qlzjkw/AlCETiMUXTWqQEJnXYt1OoX4R1eVAhqg==
+X-Received: by 2002:a4a:87:0:b0:517:5a19:a10b with SMTP id 129-20020a4a0087000000b005175a19a10bmr5773110ooh.5.1675965713390;
+        Thu, 09 Feb 2023 10:01:53 -0800 (PST)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id y19-20020a4a9c13000000b0051763d6497fsm978523ooj.38.2023.02.09.10.01.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Feb 2023 10:01:52 -0800 (PST)
+Received: (nullmailer pid 573389 invoked by uid 1000);
+        Thu, 09 Feb 2023 18:01:52 -0000
+Date:   Thu, 9 Feb 2023 12:01:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-remoteproc@vger.kernel.org,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Banajit Goswami <bgoswami@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 4/7] dt-bindings: mailbox: qcom,apcs-kpss-global: drop
+ mbox-names from example
+Message-ID: <167596571155.573340.6167349963011822791.robh@kernel.org>
+References: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
+ <20230208101545.45711-4-krzysztof.kozlowski@linaro.org>
 MIME-Version: 1.0
-References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
-In-Reply-To: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Thu, 9 Feb 2023 16:04:22 +0200
-Message-ID: <CAEnQRZBZ_GYK4_ZuEy2o++-hoaF4i=CjtRs8kEfhwuYGMCrr4Q@mail.gmail.com>
-Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de,
-        arnaud.pouliquen@foss.st.com, daniel.baluta@nxp.com,
-        iuliana.prodan@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230208101545.45711-4-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Looks good to me.
 
-On Thu, Feb 9, 2023 at 9:09 AM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
+On Wed, 08 Feb 2023 11:15:42 +0100, Krzysztof Kozlowski wrote:
+> Qualcomm G-Link RPM edge bindings do not allow and do not use mbox-names
+> property.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. None.
+> 2. Previously was sent as separate patch.
+> 
+> There are no strict dependencies. This can go anytime. The next patch
+> (glink-rpm-edge) should be applied in the same or later cycle (could be
+> via different trees).
+> ---
+>  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml       | 1 -
+>  1 file changed, 1 deletion(-)
+> 
 
-> Peng Fan (6):
->   remoteproc: imx_rproc: correct i.MX8MQ DDR Code alias mapping
->   remoteproc: elf_loader: introduce rproc_elf_find_shdr
->   remoteproc: imx_rproc: add devtype
->   remoteproc: imx_rproc: force pointer type
->   remoteproc: imx_rproc: set Cortex-M stack/pc to TCML
->   remoteproc: imx_rproc: set address of .interrupts section as bootaddr
+Acked-by: Rob Herring <robh@kernel.org>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
