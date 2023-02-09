@@ -2,108 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D0BC64EC5
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Feb 2023 10:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C12EC61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 04:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230178AbjBHKQM (ORCPT
+        id S229924AbjBIEaY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 8 Feb 2023 05:16:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55650 "EHLO
+        Wed, 8 Feb 2023 23:30:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231279AbjBHKQD (ORCPT
+        with ESMTP id S229722AbjBIEaQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 8 Feb 2023 05:16:03 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14533442DA
-        for <linux-remoteproc@vger.kernel.org>; Wed,  8 Feb 2023 02:16:02 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id n28-20020a05600c3b9c00b003ddca7a2bcbso1065071wms.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Feb 2023 02:16:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QIP8R/xQ7Af6ETfQwAtdNDiVKk4oUEjwkSgHlIW4k74=;
-        b=xf5P1mZEQ/f8xsXxbbauz7U4oW97zmEDzPAR0GIA0F5EDCDkpZUY+iw2NzZnbALPST
-         TVc6K+bd2QnughBFtQjAMZgZm7kKlhkxxvJ39ct/UqN4rfbYPLfZ17F5zd9cMq8WmqyB
-         iIEStiLAR467EaRWFZIL2D26DlCk/x1W6S4AWVmxfgq/N6jxGI6Bhov/30Ozk1ekxdoK
-         +AIAhD8xo6sEo/W4CgDu0iXlpBOHfDcZqAGFQJ3Kj+5DUFa0VpWWFn3q3XGRrD7FqGXg
-         jIAv9a8SvAaUUYlm9kIal6+y1sYhHU4VEISUeAAAH7Xb9FBAN6eZPMHpur7FJfMtcwqe
-         Lv2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QIP8R/xQ7Af6ETfQwAtdNDiVKk4oUEjwkSgHlIW4k74=;
-        b=3nuR6r1AqazbgPjvLE6mCwEJQFWuXcSng/1oqYTIh/UoMvXzh6DIilqDOiSwkQMO5o
-         tpGvBlyP0VfW3ygrvY0xv/S0q1+mYt1hp6UjM3QkzNoJxpsw7LDCaqEpDwQ25G/lidI3
-         HLzWjrOlCkx4nTr0tGd7vRBx19bHpNQYQ7/tkEYcUSXlxiIAqM3QAoW7HrigpQbuVQAP
-         XkdbvRlyM1easvsGGM1Jg/nLDzK8aSk94RPcKqm83WaV5djUi/Jd/jkwmmwLYfFbIo1B
-         ydnMHLw28N1WFNuWJ592DCpQKD2NnNhGzTGIbOyTT8Bd9tzsrLghTB5DxRAiTfbu0MZW
-         O9OA==
-X-Gm-Message-State: AO0yUKVUTDxn/9mXMav/n5GIVTHrEpEflff3okIY9vW8hVqwD49wT+M5
-        yh8zCtyVnI3PEEDzYmTOctx8mg==
-X-Google-Smtp-Source: AK7set+f5AbP6DO1p1Rfbv0AhFB9vPMBJ9BONhfBuIOjQDgrlQaXszTkx7Bz9W4uMCB6M3CKPbrG9g==
-X-Received: by 2002:a05:600c:3c9c:b0:3dc:d5b:5f6a with SMTP id bg28-20020a05600c3c9c00b003dc0d5b5f6amr6011165wmb.30.1675851361711;
-        Wed, 08 Feb 2023 02:16:01 -0800 (PST)
-Received: from krzk-bin.. ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id t14-20020a05600c198e00b003dc4ecfc4d7sm1496328wmq.29.2023.02.08.02.15.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Feb 2023 02:16:01 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Wed, 8 Feb 2023 23:30:16 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98EB3B64B;
+        Wed,  8 Feb 2023 20:29:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 88ECBB8201A;
+        Thu,  9 Feb 2023 04:22:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1454C433EF;
+        Thu,  9 Feb 2023 04:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1675916532;
+        bh=r896al9/ic3TVzWhQihrH5WWe9yq5i1aPuOB0FJblUQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BN/W1fmhyUDYnWQNFRl0yiZAlLtkPZOeM9PRJliT8ril6wiUbcRvBv1HMVz8E0tvT
+         mbyq5LYLXG+Q0iC3FE+j8oPN8wrX8CzcUUbhXZ8fLkv6SW7OFkTdgoSDQ4Z4S7676q
+         ekM+HlbJO6e1a7rJmpHX2uhrjQmq5U7OdTYpCuhnJvE8DoMV488k6BQ9GV5iJQMl+R
+         Z4eAbD3zOtPVRjxwl6mYHQRaDOaj1IjnIDvEt0MNJ02q3yVnhiKjhsmUqY3r16pJbp
+         2l1erYVmeAs/OrQ3L+bCLx5ypvDAgc3kGR5MyqzFDCB3QgSGPs4TzDKRQdWSO0Gb80
+         XNY+n6Qa5PJyg==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Rob Clark <robdclark@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andy Gross <agross@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alex Elder <elder@kernel.org>, Sean Paul <sean@poorly.run>,
+        Paolo Abeni <pabeni@redhat.com>, Kalle Valo <kvalo@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Mark Brown <broonie@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 7/7] dt-bindings: remoteproc: qcom,glink-edge: correct label description
-Date:   Wed,  8 Feb 2023 11:15:45 +0100
-Message-Id: <20230208101545.45711-7-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
-References: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
+        Will Deacon <will@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        David Airlie <airlied@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Amit Kucheria <amitk@kernel.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, ath10k@lists.infradead.org,
+        freedreno@lists.freedesktop.org, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom_scm: Move qcom_scm.h to include/linux/firmware/qcom/
+Date:   Wed,  8 Feb 2023 20:23:26 -0800
+Message-Id: <167591660372.1230100.2523010471979974316.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230203210956.3580811-1-quic_eberman@quicinc.com>
+References: <20230203210956.3580811-1-quic_eberman@quicinc.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Correct the description of 'label' property.
+On Fri, 3 Feb 2023 13:09:52 -0800, Elliot Berman wrote:
+> Move include/linux/qcom_scm.h to include/linux/firmware/qcom/qcom_scm.h.
+> This removes 1 of a few remaining Qualcomm-specific headers into a more
+> approciate subdirectory under include/.
+> 
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied, thanks!
 
----
+[1/1] firmware: qcom_scm: Move qcom_scm.h to include/linux/firmware/qcom/
+      commit: 3bf90eca76c98c55c975fa817799789b9176f9f3
 
-Changes since v1:
-1. None
----
- .../devicetree/bindings/remoteproc/qcom,glink-edge.yaml       | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
-index 8e133ab55ff3..15e6851e1ff8 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
-@@ -42,7 +42,9 @@ properties:
-     maxItems: 1
- 
-   label:
--    description: The names of the state bits used for SMP2P output
-+    description:
-+      Name of the edge, used for debugging and identification purposes. The
-+      node name will be used if this is not present.
- 
-   mboxes:
-     maxItems: 1
+Best regards,
 -- 
-2.34.1
-
+Bjorn Andersson <andersson@kernel.org>
