@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A51CAC05027
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 12:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A24C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 12:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjBIMnO (ORCPT
+        id S229551AbjBIMtB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 07:43:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
+        Thu, 9 Feb 2023 07:49:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbjBIMnN (ORCPT
+        with ESMTP id S229501AbjBIMtA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Feb 2023 07:43:13 -0500
+        Thu, 9 Feb 2023 07:49:00 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73C145ACD1;
-        Thu,  9 Feb 2023 04:43:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27595EA03;
+        Thu,  9 Feb 2023 04:48:59 -0800 (PST)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 74CB866020BA;
-        Thu,  9 Feb 2023 12:43:10 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B58DE66020C1;
+        Thu,  9 Feb 2023 12:48:57 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675946591;
-        bh=HwlWGSVTMDejL7PaZmKifPyYh1ewmmbzRWCaUaV371s=;
+        s=mail; t=1675946938;
+        bh=WIeAtzp/L0JbuRqFiBgonx+z+AnLyNZgpaAp7pibERE=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Sot1tO8WBzRmvFLFkYF6l1V/Ugw3er4S0AHbdVcp4VvVdn4zw67laXl63h1bbH7jq
-         RKXJtk2M/QD8iF1LrDvmW1PRnnVUW8C3BJqSMJfq0MuGdFzejBUc0bm77wYeBM1Vn0
-         PJKuAsmGUT0056XrvznfRL8ZEWvXctwm2o3y9vqKTut4qOI2KMWBIm/cYLcu3RjFFy
-         jrLcHk/pn5mbTm6dFiSHXIeigof1iAU4Sx2PSjlM1ibJdPGUyo4/wSGWfeMTpVQhkO
-         y3mdgzz/1B36ipfYcjCKi4AinXs+jqaE+HLRNknh5+J0rC7c6nqiFHxSEWxTcLQIeV
-         zaIYLQO850IDg==
-Message-ID: <201c6871-4c42-efb6-3f97-04e63ebc2187@collabora.com>
-Date:   Thu, 9 Feb 2023 13:43:07 +0100
+        b=JW2RNBxz7CoiZuLvoGyrMCcIEQV0ybAtjZQSn6JgNbhoS5FUKoiSoe4nhhP0S27dz
+         0EU6s0JDCImnCpox9hqLOsXR1sJunGIbnDiD0QiBIY++rVOXlxinYdkiOW2TcZJL3T
+         0kduMSYiHv+9BVQPj31es1bOLypbx27GBdQZ2i3M1jh903LuM1iir0GlsjgrRl3c3b
+         mQ0g8Qs0eaPNrwQabXcYucwPLNB5j8KGqvA+4nheccQBj4+e0S/vb1jCYL1pRTTwkL
+         JLgd/KuJ2V6TViNkYe5BrTAfaUUA3tFpLW3A/Yh/JxNbI0GrhQOIy8jsL6wFfTx5yv
+         DxFgqzCqX3//A==
+Message-ID: <5c677b40-7bbd-5d69-9f9b-4879c8aeddf8@collabora.com>
+Date:   Thu, 9 Feb 2023 13:48:55 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
-Subject: Re: [PATCH v4 06/12] remoteproc: mediatek: Extract remoteproc
- initialization flow
+Subject: Re: [PATCH v4 10/12] remoteproc: mediatek: Handle MT8195 SCP core 1
+ watchdog timeout
 Content-Language: en-US
 To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -52,10 +52,10 @@ Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20230209074021.13936-1-tinghan.shen@mediatek.com>
- <20230209074021.13936-7-tinghan.shen@mediatek.com>
+ <20230209074021.13936-11-tinghan.shen@mediatek.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230209074021.13936-7-tinghan.shen@mediatek.com>
+In-Reply-To: <20230209074021.13936-11-tinghan.shen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -63,47 +63,70 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Il 09/02/23 08:40, Tinghan Shen ha scritto:
-> This is the preparation for probing multi-core SCP. The remoteproc
-> initialization flow is similar on cores and is reuesd to avoid
-> redundant code.
-> 
-> The registers of config and l1tcm are shared for multi-core
-> SCP. Reuse the mapped addresses for all cores.
+> The MT8195 SCP core 1 watchdog timeout needs to be handled in the
+> SCP core 0 IRQ handler because the MT8195 SCP core 1 watchdog timeout
+> IRQ is wired on the same IRQ entry for core 0 watchdog timeout.
+> MT8195 SCP has a watchdog status register to identify the watchdog
+> timeout source when IRQ triggered.
 > 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 > ---
->   drivers/remoteproc/mtk_common.h |  7 +++++
->   drivers/remoteproc/mtk_scp.c    | 55 +++++++++++++++++++++------------
->   2 files changed, 42 insertions(+), 20 deletions(-)
+>   drivers/remoteproc/mtk_common.h |  4 ++++
+>   drivers/remoteproc/mtk_scp.c    | 24 +++++++++++++++++++++++-
+>   2 files changed, 27 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index 3778894c96f3..20c1a90be77d 100644
+> index e4ef97f2d3a1..ca2395b98d27 100644
 > --- a/drivers/remoteproc/mtk_common.h
 > +++ b/drivers/remoteproc/mtk_common.h
-> @@ -112,6 +112,13 @@ struct mtk_scp_of_data {
->   	size_t ipi_buf_offset;
->   };
+> @@ -55,6 +55,10 @@
+>   #define MT8192_CORE0_WDT_IRQ		0x10030
+>   #define MT8192_CORE0_WDT_CFG		0x10034
 >   
-> +struct mtk_scp_of_regs {
+> +#define MT8195_SYS_STATUS		0x4004
+> +#define MT8195_CORE0_WDT		BIT(16)
+> +#define MT8195_CORE1_WDT		BIT(17)
+> +
+>   #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
+>   
+>   #define MT8195_CPU1_SRAM_PD			0x1084
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index cfcb719ba50b..9fbbc4751433 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -222,6 +222,28 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+>   	}
+>   }
+>   
+> +static void mt8195_scp_irq_handler(struct mtk_scp *scp)
 
-That's not a common structure, but rather a commodity for internal flow: the right
-place for this one is in mtk_scp.c
+Looking at the C1 interrupt handler, I don't see any WDT timeout handling, hence
+a question naturally arises:
+
+Would it ever be possible for *both* CORE0 and CORE1 WDT timeout to happen
+at the same time?
+
+Meaning that MT8195_SYS_STATUS has *both* CORE0_WDT and CORE1_WDT bits set when
+we reach this interrupt handler?
+In that case, the fix would be to just change....
+
+> +{
+> +	u32 scp_to_host;
+> +
+> +	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
+> +
+> +	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
+> +		scp_ipi_handler(scp);
+> +	} else {
+> +		u32 reason = readl(scp->reg_base + MT8195_SYS_STATUS);
+> +
+> +		if (reason & MT8195_CORE1_WDT)
+> +			writel(1, scp->reg_base + MT8195_CORE1_WDT_IRQ);
+> +		else
+
+...the 'else' to another conditional :-)
 
 Regards,
 Angelo
 
-> +	void __iomem *reg_base;
-> +	void __iomem *l1tcm_base;
-> +	size_t l1tcm_size;
-> +	phys_addr_t l1tcm_phys;
-> +};
-> +
->   struct mtk_scp {
->   	struct device *dev;
->   	struct rproc *rproc;
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index b92274067522..feebcadd56cd 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -854,7 +854,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
 
