@@ -2,131 +2,83 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A24C61DA4
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 12:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1659C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Feb 2023 14:04:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbjBIMtB (ORCPT
+        id S229752AbjBIOEn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Feb 2023 07:49:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54626 "EHLO
+        Thu, 9 Feb 2023 09:04:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjBIMtA (ORCPT
+        with ESMTP id S230362AbjBIOEk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Feb 2023 07:49:00 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27595EA03;
-        Thu,  9 Feb 2023 04:48:59 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id B58DE66020C1;
-        Thu,  9 Feb 2023 12:48:57 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1675946938;
-        bh=WIeAtzp/L0JbuRqFiBgonx+z+AnLyNZgpaAp7pibERE=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=JW2RNBxz7CoiZuLvoGyrMCcIEQV0ybAtjZQSn6JgNbhoS5FUKoiSoe4nhhP0S27dz
-         0EU6s0JDCImnCpox9hqLOsXR1sJunGIbnDiD0QiBIY++rVOXlxinYdkiOW2TcZJL3T
-         0kduMSYiHv+9BVQPj31es1bOLypbx27GBdQZ2i3M1jh903LuM1iir0GlsjgrRl3c3b
-         mQ0g8Qs0eaPNrwQabXcYucwPLNB5j8KGqvA+4nheccQBj4+e0S/vb1jCYL1pRTTwkL
-         JLgd/KuJ2V6TViNkYe5BrTAfaUUA3tFpLW3A/Yh/JxNbI0GrhQOIy8jsL6wFfTx5yv
-         DxFgqzCqX3//A==
-Message-ID: <5c677b40-7bbd-5d69-9f9b-4879c8aeddf8@collabora.com>
-Date:   Thu, 9 Feb 2023 13:48:55 +0100
+        Thu, 9 Feb 2023 09:04:40 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ECAC2ED6E;
+        Thu,  9 Feb 2023 06:04:36 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id c26so1850701ejz.10;
+        Thu, 09 Feb 2023 06:04:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzW3nHnj5fnCOtN0H8my2p/N7+ndBtsZe+8QmFNNzxc=;
+        b=FjgF9QzbI9ls1j3RjwuZ3Eu7DLlUdjb0a1Ja5oiN2IZu3YRwoyPepCiWVDPUZ4mpkC
+         z1bdOCYN4zXLJkkR+yG/x/l6rrhec4TV0zHqZaAqC1uHYtPy9pXmLpyzUFkA9D05gmgU
+         HtGEiF7Ynp9iNThtr67gyBJlCOJ0aNeNHZicIvmUZZDvhMMbyzIPx1faQb+vfbeYXupV
+         e/7yQxEQq/nqSXtb6F0Pu8FeRTTKYmgRIt8hiRxZUx6vl93gwkIEDCIXqwOm7yLCxmZs
+         rNXVyjyyYjHAMZ4CmGy95Q+WBmNo+nFyL6iBEooD4dx0WWUNGsQ+8+x3aVcDgLX6YBXU
+         e/2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uzW3nHnj5fnCOtN0H8my2p/N7+ndBtsZe+8QmFNNzxc=;
+        b=u/sEGTANBSyB6kQ5LZE6JU35uPsUuhElkEBnlRS6ckaJ1OvzXa8WE/hd2TCMpval3b
+         0OY5R6yXqUMzYVfHypJpIxFzNuSeZcwcNQgqpBniJu/yJMypJeHChWAMxvnbZXPbprIE
+         lSAWuT4RXtuWX6FgWrASpIWSLmUIQVBvbK8h1NYaTXMTNssmcp2JwJe5eCFPflNWPxCh
+         D81cC1rMsKTcd7QxYFWGQvmTwNNOARQtsXuMkBAHSIR1Sh0vuV1idp1tsZMoX4aRErfV
+         5/gCv4jgEy5GVyLxK20X+Kp14r2ta2RRVC6Wh3RAtu117a2BrQq0xIKgw3bkG0EOYXaX
+         tKkg==
+X-Gm-Message-State: AO0yUKW8MS054ojQTJd6enJZLjDGpw4OF6Lsn4HzR1ndOSNpF0grSmNC
+        zWYsN2yXxH2F74w229QNcOdmmeZpLebPzT62mMo=
+X-Google-Smtp-Source: AK7set/PSdiSfBCDekP8ENL67NJDJ1IrBpGhWtaVGMJMrBob/HECbFNRvkTu4UlbkRUzt+8+CArqPrFy/+UGI25NkOc=
+X-Received: by 2002:a17:906:17d2:b0:889:dc4d:e637 with SMTP id
+ u18-20020a17090617d200b00889dc4de637mr538111eje.6.1675951474566; Thu, 09 Feb
+ 2023 06:04:34 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v4 10/12] remoteproc: mediatek: Handle MT8195 SCP core 1
- watchdog timeout
-Content-Language: en-US
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230209074021.13936-1-tinghan.shen@mediatek.com>
- <20230209074021.13936-11-tinghan.shen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230209074021.13936-11-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Thu, 9 Feb 2023 16:04:22 +0200
+Message-ID: <CAEnQRZBZ_GYK4_ZuEy2o++-hoaF4i=CjtRs8kEfhwuYGMCrr4Q@mail.gmail.com>
+Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de,
+        arnaud.pouliquen@foss.st.com, daniel.baluta@nxp.com,
+        iuliana.prodan@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
+        linux-imx@nxp.com, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 09/02/23 08:40, Tinghan Shen ha scritto:
-> The MT8195 SCP core 1 watchdog timeout needs to be handled in the
-> SCP core 0 IRQ handler because the MT8195 SCP core 1 watchdog timeout
-> IRQ is wired on the same IRQ entry for core 0 watchdog timeout.
-> MT8195 SCP has a watchdog status register to identify the watchdog
-> timeout source when IRQ triggered.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> ---
->   drivers/remoteproc/mtk_common.h |  4 ++++
->   drivers/remoteproc/mtk_scp.c    | 24 +++++++++++++++++++++++-
->   2 files changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index e4ef97f2d3a1..ca2395b98d27 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -55,6 +55,10 @@
->   #define MT8192_CORE0_WDT_IRQ		0x10030
->   #define MT8192_CORE0_WDT_CFG		0x10034
->   
-> +#define MT8195_SYS_STATUS		0x4004
-> +#define MT8195_CORE0_WDT		BIT(16)
-> +#define MT8195_CORE1_WDT		BIT(17)
-> +
->   #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
->   
->   #define MT8195_CPU1_SRAM_PD			0x1084
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index cfcb719ba50b..9fbbc4751433 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -222,6 +222,28 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
->   	}
->   }
->   
-> +static void mt8195_scp_irq_handler(struct mtk_scp *scp)
+Looks good to me.
 
-Looking at the C1 interrupt handler, I don't see any WDT timeout handling, hence
-a question naturally arises:
+On Thu, Feb 9, 2023 at 9:09 AM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
 
-Would it ever be possible for *both* CORE0 and CORE1 WDT timeout to happen
-at the same time?
+> Peng Fan (6):
+>   remoteproc: imx_rproc: correct i.MX8MQ DDR Code alias mapping
+>   remoteproc: elf_loader: introduce rproc_elf_find_shdr
+>   remoteproc: imx_rproc: add devtype
+>   remoteproc: imx_rproc: force pointer type
+>   remoteproc: imx_rproc: set Cortex-M stack/pc to TCML
+>   remoteproc: imx_rproc: set address of .interrupts section as bootaddr
 
-Meaning that MT8195_SYS_STATUS has *both* CORE0_WDT and CORE1_WDT bits set when
-we reach this interrupt handler?
-In that case, the fix would be to just change....
-
-> +{
-> +	u32 scp_to_host;
-> +
-> +	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
-> +
-> +	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
-> +		scp_ipi_handler(scp);
-> +	} else {
-> +		u32 reason = readl(scp->reg_base + MT8195_SYS_STATUS);
-> +
-> +		if (reason & MT8195_CORE1_WDT)
-> +			writel(1, scp->reg_base + MT8195_CORE1_WDT_IRQ);
-> +		else
-
-...the 'else' to another conditional :-)
-
-Regards,
-Angelo
-
-
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
