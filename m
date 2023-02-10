@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942C6C636CD
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Feb 2023 14:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B758C636CD
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Feb 2023 14:05:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232237AbjBJOFY (ORCPT
+        id S232410AbjBJOFx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Feb 2023 09:05:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46910 "EHLO
+        Fri, 10 Feb 2023 09:05:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231954AbjBJOFX (ORCPT
+        with ESMTP id S232409AbjBJOFv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Feb 2023 09:05:23 -0500
+        Fri, 10 Feb 2023 09:05:51 -0500
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90433656AE;
-        Fri, 10 Feb 2023 06:05:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D966A72F;
+        Fri, 10 Feb 2023 06:05:51 -0800 (PST)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 386D366020EA;
-        Fri, 10 Feb 2023 14:05:20 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1402266020EA;
+        Fri, 10 Feb 2023 14:05:49 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676037920;
-        bh=cqDAyS7WEw+aJC1vtNbHL4JA5/YlZyKWTf2H2EDwQN8=;
+        s=mail; t=1676037949;
+        bh=Mg5W77u46QtJnxyyYRaiHGd8a7BtM7ERXGTfWn6ygxk=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=k/JskO7+JOYOaDHViewiF5wyfP0mi7qPHKxV2/qqOkDHzaOuXUZ39HjNy/euqcyqz
-         mi9wnN7XAhafBsxnXAc+8AST7EA4vT8NtSboeWDwCLruVtp3Ezr8k/oSqikhkmfL/F
-         XpGejhiWfnUoB+kD5hxgA7yx6QHAEjnWbahqyplZE0RhTBCYdJosBGpfe/Qfi4jW9D
-         ndZNz24aCagf/8rPjaFB0nV9yTNeiHUcL05r+KG5w+3rN2Y3Bm1wk36C2m5jvWu/yD
-         R+FDqYpAGsgMWSvq4IxfmOSgdLx3f/ENdYS8i3S9jpogQa0jkAtEn98X557tTLWbKp
-         4FFMmdQW1K93Q==
-Message-ID: <270c795f-e8c0-7458-edb9-ca407a3bc275@collabora.com>
-Date:   Fri, 10 Feb 2023 15:05:17 +0100
+        b=oLTedfdjpgMf83Yv75H+d+BhU+L0JIKbeYwUbWHsCQNMYwDK1KpA0QXIOL9bdrwSo
+         upVUugkn6xDlMCzvyKGVPKVF9wtpE1yoNWLyWX61KHOSQgFyk1WlnVjOPJ8bD/7QH8
+         XKYWy9zrkLB4RS2tZWZHvr66iXOrJtkbgJL4UzwV1Zoh9LRpeqI2tcA2hqGmMhh3tQ
+         g23dFVLKK1kr0Nd6nW8fm4G9LJ3+SS75MO6C5TG/IIpn4sZjA/Y2arJXWjlvQW2smY
+         9vEC/SYbatCK6KOoSS1TAxPQ5t5/oN2ryF6D6MRZdyDwkSSKvKWFudr9abjST4IeEc
+         MQstltXGJ23eA==
+Message-ID: <d7a432a4-0f78-47b9-3737-90734e629878@collabora.com>
+Date:   Fri, 10 Feb 2023 15:05:46 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: Re: [PATCH v5 03/12] dt-bindings: remoteproc: mediatek: Support
- MT8195 dual-core SCP
+Subject: Re: [PATCH v5 02/12] arm64: dts: mediatek: mt8183-kukui: Update the
+ node name of SCP rpmsg subnode
 Content-Language: en-US
 To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -52,10 +52,10 @@ Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20230210085931.8941-1-tinghan.shen@mediatek.com>
- <20230210085931.8941-4-tinghan.shen@mediatek.com>
+ <20230210085931.8941-3-tinghan.shen@mediatek.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230210085931.8941-4-tinghan.shen@mediatek.com>
+In-Reply-To: <20230210085931.8941-3-tinghan.shen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -63,14 +63,9 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Il 10/02/23 09:59, Tinghan Shen ha scritto:
-> Extend the SCP binding to describe the MT8195 dual-core SCP.
-> 
-> Under different applications, the MT8195 SCP can be used as single-core
-> or dual-core. This change keeps the single-core definition and
-> adds new definitions for dual-core use case.
+> Align the node name with the definition in SCP bindings.
 > 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
