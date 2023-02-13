@@ -2,278 +2,240 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB5FC6379F
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 21:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B85AC636CC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 21:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230235AbjBMVTH (ORCPT
+        id S230202AbjBMVmQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Feb 2023 16:19:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41946 "EHLO
+        Mon, 13 Feb 2023 16:42:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230245AbjBMVTF (ORCPT
+        with ESMTP id S229891AbjBMVmQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Feb 2023 16:19:05 -0500
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2087.outbound.protection.outlook.com [40.107.223.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941931EFEC;
-        Mon, 13 Feb 2023 13:19:00 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ut2TRBBJ1x8biSwS4XfxDGJnEG5b1GHBLwnfVBHovI0Y/qCiGvjxmsYecJ3jKqoorPPYls6B4YN4nQthwj+ZLrZ44YnWxaQb+TXzx1cNVdsPBtGxjpxG1TopJOvDVdRepu3Ms4ULtIXlUIzjkVGmRB2iTuvFwyxUM133ilhvFb32HxRmZC2Wl82+t9Z6V4j2DWQQgCbaCVEXDFdMOcsA/kUc3iLeaMdYKhfd7pA1ItqxgzZVSViIAeTCKknW8dYDlMBARhD3hZXZD4HmWPzDQZvR/vAQVCO/bLKTGNDVkgLWIe4UfWpMI82HuRXGu77GizZt+VuxTHIbBD38vxf3Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U730ZNKaXlQrp/qwV/UMY6SyptWLyLa942t+MsaPtws=;
- b=Y5Dkw5nWvhZuDIdFWWJWSM7PsCUxN/o0x+NPClKv/6cJbIc+k9WucNSs2KutY/GAJ1qPl0b7HySsnqBVMzZs35G7Jaw4C2xuzooBT+g+/jmWbHxfeJjck0PGppPsEdyZt6uvksKz/i03zrHlTnvhPSJZLUjv/DAeSXKwS/nXBstIDVRfrED5/5m/Qyp+Sv8xQhGA8d084NUBLfkPwUs8ZvWbEpsGMPm8pqRr3+bnTufYk827wPUAdXe4dd8w7jNNg5w9GivUMlKC3gtnCGzoTzCIL/geIu6vLFuEJwivE8s/M2LVkSzvHapphmYOxHBa5zLeh/R+QVMguvRcJJXjTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U730ZNKaXlQrp/qwV/UMY6SyptWLyLa942t+MsaPtws=;
- b=mTyBkEOiiQnOFobZRvXtCI2STP5Q0nz3rU7gCaKoFVoemd5BhsUSrJoGdGEajAP/1mZzLtwTZsRYe2Cq7ULDXRASVTHvNkkxZs6XDxQEUmVAA5tq8DXiHRTXciq1nCYRpFEGX+hJVbsuRc7RdUbY65MxAWr3qYlc37u4FTmbz5I=
-Received: from BN9PR03CA0846.namprd03.prod.outlook.com (2603:10b6:408:13d::11)
- by LV2PR12MB5967.namprd12.prod.outlook.com (2603:10b6:408:170::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24; Mon, 13 Feb
- 2023 21:18:54 +0000
-Received: from BN8NAM11FT012.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:13d:cafe::dc) by BN9PR03CA0846.outlook.office365.com
- (2603:10b6:408:13d::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.24 via Frontend
- Transport; Mon, 13 Feb 2023 21:18:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN8NAM11FT012.mail.protection.outlook.com (10.13.177.55) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6086.24 via Frontend Transport; Mon, 13 Feb 2023 21:18:54 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 13 Feb
- 2023 15:18:52 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 13 Feb
- 2023 15:18:52 -0600
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Mon, 13 Feb 2023 15:18:51 -0600
-From:   Tanmay Shah <tanmay.shah@amd.com>
-To:     <michal.simek@amd.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <jaswinder.singh@linaro.org>,
-        <ben.levinsky@amd.com>, <shubhrajyoti.datta@amd.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Tanmay Shah <tanmay.shah@amd.com>
-Subject: [PATCH v3 2/3] drivers: remoteproc: xilinx: fix carveout names
-Date:   Mon, 13 Feb 2023 13:18:25 -0800
-Message-ID: <20230213211825.3507034-3-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230213211825.3507034-1-tanmay.shah@amd.com>
-References: <20230213211825.3507034-1-tanmay.shah@amd.com>
+        Mon, 13 Feb 2023 16:42:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6064E468F;
+        Mon, 13 Feb 2023 13:42:14 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EBE1E612CF;
+        Mon, 13 Feb 2023 21:42:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F44C433EF;
+        Mon, 13 Feb 2023 21:42:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676324533;
+        bh=rOYvHJNGXd8NF4EsktaSRa4f4jOwg6EFR8VVJBsgOnY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gZAFwyR0kPgpL78DYHN7WwQkqLUVCFmMCHQxD58hm3QOE6g5EVhMvUGA1uAh51DRz
+         Qmt5SvdI8kAfyWAkrBYFd/9mijv5DE7ibxs+wvI8e/DzHHNEZnsmijf7Nc2GaoMlIn
+         Vs7coBIa6L7JfVFY96ysmtOctoy9hm1HSmSXKeUhEuuFRPmLBg5nU50Vyv16/1KL/Q
+         fSQiNJEw2s+GK8QUWwkMs2sweurepH6mnYE3YH9/5miDYCAQqiarZuIKapZOGt3yF3
+         xBlnInJVfre/aX54H4v5HquYoHT8KUnQbb8OicAyIczGdq8xXIiK4GWk76YKc/N6fL
+         t4HKK2/Z1ziKg==
+Date:   Mon, 13 Feb 2023 13:44:17 -0800
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Elliot Berman <quic_eberman@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom_scm: Use fixed width src vm bitmap
+Message-ID: <20230213214417.mtcpeultvynyls6s@ripper>
+References: <20230213181832.3489174-1-quic_eberman@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT012:EE_|LV2PR12MB5967:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a28862a-be09-4d4a-efa8-08db0e07e935
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: XOuWHyn9URXpbjxobJAxm2TNOl6tlWUqVQyx0lzHlALG1KngE0MBnSXSG4X4808Ex9HBAKQcFVacvvjNNZG9/eElyPFSHyv/YM4mWzi4FPEmBG8T8xggexWW/E3zGCdVJTEkre3gZ0uHN5ZzROumlbokC6YsO/jmyubu98wFOyHkgnMiv1b1UmTIiQ84BO6ZfYcm5ZCVJ8mbPQKFB2smSqQlgQ061unCZqjT2jliJi8WYOYYax4iHC5wVb/uRTfk7qOeGLFIDo8rM1lGwICU660WB2xHInN+4frL0xbghF/5OdIxFGTFhQTQOvhWh19jTjJca4MJ9XGZzgHSF+dKsnr4MEEpQEOXc2fmlBTPdISB7C1fMFVXNV5LCLN3FYVfL86isY5Cw7vmmo+uyaeD7r/Sp3PsM/KMSRHwkB4IriYusVYwd5EARf51RtM6dCnj6Aa/23BlUoka7h5fphpjJ2hb5L2MapPkUBFjlr2YmR9bvHCdjoL56shoaxHRUnSE0tXODbEXGwa/y3ViBUyeoMeH1q5PgPg1pbqriYk85k5nmWQrUvn/dJA1+TK8dvR1vGavRSoHrvvFet/PynJ7e9KnjiS2CSGEbMWz6wV82ckAkmYeVUkOShMlWCViaKQJDXvLmhz4QtPoLXFXyckQ+jnUkSelK93NABTnHcJPyK7wIZV3SIxFxAaPuDvpsjK2ZdTRwkP1c8M6RC+xA+ghbHd1nYeWw5+vh8hpRZfjhLlz2M+8JFe1angiJWG6PzY4CYs8D2RnHOzjot4koUb5aQ==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(346002)(136003)(39860400002)(376002)(396003)(451199018)(40470700004)(36840700001)(46966006)(186003)(26005)(6666004)(478600001)(336012)(966005)(70586007)(70206006)(4326008)(8676002)(2616005)(54906003)(6636002)(1076003)(316002)(110136005)(83380400001)(5660300002)(41300700001)(44832011)(8936002)(36860700001)(82740400003)(2906002)(356005)(81166007)(86362001)(36756003)(82310400005)(426003)(47076005)(40460700003)(40480700001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2023 21:18:54.2930
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a28862a-be09-4d4a-efa8-08db0e07e935
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT012.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5967
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230213181832.3489174-1-quic_eberman@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-If the unit address is appended to node name of memory-region,
-then adding rproc carveouts fails as node name and unit-address
-both are passed as carveout name (i.e. vdev0vring0@xxxxxxxx). However,
-only node name is expected by remoteproc framework. This patch moves
-memory-region node parsing from driver probe to prepare and
-only passes node-name and not unit-address
+On Mon, Feb 13, 2023 at 10:18:29AM -0800, Elliot Berman wrote:
+> The maximum VMID for assign_mem is 63. Use a u64 to represent this
+> bitmap instead of architecture-dependent "unsigned int" which varies in
+> size on 32-bit and 64-bit platforms.
+> 
+> Acked-by: Kalle Valo <kvalo@kernel.org> (ath10k)
+> Tested-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
 
-Fixes: 6b291e8020a8 ("drivers: remoteproc: Add Xilinx r5 remoteproc driver")
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
-Changelog:
-  - This is first version of this change, however posting as part of the series
-    that has version v3. The v2 of the series could be found at following link.
+@Greg, would you mind taking this through your tree for v6.3, you
+already have a related change in fastrpc.c in your tree...
 
-v2: https://lore.kernel.org/all/20230126213154.1707300-1-tanmay.shah@amd.com/
+Regards,
+Bjorn
 
- drivers/remoteproc/xlnx_r5_remoteproc.c | 87 ++++++-------------------
- 1 file changed, 20 insertions(+), 67 deletions(-)
-
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 2db57d394155..81af2dea56c2 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -61,8 +61,6 @@ static const struct mem_bank_data zynqmp_tcm_banks[] = {
-  * @np: device node of RPU instance
-  * @tcm_bank_count: number TCM banks accessible to this RPU
-  * @tcm_banks: array of each TCM bank data
-- * @rmem_count: Number of reserved mem regions
-- * @rmem: reserved memory region nodes from device tree
-  * @rproc: rproc handle
-  * @pm_domain_id: RPU CPU power domain id
-  */
-@@ -71,8 +69,6 @@ struct zynqmp_r5_core {
- 	struct device_node *np;
- 	int tcm_bank_count;
- 	struct mem_bank_data **tcm_banks;
--	int rmem_count;
--	struct reserved_mem **rmem;
- 	struct rproc *rproc;
- 	u32 pm_domain_id;
- };
-@@ -239,21 +235,31 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- {
- 	struct rproc_mem_entry *rproc_mem;
- 	struct zynqmp_r5_core *r5_core;
-+	struct device_node *rmem_np;
- 	struct reserved_mem *rmem;
- 	int i, num_mem_regions;
- 
- 	r5_core = (struct zynqmp_r5_core *)rproc->priv;
--	num_mem_regions = r5_core->rmem_count;
-+
-+	num_mem_regions = of_property_count_elems_of_size(r5_core->np, "memory-region",
-+							  sizeof(phandle));
- 
- 	for (i = 0; i < num_mem_regions; i++) {
--		rmem = r5_core->rmem[i];
- 
--		if (!strncmp(rmem->name, "vdev0buffer", strlen("vdev0buffer"))) {
-+		rmem_np = of_parse_phandle(r5_core->np, "memory-region", i);
-+
-+		rmem = of_reserved_mem_lookup(rmem_np);
-+		if (!rmem) {
-+			of_node_put(rmem_np);
-+			return -EINVAL;
-+		}
-+
-+		if (!strcmp(rmem_np->name, "vdev0buffer")) {
- 			/* Init reserved memory for vdev buffer */
- 			rproc_mem = rproc_of_resm_mem_entry_init(&rproc->dev, i,
- 								 rmem->size,
- 								 rmem->base,
--								 rmem->name);
-+								 rmem_np->name);
- 		} else {
- 			/* Register associated reserved memory regions */
- 			rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
-@@ -261,16 +267,20 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 							 rmem->size, rmem->base,
- 							 zynqmp_r5_mem_region_map,
- 							 zynqmp_r5_mem_region_unmap,
--							 rmem->name);
-+							 rmem_np->name);
- 		}
- 
--		if (!rproc_mem)
-+		if (!rproc_mem) {
-+			of_node_put(rmem_np);
- 			return -ENOMEM;
-+		}
- 
- 		rproc_add_carveout(rproc, rproc_mem);
- 
- 		dev_dbg(&rproc->dev, "reserved mem carveout %s addr=%llx, size=0x%llx",
- 			rmem->name, rmem->base, rmem->size);
-+
-+		of_node_put(rmem_np);
- 	}
- 
- 	return 0;
-@@ -726,59 +736,6 @@ static int zynqmp_r5_get_tcm_node(struct zynqmp_r5_cluster *cluster)
- 	return 0;
- }
- 
--/**
-- * zynqmp_r5_get_mem_region_node()
-- * parse memory-region property and get reserved mem regions
-- *
-- * @r5_core: pointer to zynqmp_r5_core type object
-- *
-- * Return: 0 for success and error code for failure.
-- */
--static int zynqmp_r5_get_mem_region_node(struct zynqmp_r5_core *r5_core)
--{
--	struct device_node *np, *rmem_np;
--	struct reserved_mem **rmem;
--	int res_mem_count, i;
--	struct device *dev;
--
--	dev = r5_core->dev;
--	np = r5_core->np;
--
--	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
--							sizeof(phandle));
--	if (res_mem_count <= 0) {
--		dev_warn(dev, "failed to get memory-region property %d\n",
--			 res_mem_count);
--		return 0;
--	}
--
--	rmem = devm_kcalloc(dev, res_mem_count,
--			    sizeof(struct reserved_mem *), GFP_KERNEL);
--	if (!rmem)
--		return -ENOMEM;
--
--	for (i = 0; i < res_mem_count; i++) {
--		rmem_np = of_parse_phandle(np, "memory-region", i);
--		if (!rmem_np)
--			goto release_rmem;
--
--		rmem[i] = of_reserved_mem_lookup(rmem_np);
--		if (!rmem[i]) {
--			of_node_put(rmem_np);
--			goto release_rmem;
--		}
--
--		of_node_put(rmem_np);
--	}
--
--	r5_core->rmem_count = res_mem_count;
--	r5_core->rmem = rmem;
--	return 0;
--
--release_rmem:
--	return -EINVAL;
--}
--
- /*
-  * zynqmp_r5_core_init()
-  * Create and initialize zynqmp_r5_core type object
-@@ -806,10 +763,6 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
- 	for (i = 0; i < cluster->core_count; i++) {
- 		r5_core = cluster->r5_cores[i];
- 
--		ret = zynqmp_r5_get_mem_region_node(r5_core);
--		if (ret)
--			dev_warn(dev, "memory-region prop failed %d\n", ret);
--
- 		/* Initialize r5 cores with power-domains parsed from dts */
- 		ret = of_property_read_u32_index(r5_core->np, "power-domains",
- 						 1, &r5_core->pm_domain_id);
--- 
-2.25.1
-
+> ---
+>  drivers/firmware/qcom_scm.c            | 12 +++++++-----
+>  drivers/misc/fastrpc.c                 |  2 +-
+>  drivers/net/wireless/ath/ath10k/qmi.c  |  4 ++--
+>  drivers/remoteproc/qcom_q6v5_mss.c     |  8 ++++----
+>  drivers/remoteproc/qcom_q6v5_pas.c     |  2 +-
+>  drivers/soc/qcom/rmtfs_mem.c           |  2 +-
+>  include/linux/firmware/qcom/qcom_scm.h |  2 +-
+>  7 files changed, 17 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> index 468d4d5ab550..b95616b35bff 100644
+> --- a/drivers/firmware/qcom_scm.c
+> +++ b/drivers/firmware/qcom_scm.c
+> @@ -905,7 +905,7 @@ static int __qcom_scm_assign_mem(struct device *dev, phys_addr_t mem_region,
+>   * Return negative errno on failure or 0 on success with @srcvm updated.
+>   */
+>  int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+> -			unsigned int *srcvm,
+> +			u64 *srcvm,
+>  			const struct qcom_scm_vmperm *newvm,
+>  			unsigned int dest_cnt)
+>  {
+> @@ -922,9 +922,9 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+>  	__le32 *src;
+>  	void *ptr;
+>  	int ret, i, b;
+> -	unsigned long srcvm_bits = *srcvm;
+> +	u64 srcvm_bits = *srcvm;
+>  
+> -	src_sz = hweight_long(srcvm_bits) * sizeof(*src);
+> +	src_sz = hweight64(srcvm_bits) * sizeof(*src);
+>  	mem_to_map_sz = sizeof(*mem_to_map);
+>  	dest_sz = dest_cnt * sizeof(*destvm);
+>  	ptr_sz = ALIGN(src_sz, SZ_64) + ALIGN(mem_to_map_sz, SZ_64) +
+> @@ -937,8 +937,10 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+>  	/* Fill source vmid detail */
+>  	src = ptr;
+>  	i = 0;
+> -	for_each_set_bit(b, &srcvm_bits, BITS_PER_LONG)
+> -		src[i++] = cpu_to_le32(b);
+> +	for (b = 0; b < BITS_PER_TYPE(u64); b++) {
+> +		if (srcvm_bits & BIT(b))
+> +			src[i++] = cpu_to_le32(b);
+> +	}
+>  
+>  	/* Fill details of mem buff to map */
+>  	mem_to_map = ptr + ALIGN(src_sz, SZ_64);
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index a701132638cf..f48466960f1b 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -262,7 +262,7 @@ struct fastrpc_channel_ctx {
+>  	int domain_id;
+>  	int sesscount;
+>  	int vmcount;
+> -	u32 perms;
+> +	u64 perms;
+>  	struct qcom_scm_vmperm vmperms[FASTRPC_MAX_VMIDS];
+>  	struct rpmsg_device *rpdev;
+>  	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
+> diff --git a/drivers/net/wireless/ath/ath10k/qmi.c b/drivers/net/wireless/ath/ath10k/qmi.c
+> index 90f457b8e1fe..038c5903c0dc 100644
+> --- a/drivers/net/wireless/ath/ath10k/qmi.c
+> +++ b/drivers/net/wireless/ath/ath10k/qmi.c
+> @@ -33,7 +33,7 @@ static int ath10k_qmi_map_msa_permission(struct ath10k_qmi *qmi,
+>  {
+>  	struct qcom_scm_vmperm dst_perms[3];
+>  	struct ath10k *ar = qmi->ar;
+> -	unsigned int src_perms;
+> +	u64 src_perms;
+>  	u32 perm_count;
+>  	int ret;
+>  
+> @@ -65,7 +65,7 @@ static int ath10k_qmi_unmap_msa_permission(struct ath10k_qmi *qmi,
+>  {
+>  	struct qcom_scm_vmperm dst_perms;
+>  	struct ath10k *ar = qmi->ar;
+> -	unsigned int src_perms;
+> +	u64 src_perms;
+>  	int ret;
+>  
+>  	src_perms = BIT(QCOM_SCM_VMID_MSS_MSA) | BIT(QCOM_SCM_VMID_WLAN);
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index ab053084f7a2..1ba711bc0100 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -235,8 +235,8 @@ struct q6v5 {
+>  	bool has_qaccept_regs;
+>  	bool has_ext_cntl_regs;
+>  	bool has_vq6;
+> -	int mpss_perm;
+> -	int mba_perm;
+> +	u64 mpss_perm;
+> +	u64 mba_perm;
+>  	const char *hexagon_mdt_image;
+>  	int version;
+>  };
+> @@ -414,7 +414,7 @@ static void q6v5_pds_disable(struct q6v5 *qproc, struct device **pds,
+>  	}
+>  }
+>  
+> -static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, int *current_perm,
+> +static int q6v5_xfer_mem_ownership(struct q6v5 *qproc, u64 *current_perm,
+>  				   bool local, bool remote, phys_addr_t addr,
+>  				   size_t size)
+>  {
+> @@ -967,7 +967,7 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
+>  	unsigned long dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+>  	dma_addr_t phys;
+>  	void *metadata;
+> -	int mdata_perm;
+> +	u64 mdata_perm;
+>  	int xferop_ret;
+>  	size_t size;
+>  	void *ptr;
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 1e14ae4d233a..a0fa7176fde7 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -94,7 +94,7 @@ struct qcom_adsp {
+>  	size_t region_assign_size;
+>  
+>  	int region_assign_idx;
+> -	int region_assign_perms;
+> +	u64 region_assign_perms;
+>  
+>  	struct qcom_rproc_glink glink_subdev;
+>  	struct qcom_rproc_subdev smd_subdev;
+> diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+> index 2d3ee22b9249..2657c6105bb7 100644
+> --- a/drivers/soc/qcom/rmtfs_mem.c
+> +++ b/drivers/soc/qcom/rmtfs_mem.c
+> @@ -31,7 +31,7 @@ struct qcom_rmtfs_mem {
+>  
+>  	unsigned int client_id;
+>  
+> -	unsigned int perms;
+> +	u64 perms;
+>  };
+>  
+>  static ssize_t qcom_rmtfs_mem_show(struct device *dev,
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index 1e449a5d7f5c..250ea4efb7cb 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -94,7 +94,7 @@ extern int qcom_scm_mem_protect_video_var(u32 cp_start, u32 cp_size,
+>  					  u32 cp_nonpixel_start,
+>  					  u32 cp_nonpixel_size);
+>  extern int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
+> -			       unsigned int *src,
+> +			       u64 *src,
+>  			       const struct qcom_scm_vmperm *newvm,
+>  			       unsigned int dest_cnt);
+>  
+> 
+> base-commit: 09e41676e35ab06e4bce8870ea3bf1f191c3cb90
+> -- 
+> 2.39.1
+> 
