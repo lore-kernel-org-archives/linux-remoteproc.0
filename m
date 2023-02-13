@@ -2,81 +2,140 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B866C636D4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 15:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7C3C636D4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 15:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbjBMPAY (ORCPT
+        id S230049AbjBMPw1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Feb 2023 10:00:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57936 "EHLO
+        Mon, 13 Feb 2023 10:52:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231299AbjBMPAP (ORCPT
+        with ESMTP id S229593AbjBMPw0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Feb 2023 10:00:15 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BE291CAF2;
-        Mon, 13 Feb 2023 07:00:02 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 1349F66020A2;
-        Mon, 13 Feb 2023 14:59:29 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1676300369;
-        bh=MVAAR+POGKgxUb9d/9L16cYTpx1kxwtwfwvhi78kve4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=WfDy+2PvvZncwh76LKqnlhWbyBXLB8Aj0DGQn8/I2T7JJbv4hydXkytVzZIRjS0s0
-         5wMGlHlF7scmNvxTGni8GoKxk8u8NXxZz4UEKaHKt3bqOfHXJrT9zJrrodkTMBf+YN
-         U2t4bQpwEuyzSvP4GbrFQ21vtJaKzTRcUX6Z5K4X0vJOltNLO6k5wO8oZZ6o0PgGCi
-         z29jfvXwDpgHtVBHIQqc3TJ9HBEXfz6HC73LP9Tpw3l/jWhKD+xi4ZKQ+J7hHP3lrE
-         NIcohd1cRtBVuWmzz1+40KhpsA5i/eauFOCE3nEIpUf/cg64D4GJb+yiZD6pXczTz4
-         wN+bs3fJbGoTA==
-Message-ID: <32a41b0f-48e2-a87b-9736-1e10fe8859d9@collabora.com>
-Date:   Mon, 13 Feb 2023 15:59:26 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH v6 09/12] remoteproc: mediatek: Setup MT8195 SCP core 1
- SRAM offset
-Content-Language: en-US
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Mon, 13 Feb 2023 10:52:26 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F0A51A665;
+        Mon, 13 Feb 2023 07:52:25 -0800 (PST)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DE3R6R017636;
+        Mon, 13 Feb 2023 15:52:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=zJ+9aePAzG2OB/TDji5cRHGTMJtKEtO6/Bwc5MijWvg=;
+ b=gNGTqdQASymCqvgxM1X/qzCJUSfUuD4LCFRrxtY/faHpzgtnMTjRrk7eNUyripnf0xZt
+ ZroER7IBvA+KssjK78FVeSfshKygdCstrQMuWPzHo/xH92tfpyJUFDr79+Ca6wtobact
+ mbRTFNr3ZOMmSc2isKYRJHGWFZvoZJL4nNJREp/pcn39vNBS+dK/XZZnz+ikyNb5vTzH
+ YOhOQ1GZm56AwCdKYlO2zO80LaRqEyrXiZK4fzMt+m+ON84uVlZSsG35qBKEzKc2WQgd
+ BhBUdfr+f2vlWaTSKY3IpgV0dSdDmvlqA2lJbfa0s4jeYOxRaHkatZn2O5RyVcQaJmf7 hg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nqpmmg709-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 15:52:22 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DFqL2N001582
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 15:52:21 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Mon, 13 Feb 2023 07:52:21 -0800
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230213033758.16681-1-tinghan.shen@mediatek.com>
- <20230213033758.16681-10-tinghan.shen@mediatek.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230213033758.16681-10-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Chris Lew <quic_clew@quicinc.com>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/6] rpmsg: glink: Extract tx kick operation
+Date:   Mon, 13 Feb 2023 07:52:10 -0800
+Message-ID: <20230213155215.1237059-2-quic_bjorande@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
+References: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: g4Da9XEikKjCiwbWUl5531pt8Q-n78FM
+X-Proofpoint-GUID: g4Da9XEikKjCiwbWUl5531pt8Q-n78FM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-13_11,2023-02-13_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0
+ bulkscore=0 clxscore=1015 mlxscore=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302130143
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 13/02/23 04:37, Tinghan Shen ha scritto:
-> Because MT8195 SCP core 0 and core 1 both boot from head of SRAM and
-> have the same viewpoint of SRAM, SCP has a "core 1 SRAM offset"
-> configuration to control the access destination of SCP core 1 to boot
-> core 1 from different SRAM location.
-> 
-> The "core 1 SRAM offset" configuration is composed by a range
-> and an offset. It works like a simple memory mapped mechanism.
-> When SCP core 1 accesses a SRAM address located in the range,
-> the SCP bus adds the configured offset to the address to
-> shift the physical destination address on SCP SRAM. This shifting is
-> transparent to the software running on SCP core 1.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Refactor out the tx kick operations to its own function, in preparation
+for pushing the details to the individual transports.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
 
+Changes since v1:
+- None
+
+ drivers/rpmsg/qcom_glink_native.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 115c0a1eddb1..5fd8b70271b7 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -303,6 +303,12 @@ static void qcom_glink_tx_write(struct qcom_glink *glink,
+ 	glink->tx_pipe->write(glink->tx_pipe, hdr, hlen, data, dlen);
+ }
+ 
++static void qcom_glink_tx_kick(struct qcom_glink *glink)
++{
++	mbox_send_message(glink->mbox_chan, NULL);
++	mbox_client_txdone(glink->mbox_chan, 0);
++}
++
+ static void qcom_glink_send_read_notify(struct qcom_glink *glink)
+ {
+ 	struct glink_msg msg;
+@@ -313,8 +319,7 @@ static void qcom_glink_send_read_notify(struct qcom_glink *glink)
+ 
+ 	qcom_glink_tx_write(glink, &msg, sizeof(msg), NULL, 0);
+ 
+-	mbox_send_message(glink->mbox_chan, NULL);
+-	mbox_client_txdone(glink->mbox_chan, 0);
++	qcom_glink_tx_kick(glink);
+ }
+ 
+ static int qcom_glink_tx(struct qcom_glink *glink,
+@@ -355,9 +360,7 @@ static int qcom_glink_tx(struct qcom_glink *glink,
+ 	}
+ 
+ 	qcom_glink_tx_write(glink, hdr, hlen, data, dlen);
+-
+-	mbox_send_message(glink->mbox_chan, NULL);
+-	mbox_client_txdone(glink->mbox_chan, 0);
++	qcom_glink_tx_kick(glink);
+ 
+ out:
+ 	spin_unlock_irqrestore(&glink->tx_lock, flags);
+@@ -1046,9 +1049,7 @@ static irqreturn_t qcom_glink_native_intr(int irq, void *data)
+ 			break;
+ 		case RPM_CMD_READ_NOTIF:
+ 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+-
+-			mbox_send_message(glink->mbox_chan, NULL);
+-			mbox_client_txdone(glink->mbox_chan, 0);
++			qcom_glink_tx_kick(glink);
+ 			break;
+ 		case RPM_CMD_INTENT:
+ 			qcom_glink_handle_intent(glink, param1, param2, avail);
+-- 
+2.25.1
 
