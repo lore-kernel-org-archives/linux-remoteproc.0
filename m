@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C4CC636D4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D95C64EC7
 	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 18:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjBMSxX (ORCPT
+        id S229796AbjBMSxX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Mon, 13 Feb 2023 13:53:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49550 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbjBMSxW (ORCPT
+        with ESMTP id S229684AbjBMSxW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Mon, 13 Feb 2023 13:53:22 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB40126E5;
-        Mon, 13 Feb 2023 10:53:19 -0800 (PST)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DIpuHl022253;
-        Mon, 13 Feb 2023 18:53:15 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C44D536;
+        Mon, 13 Feb 2023 10:53:20 -0800 (PST)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DIlahC008363;
+        Mon, 13 Feb 2023 18:53:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=Jd2xlvXaDF9+Y7j/LDIr1vKtzraQtip8hgRISTjRAnY=;
- b=Wuq3x4/UPQV9pZB5JY9EMfcpZhyNHJvGU1URX111yrtOJOEa3h2r0Jspxph7Fh3+fQz+
- CnoOFl/bWwlV9s7ZUlBfCXTejE/UieUBjqmD/Bjewk7mIkhMxcm716vgxjRXP3d6Q3Yk
- UEJeJ2GkQ9z+ZOR7pygCLFRI1WQ8zTIi5Z22YpfkhTtAhx/f5AFXW1VfZSKmvikYCnt/
- R9RuwKLh6J2lTvn9VhPHUs3bvTGaT20Y9g8j3ZMxLO3SXnskjZqktWOfaeSgcztYt8Vm
- LiWRQrjzxRvXm44AfC4Y9DPLXnUWW9D7Xo0lkGEiuhDTmtcuxxLlAizzMieTCMqVVXn2 nQ== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nqtv08038-1
+ bh=9uCxH/ePZ/tz3F4czrOFHZuYS2hV+mYcBvJn+V94sGg=;
+ b=MZofaLAu31VQT4J3+agFZE4E6cRCSqQ+vuMUTaP2CWQwUPELHA13qV/yZUCq4FwUUeNe
+ FPAKNAZR6a7au/fYXt2IHsdPmH6ELcFtOLbh2fZYTsOITZumXgsxeo1IpKIdeBl10q8R
+ Kk2B9CIedpeeyvcW2E0hOdq37b3yXJBxiF2h9u1G71xzdasrEOpu0tj6RMWNqB9WswsR
+ 48s65A5O426BcJAfEqtVyBjtR7jWWY3eCQmpnWyAWKJRwdIXJwRiQPMsF316BnpgSwNH
+ UpDO0bRdILt7gacCuQUG5tdtJULSBxkUqzD2bTkjVre9H2YhmxQTW0XsQ5viqfjhsdkG xQ== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nqtsur0d2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Feb 2023 18:53:15 +0000
+        Mon, 13 Feb 2023 18:53:16 +0000
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DIrEg5030239
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DIrFfn006986
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Feb 2023 18:53:14 GMT
+        Mon, 13 Feb 2023 18:53:15 GMT
 Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 13 Feb 2023 10:53:14 -0800
+ 15.2.986.36; Mon, 13 Feb 2023 10:53:15 -0800
 From:   Melody Olvera <quic_molvera@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -54,9 +54,9 @@ CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Melody Olvera <quic_molvera@quicinc.com>,
         <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH 1/9] dt-bindings: firmware: qcom,scm: Update QDU1000/QRU1000 compatible
-Date:   Mon, 13 Feb 2023 10:52:10 -0800
-Message-ID: <20230213185218.166520-2-quic_molvera@quicinc.com>
+Subject: [PATCH 3/9] dt-bindings: soc: qcom: aoss: Document power-domain-cells for aoss
+Date:   Mon, 13 Feb 2023 10:52:12 -0800
+Message-ID: <20230213185218.166520-4-quic_molvera@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230213185218.166520-1-quic_molvera@quicinc.com>
 References: <20230213185218.166520-1-quic_molvera@quicinc.com>
@@ -68,40 +68,50 @@ X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aRbdGHtTbImmjEgH8bzRqZDFsSeBdKRG
-X-Proofpoint-ORIG-GUID: aRbdGHtTbImmjEgH8bzRqZDFsSeBdKRG
+X-Proofpoint-GUID: cZuWaAhdJ1pGM4mdhElvOm8ssiEtgIY2
+X-Proofpoint-ORIG-GUID: cZuWaAhdJ1pGM4mdhElvOm8ssiEtgIY2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-13_12,2023-02-13_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 priorityscore=1501 phishscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302130165
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 malwarescore=0 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0
+ suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2302130165
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Update compatible for QDU1000 and QRU1000 to include the interconnect
-these devices have.
+Document "#-power-domain-cells" field for aoss devices as required
+by power-controller bindings.
 
 Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 ---
- Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-index a66e99812b1f..d8fdb00738fb 100644
---- a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-+++ b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-@@ -166,6 +166,7 @@ allOf:
-           compatible:
-             contains:
-               enum:
-+                - qcom,scm-qdu1000
-                 - qcom,scm-sm8450
-                 - qcom,scm-sm8550
-     then:
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+index ab607efbb64c..bcfa8e2e6a04 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+@@ -60,6 +60,9 @@ properties:
+     description:
+       The single clock represents the QDSS clock.
+ 
++  "#power-domain-cells":
++    const: 1
++
+ required:
+   - compatible
+   - reg
+@@ -97,6 +100,7 @@ examples:
+       mboxes = <&apss_shared 0>;
+ 
+       #clock-cells = <0>;
++      #power-domain-cells = <1>;
+ 
+       cx_cdev: cx {
+         #cooling-cells = <2>;
 -- 
 2.25.1
 
