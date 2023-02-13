@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB22C6FA9D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 18:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39345C6FD1A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 18:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbjBMSx0 (ORCPT
+        id S230122AbjBMSx1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Feb 2023 13:53:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49512 "EHLO
+        Mon, 13 Feb 2023 13:53:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbjBMSxW (ORCPT
+        with ESMTP id S229951AbjBMSxZ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Feb 2023 13:53:22 -0500
+        Mon, 13 Feb 2023 13:53:25 -0500
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE4F12849;
-        Mon, 13 Feb 2023 10:53:19 -0800 (PST)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DIlahB008363;
-        Mon, 13 Feb 2023 18:53:15 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C031EBFF;
+        Mon, 13 Feb 2023 10:53:22 -0800 (PST)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DIltT2021786;
+        Mon, 13 Feb 2023 18:53:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=qcppdkim1;
- bh=ZcPZD8e4wxh+7dBC+CQ0oeJCKLJZAAih0oiGJ9JG4xY=;
- b=pjg+nOuMxZgQEVn0j1UXs9NDI1mFENqCqEa97FAFwN/OYSKNHW9MCzs5mnu96Yrh6Jt/
- DVgZenaNHXJNuY39bBrTpA2+IQXOmAYqNuSGY8W5xgjWDNE+Wi01Zcf4hzV0nWOYEVA5
- WH62VS6/avtw2OakB+LXZ+PJZ7ZNpIRSvQjeiUZE3IzWC4LhdQ7vla0PN91K9jGA0wNR
- MW3Nd2EpG2w8OFosQwyalvQYC8jI6XJ5zcLscS2cZis2JbqAR84pz2+/djrl0+jxRfKn
- jaUER+AXNNp7MiM8Y6EhpKpl1dEbt/47Tkz7ecQnF1qdzczvdb5ajBlwqgxYMNpgcx9P 1w== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nqtsur0d0-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=bioW/gDMtzyPy8t6XnD7ivoEwoVwagFU1ZBUDiMg2Ro=;
+ b=Z/98U/9WJZmasoQrcGKWXZ6xFCY+E3v+dqfLIrvOy6s1MWGHOzgZ+7UF6hk6o7gutA5u
+ WIcP/GNrXb7jSkWvAZrxda5+x7lTh9cwmmVfr5GFG6WNC0A2yEvzuPs8J4Z1G3csWaoQ
+ N4hWRJ49JMo56iBjoqpGpecBo0B5EcX3Wq/EqjMlcLtavspxncSDGqBQauTsY/MBw2bQ
+ WaQE5JCVcTvproapgdCgaRFKxwgYVSR6m7jpmUiN9ThY2uVtc1hRVoHkidlA9NFGFbh0
+ QIbu3Nu4hkbN+YnmvsVUI2CcstMwc9TZ5LVtc/x60Ep/n1Zzoioj4hZdMQB8fX36deCR yQ== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nqts7r0db-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Feb 2023 18:53:15 +0000
+        Mon, 13 Feb 2023 18:53:18 +0000
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DIrEeF006970
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DIrHs2019233
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Feb 2023 18:53:14 GMT
+        Mon, 13 Feb 2023 18:53:17 GMT
 Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
  nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 13 Feb 2023 10:53:13 -0800
+ 15.2.986.36; Mon, 13 Feb 2023 10:53:17 -0800
 From:   Melody Olvera <quic_molvera@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -54,10 +54,12 @@ CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Melody Olvera <quic_molvera@quicinc.com>,
         <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH 0/9] remoteproc: qcom_q6v5_pas: Add support for QDU1000/QRU1000 mpss
-Date:   Mon, 13 Feb 2023 10:52:09 -0800
-Message-ID: <20230213185218.166520-1-quic_molvera@quicinc.com>
+Subject: [PATCH 7/9] remoteproc: qcom: q6v5: Add support for q6 rmb registers
+Date:   Mon, 13 Feb 2023 10:52:16 -0800
+Message-ID: <20230213185218.166520-8-quic_molvera@quicinc.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230213185218.166520-1-quic_molvera@quicinc.com>
+References: <20230213185218.166520-1-quic_molvera@quicinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -66,55 +68,83 @@ X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tbMqf4JVd_5G7q6BvI5oBw8TTMmCrsHw
-X-Proofpoint-ORIG-GUID: tbMqf4JVd_5G7q6BvI5oBw8TTMmCrsHw
+X-Proofpoint-GUID: hm-7rxIxscEyNfcbnpxQv4YFuCGUCuhy
+X-Proofpoint-ORIG-GUID: hm-7rxIxscEyNfcbnpxQv4YFuCGUCuhy
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-13_12,2023-02-13_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 mlxlogscore=973 phishscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0
- suspectscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2302130165
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ mlxlogscore=814 mlxscore=0 impostorscore=0 spamscore=0 phishscore=0
+ clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302130165
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patchset adds support for the mpss found in the QDU1000 and QRU1000
-SoCs. 
+When attaching a running Q6, the remoteproc driver needs a way
+to communicate with the Q6 using rmb registers, so allow the
+rmb register to be gotten from the device tree if present.
 
-The mpss boot process now supports late attach for an already running
-mpss. For this, it uses an RMB register space to perform a handshake
-with the mpss for the late attach process. This is implemented in the
-patches below. The patches also address issues with split binary
-detection to support loading of split binaries more robustly.
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+ drivers/remoteproc/qcom_q6v5.c | 9 +++++++++
+ drivers/remoteproc/qcom_q6v5.h | 8 ++++++++
+ 2 files changed, 17 insertions(+)
 
-Gokul Krishna Krishnakumar (1):
-  soc: qcom: mdt_loader: Enhance split binary detection
-
-Melody Olvera (8):
-  dt-bindings: firmware: qcom,scm: Update QDU1000/QRU1000 compatible
-  dt-bindings: mailbox: qcom-ipcc: Add compatible for QDU1000/QRU1000
-  dt-bindings: soc: qcom: aoss: Document power-domain-cells for aoss
-  dt-bindings: soc: qcom: aoss: Document QDU1000/QRU1000 compatible
-  dt-bindings: remoteproc: mpss: Document QDU1000/QRU1000 mpss devices
-  remoteproc: qcom: q6v5: Add support for q6 rmb registers
-  remoteproc: qcom_q6v5_pas: Add support to attach a DSP
-  remoteproc: qcom_q6v5_pas: Add QDU1000/QRU1000 mpss compatible & data
-
- .../bindings/firmware/qcom,scm.yaml           |   1 +
- .../bindings/mailbox/qcom-ipcc.yaml           |   1 +
- .../bindings/remoteproc/qcom,qdu1000-pas.yaml | 127 ++++++++++++++++++
- .../bindings/soc/qcom/qcom,aoss-qmp.yaml      |   5 +
- drivers/remoteproc/qcom_q6v5.c                |   9 ++
- drivers/remoteproc/qcom_q6v5.h                |   8 ++
- drivers/remoteproc/qcom_q6v5_pas.c            | 126 ++++++++++++++++-
- drivers/soc/qcom/mdt_loader.c                 |  64 +++++----
- 8 files changed, 311 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-pas.yaml
-
-
-base-commit: 09e41676e35ab06e4bce8870ea3bf1f191c3cb90
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 192c7aa0e39e..e8c6be70ebfd 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -254,6 +254,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 		   void (*handover)(struct qcom_q6v5 *q6v5))
+ {
+ 	int ret;
++	struct resource *res;
+ 
+ 	q6v5->rproc = rproc;
+ 	q6v5->dev = &pdev->dev;
+@@ -263,6 +264,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+ 	init_completion(&q6v5->start_done);
+ 	init_completion(&q6v5->stop_done);
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++	if (res) {
++		q6v5->rmb_base = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(q6v5->rmb_base))
++			q6v5->rmb_base = NULL;
++	} else
++		q6v5->rmb_base = NULL;
++
+ 	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
+ 	if (q6v5->wdog_irq < 0)
+ 		return q6v5->wdog_irq;
+diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+index 5a859c41896e..95824d5b64ce 100644
+--- a/drivers/remoteproc/qcom_q6v5.h
++++ b/drivers/remoteproc/qcom_q6v5.h
+@@ -7,6 +7,12 @@
+ #include <linux/completion.h>
+ #include <linux/soc/qcom/qcom_aoss.h>
+ 
++#define RMB_BOOT_WAIT_REG 0x8
++#define RMB_BOOT_CONT_REG 0xC
++#define RMB_Q6_BOOT_STATUS_REG 0x10
++
++#define RMB_POLL_MAX_TIMES 250
++
+ struct icc_path;
+ struct rproc;
+ struct qcom_smem_state;
+@@ -16,6 +22,8 @@ struct qcom_q6v5 {
+ 	struct device *dev;
+ 	struct rproc *rproc;
+ 
++	void __iomem *rmb_base;
++
+ 	struct qcom_smem_state *state;
+ 	struct qmp *qmp;
+ 
 -- 
 2.25.1
 
