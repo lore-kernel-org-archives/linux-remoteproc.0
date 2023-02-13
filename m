@@ -2,354 +2,220 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B0BC636D7
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 03:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03C0C636CC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 10:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbjBMDi3 (ORCPT
+        id S229940AbjBMKSF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 12 Feb 2023 22:38:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49694 "EHLO
+        Mon, 13 Feb 2023 05:18:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbjBMDiT (ORCPT
+        with ESMTP id S229713AbjBMKSD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 12 Feb 2023 22:38:19 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB8FCC2C;
-        Sun, 12 Feb 2023 19:38:15 -0800 (PST)
-X-UUID: d2b4a426ab4f11eda06fc9ecc4dadd91-20230213
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=b5t2Z+WOOYoxxipSNq6Ylw1/7XcqBaaI7oFa7Np+alo=;
-        b=rjAgB3YGSLuMEnPx5REFRMvB3qTnvqRO2sWISi5PHcA+VYUHc9wGxRQG4Ghx7k0CDmiXUIba4RJnjuMCGSbwe70AfsnUJ4bxHMCGRlWxuMEBco6josFjwVzNnwUMkA1ki1KNaNwQXiQAdMlJowtZZMQQvMf/CxlwMdbWZOTsF20=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.19,REQID:df06b904-28ba-42ae-9338-115ac54220db,IP:0,U
-        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-        N:release,TS:90
-X-CID-INFO: VERSION:1.1.19,REQID:df06b904-28ba-42ae-9338-115ac54220db,IP:0,URL
-        :0,TC:0,Content:-5,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTIO
-        N:quarantine,TS:90
-X-CID-META: VersionHash:885ddb2,CLOUDID:68823cf8-ff42-4fb0-b929-626456a83c14,B
-        ulkID:2302131138079ABHDLGS,BulkQuantity:0,Recheck:0,SF:38|29|28|17|19|48,T
-        C:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-        ,OSI:0,OSA:0,AV:0
-X-CID-BVR: 0
-X-UUID: d2b4a426ab4f11eda06fc9ecc4dadd91-20230213
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1390800571; Mon, 13 Feb 2023 11:38:04 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.194) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Mon, 13 Feb 2023 11:38:03 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Mon, 13 Feb 2023 11:38:03 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+        Mon, 13 Feb 2023 05:18:03 -0500
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2072.outbound.protection.outlook.com [40.107.105.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31219ED7;
+        Mon, 13 Feb 2023 02:18:00 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lWaYp8nqdCAd2fyRAnEiy0r0Y3T+3zzG2/JzFaT12wm17b0kN9Cx9KnUU10wkVPm4kOu+2xottXPZ0Jm/YOZ0WI72uYSk9pYv0DKms30bb5a0k0PK5PLFgNIEA1WeySY15B6zxypFuBZ7d4OwPjpiBfY3zfFSPJSFvnUsGISvRjRuqd5L6IQ5+gD7kO9M9RhcN3wOjpRa2Sv/tZO55/0rlYIOJ2Wf52reMQJcJ0GPKvIS5UkaqbkTDw0kJNg6kpCyW1yhA1oYriFoTsqgchEKfDz+gMwB+biVL5N1pVtmO8cw6QS7PhZ/v+JXQdqx9UJ0JZw9YQlqGqVCRegfuemNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DNu824C9kFZw728WUxNbUFpmV8ojDy/aFCImQiRJY3o=;
+ b=Q9FmUOFOtv6xZ6oHskxH1ICSurghkcqQMPeMaf+fJi6astB/Cz4KLC5869GpckRR3LGTXMksMdyG+amnWCrpOBYA3SFvM6MIYSplOeRCoFwOYByl0ApbL3/LcUaS9wSfeV9AroGHUI1G+VcTOLiXdp32ZIe83+1G1xx9+4XvtQc1wMd9ZvNTELux/EMS2aHhEaJeYxGHtWbiooaiBDjF3xjmiY01HcB47bN5KnZSgS+2yQ36k61d6TvjZbZyarevWCX7/Omie1y4kguIE7aqiIvFEWFeyfe7J9XqE1Tq5f6yNMl8TDIGIZ93Dr31cY/h/7+rlzM9+F4beq97OLOBgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DNu824C9kFZw728WUxNbUFpmV8ojDy/aFCImQiRJY3o=;
+ b=TBA81AMh2yhnANeI9DJAFt8nEzQ4oX3eKpOLd0S1DF8wvtyJytoQAOi9GC51Z8H9gAhZ3gGPC9DzuRex1Dhz6IQJZLUPkJURspa+uB96DKIi1NVQkJtn24IMFBR7I2vRAVDwYkrs1gBPb6Pp+UBzEIVhV8mW/RoyC2etD9k1SV4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9628.eurprd04.prod.outlook.com (2603:10a6:10:30b::14)
+ by DB8PR04MB6956.eurprd04.prod.outlook.com (2603:10a6:10:11b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6086.23; Mon, 13 Feb
+ 2023 10:17:57 +0000
+Received: from DB9PR04MB9628.eurprd04.prod.outlook.com
+ ([fe80::aec2:20b6:cf99:2886]) by DB9PR04MB9628.eurprd04.prod.outlook.com
+ ([fe80::aec2:20b6:cf99:2886%5]) with mapi id 15.20.6086.022; Mon, 13 Feb 2023
+ 10:17:57 +0000
+Message-ID: <73d34c86-7c31-6530-0915-aa470af5d9ca@nxp.com>
+Date:   Mon, 13 Feb 2023 12:15:59 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
+Content-Language: en-US
+To:     Peng Fan <peng.fan@nxp.com>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "andersson@kernel.org" <andersson@kernel.org>,
+        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v6 07/12] remoteproc: mediatek: Probe multi-core SCP
-Date:   Mon, 13 Feb 2023 11:37:53 +0800
-Message-ID: <20230213033758.16681-8-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20230213033758.16681-1-tinghan.shen@mediatek.com>
-References: <20230213033758.16681-1-tinghan.shen@mediatek.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
+ <2c4997fa-973c-dee4-9b26-6b38a1ca4540@nxp.com>
+ <DU0PR04MB9417A9B81B86FAC0A477063D88DC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+In-Reply-To: <DU0PR04MB9417A9B81B86FAC0A477063D88DC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM3PR07CA0055.eurprd07.prod.outlook.com
+ (2603:10a6:207:4::13) To DB9PR04MB9628.eurprd04.prod.outlook.com
+ (2603:10a6:10:30b::14)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9628:EE_|DB8PR04MB6956:EE_
+X-MS-Office365-Filtering-Correlation-Id: f041c4c6-518c-4f57-e94a-08db0dab93ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: k+z96sb5iOzyA7G+vuqfb4A2ZdWhAQNZdZTFARc0xNboZqoKR0tPkflbMZuHSehlHRiLTadGSplPPuWuc9Wo598qtufF6n8PimNP5gGePT9Z0exvJEZ1wV084bPU7JTuXg3HIAzNyVYq+V8P8j81wDLAXxwjsDqepAFUDk3pbXTuq4KyagGHE2gd3Fv/3THmdxz4dltX+I+PSOxR/7DV4hed7zspH9+BCnYPD8UjKJapFRug+/kltKuJ8jVPAz9NHAEAG5sebKAJL49xlbs7vKznDg1MyGa8PWGYdZDnYAwMGWMd5cQb5YY+H7KRy9/7MlBG+ShIYzejDX0eoX3dc1/0mWR2hsutypR1a7on6yOEkmH32CSBvVauBq4QKd5YTVvSV/updNeI45+hceN/XVJ7ZDxuqKWJ0GpMq6LqZjWLsgyy9baWFtkmGlWwQJpLCaYI13lXjN9p9pRxqqL2uWJRf6WXvpTMooma9AmyM2YPkoZr2zNbhiezibpd+CAKpl8txmDRfZUE2wBcWLHvp5UlWGHv4ePl4vG7rKoqcgDyAOp56Jzy1IgCTnsdjQT9N6UnUzTsQ2esyQGZQklt7i+JUKv12KfkyH5RjsbgEPtM7oU2IPUSkuZorn5T8ryH8pQxqD5NnCXsXhAhhSHCPk47KIW3opCaOQrGPHgbC8c/7z+R7+gDIpIH+5dFNQKK85Wkr6ol4THq2BcDLD0aMMbgD4u7cy7lMTtMDBISKVY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9628.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(376002)(366004)(136003)(396003)(346002)(451199018)(31686004)(4326008)(316002)(66476007)(8676002)(66556008)(66946007)(5660300002)(7416002)(8936002)(44832011)(41300700001)(36756003)(31696002)(86362001)(38100700002)(55236004)(6506007)(478600001)(53546011)(186003)(26005)(6512007)(6636002)(2906002)(6486002)(83380400001)(54906003)(2616005)(110136005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?akhrTGdhZm5vQWwzOHovc0xBaVdQTkhKOElHUDRpK1FSeG5OQVNRRHhxUDlR?=
+ =?utf-8?B?cDMyNmZjRmJDK2NFU0ZMTFJpdk5hVDlzMnFtVDNhSXZldlNzR1pOK2ZXZ29F?=
+ =?utf-8?B?aHlJMUNNZ3RTQXpkdTRQTkpaS3RQNzgvTzFiSS9jdXRxQXZRQ09TVExIdFZR?=
+ =?utf-8?B?UjlnRCtadXQ0MFVOV0FlRTRKYmZ6T25GamNvczl3VXZaQ3U5VzZWVVowa3Ju?=
+ =?utf-8?B?bCtPeWR2aHJvODJaM0tLaVlYVFd2OXhPdmtkdGZ4TjMzQkRvdHJoenFrY0Zn?=
+ =?utf-8?B?b1ZkL3pHSUk0TWdiYkdrWVRFRHZWUm5zdU00MkQwTG93UkFZT3JwbWdjOEdv?=
+ =?utf-8?B?UDlya0VaZ2g2R211Q1ZDejJ1eTZwaWJ1a1JLbjVwYW1VSloyRVZ3M09jTXk5?=
+ =?utf-8?B?UG11WHB3czFYazFXdkREcW0xTlpZSWM3VWtQMEc5ejQ5MGdiZGYzU25pemE3?=
+ =?utf-8?B?NE1hRkxxZGd0TmFKNTl5Uktqd1M2UjA3MkZWZHdTdS9tb25TMW9RN20xd2tJ?=
+ =?utf-8?B?a2hzUnI1U1d2WkhQdmpWaFI0RTFiSEswYm5POGovTjVVWDVaaGVmQmdaNXJP?=
+ =?utf-8?B?aGlodjhJUHFJclh1L0F6cTVOOXg5cFp0L2ZXUTkwcjZqTTNTWjhLb0RjbFNz?=
+ =?utf-8?B?MDZaeEFjWGc3SHZNcmU3dHZzWml4SkwxUDB3YW1YQ0RkQ1ZHUzJCdWxrWnRl?=
+ =?utf-8?B?SUxFcnlQdVp3SVVxVXBoMTJreHVqUGVSNkt0cmNrcXN5SGRPTHZ2SS9lZ3Nj?=
+ =?utf-8?B?WXRNczF0dWl2c0Jjd3RVNmEwKzFFUkpxRy9PRk9TVDFQc2ZvRXlNY3dlbENw?=
+ =?utf-8?B?N0ozT2FMRXk1U1JIMGNuejd6N29CVm9wdm84bzdDL3lKT01KREszM0dnTURu?=
+ =?utf-8?B?a3NETVNrWjVVQTQ1RlcrSkFQRUtjeVNnTCtaYzBLU0d4STA2NTIvd040Uldq?=
+ =?utf-8?B?OXFUVUtSUDU4amJGKzlIcmJwOGZwUVFCVEVRM0hPZGxlVGc0RStLN2hBUldD?=
+ =?utf-8?B?YldBVUZ1KzRDdFQ4b01DNUc4ZHd4U2R5aWlEbW1XUmdwT1E1cGVRUk1JUUIv?=
+ =?utf-8?B?ZDlDZEJxekhucVNHbElRaDV1VVlvL1ZCeWpNY1hoS1NHbTVudzhkbHdwaVpS?=
+ =?utf-8?B?ZVAyQWxCa2VJTnhRWis3ckdSU1lnSm5tQUhONGY3NEIrSnBwWTE2Zk5laEFu?=
+ =?utf-8?B?cWZvbGVHRnVpby9NMFBrelRRR1cySHhZaUI2bG5ldkdoTUo1NUp0YlZiUWtS?=
+ =?utf-8?B?R2lXTUdhNGdoTWowdFdleEtiQnRDNUFDdEFEM0FFdnIwMkwrUFRJMWQ0bzlG?=
+ =?utf-8?B?OXplbHJ5UGZBdDRncGF0UDF6S0tiM3JJeUk1alFFNTFubXJKUmVybkZxN0JN?=
+ =?utf-8?B?MWt0WGkyQmdGemZDOFVLVnBTaCtXUU1ZY01TZmNxK29hR0huTnFaNlBFR2NI?=
+ =?utf-8?B?dDFIVnZFUHE1azAzekFDczFZRzBNeGM3ZEdyU3R6UFE1Q3oyeHBMbWlVZ1lj?=
+ =?utf-8?B?Nk92SnRESjNJL3lGMTI2TmZjT3YxckdTSHliaUcyV25xNm1yVVVEYmRTM3Fp?=
+ =?utf-8?B?RzlxS2pRQWxDZnRPWjhPN2NWNUljWWVxQ2d6UXZDQThFU29mWndUMExXQzQx?=
+ =?utf-8?B?VkJOdXlKWWk5U1Q1SVNLZ1EvaTNDaURzK1BPTWIyTzNQQ1FqaUtHdUJRak1x?=
+ =?utf-8?B?dTFCaUtGdTVhRHFUc2x3L29ncnYzTkl6MnNmNjQ5TWdsR3FqK01QWi9Ya1Vh?=
+ =?utf-8?B?STlaUXNCazlEVk5OcUZ0UHFSZ3d1eGNRbGlRY0tRR2JUREVwWEpQUGRVbW5q?=
+ =?utf-8?B?ZXgzVmVPOE85bS9iaTU3QXRwYkRWK25leTJnd2g4K3NSNTNDTU9ZYkF3ZFdH?=
+ =?utf-8?B?T1hDOCtjcGRrUzlidjJkdFVLdUNUMGFRT0lDYjliSURiaHpFT1hsVXlYUFp2?=
+ =?utf-8?B?dnhpWkJEOEU4M2tiNzJQYU1LK0FJZ0NDU21kcFRPejNsMmhQRlo0R2NMN2tD?=
+ =?utf-8?B?U1pHb3cyTndMREhLWCtaWVQ0eG42QmxxSWFJNllVYTI4eEF4bExNRTRiMGs5?=
+ =?utf-8?B?RWZTa2dOSGJMOFJTaytzQlJGcE9udjIxbUJURGhOc2ZsUkF4WmQwTG9Qd050?=
+ =?utf-8?B?WkhpeFhGeVlwZk9ob3lRenh6K0V5c2xRLzV1RmRUN1lYamhGMmsvcDVxdXRT?=
+ =?utf-8?B?bWc9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f041c4c6-518c-4f57-e94a-08db0dab93ec
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9628.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2023 10:17:57.7121
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2xYLOZcGU76vgjbVMoIhPpBTIK9VqwX/HDJPDplKtoT4fik0ynt5NazxoyQkXlXdiyAxFa4PYaRllR3xFSgQdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6956
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The difference of single-core SCP and multi-core SCP device tree is
-the presence of child device nodes described SCP cores. The SCP
-driver populates the platform device and checks the child nodes
-to identify whether it's a single-core SCP or a multi-core SCP.
+On 2/12/2023 9:43 AM, Peng Fan wrote:
+> Hi Iuliana,
+>
+>> Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in
+>> DDR
+>>
+>>
+>> On 2/9/2023 8:38 AM, Peng Fan (OSS) wrote:
+>>> From: Peng Fan <peng.fan@nxp.com>
+>>>
+>>> V3:
+>>>
+>>>    Daniel, Iuliana
+>>>
+>>>      Please help review this patchset per Mathieu's comments.
+>>>
+>>>    Thanks,
+>>>    Peng.
+>>>
+>>>    Move patch 3 in v2 to 1st patch in v3 and add Fixes tag Per Daniel
+>>>    IMX_RPROC_ANY in patch 3 Per Mathieu
+>>>    Update comment and commit log in patch 5, 6.
+>>>
+>>>    NXP SDK provides ".interrupts" section, but I am not sure how others
+>>>    build the firmware. So I still keep patch 6 as v2, return bootaddr
+>>>    if there is no ".interrupts" section.
+>>>
+>>> V2:
+>>>    patch 4 is introduced for sparse check warning fix
+>>>
+>>> This pachset is to support i.MX8M and i.MX93 Cortex-M core firmware
+>>> could be in DDR, not just the default TCM.
+>>>
+>>> i.MX8M needs stack/pc value be stored in TCML entry address[0,4], the
+>>> initial value could be got from firmware first section ".interrupts".
+>>> i.MX93 is a bit different, it just needs the address of .interrupts
+>>> section. NXP SDK always has .interrupts section.
+>>>
+>>> So first we need find the .interrupts section from firmware, so patch
+>>> 1 is to reuse the code of find_table to introduce a new API
+>>> rproc_elf_find_shdr to find shdr, the it could reused by i.MX driver.
+>>>
+>>> Patch 2 is introduce devtype for i.MX8M/93
+>>>
+>>> Although patch 3 is correct the mapping, but this area was never used
+>>> by NXP SW team, we directly use the DDR region, not the alias region.
+>>> Since this patchset is first to support firmware in DDR, mark this
+>>> patch as a fix does not make much sense.
+>>>
+>>> patch 4 and 5 is support i.MX8M/93 firmware in DDR with parsing
+>>> .interrupts section. Detailed information in each patch commit message.
+>>>
+>>> Patches were tested on i.MX8MQ-EVK i.MX8MP-EVK i.MX93-11x11-EVK
+>> If one can build their firmware as they want, then the .interrupt section can
+>> also be called differently.
+>> I don't think is a good idea to base all your implementation on this
+>> assumption.
+>>
+>> It's clear there's a limitation when linking firmware in DDR, so this should be
+>> well documented so one can compile their firmware and put the needed
+>> section (interrupt as we call it in NXP SDK) always in TCML - independently
+>> where the other section go.
+> Ok, so .interrupt section should be a must in elf file if I understand correctly.
+>
+> I could add a check in V4 that if .interrupt section is not there, driver will report
+> failure.
+>
+> How do you think?
 
-The resource structure of the multi-core SCP is a list of remoteproc
-instances which is different to the single-core SCP. The corresponding
-resource releasing action is based on the type of SCP.
+Peng, I stand by my opinion that the limitation of linking firmware in 
+DDR should be documented in an Application Note, or maybe there are 
+other documents where how to use imx_rproc is explained.
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
----
- drivers/remoteproc/mtk_common.h |   7 ++
- drivers/remoteproc/mtk_scp.c    | 177 +++++++++++++++++++++++++++++---
- 2 files changed, 169 insertions(+), 15 deletions(-)
+The implementation based on the .interrupt section is not robust.
+Maybe a user linked his firmware correctly in TCML, but the section is 
+not called .interrupt so the firmware loading will work.
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 3778894c96f3..635b17676de8 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -112,6 +112,10 @@ struct mtk_scp_of_data {
- 	size_t ipi_buf_offset;
- };
- 
-+struct mtk_scp_cluster {
-+	struct list_head cores;
-+};
-+
- struct mtk_scp {
- 	struct device *dev;
- 	struct rproc *rproc;
-@@ -140,6 +144,9 @@ struct mtk_scp {
- 	size_t dram_size;
- 
- 	struct rproc_subdev *rpmsg_subdev;
-+
-+	struct list_head elem;
-+	struct mtk_scp_cluster *cluster;
- };
- 
- /**
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 6270c388727a..fd054a06ea5b 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -862,7 +862,9 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
- }
- 
- static int scp_rproc_init(struct platform_device *pdev,
--			  struct mtk_scp_of_regs *of_regs)
-+			  struct mtk_scp_of_regs *of_regs,
-+			  const struct mtk_scp_of_data *of_data,
-+			  struct mtk_scp_cluster *cluster)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
-@@ -883,7 +885,8 @@ static int scp_rproc_init(struct platform_device *pdev,
- 	scp = (struct mtk_scp *)rproc->priv;
- 	scp->rproc = rproc;
- 	scp->dev = dev;
--	scp->data = of_device_get_match_data(dev);
-+	scp->data = of_data;
-+	scp->cluster = cluster;
- 	platform_set_drvdata(pdev, scp);
- 
- 	scp->reg_base = of_regs->reg_base;
-@@ -932,9 +935,13 @@ static int scp_rproc_init(struct platform_device *pdev,
- 		goto remove_subdev;
- 	}
- 
--	ret = rproc_add(rproc);
--	if (ret)
--		goto remove_subdev;
-+	if (scp->cluster) {
-+		list_add_tail(&scp->elem, &scp->cluster->cores);
-+	} else {
-+		ret = rproc_add(rproc);
-+		if (ret)
-+			goto remove_subdev;
-+	}
- 
- 	return 0;
- 
-@@ -950,11 +957,115 @@ static int scp_rproc_init(struct platform_device *pdev,
- 	return ret;
- }
- 
-+static void scp_rproc_free(struct mtk_scp *scp)
-+{
-+	int i;
-+
-+	scp_remove_rpmsg_subdev(scp);
-+	scp_ipi_unregister(scp, SCP_IPI_INIT);
-+	scp_unmap_memory_region(scp);
-+	for (i = 0; i < SCP_IPI_MAX; i++)
-+		mutex_destroy(&scp->ipi_desc[i].lock);
-+	mutex_destroy(&scp->send_lock);
-+}
-+
-+static void scp_rproc_exit(struct platform_device *pdev)
-+{
-+	struct mtk_scp *scp = platform_get_drvdata(pdev);
-+
-+	rproc_del(scp->rproc);
-+	scp_rproc_free(scp);
-+}
-+
-+static int scp_cluster_init(struct platform_device *pdev,
-+			    struct mtk_scp_of_regs *of_regs)
-+{
-+	struct mtk_scp_cluster *cluster = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev_of_node(dev);
-+	struct platform_device *cpdev;
-+	struct device_node *child;
-+	const struct mtk_scp_of_data **cluster_of_data;
-+	struct mtk_scp *scp, *temp;
-+	int core_id, num_cores;
-+	int ret;
-+
-+	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
-+
-+	for (num_cores = 0; cluster_of_data[num_cores]; num_cores++)
-+		;
-+
-+	core_id = 0;
-+	for_each_available_child_of_node(np, child) {
-+		if (core_id >= num_cores) {
-+			ret = -EINVAL;
-+			dev_err(dev, "Not support core %d\n", core_id);
-+			of_node_put(child);
-+			goto init_fail;
-+		}
-+
-+		cpdev = of_find_device_by_node(child);
-+		if (!cpdev) {
-+			ret = -ENODEV;
-+			dev_err(dev, "Not found platform device for core %d\n", core_id);
-+			of_node_put(child);
-+			goto init_fail;
-+		}
-+
-+		ret = scp_rproc_init(cpdev, of_regs, cluster_of_data[core_id], cluster);
-+		put_device(&cpdev->dev);
-+		if (ret) {
-+			dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
-+			of_node_put(child);
-+			goto init_fail;
-+		}
-+
-+		of_node_put(child);
-+		core_id++;
-+	}
-+
-+	list_for_each_entry_safe_reverse(scp, temp, &cluster->cores, elem) {
-+		ret = rproc_add(scp->rproc);
-+		if (ret)
-+			goto add_fail;
-+	}
-+
-+	return 0;
-+
-+add_fail:
-+	list_for_each_entry_continue(scp, &cluster->cores, elem) {
-+		rproc_del(scp->rproc);
-+	}
-+init_fail:
-+	list_for_each_entry_safe_reverse(scp, temp, &cluster->cores, elem) {
-+		list_del(&scp->elem);
-+		cpdev = to_platform_device(scp->dev);
-+		scp_rproc_free(scp);
-+	}
-+	return ret;
-+}
-+
-+static void scp_cluster_exit(struct platform_device *pdev)
-+{
-+	struct mtk_scp_cluster *cluster = platform_get_drvdata(pdev);
-+	struct platform_device *cpdev;
-+	struct mtk_scp *scp, *temp;
-+
-+	list_for_each_entry_safe_reverse(scp, temp, &cluster->cores, elem) {
-+		list_del(&scp->elem);
-+		cpdev = to_platform_device(scp->dev);
-+		scp_rproc_exit(cpdev);
-+	}
-+}
-+
- static int scp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *core_node;
- 	struct resource *res;
- 	struct mtk_scp_of_regs scp_regs;
-+	struct mtk_scp_cluster *cluster;
- 	int ret;
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
-@@ -975,21 +1086,50 @@ static int scp_probe(struct platform_device *pdev)
- 		scp_regs.l1tcm_phys = res->start;
- 	}
- 
--	return scp_rproc_init(pdev, &scp_regs);
-+	ret = devm_of_platform_populate(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
-+
-+	core_node = of_get_child_by_name(np, "scp");
-+	of_node_put(core_node);
-+
-+	if (!core_node) {
-+		dev_info(dev, "single-core scp\n");
-+
-+		ret = scp_rproc_init(pdev, &scp_regs, of_device_get_match_data(dev), NULL);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Failed to initialize single-core scp\n");
-+	} else {
-+		dev_info(dev, "multi-core scp\n");
-+
-+		cluster = devm_kzalloc(dev, sizeof(*cluster), GFP_KERNEL);
-+		if (!cluster)
-+			return dev_err_probe(dev, -ENOMEM, "Unable to allocate scp cluster\n");
-+
-+		INIT_LIST_HEAD(&cluster->cores);
-+		platform_set_drvdata(pdev, cluster);
-+
-+		ret = scp_cluster_init(pdev, &scp_regs);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Failed to initialize scp cluster\n");
-+	}
-+
-+	return 0;
- }
- 
- static int scp_remove(struct platform_device *pdev)
- {
--	struct mtk_scp *scp = platform_get_drvdata(pdev);
--	int i;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *core_node;
- 
--	rproc_del(scp->rproc);
--	scp_remove_rpmsg_subdev(scp);
--	scp_ipi_unregister(scp, SCP_IPI_INIT);
--	scp_unmap_memory_region(scp);
--	for (i = 0; i < SCP_IPI_MAX; i++)
--		mutex_destroy(&scp->ipi_desc[i].lock);
--	mutex_destroy(&scp->send_lock);
-+	core_node = of_get_child_by_name(np, "scp");
-+	of_node_put(core_node);
-+
-+	if (!core_node)
-+		scp_rproc_exit(pdev);
-+	else
-+		scp_cluster_exit(pdev);
- 
- 	return 0;
- }
-@@ -1068,12 +1208,19 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
- 	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
- };
- 
-+static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
-+	&mt8195_of_data,
-+	&mt8195_of_data_c1,
-+	NULL
-+};
-+
- static const struct of_device_id mtk_scp_of_match[] = {
- 	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
- 	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
- 	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
- 	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
- 	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
-+	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
--- 
-2.18.0
+So, instead of using the section name, you should use the address.
+
+First, check whether there is a section linked to TCML.
+If there is none, check for section name - as you did.
+If there is no section called .interrupt, give an error message.
+
+For all the above options please add comments in code, explaining each step.
 
