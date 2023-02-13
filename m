@@ -2,56 +2,54 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8273C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 15:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28C2C6FA99
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 15:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230314AbjBMPwa (ORCPT
+        id S230392AbjBMPwb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Feb 2023 10:52:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39416 "EHLO
+        Mon, 13 Feb 2023 10:52:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230207AbjBMPw1 (ORCPT
+        with ESMTP id S230239AbjBMPw1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Mon, 13 Feb 2023 10:52:27 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B21691A665;
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 982271A643;
         Mon, 13 Feb 2023 07:52:26 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DERs62001670;
-        Mon, 13 Feb 2023 15:52:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=np/Fh/isAkZqVk4IGvOaJu01AVx1Edn4bZ3eEoznThM=;
- b=CILJ3Plmnsa89OEgsZQZFaeSmgyAexUlueFuRDTvgXyznbSHgkZRa/Kt3C5qpMwJd2/4
- 5nSanxtYk7Xkn1/HuQWvaUaExoB3nC55huTSfg/xpR655fJtnfulo40VVYrd9BKLkGBS
- B9vY6QXGRkq7h8+lIHhTU5fDIlsTwpsUacoqxQF06uZhMSUSKZSypu6i0kLzOGSS3KBY
- zdqYTZaoUD5PWvy1hI4hggpB8lSu5RKPr9U1anYCm6j5U3LIdOc4BKVDD1ItEM3GRg2S
- Z84sZrby2kpwkExbdiUoLG9oNMqQtcs6gEtFb+Dz5bagu2vcvzN8MZWFaOYKUhs6VbhE Ig== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3np0qpvgs4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Feb 2023 15:52:23 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DFqM5V021292
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31DFkmbd000824;
         Mon, 13 Feb 2023 15:52:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=0VvJRIYUJ1Q+yZA+rhwDocPrDjS8d43jsTRHEy+Ms7Y=;
+ b=V5won4fXBo0kPt/KxsZwg1y+heSfHdoiF/2VipEk9ZsaDQzHCcHJrelW2RqjjKxebDNc
+ Dt36z6cGww2J6UH9RPtivwdqLP0KBpD07NzPL1Pc65/sNcYcEYwoCIQVtG6pt4nIaYp1
+ gYE8IlM3V0kUQ5b1Zu+WjYtthfQjSWFnQlnjvRlbbzB2OJUV/oXf+SezIOpTOnx2DT4d
+ /1qbKPIdpdbFTR68J24i/DNagwAY+Kq8eXxrT5aO8A00hTJcZttIuOsr16/leeLrYG9P
+ V8rEK6rzuDIds4CXftxDfviQ2dJTAiUi2WPJZn115+Q6RhtPCFNB4/hmogLYxCe7WyJu cw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3np21fvmu9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 15:52:22 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31DFqL1I012099
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 13 Feb 2023 15:52:21 GMT
 Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
  nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.36; Mon, 13 Feb 2023 07:52:22 -0800
+ 15.2.986.36; Mon, 13 Feb 2023 07:52:20 -0800
 From:   Bjorn Andersson <quic_bjorande@quicinc.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Chris Lew <quic_clew@quicinc.com>
 CC:     <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 6/6] rpmsg: glink: Cancel pending intent requests at removal
-Date:   Mon, 13 Feb 2023 07:52:15 -0800
-Message-ID: <20230213155215.1237059-7-quic_bjorande@quicinc.com>
+Subject: [PATCH v2 0/6] rpmsg: glink: Misc improvements
+Date:   Mon, 13 Feb 2023 07:52:09 -0800
+Message-ID: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
-References: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -60,73 +58,41 @@ X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8-3SoyprBJlUMxkUWbNgAHOG3qokxnBO
-X-Proofpoint-ORIG-GUID: 8-3SoyprBJlUMxkUWbNgAHOG3qokxnBO
+X-Proofpoint-GUID: 4Usmd3l17Y4EajOPMYEpzdTJ6WbMmslU
+X-Proofpoint-ORIG-GUID: 4Usmd3l17Y4EajOPMYEpzdTJ6WbMmslU
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-13_10,2023-02-13_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- malwarescore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxlogscore=848
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302130143
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ priorityscore=1501 bulkscore=0 impostorscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 spamscore=0 mlxlogscore=755 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2302130143
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-During removal of the glink edge interrupts are disabled and no more
-incoming messages are being serviced. In addition to the remote endpoint
-being defunct that means that any outstanding requests for intents will
-not be serviced, and qcom_glink_request_intent() will blindly wait for
-up to 10 seconds.
+This series refactors glink_native to move IRQ and mailbox handling to SMEM and
+RPM driver, in preparation for more work. It then introduces the logic to fail
+glink transactions and pending intent requests in the event of the edge being
+torn down.
 
-Mark the intent request as not granted and complete the intent request
-completion to fail the waiting client immediately.
+Bjorn Andersson (6):
+  rpmsg: glink: Extract tx kick operation
+  rpmsg: glink: smem: Wrap driver context
+  rpmsg: glink: rpm: Wrap driver context
+  rpmsg: glink: Move irq and mbox handling to transports
+  rpmsg: glink: Fail qcom_glink_tx() once remove has been initiated
+  rpmsg: glink: Cancel pending intent requests at removal
 
-Once the current intent request is failed, any potential clients waiting
-for the intent request mutex will not enter the same wait, as the
-qcom_glink_tx() call will fail fast.
+ drivers/remoteproc/qcom_common.h  |  3 +-
+ drivers/rpmsg/qcom_glink_native.c | 93 +++++++++++++----------------
+ drivers/rpmsg/qcom_glink_native.h |  3 +-
+ drivers/rpmsg/qcom_glink_rpm.c    | 94 +++++++++++++++++++++++------
+ drivers/rpmsg/qcom_glink_smem.c   | 98 +++++++++++++++++++++++++++----
+ include/linux/rpmsg/qcom_glink.h  | 12 ++--
+ 6 files changed, 212 insertions(+), 91 deletions(-)
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
-
-Changes since v1:
-- None
-
- drivers/rpmsg/qcom_glink_native.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 946128c343f3..324c75d59a6f 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -423,6 +423,12 @@ static void qcom_glink_handle_intent_req_ack(struct qcom_glink *glink,
- 	complete(&channel->intent_req_comp);
- }
- 
-+static void qcom_glink_intent_req_abort(struct glink_channel *channel)
-+{
-+	channel->intent_req_result = 0;
-+	complete(&channel->intent_req_comp);
-+}
-+
- /**
-  * qcom_glink_send_open_req() - send a RPM_CMD_OPEN request to the remote
-  * @glink: Ptr to the glink edge
-@@ -1788,6 +1794,12 @@ void qcom_glink_native_remove(struct qcom_glink *glink)
- 	wake_up_all(&glink->tx_avail_notify);
- 	spin_unlock_irqrestore(&glink->tx_lock, flags);
- 
-+	/* Abort any senders waiting for intent requests */
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	idr_for_each_entry(&glink->lcids, channel, cid)
-+		qcom_glink_intent_req_abort(channel);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+
- 	ret = device_for_each_child(glink->dev, NULL, qcom_glink_remove_device);
- 	if (ret)
- 		dev_warn(glink->dev, "Can't remove GLINK devices: %d\n", ret);
 -- 
 2.25.1
 
