@@ -2,79 +2,89 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F231CC636D4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 22:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1596EC636CC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Feb 2023 23:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230200AbjBMWVV (ORCPT
+        id S229898AbjBMXU2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Feb 2023 17:21:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60972 "EHLO
+        Mon, 13 Feb 2023 18:20:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230077AbjBMWVS (ORCPT
+        with ESMTP id S229618AbjBMXU1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Feb 2023 17:21:18 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 410BB2006C;
-        Mon, 13 Feb 2023 14:21:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D89ACB818EE;
-        Mon, 13 Feb 2023 22:21:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D05C4339B;
-        Mon, 13 Feb 2023 22:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676326867;
-        bh=IgFSxGVW+g4L3K+r5WNLqzfyj/9O8AXEX7jeT9PfUOE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B2s4hik6PHKM+c/6j3z6QeIYoHCzVPGfa6WFsZQ5G1nb7Z0RSf6qJMzdCN+TqwfbK
-         ylSba7C7OE2sHg4S7YJAv2wOUGj5TsjIXQ8bsF8ZIC/Vd3KIXLUHz8rv1o457AkUk/
-         ZhPjAWnu2aXkaKXuW9B9bwg5VLCT7RtljaLll4bQvuJar7Y6C9M+E8+YRKenC+8CbN
-         ZYoOqebjix/PvkILYwB/AXgmgQfQU/NvzLQ+4GaYSI7UB/brBNINyPrtMPHsq183Za
-         XlTw0kAZ9Q8guVZOYV6MsV/ZQ9XUo3JdnH4dljROaIzzn33Ilhl6eeLJaMshbJxzIa
-         1Sq4TV2hLr/gA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Mon, 13 Feb 2023 18:20:27 -0500
+Received: from stravinsky.debian.org (stravinsky.debian.org [IPv6:2001:41b8:202:deb::311:108])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBBF2113C5;
+        Mon, 13 Feb 2023 15:20:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+        s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:MIME-Version
+        :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=LG/q1WY/U+U/uFSQNISKRuzbP6EKDwVnNYE4h0kB6+M=; b=k/Rwak50+8guCi1PT4i7JvBAZy
+        kF/eKgf6Pk9eAFoU4t+TQJonsFB6Ktzle9rfyOPXz3++9dV24387bFaDQG4ep4m2KgRNJszLvVVbC
+        BmcuHVA9ga1lAra5ojPA7liVIFdkivSUdhMmgVITlu1f0c1d2szXHobTdUrB2/AT6KD/Gz7kLHtJZ
+        RBLeqLjp/CNTKMS+4lUMFUxxJ2tumi/paXpj7kx7He3/TIUPTxXUY+IjsDmIMy8wwNbnUpFlAlbHj
+        BBY4oL/KT8s0UMLdwLZ9w6mgl8G5Dw5EwqTtNceTlY4yKe2YrekAxIe4CnKSKKnFEY+rk1FEDMyrq
+        MWhBNcxw==;
+Received: from authenticated user
+        by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+        (Exim 4.94.2)
+        (envelope-from <bage@debian.org>)
+        id 1pRi7A-0013qZ-48; Mon, 13 Feb 2023 23:20:04 +0000
+From:   Bastian Germann <bage@debian.org>
+To:     Wilken Gottwalt <wilken.gottwalt@posteo.net>
+Cc:     Bastian Germann <bage@debian.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        linux-arm-msm@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: (subset) [PATCH v2 1/7] arm64: dts: qcom: ipq6018: align RPM G-Link node with bindings
-Date:   Mon, 13 Feb 2023 14:23:03 -0800
-Message-Id: <167632698311.557014.8382168807767874732.b4-ty@kernel.org>
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        devicetree@vger.kernel.org
+Subject: [PATCH 3/3] arm64: dts: allwinner: a64: Add hwspinlock node
+Date:   Tue, 14 Feb 2023 00:19:30 +0100
+Message-Id: <20230213231931.6546-4-bage@debian.org>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
-References: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230213231931.6546-1-bage@debian.org>
+References: <20230213231931.6546-1-bage@debian.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Debian-User: bage
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 8 Feb 2023 11:15:39 +0100, Krzysztof Kozlowski wrote:
-> Bindings expect (and most of DTS use) the RPM G-Link node name to be
-> "rpm-requests".
-> 
-> 
+Add the hwspinlock to A64 which is already implemented for A31.
 
-Applied, thanks!
+Signed-off-by: Bastian Germann <bage@debian.org>
+---
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-[1/7] arm64: dts: qcom: ipq6018: align RPM G-Link node with bindings
-      commit: 679ee73bbee28cab441008f8cca38160cc8f3d05
-[2/7] arm64: dts: qcom: qcs404: align RPM G-Link node with bindings
-      commit: 7bf30eb441b3bdaa368e65837a03f9fbba033180
-[3/7] arm64: dts: qcom: msm8996: align RPM G-Link clock-controller node with bindings
-      commit: 407ef897bd0275e38ae33d410857e71c092679bd
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index 77b5349f6087..d4be8be0f2f3 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -851,6 +851,16 @@ wdt0: watchdog@1c20ca0 {
+ 			clocks = <&osc24M>;
+ 		};
+ 
++		hwspinlock: hwlock@1c18000 {
++			compatible = "allwinner,sun6i-a31-hwspinlock";
++			reg = <0x01c18000 0x1000>;
++			clocks = <&ccu CLK_BUS_SPINLOCK>;
++			clock-names = "ahb";
++			resets = <&ccu RST_BUS_SPINLOCK>;
++			reset-names = "ahb";
++			#hwlock-cells = <1>;
++		};
++
+ 		spdif: spdif@1c21000 {
+ 			#sound-dai-cells = <0>;
+ 			compatible = "allwinner,sun50i-a64-spdif",
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.39.1
+
