@@ -2,77 +2,137 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EFCC6379F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 20:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BF9C05027
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 21:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230414AbjBNUzG (ORCPT
+        id S232638AbjBNVVB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 15:55:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52046 "EHLO
+        Tue, 14 Feb 2023 16:21:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229741AbjBNUzE (ORCPT
+        with ESMTP id S232643AbjBNVU7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 15:55:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 719342BEE1;
-        Tue, 14 Feb 2023 12:55:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D6B0618D8;
-        Tue, 14 Feb 2023 20:55:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72CFAC433D2;
-        Tue, 14 Feb 2023 20:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676408102;
-        bh=ostKEzzplobdT7O8KhCmQvHPK9uAmCw1r6JJ+q8gb74=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YG+RdaiL++HdQuIoQaz45hlPDQAbwZ887M+7Qco/qQSHCfxBTCDlcCn2G4AX0JmdN
-         Q12x7tnX/j18YihpZRft+xEJPFo6DZQ81UlB7vVdDdoQMXeZGV/VLKj22HRF9oDf1J
-         auwTpKDeJMQXjwb0u68ltFiBWuEU5k5KExWLP4ww9XPeC5SxxjutUJnHGoMZm2pjUl
-         gDf/PAWJdZ+WO8ZzExjw4E/CUATHuQ12fPJLxpTYIQ/N5ZWgDCzTPY14UIpRfTCrft
-         JHwiwBqpTIuOREcHFGPUWMkHG0CkM2oqroDBvAoxSUNAkKH949kTl6VkT86bnXdCdi
-         BHoMRu67GsXxQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        Bastian Germann <bage@debian.org>
-Cc:     linux-remoteproc@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH 0/3] Enable hwlock on Allwinner A64
-Date:   Tue, 14 Feb 2023 12:57:06 -0800
-Message-Id: <167640821432.1045974.5362172074959635497.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230213231931.6546-1-bage@debian.org>
-References: <20230213231931.6546-1-bage@debian.org>
+        Tue, 14 Feb 2023 16:20:59 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1B526877;
+        Tue, 14 Feb 2023 13:20:54 -0800 (PST)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31EL71aw000663;
+        Tue, 14 Feb 2023 21:20:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Xcw0ZlUasRoVO95Q9XmibyBnrngBcN4Pv95xjwnaGkg=;
+ b=KU/tDnJQSFzbJjBol5wTDymrODkLrphLMdiqCBE46qAZ0rlze0imq/S4fSy/f5e9hs4A
+ 403tOzXCJvMnqv2nZlhX2tAZy+zagw7mAz/vMMFjyDLl3Z1vwhJYPsKTqZ6iIpHxz+5U
+ 5Y595eh5B1DE+uBz/Fduun8nff3Utfhfa/EUQ1l8OcbYHalln0dZsXkAp0tOx9pBGRnt
+ RO/+XLWn5B/1dXmVRlVysLuJIUFXBLzMtwahE4A1/6ulXtVPKekzVUXznQPNBCxs142I
+ m4O0xN2S6kZJGQShE9qitAzQYP2Gmp7JbzXZcUxEoZVcOlfcg6c50q4B3S8roGtEAHhf tA== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nrhx3r0r2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Feb 2023 21:20:50 +0000
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31ELKnSI020053
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Feb 2023 21:20:49 GMT
+Received: from [10.134.66.255] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 14 Feb
+ 2023 13:20:49 -0800
+Message-ID: <2495bd07-5322-59d8-e79f-45403a0f9d07@quicinc.com>
+Date:   Tue, 14 Feb 2023 13:20:49 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 3/9] dt-bindings: soc: qcom: aoss: Document
+ power-domain-cells for aoss
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20230213185218.166520-1-quic_molvera@quicinc.com>
+ <20230213185218.166520-4-quic_molvera@quicinc.com>
+ <20230214175226.e3sstj6pk3naavbr@ripper>
+Content-Language: en-US
+From:   Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <20230214175226.e3sstj6pk3naavbr@ripper>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -RXDhl3Rp_HunTeeiuHfjHr-QKdRlxZu
+X-Proofpoint-GUID: -RXDhl3Rp_HunTeeiuHfjHr-QKdRlxZu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-14_15,2023-02-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 impostorscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 spamscore=0 phishscore=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302140183
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 14 Feb 2023 00:19:27 +0100, Bastian Germann wrote:
-> The allwinner,sun6i-a31-hwspinlock compatible driver can be used with
-> the Allwinner A64 chip. Add the wiring required to enable it.
-> 
-> The device tree schema needs some work to verify everything that is
-> needed by the sun6i hwlock driver.
-> 
-> The hwlock device was verified to be available with this series applied
-> on a Pinebook.
-> 
-> [...]
 
-Applied, thanks!
 
-[1/3] dt-bindings: hwlock: sun6i: Add missing #hwlock-cells
-      commit: 25d10262ed8aae71cd2f0b3c0a90d06a6b79fba2
+On 2/14/2023 9:52 AM, Bjorn Andersson wrote:
+> On Mon, Feb 13, 2023 at 10:52:12AM -0800, Melody Olvera wrote:
+>> Document "#-power-domain-cells" field for aoss devices as required
+>> by power-controller bindings.
+>>
+> 99512191f4f1 ("soc: qcom: aoss: Drop power domain support") was merged
+> in v5.16, so I don't think this is correct. Please let me know if I'm
+> misunderstood your intent.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+No, you're correct. Upon reviewing the that commit, this change is wrong and should
+be dropped. I need to update the device tree accordingly. Thanks for catching that.
+
+Thanks,
+Melody
+>
+> Thanks,
+> Bjorn
+>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+>> index ab607efbb64c..bcfa8e2e6a04 100644
+>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+>> @@ -60,6 +60,9 @@ properties:
+>>      description:
+>>        The single clock represents the QDSS clock.
+>>  
+>> +  "#power-domain-cells":
+>> +    const: 1
+>> +
+>>  required:
+>>    - compatible
+>>    - reg
+>> @@ -97,6 +100,7 @@ examples:
+>>        mboxes = <&apss_shared 0>;
+>>  
+>>        #clock-cells = <0>;
+>> +      #power-domain-cells = <1>;
+>>  
+>>        cx_cdev: cx {
+>>          #cooling-cells = <2>;
+>> -- 
+>> 2.25.1
+>>
+
