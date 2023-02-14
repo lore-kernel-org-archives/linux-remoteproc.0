@@ -2,106 +2,89 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B33C64EC7
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 16:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0DEC61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 16:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbjBNQNU (ORCPT
+        id S231854AbjBNQhn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 11:13:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55480 "EHLO
+        Tue, 14 Feb 2023 11:37:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232093AbjBNQNI (ORCPT
+        with ESMTP id S232135AbjBNQhm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 11:13:08 -0500
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7F020543;
-        Tue, 14 Feb 2023 08:12:46 -0800 (PST)
-Received: by mail-il1-f181.google.com with SMTP id f10so6437281ilc.7;
-        Tue, 14 Feb 2023 08:12:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TOvrwglmfiziR7GpHogrkS3U+q64rSn22USfXubW88k=;
-        b=Bjp339WSHdL+AkmdChLS6Nm5WhaR3AVgV9aJjLEFzaYqb4gvyxFh6EfCyPb9lBbB+h
-         dvbHvT5NIXR8Ds8uvZaN5DPuCVaPZSEp4SnuIitKABk2V7habX8h65LMZteopeEOY8L1
-         ZjGT1CuijpN9BAzBxhXADmnEhxmwV4f6YAfubLo4JGjIrfdcognqIxIQ8ubb7p17Hrt3
-         qIhiaYQqhjjWgNdZ1p0ec4LQwSHMBrILOBW7vXR+/Ts2/71u/2q7hNu4HopXfSQq5US1
-         vO/irbM/ZdTvJRQUI93QFPglJFojcC8GMlO6Chu0cZDbiVcLsbJfg9WXVYQxRkKHsfJq
-         cNYA==
-X-Gm-Message-State: AO0yUKV4UYM1eyitP7K8RDjXS4A/2wsWm24eK/WNPV2NTvjs9aUsPwQn
-        KbNiZYl2/ECjea6RPkwY1g==
-X-Google-Smtp-Source: AK7set/1RjGkMZEjYQt+pgvNdOtTX6Ck9XeM1kK01k0MLbfojEYgbSZ8+acxpFVCLsWy9ptdlxsOYQ==
-X-Received: by 2002:a05:6e02:1ba4:b0:313:904d:abda with SMTP id n4-20020a056e021ba400b00313904dabdamr2858079ili.28.1676391165536;
-        Tue, 14 Feb 2023 08:12:45 -0800 (PST)
-Received: from robh_at_kernel.org (c-73-14-99-67.hsd1.co.comcast.net. [73.14.99.67])
-        by smtp.gmail.com with ESMTPSA id r15-20020a02c6cf000000b0039e68e9988csm4797305jan.56.2023.02.14.08.12.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Feb 2023 08:12:45 -0800 (PST)
-Received: (nullmailer pid 76710 invoked by uid 1000);
-        Tue, 14 Feb 2023 16:12:34 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Tue, 14 Feb 2023 11:37:42 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCEF84215;
+        Tue, 14 Feb 2023 08:37:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 800B06179F;
+        Tue, 14 Feb 2023 16:37:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D41C433EF;
+        Tue, 14 Feb 2023 16:37:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1676392660;
+        bh=zA3qxRQiZVHeCuSPcpD8NkDwG9B4B15GfeTYUiCpIik=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mkeGiHLhcgLfZ6ClM6LEdZL0M78Ovh27GTlfAZVvbKzjSKBQlM7qUCdE5f8vDfadl
+         AfBb5P7YJLot41yNGNdJJWEK+XeY1dAo1/yotiSkCthXjZnibVccmzVvIywoY9fn0b
+         wQdIdwctsmBx67We9tw5gePhjicXBkElD7d5btyufMOICE3OMLUd9S2jw18Kd5qnYD
+         YcA7f9MvnLNC7xLDmKjFn3h7/KagavHny5xbaaKiv12RNIfDB2rGyATnPYwiKzEeIs
+         aO5llr+fic9wh2aFwQ1n2pHkTnVlnz9iFvX1mlYoUB0UXOApbQOkBX6r7Vnm3ynz4g
+         Zg0bcxP6YaRew==
+Date:   Tue, 14 Feb 2023 08:39:44 -0800
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     dmitry.baryshkov@linaro.org, agross@kernel.org,
+        mathieu.poirier@linaro.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: replace kstrdup with kstrndup
+Message-ID: <20230214163944.y5tkgdfmsycmpg7p@ripper>
+References: <1675180866-16695-1-git-send-email-quic_mojha@quicinc.com>
+ <1676383691-29738-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Bastian Germann <bage@debian.org>
-Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>, linux-sunxi@lists.linux.dev,
-        Chen-Yu Tsai <wens@csie.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-        linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20230213231931.6546-2-bage@debian.org>
-References: <20230213231931.6546-1-bage@debian.org>
- <20230213231931.6546-2-bage@debian.org>
-Message-Id: <167638944701.3666.5425414440419322569.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: hwlock: sun6i: Add missing
- #hwlock-cells
-Date:   Tue, 14 Feb 2023 10:12:34 -0600
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1676383691-29738-1-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On Tue, 14 Feb 2023 00:19:28 +0100, Bastian Germann wrote:
-> The allwinner,sun6i-a31-hwspinlock.yaml binding needs #hwlock-cells
-> which is required by the hwlock type.
+On Tue, Feb 14, 2023 at 07:38:11PM +0530, Mukesh Ojha wrote:
+> Since, there is no guarantee that region.name will be 0-terminated
+> from the firmware side, replace kstrdup with kstrndup.
 > 
-> Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
-> Signed-off-by: Bastian Germann <bage@debian.org>
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+
+Please don't send additional patches in-reply-to another patch, it makes
+it impossible to use b4 to pick up the first patch.
+
+And please don't send two patches which clearly will conflict with
+each other. Now I had to manually apply the first patch...
+
+Regards,
+Bjorn
+
 > ---
->  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml       | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/remoteproc/qcom_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.example.dtb: hwlock@1c18000: '#hwlock-cells' is a required property
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230213231931.6546-2-bage@debian.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 020349f..7810f91 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -124,7 +124,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+>  	for (i = 0; i < seg_cnt; i++) {
+>  		memcpy_fromio(&region, ptr + i, sizeof(region));
+>  		if (region.valid == MD_REGION_VALID) {
+> -			name = kstrdup(region.name, GFP_KERNEL);
+> +			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+>  			if (!name) {
+>  				iounmap(ptr);
+>  				return -ENOMEM;
+> -- 
+> 2.7.4
+> 
