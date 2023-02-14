@@ -2,93 +2,94 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7708C05027
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 08:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B79C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 08:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjBNIJ3 (ORCPT
+        id S231892AbjBNIW2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 03:09:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
+        Tue, 14 Feb 2023 03:22:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjBNIJ2 (ORCPT
+        with ESMTP id S232005AbjBNIW0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 03:09:28 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74CB72D4F
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 00:09:27 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id h16so14693910wrz.12
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 00:09:27 -0800 (PST)
+        Tue, 14 Feb 2023 03:22:26 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DE21212A8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 00:22:22 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id j32-20020a05600c1c2000b003dc4fd6e61dso13064674wms.5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 00:22:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pf9170XvU7zLLAHBJUBXw8LaXOs2tRKFoZ7PkVXYtIY=;
-        b=LPaw8u0ct7tKtQNnm9Nx7k30Lqv1q3WeXUXy9e2Gd6QHcdvXAE67RvKMGi3qZWUoIg
-         e7X/IdGd7CpY22bkryhv5EUqfE65YWzy5ilmG300PpNCUxugKDSMDMYqcTUWEc+Dk42s
-         WwTMOFlV7+BYn6khsV4Zy3/9UsU5umHdY1eQB9h4+g5DeuRYUekGNH7+KEhF9pEzQPi4
-         T6ACNEscTe7S2OTMWhgH40DZuPdbO1QD5BVzb4vvw4S7RKgVIux0yGq5rCuX+ynXd+CZ
-         kAwHKytA8yjpvF1W6BzhCKYP8URTXGePXMGLjacd43Fo9mXqiRtBXQHGECvQJVS3e/i1
-         pfaw==
+        bh=7rZYNk/+SGPInJMtgZ1K6jQiSHv5cED0P/DIveONKHE=;
+        b=b3lgCkM3PbWTCNRWh5Bf/k2/hpE7laCJLD5srPOBh4vskNvXGLVsydy5mjnSV0tRbj
+         ADc8FA8wOnub6Yrcjx0c4AHDB733qO8LrYskiCsubK6PQMNw/LIQ1inzJc9vz4+Joyi9
+         1n5ThnhS8Uq2VcGD7CUzAM3l8YRaXHLLpadILNk/isd6VHtv9k7no1eyByq9YZ0qUa6i
+         0RrHYuz6s+vVsAIlR3mHvk+Nn6bOsB0a1fJpc5rSvrGDGUdSdv3xRdovk/i1W/506PSm
+         KBrsfNogXSRyOxqnLyvEFr8WUf7vGTTsqdE0lvzjYStg7ETuv+s+G4xrrkF6zmKhVqNB
+         GEmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pf9170XvU7zLLAHBJUBXw8LaXOs2tRKFoZ7PkVXYtIY=;
-        b=r17A+ZYTPLbEM0iGiI+io0AL3iRugLQvUbhlmkaCandcBqMi3/NnVa5V6GaWRTqtYP
-         iGYD5cSOT7adXsg3OJn/tfGt55kQsRAwmevqc1ZOnwVA4uFks1+DRmp7ADgzdWUH3K+v
-         Ht5CUAxUlaXufr8rTnpuzJYK4U4V5lWOO4MRjSsRMa6plFuwOyoJXWin1ioRjcF1hWVs
-         oap0HWTXz1CcRxMDvP9dIIrWPzWA0wvoJuhKKXyLvEYgAfSibpXUtRguzU9o+uFTfPML
-         gxPED3Rh9xVqy0yPgH4dHdRhEhpQNO736q1Wj4NmfMnbtuuTu3LqgbabtEJgXFo7dyQr
-         GRYg==
-X-Gm-Message-State: AO0yUKX9FaXutw6mhXpg7xd3tAJVB+t+zwDcZnELN3dlLPXE3iAW/hEc
-        dwqxDINT1+KA7bW0CVLlDc1GIA==
-X-Google-Smtp-Source: AK7set8WK084Wm25gzk8fxH+tdMAdKMKDQpEY60rw+rQLHE2Nft2xLZqt5ECPRmIVsfYPqc19DrP/A==
-X-Received: by 2002:adf:f685:0:b0:2c5:5687:5ed5 with SMTP id v5-20020adff685000000b002c556875ed5mr1183986wrp.18.1676362166084;
-        Tue, 14 Feb 2023 00:09:26 -0800 (PST)
+        bh=7rZYNk/+SGPInJMtgZ1K6jQiSHv5cED0P/DIveONKHE=;
+        b=coxvqqEglgv96fzqnrmxhoR4WD9uEOpvPm/aQSrwZAXVPxAUK7zp3FV0jf5WycQAR+
+         mRSxiEei/sxn/Fyp6HdydFfUnygSKQWU4Tnx61vCeC8UA8uwwdAkouEPsOtTHT51KV34
+         cWg5yDSuVlHOiCIK8k+vYH1y9bm2XaBKTitxmY+FPM/kUrCQE8UW6w+ve/vyJCP1TIFt
+         lIlyc+DkKS9tk44q2nJc45cfcpsuSrkjz1DUKYzFbRxfX2xplKjIx52XU0tYkKUcYo66
+         jkbE+M2HHTFIksOuy8t+VVU6ti257AloQKoSGtFvPzUG0ar7rHp36W4+wjMChxI/dAqb
+         lGBQ==
+X-Gm-Message-State: AO0yUKUcndkNMvqICTHO7xR2pwKNMqZgRr3fgByuUTNSAayheCAHLWiv
+        BRkeYpxeVAr+saJh9p4Q/A/0sQ==
+X-Google-Smtp-Source: AK7set+Eb1ptTujhKIkoR8EnzxrayL+3WjJO5CiG0mbYdQv9ZVJ1BjiMvzwz6g06O0qsbAI5AEaHFA==
+X-Received: by 2002:a05:600c:1652:b0:3dc:16d4:a99f with SMTP id o18-20020a05600c165200b003dc16d4a99fmr1205182wmn.8.1676362941215;
+        Tue, 14 Feb 2023 00:22:21 -0800 (PST)
 Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id b16-20020adfe650000000b002c5534db60bsm6115122wrn.71.2023.02.14.00.09.24
+        by smtp.gmail.com with ESMTPSA id q14-20020a05600c46ce00b003db12112fcfsm18040828wmo.4.2023.02.14.00.22.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 00:09:25 -0800 (PST)
-Message-ID: <1f03e625-3385-06bc-1800-d30ba5da6f0c@linaro.org>
-Date:   Tue, 14 Feb 2023 09:09:23 +0100
+        Tue, 14 Feb 2023 00:22:20 -0800 (PST)
+Message-ID: <294ec301-2792-4bbd-4184-494dc62faf22@linaro.org>
+Date:   Tue, 14 Feb 2023 09:22:18 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.1
-Subject: Re: [PATCH 2/3] dt-bindings: hwlock: sun6i: Add missing names
+Subject: Re: [PATCH 1/9] dt-bindings: firmware: qcom,scm: Update
+ QDU1000/QRU1000 compatible
 Content-Language: en-US
-To:     Bastian Germann <bage@debian.org>,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+To:     Melody Olvera <quic_molvera@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        devicetree@vger.kernel.org
-References: <20230213231931.6546-1-bage@debian.org>
- <20230213231931.6546-3-bage@debian.org>
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>
+Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20230213185218.166520-1-quic_molvera@quicinc.com>
+ <20230213185218.166520-2-quic_molvera@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230213231931.6546-3-bage@debian.org>
+In-Reply-To: <20230213185218.166520-2-quic_molvera@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 14/02/2023 00:19, Bastian Germann wrote:
-> The allwinner,sun6i-a31-hwspinlock.yaml binding needs clock-names
-> and reset-names set to "ahb" as required by the driver.
+On 13/02/2023 19:52, Melody Olvera wrote:
+> Update compatible for QDU1000 and QRU1000 to include the interconnect
+> these devices have.
 > 
-> Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
-> Signed-off-by: Bastian Germann <bage@debian.org>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
+>  Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 1 +
 
-With the changes from Andre:
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
