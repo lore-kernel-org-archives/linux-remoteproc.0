@@ -2,49 +2,48 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C4CC678DB
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 17:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A27EC6FD18
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 17:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232986AbjBNR20 (ORCPT
+        id S233039AbjBNR21 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 12:28:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58420 "EHLO
+        Tue, 14 Feb 2023 12:28:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233015AbjBNR2Y (ORCPT
+        with ESMTP id S232911AbjBNR2Z (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 12:28:24 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9FA35A7;
-        Tue, 14 Feb 2023 09:28:21 -0800 (PST)
+        Tue, 14 Feb 2023 12:28:25 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4C51B9;
+        Tue, 14 Feb 2023 09:28:22 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9721CB81E4A;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3EDDFB81E52;
+        Tue, 14 Feb 2023 17:28:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65457C433D2;
         Tue, 14 Feb 2023 17:28:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30F8C4339B;
-        Tue, 14 Feb 2023 17:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676395698;
-        bh=yiAILAJmg9xgfD7FAIcgVGbrN8PNZm2XqZaijsJEnpo=;
+        s=k20201202; t=1676395699;
+        bh=WsygXz6hKASDW3Ap1NIU8e4tgT2emY5wCqe3iy7hUsw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jm0SZYXACEPN5nd16ZObfOSPPXAElVri8SQA2k0TTeLj2Engpu4brhGpjA5PY3W5l
-         MQe9Pee9yrr5y5jQnA0ApNd01sJ8WRj9CEEsLaQrFc8v1AzlOo25SiBD+ooLUKNLoO
-         rNeo6HF+l9DQbvnvNNvDRvQDluJUXwYq2daEM8XXzqZ85SPNP7UniLGyXT5uSTUFz3
-         vr7M/SOev+81xIkcIcrzNC8067lAoHMjLoARtNMU8F+xAN/9SKQ9K77/URDFAljpzl
-         Rvp3e5Cy9k2ZNTZr1ceKP8zmUZeWjgw6X6xxc+j4brYolCFruhR0WRptRKvh5F1vu6
-         2ErBK2Xi2I00w==
+        b=GYn6KlmaqNTFsnLmqBfbjk6SnOVp549jQskpDnVfTqkExTZG/rFFIiVyc3kmPY7iU
+         nm1ADmEbsZWG73dki3u4oGvK8nip/1RHE+uQWNfebEXvbfe7U96smY1gJlfq9yKFFU
+         C0PpBJ2wLF2DPtvtzKKTevSt1VZQjH8xqui3Kn2gPJT4uwVr9tPqEHnTisvxO7x+ul
+         Os8/+wM+nyQmSjfYB1UjBmdlDs3tbBFxsuJxtydFhEhqfRbQ66j76kRhCGpQ5oHKXS
+         ffe86ZDuFceQDYrwevao5050e/3yHaFQ0RQPvc6TeFJikEPs7MVmcsnH7PBy/ebufy
+         PxprJYh2NXeCQ==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Chris Lew <quic_clew@quicinc.com>
+To:     bjorn.andersson@linaro.org, quic_sibis@quicinc.com,
+        Yogesh Lal <quic_ylal@quicinc.com>
 Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] rpmsg: glink: Misc improvements
-Date:   Tue, 14 Feb 2023 09:30:17 -0800
-Message-Id: <167639581473.996065.11996915356480231505.b4-ty@kernel.org>
+Subject: Re: [PATCH V3] remoteproc: qcom: pas: Adjust the phys addr wrt the mem region
+Date:   Tue, 14 Feb 2023 09:30:19 -0800
+Message-Id: <167639581473.996065.8150646315410727656.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
-References: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
+In-Reply-To: <1667409129-6254-1-git-send-email-quic_ylal@quicinc.com>
+References: <1667409129-6254-1-git-send-email-quic_ylal@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -52,36 +51,20 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 13 Feb 2023 07:52:09 -0800, Bjorn Andersson wrote:
-> This series refactors glink_native to move IRQ and mailbox handling to SMEM and
-> RPM driver, in preparation for more work. It then introduces the logic to fail
-> glink transactions and pending intent requests in the event of the edge being
-> torn down.
+On Wed, 2 Nov 2022 22:42:09 +0530, Yogesh Lal wrote:
+> The minidump table in the toc contains physical addresses that may lie
+> before the physical address of the first elf segment in relocatable
+> images. This change adds a custom dump function for minidumps which
+> calculates the offset into the carveout region using the start of
+> the physical address instead of the start of the first elf segment.
 > 
-> Bjorn Andersson (6):
->   rpmsg: glink: Extract tx kick operation
->   rpmsg: glink: smem: Wrap driver context
->   rpmsg: glink: rpm: Wrap driver context
->   rpmsg: glink: Move irq and mbox handling to transports
->   rpmsg: glink: Fail qcom_glink_tx() once remove has been initiated
->   rpmsg: glink: Cancel pending intent requests at removal
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] rpmsg: glink: Extract tx kick operation
-      commit: 8278fd3144779d883779d1f5bcbf49da36587fd1
-[2/6] rpmsg: glink: smem: Wrap driver context
-      commit: ab9fdd41d970c38ddc0fd59e5f8f37e8d966d454
-[3/6] rpmsg: glink: rpm: Wrap driver context
-      commit: 178c3af447f92c58d5b1153df2cd02b755c083c8
-[4/6] rpmsg: glink: Move irq and mbox handling to transports
-      commit: f424d1cbe8c7ef78a4b639502fa9904c4198387b
-[5/6] rpmsg: glink: Fail qcom_glink_tx() once remove has been initiated
-      commit: 9c96bacf1af51bc71898f31e025f08338c6ca4da
-[6/6] rpmsg: glink: Cancel pending intent requests at removal
-      commit: fb23b97346f9aaa9f7b7a996e7baf066c88d69bd
+[1/1] remoteproc: qcom: pas: Adjust the phys addr wrt the mem region
+      commit: a376c10d45a8e6ee5ea55791193f90625b35e156
 
 Best regards,
 -- 
