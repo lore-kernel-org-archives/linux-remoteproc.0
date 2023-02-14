@@ -2,58 +2,49 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABDEC678D4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C4CC678DB
 	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 17:28:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231343AbjBNR2Z (ORCPT
+        id S232986AbjBNR20 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 12:28:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58466 "EHLO
+        Tue, 14 Feb 2023 12:28:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233000AbjBNR2X (ORCPT
+        with ESMTP id S233015AbjBNR2Y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 12:28:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C25313D73;
-        Tue, 14 Feb 2023 09:28:19 -0800 (PST)
+        Tue, 14 Feb 2023 12:28:24 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9FA35A7;
+        Tue, 14 Feb 2023 09:28:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 336D0B81E44;
-        Tue, 14 Feb 2023 17:28:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF507C433A0;
-        Tue, 14 Feb 2023 17:28:15 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9721CB81E4A;
+        Tue, 14 Feb 2023 17:28:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30F8C4339B;
+        Tue, 14 Feb 2023 17:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676395697;
-        bh=13vIi1ckUu3/aumbSCkzljgpO2EtfLful4/vNSEbxF8=;
+        s=k20201202; t=1676395698;
+        bh=yiAILAJmg9xgfD7FAIcgVGbrN8PNZm2XqZaijsJEnpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aT2Bl8Ny5fS4v3KYPoPJxFW/YcawNoaYqRbr5Qp15/YcCzqFruiSGB2x4ZM9KCZRm
-         a1HKnFgKfY4wJF5PINp3cQFnSHlJmiKDNkpaHNyDa3LFl1lz2RyUIlwkQQkVDL+Li6
-         oACppWOj+5Gq64KivVEcKgD1WnUeyD0qihZzIw+zAL58Yi5gOKJhEYckpjYLKg5MPd
-         J+H4BbWAK63jhCJ/wp4uJv1b5eU3G1GsEKCZDvGn44CydakZKxH2A20695hvfzGgQi
-         G2cA/QkOd2JYS+HPLpK5sZkeT8W8tpwvGj2pcLIisQyM+7NI68AtwdV2zl85lM2NoY
-         jMbX33woNACWQ==
+        b=Jm0SZYXACEPN5nd16ZObfOSPPXAElVri8SQA2k0TTeLj2Engpu4brhGpjA5PY3W5l
+         MQe9Pee9yrr5y5jQnA0ApNd01sJ8WRj9CEEsLaQrFc8v1AzlOo25SiBD+ooLUKNLoO
+         rNeo6HF+l9DQbvnvNNvDRvQDluJUXwYq2daEM8XXzqZ85SPNP7UniLGyXT5uSTUFz3
+         vr7M/SOev+81xIkcIcrzNC8067lAoHMjLoARtNMU8F+xAN/9SKQ9K77/URDFAljpzl
+         Rvp3e5Cy9k2ZNTZr1ceKP8zmUZeWjgw6X6xxc+j4brYolCFruhR0WRptRKvh5F1vu6
+         2ErBK2Xi2I00w==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Banajit Goswami <bgoswami@quicinc.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: (subset) [PATCH v2 1/7] arm64: dts: qcom: ipq6018: align RPM G-Link node with bindings
-Date:   Tue, 14 Feb 2023 09:30:15 -0800
-Message-Id: <167639581474.996065.4144950480631659648.b4-ty@kernel.org>
+        Chris Lew <quic_clew@quicinc.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] rpmsg: glink: Misc improvements
+Date:   Tue, 14 Feb 2023 09:30:17 -0800
+Message-Id: <167639581473.996065.11996915356480231505.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
-References: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
+References: <20230213155215.1237059-1-quic_bjorande@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -61,18 +52,36 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, 8 Feb 2023 11:15:39 +0100, Krzysztof Kozlowski wrote:
-> Bindings expect (and most of DTS use) the RPM G-Link node name to be
-> "rpm-requests".
+On Mon, 13 Feb 2023 07:52:09 -0800, Bjorn Andersson wrote:
+> This series refactors glink_native to move IRQ and mailbox handling to SMEM and
+> RPM driver, in preparation for more work. It then introduces the logic to fail
+> glink transactions and pending intent requests in the event of the edge being
+> torn down.
 > 
+> Bjorn Andersson (6):
+>   rpmsg: glink: Extract tx kick operation
+>   rpmsg: glink: smem: Wrap driver context
+>   rpmsg: glink: rpm: Wrap driver context
+>   rpmsg: glink: Move irq and mbox handling to transports
+>   rpmsg: glink: Fail qcom_glink_tx() once remove has been initiated
+>   rpmsg: glink: Cancel pending intent requests at removal
 > 
+> [...]
 
 Applied, thanks!
 
-[6/7] dt-bindings: remoteproc: qcom,glink-rpm-edge: convert to DT schema
-      commit: fdafdddf7b2f5cab8d233ef97f1fad8ec7d2e7a0
-[7/7] dt-bindings: remoteproc: qcom,glink-edge: correct label description
-      commit: 6f9c2f19a8743c880903a031c7f3f3c534d4b813
+[1/6] rpmsg: glink: Extract tx kick operation
+      commit: 8278fd3144779d883779d1f5bcbf49da36587fd1
+[2/6] rpmsg: glink: smem: Wrap driver context
+      commit: ab9fdd41d970c38ddc0fd59e5f8f37e8d966d454
+[3/6] rpmsg: glink: rpm: Wrap driver context
+      commit: 178c3af447f92c58d5b1153df2cd02b755c083c8
+[4/6] rpmsg: glink: Move irq and mbox handling to transports
+      commit: f424d1cbe8c7ef78a4b639502fa9904c4198387b
+[5/6] rpmsg: glink: Fail qcom_glink_tx() once remove has been initiated
+      commit: 9c96bacf1af51bc71898f31e025f08338c6ca4da
+[6/6] rpmsg: glink: Cancel pending intent requests at removal
+      commit: fb23b97346f9aaa9f7b7a996e7baf066c88d69bd
 
 Best regards,
 -- 
