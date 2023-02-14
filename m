@@ -2,102 +2,97 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 229BDC05027
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 17:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91276C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 18:11:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233130AbjBNRuZ (ORCPT
+        id S233343AbjBNSLv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 12:50:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50360 "EHLO
+        Tue, 14 Feb 2023 13:11:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232234AbjBNRuY (ORCPT
+        with ESMTP id S233310AbjBNSLv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 12:50:24 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E573F1C58F;
-        Tue, 14 Feb 2023 09:50:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 80BD9617C7;
-        Tue, 14 Feb 2023 17:50:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9709C433EF;
-        Tue, 14 Feb 2023 17:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676397022;
-        bh=gVWfNS9bFuITErua/q4NQzGP4jnrM0MQLwshGiQMrII=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eXJ/aMsfY/OV9tE0eOGc6q7gUfBkObODPrSGuIdNcT5CeJ4t+lK1xag+vDY8Ah99e
-         tBel1WVVq4tQZpeT01nt3cwyaot/kxI96+1Zyobon92hkBnhWb9TZrdNejmuLLkAgJ
-         R0O8xXU84MQCKq7tkmPQTSFWAJuNFCfsEpm2HjaspcYsKCmXaR2w6Ejcf/YfFD5rR2
-         tq/CEoycDMAZswtULVgTNrNECxtNsbj8vyPpeBPAFa8ImZrQrvKmpZvAkNJhwzoFvX
-         KMNz3RHrFG7Ur4g8cepY1R+HZoXDsloELq3ePQYtaQUlLXMzk5yxcjMBr+KTECEK0R
-         8BB92SCMSqdEA==
-Date:   Tue, 14 Feb 2023 09:52:26 -0800
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Melody Olvera <quic_molvera@quicinc.com>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Tue, 14 Feb 2023 13:11:51 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 19D5F5B9F;
+        Tue, 14 Feb 2023 10:11:43 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 68B7E1042;
+        Tue, 14 Feb 2023 10:12:25 -0800 (PST)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 049FA3F663;
+        Tue, 14 Feb 2023 10:11:40 -0800 (PST)
+Date:   Tue, 14 Feb 2023 18:11:38 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+        Bastian Germann <bage@debian.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 3/9] dt-bindings: soc: qcom: aoss: Document
- power-domain-cells for aoss
-Message-ID: <20230214175226.e3sstj6pk3naavbr@ripper>
-References: <20230213185218.166520-1-quic_molvera@quicinc.com>
- <20230213185218.166520-4-quic_molvera@quicinc.com>
+        Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: hwlock: sun6i: Add missing names
+Message-ID: <20230214181138.4a8f4beb@donnerap.cambridge.arm.com>
+In-Reply-To: <43336959-643d-4041-d11a-b0c030fbf050@linaro.org>
+References: <20230213231931.6546-1-bage@debian.org>
+        <20230213231931.6546-3-bage@debian.org>
+        <20230214104554.35338faa@posteo.net>
+        <43336959-643d-4041-d11a-b0c030fbf050@linaro.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230213185218.166520-4-quic_molvera@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Feb 13, 2023 at 10:52:12AM -0800, Melody Olvera wrote:
-> Document "#-power-domain-cells" field for aoss devices as required
-> by power-controller bindings.
-> 
+On Tue, 14 Feb 2023 13:37:20 +0100
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-99512191f4f1 ("soc: qcom: aoss: Drop power domain support") was merged
-in v5.16, so I don't think this is correct. Please let me know if I'm
-misunderstood your intent.
+Hi Krzysztof,
 
-Thanks,
-Bjorn
+> On 14/02/2023 10:45, Wilken Gottwalt wrote:
+> > On Tue, 14 Feb 2023 00:19:29 +0100
+> > Bastian Germann <bage@debian.org> wrote:
+> >   
+> >> The allwinner,sun6i-a31-hwspinlock.yaml binding needs clock-names
+> >> and reset-names set to "ahb" as required by the driver.  
+> > 
+> > Hmm, this one is a bit odd. If you look into my earlier versions of the
+> > patchset, you may notice, that I actually included these bindings and they
+> > were refused. I think the argumentation was like
+> > "there is only one bus = no need for it".
+> > 
+> > If it gets accepted now, I really like to know why. (It was some trouble
+> > back then to get the documentation properly done and accepted.)  
+> 
+> The clock names and resent names are not correct. They should have never
+> been added. If you got comments about this and did not update driver,
+> that's not nice. You just shoved incomplete bindings. :(
+> 
+> So indeed to avoid precedence - people pushing fake bindings and
+> avoiding review - NAK on this.
 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
-> index ab607efbb64c..bcfa8e2e6a04 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
-> @@ -60,6 +60,9 @@ properties:
->      description:
->        The single clock represents the QDSS clock.
->  
-> +  "#power-domain-cells":
-> +    const: 1
-> +
->  required:
->    - compatible
->    - reg
-> @@ -97,6 +100,7 @@ examples:
->        mboxes = <&apss_shared 0>;
->  
->        #clock-cells = <0>;
-> +      #power-domain-cells = <1>;
->  
->        cx_cdev: cx {
->          #cooling-cells = <2>;
-> -- 
-> 2.25.1
-> 
+Maybe it's just me, but I don't think this tone is necessary.
+
+Wilken's original submission was correct. Later there was a comment just
+on the binding patch, to remove the not needed clock-names and reset-names
+properties. But there was not a word in there that the driver requires
+changing as well, and I don't think it's fair to blame Wilken on this, or
+somewhat even implying intention. There were several patch revisions after
+this was raised, and this just slipped through review. But surely no one
+wanted this or pushed for that.
+
+If anything, it tells us that we should be more careful when merging
+drivers without users: if there would have been a DT patch, possibly even
+a consumer, this would have been flagged by dtbs_check.
+
+Cheers,
+Andre
