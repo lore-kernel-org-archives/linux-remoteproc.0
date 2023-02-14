@@ -2,124 +2,135 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140E4C61DA4
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 12:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6922C64EC7
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Feb 2023 14:18:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232155AbjBNMjv (ORCPT
+        id S233339AbjBNOSX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 07:39:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56986 "EHLO
+        Tue, 14 Feb 2023 09:18:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232031AbjBNMjs (ORCPT
+        with ESMTP id S233355AbjBNOSI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 07:39:48 -0500
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A54321A15
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 04:39:46 -0800 (PST)
-Received: by mail-wm1-x32f.google.com with SMTP id o36so10892129wms.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 04:39:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CEiKMEVtBuEXcWgSS3bW1AVgiz7paLJWbSWxqpf4KL0=;
-        b=SvD6tLh44XT/G3dEu8Z8dGpH9lPbBgjhOj5q+gsSI47Lu+AJtYFcrwM9qzPskfrcbe
-         ZL1EfMKNEFcdmipx5JbaLO+9y96WTz0lM6xcVKGu2IzoV51TyzgyFJRArRIhnUlP2GpE
-         d5S7YmuuUZoYWG6KsRtKypEbp2uEx/Aj/ABu2a8qaIcoE5noIF9pvBZWW+tN6JRNni+b
-         oPVdJIkmqDtbVjXB7kIsoRZitgeDom2h3AscRdNPiz4iZNlDJtkO8HNlI2syKNRLmg5m
-         FNZMHs4uGHrH1TNIz4rlAH66JNZSNINmQpBT6j63Cu3EGYT5JhYuFJuhSrgqcjAJwZ0o
-         66ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEiKMEVtBuEXcWgSS3bW1AVgiz7paLJWbSWxqpf4KL0=;
-        b=DzZn5LF8RR2mCvloOn6Ghl6GN2yx48eLDetBdTWMvJP+UC8zbESkG/bL6egw6uIrQ3
-         vyHqIm0LuN7UMQzOI7Chzj0u0YtZ3HimWhAj2AMuYnYTzmn4TCyfRQi54sscRWNxSxQQ
-         AJgAC6mZgcXi44iZYC4R230hJ1X1T4UEPXtCBl9fJ2Eua5WgEUTEGeQ65APwsTnysMfM
-         72C7M03mUxIT++sv9dL0e5p1lPIEHN/PqzgKnZqIqHS/o3TDWZ6/cQOXjGvyKrULmpvn
-         50Ml9+fds9l173zVRqySlx/EsrMDv1IzAdpTTzFFrnz39FO3V8Y7tyzhewPeWTXyB21q
-         F/kA==
-X-Gm-Message-State: AO0yUKX0KzGj3/P79CX2VycURyeP3Pe9TEsjiA+gC8/T6T+oL7KYdKNp
-        mCtUsAoN+NyxYWqH9D/JVAgsIA==
-X-Google-Smtp-Source: AK7set8EVHso4/Xkab5oZtnZwwagkai8GeZ6rb46YWHuCXYyV4Vpj+uUYZuT8GMB/w/FqJ3nfkh7iA==
-X-Received: by 2002:a05:600c:43ca:b0:3d3:513c:240b with SMTP id f10-20020a05600c43ca00b003d3513c240bmr1717849wmn.7.1676378385174;
-        Tue, 14 Feb 2023 04:39:45 -0800 (PST)
-Received: from [192.168.1.109] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id s21-20020a1cf215000000b003e001119927sm19664484wmc.24.2023.02.14.04.39.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Feb 2023 04:39:44 -0800 (PST)
-Message-ID: <f9bd4ef2-fe69-8414-babb-fcc30810d70f@linaro.org>
-Date:   Tue, 14 Feb 2023 13:39:43 +0100
+        Tue, 14 Feb 2023 09:18:08 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2774772A1;
+        Tue, 14 Feb 2023 06:17:46 -0800 (PST)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31E8KCHK015473;
+        Tue, 14 Feb 2023 14:12:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=/nCTd7pBuvatiw5+3uUxEm27G6Sx1tzD9Hft3j7OtVM=;
+ b=BEBpJwvu+8pjT12u5xgfS1yulu+6V0NzfOX1iZLQjfx70YM1P1OZ66wxfkatDQsIYDlQ
+ 6iDKinAzSIQ3JSRJtPIy4jTX4U3TdCzra957lvyoeAEZ+WwsRNUPOGPF6vT9qkos2P7p
+ pu5j3aNP0DFccYPuBshXJrCAguexYbrDRNFpIHq9K/RUq8EAcXT4cXrb/Z+B4WhG8kRv
+ LYruVIr/DgkNuF/pK3FPOS8eKK0oKk0jZ5s5IfwX5TofGR2y8emTrlS3D33RTdI4ncIe
+ d4QbOP8yFyLu9bDX1vvbMNXC6Em6iF6r1FV18IDmH3B6FzS5UP6LdgYDCb+dHybIU7NS Tw== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nr6ps0t72-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Feb 2023 14:12:31 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31EECUhb005371
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 14 Feb 2023 14:12:30 GMT
+Received: from [10.216.50.155] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 14 Feb
+ 2023 06:12:27 -0800
+Message-ID: <62ffa065-bc85-09bf-0492-7de0bd45ae13@quicinc.com>
+Date:   Tue, 14 Feb 2023 19:42:23 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 2/3] dt-bindings: hwlock: sun6i: Add missing names
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] remoteproc: qcom: fix sparse warnings
 Content-Language: en-US
-To:     Andre Przywara <andre.przywara@arm.com>,
-        Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc:     Bastian Germann <bage@debian.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        devicetree@vger.kernel.org
-References: <20230213231931.6546-1-bage@debian.org>
- <20230213231931.6546-3-bage@debian.org> <20230214104554.35338faa@posteo.net>
- <20230214121217.43f6124f@donnerap.cambridge.arm.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230214121217.43f6124f@donnerap.cambridge.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <konrad.dybcio@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1675180866-16695-1-git-send-email-quic_mojha@quicinc.com>
+ <bba9e244-0a02-4d46-8ba8-bc8b11ddf6b4@linaro.org>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <bba9e244-0a02-4d46-8ba8-bc8b11ddf6b4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UsWmiX7zLmzlaEVb20jXGkip6SY7Mcyn
+X-Proofpoint-GUID: UsWmiX7zLmzlaEVb20jXGkip6SY7Mcyn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-14_07,2023-02-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 mlxlogscore=947 malwarescore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302140121
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 14/02/2023 13:12, Andre Przywara wrote:
-> On Tue, 14 Feb 2023 09:45:54 +0000
-> Wilken Gottwalt <wilken.gottwalt@posteo.net> wrote:
-> 
-> Hi,
-> 
->> On Tue, 14 Feb 2023 00:19:29 +0100
->> Bastian Germann <bage@debian.org> wrote:
+
+
+On 2/13/2023 6:25 AM, Dmitry Baryshkov wrote:
+> On 31/01/2023 18:01, Mukesh Ojha wrote:
+>> This patch try to address below sparse warnings.
 >>
->>> The allwinner,sun6i-a31-hwspinlock.yaml binding needs clock-names
->>> and reset-names set to "ahb" as required by the driver.  
+>> drivers/remoteproc/qcom_common.c:126:27: warning: restricted __le32 
+>> degrades to integer
+>> drivers/remoteproc/qcom_common.c:133:32: warning: cast to restricted 
+>> __le32
+>> drivers/remoteproc/qcom_common.c:133:32: warning: cast from restricted 
+>> __le64
 >>
->> Hmm, this one is a bit odd. If you look into my earlier versions of the
->> patchset, you may notice, that I actually included these bindings and they
->> were refused. I think the argumentation was like
->> "there is only one bus = no need for it".
+>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > 
-> That's interesting, because your driver implementation relies on there
-> being a clock name. And if I chased down devm_clk_get() correctly, there
-> must be a named clock in the DT, otherwise it would fail? I haven't tested
-> this, though, but I guess this is the  reason for Bastian's patch.
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
-> Regarding "one bus clock only": while this is true, I think there
-> is (or was?) also the rationale of using names being more future-proof, so
-> adding clocks (for future hardware revisions) can be done more easily,
-> without breaking compatibility. It's not a big problem, since you probably
-> have a new compatible string in this case anyway, but it also doesn't
-> hurt, and allows to use more generic helpers like devm_clk_get().
-> 
->> If it gets accepted now, I really like to know why. (It was some trouble
->> back then to get the documentation properly done and accepted.)
-> 
-> IIUC, it simply doesn't work without a clock-names property.
 
-Oh, there is clear way. One can ignore review and push mismatched
-bindings/drivers. Incomplete binding to satisfy DT maintainers and
-driver doing something entirely else (using undocumented properties).
+Thanks for the review.
 
-Best regards,
-Krzysztof
+> Also see below.
+> 
+>> ---
+>>   drivers/remoteproc/qcom_common.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_common.c 
+>> b/drivers/remoteproc/qcom_common.c
+>> index 020349f..7133c1f 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -123,14 +123,14 @@ static int qcom_add_minidump_segments(struct 
+>> rproc *rproc, struct minidump_subsy
+>>       for (i = 0; i < seg_cnt; i++) {
+>>           memcpy_fromio(&region, ptr + i, sizeof(region));
+>> -        if (region.valid == MD_REGION_VALID) {
+>> +        if (le32_to_cpu(region.valid) == MD_REGION_VALID) {
+>>               name = kstrdup(region.name, GFP_KERNEL);
+> 
+> While you are at it, please replace this kstrdup() with kstrndup(). 
+> There is no guarantee that region.name will be 0-terminated.
 
+Kept it as separate patch in this mail thread itself.
+
+-Mukesh
+>>               if (!name) {
+>>                   iounmap(ptr);
+>>                   return -ENOMEM;
+>>               }
+>>               da = le64_to_cpu(region.address);
+>> -            size = le32_to_cpu(region.size);
+>> +            size = le64_to_cpu(region.size);
+>>               rproc_coredump_add_custom_segment(rproc, da, size, NULL, 
+>> name);
+>>           }
+>>       }
+> 
