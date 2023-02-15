@@ -2,35 +2,35 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49655C64ED6
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 20:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0ECFC64EC7
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 20:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbjBOUhh (ORCPT
+        id S229799AbjBOUhh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 15 Feb 2023 15:37:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjBOUhg (ORCPT
+        with ESMTP id S229483AbjBOUhf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Feb 2023 15:37:36 -0500
+        Wed, 15 Feb 2023 15:37:35 -0500
 Received: from stravinsky.debian.org (stravinsky.debian.org [IPv6:2001:41b8:202:deb::311:108])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35CF3B3E2;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34E83B3E1;
         Wed, 15 Feb 2023 12:37:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
         s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:MIME-Version
         :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=H4m3RP9AkGa0lGoncGnuU5TSiDprpEx7CfW0CHNe6C4=; b=Xv/LX8xdfRA3IJXZUbMbjDLKxe
-        xm7Pccqt4fjdnkBet05mvUTdubkfrMNdU7Pc/yemm12fkAV6oaKDC0Oe5Bbv1GaieZEEq5mQNh5kq
-        piDNJuUhOr3DkHj2fiHoL3Sf8fbeGU9R8dnXnuCVI00JMPJFjZ3gV/CXgS91M3Eydsw7yK/C2Mzl4
-        k+AY4TDj0rfniyHhswQhBhleKbrUBoZe8lo9/uWmT12QV+26pRQFNrmP6BPNp/aoa8WymGsB39hDD
-        THFm5TpCo6c23+3vgVoP851fe1UA/UxtNZG/FkP7jDNjhBmQrRuxnus6bSg2pMF9nPIDZ2ivSueGq
-        2sgA5x0g==;
+        bh=Wi+mMNtvFAWEOiS2DSrULuVNQaQXpbi0WtKy5bdJNlQ=; b=XH1oquDm7zORQgjVwY695ZEals
+        BPDJs1eOo9B0MGQglEDXBIMDByPNFfGv30lFRPZlkcGXdv3aryfiKVuPfCRQtwG3LOFCWj1vpKFB/
+        GQ7QQldPYLPx293B0q6kARrIel6AOyKUe4bUETebGFLQ9VeW2OR0Ff45EuqhoaGQDFYLG/uhMmrzJ
+        27d8w8LYvctSEW6ozXX3zwsDOldK05zZau3LXQmLzSU05Dre+f8vO8cuofkGE/B95CzehlRDZTtLU
+        pYIIiWkdF4IxQE6S/kry+SwPC8qxdJZQXrtvr/0VcO1Qo6OY2NmDgbxe96sM5gXFP1eG8GDLmo9EW
+        GjkqznWw==;
 Received: from authenticated user
         by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
         (Exim 4.94.2)
         (envelope-from <bage@debian.org>)
-        id 1pSOWi-002j5f-MJ; Wed, 15 Feb 2023 20:37:16 +0000
+        id 1pSOWj-002j5f-Lm; Wed, 15 Feb 2023 20:37:17 +0000
 From:   Bastian Germann <bage@debian.org>
 To:     Wilken Gottwalt <wilken.gottwalt@posteo.net>
 Cc:     Bastian Germann <bage@debian.org>,
@@ -43,12 +43,10 @@ Cc:     Bastian Germann <bage@debian.org>,
         Samuel Holland <samuel@sholland.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andre Przywara <andre.przywara@arm.com>
-Subject: [PATCH v2 1/5] dt-bindings: hwlock: sun6i: Add missing #hwlock-cells
-Date:   Wed, 15 Feb 2023 21:37:06 +0100
-Message-Id: <20230215203711.6293-2-bage@debian.org>
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 4/5] dt-bindings: hwlock: sun6i: Add a64 compatible string
+Date:   Wed, 15 Feb 2023 21:37:09 +0100
+Message-Id: <20230215203711.6293-5-bage@debian.org>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230215203711.6293-1-bage@debian.org>
 References: <20230215203711.6293-1-bage@debian.org>
@@ -59,39 +57,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The allwinner,sun6i-a31-hwspinlock.yaml binding needs #hwlock-cells
-which is required by the hwlock type.
+Add an allwinner,sun50i-a64-hwspinlock compatible string to the device
+tree binding. The A31 and A64 have compatible hwspinlocks.
 
-Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock")
 Signed-off-by: Bastian Germann <bage@debian.org>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-Link: https://lore.kernel.org/r/20230213231931.6546-2-bage@debian.org
 ---
- .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml       | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml       | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
-index 10e5a53e447b..01b1bbb3061f 100644
+index 6cdfe22deb3c..281c285282a1 100644
 --- a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
 +++ b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
-@@ -26,11 +26,15 @@ properties:
-   resets:
+@@ -15,7 +15,9 @@ description:
+ 
+ properties:
+   compatible:
+-    const: allwinner,sun6i-a31-hwspinlock
++    items:
++      - const: allwinner,sun6i-a31-hwspinlock
++      - const: allwinner,sun50i-a64-hwspinlock
+ 
+   reg:
      maxItems: 1
- 
-+  '#hwlock-cells':
-+    const: 1
-+
- required:
-   - compatible
-   - reg
-   - clocks
-   - resets
-+  - "#hwlock-cells"
- 
- additionalProperties: false
- 
 -- 
 2.39.1
 
