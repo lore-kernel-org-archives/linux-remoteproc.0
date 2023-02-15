@@ -2,49 +2,53 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3179C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 04:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42528C64EC7
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 04:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232890AbjBOENZ (ORCPT
+        id S232952AbjBOEN0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 23:13:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41092 "EHLO
+        Tue, 14 Feb 2023 23:13:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231515AbjBOENL (ORCPT
+        with ESMTP id S231803AbjBOENP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 23:13:11 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159AF25E0A;
+        Tue, 14 Feb 2023 23:13:15 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32A9925E1D;
         Tue, 14 Feb 2023 20:13:07 -0800 (PST)
-X-UUID: 0942318cace711eda06fc9ecc4dadd91-20230215
+X-UUID: 07ded606ace711ed945fc101203acc17-20230215
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Zf8N5vKf+OQiD4FPD+6mWffc+P30ueDh84oUuMSgE2g=;
-        b=Fpk5n6YDjkY8HNU8nwRzyXa44y7iyFysL7zCFdH9dIhsajNvGukyIf2R5yAd5cadNS7ydFLa+n/N1Pfje220XaYkbUp8zsvff8Bezk9P5RCftf9h61a4JiI7qdgc791GnuUPek53u5QXgawUH7mMqyp9hwpccrwnjmq88SgjLik=;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=b7x8YxesTymoInlVceUQpEbihjM+o7uEEDU4Ea9Jrt8=;
+        b=DrvvgLGGQ/eRr5KCnBQjfjQsthapbcQZ+l9uspKydZUmIsUeFFpWccYI9R7JKc8z7CuLTp0c+hZWqsPtoVkS27JfPc/ebWjmGEeAhqWsmFh6jbf1X3cS2XUYNd0JaXakZWk0H9yhIdcCi4X75KomijzIJhE4lNnXwN95t2aWpWM=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.19,REQID:d92c087b-0d29-4891-b234-4f716079f72b,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:885ddb2,CLOUDID:fa197cb0-beed-4dfc-bd9c-e1b22fa6ccc4,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-O-INFO: VERSION:1.1.19,REQID:cd5db158-d73c-492b-8dcb-a7016d591d15,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:95
+X-CID-INFO: VERSION:1.1.19,REQID:cd5db158-d73c-492b-8dcb-a7016d591d15,IP:0,URL
+        :0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTION
+        :quarantine,TS:95
+X-CID-META: VersionHash:885ddb2,CLOUDID:b3197cb0-beed-4dfc-bd9c-e1b22fa6ccc4,B
+        ulkID:2302151213011NYAS9BM,BulkQuantity:0,Recheck:0,SF:38|29|28|17|19|48,T
+        C:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+        ,OSI:0,OSA:0,AV:0
 X-CID-BVR: 0
-X-UUID: 0942318cace711eda06fc9ecc4dadd91-20230215
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+X-UUID: 07ded606ace711ed945fc101203acc17-20230215
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 161664218; Wed, 15 Feb 2023 12:13:01 +0800
+        with ESMTP id 1642543023; Wed, 15 Feb 2023 12:12:58 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Wed, 15 Feb 2023 12:12:59 +0800
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.792.3;
+ Wed, 15 Feb 2023 12:12:58 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 15 Feb 2023 12:12:59 +0800
+ 15.2.792.15 via Frontend Transport; Wed, 15 Feb 2023 12:12:58 +0800
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
@@ -54,12 +58,10 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v7 09/12] remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
-Date:   Wed, 15 Feb 2023 12:12:54 +0800
-Message-ID: <20230215041257.14548-10-tinghan.shen@mediatek.com>
+Subject: [PATCH v7 00/12] Add support for MT8195 SCP 2nd core
+Date:   Wed, 15 Feb 2023 12:12:45 +0800
+Message-ID: <20230215041257.14548-1-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20230215041257.14548-1-tinghan.shen@mediatek.com>
-References: <20230215041257.14548-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -67,69 +69,64 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Because MT8195 SCP core 0 and core 1 both boot from head of SRAM and
-have the same viewpoint of SRAM, SCP has a "core 1 SRAM offset"
-configuration to control the access destination of SCP core 1 to boot
-core 1 from different SRAM location.
+The mediatek remoteproc driver currently only allows bringing up a 
+single core SCP, e.g. MT8183. It also only bringing up the 1st 
+core in SoCs with a dual-core SCP, e.g. MT8195. This series support 
+to bring-up the 2nd core of the dual-core SCP.
 
-The "core 1 SRAM offset" configuration is composed by a range
-and an offset. It works like a simple memory mapped mechanism.
-When SCP core 1 accesses a SRAM address located in the range,
-the SCP bus adds the configured offset to the address to
-shift the physical destination address on SCP SRAM. This shifting is
-transparent to the software running on SCP core 1.
+v6 -> v7:
+1. merge the mtk_scp_cluster struct into the mtk_scp structure
+   at the "Probe multi-core SCP" patch
 
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/remoteproc/mtk_scp.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+v5 -> v6:
+1. move the mtk_scp_of_regs structure from mtk_common.h to mtk_scp.c
+2. rename the SCP core 0 label from 'scp' to 'scp_c0'
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index be995c88d333..6d88b53fc07e 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -484,6 +484,9 @@ static int mt8195_scp_before_load(struct mtk_scp *scp)
- 
- static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- {
-+	u32 sec_ctrl;
-+	struct mtk_scp *scp_c0;
-+
- 	scp_sram_power_on(scp->reg_base + MT8195_CPU1_SRAM_PD, 0);
- 
- 	/* hold SCP in reset while loading FW. */
-@@ -492,6 +495,30 @@ static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->reg_base + MT8195_CORE1_MEM_ATT_PREDEF);
- 
-+	/*
-+	 * The L2TCM_OFFSET_RANGE and L2TCM_OFFSET shift the destination address
-+	 * on SRAM when SCP core 1 accesses SRAM.
-+	 *
-+	 * This configuration solves booting the SCP core 0 and core 1 from
-+	 * different SRAM address because core 0 and core 1 both boot from
-+	 * the head of SRAM by default. this must be configured before boot SCP core 1.
-+	 *
-+	 * The value of L2TCM_OFFSET_RANGE is from the viewpoint of SCP core 1.
-+	 * When SCP core 1 issues address within the range (L2TCM_OFFSET_RANGE),
-+	 * the address will be added with a fixed offset (L2TCM_OFFSET) on the bus.
-+	 * The shift action is tranparent to software.
-+	 */
-+	writel(0, scp->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_LOW);
-+	writel(scp->sram_size, scp->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_HIGH);
-+
-+	scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
-+	writel(scp->sram_phys - scp_c0->sram_phys, scp->reg_base + MT8195_L2TCM_OFFSET);
-+
-+	/* enable SRAM offset when fetching instruction and data */
-+	sec_ctrl = readl(scp->reg_base + MT8195_SEC_CTRL);
-+	sec_ctrl |= MT8195_CORE_OFFSET_ENABLE_I | MT8195_CORE_OFFSET_ENABLE_D;
-+	writel(sec_ctrl, scp->reg_base + MT8195_SEC_CTRL);
-+
- 	return 0;
- }
- 
+v4 -> v5:
+1. move resource release actions to the platform driver remove operation 
+2. fix dual-core watchdog handling
+
+v3 -> v4:
+1. change the representation of dual-core SCP in dts file and update SCP yaml
+2. rewrite SCP driver to reflect the change of dts node
+3. drop 'remove redundant call of rproc_boot for SCP' in v3 for further investigation
+
+v2 -> v3:
+1. change the representation of dual-core SCP in dts file and update SCP yaml
+2. rewrite SCP driver to reflect the change of dts node
+3. add SCP core 1 node to mt8195.dtsi
+4. remove redundant call of rproc_boot for SCP
+5. refine IPI error message
+
+v1 -> v2:
+1. update dt-binding property description
+2. remove kconfig for scp dual driver
+3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
+
+Tinghan Shen (12):
+  dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode
+    definition
+  arm64: dts: mediatek: mt8183-kukui: Update the node name of SCP rpmsg
+    subnode
+  dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
+  remoteproc: mediatek: Add SCP core 1 register definitions
+  remoteproc: mediatek: Add MT8195 SCP core 1 operations
+  remoteproc: mediatek: Extract remoteproc initialization flow
+  remoteproc: mediatek: Probe multi-core SCP
+  remoteproc: mediatek: Control SCP core 1 by rproc subdevice
+  remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
+  remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+  remoteproc: mediatek: Refine ipi handler error message
+  arm64: dts: mediatek: mt8195: Add SCP 2nd core
+
+ .../bindings/remoteproc/mtk,scp.yaml          | 176 +++++++-
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
+ .../boot/dts/mediatek/mt8195-cherry.dtsi      |   6 +-
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  32 +-
+ drivers/remoteproc/mtk_common.h               |  38 ++
+ drivers/remoteproc/mtk_scp.c                  | 401 ++++++++++++++++--
+ 6 files changed, 596 insertions(+), 59 deletions(-)
+
 -- 
 2.18.0
 
