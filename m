@@ -2,222 +2,108 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E70C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 17:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1739CC636D4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 19:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjBOR6P (ORCPT
+        id S229814AbjBOTJR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Feb 2023 12:58:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58370 "EHLO
+        Wed, 15 Feb 2023 14:09:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjBOR6O (ORCPT
+        with ESMTP id S229825AbjBOTJQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Feb 2023 12:58:14 -0500
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56AD13DF2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Feb 2023 09:58:13 -0800 (PST)
-Received: by mail-pj1-x1035.google.com with SMTP id w14-20020a17090a5e0e00b00233d3b9650eso2991942pjf.4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Feb 2023 09:58:13 -0800 (PST)
+        Wed, 15 Feb 2023 14:09:16 -0500
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D65A63BD89
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Feb 2023 11:09:14 -0800 (PST)
+Received: by mail-wm1-x32e.google.com with SMTP id z13so14094851wmp.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Feb 2023 11:09:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mvUpuCK8Tw5hHOSWhrZqksRfIU8qxKAVlgjJMcbm0j0=;
-        b=ya9g4lr3OV6BuPLEn75AHWCHCRucPy5++bt8uYHJLCpr2Ko/wjr1Qd3uzOGIcx7fFo
-         6S7DOZbUllcratjAjMEQz8Q6Z7nbwzkhCy9UkRKzSTzvHczQ5NTH7TwOf4hXRT/7gY7m
-         fXxxi3bVZ+orqdjuXmSG3B+Nv2OJEPkhaknSh4dYH/90fSBldG/bQ7McV2UFjLLbXc1r
-         FCwUyHiz+TPIkWVfJgE/1zWM2MbKUQ3Nj7kVMrk2ueV2LPYEpXvQTb87Bq+HZhGXLlgJ
-         tqOQA+HLr1H8wFRWmjbDHGuVINcTCOWNb2kY8YOm2TgpdT7lTt4y2YQbRKlSe2YgmRFa
-         tGMQ==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8+RZTmWd7u5WQWkzFMPa+KxElUM1QLR/4kOd49BVhns=;
+        b=DzrftypQWqJ2I+cM5brMYDser82T47lkagxcYKjVPWCk0LihiDvTBh+Ar7MK2rYnA5
+         LHhWe1zpICsnmKJaxuDDnIiANxsn+RGaTL9N86IL6gmmYL6LYe/PlT+XsuxxGCHau3e2
+         jSCrrGv/gUqNBMpdSZ/8haX4ib5iPRDima3Ue7lXfEE/5QL9tz3YdsCDBxsGRVN/Ctrj
+         UOn5ex6fIyPBy7jXhRrSMRYRulHOhKk6saiMVLrNxuVL9YobbA+jdC3CJsm8cCaJvJMB
+         8zAEX7E0nxz56vnsRpZsSSA87NXq1oVVGJwQYJKf4flB+Ptdnvcx1ghuK6nzVKBKhQBL
+         1qKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvUpuCK8Tw5hHOSWhrZqksRfIU8qxKAVlgjJMcbm0j0=;
-        b=gR9m8TjAH2WNsioXoE9VFpP2zH8RYm0a4VeMS+gnNrtgz1r3WZHETj5plhJsdYS/7h
-         wdwIlmw7Cw/wxl3gdbh+MaFsuE0dSOck1TLeX9SA2YP74OKnYaWjc/if5Fsvwo/jncjG
-         BRpSHZoCfEcOYVvqYmHp4rC1X/y+TFe8v7UEbqMEdRhblkVAtGTnIOoKjr6zwnmQ3T3y
-         Ul4A+AWYl+GjCYE1FxPzLoTZM7X+EgObpIW6qyXKoBPl1rvIOV6+ozlVH8jn6x6V4rUv
-         GYfbx/AheToCM3IM3Bvp+EH0I71AZgslAJ+0oLL4R9Nh39qHXZTzVQV2r2CQaqmTopDy
-         daZA==
-X-Gm-Message-State: AO0yUKWULlFiRJE+03tDujs5GB4NW7Q1/mjtTtTnBtIix5FukgrjkM/S
-        e9FF6ADQOsbzMvA6ix/eUOLt6g==
-X-Google-Smtp-Source: AK7set8D+TytfU0ZJ503p0kYOBYVjOwgean4hwMM4Ov3LCJJq1ZmLCifc0uWW8eKFUV2yirvj1GhDA==
-X-Received: by 2002:a17:903:41ca:b0:19a:6f28:ec2c with SMTP id u10-20020a17090341ca00b0019a6f28ec2cmr3772871ple.62.1676483893101;
-        Wed, 15 Feb 2023 09:58:13 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:c457:7ba1:9c53:7a14])
-        by smtp.gmail.com with ESMTPSA id p6-20020a170903248600b0019949fd956bsm12435867plw.178.2023.02.15.09.58.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Feb 2023 09:58:12 -0800 (PST)
-Date:   Wed, 15 Feb 2023 10:58:10 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [RESEND PATCH v4] remoteproc: imx_dsp_rproc: add module
- parameter to ignore ready flag from remote processor
-Message-ID: <20230215175810.GA441246@p14s>
-References: <20230214163744.16377-1-iuliana.prodan@oss.nxp.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8+RZTmWd7u5WQWkzFMPa+KxElUM1QLR/4kOd49BVhns=;
+        b=6ojutp6dr3Tl0G1vIty59UYLl3oSLcFFgjGbTMkbOI+c9Am9HnqyvaVeleNm3aE7nD
+         5nj0QyVkutykqaUZ0vOBX/aD8TSQy+oEuMvJBYgkviEqT94ElewCuYgOWKUVY0YoEfyU
+         eOwNwY04HUcX9PFAq58xLeM1DGe53XulLK+3FC9dxnweiS9PfYWcOq2wl6hqI3toB3Pq
+         XLQVAzOh0NCfXRKBLVVQKVfOpH0+jROoEe+YEGg/7peP4StF1UvzUzLlb3T2F91LnYeY
+         3Sq1aDkIgjl5swXbdcoul2JVttZ470UHEdL2Byxl7MawM6nC7elx1RjMK7UcRH3DA4ma
+         xC4A==
+X-Gm-Message-State: AO0yUKU5Ts6pqDECJ2Z2v1zGvc8xwXOqICuFnB/cEGxIKExK2/4MOlrf
+        6hsvAZJPMlYK9ylR4vhL9i2QLw==
+X-Google-Smtp-Source: AK7set8WrxhjECCiJgFeFpXFwJhkNfXLtyqWxPp7ZXxzdG2j+FL4rPxH4J8jcXdyPzCVUYsxIZTSBQ==
+X-Received: by 2002:a05:600c:4747:b0:3dc:4042:5c21 with SMTP id w7-20020a05600c474700b003dc40425c21mr2909301wmo.6.1676488153377;
+        Wed, 15 Feb 2023 11:09:13 -0800 (PST)
+Received: from [192.168.1.109] ([178.197.216.144])
+        by smtp.gmail.com with ESMTPSA id s9-20020a05600c45c900b003e00c9888besm3286963wmo.30.2023.02.15.11.09.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Feb 2023 11:09:12 -0800 (PST)
+Message-ID: <af2ee77b-a16d-d8f0-a5d5-814e1882f7db@linaro.org>
+Date:   Wed, 15 Feb 2023 20:09:10 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230214163744.16377-1-iuliana.prodan@oss.nxp.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: (subset) [PATCH v2 1/7] arm64: dts: qcom: ipq6018: align RPM
+ G-Link node with bindings
+Content-Language: en-US
+To:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Banajit Goswami <bgoswami@quicinc.com>,
+        Mark Brown <broonie@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20230208101545.45711-1-krzysztof.kozlowski@linaro.org>
+ <167639581474.996065.4144950480631659648.b4-ty@kernel.org>
+ <CAL_JsqLpsiermwLON5B8Z99XQMAaK36Nv_GKLvRFQQokEwKY0w@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAL_JsqLpsiermwLON5B8Z99XQMAaK36Nv_GKLvRFQQokEwKY0w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Iuliana,
-
-First and foremost, you were correct to remind me of this patch - it had slipped
-through.  I got mixed up with your other patch[1], which has the same title
-preprend and the same revision.  That one is on my list of patches to review and
-I should get to it later this week or early next week.
-
-Please see below for comments on this patch.
-
-[1]. [PATCH v4] remoteproc: imx_dsp_rproc: add custom memory copy implementation for i.MX DSP Cores
-
-On Tue, Feb 14, 2023 at 06:37:44PM +0200, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+On 15/02/2023 15:10, Rob Herring wrote:
+> On Tue, Feb 14, 2023 at 11:28 AM Bjorn Andersson <andersson@kernel.org> wrote:
+>>
+>> On Wed, 8 Feb 2023 11:15:39 +0100, Krzysztof Kozlowski wrote:
+>>> Bindings expect (and most of DTS use) the RPM G-Link node name to be
+>>> "rpm-requests".
+>>>
+>>>
+>>
+>> Applied, thanks!
+>>
+>> [6/7] dt-bindings: remoteproc: qcom,glink-rpm-edge: convert to DT schema
+>>       commit: fdafdddf7b2f5cab8d233ef97f1fad8ec7d2e7a0
+>> [7/7] dt-bindings: remoteproc: qcom,glink-edge: correct label description
+>>       commit: 6f9c2f19a8743c880903a031c7f3f3c534d4b813
 > 
-> There are cases when we want to test a simple "hello world"
-> application on the DSP and we don't have IPC between the cores.
-> Therefore, do not wait for a confirmation from the remote processor
-> at start.
-> 
-> Added "ignore_dsp_ready" flag while inserting the module to ignore
-> remote processor reply after start.
-> By default, this is off - do not ignore reply from rproc.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
-> Changes since v3
-> - do not instantiate static var to 0, this is done by default
-> - do not initialize mailbox if not IPC between the core
-> 
-> Changes since v2
-> - s/ignoreready/ignore_dsp_ready
-> 
-> Changes since v1
-> - change BIT(31) to BIT(1) for REMOTE_SKIP_WAIT
-> 
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 95da1cbefacf..fb69f4e8ee96 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -26,9 +26,18 @@
->  #include "remoteproc_elf_helpers.h"
->  #include "remoteproc_internal.h"
->  
-> +/*
-> + * Module parameters
-> + */
-> +static unsigned int imx_dsp_rproc_ignore_ready;
-> +module_param_named(ignore_dsp_ready, imx_dsp_rproc_ignore_ready, int, 0644);
+> You need to apply patch 4 too. There's a warning in linux-next now without it.
 
-This patch is about introducing a mode where the mailboxes aren't used... Why
-not simply name the parameter "no_mailboxes"?
+Bjorn, can you grab patch 4 as well?
 
-> +MODULE_PARM_DESC(ignore_dsp_ready,
-> +		 "Ignore remote proc reply after start, default is 0 (off).");
-> +
->  #define DSP_RPROC_CLK_MAX			5
->  
->  #define REMOTE_IS_READY				BIT(0)
-> +#define REMOTE_SKIP_WAIT			BIT(1)
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
->  /* att flags */
-> @@ -282,6 +291,10 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	struct imx_dsp_rproc *priv = rproc->priv;
->  	int i;
->  
-> +	/* No IPC between the cores */
-> +	if (priv->flags & REMOTE_SKIP_WAIT)
-> +		return 0;
-> +
+Best regards,
+Krzysztof
 
-This isn't needed since priv->rxdb_ch is NULL when mailboxes have not been
-initialized.
-
->  	if (!priv->rxdb_ch)
->  		return 0;
->  
-> @@ -503,6 +516,13 @@ static int imx_dsp_rproc_mbox_init(struct imx_dsp_rproc *priv)
->  	struct mbox_client *cl;
->  	int ret;
-
-I suggest to rename imx_dsp_rproc_mbox_init() to imx_dsp_rproc_mbox_alloc(),
-introduce a new function called imx_dsp_rproc_mbox_no_alloc() that simply
-returns 0 and make imx_dsp_rproc_mbox_init() a function pointer.
-
-See imx_dsp_rproc_probe() for the rest of the solution...
-
->  
-> +	/*
-> +	 * If there is no IPC between the cores,
-> +	 * then no need to initialize mailbox.
-> +	 */
-> +	if (priv->flags & REMOTE_SKIP_WAIT)
-> +		return 0;
-
-Remove this.
-
-> +
->  	if (!of_get_property(dev->of_node, "mbox-names", NULL))
->  		return 0;
->  
-> @@ -562,6 +582,10 @@ static int imx_dsp_rproc_mbox_init(struct imx_dsp_rproc *priv)
->  
->  static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
->  {
-> +	/* No IPC between the cores */
-> +	if (priv->flags & REMOTE_SKIP_WAIT)
-> +		return;
-> +
-
-This isn't needed since mbox_free_channel() is able to handle a NULL parameter,
-which is the case when imx_dsp_rproc_mbox_init() hasn't been called.
-
->  	mbox_free_channel(priv->tx_ch);
->  	mbox_free_channel(priv->rx_ch);
->  	mbox_free_channel(priv->rxdb_ch);
-> @@ -903,6 +927,9 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
->  	priv->rproc = rproc;
->  	priv->dsp_dcfg = dsp_dcfg;
->  
-> +	if (imx_dsp_rproc_ignore_ready)
-> +		priv->flags |= REMOTE_SKIP_WAIT;
-> +
-
-        if (no_mailboxes)
-                imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_no_alloc;
-        else
-                imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_alloc;
-
-That way we don't introduce a new flag, there is no new conditionals peppered
-throughout the code and calls to imx_dsp_rproc_mbox_init() remain unchainged.
-
-Thanks,
-Mathieu
-
->  	dev_set_drvdata(dev, rproc);
->  
->  	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
-> -- 
-> 2.17.1
-> 
