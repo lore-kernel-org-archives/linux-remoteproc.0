@@ -2,76 +2,125 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7F0C636D4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 05:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D985DC636D4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 05:17:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233057AbjBOFBe (ORCPT
+        id S233258AbjBOFRL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Feb 2023 00:01:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38736 "EHLO
+        Wed, 15 Feb 2023 00:17:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbjBOFBd (ORCPT
+        with ESMTP id S230212AbjBOFRK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Feb 2023 00:01:33 -0500
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E204E34004
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Feb 2023 21:01:31 -0800 (PST)
-Received: from submission (posteo.de [185.67.36.169]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id 31D28240649
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Feb 2023 06:01:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-        t=1676437290; bh=FWiteDJexgPQ7XRRBus0P85wr8k1keyo2CAWC376RBg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LgoCIgmA4DG3U60cJpRJjIfKH2twgmEqeqoq6NeO4a5klvUy8lbvR28CSQQGmpLeB
-         u/cuCqwPjajm87/BGARvdGKD7jbG7tuMZd5kvjp8XR7FGogGQjTtBILnhU4uOFLtaC
-         NqEN/t1repkDdAO46q6Frc8WszoJ4xFjstGj4D+W8YNzJsuOjZKChNHGl4So8xi1rm
-         dysZ4bqopyhPAep0kE1DpQm1+Oj9BVrxkLtcLGKvF3lFPY7+rgwOO1CH2LWK4dFQgu
-         T+4yjxHc7VypDuYwKSU/8pgo2ZmZr/rj9Xy4vbsFKRf+HNwzFWqVJ7a7ITbQOdHk4s
-         FsddejQMTLvWg==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4PGmBZ5hGhz9rxF;
-        Wed, 15 Feb 2023 06:01:26 +0100 (CET)
-Date:   Wed, 15 Feb 2023 05:01:25 +0000
-From:   Wilken Gottwalt <wilken.gottwalt@posteo.net>
-To:     Bastian Germann <bage@debian.org>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/3] Enable hwlock on Allwinner A64
-Message-ID: <20230215060125.0e06312e@posteo.net>
-In-Reply-To: <d483ea28-feed-41d1-f9b6-4abfcfe42874@debian.org>
-References: <20230213231931.6546-1-bage@debian.org>
-        <20230214001805.6ead683d@slackpad.lan>
-        <d483ea28-feed-41d1-f9b6-4abfcfe42874@debian.org>
+        Wed, 15 Feb 2023 00:17:10 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D106E80;
+        Tue, 14 Feb 2023 21:17:09 -0800 (PST)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31F1hgf7018371;
+        Wed, 15 Feb 2023 05:17:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=oGCT/5IFWwFCKLzPtnIq0Q+X/5HAUDivyeTJBKdWj6k=;
+ b=f3c/TU25ZSEFeTr9eUhy2sma03vAshydzKIYpVyUACaOXPNE0NwX9hjARWew7Ugk7rps
+ rMSxBl3F0SuSEKofZIPeyxZhJW3hzhXhDzklQmiRoZNucT9UEygzPs68K225IQmI3xBh
+ cdf9Sjzu3jFFTs6JKXWY+sHUznps4pEXTSevy91eH3I0EVzNPK67iVqBvPF/sf4FzkeY
+ dJ3qsKTzOxvppjc449e3Y6T0eeq7hgj+mchDfLw9r3g6oy3mr4o7zaFjyAUbjC6vWXxI
+ nzDWiXUMSqQIUookx86BqVexrFzJ1+n6xgz7LtUFZy1lYHlFOqyWVYhU1GL8DHffaTtU 9g== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nr6qkjwe5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Feb 2023 05:17:05 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31F5H42T027026
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Feb 2023 05:17:04 GMT
+Received: from [10.216.8.213] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 14 Feb
+ 2023 21:17:01 -0800
+Message-ID: <8aeea3f5-7b90-f384-33ab-ba7b4afb5317@quicinc.com>
+Date:   Wed, 15 Feb 2023 10:46:58 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] remoteproc: qcom: replace kstrdup with kstrndup
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     <dmitry.baryshkov@linaro.org>, <agross@kernel.org>,
+        <mathieu.poirier@linaro.org>, <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1675180866-16695-1-git-send-email-quic_mojha@quicinc.com>
+ <1676383691-29738-1-git-send-email-quic_mojha@quicinc.com>
+ <20230214163944.y5tkgdfmsycmpg7p@ripper>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20230214163944.y5tkgdfmsycmpg7p@ripper>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9PlTnfRyFABlGgXrF7iH0q31QJ30WOon
+X-Proofpoint-ORIG-GUID: 9PlTnfRyFABlGgXrF7iH0q31QJ30WOon
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-15_02,2023-02-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ clxscore=1015 bulkscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302150047
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 14 Feb 2023 22:55:45 +0100
-Bastian Germann <bage@debian.org> wrote:
 
-> Am 14.02.23 um 01:18 schrieb Andre Przywara:
-> > So are there Linux/Crust patches out there that use this device?
+
+On 2/14/2023 10:09 PM, Bjorn Andersson wrote:
+> On Tue, Feb 14, 2023 at 07:38:11PM +0530, Mukesh Ojha wrote:
+>> Since, there is no guarantee that region.name will be 0-terminated
+>> from the firmware side, replace kstrdup with kstrndup.
+>>
+>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > 
-> I do not know of any. I was just investigating the chip and checked the parts that I could easily
-> use in Linux.
+> Please don't send additional patches in-reply-to another patch, it makes
+> it impossible to use b4 to pick up the first patch.
+> 
+> And please don't send two patches which clearly will conflict with
+> each other. Now I had to manually apply the first patch...
+> 
 
-Easily using it is, well, a bit questionable. The only reason to use this is
-for syncing access to hardware between the ARM and the embedded OpenRISC core.
-Like Andre wrote, it only makes sense if you want to etablish some form of
-shared access between Linux and the Crust firmware. Using this in Linux only
-instead of the common spinlocks won't be fun, that hwspinlock unit is slower.
+Really sorry, for the inconvenience.
+will keep in mind.
 
-greetings,
-Will
+Thanks,
+-Mukesh
+
+> Regards,
+> Bjorn
+> 
+>> ---
+>>   drivers/remoteproc/qcom_common.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+>> index 020349f..7810f91 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -124,7 +124,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+>>   	for (i = 0; i < seg_cnt; i++) {
+>>   		memcpy_fromio(&region, ptr + i, sizeof(region));
+>>   		if (region.valid == MD_REGION_VALID) {
+>> -			name = kstrdup(region.name, GFP_KERNEL);
+>> +			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+>>   			if (!name) {
+>>   				iounmap(ptr);
+>>   				return -ENOMEM;
+>> -- 
+>> 2.7.4
+>>
