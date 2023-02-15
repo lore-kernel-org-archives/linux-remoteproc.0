@@ -2,51 +2,53 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C67F3C636D4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 04:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF7AC64EC7
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 04:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbjBOE2K (ORCPT
+        id S231966AbjBOE2L (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 23:28:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53556 "EHLO
+        Tue, 14 Feb 2023 23:28:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbjBOE2J (ORCPT
+        with ESMTP id S231905AbjBOE2K (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 23:28:09 -0500
+        Tue, 14 Feb 2023 23:28:10 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F3BCA12;
-        Tue, 14 Feb 2023 20:28:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E87F0CA12;
+        Tue, 14 Feb 2023 20:28:09 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B731A619E6;
-        Wed, 15 Feb 2023 04:28:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CB7CC433D2;
-        Wed, 15 Feb 2023 04:28:06 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 84408614AE;
+        Wed, 15 Feb 2023 04:28:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D697C433EF;
+        Wed, 15 Feb 2023 04:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676435287;
-        bh=/L1o81djQfCsbCx2J3wixdS6atWd0MZPMT5Ksh+sWmI=;
+        s=k20201202; t=1676435289;
+        bh=eqDHH7byHA85yMuXRFFTfu7FKWx/ReUzLKXjNGLjH3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ctdDwUO4SUF/OIAte3b38LNHJoVHgk6RT9lsBnZ1vusp+l3fUIPm/FJmOWgYXaSNs
-         okUUV4rmcwiSHFX03TTxZZhAvhPjdfjmL8iFKBbnm5aAkuZaRYEfD+AYSIf0ADHEmT
-         mLYSkdbnlgfGDJLQYBWhcyPSjNgcy2UWrdxAJ78wjzeIZdr7v4uT5on209Y/UigqSl
-         AdxNSB+F5UG8R2lYKGqOlpvz9PS4Kky1p2vWrpl+7uMGg0F3LhLcbDILqx2HhWR3Q0
-         0yd360V927u7EYw7kEmjf2MRDdDKxcqYcB0hTtF63xlwsrOnOMnNjbguNum3bSCICi
-         0c0S4NhTYQjzA==
+        b=ojUs1nSR/uN7jAKVoh6a5ihA1i8FmpUWL5Iy2MRWM9C2iRiDdtO58ko8OZKVqF8TT
+         u1IsVJ3wabEoMmnS9j3GKBpKdeIRAyHMyC4y7GaHjmeJH6V6dH0UVSZCZdu+MT5Vtb
+         JjAt83MVzId7M2ZSvbFYWhtX79EF3QeZuuswKSVeBCrbBnp7Enr335mubZrPedKNwM
+         l256m5bGOGu/jnbw4HNBUvkhbWR2lp+H15Pwq5YFYv/4GD58rbKGbndSl6t4b9WXB8
+         RtBMc8vhecrOHOHHu5x0nJrNHuOW0nf3MvXhSZeAJ/in66x2LMCP8XBMO+O5gv8CV+
+         /jP/9AwEyojcw==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
         Chris Lew <quic_clew@quicinc.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Andy Gross <agross@kernel.org>
+        Sricharan R <sricharan@codeaurora.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: glink: Fix GLINK command prefix
-Date:   Tue, 14 Feb 2023 20:30:09 -0800
-Message-Id: <167643540672.1154547.8151253623301887579.b4-ty@kernel.org>
+Subject: Re: [PATCH v2] rpmsg: glink: Avoid infinite loop on intent for missing channel
+Date:   Tue, 14 Feb 2023 20:30:11 -0800
+Message-Id: <167643540672.1154547.14260994758435224496.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230214225933.2025595-1-quic_bjorande@quicinc.com>
-References: <20230214225933.2025595-1-quic_bjorande@quicinc.com>
+In-Reply-To: <20230214234231.2069751-1-quic_bjorande@quicinc.com>
+References: <20230214234231.2069751-1-quic_bjorande@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -54,20 +56,17 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 14 Feb 2023 14:59:33 -0800, Bjorn Andersson wrote:
-> The upstream GLINK driver was first introduced to communicate with the
-> RPM on MSM8996, presumably as an artifact from that era the command
-> defines was prefixed RPM_CMD, while they actually are GLINK_CMDs.
-> 
-> Let's rename these, to keep things tidy. No functional change.
+On Tue, 14 Feb 2023 15:42:31 -0800, Bjorn Andersson wrote:
+> In the event that an intent advertisement arrives on an unknown channel
+> the fifo is not advanced, resulting in the same message being handled
+> over and over.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] rpmsg: glink: Fix GLINK command prefix
-      commit: 4e816d0318fdfe8932da80dbf04ba318b13e4b3a
+[1/1] rpmsg: glink: Avoid infinite loop on intent for missing channel
+      commit: 3e74ec2f39362bffbd42854acbb67c7f4cb808f9
 
 Best regards,
 -- 
