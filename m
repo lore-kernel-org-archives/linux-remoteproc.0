@@ -2,38 +2,30 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0431C6FA99
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 20:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEB4C636D4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 20:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjBOUhj (ORCPT
+        id S229462AbjBOUm1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Feb 2023 15:37:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52796 "EHLO
+        Wed, 15 Feb 2023 15:42:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229794AbjBOUhg (ORCPT
+        with ESMTP id S229536AbjBOUm0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Feb 2023 15:37:36 -0500
-Received: from stravinsky.debian.org (stravinsky.debian.org [IPv6:2001:41b8:202:deb::311:108])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34313B3DE;
-        Wed, 15 Feb 2023 12:37:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-        s=smtpauto.stravinsky; h=X-Debian-User:Content-Transfer-Encoding:MIME-Version
-        :References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=Nm6XL9EmKootcd4yjvHH8UZ77IxEkk6Gx2zX6Qkn1sU=; b=GRXQdXOdVjKugMIj6vYmkR6z+c
-        tE41n1KbONRNr3NV4YXgZSdMOEVn5/1gCdzlxD8lDYtnbEZC0tsHA6gH/XWo/iVTgjKa+Efojf7j/
-        G3X5sPl/+Wmho26LM8904Xfwr+Yni2gD9GCcUBZaOPJjwyPH0xhHBVXVVJtxfcsgEGxkfVt2xGP8k
-        6G04gRleEPJyOxb7jHV+CzjNPcucbU+00dpGiz7Csi1JW6mGAKTI5N2jSxbqvRbYFpOceWceFwcjG
-        ZbkWcS0KKK/hxCICEt/ZnT7+6nKKrzvnLyAgYDfHY3dcAsbYJepme/v8XMO1B5PhcN4VPmFWJ9VVY
-        9LrmTvTA==;
-Received: from authenticated user
-        by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.94.2)
-        (envelope-from <bage@debian.org>)
-        id 1pSOWj-002j5f-Vs; Wed, 15 Feb 2023 20:37:18 +0000
-From:   Bastian Germann <bage@debian.org>
-To:     Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc:     Bastian Germann <bage@debian.org>,
+        Wed, 15 Feb 2023 15:42:26 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 49779211B;
+        Wed, 15 Feb 2023 12:42:25 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9C7A94B3;
+        Wed, 15 Feb 2023 12:43:07 -0800 (PST)
+Received: from slackpad.lan (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB19D3F663;
+        Wed, 15 Feb 2023 12:42:22 -0800 (PST)
+Date:   Wed, 15 Feb 2023 20:40:26 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Bastian Germann <bage@debian.org>
+Cc:     Wilken Gottwalt <wilken.gottwalt@posteo.net>,
         Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <andersson@kernel.org>,
         Baolin Wang <baolin.wang@linux.alibaba.com>,
@@ -44,48 +36,49 @@ Cc:     Bastian Germann <bage@debian.org>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         devicetree@vger.kernel.org
-Subject: [PATCH v2 5/5] arm64: dts: allwinner: a64: Add hwspinlock node
-Date:   Wed, 15 Feb 2023 21:37:10 +0100
-Message-Id: <20230215203711.6293-6-bage@debian.org>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20230215203711.6293-1-bage@debian.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: hwlock: sun6i: Add #hwlock-cells to
+ example
+Message-ID: <20230215204026.318d4b2d@slackpad.lan>
+In-Reply-To: <20230215203711.6293-3-bage@debian.org>
 References: <20230215203711.6293-1-bage@debian.org>
+        <20230215203711.6293-3-bage@debian.org>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Debian-User: bage
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add the hwspinlock to A64 which is already implemented for A31.
+On Wed, 15 Feb 2023 21:37:07 +0100
+Bastian Germann <bage@debian.org> wrote:
 
-Signed-off-by: Bastian Germann <bage@debian.org>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Hi,
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 77b5349f6087..f2ecc21f06ed 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -851,6 +851,17 @@ wdt0: watchdog@1c20ca0 {
- 			clocks = <&osc24M>;
- 		};
- 
-+		hwspinlock: hwlock@1c18000 {
-+			compatible = "allwinner,sun50i-a64-hwspinlock",
-+				     "allwinner,sun6i-a31-hwspinlock";
-+			reg = <0x01c18000 0x1000>;
-+			clocks = <&ccu CLK_BUS_SPINLOCK>;
-+			clock-names = "ahb";
-+			resets = <&ccu RST_BUS_SPINLOCK>;
-+			reset-names = "ahb";
-+			#hwlock-cells = <1>;
-+		};
-+
- 		spdif: spdif@1c21000 {
- 			#sound-dai-cells = <0>;
- 			compatible = "allwinner,sun50i-a64-spdif",
--- 
-2.39.1
+> The dt-bindings tools will compile the yaml dt examples
+> and this prevents an error about this node not existing.
+
+This needs to be part of patch 1/5, otherwise it will break
+bisecting. Just squash the two patches together.
+
+Cheers,
+Andre
+
+> Signed-off-by: Bastian Germann <bage@debian.org>
+> ---
+>  .../bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml          | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+> index 01b1bbb3061f..38478dad8b25 100644
+> --- a/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+> +++ b/Documentation/devicetree/bindings/hwlock/allwinner,sun6i-a31-hwspinlock.yaml
+> @@ -48,5 +48,6 @@ examples:
+>          reg = <0x01c18000 0x1000>;
+>          clocks = <&ccu CLK_BUS_SPINLOCK>;
+>          resets = <&ccu RST_BUS_SPINLOCK>;
+> +        #hwlock-cells = <1>;
+>      };
+>  ...
 
