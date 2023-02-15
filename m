@@ -2,125 +2,368 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D985DC636D4
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 05:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76643C636CC
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 12:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233258AbjBOFRL (ORCPT
+        id S233196AbjBOM3I (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Feb 2023 00:17:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
+        Wed, 15 Feb 2023 07:29:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbjBOFRK (ORCPT
+        with ESMTP id S229546AbjBOM3H (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Feb 2023 00:17:10 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D106E80;
-        Tue, 14 Feb 2023 21:17:09 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31F1hgf7018371;
-        Wed, 15 Feb 2023 05:17:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=oGCT/5IFWwFCKLzPtnIq0Q+X/5HAUDivyeTJBKdWj6k=;
- b=f3c/TU25ZSEFeTr9eUhy2sma03vAshydzKIYpVyUACaOXPNE0NwX9hjARWew7Ugk7rps
- rMSxBl3F0SuSEKofZIPeyxZhJW3hzhXhDzklQmiRoZNucT9UEygzPs68K225IQmI3xBh
- cdf9Sjzu3jFFTs6JKXWY+sHUznps4pEXTSevy91eH3I0EVzNPK67iVqBvPF/sf4FzkeY
- dJ3qsKTzOxvppjc449e3Y6T0eeq7hgj+mchDfLw9r3g6oy3mr4o7zaFjyAUbjC6vWXxI
- nzDWiXUMSqQIUookx86BqVexrFzJ1+n6xgz7LtUFZy1lYHlFOqyWVYhU1GL8DHffaTtU 9g== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nr6qkjwe5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Feb 2023 05:17:05 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31F5H42T027026
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Feb 2023 05:17:04 GMT
-Received: from [10.216.8.213] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Tue, 14 Feb
- 2023 21:17:01 -0800
-Message-ID: <8aeea3f5-7b90-f384-33ab-ba7b4afb5317@quicinc.com>
-Date:   Wed, 15 Feb 2023 10:46:58 +0530
+        Wed, 15 Feb 2023 07:29:07 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B1B336446;
+        Wed, 15 Feb 2023 04:29:05 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id DC18C6602193;
+        Wed, 15 Feb 2023 12:29:02 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1676464143;
+        bh=WN5KFfVxspp0n9FETRjSp4FseprWdAvg7PmlHOmIOx0=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=OahlZnfc5QdgrlNeNrP8UDreZQCHyTo5ZWNrC9nQ6k9yY0AAt49dB7xNaPt+4r67d
+         HGYr75yHOu1XEJDPUXheAilFVYXXKbPhjbjZ7MLQShoApbp5cpm879FUXacIwHyyNo
+         KCDqVTOgKmsbmp45ETotMF+kaizptGg4NxDwyYU/vAuV2aopLm6XaTL4bsz/n4M2RU
+         WzwsFkBHzr1+njff/cN+j537ftmgkfY9cVEd6Bo6wL7/bc8CzaGGD3QCAxPtKVAxbe
+         SkROXRzR8YxCrJSCbbp3zwrmrOt8FlQuUjQ0uwPaGEqUWX1B5oYn2pjWdp4w8+0BBw
+         YsqrOIcAR4fVw==
+Message-ID: <1fb45a25-38e9-d9cf-6c69-0ba0dac83824@collabora.com>
+Date:   Wed, 15 Feb 2023 13:29:00 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH] remoteproc: qcom: replace kstrdup with kstrndup
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v7 07/12] remoteproc: mediatek: Probe multi-core SCP
 Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>
-CC:     <dmitry.baryshkov@linaro.org>, <agross@kernel.org>,
-        <mathieu.poirier@linaro.org>, <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1675180866-16695-1-git-send-email-quic_mojha@quicinc.com>
- <1676383691-29738-1-git-send-email-quic_mojha@quicinc.com>
- <20230214163944.y5tkgdfmsycmpg7p@ripper>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20230214163944.y5tkgdfmsycmpg7p@ripper>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230215041257.14548-1-tinghan.shen@mediatek.com>
+ <20230215041257.14548-8-tinghan.shen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230215041257.14548-8-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9PlTnfRyFABlGgXrF7iH0q31QJ30WOon
-X-Proofpoint-ORIG-GUID: 9PlTnfRyFABlGgXrF7iH0q31QJ30WOon
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-15_02,2023-02-14_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 bulkscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302150047
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 2/14/2023 10:09 PM, Bjorn Andersson wrote:
-> On Tue, Feb 14, 2023 at 07:38:11PM +0530, Mukesh Ojha wrote:
->> Since, there is no guarantee that region.name will be 0-terminated
->> from the firmware side, replace kstrdup with kstrndup.
->>
->> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+Il 15/02/23 05:12, Tinghan Shen ha scritto:
+> The difference of single-core SCP and multi-core SCP device tree is
+> the presence of child device nodes described SCP cores. The SCP
+> driver populates the platform device and checks the child nodes
+> to identify whether it's a single-core SCP or a multi-core SCP.
 > 
-> Please don't send additional patches in-reply-to another patch, it makes
-> it impossible to use b4 to pick up the first patch.
+> The resource structure of the multi-core SCP is a list of remoteproc
+> instances which is different to the single-core SCP. The corresponding
+> resource releasing action is based on the type of SCP.
 > 
-> And please don't send two patches which clearly will conflict with
-> each other. Now I had to manually apply the first patch...
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+>   drivers/remoteproc/mtk_common.h |   4 +
+>   drivers/remoteproc/mtk_scp.c    | 179 +++++++++++++++++++++++++++++---
+>   2 files changed, 168 insertions(+), 15 deletions(-)
 > 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index 3778894c96f3..7821cb15d6fd 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -140,6 +140,10 @@ struct mtk_scp {
+>   	size_t dram_size;
+>   
+>   	struct rproc_subdev *rpmsg_subdev;
+> +
+> +	struct list_head elem;
+> +	struct list_head cluster_cores;
+> +	struct list_head *cluster;
 
-Really sorry, for the inconvenience.
-will keep in mind.
+I don't understand why you need both `cluster_cores` and `cluster`... check below.
 
-Thanks,
--Mukesh
+>   };
+>   
+>   /**
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 6270c388727a..6588e5acb159 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -862,7 +862,9 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+>   }
+>   
+>   static int scp_rproc_init(struct platform_device *pdev,
+> -			  struct mtk_scp_of_regs *of_regs)
+> +			  struct mtk_scp_of_regs *of_regs,
+> +			  const struct mtk_scp_of_data *of_data,
+> +			  bool is_multi_core)
+>   {
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *np = dev->of_node;
+> @@ -883,7 +885,7 @@ static int scp_rproc_init(struct platform_device *pdev,
+>   	scp = (struct mtk_scp *)rproc->priv;
+>   	scp->rproc = rproc;
+>   	scp->dev = dev;
+> -	scp->data = of_device_get_match_data(dev);
+> +	scp->data = of_data;
+>   	platform_set_drvdata(pdev, scp);
+>   
+>   	scp->reg_base = of_regs->reg_base;
+> @@ -932,9 +934,11 @@ static int scp_rproc_init(struct platform_device *pdev,
+>   		goto remove_subdev;
+>   	}
+>   
+> -	ret = rproc_add(rproc);
+> -	if (ret)
+> -		goto remove_subdev;
+> +	if (!is_multi_core) {
+> +		ret = rproc_add(rproc);
+> +		if (ret)
+> +			goto remove_subdev;
+> +	}
+>   
+>   	return 0;
+>   
+> @@ -950,9 +954,125 @@ static int scp_rproc_init(struct platform_device *pdev,
+>   	return ret;
+>   }
+>   
+> +static void scp_rproc_free(struct mtk_scp *scp)
+> +{
+> +	int i;
+> +
+> +	scp_remove_rpmsg_subdev(scp);
+> +	scp_ipi_unregister(scp, SCP_IPI_INIT);
+> +	scp_unmap_memory_region(scp);
+> +	for (i = 0; i < SCP_IPI_MAX; i++)
+> +		mutex_destroy(&scp->ipi_desc[i].lock);
+> +	mutex_destroy(&scp->send_lock);
+> +}
+> +
+> +static void scp_rproc_exit(struct platform_device *pdev)
+> +{
+> +	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +
+> +	rproc_del(scp->rproc);
+> +	scp_rproc_free(scp);
+> +}
+> +
+> +static int scp_cluster_init(struct platform_device *pdev,
+> +			    struct mtk_scp_of_regs *of_regs)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev_of_node(dev);
+> +	struct platform_device *cpdev;
+> +	struct device_node *child;
+> +	const struct mtk_scp_of_data **cluster_of_data;
+> +	struct list_head *cluster;
 
-> Regards,
-> Bjorn
-> 
->> ---
->>   drivers/remoteproc/qcom_common.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
->> index 020349f..7810f91 100644
->> --- a/drivers/remoteproc/qcom_common.c
->> +++ b/drivers/remoteproc/qcom_common.c
->> @@ -124,7 +124,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
->>   	for (i = 0; i < seg_cnt; i++) {
->>   		memcpy_fromio(&region, ptr + i, sizeof(region));
->>   		if (region.valid == MD_REGION_VALID) {
->> -			name = kstrdup(region.name, GFP_KERNEL);
->> +			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
->>   			if (!name) {
->>   				iounmap(ptr);
->>   				return -ENOMEM;
->> -- 
->> 2.7.4
->>
+Here you have a local `cluster` pointer.....
+
+> +	struct mtk_scp *scp, *temp;
+> +	int core_id, num_cores;
+> +	int ret;
+> +
+> +	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
+> +
+> +	for (num_cores = 0; cluster_of_data[num_cores]; num_cores++)
+> +		;
+> +
+> +	cluster = NULL;
+
+(unrelated: please initialize cluster and core_id on the declaration, not here)
+
+> +	core_id = 0;
+> +	for_each_available_child_of_node(np, child) {
+> +		if (core_id >= num_cores) {
+> +			ret = -EINVAL;
+> +			dev_err(dev, "Not support core %d\n", core_id);
+> +			of_node_put(child);
+> +			goto init_fail;
+> +		}
+> +
+> +		cpdev = of_find_device_by_node(child);
+> +		if (!cpdev) {
+> +			ret = -ENODEV;
+> +			dev_err(dev, "Not found platform device for core %d\n", core_id);
+> +			of_node_put(child);
+> +			goto init_fail;
+> +		}
+> +
+> +		ret = scp_rproc_init(cpdev, of_regs, cluster_of_data[core_id], true);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
+> +			put_device(&cpdev->dev);
+> +			of_node_put(child);
+> +			goto init_fail;
+> +		}
+> +
+> +		scp = platform_get_drvdata(cpdev);
+> +		put_device(&cpdev->dev);
+> +		if (core_id == 0) {
+> +			INIT_LIST_HEAD(&scp->cluster_cores);
+
+...then here you initialize cluster_cores,
+
+> +			cluster = &scp->cluster_cores;
+
+and assign to your local `cluster` pointer and even set it
+
+> +			platform_set_drvdata(pdev, cluster);
+
+as platform drvdata.
+
+> +		}
+> +
+> +		list_add_tail(&scp->elem, cluster);
+
+Still using the local `cluster` pointer, which is `scp->cluster_cores`
+
+> +		scp->cluster = cluster;
+
+...and here, `scp->cluster` effectively points to local `cluster`, which is
+anyway `scp->cluster_cores`.
+
+As far as I understand, `scp->cluster` is EITHER `scp->cluster_cores` or NULL,
+hence the question: why do you need both scp->cluster and scp->cluster_cores,
+if they're always pointing to the same list?
+
+P.S.: I won't cut the rest of the patch so that the readers of this reply won't
+       have to click around to see the whole code; comments end here!
+
+Regards,
+Angelo
+
+> +
+> +		of_node_put(child);
+> +		core_id++;
+> +	}
+> +
+> +	list_for_each_entry_safe_reverse(scp, temp, cluster, elem) {
+> +		ret = rproc_add(scp->rproc);
+> +		if (ret)
+> +			goto add_fail;
+> +	}
+> +
+> +	return 0;
+> +
+> +add_fail:
+> +	list_for_each_entry_continue(scp, cluster, elem) {
+> +		rproc_del(scp->rproc);
+> +	}
+> +init_fail:
+> +	if (cluster) {
+> +		list_for_each_entry_safe_reverse(scp, temp, cluster, elem) {
+> +			list_del(&scp->elem);
+> +			scp_rproc_free(scp);
+> +		}
+> +	}
+> +	return ret;
+> +}
+> +
+> +static void scp_cluster_exit(struct platform_device *pdev)
+> +{
+> +	struct list_head *cluster = platform_get_drvdata(pdev);
+> +	struct platform_device *cpdev;
+> +	struct mtk_scp *scp, *temp;
+> +
+> +	list_for_each_entry_safe_reverse(scp, temp, cluster, elem) {
+> +		list_del(&scp->elem);
+> +		cpdev = to_platform_device(scp->dev);
+> +		scp_rproc_exit(cpdev);
+> +	}
+> +}
+> +
+>   static int scp_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *core_node;
+>   	struct resource *res;
+>   	struct mtk_scp_of_regs scp_regs;
+>   	int ret;
+> @@ -975,21 +1095,43 @@ static int scp_probe(struct platform_device *pdev)
+>   		scp_regs.l1tcm_phys = res->start;
+>   	}
+>   
+> -	return scp_rproc_init(pdev, &scp_regs);
+> +	ret = devm_of_platform_populate(dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
+> +
+> +	core_node = of_get_child_by_name(np, "scp");
+> +	of_node_put(core_node);
+> +
+> +	if (!core_node) {
+> +		dev_info(dev, "single-core scp\n");
+> +
+> +		ret = scp_rproc_init(pdev, &scp_regs, of_device_get_match_data(dev), false);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Failed to initialize single-core scp\n");
+> +	} else {
+> +		dev_info(dev, "multi-core scp\n");
+> +
+> +		ret = scp_cluster_init(pdev, &scp_regs);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "Failed to initialize scp cluster\n");
+> +	}
+> +
+> +	return 0;
+>   }
+>   
+>   static int scp_remove(struct platform_device *pdev)
+>   {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> -	int i;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct device_node *core_node;
+>   
+> -	rproc_del(scp->rproc);
+> -	scp_remove_rpmsg_subdev(scp);
+> -	scp_ipi_unregister(scp, SCP_IPI_INIT);
+> -	scp_unmap_memory_region(scp);
+> -	for (i = 0; i < SCP_IPI_MAX; i++)
+> -		mutex_destroy(&scp->ipi_desc[i].lock);
+> -	mutex_destroy(&scp->send_lock);
+> +	core_node = of_get_child_by_name(np, "scp");
+> +	of_node_put(core_node);
+> +
+> +	if (!core_node)
+> +		scp_rproc_exit(pdev);
+> +	else
+> +		scp_cluster_exit(pdev);
+>   
+>   	return 0;
+>   }
+> @@ -1068,12 +1210,19 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
+>   	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
+>   };
+>   
+> +static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
+> +	&mt8195_of_data,
+> +	&mt8195_of_data_c1,
+> +	NULL
+> +};
+> +
+>   static const struct of_device_id mtk_scp_of_match[] = {
+>   	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
+>   	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
+>   	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
+>   	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
+>   	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
+> +	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
+>   	{},
+>   };
+>   MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+
