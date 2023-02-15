@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B9A5C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 04:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B53EC636CC
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Feb 2023 04:13:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233036AbjBOEN2 (ORCPT
+        id S231915AbjBOENa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Feb 2023 23:13:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
+        Tue, 14 Feb 2023 23:13:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231976AbjBOENP (ORCPT
+        with ESMTP id S229551AbjBOENR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Feb 2023 23:13:15 -0500
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AA7B32CFD;
+        Tue, 14 Feb 2023 23:13:17 -0500
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3098826877;
         Tue, 14 Feb 2023 20:13:08 -0800 (PST)
-X-UUID: 088f2970ace711eda06fc9ecc4dadd91-20230215
+X-UUID: 095f94e8ace711ed945fc101203acc17-20230215
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=pUSE1wzbu3r1aEcwMoKUD5CVWfuQSPXwRVeJZfMrP8w=;
-        b=YPEz8+6dA4Eybwf23hZUL3RfvJ9ICBvVbTeFri1NJdXVn6Lf6/aoFj4fl/nZAPWG/Nh6zuOMCiLn7rduBtqLCuw4BuhdVrEk1NpumPevZCO5lRGJDgKwi2yAZW3MXoOiV/cVdyaFcCzoxbHTy7oNU1fEEI64utQ1TQtycbbkpMA=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=C1fFjgCUHa9OHSyRoUS8th94bKH2HepGCjPkyLCX+QA=;
+        b=Rd0Ngr9poes7+RdfaOWGNd2GAQAs7cJD91Xh9ewRXHGoX4dMlbtwpQRRg4rmjddIspAolKPTyILhBjNvnlmHC5rCj5r4Ad3IhcRBqrIZXzsKKHBAKur5+ZU4kYRnJWeVK0ikb8WxPDH6ecKwEVHaLbLNv3ZDmeQyfEFWuHPlr/U=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.19,REQID:11429357-20d5-4566-a3f1-f53fe999e9d0,IP:0,U
+X-CID-O-INFO: VERSION:1.1.19,REQID:ae72b7e6-4268-42cb-9a96-2f93d38ce3ac,IP:0,U
         RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
         release,TS:0
-X-CID-META: VersionHash:885ddb2,CLOUDID:f4197cb0-beed-4dfc-bd9c-e1b22fa6ccc4,B
+X-CID-META: VersionHash:885ddb2,CLOUDID:22749b25-564d-42d9-9875-7c868ee415ec,B
         ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
 X-CID-BVR: 0
-X-UUID: 088f2970ace711eda06fc9ecc4dadd91-20230215
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+X-UUID: 095f94e8ace711ed945fc101203acc17-20230215
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1907363742; Wed, 15 Feb 2023 12:12:59 +0800
+        with ESMTP id 1978570795; Wed, 15 Feb 2023 12:13:01 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.792.15; Wed, 15 Feb 2023 12:12:58 +0800
+ 15.2.792.15; Wed, 15 Feb 2023 12:12:59 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.792.15 via Frontend Transport; Wed, 15 Feb 2023 12:12:58 +0800
+ 15.2.792.15 via Frontend Transport; Wed, 15 Feb 2023 12:12:59 +0800
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -54,9 +54,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v7 02/12] arm64: dts: mediatek: mt8183-kukui: Update the node name of SCP rpmsg subnode
-Date:   Wed, 15 Feb 2023 12:12:47 +0800
-Message-ID: <20230215041257.14548-3-tinghan.shen@mediatek.com>
+Subject: [PATCH v7 11/12] remoteproc: mediatek: Refine ipi handler error message
+Date:   Wed, 15 Feb 2023 12:12:56 +0800
+Message-ID: <20230215041257.14548-12-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20230215041257.14548-1-tinghan.shen@mediatek.com>
 References: <20230215041257.14548-1-tinghan.shen@mediatek.com>
@@ -67,27 +67,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Align the node name with the definition in SCP bindings.
+The error message doesn't accurately reflect the cause of
+the error. The error is due to a handler not being found,
+not an invalid IPI ID.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 2 +-
+ drivers/remoteproc/mtk_scp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-index fbe14b13051a..a259eb043de5 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
-@@ -810,7 +810,7 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&scp_pins>;
- 
--	cros_ec {
-+	cros-ec-rpmsg {
- 		compatible = "google,cros-ec-rpmsg";
- 		mediatek,rpmsg-name = "cros-ec-rpmsg";
- 	};
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 6bc5f7f138d5..006493f4bb4c 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -113,7 +113,7 @@ static void scp_ipi_handler(struct mtk_scp *scp)
+ 	scp_ipi_lock(scp, id);
+ 	handler = ipi_desc[id].handler;
+ 	if (!handler) {
+-		dev_err(scp->dev, "No such ipi id = %d\n", id);
++		dev_err(scp->dev, "No handler for ipi id = %d\n", id);
+ 		scp_ipi_unlock(scp, id);
+ 		return;
+ 	}
 -- 
 2.18.0
 
