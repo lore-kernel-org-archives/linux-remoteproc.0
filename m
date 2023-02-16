@@ -2,85 +2,145 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B664C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Feb 2023 08:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B93C636CC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Feb 2023 11:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbjBPIzF (ORCPT
+        id S229492AbjBPLmz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 03:55:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42040 "EHLO
+        Thu, 16 Feb 2023 06:42:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229706AbjBPIzF (ORCPT
+        with ESMTP id S230366AbjBPLmx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Feb 2023 03:55:05 -0500
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949D03B3F3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Feb 2023 00:55:01 -0800 (PST)
-Received: from submission (posteo.de [185.67.36.169]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id EF2372404C4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Feb 2023 09:54:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
-        t=1676537700; bh=CdZyo6JjpXiyHzEMPe2wM0kSGNglA5FAaZGZKnEZChU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NGtca2mSTcpvtekUIjKzkrHEIHC+UHhv88b1aw+jRKufVi+0h0ygloe6bBUPDwYJs
-         46kEdMmv9M2erO+rabUK83bApS0HO6RyeDpfoUQv/vMjFb1SJacigxS0XSU1lFbx/R
-         zS1OWAQY22di8YdjuAP80wJVZmgslAum3Ifz1wmDKTXK3KMt7CnB0cGN3uAGhRDaxl
-         AU7e0YG8ICCtbB/0HwEi2jxDp2GK/+0z3peGxXX/YixjcJgVQFBvb42x9k8DCTcSK+
-         cq2nRdCHvml1tvPK8euO9bXDgxVlGov1pTNFeoZUnrtg7WL7ea7EHwxWnq7/pc2CBn
-         Usq6M+qxEZYeQ==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 4PHTKW4zcRz6tm5;
-        Thu, 16 Feb 2023 09:54:55 +0100 (CET)
-Date:   Thu, 16 Feb 2023 08:54:54 +0000
-From:   Wilken Gottwalt <wilken.gottwalt@posteo.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bastian Germann <bage@debian.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
+        Thu, 16 Feb 2023 06:42:53 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9B77EFE;
+        Thu, 16 Feb 2023 03:42:51 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id a2so1557198wrd.6;
+        Thu, 16 Feb 2023 03:42:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OKI2TnFH1VivBlI9Zu+f4DLD1Oxh3uwKhDHr4Ttuqi4=;
+        b=gZrP2qlYh/6CWJTLqXysnOcvuh52GIC3d9yfVG0MJpITqyjaFvdpUPeyAbqMkcM3Fa
+         zXUSjvUfnTXjRU7JDXzCXkJPfg6imR/g6SaSUTLojExscX49w9mtfsR46pXfNAxLJ+SD
+         N4MbZhH7U5Ch1QWp0RK+7HQaoLs7hNEkBRUrc98Go21KPDvJYo9k5Jxcwg60I34kBiO+
+         jzOdiyIcNvEffCQDJ+R+4oiEbHiYpWCC7SztqVRM0a5mkaA2h1vc8A30s9hJVYxiQTtx
+         Ib/y5W17q02KtYLuNS7y2CNKXljk01bV4+sm4WZKuiGzO7rasB8rgb2OEWJAWVzLw/kI
+         0D+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OKI2TnFH1VivBlI9Zu+f4DLD1Oxh3uwKhDHr4Ttuqi4=;
+        b=w4Bqb3NmkmIH15iXQJRYguHwIXXT4MeeO5EWlOGTnuctijPipv0WSxGhL1Xt+kJblX
+         ob7KK8njsuXRNyAaGhFOtTXtaxG8oWEMu03dIl6J55NqLYepaZCeUFiHiuuDdVCUO1sK
+         M39z/LW90p5822zQ1qp7VmYd8VcA/V6Yywi4SkoHbFAJgbLazm5ajk2i9RXxdxqAtQ3P
+         +Qxn6+DliA77sk4hCIMTrRvjKukBWidyzg1EABAx3Wv4EUR6oQy4W+0apdeBvP8tzSWz
+         z4CpQTxlciq5q/nfE1KVssz2CPSEmxKPmNX/XnfacHoNkqvByvGnW0kn9h2/JdYEjrdi
+         EdCQ==
+X-Gm-Message-State: AO0yUKV90d1j88EhOR09ZPYVUOfwdWqYY9QViticrKtToDr+T4Zlrh3u
+        vxaHw3eznnDOp7ny8A9rpuE=
+X-Google-Smtp-Source: AK7set+dKyKPNF2+oXsuE4x1TqOXOhwS+x+LUr+rCYzBOGgJDag9Cq+SNQNNO/rL9nq18lzBFFSx1w==
+X-Received: by 2002:a5d:4486:0:b0:2c3:da8a:192 with SMTP id j6-20020a5d4486000000b002c3da8a0192mr4607178wrq.15.1676547769878;
+        Thu, 16 Feb 2023 03:42:49 -0800 (PST)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id g1-20020a5d46c1000000b002c55306f6edsm1309313wrs.54.2023.02.16.03.42.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Feb 2023 03:42:49 -0800 (PST)
+Message-ID: <a08cb6a6-2453-34fe-f6f3-9ff81585d65d@gmail.com>
+Date:   Thu, 16 Feb 2023 12:42:47 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Content-Language: en-US
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] dt-bindings: hwlock: sun6i: Add missing names
-Message-ID: <20230216095454.54f4d5ca@posteo.net>
-In-Reply-To: <a2d10295-d9eb-cd1f-8f48-b61f97487208@linaro.org>
-References: <20230215203711.6293-1-bage@debian.org>
-        <20230215203711.6293-4-bage@debian.org>
-        <a2d10295-d9eb-cd1f-8f48-b61f97487208@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230215041257.14548-1-tinghan.shen@mediatek.com>
+ <20230215041257.14548-5-tinghan.shen@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v7 04/12] remoteproc: mediatek: Add SCP core 1 register
+ definitions
+In-Reply-To: <20230215041257.14548-5-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 16 Feb 2023 09:36:08 +0100
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-> On 15/02/2023 21:37, Bastian Germann wrote:
-> > The allwinner,sun6i-a31-hwspinlock.yaml binding needs clock-names and
-> > reset-names set to "ahb" as required by the Linux driver.
-> > 
-> > Fixes: f9e784dcb63f ("dt-bindings: hwlock: add sun6i_hwspinlock") 
-> > Signed-off-by: Bastian Germann <bage@debian.org>
+
+On 15/02/2023 05:12, Tinghan Shen wrote:
+> Add MT8195 SCP core 1 related register definitions.
 > 
-> With new data, I changed my opinion and NAKed this. Still NAK, sorry.
-> Please drop the clock/reset-names from the driver (use indices) and DTS.
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I won't be able to fix this in the next time. I'm currently in the state of
-moving and can't set up my hardware to test the changes. And I'm not willing
-to submit changes without testing. And with testing I really mean testing it
-against a running Crust firmware which touches the hwspinlock unit.
+In general I would say this patch should be squashed into 5/12, but please see 
+comments below.
 
-If someone wants to change that, I'm happy to see it working out, but please
-do it properly. Just testing the locks in Linux only is not sufficient. If
-some directions are required, I still have my working repo up at Github:
-https://github.com/wgottwalt/sunxi_hwspinlock
-It may be a bit dated, but should be a good start.
+> ---
+>   drivers/remoteproc/mtk_common.h | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index ea6fa1100a00..3778894c96f3 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -47,6 +47,7 @@
+>   #define MT8192_SCP2SPM_IPC_CLR		0x4094
+>   #define MT8192_GIPC_IN_SET		0x4098
+>   #define MT8192_HOST_IPC_INT_BIT		BIT(0)
+> +#define MT8195_CORE1_HOST_IPC_INT_BIT	BIT(4)
+>   
+>   #define MT8192_CORE0_SW_RSTN_CLR	0x10000
+>   #define MT8192_CORE0_SW_RSTN_SET	0x10004
+> @@ -56,6 +57,26 @@
+>   
+>   #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
+>   
+> +#define MT8195_CPU1_SRAM_PD			0x1084
+> +#define MT8195_SSHUB2APMCU_IPC_SET		0x4088
+> +#define MT8195_SSHUB2APMCU_IPC_CLR		0x408C
+> +#define MT8195_CORE1_SW_RSTN_CLR		0x20000
+> +#define MT8195_CORE1_SW_RSTN_SET		0x20004
+> +#define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
+> +#define MT8195_CORE1_WDT_IRQ			0x20030
 
-Greetings,
-Will
+Should be part of 10/12 maybe?
+
+> +#define MT8195_CORE1_WDT_CFG			0x20034
+> +
+> +#define MT8195_SEC_CTRL				0x85000
+> +#define MT8195_CORE_OFFSET_ENABLE_D		BIT(13)
+> +#define MT8195_CORE_OFFSET_ENABLE_I		BIT(12)
+> +#define MT8195_L2TCM_OFFSET_RANGE_0_LOW		0x850b0
+> +#define MT8195_L2TCM_OFFSET_RANGE_0_HIGH	0x850b4
+> +#define MT8195_L2TCM_OFFSET			0x850d0
+
+Should be part of 9/12 maybe
+
+> +#define SCP_SRAM_REMAP_LOW			0
+> +#define SCP_SRAM_REMAP_HIGH			1
+> +#define SCP_SRAM_REMAP_OFFSET			2
+> +#define SCP_SRAM_REMAP_SIZE			3
+
+Never used.
+
+> +
+>   #define SCP_FW_VER_LEN			32
+>   #define SCP_SHARE_BUFFER_SIZE		288
+>   
