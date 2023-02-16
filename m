@@ -2,60 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B93C636CC
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Feb 2023 11:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D60F3C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Feb 2023 11:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjBPLmz (ORCPT
+        id S229656AbjBPLrX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Feb 2023 06:42:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60164 "EHLO
+        Thu, 16 Feb 2023 06:47:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230366AbjBPLmx (ORCPT
+        with ESMTP id S230402AbjBPLrV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Feb 2023 06:42:53 -0500
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B9B77EFE;
-        Thu, 16 Feb 2023 03:42:51 -0800 (PST)
-Received: by mail-wr1-x434.google.com with SMTP id a2so1557198wrd.6;
-        Thu, 16 Feb 2023 03:42:51 -0800 (PST)
+        Thu, 16 Feb 2023 06:47:21 -0500
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35BAC1F922;
+        Thu, 16 Feb 2023 03:47:20 -0800 (PST)
+Received: by mail-wr1-x430.google.com with SMTP id bu23so1558896wrb.8;
+        Thu, 16 Feb 2023 03:47:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OKI2TnFH1VivBlI9Zu+f4DLD1Oxh3uwKhDHr4Ttuqi4=;
-        b=gZrP2qlYh/6CWJTLqXysnOcvuh52GIC3d9yfVG0MJpITqyjaFvdpUPeyAbqMkcM3Fa
-         zXUSjvUfnTXjRU7JDXzCXkJPfg6imR/g6SaSUTLojExscX49w9mtfsR46pXfNAxLJ+SD
-         N4MbZhH7U5Ch1QWp0RK+7HQaoLs7hNEkBRUrc98Go21KPDvJYo9k5Jxcwg60I34kBiO+
-         jzOdiyIcNvEffCQDJ+R+4oiEbHiYpWCC7SztqVRM0a5mkaA2h1vc8A30s9hJVYxiQTtx
-         Ib/y5W17q02KtYLuNS7y2CNKXljk01bV4+sm4WZKuiGzO7rasB8rgb2OEWJAWVzLw/kI
-         0D+Q==
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K/GymRTC8E30kXdASfjuHKtUeZnJnGl8Jnbq0ua5e4w=;
+        b=pElrnzmI7gL4teX90A06t9foesLfwzg2W3jO4Ac+TptnGnaYWUeJT7aqzUVL9elwlz
+         TBY2fVERHnMX2SDLV9WYl/W8cYbIRVq/WQyeBEuU7tbOcS1ZeTPVa11r1CNi2U3d63ih
+         gGILu/yvs9q0kMx9c52+ZMs8kOs3eXknbum5pMWhJKDKTwt65Dj9d6yoK/COuFgJ0b7K
+         qVyUM2dcTBOUJNBsQOCALgYXd2BLkaK+vgyQMOcZnh9IHTsRBKOe5q0wGVcU2vFU7rOi
+         TodwibpS3sLPqy1n/ARtQ8Dbmk9T2vDUWE6tIeIGEwPXrpNM1Ed/oD/gvMTwzus2cxEO
+         Fh0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKI2TnFH1VivBlI9Zu+f4DLD1Oxh3uwKhDHr4Ttuqi4=;
-        b=w4Bqb3NmkmIH15iXQJRYguHwIXXT4MeeO5EWlOGTnuctijPipv0WSxGhL1Xt+kJblX
-         ob7KK8njsuXRNyAaGhFOtTXtaxG8oWEMu03dIl6J55NqLYepaZCeUFiHiuuDdVCUO1sK
-         M39z/LW90p5822zQ1qp7VmYd8VcA/V6Yywi4SkoHbFAJgbLazm5ajk2i9RXxdxqAtQ3P
-         +Qxn6+DliA77sk4hCIMTrRvjKukBWidyzg1EABAx3Wv4EUR6oQy4W+0apdeBvP8tzSWz
-         z4CpQTxlciq5q/nfE1KVssz2CPSEmxKPmNX/XnfacHoNkqvByvGnW0kn9h2/JdYEjrdi
-         EdCQ==
-X-Gm-Message-State: AO0yUKV90d1j88EhOR09ZPYVUOfwdWqYY9QViticrKtToDr+T4Zlrh3u
-        vxaHw3eznnDOp7ny8A9rpuE=
-X-Google-Smtp-Source: AK7set+dKyKPNF2+oXsuE4x1TqOXOhwS+x+LUr+rCYzBOGgJDag9Cq+SNQNNO/rL9nq18lzBFFSx1w==
-X-Received: by 2002:a5d:4486:0:b0:2c3:da8a:192 with SMTP id j6-20020a5d4486000000b002c3da8a0192mr4607178wrq.15.1676547769878;
-        Thu, 16 Feb 2023 03:42:49 -0800 (PST)
+        bh=K/GymRTC8E30kXdASfjuHKtUeZnJnGl8Jnbq0ua5e4w=;
+        b=elm4ewgrxXn3iW9GiR85iuDZ70uhjeGTG0ORfIAsxDx9tKgvGuATBAL0E9xzNphmsr
+         MV84NAyWUOFBBaJi3RLUkmN3xalf/T+7g8oMbTRDm4caK12kB0SY0lI40fnFh8zTyhkc
+         9zmDgFiEeJd6QcFEjix4S+b86Z5GDhaMv8w9OuYUzBpu85sfFeCtc09D1nPg/Ixrhwzr
+         U86mQ03jK5POxn9qUU+SHb72St/RHgBrFGwFAKBrFrar5nbIcu+/r5eqjGIS9NAHNRaw
+         P6yJUG78G+lGXONdWnTY5Om6zdABhzE5yJ819p0vGau6pRnSNPdonNFg5jCBHUcaKRWy
+         +40w==
+X-Gm-Message-State: AO0yUKX+gWAIOCAo/Jf14wjSPS+I1HZWEYQ9Hj7W4lLv+92Iep1EYtKF
+        lG2Jvb96nneCWmR2l7yakWM=
+X-Google-Smtp-Source: AK7set+4r8zWos74GXrVBfODT1MIee24TRa67kh+h9GiMPo+o4DQjgxdbo2YrQ/bsYkfXlTIWQFLkw==
+X-Received: by 2002:a5d:6882:0:b0:2c3:fb3e:ae85 with SMTP id h2-20020a5d6882000000b002c3fb3eae85mr5416717wru.44.1676548038630;
+        Thu, 16 Feb 2023 03:47:18 -0800 (PST)
 Received: from [192.168.2.177] ([207.188.167.132])
-        by smtp.gmail.com with ESMTPSA id g1-20020a5d46c1000000b002c55306f6edsm1309313wrs.54.2023.02.16.03.42.48
+        by smtp.gmail.com with ESMTPSA id o15-20020a5d62cf000000b002c406b357cfsm1320858wrv.86.2023.02.16.03.47.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Feb 2023 03:42:49 -0800 (PST)
-Message-ID: <a08cb6a6-2453-34fe-f6f3-9ff81585d65d@gmail.com>
-Date:   Thu, 16 Feb 2023 12:42:47 +0100
+        Thu, 16 Feb 2023 03:47:18 -0800 (PST)
+Message-ID: <533e5cd4-713a-f683-1545-913b84d280c2@gmail.com>
+Date:   Thu, 16 Feb 2023 12:47:16 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
+Subject: Re: [PATCH v7 02/12] arm64: dts: mediatek: mt8183-kukui: Update the
+ node name of SCP rpmsg subnode
 Content-Language: en-US
 To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -69,11 +71,9 @@ Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20230215041257.14548-1-tinghan.shen@mediatek.com>
- <20230215041257.14548-5-tinghan.shen@mediatek.com>
+ <20230215041257.14548-3-tinghan.shen@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v7 04/12] remoteproc: mediatek: Add SCP core 1 register
- definitions
-In-Reply-To: <20230215041257.14548-5-tinghan.shen@mediatek.com>
+In-Reply-To: <20230215041257.14548-3-tinghan.shen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,64 +83,30 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 On 15/02/2023 05:12, Tinghan Shen wrote:
-> Add MT8195 SCP core 1 related register definitions.
+> Align the node name with the definition in SCP bindings.
 > 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-In general I would say this patch should be squashed into 5/12, but please see 
-comments below.
-
 > ---
->   drivers/remoteproc/mtk_common.h | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
+>   arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index ea6fa1100a00..3778894c96f3 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -47,6 +47,7 @@
->   #define MT8192_SCP2SPM_IPC_CLR		0x4094
->   #define MT8192_GIPC_IN_SET		0x4098
->   #define MT8192_HOST_IPC_INT_BIT		BIT(0)
-> +#define MT8195_CORE1_HOST_IPC_INT_BIT	BIT(4)
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> index fbe14b13051a..a259eb043de5 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> @@ -810,7 +810,7 @@
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&scp_pins>;
 >   
->   #define MT8192_CORE0_SW_RSTN_CLR	0x10000
->   #define MT8192_CORE0_SW_RSTN_SET	0x10004
-> @@ -56,6 +57,26 @@
->   
->   #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
->   
-> +#define MT8195_CPU1_SRAM_PD			0x1084
-> +#define MT8195_SSHUB2APMCU_IPC_SET		0x4088
-> +#define MT8195_SSHUB2APMCU_IPC_CLR		0x408C
-> +#define MT8195_CORE1_SW_RSTN_CLR		0x20000
-> +#define MT8195_CORE1_SW_RSTN_SET		0x20004
-> +#define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
-> +#define MT8195_CORE1_WDT_IRQ			0x20030
+> -	cros_ec {
+> +	cros-ec-rpmsg {
+>   		compatible = "google,cros-ec-rpmsg";
 
-Should be part of 10/12 maybe?
+There are more users of "google,cros-ec-rpmsg" which would nedd to be updated.
 
-> +#define MT8195_CORE1_WDT_CFG			0x20034
-> +
-> +#define MT8195_SEC_CTRL				0x85000
-> +#define MT8195_CORE_OFFSET_ENABLE_D		BIT(13)
-> +#define MT8195_CORE_OFFSET_ENABLE_I		BIT(12)
-> +#define MT8195_L2TCM_OFFSET_RANGE_0_LOW		0x850b0
-> +#define MT8195_L2TCM_OFFSET_RANGE_0_HIGH	0x850b4
-> +#define MT8195_L2TCM_OFFSET			0x850d0
+Regards,
+Matthias
 
-Should be part of 9/12 maybe
-
-> +#define SCP_SRAM_REMAP_LOW			0
-> +#define SCP_SRAM_REMAP_HIGH			1
-> +#define SCP_SRAM_REMAP_OFFSET			2
-> +#define SCP_SRAM_REMAP_SIZE			3
-
-Never used.
-
-> +
->   #define SCP_FW_VER_LEN			32
->   #define SCP_SHARE_BUFFER_SIZE		288
->   
+>   		mediatek,rpmsg-name = "cros-ec-rpmsg";
+>   	};
