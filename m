@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D564C05027
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Feb 2023 18:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD39C61DA3
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Feb 2023 21:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229512AbjBQS36 (ORCPT
+        id S231562AbjBTV6M (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Feb 2023 13:29:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40274 "EHLO
+        Mon, 20 Feb 2023 16:58:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjBQS35 (ORCPT
+        with ESMTP id S229738AbjBTV6L (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Feb 2023 13:29:57 -0500
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ABCE60F98
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Feb 2023 10:29:54 -0800 (PST)
-Received: by mail-pg1-x531.google.com with SMTP id l16so1130787pgt.5
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Feb 2023 10:29:54 -0800 (PST)
+        Mon, 20 Feb 2023 16:58:11 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1472717
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Feb 2023 13:58:03 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id b20so1983447pfo.6
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Feb 2023 13:58:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZbrN/wtqaLP+762+fL1BSuVTDl18qAdomxpq221PnGA=;
-        b=CLH8BrYtdo+HFeDqBo6ECWp7h8IqocBPKFAQ92ku6OSDeeNKoEt28tmutSJZslL6ib
-         WwAEHOlm7li0xrHHZ306Hqkn6Zmqni02+izqd6RlK5SNGM8qH9qzOnFjVZG3QIUwBJw1
-         DCP7zU8GgALgWrIrxK3NW90YZ2+9l/N5Eg4POe3nTTNc72sDuoLFHIHX11WeyejN6ihR
-         HQuPjY4t2Mz8depH1lPI6KXySN3wltGidqRKBqLJp6m56OrhV1oVzBBILEUgGTtIYHb7
-         IpNOo80buSz4cmvpVeNPv4AIM5XndamZ+YouLE0+v9CU2YP/fqX3tXWxt8vw8Ediylgv
-         2qnw==
+        bh=o6uK3JRKD9glmPZVrtfk/3zmVSx28VEnBekWkjPdr5Y=;
+        b=JQdsgB85zsGpr7bJJtGBrfD6jVZ3ad3XG7mHodDwjrQOppO96CfKnvWDvn027EwEHC
+         96gBnPMYLefqcV9GtDQ0+KdVQAIS6RA+3R1CqkJMaXPu7rOJpoBPfnZY1CbEx4/KGiY+
+         VfP4cOljStALIu5BZ2RNwopsKcX+99WTfzFTQNDzn+y3tdQCnMs5sWt7qUe0ODIy7Iik
+         rlyymb0gEjbJtJyh7Rd+hwcHOS4yxtkxXZAaAzwGwiygiwlezXQcXtGzZKN1IVWJrIZ6
+         KYTBZopgGfTqij71ZSZLw/vf2qKwz80hU2KGTAh3EobzSPjUtDhENfl1b0+KTbQSPJ7m
+         IUdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZbrN/wtqaLP+762+fL1BSuVTDl18qAdomxpq221PnGA=;
-        b=DCkmeRGPquJn36Kl5r95jFyV4o00eGiheVQpudmxBRdGgLd7tdaywzIlqzLIVpbco4
-         zMfFBNMZ8GdWwaJKsWj+86B+6D0n9rMom7j3X5crscpBy5swQxqc8nTJhD+pOKcAl3BF
-         jhGfOdBAyug27gAlJX2chXuOYv428ZASQDmbCW+K6dREcqFP+BHB+KpHuPWN71UI3Hhz
-         HrZR1SnL/XLqcuS0aCJHEAaMYLfR8qtSvc2r+Exkom8XNazNYWqDXK3VC5Fpn2xwFQgh
-         uqsB/manpbmo0jKDUalrqISmRwwzOacWxTfv1uZ4nkyI1yixCRSx/InKNLhyHe7SWjmY
-         I1KA==
-X-Gm-Message-State: AO0yUKXLmiXgbzspGFQuj6251Xv7RdjHXraksxYl6gw4qyuBSVINn50G
-        7KWT4KGOG+oZkk4ay/IbG67HHAi9NJFaltQR
-X-Google-Smtp-Source: AK7set97CeB2IXS5TthkfDUlCh14fu8UEJl1CYVdlUy/CZKjrPzYPCKYQcH5cb7tkaELIW/vJtBykQ==
-X-Received: by 2002:a62:3207:0:b0:5a8:f259:21ff with SMTP id y7-20020a623207000000b005a8f25921ffmr1458995pfy.14.1676658593791;
-        Fri, 17 Feb 2023 10:29:53 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:e03d:a736:2176:868f])
-        by smtp.gmail.com with ESMTPSA id e24-20020aa78c58000000b00581c741f95csm3361347pfd.46.2023.02.17.10.29.52
+        bh=o6uK3JRKD9glmPZVrtfk/3zmVSx28VEnBekWkjPdr5Y=;
+        b=r4LDqk9Ndn0l98mJi+xCfI1YiFGoq6EfWxAzxup1nPicMjcvgNQjpcW/YWhwhcDboR
+         YY5GY0v92cAHribpw4WMXxaG5hr2exm8kSuvSPN/vn5Z/yllvcytpckxj2FjIsJAgHtw
+         X9Dlbn7YZEyjq9+qNKI2LWCHRpDf7AV1HrNQazBMHwovRmR0fGBhJ8ELkUsrjJp3hsOw
+         ab6Y6Pq8NcQz/ZJ3CQdLeiSn4HusHmWbbop8Y7BTzVU42SS6eRdBimi68FTPcf+EG8io
+         5JHR4Dq8eOPGbrkGNiCKY1CyXurHrUSo9bk0hAfhWYAxv6UeUdC8OTzAC9xnTExQ1CAY
+         h/bg==
+X-Gm-Message-State: AO0yUKUiVHaVp6SBi/sbANypmpXUvUPlg4pTPK+8POlEy/OjFgf3F5Ah
+        Qx4FQ8nrZvInTB/B/S1/xj39XA==
+X-Google-Smtp-Source: AK7set+5H75omPr1jx07B6MYxxT9l6o0A4rTTnvrjrtvO9CaWBAnSNy7c5wG62GfASXCoYugnTS1OA==
+X-Received: by 2002:a05:6a00:4194:b0:5a8:cc39:fc58 with SMTP id ca20-20020a056a00419400b005a8cc39fc58mr3447013pfb.6.1676930282962;
+        Mon, 20 Feb 2023 13:58:02 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:66c:5b9c:15ea:e519])
+        by smtp.gmail.com with ESMTPSA id m20-20020aa79014000000b00593c1c5bd0esm1433029pfo.164.2023.02.20.13.58.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Feb 2023 10:29:53 -0800 (PST)
-Date:   Fri, 17 Feb 2023 11:29:50 -0700
+        Mon, 20 Feb 2023 13:58:02 -0800 (PST)
+Date:   Mon, 20 Feb 2023 14:58:00 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
@@ -63,139 +63,290 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v5] remoteproc: imx_dsp_rproc: add module parameter to
- ignore ready flag from remote processor
-Message-ID: <20230217182950.GA585964@p14s>
-References: <20230217094124.9440-1-iuliana.prodan@oss.nxp.com>
+Subject: Re: [PATCH v4] remoteproc: imx_dsp_rproc: add custom memory copy
+ implementation for i.MX DSP Cores
+Message-ID: <20230220215800.GA794395@p14s>
+References: <20230207134401.26724-1-iuliana.prodan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230217094124.9440-1-iuliana.prodan@oss.nxp.com>
+In-Reply-To: <20230207134401.26724-1-iuliana.prodan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Hi Iuliana,
 
-On Fri, Feb 17, 2023 at 11:41:24AM +0200, Iuliana Prodan (OSS) wrote:
+On Tue, Feb 07, 2023 at 03:44:01PM +0200, Iuliana Prodan (OSS) wrote:
 > From: Iuliana Prodan <iuliana.prodan@nxp.com>
 > 
-> There are cases when we want to test a simple "hello world"
-> application on the DSP and we don't have IPC between the cores.
-> Therefore, do not wait for a confirmation from the remote processor
-> at start.
+> The IRAM is part of the HiFi DSP.
+> According to hardware specification only 32-bits write are allowed
+> otherwise we get a Kernel panic.
 > 
-> Added "no_mailboxes" flag while inserting the module to not initialize
-> any mailboxes, and so ignore remote processor reply after start.
-> By default, this is off - do not ignore reply from rproc.
+> Therefore add a custom memory copy and memset functions to deal with
+> the above restriction.
 > 
 > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
-> Changes since v4
-> - s/ignore_dsp_ready/no_mailboxes
-> - make imx_dsp_rproc_mbox_init() a function pointer which,
-> based on the no_mailboxes module parameter, can initialize
-> the mailboxes (= imx_dsp_rproc_mbox_alloc()), in case they exists,
-> otherwise does nothing (= imx_dsp_rproc_mbox_no_alloc()).
 > 
+> ---
 > Changes since v3
-> - do not instantiate static var to 0, this is done by default
-> - do not initialize mailbox if not IPC between the core
+> - remove Reported-by
 > 
 > Changes since v2
-> - s/ignoreready/ignore_dsp_ready
+> - fix warning "cast from pointer to integer of different size"
+> reported by kernel test robot.
 > 
 > Changes since v1
-> - change BIT(31) to BIT(1) for REMOTE_SKIP_WAIT
+> - added missing check for cases when the memory slot is bigger than the file size;
+> - added a custom memset function
+> - removed is_iomem flag since is not used here
+> - updated custom memcpy function to avoid reading after end of source
+> 
 > ---
->  drivers/remoteproc/imx_dsp_rproc.c | 33 ++++++++++++++++++++++++++++--
->  1 file changed, 31 insertions(+), 2 deletions(-)
+>  drivers/remoteproc/imx_dsp_rproc.c | 181 ++++++++++++++++++++++++++++-
+>  1 file changed, 180 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 95da1cbefacf..85eea85b1655 100644
+> index 2d9f4214a4c51..6a7cef1329329 100644
 > --- a/drivers/remoteproc/imx_dsp_rproc.c
 > +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -28,6 +28,15 @@
->  
->  #define DSP_RPROC_CLK_MAX			5
+> @@ -715,6 +715,185 @@ static void imx_dsp_rproc_kick(struct rproc *rproc, int vqid)
+>  		dev_err(dev, "%s: failed (%d, err:%d)\n", __func__, vqid, err);
+>  }
 >  
 > +/*
-> + * Module parameters
-> + */
-> +static unsigned int no_mailboxes;
-> +module_param_named(no_mailboxes, no_mailboxes, int, 0644);
-> +MODULE_PARM_DESC(no_mailboxes,
-> +		 "There is no mailbox between cores, so ignore remote proc "
-> +		 "reply after start, default is 0 (off).");
-> +
->  #define REMOTE_IS_READY				BIT(0)
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> @@ -172,6 +181,9 @@ static const struct imx_rproc_att imx_dsp_rproc_att_imx8ulp[] = {
->  	{ 0x30000000, 0x90000000, 0x10000000, 0},
->  };
->  
-> +/* Initialize the mailboxes between cores, if exists */
-> +static int (*imx_dsp_rproc_mbox_init)(struct imx_dsp_rproc *priv);
-> +
->  /* Reset function for DSP on i.MX8MP */
->  static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
->  {
-> @@ -492,12 +504,12 @@ static void imx_dsp_rproc_rxdb_callback(struct mbox_client *cl, void *data)
->  }
->  
->  /**
-> - * imx_dsp_rproc_mbox_init() - request mailbox channels
-> + * imx_dsp_rproc_mbox_alloc() - request mailbox channels
->   * @priv: private data pointer
->   *
->   * Request three mailbox channels (tx, rx, rxdb).
->   */
-> -static int imx_dsp_rproc_mbox_init(struct imx_dsp_rproc *priv)
-> +static int imx_dsp_rproc_mbox_alloc(struct imx_dsp_rproc *priv)
->  {
->  	struct device *dev = priv->rproc->dev.parent;
->  	struct mbox_client *cl;
-> @@ -560,6 +572,18 @@ static int imx_dsp_rproc_mbox_init(struct imx_dsp_rproc *priv)
->  	return ret;
->  }
->  
-> +/**
-> + * imx_dsp_rproc_mbox_no_alloc()
+> + * Custom memory copy implementation for i.MX DSP Cores
 > + *
-> + * Empty function for no mailbox between cores
-> + *
-> + * Always return 0
+> + * The IRAM is part of the HiFi DSP.
+> + * According to hw specs only 32-bits writes are allowed.
 > + */
-> +static int imx_dsp_rproc_mbox_no_alloc(struct imx_dsp_rproc *priv)
+> +static int imx_dsp_rproc_memcpy(void *dest, const void *src, size_t size)
 > +{
+> +	const u8 *src_byte = src;
+> +	u32 affected_mask;
+> +	u32 tmp;
+> +	int i, q, r;
+> +
+
+	const u8 *src_byte = src;
+	u32 affected_mask;
+	int i, q, r;
+	u32 tmp;
+
+> +	/* destination must be 32bit aligned */
+> +	if (!IS_ALIGNED((uintptr_t)dest, 4))
+> +		return -EINVAL;
+> +
+> +	q = size / 4;
+> +	r = size % 4;
+> +
+> +	/* __iowrite32_copy use 32bit size values so divide by 4 */
+> +	__iowrite32_copy(dest, src, q);
+> +
+> +	if (r) {
+> +		affected_mask = (1 << (8 * r)) - 1;
+
+Please use GENMASK()
+
+> +
+> +		/* first read the 32bit data of dest, then change affected
+> +		 * bytes, and write back to dest.
+> +		 * For unaffected bytes, it should not be changed
+> +		 */
+
+Wrong multi-line comment format.
+
+> +		tmp = ioread32(dest + q * 4);
+
+This turns into readl().
+
+> +		tmp &= ~affected_mask;
+> +
+> +		/* avoid reading after end of source */
+> +		for (i = 0; i < r; i++)
+> +			tmp |= (src_byte[q * 4 + i] << (8 * i));
+> +
+> +		iowrite32(tmp, dest + q * 4);
+
+As far as I can tell this turns into a simple writel(), leading me to beleive
+the above __iowrite32_copy() can safely be replaced by a loop that calls
+writel().
+
+> +	}
+> +
 > +	return 0;
 > +}
 > +
->  static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
->  {
->  	mbox_free_channel(priv->tx_ch);
-> @@ -903,6 +927,11 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
->  	priv->rproc = rproc;
->  	priv->dsp_dcfg = dsp_dcfg;
->  
-> +	if (no_mailboxes)
-> +		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_no_alloc;
-> +	else
-> +		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_alloc;
+> +/*
+> + * Custom memset implementation for i.MX DSP Cores
+> + *
+> + * The IRAM is part of the HiFi DSP.
+> + * According to hw specs only 32-bits writes are allowed.
+> + */
+> +static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
+> +{
+> +	u32 affected_mask;
+> +	u32 tmp_val = value;
+> +	u32 *tmp_dst = addr;
+> +	u32 tmp;
+> +	int q, r;
+> +
+> +	/* destination must be 32bit aligned */
+> +	if (!IS_ALIGNED((uintptr_t)addr, 4))
+> +		return -EINVAL;
 > +
 
-This looks good now.  The merge window for the 6.3 cycle opens on Sunday, which
-I find too close to start adding new things.  As such I will apply your patch to
-my local branch and publish it in three weeks when v6.3-rc2 comes out.
+Same as above
+
+> +	tmp_val |= tmp_val << 8;
+> +	tmp_val |= tmp_val << 16;
+> +
+> +	q = size / 4;
+> +	r = size % 4;
+> +
+> +	while (q--)
+> +		iowrite32(tmp_val, tmp_dst++);
+> +
+
+This proves my point about __iowrite32_copy() above.
+
+> +	if (r) {
+> +		affected_mask = (1 << (8 * r)) - 1;
+
+Please use GENMASK()
+
+> +
+> +		/* first read the 32bit data of addr, then change affected
+> +		 * bytes, and write back to addr.
+> +		 * For unaffected bytes, it should not be changed
+> +		 */
+
+Wrong multi-line comment format.
+
+> +		tmp = ioread32(tmp_dst);
+
+                readl();
+
+> +		tmp &= ~affected_mask;
+> +
+> +		tmp |= (tmp_val & affected_mask);
+> +		iowrite32(tmp, tmp_dst);
+
+                writel();
 
 Thanks,
 Mathieu
 
->  	dev_set_drvdata(dev, rproc);
->  
->  	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
+> +	}
+> +
+> +	return 0;
+> +}
+> +/**
+> + * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
+> + * @rproc: remote processor which will be booted using these fw segments
+> + * @fw: the ELF firmware image
+> + *
+> + * This function loads the firmware segments to memory, where the remote
+> + * processor expects them.
+> + *
+> + * Return: 0 on success and an appropriate error code otherwise
+> + */
+> +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	struct device *dev = &rproc->dev;
+> +	const void *ehdr, *phdr;
+> +	int i, ret = 0;
+> +	u16 phnum;
+> +	const u8 *elf_data = fw->data;
+> +	u8 class = fw_elf_get_class(fw);
+> +	u32 elf_phdr_get_size = elf_size_of_phdr(class);
+> +
+> +	ehdr = elf_data;
+> +	phnum = elf_hdr_get_e_phnum(class, ehdr);
+> +	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
+> +
+> +	/* go through the available ELF segments */
+> +	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
+> +		u64 da = elf_phdr_get_p_paddr(class, phdr);
+> +		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
+> +		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
+> +		u64 offset = elf_phdr_get_p_offset(class, phdr);
+> +		u32 type = elf_phdr_get_p_type(class, phdr);
+> +		void *ptr;
+> +
+> +		if (type != PT_LOAD || !memsz)
+> +			continue;
+> +
+> +		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
+> +			type, da, memsz, filesz);
+> +
+> +		if (filesz > memsz) {
+> +			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
+> +				filesz, memsz);
+> +			ret = -EINVAL;
+> +			break;
+> +		}
+> +
+> +		if (offset + filesz > fw->size) {
+> +			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
+> +				offset + filesz, fw->size);
+> +			ret = -EINVAL;
+> +			break;
+> +		}
+> +
+> +		if (!rproc_u64_fit_in_size_t(memsz)) {
+> +			dev_err(dev, "size (%llx) does not fit in size_t type\n",
+> +				memsz);
+> +			ret = -EOVERFLOW;
+> +			break;
+> +		}
+> +
+> +		/* grab the kernel address for this device address */
+> +		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
+> +		if (!ptr) {
+> +			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> +				memsz);
+> +			ret = -EINVAL;
+> +			break;
+> +		}
+> +
+> +		/* put the segment where the remote processor expects it */
+> +		if (filesz) {
+> +			ret = imx_dsp_rproc_memcpy(ptr, elf_data + offset, filesz);
+> +			if (ret) {
+> +				dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%llx\n",
+> +					da, memsz);
+> +				break;
+> +			}
+> +		}
+> +
+> +		/* zero out remaining memory for this segment */
+> +		if (memsz > filesz) {
+> +			ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
+> +			if (ret) {
+> +				dev_err(dev, "memset failed for da 0x%llx memsz 0x%llx\n",
+> +					da, memsz);
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  {
+>  	if (rproc_elf_load_rsc_table(rproc, fw))
+> @@ -729,7 +908,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+>  	.start		= imx_dsp_rproc_start,
+>  	.stop		= imx_dsp_rproc_stop,
+>  	.kick		= imx_dsp_rproc_kick,
+> -	.load		= rproc_elf_load_segments,
+> +	.load		= imx_dsp_rproc_elf_load_segments,
+>  	.parse_fw	= imx_dsp_rproc_parse_fw,
+>  	.sanity_check	= rproc_elf_sanity_check,
+>  	.get_boot_addr	= rproc_elf_get_boot_addr,
 > -- 
 > 2.17.1
 > 
