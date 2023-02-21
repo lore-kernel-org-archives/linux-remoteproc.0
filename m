@@ -2,351 +2,149 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD39C61DA3
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Feb 2023 21:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AD5C64EC4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Feb 2023 11:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231562AbjBTV6M (ORCPT
+        id S234079AbjBUL0c (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Feb 2023 16:58:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53556 "EHLO
+        Tue, 21 Feb 2023 06:26:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbjBTV6L (ORCPT
+        with ESMTP id S233460AbjBUL0b (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Feb 2023 16:58:11 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1472717
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Feb 2023 13:58:03 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id b20so1983447pfo.6
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Feb 2023 13:58:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6uK3JRKD9glmPZVrtfk/3zmVSx28VEnBekWkjPdr5Y=;
-        b=JQdsgB85zsGpr7bJJtGBrfD6jVZ3ad3XG7mHodDwjrQOppO96CfKnvWDvn027EwEHC
-         96gBnPMYLefqcV9GtDQ0+KdVQAIS6RA+3R1CqkJMaXPu7rOJpoBPfnZY1CbEx4/KGiY+
-         VfP4cOljStALIu5BZ2RNwopsKcX+99WTfzFTQNDzn+y3tdQCnMs5sWt7qUe0ODIy7Iik
-         rlyymb0gEjbJtJyh7Rd+hwcHOS4yxtkxXZAaAzwGwiygiwlezXQcXtGzZKN1IVWJrIZ6
-         KYTBZopgGfTqij71ZSZLw/vf2qKwz80hU2KGTAh3EobzSPjUtDhENfl1b0+KTbQSPJ7m
-         IUdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o6uK3JRKD9glmPZVrtfk/3zmVSx28VEnBekWkjPdr5Y=;
-        b=r4LDqk9Ndn0l98mJi+xCfI1YiFGoq6EfWxAzxup1nPicMjcvgNQjpcW/YWhwhcDboR
-         YY5GY0v92cAHribpw4WMXxaG5hr2exm8kSuvSPN/vn5Z/yllvcytpckxj2FjIsJAgHtw
-         X9Dlbn7YZEyjq9+qNKI2LWCHRpDf7AV1HrNQazBMHwovRmR0fGBhJ8ELkUsrjJp3hsOw
-         ab6Y6Pq8NcQz/ZJ3CQdLeiSn4HusHmWbbop8Y7BTzVU42SS6eRdBimi68FTPcf+EG8io
-         5JHR4Dq8eOPGbrkGNiCKY1CyXurHrUSo9bk0hAfhWYAxv6UeUdC8OTzAC9xnTExQ1CAY
-         h/bg==
-X-Gm-Message-State: AO0yUKUiVHaVp6SBi/sbANypmpXUvUPlg4pTPK+8POlEy/OjFgf3F5Ah
-        Qx4FQ8nrZvInTB/B/S1/xj39XA==
-X-Google-Smtp-Source: AK7set+5H75omPr1jx07B6MYxxT9l6o0A4rTTnvrjrtvO9CaWBAnSNy7c5wG62GfASXCoYugnTS1OA==
-X-Received: by 2002:a05:6a00:4194:b0:5a8:cc39:fc58 with SMTP id ca20-20020a056a00419400b005a8cc39fc58mr3447013pfb.6.1676930282962;
-        Mon, 20 Feb 2023 13:58:02 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:66c:5b9c:15ea:e519])
-        by smtp.gmail.com with ESMTPSA id m20-20020aa79014000000b00593c1c5bd0esm1433029pfo.164.2023.02.20.13.58.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Feb 2023 13:58:02 -0800 (PST)
-Date:   Mon, 20 Feb 2023 14:58:00 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v4] remoteproc: imx_dsp_rproc: add custom memory copy
- implementation for i.MX DSP Cores
-Message-ID: <20230220215800.GA794395@p14s>
-References: <20230207134401.26724-1-iuliana.prodan@oss.nxp.com>
+        Tue, 21 Feb 2023 06:26:31 -0500
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDA722DE6;
+        Tue, 21 Feb 2023 03:26:30 -0800 (PST)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31LARU9F024421;
+        Tue, 21 Feb 2023 11:26:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=/Wy6qoadl6SGbuKajU9rwIy3JAd97ZcZ5RR1eQKvzFI=;
+ b=lvu4b4E/PSu/U2lJP8hvZUnw1LnDYl0Yax7e5bTb7h+95Yt+8yCH3y41ce6SeB0Y5Aox
+ N4AorHuujyYghHj2fZSafxqd9HmiQjs0l5F93xUqp11sASABC/iV/IxFbYh+XblH3X7R
+ QNf56+yh9B36WDG09G6pPiCk+4559y+oVU/zFICmCRuyEiVBVSJqwKhI6YGx+qn6gk+e
+ P/GECR6Hvvcx0FeQLMMUf2ibbw6Bb+h17Tpo9S/87nIAOWfVCz20HdK+Hi2q2AXAIyVW
+ Fm6/qB4WsySQcd7AuZxxpafRNaISL3hw05nLOwg7EPVPeMF+djIdGZSWgbtqi3en+UCY LQ== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nvp4v0y6d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Feb 2023 11:26:01 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31LBQ1dW005630
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 21 Feb 2023 11:26:01 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Tue, 21 Feb 2023 03:25:56 -0800
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <keescook@chromium.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Subject: [RFC PATCH 0/6] Add basic Minidump kernel driver support
+Date:   Tue, 21 Feb 2023 16:55:07 +0530
+Message-ID: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230207134401.26724-1-iuliana.prodan@oss.nxp.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: a5P6fu8JZBUxR4Ov9Ud2zNc6pYHWhwNy
+X-Proofpoint-GUID: a5P6fu8JZBUxR4Ov9Ud2zNc6pYHWhwNy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-21_06,2023-02-20_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ clxscore=1015 adultscore=0 spamscore=0 phishscore=0 suspectscore=0
+ bulkscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302210098
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Iuliana,
+Minidump is a best effort mechanism to collect useful and predefined data
+for first level of debugging on end user devices running on Qualcomm SoCs.
+It is built on the premise that System on Chip (SoC) or subsystem part of
+SoC crashes, due to a range of hardware and software bugs. Hence, the
+ability to collect accurate data is only a best-effort. The data collected
+could be invalid or corrupted, data collection itself could fail, and so on.
 
-On Tue, Feb 07, 2023 at 03:44:01PM +0200, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> The IRAM is part of the HiFi DSP.
-> According to hardware specification only 32-bits write are allowed
-> otherwise we get a Kernel panic.
-> 
-> Therefore add a custom memory copy and memset functions to deal with
-> the above restriction.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> ---
-> Changes since v3
-> - remove Reported-by
-> 
-> Changes since v2
-> - fix warning "cast from pointer to integer of different size"
-> reported by kernel test robot.
-> 
-> Changes since v1
-> - added missing check for cases when the memory slot is bigger than the file size;
-> - added a custom memset function
-> - removed is_iomem flag since is not used here
-> - updated custom memcpy function to avoid reading after end of source
-> 
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 181 ++++++++++++++++++++++++++++-
->  1 file changed, 180 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 2d9f4214a4c51..6a7cef1329329 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -715,6 +715,185 @@ static void imx_dsp_rproc_kick(struct rproc *rproc, int vqid)
->  		dev_err(dev, "%s: failed (%d, err:%d)\n", __func__, vqid, err);
->  }
->  
-> +/*
-> + * Custom memory copy implementation for i.MX DSP Cores
-> + *
-> + * The IRAM is part of the HiFi DSP.
-> + * According to hw specs only 32-bits writes are allowed.
-> + */
-> +static int imx_dsp_rproc_memcpy(void *dest, const void *src, size_t size)
-> +{
-> +	const u8 *src_byte = src;
-> +	u32 affected_mask;
-> +	u32 tmp;
-> +	int i, q, r;
-> +
+Qualcomm devices in engineering mode provides a mechanism for generating
+full system ramdumps for post mortem debugging. But in some cases it's
+however not feasible to capture the entire content of RAM. The minidump
+mechanism provides the means for selecting which snippets should be
+included in the ramdump.
 
-	const u8 *src_byte = src;
-	u32 affected_mask;
-	int i, q, r;
-	u32 tmp;
+The core of minidump feature is part of Qualcomm's boot firmware code.
+It initializes shared memory (SMEM), which is a part of DDR and
+allocates a small section of SMEM to minidump table i.e also called
+global table of content (G-ToC). Each subsystem (APSS, ADSP, ...) has
+their own table of segments to be included in the minidump and all get
+their reference from G-ToC. Each segment/region has some details like
+name, physical address and it's size etc. and it could be anywhere
+scattered in the DDR.
 
-> +	/* destination must be 32bit aligned */
-> +	if (!IS_ALIGNED((uintptr_t)dest, 4))
-> +		return -EINVAL;
-> +
-> +	q = size / 4;
-> +	r = size % 4;
-> +
-> +	/* __iowrite32_copy use 32bit size values so divide by 4 */
-> +	__iowrite32_copy(dest, src, q);
-> +
-> +	if (r) {
-> +		affected_mask = (1 << (8 * r)) - 1;
+Existing upstream Qualcomm remoteproc driver[1] already supports minidump
+feature for remoteproc instances like ADSP, MODEM, ... where predefined
+selective segments of subsystem region can be dumped as part of
+coredump collection which generates smaller size artifacts compared to
+complete coredump of subsystem on crash.
 
-Please use GENMASK()
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/remoteproc/qcom_common.c#n142
 
-> +
-> +		/* first read the 32bit data of dest, then change affected
-> +		 * bytes, and write back to dest.
-> +		 * For unaffected bytes, it should not be changed
-> +		 */
+In addition to managing and querying the APSS minidump description,
+the Linux driver maintains a ELF header in a segment. This segment
+gets updated with section/program header whenever a new entry gets
+registered.
 
-Wrong multi-line comment format.
+Patch 1/6 is very trivial change.
+Patch 2/6 moves the minidump specific data structure and macro to
+ qcom_minidump.h so that (3/6) minidump driver can use.
+Patch 3/6 implements qualcomm minidump kernel driver and exports
+ symbol which other minidump kernel client can use.
+Patch 4/6 enables the qualcomm minidump driver.
+Patch 5/6 Use the exported symbol from minidump driver in qcom_common
+ for querying minidump descriptor for a subsystem.
+Patch 6/6 Register pstore region with minidump.
 
-> +		tmp = ioread32(dest + q * 4);
+Testing of the patches has been done on sm8450 target with the help
+of out of tree patch which helps to set the download mode and storage
+type(on which dump will be saved) for which i will send separate series.
 
-This turns into readl().
+Mukesh Ojha (6):
+  remoteproc: qcom: Expand MD_* as MINIDUMP_*
+  remoteproc: qcom: Move minidump specific data to qcom_minidump.h
+  soc: qcom: Add Qualcomm minidump kernel driver
+  arm64: defconfig: Enable Qualcomm minidump driver
+  remoterproc: qcom: refactor to leverage exported minidump symbol
+  pstore/ram: Register context with minidump
 
-> +		tmp &= ~affected_mask;
-> +
-> +		/* avoid reading after end of source */
-> +		for (i = 0; i < r; i++)
-> +			tmp |= (src_byte[q * 4 + i] << (8 * i));
-> +
-> +		iowrite32(tmp, dest + q * 4);
+ arch/arm64/configs/defconfig     |   1 +
+ drivers/remoteproc/qcom_common.c |  75 +-----
+ drivers/soc/qcom/Kconfig         |  14 ++
+ drivers/soc/qcom/Makefile        |   1 +
+ drivers/soc/qcom/qcom_minidump.c | 490 +++++++++++++++++++++++++++++++++++++++++
+ fs/pstore/ram.c                  |  77 ++++++
+ include/soc/qcom/minidump.h      |  40 ++++
+ include/soc/qcom/qcom_minidump.h |  88 +++++++
+ 8 files changed, 717 insertions(+), 69 deletions(-)
+ create mode 100644 drivers/soc/qcom/qcom_minidump.c
+ create mode 100644 include/soc/qcom/minidump.h
+ create mode 100644 include/soc/qcom/qcom_minidump.h
 
-As far as I can tell this turns into a simple writel(), leading me to beleive
-the above __iowrite32_copy() can safely be replaced by a loop that calls
-writel().
+-- 
+2.7.4
 
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Custom memset implementation for i.MX DSP Cores
-> + *
-> + * The IRAM is part of the HiFi DSP.
-> + * According to hw specs only 32-bits writes are allowed.
-> + */
-> +static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
-> +{
-> +	u32 affected_mask;
-> +	u32 tmp_val = value;
-> +	u32 *tmp_dst = addr;
-> +	u32 tmp;
-> +	int q, r;
-> +
-> +	/* destination must be 32bit aligned */
-> +	if (!IS_ALIGNED((uintptr_t)addr, 4))
-> +		return -EINVAL;
-> +
-
-Same as above
-
-> +	tmp_val |= tmp_val << 8;
-> +	tmp_val |= tmp_val << 16;
-> +
-> +	q = size / 4;
-> +	r = size % 4;
-> +
-> +	while (q--)
-> +		iowrite32(tmp_val, tmp_dst++);
-> +
-
-This proves my point about __iowrite32_copy() above.
-
-> +	if (r) {
-> +		affected_mask = (1 << (8 * r)) - 1;
-
-Please use GENMASK()
-
-> +
-> +		/* first read the 32bit data of addr, then change affected
-> +		 * bytes, and write back to addr.
-> +		 * For unaffected bytes, it should not be changed
-> +		 */
-
-Wrong multi-line comment format.
-
-> +		tmp = ioread32(tmp_dst);
-
-                readl();
-
-> +		tmp &= ~affected_mask;
-> +
-> +		tmp |= (tmp_val & affected_mask);
-> +		iowrite32(tmp, tmp_dst);
-
-                writel();
-
-Thanks,
-Mathieu
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +/**
-> + * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-> + * @rproc: remote processor which will be booted using these fw segments
-> + * @fw: the ELF firmware image
-> + *
-> + * This function loads the firmware segments to memory, where the remote
-> + * processor expects them.
-> + *
-> + * Return: 0 on success and an appropriate error code otherwise
-> + */
-> +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	const void *ehdr, *phdr;
-> +	int i, ret = 0;
-> +	u16 phnum;
-> +	const u8 *elf_data = fw->data;
-> +	u8 class = fw_elf_get_class(fw);
-> +	u32 elf_phdr_get_size = elf_size_of_phdr(class);
-> +
-> +	ehdr = elf_data;
-> +	phnum = elf_hdr_get_e_phnum(class, ehdr);
-> +	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> +
-> +	/* go through the available ELF segments */
-> +	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> +		u64 da = elf_phdr_get_p_paddr(class, phdr);
-> +		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> +		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> +		u64 offset = elf_phdr_get_p_offset(class, phdr);
-> +		u32 type = elf_phdr_get_p_type(class, phdr);
-> +		void *ptr;
-> +
-> +		if (type != PT_LOAD || !memsz)
-> +			continue;
-> +
-> +		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> +			type, da, memsz, filesz);
-> +
-> +		if (filesz > memsz) {
-> +			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> +				filesz, memsz);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		if (offset + filesz > fw->size) {
-> +			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> +				offset + filesz, fw->size);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		if (!rproc_u64_fit_in_size_t(memsz)) {
-> +			dev_err(dev, "size (%llx) does not fit in size_t type\n",
-> +				memsz);
-> +			ret = -EOVERFLOW;
-> +			break;
-> +		}
-> +
-> +		/* grab the kernel address for this device address */
-> +		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
-> +		if (!ptr) {
-> +			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> +				memsz);
-> +			ret = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		/* put the segment where the remote processor expects it */
-> +		if (filesz) {
-> +			ret = imx_dsp_rproc_memcpy(ptr, elf_data + offset, filesz);
-> +			if (ret) {
-> +				dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%llx\n",
-> +					da, memsz);
-> +				break;
-> +			}
-> +		}
-> +
-> +		/* zero out remaining memory for this segment */
-> +		if (memsz > filesz) {
-> +			ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
-> +			if (ret) {
-> +				dev_err(dev, "memset failed for da 0x%llx memsz 0x%llx\n",
-> +					da, memsz);
-> +				break;
-> +			}
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  {
->  	if (rproc_elf_load_rsc_table(rproc, fw))
-> @@ -729,7 +908,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->  	.start		= imx_dsp_rproc_start,
->  	.stop		= imx_dsp_rproc_stop,
->  	.kick		= imx_dsp_rproc_kick,
-> -	.load		= rproc_elf_load_segments,
-> +	.load		= imx_dsp_rproc_elf_load_segments,
->  	.parse_fw	= imx_dsp_rproc_parse_fw,
->  	.sanity_check	= rproc_elf_sanity_check,
->  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> -- 
-> 2.17.1
-> 
