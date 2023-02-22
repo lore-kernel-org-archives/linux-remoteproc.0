@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49B5C636D6
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Feb 2023 18:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF838C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Feb 2023 19:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232350AbjBVSnH (ORCPT
+        id S229828AbjBVTGb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Feb 2023 13:43:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
+        Wed, 22 Feb 2023 14:06:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231820AbjBVSm6 (ORCPT
+        with ESMTP id S231835AbjBVTGa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Feb 2023 13:42:58 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5114741B75
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Feb 2023 10:42:22 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id pt11so10724147pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Feb 2023 10:42:22 -0800 (PST)
+        Wed, 22 Feb 2023 14:06:30 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977BB39BAF
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Feb 2023 11:06:26 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id m3-20020a17090ade0300b00229eec90a7fso2424772pjv.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Feb 2023 11:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ey37LMUCgjy+2lrIm4/0QBCqLJaHnsaYYYuoP9hlsqs=;
-        b=d+pCwtYLAafC3qo7zsv2TWVXcN/LDLDTbIunLFvhddN1eDBsc9mnplGCtZKEagN9RZ
-         gBoLRqitllp5yw5NyZn1QOI/dK0GFd1EaKaLwQxPDcFKABP3E6OzVjqTaO/aqXu31rzC
-         oKodSCom8E+iN/vBxndRzKg3RhLIatMrHk3rmSEPh3DfBEn7mzeD3q/EVu62daIN0nlH
-         Xl4R0mXdogW3Un+VjrXF2znBm2AWiKchlVx/fvQSTT1PZ6tUQiPNvs7WXj8FZMZIHIf7
-         IlcY942glqFJeCZF93Q+ac32I/bcZN5tb3gO1QAO9mBSjf0mHKJt3uzkZ/T2kjxzmwG+
-         wYNw==
+        bh=EDMnsmd/U9Y+tD0hMscf8EU7QEy6Kjxo9zv5MZIN7yI=;
+        b=NdMnYfSIlhPUej2FgOAonh0MOMsBx2lSilCD2s7OK5A82RHxcsik/Pgq6dRH85wEEH
+         djEvAr48IWNBUYvxoMkIpIBr3d3fXn8MWN3jWcthO8IrQGpVTBnnaie0VqTzoFCAlJeo
+         eVP1pxLlDN1TUW6pj+mpoeW28DVGaqymoI2NhWYgKWUkKLIMuA2QGMQLTbtf5Gdw1saM
+         XUIN+4lP7ncn2rnBfRmf4uWeu5XJz80piDqYciIxAvT3GE/ZTVMk23t1uXA7KxnIww0e
+         I+8cVoyFWf7rzMOuheXOMbNZGwnUer4hmMz7A+ry2/XO0v0Bip2/v0+zj4EV0xM35OJL
+         pAOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ey37LMUCgjy+2lrIm4/0QBCqLJaHnsaYYYuoP9hlsqs=;
-        b=yLNi8KnEKji8I3MJRd0YCRItYTAfVjSGv88dD8kFPhLAtAKI3+6Dj8mjRoyzb3bgo7
-         rUu1TrVir2CnoSzZYRdsTL3gKXjt+r5lhdzUDLd53yctIRdv/ZsIC/MeQohErxjpAnRh
-         TWdHRqv7Xik+LnezgJQqbcwTMN/WWWgml3BOkZSBRi8wSarHLPxbI5qh3/kTvGPXBc0S
-         7KzT/6kxPUP6zDCERt+aEkc1MJxCOIsTn0IfhCRvX11llBTcxLSiK/IfCnAOXElYlXpC
-         B/rl7JjK66fuFVW2DkPtHKCGmaWThJwv13WjkelaJbupLuu36LTU8wKIMr98qayuYbh5
-         ICnw==
-X-Gm-Message-State: AO0yUKXe5OAInwbiYx33ugMkBUxr9SbxzRsNkI/1MQQ6M06IvbVZ8T+F
-        3tuYv4JQmurTLuwoqSOxWzhMIg==
-X-Google-Smtp-Source: AK7set/RYHHKmw+O7sDn+2vH0kXe+nzW1HvuMex9F5RXuptbW26d0MXDMNbzFQSv4vl9iHqzp9HJcQ==
-X-Received: by 2002:a05:6a20:698e:b0:c7:24c5:fb90 with SMTP id t14-20020a056a20698e00b000c724c5fb90mr10291163pzk.27.1677091297987;
-        Wed, 22 Feb 2023 10:41:37 -0800 (PST)
+        bh=EDMnsmd/U9Y+tD0hMscf8EU7QEy6Kjxo9zv5MZIN7yI=;
+        b=iNjDaJSugD53z0b6bShYs0kWKqS+okNKIfGxf0lW2R4398Fcve4GAeeftxpw4ZA3G8
+         p+cSonZ0K7ABOO8t5s7ZCKic2+6cQXqxIg1In3tLnMXqfLbqAnOaSOhN04UPPA4X+EG2
+         zcihGrjNf45GE9rm6wsVSphKNqt/8eeYTsxW5FQGri5uhgP4XoEfyUy/kqG0aIsgr2nF
+         1FnDZrqyDsdWakmc6flfQDlEFfr74zyB+GgFlgOUBGHylvyJcztlNLLP60Hd8nLUmKiR
+         rqy4+0mM3dqrIN15WmYjxOdae+r2hIBaBkQRL6lt2JB+xhNC7Pgvi9byddKYnS0cxOaU
+         pp6g==
+X-Gm-Message-State: AO0yUKXvnp9uZU1BpV+lGWgwSGs+I+jW5vFXNaALN2KvB84pGQkl/Hbl
+        5hMl8ZqeDPOOtuDXJfj/if8fEw==
+X-Google-Smtp-Source: AK7set+RcnSu3emQTD1wPiAb5U7bPyYDD9Mi/flhqqd93p+B6rkHBzyftrLENYqmXKeX5olu+0qHzA==
+X-Received: by 2002:a05:6a20:7da2:b0:cb:f5ab:3bd0 with SMTP id v34-20020a056a207da200b000cbf5ab3bd0mr1564777pzj.59.1677092786007;
+        Wed, 22 Feb 2023 11:06:26 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:78a7:1e00:32c7:e2c0])
-        by smtp.gmail.com with ESMTPSA id k184-20020a6384c1000000b004fb26a80875sm3290121pgd.22.2023.02.22.10.41.36
+        by smtp.gmail.com with ESMTPSA id e8-20020a170902744800b0019a8468cbe7sm5928948plt.224.2023.02.22.11.06.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Feb 2023 10:41:37 -0800 (PST)
-Date:   Wed, 22 Feb 2023 11:41:35 -0700
+        Wed, 22 Feb 2023 11:06:25 -0800 (PST)
+Date:   Wed, 22 Feb 2023 12:06:23 -0700
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tanmay Shah <tanmay.shah@amd.com>
 Cc:     michal.simek@amd.com, andersson@kernel.org,
@@ -58,204 +58,389 @@ Cc:     michal.simek@amd.com, andersson@kernel.org,
         shubhrajyoti.datta@amd.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] drivers: remoteproc: xilinx: fix carveout names
-Message-ID: <20230222184135.GB909075@p14s>
+Subject: Re: [PATCH v3 3/3] remoteproc: xilinx: add mailbox channels for rpmsg
+Message-ID: <20230222190623.GC909075@p14s>
 References: <20230213211825.3507034-1-tanmay.shah@amd.com>
- <20230213211825.3507034-3-tanmay.shah@amd.com>
+ <20230213211825.3507034-4-tanmay.shah@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230213211825.3507034-3-tanmay.shah@amd.com>
+In-Reply-To: <20230213211825.3507034-4-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Feb 13, 2023 at 01:18:25PM -0800, Tanmay Shah wrote:
-> If the unit address is appended to node name of memory-region,
-> then adding rproc carveouts fails as node name and unit-address
-> both are passed as carveout name (i.e. vdev0vring0@xxxxxxxx). However,
-> only node name is expected by remoteproc framework. This patch moves
-> memory-region node parsing from driver probe to prepare and
-> only passes node-name and not unit-address
+On Mon, Feb 13, 2023 at 01:18:26PM -0800, Tanmay Shah wrote:
+> This patch makes each r5 core mailbox client and uses
+> tx and rx channels to send and receive data to/from
+> remote processor respectively. This is needed for rpmsg
+> communication to remote processor.
 > 
-> Fixes: 6b291e8020a8 ("drivers: remoteproc: Add Xilinx r5 remoteproc driver")
 > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 > ---
 > 
-> Changelog:
->   - This is first version of this change, however posting as part of the series
->     that has version v3. The v2 of the series could be found at following link.
+> Changes in v3:
+>   - fix multi-line comment format
+>   - do not mixup mailbox information with memory-regions
+>   - fix redundant dev_warn for split mode
+>   - setting up mailboxes should return an error code
+>   - redesign driver to move mailbox setup during driver probe
+>   - add .kick function only if mailbox setup is success
 > 
 > v2: https://lore.kernel.org/all/20230126213154.1707300-1-tanmay.shah@amd.com/
 > 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 87 ++++++-------------------
->  1 file changed, 20 insertions(+), 67 deletions(-)
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 228 +++++++++++++++++++++++-
+>  1 file changed, 226 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 2db57d394155..81af2dea56c2 100644
+> index 81af2dea56c2..f7131fe8fe7e 100644
 > --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
 > +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -61,8 +61,6 @@ static const struct mem_bank_data zynqmp_tcm_banks[] = {
->   * @np: device node of RPU instance
->   * @tcm_bank_count: number TCM banks accessible to this RPU
+> @@ -8,16 +8,23 @@
+>  #include <linux/dma-mapping.h>
+>  #include <linux/firmware/xlnx-zynqmp.h>
+>  #include <linux/kernel.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mailbox/zynqmp-ipi-message.h>
+>  #include <linux/module.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/remoteproc.h>
+> -#include <linux/slab.h>
+>  
+>  #include "remoteproc_internal.h"
+>  
+> +/* IPI buffer MAX length */
+> +#define IPI_BUF_LEN_MAX	32U
+> +
+> +/* RX mailbox client buffer max length */
+> +#define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
+> +				 sizeof(struct zynqmp_ipi_message))
+>  /*
+>   * settings for RPU cluster mode which
+>   * reflects possible values of xlnx,cluster-mode dt-property
+> @@ -43,6 +50,27 @@ struct mem_bank_data {
+>  	char *bank_name;
+>  };
+>  
+> +/**
+> + * struct mbox_info
+> + *
+> + * @rx_mc_buf: to copy data from mailbox rx channel
+> + * @tx_mc_buf: to copy data to mailbox tx channel
+> + * @r5_core: this mailbox's corresponding r5_core pointer
+> + * @mbox_work: schedule work after receiving data from mailbox
+> + * @mbox_cl: mailbox client
+> + * @tx_chan: mailbox tx channel
+> + * @rx_chan: mailbox rx channel
+> + */
+> +struct mbox_info {
+> +	unsigned char rx_mc_buf[MBOX_CLIENT_BUF_MAX];
+> +	unsigned char tx_mc_buf[MBOX_CLIENT_BUF_MAX];
+> +	struct zynqmp_r5_core *r5_core;
+> +	struct work_struct mbox_work;
+> +	struct mbox_client mbox_cl;
+> +	struct mbox_chan *tx_chan;
+> +	struct mbox_chan *rx_chan;
+> +};
+> +
+>  /*
+>   * Hardcoded TCM bank values. This will be removed once TCM bindings are
+>   * accepted for system-dt specifications and upstreamed in linux kernel
+> @@ -63,6 +91,7 @@ static const struct mem_bank_data zynqmp_tcm_banks[] = {
 >   * @tcm_banks: array of each TCM bank data
-> - * @rmem_count: Number of reserved mem regions
-> - * @rmem: reserved memory region nodes from device tree
 >   * @rproc: rproc handle
 >   * @pm_domain_id: RPU CPU power domain id
+> + * @ipi: pointer to mailbox information
 >   */
-> @@ -71,8 +69,6 @@ struct zynqmp_r5_core {
->  	struct device_node *np;
->  	int tcm_bank_count;
+>  struct zynqmp_r5_core {
+>  	struct device *dev;
+> @@ -71,6 +100,7 @@ struct zynqmp_r5_core {
 >  	struct mem_bank_data **tcm_banks;
-> -	int rmem_count;
-> -	struct reserved_mem **rmem;
 >  	struct rproc *rproc;
 >  	u32 pm_domain_id;
+> +	struct mbox_info *ipi;
 >  };
-> @@ -239,21 +235,31 @@ static int add_mem_regions_carveout(struct rproc *rproc)
->  {
->  	struct rproc_mem_entry *rproc_mem;
->  	struct zynqmp_r5_core *r5_core;
-> +	struct device_node *rmem_np;
->  	struct reserved_mem *rmem;
->  	int i, num_mem_regions;
 >  
->  	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> -	num_mem_regions = r5_core->rmem_count;
+>  /**
+> @@ -88,6 +118,178 @@ struct zynqmp_r5_cluster {
+>  	struct zynqmp_r5_core **r5_cores;
+>  };
+>  
+> +/**
+> + * event_notified_idr_cb() - callback for vq_interrupt per notifyid
+> + * @id: rproc->notify id
+> + * @ptr: pointer to idr private data
+> + * @data: data passed to idr_for_each callback
+> + *
+> + * Pass notification to remoteproc virtio
+> + *
+> + * Return: 0. having return is to satisfy the idr_for_each() function
+> + *          pointer input argument requirement.
+> + **/
+> +static int event_notified_idr_cb(int id, void *ptr, void *data)
+> +{
+> +	struct rproc *rproc = data;
 > +
-> +	num_mem_regions = of_property_count_elems_of_size(r5_core->np, "memory-region",
-> +							  sizeof(phandle));
->  
->  	for (i = 0; i < num_mem_regions; i++) {
-> -		rmem = r5_core->rmem[i];
->
-
-Extra line
-
-Everyone else in the remoteproc subsystem is using of_phandle_iterator_next(),
-please do the same.  It is easier to maintain and you don't have to call
-of_node_put() after each iteration. 
-
-
-> -		if (!strncmp(rmem->name, "vdev0buffer", strlen("vdev0buffer"))) {
-> +		rmem_np = of_parse_phandle(r5_core->np, "memory-region", i);
+> +	if (rproc_vq_interrupt(rproc, id) == IRQ_NONE)
+> +		dev_dbg(&rproc->dev, "data not found for vqid=%d\n", id);
 > +
-> +		rmem = of_reserved_mem_lookup(rmem_np);
-> +		if (!rmem) {
-> +			of_node_put(rmem_np);
-> +			return -EINVAL;
-> +		}
+> +	return 0;
+> +}
 > +
-> +		if (!strcmp(rmem_np->name, "vdev0buffer")) {
->  			/* Init reserved memory for vdev buffer */
->  			rproc_mem = rproc_of_resm_mem_entry_init(&rproc->dev, i,
->  								 rmem->size,
->  								 rmem->base,
-> -								 rmem->name);
-> +								 rmem_np->name);
->  		} else {
->  			/* Register associated reserved memory regions */
->  			rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
-> @@ -261,16 +267,20 @@ static int add_mem_regions_carveout(struct rproc *rproc)
->  							 rmem->size, rmem->base,
->  							 zynqmp_r5_mem_region_map,
->  							 zynqmp_r5_mem_region_unmap,
-> -							 rmem->name);
-> +							 rmem_np->name);
->  		}
->  
-> -		if (!rproc_mem)
-> +		if (!rproc_mem) {
-> +			of_node_put(rmem_np);
-
-When moving to of_phandle_iterator_next(), of_node_put(it.node) has to be
-called on error conditions.  Other drivers don't do it, something I will fix in
-the next cycle.
-
->  			return -ENOMEM;
-> +		}
->  
->  		rproc_add_carveout(rproc, rproc_mem);
->  
->  		dev_dbg(&rproc->dev, "reserved mem carveout %s addr=%llx, size=0x%llx",
->  			rmem->name, rmem->base, rmem->size);
+> +/**
+> + * handle_event_notified() - remoteproc notification work function
+> + * @work: pointer to the work structure
+> + *
+> + * It checks each registered remoteproc notify IDs.
+> + */
+> +static void handle_event_notified(struct work_struct *work)
+> +{
+> +	struct mbox_info *ipi;
+> +	struct rproc *rproc;
 > +
-> +		of_node_put(rmem_np);
->  	}
->  
->  	return 0;
-> @@ -726,59 +736,6 @@ static int zynqmp_r5_get_tcm_node(struct zynqmp_r5_cluster *cluster)
+> +	ipi = container_of(work, struct mbox_info, mbox_work);
+> +	rproc = ipi->r5_core->rproc;
+> +
+> +	/*
+> +	 * We only use IPI for interrupt. The RPU firmware side may or may
+> +	 * not write the notifyid when it trigger IPI.
+> +	 * And thus, we scan through all the registered notifyids and
+> +	 * find which one is valid to get the message.
+> +	 * Even if message from firmware is NULL, we attempt to get vqid
+> +	 */
+> +	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
+> +}
+> +
+> +/**
+> + * zynqmp_r5_mb_rx_cb() - receive channel mailbox callback
+> + * @cl: mailbox client
+> + * @msg: message pointer
+> + *
+> + * Receive data from ipi buffer, ack interrupt and then
+> + * it will schedule the R5 notification work.
+> + */
+> +static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+> +{
+> +	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
+> +	struct mbox_info *ipi;
+> +	size_t len;
+> +
+> +	ipi = container_of(cl, struct mbox_info, mbox_cl);
+> +
+> +	/* copy data from ipi buffer to r5_core */
+> +	ipi_msg = (struct zynqmp_ipi_message *)msg;
+> +	buf_msg = (struct zynqmp_ipi_message *)ipi->rx_mc_buf;
+> +	len = ipi_msg->len;
+> +	if (len > IPI_BUF_LEN_MAX) {
+> +		dev_warn(cl->dev, "msg size exceeded than %d\n",
+> +			 IPI_BUF_LEN_MAX);
+> +		len = IPI_BUF_LEN_MAX;
+> +	}
+> +	buf_msg->len = len;
+> +	memcpy(buf_msg->data, ipi_msg->data, len);
+> +
+> +	/* received and processed interrupt ack */
+> +	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
+> +		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
+> +
+> +	schedule_work(&ipi->mbox_work);
+> +}
+> +
+> +/**
+> + * zynqmp_r5_setup_mbox() - Setup mailboxes related properties
+> + *			    this is used for each individual R5 core
+> + *
+> + * @cdev: child node device
+> + *
+> + * Function to setup mailboxes related properties
+> + * return : NULL if failed else pointer to mbox_info
+> + */
+> +static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
+> +{
+> +	struct mbox_client *mbox_cl;
+> +	struct mbox_info *ipi;
+> +
+> +	ipi = kzalloc(sizeof(*ipi), GFP_KERNEL);
+> +	if (!ipi)
+> +		return NULL;
+> +
+> +	mbox_cl = &ipi->mbox_cl;
+> +	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
+> +	mbox_cl->tx_block = false;
+> +	mbox_cl->knows_txdone = false;
+> +	mbox_cl->tx_done = NULL;
+> +	mbox_cl->dev = cdev;
+> +
+> +	/* Request TX and RX channels */
+> +	ipi->tx_chan = mbox_request_channel_byname(mbox_cl, "tx");
+> +	if (IS_ERR(ipi->tx_chan)) {
+> +		ipi->tx_chan = NULL;
+> +		kfree(ipi);
+> +		dev_warn(cdev, "mbox tx channel request failed\n");
+> +		return NULL;
+> +	}
+> +
+> +	ipi->rx_chan = mbox_request_channel_byname(mbox_cl, "rx");
+> +	if (IS_ERR(ipi->rx_chan)) {
+> +		mbox_free_channel(ipi->tx_chan);
+> +		ipi->rx_chan = NULL;
+> +		ipi->tx_chan = NULL;
+> +		kfree(ipi);
+> +		dev_warn(cdev, "mbox rx channel request failed\n");
+> +		return NULL;
+> +	}
+> +
+> +	INIT_WORK(&ipi->mbox_work, handle_event_notified);
+> +
+> +	return ipi;
+> +}
+> +
+> +static void zynqmp_r5_free_mbox(struct mbox_info *ipi)
+> +{
+> +	if (!ipi)
+> +		return;
+> +
+> +	if (ipi->tx_chan) {
+> +		mbox_free_channel(ipi->tx_chan);
+> +		ipi->tx_chan = NULL;
+> +	}
+> +
+> +	if (ipi->rx_chan) {
+> +		mbox_free_channel(ipi->rx_chan);
+> +		ipi->rx_chan = NULL;
+> +	}
+> +
+> +	kfree(ipi);
+> +}
+> +
+> +/*
+> + * zynqmp_r5_core_kick() - kick a firmware if mbox is provided
+> + * @rproc: r5 core's corresponding rproc structure
+> + * @vqid: virtqueue ID
+> + */
+> +static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+> +{
+> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> +	struct device *dev = r5_core->dev;
+> +	struct zynqmp_ipi_message *mb_msg;
+> +	struct mbox_info *ipi;
+> +	int ret;
+> +
+> +	ipi = r5_core->ipi;
+> +	if (!ipi)
+> +		return;
+> +
+> +	mb_msg = (struct zynqmp_ipi_message *)ipi->tx_mc_buf;
+> +	memcpy(mb_msg->data, &vqid, sizeof(vqid));
+> +	mb_msg->len = sizeof(vqid);
+> +	ret = mbox_send_message(ipi->tx_chan, mb_msg);
+> +	if (ret < 0)
+> +		dev_warn(dev, "failed to send message\n");
+> +}
+> +
+>  /*
+>   * zynqmp_r5_set_mode()
+>   *
+> @@ -617,7 +819,7 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
 >  	return 0;
 >  }
 >  
-> -/**
-> - * zynqmp_r5_get_mem_region_node()
-> - * parse memory-region property and get reserved mem regions
-> - *
-> - * @r5_core: pointer to zynqmp_r5_core type object
-> - *
-> - * Return: 0 for success and error code for failure.
-> - */
-> -static int zynqmp_r5_get_mem_region_node(struct zynqmp_r5_core *r5_core)
-> -{
-> -	struct device_node *np, *rmem_np;
-> -	struct reserved_mem **rmem;
-> -	int res_mem_count, i;
-> -	struct device *dev;
-> -
-> -	dev = r5_core->dev;
-> -	np = r5_core->np;
-> -
-> -	res_mem_count = of_property_count_elems_of_size(np, "memory-region",
-> -							sizeof(phandle));
-> -	if (res_mem_count <= 0) {
-> -		dev_warn(dev, "failed to get memory-region property %d\n",
-> -			 res_mem_count);
-> -		return 0;
-> -	}
-> -
-> -	rmem = devm_kcalloc(dev, res_mem_count,
-> -			    sizeof(struct reserved_mem *), GFP_KERNEL);
-> -	if (!rmem)
-> -		return -ENOMEM;
-> -
-> -	for (i = 0; i < res_mem_count; i++) {
-> -		rmem_np = of_parse_phandle(np, "memory-region", i);
-> -		if (!rmem_np)
-> -			goto release_rmem;
-> -
-> -		rmem[i] = of_reserved_mem_lookup(rmem_np);
-> -		if (!rmem[i]) {
-> -			of_node_put(rmem_np);
-> -			goto release_rmem;
-> -		}
-> -
-> -		of_node_put(rmem_np);
-> -	}
-> -
-> -	r5_core->rmem_count = res_mem_count;
-> -	r5_core->rmem = rmem;
-> -	return 0;
-> -
-> -release_rmem:
-> -	return -EINVAL;
-> -}
-> -
->  /*
->   * zynqmp_r5_core_init()
->   * Create and initialize zynqmp_r5_core type object
-> @@ -806,10 +763,6 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+> -static const struct rproc_ops zynqmp_r5_rproc_ops = {
+> +static struct rproc_ops zynqmp_r5_rproc_ops = {
+>  	.prepare	= zynqmp_r5_rproc_prepare,
+>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+>  	.start		= zynqmp_r5_rproc_start,
+> @@ -642,6 +844,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  {
+>  	struct zynqmp_r5_core *r5_core;
+>  	struct rproc *r5_rproc;
+> +	struct mbox_info *ipi;
+>  	int ret;
+>  
+>  	/* Set up DMA mask */
+> @@ -649,12 +852,23 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> +	/*
+> +	 * If mailbox nodes are disabled using "status" property then setting up
+> +	 * mailbox channels will be failed. In that case we don't really need
+> +	 * kick() operation. Include .kick() only if mbox channels are acquired
+> +	 * successfully.
+> +	 */
+> +	ipi = zynqmp_r5_setup_mbox(cdev);
+> +	if (ipi)
+> +		zynqmp_r5_rproc_ops.kick = zynqmp_r5_rproc_kick;
+> +
+>  	/* Allocate remoteproc instance */
+>  	r5_rproc = rproc_alloc(cdev, dev_name(cdev),
+>  			       &zynqmp_r5_rproc_ops,
+>  			       NULL, sizeof(struct zynqmp_r5_core));
+>  	if (!r5_rproc) {
+>  		dev_err(cdev, "failed to allocate memory for rproc instance\n");
+> +		zynqmp_r5_free_mbox(ipi);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+> @@ -665,6 +879,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  	if (!r5_core->np) {
+>  		dev_err(cdev, "can't get device node for r5 core\n");
+>  		ret = -EINVAL;
+> +		zynqmp_r5_free_mbox(ipi);
+>  		goto free_rproc;
+>  	}
+>  
+> @@ -672,10 +887,17 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>  	ret = rproc_add(r5_rproc);
+>  	if (ret) {
+>  		dev_err(cdev, "failed to add r5 remoteproc\n");
+> +		zynqmp_r5_free_mbox(ipi);
+>  		goto free_rproc;
+>  	}
+>  
+> +	if (ipi) {
+> +		r5_core->ipi = ipi;
+> +		ipi->r5_core = r5_core;
+> +	}
+> +
+>  	r5_core->rproc = r5_rproc;
+> +
+>  	return r5_core;
+>  
+>  free_rproc:
+> @@ -918,6 +1140,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+>  	while (i >= 0) {
+>  		put_device(child_devs[i]);
+>  		if (r5_cores[i]) {
+> +			zynqmp_r5_free_mbox(r5_cores[i]->ipi);
+
+The mailboxes are initialized in zynqmp_r5_add_rproc_core() but free'd here in
+case of trouble, which introduces coupling between the two functions.  I suggest
+moving zynqmp_r5_setup_mbox() in zynqmp_r5_cluster_init() and initialize both
+mailboxes in it.
+
+I am done reviewing this set.
+
+Thanks,
+Mathieu
+
+Thanks,
+Mathieu
+
+>  			of_reserved_mem_device_release(r5_cores[i]->dev);
+>  			rproc_del(r5_cores[i]->rproc);
+>  			rproc_free(r5_cores[i]->rproc);
+> @@ -942,6 +1165,7 @@ static void zynqmp_r5_cluster_exit(void *data)
+>  
 >  	for (i = 0; i < cluster->core_count; i++) {
 >  		r5_core = cluster->r5_cores[i];
->  
-> -		ret = zynqmp_r5_get_mem_region_node(r5_core);
-> -		if (ret)
-> -			dev_warn(dev, "memory-region prop failed %d\n", ret);
-> -
->  		/* Initialize r5 cores with power-domains parsed from dts */
->  		ret = of_property_read_u32_index(r5_core->np, "power-domains",
->  						 1, &r5_core->pm_domain_id);
+> +		zynqmp_r5_free_mbox(r5_core->ipi);
+>  		of_reserved_mem_device_release(r5_core->dev);
+>  		put_device(r5_core->dev);
+>  		rproc_del(r5_core->rproc);
 > -- 
 > 2.25.1
 > 
