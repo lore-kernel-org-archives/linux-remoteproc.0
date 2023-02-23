@@ -2,204 +2,125 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 825B8C636D6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Feb 2023 09:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0585C636D6
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Feb 2023 12:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233456AbjBWJle (ORCPT
+        id S233792AbjBWMiv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Feb 2023 04:41:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45024 "EHLO
+        Thu, 23 Feb 2023 07:38:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233633AbjBWJld (ORCPT
+        with ESMTP id S233303AbjBWMiu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Feb 2023 04:41:33 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2081.outbound.protection.outlook.com [40.107.243.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6823843925;
-        Thu, 23 Feb 2023 01:41:32 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XWd792yO4gZHbOgop0TNi63aKqK00R63t+H0bCNesa4YvBgJWLRmxsFoLdi/jpOQDyv5pO0mFOT17mOW9aFINgdW/tM6qDA5Ft0amNEx+iWRrR6XukrBUyqpxTyE7srPDyTPWwZNn7fQZXnldtuhSxVbZEPkWBv7K5TP9zrK9WCpsiSbQ0hHV4FIwEbtFXwMSosqWbtCtmzKnA8kUkexVK1MKwje+XhBTggU4QzxF+15IQJsNgDjyvKU6P+VaTz20s2pzMHg7IDzwkpWJuDfPkaD6syOzdlZDqvXuyIS2uhfq5ksl5roPX/bJgbCIy9zLtSsR2Ll4YvWbV9TV2vhmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WQKMSKq4P/fnXqH34nzY5+YLuj055J6J1InyvVqMZ3Y=;
- b=gmKiDxEQTgQHrBKKK/9Z1cF6rZ89yl38+AalnJPqXWL6F6spxBZKzt4OHa4MNmewovbWX1AGj2WACjVHr63TiL4MIs5eFyqWraTlLzXMnjV+7ag09zsNsk0fe+qR9hTMkWAES3CwcBaAPr/yGEn1VSRaHoqS46TbPZuz1nk7w13MqAbGDg7Jdv8soIegskN2olzVgKbylWOaJjLy0VLUaFkqANaHQnoPlI1n0DYq6JJXvzlMEnChfCThx841qhRkplIeuQV8jAEar4hQLvJTKvZ7QhuG84z4CGPtXaZn+gQBrEPd8iWURxelB+DFocjJyEic4MR2mZLT+47Eqrb4ww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WQKMSKq4P/fnXqH34nzY5+YLuj055J6J1InyvVqMZ3Y=;
- b=mkrOpcU+RB2+oa9oWBUhA5wKAOXUMGnSnsIitk1/IZLcgFhzhEIHSExrZ7wO03rgwZC0Oho/rFEw8ZlGOacnr6XjJYl/SG0r6hHJbbbgkIPFHNWnIUeQYH75y+pbl8IdcJ4JKn6uv7O5gT+Uonp9CczfhYVVX7BkCRUwaoKqerY=
-Received: from DM6PR03CA0030.namprd03.prod.outlook.com (2603:10b6:5:40::43) by
- DM6PR12MB4482.namprd12.prod.outlook.com (2603:10b6:5:2a8::23) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6134.21; Thu, 23 Feb 2023 09:41:28 +0000
-Received: from DS1PEPF0000E640.namprd02.prod.outlook.com
- (2603:10b6:5:40:cafe::50) by DM6PR03CA0030.outlook.office365.com
- (2603:10b6:5:40::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.21 via Frontend
- Transport; Thu, 23 Feb 2023 09:41:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0000E640.mail.protection.outlook.com (10.167.17.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6134.14 via Frontend Transport; Thu, 23 Feb 2023 09:41:28 +0000
-Received: from [10.254.241.51] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 23 Feb
- 2023 03:40:36 -0600
-Message-ID: <b11cd9f2-3759-1df2-ea00-50c574668c28@amd.com>
-Date:   Thu, 23 Feb 2023 10:40:18 +0100
+        Thu, 23 Feb 2023 07:38:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18E7DB744
+        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Feb 2023 04:37:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677155876;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=o5faige4boHy1KDnDJFUMGzlyi7Wgdd7JL40G0EvBo0=;
+        b=DAd69z/mYzo+WhTe+QrdMa5w37mfk94GO5CzaCRSOEbhF+nhiqNXPbPhC/TArBDxe5+B9+
+        liEk1vMkKXZ/PdYUSmxQYw0OoYAvhg33TEnNA7VnKGnwqpzN2PcPOSVg+edfytRdxDJTkD
+        bSzjTpjE7EMvgAL9ZDqsoUIkwDr3Q1o=
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
+ [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-17-ZnsHTeDROuWYZFkuX2WFNg-1; Thu, 23 Feb 2023 07:37:55 -0500
+X-MC-Unique: ZnsHTeDROuWYZFkuX2WFNg-1
+Received: by mail-io1-f70.google.com with SMTP id a21-20020a5d9595000000b0074c9dc19e16so1557458ioo.15
+        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Feb 2023 04:37:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o5faige4boHy1KDnDJFUMGzlyi7Wgdd7JL40G0EvBo0=;
+        b=QCvFYLqsb7/pta0We65u+wTLdxyx0b50xhx+l1dbqNYIKlOflRxs3jK8iK7l4AeHR5
+         VFEs5AAvM3p3g0J80N52d9Jdn5A/FSLWyNkwwLXktuNeIniyn4l8AMA4zy6Tp0TTEbth
+         YfglhqjdbfokbuGbDCWpAHdmGVcNzBKJ/vBbpSAlomBIkVeEZo9lF0doqva3MECiD+3k
+         1ce8Pxj75VRRWmla9Us+khTg0AqdxOH5iNLYZ8WANMQSscpjNK2DZdg1I1q9EXy8HZ+G
+         Do5GEMsDdE5PQ+fKvfUYT4Z5i0IrikDlmcJKokwEQFlGpv8kapXz+X7lbGGeBH1Dspc/
+         Nhgw==
+X-Gm-Message-State: AO0yUKXL6SUlI8o+KSuyxLVjive+bV3T2WiJ+4EAECkLp9T0rtrAgtPo
+        Ou9zLybK8awonWqyacusW3gFsE9kY9Steh1xPOel7U7kxIqwZw4dYPGWNJr+k8e6YD01ntDkMXE
+        pAJ1Y1o0MggTW7xBWG9t0KZ9NBpcoTg==
+X-Received: by 2002:a05:6e02:1445:b0:316:e54a:828f with SMTP id p5-20020a056e02144500b00316e54a828fmr6493866ilo.6.1677155874524;
+        Thu, 23 Feb 2023 04:37:54 -0800 (PST)
+X-Google-Smtp-Source: AK7set/6AWA4CAuXGZNmzPhHzcrBdzMdBpWOTtYJucrF1Qv97MIIPEiFDxaTnG32VB1VQ2w0xUjrzA==
+X-Received: by 2002:a05:6e02:1445:b0:316:e54a:828f with SMTP id p5-20020a056e02144500b00316e54a828fmr6493856ilo.6.1677155874289;
+        Thu, 23 Feb 2023 04:37:54 -0800 (PST)
+Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id y22-20020a02bb16000000b0039e89ea68f9sm1759062jan.135.2023.02.23.04.37.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Feb 2023 04:37:53 -0800 (PST)
+Date:   Thu, 23 Feb 2023 07:37:51 -0500
+From:   Brian Masney <bmasney@redhat.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 0/6] Add basic Minidump kernel driver support
+Message-ID: <Y/deHzijzvuvCJ2M@x1>
+References: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Tanmay Shah <tanmay.shah@amd.com>
-CC:     <andersson@kernel.org>, <jaswinder.singh@linaro.org>,
-        <ben.levinsky@amd.com>, <shubhrajyoti.datta@amd.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>
-References: <20230213211825.3507034-1-tanmay.shah@amd.com>
- <20230213211825.3507034-2-tanmay.shah@amd.com> <20230222173448.GA909075@p14s>
-From:   Michal Simek <michal.simek@amd.com>
-Subject: Re: [PATCH v3 1/3] drivers: mailbox: zynqmp: handle multiple child
- nodes
-In-Reply-To: <20230222173448.GA909075@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0000E640:EE_|DM6PR12MB4482:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18272a3e-dc2e-4ef9-cf99-08db1582237b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: PnwtANdzsnEyipmeLQHOgjdTi/JzTMzAoJ+SwYbvGMbD/dM/6/K+rO2Nk1kvZ3UnTrh0sYAaIMexyC2x40dM9oFvHgz8HKe9TXKgSBTTgzGsQktw6j+d0NT1c2ZFEKZlSdRKYDFmCAqZijnbXTWcWvBGezMlepR0Gvb2xxoMdxoVB3p+hRjX8C8BJjmRD0Mxe3cMeg2DRLxP0biyXSgzAYFvvTZc6okF3sHMoPNC3O5yYpF/wasJKhE4d2s5+TZ6kwoEQIGtg7QbUpZ/i7VTRAaKFV0MyPLv+0VyYdA5blOxGonAqXRybOgKprfi6yUTyHsDs87l75flbHl33LcW7K9bmYEsP7t2HCCVSKQMaGkN9r4SqJSOSzwgIz1kL2p/32bj7qxitPyHurqatDZdr1DfGSbKY1sEy0r0O6SaIfn77o491ApddhBGSMWGTIAP0pynmJ8exJ6vPxNlOFZwVVSuMEpvb8w/9uIfTkKGvs+gpZj/LXrp/IALOa/xu6tSyQrX0HI81PxJ6mSkxWVv8gsr5MyutrwrTqg1Kqg8Kj6vuLg7ayf+nwOziR0AZJviUdqmpiTREOcTtN9TaEv2sgOLJWSeQFK9RIMQaibfce2AS4QuzYi3ujP9uGWT9amRwPA2p80DogwttEE1d0HrKfQV9lBc+gTOckmAsZw/GoNLElQ/V3cl5QV1+Yu8nQ+QNJwMLVpQkQMPLnNlqTfW5zl8cFaQEdbBaRgfpawik1x8DgswpK8nBOH39B9TZZte
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230025)(4636009)(346002)(136003)(39860400002)(396003)(376002)(451199018)(36840700001)(46966006)(40470700004)(2616005)(41300700001)(36860700001)(83380400001)(31696002)(5660300002)(478600001)(44832011)(82310400005)(16526019)(26005)(186003)(8936002)(86362001)(6636002)(110136005)(54906003)(8676002)(16576012)(4326008)(356005)(53546011)(426003)(40480700001)(47076005)(70206006)(70586007)(40460700003)(316002)(81166007)(336012)(966005)(36756003)(82740400003)(15650500001)(31686004)(2906002)(6666004)(36900700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2023 09:41:28.6430
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18272a3e-dc2e-4ef9-cf99-08db1582237b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF0000E640.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4482
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 2/22/23 18:34, Mathieu Poirier wrote:
-> On Mon, Feb 13, 2023 at 01:18:24PM -0800, Tanmay Shah wrote:
->> As of now only one child node is handled by zynqmp-ipi
->> mailbox driver. Upon introducing remoteproc r5 core mailbox
->> nodes, found few enhancements in Xilinx zynqmp mailbox driver
->> as following:
->>
->> - fix mailbox child node counts
->>    If child mailbox node status is disabled it causes
->>    crash in interrupt handler. Fix this by assigning
->>    only available child node during driver probe.
->>
->> - fix typo in IPI documentation %s/12/32/
->>    Xilinx IPI message buffers allows 32-byte data transfer.
->>    Fix documentation that says 12 bytes
->>
->> - fix bug in zynqmp-ipi isr handling
->>    Multiple IPI channels are mapped to same interrupt handler.
->>    Current isr implementation handles only one channel per isr.
->>    Fix this behavior by checking isr status bit of all child
->>    mailbox nodes.
->>
->> Fixes: 4981b82ba2ff ("mailbox: ZynqMP IPI mailbox controller")
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->>
->> Changelog:
->>    - This is first version of this change, however posting as part of the series
->>      that has version v3.
->>
->> v2: https://lore.kernel.org/all/20230126213154.1707300-1-tanmay.shah@amd.com/
->>
->>   drivers/mailbox/zynqmp-ipi-mailbox.c       | 8 ++++----
->>   include/linux/mailbox/zynqmp-ipi-message.h | 2 +-
->>   2 files changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
->> index 12e004ff1a14..b1498f6f06e1 100644
->> --- a/drivers/mailbox/zynqmp-ipi-mailbox.c
->> +++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
->> @@ -152,7 +152,7 @@ static irqreturn_t zynqmp_ipi_interrupt(int irq, void *data)
->>   	struct zynqmp_ipi_message *msg;
->>   	u64 arg0, arg3;
->>   	struct arm_smccc_res res;
->> -	int ret, i;
->> +	int ret, i, status = IRQ_NONE;
->>   
->>   	(void)irq;
->>   	arg0 = SMC_IPI_MAILBOX_STATUS_ENQUIRY;
->> @@ -170,11 +170,11 @@ static irqreturn_t zynqmp_ipi_interrupt(int irq, void *data)
->>   				memcpy_fromio(msg->data, mchan->req_buf,
->>   					      msg->len);
->>   				mbox_chan_received_data(chan, (void *)msg);
->> -				return IRQ_HANDLED;
->> +				status = IRQ_HANDLED;
->>   			}
->>   		}
->>   	}
->> -	return IRQ_NONE;
->> +	return status;
->>   }
->>   
->>   /**
->> @@ -634,7 +634,7 @@ static int zynqmp_ipi_probe(struct platform_device *pdev)
->>   	struct zynqmp_ipi_mbox *mbox;
->>   	int num_mboxes, ret = -EINVAL;
->>   
->> -	num_mboxes = of_get_child_count(np);
->> +	num_mboxes = of_get_available_child_count(np);
->>   	pdata = devm_kzalloc(dev, sizeof(*pdata) + (num_mboxes * sizeof(*mbox)),
->>   			     GFP_KERNEL);
->>   	if (!pdata)
->> diff --git a/include/linux/mailbox/zynqmp-ipi-message.h b/include/linux/mailbox/zynqmp-ipi-message.h
->> index 35ce84c8ca02..31d8046d945e 100644
->> --- a/include/linux/mailbox/zynqmp-ipi-message.h
->> +++ b/include/linux/mailbox/zynqmp-ipi-message.h
->> @@ -9,7 +9,7 @@
->>    * @data: message payload
->>    *
->>    * This is the structure for data used in mbox_send_message
->> - * the maximum length of data buffer is fixed to 12 bytes.
->> + * the maximum length of data buffer is fixed to 32 bytes.
->>    * Client is supposed to be aware of this.
+On Tue, Feb 21, 2023 at 04:55:07PM +0530, Mukesh Ojha wrote:
+> Minidump is a best effort mechanism to collect useful and predefined data
+> for first level of debugging on end user devices running on Qualcomm SoCs.
+> It is built on the premise that System on Chip (SoC) or subsystem part of
+> SoC crashes, due to a range of hardware and software bugs. Hence, the
+> ability to collect accurate data is only a best-effort. The data collected
+> could be invalid or corrupted, data collection itself could fail, and so on.
 > 
-> I agree that this should be split in 3 patches but the fixes are so small that
-> it is hardly required.  I'll leave it up to Michal to decide.
+> Qualcomm devices in engineering mode provides a mechanism for generating
+> full system ramdumps for post mortem debugging. But in some cases it's
+> however not feasible to capture the entire content of RAM. The minidump
+> mechanism provides the means for selecting which snippets should be
+> included in the ramdump.
+> 
+> The core of minidump feature is part of Qualcomm's boot firmware code.
+> It initializes shared memory (SMEM), which is a part of DDR and
+> allocates a small section of SMEM to minidump table i.e also called
+> global table of content (G-ToC). Each subsystem (APSS, ADSP, ...) has
+> their own table of segments to be included in the minidump and all get
+> their reference from G-ToC. Each segment/region has some details like
+> name, physical address and it's size etc. and it could be anywhere
+> scattered in the DDR.
+> 
+> Existing upstream Qualcomm remoteproc driver[1] already supports minidump
+> feature for remoteproc instances like ADSP, MODEM, ... where predefined
+> selective segments of subsystem region can be dumped as part of
+> coredump collection which generates smaller size artifacts compared to
+> complete coredump of subsystem on crash.
+> 
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/remoteproc/qcom_common.c#n142
+> 
+> In addition to managing and querying the APSS minidump description,
+> the Linux driver maintains a ELF header in a segment. This segment
+> gets updated with section/program header whenever a new entry gets
+> registered.
 
-Generic guidance is saying that you should split that patches. I personally 
-prefer to have one patch per change. It is useful for bisecting and faster for 
-reviewing.
-I would expect that this patch should go via mailbox tree and the rest via 
-remoteproc tree. That's why maintainer should say what it is preferred way.
+I'd like to test this series plus your series that sets the multiple
+download modes. Can you include documentation about how to actually use
+this new feature? Also the information that you provided above is really
+useful. I think that should also go in the documentation file as well.
 
-In connection mailbox. I recently had some time to look at this driver and I 
-didn't really get why there are registers listed. Because all that addresses can 
-be calculated based on soc compatible string and by xlnx,ipi-id for both sides.
+I already have a reliable way to make a board go BOOM and go into
+ramdump mode.
 
-Thanks,
-Michal
+Brian
 
