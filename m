@@ -2,141 +2,150 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16D8C64ED8
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Feb 2023 10:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB92C61DA3
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Feb 2023 10:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbjBXK0F (ORCPT
+        id S230039AbjBXKnN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Feb 2023 05:26:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47152 "EHLO
+        Fri, 24 Feb 2023 05:43:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230319AbjBXKZo (ORCPT
+        with ESMTP id S230060AbjBXKmn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Feb 2023 05:25:44 -0500
+        Fri, 24 Feb 2023 05:42:43 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C649457CD;
-        Fri, 24 Feb 2023 02:25:07 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31O4JEks002948;
-        Fri, 24 Feb 2023 10:23:22 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DCEF5FD5;
+        Fri, 24 Feb 2023 02:41:15 -0800 (PST)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31OARbEx001357;
+        Fri, 24 Feb 2023 10:40:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=W7eS4v+eK0DlCcuv0cz4po0QefEREJU4tt2j0IBhEds=;
- b=U8K1b1UYvFrRBFPacdtJ/Cvguoo2iEPirkUHQXMd6ubk25NjXAW14nHtkD7uSRQt6HRc
- PeH9xq/kUsVn+JWzeRlHXOceNdxE4FzmuaFql0A/l9FLravXGNsRZhUajeqwU/SgVnIk
- B3EJZ6blZAocGzqXWlPPmnprDQMauzTE/60bw494rRozgGO+nGQEE+Rb1SZ1y0utvLh6
- HslmxLK3cCxyvE/BkyeDGYh7Zlpev6KOBHzpYJf8ATH5ADwcu/2RDobHkBt06AFL9uUM
- H6D8bI4gdMnriX52cT5bZOJe2lb1/+oHKIJiGN9fnj53qUpYNZj14hil3rG98EBoNPiW Ig== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nwy8m47ty-1
+ bh=8cWmvPwNwNmGYejx+XOmF4t+iGtdVe0NNZaVfqLw+CM=;
+ b=m44a5+AZmREmQBqj3NVlwF80MBGPyQT8oPnPwWDDfrfrgm5Uh0s6qA/GHWsNBwnntku5
+ Sg0Kn/EUOUZiPLzK12O89fVL6jdw9xcoEvk/CHVl3BzMwjpWA5cIsqWpOZmmDYDQ7l2q
+ DEQpADRPrR2IEDaKQeERSZFnjPQqDMPe+HOUkMa0VWUnQwtOWq/u28qIULA3PafN15S1
+ jz95ugB2Y06cOAQzyA4+Gal2Qe/5Q7rGdtHJySyawrd2FQWwFMkcNN0ndK5A4RQOIqAN
+ jfmq7U4WpDCwULAjQ7QedgxcyWmah5wShuUF84ohWWRCo2hXbuZWL2ynTRccS5Vk3Tbn rg== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nxugh80tc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 24 Feb 2023 10:23:22 +0000
+        Fri, 24 Feb 2023 10:40:51 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31OANL2s004517
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31OAeoqY024499
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 24 Feb 2023 10:23:21 GMT
+        Fri, 24 Feb 2023 10:40:50 GMT
 Received: from [10.216.22.47] (10.80.80.8) by nasanex01c.na.qualcomm.com
  (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 24 Feb
- 2023 02:23:17 -0800
-Message-ID: <cf859951-cecd-79a0-722d-8cee57ba18c9@quicinc.com>
-Date:   Fri, 24 Feb 2023 15:53:07 +0530
+ 2023 02:40:45 -0800
+Message-ID: <47542dbb-8cf3-6eae-a38e-910d38bd960b@quicinc.com>
+Date:   Fri, 24 Feb 2023 16:10:42 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [RFC PATCH 6/6] pstore/ram: Register context with minidump
+Subject: Re: [RFC PATCH 0/6] Add basic Minidump kernel driver support
 Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
+To:     Brian Masney <bmasney@redhat.com>
 CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <konrad.dybcio@linaro.org>, <keescook@chromium.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-hardening@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
 References: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
- <1676978713-7394-7-git-send-email-quic_mojha@quicinc.com>
- <63f7c1de.170a0220.f48b.e137@mx.google.com>
+ <Y/deHzijzvuvCJ2M@x1>
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <63f7c1de.170a0220.f48b.e137@mx.google.com>
+In-Reply-To: <Y/deHzijzvuvCJ2M@x1>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: i3k-DWDJFrB0DCU7Xti1zEPhXBVs4rER
-X-Proofpoint-ORIG-GUID: i3k-DWDJFrB0DCU7Xti1zEPhXBVs4rER
+X-Proofpoint-GUID: T7W3uxWLeUgO6aChRz5rQfM-dvuvUMbl
+X-Proofpoint-ORIG-GUID: T7W3uxWLeUgO6aChRz5rQfM-dvuvUMbl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-24_06,2023-02-23_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 phishscore=0
+ definitions=2023-02-24_06,2023-02-24_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ bulkscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 mlxscore=0 spamscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2302240085
+ definitions=main-2302240087
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Thanks Kees for checking into this.
+Thanks Brian for your interest in this series.
 
-On 2/24/2023 1:13 AM, Kees Cook wrote:
-> On Tue, Feb 21, 2023 at 04:55:13PM +0530, Mukesh Ojha wrote:
->> There are system which does not uses pstore directly but
->> may have the interest in the context saved by pstore.
->> Register pstore regions with minidump so that it get
->> dumped on minidump collection.
+On 2/23/2023 6:07 PM, Brian Masney wrote:
+> On Tue, Feb 21, 2023 at 04:55:07PM +0530, Mukesh Ojha wrote:
+>> Minidump is a best effort mechanism to collect useful and predefined data
+>> for first level of debugging on end user devices running on Qualcomm SoCs.
+>> It is built on the premise that System on Chip (SoC) or subsystem part of
+>> SoC crashes, due to a range of hardware and software bugs. Hence, the
+>> ability to collect accurate data is only a best-effort. The data collected
+>> could be invalid or corrupted, data collection itself could fail, and so on.
+>>
+>> Qualcomm devices in engineering mode provides a mechanism for generating
+>> full system ramdumps for post mortem debugging. But in some cases it's
+>> however not feasible to capture the entire content of RAM. The minidump
+>> mechanism provides the means for selecting which snippets should be
+>> included in the ramdump.
+>>
+>> The core of minidump feature is part of Qualcomm's boot firmware code.
+>> It initializes shared memory (SMEM), which is a part of DDR and
+>> allocates a small section of SMEM to minidump table i.e also called
+>> global table of content (G-ToC). Each subsystem (APSS, ADSP, ...) has
+>> their own table of segments to be included in the minidump and all get
+>> their reference from G-ToC. Each segment/region has some details like
+>> name, physical address and it's size etc. and it could be anywhere
+>> scattered in the DDR.
+>>
+>> Existing upstream Qualcomm remoteproc driver[1] already supports minidump
+>> feature for remoteproc instances like ADSP, MODEM, ... where predefined
+>> selective segments of subsystem region can be dumped as part of
+>> coredump collection which generates smaller size artifacts compared to
+>> complete coredump of subsystem on crash.
+>>
+>> [1]
+>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/remoteproc/qcom_common.c#n142
+>>
+>> In addition to managing and querying the APSS minidump description,
+>> the Linux driver maintains a ELF header in a segment. This segment
+>> gets updated with section/program header whenever a new entry gets
+>> registered.
+>
+> I'd like to test this series plus your series that sets the multiple
+> download modes.
+
+Sure, you are welcome, but for that you need a device running with 
+Qualcomm SoC and if it has a upstream support.
+
+Also, testing of this patch needs some minimal out of tree patches and
+i can help you with that.
+
+> Can you include documentation about how to actually use
+> this new feature?
+
+Will surely do, Since this is still RFC, and i am doubtful on the path 
+of it in documentation directory.
+
+  Also the information that you provided above is really
+> useful. I think that should also go in the documentation file as well.
 > 
-> Okay, so, this is a really interesting case -- it's a RAM backend that
-> is already found on a system by pstore via device tree, but there is
-> _another_ RAM overlay (minidump) that would like to know more about how
-> the pstore ram backend carves up the memory regions so it can examine
-> them itself too. (i.e. it's another "interface" like the pstorefs.)
+> I already have a reliable way to make a board go BOOM and go into
+> ramdump mode.
 
-It is not exactly like pstorefs where we can mount and check the logs in 
-next boot.
-
-This interface needs physical address and size of the region to be 
-conveyed to the boot firmware via the minidump registration and firmware 
-will dump this region as a blob out of the device on device crash.
-Blobs can be either plain text like console logs or some thing which
-needs parser for that reason virtual address is required.
-
-> 
-> So we need to provide the mapping back to the overlay. It feels to me
-> like the logic for this needs to live in the minidump driver itself
-> (rather than in the pstore RAM backend). Specifically, it wants to know
-> about all the operational frontends (dmesg, console, ftrace, pmsg) with
-> their virt & phys addresses and size.
-> 
-> The frontends are defined via enum pstore_type_id, and the other values
-> are "normal" types, so it should be possible to move this logic into
-> minidump instead, leaving a simpler callback. Perhaps something like:
-> 
-> void pstore_region_defined(enum pstore_type_id, void *virt,
-> 			   phys_addr_t phys, size_t size);
-Thanks, i will check on this.
-
-> 
-> How the pstore ram backend should know to call this, though, I'm
-> struggling to find a sensible way. How can it determine if the device
-> tree region is actually contained by a minidump overlay?
-
-I agree, pstore will not have any awareness about minidump adding 
-something inside pstore does not look good if it can provide API which
-provide this information.
-
-One more thing, since minidump is also one of the user of pstore in this
-case and it may not need the fixed ram addresses to be mentioned in the 
-carve out.
-
-Do you think this can be accepted or if not any suggestion
-
-https://lore.kernel.org/lkml/1675330081-15029-2-git-send-email-quic_mojha@quicinc.com/
-
+That's very nice to hear; but again if you can specify your target 
+specification.
 
 -Mukesh
+> 
+> Brian
 > 
