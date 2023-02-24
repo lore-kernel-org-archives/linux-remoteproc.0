@@ -2,100 +2,103 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D860AC7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Feb 2023 17:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AEDC7EE2D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Feb 2023 19:07:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjBXRRT (ORCPT
+        id S229992AbjBXTHD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 24 Feb 2023 12:17:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46358 "EHLO
+        Fri, 24 Feb 2023 14:07:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjBXRRS (ORCPT
+        with ESMTP id S229947AbjBXTHC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 24 Feb 2023 12:17:18 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C0716896;
-        Fri, 24 Feb 2023 09:17:14 -0800 (PST)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31OCYJbh027126;
-        Fri, 24 Feb 2023 17:17:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=/s0mPwvSSDW+VQauRoSbgFNDF3tO1lzqgOdoz387oPo=;
- b=Io5nYkDPhQSndUbG9/z2HdXwNkSrHRyQ9bx08fXmHxmDmKVIpMx4zzrS1zi09opW3UtJ
- rnot6S/LhjryKVIPj0+kMUdgXNOZmxegEzq79m6VXcx9pckEold/NGYtCD09m8XytXHc
- GJoFRGLxe1aD1WolUrSnLo/0J8Uyf2/m3q70zLe9KGqo25iqAVgdwRT7mEcGHLGvy+dq
- ch14i8qKY8eXwWlU4ZaobQK0W9k//i7ssPGejo+7riGEnh3kS5pX7EILL38Keji6FNSE
- TiMdxRWXyZSAwV6e42iOR5sYeNrbeQkC++pAwphOensVIf73ptRFmvClB7ZVsY1tFmVq JQ== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3nxuu110qa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 24 Feb 2023 17:17:08 +0000
-Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 31OHH7hF023679
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 24 Feb 2023 17:17:07 GMT
-Received: from [10.110.82.3] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 24 Feb
- 2023 09:17:07 -0800
-Message-ID: <31766494-4952-ab02-d9b1-861e81d9b080@quicinc.com>
-Date:   Fri, 24 Feb 2023 09:17:06 -0800
+        Fri, 24 Feb 2023 14:07:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E91B21B2FE
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Feb 2023 11:06:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677265572;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TO32MmHRC5X6hVdeytKpEjQuFgiB4c62vSXkbsV3be0=;
+        b=exJ3XtvNyj8288WnwA5Jqrw0Yj1bVnLY5cxEfjcj5uN1EWnXocRZHuQrcP7mMSSFBTEnYg
+        cA2HbF7ddEcXEx7BwMr6AM4bvwDNEKFaycG18o4+UlsQbWqW5Z8fkbS39f5UBrBNBRBMHs
+        mR+8M44a0HUqDbaI2X1s6xHUPEL4mFY=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-455-cwbiSjR-MpC34TgFptzMIQ-1; Fri, 24 Feb 2023 14:06:11 -0500
+X-MC-Unique: cwbiSjR-MpC34TgFptzMIQ-1
+Received: by mail-io1-f69.google.com with SMTP id g7-20020a056602242700b00745a4e97ce7so9593564iob.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Feb 2023 11:06:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TO32MmHRC5X6hVdeytKpEjQuFgiB4c62vSXkbsV3be0=;
+        b=AaGu2KZtDgPqlR+ZVkBtLHH9gQvpY986smgIPS7GCGwQaJiVy2adaH0lfNpBcmproU
+         xjgbNmo0xuQ67IIjBjGBnYSf9GOxMiTNxQy0V8ZcYAdYFC35Tz9Dh3bxx06insEmF3DW
+         CJaqmA9R1ae9faM5tDNVduIu9ovkEOE5SYWGcaxVFxzSeIaDRvWoiXcBqHU5s+zYbKIp
+         2GEPlqbCc4TJTSCZZAgINTnjmIMgfFlwCYX8uhS5NeLH1rdsrRN9cZ4gY1OrEdILaO8B
+         Z9tQnfeeuBaUDArPKjBM8/oGvY43boV8ilxsgT6lTJB0k3mw0S62lP9WMw+8TbvCRvO3
+         cDEg==
+X-Gm-Message-State: AO0yUKXU0IPD2qwbmaS+sO2wKN7ZIdaSFfgJZHDf3XsTnku21NEBUnAS
+        /cM/ybpyepHg0Dn8MMisC/aAJ/60hGXc7r0n2/cfaubka+9Info2fMryZMqC+3hvlQofDHlWJyy
+        qM88yRLf6xvUccgt3Xljej5fX/5kE6g==
+X-Received: by 2002:a05:6602:200f:b0:74c:bc54:def6 with SMTP id y15-20020a056602200f00b0074cbc54def6mr790436iod.16.1677265571053;
+        Fri, 24 Feb 2023 11:06:11 -0800 (PST)
+X-Google-Smtp-Source: AK7set9/Pv5CyL/4mD4A9Y4Q/LVOJsbK7o9jmpBuvUza9YaJUBhEetobrRKdqPedvvHaEaB9J1UmPg==
+X-Received: by 2002:a05:6602:200f:b0:74c:bc54:def6 with SMTP id y15-20020a056602200f00b0074cbc54def6mr790426iod.16.1677265570885;
+        Fri, 24 Feb 2023 11:06:10 -0800 (PST)
+Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id l5-20020a6b7b05000000b0073f8a470bacsm24221iop.16.2023.02.24.11.06.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Feb 2023 11:06:09 -0800 (PST)
+Date:   Fri, 24 Feb 2023 14:06:07 -0500
+From:   Brian Masney <bmasney@redhat.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 0/6] Add basic Minidump kernel driver support
+Message-ID: <Y/kKn9tnvSQ2Pacn@x1>
+References: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
+ <Y/deHzijzvuvCJ2M@x1>
+ <47542dbb-8cf3-6eae-a38e-910d38bd960b@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v1 1/1] remoteproc: qcom: Add remoteproc tracing
-Content-Language: en-US
-To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        "Guru Das Srinagesh" <quic_gurus@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-trace-kernel@vger.kernel.org>
-References: <20230224165142.17745-1-quic_gokukris@quicinc.com>
- <20230224165142.17745-2-quic_gokukris@quicinc.com>
-From:   Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <20230224165142.17745-2-quic_gokukris@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZUF84FnOekLcPjwSR-2iTz6t9nmHm3zw
-X-Proofpoint-ORIG-GUID: ZUF84FnOekLcPjwSR-2iTz6t9nmHm3zw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
- definitions=2023-02-24_12,2023-02-24_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- suspectscore=0 mlxscore=0 clxscore=1011 priorityscore=1501 bulkscore=0
- spamscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=503 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
- definitions=main-2302240136
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47542dbb-8cf3-6eae-a38e-910d38bd960b@quicinc.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 2/24/2023 8:51 AM, Gokul krishna Krishnakumar wrote:
-> This change adds traces to the following rproc events:
-> 1. subdevices events - (STRAT/STOP/CRASH)
-> 2. subsystem events - (START/STOP/CRASH)
-> 3. RPROC framework events - (Firmware Load/Authentication)
+Hi Mukesh,
 
+On Fri, Feb 24, 2023 at 04:10:42PM +0530, Mukesh Ojha wrote:
+> On 2/23/2023 6:07 PM, Brian Masney wrote:
+> > I'd like to test this series plus your series that sets the multiple
+> > download modes.
+> 
+> Sure, you are welcome, but for that you need a device running with Qualcomm
+> SoC and if it has a upstream support.
 
-Whenever I see 1/2/3 bullets it probably means different patches? I am 
-not sure if that applies here, but I don't know why you use numbered 
-bullets here. Also please describe what is the benefit of these trace 
-events and how you plan to use it? What kind of debugging scenartio it 
-will help you.
+I will be testing this series on a sa8540p (QDrive3 Automotive
+Development Board), which has the sc8280xp SoC with good upstream
+support. This is also the same board that I have a reliable way to
+make the board crash due to a known firmware bug.
 
----Trilok Soni
+> Also, testing of this patch needs some minimal out of tree patches and
+> i can help you with that.
+
+Yup, that's fine. Hopefully we can also work to get those dependencies
+merged upstream as well.
+
+Brian
+
