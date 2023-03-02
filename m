@@ -2,336 +2,175 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CF4C7EE2D
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  1 Mar 2023 18:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB3CC6FA8E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Mar 2023 09:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbjCAS4M (ORCPT
+        id S229621AbjCBJxO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 1 Mar 2023 13:56:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37878 "EHLO
+        Thu, 2 Mar 2023 04:53:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjCAS4M (ORCPT
+        with ESMTP id S229901AbjCBJxB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 1 Mar 2023 13:56:12 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62BDC474C4
-        for <linux-remoteproc@vger.kernel.org>; Wed,  1 Mar 2023 10:56:10 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id cp7-20020a17090afb8700b0023756229427so250196pjb.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Mar 2023 10:56:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSpw3dBnLTxPr0uk82VR0oSTopLNz20E94PKNc5GO0Y=;
-        b=xwDWh4lifKaYJBTVi81JzJhZtxh1zdsjUspmFsIpRjYq0udQv7ej0R61Pmbq1nvBcD
-         0zDQgM/VYseleci/rQBvIDeHntMXnywDpC5XDIXPUf93DCzndtyx3PIYVH0E8xxEWxMM
-         8kDYGJ8mXxV+JblEhorQhFmB0AxvqL04CmPXApMCW4typZ275jpFDB0HUPJA/+JidLOm
-         qsckFvDDl3RDF8fQxEY/ojzRQHijpuAeFNNVtvUXmBghta5GH53IWr1f5gwJriYdBX5U
-         TCm3k/9RtbgY34/kvWhkfYPqS/M5QLDQMHr7YfTXb3kCYxicXV5K1Ci0BF12+EVrzIFQ
-         zFrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vSpw3dBnLTxPr0uk82VR0oSTopLNz20E94PKNc5GO0Y=;
-        b=PlTcAFulIFhmhKGf8UU3LLMytG7JJbVA1aEbdXtuUcF2Cy/es2jYuz4K/BZg4cpB1H
-         WkFV9Btd5NJmupZIBRmAx15HtwTd8ZPmCH1w9+1PwBD28I4x5qrl9gDEitMXFzWfyYtg
-         v92zFrXr59cfA2wrHqeXoXYu8CO2a8ldSTZgrL5WRLYR6SYAylG0ecf32/dkmyizWRfh
-         KzFCJ9M0WYzuHGMBAqs2HChfFMhqjnWgN0h/mhHC3wOPwsUtsa/Vt5puLYpUlUFa7FeI
-         Vn4w5gOjjGfUUv/M3dcqsZvDu2GaoY9Cg7hD7cfrILiSVWUahCTp5dL8faqDV7kIcnAd
-         N0CA==
-X-Gm-Message-State: AO0yUKVmBzcxkI1aMx980sT0inX8d7xjKFXFjjvpmAh4mQlt6oeIQsjj
-        Afko6diohTDgmHOjNtwyutfE/g==
-X-Google-Smtp-Source: AK7set+l+B1RWIWZcdT0G5HJVGUWcgXe4TE8oNiM8lSJ+x0hHcMvWRZVHLTy7swcJKxnuQvggcalGQ==
-X-Received: by 2002:a05:6a20:258b:b0:cc:868f:37b3 with SMTP id k11-20020a056a20258b00b000cc868f37b3mr6581409pzd.58.1677696969835;
-        Wed, 01 Mar 2023 10:56:09 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:a1e5:28cc:d6dd:89d0])
-        by smtp.gmail.com with ESMTPSA id i71-20020a63874a000000b00502e7115cbdsm7795640pge.51.2023.03.01.10.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Mar 2023 10:56:09 -0800 (PST)
-Date:   Wed, 1 Mar 2023 11:56:06 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+        Thu, 2 Mar 2023 04:53:01 -0500
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2058.outbound.protection.outlook.com [40.107.8.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6518D3C3A;
+        Thu,  2 Mar 2023 01:52:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nX4FO2z7eqTImC6DY1jxGg2fsmzC8g4cJm0mCR3XATeUFQLhEHcBUSAiVooqPweOfq04CgtcGYSgzb+KkjoycJjNtKyiK1URW++7/mHdOHpYUgDWg0zpyYVa3vX+Vlpq8e03FNbxxC99LMzMthoPIjF+qXKqplIQbBdKp38ShEsH4IwQYWNYzDUgSQZdErQcvxAnFUjcw/kjm5C4hcG2SXodHQXAOqmFaxnj6xxBprs6T8vyX9TGgM/BZ6s98c3zhfRidxr1lRh434UBokhmzGxD8M/siygd1A3gg7U05CTf2Mjmo2YprFELyVESiRHb/o+HfUXC43vo8LpfscBG3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y6wwmI7XU/u72f0RhZcJpQMKYINHkN4riuzoZNKkVtI=;
+ b=CSPqV3zZAYGknkIx0SkKFrvA09eTtpv8dfqQ2PgnmVSuOmz5g512OKXYA/wWVNKyQzNfG702whVkhNRtD7/wiaMtgxRaW0e8NBliPbXo17rFuRFE0rc7DsFrrZ8qMcvVn6ODJO5qsTfORhnVBOAGBCaLwTCcs3j6Gvo5fVcybenMwdO3ol07VbN6pbHcNOS9lZUUdVyc6pgcyNDNt9iA6BkQ2OIEFtqfMO9JUo+TUa/7X1o9GRbtecrnIc+E0fnjpd//7E4GHd3SYmDea1rwYbO29fUVQTl0+vwGppTDm5yyCmuh1nfW6Ok7G29kwCtYmDZJ8axJJaDGZHba32pk/Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y6wwmI7XU/u72f0RhZcJpQMKYINHkN4riuzoZNKkVtI=;
+ b=ZKloaofZCPlBeU/yk/Y6YUu6hqK8QW8BT4XAdYd5bu+mVT2zJQlOrPd4gPgq7U1aNNif2Xv5c2veOHuOSwr6Qz6yxaeAj1K4lA8dKBdUwZ8wO5EVw3AKB+KM4gAuec7ZHYnlI2wGYYuPLtOWaT5lKTYLevyIlcgAOwlhNnmvee8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9628.eurprd04.prod.outlook.com (2603:10a6:10:30b::14)
+ by PAXPR04MB9060.eurprd04.prod.outlook.com (2603:10a6:102:223::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6156.18; Thu, 2 Mar
+ 2023 09:52:56 +0000
+Received: from DB9PR04MB9628.eurprd04.prod.outlook.com
+ ([fe80::8e85:409:6bbd:aa9f]) by DB9PR04MB9628.eurprd04.prod.outlook.com
+ ([fe80::8e85:409:6bbd:aa9f%6]) with mapi id 15.20.6156.017; Thu, 2 Mar 2023
+ 09:52:56 +0000
+Message-ID: <37ad1463-c12c-f148-4fe3-07dab52e8e1b@nxp.com>
+Date:   Thu, 2 Mar 2023 11:52:13 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v5] remoteproc: imx_dsp_rproc: add custom memory copy
+ implementation for i.MX DSP Cores
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         "S.J. Wang" <shengjiu.wang@nxp.com>,
         Fabio Estevam <festevam@gmail.com>,
         Daniel Baluta <daniel.baluta@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
         linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH v5] remoteproc: imx_dsp_rproc: add custom memory copy
- implementation for i.MX DSP Cores
-Message-ID: <20230301185606.GB1326133@p14s>
 References: <20230221170356.27923-1-iuliana.prodan@oss.nxp.com>
- <20230301184916.GA1326133@p14s>
+ <20230301184916.GA1326133@p14s> <20230301185606.GB1326133@p14s>
+Content-Language: en-US
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+In-Reply-To: <20230301185606.GB1326133@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM4PR07CA0001.eurprd07.prod.outlook.com
+ (2603:10a6:205:1::14) To DB9PR04MB9628.eurprd04.prod.outlook.com
+ (2603:10a6:10:30b::14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230301184916.GA1326133@p14s>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9628:EE_|PAXPR04MB9060:EE_
+X-MS-Office365-Filtering-Correlation-Id: e886a66b-055a-410a-fd18-08db1b03e5c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Z6s7ehyiOCCo/3ViXo2goOj5K2yV0LJWbQKUfOGJrtnh+yk1oxFffbx2yN2S8UKgRgw9RZfTTcRkR1/lLVBgxFlnoy+GA3bZWKEPaqT+fZ4HPMubV/yHmfUnIi2+JjtqvFgOxasDblW1ffRnYELTHcwrq+5E9UmQubQshGYh5Wi77Wg0SxChSnkE9JYkUgWSNVSHWTRYJEFSOn5ohngZmXf/2h03yr+sl3lyYs8BRkXRZITJxlH1hee0UD4sJpLfyTDmNM5nWRFh2XOAJs3v7WbDQchXcLInirPIgEVO17MfbgvqcO5q0TJ8Koij7FtcAsc9haqwAc11gE/sv9WbfML5z7HeoQbdKKATnfJ1RF/EPyzr2xadijeNb8RvZd30X+c6R+VqxFKtCTSpWi1SRscjmsT7e+ww2ciZ/sd3hO7NfGaPTzRp8THtEAaAdAAaQxfY+1wbZjeoHzjtpzwey4ZeQharbyAFwj+X/1HhmoFDBRwk6cFBPGLdqWuLbkcBPXptxeyh7MYHbx9F1nzCHDQ54NVcuEqjMadYM61cLg1WA+6L8nAKHHJb344n/QtKE1rcafozHhtehMRDTe4hKFz2ytfPF4zfRnvr2dkL/69SVyTPwh2DksGf81HO7+i7Fyxs8gPSaxL0M8BFlQwll4KwC8tabGcNe8CnpQi3rMIlAyo06ICNb+oSGeUZpvd1dk5lGN1WsBtzljUgcou/u2cGLl00ca89AYgKBHmX2zo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9628.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(136003)(39860400002)(366004)(396003)(346002)(376002)(451199018)(31686004)(86362001)(31696002)(2616005)(110136005)(5660300002)(8936002)(83380400001)(54906003)(41300700001)(44832011)(66899018)(186003)(4326008)(66946007)(6506007)(6512007)(66476007)(66556008)(8676002)(26005)(478600001)(316002)(6486002)(55236004)(53546011)(36756003)(2906002)(6666004)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y0JaRDZQNE5rUGlEclExVHZHMzRlZ084SU1NOGo5WXNhb0F0L2Ywc2s4eVA5?=
+ =?utf-8?B?NHM3VG9SeVpxTjRpekhGT0pBZWVLUThjS2hwVWZ3ZUlzUUdIbGFDUEtHNWV0?=
+ =?utf-8?B?Z3k0R0dlUkxPZnRjaHg1RUhHYWRsYzkxUzJRcjIwTVc1Vk9lOGsxQUp1d2wy?=
+ =?utf-8?B?RUYxVWRCd1FONTI0M1BjZkkwUHdVMm5leVVvb0VmbE0zR3JEakNHRDhNWTBG?=
+ =?utf-8?B?b2lFeFZwd3ByeEhvbUhCZGZyaXZueDdiRGhvTGluQ21XMGlRZ3R3bTJETXpi?=
+ =?utf-8?B?bnBXbXdSckNqblRlRUkyZXRRbklYb2RqNzZTMGUreDBlRjdSM1NvSUZ6ZU5z?=
+ =?utf-8?B?M1pZMldOV281WWVpQnZmWUlYQ3pYR0Y5MURHcHY2aFlnSitLWnNrQnB2WGNz?=
+ =?utf-8?B?YzRJdlBqaWNQdnhoSWRIaVNNdDdCajFjVTNlQy9BSFMwcExCWCtvczhxTHBZ?=
+ =?utf-8?B?SU5OKzJ0Q25FeFMyaEllV2xmcDNtNnl0b2p0cktSYlE2d2tkcTNOa1dLSFhE?=
+ =?utf-8?B?RDhxc1dCNGZkczFjZTFZanBVR0Jyc3Y5Mi92SCtwUitHaks1YkN1S0hkblk1?=
+ =?utf-8?B?Vm1mOWRpaGxRTnNCTk1XUEducFplSWFuWGVUem5QVVUwcSs3em8zcHlqQnBj?=
+ =?utf-8?B?UFQrSlcvK0ZWVHdhV3gzemQveDRoM3RBdE1yUUdjZ3pSSHNuWnJSWWphQW9S?=
+ =?utf-8?B?cEtQUkIyMXYxWmVBRjRBS2pLQjZtcFdweTMzRVdXcCtrQXBDUy94d21NTWhS?=
+ =?utf-8?B?R0tTUGtuV2QrMHJUY0o5NUgwbXRIazR2L1pmelVwK0U4YjQ4ZDVPbUdHUkJr?=
+ =?utf-8?B?SFJPSGhPN0U0NzZnY1UzZTJGN2RvMkhOSGZHNGF1b2toQStpTm9HdzJVMU1W?=
+ =?utf-8?B?MU5ybnVndmJhZ2tUVWpVNDVwU2VaYko3bjAzVlBXTElia0NNTDQyNTRsM21j?=
+ =?utf-8?B?YXFRNGhlbGgrQi9yQjI1Z1ZkU0J3UFVYZ0FFd0JuR3A4eGxwK2dZa2d1UmJa?=
+ =?utf-8?B?S0Jya2NDWVlRL3NHVmZhcXRSd0krWm9RblJsK2pGc2JOYVI1ZmROTXVzQU9O?=
+ =?utf-8?B?N1ZtalQ2YUxESmxDTUFBZnNLTUNEVHpXQ2hGcDJ5SEVrd0xVL1BNU1VTemhH?=
+ =?utf-8?B?dVZDSTJqdEhyZTc0SU1uSjY3M2Jlb3M0ZFZuakp0UklyMDcxTjVCUlQzV2k0?=
+ =?utf-8?B?QXp5WGxramEzNys3WUdhTmczcGYya0ZDZWhxelpSck10QjVybFZNRUQ1MUov?=
+ =?utf-8?B?K2FTNVpKdXhGbm42WkdXUEZGVGxOUk1PQkJ0NTZDTFlOVUV1cjZaL29lcEls?=
+ =?utf-8?B?SFdkWkgvODdSNFRvdlluR0hvV3ZHU2Rpelo4bkx6akw4eWVIeVQrNnVtckhk?=
+ =?utf-8?B?Y0dyb3dOS295Q2ExaE9MSllGSmhVemdjTXFnT2VDRlo1cDhOSmh2Tis1WG5B?=
+ =?utf-8?B?NHpjVno5R3IvTTRQZmVCMUxwY1ZYeXNRcXFFTDZFUVkrd01UMml6VlZMc3N4?=
+ =?utf-8?B?NEg5VzlkN0dNemZ5SFhSa2lrOEZoME13YnJDNFpUQ0o2QkdGSTZMT1lEOXI3?=
+ =?utf-8?B?MnVhSnVwY3k1OUNCMDg1c2RLeStzY2JuUGNhWG9JMldIdkFkb0RKYVhXdGor?=
+ =?utf-8?B?TDhEN1dwS3dpUGRzdUY3SmdwcmRvSE4vTkhlWXB2NUQwOUtZSCs5M2h1NHl2?=
+ =?utf-8?B?N0Z2VlZtVGx5TXpVQzRvUkN3cDRNWUlSUmhKN3dwVDduODlDQzNaZEYwL21i?=
+ =?utf-8?B?Q2hIbWhQUXVCaWpwVFAyT3ZIdXVHbFdLdnhiSjV4ZW5oZERvdUo0VzgzNzNK?=
+ =?utf-8?B?TjNEOEtORU41OEpaNHluZU5hUDdNNGNSZWVuSnNEZkRUWnF0TWpwa1JoN3JR?=
+ =?utf-8?B?VjBSOTFVVmpHOC9CR1BRK3Z4UVIzQ0dWaUpaUE9zWE0rZWQ3VGZscjEwdFha?=
+ =?utf-8?B?dEFMUTNKRGJMblQyTkJIcGtRTVp1d01Da1U5WFpxTWRZWEZtSlR1NXBiMkU3?=
+ =?utf-8?B?UmpVaWMyOGd2NTBlTFlRTlcrZnl5T1B0US9scDYxTlpCVkIwbTBGZWZ1eU56?=
+ =?utf-8?B?UkVNdTZXNkwzaWs1elVDMnd4QS9pUEM1TEdNOTE4ZWo2RlIvWVA5TzIzVUU2?=
+ =?utf-8?B?R2N3bnVoeHBpemtpTUNPUHRpenBqVzhwZ3d0djQyeWc0ck5HSFNnT2F3V3JL?=
+ =?utf-8?B?ZHc9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e886a66b-055a-410a-fd18-08db1b03e5c7
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9628.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2023 09:52:55.9199
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vjAKUTSQu5JoKQ2vxaDoYO3UMgPMGAOu5wNUQaCa+hXTbAic6f/uSgeyEMw+9dJGbZxCekBII8CDQHd4rJBAQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9060
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Mar 01, 2023 at 11:49:16AM -0700, Mathieu Poirier wrote:
-> Hi Iuliana,
-> 
-> On Tue, Feb 21, 2023 at 07:03:56PM +0200, Iuliana Prodan (OSS) wrote:
-> > From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> > 
-> > The IRAM is part of the HiFi DSP.
-> > According to hardware specification only 32-bits write are allowed
-> > otherwise we get a Kernel panic.
-> > 
-> > Therefore add a custom memory copy and memset functions to deal with
-> > the above restriction.
-> > 
-> > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> > ---
-> > Changes since v4
-> > - use GENMASK;
-> > - s/ioread32/readl;
-> > - s/iowrite32/writel;
-> > - use for loop with writel instead of __iowrite32_copy;
-> > - update multi-line comment format.
-> > 
-> 
-> This looks good now.  I will queue this on March 13th when 6.3-rc2 is out.
->
+Hi Mathieu,
 
-And out of curiosity, are the remote processors handled by imx_rproc.c also have
-the same 32-bit write constraints?  If so, it would be nice to have a patch that
-fixes that as well.  In such a case, imx_dsp_rproc_memcpy() and
-imx_dsp_rproc_memset() should be renamed to something more generic and re-used
-in imx_rproc.c.
+On 3/1/2023 8:56 PM, Mathieu Poirier wrote:
+> On Wed, Mar 01, 2023 at 11:49:16AM -0700, Mathieu Poirier wrote:
+>> Hi Iuliana,
+>>
+>> On Tue, Feb 21, 2023 at 07:03:56PM +0200, Iuliana Prodan (OSS) wrote:
+>>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>>
+>>> The IRAM is part of the HiFi DSP.
+>>> According to hardware specification only 32-bits write are allowed
+>>> otherwise we get a Kernel panic.
+>>>
+>>> Therefore add a custom memory copy and memset functions to deal with
+>>> the above restriction.
+>>>
+>>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>> ---
+>>> Changes since v4
+>>> - use GENMASK;
+>>> - s/ioread32/readl;
+>>> - s/iowrite32/writel;
+>>> - use for loop with writel instead of __iowrite32_copy;
+>>> - update multi-line comment format.
+>>>
+>> This looks good now.  I will queue this on March 13th when 6.3-rc2 is out.
+>>
+> And out of curiosity, are the remote processors handled by imx_rproc.c also have
+> the same 32-bit write constraints?  If so, it would be nice to have a patch that
+> fixes that as well.  In such a case, imx_dsp_rproc_memcpy() and
+> imx_dsp_rproc_memset() should be renamed to something more generic and re-used
+> in imx_rproc.c.
 
-> Thanks,
-> Mathieu
-> 
-> > Changes since v3
-> > - remove Reported-by
-> > 
-> > Changes since v2
-> > - fix warning "cast from pointer to integer of different size"
-> > reported by kernel test robot.
-> > 
-> > Changes since v1
-> > - added missing check for cases when the memory slot is bigger than the file size;
-> > - added a custom memset function
-> > - removed is_iomem flag since is not used here
-> > - updated custom memcpy function to avoid reading after end of source
-> > ---
-> >  drivers/remoteproc/imx_dsp_rproc.c | 187 ++++++++++++++++++++++++++++-
-> >  1 file changed, 186 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> > index 81d3a01e1444..dcbb957bc7ac 100644
-> > --- a/drivers/remoteproc/imx_dsp_rproc.c
-> > +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> > @@ -739,6 +739,191 @@ static void imx_dsp_rproc_kick(struct rproc *rproc, int vqid)
-> >  		dev_err(dev, "%s: failed (%d, err:%d)\n", __func__, vqid, err);
-> >  }
-> >  
-> > +/*
-> > + * Custom memory copy implementation for i.MX DSP Cores
-> > + *
-> > + * The IRAM is part of the HiFi DSP.
-> > + * According to hw specs only 32-bits writes are allowed.
-> > + */
-> > +static int imx_dsp_rproc_memcpy(void *dest, const void *src, size_t size)
-> > +{
-> > +	const u8 *src_byte = src;
-> > +	const u32 *source = src;
-> > +	u32 affected_mask;
-> > +	u32 *dst = dest;
-> > +	int i, q, r;
-> > +	u32 tmp;
-> > +
-> > +	/* destination must be 32bit aligned */
-> > +	if (!IS_ALIGNED((uintptr_t)dest, 4))
-> > +		return -EINVAL;
-> > +
-> > +	q = size / 4;
-> > +	r = size % 4;
-> > +
-> > +	/* copy data in units of 32 bits at a time */
-> > +	for (i = 0; i < q; i++)
-> > +		writel(source[i], &dst[i]);
-> > +
-> > +	if (r) {
-> > +		affected_mask = GENMASK(8 * r, 0);
-> > +
-> > +		/*
-> > +		 * first read the 32bit data of dest, then change affected
-> > +		 * bytes, and write back to dest.
-> > +		 * For unaffected bytes, it should not be changed
-> > +		 */
-> > +		tmp = readl(dest + q * 4);
-> > +		tmp &= ~affected_mask;
-> > +
-> > +		/* avoid reading after end of source */
-> > +		for (i = 0; i < r; i++)
-> > +			tmp |= (src_byte[q * 4 + i] << (8 * i));
-> > +
-> > +		writel(tmp, dest + q * 4);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/*
-> > + * Custom memset implementation for i.MX DSP Cores
-> > + *
-> > + * The IRAM is part of the HiFi DSP.
-> > + * According to hw specs only 32-bits writes are allowed.
-> > + */
-> > +static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
-> > +{
-> > +	u32 tmp_val = value;
-> > +	u32 *tmp_dst = addr;
-> > +	u32 affected_mask;
-> > +	int q, r;
-> > +	u32 tmp;
-> > +
-> > +	/* destination must be 32bit aligned */
-> > +	if (!IS_ALIGNED((uintptr_t)addr, 4))
-> > +		return -EINVAL;
-> > +
-> > +	tmp_val |= tmp_val << 8;
-> > +	tmp_val |= tmp_val << 16;
-> > +
-> > +	q = size / 4;
-> > +	r = size % 4;
-> > +
-> > +	while (q--)
-> > +		writel(tmp_val, tmp_dst++);
-> > +
-> > +	if (r) {
-> > +		affected_mask = GENMASK(8 * r, 0);
-> > +
-> > +		/*
-> > +		 * first read the 32bit data of addr, then change affected
-> > +		 * bytes, and write back to addr.
-> > +		 * For unaffected bytes, it should not be changed
-> > +		 */
-> > +		tmp = readl(tmp_dst);
-> > +		tmp &= ~affected_mask;
-> > +
-> > +		tmp |= (tmp_val & affected_mask);
-> > +		writel(tmp, tmp_dst);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-> > + * @rproc: remote processor which will be booted using these fw segments
-> > + * @fw: the ELF firmware image
-> > + *
-> > + * This function loads the firmware segments to memory, where the remote
-> > + * processor expects them.
-> > + *
-> > + * Return: 0 on success and an appropriate error code otherwise
-> > + */
-> > +static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-> > +{
-> > +	struct device *dev = &rproc->dev;
-> > +	const void *ehdr, *phdr;
-> > +	int i, ret = 0;
-> > +	u16 phnum;
-> > +	const u8 *elf_data = fw->data;
-> > +	u8 class = fw_elf_get_class(fw);
-> > +	u32 elf_phdr_get_size = elf_size_of_phdr(class);
-> > +
-> > +	ehdr = elf_data;
-> > +	phnum = elf_hdr_get_e_phnum(class, ehdr);
-> > +	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-> > +
-> > +	/* go through the available ELF segments */
-> > +	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-> > +		u64 da = elf_phdr_get_p_paddr(class, phdr);
-> > +		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-> > +		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-> > +		u64 offset = elf_phdr_get_p_offset(class, phdr);
-> > +		u32 type = elf_phdr_get_p_type(class, phdr);
-> > +		void *ptr;
-> > +
-> > +		if (type != PT_LOAD || !memsz)
-> > +			continue;
-> > +
-> > +		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-> > +			type, da, memsz, filesz);
-> > +
-> > +		if (filesz > memsz) {
-> > +			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-> > +				filesz, memsz);
-> > +			ret = -EINVAL;
-> > +			break;
-> > +		}
-> > +
-> > +		if (offset + filesz > fw->size) {
-> > +			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-> > +				offset + filesz, fw->size);
-> > +			ret = -EINVAL;
-> > +			break;
-> > +		}
-> > +
-> > +		if (!rproc_u64_fit_in_size_t(memsz)) {
-> > +			dev_err(dev, "size (%llx) does not fit in size_t type\n",
-> > +				memsz);
-> > +			ret = -EOVERFLOW;
-> > +			break;
-> > +		}
-> > +
-> > +		/* grab the kernel address for this device address */
-> > +		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
-> > +		if (!ptr) {
-> > +			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-> > +				memsz);
-> > +			ret = -EINVAL;
-> > +			break;
-> > +		}
-> > +
-> > +		/* put the segment where the remote processor expects it */
-> > +		if (filesz) {
-> > +			ret = imx_dsp_rproc_memcpy(ptr, elf_data + offset, filesz);
-> > +			if (ret) {
-> > +				dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%llx\n",
-> > +					da, memsz);
-> > +				break;
-> > +			}
-> > +		}
-> > +
-> > +		/* zero out remaining memory for this segment */
-> > +		if (memsz > filesz) {
-> > +			ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
-> > +			if (ret) {
-> > +				dev_err(dev, "memset failed for da 0x%llx memsz 0x%llx\n",
-> > +					da, memsz);
-> > +				break;
-> > +			}
-> > +		}
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-> >  {
-> >  	if (rproc_elf_load_rsc_table(rproc, fw))
-> > @@ -753,7 +938,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
-> >  	.start		= imx_dsp_rproc_start,
-> >  	.stop		= imx_dsp_rproc_stop,
-> >  	.kick		= imx_dsp_rproc_kick,
-> > -	.load		= rproc_elf_load_segments,
-> > +	.load		= imx_dsp_rproc_elf_load_segments,
-> >  	.parse_fw	= imx_dsp_rproc_parse_fw,
-> >  	.sanity_check	= rproc_elf_sanity_check,
-> >  	.get_boot_addr	= rproc_elf_get_boot_addr,
-> > -- 
-> > 2.17.1
-> > 
+None that I know of.
+
+But, this restriction applies to any core who's writing to IRAM.
+When one is writing from anywhere else in the system to IRAM, this is a 
+PIF write.
+And the inbound PIF writes are 32-bits at a time.
+
+Thanks,
+
+Iulia
+
