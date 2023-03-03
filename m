@@ -2,439 +2,359 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18371C6FA8E
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  2 Mar 2023 23:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C60C7EE2F
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Mar 2023 03:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjCBXK6 (ORCPT
+        id S229589AbjCCD1v (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 2 Mar 2023 18:10:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53212 "EHLO
+        Thu, 2 Mar 2023 22:27:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjCBXK5 (ORCPT
+        with ESMTP id S229445AbjCCD1u (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 2 Mar 2023 18:10:57 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E569143937
-        for <linux-remoteproc@vger.kernel.org>; Thu,  2 Mar 2023 15:10:55 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id v11so890308plz.8
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Mar 2023 15:10:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1677798655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OIO2BplgSwwa0QOcYMeKpXSJwqPWn5n80nZsHGXphts=;
-        b=Lw3YqjsYYJitC8CakKNkK6I0EP2iwVyueP1TmPD/lQddkt+CdDHiPWuG5OLqrD8ksD
-         5wljNh72JxBf0j7TplGBHE/oKOGPIDqf0721jppBg2zrh4mUx+x9p3NClJK/sUCxeMrB
-         upXlZZI+Pgms4X6b7vWRf4xxU04cGaJL4KKCS9Em2Kd47VKxG60Z7sTcwNd2DNfn35Zi
-         gqtBKoChCmJsFIv3g33zoYvCfX2fra9AGyCWe6RTkdL0LGnqCG33JBp82dE+3XTJ44Ga
-         qhH6R7TcENLhQKvgQgvtqoJdUJuy1HAdcWQoHcVgv5iq45wt1AbT1PSVS15lYC/jxqMg
-         5UXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677798655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OIO2BplgSwwa0QOcYMeKpXSJwqPWn5n80nZsHGXphts=;
-        b=IVjFrhsnhDqKjFixcGR5Ys94+TwjjEgqXLPQi9p2TE5AC3xqRsMCRn+pDUkhY9uW6F
-         NVo5KEFjC+kW3QXXtVp/FuSmbas4AJW+22OyeY1x89kbv/6BvwFcCdqMf2ZLhVsaiM3X
-         JskzYSALvDiJc29JMEHqG7JdTo/qKJK+JWCIaNhO9qnmLiQ3EDKtH3lJPka+PjyxgTGN
-         ij///eDm0p0zUKCSB52Ct4r4kIrEpsYb9uub+I7BNVgQvSBBjx/QngFlnmWdEpeiLnr7
-         3Zdft5UL7iesqXxhQmfL3UN8uA0x4QO/faa1rUcVlwubkLYw9iVn8nNPz6bnfDEkz9gM
-         Iwyw==
-X-Gm-Message-State: AO0yUKVIPeDQpwJT9fVdErNCu2nSLkjCi5nPLqwOFqKb025jwuS87gci
-        FH5h1ysOuBH48+5VZ8WYtaOwnw==
-X-Google-Smtp-Source: AK7set92aAdc8gDXzG3FhKxkbzKff45zlSDK8gamnihQt9rDyE388+SEKrk4q+82nDhK6jWKUMopcw==
-X-Received: by 2002:a17:902:ce8a:b0:19a:df76:ddd2 with SMTP id f10-20020a170902ce8a00b0019adf76ddd2mr13468886plg.36.1677798655322;
-        Thu, 02 Mar 2023 15:10:55 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:f233:886c:8482:e0ce])
-        by smtp.gmail.com with ESMTPSA id ky6-20020a170902f98600b0019cbec6c17bsm186675plb.190.2023.03.02.15.10.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 15:10:54 -0800 (PST)
-Date:   Thu, 2 Mar 2023 16:10:52 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tanmay Shah <tanmay.shah@amd.com>
-Cc:     michal.simek@amd.com, andersson@kernel.org,
-        jaswinder.singh@linaro.org, ben.levinsky@amd.com,
-        shubhrajyoti.datta@amd.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v4 5/5] remoteproc: xilinx: add mailbox channels for rpmsg
-Message-ID: <20230302231052.GB1401708@p14s>
-References: <20230228210216.447373-1-tanmay.shah@amd.com>
- <20230228210216.447373-6-tanmay.shah@amd.com>
+        Thu, 2 Mar 2023 22:27:50 -0500
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 167AA584B6;
+        Thu,  2 Mar 2023 19:27:47 -0800 (PST)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32329hb6021258;
+        Fri, 3 Mar 2023 03:27:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=GY0TFrVhMCoPIc7EbW+Q9b60LgtQRQZfYEjJtrvOov0=;
+ b=AmIiv+x2Dbdl8U3viGmZ4NJl5AcqPderxzOAJpEugoBcknh1LgLe7uwIFeEnl77V6vqE
+ 6PI1dwnjtRsh5RbE1+45nghC7fCPsIeKQNru+JcJAP16bsrts0Dq5vXaazAm6+66O0li
+ jabjfmoK9TIGLv7/d4ONfx7kddhu7JyPM5aaobfZSRw+ktxC8tV1rbZLFzTQMaujk4Qw
+ AlGB33OEO8DDOYR+Z2DEe/fgBHUr+DQ7MQD5SMfKu6K1o6ccinZ7B/6SaDgUZ1lVndef
+ h21JvEAWX4Kgn+42M3yb2v7d0CoNQR2dyxrXO2tWNrqN+56EaSWMC4IF0Z1/nNaA2zNK qw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p2veet0ky-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 03 Mar 2023 03:27:40 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3233RdvO032230
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 3 Mar 2023 03:27:39 GMT
+Received: from [10.110.97.207] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 2 Mar 2023
+ 19:27:38 -0800
+Message-ID: <dc6a6c8a-f312-0200-b117-536cb5f9d6b6@quicinc.com>
+Date:   Thu, 2 Mar 2023 19:27:32 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230228210216.447373-6-tanmay.shah@amd.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v1 1/1] remoteproc: qcom: Add remoteproc tracing
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        "Elliot Berman" <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>
+References: <20230224165142.17745-1-quic_gokukris@quicinc.com>
+ <20230224165142.17745-2-quic_gokukris@quicinc.com>
+ <20230227200639.fei5rsb5omaquhqn@ripper>
+Content-Language: en-US
+From:   Gokul Krishna Krishnakumar <quic_gokukris@quicinc.com>
+In-Reply-To: <20230227200639.fei5rsb5omaquhqn@ripper>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: poS2GyZ8Ril9XOxki7pigAC0CdwlZ0lh
+X-Proofpoint-GUID: poS2GyZ8Ril9XOxki7pigAC0CdwlZ0lh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-03_01,2023-03-02_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ adultscore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 mlxlogscore=999 impostorscore=0 bulkscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2303030026
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi,
+Hi Bjorn,
+Thanks for the review comments.
 
-On Tue, Feb 28, 2023 at 01:02:16PM -0800, Tanmay Shah wrote:
-> This patch makes each r5 core mailbox client and uses
-> tx and rx channels to send and receive data to/from
-> remote processor respectively. This is needed for rpmsg
-> communication to remote processor.
+On 2/27/2023 12:06 PM, Bjorn Andersson wrote:
+> On Fri, Feb 24, 2023 at 08:51:42AM -0800, Gokul krishna Krishnakumar wrote:
+>> This change adds traces to the following rproc events:
+>> 1. subdevices events - (STRAT/STOP/CRASH)
+>> 2. subsystem events - (START/STOP/CRASH)
+>> 3. RPROC framework events - (Firmware Load/Authentication)
+>>
 > 
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
+> Thanks for proposing the introduction of tracepoints, this is something
+> we have talked about for years, but no one has shown enough
+> need/interest to do the work.
 > 
-> Changes in v4:
->   - move zynqmp_r5_setup_mbox from zynqmp_r5_add_rproc_core to
->     zynqmp_r5_cluster_init
+> Most of the proposed tracepoints would however be very useful if you
+> move them one step up (or down...) in the stack.
 > 
-> Changes in v3:
->   - fix multi-line comment format
->   - do not mixup mailbox information with memory-regions
->   - fix redundant dev_warn for split mode
->   - setting up mailboxes should return an error code
->   - redesign driver to move mailbox setup during driver probe
->   - add .kick function only if mailbox setup is success
+> I.e. please move them into the common code.
 > 
-> v2: https://lore.kernel.org/all/20230126213154.1707300-1-tanmay.shah@amd.com/
+Moving the traces to one step up in the stack.
+>> Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+>> ---
+>>   drivers/remoteproc/Makefile           |  3 ++-
+>>   drivers/remoteproc/qcom_common.c      | 25 +++++++++++++++++++
+>>   drivers/remoteproc/qcom_q6v5.c        |  3 +++
+>>   drivers/remoteproc/qcom_q6v5_pas.c    | 17 +++++++++++++
+>>   drivers/remoteproc/qcom_sysmon.c      | 13 ++++++++++
+>>   drivers/remoteproc/qcom_tracepoints.c | 10 ++++++++
+>>   include/trace/events/rproc_qcom.h     | 36 +++++++++++++++++++++++++++
+>>   7 files changed, 106 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/remoteproc/qcom_tracepoints.c
+>>   create mode 100644 include/trace/events/rproc_qcom.h
+>>
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index 91314a9b43ce..e52fa815ddc0 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -22,7 +22,8 @@ obj-$(CONFIG_KEYSTONE_REMOTEPROC)	+= keystone_remoteproc.o
+>>   obj-$(CONFIG_MESON_MX_AO_ARC_REMOTEPROC)+= meson_mx_ao_arc.o
+>>   obj-$(CONFIG_PRU_REMOTEPROC)		+= pru_rproc.o
+>>   obj-$(CONFIG_QCOM_PIL_INFO)		+= qcom_pil_info.o
+>> -obj-$(CONFIG_QCOM_RPROC_COMMON)		+= qcom_common.o
+>> +obj-$(CONFIG_QCOM_RPROC_COMMON)		+= rproc_qcom_common.o
+>> +rproc_qcom_common-y			:= qcom_common.o qcom_tracepoints.o
+>>   obj-$(CONFIG_QCOM_Q6V5_COMMON)		+= qcom_q6v5.o
+>>   obj-$(CONFIG_QCOM_Q6V5_ADSP)		+= qcom_q6v5_adsp.o
+>>   obj-$(CONFIG_QCOM_Q6V5_MSS)		+= qcom_q6v5_mss.o
+>> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+>> index a0d4238492e9..7da3259be14a 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -18,6 +18,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/soc/qcom/mdt_loader.h>
+>>   #include <linux/soc/qcom/smem.h>
+>> +#include <trace/events/rproc_qcom.h>
+>>   
+>>   #include "remoteproc_internal.h"
+>>   #include "qcom_common.h"
+>> @@ -26,6 +27,10 @@
+>>   #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
+>>   #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
+>>   
+>> +#define GLINK_SUBDEV_NAME	"glink"
+>> +#define SMD_SUBDEV_NAME		"smd"
+>> +#define SSR_SUBDEV_NAME		"ssr"
+>> +
+>>   #define MAX_NUM_OF_SS           10
+>>   #define MAX_REGION_NAME_LENGTH  16
+>>   #define SBL_MINIDUMP_SMEM_ID	602
+>> @@ -189,6 +194,8 @@ static int glink_subdev_start(struct rproc_subdev *subdev)
+>>   {
+>>   	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+>>   
+>> +	trace_rproc_qcom_event(dev_name(glink->dev->parent), GLINK_SUBDEV_NAME, "start");
 > 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 227 +++++++++++++++++++++++-
->  1 file changed, 225 insertions(+), 2 deletions(-)
+> Please do add individual events, rather than adding a single
+> trace_printk()-like event. That allows the user to selectively enable
+> events, and it becomes convenient to use the events in debugging.
 > 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 5dd007622603..78c1638ccef0 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -8,16 +8,23 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/firmware/xlnx-zynqmp.h>
->  #include <linux/kernel.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/mailbox/zynqmp-ipi-message.h>
->  #include <linux/module.h>
->  #include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
->  #include <linux/remoteproc.h>
-> -#include <linux/slab.h>
->  
->  #include "remoteproc_internal.h"
->  
-> +/* IPI buffer MAX length */
-> +#define IPI_BUF_LEN_MAX	32U
-> +
-> +/* RX mailbox client buffer max length */
-> +#define MBOX_CLIENT_BUF_MAX	(IPI_BUF_LEN_MAX + \
-> +				 sizeof(struct zynqmp_ipi_message))
->  /*
->   * settings for RPU cluster mode which
->   * reflects possible values of xlnx,cluster-mode dt-property
-> @@ -43,6 +50,27 @@ struct mem_bank_data {
->  	char *bank_name;
->  };
->  
-> +/**
-> + * struct mbox_info
-> + *
-> + * @rx_mc_buf: to copy data from mailbox rx channel
-> + * @tx_mc_buf: to copy data to mailbox tx channel
-> + * @r5_core: this mailbox's corresponding r5_core pointer
-> + * @mbox_work: schedule work after receiving data from mailbox
-> + * @mbox_cl: mailbox client
-> + * @tx_chan: mailbox tx channel
-> + * @rx_chan: mailbox rx channel
-> + */
-> +struct mbox_info {
-> +	unsigned char rx_mc_buf[MBOX_CLIENT_BUF_MAX];
-> +	unsigned char tx_mc_buf[MBOX_CLIENT_BUF_MAX];
-> +	struct zynqmp_r5_core *r5_core;
-> +	struct work_struct mbox_work;
-> +	struct mbox_client mbox_cl;
-> +	struct mbox_chan *tx_chan;
-> +	struct mbox_chan *rx_chan;
-> +};
-> +
->  /*
->   * Hardcoded TCM bank values. This will be removed once TCM bindings are
->   * accepted for system-dt specifications and upstreamed in linux kernel
-> @@ -63,6 +91,7 @@ static const struct mem_bank_data zynqmp_tcm_banks[] = {
->   * @tcm_banks: array of each TCM bank data
->   * @rproc: rproc handle
->   * @pm_domain_id: RPU CPU power domain id
-> + * @ipi: pointer to mailbox information
->   */
->  struct zynqmp_r5_core {
->  	struct device *dev;
-> @@ -71,6 +100,7 @@ struct zynqmp_r5_core {
->  	struct mem_bank_data **tcm_banks;
->  	struct rproc *rproc;
->  	u32 pm_domain_id;
-> +	struct mbox_info *ipi;
->  };
->  
->  /**
-> @@ -88,6 +118,178 @@ struct zynqmp_r5_cluster {
->  	struct zynqmp_r5_core **r5_cores;
->  };
->  
-> +/**
-> + * event_notified_idr_cb() - callback for vq_interrupt per notifyid
-> + * @id: rproc->notify id
-> + * @ptr: pointer to idr private data
-> + * @data: data passed to idr_for_each callback
-> + *
-> + * Pass notification to remoteproc virtio
-> + *
-> + * Return: 0. having return is to satisfy the idr_for_each() function
-> + *          pointer input argument requirement.
-> + **/
-> +static int event_notified_idr_cb(int id, void *ptr, void *data)
-> +{
-> +	struct rproc *rproc = data;
-> +
-> +	if (rproc_vq_interrupt(rproc, id) == IRQ_NONE)
-> +		dev_dbg(&rproc->dev, "data not found for vqid=%d\n", id);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * handle_event_notified() - remoteproc notification work function
-> + * @work: pointer to the work structure
-> + *
-> + * It checks each registered remoteproc notify IDs.
-> + */
-> +static void handle_event_notified(struct work_struct *work)
-> +{
-> +	struct mbox_info *ipi;
-> +	struct rproc *rproc;
-> +
-> +	ipi = container_of(work, struct mbox_info, mbox_work);
-> +	rproc = ipi->r5_core->rproc;
-> +
-> +	/*
-> +	 * We only use IPI for interrupt. The RPU firmware side may or may
-> +	 * not write the notifyid when it trigger IPI.
-> +	 * And thus, we scan through all the registered notifyids and
-> +	 * find which one is valid to get the message.
-> +	 * Even if message from firmware is NULL, we attempt to get vqid
-> +	 */
-> +	idr_for_each(&rproc->notifyids, event_notified_idr_cb, rproc);
-> +}
-> +
-> +/**
-> + * zynqmp_r5_mb_rx_cb() - receive channel mailbox callback
-> + * @cl: mailbox client
-> + * @msg: message pointer
-> + *
-> + * Receive data from ipi buffer, ack interrupt and then
-> + * it will schedule the R5 notification work.
-> + */
-> +static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
-> +{
-> +	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
-> +	struct mbox_info *ipi;
-> +	size_t len;
-> +
-> +	ipi = container_of(cl, struct mbox_info, mbox_cl);
-> +
-> +	/* copy data from ipi buffer to r5_core */
-> +	ipi_msg = (struct zynqmp_ipi_message *)msg;
-> +	buf_msg = (struct zynqmp_ipi_message *)ipi->rx_mc_buf;
-> +	len = ipi_msg->len;
-> +	if (len > IPI_BUF_LEN_MAX) {
-> +		dev_warn(cl->dev, "msg size exceeded than %d\n",
-> +			 IPI_BUF_LEN_MAX);
-> +		len = IPI_BUF_LEN_MAX;
-> +	}
-> +	buf_msg->len = len;
-> +	memcpy(buf_msg->data, ipi_msg->data, len);
-> +
-> +	/* received and processed interrupt ack */
-> +	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
-> +		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
-> +
-> +	schedule_work(&ipi->mbox_work);
-> +}
-> +
-> +/**
-> + * zynqmp_r5_setup_mbox() - Setup mailboxes related properties
-> + *			    this is used for each individual R5 core
-> + *
-> + * @cdev: child node device
-> + *
-> + * Function to setup mailboxes related properties
-> + * return : NULL if failed else pointer to mbox_info
-> + */
-> +static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
-> +{
-> +	struct mbox_client *mbox_cl;
-> +	struct mbox_info *ipi;
-> +
-> +	ipi = kzalloc(sizeof(*ipi), GFP_KERNEL);
-> +	if (!ipi)
-> +		return NULL;
-> +
-> +	mbox_cl = &ipi->mbox_cl;
-> +	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
-> +	mbox_cl->tx_block = false;
-> +	mbox_cl->knows_txdone = false;
-> +	mbox_cl->tx_done = NULL;
-> +	mbox_cl->dev = cdev;
-> +
-> +	/* Request TX and RX channels */
-> +	ipi->tx_chan = mbox_request_channel_byname(mbox_cl, "tx");
-> +	if (IS_ERR(ipi->tx_chan)) {
-> +		ipi->tx_chan = NULL;
-> +		kfree(ipi);
-> +		dev_warn(cdev, "mbox tx channel request failed\n");
-> +		return NULL;
-> +	}
-> +
-> +	ipi->rx_chan = mbox_request_channel_byname(mbox_cl, "rx");
-> +	if (IS_ERR(ipi->rx_chan)) {
-> +		mbox_free_channel(ipi->tx_chan);
-> +		ipi->rx_chan = NULL;
-> +		ipi->tx_chan = NULL;
-> +		kfree(ipi);
-> +		dev_warn(cdev, "mbox rx channel request failed\n");
-> +		return NULL;
-> +	}
-> +
-> +	INIT_WORK(&ipi->mbox_work, handle_event_notified);
-> +
-> +	return ipi;
-> +}
-> +
-> +static void zynqmp_r5_free_mbox(struct mbox_info *ipi)
-> +{
-> +	if (!ipi)
-> +		return;
-> +
-> +	if (ipi->tx_chan) {
-> +		mbox_free_channel(ipi->tx_chan);
-> +		ipi->tx_chan = NULL;
-> +	}
-> +
-> +	if (ipi->rx_chan) {
-> +		mbox_free_channel(ipi->rx_chan);
-> +		ipi->rx_chan = NULL;
-> +	}
-> +
-> +	kfree(ipi);
-> +}
-> +
-> +/*
-> + * zynqmp_r5_core_kick() - kick a firmware if mbox is provided
-> + * @rproc: r5 core's corresponding rproc structure
-> + * @vqid: virtqueue ID
-> + */
-> +static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
-> +{
-> +	struct zynqmp_r5_core *r5_core = rproc->priv;
-> +	struct device *dev = r5_core->dev;
-> +	struct zynqmp_ipi_message *mb_msg;
-> +	struct mbox_info *ipi;
-> +	int ret;
-> +
-> +	ipi = r5_core->ipi;
-> +	if (!ipi)
-> +		return;
-> +
-> +	mb_msg = (struct zynqmp_ipi_message *)ipi->tx_mc_buf;
-> +	memcpy(mb_msg->data, &vqid, sizeof(vqid));
-> +	mb_msg->len = sizeof(vqid);
-> +	ret = mbox_send_message(ipi->tx_chan, mb_msg);
-> +	if (ret < 0)
-> +		dev_warn(dev, "failed to send message\n");
-> +}
-> +
->  /*
->   * zynqmp_r5_set_mode()
->   *
-> @@ -614,7 +816,7 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
->  	return 0;
->  }
->  
-> -static const struct rproc_ops zynqmp_r5_rproc_ops = {
-> +static struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.prepare	= zynqmp_r5_rproc_prepare,
->  	.unprepare	= zynqmp_r5_rproc_unprepare,
->  	.start		= zynqmp_r5_rproc_start,
-> @@ -673,6 +875,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->  	}
->  
->  	r5_core->rproc = r5_rproc;
-> +
+Adding spearate trace events for load/start/stop/interrupts/subdevices.
+>> +
+>>   	glink->edge = qcom_glink_smem_register(glink->dev, glink->node);
+>>   
+>>   	return PTR_ERR_OR_ZERO(glink->edge);
+> [..]
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+>> index 6cc4e13c5d36..27d3a6f8c92f 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>> @@ -24,6 +24,7 @@
+>>   #include <linux/soc/qcom/mdt_loader.h>
+>>   #include <linux/soc/qcom/smem.h>
+>>   #include <linux/soc/qcom/smem_state.h>
+>> +#include <trace/events/rproc_qcom.h>
+>>   
+>>   #include "qcom_common.h"
+>>   #include "qcom_pil_info.h"
+>> @@ -206,10 +207,13 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+>>   	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>>   	int ret;
+>>   
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "adsp_load", "enter");
+>> +
+>>   	/* Store firmware handle to be used in adsp_start() */
+>>   	adsp->firmware = fw;
+>>   
+>>   	if (adsp->dtb_pas_id) {
+>> +		trace_rproc_qcom_event(dev_name(adsp->dev), "dtb_firmware_loading", "enter");
+>>   		ret = request_firmware(&adsp->dtb_firmware, adsp->dtb_firmware_name, adsp->dev);
+>>   		if (ret) {
+>>   			dev_err(adsp->dev, "request_firmware failed for %s: %d\n",
+>> @@ -231,6 +235,8 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+>>   			goto release_dtb_metadata;
+>>   	}
+>>   
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "adsp_load", "exit");
+> 
+> I believe it would be more useful to capture the error path as well.
+> 
+Done.
+>> +
+>>   	return 0;
+>>   
+>>   release_dtb_metadata:
+>> @@ -247,6 +253,8 @@ static int adsp_start(struct rproc *rproc)
+>>   	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
+>>   	int ret;
+>>   
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "adsp_start", "enter");
+>> +
+>>   	ret = qcom_q6v5_prepare(&adsp->q6v5);
+>>   	if (ret)
+>>   		return ret;
+>> @@ -276,6 +284,7 @@ static int adsp_start(struct rproc *rproc)
+>>   	}
+>>   
+>>   	if (adsp->dtb_pas_id) {
+>> +	        trace_rproc_qcom_event(dev_name(adsp->dev), "dtb_auth_reset", "enter");
+>>   		ret = qcom_scm_pas_auth_and_reset(adsp->dtb_pas_id);
+>>   		if (ret) {
+>>   			dev_err(adsp->dev,
+>> @@ -289,6 +298,8 @@ static int adsp_start(struct rproc *rproc)
+>>   	if (ret)
+>>   		goto disable_px_supply;
+>>   
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "Q6_firmware_loading", "enter");
+> 
+> I would like this to contain move useful information, e.g. what file is
+> it that we're trying to load?
+> 
+> And you only put "enter" here because you have a single tracepoint, it
+> doesn't add any value...
+> 
+Adding firmware name field in the remoteproc load function.
+>> +
+>>   	ret = qcom_mdt_load_no_init(adsp->dev, adsp->firmware, rproc->firmware, adsp->pas_id,
+>>   				    adsp->mem_region, adsp->mem_phys, adsp->mem_size,
+>>   				    &adsp->mem_reloc);
+>> @@ -296,6 +307,7 @@ static int adsp_start(struct rproc *rproc)
+>>   		goto release_pas_metadata;
+>>   
+>>   	qcom_pil_info_store(adsp->info_name, adsp->mem_phys, adsp->mem_size);
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "Q6_auth_reset", "enter");
+>>   
+> 
+> When is this tracepoint useful to you? (Same with the mdt loader above)
+>
+To see where the boot failed- if it failed in the dtb authentication or 
+it got timed out in the Q6 boot.
 
-Spurious change.
+> Should mdt-loader and scm drivers have their own tracepoints defined?
+> They are after all called from a variety of other drivers...
+>
+Yes I think it would be better to move these trace points to the 
+mdt_loader driver.
 
->  	return r5_core;
->  
->  free_rproc:
-> @@ -799,6 +1002,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
->  	struct device_node *child;
->  	enum rpu_tcm_comb tcm_mode;
->  	int core_count, ret, i;
-> +	struct mbox_info *ipi;
->  
->  	ret = of_property_read_u32(dev_node, "xlnx,cluster-mode", &cluster_mode);
->  
-> @@ -869,6 +1073,18 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
->  
->  		child_devs[i] = &child_pdev->dev;
->  
-> +		/*
-> +		 * If mailbox nodes are disabled using "status" property then
-> +		 * setting up mailbox channels will be failed. In that case we
-> +		 * don't really need kick() operation. Include .kick() only if
-> +		 * mbox channels are acquired successfully.
-> +		 */
-> +		ipi = zynqmp_r5_setup_mbox(&child_pdev->dev);
-> +		if (ipi)
-> +			zynqmp_r5_rproc_ops.kick = zynqmp_r5_rproc_kick;
-> +		else
-> +			zynqmp_r5_rproc_ops.kick = NULL;
-> +
-
-Based on the way this patchset has turned out, I don't think it is required to
-do this anymore.  After all, .kick() won't be called if the mailboxes aren't
-initialized.
-
-Please move the call to zynqmp_r5_setup_mbox() just below in the next hunk.
-
+>>   	ret = qcom_scm_pas_auth_and_reset(adsp->pas_id);
+>>   	if (ret) {
+>> @@ -303,6 +315,7 @@ static int adsp_start(struct rproc *rproc)
+>>   			"failed to authenticate image and release reset\n");
+>>   		goto release_pas_metadata;
+>>   	}
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "Q6_auth_reset", "exit");
+>>   
+>>   	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
+>>   	if (ret == -ETIMEDOUT) {
+>> @@ -364,6 +377,8 @@ static int adsp_stop(struct rproc *rproc)
+>>   	int handover;
+>>   	int ret;
+>>   
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "adsp_stop", "enter");
+>> +
+>>   	ret = qcom_q6v5_request_stop(&adsp->q6v5, adsp->sysmon);
+>>   	if (ret == -ETIMEDOUT)
+>>   		dev_err(adsp->dev, "timed out on wait\n");
+>> @@ -385,6 +400,8 @@ static int adsp_stop(struct rproc *rproc)
+>>   	if (handover)
+>>   		qcom_pas_handover(&adsp->q6v5);
+>>   
+>> +	trace_rproc_qcom_event(dev_name(adsp->dev), "adsp_stop", "exit");
+> 
+> You're missing an opportunity to convey the success/failure by not using
+> "ret".
+> 
+Adding more information in the trace events.
+>> +
+>>   	return ret;
+>>   }
+>>   
+> [..]
+>> diff --git a/include/trace/events/rproc_qcom.h b/include/trace/events/rproc_qcom.h
+>> new file mode 100644
+>> index 000000000000..b8748873ab25
+>> --- /dev/null
+>> +++ b/include/trace/events/rproc_qcom.h
+>> @@ -0,0 +1,36 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2021 The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#undef TRACE_SYSTEM
+>> +#define TRACE_SYSTEM rproc_qcom
+>> +
+>> +#if !defined(_TRACE_RPROC_QCOM_H) || defined(TRACE_HEADER_MULTI_READ)
+>> +#define _TRACE_RPROC_QCOM_H
+>> +#include <linux/tracepoint.h>
+>> +
+>> +TRACE_EVENT(rproc_qcom_event,
+>> +
+>> +	TP_PROTO(const char *name, const char *event, const char *subevent),
+>> +
+>> +	TP_ARGS(name, event, subevent),
+>> +
+>> +	TP_STRUCT__entry(
+>> +		__string(name, name)
+>> +		__string(event, event)
+>> +		__string(subevent, subevent)
+> 
+> Please ensure that your trace events are carrying useful information;
+> as seen above, subevent is not useful in all cases, and in several other
+> cases you're missing useful information.
+> 
+> Please think beyond printk, and please consider that these buffers could
+> be consumed by a machine.
+> 
+Please review the V2 patchset where the events are seperated and more 
+information is passed.
+> Regards,
+> Bjorn
+> 
+>> +	),
+>> +
+>> +	TP_fast_assign(
+>> +		__assign_str(name, name);
+>> +		__assign_str(event, event);
+>> +		__assign_str(subevent, subevent);
+>> +	),
+>> +
+>> +	TP_printk("%s: %s: %s", __get_str(name), __get_str(event), __get_str(subevent))
+>> +);
+>> +#endif /* _TRACE_RPROC_QCOM_H */
+>> +
+>> +/* This part must be outside protection */
+>> +#include <trace/define_trace.h>
+>> -- 
+>> 2.39.2
+>>
 Thanks,
-Mathieu
-
->  		/* create and add remoteproc instance of type struct rproc */
->  		r5_cores[i] = zynqmp_r5_add_rproc_core(&child_pdev->dev);
->  		if (IS_ERR(r5_cores[i])) {
-> @@ -878,6 +1094,11 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
->  			goto release_r5_cores;
->  		}
->  
-> +		if (ipi) {
-> +			r5_cores[i]->ipi = ipi;
-> +			ipi->r5_core = r5_cores[i];
-> +		}
-> +
->  		/*
->  		 * If two child nodes are available in dts in lockstep mode,
->  		 * then ignore second child node.
-> @@ -915,6 +1136,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
->  	while (i >= 0) {
->  		put_device(child_devs[i]);
->  		if (r5_cores[i]) {
-> +			zynqmp_r5_free_mbox(r5_cores[i]->ipi);
->  			of_reserved_mem_device_release(r5_cores[i]->dev);
->  			rproc_del(r5_cores[i]->rproc);
->  			rproc_free(r5_cores[i]->rproc);
-> @@ -939,6 +1161,7 @@ static void zynqmp_r5_cluster_exit(void *data)
->  
->  	for (i = 0; i < cluster->core_count; i++) {
->  		r5_core = cluster->r5_cores[i];
-> +		zynqmp_r5_free_mbox(r5_core->ipi);
->  		of_reserved_mem_device_release(r5_core->dev);
->  		put_device(r5_core->dev);
->  		rproc_del(r5_core->rproc);
-> -- 
-> 2.25.1
-> 
+Gokul
