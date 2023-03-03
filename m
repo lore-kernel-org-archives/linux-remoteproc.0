@@ -2,327 +2,150 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B983C678D4
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Mar 2023 08:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F97EC64EC4
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  3 Mar 2023 08:34:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbjCCIGe (ORCPT
+        id S230172AbjCCIeT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 3 Mar 2023 03:06:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58812 "EHLO
+        Fri, 3 Mar 2023 03:34:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbjCCIGd (ORCPT
+        with ESMTP id S229985AbjCCIeP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 3 Mar 2023 03:06:33 -0500
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57EE24ECDE
-        for <linux-remoteproc@vger.kernel.org>; Fri,  3 Mar 2023 00:06:28 -0800 (PST)
-Received: by mail-ed1-x533.google.com with SMTP id i34so6991623eda.7
-        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Mar 2023 00:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1677830787;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zdJcfcyXGWtXoLMcnxOxEylM1d1K2JuAwfWfX2Z+dfI=;
-        b=aDkxPUvGNZ2oKuQ1gSddr+5WFzfVA/+eAkdBSR6e4ep84Q7aEyXK0qddNYb42QI6Jb
-         OBHIBLyCOs1uFiGQ2mH5G7ks+KkrzBnfjjMys5ayUPGX3Wn6n36oywFrBLEXK0BYAoUI
-         /gI/fH6MUeutl39jyF8IVRcgvN93+CzQu6mySuRhYK7iaSHQJsyYccHlForU9VYgkIH8
-         w9eGwLgnbOGEsZeiv2xX4Cq5nqVI75Tb989kvOG0dPjhhadB3Vlxjd0Y356RLyLreFXo
-         RPtZh+ilGJT1H6UkpVn6OjVhCk5MMF66cU/IcxnopjW2eldryIpgwU/sXGoB+fkaU1eS
-         b7fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677830787;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zdJcfcyXGWtXoLMcnxOxEylM1d1K2JuAwfWfX2Z+dfI=;
-        b=TFlUu/pzC9Y8Lhi9Q1o6TYL+aV5+diSy36HzM8BwEb5QwuB5oIIqgpPak7Vin7tAZx
-         pfHCMjpOj+15CUq0Lc8nowlZmqaMRO08pwW4Rq2uofDxCi4i0XhqOnhRZAI+83pbRYQt
-         Zwfw8FZkrJm61IYPyGbnMJqpT99kSiAPtTMTz0KE1pahfTy6LkEyN/6FtRNE4yNgygx3
-         J+yZIev5R0MfLKPbQWlv2zzB+1zxq2xPWVQToarQTmrLfwfKpHy6mFafkz+CHwsZzcCL
-         CiF4saMYEn3i5nYeRu6rTGkJK91ozx1NBERu8bcWusfzvj9oZMLeXR1JyP+kV6BoMwnZ
-         yC7w==
-X-Gm-Message-State: AO0yUKUpbDG2/58qKqsshIjrYtg/Y9rj24pFUr/2CoPS0evKJJ35KLTv
-        zJGprC1HM7id1fjcDQ4giwDO8A==
-X-Google-Smtp-Source: AK7set9sgWEXima5pGSbzL+6LPs/nnZ9r6/bqSMGWbMISKvmqrPcBaoumBJ9HU2dN5qPXd4dl3hWbg==
-X-Received: by 2002:a17:907:6089:b0:8b1:3554:25 with SMTP id ht9-20020a170907608900b008b135540025mr869239ejc.61.1677830786805;
-        Fri, 03 Mar 2023 00:06:26 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.216.144])
-        by smtp.gmail.com with ESMTPSA id n26-20020a50c21a000000b004a27046b7a7sm839952edf.73.2023.03.03.00.06.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Mar 2023 00:06:26 -0800 (PST)
-Message-ID: <5c9130de-5092-9446-6e00-d86de7dcd6b4@linaro.org>
-Date:   Fri, 3 Mar 2023 09:06:24 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 1/3] dt-bindings: remoteproc: k3-m4f: Add bindings for
- K3 AM64x SoCs
-Content-Language: en-US
-To:     Martyn Welch <martyn.welch@collabora.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Fri, 3 Mar 2023 03:34:15 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DF7311E8F;
+        Fri,  3 Mar 2023 00:34:07 -0800 (PST)
+X-UUID: 25db946eb99e11eda06fc9ecc4dadd91-20230303
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=VXNvkSE666U3KVDnuZr8zG2wpLjRqGaDYzDsWg0/Ibs=;
+        b=LNNnxQhxpjibn91CTFApjPW+YN1h9retfu53TmDbk/rjJQNfa14UHL3Hip58g9zTKuXpsoHVMXn8yGn/YmONxt9BBe406vRJaajeWWXshrXWXJfGHCIwdhjnknj6JScAEYqKrS49lhzgPWnQiIFtzbMtbSEBuQCjz+SeKqlgxe8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.20,REQID:499404c1-5a0b-4aec-8d60-d1182db1d0e7,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:25b5999,CLOUDID:217ca9f4-ddba-41c3-91d9-10eeade8eac7,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0
+X-UUID: 25db946eb99e11eda06fc9ecc4dadd91-20230303
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1356464550; Fri, 03 Mar 2023 16:34:00 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.186) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.25; Fri, 3 Mar 2023 16:34:00 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.25 via Frontend Transport; Fri, 3 Mar 2023 16:34:00 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Hari Nagalla <hnagalla@ti.com>
-Cc:     kernel@collabora.com, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230302171450.1598576-1-martyn.welch@collabora.com>
- <20230302171450.1598576-2-martyn.welch@collabora.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230302171450.1598576-2-martyn.welch@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v8 09/11] remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+Date:   Fri, 3 Mar 2023 16:33:53 +0800
+Message-ID: <20230303083355.3378-10-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230303083355.3378-1-tinghan.shen@mediatek.com>
+References: <20230303083355.3378-1-tinghan.shen@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 02/03/2023 18:14, Martyn Welch wrote:
-> From: Hari Nagalla <hnagalla@ti.com>
+The MT8195 SCP core 1 watchdog timeout needs to be handled in the
+SCP core 0 IRQ handler because the MT8195 SCP core 1 watchdog timeout
+IRQ is wired on the same IRQ entry for core 0 watchdog timeout.
+MT8195 SCP has a watchdog status register to identify the watchdog
+timeout source when IRQ triggered.
 
-Subject: drop second/last, redundant "bindings for". The "dt-bindings"
-prefix is already stating that these are bindings.
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/remoteproc/mtk_common.h |  5 +++++
+ drivers/remoteproc/mtk_scp.c    | 25 ++++++++++++++++++++++++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
-> 
-> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-> The remote processor's life cycle management and IPC mechanisms are
-> similar across the R5F and M4F cores from remote processor driver
-> point of view. However, there are subtle differences in image loading
-> and starting the M4F subsystems.
-> 
-> The YAML binding document provides the various node properties to be
-> configured by the consumers of the M4F subsystem.
-> 
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> [Martyn Welch: Amended as per review comments and to pass DT tests]
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> ---
-> 
-> Changes since v1:
->  - Spelling corrections
->  - Corrected to pass DT checks
-> 
-> Changes since v2:
->  - Missed spelling correction to commit message
-> 
-> Note: The only review comment that I don't see directly addressed is the
->       lack of description of `ti,sci`, `ti,sci-dev-id` and
->       `ti,sci-proc-ids`. A reference has been added to
->       `/schemas/arm/keystone/ti,k3-sci-common.yaml#` where they are
->       described. I believe this is the correct approach, please advise if
->       that is not the case.
-> 
->  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 158 ++++++++++++++++++
->  1 file changed, 158 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> new file mode 100644
-> index 000000000000..1b38df0be2e6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> @@ -0,0 +1,158 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI K3 M4F processor subsystems
-> +
-> +maintainers:
-> +  - Hari Nagalla <hnagalla@ti.com>
-> +
-> +description: |
-> +  Some K3 family SoCs have Arm Cortex M4F cores. AM64x is a SoC in K3
-> +  family with a M4F core. Typically safety oriented applications may use
-> +  the M4F core in isolation without an IPC. Where as some industrial and
-> +  home automation applications, may use the M4F core as a remote processor
-> +  with IPC communications.
-> +
-> +$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^m4fss(@.*)?"
-
-Drop. It's not a generic name. Also we do not enforce names in device
-schemas.
-
-> +
-> +  compatible:
-> +    enum:
-> +      - ti,am64-m4fss
-> +
-> +  power-domains:
-> +    description: |
-> +      Should contain a phandle to a PM domain provider node and an args
-> +      specifier containing the M4FSS device id value.
-
-Drop description, especially that the args depend on provider, not consumer.
-
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    const: 2
-> +
-> +  "#size-cells":
-> +    const: 2
-> +
-> +  reg:
-> +    items:
-> +      - description: Address and Size of the IRAM internal memory region
-
-Just "IRAM internal memory region"
-
-> +      - description: Address and Size of the DRAM internal memory region
-> +
-> +  reg-names:
-> +    items:
-> +      - const: iram
-> +      - const: dram
-> +
-> +  resets:
-> +    description: |
-> +      Should contain the phandle to the reset controller node managing the
-> +      local resets for this device, and a reset specifier.
-
-Drop description.
-
-
-> +    maxItems: 1
-> +
-> +  firmware-name:
-> +    description: |
-> +      Should contain the name of the default firmware image
-> +      file located on the firmware search path
-
-This description is basically duplicating the name... say something
-useful or shorten it (e.g. "Should contain" is really redundant). You
-also need $ref because we do not have the type defined anywhere.
-
-> +
-> +  mboxes:
-> +    description: |
-> +      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-
-OMAP?
-
-> +      communication with the remote processor. This property should match
-> +      with the sub-mailbox node used in the firmware image.
-> +    maxItems: 1
-> +
-> +  memory-region:
-> +    description: |
-> +      phandle to the reserved memory nodes to be associated with the
-> +      remoteproc device. There should be at least two reserved memory nodes
-> +      defined. 
-
-Don't repeat constraints in free form text.
-
-> The reserved memory nodes should be carveout nodes, and
-> +      should be defined with a "no-map" property as per the bindings in
-> +      Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
-> +    minItems: 2
-> +    maxItems: 8
-> +    items:
-> +      - description: region used for dynamic DMA allocations like vrings and
-> +                     vring buffers
-> +      - description: region reserved for firmware image sections
-> +    additionalItems: true
-
-And what is the purpose of the rest of reserved nodes?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - ti,sci
-> +  - ti,sci-dev-id
-> +  - ti,sci-proc-ids
-> +  - resets
-> +  - firmware-name
-> +  - mboxes
-> +  - memory-region
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    reserved-memory {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
-> +            compatible = "shared-dma-pool";
-> +            reg = <0x00 0x9cb00000 0x00 0x100000>;
-> +            no-map;
-> +        };
-> +
-> +        mcu_m4fss_memory_region: m4f-memory@9cc00000 {
-> +            compatible = "shared-dma-pool";
-> +            reg = <0x00 0x9cc00000 0x00 0xe00000>;
-> +            no-map;
-> +        };
-> +    };
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        mailbox0_cluster0: mailbox-0 {
-> +            #mbox-cells = <1>;
-> +
-> +            mbox_m4_0: mbox-m4-0 {
-> +                ti,mbox-rx = <0 0 0>;
-> +                ti,mbox-tx = <1 0 0>;
-> +            };
-> +        };
-
-Does not look related to this binding... or is it somehow very specific
-and needs showing?
-
-> +
-> +        bus@f0000 {
-> +            compatible = "simple-bus";
-> +            #address-cells = <2>;
-> +            #size-cells = <2>;
-> +            ranges = <0x00 0x04000000 0x00 0x04000000 0x00 0x01ff1400>;
-
-Why another bus? You already have soc in example, why more nodes?
-
-> +
-> +            bus@4000000 {
-
-And one more bus?
-
-> +                compatible = "simple-bus";
-> +                #address-cells = <2>;
-> +                #size-cells = <2>;
-> +                ranges = <0x00 0x04000000 0x00 0x04000000 0x00 0x01ff1400>;
-> +
-> +                mcu_m4fss: m4fss@5000000 {
-
-Generic node name. Qualcomm uses remoteproc.
-
-> +                    compatible = "ti,am64-m4fss";
-> +                    reg = <0x00 0x5000000 0x00 0x30000>,
-> +                          <0x00 0x5040000 0x00 0x10000>;
-> +                    reg-names = "iram", "dram";
-> +                    ti,sci = <&dmsc>;
-> +                    ti,sci-dev-id = <9>;
-> +                    ti,sci-proc-ids = <0x18 0xff>;
-> +                    resets = <&k3_reset 9 1>;
-> +                    firmware-name = "am62-mcu-m4f0_0-fw";
-> +                    mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
-> +                    memory-region = <&mcu_m4fss_dma_memory_region>,
-> +                                    <&mcu_m4fss_memory_region>;
-> +                };
-> +            };
-> +        };
-> +    };
-
-Best regards,
-Krzysztof
+diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+index 80be712a3583..80b072c17cc7 100644
+--- a/drivers/remoteproc/mtk_common.h
++++ b/drivers/remoteproc/mtk_common.h
+@@ -55,6 +55,10 @@
+ #define MT8192_CORE0_WDT_IRQ		0x10030
+ #define MT8192_CORE0_WDT_CFG		0x10034
+ 
++#define MT8195_SYS_STATUS		0x4004
++#define MT8195_CORE0_WDT		BIT(16)
++#define MT8195_CORE1_WDT		BIT(17)
++
+ #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
+ 
+ #define MT8195_CPU1_SRAM_PD			0x1084
+@@ -63,6 +67,7 @@
+ #define MT8195_CORE1_SW_RSTN_CLR		0x20000
+ #define MT8195_CORE1_SW_RSTN_SET		0x20004
+ #define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
++#define MT8195_CORE1_WDT_IRQ			0x20030
+ #define MT8195_CORE1_WDT_CFG			0x20034
+ 
+ #define MT8195_SEC_CTRL				0x85000
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 049688c731f7..056a814486a3 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -229,6 +229,29 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+ 	}
+ }
+ 
++static void mt8195_scp_irq_handler(struct mtk_scp *scp)
++{
++	u32 scp_to_host;
++
++	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
++
++	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
++		scp_ipi_handler(scp);
++	} else {
++		u32 reason = readl(scp->reg_base + MT8195_SYS_STATUS);
++
++		if (reason & MT8195_CORE0_WDT)
++			writel(1, scp->reg_base + MT8192_CORE0_WDT_IRQ);
++
++		if (reason & MT8195_CORE1_WDT)
++			writel(1, scp->reg_base + MT8195_CORE1_WDT_IRQ);
++
++		scp_wdt_handler(scp, reason);
++	}
++
++	writel(scp_to_host, scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
++}
++
+ static void mt8195_scp_c1_irq_handler(struct mtk_scp *scp)
+ {
+ 	u32 scp_to_host;
+@@ -1281,7 +1304,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+ static const struct mtk_scp_of_data mt8195_of_data = {
+ 	.scp_clk_get = mt8195_scp_clk_get,
+ 	.scp_before_load = mt8195_scp_before_load,
+-	.scp_irq_handler = mt8192_scp_irq_handler,
++	.scp_irq_handler = mt8195_scp_irq_handler,
+ 	.scp_reset_assert = mt8192_scp_reset_assert,
+ 	.scp_reset_deassert = mt8192_scp_reset_deassert,
+ 	.scp_stop = mt8195_scp_stop,
+-- 
+2.18.0
 
