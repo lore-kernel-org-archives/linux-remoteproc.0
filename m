@@ -2,48 +2,48 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A84C74A44
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Mar 2023 11:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D263EC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  6 Mar 2023 11:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230237AbjCFLKD (ORCPT
+        id S229567AbjCFLKD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Mon, 6 Mar 2023 06:10:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52332 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230186AbjCFLJ7 (ORCPT
+        with ESMTP id S230093AbjCFLJz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 6 Mar 2023 06:09:59 -0500
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5A711668;
-        Mon,  6 Mar 2023 03:09:58 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 326B9pI0037167;
-        Mon, 6 Mar 2023 05:09:51 -0600
+        Mon, 6 Mar 2023 06:09:55 -0500
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB5B11170;
+        Mon,  6 Mar 2023 03:09:53 -0800 (PST)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 326B9dHa096295;
+        Mon, 6 Mar 2023 05:09:39 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1678100991;
-        bh=Cd4zhNvCBEhmy2AH5WLywa5MlAZZBww/b2JRFPiMn0M=;
+        s=ti-com-17Q1; t=1678100979;
+        bh=+z/n1p4AQ5+RCdeqgNgdJjvdQuqkWKD1BcAtisYLHls=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=xy80XgT9LKv+HabZteybQKQ193ScXin7r9XAmXPN0+YRM4+YeRlZIY+Hn5nl0Yk0A
-         U8moz8FnA9NUkKwrMa8V+nqihoTFeC5CXJvrTK97+CIBKiT2lj3xk6pN5PjjUnH+Ou
-         TNyV+zsaeGfipDHUsQsvNmcLEySrsUOTiMWvrzWA=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 326B9pOF013906
+        b=FVBRgfqa6lMJOmLVuSsnYnzY5MDBrp8esn8K0LHHm4N7dEcHSII/8MiKMTUjjthq2
+         tmmJtX+shr24O/Fi6o5qK1Jr92OpbZ0rqmD2ELJciNRjFRFb60XsVi/ZE0PNUHi7O/
+         LEXL+GUyrKoVg4K247YDifRv7AmsqXyg9tXONofo=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 326B9d0o030173
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 6 Mar 2023 05:09:51 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 6 Mar 2023 05:09:39 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 6
- Mar 2023 05:09:51 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2023 05:09:39 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Mon, 6 Mar 2023 05:09:50 -0600
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 326B9pRi010708;
-        Mon, 6 Mar 2023 05:09:51 -0600
+ Frontend Transport; Mon, 6 Mar 2023 05:09:39 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 326B9dUe090165;
+        Mon, 6 Mar 2023 05:09:39 -0600
 Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 326B9nt3015734;
-        Mon, 6 Mar 2023 05:09:50 -0600
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 326B9bCu029571;
+        Mon, 6 Mar 2023 05:09:38 -0600
 From:   MD Danish Anwar <danishanwar@ti.com>
 To:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
         Roger Quadros <rogerq@kernel.org>,
@@ -59,9 +59,9 @@ CC:     <linux-remoteproc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <srk@ti.com>, <devicetree@vger.kernel.org>,
         <netdev@vger.kernel.org>
-Subject: [PATCH v3 6/6] soc: ti: pruss: Add helper functions to get/set PRUSS_CFG_GPMUX
-Date:   Mon, 6 Mar 2023 16:39:34 +0530
-Message-ID: <20230306110934.2736465-7-danishanwar@ti.com>
+Subject: [PATCH v3 1/6] soc: ti: pruss: Add pruss_get()/put() API
+Date:   Mon, 6 Mar 2023 16:39:29 +0530
+Message-ID: <20230306110934.2736465-2-danishanwar@ti.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230306110934.2736465-1-danishanwar@ti.com>
 References: <20230306110934.2736465-1-danishanwar@ti.com>
@@ -75,9 +75,15 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 From: Tero Kristo <t-kristo@ti.com>
 
-Add two new helper functions pruss_cfg_get_gpmux() & pruss_cfg_set_gpmux()
-to get and set the GP MUX mode for programming the PRUSS internal wrapper
-mux functionality as needed by usecases.
+Add two new get and put API, pruss_get() and pruss_put() to the
+PRUSS platform driver to allow client drivers to request a handle
+to a PRUSS device. This handle will be used by client drivers to
+request various operations of the PRUSS platform driver through
+additional API that will be added in the following patches.
+
+The pruss_get() function returns the pruss handle corresponding
+to a PRUSS device referenced by a PRU remoteproc instance. The
+pruss_put() is the complimentary function to pruss_get().
 
 Co-developed-by: Suman Anna <s-anna@ti.com>
 Signed-off-by: Suman Anna <s-anna@ti.com>
@@ -85,63 +91,151 @@ Signed-off-by: Tero Kristo <t-kristo@ti.com>
 Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 ---
- include/linux/pruss_driver.h | 44 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ drivers/soc/ti/pruss.c           | 58 ++++++++++++++++++++++++++++++++
+ include/linux/pruss_driver.h     |  1 +
+ include/linux/remoteproc/pruss.h | 19 +++++++++++
+ 3 files changed, 78 insertions(+)
 
-diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
-index 22b4b37d2536..80b668889d9d 100644
---- a/include/linux/pruss_driver.h
-+++ b/include/linux/pruss_driver.h
-@@ -35,4 +35,48 @@ struct pruss {
- 	struct clk *iep_clk_mux;
+diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+index 6882c86b3ce5..a169aa1ed044 100644
+--- a/drivers/soc/ti/pruss.c
++++ b/drivers/soc/ti/pruss.c
+@@ -6,6 +6,7 @@
+  * Author(s):
+  *	Suman Anna <s-anna@ti.com>
+  *	Andrew F. Davis <afd@ti.com>
++ *	Tero Kristo <t-kristo@ti.com>
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -18,6 +19,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/pruss_driver.h>
+ #include <linux/regmap.h>
++#include <linux/remoteproc.h>
+ #include <linux/slab.h>
+ 
+ /**
+@@ -30,6 +32,62 @@ struct pruss_private_data {
+ 	bool has_core_mux_clock;
  };
  
 +/**
-+ * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: pointer to store the current mux value into
++ * pruss_get() - get the pruss for a given PRU remoteproc
++ * @rproc: remoteproc handle of a PRU instance
 + *
-+ * Return: 0 on success, or an error code otherwise
++ * Finds the parent pruss device for a PRU given the @rproc handle of the
++ * PRU remote processor. This function increments the pruss device's refcount,
++ * so always use pruss_put() to decrement it back once pruss isn't needed
++ * anymore.
++ *
++ * Return: pruss handle on success, and an ERR_PTR on failure using one
++ * of the following error values
++ *    -EINVAL if invalid parameter
++ *    -ENODEV if PRU device or PRUSS device is not found
 + */
-+static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id pru_id, u8 *mux)
++struct pruss *pruss_get(struct rproc *rproc)
 +{
-+	int ret = 0;
-+	u32 val;
++	struct pruss *pruss;
++	struct device *dev;
++	struct platform_device *ppdev;
 +
-+	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
++	if (IS_ERR_OR_NULL(rproc))
++		return ERR_PTR(-EINVAL);
 +
-+	ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(pru_id), &val);
-+	if (!ret)
-+		*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
-+			    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-+	return ret;
++	dev = &rproc->dev;
++
++	/* make sure it is PRU rproc */
++	if (!dev->parent || !is_pru_rproc(dev->parent))
++		return ERR_PTR(-ENODEV);
++
++	ppdev = to_platform_device(dev->parent->parent);
++	pruss = platform_get_drvdata(ppdev);
++	if (!pruss)
++		return ERR_PTR(-ENODEV);
++
++	get_device(pruss->dev);
++
++	return pruss;
 +}
++EXPORT_SYMBOL_GPL(pruss_get);
 +
 +/**
-+ * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
-+ * @pruss: pruss instance
-+ * @pru_id: PRU identifier (0-1)
-+ * @mux: new mux value for PRU
++ * pruss_put() - decrement pruss device's usecount
++ * @pruss: pruss handle
 + *
-+ * Return: 0 on success, or an error code otherwise
++ * Complimentary function for pruss_get(). Needs to be called
++ * after the PRUSS is used, and only if the pruss_get() succeeds.
 + */
-+static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
-+				      enum pruss_pru_id pru_id, u8 mux)
++void pruss_put(struct pruss *pruss)
 +{
-+	if (mux >= PRUSS_GP_MUX_SEL_MAX ||
-+	    pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
++	if (IS_ERR_OR_NULL(pruss))
++		return;
 +
-+	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
-+				PRUSS_GPCFG_PRU_MUX_SEL_MASK,
-+				(u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
++	put_device(pruss->dev);
++}
++EXPORT_SYMBOL_GPL(pruss_put);
++
+ static void pruss_of_free_clk_provider(void *data)
+ {
+ 	struct device_node *clk_mux_np = data;
+diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
+index ecfded30ed05..86242fb5a64a 100644
+--- a/include/linux/pruss_driver.h
++++ b/include/linux/pruss_driver.h
+@@ -9,6 +9,7 @@
+ #ifndef _PRUSS_DRIVER_H_
+ #define _PRUSS_DRIVER_H_
+ 
++#include <linux/remoteproc/pruss.h>
+ #include <linux/types.h>
+ 
+ /*
+diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
+index 039b50d58df2..93a98cac7829 100644
+--- a/include/linux/remoteproc/pruss.h
++++ b/include/linux/remoteproc/pruss.h
+@@ -4,12 +4,14 @@
+  *
+  * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+  *	Suman Anna <s-anna@ti.com>
++ *	Tero Kristo <t-kristo@ti.com>
+  */
+ 
+ #ifndef __LINUX_PRUSS_H
+ #define __LINUX_PRUSS_H
+ 
+ #include <linux/device.h>
++#include <linux/err.h>
+ #include <linux/types.h>
+ 
+ #define PRU_RPROC_DRVNAME "pru-rproc"
+@@ -44,6 +46,23 @@ enum pru_ctable_idx {
+ 
+ struct device_node;
+ struct rproc;
++struct pruss;
++
++#if IS_ENABLED(CONFIG_TI_PRUSS)
++
++struct pruss *pruss_get(struct rproc *rproc);
++void pruss_put(struct pruss *pruss);
++
++#else
++
++static inline struct pruss *pruss_get(struct rproc *rproc)
++{
++	return ERR_PTR(-EOPNOTSUPP);
 +}
 +
- #endif	/* _PRUSS_DRIVER_H_ */
++static inline void pruss_put(struct pruss *pruss) { }
++
++#endif /* CONFIG_TI_PRUSS */
+ 
+ #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+ 
 -- 
 2.25.1
 
