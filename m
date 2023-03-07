@@ -2,236 +2,165 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B85C678D4
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 15:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CE7C6FD1B
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 17:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229913AbjCGPoi (ORCPT
+        id S231735AbjCGRda (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 10:44:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52596 "EHLO
+        Tue, 7 Mar 2023 12:33:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230078AbjCGPog (ORCPT
+        with ESMTP id S231561AbjCGRdO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Mar 2023 10:44:36 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 010F583173
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Mar 2023 07:44:26 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id j11so34488021edq.4
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Mar 2023 07:44:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678203865;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pELUsp6yWcX3CCqh+SbGeeFg/b7go8wzOCVsRgt5zwM=;
-        b=ydLI2+dorOlsuYhWP2zsWARMk6lgEr41/nPZDVCjE8vfPGA7ZkynpTY1Iw1FtkB1t6
-         DPPA35j2Pc8pGeizv6b4jONr6Dy19NNHIjoQ7CgBFeNiPmsbaTkmGxXUmv1gOFXXz4Q7
-         iRd3DumPvXQSIZ8oUQivbR6U2rV41hsY6P7zIW7AxOJAHuBHczFsbT5j5cwQDJ74gvcl
-         /oAnKfr3gA/Z3lBnpH7HqAcLIUB/JqhLoD9ESkTpvbprFydsWEeVzWenGHBHj683+snp
-         4k16GdWLVMj2RtV1mLoauY0t06h8Um6OWYPC5JGmdkaExGWZdIbzwfLX45I15pN7KxMh
-         uPbA==
+        Tue, 7 Mar 2023 12:33:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3590D41B79
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Mar 2023 09:28:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1678210081;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=cfPqcA1cwRLTFxhmqSenRbKcOcueH6OIZGXv5ofSOBc=;
+        b=c4x6i/1ShoGvdbrKw1MuLtUpu2DIGGEkuZIcJ3SBI4DxH/UUvAbglGzZ8I5DXDZwwE2vcu
+        Wy7dmZg4zXzZcVcz+YQtK68hU8aBIdRbnu9vpnX/O/0BnZ60RsSm1JHDkCHllEzemgghqX
+        BtgWJy4AQPICavxs9W4WiscZiqw/9Qc=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-608-hCl8wwpKNXWQ6EKidY_FAQ-1; Tue, 07 Mar 2023 12:28:00 -0500
+X-MC-Unique: hCl8wwpKNXWQ6EKidY_FAQ-1
+Received: by mail-il1-f198.google.com with SMTP id l1-20020a056e021c0100b003180af2a284so7310935ilh.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Mar 2023 09:28:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678203865;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pELUsp6yWcX3CCqh+SbGeeFg/b7go8wzOCVsRgt5zwM=;
-        b=xi+C0YomI4S3K7WPfofFnCLj9g9IuiBIILiFWboRjtPoS0Xo8egf1X6rAbO0rWkJXf
-         zPfjH8bpQd81HlfRaiq0bq1DJxp56kRe8fsaLVgwKziOH3MWGMRvlpuRw4KPPOZTcnfp
-         C2Qtnz+m0sM5TqxpmVpM42E4M2pzpbgNoyYyKnclmRpDr+tfnYBhkZWtKJieP4lCIHhS
-         YY+euw5foMzoYPMNk7DXBxPaCcJQYkAJbtdpuun8vN9XJ2QNQCqjSusa/K8pOzN3NbIo
-         vk4NgOf3voie8Z3hi67NqCq18bHhpjznno8h4pdGwEj9hoEnjbrpwnvpSRHT3YVjCNMm
-         kjsw==
-X-Gm-Message-State: AO0yUKV6UQXUvCRd5HMm+r9dC/cQUO8PMzYcUkKKflneedfQKLq0sXn8
-        ZTYcRnfzjh9mjKEICZzddvHn1g==
-X-Google-Smtp-Source: AK7set8/P7VfJR9EkoyuPlWLt539pgRHouLThdqqpFF177TUeWAJVJV+TPJqqOuWra8yPAxD5Ao1Dg==
-X-Received: by 2002:a17:907:7242:b0:8df:8381:52f7 with SMTP id ds2-20020a170907724200b008df838152f7mr20172769ejc.17.1678203865457;
-        Tue, 07 Mar 2023 07:44:25 -0800 (PST)
-Received: from ?IPV6:2a02:810d:15c0:828:a60f:e604:c252:1f3d? ([2a02:810d:15c0:828:a60f:e604:c252:1f3d])
-        by smtp.gmail.com with ESMTPSA id hy3-20020a1709068a6300b008e57b5e0ce9sm6261800ejc.108.2023.03.07.07.44.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Mar 2023 07:44:25 -0800 (PST)
-Message-ID: <c89d2b2b-fea1-c255-582d-60a783e2f555@linaro.org>
-Date:   Tue, 7 Mar 2023 16:44:23 +0100
+        d=1e100.net; s=20210112; t=1678210079;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cfPqcA1cwRLTFxhmqSenRbKcOcueH6OIZGXv5ofSOBc=;
+        b=bBwrX5YAOF0HZsGIQb2gCqL9JVdMnvokOS1n74QDiysux3BRG711jCs3hT8QyFt41b
+         xpWf6N8OsQqORBF3pU9TrJPB8LpfL2/dqAOwKHnV6v1QFSD+m7V7Xgc/YjMNeZda7Ajs
+         spxqROxW0kLNY6B3L2xMl80L9tslxZOOYatjG5vrO5mJ0FfIU68skO3URF2ILILyl8gt
+         NYnf/zh+gvMxlLhmun1Di6EEYNP247BW6GW357Tdc1WQSzh8OjfNeE/iNPP5ACAzBltM
+         p8y4eTbJImJ5sf6sfGQx3uxMOGkmV9pz0DiwtmmzmHekYeUCBzgMbhy2XBGdDSgyo58k
+         683Q==
+X-Gm-Message-State: AO0yUKVbkFR+ATWhIVk6zA38Msm1eIbVhbw3P4IYA4KH/yWPz2sQ/kP2
+        nWW/GTMbgHDLvzl0R4GJ0V7Tfz+SdJe1fJMhfqilY7zRDHqKDO+kLZzJbf39I/T43rlTipGiQQW
+        N6NLX9dODA5JrJMMvF4tQal0hqKIXdA==
+X-Received: by 2002:a05:6e02:12cf:b0:317:3f4:c06c with SMTP id i15-20020a056e0212cf00b0031703f4c06cmr13683757ilm.20.1678210079352;
+        Tue, 07 Mar 2023 09:27:59 -0800 (PST)
+X-Google-Smtp-Source: AK7set/0WWrRrCd3gc67coU2cSQKQm4QzNjqBsadANxnjkNms5bcQylIzmjtvguW4ZIsk3I4wn0cYQ==
+X-Received: by 2002:a05:6e02:12cf:b0:317:3f4:c06c with SMTP id i15-20020a056e0212cf00b0031703f4c06cmr13683737ilm.20.1678210079049;
+        Tue, 07 Mar 2023 09:27:59 -0800 (PST)
+Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id g11-20020a02b70b000000b003a7c47efde0sm4344252jam.11.2023.03.07.09.27.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Mar 2023 09:27:58 -0800 (PST)
+Date:   Tue, 7 Mar 2023 12:27:56 -0500
+From:   Brian Masney <bmasney@redhat.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH 0/6] Add basic Minidump kernel driver support
+Message-ID: <ZAd0HPHtSEs+XX7P@x1>
+References: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
+ <Y/deHzijzvuvCJ2M@x1>
+ <47542dbb-8cf3-6eae-a38e-910d38bd960b@quicinc.com>
+ <Y/kKn9tnvSQ2Pacn@x1>
+ <14b11c3c-353c-50f9-f9a4-837fc5d06fa4@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 11/11] arm64: dtsi: qcom: ipq9574: Add nodes to bring up
- multipd
-Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
-        loic.poulain@linaro.org, quic_eberman@quicinc.com,
-        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-12-git-send-email-quic_mmanikan@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1678164097-13247-12-git-send-email-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14b11c3c-353c-50f9-f9a4-837fc5d06fa4@quicinc.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
-> Enable nodes required for multipd remoteproc bring up.
+On Mon, Feb 27, 2023 at 03:45:31PM +0530, Mukesh Ojha wrote:
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 145 ++++++++++++++++++++++++++
->  1 file changed, 145 insertions(+)
 > 
+> On 2/25/2023 12:36 AM, Brian Masney wrote:
+> > Hi Mukesh,
+> > 
+> > On Fri, Feb 24, 2023 at 04:10:42PM +0530, Mukesh Ojha wrote:
+> > > On 2/23/2023 6:07 PM, Brian Masney wrote:
+> > > > I'd like to test this series plus your series that sets the multiple
+> > > > download modes.
+> > > 
+> > > Sure, you are welcome, but for that you need a device running with Qualcomm
+> > > SoC and if it has a upstream support.
+> > 
+> > I will be testing this series on a sa8540p (QDrive3 Automotive
+> > Development Board), which has the sc8280xp SoC with good upstream
+> > support. This is also the same board that I have a reliable way to
+> > make the board crash due to a known firmware bug.
+> > 
+> 
+> 
+> Can you try below patch to just select minidump download mode and make the
+> device crash ?
+> 
+> --------------------------------------->8-------------------------------
+> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> index 0d02599..bd8e1a8 100644
+> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+> @@ -280,6 +280,7 @@
+>         firmware {
+>                 scm: scm {
+>                         compatible = "qcom,scm-sc8280xp", "qcom,scm";
+> +                       qcom,dload-mode = <&tcsr 0x13000>;
+>                 };
+>         };
+> 
+> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> index cdbfe54..e1539a2 100644
+> --- a/drivers/firmware/qcom_scm.c
+> +++ b/drivers/firmware/qcom_scm.c
+> @@ -20,7 +20,7 @@
+> 
+>  #include "qcom_scm.h"
+> 
+> -static bool download_mode =
+> IS_ENABLED(CONFIG_QCOM_SCM_DOWNLOAD_MODE_DEFAULT);
+> +static bool download_mode = true;
+>  module_param(download_mode, bool, 0);
+> 
+>  #define SCM_HAS_CORE_CLK       BIT(0)
+> @@ -427,7 +427,7 @@ static void qcom_scm_set_download_mode(bool enable)
+>                 ret = __qcom_scm_set_dload_mode(__scm->dev, enable);
+>         } else if (__scm->dload_mode_addr) {
+>                 ret = qcom_scm_io_writel(__scm->dload_mode_addr,
+> -                               enable ? QCOM_SCM_BOOT_SET_DLOAD_MODE : 0);
+> +                               enable ? 0x20 : 0);
+>         } else {
+>                 dev_err(__scm->dev,
+>                         "No available mechanism for setting download
+> mode\n");
 
+Hi Mukesh,
 
->  	soc: soc@0 {
->  		compatible = "simple-bus";
->  		#address-cells = <1>;
-> @@ -829,6 +858,122 @@ IRQ_TYPE_LEVEL_HIGH>, /* int_c */
->  			msi-parent = <&v2m0>;
->  			status = "disabled";
->  		};
-> +
-> +		q6v5_wcss: remoteproc@cd00000 {
+I tried to test this series but I don't know how to actually use the
+minidump feature that's in this series. Some more documentation is
+needed.
 
-Be sure you put it in correct place - ordered by unit address.
+I added this series, plus your other series that adds the download modes
+to the SCM driver to my tree, along with your changes above. I
+downgraded the firmware on my sa8540p and I have my reproducible crash.
+Linux immediately loses control and the board firmware takes over.
 
-> +			compatible = "qcom,ipq9574-q6-mpd";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
+I assumed that I'd need to do a warm reboot so that DDR contents are
+still present so Linux can grab the memory contents on next reboot.
+However, 'fastboot devices' shows no devices so I can't reboot that
+way. I can do a cold boot but the DDR contents will be lost.
 
-Why do you need them?
+Also this series needs to be rebased against 6.3rc1.
 
-> +			reg = <0x0cd00000 0x4040>;
-
-reg is always a second property.
-
-> +			interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
-> +					      <&wcss_smp2p_in 0 0>,
-> +					      <&wcss_smp2p_in 1 0>,
-> +					      <&wcss_smp2p_in 2 0>,
-> +					      <&wcss_smp2p_in 3 0>;
-> +			interrupt-names = "wdog",
-> +					  "fatal",
-> +					  "ready",
-> +					  "handover",
-> +					  "stop-ack";
-> +
-> +			clocks = <&gcc GCC_ANOC_WCSS_AXI_M_CLK>,
-> +				 <&gcc GCC_WCSS_AHB_S_CLK>,
-> +				 <&gcc GCC_WCSS_ECAHB_CLK>,
-> +				 <&gcc GCC_WCSS_ACMT_CLK>,
-> +				 <&gcc GCC_WCSS_AXI_M_CLK>,
-> +				 <&gcc GCC_Q6_AXIM_CLK>,
-> +				 <&gcc GCC_Q6_AXIM2_CLK>,
-> +				 <&gcc GCC_Q6_AHB_CLK>,
-> +				 <&gcc GCC_Q6_AHB_S_CLK>,
-> +				 <&gcc GCC_Q6SS_BOOT_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_APB_BDG_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_ATB_BDG_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_DAPBUS_BDG_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_NTS_BDG_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_APB_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_ATB_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_DAPBUS_CLK>,
-> +				 <&gcc GCC_WCSS_DBG_IFC_NTS_CLK>,
-> +				 <&gcc GCC_Q6_TSCTR_1TO2_CLK>,
-> +				 <&gcc GCC_Q6SS_ATBM_CLK>,
-> +				 <&gcc GCC_Q6SS_PCLKDBG_CLK>,
-> +				 <&gcc GCC_Q6SS_TRIG_CLK>,
-> +				 <&gcc GCC_MEM_NOC_Q6_AXI_CLK>,
-> +				 <&gcc GCC_WCSS_Q6_TBU_CLK>,
-> +				 <&gcc GCC_SYS_NOC_WCSS_AHB_CLK>;
-> +
-> +			clock-names = "anoc_wcss_axi_m",
-> +				      "wcss_ahb_s",
-> +				      "wcss_ecahb",
-> +				      "wcss_acmt",
-> +				      "wcss_axi_m",
-> +				      "q6_axim",
-> +				      "q6_axim2",
-> +				      "q6_ahb",
-> +				      "q6_ahb_s",
-> +				      "q6ss_boot",
-> +				      "dbg-apb-bdg",
-> +				      "dbg-atb-bdg",
-> +				      "dbg-dapbus-bdg",
-> +				      "dbg-nts-bdg",
-> +				      "dbg-apb",
-> +				      "dbg-atb",
-> +				      "dbg-dapbus",
-> +				      "dbg-nts",
-> +				      "q6_tsctr_1to2_clk",
-> +				      "q6ss_atbm_clk",
-> +				      "q6ss_pclkdbg_clk",
-> +				      "q6ss_trig_clk",
-> +				      "mem_noc_q6_axi",
-> +				      "wcss_q6_tbu",
-> +				      "sys_noc_wcss_ahb";
-> +
-> +			assigned-clocks = <&gcc GCC_ANOC_WCSS_AXI_M_CLK>,
-> +				 <&gcc GCC_WCSS_AHB_S_CLK>,
-> +				 <&gcc GCC_WCSS_ECAHB_CLK>,
-> +				 <&gcc GCC_WCSS_ACMT_CLK>,
-> +				 <&gcc GCC_WCSS_AXI_M_CLK>,
-> +				 <&gcc GCC_Q6_AXIM_CLK>,
-> +				 <&gcc GCC_Q6_AXIM2_CLK>,
-> +				 <&gcc GCC_Q6_AHB_CLK>,
-> +				 <&gcc GCC_Q6_AHB_S_CLK>,
-> +				 <&gcc GCC_Q6SS_BOOT_CLK>,
-> +				 <&gcc GCC_MEM_NOC_Q6_AXI_CLK>,
-> +				 <&gcc GCC_WCSS_Q6_TBU_CLK>,
-> +				 <&gcc GCC_SYS_NOC_WCSS_AHB_CLK>;
-> +
-> +			assigned-clock-rates = <266666667>,
-> +						<133333333>,
-> +						<133333333>,
-> +						<133333333>,
-> +						<266666667>,
-> +						<533000000>,
-> +						<342857143>,
-> +						<133333333>,
-> +						<133333333>,
-> +						<342857143>,
-> +						<533000000>,
-> +						<533000000>,
-> +						<133333333>;
-> +
-> +			qcom,smem-states = <&wcss_smp2p_out 0>,
-> +					   <&wcss_smp2p_out 1>;
-> +			qcom,smem-state-names = "shutdown",
-> +						"stop";
-> +
-> +			memory-region = <&q6_region>;
-> +
-> +			glink-edge {
-> +				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-> +				label = "rtr";
-> +				qcom,remote-pid = <1>;
-> +				mboxes = <&apcs_glb 8>;
-> +			};
-> +
-> +			q6_wcss_pd1: remoteproc_pd1 {
-> +				compatible = "qcom,ipq9574-wcss-ahb-mpd";
-
-Why do you need empty node? Usually there is no benefit and these should
-be just part of parent.
-
-> +			};
-> +		};
->  	};
->  
->  	rpm-glink {
-
-Best regards,
-Krzysztof
+Brian
 
