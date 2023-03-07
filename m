@@ -2,51 +2,50 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80580C678D5
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 06:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BD4C678D5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 07:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230105AbjCGGvv (ORCPT
+        id S230135AbjCGH2j (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 01:51:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52598 "EHLO
+        Tue, 7 Mar 2023 02:28:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjCGGvu (ORCPT
+        with ESMTP id S229582AbjCGH2i (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Mar 2023 01:51:50 -0500
+        Tue, 7 Mar 2023 02:28:38 -0500
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CF33D92A;
-        Mon,  6 Mar 2023 22:51:47 -0800 (PST)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3276D57k005863;
-        Tue, 7 Mar 2023 06:25:25 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8219C1ABC7;
+        Mon,  6 Mar 2023 23:28:37 -0800 (PST)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3277IocE024564;
+        Tue, 7 Mar 2023 07:28:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=rM6zguBVXsB3XNdAh9usqRuz5Y1YHBBEctXnhNh/dlM=;
- b=Q0ANWGCLDWmJ56njnXZdeF+74WOkTwZq8KhCzEXj/aT40z4qejp003pDLnkTuTvztPO6
- zFre/16QrQOo5Rub8tDeFRHW3NcGPIvCH/ioypT/HQkF7ykJpKSbPQuaVG0B+/agNkkr
- TWXHPxI+SsFyjkvdwulj1tQO+B5kdAV7/fr7h4/jc+Yg58TQ/r0zJQ3P2MRpINLkHn0X
- CsoHmf58y38rKz3D8L+nMKbqIHEUQrree9gEo9ze0Ro+DS+nYgPekebqgIDjZTRrT/ZA
- ub8qhum1tSM+BEz6SwSrfBos0TVSkElIFY4aBObwwIv/6Ig1cZ6sBhNSyPet0Wmm8R/Z Hg== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p419d72a2-1
+ bh=F6QABCKHWqbxtVM4XSn7cntHysY136Cm7OTjlv9CQ5g=;
+ b=AD3pmUo3hlWH0V5NTY96aUvd8UVh/R+96zGFk89KQ1HGCdb+hLOzBPsxzJfvaIXcqbEb
+ s7lQbGV6sRPHwBuirDSea+sun0kdxDCvNER91lrEr7Tyu+6+g/D0vD7eFVSTXBsG2PvY
+ X4d6hli3uKYXaLsBNCOgC5EhtnMIk44xWRGN1sLyPNs5sMKasVdJJGDwfAzykkxuuQxZ
+ gD6MqADDJ14LTugY0Wsnq/giQ6wz7Yc8yGm7nyx7bk1MzkEf5wdKDvt6cuLypUjvCBDJ
+ uo3u1ZxYU6c/XTzJmhrxK7CpxIgmrJLK4YIUKdJEbkXAf3qLlJjBf9TQiw4eRaQMESMB kg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p5nkw9jj3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Mar 2023 06:25:25 +0000
-Received: from nasanex01a.na.qualcomm.com ([10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3276POAa024631
+        Tue, 07 Mar 2023 07:28:32 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3277SVaO024116
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 7 Mar 2023 06:25:24 GMT
-Received: from [10.201.3.167] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 7 Mar 2023 07:28:31 GMT
+Received: from [10.201.3.182] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 6 Mar 2023
- 22:25:16 -0800
-Message-ID: <b758ac38-27f5-3664-c454-aa0f43592c1b@quicinc.com>
-Date:   Tue, 7 Mar 2023 11:55:13 +0530
+ 23:28:23 -0800
+Message-ID: <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
+Date:   Tue, 7 Mar 2023 12:58:13 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [PATCH 10/11] arm64: dts: qcom: ipq5018: Add MP03.5-c1 board
- support
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 06/11] clk: qcom: IPQ9574: Add q6/wcss clocks
 Content-Language: en-US
 To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
         <agross@kernel.org>, <andersson@kernel.org>,
@@ -58,131 +57,202 @@ To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
         <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-11-git-send-email-quic_mmanikan@quicinc.com>
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-In-Reply-To: <1678164097-13247-11-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: j3n-Il8pOTDk6VJRLfxCZMDFAgLir89Q
-X-Proofpoint-GUID: j3n-Il8pOTDk6VJRLfxCZMDFAgLir89Q
+X-Proofpoint-GUID: ijw2X5OLzAv1OQ5dn1V7rR9QN-cvyVV1
+X-Proofpoint-ORIG-GUID: ijw2X5OLzAv1OQ5dn1V7rR9QN-cvyVV1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-07_01,2023-03-06_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ definitions=2023-03-07_02,2023-03-06_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ adultscore=0 malwarescore=0 mlxlogscore=900 lowpriorityscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 impostorscore=0 priorityscore=1501
  spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303070057
+ engine=8.12.0-2212070000 definitions=main-2303070066
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
+
 On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
-> Add initial device tree support for the MP03.5-C1 board.
->
+> Some of the clocks required for q6/wcss bring up
+> are missing. So this patch adds clocks.
+> 
 > Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > ---
->   arch/arm64/boot/dts/qcom/Makefile             |  1 +
->   .../arm64/boot/dts/qcom/ipq5018-mp03.5-c1.dts | 64 +++++++++++++++++++
->   2 files changed, 65 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-mp03.5-c1.dts
->
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index b77a95e97a56..10d1eafe57e4 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -4,6 +4,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
->   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
->   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
->   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-mp03.1-c2.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-mp03.5-c1.dtb
->   dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
->   dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
->   dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c1.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-mp03.5-c1.dts b/arch/arm64/boot/dts/qcom/ipq5018-mp03.5-c1.dts
-> new file mode 100644
-> index 000000000000..51ddd7367ac6
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq5018-mp03.5-c1.dts
-> @@ -0,0 +1,64 @@
-> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-> +/*
-> + * IPQ5018 CP01 board device tree source
-MP03??
-> + *
-> + * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
+>   drivers/clk/qcom/gcc-ipq9574.c | 119 +++++++++++++++++++++++++++++++++
+>   1 file changed, 119 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+> index 1bf33d582dc2..355f2e12d9c6 100644
+> --- a/drivers/clk/qcom/gcc-ipq9574.c
+> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+> @@ -2697,6 +2697,22 @@ static struct clk_branch gcc_wcss_acmt_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_wcss_ahb_s_clk = {
+> +	.halt_reg = 0x25060,
+> +	.clkr = {
+> +		.enable_reg = 0x25060,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_wcss_ahb_s_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&wcss_ahb_clk_src.clkr.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
+>   	.halt_reg = 0x2e030,
+>   	.clkr = {
+> @@ -2734,6 +2750,22 @@ static struct clk_rcg2 wcss_axi_m_clk_src = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_wcss_axi_m_clk = {
+> +	.halt_reg = 0x25064,
+> +	.clkr = {
+> +		.enable_reg = 0x25064,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_wcss_axi_m_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&wcss_axi_m_clk_src.clkr.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_anoc_wcss_axi_m_clk = {
+>   	.halt_reg = 0x2e0a8,
+>   	.clkr = {
+> @@ -2803,6 +2835,22 @@ static struct clk_branch gcc_wcss_dbg_ifc_atb_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_wcss_dbg_ifc_atb_bdg_clk = {
+> +	.halt_reg = 0x2504C,
+> +	.clkr = {
+> +		.enable_reg = 0x2504C,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_wcss_dbg_ifc_atb_bdg_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&qdss_at_clk_src.clkr.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_nssnoc_atb_clk = {
+>   	.halt_reg = 0x17014,
+>   	.clkr = {
+> @@ -3073,6 +3121,22 @@ static struct clk_branch gcc_wcss_dbg_ifc_nts_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_wcss_dbg_ifc_nts_bdg_clk = {
+> +	.halt_reg = 0x25050,
+> +	.clkr = {
+> +		.enable_reg = 0x25050,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_wcss_dbg_ifc_nts_bdg_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&qdss_tsctr_div2_clk_src.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_qdss_tsctr_div2_clk = {
+>   	.halt_reg = 0x2d044,
+>   	.clkr = {
+> @@ -3315,6 +3379,38 @@ static struct clk_branch gcc_wcss_dbg_ifc_dapbus_clk = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_wcss_dbg_ifc_apb_bdg_clk = {
+> +	.halt_reg = 0x25048,
+> +	.clkr = {
+> +		.enable_reg = 0x25048,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_wcss_dbg_ifc_apb_bdg_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&qdss_dap_sync_clk_src.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch gcc_wcss_dbg_ifc_dapbus_bdg_clk = {
+> +	.halt_reg = 0x25054,
+> +	.clkr = {
+> +		.enable_reg = 0x25054,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_wcss_dbg_ifc_dapbus_bdg_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&qdss_dap_sync_clk_src.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>   static struct clk_branch gcc_qdss_dap_clk = {
+>   	.halt_reg = 0x2d058,
+>   	.clkr = {
+> @@ -3513,6 +3609,22 @@ static struct clk_rcg2 q6_axim2_clk_src = {
+>   	},
+>   };
+>   
+> +static struct clk_branch gcc_q6_axim2_clk = {
+> +	.halt_reg = 0x25010,
+> +	.clkr = {
+> +		.enable_reg = 0x25010,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_q6_axim2_clk",
+> +			.parent_hws = (const struct clk_hw *[]){
+> +					&q6_axim2_clk_src.clkr.hw },
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
 
-Update the year
+These clocks does not seem to be used in the driver, where are they used ?
 
--Varada
-
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "ipq5018.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ5018/AP-MP03.5-C1";
-> +	compatible = "qcom,ipq5018-mp03.5-c1", "qcom,ipq5018";
-> +
-> +	aliases {
-> +		serial0 = &blsp1_uart1;
-> +	};
-> +
-> +	chosen {
-> +		bootargs = "console=ttyMSM0,115200,n8 rw init=/init swiotlb=1 coherent_pool=2M";
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&tlmm {
-> +	blsp0_uart_pins: uart_pins {
-> +		pins = "gpio20", "gpio21";
-> +		function = "blsp0_uart0";
-> +		bias-disable;
-> +	};
-> +};
-> +
-> +&blsp1_uart1 {
-> +	pinctrl-0 = <&blsp0_uart_pins>;
-> +	pinctrl-names = "default";
-> +	status = "ok";
-> +};
-> +
-> +&q6v5_wcss {
-> +	q6_wcss_pd1: remoteproc_pd1 {
-> +		interrupts-extended = <&wcss_smp2p_in 8 0>,
-> +				<&wcss_smp2p_in 9 0>,
-> +				<&wcss_smp2p_in 12 0>,
-> +				<&wcss_smp2p_in 11 0>;
-> +		interrupt-names = "fatal",
-> +				"ready",
-> +				"spawn-ack",
-> +				"stop-ack";
-> +		qcom,smem-states = <&wcss_smp2p_out 8>,
-> +				<&wcss_smp2p_out 9>,
-> +				<&wcss_smp2p_out 10>;
-> +		qcom,smem-state-names = "shutdown",
-> +					"stop",
-> +					"spawn";
-> +	};
-> +	q6_wcss_pd2: remoteproc_pd2 {
-> +		status = "okay";
-> +	};
-> +
-> +	q6_wcss_pd3: remoteproc_pd3 {
-> +		status = "okay";
-> +	};
-> +};
+Regards,
+  Sricharan
