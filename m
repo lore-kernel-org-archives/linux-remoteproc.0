@@ -2,61 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C04C6FD1B
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 15:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 352C4C678D5
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 15:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231262AbjCGPVc (ORCPT
+        id S231287AbjCGPWW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 10:21:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40402 "EHLO
+        Tue, 7 Mar 2023 10:22:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231171AbjCGPVK (ORCPT
+        with ESMTP id S231148AbjCGPWB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Mar 2023 10:21:10 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B78D11BB
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Mar 2023 07:18:47 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id k10so29745221edk.13
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Mar 2023 07:18:47 -0800 (PST)
+        Tue, 7 Mar 2023 10:22:01 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BB86EA8
+        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Mar 2023 07:19:43 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id o12so53610992edb.9
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Mar 2023 07:19:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678202316;
+        d=linaro.org; s=google; t=1678202380;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bwl4tCXVwjpJh7IhcTJKMi7gkXOGrvpoou3pIHWnxxM=;
-        b=u4y2ycachlHPFB/neVV7xdZG1TNs4w0W6CUPYi/mJ61GcBiSCyCyxeckpOEFcXGJoV
-         6Q+9x82W4fYzaIVTj588a4TfJVz50lIYVzKJadiNp6lvBlv7H7Kj2YnHSgH15oV5wj00
-         lo6u/H97zvfhVqKmUWi1SZ0iRzSEses9vD+gobXRfBUMJBVEc3fda8YyQs5bc+UCwI/A
-         CLwV0sbNMptzUkOcBBu/YYcNMRX0fyosfRNstR2BNiNP+kB5PVJsRv05yXJkm0hUYUq9
-         B7s6Pi4aLp4v4oywhpwQuc/fc0Y048bJj7SJJvPqosdkeOR0ZaqnXgP1sIpOY8BFv0sc
-         mTZw==
+        bh=8A0oGiHbXpdCnrD62ngIGsGezBV7Cv5UAeMhuYzoX0g=;
+        b=geizSapugaHROWrVGsQnWr/dCZU7wvrng7DV4SGe0KUZQRQWMXwkcUewE5Tef8ieGJ
+         sP/aaySqxkcdOBhNUZEjzrPgIk1EOAgNvxomRk3PNyS7gUYoREdgw/vdXPAMU81pV1Bx
+         W07fBPFUZTLpRkpjPpDXIbjrt1S0GuZgaepvulXj2NHtmGoJ14PxUQScmEdhNzrY8kIN
+         zGCZpncBYk+rQ/YOixtmgv414Rc7JOI4xeCFhf0Ur4ABKMu2ofDG37/ToifS8WMajiQL
+         yMblVdBGmFJIIBHh25vkvO/4sVFKo/Fjhl/ToJGsd1eZGjlRVSfSNcSpePZUEa9WHns0
+         CmOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678202316;
+        d=1e100.net; s=20210112; t=1678202380;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bwl4tCXVwjpJh7IhcTJKMi7gkXOGrvpoou3pIHWnxxM=;
-        b=FwhIXUXIkZcvIBJRJ6R7kXkDnF6qlh1Sq7q+81c4tM97z6rk8ncMB8rszWCqdMwBop
-         MaEpGhhR53e/aq868kPqVwGat8SAYEHpe4gpp31XL0xkHQunpwOi+3z8U/5H4wBLhuHs
-         07R5K02s8YUHAzmggXrz8FmriF9HcaQIclG63ojIqi307gKPhE0eHYAomBqYRvadecQS
-         xYpWQucWqTTJfUtSEX7+pR0OHK6sDJkbdB4g2EHm3NZ6hCY7pREZfvQWiUCAWaS9HEXR
-         p5IJ3eLwfz76Cu9HxLaVZbT5RiUW9QX9Cq0ufwNBOEHa1UPfE7gWPU5QIhI084E+a6bF
-         vqtA==
-X-Gm-Message-State: AO0yUKU0+736xt7KQiMlG2HTd2k+iPoBBfMZFj06lVv8b1mMOsprqhmf
-        eqnODJnk3e9+vyBd5eI1Wz6HUQ==
-X-Google-Smtp-Source: AK7set/OTiyBx5HQzigvX9pyuSerEVTOaJqZrHtQx4SxfYIW/eKaiPNd7K+ki4jEhrErvL0QOFGhfw==
-X-Received: by 2002:aa7:c983:0:b0:4aa:a0ed:e373 with SMTP id c3-20020aa7c983000000b004aaa0ede373mr9891525edt.7.1678202316731;
-        Tue, 07 Mar 2023 07:18:36 -0800 (PST)
+        bh=8A0oGiHbXpdCnrD62ngIGsGezBV7Cv5UAeMhuYzoX0g=;
+        b=ztKmjRPMkP1XwcCmx6uxfJJvy7anlEOPt3FheFbcWBuiu2XKIPhj90eQihqOikMAnZ
+         G+n/9z+5rsWB1jo24hU+jIxg4NyXDPbuAxHLCuTj2yV20Ku5ZQ0cwuOsrFX/CEifF4KU
+         iyD8piZfDsnBQH8JK7iKxQRllzkKXmI3BaCNuhQDQI6KMisE+WvMij5wqPGCFcYQkTXS
+         j/5HcPS9BJ02duVkJwaKmQlAUjGcRD8XwrbzrQlGOnoic/ieXCyvar17sOhryOiy3oR9
+         MNy8D0KPwkVhk8m9zOjvvl4D9Byg9fpzUjQj4ZMl8fFAYT/LmyVrTvSFyGyIoPxhI6Bn
+         yp+A==
+X-Gm-Message-State: AO0yUKXVRw4m8cjwkOpNFSqGBttxQykEb+8+D/+pTb11gtuD0pnKLTUl
+        f6ROHzqxlfJsNo212shDeqqhKA==
+X-Google-Smtp-Source: AK7set83GaVEvUkFlsR9cXM91TEHzQDTNBEkuKX58uHQUXifG2PlIRuHuvOT0pNDQQwGucSVBhKhKA==
+X-Received: by 2002:a05:6402:1357:b0:4ad:7bd3:bb43 with SMTP id y23-20020a056402135700b004ad7bd3bb43mr15205289edw.21.1678202380303;
+        Tue, 07 Mar 2023 07:19:40 -0800 (PST)
 Received: from ?IPV6:2a02:810d:15c0:828:a60f:e604:c252:1f3d? ([2a02:810d:15c0:828:a60f:e604:c252:1f3d])
-        by smtp.gmail.com with ESMTPSA id n13-20020a170906164d00b008deba75e89csm6252637ejd.66.2023.03.07.07.18.35
+        by smtp.gmail.com with ESMTPSA id d17-20020a50f691000000b004c0cc79f4aesm6856641edn.92.2023.03.07.07.19.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Mar 2023 07:18:36 -0800 (PST)
-Message-ID: <ef0f48ac-f258-e7b5-405d-5def6c63c1c2@linaro.org>
-Date:   Tue, 7 Mar 2023 16:18:34 +0100
+        Tue, 07 Mar 2023 07:19:39 -0800 (PST)
+Message-ID: <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
+Date:   Tue, 7 Mar 2023 16:19:38 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 03/11] dt-bindings: scm: Add compatible for IPQ5018
+Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: gcc-ipq9574: Add Q6 gcc
+ clock control
 Content-Language: en-US
 To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
         agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
@@ -72,9 +73,9 @@ Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
         quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
         quic_poovendh@quicinc.com
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-4-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1678164097-13247-4-git-send-email-quic_mmanikan@quicinc.com>
+In-Reply-To: <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,12 +83,28 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
-> Add the scm compatible string for IPQ5018 SoC
+> Add support for the QDSP6 gcc clock control used on IPQ9574
+> based devices. This would allow mpd remoteproc driver to control
+> the required gcc clocks to bring the subsystem out of reset.
 > 
 > Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+>  include/dt-bindings/clock/qcom,ipq9574-gcc.h | 159 ++++++++++---------
+>  1 file changed, 83 insertions(+), 76 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> index c89e96d568c6..8bd6350ecd56 100644
+> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> @@ -138,80 +138,87 @@
+>  #define WCSS_AHB_CLK_SRC				129
+>  #define GCC_Q6_AHB_CLK					130
+>  #define GCC_Q6_AHB_S_CLK				131
+> -#define GCC_WCSS_ECAHB_CLK				132
+> -#define GCC_WCSS_ACMT_CLK				133
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+That's an ABI break, if file was accepted. Or a very weird change
+anyway, if it wasn't (why adding entry and immediately changing it?).
 
 Best regards,
 Krzysztof
