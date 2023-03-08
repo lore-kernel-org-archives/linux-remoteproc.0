@@ -2,194 +2,426 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA9DC64EC4
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Mar 2023 04:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50997C64EC4
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Mar 2023 08:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229572AbjCHEqn (ORCPT
+        id S229727AbjCHIVS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 23:46:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57046 "EHLO
+        Wed, 8 Mar 2023 03:21:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjCHEqn (ORCPT
+        with ESMTP id S229621AbjCHIUt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Mar 2023 23:46:43 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AED1A2F38;
-        Tue,  7 Mar 2023 20:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1678250801; x=1709786801;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QcAdQ6QzcChdpvESziFs8Z8K0GlMk1y8BSQSURRc0Bo=;
-  b=JfMUtXcdO29exUBkWdSyLz91AjK+BVy4+dCGB6odsScuSkpQLXOKMMPq
-   cvr0niLvBXAZplQDKTWxFZxZwZlhQ/5EvTLn/AvSFDOo7EAULJZFK0rRx
-   eIBbMLWMW+lyse+cgI0vLX+SMT+aZZUPtuhdgRnlMkZ3VlxVj3sy/t+gh
-   apKSXrHek2mDBLz8w+4/FdjVcR+DziGfsBr1O5vF3B+TyiqSDpPtM1+XJ
-   0RxeCfqf8Hs2ZLgLWJua49TJNm/+PXSrsnT26Nz77T53dZ21q/XZOiw9X
-   E+eY/gzy23HGdTBnOl2FW1bbaS7kCrp0pGu199OD7Pi2raE441biGo5l6
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="316458534"
-X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
-   d="scan'208";a="316458534"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 20:46:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="800624035"
-X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
-   d="scan'208";a="800624035"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 07 Mar 2023 20:46:36 -0800
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pZlhD-0001sx-1S;
-        Wed, 08 Mar 2023 04:46:35 +0000
-Date:   Wed, 8 Mar 2023 12:45:56 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Melody Olvera <quic_molvera@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Gokul Krishna Krishnakumar <quic_gokukris@quicinc.com>
-Subject: Re: [PATCH v2 4/7] soc: qcom: mdt_loader: Enhance split binary
- detection
-Message-ID: <202303081259.uohZV4ZE-lkp@intel.com>
-References: <20230306231202.12223-5-quic_molvera@quicinc.com>
+        Wed, 8 Mar 2023 03:20:49 -0500
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 629BEB0BAA;
+        Wed,  8 Mar 2023 00:20:08 -0800 (PST)
+X-UUID: 05efe958bd8a11eda06fc9ecc4dadd91-20230308
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=S9xYd6IewSn037NHiVYBNHeHRAz2qBk0Fs8rI36Iu4o=;
+        b=ptvdF+WUTUZribgNZikI1Bw6Syy8G3yGE5EfI0to0VJhu9soTUxclyZMwSyvcVCt9AcZ80cXaILdv1CV/te9iovLXptHA9/xpagCmVZCD5wuQYkze503+HvzNViNwT/wFBG1pmV/bRFLxLBej92RlPasScZxkiCC2NmDBcTgqEY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.20,REQID:d68ec08e-4fd2-43a9-9093-eb20ac578242,IP:0,U
+        RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+        ON:release,TS:70
+X-CID-INFO: VERSION:1.1.20,REQID:d68ec08e-4fd2-43a9-9093-eb20ac578242,IP:0,URL
+        :0,TC:0,Content:-25,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTI
+        ON:quarantine,TS:70
+X-CID-META: VersionHash:25b5999,CLOUDID:0c7495b2-beed-4dfc-bd9c-e1b22fa6ccc4,B
+        ulkID:2303081620025NWMJRDD,BulkQuantity:0,Recheck:0,SF:38|29|28|17|19|48,T
+        C:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+        ,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0
+X-UUID: 05efe958bd8a11eda06fc9ecc4dadd91-20230308
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+        (envelope-from <haozhe.chang@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 615465098; Wed, 08 Mar 2023 16:20:02 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.25; Wed, 8 Mar 2023 16:20:00 +0800
+Received: from mcddlt001.gcn.mediatek.inc (10.19.240.15) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.25 via Frontend Transport; Wed, 8 Mar 2023 16:19:59 +0800
+From:   <haozhe.chang@mediatek.com>
+To:     M Chetan Kumar <m.chetan.kumar@intel.com>,
+        Intel Corporation <linuxwwan@intel.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>,
+        Chiranjeevi Rapolu <chiranjeevi.rapolu@linux.intel.com>,
+        Liu Haijun <haijun.liu@mediatek.com>,
+        Ricardo Martinez <ricardo.martinez@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        haozhe chang <haozhe.chang@mediatek.com>,
+        Shang XiaoJing <shangxiaojing@huawei.com>,
+        "open list:INTEL WWAN IOSM DRIVER" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR MESSAGING (RPMSG) WWAN CONTROL..." 
+        <linux-remoteproc@vger.kernel.org>,
+        "open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+CC:     <lambert.wang@mediatek.com>, <xiayu.zhang@mediatek.com>,
+        <hua.yang@mediatek.com>
+Subject: [PATCH RESEND net-next v7] wwan: core: Support slicing in port TX flow of WWAN subsystem
+Date:   Wed, 8 Mar 2023 16:19:35 +0800
+Message-ID: <20230308081939.5512-1-haozhe.chang@mediatek.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230306231202.12223-5-quic_molvera@quicinc.com>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Melody,
+From: haozhe chang <haozhe.chang@mediatek.com>
 
-Thank you for the patch! Perhaps something to improve:
+wwan_port_fops_write inputs the SKB parameter to the TX callback of
+the WWAN device driver. However, the WWAN device (e.g., t7xx) may
+have an MTU less than the size of SKB, causing the TX buffer to be
+sliced and copied once more in the WWAN device driver.
 
-[auto build test WARNING on dc837c1a5137a8cf2e9432c1891392b6a66f4d8d]
+This patch implements the slicing in the WWAN subsystem and gives
+the WWAN devices driver the option to slice(by frag_len) or not. By
+doing so, the additional memory copy is reduced.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Melody-Olvera/dt-bindings-firmware-qcom-scm-Update-QDU1000-QRU1000-compatible/20230307-071438
-base:   dc837c1a5137a8cf2e9432c1891392b6a66f4d8d
-patch link:    https://lore.kernel.org/r/20230306231202.12223-5-quic_molvera%40quicinc.com
-patch subject: [PATCH v2 4/7] soc: qcom: mdt_loader: Enhance split binary detection
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230308/202303081259.uohZV4ZE-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/3964310160b68a6246f85828ecbcebf1fb9137a7
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Melody-Olvera/dt-bindings-firmware-qcom-scm-Update-QDU1000-QRU1000-compatible/20230307-071438
-        git checkout 3964310160b68a6246f85828ecbcebf1fb9137a7
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/soc/qcom/
+Meanwhile, this patch gives WWAN devices driver the option to reserve
+headroom in fragments for the device-specific metadata.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303081259.uohZV4ZE-lkp@intel.com/
+Signed-off-by: haozhe chang <haozhe.chang@mediatek.com>
+Reviewed-by: Loic Poulain <loic.poulain@linaro.org>
 
-All warnings (new ones prefixed by >>):
+---
+Changes in v2
+  -send fragments to device driver by skb frag_list.
 
-   drivers/soc/qcom/mdt_loader.c: In function 'qcom_mdt_read_metadata':
->> drivers/soc/qcom/mdt_loader.c:156:17: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
-     156 |         ssize_t ret;
-         |                 ^~~
+Changes in v3
+  -move frag_len and headroom_len setting to wwan_create_port.
 
+Changes in v4
+  -change unreadable parameters to macro definition.
 
-vim +/ret +156 drivers/soc/qcom/mdt_loader.c
+Changes in v5
+  -optimize comments for WWAN_NO_HEADROOM, WWAN_NO_FRAGMENT.
 
-051fb70fd4ea40f drivers/remoteproc/qcom_mdt_loader.c Bjorn Andersson            2016-06-20  126  
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  127  /**
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  128   * qcom_mdt_read_metadata() - read header and metadata from mdt or mbn
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  129   * @fw:		firmware of mdt header or mbn
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  130   * @data_len:	length of the read metadata blob
-d11a34a404ee556 drivers/soc/qcom/mdt_loader.c        Krzysztof Kozlowski        2022-05-19  131   * @fw_name:	name of the firmware, for construction of segment file names
-d11a34a404ee556 drivers/soc/qcom/mdt_loader.c        Krzysztof Kozlowski        2022-05-19  132   * @dev:	device handle to associate resources with
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  133   *
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  134   * The mechanism that performs the authentication of the loading firmware
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  135   * expects an ELF header directly followed by the segment of hashes, with no
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  136   * padding inbetween. This function allocates a chunk of memory for this pair
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  137   * and copy the two pieces into the buffer.
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  138   *
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  139   * In the case of split firmware the hash is found directly following the ELF
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  140   * header, rather than at p_offset described by the second program header.
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  141   *
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  142   * The caller is responsible to free (kfree()) the returned pointer.
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  143   *
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  144   * Return: pointer to data, or ERR_PTR()
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  145   */
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  146  void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len,
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  147  			     const char *fw_name, struct device *dev)
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  148  {
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  149  	const struct elf32_phdr *phdrs;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  150  	const struct elf32_hdr *ehdr;
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  151  	unsigned int hash_segment = 0;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  152  	size_t hash_offset;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  153  	size_t hash_size;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  154  	size_t ehdr_size;
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  155  	unsigned int i;
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27 @156  	ssize_t ret;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  157  	void *data;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  158  
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  159  	ehdr = (struct elf32_hdr *)fw->data;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  160  	phdrs = (struct elf32_phdr *)(ehdr + 1);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  161  
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  162  	if (ehdr->e_phnum < 2)
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  163  		return ERR_PTR(-EINVAL);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  164  
-833d51d7c66d670 drivers/soc/qcom/mdt_loader.c        Shawn Guo                  2021-08-28  165  	if (phdrs[0].p_type == PT_LOAD)
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  166  		return ERR_PTR(-EINVAL);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  167  
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  168  	for (i = 1; i < ehdr->e_phnum; i++) {
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  169  		if ((phdrs[i].p_flags & QCOM_MDT_TYPE_MASK) == QCOM_MDT_TYPE_HASH) {
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  170  			hash_segment = i;
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  171  			break;
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  172  		}
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  173  	}
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  174  
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  175  	if (!hash_segment) {
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  176  		dev_err(dev, "no hash segment found in %s\n", fw_name);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  177  		return ERR_PTR(-EINVAL);
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  178  	}
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  179  
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  180  	ehdr_size = phdrs[0].p_filesz;
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  181  	hash_size = phdrs[hash_segment].p_filesz;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  182  
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  183  	data = kmalloc(ehdr_size + hash_size, GFP_KERNEL);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  184  	if (!data)
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  185  		return ERR_PTR(-ENOMEM);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  186  
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  187  	/* Copy ELF header */
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  188  	memcpy(data, fw->data, ehdr_size);
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  189  
-3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  190  
-3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  191  	if (qcom_mdt_bins_are_split(fw)) {
-3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  192  		ret = mdt_load_split_segment(data + ehdr_size, phdrs, hash_segment, fw_name, dev);
-3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  193  	} else {
-64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  194  		hash_offset = phdrs[hash_segment].p_offset;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  195  		memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
-8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  196  	}
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  197  	*data_len = ehdr_size + hash_size;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  198  
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  199  	return data;
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  200  }
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  201  EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
-498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  202  
+Changes in v6
+  -add reviewer to patch commit.
 
+Changes in v7
+  -rebase and resend
+---
+ drivers/net/wwan/iosm/iosm_ipc_port.c  |  3 +-
+ drivers/net/wwan/mhi_wwan_ctrl.c       |  3 +-
+ drivers/net/wwan/rpmsg_wwan_ctrl.c     |  3 +-
+ drivers/net/wwan/t7xx/t7xx_port_wwan.c | 34 +++++++--------
+ drivers/net/wwan/wwan_core.c           | 59 ++++++++++++++++++++------
+ drivers/net/wwan/wwan_hwsim.c          |  1 +
+ drivers/usb/class/cdc-wdm.c            |  3 +-
+ include/linux/wwan.h                   | 16 +++++++
+ 8 files changed, 87 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/net/wwan/iosm/iosm_ipc_port.c b/drivers/net/wwan/iosm/iosm_ipc_port.c
+index b6d81c627277..7798348f61d0 100644
+--- a/drivers/net/wwan/iosm/iosm_ipc_port.c
++++ b/drivers/net/wwan/iosm/iosm_ipc_port.c
+@@ -63,7 +63,8 @@ struct iosm_cdev *ipc_port_init(struct iosm_imem *ipc_imem,
+ 	ipc_port->ipc_imem = ipc_imem;
+ 
+ 	ipc_port->iosm_port = wwan_create_port(ipc_port->dev, port_type,
+-					       &ipc_wwan_ctrl_ops, ipc_port);
++					       &ipc_wwan_ctrl_ops, WWAN_NO_FRAGMENT,
++					       WWAN_NO_HEADROOM, ipc_port);
+ 
+ 	return ipc_port;
+ }
+diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
+index f7ca52353f40..c397aa53db5d 100644
+--- a/drivers/net/wwan/mhi_wwan_ctrl.c
++++ b/drivers/net/wwan/mhi_wwan_ctrl.c
+@@ -237,7 +237,8 @@ static int mhi_wwan_ctrl_probe(struct mhi_device *mhi_dev,
+ 
+ 	/* Register as a wwan port, id->driver_data contains wwan port type */
+ 	port = wwan_create_port(&cntrl->mhi_dev->dev, id->driver_data,
+-				&wwan_pops, mhiwwan);
++				&wwan_pops, WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM,
++				mhiwwan);
+ 	if (IS_ERR(port)) {
+ 		kfree(mhiwwan);
+ 		return PTR_ERR(port);
+diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+index 31c24420ab2e..fc6c228b7e1c 100644
+--- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
++++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+@@ -129,7 +129,8 @@ static int rpmsg_wwan_ctrl_probe(struct rpmsg_device *rpdev)
+ 
+ 	/* Register as a wwan port, id.driver_data contains wwan port type */
+ 	port = wwan_create_port(parent, rpdev->id.driver_data,
+-				&rpmsg_wwan_pops, rpwwan);
++				&rpmsg_wwan_pops, WWAN_NO_FRAGMENT,
++				WWAN_NO_HEADROOM, rpwwan);
+ 	if (IS_ERR(port))
+ 		return PTR_ERR(port);
+ 
+diff --git a/drivers/net/wwan/t7xx/t7xx_port_wwan.c b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+index 24bd21942403..59926fd0a6bb 100644
+--- a/drivers/net/wwan/t7xx/t7xx_port_wwan.c
++++ b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
+@@ -54,13 +54,13 @@ static void t7xx_port_ctrl_stop(struct wwan_port *port)
+ static int t7xx_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
+ {
+ 	struct t7xx_port *port_private = wwan_port_get_drvdata(port);
+-	size_t len, offset, chunk_len = 0, txq_mtu = CLDMA_MTU;
+ 	const struct t7xx_port_conf *port_conf;
++	struct sk_buff *cur = skb, *cloned;
+ 	struct t7xx_fsm_ctl *ctl;
+ 	enum md_state md_state;
++	int cnt = 0, ret;
+ 
+-	len = skb->len;
+-	if (!len || !port_private->chan_enable)
++	if (!port_private->chan_enable)
+ 		return -EINVAL;
+ 
+ 	port_conf = port_private->port_conf;
+@@ -72,23 +72,21 @@ static int t7xx_port_ctrl_tx(struct wwan_port *port, struct sk_buff *skb)
+ 		return -ENODEV;
+ 	}
+ 
+-	for (offset = 0; offset < len; offset += chunk_len) {
+-		struct sk_buff *skb_ccci;
+-		int ret;
+-
+-		chunk_len = min(len - offset, txq_mtu - sizeof(struct ccci_header));
+-		skb_ccci = t7xx_port_alloc_skb(chunk_len);
+-		if (!skb_ccci)
+-			return -ENOMEM;
+-
+-		skb_put_data(skb_ccci, skb->data + offset, chunk_len);
+-		ret = t7xx_port_send_skb(port_private, skb_ccci, 0, 0);
++	while (cur) {
++		cloned = skb_clone(cur, GFP_KERNEL);
++		cloned->len = skb_headlen(cur);
++		ret = t7xx_port_send_skb(port_private, cloned, 0, 0);
+ 		if (ret) {
+-			dev_kfree_skb_any(skb_ccci);
++			dev_kfree_skb(cloned);
+ 			dev_err(port_private->dev, "Write error on %s port, %d\n",
+ 				port_conf->name, ret);
+-			return ret;
++			return cnt ? cnt + ret : ret;
+ 		}
++		cnt += cur->len;
++		if (cur == skb)
++			cur = skb_shinfo(skb)->frag_list;
++		else
++			cur = cur->next;
+ 	}
+ 
+ 	dev_kfree_skb(skb);
+@@ -154,13 +152,15 @@ static int t7xx_port_wwan_disable_chl(struct t7xx_port *port)
+ static void t7xx_port_wwan_md_state_notify(struct t7xx_port *port, unsigned int state)
+ {
+ 	const struct t7xx_port_conf *port_conf = port->port_conf;
++	unsigned int header_len = sizeof(struct ccci_header);
+ 
+ 	if (state != MD_STATE_READY)
+ 		return;
+ 
+ 	if (!port->wwan.wwan_port) {
+ 		port->wwan.wwan_port = wwan_create_port(port->dev, port_conf->port_type,
+-							&wwan_ops, port);
++						   &wwan_ops, CLDMA_MTU - header_len,
++						   header_len, port);
+ 		if (IS_ERR(port->wwan.wwan_port))
+ 			dev_err(port->dev, "Unable to create WWWAN port %s", port_conf->name);
+ 	}
+diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
+index 966d0ccd2276..a2c07d07195b 100644
+--- a/drivers/net/wwan/wwan_core.c
++++ b/drivers/net/wwan/wwan_core.c
+@@ -67,6 +67,8 @@ struct wwan_device {
+  * @rxq: Buffer inbound queue
+  * @waitqueue: The waitqueue for port fops (read/write/poll)
+  * @data_lock: Port specific data access serialization
++ * @headroom_len: SKB reserved headroom size
++ * @frag_len: Length to fragment packet
+  * @at_data: AT port specific data
+  */
+ struct wwan_port {
+@@ -79,6 +81,8 @@ struct wwan_port {
+ 	struct sk_buff_head rxq;
+ 	wait_queue_head_t waitqueue;
+ 	struct mutex data_lock;	/* Port specific data access serialization */
++	size_t headroom_len;
++	size_t frag_len;
+ 	union {
+ 		struct {
+ 			struct ktermios termios;
+@@ -426,6 +430,8 @@ static int __wwan_port_dev_assign_name(struct wwan_port *port, const char *fmt)
+ struct wwan_port *wwan_create_port(struct device *parent,
+ 				   enum wwan_port_type type,
+ 				   const struct wwan_port_ops *ops,
++				   size_t frag_len,
++				   unsigned int headroom_len,
+ 				   void *drvdata)
+ {
+ 	struct wwan_device *wwandev;
+@@ -459,6 +465,8 @@ struct wwan_port *wwan_create_port(struct device *parent,
+ 
+ 	port->type = type;
+ 	port->ops = ops;
++	port->frag_len = frag_len ? frag_len : SIZE_MAX;
++	port->headroom_len = headroom_len;
+ 	mutex_init(&port->ops_lock);
+ 	skb_queue_head_init(&port->rxq);
+ 	init_waitqueue_head(&port->waitqueue);
+@@ -702,30 +710,53 @@ static ssize_t wwan_port_fops_read(struct file *filp, char __user *buf,
+ static ssize_t wwan_port_fops_write(struct file *filp, const char __user *buf,
+ 				    size_t count, loff_t *offp)
+ {
++	struct sk_buff *skb, *head = NULL, *tail = NULL;
+ 	struct wwan_port *port = filp->private_data;
+-	struct sk_buff *skb;
++	size_t frag_len, remain = count;
+ 	int ret;
+ 
+ 	ret = wwan_wait_tx(port, !!(filp->f_flags & O_NONBLOCK));
+ 	if (ret)
+ 		return ret;
+ 
+-	skb = alloc_skb(count, GFP_KERNEL);
+-	if (!skb)
+-		return -ENOMEM;
++	do {
++		frag_len = min(remain, port->frag_len);
++		skb = alloc_skb(frag_len + port->headroom_len, GFP_KERNEL);
++		if (!skb) {
++			ret = -ENOMEM;
++			goto freeskb;
++		}
++		skb_reserve(skb, port->headroom_len);
++
++		if (!head) {
++			head = skb;
++		} else if (!tail) {
++			skb_shinfo(head)->frag_list = skb;
++			tail = skb;
++		} else {
++			tail->next = skb;
++			tail = skb;
++		}
+ 
+-	if (copy_from_user(skb_put(skb, count), buf, count)) {
+-		kfree_skb(skb);
+-		return -EFAULT;
+-	}
++		if (copy_from_user(skb_put(skb, frag_len), buf + count - remain, frag_len)) {
++			ret = -EFAULT;
++			goto freeskb;
++		}
+ 
+-	ret = wwan_port_op_tx(port, skb, !!(filp->f_flags & O_NONBLOCK));
+-	if (ret) {
+-		kfree_skb(skb);
+-		return ret;
+-	}
++		if (skb != head) {
++			head->data_len += skb->len;
++			head->len += skb->len;
++			head->truesize += skb->truesize;
++		}
++	} while (remain -= frag_len);
++
++	ret = wwan_port_op_tx(port, head, !!(filp->f_flags & O_NONBLOCK));
++	if (!ret)
++		return count;
+ 
+-	return count;
++freeskb:
++	kfree_skb(head);
++	return ret;
+ }
+ 
+ static __poll_t wwan_port_fops_poll(struct file *filp, poll_table *wait)
+diff --git a/drivers/net/wwan/wwan_hwsim.c b/drivers/net/wwan/wwan_hwsim.c
+index 2397a903d8f5..b4cc51833ed2 100644
+--- a/drivers/net/wwan/wwan_hwsim.c
++++ b/drivers/net/wwan/wwan_hwsim.c
+@@ -205,6 +205,7 @@ static struct wwan_hwsim_port *wwan_hwsim_port_new(struct wwan_hwsim_dev *dev)
+ 
+ 	port->wwan = wwan_create_port(&dev->dev, WWAN_PORT_AT,
+ 				      &wwan_hwsim_port_ops,
++				      WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM,
+ 				      port);
+ 	if (IS_ERR(port->wwan)) {
+ 		err = PTR_ERR(port->wwan);
+diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+index 1f0951be15ab..e0f0bc878bbd 100644
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -929,7 +929,8 @@ static void wdm_wwan_init(struct wdm_device *desc)
+ 		return;
+ 	}
+ 
+-	port = wwan_create_port(&intf->dev, desc->wwanp_type, &wdm_wwan_port_ops, desc);
++	port = wwan_create_port(&intf->dev, desc->wwanp_type, &wdm_wwan_port_ops,
++				WWAN_NO_FRAGMENT, WWAN_NO_HEADROOM, desc);
+ 	if (IS_ERR(port)) {
+ 		dev_err(&intf->dev, "%s: Unable to create WWAN port\n",
+ 			dev_name(intf->usb_dev));
+diff --git a/include/linux/wwan.h b/include/linux/wwan.h
+index 24d76500b1cc..f5aaa36ea742 100644
+--- a/include/linux/wwan.h
++++ b/include/linux/wwan.h
+@@ -64,11 +64,25 @@ struct wwan_port_ops {
+ 			    poll_table *wait);
+ };
+ 
++/*
++ * Used to indicate that the WWAN core should not fragment control packages.
++ */
++#define WWAN_NO_FRAGMENT	0
++
++/*
++ * Used to indicate that the WWAN core should not reserve headroom in control packages.
++ */
++#define WWAN_NO_HEADROOM	0
++
+ /**
+  * wwan_create_port - Add a new WWAN port
+  * @parent: Device to use as parent and shared by all WWAN ports
+  * @type: WWAN port type
+  * @ops: WWAN port operations
++ * @frag_len: WWAN port TX fragments length, if WWAN_NO_FRAGMENT is set,
++ *            the WWAN core don't fragment control packages.
++ * @headroom_len: WWAN port TX fragments reserved headroom length, if WWAN_NO_HEADROOM
++ *                is set, the WWAN core don't reserve headroom in control packages.
+  * @drvdata: Pointer to caller driver data
+  *
+  * Allocate and register a new WWAN port. The port will be automatically exposed
+@@ -86,6 +100,8 @@ struct wwan_port_ops {
+ struct wwan_port *wwan_create_port(struct device *parent,
+ 				   enum wwan_port_type type,
+ 				   const struct wwan_port_ops *ops,
++				   size_t frag_len,
++				   unsigned int headroom_len,
+ 				   void *drvdata);
+ 
+ /**
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.17.0
+
