@@ -2,234 +2,194 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 849B1C6FA99
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  7 Mar 2023 20:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA9DC64EC4
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  8 Mar 2023 04:46:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229695AbjCGU05 (ORCPT
+        id S229572AbjCHEqn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 7 Mar 2023 15:26:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39992 "EHLO
+        Tue, 7 Mar 2023 23:46:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231430AbjCGU0j (ORCPT
+        with ESMTP id S229558AbjCHEqn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 7 Mar 2023 15:26:39 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B86FA6BFC
-        for <linux-remoteproc@vger.kernel.org>; Tue,  7 Mar 2023 12:26:33 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id m8-20020a17090a4d8800b002377bced051so17809309pjh.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Mar 2023 12:26:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678220793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JG+8cn9a3MVqddPtGZw0HBF9LcZFV3ZvoAF8l2EgmNw=;
-        b=IFttrmHhqcHbiZzWKa1r4VsPwlAVg3itHb22qloMoEmGSHkmmYUNDApiyo2dgFrOD/
-         GDghFYH5Y+XSibazMSXaj0UlGQQ00LXjuCWKQXAvDvK8qddwWnj35ij1O1E7cjwN2ESw
-         psNkn+l/g0x/K6mckHzQ9gB/vbPJTeU+tREZX/IpqldJMI890B5mfAyyjzzqqGLd4h7b
-         aZmKRA6xoWpD5fYs+3RWeXO0msvA5wddK9JVm2mPxfDxHbz5WSMcetrSn+PBN27cWwqX
-         Mvl/pDR8cFrYrGJ2QHEW4a+bnZ7eY1GefztpZCi6Jh/Qtel1NAuC5SxSIDFIfh3VkQ3K
-         yqjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678220793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JG+8cn9a3MVqddPtGZw0HBF9LcZFV3ZvoAF8l2EgmNw=;
-        b=DxvYn9x65ir6n3nCeH+hYDMB6x4D8tT4VGQtYn52L7DZH7egetcoKKhckQA5Juhxqg
-         t7fAfMCxGaeRLRTNwVN2X5yoaFK/3NOnPy7nufPpzlfhGGpTGApUh8LwapiST6Pp3h2c
-         AiUu01lsQCXWvrupRgvhmRY9JST/ynphQwLeclc3mwhb6svt3EO9cfktQpdr89PbHqCb
-         /pOaRwoGFr2drRchxx2kxL2kMWtSRO4l7s/iHGMzNXemxnNpKgwF2ZUhM0edRq6MySWq
-         LqMIeYr4O985eRFyjYi0KFxl1x6UtcnC0nBtE7kBRjedHmJEd8ezLEZ7TTC42oXxmHjL
-         UgEQ==
-X-Gm-Message-State: AO0yUKWyb2yBbsKfwSV99Y54qj4GwrZ047o1Nx7g669RZeqEy1e9ZNs+
-        XN2No7WKGbrPvpBrB2XawTfo3Q==
-X-Google-Smtp-Source: AK7set92PuRqEs3qZiTmMVNi/aZkDseorWZojXLR5il8j9jB5W6mV+++SVlsIgIFaVBdZh5WyvDf0g==
-X-Received: by 2002:a17:902:b181:b0:19e:bc01:610e with SMTP id s1-20020a170902b18100b0019ebc01610emr8165414plr.33.1678220792962;
-        Tue, 07 Mar 2023 12:26:32 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:e81a:aa4b:a2a8:6904])
-        by smtp.gmail.com with ESMTPSA id lc4-20020a170902fa8400b0019625428cefsm8721568plb.281.2023.03.07.12.26.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Mar 2023 12:26:32 -0800 (PST)
-Date:   Tue, 7 Mar 2023 13:26:29 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Peng Fan <peng.fan@oss.nxp.com>
-Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
-Message-ID: <20230307202629.GA1693781@p14s>
-References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
- <2c4997fa-973c-dee4-9b26-6b38a1ca4540@nxp.com>
- <DU0PR04MB9417A9B81B86FAC0A477063D88DC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <73d34c86-7c31-6530-0915-aa470af5d9ca@nxp.com>
- <20230213175006.GA310433@p14s>
- <343571ba-faed-35d7-2859-2668391dadb2@oss.nxp.com>
+        Tue, 7 Mar 2023 23:46:43 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AED1A2F38;
+        Tue,  7 Mar 2023 20:46:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1678250801; x=1709786801;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QcAdQ6QzcChdpvESziFs8Z8K0GlMk1y8BSQSURRc0Bo=;
+  b=JfMUtXcdO29exUBkWdSyLz91AjK+BVy4+dCGB6odsScuSkpQLXOKMMPq
+   cvr0niLvBXAZplQDKTWxFZxZwZlhQ/5EvTLn/AvSFDOo7EAULJZFK0rRx
+   eIBbMLWMW+lyse+cgI0vLX+SMT+aZZUPtuhdgRnlMkZ3VlxVj3sy/t+gh
+   apKSXrHek2mDBLz8w+4/FdjVcR+DziGfsBr1O5vF3B+TyiqSDpPtM1+XJ
+   0RxeCfqf8Hs2ZLgLWJua49TJNm/+PXSrsnT26Nz77T53dZ21q/XZOiw9X
+   E+eY/gzy23HGdTBnOl2FW1bbaS7kCrp0pGu199OD7Pi2raE441biGo5l6
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="316458534"
+X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
+   d="scan'208";a="316458534"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2023 20:46:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10642"; a="800624035"
+X-IronPort-AV: E=Sophos;i="5.98,242,1673942400"; 
+   d="scan'208";a="800624035"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 07 Mar 2023 20:46:36 -0800
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pZlhD-0001sx-1S;
+        Wed, 08 Mar 2023 04:46:35 +0000
+Date:   Wed, 8 Mar 2023 12:45:56 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Melody Olvera <quic_molvera@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Gokul Krishna Krishnakumar <quic_gokukris@quicinc.com>
+Subject: Re: [PATCH v2 4/7] soc: qcom: mdt_loader: Enhance split binary
+ detection
+Message-ID: <202303081259.uohZV4ZE-lkp@intel.com>
+References: <20230306231202.12223-5-quic_molvera@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <343571ba-faed-35d7-2859-2668391dadb2@oss.nxp.com>
+In-Reply-To: <20230306231202.12223-5-quic_molvera@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Mar 04, 2023 at 03:59:38PM +0800, Peng Fan wrote:
-> 
-> 
-> On 2/14/2023 1:50 AM, Mathieu Poirier wrote:
-> > On Mon, Feb 13, 2023 at 12:15:59PM +0200, Iuliana Prodan wrote:
-> > > On 2/12/2023 9:43 AM, Peng Fan wrote:
-> > > > Hi Iuliana,
-> > > > 
-> > > > > Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in
-> > > > > DDR
-> > > > > 
-> > > > > 
-> > > > > On 2/9/2023 8:38 AM, Peng Fan (OSS) wrote:
-> > > > > > From: Peng Fan <peng.fan@nxp.com>
-> > > > > > 
-> > > > > > V3:
-> > > > > > 
-> > > > > >     Daniel, Iuliana
-> > > > > > 
-> > > > > >       Please help review this patchset per Mathieu's comments.
-> > > > > > 
-> > > > > >     Thanks,
-> > > > > >     Peng.
-> > > > > > 
-> > > > > >     Move patch 3 in v2 to 1st patch in v3 and add Fixes tag Per Daniel
-> > > > > >     IMX_RPROC_ANY in patch 3 Per Mathieu
-> > > > > >     Update comment and commit log in patch 5, 6.
-> > > > > > 
-> > > > > >     NXP SDK provides ".interrupts" section, but I am not sure how others
-> > > > > >     build the firmware. So I still keep patch 6 as v2, return bootaddr
-> > > > > >     if there is no ".interrupts" section.
-> > > > > > 
-> > > > > > V2:
-> > > > > >     patch 4 is introduced for sparse check warning fix
-> > > > > > 
-> > > > > > This pachset is to support i.MX8M and i.MX93 Cortex-M core firmware
-> > > > > > could be in DDR, not just the default TCM.
-> > > > > > 
-> > > > > > i.MX8M needs stack/pc value be stored in TCML entry address[0,4], the
-> > > > > > initial value could be got from firmware first section ".interrupts".
-> > > > > > i.MX93 is a bit different, it just needs the address of .interrupts
-> > > > > > section. NXP SDK always has .interrupts section.
-> > > > > > 
-> > > > > > So first we need find the .interrupts section from firmware, so patch
-> > > > > > 1 is to reuse the code of find_table to introduce a new API
-> > > > > > rproc_elf_find_shdr to find shdr, the it could reused by i.MX driver.
-> > > > > > 
-> > > > > > Patch 2 is introduce devtype for i.MX8M/93
-> > > > > > 
-> > > > > > Although patch 3 is correct the mapping, but this area was never used
-> > > > > > by NXP SW team, we directly use the DDR region, not the alias region.
-> > > > > > Since this patchset is first to support firmware in DDR, mark this
-> > > > > > patch as a fix does not make much sense.
-> > > > > > 
-> > > > > > patch 4 and 5 is support i.MX8M/93 firmware in DDR with parsing
-> > > > > > .interrupts section. Detailed information in each patch commit message.
-> > > > > > 
-> > > > > > Patches were tested on i.MX8MQ-EVK i.MX8MP-EVK i.MX93-11x11-EVK
-> > > > > If one can build their firmware as they want, then the .interrupt section can
-> > > > > also be called differently.
-> > > > > I don't think is a good idea to base all your implementation on this
-> > > > > assumption.
-> > > > > 
-> > > > > It's clear there's a limitation when linking firmware in DDR, so this should be
-> > > > > well documented so one can compile their firmware and put the needed
-> > > > > section (interrupt as we call it in NXP SDK) always in TCML - independently
-> > > > > where the other section go.
-> > > > Ok, so .interrupt section should be a must in elf file if I understand correctly.
-> > > > 
-> > > > I could add a check in V4 that if .interrupt section is not there, driver will report
-> > > > failure.
-> > > > 
-> > > > How do you think?
-> > > 
-> > > Peng, I stand by my opinion that the limitation of linking firmware in DDR
-> > > should be documented in an Application Note, or maybe there are other
-> > > documents where how to use imx_rproc is explained.
-> > > 
-> > > The implementation based on the .interrupt section is not robust.
-> > > Maybe a user linked his firmware correctly in TCML, but the section is not
-> > > called .interrupt so the firmware loading will work.
-> > > 
-> > > So, instead of using the section name, you should use the address.
-> > 
-> > Can you be more specific on the above?
-> > 
-> > > 
-> > > First, check whether there is a section linked to TCML.
-> > > If there is none, check for section name - as you did.
-> > > If there is no section called .interrupt, give an error message.
-> > 
-> > We have two ways of booting, one that puts the firmware image in the TCML and
-> > another in RAM.  Based on the processor type, the first 8 bytes of the TCML need
-> > to include the address for the stack and PC value.
-> > 
-> > I think the first thing to do is have two different firmware images, one for
-> > i.MX8M and another one for i.MX93.  That should greatly simplify things.
-> 
-> sorry, I not got your points. i.MX8M and i.MX93 are not sharing firmware
+Hi Melody,
 
-Perfect.
+Thank you for the patch! Perhaps something to improve:
 
-> images. i.MX93 M33 has ROM, kicking M33 firmware just requires the
-> address of the .interrupt address which holds stack/pc value.
-> i.MX8M not has ROM, kick M33 firmware requires driver to copy
-> stack/pc into the TCML beginning address.
+[auto build test WARNING on dc837c1a5137a8cf2e9432c1891392b6a66f4d8d]
 
-It's been more than a month since I have looked at this patchset so the details are
-vague in my memory.  That said, there should be one image for the TCML and
-another one for the RAM.  And the image that runs in RAM should have a program
-segment that write the correct information in the first 8 bytes.
+url:    https://github.com/intel-lab-lkp/linux/commits/Melody-Olvera/dt-bindings-firmware-qcom-scm-Update-QDU1000-QRU1000-compatible/20230307-071438
+base:   dc837c1a5137a8cf2e9432c1891392b6a66f4d8d
+patch link:    https://lore.kernel.org/r/20230306231202.12223-5-quic_molvera%40quicinc.com
+patch subject: [PATCH v2 4/7] soc: qcom: mdt_loader: Enhance split binary detection
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230308/202303081259.uohZV4ZE-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/3964310160b68a6246f85828ecbcebf1fb9137a7
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Melody-Olvera/dt-bindings-firmware-qcom-scm-Update-QDU1000-QRU1000-compatible/20230307-071438
+        git checkout 3964310160b68a6246f85828ecbcebf1fb9137a7
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/soc/qcom/
 
-> 
-> Whether i.MX8M/i.MX93, the NXP released MCU SDK use the section
-> ".interrupt" to hold stack/pc initialization value in the beginning
-> 8 bytes of the section.
-> 
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202303081259.uohZV4ZE-lkp@intel.com/
 
-And that is fine.  Simply release another version of the SDK that does the right
-thing.
+All warnings (new ones prefixed by >>):
 
-I suggest to work with Daniel and Iuliana if some details are still unclear.
-Unlike me, they have access to the reference manual and the boot requirements.
+   drivers/soc/qcom/mdt_loader.c: In function 'qcom_mdt_read_metadata':
+>> drivers/soc/qcom/mdt_loader.c:156:17: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
+     156 |         ssize_t ret;
+         |                 ^~~
 
 
-> > 
-> > Second, there should always be a segment that adds the right information to the
-> > TMCL.  That segment doesn't need a name, it simply have to be part of the
-> > segments that are copied to memory (any kind of memory) so that function
-> > rproc_elf_load_segments() can do its job.
-> > 
-> > That pushes the complexity to the tool that generates the firmware image,
-> > exactly where it should be.
-> 
-> For i.MX8M, yes. For i.MX93, the M33 ROM needs address of storing stack/pc.
-> > 
-> > This is how I think we should solve this problem based on the very limited
-> > information provided with this patchset.  Please let me know if I missed
-> > something and we'll go from there.
-> 
-> I am not sure how to proceed on supporting the current firmware. what should
-> I continue with current patchset?
-> 
-> Thanks,
-> Peng.
-> 
-> > 
-> > > 
-> > > For all the above options please add comments in code, explaining each step.
-> > > 
+vim +/ret +156 drivers/soc/qcom/mdt_loader.c
+
+051fb70fd4ea40f drivers/remoteproc/qcom_mdt_loader.c Bjorn Andersson            2016-06-20  126  
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  127  /**
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  128   * qcom_mdt_read_metadata() - read header and metadata from mdt or mbn
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  129   * @fw:		firmware of mdt header or mbn
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  130   * @data_len:	length of the read metadata blob
+d11a34a404ee556 drivers/soc/qcom/mdt_loader.c        Krzysztof Kozlowski        2022-05-19  131   * @fw_name:	name of the firmware, for construction of segment file names
+d11a34a404ee556 drivers/soc/qcom/mdt_loader.c        Krzysztof Kozlowski        2022-05-19  132   * @dev:	device handle to associate resources with
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  133   *
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  134   * The mechanism that performs the authentication of the loading firmware
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  135   * expects an ELF header directly followed by the segment of hashes, with no
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  136   * padding inbetween. This function allocates a chunk of memory for this pair
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  137   * and copy the two pieces into the buffer.
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  138   *
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  139   * In the case of split firmware the hash is found directly following the ELF
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  140   * header, rather than at p_offset described by the second program header.
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  141   *
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  142   * The caller is responsible to free (kfree()) the returned pointer.
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  143   *
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  144   * Return: pointer to data, or ERR_PTR()
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  145   */
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  146  void *qcom_mdt_read_metadata(const struct firmware *fw, size_t *data_len,
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  147  			     const char *fw_name, struct device *dev)
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  148  {
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  149  	const struct elf32_phdr *phdrs;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  150  	const struct elf32_hdr *ehdr;
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  151  	unsigned int hash_segment = 0;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  152  	size_t hash_offset;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  153  	size_t hash_size;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  154  	size_t ehdr_size;
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  155  	unsigned int i;
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27 @156  	ssize_t ret;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  157  	void *data;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  158  
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  159  	ehdr = (struct elf32_hdr *)fw->data;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  160  	phdrs = (struct elf32_phdr *)(ehdr + 1);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  161  
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  162  	if (ehdr->e_phnum < 2)
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  163  		return ERR_PTR(-EINVAL);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  164  
+833d51d7c66d670 drivers/soc/qcom/mdt_loader.c        Shawn Guo                  2021-08-28  165  	if (phdrs[0].p_type == PT_LOAD)
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  166  		return ERR_PTR(-EINVAL);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  167  
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  168  	for (i = 1; i < ehdr->e_phnum; i++) {
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  169  		if ((phdrs[i].p_flags & QCOM_MDT_TYPE_MASK) == QCOM_MDT_TYPE_HASH) {
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  170  			hash_segment = i;
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  171  			break;
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  172  		}
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  173  	}
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  174  
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  175  	if (!hash_segment) {
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  176  		dev_err(dev, "no hash segment found in %s\n", fw_name);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  177  		return ERR_PTR(-EINVAL);
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  178  	}
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  179  
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  180  	ehdr_size = phdrs[0].p_filesz;
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  181  	hash_size = phdrs[hash_segment].p_filesz;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  182  
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  183  	data = kmalloc(ehdr_size + hash_size, GFP_KERNEL);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  184  	if (!data)
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  185  		return ERR_PTR(-ENOMEM);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  186  
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  187  	/* Copy ELF header */
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  188  	memcpy(data, fw->data, ehdr_size);
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  189  
+3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  190  
+3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  191  	if (qcom_mdt_bins_are_split(fw)) {
+3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  192  		ret = mdt_load_split_segment(data + ehdr_size, phdrs, hash_segment, fw_name, dev);
+3964310160b68a6 drivers/soc/qcom/mdt_loader.c        Gokul Krishna Krishnakumar 2023-03-06  193  	} else {
+64fb5eb87d5815f drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  194  		hash_offset = phdrs[hash_segment].p_offset;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  195  		memcpy(data + ehdr_size, fw->data + hash_offset, hash_size);
+8bd42e2341a7857 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2022-01-27  196  	}
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  197  	*data_len = ehdr_size + hash_size;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  198  
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  199  	return data;
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  200  }
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  201  EXPORT_SYMBOL_GPL(qcom_mdt_read_metadata);
+498b98e939007f8 drivers/soc/qcom/mdt_loader.c        Bjorn Andersson            2019-06-21  202  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
