@@ -2,106 +2,162 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE3AC64EC4
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Mar 2023 08:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F97C6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Mar 2023 11:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbjCIIiE (ORCPT
+        id S230420AbjCILbW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Mar 2023 03:38:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54390 "EHLO
+        Thu, 9 Mar 2023 06:31:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229718AbjCIIhe (ORCPT
+        with ESMTP id S230403AbjCILbV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Mar 2023 03:37:34 -0500
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B5DF38676
-        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Mar 2023 00:36:21 -0800 (PST)
-Received: by mail-ed1-x52d.google.com with SMTP id u9so3952559edd.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Mar 2023 00:36:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678350980;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SEpOpIkakui+KeMg3zz9ImxN2mZh/kxITlQnQLk08k=;
-        b=cEEibjqkZl2hRaglcfe5+Mgr3v5dISNz87JPz0LxDpvCQv6l6Q1y1GWoaUa/Cmyun5
-         iHJg9CCVjymvau/N6/QDGethK3WrtsIyRan//DtThOBj6kqxhXFo+9sr++Pv6cfliCPj
-         Citgky1mUJFI9Wi3gQocYyyiFs4Vg+yxFAxbhrLWMIYtjMrvLNIqokSa9do64rVEPbEu
-         vEmFuHrAvu1UWMeXQo0yFQbgwSTg92MZdrQh0D1rf+3IKaCUNpzH2lGbRdKs9vZPj/Jc
-         xchqOfryqWSKTMKnKzBMs2Uxb2+AFsztEdiF8osr4seORuWc/jKG8g5RyB1pkO6K7lRE
-         zL5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678350980;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/SEpOpIkakui+KeMg3zz9ImxN2mZh/kxITlQnQLk08k=;
-        b=BBY7otbbNUvIRbK+eN6qm2ayNwXmJWA/itMJjLAF5wzh3WZhtCf3dhoI9BSWSQlShD
-         KMGydTMdOEbosJxcpxkXfqTWzrVQdnLJslJrLq8dugNzuJnkKV2/hmv2yvsQsIyJiMwX
-         JbVpsIMs8Wv7ru/12RkjsVZlcRz8RuyK/TiJhCRcdRsxhzDPM1Ly9rP9vBj2GYpmcSto
-         TCFw3OQTRPKSJBuZhfzha9LRHmyqFW5XNorGttunRAqR7D7jDRe4d7XyucfKavu2+kOk
-         3kLVOpu+hjNzqFLJd8AapCpCdsVBXGkAp8tkWsRSgb/9peijAO1zlRuabE3umP0LakZl
-         iJyg==
-X-Gm-Message-State: AO0yUKX4o3HIdXu9lP8w09Cc46Jg/XloZr2Ku7x+K9x5rPbSvwcgBA5e
-        UxP/HkZ5bpgzStDpeC09ObSGuA==
-X-Google-Smtp-Source: AK7set/H5Curkw44DShH7kUbF2c0b2yHw5SAle0NeduHbjUmzuXXVRvS05xJJ8IDoy/r/n8yxOqF3g==
-X-Received: by 2002:a17:907:7f9f:b0:889:1eb1:7517 with SMTP id qk31-20020a1709077f9f00b008891eb17517mr26477271ejc.30.1678350979928;
-        Thu, 09 Mar 2023 00:36:19 -0800 (PST)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:7ee2:e73e:802e:45c1])
-        by smtp.gmail.com with ESMTPSA id e5-20020a17090681c500b008d269233bd4sm8506217ejx.204.2023.03.09.00.36.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Mar 2023 00:36:19 -0800 (PST)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] dt-bindings: remoteproc: qcom,adsp: bring back firmware-name
-Date:   Thu,  9 Mar 2023 09:35:48 +0100
-Message-Id: <20230309083548.47205-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Thu, 9 Mar 2023 06:31:21 -0500
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9F93241FD;
+        Thu,  9 Mar 2023 03:31:18 -0800 (PST)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 329BV5Fv019998;
+        Thu, 9 Mar 2023 05:31:05 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1678361465;
+        bh=PVFsQ2KDP+Vkk1afSUgI+AQ9InzXNc5xwXMybxvdwSw=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=MpSE924ZKyhRfViXEDZgjXmip4NIjHXb7dNtr/UAvumbyANXqfzWwiXNHn0c44PNW
+         C3iDsxSq6EGcmSuHfgZlvlrROAzeALcUC/BGhQDXYzwNST2Zirq4xvMkwGml//wWr9
+         o6oYACPa5ylKEz/OMwK+PLsAa7h/IqVLawnUnejw=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 329BV5Ev035566
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 9 Mar 2023 05:31:05 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Thu, 9
+ Mar 2023 05:31:04 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Thu, 9 Mar 2023 05:31:04 -0600
+Received: from [10.24.69.114] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 329BUxNf006862;
+        Thu, 9 Mar 2023 05:31:00 -0600
+Message-ID: <a4395259-9b83-1101-7c4c-d8a36c3600eb@ti.com>
+Date:   Thu, 9 Mar 2023 17:00:59 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.1
+Subject: Re: [EXTERNAL] Re: [EXTERNAL] Re: [PATCH v3 3/6] soc: ti: pruss: Add
+ pruss_cfg_read()/update() API
+Content-Language: en-US
+To:     Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20230306110934.2736465-1-danishanwar@ti.com>
+ <20230306110934.2736465-4-danishanwar@ti.com>
+ <7076208d-7dca-6980-5399-498e55648740@kernel.org>
+ <afd6cd8a-8ba7-24b2-d7fc-c25a9c5f3c42@ti.com>
+ <a74e5079-d89d-2420-b6af-d630c4f04380@kernel.org>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <a74e5079-d89d-2420-b6af-d630c4f04380@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The firmware-name property was moved from common qcom,pas-common.yaml
-binding to each device-specific schema, but the qcom,adsp.yaml was not
-updated.
+Hi Roger,
 
-Fixes: cee616c68846 ("dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 08/03/23 17:12, Roger Quadros wrote:
+> 
+> 
+> On 08/03/2023 13:36, Md Danish Anwar wrote:
+>> Hi Roger,
+>>
+>> On 08/03/23 13:57, Roger Quadros wrote:
+>>> Hi,
+>>>
+>>> On 06/03/2023 13:09, MD Danish Anwar wrote:
+>>>> From: Suman Anna <s-anna@ti.com>
+>>>>
+>>>> Add two new generic API pruss_cfg_read() and pruss_cfg_update() to
+>>>> the PRUSS platform driver to allow other drivers to read and program
+>>>> respectively a register within the PRUSS CFG sub-module represented
+>>>> by a syscon driver. This interface provides a simple way for client
+>>>
+>>> Do you really need these 2 functions to be public?
+>>> I see that later patches (4-6) add APIs for doing specific things
+>>> and that should be sufficient than exposing entire CFG space via
+>>> pruss_cfg_read/update().
+>>>
+>>>
+>>
+>> I think the intention here is to keep this APIs pruss_cfg_read() and
+>> pruss_cfg_update() public so that other drivers can read / modify PRUSS config
+>> when needed.
+> 
+> Where are these other drivers? If they don't exist then let's not make provision
+> for it now.
+> We can provide necessary API helpers when needed instead of letting client drivers
+> do what they want as they can be misused and hard to debug.
+> 
 
----
+The ICSSG Ethernet driver uses pruss_cfg_update() API. It is posted upstream in
+the series [1]. The ethernet driver series is dependent on this series. In
+series [1] we are using pruss_cfg_update() in icssg_config.c file,
+icssg_config() API.
 
-Changes since v1:
-1. Use maxItems:1 (Rob)
----
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+So for this, the API pruss_cfg_update() needs to be public.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index b571efe6d550..2edadba91dfc 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -44,6 +44,10 @@ properties:
-     maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-+  firmware-name:
-+    maxItems: 1
-+    description: Firmware name for the Hexagon core
-+
- required:
-   - compatible
-   - memory-region
+[1] https://lore.kernel.org/all/20230210114957.2667963-3-danishanwar@ti.com/
+
+>>
+>> The later patches (4-6) add APIs to do specific thing, but those APIs also
+>> eventually call pruss_cfg_read/update().
+> 
+> They can still call them but they need to be private to pruss.c
+> 
+>>
+>>>> drivers without having them to include and parse the CFG syscon node
+>>>> within their respective device nodes. Various useful registers and
+>>>> macros for certain register bit-fields and their values have also
+>>>> been added.
+>>>>
+>>>> It is the responsibility of the client drivers to reconfigure or
+>>>> reset a particular register upon any failures.
+>>>>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>>>> ---
+>>>>  drivers/soc/ti/pruss.c           |  41 +++++++++++++
+>>>>  include/linux/remoteproc/pruss.h | 102 +++++++++++++++++++++++++++++++
+>>>>  2 files changed, 143 insertions(+)
+>>>>
+>>>> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+>>>> index c8053c0d735f..537a3910ffd8 100644
+>>>> --- a/drivers/soc/ti/pruss.c
+>>>> +++ b/drivers/soc/ti/pruss.c
+>>>> @@ -164,6 +164,47 @@ int pruss_release_mem_region(struct pruss *pruss,
+>>>>  }
+>>>>  EXPORT_SYMBOL_GPL(pruss_release_mem_region);
+>>>
+>>> cheers,
+>>> -roger
+>>
+
 -- 
-2.34.1
-
+Thanks and Regards,
+Danish.
