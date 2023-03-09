@@ -2,96 +2,257 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C62AC64EC4
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Mar 2023 08:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8F8C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  9 Mar 2023 08:35:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbjCII3j (ORCPT
+        id S230045AbjCIIfp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Mar 2023 03:29:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60926 "EHLO
+        Thu, 9 Mar 2023 03:35:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbjCII3X (ORCPT
+        with ESMTP id S229955AbjCIIfW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Mar 2023 03:29:23 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F389AE20F4
-        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Mar 2023 00:27:26 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id k10so3701635edk.13
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Mar 2023 00:27:26 -0800 (PST)
+        Thu, 9 Mar 2023 03:35:22 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C765614D
+        for <linux-remoteproc@vger.kernel.org>; Thu,  9 Mar 2023 00:33:35 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id u9so3927576edd.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Mar 2023 00:33:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678350445;
-        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+        d=linaro.org; s=google; t=1678350813;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YYduG/Bcmu9NPPmwSKTMuZPf8YDgxXGdRWgnP+qoWu8=;
-        b=rkmkI5jIk3QDSxiUKCdxvPJQEePjs3LY0yNfoBgsvBatlCgroAG+UJ4n8jlWm1z+zf
-         4H1usWjTSumuMp1VzkFlTZnivzb8i13sivLkMtfNTW8Xt57xZK1P5vkxXu7x7BzMSRmo
-         NQnyeBNU/R+NYKURr3PmwgSIjP/Wlh66PgD+bPuUaeS17TgivgWfHGi1b9ZPttv7ivfp
-         yRisWYwTTP2iiihu4LydgdJ0lmF6q20rC2yRulLRexozjHBmwGDI56doy6C9olIlzxaY
-         iK1kLyH0eW5yoTNwK0B18/skQ7VvLF84Rt0Mekw06Ci3MSL8hfBN2fX0rzSoXDbF47sc
-         Q2Ew==
+        bh=/tLHBgVsDTPb9wu0tIc2f2P44AK0lbnBC0FyxkTVNDc=;
+        b=bwBj4q+LjBVk+tENjBVu5m5qB4YgfN+WFaWqB83FffU77Z08jWF0F8ay3pdEjI/Wie
+         GpQOqaddCjhkqnSpjSnc4PIH+VavwC2PO99lNT0qbk7qMeHT8RoeV3JJFSesU1wz1OEn
+         ox1xcbAx0Fui55oMxbYVeVDWbP11lfqWVfYDvbTqbUomfzKqf+0kLFpEOfPVAwTcQ0u7
+         2P1EvP+x03oKC5qEv5R+/CmxWfukfBQzdMehHgb66gUPDCELBTsyYuVhRm93mpmU8Np8
+         Na4azAEQV5NgSleORhbG2FhpajW9umowLiDCa8evYwCjnBVNnBNKnzy25Qwh39APgZqw
+         BzAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678350445;
-        h=content-transfer-encoding:in-reply-to:from:cc:references:to
+        d=1e100.net; s=20210112; t=1678350813;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YYduG/Bcmu9NPPmwSKTMuZPf8YDgxXGdRWgnP+qoWu8=;
-        b=ViBN9KR4jwFafDn1X7FrjYkmZ9O2+xyXv6cgHIwEAHT3+XhQYWuTX8h1CnQQOjDgc3
-         VKHSx1aldcpJ/rxv2UK7GbeUSggH4luk1h/6LvWbn0OPTwyX9hlEFeY56u5tdQBkC7oB
-         QgAxwMZx0nU+e3e+f/vh2LTn86KW8rm6AN0W+YRdYXxi43sB1cSUMiIZw2kzY5fk7TcF
-         urgf5I4r16Ete/ktCFtzTGa88KFV8c/Wjd6H9jP1GAixa7BmimlhBBCU0OOT9zLb73Ix
-         EqyoDkSsUftpiH7HMj/HzRSc+jrcZ/Mwq1vsyd8Qk6Hzk5tmRlxfngLDaSJNO4dJ+hxp
-         YOFA==
-X-Gm-Message-State: AO0yUKWzImxHl5Wwfq/grgRVSJZ2hphYmFGnXENnhmRlXfIDNCa/Rmec
-        mzJlBOoEir/rAfrN4EUwdU3Rbw==
-X-Google-Smtp-Source: AK7set/hGQYMclII6drCi+1VpLYiPnyopU8ViBSDK48kAcF5QPIQpFX3tD0Q3oPoOgezzIW+XkG8qg==
-X-Received: by 2002:aa7:d84a:0:b0:4ad:316:b4e6 with SMTP id f10-20020aa7d84a000000b004ad0316b4e6mr20325419eds.42.1678350445264;
-        Thu, 09 Mar 2023 00:27:25 -0800 (PST)
+        bh=/tLHBgVsDTPb9wu0tIc2f2P44AK0lbnBC0FyxkTVNDc=;
+        b=5Zwwx9hkhmrr/dqKm5/k06RXF2TogJHqb7ZR4f59k54/SkVYM99CHZ950UgUbz9xPV
+         LpCakI7GcwokDO8eA9L1JCuzsY5BGpV9sZS8h+q6ob9mas+cuqoeRP5OMQ/A/e60o4O8
+         PviTjqv0O9YljNv2ATAUk1U0AMbBqmPsuFGXLHAAgSf+ZZF9rmwnufYsQdDLBm9YI1Zd
+         nsx+2m/SBF+z9oSSnc9lAiExg8Qcu90Q4aD57fPS7lrmioXOwmLs/0LoBbY2DbsavfM6
+         pHLQzp53kn+ggdUNoNAlWm9dJF69JH6RwB9D0ryNMJIGPnIUhr5PFHp/amln1i3KmdqG
+         k66A==
+X-Gm-Message-State: AO0yUKVVVY8Wns8vEsjZC9feQuOvE3nSMdjrB9P1HPjn3fbJU6ImdN5e
+        KaPNj7rqGcGMUw62wU910JlETg==
+X-Google-Smtp-Source: AK7set86MFCaUzuDTjr1QJ2arv7zXxACNqdbrqdAKvBaY8TJ0qzW9KiIoEm5Et2Gz8bfJGZnSoBpZQ==
+X-Received: by 2002:a17:906:ee9:b0:8af:2bb3:80d7 with SMTP id x9-20020a1709060ee900b008af2bb380d7mr25149145eji.31.1678350813458;
+        Thu, 09 Mar 2023 00:33:33 -0800 (PST)
 Received: from ?IPV6:2a02:810d:15c0:828:7ee2:e73e:802e:45c1? ([2a02:810d:15c0:828:7ee2:e73e:802e:45c1])
-        by smtp.gmail.com with ESMTPSA id w22-20020a17090633d600b008b907006d5dsm8665494eja.173.2023.03.09.00.27.24
+        by smtp.gmail.com with ESMTPSA id a8-20020a17090680c800b008cd1f773754sm8441331ejx.5.2023.03.09.00.33.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Mar 2023 00:27:24 -0800 (PST)
-Message-ID: <4b115ff2-a137-dd12-472c-f2248ce6350a@linaro.org>
-Date:   Thu, 9 Mar 2023 09:27:23 +0100
+        Thu, 09 Mar 2023 00:33:32 -0800 (PST)
+Message-ID: <ea1c0579-1b37-77de-3c47-e5b9772cff70@linaro.org>
+Date:   Thu, 9 Mar 2023 09:33:31 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: qcom,sm6115-pas: correct
- memory-region constraints
+Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: mpss: Document
+ QDU1000/QRU1000 mpss devices
 Content-Language: en-US
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>
-References: <20230309082446.37362-1-krzysztof.kozlowski@linaro.org>
- <20230309082446.37362-2-krzysztof.kozlowski@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     Melody Olvera <quic_molvera@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>
+Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Manivannan Sadhasivam <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20230306231202.12223-1-quic_molvera@quicinc.com>
+ <20230306231202.12223-4-quic_molvera@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230309082446.37362-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230306231202.12223-4-quic_molvera@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 09/03/2023 09:24, Krzysztof Kozlowski wrote:
-> Qualcomm PAS devices expect exactly one memory region, not many.  Also,
-> the memory-region is now defined in device specific binding, not in
-> qcom,pas-common.yaml, thus also require it in the same place.
-> 
-> Fixes: 838c558bb8bc ("dt-bindings: remoteproc: qcom: Add sm6115 pas yaml file")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 07/03/2023 00:11, Melody Olvera wrote:
+> This documents the compatible for the component used to boot the
 
-I think the sm6115 was not yet merged, thus maybe this patch is not
-needed. If it wasn't merged, please squash it with original submission
-and send new viersion.
+Do not use "This commit/patch".
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+> MPSS on the QDU1000 and QRU1000 SoCs.
+> 
+> The QDU1000 and QRU1000 mpss boot process now requires the specification
+> of an RMB register space to complete the handshake needed to start or
+> attach the mpss.
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  .../remoteproc/qcom,qdu1000-mpss-pas.yaml     | 130 ++++++++++++++++++
+>  1 file changed, 130 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml
+> new file mode 100644
+> index 000000000000..9cb4296c1fa6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,qdu1000-mpss-pas.yaml
+> @@ -0,0 +1,130 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,qdu1000-mpss-pas.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm QDU1000 Modem Peripheral Authentication Service
+> +
+> +maintainers:
+> +  - Melody Olvera <quic_molvera@quicinc.com>
+> +
+> +description:
+> +  Qualcomm QDU1000 SoC Peripheral Authentication Service loads and boots firmware
+> +  on the Qualcomm DSP Hexagon core.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,qdu1000-mpss-pas
+> +
+> +  reg:
+> +    maxItems: 2
+
+You need to list the items instead (just like for clocks).
+
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +
+> +  qcom,qmp:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: Reference to the AOSS side-channel message RAM.
+> +
+> +  smd-edge: false
+> +
+> +  firmware-name:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+
+You can now drop the $ref.
+
+> +    items:
+> +      - description: Firmware name of the Hexagon core
+> +      - description: Firmware name of the Hexagon Devicetree
+> +
+> +  memory-region:
+> +    items:
+> +      - description: Memory region for main Firmware authentication
+> +      - description: Memory region for Devicetree Firmware authentication
+> +      - description: DSM Memory region
+> +
+> +  interrupts:
+> +    minItems: 6
+> +
+> +  interrupt-names:
+> +    minItems: 6
+> +
+> +  interconnects:
+> +    minItems: 1
+
+maxItems instead
+
+> +
+> +  power-domains:
+> +    items:
+> +      - description: CX power domain
+> +      - description: MSS power domain
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: cx
+> +      - const: mss
+> +
+> +required:
+> +  - compatible
+> +  - reg
+
+memory-region
+
+(I fixed other bindings)
+
+> +
+> +allOf:
+> +  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/interconnect/qcom,qdu1000-rpmh.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/mailbox/qcom-ipcc.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    remoteproc@4080000 {
+> +        compatible = "qcom,qdu1000-mpss-pas";
+> +        reg = <0x4080000 0x4040>,
+> +              <0x4180000 0x1000>;
+> +
+> +        clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +        clock-names = "xo";
+> +
+> +        interrupts-extended = <&intc GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_modem_in 0 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_modem_in 1 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_modem_in 2 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_modem_in 3 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_modem_in 7 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "wdog", "fatal", "ready", "handover",
+> +                          "stop-ack", "shutdown-ack";
+> +
+> +        memory-region = <&mpss_mem>, <&dtb_mpss_mem>, <&mpss_dsm_mem>;
+> +
+> +        firmware-name = "qcom/qdu1000/modem.mbn",
+> +                        "qcom/qdu1000/modem_dtb.mbn";
+> +
+> +        power-domains = <&rpmhpd QDU1000_CX>,
+> +                        <&rpmhpd QDU1000_MSS>;
+> +        power-domain-names = "cx", "mss";
+> +
+> +        interconnects = <&mc_virt MASTER_LLCC &mc_virt SLAVE_EBI1>;
+> +
+> +        qcom,qmp = <&aoss_qmp>;
+> +
+> +        qcom,smem-states = <&smp2p_adsp_out 0>;
+> +        qcom,smem-state-names = "stop";
+> +
+> +        glink-edge {
+> +            interrupts-extended = <&ipcc IPCC_CLIENT_MPSS
+> +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
+> +                                         IRQ_TYPE_EDGE_RISING>;
+> +            mboxes = <&ipcc IPCC_CLIENT_MPSS IPCC_MPROC_SIGNAL_GLINK_QMP>;
+> +
+> +            label = "modem";
+> +            qcom,remote-pid = <2>;
+> +
+
+Drop stray blank line
+
+> +        };
+> +    };
 
 Best regards,
 Krzysztof
