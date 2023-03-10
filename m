@@ -2,173 +2,107 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAE1C74A44
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 11:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252E1C6FA99
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 12:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbjCJLyK (ORCPT
+        id S230165AbjCJMQs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 06:54:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34618 "EHLO
+        Fri, 10 Mar 2023 07:16:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjCJLyD (ORCPT
+        with ESMTP id S229685AbjCJMQr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Mar 2023 06:54:03 -0500
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7450AC2237;
-        Fri, 10 Mar 2023 03:54:00 -0800 (PST)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32ABro76127449;
-        Fri, 10 Mar 2023 05:53:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1678449230;
-        bh=QSIrK2hf0RVPY4b/FgB+Q97RERaUbLYuYjYCaB2CdYQ=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=USybG5S2djIhE2wGOt/XlHuHsO3yvv7Mxug4un46WUoMCM+2BK8kU+nJm28KePPeR
-         0QYi884r64b+bJo6keFHmWj6YHAcQvcr7aCB9tzjNQnyKZNp3aq6a+l8nxiQebyHr6
-         H3XE4NII6n3IBMG9S7N3C3sFtD5GnOB57F4Se5Eo=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32ABronN096866
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Mar 2023 05:53:50 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 10
- Mar 2023 05:53:50 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 10 Mar 2023 05:53:50 -0600
-Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32ABrj67017278;
-        Fri, 10 Mar 2023 05:53:45 -0600
-Message-ID: <367f6b50-e4cc-c3eb-e8e9-dabd4e044530@ti.com>
-Date:   Fri, 10 Mar 2023 17:23:44 +0530
+        Fri, 10 Mar 2023 07:16:47 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC7D7F9D2F
+        for <linux-remoteproc@vger.kernel.org>; Fri, 10 Mar 2023 04:16:45 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id f18so6346478lfa.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 10 Mar 2023 04:16:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678450604;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EHKLAp7Jc2+KfUJDyt1Qw5kE7c8IF/JbAk1d9mBkGBo=;
+        b=tUIeDfbAHkOtyKcaJDW2W727Bn4SuJJdRW0k7tU3jT0EiwV0LQqbmOkrZyS35PzdPV
+         5hbDunOvUkcnFJHO6AYF7Fm7vnsDP1LLub3ZMqVAokK0pzBj1iqt3OR44ESEEwHoOOwq
+         c6qoZ1WB+xnlkJmMJmZUrNlotaMMTmZHXWQU+aGaZhZyl/blx4Z/6j8HX59PMHfLgqzH
+         ofoF4iynm5i4IQUPF/mPmCyUufm1L6puyemneMJy0Okf1/voCaX88CoBvIC0SpuB82WX
+         OntBBsIAVRJZc74MoBeiUf2/YCfCr9QGp/Ou1hwWaS59mJCMNR24hRRyFe38mPIJlqo9
+         gnig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678450604;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EHKLAp7Jc2+KfUJDyt1Qw5kE7c8IF/JbAk1d9mBkGBo=;
+        b=fR1yYEML33sAqzwqekXmpa8sZqFJuJOJLN9maEXRdPuedW6C1DPpYgF6BCJ7TsjBHA
+         8PUpR7E+U9XxX8KoaqiQ1r90Tmj2YBzT7lN6g1WV3HCa4xzk5Iv+NwehpnMWeliOYDql
+         bvtAMMYhu2qzg/jYgSp3C/gIq/wXkMgM8Tqz5E6fYY33tKj5hlGoggeGerLYv9E7SFrD
+         v9UZ95/G85Bzxu8JyyY70uS4vdTZjlTBB76uuKFHfVoGEScGo0d/A4Jz82kO1fWwsgJJ
+         /FZ9BF3FFg59x5ZBbSl9MpQwgw2yAep9ReqXhboO94QK87jAujZS0k0jaVixA0w44pZk
+         R+Uw==
+X-Gm-Message-State: AO0yUKWKiX3otofQnOWJB/Nrq/V8GDOwD/awKUVSHlWh54wxTKvekeft
+        05DzgEP6xPKtGeAA/HnunZqwiA==
+X-Google-Smtp-Source: AK7set+ztOwX9GCaJ+2a+//vED4TpcxEahgis2gwcXYlHekIEepQTV95RUpl3HNmkXO0n0x3my+Q3w==
+X-Received: by 2002:ac2:55af:0:b0:4df:5cc0:8ad1 with SMTP id y15-20020ac255af000000b004df5cc08ad1mr6960146lfg.28.1678450604169;
+        Fri, 10 Mar 2023 04:16:44 -0800 (PST)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id b27-20020a056512025b00b004cb3a55feacsm226907lfo.100.2023.03.10.04.16.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Mar 2023 04:16:43 -0800 (PST)
+Message-ID: <0328b17b-2956-9cf6-f90c-63210b01e61f@linaro.org>
+Date:   Fri, 10 Mar 2023 14:16:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.1
-Subject: Re: [EXTERNAL] Re: [EXTERNAL] Re: [PATCH v3 3/6] soc: ti: pruss: Add
- pruss_cfg_read()/update() API
-Content-Language: en-US
-From:   Md Danish Anwar <a0501179@ti.com>
-To:     Roger Quadros <rogerq@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v1 1/1] remoteproc: qcom: pas: Coredump elf class to elf64
+Content-Language: en-GB
+To:     Sibi Sankar <quic_sibis@quicinc.com>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <srk@ti.com>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <20230306110934.2736465-1-danishanwar@ti.com>
- <20230306110934.2736465-4-danishanwar@ti.com>
- <7076208d-7dca-6980-5399-498e55648740@kernel.org>
- <afd6cd8a-8ba7-24b2-d7fc-c25a9c5f3c42@ti.com>
- <a74e5079-d89d-2420-b6af-d630c4f04380@kernel.org>
- <a4395259-9b83-1101-7c4c-d8a36c3600eb@ti.com>
-Organization: Texas Instruments
-In-Reply-To: <a4395259-9b83-1101-7c4c-d8a36c3600eb@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>
+References: <20230309001035.24024-1-quic_gokukris@quicinc.com>
+ <affcec97-6cc2-aa0a-103d-efa8ad3b68bf@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <affcec97-6cc2-aa0a-103d-efa8ad3b68bf@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Roger,
+On 10/03/2023 06:04, Sibi Sankar wrote:
+> Hey Gokul,
+> 
+> Thanks for the patch.
+> 
+> On 3/9/23 05:40, Gokul krishna Krishnakumar wrote:
+>> This change adds a new initialization param which modifies the elf
+>> class accordingly. Some of the subsystem dump analysis tools need
+>> the elf class to be elf64.
+>>
+> 
+> https://lore.kernel.org/lkml/8dea333d-544d-7c07-d560-a1a9c3a38ddc@quicinc.com/
+> 
+> This patch was already sent upstream a while back ^^. IIRC the firmware
+> certainly aren't 64 bit elfs and dump analysis tools don't really care 
+> as long the coredump contains section headers.
 
-On 09/03/23 17:00, Md Danish Anwar wrote:
-> Hi Roger,
-> 
-> On 08/03/23 17:12, Roger Quadros wrote:
->>
->>
->> On 08/03/2023 13:36, Md Danish Anwar wrote:
->>> Hi Roger,
->>>
->>> On 08/03/23 13:57, Roger Quadros wrote:
->>>> Hi,
->>>>
->>>> On 06/03/2023 13:09, MD Danish Anwar wrote:
->>>>> From: Suman Anna <s-anna@ti.com>
->>>>>
->>>>> Add two new generic API pruss_cfg_read() and pruss_cfg_update() to
->>>>> the PRUSS platform driver to allow other drivers to read and program
->>>>> respectively a register within the PRUSS CFG sub-module represented
->>>>> by a syscon driver. This interface provides a simple way for client
->>>>
->>>> Do you really need these 2 functions to be public?
->>>> I see that later patches (4-6) add APIs for doing specific things
->>>> and that should be sufficient than exposing entire CFG space via
->>>> pruss_cfg_read/update().
->>>>
->>>>
->>>
->>> I think the intention here is to keep this APIs pruss_cfg_read() and
->>> pruss_cfg_update() public so that other drivers can read / modify PRUSS config
->>> when needed.
->>
->> Where are these other drivers? If they don't exist then let's not make provision
->> for it now.
->> We can provide necessary API helpers when needed instead of letting client drivers
->> do what they want as they can be misused and hard to debug.
->>
-> 
-> The ICSSG Ethernet driver uses pruss_cfg_update() API. It is posted upstream in
-> the series [1]. The ethernet driver series is dependent on this series. In
-> series [1] we are using pruss_cfg_update() in icssg_config.c file,
-> icssg_config() API.
-> 
-> So for this, the API pruss_cfg_update() needs to be public.
-> 
-> [1] https://lore.kernel.org/all/20230210114957.2667963-3-danishanwar@ti.com/
-> 
-
-I will keep this patch as it is as pruss_cfg_update() needs to be public for
-ICSSG Ethernet driver and pruss_cfg_read() is kind of a complementary function
-to update. I will do required changes in other patches and send next revision
-if that's OK with you. Please let me know.
-
->>>
->>> The later patches (4-6) add APIs to do specific thing, but those APIs also
->>> eventually call pruss_cfg_read/update().
->>
->> They can still call them but they need to be private to pruss.c
->>
->>>
->>>>> drivers without having them to include and parse the CFG syscon node
->>>>> within their respective device nodes. Various useful registers and
->>>>> macros for certain register bit-fields and their values have also
->>>>> been added.
->>>>>
->>>>> It is the responsibility of the client drivers to reconfigure or
->>>>> reset a particular register upon any failures.
->>>>>
->>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
->>>>> ---
->>>>>  drivers/soc/ti/pruss.c           |  41 +++++++++++++
->>>>>  include/linux/remoteproc/pruss.h | 102 +++++++++++++++++++++++++++++++
->>>>>  2 files changed, 143 insertions(+)
->>>>>
->>>>> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
->>>>> index c8053c0d735f..537a3910ffd8 100644
->>>>> --- a/drivers/soc/ti/pruss.c
->>>>> +++ b/drivers/soc/ti/pruss.c
->>>>> @@ -164,6 +164,47 @@ int pruss_release_mem_region(struct pruss *pruss,
->>>>>  }
->>>>>  EXPORT_SYMBOL_GPL(pruss_release_mem_region);
->>>>
->>>> cheers,
->>>> -roger
->>>
-> 
+I think that if we want to change the coredump ELF class, we should 
+match the class of the loaded firmware file. Same applies to the ELF 
+machine (EM_NONE).
 
 -- 
-Thanks and Regards,
-Danish.
+With best wishes
+Dmitry
+
