@@ -2,155 +2,78 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB45C6FA99
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 04:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519B8C64EC4
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 09:47:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbjCJEEh (ORCPT
+        id S229977AbjCJJrD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 9 Mar 2023 23:04:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54360 "EHLO
+        Fri, 10 Mar 2023 04:47:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229550AbjCJEEf (ORCPT
+        with ESMTP id S229652AbjCJJqt (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 9 Mar 2023 23:04:35 -0500
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3F3EE501E;
-        Thu,  9 Mar 2023 20:04:33 -0800 (PST)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32A16TZ4002304;
-        Fri, 10 Mar 2023 04:04:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=Qy1PUzn19VptN8IfOjaioaDlFAVD7aWdoVwO37RW/Ko=;
- b=GUtsNN75D+5nCv7YyGv4381CVWdZniukmtlgVzuxvR6l2QsH3JG6EEg7Z1Cti5lSKdr4
- 0Xv6ELqm9ai6/gXk9C4qP471zFMIbbWzOCH01/C57dj0xwPkYLEaRLOIbR/zejlar9kK
- Gzvw8myX0Ay5ZVDluFBugtkAq+mx2Mn3yxeKuhWdDrFVdoH7G+vVQKoNMo3wp4AQRosr
- c/GEIURZUeL94Tjbt46O3YuAsR7iuJSLOmfYJ3ak7Ph73s/39QxET8AUdMpJvG8c+hcz
- Q8iR9xpgB4tkSoTRACXAP0wz26KiPg2IWDvxLupRO8atYf629Fy7eYR/vxVRj3DQ6jg4 rQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3p758cuufh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Mar 2023 04:04:26 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32A44P7l002890
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Mar 2023 04:04:25 GMT
-Received: from [10.79.43.91] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 9 Mar 2023
- 20:04:14 -0800
-Message-ID: <affcec97-6cc2-aa0a-103d-efa8ad3b68bf@quicinc.com>
-Date:   Fri, 10 Mar 2023 09:34:10 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v1 1/1] remoteproc: qcom: pas: Coredump elf class to elf64
-Content-Language: en-US
-To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Fri, 10 Mar 2023 04:46:49 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071E621942;
+        Fri, 10 Mar 2023 01:46:31 -0800 (PST)
+Received: from [IPv6:2a00:23c6:c311:3401:45a5:b946:dcd1:2820] (unknown [IPv6:2a00:23c6:c311:3401:45a5:b946:dcd1:2820])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: martyn)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 948EF6603050;
+        Fri, 10 Mar 2023 09:46:29 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1678441589;
+        bh=QXugumcwP1Ga/D3ij5tCkSC4/UWHFeOdECPIBpcL+Ic=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=StoAv9fMm06Vmy5IqLIXMVKlR8emax5CNHxTD2elzdbXhpe3mvbFO5ScwkklUM/3m
+         rAo7qfiWirD47Dw1ktcOHOyn5rgDISsRFrH4rBgO2Ip88+jp0wjoq2olCDsrgrWqMt
+         gBxVietQJ+eYyToS6fEQdVMVTX1jrQv5SCc/wqDcMa8UDw5ILyNhvW7heKHZEfEIrB
+         y5VBHHV8L+tgA6SCVAG4gk/Sx7ru2+VMe2LKrpIokNVfLSv5GlBehUB9fIIz3YCcH1
+         H/XMGOyJWGIffCAh6HPdVNJWpGP4rpuLjPsi6DVwNYrw816Ac3Z/hO0Np6FuYo68ZY
+         pny9AXm8Amrgg==
+Message-ID: <a2a51a0a63b7856794ac8fd6889ebf9fcb23f84e.camel@collabora.com>
+Subject: Re: [PATCH v3 2/3] remoteproc: k4: Split out functions common with
+ M4 driver
+From:   Martyn Welch <martyn.welch@collabora.com>
+To:     Hari Nagalla <hnagalla@ti.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        "Elliot Berman" <quic_eberman@quicinc.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-References: <20230309001035.24024-1-quic_gokukris@quicinc.com>
-From:   Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <20230309001035.24024-1-quic_gokukris@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8useoCWDgeErQAEsQYb-NErQBF6ghjH6
-X-Proofpoint-GUID: 8useoCWDgeErQAEsQYb-NErQBF6ghjH6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-09_14,2023-03-09_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 spamscore=0 clxscore=1011
- impostorscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303100029
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     kernel@collabora.com, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Date:   Fri, 10 Mar 2023 09:46:26 +0000
+In-Reply-To: <400ab507-ff2f-cad8-19c6-66818407bf6d@ti.com>
+References: <20230302171450.1598576-1-martyn.welch@collabora.com>
+         <20230302171450.1598576-3-martyn.welch@collabora.com>
+         <400ab507-ff2f-cad8-19c6-66818407bf6d@ti.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.46.4-1 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hey Gokul,
+T24gVGh1LCAyMDIzLTAzLTA5IGF0IDEyOjA0IC0wNjAwLCBIYXJpIE5hZ2FsbGEgd3JvdGU6Cj4g
+T24gMy8yLzIzIDExOjE0LCBNYXJ0eW4gV2VsY2ggd3JvdGU6Cj4gPiArICogQHRpX3NjaV9pZDog
+VEktU0NJIGRldmljZSBpZGVudGlmaWVyCj4gPiArICogQG1ib3g6IG1haWxib3ggY2hhbm5lbCBo
+YW5kbGUKPiA+ICsgKiBAY2xpZW50OiBtYWlsYm94IGNsaWVudCB0byByZXF1ZXN0IHRoZSBtYWls
+Ym94IGNoYW5uZWwKPiA+ICsgKiBAaXBjX29ubHk6IGZsYWcgdG8gaW5kaWNhdGUgSVBDLW9ubHkg
+bW9kZQo+ID4gKyAqLwo+ID4gK3N0cnVjdCBrM19ycHJvYyB7Cj4gPiArwqDCoMKgwqDCoMKgwqBz
+dHJ1Y3QgZGV2aWNlICpkZXY7Cj4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcnByb2MgKnJwcm9j
+Owo+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGszX3Jwcm9jX21lbSAqbWVtOwo+ID4gK8KgwqDC
+oMKgwqDCoMKgaW50IG51bV9tZW1zOwo+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGszX3Jwcm9j
+X21lbSAqcm1lbTsKPiA+ICvCoMKgwqDCoMKgwqDCoGludCBudW1fcm1lbXM7Cj4gPiArwqDCoMKg
+wqDCoMKgwqBzdHJ1Y3QgcmVzZXRfY29udHJvbCAqcmVzZXQ7Cj4gPiArwqDCoMKgwqDCoMKgwqBj
+b25zdCBzdHJ1Y3QgazNfcnByb2NfZGV2X2RhdGEgKmRhdGE7Cj4gPiArwqDCoMKgwqDCoMKgwqBz
+dHJ1Y3QgdGlfc2NpX3Byb2MgKnRzcDsKPiA+ICvCoMKgwqDCoMKgwqDCoGNvbnN0IHN0cnVjdCB0
+aV9zY2lfaGFuZGxlICp0aV9zY2k7Cj4gPiArwqDCoMKgwqDCoMKgwqB1MzIgdGlfc2NpX2lkOwo+
+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1ib3hfY2hhbiAqbWJveDsKPiA+ICvCoMKgwqDCoMKg
+wqDCoHN0cnVjdCBtYm94X2NsaWVudCBjbGllbnQ7Cj4gPiArfTsKPiA+ICsKPiAiaXBjX29ubHki
+IG1vZGUgZWxlbWVudCBpcyBtaXNzaW5nIGluIHRoZSBzdHJ1Y3R1cmUuCgpUaGF0J3MgYWRkZWQg
+d2l0aCB0aGUgTTRGIGRyaXZlciBpbiB0aGUgbmV4dCBwYXRjaCAtIGl0J3Mgbm90IHBhcnQgb2YK
+dGhlIHN0cnVjdHVyZSBpbiB0aGUgRFNQIGRyaXZlci4K
 
-Thanks for the patch.
-
-On 3/9/23 05:40, Gokul krishna Krishnakumar wrote:
-> This change adds a new initialization param which modifies the elf
-> class accordingly. Some of the subsystem dump analysis tools need
-> the elf class to be elf64.
-> 
-
-https://lore.kernel.org/lkml/8dea333d-544d-7c07-d560-a1a9c3a38ddc@quicinc.com/
-
-This patch was already sent upstream a while back ^^. IIRC the firmware
-certainly aren't 64 bit elfs and dump analysis tools don't really care 
-as long the coredump contains section headers.
-
-- Sibi
-
-> Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 0871108fb4dc..17ce3177be7b 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -39,6 +39,7 @@ struct adsp_data {
->   	int pas_id;
->   	int dtb_pas_id;
->   	unsigned int minidump_id;
-> +	bool uses_elf64;
->   	bool auto_boot;
->   	bool decrypt_shutdown;
->   
-> @@ -681,7 +682,10 @@ static int adsp_probe(struct platform_device *pdev)
->   	}
->   
->   	rproc->auto_boot = desc->auto_boot;
-> -	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
-> +	if (desc->uses_elf64)
-> +		rproc_coredump_set_elf_info(rproc, ELFCLASS64, EM_NONE);
-> +	else
-> +		rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->   
->   	adsp = (struct qcom_adsp *)rproc->priv;
->   	adsp->dev = &pdev->dev;
-> @@ -1126,6 +1130,7 @@ static const struct adsp_data sm8550_adsp_resource = {
->   	.pas_id = 1,
->   	.dtb_pas_id = 0x24,
->   	.minidump_id = 5,
-> +	.uses_elf64 = true,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
->   		"lcx",
-> @@ -1145,6 +1150,7 @@ static const struct adsp_data sm8550_cdsp_resource = {
->   	.pas_id = 18,
->   	.dtb_pas_id = 0x25,
->   	.minidump_id = 7,
-> +	.uses_elf64 = true,
->   	.auto_boot = true,
->   	.proxy_pd_names = (char*[]){
->   		"cx",
-> @@ -1165,6 +1171,7 @@ static const struct adsp_data sm8550_mpss_resource = {
->   	.pas_id = 4,
->   	.dtb_pas_id = 0x26,
->   	.minidump_id = 3,
-> +	.uses_elf64 = true,
->   	.auto_boot = false,
->   	.decrypt_shutdown = true,
->   	.proxy_pd_names = (char*[]){
