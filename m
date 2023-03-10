@@ -2,99 +2,173 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9918C6FD19
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 09:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAE1C74A44
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 11:54:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229471AbjCJJyG (ORCPT
+        id S230019AbjCJLyK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 04:54:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
+        Fri, 10 Mar 2023 06:54:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230123AbjCJJyD (ORCPT
+        with ESMTP id S229469AbjCJLyD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Mar 2023 04:54:03 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 801386189C;
-        Fri, 10 Mar 2023 01:53:50 -0800 (PST)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E53EB660305B;
-        Fri, 10 Mar 2023 09:53:48 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678442029;
-        bh=sEvs8DHvWdeOFG6Ji40nINl66ef9BsHCMAHsxd8TCJc=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=VKOEk0Cet1hg7+M7LQBDg8sLYGizY+wmFxerYRttrOc6v9dsKcZ/N7kxwThaceOK4
-         kJvt9k7e/nMxPpdYhuIZJDTr3m86WwnyqhFsY3jHjHc+6KpOCu+I4IvkA5lMtVPtqJ
-         3aDjUJegoMtakVINANqM5g6lGkMiYfPZinMkAKPj4MoH31kXHTE4yMwbHjsX50r6uW
-         w/kEOWjdGKPKXzOrlbZBOEQcKE0bV7bBdDN5u8kV/30NZVALq/xwfh1hmytB4SG/So
-         O+Ge9vIZwKNsJ/VAMflwJtujF1hlBTpiGbAyXHJL9GEYMRTwiI8KB28mYHaCpMPM7K
-         jBa9rxY/kMxpw==
-Message-ID: <0d756429-13a5-f894-cf7d-b6f0f04da92c@collabora.com>
-Date:   Fri, 10 Mar 2023 10:53:46 +0100
+        Fri, 10 Mar 2023 06:54:03 -0500
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7450AC2237;
+        Fri, 10 Mar 2023 03:54:00 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32ABro76127449;
+        Fri, 10 Mar 2023 05:53:50 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1678449230;
+        bh=QSIrK2hf0RVPY4b/FgB+Q97RERaUbLYuYjYCaB2CdYQ=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=USybG5S2djIhE2wGOt/XlHuHsO3yvv7Mxug4un46WUoMCM+2BK8kU+nJm28KePPeR
+         0QYi884r64b+bJo6keFHmWj6YHAcQvcr7aCB9tzjNQnyKZNp3aq6a+l8nxiQebyHr6
+         H3XE4NII6n3IBMG9S7N3C3sFtD5GnOB57F4Se5Eo=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32ABronN096866
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 10 Mar 2023 05:53:50 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 10
+ Mar 2023 05:53:50 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Fri, 10 Mar 2023 05:53:50 -0600
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32ABrj67017278;
+        Fri, 10 Mar 2023 05:53:45 -0600
+Message-ID: <367f6b50-e4cc-c3eb-e8e9-dabd4e044530@ti.com>
+Date:   Fri, 10 Mar 2023 17:23:44 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v3 2/3] remoteproc: k4: Split out functions common with M4
- driver
+ Thunderbird/102.7.1
+Subject: Re: [EXTERNAL] Re: [EXTERNAL] Re: [PATCH v3 3/6] soc: ti: pruss: Add
+ pruss_cfg_read()/update() API
 Content-Language: en-US
-To:     Martyn Welch <martyn.welch@collabora.com>,
-        Hari Nagalla <hnagalla@ti.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+From:   Md Danish Anwar <a0501179@ti.com>
+To:     Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     kernel@collabora.com, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-References: <20230302171450.1598576-1-martyn.welch@collabora.com>
- <20230302171450.1598576-3-martyn.welch@collabora.com>
- <400ab507-ff2f-cad8-19c6-66818407bf6d@ti.com>
- <a2a51a0a63b7856794ac8fd6889ebf9fcb23f84e.camel@collabora.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <a2a51a0a63b7856794ac8fd6889ebf9fcb23f84e.camel@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20230306110934.2736465-1-danishanwar@ti.com>
+ <20230306110934.2736465-4-danishanwar@ti.com>
+ <7076208d-7dca-6980-5399-498e55648740@kernel.org>
+ <afd6cd8a-8ba7-24b2-d7fc-c25a9c5f3c42@ti.com>
+ <a74e5079-d89d-2420-b6af-d630c4f04380@kernel.org>
+ <a4395259-9b83-1101-7c4c-d8a36c3600eb@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <a4395259-9b83-1101-7c4c-d8a36c3600eb@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Il 10/03/23 10:46, Martyn Welch ha scritto:
-> On Thu, 2023-03-09 at 12:04 -0600, Hari Nagalla wrote:
->> On 3/2/23 11:14, Martyn Welch wrote:
->>> + * @ti_sci_id: TI-SCI device identifier
->>> + * @mbox: mailbox channel handle
->>> + * @client: mailbox client to request the mailbox channel
->>> + * @ipc_only: flag to indicate IPC-only mode
->>> + */
->>> +struct k3_rproc {
->>> +       struct device *dev;
->>> +       struct rproc *rproc;
->>> +       struct k3_rproc_mem *mem;
->>> +       int num_mems;
->>> +       struct k3_rproc_mem *rmem;
->>> +       int num_rmems;
->>> +       struct reset_control *reset;
->>> +       const struct k3_rproc_dev_data *data;
->>> +       struct ti_sci_proc *tsp;
->>> +       const struct ti_sci_handle *ti_sci;
->>> +       u32 ti_sci_id;
->>> +       struct mbox_chan *mbox;
->>> +       struct mbox_client client;
->>> +};
->>> +
->> "ipc_only" mode element is missing in the structure.
+Hi Roger,
+
+On 09/03/23 17:00, Md Danish Anwar wrote:
+> Hi Roger,
 > 
-> That's added with the M4F driver in the next patch - it's not part of
-> the structure in the DSP driver.
+> On 08/03/23 17:12, Roger Quadros wrote:
+>>
+>>
+>> On 08/03/2023 13:36, Md Danish Anwar wrote:
+>>> Hi Roger,
+>>>
+>>> On 08/03/23 13:57, Roger Quadros wrote:
+>>>> Hi,
+>>>>
+>>>> On 06/03/2023 13:09, MD Danish Anwar wrote:
+>>>>> From: Suman Anna <s-anna@ti.com>
+>>>>>
+>>>>> Add two new generic API pruss_cfg_read() and pruss_cfg_update() to
+>>>>> the PRUSS platform driver to allow other drivers to read and program
+>>>>> respectively a register within the PRUSS CFG sub-module represented
+>>>>> by a syscon driver. This interface provides a simple way for client
+>>>>
+>>>> Do you really need these 2 functions to be public?
+>>>> I see that later patches (4-6) add APIs for doing specific things
+>>>> and that should be sufficient than exposing entire CFG space via
+>>>> pruss_cfg_read/update().
+>>>>
+>>>>
+>>>
+>>> I think the intention here is to keep this APIs pruss_cfg_read() and
+>>> pruss_cfg_update() public so that other drivers can read / modify PRUSS config
+>>> when needed.
+>>
+>> Where are these other drivers? If they don't exist then let's not make provision
+>> for it now.
+>> We can provide necessary API helpers when needed instead of letting client drivers
+>> do what they want as they can be misused and hard to debug.
+>>
+> 
+> The ICSSG Ethernet driver uses pruss_cfg_update() API. It is posted upstream in
+> the series [1]. The ethernet driver series is dependent on this series. In
+> series [1] we are using pruss_cfg_update() in icssg_config.c file,
+> icssg_config() API.
+> 
+> So for this, the API pruss_cfg_update() needs to be public.
+> 
+> [1] https://lore.kernel.org/all/20230210114957.2667963-3-danishanwar@ti.com/
+> 
 
-Martyn, I get that it's added later, but the point here is that you are
-documenting something that is missing! :-)
+I will keep this patch as it is as pruss_cfg_update() needs to be public for
+ICSSG Ethernet driver and pruss_cfg_read() is kind of a complementary function
+to update. I will do required changes in other patches and send next revision
+if that's OK with you. Please let me know.
 
-You should add the kerneldoc for @ipc_only: xxxx when you actually introduce
-the new element... otherwise, this commit alone would trigger a kerneldoc warning.
+>>>
+>>> The later patches (4-6) add APIs to do specific thing, but those APIs also
+>>> eventually call pruss_cfg_read/update().
+>>
+>> They can still call them but they need to be private to pruss.c
+>>
+>>>
+>>>>> drivers without having them to include and parse the CFG syscon node
+>>>>> within their respective device nodes. Various useful registers and
+>>>>> macros for certain register bit-fields and their values have also
+>>>>> been added.
+>>>>>
+>>>>> It is the responsibility of the client drivers to reconfigure or
+>>>>> reset a particular register upon any failures.
+>>>>>
+>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>>>>> ---
+>>>>>  drivers/soc/ti/pruss.c           |  41 +++++++++++++
+>>>>>  include/linux/remoteproc/pruss.h | 102 +++++++++++++++++++++++++++++++
+>>>>>  2 files changed, 143 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+>>>>> index c8053c0d735f..537a3910ffd8 100644
+>>>>> --- a/drivers/soc/ti/pruss.c
+>>>>> +++ b/drivers/soc/ti/pruss.c
+>>>>> @@ -164,6 +164,47 @@ int pruss_release_mem_region(struct pruss *pruss,
+>>>>>  }
+>>>>>  EXPORT_SYMBOL_GPL(pruss_release_mem_region);
+>>>>
+>>>> cheers,
+>>>> -roger
+>>>
+> 
 
-Cheers,
-Angelo
+-- 
+Thanks and Regards,
+Danish.
