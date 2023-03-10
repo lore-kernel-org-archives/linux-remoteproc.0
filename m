@@ -2,78 +2,99 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519B8C64EC4
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 09:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9918C6FD19
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 09:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229977AbjCJJrD (ORCPT
+        id S229471AbjCJJyG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 04:47:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39566 "EHLO
+        Fri, 10 Mar 2023 04:54:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229652AbjCJJqt (ORCPT
+        with ESMTP id S230123AbjCJJyD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 10 Mar 2023 04:46:49 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 071E621942;
-        Fri, 10 Mar 2023 01:46:31 -0800 (PST)
-Received: from [IPv6:2a00:23c6:c311:3401:45a5:b946:dcd1:2820] (unknown [IPv6:2a00:23c6:c311:3401:45a5:b946:dcd1:2820])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Fri, 10 Mar 2023 04:54:03 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 801386189C;
+        Fri, 10 Mar 2023 01:53:50 -0800 (PST)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
-        (Authenticated sender: martyn)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 948EF6603050;
-        Fri, 10 Mar 2023 09:46:29 +0000 (GMT)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E53EB660305B;
+        Fri, 10 Mar 2023 09:53:48 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678441589;
-        bh=QXugumcwP1Ga/D3ij5tCkSC4/UWHFeOdECPIBpcL+Ic=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=StoAv9fMm06Vmy5IqLIXMVKlR8emax5CNHxTD2elzdbXhpe3mvbFO5ScwkklUM/3m
-         rAo7qfiWirD47Dw1ktcOHOyn5rgDISsRFrH4rBgO2Ip88+jp0wjoq2olCDsrgrWqMt
-         gBxVietQJ+eYyToS6fEQdVMVTX1jrQv5SCc/wqDcMa8UDw5ILyNhvW7heKHZEfEIrB
-         y5VBHHV8L+tgA6SCVAG4gk/Sx7ru2+VMe2LKrpIokNVfLSv5GlBehUB9fIIz3YCcH1
-         H/XMGOyJWGIffCAh6HPdVNJWpGP4rpuLjPsi6DVwNYrw816Ac3Z/hO0Np6FuYo68ZY
-         pny9AXm8Amrgg==
-Message-ID: <a2a51a0a63b7856794ac8fd6889ebf9fcb23f84e.camel@collabora.com>
-Subject: Re: [PATCH v3 2/3] remoteproc: k4: Split out functions common with
- M4 driver
-From:   Martyn Welch <martyn.welch@collabora.com>
-To:     Hari Nagalla <hnagalla@ti.com>,
+        s=mail; t=1678442029;
+        bh=sEvs8DHvWdeOFG6Ji40nINl66ef9BsHCMAHsxd8TCJc=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=VKOEk0Cet1hg7+M7LQBDg8sLYGizY+wmFxerYRttrOc6v9dsKcZ/N7kxwThaceOK4
+         kJvt9k7e/nMxPpdYhuIZJDTr3m86WwnyqhFsY3jHjHc+6KpOCu+I4IvkA5lMtVPtqJ
+         3aDjUJegoMtakVINANqM5g6lGkMiYfPZinMkAKPj4MoH31kXHTE4yMwbHjsX50r6uW
+         w/kEOWjdGKPKXzOrlbZBOEQcKE0bV7bBdDN5u8kV/30NZVALq/xwfh1hmytB4SG/So
+         O+Ge9vIZwKNsJ/VAMflwJtujF1hlBTpiGbAyXHJL9GEYMRTwiI8KB28mYHaCpMPM7K
+         jBa9rxY/kMxpw==
+Message-ID: <0d756429-13a5-f894-cf7d-b6f0f04da92c@collabora.com>
+Date:   Fri, 10 Mar 2023 10:53:46 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v3 2/3] remoteproc: k4: Split out functions common with M4
+ driver
+Content-Language: en-US
+To:     Martyn Welch <martyn.welch@collabora.com>,
+        Hari Nagalla <hnagalla@ti.com>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>
 Cc:     kernel@collabora.com, linux-kernel@vger.kernel.org,
         linux-remoteproc@vger.kernel.org
-Date:   Fri, 10 Mar 2023 09:46:26 +0000
-In-Reply-To: <400ab507-ff2f-cad8-19c6-66818407bf6d@ti.com>
 References: <20230302171450.1598576-1-martyn.welch@collabora.com>
-         <20230302171450.1598576-3-martyn.welch@collabora.com>
-         <400ab507-ff2f-cad8-19c6-66818407bf6d@ti.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.4-1 
-MIME-Version: 1.0
+ <20230302171450.1598576-3-martyn.welch@collabora.com>
+ <400ab507-ff2f-cad8-19c6-66818407bf6d@ti.com>
+ <a2a51a0a63b7856794ac8fd6889ebf9fcb23f84e.camel@collabora.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <a2a51a0a63b7856794ac8fd6889ebf9fcb23f84e.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-T24gVGh1LCAyMDIzLTAzLTA5IGF0IDEyOjA0IC0wNjAwLCBIYXJpIE5hZ2FsbGEgd3JvdGU6Cj4g
-T24gMy8yLzIzIDExOjE0LCBNYXJ0eW4gV2VsY2ggd3JvdGU6Cj4gPiArICogQHRpX3NjaV9pZDog
-VEktU0NJIGRldmljZSBpZGVudGlmaWVyCj4gPiArICogQG1ib3g6IG1haWxib3ggY2hhbm5lbCBo
-YW5kbGUKPiA+ICsgKiBAY2xpZW50OiBtYWlsYm94IGNsaWVudCB0byByZXF1ZXN0IHRoZSBtYWls
-Ym94IGNoYW5uZWwKPiA+ICsgKiBAaXBjX29ubHk6IGZsYWcgdG8gaW5kaWNhdGUgSVBDLW9ubHkg
-bW9kZQo+ID4gKyAqLwo+ID4gK3N0cnVjdCBrM19ycHJvYyB7Cj4gPiArwqDCoMKgwqDCoMKgwqBz
-dHJ1Y3QgZGV2aWNlICpkZXY7Cj4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgcnByb2MgKnJwcm9j
-Owo+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGszX3Jwcm9jX21lbSAqbWVtOwo+ID4gK8KgwqDC
-oMKgwqDCoMKgaW50IG51bV9tZW1zOwo+ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IGszX3Jwcm9j
-X21lbSAqcm1lbTsKPiA+ICvCoMKgwqDCoMKgwqDCoGludCBudW1fcm1lbXM7Cj4gPiArwqDCoMKg
-wqDCoMKgwqBzdHJ1Y3QgcmVzZXRfY29udHJvbCAqcmVzZXQ7Cj4gPiArwqDCoMKgwqDCoMKgwqBj
-b25zdCBzdHJ1Y3QgazNfcnByb2NfZGV2X2RhdGEgKmRhdGE7Cj4gPiArwqDCoMKgwqDCoMKgwqBz
-dHJ1Y3QgdGlfc2NpX3Byb2MgKnRzcDsKPiA+ICvCoMKgwqDCoMKgwqDCoGNvbnN0IHN0cnVjdCB0
-aV9zY2lfaGFuZGxlICp0aV9zY2k7Cj4gPiArwqDCoMKgwqDCoMKgwqB1MzIgdGlfc2NpX2lkOwo+
-ID4gK8KgwqDCoMKgwqDCoMKgc3RydWN0IG1ib3hfY2hhbiAqbWJveDsKPiA+ICvCoMKgwqDCoMKg
-wqDCoHN0cnVjdCBtYm94X2NsaWVudCBjbGllbnQ7Cj4gPiArfTsKPiA+ICsKPiAiaXBjX29ubHki
-IG1vZGUgZWxlbWVudCBpcyBtaXNzaW5nIGluIHRoZSBzdHJ1Y3R1cmUuCgpUaGF0J3MgYWRkZWQg
-d2l0aCB0aGUgTTRGIGRyaXZlciBpbiB0aGUgbmV4dCBwYXRjaCAtIGl0J3Mgbm90IHBhcnQgb2YK
-dGhlIHN0cnVjdHVyZSBpbiB0aGUgRFNQIGRyaXZlci4K
+Il 10/03/23 10:46, Martyn Welch ha scritto:
+> On Thu, 2023-03-09 at 12:04 -0600, Hari Nagalla wrote:
+>> On 3/2/23 11:14, Martyn Welch wrote:
+>>> + * @ti_sci_id: TI-SCI device identifier
+>>> + * @mbox: mailbox channel handle
+>>> + * @client: mailbox client to request the mailbox channel
+>>> + * @ipc_only: flag to indicate IPC-only mode
+>>> + */
+>>> +struct k3_rproc {
+>>> +       struct device *dev;
+>>> +       struct rproc *rproc;
+>>> +       struct k3_rproc_mem *mem;
+>>> +       int num_mems;
+>>> +       struct k3_rproc_mem *rmem;
+>>> +       int num_rmems;
+>>> +       struct reset_control *reset;
+>>> +       const struct k3_rproc_dev_data *data;
+>>> +       struct ti_sci_proc *tsp;
+>>> +       const struct ti_sci_handle *ti_sci;
+>>> +       u32 ti_sci_id;
+>>> +       struct mbox_chan *mbox;
+>>> +       struct mbox_client client;
+>>> +};
+>>> +
+>> "ipc_only" mode element is missing in the structure.
+> 
+> That's added with the M4F driver in the next patch - it's not part of
+> the structure in the DSP driver.
 
+Martyn, I get that it's added later, but the point here is that you are
+documenting something that is missing! :-)
+
+You should add the kerneldoc for @ipc_only: xxxx when you actually introduce
+the new element... otherwise, this commit alone would trigger a kerneldoc warning.
+
+Cheers,
+Angelo
