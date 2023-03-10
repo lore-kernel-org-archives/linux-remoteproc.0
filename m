@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C278AC6FD1F
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 16:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8021EC76186
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 10 Mar 2023 16:29:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjCJQ3i (ORCPT
+        id S229954AbjCJQ3j (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 10 Mar 2023 11:29:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49212 "EHLO
+        Fri, 10 Mar 2023 11:29:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbjCJQ3U (ORCPT
+        with ESMTP id S229754AbjCJQ3U (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 10 Mar 2023 11:29:20 -0500
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC55812C80E;
-        Fri, 10 Mar 2023 08:25:54 -0800 (PST)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32AGPlF5129735;
-        Fri, 10 Mar 2023 10:25:47 -0600
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F0011CD58;
+        Fri, 10 Mar 2023 08:25:57 -0800 (PST)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32AGPoYe056068;
+        Fri, 10 Mar 2023 10:25:50 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1678465547;
-        bh=q+8Yl/6InXdDAnhHvdi1hjsTSt6lHYD86fu2XQzRTyw=;
+        s=ti-com-17Q1; t=1678465550;
+        bh=fF6Rw0pOCngbb8SjQpdrdE3KGPTtPzwJwSW3GuI0RQU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=cvom2RRwBDW/ek2zKD2qZOI15lTNgbF9R607biR92A47wnlC0A+oaOmabvAEKyb4u
-         Ay7JSrEEODWg2s55CdH0lHc62+SOFRmD2vBfLDkV2lA7xaq6YKl28npb20tRILtKjN
-         9pijGnWuVuyysKjfG5POBnYGiUvuMel7DYzhyaj0=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32AGPlEf002512
+        b=b6gIUtMHE2OeytgaRMp8w/8WeFKJPWp5G1el0t8+psg2fpDRMpqstihAzr3IcxbYp
+         QjDu1u/8PwSWrmduKJwaaD2Yr5EPpt/Dic6tkUiP58oW3GC/nbqVXPqC+mMsqWrZVq
+         tc/5tAJN8amTq3IQBzKiUbeO3frSvQJ34H851EBw=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32AGPoEd127855
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Mar 2023 10:25:47 -0600
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 10 Mar 2023 10:25:50 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 10
- Mar 2023 10:25:46 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2023 10:25:50 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 10 Mar 2023 10:25:46 -0600
+ Frontend Transport; Fri, 10 Mar 2023 10:25:49 -0600
 Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32AGPk58031095;
-        Fri, 10 Mar 2023 10:25:46 -0600
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32AGPnY0011606;
+        Fri, 10 Mar 2023 10:25:49 -0600
 From:   Devarsh Thakkar <devarsht@ti.com>
 To:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
         <mathieu.poirier@linaro.org>, <p.zabel@pengutronix.de>,
@@ -50,9 +50,9 @@ To:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
 CC:     <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
         <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
         <devarsht@ti.com>, <rogerq@kernel.org>
-Subject: [PATCH v7 1/3] remoteproc: k3-r5: Simplify cluster mode setting usage
-Date:   Fri, 10 Mar 2023 21:55:42 +0530
-Message-ID: <20230310162544.3468365-2-devarsht@ti.com>
+Subject: [PATCH v7 3/3] remoteproc: k3-r5: Use separate compatible string for TI AM62x SoC family
+Date:   Fri, 10 Mar 2023 21:55:44 +0530
+Message-ID: <20230310162544.3468365-4-devarsht@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230310162544.3468365-1-devarsht@ti.com>
 References: <20230310162544.3468365-1-devarsht@ti.com>
@@ -64,133 +64,204 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Check the validity of mode against SoC supported modes right
-at the probe to minimize the usage of same check further in the code.
+AM62 and AM62A SoCs use single core R5F which is a new scenario
+different than the one being used with CLUSTER_MODE_SINGLECPU which is
+for utilizing a single core from a set of cores available in R5F cluster
+present in the SoC.
 
-Set default value of cluster-mode only if cluster-mode device tree property
-is empty.
+To support this single core scenario map it with newly defined
+CLUSTER_MODE_SINGLECORE and use it when compatible is set to
+ti,am62-r5fss.
 
-In case devicetree provided cluster-mode property is invalid For e.g. using
-CLUSTER_MODE_SINGLECPU on any SoC other than am64x then return error.
-
-If firmware has set the PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY flag then
-what it means is that only CLUSTER_MODE_SINGLECPU is possible to use [1]
-and hence there is no need to check for soc_data->single_cpu_mode first and
-then checking cluster mode.
-
-PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE flag can be set directly for
-CLUSTER_MODE_SINGLECPU without checking for soc_data->single_cpu_mode since
-that check has already been done during probe.
-
-Link:
-[1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/security/PROC_BOOT.html?highlight=singlecore_only#arm-r5
+Also set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE config for
+CLUSTER_MODE_SINGLECORE too as it is required by R5 core when it is
+being as general purpose core instead of device manager.
 
 Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 ---
-V1->V6: No changelog (Patch introduced in V6)
-V6->V7:
-- Override to appropriate cluster mode per firmware status flag directly
-  without checking for soc_data
-- Set appropriate mode as default if not provided in DT
-- Check mode validity against SoC data during probe
-- Rebase on top of 6.3 linux-next
+V2:
+- Fix indentation and ordering issues as per review comments
+V3:
+- Change CLUSTER_MODE_NONE value to -1
+V4:
+- No change
+V5:
+- No change (fixing typo in email address)
+V6:
+   - Use CLUSTER_MODE_SINGLECORE for AM62x
+   - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.
+V7:
+   - Simplify and rebase on top of base commit "[PATCH v7] remoteproc: k3-r5: Simplify cluster
+     mode setting"
 ---
- drivers/remoteproc/ti_k3_r5_remoteproc.c | 57 +++++++++++++-----------
- 1 file changed, 30 insertions(+), 27 deletions(-)
+ drivers/remoteproc/ti_k3_r5_remoteproc.c | 59 +++++++++++++++++++-----
+ 1 file changed, 48 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 0481926c6975..c2ec0f432921 100644
+index c2ec0f432921..df32f6bc4325 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -852,38 +852,33 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
- 	dev_dbg(dev, "boot_vector = 0x%llx, cfg = 0x%x ctrl = 0x%x stat = 0x%x\n",
- 		boot_vec, cfg, ctrl, stat);
+@@ -71,14 +71,16 @@ struct k3_r5_mem {
+ /*
+  * All cluster mode values are not applicable on all SoCs. The following
+  * are the modes supported on various SoCs:
+- *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
+- *   LockStep mode   : AM65x, J721E and J7200 SoCs
+- *   Single-CPU mode : AM64x SoCs only
++ *   Split mode       : AM65x, J721E, J7200 and AM64x SoCs
++ *   LockStep mode    : AM65x, J721E and J7200 SoCs
++ *   Single-CPU mode  : AM64x SoCs only
++ *   Single-Core mode : AM62x, AM62A SoCs
+  */
+ enum cluster_mode {
+ 	CLUSTER_MODE_SPLIT = 0,
+ 	CLUSTER_MODE_LOCKSTEP,
+ 	CLUSTER_MODE_SINGLECPU,
++	CLUSTER_MODE_SINGLECORE
+ };
  
--	/* check if only Single-CPU mode is supported on applicable SoCs */
--	if (cluster->soc_data->single_cpu_mode) {
--		single_cpu =
--			!!(stat & PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
--		if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
--			dev_err(cluster->dev, "split-mode not permitted, force configuring for single-cpu mode\n");
--			cluster->mode = CLUSTER_MODE_SINGLECPU;
--		}
--		goto config;
-+	single_cpu = !!(stat & PROC_BOOT_STATUS_FLAG_R5_SINGLECORE_ONLY);
-+	lockstep_en = !!(stat & PROC_BOOT_STATUS_FLAG_R5_LOCKSTEP_PERMITTED);
-+
-+	/* Override to single CPU mode if set in status flag */
-+	if (single_cpu && cluster->mode == CLUSTER_MODE_SPLIT) {
-+		dev_err(cluster->dev, "split-mode not permitted, force configuring for single-cpu mode\n");
-+		cluster->mode = CLUSTER_MODE_SINGLECPU;
- 	}
+ /**
+@@ -86,11 +88,13 @@ enum cluster_mode {
+  * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
+  * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
+  * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
++ * @is_single_core: flag to denote if SoC/IP has only single core R5
+  */
+ struct k3_r5_soc_data {
+ 	bool tcm_is_double;
+ 	bool tcm_ecc_autoinit;
+ 	bool single_cpu_mode;
++	bool is_single_core;
+ };
  
--	/* check conventional LockStep vs Split mode configuration */
--	lockstep_en = !!(stat & PROC_BOOT_STATUS_FLAG_R5_LOCKSTEP_PERMITTED);
-+	/* Override to split mode if lockstep enable bit is not set in status flag */
- 	if (!lockstep_en && cluster->mode == CLUSTER_MODE_LOCKSTEP) {
- 		dev_err(cluster->dev, "lockstep mode not permitted, force configuring for split-mode\n");
- 		cluster->mode = CLUSTER_MODE_SPLIT;
- 	}
+ /**
+@@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
  
--config:
- 	/* always enable ARM mode and set boot vector to 0 */
- 	boot_vec = 0x0;
- 	if (core == core0) {
- 		clr_cfg = PROC_BOOT_CFG_FLAG_R5_TEINIT;
--		if (cluster->soc_data->single_cpu_mode) {
--			/*
--			 * Single-CPU configuration bit can only be configured
--			 * on Core0 and system firmware will NACK any requests
--			 * with the bit configured, so program it only on
--			 * permitted cores
--			 */
--			if (cluster->mode == CLUSTER_MODE_SINGLECPU)
--				set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
-+		/*
-+		 * Single-CPU configuration bit can only be configured
-+		 * on Core0 and system firmware will NACK any requests
-+		 * with the bit configured, so program it only on
-+		 * permitted cores
-+		 */
-+		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
-+			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
+ 	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+ 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+-	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
++	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
++	    cluster->mode == CLUSTER_MODE_SINGLECORE) {
+ 		core = core0;
+ 	} else {
+ 		core = kproc->core;
+@@ -877,7 +882,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+ 		 * with the bit configured, so program it only on
+ 		 * permitted cores
+ 		 */
+-		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
++		if (cluster->mode == CLUSTER_MODE_SINGLECPU ||
++		    cluster->mode == CLUSTER_MODE_SINGLECORE) {
+ 			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
  		} else {
  			/*
- 			 * LockStep configuration bit is Read-only on Split-mode
-@@ -1700,12 +1695,6 @@ static int k3_r5_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+@@ -1069,6 +1075,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
  
- 	cluster->dev = dev;
--	/*
--	 * default to most common efuse configurations - Split-mode on AM64x
--	 * and LockStep-mode on all others
--	 */
--	cluster->mode = data->single_cpu_mode ?
--				CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
- 	cluster->soc_data = data;
- 	INIT_LIST_HEAD(&cluster->cores);
+ 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+ 	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
++	    cluster->mode == CLUSTER_MODE_SINGLECORE ||
+ 	    !cluster->soc_data->tcm_is_double)
+ 		return;
  
-@@ -1716,6 +1705,20 @@ static int k3_r5_probe(struct platform_device *pdev)
- 		return ret;
+@@ -1145,6 +1152,8 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+ 	if (cluster->soc_data->single_cpu_mode) {
+ 		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
+ 				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
++	} else if (cluster->soc_data->is_single_core) {
++		mode = CLUSTER_MODE_SINGLECORE;
+ 	} else {
+ 		mode = cfg & PROC_BOOT_CFG_FLAG_R5_LOCKSTEP ?
+ 				CLUSTER_MODE_LOCKSTEP : CLUSTER_MODE_SPLIT;
+@@ -1264,9 +1273,12 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ 			goto err_add;
+ 		}
+ 
+-		/* create only one rproc in lockstep mode or single-cpu mode */
++		/* create only one rproc in lockstep, single-cpu or
++		 * single core mode
++		 */
+ 		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+-		    cluster->mode == CLUSTER_MODE_SINGLECPU)
++		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
++		    cluster->mode == CLUSTER_MODE_SINGLECORE)
+ 			break;
  	}
  
-+	if (ret == -EINVAL) {
-+		/*
-+		 * default to most common efuse configurations - Split-mode on AM64x
-+		 * and LockStep-mode on all others
-+		 */
-+		cluster->mode = data->single_cpu_mode ?
-+					CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
-+	}
-+
-+	if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
-+		dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
-+		return -EINVAL;
-+	}
-+
+@@ -1709,19 +1721,33 @@ static int k3_r5_probe(struct platform_device *pdev)
+ 		/*
+ 		 * default to most common efuse configurations - Split-mode on AM64x
+ 		 * and LockStep-mode on all others
++		 * default to most common efuse configurations -
++		 * Split-mode on AM64x
++		 * Single core on AM62x
++		 * LockStep-mode on all others
+ 		 */
+-		cluster->mode = data->single_cpu_mode ?
++		if (!data->is_single_core)
++			cluster->mode = data->single_cpu_mode ?
+ 					CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
++		else
++			cluster->mode = CLUSTER_MODE_SINGLECORE;
+ 	}
+ 
+-	if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
++	if  ((cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) ||
++	     (cluster->mode == CLUSTER_MODE_SINGLECORE && !data->is_single_core)) {
+ 		dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
+ 		return -EINVAL;
+ 	}
+ 
  	num_cores = of_get_available_child_count(np);
- 	if (num_cores != 2) {
- 		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
+-	if (num_cores != 2) {
+-		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
++	if (num_cores != 2 && !data->is_single_core) {
++		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
++			num_cores);
++		return -ENODEV;
++	}
++
++	if (num_cores != 1 && data->is_single_core) {
++		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
+ 			num_cores);
+ 		return -ENODEV;
+ 	}
+@@ -1763,18 +1789,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
+ 	.tcm_is_double = false,
+ 	.tcm_ecc_autoinit = false,
+ 	.single_cpu_mode = false,
++	.is_single_core = false,
+ };
+ 
+ static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
+ 	.tcm_is_double = true,
+ 	.tcm_ecc_autoinit = true,
+ 	.single_cpu_mode = false,
++	.is_single_core = false,
+ };
+ 
+ static const struct k3_r5_soc_data am64_soc_data = {
+ 	.tcm_is_double = true,
+ 	.tcm_ecc_autoinit = true,
+ 	.single_cpu_mode = true,
++	.is_single_core = false,
++};
++
++static const struct k3_r5_soc_data am62_soc_data = {
++	.tcm_is_double = false,
++	.tcm_ecc_autoinit = true,
++	.single_cpu_mode = false,
++	.is_single_core = true,
+ };
+ 
+ static const struct of_device_id k3_r5_of_match[] = {
+@@ -1782,6 +1818,7 @@ static const struct of_device_id k3_r5_of_match[] = {
+ 	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
+ 	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
+ 	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
++	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
+ 	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
+ 	{ /* sentinel */ },
+ };
 -- 
 2.34.1
 
