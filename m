@@ -2,105 +2,294 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF9EC6FD19
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Mar 2023 20:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C334C74A4B
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 13 Mar 2023 20:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbjCMU1h (ORCPT
+        id S229456AbjCMU7N (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 13 Mar 2023 16:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45266 "EHLO
+        Mon, 13 Mar 2023 16:59:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbjCMU1a (ORCPT
+        with ESMTP id S229666AbjCMU7M (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 13 Mar 2023 16:27:30 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E39689F05
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Mar 2023 13:27:10 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so3399697pjz.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Mar 2023 13:27:10 -0700 (PDT)
+        Mon, 13 Mar 2023 16:59:12 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07746898F7
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Mar 2023 13:58:26 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id y2so13301191pjg.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Mar 2023 13:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678739229;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+hs+0VFLpmrPJUXyoVfcb979HJWTOyjaF+CHF//mTgk=;
-        b=wdQEPcAY6Izd+bNjUVk/FQOewydvg+jc2Z/vTKWAP5NMWCjr3RJMn3RQw0/zj6fT/y
-         gBgpxoB4sHc0pWxO0iwviARKoQ3viNuF98sx1Bs0kGwPrIxHBIluZgwTX2XK0eA/lla+
-         XJmBZSON4sewif+VzkMvqaDDzlA7zCa0D6j0NLzPiFKXlcRnSXHNPNCy3KZeFyCVv7Ez
-         CQt4F8Z2zXWDvYWUkB2/rNFBrfHXK01gkHI+J1Z6IRmbc8Z2OBULJcczw2phCrcHcjIm
-         YXJRP7m58i7ouOTv1OmZhL3BuE3/LJDNCXS9o+EoaB518M+W/wux75TZxwJPVQf80sAh
-         ZvaQ==
+        d=linaro.org; s=google; t=1678741102;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r2U9HWf+sA0AVg4GQ6mhyf88FiJRsJOROsFvX9o9iAQ=;
+        b=qiMZqhnHJoEkAcldGIp5VLSoiJ1HoRNLJpTkAcL606wau+CZ5F50xtoQNfzoh+Dr20
+         WQAVwPVtZ+h5JR2HZO9NZ44x2WFz5D/a73+Nh1NbnEH0cmfu9nOrIbA47XAxgNBndD7x
+         Ile+yocu1jqQxeD6M/W30bU3Lmkjur6lr3OTjHIQqg9ZHg37GoeVi6dLCcrUqtSs3neL
+         rKLieywLiDBp/ey1kIVLiL0wO2K2Y5722s3ZFR9bxXNH/rcPIGf0va5LkklNxksQ4/yR
+         bbxYRKKZbTjsNGiycvaTAiFP8TbOXgDnLhwMidTchh82UtZPHCGTFo/mzRaN9AxA866K
+         jWig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678739229;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+hs+0VFLpmrPJUXyoVfcb979HJWTOyjaF+CHF//mTgk=;
-        b=MSx7RKueAM/jVwAwa7KyY3e0V704fO/pMGXvFpt6iWQ7nssLHwCkyDkFFA4IscWp0p
-         rGf2zBPEHKm7ia+5IYJ8uwDYOMPy+4DMBjH9Zj9oRA3uaXk62l7jsLmtz7WqafQdQVRw
-         cBasDKo5Zj+eJZbePIzicjbEow91B+k7aqGmujQio4wzG7hcR3PqDjkwwRv+wvEoZUA6
-         roI0SIUwC9vlhKnXCIHSIZwtexUD/o/lQzAFrKSxLpLVElV89SGp8pNU2356ZigIjuuz
-         HeYw0ZfnU9+4AVrctiX8wzysF57XBOAAbqFybPmz5eeEcAA8AGiFDPK7ociwa6Uru/Ss
-         Vb7Q==
-X-Gm-Message-State: AO0yUKVUHtWZgQVNcjx+nbIlBr4hLh62e22mahVWFBpV+NTxbuRm3J4P
-        2Gzvt34N1zOOJmiPON6bX0nePyhWj0ffAVpT/Eo=
-X-Google-Smtp-Source: AK7set/DuxNbASPt88XCHkLIzf4qyAFpuR+ZME6CaTzb/ywzgClzkWF6f6Taf+v3EbZ0SNrKCLiY2A==
-X-Received: by 2002:a05:6a20:b283:b0:d3:72c6:b018 with SMTP id ei3-20020a056a20b28300b000d372c6b018mr7347841pzb.39.1678739229099;
-        Mon, 13 Mar 2023 13:27:09 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:1c5e:4a3e:15d0:d540:3861:ef0e])
-        by smtp.gmail.com with ESMTPSA id b23-20020aa78717000000b00593a1f7c3dbsm157647pfo.10.2023.03.13.13.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Mar 2023 13:27:08 -0700 (PDT)
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-To:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     mani@kernel.org, mathieu.poirier@linaro.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com, bhupesh.sharma@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: remoteproc: qcom: Fix sm6115 pas documentation
-Date:   Tue, 14 Mar 2023 01:56:55 +0530
-Message-Id: <20230313202655.1719587-1-bhupesh.sharma@linaro.org>
-X-Mailer: git-send-email 2.38.1
+        d=1e100.net; s=20210112; t=1678741102;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r2U9HWf+sA0AVg4GQ6mhyf88FiJRsJOROsFvX9o9iAQ=;
+        b=Cad3bqgYDkp0/YNTf5iG9K5ARzDarFBRmTnahdNy21b6rfQTfCe+H4jbnD93aJztC2
+         2v5Gm6+ee8rl71Iq9vzGjHiTOUQ4DAh0ZeDgbk5V9iuADbA+TIJyMtqxAWDmm3a7L/W2
+         8acwgCk1MFpbkCZ+8Wl8kVIEwOHAwwxBGENsw6oYriKRw5NLDTfSoeMZNYxAAe1O3V8u
+         OGY01HHQO4ApSy8ssf4+DmWLzeMV/dfrh96GQalwrpzAE3WFJEWcEzl+mod2lNXo/NBQ
+         Go6MhBb//TkpIcA/LX0vN29QgKyFQEVKmbhxS2Uek1lidFi8LDCA12I/+59in7sFut4j
+         /KOQ==
+X-Gm-Message-State: AO0yUKXEcddj7rT28NdAlBDN3h2/n9kdrb1eaM4FGitJO4wisTNIIQPc
+        ZeX1wcNYgDTixN791J9uKLziZQ==
+X-Google-Smtp-Source: AK7set8T/NTAAjk73Imef5Nz7v59fZZ963ggOdpW0Lw4pjUXEgdffVMNaSKrNZzqy9OcJFcuXyfHvQ==
+X-Received: by 2002:a05:6a20:7f8f:b0:d0:15c9:4e67 with SMTP id d15-20020a056a207f8f00b000d015c94e67mr31698886pzj.19.1678741102356;
+        Mon, 13 Mar 2023 13:58:22 -0700 (PDT)
+Received: from ?IPV6:2401:4900:1c5e:4a3e:15d0:d540:3861:ef0e? ([2401:4900:1c5e:4a3e:15d0:d540:3861:ef0e])
+        by smtp.gmail.com with ESMTPSA id z22-20020aa791d6000000b005ac8a51d591sm163626pfa.21.2023.03.13.13.58.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Mar 2023 13:58:21 -0700 (PDT)
+Message-ID: <5922cd55-060c-d1b1-0eb2-0875439e4268@linaro.org>
+Date:   Tue, 14 Mar 2023 02:28:16 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH] arm64: dts: qcom: sm6115: Add remoteproc nodes
+Content-Language: en-US
+To:     linux-arm-msm@vger.kernel.org, andersson@kernel.org
+Cc:     agross@kernel.org, konrad.dybcio@linaro.org,
+        linux-kernel@vger.kernel.org, bhupesh.linux@gmail.com,
+        linux-remoteproc@vger.kernel.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <20230128054256.2100501-1-bhupesh.sharma@linaro.org>
+From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
+In-Reply-To: <20230128054256.2100501-1-bhupesh.sharma@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fix the sm6115 pas yaml documentation to note that 'memory-region'
-is a required property.
+Hi Bjorn,
 
-While at it also mark that memory-region property supports
-only one item.
+On 1/28/23 11:12 AM, Bhupesh Sharma wrote:
+> Add the adsp, cdsp and modem remoteproc nodes to sm6115.
+> 
+> Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> ---
+> - Depends on the dt-binding and driver change submitted via [1].
+> [1]. https://lore.kernel.org/linux-arm-msm/20230128053504.2099620-1-bhupesh.sharma@linaro.org
 
-Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
----
- .../devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml        | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gentle Ping. Since the dependencies (dt-bindings and driver changes) 
+have already been merged into linux-next, this patch can now be applied.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-index f5d1fa9f45f1..cd5d5d068912 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-@@ -32,7 +32,7 @@ properties:
-       - const: xo
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   smd-edge: false
-@@ -43,6 +43,7 @@ properties:
- 
- required:
-   - compatible
-+  - memory-region
-   - reg
- 
- allOf:
--- 
-2.38.1
+Thanks,
+Bhupesh
 
+>   arch/arm64/boot/dts/qcom/sm6115.dtsi | 184 +++++++++++++++++++++++++++
+>   1 file changed, 184 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
+> index 3c66f998a81b..3540cd24af5c 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
+> @@ -1309,6 +1309,39 @@ dispcc: clock-controller@5f00000 {
+>   			#power-domain-cells = <1>;
+>   		};
+>   
+> +		remoteproc_mpss: remoteproc@6080000 {
+> +			compatible = "qcom,sm6115-mpss-pas";
+> +			reg = <0x06080000 0x100>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 307 IRQ_TYPE_EDGE_RISING>,
+> +					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+> +					      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready", "handover",
+> +					  "stop-ack", "shutdown-ack";
+> +
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> +			clock-names = "xo";
+> +
+> +			power-domains = <&rpmpd SM6115_VDDCX>;
+> +
+> +			memory-region = <&pil_modem_mem>;
+> +
+> +			qcom,smem-states = <&modem_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			status = "disabled";
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 68 IRQ_TYPE_EDGE_RISING>;
+> +				label = "mpss";
+> +				qcom,remote-pid = <1>;
+> +				mboxes = <&apcs_glb 12>;
+> +			};
+> +		};
+> +
+>   		stm@8002000 {
+>   			compatible = "arm,coresight-stm", "arm,primecell";
+>   			reg = <0x08002000 0x1000>,
+> @@ -1921,6 +1954,157 @@ funnel_apss1_in: endpoint {
+>   			};
+>   		};
+>   
+> +		remoteproc_adsp: remoteproc@ab00000 {
+> +			compatible = "qcom,sm6115-adsp-pas";
+> +			reg = <0x0ab00000 0x100>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 282 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready",
+> +					  "handover", "stop-ack";
+> +
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> +			clock-names = "xo";
+> +
+> +			power-domains = <&rpmpd SM6115_VDD_LPI_CX>,
+> +					<&rpmpd SM6115_VDD_LPI_MX>;
+> +
+> +			memory-region = <&pil_adsp_mem>;
+> +
+> +			qcom,smem-states = <&adsp_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			status = "disabled";
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 277 IRQ_TYPE_EDGE_RISING>;
+> +				label = "lpass";
+> +				qcom,remote-pid = <2>;
+> +				mboxes = <&apcs_glb 8>;
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+> +					label = "adsp";
+> +					qcom,non-secure-domain;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					compute-cb@3 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <3>;
+> +						iommus = <&apps_smmu 0x01c3 0x0>;
+> +					};
+> +
+> +					compute-cb@4 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <4>;
+> +						iommus = <&apps_smmu 0x01c4 0x0>;
+> +					};
+> +
+> +					compute-cb@5 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <5>;
+> +						iommus = <&apps_smmu 0x01c5 0x0>;
+> +					};
+> +
+> +					compute-cb@6 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <6>;
+> +						iommus = <&apps_smmu 0x01c6 0x0>;
+> +					};
+> +
+> +					compute-cb@7 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <7>;
+> +						iommus = <&apps_smmu 0x01c7 0x0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		remoteproc_cdsp: remoteproc@b300000 {
+> +			compatible = "qcom,sm6115-cdsp-pas";
+> +			reg = <0x0b300000 0x100000>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 265 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready",
+> +					  "handover", "stop-ack";
+> +
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> +			clock-names = "xo";
+> +
+> +			power-domains = <&rpmpd SM6115_VDDCX>;
+> +
+> +			memory-region = <&pil_cdsp_mem>;
+> +
+> +			qcom,smem-states = <&cdsp_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			status = "disabled";
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 261 IRQ_TYPE_EDGE_RISING>;
+> +				label = "cdsp";
+> +				qcom,remote-pid = <5>;
+> +				mboxes = <&apcs_glb 28>;
+> +
+> +				fastrpc {
+> +					compatible = "qcom,fastrpc";
+> +					qcom,glink-channels = "fastrpcglink-apps-dsp";
+> +					label = "cdsp";
+> +					qcom,non-secure-domain;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					compute-cb@1 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <1>;
+> +						iommus = <&apps_smmu 0x0c01 0x0>;
+> +					};
+> +
+> +					compute-cb@2 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <2>;
+> +						iommus = <&apps_smmu 0x0c02 0x0>;
+> +					};
+> +
+> +					compute-cb@3 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <3>;
+> +						iommus = <&apps_smmu 0x0c03 0x0>;
+> +					};
+> +
+> +					compute-cb@4 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <4>;
+> +						iommus = <&apps_smmu 0x0c04 0x0>;
+> +					};
+> +
+> +					compute-cb@5 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <5>;
+> +						iommus = <&apps_smmu 0x0c05 0x0>;
+> +					};
+> +
+> +					compute-cb@6 {
+> +						compatible = "qcom,fastrpc-compute-cb";
+> +						reg = <6>;
+> +						iommus = <&apps_smmu 0x0c06 0x0>;
+> +					};
+> +
+> +					/* note: secure cb9 in downstream */
+> +				};
+> +			};
+> +		};
+> +
+>   		apps_smmu: iommu@c600000 {
+>   			compatible = "qcom,sm6115-smmu-500", "qcom,smmu-500", "arm,mmu-500";
+>   			reg = <0x0c600000 0x80000>;
