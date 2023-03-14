@@ -2,102 +2,90 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D584C6FD1F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 18:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4815C05027
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 18:25:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229787AbjCNSCz (ORCPT
+        id S229825AbjCNSZR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 14:02:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43928 "EHLO
+        Tue, 14 Mar 2023 14:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbjCNSCy (ORCPT
+        with ESMTP id S230135AbjCNSZO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:02:54 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB834A883B
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 11:02:53 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pc8yz-00018W-9f; Tue, 14 Mar 2023 19:02:45 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pc8yy-0047yk-HR; Tue, 14 Mar 2023 19:02:44 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1pc8yx-004sLe-OM; Tue, 14 Mar 2023 19:02:43 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        Tue, 14 Mar 2023 14:25:14 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA4EB4213
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 11:24:49 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-541a05e4124so133941877b3.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 11:24:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678818289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aaq8T3LD9vAL2/LDrIWwh+yNCX+E4QMSUZ8Ql9Ca4Tw=;
+        b=TTVe2HPVswBoXZAM6zlng+SfROysSaFrVcx6RxIV0LHDlhypq19rLCa4F0RccWazCu
+         kksjZ9MtuyTZXm1yul08O6JAiG4RExzk4zCYCY6RwLgkasEEZx0NJpWU9caJQshORY00
+         qeSTq3h9iModrE9ZUYdgJ5n1K0tybi2Oq2d95lP+4RQPsoTrpGacWUr8DRf1re9ISfDl
+         zAP2qtYb52JJni/vjKhsZ4+u71QkbjCyn8J62RQwPsv35zBch2pBwZ15Q59zseCd4sLp
+         cu+DK9LR3a43WMyeXyKOAoSlP6OmBGrYQmcch7OncIci5oPumgBGsDcUYo2uMR3Uc/EX
+         BE5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678818289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aaq8T3LD9vAL2/LDrIWwh+yNCX+E4QMSUZ8Ql9Ca4Tw=;
+        b=C9LBUBtwFwSq2FutKuQIhAV7sIF3G4Ag4lmeRbVn5U0jqB+d86dtWnBGkiP1vjWbcl
+         ljWVLaHKAZyCmVv7BrNAm+oF/V/0Z3RHIFLbay27ShlvZ9P6Rf0EI/baeBCmULf622xa
+         YXbp8LpcWlpTAuGMA7JowRP+aNcJ+a2Zth/MUSZ7sE33vX/5JFvY/wrlKEYeYpl6a1c5
+         XDVxgN+sVdLmHC3epawx/ipxDgBjYtvrBHN2cDNk0d66ptEbdR9s5/qU3Y+F7/RLZ5lq
+         tfFT60T7E9OzASqXZ2zaQVUhFdyfvpW/TEtANhysXpQHklDp9NNNIDYuzvOnTjMRKmkR
+         +APA==
+X-Gm-Message-State: AO0yUKXkVbYUkZ426V7uDJu20O3eZc3G/5i3xEaRBXQjekZwhhKsmduz
+        Nbd2ZLalYv+UgeBFctKsShxwsgPlQlqAQkLq3a3KLg==
+X-Google-Smtp-Source: AK7set84Y+fWQioUgBVpNMN5ukDIqdnzUYp07qj8tAk0NNtBVwDBD4GXeVbXDS9zEAG6n5KSJ6zZsxG4RYUeyJNNElM=
+X-Received: by 2002:a81:ad63:0:b0:52a:9f66:80c6 with SMTP id
+ l35-20020a81ad63000000b0052a9f6680c6mr25056198ywk.9.1678818288944; Tue, 14
+ Mar 2023 11:24:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de> <20230314180241.2865888-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230314180241.2865888-1-u.kleine-koenig@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 14 Mar 2023 19:24:37 +0100
+Message-ID: <CACRpkdYp2XXb2OVr63q0piWGzuLzNzJrEDL_w-7inBbcy=KTdw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] hwspinlock: u8500: Convert to platform remove
+ callback returning void
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     Baolin Wang <baolin.wang@linux.alibaba.com>,
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-remoteproc@vger.kernel.org, kernel@pengutronix.de
-Subject: [PATCH 3/3] hwspinlock: u8500: Convert to platform remove callback returning void
-Date:   Tue, 14 Mar 2023 19:02:41 +0100
-Message-Id: <20230314180241.2865888-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de>
-References: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1630; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=HSK28UWJer9wy6dvxn2/zs3Nb8RRY+sTqfI1QldsPDU=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkELa2MkB4WaOBXVMj2GLq1yZJyczHTDKb2DuJg OQ3uErBBxmJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZBC2tgAKCRDB/BR4rcrs CSSDB/wPmqb7R3opXgRTijrp3oiuSrNy7CpuzrHdtz1/yabiE0moU0ZgS5DPAaMssAYU3mO85tu 6zX8u1iYEXF7aP5pOaZgoOeyJh28JXJ9zRVmR06dg/rox1Xj3UhkAqhmyeBnfjD0agwPyYq50Uk CadgpB3lFp/7XJ9ieCQsekbl2OAhbQxHoTt7x9oQt8KMUGFQBZZ7fTiLHCVItzgSDuGt5dSas3s xYtbcFa+X8epMg7p8SMQ+V2DFziNemPmovJrOLSjqRMARMQ1AUfRyTKB+I5jsStGzyc8dpr4rB9 U7LefKytjxH8ws9ttGRImosr+OwPv8lYDwBCt4t6M+1lwKHs
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is (mostly) ignored
-and this typically results in resource leaks. To improve here there is a
-quest to make the remove callback return void. In the first step of this
-quest all drivers are converted to .remove_new() which already returns
-void.
+On Tue, Mar 14, 2023 at 7:02=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is (mostly) ignored
+> and this typically results in resource leaks. To improve here there is a
+> quest to make the remove callback return void. In the first step of this
+> quest all drivers are converted to .remove_new() which already returns
+> void.
+>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/hwspinlock/u8500_hsem.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/hwspinlock/u8500_hsem.c b/drivers/hwspinlock/u8500_hsem.c
-index 67845c0c9701..1edca1092f29 100644
---- a/drivers/hwspinlock/u8500_hsem.c
-+++ b/drivers/hwspinlock/u8500_hsem.c
-@@ -120,20 +120,18 @@ static int u8500_hsem_probe(struct platform_device *pdev)
- 					 pdata->base_id, num_locks);
- }
- 
--static int u8500_hsem_remove(struct platform_device *pdev)
-+static void u8500_hsem_remove(struct platform_device *pdev)
- {
- 	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
- 	void __iomem *io_base = bank->lock[0].priv - HSEM_REGISTER_OFFSET;
- 
- 	/* clear all interrupts */
- 	writel(0xFFFF, io_base + HSEM_ICRALL);
--
--	return 0;
- }
- 
- static struct platform_driver u8500_hsem_driver = {
- 	.probe		= u8500_hsem_probe,
--	.remove		= u8500_hsem_remove,
-+	.remove_new	= u8500_hsem_remove,
- 	.driver		= {
- 		.name	= "u8500_hsem",
- 	},
--- 
-2.39.2
-
+Yours,
+Linus Walleij
