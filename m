@@ -2,49 +2,49 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29659C7618A
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 18:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D584C6FD1F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 18:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjCNSBT (ORCPT
+        id S229787AbjCNSCz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 14:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42048 "EHLO
+        Tue, 14 Mar 2023 14:02:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbjCNSBR (ORCPT
+        with ESMTP id S229665AbjCNSCy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Mar 2023 14:01:17 -0400
+        Tue, 14 Mar 2023 14:02:54 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CD2A8C7A
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 11:01:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB834A883B
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 11:02:53 -0700 (PDT)
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pc8xR-0000r8-Cq; Tue, 14 Mar 2023 19:01:09 +0100
+        id 1pc8yz-00018W-9f; Tue, 14 Mar 2023 19:02:45 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
         by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pc8xQ-0047yK-O4; Tue, 14 Mar 2023 19:01:08 +0100
+        id 1pc8yy-0047yk-HR; Tue, 14 Mar 2023 19:02:44 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
         (envelope-from <ukl@pengutronix.de>)
-        id 1pc8xP-004sLW-MO; Tue, 14 Mar 2023 19:01:07 +0100
+        id 1pc8yx-004sLe-OM; Tue, 14 Mar 2023 19:02:43 +0100
 From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
         <u.kleine-koenig@pengutronix.de>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
         Bjorn Andersson <andersson@kernel.org>
 Cc:     Baolin Wang <baolin.wang@linux.alibaba.com>,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: [PATCH 2/3] hwspinlock: omap: Convert to platform remove callback returning void
-Date:   Tue, 14 Mar 2023 19:01:00 +0100
-Message-Id: <20230314180100.2865801-2-u.kleine-koenig@pengutronix.de>
+        linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH 3/3] hwspinlock: u8500: Convert to platform remove callback returning void
+Date:   Tue, 14 Mar 2023 19:02:41 +0100
+Message-Id: <20230314180241.2865888-1-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230314180100.2865801-1-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de>
 References: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de>
- <20230314180100.2865801-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2006; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=wgE/4sLERlPKV9W1XXqyWi+5+5S/vz2D1FtuOs5YU3g=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkELZUh2iF0q70uE2mVR40qTK1vyhcRVVZdnHRP fXSnso1/1iJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZBC2VAAKCRDB/BR4rcrs CbIxB/0YEYnoZX0YQpTpUC/4jpkz3Gxzubc+sg3/amwjRWvUnXmi0llV+qkpqJTqy5fJl5+H/cL hVTZkgQGyqSh3dXuDSLE4G43ELHTE616Msuk3qa/sDMnD0R+a7w9tch6WTKrsU67cyMdRHN8988 s6R44eHlSQ6yX3f8aeXiy0D3UNqBNl06Uu6eBC71T1FKubCu1TuUteN81wn3Adzh27MnvdWGRbg b7u5dakxd1Ltjd3h6DYEURWhAYCwMMv1tA0cBLh/vvkzjHXzi8V7sqexOGAp2KcMXfHu9zViSmM QV2M30NyM0NU0MjXdKovtG/onFdsfSO9F2eIFJnV5e572JtG
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1630; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=HSK28UWJer9wy6dvxn2/zs3Nb8RRY+sTqfI1QldsPDU=; b=owEBbQGS/pANAwAKAcH8FHityuwJAcsmYgBkELa2MkB4WaOBXVMj2GLq1yZJyczHTDKb2DuJg OQ3uErBBxmJATMEAAEKAB0WIQR+cioWkBis/z50pAvB/BR4rcrsCQUCZBC2tgAKCRDB/BR4rcrs CSSDB/wPmqb7R3opXgRTijrp3oiuSrNy7CpuzrHdtz1/yabiE0moU0ZgS5DPAaMssAYU3mO85tu 6zX8u1iYEXF7aP5pOaZgoOeyJh28JXJ9zRVmR06dg/rox1Xj3UhkAqhmyeBnfjD0agwPyYq50Uk CadgpB3lFp/7XJ9ieCQsekbl2OAhbQxHoTt7x9oQt8KMUGFQBZZ7fTiLHCVItzgSDuGt5dSas3s xYtbcFa+X8epMg7p8SMQ+V2DFziNemPmovJrOLSjqRMARMQ1AUfRyTKB+I5jsStGzyc8dpr4rB9 U7LefKytjxH8ws9ttGRImosr+OwPv8lYDwBCt4t6M+1lwKHs
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -68,45 +68,36 @@ callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/hwspinlock/omap_hwspinlock.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/hwspinlock/u8500_hsem.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-index 93d787c78f3c..5082f496acdc 100644
---- a/drivers/hwspinlock/omap_hwspinlock.c
-+++ b/drivers/hwspinlock/omap_hwspinlock.c
-@@ -145,7 +145,7 @@ static int omap_hwspinlock_probe(struct platform_device *pdev)
- 	return ret;
+diff --git a/drivers/hwspinlock/u8500_hsem.c b/drivers/hwspinlock/u8500_hsem.c
+index 67845c0c9701..1edca1092f29 100644
+--- a/drivers/hwspinlock/u8500_hsem.c
++++ b/drivers/hwspinlock/u8500_hsem.c
+@@ -120,20 +120,18 @@ static int u8500_hsem_probe(struct platform_device *pdev)
+ 					 pdata->base_id, num_locks);
  }
  
--static int omap_hwspinlock_remove(struct platform_device *pdev)
-+static void omap_hwspinlock_remove(struct platform_device *pdev)
+-static int u8500_hsem_remove(struct platform_device *pdev)
++static void u8500_hsem_remove(struct platform_device *pdev)
  {
  	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
- 	int ret;
-@@ -153,12 +153,10 @@ static int omap_hwspinlock_remove(struct platform_device *pdev)
- 	ret = hwspin_lock_unregister(bank);
- 	if (ret) {
- 		dev_err(&pdev->dev, "%s failed: %d\n", __func__, ret);
--		return 0;
-+		return;
- 	}
+ 	void __iomem *io_base = bank->lock[0].priv - HSEM_REGISTER_OFFSET;
  
- 	pm_runtime_disable(&pdev->dev);
+ 	/* clear all interrupts */
+ 	writel(0xFFFF, io_base + HSEM_ICRALL);
 -
 -	return 0;
  }
  
- static const struct of_device_id omap_hwspinlock_of_match[] = {
-@@ -171,7 +169,7 @@ MODULE_DEVICE_TABLE(of, omap_hwspinlock_of_match);
- 
- static struct platform_driver omap_hwspinlock_driver = {
- 	.probe		= omap_hwspinlock_probe,
--	.remove		= omap_hwspinlock_remove,
-+	.remove_new	= omap_hwspinlock_remove,
+ static struct platform_driver u8500_hsem_driver = {
+ 	.probe		= u8500_hsem_probe,
+-	.remove		= u8500_hsem_remove,
++	.remove_new	= u8500_hsem_remove,
  	.driver		= {
- 		.name	= "omap_hwspinlock",
- 		.of_match_table = of_match_ptr(omap_hwspinlock_of_match),
+ 		.name	= "u8500_hsem",
+ 	},
 -- 
 2.39.2
 
