@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36BDC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 09:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F50C7618A
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 10:04:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229810AbjCNJmd (ORCPT
+        id S229832AbjCNKEr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 05:42:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41208 "EHLO
+        Tue, 14 Mar 2023 06:04:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231124AbjCNJm0 (ORCPT
+        with ESMTP id S229814AbjCNKEp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Mar 2023 05:42:26 -0400
+        Tue, 14 Mar 2023 06:04:45 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0899C6F61A;
-        Tue, 14 Mar 2023 02:42:21 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E23125BD;
+        Tue, 14 Mar 2023 03:04:44 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E570D660308B;
-        Tue, 14 Mar 2023 09:42:19 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id CA1356603090;
+        Tue, 14 Mar 2023 10:04:42 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1678786940;
-        bh=GSNV5roZLwwl6G8WfQf2/I4I3R94zmwTu0GyKcNinaE=;
+        s=mail; t=1678788283;
+        bh=MrQ2ho4+U1CGbnQubBJQGWN0CEELi3nQ2ogNYmD/lU4=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=MioD6rmPfCWH4SyemOidFwpl6xpI4xyRC1tLnJBk6ngg2AOUaiPjO/rJwnZ5yIBbj
-         UN2ZkX4cGQp+uffRpwr/exVEPpL+AFmzDfRPXBTLWNMwMbKwRH6IfFUuj2g6Ok6TH5
-         0pNV5SGExtnmv1P0VGkUPtPXEe7u9EFiNUn5PHWRdsrjrJWURxCxREhgOPI8Uvbfkb
-         7SD0n6kiy/I7pKiW99riflHcLGItgtRky99Vez0d/B0cPUrPJHhNKeU/unDwI383Xq
-         hkC4/jThrASXHVig2xCMzV4+LZLOh+LESvq7cFURDfwpLuFzquS+m9rI9WPKJcvtHm
-         tQVIViuyp+ErQ==
-Message-ID: <691cc1fd-7c49-841d-5424-f268fd7cba3b@collabora.com>
-Date:   Tue, 14 Mar 2023 10:42:17 +0100
+        b=DLvT6mWizq3XCuPv3EXpL3j79t4hic7fz9G2iONCuJPEmYkwIj2AQYfEsMCVLc3XG
+         GqDk1NsiCzwquWSt/FhCn8+52Uc23673cMavtfGd3eZcrVbbwVlyXGZnuwV3Uz+HD2
+         o353GbxwYOfQAKpSjrMDt9xItPekEl/wmWXO74jKX7CzUM49QqFnvptcvZokyK2XxL
+         iodmv6yHEIfaVuGu4nJT98mWhPgNawpasg3kNuUvF2bKw2mbbg7J1f4Tso/c4F4PFK
+         +dVd5LgeW/yQx2IIKbMPizqJVDB+Xs/gVwIeU6RPZ/E3CLTWfe3saBqz/SbOHqS/um
+         FZs7725LZDMOA==
+Message-ID: <df791ee6-de96-3dfd-ce88-9a5ea7f60a04@collabora.com>
+Date:   Tue, 14 Mar 2023 11:04:40 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.8.0
-Subject: Re: [PATCH v8 06/11] remoteproc: mediatek: Probe multi-core SCP
-Content-Language: en-US
+Subject: Re: [PATCH v8 02/11] arm64: dts: mediatek: Update the node name of
+ SCP rpmsg subnode
 To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -51,10 +51,11 @@ Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 References: <20230303083355.3378-1-tinghan.shen@mediatek.com>
- <20230303083355.3378-7-tinghan.shen@mediatek.com>
+ <20230303083355.3378-3-tinghan.shen@mediatek.com>
+Content-Language: en-US
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230303083355.3378-7-tinghan.shen@mediatek.com>
+In-Reply-To: <20230303083355.3378-3-tinghan.shen@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -62,16 +63,42 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 Il 03/03/23 09:33, Tinghan Shen ha scritto:
-> The difference of single-core SCP and multi-core SCP device tree is
-> the presence of child device nodes described SCP cores. The SCP
-> driver populates the platform device and checks the child nodes
-> to identify whether it's a single-core SCP or a multi-core SCP.
-> 
-> The resource structure of the multi-core SCP is a list of remoteproc
-> instances which is different to the single-core SCP. The corresponding
-> resource releasing action is based on the type of SCP.
+> Align the node name with the definition in SCP bindings.
 > 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi   | 2 +-
+>   arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> index fbe14b13051a..a259eb043de5 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+> @@ -810,7 +810,7 @@
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&scp_pins>;
+>   
+> -	cros_ec {
+> +	cros-ec-rpmsg {
+>   		compatible = "google,cros-ec-rpmsg";
+>   		mediatek,rpmsg-name = "cros-ec-rpmsg";
+>   	};
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+> index 9f12257ab4e7..8f14b633c1e1 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+> @@ -1260,7 +1260,7 @@
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&scp_pins>;
+>   
+> -	cros-ec {
+> +	cros-ec-rpmsg {
+>   		compatible = "google,cros-ec-rpmsg";
+>   		mediatek,rpmsg-name = "cros-ec-rpmsg";
+>   	};
+
 
