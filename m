@@ -2,156 +2,217 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 608FAC7618B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Mar 2023 15:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A93E3C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Mar 2023 17:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231847AbjCOPYB (ORCPT
+        id S231967AbjCOReP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 11:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57802 "EHLO
+        Wed, 15 Mar 2023 13:34:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbjCOPYA (ORCPT
+        with ESMTP id S232146AbjCOReN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Mar 2023 11:24:00 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94304EC59;
-        Wed, 15 Mar 2023 08:23:59 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32FALA8r022173;
-        Wed, 15 Mar 2023 15:23:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=OdnxiIa2RzAWKpmCWbias4+mruI+Y1nnKYY8NQ/Z9o0=;
- b=MVnkC5v3/s7B3JUuPgAQOnIn8QwlKsx8VvwZqyS0OvtnIN+LRLX6l6NicX407qHKx9WB
- 3TWIDPxcpcrEiFWeOGIjAlJMQXXvIyNsNKFQU1XwU8q1ZtKpXDEL9HdKF1VN2o8IeNpK
- jIgYsCMXid7zJUN+fWRlbCyvdeKMp406t9BIfIsfCApD1CYNvWddOvxJaKLdKh/JW9Vw
- vNMRvqpnmyCkpJnQJVro4SrG0BbhNts8Ja3SfFjKLGAWVZcrZ6CSbrtHiZuoEXAeqMwm
- uuM2Vcm1CWbwkbNiNUHM2+8pEsWuRiEXU3osp+QsGBPtr6WGAko4zILo6ibzp7STvqsN WA== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pb2c8a1c8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Mar 2023 15:23:41 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32FFNfVV012640
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Mar 2023 15:23:41 GMT
-Received: from [10.216.36.238] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 15 Mar
- 2023 08:23:36 -0700
-Message-ID: <f999f9bc-fb87-7716-3f55-9bd68475a667@quicinc.com>
-Date:   Wed, 15 Mar 2023 20:53:31 +0530
+        Wed, 15 Mar 2023 13:34:13 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F641E9D6
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Mar 2023 10:34:11 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id j13so3932103pjd.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Mar 2023 10:34:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678901651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f4RksfPONkCdlIzGWCI4gEmQh2PUbMXq0YFoK8rSx6E=;
+        b=ALLgMueiI4TdIzfTHW2Rn0pxzSF5Hg74eyv0v6DvLaJrYmL81uzLko1Xi+IdFFbH4r
+         d2wIOD8VxqSPX1DAJ8LZLVB6NpvqaW+cUaaMTVU5IQTdNDNNsC6+5dlZTil7XL1+Vs6/
+         GCsbaXj7owb7YxqZrRoeeKfYbf+c0MuT8m/nT1xHwwyK5G0uAIl8GNAs/2yrxqtOQk0t
+         pYB/vgUHRWAgGWq+TvqavP1Z3JArvQJCiHo3si8vPOSA8Q1OUX9W6hl4BJtcfP9L9PKq
+         Wst/e1697jinwVOhhj8K3ap7XwCfaJftZq1WQIPSbgh4ayPz7KryEa6U6Pw1HaYmuZYm
+         ZBow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678901651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f4RksfPONkCdlIzGWCI4gEmQh2PUbMXq0YFoK8rSx6E=;
+        b=U90TiY+C4zF22H6Uas+IFHxq8JSA7c1FJfmMTGCDMoENa5Zf5weddbcXsaAnl6eUnh
+         KwWwxExruoJUK81KHmcGDOcssiuxK5W7IawAUAIQhHXtEVmeV2SuL8U2JU1t89wy3htv
+         e64j24Ba5z1sFyVET4FAkqTh7GqXplmE7TbF4CkOD/oOyNUZBq/XzQNDBmJ34nWLfVmI
+         sdpqDqWSAwA/Br3w9GlkkqxbKUXLodBmLGT9LWsMjr3kgOZdeO6z4OclvOPSTRifGtzF
+         Q4GWvMsfnQjX0tDujNbwklGeMHj0oub1CP2s0jPobZoojkf7t8i+w7m6ywvFF+qZg3nK
+         rBkg==
+X-Gm-Message-State: AO0yUKWGO1uBcPgEbMMIQJbxbjvAZpFbxt+lUdqW38zBWnuJYGsDTiS8
+        ROR0rkj1Lfmgw9cZqvsHh1Yy1w==
+X-Google-Smtp-Source: AK7set9x7hqjnN6KvkKgVfidPa131/IDdJPRASJD+jji6O92VQMV1e3hnubtncWiTLiBrYRoBg6eVg==
+X-Received: by 2002:a17:90a:1913:b0:237:659a:a456 with SMTP id 19-20020a17090a191300b00237659aa456mr410281pjg.49.1678901650925;
+        Wed, 15 Mar 2023 10:34:10 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:c20b:6fb4:a029:ed06])
+        by smtp.gmail.com with ESMTPSA id y72-20020a638a4b000000b005030a00085asm3669025pgd.46.2023.03.15.10.34.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Mar 2023 10:34:10 -0700 (PDT)
+Date:   Wed, 15 Mar 2023 11:34:08 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v8 05/11] remoteproc: mediatek: Extract remoteproc
+ initialization flow
+Message-ID: <20230315173408.GA2357129@p14s>
+References: <20230303083355.3378-1-tinghan.shen@mediatek.com>
+ <20230303083355.3378-6-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [RFC PATCH 3/6] soc: qcom: Add Qualcomm minidump kernel driver
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>, <will@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1676978713-7394-1-git-send-email-quic_mojha@quicinc.com>
- <1676978713-7394-4-git-send-email-quic_mojha@quicinc.com>
- <00b37174-f19e-ce59-b520-304891f6e2ef@linaro.org>
- <88bd0152-8b53-5ae2-bb16-5060419ca580@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <88bd0152-8b53-5ae2-bb16-5060419ca580@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CZJpnAapbasNkr7WYu4tv1YLC7bq2jyM
-X-Proofpoint-ORIG-GUID: CZJpnAapbasNkr7WYu4tv1YLC7bq2jyM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-15_08,2023-03-15_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1011 malwarescore=0 lowpriorityscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2302240000 definitions=main-2303150129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230303083355.3378-6-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Thanks for the review and comment.
+Hi Shen,
 
-On 3/9/2023 2:20 AM, Konrad Dybcio wrote:
-> 
-> 
-> On 8.03.2023 21:22, Srinivas Kandagatla wrote:
->>
->>
->> On 21/02/2023 11:25, Mukesh Ojha wrote:
->>> Minidump is a best effort mechanism to collect useful and predefined
->>> data for first level of debugging on end user devices running on
->>> Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
->>> or subsystem part of SoC crashes, due to a range of hardware and
->>> software bugs. Hence, the ability to collect accurate data is only
->>> a best-effort. The data collected could be invalid or corrupted,
->>> data collection itself could fail, and so on.
->>>
->>> Qualcomm devices in engineering mode provides a mechanism for
->>> generating full system ramdumps for post mortem debugging. But in some
->>> cases it's however not feasible to capture the entire content of RAM.
->>> The minidump mechanism provides the means for selecting region should
->>> be included in the ramdump. The solution supports extracting the
->>> ramdump/minidump produced either over USB or stored to an attached
->>> storage device.
->>>
->>> The core of minidump feature is part of Qualcomm's boot firmware code.
->>> It initializes shared memory(SMEM), which is a part of DDR and
->>> allocates a small section of it to minidump table i.e also called
->>> global table of content (G-ToC). Each subsystem (APSS, ADSP, ...) has
->>> their own table of segments to be included in the minidump, all
->>> references from a descriptor in SMEM (G-ToC). Each segment/region has
->>> some details like name, physical address and it's size etc. and it
->>> could be anywhere scattered in the DDR.
->>>
->>> Minidump kernel driver adds the capability to add linux region to be
->>> dumped as part of ram dump collection. It provides appropriate symbol
->>> to check its enablement and register client regions.
->>>
->>> To simplify post mortem debugging, it creates and maintain an ELF
->>> header as first region that gets updated with upon registration
->>> of a new region.
->>>
->>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->>> ---
-> [...]
-> 
->>> +int qcom_minidump_ready(void)
->>> +{
->>> +    void *ptr;
->>> +    struct device_node *np;
->>> +    static bool is_smem_available = true;
->>> +
->>> +    if (!is_smem_available || !(np = of_find_compatible_node(NULL, NULL, "qcom,smem"))) {
->>
->> just check for dt node here does not mean that smem device is available, you should probably check if the device is avaliable aswell using of_device_is_available()
->>
->>
->> We should proabably return -EPROBEDEFER incase the node is present and device is not present.
-> qcom_smem_get() seems to handle -EPROBE_DEFER internally, so this check
-> may be entirely redundant.
+On Fri, Mar 03, 2023 at 04:33:49PM +0800, Tinghan Shen wrote:
+> This is the preparation for probing multi-core SCP. The remoteproc
+> initialization flow is similar on cores and is reuesd to avoid
 
-The main idea behind checking qcom,smem availability is to not stop 
-client(core kernel) probe if the smem dt node is not present at all
-and qcom_smem_get() will always return  -EPROBE_DEFER for such cases.
+s/reuesd/reused
 
-For e.g: Again i am taking ramoops example which seems relevant for
-this case, ramoops driver should still probe and not defer forever
-if the smem node is not available at all for non-qcom device tree.
-
--Mukesh
+> redundant code.
 > 
-> Konrad
+> The registers of config and l1tcm are shared for multi-core
+> SCP. Reuse the mapped addresses for all cores.
+> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 62 ++++++++++++++++++++++++------------
+>  1 file changed, 42 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index a3b9bc158cd9..bdb5d87eeaa3 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -23,6 +23,13 @@
+>  #define MAX_CODE_SIZE 0x500000
+>  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+>  
+> +struct mtk_scp_of_regs {
+> +	void __iomem *reg_base;
+> +	void __iomem *l1tcm_base;
+> +	size_t l1tcm_size;
+> +	phys_addr_t l1tcm_phys;
+> +};
+> +
+>  /**
+>   * scp_get() - get a reference to SCP.
+>   *
+> @@ -855,7 +862,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+>  	}
+>  }
+>  
+> -static int scp_probe(struct platform_device *pdev)
+> +static int scp_rproc_init(struct platform_device *pdev,
+> +			  struct mtk_scp_of_regs *of_regs)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> @@ -879,6 +887,11 @@ static int scp_probe(struct platform_device *pdev)
+>  	scp->data = of_device_get_match_data(dev);
+>  	platform_set_drvdata(pdev, scp);
+>  
+> +	scp->reg_base = of_regs->reg_base;
+> +	scp->l1tcm_base = of_regs->l1tcm_base;
+> +	scp->l1tcm_size = of_regs->l1tcm_size;
+> +	scp->l1tcm_phys = of_regs->l1tcm_phys;
+> +
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+>  	scp->sram_base = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(scp->sram_base))
+> @@ -888,24 +901,6 @@ static int scp_probe(struct platform_device *pdev)
+>  	scp->sram_size = resource_size(res);
+>  	scp->sram_phys = res->start;
+>  
+> -	/* l1tcm is an optional memory region */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> -	scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(scp->l1tcm_base)) {
+> -		ret = PTR_ERR(scp->l1tcm_base);
+> -		if (ret != -EINVAL) {
+> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> -		}
+> -	} else {
+> -		scp->l1tcm_size = resource_size(res);
+> -		scp->l1tcm_phys = res->start;
+> -	}
+> -
+> -	scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
+> -	if (IS_ERR(scp->reg_base))
+> -		return dev_err_probe(dev, PTR_ERR(scp->reg_base),
+> -				     "Failed to parse and map cfg memory\n");
+> -
+>  	ret = scp->data->scp_clk_get(scp);
+>  	if (ret)
+>  		return ret;
+> @@ -933,7 +928,6 @@ static int scp_probe(struct platform_device *pdev)
+>  	ret = devm_request_threaded_irq(dev, platform_get_irq(pdev, 0), NULL,
+>  					scp_irq_handler, IRQF_ONESHOT,
+>  					pdev->name, scp);
+> -
+
+Spurious change
+
+>  	if (ret) {
+>  		dev_err(dev, "failed to request irq\n");
+>  		goto remove_subdev;
+> @@ -957,6 +951,34 @@ static int scp_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> +static int scp_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	struct mtk_scp_of_regs scp_regs;
+> +	int ret;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> +	scp_regs.reg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_regs.reg_base))
+> +		return dev_err_probe(dev, PTR_ERR(scp_regs.reg_base),
+> +				     "Failed to parse and map cfg memory\n");
+> +
+> +	/* l1tcm is an optional memory region */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> +	scp_regs.l1tcm_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_regs.l1tcm_base)) {
+> +		ret = PTR_ERR(scp_regs.l1tcm_base);
+> +		if (ret != -EINVAL)
+> +			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> +	} else {
+> +		scp_regs.l1tcm_size = resource_size(res);
+> +		scp_regs.l1tcm_phys = res->start;
+> +	}
+
+If l1tcm is not specified scp_regs::[l1tcm_size, l1tcm_phys] contains garbage
+that is then communicated to scp_rproc_init().  It seems to be the case in the
+original code as well.
+
+More comments to come.
+
+> +
+> +	return scp_rproc_init(pdev, &scp_regs);
+> +}
+> +
+>  static int scp_remove(struct platform_device *pdev)
+>  {
+>  	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> -- 
+> 2.18.0
+> 
