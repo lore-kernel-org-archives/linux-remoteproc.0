@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A93E3C6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Mar 2023 17:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D894C61DA4
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Mar 2023 17:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231967AbjCOReP (ORCPT
+        id S231167AbjCORfe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 13:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40712 "EHLO
+        Wed, 15 Mar 2023 13:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232146AbjCOReN (ORCPT
+        with ESMTP id S231743AbjCORfd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Mar 2023 13:34:13 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F641E9D6
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Mar 2023 10:34:11 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id j13so3932103pjd.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Mar 2023 10:34:11 -0700 (PDT)
+        Wed, 15 Mar 2023 13:35:33 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 737EC231E7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Mar 2023 10:35:29 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id j13so3935774pjd.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Mar 2023 10:35:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678901651;
+        d=linaro.org; s=google; t=1678901729;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4RksfPONkCdlIzGWCI4gEmQh2PUbMXq0YFoK8rSx6E=;
-        b=ALLgMueiI4TdIzfTHW2Rn0pxzSF5Hg74eyv0v6DvLaJrYmL81uzLko1Xi+IdFFbH4r
-         d2wIOD8VxqSPX1DAJ8LZLVB6NpvqaW+cUaaMTVU5IQTdNDNNsC6+5dlZTil7XL1+Vs6/
-         GCsbaXj7owb7YxqZrRoeeKfYbf+c0MuT8m/nT1xHwwyK5G0uAIl8GNAs/2yrxqtOQk0t
-         pYB/vgUHRWAgGWq+TvqavP1Z3JArvQJCiHo3si8vPOSA8Q1OUX9W6hl4BJtcfP9L9PKq
-         Wst/e1697jinwVOhhj8K3ap7XwCfaJftZq1WQIPSbgh4ayPz7KryEa6U6Pw1HaYmuZYm
-         ZBow==
+        bh=mXziicv2uYfxyPIhD3Zm1hNxYuWnUEu3waNVg+uvUJE=;
+        b=fkLlxUwfoqSQHAO6oaqAO7XW8uw0SRJENlx1a6WanyTBPduDiqnW1Flid+CdRIZen4
+         npJjplws76ONO61ktvNoD/uZnlfHK5SvRoidwhwcxhPfOQz3FZBABkyvFIMImFo4i8u6
+         b/r3LljfIzFMIwjhGjERRjctXBfpbVvs0N0Be425ywz3G1mO2VVyEfrWZNX83LDkjROH
+         Qy7ZbXHqcqKEOaEz8mnSvLRHLsEHL4mgbIX1EjmhtpU1lv8u6vKIRV7fMtcKY5Jdrtj6
+         6l0jLLtnUzQeDHA1RdSruCEoe80y0/mgHn2AKveyI2NR53TBAARSa4i/y6wLLEle2nfJ
+         qESQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678901651;
+        d=1e100.net; s=20210112; t=1678901729;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f4RksfPONkCdlIzGWCI4gEmQh2PUbMXq0YFoK8rSx6E=;
-        b=U90TiY+C4zF22H6Uas+IFHxq8JSA7c1FJfmMTGCDMoENa5Zf5weddbcXsaAnl6eUnh
-         KwWwxExruoJUK81KHmcGDOcssiuxK5W7IawAUAIQhHXtEVmeV2SuL8U2JU1t89wy3htv
-         e64j24Ba5z1sFyVET4FAkqTh7GqXplmE7TbF4CkOD/oOyNUZBq/XzQNDBmJ34nWLfVmI
-         sdpqDqWSAwA/Br3w9GlkkqxbKUXLodBmLGT9LWsMjr3kgOZdeO6z4OclvOPSTRifGtzF
-         Q4GWvMsfnQjX0tDujNbwklGeMHj0oub1CP2s0jPobZoojkf7t8i+w7m6ywvFF+qZg3nK
-         rBkg==
-X-Gm-Message-State: AO0yUKWGO1uBcPgEbMMIQJbxbjvAZpFbxt+lUdqW38zBWnuJYGsDTiS8
-        ROR0rkj1Lfmgw9cZqvsHh1Yy1w==
-X-Google-Smtp-Source: AK7set9x7hqjnN6KvkKgVfidPa131/IDdJPRASJD+jji6O92VQMV1e3hnubtncWiTLiBrYRoBg6eVg==
-X-Received: by 2002:a17:90a:1913:b0:237:659a:a456 with SMTP id 19-20020a17090a191300b00237659aa456mr410281pjg.49.1678901650925;
-        Wed, 15 Mar 2023 10:34:10 -0700 (PDT)
+        bh=mXziicv2uYfxyPIhD3Zm1hNxYuWnUEu3waNVg+uvUJE=;
+        b=DsjMsTOsIa6fCq68AKWlY69uam61RDPetk2dFo9mC9lL/o1/cQi0YxRJ7wnrYsWRWG
+         pMGUZUAn0aAyCosWURuoUQP8HMxN/6tuCu8vSaBvZwpDwaYc3fHAXfMOmEKSrvyDaWeG
+         cPlSbiU1eYZl6ZVesVE0TYwkvZhqtRKl+nxQwvYGBGkEKL/BmTCIz5P8XHksTKRw+RYL
+         yztuYq/XN6UXJTmggdO2virxI5XBVwfanzuId4PwAqPTm4UFRvrP/qlpSNM/Bg5hcILd
+         W8ShgSCsWcLNrHSOEG34OXsDd4hzoy0aj7RMO4JHlTWqJ/ut9A1+pmd8t/RpzP4bBL5W
+         VqVA==
+X-Gm-Message-State: AO0yUKXix7JIn7uyXSA8Ir971TdAedv1BXJHwfcdIgxquROauSDNGaxA
+        cIMFta0ozuOz68cjQ18mfhrc5A==
+X-Google-Smtp-Source: AK7set9IdG4vaM5Q83M61wkjdQOyn5rQzQLAMeHMzSFiLlu8+VEy+S5l6kmmjS2QXhyoKMs5tmECtg==
+X-Received: by 2002:a17:90a:34d:b0:23c:ffe0:ccf9 with SMTP id 13-20020a17090a034d00b0023cffe0ccf9mr511760pjf.39.1678901728834;
+        Wed, 15 Mar 2023 10:35:28 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:c20b:6fb4:a029:ed06])
-        by smtp.gmail.com with ESMTPSA id y72-20020a638a4b000000b005030a00085asm3669025pgd.46.2023.03.15.10.34.09
+        by smtp.gmail.com with ESMTPSA id s13-20020a170902988d00b0019a7363e752sm3880048plp.276.2023.03.15.10.35.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Mar 2023 10:34:10 -0700 (PDT)
-Date:   Wed, 15 Mar 2023 11:34:08 -0600
+        Wed, 15 Mar 2023 10:35:28 -0700 (PDT)
+Date:   Wed, 15 Mar 2023 11:35:26 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tinghan Shen <tinghan.shen@mediatek.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
@@ -65,7 +65,7 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         Project_Global_Chrome_Upstream_Group@mediatek.com
 Subject: Re: [PATCH v8 05/11] remoteproc: mediatek: Extract remoteproc
  initialization flow
-Message-ID: <20230315173408.GA2357129@p14s>
+Message-ID: <20230315173526.GB2357129@p14s>
 References: <20230303083355.3378-1-tinghan.shen@mediatek.com>
  <20230303083355.3378-6-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
@@ -76,14 +76,9 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Shen,
-
 On Fri, Mar 03, 2023 at 04:33:49PM +0800, Tinghan Shen wrote:
 > This is the preparation for probing multi-core SCP. The remoteproc
 > initialization flow is similar on cores and is reuesd to avoid
-
-s/reuesd/reused
-
 > redundant code.
 > 
 > The registers of config and l1tcm are shared for multi-core
@@ -165,9 +160,6 @@ s/reuesd/reused
 >  					scp_irq_handler, IRQF_ONESHOT,
 >  					pdev->name, scp);
 > -
-
-Spurious change
-
 >  	if (ret) {
 >  		dev_err(dev, "failed to request irq\n");
 >  		goto remove_subdev;
@@ -182,6 +174,12 @@ Spurious change
 > +	struct mtk_scp_of_regs scp_regs;
 > +	int ret;
 > +
+
+        struct device *dev = &pdev->dev;
+        struct mtk_scp_of_regs scp_regs;
+        struct resource *res;
+        int ret;
+
 > +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
 > +	scp_regs.reg_base = devm_ioremap_resource(dev, res);
 > +	if (IS_ERR(scp_regs.reg_base))
@@ -199,13 +197,6 @@ Spurious change
 > +		scp_regs.l1tcm_size = resource_size(res);
 > +		scp_regs.l1tcm_phys = res->start;
 > +	}
-
-If l1tcm is not specified scp_regs::[l1tcm_size, l1tcm_phys] contains garbage
-that is then communicated to scp_rproc_init().  It seems to be the case in the
-original code as well.
-
-More comments to come.
-
 > +
 > +	return scp_rproc_init(pdev, &scp_regs);
 > +}
