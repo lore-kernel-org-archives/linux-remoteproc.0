@@ -2,97 +2,143 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D505C05027
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 14 Mar 2023 20:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3671EC6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 15 Mar 2023 04:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230402AbjCNUIh (ORCPT
+        id S230342AbjCOEIB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 14 Mar 2023 16:08:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49862 "EHLO
+        Wed, 15 Mar 2023 00:08:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjCNUIg (ORCPT
+        with ESMTP id S230006AbjCOEIA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 14 Mar 2023 16:08:36 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80571457D9
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 13:08:34 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id fd5so33019936edb.7
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Mar 2023 13:08:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1678824513;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RBqd5amS3Q98CpQpuE067MY7M8nGht8QO6g+M3bT6Yo=;
-        b=G0G0/dj90Qw/R7avrs3s5KD3DVZHkx3Z4+Vs+/Smz3XwKe/tS4eW8/FUg2yGPJRzSb
-         2JqUKnnoUUL08vumPeEn31lCAXctdzeWEWsw6hK7nb0CGLnvWpPX3r1v6hvYR5eioJ1k
-         8Q7AI/sM+XckV0UkUvGJkIhsD/NMWKHGFwMZNc2i603J/FpwSmS0dUmJA2/aAxYGUUhq
-         aJngMAS2Ui5BZlThhgobbaUSp/Wqi6DQQa5uZLg3q0htcl92fdE2dbHEw/g4ffhoHdAw
-         6rHq5n/U3JNpAuie362YL/pl9OQYTzFTvHpxvDCvfK/czWHU/qO7snqCRpy+RxeuQfSB
-         aXCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678824513;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RBqd5amS3Q98CpQpuE067MY7M8nGht8QO6g+M3bT6Yo=;
-        b=5I720HwITtbxaJu78UPAPuBDK7elV7A0KR2Lb2BlJ8Dt624i/Ounn8j9Y5sbxiHI1R
-         VAOjB7MsYAsQGZRp/tu4Ym0/DOW+qdspcQVR4Lcg/GP8o0B04PSWBjyvlGO2y45MWXak
-         E28RioPHQatMYT6l03IJP1abX6K3GZFvTTxvTgisVVEnzsWoI4oA3C3ClOgQnqdeH9BM
-         wQgGLYYma3ej4+C/9eepLlLuSgIomhIcUh+1Uw2gkBlg9x4TXLmIanAQJgyg/Mh2Slp+
-         uIYeO1rMaysyYYmSoIPHK+JYfbdbZSvQQrw7iKYP8QRIuXpKKmhXsWd2useraobWeoQM
-         XXVA==
-X-Gm-Message-State: AO0yUKX/p5RblEPiqIJrMoxL1f09wYFeJdX7ru0P5188wQgZGVuxmVdf
-        GNwMJWA1aHrnSN4BmlVL5MN5+A==
-X-Google-Smtp-Source: AK7set8gHLu8iAvvUbC57h4H7l9g7Gv4fvpCS6pcJ5Gxw6P3Oy7kpW4+ew8pi9V+n0A25RKIyb0Skg==
-X-Received: by 2002:aa7:d54d:0:b0:4fa:cbd8:3f6f with SMTP id u13-20020aa7d54d000000b004facbd83f6fmr328618edr.6.1678824512964;
-        Tue, 14 Mar 2023 13:08:32 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:642b:87c2:1efc:c8af? ([2a02:810d:15c0:828:642b:87c2:1efc:c8af])
-        by smtp.gmail.com with ESMTPSA id b12-20020a170906038c00b00924d38bbdc0sm1545981eja.105.2023.03.14.13.08.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 13:08:32 -0700 (PDT)
-Message-ID: <9a9f25b2-5279-8fbf-6451-b2c6af5bc981@linaro.org>
-Date:   Tue, 14 Mar 2023 21:08:31 +0100
+        Wed, 15 Mar 2023 00:08:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B86B171E;
+        Tue, 14 Mar 2023 21:07:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2258E61AAD;
+        Wed, 15 Mar 2023 04:07:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27010C433D2;
+        Wed, 15 Mar 2023 04:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1678853277;
+        bh=KJqyxTArsBbv6ReyKMgsMSt6IK3Nx4mxhE44Z4zwGi8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KubU8rW5zY1FS0YPdL5x43KMZenlN84ZIrfHq4nxfw3uGXTt6hcvuywqbabSvzZVL
+         t9ugsSaMCjKQL4sEISaKMfzJzqvLLQFQI+bhDCI4+4r+z8KvcDy0y/1XhgCCymNPEX
+         TH1TvXD+2i6NmINmWYqfvfZNk4aYqgj3BG7TM2tSNUy0er6kniiNPIPPOzjaLyjyYV
+         aiY0qexUbqz/90PvCWBRho/NJKGzPW0fyYzJl6trUAPjy829CBGznfbh8DP60K9+8V
+         PZwaC7FNxujAHBVBYef/nty+R6hUmBsdQmsvsULPKq5BVPtwHyZTfYuhfp9S5LlJEk
+         piSSadL8T2tow==
+Date:   Tue, 14 Mar 2023 21:11:19 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Elliot Berman <quic_eberman@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] firmware: qcom_scm: Use fixed width src vm bitmap
+Message-ID: <20230315041119.fp7npwa5bia5hck3@ripper>
+References: <20230213181832.3489174-1-quic_eberman@quicinc.com>
+ <20230213214417.mtcpeultvynyls6s@ripper>
+ <Y+tNRPf0PGdShf5l@kroah.com>
+ <20230214172325.lplxgbprhj3bzvr3@ripper>
+ <bdda82f7-933d-443b-614a-6befad2899b5@quicinc.com>
+ <2ae96b75-82f1-165a-e56d-7446c90bb7af@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v7 2/3] dt-bindings: remoteproc: ti: Add new compatible
- for AM62 SoC family
-Content-Language: en-US
-To:     Devarsh Thakkar <devarsht@ti.com>, andersson@kernel.org,
-        devicetree@vger.kernel.org, mathieu.poirier@linaro.org,
-        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com
-Cc:     hnagalla@ti.com, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
-        a-bhatia1@ti.com, j-luthra@ti.com, rogerq@kernel.org
-References: <20230310162544.3468365-1-devarsht@ti.com>
- <20230310162544.3468365-3-devarsht@ti.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230310162544.3468365-3-devarsht@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ae96b75-82f1-165a-e56d-7446c90bb7af@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 10/03/2023 17:25, Devarsh Thakkar wrote:
-> AM62 family of devices don't have a R5F cluster, instead they have
-> single core DM R5F.  Add new compatible string ti,am62-r5fss to support
-> this scenario.
+On Fri, Mar 03, 2023 at 01:09:08PM -0800, Elliot Berman wrote:
 > 
-> When this new compatible is used cluster-mode property can only be set
-> to value 3 i.e.  CLUSTER_MODE_SINGLECORE which is also the default value
-> in case cluster-mode is not defined in device-tree.
 > 
-> While at it, also sort the compatible lists in alphabetical order.
+> On 2/14/2023 10:52 AM, Elliot Berman wrote:
+> > 
+> > 
+> > On 2/14/2023 9:23 AM, Bjorn Andersson wrote:
+> > > On Tue, Feb 14, 2023 at 09:58:44AM +0100, Greg Kroah-Hartman wrote:
+> > > > On Mon, Feb 13, 2023 at 01:44:17PM -0800, Bjorn Andersson wrote:
+> > > > > On Mon, Feb 13, 2023 at 10:18:29AM -0800, Elliot Berman wrote:
+> > > > > > The maximum VMID for assign_mem is 63. Use a u64 to represent this
+> > > > > > bitmap instead of architecture-dependent "unsigned int"
+> > > > > > which varies in
+> > > > > > size on 32-bit and 64-bit platforms.
+> > > > > > 
+> > > > > > Acked-by: Kalle Valo <kvalo@kernel.org> (ath10k)
+> > > > > > Tested-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+> > > > > > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> > > > > 
+> > > > > Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> > > > > 
+> > > > > @Greg, would you mind taking this through your tree for v6.3, you
+> > > > > already have a related change in fastrpc.c in your tree...
+> > > > 
+> > > > I tried, but it doesn't apply to my char-misc tree at all:
+> > > > 
+> > > > checking file drivers/firmware/qcom_scm.c
+> > > > Hunk #1 succeeded at 898 (offset -7 lines).
+> > > > Hunk #2 succeeded at 915 (offset -7 lines).
+> > > > Hunk #3 succeeded at 930 (offset -7 lines).
+> > > > checking file drivers/misc/fastrpc.c
+> > > > checking file drivers/net/wireless/ath/ath10k/qmi.c
+> > > > checking file drivers/remoteproc/qcom_q6v5_mss.c
+> > > > Hunk #1 succeeded at 227 (offset -8 lines).
+> > > > Hunk #2 succeeded at 404 (offset -10 lines).
+> > > > Hunk #3 succeeded at 939 with fuzz 1 (offset -28 lines).
+> > > > checking file drivers/remoteproc/qcom_q6v5_pas.c
+> > > > Hunk #1 FAILED at 94.
+> > > > 1 out of 1 hunk FAILED
+> > > > checking file drivers/soc/qcom/rmtfs_mem.c
+> > > > Hunk #1 succeeded at 30 (offset -1 lines).
+> > > > can't find file to patch at input line 167
+> > > > Perhaps you used the wrong -p or --strip option?
+> > > > The text leading up to this was:
+> > > > --------------------------
+> > > > |diff --git a/include/linux/firmware/qcom/qcom_scm.h
+> > > > b/include/linux/firmware/qcom/qcom_scm.h
+> > > > |index 1e449a5d7f5c..250ea4efb7cb 100644
+> > > > |--- a/include/linux/firmware/qcom/qcom_scm.h
+> > > > |+++ b/include/linux/firmware/qcom/qcom_scm.h
+> > > > --------------------------
+> > > > 
+> > > > What tree is this patch made against?
+> > > > 
+> > > 
+> > > Sorry about that, I missed the previous changes in qcom_q6v5_pas in the
+> > > remoteproc tree. Elliot said he based it on linux-next, so I expect that
+> > > it will merge fine on top of -rc1, once that arrives.
+> > > 
+> > 
+> > Yes, this patch applies on next-20230213. I guess there are enough
+> > changes were coming from QCOM side (via Bjorn's qcom tree) as well as
+> > the fastrpc change (via Greg's char-misc tree).
+> > 
+> > Let me know if I should do anything once -rc1 arrives. Happy to post
+> > version on the -rc1 if it helps.
+> > 
 > 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> ---
+> The patch now applies on tip of Linus's tree and on char-misc.
 
+Greg, I have a couple more patches in the scm driver in my inbox. Would
+you be okay with me pulling this through the Qualcomm tree for v6.4?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Regards,
+Bjorn
