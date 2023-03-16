@@ -2,96 +2,94 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF9DC761A6
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Mar 2023 03:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35968C6FD1F
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Mar 2023 08:01:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbjCPDTJ (ORCPT
+        id S229875AbjCPIBC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 15 Mar 2023 23:19:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57960 "EHLO
+        Thu, 16 Mar 2023 04:01:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230001AbjCPDSZ (ORCPT
+        with ESMTP id S229546AbjCPIBB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 15 Mar 2023 23:18:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 498B3A18A7;
-        Wed, 15 Mar 2023 20:18:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9F1C8B81FB9;
-        Thu, 16 Mar 2023 03:18:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE274C433AE;
-        Thu, 16 Mar 2023 03:17:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1678936682;
-        bh=y0sZoUeFff+6cDV3HaVMqB5f4yIzmgYZdM8d6h5o3pc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jawiJkp4F2oYL3A1ptkMbLijjPnwxZp3UEKvAHclV5SnuNbnvSKtEvzsA5/2zLFX1
-         wNhl3Zja0S9RiC6c6bD5aJ5EDGoejYe2Q/W4Vqyf2ipXCkD7RERM0xTkL5tBHBmYt0
-         uNmGObR85LSgDkI6ZAhx09n+b+bA1g734mcxcies2Dd4UAa2enhH1EHydVBWDzFQyH
-         qYLuQ3LGLLxZ7bQl/kv9TiHXU5iRi4PENdtAc6jrSCWOOPZB4XNptSZ4Tau1K/qHAz
-         4hgcG/tmkkee1FWYq1YSJ4cL3D3TRPVAyalv3ZCpfpl8WMXTtiBop9i10FzPY+51Ia
-         0L8sJJUIiXpHg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Kalle Valo <kvalo@kernel.org>, Andy Gross <agross@kernel.org>,
-        Alex Elder <elder@linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Amol Maheshwari <amahesh@qti.qualcomm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        ath10k@lists.infradead.org, Jassi Brar <jassisinghbrar@gmail.com>,
-        linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-remoteproc@vger.kernel.org,
-        Carl van Schaik <quic_cvanscha@quicinc.com>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        netdev@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Murali Nalajala <quic_mnalajal@quicinc.com>,
-        Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Srivatsa Vaddagiri <quic_svaddagi@quicinc.com>,
-        Marc Zyngier <maz@kernel.org>, linux-doc@vger.kernel.org,
-        Prakruthi Deepak Heragu <quic_pheragu@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: (subset) [PATCH v9 17/27] firmware: qcom_scm: Use fixed width src vm bitmap
-Date:   Wed, 15 Mar 2023 20:21:02 -0700
-Message-Id: <167893686406.303819.2573416221076147237.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230120224627.4053418-18-quic_eberman@quicinc.com>
-References: <20230120224627.4053418-1-quic_eberman@quicinc.com> <20230120224627.4053418-18-quic_eberman@quicinc.com>
+        Thu, 16 Mar 2023 04:01:01 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D55012D6A
+        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Mar 2023 01:00:58 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id x3so4040313edb.10
+        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Mar 2023 01:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1678953657;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5DSdjDU0w5FQnEaCXOhop9s0Twb0u6rluswiSnrTsDE=;
+        b=j+P13YR0eUjpy79tY7AywvIQ9PlyVKEU1GaEf/tSNfcXlIEM7FV9zUVXy6j2pKXPYM
+         Kut6xeuKYtDZaPV4kGjFtF4D7JSF7B1B7gC5wDMO7QJh0hlqxq3BbmKL/Zqle7GYmqQI
+         Rpkl26zeayrfJLOU9/oTdPpArj4gP0ZdJfIkjQrvgWiyWuVfDErO85CFI9p4+InQHRn0
+         E7qexJPA1tPJu8wouLaqykbQe5i5ydFGjwMsMOMcElkhOsxvEvKSt9pgcC+Mx0486HCp
+         UN8d7bMya8WAlZvdQycZUuWmZfyBdyZmMmwa9FtOnliLRCyNce9bXtO36uG4DRh+3/9x
+         Inug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1678953657;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5DSdjDU0w5FQnEaCXOhop9s0Twb0u6rluswiSnrTsDE=;
+        b=yva61iBdS25zA+MgbKuK0Ny/JEEb+z8tNvoYd2bS8BDzlg84feB8/xgQommvZTmUFC
+         lG0C4tG5cv8eK4NyytYN3oUmvOJMzc0E1MSXkAz2WKEwNpXe/XHpMvIg9EeiCbpB1lVW
+         MypnNf4jh1axfi1B/0i6RbB+IYiPIASJn+ZGNOv0AewpeUBbs8tiusCsBSAKlD0Jmxow
+         czWnAWE1HD3crSSIYe+wLjp0FbuVfYk/9uwWJY5uPnI+dK+9aEaBmTQBj9uJHmnrRWMg
+         hS7+rrGmshTrdVfrEUAtXkOT8jw9kywaX0Sh0GXYjXs2B7vAVEzlF1RewTiks6an0xIC
+         Ba/Q==
+X-Gm-Message-State: AO0yUKUSTHMXG0Ad1qdh0mjOA7dJRPAh43gSiGT9+BZ/lnC0Ex85DFE+
+        n8iJHBMKZDFFkN+SyD4hGN9UPw==
+X-Google-Smtp-Source: AK7set/iWxJbPG/O+5nY7JnlCh+pWaxI5PWWttcrRji7J2jZ3aDvxnXWCfa6qUW0dG/SzIXNfytG5g==
+X-Received: by 2002:a17:906:4715:b0:8b1:812f:2578 with SMTP id y21-20020a170906471500b008b1812f2578mr8955146ejq.45.1678953657355;
+        Thu, 16 Mar 2023 01:00:57 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:9827:5f65:8269:a95f? ([2a02:810d:15c0:828:9827:5f65:8269:a95f])
+        by smtp.gmail.com with ESMTPSA id d14-20020a170906370e00b008d53ea69227sm3494678ejc.224.2023.03.16.01.00.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Mar 2023 01:00:57 -0700 (PDT)
+Message-ID: <bd3d21bf-24bc-a074-957f-a223105d34a9@linaro.org>
+Date:   Thu, 16 Mar 2023 09:00:55 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: sm6115-pas: Add QCM2290
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        agross@kernel.org
+Cc:     marijn.suijten@somainline.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230315183231.3562580-1-konrad.dybcio@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230315183231.3562580-1-konrad.dybcio@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 20 Jan 2023 14:46:16 -0800, Elliot Berman wrote:
-> The maximum VMID for assign_mem is 63. Use a u64 to represent this
-> bitmap instead of architecture-dependent "unsigned int" which varies in
-> size on 32-bit and 64-bit platforms.
+On 15/03/2023 19:32, Konrad Dybcio wrote:
+> QCM2290 is more or less a fork of the same design that SM6115 is based
+> on. As a result, the ADSP and modem found on it are identical.
 > 
+> Add compatibles for the QCM2290 with SM6115 fallbacks so as not to
+> require any driver changes. Change the allOf:if:properties clauses
+> to look for the presence of SM6115 compatibles and not an exact match.
+> 
+> Note that QCM2290 lacks a CDSP.
 > 
 
-Applied, thanks!
-
-[17/27] firmware: qcom_scm: Use fixed width src vm bitmap
-        commit: 968a26a07f75377afbd4f7bb18ef587a1443c244
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Krzysztof
+
