@@ -2,116 +2,92 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ADBC6FD1F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Mar 2023 08:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729C5C6FD19
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Mar 2023 09:19:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229629AbjCPIsC (ORCPT
+        id S229479AbjCPJT4 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Mar 2023 04:48:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
+        Thu, 16 Mar 2023 05:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229471AbjCPIsC (ORCPT
+        with ESMTP id S230479AbjCPJTy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Mar 2023 04:48:02 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDD92CFEA;
-        Thu, 16 Mar 2023 01:47:59 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32G25JGx002378;
-        Thu, 16 Mar 2023 08:47:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=OFM1jK7AWk+GpIGI+cgtuL1o87J82wUVsSZC0QhXseA=;
- b=BMR5MqIz06p5RwqpqF5esxpbwh5a1fT6ePnrJerhu1Q6Ot8v6gwAIFo5LtE9J/MO1bra
- wgox1x4dkIpBlCrhQf/nQzfk7PnEYOejDTHouYNLqhGuWrwy7GtMnAs+us+k3sgY7oDl
- S1R+9EOQ9qwz2EB01pLBenSPasYneh6q7jxAkMfEmWQJ7rfIFHL/S1rx+M5c0/WV9Kqh
- Pmv72Fha06A5q3FeBo9ov3laz8GlmpTG6Qf1kckg09DvronaFXFZI1x1ZZmomY2kCRTu
- mR5yf+TbuURJ+PKJNfX3B8IITSKYkDo5OVSF1fn9uU4eNrFOAXlFE56nEEUOolkB3mn3 8w== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pbpy3h82a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Mar 2023 08:47:45 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32G8liLV002408
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 16 Mar 2023 08:47:44 GMT
-Received: from [10.216.13.67] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 16 Mar
- 2023 01:47:39 -0700
-Message-ID: <326b9bac-0e83-336d-ac3f-09656625301c@quicinc.com>
-Date:   Thu, 16 Mar 2023 14:17:05 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH -next] remoteproc/mtk_scp: Fix one kernel-doc comment
-Content-Language: en-US
-To:     Yang Li <yang.lee@linux.alibaba.com>, <andersson@kernel.org>
-CC:     <mathieu.poirier@linaro.org>, <matthias.bgg@gmail.com>,
-        <angelogioacchino.delregno@collabora.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Abaci Robot <abaci@linux.alibaba.com>
-References: <20230316084011.99613-1-yang.lee@linux.alibaba.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20230316084011.99613-1-yang.lee@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HzU3uBjeUrqkUoaqLOj3OZuPSJwlyCNl
-X-Proofpoint-ORIG-GUID: HzU3uBjeUrqkUoaqLOj3OZuPSJwlyCNl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-16_06,2023-03-15_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- bulkscore=0 mlxlogscore=974 impostorscore=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 malwarescore=0 adultscore=0 clxscore=1011
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303160074
+        Thu, 16 Mar 2023 05:19:54 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3D024BC8;
+        Thu, 16 Mar 2023 02:19:52 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 6253D1A00ADE;
+        Thu, 16 Mar 2023 17:19:51 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id y7H5Ln4bIa7g; Thu, 16 Mar 2023 17:19:50 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id E79771A00AD7;
+        Thu, 16 Mar 2023 17:19:49 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mathieu.poirier@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        liqiong@nfschina.com, Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH] remoteproc: qcom_q6v5_mss: remove unnecessary (void*) conversions
+Date:   Thu, 16 Mar 2023 17:19:02 +0800
+Message-Id: <20230316091902.20765-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Pointer variables of void * type do not require type cast.
 
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+---
+ drivers/remoteproc/qcom_q6v5_mss.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 3/16/2023 2:10 PM, Yang Li wrote:
-> Fixs the function name in kernel-doc comments to clear the below
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ab053084f7a2..e7a67c8c16a0 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1562,7 +1562,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 
+ static int q6v5_start(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 	int xfermemop_ret;
+ 	int ret;
+ 
+@@ -1604,7 +1604,7 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ static int q6v5_stop(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
+@@ -1662,7 +1662,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+ 
+ static unsigned long q6v5_panic(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 
+ 	return qcom_q6v5_panic(&qproc->q6v5);
+ }
+@@ -1977,7 +1977,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	rproc->auto_boot = false;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	qproc = (struct q6v5 *)rproc->priv;
++	qproc = rproc->priv;
+ 	qproc->dev = &pdev->dev;
+ 	qproc->rproc = rproc;
+ 	qproc->hexagon_mdt_image = "modem.mdt";
+-- 
+2.11.0
 
-nit: Fix
-
-> warning:
-> 
-> drivers/remoteproc/mtk_scp_ipi.c:136: warning: expecting prototype for scp_ipi_lock(). Prototype was for scp_ipi_unlock() instead
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=4544
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->   drivers/remoteproc/mtk_scp_ipi.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-> index fc55df649b40..9c7c17b9d181 100644
-> --- a/drivers/remoteproc/mtk_scp_ipi.c
-> +++ b/drivers/remoteproc/mtk_scp_ipi.c
-> @@ -125,7 +125,7 @@ void scp_ipi_lock(struct mtk_scp *scp, u32 id)
->   EXPORT_SYMBOL_GPL(scp_ipi_lock);
->   
->   /**
-> - * scp_ipi_lock() - Unlock after operations of an IPI ID
-> + * scp_ipi_unlock() - Unlock after operations of an IPI ID
->    *
->    * @scp:	mtk_scp structure
->    * @id:		IPI ID
-
-Otherwise LGTM.
-
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
-
--- Mukesh
