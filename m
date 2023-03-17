@@ -2,314 +2,283 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C017C74A5B
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Mar 2023 08:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D33EC6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Mar 2023 16:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbjCQI4r (ORCPT
+        id S229629AbjCQQSF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 17 Mar 2023 04:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38742 "EHLO
+        Fri, 17 Mar 2023 12:18:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbjCQI4m (ORCPT
+        with ESMTP id S229665AbjCQQSE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 17 Mar 2023 04:56:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E0D69CF2;
-        Fri, 17 Mar 2023 01:56:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EBFB862233;
-        Fri, 17 Mar 2023 08:56:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16927C433D2;
-        Fri, 17 Mar 2023 08:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679043368;
-        bh=slpiaAEjXiTq1hkVY9j8a9HW24x6Azyc16xU5RO6KWs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=DMAqwki8MOihwuNweDUAzPF6FMgssCtOcAeccrigmtelNe0g+LdJRLX8uXqrlEQcE
-         eTR9VInTe4pXTF32ygqzEEDiPuJZA13bxKKAeWA/Px9Z2BkeedsjUmGFK82KNRB3oh
-         CO0siH7jD+SQ6R8gRdRYYRb7hQGEJT29610+EZIi8/3FEIlV3CHv6+a/Yqa1EXpQPc
-         tST++7pP2OMT4PWz52KW7JWp+kfaZYU99R21TAAvDlMVKNOcc5iAOPhODpfKkR7/y/
-         11mOmXuCbZRvHfcbKc68NUeBRpFUWyyGdmJvk0i7cF5HBXnxI1aYkU5imjfxwkbTwO
-         fojVBkNNfSHEg==
-Message-ID: <3f26b194-287c-074d-8e78-572875f9a734@kernel.org>
-Date:   Fri, 17 Mar 2023 10:56:02 +0200
+        Fri, 17 Mar 2023 12:18:04 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81917399F8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Mar 2023 09:18:01 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id o11so5825400ple.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Mar 2023 09:18:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679069880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gsRR/3AQTZ/QykMe7M1Imcd2WzQ3vb7NKZfryc9crHU=;
+        b=fALdD9ME0RaR9ePBbCcnEqStY3dh5EBgpYHwhpBg33lo/iIGHjIIYD883U2aWS/8y8
+         Tumv15bCu+465dAhTEtl7BAktlwxniV4cgUQwIQyCSh/zhtCNx7dCHm9bOj9+sS+oLik
+         0a5Pm2iEQ0BaGhAttwOSn0U6OCXTOJ3LAsDG4JX1JjydUXjKQ1fWeEf42WFDHCMDqi8J
+         91jwq/NKeBKHJz9I+pbZgOIyTh6uQ0h0AX9147/qj3EzAWE3X8TNH4sqhuI5nSwLLuwy
+         fGJO39qwg7WJB/Puv39EQCN88yNN5g/wKW7ZQNJLMrQSfGp55qy3pf2ymv9nqGp9Y68C
+         COnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679069880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gsRR/3AQTZ/QykMe7M1Imcd2WzQ3vb7NKZfryc9crHU=;
+        b=uTCRstVou96oTQ8kHF6xGYRAN/QdUmGVVjRPV0uEWu3UKMmMjkQQAjHF06etojKnrt
+         xJ0ja/aOM+htuxlH9Zkh4LNzriZo1+fQYDzHll5tcejjbVMqHYxWc/aInPFpqQf0dbGy
+         iDyEkluVVB9f02fFbQYR5PGZGmxzBjw/kwaaT3aWC34DtZ5GVDXNgFMIcpX22ySfD+18
+         4yFTZIhDFipbJp2agzkdT+xmtePGK04SrO+R9MApRKeQ5gbOdjXNcAJqUJtFeVXIOKkX
+         eB6dtecfltqcfJssU3kf3BP5ztbTytYvi18PMnZ+TPtNMq7PsazzCOkCwNlyHZiv+7Bt
+         F8Mw==
+X-Gm-Message-State: AO0yUKW2QuBK9YHFLxczBCeacmgcYG/gSK55nNtXc81rprEBDxA6bppm
+        al7pbbfA3ij3bdENSJsJyK9NuA==
+X-Google-Smtp-Source: AK7set9kY4kJ6xSWnJYHcqPqgXu78Ngmgb2P3QDtQt4NNZZTjaLqLJYgphdza1zezLqWhWNB0Z1d9g==
+X-Received: by 2002:a17:902:e544:b0:1a1:7899:f009 with SMTP id n4-20020a170902e54400b001a17899f009mr3531722plf.17.1679069880613;
+        Fri, 17 Mar 2023 09:18:00 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4b12:d774:9f68:68cf])
+        by smtp.gmail.com with ESMTPSA id w5-20020a1709029a8500b001a064cff3c5sm1751337plp.43.2023.03.17.09.17.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Mar 2023 09:18:00 -0700 (PDT)
+Date:   Fri, 17 Mar 2023 10:17:57 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Devarsh Thakkar <devarsht@ti.com>
+Cc:     andersson@kernel.org, devicetree@vger.kernel.org,
+        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com, hnagalla@ti.com,
+        praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+        j-luthra@ti.com, rogerq@kernel.org
+Subject: Re: [PATCH v7 3/3] remoteproc: k3-r5: Use separate compatible string
+ for TI AM62x SoC family
+Message-ID: <20230317161757.GA2471094@p14s>
+References: <20230310162544.3468365-1-devarsht@ti.com>
+ <20230310162544.3468365-4-devarsht@ti.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v4 2/5] soc: ti: pruss: Add
- pruss_{request,release}_mem_region() API
-Content-Language: en-US
-To:     MD Danish Anwar <danishanwar@ti.com>,
-        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20230313111127.1229187-1-danishanwar@ti.com>
- <20230313111127.1229187-3-danishanwar@ti.com>
-From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20230313111127.1229187-3-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310162544.3468365-4-devarsht@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Andrew & Danish,
-
-
-On 13/03/2023 13:11, MD Danish Anwar wrote:
-> From: "Andrew F. Davis" <afd@ti.com>
+On Fri, Mar 10, 2023 at 09:55:44PM +0530, Devarsh Thakkar wrote:
+> AM62 and AM62A SoCs use single core R5F which is a new scenario
+> different than the one being used with CLUSTER_MODE_SINGLECPU which is
+> for utilizing a single core from a set of cores available in R5F cluster
+> present in the SoC.
 > 
-> Add two new API - pruss_request_mem_region() & pruss_release_mem_region(),
-> to the PRUSS platform driver to allow client drivers to acquire and release
-> the common memory resources present within a PRU-ICSS subsystem. This
-> allows the client drivers to directly manipulate the respective memories,
-> as per their design contract with the associated firmware.
+> To support this single core scenario map it with newly defined
+> CLUSTER_MODE_SINGLECORE and use it when compatible is set to
+> ti,am62-r5fss.
 > 
-> Co-developed-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> Also set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE config for
+> CLUSTER_MODE_SINGLECORE too as it is required by R5 core when it is
+> being as general purpose core instead of device manager.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 > ---
->  drivers/soc/ti/pruss.c           | 77 ++++++++++++++++++++++++++++++++
->  include/linux/pruss_driver.h     | 27 +++--------
->  include/linux/remoteproc/pruss.h | 39 ++++++++++++++++
-
-
-We have these 2 header files and I think anything that deals with
-'struct pruss' should go in include/linux/pruss_driver.h
-
-Anything that deals with pru_rproc (i.e. struct rproc) should go in
-include/linux/remoteproc/pruss.h
-
-Do you agree?
-
->  3 files changed, 121 insertions(+), 22 deletions(-)
+> V2:
+> - Fix indentation and ordering issues as per review comments
+> V3:
+> - Change CLUSTER_MODE_NONE value to -1
+> V4:
+> - No change
+> V5:
+> - No change (fixing typo in email address)
+> V6:
+>    - Use CLUSTER_MODE_SINGLECORE for AM62x
+>    - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.
+> V7:
+>    - Simplify and rebase on top of base commit "[PATCH v7] remoteproc: k3-r5: Simplify cluster
+>      mode setting"
+> ---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 59 +++++++++++++++++++-----
+>  1 file changed, 48 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-> index a169aa1ed044..c8053c0d735f 100644
-> --- a/drivers/soc/ti/pruss.c
-> +++ b/drivers/soc/ti/pruss.c
-> @@ -88,6 +88,82 @@ void pruss_put(struct pruss *pruss)
->  }
->  EXPORT_SYMBOL_GPL(pruss_put);
->  
-> +/**
-> + * pruss_request_mem_region() - request a memory resource
-> + * @pruss: the pruss instance
-> + * @mem_id: the memory resource id
-> + * @region: pointer to memory region structure to be filled in
-> + *
-> + * This function allows a client driver to request a memory resource,
-> + * and if successful, will let the client driver own the particular
-> + * memory region until released using the pruss_release_mem_region()
-> + * API.
-> + *
-> + * Return: 0 if requested memory region is available (in such case pointer to
-> + * memory region is returned via @region), an error otherwise
-> + */
-> +int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
-> +			     struct pruss_mem_region *region)
-> +{
-> +	if (!pruss || !region || mem_id >= PRUSS_MEM_MAX)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&pruss->lock);
-> +
-> +	if (pruss->mem_in_use[mem_id]) {
-> +		mutex_unlock(&pruss->lock);
-> +		return -EBUSY;
-> +	}
-> +
-> +	*region = pruss->mem_regions[mem_id];
-> +	pruss->mem_in_use[mem_id] = region;
-> +
-> +	mutex_unlock(&pruss->lock);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pruss_request_mem_region);
-> +
-> +/**
-> + * pruss_release_mem_region() - release a memory resource
-> + * @pruss: the pruss instance
-> + * @region: the memory region to release
-> + *
-> + * This function is the complimentary function to
-> + * pruss_request_mem_region(), and allows the client drivers to
-> + * release back a memory resource.
-> + *
-> + * Return: 0 on success, an error code otherwise
-> + */
-> +int pruss_release_mem_region(struct pruss *pruss,
-> +			     struct pruss_mem_region *region)
-> +{
-> +	int id;
-> +
-> +	if (!pruss || !region)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&pruss->lock);
-> +
-> +	/* find out the memory region being released */
-> +	for (id = 0; id < PRUSS_MEM_MAX; id++) {
-> +		if (pruss->mem_in_use[id] == region)
-> +			break;
-> +	}
-> +
-> +	if (id == PRUSS_MEM_MAX) {
-> +		mutex_unlock(&pruss->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	pruss->mem_in_use[id] = NULL;
-> +
-> +	mutex_unlock(&pruss->lock);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pruss_release_mem_region);
-> +
->  static void pruss_of_free_clk_provider(void *data)
->  {
->  	struct device_node *clk_mux_np = data;
-> @@ -290,6 +366,7 @@ static int pruss_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	pruss->dev = dev;
-> +	mutex_init(&pruss->lock);
->  
->  	child = of_get_child_by_name(np, "memories");
->  	if (!child) {
-> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
-> index 86242fb5a64a..22b4b37d2536 100644
-> --- a/include/linux/pruss_driver.h
-> +++ b/include/linux/pruss_driver.h
-> @@ -9,37 +9,18 @@
->  #ifndef _PRUSS_DRIVER_H_
->  #define _PRUSS_DRIVER_H_
->  
-> +#include <linux/mutex.h>
->  #include <linux/remoteproc/pruss.h>
->  #include <linux/types.h>
->  
-> -/*
-> - * enum pruss_mem - PRUSS memory range identifiers
-> - */
-> -enum pruss_mem {
-> -	PRUSS_MEM_DRAM0 = 0,
-> -	PRUSS_MEM_DRAM1,
-> -	PRUSS_MEM_SHRD_RAM2,
-> -	PRUSS_MEM_MAX,
-> -};
-> -
-> -/**
-> - * struct pruss_mem_region - PRUSS memory region structure
-> - * @va: kernel virtual address of the PRUSS memory region
-> - * @pa: physical (bus) address of the PRUSS memory region
-> - * @size: size of the PRUSS memory region
-> - */
-> -struct pruss_mem_region {
-> -	void __iomem *va;
-> -	phys_addr_t pa;
-> -	size_t size;
-> -};
-> -
->  /**
->   * struct pruss - PRUSS parent structure
->   * @dev: pruss device pointer
->   * @cfg_base: base iomap for CFG region
->   * @cfg_regmap: regmap for config region
->   * @mem_regions: data for each of the PRUSS memory regions
-> + * @mem_in_use: to indicate if memory resource is in use
-> + * @lock: mutex to serialize access to resources
->   * @core_clk_mux: clk handle for PRUSS CORE_CLK_MUX
->   * @iep_clk_mux: clk handle for PRUSS IEP_CLK_MUX
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index c2ec0f432921..df32f6bc4325 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -71,14 +71,16 @@ struct k3_r5_mem {
+>  /*
+>   * All cluster mode values are not applicable on all SoCs. The following
+>   * are the modes supported on various SoCs:
+> - *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
+> - *   LockStep mode   : AM65x, J721E and J7200 SoCs
+> - *   Single-CPU mode : AM64x SoCs only
+> + *   Split mode       : AM65x, J721E, J7200 and AM64x SoCs
+> + *   LockStep mode    : AM65x, J721E and J7200 SoCs
+> + *   Single-CPU mode  : AM64x SoCs only
+> + *   Single-Core mode : AM62x, AM62A SoCs
 >   */
-> @@ -48,6 +29,8 @@ struct pruss {
->  	void __iomem *cfg_base;
->  	struct regmap *cfg_regmap;
->  	struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
-> +	struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
-> +	struct mutex lock; /* PRU resource lock */
->  	struct clk *core_clk_mux;
->  	struct clk *iep_clk_mux;
->  };
-> diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
-> index 93a98cac7829..33f930e0a0ce 100644
-> --- a/include/linux/remoteproc/pruss.h
-> +++ b/include/linux/remoteproc/pruss.h
-> @@ -44,6 +44,28 @@ enum pru_ctable_idx {
->  	PRU_C31,
+>  enum cluster_mode {
+>  	CLUSTER_MODE_SPLIT = 0,
+>  	CLUSTER_MODE_LOCKSTEP,
+>  	CLUSTER_MODE_SINGLECPU,
+> +	CLUSTER_MODE_SINGLECORE
 >  };
 >  
-> +/*
-> + * enum pruss_mem - PRUSS memory range identifiers
-> + */
-> +enum pruss_mem {
-> +	PRUSS_MEM_DRAM0 = 0,
-> +	PRUSS_MEM_DRAM1,
-> +	PRUSS_MEM_SHRD_RAM2,
-> +	PRUSS_MEM_MAX,
-> +};
-> +
-> +/**
-> + * struct pruss_mem_region - PRUSS memory region structure
-> + * @va: kernel virtual address of the PRUSS memory region
-> + * @pa: physical (bus) address of the PRUSS memory region
-> + * @size: size of the PRUSS memory region
-> + */
-> +struct pruss_mem_region {
-> +	void __iomem *va;
-> +	phys_addr_t pa;
-> +	size_t size;
-> +};
-> +
->  struct device_node;
->  struct rproc;
->  struct pruss;
-> @@ -52,6 +74,10 @@ struct pruss;
+>  /**
+> @@ -86,11 +88,13 @@ enum cluster_mode {
+>   * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
+>   * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
+>   * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
+> + * @is_single_core: flag to denote if SoC/IP has only single core R5
+>   */
+>  struct k3_r5_soc_data {
+>  	bool tcm_is_double;
+>  	bool tcm_ecc_autoinit;
+>  	bool single_cpu_mode;
+> +	bool is_single_core;
+>  };
 >  
->  struct pruss *pruss_get(struct rproc *rproc);
->  void pruss_put(struct pruss *pruss);
-> +int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
-> +			     struct pruss_mem_region *region);
-> +int pruss_release_mem_region(struct pruss *pruss,
-> +			     struct pruss_mem_region *region);
+>  /**
+> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
 >  
->  #else
+>  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+> -	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
+> +	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +	    cluster->mode == CLUSTER_MODE_SINGLECORE) {
+>  		core = core0;
+>  	} else {
+>  		core = kproc->core;
+> @@ -877,7 +882,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>  		 * with the bit configured, so program it only on
+>  		 * permitted cores
+>  		 */
+> -		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
+> +		if (cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +		    cluster->mode == CLUSTER_MODE_SINGLECORE) {
+>  			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
+>  		} else {
+>  			/*
+> @@ -1069,6 +1075,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
 >  
-> @@ -62,6 +88,19 @@ static inline struct pruss *pruss_get(struct rproc *rproc)
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>  	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +	    cluster->mode == CLUSTER_MODE_SINGLECORE ||
+>  	    !cluster->soc_data->tcm_is_double)
+>  		return;
 >  
->  static inline void pruss_put(struct pruss *pruss) { }
->  
-> +static inline int pruss_request_mem_region(struct pruss *pruss,
-> +					   enum pruss_mem mem_id,
-> +					   struct pruss_mem_region *region)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int pruss_release_mem_region(struct pruss *pruss,
-> +					   struct pruss_mem_region *region)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
->  #endif /* CONFIG_TI_PRUSS */
->  
->  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+> @@ -1145,6 +1152,8 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>  	if (cluster->soc_data->single_cpu_mode) {
+>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
+>  				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
+> +	} else if (cluster->soc_data->is_single_core) {
+> +		mode = CLUSTER_MODE_SINGLECORE;
 
-cheers,
--roger
+I have commented twice on this before - whether it is soc_data->single_cpu_mode or
+soc_data->is_single_core, I don't want to see them used elsewhere than in a
+single function.  Either in probe() or another function, use them once to set
+cluster->mode and never again.  
+
+I will silently drop any other patchset that doesn't address this.
+
+>  	} else {
+>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_LOCKSTEP ?
+>  				CLUSTER_MODE_LOCKSTEP : CLUSTER_MODE_SPLIT;
+> @@ -1264,9 +1273,12 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>  			goto err_add;
+>  		}
+>  
+> -		/* create only one rproc in lockstep mode or single-cpu mode */
+> +		/* create only one rproc in lockstep, single-cpu or
+> +		 * single core mode
+> +		 */
+>  		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+> -		    cluster->mode == CLUSTER_MODE_SINGLECPU)
+> +		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+> +		    cluster->mode == CLUSTER_MODE_SINGLECORE)
+>  			break;
+>  	}
+>  
+> @@ -1709,19 +1721,33 @@ static int k3_r5_probe(struct platform_device *pdev)
+>  		/*
+>  		 * default to most common efuse configurations - Split-mode on AM64x
+>  		 * and LockStep-mode on all others
+> +		 * default to most common efuse configurations -
+> +		 * Split-mode on AM64x
+> +		 * Single core on AM62x
+> +		 * LockStep-mode on all others
+>  		 */
+> -		cluster->mode = data->single_cpu_mode ?
+> +		if (!data->is_single_core)
+> +			cluster->mode = data->single_cpu_mode ?
+>  					CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
+> +		else
+> +			cluster->mode = CLUSTER_MODE_SINGLECORE;
+>  	}
+>  
+> -	if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
+> +	if  ((cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) ||
+> +	     (cluster->mode == CLUSTER_MODE_SINGLECORE && !data->is_single_core)) {
+>  		dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
+>  		return -EINVAL;
+>  	}
+>  
+>  	num_cores = of_get_available_child_count(np);
+> -	if (num_cores != 2) {
+> -		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
+> +	if (num_cores != 2 && !data->is_single_core) {
+> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
+> +			num_cores);
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (num_cores != 1 && data->is_single_core) {
+> +		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
+>  			num_cores);
+>  		return -ENODEV;
+>  	}
+> @@ -1763,18 +1789,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
+>  	.tcm_is_double = false,
+>  	.tcm_ecc_autoinit = false,
+>  	.single_cpu_mode = false,
+> +	.is_single_core = false,
+>  };
+>  
+>  static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
+>  	.tcm_is_double = true,
+>  	.tcm_ecc_autoinit = true,
+>  	.single_cpu_mode = false,
+> +	.is_single_core = false,
+>  };
+>  
+>  static const struct k3_r5_soc_data am64_soc_data = {
+>  	.tcm_is_double = true,
+>  	.tcm_ecc_autoinit = true,
+>  	.single_cpu_mode = true,
+> +	.is_single_core = false,
+> +};
+> +
+> +static const struct k3_r5_soc_data am62_soc_data = {
+> +	.tcm_is_double = false,
+> +	.tcm_ecc_autoinit = true,
+> +	.single_cpu_mode = false,
+> +	.is_single_core = true,
+>  };
+>  
+>  static const struct of_device_id k3_r5_of_match[] = {
+> @@ -1782,6 +1818,7 @@ static const struct of_device_id k3_r5_of_match[] = {
+>  	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
+>  	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
+>  	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
+> +	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
+>  	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
+>  	{ /* sentinel */ },
+>  };
+> -- 
+> 2.34.1
+> 
