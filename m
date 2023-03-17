@@ -2,87 +2,143 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A310FC74A5B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 16 Mar 2023 23:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A62C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 17 Mar 2023 05:03:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230233AbjCPXC7 (ORCPT
+        id S229848AbjCQFC7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 16 Mar 2023 19:02:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44326 "EHLO
+        Fri, 17 Mar 2023 01:02:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbjCPXC6 (ORCPT
+        with ESMTP id S229489AbjCQFC6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 16 Mar 2023 19:02:58 -0400
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207E1BE5CE;
-        Thu, 16 Mar 2023 16:02:48 -0700 (PDT)
-Received: by mail-il1-f172.google.com with SMTP id l9so1877670iln.1;
-        Thu, 16 Mar 2023 16:02:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679007767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=42N7QaDW74l84fk7KVVYAtLDt8AVVP8he/p12Jl7xSA=;
-        b=PZRjw1C7xa5iwa/52bF8HE2hkqV3/Qiazc+skh6wHP8sJ942bx0QxbFc2fcH5RXO57
-         mgwoTQ5XZSddFu4aCuRRbyb+O76OjCy5hqTZF97/zsRTQbKwZepgDnQxlb4SEvpSOBJ0
-         D2oq6olyWB4upB45t9dm/Pe/0X9yrCwkUSCcrkCczuOmZQ2iV9BD5lUglM9Q+SsCwOcV
-         b2R0rtwfPrhbib17oN5pL+3kuhi5D6jRWcPX5SMFzXXiAiBpbD4GW6E7cTNehhRoDvrt
-         asC7ouls6Bb5EuWiVvSxt38K7fRp0n0ZbzBl2qUM74oVzRIAQYZtPKDlP9hT5JmlT5aq
-         tmUA==
-X-Gm-Message-State: AO0yUKWBjtXP9J0vObzr7UeWqW2isFACdixhr09PBG+uMdKeg9GU9bAq
-        jx8opX3RSTcEdJw4E0Z0XkVhCTRndQ==
-X-Google-Smtp-Source: AK7set8v1z8rweeLhSlrn8BXfCs9Xu5N6zIlRvf0won94cSzzp6gYiMsmmb4Swf+84CZTEbufgj+eA==
-X-Received: by 2002:a05:6e02:1a8e:b0:323:338:cc50 with SMTP id k14-20020a056e021a8e00b003230338cc50mr9526557ilv.22.1679007767326;
-        Thu, 16 Mar 2023 16:02:47 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id 185-20020a021dc2000000b0038a06a14b37sm174163jaj.103.2023.03.16.16.02.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Mar 2023 16:02:46 -0700 (PDT)
-Received: (nullmailer pid 4049144 invoked by uid 1000);
-        Thu, 16 Mar 2023 23:02:44 -0000
-Date:   Thu, 16 Mar 2023 18:02:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom,adsp: bring back
- firmware-name
-Message-ID: <167900776429.4049083.9689239612098099608.robh@kernel.org>
-References: <20230309083548.47205-1-krzysztof.kozlowski@linaro.org>
+        Fri, 17 Mar 2023 01:02:58 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0610257D19;
+        Thu, 16 Mar 2023 22:02:56 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32H52eVZ118036;
+        Fri, 17 Mar 2023 00:02:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1679029360;
+        bh=O3wqgAjd5Kq/xmlrss1YwHCRDPVlxQ49A5FvgeboGmc=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=RvpkluMDvA6JKT9Ccec86ev48N6FKa9H05fhakyQhp3ZvU5cGuW86zWNWnOAl8Jig
+         +K4wGN7F0vkwJfQYu2wdpJyJqcXm+eH44ESF/L9ZZw0Y89XgRjCZh4L/JpbrNHTJl9
+         GZxYzy6Yduq9o5pDZzHE8NPtQCj3dW7bMpW350V0=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32H52dYo056248
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Mar 2023 00:02:39 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 17
+ Mar 2023 00:02:39 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Fri, 17 Mar 2023 00:02:39 -0500
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32H52Yk9102104;
+        Fri, 17 Mar 2023 00:02:35 -0500
+Message-ID: <22b8860c-12bd-384d-41af-93f1dde9a0fd@ti.com>
+Date:   Fri, 17 Mar 2023 10:32:34 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230309083548.47205-1-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [EXTERNAL] Re: [EXTERNAL] Re: [PATCH v4 4/5] soc: ti: pruss: Add
+ helper functions to set GPI mode, MII_RT_event and XFR
+To:     Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20230313111127.1229187-1-danishanwar@ti.com>
+ <20230313111127.1229187-5-danishanwar@ti.com>
+ <d168e7dd-42a0-b728-5c4c-e97209c13871@kernel.org>
+ <b1409f34-86b5-14e8-f352-5032aa57ca46@ti.com>
+ <60e73395-f670-6eaa-0eb7-389553320a71@kernel.org>
+ <20718115-7606-a77b-7e4d-511ca9c1d798@ti.com>
+ <e49b9a78-5e35-209e-7ecc-2333478b98b0@kernel.org>
+ <468f85ad-e4b0-54e1-a5b9-4692ae8a1445@ti.com>
+ <455440f4-7f2b-366e-53ec-700c3bb98534@kernel.org>
+Content-Language: en-US
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <455440f4-7f2b-366e-53ec-700c3bb98534@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On Thu, 09 Mar 2023 09:35:48 +0100, Krzysztof Kozlowski wrote:
-> The firmware-name property was moved from common qcom,pas-common.yaml
-> binding to each device-specific schema, but the qcom,adsp.yaml was not
-> updated.
+
+On 16/03/23 19:34, Roger Quadros wrote:
 > 
-> Fixes: cee616c68846 ("dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Hi,
 > 
-> ---
+> On 16/03/2023 15:11, Md Danish Anwar wrote:
+>>
+>>
+>> On 16/03/23 17:49, Roger Quadros wrote:
+>>>
+>>>
+>>> On 16/03/2023 13:44, Md Danish Anwar wrote:
+>>>>
+>>>> On 16/03/23 17:06, Roger Quadros wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On 16/03/2023 13:05, Md Danish Anwar wrote:
+>>>>>> Hi Roger,
+>>>>>>
+>>>>>> On 15/03/23 17:52, Roger Quadros wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 13/03/2023 13:11, MD Danish Anwar wrote:
+>>>>>>>> From: Suman Anna <s-anna@ti.com>
+>
+
+[..]
+
+>> Sure, then I will use the existing enum pru_type.
+>>
+>> The enum pru_type is currently in drivers/remoteproc/pruss.c I will move this
+>> enum definition from there to include/linux/remoteproc/pruss.h
 > 
-> Changes since v1:
-> 1. Use maxItems:1 (Rob)
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+> There are 2 public pruss.h files.
+> 	include/linux/remoteproc/pruss.h
+> and
+> 	include/linux/pruss_driver.h
+> 
+> Why is that and when to use what?
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The include/linux/remoteproc/pruss.h file was introduced in series [1] as a
+public header file for PRU_RPROC driver (drivers/remoteproc/pru_rproc.c)
 
+The second header file include/linux/pruss_driver.h was introduced much earlier
+as part of [2] , "soc: ti: pruss: Add a platform driver for PRUSS in TI SoCs".
+
+As far as I can see, seems like pruss_driver.h was added as a public header
+file for PRUSS platform driver (drivers/soc/ti/pruss.c)
+
+[1] https://lore.kernel.org/all/20230106121046.886863-1-danishanwar@ti.com/
+[2] https://lore.kernel.org/all/1542886753-17625-7-git-send-email-rogerq@ti.com/
+
+
+> cheers,
+> -roger
+
+-- 
+Thanks and Regards,
+Danish.
