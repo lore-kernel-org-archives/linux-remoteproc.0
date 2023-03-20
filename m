@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD9BC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 22:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 835CEC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 22:20:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbjCTWUi (ORCPT
+        id S230137AbjCTWUv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:20:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42230 "EHLO
+        Mon, 20 Mar 2023 18:20:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229950AbjCTWUV (ORCPT
+        with ESMTP id S229986AbjCTWUY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Mar 2023 18:20:21 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5B63199C3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Mar 2023 15:18:39 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id bn14so59127pgb.11
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Mar 2023 15:18:39 -0700 (PDT)
+        Mon, 20 Mar 2023 18:20:24 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D2A18B01
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Mar 2023 15:18:43 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id y35so6359673pgl.4
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Mar 2023 15:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679350714;
+        d=linaro.org; s=google; t=1679350716;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7SvawGG1lzE2m2LYlYl0Sje5AT1/P8cyqdj5Tvo8pXw=;
-        b=PvsJCIxu/xbvlnlhZcbf+hp2aL49LnhKhuTqbalsm2KYp8FtnY4tziFYeq6PECIzcv
-         7wi6KhU0/ObSDhiFpGp54opvLN9aTw9Wxivakpea5e66Hp5jxFO8z+vOmDN3Y7UHzaR4
-         e8Zqc9Dn4od77y53Ps62VFI3Fqiz+C08ZRcMRPROfAa6acetGE+EqDK7pMA1L8lJsPE0
-         fLoMHZufOKtY2UmiwA4oBVPyFh20qPih0+Trtn9bP3JI3L/v4pvBKGd6iINDctJAwTdt
-         2wGNlFYVcKYBKwuhOu7maadGhWXFYBS9hWhBMXS9gXFGIq16h8VrJ3kYtrTXyx5cZtsD
-         6sYw==
+        bh=trrnan71ZHM7JKq0ql81PKKI2hb7rlyx27+ksKXBUrc=;
+        b=f8qUTKDDglZJsgtv/KBhPEPSfsS/rDPVt7Q0ZvXfNE706If1SqJBI8NpCJq27Qo5gT
+         DBGx99X/V+1V/tiTX54m6jRBxlszJZzogDlJCJTGTGIyxt6vbGwLhOM5KJqI9t04HNkL
+         UQiy8VgJ1YxaLJ3QEbxjNGfDTUEzgR0koUy8jLa9VneY6PVluLfJvDPrLj+7E6CzK8OX
+         MpFui5oS0O1cN+E/S3R2STlDyC4eSSr8INCk6CUcgeEVacgLh7uNNFy5QH/uMOp4VMzI
+         m7UzrJVNthCu6l1D+R4JkUqPMcVo8xeHkhGJsyPEFhnBp5JUuQoLnCg4BemhWRypa75W
+         GIHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679350714;
+        d=1e100.net; s=20210112; t=1679350716;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7SvawGG1lzE2m2LYlYl0Sje5AT1/P8cyqdj5Tvo8pXw=;
-        b=pbke3+9AogfZgPWGALjB/mZF2H7cxGOX92GDUBA17ic03jV1jR0dERvqODzlvi6bfk
-         bJxOiUD/TXVhpBL4ZT0LSNeBaJ2UXPMNVLTI5Nu8I47vq92UfAs69IzujRheoDX2OjIu
-         kWikvi3SVcVy5cD4Nn9mP4+EOWgPQnYtQXgV9/j/cU2s2DFRYdeF2F01LBc6ouIoSlI5
-         DLx/v0ezdgzMMnQCW1TEw8S3c+tMacm0ODq53dOYlp7/cQO6uH050+wrYaG8EEpnWymM
-         rv62EKjN3AFBAT03IQmCTBYsW+MtifeLDVrd6WJoNx2ZqgYcKEGtSU5cF6LU9EOWtfwy
-         GNuQ==
-X-Gm-Message-State: AO0yUKX9UaJ4J+4kdVD9jyzMNtM27800vqEgpx+1bxcEk0t1T4JBcgYs
-        rmivjKfid1aUugkb4XBRVBXj+A==
-X-Google-Smtp-Source: AK7set91Y4YlRhjokRSS2Ws2BcWMaU/uCFjWar6nqsAqx2gZeqmqUwzvD0MsckqftgI7PPc4q9yzpA==
-X-Received: by 2002:aa7:8614:0:b0:626:22e5:beb8 with SMTP id p20-20020aa78614000000b0062622e5beb8mr11549651pfn.3.1679350713845;
-        Mon, 20 Mar 2023 15:18:33 -0700 (PDT)
+        bh=trrnan71ZHM7JKq0ql81PKKI2hb7rlyx27+ksKXBUrc=;
+        b=s7nEm5m8gt72FTqkVFArtj3uC7GKlSLM3Uxg0Zj+aOpf21bTrtj4GDgRGICdt5Tu8k
+         Xg+7QTszjKw+oW5xAmHrMxc/n6ZYDswG/SzBbB4ZmGM0xhWkknxeICzdDW0A4WTJyTV6
+         bttLaVUkLPyPhRJJXpEx9cMCfVH0rhUipIEMVGH3F0mIe5hmD1Fiva74TR2j3tRfPiuU
+         FPF2VE2KiEOje/Ri38UfiUqCc1VslIQSxAYKdkRDl2YO9uvwh7d73MEFP9++LVb/HMYC
+         5dGHehhTNQLflnXIWfVDUKWt+350oJ26caMuOgD9v3iuclBVT2KGEjsSs34heG+CSaz3
+         w68Q==
+X-Gm-Message-State: AO0yUKWCH1G6PgsuJJVONhq72rMTUBcKIy6qJC4YFxpRchNnZacCpVXu
+        It+WUWHkbS055ilRd0udBaQBgg==
+X-Google-Smtp-Source: AK7set9+CAhMtLEgvAgzUcAfqrgmuEL7isu84NLQBw1S2LtfyWANSAlBjT/xveWdfYFLX4MYX/jmRQ==
+X-Received: by 2002:aa7:9ae5:0:b0:627:fb1c:3af4 with SMTP id y5-20020aa79ae5000000b00627fb1c3af4mr342235pfp.21.1679350715864;
+        Mon, 20 Mar 2023 15:18:35 -0700 (PDT)
 Received: from p14s.cg.shawcable.net ([2604:3d09:148c:c800:4ab5:5131:bafc:4428])
-        by smtp.gmail.com with ESMTPSA id e15-20020a62aa0f000000b006259e883ee9sm4459196pff.189.2023.03.20.15.18.32
+        by smtp.gmail.com with ESMTPSA id e15-20020a62aa0f000000b006259e883ee9sm4459196pff.189.2023.03.20.15.18.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 15:18:33 -0700 (PDT)
+        Mon, 20 Mar 2023 15:18:35 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     andersson@kernel.org
 Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
@@ -59,9 +59,9 @@ Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
         arnaud.pouliquen@st.com, hongxing.zhu@nxp.com, peng.fan@nxp.com,
         shengjiu.wang@nxp.com, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] remoteproc: rcar_rproc: Call of_node_put() on iteration error
-Date:   Mon, 20 Mar 2023 16:18:24 -0600
-Message-Id: <20230320221826.2728078-4-mathieu.poirier@linaro.org>
+Subject: [PATCH 4/5] remoteproc: imx_rproc: Call of_node_put() on iteration error
+Date:   Mon, 20 Mar 2023 16:18:25 -0600
+Message-Id: <20230320221826.2728078-5-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
 References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
@@ -75,41 +75,34 @@ Function of_phandle_iterator_next() calls of_node_put() on the last
 device_node it iterated over, but when the loop exits prematurely it has
 to be called explicitly.
 
-Fixes: 285892a74f13 ("remoteproc: Add Renesas rcar driver")
+Fixes: b29b4249f8f0 ("remoteproc: imx_rproc: add i.MX specific parse fw hook")
 Cc: stable@vger.kernel.org
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/remoteproc/rcar_rproc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/remoteproc/imx_rproc.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-index aa86154109c7..1ff2a73ade90 100644
---- a/drivers/remoteproc/rcar_rproc.c
-+++ b/drivers/remoteproc/rcar_rproc.c
-@@ -62,13 +62,16 @@ static int rcar_rproc_prepare(struct rproc *rproc)
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 9fc978e0393c..0ab840dc7e97 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -541,6 +541,7 @@ static int imx_rproc_prepare(struct rproc *rproc)
  
  		rmem = of_reserved_mem_lookup(it.node);
  		if (!rmem) {
 +			of_node_put(it.node);
- 			dev_err(&rproc->dev,
- 				"unable to acquire memory-region\n");
+ 			dev_err(priv->dev, "unable to acquire memory-region\n");
  			return -EINVAL;
  		}
- 
--		if (rmem->base > U32_MAX)
-+		if (rmem->base > U32_MAX) {
-+			of_node_put(it.node);
- 			return -EINVAL;
-+		}
- 
- 		/* No need to translate pa to da, R-Car use same map */
- 		da = rmem->base;
-@@ -79,8 +82,10 @@ static int rcar_rproc_prepare(struct rproc *rproc)
- 					   rcar_rproc_mem_release,
+@@ -553,10 +554,12 @@ static int imx_rproc_prepare(struct rproc *rproc)
+ 					   imx_rproc_mem_alloc, imx_rproc_mem_release,
  					   it.node->name);
  
--		if (!mem)
-+		if (!mem) {
+-		if (mem)
++		if (mem) {
+ 			rproc_coredump_add_segment(rproc, da, rmem->size);
+-		else
++		} else {
 +			of_node_put(it.node);
  			return -ENOMEM;
 +		}
