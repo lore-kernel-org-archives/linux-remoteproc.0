@@ -2,126 +2,79 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55925C7619A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 22:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D842C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 23:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbjCTWUw (ORCPT
+        id S229676AbjCTXCR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 18:20:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42756 "EHLO
+        Mon, 20 Mar 2023 19:02:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229687AbjCTWUY (ORCPT
+        with ESMTP id S229869AbjCTXCQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Mar 2023 18:20:24 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F2637B71
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Mar 2023 15:18:47 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id i15so3858816pfo.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Mar 2023 15:18:47 -0700 (PDT)
+        Mon, 20 Mar 2023 19:02:16 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C582D2A998;
+        Mon, 20 Mar 2023 16:02:14 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id w4so6066768plg.9;
+        Mon, 20 Mar 2023 16:02:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679350717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20210112; t=1679353334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=s/LgoSGK+GmE6/EU93H8+NXO4ccsf9u+CovKfDKWumc=;
-        b=Juoyvhyhe4EVorBJbKfJG5cW+0Su9a6XcIbbfOnxvZcr96R7XCEUjwKzp651fA4P3B
-         xQTMyT2BESSeUn79Pnqz6OzC9LUrZzUtdLXqACH4HLqOKxrIL2/NZdJvjGJGXpsLtYAE
-         nw/AVLyzWI6JfiCXqm/EczR9AWvVtpUC9CXwXegc3rAI8RNdOTls4xpkQza4+o/no/6Y
-         7hr3Fti1zNNrz37wUl546X8sx1IB46mbLF2BrQqeqPEYcwljyanNJ2xpNTqfBtIq2KtA
-         bFHJc5KVtP416bgv6YlM5DHuQ600W/290Wiq5+8gdOH8t14XYl3jAr9ENimoM/Yo8Xgd
-         DXyA==
+        bh=pQTnX0bMfKbYGJwMixkUOT6RG4X+okEUFeKSoqg7iTo=;
+        b=c9FZ2V3ReMf/oMa6/BuHFlFCRR4IRu2XhLE8LdXnMuS4CmtPf6MoQdJf2e+pPee72B
+         p9yZTdfvqUO2Rx9OJEjQ6QCGdWrhueWbl1zEiZD43rYbMCnDB8VdffX+89rRtAxKx2nE
+         z2vrZ9UVMMqVipvOvme5XzqfocLlq/hEXSNvOm2f4Gx1xY919xqJILpyGnxqomabPhmi
+         6qXbNpEiwR/onTQ8rHezcIlHMdQ5Dj4IlserMqyc5/9Wjtg8pVCoyfluDqFm9P8pR4hP
+         1flLyjyFxp8dgChxehMX77r0a8KPEGa6UR1wP8fRHFwMjjcx2jiZFZq+hrK9NH7t307M
+         QxOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679350717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20210112; t=1679353334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=s/LgoSGK+GmE6/EU93H8+NXO4ccsf9u+CovKfDKWumc=;
-        b=HlLR1V6/FrABCurt7FgDolCiaCeChAjyjKAquSzt5KnIticyslaQr1D73uNrgGmJ9n
-         tRtVeyvH50ScFkXyIUcn1F2v+fLznvU5O8xqFTei2AAZpjpzacTu02+jI8KGaqssUHX6
-         TT1FFJOmY/SUBlP4teS5yL0d9o9A4FwNCRgNzl3KqE7C+53HJ2lw3Jg5nBiAjObvXmkr
-         kVG3Odwb2ANZs/AXZ8D/Xn3EwZkAMriQMGMHVxLu/sfFlHZKS/CbsJHcXU2XUD849E/d
-         r/cicniGj4ZTxc5a5oyh4ohbGAOx6o0ojjmCHyIht7ymrGexPslTzxW68bnYp1mxoPD3
-         zvJw==
-X-Gm-Message-State: AO0yUKU6PoAnU6yP9nsvWRN2vAFSlukIsj1AyHGWZYYhaWz7WsXCSJqT
-        QVpbubn2Ex0JcvMuXpfZfqAIJQ==
-X-Google-Smtp-Source: AK7set9KHdWfT5WQ73Y09ku7vZjlXSifntdEtuo1i/gz6GfDAugJDKSdSdauloxms2X4Yf1Bm9z7HQ==
-X-Received: by 2002:a62:7910:0:b0:625:d630:4e1b with SMTP id u16-20020a627910000000b00625d6304e1bmr293831pfc.31.1679350717432;
-        Mon, 20 Mar 2023 15:18:37 -0700 (PDT)
-Received: from p14s.cg.shawcable.net ([2604:3d09:148c:c800:4ab5:5131:bafc:4428])
-        by smtp.gmail.com with ESMTPSA id e15-20020a62aa0f000000b006259e883ee9sm4459196pff.189.2023.03.20.15.18.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Mar 2023 15:18:36 -0700 (PDT)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     andersson@kernel.org
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, patrice.chotard@foss.st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        arnaud.pouliquen@st.com, hongxing.zhu@nxp.com, peng.fan@nxp.com,
-        shengjiu.wang@nxp.com, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] retmoteproc: imx_dsp_rproc: Call of_node_put() on iteration error
-Date:   Mon, 20 Mar 2023 16:18:26 -0600
-Message-Id: <20230320221826.2728078-6-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
-References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
+        bh=pQTnX0bMfKbYGJwMixkUOT6RG4X+okEUFeKSoqg7iTo=;
+        b=dNI6vmF+R4ydgnSt3GJlH50pOZBdQFm3PnK4GCI4lDLY7cd1iDC8/HiWy9VJm1h+Os
+         W2SLem199n4bSB37QEqt2FkijsQ8i9pyF298RRHlVDR0N7QhmtuW4OgIXpIpBGCNdpi/
+         fPlzbelBlKDDqPgVYb0a4WVSvdP59eZ2cO0Fp+QTX4hhb3lfBhJudqoN7+p8OxUglGq7
+         9LSimM1y5y1Wj6XNMH3xXyHIypxaILgEh+R+y1Z2wuC9kE8Z/PRRZx3LZpCyfc1/7c2g
+         jtgIzHiUt8Q1jsHHwUG+5NBkHcx/fy2Gkn8qmtK+iUPyJgirMpqWcIKjOTw+uC48yplU
+         SzyA==
+X-Gm-Message-State: AO0yUKVlELvGbne10DlP6ufSFESpXMOtC5hxWJNNzLVmIHuhPYlU/OkO
+        SQjSxhv5sBDH34YpPKO7FOqMYXgyslZUxspnPos=
+X-Google-Smtp-Source: AK7set/2NdZhhmQO5d6e9xSkCffYHJdBbggPTveFkSs06tcd9zy4WRFcK2Gmk3YxchcdNwrKviVCcWEkAKuzyKT8e1g=
+X-Received: by 2002:a17:90a:6082:b0:23b:36cc:f347 with SMTP id
+ z2-20020a17090a608200b0023b36ccf347mr82605pji.9.1679353333727; Mon, 20 Mar
+ 2023 16:02:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230320221826.2728078-1-mathieu.poirier@linaro.org> <20230320221826.2728078-6-mathieu.poirier@linaro.org>
+In-Reply-To: <20230320221826.2728078-6-mathieu.poirier@linaro.org>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 20 Mar 2023 20:02:04 -0300
+Message-ID: <CAOMZO5Dh0mQEhjT2Wx_T9Kf9aTkNpJ7PbMfocQ24sh+yGtw+ww@mail.gmail.com>
+Subject: Re: [PATCH 5/5] retmoteproc: imx_dsp_rproc: Call of_node_put() on
+ iteration error
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        patrice.chotard@foss.st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, arnaud.pouliquen@st.com,
+        hongxing.zhu@nxp.com, peng.fan@nxp.com, shengjiu.wang@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Function of_phandle_iterator_next() calls of_node_put() on the last
-device_node it iterated over, but when the loop exits prematurely it has
-to be called explicitly.
+On Mon, Mar 20, 2023 at 7:18=E2=80=AFPM Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Function of_phandle_iterator_next() calls of_node_put() on the last
+> device_node it iterated over, but when the loop exits prematurely it has
+> to be called explicitly.
 
-Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver for DSP on i.MX")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index b8f268d41773..21759d9e5b7b 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -650,15 +650,19 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 
- 		rmem = of_reserved_mem_lookup(it.node);
- 		if (!rmem) {
-+			of_node_put(it.node);
- 			dev_err(dev, "unable to acquire memory-region\n");
- 			return -EINVAL;
- 		}
- 
--		if (imx_dsp_rproc_sys_to_da(priv, rmem->base, rmem->size, &da))
-+		if (imx_dsp_rproc_sys_to_da(priv, rmem->base, rmem->size, &da)) {
-+			of_node_put(it.node);
- 			return -EINVAL;
-+		}
- 
- 		cpu_addr = devm_ioremap_wc(dev, rmem->base, rmem->size);
- 		if (!cpu_addr) {
-+			of_node_put(it.node);
- 			dev_err(dev, "failed to map memory %p\n", &rmem->base);
- 			return -ENOMEM;
- 		}
-@@ -667,10 +671,12 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)rmem->base,
- 					   rmem->size, da, NULL, NULL, it.node->name);
- 
--		if (mem)
-+		if (mem) {
- 			rproc_coredump_add_segment(rproc, da, rmem->size);
--		else
-+		} else {
-+			of_node_put(it.node);
- 			return -ENOMEM;
-+		}
- 
- 		rproc_add_carveout(rproc, mem);
- 	}
--- 
-2.25.1
-
+Typo on the Subject: s/retmoteproc/remoteproc
