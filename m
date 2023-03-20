@@ -2,514 +2,167 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E154C7618A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 06:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0A2C77B60
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 11:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229676AbjCTGMv (ORCPT
+        id S230332AbjCTLLY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 02:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37790 "EHLO
+        Mon, 20 Mar 2023 07:11:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229655AbjCTGMu (ORCPT
+        with ESMTP id S229735AbjCTLLB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Mar 2023 02:12:50 -0400
-Received: from mail.nfschina.com (unknown [42.101.60.237])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB1B01CBE4;
-        Sun, 19 Mar 2023 23:12:47 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id D93741A00A80;
-        Mon, 20 Mar 2023 14:12:49 +0800 (CST)
-X-Virus-Scanned: amavisd-new at nfschina.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Er_DFi4zZtbX; Mon, 20 Mar 2023 14:12:48 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: yuzhe@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id BE29D1A009AC;
-        Mon, 20 Mar 2023 14:12:47 +0800 (CST)
-From:   Yu Zhe <yuzhe@nfschina.com>
-To:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        angelogioacchino.delregno@collabora.com, agross@kernel.org,
-        konrad.dybcio@linaro.org, patrice.chotard@foss.st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: [PATCH v2] remoteproc: remove unnecessary (void*) conversions
-Date:   Mon, 20 Mar 2023 14:11:57 +0800
-Message-Id: <20230320061157.29660-1-yuzhe@nfschina.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20230316091902.20765-1-yuzhe@nfschina.com>
-References: <20230316091902.20765-1-yuzhe@nfschina.com>
+        Mon, 20 Mar 2023 07:11:01 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEE8B28859;
+        Mon, 20 Mar 2023 04:07:12 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32K97Gml001628;
+        Mon, 20 Mar 2023 11:06:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : references : date : in-reply-to : message-id : content-type :
+ mime-version; s=corp-2022-7-12;
+ bh=r8/bozNFzpCmQqSJANyqu1fhalBv9FTa0bk/880Aufo=;
+ b=xN8q+XTs3OXFAOM0zaaQeTN0ftQsD7O3Y0Sg0IkGXIQEja3p6DDHwUtzHB94pjo/z8KP
+ dSMiUnUwpONXtQI2w7ZK6D+deIQSPYSKvg5aTKS6tMsQYbzavknFZAzO/3x8+bNwBkzp
+ F8+1IdbHY/tDBidaqG03WjyXYvOWar3i/WjesheK41wc6lybFZYRlRF8BYP5wbHaCth8
+ osG+Ef/WhWPDgqjRAwPq1y3NEO0IB1Ej/by2WKYFKU2j74MXbu1r54wVjwpd/M12XkdY
+ UyES98V0IjkkC2BDpMfDtdJubbjVA33J/1LR3cNQ47JpzFgVBjKTm0ezQ86DgYok1Bcm yw== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3pd56au1f1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Mar 2023 11:06:52 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 32KAb7uA001353;
+        Mon, 20 Mar 2023 11:06:52 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2048.outbound.protection.outlook.com [104.47.66.48])
+        by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3pd3r43mkx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 20 Mar 2023 11:06:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZdTM7LDe2r3+uqnXoBrGoHLFZJ8a5vJABv2MUh/HJg6TkEV+0Ck0Jz+LbGGz259Eof2/bvpJbRH9RRiBDsAy9tWJ41REPz0wXmwrOETAFk03CeKe4DnWXmhM5XtzUHz6+6luiZEqF+say4SJ++e8t4v4qlVY0MHUUzVFkUVK5h4G60/IPZGdkDVfFU8ayjvYUpyj3fRjWG/vzNQwkqzxrJGH0m/gbEceKiqrtJeurUsJvmiGjhLWSxwQhdRbtSRxmULN3Q9Rt3mGgOUWTDBfy82BozBpl0x4Cm23ZqzA3V1+qU3sOLQmJYzNSYxpT5Xf0ZkioijI0KHhi9uEYyVrOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r8/bozNFzpCmQqSJANyqu1fhalBv9FTa0bk/880Aufo=;
+ b=X+xppEqEr4w5ag4xpfI6vHxSCqL5ikWv7Y11h6IKspIvCn3mAMRSWRDjV2lq4JwDMjJq4xeIh61pkzSNvza5p3KqBi/0j5hpKgeJ4WvlRJq6JONT4Gq6CwUIj3JsoP15hpXI2n68Ng1o8woE2XUHRG92BPhR44nWhB+3Tte3dqfGhlY/v3C8dnDfrX06OIabKR5F4A9UfzG6ZqI+DbzDKV76CiFxqc4bkYWpRORqUmrVO7M3bkN4qlocVguqvGPr3HezbDBGvpDJdT03h55zzgJGzfdNCvlGmbKrfsMcStycZOv+Zo07aBojLwaIVSTtY9lYWXAqCxy0eHk3xTh1jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r8/bozNFzpCmQqSJANyqu1fhalBv9FTa0bk/880Aufo=;
+ b=m+wI54LtyUcGOPmnariC3eoYpFvVQR3kCGqtZ+3g5h+L+hXR1RcZYS9+cHqf9riWPPknUhjrdIysXGb2H8LqDR6K6x1kOPWOLn37/QJ+IfSw5r5dvlHgz03Y9x9l6SmCLjt8bmsOp8jcZaQhxO4/ZlzflD7eHSRj2HjrIY7/CAw=
+Received: from DS0PR10MB6798.namprd10.prod.outlook.com (2603:10b6:8:13c::20)
+ by SA2PR10MB4697.namprd10.prod.outlook.com (2603:10b6:806:112::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Mon, 20 Mar
+ 2023 11:06:50 +0000
+Received: from DS0PR10MB6798.namprd10.prod.outlook.com
+ ([fe80::d0f7:e4fd:bd4:b760]) by DS0PR10MB6798.namprd10.prod.outlook.com
+ ([fe80::d0f7:e4fd:bd4:b760%3]) with mapi id 15.20.6178.037; Mon, 20 Mar 2023
+ 11:06:46 +0000
+From:   Nick Alcock <nick.alcock@oracle.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Nick Alcock <nick.alcock@oracle.com>, mcgrof@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-trace-devel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/20] MODULE_LICENSE removals, fifth tranche
+References: <20230228130215.289081-1-nick.alcock@oracle.com>
+        <CAMuHMdUo3BkELZzhr0yVF7eU53_h757m1QWN8fQeLWKe5fCZDA@mail.gmail.com>
+Emacs:  it's all fun and games, until somebody tries to edit a file.
+Date:   Mon, 20 Mar 2023 11:06:45 +0000
+In-Reply-To: <CAMuHMdUo3BkELZzhr0yVF7eU53_h757m1QWN8fQeLWKe5fCZDA@mail.gmail.com>
+        (Geert Uytterhoeven's message of "Tue, 28 Feb 2023 14:47:48 +0100")
+Message-ID: <87bkknu1fe.fsf@esperi.org.uk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.1.91 (gnu/linux)
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P123CA0027.GBRP123.PROD.OUTLOOK.COM (2603:10a6:600::15)
+ To DS0PR10MB6798.namprd10.prod.outlook.com (2603:10b6:8:13c::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB6798:EE_|SA2PR10MB4697:EE_
+X-MS-Office365-Filtering-Correlation-Id: 831f2cf0-bd42-4162-03be-08db293331c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0SKG6CwLNPW97WlGFuh5cwYyRvkX1ky6IolyR6E6AzyDBaolePNAhIJ4Oxn/ot7pMk+t/ZFWzX46rBeRiI9CN1n2BAfQN+Q0lvGO0hBwEXEe6emoE9wciX48qZ+k9gIjIT9ST7mujzduwOUiPxqhFZpX982S5+9OiDgewd5AmnRd9NmiHMVoDABdJC4Bv2tjtdwHq8XdE9iNM6Zjl8WA/xvdoqedgM0cLX6fQmYH3KHcF27OZ42vxDdbSw2zcHmrTIDVr1tpCsKRcqRdZkydj+RDj1/WRq0wpOCsl9q8G621A9nCgekYFVQsOTfnn5UZvdJFVLE9i2CErE933Lgj6EGoWz3BXST7o40jt8hBHMqSacIO2fqUeG67KZ/mSMEI+BCck/csDrfhgRykGaHWBnUyozGhM0DU9LJtii1LtRmrMBxfiaofBWEL/BLEZJYmbYCAvwzdv7GYqtJDC7SGOXELThZbZ/Wg4AazFowdV+7igCnxRbHLtZIkG19Z76gZYFBg9DvPQexx2j9Pi4tWzctar6UnwIoMj+z+hYj3X/LMCn+2l8kC1+su9pzX9ghupeHTdeAt0Esyq0k5JzYgV49IY9j0+y/otyuU4NsZWbz3xSip2t6ltdgIX6uiTvkfXyzqeD4oZd2wS+r3Bhht1g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB6798.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(136003)(376002)(396003)(346002)(39860400002)(366004)(451199018)(186003)(6486002)(4326008)(478600001)(316002)(6916009)(66946007)(66556008)(66476007)(9686003)(6506007)(6512007)(8676002)(53546011)(41300700001)(8936002)(44832011)(7416002)(4744005)(5660300002)(38100700002)(2906002)(86362001)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TkdOhhGEdMgPsTqA0lnJPdL6bEWQJEoIc+Ulftnv2OSO+W7NBVFGKBt0Aqo7?=
+ =?us-ascii?Q?8DetqW2ExWgyQAGm12b7dyZ4Cgl1HppEpCBRbRTJtpq98/Mo94r29cHVwosS?=
+ =?us-ascii?Q?2vXgqaorApA+1cDn4Z2Bm/3JrGBXN0ZTQ7ZS/M7nlPzdB5Z2bdAJSiDCJMkq?=
+ =?us-ascii?Q?EQyaeHxljZKTaEythCp6zSZnLGrR1qfgCfEeqpR/Hx1/YrHkQ5ajpVvL4oYd?=
+ =?us-ascii?Q?1FyMQ7ZAgDiOP4jxpW02AGVcCaKCwj+MUS9h+3Y5ApsQZoVSYUjRZA5HiiX5?=
+ =?us-ascii?Q?GTyI2vwPM/pGaLGGX8cnBxyu0GmNd6PFjjsje8oK8oK9Fp6IUGAoov9phMqb?=
+ =?us-ascii?Q?6NbbFbdgzauer+siG+8P3qhNl2QRBZk+HGhhqNNUZz7leYvGRt5841qehhQx?=
+ =?us-ascii?Q?XqUwQVTSwW00Eoy1Iwcr2P8NT9m4/23DerhspAglSnuyGtOULeUqTDilTztu?=
+ =?us-ascii?Q?7MD76j5rEProtV6QdFYjjO0ZCjVyYgEtldF9FRhVFf1/6lxizjS4qVFz+6pc?=
+ =?us-ascii?Q?PnaNfDsjH9pbZWzEnllDQYgA4LzP8gZ6z0nnfLoQ68gaLI+MzhkCxtDz3Du6?=
+ =?us-ascii?Q?1mt24BgqGoa1bgyaNoF0a+2anZqnh3CQmx5UgpHe+lq1SVxWb96KcL77VFrz?=
+ =?us-ascii?Q?FPeHS4xx8lZMRpqhJ+zLj04I2sJYGv16nOuGvwf26XUpT10QtBgAkXhF+Ly2?=
+ =?us-ascii?Q?/eXTAjisDbikeTQHbmi7cy99nJ3dTQi5TjWhk/AhHAuh0wKrl84WoPoEjDNW?=
+ =?us-ascii?Q?ycYsxNNNBKTD3mPI6wSRdRZ/P3Ul5v+mq7ooT8GMC9dJ9AyYAluATgUpZVnq?=
+ =?us-ascii?Q?cv90AcboCnUQghJxithDnGUrXfIV1a1+9t8gN9LK3kxwz6ruKXT0RRm7/Nbq?=
+ =?us-ascii?Q?dbvYbwLLRPPD6xcqtdhymMC6Cap9Pz4Y+FQaVPipeIAGtmf64Qal6RQQMMBG?=
+ =?us-ascii?Q?GiT2XGGSPbxkynIfdsE6CbMCOw8ECiYXS7yyUpJ+z8dngKYd620j6QIfoWK2?=
+ =?us-ascii?Q?Ppexfm61YSnCqgLsHt6tIP4RbJ5deeoL8nBtT/tQFruLhM0QMmWPWKdX9sB6?=
+ =?us-ascii?Q?TGhma+EcZigz+oqrkiWefeIl59hMRogX6H8JDqtlF2iJzNOpCWTH3zQufumX?=
+ =?us-ascii?Q?qoRBun2yF1vu7vZGwpGp4Cg1bIdHV7ZVQ500/82B5WxjDzygv6krUn02L85n?=
+ =?us-ascii?Q?c1EuOVGXj/4NZGsWoTI/slSoa1wRhJwBiy7HwVJn9L/9DLLUUNM1W4mkDzgk?=
+ =?us-ascii?Q?kdoxdAaK7bKJCyWuEfWD78Gnq5YKpMvyF9V8E+NBSNt7Jcu5E5ukCi1TOHbS?=
+ =?us-ascii?Q?qOAvjm6D2rBFgPuGDXFYntCsxXm7XYr8EP4wHDgGGiIMPlauFLaKRlF7+Iad?=
+ =?us-ascii?Q?dya1y/JKohRuTX7dDX1HFdNb8nYwW4+2WY5C2C7X+FKVvCiCL2O4PveqrUMd?=
+ =?us-ascii?Q?kWIGK9W4bUZDnOInysJO54qdncFbLzU0Ox5IRpbnxlER/AXGQCb9xtd0foGV?=
+ =?us-ascii?Q?WO3qPuDcYlx5PxwJieqc9wWIMZr4OR6kn4qOjdEV0TPdsz5bq2XUatGYlCSF?=
+ =?us-ascii?Q?1UmTbkLTRA4/La8tpRh7HQWMKhLgSacerzdQnah2TWu7AN6b2eAnKigj8njr?=
+ =?us-ascii?Q?wA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: FUOBvg12UBvNculayVu/OGXkMezSGEA2SFWV3Iqp+bJ6Iahkrl+AfHWh/SfDDtXHu7l+bp+BqFvcdLBtEGwqpSB9CP+bnmMi/2OkThmOUde1JGd7ctE2YMOSeLF5JSjZNx0mEGdr94jfwsJ+FVWmSP/ixq4wWgRxMcbkqc3hFfVoyYotudYJ7u96jl/pN448RSYXSHIVJjaPQv5clHDoLInNQgrtHMWMM1V6+ACKkUVT7ImxoUnHvFYDDVGGviu1yD3a1tdLZf78b7Wr1uDCZPvzS6gbsx0NBD8R3NGwg/d46RZrYa/j5rEo5naEL1vBc6hW85yQTJtjmjo9CCZYhtFLAvI7eWsm1299XZ9nsN7l8C6W5+sPxdvUg2euZFHAvXoBoEcxyCJVrtNs5A3+jIE5UnCxx5OXZpcFctjK6zWOqBtdWI9ZUqjoJfkOvnlqdrgflKerQUIQH698SC1GKJR00ju/MAvzFkJt2Dut8sHvaHaa2cH/CdHQp+YBwl4gKAkyEfcdAL1ThSO7dYzdf87Exb15yDukevp4fTm8Y9XS9OyKyv9X8aiFwHrnQ36D/uTTNLFeArO7vyvuc6XBHPVQzs4pOpPtcfWKu/GAfK7VFPelLxL/HmPAdaDAO3Ut/6k9FsqEC1KUFWi4D3SEuZQuAlSfxPRKkdtMJg5JMcNo3P0cNJ6usmda8L0UuMCEPO6sjZQ0Rky/K7AOOqHGXA6o9S0uAuXKPWhU3Kc+MS0edULmKtcyIeoMvTOScyo77jTdwxHSpK+/F1yFeYZywhXY3gdXdmKdIik91dLCuXuheYLyGQ6eA3zmnF5ZwBNJsvYDaTa128oxzVqOHSLKiI0mLxmQ9bB55fpOFeDTEPhgYzVJdyeoUC7yVU69oIiGkJTwGHbMMFB21fsK7Rk2mw==
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 831f2cf0-bd42-4162-03be-08db293331c8
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB6798.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2023 11:06:45.9882
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TGM51PqgarzpmwIIEhKA6LBb3zWgtfnuWUB4dUmTRda4LjrrcFppgz/MSRbvWdwnLYvmn2jTaykm+h0xQ9kX7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR10MB4697
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-20_07,2023-03-20_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 mlxscore=0
+ mlxlogscore=999 malwarescore=0 suspectscore=0 adultscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
+ definitions=main-2303200094
+X-Proofpoint-ORIG-GUID: d9hqLDi4hb1gdRQwg7NVZuHJOMIolfpd
+X-Proofpoint-GUID: d9hqLDi4hb1gdRQwg7NVZuHJOMIolfpd
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Pointer variables of void * type do not require type cast.
+On 28 Feb 2023, Geert Uytterhoeven outgrape:
 
-Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
----
- drivers/remoteproc/da8xx_remoteproc.c     | 12 ++++++------
- drivers/remoteproc/mtk_scp.c              | 12 ++++++------
- drivers/remoteproc/qcom_q6v5_adsp.c       | 10 +++++-----
- drivers/remoteproc/qcom_q6v5_mss.c        |  8 ++++----
- drivers/remoteproc/qcom_q6v5_pas.c        | 14 +++++++-------
- drivers/remoteproc/qcom_wcnss.c           | 10 +++++-----
- drivers/remoteproc/remoteproc_core.c      |  2 +-
- drivers/remoteproc/st_remoteproc.c        |  2 +-
- drivers/remoteproc/stm32_rproc.c          |  2 +-
- drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 +-
- drivers/remoteproc/xlnx_r5_remoteproc.c   | 16 ++++++++--------
- 12 files changed, 46 insertions(+), 46 deletions(-)
+> On Tue, Feb 28, 2023 at 2:05 PM Nick Alcock <nick.alcock@oracle.com> wrote:
+>> This series, based on current modules-next, is part of a treewide cleanup
+>> suggested by Luis Chamberlain, to remove the LICENSE_MODULE usage from
+>> files/objects that are not tristate.  Due to recent changes to kbuild, these
+>> uses are now problematic.  See the commit logs for more details.
+>
+> Does this mean you expect us to queue them for v6.3?
+> Thanks!
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 98e0be9476a4..768217f0f5cd 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -84,7 +84,7 @@ struct da8xx_rproc {
-  */
- static irqreturn_t handle_event(int irq, void *p)
- {
--	struct rproc *rproc = (struct rproc *)p;
-+	struct rproc *rproc = p;
- 
- 	/* Process incoming buffers on all our vrings */
- 	rproc_vq_interrupt(rproc, 0);
-@@ -104,8 +104,8 @@ static irqreturn_t handle_event(int irq, void *p)
-  */
- static irqreturn_t da8xx_rproc_callback(int irq, void *p)
- {
--	struct rproc *rproc = (struct rproc *)p;
--	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-+	struct rproc *rproc = p;
-+	struct da8xx_rproc *drproc = rproc->priv;
- 	u32 chipsig;
- 
- 	chipsig = readl(drproc->chipsig);
-@@ -133,7 +133,7 @@ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
- static int da8xx_rproc_start(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
--	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-+	struct da8xx_rproc *drproc = rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
- 	struct reset_control *dsp_reset = drproc->dsp_reset;
- 	int ret;
-@@ -183,7 +183,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
- /* kick a virtqueue */
- static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
- {
--	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-+	struct da8xx_rproc *drproc = rproc->priv;
- 
- 	/* Interrupt remote proc */
- 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
-@@ -360,7 +360,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- static int da8xx_rproc_remove(struct platform_device *pdev)
- {
- 	struct rproc *rproc = platform_get_drvdata(pdev);
--	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-+	struct da8xx_rproc *drproc = rproc->priv;
- 	struct device *dev = &pdev->dev;
- 
- 	/*
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 0861b76f185f..e1d93e63d7df 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -74,8 +74,8 @@ static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
- 
- static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
- {
--	struct mtk_scp *scp = (struct mtk_scp *)priv;
--	struct scp_run *run = (struct scp_run *)data;
-+	struct mtk_scp *scp = priv;
-+	struct scp_run *run = data;
- 
- 	scp->run.signaled = run->signaled;
- 	strscpy(scp->run.fw_ver, run->fw_ver, SCP_FW_VER_LEN);
-@@ -498,7 +498,7 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 
- static int scp_start(struct rproc *rproc)
- {
--	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+	struct mtk_scp *scp = rproc->priv;
- 	struct device *dev = scp->dev;
- 	struct scp_run *run = &scp->run;
- 	int ret;
-@@ -587,7 +587,7 @@ static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
- 
- static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
- {
--	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+	struct mtk_scp *scp = rproc->priv;
- 
- 	return scp->data->scp_da_to_va(scp, da, len);
- }
-@@ -627,7 +627,7 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
- 
- static int scp_stop(struct rproc *rproc)
- {
--	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-+	struct mtk_scp *scp = rproc->priv;
- 	int ret;
- 
- 	ret = clk_prepare_enable(scp->clk);
-@@ -829,7 +829,7 @@ static int scp_probe(struct platform_device *pdev)
- 	if (!rproc)
- 		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
- 
--	scp = (struct mtk_scp *)rproc->priv;
-+	scp = rproc->priv;
- 	scp->rproc = rproc;
- 	scp->dev = dev;
- 	scp->data = of_device_get_match_data(dev);
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 08d8dad22ca7..d546ab9dc141 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -321,7 +321,7 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
- 
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int ret;
- 
- 	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-@@ -379,7 +379,7 @@ static int adsp_map_carveout(struct rproc *rproc)
- 
- static int adsp_start(struct rproc *rproc)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int ret;
- 	unsigned int val;
- 
-@@ -469,7 +469,7 @@ static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
- 
- static int adsp_stop(struct rproc *rproc)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int handover;
- 	int ret;
- 
-@@ -492,7 +492,7 @@ static int adsp_stop(struct rproc *rproc)
- 
- static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int offset;
- 
- 	offset = da - adsp->mem_reloc;
-@@ -696,7 +696,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	rproc->has_iommu = desc->has_iommu;
- 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
--	adsp = (struct qcom_adsp *)rproc->priv;
-+	adsp = rproc->priv;
- 	adsp->dev = &pdev->dev;
- 	adsp->rproc = rproc;
- 	adsp->info_name = desc->sysmon_name;
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index ab053084f7a2..e7a67c8c16a0 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1562,7 +1562,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
- 
- static int q6v5_start(struct rproc *rproc)
- {
--	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	struct q6v5 *qproc = rproc->priv;
- 	int xfermemop_ret;
- 	int ret;
- 
-@@ -1604,7 +1604,7 @@ static int q6v5_start(struct rproc *rproc)
- 
- static int q6v5_stop(struct rproc *rproc)
- {
--	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	struct q6v5 *qproc = rproc->priv;
- 	int ret;
- 
- 	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
-@@ -1662,7 +1662,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
- 
- static unsigned long q6v5_panic(struct rproc *rproc)
- {
--	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-+	struct q6v5 *qproc = rproc->priv;
- 
- 	return qcom_q6v5_panic(&qproc->q6v5);
- }
-@@ -1977,7 +1977,7 @@ static int q6v5_probe(struct platform_device *pdev)
- 	rproc->auto_boot = false;
- 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
--	qproc = (struct q6v5 *)rproc->priv;
-+	qproc = rproc->priv;
- 	qproc->dev = &pdev->dev;
- 	qproc->rproc = rproc;
- 	qproc->hexagon_mdt_image = "modem.mdt";
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 0871108fb4dc..8eec88119fdd 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -186,7 +186,7 @@ static int adsp_shutdown_poll_decrypt(struct qcom_adsp *adsp)
- 
- static int adsp_unprepare(struct rproc *rproc)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 
- 	/*
- 	 * adsp_load() did pass pas_metadata to the SCM driver for storing
-@@ -203,7 +203,7 @@ static int adsp_unprepare(struct rproc *rproc)
- 
- static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int ret;
- 
- 	/* Store firmware handle to be used in adsp_start() */
-@@ -244,7 +244,7 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
- 
- static int adsp_start(struct rproc *rproc)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int ret;
- 
- 	ret = qcom_q6v5_prepare(&adsp->q6v5);
-@@ -360,7 +360,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
- 
- static int adsp_stop(struct rproc *rproc)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int handover;
- 	int ret;
- 
-@@ -390,7 +390,7 @@ static int adsp_stop(struct rproc *rproc)
- 
- static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 	int offset;
- 
- 	offset = da - adsp->mem_reloc;
-@@ -405,7 +405,7 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iom
- 
- static unsigned long adsp_panic(struct rproc *rproc)
- {
--	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-+	struct qcom_adsp *adsp = rproc->priv;
- 
- 	return qcom_q6v5_panic(&adsp->q6v5);
- }
-@@ -683,7 +683,7 @@ static int adsp_probe(struct platform_device *pdev)
- 	rproc->auto_boot = desc->auto_boot;
- 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
--	adsp = (struct qcom_adsp *)rproc->priv;
-+	adsp = rproc->priv;
- 	adsp->dev = &pdev->dev;
- 	adsp->rproc = rproc;
- 	adsp->minidump_id = desc->minidump_id;
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 9d4d04fff8c6..0fc317265064 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -154,7 +154,7 @@ static const struct wcnss_data pronto_v3_data = {
- 
- static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
- {
--	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-+	struct qcom_wcnss *wcnss = rproc->priv;
- 	int ret;
- 
- 	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
-@@ -227,7 +227,7 @@ static void wcnss_configure_iris(struct qcom_wcnss *wcnss)
- 
- static int wcnss_start(struct rproc *rproc)
- {
--	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-+	struct qcom_wcnss *wcnss = rproc->priv;
- 	int ret, i;
- 
- 	mutex_lock(&wcnss->iris_lock);
-@@ -293,7 +293,7 @@ static int wcnss_start(struct rproc *rproc)
- 
- static int wcnss_stop(struct rproc *rproc)
- {
--	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-+	struct qcom_wcnss *wcnss = rproc->priv;
- 	int ret;
- 
- 	if (wcnss->state) {
-@@ -320,7 +320,7 @@ static int wcnss_stop(struct rproc *rproc)
- 
- static void *wcnss_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
- {
--	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-+	struct qcom_wcnss *wcnss = rproc->priv;
- 	int offset;
- 
- 	offset = da - wcnss->mem_reloc;
-@@ -566,7 +566,7 @@ static int wcnss_probe(struct platform_device *pdev)
- 	}
- 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
- 
--	wcnss = (struct qcom_wcnss *)rproc->priv;
-+	wcnss = rproc->priv;
- 	wcnss->dev = &pdev->dev;
- 	wcnss->rproc = rproc;
- 	platform_set_drvdata(pdev, wcnss);
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 80072b6b6283..c48089e83026 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2584,7 +2584,7 @@ EXPORT_SYMBOL(rproc_del);
- 
- static void devm_rproc_free(struct device *dev, void *res)
- {
--	rproc_free(*(struct rproc **)res);
-+	rproc_free(res);
- }
- 
- /**
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index a3268d95a50e..0e0a377ddb18 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -358,7 +358,7 @@ static int st_rproc_probe(struct platform_device *pdev)
- 
- 	rproc->has_iommu = false;
- 	ddata = rproc->priv;
--	ddata->config = (struct st_rproc_config *)match->data;
-+	ddata->config = match->data;
- 
- 	platform_set_drvdata(pdev, rproc);
- 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 7d782ed9e589..22c0241c2c97 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -629,7 +629,7 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
- 	 * entire area by overwriting it with the initial values stored in rproc->clean_table.
- 	 */
- 	*table_sz = RSC_TBL_SIZE;
--	return (struct resource_table *)ddata->rsc_va;
-+	return ddata->rsc_va;
- }
- 
- static const struct rproc_ops st_rproc_ops = {
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index ec626a37fef6..4bee10acf6fa 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -429,7 +429,7 @@ static struct resource_table *k3_dsp_get_loaded_rsc_table(struct rproc *rproc,
- 	 * the hard-coded value suffices to support the IPC-only mode.
- 	 */
- 	*rsc_table_sz = 256;
--	return (struct resource_table *)kproc->rmem[0].cpu_addr;
-+	return kproc->rmem[0].cpu_addr;
- }
- 
- /*
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 0481926c6975..115901d1ea04 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -708,7 +708,7 @@ static struct resource_table *k3_r5_get_loaded_rsc_table(struct rproc *rproc,
- 	 * the hard-coded value suffices to support the IPC-only mode.
- 	 */
- 	*rsc_table_sz = 256;
--	return (struct resource_table *)kproc->rmem[0].cpu_addr;
-+	return kproc->rmem[0].cpu_addr;
- }
- 
- /*
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 2db57d394155..5dbc12bdc29e 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -242,7 +242,7 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 	struct reserved_mem *rmem;
- 	int i, num_mem_regions;
- 
--	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-+	r5_core = rproc->priv;
- 	num_mem_regions = r5_core->rmem_count;
- 
- 	for (i = 0; i < num_mem_regions; i++) {
-@@ -363,7 +363,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
- 	size_t bank_size;
- 	char *bank_name;
- 
--	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-+	r5_core = rproc->priv;
- 	dev = r5_core->dev;
- 	num_banks = r5_core->tcm_bank_count;
- 
-@@ -432,7 +432,7 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
- 	u32 pm_domain_id;
- 	char *bank_name;
- 
--	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-+	r5_core = rproc->priv;
- 	dev = r5_core->dev;
- 
- 	/* Go through zynqmp banks for r5 node */
-@@ -502,7 +502,7 @@ static int add_tcm_banks(struct rproc *rproc)
- 	struct zynqmp_r5_core *r5_core;
- 	struct device *dev;
- 
--	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-+	r5_core = rproc->priv;
- 	if (!r5_core)
- 		return -EINVAL;
- 
-@@ -595,7 +595,7 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
- 	u32 pm_domain_id;
- 	int i;
- 
--	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-+	r5_core = rproc->priv;
- 
- 	for (i = 0; i < r5_core->tcm_bank_count; i++) {
- 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-@@ -649,7 +649,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 	}
- 
- 	r5_rproc->auto_boot = false;
--	r5_core = (struct zynqmp_r5_core *)r5_rproc->priv;
-+	r5_core = r5_rproc->priv;
- 	r5_core->dev = cdev;
- 	r5_core->np = dev_of_node(cdev);
- 	if (!r5_core->np) {
-@@ -978,12 +978,12 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 
- static void zynqmp_r5_cluster_exit(void *data)
- {
--	struct platform_device *pdev = (struct platform_device *)data;
-+	struct platform_device *pdev = data;
- 	struct zynqmp_r5_cluster *cluster;
- 	struct zynqmp_r5_core *r5_core;
- 	int i;
- 
--	cluster = (struct zynqmp_r5_cluster *)platform_get_drvdata(pdev);
-+	cluster = platform_get_drvdata(pdev);
- 	if (!cluster)
- 		return;
- 
+I believe Luis is planning to pull them in around -rc3, hence my
+freshening the series up now, getting everyone's tags in, etc.
+
 -- 
-2.11.0
-
+NULL && (void)
