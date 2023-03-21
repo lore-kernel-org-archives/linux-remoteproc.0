@@ -2,283 +2,182 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AC5C6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 20 Mar 2023 23:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3AEC6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Mar 2023 03:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230165AbjCTXsD (ORCPT
+        id S229747AbjCUDAJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 19:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46136 "EHLO
+        Mon, 20 Mar 2023 23:00:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbjCTXsB (ORCPT
+        with ESMTP id S229511AbjCUDAI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Mar 2023 19:48:01 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15942DBD0;
-        Mon, 20 Mar 2023 16:47:22 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32KMBD4S023372;
-        Mon, 20 Mar 2023 23:46:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=27HtUd1mojbfhVpkD4e+wTcjCFDgUp2b3TdzzCWzVdQ=;
- b=gjQhD47oPNq394Si2smK+1hEduPtrfxa9EzqhibfQH4fVfdlpQrBXRgqmzBOIQd+wDMQ
- 8IVeegEAAWVB2v/aF0W/ZH9JObQvOS+3wBtylgFTgDCut2UeYx4gG6kg/0mQ9HOJmZ+V
- 4uiSYROweKwzR5BGBcZj9RxQiJ6gul2gipBtxO3excKbuC9E/Gn8Y+++/E0/uSuW+nWi
- 5Vt9tq18t3oalRns8dfE/+BRA83zc742Hmw2kp66ljR6W1wQmpXTIWa9HEm5pI8zsaa5
- 5X1R2wWJw48z+zRWh8sMXKrgGkBhb8N6yP4vH9YdmBQzlE5OUuFyKwJub+Zov4KyAiJz +w== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pen6hsw49-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Mar 2023 23:46:09 +0000
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32KNk6mJ001408
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 20 Mar 2023 23:46:06 GMT
-Received: from [10.110.115.97] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 20 Mar
- 2023 16:46:05 -0700
-Message-ID: <e5753441-894d-e6f2-c628-eb931a6b2986@quicinc.com>
-Date:   Mon, 20 Mar 2023 16:46:04 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH v2 6/7] remoteproc: qcom_q6v5_pas: Add support to attach a
- DSP
+        Mon, 20 Mar 2023 23:00:08 -0400
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2064.outbound.protection.outlook.com [40.107.105.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA50F2CC66;
+        Mon, 20 Mar 2023 20:00:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IJ2AeNQk6UWeQexcq9Ks3Jwi4GsoedEa1roUOzMaJiwWtAyMkX2wWTsd2ivhesxdxtZJiHyyr6jeOal3mMytud9ajmmrgTOm3Xb3rg+9+E+baPMny7CDwd0YaFy15qdPRx3qybjqHaR+cuucYb6iI9l453e0pp9tKiAWqQLD3UdFovrnp/fm2RzKEvBouS0VG785z08x6Rx0eknBz4pchkIUV81WSDfGYm+NwtUGskf4bD1LcxLYVaoFDI2b4dogBvN7EbtMY5nQw6ttaxwU1svLuPqF6uRraCQPsDfFZrj3K+6NwOCdmSXkM+r4ZmwTSA6CDeyaIZQZEU8pr3oILA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rJ6+a+bTcJ8ub/ni8okEcgamMFUx7i7cAun3nU2Qves=;
+ b=mSt02XdSg9pDQptuBFH440Yxie42MabOo0NvvPGTHekBm+g1jLyPQF1uaEO17lyNy615rEBa2qlJriTkn4cXhslF3CYjgcNVNQJysK7Sn0VFASWPG502krkT9RnBYkFsUlONkJAjD9LmurcXhluO4wK9Sy9WzLcmcWjRCGhmd//zYf2fz/UWzSdnwSxrU4+qTS5hVbbPBjZPwYM/UjUUqlPjY+QZHhSoEQsRkt/RHsgi8LkjUhvlFIh0lFEFeK4folgAWrPxi98gnEoxVBZy1wT06qepODZNIbhsNwQBvadRcrWRUzpcxtKIizsPgwjKpiiWE02QCmf1HVpDU4XNRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rJ6+a+bTcJ8ub/ni8okEcgamMFUx7i7cAun3nU2Qves=;
+ b=BYU7yOb6IFdhio0+N7Y7g0FcUgQDjY2Qt1QyY2BFxsflvn+z8l+A7ateaGiTv8iRoGnC1ryR4FfHp/ctO8R1jI8Vbaofp0PPIIIlrRVXQM3DhnIYIM1u+Qr6VMdHGYJoy4kgiu9Fa5+fszPvJj0BWseGpjPkbaKT9cXKsPmZpBs=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DBBPR04MB7564.eurprd04.prod.outlook.com (2603:10a6:10:1f7::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Tue, 21 Mar
+ 2023 03:00:04 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::f55a:cf12:da08:6d2a]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::f55a:cf12:da08:6d2a%7]) with mapi id 15.20.6178.037; Tue, 21 Mar 2023
+ 03:00:02 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "andersson@kernel.org" <andersson@kernel.org>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "patrice.chotard@foss.st.com" <patrice.chotard@foss.st.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "arnaud.pouliquen@st.com" <arnaud.pouliquen@st.com>,
+        Hongxing Zhu <hongxing.zhu@nxp.com>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 4/5] remoteproc: imx_rproc: Call of_node_put() on
+ iteration error
+Thread-Topic: [PATCH 4/5] remoteproc: imx_rproc: Call of_node_put() on
+ iteration error
+Thread-Index: AQHZW3npeLvbR93VJ06DycG3baoUhK8Eixew
+Date:   Tue, 21 Mar 2023 03:00:02 +0000
+Message-ID: <DU0PR04MB941720004CECD8CFC6AE5B5A88819@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
+ <20230320221826.2728078-5-mathieu.poirier@linaro.org>
+In-Reply-To: <20230320221826.2728078-5-mathieu.poirier@linaro.org>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>
-CC:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20230306231202.12223-1-quic_molvera@quicinc.com>
- <20230306231202.12223-7-quic_molvera@quicinc.com>
- <20230316022740.umavd6jviftktag7@ripper>
-From:   Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <20230316022740.umavd6jviftktag7@ripper>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: K5qMRy4qy5zq3MB_PpcPonz44UrakDiR
-X-Proofpoint-GUID: K5qMRy4qy5zq3MB_PpcPonz44UrakDiR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-20_16,2023-03-20_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 priorityscore=1501 mlxscore=0 bulkscore=0 adultscore=0
- spamscore=0 impostorscore=0 phishscore=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303200200
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DBBPR04MB7564:EE_
+x-ms-office365-filtering-correlation-id: b77f1791-d251-4730-09cb-08db29b85d9a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: UtTQ/rNXzR/IhiVLQbud7VqsfLoN8ayWheJwV0pjaFf8ZUyMhvi34EOvIFGgKtLZL/fPoRaoHKmOoN8l5Ns4O8qoT++QAx04aoi76S0CLl7hGyouMsC1tSeu3lOAqo1+/9bhSgLnE0Kkq564swFPO9KbmVbL6taCeQ3O/GoaGpCln1YsarZxTxtTBP6pAJoPBlCCyrrw2MvE9xEDYs3wEa9Up+TpjoR9BBgnB8UMQVKzWwrEMQgI/s98gYwh4wwlCtm7B+TnUNLbNIbaGQMDCBOLBKRvEh4F62i5bQVpx4pQtMIvR3a2wDGSNDhb2zAk3MA97kHPq7RsegBxxc5RMlEZ1LUNsiF0J+Unc5lOWVncjeCJPbVxZa4VYaIFNgeIKcYelSkyTZMZCdQN/2MtgQ0XGPeeI9cdUBsbybP9EfojtlnRVhRxYS9ze1DyCaRImWXB98jTj3R9MXtVEQxj0GSNXG9nUuPKH8lShtjdqkjtnG6tU5bjUCcNiYItrxlKIhf6HaXnSbZA0e2GxOFK45iUfIUhN8doN4O+qh+QVHKHFsCy4o8qh46RzJHDyAJAuhUcbB5zIviX5njF980Tm7/jM8/vGuhlKXTCNm9/+64BmK3PEDNUFf1hO7vnqK1P/Ft2DabjDlxaEnjUj/zeaHg6eeuMr1w9l4Fo5at9kG8gozRsF4ikLWZuSGcw8XfcJPjztm3FpXToSVgcIOLmJEeQDuitlan4fPv4l2iwdGIC7p3BzZmD345HGP7T3YPG
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(396003)(376002)(346002)(136003)(39860400002)(451199018)(8936002)(7416002)(5660300002)(44832011)(52536014)(41300700001)(55016003)(33656002)(86362001)(122000001)(38100700002)(38070700005)(2906002)(4326008)(186003)(83380400001)(478600001)(7696005)(71200400001)(6506007)(26005)(54906003)(110136005)(316002)(66946007)(8676002)(66476007)(66556008)(66446008)(76116006)(9686003)(64756008);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?bEWpMj0yJVFr0U6aZ9h1V51N4ySXA8D2Xt2cqJDiNyxla37rSbdtScDtf514?=
+ =?us-ascii?Q?cxY2H0+fifa6PWGkv/SjGhBGx90+ERInd2c2tWhrtMU+a5OeHaGzcoLBij7o?=
+ =?us-ascii?Q?UbMTRj5idrgFEYohYNhbMpMMNFvbrrf7xWHRpepPhTbfO5LoRLemAg759l1z?=
+ =?us-ascii?Q?oypxu4IRiAqhDrlE479ixiczPBKMnQ01Hqr5Fvs25izAdLtofo1x6Q4NaAng?=
+ =?us-ascii?Q?4UJhnnqvDn1plJSteoa4HJV9MNHwd/IHS+gSQoQf0q5SLZLLKGQdTmfj0vqd?=
+ =?us-ascii?Q?uwiAX3/0FBvGzlDLYhY4UbsyUmK8H0zCwRh85+2u1tKVmmraQlVFVAKK4lvy?=
+ =?us-ascii?Q?zIJVC+s6GnreAn7I7lwxVDdG8nojTq4PpTXjM+w9cHPky6U23yhuu2TVX1cY?=
+ =?us-ascii?Q?JnRPXoJNlLw0vxwXfchjTNuKE5gUcFJVDI16J0o2p6Trf7mbUJOfLYRmsYXu?=
+ =?us-ascii?Q?Zid9O4UxoIuly0fKPwjjR6tn1cqD1vLk8tp+1CMykQVtvyE0lu6478nIEbCB?=
+ =?us-ascii?Q?8EewfCita4npkKtXNVzloQ3cVTLfxKANeMVDvpir5GbLJeqPpOy1xrDnsnuf?=
+ =?us-ascii?Q?3xGtRetNOPbT03847wqAOrYt3WTwvevGMxmW7n4UZz+wIijK1KAow5AmRMQA?=
+ =?us-ascii?Q?aUG6A86nUdI7yTK8WZmf375M69oSq5Y1BSkiBH6XPEnHY3TgfNhrSFr8YXER?=
+ =?us-ascii?Q?+H4AmtGIt8yI6JDyiLYA3baF05i7cJf0cYcSvW8YwrK7Chb3oDLvz1uQoWdB?=
+ =?us-ascii?Q?/cTZ/IONNByPUGUd21hm5IZ39vFzpdSBdMJO7+xFf8Irrqd8uEqbVwKIo7Pw?=
+ =?us-ascii?Q?JPfTwCXIkrruBrU9aNzFcSSo/AVLZvkzd3Tsftxu3C4LCD+RUb+xZd7zeP/1?=
+ =?us-ascii?Q?U1ORPQFCm8YYNMwDrJNCjRPvzD7502jktCdDTHElod6C5X5FScgKL6FTV6G6?=
+ =?us-ascii?Q?SXUYGRKq4B5YCHweGNXWdVVs/YNtbv7iWfE76NwLAlPOlsFn5vKWtAOVBzel?=
+ =?us-ascii?Q?7s6a/YXpgaATUi3OwZi+2jW35BOi8MS+/dKFvg9Zy5tO8rbeEUHgwr39Gxxm?=
+ =?us-ascii?Q?JU+wrcDEgdoJf4iChDomOffACbTcZqfPSB/zKP0gXMAYGdZg8qfE9+n/DP+p?=
+ =?us-ascii?Q?im63BeJX0+0GQJYfdfmFbz6tzJkfeOruwskJ/XX3znbCRkdjo6Dkv8puwFxX?=
+ =?us-ascii?Q?0bgR1mfESAZQ4Yp3/dfyiRKkXu2WUcPsCj5AHgt8RetMp2HMxXcCGPKl1RNt?=
+ =?us-ascii?Q?aCfiUZ3WxnTDpuPc1Z3EIffEWH5ioF0YEdXqKx4UYQhu76vMJJ5JXgyNNj/Q?=
+ =?us-ascii?Q?izU2q1tmz4/m+0ADuYA6iinIIUj0ZhpbJ6ANgQwdUWJs/ugsBzx2YLYEPUZy?=
+ =?us-ascii?Q?HDdkicwl0lWuZVwcCOW4HnN8ThscdlN4raweSvqlTYuEGMtDKSLq09MRusHa?=
+ =?us-ascii?Q?NKkFbgzHaxXYk/+s2WfLZoym2/Vg+rePBns+YViwriqyAq5oz/jA1oGZwtzr?=
+ =?us-ascii?Q?jibQ3JNla8zO/QPlfeyir/Q9g6/4No8Dy1HDW0XpyiOLeoQUixZyAM9Sn4mT?=
+ =?us-ascii?Q?gowX4HM1OlGGzBodbKA=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b77f1791-d251-4730-09cb-08db29b85d9a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2023 03:00:02.3998
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 01lI+N3xtxfxhLxZPERGXI01Hx2Zz5MSTz6YIc8Qa67sbGIvvGug5qM9+opy+rWz5gcKCl+PnWo1875KTnqyRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7564
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+> Subject: [PATCH 4/5] remoteproc: imx_rproc: Call of_node_put() on
+> iteration error
+>=20
+> Function of_phandle_iterator_next() calls of_node_put() on the last
+> device_node it iterated over, but when the loop exits prematurely it has =
+to
+> be called explicitly.
+>=20
+> Fixes: b29b4249f8f0 ("remoteproc: imx_rproc: add i.MX specific parse fw
+> hook")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
+LGTM:
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-On 3/15/2023 7:27 PM, Bjorn Andersson wrote:
-> On Mon, Mar 06, 2023 at 03:12:01PM -0800, Melody Olvera wrote:
->> Some chipsets will have DSPs which will have begun running prior
->> to linux booting, so add support to late attach these DSPs by
->> adding support for:
->> - run-time checking of an offline or running DSP via rmb register
->> - a late attach framework to attach to the running DSP
->> - a handshake mechanism to ensure full and proper booting via rmb
->>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>  drivers/remoteproc/qcom_q6v5_pas.c | 103 ++++++++++++++++++++++++++++-
->>  1 file changed, 102 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->> index 0871108fb4dc..e22be6a029a8 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> @@ -242,10 +242,89 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->>  	return ret;
->>  }
->>  
->> +static int adsp_attach(struct rproc *rproc)
->> +{
->> +	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
->> +	int i, ret;
->> +
->> +	ret = qcom_q6v5_prepare(&adsp->q6v5);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = adsp_pds_enable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->> +	if (ret < 0)
->> +		goto disable_irqs;
->> +
->> +	ret = clk_prepare_enable(adsp->xo);
->> +	if (ret)
->> +		goto disable_proxy_pds;
->> +
->> +	ret = clk_prepare_enable(adsp->aggre2_clk);
->> +	if (ret)
->> +		goto disable_xo_clk;
->> +
->> +	if (adsp->cx_supply) {
->> +		ret = regulator_enable(adsp->cx_supply);
->> +		if (ret)
->> +			goto disable_aggre2_clk;
->> +	}
->> +
->> +	if (adsp->px_supply) {
->> +		ret = regulator_enable(adsp->px_supply);
->> +		if (ret)
->> +			goto disable_cx_supply;
->> +	}
->> +
->> +	/* if needed, signal Q6 to continute booting */
->> +	if (adsp->q6v5.rmb_base) {
->> +		for (i = 0; i < RMB_POLL_MAX_TIMES; i++) {
->> +			if (readl_relaxed(adsp->q6v5.rmb_base + RMB_BOOT_WAIT_REG)) {
->> +				writel_relaxed(1, adsp->q6v5.rmb_base + RMB_BOOT_CONT_REG);
->> +				break;
->> +			}
->> +			msleep(20);
->> +		}
->> +
->> +		if (!readl_relaxed(adsp->q6v5.rmb_base + RMB_BOOT_WAIT_REG)) {
->> +			dev_err(adsp->dev, "Didn't get rmb signal from  %s\n", rproc->name);
->> +			goto disable_px_supply;
->> +		}
->> +	}
->> +
->> +	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
->> +	if (ret == -ETIMEDOUT) {
->> +		dev_err(adsp->dev, "start timed out\n");
->> +		qcom_scm_pas_shutdown(adsp->pas_id);
->> +		goto disable_px_supply;
->> +	}
->> +
->> +	return 0;
->> +
->> +disable_px_supply:
->> +	if (adsp->px_supply)
->> +		regulator_disable(adsp->px_supply);
->> +disable_cx_supply:
->> +	if (adsp->cx_supply)
->> +		regulator_disable(adsp->cx_supply);
->> +disable_aggre2_clk:
->> +	clk_disable_unprepare(adsp->aggre2_clk);
->> +disable_xo_clk:
->> +	clk_disable_unprepare(adsp->xo);
->> +disable_proxy_pds:
->> +	adsp_pds_disable(adsp, adsp->proxy_pds, adsp->proxy_pd_count);
->> +disable_irqs:
->> +	qcom_q6v5_unprepare(&adsp->q6v5);
->> +
->> +	/* Remove pointer to the loaded firmware, only valid in adsp_load() & adsp_start() */
->> +	adsp->firmware = NULL;
->> +
->> +	return ret;
->> +}
->> +
->>  static int adsp_start(struct rproc *rproc)
->>  {
->>  	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
->> -	int ret;
->> +	int i, ret;
->>  
->>  	ret = qcom_q6v5_prepare(&adsp->q6v5);
->>  	if (ret)
->> @@ -304,6 +383,22 @@ static int adsp_start(struct rproc *rproc)
->>  		goto release_pas_metadata;
->>  	}
->>  
->> +	/* if needed, signal Q6 to continute booting */
-> Why does this come before the wait_for_start()? Is the DSP actually up
-> and running when you hit attach, or is it just loaded?
-
-Yeah so DSP is loaded and partially booted, but it's waiting for a signal from our driver
-to complete the boot process through to err_ready.
-
->
->> +	if (adsp->q6v5.rmb_base) {
-> Afaict this is copy-paste from attach, please move it to a helper
-> function.
-
-Sure.
-
->
->> +		for (i = 0; i < RMB_POLL_MAX_TIMES; i++) {
->> +			if (readl_relaxed(adsp->q6v5.rmb_base + RMB_BOOT_WAIT_REG)) {
->> +				writel_relaxed(1, adsp->q6v5.rmb_base + RMB_BOOT_CONT_REG);
->> +				break;
->> +			}
->> +			msleep(20);
->> +		}
->> +
->> +		if (!readl_relaxed(adsp->q6v5.rmb_base + RMB_BOOT_WAIT_REG)) {
-> If you hit the break above, there should be no reason to read this
-> register again.
->
-> Seems cleaner to write this as:
->
-> 	ret = readl_poll_timeout();
-> 	if (ret < 0)
-> 		goto release;
->
-> 	writel(1, ...);
-
-That is much cleaner; I didn't know about the poll timeout function. Will rewrite using it.
-
-Thanks,
-Melody
->
-> Regards,
-> Bjorn
->
->> +			dev_err(adsp->dev, "Didn't get rmb signal from  %s\n", rproc->name);
->> +			goto release_pas_metadata;
->> +		}
->> +	}
->> +
->>  	ret = qcom_q6v5_wait_for_start(&adsp->q6v5, msecs_to_jiffies(5000));
->>  	if (ret == -ETIMEDOUT) {
->>  		dev_err(adsp->dev, "start timed out\n");
->> @@ -413,6 +508,7 @@ static unsigned long adsp_panic(struct rproc *rproc)
->>  static const struct rproc_ops adsp_ops = {
->>  	.unprepare = adsp_unprepare,
->>  	.start = adsp_start,
->> +	.attach = adsp_attach,
->>  	.stop = adsp_stop,
->>  	.da_to_va = adsp_da_to_va,
->>  	.parse_fw = qcom_register_dump_segments,
->> @@ -423,6 +519,7 @@ static const struct rproc_ops adsp_ops = {
->>  static const struct rproc_ops adsp_minidump_ops = {
->>  	.unprepare = adsp_unprepare,
->>  	.start = adsp_start,
->> +	.attach = adsp_attach,
->>  	.stop = adsp_stop,
->>  	.da_to_va = adsp_da_to_va,
->>  	.load = adsp_load,
->> @@ -728,6 +825,10 @@ static int adsp_probe(struct platform_device *pdev)
->>  	if (ret)
->>  		goto detach_proxy_pds;
->>  
->> +	if (adsp->q6v5.rmb_base &&
->> +			readl_relaxed(adsp->q6v5.rmb_base + RMB_Q6_BOOT_STATUS_REG))
->> +		rproc->state = RPROC_DETACHED;
->> +
->>  	qcom_add_glink_subdev(rproc, &adsp->glink_subdev, desc->ssr_name);
->>  	qcom_add_smd_subdev(rproc, &adsp->smd_subdev);
->>  	adsp->sysmon = qcom_add_sysmon_subdev(rproc,
->> -- 
->> 2.25.1
->>
+> ---
+>  drivers/remoteproc/imx_rproc.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/imx_rproc.c
+> b/drivers/remoteproc/imx_rproc.c index 9fc978e0393c..0ab840dc7e97
+> 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -541,6 +541,7 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>=20
+>  		rmem =3D of_reserved_mem_lookup(it.node);
+>  		if (!rmem) {
+> +			of_node_put(it.node);
+>  			dev_err(priv->dev, "unable to acquire memory-
+> region\n");
+>  			return -EINVAL;
+>  		}
+> @@ -553,10 +554,12 @@ static int imx_rproc_prepare(struct rproc *rproc)
+>  					   imx_rproc_mem_alloc,
+> imx_rproc_mem_release,
+>  					   it.node->name);
+>=20
+> -		if (mem)
+> +		if (mem) {
+>  			rproc_coredump_add_segment(rproc, da, rmem-
+> >size);
+> -		else
+> +		} else {
+> +			of_node_put(it.node);
+>  			return -ENOMEM;
+> +		}
+>=20
+>  		rproc_add_carveout(rproc, mem);
+>  	}
+> --
+> 2.25.1
 
