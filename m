@@ -2,203 +2,363 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA5FC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Mar 2023 03:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2A3C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Mar 2023 05:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjCUDeq (ORCPT
+        id S229941AbjCUFYW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 20 Mar 2023 23:34:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56936 "EHLO
+        Tue, 21 Mar 2023 01:24:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjCUDep (ORCPT
+        with ESMTP id S229891AbjCUFXu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 20 Mar 2023 23:34:45 -0400
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2054.outbound.protection.outlook.com [40.107.6.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAB16A67;
-        Mon, 20 Mar 2023 20:34:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ft7HwojaA9GbwoDYZd/GDpQ/qbh4USwW4wLv23kxUxeVz5c1/7hQGoCpCMb+VjHSFNuDMSmMlFgqIc9sx3W2PFZ+Y0EoSQn7X4OWFn8KjrPZVnXHm3UdnFny4fdwmgi55w/rUlH+49vR4SCdwJ7AFtRSlzkXU4OATsr/p6qx29NCwbQZVrtBMKxHIc+MR8WpOhGWPOFCcrRYoIt/fEwcsa8VkMwpgvSsy5wDABPcrGyPRsaIQoKyTnyGQ78HWbwes72R9jYPdVx31BJG9ucSzDixTR3bBNrR+FVm5tJEkYEgOSGO34HTlJ9bRUobJy8eHtRqsEA2ZBHkxkOIbbujGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3I6EiGfMFvZ7JTjYEb4dUmK++NX9unvVY5NCfGI0CW8=;
- b=H8aLdJQdXzT2ELtB0mjSP0taVNAhtulXROUtrReVb9OJXypfPOUwkLP3YzT/KRtBn3j765smLAPqtcwaNqmOKv9dDDjSF+nGn3JHafOdQxHWsvjcFi+DiUODTtXe3ytbxnbiprMS18WayOr8wkjlxtbyir60qYRWy+22swdTjuuLIoeArN3AXm7AU3QXj2+T+V7huptpsYD0BWqvaEMD6nf+sAZP8erGTWoJL2HZlVKXjBhinRzhSVpxZ6VK3Fl1MqbXRjnTR5Wv5ndcjwclCDaW9LUJe64mjqUNeM3Vo4pFN0jAALsvYrz8rbSZc4nF/WQOLxuJCeoXZbbBIrFYOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3I6EiGfMFvZ7JTjYEb4dUmK++NX9unvVY5NCfGI0CW8=;
- b=WQt3EZvwPkkT8o3OqJnPy2swGiqce1YnoItFH9NonN1tol1Tt4+iQvoQafEwAVuASv1LCKDmAvHa9Bb6EkH+H8V4bHCcMOLTgz+JyOJDEBAsisigAI5IKg13c8saOcpxxcw/IHyU24+rpS1XemBRUm0xFB0Z4zg99be7+338eQA=
-Received: from DB9PR04MB9355.eurprd04.prod.outlook.com (2603:10a6:10:36b::18)
- by DB9PR04MB9257.eurprd04.prod.outlook.com (2603:10a6:10:373::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Tue, 21 Mar
- 2023 03:34:39 +0000
-Received: from DB9PR04MB9355.eurprd04.prod.outlook.com
- ([fe80::b3c1:52ad:772a:ce82]) by DB9PR04MB9355.eurprd04.prod.outlook.com
- ([fe80::b3c1:52ad:772a:ce82%3]) with mapi id 15.20.6178.037; Tue, 21 Mar 2023
- 03:34:39 +0000
-From:   "S.J. Wang" <shengjiu.wang@nxp.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "andersson@kernel.org" <andersson@kernel.org>
-CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "patrice.chotard@foss.st.com" <patrice.chotard@foss.st.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "arnaud.pouliquen@st.com" <arnaud.pouliquen@st.com>,
-        Hongxing Zhu <hongxing.zhu@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 5/5] retmoteproc: imx_dsp_rproc: Call of_node_put() on
- iteration error
-Thread-Topic: [PATCH 5/5] retmoteproc: imx_dsp_rproc: Call of_node_put() on
- iteration error
-Thread-Index: AQHZW6YQ5Fy2rWK450m9+8GGXUXYxA==
-Date:   Tue, 21 Mar 2023 03:34:39 +0000
-Message-ID: <DB9PR04MB9355AD6C01ED0A0B6E102996E3819@DB9PR04MB9355.eurprd04.prod.outlook.com>
-References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
- <20230320221826.2728078-6-mathieu.poirier@linaro.org>
-In-Reply-To: <20230320221826.2728078-6-mathieu.poirier@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR04MB9355:EE_|DB9PR04MB9257:EE_
-x-ms-office365-filtering-correlation-id: 5f37645e-6a06-4152-d9c9-08db29bd3382
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: VPZGFW9nUaxL3sFtPfFcSVmMinkhyX6xIiD26OFRsZ7PCZrtSXgQNCW3ZSvoLsR/PB3dqxANkjhbX3C+/TSfqLs+eeaPjZQqJS47QvzYYQU0XIf6aIFYtDjjw7fR8mr/MCXS69z4yHK+5NzQI0bLXHwEKPcv1VlCqTdPLoyMsF1hY50Vh3zjMGLXs631pTGIb8sM71AP9+aXkeisjYF/3pPUMp2H9Y/n/UT+tWk6vKbsiJIfn6zTwxC5Jzzchs917TG+y73wkqpWccbL9ZJ3243/81fD9psWvkUmzJ7ORaFp2CixEUENT6tBcFLv+X6hovYcoYcuD59jVsvvxZ0hSzBcuosro3NokUmyGMNgwZY12TlXB9R6Lo4GTS5HVgEZaf0IZxvx57cKlPPTkE3q0G26uxM687DawHIFoHL8QUqk6YLpTsMM6liGyxKJhaW56VdNMuNJNSpRcR//Sjaf3KbVX29QhRRjxdFU9dbt3eg5xr0u1wea7jIibNtVS2EaDVcAMGXOM7XZfRXA/mVAO7TT2c5kGCtdKV6qXXJFPD7mmUhpXV6653cH8ZGHcrUU2XuOfq9lkvwF3NfBY9TidEOB6PTKh9IU27+80q7JbffC2qcVjVOhNzo+Lazl0zQP75qTsZytuIRby3bSk/Ys/dBXEXM3lnJ6jj5e/+OaLfOASHKma+S9X4Mdy+teuyqAMplDPIWYlQQb3fvwr54vww==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9355.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(136003)(396003)(376002)(346002)(366004)(451199018)(54906003)(71200400001)(7696005)(55016003)(110136005)(478600001)(26005)(66446008)(66476007)(4326008)(8676002)(76116006)(64756008)(66556008)(41300700001)(66946007)(6506007)(7416002)(83380400001)(5660300002)(52536014)(2906002)(9686003)(186003)(8936002)(316002)(38100700002)(33656002)(122000001)(86362001)(38070700005);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?imDBmOSw38Puqptm/zY+fMoWJiDWj/UfjA966WQEVNcGsGC4896bDz6DP3iH?=
- =?us-ascii?Q?4fXkey5c1ZowfEZdJAX5TmBtIq5UukVjh0CMeqDYM2zOwWNhA47vHz9hH57d?=
- =?us-ascii?Q?taDVbTmYJbxR5eC/1/V21Z5htS5lk/3zA3WNUoH7XBAuW9WXpBijA6F5ciYw?=
- =?us-ascii?Q?kndMJUBP4p1eEk4McFRW02yPR/kIzVP+RIqI4rgneJa3r4rQQsYeD4oe+Tj+?=
- =?us-ascii?Q?FO+sJJCSn+tJEmCD4qjSc3NSJfdR4eoNp18b1pOHit/ehAdDqM8kaaa7WF3P?=
- =?us-ascii?Q?xjx/2wQTAejsM0UA6eag0d3fDvU7KIFhJFi1wT75t7VO8oVfJVfw9uMp9GrF?=
- =?us-ascii?Q?4OfJNPGCTvK1Sio2ylp7qfe+U6u1nsjXVQtAypF8U5RxaaaJVk4+WARdfY1f?=
- =?us-ascii?Q?px3RQDQb0z0BAf9qAMXpSob8z3vaqBkYh1k/FlGFkabHQjZz/Xkb4o0/ICmu?=
- =?us-ascii?Q?5Ir0RdHa7asMpCOLBgUVJOD85O51AaPpuiB1vLFS2K9RF5U/QsCJFy4Xl77q?=
- =?us-ascii?Q?TEYxvgyEYzDMd/ljvTMTn5aJuKnhc1PgCZHoNkNm5Yn5pVPD3szctT94l8Q2?=
- =?us-ascii?Q?YihhGiwkrnFJTv0RbWYCsQOC/0HazDWomt80/8DJ+ZsvczkE1PwN6jvpZ1Dr?=
- =?us-ascii?Q?xinvr8ELQ3Jb14sUb4nl7ILhvtqyyp403T2JCvVrRsTytdCOToslBNkdbecI?=
- =?us-ascii?Q?jn6nMe6i/WOUYUGkEJA4E2fo68Htwvjc6My+A6WyRMOEgo14IyrL9+u2Vu6Q?=
- =?us-ascii?Q?5CNheQmJDGAaccyEEUhnfVmLVLE9dZ0Z9QuBlsRvgIMzo6df4EqctWTtWcHi?=
- =?us-ascii?Q?uBtwzmiF9Y/RR6y8e6ue1Ty/XCdYlDfTdSGbws9WwfZxSEC4meChseepWwng?=
- =?us-ascii?Q?UHaFUpbhgivRAG53PjwTKNi/t6zodfs5cdLCo9zHB3mBFrjeNgUH1KKSmqNu?=
- =?us-ascii?Q?UmaVDjVUgPBhVnYLt6ChBZ+z/waZ2/nJlii27K3mM8kh5JwY9J42T7UsO8Q5?=
- =?us-ascii?Q?Wj6/HfZhoMIUYu1Pg9pssGQJO33iVuL7V+fzUADmmOkrZjBTm8MiBmeeqHGo?=
- =?us-ascii?Q?rDMQeltg48as3ScOXeQwhmo85Do2Urf5ImGnvDnJND1yJfcvZ3UfL8T66LNm?=
- =?us-ascii?Q?Cesegxdg8k9rGCJi2WD2RwevJUinqlashgda+w2mPMiaTdYsj63Yr58/Y/pf?=
- =?us-ascii?Q?QVy1eSc4VTkAXMfa5ISXhXZ+YYFon+SP7dOuvRgAtehCIX0Zx2Q/zUxPwhqZ?=
- =?us-ascii?Q?Ir8xQSnZfjcSgCSjjG+8g/s8bptA3V/kPRiKq9eEWj4GG+1wNno6GaeRIzyw?=
- =?us-ascii?Q?wqpE6fqEjGhwVsLddK+xk09lR94OGiTsXMsGNZfRIucMGYcOtpWzoPTPYgL5?=
- =?us-ascii?Q?UprLsvTf3As1ISnIvgXnTmzjs3gn86Dexdf5WzVYJ2uP5J9X4eF/VAyF1RNp?=
- =?us-ascii?Q?9K0vF6d9Uv81jwY4XznlIzEEIAjibM84TqtKkngt/yvPDvBPOvbpNhhI1BZJ?=
- =?us-ascii?Q?HuFJSF/maDbgUHgPISrmAXlOIzQsXKHIC4HhqOfIZ5CPiZCfxgNfttfFCNdg?=
- =?us-ascii?Q?FqjQLS7v5G76kQ/E7yrRJ1ZfzfQyOg1KMkCkzfix?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 21 Mar 2023 01:23:50 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB45086AF;
+        Mon, 20 Mar 2023 22:23:46 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32L5NSZD050314;
+        Tue, 21 Mar 2023 00:23:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1679376208;
+        bh=C/RRrJiDKWcYW9nfp7ifTMhWpmvJInngbLn6f54awts=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=F/84IAoMH1n8GO0JLYejkMfazlNsQiz6scUcofC3eLSd6FMcdnHJJ+yOBusWgIZRq
+         Hxnt6yIlSplJFGCsKVE5EOxoeAzo5Ec2iuR28XDqNOORK+AMDKo4out1BtjyLIcp2f
+         IKW7OMXCff1x6AiSagrtouj1ZaQUUqzoySHfXOlE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32L5NSf1012720
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Mar 2023 00:23:28 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 21
+ Mar 2023 00:23:28 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Tue, 21 Mar 2023 00:23:28 -0500
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32L5NNRp041120;
+        Tue, 21 Mar 2023 00:23:24 -0500
+Message-ID: <5b936f1b-3c5b-30ab-7074-e202fd6555b6@ti.com>
+Date:   Tue, 21 Mar 2023 10:53:22 +0530
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9355.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f37645e-6a06-4152-d9c9-08db29bd3382
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Mar 2023 03:34:39.2359
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xh6eWs2oWus9Jhcwt7vQ+yywRlFBKakGExoQcM8KVpAsZ48U67jQNFXIfR5007P0D3dBrx1+s3+xdSpf9Wy+PA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9257
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [EXTERNAL] Re: [PATCH v4 2/5] soc: ti: pruss: Add
+ pruss_{request,release}_mem_region() API
+Content-Language: en-US
+To:     Andrew Davis <afd@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
+        Suman Anna <s-anna@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20230313111127.1229187-1-danishanwar@ti.com>
+ <20230313111127.1229187-3-danishanwar@ti.com>
+ <3f26b194-287c-074d-8e78-572875f9a734@kernel.org>
+ <52aeb13f-1fe4-825f-9d28-ba64860ae76d@ti.com>
+ <13048b01-641a-1d92-178c-02b87c5fa1b9@ti.com>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <13048b01-641a-1d92-178c-02b87c5fa1b9@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
->=20
-> Function of_phandle_iterator_next() calls of_node_put() on the last
-> device_node it iterated over, but when the loop exits prematurely it has =
-to
-> be called explicitly.
->=20
-> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc driver
-> for DSP on i.MX")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Hi Andrew, Roger,
 
-Acked-by: Shengjiu Wang <shengjiu.wang@gmail.com>
+On 20/03/23 21:48, Andrew Davis wrote:
+> On 3/20/23 12:11 AM, Md Danish Anwar wrote:
+>> Hi Roger,
+>>
+>> On 17/03/23 14:26, Roger Quadros wrote:
+>>> Hi Andrew & Danish,
+>>>
+>>>
+>>> On 13/03/2023 13:11, MD Danish Anwar wrote:
+>>>> From: "Andrew F. Davis" <afd@ti.com>
+>>>>
+>>>> Add two new API - pruss_request_mem_region() & pruss_release_mem_region(),
+>>>> to the PRUSS platform driver to allow client drivers to acquire and release
+>>>> the common memory resources present within a PRU-ICSS subsystem. This
+>>>> allows the client drivers to directly manipulate the respective memories,
+>>>> as per their design contract with the associated firmware.
+>>>>
+>>>> Co-developed-by: Suman Anna <s-anna@ti.com>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> Signed-off-by: Andrew F. Davis <afd@ti.com>
+>>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+>>>> ---
+>>>>   drivers/soc/ti/pruss.c           | 77 ++++++++++++++++++++++++++++++++
+>>>>   include/linux/pruss_driver.h     | 27 +++--------
+>>>>   include/linux/remoteproc/pruss.h | 39 ++++++++++++++++
+>>>
+>>>
+>>> We have these 2 header files and I think anything that deals with
+>>> 'struct pruss' should go in include/linux/pruss_driver.h
+>>>
+>>> Anything that deals with pru_rproc (i.e. struct rproc) should go in
+>>> include/linux/remoteproc/pruss.h
+>>>
+>>> Do you agree?
+>>>
+>>
+>> I agree with you Roger but Andrew is the right person to comment here as he is
+>> the author of this and several other patches.
+>>
+>> Hi Andrew, Can you please comment on this?
+>>
+> 
+> Original idea was a consumer driver (like "ICSSG Ethernet Driver" in your other
+> series) could just
+> 
+> #include <linux/remoteproc/pruss.h>
+> 
+> and get everything they need, and nothing they do not.
+> 
 
-Best regards
-Wang Shengjiu
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c
-> b/drivers/remoteproc/imx_dsp_rproc.c
-> index b8f268d41773..21759d9e5b7b 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -650,15 +650,19 @@ static int imx_dsp_rproc_add_carveout(struct
-> imx_dsp_rproc *priv)
->=20
->                 rmem =3D of_reserved_mem_lookup(it.node);
->                 if (!rmem) {
-> +                       of_node_put(it.node);
->                         dev_err(dev, "unable to acquire memory-region\n")=
-;
->                         return -EINVAL;
->                 }
->=20
-> -               if (imx_dsp_rproc_sys_to_da(priv, rmem->base, rmem->size,=
- &da))
-> +               if (imx_dsp_rproc_sys_to_da(priv, rmem->base, rmem->size,=
- &da))
-> {
-> +                       of_node_put(it.node);
->                         return -EINVAL;
-> +               }
->=20
->                 cpu_addr =3D devm_ioremap_wc(dev, rmem->base, rmem->size)=
-;
->                 if (!cpu_addr) {
-> +                       of_node_put(it.node);
->                         dev_err(dev, "failed to map memory %p\n", &rmem->=
-base);
->                         return -ENOMEM;
->                 }
-> @@ -667,10 +671,12 @@ static int imx_dsp_rproc_add_carveout(struct
-> imx_dsp_rproc *priv)
->                 mem =3D rproc_mem_entry_init(dev, (void __force *)cpu_add=
-r,
-> (dma_addr_t)rmem->base,
->                                            rmem->size, da, NULL, NULL, it=
-.node->name);
->=20
-> -               if (mem)
-> +               if (mem) {
->                         rproc_coredump_add_segment(rproc, da, rmem->size)=
-;
-> -               else
-> +               } else {
-> +                       of_node_put(it.node);
->                         return -ENOMEM;
-> +               }
->=20
->                 rproc_add_carveout(rproc, mem);
->         }
-> --
-> 2.25.1
+If we plan on continuing the original idea, then I think keeping the header
+files as it is will be the best. Because if we move anything that deals with
+'struct pruss' to include/linux/pruss_driver.h and anything that deals with
+pru_rproc (i.e. struct rproc) to include/linux/remoteproc/pruss.h, then the
+consumer drivers will need to do,
 
+#include <linux/remoteproc/pruss.h>
+#include <linux/pruss_driver.h>
+
+Roger, should I keep the header files arrangement as it is?
+
+> pruss_driver.h (which could be renamed pruss_internal.h) exists to allow
+> comunication between the pruss core and the pru rproc driver which live
+> in different subsystems.
+> 
+> Andrew
+> 
+>>>>   3 files changed, 121 insertions(+), 22 deletions(-)
+>>>>
+>>>> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+>>>> index a169aa1ed044..c8053c0d735f 100644
+>>>> --- a/drivers/soc/ti/pruss.c
+>>>> +++ b/drivers/soc/ti/pruss.c
+>>>> @@ -88,6 +88,82 @@ void pruss_put(struct pruss *pruss)
+>>>>   }
+>>>>   EXPORT_SYMBOL_GPL(pruss_put);
+>>>>   +/**
+>>>> + * pruss_request_mem_region() - request a memory resource
+>>>> + * @pruss: the pruss instance
+>>>> + * @mem_id: the memory resource id
+>>>> + * @region: pointer to memory region structure to be filled in
+>>>> + *
+>>>> + * This function allows a client driver to request a memory resource,
+>>>> + * and if successful, will let the client driver own the particular
+>>>> + * memory region until released using the pruss_release_mem_region()
+>>>> + * API.
+>>>> + *
+>>>> + * Return: 0 if requested memory region is available (in such case pointer to
+>>>> + * memory region is returned via @region), an error otherwise
+>>>> + */
+>>>> +int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
+>>>> +                 struct pruss_mem_region *region)
+>>>> +{
+>>>> +    if (!pruss || !region || mem_id >= PRUSS_MEM_MAX)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    mutex_lock(&pruss->lock);
+>>>> +
+>>>> +    if (pruss->mem_in_use[mem_id]) {
+>>>> +        mutex_unlock(&pruss->lock);
+>>>> +        return -EBUSY;
+>>>> +    }
+>>>> +
+>>>> +    *region = pruss->mem_regions[mem_id];
+>>>> +    pruss->mem_in_use[mem_id] = region;
+>>>> +
+>>>> +    mutex_unlock(&pruss->lock);
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(pruss_request_mem_region);
+>>>> +
+>>>> +/**
+>>>> + * pruss_release_mem_region() - release a memory resource
+>>>> + * @pruss: the pruss instance
+>>>> + * @region: the memory region to release
+>>>> + *
+>>>> + * This function is the complimentary function to
+>>>> + * pruss_request_mem_region(), and allows the client drivers to
+>>>> + * release back a memory resource.
+>>>> + *
+>>>> + * Return: 0 on success, an error code otherwise
+>>>> + */
+>>>> +int pruss_release_mem_region(struct pruss *pruss,
+>>>> +                 struct pruss_mem_region *region)
+>>>> +{
+>>>> +    int id;
+>>>> +
+>>>> +    if (!pruss || !region)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    mutex_lock(&pruss->lock);
+>>>> +
+>>>> +    /* find out the memory region being released */
+>>>> +    for (id = 0; id < PRUSS_MEM_MAX; id++) {
+>>>> +        if (pruss->mem_in_use[id] == region)
+>>>> +            break;
+>>>> +    }
+>>>> +
+>>>> +    if (id == PRUSS_MEM_MAX) {
+>>>> +        mutex_unlock(&pruss->lock);
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>> +
+>>>> +    pruss->mem_in_use[id] = NULL;
+>>>> +
+>>>> +    mutex_unlock(&pruss->lock);
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(pruss_release_mem_region);
+>>>> +
+>>>>   static void pruss_of_free_clk_provider(void *data)
+>>>>   {
+>>>>       struct device_node *clk_mux_np = data;
+>>>> @@ -290,6 +366,7 @@ static int pruss_probe(struct platform_device *pdev)
+>>>>           return -ENOMEM;
+>>>>         pruss->dev = dev;
+>>>> +    mutex_init(&pruss->lock);
+>>>>         child = of_get_child_by_name(np, "memories");
+>>>>       if (!child) {
+>>>> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
+>>>> index 86242fb5a64a..22b4b37d2536 100644
+>>>> --- a/include/linux/pruss_driver.h
+>>>> +++ b/include/linux/pruss_driver.h
+>>>> @@ -9,37 +9,18 @@
+>>>>   #ifndef _PRUSS_DRIVER_H_
+>>>>   #define _PRUSS_DRIVER_H_
+>>>>   +#include <linux/mutex.h>
+>>>>   #include <linux/remoteproc/pruss.h>
+>>>>   #include <linux/types.h>
+>>>>   -/*
+>>>> - * enum pruss_mem - PRUSS memory range identifiers
+>>>> - */
+>>>> -enum pruss_mem {
+>>>> -    PRUSS_MEM_DRAM0 = 0,
+>>>> -    PRUSS_MEM_DRAM1,
+>>>> -    PRUSS_MEM_SHRD_RAM2,
+>>>> -    PRUSS_MEM_MAX,
+>>>> -};
+>>>> -
+>>>> -/**
+>>>> - * struct pruss_mem_region - PRUSS memory region structure
+>>>> - * @va: kernel virtual address of the PRUSS memory region
+>>>> - * @pa: physical (bus) address of the PRUSS memory region
+>>>> - * @size: size of the PRUSS memory region
+>>>> - */
+>>>> -struct pruss_mem_region {
+>>>> -    void __iomem *va;
+>>>> -    phys_addr_t pa;
+>>>> -    size_t size;
+>>>> -};
+>>>> -
+>>>>   /**
+>>>>    * struct pruss - PRUSS parent structure
+>>>>    * @dev: pruss device pointer
+>>>>    * @cfg_base: base iomap for CFG region
+>>>>    * @cfg_regmap: regmap for config region
+>>>>    * @mem_regions: data for each of the PRUSS memory regions
+>>>> + * @mem_in_use: to indicate if memory resource is in use
+>>>> + * @lock: mutex to serialize access to resources
+>>>>    * @core_clk_mux: clk handle for PRUSS CORE_CLK_MUX
+>>>>    * @iep_clk_mux: clk handle for PRUSS IEP_CLK_MUX
+>>>>    */
+>>>> @@ -48,6 +29,8 @@ struct pruss {
+>>>>       void __iomem *cfg_base;
+>>>>       struct regmap *cfg_regmap;
+>>>>       struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
+>>>> +    struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
+>>>> +    struct mutex lock; /* PRU resource lock */
+>>>>       struct clk *core_clk_mux;
+>>>>       struct clk *iep_clk_mux;
+>>>>   };
+>>>> diff --git a/include/linux/remoteproc/pruss.h
+>>>> b/include/linux/remoteproc/pruss.h
+>>>> index 93a98cac7829..33f930e0a0ce 100644
+>>>> --- a/include/linux/remoteproc/pruss.h
+>>>> +++ b/include/linux/remoteproc/pruss.h
+>>>> @@ -44,6 +44,28 @@ enum pru_ctable_idx {
+>>>>       PRU_C31,
+>>>>   };
+>>>>   +/*
+>>>> + * enum pruss_mem - PRUSS memory range identifiers
+>>>> + */
+>>>> +enum pruss_mem {
+>>>> +    PRUSS_MEM_DRAM0 = 0,
+>>>> +    PRUSS_MEM_DRAM1,
+>>>> +    PRUSS_MEM_SHRD_RAM2,
+>>>> +    PRUSS_MEM_MAX,
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * struct pruss_mem_region - PRUSS memory region structure
+>>>> + * @va: kernel virtual address of the PRUSS memory region
+>>>> + * @pa: physical (bus) address of the PRUSS memory region
+>>>> + * @size: size of the PRUSS memory region
+>>>> + */
+>>>> +struct pruss_mem_region {
+>>>> +    void __iomem *va;
+>>>> +    phys_addr_t pa;
+>>>> +    size_t size;
+>>>> +};
+>>>> +
+>>>>   struct device_node;
+>>>>   struct rproc;
+>>>>   struct pruss;
+>>>> @@ -52,6 +74,10 @@ struct pruss;
+>>>>     struct pruss *pruss_get(struct rproc *rproc);
+>>>>   void pruss_put(struct pruss *pruss);
+>>>> +int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
+>>>> +                 struct pruss_mem_region *region);
+>>>> +int pruss_release_mem_region(struct pruss *pruss,
+>>>> +                 struct pruss_mem_region *region);
+>>>>     #else
+>>>>   @@ -62,6 +88,19 @@ static inline struct pruss *pruss_get(struct rproc
+>>>> *rproc)
+>>>>     static inline void pruss_put(struct pruss *pruss) { }
+>>>>   +static inline int pruss_request_mem_region(struct pruss *pruss,
+>>>> +                       enum pruss_mem mem_id,
+>>>> +                       struct pruss_mem_region *region)
+>>>> +{
+>>>> +    return -EOPNOTSUPP;
+>>>> +}
+>>>> +
+>>>> +static inline int pruss_release_mem_region(struct pruss *pruss,
+>>>> +                       struct pruss_mem_region *region)
+>>>> +{
+>>>> +    return -EOPNOTSUPP;
+>>>> +}
+>>>> +
+>>>>   #endif /* CONFIG_TI_PRUSS */
+>>>>     #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+>>>
+>>> cheers,
+>>> -roger
+>>
+
+-- 
+Thanks and Regards,
+Danish.
