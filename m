@@ -2,162 +2,89 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21133C74A5B
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Mar 2023 18:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55F5C6FD20
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 21 Mar 2023 21:19:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjCUSdS (ORCPT
+        id S229791AbjCUVTU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Mar 2023 14:33:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44218 "EHLO
+        Tue, 21 Mar 2023 17:19:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjCUSdR (ORCPT
+        with ESMTP id S229513AbjCUVTT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Mar 2023 14:33:17 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F8EAD2C;
-        Tue, 21 Mar 2023 11:33:14 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32LGEj7o029939;
-        Tue, 21 Mar 2023 18:33:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=qcppdkim1;
- bh=N7rjdkk2VBnMhk+iF3Zl/KI4r7dcDpWPOfVT+/Bb/ko=;
- b=fwAND6FWzf5hpb/Tzr3X3bu/kf4/bbKbe/LdkhPPfoTibt0YsvrpwAf4LZIazhxFB1pQ
- /CuzxFVIvW3VWW9Do9MNjTBm2gqP29QggIvE2Cu1WwiA/wa/edR1iqBzv03fI6ALJrJE
- tjWmDiNqIQFJ6PfjYkHbTolaZXCn7q05NxZ1XQ7xhv8kTGf+mRiMWa+8jP+8avyMybnp
- bMgW4uxaIcbUKo/MIAaH2ibAvDQFePUYXNk2xkBw3vXz8BxjBwNCos1XcFMNaHA+7AM4
- IgpDq+CdcULtX/hZ2pG/qOd3H5ZTS5NAEuFgdgAA2H0o72itvbIRMdYgb5aoYrNt21d0 oQ== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfbjy9ayh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Mar 2023 18:33:05 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32LIX4fo023252
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 21 Mar 2023 18:33:04 GMT
-Received: from hu-gokukris-sd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Tue, 21 Mar 2023 11:33:03 -0700
-From:   Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-To:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Satya Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        "Guru Das Srinagesh" <quic_gurus@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        "Gokul krishna Krishnakumar" <quic_gokukris@quicinc.com>
-Subject: [PATCH v3 1/1] soc: qcom: mdt_loader: Enhance split binary detection
-Date:   Tue, 21 Mar 2023 11:32:49 -0700
-Message-ID: <20230321183249.24154-1-quic_gokukris@quicinc.com>
-X-Mailer: git-send-email 2.39.2
+        Tue, 21 Mar 2023 17:19:19 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C3012CDB
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Mar 2023 14:19:18 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id gp15-20020a17090adf0f00b0023d1bbd9f9eso21729345pjb.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Mar 2023 14:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679433558;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VK8OACTsZrCxigEsUC8+yzbwaxLgbM99buzLp5o3QHA=;
+        b=KDAujDFlQT0N2rQpFVbd4roL3RWQBYm/O2siIyVzrY7lG/AfI5USHePmZqNACELWyZ
+         CAnixP+UM1iiselTENdcf+UGEHR7RjU7v2nh4l8MS9I5rs410vful8xNw1q8a1l48TII
+         1Tzk3uBMAd+TwF1zrApmuNi1Ts9xdXFmqeedXAvilKHysph5glkWHJYEVWDmicnq32te
+         xjLHW8hqAnrfzXLSsjx7gr9JFW3Is657wdZmV/bWIato4yLeyjXJgVuehH/QRLFzcBli
+         TGsAS28JrwpiCe5hck5JukYyZaEK9UOMdkcpfk+cvG5LjIf7XljQvIN3HFH7P5f5dwb8
+         XYCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679433558;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VK8OACTsZrCxigEsUC8+yzbwaxLgbM99buzLp5o3QHA=;
+        b=L5FupgFAgDDxeZoXiIQMZ2xU/XlcTSvvG4a+4UgdNbVIZrAP/64ZQf8KSGqIbr7RSQ
+         H1kgSKGcoBgAoei2JS2tGQIAR3GYzILxhGTvuKFa4XUWHNBr/WrrUyjTwta6X2CLarIT
+         Q1T8w3nBG2kXbWyBFw6Yr5j82yWPeSPUVZZ3xFaTJ5S6CzFIiFE+dEfR9MDUIXAT5gFg
+         7FZxjFDOGZe3evUlRSGYv60Z8qD4ZVGa55OaltFzGfNTVC8DIvfAe2hlZlOiTPIIcP8E
+         N1eq/c6GHf7p5sgTVHxmvwfi5rzayBSjH0W6xoKmSKu7LqZypFjqJJ1GERt6gF5DWMaR
+         Nirw==
+X-Gm-Message-State: AO0yUKXA+ku2oJ8n7AEYmbspGg40OjIv6BuiGlsePwB2JiLK3IgPrIQB
+        RmqPko3kgLPmA0jOcDDr4E6P8w==
+X-Google-Smtp-Source: AK7set+8I755xqwBJMnakxMfyAKZdvfsiqbry9lE2fZAK+7+ZS6/xxDfvgMLgjrrGxPIbY9MdNYOwg==
+X-Received: by 2002:a17:90a:49cf:b0:230:b0e3:9cad with SMTP id l15-20020a17090a49cf00b00230b0e39cadmr889584pjm.23.1679433558289;
+        Tue, 21 Mar 2023 14:19:18 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8a45:c131:e8ed:3f53])
+        by smtp.gmail.com with ESMTPSA id s19-20020a170902989300b00186cf82717fsm9173146plp.165.2023.03.21.14.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Mar 2023 14:19:17 -0700 (PDT)
+Date:   Tue, 21 Mar 2023 15:19:15 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        patrice.chotard@foss.st.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, arnaud.pouliquen@st.com,
+        hongxing.zhu@nxp.com, peng.fan@nxp.com, shengjiu.wang@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/5] retmoteproc: imx_dsp_rproc: Call of_node_put() on
+ iteration error
+Message-ID: <20230321211915.GA2782856@p14s>
+References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
+ <20230320221826.2728078-6-mathieu.poirier@linaro.org>
+ <CAOMZO5Dh0mQEhjT2Wx_T9Kf9aTkNpJ7PbMfocQ24sh+yGtw+ww@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gomtDVaNqWGXs04bpBSt_d-849-pxFzb
-X-Proofpoint-ORIG-GUID: gomtDVaNqWGXs04bpBSt_d-849-pxFzb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-21_11,2023-03-21_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 malwarescore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303210147
+In-Reply-To: <CAOMZO5Dh0mQEhjT2Wx_T9Kf9aTkNpJ7PbMfocQ24sh+yGtw+ww@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-It may be that the offset of the first program header lies inside the mdt's
-filesize, in this case the loader would incorrectly assume that the bins
-were not split. The loading would then continue on to fail for split bins.
-This change updates the logic used by the mdt loader to understand whether
-the firmware images are split or not. It figures this out by checking if
-each programs header's segment lies within the file or not.
+On Mon, Mar 20, 2023 at 08:02:04PM -0300, Fabio Estevam wrote:
+> On Mon, Mar 20, 2023 at 7:18 PM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+> >
+> > Function of_phandle_iterator_next() calls of_node_put() on the last
+> > device_node it iterated over, but when the loop exits prematurely it has
+> > to be called explicitly.
+> 
+> Typo on the Subject: s/retmoteproc/remoteproc
 
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
----
-This patch is separated out from [1] and includes
-changes addressing comments from that patch set.
-
-[1] https://lore.kernel.org/all/20230306231202.12223-5-quic_molvera@quicinc.com/
----
- drivers/soc/qcom/mdt_loader.c | 27 +++++++++++++++++++++++++--
- 1 file changed, 25 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
-index 3f11554df2f3..08ed4c0293f2 100644
---- a/drivers/soc/qcom/mdt_loader.c
-+++ b/drivers/soc/qcom/mdt_loader.c
-@@ -258,6 +258,26 @@ int qcom_mdt_pas_init(struct device *dev, const struct firmware *fw,
- }
- EXPORT_SYMBOL_GPL(qcom_mdt_pas_init);
- 
-+static bool qcom_mdt_bins_are_split(const struct firmware *fw, const char* fw_name)
-+{
-+	const struct elf32_phdr *phdrs;
-+	const struct elf32_hdr *ehdr;
-+	uint64_t seg_start, seg_end;
-+	int i;
-+
-+	ehdr = (struct elf32_hdr *)fw->data;
-+	phdrs = (struct elf32_phdr *)(ehdr + 1);
-+
-+	for (i = 0; i < ehdr->e_phnum; i++) {
-+		seg_start = phdrs[i].p_offset;
-+		seg_end = phdrs[i].p_offset + phdrs[i].p_filesz;
-+		if (seg_start > fw->size || seg_end > fw->size)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 			   const char *fw_name, int pas_id, void *mem_region,
- 			   phys_addr_t mem_phys, size_t mem_size,
-@@ -270,6 +290,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	phys_addr_t min_addr = PHYS_ADDR_MAX;
- 	ssize_t offset;
- 	bool relocate = false;
-+	bool is_split;
- 	void *ptr;
- 	int ret = 0;
- 	int i;
-@@ -277,6 +298,8 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 	if (!fw || !mem_region || !mem_phys || !mem_size)
- 		return -EINVAL;
- 
-+
-+	is_split = qcom_mdt_bins_are_split(fw, fw_name);
- 	ehdr = (struct elf32_hdr *)fw->data;
- 	phdrs = (struct elf32_phdr *)(ehdr + 1);
- 
-@@ -330,8 +353,8 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
- 
- 		ptr = mem_region + offset;
- 
--		if (phdr->p_filesz && phdr->p_offset < fw->size &&
--		    phdr->p_offset + phdr->p_filesz <= fw->size) {
-+
-+		if (phdr->p_filesz && !is_split) {
- 			/* Firmware is large enough to be non-split */
- 			if (phdr->p_offset + phdr->p_filesz > fw->size) {
- 				dev_err(dev, "file %s segment %d would be truncated\n",
--- 
-2.39.2
+Thanks for pointing that out, I'll fix it.
 
