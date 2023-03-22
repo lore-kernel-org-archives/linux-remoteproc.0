@@ -2,49 +2,49 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A02BC6FD20
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 03:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 724EEC6FD20
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 03:16:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbjCVDP1 (ORCPT
+        id S230076AbjCVDQr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 21 Mar 2023 23:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
+        Tue, 21 Mar 2023 23:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjCVDP1 (ORCPT
+        with ESMTP id S230075AbjCVDQq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 21 Mar 2023 23:15:27 -0400
+        Tue, 21 Mar 2023 23:16:46 -0400
 Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B246F2597B;
-        Tue, 21 Mar 2023 20:15:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0341C5552D;
+        Tue, 21 Mar 2023 20:16:46 -0700 (PDT)
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mxct.zte.com.cn (FangMail) with ESMTPS id 4PhDB36Bd8z501SY;
-        Wed, 22 Mar 2023 11:15:23 +0800 (CST)
+        by mxct.zte.com.cn (FangMail) with ESMTPS id 4PhDCc2trVz501Sb;
+        Wed, 22 Mar 2023 11:16:44 +0800 (CST)
 Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-        by mse-fl2.zte.com.cn with SMTP id 32M3FDr0006888;
-        Wed, 22 Mar 2023 11:15:13 +0800 (+08)
+        by mse-fl2.zte.com.cn with SMTP id 32M3Gfiv008647;
+        Wed, 22 Mar 2023 11:16:41 +0800 (+08)
         (envelope-from ye.xingchen@zte.com.cn)
 Received: from mapi (xaxapp02[null])
         by mapi (Zmail) with MAPI id mid31;
-        Wed, 22 Mar 2023 11:15:14 +0800 (CST)
-Date:   Wed, 22 Mar 2023 11:15:14 +0800 (CST)
-X-Zmail-TransId: 2afa641a72c25da-b2591
+        Wed, 22 Mar 2023 11:16:42 +0800 (CST)
+Date:   Wed, 22 Mar 2023 11:16:42 +0800 (CST)
+X-Zmail-TransId: 2afa641a731a6d0-b7682
 X-Mailer: Zmail v1.0
-Message-ID: <202303221115145068959@zte.com.cn>
+Message-ID: <202303221116427329010@zte.com.cn>
 Mime-Version: 1.0
 From:   <ye.xingchen@zte.com.cn>
 To:     <andersson@kernel.org>
 Cc:     <agross@kernel.org>, <konrad.dybcio@linaro.org>,
         <mathieu.poirier@linaro.org>, <linux-arm-msm@vger.kernel.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSByZW1vdGVwcm9jOiBxY29tOiBxNnY1OiB1c2XCoGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZV9ieW5hbWUoKQ==?=
+Subject: =?UTF-8?B?W1BBVENIXSByZW1vdGVwcm9jOiBxY29tOiB3Y25zczogdXNlwqBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2VfYnluYW1lKCk=?=
 Content-Type: text/plain;
         charset="UTF-8"
-X-MAIL: mse-fl2.zte.com.cn 32M3FDr0006888
+X-MAIL: mse-fl2.zte.com.cn 32M3Gfiv008647
 X-Fangmail-Gw-Spam-Type: 0
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 641A72CB.000/4PhDB36Bd8z501SY
+X-Fangmail-MID-QID: 641A731C.000/4PhDCc2trVz501Sb
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -57,22 +57,30 @@ this function does.
 
 Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
 ---
- drivers/remoteproc/qcom_q6v5_wcss.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/remoteproc/qcom_wcnss.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index ba24d745b2d6..dadb9dccd541 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -837,8 +837,7 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
- 		return -ENOMEM;
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 9d4d04fff8c6..f678dda1ed6c 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -538,7 +538,6 @@ static int wcnss_probe(struct platform_device *pdev)
+ 	const char *fw_name = WCNSS_FIRMWARE_NAME;
+ 	const struct wcnss_data *data;
+ 	struct qcom_wcnss *wcnss;
+-	struct resource *res;
+ 	struct rproc *rproc;
+ 	void __iomem *mmio;
+ 	int ret;
+@@ -576,8 +575,7 @@ static int wcnss_probe(struct platform_device *pdev)
 
- 	if (wcss->version == WCSS_IPQ8074) {
--		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "rmb");
--		wcss->rmb_base = devm_ioremap_resource(&pdev->dev, res);
-+		wcss->rmb_base = devm_platform_ioremap_resource_byname(pdev, "rmb");
- 		if (IS_ERR(wcss->rmb_base))
- 			return PTR_ERR(wcss->rmb_base);
- 	}
+ 	mutex_init(&wcnss->iris_lock);
+
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pmu");
+-	mmio = devm_ioremap_resource(&pdev->dev, res);
++	mmio = devm_platform_ioremap_resource_byname(pdev, "pmu");
+ 	if (IS_ERR(mmio)) {
+ 		ret = PTR_ERR(mmio);
+ 		goto free_rproc;
 -- 
 2.25.1
