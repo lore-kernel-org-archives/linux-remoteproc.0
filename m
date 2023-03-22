@@ -2,116 +2,76 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D76C6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 13:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09148C6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 14:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbjCVNbu (ORCPT
+        id S230513AbjCVOJG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 09:31:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44384 "EHLO
+        Wed, 22 Mar 2023 10:09:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231137AbjCVNba (ORCPT
+        with ESMTP id S231277AbjCVOJF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 09:31:30 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A3910D1;
-        Wed, 22 Mar 2023 06:31:26 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32MCpcd5032660;
-        Wed, 22 Mar 2023 13:31:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=8nYnzsuGMPsj8JOqe13LRPBczbL/fuoMs9/mE/rmmaE=;
- b=X03QKN4NYu93RufzwPPydp0MUvzRl2QbwkZ5aMhMaERjnrmUwBAPPXaDRem9cuwCblM4
- k+e1TuIzhD9Q1BPQ7j6tCBR811PYbckhbuwqIFgtZO4oDp2fvaCPVu7GSCcQGioe2Qzp
- 4zcbihYfW/3S4Kx8zth+OrcVQv+//YJWsCBXDsV8FPVCDLUfaBBXVIuI9NYpPhhC4NZ8
- nW96oqJiBrtALUW3nMOtgiFqvei3/OKGZsSL4rERHrWw3stoniwRpESz4VlBypNdI0MA
- EIms2nO30dIuDIy+DOC9dnwNXUXgFHjFuKBnjXEIpnWzyIiOOP15lo4XfPLp+HMVa4ZI VA== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfhnx284y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 13:31:10 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MDV9rj013613
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 13:31:09 GMT
-Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Wed, 22 Mar 2023 06:31:04 -0700
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>, <will@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-doc@vger.kernel.org>, "Mukesh Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH v2 6/6] remoterproc: qcom: refactor to leverage exported minidump symbol
-Date:   Wed, 22 Mar 2023 19:00:17 +0530
-Message-ID: <1679491817-2498-7-git-send-email-quic_mojha@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
-References: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
+        Wed, 22 Mar 2023 10:09:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA8B559D4;
+        Wed, 22 Mar 2023 07:09:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EEAE66211D;
+        Wed, 22 Mar 2023 14:09:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04683C433D2;
+        Wed, 22 Mar 2023 14:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679494143;
+        bh=+cCRwtJPdwxej4B9LZ/zxX+smQUuOkT8U2aueNMAgug=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KyGKR6bAbqjbzS0uBJHYs835IQGCTVhyI7NYS4hkUZwgvzPfvuZjnAuxDXqlbAzF/
+         EiCYxUt7MC/yVLzpMoHRnbyQLgSVQbtWGPej7+FGJYMZo3R//ZzO3B1G/6pUhSZevl
+         aJNqGEjiT8HscdE/T5UTfGF5rEYO5KlF4CGrzVZk4Z01rQyeXygJWhDKhzt39lR4Y1
+         36IlMxS52LXcjKRK+lktCLPGje0HszJl37rxKEKJlVaw6neyskZE3uKIFt8et2m+Gx
+         giZftk0aaNw9BOSp8EBHUWe1UmaLk0GLQsZAjX685N9h05km6qQ4f5a05q1HJyDHJh
+         +Ja3HRVOGzBNw==
+Date:   Wed, 22 Mar 2023 07:12:15 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] remoteproc: get rproc devices for clusters
+Message-ID: <20230322141215.ygicmrppqaawlgeb@ripper>
+References: <20230322040933.924813-1-tanmay.shah@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OnW_maYzV8fjuRDitSe10T3kXENK82Hk
-X-Proofpoint-ORIG-GUID: OnW_maYzV8fjuRDitSe10T3kXENK82Hk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-22_11,2023-03-22_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- bulkscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
- lowpriorityscore=0 impostorscore=0 clxscore=1015 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303150002 definitions=main-2303220098
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230322040933.924813-1-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-qcom_minidump driver provides qcom_minidump_subsystem_desc()
-exported API which other driver can use it query subsystem
-descriptor. Refactor qcom_minidump() to use this symbol.
+On Tue, Mar 21, 2023 at 09:09:32PM -0700, Tanmay Shah wrote:
+> This series extends original patch and makes rproc_put() work
+> for clusters along with rprog_get_by_phandle().
+> 
+> v1 is here: https://lore.kernel.org/all/20221214221643.1286585-1-mathieu.poirier@linaro.org/
+> 
 
-Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
----
- drivers/remoteproc/qcom_common.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+What changed since v1?
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 88fc984..240e9f7 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -94,19 +94,10 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
- {
- 	int ret;
- 	struct minidump_subsystem *subsystem;
--	struct minidump_global_toc *toc;
- 
--	/* Get Global minidump ToC*/
--	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
--
--	/* check if global table pointer exists and init is set */
--	if (IS_ERR(toc) || !toc->status) {
--		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
-+	subsystem = qcom_minidump_subsystem_desc(minidump_id);
-+	if (IS_ERR(subsystem))
- 		return;
--	}
--
--	/* Get subsystem table of contents using the minidump id */
--	subsystem = &toc->subsystems[minidump_id];
- 
- 	/**
- 	 * Collect minidump if SS ToC is valid and segment table
--- 
-2.7.4
+Thanks,
+Bjorn
 
+> Mathieu Poirier (1):
+>   remoteproc: Make rproc_get_by_phandle() work for clusters
+> 
+> Tanmay Shah (1):
+>   remoteproc: enhance rproc_put() for clusters
+> 
+>  drivers/remoteproc/remoteproc_core.c | 41 +++++++++++++++++++++++++++-
+>  1 file changed, 40 insertions(+), 1 deletion(-)
+> 
+> 
+> base-commit: e19967994d342a5986d950a1bfddf19d7e1191b7
+> -- 
+> 2.25.1
+> 
