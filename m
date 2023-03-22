@@ -2,161 +2,108 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A77AC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 08:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96782C7619A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 10:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229476AbjCVIWV (ORCPT
+        id S230076AbjCVKT6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 04:22:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44196 "EHLO
+        Wed, 22 Mar 2023 06:19:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjCVIWT (ORCPT
+        with ESMTP id S229791AbjCVKT4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 04:22:19 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615BD5D255;
-        Wed, 22 Mar 2023 01:22:18 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M4dEVn012467;
-        Wed, 22 Mar 2023 09:21:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+        Wed, 22 Mar 2023 06:19:56 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C2A5651A;
+        Wed, 22 Mar 2023 03:19:55 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M4XRw5014780;
+        Wed, 22 Mar 2023 10:19:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=oWRoobCUf6mgMbXtM7QML+mXsPQj3dwmibLtZAppDpc=;
- b=1mGUtC7cfwlxfaoNdgCVxJv3T2QY5gZrFqXzS4LbFEqqY6KzbQvnSkdHjpefY7761lMX
- QQiLPh9pN7vUYlwHNyT39kwFslES2gwx3Ys1tYgcgX7tjAkXkGacstlINnRFvZF6m6Gx
- B8Q5pHn9oQrTaABAEy0/mSpmYFDbk8Muv6kEJ7y2U78pE7ofWR/J0oXZ8OGdOPwPbzwx
- cP76JRBRSbZcs0ypoG3fEEhIXSXp2SJeEe3JyvXOww8PeptcksjJlB9OpGCvN6Xupeeo
- HMiykvyu2P/TOxfktXm4bZGhMYOtyujDJO6J7+Sf4OdOJigjAzcDWR2zRyBH2irwa0p+ sg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pf875yw7w-1
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=RLqMGRumJK6CZZb2/pwHr9Dl3j5xeLjrcwS0hWS47y0=;
+ b=bzpXLSu6PXajW2t0tQnCVRPjoYLG2pudUAuu9QljUIqhXsAVvJBYTRSxmO4G6J0nI2Ft
+ XoO6djV1w9Lr6NU9VlXw/mGBU+wGFQcDVkkijPb7zAJlKgvIbK5V/CfRfZq15Yf8tWnD
+ h21PnjmJg7Mq6iu6EXIHgTLh68PFRYzsBIWcoI976w6DthF/yhRnemw8+G2Tr7dLLUzT
+ lO7Sl/737jCs6BYKGSewpevQ/74MIqcXfEIy3OTdkw9LxbsELxPFX025EJmENGUpMDfQ
+ 24g5AgL8kOXk3kUtPjfP9DJXKggpmbG/MOPks/VOp9nntlYS+e8f+qFFG29XDVdf669l Qg== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfpfgs8e3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 09:21:18 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 173F4100038;
-        Wed, 22 Mar 2023 09:21:17 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0FE9B20E1FC;
-        Wed, 22 Mar 2023 09:21:17 +0100 (CET)
-Received: from [10.201.22.135] (10.201.22.135) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Wed, 22 Mar
- 2023 09:21:15 +0100
-Message-ID: <104da4a2-a099-666e-b821-e8efe0901ce8@foss.st.com>
-Date:   Wed, 22 Mar 2023 09:21:14 +0100
+        Wed, 22 Mar 2023 10:19:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MAJimr018523
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 10:19:44 GMT
+Received: from [10.242.243.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Mar
+ 2023 03:19:37 -0700
+Message-ID: <bb56bbb7-7b08-79f9-ad1b-a2de63eca5f6@quicinc.com>
+Date:   Wed, 22 Mar 2023 15:48:41 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 1/5] remoteproc: stm32: Call of_node_put() on iteration
- error
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc
+ driver
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <andersson@kernel.org>, <shawnguo@kernel.org>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <festevam@gmail.com>, <linux-imx@nxp.com>,
-        <patrice.chotard@foss.st.com>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <arnaud.pouliquen@st.com>,
-        <hongxing.zhu@nxp.com>, <peng.fan@nxp.com>,
-        <shengjiu.wang@nxp.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
- <20230320221826.2728078-2-mathieu.poirier@linaro.org>
- <e3644e19-7453-440b-00dc-781104ca83cf@foss.st.com>
- <20230321213250.GB2782856@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20230321213250.GB2782856@p14s>
-Content-Type: text/plain; charset="UTF-8"
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
+ <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.22.135]
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cqcy1Thc334ObsRiiKhhOqiQGD2AStnb
+X-Proofpoint-ORIG-GUID: cqcy1Thc334ObsRiiKhhOqiQGD2AStnb
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-21_11,2023-03-21_01,2023-02-09_01
+ definitions=2023-03-22_07,2023-03-22_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=373 spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ phishscore=0 priorityscore=1501 clxscore=1011 malwarescore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
+ definitions=main-2303220073
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 3/21/23 22:32, Mathieu Poirier wrote:
-> On Tue, Mar 21, 2023 at 10:00:03AM +0100, Arnaud POULIQUEN wrote:
->> Hi Mathieu,
->>
->> On 3/20/23 23:18, Mathieu Poirier wrote:
->>> Function of_phandle_iterator_next() calls of_node_put() on the last
->>> device_node it iterated over, but when the loop exits prematurely it has
->>> to be called explicitly> 
->>> Fixes: 13140de09cc2 ("remoteproc: stm32: add an ST stm32_rproc driver")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->>> ---
->>>  drivers/remoteproc/stm32_rproc.c | 6 +++++-
->>>  1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
->>> index 7d782ed9e589..23c1690b8d73 100644
->>> --- a/drivers/remoteproc/stm32_rproc.c
->>> +++ b/drivers/remoteproc/stm32_rproc.c
->>> @@ -223,11 +223,13 @@ static int stm32_rproc_prepare(struct rproc *rproc)
->>>  	while (of_phandle_iterator_next(&it) == 0) {
->>>  		rmem = of_reserved_mem_lookup(it.node);
->>>  		if (!rmem) {
->>> +			of_node_put(it.node);
->>>  			dev_err(dev, "unable to acquire memory-region\n");
->>>  			return -EINVAL;
->>>  		}
->>>  
->>>  		if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
->>> +			of_node_put(it.node);
->>>  			dev_err(dev, "memory region not valid %pa\n",
->>>  				&rmem->base);
->>>  			return -EINVAL;
->>> @@ -254,8 +256,10 @@ static int stm32_rproc_prepare(struct rproc *rproc)
->>>  							   it.node->name);
->>>  		}
->>>  
->>> -		if (!mem)
->>> +		if (!mem) {
->>> +			of_node_put(it.node);
->>>  			return -ENOMEM;
->>> +		}
->>
->> Good catch!
->>
->> Looking in code I don't see that we call of_node_put() when we release the
->> carveouts. 
->> Please tell me if I'm wrong but look to me that we should also call of_node_put()
->> in mem->release() op, in drivers. 
->>
-> 
-> Are you referring to entry->release(), which for stm32 is
-> stm32_rproc_mem_release(), in rproc_resource_cleanup()?
-> 
-> If so then no, it is not needed since of_phandle_iterator_next() calls
-> of_node_put() on the previous device_node with each iteration.
-> 
-> Otherwise I fail to understand the question and will ask you to clarify.
+On 3/7/2023 9:09 PM, Krzysztof Kozlowski wrote:
+> Why exactly do you need a new driver for this instead of extending
+> existing PIL? I feel all this is growing because no one wants to touch
+> existing code and merge with it...
 
-My apologize, I misread the of_phandle_iterator_next function. you can forget my
-comment.
+Previously we raised patch to add secure-pil to existing rproc driver. 
+Bjorn suggested to introduce a new secure-pil driver.
 
-Regards,
-Arnaud
+https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/ 
 
-> 
->> This one remains valid.
->> reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>
-> 
-> Ok
-> 
->> Thanks,
->> Arnaud
->>
->>
->>>  
->>>  		rproc_add_carveout(rproc, mem);
->>>  		index++;
+
+Also IPQ5018, IPQ9574 soc's follows multipd model. So we decided to
+have new driver which consists 'secure-pil + multi pd' in one
+place.
+
+Thanks & Regards,
+Manikanta.
