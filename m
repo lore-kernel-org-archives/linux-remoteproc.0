@@ -2,97 +2,120 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3966AC6FD1F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 11:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2C4C6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 11:52:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230110AbjCVLOl (ORCPT
+        id S230161AbjCVLwz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 07:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58528 "EHLO
+        Wed, 22 Mar 2023 07:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbjCVLOk (ORCPT
+        with ESMTP id S229816AbjCVLwy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 07:14:40 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A1A4C6F2;
-        Wed, 22 Mar 2023 04:14:39 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id eh3so71273185edb.11;
-        Wed, 22 Mar 2023 04:14:39 -0700 (PDT)
+        Wed, 22 Mar 2023 07:52:54 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29ECD10ABE;
+        Wed, 22 Mar 2023 04:52:53 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id y4so71810287edo.2;
+        Wed, 22 Mar 2023 04:52:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679483678;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wNQMPrXeAiv4ATfaNwsUCZoGnla70bhGZgF/+CvtNnY=;
-        b=leR6cYRJoRYPMxJsQhkSc+xnpejhTD209af42m9+kFja/4+30O6K1Nsvq3a8Gxh5wj
-         WVk/7FVhDN04q4mMOob9+apU9EYplmUOEUiY6vBJ0HukucA74fwIlLVaBsVzw6P58RYk
-         FI4zaoMMKwGtj3abvTlbWkl6h61rixvz5UX++HmyqLE3a6K7hWVhDVz4jrvocDKfUpaP
-         ygJiV4YnKPHk22gwG3ZSary/PoCFZX77ubbGqoJ8EmAB7sQTRsNVO2I35GFMqVLLo6jD
-         8q6szOxy/3cEbO4+wafZeIFgPqsuMGdivXqUBEgAoMkCnj2ED+KfWMfkPH+3CHx1LdV7
-         gyDA==
+        d=gmail.com; s=20210112; t=1679485971;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ho4jVBmPA9BFJ1NRBlIYYugOjZKS7BAlkcBVP60WOFY=;
+        b=E3Oh+auU0oU56o4Ag9yCvnQ/NujkTP0f/ZvGt/y7CLtux5D3nolsuSjsF/3blUbsfJ
+         eV8kejmE8d95Y+1LNWWto+mgd7RcuFW/gnnl2oipW2ky6GwDEwTAITvLoQwIRCVr1XuF
+         TrpxFzJ2iuDLJPEaATm4qvd+ofG2nx3KYegE/6EmnVs7SxIQfhSr9y3C6/uOqZnWhMhX
+         zuY2iDo1tXjCg3gilbwxs6aj5nBIuOAqJjZx5sgfi0aP0HhadSDasNAGTyOLjgAGY7+J
+         0bl338AYEXDfQgAsGdE0oJ0mikj3pCgQEMIfVKT3kQSNSKFQ1RGdrCXR6Ac1hTNiqRHu
+         ulzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679483678;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20210112; t=1679485971;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wNQMPrXeAiv4ATfaNwsUCZoGnla70bhGZgF/+CvtNnY=;
-        b=GVtClTB+CeC1ibYFPGGO6I80dP5s6pnUqbN4OB9ELx5DH6C64Fo3vjIJgsJOxxvirf
-         elevPo/rafRgS3yxoXSN9BATA3ic4bxCUmLdWA0WTTxu/3ORgfKs5wU68OjJpDTRQV7r
-         tpyTQDZGJYHzRvz5mmUL4/PPhUSaYe4/s0WvefeKnszQFuf6G6TC8KbEJv1XkkepURR9
-         Iz1ut0AF7Lp7a5hyi4T62px/9P7szGyutPe0yKGA2qQFaC3nOKjf+O1cniOsbYIekjWI
-         779yl+qdhWaFBdxGGA1F/Elc4bwMJ6Yp3Y5SEvZAqnpvIWTLl0HwGFZWScemPzXgLaz6
-         QvIg==
-X-Gm-Message-State: AO0yUKVtrmCAYq6uCpJ/t57pFNNWKZ9I4EXUqM8emXsO9ynXttCMFRi6
-        JeDbiJxMXNA/haPJpJ4+b09oG4io1dlmSOxF1ehWa2Vz
-X-Google-Smtp-Source: AK7set/vzRkpZMD3B/M4QL5rTBBvj3PbxXlggp07G+keSkvrHFE/5iOVPQ1EDTrw6B7Brkrom2QDqG4MLwq9BwtHWaE=
-X-Received: by 2002:a50:f683:0:b0:4fc:7014:f91c with SMTP id
- d3-20020a50f683000000b004fc7014f91cmr3281812edn.5.1679483677879; Wed, 22 Mar
- 2023 04:14:37 -0700 (PDT)
+        bh=ho4jVBmPA9BFJ1NRBlIYYugOjZKS7BAlkcBVP60WOFY=;
+        b=TVJlhoe251fqTinz498wFrlgzDkAxEM/dzHD98j/CT+EsSYH6/hXyMJJCr7UJ7q5lu
+         BCu7qJFUBLUAQrCTwvkR0vU0+OnvVhNMTdmfDIBRwAWhhB1rK7xXDDsJQCokpEuokpjZ
+         G69wP/UFJQqkd3zRtjmSZRJA/yGtOonWzm7qUfDHnRHNRj7/Mh0Jf8W1GJuRtrAFZUyC
+         9f+d93sbZKluKkehyPT/VyTMZ7JF7bUE1Rg8fCX025CReAzl4lJ1Ty8cBs8tOhSM6u0U
+         kidttPLjCLL+khCPQ8lI3Qq6hjY6lgz4mZUv5F83AicTY3+lHC08oDv2pYWMnjfTVOA7
+         mIZA==
+X-Gm-Message-State: AO0yUKWjM+rO9vqAelC7DBpDGcRbQVF4ZaznRk3BTmHA9toeQN2w7Fe0
+        ysfMYp/BHecTd0dsgITARqo=
+X-Google-Smtp-Source: AK7set8jk6V8+fNpBSGtiZGLG7GpUDRiZlz/urB9685AOQ4i8HnPZa4QlvotQ+Sk+/vEAa04Pr3snQ==
+X-Received: by 2002:a17:906:eb8b:b0:884:930:b017 with SMTP id mh11-20020a170906eb8b00b008840930b017mr7424514ejb.60.1679485971523;
+        Wed, 22 Mar 2023 04:52:51 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d8-20020a170906c20800b0093a2160168esm1984974ejz.35.2023.03.22.04.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Mar 2023 04:52:51 -0700 (PDT)
+Date:   Wed, 22 Mar 2023 14:52:45 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     oe-kbuild@lists.linux.dev, Tanmay Shah <tanmay.shah@amd.com>,
+        andersson@kernel.org, mathieu.poirier@linaro.org
+Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tanmay Shah <tanmay.shah@amd.com>,
+        Tarak Reddy <tarak.reddy@amd.com>
+Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
+Message-ID: <82ff071d-cd00-47f8-bc72-4d78bfed731d@kili.mountain>
 MIME-Version: 1.0
-References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
- <2c4997fa-973c-dee4-9b26-6b38a1ca4540@nxp.com> <DU0PR04MB9417A9B81B86FAC0A477063D88DC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <73d34c86-7c31-6530-0915-aa470af5d9ca@nxp.com> <20230213175006.GA310433@p14s> <343571ba-faed-35d7-2859-2668391dadb2@oss.nxp.com>
-In-Reply-To: <343571ba-faed-35d7-2859-2668391dadb2@oss.nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Wed, 22 Mar 2023 13:14:25 +0200
-Message-ID: <CAEnQRZC5t=qmo+OJLW+dqZg4gH9cAN=paWDSGbrJb2AvkKBqxg@mail.gmail.com>
-Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
-To:     Peng Fan <peng.fan@oss.nxp.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230322040933.924813-3-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> > Second, there should always be a segment that adds the right information to the
-> > TMCL.  That segment doesn't need a name, it simply have to be part of the
-> > segments that are copied to memory (any kind of memory) so that function
-> > rproc_elf_load_segments() can do its job.
-> >
-> > That pushes the complexity to the tool that generates the firmware image,
-> > exactly where it should be.
->
-> For i.MX8M, yes. For i.MX93, the M33 ROM needs address of storing stack/pc.
-> >
-> > This is how I think we should solve this problem based on the very limited
-> > information provided with this patchset.  Please let me know if I missed
-> > something and we'll go from there.
->
-> I am not sure how to proceed on supporting the current firmware. what
-> should I continue with current patchset?
+Hi Tanmay,
 
-I'm in favor of merging this patch as it is. Already gave my
-reviewed-by tag above.
+url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/remoteproc-Make-rproc_get_by_phandle-work-for-clusters/20230322-121102
+base:   e19967994d342a5986d950a1bfddf19d7e1191b7
+patch link:    https://lore.kernel.org/r/20230322040933.924813-3-tanmay.shah%40amd.com
+patch subject: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
+config: powerpc-randconfig-m041-20230322 (https://download.01.org/0day-ci/archive/20230322/202303221916.LgKkr8Gk-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 12.1.0
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <error27@gmail.com>
+| Link: https://lore.kernel.org/r/202303221916.LgKkr8Gk-lkp@intel.com/
+
+smatch warnings:
+drivers/remoteproc/remoteproc_core.c:2565 rproc_put() warn: variable dereferenced before check 'rproc->dev.parent' (see line 2562)
+drivers/remoteproc/remoteproc_core.c:2566 rproc_put() warn: variable dereferenced before check 'rproc->dev.parent->driver' (see line 2562)
+
+vim +2565 drivers/remoteproc/remoteproc_core.c
+
+160e7c840fe858 Ohad Ben-Cohen  2012-07-04  2560  void rproc_put(struct rproc *rproc)
+400e64df6b237e Ohad Ben-Cohen  2011-10-20  2561  {
+fbb6aacb078285 Bjorn Andersson 2016-10-02 @2562  	module_put(rproc->dev.parent->driver->owner);
+                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Unchecked dereferences.
+
+573d22d13a6970 Tanmay Shah     2023-03-21  2563  	struct platform_device *cluster_pdev;
+573d22d13a6970 Tanmay Shah     2023-03-21  2564  
+573d22d13a6970 Tanmay Shah     2023-03-21 @2565  	if (rproc->dev.parent) {
+                                                            ^^^^^^^^^^^^^^^^^
+Checked too late.
+
+573d22d13a6970 Tanmay Shah     2023-03-21 @2566  		if (rproc->dev.parent->driver) {
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+573d22d13a6970 Tanmay Shah     2023-03-21  2567  			module_put(rproc->dev.parent->driver->owner);
+573d22d13a6970 Tanmay Shah     2023-03-21  2568  		} else {
+573d22d13a6970 Tanmay Shah     2023-03-21  2569  			cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
+573d22d13a6970 Tanmay Shah     2023-03-21  2570  			if (cluster_pdev) {
+573d22d13a6970 Tanmay Shah     2023-03-21  2571  				module_put(cluster_pdev->dev.driver->owner);
+573d22d13a6970 Tanmay Shah     2023-03-21  2572  				put_device(&cluster_pdev->dev);
+573d22d13a6970 Tanmay Shah     2023-03-21  2573  			}
+573d22d13a6970 Tanmay Shah     2023-03-21  2574  		}
+573d22d13a6970 Tanmay Shah     2023-03-21  2575  	}
+b5ab5e24e960b9 Ohad Ben-Cohen  2012-05-30  2576  	put_device(&rproc->dev);
+400e64df6b237e Ohad Ben-Cohen  2011-10-20  2577  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
+
