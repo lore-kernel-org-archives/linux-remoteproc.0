@@ -2,253 +2,120 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABECC6FD1F
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 15:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F418CC76195
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 16:05:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbjCVPNz (ORCPT
+        id S230260AbjCVQFn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 11:13:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45700 "EHLO
+        Wed, 22 Mar 2023 12:05:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbjCVPNy (ORCPT
+        with ESMTP id S230130AbjCVQFl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 11:13:54 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC821B56D
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Mar 2023 08:13:52 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id c18so19553222ple.11
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Mar 2023 08:13:52 -0700 (PDT)
+        Wed, 22 Mar 2023 12:05:41 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F87865465
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Mar 2023 09:05:40 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so19641486pjz.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Mar 2023 09:05:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679498032;
+        d=linaro.org; s=google; t=1679501140;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9ZTp7ZZm4J7TRIYDhiFVRzOC61nUJhSd8nfAEWPRzg=;
-        b=W44GNUYI9bL7w9zg1EGFmSrVNq2zwlsVHXMuWzpOr88CtaRzO8/PScZ+qKQzs2Ci/M
-         5p+1N4uCAUCgfk00bQ9MKO/LkBxJplRuMisPePd4xfR4B4eqn9EcwNS8p8FAH/hHw6UC
-         alIMBfQvwzxQiN5+8+a5Ze6g9H7rxHHzqVc15MyoeJvzlRW8f/UEyjDwk09Tq2nHHoFS
-         hfxIpMtVO/oBB5OMIiKGVkZ7u8Rt+Ki22OGYPAjDSHrV4oupbqK7bKBAMSXf5zB4L+Do
-         Xj0LR2FC8mO3xRlBhDfOuNwd96ZyfqShl4O7MzpsfMPiPZZHYl01k7qmJ9qfptsV6NW7
-         EYSg==
+        bh=IukpbyPZH5pOnaBve9gErB6TGgeD/eDs7JQ55KZ8OhA=;
+        b=P72cmwiu0JhSN+UMSIcx06wPefsM29+6j6TbTsR+V3kIrZbrHM/lTuO2yxQKZ0Y2LJ
+         C5ZIyX+rWbcmamfcazPeFNH363BZXDl+4jEszgHmRPqEz7c92VbHfDVd2Ch1wIpUcMcB
+         TTCLga3lpnL8O9Sac+EIP3ND5vNADDjHyI9vRolzJTUTEEHJy8gEXbux55lDQpnbIrPc
+         nuqNjy+MdBB8/t37Y0HpqUdztyaf+cELCgMO31EKw/EwucGEraS3c6ASKmxkGbOFCdlk
+         C1gbMlJFaUYRfLbm5g/a84r8iJKl5qXlAB/8C5X/nzmUM4pusbd4wq74Xdt1lWqt9ym9
+         nqTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679498032;
+        d=1e100.net; s=20210112; t=1679501140;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x9ZTp7ZZm4J7TRIYDhiFVRzOC61nUJhSd8nfAEWPRzg=;
-        b=lPieaTRSKOTOIEjXH9Oo7TPLVGL7jwFJDQ+d3bQGyqFrkQn1gWo0BQyQf4w7eYILkZ
-         RiYbRzavvM3+vIsfp7Htu4nZW+VyMlCKKVAe0WGMTGUADWn2U/V57PXc87PwP6459nRs
-         Smpa52DTsZ0VekKuzoClaPNRTl4cW+IJe4u/LYr1YjHPhrlxAq23sJLX5LueB1tzYvLH
-         fjKKskIewvlS4XbRtorfcVElC6AR9RCxfjJBEfPp7lFYoY0j4cSzHhkNVHrektCc7x1P
-         SfVZgxrEmh+kvPydSPHXgai0wf/9WH3YpFXy2oEXY01gqrwCd9ZvibXZOh4j/D2TWmU3
-         DkBg==
-X-Gm-Message-State: AO0yUKXkonYry7UwXhd4zyOPg1MB0ZDi1xKjCUe6Te2H3Bffubr4iIyv
-        v7PB/1o6m4xvNUp10zseauOi3Q==
-X-Google-Smtp-Source: AK7set9zstRexLFTBKYTDeSdKyZ1uelByjZNJYf0PfMiNC9558pcmsd+EU3UiuFsb6BEV7H1OwdqjA==
-X-Received: by 2002:a17:902:f681:b0:1a1:c9f7:cec5 with SMTP id l1-20020a170902f68100b001a1c9f7cec5mr4621071plg.2.1679498032277;
-        Wed, 22 Mar 2023 08:13:52 -0700 (PDT)
+        bh=IukpbyPZH5pOnaBve9gErB6TGgeD/eDs7JQ55KZ8OhA=;
+        b=nfbmPOiWwl/QMO2JvPOvH4Ib+JIO7yzYsIdA+lwrD8RdKFKE3oHLYXJ0qrPYkyFVBm
+         oD92KAuDJTlbLi2NutcbuDQriWtBGJhzuoPq0rBpq34owGc/HDH7tWN0Dw8kl0NlItBp
+         /B2Wm7BwZq/fHCbkoFejptBjTpHbsXt/WPaRagZIQopnyWG0lPZNOtXFC4bJHEa+ZbQ2
+         CexZHlvekZeuBiF1KJ9RKIciJB/FreJFnFbU+JU4XvDMSSJZgq2EEB9Y9AYpTyi/tjIP
+         rz7fFXLdw6llYPvyAvms11VxiVSBlKYDq+V+PeWjFZ7ue9/84pS9qOMP5q6Rfesq97sI
+         ViWw==
+X-Gm-Message-State: AO0yUKX9FogIC2jQZRuvX/a4zRjIAkbcaAP5ExGaTFDcbfXBASPrAAqv
+        TPocs4KA+UALlMSGIPrcWlqeCQ==
+X-Google-Smtp-Source: AK7set96lwFZZvpRdrznRNkmv4Osn74C/Ehl8khgrbS7UE8IicN6W3Cc1JibkDzW0HFDFkGBFU6jdQ==
+X-Received: by 2002:a05:6a20:4c29:b0:d6:d41e:87ee with SMTP id fm41-20020a056a204c2900b000d6d41e87eemr97694pzb.12.1679501139896;
+        Wed, 22 Mar 2023 09:05:39 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:2eb7:bf6c:83a2:9d2f])
-        by smtp.gmail.com with ESMTPSA id p7-20020a1709028a8700b001a1860da968sm10668805plo.178.2023.03.22.08.13.50
+        by smtp.gmail.com with ESMTPSA id t2-20020a62ea02000000b0058dbd7a5e0esm10195680pfh.89.2023.03.22.09.05.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 08:13:51 -0700 (PDT)
-Date:   Wed, 22 Mar 2023 09:13:49 -0600
+        Wed, 22 Mar 2023 09:05:39 -0700 (PDT)
+Date:   Wed, 22 Mar 2023 10:05:37 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Frieder Schrempf <frieder.schrempf@kontron.de>
-Cc:     Peng Fan <peng.fan@oss.nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
-Message-ID: <20230322151349.GA2821487@p14s>
-References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
- <2c4997fa-973c-dee4-9b26-6b38a1ca4540@nxp.com>
- <DU0PR04MB9417A9B81B86FAC0A477063D88DC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <73d34c86-7c31-6530-0915-aa470af5d9ca@nxp.com>
- <20230213175006.GA310433@p14s>
- <343571ba-faed-35d7-2859-2668391dadb2@oss.nxp.com>
- <20230307202629.GA1693781@p14s>
- <021fd1cc-0ac6-c7fc-2523-48c1debf96ae@kontron.de>
+To:     Tanmay Shah <tanmay.shah@amd.com>
+Cc:     andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tarak Reddy <tarak.reddy@amd.com>
+Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
+Message-ID: <20230322160537.GB2821487@p14s>
+References: <20230322040933.924813-1-tanmay.shah@amd.com>
+ <20230322040933.924813-3-tanmay.shah@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <021fd1cc-0ac6-c7fc-2523-48c1debf96ae@kontron.de>
+In-Reply-To: <20230322040933.924813-3-tanmay.shah@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 11:59:02AM +0100, Frieder Schrempf wrote:
-> Hi,
-> 
-> On 07.03.23 21:26, Mathieu Poirier wrote:
-> > On Sat, Mar 04, 2023 at 03:59:38PM +0800, Peng Fan wrote:
-> >>
-> >>
-> >> On 2/14/2023 1:50 AM, Mathieu Poirier wrote:
-> >>> On Mon, Feb 13, 2023 at 12:15:59PM +0200, Iuliana Prodan wrote:
-> >>>> On 2/12/2023 9:43 AM, Peng Fan wrote:
-> >>>>> Hi Iuliana,
-> >>>>>
-> >>>>>> Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in
-> >>>>>> DDR
-> >>>>>>
-> >>>>>>
-> >>>>>> On 2/9/2023 8:38 AM, Peng Fan (OSS) wrote:
-> >>>>>>> From: Peng Fan <peng.fan@nxp.com>
-> >>>>>>>
-> >>>>>>> V3:
-> >>>>>>>
-> >>>>>>>     Daniel, Iuliana
-> >>>>>>>
-> >>>>>>>       Please help review this patchset per Mathieu's comments.
-> >>>>>>>
-> >>>>>>>     Thanks,
-> >>>>>>>     Peng.
-> >>>>>>>
-> >>>>>>>     Move patch 3 in v2 to 1st patch in v3 and add Fixes tag Per Daniel
-> >>>>>>>     IMX_RPROC_ANY in patch 3 Per Mathieu
-> >>>>>>>     Update comment and commit log in patch 5, 6.
-> >>>>>>>
-> >>>>>>>     NXP SDK provides ".interrupts" section, but I am not sure how others
-> >>>>>>>     build the firmware. So I still keep patch 6 as v2, return bootaddr
-> >>>>>>>     if there is no ".interrupts" section.
-> >>>>>>>
-> >>>>>>> V2:
-> >>>>>>>     patch 4 is introduced for sparse check warning fix
-> >>>>>>>
-> >>>>>>> This pachset is to support i.MX8M and i.MX93 Cortex-M core firmware
-> >>>>>>> could be in DDR, not just the default TCM.
-> >>>>>>>
-> >>>>>>> i.MX8M needs stack/pc value be stored in TCML entry address[0,4], the
-> >>>>>>> initial value could be got from firmware first section ".interrupts".
-> >>>>>>> i.MX93 is a bit different, it just needs the address of .interrupts
-> >>>>>>> section. NXP SDK always has .interrupts section.
-> >>>>>>>
-> >>>>>>> So first we need find the .interrupts section from firmware, so patch
-> >>>>>>> 1 is to reuse the code of find_table to introduce a new API
-> >>>>>>> rproc_elf_find_shdr to find shdr, the it could reused by i.MX driver.
-> >>>>>>>
-> >>>>>>> Patch 2 is introduce devtype for i.MX8M/93
-> >>>>>>>
-> >>>>>>> Although patch 3 is correct the mapping, but this area was never used
-> >>>>>>> by NXP SW team, we directly use the DDR region, not the alias region.
-> >>>>>>> Since this patchset is first to support firmware in DDR, mark this
-> >>>>>>> patch as a fix does not make much sense.
-> >>>>>>>
-> >>>>>>> patch 4 and 5 is support i.MX8M/93 firmware in DDR with parsing
-> >>>>>>> .interrupts section. Detailed information in each patch commit message.
-> >>>>>>>
-> >>>>>>> Patches were tested on i.MX8MQ-EVK i.MX8MP-EVK i.MX93-11x11-EVK
-> >>>>>> If one can build their firmware as they want, then the .interrupt section can
-> >>>>>> also be called differently.
-> >>>>>> I don't think is a good idea to base all your implementation on this
-> >>>>>> assumption.
-> >>>>>>
-> >>>>>> It's clear there's a limitation when linking firmware in DDR, so this should be
-> >>>>>> well documented so one can compile their firmware and put the needed
-> >>>>>> section (interrupt as we call it in NXP SDK) always in TCML - independently
-> >>>>>> where the other section go.
-> >>>>> Ok, so .interrupt section should be a must in elf file if I understand correctly.
-> >>>>>
-> >>>>> I could add a check in V4 that if .interrupt section is not there, driver will report
-> >>>>> failure.
-> >>>>>
-> >>>>> How do you think?
-> >>>>
-> >>>> Peng, I stand by my opinion that the limitation of linking firmware in DDR
-> >>>> should be documented in an Application Note, or maybe there are other
-> >>>> documents where how to use imx_rproc is explained.
-> >>>>
-> >>>> The implementation based on the .interrupt section is not robust.
-> >>>> Maybe a user linked his firmware correctly in TCML, but the section is not
-> >>>> called .interrupt so the firmware loading will work.
-> >>>>
-> >>>> So, instead of using the section name, you should use the address.
-> >>>
-> >>> Can you be more specific on the above?
-> >>>
-> >>>>
-> >>>> First, check whether there is a section linked to TCML.
-> >>>> If there is none, check for section name - as you did.
-> >>>> If there is no section called .interrupt, give an error message.
-> >>>
-> >>> We have two ways of booting, one that puts the firmware image in the TCML and
-> >>> another in RAM.  Based on the processor type, the first 8 bytes of the TCML need
-> >>> to include the address for the stack and PC value.
-> >>>
-> >>> I think the first thing to do is have two different firmware images, one for
-> >>> i.MX8M and another one for i.MX93.  That should greatly simplify things.
-> >>
-> >> sorry, I not got your points. i.MX8M and i.MX93 are not sharing firmware
-> > 
-> > Perfect.
-> > 
-> >> images. i.MX93 M33 has ROM, kicking M33 firmware just requires the
-> >> address of the .interrupt address which holds stack/pc value.
-> >> i.MX8M not has ROM, kick M33 firmware requires driver to copy
-> >> stack/pc into the TCML beginning address.
-> > 
-> > It's been more than a month since I have looked at this patchset so the details are
-> > vague in my memory.  That said, there should be one image for the TCML and
-> > another one for the RAM.  And the image that runs in RAM should have a program
-> > segment that write the correct information in the first 8 bytes.
-> > 
-> >>
-> >> Whether i.MX8M/i.MX93, the NXP released MCU SDK use the section
-> >> ".interrupt" to hold stack/pc initialization value in the beginning
-> >> 8 bytes of the section.
-> >>
-> > 
-> > And that is fine.  Simply release another version of the SDK that does the right
-> > thing.
-> > 
-> > I suggest to work with Daniel and Iuliana if some details are still unclear.
-> > Unlike me, they have access to the reference manual and the boot requirements.
-> > 
-> > 
-> >>>
-> >>> Second, there should always be a segment that adds the right information to the
-> >>> TMCL.  That segment doesn't need a name, it simply have to be part of the
-> >>> segments that are copied to memory (any kind of memory) so that function
-> >>> rproc_elf_load_segments() can do its job.
-> >>>
-> >>> That pushes the complexity to the tool that generates the firmware image,
-> >>> exactly where it should be.
-> >>
-> >> For i.MX8M, yes. For i.MX93, the M33 ROM needs address of storing stack/pc.
-> >>>
-> >>> This is how I think we should solve this problem based on the very limited
-> >>> information provided with this patchset.  Please let me know if I missed
-> >>> something and we'll go from there.
-> >>
-> >> I am not sure how to proceed on supporting the current firmware. what should
-> >> I continue with current patchset?
-> 
-> I've successfully tested this on i.MX8MM with an elf file generated by
-> the NXP SDK.
-> 
-> I would really like to see this upstreamed. If this requires changes
-> that are not compatible with binaries compiled with the current SDK as
-> discussed above, that would be fine for me as long as the kernel is able
-> to detect the malformed binary and warns the user about it.
->
+Hi Tanmay,
 
-I agree.
-
-> The user can then manually adjust the linker script, etc. in the SDK to
-> match the requirements of the kernel.
+On Tue, Mar 21, 2023 at 09:09:36PM -0700, Tanmay Shah wrote:
+> This patch enhances rproc_put() to support remoteproc clusters
+> with multiple child nodes as in rproc_get_by_phandle().
 > 
+> Signed-off-by: Tarak Reddy <tarak.reddy@amd.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index a3e7c8798381..e7e451012615 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2560,6 +2560,19 @@ EXPORT_SYMBOL(rproc_free);
+>  void rproc_put(struct rproc *rproc)
+>  {
+>  	module_put(rproc->dev.parent->driver->owner);
 
-That is exactly what I suggested.
+There is something wrong here - this should have been removed.
 
-> Thanks
-> Frieder
+> +	struct platform_device *cluster_pdev;
+> +
+> +	if (rproc->dev.parent) {
+
+This condition is not needed, please remove.
+
+> +		if (rproc->dev.parent->driver) {
+> +			module_put(rproc->dev.parent->driver->owner);
+> +		} else {
+> +			cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
+> +			if (cluster_pdev) {
+> +				module_put(cluster_pdev->dev.driver->owner);
+> +				put_device(&cluster_pdev->dev);
+> +			}
+> +		}
+> +	}
+
+Some in-lined documentation, the way I did in patch 1/2 would be appreciated.
+Otherwize I think the above enhancement make sense.
+
+Thanks,
+Mathieu
+
+>  	put_device(&rproc->dev);
+>  }
+>  EXPORT_SYMBOL(rproc_put);
+> -- 
+> 2.25.1
+> 
