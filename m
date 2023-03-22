@@ -2,104 +2,196 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50DFC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 16:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA6AC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 17:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbjCVQLQ (ORCPT
+        id S229607AbjCVRfE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 12:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56610 "EHLO
+        Wed, 22 Mar 2023 13:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230154AbjCVQLP (ORCPT
+        with ESMTP id S229484AbjCVRfD (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 12:11:15 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABC73BC6F
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Mar 2023 09:11:13 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id w4so11655676plg.9
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Mar 2023 09:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679501473;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pv7FuMQ8/Qu4bRSfat32quqa3YIevC6kP+hxjl6WaNE=;
-        b=f0uU6xw0F4uhIhnCzbxUOwqOkZ6zZ1n07hiIjc0U1hpEM8FuT8+qTMduh236MrQcYZ
-         MZsVAqTzmaqvS+2H80Yomx1Tj6fg+29rDeeP7tIEcKcWRTlMj+iMq0c9Jxo+uIbjK3Tl
-         rSyuJw2jQcNLM6B3QXkHNvLo1r35JMRIYG1t6R8Ufjwu4ECnVsSuRhtoTzB9lbMl6cz6
-         rdJOGE6rFf9ajqKE58fUaKSD0458mLELpkFuKBI0orgRHLO44eySSZSvjA/WRiB8ZmfM
-         e0A2mye2x2jGu1HOkwrts4fftHK9rP47ABYgzk+CnhLCSBmrtCfVkgAAd8v8ad9I0UlV
-         acWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679501473;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pv7FuMQ8/Qu4bRSfat32quqa3YIevC6kP+hxjl6WaNE=;
-        b=AQj+xKzhWNnridWMF8ou6Z7SywHMuhn6pJJn61L0RejgQbXfD1subp8XPnTYalrwkX
-         4N+9jHtjSlB7YRocHzmnY2OdLqpOIegaZp55zcLwrq7FNpC8lNTBUqhFvgJSdar9fk0W
-         1U8ZjQEhF/veODlf7AxNnXOy3jPWMDkQ7/NwomLswtd0ERgU2J5yU0heR8j3874zaNeP
-         ss7C6jNc4oGIjYT/t3Ozl8vtRYTWRvjv+qntkxatLFWGBNV2cDt8A4rPmZoSG3BSGvGd
-         nlpxgFZgcQS57mf2MYAPHhskClw6YVrH7LhC6l1NWStQF+vpk1RKD8NdLPzEPbu9L9VL
-         z7sw==
-X-Gm-Message-State: AO0yUKVFBl2FL5ac3YwJ/nmXO90sjzKxt+6HbplPTy3OnIF+gnQk1lVv
-        5t9lxzkaxGU43pxW8fhyIsEMyQ==
-X-Google-Smtp-Source: AK7set9tY6ywFhXe0FxOPUwJ6rLmVd1oFMqc+l4BurXbPkuYsw7k7YwyKLHVAUuXXaWu+/uXVsAHVg==
-X-Received: by 2002:a17:902:d2cf:b0:1a1:918e:4129 with SMTP id n15-20020a170902d2cf00b001a1918e4129mr4104549plc.30.1679501473024;
-        Wed, 22 Mar 2023 09:11:13 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:2eb7:bf6c:83a2:9d2f])
-        by smtp.gmail.com with ESMTPSA id d4-20020a170902b70400b001a1c2eb3950sm7530457pls.22.2023.03.22.09.11.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 09:11:12 -0700 (PDT)
-Date:   Wed, 22 Mar 2023 10:11:10 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Tanmay Shah <tanmay.shah@amd.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] remoteproc: get rproc devices for clusters
-Message-ID: <20230322161110.GC2821487@p14s>
+        Wed, 22 Mar 2023 13:35:03 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B431E43921;
+        Wed, 22 Mar 2023 10:35:01 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KmRelXte/OhLzkWwD10Ju4u7NNj0Z5Km+PG92qub/Sv10UplP0jfozkWV8fQdYx7foFyIvyiYSh42iTlXGaM/wkplBdWIesqNSedHArTirtkNmaz+pzDlX5Q7NQmLNBHKtqUbwq6ttjlOD33Xo/199yAjpUns5FSJinF+KspqsEHy8ziRZTQBEtR95IRt5CFgbi/7zq/v14S4rn3yH/dNqnNbBCLx2W0T6GqpA+VncNnGTWFmOA8Dwum45wNJGYdyEJckGrAEowQ3/KcxHnmWpc6LvOaBstOFvlzgVXqLjJ5ipgMvz6wu+xmQadrxX5x6+riN0tQvjOYVPT23Q0YXQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JMUvq/xx71EDDtxJkL+wdsQNJZl8vmfyJxiOsM6G+eg=;
+ b=jXvXPR65PvaU0xSiL6vZ/Hooy6Fw6eXWqYa63+EVNkuCF8QG+Fq9fIgq58f9TVY3On/z0WQ3avbhCHJu5TW7m/m2cJG2JYq74E5qaz0VnYj4ViuC0alUOHyCyxL1Bd7OejiMfnbtjtMfKv58KYWBIKB1HqzNNvZgnqWZdKdphrvjoDGftgeph87up+AieOPbQntTp9qC9sVmiZCbCusY77jH3gRrebkHbeYk9+4yd6QwTh30NSras1Gz5H0i54u3+umNIbge7hFFaEdLzydA/Ejp2z2TVFg4oKCsZIhPnCs6tnKUeJbNXPch/nGoLA5s6sdwC2S675TFExlQhb+YcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JMUvq/xx71EDDtxJkL+wdsQNJZl8vmfyJxiOsM6G+eg=;
+ b=Y0MK+sn5bBRC2zVHZx5XZzFUNL7zD+oLnIBq+5xiMC6udGz9GmBxAieuosZmHUEX9c0p2OCdFO9mHuOTZrDGxBsgEz6+7GOL+izfTJe2R6o4bJd+/TNLWqVRV5oP775PmfYnViW4XA3OoI+Wx5jRdp5OxonaGWy3Jq/sjyxd9PI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BY5PR12MB3683.namprd12.prod.outlook.com (2603:10b6:a03:1a5::16)
+ by CH2PR12MB4085.namprd12.prod.outlook.com (2603:10b6:610:79::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.37; Wed, 22 Mar
+ 2023 17:34:59 +0000
+Received: from BY5PR12MB3683.namprd12.prod.outlook.com
+ ([fe80::d214:f856:e057:f856]) by BY5PR12MB3683.namprd12.prod.outlook.com
+ ([fe80::d214:f856:e057:f856%7]) with mapi id 15.20.6178.037; Wed, 22 Mar 2023
+ 17:34:59 +0000
+Message-ID: <830db03c-ec6e-b4aa-834a-e67622e5a41f@amd.com>
+Date:   Wed, 22 Mar 2023 10:34:57 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:111.0)
+ Gecko/20100101 Thunderbird/111.0
+Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tarak Reddy <tarak.reddy@amd.com>
 References: <20230322040933.924813-1-tanmay.shah@amd.com>
- <20230322141215.ygicmrppqaawlgeb@ripper>
+ <20230322040933.924813-3-tanmay.shah@amd.com> <20230322160537.GB2821487@p14s>
+From:   Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <20230322160537.GB2821487@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR06CA0015.namprd06.prod.outlook.com
+ (2603:10b6:a03:d4::28) To BY5PR12MB3683.namprd12.prod.outlook.com
+ (2603:10b6:a03:1a5::16)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230322141215.ygicmrppqaawlgeb@ripper>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB3683:EE_|CH2PR12MB4085:EE_
+X-MS-Office365-Filtering-Correlation-Id: 432d18c6-0370-4c77-47ff-08db2afbc28c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: vei9gaEEaL7RBnQA1AHkSxIz22Xg9LYmvCusnwgyLw28cjehFdPcvc2r5CSZWeYqIxqnkXqm5ttO0aMa/zTLJgfDFRlla2gDT8jU8cvPuFxgPQd4p4ORDZkgn/839ObtpeDxYd6N2WaIqwTAmc5nlpwLHodjsfMkfNeUn29Se2PA9AGPLb4JHuJL9DC8PE4XX5FN0bm8XKnZN3Dekwb7UiaOAv8KRCsnD7thTR3HRdKzd86IR41lAi2bQn7riIBGTuc6+I0pzhqGedh+fBWSHCWgvcJTu73WAJq6jmOQ5sNFHSVdqttPcHEDe3cWAcisb5RMm4ME6whPKcUlcD7dHvtcWGSnQ0XOsVXOTecSBs1MGtCHPXjPLftkCQZkCqz1nmuxD/WLh4h4+gsIRz6E/MAwSS6wT3T3YKhAK/Nm1Jv3rb+CpjjV1FoZEgcZMGDrV6vJRbZJ86t+mQFGtmA3dOJX+YlB1JcqWFEXa14Hid1F5uEOKlt0QpFygYu1L1kMnIE9sXhIRyQ7Yhal++i82jsLWzY3hH4pFgVjlVkGmSNKv0Exd3mCEaO+miKQZQatPWk7IsMHrtBfUWzHib72Au6TJmuqZy8HgDhY9WXGwM2XERU891O0unIprpC/KxVWG3tWlmnHZRqhpIWo/3TTaNeds5SHYoSpOwIcKnqySFv8BqpVYBtg1xkCY6XVK8SDOVgfIuKpritII9DN448w4qBuLLyjgkJGVloq3woYW10=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB3683.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(366004)(396003)(136003)(346002)(39860400002)(376002)(451199018)(8936002)(44832011)(5660300002)(31696002)(86362001)(2906002)(38100700002)(36756003)(4326008)(478600001)(2616005)(41300700001)(6512007)(186003)(6486002)(26005)(6506007)(31686004)(53546011)(316002)(8676002)(66556008)(66476007)(66946007)(6916009)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Skhuc1lsMGJWWWlraVhHS0hTYzlMSjZWWG4rRlpRdGhnS1cvT3Q0bjEzaWpI?=
+ =?utf-8?B?ZlhFTCtlcXJxdmxDVnh0YTZGTUQwY0w3TWRhWnZ5VUdqbm9nYkV5cFg3akEy?=
+ =?utf-8?B?am9yYXVhUVk3QmxhZW9naTRjbmF0ZTI1VmVCQzROell3eElEYTBqZU94VWhH?=
+ =?utf-8?B?aURZT0tYcFc2N0JmZWt5dHp3b0pqdUFzSk9QSTN1Uy9SYXdTQ2VTZDhZbFdT?=
+ =?utf-8?B?RWhJQjkyUHVPZzI3NzZrYS9aRjVqU1RGdXVjU2VuODhLUmgwZXA4cG1XRkxJ?=
+ =?utf-8?B?eDVKampCbVZBVThtNUZrenFkcXcyMnQxcTJyZEhLckM0SVprVlZSZHVTeDE2?=
+ =?utf-8?B?SnV1RG9KSVBBb2wrNFNEVyswWDRSMGZES3B3azVXb2F5REw3ampIY1k1Y25o?=
+ =?utf-8?B?b3hHMkdnRHMrdzBmWUpmanFNQWQ2T0Y0cDRBWlZibnNBZldOa3dLRmFBdkEx?=
+ =?utf-8?B?bGc2aTIyVEV2ekRDcjhLUTVaUC9XMGpTd3BhYmdudTRyNm5OMHR3dklDTlRq?=
+ =?utf-8?B?a2tjM00rbzliRHhydGUxRklnSUdZTjFHZkJCWk9hMU5RTGF0OTlObnhGTGVV?=
+ =?utf-8?B?bFhDNXlxTWhiZ2xhK05lRVE4dFkwb3JaMlNPbkZ6aW1iK2pMUHBGb0Q5UTll?=
+ =?utf-8?B?LzZiSWZpSk8vR0FBL1h1MUw0ZE5lbkJjT1VodS9kOUlsMW9Qb3hUUUhleCti?=
+ =?utf-8?B?KzRZSUdtaTNMZStQcStCemk3QlcwNWFRRUw0eWtqQnBkemswbHlpNW9JZzRj?=
+ =?utf-8?B?WXkrUVljNHFTOTZvSG5Pam40SXhaWVhPTkREYUwxNzZtcE9ZV0hSeXBkbXZs?=
+ =?utf-8?B?U0RNdWNRM21nL3hMZ2tPOFBlQmhRd1J6SWJPYXhVYzlaV0dsMmFzTmZ3NVNR?=
+ =?utf-8?B?NUpvUk1nbWlkckRDSnA1VTRHb0J0d1Q2OHd4OWxVS2JiMldLL01BRHdlYUFu?=
+ =?utf-8?B?UTY0YTdTZmhyWTdDT0hhNk8vWkRHaHZiaFVrVnU2NTAzZStteUl0YUtHVk16?=
+ =?utf-8?B?ZjVDQ3NPM1VqSi9hekVVcHZ5QVNRZWRzUkx2VWd3QlowSnNWd0pvZVRUNWJj?=
+ =?utf-8?B?Uk00RDJNUkRIR2UxaG03N3F6MU5HaXA3b3VybjhyWGtwaGNxTC9pN3FZa2xZ?=
+ =?utf-8?B?UVFEOFJ5ZWJhRkovK1Y2cVMvOU53cnpjekdtNDlqL09vUXRWT0NpTnFFZURL?=
+ =?utf-8?B?andKN0EyL0RIdDZKNlBVaW9lb0VHM2JTK3RSdjFlMG5LU1BOWVUxeVFHWisw?=
+ =?utf-8?B?ZkE3YUZDTmg1L2RWaVdjSEpSdmNodGp6aC90bDdxcFBBdnlwZlV3dWhYK0p0?=
+ =?utf-8?B?Q0wxVm5leEJtbi8vNjFBVzZrWGpBR0VhenFHUmFsbnNNYlQ0QWFUZWxQUzA1?=
+ =?utf-8?B?WFQxbVlKVk1jeTh1ZmdXWnhHYWRFTjFFMzI1bEwwY21KUTBZcXR4WlUvc0Nu?=
+ =?utf-8?B?empiWjhBSFNpVVdhSGxsU1NRRXA5RjlhOWFvL0RjYjYxTUt5cmtKSVBPdExL?=
+ =?utf-8?B?N1FRMlUrOWo1T0g0SXRDQ3haTWdZMnJ1SU4wa25PWGtsS3lZTzVpYU1IeFRq?=
+ =?utf-8?B?ckJsVWRLeHF3dUE0cUhvcWh6UXhQOVBNSGtGMlF6bGY5TDJDUzZrYXpBbVZR?=
+ =?utf-8?B?cllRSGMyN0tId3BySGs1LzdzeFFFT1hKSVIvSktNNldjcHB3Nk1Sc0lsdlYw?=
+ =?utf-8?B?N3ZYcktRR2x6MHpveHlqVW5YdURIQlJCL1FRNDhRK0pYaWhsNmUxamdTL2Ey?=
+ =?utf-8?B?MzRCamdlUzh0WG9tclY4ei9FTERxa2hRQU5uOGU2V0Z3eDVvaGVOUGh5Uklm?=
+ =?utf-8?B?a3ZCdml6QWZ1dlRIcTh1eEpZZ3RYWlJYRU93cGJMNFFBVEQxM0QxWDI3UVBL?=
+ =?utf-8?B?aEo4L1gxNGlrM3ZHbXlFZGIvTkRHUGY4OUFvanV6T0ZRNkRjMVVERWVUN2pH?=
+ =?utf-8?B?NE80SXE3WGM1eW5oNEZWNlBFdHBHTXVPbjVRaVBYY1FLam9UeURkcXkwbDdj?=
+ =?utf-8?B?UzIyZmVjNHN0RUJ5Q1NjdjFjclZQR0JPN2pDYlhqMGR5S0NyTStUcWVMblNm?=
+ =?utf-8?B?VWxzSWNkRGM4LzFKOUMwNW9ZWFlBSnowaWptNC9iSis5TGV2cC9Dc3Y4SDNZ?=
+ =?utf-8?Q?cLSPv7lAmR8SNDMFQoznuO2NJ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 432d18c6-0370-4c77-47ff-08db2afbc28c
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3683.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2023 17:34:59.4219
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tPWpFfHAq9Svz7pLpkc7dLLb0FriJz3svCXvIsJVgn/pxVp3BQLAe7qyKd/tXRYS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4085
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 07:12:15AM -0700, Bjorn Andersson wrote:
-> On Tue, Mar 21, 2023 at 09:09:32PM -0700, Tanmay Shah wrote:
-> > This series extends original patch and makes rproc_put() work
-> > for clusters along with rprog_get_by_phandle().
-> > 
-> > v1 is here: https://lore.kernel.org/all/20221214221643.1286585-1-mathieu.poirier@linaro.org/
-> > 
-> 
-> What changed since v1?
+
+On 3/22/23 9:05 AM, Mathieu Poirier wrote:
+> Hi Tanmay,
 >
+> On Tue, Mar 21, 2023 at 09:09:36PM -0700, Tanmay Shah wrote:
+>> This patch enhances rproc_put() to support remoteproc clusters
+>> with multiple child nodes as in rproc_get_by_phandle().
+>>
+>> Signed-off-by: Tarak Reddy <tarak.reddy@amd.com>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>   drivers/remoteproc/remoteproc_core.c | 13 +++++++++++++
+>>   1 file changed, 13 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index a3e7c8798381..e7e451012615 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -2560,6 +2560,19 @@ EXPORT_SYMBOL(rproc_free);
+>>   void rproc_put(struct rproc *rproc)
+>>   {
+>>   	module_put(rproc->dev.parent->driver->owner);
+> There is something wrong here - this should have been removed.
 
-Path 2/2 was not part of the original submission.  Speaking of that original
-submission, you did not follow-up on my last comment, something that would be
-much appreciated in order to move forward with this fix.
 
-Thanks,
-Mathieu
+Thanks Mathieu. Sure this needs to be fixed.
+
+This is result of manually picking up patch from my side.
+
+I will try to find better automated way to pick-up patches not available 
+on mailing list.
 
 
+>
+>> +	struct platform_device *cluster_pdev;
+>> +
+>> +	if (rproc->dev.parent) {
+> This condition is not needed, please remove.
+Ack.
+>
+>> +		if (rproc->dev.parent->driver) {
+>> +			module_put(rproc->dev.parent->driver->owner);
+>> +		} else {
+>> +			cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
+>> +			if (cluster_pdev) {
+>> +				module_put(cluster_pdev->dev.driver->owner);
+>> +				put_device(&cluster_pdev->dev);
+
+I am not sure if cluster_pdev->dev should be dropped here.
+
+Should we drop it in platform driver after rproc_free() ?
+
+>> +			}
+>> +		}
+>> +	}
+> Some in-lined documentation, the way I did in patch 1/2 would be appreciated.
+> Otherwize I think the above enhancement make sense.
+Ack I will document in next revision.
+>
 > Thanks,
-> Bjorn
-> 
-> > Mathieu Poirier (1):
-> >   remoteproc: Make rproc_get_by_phandle() work for clusters
-> > 
-> > Tanmay Shah (1):
-> >   remoteproc: enhance rproc_put() for clusters
-> > 
-> >  drivers/remoteproc/remoteproc_core.c | 41 +++++++++++++++++++++++++++-
-> >  1 file changed, 40 insertions(+), 1 deletion(-)
-> > 
-> > 
-> > base-commit: e19967994d342a5986d950a1bfddf19d7e1191b7
-> > -- 
-> > 2.25.1
-> > 
+> Mathieu
+>
+>>   	put_device(&rproc->dev);
+
+
+Also, if we decide to drop cluster->dev here  then,
+
+should we drop reference of rproc->dev before cluster->dev ?
+
+
+>>   }
+>>   EXPORT_SYMBOL(rproc_put);
+>> -- 
+>> 2.25.1
+>>
