@@ -2,108 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96782C7619A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 10:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C787DC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 10:21:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbjCVKT6 (ORCPT
+        id S230155AbjCVKVl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 06:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51902 "EHLO
+        Wed, 22 Mar 2023 06:21:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbjCVKT4 (ORCPT
+        with ESMTP id S230116AbjCVKVj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 06:19:56 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7C2A5651A;
-        Wed, 22 Mar 2023 03:19:55 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M4XRw5014780;
-        Wed, 22 Mar 2023 10:19:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=RLqMGRumJK6CZZb2/pwHr9Dl3j5xeLjrcwS0hWS47y0=;
- b=bzpXLSu6PXajW2t0tQnCVRPjoYLG2pudUAuu9QljUIqhXsAVvJBYTRSxmO4G6J0nI2Ft
- XoO6djV1w9Lr6NU9VlXw/mGBU+wGFQcDVkkijPb7zAJlKgvIbK5V/CfRfZq15Yf8tWnD
- h21PnjmJg7Mq6iu6EXIHgTLh68PFRYzsBIWcoI976w6DthF/yhRnemw8+G2Tr7dLLUzT
- lO7Sl/737jCs6BYKGSewpevQ/74MIqcXfEIy3OTdkw9LxbsELxPFX025EJmENGUpMDfQ
- 24g5AgL8kOXk3kUtPjfP9DJXKggpmbG/MOPks/VOp9nntlYS+e8f+qFFG29XDVdf669l Qg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfpfgs8e3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 10:19:45 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MAJimr018523
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Mar 2023 10:19:44 GMT
-Received: from [10.242.243.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Mar
- 2023 03:19:37 -0700
-Message-ID: <bb56bbb7-7b08-79f9-ad1b-a2de63eca5f6@quicinc.com>
-Date:   Wed, 22 Mar 2023 15:48:41 +0530
+        Wed, 22 Mar 2023 06:21:39 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD7B5C9FE;
+        Wed, 22 Mar 2023 03:21:30 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id lr16-20020a17090b4b9000b0023f187954acso18653919pjb.2;
+        Wed, 22 Mar 2023 03:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679480490;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JHk6WrdRBOaXZfvy3sfCH7b75YTuvdgFdO1JgqgHyhk=;
+        b=ESLIyorCStnd6ZJLdkq6ShlIpDoTi1na7kkDyzFImBmWJXl514bkfA7+NlxO0FBoBj
+         fHOVfb9wP5/XFQ7slclalePoikPRCrD+4uEdKbXmFkxdXuHC1RW827Ka78NvU5iIXgxD
+         3EzrQouxwUi8eSVWiLvDcp3nCjH7Mdc/NLS0emVo9Dl1Nr5FtmMAf/L1IYLukoqBIEOp
+         wRTsGWYkv9CGlXr0iaShOu/mFDt4jKgXKb7sao+rzQSbGvj7fbwpxrch82tSgQAr3SJk
+         j8phLSWEpXcYPLvwslqbq9tbYfi6A1Q6+VH1yWJSEAhz6KptZ0YZhDORctOiDuu6gMyi
+         lqxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679480490;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JHk6WrdRBOaXZfvy3sfCH7b75YTuvdgFdO1JgqgHyhk=;
+        b=nKMuhdzq60YDvLQWZFGLeyEH+noxU0du1ID8Bs7fbLMekY078uw8pqrKkGxLoomSPS
+         wpT4q48t6dOW3PNjh5rRFT86NmKPFQdTm0EniNLXAVGaKRgn3S1ySsrmzoCxJBrraJbk
+         RhXxz/lKWfKm032XvEM3h1Qex+tReghfvCc0w3OIxAm7WWDUeDQJrlY8of5OnV7K12/3
+         +sfzxczsB4BYxr5swPNCIicrZiRJKh2XbProKUwOA8rzxPpd9Wt/fQoTARi6yKe+YG4K
+         5nQfrXZrB07X3vxkE284zwuD5V/1KQFGBGV1oJPXycDyKEheb+x0ezmXo+RzsGiemkbl
+         DnkQ==
+X-Gm-Message-State: AO0yUKVellQy4vOFLof4W3Vv5iphB+AAdmvcMQFPGOi9eFX576cJ+eGt
+        37wsn3wUJkZ2y7pxOC79sENkk8kDXrWxBKjw10o=
+X-Google-Smtp-Source: AK7set+PZ4mznos49hq2OljDlTJRK/UrXGgXlPBhVsXZJlMLdmy24ZzPCXCYQpg7X+qYkMuhAAwcieb4L4j1EruC/Js=
+X-Received: by 2002:a17:902:e812:b0:1a1:add5:c35b with SMTP id
+ u18-20020a170902e81200b001a1add5c35bmr913153plg.10.1679480490265; Wed, 22 Mar
+ 2023 03:21:30 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
  <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
- <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cqcy1Thc334ObsRiiKhhOqiQGD2AStnb
-X-Proofpoint-ORIG-GUID: cqcy1Thc334ObsRiiKhhOqiQGD2AStnb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-22_07,2023-03-22_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=373 spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- phishscore=0 priorityscore=1501 clxscore=1011 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
- definitions=main-2303220073
+ <059bec3f-0c77-fc16-83a3-d78cf82d543f@linaro.org> <bb56bbb7-7b08-79f9-ad1b-a2de63eca5f6@quicinc.com>
+In-Reply-To: <bb56bbb7-7b08-79f9-ad1b-a2de63eca5f6@quicinc.com>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Wed, 22 Mar 2023 11:21:19 +0100
+Message-ID: <CAOX2RU5H=fmxjAE+Er8n7qzrvUZmOpYwgqFox-RLc2C7BqJyjQ@mail.gmail.com>
+Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc driver
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
+        loic.poulain@linaro.org, quic_eberman@quicinc.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Wed, 22 Mar 2023 at 11:19, Manikanta Mylavarapu
+<quic_mmanikan@quicinc.com> wrote:
+>
+>
+>
+> On 3/7/2023 9:09 PM, Krzysztof Kozlowski wrote:
+> > Why exactly do you need a new driver for this instead of extending
+> > existing PIL? I feel all this is growing because no one wants to touch
+> > existing code and merge with it...
+>
+> Previously we raised patch to add secure-pil to existing rproc driver.
+> Bjorn suggested to introduce a new secure-pil driver.
+>
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
+>
+>
+> Also IPQ5018, IPQ9574 soc's follows multipd model. So we decided to
+> have new driver which consists 'secure-pil + multi pd' in one
+> place.
 
+Would it be possible to have IPQ8074 and IPQ6018 support in it as well?
+Cause, those are supported by ath11k but remoteproc support is missing,
+I have been upstreaming parts for IPQ8074 for years now and it is usable but
+we are still missing remoteproc.
 
-On 3/7/2023 9:09 PM, Krzysztof Kozlowski wrote:
-> Why exactly do you need a new driver for this instead of extending
-> existing PIL? I feel all this is growing because no one wants to touch
-> existing code and merge with it...
+Regards,
+Robert
 
-Previously we raised patch to add secure-pil to existing rproc driver. 
-Bjorn suggested to introduce a new secure-pil driver.
-
-https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/ 
-
-
-Also IPQ5018, IPQ9574 soc's follows multipd model. So we decided to
-have new driver which consists 'secure-pil + multi pd' in one
-place.
-
-Thanks & Regards,
-Manikanta.
+>
+> Thanks & Regards,
+> Manikanta.
