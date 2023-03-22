@@ -2,135 +2,161 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF1AC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 07:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A77AC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 08:22:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229694AbjCVHcb (ORCPT
+        id S229476AbjCVIWV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 03:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
+        Wed, 22 Mar 2023 04:22:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjCVHca (ORCPT
+        with ESMTP id S229477AbjCVIWT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 03:32:30 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6585FED;
-        Wed, 22 Mar 2023 00:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679470349; x=1711006349;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TvjfNRcHDkuEr+44MH6cZnJ0qM5gMaDlNVzAz9jGtTY=;
-  b=cXEmXXLXhylWSeZ1Mke4Lsn6jxc3uUdSlpfG3eB0bakQ7C/Yx6kYrFt9
-   pDuBcZcEiC0kgibEttCza8LhiyjQC8ooBNIiImHC2/sjWvsgtgCiEfrOR
-   UaM35ioyBqMUSyihdXjbcC2/pZjH5zCEF4/PxSLI//RBs2netRGPl9fSc
-   GmM+LjY2Qsqmwhh5MgAmtlrGdJ/uZGxUR2ivRqu3SuaKW+1I6aO5d096k
-   SO0Xz3CCJ+kEW46P4x3fv1GjvqPTL9uHJ3hPWIfDXk5fvMYfqgczF3uP+
-   qwIkwjuY45ds8OOov0REUCv6XrxrbbQtA8zgYCcX+Ykaq3GttOtoiI6l2
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="340685697"
-X-IronPort-AV: E=Sophos;i="5.98,281,1673942400"; 
-   d="scan'208";a="340685697"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2023 00:32:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="805727862"
-X-IronPort-AV: E=Sophos;i="5.98,281,1673942400"; 
-   d="scan'208";a="805727862"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 22 Mar 2023 00:32:26 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pesxN-000D3e-2n;
-        Wed, 22 Mar 2023 07:32:25 +0000
-Date:   Wed, 22 Mar 2023 15:31:59 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tanmay Shah <tanmay.shah@amd.com>,
-        Tarak Reddy <tarak.reddy@amd.com>
-Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-Message-ID: <202303221514.3xIiCbpk-lkp@intel.com>
-References: <20230322040933.924813-3-tanmay.shah@amd.com>
+        Wed, 22 Mar 2023 04:22:19 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615BD5D255;
+        Wed, 22 Mar 2023 01:22:18 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M4dEVn012467;
+        Wed, 22 Mar 2023 09:21:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=oWRoobCUf6mgMbXtM7QML+mXsPQj3dwmibLtZAppDpc=;
+ b=1mGUtC7cfwlxfaoNdgCVxJv3T2QY5gZrFqXzS4LbFEqqY6KzbQvnSkdHjpefY7761lMX
+ QQiLPh9pN7vUYlwHNyT39kwFslES2gwx3Ys1tYgcgX7tjAkXkGacstlINnRFvZF6m6Gx
+ B8Q5pHn9oQrTaABAEy0/mSpmYFDbk8Muv6kEJ7y2U78pE7ofWR/J0oXZ8OGdOPwPbzwx
+ cP76JRBRSbZcs0ypoG3fEEhIXSXp2SJeEe3JyvXOww8PeptcksjJlB9OpGCvN6Xupeeo
+ HMiykvyu2P/TOxfktXm4bZGhMYOtyujDJO6J7+Sf4OdOJigjAzcDWR2zRyBH2irwa0p+ sg== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pf875yw7w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 09:21:18 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 173F4100038;
+        Wed, 22 Mar 2023 09:21:17 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0FE9B20E1FC;
+        Wed, 22 Mar 2023 09:21:17 +0100 (CET)
+Received: from [10.201.22.135] (10.201.22.135) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Wed, 22 Mar
+ 2023 09:21:15 +0100
+Message-ID: <104da4a2-a099-666e-b821-e8efe0901ce8@foss.st.com>
+Date:   Wed, 22 Mar 2023 09:21:14 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230322040933.924813-3-tanmay.shah@amd.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/5] remoteproc: stm32: Call of_node_put() on iteration
+ error
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <andersson@kernel.org>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+        <festevam@gmail.com>, <linux-imx@nxp.com>,
+        <patrice.chotard@foss.st.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <arnaud.pouliquen@st.com>,
+        <hongxing.zhu@nxp.com>, <peng.fan@nxp.com>,
+        <shengjiu.wang@nxp.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20230320221826.2728078-1-mathieu.poirier@linaro.org>
+ <20230320221826.2728078-2-mathieu.poirier@linaro.org>
+ <e3644e19-7453-440b-00dc-781104ca83cf@foss.st.com>
+ <20230321213250.GB2782856@p14s>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20230321213250.GB2782856@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.22.135]
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-21_11,2023-03-21_01,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tanmay,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on e19967994d342a5986d950a1bfddf19d7e1191b7]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/remoteproc-Make-rproc_get_by_phandle-work-for-clusters/20230322-121102
-base:   e19967994d342a5986d950a1bfddf19d7e1191b7
-patch link:    https://lore.kernel.org/r/20230322040933.924813-3-tanmay.shah%40amd.com
-patch subject: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-config: ia64-allyesconfig (https://download.01.org/0day-ci/archive/20230322/202303221514.3xIiCbpk-lkp@intel.com/config)
-compiler: ia64-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/573d22d13a697097d02d6c29a75fb0fb1ac6d8fe
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Tanmay-Shah/remoteproc-Make-rproc_get_by_phandle-work-for-clusters/20230322-121102
-        git checkout 573d22d13a697097d02d6c29a75fb0fb1ac6d8fe
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash drivers/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303221514.3xIiCbpk-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/remoteproc/remoteproc_core.c: In function 'rproc_put':
->> drivers/remoteproc/remoteproc_core.c:2563:9: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
-    2563 |         struct platform_device *cluster_pdev;
-         |         ^~~~~~
 
 
-vim +2563 drivers/remoteproc/remoteproc_core.c
+On 3/21/23 22:32, Mathieu Poirier wrote:
+> On Tue, Mar 21, 2023 at 10:00:03AM +0100, Arnaud POULIQUEN wrote:
+>> Hi Mathieu,
+>>
+>> On 3/20/23 23:18, Mathieu Poirier wrote:
+>>> Function of_phandle_iterator_next() calls of_node_put() on the last
+>>> device_node it iterated over, but when the loop exits prematurely it has
+>>> to be called explicitly> 
+>>> Fixes: 13140de09cc2 ("remoteproc: stm32: add an ST stm32_rproc driver")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>> ---
+>>>  drivers/remoteproc/stm32_rproc.c | 6 +++++-
+>>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+>>> index 7d782ed9e589..23c1690b8d73 100644
+>>> --- a/drivers/remoteproc/stm32_rproc.c
+>>> +++ b/drivers/remoteproc/stm32_rproc.c
+>>> @@ -223,11 +223,13 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+>>>  	while (of_phandle_iterator_next(&it) == 0) {
+>>>  		rmem = of_reserved_mem_lookup(it.node);
+>>>  		if (!rmem) {
+>>> +			of_node_put(it.node);
+>>>  			dev_err(dev, "unable to acquire memory-region\n");
+>>>  			return -EINVAL;
+>>>  		}
+>>>  
+>>>  		if (stm32_rproc_pa_to_da(rproc, rmem->base, &da) < 0) {
+>>> +			of_node_put(it.node);
+>>>  			dev_err(dev, "memory region not valid %pa\n",
+>>>  				&rmem->base);
+>>>  			return -EINVAL;
+>>> @@ -254,8 +256,10 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+>>>  							   it.node->name);
+>>>  		}
+>>>  
+>>> -		if (!mem)
+>>> +		if (!mem) {
+>>> +			of_node_put(it.node);
+>>>  			return -ENOMEM;
+>>> +		}
+>>
+>> Good catch!
+>>
+>> Looking in code I don't see that we call of_node_put() when we release the
+>> carveouts. 
+>> Please tell me if I'm wrong but look to me that we should also call of_node_put()
+>> in mem->release() op, in drivers. 
+>>
+> 
+> Are you referring to entry->release(), which for stm32 is
+> stm32_rproc_mem_release(), in rproc_resource_cleanup()?
+> 
+> If so then no, it is not needed since of_phandle_iterator_next() calls
+> of_node_put() on the previous device_node with each iteration.
+> 
+> Otherwise I fail to understand the question and will ask you to clarify.
 
-  2550	
-  2551	/**
-  2552	 * rproc_put() - release rproc reference
-  2553	 * @rproc: the remote processor handle
-  2554	 *
-  2555	 * This function decrements the rproc dev refcount.
-  2556	 *
-  2557	 * If no one holds any reference to rproc anymore, then its refcount would
-  2558	 * now drop to zero, and it would be freed.
-  2559	 */
-  2560	void rproc_put(struct rproc *rproc)
-  2561	{
-  2562		module_put(rproc->dev.parent->driver->owner);
-> 2563		struct platform_device *cluster_pdev;
-  2564	
-  2565		if (rproc->dev.parent) {
-  2566			if (rproc->dev.parent->driver) {
-  2567				module_put(rproc->dev.parent->driver->owner);
-  2568			} else {
-  2569				cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
-  2570				if (cluster_pdev) {
-  2571					module_put(cluster_pdev->dev.driver->owner);
-  2572					put_device(&cluster_pdev->dev);
-  2573				}
-  2574			}
-  2575		}
-  2576		put_device(&rproc->dev);
-  2577	}
-  2578	EXPORT_SYMBOL(rproc_put);
-  2579	
+My apologize, I misread the of_phandle_iterator_next function. you can forget my
+comment.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Regards,
+Arnaud
+
+> 
+>> This one remains valid.
+>> reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>
+> 
+> Ok
+> 
+>> Thanks,
+>> Arnaud
+>>
+>>
+>>>  
+>>>  		rproc_add_carveout(rproc, mem);
+>>>  		index++;
