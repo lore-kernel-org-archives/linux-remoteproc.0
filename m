@@ -2,120 +2,272 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2C4C6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 11:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5DBC7619A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 13:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbjCVLwz (ORCPT
+        id S230437AbjCVNbJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 07:52:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37020 "EHLO
+        Wed, 22 Mar 2023 09:31:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbjCVLwy (ORCPT
+        with ESMTP id S229487AbjCVNbI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 07:52:54 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29ECD10ABE;
-        Wed, 22 Mar 2023 04:52:53 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id y4so71810287edo.2;
-        Wed, 22 Mar 2023 04:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679485971;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ho4jVBmPA9BFJ1NRBlIYYugOjZKS7BAlkcBVP60WOFY=;
-        b=E3Oh+auU0oU56o4Ag9yCvnQ/NujkTP0f/ZvGt/y7CLtux5D3nolsuSjsF/3blUbsfJ
-         eV8kejmE8d95Y+1LNWWto+mgd7RcuFW/gnnl2oipW2ky6GwDEwTAITvLoQwIRCVr1XuF
-         TrpxFzJ2iuDLJPEaATm4qvd+ofG2nx3KYegE/6EmnVs7SxIQfhSr9y3C6/uOqZnWhMhX
-         zuY2iDo1tXjCg3gilbwxs6aj5nBIuOAqJjZx5sgfi0aP0HhadSDasNAGTyOLjgAGY7+J
-         0bl338AYEXDfQgAsGdE0oJ0mikj3pCgQEMIfVKT3kQSNSKFQ1RGdrCXR6Ac1hTNiqRHu
-         ulzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679485971;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ho4jVBmPA9BFJ1NRBlIYYugOjZKS7BAlkcBVP60WOFY=;
-        b=TVJlhoe251fqTinz498wFrlgzDkAxEM/dzHD98j/CT+EsSYH6/hXyMJJCr7UJ7q5lu
-         BCu7qJFUBLUAQrCTwvkR0vU0+OnvVhNMTdmfDIBRwAWhhB1rK7xXDDsJQCokpEuokpjZ
-         G69wP/UFJQqkd3zRtjmSZRJA/yGtOonWzm7qUfDHnRHNRj7/Mh0Jf8W1GJuRtrAFZUyC
-         9f+d93sbZKluKkehyPT/VyTMZ7JF7bUE1Rg8fCX025CReAzl4lJ1Ty8cBs8tOhSM6u0U
-         kidttPLjCLL+khCPQ8lI3Qq6hjY6lgz4mZUv5F83AicTY3+lHC08oDv2pYWMnjfTVOA7
-         mIZA==
-X-Gm-Message-State: AO0yUKWjM+rO9vqAelC7DBpDGcRbQVF4ZaznRk3BTmHA9toeQN2w7Fe0
-        ysfMYp/BHecTd0dsgITARqo=
-X-Google-Smtp-Source: AK7set8jk6V8+fNpBSGtiZGLG7GpUDRiZlz/urB9685AOQ4i8HnPZa4QlvotQ+Sk+/vEAa04Pr3snQ==
-X-Received: by 2002:a17:906:eb8b:b0:884:930:b017 with SMTP id mh11-20020a170906eb8b00b008840930b017mr7424514ejb.60.1679485971523;
-        Wed, 22 Mar 2023 04:52:51 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id d8-20020a170906c20800b0093a2160168esm1984974ejz.35.2023.03.22.04.52.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Mar 2023 04:52:51 -0700 (PDT)
-Date:   Wed, 22 Mar 2023 14:52:45 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     oe-kbuild@lists.linux.dev, Tanmay Shah <tanmay.shah@amd.com>,
-        andersson@kernel.org, mathieu.poirier@linaro.org
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        Tarak Reddy <tarak.reddy@amd.com>
-Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-Message-ID: <82ff071d-cd00-47f8-bc72-4d78bfed731d@kili.mountain>
+        Wed, 22 Mar 2023 09:31:08 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F83F60422;
+        Wed, 22 Mar 2023 06:31:02 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32M9N8dn009236;
+        Wed, 22 Mar 2023 13:30:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=AD8hfL6PuJgNotwIIWest78G5vFSJt9I2wwvCPuA0eQ=;
+ b=PUZF0hb3soXOa5RvHUp6iX1Iti8NUcZtRri1yqze+Kpd8vlKS9e+VYdti1wJEEOnQ6gV
+ /XemfD/+NC8hos4nucFvxa0LFAtr9wkEX2vklvG3ldG2piSLqYOs792yR8LMO+v1ip0G
+ 1wfb8J2Vhjrm0O33pxGL3WQ/PFj9pgvXEHcjcIh9smbYtkxfcqvUjq2y9XfeOU3yIw4j
+ 8b7YfOIpihfx31zb2aVFuoksXr8dGqPNrOnw4Ae4g4LcfeVHownhwzZ92w1IWa9InXhR
+ gtH1Xn0o+GIHRkJDE4VoobvuNLqTJl1TB8LlqGIdpfM7B3KN7bXOZpTILizgHkmZCg4v jg== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pfrk0seac-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 13:30:39 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32MDUcWr000763
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Mar 2023 13:30:38 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Wed, 22 Mar 2023 06:30:34 -0700
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>, <will@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-doc@vger.kernel.org>, "Mukesh Ojha" <quic_mojha@quicinc.com>
+Subject: [PATCH v2 0/6] Add basic Minidump kernel driver support
+Date:   Wed, 22 Mar 2023 19:00:11 +0530
+Message-ID: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230322040933.924813-3-tanmay.shah@amd.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dZsjgXfjJbsZDoET2wrQrc5-J-2m757V
+X-Proofpoint-ORIG-GUID: dZsjgXfjJbsZDoET2wrQrc5-J-2m757V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-22_11,2023-03-22_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 clxscore=1011 impostorscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303150002
+ definitions=main-2303220098
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Tanmay,
+Minidump is a best effort mechanism to collect useful and predefined data
+for first level of debugging on end user devices running on Qualcomm SoCs.
+It is built on the premise that System on Chip (SoC) or subsystem part of
+SoC crashes, due to a range of hardware and software bugs. Hence, the
+ability to collect accurate data is only a best-effort. The data collected
+could be invalid or corrupted, data collection itself could fail, and so on.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/remoteproc-Make-rproc_get_by_phandle-work-for-clusters/20230322-121102
-base:   e19967994d342a5986d950a1bfddf19d7e1191b7
-patch link:    https://lore.kernel.org/r/20230322040933.924813-3-tanmay.shah%40amd.com
-patch subject: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-config: powerpc-randconfig-m041-20230322 (https://download.01.org/0day-ci/archive/20230322/202303221916.LgKkr8Gk-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 12.1.0
+Qualcomm devices in engineering mode provides a mechanism for generating
+full system ramdumps for post mortem debugging. But in some cases it's
+however not feasible to capture the entire content of RAM. The minidump
+mechanism provides the means for selecting which snippets should be
+included in the ramdump.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <error27@gmail.com>
-| Link: https://lore.kernel.org/r/202303221916.LgKkr8Gk-lkp@intel.com/
+The core of minidump feature is part of Qualcomm's boot firmware code.
+It initializes shared memory (SMEM), which is a part of DDR and
+allocates a small section of SMEM to minidump table i.e also called
+global table of content (G-ToC). Each subsystem (APSS, ADSP, ...) has
+their own table of segments to be included in the minidump and all get
+their reference from G-ToC. Each segment/region has some details like
+name, physical address and it's size etc. and it could be anywhere
+scattered in the DDR.
 
-smatch warnings:
-drivers/remoteproc/remoteproc_core.c:2565 rproc_put() warn: variable dereferenced before check 'rproc->dev.parent' (see line 2562)
-drivers/remoteproc/remoteproc_core.c:2566 rproc_put() warn: variable dereferenced before check 'rproc->dev.parent->driver' (see line 2562)
+Existing upstream Qualcomm remoteproc driver[1] already supports minidump
+feature for remoteproc instances like ADSP, MODEM, ... where predefined
+selective segments of subsystem region can be dumped as part of
+coredump collection which generates smaller size artifacts compared to
+complete coredump of subsystem on crash.
 
-vim +2565 drivers/remoteproc/remoteproc_core.c
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/remoteproc/qcom_common.c#n142
 
-160e7c840fe858 Ohad Ben-Cohen  2012-07-04  2560  void rproc_put(struct rproc *rproc)
-400e64df6b237e Ohad Ben-Cohen  2011-10-20  2561  {
-fbb6aacb078285 Bjorn Andersson 2016-10-02 @2562  	module_put(rproc->dev.parent->driver->owner);
-                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Unchecked dereferences.
+In addition to managing and querying the APSS minidump description,
+the Linux driver maintains a ELF header in a segment. This segment
+gets updated with section/program header whenever a new entry gets
+registered.
 
-573d22d13a6970 Tanmay Shah     2023-03-21  2563  	struct platform_device *cluster_pdev;
-573d22d13a6970 Tanmay Shah     2023-03-21  2564  
-573d22d13a6970 Tanmay Shah     2023-03-21 @2565  	if (rproc->dev.parent) {
-                                                            ^^^^^^^^^^^^^^^^^
-Checked too late.
+Patch 1/6 is very trivial change.
+Patch 2/6 moves the minidump specific data structure and macro to
+ qcom_minidump.h so that (4/6) minidump driver can use.
+Patch 3/6 documents qualcomm minidump guide for users.
+Patch 4/6 implements qualcomm minidump kernel driver and exports
+ symbol which other minidump kernel client can use.
+Patch 5/6 enables the qualcomm minidump driver.
+Patch 6/6 Use the exported symbol from minidump driver in qcom_common
+ for querying minidump descriptor for a subsystem.
 
-573d22d13a6970 Tanmay Shah     2023-03-21 @2566  		if (rproc->dev.parent->driver) {
-                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+Testing of the patches has been done on sm8450 target with the help
+of out of tree patch which helps to set the download mode and storage
+type and to warm reset the device.
 
-573d22d13a6970 Tanmay Shah     2023-03-21  2567  			module_put(rproc->dev.parent->driver->owner);
-573d22d13a6970 Tanmay Shah     2023-03-21  2568  		} else {
-573d22d13a6970 Tanmay Shah     2023-03-21  2569  			cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
-573d22d13a6970 Tanmay Shah     2023-03-21  2570  			if (cluster_pdev) {
-573d22d13a6970 Tanmay Shah     2023-03-21  2571  				module_put(cluster_pdev->dev.driver->owner);
-573d22d13a6970 Tanmay Shah     2023-03-21  2572  				put_device(&cluster_pdev->dev);
-573d22d13a6970 Tanmay Shah     2023-03-21  2573  			}
-573d22d13a6970 Tanmay Shah     2023-03-21  2574  		}
-573d22d13a6970 Tanmay Shah     2023-03-21  2575  	}
-b5ab5e24e960b9 Ohad Ben-Cohen  2012-05-30  2576  	put_device(&rproc->dev);
-400e64df6b237e Ohad Ben-Cohen  2011-10-20  2577  }
+Download mode setting patches are floating here,
+https://lore.kernel.org/lkml/1679070482-8391-1-git-send-email-quic_mojha@quicinc.com/
+
+Default storage type is set to via USB, so minidump would be
+downloaded with the help of x86_64 machine running PCAT attached
+to Qualcomm device which has backed minidump boot firmware
+support(more can be found patch 3/6)
+
+Below patch [1] is to warm reset Qualcomm device which has upstream qcom
+watchdog driver support.
+
+After applying all patches, we can boot the device and can execute
+following command.
+
+echo mini > /sys/module/qcom_scm/parameters/download_mode
+echo c > /proc/sysrq-trigger
+
+This will make the device go to download mode and collect the
+minidump on to the attached x86 machine running the Qualcomm
+PCAT tool.
+
+We will see a bunch of predefined registered region as binary
+blobs starts with md_*. A sample client example to dump a linux
+region has been given in 3/6.
+
+[1]
+--------------------------->8-------------------------------------
+
+commit f1124ccebd47550b4c9627aa162d9cdceba2b76f
+Author: Mukesh Ojha <quic_mojha@quicinc.com>
+Date:   Thu Mar 16 14:08:35 2023 +0530
+
+    do not merge: watchdog bite on panic
+
+    Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+
+diff --git a/drivers/watchdog/qcom-wdt.c b/drivers/watchdog/qcom-wdt.c
+index 0d2209c..767e84a 100644
+--- a/drivers/watchdog/qcom-wdt.c
++++ b/drivers/watchdog/qcom-wdt.c
+@@ -12,6 +12,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/watchdog.h>
+ #include <linux/of_device.h>
++#include <linux/panic.h>
+
+ enum wdt_reg {
+        WDT_RST,
+@@ -114,12 +115,28 @@ static int qcom_wdt_set_pretimeout(struct watchdog_device *wdd,
+        return qcom_wdt_start(wdd);
+ }
+
++static void qcom_wdt_bite_on_panic(struct qcom_wdt *wdt)
++{
++       writel(0, wdt_addr(wdt, WDT_EN));
++       writel(1, wdt_addr(wdt, WDT_BITE_TIME));
++       writel(1, wdt_addr(wdt, WDT_RST));
++       writel(QCOM_WDT_ENABLE, wdt_addr(wdt, WDT_EN));
++
++       wmb();
++
++       while(1)
++               udelay(1);
++}
++
+ static int qcom_wdt_restart(struct watchdog_device *wdd, unsigned long action,
+                            void *data)
+ {
+        struct qcom_wdt *wdt = to_qcom_wdt(wdd);
+        u32 timeout;
+
++       if (in_panic)
++               qcom_wdt_bite_on_panic(wdt);
++
+        /*
+         * Trigger watchdog bite:
+         *    Setup BITE_TIME to be 128ms, and enable WDT.
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index 979b776..f913629 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -22,6 +22,7 @@ extern int panic_on_oops;
+ extern int panic_on_unrecovered_nmi;
+ extern int panic_on_io_nmi;
+ extern int panic_on_warn;
++extern bool in_panic;
+
+ extern unsigned long panic_on_taint;
+ extern bool panic_on_taint_nousertaint;
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 487f5b0..714f7f4 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -65,6 +65,8 @@ static unsigned int warn_limit __read_mostly;
+
+ int panic_timeout = CONFIG_PANIC_TIMEOUT;
+ EXPORT_SYMBOL_GPL(panic_timeout);
++bool in_panic = false;
++EXPORT_SYMBOL_GPL(in_panic);
+
+ #define PANIC_PRINT_TASK_INFO          0x00000001
+ #define PANIC_PRINT_MEM_INFO           0x00000002
+@@ -261,6 +263,7 @@ void panic(const char *fmt, ...)
+        int old_cpu, this_cpu;
+        bool _crash_kexec_post_notifiers = crash_kexec_post_notifiers;
+
++       in_panic = true;
+        if (panic_on_warn) {
+                /*
+                 * This thread may hit another WARN() in the panic path.
+--------------------------------------------------------------------------
+
+Changes in v2:
+ - Addressed review comment made by [quic_tsoni/bmasney] to add documentation.
+ - Addressed comments made by [srinivas.kandagatla]
+ - Dropped pstore 6/6 from the last series, till i get conclusion to get pstore
+   region in minidump.
+ - Fixed issue reported by kernel test robot.
+
+
+Changes in v1: https://lore.kernel.org/lkml/1676978713-7394-1-git-send-email-quic_mojha@quicinc.com/
+
+Mukesh Ojha (6):
+  remoteproc: qcom: Expand MD_* as MINIDUMP_*
+  remoteproc: qcom: Move minidump specific data to qcom_minidump.h
+  docs: qcom: Add qualcomm minidump guide
+  soc: qcom: Add Qualcomm minidump kernel driver
+  arm64: defconfig: Enable Qualcomm minidump driver
+  remoterproc: qcom: refactor to leverage exported minidump symbol
+
+ Documentation/admin-guide/qcom_minidump.rst | 240 +++++++++++++
+ arch/arm64/configs/defconfig                |   1 +
+ drivers/remoteproc/qcom_common.c            |  75 +---
+ drivers/soc/qcom/Kconfig                    |  14 +
+ drivers/soc/qcom/Makefile                   |   1 +
+ drivers/soc/qcom/qcom_minidump.c            | 537 ++++++++++++++++++++++++++++
+ include/soc/qcom/minidump.h                 |  40 +++
+ include/soc/qcom/qcom_minidump.h            |  88 +++++
+ 8 files changed, 927 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/admin-guide/qcom_minidump.rst
+ create mode 100644 drivers/soc/qcom/qcom_minidump.c
+ create mode 100644 include/soc/qcom/minidump.h
+ create mode 100644 include/soc/qcom/qcom_minidump.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.7.4
 
