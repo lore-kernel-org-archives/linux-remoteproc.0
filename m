@@ -2,58 +2,57 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ECACC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 06:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF1AC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 22 Mar 2023 07:32:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229524AbjCVGV0 (ORCPT
+        id S229694AbjCVHcb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 22 Mar 2023 02:21:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
+        Wed, 22 Mar 2023 03:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbjCVGV0 (ORCPT
+        with ESMTP id S229645AbjCVHca (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 22 Mar 2023 02:21:26 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FD4442CA;
-        Tue, 21 Mar 2023 23:21:25 -0700 (PDT)
+        Wed, 22 Mar 2023 03:32:30 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6585FED;
+        Wed, 22 Mar 2023 00:32:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679466085; x=1711002085;
+  t=1679470349; x=1711006349;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=sV9yrowQ+RnaJFvNng0mNFOKmQMIaJRRqKuH1yOHxSk=;
-  b=JabRBkoxTUoPkGmhfqbRlA3OSegdz/lXRUwE80rgojBwPyozXbSfmTRP
-   8qlUN5Fnt7lLMbOUYCRpsHp0f7b0H2hI5dIlNQt65AvzF8NbjJMj7jiwf
-   bindiJMbeDlqI9AkmBsFHPRZbYF+ZcrI95aLURDlh0k3OOMLmBpg5pSgL
-   dt+hBK6MOcLO9P2pPlH2M892rbq/X8a2Vzm7CSMSn/kdVJrEsrQ4spH75
-   9GRnjrzMeYNb8WRAS3/wmfV/SYv5INyIxlEm7xFYykKzLP8NYSdcVFYG6
-   6jDTQrie49z0Ogt06TXbilbAK6a44oata+xX89hsj0NMl3X91Wq1cHlh4
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="339177967"
-X-IronPort-AV: E=Sophos;i="5.98,280,1673942400"; 
-   d="scan'208";a="339177967"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Mar 2023 23:21:24 -0700
+  bh=TvjfNRcHDkuEr+44MH6cZnJ0qM5gMaDlNVzAz9jGtTY=;
+  b=cXEmXXLXhylWSeZ1Mke4Lsn6jxc3uUdSlpfG3eB0bakQ7C/Yx6kYrFt9
+   pDuBcZcEiC0kgibEttCza8LhiyjQC8ooBNIiImHC2/sjWvsgtgCiEfrOR
+   UaM35ioyBqMUSyihdXjbcC2/pZjH5zCEF4/PxSLI//RBs2netRGPl9fSc
+   GmM+LjY2Qsqmwhh5MgAmtlrGdJ/uZGxUR2ivRqu3SuaKW+1I6aO5d096k
+   SO0Xz3CCJ+kEW46P4x3fv1GjvqPTL9uHJ3hPWIfDXk5fvMYfqgczF3uP+
+   qwIkwjuY45ds8OOov0REUCv6XrxrbbQtA8zgYCcX+Ykaq3GttOtoiI6l2
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="340685697"
+X-IronPort-AV: E=Sophos;i="5.98,281,1673942400"; 
+   d="scan'208";a="340685697"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2023 00:32:28 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="770936644"
-X-IronPort-AV: E=Sophos;i="5.98,280,1673942400"; 
-   d="scan'208";a="770936644"
+X-IronPort-AV: E=McAfee;i="6600,9927,10656"; a="805727862"
+X-IronPort-AV: E=Sophos;i="5.98,281,1673942400"; 
+   d="scan'208";a="805727862"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Mar 2023 23:21:22 -0700
+  by orsmga004.jf.intel.com with ESMTP; 22 Mar 2023 00:32:26 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1perqc-000CyQ-13;
-        Wed, 22 Mar 2023 06:21:22 +0000
-Date:   Wed, 22 Mar 2023 14:20:27 +0800
+        id 1pesxN-000D3e-2n;
+        Wed, 22 Mar 2023 07:32:25 +0000
+Date:   Wed, 22 Mar 2023 15:31:59 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
         mathieu.poirier@linaro.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tanmay Shah <tanmay.shah@amd.com>,
+Cc:     oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tanmay Shah <tanmay.shah@amd.com>,
         Tarak Reddy <tarak.reddy@amd.com>
 Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-Message-ID: <202303221441.cuBnpvye-lkp@intel.com>
+Message-ID: <202303221514.3xIiCbpk-lkp@intel.com>
 References: <20230322040933.924813-3-tanmay.shah@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -73,32 +72,30 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Tanmay-Shah/remoteproc-Ma
 base:   e19967994d342a5986d950a1bfddf19d7e1191b7
 patch link:    https://lore.kernel.org/r/20230322040933.924813-3-tanmay.shah%40amd.com
 patch subject: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-config: arm-randconfig-r013-20230322 (https://download.01.org/0day-ci/archive/20230322/202303221441.cuBnpvye-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 67409911353323ca5edf2049ef0df54132fa1ca7)
+config: ia64-allyesconfig (https://download.01.org/0day-ci/archive/20230322/202303221514.3xIiCbpk-lkp@intel.com/config)
+compiler: ia64-linux-gcc (GCC) 12.1.0
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        # install arm cross compiling tool for clang build
-        # apt-get install binutils-arm-linux-gnueabi
         # https://github.com/intel-lab-lkp/linux/commit/573d22d13a697097d02d6c29a75fb0fb1ac6d8fe
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Tanmay-Shah/remoteproc-Make-rproc_get_by_phandle-work-for-clusters/20230322-121102
         git checkout 573d22d13a697097d02d6c29a75fb0fb1ac6d8fe
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash drivers/remoteproc/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash drivers/
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303221441.cuBnpvye-lkp@intel.com/
+| Link: https://lore.kernel.org/oe-kbuild-all/202303221514.3xIiCbpk-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
->> drivers/remoteproc/remoteproc_core.c:2563:26: warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
-           struct platform_device *cluster_pdev;
-                                   ^
-   1 warning generated.
+   drivers/remoteproc/remoteproc_core.c: In function 'rproc_put':
+>> drivers/remoteproc/remoteproc_core.c:2563:9: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+    2563 |         struct platform_device *cluster_pdev;
+         |         ^~~~~~
 
 
 vim +2563 drivers/remoteproc/remoteproc_core.c
