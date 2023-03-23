@@ -2,50 +2,48 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3FEC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Mar 2023 08:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1CBC6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Mar 2023 08:55:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbjCWIBD (ORCPT
+        id S230274AbjCWIzL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 04:01:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
+        Thu, 23 Mar 2023 04:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjCWIBC (ORCPT
+        with ESMTP id S231146AbjCWIyv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Mar 2023 04:01:02 -0400
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA65F974;
-        Thu, 23 Mar 2023 01:00:57 -0700 (PDT)
+        Thu, 23 Mar 2023 04:54:51 -0400
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7B4412F25;
+        Thu, 23 Mar 2023 01:53:50 -0700 (PDT)
 Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4PhyT32mhZz8RTZK;
-        Thu, 23 Mar 2023 16:00:55 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-        by mse-fl2.zte.com.cn with SMTP id 32N80lxC026494;
-        Thu, 23 Mar 2023 16:00:47 +0800 (+08)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Phzf52sgpz6FK2Z;
+        Thu, 23 Mar 2023 16:53:49 +0800 (CST)
+Received: from xaxapp03.zte.com.cn ([10.88.97.17])
+        by mse-fl2.zte.com.cn with SMTP id 32N8rgwq099302;
+        Thu, 23 Mar 2023 16:53:42 +0800 (+08)
         (envelope-from ye.xingchen@zte.com.cn)
 Received: from mapi (xaxapp02[null])
         by mapi (Zmail) with MAPI id mid31;
-        Thu, 23 Mar 2023 16:00:49 +0800 (CST)
-Date:   Thu, 23 Mar 2023 16:00:49 +0800 (CST)
-X-Zmail-TransId: 2afa641c07315a3-b4765
+        Thu, 23 Mar 2023 16:53:44 +0800 (CST)
+Date:   Thu, 23 Mar 2023 16:53:44 +0800 (CST)
+X-Zmail-TransId: 2afa641c1398358-47488
 X-Mailer: Zmail v1.0
-Message-ID: <202303231600496082749@zte.com.cn>
+Message-ID: <202303231653447704556@zte.com.cn>
 Mime-Version: 1.0
 From:   <ye.xingchen@zte.com.cn>
-To:     <andersson@kernel.org>
+To:     <p.zabel@pengutronix.de>
 Cc:     <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: =?UTF-8?B?W1BBVENIXSByZW1vdGVwcm9jL2RhdmluY2k6IFVzZSBkZXZfZXJyX3Byb2JlKCk=?=
+Subject: =?UTF-8?B?W1BBVENIXSByZXNldDogbWVzb24tYXVkaW8tYXJiOiBVc2UgZGV2X2Vycl9wcm9iZSgp?=
 Content-Type: text/plain;
         charset="UTF-8"
-X-MAIL: mse-fl2.zte.com.cn 32N80lxC026494
+X-MAIL: mse-fl2.zte.com.cn 32N8rgwq099302
 X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 641C0737.002 by FangMail milter!
-X-FangMail-Envelope: 1679558455/4PhyT32mhZz8RTZK/641C0737.002/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<ye.xingchen@zte.com.cn>
 X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 641C0737.002/4PhyT32mhZz8RTZK
+X-Fangmail-MID-QID: 641C139D.000/4Phzf52sgpz6FK2Z
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -56,29 +54,26 @@ Replace the open-code with dev_err_probe() to simplify the code.
 
 Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/reset/reset-meson-audio-arb.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 98e0be9476a4..b2b7d3347949 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -278,13 +278,9 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/reset/reset-meson-audio-arb.c b/drivers/reset/reset-meson-audio-arb.c
+index 1dc06e08a8da..6a3f6a6a3bbf 100644
+--- a/drivers/reset/reset-meson-audio-arb.c
++++ b/drivers/reset/reset-meson-audio-arb.c
+@@ -151,11 +151,8 @@ static int meson_audio_arb_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, arb);
 
- 	dsp_reset = devm_reset_control_get_exclusive(dev, NULL);
--	if (IS_ERR(dsp_reset)) {
--		if (PTR_ERR(dsp_reset) != -EPROBE_DEFER)
--			dev_err(dev, "unable to get reset control: %ld\n",
--				PTR_ERR(dsp_reset));
--
--		return PTR_ERR(dsp_reset);
+ 	arb->clk = devm_clk_get(dev, NULL);
+-	if (IS_ERR(arb->clk)) {
+-		if (PTR_ERR(arb->clk) != -EPROBE_DEFER)
+-			dev_err(dev, "failed to get clock\n");
+-		return PTR_ERR(arb->clk);
 -	}
-+	if (IS_ERR(dsp_reset))
-+		return dev_err_probe(dev, PTR_ERR(dsp_reset),
-+				     "unable to get reset control: %ld\n");
++	if (IS_ERR(arb->clk))
++		return dev_err_probe(dev, PTR_ERR(arb->clk), "failed to get clock\n");
 
- 	if (dev->of_node) {
- 		ret = of_reserved_mem_device_init(dev);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	arb->regs = devm_ioremap_resource(dev, res);
 -- 
 2.25.1
