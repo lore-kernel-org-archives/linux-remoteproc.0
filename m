@@ -2,61 +2,83 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D763BC6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Mar 2023 09:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BD0C76195
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Mar 2023 09:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230409AbjCWJHL convert rfc822-to-8bit (ORCPT
+        id S231545AbjCWJdm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 05:07:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44252 "EHLO
+        Thu, 23 Mar 2023 05:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230086AbjCWJGu (ORCPT
+        with ESMTP id S229639AbjCWJdN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Mar 2023 05:06:50 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C8E22DD1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Mar 2023 02:06:04 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1pfGtT-0000qX-6V; Thu, 23 Mar 2023 10:05:59 +0100
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1pfGtS-0066ql-FJ; Thu, 23 Mar 2023 10:05:58 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1pfGtR-0001mb-I1; Thu, 23 Mar 2023 10:05:57 +0100
-Message-ID: <6616b6f6b4306752fad0ed7573799a4e17a5c947.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: meson-audio-arb: Use dev_err_probe()
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     ye.xingchen@zte.com.cn
-Cc:     mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 23 Mar 2023 10:05:57 +0100
-In-Reply-To: <202303231653447704556@zte.com.cn>
-References: <202303231653447704556@zte.com.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1+deb11u1 
+        Thu, 23 Mar 2023 05:33:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D213C10;
+        Thu, 23 Mar 2023 02:30:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B8846B82034;
+        Thu, 23 Mar 2023 09:30:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19A8C433EF;
+        Thu, 23 Mar 2023 09:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1679563829;
+        bh=iXUTHYeeegFCFaox+RMWiD1WuxysTWL+ixcGPGIX85s=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=DjeglNNoAulTCNb3qaWXJMChNxF8gKu3b+j0NIj2hcbnuHcTgUYIBDdIPCbLtKoQr
+         u8tfRnp3AWdCaM+ubHXF63bsc8YzisXeUNFoXS/NC5ITrDTE03dAjitCo28pN1TI3/
+         n8N1lBF8aS1m5JWakrNp5UcFFOfwmmrCPLTjQWH59Expu+U6zIJZ/l3pXsIjjEWqkH
+         Jo2SyfMkj3vqrf+sdIK1CccocHBEh0NPyos+ukOfmWFKEgXPnhsny386nGmIVW6ukj
+         P0PSG6+tWgijE4C+3zoCudtNN4h3JVjJRUUeZDTbijbyB0JUyJ7zDgHDIGEK7cc7vx
+         cDngE23EP677w==
+Message-ID: <0315a3e5-ec6c-9a46-7eca-5d112b624d94@kernel.org>
+Date:   Thu, 23 Mar 2023 11:30:23 +0200
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v5 3/5] soc: ti: pruss: Add pruss_cfg_read()/update() API
+Content-Language: en-US
+To:     MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+Cc:     linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20230323062451.2925996-1-danishanwar@ti.com>
+ <20230323062451.2925996-4-danishanwar@ti.com>
+From:   Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20230323062451.2925996-4-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Do, 2023-03-23 at 16:53 +0800, ye.xingchen@zte.com.cn wrote:
-> From: Ye Xingchen <ye.xingchen@zte.com.cn>
-> 
-> Replace the open-code with dev_err_probe() to simplify the code.
-> 
-> Signed-off-by: Ye Xingchen <ye.xingchen@zte.com.cn>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-regards
-Philipp
+On 23/03/2023 08:24, MD Danish Anwar wrote:
+> From: Suman Anna <s-anna@ti.com>
+> 
+> Add two new generic API pruss_cfg_read() and pruss_cfg_update() to
+> the PRUSS platform driver to read and program respectively a register
+> within the PRUSS CFG sub-module represented by a syscon driver.
+> 
+> These APIs are internal to PRUSS driver. Various useful registers
+> and macros for certain register bit-fields and their values have also
+> been added.
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
