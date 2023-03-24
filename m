@@ -2,154 +2,108 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DE9C74A5B
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 23 Mar 2023 22:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF85C6FD1C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 24 Mar 2023 07:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231264AbjCWWph (ORCPT
+        id S231277AbjCXHN7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 23 Mar 2023 18:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41392 "EHLO
+        Fri, 24 Mar 2023 03:13:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231263AbjCWWpg (ORCPT
+        with ESMTP id S229536AbjCXHN6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 23 Mar 2023 18:45:36 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FC47ED3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Mar 2023 15:45:35 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id cu12so161729pfb.13
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Mar 2023 15:45:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679611535;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xkke7lO7zfECbcdNUQ9AlvqUsiQvQ5+YaugutlTNtBQ=;
-        b=zIYsK8NxxtJbOXGPswHLWVUeMHQd4OFgrF1cyiq4Iuz8Y3bcwFnDXOL0o57KW6+JeC
-         F0uoKvKGVgLCpN4WIpOZ4d3UJTF0l35NXDi+Jg8WJwDa0Ics0NJGyFDN30nHT6wmkA/P
-         duow8DOw++TcAMQ/UkEKHRDlq4CphgUkeNSgaapwbQRBhD9lkcVbYZk+1k4LNHsNCAD3
-         4ddhR3CevCTPn2inzJrl4QBj57bkOn9JDidQ3lW9KeHtR/cJGiT91380AQkvhTlQc6qL
-         KxPnH3qELGNpPq0npNDrUa0M9vI9Pn9YwpACsa7xtOW5dq4wlqmBxWmFERVnxhHMRmHs
-         X9rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679611535;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xkke7lO7zfECbcdNUQ9AlvqUsiQvQ5+YaugutlTNtBQ=;
-        b=bN68BCKtkyZCAPNT+ZyIwcc2nZaZlSyALVaOYDAdKGoWpK+chQoFKMNC56lJhol1tn
-         4o3zHfMXJL/gAe0kbKq0T74esbRGCZyjapQyLN6WffY0WFN3kd+hFu36VnL9N3ZF7fky
-         8Lm7p1W51LbJ6sCtoXyhYlbcBYA5/iRN7p2J0P9/WBeg7V9hmk0QTqcOZtKN88toBIDX
-         snANJy8ls8fwOFdEKnzePApMtvua4SGa8CxEol5mItEp6RMVkl7H3z4xktLvswjz68OY
-         2OTywZpVoIdtu8980MVyvqV0yNmyDL5qvzuvxcXhI4VYs4MDCWDcfrSWx6J9e1+smEkA
-         BcmA==
-X-Gm-Message-State: AAQBX9fuoX946vHkJiLprO337SQGMcFgQ5f2RR/UD8HKtotr6x9uRx9W
-        gNJALQ5PsHHnQUUn5AC7CvuWEobFboqQpuN9aGg=
-X-Google-Smtp-Source: AKy350buOjOVDaQRGHLB+sBmZfv9Wb0zHrxC/aDpbwhkP6ilJkmBXq+Z9rXT6O8CRTczid6e/PZ/Pw==
-X-Received: by 2002:a62:5254:0:b0:625:febb:bc25 with SMTP id g81-20020a625254000000b00625febbbc25mr881257pfb.11.1679611535254;
-        Thu, 23 Mar 2023 15:45:35 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:e403:39f9:7f9f:340b])
-        by smtp.gmail.com with ESMTPSA id e15-20020a62ee0f000000b0058bacd6c4e8sm12302051pfi.207.2023.03.23.15.45.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Mar 2023 15:45:34 -0700 (PDT)
-Date:   Thu, 23 Mar 2023 16:45:32 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tanmay Shah <tanmay.shah@amd.com>
-Cc:     andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tarak Reddy <tarak.reddy@amd.com>
-Subject: Re: [PATCH v2 2/2] remoteproc: enhance rproc_put() for clusters
-Message-ID: <20230323224532.GB2905636@p14s>
-References: <20230322040933.924813-1-tanmay.shah@amd.com>
- <20230322040933.924813-3-tanmay.shah@amd.com>
- <20230322160537.GB2821487@p14s>
- <830db03c-ec6e-b4aa-834a-e67622e5a41f@amd.com>
+        Fri, 24 Mar 2023 03:13:58 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB540D532;
+        Fri, 24 Mar 2023 00:13:56 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32O7Dg2L053422;
+        Fri, 24 Mar 2023 02:13:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1679642022;
+        bh=ETyhzSkLMiBhoJJwftNzHfxbMQGF3UJPiIcYUOTMfoo=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=FELYO/Lf7I+Cevm4rqmagustqteOQbpDwaJIdp3/NlDM1dnil5keOnE3sozCA40eZ
+         j2eZYIVenidTzkVbfKIFGfpAXqUDmT+WknpD8+lcUhVH+CDKZEUDsB9ohf8NVbEMy8
+         zWJKQnWp3/GB7wNEU62OcIppp/9H095V+oxHsu8w=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32O7Dge5000485
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Mar 2023 02:13:42 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 24
+ Mar 2023 02:13:41 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Fri, 24 Mar 2023 02:13:41 -0500
+Received: from [10.24.69.114] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32O7Da1n072365;
+        Fri, 24 Mar 2023 02:13:37 -0500
+Message-ID: <4c9276e4-0c00-d2e9-bf9d-08cc73a75b6f@ti.com>
+Date:   Fri, 24 Mar 2023 12:43:36 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <830db03c-ec6e-b4aa-834a-e67622e5a41f@amd.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v5 0/5] Introduce PRU platform consumer API
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Roger Quadros <rogerq@kernel.org>,
+        "Andrew F. Davis" <afd@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Suman Anna <s-anna@ti.com>,
+        Bjorn Andersson <andersson@kernel.org>
+References: <20230323062451.2925996-1-danishanwar@ti.com>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <20230323062451.2925996-1-danishanwar@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Mar 22, 2023 at 10:34:57AM -0700, Tanmay Shah wrote:
+Hi Mathieu,
+
+On 23/03/23 11:54, MD Danish Anwar wrote:
+> Hi All,
+> The Programmable Real-Time Unit and Industrial Communication Subsystem (PRU-ICSS
+> or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
+> (Programmable Real-Time Units, or PRUs) for program execution.
 > 
-> On 3/22/23 9:05 AM, Mathieu Poirier wrote:
-> > Hi Tanmay,
-> > 
-> > On Tue, Mar 21, 2023 at 09:09:36PM -0700, Tanmay Shah wrote:
-> > > This patch enhances rproc_put() to support remoteproc clusters
-> > > with multiple child nodes as in rproc_get_by_phandle().
-> > > 
-> > > Signed-off-by: Tarak Reddy <tarak.reddy@amd.com>
-> > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> > > ---
-> > >   drivers/remoteproc/remoteproc_core.c | 13 +++++++++++++
-> > >   1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index a3e7c8798381..e7e451012615 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -2560,6 +2560,19 @@ EXPORT_SYMBOL(rproc_free);
-> > >   void rproc_put(struct rproc *rproc)
-> > >   {
-> > >   	module_put(rproc->dev.parent->driver->owner);
-> > There is something wrong here - this should have been removed.
+> There are 3 foundation components for TI PRUSS subsystem: the PRUSS platform
+> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All of them have
+> already been merged and can be found under:
+> 1) drivers/soc/ti/pruss.c
+>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+> 2) drivers/irqchip/irq-pruss-intc.c
+>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+> 3) drivers/remoteproc/pru_rproc.c
+>    Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 > 
+> The programmable nature of the PRUs provide flexibility to implement custom
+> peripheral interfaces, fast real-time responses, or specialized data handling.
+> Example of a PRU consumer drivers will be: 
+>   - Software UART over PRUSS
+>   - PRU-ICSS Ethernet EMAC
 > 
-> Thanks Mathieu. Sure this needs to be fixed.
-> 
-> This is result of manually picking up patch from my side.
-> 
-> I will try to find better automated way to pick-up patches not available on
-> mailing list.
+> In order to make usage of common PRU resources and allow the consumer drivers 
+> to configure the PRU hardware for specific usage the PRU API is introduced.
 >
+Roger has given his RBs for all the patches in this series. Tony has also given
+his RB.
 
-That would certainly help avoid problems such as this one.
+Can you please have a look at this series.
 
-> 
-> > 
-> > > +	struct platform_device *cluster_pdev;
-> > > +
-> > > +	if (rproc->dev.parent) {
-> > This condition is not needed, please remove.
-> Ack.
-> > 
-> > > +		if (rproc->dev.parent->driver) {
-> > > +			module_put(rproc->dev.parent->driver->owner);
-> > > +		} else {
-> > > +			cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
-> > > +			if (cluster_pdev) {
-> > > +				module_put(cluster_pdev->dev.driver->owner);
-> > > +				put_device(&cluster_pdev->dev);
-> 
-> I am not sure if cluster_pdev->dev should be dropped here.
->
-
-It needs to be done here.
-
-> Should we drop it in platform driver after rproc_free() ?
-> 
-> > > +			}
-> > > +		}
-> > > +	}
-> > Some in-lined documentation, the way I did in patch 1/2 would be appreciated.
-> > Otherwize I think the above enhancement make sense.
-> Ack I will document in next revision.
-> > 
-> > Thanks,
-> > Mathieu
-> > 
-> > >   	put_device(&rproc->dev);
-> 
-> 
-> Also, if we decide to drop cluster->dev here  then,
-> 
-> should we drop reference of rproc->dev before cluster->dev ?
-> 
-> 
-> > >   }
-> > >   EXPORT_SYMBOL(rproc_put);
-> > > -- 
-> > > 2.25.1
-> > > 
+-- 
+Thanks and Regards,
+Danish.
