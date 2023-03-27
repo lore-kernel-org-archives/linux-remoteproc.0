@@ -2,89 +2,282 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6839CC6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 20:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC320C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 20:58:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjC0UpH (ORCPT
+        id S229663AbjC0U6u (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 16:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40050 "EHLO
+        Mon, 27 Mar 2023 16:58:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229664AbjC0UpG (ORCPT
+        with ESMTP id S230287AbjC0U6t (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Mar 2023 16:45:06 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24C852107
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 13:45:04 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id l27so10106852wrb.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 13:45:04 -0700 (PDT)
+        Mon, 27 Mar 2023 16:58:49 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E115211B
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 13:58:45 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id u10so9679454plz.7
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 13:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679949902;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XXpwyfObowKcpaJA0Vcps/lEQSlDqJgPBHnabdYA9dE=;
-        b=ZV+Wq94n+gfnQf6VM4SaSun9dqYcgE0HYiK03w4VOPgn45s6y8PCnTAzaezE08LQop
-         wu3RA5wgkjnWCH5WQKnS/LQmMePGl+bJETF7tea9KQFRLWN6WaRfz+7aqqBrxLDWwOok
-         i5wuxTVw9oCQqBSsTIybgZ6DkQqh7XZldehNDNlKshJ7cS1Ig5JvY+cPTefpbYYdF/R7
-         lFx1oS//KMVzWyCF5qHsMuUpi8g2s6wMH+4l++U3ihsqgG0N0xQubM+rN3otL5UV6Wtm
-         gctvqR22bF63D8FATQ+ImgagVcaOMebuKDTZ5Afdb5BGjp6VK38u+ykpnCgQKzbYD8iC
-         4yzA==
+        d=linaro.org; s=google; t=1679950725;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eH1CJX04q2BHUR5TJOFKJGoWhDyShBC0LXQUgI8ky8M=;
+        b=J3o54tF0lNEkesTpP5H1LlTIpmJlYC/zA8uXtDj4vzg1d1dSPjT3iSz0JcuXDw63lZ
+         BAuLhmRwwfAi3TYxK/P1vfWLXL5TxZRAj4LjqE6kSg3uT776Z9kjGD1bcXR/5wTlbvJj
+         sYXbAy2/1dUNBNmrNsLIjz9O8Yar7App3XBwpxXyuXcDH28vBiHRSVW2RcRwBb/3nZaF
+         okREhu68L83ulgoPoH/KyCSVqCuwKfdGq4nMEcmTc2DzrBrkGICpvy+veFdr/1iThqc3
+         2ouszMCDmMIHCK3u6Aq7EW9UBbulDhd9WXfyHuYDt/y/P2l6DGrgQXiZ6mwQXFs5/kVZ
+         OvFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679949902;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XXpwyfObowKcpaJA0Vcps/lEQSlDqJgPBHnabdYA9dE=;
-        b=26yhpZJOWT+8AIgbnK2hYVCL1aFNGDChpj9VubR9RufzhSJT9JCaSjMVBxqePJb8X5
-         qFH97Ke8cHG5wxT+1FUNZ9Tqv3CawqOMmiLGjWLIjfCp/F3f7rYBJYDu3Rj+ZsqTBkxI
-         06JcixV7Ej44cmCwBnyXVHaCAT9UgQyQH9is0enCJRcaVVfnCl+S3F3lfeWs4nT5+NTW
-         RUIDgosbF6JwBMTaKvkjYkngHTu4kFElcVpg4ppI0MF7+osj3j1hUzJSDHjOaxN6ds9U
-         3E4kKth5SQWw7uStKNIXaKdR9PZWYJCCVmYvtWtvKUlOPzk/wXO5gl56CXu9A+pFSDxS
-         gihw==
-X-Gm-Message-State: AAQBX9fX8ctq6BwT8B2CkB/7YYliUZr8yPNawUkSc6ggVgjdjPnX/Q4L
-        VykP0Cj/0BZpIYtpPHLZfP/fEaAXgQ20Ynl1da+ouw==
-X-Google-Smtp-Source: AKy350ZMyhBvj4PkrBDJXNkoE3OUydv5XuVNMSuO6RHmSUFmrOJ+S3NmUZ+XT4/2pJxtdIxe8n41OnsHneQDVphkmpE=
-X-Received: by 2002:a05:6000:1819:b0:2d0:58f9:a69 with SMTP id
- m25-20020a056000181900b002d058f90a69mr2198643wrh.4.1679949902560; Mon, 27 Mar
- 2023 13:45:02 -0700 (PDT)
+        d=1e100.net; s=20210112; t=1679950725;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eH1CJX04q2BHUR5TJOFKJGoWhDyShBC0LXQUgI8ky8M=;
+        b=xrWrj2x8296i0r3f1HijSQZYq0fk541cCc+9+NzAIf/rcxqyG6dpPyw/ryv7Ro9ns6
+         oQpk/Bmw9sX0qZCv0B3sFusIeKSVtqd/ccN5mtpIYuxXnSychJUPRKne5TRdg0xZCkDq
+         YlOxLPF4ybYQ41ppoIVIoXvSLBwKLWUl8E7TdPSiEjCaq2Gsmkv/5qGUcCZz+s2BXK68
+         cpLeHBrCNTUrolHGaG2qj1lIJ+qRMIT+QtsqTy01n2oFLltcLrqdcEWOWhvekkmVmqPV
+         DnuFBiXY28xn6EGy3TqdM058XgvWeJ2z/5OncFr50vyjeNoJC/PmQuJeBmOcjKMW3OPM
+         gAwQ==
+X-Gm-Message-State: AO0yUKWKV8vRk76SWcqYGzQB68m8bwT+Jd4r6KPZixkY13H0egYlLMp/
+        0WH4jJwGEEI86n+hVNzuf8q23Q==
+X-Google-Smtp-Source: AK7set+nDTrsfcNlBKMWgUMp0C+CrZ+copoRG2Tzs6C6eZzeKaYjFY9667WrepMwzomNCv3HfVYCKA==
+X-Received: by 2002:a05:6a20:4ca3:b0:dd:44a8:9d2c with SMTP id fq35-20020a056a204ca300b000dd44a89d2cmr11207157pzb.47.1679950724652;
+        Mon, 27 Mar 2023 13:58:44 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:ad52:968f:ad4a:52d2])
+        by smtp.gmail.com with ESMTPSA id y18-20020a62b512000000b0062d8c855ee9sm1909108pfe.149.2023.03.27.13.58.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Mar 2023 13:58:44 -0700 (PDT)
+Date:   Mon, 27 Mar 2023 14:58:41 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     MD Danish Anwar <danishanwar@ti.com>
+Cc:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] soc: ti: pruss: Add pruss_get()/put() API
+Message-ID: <20230327205841.GA3158115@p14s>
+References: <20230323062451.2925996-1-danishanwar@ti.com>
+ <20230323062451.2925996-2-danishanwar@ti.com>
 MIME-Version: 1.0
-References: <20230313202655.1719587-1-bhupesh.sharma@linaro.org> <3cf8f543-d439-5d9e-5b07-08bb8991e774@linaro.org>
-In-Reply-To: <3cf8f543-d439-5d9e-5b07-08bb8991e774@linaro.org>
-From:   Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Date:   Tue, 28 Mar 2023 02:14:51 +0530
-Message-ID: <CAH=2Ntz3zJjFVLtCeuEkyGWjCdN=6=hNvZtYO0ScinOm9GzhEg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: Fix sm6115 pas documentation
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        mani@kernel.org, mathieu.poirier@linaro.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhupesh.linux@gmail.com, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230323062451.2925996-2-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 14 Mar 2023 at 14:07, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 13/03/2023 21:26, Bhupesh Sharma wrote:
-> > Fix the sm6115 pas yaml documentation to note that 'memory-region'
-> > is a required property.
-> >
-> > While at it also mark that memory-region property supports
-> > only one item.
-> >
-> > Suggested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
->
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi Danish
 
-Thanks Krzysztof for the review,
+On Thu, Mar 23, 2023 at 11:54:47AM +0530, MD Danish Anwar wrote:
+> From: Tero Kristo <t-kristo@ti.com>
+> 
+> Add two new get and put API, pruss_get() and pruss_put() to the
+> PRUSS platform driver to allow client drivers to request a handle
+> to a PRUSS device. This handle will be used by client drivers to
+> request various operations of the PRUSS platform driver through
+> additional API that will be added in the following patches.
+> 
+> The pruss_get() function returns the pruss handle corresponding
+> to a PRUSS device referenced by a PRU remoteproc instance. The
+> pruss_put() is the complimentary function to pruss_get().
+> 
+> Co-developed-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> ---
+>  drivers/remoteproc/pru_rproc.c                |  2 +-
+>  drivers/soc/ti/pruss.c                        | 60 ++++++++++++++++++-
+>  .../{pruss_driver.h => pruss_internal.h}      |  7 ++-
+>  include/linux/remoteproc/pruss.h              | 19 ++++++
+>  4 files changed, 83 insertions(+), 5 deletions(-)
+>  rename include/linux/{pruss_driver.h => pruss_internal.h} (90%)
+> 
+> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> index b76db7fa693d..4ddd5854d56e 100644
+> --- a/drivers/remoteproc/pru_rproc.c
+> +++ b/drivers/remoteproc/pru_rproc.c
+> @@ -19,7 +19,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/of_irq.h>
+>  #include <linux/remoteproc/pruss.h>
+> -#include <linux/pruss_driver.h>
+> +#include <linux/pruss_internal.h>
+>  #include <linux/remoteproc.h>
+>  
+>  #include "remoteproc_internal.h"
+> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+> index 6882c86b3ce5..6c2bb02a521d 100644
+> --- a/drivers/soc/ti/pruss.c
+> +++ b/drivers/soc/ti/pruss.c
+> @@ -6,6 +6,7 @@
+>   * Author(s):
+>   *	Suman Anna <s-anna@ti.com>
+>   *	Andrew F. Davis <afd@ti.com>
+> + *	Tero Kristo <t-kristo@ti.com>
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -16,8 +17,9 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_device.h>
+>  #include <linux/pm_runtime.h>
+> -#include <linux/pruss_driver.h>
+> +#include <linux/pruss_internal.h>
+>  #include <linux/regmap.h>
+> +#include <linux/remoteproc.h>
+>  #include <linux/slab.h>
+>  
+>  /**
+> @@ -30,6 +32,62 @@ struct pruss_private_data {
+>  	bool has_core_mux_clock;
+>  };
+>  
+> +/**
+> + * pruss_get() - get the pruss for a given PRU remoteproc
+> + * @rproc: remoteproc handle of a PRU instance
+> + *
+> + * Finds the parent pruss device for a PRU given the @rproc handle of the
+> + * PRU remote processor. This function increments the pruss device's refcount,
+> + * so always use pruss_put() to decrement it back once pruss isn't needed
+> + * anymore.
+> + *
+> + * Return: pruss handle on success, and an ERR_PTR on failure using one
+> + * of the following error values
+> + *    -EINVAL if invalid parameter
+> + *    -ENODEV if PRU device or PRUSS device is not found
+> + */
+> +struct pruss *pruss_get(struct rproc *rproc)
+> +{
+> +	struct pruss *pruss;
+> +	struct device *dev;
+> +	struct platform_device *ppdev;
+> +
+> +	if (IS_ERR_OR_NULL(rproc))
+> +		return ERR_PTR(-EINVAL);
+> +
 
-And a gentle ping to maintainers for merging this change.
+There is no guarantee that @rproc is valid without calling rproc_get_by_handle()
+or pru_rproc_get().
 
-Thanks,
-Bhupesh
+> +	dev = &rproc->dev;
+> +
+> +	/* make sure it is PRU rproc */
+> +	if (!dev->parent || !is_pru_rproc(dev->parent))
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	ppdev = to_platform_device(dev->parent->parent);
+> +	pruss = platform_get_drvdata(ppdev);
+> +	if (!pruss)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	get_device(pruss->dev);
+> +
+> +	return pruss;
+> +}
+> +EXPORT_SYMBOL_GPL(pruss_get);
+> +
+> +/**
+> + * pruss_put() - decrement pruss device's usecount
+> + * @pruss: pruss handle
+> + *
+> + * Complimentary function for pruss_get(). Needs to be called
+> + * after the PRUSS is used, and only if the pruss_get() succeeds.
+> + */
+> +void pruss_put(struct pruss *pruss)
+> +{
+> +	if (IS_ERR_OR_NULL(pruss))
+> +		return;
+> +
+> +	put_device(pruss->dev);
+> +}
+> +EXPORT_SYMBOL_GPL(pruss_put);
+> +
+>  static void pruss_of_free_clk_provider(void *data)
+>  {
+>  	struct device_node *clk_mux_np = data;
+> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_internal.h
+> similarity index 90%
+> rename from include/linux/pruss_driver.h
+> rename to include/linux/pruss_internal.h
+> index ecfded30ed05..8f91cb164054 100644
+> --- a/include/linux/pruss_driver.h
+> +++ b/include/linux/pruss_internal.h
+> @@ -6,9 +6,10 @@
+>   *	Suman Anna <s-anna@ti.com>
+>   */
+>  
+> -#ifndef _PRUSS_DRIVER_H_
+> -#define _PRUSS_DRIVER_H_
+> +#ifndef _PRUSS_INTERNAL_H_
+> +#define _PRUSS_INTERNAL_H_
+>  
+> +#include <linux/remoteproc/pruss.h>
+>  #include <linux/types.h>
+>  
+>  /*
+> @@ -51,4 +52,4 @@ struct pruss {
+>  	struct clk *iep_clk_mux;
+>  };
+>  
+> -#endif	/* _PRUSS_DRIVER_H_ */
+> +#endif	/* _PRUSS_INTERNAL_H_ */
+> diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
+> index 039b50d58df2..93a98cac7829 100644
+> --- a/include/linux/remoteproc/pruss.h
+> +++ b/include/linux/remoteproc/pruss.h
+> @@ -4,12 +4,14 @@
+>   *
+>   * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+>   *	Suman Anna <s-anna@ti.com>
+> + *	Tero Kristo <t-kristo@ti.com>
+>   */
+>  
+>  #ifndef __LINUX_PRUSS_H
+>  #define __LINUX_PRUSS_H
+>  
+>  #include <linux/device.h>
+> +#include <linux/err.h>
+>  #include <linux/types.h>
+>  
+>  #define PRU_RPROC_DRVNAME "pru-rproc"
+> @@ -44,6 +46,23 @@ enum pru_ctable_idx {
+>  
+>  struct device_node;
+>  struct rproc;
+> +struct pruss;
+> +
+> +#if IS_ENABLED(CONFIG_TI_PRUSS)
+> +
+> +struct pruss *pruss_get(struct rproc *rproc);
+> +void pruss_put(struct pruss *pruss);
+> +
+> +#else
+> +
+> +static inline struct pruss *pruss_get(struct rproc *rproc)
+> +{
+> +	return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +
+> +static inline void pruss_put(struct pruss *pruss) { }
+> +
+> +#endif /* CONFIG_TI_PRUSS */
+>  
+>  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+>  
+> -- 
+> 2.25.1
+> 
