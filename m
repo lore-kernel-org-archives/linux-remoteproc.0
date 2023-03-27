@@ -2,144 +2,123 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A47C761A6
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 12:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D93C76195
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 14:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232509AbjC0MZs (ORCPT
+        id S232507AbjC0OmF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 08:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54762 "EHLO
+        Mon, 27 Mar 2023 10:42:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232508AbjC0MZr (ORCPT
+        with ESMTP id S232235AbjC0OmE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Mar 2023 08:25:47 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59EBA1994
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 05:25:44 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id h8so35382215ede.8
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 05:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679919943;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=joz+G6GhOPLGNBgYdWhUUWc1HzQelk6ITcZ+QD28jgk=;
-        b=PUi0LeSnL35LCF40u+FnoMXcDyIOPwaEQ/se2minV7DA3YrB7wY/VZTnpMHz0Ry9tf
-         dLCHdEMWsPtv0vVyFyGxf+eCDx1WMHfiSkgb6Vw5neIRpMXm4D1oPUxaH4bUOuNLLwm3
-         Se0tIU0XjGiiKN8+9IRPPyj8DDVRNAWodmMosL7UUrxsY2x89dIT4eIkPVD7cW81qe3G
-         RYRLi2rI5rJwgAkMuXBUXBRYTSYSOlIr8tlI4ayFjUU7OO3k9K4UTBNH1/WgyPrZzKMZ
-         v1ABqVJTaDtWCUBEXPQ8GJ3d62h/0z7co1k873E6DzB18I2pqOb1HqvKoB0UKeC16oKm
-         sn+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679919943;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=joz+G6GhOPLGNBgYdWhUUWc1HzQelk6ITcZ+QD28jgk=;
-        b=1yzinM2MOw98OFO3DG5IVOYE7WDPg0dmQ/xwHIETDHw+59K7o5+r5vdJILvFluP/Nu
-         fDEeQhWXAdtRR19qHZL2ZZb9vvMMu9gfOvrtIMYmoZLMVPe1T45dBPy0uIeIS9v7LWvK
-         mM/zyL6i7KjPS1qrsdFmyx+yEAZNxR4djmM9g9n8quNyBXnCcq5okgI4Zrwbz/+rctv1
-         q/hGSfVoiNfZyfcEeYenOxfGUAGQ7LFQHruwqQj1Wg7YBglRF/P9zeH7HRQqGVvmqVoT
-         mnxiQhaRChz9kCE+DJpIieFA6/b+ntoA4Flb4tbYfbM3AGvzhw1QC93QsYI4adkjK6rV
-         OVbQ==
-X-Gm-Message-State: AAQBX9eXgNCFKFVn63yTRvjg5wrYR0nn/5HHyuKbBWi5RMX+60AlwRks
-        MsKp7FmiezapvGzQmZpX3fnk6g==
-X-Google-Smtp-Source: AKy350ZNyr6TRFP8CITB+F5cFxCV/EJslb7jdFVW+g9u1hhfHi7ZWRh5k14gIa9lPQ3jru7laaK7hw==
-X-Received: by 2002:a17:906:e0c5:b0:931:4f2c:4e83 with SMTP id gl5-20020a170906e0c500b009314f2c4e83mr11694068ejb.63.1679919942873;
-        Mon, 27 Mar 2023 05:25:42 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:581e:789c:7616:5ee? ([2a02:810d:15c0:828:581e:789c:7616:5ee])
-        by smtp.gmail.com with ESMTPSA id c19-20020a170906155300b0093ebc654f78sm3931897ejd.25.2023.03.27.05.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Mar 2023 05:25:42 -0700 (PDT)
-Message-ID: <757afef7-5be2-9487-8a1a-4917528ca135@linaro.org>
-Date:   Mon, 27 Mar 2023 14:25:41 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom: adsp: add
- qcom,sdm845-slpi-pas compatible
-Content-Language: en-US
-To:     Dylan Van Assche <me@dylanvanassche.be>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Mon, 27 Mar 2023 10:42:04 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311D819AC;
+        Mon, 27 Mar 2023 07:42:03 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32RD0ZmP006772;
+        Mon, 27 Mar 2023 14:42:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=BNtdJXJ3kB/+rUHxTz/r6t3HER8y8mIRr6a8CGUEPKs=;
+ b=Ylmiil+3wI1Fz0D6kIa/ozBqD2nMq/RUTIMsMSHkaQJMRMobUNiUMTKcE7EvrloEEWrc
+ EyuLeAcK7bZNhj5ZFfRyXkE3Uu5JqAX/QKebSoSb4idJq5pZEM3XMMSKkGIcGUjotce7
+ mnuRgcBxJ/8WsPphngdZZaQyqYA4C7sSz+yJLRAKXOELSxIA8GCLWKycbr9RgNtq8FIJ
+ WbL04nYUbmZ6XD8KiXa4ILMO3Pjvaez1de3DOFkUFE+DrJ0q/8bTOnITOo2rtqXag3dn
+ 2phE6E2HVldhxX7xbWMz7PAXVL86mf81u16JkNcrpWPgY6/TP4K5ga5mAqVoHiZrZu3U ew== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pkbmyr7gx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 27 Mar 2023 14:42:00 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32REfxcs027002
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 27 Mar 2023 14:41:59 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Mon, 27 Mar 2023 07:41:59 -0700
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-References: <20230325132117.19733-1-me@dylanvanassche.be>
- <20230325132117.19733-2-me@dylanvanassche.be>
- <8ab9d0c3-89f7-90f3-58d6-d2994d372518@linaro.org>
- <fe83e6f62d802109024f6203cf0d50c1ef348da1.camel@dylanvanassche.be>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <fe83e6f62d802109024f6203cf0d50c1ef348da1.camel@dylanvanassche.be>
-Content-Type: text/plain; charset=UTF-8
+        Chris Lew <quic_clew@quicinc.com>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] rpmsg: glink: Propagate TX failures in intentless mode as well
+Date:   Mon, 27 Mar 2023 07:41:52 -0700
+Message-ID: <20230327144153.3133425-2-quic_bjorande@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230327144153.3133425-1-quic_bjorande@quicinc.com>
+References: <20230327144153.3133425-1-quic_bjorande@quicinc.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kav-ocxqdqX7aIcw15z5Sk4_EoUD3JIP
+X-Proofpoint-GUID: kav-ocxqdqX7aIcw15z5Sk4_EoUD3JIP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-24_11,2023-03-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 spamscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303270116
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 27/03/2023 13:39, Dylan Van Assche wrote:
-> Hi Krzysztof,
-> 
-> On Sun, 2023-03-26 at 10:53 +0200, Krzysztof Kozlowski wrote:
->> On 25/03/2023 14:21, Dylan Van Assche wrote:
->>> SLPI DSP remoteproc on DSP is defined by the 'qcom,sdm845-slpi-pas'
->>> compatible in the qcom_q6v5_pas driver. Add this compatible to the
->>> devicetree bindings.
->>>
->>> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
->>> ---
->>>  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 3
->>> +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
->>> b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
->>> index 643ee787a81f..175be01ecd1c 100644
->>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
->>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
->>> @@ -26,6 +26,7 @@ properties:
->>>        - qcom,sdm660-adsp-pas
->>>        - qcom,sdm845-adsp-pas
->>>        - qcom,sdm845-cdsp-pas
->>> +      - qcom,sdm845-slpi-pas
->>>  
->>>    reg:
->>>      maxItems: 1
->>> @@ -63,6 +64,7 @@ allOf:
->>>                - qcom,msm8998-adsp-pas
->>>                - qcom,sdm845-adsp-pas
->>>                - qcom,sdm845-cdsp-pas
->>> +              - qcom,sdm845-slpi-pas
->>>      then:
->>>        properties:
->>>          clocks:
->>> @@ -104,6 +106,7 @@ allOf:
->>
->>
->> You miss also if:then: for power-domains.
-> 
-> I am not sure what to put for the power-domains, 
+As support for splitting transmision over several messages using
+TX_DATA_CONT was introduced it does not immediately return the return
+value of qcom_glink_tx().
 
-Doesn't your driver patch clearly state it?
+The result is that in the intentless case (i.e. intent == NULL), the
+code will continue to send all additional chunks. This is wasteful, and
+it's possible that the send operation could incorrectly indicate
+success, if the last chunk fits in the TX fifo.
 
-> newer remoteprocs from
-> SM8150/SM8250/SM8350 etc. are not in this binding either.
+Fix the condition.
 
-They have their own binding, but why is it an argument to add
-sdm845-slpi a bit incomplete?
+Fixes: 8956927faed3 ("rpmsg: glink: Add TX_DATA_CONT command while sending")
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+ drivers/rpmsg/qcom_glink_native.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-> 
-> Could you elaborate a bit here? Thanks!
-
-There are already examples of other remoteprocs which do it, so I do not
-understand why this one is different. What to elaborate more?
-
-Best regards,
-Krzysztof
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 01d2805fe30f..62634d020d13 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1356,8 +1356,9 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 	ret = qcom_glink_tx(glink, &req, sizeof(req), data, chunk_size, wait);
+ 
+ 	/* Mark intent available if we failed */
+-	if (ret && intent) {
+-		intent->in_use = false;
++	if (ret) {
++		if (intent)
++			intent->in_use = false;
+ 		return ret;
+ 	}
+ 
+@@ -1378,8 +1379,9 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 				    chunk_size, wait);
+ 
+ 		/* Mark intent available if we failed */
+-		if (ret && intent) {
+-			intent->in_use = false;
++		if (ret) {
++			if (intent)
++				intent->in_use = false;
+ 			break;
+ 		}
+ 	}
+-- 
+2.25.1
 
