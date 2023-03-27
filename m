@@ -2,166 +2,129 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F33FEC6FD1C
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 26 Mar 2023 11:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30243C761A6
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 08:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230522AbjCZLPq (ORCPT
+        id S233112AbjC0Isv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 26 Mar 2023 07:15:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47406 "EHLO
+        Mon, 27 Mar 2023 04:48:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbjCZLPq (ORCPT
+        with ESMTP id S233151AbjC0Is3 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 26 Mar 2023 07:15:46 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897F3524C;
-        Sun, 26 Mar 2023 04:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1679829343; x=1711365343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cf4CLIajSvd8ZhQi5FYODYlXTdZeLjQh4x6e7Ilv8mk=;
-  b=lMTXcIZpObuCtUWeB8hzKdV7HsTYUXmjVrFBXI4kQ8U0A6MQVlDjbQz4
-   cZVoveORZQ05RIum+OTt9MyYNdWmc+gBrtY8ofW8nHcGWV0ETztEgBBoR
-   plDn4zd9RTzKx0GsUg010CDKl53QSyOJar8QkQS/q5Lx4zGQAr4WRUA1q
-   b0PiLZXpwf7O1drqYmtjCWY8krE9ScExFkFsMD3D1KGummqVFvQAdckcD
-   D+1P7V44jOPzOMzrNBF6fpMUT0GEr1zpGWyyWxFwS1V4qVSO/AXYWt8Bs
-   5uiReG1HVDi0QWwi1cSltxHRK8no4p4lOCQRILSn2QHYmka0MU5QCiGKh
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10660"; a="404995991"
-X-IronPort-AV: E=Sophos;i="5.98,292,1673942400"; 
-   d="scan'208";a="404995991"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2023 04:15:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10660"; a="633332449"
-X-IronPort-AV: E=Sophos;i="5.98,292,1673942400"; 
-   d="scan'208";a="633332449"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 26 Mar 2023 04:15:38 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pgOLa-000H5b-09;
-        Sun, 26 Mar 2023 11:15:38 +0000
-Date:   Sun, 26 Mar 2023 19:14:42 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Yu Zhe <yuzhe@nfschina.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org,
-        angelogioacchino.delregno@collabora.com, agross@kernel.org,
-        konrad.dybcio@linaro.org, patrice.chotard@foss.st.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com
-Cc:     oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, liqiong@nfschina.com,
-        Yu Zhe <yuzhe@nfschina.com>
-Subject: Re: [PATCH v2] remoteproc: remove unnecessary (void*) conversions
-Message-ID: <202303261950.I6rq9snr-lkp@intel.com>
-References: <20230320061157.29660-1-yuzhe@nfschina.com>
+        Mon, 27 Mar 2023 04:48:29 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F9F6A42
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 01:45:11 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id br6so10272750lfb.11
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 01:45:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679906671;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KLrKAr+c7u8+WkfYnvdsqKkhxaW/xmaQn97MpcR7do8=;
+        b=rdogzM223NHg8iJx7iIN2LHYZn7tUjiFtUG9eoMoJTXpUK32coL01Ru11TIQbmWWOP
+         VKCBJBjnt0SQEZ3jeNQWQSALELd1RJCWRVgVn5znTCUioLfpT5I0pAyE8nVsXnrhvKmr
+         XXgxpsb4MRhJh5W7tj4qpUxPjzCwZVvDNePFeope9K0zHDiXNlVpl737EvCassslHUg/
+         4W369SCxed9tNg11GGBDRgExuMDsWuUwhXXkhzt5n/M81kMTIY/z7xfX0UClA/VP5+Nc
+         /Ju/SXpvGo/WX1n7Lqu9BfXvCK8EGnvBX5HwtyTr5/ygFq0ofey+MgrlvL3bDLKUud6y
+         d8Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679906671;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLrKAr+c7u8+WkfYnvdsqKkhxaW/xmaQn97MpcR7do8=;
+        b=pGBmh/YFmr02oFYIt0dIISwylMKvNmvmnyLw41kzf59rToCdm5CVUjK90N7seoUxah
+         Y+NjfQ8MJCnizuYCSUjduYRDPyEZOQCVCbw7LG+QGTpEBmmNKLjK4qD8j2wiGibddes4
+         BqwdyknIay1EUQoD28WAy07Mn0L2obCMewmihm67QAtr64OgjerHfXmATpmN6jkcLMxj
+         xNXG28VebLHRwBmo15rYFNme9eOsAqbjjy+Kbx+waltRE6wHWAqMisJBSKo0CXFJMsvW
+         56kKQ6N9XQWhxkBdy2K2EqfW/a8LFIVRHJgjAyljCpUtUzA+k2CFTlsIVwuR7SAsg52S
+         +oaw==
+X-Gm-Message-State: AAQBX9dogt27yMSqYwRdQcJWrcsBZfRmPvybcDYYXsalmhmccG0D/ypX
+        roiXj24N4RRXhEA2N12IxTGiPA==
+X-Google-Smtp-Source: AKy350ZGT9cY4UQC0D9IPOa/NyJ/hHznWUNEoPQIk9+IaHao2iitH0e524xsgtLK7ODG9AmvF+W5MA==
+X-Received: by 2002:ac2:46f9:0:b0:4e9:d719:3603 with SMTP id q25-20020ac246f9000000b004e9d7193603mr3463966lfo.55.1679906671138;
+        Mon, 27 Mar 2023 01:44:31 -0700 (PDT)
+Received: from [192.168.1.101] (abxj225.neoplus.adsl.tpnet.pl. [83.9.3.225])
+        by smtp.gmail.com with ESMTPSA id r10-20020a19ac4a000000b004b5979f9ba8sm4591731lfc.210.2023.03.27.01.44.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 01:44:30 -0700 (PDT)
+Message-ID: <a27e7e67-a3e8-01ec-1f0d-717d705af117@linaro.org>
+Date:   Mon, 27 Mar 2023 10:44:29 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230320061157.29660-1-yuzhe@nfschina.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: add SDM845 SLPI resource
+Content-Language: en-US
+To:     Dylan Van Assche <me@dylanvanassche.be>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+References: <20230325132117.19733-1-me@dylanvanassche.be>
+ <20230325132117.19733-3-me@dylanvanassche.be>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230325132117.19733-3-me@dylanvanassche.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Yu,
 
-Thank you for the patch! Perhaps something to improve:
 
-[auto build test WARNING on v6.3-rc3]
-[also build test WARNING on linus/master]
-[cannot apply to remoteproc/rproc-next next-20230324]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 25.03.2023 14:21, Dylan Van Assche wrote:
+> Add SLPI resources for the SDM845 Qualcomm SoC to the Qualcomm
+> remoteproc q6v5_pas driver to define the default firmware name
+> and GLink edge name.
+> 
+> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index c99a20542685..d82b6f4bced4 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -1028,6 +1028,22 @@ static const struct adsp_data slpi_resource_init = {
+>  		.ssctl_id = 0x16,
+>  };
+>  
+> +static const struct adsp_data sdm845_slpi_resource = {
+> +		.crash_reason_smem = 424,
+> +		.firmware_name = "slpi.mdt",
+> +		.pas_id = 12,
+> +		.auto_boot = true,
+> +		.proxy_pd_names = (char*[]){
+> +			"lcx",
+> +			"lmx",
+> +			NULL
+> +		},
+> +		.load_state = "slpi",
+> +		.ssr_name = "dsps",
+> +		.sysmon_name = "slpi",
+> +		.ssctl_id = 0x16,
+Isn't this identical to sm8150_slpi_resource?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yu-Zhe/remoteproc-remove-unnecessary-void-conversions/20230320-141403
-patch link:    https://lore.kernel.org/r/20230320061157.29660-1-yuzhe%40nfschina.com
-patch subject: [PATCH v2] remoteproc: remove unnecessary (void*) conversions
-config: arm-randconfig-s053-20230326 (https://download.01.org/0day-ci/archive/20230326/202303261950.I6rq9snr-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-39-gce1a6720-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/38335303eda6c4de037cd00e20c9065a76f82291
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Yu-Zhe/remoteproc-remove-unnecessary-void-conversions/20230320-141403
-        git checkout 38335303eda6c4de037cd00e20c9065a76f82291
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=arm olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=arm SHELL=/bin/bash drivers/remoteproc/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202303261950.I6rq9snr-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   drivers/remoteproc/stm32_rproc.c:122:12: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *va @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/stm32_rproc.c:122:12: sparse:     expected void *va
-   drivers/remoteproc/stm32_rproc.c:122:12: sparse:     got void [noderef] __iomem *
-   drivers/remoteproc/stm32_rproc.c:139:20: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *io_addr @@     got void *va @@
-   drivers/remoteproc/stm32_rproc.c:139:20: sparse:     expected void volatile [noderef] __iomem *io_addr
-   drivers/remoteproc/stm32_rproc.c:139:20: sparse:     got void *va
->> drivers/remoteproc/stm32_rproc.c:632:21: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected struct resource_table * @@     got void [noderef] __iomem *rsc_va @@
-   drivers/remoteproc/stm32_rproc.c:632:21: sparse:     expected struct resource_table *
-   drivers/remoteproc/stm32_rproc.c:632:21: sparse:     got void [noderef] __iomem *rsc_va
-
-vim +632 drivers/remoteproc/stm32_rproc.c
-
-   588	
-   589	static struct resource_table *
-   590	stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
-   591	{
-   592		struct stm32_rproc *ddata = rproc->priv;
-   593		struct device *dev = rproc->dev.parent;
-   594		phys_addr_t rsc_pa;
-   595		u32 rsc_da;
-   596		int err;
-   597	
-   598		/* The resource table has already been mapped, nothing to do */
-   599		if (ddata->rsc_va)
-   600			goto done;
-   601	
-   602		err = regmap_read(ddata->rsctbl.map, ddata->rsctbl.reg, &rsc_da);
-   603		if (err) {
-   604			dev_err(dev, "failed to read rsc tbl addr\n");
-   605			return ERR_PTR(-EINVAL);
-   606		}
-   607	
-   608		if (!rsc_da)
-   609			/* no rsc table */
-   610			return ERR_PTR(-ENOENT);
-   611	
-   612		err = stm32_rproc_da_to_pa(rproc, rsc_da, &rsc_pa);
-   613		if (err)
-   614			return ERR_PTR(err);
-   615	
-   616		ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
-   617		if (IS_ERR_OR_NULL(ddata->rsc_va)) {
-   618			dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-   619				&rsc_pa, RSC_TBL_SIZE);
-   620			ddata->rsc_va = NULL;
-   621			return ERR_PTR(-ENOMEM);
-   622		}
-   623	
-   624	done:
-   625		/*
-   626		 * Assuming the resource table fits in 1kB is fair.
-   627		 * Notice for the detach, that this 1 kB memory area has to be reserved in the coprocessor
-   628		 * firmware for the resource table. On detach, the remoteproc core re-initializes this
-   629		 * entire area by overwriting it with the initial values stored in rproc->clean_table.
-   630		 */
-   631		*table_sz = RSC_TBL_SIZE;
- > 632		return ddata->rsc_va;
-   633	}
-   634	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Konrad
+> +};
+> +
+>  static const struct adsp_data sm8150_slpi_resource = {
+>  		.crash_reason_smem = 424,
+>  		.firmware_name = "slpi.mdt",
+> @@ -1201,6 +1217,7 @@ static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
+>  	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
+> +	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource},
+>  	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
+>  	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
