@@ -2,42 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B25C761AF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 09:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07B6C7619A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 10:53:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232959AbjC0JfR (ORCPT
+        id S230309AbjC0Kxe (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 05:35:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52794 "EHLO
+        Mon, 27 Mar 2023 06:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233480AbjC0JfD (ORCPT
+        with ESMTP id S229878AbjC0Kxd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Mar 2023 05:35:03 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8668346B0;
-        Mon, 27 Mar 2023 02:34:54 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4PlSMZ4SPvz9sbn;
-        Mon, 27 Mar 2023 11:34:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dylanvanassche.be;
-        s=MBO0001; t=1679909690;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zoFQCh/dPfaIZPiSSIwBE226roc42AVfXcA4nolosx8=;
-        b=whFNQFcmpl1GnO+tebINRnQ9PLGXuFmSkTonm94mnsEkEV8Ok5/+XIvXBSBjJIJnVedzsJ
-        lpWtlFNPQGiKTefFTuw1r6Q+3326GR74grE1yUcoB5jLEfgekAL8E/AjUbbUad85MHUhhc
-        c8si6ukD28lFcbg0t+x+rtZIsHkFYphuJ1H9oHyATvUmN2ZcMSSt+DjMXjithpMwvxgiKs
-        ucWPt7rS8xk64I+lJy0Z9kTVlvoA80U+Ehia9NKbXxJDy3Ae/A8iLEZS9NWWtmgztIqW9Y
-        GzzehXVsKa9jryqhO0MBuseCWk0ip9yC8Nr+G1xJ+LksaWRBF3c/X5GR3OaaDQ==
-Message-ID: <91875b7f6f77d6bc846e2da6d009b44c89cbafab.camel@dylanvanassche.be>
+        Mon, 27 Mar 2023 06:53:33 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B3AE10FF
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 03:53:31 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id i13so10801260lfe.9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Mar 2023 03:53:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679914409;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3WnzOjHdVfvoCMG3pjVqA605yGhXEuWWs9v71lH5Wbo=;
+        b=Xm77A2gZGJkkJRtH7/hFJbceaoRhHoVaOSxcCKITYDDDP4yT2vupGTRCWt74OJ+uen
+         KpfmZs5f/A++PJKPsZoJ6OjGV1chdMTpQIT9W34thZ+h4J+1HBG5uQf/ULfnLqhSEhAR
+         0z2ytp0tax/KYyx3JEkAfBBO2lIHsftrPRqBA0YLEYkSMMT15/0t3CAd6SrcqN+1g47q
+         jtkLfIFkq1wFK11UujS6j+bkWaqUZk227f5/1D2vBf3KRUDoEd5LbNqToHxKTLKtfdwf
+         J+kVvbDFHlA86Mza2ojvGiC3UT4ARSxK1gD8jkyOI8I6qp3idVgIagCeWYrDvpCAtJqL
+         J5ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679914409;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3WnzOjHdVfvoCMG3pjVqA605yGhXEuWWs9v71lH5Wbo=;
+        b=JbQ2qiSi+Mh7ZU7lScAtKDKvoy3+0XtIyS/CfQxNvrjmkYi/IYq8rU/Pv7wxtj/yca
+         ygVIotKu34BcdyHDh+rR1g++reJytQ8d39pe5iPnayNS/bgXFy0uzGTsh6rIoGukWqiS
+         LXvkS0tW6PjwZR/ryQWRKrjSqooVuUtLhM6ceX7vXRTaMSO42FISRqKS5M5TbOwrcrsG
+         /+fuW+XXgF8I9WAYdVLSDD4NyML9Ftddeai3POAUyGiFQHwTIyHEHMievW4/4i/P9ozD
+         8b62X8hpei7gdLWki91+Ge7mj7pfH9KLkzyGoKQI3UzsnBifdWvVintIbb6UIkl4tgiN
+         XBaQ==
+X-Gm-Message-State: AAQBX9caFm18M/+shti+LjJHX0ZaN5fY/FDhsn58yxruaqxW4b+46KB3
+        mwj+iCA8iqYPGVu1t99canZvnw==
+X-Google-Smtp-Source: AKy350aYInrCK0ZXczOvivBLQCQFlcg1lhhCSj4cNtly1U8Jiy5o34ej8P5uE+5wVjEIyQgO5SUasw==
+X-Received: by 2002:ac2:5541:0:b0:4e0:2455:3ade with SMTP id l1-20020ac25541000000b004e024553ademr2952253lfk.60.1679914409515;
+        Mon, 27 Mar 2023 03:53:29 -0700 (PDT)
+Received: from [192.168.1.101] (abxj225.neoplus.adsl.tpnet.pl. [83.9.3.225])
+        by smtp.gmail.com with ESMTPSA id y28-20020ac2447c000000b004eafa141a12sm2075784lfl.9.2023.03.27.03.53.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Mar 2023 03:53:29 -0700 (PDT)
+Message-ID: <d8ff650c-fd6a-bec4-354b-eb7b27b6394e@linaro.org>
+Date:   Mon, 27 Mar 2023 12:53:27 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
 Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: add SDM845 SLPI resource
-From:   Dylan Van Assche <me@dylanvanassche.be>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+Content-Language: en-US
+To:     Dylan Van Assche <me@dylanvanassche.be>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -47,67 +68,93 @@ Cc:     Manivannan Sadhasivam <mani@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Date:   Mon, 27 Mar 2023 11:34:47 +0200
-In-Reply-To: <a27e7e67-a3e8-01ec-1f0d-717d705af117@linaro.org>
 References: <20230325132117.19733-1-me@dylanvanassche.be>
-         <20230325132117.19733-3-me@dylanvanassche.be>
-         <a27e7e67-a3e8-01ec-1f0d-717d705af117@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Rspamd-Queue-Id: 4PlSMZ4SPvz9sbn
+ <20230325132117.19733-3-me@dylanvanassche.be>
+ <a27e7e67-a3e8-01ec-1f0d-717d705af117@linaro.org>
+ <91875b7f6f77d6bc846e2da6d009b44c89cbafab.camel@dylanvanassche.be>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <91875b7f6f77d6bc846e2da6d009b44c89cbafab.camel@dylanvanassche.be>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-SGkgS29ucmFkLAoKT24gTW9uLCAyMDIzLTAzLTI3IGF0IDEwOjQ0ICswMjAwLCBLb25yYWQgRHli
-Y2lvIHdyb3RlOgo+IAo+IAo+IE9uIDI1LjAzLjIwMjMgMTQ6MjEsIER5bGFuIFZhbiBBc3NjaGUg
-d3JvdGU6Cj4gPiBBZGQgU0xQSSByZXNvdXJjZXMgZm9yIHRoZSBTRE04NDUgUXVhbGNvbW0gU29D
-IHRvIHRoZSBRdWFsY29tbQo+ID4gcmVtb3RlcHJvYyBxNnY1X3BhcyBkcml2ZXIgdG8gZGVmaW5l
-IHRoZSBkZWZhdWx0IGZpcm13YXJlIG5hbWUKPiA+IGFuZCBHTGluayBlZGdlIG5hbWUuCj4gPiAK
-PiA+IFNpZ25lZC1vZmYtYnk6IER5bGFuIFZhbiBBc3NjaGUgPG1lQGR5bGFudmFuYXNzY2hlLmJl
-Pgo+ID4gLS0tCj4gPiDCoGRyaXZlcnMvcmVtb3RlcHJvYy9xY29tX3E2djVfcGFzLmMgfCAxNyAr
-KysrKysrKysrKysrKysrKwo+ID4gwqAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKQo+
-ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZW1vdGVwcm9jL3Fjb21fcTZ2NV9wYXMuYwo+
-ID4gYi9kcml2ZXJzL3JlbW90ZXByb2MvcWNvbV9xNnY1X3Bhcy5jCj4gPiBpbmRleCBjOTlhMjA1
-NDI2ODUuLmQ4MmI2ZjRiY2VkNCAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvcmVtb3RlcHJvYy9x
-Y29tX3E2djVfcGFzLmMKPiA+ICsrKyBiL2RyaXZlcnMvcmVtb3RlcHJvYy9xY29tX3E2djVfcGFz
-LmMKPiA+IEBAIC0xMDI4LDYgKzEwMjgsMjIgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBhZHNwX2Rh
-dGEKPiA+IHNscGlfcmVzb3VyY2VfaW5pdCA9IHsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgLnNzY3RsX2lkID0gMHgxNiwKPiA+IMKgfTsKPiA+IMKgCj4gPiArc3RhdGljIGNv
-bnN0IHN0cnVjdCBhZHNwX2RhdGEgc2RtODQ1X3NscGlfcmVzb3VyY2UgPSB7Cj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmNyYXNoX3JlYXNvbl9zbWVtID0gNDI0LAo+ID4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC5maXJtd2FyZV9uYW1lID0gInNscGkubWR0IiwK
-PiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAucGFzX2lkID0gMTIsCj4gPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLmF1dG9fYm9vdCA9IHRydWUsCj4gPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLnByb3h5X3BkX25hbWVzID0gKGNoYXIqW10pewo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAibGN4IiwKPiA+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgImxteCIsCj4g
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoE5VTEwKPiA+
-ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9LAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoC5sb2FkX3N0YXRlID0gInNscGkiLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoC5zc3JfbmFtZSA9ICJkc3BzIiwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqAuc3lzbW9uX25hbWUgPSAic2xwaSIsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgLnNzY3RsX2lkID0gMHgxNiwKPiBJc24ndCB0aGlzIGlkZW50aWNhbCB0byBz
-bTgxNTBfc2xwaV9yZXNvdXJjZT8KPiAKPiBLb25yYWQKClllcyBpdCBpcy4gSSBhZGRlZCBhIG5l
-dyBlbnRyeSBiZWNhdXNlIGZvciBTTTgxNTAsIFNNODI1MCwgYW5kIFNNODM1MAp0aGV5IGFyZSBk
-dXBsaWNhdGVkIGFzIHdlbGwuIFRoZSBTRE04NDUncyBzdHJ1Y3QgaXMgaW5kZW50aWNhbCB0bwpT
-TTgxNTAvU004MjUwL1NNODM1MCdzIHN0cnVjdHMuCgpLaW5kIHJlZ2FyZHMsCkR5bGFuIFZhbiBB
-c3NjaGUKCj4gPiArfTsKPiA+ICsKPiA+IMKgc3RhdGljIGNvbnN0IHN0cnVjdCBhZHNwX2RhdGEg
-c204MTUwX3NscGlfcmVzb3VyY2UgPSB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoC5jcmFzaF9yZWFzb25fc21lbSA9IDQyNCwKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgLmZpcm13YXJlX25hbWUgPSAic2xwaS5tZHQiLAo+ID4gQEAgLTEyMDEsNiArMTIx
-Nyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkCj4gPiBhZHNwX29mX21hdGNo
-W10gPSB7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgeyAuY29tcGF0aWJsZSA9ICJxY29tLHNkbTY2MC1h
-ZHNwLXBhcyIsIC5kYXRhID0KPiA+ICZhZHNwX3Jlc291cmNlX2luaXR9LAo+ID4gwqDCoMKgwqDC
-oMKgwqDCoHsgLmNvbXBhdGlibGUgPSAicWNvbSxzZG04NDUtYWRzcC1wYXMiLCAuZGF0YSA9Cj4g
-PiAmc2RtODQ1X2Fkc3BfcmVzb3VyY2VfaW5pdH0sCj4gPiDCoMKgwqDCoMKgwqDCoMKgeyAuY29t
-cGF0aWJsZSA9ICJxY29tLHNkbTg0NS1jZHNwLXBhcyIsIC5kYXRhID0KPiA+ICZzZG04NDVfY2Rz
-cF9yZXNvdXJjZV9pbml0fSwKPiA+ICvCoMKgwqDCoMKgwqDCoHsgLmNvbXBhdGlibGUgPSAicWNv
-bSxzZG04NDUtc2xwaS1wYXMiLCAuZGF0YSA9Cj4gPiAmc2RtODQ1X3NscGlfcmVzb3VyY2V9LAo+
-ID4gwqDCoMKgwqDCoMKgwqDCoHsgLmNvbXBhdGlibGUgPSAicWNvbSxzZHg1NS1tcHNzLXBhcyIs
-IC5kYXRhID0KPiA+ICZzZHg1NV9tcHNzX3Jlc291cmNlfSwKPiA+IMKgwqDCoMKgwqDCoMKgwqB7
-IC5jb21wYXRpYmxlID0gInFjb20sc202MTE1LWFkc3AtcGFzIiwgLmRhdGEgPQo+ID4gJmFkc3Bf
-cmVzb3VyY2VfaW5pdH0sCj4gPiDCoMKgwqDCoMKgwqDCoMKgeyAuY29tcGF0aWJsZSA9ICJxY29t
-LHNtNjExNS1jZHNwLXBhcyIsIC5kYXRhID0KPiA+ICZjZHNwX3Jlc291cmNlX2luaXR9LAoK
 
+
+On 27.03.2023 11:34, Dylan Van Assche wrote:
+> Hi Konrad,
+> 
+> On Mon, 2023-03-27 at 10:44 +0200, Konrad Dybcio wrote:
+>>
+>>
+>> On 25.03.2023 14:21, Dylan Van Assche wrote:
+>>> Add SLPI resources for the SDM845 Qualcomm SoC to the Qualcomm
+>>> remoteproc q6v5_pas driver to define the default firmware name
+>>> and GLink edge name.
+>>>
+>>> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
+>>> ---
+>>>  drivers/remoteproc/qcom_q6v5_pas.c | 17 +++++++++++++++++
+>>>  1 file changed, 17 insertions(+)
+>>>
+>>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c
+>>> b/drivers/remoteproc/qcom_q6v5_pas.c
+>>> index c99a20542685..d82b6f4bced4 100644
+>>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>>> @@ -1028,6 +1028,22 @@ static const struct adsp_data
+>>> slpi_resource_init = {
+>>>                 .ssctl_id = 0x16,
+>>>  };
+>>>  
+>>> +static const struct adsp_data sdm845_slpi_resource = {
+>>> +               .crash_reason_smem = 424,
+>>> +               .firmware_name = "slpi.mdt",
+>>> +               .pas_id = 12,
+>>> +               .auto_boot = true,
+>>> +               .proxy_pd_names = (char*[]){
+>>> +                       "lcx",
+>>> +                       "lmx",
+>>> +                       NULL
+>>> +               },
+>>> +               .load_state = "slpi",
+>>> +               .ssr_name = "dsps",
+>>> +               .sysmon_name = "slpi",
+>>> +               .ssctl_id = 0x16,
+>> Isn't this identical to sm8150_slpi_resource?
+>>
+>> Konrad
+> 
+> Yes it is. I added a new entry because for SM8150, SM8250, and SM8350
+> they are duplicated as well. The SDM845's struct is indentical to
+> SM8150/SM8250/SM8350's structs.
+Well, you just found a quick improvement to make then! :D
+
+Konrad
+> 
+> Kind regards,
+> Dylan Van Assche
+> 
+>>> +};
+>>> +
+>>>  static const struct adsp_data sm8150_slpi_resource = {
+>>>                 .crash_reason_smem = 424,
+>>>                 .firmware_name = "slpi.mdt",
+>>> @@ -1201,6 +1217,7 @@ static const struct of_device_id
+>>> adsp_of_match[] = {
+>>>         { .compatible = "qcom,sdm660-adsp-pas", .data =
+>>> &adsp_resource_init},
+>>>         { .compatible = "qcom,sdm845-adsp-pas", .data =
+>>> &sdm845_adsp_resource_init},
+>>>         { .compatible = "qcom,sdm845-cdsp-pas", .data =
+>>> &sdm845_cdsp_resource_init},
+>>> +       { .compatible = "qcom,sdm845-slpi-pas", .data =
+>>> &sdm845_slpi_resource},
+>>>         { .compatible = "qcom,sdx55-mpss-pas", .data =
+>>> &sdx55_mpss_resource},
+>>>         { .compatible = "qcom,sm6115-adsp-pas", .data =
+>>> &adsp_resource_init},
+>>>         { .compatible = "qcom,sm6115-cdsp-pas", .data =
+>>> &cdsp_resource_init},
+> 
