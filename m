@@ -2,359 +2,290 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBBFC76195
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 15:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87381C76195
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 27 Mar 2023 15:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229577AbjC0PKA (ORCPT
+        id S231213AbjC0PYR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 11:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56038 "EHLO
+        Mon, 27 Mar 2023 11:24:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232543AbjC0PJx (ORCPT
+        with ESMTP id S229685AbjC0PYQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Mar 2023 11:09:53 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2090.outbound.protection.outlook.com [40.107.7.90])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047642D60;
-        Mon, 27 Mar 2023 08:09:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BvPuNKKIKC5iZQbNTxCHmcT5sTBlYqvko2wC0t1AsVgGeMvGyNOl7jFfqANKULNqTZ0Zf5ixqcA6Yrre1p1YsgY2vvdMu14FBfIcSQCLcxgVF50V2NITDHhM6eHsqy6cXBl1a1hlOLcOpgi07VE2F4eCfvgIkvZF62Axh81R3PbvMFSs8fls/3+8h8DqPVeElGTzVOd+apx9k1vkolmSNPBW4MgAunXmV8cPCSo2MSTfva/5I51eq4oHQMrIFByLf3w5v9avPAAvqWKhQEUjmoWAw6cZnpKKeXeTZYXBiOfDNiNL1kP1jASdDHFCqA11A2as2m7CFIhtyyxtKcsI3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uei1fjG6m2iMgGqH32vM9Lc1PqvOh0NxpkYk1spxf9w=;
- b=BMV2wL198TVo21kbAO+ANmt7+nmIZyxivN57/vesCvWugVY7U/8xyj+QTKUVwlRrO5ZVmXgrpnXrkzOM6SvbjzO/s6UutcYUMVkNDHRGXMRkRr/ZTenVWYIGJHJAxLPfbD/Y5olHbtZyDghsvFOEf2xRDa8k/ADOvSbpjQQHUPFLPSKPyYcvMT7r2fVn5v7fyy2Vu3aPBTmj0StCglSbGi4LQo8Xr9xjdCMqwNl6JzNZPuQbCuwc+vcr/eUZY6ulIOjxuHzh4Al+FmpN1UVeG5g3r8gAPMcBmNqQh1u/2MBJj4yCWRu+NNQgMyllQ1V6vOvYV8Jp6V7DJr+sRAbaqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kontron.de; dmarc=pass action=none header.from=kontron.de;
- dkim=pass header.d=kontron.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mysnt.onmicrosoft.com;
- s=selector2-mysnt-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uei1fjG6m2iMgGqH32vM9Lc1PqvOh0NxpkYk1spxf9w=;
- b=iZkuaOS4yWm71LtqTG4Lj3cwPwqK/PWWvo/jNtqqJjZLDwzsT3HOaV6W1g0KOt+ZU2QGskjnxDj5SI+LBBJMjvVNOF0mIgdqyDvxJAdnvzYXIPKtXI/2p6qQF+OyiLITene0fIHHjojAlPK87fyh7Qjomz/yT8js1eWNiY8FRVM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kontron.de;
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:263::10)
- by AS1PR10MB5506.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:471::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.15; Mon, 27 Mar
- 2023 15:09:46 +0000
-Received: from PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7ec3:9d2c:15ac:e1af]) by PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7ec3:9d2c:15ac:e1af%3]) with mapi id 15.20.6254.016; Mon, 27 Mar 2023
- 15:09:46 +0000
-Message-ID: <38476dd0-07a6-310f-1fba-2b3021a5b007@kontron.de>
-Date:   Mon, 27 Mar 2023 17:09:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support firmware in DDR
-Content-Language: en-US, de-DE
-To:     Peng Fan <peng.fan@oss.nxp.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "arnaud.pouliquen@foss.st.com" <arnaud.pouliquen@foss.st.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20230209063816.2782206-1-peng.fan@oss.nxp.com>
- <2c4997fa-973c-dee4-9b26-6b38a1ca4540@nxp.com>
- <DU0PR04MB9417A9B81B86FAC0A477063D88DC9@DU0PR04MB9417.eurprd04.prod.outlook.com>
- <73d34c86-7c31-6530-0915-aa470af5d9ca@nxp.com> <20230213175006.GA310433@p14s>
- <343571ba-faed-35d7-2859-2668391dadb2@oss.nxp.com>
- <20230307202629.GA1693781@p14s>
- <021fd1cc-0ac6-c7fc-2523-48c1debf96ae@kontron.de>
- <8736e543-3e8c-25b3-0107-ce59296227c9@oss.nxp.com>
-From:   Frieder Schrempf <frieder.schrempf@kontron.de>
-In-Reply-To: <8736e543-3e8c-25b3-0107-ce59296227c9@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0137.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9e::12) To PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:263::10)
+        Mon, 27 Mar 2023 11:24:16 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F052D4C;
+        Mon, 27 Mar 2023 08:24:14 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32RFO6bU120104;
+        Mon, 27 Mar 2023 10:24:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1679930646;
+        bh=tCUOuON7p6S4P6ih8tUEghfc8qxCiBo07gi6Jm7KAFM=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=hlQWEmUkqwHKgJrxDU/dUYLb8/nX8NM/M0ihHJNu+x0SftN/kuFM8gUIXhP46R6gv
+         gEMOsgP1zWnBjdsL9+53Gm5KYxyVzMRN2W36psgQoYI6aDwCbSMuomIZ7JTuSsgvD+
+         6Z5dWxoohWtIBGf8n+hGPBOXGSLd+OH0LH2KIX5U=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32RFO6KP096551
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 27 Mar 2023 10:24:06 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Mon, 27
+ Mar 2023 10:24:05 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Mon, 27 Mar 2023 10:24:05 -0500
+Received: from [172.24.145.199] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32RFO0pt023113;
+        Mon, 27 Mar 2023 10:24:01 -0500
+Message-ID: <68d7ebfb-7f7c-a216-fa97-5734ba174200@ti.com>
+Date:   Mon, 27 Mar 2023 20:54:00 +0530
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR10MB5681:EE_|AS1PR10MB5506:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d12a84c-b7c3-4ffa-d499-08db2ed54d73
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kkpJaEBouHvBvujanLvITDLy0qYM/Q8WNGyLnKqWvn79KehQIxvnz2lYMa522rfGFcB3aemtk5h2hyHtC4km0rQnZNm8xnJBVCHEc/pO7cgxWjazhgYs61MbiowM1EtXJoyFbOTjcfIunnZ8wPLSwsC3IQSuMZdoqvHqAvhmCO2J1vLDrH7PJ+yVMz6MAfHgGeWhH6XFPIC0EYTSlQfH3/nvJTcJGCJskYE0SFho8LhzrIec7wUqsrWQPs8nfIVcrx/XVfBzzk1I/yyqlNhwgo/ZiM+T1b8q+bshwWnZyJn1bAMApYA8MOMjFoN3/mw5at4Y2bnILUuleXJwJjHfsHXu1csQRMTJfMOQCRNIW03gA2fQwXWj/bLHsWcV2LQYri59kmz3M9d5LAogTw0ZV1wmB4/bvCrCtb/LwCCM6jo1vlrVQnL0kn7FZmQb4uXlH5yigxt3/oSAdDeRvK+XE0z09eP2Vq2xlN1QZO1a7BCXeXKCtU5tIpfiIQkF9tByqWorYzrXH0q6woSOfIIIZf0wNjRlgCskRIeJpDWMM5kou5KHa+PRIuujFSDUAv7Dt2HV4QCol+Nt+BnaDcjQEcQj92nwLzFpx8lw+dYV/xiEnJepquPrz9gzyLpsm+CZd/04gL525LCVEZ+UMbn/SA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(39860400002)(346002)(396003)(136003)(376002)(451199021)(6512007)(31696002)(41300700001)(478600001)(26005)(53546011)(6506007)(186003)(86362001)(8936002)(36756003)(31686004)(2616005)(5660300002)(4326008)(7416002)(6486002)(66556008)(66476007)(38100700002)(66946007)(8676002)(83380400001)(44832011)(316002)(54906003)(110136005)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QTF4VTg1bW10SnBvaFdwRmt5bzVxZjJHS1p5TUxseWxLeUE2eTdiYkdYelE0?=
- =?utf-8?B?dDZHY3VYWWJuZ0ZuKzA3TDM2eXVIK2lFVXIzaUx6UitxVE1DS21QY2I0T2l1?=
- =?utf-8?B?R3lLVjhtOXYvUjAycGFCbzBhclpKaFVnOVdYa3Y1RFVqMFhwQUxKRlQ4aEpy?=
- =?utf-8?B?bEhZekhZM1NVQW8rT3pZemppTkoxMXhYaFVnOXoyNFJzTzBJcTNrUmczQjM1?=
- =?utf-8?B?enJCeHB1OEpsMWFmQUVBMlo0ZzdMZ0w0aTZjdHlXcXlZdFU3V2lPajBoZHAv?=
- =?utf-8?B?MWVRL0NWQlR0UmRhbWd2ZGhreWdPK2ZLdjJTU1pIdE1mUi9RUU5XVFNHZEU0?=
- =?utf-8?B?M1BHVEZsTDl4NUdQd1pnV1I5ZFFsM1ljK2xNQjNlNkRLRnpPeEFKRGFCaXd3?=
- =?utf-8?B?YXNuQ3JuazROZkxUM2lOZnc2cFoycVl0eSttN0ZVaEdQdlFXQ2dKaURhMGNp?=
- =?utf-8?B?dnNCSEwxSmFIRHdJS1BTQmFIQ1h4Y2ZQOVdwQWQ1dUtNbXk1eTIyMlR0NGV3?=
- =?utf-8?B?bzhuZ3U1UlpuSjVwQlhKdHNSbU9KTmNRNmhWS2JZbVVNblV3TnI0SVVqdEZC?=
- =?utf-8?B?R2ZsM1k2NS8wRW5NSmZPVldTdkhOVEZQVzhwNDVRV0RiQXZHZnpHQWc4WjN0?=
- =?utf-8?B?dlA5Z2VtZExyOEZ0S0xSY1RJSzJnMUFFNUVZSTVMVjRBZm5uYWJ6Zy83dFdl?=
- =?utf-8?B?VEpPVmRiR0c0M1p4Y2dOVGN4TUNhSUdPOXh2cUJINmU4NzJQZ0ZxbXhmam0w?=
- =?utf-8?B?ME9zZGIwV21YU3lWZkZiMkkzWE5vUFVMQTluTkdWdmlZUXYvOGZWdVZqTVhC?=
- =?utf-8?B?TXlrc0hOTWdJZWdkN2dMcE9lb1gyeWpBdGxvNHdxRXFFOGlUWHlINHBMMHlS?=
- =?utf-8?B?b09KU0ZJQ3dPcURKSDhsYmJtR0tHTjF6QzgwR2pSeFU1ZzUxMno1aUNPYnFN?=
- =?utf-8?B?L2s2SkxtdGllWEowK29xRUFDL2NEYTYzZCt2VXFqa3V2ZGxJQlV4eElUbkVL?=
- =?utf-8?B?aHdDMytGS2lzcEZ1TTduQk9jaGlKZmJwWWhjYTJPbGJyMmhQaEUxZkd2MzF2?=
- =?utf-8?B?cVZibERjNFVYUUkwNzNzT3dtcmtHazdoWjFDakFrU01CZ3BJS0crN3dzVEov?=
- =?utf-8?B?WDNBbGpid0F2aGFaY1ExYWRtWitxZVZpWERyNTJqWmp1Q0VLWlVCaVhjM05Z?=
- =?utf-8?B?SS9TZWtkT3NpbDBkaUFLT2dnSTBmL3FEZVg4RWkvb3MzMURlVmFPY2RjY24v?=
- =?utf-8?B?SGt1N01mUzVJbTBUcnlRRDJveDltUzBoZ0hFbFRZcUo0MFgwblI0YURoLzg5?=
- =?utf-8?B?S2pNdWs5QkdyRHUvTW53cU9ZemVtcC9JVGErdnJ3Uk9ZWjVQSi8rZ0JEb2N4?=
- =?utf-8?B?MGt3RHdqc1BoZmdKWGJhK05obnhmdzZZTlVuMXdDL1piR014WlhOTE90anBv?=
- =?utf-8?B?V0MrclhsQjhwNW42WXJtUGVJalJDWFBxeHcxL2h0dVNFNEZBUzVtYmtDKzdQ?=
- =?utf-8?B?cC9uZHgzQ1M2YVhyOTlTQ2E0MTNLV2I2TXZYbWRBTmRCYUxoRndGWEU5M0p6?=
- =?utf-8?B?WlY1czBLTHM5blpPZG9OZGNUZTZ6eFE2ZFdDenhZcXRIVENhbU16c2xmM3I0?=
- =?utf-8?B?Y3QrZ3poZVdiZ2pyNzZOZFphUGkxL29OVmI2OTBLS0RtV2E0WVlCeDVOSzdJ?=
- =?utf-8?B?aUZkRmloWHhmZU5SYk5SLzJGdElBVTZna200ellZSFhwenRvb2R0YWVvZU44?=
- =?utf-8?B?N3RNNEgyZzlZU2xuOWFpektQZDEzMEd6ekxrN00ycGxmL2I2VnJBdlYzUlI1?=
- =?utf-8?B?R2J0QTd1R0ZHWUdwQlQrQXZCUUdkRHlGdnNHOGpyL3lzT09ncmtkc0RwVmJO?=
- =?utf-8?B?b2pxYVBuUHc1NHpoeDNKS0RqWk1CanIwWStieDkwdWZVRis4d3R5K2NrTko4?=
- =?utf-8?B?WnlLYU8vR3BQcWRCOFlIR0hweSs0L1dOc1RKN2tWVU1xWHYyVUhPU2NVc1B2?=
- =?utf-8?B?bVpSQTN3TVBoTVF6MSsyZHp3YTg1Y2JKNGpoa3Y1ZVJ0TER1VElIdGI1UG5Y?=
- =?utf-8?B?dlozRzB2cVE5KzYzditKVmR0eHZPQmFiOStKSFRyVUFRczViNTZHY0dqRThB?=
- =?utf-8?B?YXJnZWJaT2lLbVVKSDRsU2NlK0pRemZ6cGpXaitvR0tvTkxrYkQxK0Nhd01k?=
- =?utf-8?B?TXc9PQ==?=
-X-OriginatorOrg: kontron.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d12a84c-b7c3-4ffa-d499-08db2ed54d73
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR10MB5681.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2023 15:09:46.6854
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8c9d3c97-3fd9-41c8-a2b1-646f3942daf1
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: F8w0FlC9hB8XL9aHlZARRe6NQrK9X41dj/CdJuCtGM5vYILVZStTqELoBqYt7gbRZYsN3IGCtuYLYP0iqcN4DYayg5/JPNnfnC4vl2sUH50=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR10MB5506
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v7 3/3] remoteproc: k3-r5: Use separate compatible string
+ for TI AM62x SoC family
+Content-Language: en-US
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
+        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>,
+        <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <rogerq@kernel.org>
+References: <20230310162544.3468365-1-devarsht@ti.com>
+ <20230310162544.3468365-4-devarsht@ti.com> <20230317161757.GA2471094@p14s>
+From:   Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20230317161757.GA2471094@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Peng,
+Hi Mathieu,
 
-On 24.03.23 11:20, Peng Fan wrote:
-> Hi Frieder,
-> 
-> On 3/22/2023 6:59 PM, Frieder Schrempf wrote:
->> Hi,
+Thanks for the review.
+On 17/03/23 21:47, Mathieu Poirier wrote:
+> On Fri, Mar 10, 2023 at 09:55:44PM +0530, Devarsh Thakkar wrote:
+>> AM62 and AM62A SoCs use single core R5F which is a new scenario
+>> different than the one being used with CLUSTER_MODE_SINGLECPU which is
+>> for utilizing a single core from a set of cores available in R5F cluster
+>> present in the SoC.
 >>
->> On 07.03.23 21:26, Mathieu Poirier wrote:
->>> On Sat, Mar 04, 2023 at 03:59:38PM +0800, Peng Fan wrote:
->>>>
->>>>
->>>> On 2/14/2023 1:50 AM, Mathieu Poirier wrote:
->>>>> On Mon, Feb 13, 2023 at 12:15:59PM +0200, Iuliana Prodan wrote:
->>>>>> On 2/12/2023 9:43 AM, Peng Fan wrote:
->>>>>>> Hi Iuliana,
->>>>>>>
->>>>>>>> Subject: Re: [PATCH V3 0/6] remoteproc: imx_rproc: support
->>>>>>>> firmware in
->>>>>>>> DDR
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2/9/2023 8:38 AM, Peng Fan (OSS) wrote:
->>>>>>>>> From: Peng Fan <peng.fan@nxp.com>
->>>>>>>>>
->>>>>>>>> V3:
->>>>>>>>>
->>>>>>>>>      Daniel, Iuliana
->>>>>>>>>
->>>>>>>>>        Please help review this patchset per Mathieu's comments.
->>>>>>>>>
->>>>>>>>>      Thanks,
->>>>>>>>>      Peng.
->>>>>>>>>
->>>>>>>>>      Move patch 3 in v2 to 1st patch in v3 and add Fixes tag
->>>>>>>>> Per Daniel
->>>>>>>>>      IMX_RPROC_ANY in patch 3 Per Mathieu
->>>>>>>>>      Update comment and commit log in patch 5, 6.
->>>>>>>>>
->>>>>>>>>      NXP SDK provides ".interrupts" section, but I am not sure
->>>>>>>>> how others
->>>>>>>>>      build the firmware. So I still keep patch 6 as v2, return
->>>>>>>>> bootaddr
->>>>>>>>>      if there is no ".interrupts" section.
->>>>>>>>>
->>>>>>>>> V2:
->>>>>>>>>      patch 4 is introduced for sparse check warning fix
->>>>>>>>>
->>>>>>>>> This pachset is to support i.MX8M and i.MX93 Cortex-M core
->>>>>>>>> firmware
->>>>>>>>> could be in DDR, not just the default TCM.
->>>>>>>>>
->>>>>>>>> i.MX8M needs stack/pc value be stored in TCML entry
->>>>>>>>> address[0,4], the
->>>>>>>>> initial value could be got from firmware first section
->>>>>>>>> ".interrupts".
->>>>>>>>> i.MX93 is a bit different, it just needs the address of
->>>>>>>>> .interrupts
->>>>>>>>> section. NXP SDK always has .interrupts section.
->>>>>>>>>
->>>>>>>>> So first we need find the .interrupts section from firmware, so
->>>>>>>>> patch
->>>>>>>>> 1 is to reuse the code of find_table to introduce a new API
->>>>>>>>> rproc_elf_find_shdr to find shdr, the it could reused by i.MX
->>>>>>>>> driver.
->>>>>>>>>
->>>>>>>>> Patch 2 is introduce devtype for i.MX8M/93
->>>>>>>>>
->>>>>>>>> Although patch 3 is correct the mapping, but this area was
->>>>>>>>> never used
->>>>>>>>> by NXP SW team, we directly use the DDR region, not the alias
->>>>>>>>> region.
->>>>>>>>> Since this patchset is first to support firmware in DDR, mark this
->>>>>>>>> patch as a fix does not make much sense.
->>>>>>>>>
->>>>>>>>> patch 4 and 5 is support i.MX8M/93 firmware in DDR with parsing
->>>>>>>>> .interrupts section. Detailed information in each patch commit
->>>>>>>>> message.
->>>>>>>>>
->>>>>>>>> Patches were tested on i.MX8MQ-EVK i.MX8MP-EVK i.MX93-11x11-EVK
->>>>>>>> If one can build their firmware as they want, then the
->>>>>>>> .interrupt section can
->>>>>>>> also be called differently.
->>>>>>>> I don't think is a good idea to base all your implementation on
->>>>>>>> this
->>>>>>>> assumption.
->>>>>>>>
->>>>>>>> It's clear there's a limitation when linking firmware in DDR, so
->>>>>>>> this should be
->>>>>>>> well documented so one can compile their firmware and put the
->>>>>>>> needed
->>>>>>>> section (interrupt as we call it in NXP SDK) always in TCML -
->>>>>>>> independently
->>>>>>>> where the other section go.
->>>>>>> Ok, so .interrupt section should be a must in elf file if I
->>>>>>> understand correctly.
->>>>>>>
->>>>>>> I could add a check in V4 that if .interrupt section is not
->>>>>>> there, driver will report
->>>>>>> failure.
->>>>>>>
->>>>>>> How do you think?
->>>>>>
->>>>>> Peng, I stand by my opinion that the limitation of linking
->>>>>> firmware in DDR
->>>>>> should be documented in an Application Note, or maybe there are other
->>>>>> documents where how to use imx_rproc is explained.
->>>>>>
->>>>>> The implementation based on the .interrupt section is not robust.
->>>>>> Maybe a user linked his firmware correctly in TCML, but the
->>>>>> section is not
->>>>>> called .interrupt so the firmware loading will work.
->>>>>>
->>>>>> So, instead of using the section name, you should use the address.
->>>>>
->>>>> Can you be more specific on the above?
->>>>>
->>>>>>
->>>>>> First, check whether there is a section linked to TCML.
->>>>>> If there is none, check for section name - as you did.
->>>>>> If there is no section called .interrupt, give an error message.
->>>>>
->>>>> We have two ways of booting, one that puts the firmware image in
->>>>> the TCML and
->>>>> another in RAM.  Based on the processor type, the first 8 bytes of
->>>>> the TCML need
->>>>> to include the address for the stack and PC value.
->>>>>
->>>>> I think the first thing to do is have two different firmware
->>>>> images, one for
->>>>> i.MX8M and another one for i.MX93.  That should greatly simplify
->>>>> things.
->>>>
->>>> sorry, I not got your points. i.MX8M and i.MX93 are not sharing
->>>> firmware
->>>
->>> Perfect.
->>>
->>>> images. i.MX93 M33 has ROM, kicking M33 firmware just requires the
->>>> address of the .interrupt address which holds stack/pc value.
->>>> i.MX8M not has ROM, kick M33 firmware requires driver to copy
->>>> stack/pc into the TCML beginning address.
->>>
->>> It's been more than a month since I have looked at this patchset so
->>> the details are
->>> vague in my memory.  That said, there should be one image for the
->>> TCML and
->>> another one for the RAM.  And the image that runs in RAM should have
->>> a program
->>> segment that write the correct information in the first 8 bytes.
->>>
->>>>
->>>> Whether i.MX8M/i.MX93, the NXP released MCU SDK use the section
->>>> ".interrupt" to hold stack/pc initialization value in the beginning
->>>> 8 bytes of the section.
->>>>
->>>
->>> And that is fine.  Simply release another version of the SDK that
->>> does the right
->>> thing.
->>>
->>> I suggest to work with Daniel and Iuliana if some details are still
->>> unclear.
->>> Unlike me, they have access to the reference manual and the boot
->>> requirements.
->>>
->>>
->>>>>
->>>>> Second, there should always be a segment that adds the right
->>>>> information to the
->>>>> TMCL.  That segment doesn't need a name, it simply have to be part
->>>>> of the
->>>>> segments that are copied to memory (any kind of memory) so that
->>>>> function
->>>>> rproc_elf_load_segments() can do its job.
->>>>>
->>>>> That pushes the complexity to the tool that generates the firmware
->>>>> image,
->>>>> exactly where it should be.
->>>>
->>>> For i.MX8M, yes. For i.MX93, the M33 ROM needs address of storing
->>>> stack/pc.
->>>>>
->>>>> This is how I think we should solve this problem based on the very
->>>>> limited
->>>>> information provided with this patchset.  Please let me know if I
->>>>> missed
->>>>> something and we'll go from there.
->>>>
->>>> I am not sure how to proceed on supporting the current firmware.
->>>> what should
->>>> I continue with current patchset?
+>> To support this single core scenario map it with newly defined
+>> CLUSTER_MODE_SINGLECORE and use it when compatible is set to
+>> ti,am62-r5fss.
 >>
->> I've successfully tested this on i.MX8MM with an elf file generated by
->> the NXP SDK.
+>> Also set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE config for
+>> CLUSTER_MODE_SINGLECORE too as it is required by R5 core when it is
+>> being as general purpose core instead of device manager.
 >>
->> I would really like to see this upstreamed. If this requires changes
->> that are not compatible with binaries compiled with the current SDK as
->> discussed above, that would be fine for me as long as the kernel is able
->> to detect the malformed binary and warns the user about it.
+>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+>> ---
+>> V2:
+>> - Fix indentation and ordering issues as per review comments
+>> V3:
+>> - Change CLUSTER_MODE_NONE value to -1
+>> V4:
+>> - No change
+>> V5:
+>> - No change (fixing typo in email address)
+>> V6:
+>>    - Use CLUSTER_MODE_SINGLECORE for AM62x
+>>    - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.
+>> V7:
+>>    - Simplify and rebase on top of base commit "[PATCH v7] remoteproc: k3-r5: Simplify cluster
+>>      mode setting"
+>> ---
+>>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 59 +++++++++++++++++++-----
+>>  1 file changed, 48 insertions(+), 11 deletions(-)
 >>
->> The user can then manually adjust the linker script, etc. in the SDK to
->> match the requirements of the kernel.
-> 
-> If you have adjust linker script, you will not need this patch to load
-> m4 image to DDR for i.MX8MM. Just put the pc/stack in a seperate section
-> in your linker file, and the address is TCML start address, I think
-> it would be ok.
-> 
-> This patchset is just for images not has dedicated section saying
-> NXP ones has pc/stack in the beginning of .interrupts section.
+>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> index c2ec0f432921..df32f6bc4325 100644
+>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+>> @@ -71,14 +71,16 @@ struct k3_r5_mem {
+>>  /*
+>>   * All cluster mode values are not applicable on all SoCs. The following
+>>   * are the modes supported on various SoCs:
+>> - *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
+>> - *   LockStep mode   : AM65x, J721E and J7200 SoCs
+>> - *   Single-CPU mode : AM64x SoCs only
+>> + *   Split mode       : AM65x, J721E, J7200 and AM64x SoCs
+>> + *   LockStep mode    : AM65x, J721E and J7200 SoCs
+>> + *   Single-CPU mode  : AM64x SoCs only
+>> + *   Single-Core mode : AM62x, AM62A SoCs
+>>   */
+>>  enum cluster_mode {
+>>  	CLUSTER_MODE_SPLIT = 0,
+>>  	CLUSTER_MODE_LOCKSTEP,
+>>  	CLUSTER_MODE_SINGLECPU,
+>> +	CLUSTER_MODE_SINGLECORE
+>>  };
+>>  
+>>  /**
+>> @@ -86,11 +88,13 @@ enum cluster_mode {
+>>   * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
+>>   * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
+>>   * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
+>> + * @is_single_core: flag to denote if SoC/IP has only single core R5
+>>   */
+>>  struct k3_r5_soc_data {
+>>  	bool tcm_is_double;
+>>  	bool tcm_ecc_autoinit;
+>>  	bool single_cpu_mode;
+>> +	bool is_single_core;
+>>  };
+>>  
+>>  /**
+>> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>>  
+>>  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
+>>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>> -	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
+>> +	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +	    cluster->mode == CLUSTER_MODE_SINGLECORE) {
+>>  		core = core0;
+>>  	} else {
+>>  		core = kproc->core;
+>> @@ -877,7 +882,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
+>>  		 * with the bit configured, so program it only on
+>>  		 * permitted cores
+>>  		 */
+>> -		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
+>> +		if (cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +		    cluster->mode == CLUSTER_MODE_SINGLECORE) {
+>>  			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
+>>  		} else {
+>>  			/*
+>> @@ -1069,6 +1075,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
+>>  
+>>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>>  	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +	    cluster->mode == CLUSTER_MODE_SINGLECORE ||
+>>  	    !cluster->soc_data->tcm_is_double)
+>>  		return;
+>>  
+>> @@ -1145,6 +1152,8 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
+>>  	if (cluster->soc_data->single_cpu_mode) {
+>>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
+>>  				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
+>> +	} else if (cluster->soc_data->is_single_core) {
+>> +		mode = CLUSTER_MODE_SINGLECORE;
+> I have commented twice on this before - whether it is soc_data->single_cpu_mode or
+> soc_data->is_single_core, I don't want to see them used elsewhere than in a
+> single function.  Either in probe() or another function, use them once to set
+> cluster->mode and never again.  
 
-Ok, thanks for the explanation. Good to know. I thought there were other
-changes included in this patchset that are required.
+I will remove the soc_data flag usage in V8 from here too. I had original
+thought to keep it as an extra check
 
-Thanks
-Frieder
+in case som in-appropriate flag was set at bootloader stage due to a bug,
+
+but I will trusting be the device-manager now not to allow setting
+inappropriate flag at the first place.
+
+> I will silently drop any other patchset that doesn't address this.
+>
+>>  	} else {
+>>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_LOCKSTEP ?
+>>  				CLUSTER_MODE_LOCKSTEP : CLUSTER_MODE_SPLIT;
+>> @@ -1264,9 +1273,12 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>>  			goto err_add;
+>>  		}
+>>  
+>> -		/* create only one rproc in lockstep mode or single-cpu mode */
+>> +		/* create only one rproc in lockstep, single-cpu or
+>> +		 * single core mode
+>> +		 */
+>>  		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
+>> -		    cluster->mode == CLUSTER_MODE_SINGLECPU)
+>> +		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
+>> +		    cluster->mode == CLUSTER_MODE_SINGLECORE)
+>>  			break;
+>>  	}
+>>  
+>> @@ -1709,19 +1721,33 @@ static int k3_r5_probe(struct platform_device *pdev)
+>>  		/*
+>>  		 * default to most common efuse configurations - Split-mode on AM64x
+>>  		 * and LockStep-mode on all others
+>> +		 * default to most common efuse configurations -
+>> +		 * Split-mode on AM64x
+>> +		 * Single core on AM62x
+>> +		 * LockStep-mode on all others
+>>  		 */
+>> -		cluster->mode = data->single_cpu_mode ?
+>> +		if (!data->is_single_core)
+>> +			cluster->mode = data->single_cpu_mode ?
+>>  					CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
+>> +		else
+>> +			cluster->mode = CLUSTER_MODE_SINGLECORE;
+>>  	}
+>>  
+>> -	if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
+>> +	if  ((cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) ||
+>> +	     (cluster->mode == CLUSTER_MODE_SINGLECORE && !data->is_single_core)) {
+>>  		dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
+>>  		return -EINVAL;
+>>  	}
+>>  
+>>  	num_cores = of_get_available_child_count(np);
+>> -	if (num_cores != 2) {
+>> -		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
+>> +	if (num_cores != 2 && !data->is_single_core) {
+>> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
+>> +			num_cores);
+>> +		return -ENODEV;
+>> +	}
+>> +
+>> +	if (num_cores != 1 && data->is_single_core) {
+>> +		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
+>>  			num_cores);
+>>  		return -ENODEV;
+>>  	}
+>> @@ -1763,18 +1789,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
+>>  	.tcm_is_double = false,
+>>  	.tcm_ecc_autoinit = false,
+>>  	.single_cpu_mode = false,
+>> +	.is_single_core = false,
+>>  };
+>>  
+>>  static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
+>>  	.tcm_is_double = true,
+>>  	.tcm_ecc_autoinit = true,
+>>  	.single_cpu_mode = false,
+>> +	.is_single_core = false,
+>>  };
+>>  
+>>  static const struct k3_r5_soc_data am64_soc_data = {
+>>  	.tcm_is_double = true,
+>>  	.tcm_ecc_autoinit = true,
+>>  	.single_cpu_mode = true,
+>> +	.is_single_core = false,
+>> +};
+>> +
+>> +static const struct k3_r5_soc_data am62_soc_data = {
+>> +	.tcm_is_double = false,
+>> +	.tcm_ecc_autoinit = true,
+>> +	.single_cpu_mode = false,
+>> +	.is_single_core = true,
+>>  };
+>>  
+>>  static const struct of_device_id k3_r5_of_match[] = {
+>> @@ -1782,6 +1818,7 @@ static const struct of_device_id k3_r5_of_match[] = {
+>>  	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
+>>  	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
+>>  	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
+>> +	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
+>>  	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
+>>  	{ /* sentinel */ },
+>>  };
+>> -- 
+>> 2.34.1
+>>
