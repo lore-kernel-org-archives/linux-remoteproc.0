@@ -2,151 +2,133 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54842C76196
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 16:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EEBC76196
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 22:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231921AbjC1Qus (ORCPT
+        id S229839AbjC1WzY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 12:50:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35178 "EHLO
+        Tue, 28 Mar 2023 18:55:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231631AbjC1Qum (ORCPT
+        with ESMTP id S229708AbjC1WzX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Mar 2023 12:50:42 -0400
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7A577A81;
-        Tue, 28 Mar 2023 09:50:29 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BhpG5WCRNy96wWeAW7ZeZLdBaxos09+50nPftrwjiupeu3dJIWjRUeqWGA+WIez2pPA4Ka4DOIEvsKZKUOvYW1Ah/V77/YdLxXbk4QO5J4KDgxT01K9BzxBlH9IAbgEJN4NGmn0+gknrzzeLbOw0bJ+Fyxl6qGuLLF8fNePZ0bwtFroZzwGqciYP/zW1qgBo3pJ4PJR7RJxYL335CDALzcieRqk3XKg7TxHsX++NHUEItNipp4SoY3NIH/5a0GtMwGqeSq8zGXiABizjWsXBUSZLh9KqOtqqSkZEbMh1o4HGhiRvKxjhtYvfrsUTrrJErR1oouMZLa+dOMqFeWSbPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fDwjQDllWH3bXfHz8WaEkcDkzmtqg2nWxKaXoGFDdpE=;
- b=FgF6DLE2/rDcMFAozEeQeRjcER81+dj0yQ+BxAIcXy5Bki5ULHkkePMX5dzHU6OTkVxjbmrDxhovbPeehwVOzDyxDYMIiUe16r9qbSvrnNyzfXdM93kcXV0krXKIClVsA4gqUfuy0XALvWILW9GvlUe9sP1hEOSbL0X1hWw9KBR7VhEGp+aCv7z20P6woL0u+fyxR8uRYq5QidcyLBaclkiYS8UBF6O5VHr1DpFSTFSuJrfkoWK0CyF97Uj6aGoHr/yY9dNq73m2nfgReC3PVben/CddolgctyCxfOp02indtJSDqmZH1MwyUDYldJBWmXqnrGauZsb5CakYmhNDvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fDwjQDllWH3bXfHz8WaEkcDkzmtqg2nWxKaXoGFDdpE=;
- b=j6w1V6Ak1PCldoomcbRnhnuvsPe6IL3rKWHfQ+WKqcBEphesZpO8l0MH3ITOT7SY8jVj8jJpo4K06/MZDZpb/SEsxvUxbh5l5/SV3vt4BMa50tJAl7nzSjv0OBw9l+gujh5SOK4KrnZXrjDHjxWDhXxI3uF/0RmvkcFMsoNaI/I=
-Received: from MW4PR04CA0126.namprd04.prod.outlook.com (2603:10b6:303:84::11)
- by DM4PR12MB6448.namprd12.prod.outlook.com (2603:10b6:8:8a::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6178.41; Tue, 28 Mar 2023 16:50:27 +0000
-Received: from CO1NAM11FT084.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:84:cafe::37) by MW4PR04CA0126.outlook.office365.com
- (2603:10b6:303:84::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6178.43 via Frontend
- Transport; Tue, 28 Mar 2023 16:50:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT084.mail.protection.outlook.com (10.13.174.194) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6222.22 via Frontend Transport; Tue, 28 Mar 2023 16:50:27 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 28 Mar
- 2023 11:50:15 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 28 Mar
- 2023 11:50:05 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Tue, 28 Mar 2023 11:50:04 -0500
-From:   Tanmay Shah <tanmay.shah@amd.com>
-To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        kernel test robot <lkp@intel.com>,
-        "Tarak Reddy" <tarak.reddy@amd.com>
-Subject: [PATCH v3 2/2] remoteproc: enhance rproc_put() for clusters
-Date:   Tue, 28 Mar 2023 09:49:24 -0700
-Message-ID: <20230328164921.1895937-3-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230328164921.1895937-1-tanmay.shah@amd.com>
-References: <20230328164921.1895937-1-tanmay.shah@amd.com>
+        Tue, 28 Mar 2023 18:55:23 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1452100;
+        Tue, 28 Mar 2023 15:55:22 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32SMf6hZ028467;
+        Tue, 28 Mar 2023 22:55:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=zD6tIgThhRSFsnYd5P+4y30mqU1VvCsggBrYEeNNsMQ=;
+ b=MSmpX/FmMcqVVOcOIfZm2dQ5LX42PM8NAAG8Vyad1NXrKFvANiEaKplJ2jJShi93e0BA
+ GAHr8QFeQo35zsUyTdHpr6AyecChFaG8LlKtnH0U5odfBS4jzG1iI0bh7d5ZDZpMOOa8
+ hChUMXGlFq+Zpk5V+4E2AJfE4zMrsGyXdkqC+nHyD+jZzvG+k8hCoeOzgoLGsvfkAKF/
+ AHszaIR2qMURp/15f9PvTaJWsWGh5bJB+GMtVFl2biSz7Z12ia/IlzNmCrJMF1pMs2kA
+ jFvvAW8kBb/tqQj18TU56rN87yvycPLyGHYQFm866mpAL0sFedtY0I9R1phL0CeepPpY wQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pkbmyvg5f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Mar 2023 22:55:19 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 32SMtIkF020043
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Mar 2023 22:55:18 GMT
+Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 28 Mar
+ 2023 15:55:18 -0700
+Subject: Re: [PATCH 1/2] rpmsg: glink: Propagate TX failures in intentless
+ mode as well
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230327144153.3133425-1-quic_bjorande@quicinc.com>
+ <20230327144153.3133425-2-quic_bjorande@quicinc.com>
+From:   Chris Lew <quic_clew@quicinc.com>
+Message-ID: <026912e3-4479-415e-96db-abbb2f533599@quicinc.com>
+Date:   Tue, 28 Mar 2023 15:55:17 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT084:EE_|DM4PR12MB6448:EE_
-X-MS-Office365-Filtering-Correlation-Id: c10aea3b-ff8d-4c3d-088b-08db2fac887d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: b4YvzlyrVz/2pOHBuPuBaV4Vr3XDzwA47NKx5uG6HEL1L3rGLZsVVKdkcwbFSGJxsTBna93l1bEPAXXly6FiAYtvuNcdJT5Y1TLfpSv3MM+qBNEOhnEM188WRJRC5E1WzHAPj1cDK/DEH2B7ikcN3t5o5kzrtd+sSMmNnvDJpfI1XypA0GhdKnl9V5wRXA6pf9TAREDe4ngBt2DXQHO1N03+Ur35RzePN5r8hXbB8j6fKaxBwSBFDu/VEgbcrM/7BLPp1nbsQqWzA1cPoxFI5QWM1vIhLvED3ZrOCWsngVjKz8N9TSGD2IALZZPk+4uL0Q1WdqwM5iOizS8SlEbVR3pgf2jgE/UdR9AnNQD9kuBdHIF9cQoNtR3fwXNUXRc/G+8z5JHlTTOlskWi2XjetJHBl/Fn2YsN/EOrONS9MasAbKwhxf3EJFmT/T/ONFlPIJ631j9IR6RdNHGCbeDBQARd3gk8JM3cu0o7rrB/Dxyjz+PwQLK+Y8I6XE8BA2LYUjDfWxORZNlSpmVqkOypfKlWRPqy4CXb248e0LY/+FVsvxQ57yyH3yGTePwEu4R5obyTZk8nY2oDY66dlLovcCSYup5MI1AV/bzaf7bf6oyl71XLv1m4nE4Dprv4egg0WcKKsCzrMT/9DzBR8FQrj1vLCUyYx6VxUVtsPUjcYKpvTIDLPzqm4916zUfNb+rBwxg3W3q+xiPG3sD44F2DpgGTGt56u39meYrMwMibiYk=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(39860400002)(136003)(396003)(451199021)(36840700001)(40470700004)(46966006)(110136005)(966005)(478600001)(40480700001)(6666004)(54906003)(26005)(1076003)(316002)(8936002)(8676002)(70206006)(70586007)(40460700003)(41300700001)(81166007)(2616005)(82740400003)(4326008)(336012)(36860700001)(36756003)(186003)(82310400005)(2906002)(83380400001)(5660300002)(426003)(86362001)(47076005)(44832011)(356005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 16:50:27.2426
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c10aea3b-ff8d-4c3d-088b-08db2fac887d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT084.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6448
+In-Reply-To: <20230327144153.3133425-2-quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: l6vWVoHXxDvFoxA5DIhySnmzoKxsZ2QQ
+X-Proofpoint-GUID: l6vWVoHXxDvFoxA5DIhySnmzoKxsZ2QQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-24_11,2023-03-28_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 impostorscore=0 spamscore=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 suspectscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2303280178
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch enhances rproc_put() to support remoteproc clusters
-with multiple child nodes as in rproc_get_by_phandle().
 
-Reported-by: kernel test robot <lkp@intel.com>
-Link: https://lore.kernel.org/oe-kbuild-all/202303221441.cuBnpvye-lkp@intel.com/
-Signed-off-by: Tarak Reddy <tarak.reddy@amd.com>
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
 
-Changes in v3:
-  - remove module_put call that was introduced in the patch by mistake
-  - remove redundant check in rproc_put
-  - Add inline comments in rproc_put that explains functionality
+On 3/27/2023 7:41 AM, Bjorn Andersson wrote:
+> As support for splitting transmision over several messages using
+> TX_DATA_CONT was introduced it does not immediately return the return
+> value of qcom_glink_tx().
+> 
+> The result is that in the intentless case (i.e. intent == NULL), the
+> code will continue to send all additional chunks. This is wasteful, and
+> it's possible that the send operation could incorrectly indicate
+> success, if the last chunk fits in the TX fifo.
+> 
+> Fix the condition.
+> 
+> Fixes: 8956927faed3 ("rpmsg: glink: Add TX_DATA_CONT command while sending")
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
 
-Changes in v2:
-  - Introduce this patch to fix rproc_put as per modified rproc_get_by_phandle
+s/transmision/transmission
 
- drivers/remoteproc/remoteproc_core.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index a3e7c8798381..d8f28c6fe3a3 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2559,7 +2559,22 @@ EXPORT_SYMBOL(rproc_free);
-  */
- void rproc_put(struct rproc *rproc)
- {
--	module_put(rproc->dev.parent->driver->owner);
-+	struct platform_device *cluster_pdev;
-+
-+	if (rproc->dev.parent->driver) {
-+		module_put(rproc->dev.parent->driver->owner);
-+	} else {
-+		/*
-+		 * If the remoteproc's parent does not have a driver,
-+		 * driver is associated with the cluster.
-+		 */
-+		cluster_pdev = of_find_device_by_node(rproc->dev.parent->of_node->parent);
-+		if (cluster_pdev) {
-+			module_put(cluster_pdev->dev.driver->owner);
-+			put_device(&cluster_pdev->dev);
-+		}
-+	}
-+
- 	put_device(&rproc->dev);
- }
- EXPORT_SYMBOL(rproc_put);
--- 
-2.25.1
-
+>   drivers/rpmsg/qcom_glink_native.c | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 01d2805fe30f..62634d020d13 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -1356,8 +1356,9 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   	ret = qcom_glink_tx(glink, &req, sizeof(req), data, chunk_size, wait);
+>   
+>   	/* Mark intent available if we failed */
+> -	if (ret && intent) {
+> -		intent->in_use = false;
+> +	if (ret) {
+> +		if (intent)
+> +			intent->in_use = false;
+>   		return ret;
+>   	}
+>   
+> @@ -1378,8 +1379,9 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   				    chunk_size, wait);
+>   
+>   		/* Mark intent available if we failed */
+> -		if (ret && intent) {
+> -			intent->in_use = false;
+> +		if (ret) {
+> +			if (intent)
+> +				intent->in_use = false;
+>   			break;
+>   		}
+>   	}
+> 
