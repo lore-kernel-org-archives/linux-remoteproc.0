@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B150C761A6
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 07:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD99FC76196
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 07:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbjC1HkM (ORCPT
+        id S230505AbjC1Hmu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 03:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
+        Tue, 28 Mar 2023 03:42:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230200AbjC1HkL (ORCPT
+        with ESMTP id S230245AbjC1Hms (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Mar 2023 03:40:11 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4926E211E;
-        Tue, 28 Mar 2023 00:40:10 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id q19so8044016wrc.5;
-        Tue, 28 Mar 2023 00:40:10 -0700 (PDT)
+        Tue, 28 Mar 2023 03:42:48 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 760D5211E;
+        Tue, 28 Mar 2023 00:42:47 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id h17so11106449wrt.8;
+        Tue, 28 Mar 2023 00:42:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679989209;
+        d=gmail.com; s=20210112; t=1679989366;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qYSKi6P9F33q3cGk3dc2X+3QTPP68ecCLe041fZqdtM=;
-        b=HbSxQr4r8Zf3+yFQGbqcSxzOtKd8vj2cIF9+ve9dHjUlZoMwR8DYHXDG3+N4uRe0Vd
-         y0tyA33+FCOrO1XVTYqLMCQaVei6b+K0kcXheOPsVWLV4HEKyUxEQf1Z835o14j9bacp
-         ghe9VyKKvUiP1a7uUEtkJuyjM+AOUdFwrLJWU7Q3Au0XD5DV4t0QUX5irMgq4g1YTI75
-         5fGfeDGJnMAmrLjC4zaBRLAACxa02wIPHGF48zub+woOFOA0kqTGgHJq1xBs+FeNbLW7
-         h5cPb4t6yvBDTFgqAtUzrgUlRqccvDftKeSJUDmZZTvjxIVqSo3FDfDz142jvg4L4KaV
-         AbLA==
+        bh=reWFyQdHA0Txjoyw/asL10WD0B3MGC9C1OYGnj8cjLU=;
+        b=WCqPg7kj6QzLXEOVdoQ1xMWD4fQdgnzUfP73CB10wcAeR2+Rvyv6nLGcAmRfEqAPBN
+         uxsVum3wm7djw1PR/wmloQ3SbizDsX/f0KKbyGVdMrIp1eRklDFd+0mUKYHzhJWdy3Ok
+         hoK4vhXeeWa7NGRBpfPq9ZeaL9R9E2inGfpoDAD+bZT41NplWgWq2QHxWZWGRX5Pb21M
+         yjGyPJV7+LorCR4Qv1Ro9oWOXMjVTMoyQR2HW502gC1l5q/gCpND23aQMEfoLZezPoYG
+         NkrPghb3zVtL3KeYo3roJmiQrOEArrxbSVIX7vN/EG+zdE89GSbv5TpVUBTU3imGpeUE
+         Ak9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679989209;
+        d=1e100.net; s=20210112; t=1679989366;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qYSKi6P9F33q3cGk3dc2X+3QTPP68ecCLe041fZqdtM=;
-        b=A+aLHzm1g+sLGbiKLQQbNRarL1hntq8wvtmW/42MCROUSSLQZ6onSNcXwnQBRc6rBP
-         GIQFkb1gb2Rt5FvRTywrFZPe7fyg3vUhN6GKnmVfRsLqgSt8tqEUEs25Oc8nEh53t4Rf
-         pYgZGCJjp7dhS56DXMSCldZFqFrDgsF/rUC1oL+Xi2YwRfb1opEVZKuAVSZEew8C3gW2
-         xVdf7kqUm5KVQYxEyA6qlrsRu72Od2ACZ9voEiRZvFnn5kIkYuJmx7+Hgo4S5SMwxrVI
-         p9kIDfGkT1YGgkXYXTGFZyDFOzZ7bRvsUEEniAZrO2csT47P7/UMtOlR4rcOBD0Ahu4a
-         VTrA==
-X-Gm-Message-State: AAQBX9f50/P6OcVMFABVQLhU/E0Fl4rN7CEME4IYcbSF+xSx7pVXpyHP
-        CUhky8tWwPU1WAYt/k5KazUT7plQS+tCPA==
-X-Google-Smtp-Source: AKy350ZblYUnLPCJxBsWxVjLmOt7Surp3uSMJdu3VZiB82QN73WYQMcps/WK/CciM1DKpYZAGC5tMA==
-X-Received: by 2002:adf:fe45:0:b0:2c7:d7c:7d7 with SMTP id m5-20020adffe45000000b002c70d7c07d7mr11055389wrs.22.1679989208657;
-        Tue, 28 Mar 2023 00:40:08 -0700 (PDT)
+        bh=reWFyQdHA0Txjoyw/asL10WD0B3MGC9C1OYGnj8cjLU=;
+        b=6vBuMTD4356E+7PmwjUMfsARk6IgxHYBeNYGoaFFM/TVbZa4tMJ0HW1I8sEqKz/5T/
+         JAMAl9ArUsi1OfdDYi2UiygTCa7kSM/fTVUOFiSO/PLG+QJT0iJm5j3nlVfgpv81ZqpZ
+         GvjB06JFS1kXEuQsORz5HHv+H95YUo9rwsnSKGZtpWTzmDYf8ik8Z9E2luRmEhI7vbG0
+         DhqjvMLmqms5Vgg/WonXBOhuOu7hf6j8sopK8R3wSKLtYngj4JVky1eoL4oWQpLVeJWq
+         fZ8KphZzSebmJVv0C4i9b+mAmNLNRIaREP9qYvMZlpo9GOgmihyBu/PDYPHHmm66xVpG
+         noSQ==
+X-Gm-Message-State: AAQBX9dI+39gOkdhqNIFKJE6mX8jZ2jBrpAqkOZsZBu+arobzWSf+8Qn
+        fjVhxJFrOZ2CT9BQz1HTczc=
+X-Google-Smtp-Source: AKy350ae8pPppl5m9E/fAgObS0u170HobthBF6NK9Qjbn7LyCnoBrzLmAj4S8NpGj1TURzpOwmkCFg==
+X-Received: by 2002:a5d:5691:0:b0:2d7:d4b:b33 with SMTP id f17-20020a5d5691000000b002d70d4b0b33mr12209300wrv.21.1679989365793;
+        Tue, 28 Mar 2023 00:42:45 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k6-20020a5d6d46000000b002c5598c14acsm27215726wri.6.2023.03.28.00.40.07
+        by smtp.gmail.com with ESMTPSA id v7-20020a5d4b07000000b002c56af32e8csm26731234wrq.35.2023.03.28.00.42.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Mar 2023 00:40:08 -0700 (PDT)
-Date:   Tue, 28 Mar 2023 10:40:04 +0300
+        Tue, 28 Mar 2023 00:42:45 -0700 (PDT)
+Date:   Tue, 28 Mar 2023 10:42:42 +0300
 From:   Dan Carpenter <error27@gmail.com>
 To:     Yu Zhe <yuzhe@nfschina.com>
 Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
@@ -62,25 +62,30 @@ Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         kernel-janitors@vger.kernel.org, liqiong@nfschina.com
-Subject: Re: [PATCH v3] remoteproc: remove unnecessary (void*) conversions
-Message-ID: <4b64c2ed-b3a3-46fc-b5c7-3c03b30cd8a2@kili.mountain>
-References: <20230320061157.29660-1-yuzhe@nfschina.com>
- <20230328015749.1608-1-yuzhe@nfschina.com>
+Subject: Re: [PATCH v4] remoteproc: remove unnecessary (void*) conversions
+Message-ID: <fdcfe2ae-fa49-4758-8b5c-b853cc6a0b80@kili.mountain>
+References: <20230328015749.1608-1-yuzhe@nfschina.com>
+ <20230328024907.29791-1-yuzhe@nfschina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230328015749.1608-1-yuzhe@nfschina.com>
+In-Reply-To: <20230328024907.29791-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 09:57:49AM +0800, Yu Zhe wrote:
->  static void devm_rproc_free(struct device *dev, void *res)
->  {
-> -	rproc_free(*(struct rproc **)res);
-> +	rproc_free(res);
+On Tue, Mar 28, 2023 at 10:49:07AM +0800, Yu Zhe wrote:
+> Pointer variables of void * type do not require type cast.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Link: https://lore.kernel.org/oe-kbuild-all/202303272213.jOYrwBZu-lkp@intel.com/
+> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
+> ---
+> 
+> v3->v4:
+>  Drop wrong modifies
 
-This introduces a bug.
+Seems okay.  (I haven't tried compiling it or anything).
 
 regards,
 dan carpenter
