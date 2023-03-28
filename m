@@ -2,283 +2,217 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C77C761A6
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 07:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA29C76195
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 08:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232525AbjC1HxN (ORCPT
+        id S230288AbjC1I0V (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 03:53:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42918 "EHLO
+        Tue, 28 Mar 2023 04:26:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231717AbjC1HxJ (ORCPT
+        with ESMTP id S229459AbjC1I0U (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Mar 2023 03:53:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC2A423F;
-        Tue, 28 Mar 2023 00:53:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 118B8B81B8D;
-        Tue, 28 Mar 2023 07:53:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112E0C433EF;
-        Tue, 28 Mar 2023 07:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1679989981;
-        bh=dqwNFa1stJ5Bg3ANg2hkkKJfMFuZ91ZNlOhc2Hd0npU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=jPzR6xrn9qx5TmCMP9SGw18JotKSDd2t57lzVHdIbblgFwvaDFIDYoAjYmopFUvDD
-         NKZ3oaEP/GJdGpZuAvHaqqjTysTwXTqx+K1Ufrrkrp7jGNPmY+5QmHgjIhP7E/d0uW
-         LjKjkh5+zANj7PJyG4qy2xyehkJwkmyRauSIgsiRhAMVwiPjJrhu4pWrXZX3Nb7bOg
-         H8VwiBizA0ojB/naAU+6bUAufXqjPP6EOFhf7/yA5N3Pwl2XwjZDaFxQPyDhXRTihN
-         1uHayjvbYv0UhanDyc6sg6MAHrpt/eztbeTXsPRbeEjBr6WYVAxiV1jOCqh+6Lbo2d
-         wka3NVTJuEEBg==
-Message-ID: <f08e550b-2f15-0f84-c0ca-05e0b803481a@kernel.org>
-Date:   Tue, 28 Mar 2023 10:52:55 +0300
+        Tue, 28 Mar 2023 04:26:20 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26B72108
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Mar 2023 01:26:18 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id e11so11615047lji.8
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Mar 2023 01:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1679991977;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PDRltInM5WJ9EsRe1aHED6uAyo3C5Yid2wU2sfD+FuQ=;
+        b=xf1N4f40g5dlWOXx1m2107k+O9xGp0b/dRy3VZDmEhLHAUEcIfqd10COcvBhcIJdoh
+         JbrHW4vfhw06dOwOKgyIS89/poxt5NCajn2uQ8Agyz/nat6pv+DjEuRRcH6OWimdvcHf
+         T15xEqAYL/KI1RClzba3JQfEUSsdXg8ytL0+N32YPaqEDdsrUS9k5dXVrcJ+568P/mBV
+         4HFbxIMoG6UpWHkaNTttJepmKLX+3E6XQ0OHoPMrl0diURiB4YzM/5z9zR9jdK+/n05S
+         EIENYGR0/rX7/p35XK/XIgtJBwDYqCo7e1efH2nFqx6TzGOyJE33zYqsic8/OiZ7XXpV
+         u4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679991977;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDRltInM5WJ9EsRe1aHED6uAyo3C5Yid2wU2sfD+FuQ=;
+        b=S72mRZ5Rcsf0iN92d0277uQvfrLXH7hUAxrgTYMzxjMiYHePNa9UiSNUI1b64AsyBi
+         xLDqtnCnnuxtkiZWuiiZo64hDBcKbextROY0FJ3KGnVEx7wkiNvHkcCNc1HEfMfQNdtH
+         fSlUndLRRdbZ/8/gc/L6geyLhwEFHwCOnHqghmvrUkvNlGrJT3HBrmnttYDv2l0MQ3pX
+         r6/UIyL4xcsmFCLJLSF2vkCBgy/nHvESIl1cCBxUVH2fIuZrinXZS3U/BZkzmzvOIZe2
+         SWkN9uYaPfgVOLLrcitRLvpAxQM13UyUBS202gTFOOPXtm8u8qwntGHy8Z/27fifOqI5
+         nrPA==
+X-Gm-Message-State: AAQBX9eSpdysW54gXPOmkM/esqw/kAbXmkpBcxtk6E6ByFCoJd8r/iql
+        Bqks2MPWtZVM41+xojmfKuh1gw==
+X-Google-Smtp-Source: AKy350ZbzBBTPMRQhngLffQy7PzpnOgmvA3rMCtcDaCYu5RetayM/piJpi1q741WwacF0lDRfL5Q9w==
+X-Received: by 2002:a05:651c:201d:b0:2a3:108:d2e0 with SMTP id s29-20020a05651c201d00b002a30108d2e0mr3837706ljo.25.1679991977163;
+        Tue, 28 Mar 2023 01:26:17 -0700 (PDT)
+Received: from [192.168.1.101] (abxj225.neoplus.adsl.tpnet.pl. [83.9.3.225])
+        by smtp.gmail.com with ESMTPSA id o7-20020a2e90c7000000b002958c4e96fasm4259696ljg.3.2023.03.28.01.26.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Mar 2023 01:26:16 -0700 (PDT)
+Message-ID: <8f1a7383-ee64-3344-0971-8e2dc0277689@linaro.org>
+Date:   Tue, 28 Mar 2023 10:26:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v7 3/3] remoteproc: k3-r5: Use separate compatible string
- for TI AM62x SoC family
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v2 3/3] remoteproc: qcom: pas: refactor SLPI remoteproc
+ init
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Devarsh Thakkar <devarsht@ti.com>
-Cc:     andersson@kernel.org, devicetree@vger.kernel.org,
-        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
-        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com, hnagalla@ti.com,
-        praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
-        j-luthra@ti.com
-References: <20230310162544.3468365-1-devarsht@ti.com>
- <20230310162544.3468365-4-devarsht@ti.com> <20230317161757.GA2471094@p14s>
-From:   Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20230317161757.GA2471094@p14s>
+To:     Dylan Van Assche <me@dylanvanassche.be>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     Manivannan Sadhasivam <mani@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230327183736.496170-1-me@dylanvanassche.be>
+ <20230327183736.496170-4-me@dylanvanassche.be>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230327183736.496170-4-me@dylanvanassche.be>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Devarsh,
 
-On 17/03/2023 18:17, Mathieu Poirier wrote:
-> On Fri, Mar 10, 2023 at 09:55:44PM +0530, Devarsh Thakkar wrote:
->> AM62 and AM62A SoCs use single core R5F which is a new scenario
->> different than the one being used with CLUSTER_MODE_SINGLECPU which is
->> for utilizing a single core from a set of cores available in R5F cluster
->> present in the SoC.
->>
->> To support this single core scenario map it with newly defined
->> CLUSTER_MODE_SINGLECORE and use it when compatible is set to
->> ti,am62-r5fss.
->>
->> Also set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE config for
->> CLUSTER_MODE_SINGLECORE too as it is required by R5 core when it is
->> being as general purpose core instead of device manager.
->>
->> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->> ---
->> V2:
->> - Fix indentation and ordering issues as per review comments
->> V3:
->> - Change CLUSTER_MODE_NONE value to -1
->> V4:
->> - No change
->> V5:
->> - No change (fixing typo in email address)
->> V6:
->>    - Use CLUSTER_MODE_SINGLECORE for AM62x
->>    - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.
->> V7:
->>    - Simplify and rebase on top of base commit "[PATCH v7] remoteproc: k3-r5: Simplify cluster
->>      mode setting"
->> ---
->>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 59 +++++++++++++++++++-----
->>  1 file changed, 48 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> index c2ec0f432921..df32f6bc4325 100644
->> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->> @@ -71,14 +71,16 @@ struct k3_r5_mem {
->>  /*
->>   * All cluster mode values are not applicable on all SoCs. The following
->>   * are the modes supported on various SoCs:
->> - *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
->> - *   LockStep mode   : AM65x, J721E and J7200 SoCs
->> - *   Single-CPU mode : AM64x SoCs only
->> + *   Split mode       : AM65x, J721E, J7200 and AM64x SoCs
->> + *   LockStep mode    : AM65x, J721E and J7200 SoCs
->> + *   Single-CPU mode  : AM64x SoCs only
->> + *   Single-Core mode : AM62x, AM62A SoCs
->>   */
->>  enum cluster_mode {
->>  	CLUSTER_MODE_SPLIT = 0,
->>  	CLUSTER_MODE_LOCKSTEP,
->>  	CLUSTER_MODE_SINGLECPU,
->> +	CLUSTER_MODE_SINGLECORE
 
-What is the difference in device driver behaviour between
-SINGLECPU and SINGLECORE?
-
-If there is no difference then you should not introduce
-a new enum.
-
->>  };
->>  
->>  /**
->> @@ -86,11 +88,13 @@ enum cluster_mode {
->>   * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
->>   * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
->>   * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
->> + * @is_single_core: flag to denote if SoC/IP has only single core R5
->>   */
->>  struct k3_r5_soc_data {
->>  	bool tcm_is_double;
->>  	bool tcm_ecc_autoinit;
->>  	bool single_cpu_mode;
->> +	bool is_single_core;
->>  };
->>  
->>  /**
->> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>  
->>  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->> -	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
->> +	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
->> +	    cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>  		core = core0;
->>  	} else {
->>  		core = kproc->core;
->> @@ -877,7 +882,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>  		 * with the bit configured, so program it only on
->>  		 * permitted cores
->>  		 */
->> -		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
->> +		if (cluster->mode == CLUSTER_MODE_SINGLECPU ||
->> +		    cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>  			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
->>  		} else {
->>  			/*
->> @@ -1069,6 +1075,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
->>  
->>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>  	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
->> +	    cluster->mode == CLUSTER_MODE_SINGLECORE ||
->>  	    !cluster->soc_data->tcm_is_double)
->>  		return;
->>  
->> @@ -1145,6 +1152,8 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
->>  	if (cluster->soc_data->single_cpu_mode) {
->>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
->>  				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
->> +	} else if (cluster->soc_data->is_single_core) {
->> +		mode = CLUSTER_MODE_SINGLECORE;
+On 27.03.2023 20:37, Dylan Van Assche wrote:
+> SLPI remoteproc initialization is the same for SDM845, SM8150, SM8250,
+> SM8350 but is duplicated for each compatible. Refactor initialization
+> structs for these 4 compatibles as a single struct.
 > 
-> I have commented twice on this before - whether it is soc_data->single_cpu_mode or
-> soc_data->is_single_core, I don't want to see them used elsewhere than in a
-> single function.  Either in probe() or another function, use them once to set
-> cluster->mode and never again.  
+> Signed-off-by: Dylan Van Assche <me@dylanvanassche.be>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 66 ++++--------------------------
+>  1 file changed, 9 insertions(+), 57 deletions(-)
 > 
-> I will silently drop any other patchset that doesn't address this.
-> 
->>  	} else {
->>  		mode = cfg & PROC_BOOT_CFG_FLAG_R5_LOCKSTEP ?
->>  				CLUSTER_MODE_LOCKSTEP : CLUSTER_MODE_SPLIT;
->> @@ -1264,9 +1273,12 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->>  			goto err_add;
->>  		}
->>  
->> -		/* create only one rproc in lockstep mode or single-cpu mode */
->> +		/* create only one rproc in lockstep, single-cpu or
->> +		 * single core mode
->> +		 */
->>  		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->> -		    cluster->mode == CLUSTER_MODE_SINGLECPU)
->> +		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
->> +		    cluster->mode == CLUSTER_MODE_SINGLECORE)
->>  			break;
->>  	}
->>  
->> @@ -1709,19 +1721,33 @@ static int k3_r5_probe(struct platform_device *pdev)
->>  		/*
->>  		 * default to most common efuse configurations - Split-mode on AM64x
->>  		 * and LockStep-mode on all others
->> +		 * default to most common efuse configurations -
->> +		 * Split-mode on AM64x
->> +		 * Single core on AM62x
->> +		 * LockStep-mode on all others
->>  		 */
->> -		cluster->mode = data->single_cpu_mode ?
->> +		if (!data->is_single_core)
->> +			cluster->mode = data->single_cpu_mode ?
->>  					CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
->> +		else
->> +			cluster->mode = CLUSTER_MODE_SINGLECORE;
->>  	}
->>  
->> -	if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
->> +	if  ((cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) ||
->> +	     (cluster->mode == CLUSTER_MODE_SINGLECORE && !data->is_single_core)) {
->>  		dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
->>  		return -EINVAL;
->>  	}
->>  
->>  	num_cores = of_get_available_child_count(np);
->> -	if (num_cores != 2) {
->> -		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
->> +	if (num_cores != 2 && !data->is_single_core) {
->> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
->> +			num_cores);
->> +		return -ENODEV;
->> +	}
->> +
->> +	if (num_cores != 1 && data->is_single_core) {
->> +		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
->>  			num_cores);
->>  		return -ENODEV;
->>  	}
->> @@ -1763,18 +1789,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
->>  	.tcm_is_double = false,
->>  	.tcm_ecc_autoinit = false,
->>  	.single_cpu_mode = false,
->> +	.is_single_core = false,
->>  };
->>  
->>  static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
->>  	.tcm_is_double = true,
->>  	.tcm_ecc_autoinit = true,
->>  	.single_cpu_mode = false,
->> +	.is_single_core = false,
->>  };
->>  
->>  static const struct k3_r5_soc_data am64_soc_data = {
->>  	.tcm_is_double = true,
->>  	.tcm_ecc_autoinit = true,
->>  	.single_cpu_mode = true,
->> +	.is_single_core = false,
->> +};
->> +
->> +static const struct k3_r5_soc_data am62_soc_data = {
->> +	.tcm_is_double = false,
->> +	.tcm_ecc_autoinit = true,
->> +	.single_cpu_mode = false,
->> +	.is_single_core = true,
->>  };
->>  
->>  static const struct of_device_id k3_r5_of_match[] = {
->> @@ -1782,6 +1818,7 @@ static const struct of_device_id k3_r5_of_match[] = {
->>  	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
->>  	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
->>  	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
->> +	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
->>  	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
->>  	{ /* sentinel */ },
->>  };
->> -- 
->> 2.34.1
->>
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index d82b6f4bced4..d1c7baec4aca 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -1014,7 +1014,7 @@ static const struct adsp_data sc8180x_mpss_resource = {
+>  	.ssctl_id = 0x12,
+>  };
+>  
+> -static const struct adsp_data slpi_resource_init = {
+> +static const struct adsp_data msm_slpi_resource_init = {
+Clever idea, but I think naming it after the first SoC it was
+used on (msm8996) will be clearer, e.g. msm8960 doesn't have SLPI.
 
-cheers,
--roger
+>  		.crash_reason_smem = 424,
+>  		.firmware_name = "slpi.mdt",
+>  		.pas_id = 12,
+> @@ -1028,7 +1028,7 @@ static const struct adsp_data slpi_resource_init = {
+>  		.ssctl_id = 0x16,
+>  };
+>  
+> -static const struct adsp_data sdm845_slpi_resource = {
+> +static const struct adsp_data sm_slpi_resource_init = {
+And similarly here, the sdm845 name can stay.
+
+Konrad
+>  		.crash_reason_smem = 424,
+>  		.firmware_name = "slpi.mdt",
+>  		.pas_id = 12,
+> @@ -1044,54 +1044,6 @@ static const struct adsp_data sdm845_slpi_resource = {
+>  		.ssctl_id = 0x16,
+>  };
+>  
+> -static const struct adsp_data sm8150_slpi_resource = {
+> -		.crash_reason_smem = 424,
+> -		.firmware_name = "slpi.mdt",
+> -		.pas_id = 12,
+> -		.auto_boot = true,
+> -		.proxy_pd_names = (char*[]){
+> -			"lcx",
+> -			"lmx",
+> -			NULL
+> -		},
+> -		.load_state = "slpi",
+> -		.ssr_name = "dsps",
+> -		.sysmon_name = "slpi",
+> -		.ssctl_id = 0x16,
+> -};
+> -
+> -static const struct adsp_data sm8250_slpi_resource = {
+> -	.crash_reason_smem = 424,
+> -	.firmware_name = "slpi.mdt",
+> -	.pas_id = 12,
+> -	.auto_boot = true,
+> -	.proxy_pd_names = (char*[]){
+> -		"lcx",
+> -		"lmx",
+> -		NULL
+> -	},
+> -	.load_state = "slpi",
+> -	.ssr_name = "dsps",
+> -	.sysmon_name = "slpi",
+> -	.ssctl_id = 0x16,
+> -};
+> -
+> -static const struct adsp_data sm8350_slpi_resource = {
+> -	.crash_reason_smem = 424,
+> -	.firmware_name = "slpi.mdt",
+> -	.pas_id = 12,
+> -	.auto_boot = true,
+> -	.proxy_pd_names = (char*[]){
+> -		"lcx",
+> -		"lmx",
+> -		NULL
+> -	},
+> -	.load_state = "slpi",
+> -	.ssr_name = "dsps",
+> -	.sysmon_name = "slpi",
+> -	.ssctl_id = 0x16,
+> -};
+> -
+>  static const struct adsp_data wcss_resource_init = {
+>  	.crash_reason_smem = 421,
+>  	.firmware_name = "wcnss.mdt",
+> @@ -1200,9 +1152,9 @@ static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
+>  	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource},
+> -	{ .compatible = "qcom,msm8996-slpi-pil", .data = &slpi_resource_init},
+> +	{ .compatible = "qcom,msm8996-slpi-pil", .data = &msm_slpi_resource_init},
+>  	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8996_adsp_resource},
+> -	{ .compatible = "qcom,msm8998-slpi-pas", .data = &slpi_resource_init},
+> +	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm_slpi_resource_init},
+>  	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
+>  	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
+>  	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
+> @@ -1217,7 +1169,7 @@ static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
+>  	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
+> -	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource},
+> +	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sm_slpi_resource_init},
+>  	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
+>  	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
+>  	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
+> @@ -1228,17 +1180,17 @@ static const struct of_device_id adsp_of_match[] = {
+>  	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
+>  	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
+>  	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
+> -	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sm8150_slpi_resource},
+> +	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sm_slpi_resource_init},
+>  	{ .compatible = "qcom,sm8250-adsp-pas", .data = &sm8250_adsp_resource},
+>  	{ .compatible = "qcom,sm8250-cdsp-pas", .data = &sm8250_cdsp_resource},
+> -	{ .compatible = "qcom,sm8250-slpi-pas", .data = &sm8250_slpi_resource},
+> +	{ .compatible = "qcom,sm8250-slpi-pas", .data = &sm_slpi_resource_init},
+>  	{ .compatible = "qcom,sm8350-adsp-pas", .data = &sm8350_adsp_resource},
+>  	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
+> -	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sm8350_slpi_resource},
+> +	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sm_slpi_resource_init},
+>  	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
+>  	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
+>  	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
+> -	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm8350_slpi_resource},
+> +	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sm_slpi_resource_init},
+>  	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
+>  	{ .compatible = "qcom,sm8550-adsp-pas", .data = &sm8550_adsp_resource},
+>  	{ .compatible = "qcom,sm8550-cdsp-pas", .data = &sm8550_cdsp_resource},
