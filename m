@@ -2,308 +2,124 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31613C6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 16:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D26FC76196
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 16:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232787AbjC1QJE (ORCPT
+        id S229654AbjC1Qub (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 28 Mar 2023 12:09:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
+        Tue, 28 Mar 2023 12:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232220AbjC1QI6 (ORCPT
+        with ESMTP id S230119AbjC1Qua (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 28 Mar 2023 12:08:58 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 844F4E187;
-        Tue, 28 Mar 2023 09:08:48 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32SG8dQJ077852;
-        Tue, 28 Mar 2023 11:08:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1680019719;
-        bh=2VVefX+qtIG2/6m++0mwqFs5UXcjQLHh8rcU9bAgqPQ=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=iDgVk564h57MvTKhQ0UlO6gLAXRbECffcsufyKgG5RVpi9+fOM/iMwduw6LLzA/qd
-         w31DHLam2s5czxjOlmjViKq4WMr9m0/IE85pz/sUmGFekpNtXkkQOtUxefLzVaeNZV
-         rVdMoYIAbuvdn+ppYp+/ofcxEj0VbQwxvyy/RA00=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32SG8d0u089843
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Mar 2023 11:08:39 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 28
- Mar 2023 11:08:38 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 28 Mar 2023 11:08:39 -0500
-Received: from [10.250.148.71] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32SG8VLi016153;
-        Tue, 28 Mar 2023 11:08:32 -0500
-Message-ID: <1a24f99a-99c1-bf00-e5e7-1085cfd8faf5@ti.com>
-Date:   Tue, 28 Mar 2023 21:38:30 +0530
+        Tue, 28 Mar 2023 12:50:30 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2088.outbound.protection.outlook.com [40.107.102.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6CC1025F;
+        Tue, 28 Mar 2023 09:49:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jYCDPwmiIp8UMkU+2twGoDISShyzzZKWwDuSNwMJBMMmwV5CtV7dnWknLagtOxqs/5uy/v6QjgQ97xqy/MIDpBhBHSCvhHAJa7Ln/HxTSuP2rXTAgBr1OzLc5wCa02IStLMyrQhQ2ClK7/AAjZMM3tC7119wLVVwHZAgB5NnXiP77r6UcpEdBfeNQp/NMEMPjCF3m8h9c7Iz7BmjNyE3p49rOJpaa85iFCdA+H+rQCMdhcJweSrs9gQcTemunmLBGa7rcghJ8vZrk2tYddiwQv4TwhVWzAw5wASFvsiRawHrac6qzxsVbFPIOp/6BGWlV1N5r4T3wpHTKGw1ABXVmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LGzDELjD1JXsU+fFJ87JsZE+0HoE3FC/fuLUhKJSPo4=;
+ b=inVGWjz+PUIXAv2PyIjvZE5zYy2STLt5qaEDMDnMPIFZM0wfzMWEHCRrWiUnikdZZEru9Zlw05o6aDS4iWmevABCLQkquQKf9CMU5LzqSSyImGPJPA2FD9FEmlwPGHs2YclJp+h7UEwWwCSIN7S536ZeqpWGj8lA1KjjWcFuwuso0YjPDntci7pP32UzHaf089ndOn18ubUU18QNmfdKRKARki80El0xBGyc7b4tmDwlq0fVNdltFw9osY4LZ37x4HrPs4f8xBTyhUmhXrSHiBwRvqbew+fAu3pvaRkWWPBdh6WESL4L1rCzTaNxbnHxIgwRKxhY82hshIHTHSrwfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LGzDELjD1JXsU+fFJ87JsZE+0HoE3FC/fuLUhKJSPo4=;
+ b=UVeI+KXez8s4UuhcvPS4OtZbtFKAcvy43wqn2TLxilFRvfqckUF+jHvbU6tfttleMU8Eb1TRqayLniqi5nIP1y0Vj7EC5XgPBbS18/H+zUPWH1xW28ebitnL+V8sDL2okPo+5DLijRgkB+9c/9UglaZ3+/sauJsjZ4HlwrBap4g=
+Received: from BLAPR05CA0035.namprd05.prod.outlook.com (2603:10b6:208:335::16)
+ by CH2PR12MB4907.namprd12.prod.outlook.com (2603:10b6:610:68::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6222.30; Tue, 28 Mar
+ 2023 16:49:45 +0000
+Received: from BL02EPF000100D1.namprd05.prod.outlook.com
+ (2603:10b6:208:335:cafe::43) by BLAPR05CA0035.outlook.office365.com
+ (2603:10b6:208:335::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.18 via Frontend
+ Transport; Tue, 28 Mar 2023 16:49:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL02EPF000100D1.mail.protection.outlook.com (10.167.241.205) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6178.30 via Frontend Transport; Tue, 28 Mar 2023 16:49:45 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 28 Mar
+ 2023 11:49:44 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 28 Mar
+ 2023 11:49:44 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
+ Transport; Tue, 28 Mar 2023 11:49:44 -0500
+From:   Tanmay Shah <tanmay.shah@amd.com>
+To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tanmay Shah <tanmay.shah@amd.com>
+Subject: [PATCH v3 0/2] remoteproc: get rproc devices for clusters
+Date:   Tue, 28 Mar 2023 09:49:20 -0700
+Message-ID: <20230328164921.1895937-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v7 3/3] remoteproc: k3-r5: Use separate compatible string
- for TI AM62x SoC family
-Content-Language: en-US
-To:     Roger Quadros <rogerq@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
-        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>,
-        <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>
-References: <20230310162544.3468365-1-devarsht@ti.com>
- <20230310162544.3468365-4-devarsht@ti.com> <20230317161757.GA2471094@p14s>
- <f08e550b-2f15-0f84-c0ca-05e0b803481a@kernel.org>
-From:   Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <f08e550b-2f15-0f84-c0ca-05e0b803481a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF000100D1:EE_|CH2PR12MB4907:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6622305-543c-4b30-77e4-08db2fac6f68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: hkV4LJtH3XE01v2uAH9/UI6Ygy+JU6tiI7E1wzx/GSyWnYz+CsE7hEHsvvESRmAGsZEHXp541ieegE5V0wUoFQ5e9M641PUI92dSxlEOZK7po7Jh+uuEzLkdueqVE+K7SOau7ewTWsuVu1JeJEO5Qnihf9x3P1YF89rA+TSeTMxgeR/VX51gA5gEBr1Z6ObM42TvmFSSKjCupjeqaB5NY/SybmXIop3mnJ4QaFiTffnn85EXoEOqM2vUTVO6vbifc5ZFSMHTkdFJron4aJbJUMY0T3pjkJXL91o53FH3B7vT0smEP2VdfKfXkPqEPs6gK8juVXr1w5lO0i+fz09+pyPQWBLfEL8pI2g0Rvy/3GNiSYB30FKiwLUgdij/q4onnsJirZNx/2KRRow/TQOQW4Op88ftFYLH5YQ8vx3r+ISsGOxLjKygnEsf7cdRCkDJQpxXAbCLonNrgUSwrVu7BN1loft4Kt0aQXiWmUstsYpEZNgUg3PosoP1iPgoP1dzN7d+M5rwlFwfUqxP6RzR//tUAClTIMSZF4XUfQh5A1gj2BNn5ygg2gd50IQbZMjhQhcBGsGIYnwjxZ2xhnQBmsHUg/r4NTdz8uNRgvaihzMqBUdf0I6+SzhQIYKrNDk8x9h0p5EsTJdQhVNzDxY7g9wYOwV0UIcZPSi2Q7MbI79RqsZarRVa+sU9LXRtgRXPTrw7Rh0ezv8pumCxm1SQNfr4ZnXL3GiwMN6uZ7fwkeQ=
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(376002)(136003)(396003)(451199021)(46966006)(40470700004)(36840700001)(316002)(110136005)(40460700003)(36860700001)(478600001)(54906003)(356005)(81166007)(82740400003)(8936002)(82310400005)(36756003)(86362001)(5660300002)(70586007)(4744005)(4326008)(44832011)(70206006)(8676002)(2906002)(41300700001)(40480700001)(426003)(1076003)(186003)(6666004)(26005)(336012)(2616005)(83380400001)(47076005)(966005)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Mar 2023 16:49:45.2586
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6622305-543c-4b30-77e4-08db2fac6f68
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000100D1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4907
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Roger,
+This series extends original patch and makes rproc_put() work
+for clusters along with rprog_get_by_phandle().
 
-On 28/03/23 13:22, Roger Quadros wrote:
-> Hi Devarsh,
-> 
-> On 17/03/2023 18:17, Mathieu Poirier wrote:
->> On Fri, Mar 10, 2023 at 09:55:44PM +0530, Devarsh Thakkar wrote:
->>> AM62 and AM62A SoCs use single core R5F which is a new scenario
->>> different than the one being used with CLUSTER_MODE_SINGLECPU which is
->>> for utilizing a single core from a set of cores available in R5F cluster
->>> present in the SoC.
->>>
->>> To support this single core scenario map it with newly defined
->>> CLUSTER_MODE_SINGLECORE and use it when compatible is set to
->>> ti,am62-r5fss.
->>>
->>> Also set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE config for
->>> CLUSTER_MODE_SINGLECORE too as it is required by R5 core when it is
->>> being as general purpose core instead of device manager.
->>>
->>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->>> ---
->>> V2:
->>> - Fix indentation and ordering issues as per review comments
->>> V3:
->>> - Change CLUSTER_MODE_NONE value to -1
->>> V4:
->>> - No change
->>> V5:
->>> - No change (fixing typo in email address)
->>> V6:
->>>     - Use CLUSTER_MODE_SINGLECORE for AM62x
->>>     - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.
->>> V7:
->>>     - Simplify and rebase on top of base commit "[PATCH v7] remoteproc: k3-r5: Simplify cluster
->>>       mode setting"
->>> ---
->>>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 59 +++++++++++++++++++-----
->>>   1 file changed, 48 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> index c2ec0f432921..df32f6bc4325 100644
->>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>> @@ -71,14 +71,16 @@ struct k3_r5_mem {
->>>   /*
->>>    * All cluster mode values are not applicable on all SoCs. The following
->>>    * are the modes supported on various SoCs:
->>> - *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
->>> - *   LockStep mode   : AM65x, J721E and J7200 SoCs
->>> - *   Single-CPU mode : AM64x SoCs only
->>> + *   Split mode       : AM65x, J721E, J7200 and AM64x SoCs
->>> + *   LockStep mode    : AM65x, J721E and J7200 SoCs
->>> + *   Single-CPU mode  : AM64x SoCs only
->>> + *   Single-Core mode : AM62x, AM62A SoCs
->>>    */
->>>   enum cluster_mode {
->>>   	CLUSTER_MODE_SPLIT = 0,
->>>   	CLUSTER_MODE_LOCKSTEP,
->>>   	CLUSTER_MODE_SINGLECPU,
->>> +	CLUSTER_MODE_SINGLECORE
-> 
-> What is the difference in device driver behaviour between
-> SINGLECPU and SINGLECORE?
-> 
-Yeah there is quite a bit of common code flow between the two but the 
-fundamental difference is that you use CLUSTER_MODE_SINGLECPU when
-you have two R5F cores but you want to use only single R5F core albeit
-with using TCM of both the cores whereas CLUSTER_MODE_SINGLECORE is
-for the scenario where you have single core R5F's only.
+Changes in v3:
+  - remove module_put call that was introduced in the patch by mistake
+  - remove redundant check in rproc_put
+  - Add inline comments in rproc_put that explains functionality
 
-Also the bindings for CLUSTER_MODE_SINGLECPU are already upstream so did
-not want to break them either : 
-https://gitlab.com/linux-kernel/linux-next/-/blob/next-20230328/Documentation/devicetree/bindings/remoteproc/ti%2Ck3-r5f-rproc.yaml#L20.
+Changes in v2:
+  - Introduce patch to fix rproc_put as per modified rproc_get_by_phandle
 
-Regards
-Devarsh
+v1 is here: https://lore.kernel.org/all/20221214221643.1286585-1-mathieu.poirier@linaro.org/
 
-> If there is no difference then you should not introduce
-> a new enum. >
->>>   };
->>>   
->>>   /**
->>> @@ -86,11 +88,13 @@ enum cluster_mode {
->>>    * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
->>>    * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
->>>    * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
->>> + * @is_single_core: flag to denote if SoC/IP has only single core R5
->>>    */
->>>   struct k3_r5_soc_data {
->>>   	bool tcm_is_double;
->>>   	bool tcm_ecc_autoinit;
->>>   	bool single_cpu_mode;
->>> +	bool is_single_core;
->>>   };
->>>   
->>>   /**
->>> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>>   
->>>   	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->>>   	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>> -	    cluster->mode == CLUSTER_MODE_SINGLECPU) {
->>> +	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>> +	    cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>>   		core = core0;
->>>   	} else {
->>>   		core = kproc->core;
->>> @@ -877,7 +882,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>>   		 * with the bit configured, so program it only on
->>>   		 * permitted cores
->>>   		 */
->>> -		if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
->>> +		if (cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>> +		    cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>>   			set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
->>>   		} else {
->>>   			/*
->>> @@ -1069,6 +1075,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
->>>   
->>>   	if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>>   	    cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>> +	    cluster->mode == CLUSTER_MODE_SINGLECORE ||
->>>   	    !cluster->soc_data->tcm_is_double)
->>>   		return;
->>>   
->>> @@ -1145,6 +1152,8 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
->>>   	if (cluster->soc_data->single_cpu_mode) {
->>>   		mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
->>>   				CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
->>> +	} else if (cluster->soc_data->is_single_core) {
->>> +		mode = CLUSTER_MODE_SINGLECORE;
->>
->> I have commented twice on this before - whether it is soc_data->single_cpu_mode or
->> soc_data->is_single_core, I don't want to see them used elsewhere than in a
->> single function.  Either in probe() or another function, use them once to set
->> cluster->mode and never again.
->>
->> I will silently drop any other patchset that doesn't address this.
->>
->>>   	} else {
->>>   		mode = cfg & PROC_BOOT_CFG_FLAG_R5_LOCKSTEP ?
->>>   				CLUSTER_MODE_LOCKSTEP : CLUSTER_MODE_SPLIT;
->>> @@ -1264,9 +1273,12 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->>>   			goto err_add;
->>>   		}
->>>   
->>> -		/* create only one rproc in lockstep mode or single-cpu mode */
->>> +		/* create only one rproc in lockstep, single-cpu or
->>> +		 * single core mode
->>> +		 */
->>>   		if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>> -		    cluster->mode == CLUSTER_MODE_SINGLECPU)
->>> +		    cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>> +		    cluster->mode == CLUSTER_MODE_SINGLECORE)
->>>   			break;
->>>   	}
->>>   
->>> @@ -1709,19 +1721,33 @@ static int k3_r5_probe(struct platform_device *pdev)
->>>   		/*
->>>   		 * default to most common efuse configurations - Split-mode on AM64x
->>>   		 * and LockStep-mode on all others
->>> +		 * default to most common efuse configurations -
->>> +		 * Split-mode on AM64x
->>> +		 * Single core on AM62x
->>> +		 * LockStep-mode on all others
->>>   		 */
->>> -		cluster->mode = data->single_cpu_mode ?
->>> +		if (!data->is_single_core)
->>> +			cluster->mode = data->single_cpu_mode ?
->>>   					CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
->>> +		else
->>> +			cluster->mode = CLUSTER_MODE_SINGLECORE;
->>>   	}
->>>   
->>> -	if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
->>> +	if  ((cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) ||
->>> +	     (cluster->mode == CLUSTER_MODE_SINGLECORE && !data->is_single_core)) {
->>>   		dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
->>>   		return -EINVAL;
->>>   	}
->>>   
->>>   	num_cores = of_get_available_child_count(np);
->>> -	if (num_cores != 2) {
->>> -		dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
->>> +	if (num_cores != 2 && !data->is_single_core) {
->>> +		dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
->>> +			num_cores);
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	if (num_cores != 1 && data->is_single_core) {
->>> +		dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
->>>   			num_cores);
->>>   		return -ENODEV;
->>>   	}
->>> @@ -1763,18 +1789,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
->>>   	.tcm_is_double = false,
->>>   	.tcm_ecc_autoinit = false,
->>>   	.single_cpu_mode = false,
->>> +	.is_single_core = false,
->>>   };
->>>   
->>>   static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
->>>   	.tcm_is_double = true,
->>>   	.tcm_ecc_autoinit = true,
->>>   	.single_cpu_mode = false,
->>> +	.is_single_core = false,
->>>   };
->>>   
->>>   static const struct k3_r5_soc_data am64_soc_data = {
->>>   	.tcm_is_double = true,
->>>   	.tcm_ecc_autoinit = true,
->>>   	.single_cpu_mode = true,
->>> +	.is_single_core = false,
->>> +};
->>> +
->>> +static const struct k3_r5_soc_data am62_soc_data = {
->>> +	.tcm_is_double = false,
->>> +	.tcm_ecc_autoinit = true,
->>> +	.single_cpu_mode = false,
->>> +	.is_single_core = true,
->>>   };
->>>   
->>>   static const struct of_device_id k3_r5_of_match[] = {
->>> @@ -1782,6 +1818,7 @@ static const struct of_device_id k3_r5_of_match[] = {
->>>   	{ .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
->>>   	{ .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
->>>   	{ .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
->>> +	{ .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
->>>   	{ .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
->>>   	{ /* sentinel */ },
->>>   };
->>> -- 
->>> 2.34.1
->>>
-> 
-> cheers,
-> -roger
+Mathieu Poirier (1):
+  remoteproc: Make rproc_get_by_phandle() work for clusters
+
+Tanmay Shah (1):
+  remoteproc: enhance rproc_put() for clusters
+
+ drivers/remoteproc/remoteproc_core.c | 45 ++++++++++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 2 deletions(-)
+
+
+base-commit: e19967994d342a5986d950a1bfddf19d7e1191b7
+-- 
+2.25.1
+
