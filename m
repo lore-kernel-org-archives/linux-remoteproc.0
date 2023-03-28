@@ -2,158 +2,451 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25919C77B60
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 02:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74255C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 28 Mar 2023 02:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232707AbjC1C2Z (ORCPT
+        id S231587AbjC1CuB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 27 Mar 2023 22:28:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55760 "EHLO
+        Mon, 27 Mar 2023 22:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232630AbjC1C2O (ORCPT
+        with ESMTP id S229706AbjC1CuA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 27 Mar 2023 22:28:14 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A148026B7;
-        Mon, 27 Mar 2023 19:28:11 -0700 (PDT)
-X-UUID: 26765320cd1011edb6b9f13eb10bd0fe-20230328
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Wa16E7v4/oxQJBuGCKVIakPyTMFOlhEx6cQrvF1xl1I=;
-        b=i/6QvYGJ/nwbtf7tAIyDKkKd03T34WtGDZAp45cBrDgzzKAxoLF4T7cLajz13aq8uD+Sux39f+lhJzQtyqZFoem9gXP6qZsPBhDtI/+6N0aBjzEHuK08VRt0c5VlTZqyzxaWVnw4My0RIJu3YzGsEcm4Nq9IYfhTXfhV4zQP+VQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.22,REQID:30ef562f-305e-4f36-83a3-b639db92476f,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:95
-X-CID-INFO: VERSION:1.1.22,REQID:30ef562f-305e-4f36-83a3-b639db92476f,IP:0,URL
-        :0,TC:0,Content:0,EDM:0,RT:0,SF:95,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTION
-        :quarantine,TS:95
-X-CID-META: VersionHash:120426c,CLOUDID:72c8ac29-564d-42d9-9875-7c868ee415ec,B
-        ulkID:2303281027593YA70PBM,BulkQuantity:0,Recheck:0,SF:38|29|28|17|19|48,T
-        C:nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
-        ,OSI:0,OSA:0,AV:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-UUID: 26765320cd1011edb6b9f13eb10bd0fe-20230328
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-        (envelope-from <tinghan.shen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 782766213; Tue, 28 Mar 2023 10:27:56 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.25; Tue, 28 Mar 2023 10:27:56 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.25 via Frontend Transport; Tue, 28 Mar 2023 10:27:56 +0800
-From:   Tinghan Shen <tinghan.shen@mediatek.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v9 08/11] remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
-Date:   Tue, 28 Mar 2023 10:27:30 +0800
-Message-ID: <20230328022733.29910-9-tinghan.shen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20230328022733.29910-1-tinghan.shen@mediatek.com>
-References: <20230328022733.29910-1-tinghan.shen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Mon, 27 Mar 2023 22:50:00 -0400
+Received: from mail.nfschina.com (unknown [42.101.60.237])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0CCA1FCF;
+        Mon, 27 Mar 2023 19:49:58 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 506F61A00AF3;
+        Tue, 28 Mar 2023 10:50:05 +0800 (CST)
+X-Virus-Scanned: amavisd-new at nfschina.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (localhost.localdomain [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YYhYTM_4EMY7; Tue, 28 Mar 2023 10:50:03 +0800 (CST)
+Received: from localhost.localdomain (unknown [180.167.10.98])
+        (Authenticated sender: yuzhe@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id A877B1A00805;
+        Tue, 28 Mar 2023 10:50:02 +0800 (CST)
+From:   Yu Zhe <yuzhe@nfschina.com>
+To:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com
+Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org, liqiong@nfschina.com,
+        Yu Zhe <yuzhe@nfschina.com>
+Subject: [PATCH v4] remoteproc: remove unnecessary (void*) conversions
+Date:   Tue, 28 Mar 2023 10:49:07 +0800
+Message-Id: <20230328024907.29791-1-yuzhe@nfschina.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20230328015749.1608-1-yuzhe@nfschina.com>
+References: <20230328015749.1608-1-yuzhe@nfschina.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Because MT8195 SCP core 0 and core 1 both boot from head of SRAM and
-have the same viewpoint of SRAM, SCP has a "core 1 SRAM offset"
-configuration to control the access destination of SCP core 1 to boot
-core 1 from different SRAM location.
+Pointer variables of void * type do not require type cast.
 
-The "core 1 SRAM offset" configuration is composed by a range
-and an offset. It works like a simple memory mapped mechanism.
-When SCP core 1 accesses a SRAM address located in the range,
-the SCP bus adds the configured offset to the address to
-shift the physical destination address on SCP SRAM. This shifting is
-transparent to the software running on SCP core 1.
-
-Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Link: https://lore.kernel.org/oe-kbuild-all/202303272213.jOYrwBZu-lkp@intel.com/
+Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
 ---
- drivers/remoteproc/mtk_common.h |  7 +++++++
- drivers/remoteproc/mtk_scp.c    | 27 +++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
 
-diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index f1a021ad7f66..6861543a0825 100644
---- a/drivers/remoteproc/mtk_common.h
-+++ b/drivers/remoteproc/mtk_common.h
-@@ -65,6 +65,13 @@
- #define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
- #define MT8195_CORE1_WDT_CFG			0x20034
+v3->v4:
+ Drop wrong modifies
+---
+ drivers/remoteproc/da8xx_remoteproc.c   | 12 ++++++------
+ drivers/remoteproc/mtk_scp.c            | 12 ++++++------
+ drivers/remoteproc/qcom_q6v5_adsp.c     | 10 +++++-----
+ drivers/remoteproc/qcom_q6v5_mss.c      |  8 ++++----
+ drivers/remoteproc/qcom_q6v5_pas.c      | 14 +++++++-------
+ drivers/remoteproc/qcom_wcnss.c         | 10 +++++-----
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 16 ++++++++--------
+ 7 files changed, 41 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 98e0be9476a4..768217f0f5cd 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -84,7 +84,7 @@ struct da8xx_rproc {
+  */
+ static irqreturn_t handle_event(int irq, void *p)
+ {
+-	struct rproc *rproc = (struct rproc *)p;
++	struct rproc *rproc = p;
  
-+#define MT8195_SEC_CTRL				0x85000
-+#define MT8195_CORE_OFFSET_ENABLE_D		BIT(13)
-+#define MT8195_CORE_OFFSET_ENABLE_I		BIT(12)
-+#define MT8195_L2TCM_OFFSET_RANGE_0_LOW		0x850b0
-+#define MT8195_L2TCM_OFFSET_RANGE_0_HIGH	0x850b4
-+#define MT8195_L2TCM_OFFSET			0x850d0
-+
- #define SCP_FW_VER_LEN			32
- #define SCP_SHARE_BUFFER_SIZE		288
+ 	/* Process incoming buffers on all our vrings */
+ 	rproc_vq_interrupt(rproc, 0);
+@@ -104,8 +104,8 @@ static irqreturn_t handle_event(int irq, void *p)
+  */
+ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
+ {
+-	struct rproc *rproc = (struct rproc *)p;
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct rproc *rproc = p;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 	u32 chipsig;
  
+ 	chipsig = readl(drproc->chipsig);
+@@ -133,7 +133,7 @@ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
+ static int da8xx_rproc_start(struct rproc *rproc)
+ {
+ 	struct device *dev = rproc->dev.parent;
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 	struct clk *dsp_clk = drproc->dsp_clk;
+ 	struct reset_control *dsp_reset = drproc->dsp_reset;
+ 	int ret;
+@@ -183,7 +183,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
+ /* kick a virtqueue */
+ static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
+ {
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 
+ 	/* Interrupt remote proc */
+ 	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
+@@ -360,7 +360,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ static int da8xx_rproc_remove(struct platform_device *pdev)
+ {
+ 	struct rproc *rproc = platform_get_drvdata(pdev);
+-	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
++	struct da8xx_rproc *drproc = rproc->priv;
+ 	struct device *dev = &pdev->dev;
+ 
+ 	/*
 diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index ba931d550c1e..f74ee80838e9 100644
+index 0861b76f185f..e1d93e63d7df 100644
 --- a/drivers/remoteproc/mtk_scp.c
 +++ b/drivers/remoteproc/mtk_scp.c
-@@ -486,6 +486,9 @@ static int mt8195_scp_before_load(struct mtk_scp *scp)
+@@ -74,8 +74,8 @@ static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
  
- static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
+ static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
  {
-+	u32 sec_ctrl;
-+	struct mtk_scp *scp_c0;
-+
- 	scp_sram_power_on(scp->reg_base + MT8195_CPU1_SRAM_PD, 0);
+-	struct mtk_scp *scp = (struct mtk_scp *)priv;
+-	struct scp_run *run = (struct scp_run *)data;
++	struct mtk_scp *scp = priv;
++	struct scp_run *run = data;
  
- 	/* hold SCP in reset while loading FW. */
-@@ -494,6 +497,30 @@ static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->reg_base + MT8195_CORE1_MEM_ATT_PREDEF);
+ 	scp->run.signaled = run->signaled;
+ 	strscpy(scp->run.fw_ver, run->fw_ver, SCP_FW_VER_LEN);
+@@ -498,7 +498,7 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
  
-+	/*
-+	 * The L2TCM_OFFSET_RANGE and L2TCM_OFFSET shift the destination address
-+	 * on SRAM when SCP core 1 accesses SRAM.
-+	 *
-+	 * This configuration solves booting the SCP core 0 and core 1 from
-+	 * different SRAM address because core 0 and core 1 both boot from
-+	 * the head of SRAM by default. this must be configured before boot SCP core 1.
-+	 *
-+	 * The value of L2TCM_OFFSET_RANGE is from the viewpoint of SCP core 1.
-+	 * When SCP core 1 issues address within the range (L2TCM_OFFSET_RANGE),
-+	 * the address will be added with a fixed offset (L2TCM_OFFSET) on the bus.
-+	 * The shift action is tranparent to software.
-+	 */
-+	writel(0, scp->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_LOW);
-+	writel(scp->sram_size, scp->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_HIGH);
-+
-+	scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
-+	writel(scp->sram_phys - scp_c0->sram_phys, scp->reg_base + MT8195_L2TCM_OFFSET);
-+
-+	/* enable SRAM offset when fetching instruction and data */
-+	sec_ctrl = readl(scp->reg_base + MT8195_SEC_CTRL);
-+	sec_ctrl |= MT8195_CORE_OFFSET_ENABLE_I | MT8195_CORE_OFFSET_ENABLE_D;
-+	writel(sec_ctrl, scp->reg_base + MT8195_SEC_CTRL);
-+
- 	return 0;
+ static int scp_start(struct rproc *rproc)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
++	struct mtk_scp *scp = rproc->priv;
+ 	struct device *dev = scp->dev;
+ 	struct scp_run *run = &scp->run;
+ 	int ret;
+@@ -587,7 +587,7 @@ static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
+ 
+ static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
++	struct mtk_scp *scp = rproc->priv;
+ 
+ 	return scp->data->scp_da_to_va(scp, da, len);
  }
+@@ -627,7 +627,7 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
+ 
+ static int scp_stop(struct rproc *rproc)
+ {
+-	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
++	struct mtk_scp *scp = rproc->priv;
+ 	int ret;
+ 
+ 	ret = clk_prepare_enable(scp->clk);
+@@ -829,7 +829,7 @@ static int scp_probe(struct platform_device *pdev)
+ 	if (!rproc)
+ 		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
+ 
+-	scp = (struct mtk_scp *)rproc->priv;
++	scp = rproc->priv;
+ 	scp->rproc = rproc;
+ 	scp->dev = dev;
+ 	scp->data = of_device_get_match_data(dev);
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index 08d8dad22ca7..d546ab9dc141 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -321,7 +321,7 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
+ 
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
+@@ -379,7 +379,7 @@ static int adsp_map_carveout(struct rproc *rproc)
+ 
+ static int adsp_start(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 	unsigned int val;
+ 
+@@ -469,7 +469,7 @@ static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
+ 
+ static int adsp_stop(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int handover;
+ 	int ret;
+ 
+@@ -492,7 +492,7 @@ static int adsp_stop(struct rproc *rproc)
+ 
+ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int offset;
+ 
+ 	offset = da - adsp->mem_reloc;
+@@ -696,7 +696,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	rproc->has_iommu = desc->has_iommu;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	adsp = (struct qcom_adsp *)rproc->priv;
++	adsp = rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->info_name = desc->sysmon_name;
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ab053084f7a2..e7a67c8c16a0 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1562,7 +1562,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
+ 
+ static int q6v5_start(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 	int xfermemop_ret;
+ 	int ret;
+ 
+@@ -1604,7 +1604,7 @@ static int q6v5_start(struct rproc *rproc)
+ 
+ static int q6v5_stop(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
+@@ -1662,7 +1662,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
+ 
+ static unsigned long q6v5_panic(struct rproc *rproc)
+ {
+-	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
++	struct q6v5 *qproc = rproc->priv;
+ 
+ 	return qcom_q6v5_panic(&qproc->q6v5);
+ }
+@@ -1977,7 +1977,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	rproc->auto_boot = false;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	qproc = (struct q6v5 *)rproc->priv;
++	qproc = rproc->priv;
+ 	qproc->dev = &pdev->dev;
+ 	qproc->rproc = rproc;
+ 	qproc->hexagon_mdt_image = "modem.mdt";
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 0871108fb4dc..8eec88119fdd 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -186,7 +186,7 @@ static int adsp_shutdown_poll_decrypt(struct qcom_adsp *adsp)
+ 
+ static int adsp_unprepare(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 
+ 	/*
+ 	 * adsp_load() did pass pas_metadata to the SCM driver for storing
+@@ -203,7 +203,7 @@ static int adsp_unprepare(struct rproc *rproc)
+ 
+ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 
+ 	/* Store firmware handle to be used in adsp_start() */
+@@ -244,7 +244,7 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
+ 
+ static int adsp_start(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_q6v5_prepare(&adsp->q6v5);
+@@ -360,7 +360,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
+ 
+ static int adsp_stop(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int handover;
+ 	int ret;
+ 
+@@ -390,7 +390,7 @@ static int adsp_stop(struct rproc *rproc)
+ 
+ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 	int offset;
+ 
+ 	offset = da - adsp->mem_reloc;
+@@ -405,7 +405,7 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iom
+ 
+ static unsigned long adsp_panic(struct rproc *rproc)
+ {
+-	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
++	struct qcom_adsp *adsp = rproc->priv;
+ 
+ 	return qcom_q6v5_panic(&adsp->q6v5);
+ }
+@@ -683,7 +683,7 @@ static int adsp_probe(struct platform_device *pdev)
+ 	rproc->auto_boot = desc->auto_boot;
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	adsp = (struct qcom_adsp *)rproc->priv;
++	adsp = rproc->priv;
+ 	adsp->dev = &pdev->dev;
+ 	adsp->rproc = rproc;
+ 	adsp->minidump_id = desc->minidump_id;
+diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+index 9d4d04fff8c6..0fc317265064 100644
+--- a/drivers/remoteproc/qcom_wcnss.c
++++ b/drivers/remoteproc/qcom_wcnss.c
+@@ -154,7 +154,7 @@ static const struct wcnss_data pronto_v3_data = {
+ 
+ static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int ret;
+ 
+ 	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+@@ -227,7 +227,7 @@ static void wcnss_configure_iris(struct qcom_wcnss *wcnss)
+ 
+ static int wcnss_start(struct rproc *rproc)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int ret, i;
+ 
+ 	mutex_lock(&wcnss->iris_lock);
+@@ -293,7 +293,7 @@ static int wcnss_start(struct rproc *rproc)
+ 
+ static int wcnss_stop(struct rproc *rproc)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int ret;
+ 
+ 	if (wcnss->state) {
+@@ -320,7 +320,7 @@ static int wcnss_stop(struct rproc *rproc)
+ 
+ static void *wcnss_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+ {
+-	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
++	struct qcom_wcnss *wcnss = rproc->priv;
+ 	int offset;
+ 
+ 	offset = da - wcnss->mem_reloc;
+@@ -566,7 +566,7 @@ static int wcnss_probe(struct platform_device *pdev)
+ 	}
+ 	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
+ 
+-	wcnss = (struct qcom_wcnss *)rproc->priv;
++	wcnss = rproc->priv;
+ 	wcnss->dev = &pdev->dev;
+ 	wcnss->rproc = rproc;
+ 	platform_set_drvdata(pdev, wcnss);
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 2db57d394155..5dbc12bdc29e 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -242,7 +242,7 @@ static int add_mem_regions_carveout(struct rproc *rproc)
+ 	struct reserved_mem *rmem;
+ 	int i, num_mem_regions;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	num_mem_regions = r5_core->rmem_count;
+ 
+ 	for (i = 0; i < num_mem_regions; i++) {
+@@ -363,7 +363,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
+ 	size_t bank_size;
+ 	char *bank_name;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	dev = r5_core->dev;
+ 	num_banks = r5_core->tcm_bank_count;
+ 
+@@ -432,7 +432,7 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
+ 	u32 pm_domain_id;
+ 	char *bank_name;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	dev = r5_core->dev;
+ 
+ 	/* Go through zynqmp banks for r5 node */
+@@ -502,7 +502,7 @@ static int add_tcm_banks(struct rproc *rproc)
+ 	struct zynqmp_r5_core *r5_core;
+ 	struct device *dev;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 	if (!r5_core)
+ 		return -EINVAL;
+ 
+@@ -595,7 +595,7 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
+ 	u32 pm_domain_id;
+ 	int i;
+ 
+-	r5_core = (struct zynqmp_r5_core *)rproc->priv;
++	r5_core = rproc->priv;
+ 
+ 	for (i = 0; i < r5_core->tcm_bank_count; i++) {
+ 		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
+@@ -649,7 +649,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+ 	}
+ 
+ 	r5_rproc->auto_boot = false;
+-	r5_core = (struct zynqmp_r5_core *)r5_rproc->priv;
++	r5_core = r5_rproc->priv;
+ 	r5_core->dev = cdev;
+ 	r5_core->np = dev_of_node(cdev);
+ 	if (!r5_core->np) {
+@@ -978,12 +978,12 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+ 
+ static void zynqmp_r5_cluster_exit(void *data)
+ {
+-	struct platform_device *pdev = (struct platform_device *)data;
++	struct platform_device *pdev = data;
+ 	struct zynqmp_r5_cluster *cluster;
+ 	struct zynqmp_r5_core *r5_core;
+ 	int i;
+ 
+-	cluster = (struct zynqmp_r5_cluster *)platform_get_drvdata(pdev);
++	cluster = platform_get_drvdata(pdev);
+ 	if (!cluster)
+ 		return;
  
 -- 
-2.18.0
+2.11.0
 
