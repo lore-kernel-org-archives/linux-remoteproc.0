@@ -2,241 +2,124 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB7AC6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Mar 2023 18:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDC2C6FD18
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Mar 2023 23:21:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229929AbjC2SFA (ORCPT
+        id S230058AbjC2XVm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Mar 2023 14:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60168 "EHLO
+        Wed, 29 Mar 2023 19:21:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbjC2SE7 (ORCPT
+        with ESMTP id S229650AbjC2XVl (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Mar 2023 14:04:59 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6022F4C0D
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 11:04:54 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id v1so16660124wrv.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 11:04:54 -0700 (PDT)
+        Wed, 29 Mar 2023 19:21:41 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE0CD3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 16:21:40 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id h12-20020a17090aea8c00b0023d1311fab3so17833491pjz.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 16:21:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680113093;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KtcfMeR6JsK/ohHsKigxpHUI7/Wye0XruGbtWcUv7Oc=;
-        b=K/7LvcqNZLihJNNDYkxGRe7xK0ljMFDUuttYBiPZCAN75UiCaONgiHQxYkVhWMY2kg
-         lKCHhLrKkMcCBNU+1CL93NvVZapruIeA6ioQG+fV3hls6jGfzavHSmCupF6PIHNTqTVv
-         vTz+hYdlyakKrsi8T9EFgqnxO7DF4opGJNE0zhFVnFg+HJVir3qTBq0eaP3QZoha6kY5
-         52nNtvxgzg6uaP7eeE4duX5jEOZ1iqxuRABd72MVlXbzpkFn/7cWXljP+aoi5pHDe4Yd
-         hAuU0QPlo2byQJ06BRZWVmGod0KwyvPOVmx+yrOhVwpvShlxVEd953vHBpZgo3H9cV5U
-         mNaw==
+        d=linaro.org; s=google; t=1680132099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f8qo35RjOtl0n5atRPRPgKBlfz3NPfN74R+gLtzfZno=;
+        b=AN5lakAYU2YwPCZv5IXuj8GImGfbiFxNyWPd3Q/bKzGa9cJwZIwQykHgDyV13HGeIh
+         2+cvZJrWFjI1ZLBjtQ6fLRtYbrs3825m0X8pEzkaEOCKmyqbBltR9IbedLVRxERV6DED
+         L0j+Nl+K5VxahabLRNDTbJ+6dQiovSSGWtO5pytkfsab5slgNL4mFmI0m+bd0vChKsIL
+         8FnfO2py1Xy4T1PpSFdaLntUmgcRioQzFCBTHc2ABf/Hwf8bs45VseM/EAaXUG+gjIFz
+         smY8R09TRfqbAdea1J2LPVDk4+kXbz9mi8IZUfMGxEqaPTu1VwuLfT4sPJPEygZv9uhp
+         /Wdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680113093;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KtcfMeR6JsK/ohHsKigxpHUI7/Wye0XruGbtWcUv7Oc=;
-        b=2fQ/h2T7n1sGsPXMGYpnEx2TlyUn5aa5CQ8VeS+PgZibRXDB+alNLsPkGNgk/prJb+
-         7k7NyoFAqgxEnvtHimzGXz4vBexVFd2FIkqcQqQErkviMMStXqDpJsQIBj7YE1N/mLAi
-         r1ZO05tE+1hTvmRsJHkmfIqgK+J5lZoAvoz9LiZSxsW+u27/s38yv+u8avPeAQwcCQQh
-         aH6l2p2nlnao0Xyu2cPwXxwKHdJsSxfN1KayfxUn/PkuJ6TQ3fxIjoestYkPikgqC3li
-         dFfVFJXM2KdfWg7jDkGG2khgBgFSM2u7m7AEY+Y31hEWFY06asOvyuimk2W5ytPYYZko
-         nh/w==
-X-Gm-Message-State: AAQBX9fShpepqHsVPfWh8+gD+GR2nb+jwL6UjG1xxl+VC/mTP+0oNNL1
-        zmzZgGMaU9pkxDo/9gvEvBua3AyyxjgexsqImdufkIJUcVdVI3DP
-X-Google-Smtp-Source: AKy350apuid2c1v0d8ghzoDWeoKrqmDRDu9lZcUXGbMQYG7R5i/8vpaOWW8MowDPvQ1geBytZHu1YfNNKktLGYH5NMo=
-X-Received: by 2002:adf:f14b:0:b0:2e4:abb1:3e87 with SMTP id
- y11-20020adff14b000000b002e4abb13e87mr42744wro.2.1680113092851; Wed, 29 Mar
- 2023 11:04:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230323062451.2925996-1-danishanwar@ti.com> <20230323062451.2925996-6-danishanwar@ti.com>
- <20230327210429.GD3158115@p14s> <08cdd2b7-5152-8dec-aea2-ce286f8b97fb@ti.com>
-In-Reply-To: <08cdd2b7-5152-8dec-aea2-ce286f8b97fb@ti.com>
+        d=1e100.net; s=20210112; t=1680132099;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f8qo35RjOtl0n5atRPRPgKBlfz3NPfN74R+gLtzfZno=;
+        b=hF53R43D3Y4N85L2e+slWnIzmIwc8dGKyVdEgVIEJZ0K8ijHFTny1T1ErPoBBEGMlY
+         uEt6phpni5eiF1pVrgIpmiDMCWVJCGOA0OGFhrHOfo25vYOCsKGQexVKBRGdLiGMl9EQ
+         95QroDZtMNXcip6hn0q9jbGZC6HQSU8E+VNlMXnx5V6tE4NSv5QnbEhFaEdVV/5FV2HN
+         ofiebAsqBQm9xIlxQflWu/FM59JgbKH7PEFuxnCC4G1N8ERa8Qnll/FWFdpNxmy5L/KC
+         Elba6UmRtkmG7tm/aLsyTL1VPd/i3SegTmDpEVn2yIw28sdV74T+umkuiVvdLexX7gpD
+         E2DQ==
+X-Gm-Message-State: AAQBX9e0bTHh1EIujjfymKwl2D8k3RLzzTTntlJGfwjYRK1JZ3qub/O1
+        vPAOwXYclE+Zc0O9E2ndWJB57Q==
+X-Google-Smtp-Source: AKy350ZA6kI8qQtbdbWubei9iqLpNRAeZyjVREBI4+sHgF4nxpOQ5nQ6k6XwQ62VniYIKK3I3R7gcQ==
+X-Received: by 2002:a17:90b:1e4f:b0:23f:4dfd:4fc1 with SMTP id pi15-20020a17090b1e4f00b0023f4dfd4fc1mr23913116pjb.43.1680132099571;
+        Wed, 29 Mar 2023 16:21:39 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6b79:83ab:5e33:50a5])
+        by smtp.gmail.com with ESMTPSA id d5-20020a17090a2a4500b0023efa52d2b6sm1915857pjg.34.2023.03.29.16.21.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Mar 2023 16:21:39 -0700 (PDT)
+Date:   Wed, 29 Mar 2023 17:21:36 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Wed, 29 Mar 2023 12:04:42 -0600
-Message-ID: <CANLsYkwO62JH0TgOLwt08n8WdM_KsNYBCvUBOEsaxikJRfut0A@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH v5 5/5] soc: ti: pruss: Add helper
- functions to get/set PRUSS_CFG_GPMUX
-To:     Md Danish Anwar <a0501179@ti.com>
-Cc:     MD Danish Anwar <danishanwar@ti.com>,
-        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To:     Devarsh Thakkar <devarsht@ti.com>
+Cc:     andersson@kernel.org, devicetree@vger.kernel.org,
+        p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, s-anna@ti.com, hnagalla@ti.com,
+        praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+        j-luthra@ti.com, rogerq@kernel.org
+Subject: Re: [PATCH v8 0/3] Add single core R5F IPC for AM62 SoC family
+Message-ID: <20230329232136.GA3393405@p14s>
+References: <20230327152832.923480-1-devarsht@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230327152832.923480-1-devarsht@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 28 Mar 2023 at 05:28, Md Danish Anwar <a0501179@ti.com> wrote:
->
->
->
-> On 28/03/23 02:34, Mathieu Poirier wrote:
-> > On Thu, Mar 23, 2023 at 11:54:51AM +0530, MD Danish Anwar wrote:
-> >> From: Tero Kristo <t-kristo@ti.com>
-> >>
-> >> Add two new helper functions pruss_cfg_get_gpmux() & pruss_cfg_set_gpmux()
-> >> to get and set the GP MUX mode for programming the PRUSS internal wrapper
-> >> mux functionality as needed by usecases.
-> >>
-> >> Co-developed-by: Suman Anna <s-anna@ti.com>
-> >> Signed-off-by: Suman Anna <s-anna@ti.com>
-> >> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> >> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> >> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> >> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
-> >> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> >> Reviewed-by: Roger Quadros <rogerq@kernel.org>
-> >> ---
-> >>  drivers/soc/ti/pruss.c           | 44 ++++++++++++++++++++++++++++++++
-> >>  include/linux/remoteproc/pruss.h | 30 ++++++++++++++++++++++
-> >>  2 files changed, 74 insertions(+)
-> >>
-> >> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-> >> index ac415442e85b..3aa3c38c6c79 100644
-> >> --- a/drivers/soc/ti/pruss.c
-> >> +++ b/drivers/soc/ti/pruss.c
-> >> @@ -239,6 +239,50 @@ int pruss_cfg_xfr_enable(struct pruss *pruss, enum pru_type pru_type,
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(pruss_cfg_xfr_enable);
-> >>
-> >> +/**
-> >> + * pruss_cfg_get_gpmux() - get the current GPMUX value for a PRU device
-> >> + * @pruss: pruss instance
-> >> + * @pru_id: PRU identifier (0-1)
-> >> + * @mux: pointer to store the current mux value into
-> >> + *
-> >> + * Return: 0 on success, or an error code otherwise
-> >> + */
-> >> +int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 *mux)
-> >> +{
-> >> +    int ret = 0;
-> >> +    u32 val;
-> >> +
-> >> +    if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-> >> +            return -EINVAL;
-> >> +
-> >> +    ret = pruss_cfg_read(pruss, PRUSS_CFG_GPCFG(pru_id), &val);
-> >> +    if (!ret)
-> >> +            *mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
-> >> +                        PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-> >
-> > What happens if @mux is NULL?
->
-> @mux being null may result in some error here. I will add NULL check for mux
-> before storing the value in mux.
->
+On Mon, Mar 27, 2023 at 08:58:29PM +0530, Devarsh Thakkar wrote:
+> AM62 SoC family don't have a multicore R5F cluster,                             
+> instead they have a single core R5F.                                            
+> This enables IPC support with single core R5F for AM62                          
+> family of SoCs.
+> 
+> While at it, also simplify the cluster mode setting usage
+> by using soc_data specific checks only at probe.
+> 
+> Devarsh Thakkar (3):
+>   remoteproc: k3-r5: Simplify cluster mode setting usage
+>   dt-bindings: remoteproc: ti: Add new compatible for AM62 SoC family
+>   remoteproc: k3-r5: Use separate compatible string for TI AM62x SoC
+>     family
+> 
+>  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  |  76 ++++++++---
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c      | 127 ++++++++++++------
+>  2 files changed, 138 insertions(+), 65 deletions(-)
 
-It will result in a kernel panic.
+I have applied this set.
 
-> I will modify the above if condition to have NULL check for mux as well.
-> The if condition will look like below.
->
->         if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS || !mux)
->                 return -EINVAL;
->
+Thanks,
+Mathieu
 
-That will be fine.
-
-> Please let me know if this looks OK.
->
-> >
-> > Thanks,
-> > Mathieu
-> >
-> >
-> >> +    return ret;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(pruss_cfg_get_gpmux);
-> >> +
-> >> +/**
-> >> + * pruss_cfg_set_gpmux() - set the GPMUX value for a PRU device
-> >> + * @pruss: pruss instance
-> >> + * @pru_id: PRU identifier (0-1)
-> >> + * @mux: new mux value for PRU
-> >> + *
-> >> + * Return: 0 on success, or an error code otherwise
-> >> + */
-> >> +int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux)
-> >> +{
-> >> +    if (mux >= PRUSS_GP_MUX_SEL_MAX ||
-> >> +        pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-> >> +            return -EINVAL;
-> >> +
-> >> +    return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
-> >> +                            PRUSS_GPCFG_PRU_MUX_SEL_MASK,
-> >> +                            (u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(pruss_cfg_set_gpmux);
-> >> +
-> >>  static void pruss_of_free_clk_provider(void *data)
-> >>  {
-> >>      struct device_node *clk_mux_np = data;
-> >> diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
-> >> index bb001f712980..42f1586c62ac 100644
-> >> --- a/include/linux/remoteproc/pruss.h
-> >> +++ b/include/linux/remoteproc/pruss.h
-> >> @@ -16,6 +16,24 @@
-> >>
-> >>  #define PRU_RPROC_DRVNAME "pru-rproc"
-> >>
-> >> +/*
-> >> + * enum pruss_gp_mux_sel - PRUSS GPI/O Mux modes for the
-> >> + * PRUSS_GPCFG0/1 registers
-> >> + *
-> >> + * NOTE: The below defines are the most common values, but there
-> >> + * are some exceptions like on 66AK2G, where the RESERVED and MII2
-> >> + * values are interchanged. Also, this bit-field does not exist on
-> >> + * AM335x SoCs
-> >> + */
-> >> +enum pruss_gp_mux_sel {
-> >> +    PRUSS_GP_MUX_SEL_GP = 0,
-> >> +    PRUSS_GP_MUX_SEL_ENDAT,
-> >> +    PRUSS_GP_MUX_SEL_RESERVED,
-> >> +    PRUSS_GP_MUX_SEL_SD,
-> >> +    PRUSS_GP_MUX_SEL_MII2,
-> >> +    PRUSS_GP_MUX_SEL_MAX,
-> >> +};
-> >> +
-> >>  /*
-> >>   * enum pruss_gpi_mode - PRUSS GPI configuration modes, used
-> >>   *                   to program the PRUSS_GPCFG0/1 registers
-> >> @@ -110,6 +128,8 @@ int pruss_cfg_gpimode(struct pruss *pruss, enum pruss_pru_id pru_id,
-> >>  int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable);
-> >>  int pruss_cfg_xfr_enable(struct pruss *pruss, enum pru_type pru_type,
-> >>                       bool enable);
-> >> +int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 *mux);
-> >> +int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux);
-> >>
-> >>  #else
-> >>
-> >> @@ -152,6 +172,16 @@ static inline int pruss_cfg_xfr_enable(struct pruss *pruss,
-> >>      return ERR_PTR(-EOPNOTSUPP);
-> >>  }
-> >>
-> >> +static inline int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 *mux)
-> >> +{
-> >> +    return ERR_PTR(-EOPNOTSUPP);
-> >> +}
-> >> +
-> >> +static inline int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux)
-> >> +{
-> >> +    return ERR_PTR(-EOPNOTSUPP);
-> >> +}
-> >> +
-> >>  #endif /* CONFIG_TI_PRUSS */
-> >>
-> >>  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
-> >> --
-> >> 2.25.1
-> >>
->
-> --
-> Thanks and Regards,
-> Danish.
+> ---
+> V2:                                                                             
+>   - dt-bindings: Avoid acronyms, use "Device Manager" instead of "DM"           
+> V3:                                                                             
+>   - dt-bindings: Use separate if block for each compatible for                  
+>     ti,cluster-mode property                                                    
+>   - dt-bindings: Rearrange compatibles as per alphabatical order                
+> V4:                                                                             
+>   - dt-bindings: Place each enum in separate line in allOf                      
+> V5:                                                                             
+>   - No change (fixing typo in email address)                                    
+> V6:                                                                             
+>   - dt-bindings: Remove reviewed-by due to new modifications to use             
+>     cluster-mode=3                                                              
+>     Introduce Simplify cluster-mode setting preamble patch per review           
+> comments                                                                        
+>   - Use CLUSTER_MODE_SINGLECORE for AM62x                                       
+>   - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.                      
+> V7:                                                                             
+>   - Override to appropriate cluster-mode per firmware status flag               
+>     without checking soc_data                                                   
+>   - Set appropriate mode as default if not provided in DT                       
+>   - Check mode validity against SoC data during probe                           
+>   - Rebase on top of 6.3 linux-next                                             
+> V8:                                                                             
+>   - Avoid using soc_data while overriding cluster mode for IPC-only mode  
+> -- 
+> 2.34.1
+> 
