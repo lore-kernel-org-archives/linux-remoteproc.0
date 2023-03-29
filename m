@@ -2,336 +2,252 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B38DBC6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Mar 2023 13:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4091C77B61
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Mar 2023 17:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230086AbjC2NQV (ORCPT
+        id S230390AbjC2RVV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Mar 2023 09:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37352 "EHLO
+        Wed, 29 Mar 2023 13:21:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230125AbjC2NQU (ORCPT
+        with ESMTP id S231327AbjC2RVU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Mar 2023 09:16:20 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 690D4423A;
-        Wed, 29 Mar 2023 06:16:17 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32TDG7CO002426;
-        Wed, 29 Mar 2023 08:16:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1680095767;
-        bh=Kb+bU9aumKLwGlaVak3k1ORwadD53cqmSrx7lYUvUiA=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=xr1eKtEEK0RNCUip+ccE1hWfqlwzujSfi+6TU1xrNX7H6/uFtlGFJDPz/y2+riI5B
-         aASVj8A97ertKSCqZJPYkiLjcKZmBMQ8z7AxNwE663b1r/XJiTuyftkfPG2xt9MxAT
-         hfFtdouTWjXf+AyY3HZWclwNfsk/QF8/AlMXStNw=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32TDG6xD007358
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Mar 2023 08:16:06 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Wed, 29
- Mar 2023 08:16:06 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Wed, 29 Mar 2023 08:16:06 -0500
-Received: from [172.24.218.54] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32TDG0ih031074;
-        Wed, 29 Mar 2023 08:16:01 -0500
-Message-ID: <5382c15d-84dc-2255-8fc5-9192917fd4a5@ti.com>
-Date:   Wed, 29 Mar 2023 18:45:59 +0530
+        Wed, 29 Mar 2023 13:21:20 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E329561BA
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 10:21:10 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id u20so10755047pfk.12
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 10:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680110470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gutUdfZnZGJz80FqANIFD9947ke4IDEKtmrilCP9Asg=;
+        b=uoDbG/Rpr227AQzHfgKoRhIFdGyFDgE38i3QuNOHy1nfld7wbGPfRr9WuTb7JUFFRv
+         5S6IUx5xo+jHf4HvuW37VUeU6CjeSxv7fJ3Xu1nDh3LyiSPOzXMvxx0JIjwsnbFpR5AC
+         h/Z91+pEymRNAWpDcf4quLxfLPS/ZppPxHBsPd6hfixrDpFQxADA7OvslGVMam2HYR1T
+         0nFVVFHIHCF83Qv5QPd7b/P0qCSfQK+pmpvJ/1puEeX934QmJKrQHP2Z5Zao9n2DUn2L
+         gkMFCIk+VFJN3pd6/P7u1g6lhw+g3t5dv0cnLwPs3L7zuHEKDj2kEBENZazXqqiHwvYq
+         f/Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680110470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gutUdfZnZGJz80FqANIFD9947ke4IDEKtmrilCP9Asg=;
+        b=Ng5+KnRLNO4Q3OFbbZtO4+zUoat/XsI+S1gj75wuBJ7+NjqSsb+S1JDHnA6txSRBlf
+         6rS/1rGjLl/41JAIGeEoSC8BnN5d9L9O/4u0ovD+NGTaIxsipmSMeed9Yyh+rxYMx6nP
+         zXZTUVod6wDwcg5sF/p5j4UTL+ffGBvvCcABor/7gy1ILz6RbX4jWrUb4JOZCS2XrLyO
+         M73fT0TB+7jqd5I5JsA2m4etogewmYkc8KTejEoRx+krWqKmwiFgk07nUM3u45srVEXv
+         /ThfTHkdFtlh11oT9euGBCYftAqT/hADlr3X+NNg8osCHmbzBTx5NPtBKXwZgDuiLRWY
+         tQvQ==
+X-Gm-Message-State: AAQBX9dVF/ry7n05F71443yl9gHUKBhPy+lYV6Mv4x5arSi+TpElkrnA
+        Uo7ZQtlK/8fBZGiWhu7S+bZ8Ew==
+X-Google-Smtp-Source: AKy350Y9SAYyqMx62p9jKSnHqyG110Q69ooC4fMXn9Wpn/gCEjRcEAoPcOxIkdsN6Ap4ln7XX1StRw==
+X-Received: by 2002:aa7:99d2:0:b0:626:7c43:7cb8 with SMTP id v18-20020aa799d2000000b006267c437cb8mr19386468pfi.20.1680110470163;
+        Wed, 29 Mar 2023 10:21:10 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6b79:83ab:5e33:50a5])
+        by smtp.gmail.com with ESMTPSA id v3-20020a632f03000000b00502e6bfedc0sm21950243pgv.0.2023.03.29.10.21.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Mar 2023 10:21:09 -0700 (PDT)
+Date:   Wed, 29 Mar 2023 11:21:06 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH] dt-bindings: remoteproc: Drop unneeded quotes
+Message-ID: <20230329172106.GA3374270@p14s>
+References: <20230327170114.4102315-1-robh@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH v7 3/3] remoteproc: k3-r5: Use separate compatible string
- for TI AM62x SoC family
-Content-Language: en-US
-To:     Roger Quadros <rogerq@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <andersson@kernel.org>, <devicetree@vger.kernel.org>,
-        <p.zabel@pengutronix.de>, <linux-remoteproc@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <s-anna@ti.com>,
-        <hnagalla@ti.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>
-References: <20230310162544.3468365-1-devarsht@ti.com>
- <20230310162544.3468365-4-devarsht@ti.com> <20230317161757.GA2471094@p14s>
- <f08e550b-2f15-0f84-c0ca-05e0b803481a@kernel.org>
- <1a24f99a-99c1-bf00-e5e7-1085cfd8faf5@ti.com>
- <9acd96ab-7987-5cdc-e65b-9f055948eb4f@kernel.org>
-From:   Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <9acd96ab-7987-5cdc-e65b-9f055948eb4f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230327170114.4102315-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Roger,
-
-On 29/03/23 13:51, Roger Quadros wrote:
+On Mon, Mar 27, 2023 at 12:01:13PM -0500, Rob Herring wrote:
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.
 > 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../remoteproc/amlogic,meson-mx-ao-arc.yaml        |  4 ++--
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml         |  4 ++--
+>  .../bindings/remoteproc/ingenic,vpu.yaml           |  4 ++--
+>  .../bindings/remoteproc/qcom,glink-edge.yaml       |  2 +-
+>  .../bindings/remoteproc/qcom,smd-edge.yaml         |  2 +-
+>  .../bindings/remoteproc/renesas,rcar-rproc.yaml    |  4 ++--
+>  .../bindings/remoteproc/st,stm32-rproc.yaml        | 14 +++++++-------
+>  7 files changed, 17 insertions(+), 17 deletions(-)
+>
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+> diff --git a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> index 11cb42a3fdd1..3100cb870170 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/remoteproc/amlogic,meson-mx-ao-arc.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/remoteproc/amlogic,meson-mx-ao-arc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Amlogic Meson AO ARC Remote Processor
+>  
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index ae2eab4452dd..0c3910f152d1 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/remoteproc/fsl,imx-rproc.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/remoteproc/fsl,imx-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: NXP i.MX Co-Processor
+>  
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+> index 85b1e43cab08..8b55dbd909b0 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/remoteproc/ingenic,vpu.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/remoteproc/ingenic,vpu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Ingenic Video Processing Unit
+>  
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+> index 15e6851e1ff8..7b43ad3daa56 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+> @@ -15,7 +15,7 @@ description:
+>  
+>  properties:
+>    $nodename:
+> -    const: "glink-edge"
+> +    const: glink-edge
+>  
+>    apr:
+>      $ref: /schemas/soc/qcom/qcom,apr.yaml#
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml
+> index 7ec8a6b6682c..02c85b420c1a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,smd-edge.yaml
+> @@ -21,7 +21,7 @@ description:
+>  
+>  properties:
+>    $nodename:
+> -    const: "smd-edge"
+> +    const: smd-edge
+>  
+>    apr:
+>      $ref: /schemas/soc/qcom/qcom,apr.yaml#
+> diff --git a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+> index 7e0275d31a3c..4bea679a0f61 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/renesas,rcar-rproc.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/remoteproc/renesas,rcar-rproc.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/remoteproc/renesas,rcar-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: Renesas R-Car remote processor controller
+>  
+> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> index 66b1e3efdaa3..37c0d7b4ceef 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> @@ -1,8 +1,8 @@
+>  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>  %YAML 1.2
+>  ---
+> -$id: "http://devicetree.org/schemas/remoteproc/st,stm32-rproc.yaml#"
+> -$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +$id: http://devicetree.org/schemas/remoteproc/st,stm32-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: STMicroelectronics STM32 remote processor controller
+>  
+> @@ -29,7 +29,7 @@ properties:
+>  
+>    st,syscfg-holdboot:
+>      description: remote processor reset hold boot
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>      items:
+>        - items:
+>            - description: Phandle of syscon block
+> @@ -39,7 +39,7 @@ properties:
+>    st,syscfg-tz:
+>      description:
+>        Reference to the system configuration which holds the RCC trust zone mode
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>      items:
+>        - items:
+>            - description: Phandle of syscon block
+> @@ -95,7 +95,7 @@ properties:
+>        (see ../reserved-memory/reserved-memory.txt)
+>  
+>    st,syscfg-pdds:
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>      description: |
+>        Reference to the system configuration which holds the remote
+>      items:
+> @@ -105,7 +105,7 @@ properties:
+>            - description: The field mask of the PDDS selection
+>  
+>    st,syscfg-m4-state:
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>      description: |
+>        Reference to the tamp register which exposes the Cortex-M4 state.
+>      items:
+> @@ -115,7 +115,7 @@ properties:
+>            - description: The field mask of the Cortex-M4 state
+>  
+>    st,syscfg-rsc-tbl:
+> -    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+>      description: |
+>        Reference to the tamp register which references the Cortex-M4
+>        resource table address.
+> -- 
+> 2.39.2
 > 
-> On 28/03/2023 19:08, Devarsh Thakkar wrote:
->> Hi Roger,
->>
->> On 28/03/23 13:22, Roger Quadros wrote:
->>> Hi Devarsh,
->>>
->>> On 17/03/2023 18:17, Mathieu Poirier wrote:
->>>> On Fri, Mar 10, 2023 at 09:55:44PM +0530, Devarsh Thakkar wrote:
->>>>> AM62 and AM62A SoCs use single core R5F which is a new scenario
->>>>> different than the one being used with CLUSTER_MODE_SINGLECPU which is
->>>>> for utilizing a single core from a set of cores available in R5F cluster
->>>>> present in the SoC.
->>>>>
->>>>> To support this single core scenario map it with newly defined
->>>>> CLUSTER_MODE_SINGLECORE and use it when compatible is set to
->>>>> ti,am62-r5fss.
->>>>>
->>>>> Also set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE config for
->>>>> CLUSTER_MODE_SINGLECORE too as it is required by R5 core when it is
->>>>> being as general purpose core instead of device manager.
->>>>>
->>>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->>>>> ---
->>>>> V2:
->>>>> - Fix indentation and ordering issues as per review comments
->>>>> V3:
->>>>> - Change CLUSTER_MODE_NONE value to -1
->>>>> V4:
->>>>> - No change
->>>>> V5:
->>>>> - No change (fixing typo in email address)
->>>>> V6:
->>>>>      - Use CLUSTER_MODE_SINGLECORE for AM62x
->>>>>      - Set PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE for single core.
->>>>> V7:
->>>>>      - Simplify and rebase on top of base commit "[PATCH v7] remoteproc: k3-r5: Simplify cluster
->>>>>        mode setting"
->>>>> ---
->>>>>    drivers/remoteproc/ti_k3_r5_remoteproc.c | 59 +++++++++++++++++++-----
->>>>>    1 file changed, 48 insertions(+), 11 deletions(-)
->>>>>
->>>>> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>>> index c2ec0f432921..df32f6bc4325 100644
->>>>> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>>> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
->>>>> @@ -71,14 +71,16 @@ struct k3_r5_mem {
->>>>>    /*
->>>>>     * All cluster mode values are not applicable on all SoCs. The following
->>>>>     * are the modes supported on various SoCs:
->>>>> - *   Split mode      : AM65x, J721E, J7200 and AM64x SoCs
->>>>> - *   LockStep mode   : AM65x, J721E and J7200 SoCs
->>>>> - *   Single-CPU mode : AM64x SoCs only
->>>>> + *   Split mode       : AM65x, J721E, J7200 and AM64x SoCs
->>>>> + *   LockStep mode    : AM65x, J721E and J7200 SoCs
->>>>> + *   Single-CPU mode  : AM64x SoCs only
->>>>> + *   Single-Core mode : AM62x, AM62A SoCs
->>>>>     */
->>>>>    enum cluster_mode {
->>>>>        CLUSTER_MODE_SPLIT = 0,
->>>>>        CLUSTER_MODE_LOCKSTEP,
->>>>>        CLUSTER_MODE_SINGLECPU,
->>>>> +    CLUSTER_MODE_SINGLECORE
->>>
->>> What is the difference in device driver behaviour between
->>> SINGLECPU and SINGLECORE?
->>>
->> Yeah there is quite a bit of common code flow between the two but the fundamental difference is that you use CLUSTER_MODE_SINGLECPU when
-> 
-> I still didn't get what is the difference between the two from SW point of view.
-> What happens if you just use CLUSTER_MODE_SINGLECPU for AM62 SoC?
-Talking about mere functionality, I think there are some checks in 
-driver which expect two cores for this (since CLUSTER_MODE_SINGLECPU is 
-to select one out of two cores as mentioned earlier) but if those checks 
-are handled it would be possible to use am64 compatible and achieve the 
-functionality in am62 and I do remember running it with some hacks to 
-bypass those checks during pre-silicon.
-
-But this doesn't seem to be proper way since bindings say 
-CLUSTER_MODE_SINGLECPU is for dual core scenarios as mentioned in 
-DT-binding [1] :
-
-"AM64x SoCs do not support LockStep mode, but rather a new non-safety 
-mode called "Single-CPU" mode, where only Core0 is used, but with 
-ability to use Core1's TCMs as well."
-
-and to use it for single core scenarios would conflict above definition.
-
-I had also discussed this in past offline with Suman who is the author 
-of this driver and we aligned on not using CLUSTER_MODE_SINGLECPU for 
-am62 due to above reasons.
-
-[1]: 
-https://gitlab.com/linux-kernel/linux-next/-/blob/next-20230328/Documentation/devicetree/bindings/remoteproc/ti%2Ck3-r5f-rproc.yaml#L20
-
-Regards
-Devarsh
-
-
-> 
->> you have two R5F cores but you want to use only single R5F core albeit
->> with using TCM of both the cores whereas CLUSTER_MODE_SINGLECORE is
->> for the scenario where you have single core R5F's only.
->>
->> Also the bindings for CLUSTER_MODE_SINGLECPU are already upstream so did
->> not want to break them either : https://gitlab.com/linux-kernel/linux-next/-/blob/next-20230328/Documentation/devicetree/bindings/remoteproc/ti%2Ck3-r5f-rproc.yaml#L20.
->>
->> Regards
->> Devarsh
->>
->>> If there is no difference then you should not introduce
->>> a new enum. >
->>>>>    };
->>>>>      /**
->>>>> @@ -86,11 +88,13 @@ enum cluster_mode {
->>>>>     * @tcm_is_double: flag to denote the larger unified TCMs in certain modes
->>>>>     * @tcm_ecc_autoinit: flag to denote the auto-initialization of TCMs for ECC
->>>>>     * @single_cpu_mode: flag to denote if SoC/IP supports Single-CPU mode
->>>>> + * @is_single_core: flag to denote if SoC/IP has only single core R5
->>>>>     */
->>>>>    struct k3_r5_soc_data {
->>>>>        bool tcm_is_double;
->>>>>        bool tcm_ecc_autoinit;
->>>>>        bool single_cpu_mode;
->>>>> +    bool is_single_core;
->>>>>    };
->>>>>      /**
->>>>> @@ -838,7 +842,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>>>>          core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
->>>>>        if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>>>> -        cluster->mode == CLUSTER_MODE_SINGLECPU) {
->>>>> +        cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>>>> +        cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>>>>            core = core0;
->>>>>        } else {
->>>>>            core = kproc->core;
->>>>> @@ -877,7 +882,8 @@ static int k3_r5_rproc_configure(struct k3_r5_rproc *kproc)
->>>>>             * with the bit configured, so program it only on
->>>>>             * permitted cores
->>>>>             */
->>>>> -        if (cluster->mode == CLUSTER_MODE_SINGLECPU) {
->>>>> +        if (cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>>>> +            cluster->mode == CLUSTER_MODE_SINGLECORE) {
->>>>>                set_cfg = PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE;
->>>>>            } else {
->>>>>                /*
->>>>> @@ -1069,6 +1075,7 @@ static void k3_r5_adjust_tcm_sizes(struct k3_r5_rproc *kproc)
->>>>>          if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>>>>            cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>>>> +        cluster->mode == CLUSTER_MODE_SINGLECORE ||
->>>>>            !cluster->soc_data->tcm_is_double)
->>>>>            return;
->>>>>    @@ -1145,6 +1152,8 @@ static int k3_r5_rproc_configure_mode(struct k3_r5_rproc *kproc)
->>>>>        if (cluster->soc_data->single_cpu_mode) {
->>>>>            mode = cfg & PROC_BOOT_CFG_FLAG_R5_SINGLE_CORE ?
->>>>>                    CLUSTER_MODE_SINGLECPU : CLUSTER_MODE_SPLIT;
->>>>> +    } else if (cluster->soc_data->is_single_core) {
->>>>> +        mode = CLUSTER_MODE_SINGLECORE;
->>>>
->>>> I have commented twice on this before - whether it is soc_data->single_cpu_mode or
->>>> soc_data->is_single_core, I don't want to see them used elsewhere than in a
->>>> single function.  Either in probe() or another function, use them once to set
->>>> cluster->mode and never again.
->>>>
->>>> I will silently drop any other patchset that doesn't address this.
->>>>
->>>>>        } else {
->>>>>            mode = cfg & PROC_BOOT_CFG_FLAG_R5_LOCKSTEP ?
->>>>>                    CLUSTER_MODE_LOCKSTEP : CLUSTER_MODE_SPLIT;
->>>>> @@ -1264,9 +1273,12 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->>>>>                goto err_add;
->>>>>            }
->>>>>    -        /* create only one rproc in lockstep mode or single-cpu mode */
->>>>> +        /* create only one rproc in lockstep, single-cpu or
->>>>> +         * single core mode
->>>>> +         */
->>>>>            if (cluster->mode == CLUSTER_MODE_LOCKSTEP ||
->>>>> -            cluster->mode == CLUSTER_MODE_SINGLECPU)
->>>>> +            cluster->mode == CLUSTER_MODE_SINGLECPU ||
->>>>> +            cluster->mode == CLUSTER_MODE_SINGLECORE)
->>>>>                break;
->>>>>        }
->>>>>    @@ -1709,19 +1721,33 @@ static int k3_r5_probe(struct platform_device *pdev)
->>>>>            /*
->>>>>             * default to most common efuse configurations - Split-mode on AM64x
->>>>>             * and LockStep-mode on all others
->>>>> +         * default to most common efuse configurations -
->>>>> +         * Split-mode on AM64x
->>>>> +         * Single core on AM62x
->>>>> +         * LockStep-mode on all others
->>>>>             */
->>>>> -        cluster->mode = data->single_cpu_mode ?
->>>>> +        if (!data->is_single_core)
->>>>> +            cluster->mode = data->single_cpu_mode ?
->>>>>                        CLUSTER_MODE_SPLIT : CLUSTER_MODE_LOCKSTEP;
->>>>> +        else
->>>>> +            cluster->mode = CLUSTER_MODE_SINGLECORE;
->>>>>        }
->>>>>    -    if (cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) {
->>>>> +    if  ((cluster->mode == CLUSTER_MODE_SINGLECPU && !data->single_cpu_mode) ||
->>>>> +         (cluster->mode == CLUSTER_MODE_SINGLECORE && !data->is_single_core)) {
->>>>>            dev_err(dev, "Cluster mode = %d is not supported on this SoC\n", cluster->mode);
->>>>>            return -EINVAL;
->>>>>        }
->>>>>          num_cores = of_get_available_child_count(np);
->>>>> -    if (num_cores != 2) {
->>>>> -        dev_err(dev, "MCU cluster requires both R5F cores to be enabled, num_cores = %d\n",
->>>>> +    if (num_cores != 2 && !data->is_single_core) {
->>>>> +        dev_err(dev, "MCU cluster requires both R5F cores to be enabled but num_cores is set to = %d\n",
->>>>> +            num_cores);
->>>>> +        return -ENODEV;
->>>>> +    }
->>>>> +
->>>>> +    if (num_cores != 1 && data->is_single_core) {
->>>>> +        dev_err(dev, "SoC supports only single core R5 but num_cores is set to %d\n",
->>>>>                num_cores);
->>>>>            return -ENODEV;
->>>>>        }
->>>>> @@ -1763,18 +1789,28 @@ static const struct k3_r5_soc_data am65_j721e_soc_data = {
->>>>>        .tcm_is_double = false,
->>>>>        .tcm_ecc_autoinit = false,
->>>>>        .single_cpu_mode = false,
->>>>> +    .is_single_core = false,
->>>>>    };
->>>>>      static const struct k3_r5_soc_data j7200_j721s2_soc_data = {
->>>>>        .tcm_is_double = true,
->>>>>        .tcm_ecc_autoinit = true,
->>>>>        .single_cpu_mode = false,
->>>>> +    .is_single_core = false,
->>>>>    };
->>>>>      static const struct k3_r5_soc_data am64_soc_data = {
->>>>>        .tcm_is_double = true,
->>>>>        .tcm_ecc_autoinit = true,
->>>>>        .single_cpu_mode = true,
->>>>> +    .is_single_core = false,
->>>>> +};
->>>>> +
->>>>> +static const struct k3_r5_soc_data am62_soc_data = {
->>>>> +    .tcm_is_double = false,
->>>>> +    .tcm_ecc_autoinit = true,
->>>>> +    .single_cpu_mode = false,
->>>>> +    .is_single_core = true,
->>>>>    };
->>>>>      static const struct of_device_id k3_r5_of_match[] = {
->>>>> @@ -1782,6 +1818,7 @@ static const struct of_device_id k3_r5_of_match[] = {
->>>>>        { .compatible = "ti,j721e-r5fss", .data = &am65_j721e_soc_data, },
->>>>>        { .compatible = "ti,j7200-r5fss", .data = &j7200_j721s2_soc_data, },
->>>>>        { .compatible = "ti,am64-r5fss",  .data = &am64_soc_data, },
->>>>> +    { .compatible = "ti,am62-r5fss",  .data = &am62_soc_data, },
->>>>>        { .compatible = "ti,j721s2-r5fss",  .data = &j7200_j721s2_soc_data, },
->>>>>        { /* sentinel */ },
->>>>>    };
->>>>> -- 
->>>>> 2.34.1
->>>>>
->>>
-> 
-> --
-> cheers,
-> -roger
