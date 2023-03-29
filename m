@@ -2,485 +2,321 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FDDC74A5B
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Mar 2023 17:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E928C6FD18
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 29 Mar 2023 17:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjC2RqQ (ORCPT
+        id S229788AbjC2R71 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 29 Mar 2023 13:46:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39388 "EHLO
+        Wed, 29 Mar 2023 13:59:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbjC2RqP (ORCPT
+        with ESMTP id S229811AbjC2R70 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 29 Mar 2023 13:46:15 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1325D59E5
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 10:46:12 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id le6so15648876plb.12
-        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 10:46:12 -0700 (PDT)
+        Wed, 29 Mar 2023 13:59:26 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34AB935A7
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 10:59:22 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id e18so16629227wra.9
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Mar 2023 10:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680111971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ya68Y7BreYgp2xmW7R1eW3EwXPKdktm2mDTZy/1T50=;
-        b=dMJU+o+oi5o+BlxycSkAJ0Nk546Id6eOpKoQNZB4kNWrxcy8P5Z0Hpe1OpZa2jlPrs
-         86jfgpEltiydLSAwjAG0XTgcr9hNJY1nqiTUR8f8np+AteK+/jJmXPlZByoJTpNQewGB
-         4TPsQgzXU3IGOsIMY5xxs0JX00o+drI1epvCGJpQLLIlOyiGjtxDlVZb/gOlxptYYtrS
-         VZIg1/885K+tiiuxmBebY8YUEmLuREKhOizD0K2sr4jVyIHuCojsXp/OqJm+Mw7J1+lm
-         WZRMBk946CXWNCUoZf/c11Ma9Jq7EFi11/CRC9zFsPbPmMcmhC5GCWemYXxBhyJH7HoG
-         NxuA==
+        d=linaro.org; s=google; t=1680112760;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OJ9nha7AgNmpmpnP4RutaTZzBRrwel6kV4lGuwfHlf8=;
+        b=aLjxdVe/40YaHJHwB6i2tMNnpYc9l4e81zyuv2IPGWApYcCl/erSxKBA2of1bZBHSZ
+         UXzeAjnb1qRkpNRTSjcO0qJ1SrrLsImL1FV2ltdJA66H0R9FFrnTOlufw5jfVbbWj4ls
+         AahADSqGwloxFoHk+PS66/3/6lM0SD9rW8QvEuMILlXm3F8tanC8E2ZjxUCFFanEpa7r
+         YEfVQbaqrqtzv7TfZbLbHdIpq/9Q4+QCC2q5QqBrZXEyPISFLZoBYpL5SzNUlScgqutK
+         F4OpjyeZCMugC0eWcNDcDKMkzY4EXZP0Fshf/4PPBcbQ1PkXLJXg8EIFw4hOJBeVgRjh
+         BX3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680111971;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ya68Y7BreYgp2xmW7R1eW3EwXPKdktm2mDTZy/1T50=;
-        b=J+3bE+sEJCBpGKuYdl5lkXBRG2WqKEPqMcg7WduCoqU4+cqMg6opvNLygQrQsfB90p
-         qOrpJ2kHYOHP6N6fvjWKbN/ZX7FXaLREbmgcI4WK9VqlJdFwIYGyU3/odX8ShN9+VFhi
-         wVnl1JigNddLIhxyBsMOQh9sVeu3EtFHyt0e9FUacnobQDK6pSBGWcETd6udF6XITulc
-         ri90Bi+v8slkbHFw7vEQBbHFc42eg2isCDNyjhLemrJMh4tuAFPxiWj7VBtPK5aJ7w3+
-         sFOVbDM/qIRyJTXOO6FOtjUuig1zm7162cABQyUbVJgqt7SlHluvCyS43tiOJNN9+pTW
-         foQQ==
-X-Gm-Message-State: AAQBX9dpM5MGLSCFbkjN0KKu1tH2W5IwY+GxLfsR2W8LlGaYV61blNpc
-        05m8WJ0vkspc5CefA4SjPcktrw==
-X-Google-Smtp-Source: AKy350Y7TSUjpvy5YPG38ymSokgkfiQGqTlx//VBy8VXDlp6/7VnzWJyCDUsV2h7z1S6+WJBJJyJ4w==
-X-Received: by 2002:a17:903:138e:b0:1a2:3ddc:6286 with SMTP id jx14-20020a170903138e00b001a23ddc6286mr12485764plb.49.1680111971487;
-        Wed, 29 Mar 2023 10:46:11 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:6b79:83ab:5e33:50a5])
-        by smtp.gmail.com with ESMTPSA id v15-20020a1709028d8f00b001a055028d1asm23327162plo.1.2023.03.29.10.46.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Mar 2023 10:46:11 -0700 (PDT)
-Date:   Wed, 29 Mar 2023 11:46:08 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Yu Zhe <yuzhe@nfschina.com>
-Cc:     andersson@kernel.org, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, agross@kernel.org,
-        konrad.dybcio@linaro.org, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@foss.st.com, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel-janitors@vger.kernel.org, liqiong@nfschina.com
-Subject: Re: [PATCH v4] remoteproc: remove unnecessary (void*) conversions
-Message-ID: <20230329174608.GB3374270@p14s>
-References: <20230328015749.1608-1-yuzhe@nfschina.com>
- <20230328024907.29791-1-yuzhe@nfschina.com>
+        d=1e100.net; s=20210112; t=1680112760;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OJ9nha7AgNmpmpnP4RutaTZzBRrwel6kV4lGuwfHlf8=;
+        b=t1B8+tzHm+OBHb0yPBTYmVaWkTjmZV7jHbT447Nn95lxVgWh/JCoCqAhxENriFDsx4
+         TKb6FcyYDoSuhcADmkZT1zLO9xeKgDKh8ttAn/EKJj82Ih3Mx7Wx1BBVyiVqOdSt1ZQK
+         zdqrlSPJZXWe9RvY2qCQ6+0kbWyahaVBhJA6deF7dADcZ5i+jm5emWrCI20oRXaRy7xG
+         DS5kiyNTyjTl9Qvnys7eqbo7NY5Oz57Gg3r6JXe2CpLdIqP37R0wNd1WtX3qKjKInax2
+         DFRAXzTIyd3u1IuJ2jlSmzUoyKMz88AU+3e94s/l3GjcWCsElZkcYIdJL8GBKu2Jmlon
+         PrkA==
+X-Gm-Message-State: AAQBX9fHodhhqViArBgQTtIlqcPucmi35TAwrcrebiT/wruiZM6aenZk
+        vGbjHUBcICu2HKv5xFIOubt/HQf1C+U2aWGGI1n16Q==
+X-Google-Smtp-Source: AKy350akP4/NQIx5w9BQvswFfGlbVMz6q4mb9WlohNsWv2IEhZG0HeS9p9EvXUCf7t0U8BCXIWGxBfe111LBZrdT+R0=
+X-Received: by 2002:adf:ec82:0:b0:2d4:167e:854d with SMTP id
+ z2-20020adfec82000000b002d4167e854dmr4219882wrn.2.1680112760643; Wed, 29 Mar
+ 2023 10:59:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230328024907.29791-1-yuzhe@nfschina.com>
+References: <20230323062451.2925996-1-danishanwar@ti.com> <20230323062451.2925996-2-danishanwar@ti.com>
+ <20230327205841.GA3158115@p14s> <9d4c7762-615b-0fbd-76d2-87156e691928@ti.com>
+In-Reply-To: <9d4c7762-615b-0fbd-76d2-87156e691928@ti.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 29 Mar 2023 11:59:09 -0600
+Message-ID: <CANLsYkx6Nkrc_qSVWe53bhm9GjTDzXydiaxCB=_nL2R7ppu-qw@mail.gmail.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v5 1/5] soc: ti: pruss: Add
+ pruss_get()/put() API
+To:     Md Danish Anwar <a0501179@ti.com>
+Cc:     MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Mar 28, 2023 at 10:49:07AM +0800, Yu Zhe wrote:
-> Pointer variables of void * type do not require type cast.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Link: https://lore.kernel.org/oe-kbuild-all/202303272213.jOYrwBZu-lkp@intel.com/
-> Signed-off-by: Yu Zhe <yuzhe@nfschina.com>
-> ---
-> 
-> v3->v4:
->  Drop wrong modifies
-> ---
->  drivers/remoteproc/da8xx_remoteproc.c   | 12 ++++++------
->  drivers/remoteproc/mtk_scp.c            | 12 ++++++------
->  drivers/remoteproc/qcom_q6v5_adsp.c     | 10 +++++-----
->  drivers/remoteproc/qcom_q6v5_mss.c      |  8 ++++----
->  drivers/remoteproc/qcom_q6v5_pas.c      | 14 +++++++-------
->  drivers/remoteproc/qcom_wcnss.c         | 10 +++++-----
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 16 ++++++++--------
->  7 files changed, 41 insertions(+), 41 deletions(-)
+On Mon, 27 Mar 2023 at 23:42, Md Danish Anwar <a0501179@ti.com> wrote:
+>
+> Hi Mathieu,
+>
+> On 28/03/23 02:28, Mathieu Poirier wrote:
+> > Hi Danish
+> >
+> > On Thu, Mar 23, 2023 at 11:54:47AM +0530, MD Danish Anwar wrote:
+> >> From: Tero Kristo <t-kristo@ti.com>
+> >>
+> >> Add two new get and put API, pruss_get() and pruss_put() to the
+> >> PRUSS platform driver to allow client drivers to request a handle
+> >> to a PRUSS device. This handle will be used by client drivers to
+> >> request various operations of the PRUSS platform driver through
+> >> additional API that will be added in the following patches.
+> >>
+> >> The pruss_get() function returns the pruss handle corresponding
+> >> to a PRUSS device referenced by a PRU remoteproc instance. The
+> >> pruss_put() is the complimentary function to pruss_get().
+> >>
+> >> Co-developed-by: Suman Anna <s-anna@ti.com>
+> >> Signed-off-by: Suman Anna <s-anna@ti.com>
+> >> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> >> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> >> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> >> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> >> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> >> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> >> ---
+> >>  drivers/remoteproc/pru_rproc.c                |  2 +-
+> >>  drivers/soc/ti/pruss.c                        | 60 ++++++++++++++++++-
+> >>  .../{pruss_driver.h => pruss_internal.h}      |  7 ++-
+> >>  include/linux/remoteproc/pruss.h              | 19 ++++++
+> >>  4 files changed, 83 insertions(+), 5 deletions(-)
+> >>  rename include/linux/{pruss_driver.h => pruss_internal.h} (90%)
+> >>
+> >> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> >> index b76db7fa693d..4ddd5854d56e 100644
+> >> --- a/drivers/remoteproc/pru_rproc.c
+> >> +++ b/drivers/remoteproc/pru_rproc.c
+> >> @@ -19,7 +19,7 @@
+> >>  #include <linux/of_device.h>
+> >>  #include <linux/of_irq.h>
+> >>  #include <linux/remoteproc/pruss.h>
+> >> -#include <linux/pruss_driver.h>
+> >> +#include <linux/pruss_internal.h>
+> >>  #include <linux/remoteproc.h>
+> >>
+> >>  #include "remoteproc_internal.h"
+> >> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+> >> index 6882c86b3ce5..6c2bb02a521d 100644
+> >> --- a/drivers/soc/ti/pruss.c
+> >> +++ b/drivers/soc/ti/pruss.c
+> >> @@ -6,6 +6,7 @@
+> >>   * Author(s):
+> >>   *  Suman Anna <s-anna@ti.com>
+> >>   *  Andrew F. Davis <afd@ti.com>
+> >> + *  Tero Kristo <t-kristo@ti.com>
+> >>   */
+> >>
+> >>  #include <linux/clk-provider.h>
+> >> @@ -16,8 +17,9 @@
+> >>  #include <linux/of_address.h>
+> >>  #include <linux/of_device.h>
+> >>  #include <linux/pm_runtime.h>
+> >> -#include <linux/pruss_driver.h>
+> >> +#include <linux/pruss_internal.h>
+> >>  #include <linux/regmap.h>
+> >> +#include <linux/remoteproc.h>
+> >>  #include <linux/slab.h>
+> >>
+> >>  /**
+> >> @@ -30,6 +32,62 @@ struct pruss_private_data {
+> >>      bool has_core_mux_clock;
+> >>  };
+> >>
+> >> +/**
+> >> + * pruss_get() - get the pruss for a given PRU remoteproc
+> >> + * @rproc: remoteproc handle of a PRU instance
+> >> + *
+> >> + * Finds the parent pruss device for a PRU given the @rproc handle of the
+> >> + * PRU remote processor. This function increments the pruss device's refcount,
+> >> + * so always use pruss_put() to decrement it back once pruss isn't needed
+> >> + * anymore.
+> >> + *
+> >> + * Return: pruss handle on success, and an ERR_PTR on failure using one
+> >> + * of the following error values
+> >> + *    -EINVAL if invalid parameter
+> >> + *    -ENODEV if PRU device or PRUSS device is not found
+> >> + */
+> >> +struct pruss *pruss_get(struct rproc *rproc)
+> >> +{
+> >> +    struct pruss *pruss;
+> >> +    struct device *dev;
+> >> +    struct platform_device *ppdev;
+> >> +
+> >> +    if (IS_ERR_OR_NULL(rproc))
+> >> +            return ERR_PTR(-EINVAL);
+> >> +
+> >
+> > There is no guarantee that @rproc is valid without calling rproc_get_by_handle()
+> > or pru_rproc_get().
+> >
+>
+> Here in this API, we are checking if rproc is NULL or not. Also we are checking
+> is_pru_rproc() to make sure this rproc is pru-rproc only and not some other rproc.
+>
+> This API will be called from driver (icssg_prueth.c) which I'll post once this
+> series is merged.
+>
+> In the driver we are doing,
+>
+>         prueth->pru[slice] = pru_rproc_get(np, pru, &pruss_id);
+>
+>         pruss = pruss_get(prueth->pru[slice]);
+>
+> So, before calling pruss_get() we are in fact calling pru_rproc_get() to make
+> sure it's a valid rproc.
+>
 
-This looks good to me but since I am pretty sure you have not compiled for all
-these platforms, I will wait a week to give time for the bots to find potential
-compilation warnings.
+You are doing the right thing but because pruss_get() is exported
+globally, other people eventually using the interface may not be so
+rigorous.  Add a comment to the pruss_get() function documentation
+clearly mentioning it is expected the caller will have done a
+pru_rproc_get() on @rproc.
 
-Thanks,
-Mathieu
-
-> 
-> diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-> index 98e0be9476a4..768217f0f5cd 100644
-> --- a/drivers/remoteproc/da8xx_remoteproc.c
-> +++ b/drivers/remoteproc/da8xx_remoteproc.c
-> @@ -84,7 +84,7 @@ struct da8xx_rproc {
->   */
->  static irqreturn_t handle_event(int irq, void *p)
->  {
-> -	struct rproc *rproc = (struct rproc *)p;
-> +	struct rproc *rproc = p;
->  
->  	/* Process incoming buffers on all our vrings */
->  	rproc_vq_interrupt(rproc, 0);
-> @@ -104,8 +104,8 @@ static irqreturn_t handle_event(int irq, void *p)
->   */
->  static irqreturn_t da8xx_rproc_callback(int irq, void *p)
->  {
-> -	struct rproc *rproc = (struct rproc *)p;
-> -	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-> +	struct rproc *rproc = p;
-> +	struct da8xx_rproc *drproc = rproc->priv;
->  	u32 chipsig;
->  
->  	chipsig = readl(drproc->chipsig);
-> @@ -133,7 +133,7 @@ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
->  static int da8xx_rproc_start(struct rproc *rproc)
->  {
->  	struct device *dev = rproc->dev.parent;
-> -	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-> +	struct da8xx_rproc *drproc = rproc->priv;
->  	struct clk *dsp_clk = drproc->dsp_clk;
->  	struct reset_control *dsp_reset = drproc->dsp_reset;
->  	int ret;
-> @@ -183,7 +183,7 @@ static int da8xx_rproc_stop(struct rproc *rproc)
->  /* kick a virtqueue */
->  static void da8xx_rproc_kick(struct rproc *rproc, int vqid)
->  {
-> -	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-> +	struct da8xx_rproc *drproc = rproc->priv;
->  
->  	/* Interrupt remote proc */
->  	writel(SYSCFG_CHIPSIG2, drproc->chipsig);
-> @@ -360,7 +360,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
->  static int da8xx_rproc_remove(struct platform_device *pdev)
->  {
->  	struct rproc *rproc = platform_get_drvdata(pdev);
-> -	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
-> +	struct da8xx_rproc *drproc = rproc->priv;
->  	struct device *dev = &pdev->dev;
->  
->  	/*
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 0861b76f185f..e1d93e63d7df 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -74,8 +74,8 @@ static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
->  
->  static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
->  {
-> -	struct mtk_scp *scp = (struct mtk_scp *)priv;
-> -	struct scp_run *run = (struct scp_run *)data;
-> +	struct mtk_scp *scp = priv;
-> +	struct scp_run *run = data;
->  
->  	scp->run.signaled = run->signaled;
->  	strscpy(scp->run.fw_ver, run->fw_ver, SCP_FW_VER_LEN);
-> @@ -498,7 +498,7 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  
->  static int scp_start(struct rproc *rproc)
->  {
-> -	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-> +	struct mtk_scp *scp = rproc->priv;
->  	struct device *dev = scp->dev;
->  	struct scp_run *run = &scp->run;
->  	int ret;
-> @@ -587,7 +587,7 @@ static void *mt8192_scp_da_to_va(struct mtk_scp *scp, u64 da, size_t len)
->  
->  static void *scp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->  {
-> -	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-> +	struct mtk_scp *scp = rproc->priv;
->  
->  	return scp->data->scp_da_to_va(scp, da, len);
->  }
-> @@ -627,7 +627,7 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
->  
->  static int scp_stop(struct rproc *rproc)
->  {
-> -	struct mtk_scp *scp = (struct mtk_scp *)rproc->priv;
-> +	struct mtk_scp *scp = rproc->priv;
->  	int ret;
->  
->  	ret = clk_prepare_enable(scp->clk);
-> @@ -829,7 +829,7 @@ static int scp_probe(struct platform_device *pdev)
->  	if (!rproc)
->  		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
->  
-> -	scp = (struct mtk_scp *)rproc->priv;
-> +	scp = rproc->priv;
->  	scp->rproc = rproc;
->  	scp->dev = dev;
->  	scp->data = of_device_get_match_data(dev);
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index 08d8dad22ca7..d546ab9dc141 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -321,7 +321,7 @@ static int qcom_adsp_shutdown(struct qcom_adsp *adsp)
->  
->  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int ret;
->  
->  	ret = qcom_mdt_load_no_init(adsp->dev, fw, rproc->firmware, 0,
-> @@ -379,7 +379,7 @@ static int adsp_map_carveout(struct rproc *rproc)
->  
->  static int adsp_start(struct rproc *rproc)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int ret;
->  	unsigned int val;
->  
-> @@ -469,7 +469,7 @@ static void qcom_adsp_pil_handover(struct qcom_q6v5 *q6v5)
->  
->  static int adsp_stop(struct rproc *rproc)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int handover;
->  	int ret;
->  
-> @@ -492,7 +492,7 @@ static int adsp_stop(struct rproc *rproc)
->  
->  static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int offset;
->  
->  	offset = da - adsp->mem_reloc;
-> @@ -696,7 +696,7 @@ static int adsp_probe(struct platform_device *pdev)
->  	rproc->has_iommu = desc->has_iommu;
->  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->  
-> -	adsp = (struct qcom_adsp *)rproc->priv;
-> +	adsp = rproc->priv;
->  	adsp->dev = &pdev->dev;
->  	adsp->rproc = rproc;
->  	adsp->info_name = desc->sysmon_name;
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index ab053084f7a2..e7a67c8c16a0 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -1562,7 +1562,7 @@ static void qcom_q6v5_dump_segment(struct rproc *rproc,
->  
->  static int q6v5_start(struct rproc *rproc)
->  {
-> -	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-> +	struct q6v5 *qproc = rproc->priv;
->  	int xfermemop_ret;
->  	int ret;
->  
-> @@ -1604,7 +1604,7 @@ static int q6v5_start(struct rproc *rproc)
->  
->  static int q6v5_stop(struct rproc *rproc)
->  {
-> -	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-> +	struct q6v5 *qproc = rproc->priv;
->  	int ret;
->  
->  	ret = qcom_q6v5_request_stop(&qproc->q6v5, qproc->sysmon);
-> @@ -1662,7 +1662,7 @@ static int qcom_q6v5_register_dump_segments(struct rproc *rproc,
->  
->  static unsigned long q6v5_panic(struct rproc *rproc)
->  {
-> -	struct q6v5 *qproc = (struct q6v5 *)rproc->priv;
-> +	struct q6v5 *qproc = rproc->priv;
->  
->  	return qcom_q6v5_panic(&qproc->q6v5);
->  }
-> @@ -1977,7 +1977,7 @@ static int q6v5_probe(struct platform_device *pdev)
->  	rproc->auto_boot = false;
->  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->  
-> -	qproc = (struct q6v5 *)rproc->priv;
-> +	qproc = rproc->priv;
->  	qproc->dev = &pdev->dev;
->  	qproc->rproc = rproc;
->  	qproc->hexagon_mdt_image = "modem.mdt";
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 0871108fb4dc..8eec88119fdd 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -186,7 +186,7 @@ static int adsp_shutdown_poll_decrypt(struct qcom_adsp *adsp)
->  
->  static int adsp_unprepare(struct rproc *rproc)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  
->  	/*
->  	 * adsp_load() did pass pas_metadata to the SCM driver for storing
-> @@ -203,7 +203,7 @@ static int adsp_unprepare(struct rproc *rproc)
->  
->  static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int ret;
->  
->  	/* Store firmware handle to be used in adsp_start() */
-> @@ -244,7 +244,7 @@ static int adsp_load(struct rproc *rproc, const struct firmware *fw)
->  
->  static int adsp_start(struct rproc *rproc)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int ret;
->  
->  	ret = qcom_q6v5_prepare(&adsp->q6v5);
-> @@ -360,7 +360,7 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
->  
->  static int adsp_stop(struct rproc *rproc)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int handover;
->  	int ret;
->  
-> @@ -390,7 +390,7 @@ static int adsp_stop(struct rproc *rproc)
->  
->  static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  	int offset;
->  
->  	offset = da - adsp->mem_reloc;
-> @@ -405,7 +405,7 @@ static void *adsp_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iom
->  
->  static unsigned long adsp_panic(struct rproc *rproc)
->  {
-> -	struct qcom_adsp *adsp = (struct qcom_adsp *)rproc->priv;
-> +	struct qcom_adsp *adsp = rproc->priv;
->  
->  	return qcom_q6v5_panic(&adsp->q6v5);
->  }
-> @@ -683,7 +683,7 @@ static int adsp_probe(struct platform_device *pdev)
->  	rproc->auto_boot = desc->auto_boot;
->  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->  
-> -	adsp = (struct qcom_adsp *)rproc->priv;
-> +	adsp = rproc->priv;
->  	adsp->dev = &pdev->dev;
->  	adsp->rproc = rproc;
->  	adsp->minidump_id = desc->minidump_id;
-> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-> index 9d4d04fff8c6..0fc317265064 100644
-> --- a/drivers/remoteproc/qcom_wcnss.c
-> +++ b/drivers/remoteproc/qcom_wcnss.c
-> @@ -154,7 +154,7 @@ static const struct wcnss_data pronto_v3_data = {
->  
->  static int wcnss_load(struct rproc *rproc, const struct firmware *fw)
->  {
-> -	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-> +	struct qcom_wcnss *wcnss = rproc->priv;
->  	int ret;
->  
->  	ret = qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
-> @@ -227,7 +227,7 @@ static void wcnss_configure_iris(struct qcom_wcnss *wcnss)
->  
->  static int wcnss_start(struct rproc *rproc)
->  {
-> -	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-> +	struct qcom_wcnss *wcnss = rproc->priv;
->  	int ret, i;
->  
->  	mutex_lock(&wcnss->iris_lock);
-> @@ -293,7 +293,7 @@ static int wcnss_start(struct rproc *rproc)
->  
->  static int wcnss_stop(struct rproc *rproc)
->  {
-> -	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-> +	struct qcom_wcnss *wcnss = rproc->priv;
->  	int ret;
->  
->  	if (wcnss->state) {
-> @@ -320,7 +320,7 @@ static int wcnss_stop(struct rproc *rproc)
->  
->  static void *wcnss_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->  {
-> -	struct qcom_wcnss *wcnss = (struct qcom_wcnss *)rproc->priv;
-> +	struct qcom_wcnss *wcnss = rproc->priv;
->  	int offset;
->  
->  	offset = da - wcnss->mem_reloc;
-> @@ -566,7 +566,7 @@ static int wcnss_probe(struct platform_device *pdev)
->  	}
->  	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->  
-> -	wcnss = (struct qcom_wcnss *)rproc->priv;
-> +	wcnss = rproc->priv;
->  	wcnss->dev = &pdev->dev;
->  	wcnss->rproc = rproc;
->  	platform_set_drvdata(pdev, wcnss);
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 2db57d394155..5dbc12bdc29e 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -242,7 +242,7 @@ static int add_mem_regions_carveout(struct rproc *rproc)
->  	struct reserved_mem *rmem;
->  	int i, num_mem_regions;
->  
-> -	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> +	r5_core = rproc->priv;
->  	num_mem_regions = r5_core->rmem_count;
->  
->  	for (i = 0; i < num_mem_regions; i++) {
-> @@ -363,7 +363,7 @@ static int add_tcm_carveout_split_mode(struct rproc *rproc)
->  	size_t bank_size;
->  	char *bank_name;
->  
-> -	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> +	r5_core = rproc->priv;
->  	dev = r5_core->dev;
->  	num_banks = r5_core->tcm_bank_count;
->  
-> @@ -432,7 +432,7 @@ static int add_tcm_carveout_lockstep_mode(struct rproc *rproc)
->  	u32 pm_domain_id;
->  	char *bank_name;
->  
-> -	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> +	r5_core = rproc->priv;
->  	dev = r5_core->dev;
->  
->  	/* Go through zynqmp banks for r5 node */
-> @@ -502,7 +502,7 @@ static int add_tcm_banks(struct rproc *rproc)
->  	struct zynqmp_r5_core *r5_core;
->  	struct device *dev;
->  
-> -	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> +	r5_core = rproc->priv;
->  	if (!r5_core)
->  		return -EINVAL;
->  
-> @@ -595,7 +595,7 @@ static int zynqmp_r5_rproc_unprepare(struct rproc *rproc)
->  	u32 pm_domain_id;
->  	int i;
->  
-> -	r5_core = (struct zynqmp_r5_core *)rproc->priv;
-> +	r5_core = rproc->priv;
->  
->  	for (i = 0; i < r5_core->tcm_bank_count; i++) {
->  		pm_domain_id = r5_core->tcm_banks[i]->pm_domain_id;
-> @@ -649,7 +649,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
->  	}
->  
->  	r5_rproc->auto_boot = false;
-> -	r5_core = (struct zynqmp_r5_core *)r5_rproc->priv;
-> +	r5_core = r5_rproc->priv;
->  	r5_core->dev = cdev;
->  	r5_core->np = dev_of_node(cdev);
->  	if (!r5_core->np) {
-> @@ -978,12 +978,12 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
->  
->  static void zynqmp_r5_cluster_exit(void *data)
->  {
-> -	struct platform_device *pdev = (struct platform_device *)data;
-> +	struct platform_device *pdev = data;
->  	struct zynqmp_r5_cluster *cluster;
->  	struct zynqmp_r5_core *r5_core;
->  	int i;
->  
-> -	cluster = (struct zynqmp_r5_cluster *)platform_get_drvdata(pdev);
-> +	cluster = platform_get_drvdata(pdev);
->  	if (!cluster)
->  		return;
->  
-> -- 
-> 2.11.0
-> 
+> I think in this API, these two checks (NULL check and is_pru_rproc) should be
+> OK as the driver is already calling pru_rproc_get() before this API.
+>
+> The only way to get a "pru-rproc" is by calling pru_rproc_get(), now the check
+> is_pru_rproc() will only be true if it is a "pru-rproc" implying
+> pru_rproc_get() was called before calling this API.
+>
+> Please let me know if this is OK or if any change is required.
+>
+> >> +    dev = &rproc->dev;
+> >> +
+> >> +    /* make sure it is PRU rproc */
+> >> +    if (!dev->parent || !is_pru_rproc(dev->parent))
+> >> +            return ERR_PTR(-ENODEV);
+> >> +
+> >> +    ppdev = to_platform_device(dev->parent->parent);
+> >> +    pruss = platform_get_drvdata(ppdev);
+> >> +    if (!pruss)
+> >> +            return ERR_PTR(-ENODEV);
+> >> +
+> >> +    get_device(pruss->dev);
+> >> +
+> >> +    return pruss;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(pruss_get);
+> >> +
+> >> +/**
+> >> + * pruss_put() - decrement pruss device's usecount
+> >> + * @pruss: pruss handle
+> >> + *
+> >> + * Complimentary function for pruss_get(). Needs to be called
+> >> + * after the PRUSS is used, and only if the pruss_get() succeeds.
+> >> + */
+> >> +void pruss_put(struct pruss *pruss)
+> >> +{
+> >> +    if (IS_ERR_OR_NULL(pruss))
+> >> +            return;
+> >> +
+> >> +    put_device(pruss->dev);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(pruss_put);
+> >> +
+> >>  static void pruss_of_free_clk_provider(void *data)
+> >>  {
+> >>      struct device_node *clk_mux_np = data;
+> >> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_internal.h
+> >> similarity index 90%
+> >> rename from include/linux/pruss_driver.h
+> >> rename to include/linux/pruss_internal.h
+> >> index ecfded30ed05..8f91cb164054 100644
+> >> --- a/include/linux/pruss_driver.h
+> >> +++ b/include/linux/pruss_internal.h
+> >> @@ -6,9 +6,10 @@
+> >>   *  Suman Anna <s-anna@ti.com>
+> >>   */
+> >>
+> >> -#ifndef _PRUSS_DRIVER_H_
+> >> -#define _PRUSS_DRIVER_H_
+> >> +#ifndef _PRUSS_INTERNAL_H_
+> >> +#define _PRUSS_INTERNAL_H_
+> >>
+> >> +#include <linux/remoteproc/pruss.h>
+> >>  #include <linux/types.h>
+> >>
+> >>  /*
+> >> @@ -51,4 +52,4 @@ struct pruss {
+> >>      struct clk *iep_clk_mux;
+> >>  };
+> >>
+> >> -#endif      /* _PRUSS_DRIVER_H_ */
+> >> +#endif      /* _PRUSS_INTERNAL_H_ */
+> >> diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
+> >> index 039b50d58df2..93a98cac7829 100644
+> >> --- a/include/linux/remoteproc/pruss.h
+> >> +++ b/include/linux/remoteproc/pruss.h
+> >> @@ -4,12 +4,14 @@
+> >>   *
+> >>   * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
+> >>   *  Suman Anna <s-anna@ti.com>
+> >> + *  Tero Kristo <t-kristo@ti.com>
+> >>   */
+> >>
+> >>  #ifndef __LINUX_PRUSS_H
+> >>  #define __LINUX_PRUSS_H
+> >>
+> >>  #include <linux/device.h>
+> >> +#include <linux/err.h>
+> >>  #include <linux/types.h>
+> >>
+> >>  #define PRU_RPROC_DRVNAME "pru-rproc"
+> >> @@ -44,6 +46,23 @@ enum pru_ctable_idx {
+> >>
+> >>  struct device_node;
+> >>  struct rproc;
+> >> +struct pruss;
+> >> +
+> >> +#if IS_ENABLED(CONFIG_TI_PRUSS)
+> >> +
+> >> +struct pruss *pruss_get(struct rproc *rproc);
+> >> +void pruss_put(struct pruss *pruss);
+> >> +
+> >> +#else
+> >> +
+> >> +static inline struct pruss *pruss_get(struct rproc *rproc)
+> >> +{
+> >> +    return ERR_PTR(-EOPNOTSUPP);
+> >> +}
+> >> +
+> >> +static inline void pruss_put(struct pruss *pruss) { }
+> >> +
+> >> +#endif /* CONFIG_TI_PRUSS */
+> >>
+> >>  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
+> >>
+> >> --
+> >> 2.25.1
+> >>
+>
+> --
+> Thanks and Regards,
+> Danish.
