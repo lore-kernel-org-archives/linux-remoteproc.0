@@ -2,116 +2,204 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E48FFC76196
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 16:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA2EC77B60
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 17:44:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbjCaQG7 (ORCPT
+        id S232239AbjCaRoh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 12:06:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
+        Fri, 31 Mar 2023 13:44:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230185AbjCaQG6 (ORCPT
+        with ESMTP id S230193AbjCaRog (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Mar 2023 12:06:58 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14061EA38;
-        Fri, 31 Mar 2023 09:06:56 -0700 (PDT)
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32VDr4TF010311;
-        Fri, 31 Mar 2023 18:06:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=selector1;
- bh=Ac3ViCSx4VTlv+LCUqAH7E7aEYqOJVCoIrcTZkiflLc=;
- b=DAqWhPxO9f0x4XYX/WTjp22Ou8QoEFOwd4cF6wTMoplIcxfg29fgVidw6j6pm7OaAWlj
- V6AaPUVl/HSwqaTriFbK2lwq7EYvJaWWU11LCD3wLNJpUYH9NTIiPWX/pE9z7JPMOxLk
- KRR0PmPUruP+EIJnUZyLumt5M17wXcaRvZEwOBwlUbtPn2kIHEsnDP/DOv67leYw2AXC
- WvLtyZQnM2jsSItfEyU626TpYI56c/UYAo1p3aDd944l4VVDqpr5AUBa1pwF5K7thwBD
- GgNyuEUMdmsiNKLHyH/BTSrtvcLu1vNotTa8G66ku0ePySujAIIqxKZkf2AafqQLPIGt oA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pnw9c27um-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 18:06:48 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E790710002A;
-        Fri, 31 Mar 2023 18:06:41 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DDF282248BA;
-        Fri, 31 Mar 2023 18:06:41 +0200 (CEST)
-Received: from localhost (10.201.21.178) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 31 Mar
- 2023 18:06:41 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] remoteproc: stm32_rproc: Add mutex protection for workqueue
-Date:   Fri, 31 Mar 2023 18:06:34 +0200
-Message-ID: <20230331160634.3113031-1-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 31 Mar 2023 13:44:36 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41BAC1DFB8
+        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Mar 2023 10:44:35 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id o2so21957518plg.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Mar 2023 10:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680284675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VXNcjohZysdJFTpfz0Tp4bdKAzd73WpdyuV554RNSZw=;
+        b=ExGm85KLhOefR0naD5/e5ZoclYAwGcnNGljHYGEIIm7cw6Blt50uY529QZCw5rjKSK
+         tz+kzOKriH34/bYLdt7XVzHdiygYMt8NsKcP8cBW6F465c7HwXEAbIIoufu1l5RHyIYP
+         hsdga9hL/Cz5emQyXePhwVEMuMUHXOjvvK1nhTnYozQhhCkz8qBOeHAdV7GLE9AZ3mVs
+         S+jdkpW16u0TaneLV1wvF2y+XGLEDOblMiABLFO+6J54bpXjx4/x6v1dIjlfzBGsBV8Y
+         wm/khn4tH7j8HStsKWEGQR6MVS4sdMyNmNq3/gYCQiYau7MMlmvAxw5BsK/S9kxthX8x
+         4qew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680284675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VXNcjohZysdJFTpfz0Tp4bdKAzd73WpdyuV554RNSZw=;
+        b=a54AuLPiHk6fhkRdF9RekDfOibe+r8FSHD84NICBOTIEHW9DRZQ6qGt2igtQ6VJDFg
+         WnWW519sGtGyfOUK74BEGdC6NcJxUCP34y8/b6UdT8eY+Zmo5gjRuBVc19nx0suRTgyD
+         2xtIij0WRfhP0IbmNvDRcjR3L15O+prgut/WpvvgNFlC96rDK6yTzn/dvABfxG/HJxq1
+         /15hpMQoxKAgA1fnwSyuAA0JuhSaubZAWCrqPdWsab80FlDgOz4LU6uoI2/uD9X2hH3c
+         BU1mT19ri6xKht1hfZ9GiZ2UgDbRmpBDM/8URshI4WzU+6Fw9gKyKm9sqMxUDqj+uj6H
+         7GgA==
+X-Gm-Message-State: AAQBX9dY8qId3ZY73MU15Bs3yJo7ZxjaRABMgZ3A+NmY6U92lUlibriB
+        dyziKzP+OYEysOfhxtgICn8elhv4kpEv80/hniU=
+X-Google-Smtp-Source: AKy350a04fGm/Zt+9yziHzr+NnMQiLRNR11nrRqTIIbvqLXNxUwZ0/vkFHf67U5CbG9I5CLxWvU4VQ==
+X-Received: by 2002:a17:903:2441:b0:1a2:7462:d674 with SMTP id l1-20020a170903244100b001a27462d674mr9996089pls.24.1680284674722;
+        Fri, 31 Mar 2023 10:44:34 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:f19d:e1b1:6a5d:8ade])
+        by smtp.gmail.com with ESMTPSA id q9-20020a170902788900b001a20b31a23fsm1816496pll.293.2023.03.31.10.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Mar 2023 10:44:34 -0700 (PDT)
+Date:   Fri, 31 Mar 2023 11:44:31 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v9 05/11] remoteproc: mediatek: Extract remoteproc
+ initialization flow
+Message-ID: <20230331174431.GA3504605@p14s>
+References: <20230328022733.29910-1-tinghan.shen@mediatek.com>
+ <20230328022733.29910-6-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.201.21.178]
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-31_07,2023-03-31_01,2023-02-09_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230328022733.29910-6-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The workqueue may execute late even after remoteproc is stopped or
-stopping, some resources (rpmsg device and endpoint) have been
-released in rproc_stop_subdevices(), then rproc_vq_interrupt()
-accessing these resources will cause kennel dump.
+On Tue, Mar 28, 2023 at 10:27:27AM +0800, Tinghan Shen wrote:
+> This is the preparation for probing multi-core SCP. The remoteproc
+> initialization flow is similar on cores and is reused to avoid
+> redundant code.
+> 
+> The registers of config and l1tcm are shared for multi-core
+> SCP. Reuse the mapped addresses for all cores.
+> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 64 +++++++++++++++++++++++++-----------
+>  1 file changed, 45 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index a3b9bc158cd9..32ecd1450c6f 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -23,6 +23,13 @@
+>  #define MAX_CODE_SIZE 0x500000
+>  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+>  
+> +struct mtk_scp_of_regs {
+> +	void __iomem *reg_base;
+> +	void __iomem *l1tcm_base;
+> +	size_t l1tcm_size;
+> +	phys_addr_t l1tcm_phys;
+> +};
+> +
 
-Call trace:
-virtqueue_add_inbuf
-virtqueue_add_inbuf
-rpmsg_recv_single
-rpmsg_recv_done
-vring_interrupt
-stm32_rproc_mb_vq_work
-process_one_work
-worker_thread
-kthread
+This should represent the cluster with a list of mtk_scp instead of @cluster_cores as
+introduced in the next patch.
 
-Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>  /**
+>   * scp_get() - get a reference to SCP.
+>   *
+> @@ -855,7 +862,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+>  	}
+>  }
+>  
+> -static int scp_probe(struct platform_device *pdev)
+> +static int scp_rproc_init(struct platform_device *pdev,
+> +			  struct mtk_scp_of_regs *of_regs)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> @@ -879,6 +887,11 @@ static int scp_probe(struct platform_device *pdev)
+>  	scp->data = of_device_get_match_data(dev);
+>  	platform_set_drvdata(pdev, scp);
+>  
+> +	scp->reg_base = of_regs->reg_base;
+> +	scp->l1tcm_base = of_regs->l1tcm_base;
+> +	scp->l1tcm_size = of_regs->l1tcm_size;
+> +	scp->l1tcm_phys = of_regs->l1tcm_phys;
+> +
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+>  	scp->sram_base = devm_ioremap_resource(dev, res);
+>  	if (IS_ERR(scp->sram_base))
+> @@ -888,24 +901,6 @@ static int scp_probe(struct platform_device *pdev)
+>  	scp->sram_size = resource_size(res);
+>  	scp->sram_phys = res->start;
+>  
+> -	/* l1tcm is an optional memory region */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> -	scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(scp->l1tcm_base)) {
+> -		ret = PTR_ERR(scp->l1tcm_base);
+> -		if (ret != -EINVAL) {
+> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> -		}
+> -	} else {
 
----
-This patch is similar to the issue fixed in
-commit 47e6ab07018e ("remoteproc: imx_dsp_rproc: Add mutex protection for workqueue")
----
- drivers/remoteproc/stm32_rproc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+                scp->l1tcm_base = NULL;
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 7d782ed9e589..f618405cf420 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -287,8 +287,16 @@ static void stm32_rproc_mb_vq_work(struct work_struct *work)
- 	struct stm32_mbox *mb = container_of(work, struct stm32_mbox, vq_work);
- 	struct rproc *rproc = dev_get_drvdata(mb->client.dev);
- 
-+	mutex_lock(&rproc->lock);
-+
-+	if (rproc->state != RPROC_RUNNING)
-+		goto unlock_mutex;
-+
- 	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
- 		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
-+
-+unlock_mutex:
-+	mutex_unlock(&rproc->lock);
- }
- 
- static void stm32_rproc_mb_callback(struct mbox_client *cl, void *data)
--- 
-2.25.1
-
+> -		scp->l1tcm_size = resource_size(res);
+> -		scp->l1tcm_phys = res->start;
+> -	}
+> -
+> -	scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
+> -	if (IS_ERR(scp->reg_base))
+> -		return dev_err_probe(dev, PTR_ERR(scp->reg_base),
+> -				     "Failed to parse and map cfg memory\n");
+> -
+>  	ret = scp->data->scp_clk_get(scp);
+>  	if (ret)
+>  		return ret;
+> @@ -957,6 +952,37 @@ static int scp_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> +static int scp_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mtk_scp_of_regs scp_regs;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> +	scp_regs.reg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_regs.reg_base))
+> +		return dev_err_probe(dev, PTR_ERR(scp_regs.reg_base),
+> +				     "Failed to parse and map cfg memory\n");
+> +
+> +	/* l1tcm is an optional memory region */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> +	scp_regs.l1tcm_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_regs.l1tcm_base)) {
+> +		ret = PTR_ERR(scp_regs.l1tcm_base);
+> +		if (ret != -EINVAL)
+> +			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> +
+> +		scp_regs.l1tcm_size = 0;
+> +		scp_regs.l1tcm_phys = 0;
+> +	} else {
+> +		scp_regs.l1tcm_size = resource_size(res);
+> +		scp_regs.l1tcm_phys = res->start;
+> +	}
+> +
+> +	return scp_rproc_init(pdev, &scp_regs);
+> +}
+> +
+>  static int scp_remove(struct platform_device *pdev)
+>  {
+>  	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> -- 
+> 2.18.0
+> 
