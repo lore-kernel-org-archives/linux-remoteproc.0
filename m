@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356A8C761A6
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 15:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC472C77B6E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 15:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233249AbjCaPrb (ORCPT
+        id S233266AbjCaPrc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 11:47:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
+        Fri, 31 Mar 2023 11:47:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232342AbjCaPra (ORCPT
+        with ESMTP id S233228AbjCaPrb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Mar 2023 11:47:30 -0400
+        Fri, 31 Mar 2023 11:47:31 -0400
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F5830F0;
-        Fri, 31 Mar 2023 08:47:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512E76E98;
+        Fri, 31 Mar 2023 08:47:30 -0700 (PDT)
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32VDr4QB010311;
-        Fri, 31 Mar 2023 17:47:17 +0200
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32VDsgnj010401;
+        Fri, 31 Mar 2023 17:47:18 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=eRrWNW+wqxD3/GwUf/qHnZc761vbTu9x3KnHNUXIaMQ=;
- b=cz8ZHWXiFdhsnvsBJYYP/G4lo7Z4lnX8n/kpxRSmUuQUJcKfIUTWOWYndEdBqxFI6ngR
- aAQFOBLD7hVJm6lOx7hznLY1KaMB8YlgaOHFQ94KnBA1z6eSwMsjSHD2B3HvMf05L/mr
- 2DQ+Po1KLyJD9Mh4hN2O7ZL4jJvY1fEUlqoCBowSYkjUS21YJlH4oXpiFofLnaVaLxuQ
- mJGFQHStVcU7DytGR3R+zP6ZKSeUN4VsjnYxFZUknahpNqhB0qj+HhNp0FpNfMFnw+mI
- KZCA0hkSqv6EjsSyEkHMnn+wTR20us/uoQie6FzcYsADht6MHx4YWroOiZzK79Rk4hap rw== 
+ bh=w9ILhYsOTZvuxzQYlPD9R8Ib3F4vFKSWlfhzjruH6nM=;
+ b=xGrE7u0ouxNc3tQtzmyx/VyqCaQAa62qt6PtmS7wzEF18jsY3S1m2WvotXBjp0BnC9Sr
+ kwub1o4269ISZH4nquOX8i9rPiVmbSKiSCJLv53mxh01ahRlw9SFgGlreFDldA9UdMLJ
+ PbO6rja7T6UYoyS2ftrOqdiQohgn2o8dI3OBv+ijCQGwYcDlEcNU6E3+PFJ9qrVUAjaD
+ J6GmSQPhu8iM94NylhExE0AdNRb5vtO4BROppMjJ0nicdyJstQbXzdkGecm+5zUNun+g
+ PBfyLFAV6oZjif8J5oGQrZtOYQ4nKN08GlRF+Nt2Hw/SzKr8cETg+LWbfOFWvNz2bglD vQ== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pnw9c24ru-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pnw9c24rw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 17:47:17 +0200
+        Fri, 31 Mar 2023 17:47:18 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B8E1A100034;
-        Fri, 31 Mar 2023 17:47:16 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 97E3110002A;
+        Fri, 31 Mar 2023 17:47:17 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B0CB2222CAD;
-        Fri, 31 Mar 2023 17:47:16 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 91E09222CAD;
+        Fri, 31 Mar 2023 17:47:17 +0200 (CEST)
 Received: from localhost (10.201.21.178) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 31 Mar
- 2023 17:47:16 +0200
+ 2023 17:47:15 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -51,9 +51,9 @@ To:     Bjorn Andersson <andersson@kernel.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <devicetree@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH 3/5] remoteproc: stm32: Clean-up the management of the hold boot by SMC call
-Date:   Fri, 31 Mar 2023 17:46:49 +0200
-Message-ID: <20230331154651.3107173-4-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 1/5] dt-bindings: remoteproc: st,stm32-rproc: Rework reset declarations
+Date:   Fri, 31 Mar 2023 17:46:47 +0200
+Message-ID: <20230331154651.3107173-2-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
 References: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
@@ -70,99 +70,115 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-There are two ways to manage the Cortex-M4 hold boot:
-- by Linux thanks to a sys config controller
-- by the secure context when the hold boot is protected.
-Since the introduction of the SCMI server, the use of the SMC call
-is deprecated. If the trust zone is activated, the management of the
-hold boot must be done by the secure context thanks to a SCMI reset
-controller.
+With the introduction of the SCMI server it is now possible to use
+the SCMI to handle the hold boot instead of a dedicated smc call.
 
-This patch cleans-up the code related to the SMC call, replaced by
-the SCMI server.
+As consequences two configurations are possible:
+- use the Linux rcc reset service and use syscon for the MCU hold boot
+- use the SCMI reset service for both the MCU reset and the MCU hold boot.
+
+This patch:
+- suppresses the use of the property st,syscfg-tz which was used
+  to check if the trusted Zone was enable to use scm call to manage
+  the hold boot (the reset controller phandle is used instead to select
+  the configurations)
+- adds properties check on resets definitions.
+- adds an example of the SCMI reset service usage.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- drivers/remoteproc/stm32_rproc.c | 34 ++------------------------------
- 1 file changed, 2 insertions(+), 32 deletions(-)
+ .../bindings/remoteproc/st,stm32-rproc.yaml   | 52 +++++++++++++------
+ 1 file changed, 37 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 7d782ed9e589..4be651e734ee 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -5,7 +5,6 @@
-  *          Fabien Dessenne <fabien.dessenne@st.com> for STMicroelectronics.
-  */
+diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+index 66b1e3efdaa3..98d98e9114fc 100644
+--- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+@@ -25,7 +25,14 @@ properties:
+     maxItems: 3
  
--#include <linux/arm-smccc.h>
- #include <linux/dma-mapping.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-@@ -88,7 +87,6 @@ struct stm32_rproc {
- 	struct stm32_rproc_mem *rmems;
- 	struct stm32_mbox mb[MBOX_NB_MBX];
- 	struct workqueue_struct *workqueue;
--	bool secured_soc;
- 	void __iomem *rsc_va;
- };
+   resets:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 2
++
++  reset-names:
++    items:
++      - const: mcu_rst
++      - const: hold_boot
++    minItems: 1
  
-@@ -398,20 +396,12 @@ static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
- {
- 	struct stm32_rproc *ddata = rproc->priv;
- 	struct stm32_syscon hold_boot = ddata->hold_boot;
--	struct arm_smccc_res smc_res;
- 	int val, err;
+   st,syscfg-holdboot:
+     description: remote processor reset hold boot
+@@ -36,16 +43,6 @@ properties:
+           - description: The offset of the hold boot setting register
+           - description: The field mask of the hold boot
  
- 	val = hold ? HOLD_BOOT : RELEASE_BOOT;
- 
--	if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->secured_soc) {
--		arm_smccc_smc(STM32_SMC_RCC, STM32_SMC_REG_WRITE,
--			      hold_boot.reg, val, 0, 0, 0, 0, &smc_res);
--		err = smc_res.a0;
--	} else {
--		err = regmap_update_bits(hold_boot.map, hold_boot.reg,
--					 hold_boot.mask, val);
--	}
+-  st,syscfg-tz:
+-    description:
+-      Reference to the system configuration which holds the RCC trust zone mode
+-    $ref: "/schemas/types.yaml#/definitions/phandle-array"
+-    items:
+-      - items:
+-          - description: Phandle of syscon block
+-          - description: The offset of the trust zone setting register
+-          - description: The field mask of the trust zone state
 -
-+	err = regmap_update_bits(hold_boot.map, hold_boot.reg,
-+				 hold_boot.mask, val);
- 	if (err)
- 		dev_err(&rproc->dev, "failed to set hold boot\n");
+   interrupts:
+     description: Should contain the WWDG1 watchdog reset interrupt
+     maxItems: 1
+@@ -135,22 +132,47 @@ required:
+   - compatible
+   - reg
+   - resets
+-  - st,syscfg-holdboot
+-  - st,syscfg-tz
++  - reset-names
++
++allOf:
++  - if:
++      properties:
++        reset-names:
++          not:
++            contains:
++              const: hold_boot
++    then:
++      required:
++        - st,syscfg-holdboot
++    else:
++      properties:
++        st,syscfg-holdboot: false
  
-@@ -680,8 +670,6 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct stm32_syscon tz;
--	unsigned int tzen;
- 	int err, irq;
+ additionalProperties: false
  
- 	irq = platform_get_irq(pdev, 0);
-@@ -710,24 +698,6 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
- 		return dev_err_probe(dev, PTR_ERR(ddata->rst),
- 				     "failed to get mcu_reset\n");
- 
--	/*
--	 * if platform is secured the hold boot bit must be written by
--	 * smc call and read normally.
--	 * if not secure the hold boot bit could be read/write normally
--	 */
--	err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
--	if (err) {
--		dev_err(dev, "failed to get tz syscfg\n");
--		return err;
--	}
--
--	err = regmap_read(tz.map, tz.reg, &tzen);
--	if (err) {
--		dev_err(dev, "failed to read tzen\n");
--		return err;
--	}
--	ddata->secured_soc = tzen & tz.mask;
--
- 	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
- 				     &ddata->hold_boot);
- 	if (err) {
+ examples:
+   - |
+     #include <dt-bindings/reset/stm32mp1-resets.h>
+-    m4_rproc: m4@10000000 {
++    m4_rproc_example1: m4@10000000 {
+       compatible = "st,stm32mp1-m4";
+       reg = <0x10000000 0x40000>,
+             <0x30000000 0x40000>,
+             <0x38000000 0x10000>;
+       resets = <&rcc MCU_R>;
++      reset-names = "mcu_rst";
+       st,syscfg-holdboot = <&rcc 0x10C 0x1>;
+-      st,syscfg-tz = <&rcc 0x000 0x1>;
++      st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
++      st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
++    };
++  - |
++    #include <dt-bindings/reset/stm32mp1-resets.h>
++    m4_rproc_example2: m4@10000000 {
++      compatible = "st,stm32mp1-m4";
++      reg = <0x10000000 0x40000>,
++            <0x30000000 0x40000>,
++            <0x38000000 0x10000>;
++      resets = <&scmi MCU_R>, <&scmi MCU_HOLD_BOOT_R>;
++      reset-names = "mcu_rst", "hold_boot";
+       st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+       st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+     };
 -- 
 2.25.1
 
