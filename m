@@ -2,154 +2,113 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4497AC6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 11:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04344C77B6C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 15:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231904AbjCaLfG (ORCPT
+        id S232888AbjCaPrb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 07:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46794 "EHLO
+        Fri, 31 Mar 2023 11:47:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232069AbjCaLe5 (ORCPT
+        with ESMTP id S231313AbjCaPra (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Mar 2023 07:34:57 -0400
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23B661EFD8;
-        Fri, 31 Mar 2023 04:34:39 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 32VBYXHL081175;
-        Fri, 31 Mar 2023 06:34:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1680262473;
-        bh=GvCcYXn6ovoAura2uB/dpDoFgd16j6cQ/c1lMJFYme4=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=AJ10w/SaEiUKg/SVuJPLY4cO9HhIX8CAB/QB3lfUx4SML5yZydsWkeLwOu0jQEYXR
-         OLyHoDd8yKjWvLj0Y+6ILzFCmda05Bsuq+vMWFSJl0ngJ7JgDrZsHNBCtcHce7awsR
-         EU7mIBhB+XaGFP7DbHrzUElKoLyKhv57B5wMNEu4=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 32VBYXVj028519
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 31 Mar 2023 06:34:33 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Fri, 31
- Mar 2023 06:34:33 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Fri, 31 Mar 2023 06:34:32 -0500
-Received: from [10.24.69.114] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 32VBYRIv123330;
-        Fri, 31 Mar 2023 06:34:28 -0500
-Message-ID: <cca8cffb-b6f6-2fbb-f7a2-151b4380b2f6@ti.com>
-Date:   Fri, 31 Mar 2023 17:04:27 +0530
+        Fri, 31 Mar 2023 11:47:30 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5585D4691;
+        Fri, 31 Mar 2023 08:47:29 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32VDqKvU010304;
+        Fri, 31 Mar 2023 17:47:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=WnaqWGLbrGE8l1DdJGiLovg7YI1781JuH5yhngJ70so=;
+ b=zSTrSxBc/sfgQsuwnBvTWeNOuQFrnJHVRUPWvkEQ/kW2SRJTv/x42zeLeGjdBCZ4KfEr
+ 019lQyD+QK13vhXbRwVnbyWQAFTucsHNhWCfHh98pi0idgU7/UEPCo3puCcgZDOd59oD
+ 59xOCUSHyPVmZwgkYpXyCX50eGCURmR4ptJEr6Fh5ISLewVtR/eBGawkN4v+JkWktQOM
+ p3evJSacFd/B6Ae2qSJJn+lQqSb2eyjKKlNF56Av0/50wvc/l5J15uL7OQ6IszBPfp8J
+ 2NXkTdZ1/D7PPnfByg71URq7ypg6JlHxEi5VxXlsJMuo0cvRH8xLw83YokDlAGkSk/Yl rQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pnw9c24rt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 31 Mar 2023 17:47:17 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8C96010002A;
+        Fri, 31 Mar 2023 17:47:15 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A6384222CAD;
+        Fri, 31 Mar 2023 17:47:15 +0200 (CEST)
+Received: from localhost (10.201.21.178) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 31 Mar
+ 2023 17:47:14 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <devicetree@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH 0/5] stm32mp15: update remoteproc to support SCMI Device tree
+Date:   Fri, 31 Mar 2023 17:46:46 +0200
+Message-ID: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [EXTERNAL] Re: [PATCH v5 3/5] soc: ti: pruss: Add
- pruss_cfg_read()/update() API
-Content-Language: en-US
-From:   Md Danish Anwar <a0501179@ti.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     MD Danish Anwar <danishanwar@ti.com>,
-        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <srk@ti.com>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <20230323062451.2925996-1-danishanwar@ti.com>
- <20230323062451.2925996-4-danishanwar@ti.com> <20230327210126.GC3158115@p14s>
- <4e239000-c5f7-a42e-157e-5b668c6b2908@ti.com>
- <CANLsYkxcprFh4SNxb=TkTLT7PNR6=QPFW5HhqPouPP3+oYk7Sg@mail.gmail.com>
- <10ad5344-e8ae-eb8e-eb1e-6431b3e09384@ti.com>
-Organization: Texas Instruments
-In-Reply-To: <10ad5344-e8ae-eb8e-eb1e-6431b3e09384@ti.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.201.21.178]
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-03-31_07,2023-03-31_01,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+This series updates the stm32_rproc driver and associated DT node to
+support device tree configuration with and without SCMI server. 
+The impact is mainly on the MCU hold boot management.
 
-On 31/03/23 15:52, Md Danish Anwar wrote:
-> On 30/03/23 19:51, Mathieu Poirier wrote:
->> On Thu, 30 Mar 2023 at 04:00, Md Danish Anwar <a0501179@ti.com> wrote:
->>>
->>> Hi Mathieu,
->>>
->>> On 28/03/23 02:31, Mathieu Poirier wrote:
->>>> On Thu, Mar 23, 2023 at 11:54:49AM +0530, MD Danish Anwar wrote:
->>>>> From: Suman Anna <s-anna@ti.com>
->>>>>
->>>>> Add two new generic API pruss_cfg_read() and pruss_cfg_update() to
->>>>> the PRUSS platform driver to read and program respectively a register
->>>>> within the PRUSS CFG sub-module represented by a syscon driver.
->>>>>
->>>>> These APIs are internal to PRUSS driver. Various useful registers
->>>>> and macros for certain register bit-fields and their values have also
->>>>> been added.
->>>>>
->>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
->>>>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
->>>>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
->>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>>>> ---
->>>>>  drivers/soc/ti/pruss.c |   1 +
->>>>>  drivers/soc/ti/pruss.h | 112 +++++++++++++++++++++++++++++++++++++++++
->>>>>  2 files changed, 113 insertions(+)
->>>>>  create mode 100644 drivers/soc/ti/pruss.h
->>>>>
->>>>
->>>> This patch doesn't compile without warnings.
->>>>
->>>
->>> I checked the warnings. Below are the warnings that I am getting for these patch.
->>>
->>> In file included from drivers/soc/ti/pruss.c:24:
->>> drivers/soc/ti/pruss.h:103:12: warning: ‘pruss_cfg_update’ defined but not used
->>> [-Wunused-function]
->>>   103 | static int pruss_cfg_update(struct pruss *pruss, unsigned int reg,
->>>       |            ^~~~~~~~~~~~~~~~
->>> drivers/soc/ti/pruss.h:84:12: warning: ‘pruss_cfg_read’ defined but not used
->>> [-Wunused-function]
->>>    84 | static int pruss_cfg_read(struct pruss *pruss, unsigned int reg,
->>> unsigned int *val)
->>>
->>> These warnings are coming because pruss_cfg_read() / update() APIs are
->>> introduced in this patch but they are used later.
->>>
->>> One way to resolve this warning is to make this API "inline". I compiled after
->>> making these APIs inline, it got compiled without any warnings.
->>>
->>> The other solution is to merge a user API of these APIs in this patch. Patch 4
->>> and 5 introduces some APIs that uses pruss_cfg_read() / update() APIs. If we
->>> squash patch 5 (as patch 5 uses both read() and update() APIs where as patch 4
->>> only uses update() API) with this patch and make it a single patch where
->>> pruss_cfg_read() / update() is introduced as well as used, then this warning
->>> will be resolved.
->>>
->>
->> The proper way to do this is to introduce new APIs only when they are needed.
->>
-> 
-> Sure, Mathieu. I will squash this patch with patch 5 ( as it uses both update()
-> and read() APIs) so that these APIs are introduced and used in the same patch.
-> 
+1) Configuration without SCMI server (legacy): Trusted context not activated
+- The MCU reset is controlled through the Linux RCC reset driver.
+- The MCU HOLD BOOT is controlled through The RCC sysconf.
 
-I have sent next revision [v6] of these patch-set addressing your comments.
-Please have a look at that.
+2) Configuration with SCMI server: Trusted context activated
+- The MCU reset is controlled through the SCMI reset service.
+- The MCU HOLD BOOT is no more controlled through a SMC call service but
+  through the SCMI reset service.
 
-[v6] https://lore.kernel.org/all/20230331112941.823410-1-danishanwar@ti.com/
+In consequence this series:
+- Use the SCMI server to manage the MCU hold boot instead of the a SMC
+  call service,
+- determine the configuration to use depending on the presence of the
+  "reset-names" property
+  if ( "reset-names" property contains "hold_boot")
+  then use reset_control services
+  else use regmap access based on "st,syscfg-holdboot" property.
+- Update the bindings and DTs in consequence.
+
+Arnaud Pouliquen (5):
+  dt-bindings: remoteproc: st,stm32-rproc: Rework reset declarations
+  ARM: dts: stm32: Remove the st,syscfg-tz property
+  remoteproc: stm32: Clean-up the management of the hold boot by smc
+    call
+  remoteproc: stm32: Allow hold boot management by the SCMI reset
+    controller
+  ARM: dts: stm32: fix m4_rproc references to use scmi
+
+ .../bindings/remoteproc/st,stm32-rproc.yaml   | 52 ++++++++++-----
+ arch/arm/boot/dts/stm32mp151.dtsi             |  2 +-
+ arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts    |  6 +-
+ arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts    |  6 +-
+ arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts    |  6 +-
+ arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts    |  6 +-
+ drivers/remoteproc/stm32_rproc.c              | 64 ++++++++-----------
+ 7 files changed, 82 insertions(+), 60 deletions(-)
 
 -- 
-Thanks and Regards,
-Danish.
+2.25.1
+
