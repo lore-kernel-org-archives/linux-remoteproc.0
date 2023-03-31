@@ -2,58 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5417C761AF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 15:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48FFC76196
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 31 Mar 2023 16:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232887AbjCaPzr (ORCPT
+        id S230239AbjCaQG7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 31 Mar 2023 11:55:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
+        Fri, 31 Mar 2023 12:06:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232430AbjCaPzq (ORCPT
+        with ESMTP id S230185AbjCaQG6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 31 Mar 2023 11:55:46 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0520A6E86;
-        Fri, 31 Mar 2023 08:55:45 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32VDb6fB013251;
-        Fri, 31 Mar 2023 17:55:40 +0200
+        Fri, 31 Mar 2023 12:06:58 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14061EA38;
+        Fri, 31 Mar 2023 09:06:56 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 32VDr4TF010311;
+        Fri, 31 Mar 2023 18:06:49 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : mime-version : content-transfer-encoding :
  content-type; s=selector1;
- bh=DQiRL/Gjb9dXGrMIuaI/wmlc0CfSHney35atkcqIpGw=;
- b=Nj57gLelaFm8Bsn/woI0tC8MIJ7/aQSjjKU1LhNaFDnnsfljAUIuCLvIWdK5IGNguYFm
- 9qFCspLbbNgkAsviAqAj+phTPsOfJnos1PY60zCSeSO1lrx6gDCusU8rV1bbTaTRatlI
- 5SNkv+Y4fLrffrQSAr+oVNXXQSTotJQ4yHnS5SksuRGS949BL60LyLmQO3XZiLL/OT0j
- a7FXPmy969b7rSOiuBukQR4gyrZikiplGyFfr+bF1QpQFb9BxA1FS/nu6fkF38MhZ2qe
- ToE5CK+Ta834UNNnXaz1sQqS+3pOBI+FK8rwtQSe2yeFcf2MN0f5p4Ud1FyF0+0X9CH/ qQ== 
+ bh=Ac3ViCSx4VTlv+LCUqAH7E7aEYqOJVCoIrcTZkiflLc=;
+ b=DAqWhPxO9f0x4XYX/WTjp22Ou8QoEFOwd4cF6wTMoplIcxfg29fgVidw6j6pm7OaAWlj
+ V6AaPUVl/HSwqaTriFbK2lwq7EYvJaWWU11LCD3wLNJpUYH9NTIiPWX/pE9z7JPMOxLk
+ KRR0PmPUruP+EIJnUZyLumt5M17wXcaRvZEwOBwlUbtPn2kIHEsnDP/DOv67leYw2AXC
+ WvLtyZQnM2jsSItfEyU626TpYI56c/UYAo1p3aDd944l4VVDqpr5AUBa1pwF5K7thwBD
+ GgNyuEUMdmsiNKLHyH/BTSrtvcLu1vNotTa8G66ku0ePySujAIIqxKZkf2AafqQLPIGt oA== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pnvth2aem-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pnw9c27um-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Mar 2023 17:55:39 +0200
+        Fri, 31 Mar 2023 18:06:48 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7F7AD10002A;
-        Fri, 31 Mar 2023 17:55:39 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E790710002A;
+        Fri, 31 Mar 2023 18:06:41 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 74B72222CB0;
-        Fri, 31 Mar 2023 17:55:39 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DDF282248BA;
+        Fri, 31 Mar 2023 18:06:41 +0200 (CEST)
 Received: from localhost (10.201.21.178) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Fri, 31 Mar
- 2023 17:55:38 +0200
+ 2023 18:06:41 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
+        Mathieu Poirier <mathieu.poirier@linaro.org>
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>, <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH] dt-bindings: remoteproc: typo fix
-Date:   Fri, 31 Mar 2023 17:55:27 +0200
-Message-ID: <20230331155527.3111125-1-arnaud.pouliquen@foss.st.com>
+        <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH] remoteproc: stm32_rproc: Add mutex protection for workqueue
+Date:   Fri, 31 Mar 2023 18:06:34 +0200
+Message-ID: <20230331160634.3113031-1-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,31 +65,53 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fix "communnication" typo error.
+The workqueue may execute late even after remoteproc is stopped or
+stopping, some resources (rpmsg device and endpoint) have been
+released in rproc_stop_subdevices(), then rproc_vq_interrupt()
+accessing these resources will cause kennel dump.
 
-Fixes: aca8f94e5b69 ("dt-bindings: remoteproc: stm32-rproc: add new mailbox channel for detach")
+Call trace:
+virtqueue_add_inbuf
+virtqueue_add_inbuf
+rpmsg_recv_single
+rpmsg_recv_done
+vring_interrupt
+stm32_rproc_mb_vq_work
+process_one_work
+worker_thread
+kthread
 
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml        | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-index 66b1e3efdaa3..ff95648f4967 100644
---- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
-@@ -72,9 +72,9 @@ properties:
-               ready for shutdown
-       - description: |
-           A channel (d) used by the local proc to notify the remote proc that it
--          has to stop interprocessor communnication.
-+          has to stop interprocessor communication.
-           Unidirectional channel:
--            - from local to remote, where ACK from the remote means that communnication
-+            - from local to remote, where ACK from the remote means that communication
-               as been stopped on the remote side.
-     minItems: 1
+---
+This patch is similar to the issue fixed in
+commit 47e6ab07018e ("remoteproc: imx_dsp_rproc: Add mutex protection for workqueue")
+---
+ drivers/remoteproc/stm32_rproc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 7d782ed9e589..f618405cf420 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -287,8 +287,16 @@ static void stm32_rproc_mb_vq_work(struct work_struct *work)
+ 	struct stm32_mbox *mb = container_of(work, struct stm32_mbox, vq_work);
+ 	struct rproc *rproc = dev_get_drvdata(mb->client.dev);
  
++	mutex_lock(&rproc->lock);
++
++	if (rproc->state != RPROC_RUNNING)
++		goto unlock_mutex;
++
+ 	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
+ 		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
++
++unlock_mutex:
++	mutex_unlock(&rproc->lock);
+ }
+ 
+ static void stm32_rproc_mb_callback(struct mbox_client *cl, void *data)
 -- 
 2.25.1
 
