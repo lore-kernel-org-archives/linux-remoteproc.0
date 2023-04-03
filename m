@@ -2,123 +2,112 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C787C76188
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Apr 2023 17:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212B3C76188
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Apr 2023 17:18:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231411AbjDCRRz (ORCPT
+        id S232742AbjDCRSx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 3 Apr 2023 13:17:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51768 "EHLO
+        Mon, 3 Apr 2023 13:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjDCRRy (ORCPT
+        with ESMTP id S232821AbjDCRSu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 3 Apr 2023 13:17:54 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DFB212D
-        for <linux-remoteproc@vger.kernel.org>; Mon,  3 Apr 2023 10:17:53 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id w4so28711506plg.9
-        for <linux-remoteproc@vger.kernel.org>; Mon, 03 Apr 2023 10:17:53 -0700 (PDT)
+        Mon, 3 Apr 2023 13:18:50 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D372D59
+        for <linux-remoteproc@vger.kernel.org>; Mon,  3 Apr 2023 10:18:46 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id kq3so28704856plb.13
+        for <linux-remoteproc@vger.kernel.org>; Mon, 03 Apr 2023 10:18:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680542273;
+        d=linaro.org; s=google; t=1680542325;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l4xSdqbs61SVAWVBHT8IiytZ71ydcaIwPCOE+rXcdBg=;
-        b=Ge00iGkm2mOdcOxDxjzEbcjRPoGh/M6JYTxSdzfYWfqGdTMbjALJ1hWFzELWUGyflw
-         VaKbSDCqdQCPdWg+PZYiUBE1XyA5Pq6tL3PAL+jAdWDbDhhTInlHPdhxj71FrIUAQ3n7
-         Xl2n23PNO3MbdSZtvfskOpnUWcAlCXYob3mLEUMiBahnrwxLm6IV+DgNi8cWKoPeJFWY
-         mXzcslcePNVr6iDI2/o8nsQ4ttXJMTpEYDp0S8SI1/vqFyivjOxxqdOnu7WHXUUqV7J3
-         Lf/dnMS44WZM2yNj4YO/Hd7vV2vogEkf8AWmE6VXrgqmEVQnDVm6SNuecLH16TuH5tra
-         a7ug==
+        bh=3rW3em2VILxt0UnmLbwVBQSzkZ1Aze3c4iqs/OGaKgQ=;
+        b=guWPpHelsN8D4CzukM+p9HwO+O0+t1EOvCaPqycmbYFVAXF5fCh073bwn6x3o4QTJ8
+         nvtkG5glJFtW3S4SL/2DK7YRgBwk+QqDy3xPs4Kw6rNem+i65ZzqrnUrsjTndKoYZf59
+         v4WwjYEg9iWwRy7SfoA6rNCTKPhWCa7iCNioJU2SCeYlNuZKbJSFkcVUAYhjUHoz2x0J
+         AnVSZqfWtCrh0lphbxJh8bkGSrQTSw1DO0J5msp2Y4wJQjCsOBgFqh+MDN4w2+0wcb/w
+         C/syvLGgPDe5gWG8EIACnyPSGNljH20EWGsAcw6+LaYSx+3o93zE2tnQXHcvuEZX+lWm
+         xn+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680542273;
+        d=1e100.net; s=20210112; t=1680542325;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l4xSdqbs61SVAWVBHT8IiytZ71ydcaIwPCOE+rXcdBg=;
-        b=4sz9xs368pRIotjHawzTLtGLqRGOqhA50rTW1Rcm/WovOEJpCC+3rpFwDS/wDPw4DR
-         bL86xJa7pThTtBkCSMkUR+ERtcYovOMNwRqY7nMdHH56vCyfCXbsW+YETY6gEAKo5A2c
-         GEHO0y3ibmD6YsYjeAqn39gmiTnlXRx7q+yuEpzPdErVeQ0iXpj/TtTXlqyzizK2rxkc
-         kWylOeUqxEjTh0/Xx3yFpHGzZsUXF5L4G+26uCD61TI7xUdnlQWVZuTKikDBkGuaKEf4
-         BLG5YAG52tAyBUUfQA2zkj8eNhTxYemyTPJDOWNM2T0K+nZYMX90t1uxoAl/TY1Kvsh7
-         azyQ==
-X-Gm-Message-State: AAQBX9fcamFdlKh+jj06a75Vv+PFwKU0LvR0gh5ZE/jl07WzbNs0wSzn
-        96AxuPrNrcJXGuIapxJmJvhz4vDEdR8q+VcxCwE=
-X-Google-Smtp-Source: AKy350a++mWXDMz14NMLvc/HllozsRuvnaaqfIh9L4iRNH8H8kfXjRUDFCTwkrcTZrciL2hOq1lzKw==
-X-Received: by 2002:a17:902:e5d1:b0:19e:4bc3:b1ef with SMTP id u17-20020a170902e5d100b0019e4bc3b1efmr46447759plf.64.1680542273012;
-        Mon, 03 Apr 2023 10:17:53 -0700 (PDT)
+        bh=3rW3em2VILxt0UnmLbwVBQSzkZ1Aze3c4iqs/OGaKgQ=;
+        b=5ZH5bmyNSfiECEewVuKqJvBNLj+N2c4qxpB3vObe47h7bpJkmMYC/rAYTcmdmqwZ7X
+         B1B51JteF+g27deIK8sn08JMpboh/FDozxXEVowoVXvBddME3g5vrjAGqjH7g14uiBNc
+         oTxZHz9vKqGBbMrwXRrKu8t4Wd1GGkoGmWN5jji2G8Z+9Gtqb/hfLl78PZz+x6vPv2aF
+         COlH4TyVW+iEPOrEyMkM4jezgWi8cUvoxuSNhgVuVBwH1GKySuQoZBimNaz10z3JhH61
+         lVPHqHzXROyfz0NQxAf4fvK3hWZXot9sJbcD7zPj7ER1QcHrm8ODsislLtpG9l3lbMQK
+         F2Cw==
+X-Gm-Message-State: AAQBX9eokMvhXEIs20NItMGii4/ob3LsrOGzDj4AWprvJugU9L7rwnih
+        GffWUaV0NWlkuYc7xyT/UQLP4G7xSBzOuP7z1PI=
+X-Google-Smtp-Source: AKy350bMB5zNEq0ZE1UFYbMQNdutHQBU+wTgTdP/JcPYscsdxGvNCxZ7pEDBeiPHb5YKMtqVT/ZR9Q==
+X-Received: by 2002:a17:90b:1b09:b0:23f:b609:e707 with SMTP id nu9-20020a17090b1b0900b0023fb609e707mr43389916pjb.2.1680542325652;
+        Mon, 03 Apr 2023 10:18:45 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:2a9e:349f:4c3:53c7])
-        by smtp.gmail.com with ESMTPSA id jb5-20020a170903258500b001898ee9f723sm6928955plb.2.2023.04.03.10.17.52
+        by smtp.gmail.com with ESMTPSA id 3-20020a17090a174300b0023f545c055bsm9837249pjm.33.2023.04.03.10.18.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Apr 2023 10:17:52 -0700 (PDT)
-Date:   Mon, 3 Apr 2023 11:17:50 -0600
+        Mon, 03 Apr 2023 10:18:45 -0700 (PDT)
+Date:   Mon, 3 Apr 2023 11:18:42 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH] remoteproc: stm32_rproc: Add mutex protection for
- workqueue
-Message-ID: <20230403171750.GA3679607@p14s>
-References: <20230331160634.3113031-1-arnaud.pouliquen@foss.st.com>
+        linux-stm32@st-md-mailman.stormreply.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: st,stm32-rproc: Typo fix
+Message-ID: <20230403171842.GB3679607@p14s>
+References: <20230403162423.3325968-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230331160634.3113031-1-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20230403162423.3325968-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Mar 31, 2023 at 06:06:34PM +0200, Arnaud Pouliquen wrote:
-> The workqueue may execute late even after remoteproc is stopped or
-> stopping, some resources (rpmsg device and endpoint) have been
-> released in rproc_stop_subdevices(), then rproc_vq_interrupt()
-> accessing these resources will cause kennel dump.
+On Mon, Apr 03, 2023 at 06:24:23PM +0200, Arnaud Pouliquen wrote:
+> Fix "communnication" typo error.
 > 
-> Call trace:
-> virtqueue_add_inbuf
-> virtqueue_add_inbuf
-> rpmsg_recv_single
-> rpmsg_recv_done
-> vring_interrupt
-> stm32_rproc_mb_vq_work
-> process_one_work
-> worker_thread
-> kthread
-> 
-> Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Fixes: aca8f94e5b69 ("dt-bindings: remoteproc: stm32-rproc: add new mailbox channel for detach")
 > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->
-
-I had forgotten about this issue - applied.
-
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
-> This patch is similar to the issue fixed in
-> commit 47e6ab07018e ("remoteproc: imx_dsp_rproc: Add mutex protection for workqueue")
+> updates vs V1: address Krzysztof comments
+> - Add missing "st,stm32-rproc" device prefix in subject
+> - Drop line break between "Fixes" and "Signed-off-by"
+> - Add Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  drivers/remoteproc/stm32_rproc.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  .../devicetree/bindings/remoteproc/st,stm32-rproc.yaml        | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+And this one as well.
+
+Thanks,
+Mathieu
+
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 7d782ed9e589..f618405cf420 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -287,8 +287,16 @@ static void stm32_rproc_mb_vq_work(struct work_struct *work)
->  	struct stm32_mbox *mb = container_of(work, struct stm32_mbox, vq_work);
->  	struct rproc *rproc = dev_get_drvdata(mb->client.dev);
+> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> index 66b1e3efdaa3..ff95648f4967 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+> @@ -72,9 +72,9 @@ properties:
+>                ready for shutdown
+>        - description: |
+>            A channel (d) used by the local proc to notify the remote proc that it
+> -          has to stop interprocessor communnication.
+> +          has to stop interprocessor communication.
+>            Unidirectional channel:
+> -            - from local to remote, where ACK from the remote means that communnication
+> +            - from local to remote, where ACK from the remote means that communication
+>                as been stopped on the remote side.
+>      minItems: 1
 >  
-> +	mutex_lock(&rproc->lock);
-> +
-> +	if (rproc->state != RPROC_RUNNING)
-> +		goto unlock_mutex;
-> +
->  	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
->  		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
-> +
-> +unlock_mutex:
-> +	mutex_unlock(&rproc->lock);
->  }
->  
->  static void stm32_rproc_mb_callback(struct mbox_client *cl, void *data)
 > -- 
 > 2.25.1
 > 
