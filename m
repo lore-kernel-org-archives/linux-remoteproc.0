@@ -2,171 +2,212 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35F3DC76196
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Apr 2023 17:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE7C7618D
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 04:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232340AbjDCRZW (ORCPT
+        id S233114AbjDDEze (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 3 Apr 2023 13:25:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58414 "EHLO
+        Tue, 4 Apr 2023 00:55:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232744AbjDCRZV (ORCPT
+        with ESMTP id S231878AbjDDEzc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 3 Apr 2023 13:25:21 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89CCC8E
-        for <linux-remoteproc@vger.kernel.org>; Mon,  3 Apr 2023 10:25:19 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id r19-20020a05600c459300b003eb3e2a5e7bso18586065wmo.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 03 Apr 2023 10:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680542718;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uJI+R7Z2OIlFqVuwYWesbGzyliYONi9PcdnjVEKDM1o=;
-        b=n1quY7QqUla1CplzUDYkiQ/27vTXjJRjzVQEvjeb+uaNXP/M7Phaim99ZCXxkMShMp
-         YqRhsALQleSLEIbfBWl/lOOhFUJI7S6j73gamrYhmjuYBJ9Sr/ORnl+h4hJ4kpbzue2r
-         tsENu+oE1gOY4u1+Gn2gigXmGtZoH4zbri/qRhjXykYLaVXx9rEhKTL4ng/LaIGwCzbI
-         awQczryb4NoalCjVLGre6jrV0N5fWV9PH84TuulLReYJXlL0xo1QBumUlI2Z2k2fN2k7
-         takPOyr9GQFYMLIbcoHybFP/YvG44IXLlmxPcuzja0I+FCOuHdZSn1BVdaJlhrlUnNG6
-         oybg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680542718;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uJI+R7Z2OIlFqVuwYWesbGzyliYONi9PcdnjVEKDM1o=;
-        b=m/sXywJyRsAcIKg+mNXpkz3IqjJhRbUl0SE/5+s0P2LVsqAue8LbG5JRvnlEkNYe03
-         h4NMLt8064eSAFy6fDs0B43Yiioq8c7hAaISrJIgtAKT2WlyLBFEeLwkGjZ/D095OfY+
-         G+PdPRD8qbcawtUuICvZ3K/9b2Dg+ZJ6yiErheiRZPtdHWleSHIPtixbzqu04oEfbata
-         BmQj0MIXB2+jRgjQy63M4sReFbVDgmmxF/mvp0zmsjIY+xGDcmNnqluoSyk36Wr4ozis
-         l8Gi2pTWlaAYTRFC07akMT/ModT3wgvU63wOoUbg9zFTSloG2C1/a2t+jh59BrM4fqVz
-         SQ8g==
-X-Gm-Message-State: AAQBX9dog5vBnaqheeutW6lJzz+lIbXMnjWRJ2CTLl9svW2T5MtkR1Kq
-        vZDufdbO3hu1hhRbG9uYzIPkEA719WzzX56fGwnbrA==
-X-Google-Smtp-Source: AKy350arJwJZmf6GVJKgYAqtK3M80H/h0YB5IchzMw/j7dNdVnxhUoZAx0FpTRuSfsdgq1F0LivXm+9/d34VX5Qsqhg=
-X-Received: by 2002:a05:600c:291:b0:3f0:4429:2eb5 with SMTP id
- 17-20020a05600c029100b003f044292eb5mr59662wmk.5.1680542718041; Mon, 03 Apr
- 2023 10:25:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230328022733.29910-1-tinghan.shen@mediatek.com>
- <20230328022733.29910-12-tinghan.shen@mediatek.com> <848971ea-b142-d088-df6f-74ee2d807950@gmail.com>
-In-Reply-To: <848971ea-b142-d088-df6f-74ee2d807950@gmail.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 3 Apr 2023 11:25:07 -0600
-Message-ID: <CANLsYkw1viJTWzFZ3gCjFoEwm-TjF0QCLLqqwYGvLjW0fE+6rg@mail.gmail.com>
-Subject: Re: [PATCH v9 11/11] arm64: dts: mediatek: mt8195: Add SCP 2nd core
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        Tue, 4 Apr 2023 00:55:32 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2066.outbound.protection.outlook.com [40.107.20.66])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9421BCB;
+        Mon,  3 Apr 2023 21:55:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ObkBP3cS89kzk81zenxdW0qtzxLM64AtCknYlW1RvbbKhym8KoYiasaZhbPl+UNuWFQktlQSTKyjt+ydGujfh+NOfs8HtdjZ85/JccbnAjiywv+QMRXuY0H3QZ/LTaULn0zPMPQXaB73+ZMFosiqc4Ff6gBkddwXLXMWV4FwSxSdEfJhej4GRX+4pKpE6FHoa53wPi7KBrV/fSB2uVsmMYQKHk4GhTEpZD74YoNCPFIeEThYv3FETQrHiBh7qhsNXFLUOgNTJxi4A2HBzDb65Xi5jDpADJIWYJQQvRprx+zEDHJAiH31hJrYqn+oMdbzGKtrQo+2vJ/CBOijtIk+GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qrx6wzp22s3ImoZHwkmTGnleOX/iwEeE4gfkd+/BrtY=;
+ b=gAhwV7xjgJvAlwOn4uJ5GZwIHPeUX1epqr8Kpzh4N6Zv8+pLLm+88v7oTq5yjxkjtfvAgvLnGi7R9dqcEvbfVJMxNusbgyj4BZVVr1QRVR/BsSlyUKW8uR7LfUmV9itKES3bhcra7Xob8OKKTC6/NWGwHdw4sRFUkZlhNwCyNKz+dzUNvNmjEWvJOPOhF4IHPJigjs1dNiOSzK0lqtpc5Vf1GQnwqSZfgf3Tv8kG3696mCl0FvYjHZbNCDArA8k93DikqxNfCzGBw68WTkSjJmNwCuivTe3+5u77HfS2kUZK/qzapMwNsVX0t0SlZVtyC/aQeJSmgsZjIgv5Ql25ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qrx6wzp22s3ImoZHwkmTGnleOX/iwEeE4gfkd+/BrtY=;
+ b=c8snKh0XqTnwvMbMvxp2rArUmJv+meXHWaExUN9lbdlJJ5Cv4CIXpF+EpvcsHHPZDGTAtZuiQHMl0J2Fi04LGq8Yk7rrguFdCMNNxKWhEjaNKTuhhu9lqJ/4oM3zBTxr7+9/9rEm6YOO6VjRWsQfJYisQfZMcaZJaBTac+f5D/U=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DB8PR04MB7097.eurprd04.prod.outlook.com (2603:10a6:10:12a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.35; Tue, 4 Apr
+ 2023 04:55:28 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::b999:f2c6:a8cc:7b4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::b999:f2c6:a8cc:7b4%4]) with mapi id 15.20.6254.033; Tue, 4 Apr 2023
+ 04:55:28 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by the
+ SCMI reset controller
+Thread-Topic: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by the
+ SCMI reset controller
+Thread-Index: AQHZY+gfFgW91EuCRkiIW9Op8za+hq8am2Pg
+Date:   Tue, 4 Apr 2023 04:55:28 +0000
+Message-ID: <DU0PR04MB941747DDF6FD2F157A24183288939@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
+ <20230331154651.3107173-5-arnaud.pouliquen@foss.st.com>
+In-Reply-To: <20230331154651.3107173-5-arnaud.pouliquen@foss.st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DB8PR04MB7097:EE_
+x-ms-office365-filtering-correlation-id: 60787d3a-2d9a-4330-e199-08db34c8cfcb
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: SQUKPm3ypAgqeS6LCCQ4SPdcOqOybH+kgf4+PD2s6QtBuDMlqi/Gs7BUozytQg9ESxqcVasirTHClD/5aqq4SU5kxWzeGVr+ZdFCVQcE2Lxl4bFWByAo/czE5U8fPV6wdkv3msIdWYAAeyif7kuj4JQRuR4QRF3vNqLxonAJ9MJqbr86wBrT2BDVCU+Mko1cyiP25v1JmwdByFrZxK5inXnOBpXrx7FENRehaiMyE72azDWzzGV7VlgapNhUco72h+DFogR53GI9a6jJa9At3e8hAp9lLv91Rvyr79TraEjHzLdhugX6MHC70ddw2I0PlYLkBTtXy1xgbHYpasnG8GSQJrQzMOKGARFmPFeEznhcW5ljUVIptbOxM34g2Ur2N0Z2yrqZaVF1hh87M7rH7vkzDvmx8dJi6aOsyxYPiBIJR1yk8HIZNtm7O53VGBgJqNTjN69+21HQRSp3J15r8EbQo8ZXMMzcr3ygTkNoatI1tyD5sQnHfNEUg4uZWCdg4yc32irYlrXhNPnQ8z5VE97eeVBje3sdJy/KiZ2+/85tRC7ZoM0I1vNWq3fJeb5MN4iTbYQh24lICvwekaUd1HVe8vlN5F0qMbYDVCuDzTrqWserOfxXNiJhkKYWjcJb
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(396003)(346002)(39860400002)(376002)(451199021)(66946007)(26005)(6506007)(9686003)(83380400001)(122000001)(66556008)(66476007)(66446008)(38100700002)(41300700001)(7696005)(71200400001)(186003)(54906003)(110136005)(316002)(478600001)(7416002)(2906002)(44832011)(33656002)(86362001)(4326008)(64756008)(76116006)(8676002)(55016003)(5660300002)(38070700005)(8936002)(52536014);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?FKG+gHLUIvsj6/x8Hhr7t6EcG7vCR9SpXaSMR4/RPJHqhn2gVaCeOZOS/rph?=
+ =?us-ascii?Q?LvPHbYS74oadQWktn4LFn+Bgbdu6THOvTv17eagO7MKmnmSh6NXWPtrnBJpb?=
+ =?us-ascii?Q?K2GFmDsO0cb2Iu2YtfBQsYLMI9LRs/+sFb8hAhXXL80IUwN0MX88IZsBR3SB?=
+ =?us-ascii?Q?olHHYRnQa/ugAnamPc5RoevpErCUB0B9798MhQ6NUm9MZsJz2vi779FAGOv9?=
+ =?us-ascii?Q?j8r4Ns7Y+NtezizB7S8EaEFDy9VwrFV1F5JQx9VKbjZW5Ib5LGIfe6sS3gzD?=
+ =?us-ascii?Q?Q6u8UJPUo8ACImpusu6tktQODNpmlyHZUMc7BkzRkJ8W+aWSw9DohSMQxFy+?=
+ =?us-ascii?Q?G8U2ITNVMn8Sdde/1Cmtq7f3InqBXB2gSnVvk0ZffyJ1D7k5ABEY2THq9miZ?=
+ =?us-ascii?Q?ACj7SdRPnA39foXUQlPVGUl81icsDz7OZTuM1s7YHyzfGaOTs5FfRPNbSHib?=
+ =?us-ascii?Q?jviGq18RcYg/CZFtft+tJlfJtUiuPnQryivDdhlMPzo4z9B4QgVmdMUY4qF6?=
+ =?us-ascii?Q?cevqlIDvms/o6lwkOoqYiktj+j0itFnZ8KwhvlEKj2cydTjtCPMMk9RYJHVn?=
+ =?us-ascii?Q?QjN2036izfFxFOuWDIc9yiO23gjbquYs7Y+l6sOWrVitBVoZS8kwTCuz6sff?=
+ =?us-ascii?Q?Mw4stW3HtPcKqGjDr1lshUeLAmlc8vdbXvzS4+wTB9tOuYtPJvUlUSveNK8B?=
+ =?us-ascii?Q?xmsMUa3L0PxWxg0Kwy0l5OKsj/91myy6I6YZuXEG8rOgNt/sVvN7lK6RpdQu?=
+ =?us-ascii?Q?8qt105W4gUr8xpSjCKpWNVq9lCt5ENyEiKpebv11ftY4vg81hxK+3PerLiJl?=
+ =?us-ascii?Q?MAusBEUyvKLqhUD6z2Ir06gnsKybUivlA7lB42DiZmlOzmDdAUauUwyWEfUP?=
+ =?us-ascii?Q?V9+fnrw7vzhNvXYo9RwcmtqCI6CHqtr2iCckDdd+aG747cpNM8j676/K71Hs?=
+ =?us-ascii?Q?pQM4KBw9DV3gjcjjRJvRHGjEqjDCoMNOcH5ZlaGS6MpcQY5j4/Qg2OlY1imo?=
+ =?us-ascii?Q?w3WcrW2JSMBkX7eMJZau1+1e6FNv01LKlWjMC8X5T/8t597rKSxLvFA9Zb+F?=
+ =?us-ascii?Q?qghiIZlriggXXZ1Bvxi0nf90LccXuVRdS5xETYDdns0opezvjdO8HbfeR1mD?=
+ =?us-ascii?Q?KWFYBOsO0qUCacnohkKc2AUoymTrj0znOEde0b19mi7bMaZHIs3vYzgC3QxP?=
+ =?us-ascii?Q?GCJbkYale/DkfREpeku2X2pjceWUtmsYNTdfcCZSpHerS4Lk0VUU0lJuzeYV?=
+ =?us-ascii?Q?57hfYK40ZDCcLAAxjX2OiG3n8x6kgwtD/8xZjdKYUArNz8kFB7L6p88ennDb?=
+ =?us-ascii?Q?Vy2r66wxCqY2p7VTw6DUM2fpNuowVySXrlYghjMMQuwmCkGymJxTH+Qliau9?=
+ =?us-ascii?Q?mmuPJGRLiFn5Ndd9GU0OhldsLNpju52VLAph1Ux0TuB2pRp50AZ4+qzFZtOk?=
+ =?us-ascii?Q?kvvDBYRBHGDW5jwO26ovnSJLAywzSvuIUrFEjoMipEgaRNoiObfBF08Vn/ur?=
+ =?us-ascii?Q?Wj0ylidyrTCww4oxF7etcfmBjEgFmrLV1XAHQLPmHJuEhIxpdzMOZbFZQZ+q?=
+ =?us-ascii?Q?UMhjG/AMYQODFcMw5s8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60787d3a-2d9a-4330-e199-08db34c8cfcb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Apr 2023 04:55:28.7043
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JvslKpa3pe/mpRk1PmdcFNmAuRdIAibVm8ibvmUqr0AuU/twCmxl0nj1rNERZRtaSs359n+Dey7R1D4tgsIK3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7097
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, 31 Mar 2023 at 05:00, Matthias Brugger <matthias.bgg@gmail.com> wrote:
->
->
->
-> On 28/03/2023 04:27, Tinghan Shen wrote:
-> > Rewrite the MT8195 SCP device node as a cluster and
-> > add the SCP 2nd core in it.
-> >
-> > Since the SCP device node is changed to multi-core structure,
-> > enable SCP cluster to enable probing SCP core 0.
-> >
-> > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->
-> As this is a bigger change I'd prefer to take it through my tree once the driver
-> and dt-bindings changes are merged. Given the fact, maybe it would make sense to
-> take 2/11 through my tree as well.
->
+> Subject: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by
+> the SCMI reset controller
+>=20
+> The hold boot can be managed by the SCMI controller as a reset.
+> If the "hold_boot" reset is defined in the device tree, use it.
+> Else use the syscon controller directly to access to the register.
+>=20
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 34 ++++++++++++++++++++++++++-----
+> -
+>  1 file changed, 28 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/remoteproc/stm32_rproc.c
+> b/drivers/remoteproc/stm32_rproc.c
+> index 4be651e734ee..6b0d8f30a5c7 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -78,6 +78,7 @@ struct stm32_mbox {
+>=20
+>  struct stm32_rproc {
+>  	struct reset_control *rst;
+> +	struct reset_control *hold_boot_rst;
+>  	struct stm32_syscon hold_boot;
+>  	struct stm32_syscon pdds;
+>  	struct stm32_syscon m4_state;
+> @@ -398,6 +399,14 @@ static int stm32_rproc_set_hold_boot(struct rproc
+> *rproc, bool hold)
+>  	struct stm32_syscon hold_boot =3D ddata->hold_boot;
+>  	int val, err;
+>=20
+> +	if (ddata->hold_boot_rst) {
+> +		/* Use the SCMI reset controller */
+> +		if (!hold)
+> +			return reset_control_deassert(ddata-
+> >hold_boot_rst);
+> +		else
+> +			return reset_control_assert(ddata->hold_boot_rst);
+> +	}
+> +
+>  	val =3D hold ? HOLD_BOOT : RELEASE_BOOT;
+>=20
+>  	err =3D regmap_update_bits(hold_boot.map, hold_boot.reg, @@ -
+> 693,16 +702,29 @@ static int stm32_rproc_parse_dt(struct platform_device
+> *pdev,
+>  		dev_info(dev, "wdg irq registered\n");
+>  	}
+>=20
+> -	ddata->rst =3D devm_reset_control_get_by_index(dev, 0);
+> +	ddata->rst =3D devm_reset_control_get(dev, "mcu_rst");
+[Peng Fan]=20
+This may break legacy device tree.
 
-Might as well take the whole thing through your tree, which I'm
-totally fine with.  But when that happens, you will also have to pick
-up other potential patches that touch these files.  We'll sort it out.
+Regards,
+Peng.
 
-> Regards,
-> Matthias
->
-> > ---
-> >   .../boot/dts/mediatek/mt8195-cherry.dtsi      |  6 +++-
-> >   arch/arm64/boot/dts/mediatek/mt8195.dtsi      | 32 ++++++++++++++-----
-> >   2 files changed, 29 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> > index 56749cfe7c33..31415d71b6a4 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> > @@ -933,7 +933,11 @@
-> >       interrupts-extended = <&pio 222 IRQ_TYPE_LEVEL_HIGH>;
-> >   };
-> >
-> > -&scp {
-> > +&scp_cluster {
-> > +     status = "okay";
-> > +};
-> > +
-> > +&scp_c0 {
-> >       status = "okay";
-> >
-> >       firmware-name = "mediatek/mt8195/scp.img";
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > index 8fc527570791..5fe5fb32261e 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-> > @@ -826,14 +826,30 @@
-> >                       clocks = <&infracfg_ao CLK_INFRA_AO_GCE2>;
-> >               };
-> >
-> > -             scp: scp@10500000 {
-> > -                     compatible = "mediatek,mt8195-scp";
-> > -                     reg = <0 0x10500000 0 0x100000>,
-> > -                           <0 0x10720000 0 0xe0000>,
-> > -                           <0 0x10700000 0 0x8000>;
-> > -                     reg-names = "sram", "cfg", "l1tcm";
-> > -                     interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +             scp_cluster: scp@10500000 {
-> > +                     compatible = "mediatek,mt8195-scp-dual";
-> > +                     reg = <0 0x10720000 0 0xe0000>, <0 0x10700000 0 0x8000>;
-> > +                     reg-names = "cfg", "l1tcm";
-> > +                     #address-cells = <1>;
-> > +                     #size-cells = <1>;
-> > +                     ranges = <0 0 0x10500000 0x100000>;
-> >                       status = "disabled";
-> > +
-> > +                     scp_c0: scp@0 {
-> > +                             compatible = "mediatek,scp-core";
-> > +                             reg = <0x0 0xa0000>;
-> > +                             reg-names = "sram";
-> > +                             interrupts = <GIC_SPI 462 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                             status = "disabled";
-> > +                     };
-> > +
-> > +                     scp_c1: scp@a0000 {
-> > +                             compatible = "mediatek,scp-core";
-> > +                             reg = <0xa0000 0x20000>;
-> > +                             reg-names = "sram";
-> > +                             interrupts = <GIC_SPI 463 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +                             status = "disabled";
-> > +                     };
-> >               };
-> >
-> >               scp_adsp: clock-controller@10720000 {
-> > @@ -2309,7 +2325,7 @@
-> >                                <&iommu_vdo M4U_PORT_L19_VENC_REF_LUMA>,
-> >                                <&iommu_vdo M4U_PORT_L19_VENC_REF_CHROMA>;
-> >                       interrupts = <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH 0>;
-> > -                     mediatek,scp = <&scp>;
-> > +                     mediatek,scp = <&scp_c0>;
-> >                       clocks = <&vencsys CLK_VENC_VENC>;
-> >                       clock-names = "venc_sel";
-> >                       assigned-clocks = <&topckgen CLK_TOP_VENC>;
+>  	if (IS_ERR(ddata->rst))
+>  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+>  				     "failed to get mcu_reset\n");
+>=20
+> -	err =3D stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+> -				     &ddata->hold_boot);
+> -	if (err) {
+> -		dev_err(dev, "failed to get hold boot\n");
+> -		return err;
+> +	ddata->hold_boot_rst =3D devm_reset_control_get(dev, "hold_boot");
+> +	if (IS_ERR(ddata->hold_boot_rst)) {
+> +		if (PTR_ERR(ddata->hold_boot_rst) =3D=3D -EPROBE_DEFER)
+> +			return PTR_ERR(ddata->hold_boot_rst);
+> +		ddata->hold_boot_rst =3D NULL;
+> +	}
+> +
+> +	if (!ddata->hold_boot_rst) {
+> +		/*
+> +		 * If the hold boot is not managed by the SCMI reset
+> controller,
+> +		 * manage it through the syscon controller
+> +		 */
+> +		err =3D stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+> +					     &ddata->hold_boot);
+> +		if (err) {
+> +			dev_err(dev, "failed to get hold boot\n");
+> +			return err;
+> +		}
+>  	}
+>=20
+>  	err =3D stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
+> --
+> 2.25.1
+
