@@ -2,130 +2,184 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C43C761A6
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 12:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC440C761A6
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 15:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234958AbjDDMvv (ORCPT
+        id S234451AbjDDPPr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Apr 2023 08:51:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54134 "EHLO
+        Tue, 4 Apr 2023 11:15:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235045AbjDDMvt (ORCPT
+        with ESMTP id S229687AbjDDPPq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Apr 2023 08:51:49 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE2041BC7;
-        Tue,  4 Apr 2023 05:51:47 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 334C4sME008549;
-        Tue, 4 Apr 2023 12:51:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+        Tue, 4 Apr 2023 11:15:46 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6B144A3;
+        Tue,  4 Apr 2023 08:15:35 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 334CS99Z019621;
+        Tue, 4 Apr 2023 17:15:22 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=S56gB3YQkJOt44DZlf+zjHqDJe5ozPp+Loy1PCk6f9Q=;
- b=AVwtTz4nDRVh58sfp30UTInPgn4QThvPODmw3V1GsV36TOiV0vAnCKcfqd8rwyfbi3Bv
- 3aJfRNZTc6mtWwJDQVh+0y+ApvlfDeIDyOojIi0kWtKvYsNSi9qvhqtGxKMeh00LgJ6x
- F8pOf7jdIRAOzJ1lSk3U2OmThlW3Pe0wv6ihlIT4mX1DspapLKRqjbMVGlwToNtOUQns
- ow5w+ozQVK/PqTPGr43l0zngi8zQz78iGWOsND5NiIGg/Rtq4grQsGHgksjJRtsTlHdw
- js6VeIWF5WK7JYYBDX20xhQ6rlYpn97ibecYQ75XcPDmhs0gWGEeI/d1VquR2XcwFMwh 4w== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pqwdrugdp-1
+ content-type : content-transfer-encoding; s=selector1;
+ bh=O4QAVAXtCfAM2YMeEv35i7sxiFxYCA1KFeyN8KIQ5+8=;
+ b=nKSy0tX/2pG6fXNiReeUK1YeACTsHLeWuPfHA14D/QraNRiDwN5VUXBVofuvgmYF1DcP
+ H3Ni8+rQVObaNqIHDKjReKaNALH7Geqggz/1Tm1symw/E0HAZisw2a8h8Sy9cHKeYX8B
+ lP7CCk4OTfv+0HdaoAFQgdxmLcogndnxSVToL8OTGibH+wfwlBpvd+xzu4gY14G9ybnw
+ sGcGTb1nzv3B18PFGK44xSCvA+rBgbM2tdZaIalDp0A6sKravxPNhKtDhVQil5/fHF7R
+ y70XpE9An9zRs9DRnxUVgo3jVKI7MV/6Lxr1cZAfRjvoCrXYzwhhX45xu08C6FuKcGP9 cw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3pqunht0vr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Apr 2023 12:51:27 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 334CpQas018881
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 4 Apr 2023 12:51:26 GMT
-Received: from [10.214.66.81] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 4 Apr 2023
- 05:51:23 -0700
-Message-ID: <676dfbfb-f1ee-b02f-0383-9a84a91634af@quicinc.com>
-Date:   Tue, 4 Apr 2023 18:21:20 +0530
+        Tue, 04 Apr 2023 17:15:22 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 399D910002A;
+        Tue,  4 Apr 2023 17:15:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2002D2248B0;
+        Tue,  4 Apr 2023 17:15:21 +0200 (CEST)
+Received: from [10.252.11.89] (10.252.11.89) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Tue, 4 Apr
+ 2023 17:15:17 +0200
+Message-ID: <6bfaef82-458e-256d-b9ba-d6d84c574d4b@foss.st.com>
+Date:   Tue, 4 Apr 2023 17:15:17 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH] remoteproc: pru: remove always true check positive
- unsigned value
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by the
+ SCMI reset controller
 Content-Language: en-US
-To:     Simon Horman <horms@kernel.org>,
+To:     Peng Fan <peng.fan@nxp.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Dan Carpenter <error27@gmail.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>
-References: <20230404-pru-always-true-v1-1-b1b55eeff188@kernel.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20230404-pru-always-true-v1-1-b1b55eeff188@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
+ <20230331154651.3107173-5-arnaud.pouliquen@foss.st.com>
+ <DU0PR04MB941747DDF6FD2F157A24183288939@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <DU0PR04MB941747DDF6FD2F157A24183288939@DU0PR04MB9417.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: d1U18E7dXEJCaMRXgYCwRKKITKsc2Csj
-X-Proofpoint-ORIG-GUID: d1U18E7dXEJCaMRXgYCwRKKITKsc2Csj
+X-Originating-IP: [10.252.11.89]
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-04_04,2023-04-04_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 phishscore=0 spamscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 mlxlogscore=936 suspectscore=0 clxscore=1011
- bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2303200000 definitions=main-2304040119
+ definitions=2023-04-04_06,2023-04-04_04,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 4/4/2023 6:14 PM, Simon Horman wrote:
-> In both cases they type of da is u32. And PRU_PDRAM_DA is 0.
-> So the check da >= PRU_PDRAM_DA is always true and can be removed.
-> 
-> Flagged by Smatch:
-> 
->   drivers/remoteproc/pru_rproc.c:660 pru_d_da_to_va() warn: always true condition '(da >= 0) => (0-u32max >= 0)'
->   drivers/remoteproc/pru_rproc.c:709 pru_i_da_to_va() warn: always true condition '(da >= 0) => (0-u32max >= 0)'
-> 
-> No functional changes intended.
-> Compile tested only.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Link: https://www.spinics.net/lists/kernel/msg4025983.html
-> Signed-off-by: Simon Horman <horms@kernel.org>
-> ---
->   drivers/remoteproc/pru_rproc.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index b76db7fa693d..095f66130f48 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -657,7 +657,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
->   		swap(dram0, dram1);
->   	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
->   
-> -	if (da >= PRU_PDRAM_DA && da + len <= PRU_PDRAM_DA + dram0.size) {
-> +	if (da + len <= PRU_PDRAM_DA + dram0.size) {
->   		offset = da - PRU_PDRAM_DA;
->   		va = (__force void *)(dram0.va + offset);
->   	} else if (da >= PRU_SDRAM_DA &&
-> @@ -706,8 +706,7 @@ static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
->   	 */
->   	da &= 0xfffff;
->   
-> -	if (da >= PRU_IRAM_DA &&
-> -	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
-> +	if (da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
->   		offset = da - PRU_IRAM_DA;
->   		va = (__force void *)(pru->mem_regions[PRU_IOMEM_IRAM].va +
+On 4/4/23 06:55, Peng Fan wrote:
+>> Subject: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by
+>> the SCMI reset controller
+>>
+>> The hold boot can be managed by the SCMI controller as a reset.
+>> If the "hold_boot" reset is defined in the device tree, use it.
+>> Else use the syscon controller directly to access to the register.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  drivers/remoteproc/stm32_rproc.c | 34 ++++++++++++++++++++++++++-----
+>> -
+>>  1 file changed, 28 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/stm32_rproc.c
+>> b/drivers/remoteproc/stm32_rproc.c
+>> index 4be651e734ee..6b0d8f30a5c7 100644
+>> --- a/drivers/remoteproc/stm32_rproc.c
+>> +++ b/drivers/remoteproc/stm32_rproc.c
+>> @@ -78,6 +78,7 @@ struct stm32_mbox {
+>>
+>>  struct stm32_rproc {
+>>  	struct reset_control *rst;
+>> +	struct reset_control *hold_boot_rst;
+>>  	struct stm32_syscon hold_boot;
+>>  	struct stm32_syscon pdds;
+>>  	struct stm32_syscon m4_state;
+>> @@ -398,6 +399,14 @@ static int stm32_rproc_set_hold_boot(struct rproc
+>> *rproc, bool hold)
+>>  	struct stm32_syscon hold_boot = ddata->hold_boot;
+>>  	int val, err;
+>>
+>> +	if (ddata->hold_boot_rst) {
+>> +		/* Use the SCMI reset controller */
+>> +		if (!hold)
+>> +			return reset_control_deassert(ddata-
+>>> hold_boot_rst);
+>> +		else
+>> +			return reset_control_assert(ddata->hold_boot_rst);
+>> +	}
+>> +
+>>  	val = hold ? HOLD_BOOT : RELEASE_BOOT;
+>>
+>>  	err = regmap_update_bits(hold_boot.map, hold_boot.reg, @@ -
+>> 693,16 +702,29 @@ static int stm32_rproc_parse_dt(struct platform_device
+>> *pdev,
+>>  		dev_info(dev, "wdg irq registered\n");
+>>  	}
+>>
+>> -	ddata->rst = devm_reset_control_get_by_index(dev, 0);
+>> +	ddata->rst = devm_reset_control_get(dev, "mcu_rst");
+> [Peng Fan] 
+> This may break legacy device tree.
 
-LGTM.
-Reviewed-by: Mukesh Ojha <quic_mojha@quicinc.com>
+That partially true by the fact that I impose the "reset-names" property
+(but also suppress the "st,syscfg-tz" property)
+
+But this should not be the case as the arch/arm/boot/dts/stm32mp151.dtsi
+is updated in patch 2/5. The DTS files associated to this chip include it.
+
+Thanks,
+Arnaud
 
 
---Mukesh
->   				      offset);
+> 
+> Regards,
+> Peng.
+> 
+>>  	if (IS_ERR(ddata->rst))
+>>  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+>>  				     "failed to get mcu_reset\n");
+>>
+>> -	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+>> -				     &ddata->hold_boot);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to get hold boot\n");
+>> -		return err;
+>> +	ddata->hold_boot_rst = devm_reset_control_get(dev, "hold_boot");
+>> +	if (IS_ERR(ddata->hold_boot_rst)) {
+>> +		if (PTR_ERR(ddata->hold_boot_rst) == -EPROBE_DEFER)
+>> +			return PTR_ERR(ddata->hold_boot_rst);
+>> +		ddata->hold_boot_rst = NULL;
+>> +	}
+>> +
+>> +	if (!ddata->hold_boot_rst) {
+>> +		/*
+>> +		 * If the hold boot is not managed by the SCMI reset
+>> controller,
+>> +		 * manage it through the syscon controller
+>> +		 */
+>> +		err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+>> +					     &ddata->hold_boot);
+>> +		if (err) {
+>> +			dev_err(dev, "failed to get hold boot\n");
+>> +			return err;
+>> +		}
+>>  	}
+>>
+>>  	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
+>> --
+>> 2.25.1
 > 
