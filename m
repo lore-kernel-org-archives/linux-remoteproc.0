@@ -2,285 +2,98 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4846DC6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 11:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA8CC77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 12:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234438AbjDDLyi (ORCPT
+        id S234847AbjDDMpM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Apr 2023 07:54:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60286 "EHLO
+        Tue, 4 Apr 2023 08:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234737AbjDDLyS (ORCPT
+        with ESMTP id S235003AbjDDMpA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Apr 2023 07:54:18 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E65E4228;
-        Tue,  4 Apr 2023 04:54:02 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 334BrlgG071631;
-        Tue, 4 Apr 2023 06:53:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1680609227;
-        bh=PSEF9PKaq4DqE7eetCOk74X05JZ9Cnh2P7vAE2yAcTY=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=YED9DmopnKmYWayOBW0rzAIvHJDEc908advdAG5IWh13QJi0EJuCfDUPgB7SYeFFa
-         7oFcxiehLqM7JcLRtcPazp+ZLDSLkSrkoMINCLVywZpZcYkF1Op5XqXRyx6/5E1AJE
-         pqdXurVO8C0GQN0CdV2cc6Wejd/3H7JdQksGexcA=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 334BrlUw033501
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 4 Apr 2023 06:53:47 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 4
- Apr 2023 06:53:47 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
- Frontend Transport; Tue, 4 Apr 2023 06:53:47 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 334BrlZI080398;
-        Tue, 4 Apr 2023 06:53:47 -0500
-Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
-        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 334Brk1W010005;
-        Tue, 4 Apr 2023 06:53:46 -0500
-From:   MD Danish Anwar <danishanwar@ti.com>
-To:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Nishanth Menon <nm@ti.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <srk@ti.com>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-Subject: [PATCH v7 4/4] soc: ti: pruss: Add helper functions to set GPI mode, MII_RT_event and XFR
-Date:   Tue, 4 Apr 2023 17:23:36 +0530
-Message-ID: <20230404115336.599430-5-danishanwar@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230404115336.599430-1-danishanwar@ti.com>
-References: <20230404115336.599430-1-danishanwar@ti.com>
+        Tue, 4 Apr 2023 08:45:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABBE93;
+        Tue,  4 Apr 2023 05:44:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1553463364;
+        Tue,  4 Apr 2023 12:44:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29EC1C433D2;
+        Tue,  4 Apr 2023 12:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1680612298;
+        bh=WFFW9qEQYe8+GiUD2bFU8d19Cj3lDDm8VtUlxAm+bH4=;
+        h=From:Date:Subject:To:Cc:From;
+        b=QZKS1I8yNLt22q8keAcuSLsiaXmUwcW3CtB65tSui+68PSR6a6y8o1zas3Gs6KBYc
+         rvqMb8u37hnumuyK3xPVLSvPllfuT5Fsuv+zjtcScxUlKg/HbhG9jzCK2UjPatyL6L
+         UyslQu58wAisIOZa8Rfhfr7mfefiGmO2aARQP/VgcsbBKKjnfDj/D6R7RHZywo8VbY
+         oSzvoZkEh7vpAeSaKzWjpLV3/YonsqM1nVTWJup4TytlLQZ/sMx+InXEDhuN1vlsmA
+         H+oYMa3j+iNycVjWMG9kK5wglimZUsSIxG1dNCzgD9q9Nka2204KAqSyBaaGI3UJ6h
+         jPjSAF1FwG2Dg==
+From:   Simon Horman <horms@kernel.org>
+Date:   Tue, 04 Apr 2023 14:44:53 +0200
+Subject: [PATCH] remoteproc: pru: remove always true check positive
+ unsigned value
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230404-pru-always-true-v1-1-b1b55eeff188@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMQbLGQC/x2N0QqDMAwAf0XyvEC1Vdh+Zewh1mwWSifJ6ibiv
+ xv2eAfH7aAsiRVuzQ7Ca9L0LgbtpYE4U3kxpskYOtd5F1zARSpS/tKm+JHK2Psh9lNLwzV4sGo
+ kZRyFSpytKzVnk4vwM/3+m/vjOE45xyw+dgAAAA==
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Dan Carpenter <error27@gmail.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>,
+        Simon Horman <horms@kernel.org>
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+In both cases they type of da is u32. And PRU_PDRAM_DA is 0.
+So the check da >= PRU_PDRAM_DA is always true and can be removed.
 
-The PRUSS CFG module is represented as a syscon node and is currently
-managed by the PRUSS platform driver. Add easy accessor functions to set
-GPI mode, MII_RT event enable/disable and XFR (XIN XOUT) enable/disable
-to enable the PRUSS Ethernet usecase. These functions reuse the generic
-pruss_cfg_update() API function.
+Flagged by Smatch:
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
-Reviewed-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+ drivers/remoteproc/pru_rproc.c:660 pru_d_da_to_va() warn: always true condition '(da >= 0) => (0-u32max >= 0)'
+ drivers/remoteproc/pru_rproc.c:709 pru_i_da_to_va() warn: always true condition '(da >= 0) => (0-u32max >= 0)'
+
+No functional changes intended.
+Compile tested only.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Link: https://www.spinics.net/lists/kernel/msg4025983.html
+Signed-off-by: Simon Horman <horms@kernel.org>
 ---
- drivers/remoteproc/pru_rproc.c   | 15 -------
- drivers/soc/ti/pruss.c           | 74 ++++++++++++++++++++++++++++++++
- include/linux/remoteproc/pruss.h | 51 ++++++++++++++++++++++
- 3 files changed, 125 insertions(+), 15 deletions(-)
+ drivers/remoteproc/pru_rproc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 4ddd5854d56e..a88861737dec 100644
+index b76db7fa693d..095f66130f48 100644
 --- a/drivers/remoteproc/pru_rproc.c
 +++ b/drivers/remoteproc/pru_rproc.c
-@@ -81,21 +81,6 @@ enum pru_iomem {
- 	PRU_IOMEM_MAX,
- };
+@@ -657,7 +657,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+ 		swap(dram0, dram1);
+ 	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
  
--/**
-- * enum pru_type - PRU core type identifier
-- *
-- * @PRU_TYPE_PRU: Programmable Real-time Unit
-- * @PRU_TYPE_RTU: Auxiliary Programmable Real-Time Unit
-- * @PRU_TYPE_TX_PRU: Transmit Programmable Real-Time Unit
-- * @PRU_TYPE_MAX: just keep this one at the end
-- */
--enum pru_type {
--	PRU_TYPE_PRU = 0,
--	PRU_TYPE_RTU,
--	PRU_TYPE_TX_PRU,
--	PRU_TYPE_MAX,
--};
--
- /**
-  * struct pru_private_data - device data for a PRU core
-  * @type: type of the PRU core (PRU, RTU, Tx_PRU)
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index 0e37fe142615..64a1880ba4ee 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -213,6 +213,80 @@ int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux)
- }
- EXPORT_SYMBOL_GPL(pruss_cfg_set_gpmux);
+-	if (da >= PRU_PDRAM_DA && da + len <= PRU_PDRAM_DA + dram0.size) {
++	if (da + len <= PRU_PDRAM_DA + dram0.size) {
+ 		offset = da - PRU_PDRAM_DA;
+ 		va = (__force void *)(dram0.va + offset);
+ 	} else if (da >= PRU_SDRAM_DA &&
+@@ -706,8 +706,7 @@ static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+ 	 */
+ 	da &= 0xfffff;
  
-+/**
-+ * pruss_cfg_gpimode() - set the GPI mode of the PRU
-+ * @pruss: the pruss instance handle
-+ * @pru_id: id of the PRU core within the PRUSS
-+ * @mode: GPI mode to set
-+ *
-+ * Sets the GPI mode for a given PRU by programming the
-+ * corresponding PRUSS_CFG_GPCFGx register
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_gpimode(struct pruss *pruss, enum pruss_pru_id pru_id,
-+		      enum pruss_gpi_mode mode)
-+{
-+	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
-+		return -EINVAL;
-+
-+	if (mode < 0 || mode > PRUSS_GPI_MODE_MAX)
-+		return -EINVAL;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
-+				PRUSS_GPCFG_PRU_GPI_MODE_MASK,
-+				mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_gpimode);
-+
-+/**
-+ * pruss_cfg_miirt_enable() - Enable/disable MII RT Events
-+ * @pruss: the pruss instance
-+ * @enable: enable/disable
-+ *
-+ * Enable/disable the MII RT Events for the PRUSS.
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
-+{
-+	u32 set = enable ? PRUSS_MII_RT_EVENT_EN : 0;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_MII_RT,
-+				PRUSS_MII_RT_EVENT_EN, set);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_miirt_enable);
-+
-+/**
-+ * pruss_cfg_xfr_enable() - Enable/disable XIN XOUT shift functionality
-+ * @pruss: the pruss instance
-+ * @pru_type: PRU core type identifier
-+ * @enable: enable/disable
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+int pruss_cfg_xfr_enable(struct pruss *pruss, enum pru_type pru_type,
-+			 bool enable)
-+{
-+	u32 mask, set;
-+
-+	switch (pru_type) {
-+	case PRU_TYPE_PRU:
-+		mask = PRUSS_SPP_XFER_SHIFT_EN;
-+		break;
-+	case PRU_TYPE_RTU:
-+		mask = PRUSS_SPP_RTU_XFR_SHIFT_EN;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	set = enable ? mask : 0;
-+
-+	return pruss_cfg_update(pruss, PRUSS_CFG_SPP, mask, set);
-+}
-+EXPORT_SYMBOL_GPL(pruss_cfg_xfr_enable);
-+
- static void pruss_of_free_clk_provider(void *data)
- {
- 	struct device_node *clk_mux_np = data;
-diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
-index 5641153459a7..b68ab8735247 100644
---- a/include/linux/remoteproc/pruss.h
-+++ b/include/linux/remoteproc/pruss.h
-@@ -34,6 +34,33 @@ enum pruss_gp_mux_sel {
- 	PRUSS_GP_MUX_SEL_MAX,
- };
- 
-+/*
-+ * enum pruss_gpi_mode - PRUSS GPI configuration modes, used
-+ *			 to program the PRUSS_GPCFG0/1 registers
-+ */
-+enum pruss_gpi_mode {
-+	PRUSS_GPI_MODE_DIRECT = 0,
-+	PRUSS_GPI_MODE_PARALLEL,
-+	PRUSS_GPI_MODE_28BIT_SHIFT,
-+	PRUSS_GPI_MODE_MII,
-+	PRUSS_GPI_MODE_MAX,
-+};
-+
-+/**
-+ * enum pru_type - PRU core type identifier
-+ *
-+ * @PRU_TYPE_PRU: Programmable Real-time Unit
-+ * @PRU_TYPE_RTU: Auxiliary Programmable Real-Time Unit
-+ * @PRU_TYPE_TX_PRU: Transmit Programmable Real-Time Unit
-+ * @PRU_TYPE_MAX: just keep this one at the end
-+ */
-+enum pru_type {
-+	PRU_TYPE_PRU = 0,
-+	PRU_TYPE_RTU,
-+	PRU_TYPE_TX_PRU,
-+	PRU_TYPE_MAX,
-+};
-+
- /**
-  * enum pruss_pru_id - PRU core identifiers
-  * @PRUSS_PRU0: PRU Core 0.
-@@ -98,6 +125,11 @@ int pruss_release_mem_region(struct pruss *pruss,
- 			     struct pruss_mem_region *region);
- int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 *mux);
- int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux);
-+int pruss_cfg_gpimode(struct pruss *pruss, enum pruss_pru_id pru_id,
-+		      enum pruss_gpi_mode mode);
-+int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable);
-+int pruss_cfg_xfr_enable(struct pruss *pruss, enum pru_type pru_type,
-+			 bool enable);
- 
- #else
- 
-@@ -133,6 +165,25 @@ static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
- 	return ERR_PTR(-EOPNOTSUPP);
- }
- 
-+static inline int pruss_cfg_gpimode(struct pruss *pruss,
-+				    enum pruss_pru_id pru_id,
-+				    enum pruss_gpi_mode mode)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
-+static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
-+static inline int pruss_cfg_xfr_enable(struct pruss *pruss,
-+				       enum pru_type pru_type,
-+				       bool enable);
-+{
-+	return ERR_PTR(-EOPNOTSUPP);
-+}
-+
- #endif /* CONFIG_TI_PRUSS */
- 
- #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
--- 
-2.25.1
+-	if (da >= PRU_IRAM_DA &&
+-	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
++	if (da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
+ 		offset = da - PRU_IRAM_DA;
+ 		va = (__force void *)(pru->mem_regions[PRU_IOMEM_IRAM].va +
+ 				      offset);
 
