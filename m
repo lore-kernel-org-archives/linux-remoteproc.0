@@ -2,212 +2,197 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE7C7618D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 04:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502C0C6FD1D
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 11:53:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233114AbjDDEze (ORCPT
+        id S234310AbjDDLxw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Apr 2023 00:55:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42582 "EHLO
+        Tue, 4 Apr 2023 07:53:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231878AbjDDEzc (ORCPT
+        with ESMTP id S234250AbjDDLxv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Apr 2023 00:55:32 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2066.outbound.protection.outlook.com [40.107.20.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9421BCB;
-        Mon,  3 Apr 2023 21:55:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ObkBP3cS89kzk81zenxdW0qtzxLM64AtCknYlW1RvbbKhym8KoYiasaZhbPl+UNuWFQktlQSTKyjt+ydGujfh+NOfs8HtdjZ85/JccbnAjiywv+QMRXuY0H3QZ/LTaULn0zPMPQXaB73+ZMFosiqc4Ff6gBkddwXLXMWV4FwSxSdEfJhej4GRX+4pKpE6FHoa53wPi7KBrV/fSB2uVsmMYQKHk4GhTEpZD74YoNCPFIeEThYv3FETQrHiBh7qhsNXFLUOgNTJxi4A2HBzDb65Xi5jDpADJIWYJQQvRprx+zEDHJAiH31hJrYqn+oMdbzGKtrQo+2vJ/CBOijtIk+GA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qrx6wzp22s3ImoZHwkmTGnleOX/iwEeE4gfkd+/BrtY=;
- b=gAhwV7xjgJvAlwOn4uJ5GZwIHPeUX1epqr8Kpzh4N6Zv8+pLLm+88v7oTq5yjxkjtfvAgvLnGi7R9dqcEvbfVJMxNusbgyj4BZVVr1QRVR/BsSlyUKW8uR7LfUmV9itKES3bhcra7Xob8OKKTC6/NWGwHdw4sRFUkZlhNwCyNKz+dzUNvNmjEWvJOPOhF4IHPJigjs1dNiOSzK0lqtpc5Vf1GQnwqSZfgf3Tv8kG3696mCl0FvYjHZbNCDArA8k93DikqxNfCzGBw68WTkSjJmNwCuivTe3+5u77HfS2kUZK/qzapMwNsVX0t0SlZVtyC/aQeJSmgsZjIgv5Ql25ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qrx6wzp22s3ImoZHwkmTGnleOX/iwEeE4gfkd+/BrtY=;
- b=c8snKh0XqTnwvMbMvxp2rArUmJv+meXHWaExUN9lbdlJJ5Cv4CIXpF+EpvcsHHPZDGTAtZuiQHMl0J2Fi04LGq8Yk7rrguFdCMNNxKWhEjaNKTuhhu9lqJ/4oM3zBTxr7+9/9rEm6YOO6VjRWsQfJYisQfZMcaZJaBTac+f5D/U=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DB8PR04MB7097.eurprd04.prod.outlook.com (2603:10a6:10:12a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6254.35; Tue, 4 Apr
- 2023 04:55:28 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::b999:f2c6:a8cc:7b4]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::b999:f2c6:a8cc:7b4%4]) with mapi id 15.20.6254.033; Tue, 4 Apr 2023
- 04:55:28 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
+        Tue, 4 Apr 2023 07:53:51 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B8FF97;
+        Tue,  4 Apr 2023 04:53:49 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 334BrcNJ012752;
+        Tue, 4 Apr 2023 06:53:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1680609218;
+        bh=7/6vxYJ7RTVcIRm2WA3dwkLMPjDNfTBZL/h968j8CCM=;
+        h=From:To:CC:Subject:Date;
+        b=Duvz28m7j6y7e4b8mUcITI36a2NK8gqcHGLl89WL2LDnd7Um0SqPJ6jMlTyex7bTP
+         ihKSf8S9TQS08BNW0WJuuf5Cs0E5GWs19MIGnWmP/jILePegma0YfnLdXO4PpmjfJn
+         sTon+3Ead3YrNTJPBzE8g2iV98ge5kvrgyLdC/jU=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 334BrcbH129729
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 4 Apr 2023 06:53:38 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Tue, 4
+ Apr 2023 06:53:38 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Tue, 4 Apr 2023 06:53:38 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 334Brc2N002950;
+        Tue, 4 Apr 2023 06:53:38 -0500
+Received: from localhost (a0501179-pc.dhcp.ti.com [10.24.69.114])
+        by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 334BraNA009968;
+        Tue, 4 Apr 2023 06:53:37 -0500
+From:   MD Danish Anwar <danishanwar@ti.com>
+To:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by the
- SCMI reset controller
-Thread-Topic: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by the
- SCMI reset controller
-Thread-Index: AQHZY+gfFgW91EuCRkiIW9Op8za+hq8am2Pg
-Date:   Tue, 4 Apr 2023 04:55:28 +0000
-Message-ID: <DU0PR04MB941747DDF6FD2F157A24183288939@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
- <20230331154651.3107173-5-arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20230331154651.3107173-5-arnaud.pouliquen@foss.st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DB8PR04MB7097:EE_
-x-ms-office365-filtering-correlation-id: 60787d3a-2d9a-4330-e199-08db34c8cfcb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: SQUKPm3ypAgqeS6LCCQ4SPdcOqOybH+kgf4+PD2s6QtBuDMlqi/Gs7BUozytQg9ESxqcVasirTHClD/5aqq4SU5kxWzeGVr+ZdFCVQcE2Lxl4bFWByAo/czE5U8fPV6wdkv3msIdWYAAeyif7kuj4JQRuR4QRF3vNqLxonAJ9MJqbr86wBrT2BDVCU+Mko1cyiP25v1JmwdByFrZxK5inXnOBpXrx7FENRehaiMyE72azDWzzGV7VlgapNhUco72h+DFogR53GI9a6jJa9At3e8hAp9lLv91Rvyr79TraEjHzLdhugX6MHC70ddw2I0PlYLkBTtXy1xgbHYpasnG8GSQJrQzMOKGARFmPFeEznhcW5ljUVIptbOxM34g2Ur2N0Z2yrqZaVF1hh87M7rH7vkzDvmx8dJi6aOsyxYPiBIJR1yk8HIZNtm7O53VGBgJqNTjN69+21HQRSp3J15r8EbQo8ZXMMzcr3ygTkNoatI1tyD5sQnHfNEUg4uZWCdg4yc32irYlrXhNPnQ8z5VE97eeVBje3sdJy/KiZ2+/85tRC7ZoM0I1vNWq3fJeb5MN4iTbYQh24lICvwekaUd1HVe8vlN5F0qMbYDVCuDzTrqWserOfxXNiJhkKYWjcJb
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(136003)(366004)(396003)(346002)(39860400002)(376002)(451199021)(66946007)(26005)(6506007)(9686003)(83380400001)(122000001)(66556008)(66476007)(66446008)(38100700002)(41300700001)(7696005)(71200400001)(186003)(54906003)(110136005)(316002)(478600001)(7416002)(2906002)(44832011)(33656002)(86362001)(4326008)(64756008)(76116006)(8676002)(55016003)(5660300002)(38070700005)(8936002)(52536014);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?FKG+gHLUIvsj6/x8Hhr7t6EcG7vCR9SpXaSMR4/RPJHqhn2gVaCeOZOS/rph?=
- =?us-ascii?Q?LvPHbYS74oadQWktn4LFn+Bgbdu6THOvTv17eagO7MKmnmSh6NXWPtrnBJpb?=
- =?us-ascii?Q?K2GFmDsO0cb2Iu2YtfBQsYLMI9LRs/+sFb8hAhXXL80IUwN0MX88IZsBR3SB?=
- =?us-ascii?Q?olHHYRnQa/ugAnamPc5RoevpErCUB0B9798MhQ6NUm9MZsJz2vi779FAGOv9?=
- =?us-ascii?Q?j8r4Ns7Y+NtezizB7S8EaEFDy9VwrFV1F5JQx9VKbjZW5Ib5LGIfe6sS3gzD?=
- =?us-ascii?Q?Q6u8UJPUo8ACImpusu6tktQODNpmlyHZUMc7BkzRkJ8W+aWSw9DohSMQxFy+?=
- =?us-ascii?Q?G8U2ITNVMn8Sdde/1Cmtq7f3InqBXB2gSnVvk0ZffyJ1D7k5ABEY2THq9miZ?=
- =?us-ascii?Q?ACj7SdRPnA39foXUQlPVGUl81icsDz7OZTuM1s7YHyzfGaOTs5FfRPNbSHib?=
- =?us-ascii?Q?jviGq18RcYg/CZFtft+tJlfJtUiuPnQryivDdhlMPzo4z9B4QgVmdMUY4qF6?=
- =?us-ascii?Q?cevqlIDvms/o6lwkOoqYiktj+j0itFnZ8KwhvlEKj2cydTjtCPMMk9RYJHVn?=
- =?us-ascii?Q?QjN2036izfFxFOuWDIc9yiO23gjbquYs7Y+l6sOWrVitBVoZS8kwTCuz6sff?=
- =?us-ascii?Q?Mw4stW3HtPcKqGjDr1lshUeLAmlc8vdbXvzS4+wTB9tOuYtPJvUlUSveNK8B?=
- =?us-ascii?Q?xmsMUa3L0PxWxg0Kwy0l5OKsj/91myy6I6YZuXEG8rOgNt/sVvN7lK6RpdQu?=
- =?us-ascii?Q?8qt105W4gUr8xpSjCKpWNVq9lCt5ENyEiKpebv11ftY4vg81hxK+3PerLiJl?=
- =?us-ascii?Q?MAusBEUyvKLqhUD6z2Ir06gnsKybUivlA7lB42DiZmlOzmDdAUauUwyWEfUP?=
- =?us-ascii?Q?V9+fnrw7vzhNvXYo9RwcmtqCI6CHqtr2iCckDdd+aG747cpNM8j676/K71Hs?=
- =?us-ascii?Q?pQM4KBw9DV3gjcjjRJvRHGjEqjDCoMNOcH5ZlaGS6MpcQY5j4/Qg2OlY1imo?=
- =?us-ascii?Q?w3WcrW2JSMBkX7eMJZau1+1e6FNv01LKlWjMC8X5T/8t597rKSxLvFA9Zb+F?=
- =?us-ascii?Q?qghiIZlriggXXZ1Bvxi0nf90LccXuVRdS5xETYDdns0opezvjdO8HbfeR1mD?=
- =?us-ascii?Q?KWFYBOsO0qUCacnohkKc2AUoymTrj0znOEde0b19mi7bMaZHIs3vYzgC3QxP?=
- =?us-ascii?Q?GCJbkYale/DkfREpeku2X2pjceWUtmsYNTdfcCZSpHerS4Lk0VUU0lJuzeYV?=
- =?us-ascii?Q?57hfYK40ZDCcLAAxjX2OiG3n8x6kgwtD/8xZjdKYUArNz8kFB7L6p88ennDb?=
- =?us-ascii?Q?Vy2r66wxCqY2p7VTw6DUM2fpNuowVySXrlYghjMMQuwmCkGymJxTH+Qliau9?=
- =?us-ascii?Q?mmuPJGRLiFn5Ndd9GU0OhldsLNpju52VLAph1Ux0TuB2pRp50AZ4+qzFZtOk?=
- =?us-ascii?Q?kvvDBYRBHGDW5jwO26ovnSJLAywzSvuIUrFEjoMipEgaRNoiObfBF08Vn/ur?=
- =?us-ascii?Q?Wj0ylidyrTCww4oxF7etcfmBjEgFmrLV1XAHQLPmHJuEhIxpdzMOZbFZQZ+q?=
- =?us-ascii?Q?UMhjG/AMYQODFcMw5s8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Subject: [PATCH v7 0/4] Introduce PRU platform consumer API
+Date:   Tue, 4 Apr 2023 17:23:32 +0530
+Message-ID: <20230404115336.599430-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60787d3a-2d9a-4330-e199-08db34c8cfcb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Apr 2023 04:55:28.7043
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JvslKpa3pe/mpRk1PmdcFNmAuRdIAibVm8ibvmUqr0AuU/twCmxl0nj1rNERZRtaSs359n+Dey7R1D4tgsIK3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7097
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-> Subject: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by
-> the SCMI reset controller
->=20
-> The hold boot can be managed by the SCMI controller as a reset.
-> If the "hold_boot" reset is defined in the device tree, use it.
-> Else use the syscon controller directly to access to the register.
->=20
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 34 ++++++++++++++++++++++++++-----
-> -
->  1 file changed, 28 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/remoteproc/stm32_rproc.c
-> b/drivers/remoteproc/stm32_rproc.c
-> index 4be651e734ee..6b0d8f30a5c7 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -78,6 +78,7 @@ struct stm32_mbox {
->=20
->  struct stm32_rproc {
->  	struct reset_control *rst;
-> +	struct reset_control *hold_boot_rst;
->  	struct stm32_syscon hold_boot;
->  	struct stm32_syscon pdds;
->  	struct stm32_syscon m4_state;
-> @@ -398,6 +399,14 @@ static int stm32_rproc_set_hold_boot(struct rproc
-> *rproc, bool hold)
->  	struct stm32_syscon hold_boot =3D ddata->hold_boot;
->  	int val, err;
->=20
-> +	if (ddata->hold_boot_rst) {
-> +		/* Use the SCMI reset controller */
-> +		if (!hold)
-> +			return reset_control_deassert(ddata-
-> >hold_boot_rst);
-> +		else
-> +			return reset_control_assert(ddata->hold_boot_rst);
-> +	}
-> +
->  	val =3D hold ? HOLD_BOOT : RELEASE_BOOT;
->=20
->  	err =3D regmap_update_bits(hold_boot.map, hold_boot.reg, @@ -
-> 693,16 +702,29 @@ static int stm32_rproc_parse_dt(struct platform_device
-> *pdev,
->  		dev_info(dev, "wdg irq registered\n");
->  	}
->=20
-> -	ddata->rst =3D devm_reset_control_get_by_index(dev, 0);
-> +	ddata->rst =3D devm_reset_control_get(dev, "mcu_rst");
-[Peng Fan]=20
-This may break legacy device tree.
+Hi All,
+The Programmable Real-Time Unit and Industrial Communication Subsystem (PRU-ICSS
+or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
+(Programmable Real-Time Units, or PRUs) for program execution.
 
-Regards,
-Peng.
+There are 3 foundation components for TI PRUSS subsystem: the PRUSS platform
+driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All of them have
+already been merged and can be found under:
+1) drivers/soc/ti/pruss.c
+   Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+2) drivers/irqchip/irq-pruss-intc.c
+   Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+3) drivers/remoteproc/pru_rproc.c
+   Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
 
->  	if (IS_ERR(ddata->rst))
->  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
->  				     "failed to get mcu_reset\n");
->=20
-> -	err =3D stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
-> -				     &ddata->hold_boot);
-> -	if (err) {
-> -		dev_err(dev, "failed to get hold boot\n");
-> -		return err;
-> +	ddata->hold_boot_rst =3D devm_reset_control_get(dev, "hold_boot");
-> +	if (IS_ERR(ddata->hold_boot_rst)) {
-> +		if (PTR_ERR(ddata->hold_boot_rst) =3D=3D -EPROBE_DEFER)
-> +			return PTR_ERR(ddata->hold_boot_rst);
-> +		ddata->hold_boot_rst =3D NULL;
-> +	}
-> +
-> +	if (!ddata->hold_boot_rst) {
-> +		/*
-> +		 * If the hold boot is not managed by the SCMI reset
-> controller,
-> +		 * manage it through the syscon controller
-> +		 */
-> +		err =3D stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
-> +					     &ddata->hold_boot);
-> +		if (err) {
-> +			dev_err(dev, "failed to get hold boot\n");
-> +			return err;
-> +		}
->  	}
->=20
->  	err =3D stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
-> --
-> 2.25.1
+The programmable nature of the PRUs provide flexibility to implement custom
+peripheral interfaces, fast real-time responses, or specialized data handling.
+Example of a PRU consumer drivers will be: 
+  - Software UART over PRUSS
+  - PRU-ICSS Ethernet EMAC
+
+In order to make usage of common PRU resources and allow the consumer drivers 
+to configure the PRU hardware for specific usage the PRU API is introduced.
+
+This is the v7 of the old patch series [9].
+
+Changes from v6 [9] to v7:
+*) Addressed Simon's comment on patch 3 of this series and dropped unnecassary
+macros from the patch.
+
+Changes from v5 [1] to v6:
+*) Added Reviewed by tags of Roger and Tony to the patches.
+*) Added Acked by tag of Mathieu to patch 2 of this series.
+*) Added NULL check for @mux in pruss_cfg_get_gpmux() API.
+*) Added comment to the pruss_get() function documentation mentioning it is
+expected the caller will have done a pru_rproc_get() on @rproc.
+*) Fixed compilation warning "warning: ‘pruss_cfg_update’ defined but not used"
+in patch 3 by squashing patch 3 [7] and patch 5 [8] of previous revision
+together. Squashed patch 5 instead of patch 4 with patch 3 because patch 5 uses
+both read() and update() APIs where as patch 4 only uses update() API.
+Previously pruss_cfg_read()/update() APIs were intoroduced in patch 3
+and used in patch 4 and 5. Now these APIs are introduced as well as used in 
+patch 3.
+
+Changes from v4 [2] to v5:
+*) Addressed Roger's comment to change function argument in API 
+pruss_cfg_xfr_enable(). Instead of asking user to calcualte mask, now user
+will just provide the pru_type and mask will be calcualted inside the API.
+*) Moved enum pru_type from pru_rproc.c to include/linux/remoteproc/pruss.h
+in patch 4 / 5.
+*) Moved enum pruss_gpi_mode from patch 3/5 to patch 4/5 to introduce this
+enum in same patch as the API using it.
+*) Moved enum pruss_gp_mux_sel from patch 3/5 to patch 5/5 to introduce this
+enum in same patch as the API using it.
+*) Created new headefile drivers/soc/ti/pruss.h, private to PRUSS as asked by
+Roger. Moved all private definitions and pruss_cfg_read () / update ()
+APIs to this newly added headerfile.
+*) Renamed include/linux/pruss_driver.h to include/linux/pruss_internal.h as
+suggested by Andrew and Roger.
+
+Changes from v3 [3] to v4:
+*) Added my SoB tags in all patches as earlier SoB tags were missing in few
+patches.
+*) Added Roger's RB tags in 3 patches.
+*) Addressed Roger's comment in patch 4/5 of this series. Added check for 
+   invalid GPI mode in pruss_cfg_gpimode() API.
+*) Removed patch [4] from this series as that patch is no longer required.
+*) Made pruss_cfg_read() and pruss_cfg_update() APIs internal to pruss.c by
+   removing EXPORT_SYMBOL_GPL and making them static. Now these APIs are 
+   internal to pruss.c and PRUSS CFG space is not exposed.
+*) Moved APIs pruss_cfg_gpimode(), pruss_cfg_miirt_enable(), 
+   pruss_cfg_xfr_enable(), pruss_cfg_get_gpmux(), pruss_cfg_set_gpmux() to
+   pruss.c file as they are using APIs pruss_cfg_read / update. 
+   Defined these APIs in pruss.h file as other drivers use these APIs to 
+   perform respective operations.
+
+Changes from v2 to v3:
+*) No functional changes, the old series has been rebased on linux-next (tag:
+next-20230306).
+
+This series depends on another series which is already merged in the remoteproc
+tree [5] and is part of v6.3-rc1. This series and the remoteproc series form 
+the PRUSS consumer API which can be used by consumer drivers to utilize the 
+PRUs.
+
+One example of the consumer driver is the PRU-ICSSG ethernet driver [6],which 
+depends on this series and the remoteproc series [5].
+
+[1] https://lore.kernel.org/all/20230323062451.2925996-1-danishanwar@ti.com/
+[2] https://lore.kernel.org/all/20230313111127.1229187-1-danishanwar@ti.com/
+[3] https://lore.kernel.org/all/20230306110934.2736465-1-danishanwar@ti.com/
+[4] https://lore.kernel.org/all/20230306110934.2736465-6-danishanwar@ti.com/
+[5] https://lore.kernel.org/all/20230106121046.886863-1-danishanwar@ti.com/#t
+[6] https://lore.kernel.org/all/20230210114957.2667963-1-danishanwar@ti.com/
+[7] https://lore.kernel.org/all/20230323062451.2925996-4-danishanwar@ti.com/
+[8] https://lore.kernel.org/all/20230323062451.2925996-6-danishanwar@ti.com/
+[9] https://lore.kernel.org/all/20230331112941.823410-1-danishanwar@ti.com/
+
+Thanks and Regards,
+Md Danish Anwar
+
+Andrew F. Davis (1):
+  soc: ti: pruss: Add pruss_{request,release}_mem_region() API
+
+Suman Anna (2):
+  soc: ti: pruss: Add pruss_cfg_read()/update(),
+    pruss_cfg_get_gpmux()/set_gpmux() APIs
+  soc: ti: pruss: Add helper functions to set GPI mode, MII_RT_event and
+    XFR
+
+Tero Kristo (1):
+  soc: ti: pruss: Add pruss_get()/put() API
+
+ drivers/remoteproc/pru_rproc.c                |  17 +-
+ drivers/soc/ti/pruss.c                        | 260 +++++++++++++++++-
+ drivers/soc/ti/pruss.h                        |  88 ++++++
+ .../{pruss_driver.h => pruss_internal.h}      |  34 +--
+ include/linux/remoteproc/pruss.h              | 141 ++++++++++
+ 5 files changed, 498 insertions(+), 42 deletions(-)
+ create mode 100644 drivers/soc/ti/pruss.h
+ rename include/linux/{pruss_driver.h => pruss_internal.h} (58%)
+
+-- 
+2.25.1
 
