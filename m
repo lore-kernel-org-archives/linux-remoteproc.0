@@ -2,120 +2,120 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 364B3C6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Apr 2023 15:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3190FC7619A
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Apr 2023 17:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233140AbjDDPeL (ORCPT
+        id S233903AbjDERCh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Apr 2023 11:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
+        Wed, 5 Apr 2023 13:02:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235265AbjDDPeJ (ORCPT
+        with ESMTP id S233758AbjDERCU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Apr 2023 11:34:09 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91E5A211D;
-        Tue,  4 Apr 2023 08:34:08 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 334DItm1004091;
-        Tue, 4 Apr 2023 17:33:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=DqoMUOl84qAxYmLCh80KNtJg5Ir0IEjSOZQgQ2rfR+U=;
- b=bRdm1ozxGy4JGpSVk7F+O5uEnVZiZ+VDq12thED6jcLIjSA3AjMlfGEJISx273k6Om2q
- dXIhG33FLPCjTWp4o2OYsmnT6dlDXvZ+Bcltp3E9IT6H4uQ+jz0fgZqdCqkUQGjVBBj7
- lQnSs3lZHAzkAgn5Sm88+QhE7EptAhuvLvMsr9ZKUzJECkH+tv2aOOuuXQvj9EpNxlQf
- IZoAmr3yBawR//Gn50P34rPcPge+vkF0esZGdFm/ZXW2Ru9UV4zLjZ6nMqogKZrXbZ4Q
- jO3fEOXwh5DNv4G/i46osQQz7JiWXi2V/hd2GV+g0z9+dr4CIH7ySEw+jd0h1KUzS9KV Jw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3prmny0sjm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Apr 2023 17:33:56 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D089710002A;
-        Tue,  4 Apr 2023 17:33:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C51152248CF;
-        Tue,  4 Apr 2023 17:33:55 +0200 (CEST)
-Received: from [10.252.11.89] (10.252.11.89) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Tue, 4 Apr
- 2023 17:33:52 +0200
-Message-ID: <14e897f3-1d11-f4d2-ad04-d328e7a57564@foss.st.com>
-Date:   Tue, 4 Apr 2023 17:33:37 +0200
+        Wed, 5 Apr 2023 13:02:20 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D2D65AC
+        for <linux-remoteproc@vger.kernel.org>; Wed,  5 Apr 2023 10:00:40 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id p3-20020a17090a74c300b0023f69bc7a68so37914264pjl.4
+        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Apr 2023 10:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680713989;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pwKkt8UZiD6fRvOx9rvYnVXlwR4u+FrQ9QF6T/cZZ2g=;
+        b=K0VXt7uzMbgeVdLQlGWjVFdFVdL2wVsoMEWVeT63P3jknf0qvrRohz3eZ2D96Vkso5
+         bjvvI5yDDjeoJx5vzt0xpQZk59equg1a0ShTWy/kQofIjMboQL4aTDSYUYVmZ32bZLH2
+         R0JpLjorAL2vKr2EHj0m2F2GYS70yeh3yhoRGidaG6PG8VS6KEsTpmbVFHHT5r5EGjuE
+         uXkAkhKHcMYTjAkkzhxaFdyllF/8L5teR8f1+yuKF654OHlN1Eitguh4YOE4x0wKHHtU
+         jsiYKFCykDbQG9qKckPJSDchmm8/000DTTaJxA8CqmlxZdtljmSCKJCXP2HF6BBTBasy
+         0mFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680713989;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pwKkt8UZiD6fRvOx9rvYnVXlwR4u+FrQ9QF6T/cZZ2g=;
+        b=wATsurIAGFcKSBJboNt5mSXZkWl8pjYlvU1Mc/mMBvIurO4SEoHr0Q2HM9Bi1smdwa
+         ssYrRJ4L4MrLhiExb4141gBaUp0WJAe3pEa75xXQj05MJKo/X4hv2j1UF7ArMiMxnTab
+         e6tcIlcNF3N97OupnzbAG5hKrE/dp6BjKOV+vWyCfxVcZiyawVwBOFvyC9y2EKFo92rx
+         jObcpYbQHsa992Xf5VoT6+UwY8F6ydrZIbwS6VBg3k17gQJeC60MHYAWP/TxTZn33iTW
+         I1bVBo7QwXrrIZs3BkSFN9QSY3iToyTB0yvRAf5ztp7A1tfjdchW9sCG0MrrOB12B+iA
+         co0g==
+X-Gm-Message-State: AAQBX9cbrZO0DchhU/HMv/q7oMkTtwXXm2DdI7bnEuGSX5F6Gg0TE2of
+        PuPLRoc1b6rmAm+GzPGSioec3g==
+X-Google-Smtp-Source: AKy350bGw9ye0QyyHuauw+aT8RcP5GbRWyMs9bq4TNM0KhIyUtjWQiDxlmKbWulcAimscfqzgrrhBQ==
+X-Received: by 2002:a17:90b:3511:b0:22c:afd6:e597 with SMTP id ls17-20020a17090b351100b0022cafd6e597mr7288067pjb.17.1680713989285;
+        Wed, 05 Apr 2023 09:59:49 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:c807:a26a:a179:b5ec])
+        by smtp.gmail.com with ESMTPSA id a17-20020a170902ee9100b001a24cded097sm10339946pld.236.2023.04.05.09.59.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Apr 2023 09:59:48 -0700 (PDT)
+Date:   Wed, 5 Apr 2023 10:59:46 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Simon Horman <horms@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Dan Carpenter <error27@gmail.com>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] remoteproc: pru: remove always true check positive
+ unsigned value
+Message-ID: <20230405165946.GA3812912@p14s>
+References: <20230404-pru-always-true-v1-1-b1b55eeff188@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 2/5] ARM: dts: stm32: Remove the st,syscfg-tz property
-Content-Language: en-US
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>
-References: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
- <20230331154651.3107173-3-arnaud.pouliquen@foss.st.com>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20230331154651.3107173-3-arnaud.pouliquen@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.252.11.89]
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-04_07,2023-04-04_04,2023-02-09_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230404-pru-always-true-v1-1-b1b55eeff188@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 3/31/23 17:46, Arnaud Pouliquen wrote:
-> Since the introduction of the SCMI server for the management
-> of the MCU hold boot in OPTEE, management of the hold boot by smc call
-> is deprecated.
-> Clean the st,syscfg-tz  which allows to determine if the trust
-> zone is enable.
-
-
-Please don't waste time to review the commit message above!
-
-The subject and the commit message is not aligned with the commit update
-
-I need to rework it in a V2. I'm waiting few days before sending the V2,
-allowing people to comment V1.
-
-For V2 I will probably copy/past the commit message of:
-
-[PATCH 1/5] dt-bindings: remoteproc: st,stm32-rproc: Rework reset declarations
-
-Regards,
-Arnaud
-
+On Tue, Apr 04, 2023 at 02:44:53PM +0200, Simon Horman wrote:
+> In both cases they type of da is u32. And PRU_PDRAM_DA is 0.
+> So the check da >= PRU_PDRAM_DA is always true and can be removed.
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Flagged by Smatch:
+> 
+>  drivers/remoteproc/pru_rproc.c:660 pru_d_da_to_va() warn: always true condition '(da >= 0) => (0-u32max >= 0)'
+>  drivers/remoteproc/pru_rproc.c:709 pru_i_da_to_va() warn: always true condition '(da >= 0) => (0-u32max >= 0)'
+> 
+> No functional changes intended.
+> Compile tested only.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Link: https://www.spinics.net/lists/kernel/msg4025983.html
+> Signed-off-by: Simon Horman <horms@kernel.org>
 > ---
->  arch/arm/boot/dts/stm32mp151.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
-> index 4e437d3f2ed6..25626797db94 100644
-> --- a/arch/arm/boot/dts/stm32mp151.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp151.dtsi
-> @@ -1820,8 +1820,8 @@ m4_rproc: m4@10000000 {
->  			      <0x30000000 0x40000>,
->  			      <0x38000000 0x10000>;
->  			resets = <&rcc MCU_R>;
-> +			reset-names = "mcu_rst";
->  			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
-> -			st,syscfg-tz = <&rcc 0x000 0x1>;
->  			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
->  			st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
->  			st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+>  drivers/remoteproc/pru_rproc.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
 
+Applied
+
+Thanks,
+Mathieu
+
+
+> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+> index b76db7fa693d..095f66130f48 100644
+> --- a/drivers/remoteproc/pru_rproc.c
+> +++ b/drivers/remoteproc/pru_rproc.c
+> @@ -657,7 +657,7 @@ static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+>  		swap(dram0, dram1);
+>  	shrd_ram = pruss->mem_regions[PRUSS_MEM_SHRD_RAM2];
+>  
+> -	if (da >= PRU_PDRAM_DA && da + len <= PRU_PDRAM_DA + dram0.size) {
+> +	if (da + len <= PRU_PDRAM_DA + dram0.size) {
+>  		offset = da - PRU_PDRAM_DA;
+>  		va = (__force void *)(dram0.va + offset);
+>  	} else if (da >= PRU_SDRAM_DA &&
+> @@ -706,8 +706,7 @@ static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, size_t len)
+>  	 */
+>  	da &= 0xfffff;
+>  
+> -	if (da >= PRU_IRAM_DA &&
+> -	    da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
+> +	if (da + len <= PRU_IRAM_DA + pru->mem_regions[PRU_IOMEM_IRAM].size) {
+>  		offset = da - PRU_IRAM_DA;
+>  		va = (__force void *)(pru->mem_regions[PRU_IOMEM_IRAM].va +
+>  				      offset);
+> 
