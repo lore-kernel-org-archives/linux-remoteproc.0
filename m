@@ -2,175 +2,151 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A41A9C77B75
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Apr 2023 11:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED60C7618D
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Apr 2023 13:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237513AbjDFLMC (ORCPT
+        id S237098AbjDFNP2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Apr 2023 07:12:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39054 "EHLO
+        Thu, 6 Apr 2023 09:15:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236782AbjDFLL7 (ORCPT
+        with ESMTP id S229733AbjDFNP0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Apr 2023 07:11:59 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DC347EE7;
-        Thu,  6 Apr 2023 04:11:55 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 336ATra9030223;
-        Thu, 6 Apr 2023 13:11:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=lNXQl4ZV/6vn7r3pBuZewXxh3tYHi2TdmaJoMqkDndc=;
- b=30CchlbXohzL5uB7KQeLzo1CHO5Bh8K6Dl4BegGtjo6JcZ1qBrDYI2SVFeGEHThbKXK3
- oOgleTH1Y8ffgFwDZuhkXyAc/ARlhtZuWEYpFXJJBRQwcDgTYCiIXd4z626ZM7lko5TJ
- TH+dfe4GYpVHGiXXP8Zf48ogxNfMYQsw5o+zUAfGOAhT4omYDZJZOxz0BoOq2n9fIJr3
- yn+akJ9Mzg1ytnmIk+bdgfFyB9qLiunWZ4i6x0r+5XJLqQDztkNF0D416MnI1Z78BfGB
- 9lfETUEMAn5IzK0DhCy9TzWLPROoLo+zYQQ7Dx9fvJVqR2LWypDZj4+ZiBnlUmIIZPo+ 4Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3psv5xrb6u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Apr 2023 13:11:42 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1A61010002A;
-        Thu,  6 Apr 2023 13:11:40 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3596121BF53;
-        Thu,  6 Apr 2023 13:11:40 +0200 (CEST)
-Received: from [10.201.21.178] (10.201.21.178) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.17; Thu, 6 Apr
- 2023 13:11:37 +0200
-Message-ID: <9c87443a-90e6-52d3-859f-2b2eb057049b@foss.st.com>
-Date:   Thu, 6 Apr 2023 13:11:36 +0200
+        Thu, 6 Apr 2023 09:15:26 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DC3659FA
+        for <linux-remoteproc@vger.kernel.org>; Thu,  6 Apr 2023 06:15:25 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id v1so39484617wrv.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 06 Apr 2023 06:15:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680786923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8jl2u7ZgIomwOzSs9gTkCTnXd22WXIrlnSqWMsc6pk=;
+        b=kDBn/dmCu985IQTLBWCcwWI4Q9kXEIZSWrO1xFMeJQadLDT4SmbNj2tA7fAkrtBVEx
+         190VkK3IKSdOk7aMZx7xCFQ17vXvjKmyYziqzMMhWweLUjvgVB9szl7TjqmcN/k1BHGH
+         Wl4moR+0SxMj4ggSdodfBomBhH659fuLkjeRgVLewmGkGz9hzH44HXr40SiMWV1wLqX0
+         NNZoziQBeyroM3nmA1mh/FNGhcQPe2xKWjbF1m39mZBBwkduYncrQDySUTdu9QEUrjRg
+         zrojhwYu+SMIaYU30i2GwOA6ne+96eUz6nZHRrDdYjOTJ1th/biVY5IPD2t64JDzwsmS
+         GIPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680786923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8jl2u7ZgIomwOzSs9gTkCTnXd22WXIrlnSqWMsc6pk=;
+        b=o2BaCeZfsOGtkhZl122uZ2U8lDryqxomFAY6W3Rsd7oLQgnsHbXDF5QzmP16ROiIVj
+         VHAvD1MvtgmbOlcA6PC+HQkd8AtZHxuGpiVAKTuGU8y8uWh9FjA4f7vnHvKwu4qy3J6m
+         HFb2fcw7z8nwZMoNx3tPGuKUl51HkPv7Wu22yucx804XrHctTht1kdYv8do/fJheJxPz
+         koIfcwI25JSSW/k41kKQ7XbABRCdMAZwogBBHG8Ts77NESfMMhN74FVnvQBRasm0A7C4
+         E7BV95f+5ctPe+C3LEeSREuaA/bIfEnGnpAbkyCIGQL17qp27esmTBaAfuuFKUE94GXM
+         N9TQ==
+X-Gm-Message-State: AAQBX9cNEVCdCAfCBhX+vOknIhkXh/G3/cPXmQttoV38dmYClxrIoPwe
+        OTtzg08ZwgTaVnXzl1n6sZ2Oqg6kshG3rxPOYAJTXA==
+X-Google-Smtp-Source: AKy350bq2EBTopZZNM0f+YHHQfpscHHsUX8kWBbB0wT9Q3Hobf/OeHI3zi0Ixs6k5NucJt4veM2MPKre5NBx7CjYTLY=
+X-Received: by 2002:a5d:47a7:0:b0:2ee:b548:c64f with SMTP id
+ 7-20020a5d47a7000000b002eeb548c64fmr803994wrb.3.1680786923515; Thu, 06 Apr
+ 2023 06:15:23 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH 4/5] remoteproc: stm32: Allow hold boot management by the
- SCMI reset controller
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>
-References: <20230331154651.3107173-1-arnaud.pouliquen@foss.st.com>
- <20230331154651.3107173-5-arnaud.pouliquen@foss.st.com>
- <20230405180143.GD3812912@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20230405180143.GD3812912@p14s>
+References: <20230404115336.599430-1-danishanwar@ti.com> <86ee5333-6d65-d28b-0dd5-40dfe485d48b@ti.com>
+In-Reply-To: <86ee5333-6d65-d28b-0dd5-40dfe485d48b@ti.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 6 Apr 2023 07:15:12 -0600
+Message-ID: <CANLsYkyrvAcVa8VNkbsrxyAC-60fyGYoXVS=fqwLcsMverzNcg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] Introduce PRU platform consumer API
+To:     Md Danish Anwar <a0501179@ti.com>
+Cc:     MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.21.178]
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-06_05,2023-04-06_01,2023-02-09_01
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Thu, 6 Apr 2023 at 00:54, Md Danish Anwar <a0501179@ti.com> wrote:
+>
+> On 04/04/23 17:23, MD Danish Anwar wrote:
+> > Hi All,
+> > The Programmable Real-Time Unit and Industrial Communication Subsystem =
+(PRU-ICSS
+> > or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
+> > (Programmable Real-Time Units, or PRUs) for program execution.
+> >
+> > There are 3 foundation components for TI PRUSS subsystem: the PRUSS pla=
+tform
+> > driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All of t=
+hem have
+> > already been merged and can be found under:
+> > 1) drivers/soc/ti/pruss.c
+> >    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+> > 2) drivers/irqchip/irq-pruss-intc.c
+> >    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc=
+.yaml
+> > 3) drivers/remoteproc/pru_rproc.c
+> >    Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> >
+> > The programmable nature of the PRUs provide flexibility to implement cu=
+stom
+> > peripheral interfaces, fast real-time responses, or specialized data ha=
+ndling.
+> > Example of a PRU consumer drivers will be:
+> >   - Software UART over PRUSS
+> >   - PRU-ICSS Ethernet EMAC
+> >
+> > In order to make usage of common PRU resources and allow the consumer d=
+rivers
+> > to configure the PRU hardware for specific usage the PRU API is introdu=
+ced.
+> >
+> > This is the v7 of the old patch series [9].
+> >
+>
+> Hi Mathieu, Can you please review this series. I have addressed comments =
+made
+> by you in v5. I have also addressed Simon's comment in v6 and removed red=
+undant
+> macros from pruss.h header file.
+>
 
+You are pushing me to review your code 19 hours after sending the last
+revision?  Are you serious?
 
-On 4/5/23 20:01, Mathieu Poirier wrote:
-> On Fri, Mar 31, 2023 at 05:46:50PM +0200, Arnaud Pouliquen wrote:
->> The hold boot can be managed by the SCMI controller as a reset.
->> If the "hold_boot" reset is defined in the device tree, use it.
->> Else use the syscon controller directly to access to the register.
->>
->> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->> ---
->>  drivers/remoteproc/stm32_rproc.c | 34 ++++++++++++++++++++++++++------
->>  1 file changed, 28 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
->> index 4be651e734ee..6b0d8f30a5c7 100644
->> --- a/drivers/remoteproc/stm32_rproc.c
->> +++ b/drivers/remoteproc/stm32_rproc.c
->> @@ -78,6 +78,7 @@ struct stm32_mbox {
->>  
->>  struct stm32_rproc {
->>  	struct reset_control *rst;
->> +	struct reset_control *hold_boot_rst;
->>  	struct stm32_syscon hold_boot;
->>  	struct stm32_syscon pdds;
->>  	struct stm32_syscon m4_state;
->> @@ -398,6 +399,14 @@ static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
->>  	struct stm32_syscon hold_boot = ddata->hold_boot;
->>  	int val, err;
->>  
->> +	if (ddata->hold_boot_rst) {
->> +		/* Use the SCMI reset controller */
->> +		if (!hold)
->> +			return reset_control_deassert(ddata->hold_boot_rst);
->> +		else
->> +			return reset_control_assert(ddata->hold_boot_rst);
->> +	}
->> +
->>  	val = hold ? HOLD_BOOT : RELEASE_BOOT;
->>  
->>  	err = regmap_update_bits(hold_boot.map, hold_boot.reg,
->> @@ -693,16 +702,29 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->>  		dev_info(dev, "wdg irq registered\n");
->>  	}
->>  
->> -	ddata->rst = devm_reset_control_get_by_index(dev, 0);
->> +	ddata->rst = devm_reset_control_get(dev, "mcu_rst");
-> 
-> Peng is correct - newer kernels won't be able to boot with older DT.
-> 
->>  	if (IS_ERR(ddata->rst))
->>  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
->>  				     "failed to get mcu_reset\n");
->>  
->> -	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
->> -				     &ddata->hold_boot);
->> -	if (err) {
->> -		dev_err(dev, "failed to get hold boot\n");
->> -		return err;
->> +	ddata->hold_boot_rst = devm_reset_control_get(dev, "hold_boot");
->> +	if (IS_ERR(ddata->hold_boot_rst)) {
->> +		if (PTR_ERR(ddata->hold_boot_rst) == -EPROBE_DEFER)
->> +			return PTR_ERR(ddata->hold_boot_rst);
->> +		ddata->hold_boot_rst = NULL;
->> +	}
->> +
->> +	if (!ddata->hold_boot_rst) {Okay, I definitely need to rewrite the patchset.
-> 
-> Why another if() statement?  The code below should be in the above if()...
-> 
-> This patchset is surprizingly confusing for its size.  I suggest paying
-> attention to the changelogs and adding comments in the code.
-
-I definitely need to rewrite this patchset.
-
-Thanks for all reviewers
-Regards
-Arnaud
-
-> 
-> Thanks,
-> Mathieu
-> 
->> +		/*
->> +		 * If the hold boot is not managed by the SCMI reset controller,
->> +		 * manage it through the syscon controller
->> +		 */
->> +		err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
->> +					     &ddata->hold_boot);
->> +		if (err) {
->> +			dev_err(dev, "failed to get hold boot\n");
->> +			return err;
->> +		}
->>  	}
->>  
->>  	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
->> -- 
->> 2.25.1
->>
+> > Changes from v6 [9] to v7:
+> > *) Addressed Simon's comment on patch 3 of this series and dropped unne=
+cassary
+> > macros from the patch.
+> >
+> > Changes from v5 [1] to v6:
+> > *) Added Reviewed by tags of Roger and Tony to the patches.
+> > *) Added Acked by tag of Mathieu to patch 2 of this series.
+> > *) Added NULL check for @mux in pruss_cfg_get_gpmux() API.
+> > *) Added comment to the pruss_get() function documentation mentioning i=
+t is
+> > expected the caller will have done a pru_rproc_get() on @rproc.
+> > *) Fixed compilation warning "warning: =E2=80=98pruss_cfg_update=E2=80=
+=99 defined but not used"
+> > in patch 3 by squashing patch 3 [7] and patch 5 [8] of previous revisio=
+n
+> > together. Squashed patch 5 instead of patch 4 with patch 3 because patc=
+h 5 uses
+> > both read() and update() APIs where as patch 4 only uses update() API.
+> > Previously pruss_cfg_read()/update() APIs were intoroduced in patch 3
+> > and used in patch 4 and 5. Now these APIs are introduced as well as use=
+d in
+> > patch 3.
+> >
+>
+>
+> --
+> Thanks and Regards,
+> Danish.
