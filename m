@@ -2,63 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448C8C6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DC2C77B61
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:28:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240797AbjDGN2i (ORCPT
+        id S240822AbjDGN2m (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Apr 2023 09:28:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35986 "EHLO
+        Fri, 7 Apr 2023 09:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233684AbjDGN2h (ORCPT
+        with ESMTP id S240807AbjDGN2j (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Apr 2023 09:28:37 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF01383FF
-        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:35 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id o20so40632115ljp.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:35 -0700 (PDT)
+        Fri, 7 Apr 2023 09:28:39 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05D98A42
+        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:37 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id x20so43531900ljq.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680874114;
+        d=linaro.org; s=google; t=1680874117;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OgDPlYdeyBN5Ce+XKNF10sW0zXkUfnHdpMsUaHXHsmA=;
-        b=wirQaUgP7v7X9GkaF1EOA3FI0ORRUf7xGwFC1cy6YoAraBNvAlvmvGjhnAJDkkJB2r
-         uEpoM7BlqdARZP4E6zm0ElxaniNBG8TUOQgyBgLlH9oyG/GkUot7bkSOhfKu4kg2PIfW
-         MC/5dtto7NIM9pfMMlFuPz37CEFYSdwQi4MWsMHhDai9CdJ4wbZXgD4m9nC9QOAF+c9F
-         6bhwD9YSE2tyQ1lvJ1G0g9OulLfzd1vGicOsdEoFI62iMU8FefVZFML8E17BgTaSlW0k
-         ZslYXcOhRvkKdwkSB1k4ifDjqKiYZDatJGNaX/tUDAeFB6uPmSo617/LKO8eZ/wQ8C1L
-         E9Mg==
+        bh=grmIxSUAU0kBA7EJgdolRxlhvAD6xuuLCo/DeTKPOd4=;
+        b=cOMmHlrGEbtO3yZ2betrRfYyhgeHSJqYgebKGG1sn5LOU3ZBjFwpqxrUgC4Dn2h+8S
+         NofaV0W0HOITCig0UgxmDmjccOZe/hp967GmdVHkGZy3p7yMgnqr169PSOp6jBwaZcLh
+         61IJuBtGB8EDgmTlzBlz7PunAp4XVGhE+OzDRid7GmPyA01dfw/UPoLuyguHpG89ofpk
+         YT/57yooGXrwitCugYgAdvGauTV98U6auEpQrg0NGFKFX96eSTjos3xGqYfCB0smxFcy
+         wLwNq1BqI9101d6XoYCft/VuULBvSj/oSAbmXhaNv1jSZarDlO5kascO3KDW1Xv8Eqyh
+         IKHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680874114;
+        d=1e100.net; s=20210112; t=1680874117;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OgDPlYdeyBN5Ce+XKNF10sW0zXkUfnHdpMsUaHXHsmA=;
-        b=x4p3oXXhohtEkS53y+ria9gRJTORVHMVvfXl3OL83HF27Gn3+i0wtf7Hft0A5hVo2M
-         cEEMLKwfnLqHuWlEaVuZrEzNYp4DNT0Nt+lZtKalBDwDQQsUZi/GHg+rreqv6qTA4U+a
-         IqnWITJPpKMOBbfRYZHr/uZWZEmMKKjJq94csyBFKwgapnw/PB55hgjdB69YQT0EJgnx
-         YaV1uWTde+d/X2aagFB4ihYBO8O/gQ8/lvxUyiRP/piVOfEo+jKxOprb+g9ECJTB4UVk
-         mQJLOAv0/37tU8WFBRaM+mPCB6QKt+Z38xhDBc04XMhEexdwOp5uM6QHEH5ETvw1WvfA
-         R3tA==
-X-Gm-Message-State: AAQBX9dmzD31QCI0WRAjftsdOjXDsfp8SRdbNxOfpbscpZQsXdvdcGt6
-        q6NpIn1cCsFf5xKGEvAkznSgMA==
-X-Google-Smtp-Source: AKy350bNk4BbC2iWXByZtDbKjEm7psxi4oI5hkztB0J+/AmIB7wZjpS7vBo0MXMRy4vW3Ihhy0bUag==
-X-Received: by 2002:a2e:a232:0:b0:295:9517:b98f with SMTP id i18-20020a2ea232000000b002959517b98fmr520908ljm.15.1680874113953;
-        Fri, 07 Apr 2023 06:28:33 -0700 (PDT)
+        bh=grmIxSUAU0kBA7EJgdolRxlhvAD6xuuLCo/DeTKPOd4=;
+        b=d4Sw7P0VwgKq1oz8eQOqmLhXQypXTy2iRvR69e1veQ2l74d/8nqutWHgWQfPTChT6A
+         5RQZTYFBZPtvX9z1aDVw1CnuJ8OtH+qVFaTqF7tOvq5byERveZCHLVuyhqlCiwukSu3W
+         KcN8HFYW0NyLWNVWlMSdFotP0eJAbZmExBLxZ99ZLGgN1gkByedmMemSt/m5mztpcni+
+         VXJ4Nd5rWtjfmQXGPMNHAvtiecfG2NpSMOrGPguLJ3CoXYZzOHHYDPwy5DIdiIpSLBky
+         11/AkGFsAmBTC6it6MQv3glbtVjOyCaWX/Jc9aJy/q2QQTKeBxVsSc/hCIMRCFOmOd7m
+         sO+A==
+X-Gm-Message-State: AAQBX9eLTIg3Q7QpmnLxf4CuAz9WYzJZ9LXKQeDksyFtbxShqlJeLPgv
+        T/bfNn67r5tgOjDCjop2+0LgKA==
+X-Google-Smtp-Source: AKy350aaMgbaCCdcjWNyNhLf9oPTZzXicz8SmfDjO3HAgT62Q3Pdw3TK2UNh5tKA3icr4u1hUazx7g==
+X-Received: by 2002:a2e:9851:0:b0:298:a8bf:a65 with SMTP id e17-20020a2e9851000000b00298a8bf0a65mr558843ljj.13.1680874117346;
+        Fri, 07 Apr 2023 06:28:37 -0700 (PDT)
 Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
-        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.32
+        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Apr 2023 06:28:33 -0700 (PDT)
+        Fri, 07 Apr 2023 06:28:37 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 07 Apr 2023 15:28:31 +0200
-Subject: [PATCH 1/6] dt-bindings: media: qcom,sdm845-venus-v2: Allow
- interconnect properties
+Date:   Fri, 07 Apr 2023 15:28:33 +0200
+Subject: [PATCH 3/6] dt-bindings: usb: dwc3: Allow dma-ranges
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230407-topic-msm_dtb-v1-1-6efb4196f51f@linaro.org>
+Message-Id: <20230407-topic-msm_dtb-v1-3-6efb4196f51f@linaro.org>
 References: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 In-Reply-To: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -79,43 +78,40 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=861;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=844;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=x0byFv9Tpffmv4tOybuaTsG0ZSBjTbBYI411ExiSp0g=;
- b=EC0ulUC65d17dKo7Frq3qvRwtteTFJ96VnOc/0CNt8p2Q4VjwS1FYzNm0SXw46wcRgHOjaIbmIgv
- Kj4//+sjBJiJGMl+QYDIACI6Jj3QJUxsi1yT/0yTAj8lHjuSa1KO
+ bh=2wRiR7WEXmQZpYv5SNBYk0HTq2/eu6+iUQ50kZacv00=;
+ b=0WYZFFcb41FKVZEjr+Rt3QZBW3WacDCF7a8sYWN6zVRRSIzFFLbR9KfDvAF4VFO4EuK1ln6sUm89
+ L3qPPGO2AKdPUmSfhgE9qEydOzLILrexSR6oMm8BuEeOZutzOv9t
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Allow the interconnect properties, which have been in use for ages.
+Allow the common dma-ranges property to silence warning like this:
+
+qcom/sc7280-herobrine-evoker.dtb: usb@a6f8800: 'dma-ranges' does not
+match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-index d5f80976f4cf..6228fd2b3246 100644
---- a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
-@@ -48,6 +48,14 @@ properties:
-   iommus:
-     maxItems: 2
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index d84281926f10..3c3548f55797 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -55,6 +55,8 @@ properties:
  
-+  interconnects:
-+    maxItems: 2
+   ranges: true
+ 
++  dma-ranges: true
 +
-+  interconnect-names:
-+    items:
-+      - const: video-mem
-+      - const: cpu-cfg
-+
-   operating-points-v2: true
-   opp-table:
-     type: object
+   power-domains:
+     description: specifies a phandle to PM domain provider node
+     maxItems: 1
 
 -- 
 2.40.0
