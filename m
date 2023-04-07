@@ -2,62 +2,63 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E88CEC6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4617FC77B61
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240880AbjDGN3B (ORCPT
+        id S240804AbjDGN3G (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Apr 2023 09:29:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35992 "EHLO
+        Fri, 7 Apr 2023 09:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240847AbjDGN2u (ORCPT
+        with ESMTP id S240854AbjDGN2u (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 7 Apr 2023 09:28:50 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 638F9AD2E
-        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:42 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id a44so24899242ljr.10
-        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:42 -0700 (PDT)
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD2C48A6B
+        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:43 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id e9so28276194ljq.4
+        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680874120;
+        d=linaro.org; s=google; t=1680874122;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/Qrp16+bclmc99syXIKvGh44pTCvLytsw1x/uNP3QSg=;
-        b=MWDrv93HhCvSMJ+pWQEeXjME20LxtFzYPkQcZoitRui3tk0zoaCTeUS52qZHXvNde9
-         c6lKH/GQM/PwpbqdAfcEs30OVirUSxfyRwfr9wVTomZUnWygA/s+OYksunrSJSR0vDHo
-         3MFcK4fntuQdhsVDW57CWH5jZxgzGdnLjMHwT/zoEIZNs6eu3884a4j2tWhall3dsiRy
-         6lwOVUbjUh7ceAyfBMTg5CaCDONNy2LMfG/4iSU8r1c1LUoyGUVU+OWNlAtBIGWCdWWG
-         dHvgTq82Wuoj/AsonRdRypQq2qbLJmw1R3AW/1OPQwesS8kXt1julgGJFaJ1GRRs339R
-         pLIA==
+        bh=71AC0ikf0Km0x4plkaVuEck1Cfenbrjm5IUQHvGO24k=;
+        b=XkNeRFkyD1Vke1fwILYZ5wCBxBjB8TgpmdJeOin1U9seR/kEM0T6tjuTMuVAyA9+d5
+         4MtSRVT0fUyVDZVkKOkdyzhehxSKNDrHjiAf/jiHyXUBDy+BD+MgtqBCzPWTXOohE+o8
+         k7s/Gppk3oXJhP9IMVl+qSkmTICuzRQc+UFcmcbODiWjydzuqUd8srR17IABThPYR7dV
+         3UEKA7G+AMR/EZQktWMYSubrrxlZFsxVmR4FsYAokMjqed5RvZ+GoVZBe4Kj7Es8arNk
+         /AvxIxOyaijm2FtBii86oS6m6fZlsicQaJNHAhxufA6aUwddQP/n78Jb2fSr9chMgOos
+         9FHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680874120;
+        d=1e100.net; s=20210112; t=1680874122;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/Qrp16+bclmc99syXIKvGh44pTCvLytsw1x/uNP3QSg=;
-        b=AbSCoUUme+y68499xW/4Pa+5tj+jgcv3xdz+kebKVACzlQCTmPgto6Id8Buep3JhoN
-         a3ml4CRy8PB8eXti/eVV5OwxprfjiH5pA35h/asywLkZLFPFmRmR2uDnbQchA4OXFCAK
-         +Sb52i1IAlbhIujQZPCS9DM0cnzGYL0S7bginA4W6GYJDI+kggd/84mCfS+P4fmCV4UC
-         U6OTT62SPJCpC+rcmPuFIch36FI3HBD0G/XWJV/yK6B/Aix6vHfqa6ROQdARTy0SAKWE
-         95DUGdN2IWHaUni4Ebe/FF9euhKDf+k3EJam9X4Yfz/PIeFebvwYiap+BfaAU3IAYUWG
-         SedA==
-X-Gm-Message-State: AAQBX9dttrHG53FsdIEHruoDNT3nPuxt8S9ZxgieOE7JQzs1LZo0c9Qq
-        y8aIJAx29jgjneFTCrw5f/ptpQ==
-X-Google-Smtp-Source: AKy350Y1Z3yUxBXAZndb/euEtaLZY2xRexNvc+IuXlQ4YmU+HvZDzwLaGFTqY5mjBTkP47DQL5F+HQ==
-X-Received: by 2002:a05:651c:d1:b0:29b:d4d0:d3f7 with SMTP id 17-20020a05651c00d100b0029bd4d0d3f7mr488284ljr.26.1680874120450;
-        Fri, 07 Apr 2023 06:28:40 -0700 (PDT)
+        bh=71AC0ikf0Km0x4plkaVuEck1Cfenbrjm5IUQHvGO24k=;
+        b=ILZkoIB44hIA4uLvhCHCaqktga+73RVXjsHNq1s2O/+51vWrEPCuMVBfcvmK6zKIyP
+         geYedazqlfqLZ4qOnb7414smiyUd6c15IrRWeozerPStTtO1vjWKUZMMyGSWqVu2z0Yx
+         6f0npaZvcbijverBEdwRU6AYvuOI0cpxN+cIsochPfHLYVWfLxWziUHVaiwgIJZ/egxY
+         kcuACEM+E1xNVYCzbISX8OnQ5Iu2Bsm5UCpsD8VR2p7D4ONY95dAuB1cqZP4dqY9lzd6
+         3JdBXUk1wCgxQDDlYdRrhHKJayYmO6pPXYMYGpihOy4fI2s48pt9kYLBcyrG+pIlqEgU
+         LYcg==
+X-Gm-Message-State: AAQBX9eLWkXq0DJ5TJKamRD+SZfjcmB4WXkcMOo0paD1HcBkYDWnSDZT
+        OoeJ60xTQN8pwMKY9fHtQGg8tQ==
+X-Google-Smtp-Source: AKy350ZSruER/WhZaHc54QHBOZ51rAbF7UrQ9i5YxFqdcrNz6ioeFKKdY2ttc1T424CJeSRGUvUDvQ==
+X-Received: by 2002:a2e:90d2:0:b0:298:8782:e5f with SMTP id o18-20020a2e90d2000000b0029887820e5fmr562218ljg.43.1680874122036;
+        Fri, 07 Apr 2023 06:28:42 -0700 (PDT)
 Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
-        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.39
+        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Apr 2023 06:28:40 -0700 (PDT)
+        Fri, 07 Apr 2023 06:28:41 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 07 Apr 2023 15:28:35 +0200
-Subject: [PATCH 5/6] arm64: dts: qcom: pm8916: Fix pm8941-misc node name
+Date:   Fri, 07 Apr 2023 15:28:36 +0200
+Subject: [PATCH 6/6] arm64: dts: qcom: sdm845-oneplus: Fix speaker GPIO
+ node
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230407-topic-msm_dtb-v1-5-6efb4196f51f@linaro.org>
+Message-Id: <20230407-topic-msm_dtb-v1-6-6efb4196f51f@linaro.org>
 References: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 In-Reply-To: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -78,45 +79,47 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=1099;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=899;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=WG/ipbDMuDk+aHJosMLwAyE+K0gF2DpT2uf5CXcw2yY=;
- b=l6Ef1ydbm+TCxHakiS5bpJ536JObhvG96L9jm9ck1pZ87J3Xfuj6cPA3xSQDrNTU+XHEAEZNXwLp
- 3xi2ah/ZCF0AOJ2EVoorgNg35Iqy+mIVCj8JSmaBr0148qNfmqRc
+ bh=2ZlzTx4qZrv5fI0EvpNhiuB/bNP3eTRF8tP8rrGDU64=;
+ b=rMGpDmfTtl9My3tCK5KMbjhv6W+DPUi8hya37IvJUg93v3X1hJhA3hhTChLw4Ae5xjo4R9YcfAXP
+ LP3v6XHBBcPwajD4MBHv6PdXz7VPM48G/a5f3Yf/53uBOgINd6BK
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fix the node name to make dtbs_check happy:
-
-qcom/apq8016-sbc.dtb: pmic@0: 'extcon@1300' does not match any of the
-regexes: '(.*)?(wled|leds)@[0-9a-f]+$', '^adc-tm@[0-9a-f]+$',
-'^adc@[0-9a-f]+$', '^audio-codec@[0-9a-f]+$', '^charger@[0-9a-f]+$',
-'^mpps@[0-9a-f]+$', '^nvram@[0-9a-f]+$', '^rtc@[0-9a-f]+$',
-'^temp-alarm@[0-9a-f]+$', '^usb-detect@[0-9a-f]+$',
-'^usb-vbus-regulator@[0-9a-f]+$', '^vibrator@[0-9a-f]+$',
-'gpio@[0-9a-f]+$', 'pinctrl-[0-9]+', 'pon@[0-9a-f]+$'
+Drop the unnecessary mux{} level to make dtbs check happy.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/pm8916.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8916.dtsi b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-index e2a6b66d8847..f4fb1a92ab55 100644
---- a/arch/arm64/boot/dts/qcom/pm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-@@ -41,7 +41,7 @@ watchdog {
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+index 0c268c560d37..8c2b9382337c 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
+@@ -814,13 +814,11 @@ panel_esd_pin: panel-esd-state {
+ 	};
  
--		pm8916_usbin: extcon@1300 {
-+		pm8916_usbin: usb-detect@1300 {
- 			compatible = "qcom,pm8941-misc";
- 			reg = <0x1300>;
- 			interrupts = <0x0 0x13 1 IRQ_TYPE_EDGE_BOTH>;
+ 	speaker_default: speaker-default-state {
+-		mux {
+-			pins = "gpio69";
+-			function = "gpio";
+-			drive-strength = <16>;
+-			bias-pull-up;
+-			output-high;
+-		};
++		pins = "gpio69";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-pull-up;
++		output-high;
+ 	};
+ };
+ 
 
 -- 
 2.40.0
