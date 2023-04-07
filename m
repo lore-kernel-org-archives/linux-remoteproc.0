@@ -2,274 +2,117 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E78C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 03:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1E7C77B61
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:28:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232051AbjDGDoe (ORCPT
+        id S232688AbjDGN2g (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Apr 2023 23:44:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
+        Fri, 7 Apr 2023 09:28:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjDGDoc (ORCPT
+        with ESMTP id S229609AbjDGN2f (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Apr 2023 23:44:32 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C40E5E63;
-        Thu,  6 Apr 2023 20:44:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1680839070; x=1712375070;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PLs5JPDUHNYwfcnKHsSeZ6Vihp3GPVzFQtLqg/2mSy4=;
-  b=f1n1cbEeLfgPciWgtHj2H0+oXobsWkRsgA/4xYuCVERKeZbSm1ws4VZF
-   dadH7ybydCC1ZXK8ZuHzKjD2/BAjN3SNQGxVqJu0SqC1ZldRzRX1fq5qQ
-   4p/uTjtPmOv+w8NyPEeN2HUDTPPp4BqxiXpNOaPhadBtf1q79w0wWfgmQ
-   Bf+85VwH8Km21RjhIJ2dp4He/jxvutC1zfKKuYooo0uL/Bs1dd0S50jGB
-   AqEnDQXHdC98JyJQCtRJpSetH7le5XffGQ1rbcJ20Aq7Vk4kVt/e3hkw8
-   LaK/dD54+iid0RlMl3nK3l0kGsEFRwk63ChCTyix9IHcrAY9JhTsPB6pl
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10672"; a="323290642"
-X-IronPort-AV: E=Sophos;i="5.98,324,1673942400"; 
-   d="scan'208";a="323290642"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2023 20:44:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10672"; a="664757168"
-X-IronPort-AV: E=Sophos;i="5.98,324,1673942400"; 
-   d="scan'208";a="664757168"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 06 Apr 2023 20:44:26 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pkd1V-000S5o-1j;
-        Fri, 07 Apr 2023 03:44:25 +0000
-Date:   Fri, 07 Apr 2023 11:43:39 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     platform-driver-x86@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, linux-acpi@vger.kernel.org,
-        io-uring@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        bpf@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- e134c93f788fb93fd6a3ec3af9af850a2048c7e6
-Message-ID: <642f916b.pPIKZ/l//bw8tvIH%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Fri, 7 Apr 2023 09:28:35 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FBEB83FF
+        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:34 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id s20so23249988ljp.7
+        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1680874112;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TQBrT693IMyw8NXc3/LuFzvk7FqmU/zQ20PRIEg0JBA=;
+        b=BhAuGFkm7Z0Dk0sWW58yFSVdvbmwo3bezMeeCVSDvB0MGnNQGYS21BcCvQU/+hL6Jq
+         UhRW2wiMHrBww3yim/pjJiTmifunGLJiVl1MiOyA8s61wX0kKSXPgu/aTAFxIOOYk+Pf
+         8XOXQa5+kOGs7uCUa2cCaM8s9HhqAhc6OcgA3AC9zYxcvxaPT2c6GatMO6xDZWKs8kQY
+         nSDPvIRheNugYDQLwUbt2OANwgRus7KTt7wmpGjeguHXp92/6+CGHOjz4dUp0+0RBOUq
+         QNkzwnlHNWpJF38KTmQbaYJUE1fASrBuNjeEdGfcAFCZZQNr7JbdDG/KFOCszRAea92H
+         jupQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1680874112;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TQBrT693IMyw8NXc3/LuFzvk7FqmU/zQ20PRIEg0JBA=;
+        b=m9AQ71RzxduGd1Hp0sxsyuGOYoymrTmL3S5WMRMvBz8iofKFlPbQqRm+TmpKUJc4gG
+         0s6zCb3I7x/cWIKsw2GpScQt1zF/URNsLEQFDqMoYj+7ZWKIstYrWPPg7dt59eCRZ0JR
+         zGYaZeV3bpJKQ+M8akW/QsQP6i35GH/wdMIiA34h5J02pWircQ7SZ9rqyLQFFpWOtesu
+         rbPj87v2NAYHN/ooImaMWeRqvZKBrgHUuOAdt8Xm7lDxbOKS13EKV4kEDkHNhjHI5cUn
+         RViQqHD09CWH+iegZpTKWFYyhdesYqyi7vC1tEw7pwUF3TIUAe8xT6PfliClpvHxbKCt
+         4qrA==
+X-Gm-Message-State: AAQBX9dtx7Pge8dXiw7ODJ8xGyxIxlO5PFllk7K/+nwPVBpApV1SNKrT
+        ZNIV3QG8aSnJcu4rvc8Tfskh3g==
+X-Google-Smtp-Source: AKy350YmuhzUBxWUp60ovcUDsPlJFsBLyczP0oGDo4ISjPF+jYKyyt5nWKv+Dmxe0wdKjdJvsar7dg==
+X-Received: by 2002:a2e:8001:0:b0:2a6:2444:9892 with SMTP id j1-20020a2e8001000000b002a624449892mr668944ljg.25.1680874112332;
+        Fri, 07 Apr 2023 06:28:32 -0700 (PDT)
+Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
+        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Apr 2023 06:28:31 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/6] Couple of bindings / dt fixes
+Date:   Fri, 07 Apr 2023 15:28:30 +0200
+Message-Id: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH4aMGQC/x2NWwqDQAwAryL5biBNX7ZXkVKya1oDuspGpSDev
+ Us/Z2CYDVyzqcOj2iDram5jKnA8VBA7SR9FawsDE5/oTDecx8kiDj682jkg1cy1XFkud4LSBHH
+ FkCXFrlRp6fsip6xv+/4nzXPff6id8El0AAAA
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=1182;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=9ZXqfxOQy7I2vZ6V/C5/H9u0lqdYqI+mn97VyDj4Pf4=;
+ b=7g+tFK1DIvw8PBgY5f/XwdyP6/5uKgfC6fcEf6XcQ1SDfP+/cDy/PnluuI/fa3zPlWlcXL0B0zR9
+ qZFl+EXLBc9Ov11e6TfAyDILL6AbIDlGhUQUuw0SVi1rAGfVLGdT
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: e134c93f788fb93fd6a3ec3af9af850a2048c7e6  Add linux-next specific files for 20230406
+Couple of trivial fixes to make dtbs_check happy (happier).
 
-Error/Warning reports:
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (6):
+      dt-bindings: media: qcom,sdm845-venus-v2: Allow interconnect properties
+      dt-bindings: remoteproc: qcom: adsp: Allow firmware-name
+      dt-bindings: usb: dwc3: Allow dma-ranges
+      arm64: dts: qcom: sc7280: Fix up the gic node
+      arm64: dts: qcom: pm8916: Fix pm8941-misc node name
+      arm64: dts: qcom: sdm845-oneplus: Fix speaker GPIO node
 
-https://lore.kernel.org/oe-kbuild-all/202303082135.NjdX1Bij-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202303161521.jbGbaFjJ-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202304011449.XFV6lLwh-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202304040401.IMxt7Ubi-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202304061839.hi01VPl1-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202304070251.LY6c7kgm-lkp@intel.com
+ .../devicetree/bindings/media/qcom,sdm845-venus-v2.yaml    |  8 ++++++++
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml          |  4 ++++
+ Documentation/devicetree/bindings/usb/qcom,dwc3.yaml       |  2 ++
+ arch/arm64/boot/dts/qcom/pm8916.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sc7280.dtsi                       | 14 +++++++-------
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi        | 12 +++++-------
+ 6 files changed, 27 insertions(+), 15 deletions(-)
+---
+base-commit: e134c93f788fb93fd6a3ec3af9af850a2048c7e6
+change-id: 20230407-topic-msm_dtb-08228a62a590
 
-Error/Warning: (recently discovered and may have been fixed)
-
-Warning: arch/x86/Kconfig references a file that doesn't exist: Documentation/x86/shstk.rst
-diff: tools/arch/s390/include/uapi/asm/ptrace.h: No such file or directory
-drivers/bluetooth/hci_qca.c:1894:37: warning: unused variable 'qca_soc_data_wcn6855' [-Wunused-const-variable]
-drivers/clk/clk-sp7021.c:316:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:309:17: sparse:    int
-drivers/gpu/drm/amd/amdgpu/../pm/swsmu/smu13/smu_v13_0_6_ppt.c:309:17: sparse:    void
-drivers/net/wireless/legacy/ray_cs.c:628:17: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-kernel/bpf/verifier.c:18485: undefined reference to `find_kallsyms_symbol_value'
-
-Unverified Error/Warning (likely false positive, please contact us if interested):
-
-drivers/acpi/property.c:985 acpi_data_prop_read_single() error: potentially dereferencing uninitialized 'obj'.
-drivers/gpu/drm/i915/display/intel_tc.c:424 icl_tc_phy_hpd_live_status() error: uninitialized symbol 'fia_isr'.
-drivers/gpu/drm/i915/display/intel_tc.c:436 icl_tc_phy_hpd_live_status() error: uninitialized symbol 'pch_isr'.
-drivers/gpu/drm/i915/display/intel_tc.c:655 tgl_tc_phy_init() error: uninitialized symbol 'val'.
-drivers/gpu/drm/i915/display/intel_tc.c:709 adlp_tc_phy_hpd_live_status() error: uninitialized symbol 'cpu_isr'.
-drivers/gpu/drm/i915/display/intel_tc.c:714 adlp_tc_phy_hpd_live_status() error: uninitialized symbol 'pch_isr'.
-drivers/gpu/drm/i915/i915_hwmon.c:411 hwm_power_max_write() error: uninitialized symbol 'nval'.
-include/linux/gpio/consumer.h: linux/err.h is included more than once.
-include/linux/gpio/driver.h: asm/bug.h is included more than once.
-io_uring/io_uring.c:432 io_prep_async_work() error: we previously assumed 'req->file' could be null (see line 425)
-io_uring/kbuf.c:221 __io_remove_buffers() warn: variable dereferenced before check 'bl->buf_ring' (see line 219)
-
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
-|-- alpha-randconfig-m041-20230403
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arc-randconfig-r043-20230404
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm64-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm64-randconfig-s053-20230406
-|   |-- drivers-remoteproc-imx_dsp_rproc.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-void-const-volatile-noderef-__iomem-addr-got-unsigned-int-usertype-assigned-tmp_dst
-|   |-- drivers-remoteproc-imx_dsp_rproc.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-void-const-volatile-noderef-__iomem-addr-got-void
-|   |-- drivers-remoteproc-imx_dsp_rproc.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-void-volatile-noderef-__iomem-addr-got-unsigned-int-usertype
-|   |-- drivers-remoteproc-imx_dsp_rproc.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-void-volatile-noderef-__iomem-addr-got-unsigned-int-usertype-assigned-tmp_dst
-|   `-- drivers-remoteproc-imx_dsp_rproc.c:sparse:sparse:incorrect-type-in-argument-(different-address-spaces)-expected-void-volatile-noderef-__iomem-addr-got-void
-|-- csky-buildonly-randconfig-r002-20230403
-|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
-|-- csky-randconfig-r011-20230403
-|   `-- drivers-net-wireless-legacy-ray_cs.c:warning:strncpy-specified-bound-equals-destination-size
-|-- i386-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- i386-randconfig-m021-20230403
-|   |-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
-|   |-- io_uring-io_uring.c-io_prep_async_work()-error:we-previously-assumed-req-file-could-be-null-(see-line-)
-|   `-- io_uring-kbuf.c-__io_remove_buffers()-warn:variable-dereferenced-before-check-bl-buf_ring-(see-line-)
-|-- i386-randconfig-m031-20230403
-|   |-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
-|   |-- drivers-gpu-drm-i915-display-intel_tc.c-adlp_tc_phy_hpd_live_status()-error:uninitialized-symbol-cpu_isr-.
-|   |-- drivers-gpu-drm-i915-display-intel_tc.c-adlp_tc_phy_hpd_live_status()-error:uninitialized-symbol-pch_isr-.
-|   |-- drivers-gpu-drm-i915-display-intel_tc.c-icl_tc_phy_hpd_live_status()-error:uninitialized-symbol-fia_isr-.
-|   |-- drivers-gpu-drm-i915-display-intel_tc.c-icl_tc_phy_hpd_live_status()-error:uninitialized-symbol-pch_isr-.
-|   |-- drivers-gpu-drm-i915-display-intel_tc.c-tgl_tc_phy_init()-error:uninitialized-symbol-val-.
-|   |-- drivers-gpu-drm-i915-i915_hwmon.c-hwm_power_max_write()-error:uninitialized-symbol-nval-.
-|   |-- io_uring-io_uring.c-io_prep_async_work()-error:we-previously-assumed-req-file-could-be-null-(see-line-)
-|   `-- io_uring-kbuf.c-__io_remove_buffers()-warn:variable-dereferenced-before-check-bl-buf_ring-(see-line-)
-|-- ia64-allmodconfig
-clang_recent_errors
-|-- hexagon-randconfig-r025-20230405
-|   `-- drivers-clk-clk-sp7021.c:warning:result-of-comparison-of-constant-with-expression-of-type-typeof-(_Generic((_m)-char:(unsigned-char)-unsigned-char:(unsigned-char)-signed-char:(unsigned-char)-unsigned-
-`-- hexagon-randconfig-r041-20230404
-    `-- drivers-bluetooth-hci_qca.c:warning:unused-variable-qca_soc_data_wcn6855
-
-elapsed time: 1262m
-
-configs tested: 100
-configs skipped: 6
-
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r026-20230405   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r043-20230404   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                  randconfig-r002-20230405   gcc  
-arm                  randconfig-r046-20230404   gcc  
-arm64                            allyesconfig   gcc  
-arm64        buildonly-randconfig-r003-20230403   clang
-arm64                               defconfig   gcc  
-csky         buildonly-randconfig-r002-20230403   gcc  
-csky                                defconfig   gcc  
-csky                 randconfig-r011-20230403   gcc  
-csky                 randconfig-r013-20230403   gcc  
-csky                 randconfig-r032-20230405   gcc  
-csky                 randconfig-r035-20230405   gcc  
-hexagon      buildonly-randconfig-r004-20230403   clang
-hexagon              randconfig-r025-20230405   clang
-hexagon              randconfig-r041-20230404   clang
-hexagon              randconfig-r045-20230404   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a001-20230403   clang
-i386                 randconfig-a002-20230403   clang
-i386                 randconfig-a003-20230403   clang
-i386                 randconfig-a004-20230403   clang
-i386                 randconfig-a005-20230403   clang
-i386                 randconfig-a006-20230403   clang
-i386                 randconfig-a011-20230403   gcc  
-i386                 randconfig-a012-20230403   gcc  
-i386                 randconfig-a013-20230403   gcc  
-i386                 randconfig-a014-20230403   gcc  
-i386                 randconfig-a015-20230403   gcc  
-i386                 randconfig-a016-20230403   gcc  
-ia64                             allmodconfig   gcc  
-ia64         buildonly-randconfig-r006-20230403   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r001-20230405   gcc  
-ia64                 randconfig-r024-20230405   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-m68k                             allmodconfig   gcc  
-m68k         buildonly-randconfig-r005-20230403   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r014-20230403   gcc  
-m68k                 randconfig-r031-20230405   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                 randconfig-r033-20230405   gcc  
-nios2                               defconfig   gcc  
-openrisc             randconfig-r034-20230405   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r006-20230405   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc              randconfig-r021-20230405   gcc  
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                randconfig-r003-20230405   clang
-riscv                randconfig-r012-20230403   gcc  
-riscv                randconfig-r016-20230403   gcc  
-riscv                randconfig-r023-20230405   gcc  
-riscv                randconfig-r042-20230404   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390                                defconfig   gcc  
-s390                 randconfig-r022-20230405   gcc  
-s390                 randconfig-r044-20230404   clang
-sh                               allmodconfig   gcc  
-sparc        buildonly-randconfig-r001-20230403   gcc  
-sparc                               defconfig   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64                        randconfig-a001   clang
-x86_64                        randconfig-a002   gcc  
-x86_64                        randconfig-a003   clang
-x86_64                        randconfig-a004   gcc  
-x86_64                        randconfig-a005   clang
-x86_64                        randconfig-a006   gcc  
-x86_64               randconfig-a011-20230403   gcc  
-x86_64               randconfig-a012-20230403   gcc  
-x86_64               randconfig-a013-20230403   gcc  
-x86_64               randconfig-a014-20230403   gcc  
-x86_64               randconfig-a015-20230403   gcc  
-x86_64               randconfig-a016-20230403   gcc  
-x86_64                               rhel-8.3   gcc  
-xtensa               randconfig-r005-20230405   gcc  
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
