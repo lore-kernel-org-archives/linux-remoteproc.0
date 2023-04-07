@@ -2,63 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9011AC77B73
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7FBC77B6F
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 13:28:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240830AbjDGN2n (ORCPT
+        id S240850AbjDGN2u (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Apr 2023 09:28:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35992 "EHLO
+        Fri, 7 Apr 2023 09:28:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240803AbjDGN2j (ORCPT
+        with ESMTP id S240799AbjDGN2l (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Apr 2023 09:28:39 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 260A3900C
-        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:37 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id x20so43531825ljq.9
-        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:37 -0700 (PDT)
+        Fri, 7 Apr 2023 09:28:41 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5961883FB
+        for <linux-remoteproc@vger.kernel.org>; Fri,  7 Apr 2023 06:28:39 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id x20so43531956ljq.9
+        for <linux-remoteproc@vger.kernel.org>; Fri, 07 Apr 2023 06:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1680874115;
+        d=linaro.org; s=google; t=1680874119;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=llePgOmhGh4IWb8LWhk+RajPlS7CDIy7UmsGMTBqzaA=;
-        b=cO5lYLU5ym4dGfjzsNgK5ZlP8ePOHNfsRx9h+f8eHM/HC7LyE529BTqTknOrvQlJ+g
-         ZAkrgOb5Z4e26L3cntz7DBdNcUm0MJmkG6l5MEIEOFHY6K7sm3KW++34p3p8gzcuidV9
-         HEpV4gj7Hw7jKgF+cKhSFUK+WQDGeMGSAEEKLGl3BOOOj5eWouTZWawpiENhZ9aOHS4G
-         y8EQB/5AOT19+OoT5XKdPYjcm+q+qvQYz8S8hzUlnF1Wej7hrfrLEZosqKUwhino+Mkp
-         boVxM/H8EQx0UjZtv93ATw+qXKWPKAQ22LIQ8mOtTlYLsQ+Od9p04+JWUXnnDmcqobKh
-         TB7g==
+        bh=k0IfW2c7yHYEw+7My0/Z0HZx/BNSO/stFk2dfA3BGq0=;
+        b=Ro0Vd5ko7vTTIJf8sPurw4gyNC9dktQtfFJJl77SMkhAyBP/pGEqpZZrfkq9zQdxen
+         QeNFSfzVP6fKnCXK705/jnJaWfZLdgruEkF/WVCiDDaxQ4ySU9ehYsHiPe+r/Qc0lPZn
+         EokASAgN41BXeNYBcaDHOMxar1uBU09BRlUzAQKJwjLTUL+uhrDoYiIglqvYKboSjlLn
+         QbNjaKhLY+GS7st+gBqJBxuhQ+KfPOYo3FZs9eRJm4aaZm8kdnupDwBHXgnjjeuPxW0V
+         S2P9lkFrRAJ1dr77dnsAMlAVhS+Vgw8ZU8FcCJFPCozDIJoAnciVDnC2yT22pK3t20jj
+         t7Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680874115;
+        d=1e100.net; s=20210112; t=1680874119;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=llePgOmhGh4IWb8LWhk+RajPlS7CDIy7UmsGMTBqzaA=;
-        b=eKOZpSp6WLNUn2ke3dUUJYaBMZZU+QbOTUfF7BGXMgg/POIE2wLyNUQZzQ85wanFBX
-         /IddohdkDXdjGdON6zNTXQV7fBZdsD/caRCR/7MTKF0R3yjAk7gHj8aYilu24Iu0gEMk
-         ye/L3g/5t5EPWIFWJ/qQ6L2ZwV37vAi4/Y+pJ5sS8JMY1iF0MP/u7IQRvcS9f47DIsBa
-         65ZOO2KfirkyBY4CKSWHAVfgpjgz6kbEQR75cgTb/971qvvWBswdWTw6hWhqYWcfKDbK
-         iifq9kom1ccP4orem7XzhG4rZySZ4zVQ6zxrKCB5cHyu9PULSNFh5YkEeSD1Y7fVIzK3
-         /Tug==
-X-Gm-Message-State: AAQBX9fCrkS9ykzay55QKEk2qdzuLpoqZLKXFKbpeNACzui+Ryg5lzqC
-        3b4gOYbHQxTP4m519sj5AxTbWg==
-X-Google-Smtp-Source: AKy350ZBU2+IVi4EkhIGy4Up7yOAsxRsnKvkuQMm67ALbuKqLn0D4GUuOG3n3GgoleU/9qzFInWv+A==
-X-Received: by 2002:a2e:3607:0:b0:295:a16f:c893 with SMTP id d7-20020a2e3607000000b00295a16fc893mr613024lja.18.1680874115534;
-        Fri, 07 Apr 2023 06:28:35 -0700 (PDT)
+        bh=k0IfW2c7yHYEw+7My0/Z0HZx/BNSO/stFk2dfA3BGq0=;
+        b=lQLXaAUDkZjk+yOMxmYVvrWwmwUdXqKGJTinB5g/6W9/hzgAbJJQJ5p4hbTQbt1M7h
+         D+RjUbjwFWQgeDHveCaqPSXUiy7/v9NTV01ZLcwY6xgVRVlAawE72nasiltlVgkVOVxm
+         EoXFMswsqhFJJeKoO7mRLJ4Bl8PZ53E2WTxrquvE/eQ1v7mnuXiuNgabssiSXTvfyqir
+         TsiMXX6qboMmtU0O/OF6V1CrhQqyNrmmI0BcXdzllKk1UN109RkEb1w+38o+nt/Vm/LK
+         ZRHCjIQRNhSPjyt+qFaCxH19d1doyeBooiJ2V1EKPIBT9zulgni+leJ3ESKvog99C818
+         ofkQ==
+X-Gm-Message-State: AAQBX9eM7LkeO64YBvyVRQKZUaeo0uOkYJyWdXFahmIr0HoghOSSfi8E
+        k3yla9EfwRCM+li+vYI/REYC7w==
+X-Google-Smtp-Source: AKy350ZQ30yshVINhFaemYrdT+8iOMgt3F15JZRLYN0ujn/iGtjiu2jaTgtCX9DBh7jQJj5JhlA8EQ==
+X-Received: by 2002:a2e:9a90:0:b0:295:ba22:360 with SMTP id p16-20020a2e9a90000000b00295ba220360mr718548lji.42.1680874118910;
+        Fri, 07 Apr 2023 06:28:38 -0700 (PDT)
 Received: from [192.168.1.101] (abxh37.neoplus.adsl.tpnet.pl. [83.9.1.37])
-        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.34
+        by smtp.gmail.com with ESMTPSA id h2-20020a2e3a02000000b002a618eb72b1sm811031lja.98.2023.04.07.06.28.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Apr 2023 06:28:35 -0700 (PDT)
+        Fri, 07 Apr 2023 06:28:38 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 07 Apr 2023 15:28:32 +0200
-Subject: [PATCH 2/6] dt-bindings: remoteproc: qcom: adsp: Allow
- firmware-name
+Date:   Fri, 07 Apr 2023 15:28:34 +0200
+Subject: [PATCH 4/6] arm64: dts: qcom: sc7280: Fix up the gic node
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230407-topic-msm_dtb-v1-2-6efb4196f51f@linaro.org>
+Message-Id: <20230407-topic-msm_dtb-v1-4-6efb4196f51f@linaro.org>
 References: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 In-Reply-To: <20230407-topic-msm_dtb-v1-0-6efb4196f51f@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -79,43 +78,62 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=1008;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1680874110; l=1494;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=dWnjAZMJzqjimRi8bQ9g3R4fQYhXM8ZgJZOOjsidZPo=;
- b=ZQ8LDsV8IFCj7oNIKdE4Wf/XjVIGpWft9setIb/PWvyNs02B1LepgKLs5g40HQi1fh9+DtmdRNQT
- VsMDX0bxDcq+DhkC6P7f2SLCCWNKlpVc/en0jMqXufIW1K02/jFi
+ bh=gHkzosUqi4bzAs9dpyelWGTDvy9GQH7llzRSHl6mEos=;
+ b=vqvoGg7o3fTzGx7vo2BEYDCXp5lvFkui2hVK5Zlj/spa9/z9GyvocahhSArwYxz23Agovl07UXC+
+ zft2HNhADd3ZtyJKEv7cFmxO2Z6+RnmniJonP8w9Z7VA7RmgPy76
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-firmware-name has been with us for a long long time. Allow it to fix
-warnings like this:
+Fix the following schema warning:
 
-qcom/sdm845-oneplus-enchilada.dtb: remoteproc-cdsp: Unevaluated properties
-are not allowed ('firmware-name' was unexpected)
+gic-its@17a40000: False schema does not allow {'compatible':
+['arm,gic-v3-its'], 'msi-controller': True, '#msi-cells': [[1]],
+'reg': [[0, 396623872, 0, 131072]], 'status': ['disabled']}
+
+And reorder the properties to be more in order with all other nodes.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/qcom/sc7280.dtsi | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 643ee787a81f..d99618a9ca2e 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -44,6 +44,10 @@ properties:
-     maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
+diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+index 0cdb16316021..3292b046a8d3 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
+@@ -5182,20 +5182,20 @@ apps_smmu: iommu@15000000 {
  
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Relative path to the DSP firmware binary
-+
- required:
-   - compatible
+ 		intc: interrupt-controller@17a00000 {
+ 			compatible = "arm,gic-v3";
+-			#address-cells = <2>;
+-			#size-cells = <2>;
+-			ranges;
+-			#interrupt-cells = <3>;
+-			interrupt-controller;
+ 			reg = <0 0x17a00000 0 0x10000>,     /* GICD */
+ 			      <0 0x17a60000 0 0x100000>;    /* GICR * 8 */
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
  
+-			gic-its@17a40000 {
++			msi-controller@17a40000 {
+ 				compatible = "arm,gic-v3-its";
++				reg = <0 0x17a40000 0 0x20000>;
+ 				msi-controller;
+ 				#msi-cells = <1>;
+-				reg = <0 0x17a40000 0 0x20000>;
+ 				status = "disabled";
+ 			};
+ 		};
 
 -- 
 2.40.0
