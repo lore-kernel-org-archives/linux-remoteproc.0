@@ -2,96 +2,151 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BDDC6FD1D
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  7 Apr 2023 22:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC731C76196
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 10 Apr 2023 04:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbjDGWf6 (ORCPT
+        id S229512AbjDJEre (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 7 Apr 2023 18:35:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42098 "EHLO
+        Mon, 10 Apr 2023 00:47:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjDGWf5 (ORCPT
+        with ESMTP id S229475AbjDJErc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 7 Apr 2023 18:35:57 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A32CA1A;
-        Fri,  7 Apr 2023 15:35:54 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 337LbUgi030608;
-        Fri, 7 Apr 2023 22:35:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=GLPTOTfwSYH4/Oiye4DOEFwrubn3rrjGIYd6rskQ6hg=;
- b=KP8y2ONQGKZIohtcbcVh6KPVfIHsKls4n73O1Gmoyn+jXcsKhCjNN0UUEzz1IaJ1CJCG
- JtfLveRlbq2v9G3yWxa5W/i6Sbl6OAkN41l0kLGYvOYEYfQ5pYXzOLrnNpNXwMM7ohjg
- ySJ61ktiB3JYW1kZeFnjXm6MEtrSbn/2Atjd7BI9boOgNbgfPdpObhIsSNNpGyxHsLRH
- DfGPzbvDkVqknAepsmPU9w80s/jrVg5gQrT+PsCM7jeJ+CNlMR5tTDauDmgL6ATmI6NF
- qQbNeUJmI9H9SAzOdzfQQ23B2mqWoukN4Sx2o3mXQ4hLQnSqJYJg/BnXBjg2CJ7kINU+ Nw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ptgpk1jc5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 07 Apr 2023 22:35:51 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 337MZpeC027751
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Apr 2023 22:35:51 GMT
-Received: from [10.110.34.31] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 7 Apr 2023
- 15:35:50 -0700
-Message-ID: <58305f4d-fbcb-44cc-053c-d30f4ca082e7@quicinc.com>
-Date:   Fri, 7 Apr 2023 15:35:49 -0700
+        Mon, 10 Apr 2023 00:47:32 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC1E30C6;
+        Sun,  9 Apr 2023 21:47:30 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 33A4lBoH101478;
+        Sun, 9 Apr 2023 23:47:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1681102031;
+        bh=Ytx9fQ9Ub8uG529ZrD4BPGXjS5WsbtxTltwVymlI5EY=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=di9uad7g8o6mc+SUeEMjwQE0pHDJHpuClOwJxovDPrJkU0RjNyL39zYmd+1QdurFL
+         fS7jwdU5OjbhyxeObxRDj5eVQ4ORkuQJ5Ww2Y8D40ygmfPnSKtWkO1I6jF1ykeoRKU
+         3PCJPNZLIdG6swmUz59g7BAks0ZhZSBsF9+bgZcQ=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 33A4lBhe020480
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 9 Apr 2023 23:47:11 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Sun, 9
+ Apr 2023 23:47:10 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Sun, 9 Apr 2023 23:47:10 -0500
+Received: from [10.24.69.114] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 33A4l5pl079918;
+        Sun, 9 Apr 2023 23:47:06 -0500
+Message-ID: <08c07263-f4d4-1264-dd67-b377c3b6a048@ti.com>
+Date:   Mon, 10 Apr 2023 10:17:05 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 0/2] rpmsg: glink: Wait for intent after intent request
-Content-Language: en-US
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [EXTERNAL] Re: [PATCH v7 0/4] Introduce PRU platform consumer API
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     MD Danish Anwar <danishanwar@ti.com>,
+        "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230327144617.3134175-1-quic_bjorande@quicinc.com>
-From:   Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20230327144617.3134175-1-quic_bjorande@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ctf5nHn8wnafu-MSPyw-OvmjotHfcvYA
-X-Proofpoint-GUID: ctf5nHn8wnafu-MSPyw-OvmjotHfcvYA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-07_14,2023-04-06_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 suspectscore=0 malwarescore=0
- priorityscore=1501 mlxscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304070204
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20230404115336.599430-1-danishanwar@ti.com>
+ <86ee5333-6d65-d28b-0dd5-40dfe485d48b@ti.com>
+ <CANLsYkyrvAcVa8VNkbsrxyAC-60fyGYoXVS=fqwLcsMverzNcg@mail.gmail.com>
+Content-Language: en-US
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <CANLsYkyrvAcVa8VNkbsrxyAC-60fyGYoXVS=fqwLcsMverzNcg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 3/27/2023 7:46 AM, Bjorn Andersson wrote:
-> When written it was assumed that upon requesting an intent, the intent
-> would arrive followed by an intent request acknowledgement. But this is
-> not always the case, in which case the current implementation would
-> request yet another intent and when that is acknowledged find the first
-> received intent - if the remote didn't run out of memory and failed the
-> second request...
+On 06/04/23 18:45, Mathieu Poirier wrote:
+> On Thu, 6 Apr 2023 at 00:54, Md Danish Anwar <a0501179@ti.com> wrote:
+>>
+>> On 04/04/23 17:23, MD Danish Anwar wrote:
+>>> Hi All,
+>>> The Programmable Real-Time Unit and Industrial Communication Subsystem (PRU-ICSS
+>>> or simply PRUSS) on various TI SoCs consists of dual 32-bit RISC cores
+>>> (Programmable Real-Time Units, or PRUs) for program execution.
+>>>
+>>> There are 3 foundation components for TI PRUSS subsystem: the PRUSS platform
+>>> driver, the PRUSS INTC driver and the PRUSS remoteproc driver. All of them have
+>>> already been merged and can be found under:
+>>> 1) drivers/soc/ti/pruss.c
+>>>    Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
+>>> 2) drivers/irqchip/irq-pruss-intc.c
+>>>    Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml
+>>> 3) drivers/remoteproc/pru_rproc.c
+>>>    Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+>>>
+>>> The programmable nature of the PRUs provide flexibility to implement custom
+>>> peripheral interfaces, fast real-time responses, or specialized data handling.
+>>> Example of a PRU consumer drivers will be:
+>>>   - Software UART over PRUSS
+>>>   - PRU-ICSS Ethernet EMAC
+>>>
+>>> In order to make usage of common PRU resources and allow the consumer drivers
+>>> to configure the PRU hardware for specific usage the PRU API is introduced.
+>>>
+>>> This is the v7 of the old patch series [9].
+>>>
+>>
+>> Hi Mathieu, Can you please review this series. I have addressed comments made
+>> by you in v5. I have also addressed Simon's comment in v6 and removed redundant
+>> macros from pruss.h header file.
+>>
 > 
-> Bjorn Andersson (2):
->    rpmsg: glink: Transition intent request signaling to wait queue
->    rpmsg: glink: Wait for intent, not just request ack
-> 
->   drivers/rpmsg/qcom_glink_native.c | 37 ++++++++++++++++++++++---------
->   1 file changed, 26 insertions(+), 11 deletions(-)
+> You are pushing me to review your code 19 hours after sending the last
+> revision?  Are you serious?
 > 
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+I am really sorry for this. Thursday was last working day last week (as Friday
+was holiday in India), so I thought I should ping you so that this series would
+be reviewed by Monday. From now on I would try to keep a gap a week (or
+whatever is appropriate) before pinging you for review.
+
+I am really sorry for this again.
+
+>>> Changes from v6 [9] to v7:
+>>> *) Addressed Simon's comment on patch 3 of this series and dropped unnecassary
+>>> macros from the patch.
+>>>
+>>> Changes from v5 [1] to v6:
+>>> *) Added Reviewed by tags of Roger and Tony to the patches.
+>>> *) Added Acked by tag of Mathieu to patch 2 of this series.
+>>> *) Added NULL check for @mux in pruss_cfg_get_gpmux() API.
+>>> *) Added comment to the pruss_get() function documentation mentioning it is
+>>> expected the caller will have done a pru_rproc_get() on @rproc.
+>>> *) Fixed compilation warning "warning: ‘pruss_cfg_update’ defined but not used"
+>>> in patch 3 by squashing patch 3 [7] and patch 5 [8] of previous revision
+>>> together. Squashed patch 5 instead of patch 4 with patch 3 because patch 5 uses
+>>> both read() and update() APIs where as patch 4 only uses update() API.
+>>> Previously pruss_cfg_read()/update() APIs were intoroduced in patch 3
+>>> and used in patch 4 and 5. Now these APIs are introduced as well as used in
+>>> patch 3.
+>>>
+>>
+>>
+>> --
+>> Thanks and Regards,
+>> Danish.
+
+-- 
+Thanks and Regards,
+Danish.
