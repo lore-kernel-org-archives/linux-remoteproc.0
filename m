@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF19FC76196
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Apr 2023 17:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED9AC77B6F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 11 Apr 2023 17:51:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229747AbjDKRtq (ORCPT
+        id S229980AbjDKRvr (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 11 Apr 2023 13:49:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59850 "EHLO
+        Tue, 11 Apr 2023 13:51:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjDKRto (ORCPT
+        with ESMTP id S229892AbjDKRvp (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 11 Apr 2023 13:49:44 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04148173C
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Apr 2023 10:49:42 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id n14so33721546plc.8
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Apr 2023 10:49:41 -0700 (PDT)
+        Tue, 11 Apr 2023 13:51:45 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A19A6585
+        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Apr 2023 10:51:41 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-635df3bd6e9so3518577b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Apr 2023 10:51:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681235381;
+        d=linaro.org; s=google; t=1681235501;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jaebHLqve3sr3PjhNWP7eX3jN2UJi3CqLa3+FrX8x6s=;
-        b=kA4FhnB8aG0ab2N8mylFWLmJfZnYWVGEzKp0pZXAocXC/y+0BsxCOp+cbv5mj68I4b
-         mS/362UmBdA+MtafvCOJW8hiQsr9o1F5Sg55B58ZwTWoLUe/DACmSEG+Pg5G5G8h6iuV
-         PsBgLSPzVrAQ1LAYXxko8L1iiU//KBkCDRrklc2rlqF9Ob4iEVT3yiKBVXgJ2CaVYI8V
-         LCb/QgvQBRb910+kWXq3rk9bhfBBLbIHtao27XdO9tSeLNUlWPjGy/AVEHoSGnof56dw
-         pXb5GGgtkZW34Vv+hOOXxcDQ8VHOquDAjN8hinsQl9q6qfkbWQoq2O71I3uZ3mCWyUAO
-         6qJg==
+        bh=Qbuj7VpjZ04yn+wg2bJaslUI/L4vbCkU/bi684VY7gU=;
+        b=rGqy3gXENEdQs9vwdi5+0tC3AYSczqHIF80RMZjqiYEC8liJHBMqz38foZT4QOZJHf
+         2BEiKR+utiGB6SNIy6QKcFABt+CjNDhFonLiW1GEKifNs6KbEhLK6JWn31aUy4f3Wo+D
+         QMb2xGdP6Dp1s7JEKq1KNQK6mqlh9kA+DwQ8hv3wnqjGQOdJZ3lcOwmQL/R2eTNJPIx0
+         BlSKSjOV1coNnS5G1X/RQy1xv5DeH1pkC1fKohcn8IyExr2IRswySVeMImOJDLCUhuHv
+         KU2K9SCdluLLdPipsRNPlljEcsGuKcbaQiUN7iFtd89VoQbxmejkjCcyXpnzEi4VwbtB
+         PqmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1681235381;
+        d=1e100.net; s=20210112; t=1681235501;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jaebHLqve3sr3PjhNWP7eX3jN2UJi3CqLa3+FrX8x6s=;
-        b=y3LUUe6gV0VOeNaGL/nT1TOot+0LOEAjuwhYIQPz7NcqPm2AxEOzEL4YtcjsOv+E1H
-         a+8oTWC4crp9yaUywxTlhKCN0EoVs15PFjHTCNcAlDh3d5QWQcvpKYWIrfla1It0vklU
-         qJYU7Q/HIHYzRO2FwclPIAvQ7HB59ZePGNdw6/Mu5FKcvPkTttPrNo1V4u+bVZIkAD8d
-         uvFVsor8bTrEMv/HtujZ+Cct867rN0ys7+1RqotgL0nkxO/0c+QyncAsgvxxbebnnc3j
-         y6I2QAdXHMXWt+jNPWrOABdZv1iAUYw28+Wr2XWkjmy+5wC30q4LiZj6f5Cyn+IeQW5/
-         naSg==
-X-Gm-Message-State: AAQBX9fAdm3KimW0D3GQv1rvqkjSYPz11BIBfMGGIHgGDh5Pz+Eosk+m
-        J/WQaFHE3ioGh/EC7/M4SeJvAw==
-X-Google-Smtp-Source: AKy350ZR3zysgzggrix4Kf++ZHjpsKtVeF09whw+wPV8LPhDGW9uk/3nyPygD/2zY7/UjM+B9SM8tw==
-X-Received: by 2002:a05:6a20:49b0:b0:d8:bd6d:e122 with SMTP id fs48-20020a056a2049b000b000d8bd6de122mr3712989pzb.29.1681235381478;
-        Tue, 11 Apr 2023 10:49:41 -0700 (PDT)
+        bh=Qbuj7VpjZ04yn+wg2bJaslUI/L4vbCkU/bi684VY7gU=;
+        b=8ErSHZCVQ5zvkYV+Akxwfy78U7rUnns43fvQNVSp5crbgoVg8bu2txLrBUKF8KM9JU
+         GYVlGLbMYkmFpaZ086xaHcqn/O3z2t2+LFdA3rFFhQUlYmAlOW1ayli7LOBUAelxemC0
+         9AZf0A41Eu7y9+U5qgHZ0Z24E9FqdNcKtuRP+ruKEppf13Mnz1JeBfrL9CBLMjE4rYL9
+         soKVLziGWmadA95OOnUHtjTIKT/tPnIq8OjOKsY+oJ/1BT6eR3muYkE0MHu6R203V6t1
+         dBaxC2xn6DjRaWjRJXXZDDr3etdh5dXo6tDe/eABKZSRnmW19rhjSRIbs9mh7mRMwpmh
+         4XyA==
+X-Gm-Message-State: AAQBX9eu47dSZ9LsiislDd+DyzjM1towFjlkjo9h98qMNDKlguy2DhbF
+        symSpSEanUsJHp1WxC2bihhTGg==
+X-Google-Smtp-Source: AKy350YEP9DijctCtVBhRuMX8F/0ocKY2aSATqLaLy16Q+DL1r+vUkiiec1juOtOMmYHlgtGSQUC1A==
+X-Received: by 2002:a62:ab14:0:b0:625:524b:9712 with SMTP id p20-20020a62ab14000000b00625524b9712mr41711pff.2.1681235500775;
+        Tue, 11 Apr 2023 10:51:40 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:f795:eecb:467b:d183])
-        by smtp.gmail.com with ESMTPSA id s21-20020aa78295000000b0062dc14ee2a7sm10099273pfm.211.2023.04.11.10.49.40
+        by smtp.gmail.com with ESMTPSA id s21-20020a056a00195500b006243e706195sm10084448pfk.196.2023.04.11.10.51.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Apr 2023 10:49:41 -0700 (PDT)
-Date:   Tue, 11 Apr 2023 11:49:38 -0600
+        Tue, 11 Apr 2023 10:51:40 -0700 (PDT)
+Date:   Tue, 11 Apr 2023 11:51:37 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     MD Danish Anwar <danishanwar@ti.com>
 Cc:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
@@ -63,230 +63,265 @@ Cc:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
         netdev@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] soc: ti: pruss: Add pruss_get()/put() API
-Message-ID: <20230411174938.GB38361@p14s>
+Subject: Re: [PATCH v7 2/4] soc: ti: pruss: Add
+ pruss_{request,release}_mem_region() API
+Message-ID: <20230411175137.GC38361@p14s>
 References: <20230404115336.599430-1-danishanwar@ti.com>
- <20230404115336.599430-2-danishanwar@ti.com>
+ <20230404115336.599430-3-danishanwar@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230404115336.599430-2-danishanwar@ti.com>
+In-Reply-To: <20230404115336.599430-3-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Apr 04, 2023 at 05:23:33PM +0530, MD Danish Anwar wrote:
-> From: Tero Kristo <t-kristo@ti.com>
+On Tue, Apr 04, 2023 at 05:23:34PM +0530, MD Danish Anwar wrote:
+> From: "Andrew F. Davis" <afd@ti.com>
 > 
-> Add two new get and put API, pruss_get() and pruss_put() to the
-> PRUSS platform driver to allow client drivers to request a handle
-> to a PRUSS device. This handle will be used by client drivers to
-> request various operations of the PRUSS platform driver through
-> additional API that will be added in the following patches.
-> 
-> The pruss_get() function returns the pruss handle corresponding
-> to a PRUSS device referenced by a PRU remoteproc instance. The
-> pruss_put() is the complimentary function to pruss_get().
+> Add two new API - pruss_request_mem_region() & pruss_release_mem_region(),
+> to the PRUSS platform driver to allow client drivers to acquire and release
+> the common memory resources present within a PRU-ICSS subsystem. This
+> allows the client drivers to directly manipulate the respective memories,
+> as per their design contract with the associated firmware.
 > 
 > Co-developed-by: Suman Anna <s-anna@ti.com>
 > Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
 > Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
 > Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
-> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
 > Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > Reviewed-by: Tony Lindgren <tony@atomide.com>
 > Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 > ---
->  drivers/remoteproc/pru_rproc.c                |  2 +-
->  drivers/soc/ti/pruss.c                        | 64 ++++++++++++++++++-
->  .../{pruss_driver.h => pruss_internal.h}      |  7 +-
->  include/linux/remoteproc/pruss.h              | 19 ++++++
->  4 files changed, 87 insertions(+), 5 deletions(-)
->  rename include/linux/{pruss_driver.h => pruss_internal.h} (90%)
+>  drivers/soc/ti/pruss.c           | 77 ++++++++++++++++++++++++++++++++
+>  include/linux/pruss_internal.h   | 27 +++--------
+>  include/linux/remoteproc/pruss.h | 39 ++++++++++++++++
+>  3 files changed, 121 insertions(+), 22 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index b76db7fa693d..4ddd5854d56e 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -19,7 +19,7 @@
->  #include <linux/of_device.h>
->  #include <linux/of_irq.h>
->  #include <linux/remoteproc/pruss.h>
-> -#include <linux/pruss_driver.h>
-> +#include <linux/pruss_internal.h>
-
-Don't rename pruss_driver.h.  There is no point in having a file in the include
-directory that contains a single struct declaration.
-
->  #include <linux/remoteproc.h>
->  
->  #include "remoteproc_internal.h"
 > diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-> index 6882c86b3ce5..28b77d715903 100644
+> index 28b77d715903..7aa0f7171af1 100644
 > --- a/drivers/soc/ti/pruss.c
 > +++ b/drivers/soc/ti/pruss.c
-> @@ -6,6 +6,7 @@
->   * Author(s):
->   *	Suman Anna <s-anna@ti.com>
->   *	Andrew F. Davis <afd@ti.com>
-> + *	Tero Kristo <t-kristo@ti.com>
->   */
->  
->  #include <linux/clk-provider.h>
-> @@ -16,8 +17,9 @@
->  #include <linux/of_address.h>
->  #include <linux/of_device.h>
->  #include <linux/pm_runtime.h>
-> -#include <linux/pruss_driver.h>
-> +#include <linux/pruss_internal.h>
->  #include <linux/regmap.h>
-> +#include <linux/remoteproc.h>
->  #include <linux/slab.h>
->  
->  /**
-> @@ -30,6 +32,66 @@ struct pruss_private_data {
->  	bool has_core_mux_clock;
->  };
+> @@ -92,6 +92,82 @@ void pruss_put(struct pruss *pruss)
+>  }
+>  EXPORT_SYMBOL_GPL(pruss_put);
 >  
 > +/**
-> + * pruss_get() - get the pruss for a given PRU remoteproc
-> + * @rproc: remoteproc handle of a PRU instance
+> + * pruss_request_mem_region() - request a memory resource
+> + * @pruss: the pruss instance
+> + * @mem_id: the memory resource id
+> + * @region: pointer to memory region structure to be filled in
 > + *
-> + * Finds the parent pruss device for a PRU given the @rproc handle of the
-> + * PRU remote processor. This function increments the pruss device's refcount,
-> + * so always use pruss_put() to decrement it back once pruss isn't needed
-> + * anymore.
+> + * This function allows a client driver to request a memory resource,
+> + * and if successful, will let the client driver own the particular
+> + * memory region until released using the pruss_release_mem_region()
+> + * API.
 > + *
-> + * This API doesn't check if @rproc is valid or not. It is expected the caller
-> + * will have done a pru_rproc_get() on @rproc, before calling this API to make
-> + * sure that @rproc is valid.
-> + *
-> + * Return: pruss handle on success, and an ERR_PTR on failure using one
-> + * of the following error values
-> + *    -EINVAL if invalid parameter
-> + *    -ENODEV if PRU device or PRUSS device is not found
+> + * Return: 0 if requested memory region is available (in such case pointer to
+> + * memory region is returned via @region), an error otherwise
 > + */
-> +struct pruss *pruss_get(struct rproc *rproc)
+> +int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
+> +			     struct pruss_mem_region *region)
 > +{
-> +	struct pruss *pruss;
-> +	struct device *dev;
-> +	struct platform_device *ppdev;
+> +	if (!pruss || !region || mem_id >= PRUSS_MEM_MAX)
+> +		return -EINVAL;
 > +
-> +	if (IS_ERR_OR_NULL(rproc))
-> +		return ERR_PTR(-EINVAL);
+> +	mutex_lock(&pruss->lock);
 > +
-> +	dev = &rproc->dev;
+> +	if (pruss->mem_in_use[mem_id]) {
+> +		mutex_unlock(&pruss->lock);
+> +		return -EBUSY;
+> +	}
 > +
-> +	/* make sure it is PRU rproc */
-> +	if (!dev->parent || !is_pru_rproc(dev->parent))
-> +		return ERR_PTR(-ENODEV);
+> +	*region = pruss->mem_regions[mem_id];
+> +	pruss->mem_in_use[mem_id] = region;
 > +
-> +	ppdev = to_platform_device(dev->parent->parent);
-> +	pruss = platform_get_drvdata(ppdev);
-> +	if (!pruss)
-> +		return ERR_PTR(-ENODEV);
+> +	mutex_unlock(&pruss->lock);
 > +
-> +	get_device(pruss->dev);
-> +
-> +	return pruss;
+> +	return 0;
 > +}
-> +EXPORT_SYMBOL_GPL(pruss_get);
+> +EXPORT_SYMBOL_GPL(pruss_request_mem_region);
 > +
 > +/**
-> + * pruss_put() - decrement pruss device's usecount
-> + * @pruss: pruss handle
+> + * pruss_release_mem_region() - release a memory resource
+> + * @pruss: the pruss instance
+> + * @region: the memory region to release
 > + *
-> + * Complimentary function for pruss_get(). Needs to be called
-> + * after the PRUSS is used, and only if the pruss_get() succeeds.
+> + * This function is the complimentary function to
+> + * pruss_request_mem_region(), and allows the client drivers to
+> + * release back a memory resource.
+> + *
+> + * Return: 0 on success, an error code otherwise
 > + */
-> +void pruss_put(struct pruss *pruss)
+> +int pruss_release_mem_region(struct pruss *pruss,
+> +			     struct pruss_mem_region *region)
 > +{
-> +	if (IS_ERR_OR_NULL(pruss))
-> +		return;
+> +	int id;
 > +
-> +	put_device(pruss->dev);
+> +	if (!pruss || !region)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&pruss->lock);
+> +
+> +	/* find out the memory region being released */
+> +	for (id = 0; id < PRUSS_MEM_MAX; id++) {
+> +		if (pruss->mem_in_use[id] == region)
+> +			break;
+> +	}
+> +
+> +	if (id == PRUSS_MEM_MAX) {
+> +		mutex_unlock(&pruss->lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	pruss->mem_in_use[id] = NULL;
+> +
+> +	mutex_unlock(&pruss->lock);
+> +
+> +	return 0;
 > +}
-> +EXPORT_SYMBOL_GPL(pruss_put);
-
-pruss_get() and pruss_put() stay here.
-
+> +EXPORT_SYMBOL_GPL(pruss_release_mem_region);
 > +
+
+These stay here.
+
 >  static void pruss_of_free_clk_provider(void *data)
 >  {
 >  	struct device_node *clk_mux_np = data;
-> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_internal.h
-> similarity index 90%
-> rename from include/linux/pruss_driver.h
-> rename to include/linux/pruss_internal.h
-> index ecfded30ed05..8f91cb164054 100644
-> --- a/include/linux/pruss_driver.h
+> @@ -294,6 +370,7 @@ static int pruss_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	pruss->dev = dev;
+> +	mutex_init(&pruss->lock);
+>  
+>  	child = of_get_child_by_name(np, "memories");
+>  	if (!child) {
+> diff --git a/include/linux/pruss_internal.h b/include/linux/pruss_internal.h
+> index 8f91cb164054..cf5287fa01df 100644
+> --- a/include/linux/pruss_internal.h
 > +++ b/include/linux/pruss_internal.h
-> @@ -6,9 +6,10 @@
->   *	Suman Anna <s-anna@ti.com>
->   */
+> @@ -9,37 +9,18 @@
+>  #ifndef _PRUSS_INTERNAL_H_
+>  #define _PRUSS_INTERNAL_H_
 >  
-> -#ifndef _PRUSS_DRIVER_H_
-> -#define _PRUSS_DRIVER_H_
-> +#ifndef _PRUSS_INTERNAL_H_
-> +#define _PRUSS_INTERNAL_H_
->  
-> +#include <linux/remoteproc/pruss.h>
+> +#include <linux/mutex.h>
+>  #include <linux/remoteproc/pruss.h>
 >  #include <linux/types.h>
 >  
->  /*
-> @@ -51,4 +52,4 @@ struct pruss {
+> -/*
+> - * enum pruss_mem - PRUSS memory range identifiers
+> - */
+> -enum pruss_mem {
+> -	PRUSS_MEM_DRAM0 = 0,
+> -	PRUSS_MEM_DRAM1,
+> -	PRUSS_MEM_SHRD_RAM2,
+> -	PRUSS_MEM_MAX,
+> -};
+> -
+> -/**
+> - * struct pruss_mem_region - PRUSS memory region structure
+> - * @va: kernel virtual address of the PRUSS memory region
+> - * @pa: physical (bus) address of the PRUSS memory region
+> - * @size: size of the PRUSS memory region
+> - */
+> -struct pruss_mem_region {
+> -	void __iomem *va;
+> -	phys_addr_t pa;
+> -	size_t size;
+> -};
+> -
+
+These stay here.
+
+>  /**
+>   * struct pruss - PRUSS parent structure
+>   * @dev: pruss device pointer
+>   * @cfg_base: base iomap for CFG region
+>   * @cfg_regmap: regmap for config region
+>   * @mem_regions: data for each of the PRUSS memory regions
+> + * @mem_in_use: to indicate if memory resource is in use
+> + * @lock: mutex to serialize access to resources
+>   * @core_clk_mux: clk handle for PRUSS CORE_CLK_MUX
+>   * @iep_clk_mux: clk handle for PRUSS IEP_CLK_MUX
+>   */
+> @@ -48,6 +29,8 @@ struct pruss {
+>  	void __iomem *cfg_base;
+>  	struct regmap *cfg_regmap;
+>  	struct pruss_mem_region mem_regions[PRUSS_MEM_MAX];
+> +	struct pruss_mem_region *mem_in_use[PRUSS_MEM_MAX];
+> +	struct mutex lock; /* PRU resource lock */
+>  	struct clk *core_clk_mux;
 >  	struct clk *iep_clk_mux;
 >  };
->  
-> -#endif	/* _PRUSS_DRIVER_H_ */
-> +#endif	/* _PRUSS_INTERNAL_H_ */
 > diff --git a/include/linux/remoteproc/pruss.h b/include/linux/remoteproc/pruss.h
-> index 039b50d58df2..93a98cac7829 100644
+> index 93a98cac7829..33f930e0a0ce 100644
 > --- a/include/linux/remoteproc/pruss.h
 > +++ b/include/linux/remoteproc/pruss.h
-> @@ -4,12 +4,14 @@
->   *
->   * Copyright (C) 2015-2022 Texas Instruments Incorporated - http://www.ti.com
->   *	Suman Anna <s-anna@ti.com>
-> + *	Tero Kristo <t-kristo@ti.com>
->   */
+> @@ -44,6 +44,28 @@ enum pru_ctable_idx {
+>  	PRU_C31,
+>  };
 >  
->  #ifndef __LINUX_PRUSS_H
->  #define __LINUX_PRUSS_H
->  
->  #include <linux/device.h>
-> +#include <linux/err.h>
->  #include <linux/types.h>
->  
->  #define PRU_RPROC_DRVNAME "pru-rproc"
-> @@ -44,6 +46,23 @@ enum pru_ctable_idx {
->  
+> +/*
+> + * enum pruss_mem - PRUSS memory range identifiers
+> + */
+> +enum pruss_mem {
+> +	PRUSS_MEM_DRAM0 = 0,
+> +	PRUSS_MEM_DRAM1,
+> +	PRUSS_MEM_SHRD_RAM2,
+> +	PRUSS_MEM_MAX,
+> +};
+> +
+> +/**
+> + * struct pruss_mem_region - PRUSS memory region structure
+> + * @va: kernel virtual address of the PRUSS memory region
+> + * @pa: physical (bus) address of the PRUSS memory region
+> + * @size: size of the PRUSS memory region
+> + */
+> +struct pruss_mem_region {
+> +	void __iomem *va;
+> +	phys_addr_t pa;
+> +	size_t size;
+> +};
+> +
 >  struct device_node;
 >  struct rproc;
-> +struct pruss;
-> +
-> +#if IS_ENABLED(CONFIG_TI_PRUSS)
-> +
-> +struct pruss *pruss_get(struct rproc *rproc);
-> +void pruss_put(struct pruss *pruss);
-> +
-> +#else
-> +
-> +static inline struct pruss *pruss_get(struct rproc *rproc)
+>  struct pruss;
+> @@ -52,6 +74,10 @@ struct pruss;
+>  
+>  struct pruss *pruss_get(struct rproc *rproc);
+>  void pruss_put(struct pruss *pruss);
+> +int pruss_request_mem_region(struct pruss *pruss, enum pruss_mem mem_id,
+> +			     struct pruss_mem_region *region);
+> +int pruss_release_mem_region(struct pruss *pruss,
+> +			     struct pruss_mem_region *region);
+>  
+>  #else
+>  
+> @@ -62,6 +88,19 @@ static inline struct pruss *pruss_get(struct rproc *rproc)
+>  
+>  static inline void pruss_put(struct pruss *pruss) { }
+>  
+> +static inline int pruss_request_mem_region(struct pruss *pruss,
+> +					   enum pruss_mem mem_id,
+> +					   struct pruss_mem_region *region)
 > +{
-> +	return ERR_PTR(-EOPNOTSUPP);
+> +	return -EOPNOTSUPP;
 > +}
 > +
-> +static inline void pruss_put(struct pruss *pruss) { }
+> +static inline int pruss_release_mem_region(struct pruss *pruss,
+> +					   struct pruss_mem_region *region)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
 > +
-> +#endif /* CONFIG_TI_PRUSS */
 
 These go in pruss_driver.h
 
+>  #endif /* CONFIG_TI_PRUSS */
 >  
 >  #if IS_ENABLED(CONFIG_PRU_REMOTEPROC)
->  
 > -- 
 > 2.25.1
 > 
