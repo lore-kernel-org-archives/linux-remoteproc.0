@@ -2,159 +2,232 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E21C7619A
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Apr 2023 16:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A8DC7619A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Apr 2023 17:00:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbjDLQtL (ORCPT
+        id S229753AbjDLRAq (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 12 Apr 2023 12:49:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49420 "EHLO
+        Wed, 12 Apr 2023 13:00:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231538AbjDLQtB (ORCPT
+        with ESMTP id S230344AbjDLRAm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 12 Apr 2023 12:49:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75AF4495;
-        Wed, 12 Apr 2023 09:48:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A097B6375B;
-        Wed, 12 Apr 2023 16:47:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B45C433D2;
-        Wed, 12 Apr 2023 16:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681318022;
-        bh=qTDTPft69sngqARhBIeJA14iYjSCz/p1w+ygzUzfdNo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TxhEOMUjD6PeE7AEWIEcG0FFr+I05NkdxpGo7d+vCI2w7eYaRlsSJFnr8AF/Q8kCz
-         It45z8FvpfGzPr9MHRzSgQQ6flq0h9ubmFy9QzuNw+E1cQ1wx+rs5UAHbtU36Hv5BI
-         o5piuZCr0RfzoIbqJ+NysBn8k8zBX/UCLb9uKKSaH6kPiSaRS1QCuiYVkE1FB9YQ1H
-         LcU1hnCO2PE9jHro4a9dRZ5hCsUi+Igm3RNkZrzb1FPMrN7UFhzTMPwCPB0FOaiMlT
-         oOWTHU09JWM+7ouV3uSZNmBZDfX+jsoJ2x7JsBbLLFLAvGxDpLJ0CuL6KoBag+rtHW
-         IYnPtd27UV04g==
-Date:   Wed, 12 Apr 2023 09:50:42 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Chris Lew <quic_clew@quicinc.com>
-Cc:     Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rpmsg: glink: Consolidate TX_DATA and TX_DATA_CONT
-Message-ID: <20230412165042.jsqhwbn3r364iinr@ripper>
-References: <20230327144153.3133425-1-quic_bjorande@quicinc.com>
- <20230327144153.3133425-3-quic_bjorande@quicinc.com>
- <e01c0579-5ce2-459b-0306-7351f8aca561@quicinc.com>
+        Wed, 12 Apr 2023 13:00:42 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C24D900E
+        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Apr 2023 10:00:13 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id c10-20020a17090abf0a00b0023d1bbd9f9eso15256623pjs.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Apr 2023 10:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681318808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+oanG2L1no3cfGxUr2f5jC5PPLghnpHBRMM+yz7rcqg=;
+        b=ETda2EF8CeXNpRP+t6JDEdQjQy9SuS5w1CFty3glJHeryif4TOjMLgsh61/0aNSX3l
+         WY1ZA7XUoVt89GbEf1jgCheNGw9MaytQLgyFBlcuxrJ+BaaNq6YZC3nyYAPwracjWBIX
+         AP7RHR/Gh4cWRg0sf645I9NV8n3Mjoxl6J3uaTWZzNxymh/wVr5dZ+jXvjqqYLj0x6/O
+         sJI4IlQoXsviOEiFA0c0IoPYmF1Yu5VmihBQsL/2pIJqwIIKXT1R6D+9wgANE3BD+Bku
+         nt9FbMEFzgJRnu08QofJrkWn+NBu7u5GbQ14Tqu+fUahxwRLIEX/5KBfYqjrytmtvEOB
+         MpAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681318808;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+oanG2L1no3cfGxUr2f5jC5PPLghnpHBRMM+yz7rcqg=;
+        b=StNrLc47MOtqFzkc7MMDj2K00XNPYn2OM879LDHz4nfNDrgEFagfv8Cmw0nRaB9Lhn
+         doehiJAffIoNRoSINEErGwI9p+FBk1q8VGY4wu4LOJUKOe9sHbDS8IX6XVxyUf/iBl+h
+         Vvs16CJvM+vldxu10jEBsiMcJVEe5ZUZObhzbl3+ADY1QU0cUTZLCZTfxh1/WhGdDy9n
+         zsU2i4tx1DMBU+dsmziTmQCelFL09iJEnxlgGR/MNHJAW6Az0ihhA+b9e3j7rB2dKHoj
+         WYsvAKlgtnMazhcuvnHCdgMkYgDDPaKmgsVYNT1dsVMFugS3YPrUsbxdf0bnsg8jOpBX
+         2OKg==
+X-Gm-Message-State: AAQBX9cy8SRnCM1Hdqqr1GJcog7jdY0lfgTpVL+GImljVNi+oDX1ccVi
+        bMOif9Y59gGEF4pJ3uYBC+Z9CA==
+X-Google-Smtp-Source: AKy350ZyGAHpWAWIglbbCQpXeWBI+mmZnj2uqsJASDPZg4pKPfpA1jxJzKxrtxsUWwfHCkGWCv9/MA==
+X-Received: by 2002:a17:90a:b294:b0:246:fdad:28ca with SMTP id c20-20020a17090ab29400b00246fdad28camr2727902pjr.38.1681318807683;
+        Wed, 12 Apr 2023 10:00:07 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:1cd7:1135:5e45:5f77])
+        by smtp.gmail.com with ESMTPSA id l17-20020a170902eb1100b001a52dd51ff6sm7800419plb.269.2023.04.12.10.00.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Apr 2023 10:00:07 -0700 (PDT)
+Date:   Wed, 12 Apr 2023 11:00:04 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     MD Danish Anwar <danishanwar@ti.com>
+Cc:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, srk@ti.com, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] soc: ti: pruss: Add pruss_get()/put() API
+Message-ID: <20230412170004.GA86761@p14s>
+References: <20230412103012.1754161-1-danishanwar@ti.com>
+ <20230412103012.1754161-2-danishanwar@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e01c0579-5ce2-459b-0306-7351f8aca561@quicinc.com>
+In-Reply-To: <20230412103012.1754161-2-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Apr 07, 2023 at 03:10:45PM -0700, Chris Lew wrote:
+On Wed, Apr 12, 2023 at 04:00:09PM +0530, MD Danish Anwar wrote:
+> From: Tero Kristo <t-kristo@ti.com>
 > 
+> Add two new get and put API, pruss_get() and pruss_put() to the
+> PRUSS platform driver to allow client drivers to request a handle
+> to a PRUSS device. This handle will be used by client drivers to
+> request various operations of the PRUSS platform driver through
+> additional API that will be added in the following patches.
 > 
-> On 3/27/2023 7:41 AM, Bjorn Andersson wrote:
-> > Rather than duplicating most of the code for constructing the initial
-> > TX_DATA and subsequent TX_DATA_CONT packets, roll them into a single
-> > loop.
-> > 
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > ---
-> >   drivers/rpmsg/qcom_glink_native.c | 46 +++++++++----------------------
-> >   1 file changed, 13 insertions(+), 33 deletions(-)
-> > 
-> > diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> > index 62634d020d13..082cf7f4888e 100644
-> > --- a/drivers/rpmsg/qcom_glink_native.c
-> > +++ b/drivers/rpmsg/qcom_glink_native.c
-> > @@ -1309,7 +1309,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
-> >   	int ret;
-> >   	unsigned long flags;
-> >   	int chunk_size = len;
-> > -	int left_size = 0;
-> > +	size_t offset = 0;
-> >   	if (!glink->intentless) {
-> >   		while (!intent) {
-> > @@ -1343,49 +1343,29 @@ static int __qcom_glink_send(struct glink_channel *channel,
-> >   		iid = intent->id;
-> >   	}
-> > -	if (wait && chunk_size > SZ_8K) {
-> > -		chunk_size = SZ_8K;
-> > -		left_size = len - chunk_size;
-> > -	}
-> > -	req.msg.cmd = cpu_to_le16(GLINK_CMD_TX_DATA);
-> > -	req.msg.param1 = cpu_to_le16(channel->lcid);
-> > -	req.msg.param2 = cpu_to_le32(iid);
-> > -	req.chunk_size = cpu_to_le32(chunk_size);
-> > -	req.left_size = cpu_to_le32(left_size);
-> > -
-> > -	ret = qcom_glink_tx(glink, &req, sizeof(req), data, chunk_size, wait);
-> > -
-> > -	/* Mark intent available if we failed */
-> > -	if (ret) {
-> > -		if (intent)
-> > -			intent->in_use = false;
-> > -		return ret;
-> > -	}
-> > -
-> > -	while (left_size > 0) {
-> > -		data = (void *)((char *)data + chunk_size);
-> > -		chunk_size = left_size;
-> > -		if (chunk_size > SZ_8K)
-> > +	while (offset < len) {
-> > +		chunk_size = len - offset;
-> > +		if (chunk_size > SZ_8K && (wait || offset > 0))
+> The pruss_get() function returns the pruss handle corresponding
+> to a PRUSS device referenced by a PRU remoteproc instance. The
+> pruss_put() is the complimentary function to pruss_get().
 > 
-> offset > 0 seems to be a new condition compared to the previous logic.
-> Are we adding this as a cached check because we know if offset is set then
-> fragmented sends are allowed?
+> Co-developed-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+> Reviewed-by: Tony Lindgren <tony@atomide.com>
+> Reviewed-by: Simon Horman <simon.horman@corigine.com>
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  drivers/soc/ti/pruss.c       | 62 ++++++++++++++++++++++++++++++++++++
+>  include/linux/pruss_driver.h | 18 +++++++++++
+>  2 files changed, 80 insertions(+)
 > 
 
-You're right, I believe my intention was to retain the two inquiries of
-the original code; for the first block, don't split it if we're not
-waiting and for any subsequent blocks always split.
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-> I don't think wait would have changed during the loop, so I'm not sure if
-> offset > 0 is adding any extra value to the check.
+> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+> index 6882c86b3ce5..3fac92df8790 100644
+> --- a/drivers/soc/ti/pruss.c
+> +++ b/drivers/soc/ti/pruss.c
+> @@ -6,6 +6,7 @@
+>   * Author(s):
+>   *	Suman Anna <s-anna@ti.com>
+>   *	Andrew F. Davis <afd@ti.com>
+> + *	Tero Kristo <t-kristo@ti.com>
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -18,6 +19,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/pruss_driver.h>
+>  #include <linux/regmap.h>
+> +#include <linux/remoteproc.h>
+>  #include <linux/slab.h>
+>  
+>  /**
+> @@ -30,6 +32,66 @@ struct pruss_private_data {
+>  	bool has_core_mux_clock;
+>  };
+>  
+> +/**
+> + * pruss_get() - get the pruss for a given PRU remoteproc
+> + * @rproc: remoteproc handle of a PRU instance
+> + *
+> + * Finds the parent pruss device for a PRU given the @rproc handle of the
+> + * PRU remote processor. This function increments the pruss device's refcount,
+> + * so always use pruss_put() to decrement it back once pruss isn't needed
+> + * anymore.
+> + *
+> + * This API doesn't check if @rproc is valid or not. It is expected the caller
+> + * will have done a pru_rproc_get() on @rproc, before calling this API to make
+> + * sure that @rproc is valid.
+> + *
+> + * Return: pruss handle on success, and an ERR_PTR on failure using one
+> + * of the following error values
+> + *    -EINVAL if invalid parameter
+> + *    -ENODEV if PRU device or PRUSS device is not found
+> + */
+> +struct pruss *pruss_get(struct rproc *rproc)
+> +{
+> +	struct pruss *pruss;
+> +	struct device *dev;
+> +	struct platform_device *ppdev;
+> +
+> +	if (IS_ERR_OR_NULL(rproc))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	dev = &rproc->dev;
+> +
+> +	/* make sure it is PRU rproc */
+> +	if (!dev->parent || !is_pru_rproc(dev->parent))
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	ppdev = to_platform_device(dev->parent->parent);
+> +	pruss = platform_get_drvdata(ppdev);
+> +	if (!pruss)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	get_device(pruss->dev);
+> +
+> +	return pruss;
+> +}
+> +EXPORT_SYMBOL_GPL(pruss_get);
+> +
+> +/**
+> + * pruss_put() - decrement pruss device's usecount
+> + * @pruss: pruss handle
+> + *
+> + * Complimentary function for pruss_get(). Needs to be called
+> + * after the PRUSS is used, and only if the pruss_get() succeeds.
+> + */
+> +void pruss_put(struct pruss *pruss)
+> +{
+> +	if (IS_ERR_OR_NULL(pruss))
+> +		return;
+> +
+> +	put_device(pruss->dev);
+> +}
+> +EXPORT_SYMBOL_GPL(pruss_put);
+> +
+>  static void pruss_of_free_clk_provider(void *data)
+>  {
+>  	struct device_node *clk_mux_np = data;
+> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
+> index ecfded30ed05..cb40c2b31045 100644
+> --- a/include/linux/pruss_driver.h
+> +++ b/include/linux/pruss_driver.h
+> @@ -9,7 +9,9 @@
+>  #ifndef _PRUSS_DRIVER_H_
+>  #define _PRUSS_DRIVER_H_
+>  
+> +#include <linux/remoteproc/pruss.h>
+>  #include <linux/types.h>
+> +#include <linux/err.h>
+>  
+>  /*
+>   * enum pruss_mem - PRUSS memory range identifiers
+> @@ -51,4 +53,20 @@ struct pruss {
+>  	struct clk *iep_clk_mux;
+>  };
+>  
+> +#if IS_ENABLED(CONFIG_TI_PRUSS)
+> +
+> +struct pruss *pruss_get(struct rproc *rproc);
+> +void pruss_put(struct pruss *pruss);
+> +
+> +#else
+> +
+> +static inline struct pruss *pruss_get(struct rproc *rproc)
+> +{
+> +	return ERR_PTR(-EOPNOTSUPP);
+> +}
+> +
+> +static inline void pruss_put(struct pruss *pruss) { }
+> +
+> +#endif /* CONFIG_TI_PRUSS */
+> +
+>  #endif	/* _PRUSS_DRIVER_H_ */
+> -- 
+> 2.34.1
 > 
-
-But you're totally right, offset > 0 would only occur if wait is set and
-wait will not have changed for subsequent blocks.
-
-So while capturing the original conditions, it seems superfluous.
-
-Thanks,
-Bjorn
-
-> >   			chunk_size = SZ_8K;
-> > -		left_size -= chunk_size;
-> > -		req.msg.cmd = cpu_to_le16(GLINK_CMD_TX_DATA_CONT);
-> > +		req.msg.cmd = cpu_to_le16(offset == 0 ? GLINK_CMD_TX_DATA : GLINK_CMD_TX_DATA_CONT);
-> >   		req.msg.param1 = cpu_to_le16(channel->lcid);
-> >   		req.msg.param2 = cpu_to_le32(iid);
-> >   		req.chunk_size = cpu_to_le32(chunk_size);
-> > -		req.left_size = cpu_to_le32(left_size);
-> > +		req.left_size = cpu_to_le32(len - offset - chunk_size);
-> > -		ret = qcom_glink_tx(glink, &req, sizeof(req), data,
-> > -				    chunk_size, wait);
-> > -
-> > -		/* Mark intent available if we failed */
-> > +		ret = qcom_glink_tx(glink, &req, sizeof(req), data + offset, chunk_size, wait);
-> >   		if (ret) {
-> > +			/* Mark intent available if we failed */
-> >   			if (intent)
-> >   				intent->in_use = false;
-> > -			break;
-> > +			return ret;
-> >   		}
-> > +
-> > +		offset += chunk_size;
-> >   	}
-> > -	return ret;
-> > +
-> > +	return 0;
-> >   }
-> >   static int qcom_glink_send(struct rpmsg_endpoint *ept, void *data, int len)
