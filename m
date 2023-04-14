@@ -2,244 +2,311 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04551C77B6F
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Apr 2023 22:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80A3C77B70
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 04:49:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbjDMWcb (ORCPT
+        id S229611AbjDNEtb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Apr 2023 18:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49034 "EHLO
+        Fri, 14 Apr 2023 00:49:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60996 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbjDMWca (ORCPT
+        with ESMTP id S229457AbjDNEta (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Apr 2023 18:32:30 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E78AB47F
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Apr 2023 15:32:08 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id xd13so7217436ejb.4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Apr 2023 15:32:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681425128; x=1684017128;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l9L8tYYDKjHSQReGzmtMFXvGbvY7EYYVxpxKS7dXKNo=;
-        b=NUMlpInTsiaZkcsWcvkcKmtfHKuAwRbbbcmBduiX7PxlzMJoxEBi6ntfBNjafwJWoM
-         gFjLpY3wCQsp+inAdEZzlHrofabiy4tT0V+Anr/PbIjkKY+aJ4cTCvFFqCdmEK7m60Sh
-         g6rLHBXIjMBceh7AxpYizZozyK1Rp5mNB7qm+pN17SwcHNlET8i5K3ZGr+m6JAGs3oDK
-         sAqaOP6y+wtNmLzzh0OOpa+Lg7ILcHMFhqtK5NtfKRroSAFIl18IxB4XpMXpEYXw9CT3
-         FHSd0RA+21dHkMzMDkzB/aMTGUxyyZ68nsOH84EmaobTGoBlQcO6+VVtpJqyQgJP/SIF
-         T5dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681425128; x=1684017128;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9L8tYYDKjHSQReGzmtMFXvGbvY7EYYVxpxKS7dXKNo=;
-        b=Rg76WElfzf3qBjdGBDtkqZhqunDpCWMga5QA1NVq80XfNNoxTFyy+Q2DLfl1E1w6gA
-         3pNFGH/26E2sUDAy5V/BF8Z//m/Ohw/lkhdaez56WKUv3BWMzHN3hJ1V3ynIsZdCfsh8
-         8x8KvXYx85fUBeUnW3iubR6WE2BWKj/4hrLGskMULRZg7ln/Cd3Kj9bh6+UYr3I+JRIs
-         LWL4ELYk+vz/9ec+W2U1wqvEV1GDeVflT6kBmXN3Pu7n45IjmOK5mXAXI6gRJ4OagxW3
-         4anp1bZPWBRmoDAZ3ZPPIw+W3S6Y6yJB+NsO6qSgaF/WDETFDeavYSMk46YLa9iVP9jw
-         YQbg==
-X-Gm-Message-State: AAQBX9c9L3Kbq+U05saCYawlSW92xGm9zyEP1H3QChV8nOAEHP+qoI0D
-        1KWYlHU/WqUKlf2NggtxM5KG1A==
-X-Google-Smtp-Source: AKy350Yy95MU6ymMXBfdoUzvXczL7NB3u1Ku2n1nJfzBRl7LG4KzH69EMBs/RB5ypqmLO3ckzmGIOg==
-X-Received: by 2002:a17:906:6855:b0:930:6e31:3c11 with SMTP id a21-20020a170906685500b009306e313c11mr4393262ejs.70.1681425128140;
-        Thu, 13 Apr 2023 15:32:08 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id f17-20020a170906495100b009334219656dsm1567607ejt.56.2023.04.13.15.32.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 15:32:07 -0700 (PDT)
-Message-ID: <e74fb30d-4268-86b1-cdf7-ad3d104c6c40@linaro.org>
-Date:   Thu, 13 Apr 2023 23:32:06 +0100
+        Fri, 14 Apr 2023 00:49:30 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF6E44B9;
+        Thu, 13 Apr 2023 21:49:27 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 33E4nGNx073335;
+        Thu, 13 Apr 2023 23:49:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1681447756;
+        bh=ewfkuLS0iYg6xWQwWbJ4p43ROxv9Ga94jsX4IeY1AyA=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=RxcXYMpZr4wDser0h66aeKv6Wg5iHUXNY7BIMJySf8HbAQwoJMBDeStsnOnD8pkPH
+         CtCkXKSplqNm+00h/Z/UOgFF78HLqQw/LCaPYb6W1kwLoyhF8JBfXY+e4pABAB/mBy
+         oASr3XsHlU/JJ3phqPBFOo/j8cs5bZOFGqSi4qQo=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 33E4nFPp062354
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Apr 2023 23:49:16 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16; Thu, 13
+ Apr 2023 23:49:15 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.16 via
+ Frontend Transport; Thu, 13 Apr 2023 23:49:15 -0500
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 33E4nAr3015585;
+        Thu, 13 Apr 2023 23:49:11 -0500
+Message-ID: <4e991441-535e-6944-3cd5-682c822a9552@ti.com>
+Date:   Fri, 14 Apr 2023 10:19:10 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v2 2/6] remoteproc: qcom: Move minidump specific data to
- qcom_minidump.h
+ Thunderbird/102.10.0
+Subject: Re: [EXTERNAL] Re: [PATCH v8 4/4] soc: ti: pruss: Add helper
+ functions to set GPI mode, MII_RT_event and XFR
 Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        catalin.marinas@arm.com, will@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
- <1679491817-2498-3-git-send-email-quic_mojha@quicinc.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <1679491817-2498-3-git-send-email-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+CC:     "Andrew F. Davis" <afd@ti.com>, Suman Anna <s-anna@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Nishanth Menon <nm@ti.com>, <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <srk@ti.com>, <devicetree@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+References: <20230412103012.1754161-1-danishanwar@ti.com>
+ <20230412103012.1754161-5-danishanwar@ti.com> <20230412171319.GD86761@p14s>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <20230412171319.GD86761@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 22/03/2023 13:30, Mukesh Ojha wrote:
-> Move minidump specific data types and macros to a separate internal
-> header(qcom_minidump.h) so that it can be shared among different
-
-minidump.h should be good as we are already in include/soc/qcom/
-
---srini
-
-> Qualcomm drivers.
+On 12/04/23 22:43, Mathieu Poirier wrote:
+> On Wed, Apr 12, 2023 at 04:00:12PM +0530, MD Danish Anwar wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> The PRUSS CFG module is represented as a syscon node and is currently
+>> managed by the PRUSS platform driver. Add easy accessor functions to set
+>> GPI mode, MII_RT event enable/disable and XFR (XIN XOUT) enable/disable
+>> to enable the PRUSS Ethernet usecase. These functions reuse the generic
+>> pruss_cfg_update() API function.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Co-developed-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>> Signed-off-by: Grzegorz Jaszczyk <grzegorz.jaszczyk@linaro.org>
+>> Signed-off-by: Puranjay Mohan <p-mohan@ti.com>
+>> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+>> Reviewed-by: Tony Lindgren <tony@atomide.com>
+>> Reviewed-by: Simon Horman <simon.horman@corigine.com>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  drivers/remoteproc/pru_rproc.c | 15 -------
+>>  drivers/soc/ti/pruss.c         | 74 ++++++++++++++++++++++++++++++++++
+>>  include/linux/pruss_driver.h   | 51 +++++++++++++++++++++++
+>>  3 files changed, 125 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>> index 095f66130f48..54f5ce302e7a 100644
+>> --- a/drivers/remoteproc/pru_rproc.c
+>> +++ b/drivers/remoteproc/pru_rproc.c
+>> @@ -81,21 +81,6 @@ enum pru_iomem {
+>>  	PRU_IOMEM_MAX,
+>>  };
+>>  
+>> -/**
+>> - * enum pru_type - PRU core type identifier
+>> - *
+>> - * @PRU_TYPE_PRU: Programmable Real-time Unit
+>> - * @PRU_TYPE_RTU: Auxiliary Programmable Real-Time Unit
+>> - * @PRU_TYPE_TX_PRU: Transmit Programmable Real-Time Unit
+>> - * @PRU_TYPE_MAX: just keep this one at the end
+>> - */
+>> -enum pru_type {
+>> -	PRU_TYPE_PRU = 0,
+>> -	PRU_TYPE_RTU,
+>> -	PRU_TYPE_TX_PRU,
+>> -	PRU_TYPE_MAX,
+>> -};
+>> -
+>>  /**
+>>   * struct pru_private_data - device data for a PRU core
+>>   * @type: type of the PRU core (PRU, RTU, Tx_PRU)
+>> diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+>> index 34d513816a9d..90a625ab9cfc 100644
+>> --- a/drivers/soc/ti/pruss.c
+>> +++ b/drivers/soc/ti/pruss.c
+>> @@ -213,6 +213,80 @@ int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux)
+>>  }
+>>  EXPORT_SYMBOL_GPL(pruss_cfg_set_gpmux);
+>>  
+>> +/**
+>> + * pruss_cfg_gpimode() - set the GPI mode of the PRU
+>> + * @pruss: the pruss instance handle
+>> + * @pru_id: id of the PRU core within the PRUSS
+>> + * @mode: GPI mode to set
+>> + *
+>> + * Sets the GPI mode for a given PRU by programming the
+>> + * corresponding PRUSS_CFG_GPCFGx register
+>> + *
+>> + * Return: 0 on success, or an error code otherwise
+>> + */
+>> +int pruss_cfg_gpimode(struct pruss *pruss, enum pruss_pru_id pru_id,
+>> +		      enum pruss_gpi_mode mode)
+>> +{
+>> +	if (pru_id < 0 || pru_id >= PRUSS_NUM_PRUS)
+>> +		return -EINVAL;
+>> +
 > 
-> There is no change in functional behavior after this.
+> Same
 > 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->   drivers/remoteproc/qcom_common.c | 56 +---------------------------------
->   include/soc/qcom/qcom_minidump.h | 66 ++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 67 insertions(+), 55 deletions(-)
->   create mode 100644 include/soc/qcom/qcom_minidump.h
+>> +	if (mode < 0 || mode > PRUSS_GPI_MODE_MAX)
+>> +		return -EINVAL;
+>> +
 > 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 805e525..88fc984 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -18,6 +18,7 @@
->   #include <linux/slab.h>
->   #include <linux/soc/qcom/mdt_loader.h>
->   #include <linux/soc/qcom/smem.h>
-> +#include <soc/qcom/qcom_minidump.h>
->   
->   #include "remoteproc_internal.h"
->   #include "qcom_common.h"
-> @@ -26,61 +27,6 @@
->   #define to_smd_subdev(d) container_of(d, struct qcom_rproc_subdev, subdev)
->   #define to_ssr_subdev(d) container_of(d, struct qcom_rproc_ssr, subdev)
->   
-> -#define MAX_NUM_OF_SS           10
-> -#define MAX_REGION_NAME_LENGTH  16
-> -#define SBL_MINIDUMP_SMEM_ID	602
-> -#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
-> -#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
-> -#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
-> -
-> -/**
-> - * struct minidump_region - Minidump region
-> - * @name		: Name of the region to be dumped
-> - * @seq_num:		: Use to differentiate regions with same name.
-> - * @valid		: This entry to be dumped (if set to 1)
-> - * @address		: Physical address of region to be dumped
-> - * @size		: Size of the region
-> - */
-> -struct minidump_region {
-> -	char	name[MAX_REGION_NAME_LENGTH];
-> -	__le32	seq_num;
-> -	__le32	valid;
-> -	__le64	address;
-> -	__le64	size;
-> -};
-> -
-> -/**
-> - * struct minidump_subsystem - Subsystem's SMEM Table of content
-> - * @status : Subsystem toc init status
-> - * @enabled : if set to 1, this region would be copied during coredump
-> - * @encryption_status: Encryption status for this subsystem
-> - * @encryption_required : Decides to encrypt the subsystem regions or not
-> - * @region_count : Number of regions added in this subsystem toc
-> - * @regions_baseptr : regions base pointer of the subsystem
-> - */
-> -struct minidump_subsystem {
-> -	__le32	status;
-> -	__le32	enabled;
-> -	__le32	encryption_status;
-> -	__le32	encryption_required;
-> -	__le32	region_count;
-> -	__le64	regions_baseptr;
-> -};
-> -
-> -/**
-> - * struct minidump_global_toc - Global Table of Content
-> - * @status : Global Minidump init status
-> - * @md_revision : Minidump revision
-> - * @enabled : Minidump enable status
-> - * @subsystems : Array of subsystems toc
-> - */
-> -struct minidump_global_toc {
-> -	__le32				status;
-> -	__le32				md_revision;
-> -	__le32				enabled;
-> -	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
-> -};
-> -
->   struct qcom_ssr_subsystem {
->   	const char *name;
->   	struct srcu_notifier_head notifier_list;
-> diff --git a/include/soc/qcom/qcom_minidump.h b/include/soc/qcom/qcom_minidump.h
-> new file mode 100644
-> index 0000000..84c8605
-> --- /dev/null
-> +++ b/include/soc/qcom/qcom_minidump.h
-> @@ -0,0 +1,66 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Qualcomm minidump shared data structures and macros
-> + *
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _QCOM_MINIDUMP_H_
-> +#define _QCOM_MINIDUMP_H_
-> +
-> +#define MAX_NUM_OF_SS           10
-> +#define MAX_REGION_NAME_LENGTH  16
-> +#define SBL_MINIDUMP_SMEM_ID	602
-> +#define MINIDUMP_REGION_VALID		('V' << 24 | 'A' << 16 | 'L' << 8 | 'I' << 0)
-> +#define MINIDUMP_SS_ENCR_DONE		('D' << 24 | 'O' << 16 | 'N' << 8 | 'E' << 0)
-> +#define MINIDUMP_SS_ENABLED		('E' << 24 | 'N' << 16 | 'B' << 8 | 'L' << 0)
-> +
-> +/**
-> + * struct minidump_region - Minidump region
-> + * @name		: Name of the region to be dumped
-> + * @seq_num:		: Use to differentiate regions with same name.
-> + * @valid		: This entry to be dumped (if set to 1)
-> + * @address		: Physical address of region to be dumped
-> + * @size		: Size of the region
-> + */
-> +struct minidump_region {
-> +	char	name[MAX_REGION_NAME_LENGTH];
-> +	__le32	seq_num;
-> +	__le32	valid;
-> +	__le64	address;
-> +	__le64	size;
-> +};
-> +
-> +/**
-> + * struct minidump_subsystem - Subsystem's SMEM Table of content
-> + * @status : Subsystem toc init status
-> + * @enabled : if set to 1, this region would be copied during coredump
-> + * @encryption_status: Encryption status for this subsystem
-> + * @encryption_required : Decides to encrypt the subsystem regions or not
-> + * @region_count : Number of regions added in this subsystem toc
-> + * @regions_baseptr : regions base pointer of the subsystem
-> + */
-> +struct minidump_subsystem {
-> +	__le32	status;
-> +	__le32	enabled;
-> +	__le32	encryption_status;
-> +	__le32	encryption_required;
-> +	__le32	region_count;
-> +	__le64	regions_baseptr;
-> +};
-> +
-> +/**
-> + * struct minidump_global_toc - Global Table of Content
-> + * @status : Global Minidump init status
-> + * @md_revision : Minidump revision
-> + * @enabled : Minidump enable status
-> + * @subsystems : Array of subsystems toc
-> + */
-> +struct minidump_global_toc {
-> +	__le32				status;
-> +	__le32				md_revision;
-> +	__le32				enabled;
-> +	struct minidump_subsystem	subsystems[MAX_NUM_OF_SS];
-> +};
-> +
-> +#endif  /* _QCOM_MINIDUMP_H_ */
+> Same
+> 
+>> +	return pruss_cfg_update(pruss, PRUSS_CFG_GPCFG(pru_id),
+>> +				PRUSS_GPCFG_PRU_GPI_MODE_MASK,
+>> +				mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
+>> +}
+>> +EXPORT_SYMBOL_GPL(pruss_cfg_gpimode);
+>> +
+>> +/**
+>> + * pruss_cfg_miirt_enable() - Enable/disable MII RT Events
+>> + * @pruss: the pruss instance
+>> + * @enable: enable/disable
+>> + *
+>> + * Enable/disable the MII RT Events for the PRUSS.
+>> + *
+>> + * Return: 0 on success, or an error code otherwise
+>> + */
+>> +int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
+>> +{
+>> +	u32 set = enable ? PRUSS_MII_RT_EVENT_EN : 0;
+>> +
+>> +	return pruss_cfg_update(pruss, PRUSS_CFG_MII_RT,
+>> +				PRUSS_MII_RT_EVENT_EN, set);
+>> +}
+>> +EXPORT_SYMBOL_GPL(pruss_cfg_miirt_enable);
+>> +
+>> +/**
+>> + * pruss_cfg_xfr_enable() - Enable/disable XIN XOUT shift functionality
+>> + * @pruss: the pruss instance
+>> + * @pru_type: PRU core type identifier
+>> + * @enable: enable/disable
+>> + *
+>> + * Return: 0 on success, or an error code otherwise
+>> + */
+>> +int pruss_cfg_xfr_enable(struct pruss *pruss, enum pru_type pru_type,
+>> +			 bool enable)
+>> +{
+>> +	u32 mask, set;
+>> +
+>> +	switch (pru_type) {
+>> +	case PRU_TYPE_PRU:
+>> +		mask = PRUSS_SPP_XFER_SHIFT_EN;
+>> +		break;
+>> +	case PRU_TYPE_RTU:
+>> +		mask = PRUSS_SPP_RTU_XFR_SHIFT_EN;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	set = enable ? mask : 0;
+>> +
+>> +	return pruss_cfg_update(pruss, PRUSS_CFG_SPP, mask, set);
+>> +}
+>> +EXPORT_SYMBOL_GPL(pruss_cfg_xfr_enable);
+>> +
+>>  static void pruss_of_free_clk_provider(void *data)
+>>  {
+>>  	struct device_node *clk_mux_np = data;
+>> diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
+>> index c70e08c90165..2a139bfda452 100644
+>> --- a/include/linux/pruss_driver.h
+>> +++ b/include/linux/pruss_driver.h
+>> @@ -32,6 +32,33 @@ enum pruss_gp_mux_sel {
+>>  	PRUSS_GP_MUX_SEL_MAX,
+>>  };
+>>  
+>> +/*
+>> + * enum pruss_gpi_mode - PRUSS GPI configuration modes, used
+>> + *			 to program the PRUSS_GPCFG0/1 registers
+>> + */
+>> +enum pruss_gpi_mode {
+>> +	PRUSS_GPI_MODE_DIRECT = 0,
+> 
+> Not needed
+> 
+>> +	PRUSS_GPI_MODE_PARALLEL,
+>> +	PRUSS_GPI_MODE_28BIT_SHIFT,
+>> +	PRUSS_GPI_MODE_MII,
+>> +	PRUSS_GPI_MODE_MAX,
+>> +};
+>> +
+>> +/**
+>> + * enum pru_type - PRU core type identifier
+>> + *
+>> + * @PRU_TYPE_PRU: Programmable Real-time Unit
+>> + * @PRU_TYPE_RTU: Auxiliary Programmable Real-Time Unit
+>> + * @PRU_TYPE_TX_PRU: Transmit Programmable Real-Time Unit
+>> + * @PRU_TYPE_MAX: just keep this one at the end
+>> + */
+>> +enum pru_type {
+>> +	PRU_TYPE_PRU = 0,
+> 
+> Same
+> 
+> With the above:
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+
+Sure Mathieu, I will do these changes and send next revision.
+
+>> +	PRU_TYPE_RTU,
+>> +	PRU_TYPE_TX_PRU,
+>> +	PRU_TYPE_MAX,
+>> +};
+>> +
+>>  /*
+>>   * enum pruss_mem - PRUSS memory range identifiers
+>>   */
+>> @@ -86,6 +113,11 @@ int pruss_release_mem_region(struct pruss *pruss,
+>>  			     struct pruss_mem_region *region);
+>>  int pruss_cfg_get_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 *mux);
+>>  int pruss_cfg_set_gpmux(struct pruss *pruss, enum pruss_pru_id pru_id, u8 mux);
+>> +int pruss_cfg_gpimode(struct pruss *pruss, enum pruss_pru_id pru_id,
+>> +		      enum pruss_gpi_mode mode);
+>> +int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable);
+>> +int pruss_cfg_xfr_enable(struct pruss *pruss, enum pru_type pru_type,
+>> +			 bool enable);
+>>  
+>>  #else
+>>  
+>> @@ -121,6 +153,25 @@ static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
+>>  	return ERR_PTR(-EOPNOTSUPP);
+>>  }
+>>  
+>> +static inline int pruss_cfg_gpimode(struct pruss *pruss,
+>> +				    enum pruss_pru_id pru_id,
+>> +				    enum pruss_gpi_mode mode)
+>> +{
+>> +	return ERR_PTR(-EOPNOTSUPP);
+>> +}
+>> +
+>> +static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
+>> +{
+>> +	return ERR_PTR(-EOPNOTSUPP);
+>> +}
+>> +
+>> +static inline int pruss_cfg_xfr_enable(struct pruss *pruss,
+>> +				       enum pru_type pru_type,
+>> +				       bool enable);
+>> +{
+>> +	return ERR_PTR(-EOPNOTSUPP);
+>> +}
+>> +
+>>  #endif /* CONFIG_TI_PRUSS */
+>>  
+>>  #endif	/* _PRUSS_DRIVER_H_ */
+>> -- 
+>> 2.34.1
+>>
+
+-- 
+Thanks and Regards,
+Danish.
