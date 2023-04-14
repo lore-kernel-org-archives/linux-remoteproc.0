@@ -2,144 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE92C77B6E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 10:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916F2C77B72
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 11:10:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbjDNKo5 (ORCPT
+        id S229805AbjDNLKL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Apr 2023 06:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51256 "EHLO
+        Fri, 14 Apr 2023 07:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjDNKo4 (ORCPT
+        with ESMTP id S230377AbjDNLKJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Apr 2023 06:44:56 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FCC61FD0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Apr 2023 03:44:55 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-50508810c8bso1678515a12.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Apr 2023 03:44:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681469094; x=1684061094;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=99/2Xzq1k3jGcxmT1pTlyb+0p5jdof1SmGadkZ956E8=;
-        b=gjpb92BJlyi8AdRk2tXb6yIbRjNjmhPIjGoUt2NuU0q+EpYqyo3wONGmRD1PvavfsD
-         3EMTmNpcRpfwkCowxOmjE+xlw7lf9vxOMlVAldE5s1EDeZcUPR4udR2V5FXv/lVgTU/a
-         OIKwB7dOGs+wSZw6Cv/dE8mXplb70MkLuDyhswOglpMEgRd9GkBuewhN+8oaW9urSnNk
-         rKYjQlFyRam2rXBVRQZ6Hu1fxxH9VWK5AxxvWPXVeGNQ6evxRnM3DaWxY1slE9kzT2ir
-         iyKN3Ql0FWU47U5IFa9tz4j3s9ROVKl37k+PnvumIYZONanbc84xGAnXCMu7sZw2fMv3
-         kpWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681469094; x=1684061094;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=99/2Xzq1k3jGcxmT1pTlyb+0p5jdof1SmGadkZ956E8=;
-        b=l5BqPevW5YfKdEzxxEInRuNoZyRmwIM83rmjGZCQD4w5uscaJfz4vZjPNvdltwy6Aj
-         MvQhgg2sC89jCoiWzVmZn5eYwHcewbw1FoLV0cF6/IRycQgQUFH/gRd6ul7InYZt/F7F
-         dkar/JXXj9/HeXudBIjlr30BHEPFkYl1ASRzVNAQOZvoM9qNGUXzKGI7c9hrTG2Lzg7L
-         gND4Yw9mUj/YXCyBZ+MtyrXFvfNQgvIEJ9jq9/2MU3gEbYNiAwbsMI5hmMQXU+7I31fO
-         h5GydgUwqT+DUUfdg3Zhk5wSG7viL/evZ8NFMiPW42WAW2+/i31sqgpIR7rwlDALxVSd
-         y1xg==
-X-Gm-Message-State: AAQBX9c20alSS00Q4EIkcc9au8WOC6JCO9vsyi/ex7+7+j3LA3SnDY4N
-        flyNPIKDk8AL98v68+UKtyfKYA==
-X-Google-Smtp-Source: AKy350YAZ4ObREDPTqX+3sDjKddkzxLRFtcc0tjO/9BvuuaM+s0ApmwT+Uw7xC7rJqvbc3fYPtVPzQ==
-X-Received: by 2002:aa7:c04f:0:b0:504:aae4:a034 with SMTP id k15-20020aa7c04f000000b00504aae4a034mr5907943edo.31.1681469094005;
-        Fri, 14 Apr 2023 03:44:54 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id o24-20020aa7c7d8000000b005067d089aafsm1003061eds.11.2023.04.14.03.44.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 03:44:53 -0700 (PDT)
-Message-ID: <6c01d2fc-3155-0dcd-f473-9cbd75dd69ec@linaro.org>
-Date:   Fri, 14 Apr 2023 11:44:51 +0100
+        Fri, 14 Apr 2023 07:10:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DDC49EFA;
+        Fri, 14 Apr 2023 04:09:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E6BD3646CF;
+        Fri, 14 Apr 2023 11:09:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 469B9C433D2;
+        Fri, 14 Apr 2023 11:09:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681470587;
+        bh=dCWQvGEBkXfONfpK8qRsz+qQGvbMNYwp8pY9BT7oHlM=;
+        h=From:Date:Subject:To:Cc:Reply-To:From;
+        b=gojfUNusRFaxsw+K+iU6qmS0wnoIF3H+MO6I41GnkfBqHWvCdBR8gtOlREW9d08Bx
+         219Bjq8YmQzuP8eQvxqU6FOasO0WYXmWh8xK58ggcf366u+7RloteUDHW2jZ3isl7Z
+         cGMv1M+KR6319Lidsor26t5p/XHa8wp2Z49xM4KXrPt3rOpIMMcsK7ctfaHAKMNxWd
+         VDqfhpuQuGid39lmj/wiznEHqQ4GsBUdiyJzVduzhK8JaovNxazIkftMTKEroIUqFD
+         28LXg/OiDpO43srB7ejb0EItsRGniB5L5jqUQD1Ku8PkazXE7OEQiIQ8US2niVbqrD
+         2l+CdknqWPfMA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.lore.kernel.org (Postfix) with ESMTP id 28B3FC77B72;
+        Fri, 14 Apr 2023 11:09:47 +0000 (UTC)
+From:   Jaime Breva via B4 Relay 
+        <devnull+jbreva.nayarsystems.com@kernel.org>
+Date:   Fri, 14 Apr 2023 13:07:40 +0200
+Subject: [PATCH] net: wwan: Expose secondary AT port on DATA1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v2 6/6] remoterproc: qcom: refactor to leverage exported
- minidump symbol
-Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        catalin.marinas@arm.com, will@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
- <1679491817-2498-7-git-send-email-quic_mojha@quicinc.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <1679491817-2498-7-git-send-email-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20230414-rpmsg-wwan-secondary-at-port-v1-1-6d7307527911@nayarsystems.com>
+X-B4-Tracking: v=1; b=H4sIAPwzOWQC/x2NQQqDMBAAvyJ77oKmQaFfKT1skq3mYBJ2Q7WIf
+ 2/scRiYOUBZIis8ugOEP1FjTg2GWwd+oTQzxtAYTG/uvR0sSll1xm2jhMo+p0DyRapYslQMbjI
+ 0jp4nS9ASjpTRCSW/XJGVtLJcogi/4/7/Pl/n+QMph2lPhwAAAA==
+To:     Stephan Gerhold <stephan@gerhold.net>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jaime Breva <jbreva@nayarsystems.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1681470586; l=1075;
+ i=jbreva@nayarsystems.com; s=20230414; h=from:subject:message-id;
+ bh=cSR4ZQap91Ye+xWxHZdF++TRRzXHB58d7aORnQDEYqM=;
+ b=UtqPg4Ls/omSuTtTSlV0VkJABHHRNDsCfzzMZBGbx0UTm78zIV39iYILVj5p0bOVV8LWiNvRi
+ 1InMJSqRsISARwe/xrdCFAgj+PEDNk4JRU+vdLJAYeKPJMiP3rqDHnJ
+X-Developer-Key: i=jbreva@nayarsystems.com; a=ed25519;
+ pk=zDC7l1kB518eXlRUJzDUyrUOKe2m/yx+62R/yqmd/kM=
+X-Endpoint-Received: by B4 Relay for jbreva@nayarsystems.com/20230414 with auth_id=42
+X-Original-From: Jaime Breva <jbreva@nayarsystems.com>
+Reply-To: <jbreva@nayarsystems.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Jaime Breva <jbreva@nayarsystems.com>
 
+Our use-case needs two AT ports available:
+One for running a ppp daemon, and another one for management
 
-On 22/03/2023 13:30, Mukesh Ojha wrote:
-> qcom_minidump driver provides qcom_minidump_subsystem_desc()
-> exported API which other driver can use it query subsystem
-> descriptor. Refactor qcom_minidump() to use this symbol.
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->   drivers/remoteproc/qcom_common.c | 13 ++-----------
->   1 file changed, 2 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-> index 88fc984..240e9f7 100644
-> --- a/drivers/remoteproc/qcom_common.c
-> +++ b/drivers/remoteproc/qcom_common.c
-> @@ -94,19 +94,10 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
->   {
->   	int ret;
->   	struct minidump_subsystem *subsystem;
-> -	struct minidump_global_toc *toc;
->   
-> -	/* Get Global minidump ToC*/
-> -	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
-> -
-> -	/* check if global table pointer exists and init is set */
-> -	if (IS_ERR(toc) || !toc->status) {
-> -		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
-> +	subsystem = qcom_minidump_subsystem_desc(minidump_id);
-> +	if (IS_ERR(subsystem))
->   		return;
+This patch enables a second AT port on DATA1
 
-Sorry If I am missing something but I got lost looking at the below code 
-snippet in drivers/remoteproc/qcom_common.c
+Signed-off-by: Jaime Breva <jbreva@nayarsystems.com>
+---
+ drivers/net/wwan/rpmsg_wwan_ctrl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+index 31c24420ab2e..e964bdeea2b3 100644
+--- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
++++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
+@@ -149,6 +149,7 @@ static const struct rpmsg_device_id rpmsg_wwan_ctrl_id_table[] = {
+ 	/* RPMSG channels for Qualcomm SoCs with integrated modem */
+ 	{ .name = "DATA5_CNTL", .driver_data = WWAN_PORT_QMI },
+ 	{ .name = "DATA4", .driver_data = WWAN_PORT_AT },
++	{ .name = "DATA1", .driver_data = WWAN_PORT_AT },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(rpmsg, rpmsg_wwan_ctrl_id_table);
 
--------------------->cut<-----------------------------
-	subsystem = qcom_minidump_subsystem_desc(minidump_id);
-	if (IS_ERR(subsystem))
-		return;
+---
+base-commit: c9c3395d5e3dcc6daee66c6908354d47bf98cb0c
+change-id: 20230414-rpmsg-wwan-secondary-at-port-db72a66ce74a
 
-	/**
-	 * Collect minidump if SS ToC is valid and segment table
-	 * is initialized in memory and encryption status is set.
-	 */
-	if (subsystem->regions_baseptr == 0 ||
-	    le32_to_cpu(subsystem->status) != 1 ||
-	    le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED ||
-	    le32_to_cpu(subsystem->encryption_status) != MINIDUMP_SS_ENCR_DONE) {
-		dev_err(&rproc->dev, "Minidump not ready, skipping\n");
-		return;
-	}
--------------------->cut<-----------------------------
+Best regards,
+-- 
+Jaime Breva <jbreva@nayarsystems.com>
 
-where does "subsystem->regions_baseptr" for this ADSP minidump 
-descriptor get set?
-
-
---srini
-
-> -	}
-> -
-> -	/* Get subsystem table of contents using the minidump id */
-> -	subsystem = &toc->subsystems[minidump_id];
->   
->   	/**
->   	 * Collect minidump if SS ToC is valid and segment table
