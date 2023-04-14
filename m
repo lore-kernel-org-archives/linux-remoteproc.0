@@ -2,106 +2,164 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 916F2C77B72
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 11:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0217FC77B77
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 11:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjDNLKL (ORCPT
+        id S230401AbjDNLPA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Apr 2023 07:10:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
+        Fri, 14 Apr 2023 07:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230377AbjDNLKJ (ORCPT
+        with ESMTP id S231236AbjDNLO4 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Apr 2023 07:10:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DDC49EFA;
-        Fri, 14 Apr 2023 04:09:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E6BD3646CF;
-        Fri, 14 Apr 2023 11:09:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 469B9C433D2;
-        Fri, 14 Apr 2023 11:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681470587;
-        bh=dCWQvGEBkXfONfpK8qRsz+qQGvbMNYwp8pY9BT7oHlM=;
-        h=From:Date:Subject:To:Cc:Reply-To:From;
-        b=gojfUNusRFaxsw+K+iU6qmS0wnoIF3H+MO6I41GnkfBqHWvCdBR8gtOlREW9d08Bx
-         219Bjq8YmQzuP8eQvxqU6FOasO0WYXmWh8xK58ggcf366u+7RloteUDHW2jZ3isl7Z
-         cGMv1M+KR6319Lidsor26t5p/XHa8wp2Z49xM4KXrPt3rOpIMMcsK7ctfaHAKMNxWd
-         VDqfhpuQuGid39lmj/wiznEHqQ4GsBUdiyJzVduzhK8JaovNxazIkftMTKEroIUqFD
-         28LXg/OiDpO43srB7ejb0EItsRGniB5L5jqUQD1Ku8PkazXE7OEQiIQ8US2niVbqrD
-         2l+CdknqWPfMA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id 28B3FC77B72;
-        Fri, 14 Apr 2023 11:09:47 +0000 (UTC)
-From:   Jaime Breva via B4 Relay 
-        <devnull+jbreva.nayarsystems.com@kernel.org>
-Date:   Fri, 14 Apr 2023 13:07:40 +0200
-Subject: [PATCH] net: wwan: Expose secondary AT port on DATA1
+        Fri, 14 Apr 2023 07:14:56 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156147D94;
+        Fri, 14 Apr 2023 04:14:55 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33EBEZXp014608;
+        Fri, 14 Apr 2023 11:14:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=fPy1TqO2tYq9zpkFuktROtjj+BsSkhdXM14XPK6zJaY=;
+ b=l1p7TT2XTdYCqQYBMHsALsxwD5JiRBO0ez+BFEgmUevr+HQjP4yCt60xODwIMuVtFnc+
+ fxRg1/TaURu/+YOCG1u9VUnC58WtCBdnrabXbhKzTURHqKWTQ/8iByxxVApTptgXAoVv
+ iu4AyB32XoGJZGTaRK+XfXQ6dEMmoXkaaDaMUHN3TJxuvgmRWLPkqKJDr9jMBeyQYhB9
+ +zzBlnwaiBQ9kW6E05/2j29myGJSBt+d9fn4QoOrcAwYDo9CwbNcgCC5B2vxn0Qcxz+o
+ +6N1bHBYde+0Nyr19lzyXJyX2H+S5+zN/kqED7LhccNqEQM9fB68Fr/DWa7EOP6sjBmR 2g== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pxe66jxa4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 11:14:34 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33EBEGdm029666
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 11:14:16 GMT
+Received: from [10.216.56.7] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 14 Apr
+ 2023 04:14:07 -0700
+Message-ID: <af23d650-3dec-9a51-566c-1eec2fa4b84b@quicinc.com>
+Date:   Fri, 14 Apr 2023 16:44:02 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230414-rpmsg-wwan-secondary-at-port-v1-1-6d7307527911@nayarsystems.com>
-X-B4-Tracking: v=1; b=H4sIAPwzOWQC/x2NQQqDMBAAvyJ77oKmQaFfKT1skq3mYBJ2Q7WIf
- 2/scRiYOUBZIis8ugOEP1FjTg2GWwd+oTQzxtAYTG/uvR0sSll1xm2jhMo+p0DyRapYslQMbjI
- 0jp4nS9ASjpTRCSW/XJGVtLJcogi/4/7/Pl/n+QMph2lPhwAAAA==
-To:     Stephan Gerhold <stephan@gerhold.net>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jaime Breva <jbreva@nayarsystems.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1681470586; l=1075;
- i=jbreva@nayarsystems.com; s=20230414; h=from:subject:message-id;
- bh=cSR4ZQap91Ye+xWxHZdF++TRRzXHB58d7aORnQDEYqM=;
- b=UtqPg4Ls/omSuTtTSlV0VkJABHHRNDsCfzzMZBGbx0UTm78zIV39iYILVj5p0bOVV8LWiNvRi
- 1InMJSqRsISARwe/xrdCFAgj+PEDNk4JRU+vdLJAYeKPJMiP3rqDHnJ
-X-Developer-Key: i=jbreva@nayarsystems.com; a=ed25519;
- pk=zDC7l1kB518eXlRUJzDUyrUOKe2m/yx+62R/yqmd/kM=
-X-Endpoint-Received: by B4 Relay for jbreva@nayarsystems.com/20230414 with auth_id=42
-X-Original-From: Jaime Breva <jbreva@nayarsystems.com>
-Reply-To: <jbreva@nayarsystems.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2 6/6] remoterproc: qcom: refactor to leverage exported
+ minidump symbol
+Content-Language: en-US
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>, <will@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>
+References: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
+ <1679491817-2498-7-git-send-email-quic_mojha@quicinc.com>
+ <6c01d2fc-3155-0dcd-f473-9cbd75dd69ec@linaro.org>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <6c01d2fc-3155-0dcd-f473-9cbd75dd69ec@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SwA_x-IY_04ZqvW12qKAk70gD3Qz7i5f
+X-Proofpoint-ORIG-GUID: SwA_x-IY_04ZqvW12qKAk70gD3Qz7i5f
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-14_05,2023-04-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 spamscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ mlxscore=0 suspectscore=0 bulkscore=0 malwarescore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304140102
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Jaime Breva <jbreva@nayarsystems.com>
 
-Our use-case needs two AT ports available:
-One for running a ppp daemon, and another one for management
 
-This patch enables a second AT port on DATA1
+On 4/14/2023 4:14 PM, Srinivas Kandagatla wrote:
+> 
+> 
+> On 22/03/2023 13:30, Mukesh Ojha wrote:
+>> qcom_minidump driver provides qcom_minidump_subsystem_desc()
+>> exported API which other driver can use it query subsystem
+>> descriptor. Refactor qcom_minidump() to use this symbol.
+>>
+>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>> ---
+>>   drivers/remoteproc/qcom_common.c | 13 ++-----------
+>>   1 file changed, 2 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/qcom_common.c 
+>> b/drivers/remoteproc/qcom_common.c
+>> index 88fc984..240e9f7 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -94,19 +94,10 @@ void qcom_minidump(struct rproc *rproc, unsigned 
+>> int minidump_id,
+>>   {
+>>       int ret;
+>>       struct minidump_subsystem *subsystem;
+>> -    struct minidump_global_toc *toc;
+>> -    /* Get Global minidump ToC*/
+>> -    toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+>> -
+>> -    /* check if global table pointer exists and init is set */
+>> -    if (IS_ERR(toc) || !toc->status) {
+>> -        dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+>> +    subsystem = qcom_minidump_subsystem_desc(minidump_id);
+>> +    if (IS_ERR(subsystem))
+>>           return;
+> 
+> Sorry If I am missing something but I got lost looking at the below code 
+> snippet in drivers/remoteproc/qcom_common.c
+> 
+> 
+> -------------------->cut<-----------------------------
+>      subsystem = qcom_minidump_subsystem_desc(minidump_id);
+>      if (IS_ERR(subsystem))
+>          return;
+> 
+>      /**
+>       * Collect minidump if SS ToC is valid and segment table
+>       * is initialized in memory and encryption status is set.
+>       */
+>      if (subsystem->regions_baseptr == 0 ||
+>          le32_to_cpu(subsystem->status) != 1 ||
+>          le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED ||
+>          le32_to_cpu(subsystem->encryption_status) != 
+> MINIDUMP_SS_ENCR_DONE) {
+>          dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+>          return;
+>      }
+> -------------------->cut<-----------------------------
+> 
+> where does "subsystem->regions_baseptr" for this ADSP minidump 
+> descriptor get set?
 
-Signed-off-by: Jaime Breva <jbreva@nayarsystems.com>
----
- drivers/net/wwan/rpmsg_wwan_ctrl.c | 1 +
- 1 file changed, 1 insertion(+)
+Other co-processor such as adsp/cdsp/Mpss has their own way of 
+registering their region/segment (mostly they are static known
+regions) with minidump global infra and which could be happening
+from firmware side .
 
-diff --git a/drivers/net/wwan/rpmsg_wwan_ctrl.c b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-index 31c24420ab2e..e964bdeea2b3 100644
---- a/drivers/net/wwan/rpmsg_wwan_ctrl.c
-+++ b/drivers/net/wwan/rpmsg_wwan_ctrl.c
-@@ -149,6 +149,7 @@ static const struct rpmsg_device_id rpmsg_wwan_ctrl_id_table[] = {
- 	/* RPMSG channels for Qualcomm SoCs with integrated modem */
- 	{ .name = "DATA5_CNTL", .driver_data = WWAN_PORT_QMI },
- 	{ .name = "DATA4", .driver_data = WWAN_PORT_AT },
-+	{ .name = "DATA1", .driver_data = WWAN_PORT_AT },
- 	{},
- };
- MODULE_DEVICE_TABLE(rpmsg, rpmsg_wwan_ctrl_id_table);
 
----
-base-commit: c9c3395d5e3dcc6daee66c6908354d47bf98cb0c
-change-id: 20230414-rpmsg-wwan-secondary-at-port-db72a66ce74a
+-Mukesh
 
-Best regards,
--- 
-Jaime Breva <jbreva@nayarsystems.com>
-
+> 
+> 
+> --srini
+> 
+>> -    }
+>> -
+>> -    /* Get subsystem table of contents using the minidump id */
+>> -    subsystem = &toc->subsystems[minidump_id];
+>>       /**
+>>        * Collect minidump if SS ToC is valid and segment table
