@@ -2,202 +2,204 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C4AC77B6E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 11:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C36C77B6E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Apr 2023 12:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229950AbjDNLuW (ORCPT
+        id S230061AbjDNMWx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Apr 2023 07:50:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48344 "EHLO
+        Fri, 14 Apr 2023 08:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229969AbjDNLuV (ORCPT
+        with ESMTP id S230131AbjDNMWv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Apr 2023 07:50:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 603E230FA;
-        Fri, 14 Apr 2023 04:50:19 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33E8xq5L023005;
-        Fri, 14 Apr 2023 11:49:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=lGGtG0ZL06RAk+9DnB1J6y3+oHd/FzVf4TXsIJzgcM0=;
- b=OBODqnqp7BrvjN73Cmv5z388VcXu9nuSSVSBhOgMVH9zlyBuV/souARnPUnNkceS2zmu
- W3hlhE1+hNAQ//dGZdtz4Y8not+uMPbk/xzcTHN8AV1hIlAKvWAd4ddamXBlEADBSJCQ
- vpHF1fVuDhYkm7CGOFjYOdHNT19AQKyX4o765dvaWaDiyOVzFuAxik3pu2/y+ZfFsita
- 2IfY/8bfkz6u0/3iEItYeen4OuzK4K2PnbZfw1767JMD2Y687HxcDJBhmeXqubEcxRqb
- tl+o3gHbeLcIDt0HOKchmztuaWAOU0y5OiCgT/4M5Usoz1tkWzcfRxwoZ02nLqXzX2zo vg== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pxqf99r9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Apr 2023 11:49:56 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33EBntgf021932
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Apr 2023 11:49:55 GMT
-Received: from [10.216.56.7] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 14 Apr
- 2023 04:49:40 -0700
-Message-ID: <93f5dc05-a91b-0fe6-c7e2-d3457cba8a1f@quicinc.com>
-Date:   Fri, 14 Apr 2023 17:19:26 +0530
+        Fri, 14 Apr 2023 08:22:51 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E9AB471
+        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Apr 2023 05:22:47 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id jg21so44756210ejc.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Apr 2023 05:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681474966; x=1684066966;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qxeb1X5SVRdaG7MUiUMqfSFROSoeue7LGp8CJuQD1LE=;
+        b=X/u9ElBnOey6SMlG77ZLji/brPJD2qCwKBPr/9/seZ84aUiZ6nN/pK6pMGvPciV27m
+         hQGeHPOaN2tmDhyTp647EMRvNB2ZyzPPJxXl/H+CazoIGZ+cIST3JUW3X4ux+nxZPjD7
+         0wdQMA+ziEcfhD8NTbwbZGniB7uHfIh3PoNrR3kWsh3VbPPsNIz5HZgJ0xcF8U4HYYMS
+         AXBnQFYTXFAURzfVtMBeSiPnbecHW+fyYlb4Gwwl5WIOw/u5rWX3uCsodSxIPGEpAQ8X
+         moTlfxZhoSGo9Gqq2WHd03jopuyFEjDcfcI97xcHn5dnjWt4aZHhil05NTe33WGL5mCx
+         lcDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681474966; x=1684066966;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qxeb1X5SVRdaG7MUiUMqfSFROSoeue7LGp8CJuQD1LE=;
+        b=LVUFjdwdkwA613KPbUou0V1w2ZdoENjrWcPCQntBgeifQHYVxyUT19SfPZeuITInhC
+         FT37Zu8ZhmBG834E3TbrdM6T2cagZvfU5lrUZoWbrCGAX8dF7cnhLIPorLM0Ir0/fUK1
+         IVT6yQYFgCJkZvkRPKgoc2GsosiAHQbkodY1MRtP/YiCroZmA/xpkTTNy6izbWhN8Tof
+         j3GfFstRc65rRARsA98KX0ndwJ+veVC2Ze2X4Q0bBZyyxl6eX2hRt8tt8lkpzvpQQYiU
+         b9WNyOGrL/vMkcGFpXWNdSt3IP0L5nrF+K+E0xREpzvIuQ2B/lx0FP5GAT4tPakeafOg
+         8LeQ==
+X-Gm-Message-State: AAQBX9eeirbkmHmLRkYaTqNsLg4QHq98rIy2bg0FU8877TFC1PhDmuWS
+        kFGEdvuiA7gjzfKtiCKrXDirPg==
+X-Google-Smtp-Source: AKy350aW6s+a/rDC4KqsK1yhplkUFIcB94yAkYidmjug8qI0IP+Xng0dA9Sxomr+mKMSyJCJ7/b+jg==
+X-Received: by 2002:a17:906:3e86:b0:94a:8ead:c7f with SMTP id a6-20020a1709063e8600b0094a8ead0c7fmr6572378ejj.23.1681474966150;
+        Fri, 14 Apr 2023 05:22:46 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id k26-20020a17090666da00b0094a64196ed6sm2383275ejp.54.2023.04.14.05.22.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Apr 2023 05:22:45 -0700 (PDT)
+Message-ID: <5048416b-ed93-30d3-05e3-5797a894dfd0@linaro.org>
+Date:   Fri, 14 Apr 2023 13:22:44 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
 Subject: Re: [PATCH v2 6/6] remoterproc: qcom: refactor to leverage exported
  minidump symbol
 Content-Language: en-US
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>, <will@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
 References: <1679491817-2498-1-git-send-email-quic_mojha@quicinc.com>
  <1679491817-2498-7-git-send-email-quic_mojha@quicinc.com>
  <6c01d2fc-3155-0dcd-f473-9cbd75dd69ec@linaro.org>
  <af23d650-3dec-9a51-566c-1eec2fa4b84b@quicinc.com>
  <5a872001-dfcb-5c00-3b13-3c29e6be213b@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <5a872001-dfcb-5c00-3b13-3c29e6be213b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <93f5dc05-a91b-0fe6-c7e2-d3457cba8a1f@quicinc.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <93f5dc05-a91b-0fe6-c7e2-d3457cba8a1f@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3ntYelLKBQ7bxw53Kv7pIpZOL47Q7afW
-X-Proofpoint-ORIG-GUID: 3ntYelLKBQ7bxw53Kv7pIpZOL47Q7afW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-14_06,2023-04-14_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 spamscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304140106
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 4/14/2023 5:10 PM, Srinivas Kandagatla wrote:
+On 14/04/2023 12:49, Mukesh Ojha wrote:
 > 
 > 
-> On 14/04/2023 12:14, Mukesh Ojha wrote:
+> On 4/14/2023 5:10 PM, Srinivas Kandagatla wrote:
 >>
 >>
->> On 4/14/2023 4:14 PM, Srinivas Kandagatla wrote:
+>> On 14/04/2023 12:14, Mukesh Ojha wrote:
 >>>
 >>>
->>> On 22/03/2023 13:30, Mukesh Ojha wrote:
->>>> qcom_minidump driver provides qcom_minidump_subsystem_desc()
->>>> exported API which other driver can use it query subsystem
->>>> descriptor. Refactor qcom_minidump() to use this symbol.
+>>> On 4/14/2023 4:14 PM, Srinivas Kandagatla wrote:
 >>>>
->>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
->>>> ---
->>>>   drivers/remoteproc/qcom_common.c | 13 ++-----------
->>>>   1 file changed, 2 insertions(+), 11 deletions(-)
 >>>>
->>>> diff --git a/drivers/remoteproc/qcom_common.c 
->>>> b/drivers/remoteproc/qcom_common.c
->>>> index 88fc984..240e9f7 100644
->>>> --- a/drivers/remoteproc/qcom_common.c
->>>> +++ b/drivers/remoteproc/qcom_common.c
->>>> @@ -94,19 +94,10 @@ void qcom_minidump(struct rproc *rproc, unsigned 
->>>> int minidump_id,
->>>>   {
->>>>       int ret;
->>>>       struct minidump_subsystem *subsystem;
->>>> -    struct minidump_global_toc *toc;
->>>> -    /* Get Global minidump ToC*/
->>>> -    toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, 
->>>> NULL);
->>>> -
->>>> -    /* check if global table pointer exists and init is set */
->>>> -    if (IS_ERR(toc) || !toc->status) {
->>>> -        dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
->>>> +    subsystem = qcom_minidump_subsystem_desc(minidump_id);
->>>> +    if (IS_ERR(subsystem))
->>>>           return;
+>>>> On 22/03/2023 13:30, Mukesh Ojha wrote:
+>>>>> qcom_minidump driver provides qcom_minidump_subsystem_desc()
+>>>>> exported API which other driver can use it query subsystem
+>>>>> descriptor. Refactor qcom_minidump() to use this symbol.
+>>>>>
+>>>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>>>>> ---
+>>>>>   drivers/remoteproc/qcom_common.c | 13 ++-----------
+>>>>>   1 file changed, 2 insertions(+), 11 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/qcom_common.c 
+>>>>> b/drivers/remoteproc/qcom_common.c
+>>>>> index 88fc984..240e9f7 100644
+>>>>> --- a/drivers/remoteproc/qcom_common.c
+>>>>> +++ b/drivers/remoteproc/qcom_common.c
+>>>>> @@ -94,19 +94,10 @@ void qcom_minidump(struct rproc *rproc, 
+>>>>> unsigned int minidump_id,
+>>>>>   {
+>>>>>       int ret;
+>>>>>       struct minidump_subsystem *subsystem;
+>>>>> -    struct minidump_global_toc *toc;
+>>>>> -    /* Get Global minidump ToC*/
+>>>>> -    toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, 
+>>>>> NULL);
+>>>>> -
+>>>>> -    /* check if global table pointer exists and init is set */
+>>>>> -    if (IS_ERR(toc) || !toc->status) {
+>>>>> -        dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
+>>>>> +    subsystem = qcom_minidump_subsystem_desc(minidump_id);
+>>>>> +    if (IS_ERR(subsystem))
+>>>>>           return;
+>>>>
+>>>> Sorry If I am missing something but I got lost looking at the below 
+>>>> code snippet in drivers/remoteproc/qcom_common.c
+>>>>
+>>>>
+>>>> -------------------->cut<-----------------------------
+>>>>      subsystem = qcom_minidump_subsystem_desc(minidump_id);
+>>>>      if (IS_ERR(subsystem))
+>>>>          return;
+>>>>
+>>>>      /**
+>>>>       * Collect minidump if SS ToC is valid and segment table
+>>>>       * is initialized in memory and encryption status is set.
+>>>>       */
+>>>>      if (subsystem->regions_baseptr == 0 ||
+>>>>          le32_to_cpu(subsystem->status) != 1 ||
+>>>>          le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED ||
+>>>>          le32_to_cpu(subsystem->encryption_status) != 
+>>>> MINIDUMP_SS_ENCR_DONE) {
+>>>>          dev_err(&rproc->dev, "Minidump not ready, skipping\n");
+>>>>          return;
+>>>>      }
+>>>> -------------------->cut<-----------------------------
+>>>>
+>>>> where does "subsystem->regions_baseptr" for this ADSP minidump 
+>>>> descriptor get set?
 >>>
->>> Sorry If I am missing something but I got lost looking at the below 
->>> code snippet in drivers/remoteproc/qcom_common.c
->>>
->>>
->>> -------------------->cut<-----------------------------
->>>      subsystem = qcom_minidump_subsystem_desc(minidump_id);
->>>      if (IS_ERR(subsystem))
->>>          return;
->>>
->>>      /**
->>>       * Collect minidump if SS ToC is valid and segment table
->>>       * is initialized in memory and encryption status is set.
->>>       */
->>>      if (subsystem->regions_baseptr == 0 ||
->>>          le32_to_cpu(subsystem->status) != 1 ||
->>>          le32_to_cpu(subsystem->enabled) != MINIDUMP_SS_ENABLED ||
->>>          le32_to_cpu(subsystem->encryption_status) != 
->>> MINIDUMP_SS_ENCR_DONE) {
->>>          dev_err(&rproc->dev, "Minidump not ready, skipping\n");
->>>          return;
->>>      }
->>> -------------------->cut<-----------------------------
->>>
->>> where does "subsystem->regions_baseptr" for this ADSP minidump 
->>> descriptor get set?
+>>> Other co-processor such as adsp/cdsp/Mpss has their own way of 
+>>> registering their region/segment (mostly they are static known
+>>> regions) with minidump global infra and which could be happening
+>>> from firmware side .
+>> If its happening from firmware side, then that ram phys address range 
+>> should be reserved from kernel usage I guess.
 >>
->> Other co-processor such as adsp/cdsp/Mpss has their own way of 
->> registering their region/segment (mostly they are static known
->> regions) with minidump global infra and which could be happening
->> from firmware side .
-> If its happening from firmware side, then that ram phys address range 
-> should be reserved from kernel usage I guess.
+>> Do you have more details on where exactly is this reserved from within 
+>> linux kernel?
 > 
-> Do you have more details on where exactly is this reserved from within 
-> linux kernel?
+> These regions are inside remoteproc memory carve-out.
+> like.
+> 
+> adsp_mem: memory@85e00000 {
+>      reg = <0x0 0x85e00000 0x0 0x2100000>;
+>      no-map;
+> };
 
-These regions are inside remoteproc memory carve-out.
-like.
+thanks for explaining.
 
-adsp_mem: memory@85e00000 {
-	reg = <0x0 0x85e00000 0x0 0x2100000>;
-	no-map;
-};
-
-
-
-remoteproc_adsp: remoteproc@30000000 {
-	compatible = "qcom,sm8450-adsp-pas";
-	reg = <0 0x30000000 0 0x100>;
-            ...
-            ...
-	memory-region = <&adsp_mem>; <==
-
--Mukesh
-	
+--srini
 > 
 > 
-> --srini
+> 
+> remoteproc_adsp: remoteproc@30000000 {
+>      compatible = "qcom,sm8450-adsp-pas";
+>      reg = <0 0x30000000 0 0x100>;
+>             ...
+>             ...
+>      memory-region = <&adsp_mem>; <==
+> 
+> -Mukesh
 > 
 >>
 >>
->> -Mukesh
+>> --srini
 >>
 >>>
 >>>
->>> --srini
+>>> -Mukesh
 >>>
->>>> -    }
->>>> -
->>>> -    /* Get subsystem table of contents using the minidump id */
->>>> -    subsystem = &toc->subsystems[minidump_id];
->>>>       /**
->>>>        * Collect minidump if SS ToC is valid and segment table
+>>>>
+>>>>
+>>>> --srini
+>>>>
+>>>>> -    }
+>>>>> -
+>>>>> -    /* Get subsystem table of contents using the minidump id */
+>>>>> -    subsystem = &toc->subsystems[minidump_id];
+>>>>>       /**
+>>>>>        * Collect minidump if SS ToC is valid and segment table
