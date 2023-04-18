@@ -2,98 +2,129 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8034FC6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Apr 2023 16:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8574C6FD18
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Apr 2023 16:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232055AbjDRQ0o (ORCPT
+        id S232139AbjDRQad (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Apr 2023 12:26:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40036 "EHLO
+        Tue, 18 Apr 2023 12:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232320AbjDRQ0n (ORCPT
+        with ESMTP id S232432AbjDRQac (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Apr 2023 12:26:43 -0400
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B0EC650;
-        Tue, 18 Apr 2023 09:26:38 -0700 (PDT)
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6a5e905e15aso328401a34.1;
-        Tue, 18 Apr 2023 09:26:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681835198; x=1684427198;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fjH/hStSCiVLtQLuqVajFztpwIunoyCsP3iwDrSgpHg=;
-        b=id+wvDaalHa4jJQ1J8tfp9eh87aKsyryEOjwdfmwBvpfBNJd2UG8EANuK+IdqG9M4L
-         a0udVM6lgX1yG2qt1dBqY+VobT+452iiqR4eOt3RAPkA6ReT9BBkR+QtpwncSTfaidpx
-         3Htg3omq3iyQ3nWTJ6nWolmWP0+mgg8NkaC2SIJTGDZb00cyBJgbgV/9K6dN9QnRc7El
-         eUAU+xSKv3+n/ofFiwUIt05uU+MNR1kvWAAT72HrCa68ISfF8nbBJCDRuOGh37grqql6
-         F+Fk7KIblkU/zGQ9wtoxJihfIl/Uky89urF3s2oFwGaVuaPjkbqhozy72HLY8cOcpH4U
-         iljQ==
-X-Gm-Message-State: AAQBX9chi5qOMpfryVllPICd6sTzWP9p/2NZ6vprMkoZkOMAS3RlmV7B
-        biKVmzPLCDD9/meJ+WTZ7Q==
-X-Google-Smtp-Source: AKy350bEpph6yuJMXQ4ijSo0Yo4pU5RYjIe5g/2kLLvB2C5rB5LOQKRaMTTBKZ7Fy10XJv3tGSVurw==
-X-Received: by 2002:a9d:7454:0:b0:6a5:f8b6:cccf with SMTP id p20-20020a9d7454000000b006a5f8b6cccfmr1548078otk.16.1681835197867;
-        Tue, 18 Apr 2023 09:26:37 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id t27-20020a0568301e3b00b0069436b64bb1sm5639720otr.79.2023.04.18.09.26.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 09:26:37 -0700 (PDT)
-Received: (nullmailer pid 1809366 invoked by uid 1000);
-        Tue, 18 Apr 2023 16:26:35 -0000
-Date:   Tue, 18 Apr 2023 11:26:35 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Patrice Chotard <patrice.chotard@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: st: Use of_property_present() for testing DT
- property presence
-Message-ID: <20230418162635.GE1764573-robh@kernel.org>
-References: <20230310144736.1546972-1-robh@kernel.org>
+        Tue, 18 Apr 2023 12:30:32 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9606C72A8;
+        Tue, 18 Apr 2023 09:30:28 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33IEmZlt002565;
+        Tue, 18 Apr 2023 16:30:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=qcppdkim1;
+ bh=ax9Qp5WIkTCqs0jQ/m2UVDmnzSC5x5toDbw05//u7zI=;
+ b=B+LPDNnRBNvqNO6+6C/ZXLpOvLwmC0BMIup0lWHb0ZO49ljwAaHoP2FMb2+V0CtOnLtE
+ 6xF5tG8esJ4SSJMTeAQrZQGkWek27Ocsrfox2rBrM7if5Nof3t/HkjoTu83GRLorScRa
+ EpuJQcK4BO+SkQapuJgQY7LgIyMtldYyBqP7aRbNkiWZwK+VLAuA0W1xk6bFvVR8lyfh
+ O4nlof+JjqiRjPNvJLMUQ7UVqh1aIpIjH8mYHyWaAq+ff8PNre+TgUHWEhYGlCa1FE9c
+ QyeXiKPLq7sIIEg2stHisMVwHrZWyyV5y09ZSWiHM1vwsrrCJGziz9RrEMPmoTN/wd3S 7Q== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q1nr5hf2j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Apr 2023 16:30:24 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33IGUO6L013560
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Apr 2023 16:30:24 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Tue, 18 Apr 2023 09:30:23 -0700
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Chris Lew <quic_clew@quicinc.com>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/2] rpmsg: glink: Propagate TX failures in intentless mode as well
+Date:   Tue, 18 Apr 2023 09:30:17 -0700
+Message-ID: <20230418163018.785524-2-quic_bjorande@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230418163018.785524-1-quic_bjorande@quicinc.com>
+References: <20230418163018.785524-1-quic_bjorande@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230310144736.1546972-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RUFQwkd6oDNnoaR1kNHCdmULZO3vbUo_
+X-Proofpoint-ORIG-GUID: RUFQwkd6oDNnoaR1kNHCdmULZO3vbUo_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-18_11,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 spamscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 clxscore=1011 priorityscore=1501 mlxscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304180137
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Mar 10, 2023 at 08:47:35AM -0600, Rob Herring wrote:
-> It is preferred to use typed property access functions (i.e.
-> of_property_read_<type> functions) rather than low-level
-> of_get_property/of_find_property functions for reading properties. As
-> part of this, convert of_get_property/of_find_property calls to the
-> recently added of_property_present() helper when we just want to test
-> for presence of a property and nothing more.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/remoteproc/st_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+As support for splitting transmission over several messages using
+TX_DATA_CONT was introduced it does not immediately return the return
+value of qcom_glink_tx().
 
-Ping!
+The result is that in the intentless case (i.e. intent == NULL), the
+code will continue to send all additional chunks. This is wasteful, and
+it's possible that the send operation could incorrectly indicate
+success, if the last chunk fits in the TX fifo.
 
-> 
-> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> index a3268d95a50e..50ef40671652 100644
-> --- a/drivers/remoteproc/st_remoteproc.c
-> +++ b/drivers/remoteproc/st_remoteproc.c
-> @@ -379,7 +379,7 @@ static int st_rproc_probe(struct platform_device *pdev)
->  		clk_set_rate(ddata->clk, ddata->clk_rate);
->  	}
->  
-> -	if (of_get_property(np, "mbox-names", NULL)) {
-> +	if (of_property_present(np, "mbox-names")) {
->  		ddata->mbox_client_vq0.dev		= dev;
->  		ddata->mbox_client_vq0.tx_done		= NULL;
->  		ddata->mbox_client_vq0.tx_block	= false;
-> -- 
-> 2.39.2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Fix the condition.
+
+Fixes: 8956927faed3 ("rpmsg: glink: Add TX_DATA_CONT command while sending")
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+---
+
+Changes since v1:
+- Picked up Chris
+- Added another 's' in transmission
+
+ drivers/rpmsg/qcom_glink_native.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 01d2805fe30f..62634d020d13 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1356,8 +1356,9 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 	ret = qcom_glink_tx(glink, &req, sizeof(req), data, chunk_size, wait);
+ 
+ 	/* Mark intent available if we failed */
+-	if (ret && intent) {
+-		intent->in_use = false;
++	if (ret) {
++		if (intent)
++			intent->in_use = false;
+ 		return ret;
+ 	}
+ 
+@@ -1378,8 +1379,9 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 				    chunk_size, wait);
+ 
+ 		/* Mark intent available if we failed */
+-		if (ret && intent) {
+-			intent->in_use = false;
++		if (ret) {
++			if (intent)
++				intent->in_use = false;
+ 			break;
+ 		}
+ 	}
+-- 
+2.25.1
+
