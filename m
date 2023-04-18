@@ -2,82 +2,98 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6AAC7EE20
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Apr 2023 16:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8034FC6FD18
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Apr 2023 16:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231995AbjDRQGV (ORCPT
+        id S232055AbjDRQ0o (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Apr 2023 12:06:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49154 "EHLO
+        Tue, 18 Apr 2023 12:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231766AbjDRQGU (ORCPT
+        with ESMTP id S232320AbjDRQ0n (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Apr 2023 12:06:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373B4F7;
-        Tue, 18 Apr 2023 09:06:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C9C9363644;
-        Tue, 18 Apr 2023 16:06:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97195C4339B;
-        Tue, 18 Apr 2023 16:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681833978;
-        bh=ePPAUY9dJOFw/kK4NHB+f5qypog9sXqimbRgdM/SBcE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s+udSpDHoT4p04HgM1AmuYzYBjhYlepMKYnmZH/3AMkwo8tWPH6XFHZzk19LiaBBa
-         21WYUi5QMqvdLbV0lzNAcVJ2kTu0Pi+lGC75tN5EVDgOpkM86/4Te/m7N5s/qAiUD/
-         oHdp7Nqn0hbwb3Ua79oEb4BTnlJlYrjf3qg98pVZZ1IdFRIjV72Yi55afQaCkRiAFs
-         Y0PRxpQT9Ymku65e1BWkZwEiJ77ePgQfDh2AgjbG6aEvHso6sv7/JctyhFaH0yNvzm
-         3u0i5yBYOPaPu70XRcXHXoF5cZ8cbUFmr6xe5Ov/gYmkLWSE7PRTyEfW3JYtFfqdtI
-         mXEMGaxWAUxxw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Andy Gross <agross@kernel.org>, Rob Herring <robh@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: remoteproc: Drop unneeded quotes
-Date:   Tue, 18 Apr 2023 09:09:48 -0700
-Message-Id: <168183418160.1484313.11791175608485998992.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230327170114.4102315-1-robh@kernel.org>
-References: <20230327170114.4102315-1-robh@kernel.org>
+        Tue, 18 Apr 2023 12:26:43 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B0EC650;
+        Tue, 18 Apr 2023 09:26:38 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6a5e905e15aso328401a34.1;
+        Tue, 18 Apr 2023 09:26:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681835198; x=1684427198;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fjH/hStSCiVLtQLuqVajFztpwIunoyCsP3iwDrSgpHg=;
+        b=id+wvDaalHa4jJQ1J8tfp9eh87aKsyryEOjwdfmwBvpfBNJd2UG8EANuK+IdqG9M4L
+         a0udVM6lgX1yG2qt1dBqY+VobT+452iiqR4eOt3RAPkA6ReT9BBkR+QtpwncSTfaidpx
+         3Htg3omq3iyQ3nWTJ6nWolmWP0+mgg8NkaC2SIJTGDZb00cyBJgbgV/9K6dN9QnRc7El
+         eUAU+xSKv3+n/ofFiwUIt05uU+MNR1kvWAAT72HrCa68ISfF8nbBJCDRuOGh37grqql6
+         F+Fk7KIblkU/zGQ9wtoxJihfIl/Uky89urF3s2oFwGaVuaPjkbqhozy72HLY8cOcpH4U
+         iljQ==
+X-Gm-Message-State: AAQBX9chi5qOMpfryVllPICd6sTzWP9p/2NZ6vprMkoZkOMAS3RlmV7B
+        biKVmzPLCDD9/meJ+WTZ7Q==
+X-Google-Smtp-Source: AKy350bEpph6yuJMXQ4ijSo0Yo4pU5RYjIe5g/2kLLvB2C5rB5LOQKRaMTTBKZ7Fy10XJv3tGSVurw==
+X-Received: by 2002:a9d:7454:0:b0:6a5:f8b6:cccf with SMTP id p20-20020a9d7454000000b006a5f8b6cccfmr1548078otk.16.1681835197867;
+        Tue, 18 Apr 2023 09:26:37 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id t27-20020a0568301e3b00b0069436b64bb1sm5639720otr.79.2023.04.18.09.26.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 09:26:37 -0700 (PDT)
+Received: (nullmailer pid 1809366 invoked by uid 1000);
+        Tue, 18 Apr 2023 16:26:35 -0000
+Date:   Tue, 18 Apr 2023 11:26:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Patrice Chotard <patrice.chotard@foss.st.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: st: Use of_property_present() for testing DT
+ property presence
+Message-ID: <20230418162635.GE1764573-robh@kernel.org>
+References: <20230310144736.1546972-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230310144736.1546972-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, 27 Mar 2023 12:01:13 -0500, Rob Herring wrote:
-> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
-> checking for this can be enabled in yamllint.
+On Fri, Mar 10, 2023 at 08:47:35AM -0600, Rob Herring wrote:
+> It is preferred to use typed property access functions (i.e.
+> of_property_read_<type> functions) rather than low-level
+> of_get_property/of_find_property functions for reading properties. As
+> part of this, convert of_get_property/of_find_property calls to the
+> recently added of_property_present() helper when we just want to test
+> for presence of a property and nothing more.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/remoteproc/st_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Ping!
+
+> 
+> diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
+> index a3268d95a50e..50ef40671652 100644
+> --- a/drivers/remoteproc/st_remoteproc.c
+> +++ b/drivers/remoteproc/st_remoteproc.c
+> @@ -379,7 +379,7 @@ static int st_rproc_probe(struct platform_device *pdev)
+>  		clk_set_rate(ddata->clk, ddata->clk_rate);
+>  	}
+>  
+> -	if (of_get_property(np, "mbox-names", NULL)) {
+> +	if (of_property_present(np, "mbox-names")) {
+>  		ddata->mbox_client_vq0.dev		= dev;
+>  		ddata->mbox_client_vq0.tx_done		= NULL;
+>  		ddata->mbox_client_vq0.tx_block	= false;
+> -- 
+> 2.39.2
 > 
 > 
-
-Applied, thanks!
-
-[1/1] dt-bindings: remoteproc: Drop unneeded quotes
-      commit: 82f2734d99d7e6a2327ff4e2122dd0db425b598f
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
