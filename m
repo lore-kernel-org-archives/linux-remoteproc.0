@@ -2,111 +2,173 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC75C6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Apr 2023 20:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D68C77B76
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Apr 2023 21:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjDRU1r (ORCPT
+        id S232888AbjDRVHt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Apr 2023 16:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38262 "EHLO
+        Tue, 18 Apr 2023 17:07:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbjDRU1q (ORCPT
+        with ESMTP id S232842AbjDRVHr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Apr 2023 16:27:46 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A828AA275
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Apr 2023 13:27:44 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f1738d0d4cso13128335e9.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Apr 2023 13:27:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681849663; x=1684441663;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=I1h5VMD8irVNgEXz9YvfZ3zmENpujirJNHAjn+rYAZE=;
-        b=twMxLwYOZ6dC9LrYkN1FQPYT1IcxPWPd6k0ixiWIZHb7qZscLoKqG7eabN3ZU/rsFh
-         2M+I2xQaOcgP9vhaYR9qr4c19iBxlCOu/q/hxy1UJOwtnAh0BnSMoFfr+dqy2JTgsD1z
-         ou6giTAVLv7aIBcjvnj5ncSAnb5HS1Oe8BjwVZe8eQ4HluDCrjoO2OR+D+a5pN0ojavO
-         2nGLsAKvWML5zjkuOQfyoVeIpVz/6iEDmuILxZRtKdQSt+f63ebVZTqpgAbzPriyjQKM
-         CgDKE/jU8PbMKVOr2/Sd1d/g7nlB+ckoHqacVEB5Lr7Eo0PzaAcMnf89tSID4IMbNZdx
-         7CRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681849663; x=1684441663;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=I1h5VMD8irVNgEXz9YvfZ3zmENpujirJNHAjn+rYAZE=;
-        b=BUk5y5PzP36p/KHxQt0JcMIdKZ03z1u3CtWpXU9NimsLSdQKcmD5nl8ia98PiUKoYK
-         icoLE+MNiMmdO9kfUbGTt4YZDvcaUdjo6OrbwBHgQlp6WkcuKY09U4/EfERL+ilRtbmR
-         eElUkTojqWVfU1+EBARfE+K8H4UeRUCeSbag7VG4uhk2SyVrVNCPNQPCC5qLoS/SRVpZ
-         WLBFf98TbROnr1pHe63XAmCF2An8Szs/hs+SsVYmPdIpwpMuEcad4q4paGuhZ3MjWlpS
-         a2Zhe7FHQuvRkvXgfgCHXv4UeNborXvcYRxR/GKq7PE6ZOEHzkyeEPBybM/TlQhId+Hm
-         tCSQ==
-X-Gm-Message-State: AAQBX9dF29SQENbQGVAaF1K4LvLnZTz5tJwQVOmQ3lnQe2VcWqGhgfNC
-        IHdZj2yXUwgu8vh2i48MbuZbxYpHe6MNBlrpa+qoug==
-X-Google-Smtp-Source: AKy350ZMNx12ahTSkdJmMl8y+SwQf09SwN6gvR+KA+aItA0HKnicjt5YfiKc5zRaeURVS63fe96kFZeAwtS5U6Kfu5A=
-X-Received: by 2002:a5d:4f05:0:b0:2f8:cd53:d882 with SMTP id
- c5-20020a5d4f05000000b002f8cd53d882mr2271901wru.56.1681849663050; Tue, 18 Apr
- 2023 13:27:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230310144736.1546972-1-robh@kernel.org> <20230418162635.GE1764573-robh@kernel.org>
-In-Reply-To: <20230418162635.GE1764573-robh@kernel.org>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 18 Apr 2023 14:27:32 -0600
-Message-ID: <CANLsYkyUorJZyfiKA+ZpF0aPSxx7nU4f3B2f+S5Y93GnZshG9A@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: st: Use of_property_present() for testing DT
- property presence
-To:     Rob Herring <robh@kernel.org>
-Cc:     Patrice Chotard <patrice.chotard@foss.st.com>,
+        Tue, 18 Apr 2023 17:07:47 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14BCA253;
+        Tue, 18 Apr 2023 14:07:40 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33IKuoov001291;
+        Tue, 18 Apr 2023 21:07:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=2XAxNl4hzVW/qth3lmjEC9szXVLjhO+e60yVfkNNEfw=;
+ b=DX5c4YQOXvTke4GSbXaZK47NiYxw1oew0B//qKtS0h8dBDEe9iH7CptofRN9yR2X6zaK
+ paFfuuPn1QMUrLh6tiXFNxzOXbK5UjU85iIXC3Vz4W0hOuPdLcWGa9x4IYyrukruIDt3
+ gfZAw1hfvIh49qd2McdtOYOmLnbnZpjKQCJe2bOhxTq1dmgRcTrpZrh1dV/DRp+cSLTd
+ bIxheBAldmoTjiVy5g6lfR8LEnELRc2erJRt5fVWvKvCmHXWf+83kXOmLfXHUJ0/26fA
+ NVdpm01q83Z6brAI7BBWnGvXnNFkVBpGxCp/ETxAEc0/VGo0yIpF5PC4UkhHDG+WfnYw mg== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q1v2ah9va-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Apr 2023 21:07:32 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33IL7V9v012444
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Apr 2023 21:07:31 GMT
+Received: from [192.168.142.6] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 18 Apr
+ 2023 14:07:30 -0700
+Subject: Re: [PATCH v2 2/2] rpmsg: glink: Consolidate TX_DATA and TX_DATA_CONT
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230418163018.785524-1-quic_bjorande@quicinc.com>
+ <20230418163018.785524-3-quic_bjorande@quicinc.com>
+From:   Chris Lew <quic_clew@quicinc.com>
+Message-ID: <7ab6ad8b-2403-abba-08b5-028ecc18f12c@quicinc.com>
+Date:   Tue, 18 Apr 2023 14:07:29 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <20230418163018.785524-3-quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nKQhWyWGqcBeUO8-DpRlcBb2vazc1o1z
+X-Proofpoint-ORIG-GUID: nKQhWyWGqcBeUO8-DpRlcBb2vazc1o1z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-18_15,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0 phishscore=0
+ clxscore=1011 impostorscore=0 mlxscore=0 adultscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304180175
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, 18 Apr 2023 at 10:26, Rob Herring <robh@kernel.org> wrote:
->
-> On Fri, Mar 10, 2023 at 08:47:35AM -0600, Rob Herring wrote:
-> > It is preferred to use typed property access functions (i.e.
-> > of_property_read_<type> functions) rather than low-level
-> > of_get_property/of_find_property functions for reading properties. As
-> > part of this, convert of_get_property/of_find_property calls to the
-> > recently added of_property_present() helper when we just want to test
-> > for presence of a property and nothing more.
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  drivers/remoteproc/st_remoteproc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Ping!
 
-I did provide an RB for this patch on the same day you sent it,
-thinking it was part of a larger refactoring effort.  But taking
-another look now I see that it is not the case and will apply it right
-away.
 
+On 4/18/2023 9:30 AM, Bjorn Andersson wrote:
+> Rather than duplicating most of the code for constructing the initial
+> TX_DATA and subsequent TX_DATA_CONT packets, roll them into a single
+> loop.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+> 
+> Changes since v1:
+> - Reduced unnecessary complexity in the chunking condition
 >
-> >
-> > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-> > index a3268d95a50e..50ef40671652 100644
-> > --- a/drivers/remoteproc/st_remoteproc.c
-> > +++ b/drivers/remoteproc/st_remoteproc.c
-> > @@ -379,7 +379,7 @@ static int st_rproc_probe(struct platform_device *pdev)
-> >               clk_set_rate(ddata->clk, ddata->clk_rate);
-> >       }
-> >
-> > -     if (of_get_property(np, "mbox-names", NULL)) {
-> > +     if (of_property_present(np, "mbox-names")) {
-> >               ddata->mbox_client_vq0.dev              = dev;
-> >               ddata->mbox_client_vq0.tx_done          = NULL;
-> >               ddata->mbox_client_vq0.tx_block = false;
-> > --
-> > 2.39.2
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+
+>   drivers/rpmsg/qcom_glink_native.c | 46 +++++++++----------------------
+>   1 file changed, 13 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 62634d020d13..7e6fad4e02f8 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -1309,7 +1309,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   	int ret;
+>   	unsigned long flags;
+>   	int chunk_size = len;
+> -	int left_size = 0;
+> +	size_t offset = 0;
+>   
+>   	if (!glink->intentless) {
+>   		while (!intent) {
+> @@ -1343,49 +1343,29 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   		iid = intent->id;
+>   	}
+>   
+> -	if (wait && chunk_size > SZ_8K) {
+> -		chunk_size = SZ_8K;
+> -		left_size = len - chunk_size;
+> -	}
+> -	req.msg.cmd = cpu_to_le16(GLINK_CMD_TX_DATA);
+> -	req.msg.param1 = cpu_to_le16(channel->lcid);
+> -	req.msg.param2 = cpu_to_le32(iid);
+> -	req.chunk_size = cpu_to_le32(chunk_size);
+> -	req.left_size = cpu_to_le32(left_size);
+> -
+> -	ret = qcom_glink_tx(glink, &req, sizeof(req), data, chunk_size, wait);
+> -
+> -	/* Mark intent available if we failed */
+> -	if (ret) {
+> -		if (intent)
+> -			intent->in_use = false;
+> -		return ret;
+> -	}
+> -
+> -	while (left_size > 0) {
+> -		data = (void *)((char *)data + chunk_size);
+> -		chunk_size = left_size;
+> -		if (chunk_size > SZ_8K)
+> +	while (offset < len) {
+> +		chunk_size = len - offset;
+> +		if (chunk_size > SZ_8K && wait)
+>   			chunk_size = SZ_8K;
+> -		left_size -= chunk_size;
+>   
+> -		req.msg.cmd = cpu_to_le16(GLINK_CMD_TX_DATA_CONT);
+> +		req.msg.cmd = cpu_to_le16(offset == 0 ? GLINK_CMD_TX_DATA : GLINK_CMD_TX_DATA_CONT);
+>   		req.msg.param1 = cpu_to_le16(channel->lcid);
+>   		req.msg.param2 = cpu_to_le32(iid);
+>   		req.chunk_size = cpu_to_le32(chunk_size);
+> -		req.left_size = cpu_to_le32(left_size);
+> +		req.left_size = cpu_to_le32(len - offset - chunk_size);
+>   
+> -		ret = qcom_glink_tx(glink, &req, sizeof(req), data,
+> -				    chunk_size, wait);
+> -
+> -		/* Mark intent available if we failed */
+> +		ret = qcom_glink_tx(glink, &req, sizeof(req), data + offset, chunk_size, wait);
+>   		if (ret) {
+> +			/* Mark intent available if we failed */
+>   			if (intent)
+>   				intent->in_use = false;
+> -			break;
+> +			return ret;
+>   		}
+> +
+> +		offset += chunk_size;
+>   	}
+> -	return ret;
+> +
+> +	return 0;
+>   }
+>   
+>   static int qcom_glink_send(struct rpmsg_endpoint *ept, void *data, int len)
+> 
