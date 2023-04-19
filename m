@@ -2,240 +2,157 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2531FC6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Apr 2023 15:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E214EC77B73
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Apr 2023 17:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232948AbjDSPKC (ORCPT
+        id S233187AbjDSREG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 11:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60332 "EHLO
+        Wed, 19 Apr 2023 13:04:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233271AbjDSPJz (ORCPT
+        with ESMTP id S233437AbjDSREE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Apr 2023 11:09:55 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1FA49EB
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Apr 2023 08:09:50 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-24736992dd3so1730112a91.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Apr 2023 08:09:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681916990; x=1684508990;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=9xYRx4lxSwrTz8KomOP3X7PYWUvothv5g/ZoMajkQIs=;
-        b=sXPBCslnv6R9uVZX7Gq3xtSsKpgzb0/01i98xXOZQx+KbP4KqVddhPYdcEVIH92o4/
-         pmZSEaoq7K27ohwgJ+wenSjn0dMQerb+uCo2ZucB/ttrkOH+5nH3PbagzZ3PTu4MLinA
-         TuKX/J6WZKuecdQ+SbtWPDBxIT9YSQFdk9EpXU82KxmWB7eepY+FOWYRQZw89n6lAOaK
-         XrVRagqX0pIaFphG3FrY/Kf+S15ViKgyd1zdDEgbm2ZGDCRg5ygwZkCfIxnA/TylLYqo
-         kupYb4zacsCkJMBL3td7FdPMMyd0LNOaVeCVWWXhum1Qx2Kzg3cACS2tSOJI8K/kMrPz
-         X4Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681916990; x=1684508990;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9xYRx4lxSwrTz8KomOP3X7PYWUvothv5g/ZoMajkQIs=;
-        b=P3rEstWTWXl8R2Iybr51LxgJ1TNM4B3702itNy4xt54MYiRnL5suTlEkD9JAxXzFBo
-         RWK7J9BYFvvYra2z418Zv0QOlF0soa5TRShmPaNqGmoFQYr6VuSTfZQ8vzzCRpYEJ0SR
-         eSRbcp9edfxnsCy/SaRBcq9wbebeE8KLXRfx24GegRkgy32GcDjHoE650u2PYWw2Pf1F
-         0lX+TS11miwSlbupPQRGQfmCHxyPkNPDT17Z8owUwActOXkLcaJRQmkuP3ZJTYBH5yTQ
-         7oCBaMmkYrA/1avy3UQOjPMTscBYLsHR4ZlGGtMR6WGmiTcYavcuz/4cbL0b5MYTROKT
-         6Hog==
-X-Gm-Message-State: AAQBX9f4ToQyAiccH95YL0KbuteN/Y1ReLrApvPr7OgIxGUaSoDj6qJz
-        Sx8JOfkVj+dQSvvlEe4A6H8Udw==
-X-Google-Smtp-Source: AKy350ZOsj/rgDa7m85kCFSt/yyAxPXdtikhF0MU23Wn0WjNTH8dh6EXRwbGslBJniiqLHyCe3xjGQ==
-X-Received: by 2002:a17:90a:72c8:b0:246:9bad:2354 with SMTP id l8-20020a17090a72c800b002469bad2354mr3110204pjk.43.1681916990193;
-        Wed, 19 Apr 2023 08:09:50 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:302c:551a:91d2:840f])
-        by smtp.gmail.com with ESMTPSA id ip11-20020a17090b314b00b00246626343aesm1541885pjb.25.2023.04.19.08.09.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Apr 2023 08:09:49 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 09:09:47 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     TingHan Shen =?utf-8?B?KOayiOW7t+e/sCk=?= 
-        <TingHan.Shen@mediatek.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Project_Global_Chrome_Upstream_Group 
-        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "andersson@kernel.org" <andersson@kernel.org>,
-        "angelogioacchino.delregno@collabora.com" 
-        <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v9 05/11] remoteproc: mediatek: Extract remoteproc
- initialization flow
-Message-ID: <ZEAEO3ZOptIoIskz@p14s>
-References: <20230328022733.29910-1-tinghan.shen@mediatek.com>
- <20230328022733.29910-6-tinghan.shen@mediatek.com>
- <20230331174431.GA3504605@p14s>
- <46baff1f95fa13976d7a07b5e50ff2175e464baa.camel@mediatek.com>
+        Wed, 19 Apr 2023 13:04:04 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F9697EF6;
+        Wed, 19 Apr 2023 10:04:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1681923842; x=1713459842;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YWEFkjk4Tn32C8B9bIF5tMsJFwcjS2BBCkRcNPRL1DQ=;
+  b=Yz2T8buo5MzkVoHNGVFWq5aJXUDeimuw72EhY38eDy7iIgpGJRhabyGW
+   5q2reARDYKTqOXv20FYSbwszv8ckH6Ryv+D7e3j1Zlzjdb79ZXh2K+4CY
+   ULE3PtNKh5EdD2HDbxbapxcajh48Nh2OvUH7bNkmB6jPcEaqo3BMryD44
+   UDWvkYM3DRbD6hAh7cVJR/g5yrZxCKXOnVL1n6GRi4/NuvA0Iep+YFJpJ
+   /mD5lkAUE5PCPqSUWN1eeFlDd3N2EIP/nQ07/9NhoZ/QUi+QSuWBYIJA5
+   80WP9NLMkDSxiTgUCCP03mHwkKXFsjKEYJXTDx/NcUa/5/aLhOq2hnJF7
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="325117127"
+X-IronPort-AV: E=Sophos;i="5.99,208,1677571200"; 
+   d="scan'208";a="325117127"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2023 10:04:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10685"; a="756171542"
+X-IronPort-AV: E=Sophos;i="5.99,208,1677571200"; 
+   d="scan'208";a="756171542"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Apr 2023 10:03:57 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1ppBDp-000f2M-0Q;
+        Wed, 19 Apr 2023 17:03:57 +0000
+Date:   Thu, 20 Apr 2023 01:03:28 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+        arnaud.pouliquen@foss.st.com, swboyd@chromium.org,
+        quic_clew@quicinc.com, mathieu.poirier@linaro.org
+Cc:     oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Sarannya S <quic_sarannya@quicinc.com>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH V6 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL
+ support
+Message-ID: <202304200018.ik0k7dKN-lkp@intel.com>
+References: <1681912409-25248-4-git-send-email-quic_sarannya@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <46baff1f95fa13976d7a07b5e50ff2175e464baa.camel@mediatek.com>
+In-Reply-To: <1681912409-25248-4-git-send-email-quic_sarannya@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 03:38:14AM +0000, TingHan Shen (沈廷翰) wrote:
-> Hi Mathieu,
-> 
-> On Fri, 2023-03-31 at 11:44 -0600, Mathieu Poirier wrote:
-> > External email : Please do not click links or open attachments until you have verified the sender or the content.
-> > 
-> > 
-> > On Tue, Mar 28, 2023 at 10:27:27AM +0800, Tinghan Shen wrote:
-> > > This is the preparation for probing multi-core SCP. The remoteproc
-> > > initialization flow is similar on cores and is reused to avoid
-> > > redundant code.
-> > > 
-> > > The registers of config and l1tcm are shared for multi-core
-> > > SCP. Reuse the mapped addresses for all cores.
-> > > 
-> > > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > > ---
-> > >  drivers/remoteproc/mtk_scp.c | 64 +++++++++++++++++++++++++-----------
-> > >  1 file changed, 45 insertions(+), 19 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> > > index a3b9bc158cd9..32ecd1450c6f 100644
-> > > --- a/drivers/remoteproc/mtk_scp.c
-> > > +++ b/drivers/remoteproc/mtk_scp.c
-> > > @@ -23,6 +23,13 @@
-> > >  #define MAX_CODE_SIZE 0x500000
-> > >  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
-> > > 
-> > > +struct mtk_scp_of_regs {
-> > > +     void __iomem *reg_base;
-> > > +     void __iomem *l1tcm_base;
-> > > +     size_t l1tcm_size;
-> > > +     phys_addr_t l1tcm_phys;
-> > > +};
-> > > +
-> > 
-> > This should represent the cluster with a list of mtk_scp instead of @cluster_cores as
-> > introduced in the next patch.
-> 
-> If I'm understanding you correctly, you're suggesting that @cluster_cores should be included 
-> as a member of this structure. Is that correct?
+Hi Sarannya,
 
-Correct.  Than this structure is allocated in probe() and added as driver data
-for the platform device.  Its name should also be something like
-mtk_scp_cluster or something like that.  I suggest you look at what has been
-done in ti_k3_r5_remoteproc.c, your end design should be quite similar to that.
-In fact you are close but a few things need to be addressed.
+kernel test robot noticed the following build errors:
 
-> 
-> Best regards,
-> TingHan
-> 
-> > 
-> > >  /**
-> > >   * scp_get() - get a reference to SCP.
-> > >   *
-> > > @@ -855,7 +862,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
-> > >       }
-> > >  }
-> > > 
-> > > -static int scp_probe(struct platform_device *pdev)
-> > > +static int scp_rproc_init(struct platform_device *pdev,
-> > > +                       struct mtk_scp_of_regs *of_regs)
-> > >  {
-> > >       struct device *dev = &pdev->dev;
-> > >       struct device_node *np = dev->of_node;
-> > > @@ -879,6 +887,11 @@ static int scp_probe(struct platform_device *pdev)
-> > >       scp->data = of_device_get_match_data(dev);
-> > >       platform_set_drvdata(pdev, scp);
-> > > 
-> > > +     scp->reg_base = of_regs->reg_base;
-> > > +     scp->l1tcm_base = of_regs->l1tcm_base;
-> > > +     scp->l1tcm_size = of_regs->l1tcm_size;
-> > > +     scp->l1tcm_phys = of_regs->l1tcm_phys;
-> > > +
-> > >       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
-> > >       scp->sram_base = devm_ioremap_resource(dev, res);
-> > >       if (IS_ERR(scp->sram_base))
-> > > @@ -888,24 +901,6 @@ static int scp_probe(struct platform_device *pdev)
-> > >       scp->sram_size = resource_size(res);
-> > >       scp->sram_phys = res->start;
-> > > 
-> > > -     /* l1tcm is an optional memory region */
-> > > -     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> > > -     scp->l1tcm_base = devm_ioremap_resource(dev, res);
-> > > -     if (IS_ERR(scp->l1tcm_base)) {
-> > > -             ret = PTR_ERR(scp->l1tcm_base);
-> > > -             if (ret != -EINVAL) {
-> > > -                     return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> > > -             }
-> > > -     } else {
-> > 
-> >                 scp->l1tcm_base = NULL;
-> > 
-> > > -             scp->l1tcm_size = resource_size(res);
-> > > -             scp->l1tcm_phys = res->start;
-> > > -     }
-> > > -
-> > > -     scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
-> > > -     if (IS_ERR(scp->reg_base))
-> > > -             return dev_err_probe(dev, PTR_ERR(scp->reg_base),
-> > > -                                  "Failed to parse and map cfg memory\n");
-> > > -
-> > >       ret = scp->data->scp_clk_get(scp);
-> > >       if (ret)
-> > >               return ret;
-> > > @@ -957,6 +952,37 @@ static int scp_probe(struct platform_device *pdev)
-> > >       return ret;
-> > >  }
-> > > 
-> > > +static int scp_probe(struct platform_device *pdev)
-> > > +{
-> > > +     struct device *dev = &pdev->dev;
-> > > +     struct mtk_scp_of_regs scp_regs;
-> > > +     struct resource *res;
-> > > +     int ret;
-> > > +
-> > > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
-> > > +     scp_regs.reg_base = devm_ioremap_resource(dev, res);
-> > > +     if (IS_ERR(scp_regs.reg_base))
-> > > +             return dev_err_probe(dev, PTR_ERR(scp_regs.reg_base),
-> > > +                                  "Failed to parse and map cfg memory\n");
-> > > +
-> > > +     /* l1tcm is an optional memory region */
-> > > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> > > +     scp_regs.l1tcm_base = devm_ioremap_resource(dev, res);
-> > > +     if (IS_ERR(scp_regs.l1tcm_base)) {
-> > > +             ret = PTR_ERR(scp_regs.l1tcm_base);
-> > > +             if (ret != -EINVAL)
-> > > +                     return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> > > +
-> > > +             scp_regs.l1tcm_size = 0;
-> > > +             scp_regs.l1tcm_phys = 0;
-> > > +     } else {
-> > > +             scp_regs.l1tcm_size = resource_size(res);
-> > > +             scp_regs.l1tcm_phys = res->start;
-> > > +     }
-> > > +
-> > > +     return scp_rproc_init(pdev, &scp_regs);
-> > > +}
-> > > +
-> > >  static int scp_remove(struct platform_device *pdev)
-> > >  {
-> > >       struct mtk_scp *scp = platform_get_drvdata(pdev);
-> > > --
-> > > 2.18.0
-> > > 
-> 
-> -- 
-> Best regards,
-> TingHan
+[auto build test ERROR on v6.3-rc7]
+[also build test ERROR on linus/master next-20230418]
+[cannot apply to remoteproc/rpmsg-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sarannya-S/rpmsg-core-Add-signal-API-support/20230419-220040
+patch link:    https://lore.kernel.org/r/1681912409-25248-4-git-send-email-quic_sarannya%40quicinc.com
+patch subject: [PATCH V6 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230420/202304200018.ik0k7dKN-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/4f765ede8c129f07c522ef4a7c6aee27cb466be6
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Sarannya-S/rpmsg-core-Add-signal-API-support/20230419-220040
+        git checkout 4f765ede8c129f07c522ef4a7c6aee27cb466be6
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304200018.ik0k7dKN-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/rpmsg/rpmsg_char.c: In function 'rpmsg_eptdev_ioctl':
+>> drivers/rpmsg/rpmsg_char.c:334:23: error: too few arguments to function 'rpmsg_set_flow_control'
+     334 |                 ret = rpmsg_set_flow_control(eptdev->ept, set);
+         |                       ^~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/rpmsg/rpmsg_char.c:23:
+   include/linux/rpmsg.h:200:5: note: declared here
+     200 | int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst);
+         |     ^~~~~~~~~~~~~~~~~~~~~~
+>> drivers/rpmsg/rpmsg_char.c:321:13: warning: variable 'val' set but not used [-Wunused-but-set-variable]
+     321 |         u32 val;
+         |             ^~~
+
+
+vim +/rpmsg_set_flow_control +334 drivers/rpmsg/rpmsg_char.c
+
+   314	
+   315	static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+   316				       unsigned long arg)
+   317	{
+   318		struct rpmsg_eptdev *eptdev = fp->private_data;
+   319	
+   320		bool set;
+ > 321		u32 val;
+   322		int ret;
+   323	
+   324		switch (cmd) {
+   325		case RPMSG_GET_OUTGOING_FLOWCONTROL:
+   326			eptdev->remote_flow_updated = false;
+   327			ret = put_user(eptdev->remote_flow, (int __user *)arg);
+   328			break;
+   329		case RPMSG_SET_INCOMING_FLOWCONTROL:
+   330			ret = get_user(val, (int __user *)arg);
+   331			if (ret)
+   332				break;
+   333			set = !!arg;
+ > 334			ret = rpmsg_set_flow_control(eptdev->ept, set);
+   335			break;
+   336		case RPMSG_DESTROY_EPT_IOCTL:
+   337			/* Don't allow to destroy a default endpoint. */
+   338			if (eptdev->default_ept) {
+   339				ret = -EINVAL;
+   340				break;
+   341			}
+   342			ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+   343			break;
+   344		default:
+   345			ret = -EINVAL;
+   346		}
+   347	
+   348		return ret;
+   349	}
+   350	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
