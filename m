@@ -2,228 +2,240 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75351C6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Apr 2023 13:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2531FC6FD18
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Apr 2023 15:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbjDSN4w (ORCPT
+        id S232948AbjDSPKC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 09:56:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58662 "EHLO
+        Wed, 19 Apr 2023 11:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233565AbjDSNyy (ORCPT
+        with ESMTP id S233271AbjDSPJz (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Apr 2023 09:54:54 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A58AFB8;
-        Wed, 19 Apr 2023 06:54:32 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33JBwkH7003159;
-        Wed, 19 Apr 2023 13:54:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=B8cLtxv9PU2HnbgUOJm2opofnozZCP40aKIFgYCMcrU=;
- b=Z4ICEhHsu/DJxDqcc264djSrzLo6NrwGzIrB9zlIBtVDzlJtcZ9XtRyihwdbjh82/Enk
- YqAKmIuWvhbFTfprVjpI+/nHOaIg8QhiYhBeU65mhQaGGZCn7rx5xuqFWumySg0vUHaw
- h/Hev+pcpql2/Lg1fS7AjaQtY0mEmy1Gz9pHpa7PwMitiMzZNDZ++dnz3r7KarTXynOn
- xwifN4eUDhAtoEs4jsYTRIpZW/8aPKDhTwhIbUjFnY7S6v2AAGu2vClM+uO/utWRavqL
- dlG/kh7qFqPVFHoMTb5EmYAiX1ZsrFiv4QuHJT8zLJCNBeseBdpWELEiNrKs4fQVD4y1 9w== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q2dy7rkus-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Apr 2023 13:54:24 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33JDsB9k008924
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Apr 2023 13:54:11 GMT
-Received: from sarannya-linux.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 19 Apr 2023 06:54:07 -0700
-From:   Sarannya S <quic_sarannya@quicinc.com>
-To:     <quic_bjorande@quicinc.com>, <arnaud.pouliquen@foss.st.com>,
-        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Sarannya S <quic_sarannya@quicinc.com>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>
-Subject: [PATCH V6 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support
-Date:   Wed, 19 Apr 2023 19:23:28 +0530
-Message-ID: <1681912409-25248-4-git-send-email-quic_sarannya@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1681912409-25248-1-git-send-email-quic_sarannya@quicinc.com>
-References: <1681912409-25248-1-git-send-email-quic_sarannya@quicinc.com>
+        Wed, 19 Apr 2023 11:09:55 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF1FA49EB
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Apr 2023 08:09:50 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-24736992dd3so1730112a91.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Apr 2023 08:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681916990; x=1684508990;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9xYRx4lxSwrTz8KomOP3X7PYWUvothv5g/ZoMajkQIs=;
+        b=sXPBCslnv6R9uVZX7Gq3xtSsKpgzb0/01i98xXOZQx+KbP4KqVddhPYdcEVIH92o4/
+         pmZSEaoq7K27ohwgJ+wenSjn0dMQerb+uCo2ZucB/ttrkOH+5nH3PbagzZ3PTu4MLinA
+         TuKX/J6WZKuecdQ+SbtWPDBxIT9YSQFdk9EpXU82KxmWB7eepY+FOWYRQZw89n6lAOaK
+         XrVRagqX0pIaFphG3FrY/Kf+S15ViKgyd1zdDEgbm2ZGDCRg5ygwZkCfIxnA/TylLYqo
+         kupYb4zacsCkJMBL3td7FdPMMyd0LNOaVeCVWWXhum1Qx2Kzg3cACS2tSOJI8K/kMrPz
+         X4Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681916990; x=1684508990;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9xYRx4lxSwrTz8KomOP3X7PYWUvothv5g/ZoMajkQIs=;
+        b=P3rEstWTWXl8R2Iybr51LxgJ1TNM4B3702itNy4xt54MYiRnL5suTlEkD9JAxXzFBo
+         RWK7J9BYFvvYra2z418Zv0QOlF0soa5TRShmPaNqGmoFQYr6VuSTfZQ8vzzCRpYEJ0SR
+         eSRbcp9edfxnsCy/SaRBcq9wbebeE8KLXRfx24GegRkgy32GcDjHoE650u2PYWw2Pf1F
+         0lX+TS11miwSlbupPQRGQfmCHxyPkNPDT17Z8owUwActOXkLcaJRQmkuP3ZJTYBH5yTQ
+         7oCBaMmkYrA/1avy3UQOjPMTscBYLsHR4ZlGGtMR6WGmiTcYavcuz/4cbL0b5MYTROKT
+         6Hog==
+X-Gm-Message-State: AAQBX9f4ToQyAiccH95YL0KbuteN/Y1ReLrApvPr7OgIxGUaSoDj6qJz
+        Sx8JOfkVj+dQSvvlEe4A6H8Udw==
+X-Google-Smtp-Source: AKy350ZOsj/rgDa7m85kCFSt/yyAxPXdtikhF0MU23Wn0WjNTH8dh6EXRwbGslBJniiqLHyCe3xjGQ==
+X-Received: by 2002:a17:90a:72c8:b0:246:9bad:2354 with SMTP id l8-20020a17090a72c800b002469bad2354mr3110204pjk.43.1681916990193;
+        Wed, 19 Apr 2023 08:09:50 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:302c:551a:91d2:840f])
+        by smtp.gmail.com with ESMTPSA id ip11-20020a17090b314b00b00246626343aesm1541885pjb.25.2023.04.19.08.09.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Apr 2023 08:09:49 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 09:09:47 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     TingHan Shen =?utf-8?B?KOayiOW7t+e/sCk=?= 
+        <TingHan.Shen@mediatek.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Project_Global_Chrome_Upstream_Group 
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "andersson@kernel.org" <andersson@kernel.org>,
+        "angelogioacchino.delregno@collabora.com" 
+        <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v9 05/11] remoteproc: mediatek: Extract remoteproc
+ initialization flow
+Message-ID: <ZEAEO3ZOptIoIskz@p14s>
+References: <20230328022733.29910-1-tinghan.shen@mediatek.com>
+ <20230328022733.29910-6-tinghan.shen@mediatek.com>
+ <20230331174431.GA3504605@p14s>
+ <46baff1f95fa13976d7a07b5e50ff2175e464baa.camel@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XXPs98SuyPLWjRGz_ldUBMRGkRAeCD8I
-X-Proofpoint-GUID: XXPs98SuyPLWjRGz_ldUBMRGkRAeCD8I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-19_09,2023-04-18_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- lowpriorityscore=0 malwarescore=0 adultscore=0 mlxscore=0 suspectscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304190125
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <46baff1f95fa13976d7a07b5e50ff2175e464baa.camel@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add RPMSG_GET_OUTGOING_FLOWCONTROL and RPMSG_SET_INCOMING_FLOWCONTROL
-IOCTL support for rpmsg char device nodes to get/set the low level
-transport signals.
+On Wed, Apr 19, 2023 at 03:38:14AM +0000, TingHan Shen (沈廷翰) wrote:
+> Hi Mathieu,
+> 
+> On Fri, 2023-03-31 at 11:44 -0600, Mathieu Poirier wrote:
+> > External email : Please do not click links or open attachments until you have verified the sender or the content.
+> > 
+> > 
+> > On Tue, Mar 28, 2023 at 10:27:27AM +0800, Tinghan Shen wrote:
+> > > This is the preparation for probing multi-core SCP. The remoteproc
+> > > initialization flow is similar on cores and is reused to avoid
+> > > redundant code.
+> > > 
+> > > The registers of config and l1tcm are shared for multi-core
+> > > SCP. Reuse the mapped addresses for all cores.
+> > > 
+> > > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > ---
+> > >  drivers/remoteproc/mtk_scp.c | 64 +++++++++++++++++++++++++-----------
+> > >  1 file changed, 45 insertions(+), 19 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> > > index a3b9bc158cd9..32ecd1450c6f 100644
+> > > --- a/drivers/remoteproc/mtk_scp.c
+> > > +++ b/drivers/remoteproc/mtk_scp.c
+> > > @@ -23,6 +23,13 @@
+> > >  #define MAX_CODE_SIZE 0x500000
+> > >  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+> > > 
+> > > +struct mtk_scp_of_regs {
+> > > +     void __iomem *reg_base;
+> > > +     void __iomem *l1tcm_base;
+> > > +     size_t l1tcm_size;
+> > > +     phys_addr_t l1tcm_phys;
+> > > +};
+> > > +
+> > 
+> > This should represent the cluster with a list of mtk_scp instead of @cluster_cores as
+> > introduced in the next patch.
+> 
+> If I'm understanding you correctly, you're suggesting that @cluster_cores should be included 
+> as a member of this structure. Is that correct?
 
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
----
- drivers/rpmsg/rpmsg_char.c | 53 ++++++++++++++++++++++++++++++++++++++++------
- include/uapi/linux/rpmsg.h | 11 +++++++++-
- 2 files changed, 57 insertions(+), 7 deletions(-)
+Correct.  Than this structure is allocated in probe() and added as driver data
+for the platform device.  Its name should also be something like
+mtk_scp_cluster or something like that.  I suggest you look at what has been
+done in ti_k3_r5_remoteproc.c, your end design should be quite similar to that.
+In fact you are close but a few things need to be addressed.
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index a271fce..97f80f4 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -23,6 +23,7 @@
- #include <linux/rpmsg.h>
- #include <linux/skbuff.h>
- #include <linux/slab.h>
-+#include <linux/termios.h>
- #include <linux/uaccess.h>
- #include <uapi/linux/rpmsg.h>
- 
-@@ -68,6 +69,8 @@ struct rpmsg_eptdev {
- 	struct sk_buff_head queue;
- 	wait_queue_head_t readq;
- 
-+	bool remote_flow;
-+	bool remote_flow_updated;
- };
- 
- int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
-@@ -116,6 +119,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
- 	return 0;
- }
- 
-+static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable)
-+{
-+	struct rpmsg_eptdev *eptdev = priv;
-+
-+	eptdev->remote_flow = enable;
-+	eptdev->remote_flow_updated = true;
-+
-+	wake_up_interruptible(&eptdev->readq);
-+
-+	return 0;
-+}
-+
- static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- {
- 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
-@@ -152,6 +167,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
- 		return -EINVAL;
- 	}
- 
-+	ept->flow_cb = rpmsg_ept_flow_cb;
- 	eptdev->ept = ept;
- 	filp->private_data = eptdev;
- 	mutex_unlock(&eptdev->ept_lock);
-@@ -172,6 +188,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
- 		eptdev->ept = NULL;
- 	}
- 	mutex_unlock(&eptdev->ept_lock);
-+	eptdev->remote_flow_updated = false;
- 
- 	/* Discard all SKBs */
- 	skb_queue_purge(&eptdev->queue);
-@@ -285,6 +302,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
- 	if (!skb_queue_empty(&eptdev->queue))
- 		mask |= EPOLLIN | EPOLLRDNORM;
- 
-+	if (eptdev->remote_flow_updated)
-+		mask |= EPOLLPRI;
-+
- 	mutex_lock(&eptdev->ept_lock);
- 	mask |= rpmsg_poll(eptdev->ept, filp, wait);
- 	mutex_unlock(&eptdev->ept_lock);
-@@ -297,14 +317,35 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
- {
- 	struct rpmsg_eptdev *eptdev = fp->private_data;
- 
--	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
--		return -EINVAL;
-+	bool set;
-+	u32 val;
-+	int ret;
- 
--	/* Don't allow to destroy a default endpoint. */
--	if (eptdev->default_ept)
--		return -EINVAL;
-+	switch (cmd) {
-+	case RPMSG_GET_OUTGOING_FLOWCONTROL:
-+		eptdev->remote_flow_updated = false;
-+		ret = put_user(eptdev->remote_flow, (int __user *)arg);
-+		break;
-+	case RPMSG_SET_INCOMING_FLOWCONTROL:
-+		ret = get_user(val, (int __user *)arg);
-+		if (ret)
-+			break;
-+		set = !!arg;
-+		ret = rpmsg_set_flow_control(eptdev->ept, set);
-+		break;
-+	case RPMSG_DESTROY_EPT_IOCTL:
-+		/* Don't allow to destroy a default endpoint. */
-+		if (eptdev->default_ept) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
- 
--	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
-+	return ret;
- }
- 
- static const struct file_operations rpmsg_eptdev_fops = {
-diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
-index 1637e68..c955e27 100644
---- a/include/uapi/linux/rpmsg.h
-+++ b/include/uapi/linux/rpmsg.h
-@@ -10,7 +10,6 @@
- #include <linux/types.h>
- 
- #define RPMSG_ADDR_ANY		0xFFFFFFFF
--
- /**
-  * struct rpmsg_endpoint_info - endpoint info representation
-  * @name: name of service
-@@ -43,4 +42,14 @@ struct rpmsg_endpoint_info {
-  */
- #define RPMSG_RELEASE_DEV_IOCTL	_IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
- 
-+/**
-+ * Set the flow control for the remote rpmsg char device.
-+ */
-+#define RPMSG_GET_OUTGOING_FLOWCONTROL _IOW(0xb5, 0x5, struct rpmsg_endpoint_info)
-+
-+/**
-+ * Set the flow control for the local rpmsg char device.
-+ */
-+#define RPMSG_SET_INCOMING_FLOWCONTROL _IOW(0xb5, 0x6, struct rpmsg_endpoint_info)
-+
- #endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+> 
+> Best regards,
+> TingHan
+> 
+> > 
+> > >  /**
+> > >   * scp_get() - get a reference to SCP.
+> > >   *
+> > > @@ -855,7 +862,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+> > >       }
+> > >  }
+> > > 
+> > > -static int scp_probe(struct platform_device *pdev)
+> > > +static int scp_rproc_init(struct platform_device *pdev,
+> > > +                       struct mtk_scp_of_regs *of_regs)
+> > >  {
+> > >       struct device *dev = &pdev->dev;
+> > >       struct device_node *np = dev->of_node;
+> > > @@ -879,6 +887,11 @@ static int scp_probe(struct platform_device *pdev)
+> > >       scp->data = of_device_get_match_data(dev);
+> > >       platform_set_drvdata(pdev, scp);
+> > > 
+> > > +     scp->reg_base = of_regs->reg_base;
+> > > +     scp->l1tcm_base = of_regs->l1tcm_base;
+> > > +     scp->l1tcm_size = of_regs->l1tcm_size;
+> > > +     scp->l1tcm_phys = of_regs->l1tcm_phys;
+> > > +
+> > >       res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+> > >       scp->sram_base = devm_ioremap_resource(dev, res);
+> > >       if (IS_ERR(scp->sram_base))
+> > > @@ -888,24 +901,6 @@ static int scp_probe(struct platform_device *pdev)
+> > >       scp->sram_size = resource_size(res);
+> > >       scp->sram_phys = res->start;
+> > > 
+> > > -     /* l1tcm is an optional memory region */
+> > > -     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> > > -     scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> > > -     if (IS_ERR(scp->l1tcm_base)) {
+> > > -             ret = PTR_ERR(scp->l1tcm_base);
+> > > -             if (ret != -EINVAL) {
+> > > -                     return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> > > -             }
+> > > -     } else {
+> > 
+> >                 scp->l1tcm_base = NULL;
+> > 
+> > > -             scp->l1tcm_size = resource_size(res);
+> > > -             scp->l1tcm_phys = res->start;
+> > > -     }
+> > > -
+> > > -     scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
+> > > -     if (IS_ERR(scp->reg_base))
+> > > -             return dev_err_probe(dev, PTR_ERR(scp->reg_base),
+> > > -                                  "Failed to parse and map cfg memory\n");
+> > > -
+> > >       ret = scp->data->scp_clk_get(scp);
+> > >       if (ret)
+> > >               return ret;
+> > > @@ -957,6 +952,37 @@ static int scp_probe(struct platform_device *pdev)
+> > >       return ret;
+> > >  }
+> > > 
+> > > +static int scp_probe(struct platform_device *pdev)
+> > > +{
+> > > +     struct device *dev = &pdev->dev;
+> > > +     struct mtk_scp_of_regs scp_regs;
+> > > +     struct resource *res;
+> > > +     int ret;
+> > > +
+> > > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> > > +     scp_regs.reg_base = devm_ioremap_resource(dev, res);
+> > > +     if (IS_ERR(scp_regs.reg_base))
+> > > +             return dev_err_probe(dev, PTR_ERR(scp_regs.reg_base),
+> > > +                                  "Failed to parse and map cfg memory\n");
+> > > +
+> > > +     /* l1tcm is an optional memory region */
+> > > +     res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> > > +     scp_regs.l1tcm_base = devm_ioremap_resource(dev, res);
+> > > +     if (IS_ERR(scp_regs.l1tcm_base)) {
+> > > +             ret = PTR_ERR(scp_regs.l1tcm_base);
+> > > +             if (ret != -EINVAL)
+> > > +                     return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> > > +
+> > > +             scp_regs.l1tcm_size = 0;
+> > > +             scp_regs.l1tcm_phys = 0;
+> > > +     } else {
+> > > +             scp_regs.l1tcm_size = resource_size(res);
+> > > +             scp_regs.l1tcm_phys = res->start;
+> > > +     }
+> > > +
+> > > +     return scp_rproc_init(pdev, &scp_regs);
+> > > +}
+> > > +
+> > >  static int scp_remove(struct platform_device *pdev)
+> > >  {
+> > >       struct mtk_scp *scp = platform_get_drvdata(pdev);
+> > > --
+> > > 2.18.0
+> > > 
+> 
+> -- 
+> Best regards,
+> TingHan
