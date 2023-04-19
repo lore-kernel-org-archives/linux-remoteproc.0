@@ -2,83 +2,100 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E84C6FD18
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Apr 2023 12:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2D6C77B75
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Apr 2023 13:54:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232957AbjDSMBB (ORCPT
+        id S233355AbjDSNyD (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Apr 2023 08:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53214 "EHLO
+        Wed, 19 Apr 2023 09:54:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232662AbjDSMA5 (ORCPT
+        with ESMTP id S232359AbjDSNyC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Apr 2023 08:00:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 083DC15639;
-        Wed, 19 Apr 2023 05:00:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DF0E563E39;
-        Wed, 19 Apr 2023 12:00:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 359B1C433EF;
-        Wed, 19 Apr 2023 12:00:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681905624;
-        bh=zGbUZiACjiQ5xDCuVGbZ/qeo8/UvZ7o2Azhml3u3dks=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=QS0P1L0MAHyIdXKX8jx0oVC5pTplxf7xfKlwlFjwd2keQYXvoAnGyA9j4WyTKxxWW
-         vSat4h2/DqkKkAmbf3oZibe+qzRg5iLwoUlIbcV7wk2CP2Et5tA+O0gYA96KMu4fSz
-         tm38rEjXefHbYPEoqQ3i9cIrih6cZzUqgKREMCJ19xVBqlVVdCsyQoX01nUkR/Jf46
-         egfCNAFI0WNv95ZbEBVmSRqKLEtSt5CBo8utW6YYI3LhNOLB/1dNhSOUldyrBckgfN
-         hp3pdYGt5fuV8TDAOw4AIN+oYP1nci55/f23Ec1VUtdOmCiCjg2nKwn2VeedilccDP
-         BX+v2TjOZCSPw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0F2D1E270E7;
-        Wed, 19 Apr 2023 12:00:24 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 19 Apr 2023 09:54:02 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C9FF13C0A;
+        Wed, 19 Apr 2023 06:54:01 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33J9W1Wc030480;
+        Wed, 19 Apr 2023 13:53:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=bOP9REL4bDVbPp5LAmiFsanF4KApVmQdSdmb2BgMyBg=;
+ b=Kt8wBQfkIZsK+mFwfHdw+GhVa/MdnvCNgSmzrL0bcipJatdT7IrSk5NRh83IfQvY92wW
+ SGp1LMcPse1cmQWP4I2opsizJB5agaf1W7GGJ+uIAQtKutX3BSqaBbbkBQXhPk18qBaA
+ LmWE1Td0Yyw+RFNj6B1PEMFjBg1AgSVAr+0aQELitG97nvPT+ZpjOU6jQ8MJdiLWzBAp
+ kkHQ0dohXMCSV3DcS5uOp8otGOk59Hr4UohYivR1xam4arslKELpDyxUMf8j1zhhC8yl
+ snQsp01PUJxPHQ1PHJNs9EBYDLe/XT/ejg2BmM9xa3QQnqrulYu9AJPX73/SPgMoeby1 gg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q1wxk2uvv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 13:53:55 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33JDrr11008758
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Apr 2023 13:53:54 GMT
+Received: from sarannya-linux.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Wed, 19 Apr 2023 06:53:50 -0700
+From:   Sarannya S <quic_sarannya@quicinc.com>
+To:     <quic_bjorande@quicinc.com>, <arnaud.pouliquen@foss.st.com>,
+        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Sarannya S <quic_sarannya@quicinc.com>
+Subject: [PATCH V6 0/3] rpmsg signaling/flowcontrol patches
+Date:   Wed, 19 Apr 2023 19:23:25 +0530
+Message-ID: <1681912409-25248-1-git-send-email-quic_sarannya@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: wwan: Expose secondary AT port on DATA1
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <168190562405.2268.16080660591226497806.git-patchwork-notify@kernel.org>
-Date:   Wed, 19 Apr 2023 12:00:24 +0000
-References: <20230414-rpmsg-wwan-secondary-at-port-v2-1-9a92ee5fdce2@nayarsystems.com>
-In-Reply-To: <20230414-rpmsg-wwan-secondary-at-port-v2-1-9a92ee5fdce2@nayarsystems.com>
-To:     Jaime Breva via B4 Relay 
-        <devnull+jbreva.nayarsystems.com@kernel.org>
-Cc:     stephan@gerhold.net, loic.poulain@linaro.org,
-        ryazanov.s.a@gmail.com, johannes@sipsolutions.net,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, netdev@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jbreva@nayarsystems.com
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kEsJYGKdySadr_5KaHtvw6QzAz8a8WZh
+X-Proofpoint-ORIG-GUID: kEsJYGKdySadr_5KaHtvw6QzAz8a8WZh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-19_08,2023-04-18_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxlogscore=648 bulkscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304190123
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello:
+Added new IOCTLS- RPMSG_GET_OUTGOING_FLOWCONTROL and RPMSG_SET_INCOMING_FLOWCONTROL
+to get/set the rpmsg char device's flow control signal.
+Update the cmd name 'RPM_CMD_SIGNALS' to 'GLINK_CMD_SIGNALS'.
+Changed 'remote_flow' to bool type, and updated it's evaluation.
+Updated evaluation 'set' in rpmsg_char as 'set = !!arg'.
+Addressed review comments to change variable names/descriptions.
 
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Chris Lew (1):
+  rpmsg: glink: Add support to handle signals command
 
-On Mon, 17 Apr 2023 08:07:24 +0200 you wrote:
-> From: Jaime Breva <jbreva@nayarsystems.com>
-> 
-> Our use-case needs two AT ports available:
-> One for running a ppp daemon, and another one for management
-> 
-> This patch enables a second AT port on DATA1
-> 
-> [...]
+Deepak Kumar Singh (1):
+  rpmsg: core: Add signal API support
 
-Here is the summary with links:
-  - [net-next,v2] net: wwan: Expose secondary AT port on DATA1
-    https://git.kernel.org/netdev/net-next/c/158441884772
+Sarannya S (1):
+  rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support
 
-You are awesome, thank you!
+ drivers/rpmsg/qcom_glink_native.c | 64 +++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_char.c        | 53 ++++++++++++++++++++++++++++----
+ drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |  2 ++
+ include/linux/rpmsg.h             | 15 +++++++++
+ include/uapi/linux/rpmsg.h        | 11 ++++++-
+ 6 files changed, 159 insertions(+), 7 deletions(-)
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
