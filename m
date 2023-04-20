@@ -2,99 +2,83 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5042C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Apr 2023 15:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E865C77B73
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Apr 2023 18:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232105AbjDTPlj (ORCPT
+        id S230010AbjDTSgI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 20 Apr 2023 11:41:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40774 "EHLO
+        Thu, 20 Apr 2023 14:36:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231656AbjDTPli (ORCPT
+        with ESMTP id S232040AbjDTSgE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 20 Apr 2023 11:41:38 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A79D44EDE
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Apr 2023 08:41:21 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f09b9ac51dso22953225e9.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Apr 2023 08:41:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682005280; x=1684597280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pMTCI9kAG7wRhQ4LO+BFtd8OeJXKh9I5SStps/c37Rw=;
-        b=PsOyPWDCsi920bN8Udf6m0hFPjcB7Hp3uhPoxvdq/n0L8GKwzbRaBjT67AFSTy8etY
-         dSxDU4PLWYFfVwc3MwyUS1a6Op5jKszILgf4c140Cp1OuLCCUyTe6ZZ40QvUyn7ldb82
-         07T1NhScT3g4Kf+6DbgUKy4gdirJpfjjuzaFjxwlFSETLG7ebv7t/9zlAv4SXQ2tpcLs
-         rvl+vle9tOoZVlmgyhCdItgQAW9LV2W8H5AIWyDj5lUM22E7iPfIENAJJoibq2yuvvyT
-         +dx61Ogx3NogDVkYbVskFRw1Bu/2nsIV56zRNYtRrf8l0a1U6Xe4mp4s7WGBk+dJnaqD
-         qnxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682005280; x=1684597280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pMTCI9kAG7wRhQ4LO+BFtd8OeJXKh9I5SStps/c37Rw=;
-        b=iSn6M3ksAXzTGiJ+I5JklfQswJ0XEpeM3YCLZ5sTBhofduAjHj986dX873gtxXFVvP
-         tqKvwAoWI5CrAg/jz6jeVuj1A7c1AMGccgc+sP73gQA3C+gObuRmDRLJMYIY+/fm4Lrm
-         r4rMj9vxy6jvh1CHefuN2CVGCHyzg7Y40g0oUnsdwliBw5D3MSfueFg1+RU7gLcU4eNU
-         SU1R21H+h+y54/MCDh00cwKdoKjx5KaRRmjGfdTdKOShUt8paSMQmcDKpvHuoMUBstIC
-         CxIJd43JctKOIPFkL867oC9fSMoBol6CqFxL4cIUYXYxGg0bnIYRnVsYDR7K1Uf/QiS9
-         adQg==
-X-Gm-Message-State: AAQBX9ffgBjkpLsLNMupIkfonnpK2dVUE/+nmxnZQKeDgBqHeUVg9WP1
-        kEAABC1Kr352skr1cZ975eLgd0j8iwBQqqXRtp8y3w==
-X-Google-Smtp-Source: AKy350Zm2fmnU/Ys/3X2CzEj8wVPLTgQsWnV/f20jBKDfIONBHIbCzhsBE/x/IkJXuZKQzVRBRgr21q2SXkmBujHd1Q=
-X-Received: by 2002:a05:6000:1181:b0:2fc:3596:7392 with SMTP id
- g1-20020a056000118100b002fc35967392mr1580931wrx.24.1682005280020; Thu, 20 Apr
- 2023 08:41:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <1681971690-28858-1-git-send-email-quic_sarannya@quicinc.com>
-In-Reply-To: <1681971690-28858-1-git-send-email-quic_sarannya@quicinc.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Thu, 20 Apr 2023 09:41:09 -0600
-Message-ID: <CANLsYky00+sD-MsGK40E79xe8v8vtxji8O0LdgEOHYTF5PPpZA@mail.gmail.com>
-Subject: Re: [PATCH V6 0/3] rpmsg signaling/flowcontrol patches
+        Thu, 20 Apr 2023 14:36:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A3D35BF;
+        Thu, 20 Apr 2023 11:35:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 192116156F;
+        Thu, 20 Apr 2023 18:34:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00E7C433EF;
+        Thu, 20 Apr 2023 18:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682015682;
+        bh=jKr+iaLUp9CiJCCDhMqaQKsER/qVVoFkcU3AC2cTRmM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cqMQlb/zeWZeOkw/uFCl6i1K+Ji2WSqlh1mcWVweto2DvQnPx6AJJxsemvlHFKLyv
+         NotURfec3mDHO9hahzDnSSZKBVZy5+pJ6GoWI9sncfdNMm/4jdK612fHzGTLnwGVCc
+         2m8S0isI7nsAftso5fBQIxSbjwS9KQtlxw3bVT/dAXqSkyTMVuNAL5FnNLiHbL00O8
+         QARyg5e19sJSV2X8jrYBefuLmlF0VG2TGopWxWz2+OCB7Dop2Zc+IcwEnbKFbGEuah
+         V/eMUwWAhpuesd2Qr3Lm5JQTFLxa262ATwzFTqhoR9g5Kpp5LptzaBHKIZSGQpfJE1
+         WNS+JB5ZHuv1g==
+Date:   Thu, 20 Apr 2023 11:38:11 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
 To:     Sarannya S <quic_sarannya@quicinc.com>
 Cc:     quic_bjorande@quicinc.com, arnaud.pouliquen@foss.st.com,
         swboyd@chromium.org, quic_clew@quicinc.com,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: Re: [PATCH V6 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL
+ support
+Message-ID: <20230420183811.oujn5eqsnqug3u4a@ripper>
+References: <1681971690-28858-1-git-send-email-quic_sarannya@quicinc.com>
+ <1681971690-28858-4-git-send-email-quic_sarannya@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1681971690-28858-4-git-send-email-quic_sarannya@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, 20 Apr 2023 at 00:22, Sarannya S <quic_sarannya@quicinc.com> wrote:
->
-> Added new IOCTLS- RPMSG_GET_OUTGOING_FLOWCONTROL and RPMSG_SET_INCOMING_FLOWCONTROL
-> to get/set the rpmsg char device's flow control signal.
-> Updated the cmd name 'RPM_CMD_SIGNALS' to 'GLINK_CMD_SIGNALS'.
-> Changed 'remote_flow' to bool type, and updated it's evaluation.
-> Updated evaluation of 'set' in rpmsg_char as 'set = !!arg'.
-> Add destination address of endpoint as parameter in rpmsg_set_flow_control.
-> Addressed review comments to change variable names/descriptions.
->
-> Chris Lew (2):
->   rpmsg: glink: Add support to handle signals command
->   rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support
->
-> Deepak Kumar Singh (1):
->   rpmsg: core: Add signal API support
->
->  drivers/rpmsg/qcom_glink_native.c | 64 +++++++++++++++++++++++++++++++++++++++
->  drivers/rpmsg/rpmsg_char.c        | 49 ++++++++++++++++++++++++++----
->  drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++++
->  drivers/rpmsg/rpmsg_internal.h    |  2 ++
->  include/linux/rpmsg.h             | 15 +++++++++
->  include/uapi/linux/rpmsg.h        | 11 ++++++-
->  6 files changed, 155 insertions(+), 7 deletions(-)
->
+On Thu, Apr 20, 2023 at 11:51:29AM +0530, Sarannya S wrote:
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+[..]
+> @@ -297,14 +317,31 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  {
+>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+>  
+> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> -		return -EINVAL;
+> +	bool set;
+> +	int ret;
+>  
+> -	/* Don't allow to destroy a default endpoint. */
+> -	if (eptdev->default_ept)
+> -		return -EINVAL;
+> +	switch (cmd) {
+> +	case RPMSG_GET_OUTGOING_FLOWCONTROL:
+> +		eptdev->remote_flow_updated = false;
+> +		ret = put_user(eptdev->remote_flow, (int __user *)arg);
+> +		break;
+> +	case RPMSG_SET_INCOMING_FLOWCONTROL:
+> +		set = !!arg;
+> +		ret = rpmsg_set_flow_control(eptdev->ept, set, 0);
 
-It is not possible to follow what is happening with this patchset.
-Please send a proper V7 that takes into account the comments that were
-received _and_ a summary of what changed between the revisions.
+The last parameter should be eptdev->chinfo.dst.
 
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+Regards,
+Bjorn
