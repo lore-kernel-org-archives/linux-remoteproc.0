@@ -2,83 +2,126 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E865C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Apr 2023 18:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF1EC7618E
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Apr 2023 21:36:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230010AbjDTSgI (ORCPT
+        id S232136AbjDTVgU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 20 Apr 2023 14:36:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47396 "EHLO
+        Thu, 20 Apr 2023 17:36:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232040AbjDTSgE (ORCPT
+        with ESMTP id S229523AbjDTVgT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 20 Apr 2023 14:36:04 -0400
+        Thu, 20 Apr 2023 17:36:19 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A3D35BF;
-        Thu, 20 Apr 2023 11:35:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4883F30D2;
+        Thu, 20 Apr 2023 14:36:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 192116156F;
-        Thu, 20 Apr 2023 18:34:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00E7C433EF;
-        Thu, 20 Apr 2023 18:34:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A4CA464C19;
+        Thu, 20 Apr 2023 21:36:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B2BC433D2;
+        Thu, 20 Apr 2023 21:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682015682;
-        bh=jKr+iaLUp9CiJCCDhMqaQKsER/qVVoFkcU3AC2cTRmM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cqMQlb/zeWZeOkw/uFCl6i1K+Ji2WSqlh1mcWVweto2DvQnPx6AJJxsemvlHFKLyv
-         NotURfec3mDHO9hahzDnSSZKBVZy5+pJ6GoWI9sncfdNMm/4jdK612fHzGTLnwGVCc
-         2m8S0isI7nsAftso5fBQIxSbjwS9KQtlxw3bVT/dAXqSkyTMVuNAL5FnNLiHbL00O8
-         QARyg5e19sJSV2X8jrYBefuLmlF0VG2TGopWxWz2+OCB7Dop2Zc+IcwEnbKFbGEuah
-         V/eMUwWAhpuesd2Qr3Lm5JQTFLxa262ATwzFTqhoR9g5Kpp5LptzaBHKIZSGQpfJE1
-         WNS+JB5ZHuv1g==
-Date:   Thu, 20 Apr 2023 11:38:11 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Sarannya S <quic_sarannya@quicinc.com>
-Cc:     quic_bjorande@quicinc.com, arnaud.pouliquen@foss.st.com,
-        swboyd@chromium.org, quic_clew@quicinc.com,
-        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: Re: [PATCH V6 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL
- support
-Message-ID: <20230420183811.oujn5eqsnqug3u4a@ripper>
-References: <1681971690-28858-1-git-send-email-quic_sarannya@quicinc.com>
- <1681971690-28858-4-git-send-email-quic_sarannya@quicinc.com>
+        s=k20201202; t=1682026577;
+        bh=N4kO0Ct/LnSLCi9T11XBZTUArgxHgmHTQU2AiDujI3o=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OWspLkkmDbLi4PsR/Dq2qnHLUx/tAWfx2lQH1hjad2NuBrOmm4jEe42bR3Wkn4yAH
+         BygNnJjNdNPaHCAI0k94PE7RTWBk51F4r6/w9dHyL8xSlisABkbBqRjHx15Zz06Rxk
+         VA87KAdEenumsUT3r2NhZQ74OgcWzT2kUzapy0XB3WLCHMENFIdga15OCS1nSA0gIJ
+         uJAhWD8R/e9L2XJzZMz0uf0hpN0ymnMPQ2Di3/Yn8Wln8zUpbcixQPsuxCHDm7XYh/
+         par1g0B7aoCZrH/KxWy93rgcnxN29UWfyvEZdBqjs9hiDzqx5AcnBgau3rBfZ1vlZl
+         h0Yxemfd2B0DQ==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Markus Elfring <Markus.Elfring@web.de>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: imx_dsp_rproc: use modern pm_ops
+Date:   Thu, 20 Apr 2023 23:36:04 +0200
+Message-Id: <20230420213610.2219080-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1681971690-28858-4-git-send-email-quic_sarannya@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Apr 20, 2023 at 11:51:29AM +0530, Sarannya S wrote:
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-[..]
-> @@ -297,14 +317,31 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->  {
->  	struct rpmsg_eptdev *eptdev = fp->private_data;
->  
-> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
-> -		return -EINVAL;
-> +	bool set;
-> +	int ret;
->  
-> -	/* Don't allow to destroy a default endpoint. */
-> -	if (eptdev->default_ept)
-> -		return -EINVAL;
-> +	switch (cmd) {
-> +	case RPMSG_GET_OUTGOING_FLOWCONTROL:
-> +		eptdev->remote_flow_updated = false;
-> +		ret = put_user(eptdev->remote_flow, (int __user *)arg);
-> +		break;
-> +	case RPMSG_SET_INCOMING_FLOWCONTROL:
-> +		set = !!arg;
-> +		ret = rpmsg_set_flow_control(eptdev->ept, set, 0);
+From: Arnd Bergmann <arnd@arndb.de>
 
-The last parameter should be eptdev->chinfo.dst.
+Without CONFIG_PM, the driver warns about unused functions:
 
-Regards,
-Bjorn
+drivers/remoteproc/imx_dsp_rproc.c:1210:12: error: 'imx_dsp_runtime_suspend' defined but not used [-Werror=unused-function]
+ 1210 | static int imx_dsp_runtime_suspend(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~
+drivers/remoteproc/imx_dsp_rproc.c:1178:12: error: 'imx_dsp_runtime_resume' defined but not used [-Werror=unused-function]
+ 1178 | static int imx_dsp_runtime_resume(struct device *dev)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+
+Change the old SET_SYSTEM_SLEEP_PM_OPS()/SET_RUNTIME_PM_OPS()
+helpers to their modern replacements that avoid the warning,
+and remove the now unnecessary __maybe_unused annotations
+on the other PM helper functions.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/remoteproc/imx_dsp_rproc.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index cab06dbf37fb..2d75dea43f20 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -1243,7 +1243,7 @@ static void imx_dsp_load_firmware(const struct firmware *fw, void *context)
+ 	release_firmware(fw);
+ }
+ 
+-static __maybe_unused int imx_dsp_suspend(struct device *dev)
++static int imx_dsp_suspend(struct device *dev)
+ {
+ 	struct rproc *rproc = dev_get_drvdata(dev);
+ 	struct imx_dsp_rproc *priv = rproc->priv;
+@@ -1278,7 +1278,7 @@ static __maybe_unused int imx_dsp_suspend(struct device *dev)
+ 	return pm_runtime_force_suspend(dev);
+ }
+ 
+-static __maybe_unused int imx_dsp_resume(struct device *dev)
++static int imx_dsp_resume(struct device *dev)
+ {
+ 	struct rproc *rproc = dev_get_drvdata(dev);
+ 	int ret = 0;
+@@ -1312,9 +1312,8 @@ static __maybe_unused int imx_dsp_resume(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops imx_dsp_rproc_pm_ops = {
+-	SET_SYSTEM_SLEEP_PM_OPS(imx_dsp_suspend, imx_dsp_resume)
+-	SET_RUNTIME_PM_OPS(imx_dsp_runtime_suspend,
+-			   imx_dsp_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(imx_dsp_suspend, imx_dsp_resume)
++	RUNTIME_PM_OPS(imx_dsp_runtime_suspend, imx_dsp_runtime_resume, NULL)
+ };
+ 
+ static const struct of_device_id imx_dsp_rproc_of_match[] = {
+@@ -1332,7 +1331,7 @@ static struct platform_driver imx_dsp_rproc_driver = {
+ 	.driver = {
+ 		.name = "imx-dsp-rproc",
+ 		.of_match_table = imx_dsp_rproc_of_match,
+-		.pm = &imx_dsp_rproc_pm_ops,
++		.pm = pm_ptr(&imx_dsp_rproc_pm_ops),
+ 	},
+ };
+ module_platform_driver(imx_dsp_rproc_driver);
+-- 
+2.39.2
+
