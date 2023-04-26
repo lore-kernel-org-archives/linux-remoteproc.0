@@ -2,73 +2,138 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDAEC77B7C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Apr 2023 00:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D9EC77B60
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Apr 2023 09:12:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238991AbjDZAuO (ORCPT
+        id S240145AbjDZJMl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 Apr 2023 20:50:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55268 "EHLO
+        Wed, 26 Apr 2023 05:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239032AbjDZAt7 (ORCPT
+        with ESMTP id S239997AbjDZJMi (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 Apr 2023 20:49:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92122193E1;
-        Tue, 25 Apr 2023 17:49:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB3AB62E0D;
-        Wed, 26 Apr 2023 00:49:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A81FC433EF;
-        Wed, 26 Apr 2023 00:49:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682470171;
-        bh=S2GMdo53A6ZmyF9BBrhmPbTXFtIVagtRorCymkZ1c+c=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=AHzY/7RgwmThFwIrExnl5NKxLD7uI1jX3q89GAukpfJxW4pB2ZQf7igXzspVPe2QK
-         4f1Zpb0q4l0jK2MgswrwMzNSyYnYTUlfzRBtZV+DDtcEqz7cfqH2LkysDCvmAYaQGc
-         L8UQir+ekhkFRAkKM9Ifl6fZEZIpKUearLxA1WobjWorENQDoOzC3GYli4TPhioFf5
-         ktQlVxWtj9I9oSNcuuR2MpLYNMBS9tGmlj1NGlnuQae7qYQjVEpQwEeJLK5aoJ5SbQ
-         OFmpPk14K91xPxcSPuR1/qL30nsRqQ+sQdX5b3xZFQzrXhRLWEKjhyAAZt/pM+ZKxS
-         PbfvAXTzLS1TQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 234F6E5FFC6;
-        Wed, 26 Apr 2023 00:49:31 +0000 (UTC)
-Subject: Re: [GIT PULL] rpmsg updates for v6.4
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230424145902.277800-1-andersson@kernel.org>
-References: <20230424145902.277800-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-remoteproc.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230424145902.277800-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.4
-X-PR-Tracked-Commit-Id: ba7a4754da1092decbeea3b29bf7d5946f1be400
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fe89e9b1af14794a4df9d45b958ff1adf0b98dc1
-Message-Id: <168247017113.10866.13504213550079613895.pr-tracker-bot@kernel.org>
-Date:   Wed, 26 Apr 2023 00:49:31 +0000
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
+        Wed, 26 Apr 2023 05:12:38 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1175430CA;
+        Wed, 26 Apr 2023 02:12:31 -0700 (PDT)
+X-UUID: 75e5f780e41211eda9a90f0bb45854f4-20230426
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=X5BMOUCftBqUoS89OY1vJghk0U8zsFcVshTFWmsRm4E=;
+        b=cGdRaE4fZAkJ9C0QfYzazZF/ynwvuk7yLlDI+uo6aoOsydawcUneSZ7IFB0XM9IVIVXXCeSQAvf5QuBH5TJ/GfMlYKfM3hWhRc4LopsuctWiDdxwBHhEF0kJt5qIQaaLlzO8ScbXh01MEnmjeepKNvGGuXW5/XruhZk+fnhB2NE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.22,REQID:a12ec346-2823-47fc-ae8d-b6736cea1f46,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:120426c,CLOUDID:f6244e85-cd9c-45f5-8134-710979e3df0e,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-UUID: 75e5f780e41211eda9a90f0bb45854f4-20230426
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 276731506; Wed, 26 Apr 2023 17:12:25 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.25; Wed, 26 Apr 2023 17:12:24 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.25 via Frontend Transport; Wed, 26 Apr 2023 17:12:24 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Tinghan Shen <tinghan.shen@mediatek.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v10 01/11] dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode definition
+Date:   Wed, 26 Apr 2023 17:12:01 +0800
+Message-ID: <20230426091211.21557-2-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230426091211.21557-1-tinghan.shen@mediatek.com>
+References: <20230426091211.21557-1-tinghan.shen@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The pull request you sent on Mon, 24 Apr 2023 07:59:02 -0700:
+Improve the definition of the rpmsg subnode by
+assigning a distinct node name and adding the
+definition source of node properties.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.4
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ .../bindings/remoteproc/mtk,scp.yaml          | 31 +++++++++----------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fe89e9b1af14794a4df9d45b958ff1adf0b98dc1
-
-Thank you!
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index 895415772d1d..271081df0e46 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -58,6 +58,18 @@ properties:
+   memory-region:
+     maxItems: 1
+ 
++  cros-ec-rpmsg:
++    $ref: /schemas/mfd/google,cros-ec.yaml
++    description:
++      This subnode represents the rpmsg device. The properties
++      of this node are defined by the individual bindings for
++      the rpmsg devices.
++
++    required:
++      - mediatek,rpmsg-name
++
++    unevaluatedProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -89,21 +101,7 @@ allOf:
+         reg-names:
+           maxItems: 2
+ 
+-additionalProperties:
+-  type: object
+-  description:
+-    Subnodes of the SCP represent rpmsg devices. The names of the devices
+-    are not important. The properties of these nodes are defined by the
+-    individual bindings for the rpmsg devices.
+-  properties:
+-    mediatek,rpmsg-name:
+-      $ref: /schemas/types.yaml#/definitions/string-array
+-      description:
+-        Contains the name for the rpmsg device. Used to match
+-        the subnode to rpmsg device announced by SCP.
+-
+-  required:
+-    - mediatek,rpmsg-name
++additionalProperties: false
+ 
+ examples:
+   - |
+@@ -118,7 +116,8 @@ examples:
+         clocks = <&infracfg CLK_INFRA_SCPSYS>;
+         clock-names = "main";
+ 
+-        cros_ec {
++        cros-ec-rpmsg {
++            compatible = "google,cros-ec-rpmsg";
+             mediatek,rpmsg-name = "cros-ec-rpmsg";
+         };
+     };
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.18.0
+
