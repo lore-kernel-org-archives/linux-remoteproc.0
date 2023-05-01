@@ -2,47 +2,49 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6F8C7EE25
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 May 2023 02:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4237DC77B7F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 May 2023 02:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232176AbjEAC5s (ORCPT
+        id S232296AbjEAC7r (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 30 Apr 2023 22:57:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47824 "EHLO
+        Sun, 30 Apr 2023 22:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232156AbjEAC5o (ORCPT
+        with ESMTP id S232295AbjEAC7I (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 30 Apr 2023 22:57:44 -0400
+        Sun, 30 Apr 2023 22:59:08 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B531730;
-        Sun, 30 Apr 2023 19:57:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CFE173A;
+        Sun, 30 Apr 2023 19:58:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F48A615CC;
-        Mon,  1 May 2023 02:57:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F039C433D2;
-        Mon,  1 May 2023 02:57:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 339A0615CC;
+        Mon,  1 May 2023 02:58:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89CFEC433D2;
+        Mon,  1 May 2023 02:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682909834;
-        bh=dR9PklygolTqH8imwIcPA8LbTdW6fOKb0nJV97565/o=;
+        s=k20201202; t=1682909905;
+        bh=lW38JLU3QFhVbWOQXPhF88T4VJz8JtutIhc3gKjsfPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f6Iixv7wOr5SYGeyP7Fs8WwyuKegvs40PuSYwJm/0W8UiOHNDIo/UfTr58Ng75Kly
-         5KG3VaK55XwY3veCdMKtz1gLOq6TRii6IuNQWCpTRLykurlJo3ToeGn6TGwCbGocvi
-         bIKl6frNmwcxzc/nNKr6pI4334ZpIapsjNNuH0UdE1K1/tl1nc4Dp0rwLaDeHnLkcJ
-         ZqUIhPRimR/gKmZgzRJEoC/q+LErlIKG+IzgcASarkDS2j9p0Hrf71fNJU8A0jSVR2
-         RV9VQVvWTyG7yt5JNYnkDZ+XfBQRMivbAG0O5lAzFDHLp8AYYmgKoIRE2+vBV5Q2E4
-         jwtt2AcQmLUuw==
+        b=LNDM867XKrmv3pVWL2gsdAOe3tK/usCrCB/aMswNBvi/3Au0pL0UfA9gkLL94i/k7
+         NIa67vFvEk6UYfvH9VQN7S36hZGbwdBYtzGxIoReinY/6pLW/8+BMxfdOSBLMo7VB5
+         vEMWTnX5NmenF1Rvzvd+IyKJfP2qiFctDLq4mRHONMyX21L4LdlufUErJqbAuprm3S
+         YTTf6ABIYqrKq2bZIqai6HyT85dAKK3acs0Pa58Sw593KTLrFU0Lv6SdQ0E53V4xmj
+         mDomirRvicyANEcwIpOkVzbNMGlC8KRRYUDqbg9RPhjbImH4Y1xL6evtwdt6Up/i3B
+         89zu2EvQbBJLg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Sasha Levin <sashal@kernel.org>, andersson@kernel.org,
-        shawnguo@kernel.org, linux-remoteproc@vger.kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.3 09/44] remoteproc: imx_dsp_rproc: Add custom memory copy implementation for i.MX DSP Cores
-Date:   Sun, 30 Apr 2023 22:55:57 -0400
-Message-Id: <20230501025632.3253067-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.3 25/44] remoteproc: stm32_rproc: Add mutex protection for workqueue
+Date:   Sun, 30 Apr 2023 22:56:13 -0400
+Message-Id: <20230501025632.3253067-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230501025632.3253067-1-sashal@kernel.org>
 References: <20230501025632.3253067-1-sashal@kernel.org>
@@ -54,230 +56,56 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Iuliana Prodan <iuliana.prodan@nxp.com>
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 
-[ Upstream commit 408ec1ff0caa340c57eecf4cbd14ef0132036a50 ]
+[ Upstream commit 35bdafda40cc343ad2ba2cce105eba03a70241cc ]
 
-The IRAM is part of the HiFi DSP.
-According to hardware specification only 32-bits write are allowed
-otherwise we get a Kernel panic.
+The workqueue may execute late even after remoteproc is stopped or
+stopping, some resources (rpmsg device and endpoint) have been
+released in rproc_stop_subdevices(), then rproc_vq_interrupt()
+accessing these resources will cause kernel dump.
 
-Therefore add a custom memory copy and memset functions to deal with
-the above restriction.
+Call trace:
+virtqueue_add_inbuf
+virtqueue_add_inbuf
+rpmsg_recv_single
+rpmsg_recv_done
+vring_interrupt
+stm32_rproc_mb_vq_work
+process_one_work
+worker_thread
+kthread
 
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Link: https://lore.kernel.org/r/20230221170356.27923-1-iuliana.prodan@oss.nxp.com
+Suggested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Link: https://lore.kernel.org/r/20230331160634.3113031-1-arnaud.pouliquen@foss.st.com
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/remoteproc/imx_dsp_rproc.c | 187 ++++++++++++++++++++++++++++-
- 1 file changed, 186 insertions(+), 1 deletion(-)
+ drivers/remoteproc/stm32_rproc.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 95da1cbefacf0..6255864442a2b 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -715,6 +715,191 @@ static void imx_dsp_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_err(dev, "%s: failed (%d, err:%d)\n", __func__, vqid, err);
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 7d782ed9e5896..f618405cf4200 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -287,8 +287,16 @@ static void stm32_rproc_mb_vq_work(struct work_struct *work)
+ 	struct stm32_mbox *mb = container_of(work, struct stm32_mbox, vq_work);
+ 	struct rproc *rproc = dev_get_drvdata(mb->client.dev);
+ 
++	mutex_lock(&rproc->lock);
++
++	if (rproc->state != RPROC_RUNNING)
++		goto unlock_mutex;
++
+ 	if (rproc_vq_interrupt(rproc, mb->vq_id) == IRQ_NONE)
+ 		dev_dbg(&rproc->dev, "no message found in vq%d\n", mb->vq_id);
++
++unlock_mutex:
++	mutex_unlock(&rproc->lock);
  }
  
-+/*
-+ * Custom memory copy implementation for i.MX DSP Cores
-+ *
-+ * The IRAM is part of the HiFi DSP.
-+ * According to hw specs only 32-bits writes are allowed.
-+ */
-+static int imx_dsp_rproc_memcpy(void *dest, const void *src, size_t size)
-+{
-+	const u8 *src_byte = src;
-+	const u32 *source = src;
-+	u32 affected_mask;
-+	u32 *dst = dest;
-+	int i, q, r;
-+	u32 tmp;
-+
-+	/* destination must be 32bit aligned */
-+	if (!IS_ALIGNED((uintptr_t)dest, 4))
-+		return -EINVAL;
-+
-+	q = size / 4;
-+	r = size % 4;
-+
-+	/* copy data in units of 32 bits at a time */
-+	for (i = 0; i < q; i++)
-+		writel(source[i], &dst[i]);
-+
-+	if (r) {
-+		affected_mask = GENMASK(8 * r, 0);
-+
-+		/*
-+		 * first read the 32bit data of dest, then change affected
-+		 * bytes, and write back to dest.
-+		 * For unaffected bytes, it should not be changed
-+		 */
-+		tmp = readl(dest + q * 4);
-+		tmp &= ~affected_mask;
-+
-+		/* avoid reading after end of source */
-+		for (i = 0; i < r; i++)
-+			tmp |= (src_byte[q * 4 + i] << (8 * i));
-+
-+		writel(tmp, dest + q * 4);
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Custom memset implementation for i.MX DSP Cores
-+ *
-+ * The IRAM is part of the HiFi DSP.
-+ * According to hw specs only 32-bits writes are allowed.
-+ */
-+static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
-+{
-+	u32 tmp_val = value;
-+	u32 *tmp_dst = addr;
-+	u32 affected_mask;
-+	int q, r;
-+	u32 tmp;
-+
-+	/* destination must be 32bit aligned */
-+	if (!IS_ALIGNED((uintptr_t)addr, 4))
-+		return -EINVAL;
-+
-+	tmp_val |= tmp_val << 8;
-+	tmp_val |= tmp_val << 16;
-+
-+	q = size / 4;
-+	r = size % 4;
-+
-+	while (q--)
-+		writel(tmp_val, tmp_dst++);
-+
-+	if (r) {
-+		affected_mask = GENMASK(8 * r, 0);
-+
-+		/*
-+		 * first read the 32bit data of addr, then change affected
-+		 * bytes, and write back to addr.
-+		 * For unaffected bytes, it should not be changed
-+		 */
-+		tmp = readl(tmp_dst);
-+		tmp &= ~affected_mask;
-+
-+		tmp |= (tmp_val & affected_mask);
-+		writel(tmp, tmp_dst);
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-+ * @rproc: remote processor which will be booted using these fw segments
-+ * @fw: the ELF firmware image
-+ *
-+ * This function loads the firmware segments to memory, where the remote
-+ * processor expects them.
-+ *
-+ * Return: 0 on success and an appropriate error code otherwise
-+ */
-+static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-+{
-+	struct device *dev = &rproc->dev;
-+	const void *ehdr, *phdr;
-+	int i, ret = 0;
-+	u16 phnum;
-+	const u8 *elf_data = fw->data;
-+	u8 class = fw_elf_get_class(fw);
-+	u32 elf_phdr_get_size = elf_size_of_phdr(class);
-+
-+	ehdr = elf_data;
-+	phnum = elf_hdr_get_e_phnum(class, ehdr);
-+	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-+
-+	/* go through the available ELF segments */
-+	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
-+		u64 da = elf_phdr_get_p_paddr(class, phdr);
-+		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
-+		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
-+		u64 offset = elf_phdr_get_p_offset(class, phdr);
-+		u32 type = elf_phdr_get_p_type(class, phdr);
-+		void *ptr;
-+
-+		if (type != PT_LOAD || !memsz)
-+			continue;
-+
-+		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
-+			type, da, memsz, filesz);
-+
-+		if (filesz > memsz) {
-+			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
-+				filesz, memsz);
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		if (offset + filesz > fw->size) {
-+			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
-+				offset + filesz, fw->size);
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		if (!rproc_u64_fit_in_size_t(memsz)) {
-+			dev_err(dev, "size (%llx) does not fit in size_t type\n",
-+				memsz);
-+			ret = -EOVERFLOW;
-+			break;
-+		}
-+
-+		/* grab the kernel address for this device address */
-+		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
-+		if (!ptr) {
-+			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-+				memsz);
-+			ret = -EINVAL;
-+			break;
-+		}
-+
-+		/* put the segment where the remote processor expects it */
-+		if (filesz) {
-+			ret = imx_dsp_rproc_memcpy(ptr, elf_data + offset, filesz);
-+			if (ret) {
-+				dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%llx\n",
-+					da, memsz);
-+				break;
-+			}
-+		}
-+
-+		/* zero out remaining memory for this segment */
-+		if (memsz > filesz) {
-+			ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
-+			if (ret) {
-+				dev_err(dev, "memset failed for da 0x%llx memsz 0x%llx\n",
-+					da, memsz);
-+				break;
-+			}
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- {
- 	if (rproc_elf_load_rsc_table(rproc, fw))
-@@ -729,7 +914,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
- 	.start		= imx_dsp_rproc_start,
- 	.stop		= imx_dsp_rproc_stop,
- 	.kick		= imx_dsp_rproc_kick,
--	.load		= rproc_elf_load_segments,
-+	.load		= imx_dsp_rproc_elf_load_segments,
- 	.parse_fw	= imx_dsp_rproc_parse_fw,
- 	.sanity_check	= rproc_elf_sanity_check,
- 	.get_boot_addr	= rproc_elf_get_boot_addr,
+ static void stm32_rproc_mb_callback(struct mbox_client *cl, void *data)
 -- 
 2.39.2
 
