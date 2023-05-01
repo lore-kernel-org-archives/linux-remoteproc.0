@@ -2,37 +2,37 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4237DC77B7F
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 May 2023 02:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A03C7EE25
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 May 2023 03:06:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbjEAC7r (ORCPT
+        id S232406AbjEADGY (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 30 Apr 2023 22:59:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49650 "EHLO
+        Sun, 30 Apr 2023 23:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232295AbjEAC7I (ORCPT
+        with ESMTP id S233020AbjEADFu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 30 Apr 2023 22:59:08 -0400
+        Sun, 30 Apr 2023 23:05:50 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4CFE173A;
-        Sun, 30 Apr 2023 19:58:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9FA43599;
+        Sun, 30 Apr 2023 20:02:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 339A0615CC;
-        Mon,  1 May 2023 02:58:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89CFEC433D2;
-        Mon,  1 May 2023 02:58:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 84B1861755;
+        Mon,  1 May 2023 03:01:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BC4C4339B;
+        Mon,  1 May 2023 03:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682909905;
+        s=k20201202; t=1682910078;
         bh=lW38JLU3QFhVbWOQXPhF88T4VJz8JtutIhc3gKjsfPk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LNDM867XKrmv3pVWL2gsdAOe3tK/usCrCB/aMswNBvi/3Au0pL0UfA9gkLL94i/k7
-         NIa67vFvEk6UYfvH9VQN7S36hZGbwdBYtzGxIoReinY/6pLW/8+BMxfdOSBLMo7VB5
-         vEMWTnX5NmenF1Rvzvd+IyKJfP2qiFctDLq4mRHONMyX21L4LdlufUErJqbAuprm3S
-         YTTf6ABIYqrKq2bZIqai6HyT85dAKK3acs0Pa58Sw593KTLrFU0Lv6SdQ0E53V4xmj
-         mDomirRvicyANEcwIpOkVzbNMGlC8KRRYUDqbg9RPhjbImH4Y1xL6evtwdt6Up/i3B
-         89zu2EvQbBJLg==
+        b=RgRJ3WKbMwnOIcpoIxtuYbWUQvswsKjPdgj8SUSgPzaTII1+FJ3bDdmmTg79Kw8JX
+         WKy3ML6vOtzu4ePciQQulKR78Fx7EJ8C0mfTvmCyEMqlr9XVjQ5CzUEk0eE8WMOdD7
+         D6nwvGkmMscDXEaqQpV98J6Lc0stPXNyvDuy0t1FwauVGCYKkXO7VT+MLtaL66FVwy
+         hXnyyMW1tu1dk9xOnOSmeuX1yePS1yGmX2bD1f7gF/4b5R74SJBAZfJqo5LFcqTPWt
+         PLqavTkqLhoeOf4koeeY/FS5XkP/h47xOIOYMiTeIUYZkP+2i3vLrR08Uu1ILX0ufA
+         nKM8ImAoCOw7Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
@@ -42,12 +42,12 @@ Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
         linux-remoteproc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.3 25/44] remoteproc: stm32_rproc: Add mutex protection for workqueue
-Date:   Sun, 30 Apr 2023 22:56:13 -0400
-Message-Id: <20230501025632.3253067-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.2 23/37] remoteproc: stm32_rproc: Add mutex protection for workqueue
+Date:   Sun, 30 Apr 2023 22:59:31 -0400
+Message-Id: <20230501025945.3253774-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501025632.3253067-1-sashal@kernel.org>
-References: <20230501025632.3253067-1-sashal@kernel.org>
+In-Reply-To: <20230501025945.3253774-1-sashal@kernel.org>
+References: <20230501025945.3253774-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
