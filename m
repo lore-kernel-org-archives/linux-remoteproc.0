@@ -2,37 +2,37 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAAEC7EE29
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 May 2023 03:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2E3C77B7F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  1 May 2023 03:11:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbjEADGZ (ORCPT
+        id S232862AbjEADLQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 30 Apr 2023 23:06:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58066 "EHLO
+        Sun, 30 Apr 2023 23:11:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232590AbjEADEQ (ORCPT
+        with ESMTP id S232970AbjEADKF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 30 Apr 2023 23:04:16 -0400
+        Sun, 30 Apr 2023 23:10:05 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 610B61FD2;
-        Sun, 30 Apr 2023 20:01:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633F32137;
+        Sun, 30 Apr 2023 20:04:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 24D9E6172C;
-        Mon,  1 May 2023 03:00:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98ABEC433D2;
-        Mon,  1 May 2023 03:00:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6062F6170A;
+        Mon,  1 May 2023 03:03:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8285C433EF;
+        Mon,  1 May 2023 03:02:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682910023;
+        s=k20201202; t=1682910180;
         bh=dR9PklygolTqH8imwIcPA8LbTdW6fOKb0nJV97565/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Sjiv4oB1HmxNhmm4DWQV3EOibvUOWcKgrYgVb98Mnh6yoxjF/X0Fh+85RGHNf1SaY
-         tHPmhuMgB1Km4cXo756K3nfNJ7SrnsWaXn/KhKcyvYDkA6/HkC/LoaPcIrkDITwhs0
-         bLwq1FImymxqQ51Ktx2Rh424HSHsfTiJR8uPQJEuCE7UWQt9/9d9zoaRjvYaOljJuL
-         cK3CbtDFvWYogaFSuWXetyPZEAz5MjVmoFQhbNA4XIyLVSibK3Kx0p4V0LcU6LNzxw
-         WnNGH/GV64mlCL205X6zeMF2ySZ06/iFj+qmhyf+lbiSfBi2jvwu1OIbvF6H5cLIgw
-         ROxUY41m5noqw==
+        b=HVGtpDldsapqD3Z2l0ZE1qxsY+R7IPOhIMI/92iTK0jsIAJMiO4Z5y6BJhtdtgsPy
+         P80d8e0OHHWs5DsdgcQSRkvj+Csf6E9DJzvBTen4m0jFxbt3F15lb30cnwaZLqu8y6
+         KomOtHz2TqcL/rAIJPs1nWrrrlnHyNd1q9Oyza0Zb5rTRXHwoJXoY9Us2miaVlGKfu
+         trpUYJQPchOtc3nn20pAsXPcPVAnY4939ebtw0gC3h+fKXRv13TxrTXGxgeqIkT+5W
+         MyYpsUG6218bqFvwxvH7ctyuGjIwbwNbpx+pVctmXIDkLnV05s4Xe6zyv2tlSqnQYw
+         QNKDh53u32eIg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
@@ -40,12 +40,12 @@ Cc:     Iuliana Prodan <iuliana.prodan@nxp.com>,
         Sasha Levin <sashal@kernel.org>, andersson@kernel.org,
         shawnguo@kernel.org, linux-remoteproc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.2 09/37] remoteproc: imx_dsp_rproc: Add custom memory copy implementation for i.MX DSP Cores
-Date:   Sun, 30 Apr 2023 22:59:17 -0400
-Message-Id: <20230501025945.3253774-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 08/33] remoteproc: imx_dsp_rproc: Add custom memory copy implementation for i.MX DSP Cores
+Date:   Sun, 30 Apr 2023 23:02:02 -0400
+Message-Id: <20230501030227.3254266-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501025945.3253774-1-sashal@kernel.org>
-References: <20230501025945.3253774-1-sashal@kernel.org>
+In-Reply-To: <20230501030227.3254266-1-sashal@kernel.org>
+References: <20230501030227.3254266-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
