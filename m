@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA241C7EE2A
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 May 2023 17:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED1BC7EE29
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  3 May 2023 17:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229976AbjECRGU (ORCPT
+        id S229970AbjECRGU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Wed, 3 May 2023 13:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44300 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbjECRGG (ORCPT
+        with ESMTP id S229913AbjECRGN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 3 May 2023 13:06:06 -0400
+        Wed, 3 May 2023 13:06:13 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7137A94;
-        Wed,  3 May 2023 10:05:35 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343GPgc7009038;
-        Wed, 3 May 2023 17:04:04 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51E0259FC;
+        Wed,  3 May 2023 10:05:41 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343GmrN4002039;
+        Wed, 3 May 2023 17:04:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=0DzLymHz3lEzTmHMI8yir3TRAShsPt00mvYT999cUZY=;
- b=JoJ5L0EZQ5BeE4BrszLm+5WZsiEK+tNPeN1sFiFzRaPqevjFLXwM/BDuVwqnwfVFOS+I
- SE6TVujwQCiupqBhS7+8xrOGNElopcPRvp8rLiPoGUleF31iMC3toUkvlzLOgV8M1t+l
- tr2KFNyfDPocWPg1MJif0dFLi6xeLv7ftKsG8wHwqkVUuXqamN1Iyf5vn1+aubugBKQw
- Gv7SMHvhdIfdH2bMSb+wjkZmdTx8vuNT0XQJZN/edCT078OBPZnzl9m7OGF0s1ZUukdR
- 2K4IYhk+lkWybrKHhDFzrngfvGZoKcaD4b9Qp6QsvmsG3fa102dfZOmTs+WALT56ZP0y +A== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbjwn994f-1
+ bh=8nYnzsuGMPsj8JOqe13LRPBczbL/fuoMs9/mE/rmmaE=;
+ b=O8I42Xh/OTKcrSYBuQQqIMwaLeekgkwrVdCkcAYjWc2ApMwzbNGNLL7wwEe/PB6h7ASX
+ mAQeKyuNozfA2vcoJDavQBKyd52xjPZuhNxeX3xdDYvztX9bxoM0yYIrtYHbCkSlbV3y
+ MntE5Bs3cVcoLihEVbWU55XmBtCxGgLXSQH27lN0ubfdPcmuMrzDt0rBhRHgEJeWzc69
+ 82kZ1ZnH2PxZ8PZ2fFTn/dPphRom/AJSK4A45pr8Psv1DpwB72G7QI/l6Nw1hF+NLp2Y
+ rnhhgk+HsQZD0y8AGJGfEhU4oxy75+dZYNK2kpTD6an+vqaWf2+NreJe2dUJQEeEp2m8 nQ== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbeb2sx60-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 17:04:03 +0000
+        Wed, 03 May 2023 17:04:10 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343H3wR5003853
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343H3exR003561
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 3 May 2023 17:03:58 GMT
+        Wed, 3 May 2023 17:03:40 GMT
 Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
  nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 3 May 2023 10:03:52 -0700
+ 15.2.986.42; Wed, 3 May 2023 10:03:34 -0700
 From:   Mukesh Ojha <quic_mojha@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
@@ -53,9 +53,9 @@ CC:     <linux-arm-msm@vger.kernel.org>,
         <linux-hardening@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-doc@vger.kernel.org>, "Mukesh Ojha" <quic_mojha@quicinc.com>
-Subject: [PATCH v3 11/18] arm64: dts: qcom: sm8450: Add Qualcomm ramoops minidump node
-Date:   Wed, 3 May 2023 22:32:25 +0530
-Message-ID: <1683133352-10046-12-git-send-email-quic_mojha@quicinc.com>
+Subject: [PATCH v3 08/18] remoterproc: qcom: refactor to leverage exported minidump symbol
+Date:   Wed, 3 May 2023 22:32:22 +0530
+Message-ID: <1683133352-10046-9-git-send-email-quic_mojha@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
 References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
@@ -66,52 +66,55 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Cfl-5WOcbwYZpvDBbsnEXcoeROMMQzBn
-X-Proofpoint-ORIG-GUID: Cfl-5WOcbwYZpvDBbsnEXcoeROMMQzBn
+X-Proofpoint-ORIG-GUID: 2FY1pXa6SwJ3AJP0-tSHYGW0NzkSHCrx
+X-Proofpoint-GUID: 2FY1pXa6SwJ3AJP0-tSHYGW0NzkSHCrx
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-03_12,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=911
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305030146
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2303200000 definitions=main-2305030146
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This enable dynamic reserve memory for Qualcomm ramoops device,
-Which will used to save ramoops frontend data and this region
-gets dumped on crash via Qualcomm's minidump infrastructure.
-qcom_pstore_minidump is the associated driver for this node.
+qcom_minidump driver provides qcom_minidump_subsystem_desc()
+exported API which other driver can use it query subsystem
+descriptor. Refactor qcom_minidump() to use this symbol.
 
 Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 ---
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/remoteproc/qcom_common.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 595533a..92d023f 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -614,6 +614,17 @@
- 			reg = <0x0 0xed900000 0x0 0x3b00000>;
- 			no-map;
- 		};
-+
-+		qcom_ramoops_md_region:qcom_ramoops_md {
-+			alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
-+			size = <0x0 0x200000>;
-+			no-map;
-+		};
-+	};
-+
-+	qcom_ramoops_md {
-+		compatible = "qcom,sm8450-ramoops-minidump", "qcom,ramoops-minidump";
-+		memory-region = <&qcom_ramoops_md_region>;
- 	};
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 88fc984..240e9f7 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -94,19 +94,10 @@ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
+ {
+ 	int ret;
+ 	struct minidump_subsystem *subsystem;
+-	struct minidump_global_toc *toc;
  
- 	smp2p-adsp {
+-	/* Get Global minidump ToC*/
+-	toc = qcom_smem_get(QCOM_SMEM_HOST_ANY, SBL_MINIDUMP_SMEM_ID, NULL);
+-
+-	/* check if global table pointer exists and init is set */
+-	if (IS_ERR(toc) || !toc->status) {
+-		dev_err(&rproc->dev, "Minidump TOC not found in SMEM\n");
++	subsystem = qcom_minidump_subsystem_desc(minidump_id);
++	if (IS_ERR(subsystem))
+ 		return;
+-	}
+-
+-	/* Get subsystem table of contents using the minidump id */
+-	subsystem = &toc->subsystems[minidump_id];
+ 
+ 	/**
+ 	 * Collect minidump if SS ToC is valid and segment table
 -- 
 2.7.4
 
