@@ -2,145 +2,137 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B149CC7EE2A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 May 2023 12:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6E4C77B78
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 May 2023 12:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbjEDM3G (ORCPT
+        id S230280AbjEDMcK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 May 2023 08:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55298 "EHLO
+        Thu, 4 May 2023 08:32:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbjEDM3E (ORCPT
+        with ESMTP id S229990AbjEDMcJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 May 2023 08:29:04 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439726185;
-        Thu,  4 May 2023 05:29:03 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 344C6mSH018634;
-        Thu, 4 May 2023 12:28:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=PUpzOZj3934Z7RYhXVQ62PQUTt99uv5wnpS3MmtTpDk=;
- b=ScENoJCIMPa/nuFo6WTOFsnXjEuxC+Det3kt10e9fKn1ztsXrEJgHbbjsrZr+z5JwEZn
- hmDJvGzGPJOWJPgP54zFyhoGSr5FDEjM8rUt6QmcFddNfV1plbgwK+LXhnMor7f+liYY
- 1VzHTBDenyXsxo4f+TPGNgKFKQlY69BCo4IOauZNvlUsoplFqSEJ1b0jsbVeIxerH20p
- 2cMQx/I2NegcwPzWHd437O+XwqrUHodbP6rO/0i2hxFnPLW+lEWAHsWnsoc2PGBOBzfU
- rwYE9NbH2hxJZz2f/7dMVEAr3GchS+Yc5D8oRURBysTFiHSxPjcCbNE2QfMSYh7IOXJC fg== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qc8kw8mh7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 04 May 2023 12:28:41 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 344CQiX9004732
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 4 May 2023 12:28:40 GMT
-Received: from [10.216.46.158] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 4 May 2023
- 05:26:37 -0700
-Message-ID: <33ea7c3b-4317-5aff-5e6a-af6e093d45a0@quicinc.com>
-Date:   Thu, 4 May 2023 17:56:33 +0530
+        Thu, 4 May 2023 08:32:09 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E0B618B
+        for <linux-remoteproc@vger.kernel.org>; Thu,  4 May 2023 05:32:06 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9659c5b14d8so67745266b.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 04 May 2023 05:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683203524; x=1685795524;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CrbpIEMptg8Nu95mNsBTQ6WaBBHC6A4oRrtY3eFlfqs=;
+        b=a5ecuECdq5V5WZ2pb8QPbrLujAGXrAJwfWNwdXd7bm+tmCsthMP1e33cpqChSe6GKk
+         l3RYFR9DdDqdUmwY7nZFqa8sBo4+02hL1qBqzrWqLBC4JGVxIPsU9/X2AvC8Eef9x9OY
+         fpIoUfyyNMuFs76uH/mU9MGTUbS0b4QoZ8+Esgft/09YyNJHZ8J//KlZQMRG+1rs0ehU
+         s3f8N4Fe9FjBbz5jM1ZfJ15RayFLThFsuNXRam4v1H1c++tVDQaLCWuAQqt7NFhyBDGl
+         QcADV5f8ovZfMd131yznZHQ4KqwBL95gmzGZBKWrMASnNSL9OvaV29Iz/Jb1kD49cc1f
+         L5fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683203524; x=1685795524;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CrbpIEMptg8Nu95mNsBTQ6WaBBHC6A4oRrtY3eFlfqs=;
+        b=JwO1GH+BcSwZg18cgbkLw8aOHJ+9CG7FRi2G/N4zlRqa91EDqA7+gvjVQwsBsKwS9A
+         5LdAuFp59lyoVwaKu6c+6zDk6wwuwN/uhbv5sqrH3jPtgGJ2oVhZ0/TtfWWEBolFGc0q
+         WOaScIWSR6DvVjCgRzOJMaoEtjcCHurrO84mCF1rpNko6W4P1Aotu7H+Fgb5lFq2TGM5
+         k5vX86MHB+uEcXb7o6UTngSNkPFs0CoRDxwHZ5Owj7Z/1n4hok8BszhK29kD4giD3vGN
+         T3wr5/yU7o5+r7NTx+pWaaRGUMD0L612zRZ9TV2yV/s0Nsoa+/vm+C4A3leflYp/xB+A
+         JxVQ==
+X-Gm-Message-State: AC+VfDwPezQdXVvH4uKW4knVm0QahTsFAa49eKU6iawOiSvbkb1807pv
+        EUIBWvpuOSOpU8401cVTY5zT0g==
+X-Google-Smtp-Source: ACHHUZ7WP/SrQkpuJ4nYDyrtOsN3LKp6lH6RSLgSvg/FR7Pb9OEgE0TBtEvtuxZc4ExAKCwQHhpMDQ==
+X-Received: by 2002:a17:906:ef08:b0:94f:3b83:a4d1 with SMTP id f8-20020a170906ef0800b0094f3b83a4d1mr5816986ejs.50.1683203524601;
+        Thu, 04 May 2023 05:32:04 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:cbf1:e7ef:fb81:e912? ([2a02:810d:15c0:828:cbf1:e7ef:fb81:e912])
+        by smtp.gmail.com with ESMTPSA id sk19-20020a170906631300b009572a8f86fbsm17151363ejc.165.2023.05.04.05.32.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 04 May 2023 05:32:03 -0700 (PDT)
+Message-ID: <a4118697-d575-6499-ed8e-656e51ca0da3@linaro.org>
+Date:   Thu, 4 May 2023 14:32:02 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 02/18] remoteproc: qcom: Move minidump specific data to
- qcom_minidump.h
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v3 07/18] arm64: defconfig: Enable Qualcomm minidump
+ driver
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
-        <linux-gpio@vger.kernel.org>, <srinivas.kandagatla@linaro.org>
-CC:     <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        srinivas.kandagatla@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
 References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
- <1683133352-10046-3-git-send-email-quic_mojha@quicinc.com>
- <fe94ed5c-c444-436d-720a-c96538c1026d@linaro.org>
- <e69862cc-4185-a7a2-07b2-15e331c4678a@quicinc.com>
- <659a9637-f82c-054b-99a8-dc25416c8e13@linaro.org>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <659a9637-f82c-054b-99a8-dc25416c8e13@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <1683133352-10046-8-git-send-email-quic_mojha@quicinc.com>
+ <ad9915b2-56ff-3f95-7c92-fae597d6ed43@linaro.org>
+ <4325c2e7-8ca1-7e45-db14-5ba8bc83f5d7@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <4325c2e7-8ca1-7e45-db14-5ba8bc83f5d7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2We-ouX9jSCh1TC1DTCqu74GKsCnUQj-
-X-Proofpoint-ORIG-GUID: 2We-ouX9jSCh1TC1DTCqu74GKsCnUQj-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-04_08,2023-05-04_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=396 malwarescore=0 phishscore=0
- adultscore=0 clxscore=1015 spamscore=0 impostorscore=0 bulkscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305040101
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 5/4/2023 5:33 PM, Krzysztof Kozlowski wrote:
-> On 04/05/2023 13:58, Mukesh Ojha wrote:
->>
->>
->> On 5/4/2023 5:08 PM, Krzysztof Kozlowski wrote:
->>> On 03/05/2023 19:02, Mukesh Ojha wrote:
->>>> Move minidump specific data types and macros to a separate internal
->>>> header(qcom_minidump.h) so that it can be shared among different
->>>> Qualcomm drivers.
->>>
->>> No, this is not internal header. You moved it to global header.
->>>
->>> There is no reason driver internals should be exposed to other unrelated
->>> subsystems.
->>>
->>>>
->>>> There is no change in functional behavior after this.
->>>
->>> It is. You made all these internal symbols available to others.
->>>
->>>>
->>>
->>> This comes without justification why other drivers needs to access
->>> private and internal data. It does not look correct design. NAK.
->>
->> Thanks for catching outdated commit text, will fix the commit with
->> more descriptive reasoning.
->>
->> It has to be global so that co-processor minidump and apss minidump can
->> share data structure and they are lying in different directory.
->>
+On 04/05/2023 13:45, Mukesh Ojha wrote:
 > 
-> Then you should not share all the internals of memory layout but only
-> few pieces necessary to talk with minidump driver. The minidump driver
-> should organize everything how it wants.
-
-These are core data structure which is shared with boot firmware and the
-one's are moved here all are required by minidump driver .
-
-If you follow here[1], i raised by concern to make this particular one's
-as private and later to avoid confusion went with single header.
-But if others agree, I will keep the one that get shared with minidump
-as separate one or if relative path of headers are allowed that can make
-it private between these drivers(which i don't think, will be allowed or
-recommended).
-
-[1]
-https://lore.kernel.org/lkml/3df1ec27-7e4d-1f84-ff20-94e8ea91c86f@quicinc.com/
-
--- Mukesh
 > 
-> Best regards,
-> Krzysztof
+> On 5/4/2023 4:53 PM, Krzysztof Kozlowski wrote:
+>> On 03/05/2023 19:02, Mukesh Ojha wrote:
+>>> Previous patches add the Qualcomm minidump driver support, so
+>>> lets enable minidump config so that it can be used by kernel
+>>> clients.
+>>>
+>>> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+>>
+>> This patchset is split too much. Defconfig change is one change. Not two
+>> or three.
+>>
+>>> ---
+>>>   arch/arm64/configs/defconfig | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>>> index a24609e..831c942 100644
+>>> --- a/arch/arm64/configs/defconfig
+>>> +++ b/arch/arm64/configs/defconfig
+>>> @@ -1250,6 +1250,7 @@ CONFIG_QCOM_STATS=m
+>>>   CONFIG_QCOM_WCNSS_CTRL=m
+>>>   CONFIG_QCOM_APR=m
+>>>   CONFIG_QCOM_ICC_BWMON=m
+>>> +CONFIG_QCOM_MINIDUMP=y
+>>
+>> This must be a module.
 > 
+> Why do you think this should be a module ?
+> 
+> Is it because, it is lying here among others '=m' ?
+
+Because we want and insist on everything being a module. That's the
+generic rule. There are exceptions, so if this justifies being an
+exception, please bring appropriate arguments.
+
+> 
+> Or you have some other reasoning ? like it is for qcom specific
+> soc and can not be used outside ? but that is not true for
+> all configs mentioned here.
+> 
+> The reason behind making it as '=y' was, to collect information from 
+> core kernel data structure as well as the information like percpu data, 
+> run queue, irq stat kind of information on kernel crash on a target 
+> running some perf configuration(android phone).
+
+I don't understand why =m stops you from all that. What's more, I don't
+understand why do you refer to the Android here. This is a development
+and debugging Linux defconfig, not Android reference config for vendors...
+
+Best regards,
+Krzysztof
+
