@@ -2,129 +2,103 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B956DC7EE29
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 May 2023 07:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D63C6C7EE21
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 May 2023 09:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbjEDHOI (ORCPT
+        id S230395AbjEDJr1 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 May 2023 03:14:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41032 "EHLO
+        Thu, 4 May 2023 05:47:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbjEDHOH (ORCPT
+        with ESMTP id S229972AbjEDJr0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 May 2023 03:14:07 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B86B26B5
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 May 2023 00:14:05 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2a8a5f6771fso1544151fa.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 May 2023 00:14:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683184443; x=1685776443;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fC32ZRL6kv8V/7o8EGUr1mtZobBUgWUVglha3gwf8ss=;
-        b=SKg0wIfLaLDnuauS+QNo+ttQkKMyX0p/sZ1KfMllPb9bPgx0sMEFrOosJEwQJqFBdY
-         wdWWmFf8C/l/3uLBTHhG+/iyxOn6Do7W+6sFqQt5qDl2E+RCyKhHnZzHacoNRdbVqQ5m
-         lQ5ZIcWhbbQL0CTZkKKpjThRy97Kgz/haVJTKFCnvPQ2oEW2IF/OBH94ki02CmcTy9Z9
-         k6IoUswj4PAWNobK0Tkc1ASV4hmdtkx5J5nqYreU5HvczJEJYjXSZgAumAI5p92cPpoi
-         +nk+3CKDzkgfEXLkcjCpFbFW5VhLYVOpLCMdsxWsaMA2AANRUtrvcHHkQr6gzFjt3X5X
-         Jr2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683184443; x=1685776443;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fC32ZRL6kv8V/7o8EGUr1mtZobBUgWUVglha3gwf8ss=;
-        b=RUpVwE+XhsnwTpmdRywZG3hIbfYRt57MnUeNmYG59L3lUZd93NLjpbcMQus9p+TQeM
-         6qweo28EEOPC0CaMO5DyHY7JDZXQRQGXFXGoFEw3zPi/xA82LQ8iNQvFIJ3hGiNgdJA2
-         2I5m7xR9e1DI6s+CACGIXj9Y56GKj5G9eJlq5dObbl9a74UyJg3k15i4IOkjhJOV4oxe
-         AIdU957Bv2EoIhzuRmYlVi7mw6fSdVmbV22yhxzRNA4vu0hi7RAOeDCZPEcLUSw1MKth
-         6uJvFlj97bcfTwQjzSqfYQBvu4jiR3W/Y9NzHUPb1EhMn3K/TgTCsjQYuYxOfAn5RRfx
-         Lwzw==
-X-Gm-Message-State: AC+VfDx5xYhhGdPTcsDi6u3yNRXo6uakLD3OjvSEF+H0CMRwvL/zI6hI
-        IKbxBne+GGyh3KrMZM6rjUtUTw==
-X-Google-Smtp-Source: ACHHUZ68E5CT+tz5TBMWB/yNgy/q68QX2qmngSSqztLupWyrwNdOkkrkNo9hgynnEpklbx+XHjkw6g==
-X-Received: by 2002:a2e:9785:0:b0:2ab:d1b:dcb2 with SMTP id y5-20020a2e9785000000b002ab0d1bdcb2mr635844lji.38.1683184443371;
-        Thu, 04 May 2023 00:14:03 -0700 (PDT)
-Received: from [192.168.1.101] (abyl248.neoplus.adsl.tpnet.pl. [83.9.31.248])
-        by smtp.gmail.com with ESMTPSA id f2-20020ac25082000000b004eed63bc08csm6402214lfm.131.2023.05.04.00.14.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 May 2023 00:14:02 -0700 (PDT)
-Message-ID: <21b500a5-2c4a-e156-61b3-aa0a2f4f5183@linaro.org>
-Date:   Thu, 4 May 2023 09:14:00 +0200
+        Thu, 4 May 2023 05:47:26 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACC746B8;
+        Thu,  4 May 2023 02:47:23 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34470Zrq017402;
+        Thu, 4 May 2023 11:47:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=6ZAeKfaCVjCcQYatDKf5A35sHggy0HxLFWn8Q2KLZBk=;
+ b=RoEBYkGpsg3gmhYy0mGguNKc/8Hz9Gux7m7QYdYPHGGgDLnkardx8IF1/TH1749xMwOm
+ pNqsk4/7rA1tRKNByM2BBaefU++wnXEgoh0GEpCbgZfGS7sfQwDSiRwavo3lUDYChVQq
+ R0SmAf8Vek9PzHk3ksKUdVIjb+O8pSRUH1DwE1rdc/iXrA9aQpToSGOjZtC7UK0Hgo6U
+ t8uHQQWlZf86OhAwlkIDJAgNU3X8qB+kQ1fY8xBHPkCj+HVj+4hFkV2fhggiTFplstWr
+ xmbO+T+1oTOUpnYdtLB5Xm8Z89RFrOSjyt7iI/061gXzdsL+95JJKh79UJIONgRk3IK+ fA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qbu4j4pse-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 04 May 2023 11:47:09 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 984E810002A;
+        Thu,  4 May 2023 11:46:55 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 90BE62138F9;
+        Thu,  4 May 2023 11:46:55 +0200 (CEST)
+Received: from localhost (10.201.21.213) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Thu, 4 May
+ 2023 11:46:54 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v2 3/4] ARM: dts: stm32: Update reset declarations
+Date:   Thu, 4 May 2023 11:46:40 +0200
+Message-ID: <20230504094641.870378-4-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230504094641.870378-1-arnaud.pouliquen@foss.st.com>
+References: <20230504094641.870378-1-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v3 11/18] arm64: dts: qcom: sm8450: Add Qualcomm ramoops
- minidump node
-Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, corbet@lwn.net, keescook@chromium.org,
-        tony.luck@intel.com, gpiccoli@igalia.com, catalin.marinas@arm.com,
-        will@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, srinivas.kandagatla@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
- <1683133352-10046-12-git-send-email-quic_mojha@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <1683133352-10046-12-git-send-email-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.201.21.213]
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-04_06,2023-05-03_01,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Since the introduction of the SCMI for the management
+of the MCU hold boot in OP-TEE, management of the hold boot by SMC call
+is deprecated.
+- Clean the st,syscfg-tz  which allows to determine if the trust
+zone is enable.
+- Add reset-names properties to be able to differentiate the MCU reset and
+  the MCU HOLD BOOT.
 
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ arch/arm/boot/dts/stm32mp151.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 3.05.2023 19:02, Mukesh Ojha wrote:
-> This enable dynamic reserve memory for Qualcomm ramoops device,
-> Which will used to save ramoops frontend data and this region
-> gets dumped on crash via Qualcomm's minidump infrastructure.
-> qcom_pstore_minidump is the associated driver for this node.
-> 
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8450.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-> index 595533a..92d023f 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-> @@ -614,6 +614,17 @@
->  			reg = <0x0 0xed900000 0x0 0x3b00000>;
->  			no-map;
->  		};
-> +
-> +		qcom_ramoops_md_region:qcom_ramoops_md {
-Missing space after ':'
+diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
+index 4e437d3f2ed6..25626797db94 100644
+--- a/arch/arm/boot/dts/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/stm32mp151.dtsi
+@@ -1820,8 +1820,8 @@ m4_rproc: m4@10000000 {
+ 			      <0x30000000 0x40000>,
+ 			      <0x38000000 0x10000>;
+ 			resets = <&rcc MCU_R>;
++			reset-names = "mcu_rst";
+ 			st,syscfg-holdboot = <&rcc 0x10C 0x1>;
+-			st,syscfg-tz = <&rcc 0x000 0x1>;
+ 			st,syscfg-pdds = <&pwr_mcu 0x0 0x1>;
+ 			st,syscfg-rsc-tbl = <&tamp 0x144 0xFFFFFFFF>;
+ 			st,syscfg-m4-state = <&tamp 0x148 0xFFFFFFFF>;
+-- 
+2.25.1
 
-node names should not contain underscores
-
-minidump {
-
-or
-
-ramoops {
-
-would probably be better names for this node
-> +			alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
-> +			size = <0x0 0x200000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	qcom_ramoops_md {
-Node names should be generic (e.g. ramdump or something) and should
-not contain underscores.
-
-Konrad
-> +		compatible = "qcom,sm8450-ramoops-minidump", "qcom,ramoops-minidump";
-> +		memory-region = <&qcom_ramoops_md_region>;
->  	};
->  
->  	smp2p-adsp {
