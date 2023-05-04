@@ -2,120 +2,145 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6248FC77B78
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 May 2023 12:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B149CC7EE2A
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  4 May 2023 12:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbjEDMDZ (ORCPT
+        id S230417AbjEDM3G (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 4 May 2023 08:03:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39924 "EHLO
+        Thu, 4 May 2023 08:29:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbjEDMDX (ORCPT
+        with ESMTP id S229606AbjEDM3E (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 4 May 2023 08:03:23 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB6C5FCE
-        for <linux-remoteproc@vger.kernel.org>; Thu,  4 May 2023 05:03:20 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-94f910ea993so58739866b.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 May 2023 05:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683201799; x=1685793799;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s+Flag063oKB8Q1wi7qSq3Ulfch+IJh7NyCjAcrM3ZE=;
-        b=IYSagRNF//SQQg3BUrc4S0KxF4KoLFjA33rsTrtPcO+JqKa0apRPWl3U/wTAQGSPab
-         EMIlYccEyXfAq/FZbXhwWuNSi9fTJA9Mvk9gQXY3XKjy+jJyqiAgA4hdAzjo7YwIYV9A
-         kLY7Gb5r0+74CruZqUJR7vCI7ztmSbAPfO5C5oDy9r/TPJX7gxQx/7lFewrjHkxU/2iD
-         FJmcWSSM9eMxEfD9id6y3uUHPpxJJ9rfw9l9k8ONvWbnLsu9CXahoFDQHWwz84eFGUG6
-         l4hoPL76xLEX1cchsBjY6o/dy2dFCUZUy67fDdvDV7VXOHgksXeEf/g5VnVW6OcaOHct
-         luCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683201799; x=1685793799;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s+Flag063oKB8Q1wi7qSq3Ulfch+IJh7NyCjAcrM3ZE=;
-        b=SHNfhyiOhUWvTvFBQ3Q7Fm1krg7XEcbIx8PW2SaIZ7OvXg5fWyUrLV/p5tCtsJWMw5
-         ucTZXTtagzA11Rcrh715t5vUsPQR2//iWOBCKXmuNnvH6QvRVAE0bKNrLdfVs6D+Tg0a
-         nNOVOvF+DscjliZY1TApnVBO5/Zjh2fOy44QFSeGLxMkCICm/C8Ao0P8/S4Fh4GmEOqV
-         etQj3Tl6Bugwiqqr2G4TzUApeZEPsmaWDNn4rlVzjs6kVeO/XbqHETgG84VE9SyRt2Iz
-         WGMd3FKlHaQgsAojhuGiW1wY7zy1UsCr/wPnstF0UqZz23SsTsdVShjaWtwxrLP5moDe
-         y9CQ==
-X-Gm-Message-State: AC+VfDzcnBis+UYWObhIR/g4LBvQTMMOpfxkwCokYK3P17OhiMYOqMzi
-        2TJ7a2oBUH8bs0ER+S+ixgbW3Q==
-X-Google-Smtp-Source: ACHHUZ47YNIr6sZk/XYPHNt6yECSYNBOnFaK5lc1XKM9RfUQ+Fa5l3+EvXb6aEqviIAPoQw+tOeQvQ==
-X-Received: by 2002:a17:907:268c:b0:92b:3c78:91fa with SMTP id bn12-20020a170907268c00b0092b3c7891famr5405677ejc.28.1683201798867;
-        Thu, 04 May 2023 05:03:18 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:cbf1:e7ef:fb81:e912? ([2a02:810d:15c0:828:cbf1:e7ef:fb81:e912])
-        by smtp.gmail.com with ESMTPSA id oz15-20020a1709077d8f00b0095850aef138sm15707511ejc.6.2023.05.04.05.03.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 May 2023 05:03:18 -0700 (PDT)
-Message-ID: <659a9637-f82c-054b-99a8-dc25416c8e13@linaro.org>
-Date:   Thu, 4 May 2023 14:03:16 +0200
+        Thu, 4 May 2023 08:29:04 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439726185;
+        Thu,  4 May 2023 05:29:03 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 344C6mSH018634;
+        Thu, 4 May 2023 12:28:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=PUpzOZj3934Z7RYhXVQ62PQUTt99uv5wnpS3MmtTpDk=;
+ b=ScENoJCIMPa/nuFo6WTOFsnXjEuxC+Det3kt10e9fKn1ztsXrEJgHbbjsrZr+z5JwEZn
+ hmDJvGzGPJOWJPgP54zFyhoGSr5FDEjM8rUt6QmcFddNfV1plbgwK+LXhnMor7f+liYY
+ 1VzHTBDenyXsxo4f+TPGNgKFKQlY69BCo4IOauZNvlUsoplFqSEJ1b0jsbVeIxerH20p
+ 2cMQx/I2NegcwPzWHd437O+XwqrUHodbP6rO/0i2hxFnPLW+lEWAHsWnsoc2PGBOBzfU
+ rwYE9NbH2hxJZz2f/7dMVEAr3GchS+Yc5D8oRURBysTFiHSxPjcCbNE2QfMSYh7IOXJC fg== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qc8kw8mh7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 04 May 2023 12:28:41 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 344CQiX9004732
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 4 May 2023 12:28:40 GMT
+Received: from [10.216.46.158] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 4 May 2023
+ 05:26:37 -0700
+Message-ID: <33ea7c3b-4317-5aff-5e6a-af6e093d45a0@quicinc.com>
+Date:   Thu, 4 May 2023 17:56:33 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
 Subject: Re: [PATCH v3 02/18] remoteproc: qcom: Move minidump specific data to
  qcom_minidump.h
 Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        srinivas.kandagatla@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <corbet@lwn.net>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>, <srinivas.kandagatla@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>
 References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
  <1683133352-10046-3-git-send-email-quic_mojha@quicinc.com>
  <fe94ed5c-c444-436d-720a-c96538c1026d@linaro.org>
  <e69862cc-4185-a7a2-07b2-15e331c4678a@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <e69862cc-4185-a7a2-07b2-15e331c4678a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+ <659a9637-f82c-054b-99a8-dc25416c8e13@linaro.org>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <659a9637-f82c-054b-99a8-dc25416c8e13@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2We-ouX9jSCh1TC1DTCqu74GKsCnUQj-
+X-Proofpoint-ORIG-GUID: 2We-ouX9jSCh1TC1DTCqu74GKsCnUQj-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-04_08,2023-05-04_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=396 malwarescore=0 phishscore=0
+ adultscore=0 clxscore=1015 spamscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305040101
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 04/05/2023 13:58, Mukesh Ojha wrote:
-> 
-> 
-> On 5/4/2023 5:08 PM, Krzysztof Kozlowski wrote:
->> On 03/05/2023 19:02, Mukesh Ojha wrote:
->>> Move minidump specific data types and macros to a separate internal
->>> header(qcom_minidump.h) so that it can be shared among different
->>> Qualcomm drivers.
+
+
+On 5/4/2023 5:33 PM, Krzysztof Kozlowski wrote:
+> On 04/05/2023 13:58, Mukesh Ojha wrote:
 >>
->> No, this is not internal header. You moved it to global header.
 >>
->> There is no reason driver internals should be exposed to other unrelated
->> subsystems.
->>
+>> On 5/4/2023 5:08 PM, Krzysztof Kozlowski wrote:
+>>> On 03/05/2023 19:02, Mukesh Ojha wrote:
+>>>> Move minidump specific data types and macros to a separate internal
+>>>> header(qcom_minidump.h) so that it can be shared among different
+>>>> Qualcomm drivers.
 >>>
->>> There is no change in functional behavior after this.
->>
->> It is. You made all these internal symbols available to others.
->>
+>>> No, this is not internal header. You moved it to global header.
 >>>
+>>> There is no reason driver internals should be exposed to other unrelated
+>>> subsystems.
+>>>
+>>>>
+>>>> There is no change in functional behavior after this.
+>>>
+>>> It is. You made all these internal symbols available to others.
+>>>
+>>>>
+>>>
+>>> This comes without justification why other drivers needs to access
+>>> private and internal data. It does not look correct design. NAK.
 >>
->> This comes without justification why other drivers needs to access
->> private and internal data. It does not look correct design. NAK.
+>> Thanks for catching outdated commit text, will fix the commit with
+>> more descriptive reasoning.
+>>
+>> It has to be global so that co-processor minidump and apss minidump can
+>> share data structure and they are lying in different directory.
+>>
 > 
-> Thanks for catching outdated commit text, will fix the commit with
-> more descriptive reasoning.
+> Then you should not share all the internals of memory layout but only
+> few pieces necessary to talk with minidump driver. The minidump driver
+> should organize everything how it wants.
+
+These are core data structure which is shared with boot firmware and the
+one's are moved here all are required by minidump driver .
+
+If you follow here[1], i raised by concern to make this particular one's
+as private and later to avoid confusion went with single header.
+But if others agree, I will keep the one that get shared with minidump
+as separate one or if relative path of headers are allowed that can make
+it private between these drivers(which i don't think, will be allowed or
+recommended).
+
+[1]
+https://lore.kernel.org/lkml/3df1ec27-7e4d-1f84-ff20-94e8ea91c86f@quicinc.com/
+
+-- Mukesh
 > 
-> It has to be global so that co-processor minidump and apss minidump can
-> share data structure and they are lying in different directory.
+> Best regards,
+> Krzysztof
 > 
-
-Then you should not share all the internals of memory layout but only
-few pieces necessary to talk with minidump driver. The minidump driver
-should organize everything how it wants.
-
-Best regards,
-Krzysztof
-
