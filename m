@@ -2,231 +2,131 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF38AC77B75
-	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 May 2023 17:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAC5DC77B7F
+	for <linux-remoteproc@archiver.kernel.org>; Fri,  5 May 2023 17:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbjEEREC (ORCPT
+        id S230398AbjEEROO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 5 May 2023 13:04:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47120 "EHLO
+        Fri, 5 May 2023 13:14:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231194AbjEEREB (ORCPT
+        with ESMTP id S230473AbjEERON (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 5 May 2023 13:04:01 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D8DC15680
-        for <linux-remoteproc@vger.kernel.org>; Fri,  5 May 2023 10:03:58 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1aae46e62e9so14425125ad.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 05 May 2023 10:03:58 -0700 (PDT)
+        Fri, 5 May 2023 13:14:13 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA33D1490B
+        for <linux-remoteproc@vger.kernel.org>; Fri,  5 May 2023 10:13:58 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3f199696149so14537015e9.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 05 May 2023 10:13:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683306238; x=1685898238;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JMDVesgAKasFsor4GeKqlCagXQ7DH3+AoXUlf3OElm8=;
-        b=bR6gi0lcTDkNWyn7wz8u78OloJBPQ6KfsiLCSKJtSrf/mwTyj4RnLq3ZZsQz1dPnbt
-         YK9sctpzPhvjPa52msOKNb71MrX9QuGHxcjpZuU8MGICBCkBa6eWB9EHqDkaXzxExAeW
-         FPSm1Tea8e42GTKd966cAYYcdLDWPu6xE/hQeQUEo8fWlHBrOmBhtHxUicyfTT6TJWZj
-         gdLsXFigde8hbfEGXnwwZxx8j5oUZBhL4nJhOrzEA9MpP5f51RJbStN4VgCurhtsSYua
-         lGPxMvVeQXhWZLel1UYlHTqXLmtDeCWCBZJiBnr6VZn0Ox3VVAsNLkc8agKkEFCtkjTl
-         ZLCQ==
+        d=gmail.com; s=20221208; t=1683306837; x=1685898837;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dMfl0C8EMOIowWqbI/Rqq/+20qm/1u6RPCMDDJIfSHE=;
+        b=U4q6GwkvxBZ02dcyk99ozrFVmaFKd9pXRVdIq/QMfjQfSM0DuYV11qSq3LjQ/eh2hn
+         SWoMjUcqXlUtdBEDydU5uR/ThsuXpidINhAN5u5FVfNXQe4U+xXWPT/5GacMC0hOAhUm
+         N+9fx7EdGhIgSMeJ/fXhj+tbWfL3jApEH0buSB+7BSDggwjJaF5BC+yOyuqonEktV/BB
+         gcj/LQdGZ2QC+glfRh38xbPaj3m6h/eW+L4zktEq3vtrVTipyuZ4jiwGq6ROfK3afeb8
+         WFDpXjQvo3HeGWHRzWy/jV1w79bCWpBHYHcwBnGEfOj9izvG0ZDkXscyUbGf7Hrhah5v
+         044A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683306238; x=1685898238;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JMDVesgAKasFsor4GeKqlCagXQ7DH3+AoXUlf3OElm8=;
-        b=VcS0GmvNL8EpCfJAsX0oNGBxTBcNZ6tQDaEpKSipdi6+I7qYjB/OfRlhZWpk3fL6rd
-         SakcnlF7AcPBFqlS7KIQpq361B28jt+krQSiODX8QFmPsUXMsHCSEPEtXdI5ose2wujS
-         o31OMSqEo6UMTBG2/om8oOF0KUP7zEZNdxwZs7g11cnBvHLu7rAH7j3jZ5JSU9efwtrC
-         i7fNfVeeQvG7jg8ahhmDyNIxGg805FMsDrP5aAHYCBFmUxv1M+9l+ycu7wYMEViMLPr7
-         Gqzpt0eni7OHN4DtQv8wNAoLlzcPPj2irrWF8AXe35N93ZouqILctwNoAL8HQ40cajti
-         b5HA==
-X-Gm-Message-State: AC+VfDwdO9kliC28k6IVkdleiUCi1WjG788eCyFP71CPSzBLfH+YJ15b
-        voXXkCQBCg6C2sJSgsiPt3bogw==
-X-Google-Smtp-Source: ACHHUZ6UMaUB3IhahmbRyxKYzoTmEg9HFyUQpdd2o5G9PGG44utHoVF+53YsCBC0g19omuVtmiHoaw==
-X-Received: by 2002:a17:902:6901:b0:1a1:956e:5417 with SMTP id j1-20020a170902690100b001a1956e5417mr1763516plk.22.1683306237785;
-        Fri, 05 May 2023 10:03:57 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:fd16:b4b6:ee7c:e4e5])
-        by smtp.gmail.com with ESMTPSA id c13-20020a170902d48d00b001994fc55998sm2013388plg.217.2023.05.05.10.03.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 10:03:57 -0700 (PDT)
-Date:   Fri, 5 May 2023 11:03:54 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] remoteproc: stm32: Allow hold boot management by
- the SCMI reset controller
-Message-ID: <ZFU2+ni/tKOIIHbq@p14s>
-References: <20230504094641.870378-1-arnaud.pouliquen@foss.st.com>
- <20230504094641.870378-3-arnaud.pouliquen@foss.st.com>
+        d=1e100.net; s=20221208; t=1683306837; x=1685898837;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dMfl0C8EMOIowWqbI/Rqq/+20qm/1u6RPCMDDJIfSHE=;
+        b=BQlI3ZimCgAS9aZUlCKaZfDy1BxtJfiAQ23bqc7076wGZIezV66mXtXBkR21TmoNHC
+         24ihtZ9PYgi/bvzuaN7kTcsJZHQYwRaXevqOhAOO+jHBppKDd6hPSUMdb0SoRSsyj4bU
+         G0ELzQ+NXFx9+XiZ1TDyYRbwqybR3UOc6PfEhdbULRHMw7VBxqGZPQGZzxj3JI0AwmZ5
+         THBwex/xhtOn+Q/Fj//M2qtDa58fZMBuTPis0A6VSjHb273/6sOL/AN/KatTc7cfMj3a
+         sFilfDk76fxYfJiZ1WQOIzTY3X51DJwfSKlvzLdySgsTr3gTDjzMDTv2zlpAKTnWyU5t
+         7NDw==
+X-Gm-Message-State: AC+VfDwUj2ZC0NsPHRYq3407gSws4sVu4H4rRcFhMgXnWH/MJpmoXXlH
+        BmcVlJX+7LVgKKXxSizQAiAcLpA1Hv4=
+X-Google-Smtp-Source: ACHHUZ6hqgTsps9ibKVkPPhU/c2tsc26KuGSdINz19lQutH4+j4O3f6l2AMBZzNuHLaVkM6/FpGKVA==
+X-Received: by 2002:a5d:4745:0:b0:306:3ad3:94f2 with SMTP id o5-20020a5d4745000000b003063ad394f2mr1805903wrs.42.1683306837105;
+        Fri, 05 May 2023 10:13:57 -0700 (PDT)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id z13-20020adfd0cd000000b0030631a599a0sm2947687wrh.24.2023.05.05.10.13.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 May 2023 10:13:56 -0700 (PDT)
+Message-ID: <65f4c370-e9fa-c715-19a4-54347c077e53@gmail.com>
+Date:   Fri, 5 May 2023 19:13:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230504094641.870378-3-arnaud.pouliquen@foss.st.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 06/18] remoteproc: mtk_scp: Convert to platform remove
+ callback returning void
+Content-Language: en-US, ca-ES, es-ES
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-remoteproc@vger.kernel.org, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de>
+ <20230504194453.1150368-7-u.kleine-koenig@pengutronix.de>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20230504194453.1150368-7-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Arnaud,
 
-On Thu, May 04, 2023 at 11:46:39AM +0200, Arnaud Pouliquen wrote:
-> The hold boot can be managed by the SCMI controller as a reset.
-> If the "hold_boot" reset is defined in the device tree, use it.
-> Else use the syscon controller directly to access to the register.
-> The support of the SMC call is deprecated but kept for legacy support.
+
+On 04/05/2023 21:44, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is (mostly) ignored
+> and this typically results in resource leaks. To improve here there is a
+> quest to make the remove callback return void. In the first step of this
+> quest all drivers are converted to .remove_new() which already returns
+> void.
 > 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
 > ---
-> Updates vs previous version
-> - keep support of the "st,syscfg-tz" property for legacy compatibility
-> - rename secured_soc in hold_boot_smc for readability
-> - add comments to explain hold boot management.
-> - update commit message
-> ---
->  drivers/remoteproc/stm32_rproc.c | 78 +++++++++++++++++++++++---------
->  1 file changed, 57 insertions(+), 21 deletions(-)
+>   drivers/remoteproc/mtk_scp.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 7d782ed9e589..e9cf24274345 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -79,6 +79,7 @@ struct stm32_mbox {
->  
->  struct stm32_rproc {
->  	struct reset_control *rst;
-> +	struct reset_control *hold_boot_rst;
->  	struct stm32_syscon hold_boot;
->  	struct stm32_syscon pdds;
->  	struct stm32_syscon m4_state;
-> @@ -88,7 +89,7 @@ struct stm32_rproc {
->  	struct stm32_rproc_mem *rmems;
->  	struct stm32_mbox mb[MBOX_NB_MBX];
->  	struct workqueue_struct *workqueue;
-> -	bool secured_soc;
-> +	bool hold_boot_smc;
->  	void __iomem *rsc_va;
->  };
->  
-> @@ -401,13 +402,28 @@ static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
->  	struct arm_smccc_res smc_res;
->  	int val, err;
->  
-> +	/*
-> +	 * Three ways to manage the hold boot
-> +	 * - using SCMI: the hold boot is managed as a reset,
-> +	 * - using Linux(no SCMI): the hold boot is managed as a syscon register
-> +	 * - using SMC call (deprecated): use SMC reset interface
-> +	 */
-> +
->  	val = hold ? HOLD_BOOT : RELEASE_BOOT;
->  
-> -	if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->secured_soc) {
-> +	if (ddata->hold_boot_rst) {
-> +		/* Use the SCMI reset controller */
-> +		if (!hold)
-> +			err = reset_control_deassert(ddata->hold_boot_rst);
-> +		else
-> +			err =  reset_control_assert(ddata->hold_boot_rst);
-> +	} else if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->hold_boot_smc) {
-> +		/* Use the SMC call */
->  		arm_smccc_smc(STM32_SMC_RCC, STM32_SMC_REG_WRITE,
->  			      hold_boot.reg, val, 0, 0, 0, 0, &smc_res);
->  		err = smc_res.a0;
->  	} else {
-> +		/* Use syscon */
->  		err = regmap_update_bits(hold_boot.map, hold_boot.reg,
->  					 hold_boot.mask, val);
->  	}
-> @@ -705,34 +721,54 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  		dev_info(dev, "wdg irq registered\n");
->  	}
->  
-> -	ddata->rst = devm_reset_control_get_by_index(dev, 0);
-> +	ddata->rst = devm_reset_control_get_optional(dev, "mcu_rst");
-> +	if (!ddata->rst) {
-> +		/* Try legacy fallback method: get it by index */
-> +		ddata->rst = devm_reset_control_get_by_index(dev, 0);
-> +	}
->  	if (IS_ERR(ddata->rst))
->  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
->  				     "failed to get mcu_reset\n");
->  
->  	/*
-> -	 * if platform is secured the hold boot bit must be written by
-> -	 * smc call and read normally.
-> -	 * if not secure the hold boot bit could be read/write normally
-> +	 * Three ways to manage the hold boot
-> +	 * - using SCMI: the hold boot is managed as a reset
-> +	 *    The DT "reset-mames" property should be defined with 2 items:
-> +	 *        reset-names = "mcu_rst", "hold_boot";
-> +	 * - using SMC call (deprecated): use SMC reset interface
-> +	 *    The DT "reset-mames" property is optional, "st,syscfg-tz" is required
-> +	 * - default(no SCMI, no SMC): the hold boot is managed as a syscon register
-> +	 *    The DT "reset-mames" property is optional, "st,syscfg-holdboot" is required
->  	 */
-> -	err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
-> -	if (err) {
-> -		dev_err(dev, "failed to get tz syscfg\n");
-> -		return err;
-> -	}
->  
-> -	err = regmap_read(tz.map, tz.reg, &tzen);
-> -	if (err) {
-> -		dev_err(dev, "failed to read tzen\n");
-> -		return err;
-> +	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
-> +	if (IS_ERR(ddata->hold_boot_rst)) {
-> +		if (PTR_ERR(ddata->hold_boot_rst) == -EPROBE_DEFER)
-> +			return PTR_ERR(ddata->hold_boot_rst);
-
-Here we know that devm_reset_control_get_optional() has returned an error that is
-not -EPROBE_DEFER and as such, I think we should return that error instead of
-continuing on with the probing.  Calling dev_err_probe() should be just fine. 
-
-Otherwise I'm good with this set.  Many thanks for the enhanced explanation.
-
-Mathieu
-
-> +		ddata->hold_boot_rst = NULL;
-> +	}
-> +
-> +	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
-> +		/* Manage the MCU_BOOT using SMC call */
-> +		err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
-> +		if (!err) {
-> +			err = regmap_read(tz.map, tz.reg, &tzen);
-> +			if (err) {
-> +				dev_err(dev, "failed to read tzen\n");
-> +				return err;
-> +			}
-> +			ddata->hold_boot_smc = tzen & tz.mask;
-> +		}
->  	}
-> -	ddata->secured_soc = tzen & tz.mask;
->  
-> -	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
-> -				     &ddata->hold_boot);
-> -	if (err) {
-> -		dev_err(dev, "failed to get hold boot\n");
-> -		return err;
-> +	if (!ddata->hold_boot_rst && !ddata->hold_boot_smc) {
-> +		/* Default: hold boot manage it through the syscon controller */
-> +		err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
-> +					     &ddata->hold_boot);
-> +		if (err) {
-> +			dev_err(dev, "failed to get hold boot\n");
-> +			return err;
-> +		}
->  	}
->  
->  	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
-> -- 
-> 2.25.1
-> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e1d93e63d7df..dcc94ee2458d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -913,7 +913,7 @@ static int scp_probe(struct platform_device *pdev)
+>   	return ret;
+>   }
+>   
+> -static int scp_remove(struct platform_device *pdev)
+> +static void scp_remove(struct platform_device *pdev)
+>   {
+>   	struct mtk_scp *scp = platform_get_drvdata(pdev);
+>   	int i;
+> @@ -925,8 +925,6 @@ static int scp_remove(struct platform_device *pdev)
+>   	for (i = 0; i < SCP_IPI_MAX; i++)
+>   		mutex_destroy(&scp->ipi_desc[i].lock);
+>   	mutex_destroy(&scp->send_lock);
+> -
+> -	return 0;
+>   }
+>   
+>   static const struct mtk_scp_of_data mt8183_of_data = {
+> @@ -1003,7 +1001,7 @@ MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+>   
+>   static struct platform_driver mtk_scp_driver = {
+>   	.probe = scp_probe,
+> -	.remove = scp_remove,
+> +	.remove_new = scp_remove,
+>   	.driver = {
+>   		.name = "mtk-scp",
+>   		.of_match_table = mtk_scp_of_match,
