@@ -2,96 +2,97 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA041C77B7D
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  7 May 2023 14:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C34ADC77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Sun,  7 May 2023 17:20:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231760AbjEGOsk (ORCPT
+        id S229881AbjEGRUs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 7 May 2023 10:48:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46520 "EHLO
+        Sun, 7 May 2023 13:20:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231682AbjEGOsg (ORCPT
+        with ESMTP id S229533AbjEGRUr (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 7 May 2023 10:48:36 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD54B15EFA
-        for <linux-remoteproc@vger.kernel.org>; Sun,  7 May 2023 07:48:30 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-9660af2499dso307566566b.0
-        for <linux-remoteproc@vger.kernel.org>; Sun, 07 May 2023 07:48:30 -0700 (PDT)
+        Sun, 7 May 2023 13:20:47 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDCEAD01
+        for <linux-remoteproc@vger.kernel.org>; Sun,  7 May 2023 10:20:45 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2ac80da3443so42171221fa.0
+        for <linux-remoteproc@vger.kernel.org>; Sun, 07 May 2023 10:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683470909; x=1686062909;
+        d=linaro.org; s=google; t=1683480043; x=1686072043;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iE134vQgSNzS2DPVaEM0R6ddInwhWIrVu0oDCzxV75I=;
-        b=oc8MiStl06k/dS1OmX4XwZmneuPwM9xkdk/v/DWnQryg+EHWd9nQEPt6B9G4JPhpvd
-         v3hxksfYChR46tSlPjY0BRKChVLa3V5JA6a6Pq/0DLrbCS0GnFGRTzjwi5VwKv11T/uY
-         j6KdoCiXqvqVoG+PwZnYUi4I2Saq3o66vdVhPwnWeLosFgg3RFvEfAR4Xmu7ttS4+McD
-         24ru3EKOORhzFOloHFhEgYpJyc3qS4BcC8P92PWv0+wIgYR9d0OPoWq84lbcUjgWwuOo
-         wd5iiMBZuiSV8IqKuh5av12YrwWiv8/C80Jm5kuq8uWUuq4FJWlrBXMg4Vejo1hisjea
-         iuug==
+        bh=M/5pOupv+/kvkx49PpIkwAf4CCXzUUa1iRSgEDfB2Bo=;
+        b=zH3v1112yeSDEBiV7yhjERrpyO+AgDkRPv4aF54awBRDwT98bmi2Nx86biY4uBVP5k
+         xsSIgEEPVwG6flsjJOwo7cAYzza5BjEnsBv+LQ+ve6MZh+/IgAp4YHpqHRv8usQuJUQo
+         vFamnmdkUrcoHOJtZWpoIZDi8SnyixJWIa1bPgcCcRzCFjxQiAXZyiv3IvV5jeGigubh
+         PKkQ4ECTRtNDlY0nrbhHT6zc9rSnFHhbF0yJo9nmAIQD58nuv6A5n+pncqn2WsLc8v3W
+         iFmGD6uTnjuPZ561ZLeLLT1BfjgjgKSZKm8yAPMmz64Hfg02N0NEtgHQIqZlyq68ydY9
+         i0QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683470909; x=1686062909;
+        d=1e100.net; s=20221208; t=1683480043; x=1686072043;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iE134vQgSNzS2DPVaEM0R6ddInwhWIrVu0oDCzxV75I=;
-        b=buGW9D4gXi9n7DgJg5uPjuDnPiadp3ZMB2IgmuoDS4s8+TFr2gVZpYujzeQt5s0emv
-         Oy3ZQqAyy5WxPETQsfN8DVb0i5oaLNXvTzWLvErhQLq21Y+tpTrF0ZKh/0Xcr/zIg8ud
-         BcjFgpET2lzSMLhrQx/jEWxGgKNUvkIsJhDyhyNt0KBne3z4ZxOaZ+8tB4GNAl++NiuY
-         BjRCAC58LxtM83vYXwmrWgWYJFO1xs3wt0rIbfiMx6ZrfMO/HO+SdNH9MzqeLb5hlnIa
-         0/3o2zFsGgBUHSZ1f8IRK4xhLJzkMNkRkCMMSy3cfDo3uEvCqDebpX1rguB9D1EtWD4H
-         OnEw==
-X-Gm-Message-State: AC+VfDyong/uAD0ileMCoq0GHi18tmwlHtf7nkv1bCKR9vCSN74DgUv6
-        265N1NsxnhzHOIF27DJCewbQ8w==
-X-Google-Smtp-Source: ACHHUZ5M1OGztQCDtLZh/GfKvH6ydIeXxG/nBJmYT6/rF+K1SzlcLOJA7bMvZU4TElE6N4xdoghrAg==
-X-Received: by 2002:a17:907:724e:b0:961:8fcd:53c9 with SMTP id ds14-20020a170907724e00b009618fcd53c9mr6823568ejc.39.1683470909289;
-        Sun, 07 May 2023 07:48:29 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:1757:b51a:9965:e81])
-        by smtp.gmail.com with ESMTPSA id fh8-20020a1709073a8800b0095ef7268ba9sm3710023ejc.41.2023.05.07.07.48.28
+        bh=M/5pOupv+/kvkx49PpIkwAf4CCXzUUa1iRSgEDfB2Bo=;
+        b=ICEFNxDTju2PPXXM8fqrlmzoXjcErIbJvaM4xnqGwYckFie5SZ3LIMZpR4NhJ/7h8n
+         7s4pasCy4XAnuzViWK/p+Sfsh5tFcuB2yDBHbxZkkZ7dktHhkjbVRWARScFbnlHlZjpE
+         yrk6uR95alRvXjKhinZQcT/DZR4M1ttNx6SjV+92PqZrwntDosiaFM4trQzszuzausoo
+         aNkDJFVZjgVkDahkhI+1DqnOx+nzEug0yPzEE26te94zYd6JMdlu51uF1nAEK5a9YEKY
+         HR3W+OZSXyVVVPp2NG0+KapUV6gQQMVyb1qv+j5nQWIDGHR2jVklG2RO2GrYvKwTJYlt
+         1Q1Q==
+X-Gm-Message-State: AC+VfDwd8E9efbjhVHxwiQIIDw5tqGSrd4B3K0r3CdLziobN5JfI7G9y
+        w45xz/VcLLzeOhhbJQvywt3mjw==
+X-Google-Smtp-Source: ACHHUZ4zT0S8OQd/CfK13BN8dZVv75uAk+rfuEFzFc1ESTE11Wk0qjSheblxNSbXN5N/TsGL9UD0iQ==
+X-Received: by 2002:a2e:a3d8:0:b0:2a8:c1bf:5ce2 with SMTP id w24-20020a2ea3d8000000b002a8c1bf5ce2mr1875797lje.7.1683480043385;
+        Sun, 07 May 2023 10:20:43 -0700 (PDT)
+Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
+        by smtp.gmail.com with ESMTPSA id d12-20020a2e96cc000000b002a7e9e4e9dcsm877363ljj.114.2023.05.07.10.20.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 May 2023 07:48:28 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Sun, 07 May 2023 10:20:42 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] remoteproc: qcom_q6v5_pas: staticize adsp_segment_dump()
-Date:   Sun,  7 May 2023 16:48:26 +0200
-Message-Id: <20230507144826.193067-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: [PATCH] remoteproc: qcom_q6v5_mss: support loading MBN file on msm8974
+Date:   Sun,  7 May 2023 20:20:41 +0300
+Message-Id: <20230507172041.2320279-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-adsp_segment_dump() is not used outside of this unit, so add missing
-static to fix:
+On MSM8974 and APQ8074 the MSS requires loading raw MBA image instead of
+the ELF file. Skip the ELF headers if mba.mbn was specified as the
+firmware image.
 
-  drivers/remoteproc/qcom_q6v5_pas.c:108:6: warning: no previous prototype for ‘adsp_segment_dump’ [-Wmissing-prototypes]
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating Hexagon v5")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index e34d82b18a67..f77d11c91a75 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -105,7 +105,7 @@ struct qcom_adsp {
- 	struct qcom_scm_pas_metadata dtb_pas_metadata;
- };
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ab053084f7a2..1603c5be44c8 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -477,7 +477,11 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ 		return -EBUSY;
+ 	}
  
--void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
-+static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
- 		       void *dest, size_t offset, size_t size)
- {
- 	struct qcom_adsp *adsp = rproc->priv;
+-	memcpy(mba_region, fw->data, fw->size);
++	if (qproc->version == MSS_MSM8974 &&
++	    !memcmp(fw->data, ELFMAG, SELFMAG))
++		memcpy(mba_region, fw->data + 0x1000, fw->size - 0x1000);
++	else
++		memcpy(mba_region, fw->data, fw->size);
+ 	q6v5_debug_policy_load(qproc, mba_region);
+ 	memunmap(mba_region);
+ 
 -- 
-2.34.1
+2.39.2
 
