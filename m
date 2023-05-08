@@ -2,51 +2,51 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C07C77B75
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 14:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73083C7EE26
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 14:31:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234354AbjEHOQR (ORCPT
+        id S234902AbjEHObN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 May 2023 10:16:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54436 "EHLO
+        Mon, 8 May 2023 10:31:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233491AbjEHOQQ (ORCPT
+        with ESMTP id S235218AbjEHOa0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 May 2023 10:16:16 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B57127;
-        Mon,  8 May 2023 07:16:15 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348BOPQ2017030;
-        Mon, 8 May 2023 14:16:10 GMT
+        Mon, 8 May 2023 10:30:26 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFFF9010;
+        Mon,  8 May 2023 07:29:57 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348ETpNA015244;
+        Mon, 8 May 2023 14:29:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=3rqXwkrD6ehlNN97QDzAG+jEL4x7VQEcavwTxpacJL0=;
- b=kx282jOI/pcKNCsEY71kK7nu96c1VcnskTxNjEBZhib6rS2xqRXUM+dftqHYoa5v3UZY
- 1XKca7s0lk6lm9nXowPJu8YyaobOtU6ov6plUsRYsBgzeK2xU5pTel0IENHoJDNLakbm
- xyW7XxgfxsGWk2rnCFPFXx/nSr9gpYvnQsOqtKYtk68iM7QqbrkGY1h2jqXbtyEoB/NB
- ewoWwWXcLEVldLHRmFQ1suAHBXk3FvcHvD/Wd10YytAE0Zs3BnJqvhw2FNH1dnxQ3myL
- 2Zo6GslJxbbOA2YLECf30cZvZq7w/7QFYT/eDZGWA3x1XsyLWaqXM1Jcra4AVJ+f4jek 1Q== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qesg8940t-1
+ bh=5OtZQNzTavdtMmiQ3BQTEPQPhnMBmFVHCrTtzHQe0Aw=;
+ b=W/3rtYJh7L7iF3oFVojlRC1xzGSh4RwWlEI+dV9Y3G8fqsasyTNggb5+x2TDfK9XfObS
+ Ka5ZEzKeLq2QYAN7G/asVvP6eFxlOv0dubZ0iArzc9NAHNqlQkCW4Ef91f7+O2UyTah7
+ Dn7D2dTFMrngwHGvLo0oYV8IzD3SUGgn7zMr6pgN6OdYCi0E5CIByGgQVIwaXR1sbJMJ
+ 69std41K2GlRGw+wAotOpAooJazvbnnbKt+gqwMya5Pz+SXeurxBfsV769KUj3+A43op
+ rnNBUYQhfI9NFHcasakcg4b6E1N0WwDNYBEAOslPzg0e0FiLknnGeTgUP3o9KS2fazUy jA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf0vk09g6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 May 2023 14:16:09 +0000
+        Mon, 08 May 2023 14:29:51 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 348EG8NO026896
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 348EToXa017015
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 8 May 2023 14:16:08 GMT
+        Mon, 8 May 2023 14:29:50 GMT
 Received: from [10.242.242.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 8 May 2023
- 07:16:00 -0700
-Message-ID: <be1d5449-b5f5-9248-98e0-e25b57daf0c5@quicinc.com>
-Date:   Mon, 8 May 2023 19:45:57 +0530
+ 07:29:42 -0700
+Message-ID: <3d876a44-0145-09b8-0722-80f57d6c96ac@quicinc.com>
+Date:   Mon, 8 May 2023 19:59:39 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: Re: [PATCH 02/11] dt-bindings: mailbox: qcom: Add IPQ5018 APCS
- compatible
+Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: gcc-ipq9574: Add Q6 gcc
+ clock control
 Content-Language: en-US
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         <agross@kernel.org>, <andersson@kernel.org>,
@@ -63,53 +63,63 @@ CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_poovendh@quicinc.com>
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-3-git-send-email-quic_mmanikan@quicinc.com>
- <19d5ce31-284c-4028-bf9e-190b97dca906@linaro.org>
+ <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
+ <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
 From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <19d5ce31-284c-4028-bf9e-190b97dca906@linaro.org>
+In-Reply-To: <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: pm5idBmormyOae31ew9lgk1V1S-zydg-
-X-Proofpoint-ORIG-GUID: pm5idBmormyOae31ew9lgk1V1S-zydg-
+X-Proofpoint-GUID: KqQ7f46CIgekKZiO7U2LP9DA5aiSHFvY
+X-Proofpoint-ORIG-GUID: KqQ7f46CIgekKZiO7U2LP9DA5aiSHFvY
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-08_10,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- adultscore=0 mlxlogscore=644 lowpriorityscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 spamscore=0 suspectscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305080096
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=990 bulkscore=0
+ malwarescore=0 adultscore=0 spamscore=0 mlxscore=0 clxscore=1015
+ impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2303200000 definitions=main-2305080097
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 3/7/2023 8:51 PM, Krzysztof Kozlowski wrote:
+On 3/7/2023 8:49 PM, Krzysztof Kozlowski wrote:
 > On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
->> Add compatible for the Qualcomm IPQ5018 APCS block.
-> 
-> Is it compatible with ipq6018 or ipq8074? Your driver tells it is...
-> 
+>> Add support for the QDSP6 gcc clock control used on IPQ9574
+>> based devices. This would allow mpd remoteproc driver to control
+>> the required gcc clocks to bring the subsystem out of reset.
 >>
 >> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 >> ---
->>   .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml      | 2 ++
->>   1 file changed, 2 insertions(+)
+>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 159 ++++++++++---------
+>>   1 file changed, 83 insertions(+), 76 deletions(-)
 >>
+>> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+>> index c89e96d568c6..8bd6350ecd56 100644
+>> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+>> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+>> @@ -138,80 +138,87 @@
+>>   #define WCSS_AHB_CLK_SRC				129
+>>   #define GCC_Q6_AHB_CLK					130
+>>   #define GCC_Q6_AHB_S_CLK				131
+>> -#define GCC_WCSS_ECAHB_CLK				132
+>> -#define GCC_WCSS_ACMT_CLK				133
 > 
-> 
+> That's an ABI break, if file was accepted. Or a very weird change
+> anyway, if it wasn't (why adding entry and immediately changing it?).
 > 
 > Best regards,
 > Krzysztof
 > 
-Yeah, it's compatible. I will use fallback mechanism available here
-https://lore.kernel.org/linux-arm-msm/20230217083308.12017-5-quic_kathirav@quicinc.com/
+
+I will add new macros at the end instead in middle.
 
 Thanks & Regards,
 Manikanta.
