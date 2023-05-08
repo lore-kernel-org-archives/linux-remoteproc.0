@@ -2,165 +2,89 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED076C7EE22
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 15:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0602DC77B7F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 19:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233824AbjEHPfb (ORCPT
+        id S232746AbjEHTkG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 May 2023 11:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49834 "EHLO
+        Mon, 8 May 2023 15:40:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233694AbjEHPfa (ORCPT
+        with ESMTP id S229457AbjEHTkE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 May 2023 11:35:30 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F081FD7
-        for <linux-remoteproc@vger.kernel.org>; Mon,  8 May 2023 08:35:27 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2ac8d9399d5so33826981fa.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 08 May 2023 08:35:27 -0700 (PDT)
+        Mon, 8 May 2023 15:40:04 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2E2F59DA
+        for <linux-remoteproc@vger.kernel.org>; Mon,  8 May 2023 12:40:02 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-965ddb2093bso626365166b.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 May 2023 12:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683560125; x=1686152125;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+rGMM6WldBczt8RNjSEnRHxOpQkBYT/hbYgVK8fNow=;
-        b=bJ8h3KMYMCP7/Uk4X9NyK8D65ogdkLENKzzcLz5QY6S0c6oiU+5uzZGt75lfTZ4osE
-         Iwao1AvIqgHENfdY6hgyqGL8PhfsIECVdsOVVkjCUMOpHYrwH06zt3HdwSmI+7C+rWAW
-         ZqlBuVfkBAapZubsKKVfgaWjBQzxnYr+rZcXIstuNJnFcpmZn5jc/OWVOmswWWQiRsf+
-         RDe941T/hk8X17HuHiln/CUd7DLeJdsEphrVyp7xEBdUR1unDQCjAzQVZOvdv4yao3Z3
-         3697pXgLPte87OdW7xUJ2FNj0l3EBUUWah4KLssJeJZm1GXYbjgWV0s5eTKulIieeFqC
-         0vqQ==
+        d=googlemail.com; s=20221208; t=1683574801; x=1686166801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E/FUv0s0uxGOAEhAmizPOK6LOstZe+HzXc28uj+u2tI=;
+        b=rPYVxJN48NAgnAnIvAKenwk4IOJ2RDZX29vdTvwYD2TokVD6CVXdI9lEegiucUrQWG
+         dKdyA0vD/Ak2Q2zY55nXUUSUyExOhlv3mOFTU/uGoqmECd7WednDRMz7nuGMs9HcAInb
+         Je1mBQK1UFWkjwEczcLajJP7TyYVQeJrPEwzfSFeKjY6T4PJV6R1H/GxTJlsS0MY4Xv6
+         WK1TlZAI/hUlAehA+erdkjD3TN67TmX9q3LL3iCGZaQl1FQQImbhcyoPowenU5zhmxwc
+         AW/WS00jX20tZzN2/Vfk76oOLD7bw3W961Hbjz8ViyZ36/oKB8iiaZcJtjCvHjMrWMG0
+         6PTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683560125; x=1686152125;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y+rGMM6WldBczt8RNjSEnRHxOpQkBYT/hbYgVK8fNow=;
-        b=Wv+SbOizyj10nXo6wzTuY+DiSZQt3UJIttTmUgew046pySTn8Ka3aVhaLedwtrR+R9
-         nMceegxPzc4tWzNrZ6/R0hrS/PRZ6g3/vq8M2OkwG1tpEvKp9+9oel/j1O31hbFjesAt
-         dfv2LdShtH6yA10l5uqPkhbYYxplB+3uR7uKhBjfC8grU4IG5xUyVyG4v34kpGbrOiLz
-         Wfc5EeTuMXi1HxpHjpb2ES7ZuVJWIC3NEWAJcGqCIR5gNE2g4t8ODuRYHquLlBytqTb3
-         ujV8XNeXsaBBctBEa0C3nyYCBL8cdc4E0ihYcoZNw46/ktOUo9hc7Ni69STfyYEk6MSD
-         /law==
-X-Gm-Message-State: AC+VfDwgC+fxXnF/dTHS2ym0gaI/f+ug5nul81YCXVoLQXpwB/AGy/MD
-        qsjr3L2aij6XapJTARRReBc9kw==
-X-Google-Smtp-Source: ACHHUZ4PS+Dueoz0V8cQJRS5V1Be4SfBRBJR1yuveA/NiY//o6/VPQtD+btdu0QrWkKnZpAIANVBzw==
-X-Received: by 2002:a2e:86cb:0:b0:2a7:6f60:34f2 with SMTP id n11-20020a2e86cb000000b002a76f6034f2mr2758618ljj.33.1683560125460;
-        Mon, 08 May 2023 08:35:25 -0700 (PDT)
-Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
-        by smtp.gmail.com with ESMTPSA id f4-20020a2e3804000000b002a634bfa224sm1222065lja.40.2023.05.08.08.35.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 08:35:25 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: [PATCH v2] remoteproc: qcom_q6v5_mss: support loading MBN file on msm8974
-Date:   Mon,  8 May 2023 18:35:24 +0300
-Message-Id: <20230508153524.2371795-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20221208; t=1683574801; x=1686166801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E/FUv0s0uxGOAEhAmizPOK6LOstZe+HzXc28uj+u2tI=;
+        b=ikENjhFQjDxuzhWBN581qTwCT09sby7/dKWOSfyU2PmfrFL05rOfDu3j/CJcLLv64U
+         Xzb7+0MslK/oBZqWk1hx7cCYyVlEkuQBvmkmSNomKauC/kOg529aMeisYlPguD3sWxco
+         6YLfLptbMtjLZYtFpZ67XePhvOG44L/pbxh4OioJQsfbofK0VoAoPVH8VFpKfRQ+UeQn
+         Ac3q0zGeQd4EEHfcgLl1bjLweYOTJZVQYfygWAwOkCu/0aO/37sD8nh4ppnQ2f/zBtbV
+         2HQZX5jls5HoPWHFtZ55+0ebfAg/NILa6C3F6zdWjXPzeLSerNnarVI/qMTlRVpVeOw6
+         pUAA==
+X-Gm-Message-State: AC+VfDyR75equkKV66On8mvISuzh1mguucfE++Mg9tt6NeQQvwPeW8tx
+        c5m3wA9iuIw7ALqNQ4400iYt0F8CNJSdXAXkLZI=
+X-Google-Smtp-Source: ACHHUZ7xPFOdR0tu9mLlwmC+xFOOyeEbdUwJPYjFROE9r2zYYk1YPkHxLUtmMG5BOLBzXOg5K00p5UDNukR5SMrJ0/M=
+X-Received: by 2002:a17:907:3686:b0:965:fa3b:7478 with SMTP id
+ bi6-20020a170907368600b00965fa3b7478mr8997027ejc.53.1683574800982; Mon, 08
+ May 2023 12:40:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de> <20230504194453.1150368-6-u.kleine-koenig@pengutronix.de>
+In-Reply-To: <20230504194453.1150368-6-u.kleine-koenig@pengutronix.de>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 8 May 2023 21:39:50 +0200
+Message-ID: <CAFBinCBXvhRbqDRxH1D29Ua1zTmVR+tqtzJWpyQ9upLX9RhLYA@mail.gmail.com>
+Subject: Re: [PATCH 05/18] remoteproc: meson_mx_ao_arc: Convert to platform
+ remove callback returning void
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On MSM8974 and APQ8074 the MSS requires loading raw MBA image instead of
-the ELF file. Skip the ELF headers if mba.mbn was specified as the
-firmware image.
-
-Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating Hexagon v5")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-
-Changes since v1:
-- Replace fixed offset 0x1000 with the value obtained from ELF headers
-- Implement ELF validity checks
-
----
- drivers/remoteproc/qcom_q6v5_mss.c | 47 +++++++++++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index ab053084f7a2..b4ff900f0304 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -11,6 +11,7 @@
- #include <linux/delay.h>
- #include <linux/devcoredump.h>
- #include <linux/dma-mapping.h>
-+#include <linux/firmware.h>
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
-@@ -29,6 +30,7 @@
- #include <linux/iopoll.h>
- #include <linux/slab.h>
- 
-+#include "remoteproc_elf_helpers.h"
- #include "remoteproc_internal.h"
- #include "qcom_common.h"
- #include "qcom_pil_info.h"
-@@ -459,6 +461,35 @@ static void q6v5_debug_policy_load(struct q6v5 *qproc, void *mba_region)
- 	release_firmware(dp_fw);
- }
- 
-+/* Get the offset of the segment 0 for mba.mbn */
-+static int q6v5_mba_get_offset(struct rproc *rproc, const struct firmware *fw)
-+{
-+	const struct elf32_hdr *ehdr;
-+	const void *phdr;
-+	char class;
-+	u64 phoffset, poffset;
-+	u16 phentsize;
-+	int ret;
-+
-+	ret = rproc_elf_sanity_check(rproc, fw);
-+	if (ret < 0)
-+		return ret;
-+
-+	ehdr = (const struct elf32_hdr *)fw->data;
-+	class = ehdr->e_ident[EI_CLASS];
-+	phoffset = elf_hdr_get_e_phoff(class, ehdr);
-+	phentsize = elf_hdr_get_e_phentsize(class, ehdr);
-+	if (phoffset + phentsize > fw->size)
-+		return -EINVAL;
-+
-+	phdr = fw->data + elf_hdr_get_e_phoff(class, ehdr);
-+	poffset = elf_phdr_get_p_offset(class, phdr);
-+	if (poffset > fw->size)
-+		return -EINVAL;
-+
-+	return poffset;
-+}
-+
- static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct q6v5 *qproc = rproc->priv;
-@@ -477,7 +508,21 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
- 		return -EBUSY;
- 	}
- 
--	memcpy(mba_region, fw->data, fw->size);
-+	if (qproc->version == MSS_MSM8974 &&
-+	    !memcmp(fw->data, ELFMAG, SELFMAG)) {
-+		int poffset;
-+
-+		poffset = q6v5_mba_get_offset(rproc, fw);
-+		if (poffset < 0) {
-+			memunmap(mba_region);
-+			return poffset;
-+		}
-+
-+		memcpy(mba_region, fw->data + poffset, fw->size - poffset);
-+	} else {
-+		memcpy(mba_region, fw->data, fw->size);
-+	}
-+
- 	q6v5_debug_policy_load(qproc, mba_region);
- 	memunmap(mba_region);
- 
--- 
-2.39.2
-
+On Thu, May 4, 2023 at 9:45=E2=80=AFPM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is (mostly) ignored
+> and this typically results in resource leaks. To improve here there is a
+> quest to make the remove callback return void. In the first step of this
+> quest all drivers are converted to .remove_new() which already returns
+> void.
+>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
