@@ -2,107 +2,247 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85262C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 07:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F71C7EE2D
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 10:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233562AbjEHHp1 (ORCPT
+        id S233925AbjEHKBb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 May 2023 03:45:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53732 "EHLO
+        Mon, 8 May 2023 06:01:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233553AbjEHHp0 (ORCPT
+        with ESMTP id S233917AbjEHKB2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 May 2023 03:45:26 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1BB1C0D6
-        for <linux-remoteproc@vger.kernel.org>; Mon,  8 May 2023 00:45:23 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2ac806f4fccso47435941fa.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 08 May 2023 00:45:23 -0700 (PDT)
+        Mon, 8 May 2023 06:01:28 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A65FD2E062;
+        Mon,  8 May 2023 03:01:26 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-6439f186366so2134071b3a.2;
+        Mon, 08 May 2023 03:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683531921; x=1686123921;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IAz7GZnmIeznEXKBKn5jRxKL983QPWlvPE9e0rtjyTI=;
-        b=k/a1dwS95HVo/BKWX4YLzrqd4ZbKHsgJwW84rmLG/gsjUH7rbBEsX17DIqlXDcA66n
-         GcEndMFwihGu70y/q9+nXlc8Raa+Vc2KtXs9v/6Ib8GNyszadifcidPytkYl5gT8j5IS
-         L3uJkNKx9FmjIM+6bR88bqIxcoXWcAz3SYQsVyCC9ramjJTBZJPJ6XLcxd10r0Zb06I4
-         E8pVuNLSPXqMMm7DWWTpOGiF6SYdauwNCq+5IeHASdxordh/0XAW635jPgETDvDuooCK
-         1Jc5bycf2Ppm4Y2vqJV8IPM36gzdbog6cefTW3QtTZhVYzlF8x0FqYjtuwXqB8rUO+4s
-         7phg==
+        d=gmail.com; s=20221208; t=1683540086; x=1686132086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJvJGURrh5Y6Ahv+dvSHYL3+bNVZ9g/h4mq9+B66qRI=;
+        b=IPShIZ0hYGoGQZ+QpgYEoS7sXMWJihKWBFY8s06PyRBEPpO8fiac9zfXtKK+oC+7ks
+         +5JM8r+DcylJmbKZJjo1jkOrh4NpjgM1KMT/6PXtTdt7P16Q1bVpoOQMJu/xd6ZuQJf6
+         g0wxdJshfIpodgZPz8OSPuNG8QEfupLy5h2HhTz9rjIDjUPXK1rVQ7aazGvB5W8WfNld
+         JhRCRS6vM7Dl2sn+luKAPSacYOwUCV6Uu/hstIDQaxTcuZKxGKGwqUbCRdEAR5dMajWV
+         PZF1Vy+nsY72Pl4fdXRbabdzVh6jYSVvgiKnDr3yLcl7t0C5+d/Vc6M+qwI1gNWSsMZR
+         CAAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683531921; x=1686123921;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IAz7GZnmIeznEXKBKn5jRxKL983QPWlvPE9e0rtjyTI=;
-        b=W2sZWeuClrUEi/NUuO0UB6mQ9fpih/1qqqiTvJMOgqYcdMcKOdFLLYw2cKszopOkvN
-         LpIqpjKoW0YRrJ/ZnydWgI1/e5Hb9HAo5vYSq2MzX+MyzpszuAPJni0+S9tqRvGY6AWa
-         ADDPIpk3EXezE3qU1XBV9iKmfg2lFYC9KwdS2oLc7YFlMmghSgP50PlTD1QWXShtRP7R
-         IZu3kwgCTDfcxTsO1BRqwG2FH2CHEBzSmA9WOSaghGkiAz3tFOXDnGGZ3vniRScvA2Rv
-         S17XGTDIM6ARqnYgjr+aRIo0blxReIl52H5eI92CjIa8TpQxjjOdiON/XkXzkLhFBovn
-         nTYg==
-X-Gm-Message-State: AC+VfDxCoL3u/lyl3stzO1JEHVTwbzyzW42S5RluhFH1AXSPRgYvAxnd
-        cA8SfTYF646Yl5LleoGsFhif4g==
-X-Google-Smtp-Source: ACHHUZ7cagHsaHneag63ciMBUBT40ZwWBdt/xZ1gsskf8BIe/PlccWkiP0aeqmm5C7m7cx4LeqoygQ==
-X-Received: by 2002:a2e:b61b:0:b0:2ac:76dc:b067 with SMTP id r27-20020a2eb61b000000b002ac76dcb067mr2714541ljn.10.1683531921521;
-        Mon, 08 May 2023 00:45:21 -0700 (PDT)
-Received: from [192.168.1.101] (abyl248.neoplus.adsl.tpnet.pl. [83.9.31.248])
-        by smtp.gmail.com with ESMTPSA id u4-20020a2ea164000000b002a8bbd919f8sm1094898ljl.6.2023.05.08.00.45.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 00:45:21 -0700 (PDT)
-Message-ID: <d52e059a-450c-ada2-fd28-48428ed194a4@linaro.org>
-Date:   Mon, 8 May 2023 09:45:20 +0200
+        d=1e100.net; s=20221208; t=1683540086; x=1686132086;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rJvJGURrh5Y6Ahv+dvSHYL3+bNVZ9g/h4mq9+B66qRI=;
+        b=FekkjWtelKJd+P4Mb9vrpEIxVnk2esoGx4LDivqTRewf1hOFKzkFKeGmrndua9se27
+         aC7+PAfVsjgIxqUrbro5F55kMgCieEtkAjOoED7gzPCMFV+UVawB4wJMaO1ZuavCW/Gk
+         UgGQlXuQ3gtdcOxnRZ/SzB07nlsskCJXlg77TC28U+oHIVzk5n1inCiCMjFdUNogqc7j
+         7ZTmcgqgJ9HDAN9qokuI/O5PgYBX6agI4CKZX3Osicx22lAkqOb/kq5gYlySqkZzMRh1
+         oVBTBFrY4T5dId0tiSJN6zgYh/7Wc7Pz0i56/LVZFOxQTG6wb+hzGiTJmCNEOZ/BJ9Ps
+         s1Lw==
+X-Gm-Message-State: AC+VfDzasEe6x5Gz24fMbjKYHa6wHogSVsCL+46dlYwyTwIpHmpb9Y7t
+        ZX8a+7Bj+NjlLikJYPreKHk=
+X-Google-Smtp-Source: ACHHUZ432kkuqfkRj7AzZft5/WbhfjXcUv0u9eGieSBZ3qtznBd/fiH77+wHRKFcmjTGSgYOzAr1dw==
+X-Received: by 2002:a05:6a00:1694:b0:63b:57cb:145f with SMTP id k20-20020a056a00169400b0063b57cb145fmr13083641pfc.20.1683540085842;
+        Mon, 08 May 2023 03:01:25 -0700 (PDT)
+Received: from debian.me (subs32-116-206-28-55.three.co.id. [116.206.28.55])
+        by smtp.gmail.com with ESMTPSA id i23-20020aa787d7000000b0062d90f36d16sm2667483pfo.88.2023.05.08.03.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 May 2023 03:01:25 -0700 (PDT)
+Received: by debian.me (Postfix, from userid 1000)
+        id 0C36010687E; Mon,  8 May 2023 17:01:21 +0700 (WIB)
+Date:   Mon, 8 May 2023 17:01:21 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        srinivas.kandagatla@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 03/18] docs: qcom: Add qualcomm minidump guide
+Message-ID: <ZFjIcSRSitmOvmZw@debian.me>
+References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
+ <1683133352-10046-4-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: support loading MBN file on
- msm8974
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20230507172041.2320279-1-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230507172041.2320279-1-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="y9mITgkKFRXba6ks"
+Content-Disposition: inline
+In-Reply-To: <1683133352-10046-4-git-send-email-quic_mojha@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
+--y9mITgkKFRXba6ks
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7.05.2023 19:20, Dmitry Baryshkov wrote:
-> On MSM8974 and APQ8074 the MSS requires loading raw MBA image instead of
-> the ELF file. Skip the ELF headers if mba.mbn was specified as the
-> firmware image.
-> 
-> Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating Hexagon v5")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_mss.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index ab053084f7a2..1603c5be44c8 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -477,7 +477,11 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
->  		return -EBUSY;
->  	}
->  
-> -	memcpy(mba_region, fw->data, fw->size);
-> +	if (qproc->version == MSS_MSM8974 &&
-> +	    !memcmp(fw->data, ELFMAG, SELFMAG))
-> +		memcpy(mba_region, fw->data + 0x1000, fw->size - 0x1000);
-I think this deserves some kind of a define instead of just a magic no
+On Wed, May 03, 2023 at 10:32:17PM +0530, Mukesh Ojha wrote:
+>  Documentation/admin-guide/qcom_minidump.rst | 246 ++++++++++++++++++++++=
+++++++
+>  1 file changed, 246 insertions(+)
 
-Konrad
-> +	else
-> +		memcpy(mba_region, fw->data, fw->size);
->  	q6v5_debug_policy_load(qproc, mba_region);
->  	memunmap(mba_region);
->  
+You forget to add toctree entry:
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guid=
+e/index.rst
+index 43ea35613dfcd4..251d070486c2ab 100644
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@ -120,6 +120,7 @@ configure specific aspects of kernel behavior to your l=
+iking.
+    perf-security
+    pm/index
+    pnp
++   qcom_minidump
+    rapidio
+    ras
+    rtc
+
+> +Writing to sysfs node can also be used to set the mode to minidump.
+> +
+> +::
+> +	echo "mini" > /sys/module/qcom_scm/parameter/download_mode
+
+The snippet above isn't rendered to code block, so I have to fix it up:
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/ad=
+min-guide/qcom_minidump.rst
+index 062c797e90d9cf..408fe1beed1b78 100644
+--- a/Documentation/admin-guide/qcom_minidump.rst
++++ b/Documentation/admin-guide/qcom_minidump.rst
+@@ -208,9 +208,8 @@ Similarly, "full" is passed to set the download mode to=
+ full dump
+ where entire ddr dump will be collected while setting it "full,mini"
+ will collect minidump along with fulldump.
+=20
+-Writing to sysfs node can also be used to set the mode to minidump.
++Writing to sysfs node can also be used to set the mode to minidump::
+=20
+-::
+ 	echo "mini" > /sys/module/qcom_scm/parameter/download_mode
+=20
+ Once the download mode is set, any kind of crash will make the device coll=
+ect
+
+> +By default, dumps are downloaded via USB to the attached x86_64 machine
+> +running PCAT (Qualcomm tool) software. Upon download, we will see
+> +a set of binary blobs starts with name md_* in PCAT configured directory
+> +in x86_64 machine, so for above example from the client it will be
+> +md_REGION_A.BIN. This binary blob depends on region content to determine
+> +whether it needs external parser support to get the content of the regio=
+n,
+> +so for simple plain ASCII text we don't need any parsing and the content
+> +can be seen just opening the binary file.
+> +
+> <snipped> ...
+> +One need to read the entire rawdump partition and pull out content to
+> +save it onto the attached x86_64 machine over USB. Later, this rawdump
+> +can be pass it to another tool dexter.exe(Qualcomm tool) which converts
+> +this into the similar binary blobs which we have got it when download ty=
+pe
+> +was set to USB i.e a set of registered region as blobs and their name
+> +starts with md_*.
+> +
+> +Replacing the dexter.exe with some open source tool can be added as futu=
+re
+> +scope of this document.
+
+There is inconsistency on inlining code keywords, so I have to inline
+the rest:
+
+---- >8 ----
+diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/ad=
+min-guide/qcom_minidump.rst
+index 408fe1beed1b78..117e61ef9fde67 100644
+--- a/Documentation/admin-guide/qcom_minidump.rst
++++ b/Documentation/admin-guide/qcom_minidump.rst
+@@ -118,7 +118,7 @@ Client driver can use ``qcom_apss_minidump_region_regis=
+ter`` API's to
+ register and ``qcom_apss_minidump_region_unregister`` to unregister
+ their region from minidump driver.
+=20
+-Client need to fill their region by filling qcom_apss_minidump_region
++Client need to fill their region by filling ``qcom_apss_minidump_region``
+ structure object which consist of the region name, region's
+ virtual and physical address and its size.
+=20
+@@ -166,7 +166,7 @@ Test
+=20
+ Existing Qualcomm devices already supports entire ddr dump (also called
+ full dump) by writing appropriate value to Qualcomm's top control and
+-status register(tcsr) in driver/firmware/qcom_scm.c .
++status register(tcsr) in ``driver/firmware/qcom_scm.c``.
+=20
+ SCM device Tree bindings required to support download mode
+ For example (sm8450) ::
+@@ -202,10 +202,10 @@ For example (sm8450) ::
+=20
+ 	};
+=20
+-User of minidump can pass qcom_scm.download_mode=3D"mini" to kernel
++User of minidump can pass ``qcom_scm.download_mode=3D"mini"`` to kernel
+ commandline to set the current download mode to minidump.
+-Similarly, "full" is passed to set the download mode to full dump
+-where entire ddr dump will be collected while setting it "full,mini"
++Similarly, ``"full"`` is passed to set the download mode to full dump
++where entire ddr dump will be collected while setting it ``"full,mini"``
+ will collect minidump along with fulldump.
+=20
+ Writing to sysfs node can also be used to set the mode to minidump::
+@@ -223,9 +223,9 @@ stored to an attached storage device.
+=20
+ By default, dumps are downloaded via USB to the attached x86_64 machine
+ running PCAT (Qualcomm tool) software. Upon download, we will see
+-a set of binary blobs starts with name md_* in PCAT configured directory
++a set of binary blobs starts with name ``md_*`` in PCAT configured directo=
+ry
+ in x86_64 machine, so for above example from the client it will be
+-md_REGION_A.BIN. This binary blob depends on region content to determine
++``md_REGION_A.BIN``. This binary blob depends on region content to determi=
+ne
+ whether it needs external parser support to get the content of the region,
+ so for simple plain ASCII text we don't need any parsing and the content
+ can be seen just opening the binary file.
+@@ -236,10 +236,10 @@ partition on the target device itself.
+=20
+ One need to read the entire rawdump partition and pull out content to
+ save it onto the attached x86_64 machine over USB. Later, this rawdump
+-can be pass it to another tool dexter.exe(Qualcomm tool) which converts
++can be pass it to another tool (``dexter.exe`` [Qualcomm tool]) which conv=
+erts
+ this into the similar binary blobs which we have got it when download type
+ was set to USB i.e a set of registered region as blobs and their name
+-starts with md_*.
++starts with ``md_*``.
+=20
+-Replacing the dexter.exe with some open source tool can be added as future
++Replacing the ``dexter.exe`` with some open source tool can be added as fu=
+ture
+ scope of this document.
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--y9mITgkKFRXba6ks
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZFjIbAAKCRD2uYlJVVFO
+oyXUAP9Jdvp3ekfNs/R/xT6oObGE6Yey/Lz3Tnr82n5uZ2grhgD+Jc+IKZQhm8/Q
+linikE60BwEYt7d/w1AiQuaOIvuahgk=
+=PaTP
+-----END PGP SIGNATURE-----
+
+--y9mITgkKFRXba6ks--
