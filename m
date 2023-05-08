@@ -2,124 +2,165 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73083C7EE26
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 14:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED076C7EE22
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  8 May 2023 15:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234902AbjEHObN (ORCPT
+        id S233824AbjEHPfb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 8 May 2023 10:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38222 "EHLO
+        Mon, 8 May 2023 11:35:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235218AbjEHOa0 (ORCPT
+        with ESMTP id S233694AbjEHPfa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 8 May 2023 10:30:26 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFFF9010;
-        Mon,  8 May 2023 07:29:57 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348ETpNA015244;
-        Mon, 8 May 2023 14:29:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=5OtZQNzTavdtMmiQ3BQTEPQPhnMBmFVHCrTtzHQe0Aw=;
- b=W/3rtYJh7L7iF3oFVojlRC1xzGSh4RwWlEI+dV9Y3G8fqsasyTNggb5+x2TDfK9XfObS
- Ka5ZEzKeLq2QYAN7G/asVvP6eFxlOv0dubZ0iArzc9NAHNqlQkCW4Ef91f7+O2UyTah7
- Dn7D2dTFMrngwHGvLo0oYV8IzD3SUGgn7zMr6pgN6OdYCi0E5CIByGgQVIwaXR1sbJMJ
- 69std41K2GlRGw+wAotOpAooJazvbnnbKt+gqwMya5Pz+SXeurxBfsV769KUj3+A43op
- rnNBUYQhfI9NFHcasakcg4b6E1N0WwDNYBEAOslPzg0e0FiLknnGeTgUP3o9KS2fazUy jA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf0vk09g6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 May 2023 14:29:51 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 348EToXa017015
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 8 May 2023 14:29:50 GMT
-Received: from [10.242.242.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 8 May 2023
- 07:29:42 -0700
-Message-ID: <3d876a44-0145-09b8-0722-80f57d6c96ac@quicinc.com>
-Date:   Mon, 8 May 2023 19:59:39 +0530
+        Mon, 8 May 2023 11:35:30 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F081FD7
+        for <linux-remoteproc@vger.kernel.org>; Mon,  8 May 2023 08:35:27 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2ac8d9399d5so33826981fa.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 May 2023 08:35:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683560125; x=1686152125;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+rGMM6WldBczt8RNjSEnRHxOpQkBYT/hbYgVK8fNow=;
+        b=bJ8h3KMYMCP7/Uk4X9NyK8D65ogdkLENKzzcLz5QY6S0c6oiU+5uzZGt75lfTZ4osE
+         Iwao1AvIqgHENfdY6hgyqGL8PhfsIECVdsOVVkjCUMOpHYrwH06zt3HdwSmI+7C+rWAW
+         ZqlBuVfkBAapZubsKKVfgaWjBQzxnYr+rZcXIstuNJnFcpmZn5jc/OWVOmswWWQiRsf+
+         RDe941T/hk8X17HuHiln/CUd7DLeJdsEphrVyp7xEBdUR1unDQCjAzQVZOvdv4yao3Z3
+         3697pXgLPte87OdW7xUJ2FNj0l3EBUUWah4KLssJeJZm1GXYbjgWV0s5eTKulIieeFqC
+         0vqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683560125; x=1686152125;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y+rGMM6WldBczt8RNjSEnRHxOpQkBYT/hbYgVK8fNow=;
+        b=Wv+SbOizyj10nXo6wzTuY+DiSZQt3UJIttTmUgew046pySTn8Ka3aVhaLedwtrR+R9
+         nMceegxPzc4tWzNrZ6/R0hrS/PRZ6g3/vq8M2OkwG1tpEvKp9+9oel/j1O31hbFjesAt
+         dfv2LdShtH6yA10l5uqPkhbYYxplB+3uR7uKhBjfC8grU4IG5xUyVyG4v34kpGbrOiLz
+         Wfc5EeTuMXi1HxpHjpb2ES7ZuVJWIC3NEWAJcGqCIR5gNE2g4t8ODuRYHquLlBytqTb3
+         ujV8XNeXsaBBctBEa0C3nyYCBL8cdc4E0ihYcoZNw46/ktOUo9hc7Ni69STfyYEk6MSD
+         /law==
+X-Gm-Message-State: AC+VfDwgC+fxXnF/dTHS2ym0gaI/f+ug5nul81YCXVoLQXpwB/AGy/MD
+        qsjr3L2aij6XapJTARRReBc9kw==
+X-Google-Smtp-Source: ACHHUZ4PS+Dueoz0V8cQJRS5V1Be4SfBRBJR1yuveA/NiY//o6/VPQtD+btdu0QrWkKnZpAIANVBzw==
+X-Received: by 2002:a2e:86cb:0:b0:2a7:6f60:34f2 with SMTP id n11-20020a2e86cb000000b002a76f6034f2mr2758618ljj.33.1683560125460;
+        Mon, 08 May 2023 08:35:25 -0700 (PDT)
+Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
+        by smtp.gmail.com with ESMTPSA id f4-20020a2e3804000000b002a634bfa224sm1222065lja.40.2023.05.08.08.35.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 May 2023 08:35:25 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: [PATCH v2] remoteproc: qcom_q6v5_mss: support loading MBN file on msm8974
+Date:   Mon,  8 May 2023 18:35:24 +0300
+Message-Id: <20230508153524.2371795-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: gcc-ipq9574: Add Q6 gcc
- clock control
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
- <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KqQ7f46CIgekKZiO7U2LP9DA5aiSHFvY
-X-Proofpoint-ORIG-GUID: KqQ7f46CIgekKZiO7U2LP9DA5aiSHFvY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-08_10,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=990 bulkscore=0
- malwarescore=0 adultscore=0 spamscore=0 mlxscore=0 clxscore=1015
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2303200000 definitions=main-2305080097
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On MSM8974 and APQ8074 the MSS requires loading raw MBA image instead of
+the ELF file. Skip the ELF headers if mba.mbn was specified as the
+firmware image.
 
+Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating Hexagon v5")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
 
-On 3/7/2023 8:49 PM, Krzysztof Kozlowski wrote:
-> On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
->> Add support for the QDSP6 gcc clock control used on IPQ9574
->> based devices. This would allow mpd remoteproc driver to control
->> the required gcc clocks to bring the subsystem out of reset.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 159 ++++++++++---------
->>   1 file changed, 83 insertions(+), 76 deletions(-)
->>
->> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> index c89e96d568c6..8bd6350ecd56 100644
->> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> @@ -138,80 +138,87 @@
->>   #define WCSS_AHB_CLK_SRC				129
->>   #define GCC_Q6_AHB_CLK					130
->>   #define GCC_Q6_AHB_S_CLK				131
->> -#define GCC_WCSS_ECAHB_CLK				132
->> -#define GCC_WCSS_ACMT_CLK				133
-> 
-> That's an ABI break, if file was accepted. Or a very weird change
-> anyway, if it wasn't (why adding entry and immediately changing it?).
-> 
-> Best regards,
-> Krzysztof
-> 
+Changes since v1:
+- Replace fixed offset 0x1000 with the value obtained from ELF headers
+- Implement ELF validity checks
 
-I will add new macros at the end instead in middle.
+---
+ drivers/remoteproc/qcom_q6v5_mss.c | 47 +++++++++++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-Thanks & Regards,
-Manikanta.
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index ab053084f7a2..b4ff900f0304 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -11,6 +11,7 @@
+ #include <linux/delay.h>
+ #include <linux/devcoredump.h>
+ #include <linux/dma-mapping.h>
++#include <linux/firmware.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/mfd/syscon.h>
+@@ -29,6 +30,7 @@
+ #include <linux/iopoll.h>
+ #include <linux/slab.h>
+ 
++#include "remoteproc_elf_helpers.h"
+ #include "remoteproc_internal.h"
+ #include "qcom_common.h"
+ #include "qcom_pil_info.h"
+@@ -459,6 +461,35 @@ static void q6v5_debug_policy_load(struct q6v5 *qproc, void *mba_region)
+ 	release_firmware(dp_fw);
+ }
+ 
++/* Get the offset of the segment 0 for mba.mbn */
++static int q6v5_mba_get_offset(struct rproc *rproc, const struct firmware *fw)
++{
++	const struct elf32_hdr *ehdr;
++	const void *phdr;
++	char class;
++	u64 phoffset, poffset;
++	u16 phentsize;
++	int ret;
++
++	ret = rproc_elf_sanity_check(rproc, fw);
++	if (ret < 0)
++		return ret;
++
++	ehdr = (const struct elf32_hdr *)fw->data;
++	class = ehdr->e_ident[EI_CLASS];
++	phoffset = elf_hdr_get_e_phoff(class, ehdr);
++	phentsize = elf_hdr_get_e_phentsize(class, ehdr);
++	if (phoffset + phentsize > fw->size)
++		return -EINVAL;
++
++	phdr = fw->data + elf_hdr_get_e_phoff(class, ehdr);
++	poffset = elf_phdr_get_p_offset(class, phdr);
++	if (poffset > fw->size)
++		return -EINVAL;
++
++	return poffset;
++}
++
+ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct q6v5 *qproc = rproc->priv;
+@@ -477,7 +508,21 @@ static int q6v5_load(struct rproc *rproc, const struct firmware *fw)
+ 		return -EBUSY;
+ 	}
+ 
+-	memcpy(mba_region, fw->data, fw->size);
++	if (qproc->version == MSS_MSM8974 &&
++	    !memcmp(fw->data, ELFMAG, SELFMAG)) {
++		int poffset;
++
++		poffset = q6v5_mba_get_offset(rproc, fw);
++		if (poffset < 0) {
++			memunmap(mba_region);
++			return poffset;
++		}
++
++		memcpy(mba_region, fw->data + poffset, fw->size - poffset);
++	} else {
++		memcpy(mba_region, fw->data, fw->size);
++	}
++
+ 	q6v5_debug_policy_load(qproc, mba_region);
+ 	memunmap(mba_region);
+ 
+-- 
+2.39.2
+
