@@ -2,152 +2,177 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A62C77B75
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 20:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A23C77B75
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 20:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232313AbjEIUIn (ORCPT
+        id S229595AbjEIUJX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 16:08:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47190 "EHLO
+        Tue, 9 May 2023 16:09:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjEIUIm (ORCPT
+        with ESMTP id S229538AbjEIUJW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 16:08:42 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4FD410C8
-        for <linux-remoteproc@vger.kernel.org>; Tue,  9 May 2023 13:08:41 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1aad55244b7so48467785ad.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 May 2023 13:08:41 -0700 (PDT)
+        Tue, 9 May 2023 16:09:22 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A351B9
+        for <linux-remoteproc@vger.kernel.org>; Tue,  9 May 2023 13:09:21 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-643aad3bc41so5237722b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 May 2023 13:09:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683662921; x=1686254921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R5yFXJpFYYPBvv2gYtK4nzvS+8gi0j0YQx+tpAx3do8=;
-        b=L4iW/eajQ1x43A3kVh5iovfAlknWcDNfeXtCswRGgNTSezbbw7WPVcJVEkuu3YTi3w
-         HZ4gHUbO7bdG/2a1KNobEGpb880qVxVkJz3mbMEZm18mpDComMQqgI8/RmV5iNNC2N5P
-         eNTO6EIl62w6O3JP1YjqYLO1wBvZoDyGhOFAUGIstyOrJDmqVnw9Ew3LfKm4o+V7fzpJ
-         smF0JFgstQK2UgaRRunidHmw7LUZ46bE4gUoDNA5ktFBOSoOuoGRIdoQNyC3dqxD6cW1
-         /uYMMl53WRytk6jlUA9wUoJHwvHGfemm/ILIBUvIU4cg9CCQn7ltKNQ6mB8cFTzwyWmt
-         LzeA==
+        d=linaro.org; s=google; t=1683662961; x=1686254961;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=k+FKrsLIVkKYcsIeLT6acEHQnxxZ6Q1AY/ul3RhcaDc=;
+        b=t7HcuJJ8yNGZSd5jU/xlsEmIR0LbZB3y+UKrWSXF1bjCnP1H/mulK2qxWbB9om6c5e
+         EPoNhS+2F2SY6TDpNh93OfYIaBuWtDyA0WUhhijzdrOdZ209vJFBMBDEstCsarasou+9
+         +aaguV9fWmvqneuHb9CoJTE/qx66MsyzXT+Vxlf3Z99RhkANcfNe43TH2ZxXjLdx2+BS
+         HuT1Mt+LUKLIi9eC3VKE3enmhVi2+4/fEeTRQlISUfpnrQX7AiRV2EtLIcQYI0O8DYbA
+         SgRhafl44CnHhh1/jjt5W5eRfmOo6Y3wvHoZfrVQ9hLa4M2QjasbOPOES3SF4ouZL3OB
+         lEsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683662921; x=1686254921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R5yFXJpFYYPBvv2gYtK4nzvS+8gi0j0YQx+tpAx3do8=;
-        b=ZttRPJsPngXrvBfsdPkREzEj5q1vPSpDSyhBafFSzQS7vi2PqcWiMiWcLnyk3eoPSy
-         s3KhHF7dEtYZnHqJTVrgVKtDz6DRRqQgQaxmAtuCnLFVDmAqXrN0ELs0YHYqFVrwFmuH
-         lSeFU1knTfecNmJIyt34EZwu0D2mrCMxNuNw+rmnP8lq5+v485j5UrtMyzIlso6TAVPz
-         FkJo+UaLx4ndw+vfhrPAcO9KZiqoYb1hYNaglBb+T7ic+BnXJyH8fAqKvyRAXE5rKSa8
-         iv4EuqQMEOBsYQfzI5RCaoWlYyXQhTM6UgIV02UZqF6oTg/0Wq21U/lREdteHpituQUP
-         zg1A==
-X-Gm-Message-State: AC+VfDwFMhQpmb6eQ4ou6m3yfT19tJE/CBdL0uFh2N9Gomg1qK+v3aX5
-        dxCd3qPjedBv54z4zg04XKftog==
-X-Google-Smtp-Source: ACHHUZ5YyMLX+oPAbFkOBk3bKpJA2/DvBwAFKb4s52WAPzLQ83YhSWdLsdsodIXw+4xsQjjgjgXkdA==
-X-Received: by 2002:a17:902:ecc3:b0:1ab:528:5f85 with SMTP id a3-20020a170902ecc300b001ab05285f85mr19803294plh.59.1683662921049;
-        Tue, 09 May 2023 13:08:41 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683662961; x=1686254961;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+FKrsLIVkKYcsIeLT6acEHQnxxZ6Q1AY/ul3RhcaDc=;
+        b=ktA6lhGGqPrTK4mGTvbNfYyheZLScbGqubPRVPkhvUFx64R5ZC5D7LfjwDwv8cqI5O
+         2+KqF1kKT0IGp2rXtGNis3hgbUXJz7ReXq/vRhwYvTUew4HwJU/dyy7RDE/yaWwEyfwp
+         tIp24CmOpsfkTwsKMTYjEvGHqzgzbzi4D5wUlE1bpt3sfYHfT6IVNkXEU+gWi+NS5H/P
+         5ukJJRdQAM4QQuhRP26Rh34FBcpU7W+RjWdVlnECM5gSyzWviMHk53jEYS9miTIlxRKb
+         fvoVSc0p0ojr77ShMn9HKFNi9wA0whYS0HD8Jwj8Q7Dfyfl6+w/uI5THTppZTMNl+8zk
+         bP/Q==
+X-Gm-Message-State: AC+VfDzALCQeIGaNbPG+G/6yH8su8VF+RVnPUzhRSx27RcktqrPzvUl7
+        i4Y/N4LmZGkER9t2Q39ArBbWKQ==
+X-Google-Smtp-Source: ACHHUZ7DY1IJhZ58XkyYQJW/n6N11Hq8FL8JnuzhTJRQRu0mHe/ZFZZkYof5BJbwpbwYX39JmI5wDQ==
+X-Received: by 2002:a05:6a21:6317:b0:f3:3810:8a89 with SMTP id wu23-20020a056a21631700b000f338108a89mr16127445pzb.51.1683662960788;
+        Tue, 09 May 2023 13:09:20 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:5e48:ff40:3eaf:3f9e])
-        by smtp.gmail.com with ESMTPSA id l4-20020a170902f68400b001a19f3a661esm2015563plg.138.2023.05.09.13.08.39
+        by smtp.gmail.com with ESMTPSA id a9-20020a63e409000000b0050376cedb3asm1756976pgi.24.2023.05.09.13.09.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 13:08:40 -0700 (PDT)
-Date:   Tue, 9 May 2023 14:08:37 -0600
+        Tue, 09 May 2023 13:09:20 -0700 (PDT)
+Date:   Tue, 9 May 2023 14:09:17 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Arnd Bergmann <arnd@kernel.org>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-remoteproc@vger.kernel.org, kernel@pengutronix.de,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Markus Elfring <Markus.Elfring@web.de>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: use modern pm_ops
-Message-ID: <ZFqoRdARznP/tPIq@p14s>
-References: <20230420213610.2219080-1-arnd@kernel.org>
+        linux-arm-kernel@lists.infradead.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-mediatek@lists.infradead.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 00/18] remoteproc: Convert to platform remove callback
+ returning void
+Message-ID: <ZFqobZAfdlu+Rdtt@p14s>
+References: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20230420213610.2219080-1-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Apr 20, 2023 at 11:36:04PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Thu, May 04, 2023 at 09:44:35PM +0200, Uwe Kleine-König wrote:
+> Hello,
 > 
-> Without CONFIG_PM, the driver warns about unused functions:
+> this patch series adapts most platform drivers below drivers/remoteproc
+> to use the .remove_new() callback. Compared to the traditional .remove()
+> callback .remove_new() returns no value. This is a good thing because
+> the driver core doesn't (and cannot) cope for errors during remove. The
+> only effect of a non-zero return value in .remove() is that the driver
+> core emits a warning. The device is removed anyhow and an early return
+> from .remove() usually yields a resource leak. One driver suffering from
+> this problem (s3c2410) is fixed by the first patch.
 > 
-> drivers/remoteproc/imx_dsp_rproc.c:1210:12: error: 'imx_dsp_runtime_suspend' defined but not used [-Werror=unused-function]
->  1210 | static int imx_dsp_runtime_suspend(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~~~~~
-> drivers/remoteproc/imx_dsp_rproc.c:1178:12: error: 'imx_dsp_runtime_resume' defined but not used [-Werror=unused-function]
->  1178 | static int imx_dsp_runtime_resume(struct device *dev)
->       |            ^~~~~~~~~~~~~~~~~~~~~~
+> By changing the remove callback to return void driver authors cannot
+> reasonably (but wrongly) assume any more that there happens some kind of
+> cleanup later.
 > 
-> Change the old SET_SYSTEM_SLEEP_PM_OPS()/SET_RUNTIME_PM_OPS()
-> helpers to their modern replacements that avoid the warning,
-> and remove the now unnecessary __maybe_unused annotations
-> on the other PM helper functions.
+> There is one driver (i.e. ti_k3_dsp_remoteproc.c) that might return an
+> error code in .remove(). I didn't look in detail into this driver, but
+> if that error happens, we have exactly the bad situation described
+> above. (Note that kproc->mem and the register mapping goes away.)
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
+> Best regards
+> Uwe
 > 
+> Uwe Kleine-König (18):
+>   remoteproc: da8xx: Convert to platform remove callback returning void
+>   remoteproc: imx_dsp: Convert to platform remove callback returning
+>     void
+>   remoteproc: imx: Convert to platform remove callback returning void
+>   remoteproc: keystone: Convert to platform remove callback returning
+>     void
+>   remoteproc: meson_mx_ao_arc: Convert to platform remove callback
+>     returning void
+>   remoteproc: mtk_scp: Convert to platform remove callback returning
+>     void
+>   remoteproc: omap: Convert to platform remove callback returning void
+>   remoteproc: pru: Convert to platform remove callback returning void
+>   remoteproc: qcom_q6v5_adsp: Convert to platform remove callback
+>     returning void
+>   remoteproc: qcom_q6v5_mss: Convert to platform remove callback
+>     returning void
+>   remoteproc: qcom_q6v5_pas: Convert to platform remove callback
+>     returning void
+>   remoteproc: qcom_q6v5_wcss: Convert to platform remove callback
+>     returning void
+>   remoteproc: qcom_wcnss: Convert to platform remove callback returning
+>     void
+>   remoteproc: rcar: Convert to platform remove callback returning void
+>   remoteproc: virtio: Convert to platform remove callback returning void
+>   remoteproc: st: Convert to platform remove callback returning void
+>   remoteproc: stm32: Convert to platform remove callback returning void
+>   remoteproc: wkup_m3: Convert to platform remove callback returning
+>     void
+> 
+>  drivers/remoteproc/da8xx_remoteproc.c    | 6 ++----
+>  drivers/remoteproc/imx_dsp_rproc.c       | 6 ++----
+>  drivers/remoteproc/imx_rproc.c           | 6 ++----
+>  drivers/remoteproc/keystone_remoteproc.c | 6 ++----
+>  drivers/remoteproc/meson_mx_ao_arc.c     | 6 ++----
+>  drivers/remoteproc/mtk_scp.c             | 6 ++----
+>  drivers/remoteproc/omap_remoteproc.c     | 6 ++----
+>  drivers/remoteproc/pru_rproc.c           | 6 ++----
+>  drivers/remoteproc/qcom_q6v5_adsp.c      | 6 ++----
+>  drivers/remoteproc/qcom_q6v5_mss.c       | 6 ++----
+>  drivers/remoteproc/qcom_q6v5_pas.c       | 6 ++----
+>  drivers/remoteproc/qcom_q6v5_wcss.c      | 6 ++----
+>  drivers/remoteproc/qcom_wcnss.c          | 6 ++----
+>  drivers/remoteproc/rcar_rproc.c          | 6 ++----
+>  drivers/remoteproc/remoteproc_virtio.c   | 6 ++----
+>  drivers/remoteproc/st_remoteproc.c       | 6 ++----
+>  drivers/remoteproc/stm32_rproc.c         | 6 ++----
+>  drivers/remoteproc/wkup_m3_rproc.c       | 6 ++----
+>  18 files changed, 36 insertions(+), 72 deletions(-)
+>
 
-Applied.
+I have applied this set.
 
 Thanks,
 Mathieu
 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index cab06dbf37fb..2d75dea43f20 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -1243,7 +1243,7 @@ static void imx_dsp_load_firmware(const struct firmware *fw, void *context)
->  	release_firmware(fw);
->  }
->  
-> -static __maybe_unused int imx_dsp_suspend(struct device *dev)
-> +static int imx_dsp_suspend(struct device *dev)
->  {
->  	struct rproc *rproc = dev_get_drvdata(dev);
->  	struct imx_dsp_rproc *priv = rproc->priv;
-> @@ -1278,7 +1278,7 @@ static __maybe_unused int imx_dsp_suspend(struct device *dev)
->  	return pm_runtime_force_suspend(dev);
->  }
->  
-> -static __maybe_unused int imx_dsp_resume(struct device *dev)
-> +static int imx_dsp_resume(struct device *dev)
->  {
->  	struct rproc *rproc = dev_get_drvdata(dev);
->  	int ret = 0;
-> @@ -1312,9 +1312,8 @@ static __maybe_unused int imx_dsp_resume(struct device *dev)
->  }
->  
->  static const struct dev_pm_ops imx_dsp_rproc_pm_ops = {
-> -	SET_SYSTEM_SLEEP_PM_OPS(imx_dsp_suspend, imx_dsp_resume)
-> -	SET_RUNTIME_PM_OPS(imx_dsp_runtime_suspend,
-> -			   imx_dsp_runtime_resume, NULL)
-> +	SYSTEM_SLEEP_PM_OPS(imx_dsp_suspend, imx_dsp_resume)
-> +	RUNTIME_PM_OPS(imx_dsp_runtime_suspend, imx_dsp_runtime_resume, NULL)
->  };
->  
->  static const struct of_device_id imx_dsp_rproc_of_match[] = {
-> @@ -1332,7 +1331,7 @@ static struct platform_driver imx_dsp_rproc_driver = {
->  	.driver = {
->  		.name = "imx-dsp-rproc",
->  		.of_match_table = imx_dsp_rproc_of_match,
-> -		.pm = &imx_dsp_rproc_pm_ops,
-> +		.pm = pm_ptr(&imx_dsp_rproc_pm_ops),
->  	},
->  };
->  module_platform_driver(imx_dsp_rproc_driver);
+> 
+> base-commit: 1a5304fecee523060f26e2778d9d8e33c0562df3
 > -- 
 > 2.39.2
 > 
