@@ -2,146 +2,198 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B56CFC77B75
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 07:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F91C7EE22
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 10:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235232AbjEIHLk (ORCPT
+        id S235256AbjEIKfx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 03:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41332 "EHLO
+        Tue, 9 May 2023 06:35:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235223AbjEIHLi (ORCPT
+        with ESMTP id S235152AbjEIKfw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 03:11:38 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47348A5F4
-        for <linux-remoteproc@vger.kernel.org>; Tue,  9 May 2023 00:11:36 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-50bc570b4a3so10291565a12.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 May 2023 00:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683616295; x=1686208295;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=APH4uf0HQ8cOpTtx4oEH1mlDXvsjwJke9jk7vwtuN80=;
-        b=e7j6qkllm/T/2M2c1EkqE/Qd/638PextIBR0EfhntkXwIPUhY6InG0cTEP19Pl6rJX
-         tzpjvB4ljG1Wpv06IP8v0iJEsTwM4pF4IdAbZvRdo2cjs5Wv4t8ffGIy4i89YSSwoyZY
-         QIWbShgowuM5OzwGJdJ1FxIYWJO8yENJsZnyGyyMcDCnf5X/AfB0a4iDpCyXAzK5kv83
-         YhQ2A8UNHBgzd9cPjbCi7+0ZFJkOowMKZg7uOa2zCrr9/kDcXodhAZYIk727px/1eZA4
-         D+/Wf5n6mnlx2gWnDoJQyYp8xv+TH0psqoE9I70jPYNednkYtru0ZwjFHM60MdO5DDQg
-         WJ8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683616295; x=1686208295;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=APH4uf0HQ8cOpTtx4oEH1mlDXvsjwJke9jk7vwtuN80=;
-        b=WlZ141nmH3LnfDpyMUyxvZ8LxnvAsLFc+iVGaNABbr5a3F/p+XWQXzdEDoGQwkuIt5
-         VlB8uWvbueGUwC2E8bN/xXBKce8xjnQ158h3ywS382Y+TdWDTKCUlbb01fshSn6htpvd
-         C0cPa4Ws92aVqXiqj2vnAHnLFxi8NF8PbVlqI1e7nD2eh6hNDu6R3yzmiEvDORn7ta2+
-         jGCWX3EVNESTJouTabOzN6ih3DBW8Lbm05ZCNTdZ8OcaruJ8UU3To7pqCJbTlr73Xehz
-         Wo/+lVCM+H3uWpz45WWWNWwBULpYeQ/exbpbAez/9t97fhd+1jH/MF4CSX46gNX0hddn
-         eu7w==
-X-Gm-Message-State: AC+VfDz7ynauPWiB5ZpuUmP7UhAoOv6fu9SDlUvHkQP3cT5uHhftL+qU
-        LZNu8JocwQ2t4XaIdFo7awH8Aw==
-X-Google-Smtp-Source: ACHHUZ4NTgyfxBlvxeFNFcg9A0+pojhfwrdDKrGACJsSCpzT73/PLN82DOw9k/K7FMCu1mximsVIng==
-X-Received: by 2002:a05:6402:8c3:b0:506:7d3e:ade5 with SMTP id d3-20020a05640208c300b005067d3eade5mr9710332edz.33.1683616294764;
-        Tue, 09 May 2023 00:11:34 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:d0d5:7818:2f46:5e76? ([2a02:810d:15c0:828:d0d5:7818:2f46:5e76])
-        by smtp.gmail.com with ESMTPSA id n7-20020aa7d047000000b004fbdfbb5acesm415192edo.89.2023.05.09.00.11.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 00:11:34 -0700 (PDT)
-Message-ID: <7777c016-4875-a6c9-cd5e-78c2ac686448@linaro.org>
-Date:   Tue, 9 May 2023 09:11:32 +0200
+        Tue, 9 May 2023 06:35:52 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D595DDD9A;
+        Tue,  9 May 2023 03:35:21 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3495GCcF015664;
+        Tue, 9 May 2023 10:35:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=7rAJVFbOA/qLEVTAdfdN8+mkHBM9gPh2AaEOJvYGnm4=;
+ b=ILW79M/6Nrxlkh0H98IGbFPKcgyhYGfSc+HWIN4Yatm6wTJSQD3zROsurZIFeF8Efhyt
+ OxMG9diTx39C7qtfk/rbzhb7GUZq3NpjF6Thxk6Ryv+Ke2bJ7KY/+SOn64TpqC7grsjl
+ PjHqtXaJqi0LTjguBgurfYSVcByBi6touFjiCPNKpJ8bQzpStZQjt6yJFBDkEDVj08kZ
+ +M4k1yOFrKZaFi+sp4F/lxAqSeWVjwkYJRYYY+IvTKyeXHKPk9d9pwyx5W4gHqWR3xBt
+ TjWjgAdwKa9KD9kLBGK4BpojQx6wVYdS31Py5J2KqcbqrBmQ0/zRTHp41M3/XRmUCfU2 Ag== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf7851e7y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 May 2023 10:35:01 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349AYxNM016069
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 May 2023 10:35:00 GMT
+Received: from [10.242.242.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
+ 03:34:52 -0700
+Message-ID: <b8b30b77-31df-15c3-3914-1198f90299e6@quicinc.com>
+Date:   Tue, 9 May 2023 16:04:48 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 04/18] soc: qcom: Add Qualcomm minidump kernel driver
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
 Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        srinivas.kandagatla@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
- <1683133352-10046-5-git-send-email-quic_mojha@quicinc.com>
- <c6f730b6-f702-91d4-4abd-71546e02f869@linaro.org>
- <23b493f4-1a01-8d03-fc12-d588b2c6fd74@quicinc.com>
- <575a422d-6224-06b7-628c-8487b47882e9@linaro.org>
- <500e5abc-fb71-8468-a6b0-3ced2676b57c@linaro.org>
- <e714566e-39b7-d46b-13bd-3c0e20e9f944@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <e714566e-39b7-d46b-13bd-3c0e20e9f944@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <38a5a268-7d8a-6e61-4272-8e9155df0034@linaro.org>
+ <790496d7-98dc-c92e-dedc-1c89395a1ad8@quicinc.com>
+ <e63a3e34-1f73-3661-8655-e34e1e955804@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <e63a3e34-1f73-3661-8655-e34e1e955804@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XkErmhbDB5Hgp_TKZN_KEbnzhATsuSLj
+X-Proofpoint-GUID: XkErmhbDB5Hgp_TKZN_KEbnzhATsuSLj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_06,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ bulkscore=0 mlxlogscore=999 impostorscore=0 spamscore=0 mlxscore=0
+ priorityscore=1501 adultscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090083
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 08/05/2023 09:10, Mukesh Ojha wrote:
-> 
-> 
-> On 5/4/2023 10:04 PM, Krzysztof Kozlowski wrote:
->> On 04/05/2023 17:21, Krzysztof Kozlowski wrote:
->>>>>
->>>>>> +	ret = qcom_minidump_init_apss_subsystem(md);
->>>>>> +	if (ret) {
->>>>>> +		dev_err(&pdev->dev, "apss minidump initialization failed: %d\n", ret);
->>>>>> +		goto unlock;
->>>>>> +	}
->>>>>> +
->>>>>> +	__md = md;
->>>>>
->>>>> No. This is a platform device, so it can have multiple instances.
+
+
+On 5/9/2023 12:38 PM, Krzysztof Kozlowski wrote:
+> On 08/05/2023 15:45, Manikanta Mylavarapu wrote:
+>>
+>>
+>> On 3/7/2023 8:47 PM, Krzysztof Kozlowski wrote:
+>>> On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
+>>>> Add new binding document for multipd model remoteproc.
+>>>> IPQ5018, IPQ9574 follows multipd model.
 >>>>
->>>> It can have only one instance that is created from SMEM driver probe.
+>>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>>> ---
+>>>>    .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
+>>>>    1 file changed, 282 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..b788607f5abd
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>>> @@ -0,0 +1,282 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/remoteproc/qcom,multipd-pil.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Qualcomm Multipd Secure Peripheral Image Loader
+>>>> +
+>>>> +maintainers:
+>>>> +  - Bjorn Andersson <andersson@kernel.org>
+>>>> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>> +
+>>>> +description:
+>>>> +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
+>>>> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
 >>>
->>> Anyone can instantiate more of them.... how did you solve it?
->>
->> To clarify - sprinkling more of singletons makes everything tightly
->> coupled, difficult to debug and non-portable. You cannot have two
->> instances, you have to control concurrent initialization by yourself in
->> each of such singletons.
->>
->> I understand sometimes they are unavoidable, for example when this does
->> not map to hardware property. However here you have the parent - smem -
->> which can return you valid instance. Thus you avoid entire problem of
->> file-scope variables.
+>>> What is a "pd"?
+>>>
+>> Pd means protection domain.
+>> It's similar to process in Linux. Here QDSP6 processor runs each wifi
+>> radio functionality on a separate process. One process can't access
+>> other process resources, so this is termed as PD i.e protection domain.
+>> Here we have two pd's called root and user pd. We can correlate Root pd
+>> as root and user pd as user in linux. Root pd has more privileges than
+>> user pd.
+>>   From remoteproc driver perspective, root pd corresponds to QDSP6
+>> processor bring up and user pd corresponds to Wifi radio (WCSS) bring up.
 > 
-> I get your point, why one's should avoid file scope variables.
+> Parts of it should be in description. And definitely "pd" should be
+> explained.
+> 
+Sure, i will add it in cover page.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    enum:
+>>>> +      - qcom,ipq5018-q6-mpd
+>>>> +      - qcom,ipq9574-q6-mpd
+>>>> +
+>>>> +  '#address-cells': true
+>>>> +
+>>>> +  '#size-cells': true
+> 
+> ...
+> 
+>>>
+>> Sure, will add.
+>>>> +    description:
+>>>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>>>> +      and devices related to the Modem.
+>>>> +
+>>>> +patternProperties:
+>>>> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
+>>>
+>>> No, underscores are not allowed. Also, what is pd?
+>>>
+>> Sure, will remove underscores.
+> 
+> Shouldn't this be just pd-1?
 > 
 > 
-> This is infrastructure driver and will not have multiple instances and 
-> even if it happens could be avoided with with the help of global mutex 
-> and protect below function which i am already doing at the moment and 
+I think 'pd-1' not enough. Because child's i.e userpd's also considered
+as remote processor's, so name should be like "remoteproc-pd1".
+>>>> +    type: object
+>>>> +    description:
+>>>> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+>>>> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+>>>> +      device node.
+>>>> +
+>>>> +    properties:
+>>>> +      compatible:
+>>>> +        enum:
+>>>> +          - "qcom,ipq5018-wcss-ahb-mpd"
+>>>> +          - "qcom,ipq9574-wcss-ahb-mpd"
+>>>> +          - "qcom,ipq5018-wcss-pcie-mpd"
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
-But we do not want global mutexes... so incorrect design is being
-improved by more incorrect design.
-
-> fail the other probe if it is already initialized with proper logging..e.g
-> 
-> "already initialized..."
-> 
-> 
-> ret = qcom_minidump_init_apss_subsystem(md);
-> 
-> 
-> And this will be in-lined with
-> 
-> /* Pointer to the one and only smem handle */
-> static struct qcom_smem *__smem;
-> 
-> Let me know if you still disagree...and have some other way ?
-
-Why the parent - smem - cannot return every consumer the instance it
-has? There will be one smem having only one minidump, so all problems
-solved?
-
-Best regards,
-Krzysztof
-
+Thanks & Regards,
+Manikanta.
