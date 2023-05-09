@@ -2,295 +2,437 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07115C7EE25
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 16:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB6DC7EE22
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 16:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235518AbjEIQGk (ORCPT
+        id S233450AbjEIQSc (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 12:06:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35130 "EHLO
+        Tue, 9 May 2023 12:18:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231488AbjEIQGi (ORCPT
+        with ESMTP id S229533AbjEIQSb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 12:06:38 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C7D46B5;
-        Tue,  9 May 2023 09:06:36 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-52caed90d17so3337166a12.0;
-        Tue, 09 May 2023 09:06:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683648396; x=1686240396;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3D71as6LJWsYMDTb4BiasqKDmId0LkGzfVkMgY6tMoc=;
-        b=i8dhhnQhpe5/KpsAyTAlVssvMR0ux0o5onT9Qxzie9BfoGIHQ6SOniG0AlO8B8ZxcL
-         5ycfkMwgNjmSIibN/NNfkn5qZaljGAlKPr57vAGXYGktC0jXrY5E3SYQOEMfRwCeEQFL
-         uKWsMhtcVzW3In+kDKdi2wn5Zt3T9g0umMlR3PVNGEAmEwpKDiQm8j3Nf2+fS8+b6wrQ
-         slylNYxXZbljTUQPhSahBLwdE6akjNBDXMX3KSnJBc6J9/YegRPSLvDgCQi4f4sn080/
-         TTwiccVSfo0zo/TKN8B3VIRGxBT4XF5YWG9gNZVgUmrGAPLNalb6F/h0pDd29iRKFfen
-         IzNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683648396; x=1686240396;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3D71as6LJWsYMDTb4BiasqKDmId0LkGzfVkMgY6tMoc=;
-        b=FL9KIVU6CPp+vYH4I42K4NbiR3GC85wqxdLwqyjbY3ibrN/m7fE1oUZccGIZfEMsUo
-         8LLP4jwH7JscImeBcc+zCko5NAlonuhdLVg+7exS5rzr0D4EFCIf7A6zuVN2lEoOZG6Y
-         iu8xqSbLsAsU3mPw5vFTsOVeQeY5vNgrVcDDXym6jZmRMo937o0e4mXL7C5/7e+faxgn
-         bPwPIrY5NJUK0oUQJgPm2k83bfqGp1h2lJyzu98fRixKNInjJJYBi9FlZ8KHZdEa4AXA
-         igZl8eC0beww4j+fzji17OsKCpY4pob8+bPS10B3zjLqloTMX0/kkWSjPsAyoWveke/h
-         IVbw==
-X-Gm-Message-State: AC+VfDwjOfKcYCdMy7TZQntMYl+nOwEP38FEibbkA5qMLQo84hQiUkb4
-        sANt2I58TYdDP/Vfux2h7S0=
-X-Google-Smtp-Source: ACHHUZ6vq6rgO7usSQ6hQ8Rf6iwdW69I+IF91CuCUFV2Mybvsjlx3XmHs9ctzTW8ientqNcQ3qg9iA==
-X-Received: by 2002:a17:90a:ba8a:b0:240:f8a6:55c7 with SMTP id t10-20020a17090aba8a00b00240f8a655c7mr14101831pjr.20.1683648395618;
-        Tue, 09 May 2023 09:06:35 -0700 (PDT)
-Received: from [192.168.50.148] (net-2-32-39-33.cust.vodafonedsl.it. [2.32.39.33])
-        by smtp.gmail.com with ESMTPSA id o6-20020a17090ac08600b00250ad795d72sm1599484pjs.44.2023.05.09.09.06.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 09:06:34 -0700 (PDT)
-Message-ID: <e25723bf-be85-b458-a84c-1a45392683bb@gmail.com>
-Date:   Tue, 9 May 2023 18:06:26 +0200
+        Tue, 9 May 2023 12:18:31 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3090646A2;
+        Tue,  9 May 2023 09:18:29 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349BW8Vj032004;
+        Tue, 9 May 2023 16:18:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=C1yltITvHm6+V9sJou1VjBUdYHedvQ1G0Q45b7NVnN4=;
+ b=iW04eozuKAMYFsyEcx3PK+l4lX64sVZe+egaVePgpbC33cSMqzR3a+zPNYMAc02d7Xal
+ rt1I59PPcbg5sJsub/7Eotaq4jupBvFOn5CW7CSfBc+9d/+MakQndKllSAg2zlsLxE7a
+ A33udQweWnWorzpuomnpzYD/BVaaS8UYDCmDHpV0LIocCe4dv/Txo9ravtWhPhylvc2f
+ rw4Vh/T9fqkvPMBv1+iqLJ6L8R9jM37I18+a/xyHM+G7pb//9GB+HfFkBQIKZVSaXME9
+ ntuzG2wWnrmHNaS+lNQT2dAKBJvpxPfMR8dz415bIDG61irLgQXjIPgzC+yDFVHvhGqN uQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf781jb76-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 May 2023 16:18:23 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349GILj4021857
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 May 2023 16:18:22 GMT
+Received: from [10.216.5.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
+ 09:17:59 -0700
+Message-ID: <1ddb9ff9-2284-1f8b-69cc-e8d041a29ca1@quicinc.com>
+Date:   Tue, 9 May 2023 21:47:54 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 09/18] soc: qcom: Add qcom's pstore minidump driver
- support
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
 Content-Language: en-US
-To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        srinivas.kandagatla@linaro.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
- <1683133352-10046-10-git-send-email-quic_mojha@quicinc.com>
-From:   Luca Stefani <luca.stefani.ge1@gmail.com>
-In-Reply-To: <1683133352-10046-10-git-send-email-quic_mojha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Rob Herring <robh@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_gurus@quicinc.com>, <loic.poulain@linaro.org>,
+        <quic_eberman@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <20230307142614.GA2742-robh@kernel.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <20230307142614.GA2742-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WxJlulJhVGuV9feqI3M2tz29GapSrcu_
+X-Proofpoint-ORIG-GUID: WxJlulJhVGuV9feqI3M2tz29GapSrcu_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_09,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0 mlxscore=0
+ impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090133
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On 03/05/23 19:02, Mukesh Ojha wrote:
-> This driver was inspired from the fact pstore ram region should be
-> fixed and boot firmware need to have awarness about this region,
-> so that it will be persistent across boot. But, there are many
-> QCOM SoC which does not support warm boot from hardware but they
-> have minidump support from the software, and for them, there is
-> no need of this pstore ram region to be fixed, but at the same
-> time have interest in the pstore frontends. So, this driver
-> get the dynamic reserved region from the ram and register the
-> ramoops platform device.
->
->   +---------+     +---------+   +--------+     +---------+
->   | console |     | pmsg    |   | ftrace |     | dmesg   |
->   +---------+     +---------+   +--------+     +---------+
->         |             |             |              |
->         |             |             |              |
->         +------------------------------------------+
->                            |
->                           \ /
->                    +----------------+
->              (1)   |pstore frontends|
->                    +----------------+
->                            |
->                           \ /
->                   +------------------- +
->              (2)  | pstore backend(ram)|
->                   +--------------------+
->                            |
->                           \ /
->                   +--------------------+
->              (3)  |qcom_pstore_minidump|
->                   +--------------------+
->                            |
->                           \ /
->                     +---------------+
->              (4)    | qcom_minidump |
->                     +---------------+
->
-> This driver will route all the pstore front data to the stored
-> in qcom pstore reserved region and the reason of showing an
-> arrow from (3) to (4) as qcom_pstore_minidump driver will register
-> all the available frontends region with qcom minidump driver
-> in upcoming patch.
->
-> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> ---
->   drivers/soc/qcom/Kconfig                |  11 +++
->   drivers/soc/qcom/Makefile               |   1 +
->   drivers/soc/qcom/qcom_pstore_minidump.c | 116 ++++++++++++++++++++++++++++++++
->   3 files changed, 128 insertions(+)
->   create mode 100644 drivers/soc/qcom/qcom_pstore_minidump.c
->
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index 15c931e..afdc634 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -293,4 +293,15 @@ config QCOM_MINIDUMP
->   	  these selective regions will be dumped instead of the entire DDR.
->   	  This saves significant amount of time and/or storage space.
->   
-> +config QCOM_PSTORE_MINIDUMP
-> +	tristate "Pstore support for QCOM Minidump"
-> +	depends on ARCH_QCOM
-> +	depends on PSTORE_RAM
-> +	depends on QCOM_MINIDUMP
-> +	help
-> +	  Enablement of this driver ensures that ramoops region can be anywhere
-> +	  reserved in ram instead of being fixed address which needs boot firmware
-> +	  awareness. So, this driver creates plaform device and registers available
-> +	  frontend region with the Qualcomm's minidump driver.
-> +
->   endmenu
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index 1ebe081..02d30d7 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -34,3 +34,4 @@ obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=	kryo-l2-accessors.o
->   obj-$(CONFIG_QCOM_ICC_BWMON)	+= icc-bwmon.o
->   obj-$(CONFIG_QCOM_INLINE_CRYPTO_ENGINE)	+= ice.o
->   obj-$(CONFIG_QCOM_MINIDUMP) += qcom_minidump.o
-> +obj-$(CONFIG_QCOM_PSTORE_MINIDUMP) += qcom_pstore_minidump.o
-> diff --git a/drivers/soc/qcom/qcom_pstore_minidump.c b/drivers/soc/qcom/qcom_pstore_minidump.c
-> new file mode 100644
-> index 0000000..8d58500
-> --- /dev/null
-> +++ b/drivers/soc/qcom/qcom_pstore_minidump.c
-> @@ -0,0 +1,116 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/*
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_reserved_mem.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pstore_ram.h>
-> +#include <soc/qcom/qcom_minidump.h>
-> +
-> +struct qcom_ramoops_config {
-> +	unsigned long	record_size;
-> +	unsigned long	console_size;
-> +	unsigned long	ftrace_size;
-> +	unsigned long	pmsg_size;
-> +	unsigned int	mem_type;
-> +	unsigned int	flags;
-> +	int		max_reason;
-> +};
-> +
-> +struct qcom_ramoops_dd {
-> +	struct ramoops_platform_data qcom_ramoops_pdata;
-> +	struct platform_device *ramoops_pdev;
-> +};
-> +
-> +static struct qcom_ramoops_config default_ramoops_config = {
-> +	.mem_type = 2,
-> +	.record_size = 0x0,
-> +	.console_size = 0x200000,
-> +	.ftrace_size = 0x0,
-> +	.pmsg_size = 0x0,
-> +};
 
-This is effectively hard-cording the configuration of ramoops.
+On 3/7/2023 7:56 PM, Rob Herring wrote:
+> On Tue, Mar 07, 2023 at 10:11:27AM +0530, Manikanta Mylavarapu wrote:
+>> Add new binding document for multipd model remoteproc.
+>> IPQ5018, IPQ9574 follows multipd model.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
+>>   1 file changed, 282 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>> new file mode 100644
+>> index 000000000000..b788607f5abd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>> @@ -0,0 +1,282 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/qcom,multipd-pil.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Multipd Secure Peripheral Image Loader
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <andersson@kernel.org>
+>> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
+>> +
+>> +description:
+>> +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
+>> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
+> 
+> What is PD? I don't see it defined anywhere.
+> 
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,ipq5018-q6-mpd
+>> +      - qcom,ipq9574-q6-mpd
+>> +
+>> +  '#address-cells': true
+> 
+> Need to define the size.
+> 
+>> +
+>> +  '#size-cells': true
+> 
+> ditto
+> 
+>> +
+>> +  'ranges': true
+> 
+> Don't need quotes
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts-extended:
+> 
+> Just 'interrupts'. Both forms are always supported.
+> 
+>> +    items:
+>> +      - description: Watchdog interrupt
+>> +      - description: Fatal interrupt
+>> +      - description: Ready interrupt
+>> +      - description: Handover interrupt
+>> +      - description: Stop acknowledge interrupt
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: wdog
+>> +      - const: fatal
+>> +      - const: ready
+>> +      - const: handover
+>> +      - const: stop-ack
+>> +
+>> +  clocks:
+>> +    minItems: 25
+>> +    maxItems: 25
+> 
+> You need to list out what the clocks are.
+> 
+>> +
+>> +  clock-names:
+>> +    minItems: 25
+>> +    maxItems: 25
+>> +
+>> +  assigned-clocks:
+> 
+> You can drop this. Implicitly supported.
+>
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
 
-Since the memory range is dynamic and by itself doesn't impose any 
-limitation this should be configurable in the device-tree, like a 
-standard ramoops entry backed by a memory range.
+>> +    minItems: 13
+>> +    maxItems: 13
+>> +
+>> +  assigned-clock-rates:
+>> +    minItems: 13
+>> +    maxItems: 13
+>> +
+>> +  qcom,smem-states:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> 
+> I believe this already has a type. It should be defined in a common
+> schema if not already and then included in this schema.
+> 
+>> +    description: States used by the AP to signal the remoteprocessor
+>> +    items:
+>> +      - description: Shutdown Q6
+>> +      - description: Stop Q6
+>> +
+>> +  qcom,smem-state-names:
+>> +    description:
+>> +      Names of the states used by the AP to signal the remoteprocessor
+>> +    items:
+>> +      - const: shutdown
+>> +      - const: stop
+>> +
+>> +  memory-region:
+>> +    items:
+>> +      - description: Q6 pd reserved region
+>> +
+>> +  glink-edge:
+>> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+>> +    description:
+>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>> +      and devices related to the Modem.
+>> +
+>> +patternProperties:
+>> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
+>> +    type: object
+>> +    description:
+>> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+>> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+>> +      device node.
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        enum:
+>> +          - "qcom,ipq5018-wcss-ahb-mpd"
+> 
+> Don't need quotes.
+> 
+>> +          - "qcom,ipq9574-wcss-ahb-mpd"
+>> +          - "qcom,ipq5018-wcss-pcie-mpd"
+>> +
+>> +      interrupts-extended:
+> 
+> Just interrupts
+> 
+>> +        items:
+>> +          - description: Fatal interrupt
+>> +          - description: Ready interrupt
+>> +          - description: Spawn acknowledge interrupt
+>> +          - description: Stop acknowledge interrupt
+>> +
+>> +      interrupt-names:
+>> +        items:
+>> +          - const: fatal
+>> +          - const: ready
+>> +          - const: spawn-ack
+>> +          - const: stop-ack
+>> +
+>> +      qcom,smem-states:
+>> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +        description: States used by the AP to signal the remoteprocessor
+>> +        items:
+>> +          - description: Shutdown WCSS pd
+>> +          - description: Stop WCSS pd
+>> +          - description: Spawn WCSS pd
+>> +
+>> +      qcom,smem-state-names:
+>> +        description:
+>> +          Names of the states used by the AP to signal the remoteprocessor
+>> +        items:
+>> +          - const: shutdown
+>> +          - const: stop
+>> +          - const: spawn
+>> +
+>> +    required:
+>> +      - compatible
+>> +
+>> +    additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts-extended
+>> +  - interrupt-names
+>> +  - qcom,smem-states
+>> +  - qcom,smem-state-names
+>> +  - memory-region
+>> +
+>> +additionalProperties: false
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          enum:
+>> +            - qcom,ipq9574-q6-mpd
+>> +    then:
+>> +      properties:
+>> +        assigned-clocks:
+> 
+> Don't need to define assigned-clocks
+> 
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
+>> +          items:
+>> +            - description: Phandle, clock specifier of GCC_ANOC_WCSS_AXI_M_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_AHB_S_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_ECAHB_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_ACMT_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_AXI_M_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AXIM_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AXIM2_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AHB_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AHB_S_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6SS_BOOT_CLK
+>> +            - description: Phandle, clock specifier of GCC_MEM_NOC_Q6_AXI_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_Q6_TBU_CLK
+>> +            - description: Phandle, clock specifier of GCC_SYS_NOC_WCSS_AHB_CLK
+>> +        assigned-clock-rates:
+>> +          items:
+>> +            - description: Must be 266666667 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 266666667 HZ
+>> +            - description: Must be 533000000 HZ
+>> +            - description: Must be 342857143 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 342857143 HZ
+>> +            - description: Must be 533000000 HZ
+>> +            - description: Must be 533000000 HZ
+>> +            - description: Must be 133333333 HZ
+>> +
+>> +examples:
+>> +  - |
+>> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +        #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>> +        #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+>> +
+>> +        q6v5_wcss: remoteproc@cd00000 {
+>> +                compatible = "qcom,ipq5018-q6-mpd";
+>> +                #address-cells = <1>;
+>> +                #size-cells = <1>;
+>> +                ranges;
+>> +                reg = <0x0cd00000 0x4040>;
+>> +                interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
+>> +                                <&wcss_smp2p_in 0 0>,
+>> +                                <&wcss_smp2p_in 1 0>,
+>> +                                <&wcss_smp2p_in 2 0>,
+>> +                                <&wcss_smp2p_in 3 0>;
+>> +                interrupt-names = "wdog",
+>> +                                  "fatal",
+>> +                                  "ready",
+>> +                                  "handover",
+>> +                                  "stop-ack";
+>> +
+>> +                qcom,smem-states = <&wcss_smp2p_out 0>,
+>> +                                   <&wcss_smp2p_out 1>;
+>> +                qcom,smem-state-names = "shutdown",
+>> +                                        "stop";
+>> +
+>> +                memory-region = <&q6_region>;
+>> +
+>> +                glink-edge {
+>> +                        interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
+>> +                        label = "rtr";
+>> +                        qcom,remote-pid = <1>;
+>> +                        mboxes = <&apcs_glb 8>;
+>> +                };
+>> +
+>> +                q6_wcss_pd1: remoteproc_pd1 {
+>> +                        compatible = "qcom,ipq5018-wcss-ahb-mpd";
+>> +                        interrupts-extended = <&wcss_smp2p_in 8 0>,
+>> +                                        <&wcss_smp2p_in 9 0>,
+>> +                                        <&wcss_smp2p_in 12 0>,
+>> +                                        <&wcss_smp2p_in 11 0>;
+>> +                        interrupt-names = "fatal",
+>> +                                          "ready",
+>> +                                          "spawn-ack",
+>> +                                          "stop-ack";
+>> +                        qcom,smem-states = <&wcss_smp2p_out 8>,
+>> +                                           <&wcss_smp2p_out 9>,
+>> +                                           <&wcss_smp2p_out 10>;
+>> +                        qcom,smem-state-names = "shutdown",
+>> +                                                "stop",
+>> +                                                "spawn";
+>> +                };
+>> +
+>> +                q6_wcss_pd2: remoteproc_pd2 {
+>> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
+>> +                        interrupts-extended = <&wcss_smp2p_in 16 0>,
+>> +                                        <&wcss_smp2p_in 17 0>,
+>> +                                        <&wcss_smp2p_in 20 0>,
+>> +                                        <&wcss_smp2p_in 19 0>;
+>> +                        interrupt-names = "fatal",
+>> +                                          "ready",
+>> +                                          "spawn-ack",
+>> +                                          "stop-ack";
+>> +
+>> +                        qcom,smem-states = <&wcss_smp2p_out 16>,
+>> +                                           <&wcss_smp2p_out 17>,
+>> +                                           <&wcss_smp2p_out 18>;
+>> +                        qcom,smem-state-names = "shutdown",
+>> +                                                "stop",
+>> +                                                "spawn";
+>> +                        status = "okay";
+> 
+> Don't need status in examples.
+> 
+>> +                };
+>> +
+>> +                q6_wcss_pd3: remoteproc_pd3 {
+>> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
+>> +                        interrupts-extended = <&wcss_smp2p_in 24 0>,
+>> +                                        <&wcss_smp2p_in 25 0>,
+>> +                                        <&wcss_smp2p_in 28 0>,
+>> +                                        <&wcss_smp2p_in 27 0>;
+>> +                        interrupt-names = "fatal",
+>> +                                          "ready",
+>> +                                          "spawn-ack",
+>> +                                          "stop-ack";
+>> +
+>> +                        qcom,smem-states = <&wcss_smp2p_out 24>,
+>> +                                           <&wcss_smp2p_out 25>,
+>> +                                           <&wcss_smp2p_out 26>;
+>> +                        qcom,smem-state-names = "shutdown",
+>> +                                                "stop",
+>> +                                                "spawn";
+>> +                        status = "okay";
+>> +                };
+>> +        };
+>> -- 
+>> 2.34.1
+>>
 
-I think this should provide the same interface/knobs as pstore-ram does, 
-unless there's some known limitations to minidump, in which case those 
-should be expressed.
-
-> +
-> +static struct qcom_ramoops_dd *qcom_rdd;
-> +static int qcom_ramoops_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *of_node = pdev->dev.of_node;
-> +	struct device_node *node;
-> +	const struct qcom_ramoops_config *cfg;
-> +	struct ramoops_platform_data *pdata;
-> +	struct reserved_mem *rmem;
-> +	long ret;
-> +
-> +	node = of_parse_phandle(of_node, "memory-region", 0);
-> +	if (!node)
-> +		return -ENODEV;
-> +
-> +	rmem = of_reserved_mem_lookup(node);
-> +	of_node_put(node);
-> +	if (!rmem) {
-> +		dev_err(&pdev->dev, "failed to locate DT /reserved-memory resource\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	qcom_rdd = devm_kzalloc(&pdev->dev, sizeof(*qcom_rdd), GFP_KERNEL);
-> +	if (!qcom_rdd)
-> +		return -ENOMEM;
-> +
-> +	cfg = of_device_get_match_data(&pdev->dev);
-> +	if (!cfg) {
-> +		dev_err(&pdev->dev, "failed to get supported matched data\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	pdata = &qcom_rdd->qcom_ramoops_pdata;
-> +	pdata->mem_size = rmem->size;
-> +	pdata->mem_address = rmem->base;
-> +	pdata->mem_type = cfg->mem_type;
-> +	pdata->record_size = cfg->record_size;
-> +	pdata->console_size = cfg->console_size;
-> +	pdata->ftrace_size = cfg->ftrace_size;
-> +	pdata->pmsg_size = cfg->pmsg_size;
-> +	pdata->max_reason = KMSG_DUMP_PANIC;
-> +
-> +	qcom_rdd->ramoops_pdev = platform_device_register_data(NULL, "ramoops", -1,
-> +							       pdata, sizeof(*pdata));
-> +	if (IS_ERR(qcom_rdd->ramoops_pdev)) {
-> +		ret = PTR_ERR(qcom_rdd->ramoops_pdev);
-> +		dev_err(&pdev->dev, "could not create platform device: %ld\n", ret);
-> +		qcom_rdd->ramoops_pdev = NULL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_ramoops_remove(struct platform_device *pdev)
-> +{
-> +	platform_device_unregister(qcom_rdd->ramoops_pdev);
-> +	qcom_rdd->ramoops_pdev = NULL;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id qcom_ramoops_of_match[] = {
-> +	{ .compatible = "qcom,sm8450-ramoops-minidump", .data = &default_ramoops_config },
-> +	{ .compatible = "qcom,ramoops-minidump", .data = &default_ramoops_config },
-> +	{}
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, qcom_ramoops_of_match);
-> +static struct platform_driver qcom_ramoops_drv = {
-> +	.driver		= {
-> +		.name	= "qcom,ramoops-minidump",
-> +		.of_match_table = qcom_ramoops_of_match,
-> +	},
-> +	.probe = qcom_ramoops_probe,
-> +	.remove = qcom_ramoops_remove,
-> +};
-> +
-> +module_platform_driver(qcom_ramoops_drv);
-> +
-> +MODULE_DESCRIPTION("Qualcomm minidump pstore driver");
-> +MODULE_LICENSE("GPL");
+Thanks & Regards,
+Manikanta.
