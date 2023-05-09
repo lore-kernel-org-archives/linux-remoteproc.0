@@ -2,112 +2,243 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5902C77B7C
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 13:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9594C77B75
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 13:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233120AbjEINCe (ORCPT
+        id S235273AbjEINLT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 09:02:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
+        Tue, 9 May 2023 09:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235178AbjEINC1 (ORCPT
+        with ESMTP id S229741AbjEINLS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 09:02:27 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E14359DB
-        for <linux-remoteproc@vger.kernel.org>; Tue,  9 May 2023 06:02:23 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-50be0d835aaso10617294a12.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 May 2023 06:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683637342; x=1686229342;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZpIAP3t6RkkpB/dslfsju5UGZqS1fqIKK8wFrjmFBkM=;
-        b=JX02OLLm84X5xmwMza4onDrd6Av1y+XmO6r6t7pnPyEMDyc+Jfi4aLpNO0ef1lhc/Y
-         B9ZJtoP77oI7P7sp+S8/ByxAQALfuO/Dt4EdGID8tZGL/40EUuAGlVbrSAvhfK5QLGQZ
-         90xe/qZZXqfcWVLBATxW3hzQ1p0YQu2e/OFPqKVTap7hdxdJ2GnvF00Att0PnmbA4Une
-         kvNOFdeaHfc/snrF+QDVkvDO4BSVPliZZCaMl33ji2kiZftDFEYkfrvE5MKE4+5T31Ua
-         2yIDfY8D4pNIHGK1d4eVRdzRjzBfdCQ6nVykKLcPer5LQwlQ+fLy4a7z9U7VSJft1TC9
-         DhpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683637342; x=1686229342;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZpIAP3t6RkkpB/dslfsju5UGZqS1fqIKK8wFrjmFBkM=;
-        b=JR0TCH6Gmlt5Q3VnXu5qokvg5YiIKxomI2BD0nN7q2cvAkDeRoTG2mSKgw6KQmkyBj
-         0ese933zxvnFKcrLg0Y8j14+aeENUugDtVjbrJdeiWhgPr2s5ztveJ6gpGraKydqLbx3
-         x+O98eFVuM7HaP3Mz03rebh0dRz5FfKbaPa7CI++gxo9lFvW1p8jNejSrIYILVKo6cDc
-         wGKJABm0K2yOoKnENV8i7NWvyc6MlHIUsvti6oRUWc4tSzzR4Q0VaGxW3CFu4spt3PqD
-         3UIqZ+YGalQ0z1E/LAgvRQqfFnrzmEw0jPSfpZCjp9XlZL5FINNDIhNz593Pt2wJ7gcx
-         n9Fg==
-X-Gm-Message-State: AC+VfDz9h7npxP2A0sjx8TpT8AYo/s/G9yrJ8v/OER5hw7VD2vUGP9eW
-        Z2O7n7iz0ql6ebnxrq14fflcCg==
-X-Google-Smtp-Source: ACHHUZ70kubx3YLwOp6oEMBYLKUV3iI/XGmMuK2+SaTWFJkqJqP+xeDGaeUe/FM0QwqZbUO6Mp365A==
-X-Received: by 2002:a17:907:9718:b0:966:c09:1c57 with SMTP id jg24-20020a170907971800b009660c091c57mr11019088ejc.65.1683637341701;
-        Tue, 09 May 2023 06:02:21 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:d0d5:7818:2f46:5e76? ([2a02:810d:15c0:828:d0d5:7818:2f46:5e76])
-        by smtp.gmail.com with ESMTPSA id ot3-20020a170906ccc300b0096654eda57csm1308744ejb.75.2023.05.09.06.01.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 06:02:08 -0700 (PDT)
-Message-ID: <c1833e5b-9397-8a87-07c5-1b8bd84bd457@linaro.org>
-Date:   Tue, 9 May 2023 15:01:42 +0200
+        Tue, 9 May 2023 09:11:18 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9249530DE;
+        Tue,  9 May 2023 06:11:12 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349CKi1H016196;
+        Tue, 9 May 2023 15:10:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=P3Q+sdtDfPWmRervkqa1GLFh3ORMuViCUg600HAqAS8=;
+ b=cQ1vSrZ5L2YNAp07TGmYpRrqXs5j6r2p/qp4V1lE0SFGWNZotepElaKsbeiBfYGn0pvA
+ YmkaedZoXefpSUh8t/liUFcP8OaCFGjcashNvtec/HX2I5OO0box7zwZKeAj73udvYsW
+ sSfgAmKMuCUaKDJ6DneAXJOvQztSCMpY9ClRF0ZIjgxt0qSLBU+AR3uCfWtYFsNIwzjQ
+ xAhteM5RiYwks/ULV9/vrbLXE+cP8NxrMuwCFwWKxdQ5YMSZ/zr8HwIT6p1KVplWdcq+
+ 9hXHijBkKH2c7t6hqOZGwpapxo32flWSL0j//GevcxMgYM7uiEIyVhVUfCPgxzVPLLJ3 3g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qf79xd4yg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 May 2023 15:10:46 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9B3BC100034;
+        Tue,  9 May 2023 15:10:44 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7B2EA21F0B8;
+        Tue,  9 May 2023 15:10:44 +0200 (CEST)
+Received: from [10.252.7.97] (10.252.7.97) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 9 May
+ 2023 15:10:44 +0200
+Message-ID: <9c6e0308-60ba-f55e-c90c-24454307a868@foss.st.com>
+Date:   Tue, 9 May 2023 15:10:43 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
- multipd model
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 2/4] remoteproc: stm32: Allow hold boot management by
+ the SCMI reset controller
 Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
-        loic.poulain@linaro.org, quic_eberman@quicinc.com,
-        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
- <38a5a268-7d8a-6e61-4272-8e9155df0034@linaro.org>
- <790496d7-98dc-c92e-dedc-1c89395a1ad8@quicinc.com>
- <e63a3e34-1f73-3661-8655-e34e1e955804@linaro.org>
- <b8b30b77-31df-15c3-3914-1198f90299e6@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <b8b30b77-31df-15c3-3914-1198f90299e6@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230504094641.870378-1-arnaud.pouliquen@foss.st.com>
+ <20230504094641.870378-3-arnaud.pouliquen@foss.st.com>
+ <ZFU2+ni/tKOIIHbq@p14s>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <ZFU2+ni/tKOIIHbq@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.252.7.97]
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_08,2023-05-05_01,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 09/05/2023 12:34, Manikanta Mylavarapu wrote:
->>> Sure, will add.
->>>>> +    description:
->>>>> +      Qualcomm G-Link subnode which represents communication edge, channels
->>>>> +      and devices related to the Modem.
->>>>> +
->>>>> +patternProperties:
->>>>> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
->>>>
->>>> No, underscores are not allowed. Also, what is pd?
->>>>
->>> Sure, will remove underscores.
+Hi Mathieu,
+
+On 5/5/23 19:03, Mathieu Poirier wrote:
+> Hi Arnaud,
+> 
+> On Thu, May 04, 2023 at 11:46:39AM +0200, Arnaud Pouliquen wrote:
+>> The hold boot can be managed by the SCMI controller as a reset.
+>> If the "hold_boot" reset is defined in the device tree, use it.
+>> Else use the syscon controller directly to access to the register.
+>> The support of the SMC call is deprecated but kept for legacy support.
 >>
->> Shouldn't this be just pd-1?
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> Updates vs previous version
+>> - keep support of the "st,syscfg-tz" property for legacy compatibility
+>> - rename secured_soc in hold_boot_smc for readability
+>> - add comments to explain hold boot management.
+>> - update commit message
+>> ---
+>>  drivers/remoteproc/stm32_rproc.c | 78 +++++++++++++++++++++++---------
+>>  1 file changed, 57 insertions(+), 21 deletions(-)
 >>
+>> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+>> index 7d782ed9e589..e9cf24274345 100644
+>> --- a/drivers/remoteproc/stm32_rproc.c
+>> +++ b/drivers/remoteproc/stm32_rproc.c
+>> @@ -79,6 +79,7 @@ struct stm32_mbox {
+>>  
+>>  struct stm32_rproc {
+>>  	struct reset_control *rst;
+>> +	struct reset_control *hold_boot_rst;
+>>  	struct stm32_syscon hold_boot;
+>>  	struct stm32_syscon pdds;
+>>  	struct stm32_syscon m4_state;
+>> @@ -88,7 +89,7 @@ struct stm32_rproc {
+>>  	struct stm32_rproc_mem *rmems;
+>>  	struct stm32_mbox mb[MBOX_NB_MBX];
+>>  	struct workqueue_struct *workqueue;
+>> -	bool secured_soc;
+>> +	bool hold_boot_smc;
+>>  	void __iomem *rsc_va;
+>>  };
+>>  
+>> @@ -401,13 +402,28 @@ static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
+>>  	struct arm_smccc_res smc_res;
+>>  	int val, err;
+>>  
+>> +	/*
+>> +	 * Three ways to manage the hold boot
+>> +	 * - using SCMI: the hold boot is managed as a reset,
+>> +	 * - using Linux(no SCMI): the hold boot is managed as a syscon register
+>> +	 * - using SMC call (deprecated): use SMC reset interface
+>> +	 */
+>> +
+>>  	val = hold ? HOLD_BOOT : RELEASE_BOOT;
+>>  
+>> -	if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->secured_soc) {
+>> +	if (ddata->hold_boot_rst) {
+>> +		/* Use the SCMI reset controller */
+>> +		if (!hold)
+>> +			err = reset_control_deassert(ddata->hold_boot_rst);
+>> +		else
+>> +			err =  reset_control_assert(ddata->hold_boot_rst);
+>> +	} else if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->hold_boot_smc) {
+>> +		/* Use the SMC call */
+>>  		arm_smccc_smc(STM32_SMC_RCC, STM32_SMC_REG_WRITE,
+>>  			      hold_boot.reg, val, 0, 0, 0, 0, &smc_res);
+>>  		err = smc_res.a0;
+>>  	} else {
+>> +		/* Use syscon */
+>>  		err = regmap_update_bits(hold_boot.map, hold_boot.reg,
+>>  					 hold_boot.mask, val);
+>>  	}
+>> @@ -705,34 +721,54 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+>>  		dev_info(dev, "wdg irq registered\n");
+>>  	}
+>>  
+>> -	ddata->rst = devm_reset_control_get_by_index(dev, 0);
+>> +	ddata->rst = devm_reset_control_get_optional(dev, "mcu_rst");
+>> +	if (!ddata->rst) {
+>> +		/* Try legacy fallback method: get it by index */
+>> +		ddata->rst = devm_reset_control_get_by_index(dev, 0);
+>> +	}
+>>  	if (IS_ERR(ddata->rst))
+>>  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+>>  				     "failed to get mcu_reset\n");
+>>  
+>>  	/*
+>> -	 * if platform is secured the hold boot bit must be written by
+>> -	 * smc call and read normally.
+>> -	 * if not secure the hold boot bit could be read/write normally
+>> +	 * Three ways to manage the hold boot
+>> +	 * - using SCMI: the hold boot is managed as a reset
+>> +	 *    The DT "reset-mames" property should be defined with 2 items:
+>> +	 *        reset-names = "mcu_rst", "hold_boot";
+>> +	 * - using SMC call (deprecated): use SMC reset interface
+>> +	 *    The DT "reset-mames" property is optional, "st,syscfg-tz" is required
+>> +	 * - default(no SCMI, no SMC): the hold boot is managed as a syscon register
+>> +	 *    The DT "reset-mames" property is optional, "st,syscfg-holdboot" is required
+>>  	 */
+>> -	err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to get tz syscfg\n");
+>> -		return err;
+>> -	}
+>>  
+>> -	err = regmap_read(tz.map, tz.reg, &tzen);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to read tzen\n");
+>> -		return err;
+>> +	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
+>> +	if (IS_ERR(ddata->hold_boot_rst)) {
+>> +		if (PTR_ERR(ddata->hold_boot_rst) == -EPROBE_DEFER)
+>> +			return PTR_ERR(ddata->hold_boot_rst);
+> 
+> Here we know that devm_reset_control_get_optional() has returned an error that is
+> not -EPROBE_DEFER and as such, I think we should return that error instead of
+> continuing on with the probing.  Calling dev_err_probe() should be just fine.
+
+Good catch!
+
+Thanks,
+Arnaud
+
+> 
+> Otherwise I'm good with this set.  Many thanks for the enhanced explanation.
+> 
+> Mathieu
+> 
+>> +		ddata->hold_boot_rst = NULL;
+>> +	}
+>> +
+>> +	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
+>> +		/* Manage the MCU_BOOT using SMC call */
+>> +		err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
+>> +		if (!err) {
+>> +			err = regmap_read(tz.map, tz.reg, &tzen);
+>> +			if (err) {
+>> +				dev_err(dev, "failed to read tzen\n");
+>> +				return err;
+>> +			}
+>> +			ddata->hold_boot_smc = tzen & tz.mask;
+>> +		}
+>>  	}
+>> -	ddata->secured_soc = tzen & tz.mask;
+>>  
+>> -	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+>> -				     &ddata->hold_boot);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to get hold boot\n");
+>> -		return err;
+>> +	if (!ddata->hold_boot_rst && !ddata->hold_boot_smc) {
+>> +		/* Default: hold boot manage it through the syscon controller */
+>> +		err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+>> +					     &ddata->hold_boot);
+>> +		if (err) {
+>> +			dev_err(dev, "failed to get hold boot\n");
+>> +			return err;
+>> +		}
+>>  	}
+>>  
+>>  	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
+>> -- 
+>> 2.25.1
 >>
-> I think 'pd-1' not enough. Because child's i.e userpd's also considered
-> as remote processor's, so name should be like "remoteproc-pd1".
-
-"pd-1" is not enough for what? Why the node name has to be more specific?
-
-
-Best regards,
-Krzysztof
-
