@@ -2,132 +2,264 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB84FC7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 17:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE77EC77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 17:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229699AbjEIRM2 (ORCPT
+        id S229549AbjEIRQv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 13:12:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57814 "EHLO
+        Tue, 9 May 2023 13:16:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235248AbjEIRMM (ORCPT
+        with ESMTP id S229515AbjEIRQu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 13:12:12 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3603930D5
-        for <linux-remoteproc@vger.kernel.org>; Tue,  9 May 2023 10:11:42 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349CIsXA020568;
-        Tue, 9 May 2023 19:11:20 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+        Tue, 9 May 2023 13:16:50 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3481E71;
+        Tue,  9 May 2023 10:16:48 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349Gg89T012569;
+        Tue, 9 May 2023 17:03:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=mn5jOxLh1H2LGQF8BkirJjrvG/rHRFFa5N/haTu7SCk=;
- b=w1GEJOugTU6MG/OSxcxzMhyVxUpsKNitOvKtS0QqiQsycyC9Ssr3FD1HyAidp6nGnBjN
- wVLKmYLS7oTOYIbXqsMwwAfeT/OK2hOdQ4BWSG/cWxaaMQFi1RKT3fMY/DljnhqgZsDW
- UowzfJ7pVeTbHDwgnwOdplKXWHIV+fKqg4+xvlmzf7+cRFE6XI3F6Zs7tunHrtbLGhRq
- JGSntJi2FDLMhoTwFdo0kq5Q2lJkUQzIci70Qw8a87XjMrWjSqJiYrO8eZEBZtiIcK5d
- gSB0QkWgHLUtk4NoWnnOfnUsvLAr8EntsH/VNB68fkSZFw23FU3RFVScOGiUJxU/FT7d 2Q== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qf79heekw-1
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=qI45RyaeiSVGGtld+kEpMAI9UE2lNL2CaZZmt75kPww=;
+ b=VAnJdxSeXAFHP4N0fq0UrtckJJLNGGoDPTSl4FXeAIqLAs/blbNIaQDUENCbtqAnPDG1
+ 1M4wAd6UMvwn0LUaST+GT3HL0i1j5feb424eEgg7YH+Yyud43BZuzXpSDFk67tiRYp1W
+ nyeStaIP3EYMhZ1lvqG6oJYq6AwA7gxwiZSJ/7ydsHKc3fejrm2RK640dqk0te0iAYJq
+ FfCBQtDhVm0HpRX+08EJygPebUWvL4b3MuRrfiZ44NOhgmwsva/4UQju+gbpEeIT6TR3
+ gkEd2Y5ld3JKvUK434++4COb28/4AhgrAo6zByRwgrDaI22xAGzcVtzsbioTeHOof4Xk tQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qfrvm07k0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 May 2023 19:11:20 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0CA4010002A;
-        Tue,  9 May 2023 19:11:19 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 04BC7231506;
-        Tue,  9 May 2023 19:11:19 +0200 (CEST)
-Received: from [10.252.28.195] (10.252.28.195) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 9 May
- 2023 19:11:17 +0200
-Message-ID: <e14f7bc4-6705-6be6-3393-69ea962ab6ac@foss.st.com>
-Date:   Tue, 9 May 2023 19:11:16 +0200
+        Tue, 09 May 2023 17:03:06 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349H35FJ030496
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 May 2023 17:03:05 GMT
+Received: from [10.216.5.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
+ 10:02:57 -0700
+Message-ID: <5d719c21-7820-b67f-ba63-adee0431cae7@quicinc.com>
+Date:   Tue, 9 May 2023 22:32:53 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 17/18] remoteproc: stm32: Convert to platform remove
- callback returning void
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 06/11] clk: qcom: IPQ9574: Add q6/wcss clocks
 Content-Language: en-US
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC:     <linux-remoteproc@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <kernel@pengutronix.de>
-References: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de>
- <20230504194453.1150368-18-u.kleine-koenig@pengutronix.de>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <20230504194453.1150368-18-u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
+ <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.252.28.195]
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fjcwsU8JXGhDunl7NH2vLhH2qz6N5A7K
+X-Proofpoint-GUID: fjcwsU8JXGhDunl7NH2vLhH2qz6N5A7K
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-09_10,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxlogscore=903 clxscore=1015
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090141
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Uwe,
 
-On 5/4/23 21:44, Uwe Kleine-König wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is (mostly) ignored
-> and this typically results in resource leaks. To improve here there is a
-> quest to make the remove callback return void. In the first step of this
-> quest all drivers are converted to .remove_new() which already returns
-> void.
+
+On 3/7/2023 12:58 PM, Sricharan Ramabadhran wrote:
 > 
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
-
-Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-
-Thanks,
-Arnaud
-
 > 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
+>> Some of the clocks required for q6/wcss bring up
+>> are missing. So this patch adds clocks.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/gcc-ipq9574.c | 119 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 119 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-ipq9574.c 
+>> b/drivers/clk/qcom/gcc-ipq9574.c
+>> index 1bf33d582dc2..355f2e12d9c6 100644
+>> --- a/drivers/clk/qcom/gcc-ipq9574.c
+>> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+>> @@ -2697,6 +2697,22 @@ static struct clk_branch gcc_wcss_acmt_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_ahb_s_clk = {
+>> +    .halt_reg = 0x25060,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25060,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_ahb_s_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &wcss_ahb_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
+>>       .halt_reg = 0x2e030,
+>>       .clkr = {
+>> @@ -2734,6 +2750,22 @@ static struct clk_rcg2 wcss_axi_m_clk_src = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_axi_m_clk = {
+>> +    .halt_reg = 0x25064,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25064,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_axi_m_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &wcss_axi_m_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_anoc_wcss_axi_m_clk = {
+>>       .halt_reg = 0x2e0a8,
+>>       .clkr = {
+>> @@ -2803,6 +2835,22 @@ static struct clk_branch 
+>> gcc_wcss_dbg_ifc_atb_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_dbg_ifc_atb_bdg_clk = {
+>> +    .halt_reg = 0x2504C,
+>> +    .clkr = {
+>> +        .enable_reg = 0x2504C,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_atb_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_at_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_nssnoc_atb_clk = {
+>>       .halt_reg = 0x17014,
+>>       .clkr = {
+>> @@ -3073,6 +3121,22 @@ static struct clk_branch 
+>> gcc_wcss_dbg_ifc_nts_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_dbg_ifc_nts_bdg_clk = {
+>> +    .halt_reg = 0x25050,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25050,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_nts_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_tsctr_div2_clk_src.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_qdss_tsctr_div2_clk = {
+>>       .halt_reg = 0x2d044,
+>>       .clkr = {
+>> @@ -3315,6 +3379,38 @@ static struct clk_branch 
+>> gcc_wcss_dbg_ifc_dapbus_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_dbg_ifc_apb_bdg_clk = {
+>> +    .halt_reg = 0x25048,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25048,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_apb_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_dap_sync_clk_src.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>> +static struct clk_branch gcc_wcss_dbg_ifc_dapbus_bdg_clk = {
+>> +    .halt_reg = 0x25054,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25054,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_dapbus_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_dap_sync_clk_src.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_qdss_dap_clk = {
+>>       .halt_reg = 0x2d058,
+>>       .clkr = {
+>> @@ -3513,6 +3609,22 @@ static struct clk_rcg2 q6_axim2_clk_src = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_q6_axim2_clk = {
+>> +    .halt_reg = 0x25010,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25010,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_q6_axim2_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &q6_axim2_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 8746cbb1f168..19716ec82aae 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -867,7 +867,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> -static int stm32_rproc_remove(struct platform_device *pdev)
-> +static void stm32_rproc_remove(struct platform_device *pdev)
->  {
->  	struct rproc *rproc = platform_get_drvdata(pdev);
->  	struct stm32_rproc *ddata = rproc->priv;
-> @@ -885,8 +885,6 @@ static int stm32_rproc_remove(struct platform_device *pdev)
->  		device_init_wakeup(dev, false);
->  	}
->  	rproc_free(rproc);
-> -
-> -	return 0;
->  }
->  
->  static int __maybe_unused stm32_rproc_suspend(struct device *dev)
-> @@ -916,7 +914,7 @@ static SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
->  
->  static struct platform_driver stm32_rproc_driver = {
->  	.probe = stm32_rproc_probe,
-> -	.remove = stm32_rproc_remove,
-> +	.remove_new = stm32_rproc_remove,
->  	.driver = {
->  		.name = "stm32-rproc",
->  		.pm = &stm32_rproc_pm_ops,
+> These clocks does not seem to be used in the driver, where are they used ?
+> 
+> Regards,
+>   Sricharan
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling and drop this patch.
+
+Thanks & Regards,
+Manikanta.
