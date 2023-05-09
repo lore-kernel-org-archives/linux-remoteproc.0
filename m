@@ -2,95 +2,96 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB6DC7EE22
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 16:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC50C7EE23
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 16:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233450AbjEIQSc (ORCPT
+        id S234221AbjEIQq6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 12:18:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
+        Tue, 9 May 2023 12:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjEIQSb (ORCPT
+        with ESMTP id S234111AbjEIQq5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 12:18:31 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3090646A2;
-        Tue,  9 May 2023 09:18:29 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349BW8Vj032004;
-        Tue, 9 May 2023 16:18:23 GMT
+        Tue, 9 May 2023 12:46:57 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8A891725;
+        Tue,  9 May 2023 09:46:54 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349Gg8j3003653;
+        Tue, 9 May 2023 16:46:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=C1yltITvHm6+V9sJou1VjBUdYHedvQ1G0Q45b7NVnN4=;
- b=iW04eozuKAMYFsyEcx3PK+l4lX64sVZe+egaVePgpbC33cSMqzR3a+zPNYMAc02d7Xal
- rt1I59PPcbg5sJsub/7Eotaq4jupBvFOn5CW7CSfBc+9d/+MakQndKllSAg2zlsLxE7a
- A33udQweWnWorzpuomnpzYD/BVaaS8UYDCmDHpV0LIocCe4dv/Txo9ravtWhPhylvc2f
- rw4Vh/T9fqkvPMBv1+iqLJ6L8R9jM37I18+a/xyHM+G7pb//9GB+HfFkBQIKZVSaXME9
- ntuzG2wWnrmHNaS+lNQT2dAKBJvpxPfMR8dz415bIDG61irLgQXjIPgzC+yDFVHvhGqN uQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf781jb76-1
+ bh=PmUvMkpmxb5wKT0GLDxWM+Pmnk5F3eR61Wx8LVrALXU=;
+ b=gMo0L7RvUq1+/EdzbrW5kobBaFL5OSGf3OIc1tTu/NiJLlFdDCOGOqv3A19DonL1YW+3
+ zlNxdpv5PiuqH5zFTYWRj6CTaaXYAk201OyidPlri4HxHuYnQtT3Otl98gX1Ig/3hUBI
+ u/IJriXqmzFCTHfQqfLIUnqDIuRCT/A7KoP8BmRCcUF4ls7ItGKl5u/MDWRQmOlgZP0n
+ xti5YYDj+0TlnDtm9GryyaBvVhAbs9dD91KOlIF3V5Yjtplrwq7R/GyQ8+1BKFTn4gEP
+ ZFRqOO6dvu3vo0ZkIeFwzIHu/fyzHeI5l3Xqa+9U/4Ovk4fz0JxUmX5ha5wskpyXab7+ wg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf77ktcna-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 May 2023 16:18:23 +0000
+        Tue, 09 May 2023 16:46:49 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349GILj4021857
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349GkmMu018137
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 9 May 2023 16:18:22 GMT
+        Tue, 9 May 2023 16:46:48 GMT
 Received: from [10.216.5.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
- 09:17:59 -0700
-Message-ID: <1ddb9ff9-2284-1f8b-69cc-e8d041a29ca1@quicinc.com>
-Date:   Tue, 9 May 2023 21:47:54 +0530
+ 09:46:39 -0700
+Message-ID: <26c8bbe3-18e4-92f9-f559-340331c08562@quicinc.com>
+Date:   Tue, 9 May 2023 22:16:36 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
 Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
  multipd model
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_gurus@quicinc.com>, <loic.poulain@linaro.org>,
-        <quic_eberman@quicinc.com>, <robimarko@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
-        <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
  <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
- <20230307142614.GA2742-robh@kernel.org>
+ <38a5a268-7d8a-6e61-4272-8e9155df0034@linaro.org>
 From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <20230307142614.GA2742-robh@kernel.org>
+In-Reply-To: <38a5a268-7d8a-6e61-4272-8e9155df0034@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WxJlulJhVGuV9feqI3M2tz29GapSrcu_
-X-Proofpoint-ORIG-GUID: WxJlulJhVGuV9feqI3M2tz29GapSrcu_
+X-Proofpoint-GUID: DhUQcEPQ3EjIlYA8VFPlzZKhWLQ9RM7Q
+X-Proofpoint-ORIG-GUID: DhUQcEPQ3EjIlYA8VFPlzZKhWLQ9RM7Q
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-09_09,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- suspectscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0 mlxscore=0
- impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ definitions=2023-05-09_10,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0
+ phishscore=0 impostorscore=0 spamscore=0 clxscore=1015 bulkscore=0
  priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305090133
+ engine=8.12.0-2304280000 definitions=main-2305090139
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 3/7/2023 7:56 PM, Rob Herring wrote:
-> On Tue, Mar 07, 2023 at 10:11:27AM +0530, Manikanta Mylavarapu wrote:
+On 3/7/2023 8:47 PM, Krzysztof Kozlowski wrote:
+> On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
 >> Add new binding document for multipd model remoteproc.
 >> IPQ5018, IPQ9574 follows multipd model.
 >>
@@ -122,7 +123,7 @@ On 3/7/2023 7:56 PM, Rob Herring wrote:
 >> +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
 >> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
 > 
-> What is PD? I don't see it defined anywhere.
+> What is a "pd"?
 > 
 >> +
 >> +properties:
@@ -132,26 +133,25 @@ On 3/7/2023 7:56 PM, Rob Herring wrote:
 >> +      - qcom,ipq9574-q6-mpd
 >> +
 >> +  '#address-cells': true
-> 
-> Need to define the size.
-> 
 >> +
 >> +  '#size-cells': true
 > 
-> ditto
+> Why do you need both?
+> 
+> If really needed, these should be const.
 > 
 >> +
 >> +  'ranges': true
-> 
-> Don't need quotes
-> 
 >> +
+> 
+> Same question - why do you need it?
+> 
 >> +  reg:
 >> +    maxItems: 1
 >> +
 >> +  interrupts-extended:
 > 
-> Just 'interrupts'. Both forms are always supported.
+> Instead interrupts
 > 
 >> +    items:
 >> +      - description: Watchdog interrupt
@@ -172,33 +172,35 @@ On 3/7/2023 7:56 PM, Rob Herring wrote:
 >> +    minItems: 25
 >> +    maxItems: 25
 > 
-> You need to list out what the clocks are.
+> Drop both and instead describe the items. Anyway minItems are not needed
+> here.
 > 
 >> +
 >> +  clock-names:
 >> +    minItems: 25
 >> +    maxItems: 25
+> 
+> Drop both and instead list the names.
+> 
 >> +
 >> +  assigned-clocks:
-> 
-> You can drop this. Implicitly supported.
->
-Clocks in multipd architecture will be handled by QDSP6 firmware.
-So i am going to remove clock handling.
-
 >> +    minItems: 13
 >> +    maxItems: 13
->> +
+> 
+> Drop, they do not have to be mentioned in the binding. If you think they
+> need to, then why?
+>  >> +
 >> +  assigned-clock-rates:
 >> +    minItems: 13
 >> +    maxItems: 13
+> 
+> Ditto
+> 
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
 >> +
 >> +  qcom,smem-states:
 >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> 
-> I believe this already has a type. It should be defined in a common
-> schema if not already and then included in this schema.
-> 
 >> +    description: States used by the AP to signal the remoteprocessor
 >> +    items:
 >> +      - description: Shutdown Q6
@@ -217,12 +219,18 @@ So i am going to remove clock handling.
 >> +
 >> +  glink-edge:
 >> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+> 
+> unevaluatedProperties: false
+> 
 >> +    description:
 >> +      Qualcomm G-Link subnode which represents communication edge, channels
 >> +      and devices related to the Modem.
 >> +
 >> +patternProperties:
 >> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
+> 
+> No, underscores are not allowed. Also, what is pd?
+> 
 >> +    type: object
 >> +    description:
 >> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
@@ -233,15 +241,15 @@ So i am going to remove clock handling.
 >> +      compatible:
 >> +        enum:
 >> +          - "qcom,ipq5018-wcss-ahb-mpd"
-> 
-> Don't need quotes.
-> 
 >> +          - "qcom,ipq9574-wcss-ahb-mpd"
 >> +          - "qcom,ipq5018-wcss-pcie-mpd"
+> 
+> Drop quotes
+> 
 >> +
 >> +      interrupts-extended:
 > 
-> Just interrupts
+> Same as before
 > 
 >> +        items:
 >> +          - description: Fatal interrupt
@@ -267,10 +275,16 @@ So i am going to remove clock handling.
 >> +      qcom,smem-state-names:
 >> +        description:
 >> +          Names of the states used by the AP to signal the remoteprocessor
+> 
+> remote processor
+> 
 >> +        items:
 >> +          - const: shutdown
 >> +          - const: stop
 >> +          - const: spawn
+> 
+> This is confusing. Why your children have the same properties as parent?
+> 
 >> +
 >> +    required:
 >> +      - compatible
@@ -281,6 +295,9 @@ So i am going to remove clock handling.
 >> +  - compatible
 >> +  - reg
 >> +  - interrupts-extended
+> 
+> interrupts
+> 
 >> +  - interrupt-names
 >> +  - qcom,smem-states
 >> +  - qcom,smem-state-names
@@ -297,11 +314,6 @@ So i am going to remove clock handling.
 >> +    then:
 >> +      properties:
 >> +        assigned-clocks:
-> 
-> Don't need to define assigned-clocks
-> 
-Clocks in multipd architecture will be handled by QDSP6 firmware.
-So i am going to remove clock handling.
 >> +          items:
 >> +            - description: Phandle, clock specifier of GCC_ANOC_WCSS_AXI_M_CLK
 >> +            - description: Phandle, clock specifier of GCC_WCSS_AHB_S_CLK
@@ -316,6 +328,18 @@ So i am going to remove clock handling.
 >> +            - description: Phandle, clock specifier of GCC_MEM_NOC_Q6_AXI_CLK
 >> +            - description: Phandle, clock specifier of GCC_WCSS_Q6_TBU_CLK
 >> +            - description: Phandle, clock specifier of GCC_SYS_NOC_WCSS_AHB_CLK
+> 
+> Eh, so here they are. But Why? Do you expect different clocks for
+> others? If so, where are they?
+> 
+> Anyway, drop useless "Phandle, clock specifier of". Clocks cannot be
+> anything else than phandle and a clock specifier. Instead of using some
+> cryptic ACRONYM_OR_SOME_CLK, describe them. Just like we do for other
+> bindings. You have plenty of good examples, so please start from them.
+> 
+> 
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
 >> +        assigned-clock-rates:
 >> +          items:
 >> +            - description: Must be 266666667 HZ
@@ -331,12 +355,27 @@ So i am going to remove clock handling.
 >> +            - description: Must be 533000000 HZ
 >> +            - description: Must be 533000000 HZ
 >> +            - description: Must be 133333333 HZ
+> 
+> ???
+> 
+> If these are fixed, why this is in DT? DT is for variable and
+> non-discoverable pieces and you do not have here anything variable, but
+> fixed.
+> 
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
+
+Thanks & Regards,
+Manikanta.
 >> +
 >> +examples:
 >> +  - |
 >> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
 >> +        #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
 >> +        #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+> 
+> Use 4 spaces for example indentation.
+> 
 >> +
 >> +        q6v5_wcss: remoteproc@cd00000 {
 >> +                compatible = "qcom,ipq5018-q6-mpd";
@@ -346,6 +385,9 @@ So i am going to remove clock handling.
 >> +                reg = <0x0cd00000 0x4040>;
 >> +                interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
 >> +                                <&wcss_smp2p_in 0 0>,
+> 
+> Wrong alignment of indentation
+> 
 >> +                                <&wcss_smp2p_in 1 0>,
 >> +                                <&wcss_smp2p_in 2 0>,
 >> +                                <&wcss_smp2p_in 3 0>;
@@ -406,33 +448,9 @@ So i am going to remove clock handling.
 >> +                                                "spawn";
 >> +                        status = "okay";
 > 
-> Don't need status in examples.
+> Drop statuses from the example.
 > 
->> +                };
->> +
->> +                q6_wcss_pd3: remoteproc_pd3 {
->> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
->> +                        interrupts-extended = <&wcss_smp2p_in 24 0>,
->> +                                        <&wcss_smp2p_in 25 0>,
->> +                                        <&wcss_smp2p_in 28 0>,
->> +                                        <&wcss_smp2p_in 27 0>;
->> +                        interrupt-names = "fatal",
->> +                                          "ready",
->> +                                          "spawn-ack",
->> +                                          "stop-ack";
->> +
->> +                        qcom,smem-states = <&wcss_smp2p_out 24>,
->> +                                           <&wcss_smp2p_out 25>,
->> +                                           <&wcss_smp2p_out 26>;
->> +                        qcom,smem-state-names = "shutdown",
->> +                                                "stop",
->> +                                                "spawn";
->> +                        status = "okay";
->> +                };
->> +        };
->> -- 
->> 2.34.1
->>
-
-Thanks & Regards,
-Manikanta.
+> 
+> Best regards,
+> Krzysztof
+> 
