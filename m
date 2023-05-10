@@ -2,177 +2,109 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A23C77B75
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  9 May 2023 20:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FE6C77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 May 2023 06:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229595AbjEIUJX (ORCPT
+        id S235998AbjEJGiL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 9 May 2023 16:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47760 "EHLO
+        Wed, 10 May 2023 02:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjEIUJW (ORCPT
+        with ESMTP id S229500AbjEJGiK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 9 May 2023 16:09:22 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A351B9
-        for <linux-remoteproc@vger.kernel.org>; Tue,  9 May 2023 13:09:21 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-643aad3bc41so5237722b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 May 2023 13:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683662961; x=1686254961;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=k+FKrsLIVkKYcsIeLT6acEHQnxxZ6Q1AY/ul3RhcaDc=;
-        b=t7HcuJJ8yNGZSd5jU/xlsEmIR0LbZB3y+UKrWSXF1bjCnP1H/mulK2qxWbB9om6c5e
-         EPoNhS+2F2SY6TDpNh93OfYIaBuWtDyA0WUhhijzdrOdZ209vJFBMBDEstCsarasou+9
-         +aaguV9fWmvqneuHb9CoJTE/qx66MsyzXT+Vxlf3Z99RhkANcfNe43TH2ZxXjLdx2+BS
-         HuT1Mt+LUKLIi9eC3VKE3enmhVi2+4/fEeTRQlISUfpnrQX7AiRV2EtLIcQYI0O8DYbA
-         SgRhafl44CnHhh1/jjt5W5eRfmOo6Y3wvHoZfrVQ9hLa4M2QjasbOPOES3SF4ouZL3OB
-         lEsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683662961; x=1686254961;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+FKrsLIVkKYcsIeLT6acEHQnxxZ6Q1AY/ul3RhcaDc=;
-        b=ktA6lhGGqPrTK4mGTvbNfYyheZLScbGqubPRVPkhvUFx64R5ZC5D7LfjwDwv8cqI5O
-         2+KqF1kKT0IGp2rXtGNis3hgbUXJz7ReXq/vRhwYvTUew4HwJU/dyy7RDE/yaWwEyfwp
-         tIp24CmOpsfkTwsKMTYjEvGHqzgzbzi4D5wUlE1bpt3sfYHfT6IVNkXEU+gWi+NS5H/P
-         5ukJJRdQAM4QQuhRP26Rh34FBcpU7W+RjWdVlnECM5gSyzWviMHk53jEYS9miTIlxRKb
-         fvoVSc0p0ojr77ShMn9HKFNi9wA0whYS0HD8Jwj8Q7Dfyfl6+w/uI5THTppZTMNl+8zk
-         bP/Q==
-X-Gm-Message-State: AC+VfDzALCQeIGaNbPG+G/6yH8su8VF+RVnPUzhRSx27RcktqrPzvUl7
-        i4Y/N4LmZGkER9t2Q39ArBbWKQ==
-X-Google-Smtp-Source: ACHHUZ7DY1IJhZ58XkyYQJW/n6N11Hq8FL8JnuzhTJRQRu0mHe/ZFZZkYof5BJbwpbwYX39JmI5wDQ==
-X-Received: by 2002:a05:6a21:6317:b0:f3:3810:8a89 with SMTP id wu23-20020a056a21631700b000f338108a89mr16127445pzb.51.1683662960788;
-        Tue, 09 May 2023 13:09:20 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:5e48:ff40:3eaf:3f9e])
-        by smtp.gmail.com with ESMTPSA id a9-20020a63e409000000b0050376cedb3asm1756976pgi.24.2023.05.09.13.09.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 13:09:20 -0700 (PDT)
-Date:   Tue, 9 May 2023 14:09:17 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
+        Wed, 10 May 2023 02:38:10 -0400
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 692FC4230;
+        Tue,  9 May 2023 23:38:04 -0700 (PDT)
+X-UUID: 34247c90eefd11ed9cb5633481061a41-20230510
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=mvwHWznV1CbjQr3A3SteeGWxU/09D9mqE8X8ZN62xhE=;
+        b=EYnrqEY8zgAUWNUsYt2RVJWBuwk+IHY3g1mn2SXcxrsZJkB2DAOk64Jl5XHj7q42kDmchYB3/lPYSHTofMrEGC9Ik4p5m0jRmCOd6mTozfsDRSA/sIGu8T48IHjJgyKeeBzbDdgokixTenSeV800u+0pxZiiW78UZEpzg5Ub1kc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.24,REQID:6280bedf-0535-4582-924c-5ef06b704bf5,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:178d4d4,CLOUDID:bd1c5dc0-e32c-4c97-918d-fbb3fc224d4e,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-UUID: 34247c90eefd11ed9cb5633481061a41-20230510
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+        (envelope-from <tinghan.shen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1773943641; Wed, 10 May 2023 14:37:58 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.194) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 10 May 2023 14:37:57 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 10 May 2023 14:37:57 +0800
+From:   Tinghan Shen <tinghan.shen@mediatek.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-remoteproc@vger.kernel.org, kernel@pengutronix.de,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        linux-mediatek@lists.infradead.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 00/18] remoteproc: Convert to platform remove callback
- returning void
-Message-ID: <ZFqobZAfdlu+Rdtt@p14s>
-References: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de>
+        Tinghan Shen <tinghan.shen@mediatek.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v11 02/11] arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
+Date:   Wed, 10 May 2023 14:37:40 +0800
+Message-ID: <20230510063749.5127-3-tinghan.shen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20230510063749.5127-1-tinghan.shen@mediatek.com>
+References: <20230510063749.5127-1-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230504194453.1150368-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain
+X-MTK:  N
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, May 04, 2023 at 09:44:35PM +0200, Uwe Kleine-König wrote:
-> Hello,
-> 
-> this patch series adapts most platform drivers below drivers/remoteproc
-> to use the .remove_new() callback. Compared to the traditional .remove()
-> callback .remove_new() returns no value. This is a good thing because
-> the driver core doesn't (and cannot) cope for errors during remove. The
-> only effect of a non-zero return value in .remove() is that the driver
-> core emits a warning. The device is removed anyhow and an early return
-> from .remove() usually yields a resource leak. One driver suffering from
-> this problem (s3c2410) is fixed by the first patch.
-> 
-> By changing the remove callback to return void driver authors cannot
-> reasonably (but wrongly) assume any more that there happens some kind of
-> cleanup later.
-> 
-> There is one driver (i.e. ti_k3_dsp_remoteproc.c) that might return an
-> error code in .remove(). I didn't look in detail into this driver, but
-> if that error happens, we have exactly the bad situation described
-> above. (Note that kproc->mem and the register mapping goes away.)
-> 
-> Best regards
-> Uwe
-> 
-> Uwe Kleine-König (18):
->   remoteproc: da8xx: Convert to platform remove callback returning void
->   remoteproc: imx_dsp: Convert to platform remove callback returning
->     void
->   remoteproc: imx: Convert to platform remove callback returning void
->   remoteproc: keystone: Convert to platform remove callback returning
->     void
->   remoteproc: meson_mx_ao_arc: Convert to platform remove callback
->     returning void
->   remoteproc: mtk_scp: Convert to platform remove callback returning
->     void
->   remoteproc: omap: Convert to platform remove callback returning void
->   remoteproc: pru: Convert to platform remove callback returning void
->   remoteproc: qcom_q6v5_adsp: Convert to platform remove callback
->     returning void
->   remoteproc: qcom_q6v5_mss: Convert to platform remove callback
->     returning void
->   remoteproc: qcom_q6v5_pas: Convert to platform remove callback
->     returning void
->   remoteproc: qcom_q6v5_wcss: Convert to platform remove callback
->     returning void
->   remoteproc: qcom_wcnss: Convert to platform remove callback returning
->     void
->   remoteproc: rcar: Convert to platform remove callback returning void
->   remoteproc: virtio: Convert to platform remove callback returning void
->   remoteproc: st: Convert to platform remove callback returning void
->   remoteproc: stm32: Convert to platform remove callback returning void
->   remoteproc: wkup_m3: Convert to platform remove callback returning
->     void
-> 
->  drivers/remoteproc/da8xx_remoteproc.c    | 6 ++----
->  drivers/remoteproc/imx_dsp_rproc.c       | 6 ++----
->  drivers/remoteproc/imx_rproc.c           | 6 ++----
->  drivers/remoteproc/keystone_remoteproc.c | 6 ++----
->  drivers/remoteproc/meson_mx_ao_arc.c     | 6 ++----
->  drivers/remoteproc/mtk_scp.c             | 6 ++----
->  drivers/remoteproc/omap_remoteproc.c     | 6 ++----
->  drivers/remoteproc/pru_rproc.c           | 6 ++----
->  drivers/remoteproc/qcom_q6v5_adsp.c      | 6 ++----
->  drivers/remoteproc/qcom_q6v5_mss.c       | 6 ++----
->  drivers/remoteproc/qcom_q6v5_pas.c       | 6 ++----
->  drivers/remoteproc/qcom_q6v5_wcss.c      | 6 ++----
->  drivers/remoteproc/qcom_wcnss.c          | 6 ++----
->  drivers/remoteproc/rcar_rproc.c          | 6 ++----
->  drivers/remoteproc/remoteproc_virtio.c   | 6 ++----
->  drivers/remoteproc/st_remoteproc.c       | 6 ++----
->  drivers/remoteproc/stm32_rproc.c         | 6 ++----
->  drivers/remoteproc/wkup_m3_rproc.c       | 6 ++----
->  18 files changed, 36 insertions(+), 72 deletions(-)
->
+Align the node name with the definition in SCP bindings.
 
-I have applied this set.
+Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi   | 2 +-
+ arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Mathieu
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index 63952c1251df..ac4aeeded37c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -825,7 +825,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&scp_pins>;
+ 
+-	cros_ec {
++	cros-ec-rpmsg {
+ 		compatible = "google,cros-ec-rpmsg";
+ 		mediatek,rpmsg-name = "cros-ec-rpmsg";
+ 	};
+diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+index 5a440504d4f9..cd4d68f1d93b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+@@ -1280,7 +1280,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&scp_pins>;
+ 
+-	cros-ec {
++	cros-ec-rpmsg {
+ 		compatible = "google,cros-ec-rpmsg";
+ 		mediatek,rpmsg-name = "cros-ec-rpmsg";
+ 	};
+-- 
+2.18.0
 
-> 
-> base-commit: 1a5304fecee523060f26e2778d9d8e33c0562df3
-> -- 
-> 2.39.2
-> 
