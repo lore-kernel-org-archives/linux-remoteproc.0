@@ -2,40 +2,40 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDD0C7EE30
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 May 2023 06:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4AFC7EE2D
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 May 2023 06:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236057AbjEJGiP (ORCPT
+        id S236072AbjEJGiS (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 10 May 2023 02:38:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40992 "EHLO
+        Wed, 10 May 2023 02:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236017AbjEJGiM (ORCPT
+        with ESMTP id S235723AbjEJGiM (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Wed, 10 May 2023 02:38:12 -0400
 Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DB44486;
-        Tue,  9 May 2023 23:38:04 -0700 (PDT)
-X-UUID: 349a51aeeefd11edb20a276fd37b9834-20230510
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF0244AF;
+        Tue,  9 May 2023 23:38:07 -0700 (PDT)
+X-UUID: 34c7b572eefd11edb20a276fd37b9834-20230510
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=/2HwQXP5gcxmFdmc9DZ5hDZ3MeFnNJZxYWYbN2vHeWc=;
-        b=TXNAWZoNmGE8M0hRlYhqIVWg/6Mp59EuzX/6fmLzn6t3h6IR0dEQujS2q55n/XrQ4CD7+wzyhEsXH6tygcSDpPek9nHLxcQiaWkRKY330f/RqwlsVHwv6R7zdJfqEsIDloh1iqYW0OTWB48mTlMhGtY7jUDD83aZ3WsR1Ta+XSc=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=KywwB79Axi7aU4lRJ596DVj2FAMwh3ZTg6f+iWMOi+g=;
+        b=h2U7Knc5ajKGooLKMe5nD9XfwpPa1wOYL3WjBCv+8BDIU5bAbQPaSuzusH1N+Vd6PkpWkWsvcZB1VacnPFGupbzFQtUqcsBiZnd/81Ohmf6pPbFcF+lK/7FyE5e0Ucx89J9oLEIAk0ne8Zyor2ufjhnJF+cVxLpOgba20Q0DCRI=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.24,REQID:926fc43e-f9f6-43f3-bfcb-0b6eab9d28c9,IP:0,U
+X-CID-O-INFO: VERSION:1.1.24,REQID:304162b8-047a-4bc4-96b9-89c9bc2e791a,IP:0,U
         RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
         release,TS:0
-X-CID-META: VersionHash:178d4d4,CLOUDID:5dd9b03a-de1e-4348-bc35-c96f92f1dcbb,B
+X-CID-META: VersionHash:178d4d4,CLOUDID:42d0556b-2f20-4998-991c-3b78627e4938,B
         ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
-X-UUID: 349a51aeeefd11edb20a276fd37b9834-20230510
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw02.mediatek.com
+X-UUID: 34c7b572eefd11edb20a276fd37b9834-20230510
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 9349902; Wed, 10 May 2023 14:37:59 +0800
+        with ESMTP id 716746769; Wed, 10 May 2023 14:37:59 +0800
 Received: from mtkmbs13n1.mediatek.inc (172.21.101.194) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.26; Wed, 10 May 2023 14:37:58 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
@@ -45,20 +45,20 @@ From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Tinghan Shen <tinghan.shen@mediatek.com>
+        "Tinghan Shen" <tinghan.shen@mediatek.com>
 CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v11 07/11] remoteproc: mediatek: Control SCP core 1 by rproc subdevice
-Date:   Wed, 10 May 2023 14:37:45 +0800
-Message-ID: <20230510063749.5127-8-tinghan.shen@mediatek.com>
+Subject: [PATCH v11 09/11] remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+Date:   Wed, 10 May 2023 14:37:47 +0800
+Message-ID: <20230510063749.5127-10-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20230510063749.5127-1-tinghan.shen@mediatek.com>
 References: <20230510063749.5127-1-tinghan.shen@mediatek.com>
@@ -69,154 +69,85 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Register SCP core 1 as a subdevice of core 0 for the boot sequence
-and watchdog timeout handling. The core 1 has to boot after core 0
-because the SCP clock and SRAM power is controlled by SCP core 0.
-As for watchdog timeout handling, the remoteproc framework helps to
-stop/start subdevices automatically when SCP driver receives watchdog
-timeout event.
+The MT8195 SCP core 1 watchdog timeout needs to be handled in the
+SCP core 0 IRQ handler because the MT8195 SCP core 1 watchdog timeout
+IRQ is wired on the same IRQ entry for core 0 watchdog timeout.
+MT8195 SCP has a watchdog status register to identify the watchdog
+timeout source when IRQ triggered.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/remoteproc/mtk_common.h |  9 +++++
- drivers/remoteproc/mtk_scp.c    | 68 +++++++++++++++++++++++++++++++++
- 2 files changed, 77 insertions(+)
+ drivers/remoteproc/mtk_common.h |  5 +++++
+ drivers/remoteproc/mtk_scp.c    | 25 ++++++++++++++++++++++++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index 56395e8664cb..85afed2e6928 100644
+index e1cec3109fd9..5ec83ac18503 100644
 --- a/drivers/remoteproc/mtk_common.h
 +++ b/drivers/remoteproc/mtk_common.h
-@@ -100,6 +100,13 @@ struct mtk_scp_of_data {
- 	size_t ipi_buf_offset;
- };
+@@ -55,6 +55,10 @@
+ #define MT8192_CORE0_WDT_IRQ		0x10030
+ #define MT8192_CORE0_WDT_CFG		0x10034
  
-+struct mtk_scp_core_subdev {
-+	struct rproc_subdev subdev;
-+	struct mtk_scp *scp;
-+};
++#define MT8195_SYS_STATUS		0x4004
++#define MT8195_CORE0_WDT		BIT(16)
++#define MT8195_CORE1_WDT		BIT(17)
 +
-+#define to_core_subdev(d) container_of(d, struct mtk_scp_core_subdev, subdev)
-+
- struct mtk_scp {
- 	struct device *dev;
- 	struct rproc *rproc;
-@@ -130,6 +137,8 @@ struct mtk_scp {
- 	struct rproc_subdev *rpmsg_subdev;
+ #define MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS		GENMASK(7, 4)
  
- 	struct list_head elem;
-+	struct list_head *cluster;
-+	struct mtk_scp_core_subdev *core_subdev;
- };
+ #define MT8195_CPU1_SRAM_PD			0x1084
+@@ -63,6 +67,7 @@
+ #define MT8195_CORE1_SW_RSTN_CLR		0x20000
+ #define MT8195_CORE1_SW_RSTN_SET		0x20004
+ #define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
++#define MT8195_CORE1_WDT_IRQ			0x20030
+ #define MT8195_CORE1_WDT_CFG			0x20034
  
- /**
+ #define MT8195_SEC_CTRL				0x85000
 diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 87215a0e145e..a88fdd46f614 100644
+index 3e509c3d4674..6645fa801b89 100644
 --- a/drivers/remoteproc/mtk_scp.c
 +++ b/drivers/remoteproc/mtk_scp.c
-@@ -863,6 +863,60 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+@@ -230,6 +230,29 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
  	}
  }
  
-+static int scp_core_subdev_start(struct rproc_subdev *subdev)
++static void mt8195_scp_irq_handler(struct mtk_scp *scp)
 +{
-+	struct mtk_scp_core_subdev *core_subdev = to_core_subdev(subdev);
-+	struct mtk_scp *scp = core_subdev->scp;
++	u32 scp_to_host;
 +
-+	rproc_boot(scp->rproc);
++	scp_to_host = readl(scp->reg_base + MT8192_SCP2APMCU_IPC_SET);
 +
-+	return 0;
-+}
++	if (scp_to_host & MT8192_SCP_IPC_INT_BIT) {
++		scp_ipi_handler(scp);
++	} else {
++		u32 reason = readl(scp->reg_base + MT8195_SYS_STATUS);
 +
-+static void scp_core_subdev_stop(struct rproc_subdev *subdev, bool crashed)
-+{
-+	struct mtk_scp_core_subdev *core_subdev = to_core_subdev(subdev);
-+	struct mtk_scp *scp = core_subdev->scp;
++		if (reason & MT8195_CORE0_WDT)
++			writel(1, scp->reg_base + MT8192_CORE0_WDT_IRQ);
 +
-+	rproc_shutdown(scp->rproc);
-+}
++		if (reason & MT8195_CORE1_WDT)
++			writel(1, scp->reg_base + MT8195_CORE1_WDT_IRQ);
 +
-+static int scp_core_subdev_register(struct mtk_scp *scp)
-+{
-+	struct device *dev = scp->dev;
-+	struct mtk_scp_core_subdev *core_subdev;
-+	struct mtk_scp *scp_c0;
-+
-+	scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
-+	if (!scp_c0)
-+		return -ENODATA;
-+
-+	core_subdev = devm_kzalloc(dev, sizeof(*core_subdev), GFP_KERNEL);
-+	if (!core_subdev)
-+		return -ENOMEM;
-+
-+	core_subdev->scp = scp;
-+	core_subdev->subdev.start = scp_core_subdev_start;
-+	core_subdev->subdev.stop = scp_core_subdev_stop;
-+
-+	scp->core_subdev = core_subdev;
-+	rproc_add_subdev(scp_c0->rproc, &scp->core_subdev->subdev);
-+
-+	return 0;
-+}
-+
-+static void scp_core_subdev_unregister(struct mtk_scp *scp)
-+{
-+	struct mtk_scp *scp_c0;
-+
-+	if (scp->core_subdev) {
-+		scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
-+		rproc_remove_subdev(scp_c0->rproc, &scp->core_subdev->subdev);
-+		devm_kfree(scp->dev, scp->core_subdev);
-+		scp->core_subdev = NULL;
++		scp_wdt_handler(scp, reason);
 +	}
++
++	writel(scp_to_host, scp->reg_base + MT8192_SCP2APMCU_IPC_CLR);
 +}
 +
- static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
- 				      struct mtk_scp_of_cluster *scp_cluster,
- 				      const struct mtk_scp_of_data *of_data)
-@@ -957,6 +1011,7 @@ static void scp_rproc_free(struct mtk_scp *scp)
+ static void mt8195_scp_c1_irq_handler(struct mtk_scp *scp)
  {
- 	int i;
- 
-+	scp_core_subdev_unregister(scp);
- 	scp_remove_rpmsg_subdev(scp);
- 	scp_ipi_unregister(scp, SCP_IPI_INIT);
- 	scp_unmap_memory_region(scp);
-@@ -1009,6 +1064,7 @@ static int scp_cluster_init(struct platform_device *pdev)
- 			return PTR_ERR(scp);
- 
- 		list_add_tail(&scp->elem, cluster);
-+		scp->cluster = cluster;
- 	} else {
- 		dev_dbg(dev, "multi-core scp\n");
- 
-@@ -1038,6 +1094,7 @@ static int scp_cluster_init(struct platform_device *pdev)
- 				goto init_fail;
- 			}
- 			list_add_tail(&scp->elem, cluster);
-+			scp->cluster = cluster;
- 			put_device(&cpdev->dev);
- 
- 			core_id++;
-@@ -1045,6 +1102,17 @@ static int scp_cluster_init(struct platform_device *pdev)
- 	}
- 
- 	list_for_each_entry_safe_reverse(scp, temp, cluster, elem) {
-+		if (!list_is_first(&scp->elem, cluster)) {
-+			ret = scp_core_subdev_register(scp);
-+			if (ret) {
-+				dev_err_probe(scp->dev, ret, "Failed to register as subdev\n");
-+				goto add_fail;
-+			}
-+
-+			/* sub cores are booted as subdevices of core 0 */
-+			scp->rproc->auto_boot = false;
-+		}
-+
- 		ret = rproc_add(scp->rproc);
- 		if (ret)
- 			goto add_fail;
+ 	u32 scp_to_host;
+@@ -1272,7 +1295,7 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+ static const struct mtk_scp_of_data mt8195_of_data = {
+ 	.scp_clk_get = mt8195_scp_clk_get,
+ 	.scp_before_load = mt8195_scp_before_load,
+-	.scp_irq_handler = mt8192_scp_irq_handler,
++	.scp_irq_handler = mt8195_scp_irq_handler,
+ 	.scp_reset_assert = mt8192_scp_reset_assert,
+ 	.scp_reset_deassert = mt8192_scp_reset_deassert,
+ 	.scp_stop = mt8195_scp_stop,
 -- 
 2.18.0
 
