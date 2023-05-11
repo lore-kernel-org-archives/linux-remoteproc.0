@@ -2,318 +2,367 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3746FC7EE24
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 10 May 2023 18:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E2CC77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 11 May 2023 17:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236148AbjEJSFk (ORCPT
+        id S238687AbjEKR6o (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 10 May 2023 14:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47572 "EHLO
+        Thu, 11 May 2023 13:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236089AbjEJSFb (ORCPT
+        with ESMTP id S239127AbjEKR6Y (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 10 May 2023 14:05:31 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB065B80;
-        Wed, 10 May 2023 11:05:29 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34AEYjYq015448;
-        Wed, 10 May 2023 18:05:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=TFO+ASYvrLFqEdFOPQ+XU8KFRwDiwNBhRyhH+x2G6ig=;
- b=jw9IHQd6+FU7taS6mAknpwPYh4KmVBiF9OB7b/ed57sGKokY7kQCkupXr23joC+UWbRZ
- wqd8ufa9UMqeuwBRpBWRoJeQuJXjao8Oy+J+KuNsPEOQkeW6/1sWnzkwOgudijRZmjAW
- 3m9PISwACseE/qIAL/zkfBYAOvbo58aEj/Da3JcltMGnxGGbt55ZenG1ZHNo+KS+CfBh
- IIs67Ne/5yDNxJahLfBf5UISdGZunrrlZKc0XIczjOMFScDDrymCLrO2SzoYflRUWuQO
- LnKhKunuX8vCvtApQkDOIduzsgVyRJOY5JGoV6i3SdXSuS5pDKh8fszCbut9WgnjdBlX 1w== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qg79cs7yf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 May 2023 18:05:25 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34AI5OMQ022918
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 May 2023 18:05:24 GMT
-Received: from hu-gokukris-sd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 10 May 2023 11:05:24 -0700
-From:   Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-To:     <linux-remoteproc@vger.kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-kernel@vger.kernel.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        "Elliot Berman" <quic_eberman@quicinc.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-Subject: [PATCH v3 2/2] remoteproc: qcom: Add remoteproc tracing
-Date:   Wed, 10 May 2023 11:05:04 -0700
-Message-ID: <3efc06319d52973e74c64fec701111427639044c.1683741283.git.quic_gokukris@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <cover.1683741283.git.quic_gokukris@quicinc.com>
-References: <cover.1683741283.git.quic_gokukris@quicinc.com>
+        Thu, 11 May 2023 13:58:24 -0400
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25BCB86A4
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 May 2023 10:57:59 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1ab032d9266so83017175ad.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 May 2023 10:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683827873; x=1686419873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IE3MRanS9uBZk5iyRYVZ75isIkjN+eRZmeuR+lcRDrE=;
+        b=ZV3QeS/kmnBEFoomfujqKJMQXqTB23DPZHQ+9mNPiDpOiepMc/AAEtbOwvZR10tNme
+         6AJh8fgVjNCdQsxxV1bplKA/zVjMXr6lxy0c+eNFglzPF2MT1x/fzS7CmPvLHZF/qucF
+         /hdf22S8N8Z/fwA7h4OfKgK+BW0+QHJpctXYzLzsY0Oz7a5lRsIeJfpyhD3OESuIhGRh
+         hZRBejnENRSbj7TbeANtpYSqtEWwLObLBzaZaVDCZ7YeGxS9Z3zOlHqgvJJL0HcaB8Ek
+         rBNr9Rw2yOdkWdEtkWmwSj7EnF8IFhTvkfSanoVJ9wXLWao9AmR9xmu5UQSPLZli4Eba
+         zBDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683827873; x=1686419873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IE3MRanS9uBZk5iyRYVZ75isIkjN+eRZmeuR+lcRDrE=;
+        b=Tuh1k/C25dgzbGEGCHOi75RB4NOgUWfobRe73znpaWSPOsHhw1UTfMKgt1ATwXbslj
+         0A60R4rkfQEM+mKqzqHMh4WmsGK2nR5YcE5sXJ2hzyicGDmyb7IBWsKLsWKZLYjeRrcp
+         aMYA9eYecPfYMpkS4VwMLHZoJHzjvZCAPNXAg+zqSOxTAYTP2Vzx8xhlp07E5KWHUGCz
+         FCWvrbWmmg6vuSvM9OQfcX/naeWx64xdCJ96VkIWlKwfwy1ZeFDnhoH9PWBirBEzdWPk
+         34EbSdeYEpEDy4iDlmBLk52Lk0yjK2BVNzPzAcpBmJcX+Jow874ZB7pzvOHeF2vA2Sd0
+         iclw==
+X-Gm-Message-State: AC+VfDzLao01vcTCMSNCRb8ocMMYtDkbR6EaGPAsQxTM87OLTMZezf0/
+        xeY4YUdNmXuUrb0q+p4BUJGzAQ==
+X-Google-Smtp-Source: ACHHUZ4BC0yUHVwBv3jXzLEPAI6waOCTU8xCnnu3MTIrJFDcdbHI3gYdpy5HFOA0xhcQ+FiCF+rF4Q==
+X-Received: by 2002:a17:902:d487:b0:1a9:9a18:346a with SMTP id c7-20020a170902d48700b001a99a18346amr29636766plg.5.1683827873229;
+        Thu, 11 May 2023 10:57:53 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:5715:c2a3:1400:98ae])
+        by smtp.gmail.com with ESMTPSA id 17-20020a170902ee5100b001a63ba28052sm6217123plo.69.2023.05.11.10.57.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 May 2023 10:57:52 -0700 (PDT)
+Date:   Thu, 11 May 2023 11:57:50 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Tinghan Shen <tinghan.shen@mediatek.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v11 05/11] remoteproc: mediatek: Introduce cluster on
+ single-core SCP
+Message-ID: <ZF0snh07gRNfEoMQ@p14s>
+References: <20230510063749.5127-1-tinghan.shen@mediatek.com>
+ <20230510063749.5127-6-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hGxEcqL0z165_sjwqT2TYQaVqaIREBX0
-X-Proofpoint-ORIG-GUID: hGxEcqL0z165_sjwqT2TYQaVqaIREBX0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-10_04,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 mlxscore=0 suspectscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 mlxlogscore=904 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305100145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230510063749.5127-6-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This change attempts to add traces for start, stop, crash
-subsystem/subdevice events, these will serve as standard checkpoints in
-code and could help in debugging the failures in subdevice/subsystem
-prepare, start, stop and unprepare functions. This will also breakdown
-the time taken for each step in remoteproc bootup/shutdown process.
+Good day,
 
-Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
----
- drivers/remoteproc/qcom_common.c     | 37 ++++++++++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5.c       |  9 +++++++
- drivers/remoteproc/remoteproc_core.c |  8 ++++++
- 3 files changed, 54 insertions(+)
+On Wed, May 10, 2023 at 02:37:43PM +0800, Tinghan Shen wrote:
+> This is the preliminary step for probing multi-core SCP.
+> The initialization procedure for remoteproc is similar for both
+> single-core and multi-core architectures and is reusing to avoid
+> redundant code.
+> 
+> Adapt the probing flow of single-core SCP to incorporate the 'cluster'
+> concept required for probing multi-core SCP.The main differences are,
+> 
+>   - the SCP core object is maintained in the cluster list,
+>     instead of in the driver data property.
+>   - the cluster information is saved in the driver data property.
+>   - To maintain compatibility with exported SCP APIs that get
+>     the SCP core object by SCP node phandle, the SCP core object pointers
+>     are moved to the platform data property.
+> 
+> The registers of config and l1tcm are shared for multi-core
+> SCP. Reuse the mapped addresses for all cores.
+> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> ---
+>  drivers/remoteproc/mtk_common.h |   2 +
+>  drivers/remoteproc/mtk_scp.c    | 143 ++++++++++++++++++++++----------
+>  2 files changed, 103 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index c0905aec3b4b..56395e8664cb 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -128,6 +128,8 @@ struct mtk_scp {
+>  	size_t dram_size;
+>  
+>  	struct rproc_subdev *rpmsg_subdev;
+> +
+> +	struct list_head elem;
+>  };
+>  
+>  /**
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index d66822dad943..6c4da7332896 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -23,6 +23,14 @@
+>  #define MAX_CODE_SIZE 0x500000
+>  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+>  
+> +struct mtk_scp_of_cluster {
+> +	void __iomem *reg_base;
+> +	void __iomem *l1tcm_base;
+> +	size_t l1tcm_size;
+> +	phys_addr_t l1tcm_phys;
+> +	struct list_head mtk_scp_cluster;
 
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index a0d4238492e9..c19bcb2dd603 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/soc/qcom/mdt_loader.h>
- #include <linux/soc/qcom/smem.h>
-+#include <trace/events/rproc_qcom.h>
- 
- #include "remoteproc_internal.h"
- #include "qcom_common.h"
-@@ -191,6 +192,10 @@ static int glink_subdev_start(struct rproc_subdev *subdev)
- 
- 	glink->edge = qcom_glink_smem_register(glink->dev, glink->node);
- 
-+	trace_rproc_subdev_event(dev_name(glink->dev->parent),
-+					"glink", "start",
-+					PTR_ERR_OR_ZERO(glink->edge));
-+
- 	return PTR_ERR_OR_ZERO(glink->edge);
- }
- 
-@@ -199,6 +204,11 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
- 	qcom_glink_smem_unregister(glink->edge);
-+
-+	trace_rproc_subdev_event(dev_name(glink->dev->parent),
-+					"glink", "stop",
-+					PTR_ERR_OR_ZERO(glink->edge));
-+
- 	glink->edge = NULL;
- }
- 
-@@ -206,6 +216,10 @@ static void glink_subdev_unprepare(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
- 
-+	trace_rproc_subdev_event(dev_name(glink->dev->parent),
-+					"glink", "unprepare",
-+					PTR_ERR_OR_ZERO(glink->edge));
-+
- 	qcom_glink_ssr_notify(glink->ssr_name);
- }
- 
-@@ -300,6 +314,10 @@ static int smd_subdev_start(struct rproc_subdev *subdev)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-+	trace_rproc_subdev_event(dev_name(smd->dev->parent),
-+					"smd", "start",
-+					PTR_ERR_OR_ZERO(smd->edge));
-+
- 	smd->edge = qcom_smd_register_edge(smd->dev, smd->node);
- 
- 	return PTR_ERR_OR_ZERO(smd->edge);
-@@ -309,6 +327,10 @@ static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
- {
- 	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
- 
-+	trace_rproc_subdev_event(dev_name(smd->dev->parent),
-+					"smd", "stop",
-+					PTR_ERR_OR_ZERO(smd->edge));
-+
- 	qcom_smd_unregister_edge(smd->edge);
- 	smd->edge = NULL;
- }
-@@ -425,6 +447,10 @@ static int ssr_notify_prepare(struct rproc_subdev *subdev)
- 		.crashed = false,
- 	};
- 
-+	trace_rproc_subdev_event(ssr->info->name,
-+					"ssr", "QCOM_SSR_BEFORE_POWERUP",
-+					data.crashed);
-+
- 	srcu_notifier_call_chain(&ssr->info->notifier_list,
- 				 QCOM_SSR_BEFORE_POWERUP, &data);
- 	return 0;
-@@ -437,6 +463,9 @@ static int ssr_notify_start(struct rproc_subdev *subdev)
- 		.name = ssr->info->name,
- 		.crashed = false,
- 	};
-+	trace_rproc_subdev_event(ssr->info->name,
-+					"ssr", "QCOM_SSR_AFTER_POWERUP",
-+					data.crashed);
- 
- 	srcu_notifier_call_chain(&ssr->info->notifier_list,
- 				 QCOM_SSR_AFTER_POWERUP, &data);
-@@ -451,6 +480,10 @@ static void ssr_notify_stop(struct rproc_subdev *subdev, bool crashed)
- 		.crashed = crashed,
- 	};
- 
-+	trace_rproc_subdev_event(ssr->info->name,
-+					"ssr", "QCOM_SSR_BEFORE_SHUTDOWN",
-+					data.crashed);
-+
- 	srcu_notifier_call_chain(&ssr->info->notifier_list,
- 				 QCOM_SSR_BEFORE_SHUTDOWN, &data);
- }
-@@ -463,6 +496,10 @@ static void ssr_notify_unprepare(struct rproc_subdev *subdev)
- 		.crashed = false,
- 	};
- 
-+	trace_rproc_subdev_event(ssr->info->name,
-+					"ssr", "QCOM_SSR_AFTER_SHUTDOWN",
-+					data.crashed);
-+
- 	srcu_notifier_call_chain(&ssr->info->notifier_list,
- 				 QCOM_SSR_AFTER_SHUTDOWN, &data);
- }
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 192c7aa0e39e..2f4e9c8ebbf9 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -15,6 +15,7 @@
- #include <linux/soc/qcom/smem.h>
- #include <linux/soc/qcom/smem_state.h>
- #include <linux/remoteproc.h>
-+#include <trace/events/rproc_qcom.h>
- #include "qcom_common.h"
- #include "qcom_q6v5.h"
- 
-@@ -113,6 +114,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
- 		dev_err(q6v5->dev, "watchdog without message\n");
- 
- 	q6v5->running = false;
-+	trace_rproc_interrupt_event(q6v5->rproc, "q6v5_wdog", msg);
- 	rproc_report_crash(q6v5->rproc, RPROC_WATCHDOG);
- 
- 	return IRQ_HANDLED;
-@@ -134,6 +136,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
- 		dev_err(q6v5->dev, "fatal error without message\n");
- 
- 	q6v5->running = false;
-+	trace_rproc_interrupt_event(q6v5->rproc, "fatal", msg);
- 	rproc_report_crash(q6v5->rproc, RPROC_FATAL_ERROR);
- 
- 	return IRQ_HANDLED;
-@@ -165,6 +168,8 @@ int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout)
- 	if (!ret)
- 		disable_irq(q6v5->handover_irq);
- 
-+	trace_rproc_interrupt_event(q6v5->rproc, "Ready", !ret ? "-ETIMEDOUT":"done");
-+
- 	return !ret ? -ETIMEDOUT : 0;
- }
- EXPORT_SYMBOL_GPL(qcom_q6v5_wait_for_start);
-@@ -180,6 +185,8 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
- 
- 	q6v5->handover_issued = true;
- 
-+	trace_rproc_interrupt_event(q6v5->rproc, "handover", "Proxy votes removed");
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -216,6 +223,8 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon)
- 
- 	qcom_smem_state_update_bits(q6v5->state, BIT(q6v5->stop_bit), 0);
- 
-+	trace_rproc_interrupt_event(q6v5->rproc, "Stop", ret ? "done":"-EETIMEDOUT");
-+
- 	return ret == 0 ? -ETIMEDOUT : 0;
- }
- EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 695cce218e8c..ced7584c27c3 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -38,6 +38,7 @@
- #include <linux/virtio_ring.h>
- #include <asm/byteorder.h>
- #include <linux/platform_device.h>
-+#include <trace/events/rproc_qcom.h>
- 
- #include "remoteproc_internal.h"
- 
-@@ -1271,6 +1272,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 
- 	/* load the ELF segments to memory */
- 	ret = rproc_load_segments(rproc, fw);
-+	trace_rproc_load_event(rproc, ret);
- 	if (ret) {
- 		dev_err(dev, "Failed to load program segments: %d\n", ret);
- 		return ret;
-@@ -1306,6 +1308,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
- 
- 	/* Start any subdevices for the remote processor */
- 	ret = rproc_start_subdevices(rproc);
-+
- 	if (ret) {
- 		dev_err(dev, "failed to probe subdevices for %s: %d\n",
- 			rproc->name, ret);
-@@ -1730,6 +1733,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
- 		return ret;
- 	}
- 
-+	trace_rproc_stop_event(rproc, crashed ? "crash stop" : "stop");
-+
- 	rproc_unprepare_subdevices(rproc);
- 
- 	rproc->state = RPROC_OFFLINE;
-@@ -1940,6 +1945,8 @@ int rproc_boot(struct rproc *rproc)
- 		dev_info(dev, "attaching to %s\n", rproc->name);
- 
- 		ret = rproc_attach(rproc);
-+		trace_rproc_start_event(rproc, ret);
-+
- 	} else {
- 		dev_info(dev, "powering up %s\n", rproc->name);
- 
-@@ -1951,6 +1958,7 @@ int rproc_boot(struct rproc *rproc)
- 		}
- 
- 		ret = rproc_fw_boot(rproc, firmware_p);
-+		trace_rproc_start_event(rproc, ret);
- 
- 		release_firmware(firmware_p);
- 	}
--- 
-2.40.1
+struct list_head mtk_scp_list;
 
+> +};
+> +
+>  /**
+>   * scp_get() - get a reference to SCP.
+>   *
+> @@ -51,7 +59,7 @@ struct mtk_scp *scp_get(struct platform_device *pdev)
+>  		return NULL;
+>  	}
+>  
+> -	return platform_get_drvdata(scp_pdev);
+> +	return *(struct mtk_scp **)dev_get_platdata(&scp_pdev->dev);
+>  }
+>  EXPORT_SYMBOL_GPL(scp_get);
+>  
+> @@ -810,14 +818,14 @@ static void scp_unmap_memory_region(struct mtk_scp *scp)
+>  static int scp_register_ipi(struct platform_device *pdev, u32 id,
+>  			    ipi_handler_t handler, void *priv)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  
+>  	return scp_ipi_register(scp, id, handler, priv);
+>  }
+>  
+>  static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  
+>  	scp_ipi_unregister(scp, id);
+>  }
+> @@ -825,7 +833,7 @@ static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
+>  static int scp_send_ipi(struct platform_device *pdev, u32 id, void *buf,
+>  			unsigned int len, unsigned int wait)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  
+>  	return scp_ipi_send(scp, id, buf, len, wait);
+>  }
+> @@ -855,7 +863,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+>  	}
+>  }
+>  
+> -static int scp_probe(struct platform_device *pdev)
+> +static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+> +				      struct mtk_scp_of_cluster *scp_cluster)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> @@ -867,52 +876,42 @@ static int scp_probe(struct platform_device *pdev)
+>  
+>  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+>  	if (ret < 0 && ret != -EINVAL)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+>  	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
+> -	if (!rproc)
+> -		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
+> +	if (!rproc) {
+> +		dev_err(dev, "unable to allocate remoteproc\n");
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+>  
+>  	scp = rproc->priv;
+>  	scp->rproc = rproc;
+>  	scp->dev = dev;
+>  	scp->data = of_device_get_match_data(dev);
+> -	platform_set_drvdata(pdev, scp);
+> +	platform_device_add_data(pdev, &scp, sizeof(scp));
+> +
+> +	scp->reg_base = scp_cluster->reg_base;
+> +	scp->l1tcm_base = scp_cluster->l1tcm_base;
+> +	scp->l1tcm_size = scp_cluster->l1tcm_size;
+> +	scp->l1tcm_phys = scp_cluster->l1tcm_phys;
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+>  	scp->sram_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(scp->sram_base))
+> -		return dev_err_probe(dev, PTR_ERR(scp->sram_base),
+> -				     "Failed to parse and map sram memory\n");
+> +	if (IS_ERR(scp->sram_base)) {
+> +		dev_err(dev, "Failed to parse and map sram memory\n");
+> +		return ERR_PTR(PTR_ERR(scp->sram_base));
+> +	}
+>  
+>  	scp->sram_size = resource_size(res);
+>  	scp->sram_phys = res->start;
+>  
+> -	/* l1tcm is an optional memory region */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> -	scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(scp->l1tcm_base)) {
+> -		ret = PTR_ERR(scp->l1tcm_base);
+> -		if (ret != -EINVAL) {
+> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> -		}
+> -	} else {
+> -		scp->l1tcm_size = resource_size(res);
+> -		scp->l1tcm_phys = res->start;
+> -	}
+> -
+> -	scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
+> -	if (IS_ERR(scp->reg_base))
+> -		return dev_err_probe(dev, PTR_ERR(scp->reg_base),
+> -				     "Failed to parse and map cfg memory\n");
+> -
+>  	ret = scp->data->scp_clk_get(scp);
+>  	if (ret)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+>  	ret = scp_map_memory_region(scp);
+>  	if (ret)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+>  	mutex_init(&scp->send_lock);
+>  	for (i = 0; i < SCP_IPI_MAX; i++)
+> @@ -943,7 +942,7 @@ static int scp_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto remove_subdev;
+>  
+> -	return 0;
+> +	return scp;
+>  
+>  remove_subdev:
+>  	scp_remove_rpmsg_subdev(scp);
+> @@ -954,21 +953,81 @@ static int scp_probe(struct platform_device *pdev)
+>  		mutex_destroy(&scp->ipi_desc[i].lock);
+>  	mutex_destroy(&scp->send_lock);
+>  
+> -	return ret;
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static int scp_cluster_init(struct platform_device *pdev)
+> +{
+> +	struct mtk_scp *scp;
+> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
+> +	struct list_head *cluster = &scp_cluster->mtk_scp_cluster;
+> +
+> +	scp = scp_rproc_init(pdev, scp_cluster);
+> +	if (IS_ERR(scp))
+> +		return PTR_ERR(scp);
+> +
+> +	list_add_tail(&scp->elem, cluster);
+> +
+> +	return 0;
+> +}
+> +
+> +static int scp_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mtk_scp_of_cluster *scp_cluster;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	scp_cluster = devm_kzalloc(&pdev->dev, sizeof(*scp_cluster), GFP_KERNEL);
+
+Please use @dev the same way it was done for dev_err_probe() and
+devm_ioremap_resource() below.
+
+More comments to come tomorrow.
+
+Thanks,
+Mathieu
+
+> +	if (!scp_cluster)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> +	scp_cluster->reg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_cluster->reg_base))
+> +		return dev_err_probe(dev, PTR_ERR(scp_cluster->reg_base),
+> +				     "Failed to parse and map cfg memory\n");
+> +
+> +	/* l1tcm is an optional memory region */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> +	scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_cluster->l1tcm_base)) {
+> +		ret = PTR_ERR(scp_cluster->l1tcm_base);
+> +		if (ret != -EINVAL)
+> +			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> +
+> +		scp_cluster->l1tcm_base = NULL;
+> +	} else {
+> +		scp_cluster->l1tcm_size = resource_size(res);
+> +		scp_cluster->l1tcm_phys = res->start;
+> +	}
+> +
+> +	INIT_LIST_HEAD(&scp_cluster->mtk_scp_cluster);
+> +	platform_set_drvdata(pdev, scp_cluster);
+> +
+> +	ret = scp_cluster_init(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+>  }
+>  
+>  static void scp_remove(struct platform_device *pdev)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp, *temp;
+>  	int i;
+>  
+> -	rproc_del(scp->rproc);
+> -	scp_remove_rpmsg_subdev(scp);
+> -	scp_ipi_unregister(scp, SCP_IPI_INIT);
+> -	scp_unmap_memory_region(scp);
+> -	for (i = 0; i < SCP_IPI_MAX; i++)
+> -		mutex_destroy(&scp->ipi_desc[i].lock);
+> -	mutex_destroy(&scp->send_lock);
+> +	list_for_each_entry_safe_reverse(scp, temp, &scp_cluster->mtk_scp_cluster, elem) {
+> +		list_del(&scp->elem);
+> +		rproc_del(scp->rproc);
+> +		scp_remove_rpmsg_subdev(scp);
+> +		scp_ipi_unregister(scp, SCP_IPI_INIT);
+> +		scp_unmap_memory_region(scp);
+> +		for (i = 0; i < SCP_IPI_MAX; i++)
+> +			mutex_destroy(&scp->ipi_desc[i].lock);
+> +		mutex_destroy(&scp->send_lock);
+> +	}
+>  }
+>  
+>  static const struct mtk_scp_of_data mt8183_of_data = {
+> -- 
+> 2.18.0
+> 
