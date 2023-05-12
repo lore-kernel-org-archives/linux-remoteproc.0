@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71752C77B7C
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 May 2023 09:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93473C77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 May 2023 09:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240226AbjELJlL (ORCPT
+        id S240360AbjELJlM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 12 May 2023 05:41:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38142 "EHLO
+        Fri, 12 May 2023 05:41:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240090AbjELJlK (ORCPT
+        with ESMTP id S240024AbjELJlK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Fri, 12 May 2023 05:41:10 -0400
 Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A556AD879;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A691211B51;
         Fri, 12 May 2023 02:40:38 -0700 (PDT)
 Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34C8bG0T025488;
-        Fri, 12 May 2023 11:39:33 +0200
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34C8RUGj025513;
+        Fri, 12 May 2023 11:39:32 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=selector1;
- bh=tr01CIe/LpDGGpoPafu39bOHteV6ORG+tu0CkFYJUD0=;
- b=vBk9mG9Q/KmMCVqg48ljoIqEpnKCRZ2+N/aFo6SjONW6Y918JMzJn4Y1o8xBHn65NdPE
- NcDP+edBHIGFWXLUF/Ud9ASFiW0lKTs62vGouVJIgZrlXxHN2SXQfvhc/yOEE0ktWN3x
- WRK1qI2GQ3/sr/T3ItTEW9pJCE/tM8KP6RqYFlbMwLk1f1PvFFMlS0nsrnAb9cqMIDpa
- xzLiiFwVlhWsxaCtTow+acZOvF1wah+QeH/2dgPANx9Y8xqhaBU2eMf9o5ce+q8a5ZS3
- Ou29m/fLLi42BbpZhFyJxp9hOXHjrT7VLofevWBNI/+dtGSR1botx84J3cgTqK8Dq75W kQ== 
+ bh=5Q1gR8oRjEI5vr4HNTyzzxweoykIM1rjbUQgj6KH048=;
+ b=Y7/iOX6z8VwxoNnVwUL91jD9SWEqZxKCPjrcTTgcFnm9qdFbfs4TA2jsgLIrVCgFkcYa
+ iXVB0JD2Xfp97v/f4dpd3X7dSJGBrEiLMECnHy5pxZo9ZJCSjYFw0inKRscOBL+8JfpE
+ R6+lZ2DC0IO0nPMfhn1WelaMGzrzEu03YrEbGMANbOyKdHyvLtCAB4iHAvs/MUscQemL
+ c9ZDI7ZNxAB1WW9hdwfrV8nnbWIUaYnD0O/36f/w0zj0VkAX+FWNy7dGZ9iHqT9JAQs5
+ PcKJODj74aOwlz1XK3KrY1mo4OaGRpeJfs3alC9Dh+LJ6SNquWSB+GalVGWoPdVthV7r 7A== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qguwkrsks-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qguwkrskp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 May 2023 11:39:33 +0200
+        Fri, 12 May 2023 11:39:32 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CE23B10002A;
-        Fri, 12 May 2023 11:39:32 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9AC1C100038;
+        Fri, 12 May 2023 11:39:31 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C5E172248B0;
-        Fri, 12 May 2023 11:39:32 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 89F322248B0;
+        Fri, 12 May 2023 11:39:31 +0200 (CEST)
 Received: from localhost (10.201.21.213) by SHFDAG1NODE2.st.com (10.75.129.70)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Fri, 12 May
- 2023 11:39:32 +0200
+ 2023 11:39:31 +0200
 From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -53,9 +53,9 @@ CC:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [PATCH v3 4/4] ARM: dts: stm32: fix m4_rproc references to use SCMI
-Date:   Fri, 12 May 2023 11:39:26 +0200
-Message-ID: <20230512093926.661509-5-arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v3 2/4] remoteproc: stm32: Allow hold boot management by the SCMI reset controller
+Date:   Fri, 12 May 2023 11:39:24 +0200
+Message-ID: <20230512093926.661509-3-arnaud.pouliquen@foss.st.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230512093926.661509-1-arnaud.pouliquen@foss.st.com>
 References: <20230512093926.661509-1-arnaud.pouliquen@foss.st.com>
@@ -72,91 +72,142 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Fixes stm32mp15*-scmi DTS files introduced in [1]:
-This patch fixes the node which uses the MCU reset and adds the
-missing HOLD_BOOT which is also handled by the SCMI reset service.
-
-This change cannot be applied as a fix on commit [1], the management
-of the hold boot impacts also the stm32_rproc driver.
-
-[1] 'commit 5b7e58313a77 ("ARM: dts: stm32: Add SCMI version of STM32 boards (DK1/DK2/ED1/EV1)")'
+The hold boot can be managed by the SCMI controller as a reset.
+If the "hold_boot" reset is defined in the device tree, use it.
+Else use the syscon controller directly to access to the register.
+The support of the SMC call is deprecated but kept for legacy support.
 
 Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 ---
- arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts | 6 ++++--
- arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts | 6 ++++--
- arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts | 6 ++++--
- arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts | 6 ++++--
- 4 files changed, 16 insertions(+), 8 deletions(-)
+Updates vs previous version
+- Fix error management of the devm_reset_control_get_optional(dev, "hold_boot");
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts b/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts
-index e539cc80bef8..134788e64265 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts
-@@ -55,8 +55,10 @@ &mdma1 {
- 	resets = <&scmi_reset RST_SCMI_MDMA>;
+ drivers/remoteproc/stm32_rproc.c | 76 +++++++++++++++++++++++---------
+ 1 file changed, 55 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 8746cbb1f168..d85c2f8a2d6b 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -79,6 +79,7 @@ struct stm32_mbox {
+ 
+ struct stm32_rproc {
+ 	struct reset_control *rst;
++	struct reset_control *hold_boot_rst;
+ 	struct stm32_syscon hold_boot;
+ 	struct stm32_syscon pdds;
+ 	struct stm32_syscon m4_state;
+@@ -88,7 +89,7 @@ struct stm32_rproc {
+ 	struct stm32_rproc_mem *rmems;
+ 	struct stm32_mbox mb[MBOX_NB_MBX];
+ 	struct workqueue_struct *workqueue;
+-	bool secured_soc;
++	bool hold_boot_smc;
+ 	void __iomem *rsc_va;
  };
  
--&mlahb {
--	resets = <&scmi_reset RST_SCMI_MCU>;
-+&m4_rproc {
-+	resets = <&scmi_reset RST_SCMI_MCU>,
-+		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
-+	reset-names =  "mcu_rst", "hold_boot";
- };
+@@ -413,13 +414,28 @@ static int stm32_rproc_set_hold_boot(struct rproc *rproc, bool hold)
+ 	struct arm_smccc_res smc_res;
+ 	int val, err;
  
- &rcc {
-diff --git a/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts b/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts
-index 97e4f94b0a24..c42e658debfb 100644
---- a/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts
-@@ -61,8 +61,10 @@ &mdma1 {
- 	resets = <&scmi_reset RST_SCMI_MDMA>;
- };
++	/*
++	 * Three ways to manage the hold boot
++	 * - using SCMI: the hold boot is managed as a reset,
++	 * - using Linux(no SCMI): the hold boot is managed as a syscon register
++	 * - using SMC call (deprecated): use SMC reset interface
++	 */
++
+ 	val = hold ? HOLD_BOOT : RELEASE_BOOT;
  
--&mlahb {
--	resets = <&scmi_reset RST_SCMI_MCU>;
-+&m4_rproc {
-+	resets = <&scmi_reset RST_SCMI_MCU>,
-+		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
-+	reset-names =  "mcu_rst", "hold_boot";
- };
+-	if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->secured_soc) {
++	if (ddata->hold_boot_rst) {
++		/* Use the SCMI reset controller */
++		if (!hold)
++			err = reset_control_deassert(ddata->hold_boot_rst);
++		else
++			err =  reset_control_assert(ddata->hold_boot_rst);
++	} else if (IS_ENABLED(CONFIG_HAVE_ARM_SMCCC) && ddata->hold_boot_smc) {
++		/* Use the SMC call */
+ 		arm_smccc_smc(STM32_SMC_RCC, STM32_SMC_REG_WRITE,
+ 			      hold_boot.reg, val, 0, 0, 0, 0, &smc_res);
+ 		err = smc_res.a0;
+ 	} else {
++		/* Use syscon */
+ 		err = regmap_update_bits(hold_boot.map, hold_boot.reg,
+ 					 hold_boot.mask, val);
+ 	}
+@@ -717,34 +733,52 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+ 		dev_info(dev, "wdg irq registered\n");
+ 	}
  
- &rcc {
-diff --git a/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts b/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts
-index 9cf0a44d2f47..7a56ff2d4185 100644
---- a/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts
-@@ -60,8 +60,10 @@ &mdma1 {
- 	resets = <&scmi_reset RST_SCMI_MDMA>;
- };
+-	ddata->rst = devm_reset_control_get_by_index(dev, 0);
++	ddata->rst = devm_reset_control_get_optional(dev, "mcu_rst");
++	if (!ddata->rst) {
++		/* Try legacy fallback method: get it by index */
++		ddata->rst = devm_reset_control_get_by_index(dev, 0);
++	}
+ 	if (IS_ERR(ddata->rst))
+ 		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+ 				     "failed to get mcu_reset\n");
  
--&mlahb {
--	resets = <&scmi_reset RST_SCMI_MCU>;
-+&m4_rproc {
-+	resets = <&scmi_reset RST_SCMI_MCU>,
-+		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
-+	reset-names =  "mcu_rst", "hold_boot";
- };
+ 	/*
+-	 * if platform is secured the hold boot bit must be written by
+-	 * smc call and read normally.
+-	 * if not secure the hold boot bit could be read/write normally
++	 * Three ways to manage the hold boot
++	 * - using SCMI: the hold boot is managed as a reset
++	 *    The DT "reset-mames" property should be defined with 2 items:
++	 *        reset-names = "mcu_rst", "hold_boot";
++	 * - using SMC call (deprecated): use SMC reset interface
++	 *    The DT "reset-mames" property is optional, "st,syscfg-tz" is required
++	 * - default(no SCMI, no SMC): the hold boot is managed as a syscon register
++	 *    The DT "reset-mames" property is optional, "st,syscfg-holdboot" is required
+ 	 */
+-	err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
+-	if (err) {
+-		dev_err(dev, "failed to get tz syscfg\n");
+-		return err;
+-	}
  
- &rcc {
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts b/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts
-index 3b9dd6f4ccc9..119874dd91e4 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts
-@@ -66,8 +66,10 @@ &mdma1 {
- 	resets = <&scmi_reset RST_SCMI_MDMA>;
- };
+-	err = regmap_read(tz.map, tz.reg, &tzen);
+-	if (err) {
+-		dev_err(dev, "failed to read tzen\n");
+-		return err;
++	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
++	if (IS_ERR(ddata->hold_boot_rst))
++		return dev_err_probe(dev, PTR_ERR(ddata->rst),
++				     "failed to get hold_boot reset\n");
++
++	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
++		/* Manage the MCU_BOOT using SMC call */
++		err = stm32_rproc_get_syscon(np, "st,syscfg-tz", &tz);
++		if (!err) {
++			err = regmap_read(tz.map, tz.reg, &tzen);
++			if (err) {
++				dev_err(dev, "failed to read tzen\n");
++				return err;
++			}
++			ddata->hold_boot_smc = tzen & tz.mask;
++		}
+ 	}
+-	ddata->secured_soc = tzen & tz.mask;
  
--&mlahb {
--	resets = <&scmi_reset RST_SCMI_MCU>;
-+&m4_rproc {
-+	resets = <&scmi_reset RST_SCMI_MCU>,
-+		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
-+	reset-names =  "mcu_rst", "hold_boot";
- };
+-	err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
+-				     &ddata->hold_boot);
+-	if (err) {
+-		dev_err(dev, "failed to get hold boot\n");
+-		return err;
++	if (!ddata->hold_boot_rst && !ddata->hold_boot_smc) {
++		/* Default: hold boot manage it through the syscon controller */
++		err = stm32_rproc_get_syscon(np, "st,syscfg-holdboot",
++					     &ddata->hold_boot);
++		if (err) {
++			dev_err(dev, "failed to get hold boot\n");
++			return err;
++		}
+ 	}
  
- &rcc {
+ 	err = stm32_rproc_get_syscon(np, "st,syscfg-pdds", &ddata->pdds);
 -- 
 2.25.1
 
