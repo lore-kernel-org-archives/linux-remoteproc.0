@@ -2,322 +2,420 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A02ACC77B75
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 12 May 2023 17:56:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAB5C7EE2D
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 13 May 2023 18:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237502AbjELR4a (ORCPT
+        id S229611AbjEMSrO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 12 May 2023 13:56:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49442 "EHLO
+        Sat, 13 May 2023 14:47:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238159AbjELR43 (ORCPT
+        with ESMTP id S229603AbjEMSrN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 12 May 2023 13:56:29 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 595C38A7D
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 May 2023 10:56:26 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-643465067d1so7667331b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 May 2023 10:56:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683914186; x=1686506186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R9N7oS6jr5I1eNsTOfVL37WjNOJubQs2HqUtyANMDP0=;
-        b=e8VeAJis7BiGB80fGC9OA2dXjFxJ84RYh+orJsPRquyiCWeb/YOnxgvRH4NQ5DN+Sz
-         K8zIePNL37kmIZi3LujOHN95Q4j9j8pag4WDkr/9Ztd6IeVl/mq+FLwLgzRaF5FuYYOC
-         taL3EkI2ffVatTtsWqvJNfxXEuGQiP4igFIaapo2GOWDQqgdPHe0EON7ABVsRcah/pap
-         NaqDMAxkgs7zK/IuYeqXLx/QNiG+AC+GgRXA/FoGxG+Bk1ZMm/DplIYxXUg7WMEXR0Sj
-         OfTN2cHkaYiHjfM6BSVcJO0hylb4gfOgX8LD8q+mcs63ID5+gvWXFz2/UKg51aSuspwn
-         0LEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683914186; x=1686506186;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9N7oS6jr5I1eNsTOfVL37WjNOJubQs2HqUtyANMDP0=;
-        b=LPYk66DKAPnfz60xc7WGWCiIE34W6/qSKwM5T+o7SWLuP3+lo2RXSjJRyCacs/w29a
-         Fda+OMdbk/YpW71UM489URLajNMZB0VtBxOucR3uXxQgE5LfCD1EHxeBJ97BpVQVPwlI
-         9kFPvWyBXPF31+3Wk1BzaNX0esOtlLB6KxrYvtGgh6AA+/xWguI9EpKMadx7dqbGHve1
-         hUFMpJHu4PIg0Vc22nqA8lhFHf9BZJWxp6vdxCgMGsf5zODDb+MxzlyjC4wNKkHg+6RV
-         fJlysTbM/4k37CUmWNB0/8lB8WnZtmqFxyu2BkFyfVkjCF0MTVtTuwglwz1urfBaKdU3
-         qFAw==
-X-Gm-Message-State: AC+VfDy3PDe3D6xME0VEh9BjXDMEq1tnicVGLhwLXlOr7UDoKZ5GyNiF
-        5KFwMXHkPDoUMWcDYp1kWhQe7Q==
-X-Google-Smtp-Source: ACHHUZ7PynoPsqxQ9BaRx3LZvfa6R+SwPfo3isHwZ5NUP1XZZEDFDgjXygEj5DaDyxccAYzMaBXPHw==
-X-Received: by 2002:a05:6a20:9153:b0:101:3600:6aa5 with SMTP id x19-20020a056a20915300b0010136006aa5mr16881734pzc.3.1683914185675;
-        Fri, 12 May 2023 10:56:25 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:3c53:c331:6276:810])
-        by smtp.gmail.com with ESMTPSA id o4-20020a63f144000000b00513973a7014sm6946408pgk.12.2023.05.12.10.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 May 2023 10:56:25 -0700 (PDT)
-Date:   Fri, 12 May 2023 11:56:22 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v11 06/11] remoteproc: mediatek: Probe multi-core SCP
-Message-ID: <ZF59xilzufy69RZh@p14s>
-References: <20230510063749.5127-1-tinghan.shen@mediatek.com>
- <20230510063749.5127-7-tinghan.shen@mediatek.com>
+        Sat, 13 May 2023 14:47:13 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E288F35A6;
+        Sat, 13 May 2023 11:46:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=z5rT/sFnKVCPmGd3kdSEL73TC89E0iRmOXASAh7GYz8=; b=g3sAtfFAg2+nCMQ0q/nSLIcQVM
+        gx2d6Aqu4nuwwDlHBypylm8SUhnOORCN8M4LfQcksoQrFi0r4vh0fllFljrfTPWMwkFwAu1NA1jy2
+        Od63Enkq9c/maLX5A/TERlzyn7phhPEDIJ///EH3ozmkcHNZ8dS8UHy5oICKCzyOuqOMfpMFbXyy/
+        qiSt+wFmqVGa9O13vJOjOmDIPSKY3bQpn4aHZth8qcrWQFUYI7kP+LG4tyd3sumA2hW5eqlw+esJo
+        e4g+vuTFr+uucCErSsMfNe9SvmKI3QgHQ8YwZLBUwTSrGgWe6UnQolx/cH6r0uaCjX6bfo/JDa0c6
+        o1d3WieA==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pxuGR-00Fbpw-0J;
+        Sat, 13 May 2023 18:46:43 +0000
+Message-ID: <2ce73561-ce8a-b288-a5ab-254e5d2070f1@infradead.org>
+Date:   Sat, 13 May 2023 11:46:39 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230510063749.5127-7-tinghan.shen@mediatek.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v3 03/18] docs: qcom: Add qualcomm minidump guide
+Content-Language: en-US
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        srinivas.kandagatla@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
+ <1683133352-10046-4-git-send-email-quic_mojha@quicinc.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <1683133352-10046-4-git-send-email-quic_mojha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 10, 2023 at 02:37:44PM +0800, Tinghan Shen wrote:
-> The difference of single-core SCP and multi-core SCP device tree is
-> the presence of child device nodes described SCP cores. The SCP
-> driver populates the platform device and checks the child nodes
-> to identify whether it's a single-core SCP or a multi-core SCP.
+
+
+On 5/3/23 10:02, Mukesh Ojha wrote:
+> Add the qualcomm minidump guide for the users which
+> tries to cover the dependency and the way to test
+> and collect minidump on Qualcomm supported platforms.
 > 
-> Add the remoteproc instances of multi-core SCP to the SCP cluster list.
-> When the SCP driver is removed, it cleanup resources by walking
-> through the cluster list.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 > ---
->  drivers/remoteproc/mtk_scp.c | 135 ++++++++++++++++++++++++++++++-----
->  1 file changed, 117 insertions(+), 18 deletions(-)
+>  Documentation/admin-guide/qcom_minidump.rst | 246 ++++++++++++++++++++++++++++
+>  1 file changed, 246 insertions(+)
+>  create mode 100644 Documentation/admin-guide/qcom_minidump.rst
 > 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index ff73c6dd9637..87215a0e145e 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -864,7 +864,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
->  }
->  
->  static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
-> -				      struct mtk_scp_of_cluster *scp_cluster)
-> +				      struct mtk_scp_of_cluster *scp_cluster,
-> +				      const struct mtk_scp_of_data *of_data)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> @@ -887,7 +888,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  	scp = rproc->priv;
->  	scp->rproc = rproc;
->  	scp->dev = dev;
-> -	scp->data = of_device_get_match_data(dev);
-> +	scp->data = of_data;
->  	platform_device_add_data(pdev, &scp, sizeof(scp));
->  
->  	scp->reg_base = scp_cluster->reg_base;
-> @@ -938,10 +939,6 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  		goto remove_subdev;
->  	}
->  
-> -	ret = rproc_add(rproc);
-> -	if (ret)
-> -		goto remove_subdev;
-> -
+> diff --git a/Documentation/admin-guide/qcom_minidump.rst b/Documentation/admin-guide/qcom_minidump.rst
+> new file mode 100644
+> index 0000000..062c797
+> --- /dev/null
+> +++ b/Documentation/admin-guide/qcom_minidump.rst
+> @@ -0,0 +1,246 @@
+> +Qualcomm Minidump Feature
+> +=========================
+> +
+> +Introduction
+> +------------
+> +
+> +Minidump is a best effort mechanism to collect useful and predefined
+> +data for first level of debugging on end user devices running on
+> +Qualcomm SoCs. It is built on the premise that System on Chip (SoC)
+> +or subsystem part of SoC crashes, due to a range of hardware and
+> +software bugs. Hence, the ability to collect accurate data is only
+> +a best-effort. The data collected could be invalid or corrupted, data
+> +collection itself could fail, and so on.
+> +
+> +Qualcomm devices in engineering mode provides a mechanism for generating
+> +full system ramdumps for post mortem debugging. But in some cases it's
 
-This should have been done in the previous patch.
+               RAM dumps for {post-mortem or postmortem} debugging.
 
->  	return scp;
->  
->  remove_subdev:
-> @@ -956,19 +953,116 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  	return ERR_PTR(ret);
->  }
->  
-> +static void scp_rproc_free(struct mtk_scp *scp)
-> +{
-> +	int i;
-> +
-> +	scp_remove_rpmsg_subdev(scp);
-> +	scp_ipi_unregister(scp, SCP_IPI_INIT);
-> +	scp_unmap_memory_region(scp);
-> +	for (i = 0; i < SCP_IPI_MAX; i++)
-> +		mutex_destroy(&scp->ipi_desc[i].lock);
-> +	mutex_destroy(&scp->send_lock);
-> +}
-> +
-> +static int scp_is_single_core(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev_of_node(dev);
-> +	struct device_node *child;
-> +
-> +	child = of_get_next_available_child(np, NULL);
-> +	if (!child)
-> +		return dev_err_probe(dev, -ENODEV, "No child node\n");
-> +
-> +	of_node_put(child);
-> +	return of_node_name_eq(child, "cros-ec-rpmsg");
-> +}
-> +
->  static int scp_cluster_init(struct platform_device *pdev)
->  {
-> -	struct mtk_scp *scp;
-> +	struct mtk_scp *scp, *temp;
->  	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
->  	struct list_head *cluster = &scp_cluster->mtk_scp_cluster;
->  
-> -	scp = scp_rproc_init(pdev, scp_cluster);
-> -	if (IS_ERR(scp))
-> -		return PTR_ERR(scp);
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev_of_node(dev);
-> +	struct platform_device *cpdev;
-> +	struct device_node *child;
-> +	const struct mtk_scp_of_data **cluster_of_data;
-> +	int core_id = 0;
-> +	int ret;
-> +
-> +	ret = scp_is_single_core(pdev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	if (ret) {
-> +		dev_dbg(dev, "single-core scp\n");
-> +
-> +		/* When using the SCP node phandle on exported SCP APIs, the drvdata
-> +		 * is expected to be the mtk_scp object, and as a result, it is intended
-> +		 * to be overwritten for single-core SCP usage.
-> +		 */
 
-Is this comment still relevant?
-
-> +		scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev));
-> +		if (IS_ERR(scp))
-> +			return PTR_ERR(scp);
+> +however not feasible to capture the entire content of RAM. The minidump
+> +mechanism provides the means for selecting region should be included in
+> +the ramdump.
 > +
-> +		list_add_tail(&scp->elem, cluster);
-
-This is getting messy.  Please add two new functions, i.e scp_add_single_core()
-and scp_add_multi_core().
-
-> +	} else {
-> +		dev_dbg(dev, "multi-core scp\n");
+> +::
 > +
-> +		cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
-> +
-> +		for_each_available_child_of_node(np, child) {
-> +			if (!cluster_of_data[core_id]) {
-> +				ret = -EINVAL;
-> +				dev_err(dev, "Not support core %d\n", core_id);
-> +				of_node_put(child);
-> +				goto init_fail;
-> +			}
-> +
-> +			cpdev = of_find_device_by_node(child);
-> +			if (!cpdev) {
-> +				ret = -ENODEV;
-> +				dev_err(dev, "Not found platform device for core %d\n", core_id);
-> +				of_node_put(child);
-> +				goto init_fail;
-> +			}
-> +
-> +			scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id]);
-> +			if (IS_ERR(scp)) {
-> +				dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
-> +				put_device(&cpdev->dev);
-> +				of_node_put(child);
-> +				goto init_fail;
-> +			}
-> +			list_add_tail(&scp->elem, cluster);
-> +			put_device(&cpdev->dev);
-> +
-> +			core_id++;
-> +		}
-> +	}
->  
-> -	list_add_tail(&scp->elem, cluster);
-> +	list_for_each_entry_safe_reverse(scp, temp, cluster, elem) {
-> +		ret = rproc_add(scp->rproc);
+> +   +-----------------------------------------------+
+> +   |   DDR                       +-------------+   |
+> +   |                             |      SS0-ToC|   |
+> +   | +----------------+     +----------------+ |   |
+> +   | |Shared memory   |     |         SS1-ToC| |   |
+> +   | |(SMEM)          |     |                | |   |
+> +   | |                | +-->|--------+       | |   |
+> +   | |G-ToC           | |   | SS-ToC  \      | |   |
+> +   | |+-------------+ | |   | +-----------+  | |   |
+> +   | ||-------------| | |   | |-----------|  | |   |
+> +   | || SS0-ToC     | | | +-|<|SS1 region1|  | |   |
+> +   | ||-------------| | | | | |-----------|  | |   |
+> +   | || SS1-ToC     |-|>+ | | |SS1 region2|  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | || SS2-ToC     | |   | | |  ...      |  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | ||  ...        | |   |-|<|SS1 regionN|  | |   |
+> +   | ||-------------| |   | | |-----------|  | |   |
+> +   | || SSn-ToC     | |   | | +-----------+  | |   |
+> +   | |+-------------+ |   | |                | |   |
+> +   | |                |   | |----------------| |   |
+> +   | |                |   +>|  regionN       | |   |
+> +   | |                |   | |----------------| |   |
+> +   | +----------------+   | |                | |   |
+> +   |                      | |----------------| |   |
+> +   |                      +>|  region1       | |   |
+> +   |                        |----------------| |   |
+> +   |                        |                | |   |
+> +   |                        |----------------|-+   |
+> +   |                        |  region5       |     |
+> +   |                        |----------------|     |
+> +   |                        |                |     |
+> +   |  Region information    +----------------+     |
+> +   | +---------------+                             |
+> +   | |region name    |                             |
+> +   | |---------------|                             |
+> +   | |region address |                             |
+> +   | |---------------|                             |
+> +   | |region size    |                             |
+> +   | +---------------+                             |
+> +   +-----------------------------------------------+
+> +       G-ToC: Global table of content
 
-Call rproc_add() in the for_each_available_child_of_node() loop above.  That way
-it if fails you can call scp_rproc_free() right away and jump to init_fail to
-deal with the other cores on the list.
+                                 contents
+?
 
-> +		if (ret)
-> +			goto add_fail;
-> +	}
->  
->  	return 0;
+> +       SS-ToC: Subsystem table of content
+
+                                     contents
+?
+
+> +       SS0-SSn: Subsystem numbered from 0 to n
 > +
-> +add_fail:
-> +	list_for_each_entry_continue(scp, cluster, elem) {
-> +		rproc_del(scp->rproc);
-> +	}
-> +init_fail:
-> +	list_for_each_entry_safe_reverse(scp, temp, cluster, elem) {
-> +		list_del(&scp->elem);
-> +		scp_rproc_free(scp);
-> +	}
+> +The core of minidump feature is part of Qualcomm's boot firmware code.
+> +It initializes shared memory(SMEM), which is a part of DDR and
+
+                         memory (SMEM),
+
+> +allocates a small section of it to minidump table i.e also called
+
+                                               table, i.e.
+
+> +global table of content (G-ToC). Each subsystem (APSS, ADSP, ...) has
+
+                   contents
+
+> +their own table of segments to be included in the minidump, all
+
+   its own table
+
+> +references from a descriptor in SMEM (G-ToC). Each segment/region has
+> +some details like name, physical address and it's size etc. and it
+
+                                                its
+
+> +could be anywhere scattered in the DDR.
 > +
+> +Minidump kernel driver concept
+> +------------------------------
+> +
+> +Qualcomm minidump kernel driver adds the capability to add linux region
 
-There are a serious problems with the code in both labels above.  I will let you
-think about that and I will stop here for this revision.
+                                                              Linux
 
-Mathieu
+> +to be dumped as part of ram dump collection. At the moment, shared memory
 
+                           RAM
+
+> +driver creates plaform device for minidump driver and give a means to
+
+                  platform
+
+> +APSS minidump to initialize itself on probe.
+> +
+> +This driver provides ``qcom_apss_minidump_region_register`` and
+> +``qcom_apss_minidump_region_unregister`` API's to register and unregister
+> +apss minidump region. It also gives a mechanism to update physical/virtual
+
+   APSS
+
+> +address for the client whose addresses keeps on changing e.g Current stack
+
+                                                   changing, e.g., current stack
+
+> +address of task keep on changing on context switch for each core. So these
+
+                   keeps
+
+> +clients can update their addresses with ``qcom_apss_minidump_update_region``
+> +API.
+> +
+> +The driver also supports registration for the clients who came before
+> +minidump driver was initialized. It maintains pending list of clients
+> +who came before minidump and once minidump is initialized it registers
+> +them in one go.
+> +
+> +To simplify post mortem debugging, driver creates and maintain an ELF
+
+choose one:    postmortem or post-mortem
+
+> +header as first region that gets updated each time a new region gets
+> +registered.
+> +
+> +The solution supports extracting the ramdump/minidump produced either
+
+                                        RAM dump/minidump
+
+> +over USB or stored to an attached storage device.
+> +
+> +Dependency of minidump kernel driver
+> +------------------------------------
+> +
+> +It is to note that whole of minidump thing depends on Qualcomm boot
+
+s/thing //
+
+> +firmware whether it supports minidump or not. So, if the minidump
+> +smem id is present in shared memory, it indicates that minidump
+
+   SMEM ID
+
+> +is supported from boot firmware and it is possible to dump linux
+
+                                                              Linux
+
+> +(APSS) region as part of minidump collection.
+> +
+> +How a kernel client driver can register region with minidump
+> +------------------------------------------------------------
+> +
+> +Client driver can use ``qcom_apss_minidump_region_register`` API's to
+> +register and ``qcom_apss_minidump_region_unregister`` to unregister
+> +their region from minidump driver.
+> +
+> +Client need to fill their region by filling qcom_apss_minidump_region
+
+          needs
+
+> +structure object which consist of the region name, region's
+
+                          consists
+
+> +virtual and physical address and its size.
+> +
+> +Below is one sample client driver snippet which try to allocate
+
+                                                   tries
+
+> +a region from kernel heap of certain size and it writes a certain
+> +known pattern (that can help in verification after collection
+> +that we got the exact pattern, what we wrote) and registers it with
+> +minidump.
+> +
+> + .. code-block:: c
+> +
+> +  #include <soc/qcom/qcom_minidump.h>
+> +  [...]
+> +
+> +
+> +  [... inside a function ...]
+> +  struct qcom_apss_minidump_region region;
+> +
+> +  [...]
+> +
+> +  client_mem_region = kzalloc(region_size, GFP_KERNEL);
+> +  if (!client_mem_region)
+> +	return -ENOMEM;
+> +
+> +  [... Just write a pattern ...]
+> +  memset(client_mem_region, 0xAB, region_size);
+> +
+> +  [... Fill up the region object ...]
+> +  strlcpy(region.name, "REGION_A", sizeof(region.name));
+> +  region.virt_addr = client_mem_region;
+> +  region.phys_addr = virt_to_phys(client_mem_region);
+> +  region.size = region_size;
+> +
+> +  ret = qcom_apss_minidump_region_register(&region);
+> +  if (ret < 0) {
+> +	pr_err("failed to add region in minidump: err: %d\n", ret);
 > +	return ret;
->  }
->  
->  static int scp_probe(struct platform_device *pdev)
-> @@ -1005,6 +1099,10 @@ static int scp_probe(struct platform_device *pdev)
->  	INIT_LIST_HEAD(&scp_cluster->mtk_scp_cluster);
->  	platform_set_drvdata(pdev, scp_cluster);
->  
-> +	ret = devm_of_platform_populate(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
+> +  }
 > +
->  	ret = scp_cluster_init(pdev);
->  	if (ret)
->  		return ret;
-> @@ -1016,17 +1114,11 @@ static int scp_remove(struct platform_device *pdev)
->  {
->  	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
->  	struct mtk_scp *scp, *temp;
-> -	int i;
->  
->  	list_for_each_entry_safe_reverse(scp, temp, &scp_cluster->mtk_scp_cluster, elem) {
->  		list_del(&scp->elem);
->  		rproc_del(scp->rproc);
-> -		scp_remove_rpmsg_subdev(scp);
-> -		scp_ipi_unregister(scp, SCP_IPI_INIT);
-> -		scp_unmap_memory_region(scp);
-> -		for (i = 0; i < SCP_IPI_MAX; i++)
-> -			mutex_destroy(&scp->ipi_desc[i].lock);
-> -		mutex_destroy(&scp->send_lock);
-> +		scp_rproc_free(scp);
->  	}
->  
->  	return 0;
-> @@ -1106,12 +1198,19 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
->  	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
->  };
->  
-> +static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
-> +	&mt8195_of_data,
-> +	&mt8195_of_data_c1,
-> +	NULL
-> +};
+> +  [...]
 > +
->  static const struct of_device_id mtk_scp_of_match[] = {
->  	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
->  	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
->  	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
->  	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
->  	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
-> +	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
-> -- 
-> 2.18.0
-> 
+> +
+> +Test
+> +----
+> +
+> +Existing Qualcomm devices already supports entire ddr dump (also called
+
+                                                     DDR
+
+> +full dump) by writing appropriate value to Qualcomm's top control and
+> +status register(tcsr) in driver/firmware/qcom_scm.c .
+
+          register (tcsr)
+
+> +
+> +SCM device Tree bindings required to support download mode
+> +For example (sm8450) ::
+> +
+> +	/ {
+> +
+> +	[...]
+> +
+> +		firmware {
+> +			scm: scm {
+> +				compatible = "qcom,scm-sm8450", "qcom,scm";
+> +				[... tcsr register ... ]
+> +				qcom,dload-mode = <&tcsr 0x13000>;
+> +
+> +				[...]
+> +			};
+> +		};
+> +
+> +	[...]
+> +
+> +		soc: soc@0 {
+> +
+> +			[...]
+> +
+> +			tcsr: syscon@1fc0000 {
+> +				compatible = "qcom,sm8450-tcsr", "syscon";
+> +				reg = <0x0 0x1fc0000 0x0 0x30000>;
+> +			};
+> +
+> +			[...]
+> +		};
+> +	[...]
+> +
+> +	};
+> +
+> +User of minidump can pass qcom_scm.download_mode="mini" to kernel
+> +commandline to set the current download mode to minidump.
+> +Similarly, "full" is passed to set the download mode to full dump
+> +where entire ddr dump will be collected while setting it "full,mini"
+
+                DDR
+
+> +will collect minidump along with fulldump.
+> +
+> +Writing to sysfs node can also be used to set the mode to minidump.
+> +
+> +::
+> +	echo "mini" > /sys/module/qcom_scm/parameter/download_mode
+> +
+> +Once the download mode is set, any kind of crash will make the device collect
+> +respective dump as per set download mode.
+> +
+> +Dump collection
+> +---------------
+> +
+> +The solution supports extracting the minidump produced either over USB or
+> +stored to an attached storage device.
+> +
+> +By default, dumps are downloaded via USB to the attached x86_64 machine
+> +running PCAT (Qualcomm tool) software. Upon download, we will see
+> +a set of binary blobs starts with name md_* in PCAT configured directory
+
+                         starting
+
+> +in x86_64 machine, so for above example from the client it will be
+> +md_REGION_A.BIN. This binary blob depends on region content to determine
+> +whether it needs external parser support to get the content of the region,
+> +so for simple plain ASCII text we don't need any parsing and the content
+> +can be seen just opening the binary file.
+> +
+> +To collect the dump to attached storage type, one need to write appropriate
+
+                                                     needs
+
+> +value to IMEM register, in that case dumps are collected in rawdump
+> +partition on the target device itself.
+> +
+> +One need to read the entire rawdump partition and pull out content to
+
+       needs
+
+> +save it onto the attached x86_64 machine over USB. Later, this rawdump
+> +can be pass it to another tool dexter.exe(Qualcomm tool) which converts
+
+          passed                  dexter.exe (Qualcomm tool)
+
+> +this into the similar binary blobs which we have got it when download type
+> +was set to USB i.e a set of registered region as blobs and their name
+
+              USB, i.e.                   regions
+
+
+> +starts with md_*.
+> +
+> +Replacing the dexter.exe with some open source tool can be added as future
+> +scope of this document.
+
+-- 
+~Randy
