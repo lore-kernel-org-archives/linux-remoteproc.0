@@ -2,67 +2,67 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1633BC77B7F
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 May 2023 14:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 448B8C77B7F
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 16 May 2023 15:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233872AbjEPOd6 (ORCPT
+        id S233341AbjEPPfT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 16 May 2023 10:33:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45268 "EHLO
+        Tue, 16 May 2023 11:35:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232958AbjEPOd5 (ORCPT
+        with ESMTP id S232476AbjEPPfR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 16 May 2023 10:33:57 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11416A8;
-        Tue, 16 May 2023 07:33:53 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34GE580o015630;
-        Tue, 16 May 2023 16:33:38 +0200
+        Tue, 16 May 2023 11:35:17 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E2025FEB;
+        Tue, 16 May 2023 08:35:14 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34GCFQCb014872;
+        Tue, 16 May 2023 17:35:04 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=selector1;
- bh=ZOHvPLARUacy7nqUqtK+6md229aHrzcf8Fijn/GrLZ0=;
- b=4wbhNw0Wxskx9jw7OBPD+h22nH8hiUjzHbNF6Gper4o5/ee7ZUt1SmMJfy8z4uEKWWoL
- Q7+TYpLoiKuURW2wDlky0vC86RisTmTX9pXWE1EujcUt9ixB83wjHhqzxQAhPsQVfZ2F
- Dm5A8Z5okS02KDlMXR9ugIiMlwdXHp3qtc1iK8vZA10VSqgxa5oW84uL4Dda0RfzDGjQ
- CPwKJmt7JcQV/yGbSBr4NYDuvBqRLYaZGQSig9WOFBv5DOq+2MVFbMJllrTmHuXFa53L
- 1uLkNA1LlIL9YrwXZuskVe0yzvwEknYGN8wL6YD4o9yKHjM9xCEFIqvISMiw3OtumSej Qg== 
+ bh=V8TfW2yFnFlBR+PvqUa/5jzNo/cIcHh5MaXp9eIlTJ0=;
+ b=CiEp9jCFXi2uLnNtBtVkNxzsc9LPbjKVTr0lFBQTtUvt5lMIKrFSPAL/HDZTVqdq8MfD
+ YD8JtbfU4ZXTmMO9Up+NXwCaWpcSBEPS+aD+7syTXvQf/MQpnCaNo5LvpHXb0bQ6CRtX
+ 46LYdk96aUZDAPWVuMu2gmHUTN7DZhndcg4qV2HXpbM7dG4u5FXjpcYE8JvEu0BcPHMC
+ vpmSH8wLyvaZnBmwC/CIF5HsGfMOABj/kxUrbqA2/QKDECTsqGXCa0ahfxBSMD4490Py
+ InCTP4UHaWFaKNfBUVn5nxOclcmlAuRrCKJ/7lR/UE31vjrry/JPQDRbKwPJCfsOK18c pg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qm7tf9qb9-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qkhp0hu5m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 May 2023 16:33:38 +0200
+        Tue, 16 May 2023 17:35:04 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C71EC10002A;
-        Tue, 16 May 2023 16:33:37 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0C13E10002A;
+        Tue, 16 May 2023 17:35:02 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C02FB229A97;
-        Tue, 16 May 2023 16:33:37 +0200 (CEST)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 27D1423300B;
+        Tue, 16 May 2023 17:35:02 +0200 (CEST)
 Received: from [10.252.0.230] (10.252.0.230) by SHFDAG1NODE1.st.com
  (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 16 May
- 2023 16:33:34 +0200
-Message-ID: <6f146b61-4386-1f2f-f16b-55148b74bb6a@foss.st.com>
-Date:   Tue, 16 May 2023 16:33:33 +0200
+ 2023 17:35:01 +0200
+Message-ID: <20c010da-7245-7acf-db2f-991ee2975ea2@foss.st.com>
+Date:   Tue, 16 May 2023 17:35:00 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH v3 0/4] stm32mp15: update remoteproc to support SCMI
- Device tree
+Subject: Re: [PATCH v3 4/4] ARM: dts: stm32: fix m4_rproc references to use
+ SCMI
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        <devicetree@vger.kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <devicetree@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <20230512093926.661509-1-arnaud.pouliquen@foss.st.com>
- <ZGJrj9Vu2H9NZdlH@p14s>
+ <20230512093926.661509-5-arnaud.pouliquen@foss.st.com>
 From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <ZGJrj9Vu2H9NZdlH@p14s>
+In-Reply-To: <20230512093926.661509-5-arnaud.pouliquen@foss.st.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.252.0.230]
@@ -70,84 +70,110 @@ X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
  (10.75.129.69)
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-16_07,2023-05-16_01,2023-02-09_01
+ definitions=2023-05-16_08,2023-05-16_01,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu
+Hi Arnaud
 
-On 5/15/23 19:27, Mathieu Poirier wrote:
-> On Fri, May 12, 2023 at 11:39:22AM +0200, Arnaud Pouliquen wrote:
->> Update vs V2[1]:
->> ---------------
->> - update yaml to remove label in examples
->> - fix error management for  devm_reset_control_get_optional(dev, "hold_boot")
->> - rebased on commit ac9a78681b92 ("Linux 6.4-rc1")
->>
->> [1]https://lore.kernel.org/lkml/20230504094641.870378-1-arnaud.pouliquen@foss.st.com/T/
->>
->>
->> Description:
->> -----------
->> This series updates the stm32_rproc driver and associated DT node to
->> support device tree configuration with and without SCMI server.
->> The impact is mainly on the MCU hold boot management.
->>
->> Three configurations have to be supported:
->>
->> 1) Configuration without OP-TEE SCMI (legacy): Trusted context not activated
->> - The MCU reset is controlled through the Linux RCC reset driver.
->> - The MCU HOLD BOOT is controlled through The RCC sysconf.
->>
->> 2) Configuration with SCMI server: Trusted context activated
->> - The MCU reset is controlled through the SCMI reset service.
->> - The MCU HOLD BOOT is no more controlled through a SMC call service but
->>    through the SCMI reset service.
->>
->> 3) Configuration with OP-TEE SMC call (deprecated): Trusted context activated
->> - The MCU reset is controlled through the Linux RCC reset driver.
->> - The MCU HOLD BOOT is controlled through The SMC call.
->>
->> In consequence this series:
->> - adds the use of the SCMI reset service to manage the MCU hold boot,
->> - determines the configuration to use depending on the presence of the
->>    "reset-names" property
->>    if ( "reset-names" property contains "hold_boot")
->>    then use reset_control services
->>    else use regmap access based on "st,syscfg-holdboot" property.
->> - set the DT st,syscfg-tz property as deprecated
->>
->> Arnaud Pouliquen (4):
->>    dt-bindings: remoteproc: st,stm32-rproc: Rework reset declarations
->>    remoteproc: stm32: Allow hold boot management by the SCMI reset
->>      controller
->>    ARM: dts: stm32: Update reset declarations
->>    ARM: dts: stm32: fix m4_rproc references to use SCMI
->>
->>   .../bindings/remoteproc/st,stm32-rproc.yaml   | 44 +++++++++--
->>   arch/arm/boot/dts/stm32mp151.dtsi             |  2 +-
->>   arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts    |  6 +-
->>   arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts    |  6 +-
->>   arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts    |  6 +-
->>   arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts    |  6 +-
->>   drivers/remoteproc/stm32_rproc.c              | 76 ++++++++++++++-----
->>   7 files changed, 111 insertions(+), 35 deletions(-)
->>
+On 5/12/23 11:39, Arnaud Pouliquen wrote:
+> Fixes stm32mp15*-scmi DTS files introduced in [1]:
+> This patch fixes the node which uses the MCU reset and adds the
+> missing HOLD_BOOT which is also handled by the SCMI reset service.
 > 
-> I have applied patch 1 and 2.  Unless Alexandre wants to proceed differently,
-> patches 3 and 4 should go through his tree.
-
-I will merge DT patches in STM32 tree.
-
-cheers
-Alex
-
+> This change cannot be applied as a fix on commit [1], the management
+> of the hold boot impacts also the stm32_rproc driver.
 > 
-> Thanks,
-> Mathieu
+> [1] 'commit 5b7e58313a77 ("ARM: dts: stm32: Add SCMI version of STM32 boards (DK1/DK2/ED1/EV1)")'
 > 
->> -- 
->> 2.25.1
->>
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+
+I just ran YAML validation on your DT patches and it fails. I added your 
+DT patches + dt-binding one (just for the test). I got the following issue:
+
+/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dtb: m4@10000000: 
+st,syscfg-holdboot: False schema does not allow [[7, 268, 1]]
+	From schema: 
+/local/home/frq08678/STLINUX/kernel/my-kernel/stm32/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+
+Do I miss another dt-binding update not present in this series ?
+
+alex
+
+>   arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts | 6 ++++--
+>   arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts | 6 ++++--
+>   arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts | 6 ++++--
+>   arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts | 6 ++++--
+>   4 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts b/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts
+> index e539cc80bef8..134788e64265 100644
+> --- a/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts
+> +++ b/arch/arm/boot/dts/stm32mp157a-dk1-scmi.dts
+> @@ -55,8 +55,10 @@ &mdma1 {
+>   	resets = <&scmi_reset RST_SCMI_MDMA>;
+>   };
+>   
+> -&mlahb {
+> -	resets = <&scmi_reset RST_SCMI_MCU>;
+> +&m4_rproc {
+> +	resets = <&scmi_reset RST_SCMI_MCU>,
+> +		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
+> +	reset-names =  "mcu_rst", "hold_boot";
+>   };
+>   
+>   &rcc {
+> diff --git a/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts b/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts
+> index 97e4f94b0a24..c42e658debfb 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-dk2-scmi.dts
+> @@ -61,8 +61,10 @@ &mdma1 {
+>   	resets = <&scmi_reset RST_SCMI_MDMA>;
+>   };
+>   
+> -&mlahb {
+> -	resets = <&scmi_reset RST_SCMI_MCU>;
+> +&m4_rproc {
+> +	resets = <&scmi_reset RST_SCMI_MCU>,
+> +		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
+> +	reset-names =  "mcu_rst", "hold_boot";
+>   };
+>   
+>   &rcc {
+> diff --git a/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts b/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts
+> index 9cf0a44d2f47..7a56ff2d4185 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-ed1-scmi.dts
+> @@ -60,8 +60,10 @@ &mdma1 {
+>   	resets = <&scmi_reset RST_SCMI_MDMA>;
+>   };
+>   
+> -&mlahb {
+> -	resets = <&scmi_reset RST_SCMI_MCU>;
+> +&m4_rproc {
+> +	resets = <&scmi_reset RST_SCMI_MCU>,
+> +		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
+> +	reset-names =  "mcu_rst", "hold_boot";
+>   };
+>   
+>   &rcc {
+> diff --git a/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts b/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts
+> index 3b9dd6f4ccc9..119874dd91e4 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-ev1-scmi.dts
+> @@ -66,8 +66,10 @@ &mdma1 {
+>   	resets = <&scmi_reset RST_SCMI_MDMA>;
+>   };
+>   
+> -&mlahb {
+> -	resets = <&scmi_reset RST_SCMI_MCU>;
+> +&m4_rproc {
+> +	resets = <&scmi_reset RST_SCMI_MCU>,
+> +		 <&scmi_reset RST_SCMI_MCU_HOLD_BOOT>;
+> +	reset-names =  "mcu_rst", "hold_boot";
+>   };
+>   
+>   &rcc {
 
