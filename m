@@ -2,263 +2,122 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379E6C77B75
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 17 May 2023 17:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802ADC77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 May 2023 07:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjEQR6f (ORCPT
+        id S229750AbjERHrz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 17 May 2023 13:58:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37782 "EHLO
+        Thu, 18 May 2023 03:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbjEQR6e (ORCPT
+        with ESMTP id S229582AbjERHry (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 17 May 2023 13:58:34 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5FC92D5A
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 May 2023 10:58:30 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1ae54b623c2so8765715ad.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 May 2023 10:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684346310; x=1686938310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PRGNMLfUfmstzWu7T2z9+f63mnhBNH1tSnmTg/DwAEQ=;
-        b=Jm35xW1cRZ/F90wt0h3bGOPCTen8c2gmnjncdgF7e6KT31+WA4SPRSQyhim1XvnVLE
-         QKtw0N3QiJoYq245Fn8iEDOje5JMajAUKJzEvXg/XZdy5c2MJNZDvfBf6WY6A+5bBmMb
-         aLVuWby9tuvdq7cnnCX9aZ1luqZccYwz9WuLTE3f1ezVy/t4hOCUexz/VbmWXVin3zhn
-         kZCn41MWOIvMjVM/tirechE8eoAPoKpBGBYKADjnAcmkVw5d9qzR9vx1FE/s1FvNiFPR
-         U+47siOH7AKayqHhSZpPNQkXWJxiBro6iWDzR30Ug2oZidtNvtgR/plTAlyJ0xObY9MI
-         CZIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684346310; x=1686938310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PRGNMLfUfmstzWu7T2z9+f63mnhBNH1tSnmTg/DwAEQ=;
-        b=Z6CYCWEN/inyoakEoXSiU/xRO59lHaaed2Pq4qWKW9PRduR6Vsw/vMe5rnXQOELQ6K
-         ofv+/1yCZKrGxK4oOTBjxMmDdze9uLnEpykZvDojZQupbOnWiJJyi2KXjr4zjCIIqEEX
-         J+faKQws7ew8CDqf8QGRHr0KDu7s0dYVK3rc3elf6NUJY7Qp57Rmqk25upawgzQdWtCM
-         yRH39/nCVnwhfmcuOxKOGeFu8Jh4SqTuC/oXC1WhDLGHdTMBqc3e25YL4YG6PGGlMbr6
-         opQp0Bg/j1L9e/AkkFAoUq8LR/GRwAstvEQwARnKu6f2owSloaS0UnuaZwV2K/WYh9dY
-         FElw==
-X-Gm-Message-State: AC+VfDwFLCMtAuBE28wpaUfs+wOvTAWzkVzdgwYf4N4xwN/2S6b0dEld
-        pvKxEMlCq2cimIAjBjUQrigjDQ==
-X-Google-Smtp-Source: ACHHUZ7fbLj71H3Bwby0ODNkhv4RQWQwdhA80KwYsAbIM+bAk2Oy0dY4Cocm5quS5tQgZjjK5i/igQ==
-X-Received: by 2002:a17:903:234c:b0:1ab:289f:65cf with SMTP id c12-20020a170903234c00b001ab289f65cfmr56070844plh.54.1684346310357;
-        Wed, 17 May 2023 10:58:30 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:fd0b:2592:d377:e4e3])
-        by smtp.gmail.com with ESMTPSA id b15-20020a170902b60f00b001aafe232bcfsm17853795pls.44.2023.05.17.10.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 May 2023 10:58:29 -0700 (PDT)
-Date:   Wed, 17 May 2023 11:58:27 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v12 07/11] remoteproc: mediatek: Control SCP core 1 by
- rproc subdevice
-Message-ID: <ZGUVw1VIq8LAm8mj@p14s>
-References: <20230517043449.26352-1-tinghan.shen@mediatek.com>
- <20230517043449.26352-8-tinghan.shen@mediatek.com>
+        Thu, 18 May 2023 03:47:54 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69F42690;
+        Thu, 18 May 2023 00:47:52 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34I7Klao006364;
+        Thu, 18 May 2023 07:47:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=0rnd9wlqpv8lZd9eNQMBYgfQQDwq/ErFAT8Dgq3EFkg=;
+ b=NlLiP4v3nlKCAV93Usi5tD+wChuLf4PWBjOQUYlLmyGtkezVbZu/FpHJXXqm3hSb+nEd
+ BUDBHbFa1UbwiwgGhXT9YqEkwjt0hUC8Rj7NzGdF2E7nz55SphQaquGyzh1HUYDYLDQL
+ 8PkWgzzMa8Hppr8854aKzIGjo+qk6bNG+jGK9KO4auwjYCxpqiXnru6G/8ECDYHNX6Va
+ xDPE4dVSfUBfLp4mhppU6TQPd6QuXbZB+yMs/lDkzSK4aM6AXcgZn4MB4e+O6hLCzF8E
+ 4VbbkWjT6x3MpNcamhCTPvpVelKarx9U45msVq3+g3X0Gwg0Yto5iiNe3Wtqavgidz4Z xQ== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qn8a60qtp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 May 2023 07:47:46 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34I7lj0x025342
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 May 2023 07:47:45 GMT
+Received: from [10.216.40.42] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 18 May
+ 2023 00:47:41 -0700
+Message-ID: <c503c773-137c-0d76-9762-7ea6d3ee868c@quicinc.com>
+Date:   Thu, 18 May 2023 13:17:28 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230517043449.26352-8-tinghan.shen@mediatek.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] remoteproc: qcom: pas: mark adsp_segment_dump() static
+To:     Arnd Bergmann <arnd@kernel.org>, Andy Gross <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        "Yogesh Lal" <quic_ylal@quicinc.com>
+CC:     Arnd Bergmann <arnd@arndb.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230516202332.560123-1-arnd@kernel.org>
+Content-Language: en-US
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <20230516202332.560123-1-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IMxnHTjoLvy3pepom3P7UCNuwnAoOiFf
+X-Proofpoint-ORIG-GUID: IMxnHTjoLvy3pepom3P7UCNuwnAoOiFf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-18_05,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1011 spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2305180059
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, May 17, 2023 at 12:34:45PM +0800, Tinghan Shen wrote:
-> Register SCP core 1 as a subdevice of core 0 for the boot sequence
-> and watchdog timeout handling. The core 1 has to boot after core 0
-> because the SCP clock and SRAM power is controlled by SCP core 0.
-> As for watchdog timeout handling, the remoteproc framework helps to
-> stop/start subdevices automatically when SCP driver receives watchdog
-> timeout event.
->
-
-Subdevices should be reserved for virtio devices and not used for remote
-processors.  Mixing both will get us into trouble at some point in the future.
-The way to address power and clock dependencies is to use a different rproc_ops
-for SCP1.  That rproc_ops would implemented the prepare() and unprepare()
-functions to power up SCP1's power domain and deal with its clock.  
-
-I will stop here for this revision.
-
-Thanks,
-Mathieu
 
 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+On 5/17/2023 1:53 AM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The function has no other callers and should not be globally defined.
+> Making it static avoids this warning:
+> 
+> drivers/remoteproc/qcom_q6v5_pas.c:108:6: error: no previous prototype for 'adsp_segment_dump'
+> 
+> Fixes: a376c10d45a8 ("remoteproc: qcom: pas: Adjust the phys addr wrt the mem region")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+This seems to be posted already
+
+https://lore.kernel.org/lkml/20230507144826.193067-1-krzysztof.kozlowski@linaro.org/
+
+-- Mukesh
+
 > ---
->  drivers/remoteproc/mtk_common.h |  9 ++++
->  drivers/remoteproc/mtk_scp.c    | 88 +++++++++++++++++++++++++++++++++
->  2 files changed, 97 insertions(+)
+>   drivers/remoteproc/qcom_q6v5_pas.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index 56395e8664cb..85afed2e6928 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -100,6 +100,13 @@ struct mtk_scp_of_data {
->  	size_t ipi_buf_offset;
->  };
->  
-> +struct mtk_scp_core_subdev {
-> +	struct rproc_subdev subdev;
-> +	struct mtk_scp *scp;
-> +};
-> +
-> +#define to_core_subdev(d) container_of(d, struct mtk_scp_core_subdev, subdev)
-> +
->  struct mtk_scp {
->  	struct device *dev;
->  	struct rproc *rproc;
-> @@ -130,6 +137,8 @@ struct mtk_scp {
->  	struct rproc_subdev *rpmsg_subdev;
->  
->  	struct list_head elem;
-> +	struct list_head *cluster;
-> +	struct mtk_scp_core_subdev *core_subdev;
->  };
->  
->  /**
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index d644e232dfec..18534b1179b5 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -863,6 +863,60 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
->  	}
->  }
->  
-> +static int scp_core_subdev_start(struct rproc_subdev *subdev)
-> +{
-> +	struct mtk_scp_core_subdev *core_subdev = to_core_subdev(subdev);
-> +	struct mtk_scp *scp = core_subdev->scp;
-> +
-> +	rproc_boot(scp->rproc);
-> +
-> +	return 0;
-> +}
-> +
-> +static void scp_core_subdev_stop(struct rproc_subdev *subdev, bool crashed)
-> +{
-> +	struct mtk_scp_core_subdev *core_subdev = to_core_subdev(subdev);
-> +	struct mtk_scp *scp = core_subdev->scp;
-> +
-> +	rproc_shutdown(scp->rproc);
-> +}
-> +
-> +static int scp_core_subdev_register(struct mtk_scp *scp)
-> +{
-> +	struct device *dev = scp->dev;
-> +	struct mtk_scp_core_subdev *core_subdev;
-> +	struct mtk_scp *scp_c0;
-> +
-> +	scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
-> +	if (!scp_c0)
-> +		return -ENODATA;
-> +
-> +	core_subdev = devm_kzalloc(dev, sizeof(*core_subdev), GFP_KERNEL);
-> +	if (!core_subdev)
-> +		return -ENOMEM;
-> +
-> +	core_subdev->scp = scp;
-> +	core_subdev->subdev.start = scp_core_subdev_start;
-> +	core_subdev->subdev.stop = scp_core_subdev_stop;
-> +
-> +	scp->core_subdev = core_subdev;
-> +	rproc_add_subdev(scp_c0->rproc, &scp->core_subdev->subdev);
-> +
-> +	return 0;
-> +}
-> +
-> +static void scp_core_subdev_unregister(struct mtk_scp *scp)
-> +{
-> +	struct mtk_scp *scp_c0;
-> +
-> +	if (scp->core_subdev) {
-> +		scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
-> +		rproc_remove_subdev(scp_c0->rproc, &scp->core_subdev->subdev);
-> +		devm_kfree(scp->dev, scp->core_subdev);
-> +		scp->core_subdev = NULL;
-> +	}
-> +}
-> +
->  static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
->  				      struct mtk_scp_of_cluster *scp_cluster,
->  				      const struct mtk_scp_of_data *of_data)
-> @@ -957,6 +1011,7 @@ static void scp_free(struct mtk_scp *scp)
->  {
->  	int i;
->  
-> +	scp_core_subdev_unregister(scp);
->  	scp_remove_rpmsg_subdev(scp);
->  	scp_ipi_unregister(scp, SCP_IPI_INIT);
->  	scp_unmap_memory_region(scp);
-> @@ -989,6 +1044,15 @@ static int scp_add_single_core(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static void scp_rproc_boot_callback(const struct firmware *fw, void *context)
-> +{
-> +	struct rproc *rproc = context;
-> +
-> +	rproc_boot(rproc);
-> +
-> +	release_firmware(fw);
-> +}
-> +
->  static int scp_add_multi_core(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1029,6 +1093,20 @@ static int scp_add_multi_core(struct platform_device *pdev)
->  			goto init_fail;
->  		}
->  
-> +		scp->cluster = cluster;
-> +		if (!list_empty(cluster)) {
-> +			ret = scp_core_subdev_register(scp);
-> +			if (ret) {
-> +				dev_err(dev, "Failed to register core %d as subdev\n", core_id);
-> +				of_node_put(child);
-> +				scp_free(scp);
-> +				goto init_fail;
-> +			}
-> +		}
-> +
-> +		/* boot after all cores finished rproc_add() */
-> +		scp->rproc->auto_boot = false;
-> +
->  		ret = rproc_add(scp->rproc);
->  		if (ret) {
->  			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
-> @@ -1041,6 +1119,16 @@ static int scp_add_multi_core(struct platform_device *pdev)
->  		core_id++;
->  	}
->  
-> +	/* boot core 0, and other cores are booted following core 0 as subdevices */
-> +	scp = list_first_entry(cluster, struct mtk_scp, elem);
-> +	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> +				      scp->rproc->firmware, &scp->rproc->dev, GFP_KERNEL,
-> +				      scp->rproc, scp_rproc_boot_callback);
-> +	if (ret < 0) {
-> +		dev_err(dev, "request_firmware_nowait err: %d\n", ret);
-> +		goto init_fail;
-> +	}
-> +
->  	return 0;
->  
->  init_fail:
-> -- 
-> 2.18.0
-> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index e34d82b18a67..a1d69721a0e7 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -105,8 +105,9 @@ struct qcom_adsp {
+>   	struct qcom_scm_pas_metadata dtb_pas_metadata;
+>   };
+>   
+> -void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+> -		       void *dest, size_t offset, size_t size)
+> +static void adsp_segment_dump(struct rproc *rproc,
+> +			      struct rproc_dump_segment *segment,
+> +			      void *dest, size_t offset, size_t size)
+>   {
+>   	struct qcom_adsp *adsp = rproc->priv;
+>   	int total_offset;
