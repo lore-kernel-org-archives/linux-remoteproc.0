@@ -2,122 +2,134 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 802ADC77B7A
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 May 2023 07:47:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53667C77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 May 2023 11:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229750AbjERHrz (ORCPT
+        id S231604AbjERLvk (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 May 2023 03:47:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39340 "EHLO
+        Thu, 18 May 2023 07:51:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjERHry (ORCPT
+        with ESMTP id S231644AbjERLv2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 May 2023 03:47:54 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69F42690;
-        Thu, 18 May 2023 00:47:52 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34I7Klao006364;
-        Thu, 18 May 2023 07:47:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=0rnd9wlqpv8lZd9eNQMBYgfQQDwq/ErFAT8Dgq3EFkg=;
- b=NlLiP4v3nlKCAV93Usi5tD+wChuLf4PWBjOQUYlLmyGtkezVbZu/FpHJXXqm3hSb+nEd
- BUDBHbFa1UbwiwgGhXT9YqEkwjt0hUC8Rj7NzGdF2E7nz55SphQaquGyzh1HUYDYLDQL
- 8PkWgzzMa8Hppr8854aKzIGjo+qk6bNG+jGK9KO4auwjYCxpqiXnru6G/8ECDYHNX6Va
- xDPE4dVSfUBfLp4mhppU6TQPd6QuXbZB+yMs/lDkzSK4aM6AXcgZn4MB4e+O6hLCzF8E
- 4VbbkWjT6x3MpNcamhCTPvpVelKarx9U45msVq3+g3X0Gwg0Yto5iiNe3Wtqavgidz4Z xQ== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qn8a60qtp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 07:47:46 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34I7lj0x025342
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 07:47:45 GMT
-Received: from [10.216.40.42] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 18 May
- 2023 00:47:41 -0700
-Message-ID: <c503c773-137c-0d76-9762-7ea6d3ee868c@quicinc.com>
-Date:   Thu, 18 May 2023 13:17:28 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] remoteproc: qcom: pas: mark adsp_segment_dump() static
-To:     Arnd Bergmann <arnd@kernel.org>, Andy Gross <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
+        Thu, 18 May 2023 07:51:28 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE9D3591
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 May 2023 04:50:44 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f41d087b24so13518395e9.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 May 2023 04:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684410643; x=1687002643;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4GbFMPjUFF9uuaXdP1MBvbLG15PgOtEOYz2afufGOGY=;
+        b=ZyycZsK+W7vqKI/wajkBrmb/IKov5NEyGA5ouG/8DGclQF038y5DfFqsrTMB+s4fkr
+         eUGu+Ty4MdnljIQAFZHjHlNj5slsxBed0cCB2uYNy+OMtI6nCu9EW6DI1l5AikSkH83j
+         TFtIKlbT4Ngy4x1gS3WQ4N72Pf+MZUIEmW29/lCRvFkn6rUUjaKXF0hV+hXaT/JGoCzz
+         nDOwhQrTzZwqw0r09ybNpIqPF5gzKuwopKPShlBduTJtb02FvXh0PizifEpErC/5pnHt
+         Ney4bxUFVy45qSHTUHoHiQY0XE+FMUjrlyCjmTiXDsnXsq0o/gcleEFBM5B1FlyfZi1x
+         qe9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684410643; x=1687002643;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4GbFMPjUFF9uuaXdP1MBvbLG15PgOtEOYz2afufGOGY=;
+        b=fR3qyHkmA7LpJorFaVj1YlKl5kEd9DSBsIfCriAMVHcx/dj4W/KEVCzaHrbVuDn93T
+         zJbbxx9mA4v8OiYiJzZHkZE3poQFw1Yy8OWlr7Gg9fz2QN8LyR6xOLLuyniTG6xI8LRT
+         KahznSchVhwmFed/f8KLUA+PMzjB+0NSWoONv/Tu1Qcy4BjLKpxbVIlw+5Co+j/XY+r0
+         Nykex+HMxnNkbulnLlE/cXbz0FglfgNWEv1oYQxYldBQmkAHL+sBwe8iSuwjR7yYp01d
+         Z+HvI873yl9Lv61uHsn7dlh52j+H2g5KN1+hhY6xROPWNckknJkBBkElXrmprLOUseZV
+         Nnxg==
+X-Gm-Message-State: AC+VfDwzrgnttX7Oxn4p9th9gh4iGva+1paL7bQ28xiSpimFPkI3PnzG
+        possPrHMXBwoyMxhRtqG7eB1EA==
+X-Google-Smtp-Source: ACHHUZ4qI1udVkiV6/Ew6tml0v++zojqe1Evt5p7G+qZ1+mBqq0DfzHz64PbkWrAGEdbtJ+FKGlc6Q==
+X-Received: by 2002:a7b:c847:0:b0:3f5:42e:7229 with SMTP id c7-20020a7bc847000000b003f5042e7229mr1035527wml.41.1684410643102;
+        Thu, 18 May 2023 04:50:43 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id v14-20020a1cf70e000000b003f1751016desm1822077wmh.28.2023.05.18.04.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 04:50:41 -0700 (PDT)
+Date:   Thu, 18 May 2023 14:50:38 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     oe-kbuild@lists.linux.dev,
+        Tinghan Shen <tinghan.shen@mediatek.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        "Yogesh Lal" <quic_ylal@quicinc.com>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230516202332.560123-1-arnd@kernel.org>
-Content-Language: en-US
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <20230516202332.560123-1-arnd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IMxnHTjoLvy3pepom3P7UCNuwnAoOiFf
-X-Proofpoint-ORIG-GUID: IMxnHTjoLvy3pepom3P7UCNuwnAoOiFf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-18_05,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 malwarescore=0
- clxscore=1011 spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2304280000 definitions=main-2305180059
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v12 07/11] remoteproc: mediatek: Control SCP core 1 by
+ rproc subdevice
+Message-ID: <11b3ab8d-1264-4143-8eec-b2ef9f691814@kili.mountain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230517043449.26352-8-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Tinghan,
 
+kernel test robot noticed the following build warnings:
 
-On 5/17/2023 1:53 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The function has no other callers and should not be globally defined.
-> Making it static avoids this warning:
-> 
-> drivers/remoteproc/qcom_q6v5_pas.c:108:6: error: no previous prototype for 'adsp_segment_dump'
-> 
-> Fixes: a376c10d45a8 ("remoteproc: qcom: pas: Adjust the phys addr wrt the mem region")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This seems to be posted already
+url:    https://github.com/intel-lab-lkp/linux/commits/Tinghan-Shen/dt-bindings-remoteproc-mediatek-Improve-the-rpmsg-subnode-definition/20230517-123659
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20230517043449.26352-8-tinghan.shen%40mediatek.com
+patch subject: [PATCH v12 07/11] remoteproc: mediatek: Control SCP core 1 by rproc subdevice
+config: csky-randconfig-m041-20230517
+compiler: csky-linux-gcc (GCC) 12.1.0
 
-https://lore.kernel.org/lkml/20230507144826.193067-1-krzysztof.kozlowski@linaro.org/
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <error27@gmail.com>
+| Closes: https://lore.kernel.org/r/202305181957.ZMXChgJV-lkp@intel.com/
 
--- Mukesh
+smatch warnings:
+drivers/remoteproc/mtk_scp.c:891 scp_core_subdev_register() warn: can 'scp_c0' even be NULL?
 
-> ---
->   drivers/remoteproc/qcom_q6v5_pas.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index e34d82b18a67..a1d69721a0e7 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -105,8 +105,9 @@ struct qcom_adsp {
->   	struct qcom_scm_pas_metadata dtb_pas_metadata;
->   };
->   
-> -void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
-> -		       void *dest, size_t offset, size_t size)
-> +static void adsp_segment_dump(struct rproc *rproc,
-> +			      struct rproc_dump_segment *segment,
-> +			      void *dest, size_t offset, size_t size)
->   {
->   	struct qcom_adsp *adsp = rproc->priv;
->   	int total_offset;
+vim +/scp_c0 +891 drivers/remoteproc/mtk_scp.c
+
+69e1791d92cfa0 Tinghan Shen 2023-05-17  884  static int scp_core_subdev_register(struct mtk_scp *scp)
+69e1791d92cfa0 Tinghan Shen 2023-05-17  885  {
+69e1791d92cfa0 Tinghan Shen 2023-05-17  886  	struct device *dev = scp->dev;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  887  	struct mtk_scp_core_subdev *core_subdev;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  888  	struct mtk_scp *scp_c0;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  889  
+69e1791d92cfa0 Tinghan Shen 2023-05-17  890  	scp_c0 = list_first_entry(scp->cluster, struct mtk_scp, elem);
+69e1791d92cfa0 Tinghan Shen 2023-05-17 @891  	if (!scp_c0)
+69e1791d92cfa0 Tinghan Shen 2023-05-17  892  		return -ENODATA;
+
+This NULL check isn't right.  Use list_first_entry_or_null() if the list
+can be empty.
+
+69e1791d92cfa0 Tinghan Shen 2023-05-17  893  
+69e1791d92cfa0 Tinghan Shen 2023-05-17  894  	core_subdev = devm_kzalloc(dev, sizeof(*core_subdev), GFP_KERNEL);
+69e1791d92cfa0 Tinghan Shen 2023-05-17  895  	if (!core_subdev)
+69e1791d92cfa0 Tinghan Shen 2023-05-17  896  		return -ENOMEM;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  897  
+69e1791d92cfa0 Tinghan Shen 2023-05-17  898  	core_subdev->scp = scp;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  899  	core_subdev->subdev.start = scp_core_subdev_start;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  900  	core_subdev->subdev.stop = scp_core_subdev_stop;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  901  
+69e1791d92cfa0 Tinghan Shen 2023-05-17  902  	scp->core_subdev = core_subdev;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  903  	rproc_add_subdev(scp_c0->rproc, &scp->core_subdev->subdev);
+69e1791d92cfa0 Tinghan Shen 2023-05-17  904  
+69e1791d92cfa0 Tinghan Shen 2023-05-17  905  	return 0;
+69e1791d92cfa0 Tinghan Shen 2023-05-17  906  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
