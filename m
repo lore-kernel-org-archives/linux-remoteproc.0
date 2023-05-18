@@ -2,120 +2,136 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18CDC7EE25
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 May 2023 17:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B93DC7EE2D
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 18 May 2023 18:49:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229550AbjERRrH (ORCPT
+        id S230059AbjERSt0 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 18 May 2023 13:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39312 "EHLO
+        Thu, 18 May 2023 14:49:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230018AbjERRqy (ORCPT
+        with ESMTP id S230010AbjERStY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 18 May 2023 13:46:54 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D884A9;
-        Thu, 18 May 2023 10:46:51 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IGivGk029217;
-        Thu, 18 May 2023 17:46:47 GMT
+        Thu, 18 May 2023 14:49:24 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 661E1E4F;
+        Thu, 18 May 2023 11:49:23 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IHuYvd009111;
+        Thu, 18 May 2023 18:48:55 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=3xSP10bNXu97RicDPv8IfOJME5zzMDni62CNoTI1894=;
- b=kMcnwCP2Rc52m4xTT0yA5u6qrx6Cf9qmnibFPMQI84nCrkqWoX3ivq9igiNJUjHoh3FU
- 02kC7N2cVGvwNkG+ubo+FkXLHGg3TbjnwTDQe0DeYH/VFanbnS8QIFWa5LzjHrtGgHlp
- c22/jI9HkOKb6qpEqb7QDLky9Au0XTqmWPzz6Q9MavK4a4Vxhp9g8PZym0BvKm4wfq+g
- O3n1uxLhUGKoXeWS4uVnxk9s+mvcMDqJj4iDltgKBoMu3SAxCbqpd1+FvtrZN31Ks3WM
- fYDWdQldXHM3p885FjzM3WMV18GSA4WhxCSMlur/6YOQrNf1x4EvoqoZ4i1dcYx+suuN vQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qn8d2j5hy-1
+ bh=Ht8RdntEily+GKgk89bEEqXSuiTabzJwgELIJ8zSbaw=;
+ b=ZgXnKkBrd+exeBOkx6Ik0Husd0o2bc+l2xws0yaktEkH31Sltl99c9DYHQLNbse34BfN
+ kOCbydqLnPuRapEVOnpddor4HfGX4pYgdvKEdNLNajwX3c4FevlrphbBnZb8eYto4sGQ
+ FNgf1ywQqPD8+OyviN5e7T0BdMsmpCqGoJpo2px2ydBRA9/G0t0B5xxN/WCxYeZZ/KQl
+ bwu26We8vJvY0IVaJ6DcC6V2spGBzNytFJcZljippKO8JcesALxZRdnSgp4AihW6V5Jx
+ Qc5hBZ3RDW6DHgr06RMN/NZ0VaBS0vmCop6Phlbu/fA4N9KyqZ4Tg8P8aXcifRBCUsLS iw== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qnc30swc8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 17:46:47 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34IHkkO8002062
+        Thu, 18 May 2023 18:48:55 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34IImrVv030047
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 17:46:46 GMT
-Received: from [10.216.41.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 18 May 2023 18:48:53 GMT
+Received: from [10.110.64.80] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 18 May
- 2023 10:46:38 -0700
-Message-ID: <c7bf19ed-6c9f-7073-97fe-329eb1c88ba1@quicinc.com>
-Date:   Thu, 18 May 2023 23:16:34 +0530
+ 2023 11:48:52 -0700
+Message-ID: <b14475ca-95d5-a5a2-90bd-79e7b94cd8ab@quicinc.com>
+Date:   Thu, 18 May 2023 11:48:52 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 07/11] mailbox: qcom-apcs-ipc: Add IPQ5018 APCS IPC
- support
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v3 14/18] firmware: qcom_scm: provide a read-modify-write
+ function
+To:     Mukesh Ojha <quic_mojha@quicinc.com>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <corbet@lwn.net>, <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <robh+dt@kernel.org>, <linus.walleij@linaro.org>,
+        <linux-gpio@vger.kernel.org>, <srinivas.kandagatla@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-doc@vger.kernel.org>
+References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
+ <1683133352-10046-15-git-send-email-quic_mojha@quicinc.com>
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-8-git-send-email-quic_mmanikan@quicinc.com>
- <ec7af3f9-5feb-0785-278c-209eeefd0aac@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <ec7af3f9-5feb-0785-278c-209eeefd0aac@linaro.org>
+From:   Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <1683133352-10046-15-git-send-email-quic_mojha@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+ nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: q5VYWFnnKF5zHJkJQl5L6NHLWyv8S3Tk
-X-Proofpoint-GUID: q5VYWFnnKF5zHJkJQl5L6NHLWyv8S3Tk
+X-Proofpoint-GUID: i8RM0WpSoeg1VDYk_FS0NbrlAD0efXR1
+X-Proofpoint-ORIG-GUID: i8RM0WpSoeg1VDYk_FS0NbrlAD0efXR1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-18_13,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- malwarescore=0 mlxlogscore=999 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 clxscore=1015 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305180144
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ suspectscore=0 mlxlogscore=856 phishscore=0 adultscore=0 bulkscore=0
+ mlxscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305180153
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 3/7/2023 8:50 PM, Krzysztof Kozlowski wrote:
-> On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
->> Enable IPQ5018 APCS IPC support by adding the compatible.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>   drivers/mailbox/qcom-apcs-ipc-mailbox.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
->> index 6bbf87c6d60b..0b873c76fd7e 100644
->> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
->> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
->> @@ -141,6 +141,7 @@ static int qcom_apcs_ipc_remove(struct platform_device *pdev)
->>   
->>   /* .data is the offset of the ipc register within the global block */
->>   static const struct of_device_id qcom_apcs_ipc_of_match[] = {
->> +	{ .compatible = "qcom,ipq5018-apcs-apps-global", .data = &ipq6018_apcs_data },
+On 5/3/2023 10:02 AM, Mukesh Ojha wrote:
+> It was realized by Srinivas K. that there is a need of
+> read-modify-write scm exported function so that it can
+> be used by multiple clients.
 > 
-> Why do you need new entry with same driver data?
+> Let's introduce qcom_scm_io_update_field() which masks
+> out the bits and write the passed value to that
+> bit-offset. Subsequent patch will use this function.
 > 
-> Best regards,
-> Krzysztof
+> Suggested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> ---
+>   drivers/firmware/qcom_scm.c            | 15 +++++++++++++++
+>   include/linux/firmware/qcom/qcom_scm.h |  2 ++
+>   2 files changed, 17 insertions(+)
 > 
-Yeah it's not required. Since i already updated bindings, i will drop 
-this patch.
+> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> index fde33acd..003cbcb 100644
+> --- a/drivers/firmware/qcom_scm.c
+> +++ b/drivers/firmware/qcom_scm.c
+> @@ -407,6 +407,21 @@ int qcom_scm_set_remote_state(u32 state, u32 id)
+>   }
+>   EXPORT_SYMBOL(qcom_scm_set_remote_state);
+>   
+> +int qcom_scm_io_update_field(phys_addr_t addr, unsigned int mask, unsigned int val)
+> +{
+> +	unsigned int old, new;
+> +	int ret;
+> +
+> +	ret = qcom_scm_io_readl(addr, &old);
+> +	if (ret)
+> +		return ret;
+> +
+> +	new = (old & ~mask) | val << (ffs(mask) - 1);
+> +
+> +	return qcom_scm_io_writel(addr, new);
+> +}
+> +EXPORT_SYMBOL(qcom_scm_io_update_field);
 
-Thanks & Regards,
-Manikanta.
+EXPORT_SYMBOL_GPL?
+
+There are other symbols in this driver marked as EXPORT_SYMBOL only. Can 
+you submit a separate patch to convert them into EXPORT_SYMBOL_GPL. OR I 
+want to know why we are marking them without _GPL.
+
+checkpatch should catch this as well? By default we should have all the 
+new additions as EXPORT_SYMBOL_GPL and only few existing APIs w/ 
+exceptions?
+
+---Trilok Soni
+
