@@ -2,433 +2,634 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F04C7EE29
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 19 May 2023 08:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F0CC77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 May 2023 15:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbjESIrH (ORCPT
+        id S229974AbjEUPst (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 19 May 2023 04:47:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37548 "EHLO
+        Sun, 21 May 2023 11:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjESIrG (ORCPT
+        with ESMTP id S229951AbjEUPss (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 19 May 2023 04:47:06 -0400
+        Sun, 21 May 2023 11:48:48 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FCEFEE;
-        Fri, 19 May 2023 01:47:05 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34J8Ajb0025742;
-        Fri, 19 May 2023 08:46:59 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9898AE3;
+        Sun, 21 May 2023 08:48:46 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34LFlShd017419;
+        Sun, 21 May 2023 15:48:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=nUUBkTxt0InmoI/nYitrInoeUNfxgxO33Sr7K/UDt0I=;
- b=DQZC4/iNAQpeO8Bzf94IQG2bfNMhsn/uqFBPDOCXVfSqZQaHRq+BXMgHM/0eogWWXumI
- zkZsWL54jOtjlNAPqVMu+QTLDV50IK+uBdhL3lYsKWbJ9xW8p5BAVcyVI8rM0QppVw4s
- lKtbSame3/AN3QvwkkugOReefKuOgSUcfnoqG6VdB4whLrtVqYyjzFwEAjtSw2D+/qe/
- /zLx04OofkRqam1M1rv5VPM6Ztiy7NzZoAJWdyq2XGglasRhDdfwtNfztaGt/UlRSTrt
- zLrJHrbYT1Hlu3h3hxCKJvWy3luASqBhNVYGByVFjdTXAuk6WSpfzd1eXvV0XevZQpNW lQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qnbxqkba1-1
+ bh=NUTBc1xORa5ulkz4rTxoTTP07JM5rWNkZD3lV+ZKALI=;
+ b=Wj1/0uxS0h69MGZLwZWS+2BCipYQMSSRjulDXzy/k/mainTu+Atpb7+7pQBwGizMBjL4
+ 8UD6JIk9zoaS9846dvs9CZ2NQ5L1zQobNAz3OBRvEB1OK8a+sv4kU0zFlB2a3OqMWZYp
+ lDZd+c69kVi9a320xRfn2POKxLkI4pT2NYq5x1El+ElI9bvzXxJ19658WWQ0W6q/xUZZ
+ T9w2H7na+B1QZIcDj57M6igHSySBYRBJVFsb8o5uRFSkRz/uZZSYUAChu4OA+jPy3ic4
+ TJDS8BMFgK99mrhhcS5L0QvbfA9RfRYNTjD43iY931rKcBsWUOcHOwc39fuJ4ZkFwbyb Mg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qppyp9vgj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 08:46:59 +0000
+        Sun, 21 May 2023 15:48:35 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34J8kwgb004719
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34LFmYXX014584
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 08:46:58 GMT
-Received: from [10.216.41.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
+        Sun, 21 May 2023 15:48:34 GMT
+Received: from [10.216.45.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 19 May
- 2023 01:46:49 -0700
-Message-ID: <5a1ad8f6-73fd-1daf-f4a0-ad6fc2f1b64c@quicinc.com>
-Date:   Fri, 19 May 2023 14:16:43 +0530
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 21 May
+ 2023 08:48:26 -0700
+Message-ID: <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
+Date:   Sun, 21 May 2023 21:18:22 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.7.2
-Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
- multipd model
+Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc
+ driver
 Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_gurus@quicinc.com>, <loic.poulain@linaro.org>,
-        <quic_eberman@quicinc.com>, <robimarko@gmail.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
-        <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
         <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
- <20230307142614.GA2742-robh@kernel.org>
+ <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
+ <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com>
 From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <20230307142614.GA2742-robh@kernel.org>
+In-Reply-To: <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yuHYXKna3j1FRYxuWnhsYW2Z1yJd_rss
-X-Proofpoint-GUID: yuHYXKna3j1FRYxuWnhsYW2Z1yJd_rss
+X-Proofpoint-ORIG-GUID: Z_kex2yC5ScYScyRtdZovxYkdONRSVWO
+X-Proofpoint-GUID: Z_kex2yC5ScYScyRtdZovxYkdONRSVWO
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-19_05,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305190073
+ definitions=2023-05-21_11,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305210139
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 3/7/2023 7:56 PM, Rob Herring wrote:
-> On Tue, Mar 07, 2023 at 10:11:27AM +0530, Manikanta Mylavarapu wrote:
->> Add new binding document for multipd model remoteproc.
->> IPQ5018, IPQ9574 follows multipd model.
+On 3/7/2023 6:47 PM, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
+>> APSS brings Q6 out of reset and then Q6 brings
+>> WCSS block (wifi radio's) out of reset.
+>>
+>>                    ---------------
+>>                   -->  |WiFi 2G radio|
+>>                   |       --------------
+>>                   |
+>> --------    -------          |
+>> | APSS | --->   |QDSP6|  -----|
+>> ---------    -------       |
+>>                                |
+>>                          |
+>>                   |   --------------
+>>                   --> |WiFi 5G radio|
+>>                   --------------
+>>
+>> Problem here is if any radio crashes, subsequently other
+>> radio also should crash because Q6 crashed. Let's say
+>> 2G radio crashed, Q6 should pass this info to APSS. Only
+>> Q6 processor interrupts registered with APSS. Obviously
+>> Q6 should crash and raise fatal interrupt to APSS. Due
+>> to this 5G radio also crashed. But no issue in 5G radio,
+>> because of 2G radio crash 5G radio also impacted.
+>>
+>> In multi pd model, this problem is resolved. Here WCSS
+>> functionality (WiFi radio's) moved out from Q6 root pd
+>> to a separate user pd. Due to this, radio's independently
+>> pass their status info to APPS with out crashing Q6. So
+>> other radio's won't be impacted.
+>>
+>>                         ---------
+>>                             |WiFi    |
+>>                         --> |2G radio|
+>>                         |     ---------
+>> ------    Start Q6             -------     |
+>> |    |    ------------------>     |     |     |
+>> |    |  Start WCSS PD1 (2G)       |     |        |
+>> |APSS|    ----------------------->|QDSP6|-----|
+>> |    |    Start WCSS PD1 (5G)    |     |
+>> |    |    ----------------------->|     |-----|
+>> ------                     -------     |
+>>                         |
+>>                         |    -----------
+>>                         |-->|WiFi      |
+>>                         |5G radio |
+>>                         -----------
+>> According to linux terminology, here consider Q6 as root
+>> i.e it provide all services, WCSS (wifi radio's) as user
+>> i.e it uses services provided by root.
+>>
+>> Since Q6 root & WCSS user pd's able to communicate with
+>> APSS individually, multipd remoteproc driver registers
+>> each PD with rproc framework. Here clients (Wifi host drivers)
+>> intrested on WCSS PD rproc, so multipd driver start's root
+>> pd in the context of WCSS user pd rproc start. Similarly
+>> on down path, root pd will be stopped after wcss user pd
+>> stopped.
+>>
+>> Here WCSS(user) PD is dependent on Q6(root) PD, so first
+>> q6 pd should be up before wcss pd. After wcss pd goes down,
+>> q6 pd should be turned off.
+>>
+>> rproc->ops->start(userpd_rproc) {
+>>     /* Boot root pd rproc */
+>>     rproc_boot(upd_dev->parent);
+>>     ---
+>>     /* user pd rproc start sequence */
+>>     ---
+>>     ---
+>> }
+>> With this way we ensure that root pd brought up before userpd.
+>>
+>> rproc->ops->stop(userpd_rproc) {
+>>     ---
+>>     ---
+>>     /* user pd rproc stop sequence */
+>>     ---
+>>     ---
+>>     /* Shutdown root pd rproc */
+>>     rproc_shutdown(upd_dev->parent);
+>> }
+>> After userpd rproc stops, root pd rproc will be stopped.
+>> IPQ5018, IPQ9574 supports multipd remoteproc driver.
 >>
 >> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 >> ---
->>   .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
->>   1 file changed, 282 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>   drivers/firmware/qcom_scm.c            | 114 +++++
+>>   drivers/firmware/qcom_scm.h            |   6 +
+>>   drivers/remoteproc/Kconfig             |  20 +
+>>   drivers/remoteproc/Makefile            |   1 +
+>>   drivers/remoteproc/qcom_common.c       |  23 +
+>>   drivers/remoteproc/qcom_common.h       |   1 +
+>>   drivers/remoteproc/qcom_q6v5.c         |  41 +-
+>>   drivers/remoteproc/qcom_q6v5.h         |  15 +-
+>>   drivers/remoteproc/qcom_q6v5_adsp.c    |   5 +-
+>>   drivers/remoteproc/qcom_q6v5_mpd.c     | 668 +++++++++++++++++++++++++
+>>   drivers/remoteproc/qcom_q6v5_mss.c     |   4 +-
+>>   drivers/remoteproc/qcom_q6v5_pas.c     |   3 +-
+>>   drivers/soc/qcom/mdt_loader.c          | 314 ++++++++++++
+>>   include/linux/firmware/qcom/qcom_scm.h |   3 +
+>>   include/linux/soc/qcom/mdt_loader.h    |  19 +
+>>   15 files changed, 1228 insertions(+), 9 deletions(-)
+>>   create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
 >>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+>> index d88c5f14bd54..d69560963353 100644
+>> --- a/drivers/firmware/qcom_scm.c
+>> +++ b/drivers/firmware/qcom_scm.c
+>> @@ -654,6 +654,120 @@ int qcom_scm_pas_shutdown(u32 peripheral)
+>>   }
+>>   EXPORT_SYMBOL(qcom_scm_pas_shutdown);
+>> +/**
+>> + * qti_scm_int_radio_powerup - Bring up internal radio userpd
+>> + *
+>> + * @peripheral:    peripheral id
+>> + *
+>> + * Return 0 on success.
+>> + */
+>> +int qti_scm_int_radio_powerup(u32 peripheral)
+>> +{
+> 
+> qcom instead and in other places too.
+> 
+Internal open source team suggested to use qti.
+>> +    int ret;
+>> +    struct qcom_scm_desc desc = {
+>> +        .svc = QCOM_SCM_PD_LOAD_SVC_ID,
+>> +        .cmd = QCOM_SCM_INT_RAD_PWR_UP_CMD_ID,
+>> +        .arginfo = QCOM_SCM_ARGS(1),
+>> +        .args[0] = peripheral,
+>> +        .owner = ARM_SMCCC_OWNER_SIP,
+>> +    };
+>> +    struct qcom_scm_res res;
+>> +
+>> +    ret = qcom_scm_clk_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_bw_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +    qcom_scm_bw_disable();
+>> +    qcom_scm_clk_disable();
+>> +
+>> +    return ret ? : res.result[0];
+>> +}
+>> +EXPORT_SYMBOL(qti_scm_int_radio_powerup);
+>> +
+>> +/**
+>> + * qti_scm_int_radio_powerdown() - Shut down internal radio userpd
+>> + *
+>> + * @peripheral: peripheral id
+>> + *
+>> + * Returns 0 on success.
+>> + */
+>> +int qti_scm_int_radio_powerdown(u32 peripheral)
+>> +{
+>> +    int ret;
+>> +    struct qcom_scm_desc desc = {
+>> +        .svc = QCOM_SCM_PD_LOAD_SVC_ID,
+>> +        .cmd = QCOM_SCM_INT_RAD_PWR_DN_CMD_ID,
+>> +        .arginfo = QCOM_SCM_ARGS(1),
+>> +        .args[0] = peripheral,
+>> +        .owner = ARM_SMCCC_OWNER_SIP,
+>> +    };
+>> +    struct qcom_scm_res res;
+>> +
+>> +    ret = qcom_scm_clk_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_bw_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +    qcom_scm_bw_disable();
+>> +    qcom_scm_clk_disable();
+>> +
+>> +    return ret ? : res.result[0];
+>> +}
+>> +EXPORT_SYMBOL(qti_scm_int_radio_powerdown);
+>> +
+>> +/**
+>> + * qti_scm_pdseg_memcpy_v2() - copy userpd PIL segments data to dma 
+>> blocks
+>> + *
+>> + * @peripheral:        peripheral id
+>> + * @phno:        program header no
+>> + * @dma:        handle of dma region
+>> + * @seg_cnt:        no of dma blocks
+>> + *
+>> + * Returns 0 if trustzone successfully loads userpd PIL segments from 
+>> dma
+>> + * blocks to DDR
+>> + */
+>> +int qti_scm_pdseg_memcpy_v2(u32 peripheral, int phno, dma_addr_t dma,
+>> +                int seg_cnt)
+>> +{
+>> +    int ret;
+>> +    struct qcom_scm_desc desc = {
+>> +        .svc = QCOM_SCM_PD_LOAD_SVC_ID,
+>> +        .cmd = QCOM_SCM_PD_LOAD_V2_CMD_ID,
+>> +        .arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_VAL, QCOM_SCM_VAL,
+>> +                        QCOM_SCM_RW, QCOM_SCM_VAL),
+>> +        .args[0] = peripheral,
+>> +        .args[1] = phno,
+>> +        .args[2] = dma,
+>> +        .args[3] = seg_cnt,
+>> +        .owner = ARM_SMCCC_OWNER_SIP,
+>> +    };
+>> +    struct qcom_scm_res res;
+>> +
+>> +    ret = qcom_scm_clk_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_bw_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +    qcom_scm_bw_disable();
+>> +    qcom_scm_clk_disable();
+>> +
+>> +    return ret ? : res.result[0];
+>> +}
+>> +EXPORT_SYMBOL(qti_scm_pdseg_memcpy_v2);
+>> +
+> 
+> This patch should be split further.
+> btw, this new scm apis should go in as one patch first separately.
+> 
+Sure, will do it.
+>>   /**
+>>    * qcom_scm_pas_supported() - Check if the peripheral authentication 
+>> service is
+>>    *                  available for the given peripherial
+>> diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+>> index e6e512bd57d1..99e3ab2f1986 100644
+>> --- a/drivers/firmware/qcom_scm.h
+>> +++ b/drivers/firmware/qcom_scm.h
+>> @@ -132,6 +132,12 @@ extern int scm_legacy_call(struct device *dev, 
+>> const struct qcom_scm_desc *desc,
+>>   #define QCOM_SCM_SMMU_CONFIG_ERRATA1        0x03
+>>   #define QCOM_SCM_SMMU_CONFIG_ERRATA1_CLIENT_ALL    0x02
+>> +#define QCOM_SCM_PD_LOAD_SVC_ID            0x2
+>> +#define QCOM_SCM_PD_LOAD_CMD_ID            0x16
+>> +#define QCOM_SCM_PD_LOAD_V2_CMD_ID        0x19
+>> +#define QCOM_SCM_INT_RAD_PWR_UP_CMD_ID        0x17
+>> +#define QCOM_SCM_INT_RAD_PWR_DN_CMD_ID        0x18
+>> +
+>>   #define QCOM_SCM_SVC_WAITQ            0x24
+>>   #define QCOM_SCM_WAITQ_RESUME            0x02
+>>   #define QCOM_SCM_WAITQ_GET_WQ_CTX        0x03
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index a850e9f486dd..44af5c36f67e 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -234,6 +234,26 @@ config QCOM_Q6V5_PAS
+>>         CDSP (Compute DSP), MPSS (Modem Peripheral SubSystem), and
+>>         SLPI (Sensor Low Power Island).
+>> +config QCOM_Q6V5_MPD
+>> +    tristate "Qualcomm Hexagon based MPD model Peripheral Image Loader"
+>> +    depends on OF && ARCH_QCOM
+>> +    depends on QCOM_SMEM
+>> +    depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
+>> +    depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>> +    depends on QCOM_SYSMON || QCOM_SYSMON=n
+>> +    depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+>> +    depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+>> +    select MFD_SYSCON
+>> +    select QCOM_MDT_LOADER
+>> +    select QCOM_PIL_INFO
+>> +    select QCOM_Q6V5_COMMON
+>> +    select QCOM_RPROC_COMMON
+>> +    select QCOM_SCM
+>> +    help
+>> +      Say y here to support the Qualcomm Secure Peripheral Image Loader
+>> +      for the Hexagon based MultiPD model remote processors on e.g. 
+>> IPQ5018.
+>> +      This is trustZone wireless subsystem.
+>> +
+>>   config QCOM_Q6V5_WCSS
+>>       tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+>>       depends on OF && ARCH_QCOM
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index 91314a9b43ce..b64051080ec1 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -25,6 +25,7 @@ obj-$(CONFIG_QCOM_PIL_INFO)        += qcom_pil_info.o
+>>   obj-$(CONFIG_QCOM_RPROC_COMMON)        += qcom_common.o
+>>   obj-$(CONFIG_QCOM_Q6V5_COMMON)        += qcom_q6v5.o
+>>   obj-$(CONFIG_QCOM_Q6V5_ADSP)        += qcom_q6v5_adsp.o
+>> +obj-$(CONFIG_QCOM_Q6V5_MPD)        += qcom_q6v5_mpd.o
+>>   obj-$(CONFIG_QCOM_Q6V5_MSS)        += qcom_q6v5_mss.o
+>>   obj-$(CONFIG_QCOM_Q6V5_PAS)        += qcom_q6v5_pas.o
+>>   obj-$(CONFIG_QCOM_Q6V5_WCSS)        += qcom_q6v5_wcss.o
+>> diff --git a/drivers/remoteproc/qcom_common.c 
+>> b/drivers/remoteproc/qcom_common.c
+>> index a0d4238492e9..b72fbda02242 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -510,5 +510,28 @@ void qcom_remove_ssr_subdev(struct rproc *rproc, 
+>> struct qcom_rproc_ssr *ssr)
+>>   }
+>>   EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+>> +/**
+>> + * qcom_get_pd_asid() - get the pd asid number from DT node
+>> + * @node:    device tree node
+>> + *
+>> + * Returns asid if node name has 'pd' string
+>> + */
+>> +s8 qcom_get_pd_asid(struct device_node *node)
+>> +{
+>> +    char *str;
+>> +    u8 pd_asid;
+>> +
+>> +    if (!node)
+>> +        return -EINVAL;
+>> +
+>> +    str = strstr(node->name, "pd");
+>> +    if (!str)
+>> +        return 0;
+>> +
+>> +    str += strlen("pd");
+>> +    return kstrtos8(str, 10, &pd_asid) ? -EINVAL : pd_asid;
+>> +}
+>> +EXPORT_SYMBOL(qcom_get_pd_asid);
+>> +
+>>   MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/remoteproc/qcom_common.h 
+>> b/drivers/remoteproc/qcom_common.h
+>> index 9ef4449052a9..9f3fb11224aa 100644
+>> --- a/drivers/remoteproc/qcom_common.h
+>> +++ b/drivers/remoteproc/qcom_common.h
+>> @@ -75,5 +75,6 @@ static inline bool qcom_sysmon_shutdown_acked(struct 
+>> qcom_sysmon *sysmon)
+>>       return false;
+>>   }
+>>   #endif
+>> +s8 qcom_get_pd_asid(struct device_node *node);
+>>   #endif
+>> diff --git a/drivers/remoteproc/qcom_q6v5.c 
+>> b/drivers/remoteproc/qcom_q6v5.c
+>> index 192c7aa0e39e..b88bf3a8e53b 100644
+>> --- a/drivers/remoteproc/qcom_q6v5.c
+>> +++ b/drivers/remoteproc/qcom_q6v5.c
+>> @@ -118,7 +118,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, 
+>> void *data)
+>>       return IRQ_HANDLED;
+>>   }
+>> -static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>> +irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>>   {
+>>       struct qcom_q6v5 *q6v5 = data;
+>>       size_t len;
+>> @@ -139,7 +139,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, 
+>> void *data)
+>>       return IRQ_HANDLED;
+>>   }
+>> -static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
+>> +irqreturn_t q6v5_ready_interrupt(int irq, void *data)
+>>   {
+>>       struct qcom_q6v5 *q6v5 = data;
+>> @@ -183,7 +183,16 @@ static irqreturn_t q6v5_handover_interrupt(int 
+>> irq, void *data)
+>>       return IRQ_HANDLED;
+>>   }
+>> -static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
+>> +irqreturn_t q6v5_spawn_interrupt(int irq, void *data)
+>> +{
+>> +    struct qcom_q6v5 *q6v5 = data;
+>> +
+>> +    complete(&q6v5->spawn_done);
+>> +
+>> +    return IRQ_HANDLED;
+>> +}
+>> +
+>> +irqreturn_t q6v5_stop_interrupt(int irq, void *data)
+>>   {
+>>       struct qcom_q6v5 *q6v5 = data;
+>> @@ -220,6 +229,28 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 
+>> *q6v5, struct qcom_sysmon *sysmon)
+>>   }
+>>   EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
+>> +/**
+>> + * qcom_q6v5_request_spawn() - request the remote processor to spawn
+>> + * @q6v5:      reference to qcom_q6v5 context
+>> + *
+>> + * Return: 0 on success, negative errno on failure
+>> + */
+>> +int qcom_q6v5_request_spawn(struct qcom_q6v5 *q6v5)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = qcom_smem_state_update_bits(q6v5->spawn_state,
+>> +                      BIT(q6v5->spawn_bit), BIT(q6v5->spawn_bit));
+>> +
+>> +    ret = wait_for_completion_timeout(&q6v5->spawn_done, 5 * HZ);
+>> +
+>> +    qcom_smem_state_update_bits(q6v5->spawn_state,
+>> +                    BIT(q6v5->spawn_bit), 0);
+>> +
+>> +    return ret == 0 ? -ETIMEDOUT : 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(qcom_q6v5_request_spawn);
+>> +
+>>   /**
+>>    * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
+>>    * @q6v5:    reference to qcom_q6v5 context
+>> @@ -250,7 +281,8 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>>    * Return: 0 on success, negative errno on failure
+>>    */
+>>   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device 
+>> *pdev,
+>> -           struct rproc *rproc, int crash_reason, const char 
+>> *load_state,
+>> +           struct rproc *rproc, int remote_id, int crash_reason,
+>> +           const char *load_state,
+>>              void (*handover)(struct qcom_q6v5 *q6v5))
+>>   {
+>>       int ret;
+>> @@ -258,6 +290,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct 
+>> platform_device *pdev,
+>>       q6v5->rproc = rproc;
+>>       q6v5->dev = &pdev->dev;
+>>       q6v5->crash_reason = crash_reason;
+>> +    q6v5->remote_id = remote_id;
+>>       q6v5->handover = handover;
+>>       init_completion(&q6v5->start_done);
+>> diff --git a/drivers/remoteproc/qcom_q6v5.h 
+>> b/drivers/remoteproc/qcom_q6v5.h
+>> index 5a859c41896e..d00568339d46 100644
+>> --- a/drivers/remoteproc/qcom_q6v5.h
+>> +++ b/drivers/remoteproc/qcom_q6v5.h
+>> @@ -18,22 +18,29 @@ struct qcom_q6v5 {
+>>       struct qcom_smem_state *state;
+>>       struct qmp *qmp;
+>> +    struct qcom_smem_state *shutdown_state;
+>> +    struct qcom_smem_state *spawn_state;
+>>       struct icc_path *path;
+>>       unsigned stop_bit;
+>> +    unsigned shutdown_bit;
+>> +    unsigned spawn_bit;
+>>       int wdog_irq;
+>>       int fatal_irq;
+>>       int ready_irq;
+>>       int handover_irq;
+>>       int stop_irq;
+>> +    int spawn_irq;
+>>       bool handover_issued;
+>>       struct completion start_done;
+>>       struct completion stop_done;
+>> +    struct completion spawn_done;
+>> +    int remote_id;
+>>       int crash_reason;
+>>       bool running;
+>> @@ -43,14 +50,20 @@ struct qcom_q6v5 {
+>>   };
+>>   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device 
+>> *pdev,
+>> -           struct rproc *rproc, int crash_reason, const char 
+>> *load_state,
+>> +           struct rproc *rproc, int remote_id, int crash_reason,
+>> +           const char *load_state,
+>>              void (*handover)(struct qcom_q6v5 *q6v5));
+>>   void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct 
+>> qcom_sysmon *sysmon);
+>> +int qcom_q6v5_request_spawn(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+>>   unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+>> +irqreturn_t q6v5_fatal_interrupt(int irq, void *data);
+>> +irqreturn_t q6v5_ready_interrupt(int irq, void *data);
+>> +irqreturn_t q6v5_spawn_interrupt(int irq, void *data);
+>> +irqreturn_t q6v5_stop_interrupt(int irq, void *data);
+> 
+> Even this also you can keep it as a separate preparatory patch to pull
+> out the common functions.
+> 
+Sure, will raise a new patch.
+>>   #endif
+>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c 
+>> b/drivers/remoteproc/qcom_q6v5_adsp.c
+>> index 08d8dad22ca7..bf8909ad5ff5 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+>> @@ -733,8 +733,9 @@ static int adsp_probe(struct platform_device *pdev)
+>>       if (ret)
+>>           goto disable_pm;
+>> -    ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, 
+>> desc->crash_reason_smem,
+>> -                 desc->load_state, qcom_adsp_pil_handover);
+>> +    ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
+>> +                 desc->crash_reason_smem, desc->load_state,
+>> +                 qcom_adsp_pil_handover);
+>>       if (ret)
+>>           goto disable_pm;
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mpd.c 
+>> b/drivers/remoteproc/qcom_q6v5_mpd.c
 >> new file mode 100644
->> index 000000000000..b788607f5abd
+>> index 000000000000..853aa3bc5859
 >> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
->> @@ -0,0 +1,282 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/remoteproc/qcom,multipd-pil.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Multipd Secure Peripheral Image Loader
->> +
->> +maintainers:
->> +  - Bjorn Andersson <andersson@kernel.org>
->> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
->> +
->> +description:
->> +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
->> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
+>> +++ b/drivers/remoteproc/qcom_q6v5_mpd.c
+>> @@ -0,0 +1,668 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2016-2018 Linaro Ltd.
+>> + * Copyright (C) 2014 Sony Mobile Communications AB
+>> + * Copyright (c) 2012-2018, 2021 The Linux Foundation. All rights 
+>> reserved.
+>> + */
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/of_reserved_mem.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset.h>
+>> +#include <linux/soc/qcom/mdt_loader.h>
+>> +#include <linux/soc/qcom/smem.h>
+>> +#include <linux/soc/qcom/smem_state.h>
+>> +#include <linux/firmware/qcom/qcom_scm.h>
+>> +#include <linux/interrupt.h>
 > 
-> What is PD? I don't see it defined anywhere.
+>   Alphabetical order.
 > 
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - qcom,ipq5018-q6-mpd
->> +      - qcom,ipq9574-q6-mpd
->> +
->> +  '#address-cells': true
-> 
-> Need to define the size.
-> 
->> +
->> +  '#size-cells': true
-> 
-> ditto
-> 
->> +
->> +  'ranges': true
-> 
-> Don't need quotes
-> 
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts-extended:
-> 
-> Just 'interrupts'. Both forms are always supported.
-> 
->> +    items:
->> +      - description: Watchdog interrupt
->> +      - description: Fatal interrupt
->> +      - description: Ready interrupt
->> +      - description: Handover interrupt
->> +      - description: Stop acknowledge interrupt
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: wdog
->> +      - const: fatal
->> +      - const: ready
->> +      - const: handover
->> +      - const: stop-ack
->> +
->> +  clocks:
->> +    minItems: 25
->> +    maxItems: 25
-> 
-> You need to list out what the clocks are.
-> 
->> +
->> +  clock-names:
->> +    minItems: 25
->> +    maxItems: 25
->> +
->> +  assigned-clocks:
-> 
-> You can drop this. Implicitly supported.
-> 
->> +    minItems: 13
->> +    maxItems: 13
->> +
->> +  assigned-clock-rates:
->> +    minItems: 13
->> +    maxItems: 13
->> +
->> +  qcom,smem-states:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> 
-> I believe this already has a type. It should be defined in a common
-> schema if not already and then included in this schema.
-> 
-It's not defined in common schema, so i included here.
-
-Thanks & Regards,
-Manikanta.
->> +    description: States used by the AP to signal the remoteprocessor
->> +    items:
->> +      - description: Shutdown Q6
->> +      - description: Stop Q6
->> +
->> +  qcom,smem-state-names:
->> +    description:
->> +      Names of the states used by the AP to signal the remoteprocessor
->> +    items:
->> +      - const: shutdown
->> +      - const: stop
->> +
->> +  memory-region:
->> +    items:
->> +      - description: Q6 pd reserved region
->> +
->> +  glink-edge:
->> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
->> +    description:
->> +      Qualcomm G-Link subnode which represents communication edge, channels
->> +      and devices related to the Modem.
->> +
->> +patternProperties:
->> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
->> +    type: object
->> +    description:
->> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
->> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
->> +      device node.
->> +
->> +    properties:
->> +      compatible:
->> +        enum:
->> +          - "qcom,ipq5018-wcss-ahb-mpd"
-> 
-> Don't need quotes.
-> 
->> +          - "qcom,ipq9574-wcss-ahb-mpd"
->> +          - "qcom,ipq5018-wcss-pcie-mpd"
->> +
->> +      interrupts-extended:
-> 
-> Just interrupts
-> 
->> +        items:
->> +          - description: Fatal interrupt
->> +          - description: Ready interrupt
->> +          - description: Spawn acknowledge interrupt
->> +          - description: Stop acknowledge interrupt
->> +
->> +      interrupt-names:
->> +        items:
->> +          - const: fatal
->> +          - const: ready
->> +          - const: spawn-ack
->> +          - const: stop-ack
->> +
->> +      qcom,smem-states:
->> +        $ref: /schemas/types.yaml#/definitions/phandle-array
->> +        description: States used by the AP to signal the remoteprocessor
->> +        items:
->> +          - description: Shutdown WCSS pd
->> +          - description: Stop WCSS pd
->> +          - description: Spawn WCSS pd
->> +
->> +      qcom,smem-state-names:
->> +        description:
->> +          Names of the states used by the AP to signal the remoteprocessor
->> +        items:
->> +          - const: shutdown
->> +          - const: stop
->> +          - const: spawn
->> +
->> +    required:
->> +      - compatible
->> +
->> +    additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts-extended
->> +  - interrupt-names
->> +  - qcom,smem-states
->> +  - qcom,smem-state-names
->> +  - memory-region
->> +
->> +additionalProperties: false
->> +
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - qcom,ipq9574-q6-mpd
->> +    then:
->> +      properties:
->> +        assigned-clocks:
-> 
-> Don't need to define assigned-clocks
-> 
->> +          items:
->> +            - description: Phandle, clock specifier of GCC_ANOC_WCSS_AXI_M_CLK
->> +            - description: Phandle, clock specifier of GCC_WCSS_AHB_S_CLK
->> +            - description: Phandle, clock specifier of GCC_WCSS_ECAHB_CLK
->> +            - description: Phandle, clock specifier of GCC_WCSS_ACMT_CLK
->> +            - description: Phandle, clock specifier of GCC_WCSS_AXI_M_CLK
->> +            - description: Phandle, clock specifier of GCC_Q6_AXIM_CLK
->> +            - description: Phandle, clock specifier of GCC_Q6_AXIM2_CLK
->> +            - description: Phandle, clock specifier of GCC_Q6_AHB_CLK
->> +            - description: Phandle, clock specifier of GCC_Q6_AHB_S_CLK
->> +            - description: Phandle, clock specifier of GCC_Q6SS_BOOT_CLK
->> +            - description: Phandle, clock specifier of GCC_MEM_NOC_Q6_AXI_CLK
->> +            - description: Phandle, clock specifier of GCC_WCSS_Q6_TBU_CLK
->> +            - description: Phandle, clock specifier of GCC_SYS_NOC_WCSS_AHB_CLK
->> +        assigned-clock-rates:
->> +          items:
->> +            - description: Must be 266666667 HZ
->> +            - description: Must be 133333333 HZ
->> +            - description: Must be 133333333 HZ
->> +            - description: Must be 133333333 HZ
->> +            - description: Must be 266666667 HZ
->> +            - description: Must be 533000000 HZ
->> +            - description: Must be 342857143 HZ
->> +            - description: Must be 133333333 HZ
->> +            - description: Must be 133333333 HZ
->> +            - description: Must be 342857143 HZ
->> +            - description: Must be 533000000 HZ
->> +            - description: Must be 533000000 HZ
->> +            - description: Must be 133333333 HZ
->> +
->> +examples:
->> +  - |
->> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +        #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
->> +        #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
->> +
->> +        q6v5_wcss: remoteproc@cd00000 {
->> +                compatible = "qcom,ipq5018-q6-mpd";
->> +                #address-cells = <1>;
->> +                #size-cells = <1>;
->> +                ranges;
->> +                reg = <0x0cd00000 0x4040>;
->> +                interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
->> +                                <&wcss_smp2p_in 0 0>,
->> +                                <&wcss_smp2p_in 1 0>,
->> +                                <&wcss_smp2p_in 2 0>,
->> +                                <&wcss_smp2p_in 3 0>;
->> +                interrupt-names = "wdog",
->> +                                  "fatal",
->> +                                  "ready",
->> +                                  "handover",
->> +                                  "stop-ack";
->> +
->> +                qcom,smem-states = <&wcss_smp2p_out 0>,
->> +                                   <&wcss_smp2p_out 1>;
->> +                qcom,smem-state-names = "shutdown",
->> +                                        "stop";
->> +
->> +                memory-region = <&q6_region>;
->> +
->> +                glink-edge {
->> +                        interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
->> +                        label = "rtr";
->> +                        qcom,remote-pid = <1>;
->> +                        mboxes = <&apcs_glb 8>;
->> +                };
->> +
->> +                q6_wcss_pd1: remoteproc_pd1 {
->> +                        compatible = "qcom,ipq5018-wcss-ahb-mpd";
->> +                        interrupts-extended = <&wcss_smp2p_in 8 0>,
->> +                                        <&wcss_smp2p_in 9 0>,
->> +                                        <&wcss_smp2p_in 12 0>,
->> +                                        <&wcss_smp2p_in 11 0>;
->> +                        interrupt-names = "fatal",
->> +                                          "ready",
->> +                                          "spawn-ack",
->> +                                          "stop-ack";
->> +                        qcom,smem-states = <&wcss_smp2p_out 8>,
->> +                                           <&wcss_smp2p_out 9>,
->> +                                           <&wcss_smp2p_out 10>;
->> +                        qcom,smem-state-names = "shutdown",
->> +                                                "stop",
->> +                                                "spawn";
->> +                };
->> +
->> +                q6_wcss_pd2: remoteproc_pd2 {
->> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
->> +                        interrupts-extended = <&wcss_smp2p_in 16 0>,
->> +                                        <&wcss_smp2p_in 17 0>,
->> +                                        <&wcss_smp2p_in 20 0>,
->> +                                        <&wcss_smp2p_in 19 0>;
->> +                        interrupt-names = "fatal",
->> +                                          "ready",
->> +                                          "spawn-ack",
->> +                                          "stop-ack";
->> +
->> +                        qcom,smem-states = <&wcss_smp2p_out 16>,
->> +                                           <&wcss_smp2p_out 17>,
->> +                                           <&wcss_smp2p_out 18>;
->> +                        qcom,smem-state-names = "shutdown",
->> +                                                "stop",
->> +                                                "spawn";
->> +                        status = "okay";
-> 
-> Don't need status in examples.
-> 
->> +                };
->> +
->> +                q6_wcss_pd3: remoteproc_pd3 {
->> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
->> +                        interrupts-extended = <&wcss_smp2p_in 24 0>,
->> +                                        <&wcss_smp2p_in 25 0>,
->> +                                        <&wcss_smp2p_in 28 0>,
->> +                                        <&wcss_smp2p_in 27 0>;
->> +                        interrupt-names = "fatal",
->> +                                          "ready",
->> +                                          "spawn-ack",
->> +                                          "stop-ack";
->> +
->> +                        qcom,smem-states = <&wcss_smp2p_out 24>,
->> +                                           <&wcss_smp2p_out 25>,
->> +                                           <&wcss_smp2p_out 26>;
->> +                        qcom,smem-state-names = "shutdown",
->> +                                                "stop",
->> +                                                "spawn";
->> +                        status = "okay";
->> +                };
->> +        };
->> -- 
->> 2.34.1
->>
+I will update.
+> Regards,
+>   Sricharan
