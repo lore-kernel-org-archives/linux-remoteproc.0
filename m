@@ -2,215 +2,162 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B60C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 May 2023 18:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819C7C7EE2D
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 May 2023 18:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbjEUS2l (ORCPT
+        id S229522AbjEUScP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 21 May 2023 14:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48684 "EHLO
+        Sun, 21 May 2023 14:32:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231807AbjEUSVA (ORCPT
+        with ESMTP id S231392AbjEURu0 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 21 May 2023 14:21:00 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAEF113E
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 May 2023 11:10:37 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id 3f1490d57ef6-ba8cf3cb34fso4110479276.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 May 2023 11:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684692636; x=1687284636;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lkjzc+aDypSMI7e9l+x5HsKGmCuqjdvtk76l+YseVrM=;
-        b=n+WUlbPG7U+2MxbjLkfmws8nrRXJXShW2Xrti83ugFG3vzfFfmcSOXShpI7MG5o1Si
-         PViSN5gazzVaDCtWYkvQnuGiDCj5UZxxrf3m9Zs72O/5yQFIRW9jjXiMKXxbQ53HXDmz
-         P+dbNP+X6WcBXBD8P7un7KR6KtvnbILpdRF3PUyt6l+6hWssJWIndDt45xgbB+3qCmVi
-         XTtVtELIUcEw6mjXj0/J7pvdDbxnXcEVuBhrlzzW+HaUNgJKdSkje5LpqbYR93lT8zgE
-         hvUWBMX1fvEv4Ap8KszP/JyGxMABZuOzOPx2+E2me/69YhoX9d6oZFdSMaMqewkFZZON
-         EuyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684692636; x=1687284636;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lkjzc+aDypSMI7e9l+x5HsKGmCuqjdvtk76l+YseVrM=;
-        b=gZp51zwM8wRgAeR0HrCmFuXSBBK1K4p0sK/HbbrtQ+BgrUDClPZUijAbw55/inPfCP
-         rWvniy5lwNgolGfvxJ6R5wIGue6D9RDdXochXKv6pHhgt7+DWe+5vda7zCc+MPKJh2qa
-         RBzrUWAAku3ZxuHIZDRj5I3kxC8fUriKmXA2mAG0NK1hE7rufehrNPSKgL8iaDm6vPYx
-         RKbl639gN5OUW6WjQv3vSjB5575PNgoJHR1lECgH6XG+s/aXRtGI8tvtJlC8+d5U8fi3
-         1Zl39VGaZm6t9og+z74ZCweX8I3ftDsyoHd+Xe+n7/FjJIza/T8jfMoX07ItlEF7Cdvy
-         2zmg==
-X-Gm-Message-State: AC+VfDzQ17B/zkUigmCnbQRFhJPFHAaxUYBq35PL7JBjo3wspNr3mKaf
-        j/QibqVu1//Z/SHDmP0oyKCaKz3vurTvtXuUOIoEoQ==
-X-Google-Smtp-Source: ACHHUZ55W84sCFiOxOJpLNBhRJQ8wI4F5e70a7F/5r8/nyLXHtEwHzpYQsd9caGfXD1Y3CXq9xw91dvDYW+yC7cT0WY=
-X-Received: by 2002:a25:250e:0:b0:b9a:affd:64d3 with SMTP id
- l14-20020a25250e000000b00b9aaffd64d3mr8761953ybl.15.1684692636458; Sun, 21
- May 2023 11:10:36 -0700 (PDT)
+        Sun, 21 May 2023 13:50:26 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48921720;
+        Sun, 21 May 2023 10:44:47 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34LHcPAL017651;
+        Sun, 21 May 2023 17:44:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ztr/IrR1R/TohKTPGnGacnHC39isrkFF359v/DkDe8w=;
+ b=NcHUn/ehjZuieWfTQGG6vdUs5zHJbxI6HOjsSnsNQwzxwVN6kNYuw6kr0mWBXshuGily
+ +UUQ3gkrFXbHeLZZmWauL4RwxlxPDtwg4pYVY6ulNC/tfnk7v7KnS3gJvogVs/JPopHn
+ 9gCV4eO8TniX9dtjOZYOLzFQkrCy5KfIQa1BZJrTq6qZhW5LWTWZ4dP2YUPF/D9/c8wm
+ O4cL22IJT18cJTWlZj01QlU5o3VYIjpQfYLgBH3VNr6CfNx9hHEv9nlis6W3ZdkbWuM+
+ ozvTKAlXfUh0xQZ+S5PbT0XxrSfSffvuEWG0Taf1lWU8lq+VE3l07B/gCrHmfUVPMja6 cg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qpqctsy02-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 21 May 2023 17:44:40 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34LHidtL030413
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 21 May 2023 17:44:39 GMT
+Received: from [10.216.45.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 21 May
+ 2023 10:44:31 -0700
+Message-ID: <202568ee-5bf0-1726-820a-5fb747969893@quicinc.com>
+Date:   Sun, 21 May 2023 23:14:27 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
+CC:     <quic_sjaganat@quicinc.com>, <quic_gurus@quicinc.com>,
+        <quic_gokulsri@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <andersson@kernel.org>, <jassisinghbrar@gmail.com>,
+        <konrad.dybcio@linaro.org>, <quic_eberman@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <robimarko@gmail.com>,
+        <mturquette@baylibre.com>, <mathieu.poirier@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <quic_arajkuma@quicinc.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <loic.poulain@linaro.org>, <quic_anusha@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <agross@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
 References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
- <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com> <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
-In-Reply-To: <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sun, 21 May 2023 21:10:25 +0300
-Message-ID: <CAA8EJpoH51ajGvSdb1VBmtkKdLUnVGNhoBay93whz+hJh4ApXA@mail.gmail.com>
-Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc driver
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
-        loic.poulain@linaro.org, quic_eberman@quicinc.com,
-        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
-        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
-        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <167819522915.3831.12765243745569076133.robh@kernel.org>
+ <9de5629f-0a69-7b5b-c312-ab6fe19d60f8@quicinc.com>
+ <fdb8e5a9-d8a0-1881-894f-1202ceefcc21@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <fdb8e5a9-d8a0-1881-894f-1202ceefcc21@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BvZwTcxkdB5K8xursqQddjOTT8QXNbi9
+X-Proofpoint-GUID: BvZwTcxkdB5K8xursqQddjOTT8QXNbi9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-21_13,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ mlxlogscore=740 clxscore=1015 lowpriorityscore=0 phishscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305210158
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, 21 May 2023 at 18:48, Manikanta Mylavarapu
-<quic_mmanikan@quicinc.com> wrote:
->
->
->
-> On 3/7/2023 6:47 PM, Sricharan Ramabadhran wrote:
-> >
-> >
-> > On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
-> >> APSS brings Q6 out of reset and then Q6 brings
-> >> WCSS block (wifi radio's) out of reset.
-> >>
-> >>                    ---------------
-> >>                   -->  |WiFi 2G radio|
-> >>                   |       --------------
-> >>                   |
-> >> --------    -------          |
-> >> | APSS | --->   |QDSP6|  -----|
-> >> ---------    -------       |
-> >>                                |
-> >>                          |
-> >>                   |   --------------
-> >>                   --> |WiFi 5G radio|
-> >>                   --------------
-> >>
-> >> Problem here is if any radio crashes, subsequently other
-> >> radio also should crash because Q6 crashed. Let's say
-> >> 2G radio crashed, Q6 should pass this info to APSS. Only
-> >> Q6 processor interrupts registered with APSS. Obviously
-> >> Q6 should crash and raise fatal interrupt to APSS. Due
-> >> to this 5G radio also crashed. But no issue in 5G radio,
-> >> because of 2G radio crash 5G radio also impacted.
-> >>
-> >> In multi pd model, this problem is resolved. Here WCSS
-> >> functionality (WiFi radio's) moved out from Q6 root pd
-> >> to a separate user pd. Due to this, radio's independently
-> >> pass their status info to APPS with out crashing Q6. So
-> >> other radio's won't be impacted.
-> >>
-> >>                         ---------
-> >>                             |WiFi    |
-> >>                         --> |2G radio|
-> >>                         |     ---------
-> >> ------    Start Q6             -------     |
-> >> |    |    ------------------>     |     |     |
-> >> |    |  Start WCSS PD1 (2G)       |     |        |
-> >> |APSS|    ----------------------->|QDSP6|-----|
-> >> |    |    Start WCSS PD1 (5G)    |     |
-> >> |    |    ----------------------->|     |-----|
-> >> ------                     -------     |
-> >>                         |
-> >>                         |    -----------
-> >>                         |-->|WiFi      |
-> >>                         |5G radio |
-> >>                         -----------
-> >> According to linux terminology, here consider Q6 as root
-> >> i.e it provide all services, WCSS (wifi radio's) as user
-> >> i.e it uses services provided by root.
-> >>
-> >> Since Q6 root & WCSS user pd's able to communicate with
-> >> APSS individually, multipd remoteproc driver registers
-> >> each PD with rproc framework. Here clients (Wifi host drivers)
-> >> intrested on WCSS PD rproc, so multipd driver start's root
-> >> pd in the context of WCSS user pd rproc start. Similarly
-> >> on down path, root pd will be stopped after wcss user pd
-> >> stopped.
-> >>
-> >> Here WCSS(user) PD is dependent on Q6(root) PD, so first
-> >> q6 pd should be up before wcss pd. After wcss pd goes down,
-> >> q6 pd should be turned off.
-> >>
-> >> rproc->ops->start(userpd_rproc) {
-> >>     /* Boot root pd rproc */
-> >>     rproc_boot(upd_dev->parent);
-> >>     ---
-> >>     /* user pd rproc start sequence */
-> >>     ---
-> >>     ---
-> >> }
-> >> With this way we ensure that root pd brought up before userpd.
-> >>
-> >> rproc->ops->stop(userpd_rproc) {
-> >>     ---
-> >>     ---
-> >>     /* user pd rproc stop sequence */
-> >>     ---
-> >>     ---
-> >>     /* Shutdown root pd rproc */
-> >>     rproc_shutdown(upd_dev->parent);
-> >> }
-> >> After userpd rproc stops, root pd rproc will be stopped.
-> >> IPQ5018, IPQ9574 supports multipd remoteproc driver.
-> >>
-> >> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> >> ---
-> >>   drivers/firmware/qcom_scm.c            | 114 +++++
-> >>   drivers/firmware/qcom_scm.h            |   6 +
-> >>   drivers/remoteproc/Kconfig             |  20 +
-> >>   drivers/remoteproc/Makefile            |   1 +
-> >>   drivers/remoteproc/qcom_common.c       |  23 +
-> >>   drivers/remoteproc/qcom_common.h       |   1 +
-> >>   drivers/remoteproc/qcom_q6v5.c         |  41 +-
-> >>   drivers/remoteproc/qcom_q6v5.h         |  15 +-
-> >>   drivers/remoteproc/qcom_q6v5_adsp.c    |   5 +-
-> >>   drivers/remoteproc/qcom_q6v5_mpd.c     | 668 +++++++++++++++++++++++++
-> >>   drivers/remoteproc/qcom_q6v5_mss.c     |   4 +-
-> >>   drivers/remoteproc/qcom_q6v5_pas.c     |   3 +-
-> >>   drivers/soc/qcom/mdt_loader.c          | 314 ++++++++++++
-> >>   include/linux/firmware/qcom/qcom_scm.h |   3 +
-> >>   include/linux/soc/qcom/mdt_loader.h    |  19 +
-> >>   15 files changed, 1228 insertions(+), 9 deletions(-)
-> >>   create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
-> >>
-> >> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
-> >> index d88c5f14bd54..d69560963353 100644
-> >> --- a/drivers/firmware/qcom_scm.c
-> >> +++ b/drivers/firmware/qcom_scm.c
-> >> @@ -654,6 +654,120 @@ int qcom_scm_pas_shutdown(u32 peripheral)
-> >>   }
-> >>   EXPORT_SYMBOL(qcom_scm_pas_shutdown);
-> >> +/**
-> >> + * qti_scm_int_radio_powerup - Bring up internal radio userpd
-> >> + *
-> >> + * @peripheral:    peripheral id
-> >> + *
-> >> + * Return 0 on success.
-> >> + */
-> >> +int qti_scm_int_radio_powerup(u32 peripheral)
-> >> +{
-> >
-> > qcom instead and in other places too.
-> >
-> Internal open source team suggested to use qti.
 
-All existing drivers use qcom_ prefix. Other functions in qcom_scm.c
-use qcom_ prefix. Please stick to it.
 
--- 
-With best wishes
-Dmitry
+On 5/3/2023 9:57 PM, Krzysztof Kozlowski wrote:
+> On 03/05/2023 12:59, Manikanta Mylavarapu wrote:
+>>
+>>
+>> On 3/7/2023 6:53 PM, Rob Herring wrote:
+>>>
+>>> On Tue, 07 Mar 2023 10:11:27 +0530, Manikanta Mylavarapu wrote:
+>>>> Add new binding document for multipd model remoteproc.
+>>>> IPQ5018, IPQ9574 follows multipd model.
+>>>>
+>>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>>> ---
+>>>>    .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
+>>>>    1 file changed, 282 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>>>
+>>>
+>>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>>
+>>> yamllint warnings/errors:
+>>>
+>>> dtschema/dtc warnings/errors:
+>>> Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.example.dts:22:18: fatal error: dt-bindings/clock/qcom,gcc-ipq5018.h: No such file or directory
+>>>      22 |         #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>>>         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>> compilation terminated.
+>>> make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.example.dtb] Error 1
+>>> make[1]: *** Waiting for unfinished jobs....
+>>> make: *** [Makefile:1512: dt_binding_check] Error 2
+>>>
+>>> doc reference errors (make refcheckdocs):
+>>>
+>>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com
+>>>
+>>> The base for the series is generally the latest rc1. A different dependency
+>>> should be noted in *this* patch.
+>>>
+>>> If you already ran 'make dt_binding_check' and didn't see the above
+>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>>> date:
+>>>
+>>> pip3 install dtschema --upgrade
+>>>
+>>> Please check and re-submit after running the above command yourself. Note
+>>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>>> your schema. However, it must be unset to test all examples with your schema.
+>>>
+>>
+>> I mentioned dependency link
+>> (https://lore.kernel.org/linux-arm-msm/20220621161126.15883-1-quic_srichara@quicinc.com/)
+>> in cover page patch because it's required for entire series. I will add
+>> dependency link's and raise new patchset.
+> 
+> Is the dependency merged for v6.4-rc1? Looks not, so this means the
+> patch cannot be merged for next three months.
+> 
+> Why do you need any dependency here in this binding?
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Since i removed gcc clocks from DTS nodes, dt-bindings are not required.
+I will remove it.
+
+Thanks & Regards,
+Manikanta.
