@@ -2,237 +2,233 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828ADC77B73
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 May 2023 22:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1F8C77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 May 2023 22:29:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbjEUWHh (ORCPT
+        id S231190AbjEUW3Y (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 21 May 2023 18:07:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37020 "EHLO
+        Sun, 21 May 2023 18:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229528AbjEUWHg (ORCPT
+        with ESMTP id S229571AbjEUW3X (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 21 May 2023 18:07:36 -0400
+        Sun, 21 May 2023 18:29:23 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80E8FDC;
-        Sun, 21 May 2023 15:07:35 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34LM08BE003381;
-        Sun, 21 May 2023 22:07:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=+63/G/Tv/MrcI5FFFsDFDEW053aArl4gLPbcVipYQ/I=;
- b=ZjssRMTFpesSGNTyncoKjKunNIuZOaWsNoYAPnF0i5Kvf17qPPlbbX5ra5xYz5HIttGZ
- 7J5lrWFWsgIvqzsMFly2EZj1Pt+Nqy8fdTe9IGfomX1jtBGgnDZh1Lp+uBgsHvLi2mwQ
- 3GzCkOXmDnwi1FCVa0nbxG4JnTBdrfpvAU82WOQjvz6WVZ17bd24ax0mdu9bZT4UWVRV
- Yzc6964KvVAGApYq7UIXYLvve590DjKszl32dCh/NTMqSB1huJeL+g3rnKQ382GkpwS5
- P/su2SIcL29aXSV9fe0NGvqKztsUgqjhhE1CNDl0YUfVZ/s55OHE61W7FBjlBHDTnViO +w== 
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3822EDE;
+        Sun, 21 May 2023 15:29:22 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34LMSYaX007750;
+        Sun, 21 May 2023 22:29:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=n5ptajVHTuzBLYXfFcRkoFuin90Tu5SSz+cp+G+yHKI=;
+ b=I1T4bNzKEsi3e2QZFwxW1mDJgak3FE+T7Vhutu4AWYNl/D5BmfW72YJodMQ4ZcwiwlbK
+ K7s+YS7FJgFT9wpSZdP0eoeWyEuTgH5bIauSe6erRG5goU93Mk/sWSXz/x1/Ynxf6vBM
+ 6xBzuEBwHptH0UtN2E65fGc2P/gsuANHbQM2Hopt0b1JMA6gva+vn6/tlcC4Iogj0kmg
+ AWP2nWOv+DlzrgKOKFhh6/ptEnnGqjFjB52jQQ9Suom67L+F9aZxFagw37i10wQdscac
+ UcwaJAczK8KewyqLfX4NoW00F21iiNFY4F/+ATLrffQ+neMzLOv2dybmaSk2/aaGnQTN GQ== 
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qppa1a98t-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qpn7f2bmu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 21 May 2023 22:07:24 +0000
+        Sun, 21 May 2023 22:29:17 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34LM7NgP023683
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34LMTGBG010444
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 21 May 2023 22:07:23 GMT
-Received: from [10.216.45.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 21 May
- 2023 15:07:16 -0700
-Message-ID: <24826ca7-a9fa-9602-39ba-870021150c8d@quicinc.com>
-Date:   Mon, 22 May 2023 03:37:12 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
- <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com>
- <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
- <CAA8EJpoH51ajGvSdb1VBmtkKdLUnVGNhoBay93whz+hJh4ApXA@mail.gmail.com>
+        Sun, 21 May 2023 22:29:16 GMT
+Received: from mmanikan-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Sun, 21 May 2023 15:29:08 -0700
 From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <CAA8EJpoH51ajGvSdb1VBmtkKdLUnVGNhoBay93whz+hJh4ApXA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <kvalo@kernel.org>, <quic_mmanikan@quicinc.com>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+Subject: [PATCH V2 00/13] Add multipd remoteproc support
+Date:   Mon, 22 May 2023 03:58:39 +0530
+Message-ID: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: H7Ecfu0LluM_zm-IRWNWOOtdyxEJw1xS
-X-Proofpoint-ORIG-GUID: H7Ecfu0LluM_zm-IRWNWOOtdyxEJw1xS
+X-Proofpoint-GUID: y7pxhY4MegK2_kpqNF6sO1C7g0SRe8hQ
+X-Proofpoint-ORIG-GUID: y7pxhY4MegK2_kpqNF6sO1C7g0SRe8hQ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-21_16,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=0
- priorityscore=1501 spamscore=0 mlxlogscore=943 phishscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305210199
+ definitions=2023-05-21_17,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=695
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 adultscore=0 clxscore=1011 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305210202
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+APSS brings Q6 out of reset and then Q6 brings
+WCSS block (wifi radio's) out of reset.
+
+				   ---------------
+			      -->  |WiFi 2G radio|
+			      |	   --------------
+			      |
+--------	-------	      |
+| APSS | --->   |QDSP6|  -----|
+---------	-------       |
+                              |
+      			      |
+			      |   --------------
+			      --> |WiFi 5G radio|
+				  --------------
+
+Problem here is if any radio crashes, subsequently other
+radio also should crash because Q6 crashed. Let's say
+2G radio crashed, Q6 should pass this info to APSS. Only
+Q6 processor interrupts registered with APSS. Obviously
+Q6 should crash and raise fatal interrupt to APSS. Due
+to this 5G radio also crashed. But no issue in 5G radio,
+because of 2G radio crash 5G radio also impacted.
+
+In multi pd model, this problem is resolved. Here WCSS
+functionality (WiFi radio's) moved out from Q6 root pd
+to a separate user pd. Due to this, radio's independently
+pass their status info to APPS with out crashing Q6. So
+other radio's won't be impacted.
+
+Pd means protection domain. It's similar to process in Linux.
+Here QDSP6 processor runs each wifi radio functionality on a
+separate process. One process can't access other process
+resources, so this is termed as PD i.e protection domain.
+
+						---------
+					    	|WiFi    |
+					    --> |2G radio|
+					    | 	---------
+------	Start Q6     		-------     |
+|    |	------------------>     |     |     |
+|    |  Start WCSS PD1 (2G)   	|     |	    |
+|APSS|	----------------------->|QDSP6|-----|
+|    |	Start WCSS PD1 (5G)	|     |
+|    |	----------------------->|     |-----|
+------		     		-------     |
+					    |
+					    |	-----------
+					    |-->|WiFi	  |
+						|5G radio |
+						-----------
+According to linux terminology, here consider Q6 as root
+i.e it provide all services, WCSS (wifi radio's) as user
+i.e it uses services provided by root.
+
+Since Q6 root & WCSS user pd's able to communicate with
+APSS individually, multipd remoteproc driver registers
+each PD with rproc framework. Here clients (Wifi host drivers)
+intrested on WCSS PD rproc, so multipd driver start's root
+pd in the context of WCSS user pd rproc start. Similarly
+on down path, root pd will be stopped after wcss user pd
+stopped.
+
+Here WCSS(user) PD is dependent on Q6(root) PD, so first
+q6 pd should be up before wcss pd. After wcss pd goes down,
+q6 pd should be turned off.
+
+rproc->ops->start(userpd_rproc) {
+	/* Boot root pd rproc */
+	rproc_boot(upd_dev->parent);
+	---
+	/* user pd rproc start sequence */
+	---
+	---
+}
+With this way we ensure that root pd brought up before userpd.
+
+rproc->ops->stop(userpd_rproc) {
+	---
+	---
+	/* user pd rproc stop sequence */
+	---
+	---
+	/* Shutdown root pd rproc */
+	rproc_shutdown(upd_dev->parent);
+}
+After userpd rproc stops, root pd rproc will be stopped.
+IPQ5018, IPQ9574 supports multipd remoteproc driver.
+
+DTS patch [13/13] is based on below series
+https://lore.kernel.org/linux-arm-msm/20230519090219.15925-1-quic_devipriy@quicinc.com/
+	
+[V2]
+	- This patch is depends on the below series
+https://lore.kernel.org/linux-arm-msm/20230519090219.15925-1-quic_devipriy@quicinc.com/
+https://lore.kernel.org/linux-arm-msm/20230519125409.497439-1-quic_srichara@quicinc.com/
+	- Fixed all comments and rebased for TOT.
+	- Strip off SCM code changes from https://lore.kernel.org/linux-arm-msm/1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com/
+	  and made new patchset [08/13]
+	- Strip off qcom_q6v5 changes from https://lore.kernel.org/linux-arm-msm/1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com/
+	  and made new patchset [09/13]
+	- since clocks handled by QDSP6 firmware
+	  Dropped https://lore.kernel.org/linux-arm-msm/1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com/,
+	  https://lore.kernel.org/linux-arm-msm/1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com/.
+ 	  Added [04/13], [05/13], [06/13], [07/13] patches.
+
+Manikanta Mylavarapu (13):
+  dt-bindings: remoteproc: qcom: Add support for multipd model
+  dt-bindings: mailbox: qcom: Add IPQ5018 APCS compatible
+  dt-bindings: arm: qcom: Document the Qualcomm rdp432-c1 board
+  dt-bindings: clock: qcom: gcc-ipq5018: remove q6 clocks macros
+  dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring up clock macros
+  clk: qcom: ipq5018: remove q6 bring up clocks
+  clk: qcom: ipq9574: remove q6 bring up clocks
+  firmware: qcom_scm: ipq5018: Add WCSS AHB pd support
+  remoteproc: qcom: q6v5: Add multipd interrupts support
+  remoteproc: qcom: Add Hexagon based multipd rproc driver
+  arm64: dtsi: qcom: ipq5018: enable nodes required for multipd
+  arm64: dts: qcom: ipq5018: Add RDP432-c1 board support
+  arm64: dtsi: qcom: ipq9574: Add nodes to bring up multipd
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ .../mailbox/qcom,apcs-kpss-global.yaml        |   1 +
+ .../bindings/remoteproc/qcom,multipd-pil.yaml | 265 +++++++
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts |  49 ++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 140 ++++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 118 +++
+ drivers/clk/qcom/gcc-ipq5018.c                | 414 -----------
+ drivers/clk/qcom/gcc-ipq9574.c                | 326 ---------
+ drivers/firmware/qcom_scm.c                   | 114 +++
+ drivers/firmware/qcom_scm.h                   |   6 +
+ drivers/remoteproc/Kconfig                    |  20 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_common.h              |   9 +
+ drivers/remoteproc/qcom_q6v5.c                |  37 +-
+ drivers/remoteproc/qcom_q6v5.h                |  11 +
+ drivers/remoteproc/qcom_q6v5_mpd.c            | 677 ++++++++++++++++++
+ drivers/soc/qcom/mdt_loader.c                 | 332 +++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq5018.h  |  21 -
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |  18 -
+ include/linux/firmware/qcom/qcom_scm.h        |   3 +
+ include/linux/soc/qcom/mdt_loader.h           |  19 +
+ 22 files changed, 1801 insertions(+), 782 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts
+ create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
 
 
-On 5/21/2023 11:40 PM, Dmitry Baryshkov wrote:
-> On Sun, 21 May 2023 at 18:48, Manikanta Mylavarapu
-> <quic_mmanikan@quicinc.com> wrote:
->>
->>
->>
->> On 3/7/2023 6:47 PM, Sricharan Ramabadhran wrote:
->>>
->>>
->>> On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
->>>> APSS brings Q6 out of reset and then Q6 brings
->>>> WCSS block (wifi radio's) out of reset.
->>>>
->>>>                     ---------------
->>>>                    -->  |WiFi 2G radio|
->>>>                    |       --------------
->>>>                    |
->>>> --------    -------          |
->>>> | APSS | --->   |QDSP6|  -----|
->>>> ---------    -------       |
->>>>                                 |
->>>>                           |
->>>>                    |   --------------
->>>>                    --> |WiFi 5G radio|
->>>>                    --------------
->>>>
->>>> Problem here is if any radio crashes, subsequently other
->>>> radio also should crash because Q6 crashed. Let's say
->>>> 2G radio crashed, Q6 should pass this info to APSS. Only
->>>> Q6 processor interrupts registered with APSS. Obviously
->>>> Q6 should crash and raise fatal interrupt to APSS. Due
->>>> to this 5G radio also crashed. But no issue in 5G radio,
->>>> because of 2G radio crash 5G radio also impacted.
->>>>
->>>> In multi pd model, this problem is resolved. Here WCSS
->>>> functionality (WiFi radio's) moved out from Q6 root pd
->>>> to a separate user pd. Due to this, radio's independently
->>>> pass their status info to APPS with out crashing Q6. So
->>>> other radio's won't be impacted.
->>>>
->>>>                          ---------
->>>>                              |WiFi    |
->>>>                          --> |2G radio|
->>>>                          |     ---------
->>>> ------    Start Q6             -------     |
->>>> |    |    ------------------>     |     |     |
->>>> |    |  Start WCSS PD1 (2G)       |     |        |
->>>> |APSS|    ----------------------->|QDSP6|-----|
->>>> |    |    Start WCSS PD1 (5G)    |     |
->>>> |    |    ----------------------->|     |-----|
->>>> ------                     -------     |
->>>>                          |
->>>>                          |    -----------
->>>>                          |-->|WiFi      |
->>>>                          |5G radio |
->>>>                          -----------
->>>> According to linux terminology, here consider Q6 as root
->>>> i.e it provide all services, WCSS (wifi radio's) as user
->>>> i.e it uses services provided by root.
->>>>
->>>> Since Q6 root & WCSS user pd's able to communicate with
->>>> APSS individually, multipd remoteproc driver registers
->>>> each PD with rproc framework. Here clients (Wifi host drivers)
->>>> intrested on WCSS PD rproc, so multipd driver start's root
->>>> pd in the context of WCSS user pd rproc start. Similarly
->>>> on down path, root pd will be stopped after wcss user pd
->>>> stopped.
->>>>
->>>> Here WCSS(user) PD is dependent on Q6(root) PD, so first
->>>> q6 pd should be up before wcss pd. After wcss pd goes down,
->>>> q6 pd should be turned off.
->>>>
->>>> rproc->ops->start(userpd_rproc) {
->>>>      /* Boot root pd rproc */
->>>>      rproc_boot(upd_dev->parent);
->>>>      ---
->>>>      /* user pd rproc start sequence */
->>>>      ---
->>>>      ---
->>>> }
->>>> With this way we ensure that root pd brought up before userpd.
->>>>
->>>> rproc->ops->stop(userpd_rproc) {
->>>>      ---
->>>>      ---
->>>>      /* user pd rproc stop sequence */
->>>>      ---
->>>>      ---
->>>>      /* Shutdown root pd rproc */
->>>>      rproc_shutdown(upd_dev->parent);
->>>> }
->>>> After userpd rproc stops, root pd rproc will be stopped.
->>>> IPQ5018, IPQ9574 supports multipd remoteproc driver.
->>>>
->>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>>> ---
->>>>    drivers/firmware/qcom_scm.c            | 114 +++++
->>>>    drivers/firmware/qcom_scm.h            |   6 +
->>>>    drivers/remoteproc/Kconfig             |  20 +
->>>>    drivers/remoteproc/Makefile            |   1 +
->>>>    drivers/remoteproc/qcom_common.c       |  23 +
->>>>    drivers/remoteproc/qcom_common.h       |   1 +
->>>>    drivers/remoteproc/qcom_q6v5.c         |  41 +-
->>>>    drivers/remoteproc/qcom_q6v5.h         |  15 +-
->>>>    drivers/remoteproc/qcom_q6v5_adsp.c    |   5 +-
->>>>    drivers/remoteproc/qcom_q6v5_mpd.c     | 668 +++++++++++++++++++++++++
->>>>    drivers/remoteproc/qcom_q6v5_mss.c     |   4 +-
->>>>    drivers/remoteproc/qcom_q6v5_pas.c     |   3 +-
->>>>    drivers/soc/qcom/mdt_loader.c          | 314 ++++++++++++
->>>>    include/linux/firmware/qcom/qcom_scm.h |   3 +
->>>>    include/linux/soc/qcom/mdt_loader.h    |  19 +
->>>>    15 files changed, 1228 insertions(+), 9 deletions(-)
->>>>    create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
->>>>
->>>> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
->>>> index d88c5f14bd54..d69560963353 100644
->>>> --- a/drivers/firmware/qcom_scm.c
->>>> +++ b/drivers/firmware/qcom_scm.c
->>>> @@ -654,6 +654,120 @@ int qcom_scm_pas_shutdown(u32 peripheral)
->>>>    }
->>>>    EXPORT_SYMBOL(qcom_scm_pas_shutdown);
->>>> +/**
->>>> + * qti_scm_int_radio_powerup - Bring up internal radio userpd
->>>> + *
->>>> + * @peripheral:    peripheral id
->>>> + *
->>>> + * Return 0 on success.
->>>> + */
->>>> +int qti_scm_int_radio_powerup(u32 peripheral)
->>>> +{
->>>
->>> qcom instead and in other places too.
->>>
->> Internal open source team suggested to use qti.
-> 
-> All existing drivers use qcom_ prefix. Other functions in qcom_scm.c
-> use qcom_ prefix. Please stick to it.
-> 
+base-commit: dbd91ef4e91c1ce3a24429f5fb3876b7a0306733
+--
+2.17.1
 
-I will discuss with internal team and update in V3 series.
-
-Thanks & Regards,
-Manikanta.
