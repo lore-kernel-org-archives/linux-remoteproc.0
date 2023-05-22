@@ -2,46 +2,46 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC483C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 May 2023 14:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44858C77B75
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 May 2023 15:33:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233117AbjEVOgX (ORCPT
+        id S233974AbjEVPdM (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 May 2023 10:36:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
+        Mon, 22 May 2023 11:33:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232833AbjEVOgW (ORCPT
+        with ESMTP id S231255AbjEVPdL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 May 2023 10:36:22 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB8799;
-        Mon, 22 May 2023 07:36:20 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MDKcCt014866;
-        Mon, 22 May 2023 14:36:13 GMT
+        Mon, 22 May 2023 11:33:11 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9632AA;
+        Mon, 22 May 2023 08:33:09 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MEdf0I012567;
+        Mon, 22 May 2023 15:33:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=udS8vuoIq/MqmnFiF3MIBi5Ur5CPSuoz/BwfHiDeaR0=;
- b=QOguyjJY0yx/Q+jfcgp+RXugmJGJJ3wOMr+lWV3lH/t4ZtULQEO2qHPPuzX8WxEqDd+B
- VxDxrRvPrloQwXj0biQf2N63glTSa4vtrX9G3s6w5K3MRcHMEB2jlDs4X3rlFqdN0O+m
- NTIo2pGFIlI2SGQ4oF/mKY02MxEkp/T/KtIt1yZA/Nc3Na0Ubuvkk1SxFMzwUykeQnVX
- EGwHi1q02QwG11qvsDkxEhKfpGyQPnz8XBCQH1n01b22j0CgDNaTE7ncg30VhqPaI0hF
- nxVzhPanhUR5s6ccLj4MolZDm/2e8RU/XOaIe62Cp/7bbGWBXcgMV+SkG1lRHSRSuMMG 6Q== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qr8qr871m-1
+ bh=6XGFyEzczDwyR5+6vRQrf4JUOYRAtfqw+FiJTqGz47Q=;
+ b=SQXkc3SpFJmbDIH8wbNOM0NwmVjRs0Jhgh6CAJEPp2XSeufIrhkJ7rZJ21S+/gs5zKX+
+ +Bif1KBVXrv4cdcmd9jhE9GEpu9pKmphL2s4u7tNaND1COp6OB7XI0f4eE5IK2t8nyiZ
+ /soaHCUrNDiMzZsi5x9rawpseLIRWCrYt126RZNhfKNtZGc1iJuOYC9eY5Ho76ZUr4yN
+ CpaCJHeb3KDjULQgayIPWqo93t8Px/OjuzlotrqygSQDNVJSGJq6hlGNYymFTkAgjqkl
+ zJ0YUoAxdJCeDHjumU5osWjflW2jpV/e8z0/jjSldFAKBgmbR5za/NKoznYfIA9rg4E1 TA== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qraasr5jr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 May 2023 14:36:13 +0000
+        Mon, 22 May 2023 15:33:03 +0000
 Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34MEaC46014016
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34MFX2kk027626
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 May 2023 14:36:12 GMT
+        Mon, 22 May 2023 15:33:02 GMT
 Received: from [10.216.34.225] (10.80.80.8) by nasanex01c.na.qualcomm.com
  (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 22 May
- 2023 07:36:07 -0700
-Message-ID: <b5566ae2-ec72-9326-fad3-82b69c7e13c4@quicinc.com>
-Date:   Mon, 22 May 2023 20:05:58 +0530
+ 2023 08:32:58 -0700
+Message-ID: <a7a0cd79-e080-cd26-9411-5913a4c0c61f@quicinc.com>
+Date:   Mon, 22 May 2023 21:02:55 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
@@ -66,20 +66,20 @@ In-Reply-To: <5c7c2657d12808e211942d71ad79e3846f4e70bb.1683741283.git.quic_gokuk
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01c.na.qualcomm.com (10.45.79.139)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: irUSM7gcudgQy1KrA8swdUkGl4H7GxoN
-X-Proofpoint-ORIG-GUID: irUSM7gcudgQy1KrA8swdUkGl4H7GxoN
+X-Proofpoint-GUID: me_CRU_Tf7KLc56Nmp-lwP3Uu4gbhl4Z
+X-Proofpoint-ORIG-GUID: me_CRU_Tf7KLc56Nmp-lwP3Uu4gbhl4Z
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-05-22_10,2023-05-22_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 phishscore=0
- adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305220121
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 lowpriorityscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305220129
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -98,15 +98,6 @@ On 5/10/2023 11:35 PM, Gokul krishna Krishnakumar wrote:
 > ---
 >   drivers/remoteproc/Makefile           |   1 +
 >   drivers/remoteproc/qcom_tracepoints.c |  12 +++
-
-
-Again, all names are generic enough why file name should contain
-qcom in it's name. Make it such that other remoteproc drivers can
-also use it.
-
-
--- Mukesh
-
 >   include/trace/events/rproc_qcom.h     | 128 ++++++++++++++++++++++++++
 >   3 files changed, 141 insertions(+)
 >   create mode 100644 drivers/remoteproc/qcom_tracepoints.c
@@ -209,6 +200,11 @@ also use it.
 > +TRACE_EVENT(rproc_stop_event,
 > +
 > +	TP_PROTO(struct rproc *rproc, char *crash_msg),
+
+
+
+const char *crash_msg ?
+
 > +
 > +	TP_ARGS(rproc, crash_msg),
 > +
@@ -223,6 +219,7 @@ also use it.
 > +	),
 > +
 > +	TP_printk("%s %s", __get_str(name), __get_str(crash_msg))
+
 > +);
 > +
 > +TRACE_EVENT(rproc_interrupt_event,
@@ -271,6 +268,16 @@ also use it.
 > +
 > +	TP_printk("%s %s %s %d", __get_str(rproc), __get_str(subdev),
 > +			__get_str(event), __entry->ret)
+
+Should you not specify what all are you trying to print here..
+Unless they are very generic and self interpret-able.
+
+TP_printk("rproc:%s subdev:%s event:%s ret:%d", __get_str(rproc), 
+__get_str(subdev), __get_str(event), __entry->ret)
+
+
+-- Mukesh
+
 > +);
 > +#endif /* _TRACE_RPROC_QCOM_H */
 > +
