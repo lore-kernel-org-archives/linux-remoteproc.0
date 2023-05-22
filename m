@@ -2,239 +2,96 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35588C7EE26
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 21 May 2023 22:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89347C7EE26
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 May 2023 07:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbjEUWbr (ORCPT
+        id S230236AbjEVHsu (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 21 May 2023 18:31:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
+        Mon, 22 May 2023 03:48:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231489AbjEUWbg (ORCPT
+        with ESMTP id S232632AbjEVHsa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 21 May 2023 18:31:36 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 085351B4;
-        Sun, 21 May 2023 15:31:17 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34LMTsta026563;
-        Sun, 21 May 2023 22:30:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=su4pLfaYpFjRQckjSvgDjsewZEZbx868uHmkpyjso4s=;
- b=SDVRfjCrACNcg6LJi4tTo65n2Yg4GkY/dVr3flASoMXqmfaGaMAsamyQj8NFyS6GWPB7
- sN2PeRdKbUiM453rWFu2k1URqOydZyHyjvc8DzMdimuAuj2mJtzlcfQ5ZGxsPpQI+J0O
- R6Y6naD7Bc/rMrz1Zae+3sYMlO8E5BOt7ynSDm14fghE+bNKr1eKlb/5ZsB3qvpL6Tcu
- 26DYdT3ZKvA+IDG3W/Jc7gxrBxYr/VOxmApYCLCjI6S8ZrphZMMMkdyiJFQ1sQVKwEW5
- N0tFj1lhcYYi2kkxKOUO+I/03Q68UWhlTYVZQZyAAwBQfEYrMxcv6qkJhslPvxol263h 1w== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qppa1a9uy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 21 May 2023 22:30:53 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34LMUp36011891
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 21 May 2023 22:30:52 GMT
-Received: from mmanikan-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Sun, 21 May 2023 15:30:44 -0700
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
-        <kvalo@kernel.org>, <quic_mmanikan@quicinc.com>,
-        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_devipriy@quicinc.com>
-Subject: [PATCH V2 13/13] arm64: dtsi: qcom: ipq9574: Add nodes to bring up multipd
-Date:   Mon, 22 May 2023 03:58:52 +0530
-Message-ID: <20230521222852.5740-14-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+        Mon, 22 May 2023 03:48:30 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172F4B9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 May 2023 00:47:07 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30a4ebbda56so1655470f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 May 2023 00:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684741576; x=1687333576;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RIVk01vUE32Fs5xmh6uGF+YSpQzTcY9OgG1aTov+WQM=;
+        b=aJRU56KCSo3rpIlXDTIxgutOm21kKy4pCK66q+4n23HGRVPpaHZ5t/IbiMDcg7xCuv
+         4GCem5qCSVC6EYh9WGOI8/10GlUS5tuxOR2nUWxbeeJF167/MDDiSn4dWSw0S+LLy31t
+         CF/ABoFrh40zfGyBbPC+qXy3UqY4m4fe6+D/rlof4kyKWHt2VEZRsXwcoONP6Dheffpk
+         BbXo0EkS57WXREeM5uUaCQh+FhxLv2bVH34MMgZRF7x01Sj2FVKrqsB9bLYAK8y8+o74
+         LSFCN5M2zDH3pSfwQpdZPksdF7Cs7/6XzjjGKsqE2zouxyHOWZNyA4v9LbT7x5WN9ET+
+         NcDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684741576; x=1687333576;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RIVk01vUE32Fs5xmh6uGF+YSpQzTcY9OgG1aTov+WQM=;
+        b=LPSTPIeyOMU5nrTE8LdQD58NtEqzdaKEj42XWkz+QWrRwXHStFM78rqf6k79brh3b+
+         3Vq6FSdnXDVFx6v8eH/8032KA1a0RjxEaDfIpVSZ+rPBmBfxmzOY4cQVdLf7UrLpWKYv
+         YQtBT1L9l70ndXuf6xWEPCA3cSTCdaQgAy4s5oSBJtNLCb4o4CyR+l0tduCvpiVkm0Gs
+         L9YCpustBA5vx5PL9e72BLsu6g9TYOWvL+nen4DZgia1NMLufpvP0SWFBtuei2IcJcZL
+         pUfRHmPzv6IVqM5miO8t0hT4UMdPUz37Qe0ASj/pWOfr/sIoloB5jNGh6uUhiiRWNxLg
+         rIwg==
+X-Gm-Message-State: AC+VfDz6hTH8VQuVs+N0SKwKgvYSzXh1aJF1H25x2eJX5kbiKHvTlzHe
+        eae1x9buNgcZIGPYcpSRK0sihw==
+X-Google-Smtp-Source: ACHHUZ5WPY0s+puoCLwPIv3+dZIthZntG1qO8mejkYgqwA0xER2gHbAwLfhkvLu0SZTyKxPKdCZmfw==
+X-Received: by 2002:adf:de10:0:b0:306:2dd6:95d3 with SMTP id b16-20020adfde10000000b003062dd695d3mr8301383wrm.22.1684741576394;
+        Mon, 22 May 2023 00:46:16 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id a2-20020a5d53c2000000b002ffbf2213d4sm6816964wrw.75.2023.05.22.00.46.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 May 2023 00:46:15 -0700 (PDT)
+Date:   Mon, 22 May 2023 10:46:11 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] remoteproc: stm32: Fix error code in stm32_rproc_parse_dt()
+Message-ID: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uYe28ZOXgSwTAqI5FOeRAdDepM7YcXwg
-X-Proofpoint-ORIG-GUID: uYe28ZOXgSwTAqI5FOeRAdDepM7YcXwg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-21_17,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 adultscore=0 suspectscore=0
- priorityscore=1501 spamscore=0 mlxlogscore=760 phishscore=0
- impostorscore=0 mlxscore=0 malwarescore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305210202
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Enable nodes required for multipd remoteproc bring up.
+There is a cut and paste bug so this code was returning the wrong
+variable.  It should have been "ddata->hold_boot_rst" instead of
+"ddata->rst".
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Fixes: de598695a2ad ("remoteproc: stm32: Allow hold boot management by the SCMI reset controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-Changes in V2:
-	- Corrected syntax like alignmnet and kept nodes in sorted order.
-	- Added 'firmware-name' property.
+ drivers/remoteproc/stm32_rproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 118 ++++++++++++++++++++++++++
- 1 file changed, 118 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 0e04549c69a5..ff0da53ba05f 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -160,6 +160,11 @@
- 			no-map;
- 		};
-
-+		q6_region: wcnss@4ab00000 {
-+			reg = <0x0 0x4ab00000 0x0 0x2b00000>;
-+			no-map;
-+		};
-+
- 		smem@4aa00000 {
- 			compatible = "qcom,smem";
- 			reg = <0x0 0x4aa00000 0x0 0x00100000>;
-@@ -697,6 +702,95 @@
- 			};
- 		};
-
-+		q6v5_wcss: remoteproc@cd00000 {
-+			compatible = "qcom,ipq9574-q6-mpd";
-+			reg = <0x0cd00000 0x4040>;
-+			firmware-name = "IPQ9574/q6_fw.mdt",
-+					"IPQ9574/m3_fw.mdt";
-+			interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
-+					      <&wcss_smp2p_in 0 0>,
-+					      <&wcss_smp2p_in 1 0>,
-+					      <&wcss_smp2p_in 2 0>,
-+					      <&wcss_smp2p_in 3 0>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			qcom,smem-states = <&wcss_smp2p_out 0>,
-+					   <&wcss_smp2p_out 1>;
-+			qcom,smem-state-names = "shutdown",
-+						"stop";
-+			memory-region = <&q6_region>;
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+				label = "rtr";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+			};
-+
-+			pd-1 {
-+				compatible = "qcom,ipq9574-wcss-ahb-mpd";
-+				firmware-name = "IPQ9574/q6_fw.mdt";
-+				interrupts-extended = <&wcss_smp2p_in 8 0>,
-+						      <&wcss_smp2p_in 9 0>,
-+						      <&wcss_smp2p_in 12 0>,
-+						      <&wcss_smp2p_in 11 0>;
-+				interrupt-names = "fatal",
-+						  "ready",
-+						  "spawn-ack",
-+						  "stop-ack";
-+				qcom,smem-states = <&wcss_smp2p_out 8>,
-+						   <&wcss_smp2p_out 9>,
-+						   <&wcss_smp2p_out 10>;
-+				qcom,smem-state-names = "shutdown",
-+							"stop",
-+							"spawn";
-+			};
-+
-+			pd-2 {
-+				compatible = "qcom,ipq5018-wcss-pcie-mpd";
-+				interrupts-extended = <&wcss_smp2p_in 16 0>,
-+						      <&wcss_smp2p_in 17 0>,
-+						      <&wcss_smp2p_in 20 0>,
-+						      <&wcss_smp2p_in 19 0>;
-+				interrupt-names = "fatal",
-+						  "ready",
-+						  "spawn-ack",
-+						  "stop-ack";
-+
-+				qcom,smem-states = <&wcss_smp2p_out 16>,
-+						   <&wcss_smp2p_out 17>,
-+						   <&wcss_smp2p_out 18>;
-+				qcom,smem-state-names = "shutdown",
-+							"stop",
-+							"spawn";
-+				status = "disabled";
-+			};
-+
-+			pd-3 {
-+				compatible = "qcom,ipq5018-wcss-pcie-mpd";
-+				interrupts-extended = <&wcss_smp2p_in 24 0>,
-+						      <&wcss_smp2p_in 25 0>,
-+						      <&wcss_smp2p_in 28 0>,
-+						      <&wcss_smp2p_in 27 0>;
-+				interrupt-names = "fatal",
-+						  "ready",
-+						  "spawn-ack",
-+						  "stop-ack";
-+
-+				qcom,smem-states = <&wcss_smp2p_out 24>,
-+						   <&wcss_smp2p_out 25>,
-+						   <&wcss_smp2p_out 26>;
-+				qcom,smem-state-names = "shutdown",
-+							"stop",
-+							"spawn";
-+				status = "disabled";
-+			};
-+		};
-+
- 		pcie1: pci@10000000 {
- 			compatible = "qcom,pcie-ipq9574";
- 			reg =  <0x10000000 0xf1d>,
-@@ -966,4 +1060,28 @@
- 			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
- 			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 	};
-+
-+	wcss: wcss-smp2p {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <GIC_SPI 322 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
- };
---
-2.17.1
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 0e322697d210..a7457777aae4 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -755,7 +755,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+ 
+ 	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
+ 	if (IS_ERR(ddata->hold_boot_rst))
+-		return dev_err_probe(dev, PTR_ERR(ddata->rst),
++		return dev_err_probe(dev, PTR_ERR(ddata->hold_boot_rst),
+ 				     "failed to get hold_boot reset\n");
+ 
+ 	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
+-- 
+2.39.2
 
