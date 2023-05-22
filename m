@@ -2,96 +2,94 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89347C7EE26
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 May 2023 07:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CBEC7EE2A
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 May 2023 07:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbjEVHsu (ORCPT
+        id S231438AbjEVHzj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 May 2023 03:48:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34346 "EHLO
+        Mon, 22 May 2023 03:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232632AbjEVHsa (ORCPT
+        with ESMTP id S232777AbjEVHzS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 May 2023 03:48:30 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172F4B9
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 May 2023 00:47:07 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30a4ebbda56so1655470f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 May 2023 00:47:06 -0700 (PDT)
+        Mon, 22 May 2023 03:55:18 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F8AF1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 May 2023 00:53:36 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2af30d10d8fso18583661fa.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 May 2023 00:53:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684741576; x=1687333576;
+        d=linaro.org; s=google; t=1684742015; x=1687334015;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RIVk01vUE32Fs5xmh6uGF+YSpQzTcY9OgG1aTov+WQM=;
-        b=aJRU56KCSo3rpIlXDTIxgutOm21kKy4pCK66q+4n23HGRVPpaHZ5t/IbiMDcg7xCuv
-         4GCem5qCSVC6EYh9WGOI8/10GlUS5tuxOR2nUWxbeeJF167/MDDiSn4dWSw0S+LLy31t
-         CF/ABoFrh40zfGyBbPC+qXy3UqY4m4fe6+D/rlof4kyKWHt2VEZRsXwcoONP6Dheffpk
-         BbXo0EkS57WXREeM5uUaCQh+FhxLv2bVH34MMgZRF7x01Sj2FVKrqsB9bLYAK8y8+o74
-         LSFCN5M2zDH3pSfwQpdZPksdF7Cs7/6XzjjGKsqE2zouxyHOWZNyA4v9LbT7x5WN9ET+
-         NcDw==
+        bh=HRWPQ1JYR7rxT767Hx6VFuo4p3kgPx9SeYKiNWof2ik=;
+        b=v/0VfxgD5vAPv/y5W7DnzgGWqmrhDvQkEf20EgVVMBtW/Y08y+fAU0GYOHKwQokSQc
+         jLMc7OCrmwCzd34wGk5cynVt/MfhE1gQqeEBzqAjRJUUVlGJ12mOUkGjiLYu9GzLrH4/
+         VvpMCyCgksfwf5UCAf/XmQ178ceMxZVwBByqfO1df9JDjNjCnFyOx9UO+QXa3v+9CzMt
+         h+Qon+aWJbFuf4CS02zPQx+UzlvOLmDgHC5aQlYFvSyjtIq/QZQSQK05iUoFk8Rqze0n
+         qcQrm0my8zsCdupiTnAKCywtUWHnjQlVfOrfTLjAByGrjDkvdv0hvNO19pm3nZgY7mJx
+         DfLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684741576; x=1687333576;
+        d=1e100.net; s=20221208; t=1684742015; x=1687334015;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIVk01vUE32Fs5xmh6uGF+YSpQzTcY9OgG1aTov+WQM=;
-        b=LPSTPIeyOMU5nrTE8LdQD58NtEqzdaKEj42XWkz+QWrRwXHStFM78rqf6k79brh3b+
-         3Vq6FSdnXDVFx6v8eH/8032KA1a0RjxEaDfIpVSZ+rPBmBfxmzOY4cQVdLf7UrLpWKYv
-         YQtBT1L9l70ndXuf6xWEPCA3cSTCdaQgAy4s5oSBJtNLCb4o4CyR+l0tduCvpiVkm0Gs
-         L9YCpustBA5vx5PL9e72BLsu6g9TYOWvL+nen4DZgia1NMLufpvP0SWFBtuei2IcJcZL
-         pUfRHmPzv6IVqM5miO8t0hT4UMdPUz37Qe0ASj/pWOfr/sIoloB5jNGh6uUhiiRWNxLg
-         rIwg==
-X-Gm-Message-State: AC+VfDz6hTH8VQuVs+N0SKwKgvYSzXh1aJF1H25x2eJX5kbiKHvTlzHe
-        eae1x9buNgcZIGPYcpSRK0sihw==
-X-Google-Smtp-Source: ACHHUZ5WPY0s+puoCLwPIv3+dZIthZntG1qO8mejkYgqwA0xER2gHbAwLfhkvLu0SZTyKxPKdCZmfw==
-X-Received: by 2002:adf:de10:0:b0:306:2dd6:95d3 with SMTP id b16-20020adfde10000000b003062dd695d3mr8301383wrm.22.1684741576394;
-        Mon, 22 May 2023 00:46:16 -0700 (PDT)
+        bh=HRWPQ1JYR7rxT767Hx6VFuo4p3kgPx9SeYKiNWof2ik=;
+        b=kRhcJ+ZJkjrbtD5guE+iMEw0rgDPnEtQXzJseoaplmw7+k0EBqcyOmokhLez065FOj
+         TSdhcRkJp2V084tY48MXAagJ75qYlfe6a4GJmO8IheMjefezTTrCzNZj3xAnqddt2mjj
+         g+l1XNdusrPn8eXEZII8IrNiIL67zr6qMgHZaveD94FW5HqNMq9DbRVU/gRn0bZ5lT5Z
+         nqCGZ7X+LkU05fxgYknUT6LMgRAjRwhX7hrrjgxP1XUhFlQsiM8DB/H3zpfoe26kcU2T
+         GdA9ovBhoyqieJA8IfdciM2lPtimJvL/6o7WUgSs0ykuISt9PlJTZOMjsjqqFaElzS8u
+         pfDA==
+X-Gm-Message-State: AC+VfDzH5V2n001/E5QsI2m5zbwma58A9O9+Qi8YR2KSRM5OJqhx6p8y
+        MccLifCywha35rdf16pVwLWdF/4CLpa5Cl4KI48=
+X-Google-Smtp-Source: ACHHUZ5jGLr5ZkNOpPGKF8ZrWHCcybQ2ho6XJK0XoN6Fxa4KXslUK35FJTi2aHp/q5ECehdLWpgP5A==
+X-Received: by 2002:adf:fdd2:0:b0:307:8e50:34c6 with SMTP id i18-20020adffdd2000000b003078e5034c6mr6604488wrs.52.1684741592753;
+        Mon, 22 May 2023 00:46:32 -0700 (PDT)
 Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id a2-20020a5d53c2000000b002ffbf2213d4sm6816964wrw.75.2023.05.22.00.46.14
+        by smtp.gmail.com with ESMTPSA id i12-20020adffc0c000000b003063db8f45bsm6773775wrr.23.2023.05.22.00.46.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 May 2023 00:46:15 -0700 (PDT)
-Date:   Mon, 22 May 2023 10:46:11 +0300
+        Mon, 22 May 2023 00:46:31 -0700 (PDT)
+Date:   Mon, 22 May 2023 10:46:26 +0300
 From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH] remoteproc: stm32: Fix error code in stm32_rproc_parse_dt()
-Message-ID: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
+To:     rogerq@ti.com
+Cc:     linux-remoteproc@vger.kernel.org
+Subject: [bug report] remoteproc: pru: Add pru_rproc_set_ctable() function
+Message-ID: <2dfa4582-9a0c-4350-8ecc-33c9247aad12@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-There is a cut and paste bug so this code was returning the wrong
-variable.  It should have been "ddata->hold_boot_rst" instead of
-"ddata->rst".
+Hello Roger Quadros,
 
-Fixes: de598695a2ad ("remoteproc: stm32: Allow hold boot management by the SCMI reset controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/remoteproc/stm32_rproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch 102853400321: "remoteproc: pru: Add pru_rproc_set_ctable()
+function" from Jan 6, 2023, leads to the following Smatch static
+checker warning:
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 0e322697d210..a7457777aae4 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -755,7 +755,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
- 
- 	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
- 	if (IS_ERR(ddata->hold_boot_rst))
--		return dev_err_probe(dev, PTR_ERR(ddata->rst),
-+		return dev_err_probe(dev, PTR_ERR(ddata->hold_boot_rst),
- 				     "failed to get hold_boot reset\n");
- 
- 	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
--- 
-2.39.2
+	drivers/remoteproc/pru_rproc.c:326 pru_rproc_set_ctable()
+	warn: variable dereferenced before IS_ERR check 'rproc' (see line 320)
 
+drivers/remoteproc/pru_rproc.c
+    316  * Return: 0 on success, or errno in error case.
+    317  */
+    318 int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
+    319 {
+    320         struct pru_rproc *pru = rproc->priv;
+                                        ^^^^^^^^^^^
+Dereference
+
+    321         unsigned int reg;
+    322         u32 mask, set;
+    323         u16 idx;
+    324         u16 idx_mask;
+    325 
+--> 326         if (IS_ERR_OR_NULL(rproc))
+                                   ^^^^^
+Checked too late.
+
+    327                 return -EINVAL;
+
+regards,
+dan carpenter
