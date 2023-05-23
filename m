@@ -2,284 +2,147 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44858C77B75
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 22 May 2023 15:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDE2C77B75
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 May 2023 09:15:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233974AbjEVPdM (ORCPT
+        id S235731AbjEWJPU (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 22 May 2023 11:33:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
+        Tue, 23 May 2023 05:15:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231255AbjEVPdL (ORCPT
+        with ESMTP id S236437AbjEWJPJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 22 May 2023 11:33:11 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9632AA;
-        Mon, 22 May 2023 08:33:09 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34MEdf0I012567;
-        Mon, 22 May 2023 15:33:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=6XGFyEzczDwyR5+6vRQrf4JUOYRAtfqw+FiJTqGz47Q=;
- b=SQXkc3SpFJmbDIH8wbNOM0NwmVjRs0Jhgh6CAJEPp2XSeufIrhkJ7rZJ21S+/gs5zKX+
- +Bif1KBVXrv4cdcmd9jhE9GEpu9pKmphL2s4u7tNaND1COp6OB7XI0f4eE5IK2t8nyiZ
- /soaHCUrNDiMzZsi5x9rawpseLIRWCrYt126RZNhfKNtZGc1iJuOYC9eY5Ho76ZUr4yN
- CpaCJHeb3KDjULQgayIPWqo93t8Px/OjuzlotrqygSQDNVJSGJq6hlGNYymFTkAgjqkl
- zJ0YUoAxdJCeDHjumU5osWjflW2jpV/e8z0/jjSldFAKBgmbR5za/NKoznYfIA9rg4E1 TA== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qraasr5jr-1
+        Tue, 23 May 2023 05:15:09 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AFC3185;
+        Tue, 23 May 2023 02:14:40 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34N93S0K031499;
+        Tue, 23 May 2023 11:14:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding : content-type; s=selector1;
+ bh=21YBn0N8+x8QGAqVLFfwgztlVeH2AvX3vZpEDO9WkLw=;
+ b=Z72laeQROTpJ76DnrGB34vNSkf+8rWa9KRXO4awbG7MspeOZlgenGAe1CSHuJZ1Zj6Kj
+ I1mmC7RSljAyJzTgsbGbewcOXwm4BfDXAt/9I5Hdeuw7LjvMU7wF2T1Z1Arv9AH3Qp2N
+ x9shXiAszaZy35LIzi+YRgzK2PGqh8rbLlfF329+A1fHbEZ2TQq5ZHJbvVFCdZbP88LA
+ 7knI6lbDq+s8VZVhtcZd9kOaH1ubyML/seu2xozacRXLXpiiokHlcVGB3CORQ3Rr+YBH
+ kHpUZMfq3KtwOpKr5sdzFh4IeoupivuTy16eixqgYJ0IA3dfiN9GZkAtv0dpq/LXcMAm FA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qrtgur5jn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 May 2023 15:33:03 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34MFX2kk027626
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 May 2023 15:33:02 GMT
-Received: from [10.216.34.225] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 22 May
- 2023 08:32:58 -0700
-Message-ID: <a7a0cd79-e080-cd26-9411-5913a4c0c61f@quicinc.com>
-Date:   Mon, 22 May 2023 21:02:55 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 1/2] remoteproc: Introduce traces for remoteproc events
-Content-Language: en-US
-To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
+        Tue, 23 May 2023 11:14:19 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F390A100034;
+        Tue, 23 May 2023 11:14:18 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id ED43F222CB8;
+        Tue, 23 May 2023 11:14:18 +0200 (CEST)
+Received: from localhost (10.252.31.43) by SHFDAG1NODE2.st.com (10.75.129.70)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 23 May
+ 2023 11:14:16 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-kernel@vger.kernel.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        "Elliot Berman" <quic_eberman@quicinc.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-References: <cover.1683741283.git.quic_gokukris@quicinc.com>
- <5c7c2657d12808e211942d71ad79e3846f4e70bb.1683741283.git.quic_gokukris@quicinc.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <5c7c2657d12808e211942d71ad79e3846f4e70bb.1683741283.git.quic_gokukris@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: me_CRU_Tf7KLc56Nmp-lwP3Uu4gbhl4Z
-X-Proofpoint-ORIG-GUID: me_CRU_Tf7KLc56Nmp-lwP3Uu4gbhl4Z
+        Jens Wiklander <jens.wiklander@linaro.org>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [RFC PATCH 3/4] dt-bindings: remoteproc: add compatibility for TEE support
+Date:   Tue, 23 May 2023 11:13:49 +0200
+Message-ID: <20230523091350.292221-4-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
+References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.252.31.43]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-22_10,2023-05-22_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 bulkscore=0 malwarescore=0 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305220129
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-23_06,2023-05-22_03,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Rework compatibility description according to the support of
+the authenticated firmware relying on OP-TEE authentication.
 
+The expected behavior is:
+- with legacy compatible "st,stm32mp1-m4" the Linux kernel loads a
+  non-signed (ELF) firmware image,
+- with compatible "st,stm32mp1-m4-tee" the Linux kernel load a signed
+  firmware image. In this case it calls TEE services to manage the firmware
+  loading and the remoteproc life-cycle.
 
-On 5/10/2023 11:35 PM, Gokul krishna Krishnakumar wrote:
-> Adding Traces for the following remoteproc events:
-> 	rproc_subdev_event,
-> 	rproc_interrupt_event,
-> 	rproc_load_event,
-> 	rproc_start_event,
-> 	rproc_stop_event
-> 
-> Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-> ---
->   drivers/remoteproc/Makefile           |   1 +
->   drivers/remoteproc/qcom_tracepoints.c |  12 +++
->   include/trace/events/rproc_qcom.h     | 128 ++++++++++++++++++++++++++
->   3 files changed, 141 insertions(+)
->   create mode 100644 drivers/remoteproc/qcom_tracepoints.c
->   create mode 100644 include/trace/events/rproc_qcom.h
-> 
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index 91314a9b43ce..3399fcaba39b 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -10,6 +10,7 @@ remoteproc-y				+= remoteproc_debugfs.o
->   remoteproc-y				+= remoteproc_sysfs.o
->   remoteproc-y				+= remoteproc_virtio.o
->   remoteproc-y				+= remoteproc_elf_loader.o
-> +remoteproc-y				+= qcom_tracepoints.o
->   obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
->   obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
->   obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
-> diff --git a/drivers/remoteproc/qcom_tracepoints.c b/drivers/remoteproc/qcom_tracepoints.c
-> new file mode 100644
-> index 000000000000..1b587ef54aa7
-> --- /dev/null
-> +++ b/drivers/remoteproc/qcom_tracepoints.c
-> @@ -0,0 +1,12 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/rproc_qcom.h>
-> +EXPORT_TRACEPOINT_SYMBOL(rproc_load_event);
-> +EXPORT_TRACEPOINT_SYMBOL(rproc_start_event);
-> +EXPORT_TRACEPOINT_SYMBOL(rproc_stop_event);
-> +EXPORT_TRACEPOINT_SYMBOL(rproc_interrupt_event);
-> +EXPORT_TRACEPOINT_SYMBOL(rproc_subdev_event);
-> diff --git a/include/trace/events/rproc_qcom.h b/include/trace/events/rproc_qcom.h
-> new file mode 100644
-> index 000000000000..48ad26ce18a3
-> --- /dev/null
-> +++ b/include/trace/events/rproc_qcom.h
-> @@ -0,0 +1,128 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM rproc_qcom
-> +
-> +#if !defined(_TRACE_RPROC_QCOM_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_RPROC_QCOM_H
-> +#include <linux/tracepoint.h>
-> +#include <linux/remoteproc.h>
-> +
-> +/*
-> + * Tracepoints for remoteproc and subdevice events
-> + */
-> +TRACE_EVENT(rproc_load_event,
-> +
-> +	TP_PROTO(struct rproc *rproc, int ret),
-> +
-> +	TP_ARGS(rproc, ret),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(name, rproc->name)
-> +		__string(firmware, rproc->firmware)
-> +		__field(int, ret)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(name, rproc->name);
-> +		__assign_str(firmware, rproc->firmware);
-> +		__entry->ret = ret;
-> +	),
-> +
-> +	TP_printk("%s loading firmware %s returned %d",
-> +			__get_str(name), __get_str(firmware),
-> +			__entry->ret)
-> +);
-> +
-> +TRACE_EVENT(rproc_start_event,
-> +
-> +	TP_PROTO(struct rproc *rproc, int ret),
-> +
-> +	TP_ARGS(rproc, ret),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(name, rproc->name)
-> +		__field(int, ret)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(name, rproc->name);
-> +		__entry->ret = ret;
-> +	),
-> +
-> +	TP_printk("%s %d", __get_str(name), __entry->ret)
-> +);
-> +
-> +TRACE_EVENT(rproc_stop_event,
-> +
-> +	TP_PROTO(struct rproc *rproc, char *crash_msg),
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ .../bindings/remoteproc/st,stm32-rproc.yaml   | 33 +++++++++++++++++--
+ 1 file changed, 30 insertions(+), 3 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+index 959a56f1b6c7..1671a90d5974 100644
+--- a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc.yaml
+@@ -16,7 +16,12 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    const: st,stm32mp1-m4
++    enum:
++      - st,stm32mp1-m4
++      - st,stm32mp1-m4-tee
++    description:
++      Use "st,stm32mp1-m4" for the Cortex-M4 coprocessor management by Linux
++      Use "st,stm32mp1-m4-tee" for the Cortex-M4 coprocessor management by OPTEE
+ 
+   reg:
+     description:
+@@ -135,8 +140,28 @@ required:
+   - compatible
+   - reg
+   - resets
+-  - st,syscfg-holdboot
+-  - st,syscfg-tz
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          enum:
++            - st,stm32mp1-m4
++    then:
++      required:
++        - memory-region
++        - st,syscfg-holdboot
++        - st,syscfg-tz
++        - resets
++  - if:
++      properties:
++        compatible:
++          enum:
++            - st,stm32mp1-m4-tee
++    then:
++      required:
++        - memory-region
++
+ 
+ additionalProperties: false
+ 
+@@ -148,6 +173,8 @@ examples:
+       reg = <0x10000000 0x40000>,
+             <0x30000000 0x40000>,
+             <0x38000000 0x10000>;
++      memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
++                      <&m_ipc_shm>, <&vdev0vring1>, <&vdev0buffer>;
+       resets = <&rcc MCU_R>;
+       st,syscfg-holdboot = <&rcc 0x10C 0x1>;
+       st,syscfg-tz = <&rcc 0x000 0x1>;
+-- 
+2.25.1
 
-
-const char *crash_msg ?
-
-> +
-> +	TP_ARGS(rproc, crash_msg),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(name, rproc->name)
-> +		__string(crash_msg, crash_msg)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(name, rproc->name);
-> +		__assign_str(crash_msg, crash_msg)
-> +	),
-> +
-> +	TP_printk("%s %s", __get_str(name), __get_str(crash_msg))
-
-> +);
-> +
-> +TRACE_EVENT(rproc_interrupt_event,
-> +
-> +	TP_PROTO(struct rproc *rproc, const char *event,
-> +			 const char *msg),
-> +
-> +	TP_ARGS(rproc, event, msg),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(name, rproc->name)
-> +		__string(event, event)
-> +		__string(msg, msg)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(name, rproc->name);
-> +		__assign_str(event, event);
-> +		__assign_str(msg, msg);
-> +	),
-> +
-> +	TP_printk("%s %s returned %s", __get_str(name),
-> +			 __get_str(event), __get_str(msg))
-> +);
-> +
-> +TRACE_EVENT(rproc_subdev_event,
-> +
-> +	TP_PROTO(const char *rproc, const char *subdev,
-> +			const char *event, int ret),
-> +
-> +	TP_ARGS(rproc, subdev, event, ret),
-> +
-> +	TP_STRUCT__entry(
-> +		__string(rproc, rproc)
-> +		__string(subdev, subdev)
-> +		__string(event, event)
-> +		__field(int, ret)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__assign_str(rproc, rproc);
-> +		__assign_str(subdev, subdev);
-> +		__assign_str(event, event);
-> +		__entry->ret = ret;
-> +	),
-> +
-> +	TP_printk("%s %s %s %d", __get_str(rproc), __get_str(subdev),
-> +			__get_str(event), __entry->ret)
-
-Should you not specify what all are you trying to print here..
-Unless they are very generic and self interpret-able.
-
-TP_printk("rproc:%s subdev:%s event:%s ret:%d", __get_str(rproc), 
-__get_str(subdev), __get_str(event), __entry->ret)
-
-
--- Mukesh
-
-> +);
-> +#endif /* _TRACE_RPROC_QCOM_H */
-> +
-> +/* This part must be outside protection */
-> +#include <trace/define_trace.h>
