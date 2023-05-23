@@ -2,123 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE8CC77B75
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 May 2023 09:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5278C7EE23
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 May 2023 20:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236375AbjEWJSt (ORCPT
+        id S233032AbjEWUFa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 May 2023 05:18:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44280 "EHLO
+        Tue, 23 May 2023 16:05:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236429AbjEWJPH (ORCPT
+        with ESMTP id S229614AbjEWUFa (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 May 2023 05:15:07 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 249B7E6A;
-        Tue, 23 May 2023 02:14:38 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34N8nKRU005346;
-        Tue, 23 May 2023 11:14:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=selector1;
- bh=t/AFG2duLebengydODKmElakzYnHQVPdHkUYtcBP5eI=;
- b=sabo5+Qj8gv0PsnTFVNWmeCml2pfMTsIVdPhQj2oOAsu8EVmeFT9JMyZzNfCJt13htMl
- R0FcWQ5mcfd76unzm6L8IW2AxkI9pj+7u+t0IuZVZK2gTi6rP09WZIsZfvtpnVOFW6Ao
- 5tttHJKrRHNeejVdBKxm7NLZIvuRoB/v2QyR6LdJzIoxTq7MItKEHoksy+kBK33NsXiY
- nNcggs7QwiW9oIvDpb5+LuyGed4SOspjKP0rYQ5XrYelXCIl1kL6PuTMRS2BXh+cGPqE
- vY2zLvuUsAVydKXMVxeHGQPFCLT0kAnj3dFQrcLZkFb+XNBAcIPWFgP+zPGXuREJtK5+ iQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qpnj1gbqc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 May 2023 11:14:17 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C649A100034;
-        Tue, 23 May 2023 11:14:15 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AC98C222CB8;
-        Tue, 23 May 2023 11:14:15 +0200 (CEST)
-Received: from localhost (10.252.31.43) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 23 May
- 2023 11:14:15 +0200
-From:   Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Subject: [RFC PATCH 1/4] tee: Re-enable vmalloc page support for shared memory
-Date:   Tue, 23 May 2023 11:13:47 +0200
-Message-ID: <20230523091350.292221-2-arnaud.pouliquen@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
-References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
+        Tue, 23 May 2023 16:05:30 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12948119
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 May 2023 13:05:29 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-64d2981e3abso177853b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 May 2023 13:05:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684872328; x=1687464328;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxXVUOaFN1Qv+6eAQzosOhjOl+94anVe0xXKbzcrKW0=;
+        b=Z1UfLh8zwQ4gGkVeoNzdf7gNB+vkVFBoxp+/Y2vwDp7ns/GM5u9C4vSDIBCs/fw/ii
+         92XGpa8kQFDw88Bqx0REdQVhQafzDeGATQcQ0YHuOKOLO2CMYCZXEq54VBggA+mOUuX5
+         lH5Yi8VSe62WZpgb57rw12rbw2hpSeuwCummsJiFzJlU7+d7wQD9iSPC4p0gbzcvLIDj
+         FiOUA1ZN0NdQSh09ZL4AcUFBu5es2ubK87MmrFdarhGIe8sfph8Pi47Ry9BenJBVDDz2
+         SMe+pwJBaqXAQbwk5+Nh5qNcr4kYcfczdiGNEEXco2r/tDa/tDbefbTvoQgStRxxTgZg
+         EV4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684872328; x=1687464328;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xxXVUOaFN1Qv+6eAQzosOhjOl+94anVe0xXKbzcrKW0=;
+        b=iVGcryzoZVhBHFZCqeX1nEJVKlQCBhhgKuwNx8Dqhzdaopkyt0+YllII5TSfr0b/Hb
+         IYa0sBzc5sRS8Kft67VpPzv+k8pYdxtoF1s2HbBtqqL+q/CNlcA7AcQd0li0o/edRcXI
+         Yxj2RKe+9HkKP6kEiS6HOQpph7A3XvrO6YsoDdy/WMfap/PH4vKboE4csAhT0Ex3jpjq
+         O4myf68lOKFrRhRCdFuF5nx4Jq+14/fiAEWIE/hdhORs/X1iYJk4IFkhiVQUhO3pu0Ka
+         XzBcNcCEj1Jpc//e2+S7ha4mdSYokRqedQTQXMzFMlBLqnlrxIhI+AocqFAHA8lixfek
+         Ufuw==
+X-Gm-Message-State: AC+VfDzxFeFC9/lW8RiYUP1UyiBTY16fSM55LXpT5YG91CfVJ0l0F8dP
+        AxL6n6BpPxmTYR1ql/o6745N/eBnp1gxMm7lXuw=
+X-Google-Smtp-Source: ACHHUZ49fyumpSoubA/QSL2euXQxNkK8YT8+yIAjR9IgC5rGDCadGOaus7RUj9TiIgEIp6v5Xzd0HQ==
+X-Received: by 2002:a05:6a00:23cc:b0:645:c730:f826 with SMTP id g12-20020a056a0023cc00b00645c730f826mr201405pfc.24.1684872328385;
+        Tue, 23 May 2023 13:05:28 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:7a5b:c1e7:4298:b147])
+        by smtp.gmail.com with ESMTPSA id x10-20020a056a00270a00b00640e64aa9b7sm6370805pfv.10.2023.05.23.13.05.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 May 2023 13:05:27 -0700 (PDT)
+Date:   Tue, 23 May 2023 14:05:24 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: stm32: Fix error code in
+ stm32_rproc_parse_dt()
+Message-ID: <ZG0chM7o2f7gTNyg@p14s>
+References: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.252.31.43]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-23_06,2023-05-22_03,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch revert commit c83900393aa1 ("tee: Remove vmalloc page support")
+On Mon, May 22, 2023 at 10:46:11AM +0300, Dan Carpenter wrote:
+> There is a cut and paste bug so this code was returning the wrong
+> variable.  It should have been "ddata->hold_boot_rst" instead of
+> "ddata->rst".
+> 
+> Fixes: de598695a2ad ("remoteproc: stm32: Allow hold boot management by the SCMI reset controller")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 0e322697d210..a7457777aae4 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -755,7 +755,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+>  
+>  	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
+>  	if (IS_ERR(ddata->hold_boot_rst))
+> -		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+> +		return dev_err_probe(dev, PTR_ERR(ddata->hold_boot_rst),
+>  				     "failed to get hold_boot reset\n");
 
-The firmware framework uses vmalloc page to store an image of a firmware,
-got from the file system.
-To be able to give this firmware to OP-TEE without an extra copy,
-the vmalloc page support needs to be reintroduce.
+I have applied this patch.
 
-Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
----
- drivers/tee/tee_shm.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+Thanks,
+Mathieu
 
-diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-index 673cf0359494..b2d349ac17b4 100644
---- a/drivers/tee/tee_shm.c
-+++ b/drivers/tee/tee_shm.c
-@@ -28,14 +28,26 @@ static int shm_get_kernel_pages(unsigned long start, size_t page_count,
- 	struct page *page;
- 	size_t n;
- 
--	if (WARN_ON_ONCE(is_vmalloc_addr((void *)start) ||
--			 is_kmap_addr((void *)start)))
-+	if (WARN_ON_ONCE(is_kmap_addr((void *)start)))
- 		return -EINVAL;
- 
--	page = virt_to_page((void *)start);
--	for (n = 0; n < page_count; n++) {
--		pages[n] = page + n;
--		get_page(pages[n]);
-+	if (is_vmalloc_addr((void *)start)) {
-+		struct page *page;
-+
-+		for (n = 0; n < page_count; n++) {
-+			page = vmalloc_to_page((void *)(start + PAGE_SIZE * n));
-+			if (!page)
-+				return -ENOMEM;
-+
-+			get_page(page);
-+			pages[n] = page;
-+		}
-+	}  else {
-+		page = virt_to_page((void *)start);
-+		for (n = 0; n < page_count; n++) {
-+			pages[n] = page + n;
-+			get_page(pages[n]);
-+		}
- 	}
- 
- 	return page_count;
--- 
-2.25.1
-
+>  
+>  	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
+> -- 
+> 2.39.2
+> 
