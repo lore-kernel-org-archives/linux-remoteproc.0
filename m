@@ -2,67 +2,220 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42644C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 May 2023 06:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B6FC77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 May 2023 11:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239772AbjEXGv7 (ORCPT
+        id S229723AbjEXLRw (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 24 May 2023 02:51:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38098 "EHLO
+        Wed, 24 May 2023 07:17:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233725AbjEXGvj (ORCPT
+        with ESMTP id S229540AbjEXLRv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 24 May 2023 02:51:39 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F7D31A8;
-        Tue, 23 May 2023 23:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=tHeCHx/MOMVMOZD9oj9+Q6YTtU8wrcycwgwfyfxHFIY=; b=EtZtPKW8TSYwismfcohBDho/P1
-        N4gWnd35viIowDvStMYa9OeqlAzPKP4t2uN25NL18atYnIyqOi2g8KYDvxzXIfiZbExJhekl4+LY3
-        pAs7BsyRPwzikVP4SG4QH3zHU8+Kit63+0rFj0bg0JKyzPPtH1GATs7MbkKVx+7FEoBhBqRPGFDRm
-        dcbzdeEU6FN5zy3fbqVA1MbmENfCXBwLc23m+z5AX7Q54osvOCJDYJdMfOya0kYxFGqQ7YFvQnBu3
-        j49yNpWbnJnPWhopSNtvTmmvVXSvENPbXGmxD7l7XmIvFPY/qy4ERsCMg6C+ueod+CAYCiOnj9jsu
-        bZtFiyAw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1q1iKd-00CX9Z-1L;
-        Wed, 24 May 2023 06:50:47 +0000
-Date:   Tue, 23 May 2023 23:50:47 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org
-Subject: Re: [RFC PATCH 2/4] remoteproc: Add TEE support
-Message-ID: <ZG2zx+ARLO1a7wh5@infradead.org>
-References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
- <20230523091350.292221-3-arnaud.pouliquen@foss.st.com>
+        Wed, 24 May 2023 07:17:51 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3707C5;
+        Wed, 24 May 2023 04:17:49 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51190fd46c3so1615761a12.1;
+        Wed, 24 May 2023 04:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684927068; x=1687519068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R1aqK7Ud0k9NZcXoizSkxgHpUDinNYt7aEGaaazv/Z8=;
+        b=M64Z8XD90NwQvjtSENRZLkYlvy3y0h4xXTeCMpaFe3Nvg7W+2i+x6uzNnrOxOpT9cC
+         I4FuijR/msNkzgjIh4JqMRWmxNvfjp0e1cErAl9eIax4U0pSa+jlozPO9dV9JJ5pH5lZ
+         a63cl6WnjP4k7MZKymPo9p73MP19YPZmy1WXkguGx3M9dB5mTp9Mdtw9DOtHVwkVtEdl
+         cRuRCw8aToFYwPEYJu318peRGvyzNY4jPQ7l2ZByZgm/catuEzNKFu5rAv/6hbrxVviK
+         8z9mAQ+zKhyYqHdihcWlxRuSz7Vq+77BbVCK7K1TjZbNpcrBVOLgOITiDVX3hshc++eG
+         r85w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684927068; x=1687519068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1aqK7Ud0k9NZcXoizSkxgHpUDinNYt7aEGaaazv/Z8=;
+        b=ViaQ0jABN9h0Ui+ZI4M83FCkeDCdba4VvTxGaQyLoZOlE+kLlca2tZ2OVXhMy2yRsD
+         Jn0AFDiKOcyNibxvcB37yPXdZEf0mN651sZFJmRG8O9xcKpPKOLSq5xtTC5ClYymF51S
+         FVKGTAfD8K67mqdaJ1zK94izkn0M5KB004APolnbju5kyFomQkqSzgiZ6zIK6mF1UeoI
+         VX7h3s/SyN18iW0WH/Ppb/ytUMKZ2xGRDH/ED6gBzV0zNeVupctRliW1yPmlFeR+Xrzj
+         AItoeM+IwTRgAONhf8qlBUyz/kWyyOuvfAXEXgPqJGuTjTnyFm5wvjkCEVhXEIOdc3Gt
+         qTdg==
+X-Gm-Message-State: AC+VfDwt0z6vr4is93bl9KL8fFzhwoVEr3YHAHgrfm6Lyu1JtXEzP1wo
+        MTM3s10PUjFMdvKdp4PO2YQ=
+X-Google-Smtp-Source: ACHHUZ5E+uzRTP/jxOVJKqtttOPDyek7yNaAEC3dr/1xLcSEeoVvv4hI6zSfl4xIC+s8uMB4UwtZXg==
+X-Received: by 2002:a17:907:3f27:b0:96f:bf78:c380 with SMTP id hq39-20020a1709073f2700b0096fbf78c380mr12197141ejc.55.1684927068200;
+        Wed, 24 May 2023 04:17:48 -0700 (PDT)
+Received: from [192.168.3.32] ([213.149.38.146])
+        by smtp.gmail.com with ESMTPSA id kg1-20020a17090776e100b009664e25c425sm5637404ejc.95.2023.05.24.04.17.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 May 2023 04:17:47 -0700 (PDT)
+Message-ID: <248ebc1b-d077-e424-8f36-6c143b0ed697@gmail.com>
+Date:   Wed, 24 May 2023 13:17:45 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230523091350.292221-3-arnaud.pouliquen@foss.st.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH 01/13] firmware: qcom: scm: Introduce pas_metadata context
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>
+References: <20220128025513.97188-1-bjorn.andersson@linaro.org>
+ <20220128025513.97188-2-bjorn.andersson@linaro.org>
+Content-Language: en-US
+From:   Robert Marko <robimarko@gmail.com>
+In-Reply-To: <20220128025513.97188-2-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, May 23, 2023 at 11:13:48AM +0200, Arnaud Pouliquen wrote:
-> +	struct tee_param param[MAX_TEE_PARAM_ARRY_MEMB];
-> +	struct tee_shm *fw_shm;
-> +	int ret;
+
+On 28. 01. 2022. 03:55, Bjorn Andersson wrote:
+> Starting with Qualcomm SM8450, some new security enhancements has been
+> done in the secure world, which results in the requirement to keep the
+> metadata segment accessible by the secure world from init_image() until
+> auth_and_reset().
+>
+> Introduce a "PAS metadata context" object that can be passed to
+> init_image() for tracking the mapped memory and a related release
+> function for client drivers to release the mapping once either
+> auth_and_reset() has been invoked or in error handling paths on the way
+> there.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Hi Bjorn,
+I know a lot of time has passed since this patch, but this patch breaks 
+qcom_scm_pas_auth_and_reset SCM call.
+I have had MDT loader and SCM changes from this series reverted for a 
+long time but was unable to
+find the exact culprit nor how to fix it.
+I even ported the TZ log driver to see if anything is obvious there but 
+nope, calling qcom_scm_pas_auth_and_reset
+after this patch is just failling which is then causing Q6 WCSS on 
+IPQ8074 to fail probing so WLAN doesnt work.
+
+Since I am out of ideas, I was hoping that you maybe have an idea what 
+could be the issue, I can provide the TZ log
+with all of the SCM calls when it works and when not if required.
+
+Regards,
+Robert
+
+> ---
+>   drivers/firmware/qcom_scm.c   | 39 ++++++++++++++++++++++++++++++-----
+>   drivers/soc/qcom/mdt_loader.c |  2 +-
+>   include/linux/qcom_scm.h      | 10 ++++++++-
+>   3 files changed, 44 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> index 7db8066b19fd..3218d13cbf83 100644
+> --- a/drivers/firmware/qcom_scm.c
+> +++ b/drivers/firmware/qcom_scm.c
+> @@ -435,10 +435,16 @@ static void qcom_scm_set_download_mode(bool enable)
+>    *		and optional blob of data used for authenticating the metadata
+>    *		and the rest of the firmware
+>    * @size:	size of the metadata
+> + * @ctx:	optional metadata context
+>    *
+> - * Returns 0 on success.
+> + * Return: 0 on success.
+> + *
+> + * Upon successful return, the PAS metadata context (@ctx) will be used to
+> + * track the metadata allocation, this needs to be released by invoking
+> + * qcom_scm_pas_metadata_release() by the caller.
+>    */
+> -int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size)
+> +int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+> +			    struct qcom_scm_pas_metadata *ctx)
+>   {
+>   	dma_addr_t mdata_phys;
+>   	void *mdata_buf;
+> @@ -467,7 +473,7 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size)
+>   
+>   	ret = qcom_scm_clk_enable();
+>   	if (ret)
+> -		goto free_metadata;
+> +		goto out;
+>   
+>   	desc.args[1] = mdata_phys;
+>   
+> @@ -475,13 +481,36 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size)
+>   
+>   	qcom_scm_clk_disable();
+>   
+> -free_metadata:
+> -	dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
+> +out:
+> +	if (ret < 0 || !ctx) {
+> +		dma_free_coherent(__scm->dev, size, mdata_buf, mdata_phys);
+> +	} else if (ctx) {
+> +		ctx->ptr = mdata_buf;
+> +		ctx->phys = mdata_phys;
+> +		ctx->size = size;
+> +	}
+>   
+>   	return ret ? : res.result[0];
+>   }
+>   EXPORT_SYMBOL(qcom_scm_pas_init_image);
+>   
+> +/**
+> + * qcom_scm_pas_metadata_release() - release metadata context
+> + * @ctx:	metadata context
+> + */
+> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx)
+> +{
+> +	if (!ctx->ptr)
+> +		return;
 > +
-> +	fw_shm = tee_shm_register_kernel_buf(tee_rproc_ctx->tee_ctx, (void *)fw->data, fw->size);
-> +	if (IS_ERR(fw_shm)) {
-> +		/* Fallback: Try to allocate memory in OP-TEE space */
-> +		fw_shm = tee_shm_alloc_kernel_buf(tee_rproc_ctx->tee_ctx, fw->size);
-
-> +EXPORT_SYMBOL(tee_rproc_load_fw);
-
-Please stick to the EXPORT_SYMBOL_GPL of the underlying tee
-infrastructure.
+> +	dma_free_coherent(__scm->dev, ctx->size, ctx->ptr, ctx->phys);
+> +
+> +	ctx->ptr = NULL;
+> +	ctx->phys = 0;
+> +	ctx->size = 0;
+> +}
+> +EXPORT_SYMBOL(qcom_scm_pas_metadata_release);
+> +
+>   /**
+>    * qcom_scm_pas_mem_setup() - Prepare the memory related to a given peripheral
+>    *			      for firmware loading
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index 72fc2b539213..b00586db5391 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -171,7 +171,7 @@ static int __qcom_mdt_load(struct device *dev, const struct firmware *fw,
+>   			goto out;
+>   		}
+>   
+> -		ret = qcom_scm_pas_init_image(pas_id, metadata, metadata_len);
+> +		ret = qcom_scm_pas_init_image(pas_id, metadata, metadata_len, NULL);
+>   
+>   		kfree(metadata);
+>   		if (ret) {
+> diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+> index 81cad9e1e412..4d8371410b05 100644
+> --- a/include/linux/qcom_scm.h
+> +++ b/include/linux/qcom_scm.h
+> @@ -68,8 +68,16 @@ extern int qcom_scm_set_warm_boot_addr(void *entry, const cpumask_t *cpus);
+>   extern void qcom_scm_cpu_power_down(u32 flags);
+>   extern int qcom_scm_set_remote_state(u32 state, u32 id);
+>   
+> +struct qcom_scm_pas_metadata {
+> +	void *ptr;
+> +	dma_addr_t phys;
+> +	ssize_t size;
+> +};
+> +
+>   extern int qcom_scm_pas_init_image(u32 peripheral, const void *metadata,
+> -				   size_t size);
+> +				   size_t size,
+> +				   struct qcom_scm_pas_metadata *ctx);
+> +void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
+>   extern int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
+>   				  phys_addr_t size);
+>   extern int qcom_scm_pas_auth_and_reset(u32 peripheral);
