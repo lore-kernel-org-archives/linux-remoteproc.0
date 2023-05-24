@@ -2,106 +2,61 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5278C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 23 May 2023 20:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DF5C77B7C
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 May 2023 06:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233032AbjEWUFa (ORCPT
+        id S239392AbjEXGsI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 23 May 2023 16:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56392 "EHLO
+        Wed, 24 May 2023 02:48:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229614AbjEWUFa (ORCPT
+        with ESMTP id S239481AbjEXGrd (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 23 May 2023 16:05:30 -0400
-Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12948119
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 May 2023 13:05:29 -0700 (PDT)
-Received: by mail-pf1-x429.google.com with SMTP id d2e1a72fcca58-64d2981e3abso177853b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 May 2023 13:05:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684872328; x=1687464328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xxXVUOaFN1Qv+6eAQzosOhjOl+94anVe0xXKbzcrKW0=;
-        b=Z1UfLh8zwQ4gGkVeoNzdf7gNB+vkVFBoxp+/Y2vwDp7ns/GM5u9C4vSDIBCs/fw/ii
-         92XGpa8kQFDw88Bqx0REdQVhQafzDeGATQcQ0YHuOKOLO2CMYCZXEq54VBggA+mOUuX5
-         lH5Yi8VSe62WZpgb57rw12rbw2hpSeuwCummsJiFzJlU7+d7wQD9iSPC4p0gbzcvLIDj
-         FiOUA1ZN0NdQSh09ZL4AcUFBu5es2ubK87MmrFdarhGIe8sfph8Pi47Ry9BenJBVDDz2
-         SMe+pwJBaqXAQbwk5+Nh5qNcr4kYcfczdiGNEEXco2r/tDa/tDbefbTvoQgStRxxTgZg
-         EV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684872328; x=1687464328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxXVUOaFN1Qv+6eAQzosOhjOl+94anVe0xXKbzcrKW0=;
-        b=iVGcryzoZVhBHFZCqeX1nEJVKlQCBhhgKuwNx8Dqhzdaopkyt0+YllII5TSfr0b/Hb
-         IYa0sBzc5sRS8Kft67VpPzv+k8pYdxtoF1s2HbBtqqL+q/CNlcA7AcQd0li0o/edRcXI
-         Yxj2RKe+9HkKP6kEiS6HOQpph7A3XvrO6YsoDdy/WMfap/PH4vKboE4csAhT0Ex3jpjq
-         O4myf68lOKFrRhRCdFuF5nx4Jq+14/fiAEWIE/hdhORs/X1iYJk4IFkhiVQUhO3pu0Ka
-         XzBcNcCEj1Jpc//e2+S7ha4mdSYokRqedQTQXMzFMlBLqnlrxIhI+AocqFAHA8lixfek
-         Ufuw==
-X-Gm-Message-State: AC+VfDzxFeFC9/lW8RiYUP1UyiBTY16fSM55LXpT5YG91CfVJ0l0F8dP
-        AxL6n6BpPxmTYR1ql/o6745N/eBnp1gxMm7lXuw=
-X-Google-Smtp-Source: ACHHUZ49fyumpSoubA/QSL2euXQxNkK8YT8+yIAjR9IgC5rGDCadGOaus7RUj9TiIgEIp6v5Xzd0HQ==
-X-Received: by 2002:a05:6a00:23cc:b0:645:c730:f826 with SMTP id g12-20020a056a0023cc00b00645c730f826mr201405pfc.24.1684872328385;
-        Tue, 23 May 2023 13:05:28 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:7a5b:c1e7:4298:b147])
-        by smtp.gmail.com with ESMTPSA id x10-20020a056a00270a00b00640e64aa9b7sm6370805pfv.10.2023.05.23.13.05.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 May 2023 13:05:27 -0700 (PDT)
-Date:   Tue, 23 May 2023 14:05:24 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        linux-remoteproc@vger.kernel.org,
+        Wed, 24 May 2023 02:47:33 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91C7E1BB;
+        Tue, 23 May 2023 23:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=d42AHTFlpUEOeGU5jPR9+1OGQMHqlZflKmgaMdb+Sas=; b=MwxCPps7AIYBrNm23ThRPeSFhC
+        C5DcQDk8QDb0J10OGerS6pvVbC2XXSobScNXP3T0adiQL/ZTAYnQKwvhIgUNlHAf0O+pSVLvqihBX
+        9pPenUhaV/I2af9WBMJ1Qtqh7hPk6P0UENM4y2Z3nKZ0EJXBD+j5LW26GwVC54b2H8Uzr3xkvhucT
+        g2E494/FR4dLUjMH4EA3D6RgblH2jlKE/5rjuHhm1JkSqUxKILGJTMx39Og/kp6hTcsQf5zkueNP9
+        N+Kc0CaC65olQL5nEcqbGZMJuA5xzcvhJOfFdVbomC6y3LKw5YoxCxqQ+cZkpsENELgyOBvzFnvfJ
+        UOgXaVEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1q1iGR-00CWbv-2z;
+        Wed, 24 May 2023 06:46:27 +0000
+Date:   Tue, 23 May 2023 23:46:27 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
         linux-stm32@st-md-mailman.stormreply.com,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: stm32: Fix error code in
- stm32_rproc_parse_dt()
-Message-ID: <ZG0chM7o2f7gTNyg@p14s>
-References: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
+        linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [RFC PATCH 1/4] tee: Re-enable vmalloc page support for shared
+ memory
+Message-ID: <ZG2yw0xZ6XGGp9E5@infradead.org>
+References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
+ <20230523091350.292221-2-arnaud.pouliquen@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f457246-6446-42cb-81ae-d37221d726b1@kili.mountain>
+In-Reply-To: <20230523091350.292221-2-arnaud.pouliquen@foss.st.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, May 22, 2023 at 10:46:11AM +0300, Dan Carpenter wrote:
-> There is a cut and paste bug so this code was returning the wrong
-> variable.  It should have been "ddata->hold_boot_rst" instead of
-> "ddata->rst".
-> 
-> Fixes: de598695a2ad ("remoteproc: stm32: Allow hold boot management by the SCMI reset controller")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 0e322697d210..a7457777aae4 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -755,7 +755,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  
->  	ddata->hold_boot_rst = devm_reset_control_get_optional(dev, "hold_boot");
->  	if (IS_ERR(ddata->hold_boot_rst))
-> -		return dev_err_probe(dev, PTR_ERR(ddata->rst),
-> +		return dev_err_probe(dev, PTR_ERR(ddata->hold_boot_rst),
->  				     "failed to get hold_boot reset\n");
+On Tue, May 23, 2023 at 11:13:47AM +0200, Arnaud Pouliquen wrote:
+> This patch revert commit c83900393aa1 ("tee: Remove vmalloc page support")
 
-I have applied this patch.
+As per the discussion back then: don't just blindly do the same dumb
+thing again and fix the interfae to actually pass in a page array,
+or iov_iter or an actually useful container that fits.
 
-Thanks,
-Mathieu
-
->  
->  	if (!ddata->hold_boot_rst && IS_ENABLED(CONFIG_HAVE_ARM_SMCCC)) {
-> -- 
-> 2.39.2
-> 
