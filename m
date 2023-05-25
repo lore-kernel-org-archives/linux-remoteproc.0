@@ -2,102 +2,128 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49300C7EE2C
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 24 May 2023 14:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEF5C77B7E
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 25 May 2023 15:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232374AbjEXOBj (ORCPT
+        id S241810AbjEYPcJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 24 May 2023 10:01:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45384 "EHLO
+        Thu, 25 May 2023 11:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235661AbjEXOBi (ORCPT
+        with ESMTP id S241808AbjEYPcH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 24 May 2023 10:01:38 -0400
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 798459E;
-        Wed, 24 May 2023 07:01:37 -0700 (PDT)
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34OCxk8w017501;
-        Wed, 24 May 2023 16:01:19 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=RAAm+AX0qyb+kRbhxWkN1xkrpeGaJzZQEwR5kRwe2Nw=;
- b=kMTpYOYiRB6jJbKtryLg7tWY8/FSoXts15ruhQzQ0ufCRJeoEitDNiPAhTePtqwL5Ou+
- 2zlvdcpRXH8UkEcUMXwnvNAsbYsLfPJGTn+WQCUdM6KND3lZOw04C+Bsqvbv4Ziu3nEk
- uFAVgopKzQi09gNs+Or3Jf4yC0Q9Ym/TwemN6scyjw1NbZsRyON2iRKVEyHf063O0ghs
- Qo8s3Tj+/hTnXE5OLREvjYEPXBrf+FQDAV9EPtVebl5b8io7yIkyj9MgW360zTH0JNyj
- j581Udh60uj3NOsIzQtn4JQIjhfxdS4iCDQgr29PWbmXtMyE+vvutrRnFfOXE5NMXPuW 7g== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qrspnsf9s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 16:01:19 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2416910002A;
-        Wed, 24 May 2023 16:01:18 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EC59822A6EF;
-        Wed, 24 May 2023 16:01:18 +0200 (CEST)
-Received: from [10.201.21.9] (10.201.21.9) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Wed, 24 May
- 2023 16:01:15 +0200
-Message-ID: <18a8528d-7d9d-6ed0-0045-5ee47dd39fb2@foss.st.com>
-Date:   Wed, 24 May 2023 16:01:14 +0200
+        Thu, 25 May 2023 11:32:07 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB5E197
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 May 2023 08:32:04 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1ae763f9a94so11451765ad.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 May 2023 08:32:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685028723; x=1687620723;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UmQi8fIzOJff3kyNGKaVTa69XxHyX2JQ/cM/6RRUYVY=;
+        b=fv94K8XOnLGVRz+eN9eeXw5o+qvVgngk6JKw1Zc/4W9HISDqNzb6NTDZBmnff2uF0x
+         s5UovWDO85t7EqIV86tWY8ZU2upyA6OzuFoNhF18Xoyi6iOi9X6ArwTaL9zTBfN7Pzgr
+         kzl9XtnZrOFzXK50ZCTxsObp0OyTd9FkCT+x+ZugTmNn1ciepfVkwk/j/eVPBYVCCzqO
+         oXJP4obDUZFABgjNJ+UUe0wQ35BPiePXyaqyQMA0Ny48yerkpH3uFOFGgERMw8Mv6s5v
+         7fAOt7TTr5MJ8GTgDpy69t1asKioeh5cpxs2rXz60oovYZ4cpnKUeYnsfQVhCK+Vt1ns
+         zqlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685028723; x=1687620723;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmQi8fIzOJff3kyNGKaVTa69XxHyX2JQ/cM/6RRUYVY=;
+        b=fuskGSM61ydT7VBPoMqqU8+v/tzvWlTK3Aww0wXjkn3ITCPzCyVJAU/p21X7rWkkau
+         AnseB6qotISYoMb2hA2xvr8FrHRyaGznDRnBk1wsjiW61qV7OlmzI/fZmF0l75F/GOXu
+         b9o+DD4ycgrIDzcXceEHCyL96O8Mcl9oe8GQ0owRKn87ar2vFGHSjMD4f1a/XQpixZQm
+         CoOFypSlJ9YjXumvlI1AMcoHRrs4bbuVh5tKupBZKeDfOc2Ic/59B6+tCxXHWXi0OV6S
+         FdAkNEmdJOgcwEuuAwBP/rB1DYk86/CzeOlBfkvnx+M0EDyNMFsqvU+hyddc4NK5fD3C
+         RlTw==
+X-Gm-Message-State: AC+VfDyzL9hHXvmYlMjc2Vhg6JCcQLa1pZi1xGsNeO/XRwauks+u8LHo
+        1TfB4rVwfLRVg3NnyIv3oqbV8w==
+X-Google-Smtp-Source: ACHHUZ46Du0JEr4QEa4hb5TfjiXFSDB8X9bCJLLgtTlTN8tlUOafA+SKBkA/6yJjF+jYQ0axnk4tVg==
+X-Received: by 2002:a17:903:2793:b0:1ad:e633:ee96 with SMTP id jw19-20020a170903279300b001ade633ee96mr2007567plb.55.1685028723461;
+        Thu, 25 May 2023 08:32:03 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:2825:fb66:f9f3:171d])
+        by smtp.gmail.com with ESMTPSA id bj2-20020a170902850200b001993a1fce7bsm1557285plb.196.2023.05.25.08.32.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 May 2023 08:32:02 -0700 (PDT)
+Date:   Thu, 25 May 2023 09:32:00 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc:     linux-remoteproc@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, quic_plai@quicinc.com, bgoswami@quicinc.com,
+        perex@perex.cz, tiwai@suse.com, srinivas.kandagatla@linaro.org,
+        quic_rohkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, swboyd@chromium.org,
+        judyhsiao@chromium.org, devicetree@vger.kernel.org,
+        krzysztof.kozlowski@linaro.org, corbet@lwn.net,
+        quic_visr@quicinc.com
+Subject: Re: [PATCH v5 0/2] Update section header name check
+Message-ID: <ZG9/cEMRMg06Pz4u@p14s>
+References: <20230223150559.2429562-1-quic_mohs@quicinc.com>
+ <20230302215735.GA1401708@p14s>
+ <f9c6fead-d573-a8bc-7e88-a53313ff8bef@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 1/4] tee: Re-enable vmalloc page support for shared
- memory
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>
-References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
- <20230523091350.292221-2-arnaud.pouliquen@foss.st.com>
- <ZG2yw0xZ6XGGp9E5@infradead.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <ZG2yw0xZ6XGGp9E5@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.21.9]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-24_09,2023-05-24_01,2023-05-22_02
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9c6fead-d573-a8bc-7e88-a53313ff8bef@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Christoph,
-
-On 5/24/23 08:46, Christoph Hellwig wrote:
-> On Tue, May 23, 2023 at 11:13:47AM +0200, Arnaud Pouliquen wrote:
->> This patch revert commit c83900393aa1 ("tee: Remove vmalloc page support")
+On Thu, May 11, 2023 at 10:09:45PM +0530, Mohammad Rafi Shaik wrote:
 > 
-> As per the discussion back then: don't just blindly do the same dumb
-> thing again and fix the interfae to actually pass in a page array,
-> or iov_iter or an actually useful container that fits.
+> On 3/3/2023 3:27 AM, Mathieu Poirier wrote:
+> > On Thu, Feb 23, 2023 at 08:35:57PM +0530, Mohammad Rafi Shaik wrote:
+> > > Update section header name check and corresponding documentation.
+> > > Changes since v4:
+> > >      -- Rephrase commit message.
+> > Asked for clarifications on V4 that were never given to me.  This patchset will
+> > not move forward until those have been resolved.
+> The present Qualcomm DSP binary contains resource table name as
+> ".resource_table.ac_bin_process.",
+
+My questions still haven't been answered:
+
+1. Why do we have to change the kernel because of the way a company specific
+tool generates an ELF?
+
+2. Why is the "ac_bin_process" part needed at all?
+
+> so the current logic with strcmp will fail with present comparision  as the
+> binary name is not only .resource_table but resource_table.ac_bin_process So
+> to overcome this issue we modified the way of checking the resource table
+> name to make it generic.
 > 
-
-I suppose your are speaking about this discussion:
-https://lore.kernel.org/all/20221002002326.946620-3-ira.weiny@intel.com/
-
-If I'm not mistaken, I should modify at tee_shm_register_kernel_buf API and
-register_shm_helper inernal function, right?
-
-Seems that Jens has also pointed out the free part...
-
-What about having equivalent of shm_get_kernel_pages in an external helper (to
-defined where to put it), could it be an alternative of the upadate of the
-tee_shm API?
-
-Thanks,
-Arnaud
+> strstarts(name_table + name, ".resource_table");
+> 
+> This logic will perform a string comparison with name ".resouce_table"as our
+> binary name is .resource_table.ac_bin_process it succeeds
+> 
+> > > Changes since v3:
+> > >      -- Rephrase commit message.
+> > > Changes since v2:
+> > >      -- Update the commit message with example.
+> > >      -- Update the documentation text appropriately.
+> > > Changes since v1:
+> > >      -- Update the commit message.
+> > >      -- Use strstarts instead of strstr.
+> > >      -- Update documentation file.
+> > > 
+> > > Srinivasa Rao Mandadapu (2):
+> > >    remoteproc: elf_loader: Update resource table name check
+> > >    docs: remoteproc: Update section header name requirement
+> > > 
+> > >   Documentation/staging/remoteproc.rst       | 5 ++++-
+> > >   drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
+> > >   2 files changed, 5 insertions(+), 2 deletions(-)
+> > > 
+> > > -- 
+> > > 2.25.1
+> > > 
