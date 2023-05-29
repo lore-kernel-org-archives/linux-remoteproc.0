@@ -2,113 +2,283 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED70CC77B7A
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 May 2023 07:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C155AC77B7E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 May 2023 14:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjE2HVf (ORCPT
+        id S229659AbjE2OLQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 29 May 2023 03:21:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46188 "EHLO
+        Mon, 29 May 2023 10:11:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjE2HVe (ORCPT
+        with ESMTP id S229558AbjE2OLN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 29 May 2023 03:21:34 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE82A6;
-        Mon, 29 May 2023 00:21:32 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34T6TFJd022657;
-        Mon, 29 May 2023 09:21:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=R7U12OfPWbuKgyybSdqlH6r+NAGEknQL5yOH75+Ki/o=;
- b=mWTzap13IJD3sGmFPOA13Bs0t5d4pbafMu/Co6c4yHZ6oMTKxRLdVzGEToWs0IGUroNE
- QP8XfIRu9woFIYgnX97OZuo95eM/AFE1JWze1wNiqzOKITvsJ1CLLDxfMBUTIlm+ZFZ/
- FBrZ6qj9twziD55xCwawiWR/CNMciHj8YUaZa+z1Br7LL4tV528fSTPjtWU59aU92Db2
- eOpkZZ6wwruqY0h27P58IQd+Br0quuuOXF5mYuYH6E/WG1ObvkGfGUCKr115WlqWnG/g
- QfRuciXKo3pg0Dsakv3Ll9/s+AK8ty6lMl0IzMFg6wbiuu/JxiG6F3KJJduixrcFexxJ SQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3quag27vxa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 29 May 2023 09:21:05 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 03EAB100039;
-        Mon, 29 May 2023 09:21:04 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EEF0B2132FC;
-        Mon, 29 May 2023 09:21:03 +0200 (CEST)
-Received: from [10.201.21.9] (10.201.21.9) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Mon, 29 May
- 2023 09:21:02 +0200
-Message-ID: <312a7c7a-165c-eb17-b6af-4c708d33afb4@foss.st.com>
-Date:   Mon, 29 May 2023 09:17:00 +0200
+        Mon, 29 May 2023 10:11:13 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D47D110;
+        Mon, 29 May 2023 07:10:52 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3078a3f3b5fso3199623f8f.0;
+        Mon, 29 May 2023 07:10:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685369450; x=1687961450;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=10o9jmZWeP457p2kLERKO+3a4U7ZX8eeTkQQ7+6/jtg=;
+        b=R/rqDkNlnRgXOH1pDR5R2SSc30hzPgW0hPNMtwNUrgpO8HXY3pY3T2BoA4vrSxPgOD
+         uXUIldAd/8jFOYIQyC153wIBVX/AJ3MjygoVgbWscuZo7HwahFejjaBDGl8bRLDFU88U
+         ZinOpb71aOiSoFvt8gODU5oDbNiuDTPsb1lV3BPARvLCJkxDfAnwAj5FWAtSa8311wO1
+         5DMOC4jWMkWct6/V3mTiY1omJIM1cCpeKzovWPXNM3Y4LSm1CCgQg0unu5FRiELGea//
+         voB22/S3nulIGlPNptxRVXWbm5PVMiHqaQYRx4Ch0LJzaNqZvA923HAC8OKOleLQwOaY
+         3/zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685369450; x=1687961450;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=10o9jmZWeP457p2kLERKO+3a4U7ZX8eeTkQQ7+6/jtg=;
+        b=U1XyGLNjoTEU1D2qAlz0wpCDOxWIxKvpx2jy3pzAhpMRvb5Rkc03mp0FhQt9bZlQva
+         MbznRE/Jnff+WNjiO2ta8vePTzle52qcpDwLKcO2e6bmWN20h7+tQluehlMKY5vNdAT8
+         AWiRbmrXm8evRMhCJsnytpec2GsmxCdx96IN52Tbu8qC+qr5A7SOPfqzJ+V3rnUWCA01
+         oEuFeV3ycx+BweCUZH+MrjJK+6Z495tf0BU0d0tkjERR45RFmknkuwwvrNGpfFdnhzhE
+         Fmj58xAONhTFsREvN7MJPZR1S0Nnuj9OcLY1qlnBOTPg6sfiRxCVdb0ptrfmN4NsfaDa
+         NW+g==
+X-Gm-Message-State: AC+VfDy1kAOoC/CHBsIRXimh5jVfM9Lw+vrhYJlTTgw/g3sn7OtuczvN
+        +o8rPU02yuGrtigE9J99uHM=
+X-Google-Smtp-Source: ACHHUZ6A74E+BgfNtlIZYglrKBVuUz4y94mfpo3xLAeito8AShd1iQMhnZMhDZbfgGvwCnI7VQYABw==
+X-Received: by 2002:a5d:618d:0:b0:30a:ddb3:93b with SMTP id j13-20020a5d618d000000b0030addb3093bmr8244185wru.63.1685369449882;
+        Mon, 29 May 2023 07:10:49 -0700 (PDT)
+Received: from [192.168.2.177] ([207.188.167.132])
+        by smtp.gmail.com with ESMTPSA id n7-20020adfe347000000b00309382eb047sm39744wrj.112.2023.05.29.07.10.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 May 2023 07:10:48 -0700 (PDT)
+Message-ID: <e744408d-2bc7-886e-2f32-0a05a1dd570a@gmail.com>
+Date:   Mon, 29 May 2023 16:10:47 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 1/4] tee: Re-enable vmalloc page support for shared
- memory
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v12 03/11] dt-bindings: remoteproc: mediatek: Support
+ MT8195 dual-core SCP
+Content-Language: en-US, ca-ES, es-ES
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>
-References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
- <20230523091350.292221-2-arnaud.pouliquen@foss.st.com>
- <ZG2yw0xZ6XGGp9E5@infradead.org>
- <18a8528d-7d9d-6ed0-0045-5ee47dd39fb2@foss.st.com>
- <ZHCoJEkVinvsB2lZ@infradead.org>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <ZHCoJEkVinvsB2lZ@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230517043449.26352-1-tinghan.shen@mediatek.com>
+ <20230517043449.26352-4-tinghan.shen@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20230517043449.26352-4-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.21.9]
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-29_04,2023-05-25_03,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 
-On 5/26/23 14:37, Christoph Hellwig wrote:
-> On Wed, May 24, 2023 at 04:01:14PM +0200, Arnaud POULIQUEN wrote:
->>> As per the discussion back then: don't just blindly do the same dumb
->>> thing again and fix the interfae to actually pass in a page array,
->>> or iov_iter or an actually useful container that fits.
->>>
->>
->> I suppose your are speaking about this discussion:
->> https://lore.kernel.org/all/20221002002326.946620-3-ira.weiny@intel.com/
+On 17/05/2023 06:34, Tinghan Shen wrote:
+> Extend the SCP binding to describe the MT8195 dual-core SCP.
 > 
-> Yes.
+> Under different applications, the MT8195 SCP can be used as single-core
+> or dual-core. This change keeps the single-core definitions and
+> adds new definitions for the dual-core use case.
 > 
->>
->> If I'm not mistaken, I should modify at tee_shm_register_kernel_buf API and
->> register_shm_helper inernal function, right?
->>
-> 
->> What about having equivalent of shm_get_kernel_pages in an external helper (to
->> defined where to put it), could it be an alternative of the upadate of the
->> tee_shm API?
-> 
-> I think the fundamentally right thing is to pass an iov_iter to
-> register_shm_helper, and then use the new as of 6.3
-> iov_iter_extract_pages helper to extract the pages from that.  For
-> the kernel users you can then simply pass down an ITER_BVEC iter
-> that you can fill with vmalloc pages if you want.
-> 
+> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Thanks for the advice!
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-Regards,
-Arnaud
+> ---
+>   .../bindings/remoteproc/mtk,scp.yaml          | 145 +++++++++++++++++-
+>   1 file changed, 141 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index 271081df0e46..09102dda4942 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -21,6 +21,7 @@ properties:
+>         - mediatek,mt8188-scp
+>         - mediatek,mt8192-scp
+>         - mediatek,mt8195-scp
+> +      - mediatek,mt8195-scp-dual
+>   
+>     reg:
+>       description:
+> @@ -31,10 +32,7 @@ properties:
+>   
+>     reg-names:
+>       minItems: 2
+> -    items:
+> -      - const: sram
+> -      - const: cfg
+> -      - const: l1tcm
+> +    maxItems: 3
+>   
+>     clocks:
+>       description:
+> @@ -70,6 +68,81 @@ properties:
+>   
+>       unevaluatedProperties: false
+>   
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 1
+> +
+> +  ranges:
+> +    description:
+> +      Standard ranges definition providing address translations for
+> +      local SCP SRAM address spaces to bus addresses.
+> +
+> +patternProperties:
+> +  "^scp@[a-f0-9]+$":
+> +    type: object
+> +    description:
+> +      The MediaTek SCP integrated to SoC might be a multi-core version.
+> +      The other cores are represented as child nodes of the boot core.
+> +      There are some integration differences for the IP like the usage of
+> +      address translator for translating SoC bus addresses into address space
+> +      for the processor.
+> +
+> +      Each SCP core has own cache memory. The SRAM and L1TCM are shared by
+> +      cores. The power of cache, SRAM and L1TCM power should be enabled
+> +      before booting SCP cores. The size of cache, SRAM, and L1TCM are varied
+> +      on differnt SoCs.
+> +
+> +      The SCP cores do not use an MMU, but has a set of registers to
+> +      control the translations between 32-bit CPU addresses into system bus
+> +      addresses. Cache and memory access settings are provided through a
+> +      Memory Protection Unit (MPU), programmable only from the SCP.
+> +
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - mediatek,scp-core
+> +
+> +      reg:
+> +        description: The base address and size of SRAM.
+> +        maxItems: 1
+> +
+> +      reg-names:
+> +        const: sram
+> +
+> +      interrupts:
+> +        maxItems: 1
+> +
+> +      firmware-name:
+> +        $ref: /schemas/types.yaml#/definitions/string
+> +        description:
+> +          If present, name (or relative path) of the file within the
+> +          firmware search path containing the firmware image used when
+> +          initializing sub cores of multi-core SCP.
+> +
+> +      memory-region:
+> +        maxItems: 1
+> +
+> +      cros-ec-rpmsg:
+> +        $ref: /schemas/mfd/google,cros-ec.yaml
+> +        description:
+> +          This subnode represents the rpmsg device. The properties
+> +          of this node are defined by the individual bindings for
+> +          the rpmsg devices.
+> +
+> +        required:
+> +          - mediatek,rpmsg-name
+> +
+> +        unevaluatedProperties: false
+> +
+> +    required:
+> +      - compatible
+> +      - reg
+> +      - reg-names
+> +
+> +    additionalProperties: false
+> +
+>   required:
+>     - compatible
+>     - reg
+> @@ -99,7 +172,37 @@ allOf:
+>           reg:
+>             maxItems: 2
+>           reg-names:
+> +          items:
+> +            - const: sram
+> +            - const: cfg
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - mediatek,mt8192-scp
+> +            - mediatek,mt8195-scp
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 3
+> +        reg-names:
+> +          items:
+> +            - const: sram
+> +            - const: cfg
+> +            - const: l1tcm
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - mediatek,mt8195-scp-dual
+> +    then:
+> +      properties:
+> +        reg:
+>             maxItems: 2
+> +        reg-names:
+> +          items:
+> +            - const: cfg
+> +            - const: l1tcm
+>   
+>   additionalProperties: false
+>   
+> @@ -121,3 +224,37 @@ examples:
+>               mediatek,rpmsg-name = "cros-ec-rpmsg";
+>           };
+>       };
+> +
+> +  - |
+> +    scp@10500000 {
+> +        compatible = "mediatek,mt8195-scp-dual";
+> +        reg = <0x10720000 0xe0000>,
+> +              <0x10700000 0x8000>;
+> +        reg-names = "cfg", "l1tcm";
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0 0x10500000 0x100000>;
+> +
+> +        scp@0 {
+> +            compatible = "mediatek,scp-core";
+> +            reg = <0x0 0xa0000>;
+> +            reg-names = "sram";
+> +
+> +            cros-ec-rpmsg {
+> +                compatible = "google,cros-ec-rpmsg";
+> +                mediatek,rpmsg-name = "cros-ec-rpmsg";
+> +            };
+> +        };
+> +
+> +        scp@a0000 {
+> +            compatible = "mediatek,scp-core";
+> +            reg = <0xa0000 0x20000>;
+> +            reg-names = "sram";
+> +
+> +            cros-ec-rpmsg {
+> +                compatible = "google,cros-ec-rpmsg";
+> +                mediatek,rpmsg-name = "cros-ec-rpmsg";
+> +            };
+> +        };
+> +    };
