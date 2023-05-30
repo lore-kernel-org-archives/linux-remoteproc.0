@@ -2,126 +2,125 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC45C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 May 2023 13:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BED4C77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 May 2023 15:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232006AbjE3N4f (ORCPT
+        id S232833AbjE3PAj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 30 May 2023 09:56:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43496 "EHLO
+        Tue, 30 May 2023 11:00:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230297AbjE3N4e (ORCPT
+        with ESMTP id S232555AbjE3PAb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 30 May 2023 09:56:34 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C598E
-        for <linux-remoteproc@vger.kernel.org>; Tue, 30 May 2023 06:56:33 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q3zpp-0002Fr-M0; Tue, 30 May 2023 15:56:25 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q3zpo-003tBy-MK; Tue, 30 May 2023 15:56:24 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1q3zpn-009WDo-LL; Tue, 30 May 2023 15:56:23 +0200
-Date:   Tue, 30 May 2023 15:56:21 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Baolin Wang <baolin.wang@linux.alibaba.com>,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] hwspinlock: Convert to platform remove callback
- returning void
-Message-ID: <20230530135621.34psftds7ymrdvmt@pengutronix.de>
-References: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de>
- <20230412171610.ji5czj5c77banf6d@pengutronix.de>
+        Tue, 30 May 2023 11:00:31 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196D59D;
+        Tue, 30 May 2023 08:00:23 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34UBxQBT017376;
+        Tue, 30 May 2023 17:00:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=OCnHecsp5UxiV8JTlQGc9ogoMM35ZUP0jx/iE9+z3bc=;
+ b=Ndb076wsztMFwoq8SavyLWdQRMbY8O726wZJBmo1X81kXwQwblZigIgLj50d9sM8zkyt
+ z+VM03fUpQZpkdkCX70mkuGYzgBuvRf1c09biBP7PLdo8YcrBdFAYkyZ/LQNZmeC/lGI
+ bzaXyRQiWPvbYP6GRH8EwRRKJygwZbkL6x6ZUAWdGCEBVbqLi9ARQ2udozMGK9iykANC
+ qIAVRrwOxS9RKOyF55xnKnSZFib6yFcRBPiT7A8wDk/awL2Co78s6hP3Bbw34lnDYzox
+ MkKUAjjSjbaxvHegVPy6iiRTqnmxJkZ7/cHnwl7EM3ZXbGnZKgxIK3WHwpRQaD2r3cNh cA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3quahy8uvg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 May 2023 17:00:09 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8D94B10002A;
+        Tue, 30 May 2023 17:00:08 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7641322D164;
+        Tue, 30 May 2023 17:00:08 +0200 (CEST)
+Received: from [10.252.5.129] (10.252.5.129) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 30 May
+ 2023 17:00:07 +0200
+Message-ID: <d4a98500-5cb0-b3fd-7f40-8b56a2258619@foss.st.com>
+Date:   Tue, 30 May 2023 17:00:07 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="olg5h6fahaia7uo2"
-Content-Disposition: inline
-In-Reply-To: <20230412171610.ji5czj5c77banf6d@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-remoteproc@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [RFC PATCH 3/4] dt-bindings: remoteproc: add compatibility for
+ TEE support
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>
+CC:     <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>
+References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
+ <20230523091350.292221-4-arnaud.pouliquen@foss.st.com>
+ <1b4eba7e-2771-b0c8-ec23-2ed882374e5d@kernel.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <1b4eba7e-2771-b0c8-ec23-2ed882374e5d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.252.5.129]
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-30_10,2023-05-30_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hello Krzysztof,
 
---olg5h6fahaia7uo2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 5/30/23 13:50, Krzysztof Kozlowski wrote:
+> On 23/05/2023 11:13, Arnaud Pouliquen wrote:
+>> Rework compatibility description according to the support of
+>> the authenticated firmware relying on OP-TEE authentication.
+>>
+>> The expected behavior is:
+>> - with legacy compatible "st,stm32mp1-m4" the Linux kernel loads a
+>>   non-signed (ELF) firmware image,
+>> - with compatible "st,stm32mp1-m4-tee" the Linux kernel load a signed
+>>   firmware image. In this case it calls TEE services to manage the firmware
+>>   loading and the remoteproc life-cycle.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 33 +++++++++++++++++--
+>>  1 file changed, 30 insertions(+), 3 deletions(-)
+> 
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC.  It might happen, that command when run on an older
+> kernel, gives you outdated entries.  Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> You missed at least DT list (maybe more), so this won't be tested.
+> Please resend and include all necessary entries.
+> 
+> Because of above and RFC, I assume there is no need for review. Just to
+> be clear - that's a no.
 
-Hello,
+I did not add DT list and maintainers intentionally to avoid that you
+review it.
+As in a first step the associated OP-TEE pull request has to be reviewed.
+And my plan was just to share the Linux implementation part until the
+OP-TEE review cycle is finished.
 
-On Wed, Apr 12, 2023 at 07:16:10PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Tue, Mar 14, 2023 at 07:00:20PM +0100, Uwe Kleine-K=F6nig wrote:
-> > Hello,
-> >=20
-> > this patch series adapts the platform drivers below drivers/hwspinlock =
-to use
-> > the .remove_new() callback. Compared to the traditional .remove() callb=
-ack
-> > .remove_new() returns no value. This is a good thing because the driver=
- core
-> > doesn't (and cannot) cope for errors during remove. The only effect of a
-> > non-zero return value in .remove() is that the driver core emits a warn=
-ing. The
-> > device is removed anyhow and an early return from .remove() usually yie=
-lds a
-> > resource leak.
-> >=20
-> > By changing the remove callback to return void driver authors cannot re=
-asonably
-> > assume any more that there is some kind of cleanup later.
-> >=20
-> > The omap driver could return -EBUSY. This is first changed to return
-> > zero to drop the duplicated error message. I assume this error path is
-> > dangerous. For sure the platform device binding goes away and so
-> > devm_platform_ioremap_resource is undone. So probably the user of the
-> > hwspinlock that prevented its removal will soon access an unmapped
-> > virtual address resulting in an oops. This is true with and without my
-> > patch. IMHO hwspin_lock_unregister() shouldn't return an error code but
-> > care that all users go away and then return void.
-> >=20
-> > After this change the two platform_drivers can be trivially converted to
-> > .remove_new().
->=20
-> Gentle ping!
->=20
-> Who is supposed to apply this series (or point out a good reason to not
-> do that)?
+Now regarding your mail (and very interesting feedback from Christoph Hellwig),
+it was clearly not the good strategy.
+So my apologize and next time whatever the objective of the series I will add
+all peoples and lists in the loop.
 
-Still no maintainer feedback on my series :-\ Would a resend help?
+Thanks,
+Arnaud
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---olg5h6fahaia7uo2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmR2AIQACgkQj4D7WH0S
-/k7dggf+ODF1m3jtKl6F+UkJAuatg9btwG2VZW7LjwpFFWazIkNGxelYwkdCfzi6
-lkHvRjmClvlPmosk/cCwO6ymXkVbu8ok6gonlkrT09H6fN51/cW6T4o5hSbK91k7
-gf/nMxXl2V7irjQ8j/Emm+29Yrb3pkUB+wYm2LTYK0gUImIaIaLfeCTToHiGR+KP
-vGMNTb5V5Z2Q1TNMKgtzoeyJFmCAIIIQcQ+Sj2c5NTOb57I1Kaj1iF6ODXSRxlkx
-fR0xDY1mAdrK+N25QEC3vDOm51DCbYqjmlt3TschWqTb77TIi0nxkdJWKy94rQet
-ZLGg9Xaa5R3KxZI+Wr97hNjQsy2QIA==
-=ZUlE
------END PGP SIGNATURE-----
-
---olg5h6fahaia7uo2--
+> 
+> Best regards,
+> Krzysztof
+> 
