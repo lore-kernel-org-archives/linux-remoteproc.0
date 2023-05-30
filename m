@@ -2,113 +2,119 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CF9C7EE33
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 May 2023 15:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43128C7EE23
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 May 2023 16:20:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233202AbjE3PMk (ORCPT
+        id S230138AbjE3QUy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 30 May 2023 11:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
+        Tue, 30 May 2023 12:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233184AbjE3PMh (ORCPT
+        with ESMTP id S230105AbjE3QUx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 30 May 2023 11:12:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210A5BE;
-        Tue, 30 May 2023 08:12:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A7F9462906;
-        Tue, 30 May 2023 15:12:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C417FC433EF;
-        Tue, 30 May 2023 15:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685459555;
-        bh=4kszkiKYQZZBlC9XFCYpDiNYoZ19gI+fLwDPLNndKzU=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=G0Jabv367okXjl+PR0dnMMOSyHI2z+LaykTYgyjXEbYiilKX+419JA7ARffaR9t3M
-         7cMpsTljIe7hGzmFHVwwoOjLJXsexJP6f7vKSKbG/cs5qyGAuOnkpI5SCdxvSnXk9x
-         RYzAccWTtYwzSChWOR9HXWuRkXSs/38eAOUWd1ortKwryWdX1lWcZySyCoiZCKQdtE
-         Sry3mSrPcmr/QRG4P/80TCJV+yW6/UTJTZTMrOtkDIBz+3EUrfFRbH3qXe6hou2apm
-         6BHkjatycqfh/rPqPiMeEZlVC8P4yJdZkrjmMLsqE0QzsAxExeBVBq8uZOJtVVBc8Q
-         RpQxhWY9/9jrA==
-Message-ID: <7bdb0e44-eaf7-8085-2ea5-6bb06b01ef35@kernel.org>
-Date:   Tue, 30 May 2023 17:12:28 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RFC PATCH 3/4] dt-bindings: remoteproc: add compatibility for
- TEE support
-Content-Language: en-US
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
+        Tue, 30 May 2023 12:20:53 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 238E79D
+        for <linux-remoteproc@vger.kernel.org>; Tue, 30 May 2023 09:20:52 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id 41be03b00d2f7-53fb64b3368so593874a12.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 30 May 2023 09:20:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685463651; x=1688055651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vf4YK7Nlt1xMm1TWJQkBoFqPmDurlTxDp8HiK/k4M8k=;
+        b=VjGC5EGOqpWtBh+mIxKe7Jr2JgXDaZaiVvkxKwrmhnXgWfX8Vxd90dSarJ5pyfyIG4
+         DI/4s4lFuf929W4CVXxTBTAyblpUiNV9MG/mQAaZ8YLhccAmXasXKDV3JGSRg77PgFZf
+         IkVKZprTL0nTEc9FQ9yhI8Fi65/hmkZt4rkQ/GsI3DXr4gC7kQ7apCemi6NhXu23gJfp
+         qzBq0yqJ0HP7nEFCbNLZttq/HtbDMWII9eSidc0CR+JHEuOm4uXRd6gKzDb0FxsrrWWM
+         z2N2D05S5LZml3cCs2UpK2IiFT63UMNoUo1v3rJwMN41Fk36hrhEzJy60Wr6NVhH6wFs
+         HriQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685463651; x=1688055651;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vf4YK7Nlt1xMm1TWJQkBoFqPmDurlTxDp8HiK/k4M8k=;
+        b=lK45J26Y/9G3IUTwKNRtpLYWJyoUqV+JtZEdTqfiDNyJ9N2WYH8IlTmiZo4mJNNGqj
+         ASL9oYDiOqr7oeRkVgmkyvxd+dO3+yeJlQrGXxZjt+Cj1w1/E85OHwUCCNMGg6ZVHQSV
+         us+np3CovSmdJmX0mcdLOXPrY9iifl2QGT4pRJWLRvXmlTbkpVuG5+ELSOP+uLVfzIK7
+         6nXcUAD4f+oqXlddewNMi6vVuMjBoUYQVavI8PRb7ac9jWQzsjf66qbWn+QU2Wrv2xv9
+         6B1sZd8/bN0T+5Jj7BAvmMEW1EnhZOOyJw+xGbSc3Efis58T7gXW2oep7PvFDkl45n0V
+         PInQ==
+X-Gm-Message-State: AC+VfDwQbCf0sLNb0NclCrYGX6VaEV7FARfYKFrULPOKJ8UDMYCsno5+
+        /lKTb9c85x1+OyKgE60iaLseqcPPvDfsAnWlSik=
+X-Google-Smtp-Source: ACHHUZ6l87ILYGpW4MUVWIF+xyHlCkMCs7tBbloFyheBZTZyYhcowO1DlaakYntogeCKPeP80JhOKA==
+X-Received: by 2002:a17:90a:c695:b0:256:c44d:e115 with SMTP id n21-20020a17090ac69500b00256c44de115mr2309344pjt.12.1685463651451;
+        Tue, 30 May 2023 09:20:51 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:ec0e:68f8:4f49:7581])
+        by smtp.gmail.com with ESMTPSA id a3-20020a634d03000000b0053f3797fc4asm8370567pgb.0.2023.05.30.09.20.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 09:20:51 -0700 (PDT)
+Date:   Tue, 30 May 2023 10:20:48 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
         linux-arm-kernel@lists.infradead.org,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         op-tee@lists.trustedfirmware.org
+Subject: Re: [RFC PATCH 0/4] introduction of a remoteproc tee to load signed
+ firmware images
+Message-ID: <ZHYiYGMHdqxBaDzc@p14s>
 References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
- <20230523091350.292221-4-arnaud.pouliquen@foss.st.com>
- <1b4eba7e-2771-b0c8-ec23-2ed882374e5d@kernel.org>
- <d4a98500-5cb0-b3fd-7f40-8b56a2258619@foss.st.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-In-Reply-To: <d4a98500-5cb0-b3fd-7f40-8b56a2258619@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 30/05/2023 17:00, Arnaud POULIQUEN wrote:
-> Hello Krzysztof,
+On Tue, May 23, 2023 at 11:13:46AM +0200, Arnaud Pouliquen wrote:
+> This RFC proposes an implementation of a remoteproc tee driver to
+> communicate with a TEE trusted application in charge of authenticating
+> and loading remoteproc firmware image in an Arm secure context.
 > 
-> On 5/30/23 13:50, Krzysztof Kozlowski wrote:
->> On 23/05/2023 11:13, Arnaud Pouliquen wrote:
->>> Rework compatibility description according to the support of
->>> the authenticated firmware relying on OP-TEE authentication.
->>>
->>> The expected behavior is:
->>> - with legacy compatible "st,stm32mp1-m4" the Linux kernel loads a
->>>   non-signed (ELF) firmware image,
->>> - with compatible "st,stm32mp1-m4-tee" the Linux kernel load a signed
->>>   firmware image. In this case it calls TEE services to manage the firmware
->>>   loading and the remoteproc life-cycle.
->>>
->>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>> ---
->>>  .../bindings/remoteproc/st,stm32-rproc.yaml   | 33 +++++++++++++++++--
->>>  1 file changed, 30 insertions(+), 3 deletions(-)
->>
->> Please use scripts/get_maintainers.pl to get a list of necessary people
->> and lists to CC.  It might happen, that command when run on an older
->> kernel, gives you outdated entries.  Therefore please be sure you base
->> your patches on recent Linux kernel.
->>
->> You missed at least DT list (maybe more), so this won't be tested.
->> Please resend and include all necessary entries.
->>
->> Because of above and RFC, I assume there is no need for review. Just to
->> be clear - that's a no.
+> The services implemented are the same as those offered by the Linux
+> remoteproc framework:
+> - load of a signed firmware
+> - start/stop of a coprocessor
+> - get the resource table
 > 
-> I did not add DT list and maintainers intentionally to avoid that you
-> review it.
-> As in a first step the associated OP-TEE pull request has to be reviewed.
-> And my plan was just to share the Linux implementation part until the
-> OP-TEE review cycle is finished.
+> 
+> The OP-TEE code in charge of providing the service in a trusted application
+> is proposed for upstream here:
+> https://github.com/OP-TEE/optee_os/pull/6027
+> 
+> For more details on the implementation a presentation is available here:
+> https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+> 
+> Arnaud Pouliquen (4):
+>   tee: Re-enable vmalloc page support for shared memory
+>   remoteproc: Add TEE support
+>   dt-bindings: remoteproc: add compatibility for TEE support
+>   remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
+> 
+>  .../bindings/remoteproc/st,stm32-rproc.yaml   |  33 +-
+>  drivers/remoteproc/Kconfig                    |   9 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/stm32_rproc.c              | 234 +++++++++--
+>  drivers/remoteproc/tee_remoteproc.c           | 397 ++++++++++++++++++
+>  drivers/tee/tee_shm.c                         |  24 +-
+>  include/linux/tee_remoteproc.h                | 101 +++++
+>  7 files changed, 753 insertions(+), 46 deletions(-)
+>  create mode 100644 drivers/remoteproc/tee_remoteproc.c
+>  create mode 100644 include/linux/tee_remoteproc.h
 
-Sure, that's fine. I just don't know whether this is intentional or not.
-Many people skip list without such reason...
+Looking at comments from Christoph, there seems to be a good refactoring
+exercise in store for this pathset.  As such I will wait for the next revision
+to look at it.
+
+Thanks,
+Mathieu
 
 > 
-> Now regarding your mail (and very interesting feedback from Christoph Hellwig),
-> it was clearly not the good strategy.
-> So my apologize and next time whatever the objective of the series I will add
-> all peoples and lists in the loop.
-
-No worries! Thanks.
-
-Best regards,
-Krzysztof
-
+> -- 
+> 2.25.1
+> 
