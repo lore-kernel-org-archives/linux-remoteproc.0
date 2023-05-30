@@ -2,283 +2,109 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C155AC77B7E
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 29 May 2023 14:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B71C77B73
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 May 2023 10:45:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229659AbjE2OLQ (ORCPT
+        id S231695AbjE3Kpt (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 29 May 2023 10:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52772 "EHLO
+        Tue, 30 May 2023 06:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjE2OLN (ORCPT
+        with ESMTP id S231696AbjE3Kpc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 29 May 2023 10:11:13 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D47D110;
-        Mon, 29 May 2023 07:10:52 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-3078a3f3b5fso3199623f8f.0;
-        Mon, 29 May 2023 07:10:52 -0700 (PDT)
+        Tue, 30 May 2023 06:45:32 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CB821A5
+        for <linux-remoteproc@vger.kernel.org>; Tue, 30 May 2023 03:45:13 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-96fa4a6a79bso626859466b.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 30 May 2023 03:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685369450; x=1687961450;
+        d=linaro.org; s=google; t=1685443512; x=1688035512;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=10o9jmZWeP457p2kLERKO+3a4U7ZX8eeTkQQ7+6/jtg=;
-        b=R/rqDkNlnRgXOH1pDR5R2SSc30hzPgW0hPNMtwNUrgpO8HXY3pY3T2BoA4vrSxPgOD
-         uXUIldAd/8jFOYIQyC153wIBVX/AJ3MjygoVgbWscuZo7HwahFejjaBDGl8bRLDFU88U
-         ZinOpb71aOiSoFvt8gODU5oDbNiuDTPsb1lV3BPARvLCJkxDfAnwAj5FWAtSa8311wO1
-         5DMOC4jWMkWct6/V3mTiY1omJIM1cCpeKzovWPXNM3Y4LSm1CCgQg0unu5FRiELGea//
-         voB22/S3nulIGlPNptxRVXWbm5PVMiHqaQYRx4Ch0LJzaNqZvA923HAC8OKOleLQwOaY
-         3/zw==
+        bh=ZVwdZi18tOx4F5EpOQikJaJC+N1FG0YCZmCcPhomPHk=;
+        b=S73mFiWbxirjBnXaVpi44ZylcB1rk2ju47gQOmZCRxQN2+s/sqVV1D8hvtUrluFh6E
+         no9M/snhG8IGrnRjrp/0xLZxudsQlPuvOzuHvd6vBtx2b5F5l1Szqih9fBYKrBVG1v7U
+         lpyV9KLdT4b8zcRvAjcdbvA9YuzHeVxK0SSiTx2LfKVerRUEZBhuAIyQn9Wewc7oGq8v
+         qg6nkPqS67PIzeqbmPQU8BlGbbmOfLOx9xTCXFfNPCojYzzzenV/f+Yy1FlbU8C2V0ZS
+         uFqTcCVCsSf+3x+VWGzFUnCDVvsrIA9qbSooaz8Vi37COFaDiRwwXAljEV0iT5P/kk50
+         swJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685369450; x=1687961450;
+        d=1e100.net; s=20221208; t=1685443512; x=1688035512;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=10o9jmZWeP457p2kLERKO+3a4U7ZX8eeTkQQ7+6/jtg=;
-        b=U1XyGLNjoTEU1D2qAlz0wpCDOxWIxKvpx2jy3pzAhpMRvb5Rkc03mp0FhQt9bZlQva
-         MbznRE/Jnff+WNjiO2ta8vePTzle52qcpDwLKcO2e6bmWN20h7+tQluehlMKY5vNdAT8
-         AWiRbmrXm8evRMhCJsnytpec2GsmxCdx96IN52Tbu8qC+qr5A7SOPfqzJ+V3rnUWCA01
-         oEuFeV3ycx+BweCUZH+MrjJK+6Z495tf0BU0d0tkjERR45RFmknkuwwvrNGpfFdnhzhE
-         Fmj58xAONhTFsREvN7MJPZR1S0Nnuj9OcLY1qlnBOTPg6sfiRxCVdb0ptrfmN4NsfaDa
-         NW+g==
-X-Gm-Message-State: AC+VfDy1kAOoC/CHBsIRXimh5jVfM9Lw+vrhYJlTTgw/g3sn7OtuczvN
-        +o8rPU02yuGrtigE9J99uHM=
-X-Google-Smtp-Source: ACHHUZ6A74E+BgfNtlIZYglrKBVuUz4y94mfpo3xLAeito8AShd1iQMhnZMhDZbfgGvwCnI7VQYABw==
-X-Received: by 2002:a5d:618d:0:b0:30a:ddb3:93b with SMTP id j13-20020a5d618d000000b0030addb3093bmr8244185wru.63.1685369449882;
-        Mon, 29 May 2023 07:10:49 -0700 (PDT)
-Received: from [192.168.2.177] ([207.188.167.132])
-        by smtp.gmail.com with ESMTPSA id n7-20020adfe347000000b00309382eb047sm39744wrj.112.2023.05.29.07.10.48
+        bh=ZVwdZi18tOx4F5EpOQikJaJC+N1FG0YCZmCcPhomPHk=;
+        b=WfVByq8e2upBmpcdNlQBIsMwM69eJYOIRv9+RWNJAXuwoaFps61UhY2mZp07/mmFjP
+         LPEYUcf8GIRvF8WFRTf45VD6upiP78Oktq2UDZw4AcGXHnX5ir36SBkdoLqEnpMpCx12
+         3AxHex9YkQDcXVkP2nXfIMwkRaIOL/S6zyHgdDcLEij93hhnsi9j2QjX4abDJ3vBCAMx
+         TKBX/EtSpbMbzokuKEZOSapd+xou4aVCdPbqxKxZWDU6S19DE4hIoft1K4UxU7fYPkzB
+         4JdxHVED1hBRIePIeWHjJjn7xH8i18SSyuLowjHJwaisCQxx//FxMedLV5z/QJLyZCRy
+         Nbww==
+X-Gm-Message-State: AC+VfDzFqPdLsw2jEJLZZ81R+XjsePAeLjvOkAYA7473X4qgwdI854DS
+        0CPCMITJB0lmHDp5EI7tuqW7UQ==
+X-Google-Smtp-Source: ACHHUZ5uBamxXB8i6XT3BS/ZYvZ++f/DXv7dyXHtwOOk5zHSIIHgpWmLsU4LBbiyiCdthKlAqh1erw==
+X-Received: by 2002:a17:907:7d94:b0:973:e184:e0fd with SMTP id oz20-20020a1709077d9400b00973e184e0fdmr1899181ejc.70.1685443511792;
+        Tue, 30 May 2023 03:45:11 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id o2-20020a1709062e8200b0094f698073e0sm7040396eji.123.2023.05.30.03.45.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 May 2023 07:10:48 -0700 (PDT)
-Message-ID: <e744408d-2bc7-886e-2f32-0a05a1dd570a@gmail.com>
-Date:   Mon, 29 May 2023 16:10:47 +0200
+        Tue, 30 May 2023 03:45:11 -0700 (PDT)
+Message-ID: <30832bc4-c5b9-9131-2450-3522197ee05d@linaro.org>
+Date:   Tue, 30 May 2023 12:45:08 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v12 03/11] dt-bindings: remoteproc: mediatek: Support
- MT8195 dual-core SCP
-Content-Language: en-US, ca-ES, es-ES
-To:     Tinghan Shen <tinghan.shen@mediatek.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20230517043449.26352-1-tinghan.shen@mediatek.com>
- <20230517043449.26352-4-tinghan.shen@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-In-Reply-To: <20230517043449.26352-4-tinghan.shen@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
+        loic.poulain@linaro.org, quic_eberman@quicinc.com,
+        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <38a5a268-7d8a-6e61-4272-8e9155df0034@linaro.org>
+ <790496d7-98dc-c92e-dedc-1c89395a1ad8@quicinc.com>
+ <4669eed6-b76c-8e68-74b1-36ea52a4bd5b@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <4669eed6-b76c-8e68-74b1-36ea52a4bd5b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On 18/05/2023 19:22, Manikanta Mylavarapu wrote:
+>>>
+>> It's not required. I am going to remove it.
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts-extended:
+>>>
+>>> Instead interrupts
+>>>
+>> Sure. I will use 'interrupts'.
+>>
+> Please discard my previous reply. Here i couldn't able to use 
+> 'interrupts' because i am using interrupts from two different interrupt 
+> controllers. Sorry for previous wrong reply.
+
+The bindings still should have interrupts. I did not comment on DTS, but
+on bindings. interrupts imply (or allow) interrupts-extended.
 
 
-On 17/05/2023 06:34, Tinghan Shen wrote:
-> Extend the SCP binding to describe the MT8195 dual-core SCP.
-> 
-> Under different applications, the MT8195 SCP can be used as single-core
-> or dual-core. This change keeps the single-core definitions and
-> adds new definitions for the dual-core use case.
-> 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Best regards,
+Krzysztof
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
-> ---
->   .../bindings/remoteproc/mtk,scp.yaml          | 145 +++++++++++++++++-
->   1 file changed, 141 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index 271081df0e46..09102dda4942 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -21,6 +21,7 @@ properties:
->         - mediatek,mt8188-scp
->         - mediatek,mt8192-scp
->         - mediatek,mt8195-scp
-> +      - mediatek,mt8195-scp-dual
->   
->     reg:
->       description:
-> @@ -31,10 +32,7 @@ properties:
->   
->     reg-names:
->       minItems: 2
-> -    items:
-> -      - const: sram
-> -      - const: cfg
-> -      - const: l1tcm
-> +    maxItems: 3
->   
->     clocks:
->       description:
-> @@ -70,6 +68,81 @@ properties:
->   
->       unevaluatedProperties: false
->   
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
-> +  ranges:
-> +    description:
-> +      Standard ranges definition providing address translations for
-> +      local SCP SRAM address spaces to bus addresses.
-> +
-> +patternProperties:
-> +  "^scp@[a-f0-9]+$":
-> +    type: object
-> +    description:
-> +      The MediaTek SCP integrated to SoC might be a multi-core version.
-> +      The other cores are represented as child nodes of the boot core.
-> +      There are some integration differences for the IP like the usage of
-> +      address translator for translating SoC bus addresses into address space
-> +      for the processor.
-> +
-> +      Each SCP core has own cache memory. The SRAM and L1TCM are shared by
-> +      cores. The power of cache, SRAM and L1TCM power should be enabled
-> +      before booting SCP cores. The size of cache, SRAM, and L1TCM are varied
-> +      on differnt SoCs.
-> +
-> +      The SCP cores do not use an MMU, but has a set of registers to
-> +      control the translations between 32-bit CPU addresses into system bus
-> +      addresses. Cache and memory access settings are provided through a
-> +      Memory Protection Unit (MPU), programmable only from the SCP.
-> +
-> +    properties:
-> +      compatible:
-> +        enum:
-> +          - mediatek,scp-core
-> +
-> +      reg:
-> +        description: The base address and size of SRAM.
-> +        maxItems: 1
-> +
-> +      reg-names:
-> +        const: sram
-> +
-> +      interrupts:
-> +        maxItems: 1
-> +
-> +      firmware-name:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        description:
-> +          If present, name (or relative path) of the file within the
-> +          firmware search path containing the firmware image used when
-> +          initializing sub cores of multi-core SCP.
-> +
-> +      memory-region:
-> +        maxItems: 1
-> +
-> +      cros-ec-rpmsg:
-> +        $ref: /schemas/mfd/google,cros-ec.yaml
-> +        description:
-> +          This subnode represents the rpmsg device. The properties
-> +          of this node are defined by the individual bindings for
-> +          the rpmsg devices.
-> +
-> +        required:
-> +          - mediatek,rpmsg-name
-> +
-> +        unevaluatedProperties: false
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - reg-names
-> +
-> +    additionalProperties: false
-> +
->   required:
->     - compatible
->     - reg
-> @@ -99,7 +172,37 @@ allOf:
->           reg:
->             maxItems: 2
->           reg-names:
-> +          items:
-> +            - const: sram
-> +            - const: cfg
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - mediatek,mt8192-scp
-> +            - mediatek,mt8195-scp
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 3
-> +        reg-names:
-> +          items:
-> +            - const: sram
-> +            - const: cfg
-> +            - const: l1tcm
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - mediatek,mt8195-scp-dual
-> +    then:
-> +      properties:
-> +        reg:
->             maxItems: 2
-> +        reg-names:
-> +          items:
-> +            - const: cfg
-> +            - const: l1tcm
->   
->   additionalProperties: false
->   
-> @@ -121,3 +224,37 @@ examples:
->               mediatek,rpmsg-name = "cros-ec-rpmsg";
->           };
->       };
-> +
-> +  - |
-> +    scp@10500000 {
-> +        compatible = "mediatek,mt8195-scp-dual";
-> +        reg = <0x10720000 0xe0000>,
-> +              <0x10700000 0x8000>;
-> +        reg-names = "cfg", "l1tcm";
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0 0x10500000 0x100000>;
-> +
-> +        scp@0 {
-> +            compatible = "mediatek,scp-core";
-> +            reg = <0x0 0xa0000>;
-> +            reg-names = "sram";
-> +
-> +            cros-ec-rpmsg {
-> +                compatible = "google,cros-ec-rpmsg";
-> +                mediatek,rpmsg-name = "cros-ec-rpmsg";
-> +            };
-> +        };
-> +
-> +        scp@a0000 {
-> +            compatible = "mediatek,scp-core";
-> +            reg = <0xa0000 0x20000>;
-> +            reg-names = "sram";
-> +
-> +            cros-ec-rpmsg {
-> +                compatible = "google,cros-ec-rpmsg";
-> +                mediatek,rpmsg-name = "cros-ec-rpmsg";
-> +            };
-> +        };
-> +    };
