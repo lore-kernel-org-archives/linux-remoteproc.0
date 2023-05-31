@@ -2,137 +2,88 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87749C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 30 May 2023 17:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80078C77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 31 May 2023 01:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230352AbjE3RNE (ORCPT
+        id S233925AbjEaBMl (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 30 May 2023 13:13:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45366 "EHLO
+        Tue, 30 May 2023 21:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232763AbjE3RND (ORCPT
+        with ESMTP id S231740AbjEaBMk (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 30 May 2023 13:13:03 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D64D116;
-        Tue, 30 May 2023 10:13:00 -0700 (PDT)
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34UFnxM2017369;
-        Tue, 30 May 2023 19:12:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=FwkP6U9+abkTw5jLxAP82NS3Pqb2yLMLtFGxIOmhkZY=;
- b=IUc1O1SrTMIn+QZWfRSS9AjGAvkYdvByQSrp6ETusmwrvXwnlpUOltNzYRtxq0x3+su9
- okK5FpSsBPPHOgZAR9mczGidpgVLhSdp9Xbkr+wJ/YO9RW31LEqZWsCpH37voqsl6/18
- m2tYXvz2NGHE8n+OW/yOB9XxjcNZNEAV7X6q7GehQlF86gTY+7bWsmMxcGCDuuyM2DsK
- lw+hKYMenVMXCymEvvG8mjtNFCtOXOcQFyFFHa7YaHGKt1AAZdE8612c5GaCiznhWYZN
- 0eLUrp8jZXRPt4UhWdMDRaemW6IgGaZfu2yVqfpJ3ufR3nGYPg4lId53E37OmVFg6tI7 Gw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3quahy9j2f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 May 2023 19:12:29 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3FFE410002A;
-        Tue, 30 May 2023 19:12:28 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 26A8F23694B;
-        Tue, 30 May 2023 19:12:28 +0200 (CEST)
-Received: from [10.252.5.129] (10.252.5.129) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 30 May
- 2023 19:12:22 +0200
-Message-ID: <fc7fcb92-dec6-413a-7b08-1083a444f6fc@foss.st.com>
-Date:   Tue, 30 May 2023 19:12:21 +0200
+        Tue, 30 May 2023 21:12:40 -0400
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3041A102;
+        Tue, 30 May 2023 18:12:27 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R531e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VjvFrGD_1685495542;
+Received: from 30.97.48.48(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VjvFrGD_1685495542)
+          by smtp.aliyun-inc.com;
+          Wed, 31 May 2023 09:12:23 +0800
+Message-ID: <970927f9-f3b8-3c92-e581-a28e3522196c@linux.alibaba.com>
+Date:   Wed, 31 May 2023 09:12:40 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [RFC PATCH 0/4] introduction of a remoteproc tee to load signed
- firmware images
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>
-References: <20230523091350.292221-1-arnaud.pouliquen@foss.st.com>
- <ZHYiYGMHdqxBaDzc@p14s>
-From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <ZHYiYGMHdqxBaDzc@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.252.5.129]
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-30_12,2023-05-30_01,2023-05-22_02
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 0/3] hwspinlock: Convert to platform remove callback
+ returning void
+To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+References: <20230314180020.2865734-1-u.kleine-koenig@pengutronix.de>
+ <20230412171610.ji5czj5c77banf6d@pengutronix.de>
+ <20230530135621.34psftds7ymrdvmt@pengutronix.de>
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20230530135621.34psftds7ymrdvmt@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hello Mathieu,
 
-On 5/30/23 18:20, Mathieu Poirier wrote:
-> On Tue, May 23, 2023 at 11:13:46AM +0200, Arnaud Pouliquen wrote:
->> This RFC proposes an implementation of a remoteproc tee driver to
->> communicate with a TEE trusted application in charge of authenticating
->> and loading remoteproc firmware image in an Arm secure context.
->>
->> The services implemented are the same as those offered by the Linux
->> remoteproc framework:
->> - load of a signed firmware
->> - start/stop of a coprocessor
->> - get the resource table
->>
->>
->> The OP-TEE code in charge of providing the service in a trusted application
->> is proposed for upstream here:
->> https://github.com/OP-TEE/optee_os/pull/6027
->>
->> For more details on the implementation a presentation is available here:
->> https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
->>
->> Arnaud Pouliquen (4):
->>   tee: Re-enable vmalloc page support for shared memory
->>   remoteproc: Add TEE support
->>   dt-bindings: remoteproc: add compatibility for TEE support
->>   remoteproc: stm32: Add support of an OP-TEE TA to load the firmware
->>
->>  .../bindings/remoteproc/st,stm32-rproc.yaml   |  33 +-
->>  drivers/remoteproc/Kconfig                    |   9 +
->>  drivers/remoteproc/Makefile                   |   1 +
->>  drivers/remoteproc/stm32_rproc.c              | 234 +++++++++--
->>  drivers/remoteproc/tee_remoteproc.c           | 397 ++++++++++++++++++
->>  drivers/tee/tee_shm.c                         |  24 +-
->>  include/linux/tee_remoteproc.h                | 101 +++++
->>  7 files changed, 753 insertions(+), 46 deletions(-)
->>  create mode 100644 drivers/remoteproc/tee_remoteproc.c
->>  create mode 100644 include/linux/tee_remoteproc.h
+
+On 5/30/2023 9:56 PM, Uwe Kleine-König wrote:
+> Hello,
 > 
-> Looking at comments from Christoph, there seems to be a good refactoring
-> exercise in store for this pathset. 
-
-Yes, a good opportunity to ramp-up on kernel memory management :)
-
-As such I will wait for the next revision
-> to look at it.
-
-That's fair. More than that I would prefer to focus first on OP-TEE part that
-provides the service. The OP-TEE pull request review could have significant
-impacts on the kernel implementation...
-
-Thanks,
-Arnaud
-
-> 
-> Thanks,
-> Mathieu
-> 
+> On Wed, Apr 12, 2023 at 07:16:10PM +0200, Uwe Kleine-König wrote:
+>> On Tue, Mar 14, 2023 at 07:00:20PM +0100, Uwe Kleine-König wrote:
+>>> Hello,
+>>>
+>>> this patch series adapts the platform drivers below drivers/hwspinlock to use
+>>> the .remove_new() callback. Compared to the traditional .remove() callback
+>>> .remove_new() returns no value. This is a good thing because the driver core
+>>> doesn't (and cannot) cope for errors during remove. The only effect of a
+>>> non-zero return value in .remove() is that the driver core emits a warning. The
+>>> device is removed anyhow and an early return from .remove() usually yields a
+>>> resource leak.
+>>>
+>>> By changing the remove callback to return void driver authors cannot reasonably
+>>> assume any more that there is some kind of cleanup later.
+>>>
+>>> The omap driver could return -EBUSY. This is first changed to return
+>>> zero to drop the duplicated error message. I assume this error path is
+>>> dangerous. For sure the platform device binding goes away and so
+>>> devm_platform_ioremap_resource is undone. So probably the user of the
+>>> hwspinlock that prevented its removal will soon access an unmapped
+>>> virtual address resulting in an oops. This is true with and without my
+>>> patch. IMHO hwspin_lock_unregister() shouldn't return an error code but
+>>> care that all users go away and then return void.
+>>>
+>>> After this change the two platform_drivers can be trivially converted to
+>>> .remove_new().
 >>
->> -- 
->> 2.25.1
+>> Gentle ping!
 >>
+>> Who is supposed to apply this series (or point out a good reason to not
+>> do that)?
+> 
+> Still no maintainer feedback on my series :-\ Would a resend help?
+
+For the whole patchset,
+Acked-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+I think Bjorn can help to apply this patchset, Bjorn?
