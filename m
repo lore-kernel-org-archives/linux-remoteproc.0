@@ -2,114 +2,117 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFB5C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Jun 2023 14:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E1DC77B7E
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Jun 2023 18:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233640AbjFAOYi (ORCPT
+        id S231801AbjFASz7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Jun 2023 10:24:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44468 "EHLO
+        Thu, 1 Jun 2023 14:55:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233293AbjFAOYh (ORCPT
+        with ESMTP id S229490AbjFASz6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Jun 2023 10:24:37 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D69C186;
-        Thu,  1 Jun 2023 07:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685629476; x=1717165476;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F+v0KYqgmXbJzCwwpH3tD86bRW38udBiayCtr+jvjqU=;
-  b=X26w7TlQBCR06/ROInIyqQR84NEpnU4eIjheD0nSLhVTBD2zRuSFE24l
-   Fu2fBEHot3b+J7WVJkUdGf+LedDOmtUbYMUDb4HOGr8PrD3c5eKEeL7yh
-   j7dofaaMM0Oe4J+naIzwKgs4DbTIYanYXzx7IbeRht7WHUhwDOhjXVQOW
-   qGPdBDFzc1qiioErv3Bm4wqiVeujUScmVbGBUCNi90YkpInHK/MWTF38Y
-   lzAp5jyxdp0Du065JEz/n+VnJVJlhkB57mCJCqFGyuBpm376ZM5sMBnIv
-   mEUHRyJJ4Sqbq9wbwrQwdrsEumvnOZaYC54KGK1D6/cqrzKhF+rBvP3f2
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="419088759"
-X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
-   d="scan'208";a="419088759"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2023 07:19:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="657813872"
-X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
-   d="scan'208";a="657813872"
-Received: from lkp-server01.sh.intel.com (HELO fb1ced2c09fb) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 01 Jun 2023 07:19:17 -0700
-Received: from kbuild by fb1ced2c09fb with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q4j92-0002Lv-2b;
-        Thu, 01 Jun 2023 14:19:16 +0000
-Date:   Thu, 1 Jun 2023 22:18:20 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
-        linux-remoteproc@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org, Trilok Soni <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-Subject: Re: [PATCH v4 2/2] remoteproc: qcom: Add remoteproc tracing
-Message-ID: <202306011703.PMV10K8E-lkp@intel.com>
-References: <bd949ac8225abb842630bd7f4a2d45334c58f17f.1685486994.git.quic_gokukris@quicinc.com>
+        Thu, 1 Jun 2023 14:55:58 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8993137;
+        Thu,  1 Jun 2023 11:55:56 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-514953b3aa6so1767951a12.1;
+        Thu, 01 Jun 2023 11:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685645755; x=1688237755;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E3lDxoepCotRm5g8FmHuYHCp7Kw5DHj9NlnnBObc7C0=;
+        b=LspfDwwu0agFSlesNyPc16GF73NRIzLGQX0dggyRENMz5sxChLm+2fO9GJdhtloMu2
+         uzCqa511Tn9y8kg4OVqMFBaYucEaSUhGsGiOF8r7Qke5fN56Ci3JGb7AaSM8cYn9X2Y2
+         2u2f3g7voyelZ07YV8cLRcFui+u9NRL9Ussoa9OG7WSMsFKGCqyQ3quGp9UpcEd2yDn1
+         9UgQ5j8PxLqmzsfpzaMuvGY+T1pIWF9wdYhVpIPxmmjYBpAM9LfB8KdioJS+ATSSOU80
+         PmcOHOeVHSYb8Dl4VdkSU3ir+p3jJAz6vrJGBQJZu6FOWBoPK0spka7zBwj2kT9eq195
+         wtPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685645755; x=1688237755;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3lDxoepCotRm5g8FmHuYHCp7Kw5DHj9NlnnBObc7C0=;
+        b=hYm272baur9NULWH+TZuhqR4qYVXfImTzwLshJ2Pwze8GE/Bei6Ildi97pqEvqXzTj
+         OJcIFSV+HT4ccxEuFr2uOZ7WOGmGUJI8V4w6sFAyyM/SjU6YZypStWkccbI5WlZSXjFu
+         Yr4ZMYEL4hJ66ksBAdtGv+j5j/9LOzEpXg1kJl1mq6ocd/OIb4vQ4vOR1R/FPYnWVsOR
+         l1SlfASJxWT1459RbRhZ2HoGfhPKCxa7/+3QfdMoLlKg2zbF0oZLjrqDj6ljkNHoZGjb
+         hAyyuMem8vvVwS9FxYKsMqVj34e46ogXpUZejQUYB3vzpopY3XlqL7ANGB2cVjNVkaEv
+         LmiA==
+X-Gm-Message-State: AC+VfDxodby5Hbl9c7mhhedeFZaqNk+ll5pNzWTfPMDM8sEyZGLWLc4n
+        mIHV1/zBxMzSbGrwrqPe6ShQzLcRnBuS3A==
+X-Google-Smtp-Source: ACHHUZ5v17sxhOVW4SbCe8kdp+/1vwAyqZlUA/agwNrEA3Z8CZkWH1W1KIEfT1VywtH+5JP5hGZFjQ==
+X-Received: by 2002:aa7:d403:0:b0:50b:c397:bbac with SMTP id z3-20020aa7d403000000b0050bc397bbacmr573668edq.29.1685645755137;
+        Thu, 01 Jun 2023 11:55:55 -0700 (PDT)
+Received: from [192.168.3.32] (dh207-98-93.xnet.hr. [88.207.98.93])
+        by smtp.gmail.com with ESMTPSA id i12-20020aa7dd0c000000b005149c3fa632sm5876632edv.13.2023.06.01.11.55.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jun 2023 11:55:54 -0700 (PDT)
+Message-ID: <d64b9718-0c85-6e5d-7c5b-6ea617e36a32@gmail.com>
+Date:   Thu, 1 Jun 2023 20:55:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd949ac8225abb842630bd7f4a2d45334c58f17f.1685486994.git.quic_gokukris@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH V2 04/13] dt-bindings: clock: qcom: gcc-ipq5018: remove q6
+ clocks macros
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jassisinghbrar@gmail.com,
+        mathieu.poirier@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
+        kvalo@kernel.org, loic.poulain@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
+        quic_devipriy@quicinc.com
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-5-quic_mmanikan@quicinc.com>
+ <514a9e26-aeb9-ce05-1055-337646098ec1@linaro.org>
+From:   Robert Marko <robimarko@gmail.com>
+In-Reply-To: <514a9e26-aeb9-ce05-1055-337646098ec1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Gokul,
+On 30. 05. 2023. 13:01, Krzysztof Kozlowski wrote:
 
-kernel test robot noticed the following build errors:
+> On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
+>> Since Q6 firmware takes care of bring up clocks in multipd
+>> model, remove bring up clock macros.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   include/dt-bindings/clock/qcom,gcc-ipq5018.h | 21 --------------------
+>>   1 file changed, 21 deletions(-)
+>>
+> I am fine with this if it still compiles... I have doubts about it,
+> unless of some depedencies (you mentioned three !)... but then it gets
+> complicated.
+>
+> Keep patches doing same logical change in same patchset. This dependency
+> dance in recent submissions is making things tricky and prolonging your
+> upstreaming process significantly.
 
-[auto build test ERROR on remoteproc/rproc-next]
-[also build test ERROR on linus/master v6.4-rc4 next-20230601]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Considering that the basic IPQ5018 patchset that this series depends on
+has not yet been merged, why not just drop these there instead?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-krishna-Krishnakumar/remoteproc-Introduce-traces-for-remoteproc-events/20230601-053050
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/bd949ac8225abb842630bd7f4a2d45334c58f17f.1685486994.git.quic_gokukris%40quicinc.com
-patch subject: [PATCH v4 2/2] remoteproc: qcom: Add remoteproc tracing
-config: arm64-randconfig-r036-20230531 (https://download.01.org/0day-ci/archive/20230601/202306011703.PMV10K8E-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/8a5252420291719cda102eb8ca72295283540cd4
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Gokul-krishna-Krishnakumar/remoteproc-Introduce-traces-for-remoteproc-events/20230601-053050
-        git checkout 8a5252420291719cda102eb8ca72295283540cd4
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash
+Regards,
+Robert
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306011703.PMV10K8E-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "__tracepoint_rproc_subdev_event" [drivers/remoteproc/qcom_common.ko] undefined!
->> ERROR: modpost: "__traceiter_rproc_subdev_event" [drivers/remoteproc/qcom_common.ko] undefined!
->> ERROR: modpost: "__tracepoint_rproc_interrupt_event" [drivers/remoteproc/qcom_q6v5.ko] undefined!
->> ERROR: modpost: "__traceiter_rproc_interrupt_event" [drivers/remoteproc/qcom_q6v5.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Best regards,
+> Krzysztof
+>
+>
+>
