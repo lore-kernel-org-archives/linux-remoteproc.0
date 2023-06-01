@@ -2,139 +2,122 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B608DC77B7A
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Jun 2023 10:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C773C7EE23
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Jun 2023 14:19:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbjFAK7u (ORCPT
+        id S233330AbjFAOTp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 1 Jun 2023 06:59:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
+        Thu, 1 Jun 2023 10:19:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233322AbjFAK7m (ORCPT
+        with ESMTP id S232834AbjFAOTn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 1 Jun 2023 06:59:42 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8137012C;
-        Thu,  1 Jun 2023 03:59:22 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 351Ax8s5121002;
-        Thu, 1 Jun 2023 05:59:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1685617148;
-        bh=Su7R47v4W5yO6beC23P257B1E8f3gfa6U+NgWZ0c6fE=;
-        h=From:To:CC:Subject:Date;
-        b=ILYoAtU434Bw9nLblRFw0m8HJnE2yBrkz5O91voAn1RFqb4HjzLJTt0rEpd70S5js
-         MSyhffXPvZIoyUahdsQ397ivTu8wWV5fyldw0HNzAfLMASfH6rMD02GQQfaJgH94Mf
-         5xgjFPnA8+1Uqt2Uz+lXQzO32ch8AwyRwFWEMAO8=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 351Ax8nS087594
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Jun 2023 05:59:08 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
- Jun 2023 05:59:07 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 1 Jun 2023 05:59:07 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 351Ax7ZJ027859;
-        Thu, 1 Jun 2023 05:59:07 -0500
-Received: from localhost (uda0501179.dhcp.ti.com [10.24.69.114])
-        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 351Ax6BY024592;
-        Thu, 1 Jun 2023 05:59:06 -0500
-From:   MD Danish Anwar <danishanwar@ti.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     <rogerq@kernel.org>, <vigneshr@ti.org>, <nm@ti.com>, <srk@ti.com>,
-        <danishanwar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] remoteproc: pru: add support for configuring GPMUX based on client setup
-Date:   Thu, 1 Jun 2023 16:29:04 +0530
-Message-ID: <20230601105904.3204260-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 1 Jun 2023 10:19:43 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF829C0;
+        Thu,  1 Jun 2023 07:19:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685629182; x=1717165182;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I4kycmK6ZsZGDqn1h2vHJE5lPWq2KktJ9e9ABzGmIj4=;
+  b=L7zxAffl6QY0zXjPop1xzlVGZfu8kjrD1ci6XKDRoKmf0S5pXJ4oQXkm
+   fNfe8rCIGQfWm0c7Y9TDIVOG2MKah2hZtKk+F3tqNLOZQbrC9z2oSoZFK
+   9+tKZWZz7VmyLWV4j6KrENOX8ZFtt1Z2xNtIdUjS+GBveFWPZ/ASvxsBA
+   xnNp+dut2ysBCPCQh6EcAYgrHDT9HqcbAdim1XG7XgSpR8aG64epgf16V
+   I4cyC5pmMPfPE4CTqjtsMgo4Wu3jW3JQ4CkzC5UCV3HMWG4IEAI1nxiXT
+   d4LfJJdJv9cwdZ1xAUgW3x6yO7qAI/I8Xr1F9qZIrKdP/jjsfcilalUT+
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="441931591"
+X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
+   d="scan'208";a="441931591"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2023 07:19:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10728"; a="819811076"
+X-IronPort-AV: E=Sophos;i="6.00,210,1681196400"; 
+   d="scan'208";a="819811076"
+Received: from lkp-server01.sh.intel.com (HELO fb1ced2c09fb) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Jun 2023 07:19:17 -0700
+Received: from kbuild by fb1ced2c09fb with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1q4j92-0002Ly-2y;
+        Thu, 01 Jun 2023 14:19:16 +0000
+Date:   Thu, 1 Jun 2023 22:18:24 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
+        linux-remoteproc@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org, Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+Subject: Re: [PATCH v4 2/2] remoteproc: qcom: Add remoteproc tracing
+Message-ID: <202306011819.IWZmMEEa-lkp@intel.com>
+References: <bd949ac8225abb842630bd7f4a2d45334c58f17f.1685486994.git.quic_gokukris@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bd949ac8225abb842630bd7f4a2d45334c58f17f.1685486994.git.quic_gokukris@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+Hi Gokul,
 
-Client device node property ti,pruss-gp-mux-sel can now be used to
-configure the GPMUX config value for PRU.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/remoteproc/pru_rproc.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+[auto build test ERROR on remoteproc/rproc-next]
+[also build test ERROR on linus/master v6.4-rc4 next-20230601]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 2874c8d324f7..29d3a5a930c1 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -109,6 +109,7 @@ struct pru_private_data {
-  * @dbg_single_step: debug state variable to set PRU into single step mode
-  * @dbg_continuous: debug state variable to restore PRU execution mode
-  * @evt_count: number of mapped events
-+ * @gpmux_save: saved value for gpmux config
-  */
- struct pru_rproc {
- 	int id;
-@@ -127,6 +128,7 @@ struct pru_rproc {
- 	u32 dbg_single_step;
- 	u32 dbg_continuous;
- 	u8 evt_count;
-+	u8 gpmux_save;
- };
- 
- static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
-@@ -228,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	struct device *dev;
- 	const char *fw_name;
- 	int ret;
-+	u32 mux;
- 
- 	rproc = __pru_rproc_get(np, index);
- 	if (IS_ERR(rproc))
-@@ -252,6 +255,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
- 	if (pru_id)
- 		*pru_id = pru->id;
- 
-+	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
-+	if (ret) {
-+		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
-+		goto err;
-+	}
-+
-+	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
-+					 &mux);
-+	if (!ret) {
-+		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
-+		if (ret) {
-+			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
-+			goto err;
-+		}
-+	}
-+
- 	ret = of_property_read_string_index(np, "firmware-name", index,
- 					    &fw_name);
- 	if (!ret) {
-@@ -290,6 +309,8 @@ void pru_rproc_put(struct rproc *rproc)
- 
- 	pru = rproc->priv;
- 
-+	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
-+
- 	pru_rproc_set_firmware(rproc, NULL);
- 
- 	mutex_lock(&pru->lock);
+url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-krishna-Krishnakumar/remoteproc-Introduce-traces-for-remoteproc-events/20230601-053050
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/bd949ac8225abb842630bd7f4a2d45334c58f17f.1685486994.git.quic_gokukris%40quicinc.com
+patch subject: [PATCH v4 2/2] remoteproc: qcom: Add remoteproc tracing
+config: csky-randconfig-r025-20230531 (https://download.01.org/0day-ci/archive/20230601/202306011819.IWZmMEEa-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build):
+        mkdir -p ~/bin
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/8a5252420291719cda102eb8ca72295283540cd4
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Gokul-krishna-Krishnakumar/remoteproc-Introduce-traces-for-remoteproc-events/20230601-053050
+        git checkout 8a5252420291719cda102eb8ca72295283540cd4
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306011819.IWZmMEEa-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   csky-linux-ld: drivers/remoteproc/remoteproc_core.o: in function `rproc_stop':
+>> remoteproc_core.c:(.text+0x4c6): undefined reference to `__traceiter_rproc_stop_event'
+>> csky-linux-ld: remoteproc_core.c:(.text+0x510): undefined reference to `__tracepoint_rproc_stop_event'
+>> csky-linux-ld: remoteproc_core.c:(.text+0x518): undefined reference to `__traceiter_rproc_stop_event'
+   csky-linux-ld: drivers/remoteproc/remoteproc_core.o: in function `rproc_start':
+>> remoteproc_core.c:(.text.unlikely+0x230): undefined reference to `__traceiter_rproc_load_event'
+   csky-linux-ld: drivers/remoteproc/remoteproc_core.o: in function `trace_rproc_start_event':
+>> remoteproc_core.c:(.text.unlikely+0x30a): undefined reference to `__traceiter_rproc_start_event'
+>> csky-linux-ld: remoteproc_core.c:(.text.unlikely+0x31c): undefined reference to `__tracepoint_rproc_load_event'
+>> csky-linux-ld: remoteproc_core.c:(.text.unlikely+0x324): undefined reference to `__traceiter_rproc_load_event'
+>> csky-linux-ld: remoteproc_core.c:(.text.unlikely+0x354): undefined reference to `__tracepoint_rproc_start_event'
+>> csky-linux-ld: remoteproc_core.c:(.text.unlikely+0x358): undefined reference to `__traceiter_rproc_start_event'
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
