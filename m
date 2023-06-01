@@ -2,131 +2,139 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 643A3C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Jun 2023 00:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B608DC77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  1 Jun 2023 10:59:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229724AbjFAAz6 (ORCPT
+        id S232331AbjFAK7u (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 31 May 2023 20:55:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        Thu, 1 Jun 2023 06:59:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjFAAz5 (ORCPT
+        with ESMTP id S233322AbjFAK7m (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 31 May 2023 20:55:57 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFFB312B;
-        Wed, 31 May 2023 17:55:55 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3510fvof002832;
-        Thu, 1 Jun 2023 00:55:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=bvuLLMRXfFK2/Zw/BcyuOeZgQFDiq7X3IIAWCop0yuo=;
- b=ku6zt+CCfxb/cN1vtZAyS06qo2MP+NzzkRkW6a9s6Tqp9OVTSGsggnX3A8sbnJJq3NV1
- px1AbCZlGFTJHTcfFZ8ZbtgEfnRyIJbn/FybaDZWsO+3hQ8HfOytI0zkjt7tXwcPXxNP
- iWiXpz7nWBHVYYi1C88FfVs9Uz99KTmZ1Uv5+r6QsER1A4QesTMOyBqYx1aigIlKFgJR
- lCj15nVQZAtEIGkwXzvVXjSuDspKqOixCdlzyRv/BzrSlsNxB6IQX3SxtSqmtSejwJ4S
- LDcJfYkI5rX4J4vVnVg6dlRxdKxZiSFXQZqBDVk7YvXVmelpQK7E4ppVPl1LuaRgQlio 4w== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qxc798hgk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Jun 2023 00:55:47 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3510tkQf016235
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 1 Jun 2023 00:55:46 GMT
-Received: from [10.71.110.156] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 31 May
- 2023 17:55:46 -0700
-Message-ID: <98ffc5cd-7129-3128-1f83-d66b4fc8c78a@quicinc.com>
-Date:   Wed, 31 May 2023 17:55:45 -0700
+        Thu, 1 Jun 2023 06:59:42 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8137012C;
+        Thu,  1 Jun 2023 03:59:22 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 351Ax8s5121002;
+        Thu, 1 Jun 2023 05:59:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1685617148;
+        bh=Su7R47v4W5yO6beC23P257B1E8f3gfa6U+NgWZ0c6fE=;
+        h=From:To:CC:Subject:Date;
+        b=ILYoAtU434Bw9nLblRFw0m8HJnE2yBrkz5O91voAn1RFqb4HjzLJTt0rEpd70S5js
+         MSyhffXPvZIoyUahdsQ397ivTu8wWV5fyldw0HNzAfLMASfH6rMD02GQQfaJgH94Mf
+         5xgjFPnA8+1Uqt2Uz+lXQzO32ch8AwyRwFWEMAO8=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 351Ax8nS087594
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Jun 2023 05:59:08 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
+ Jun 2023 05:59:07 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 1 Jun 2023 05:59:07 -0500
+Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 351Ax7ZJ027859;
+        Thu, 1 Jun 2023 05:59:07 -0500
+Received: from localhost (uda0501179.dhcp.ti.com [10.24.69.114])
+        by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 351Ax6BY024592;
+        Thu, 1 Jun 2023 05:59:06 -0500
+From:   MD Danish Anwar <danishanwar@ti.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC:     <rogerq@kernel.org>, <vigneshr@ti.org>, <nm@ti.com>, <srk@ti.com>,
+        <danishanwar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] remoteproc: pru: add support for configuring GPMUX based on client setup
+Date:   Thu, 1 Jun 2023 16:29:04 +0530
+Message-ID: <20230601105904.3204260-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.1
-Subject: Re: [PATCH v4 1/2] remoteproc: Introduce traces for remoteproc events
-Content-Language: en-US
-To:     Trilok Soni <quic_tsoni@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Satya Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        "Guru Das Srinagesh" <quic_gurus@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-References: <cover.1685486994.git.quic_gokukris@quicinc.com>
- <5c1744bc362fbc80615349f12c18c8ab5c4f0a6e.1685486994.git.quic_gokukris@quicinc.com>
- <b332eaf8-2528-ad71-9118-6627bf9ab7c1@quicinc.com>
-From:   Gokul Krishna Krishnakumar <quic_gokukris@quicinc.com>
-In-Reply-To: <b332eaf8-2528-ad71-9118-6627bf9ab7c1@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -0HWdsSuhOLjI2NaMfA_EkcNpwAsO2Om
-X-Proofpoint-ORIG-GUID: -0HWdsSuhOLjI2NaMfA_EkcNpwAsO2Om
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-31_18,2023-05-31_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 mlxlogscore=797
- adultscore=0 spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2306010006
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+From: Tero Kristo <t-kristo@ti.com>
 
+Client device node property ti,pruss-gp-mux-sel can now be used to
+configure the GPMUX config value for PRU.
 
-On 5/31/2023 2:51 PM, Trilok Soni wrote:
-> On 5/31/2023 2:28 PM, Gokul krishna Krishnakumar wrote:
->> Adding Traces for the following remoteproc events:
->>     rproc_subdev_event,
->>     rproc_interrupt_event,
->>     rproc_load_event,
->>     rproc_start_event,
->>     rproc_stop_event
->>
->> Signed-off-by: Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
->> ---
->>   drivers/remoteproc/Kconfig                    |   5 +
->>   drivers/remoteproc/Makefile                   |   1 +
->>   drivers/remoteproc/remoteproc_tracepoints.c   |  13 ++
->>   include/trace/events/remoteproc_tracepoints.h | 129 ++++++++++++++++++
->>   4 files changed, 148 insertions(+)
->>   create mode 100644 drivers/remoteproc/remoteproc_tracepoints.c
->>   create mode 100644 include/trace/events/remoteproc_tracepoints.h
->>
->> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->> index a850e9f486dd..2ef4f527f1c1 100644
->> --- a/drivers/remoteproc/Kconfig
->> +++ b/drivers/remoteproc/Kconfig
->> @@ -365,6 +365,11 @@ config XLNX_R5_REMOTEPROC
->>         It's safe to say N if not interested in using RPU r5f cores.
->> +config REMOTEPROC_TRACEPOINTS
->> +    bool "Support for Remote Processor subsystem traces"
->> +    help
->> +      Say y to add traces to the remoteproc events.
-> 
-> More information here please. What information these traces provide? How 
-> they can be useful to developers? More text will always be helpful.
-> 
-Say y to add traces to remoteproc events of interest such as the 
-start/stop/crash events in a remote-processor and also sub-device 
-stop/start events and there errors.
-These traces can be useful while debugging errors with subsystem restart 
-and draw an estimate on how long each event takes to run.
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Suman Anna <s-anna@ti.com>
+Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+---
+ drivers/remoteproc/pru_rproc.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-> ---Trilok Soni
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 2874c8d324f7..29d3a5a930c1 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -109,6 +109,7 @@ struct pru_private_data {
+  * @dbg_single_step: debug state variable to set PRU into single step mode
+  * @dbg_continuous: debug state variable to restore PRU execution mode
+  * @evt_count: number of mapped events
++ * @gpmux_save: saved value for gpmux config
+  */
+ struct pru_rproc {
+ 	int id;
+@@ -127,6 +128,7 @@ struct pru_rproc {
+ 	u32 dbg_single_step;
+ 	u32 dbg_continuous;
+ 	u8 evt_count;
++	u8 gpmux_save;
+ };
+ 
+ static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+@@ -228,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	struct device *dev;
+ 	const char *fw_name;
+ 	int ret;
++	u32 mux;
+ 
+ 	rproc = __pru_rproc_get(np, index);
+ 	if (IS_ERR(rproc))
+@@ -252,6 +255,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+ 	if (pru_id)
+ 		*pru_id = pru->id;
+ 
++	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
++	if (ret) {
++		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
++		goto err;
++	}
++
++	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
++					 &mux);
++	if (!ret) {
++		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
++		if (ret) {
++			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
++			goto err;
++		}
++	}
++
+ 	ret = of_property_read_string_index(np, "firmware-name", index,
+ 					    &fw_name);
+ 	if (!ret) {
+@@ -290,6 +309,8 @@ void pru_rproc_put(struct rproc *rproc)
+ 
+ 	pru = rproc->priv;
+ 
++	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
++
+ 	pru_rproc_set_firmware(rproc, NULL);
+ 
+ 	mutex_lock(&pru->lock);
+-- 
+2.34.1
 
-How does this look.
-Thanks,
-Gokul
