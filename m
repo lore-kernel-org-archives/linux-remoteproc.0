@@ -2,103 +2,144 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83913C7EE24
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 08:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97D6AC7EE2F
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 09:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230042AbjFEIeH (ORCPT
+        id S230515AbjFEJRL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Jun 2023 04:34:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60150 "EHLO
+        Mon, 5 Jun 2023 05:17:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229724AbjFEIeG (ORCPT
+        with ESMTP id S230408AbjFEJRI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Jun 2023 04:34:06 -0400
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5440AC7;
-        Mon,  5 Jun 2023 01:34:04 -0700 (PDT)
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-777ac4344f9so19423739f.0;
-        Mon, 05 Jun 2023 01:34:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685954043; x=1688546043;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FvMVzBFh2qIaLJzUc3itd2Y7Ptws11UXcErgWlt9W/U=;
-        b=Uyl7ibfIhbM2lCd1QOH06Dp+0qgyPZf1OUPVt0Gr9k9t3DfVICMBWixr88/jjhX22o
-         p019KECAV7ahIYthSSmdrbV5EvAikcN0K0zt8xi95qCv0bfGhgN08rZBB28tLdlAho/P
-         BsfTssRHCLw9epmyfbaJTJyIqBDQvDtmkFZFeTihIl/ujPK0qbEsyHySzUrSv7J+Rfqi
-         NOTq61FKNcIWfvIciY3rr78sq7oLdlQLIh+tOj62o8imjhYf+F+4oE21BNfWnKTAOYMD
-         98iO1xpVSTedAfJX1sDpaHNEYJXYX3LNNJoZpaHtniKXsxbsg56kUDeElQwCk6SM1g43
-         jrQw==
-X-Gm-Message-State: AC+VfDxFqs8YaUiXhBviXLLWi8x/g4KMhMpRESMiffF7/I3muL9Zfq5L
-        uL3QfuEhGoWvnEY32UuQcg==
-X-Google-Smtp-Source: ACHHUZ5QAi3gJpHdm7Tj1gUW44mXOGsCdk/LqF2d6rfZDUpRsopLA0zibIELN/MSr7L9Mf9hF5UYZg==
-X-Received: by 2002:a6b:740f:0:b0:777:91d5:c198 with SMTP id s15-20020a6b740f000000b0077791d5c198mr5849697iog.15.1685954043534;
-        Mon, 05 Jun 2023 01:34:03 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id z25-20020a6b0a19000000b00760f256037dsm545198ioi.44.2023.06.05.01.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jun 2023 01:34:02 -0700 (PDT)
-Received: (nullmailer pid 208976 invoked by uid 1000);
-        Mon, 05 Jun 2023 08:33:58 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     devicetree@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Mon, 5 Jun 2023 05:17:08 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2578FF;
+        Mon,  5 Jun 2023 02:16:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1685956614; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=Bt92vqC/KJ8J+F82dat/5fo8c0DUqXQNGdiy8U9WuozmZY6gbnMbsKT1qf3R/0ayYb
+    Omy9LLVRxunBW0hPH7lkwrqbt/XyhJgRi0TKa5rCMznXC6KTDJOojH1CWRv6JMabYZ2U
+    5uOQTxKHOAHFWkwcET0GzSJbD/UsJBCqslcHdS4ieCb7c8SO3NVmOjlXgIO0jWNWzrHx
+    uFZhLbIRIe1XfVBwSnC8xh3/JP977sIMP5XZc2zcpWDdgwhqkYaeLS4sIOZmy8NL0SJx
+    UCK3mIvowbRzb54CzJCnDdZqPPvsJ2oCuVurea3uLvyTe23IV+42U8FHwbJgTn6Hbmke
+    kuVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1685956614;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=y/8gmRS2Mmo/6o0P04FMEj8MQ1YpxHue2slUOt6zG90=;
+    b=MKpC4Gi5qkDE2OvdgeyjlsIxJx+1BWfnd7rh1nLQ8f98t5vLs4su+zNisnH1TFWje/
+    cTkE37Cvv2YXu16O2b0IgOQ/sxq8nMQ7cCyE/fh7UnAXMqHwbwzm08huM2vtkEZJyTlJ
+    mRgSCFpLbiV6Ti+12sIklIfTXBFEZk/Ta+XhXSN35MtxdHlujZr0YjkLJUdc738WHjPh
+    48nRTzqDbkOhSTnMw5i1NumiiP6DART3ky02v7OXAMo7x1pShrReZIuMBF7+QzCW41Q2
+    FBA+9s5OH5IIl4z+8rqy0Jpxsmmd7lpWIjSslO9hPuPLyA1O5//TPuSvmxvOTbdOvkKV
+    g+Tw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1685956614;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=y/8gmRS2Mmo/6o0P04FMEj8MQ1YpxHue2slUOt6zG90=;
+    b=Itoq/TuHW7rWDELrLWD5UtrhzhtaZELO6PVvD9xUQOiIxp+TXgm05pfuDzlilKExrt
+    9KimmL6T4Nd8XTHgvtcnEQCnSLsYlMtcD2u74XWGquZEq3+gY+I5PBPaJCMNg6G+O5ZH
+    9KIXWSB2WCm9lBb7qry/Ee4VnKz2GujBpS0nady6LJcXG0Myy+QUyGUhaLn4SyO+e3Zu
+    JzVi/wKX2NHG+l1QV2dMRZj/37fvH6+eu9wP6ZTCJs3XtU+MlwE2BAL+4vZ7zGJc/9eY
+    2V9hdrNVEHNogD/6Ap57f+klag9Jj8ya0GTZbfFP6WL6mC0mjgdDMG0gY7nXEDozeasV
+    e4kA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1685956614;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=y/8gmRS2Mmo/6o0P04FMEj8MQ1YpxHue2slUOt6zG90=;
+    b=BTto49rNj6EYLv1vLCwvkup6Qqzsd1jb9LzbyIve0AoCkQu8HUMlDvGAdKF5F5/Blo
+    7OJELbUcpxQtTImzUQDA==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8Z+J1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
+    with ESMTPSA id Z82ec2z559Gs9Qu
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Mon, 5 Jun 2023 11:16:54 +0200 (CEST)
+Date:   Mon, 5 Jun 2023 11:16:46 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        linux-remoteproc@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-In-Reply-To: <20230531-rpm-rproc-v1-6-e0a3b6de1f14@gerhold.net>
+        Andy Gross <agross@kernel.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 05/14] dt-bindings: remoteproc: Add Qualcomm RPM
+ processor/subsystem
+Message-ID: <ZH2n_tsf2MsIQ6Vf@gerhold.net>
 References: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
- <20230531-rpm-rproc-v1-6-e0a3b6de1f14@gerhold.net>
-Message-Id: <168595403816.208946.12766625011186229177.robh@kernel.org>
-Subject: Re: [PATCH 06/14] dt-bindings: soc: qcom: smd-rpm: Use
- qcom,rpm-proc in example
-Date:   Mon, 05 Jun 2023 02:33:58 -0600
+ <20230531-rpm-rproc-v1-5-e0a3b6de1f14@gerhold.net>
+ <168595403632.208907.7805006523202767813.robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <168595403632.208907.7805006523202767813.robh@kernel.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On Mon, 05 Jun 2023 09:08:22 +0200, Stephan Gerhold wrote:
-> Use the new top-level rpm-proc node instead of having a dummy top-level
-> /smd node that only contains the RPM but not other remote processors.
+On Mon, Jun 05, 2023 at 02:33:58AM -0600, Rob Herring wrote:
+> On Mon, 05 Jun 2023 09:08:21 +0200, Stephan Gerhold wrote:
+> > On Qualcomm platforms, most subsystems (e.g. audio/modem DSP) are
+> > described as remote processors in the device tree, with a dedicated
+> > node where properties and services related to them can be described.
+> > 
+> > The Resource Power Manager (RPM) is also such a subsystem, with a
+> > remote processor that is running a special firmware. Unfortunately,
+> > the RPM never got a dedicated node representing it properly in the
+> > device tree. Most of the RPM services are described below a top-level
+> > /smd or /rpm-glink node.
+> > 
+> > However, SMD/GLINK is just one of the communication channels to the RPM
+> > firmware. For example, the MPM interrupt functionality provided by the
+> > RPM does not use SMD/GLINK but writes directly to a special memory
+> > region allocated by the RPM firmware in combination with a mailbox.
+> > Currently there is no good place in the device tree to describe this
+> > functionality. It doesn't belong below SMD/GLINK but it's not an
+> > independent top-level device either.
+> > 
+> > Introduce a new "qcom,rpm-proc" compatible that allows describing the
+> > RPM as a remote processor/subsystem like all others. The SMD/GLINK node
+> > is moved to a "smd-edge"/"glink-edge" subnode consistent with other
+> > existing bindings. Additional subnodes (e.g. interrupt-controller for
+> > MPM, rpm-master-stats) can be also added there.
+> > 
+> > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+> > ---
+> >  .../bindings/remoteproc/qcom,rpm-proc.yaml         | 125 +++++++++++++++++++++
+> >  1 file changed, 125 insertions(+)
+> > 
 > 
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> ./Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/soc/qcom/qcom,rpm-master-stats.yaml
 > 
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+I think we can ignore this error: The qcom,rpm-master-stats.yaml schema
+exists only in the qcom for-next branch at the moment, which is what
+this series targets. The base-commit in the cover letter also points
+there (although I guess it might be tricky to resolve it reliably for
+automated testing).
 
-yamllint warnings/errors:
+Before sending this series I verified that there are no dt_binding_check
+and dtbs_check warnings or errors when applied to the correct branch.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.example.dtb: /example-0/remoteproc-rpm: failed to match any schema with compatible: ['qcom,msm8916-rpm-proc', 'qcom,rpm-proc']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230531-rpm-rproc-v1-6-e0a3b6de1f14@gerhold.net
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks,
+Stephan
