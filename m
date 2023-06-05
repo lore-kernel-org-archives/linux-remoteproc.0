@@ -2,165 +2,162 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 362CBC7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 17:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE41C7EE25
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 18:49:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232805AbjFER0l (ORCPT
+        id S229825AbjFEStV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Jun 2023 13:26:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46970 "EHLO
+        Mon, 5 Jun 2023 14:49:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230237AbjFER0k (ORCPT
+        with ESMTP id S230511AbjFEStT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Jun 2023 13:26:40 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A8E91
-        for <linux-remoteproc@vger.kernel.org>; Mon,  5 Jun 2023 10:26:39 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-65292f79456so2202873b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jun 2023 10:26:39 -0700 (PDT)
+        Mon, 5 Jun 2023 14:49:19 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A4CF1
+        for <linux-remoteproc@vger.kernel.org>; Mon,  5 Jun 2023 11:49:17 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f5f728c4aaso5801294e87.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jun 2023 11:49:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685985998; x=1688577998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oZqfyldacC0XDQdlgcybeOtmpOKByOPh6WjeVTF62fI=;
-        b=zHj/glthhqgShaVchA3kSlzmwRY1tu52DszjiLxHcQu4qoc/Guv3EPCzIvWg2KPeNb
-         rCXdG49EbGfe+X72cuW9RHxS3QRqLfxGcCZq8RYA2EYEVatWZp3BRIBqZQDGn9CxC0SJ
-         1HgYv876+yPQzJGFGojPFisVcd481SL8Lt3Zma1YkYooSEa4Q5VISP0Qt6L3pv8Eg73m
-         Ps1PFvKHxIWN+lU+k2XX0cWIhrZomTguaZo76gC/R5JJF+K5do82HWBsPc3r22qXMsv5
-         zZAPXxY60v8/pqBiIyMqGSWS12DaYmG0Q3LNmofbCsfK+8IWu+Un/XFnBO0bcm6SaQ6/
-         bKrg==
+        d=linaro.org; s=google; t=1685990955; x=1688582955;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eS7R8Iw26U2hBPhTa4MZJ2uQUjp12WGBrNfWAr/A1BY=;
+        b=v14FLESgzRLJ7jJiMOxQzWE1HaUNvpUIwxALr1UpG0kEN6Qsj4URQP3OIZCKD4kz/3
+         c25IqisDh9wUCeQWLdjGa8CXnhY5bVP+a0VR5s41lDORwJChQBIZlpgKKOzYyKMxz3Du
+         b4oc8feOXJGz3faQWAmSTDXfgAHu++s9+yMdebAcmlWsSJbv8R4bM+2vmqxax1PjnJlW
+         ++pCEDVd5lgDMXqxlGNV/ZuZQO0JfjyVtuVByVjtIJ+/CmsO9ZEEYHRl7yr6xFe/goBP
+         H+oSKrVkvG+8ZRKIyoJqNGc5b6M0uaNH8uvqZ9iWhlajZCKKl6bDTzgwI0VYjEXqk8iu
+         1V9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685985998; x=1688577998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZqfyldacC0XDQdlgcybeOtmpOKByOPh6WjeVTF62fI=;
-        b=AAHEWAMWyr0SEwNXFh30eb1YOI/QXz3Z9X3qMNg/JGrq2tt26jrDAOdlUC8QMvp1XF
-         sTgzJ6ZeIJq5FNkB45roasrZXKqq1TUip/im08fW8G2NKUpWs6jiIA3vTuHHFnjfmvB2
-         StUIdGewTbtHQlbMdS19SZSn+rr3bXXdgpnGvs9TCR3ABdYNL2JAieNEyGrUadCxtnKb
-         Tud9G1s6zO8wYJg70Td0McB6KiaMomE+3SevfGKCnw1/3qkj2eT7UzvWprObWxRL6Tsb
-         D/50Jng0XHn6M2e/rhXCvIJ0oiENcA7TCnSXBgOtNwDMBCwPsIC8xqeADRu3LKEfdlxx
-         hm2A==
-X-Gm-Message-State: AC+VfDyO2JoeWybdYcPwdIu6qpTm7UKvnZDFjTRYQmgSA1pyW8C+Geg9
-        L2tT0XfOPd+VCUqTs3bwY7tgJQ==
-X-Google-Smtp-Source: ACHHUZ5JvrGlGppWeBFVmmK+Ax40IK7f9ZR/h7+HCqrLeKIfBaX7AWDP6dUJVCsCnHCuJREMmCBrMQ==
-X-Received: by 2002:a17:902:b183:b0:1b2:1a4f:5825 with SMTP id s3-20020a170902b18300b001b21a4f5825mr1249848plr.19.1685985998519;
-        Mon, 05 Jun 2023 10:26:38 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:e5f9:abc2:7e8d:5257])
-        by smtp.gmail.com with ESMTPSA id 11-20020a170902c20b00b001b061dcdb6bsm6872663pll.28.2023.06.05.10.26.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jun 2023 10:26:38 -0700 (PDT)
-Date:   Mon, 5 Jun 2023 11:26:35 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     MD Danish Anwar <danishanwar@ti.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>, rogerq@kernel.org,
-        vigneshr@ti.org, nm@ti.com, srk@ti.com,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: pru: add support for configuring GPMUX based
- on client setup
-Message-ID: <ZH4aywQoA9gy2OWU@p14s>
-References: <20230601105904.3204260-1-danishanwar@ti.com>
+        d=1e100.net; s=20221208; t=1685990955; x=1688582955;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eS7R8Iw26U2hBPhTa4MZJ2uQUjp12WGBrNfWAr/A1BY=;
+        b=YVZeY9OLhrsymgzvgQkqZtn+Krglas3fMJaHyvTmbU3YwYnM/5OPhtxLv2s/Qg4efc
+         xqVuRyl2T/pjIwPetNh1BdW56XKdXR1WXUZD8DhHA68UkkbtS2ZznMVA198zwdb2JqSz
+         kmiwOKqXy9SwAdpU72YOKyxvo6QFHXra9JgLDYepF2Zpx7euEO7ZO908R3tMWVIow1cL
+         GH1MDZvqr0maeM9hy+J0gX5eKUoVFtr6EBWpCq1lgob88yGn3bGwoRKO79kA5tjHCuEV
+         C5hokrbCYZoZheIyKMrhEOLlqSyxHQhPf0yMLUqdwXXfCMll7CesWDJ3RvdZQUWIrhD1
+         EyAQ==
+X-Gm-Message-State: AC+VfDzISb+vE3nCHL2BGoRT/oiCpkPaHdl9tjoHPuVkZuMK8RPkCotQ
+        texezUkqvZZmYbUYpoVP4R7w/g==
+X-Google-Smtp-Source: ACHHUZ66SeEy8dldCqgvYUjjpe+Gv06VM9DmlXAk6TNxjzYlDvyAVS8UKqFdJrPs328lAR8pVrFpOg==
+X-Received: by 2002:ac2:4353:0:b0:4f3:77f9:2bbe with SMTP id o19-20020ac24353000000b004f377f92bbemr3810557lfl.3.1685990955422;
+        Mon, 05 Jun 2023 11:49:15 -0700 (PDT)
+Received: from [192.168.1.101] (abyj96.neoplus.adsl.tpnet.pl. [83.9.29.96])
+        by smtp.gmail.com with ESMTPSA id a9-20020a056512020900b004f62e33f343sm225120lfo.109.2023.06.05.11.49.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Jun 2023 11:49:14 -0700 (PDT)
+Message-ID: <84c94ba5-fee4-c37a-9900-f9a1ad589c33@linaro.org>
+Date:   Mon, 5 Jun 2023 20:49:13 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230601105904.3204260-1-danishanwar@ti.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 04/14] soc: qcom: smd-rpm: Match rpmsg channel instead of
+ compatible
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>,
+        Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
+ <20230531-rpm-rproc-v1-4-e0a3b6de1f14@gerhold.net>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230531-rpm-rproc-v1-4-e0a3b6de1f14@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi MD,
 
-On Thu, Jun 01, 2023 at 04:29:04PM +0530, MD Danish Anwar wrote:
-> From: Tero Kristo <t-kristo@ti.com>
+
+On 5.06.2023 09:08, Stephan Gerhold wrote:
+> There is an ever growing list of compatibles in the smd-rpm.c driver.
+> A fallback compatible would help here but would still require keeping
+> the current list around for backwards compatibility.
 > 
-> Client device node property ti,pruss-gp-mux-sel can now be used to
-> configure the GPMUX config value for PRU.
+> As an alternative, let's switch the driver to match the rpmsg_device_id
+> instead, which is always "rpm_requests" on all platforms. Add a check
+> to ensure that there is a device tree node defined for the device since
+> otherwise the of_platform_populate() call will operate on the root node (/).
 > 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> Similar approaches with matching rpmsg_device_id are already used in
+> qcom_sysmon, qcom_glink_ssr, qrtr, and rpmsg_wwan_ctrl.
+> 
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 > ---
->  drivers/remoteproc/pru_rproc.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+Tested-by: Konrad Dybcio <konrad.dybcio@linaro.org> # SM6375 (G-Link)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>  drivers/soc/qcom/smd-rpm.c | 35 +++++++++--------------------------
+>  1 file changed, 9 insertions(+), 26 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 2874c8d324f7..29d3a5a930c1 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -109,6 +109,7 @@ struct pru_private_data {
->   * @dbg_single_step: debug state variable to set PRU into single step mode
->   * @dbg_continuous: debug state variable to restore PRU execution mode
->   * @evt_count: number of mapped events
-> + * @gpmux_save: saved value for gpmux config
->   */
->  struct pru_rproc {
->  	int id;
-> @@ -127,6 +128,7 @@ struct pru_rproc {
->  	u32 dbg_single_step;
->  	u32 dbg_continuous;
->  	u8 evt_count;
-> +	u8 gpmux_save;
+> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+> index 0c1aa809cc4e..13d8c52330d0 100644
+> --- a/drivers/soc/qcom/smd-rpm.c
+> +++ b/drivers/soc/qcom/smd-rpm.c
+> @@ -199,6 +199,9 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+>  	struct qcom_smd_rpm *rpm;
+>  	int ret;
+>  
+> +	if (!rpdev->dev.of_node)
+> +		return -EINVAL;
+> +
+>  	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
+>  	if (!rpm)
+>  		return -ENOMEM;
+> @@ -230,38 +233,18 @@ static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
+>  	of_platform_depopulate(&rpdev->dev);
+>  }
+>  
+> -static const struct of_device_id qcom_smd_rpm_of_match[] = {
+> -	{ .compatible = "qcom,rpm-apq8084" },
+> -	{ .compatible = "qcom,rpm-ipq6018" },
+> -	{ .compatible = "qcom,rpm-ipq9574" },
+> -	{ .compatible = "qcom,rpm-msm8226" },
+> -	{ .compatible = "qcom,rpm-msm8909" },
+> -	{ .compatible = "qcom,rpm-msm8916" },
+> -	{ .compatible = "qcom,rpm-msm8936" },
+> -	{ .compatible = "qcom,rpm-msm8953" },
+> -	{ .compatible = "qcom,rpm-msm8974" },
+> -	{ .compatible = "qcom,rpm-msm8976" },
+> -	{ .compatible = "qcom,rpm-msm8994" },
+> -	{ .compatible = "qcom,rpm-msm8996" },
+> -	{ .compatible = "qcom,rpm-msm8998" },
+> -	{ .compatible = "qcom,rpm-sdm660" },
+> -	{ .compatible = "qcom,rpm-sm6115" },
+> -	{ .compatible = "qcom,rpm-sm6125" },
+> -	{ .compatible = "qcom,rpm-sm6375" },
+> -	{ .compatible = "qcom,rpm-qcm2290" },
+> -	{ .compatible = "qcom,rpm-qcs404" },
+> -	{}
+> +static const struct rpmsg_device_id qcom_smd_rpm_id_table[] = {
+> +	{ .name = "rpm_requests", },
+> +	{ /* sentinel */ }
+>  };
+> -MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
+> +MODULE_DEVICE_TABLE(rpmsg, qcom_smd_rpm_id_table);
+>  
+>  static struct rpmsg_driver qcom_smd_rpm_driver = {
+>  	.probe = qcom_smd_rpm_probe,
+>  	.remove = qcom_smd_rpm_remove,
+>  	.callback = qcom_smd_rpm_callback,
+> -	.drv  = {
+> -		.name  = "qcom_smd_rpm",
+> -		.of_match_table = qcom_smd_rpm_of_match,
+> -	},
+> +	.id_table = qcom_smd_rpm_id_table,
+> +	.drv.name = "qcom_smd_rpm",
 >  };
 >  
->  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
-> @@ -228,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->  	struct device *dev;
->  	const char *fw_name;
->  	int ret;
-> +	u32 mux;
->  
->  	rproc = __pru_rproc_get(np, index);
->  	if (IS_ERR(rproc))
-> @@ -252,6 +255,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->  	if (pru_id)
->  		*pru_id = pru->id;
->  
-> +	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
-> +					 &mux);
-> +	if (!ret) {
-> +		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
-> +		if (ret) {
-> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
-> +			goto err;
-> +		}
-> +	}
-> +
-
-It would have been nice to be told in a cover letter that pruss_cfg_get_gpmux()
-is in linux-next so that I don't have to go fish for it...
-
-I am fine with the code in this patch, though the changelog is cryptic and could
-be enhanced to say "why" this is needed.  The above could use some comments to
-make sure people looking at this code understand that an error from
-of_property_read_u32_index() is acceptable for backward compatibility.
-
-Here I have to suppose pruss_cfg_get_gpmux() has been added to Nishanth's tree.
-As such the only way for me to apply your patch is if Nishanth sends me a pull
-request for the patchset that introduced pruss_cfg_get_gpmux().  You can also
-resend this in the next cycle.
-
-Thanks,
-Mathieu
-
->  	ret = of_property_read_string_index(np, "firmware-name", index,
->  					    &fw_name);
->  	if (!ret) {
-> @@ -290,6 +309,8 @@ void pru_rproc_put(struct rproc *rproc)
->  
->  	pru = rproc->priv;
->  
-> +	pruss_cfg_set_gpmux(pru->pruss, pru->id, pru->gpmux_save);
-> +
->  	pru_rproc_set_firmware(rproc, NULL);
->  
->  	mutex_lock(&pru->lock);
-> -- 
-> 2.34.1
+>  static int __init qcom_smd_rpm_init(void)
 > 
