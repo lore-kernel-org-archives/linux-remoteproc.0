@@ -2,106 +2,82 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E951C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 20:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E072C7EE23
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 20:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbjFEUc2 (ORCPT
+        id S231268AbjFEUqC (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Jun 2023 16:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
+        Mon, 5 Jun 2023 16:46:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230271AbjFEUc1 (ORCPT
+        with ESMTP id S229614AbjFEUqB (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Jun 2023 16:32:27 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9688B94;
-        Mon,  5 Jun 2023 13:32:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1685997146; x=1717533146;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=btZahgC1h/ESCrvkTLalt9h2IyYRaP2vn69sQbCp+ZM=;
-  b=i6Ymdy0/adVfFVaLO9v88T1qrKvgrLg9UUq/hioe0Of5giHv6g/Sob6C
-   fV9XBrgUOMWyt7U8R/7JdfrtHdprO8su9jiesjp2unyuXgd3ciDqs0FcG
-   XMOiv/LKqQ0GcqgrNQZxDYZ/VA+RRE1uefCGJeHUOjF3UIe4h8h4jf/x5
-   id9dBn9iHUlOEdrRPI2+6YnCFxvd3dwJO+LE3hIYRdLmJJ67En4UDhko0
-   5UbCQXeGKqITZFsAQifPIkA7LaQZA2W+CFlJ84DL88uAVrhgUBKDhFHnp
-   a8EgjgEcBVdiAQATkkyUOunpcxzRAT5gd+rqFVMtPn5nuRjs9XHNlflC/
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="336831470"
-X-IronPort-AV: E=Sophos;i="6.00,218,1681196400"; 
-   d="scan'208";a="336831470"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2023 13:32:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10732"; a="708798601"
-X-IronPort-AV: E=Sophos;i="6.00,218,1681196400"; 
-   d="scan'208";a="708798601"
-Received: from lkp-server01.sh.intel.com (HELO 15ab08e44a81) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 05 Jun 2023 13:32:23 -0700
-Received: from kbuild by 15ab08e44a81 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q6GsI-0004QT-1h;
-        Mon, 05 Jun 2023 20:32:22 +0000
-Date:   Tue, 6 Jun 2023 04:31:55 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stephan Gerhold <stephan@gerhold.net>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev, Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: Re: [PATCH 10/14] soc: qcom: Add RPM processor/subsystem driver
-Message-ID: <202306060446.CAOHuKLm-lkp@intel.com>
-References: <20230531-rpm-rproc-v1-10-e0a3b6de1f14@gerhold.net>
+        Mon, 5 Jun 2023 16:46:01 -0400
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F21A7;
+        Mon,  5 Jun 2023 13:46:00 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 355KjqYO042200;
+        Mon, 5 Jun 2023 15:45:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1685997953;
+        bh=IM26LQhhxQAXSh7/HG0igDymrTDNSeNiHL1OIbK2lec=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=FXvkd2Nq0pyh3Yv0K3TE9KIC5kmP1Gv7IbkN/jDBIRIJlJKeWbRkiDJccPeMXSfQ1
+         CeQyF5Vd6pIWIvNpAy4wwYJbYRwzOxtKDcpT+YuMYRkBdZlFdzbsxYIXPQfRTt+1bO
+         hx5ICN6qZQ7GL5MKlWkGNeHLuSG/qIiiUA/BL9tY=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 355KjqtU001866
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Jun 2023 15:45:52 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 5
+ Jun 2023 15:45:52 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 5 Jun 2023 15:45:52 -0500
+Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 355Kjqkk104642;
+        Mon, 5 Jun 2023 15:45:52 -0500
+Date:   Mon, 5 Jun 2023 15:45:52 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     MD Danish Anwar <danishanwar@ti.com>,
+        Bjorn Andersson <andersson@kernel.org>, <rogerq@kernel.org>,
+        <vigneshr@ti.org>, <srk@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] remoteproc: pru: add support for configuring GPMUX based
+ on client setup
+Message-ID: <20230605204552.x4ctuzos4rysldwj@sessions>
+References: <20230601105904.3204260-1-danishanwar@ti.com>
+ <ZH4aywQoA9gy2OWU@p14s>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20230531-rpm-rproc-v1-10-e0a3b6de1f14@gerhold.net>
+In-Reply-To: <ZH4aywQoA9gy2OWU@p14s>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Stephan,
+On 11:26-20230605, Mathieu Poirier wrote:
+[...]
+> Here I have to suppose pruss_cfg_get_gpmux() has been added to Nishanth's tree.
+> As such the only way for me to apply your patch is if Nishanth sends me a pull
+> request for the patchset that introduced pruss_cfg_get_gpmux().  You can also
+> resend this in the next cycle.
 
-kernel test robot noticed the following build errors:
+Yes, I had pulled this in [1] along with a few other driver fixes. I
+can send you an immutable tag to pull for your tree, if that helps the
+process along though, it might have a unrelated driver fixup patch as
+part of the series though..
 
-[auto build test ERROR on 8d5a57ea6a0b1722725170e32e511701ca7c454c]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Stephan-Gerhold/dt-bindings-soc-qcom-smd-rpm-Fix-sort-order/20230605-151438
-base:   8d5a57ea6a0b1722725170e32e511701ca7c454c
-patch link:    https://lore.kernel.org/r/20230531-rpm-rproc-v1-10-e0a3b6de1f14%40gerhold.net
-patch subject: [PATCH 10/14] soc: qcom: Add RPM processor/subsystem driver
-config: m68k-randconfig-r023-20230605 (https://download.01.org/0day-ci/archive/20230606/202306060446.CAOHuKLm-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/e08a6ffdb1d65902d0c4fed40968ff2e4d83a476
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Stephan-Gerhold/dt-bindings-soc-qcom-smd-rpm-Fix-sort-order/20230605-151438
-        git checkout e08a6ffdb1d65902d0c4fed40968ff2e4d83a476
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=m68k olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306060446.CAOHuKLm-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   m68k-linux-ld: drivers/soc/qcom/rpm-proc.o: in function `rpm_proc_remove':
->> rpm-proc.c:(.text+0x12): undefined reference to `qcom_smd_unregister_edge'
-
+[1] https://lore.kernel.org/all/168434617580.1538524.11482827517408254591.b4-ty@ti.com/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git/log/?h=ti-drivers-soc-next
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
