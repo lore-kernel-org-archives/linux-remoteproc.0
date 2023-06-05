@@ -2,78 +2,124 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2E9C7EE2D
-	for <linux-remoteproc@archiver.kernel.org>; Sun,  4 Jun 2023 13:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB95C7EE24
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 05:29:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232129AbjFDNfO (ORCPT
+        id S232165AbjFEF3g (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 4 Jun 2023 09:35:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
+        Mon, 5 Jun 2023 01:29:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjFDNfN (ORCPT
+        with ESMTP id S229449AbjFEF3f (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 4 Jun 2023 09:35:13 -0400
-Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3ACA8DA;
-        Sun,  4 Jun 2023 06:35:12 -0700 (PDT)
-Received: from [192.168.20.2] (unknown [77.239.252.99])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id 9FB2D1407E3;
-        Sun,  4 Jun 2023 13:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-        s=donut; t=1685885711;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hWSdLvdNVWuD5AVS9UvtS8NdUTlSKL3owLdgzwv6oRQ=;
-        b=XzHiyYY8t9XMYJATI9brPQhkzMKLrRnM67HCzUAb9CMZ9qsod9uCiBLufJ1oDGM29ORz/I
-        C4n2TqYDRsxR+zemBOBC0l8UWorC42CQEOGFqmuqpVjU8MwHwW62ERD7ESLinn53y+GCgo
-        KUASu+xuJBy/G6iiLMpW3sl2EDA+lLc=
-Message-ID: <06cd3bc1-ce97-3b62-c5f1-98b22c8c24b0@postmarketos.org>
-Date:   Sun, 4 Jun 2023 16:35:10 +0300
+        Mon, 5 Jun 2023 01:29:35 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F8DB7;
+        Sun,  4 Jun 2023 22:29:33 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3555NPiV008992;
+        Mon, 5 Jun 2023 05:29:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=iBlQESx7TSygk/quQJm9azeaTl3pcvNd0gqkMVUCapM=;
+ b=eZEzLqaSY125Hj7o1QsuSINzPgDLtvhbfkxxkwiNt6RSDMPDx+LhB+9mPvkqyz5/gL6h
+ 3NQvbgy36Xz2fxFnP9TQITLW77P3vWGMX0EwnQtV0KHz/AUui43qK+7gxhkhRcFf8lOJ
+ R4yoKe3SqbkHcevibY/H98SkH/DjniR4G0BQZ2aojpisxxPs/jY2UFrp9bOuljYz4UB1
+ xWMOMfk2CmoS35MnoYYiBMlONxCScKl1dyzsFO39rpT7LKc3/FiYcwzm8ToIF/nnxGZ+
+ NBY5ZyVwhosxz6BRn/nxCSEUqe+LDCG6A76QM+/mG7LdSskEVuRY7ztrmcKn0yS9v9Ki 4A== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qyvfxjqnp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 05 Jun 2023 05:29:23 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3555TMaq019937
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 5 Jun 2023 05:29:22 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 4 Jun 2023
+ 22:29:14 -0700
+Message-ID: <9ce8a35e-81c9-018d-68a8-d70bd48cdfed@quicinc.com>
+Date:   Mon, 5 Jun 2023 10:59:11 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom,msm8996-mss-pil: Add
- SDM660 compatible
-Content-Language: en-US
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 03/13] dt-bindings: arm: qcom: Document the Qualcomm
+ rdp432-c1 board
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-References: <20230604061421.3787649-1-alexeymin@postmarketos.org>
- <05658f98-ddc1-702b-ea4b-4ea95d0b3313@linaro.org>
-From:   Alexey Minnekhanov <alexeymin@postmarketos.org>
-In-Reply-To: <05658f98-ddc1-702b-ea4b-4ea95d0b3313@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-4-quic_mmanikan@quicinc.com>
+ <fbef157d-88ef-7cce-9bff-06cee53b9a16@linaro.org>
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <fbef157d-88ef-7cce-9bff-06cee53b9a16@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: s07X_STuyLyCw0UQaKfc77-H7SAxXkSQ
+X-Proofpoint-ORIG-GUID: s07X_STuyLyCw0UQaKfc77-H7SAxXkSQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-03_08,2023-06-02_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=965
+ malwarescore=0 adultscore=0 priorityscore=1501 phishscore=0 bulkscore=0
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2306050048
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 04.06.2023 12:11, Krzysztof Kozlowski wrote:>
-> You also need to restrict/constrain power domains and resets.
+
+
+On 5/30/2023 4:29 PM, Krzysztof Kozlowski wrote:
+> On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
+>> Document the Qualcomm rdp432-c1 board based on IPQ5018 Soc.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>> Changes in V2:
+>> 	- Renamed mp03.5-c1 to rdp432-c1
+>>
+>>   Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index 33a9a97d7b5b..53ae2b6b2da6 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -337,6 +337,7 @@ properties:
+>>         - items:
+>>             - enum:
+>>                 - qcom,ipq5018-rdp432-c2
+>> +              - qcom,ipq5018-rdp432-c1
+> 
+> Then keep it before c2, to have it sorted.
 > 
 > Best regards,
 > Krzysztof
 > 
 
-If I understand correctly, power domains and resets should be already 
-restricted together with msm8996+msm8998 by "else" branch [1]?
-Am I missing something?
+Sure, I will move c1 first.
 
-[1] 
-https://elixir.bootlin.com/linux/v6.4-rc4/source/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml#L311
--- 
-Regards,
-Alexey Minnekhanov
+Thanks & Regards,
+Manikanta.
