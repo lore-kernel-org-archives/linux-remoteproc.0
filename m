@@ -2,76 +2,78 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F569C7EE33
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 07:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EAFC7EE23
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 07:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbjFEHK6 (ORCPT
+        id S231175AbjFEHKz (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Jun 2023 03:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42866 "EHLO
+        Mon, 5 Jun 2023 03:10:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231740AbjFEHKU (ORCPT
+        with ESMTP id S231789AbjFEHKX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Jun 2023 03:10:20 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5349CE44;
-        Mon,  5 Jun 2023 00:09:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1685948952; cv=none;
+        Mon, 5 Jun 2023 03:10:23 -0400
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74A15E54;
+        Mon,  5 Jun 2023 00:09:58 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1685948956; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=Ds03rjV6L/KUIbJVzZE7Et2ppDS6H8wuSRxoK+oNodpqehWOWIgHR486H2PT/Y0LZ+
-    egR8u58m0m2XId0tGiiuFUxoQ/Lmrymq5weSX9dqE73CHk51XYBa7+Jm1F8HEsNu5l/X
-    lUWv2Ye+G2C01z2oikAuWrATJGmrMh+kG11kIXqtag/8jT76o5yrZAeM/alnABJ815MF
-    ty83DPXGJZwYradkFO+oVoTLIvtA8+RyA6qH827O/GMgYl9tPoFl1GPB0XYefLGAds0n
-    apnvkH+g126ARsFf0nUnGrVdQHbchSoyUNYXTkqhoIvpkpodm7L/qzwwEjFEzuJnXy2j
-    dWfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1685948952;
+    b=bX50qapSRFTtaoSTIA7GQZA2db0fJtJvo2IS0sSLovGDjiNmdpu9/lJB4jAWVAWZ4A
+    652rm5K1R663bTzUXf5FYqR88fJhwpUybsmMmcmMV5kp47Op7qFckjBCcRWE5tL7HcwM
+    /joaf+XeCHJoFzliuMpgpTuhqlEiD5ZG0oopmpM/R9Zsg0hvsXcmKqp39ieANAh3G42i
+    828W6l/LKcQZk94xYWe7zOoUMoxqMUnI7Zl+YJA86z6QG/550dspJP2wtskbOintGwIV
+    fsXS0i+ez3C1giSUmQZsarZhwYYftqh/njOA5oHbbxrElGAZ65pKHmH3DgkjmBYsvag0
+    m03g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1685948956;
     s=strato-dkim-0002; d=strato.com;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=tDXvQyb9TQPL8CACuByqs5ZpebJ2G7D0n7f+VTZmq0c=;
-    b=io1O51LPqSWDMVtTWZSWW39+xLcVUoX5H1sE/1UWMV4ag/wbj3NJC01YQfKJlVjhqP
-    iwoSOMhkOLNXOUEoPL76iFG/SdZSGsvM1Hni5kXHwoeLDnUw9Obp4HpBqi04Vz3y/rWG
-    YWx6ThwqsiNgWF5AyshoslY2MR7066DRcqmXObrfFFIkZ1cgy68MpVul3+mk/R5ePKTX
-    W/7Ze9cztd+MiZYMYO6FilcdFv6dFWjy6vOK9HEx5W0jHtJxFk+P2GX6ogl3CsY/7Ebx
-    6uJuPq3+WV4j+gr7auZVgoHCQq/9pHzeOdYNrPQpSAV3Y8ukbjmgVYgyZhtAfgGXst58
-    j38g==
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=j/qOxaWwVTu/WS0NkZyfHQtgU7h2MbqoNvZMGU5tI7E=;
+    b=Te+Hwp90BnuWHdSzZdSQXkawYtIPSzDn7rbwwMwb3c8ObUxJwCYBSguLIzn9wDcZ7c
+    I/BfFq5HOhCK0brWREJKorsQvW/6iFmzvvP3ukSf+Dl80KRfGQPubNMIDmZ6t9ZJQmz2
+    aav3ssOTeawAm06XUg+9v9irTc7L0mCkZ7o3xjds2SGBdm1W5sdCSgyONZuMp7d7NE/4
+    8Ukb333p30P44SfcQskWVZ+RvVxxiJPAuM0NuF4ICsISzNTNt9Eh0b1ylzYEQEHjLJ90
+    +Sx3Qj3NWbv20zLxxP2yzdmVy0rbFocz4g+A3LcRbxvienyoB4r6greEFB4Q/rZJUqhf
+    DNFA==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1685948952;
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1685948956;
     s=strato-dkim-0002; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=tDXvQyb9TQPL8CACuByqs5ZpebJ2G7D0n7f+VTZmq0c=;
-    b=lIDu3s9pNBzuwt23zQerZtAxwimNIctDaOiO43KimHgQRnsusWVkK1n4VuJ576NX8J
-    hMolD5bER7Lng4bCURA6DbqhzATp4+PgcxOAR+SY7n0JjgKiWM9SCo6jjh4HNl116lN7
-    QWjq9yQoY5LvEkGkRB9PckkS8F7Ytfvaj/2naOC/59zTQjGVwTexr3uS0GFIxMUMoOzY
-    5eANVpmC3OryIsRENprkXlNxnImVzBGQZ4LdNIU9x0VPbSZPYpEvydc70XlszNXSVr1u
-    4TV9DXyplI1HIJ2U5tNrQZfAZQ6pjDjvV0y+AgiW+vR3oGjyHjlHWzq8AlBGOMaeTkzD
-    LzKg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1685948951;
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=j/qOxaWwVTu/WS0NkZyfHQtgU7h2MbqoNvZMGU5tI7E=;
+    b=pUON0w80j6/nNEso+mRkgAYP8hUQVX30OnAo4R3boDY/Suk60vMJw8k1M8txrWWe7X
+    ylnQRLX1h9fuHYdtelaMwAMNAPSqGlmKQ9dZdTY7LX2xjKhIzZkxI33ejgLoSJkrKuk3
+    ngw8LGJQiGTvZ+Dr+LTQKoSQ4TFDBPObIt75KWAOPZLjg/CLwXc7PNgc9T9c18zez2q3
+    lFya1NtJ3GCIY6Dl9INATglf70q7CE/kf/aP5njLp8mJY9LBgoOjbuQCjePSLuZYtu4c
+    kuZAzCwm13h/a/g4FDfuVegjSHVA/4MpTmcjS8CPrpF7bUj1TixHCIfYb2eDvXXvdraT
+    Io/Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1685948956;
     s=strato-dkim-0003; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=tDXvQyb9TQPL8CACuByqs5ZpebJ2G7D0n7f+VTZmq0c=;
-    b=nse4l3nSLDuEdniyfJ7hh1KGvUPLA3FAHwMvdFVBRVMK32m4fJfuZAb7JTUiAvg4J0
-    svoj2NGEgnRARZg3ZKCQ==
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=j/qOxaWwVTu/WS0NkZyfHQtgU7h2MbqoNvZMGU5tI7E=;
+    b=+kaqo2W6u9y/zJjKahoc6Puzp9Nm7kKA/5NTxSRVAOohNlxVes4pJH0hday5yATKOi
+    VNU+ScJr/TgJCp8ul7AQ==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn9VOL5nz0="
 Received: from [192.168.244.3]
     by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
-    with ESMTPSA id Z82ec2z5579B8Zy
+    with ESMTPSA id Z82ec2z5579G8aA
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Mon, 5 Jun 2023 09:09:11 +0200 (CEST)
+    Mon, 5 Jun 2023 09:09:16 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 00/14] Add dedicated device tree node for RPM
- processor/subsystem
-Date:   Mon, 05 Jun 2023 09:08:16 +0200
-Message-Id: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
+Date:   Mon, 05 Jun 2023 09:08:27 +0200
+Subject: [PATCH 11/14] arm64: dts: qcom: Add rpm-proc node for SMD
+ platforms
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOCJfWQC/x2NSwqAMAxEryJZW1Dr/yriorZRA1olRRGKdze4m
- MUb3jARAjJhgD6JwHhToMML5GkCdjV+QUVOGIqs0Fmlc8XnLuHDqqZqdV22urPOgfiTCagmNt6
- usvDXtkl5Ms70/AfD+L4f1PcCn3AAAAA=
+Message-Id: <20230531-rpm-rproc-v1-11-e0a3b6de1f14@gerhold.net>
+References: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
+In-Reply-To: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
 To:     Bjorn Andersson <andersson@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -87,66 +89,612 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The Resource Power Manager (RPM) currently does not have a dedicated 
-device tree node that represents the remoteproc/subsystem. The 
-functionality exposed through the SMD/GLINK channels is described in 
-top-level nodes of the device tree. This makes it hard to group other 
-functionality provided by the RPM together in the device tree. This 
-series adds a single top-level remoteproc-rpm/rpm-proc device tree node 
-that groups all RPM functionality together.
+Rather than having the RPM SMD channels as the only child of a dummy
+SMD node, switch to representing the RPM as remoteproc like all the
+other remoteprocs (WCNSS, modem DSP).
+
+This allows assigning additional subdevices to it like the MPM
+interrupt-controller or rpm-master-stats.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
-Stephan Gerhold (14):
-      dt-bindings  soc: qcom: smd-rpm: Fix sort order
-      dt-bindings: soc: qcom: smd-rpm: Add MSM8909 to qcom,smd-channels
-      dt-bindings: soc: qcom: smd-rpm: Add some more compatibles
-      soc: qcom: smd-rpm: Match rpmsg channel instead of compatible
-      dt-bindings: remoteproc: Add Qualcomm RPM processor/subsystem
-      dt-bindings: soc: qcom: smd-rpm: Use qcom,rpm-proc in example
-      dt-bindings: qcom: smd: Mark as deprecated
-      soc: qcom: smem: Add qcom_smem_is_available()
-      rpmsg: qcom_smd: Use qcom_smem_is_available()
-      soc: qcom: Add RPM processor/subsystem driver
-      arm64: dts: qcom: Add rpm-proc node for SMD platforms
-      arm64: dts: qcom: Add rpm-proc node for GLINK gplatforms
-      ARM: dts: qcom: Add rpm-proc node for SMD platforms
-      ARM: dts: qcom: apq8064: Drop redundant /smd node
+ arch/arm64/boot/dts/qcom/msm8916.dtsi |   6 +-
+ arch/arm64/boot/dts/qcom/msm8939.dtsi | 112 ++++++++++++-------------
+ arch/arm64/boot/dts/qcom/msm8953.dtsi | 136 +++++++++++++++---------------
+ arch/arm64/boot/dts/qcom/msm8976.dtsi | 152 +++++++++++++++++-----------------
+ arch/arm64/boot/dts/qcom/msm8994.dtsi |  99 +++++++++++-----------
+ 5 files changed, 253 insertions(+), 252 deletions(-)
 
- .../bindings/remoteproc/qcom,rpm-proc.yaml         | 125 +++++++++++++++++
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml |  23 +++-
- .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |   7 +
- arch/arm/boot/dts/qcom-apq8064.dtsi                |  40 ------
- arch/arm/boot/dts/qcom-apq8084.dtsi                |   6 +-
- arch/arm/boot/dts/qcom-msm8226.dtsi                |  38 +++---
- arch/arm/boot/dts/qcom-msm8974.dtsi                |  44 +++---
- arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  48 ++++---
- arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  28 ++--
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   6 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi              | 112 +++++++--------
- arch/arm64/boot/dts/qcom/msm8953.dtsi              | 136 +++++++++---------
- arch/arm64/boot/dts/qcom/msm8976.dtsi              | 152 ++++++++++-----------
- arch/arm64/boot/dts/qcom/msm8994.dtsi              |  99 +++++++-------
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 113 +++++++--------
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  98 ++++++-------
- arch/arm64/boot/dts/qcom/qcm2290.dtsi              | 126 ++++++++---------
- arch/arm64/boot/dts/qcom/qcs404.dtsi               | 152 +++++++++++----------
- arch/arm64/boot/dts/qcom/sdm630.dtsi               | 132 +++++++++---------
- arch/arm64/boot/dts/qcom/sm6115.dtsi               | 128 ++++++++---------
- arch/arm64/boot/dts/qcom/sm6125.dtsi               | 140 ++++++++++---------
- arch/arm64/boot/dts/qcom/sm6375.dtsi               | 126 ++++++++---------
- drivers/rpmsg/qcom_smd.c                           |  10 +-
- drivers/soc/qcom/Makefile                          |   2 +-
- drivers/soc/qcom/rpm-proc.c                        |  76 +++++++++++
- drivers/soc/qcom/smd-rpm.c                         |  35 ++---
- drivers/soc/qcom/smem.c                            |   9 ++
- include/linux/soc/qcom/smem.h                      |   1 +
- 28 files changed, 1111 insertions(+), 901 deletions(-)
----
-base-commit: 8d5a57ea6a0b1722725170e32e511701ca7c454c
-change-id: 20230531-rpm-rproc-758364839cdd
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index 9494b6512d87..667748612d3e 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -282,10 +282,10 @@ CLUSTER_PD: power-domain-cluster {
+ 		};
+ 	};
+ 
+-	smd {
+-		compatible = "qcom,smd";
++	rpm: remoteproc-rpm {
++		compatible = "qcom,msm8916-rpm-proc", "qcom,rpm-proc";
+ 
+-		rpm {
++		smd-edge {
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+ 			qcom,ipc = <&apcs 8 0>;
+ 			qcom,smd-edge = <15>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+index 0d9f8b951b66..f11d522586eb 100644
+--- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+@@ -240,6 +240,62 @@ pmu {
+ 		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
+ 	};
+ 
++	rpm: remoteproc-rpm {
++		compatible = "qcom,msm8936-rpm-proc", "qcom,rpm-proc";
++
++		smd-edge {
++			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++			qcom,ipc = <&apcs1_mbox 8 0>;
++			qcom,smd-edge = <15>;
++
++			rpm_requests: rpm-requests {
++				compatible = "qcom,rpm-msm8936";
++				qcom,smd-channels = "rpm_requests";
++
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8936", "qcom,rpmcc";
++					#clock-cells = <1>;
++					clock-names = "xo";
++					clocks = <&xo_board>;
++				};
++
++				rpmpd: power-controller {
++					compatible = "qcom,msm8939-rpmpd";
++					#power-domain-cells = <1>;
++					operating-points-v2 = <&rpmpd_opp_table>;
++
++					rpmpd_opp_table: opp-table {
++						compatible = "operating-points-v2";
++
++						rpmpd_opp_ret: opp1 {
++							opp-level = <1>;
++						};
++
++						rpmpd_opp_svs_krait: opp2 {
++							opp-level = <2>;
++						};
++
++						rpmpd_opp_svs_soc: opp3 {
++							opp-level = <3>;
++						};
++
++						rpmpd_opp_nom: opp4 {
++							opp-level = <4>;
++						};
++
++						rpmpd_opp_turbo: opp5 {
++							opp-level = <5>;
++						};
++
++						rpmpd_opp_super_turbo: opp6 {
++							opp-level = <6>;
++						};
++					};
++				};
++			};
++		};
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -308,62 +364,6 @@ mba_mem: mba@8cb00000 {
+ 		};
+ 	};
+ 
+-	smd {
+-		compatible = "qcom,smd";
+-
+-		rpm {
+-			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-			qcom,ipc = <&apcs1_mbox 8 0>;
+-			qcom,smd-edge = <15>;
+-
+-			rpm_requests: rpm-requests {
+-				compatible = "qcom,rpm-msm8936";
+-				qcom,smd-channels = "rpm_requests";
+-
+-				rpmcc: clock-controller {
+-					compatible = "qcom,rpmcc-msm8936", "qcom,rpmcc";
+-					#clock-cells = <1>;
+-					clock-names = "xo";
+-					clocks = <&xo_board>;
+-				};
+-
+-				rpmpd: power-controller {
+-					compatible = "qcom,msm8939-rpmpd";
+-					#power-domain-cells = <1>;
+-					operating-points-v2 = <&rpmpd_opp_table>;
+-
+-					rpmpd_opp_table: opp-table {
+-						compatible = "operating-points-v2";
+-
+-						rpmpd_opp_ret: opp1 {
+-							opp-level = <1>;
+-						};
+-
+-						rpmpd_opp_svs_krait: opp2 {
+-							opp-level = <2>;
+-						};
+-
+-						rpmpd_opp_svs_soc: opp3 {
+-							opp-level = <3>;
+-						};
+-
+-						rpmpd_opp_nom: opp4 {
+-							opp-level = <4>;
+-						};
+-
+-						rpmpd_opp_turbo: opp5 {
+-							opp-level = <5>;
+-						};
+-
+-						rpmpd_opp_super_turbo: opp6 {
+-							opp-level = <6>;
+-						};
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+ 	smp2p-hexagon {
+ 		compatible = "qcom,smp2p";
+ 		qcom,smem = <435>, <428>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
+index 7d193a467819..4b2f02850a10 100644
+--- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
+@@ -190,6 +190,74 @@ psci {
+ 		method = "smc";
+ 	};
+ 
++	rpm: remoteproc-rpm {
++		compatible = "qcom,msm8953-rpm-proc", "qcom,rpm-proc";
++
++		smd-edge {
++			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++			qcom,ipc = <&apcs 8 0>;
++			qcom,smd-edge = <15>;
++
++			rpm_requests: rpm-requests {
++				compatible = "qcom,rpm-msm8953";
++				qcom,smd-channels = "rpm_requests";
++
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8953", "qcom,rpmcc";
++					clocks = <&xo_board>;
++					clock-names = "xo";
++					#clock-cells = <1>;
++				};
++
++				rpmpd: power-controller {
++					compatible = "qcom,msm8953-rpmpd";
++					#power-domain-cells = <1>;
++					operating-points-v2 = <&rpmpd_opp_table>;
++
++					rpmpd_opp_table: opp-table {
++						compatible = "operating-points-v2";
++
++						rpmpd_opp_ret: opp1 {
++							opp-level = <RPM_SMD_LEVEL_RETENTION>;
++						};
++
++						rpmpd_opp_ret_plus: opp2 {
++							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
++						};
++
++						rpmpd_opp_min_svs: opp3 {
++							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
++						};
++
++						rpmpd_opp_low_svs: opp4 {
++							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
++						};
++
++						rpmpd_opp_svs: opp5 {
++							opp-level = <RPM_SMD_LEVEL_SVS>;
++						};
++
++						rpmpd_opp_svs_plus: opp6 {
++							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
++						};
++
++						rpmpd_opp_nom: opp7 {
++							opp-level = <RPM_SMD_LEVEL_NOM>;
++						};
++
++						rpmpd_opp_nom_plus: opp8 {
++							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
++						};
++
++						rpmpd_opp_turbo: opp9 {
++							opp-level = <RPM_SMD_LEVEL_TURBO>;
++						};
++					};
++				};
++			};
++		};
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -263,74 +331,6 @@ rmtfs@f2d00000 {
+ 		};
+ 	};
+ 
+-	smd {
+-		compatible = "qcom,smd";
+-
+-		rpm {
+-			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-			qcom,ipc = <&apcs 8 0>;
+-			qcom,smd-edge = <15>;
+-
+-			rpm_requests: rpm-requests {
+-				compatible = "qcom,rpm-msm8953";
+-				qcom,smd-channels = "rpm_requests";
+-
+-				rpmcc: clock-controller {
+-					compatible = "qcom,rpmcc-msm8953", "qcom,rpmcc";
+-					clocks = <&xo_board>;
+-					clock-names = "xo";
+-					#clock-cells = <1>;
+-				};
+-
+-				rpmpd: power-controller {
+-					compatible = "qcom,msm8953-rpmpd";
+-					#power-domain-cells = <1>;
+-					operating-points-v2 = <&rpmpd_opp_table>;
+-
+-					rpmpd_opp_table: opp-table {
+-						compatible = "operating-points-v2";
+-
+-						rpmpd_opp_ret: opp1 {
+-							opp-level = <RPM_SMD_LEVEL_RETENTION>;
+-						};
+-
+-						rpmpd_opp_ret_plus: opp2 {
+-							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
+-						};
+-
+-						rpmpd_opp_min_svs: opp3 {
+-							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
+-						};
+-
+-						rpmpd_opp_low_svs: opp4 {
+-							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
+-						};
+-
+-						rpmpd_opp_svs: opp5 {
+-							opp-level = <RPM_SMD_LEVEL_SVS>;
+-						};
+-
+-						rpmpd_opp_svs_plus: opp6 {
+-							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
+-						};
+-
+-						rpmpd_opp_nom: opp7 {
+-							opp-level = <RPM_SMD_LEVEL_NOM>;
+-						};
+-
+-						rpmpd_opp_nom_plus: opp8 {
+-							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
+-						};
+-
+-						rpmpd_opp_turbo: opp9 {
+-							opp-level = <RPM_SMD_LEVEL_TURBO>;
+-						};
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+ 	smp2p-adsp {
+ 		compatible = "qcom,smp2p";
+ 		qcom,smem = <443>, <429>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
+index 753b9a2105ed..6f856562923f 100644
+--- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
+@@ -232,6 +232,82 @@ psci {
+ 		method = "smc";
+ 	};
+ 
++	rpm: remoteproc-rpm {
++		compatible = "qcom,msm8976-rpm-proc", "qcom,rpm-proc";
++
++		smd-edge {
++			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++			qcom,ipc = <&apcs 8 0>;
++			qcom,smd-edge = <15>;
++
++			rpm_requests: rpm-requests {
++				compatible = "qcom,rpm-msm8976";
++				qcom,smd-channels = "rpm_requests";
++
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8976", "qcom,rpmcc";
++					clocks = <&xo_board>;
++					clock-names = "xo";
++					#clock-cells = <1>;
++				};
++
++				rpmpd: power-controller {
++					compatible = "qcom,msm8976-rpmpd";
++					#power-domain-cells = <1>;
++					operating-points-v2 = <&rpmpd_opp_table>;
++
++					rpmpd_opp_table: opp-table {
++						compatible = "operating-points-v2";
++
++						rpmpd_opp_ret: opp1 {
++							opp-level = <RPM_SMD_LEVEL_RETENTION>;
++						};
++
++						rpmpd_opp_ret_plus: opp2 {
++							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
++						};
++
++						rpmpd_opp_min_svs: opp3 {
++							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
++						};
++
++						rpmpd_opp_low_svs: opp4 {
++							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
++						};
++
++						rpmpd_opp_svs: opp5 {
++							opp-level = <RPM_SMD_LEVEL_SVS>;
++						};
++
++						rpmpd_opp_svs_plus: opp6 {
++							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
++						};
++
++						rpmpd_opp_nom: opp7 {
++							opp-level = <RPM_SMD_LEVEL_NOM>;
++						};
++
++						rpmpd_opp_nom_plus: opp8 {
++							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
++						};
++
++						rpmpd_opp_turbo: opp9 {
++							opp-level = <RPM_SMD_LEVEL_TURBO>;
++						};
++
++						rpmpd_opp_turbo_no_cpr: opp10 {
++							opp-level = <RPM_SMD_LEVEL_TURBO_NO_CPR>;
++						};
++
++						rpmpd_opp_turbo_high: opp111 {
++							opp-level = <RPM_SMD_LEVEL_TURBO_HIGH>;
++						};
++					};
++				};
++			};
++		};
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -346,82 +422,6 @@ wcnss_smp2p_in: slave-kernel {
+ 		};
+ 	};
+ 
+-	smd {
+-		compatible = "qcom,smd";
+-
+-		rpm {
+-			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-			qcom,ipc = <&apcs 8 0>;
+-			qcom,smd-edge = <15>;
+-
+-			rpm_requests: rpm-requests {
+-				compatible = "qcom,rpm-msm8976";
+-				qcom,smd-channels = "rpm_requests";
+-
+-				rpmcc: clock-controller {
+-					compatible = "qcom,rpmcc-msm8976", "qcom,rpmcc";
+-					clocks = <&xo_board>;
+-					clock-names = "xo";
+-					#clock-cells = <1>;
+-				};
+-
+-				rpmpd: power-controller {
+-					compatible = "qcom,msm8976-rpmpd";
+-					#power-domain-cells = <1>;
+-					operating-points-v2 = <&rpmpd_opp_table>;
+-
+-					rpmpd_opp_table: opp-table {
+-						compatible = "operating-points-v2";
+-
+-						rpmpd_opp_ret: opp1 {
+-							opp-level = <RPM_SMD_LEVEL_RETENTION>;
+-						};
+-
+-						rpmpd_opp_ret_plus: opp2 {
+-							opp-level = <RPM_SMD_LEVEL_RETENTION_PLUS>;
+-						};
+-
+-						rpmpd_opp_min_svs: opp3 {
+-							opp-level = <RPM_SMD_LEVEL_MIN_SVS>;
+-						};
+-
+-						rpmpd_opp_low_svs: opp4 {
+-							opp-level = <RPM_SMD_LEVEL_LOW_SVS>;
+-						};
+-
+-						rpmpd_opp_svs: opp5 {
+-							opp-level = <RPM_SMD_LEVEL_SVS>;
+-						};
+-
+-						rpmpd_opp_svs_plus: opp6 {
+-							opp-level = <RPM_SMD_LEVEL_SVS_PLUS>;
+-						};
+-
+-						rpmpd_opp_nom: opp7 {
+-							opp-level = <RPM_SMD_LEVEL_NOM>;
+-						};
+-
+-						rpmpd_opp_nom_plus: opp8 {
+-							opp-level = <RPM_SMD_LEVEL_NOM_PLUS>;
+-						};
+-
+-						rpmpd_opp_turbo: opp9 {
+-							opp-level = <RPM_SMD_LEVEL_TURBO>;
+-						};
+-
+-						rpmpd_opp_turbo_no_cpr: opp10 {
+-							opp-level = <RPM_SMD_LEVEL_TURBO_NO_CPR>;
+-						};
+-
+-						rpmpd_opp_turbo_high: opp111 {
+-							opp-level = <RPM_SMD_LEVEL_TURBO_HIGH>;
+-						};
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+ 	smsm {
+ 		compatible = "qcom,smsm";
+ 
+diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+index 5a7923d7c62a..6168d0aeff57 100644
+--- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+@@ -178,6 +178,56 @@ psci {
+ 		method = "hvc";
+ 	};
+ 
++	rpm: remoteproc-rpm {
++		compatible = "qcom,msm8994-rpm-proc", "qcom,rpm-proc";
++
++		smd-edge {
++			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++			qcom,ipc = <&apcs 8 0>;
++			qcom,smd-edge = <15>;
++			qcom,remote-pid = <6>;
++
++			rpm_requests: rpm-requests {
++				compatible = "qcom,rpm-msm8994";
++				qcom,smd-channels = "rpm_requests";
++
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8994", "qcom,rpmcc";
++					#clock-cells = <1>;
++				};
++
++				rpmpd: power-controller {
++					compatible = "qcom,msm8994-rpmpd";
++					#power-domain-cells = <1>;
++					operating-points-v2 = <&rpmpd_opp_table>;
++
++					rpmpd_opp_table: opp-table {
++						compatible = "operating-points-v2";
++
++						rpmpd_opp_ret: opp1 {
++							opp-level = <1>;
++						};
++						rpmpd_opp_svs_krait: opp2 {
++							opp-level = <2>;
++						};
++						rpmpd_opp_svs_soc: opp3 {
++							opp-level = <3>;
++						};
++						rpmpd_opp_nom: opp4 {
++							opp-level = <4>;
++						};
++						rpmpd_opp_turbo: opp5 {
++							opp-level = <5>;
++						};
++						rpmpd_opp_super_turbo: opp6 {
++							opp-level = <6>;
++						};
++					};
++				};
++			};
++		};
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -237,55 +287,6 @@ reserved@6c00000 {
+ 		};
+ 	};
+ 
+-	smd {
+-		compatible = "qcom,smd";
+-		rpm {
+-			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-			qcom,ipc = <&apcs 8 0>;
+-			qcom,smd-edge = <15>;
+-			qcom,remote-pid = <6>;
+-
+-			rpm_requests: rpm-requests {
+-				compatible = "qcom,rpm-msm8994";
+-				qcom,smd-channels = "rpm_requests";
+-
+-				rpmcc: clock-controller {
+-					compatible = "qcom,rpmcc-msm8994", "qcom,rpmcc";
+-					#clock-cells = <1>;
+-				};
+-
+-				rpmpd: power-controller {
+-					compatible = "qcom,msm8994-rpmpd";
+-					#power-domain-cells = <1>;
+-					operating-points-v2 = <&rpmpd_opp_table>;
+-
+-					rpmpd_opp_table: opp-table {
+-						compatible = "operating-points-v2";
+-
+-						rpmpd_opp_ret: opp1 {
+-							opp-level = <1>;
+-						};
+-						rpmpd_opp_svs_krait: opp2 {
+-							opp-level = <2>;
+-						};
+-						rpmpd_opp_svs_soc: opp3 {
+-							opp-level = <3>;
+-						};
+-						rpmpd_opp_nom: opp4 {
+-							opp-level = <4>;
+-						};
+-						rpmpd_opp_turbo: opp5 {
+-							opp-level = <5>;
+-						};
+-						rpmpd_opp_super_turbo: opp6 {
+-							opp-level = <6>;
+-						};
+-					};
+-				};
+-			};
+-		};
+-	};
+-
+ 	smem {
+ 		compatible = "qcom,smem";
+ 		memory-region = <&smem_mem>;
 
-Best regards,
 -- 
-Stephan Gerhold <stephan@gerhold.net>
+2.40.1
 
