@@ -2,92 +2,134 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22057C7EE2A
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 06:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16875C7EE32
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  5 Jun 2023 07:10:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbjFEG0T (ORCPT
+        id S230453AbjFEHKp (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 5 Jun 2023 02:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
+        Mon, 5 Jun 2023 03:10:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjFEG0R (ORCPT
+        with ESMTP id S231747AbjFEHKU (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 5 Jun 2023 02:26:17 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F519D3
-        for <linux-remoteproc@vger.kernel.org>; Sun,  4 Jun 2023 23:26:15 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-977c8423dccso326054966b.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 04 Jun 2023 23:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685946374; x=1688538374;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JKNxhsEFUtYjzQxD0J9q5LbYbALidtpnh+E1K51aRgc=;
-        b=DfT8Qmh3d0Z8MndjKU4WDIDM5R4fi8RaQjuJ3Gu318n1xtvZKBsj3qglFm1KwZtHfC
-         JGHn7hFoLui5gzXAWn9inVA1ZRrFMHbFT4X55JZhJAVxkW5e1ZGGObg5g2dhavmd5LiR
-         v1v+G5Lyt5MN2kq1fGZ3hLJAdDaNS7Uo9ulWxgJyPmW02CG0DvaEiaovCkzZ3+NbU6JC
-         jaVR9/xcrz+MuT75tz3MpkvdfLubRlvj2pl8Y69ogLvAHMwentNIsCXOyDIR2ZME6dom
-         DKm9fl/yq+O5bSVOclLemPKJ2fFu8fZe2FnXaPd88U2qVe60cYgUtQrP3o+5J99KHp6H
-         qS3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685946374; x=1688538374;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKNxhsEFUtYjzQxD0J9q5LbYbALidtpnh+E1K51aRgc=;
-        b=hqKl7BMijijep82vU5L01ZBogP9aat4lVhQxKc/RG70yJG0sYb2GJsOgxHJjLLu2rv
-         ZoSVA/2wIeTEeZNW62OAL3MesuBunW/8MPFiycE4XCX9njHQW2+S/Lol/GwPe8YI7Iel
-         ij/Ua5uiMfuvrnZT2L9bDuchEnNth/lLYbzAHZtvWFa8LrjoLUK0NHME90siqls2+GbX
-         C4Wu5uWS5HD7YafFa9+CWMYU2e64fmTIe/95JqBi3m0fiqNWAHy8W6rOnKu9LGjEc58m
-         XQXe4twFN3rsvV1MFOy/U6mofUUGC+3uV7AFIa5wRIkyPvBqzVxtOElW1QQ08wOGMrsc
-         zqzg==
-X-Gm-Message-State: AC+VfDxQPl6AhrCfxRZC9FLF9a4em7PiRMU2WaH/6AsjkrUVLQiOvziS
-        Kp5cqZZDP97/DBeqbbsMAZPwnw==
-X-Google-Smtp-Source: ACHHUZ4I1WSNJJSHpNb+jq73kUifdOulRKcOLRCfEgk8bjsqMW/HDusbgfA+8LYUBWK+Zo1wnqD2Mw==
-X-Received: by 2002:a17:907:1c0a:b0:977:daec:4017 with SMTP id nc10-20020a1709071c0a00b00977daec4017mr1525296ejc.30.1685946374070;
-        Sun, 04 Jun 2023 23:26:14 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id qh8-20020a170906eca800b009600ce4fb53sm3871846ejb.37.2023.06.04.23.26.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Jun 2023 23:26:13 -0700 (PDT)
-Message-ID: <35e62a74-c86e-b274-a013-a2f8f312c265@linaro.org>
-Date:   Mon, 5 Jun 2023 08:26:11 +0200
+        Mon, 5 Jun 2023 03:10:20 -0400
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245F9E47;
+        Mon,  5 Jun 2023 00:09:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1685948955; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=D7XlZBqJodlO1/trmVZ9E0fJMP+YSpO1UHkUT5t1IQy9gi7MVHiPBN6dhB19NUy6St
+    LbsbWO3KDW8qhjVV2jgh9ybTF4kxtKBwi2m32gmnwWKAKcYSfWUcK+uZera7oZuGPStA
+    Ys1VXY4TS+VGm82VUI7FkKA+GQrm46Y3D7Ijyesv5Brsvsgv2Nni/vpl6jVC1oJObikp
+    mYO2kq0E6tHWl6IPGcIRlqMQ5TOfdyu1lJL3OfCBEnC7xrMplB1de6DLYVN+WvQ8hAX2
+    0M0R9y2GFykcKIGYtJMbLDjv31tJuY1vFBSPBuilCh8slZyNQrqCGenAvSttb1ZXmkYa
+    VDgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1685948955;
+    s=strato-dkim-0002; d=strato.com;
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=+npGgjzfjdX6BHWaITrIYD9gk4zOqfuT40I/KSZiv44=;
+    b=DknVha/VsiJFh7Pp8po0CeJ5A1xmrxy1Ahz/VS+lYPfyQ3f4SPR2X/dE9EGk8BLlyU
+    Cc3GkM4R87UP0qQ7SR8kA+27hzjJh3zo/WBBCYfIxqD2DFievwclVBfr7MDaXWt59iPZ
+    QOzLhpMw7J754VLKzu0+ULLzeeDuap0CHbh+inFgP5EIOLREbU9zZTKwR41Oa/5goMF+
+    SvKHN2VT2aRXYcBm5zxSIFnxaTTO5jhdzA/gH/QpQlNl+B/NSqU6EM8qfAef0NioKspi
+    L2janq2WzOpmugKNlav354dWE9SPXQAI4yAG0UFMJ5VZ6q2nuZzeVGnjtXEkI2CfUWB9
+    xGqg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1685948955;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=+npGgjzfjdX6BHWaITrIYD9gk4zOqfuT40I/KSZiv44=;
+    b=O6Xko2UDLApY+us9VBR+bFjaT6Gl4a4qdBnLTZe5WdMf4naIQYdo6WJXgbNO03m8W9
+    cKnDavlv5i/SPg9mVsnAjFRTmUtfI2GjoBzAOic2b5VuS+TjZ2dWvpOzOTUz2vw8GdNz
+    nSeLyQa6btqg82bsi1bigG2CUX6TZcedJRBpMhpatNGadq1CUEFSfgRcmRBdQ+2mejst
+    W/j/LcbgTxrLCRE2eKuYGEAfkjvIKFs1pqGb5tbUuaWiJuyDaOlrGbdOFk2UES3qtaqZ
+    fuB9zVugmC4alZFl7IYGVhzjIzH1BNOfgircLEs+xIPW0hmbAa2/Vxo0uU8o1UAIJyMV
+    31ww==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1685948955;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=+npGgjzfjdX6BHWaITrIYD9gk4zOqfuT40I/KSZiv44=;
+    b=g8Z+6Z7MCNOKmDPllzkNa/Z/wdZy/DYfEakkoH0VsrCUyL09TAkT8x5sYGN0f8d4Gx
+    4srufWDbTWRK/YG1amAw==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn9VOL5nz0="
+Received: from [192.168.244.3]
+    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
+    with ESMTPSA id Z82ec2z5579E8a7
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Mon, 5 Jun 2023 09:09:14 +0200 (CEST)
+From:   Stephan Gerhold <stephan@gerhold.net>
+Date:   Mon, 05 Jun 2023 09:08:24 +0200
+Subject: [PATCH 08/14] soc: qcom: smem: Add qcom_smem_is_available()
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: qcom,msm8996-mss-pil: Add
- SDM660 compatible
-Content-Language: en-US
-To:     Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230531-rpm-rproc-v1-8-e0a3b6de1f14@gerhold.net>
+References: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
+In-Reply-To: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-References: <20230604061421.3787649-1-alexeymin@postmarketos.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230604061421.3787649-1-alexeymin@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Stephan Gerhold <stephan@gerhold.net>
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 04/06/2023 08:14, Alexey Minnekhanov wrote:
-> Mention sdm660-mss-pil in compatibles list.
-> 
-> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-> ---
+Avoid having to look up a dummy item from SMEM to detect if it is
+already available or if we need to defer probing.
 
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+---
+ drivers/soc/qcom/smem.c       | 9 +++++++++
+ include/linux/soc/qcom/smem.h | 1 +
+ 2 files changed, 10 insertions(+)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+index b0d59e815c3b..3d93a6681494 100644
+--- a/drivers/soc/qcom/smem.c
++++ b/drivers/soc/qcom/smem.c
+@@ -359,6 +359,15 @@ static struct qcom_smem *__smem;
+ /* Timeout (ms) for the trylock of remote spinlocks */
+ #define HWSPINLOCK_TIMEOUT	1000
+ 
++/**
++ * qcom_smem_is_available() - Checks if SMEM is available
++ */
++bool qcom_smem_is_available(void)
++{
++	return !!__smem;
++}
++EXPORT_SYMBOL(qcom_smem_is_available);
++
+ static int qcom_smem_alloc_private(struct qcom_smem *smem,
+ 				   struct smem_partition *part,
+ 				   unsigned item,
+diff --git a/include/linux/soc/qcom/smem.h b/include/linux/soc/qcom/smem.h
+index 223db6a9c733..a36a3b9d4929 100644
+--- a/include/linux/soc/qcom/smem.h
++++ b/include/linux/soc/qcom/smem.h
+@@ -4,6 +4,7 @@
+ 
+ #define QCOM_SMEM_HOST_ANY -1
+ 
++bool qcom_smem_is_available(void);
+ int qcom_smem_alloc(unsigned host, unsigned item, size_t size);
+ void *qcom_smem_get(unsigned host, unsigned item, size_t *size);
+ 
 
-Best regards,
-Krzysztof
+-- 
+2.40.1
 
