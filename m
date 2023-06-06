@@ -2,165 +2,189 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7CEC7EE2C
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 09:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7669DC77B7A
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 12:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235371AbjFFJln (ORCPT
+        id S237510AbjFFMMg (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:41:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49940 "EHLO
+        Tue, 6 Jun 2023 08:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236507AbjFFJlf (ORCPT
+        with ESMTP id S237449AbjFFMMf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Jun 2023 05:41:35 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58F610F3;
-        Tue,  6 Jun 2023 02:40:58 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3569ei3w057409;
-        Tue, 6 Jun 2023 04:40:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1686044444;
-        bh=w8SrY+ikkcMi7SM9PmtVDxwhrCdH5GJSMEEsUmqJS5s=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=o435kgmjuDhakcO6daN39eT4zwGfSCqW/SwSDOkAGMSJQOCI6EHlZ2UmStlTLX3Vr
-         BBcOBOUGJiYABA1jtyugir6DcumnDp9+ftRrjDwrB7XlTluGxE1uA/hWRxB/Kb8PSq
-         7piu/BwppWwgCxifx9cWwNppqZEbnYIm70XrEReU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3569eicD088715
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Jun 2023 04:40:44 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
- Jun 2023 04:40:44 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 6 Jun 2023 04:40:44 -0500
-Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3569eeL3125049;
-        Tue, 6 Jun 2023 04:40:41 -0500
-Message-ID: <773f4723-65f4-9bad-6ab3-bda65e5a4319@ti.com>
-Date:   Tue, 6 Jun 2023 15:10:40 +0530
+        Tue, 6 Jun 2023 08:12:35 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C031E78;
+        Tue,  6 Jun 2023 05:12:13 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 356Bu27l019072;
+        Tue, 6 Jun 2023 12:11:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=vL07l/foXbYW2GbPAvxRMO9aFR20+bjrFykzc+VGJOI=;
+ b=obGN6yyyewnpP9Jhv3BaOBW01a7L92tfLOu5Yt9YeoMdaZFLNcG8mJAwJ7vm9GxZy4EC
+ 6P37WOI01pM9qO7iEpgMlqPfw0v56Icv3r1sP+NHixNHdZf0pxm5h7or/01HmPyy+4z+
+ AmzqAcxi9rzymWKWHNQe3Nesz3RLaSk9ikLuHvuyOa/Rn6bCGnkFr0/ZMZPR1+vKVt5J
+ 2XgvoSdGAEB1t2MpJvdLHqUflE+S2VaXLaa3e5sOsfn9TmvqNx7oZI4t6ESFvnn56+Fb
+ LWEwMK2rMMk7aGgV6w6IKIute22fH64WwB3PbxGkexL9QUNPe+ZbBaA5BtU3Puv9hfnD Nw== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r1d4etwvy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 06 Jun 2023 12:11:12 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 356CBBvY022935
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 6 Jun 2023 12:11:11 GMT
+Received: from [10.216.9.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 6 Jun 2023
+ 05:11:03 -0700
+Message-ID: <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
+Date:   Tue, 6 Jun 2023 17:41:00 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [EXTERNAL] Re: [PATCH] remoteproc: pru: add support for
- configuring GPMUX based on client setup
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
 Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        MD Danish Anwar <danishanwar@ti.com>
-CC:     Bjorn Andersson <andersson@kernel.org>, <rogerq@kernel.org>,
-        <nm@ti.com>, <srk@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20230601105904.3204260-1-danishanwar@ti.com>
- <ZH4aywQoA9gy2OWU@p14s>
-From:   Md Danish Anwar <a0501179@ti.com>
-Organization: Texas Instruments
-In-Reply-To: <ZH4aywQoA9gy2OWU@p14s>
-Content-Type: text/plain; charset="UTF-8"
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+ <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+ <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+ <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: PX85kbnB417PqgOd07TlNVd4HWUgoBA2
+X-Proofpoint-GUID: PX85kbnB417PqgOd07TlNVd4HWUgoBA2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-06_08,2023-06-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 mlxscore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 spamscore=0
+ mlxlogscore=895 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2306060103
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
 
-On 05/06/23 10:56 pm, Mathieu Poirier wrote:
-> Hi MD,
-> 
-> On Thu, Jun 01, 2023 at 04:29:04PM +0530, MD Danish Anwar wrote:
->> From: Tero Kristo <t-kristo@ti.com>
+
+On 6/6/2023 11:44 AM, Krzysztof Kozlowski wrote:
+> On 05/06/2023 14:02, Manikanta Mylavarapu wrote:
+>>>> +  memory-region:
+>>>> +    items:
+>>>> +      - description: Q6 pd reserved region
+>>>> +
+>>>> +  glink-edge:
+>>>> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+>>>> +    description:
+>>>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>>>> +      and devices related to the Modem.
+>>>> +
+>>>> +patternProperties:
+>>>> +  "^pd-1|pd-2|pd-3":
+>>>> +    type: object
+>>>> +    description:
+>>>> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+>>>> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+>>>> +      device node.
+>>>
+>>> That's not enough. Your description does not say what is this, why you
+>>> have two protection domains for same compatible. What's more, it a bit
+>>> deviates from hardware description.
+>>>
+>> WCSS means 'wireless connectivity sub system', in simple words it's a
+>> wifi radio block.
 >>
->> Client device node property ti,pruss-gp-mux-sel can now be used to
->> configure the GPMUX config value for PRU.
+>> IPQ5018 SOC has both internal (AHB) wifi radio/WCSS and external (PCIE)
+>> wifi radio/WCSS. In Q6, Root protection domain will provide services to
+>> both internal (AHB) and external (PCIE) wifi radio's protection domain.
+>> So we have two protection domains for IPQ5018, one is for internal(AHB)
+>> and other is for external(PCIE) wifi radio.
+> 
+> So it is now in email, but not in the code...
 >>
->> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> ---
->>  drivers/remoteproc/pru_rproc.c | 21 +++++++++++++++++++++
->>  1 file changed, 21 insertions(+)
->>
->> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
->> index 2874c8d324f7..29d3a5a930c1 100644
->> --- a/drivers/remoteproc/pru_rproc.c
->> +++ b/drivers/remoteproc/pru_rproc.c
->> @@ -109,6 +109,7 @@ struct pru_private_data {
->>   * @dbg_single_step: debug state variable to set PRU into single step mode
->>   * @dbg_continuous: debug state variable to restore PRU execution mode
->>   * @evt_count: number of mapped events
->> + * @gpmux_save: saved value for gpmux config
->>   */
->>  struct pru_rproc {
->>  	int id;
->> @@ -127,6 +128,7 @@ struct pru_rproc {
->>  	u32 dbg_single_step;
->>  	u32 dbg_continuous;
->>  	u8 evt_count;
->> +	u8 gpmux_save;
->>  };
->>  
->>  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
->> @@ -228,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->>  	struct device *dev;
->>  	const char *fw_name;
->>  	int ret;
->> +	u32 mux;
->>  
->>  	rproc = __pru_rproc_get(np, index);
->>  	if (IS_ERR(rproc))
->> @@ -252,6 +255,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
->>  	if (pru_id)
->>  		*pru_id = pru->id;
->>  
->> +	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
->> +	if (ret) {
->> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
->> +		goto err;
->> +	}
->> +
->> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
->> +					 &mux);
->> +	if (!ret) {
->> +		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
->> +		if (ret) {
->> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
->> +			goto err;
->> +		}
->> +	}
->> +
+I will add this info, corresponding block diagram in driver code.
+
+>>>> +
+>>>> +    properties:
+>>>> +      compatible:
+>>>> +        enum:
+>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>
+>>> Keep rather alphabetical order (so both 5018 together).
+>>>
+>>> I also do not understand these at all. Why adding bus type to
+>>> compatible? This rarely is allowed (unless it is PCIe controller within
+>>> soc).
+>>>
+>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
+>> radio's properties, i have added bus type to compatible.
 > 
-> It would have been nice to be told in a cover letter that pruss_cfg_get_gpmux()
-> is in linux-next so that I don't have to go fish for it...
+> It's the same device - WCSS - right? We do not create multiple nodes and
+> compatibles for the same devices. Bus suffixes are almost never parts of
+> compatibles.
 > 
-
-My bad, I should have mentioned it. This patch depends on the soc: ti: pruss
-series [1] which is merged to Nishant's tree and is part of 'linux-next' but
-this isn't yet part of mainline linux.
-
-> I am fine with the code in this patch, though the changelog is cryptic and could
-> be enhanced to say "why" this is needed.  The above could use some comments to
-> make sure people looking at this code understand that an error from
-> of_property_read_u32_index() is acceptable for backward compatibility.
 > 
-> Here I have to suppose pruss_cfg_get_gpmux() has been added to Nishanth's tree.
-> As such the only way for me to apply your patch is if Nishanth sends me a pull
-> request for the patchset that introduced pruss_cfg_get_gpmux().  You can also
-> resend this in the next cycle.
+No it's not the same device. WCSS on inside IPQ5018 and WCSS attached 
+via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
 
-I will fix the changelog and send the next revision in the next cycle.
+So for better clarity i will use attached SOC ID in compatible.
+Below are the new compatible's.
 
+- qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+- qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
+- qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
+
+>>>
+>>> Drop.
+>>>
+>>>> +
+>>>> +unevaluatedProperties: false
+>>>
+>>> This changed... why?
+>>>
+>>>
+>> 'unevaluatedProperties' is similar to 'additionalProperties' except
+>> that it recognize properties declared in subschemas as well.
 > 
-> Thanks,
-> Mathieu
+> You don't have to explain me what are unevaluatedProperties or
+> additionalProperties. Let's assume that I know them. What you should
+> explain is why you changed it. Where is the reference to other schema?
 > 
+I will go with previously used 'additionalProperties' itself and add
+'unevaluatedProperties' in glink-edge.
 
-[1] https://lore.kernel.org/all/20230414045542.3249939-1-danishanwar@ti.com/
-
--- 
-Thanks and Regards,
-Danish.
+Thanks & Regards,
+Manikanta.
+> 
+> Best regards,
+> Krzysztof
+> 
