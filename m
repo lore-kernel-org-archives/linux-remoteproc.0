@@ -2,71 +2,64 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F36C77B73
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 09:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF0EC7EE24
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 09:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229838AbjFFJG7 (ORCPT
+        id S237102AbjFFJRa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:06:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        Tue, 6 Jun 2023 05:17:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229669AbjFFJG6 (ORCPT
+        with ESMTP id S236108AbjFFJRP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Jun 2023 05:06:58 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC02E8;
-        Tue,  6 Jun 2023 02:06:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686042414; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=iDCNYdm7JTLiDLNmFtfUAjZr1UiesJxNO8/KTf5OlGv6WaSHk1cfpluOhHKYdnNgQi
-    YRlva+6qyWHAJ+EBpybp0N7BWx0rfyqcD+qbHgHgzUuuU1spLmwxYEDMy/nWG4Pdeg5x
-    YbV6GoY+hx4dT3VsuEu0VvB/W5BVEsl+KNWGIY4vscN3KPbNfwbgP46pGKEIzQ9/DSZ6
-    hwNU+02Qp7ShjhfqM0/xeI4wqnwDihuutvuyyY/j3K1Ovukdq1rv+WuMH6wtfbs9MoFT
-    KPsv4zXuwQuhc+FA83ABtm3xpSTDLcT71hcOFHsN8dCx2/Fl410ik1sjzjBE2VJc6lxv
-    XzCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686042414;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=MxljD7ks5H/LgsphPWxQ4t5v0cK2mi0IBL2/Ko8mMDc=;
-    b=aPCHaPCXgIzHF5ea2rVIfvll1o7hQytOKlcC/FHoPFKnF7BJxwi1DwUbs1mMgoHs0L
-    L/Rr/Dq7XmzsrKUV7Bm7vBnuCbCuNiQsHdWeBScL0b8QSqBP6nH9GOuruS1z1OrLccfO
-    JLgM2jCh9vYLehIiQIP0bOMFH9VwABN9kRGb5RRxLH5Eet8IQ9GiG0kGMUZm44dRlQ/I
-    eKm0V0azlJ4bRd9ndkas62zrU9JXhhZxSNwERCedRRxVtKJvvAyWg91hFZnSc/7BMXiN
-    lPewi5mvoaK7DAb5D+lLIkV4zQXaxmajMV9DCQSZaNZrcPnuem+BgBcqIHmNuN6UMX7E
-    8cGQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686042414;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=MxljD7ks5H/LgsphPWxQ4t5v0cK2mi0IBL2/Ko8mMDc=;
-    b=Nivw6PPvm02HZYqAm05b3lzcVMCMSsJfhE2uHUSDWDO0K9NL/8QqHNX7R6iqJRzpI8
-    S6GPRXpzPVj80e/Rp63uZBqNgdARi1MLeEOhyE3HUCXeaSz9R8VJiUQY8kX3As/FNwrP
-    CBwAitMqjmx7HQEaab3xyrRH6nhrL3s1NvB7wZDH3ZjCqCx7/2mBgSCWKMrIrb5qbHgv
-    ascfbvbSG0IK+bAxkKLYnVPhBSPgG59bUOLo311KliuygFO46F5gzRy/B2qAnfxNjxWT
-    4t4I/VcqycbnuMTR9GHV92BL4C8mAj8HqQNKD4KCkb8lPbclPjk+yYDrjru86I1RhLVd
-    q5dA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686042414;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=MxljD7ks5H/LgsphPWxQ4t5v0cK2mi0IBL2/Ko8mMDc=;
-    b=0o844zOm9ZCfU50CXT8WN6pfx0hJyuhU1CUluPy8qDAZJQgnHL+buhlBpa46FvQwKd
-    9HqoUeQS87NnLxdRnABQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8Z+J1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
-    with ESMTPSA id Z82ec2z5696sDLQ
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Tue, 6 Jun 2023 11:06:54 +0200 (CEST)
-Date:   Tue, 6 Jun 2023 11:06:47 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Tue, 6 Jun 2023 05:17:15 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B588010EC
+        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jun 2023 02:17:04 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-970056276acso866060266b.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Jun 2023 02:17:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686043023; x=1688635023;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WFZO1quiYCb7WK7FGJd2k62/gfvxHreHYp1ujyVcgQE=;
+        b=YI0x4LbkmazNjw9SPHR89qxvIBqKi+rZQM2uGk0dQ2QkSg17hxKx9pO3DDbhwse1th
+         qLjZSeAtWLki/tTjyWSkemYjyXXNrhfa6xnCifIKWNPMtUn8ni7fmv4owW0b70Ndu9zj
+         a6a0A4sInpNznlHuzIYI00Mls+GuEGSVYqcJbnl9Nbys5CktNl49x/GIi4ey+IvbrC8t
+         gV8z1YB1TZAFZ/qop2kQolfl8pE2HI7nLIEvpd3Z4O5pJHiZBW+9hUGZD41lJ1d7xy7V
+         0iTIgudvlsGTLeFLlGrHWVNBkL0JTOOI2xwPrv6bntw9BEcbB5Z/fj4DokQIFPJMp/35
+         oTgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686043023; x=1688635023;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WFZO1quiYCb7WK7FGJd2k62/gfvxHreHYp1ujyVcgQE=;
+        b=lGPm2vTVPC0Gbmc400LZCxWYgyNmJKYy3NQXcniZncL0M1BaUMGBjk5zWRi/1CJ9lF
+         WJOO0dmnAizAHkfaPTSh6M40fpsPxnUdcaTl22C4BFmplPwmkBbgUtHCPzrAH3CNdqAJ
+         rFX6coNhOlwBK8jUrz6nUEE1nH4XE+0D7EcEfuve1l0i1Tc3X8xnwzHh72aH1lIk1Upz
+         0QXYo2xwQTsehoPdg/0vynEoQYNP8o8eN+PWhDt/t2eDJJebcSdsyB/WNy/rzPYGutBY
+         fIFQoLUKIwdY7fXNWEWoCqHgplw/m4t6WzSMjN5yZjNLSBRLzZaYcyGMVLhYy2YY46kT
+         yOZQ==
+X-Gm-Message-State: AC+VfDw5fJPizjRaviYTHDtlQimRt7avL6vVyTSQv6JJt1Rr25lv4siS
+        ZWh/cXYZ3CPE0YcTaPSwHu2Oag==
+X-Google-Smtp-Source: ACHHUZ4PAeDI8t67bUJhdaqBmTvjv2z7fbXLke2PqprP5R52QQZ3TpwVeTM5xT7yvCcvZsEeW6ORAg==
+X-Received: by 2002:a17:907:3ea9:b0:973:7dfc:f052 with SMTP id hs41-20020a1709073ea900b009737dfcf052mr1649432ejc.30.1686043022772;
+        Tue, 06 Jun 2023 02:17:02 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id l12-20020a170906a40c00b00971433ed5fesm5214639ejz.184.2023.06.06.02.17.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Jun 2023 02:17:02 -0700 (PDT)
+Message-ID: <30c702b2-18c6-ed38-ce7e-6f098a38d3c3@linaro.org>
+Date:   Tue, 6 Jun 2023 11:17:00 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 06/14] dt-bindings: soc: qcom: smd-rpm: Use qcom,rpm-proc
+ in example
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -76,52 +69,48 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 06/14] dt-bindings: soc: qcom: smd-rpm: Use qcom,rpm-proc
- in example
-Message-ID: <ZH73JxLd1i1vUcyw@gerhold.net>
 References: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
  <20230531-rpm-rproc-v1-6-e0a3b6de1f14@gerhold.net>
  <d0fa3b01-edab-fe8e-c309-036cbbcec7ab@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0fa3b01-edab-fe8e-c309-036cbbcec7ab@linaro.org>
+ <ZH73JxLd1i1vUcyw@gerhold.net>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZH73JxLd1i1vUcyw@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jun 06, 2023 at 08:37:04AM +0200, Krzysztof Kozlowski wrote:
-> On 05/06/2023 09:08, Stephan Gerhold wrote:
-> > Use the new top-level rpm-proc node instead of having a dummy top-level
-> > /smd node that only contains the RPM but not other remote processors.
-> > 
-> > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> > ---
-> >  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-> > index c6930706bfa9..06e574239bd4 100644
-> > --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-> > +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-> > @@ -120,10 +120,10 @@ examples:
-> > [...]
-> > +        compatible = "qcom,msm8916-rpm-proc", "qcom,rpm-proc";
-> >  
-> > -        rpm {
-> > +        smd-edge {
+On 06/06/2023 11:06, Stephan Gerhold wrote:
+> On Tue, Jun 06, 2023 at 08:37:04AM +0200, Krzysztof Kozlowski wrote:
+>> On 05/06/2023 09:08, Stephan Gerhold wrote:
+>>> Use the new top-level rpm-proc node instead of having a dummy top-level
+>>> /smd node that only contains the RPM but not other remote processors.
+>>>
+>>> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+>>> ---
+>>>  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 6 +++---
+>>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+>>> index c6930706bfa9..06e574239bd4 100644
+>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+>>> @@ -120,10 +120,10 @@ examples:
+>>> [...]
+>>> +        compatible = "qcom,msm8916-rpm-proc", "qcom,rpm-proc";
+>>>  
+>>> -        rpm {
+>>> +        smd-edge {
+>>
+>> What about binding updates?
+>>
 > 
-> What about binding updates?
->
+> The binding for this is in PATCH 05/14. The old binding replaced here is
+> deprecated in PATCH 07/14.
 
-The binding for this is in PATCH 05/14. The old binding replaced here is
-deprecated in PATCH 07/14.
- 
-> Anyway, this should be squashed with previous one.
-> 
+So changing example without changing binding is not an atomic change.
 
-Sure, I can squash in v2.
+Best regards,
+Krzysztof
 
-Thanks,
-Stephan
