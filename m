@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 219ADC77B7A
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 12:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF27BC7EE37
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 12:55:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237768AbjFFMvB (ORCPT
+        id S237224AbjFFMzG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 08:51:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
+        Tue, 6 Jun 2023 08:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237775AbjFFMuw (ORCPT
+        with ESMTP id S237929AbjFFMy7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Jun 2023 08:50:52 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 351AD1997
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jun 2023 05:50:30 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f4bdcde899so7488964e87.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Jun 2023 05:50:30 -0700 (PDT)
+        Tue, 6 Jun 2023 08:54:59 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E81F10F6
+        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jun 2023 05:54:44 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b1a7e31dcaso65152501fa.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Jun 2023 05:54:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686055820; x=1688647820;
+        d=linaro.org; s=google; t=1686056082; x=1688648082;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wyaDAeF5F3ya0H2Tt5M7GqFjZHMBxCl1PByfjSc9IM0=;
-        b=sg/fn/LP4T98vqK7J06CTcM1xWWhpaiETXdTxN0iyfmKx4avnn6f8QtfkJwqzQw7vE
-         p0fp1s4kjDo8IEOirogy6pmvbsutr5cjxcj8RHkDI3AEJnU2Zs+fd1dw9HHokcyvkXn9
-         kMj289MmSuVzatmCP1IfN0V1llUPHCCGA0up78/HciRYojx7CDTcB5PqDgtLjZLHyKCT
-         gsiyCrJJ36DBmhtCGHy9o1QjO5rM+sunRwZs9DkkuvF44eYggLNRnyNH9s53ywMa849T
-         rd3pWv5rtkF2fFMsbNs5uiIsHXHxR406bpoR4du3lAh30u4JAao+xdzVXUVGBIMJGksl
-         qEEg==
+        bh=29byLYkD06epxWvaEwoGaPGYgdfPe7JpaZeRRJG1+CU=;
+        b=D5XaxIQKQ/doqcc8DuXkgTHCTvXjNsqVWPozqMUda9OiW7AjyFLHFyJkH9Nsx7ML2i
+         aWv31ktclhLy45aXYbmF+U5v3iOMc+raYmqOmFe7qZoBBor/nyp6888wvAEEEqtnXb0A
+         xAV/PMg6nUMdRFkKan9zlqdcnfBEssrMFKLnw0/7l2yv49WZCvyZFHq6I65Rv6NsUX0G
+         DTJQ2KEYTsDCf3b9fas55+m7+wmZAIkZcA5DMpYaIov5qsKuQsQH0srevTXs7EAkBjsK
+         bpMXitjocOV4Xz4JYYIVBGzn4lDEMxs1p1Cm8nVnbOUprTw9leyl2Pm44tuPMksrTwBE
+         iQCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686055821; x=1688647821;
+        d=1e100.net; s=20221208; t=1686056082; x=1688648082;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wyaDAeF5F3ya0H2Tt5M7GqFjZHMBxCl1PByfjSc9IM0=;
-        b=EWHwHVG6gAX+zYLutAc5cQkKqRMdJkbFDdFpgZyCGfd8llu8IgMdda+K/4oWwMBi8i
-         A79am6fmY1WQaoRO73YPzFnfLvQr8Tk9zDvfDsPNEkTk31yjAtwFfZIdPq4nx8H653qz
-         BxOX40iQyZjDK0OL/YzWk1ALK1r9n4wu1UIJcCNYLCiprXuND1emUtHzyVz8lmAWoPU2
-         pKtI2USwhNxR9pYqo6cYbKtyqzw/FIeGXEATpYfl1DbxAnLRlGqHOASQlhXLHmvA1ZyJ
-         OM0QDPUW4W/H+n1IP3qZBLrq1oFxIlRyrQZNeLWYP7HE6b8Cp8IusbrtDKIsrFZWH2bC
-         Wwkg==
-X-Gm-Message-State: AC+VfDzyQ2bO3cZaFquWuVEuzkCJWVlpgPqc+XbvHmo1tTegtgUEHkV8
-        5zA0eqaIje3+6oAH1EGdOCEYFaX2DrbMK1t80ys=
-X-Google-Smtp-Source: ACHHUZ4Y81qFM9U/GDkX5tXxeRfM60Qt/9uvjraZLnDE2TOtWXWePKm5uGOXaAJX30RsgDBdyD+bUw==
-X-Received: by 2002:a19:7514:0:b0:4f6:274e:42f0 with SMTP id y20-20020a197514000000b004f6274e42f0mr1050438lfe.15.1686055820708;
-        Tue, 06 Jun 2023 05:50:20 -0700 (PDT)
+        bh=29byLYkD06epxWvaEwoGaPGYgdfPe7JpaZeRRJG1+CU=;
+        b=Uu73hytzX3HENta6VSsDbbFCQTd8i+jryWGJVIknvQMbRL781qYrkeLoPz5t/pi1b/
+         6tL3nDhgvPO13pqQlknmiA+dP9S2b3pHg2rG17EADevoxNqZi3xvI2ZCEI2JEkUqaYdC
+         r77SbOyJ/cGu8K9R62YQyZH91Y7/5Fn/4SeBtSQR2faoZHN97FBgc2ZjA6qdS0AM8b3G
+         lqZ3hxJuKgLf/+Q++n0hqFg2mBOPLk643YJMEgjW/ZnKPXltzrnyx9eJwpR6eh9eIxu7
+         eyxunVBuKp8++x0bMIaQ1L2TB2eiTtxeyv6KQMbAEJ9j+yhGgnJiLVgut7Ink3qPnBuM
+         8FkA==
+X-Gm-Message-State: AC+VfDyf4kfs2VllssL6QhuBwzfCR1OlG7/zEpFStt/fMIwf3XYhbX/6
+        nIxan4guerPk+pzIG+SJk2pYaw==
+X-Google-Smtp-Source: ACHHUZ49XQlBrwtKYXFqe0/3nJfe8j1/38BI40A3xg/WttZ1Xjsx/kEy5WnlSU5+sttm1HBSPstNWw==
+X-Received: by 2002:a05:651c:d5:b0:2ad:9c17:a78f with SMTP id 21-20020a05651c00d500b002ad9c17a78fmr1099893ljr.53.1686056082286;
+        Tue, 06 Jun 2023 05:54:42 -0700 (PDT)
 Received: from [192.168.1.101] (abyl150.neoplus.adsl.tpnet.pl. [83.9.31.150])
-        by smtp.gmail.com with ESMTPSA id m7-20020a195207000000b004f11e965308sm1456274lfb.20.2023.06.06.05.50.19
+        by smtp.gmail.com with ESMTPSA id w13-20020a2e300d000000b002af25598f07sm1843047ljw.78.2023.06.06.05.54.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 05:50:20 -0700 (PDT)
-Message-ID: <d7132808-1b24-08ab-0d78-9f4012c4da04@linaro.org>
-Date:   Tue, 6 Jun 2023 14:50:18 +0200
+        Tue, 06 Jun 2023 05:54:41 -0700 (PDT)
+Message-ID: <1f1cdf5d-075a-7e75-9dac-840f3dcfe9e9@linaro.org>
+Date:   Tue, 6 Jun 2023 14:54:40 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdm630: Add support for modem
- remoteproc
+Subject: Re: [PATCH 2/3] remoteproc: qcom: q6v5-mss: Add support for
+ SDM630/636/660
 Content-Language: en-US
 To:     Alexey Minnekhanov <alexeymin@postmarketos.org>,
         Andy Gross <agross@kernel.org>,
@@ -68,11 +68,12 @@ To:     Alexey Minnekhanov <alexeymin@postmarketos.org>,
         Conor Dooley <conor+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Konrad Dybcio <konradybcio@gmail.com>
 References: <20230604061421.3787649-1-alexeymin@postmarketos.org>
- <20230604061421.3787649-3-alexeymin@postmarketos.org>
+ <20230604061421.3787649-2-alexeymin@postmarketos.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230604061421.3787649-3-alexeymin@postmarketos.org>
+In-Reply-To: <20230604061421.3787649-2-alexeymin@postmarketos.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -82,90 +83,162 @@ X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
 On 4.06.2023 08:14, Alexey Minnekhanov wrote:
-> Modem subsystem in SDM630/660 is similar to MSM8998 and
-> device tree node for it is based on the one from msm8998.dtsi.
+> Snapdragon 630/660 modem subsystem is similar to one in MSM8998
+> and can almost reuse it's reset sequence.
 > 
+> Downstream sources call this q6v5 version "qdsp6v62-1-5" and its
+> code path has additional checks for QDSP6v55_BHS_EN_REST_ACK
+> status [2].
+> 
+> Inspiration is taken from Konrad Dybcio's work in [1], but reworked
+> to use common code path with MSM8996/8998, instead of completely
+> separate "if" block for SDM660.
+> 
+> [1] https://github.com/SoMainline/linux/commit/7dd6dd9b936dc8d6c1f1abe299e5b065c33741e8
+> [2] https://github.com/MiCode/Xiaomi_Kernel_OpenSource/blob/lavender-q-oss/drivers/soc/qcom/pil-q6v5.c#L393
+> 
+> Co-developed-by: Konrad Dybcio <konradybcio@gmail.com>
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 > Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm630.dtsi | 57 ++++++++++++++++++++++++++++
->  1 file changed, 57 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> index 5c4086d2fa99c..5e68972d48fb4 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-> @@ -1026,6 +1026,63 @@ data-pins {
->  			};
->  		};
+> ---
+> 
+> In his commit Konrad mentions that modem was unstable, but I don't
+> observe such behaviour on my device. Modem does not restart by itself,
+> and I could successfully enable ath10k Wi-Fi with this (and it was
+> also stable).
+> 
+> Also worth saying that in my initial tests just using qcom,msm8998-mss-pil
+> as-is, without separate resource struct and separate code paths for
+> SDM660, was also working fine. So I'm not sure if separate struct and
+> code path is even needed for sdm660.
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 54 ++++++++++++++++++++++++++++--
+>  1 file changed, 52 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 8e15e4f85de13..e270fc4798766 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -71,6 +71,7 @@
+>  #define QDSP6SS_MEM_PWR_CTL		0x0B0
+>  #define QDSP6V6SS_MEM_PWR_CTL		0x034
+>  #define QDSP6SS_STRAP_ACC		0x110
+> +#define QDSP6V62SS_BHS_STATUS		0x0C4
 >  
-> +		remoteproc_mss: remoteproc@4080000 {
-> +			compatible = "qcom,sdm660-mss-pil";
-> +			reg = <0x04080000 0x100>, <0x04180000 0x40>;
-> +			reg-names = "qdsp6", "rmb";
-> +
-> +			interrupts-extended =
-> +				<&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-> +				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-> +				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-Please remove the \n\t\t\t after = and align them to the first entry
+>  /* AXI Halt Register Offsets */
+>  #define AXI_HALTREQ_REG			0x0
+> @@ -123,6 +124,7 @@
+>  #define QDSP6v56_CLAMP_QMC_MEM		BIT(22)
+>  #define QDSP6SS_XO_CBCR		0x0038
+>  #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
+> +#define QDSP6v55_BHS_EN_REST_ACK	BIT(0)
+>  
+>  /* QDSP6v65 parameters */
+>  #define QDSP6SS_CORE_CBCR		0x20
+> @@ -130,6 +132,7 @@
+>  #define QDSP6SS_BOOT_CORE_START         0x400
+>  #define QDSP6SS_BOOT_CMD                0x404
+>  #define BOOT_FSM_TIMEOUT                10000
+> +#define BHS_CHECK_MAX_LOOPS             200
+>  
+>  struct reg_info {
+>  	struct regulator *reg;
+> @@ -250,6 +253,7 @@ enum {
+>  	MSS_MSM8998,
+>  	MSS_SC7180,
+>  	MSS_SC7280,
+> +	MSS_SDM660,
+>  	MSS_SDM845,
+>  };
+>  
+> @@ -700,7 +704,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>  	} else if (qproc->version == MSS_MSM8909 ||
+>  		   qproc->version == MSS_MSM8953 ||
+>  		   qproc->version == MSS_MSM8996 ||
+> -		   qproc->version == MSS_MSM8998) {
+> +		   qproc->version == MSS_MSM8998 ||
+> +		   qproc->version == MSS_SDM660) {
+>  
+>  		if (qproc->version != MSS_MSM8909 &&
+>  		    qproc->version != MSS_MSM8953)
+> @@ -734,6 +739,19 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>  		val |= readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+>  		udelay(1);
+>  
+> +		if (qproc->version == MSS_SDM660) {
+> +			for (i = BHS_CHECK_MAX_LOOPS; i > 0; i--) {
+> +				if (readl_relaxed(qproc->reg_base + QDSP6V62SS_BHS_STATUS)
+> +					& QDSP6v55_BHS_EN_REST_ACK)
+> +					break;
+> +				udelay(1);
+> +			}
+> +			if (!i) {
+> +				dev_err(qproc->dev, "BHS_EN_REST_ACK not set!\n");
+> +				return -ETIMEDOUT;
+> +			}
+> +		}
+We could use something like readl_relaxed_poll_timeout instead!
 
-> +			interrupt-names = "wdog", "fatal", "ready",
-> +					"handover", "stop-ack",
-> +					"shutdown-ack";
-Please turn this and clock-names into vertical lists with one
-entry per line
-
-> +
-> +			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-> +				<&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
-And these too, align them with a space.
-
-
-looks good otherwise!
+I think it looks good otherwise!
 
 Konrad
-> +				<&gcc GCC_BOOT_ROM_AHB_CLK>,
-> +				<&gcc GPLL0_OUT_MSSCC>,
-> +				<&gcc GCC_MSS_SNOC_AXI_CLK>,
-> +				<&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
-> +				<&rpmcc RPM_SMD_QDSS_CLK>,
-> +				<&rpmcc RPM_SMD_XO_CLK_SRC>;
-> +			clock-names = "iface", "bus", "mem", "gpll0_mss",
-> +				"snoc_axi", "mnoc_axi", "qdss", "xo";
 > +
-> +			qcom,smem-states = <&modem_smp2p_out 0>;
-> +			qcom,smem-state-names = "stop";
-> +
-> +			resets = <&gcc GCC_MSS_RESTART>;
-> +			reset-names = "mss_restart";
-> +
-> +			qcom,halt-regs = <&tcsr_regs_1 0x3000 0x5000 0x4000>;
-> +
-> +			power-domains = <&rpmpd SDM660_VDDCX>,
-> +					<&rpmpd SDM660_VDDMX>;
-> +			power-domain-names = "cx", "mx";
-> +
-> +			status = "disabled";
-> +
-> +			mba {
-> +				memory-region = <&mba_region>;
-> +			};
-> +
-> +			mpss {
-> +				memory-region = <&mpss_region>;
-> +			};
-> +
-> +			glink-edge {
-> +				interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
-> +				label = "modem";
-> +				qcom,remote-pid = <1>;
-> +				mboxes = <&apcs_glb 15>;
-> +			};
-> +		};
-> +
->  		adreno_gpu: gpu@5000000 {
->  			compatible = "qcom,adreno-508.0", "qcom,adreno";
+>  		/* Put LDO in bypass mode */
+>  		val |= QDSP6v56_LDO_BYP;
+>  		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+> @@ -756,7 +774,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+>  				mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
+>  				i = 19;
+>  			} else {
+> -				/* MSS_MSM8998 */
+> +				/* MSS_MSM8998, MSS_SDM660 */
+>  				mem_pwr_ctl = QDSP6V6SS_MEM_PWR_CTL;
+>  				i = 28;
+>  			}
+> @@ -2193,6 +2211,37 @@ static const struct rproc_hexagon_res sc7280_mss = {
+>  	.version = MSS_SC7280,
+>  };
 >  
+> +static const struct rproc_hexagon_res sdm660_mss = {
+> +	.hexagon_mba_image = "mba.mbn",
+> +	.proxy_clk_names = (char*[]){
+> +			"xo",
+> +			"qdss",
+> +			"mem",
+> +			NULL
+> +	},
+> +	.active_clk_names = (char*[]){
+> +			"iface",
+> +			"bus",
+> +			"gpll0_mss",
+> +			"mnoc_axi",
+> +			"snoc_axi",
+> +			NULL
+> +	},
+> +	.proxy_pd_names = (char*[]){
+> +			"cx",
+> +			"mx",
+> +			NULL
+> +	},
+> +	.need_mem_protection = true,
+> +	.has_alt_reset = false,
+> +	.has_mba_logs = false,
+> +	.has_spare_reg = false,
+> +	.has_qaccept_regs = false,
+> +	.has_ext_cntl_regs = false,
+> +	.has_vq6 = false,
+> +	.version = MSS_SDM660,
+> +};
+> +
+>  static const struct rproc_hexagon_res sdm845_mss = {
+>  	.hexagon_mba_image = "mba.mbn",
+>  	.proxy_clk_names = (char*[]){
+> @@ -2475,6 +2524,7 @@ static const struct of_device_id q6v5_of_match[] = {
+>  	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss},
+>  	{ .compatible = "qcom,sc7180-mss-pil", .data = &sc7180_mss},
+>  	{ .compatible = "qcom,sc7280-mss-pil", .data = &sc7280_mss},
+> +	{ .compatible = "qcom,sdm660-mss-pil", .data = &sdm660_mss},
+>  	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
+>  	{ },
+>  };
