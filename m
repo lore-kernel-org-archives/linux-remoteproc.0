@@ -2,115 +2,165 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AF0EC7EE24
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 09:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7CEC7EE2C
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  6 Jun 2023 09:41:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237102AbjFFJRa (ORCPT
+        id S235371AbjFFJln (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 6 Jun 2023 05:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58530 "EHLO
+        Tue, 6 Jun 2023 05:41:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236108AbjFFJRP (ORCPT
+        with ESMTP id S236507AbjFFJlf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 6 Jun 2023 05:17:15 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B588010EC
-        for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jun 2023 02:17:04 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-970056276acso866060266b.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Jun 2023 02:17:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686043023; x=1688635023;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WFZO1quiYCb7WK7FGJd2k62/gfvxHreHYp1ujyVcgQE=;
-        b=YI0x4LbkmazNjw9SPHR89qxvIBqKi+rZQM2uGk0dQ2QkSg17hxKx9pO3DDbhwse1th
-         qLjZSeAtWLki/tTjyWSkemYjyXXNrhfa6xnCifIKWNPMtUn8ni7fmv4owW0b70Ndu9zj
-         a6a0A4sInpNznlHuzIYI00Mls+GuEGSVYqcJbnl9Nbys5CktNl49x/GIi4ey+IvbrC8t
-         gV8z1YB1TZAFZ/qop2kQolfl8pE2HI7nLIEvpd3Z4O5pJHiZBW+9hUGZD41lJ1d7xy7V
-         0iTIgudvlsGTLeFLlGrHWVNBkL0JTOOI2xwPrv6bntw9BEcbB5Z/fj4DokQIFPJMp/35
-         oTgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686043023; x=1688635023;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WFZO1quiYCb7WK7FGJd2k62/gfvxHreHYp1ujyVcgQE=;
-        b=lGPm2vTVPC0Gbmc400LZCxWYgyNmJKYy3NQXcniZncL0M1BaUMGBjk5zWRi/1CJ9lF
-         WJOO0dmnAizAHkfaPTSh6M40fpsPxnUdcaTl22C4BFmplPwmkBbgUtHCPzrAH3CNdqAJ
-         rFX6coNhOlwBK8jUrz6nUEE1nH4XE+0D7EcEfuve1l0i1Tc3X8xnwzHh72aH1lIk1Upz
-         0QXYo2xwQTsehoPdg/0vynEoQYNP8o8eN+PWhDt/t2eDJJebcSdsyB/WNy/rzPYGutBY
-         fIFQoLUKIwdY7fXNWEWoCqHgplw/m4t6WzSMjN5yZjNLSBRLzZaYcyGMVLhYy2YY46kT
-         yOZQ==
-X-Gm-Message-State: AC+VfDw5fJPizjRaviYTHDtlQimRt7avL6vVyTSQv6JJt1Rr25lv4siS
-        ZWh/cXYZ3CPE0YcTaPSwHu2Oag==
-X-Google-Smtp-Source: ACHHUZ4PAeDI8t67bUJhdaqBmTvjv2z7fbXLke2PqprP5R52QQZ3TpwVeTM5xT7yvCcvZsEeW6ORAg==
-X-Received: by 2002:a17:907:3ea9:b0:973:7dfc:f052 with SMTP id hs41-20020a1709073ea900b009737dfcf052mr1649432ejc.30.1686043022772;
-        Tue, 06 Jun 2023 02:17:02 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id l12-20020a170906a40c00b00971433ed5fesm5214639ejz.184.2023.06.06.02.17.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 02:17:02 -0700 (PDT)
-Message-ID: <30c702b2-18c6-ed38-ce7e-6f098a38d3c3@linaro.org>
-Date:   Tue, 6 Jun 2023 11:17:00 +0200
+        Tue, 6 Jun 2023 05:41:35 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58F610F3;
+        Tue,  6 Jun 2023 02:40:58 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3569ei3w057409;
+        Tue, 6 Jun 2023 04:40:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1686044444;
+        bh=w8SrY+ikkcMi7SM9PmtVDxwhrCdH5GJSMEEsUmqJS5s=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=o435kgmjuDhakcO6daN39eT4zwGfSCqW/SwSDOkAGMSJQOCI6EHlZ2UmStlTLX3Vr
+         BBcOBOUGJiYABA1jtyugir6DcumnDp9+ftRrjDwrB7XlTluGxE1uA/hWRxB/Kb8PSq
+         7piu/BwppWwgCxifx9cWwNppqZEbnYIm70XrEReU=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3569eicD088715
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Jun 2023 04:40:44 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 6
+ Jun 2023 04:40:44 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 6 Jun 2023 04:40:44 -0500
+Received: from [10.24.69.114] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3569eeL3125049;
+        Tue, 6 Jun 2023 04:40:41 -0500
+Message-ID: <773f4723-65f4-9bad-6ab3-bda65e5a4319@ti.com>
+Date:   Tue, 6 Jun 2023 15:10:40 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH 06/14] dt-bindings: soc: qcom: smd-rpm: Use qcom,rpm-proc
- in example
+ Thunderbird/102.11.0
+Subject: Re: [EXTERNAL] Re: [PATCH] remoteproc: pru: add support for
+ configuring GPMUX based on client setup
 Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net>
- <20230531-rpm-rproc-v1-6-e0a3b6de1f14@gerhold.net>
- <d0fa3b01-edab-fe8e-c309-036cbbcec7ab@linaro.org>
- <ZH73JxLd1i1vUcyw@gerhold.net>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZH73JxLd1i1vUcyw@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+CC:     Bjorn Andersson <andersson@kernel.org>, <rogerq@kernel.org>,
+        <nm@ti.com>, <srk@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20230601105904.3204260-1-danishanwar@ti.com>
+ <ZH4aywQoA9gy2OWU@p14s>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <ZH4aywQoA9gy2OWU@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 06/06/2023 11:06, Stephan Gerhold wrote:
-> On Tue, Jun 06, 2023 at 08:37:04AM +0200, Krzysztof Kozlowski wrote:
->> On 05/06/2023 09:08, Stephan Gerhold wrote:
->>> Use the new top-level rpm-proc node instead of having a dummy top-level
->>> /smd node that only contains the RPM but not other remote processors.
->>>
->>> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
->>> ---
->>>  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 6 +++---
->>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
->>> index c6930706bfa9..06e574239bd4 100644
->>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
->>> @@ -120,10 +120,10 @@ examples:
->>> [...]
->>> +        compatible = "qcom,msm8916-rpm-proc", "qcom,rpm-proc";
->>>  
->>> -        rpm {
->>> +        smd-edge {
->>
->> What about binding updates?
->>
+Hi Mathieu,
+
+On 05/06/23 10:56 pm, Mathieu Poirier wrote:
+> Hi MD,
 > 
-> The binding for this is in PATCH 05/14. The old binding replaced here is
-> deprecated in PATCH 07/14.
+> On Thu, Jun 01, 2023 at 04:29:04PM +0530, MD Danish Anwar wrote:
+>> From: Tero Kristo <t-kristo@ti.com>
+>>
+>> Client device node property ti,pruss-gp-mux-sel can now be used to
+>> configure the GPMUX config value for PRU.
+>>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> ---
+>>  drivers/remoteproc/pru_rproc.c | 21 +++++++++++++++++++++
+>>  1 file changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+>> index 2874c8d324f7..29d3a5a930c1 100644
+>> --- a/drivers/remoteproc/pru_rproc.c
+>> +++ b/drivers/remoteproc/pru_rproc.c
+>> @@ -109,6 +109,7 @@ struct pru_private_data {
+>>   * @dbg_single_step: debug state variable to set PRU into single step mode
+>>   * @dbg_continuous: debug state variable to restore PRU execution mode
+>>   * @evt_count: number of mapped events
+>> + * @gpmux_save: saved value for gpmux config
+>>   */
+>>  struct pru_rproc {
+>>  	int id;
+>> @@ -127,6 +128,7 @@ struct pru_rproc {
+>>  	u32 dbg_single_step;
+>>  	u32 dbg_continuous;
+>>  	u8 evt_count;
+>> +	u8 gpmux_save;
+>>  };
+>>  
+>>  static inline u32 pru_control_read_reg(struct pru_rproc *pru, unsigned int reg)
+>> @@ -228,6 +230,7 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>  	struct device *dev;
+>>  	const char *fw_name;
+>>  	int ret;
+>> +	u32 mux;
+>>  
+>>  	rproc = __pru_rproc_get(np, index);
+>>  	if (IS_ERR(rproc))
+>> @@ -252,6 +255,22 @@ struct rproc *pru_rproc_get(struct device_node *np, int index,
+>>  	if (pru_id)
+>>  		*pru_id = pru->id;
+>>  
+>> +	ret = pruss_cfg_get_gpmux(pru->pruss, pru->id, &pru->gpmux_save);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
+>> +		goto err;
+>> +	}
+>> +
+>> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
+>> +					 &mux);
+>> +	if (!ret) {
+>> +		ret = pruss_cfg_set_gpmux(pru->pruss, pru->id, mux);
+>> +		if (ret) {
+>> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
+>> +			goto err;
+>> +		}
+>> +	}
+>> +
+> 
+> It would have been nice to be told in a cover letter that pruss_cfg_get_gpmux()
+> is in linux-next so that I don't have to go fish for it...
+> 
 
-So changing example without changing binding is not an atomic change.
+My bad, I should have mentioned it. This patch depends on the soc: ti: pruss
+series [1] which is merged to Nishant's tree and is part of 'linux-next' but
+this isn't yet part of mainline linux.
 
-Best regards,
-Krzysztof
+> I am fine with the code in this patch, though the changelog is cryptic and could
+> be enhanced to say "why" this is needed.  The above could use some comments to
+> make sure people looking at this code understand that an error from
+> of_property_read_u32_index() is acceptable for backward compatibility.
+> 
+> Here I have to suppose pruss_cfg_get_gpmux() has been added to Nishanth's tree.
+> As such the only way for me to apply your patch is if Nishanth sends me a pull
+> request for the patchset that introduced pruss_cfg_get_gpmux().  You can also
+> resend this in the next cycle.
 
+I will fix the changelog and send the next revision in the next cycle.
+
+> 
+> Thanks,
+> Mathieu
+> 
+
+[1] https://lore.kernel.org/all/20230414045542.3249939-1-danishanwar@ti.com/
+
+-- 
+Thanks and Regards,
+Danish.
