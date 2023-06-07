@@ -2,67 +2,76 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20350C83003
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jun 2023 08:10:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E33DC7EE43
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jun 2023 08:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235640AbjFGIKs (ORCPT
+        id S235486AbjFGI2E (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Jun 2023 04:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55652 "EHLO
+        Wed, 7 Jun 2023 04:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234278AbjFGIKr (ORCPT
+        with ESMTP id S235647AbjFGI2D (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Jun 2023 04:10:47 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5095095;
-        Wed,  7 Jun 2023 01:10:46 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3573hgoH013040;
-        Wed, 7 Jun 2023 08:10:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=zNC49izImKDUwPg+4hUyOkDmU+KHJ1XdXUa8gCnXKX8=;
- b=fR6PmIelCrJjxOqw26q5umZ0gfPqa19W0Dvc+0TBtPRKn2H2MidblHCV1ALy+t3tLsaw
- jqEvfLilrQte9w1Ry25t96K8eiNPMBotNIoVniguqCfL5Nm1kdfLaQQIYwFWJhz/GQH5
- x1CxIFBtna6+EbGc3kDDuNYCeYyG6wU/ch9VhRKdgQAtnuQHXobFrdLoELEuZUIAfsaq
- XXRRA6sjFFRbvADO0PCSN1XBN1NBS5TYAHTxyUYXBo8ws2wkxGg7TXR4Z/+v1DekzDKO
- ufwEBvr9EnDGHJ8WNaFuuua60IJnG6+2G5gSKACHoQqeGQaURHm9R1JYwB6LXQetgzc5 Hw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a7699yv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Jun 2023 08:10:35 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3578AYhs030018
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 7 Jun 2023 08:10:34 GMT
-Received: from [10.216.18.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 7 Jun 2023
- 01:10:26 -0700
-Message-ID: <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
-Date:   Wed, 7 Jun 2023 13:40:22 +0530
+        Wed, 7 Jun 2023 04:28:03 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21543E62
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jun 2023 01:28:01 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-977c89c47bdso735331066b.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jun 2023 01:28:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686126479; x=1688718479;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=udzaaw6qDHSkruTSqapZilAwmBDTeRd1WqYkzLxfxKw=;
+        b=mCSLZ0SpTD8dM8IYBeH0NsSoPs/RoeEsK3Gz91De8m0o/bkR9A1JQfbDdPRCwXNkao
+         j/mft2XNI0lezzVQ1Cap/N2JFPUjdDIhTTCvRIKrDzoR2ad3g8QWoD6RNPiPwm01U9p8
+         wiY2wli1m7w3XwWE8qhD6lMF7711UkDsI5Cb/qGK2ngdGOMqY7y7ejLnMacZJ/13YmyE
+         WbO9efLR2U4tFZxeIMadh6qY7gdLmP2+n78s6lXZeBUR7Jz95SQq77xJE5tnVSqnAuJD
+         Y2ZJrNPTob5s5pGAakoVOXqp+EabmPcxfb5CjySIaRtfDqSX0TqngwuP2spaJBVNmvjw
+         2lVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686126479; x=1688718479;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=udzaaw6qDHSkruTSqapZilAwmBDTeRd1WqYkzLxfxKw=;
+        b=NaKhK83yAjkuMWzVqRN1e9wV6jfQd+eqC58vLa2RfRMG4bMoNfqFenv/8r0wftSD5J
+         LD28Yw8apoqXfmBwB0EnoVfjYxhWOSETyiBeHhPCPy1V9eZ34+ZLyTI3WFboYgyIyB5J
+         zVY0E/tavgy78gP4ZGze3BhcRchl5ViW2OVOLAFyCCr6gH1CcAKxGkY2c0Otekpt8L+X
+         SSMEahKuCFfzIWl3d6UzAzyMvAIF3FQM12uPEM6JKar/Aw3gc+6WYCppRygmH6llJ8Xn
+         /2sYa0TfTJtl8BTafICuRjuIP9fYzx1UBrd7JxsabqqcMzuqRD3K5hmLNX7XgeYAADuQ
+         mW+Q==
+X-Gm-Message-State: AC+VfDyu8LzsJ82cxir6UdoNodWmU+RiwZtwmiqDXqCo616Sf5716Uu9
+        juzhHO98UadSrbh6lxWv54abqg==
+X-Google-Smtp-Source: ACHHUZ551irlhGeCoLFUsmqhKcmyEYKhUagCEadWq9J9KXqoa5i4D87g/vHnCHUNgfj3GYF+SJNTGg==
+X-Received: by 2002:a17:907:7e9c:b0:96f:bcea:df87 with SMTP id qb28-20020a1709077e9c00b0096fbceadf87mr4846126ejc.42.1686126479436;
+        Wed, 07 Jun 2023 01:27:59 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id uz13-20020a170907118d00b009775eb0343bsm5439900ejb.79.2023.06.07.01.27.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 01:27:59 -0700 (PDT)
+Message-ID: <5f9cc367-eaa5-4c19-4e5e-7052b0259ccf@linaro.org>
+Date:   Wed, 7 Jun 2023 10:27:55 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
 Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
  multipd model
-Content-Language: en-US
-To:     Kalle Valo <kvalo@kernel.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
-        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_devipriy@quicinc.com>
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        Kalle Valo <kvalo@kernel.org>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jassisinghbrar@gmail.com,
+        mathieu.poirier@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
+        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
+        quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
+        quic_devipriy@quicinc.com
 References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
  <20230521222852.5740-2-quic_mmanikan@quicinc.com>
  <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
@@ -70,75 +79,73 @@ References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
  <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
  <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
  <87edmoitu3.fsf@kernel.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <87edmoitu3.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gqe4xl4c4R0xB_rjn82FRVjAJ6tko9eF
-X-Proofpoint-GUID: gqe4xl4c4R0xB_rjn82FRVjAJ6tko9eF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-07_04,2023-06-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 clxscore=1015
- mlxscore=0 bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=758
- impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2306070066
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 6/6/2023 7:19 PM, Kalle Valo wrote:
-> Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
+On 07/06/2023 10:10, Manikanta Mylavarapu wrote:
 > 
->>>>>> +
->>>>>> +    properties:
->>>>>> +      compatible:
->>>>>> +        enum:
->>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
->>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
->>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
->>>>>
->>>>> Keep rather alphabetical order (so both 5018 together).
->>>>>
->>>>> I also do not understand these at all. Why adding bus type to
->>>>> compatible? This rarely is allowed (unless it is PCIe controller within
->>>>> soc).
->>>>>
->>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
->>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
->>>> radio's properties, i have added bus type to compatible.
+> 
+> On 6/6/2023 7:19 PM, Kalle Valo wrote:
+>> Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
+>>
+>>>>>>> +
+>>>>>>> +    properties:
+>>>>>>> +      compatible:
+>>>>>>> +        enum:
+>>>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>>>>
+>>>>>> Keep rather alphabetical order (so both 5018 together).
+>>>>>>
+>>>>>> I also do not understand these at all. Why adding bus type to
+>>>>>> compatible? This rarely is allowed (unless it is PCIe controller within
+>>>>>> soc).
+>>>>>>
+>>>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>>>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
+>>>>> radio's properties, i have added bus type to compatible.
+>>>>
+>>>> It's the same device - WCSS - right? We do not create multiple nodes and
+>>>> compatibles for the same devices. Bus suffixes are almost never parts of
+>>>> compatibles.
 >>>
->>> It's the same device - WCSS - right? We do not create multiple nodes and
->>> compatibles for the same devices. Bus suffixes are almost never parts of
->>> compatibles.
+>>>
+>>> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
+>>> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
+>>>
+>>> So for better clarity i will use attached SOC ID in compatible.
+>>> Below are the new compatible's.
+>>>
+>>> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+>>> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
+>>> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
 >>
+>> What mandates that there's just one QCN6122 device attached to PCI?
+>> Assuming fixed PCI configurations like that makes me worried.
 >>
->> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
->> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
->>
->> So for better clarity i will use attached SOC ID in compatible.
->> Below are the new compatible's.
->>
->> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
->> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
->> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
 > 
-> What mandates that there's just one QCN6122 device attached to PCI?
-> Assuming fixed PCI configurations like that makes me worried.
-> 
+> IPQ5018 always has one internal radio, attached pcie radio's depends on 
+> no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two 
+> qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's 
+> number of pcie devices controlled by QDSP6.
 
-IPQ5018 always has one internal radio, attached pcie radio's depends on 
-no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two 
-qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's 
-number of pcie devices controlled by QDSP6.
+So this is hot-pluggable (or at least board-pluggable), then should not
+be a part of static DTS.
 
-Thanks & Regards,
-Manikanta.
+Some concepts of virtual-processes is anyway far away from hardware
+description, thus does not fit into DTS. Adding now to the equation PCIe
+with variable number of such processes, brings us even further.
+
+This is not a DT property. Remember - DT describes hardware.
+
+Best regards,
+Krzysztof
+
