@@ -2,145 +2,92 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE486C7EE23
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jun 2023 12:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D54C3C7EE29
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  7 Jun 2023 14:36:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240598AbjFGMSS (ORCPT
+        id S240473AbjFGOf7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 7 Jun 2023 08:18:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60870 "EHLO
+        Wed, 7 Jun 2023 10:35:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240628AbjFGMSN (ORCPT
+        with ESMTP id S240172AbjFGOf5 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 7 Jun 2023 08:18:13 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECDE01FC1;
-        Wed,  7 Jun 2023 05:18:10 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 357BlIW9004954;
-        Wed, 7 Jun 2023 12:18:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=VHE8w+ShAqFQJicL/pWh6KAKyy97L6DwKhrLaJOzP84=;
- b=XD+IRKlDjwT7E5qWRTxji1l+l1TmoqUOV/IQxWzJsBXDosy89x10O/A1bvPKG0nOyNSM
- dTKdKQefc4Ck6U6hj/IkqzM22iv8ohptB5pnxnOGGKOE4OW/llTfwNl5EhJ93IwSCFes
- kykeHBU4znzWeWZSxk6fL6D+m1u6nOHVdYUcGjqI8L7Y+sJ/L11/9JmuyIfTmb8bVcOh
- ozetSsK2a25GXd38219+y2osqXtSm0m88SfmQMXRA5bUPvxJ+YnXlCPVm0qveAmmPa/j
- SifPVVA2Yeec92FDRJ7eY2ZYm4UzRpY6ZVmYd0hOfbQUPPbxbF+pP7vXp9x8Yjr2nI7k lA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a9t9rqb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Jun 2023 12:18:07 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357CI5wY019704
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 7 Jun 2023 12:18:05 GMT
-Received: from mmanikan-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 7 Jun 2023 05:18:01 -0700
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_varada@quicinc.com>
-Subject: [PATCH 2/2] rpmsg: glink: change intent work queue type
-Date:   Wed, 7 Jun 2023 17:47:31 +0530
-Message-ID: <20230607121731.26958-3-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230607121731.26958-1-quic_mmanikan@quicinc.com>
-References: <20230607121731.26958-1-quic_mmanikan@quicinc.com>
+        Wed, 7 Jun 2023 10:35:57 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DA4A1BEF
+        for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jun 2023 07:35:55 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f6042d610fso73340195e9.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jun 2023 07:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686148554; x=1688740554;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=deFx223UAn6/3WPT3CB+BedQKRrIofGGQo7Oraihby4=;
+        b=mYOEVqMXw3Q8wvGV5v2RZzRwA+4Mqjcm8fYX68tNivJRV3fglrj3h0DcBeYSamGejq
+         ULZmGnjzhGkRqyROnr3h3tUWSqfdhmrlodjnU5PurkxosQcs+9Xs/B1kOCDfCBPwM0ob
+         cwEGiwsDqLFApd9QD8kVF2hvKBgPSnUvGRf3MrHJ5QV7vsExHJgJBotMyJKJ6RdIB6gO
+         97kw7YXhqniAjmMT9Pc8L5iL67j7UhaRR4Wq4AQB7V/EFovLVM7zr1ZuWRPA3cUZfXai
+         PZP2NmBhNI8YcR4+lgb8NImAo1g17jDE+RSoPWX+j/fPBsVch9FNgb12N89oTBmtUM3l
+         hWnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686148554; x=1688740554;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=deFx223UAn6/3WPT3CB+BedQKRrIofGGQo7Oraihby4=;
+        b=TujPRjM1hnRk3Y8DN5uoyDS1kr6Y2Uxo+VughrTThqSA7VK0McEOXqAOBH4ghPbruC
+         2LxNJ/ICya3wpqrchaPtGEitXXftxHRuxPSYX8yR29mDbg937YaVUVEGtAvvokldpwK9
+         D1tizS1/DwhX8fkOXU9r9x482zFACup2yzrkuh6UtpuuC/RtGTbmAxgiLnqdcYZUg/+J
+         h3L+iEKaskIVb77GD6RO9eKw0PttYyqe9nXiB3bwPS6N5jvGfJGKVm48dh1GpzG4o2ga
+         1I4gcJmPdhefNpPksIDDIoEYUD/7SxC84/SPxdM1wDEn1ddl+KBik7TH+RygpcCo+oRK
+         yPzA==
+X-Gm-Message-State: AC+VfDwzLLRpDAFQ+xthvPYsIDPFOyFTFNsuimfOqSA9qcSX7LZdZ95k
+        EfkwDhhExcbalElPx/LTDhcnGKRBYGzYryXl64CCkbuYpjE9a9ZK
+X-Google-Smtp-Source: ACHHUZ6rr+HgEVIoVLyykSTfTB2HiarNlmmYZrEKCS2/KijlnRwxvv+5UXoQuaCyA+JqF/Hdo4PK9o4GyOi/AVPIoAk=
+X-Received: by 2002:a7b:cc93:0:b0:3f6:af2:8471 with SMTP id
+ p19-20020a7bcc93000000b003f60af28471mr4912522wma.26.1686148553863; Wed, 07
+ Jun 2023 07:35:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0qrEEyXrMliSlsA-jatLlxTXYqgs9687
-X-Proofpoint-GUID: 0qrEEyXrMliSlsA-jatLlxTXYqgs9687
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-07_06,2023-06-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- phishscore=0 clxscore=1015 impostorscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 spamscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306070102
+References: <20230601105904.3204260-1-danishanwar@ti.com> <ZH4aywQoA9gy2OWU@p14s>
+ <20230605204552.x4ctuzos4rysldwj@sessions>
+In-Reply-To: <20230605204552.x4ctuzos4rysldwj@sessions>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 7 Jun 2023 08:35:43 -0600
+Message-ID: <CANLsYkyOhtaWbgKX9kkkLUtMkZbAp5t+JA7BNYULXf9r_FmNNw@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: pru: add support for configuring GPMUX based
+ on client setup
+To:     Nishanth Menon <nm@ti.com>
+Cc:     MD Danish Anwar <danishanwar@ti.com>,
+        Bjorn Andersson <andersson@kernel.org>, rogerq@kernel.org,
+        vigneshr@ti.org, srk@ti.com, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-QDSP6 will clear heap memory once it's received
-RX_DONE event from APPS. Under heavy cpu load
-intent worker thread not able to get cpu slot
-because it's bound to kernel global work queue.
-Due to this QDSP6 firmware faces OOM and it leads
-to Q6 crash. Changing intent work queue type to
-UNBOUND workqueue ensures intent worker thread
-will be executed as early as possible.
+On Mon, 5 Jun 2023 at 14:45, Nishanth Menon <nm@ti.com> wrote:
+>
+> On 11:26-20230605, Mathieu Poirier wrote:
+> [...]
+> > Here I have to suppose pruss_cfg_get_gpmux() has been added to Nishanth's tree.
+> > As such the only way for me to apply your patch is if Nishanth sends me a pull
+> > request for the patchset that introduced pruss_cfg_get_gpmux().  You can also
+> > resend this in the next cycle.
+>
+> Yes, I had pulled this in [1] along with a few other driver fixes. I
+> can send you an immutable tag to pull for your tree, if that helps the
+> process along though, it might have a unrelated driver fixup patch as
+> part of the series though..
+>
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
----
- drivers/rpmsg/qcom_glink_native.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+MD has indicated he would rework his patch and send a new revision in
+the next cycle.
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 6f9a439e5046..c3e076bb863f 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -140,6 +140,7 @@ enum {
-  * @liids:	idr of all local intents
-  * @riids:	idr of all remote intents
-  * @intent_work: worker responsible for transmitting rx_done packets
-+ * @intent_wq:	work queue of intent_work
-  * @done_intents: list of intents that needs to be announced rx_done
-  * @buf:	receive buffer, for gathering fragments
-  * @buf_offset:	write offset in @buf
-@@ -169,6 +170,7 @@ struct glink_channel {
- 	struct idr liids;
- 	struct idr riids;
- 	struct work_struct intent_work;
-+	struct workqueue_struct *intent_wq;
- 	struct list_head done_intents;
- 
- 	struct glink_core_rx_intent *buf;
-@@ -231,6 +233,14 @@ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
- 	INIT_LIST_HEAD(&channel->done_intents);
- 	INIT_WORK(&channel->intent_work, qcom_glink_rx_done_work);
- 
-+	channel->intent_wq = alloc_workqueue("intent_wq", WQ_UNBOUND, 1);
-+	if (!channel->intent_wq) {
-+		pr_err("failed to create %s channel intent work queue\n",
-+		       channel->name);
-+		kfree(channel);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
- 	idr_init(&channel->liids);
- 	idr_init(&channel->riids);
- 	kref_init(&channel->refcount);
-@@ -270,6 +280,7 @@ static void qcom_glink_channel_release(struct kref *ref)
- 	idr_destroy(&channel->riids);
- 	spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
-+	destroy_workqueue(channel->intent_wq);
- 	kfree(channel->name);
- 	kfree(channel);
- }
-@@ -573,7 +584,7 @@ static void qcom_glink_rx_done(struct qcom_glink *glink,
- 	list_add_tail(&intent->node, &channel->done_intents);
- 	spin_unlock(&channel->intent_lock);
- 
--	schedule_work(&channel->intent_work);
-+	queue_work(channel->intent_wq, &channel->intent_work);
- }
- 
- /**
--- 
-2.17.1
-
+> [1] https://lore.kernel.org/all/168434617580.1538524.11482827517408254591.b4-ty@ti.com/
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git/log/?h=ti-drivers-soc-next
+> --
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
