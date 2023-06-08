@@ -2,77 +2,78 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3D5C83003
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jun 2023 07:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DA1C87FDD
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  8 Jun 2023 07:11:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235304AbjFHHLS (ORCPT
+        id S234897AbjFHHLT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 8 Jun 2023 03:11:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48888 "EHLO
+        Thu, 8 Jun 2023 03:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233900AbjFHHLR (ORCPT
+        with ESMTP id S235284AbjFHHLR (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 8 Jun 2023 03:11:17 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B31E41FDA;
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2021FDC;
         Thu,  8 Jun 2023 00:11:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686208271; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1686208272; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=EyXGzWk5qOg4GSCIAy3lW2UQjI1xBH2mtBGSiS4lAzSs70HXRrgkzrOFuoIki3D83d
-    YDiuh0FKR2xi8o6wGSFKiRGJUOsnDAuPapmnB/Vc2hqOTMOo0cyUEMJceQZYS5vNaghk
-    h9Gh6MDkEH6vOJLlMlrriJbRcrNR1yI1OjVOhq2TsfCrsZOAuNFydsJcxqgAQozLdmuY
-    AYtlaCGXeAnpYg9qxYTJqIRb/7vb7olEiEgaONeXhfCxvDujh4eRqsTQa1WpPODoZukP
-    XtpK2YNe8ClKjoqXEDUnU89pdqDfQc9HcRAGezrOnrE2eEX7kHVK8H2CVRPJrA/4pWpm
-    oFuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686208271;
+    b=lg6Om4QDsNWs7+FmoQcziCTJNt5U599S2HuIu4zJaLFlBnfQdQT/955Z+4mKmBt5kh
+    oYqvsSumL8qmZb+/NbJoJfug2LM05H13kfEfghOFulheg6tA1ol9iYmceq4RQ2sFdDuV
+    B5lED/7td6WComqqIaIsQu/YrrIkmdrwZE1NxD/Xy22mhUPayO++N9NoghDiSeqNXzD/
+    pP3IE8UPur6dSKUsYWmgvGacz/vJ/9CQtFUsswv0OInoLbntV3pwmLRw5Lm64M8HYj5w
+    eybQ3NXj4ILey3ty3Pbew1l5WBk+OyLg1w67DZabdwgrWD+nTMyLI4X3W7aSGbaBlsIP
+    bXog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686208272;
     s=strato-dkim-0002; d=strato.com;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=e94V8Kezz3qtY3xLT9x24/ZhCtGOkVTLukjovOp8Io0=;
-    b=ODlssyIGnyL66sBAo+w/jXpRmaHUtTrPofEfinPuvGX8T2jlAhXOiRG89gAv59D9At
-    F6RWqNNNdkld7jIJIVgXqhKeBGN4+7KljMcU/aVv41l8+Wv7QFBFeYv4he4hDSjZpRO5
-    tr9unK0eIzISlHaCyTrw6nnTefDb9hHoc4iLNeuwo6UcqABkEmASMmKJglb54keWytmJ
-    +m4tH/WervtCk55XT2PlZCFILogmY/mjM345Vgsos+TVZ1hWQgM1gyCwEkPG7BODlvk2
-    rxlV5LJjDRZ5QY7a3hGiHXIoui/wL/1mW4Awee69vKK+ndVod4ft+xuo3DGKtlfvSTef
-    QtKg==
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=zIP6Ad+n6GtTcdAN99toMZU1nMdvUwM/xKmNfiwoI/o=;
+    b=H8oP07qbE+mBJJJzVh0Rn4FRDOviNnuVfxLLPpMpJ/Zi389aZE/fY/RKAA5i6pnp/b
+    /5ypSCInaII7caP0n3zh6WeGjU4BN5Ka/rsIlK6AwpEMqzC0Jx3ocB41nrZLCRQyUKGj
+    Os8LRbi+FfXsHTL06Za9Otj+bepHa7Q+DI283UgpdW8I765Nj1LbwvDRfU3favy9yGfj
+    EfShtXWeyH3IhU8ozRrnRilTke3Bq+Z3cC/Ylkv40Pc/F388ifjy+vVr3jZItMrKoqSy
+    nDMq/Hj0emDAtrUllaJ+vpQfPUYeRzEs5X6ECPGR0BoJn9tG1K3iqBJHj0M5t7s28Sg6
+    N4qQ==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686208271;
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686208272;
     s=strato-dkim-0002; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=e94V8Kezz3qtY3xLT9x24/ZhCtGOkVTLukjovOp8Io0=;
-    b=o9PYSaDyoBym2xOkZGzTgE5tTfSTI0LWSonNqs8FenqHEjukJPato+qEE/D8FHdcOQ
-    vtGPl2R1kMob6gwsEI9evgnCCJjsTOFUkzYgSg/M8bEeWsFl9CGgroi/qxPJHPiz1Pwx
-    PcnZrBMU17zwL/fe/k8ZksCH9bU5QA/U8xFoNDEIOit6i31Joz2lLqgDJ6LtP4mBLnwp
-    tMfL50LCDcPFWiMl+Dny0nDFLmN+bHQpnqc0XhnejVPwXUqUyqNDuQc3OjWMMUdRFx11
-    f+h1CZ8wzF+DjC2gmIqXFpX03wttEOcMWlarP0LXdqdePxDwuxZIVOqS69in/tYEuaHd
-    UjRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686208271;
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=zIP6Ad+n6GtTcdAN99toMZU1nMdvUwM/xKmNfiwoI/o=;
+    b=EbfbsfgV0Sv8mh6sgknLefjtuDEzgECz/O3uhsscBRmgGtHCVpQ0lpD61FpoExMkKO
+    YHeWU1N2pPbxZf9ZiwCREBP7FJIvq77QLDsK5E035CYCUmFfCnUB324KrHJeM0/zUVMp
+    Vm+/dePHnwlP+CxvyJn2nX90Q617Ns6CVuRgoXrP29zlUhMF6psN6IhyNm5lPH4ykZAY
+    nGKFN21wR0IzjOA/x2ZtkidHlHMbw6V/2Wqvia3nTLlYdiXHKTOrNOcvl0cwJaTbR9o3
+    vxjlSqKtZDgBte/ZZ8AhES4M//zOp5u8oaqdPetCr688qD5vQg0IvoKyy4RcKDYjxwAP
+    2Feg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686208272;
     s=strato-dkim-0003; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=e94V8Kezz3qtY3xLT9x24/ZhCtGOkVTLukjovOp8Io0=;
-    b=h3+wXnICtH32yfWZObSS2Lj1ds/ix142rEBxSZwxwrVU0kTqtoPhzVeX+AUJBiT/DH
-    qLCL9glieObTZivubxDA==
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=zIP6Ad+n6GtTcdAN99toMZU1nMdvUwM/xKmNfiwoI/o=;
+    b=n+dmEAkCytzWFOoiLThsrzpfCUlIjJePl3kJDrdrrHW/AvQiA9EcOGawv6Sk0YTLRU
+    rebnGBOOUmwQnbXPv3Cg==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn8u4ly9TY="
 Received: from [192.168.244.3]
     by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
-    with ESMTPSA id Z82ec2z587BBKHt
+    with ESMTPSA id Z82ec2z587BBKHv
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
     Thu, 8 Jun 2023 09:11:11 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v2 00/12] Add dedicated device tree node for RPM
- processor/subsystem
-Date:   Thu, 08 Jun 2023 09:10:20 +0200
-Message-Id: <20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net>
+Date:   Thu, 08 Jun 2023 09:10:22 +0200
+Subject: [PATCH v2 02/12] dt-bindings: soc: qcom: smd-rpm: Add MSM8909 to
+ qcom,smd-channels
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANx+gWQC/22NTQ6CMBCFr0JmbU1LAdGV9zAsSjvQJtiSKRIN4
- e6OrF28xffyfjbISAEz3IoNCNeQQ4oM5akA600cUQTHDKUstay1EjQ/WZSsuNStbqpWX61zwPn
- eZBQ9mWg9N+JrmticCYfwPg4eHbMPeUn0Of5W9XP/Ta9KSIHS6L5xqAZV3UcknyZ3jrhAt+/7F
- ylWJ+q5AAAA
+Message-Id: <20230531-rpm-rproc-v2-2-56a4a00c8260@gerhold.net>
+References: <20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net>
+In-Reply-To: <20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net>
 To:     Bjorn Andersson <andersson@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -89,80 +90,29 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The Resource Power Manager (RPM) currently does not have a dedicated 
-device tree node that represents the remoteproc/subsystem. The 
-functionality exposed through the SMD/GLINK channels is described in 
-top-level nodes of the device tree. This makes it hard to group other 
-functionality provided by the RPM together in the device tree. This 
-series adds a single top-level remoteproc-rpm/rpm-proc device tree node 
-that groups all RPM functionality together.
+MSM8909 is using qcom,smd-channels but is missing in the list, add it
+there as well.
 
+Fixes: 709d473dd5e1 ("dt-bindings: soc: qcom: smd-rpm: Add MSM8909")
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
-Changes in v2:
-- Pick up review/test tags from Konrad and Krzysztof
-- Rename "remoteproc-rpm" -> "remoteproc" everywhere (Krzysztof/Konrad)
-- "dt-bindings: remoteproc: Add Qualcomm RPM processor/subsystem"
-  - Squash with other dt-bindings changes to have atomic refactoring (Krzysztof)
-  - Add diagrams from discussion as clarification
-- "soc: qcom: smem: Add qcom_smem_is_available()"
-  - Add return documentation in qcom_smem_is_available() (Konrad)
-- "soc: qcom: Add RPM processor/subsystem driver"
-  - Add missing of_node_put(), fix children (Konrad)
-  - Add depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n to fix build 
-    error in weird kernel configurations (kernel test robot)
-- Link to v1: https://lore.kernel.org/r/20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net
+ Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
----
-Stephan Gerhold (12):
-      dt-bindings soc: qcom: smd-rpm: Fix sort order
-      dt-bindings: soc: qcom: smd-rpm: Add MSM8909 to qcom,smd-channels
-      dt-bindings: soc: qcom: smd-rpm: Add some more compatibles
-      soc: qcom: smd-rpm: Match rpmsg channel instead of compatible
-      dt-bindings: remoteproc: Add Qualcomm RPM processor/subsystem
-      soc: qcom: smem: Add qcom_smem_is_available()
-      rpmsg: qcom_smd: Use qcom_smem_is_available()
-      soc: qcom: Add RPM processor/subsystem driver
-      arm64: dts: qcom: Add rpm-proc node for SMD platforms
-      arm64: dts: qcom: Add rpm-proc node for GLINK gplatforms
-      ARM: dts: qcom: Add rpm-proc node for SMD platforms
-      ARM: dts: qcom: apq8064: Drop redundant /smd node
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+index fe814b991559..78822315edeb 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+@@ -82,6 +82,7 @@ if:
+         enum:
+           - qcom,rpm-apq8084
+           - qcom,rpm-msm8226
++          - qcom,rpm-msm8909
+           - qcom,rpm-msm8916
+           - qcom,rpm-msm8936
+           - qcom,rpm-msm8953
 
- .../bindings/remoteproc/qcom,rpm-proc.yaml         | 171 +++++++++++++++++++++
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml |  23 ++-
- .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |   7 +
- arch/arm/boot/dts/qcom-apq8064.dtsi                |  40 -----
- arch/arm/boot/dts/qcom-apq8084.dtsi                |   6 +-
- arch/arm/boot/dts/qcom-msm8226.dtsi                |  38 ++---
- arch/arm/boot/dts/qcom-msm8974.dtsi                |  44 +++---
- arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  48 +++---
- arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  28 ++--
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   6 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi              | 112 +++++++-------
- arch/arm64/boot/dts/qcom/msm8953.dtsi              | 136 ++++++++--------
- arch/arm64/boot/dts/qcom/msm8976.dtsi              | 152 +++++++++---------
- arch/arm64/boot/dts/qcom/msm8994.dtsi              |  99 ++++++------
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 113 +++++++-------
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  98 ++++++------
- arch/arm64/boot/dts/qcom/qcm2290.dtsi              | 126 +++++++--------
- arch/arm64/boot/dts/qcom/qcs404.dtsi               | 152 +++++++++---------
- arch/arm64/boot/dts/qcom/sdm630.dtsi               | 132 ++++++++--------
- arch/arm64/boot/dts/qcom/sm6115.dtsi               | 128 +++++++--------
- arch/arm64/boot/dts/qcom/sm6125.dtsi               | 140 +++++++++--------
- arch/arm64/boot/dts/qcom/sm6375.dtsi               | 126 +++++++--------
- drivers/rpmsg/qcom_smd.c                           |  10 +-
- drivers/soc/qcom/Kconfig                           |   1 +
- drivers/soc/qcom/Makefile                          |   2 +-
- drivers/soc/qcom/rpm-proc.c                        |  77 ++++++++++
- drivers/soc/qcom/smd-rpm.c                         |  35 ++---
- drivers/soc/qcom/smem.c                            |  11 ++
- include/linux/soc/qcom/smem.h                      |   1 +
- 29 files changed, 1161 insertions(+), 901 deletions(-)
----
-base-commit: 8d5a57ea6a0b1722725170e32e511701ca7c454c
-change-id: 20230531-rpm-rproc-758364839cdd
-
-Best regards,
 -- 
-Stephan Gerhold <stephan@gerhold.net>
+2.40.1
 
