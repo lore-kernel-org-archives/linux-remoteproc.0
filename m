@@ -2,122 +2,122 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97118C88CB4
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 18:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7541AC7EE43
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 22:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237477AbjFLSUI (ORCPT
+        id S233166AbjFLWD6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Jun 2023 14:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41580 "EHLO
+        Mon, 12 Jun 2023 18:03:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237475AbjFLSUC (ORCPT
+        with ESMTP id S238368AbjFLWDw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Jun 2023 14:20:02 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D268199
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 11:19:59 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977cf86aae5so705122266b.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 11:19:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686593998; x=1689185998;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C4cxOfKTTvDZcNfp7Q3cCq6cFjQ+nLVM01oDWqMRamI=;
-        b=a/yq5FtlV3i+LTkUI21h759UVdMobPe33EwC9V1kaTkfOEceXO8gcVEwppExH93p61
-         XmJM9aqDB9ob8SwguvAGhu1UEK9nyf90lRhsWtIjW0qaZoXMpjZQOr2t+n6aK3C+Pqtb
-         3P5lSHbH8eQXEuLH9BJvM3LxqC4H7LCiFCtV9uvD6MDuPOQ0dhMlEkAMxxThB3W6Mh8Z
-         pbCjeltU8snS7hMrKHfrruhn3V+qt+P9Uqk/4Mb86yXwfxmJ3beYwpLCPtRWQF/oJxW2
-         7UP4Xs3L917msGb2NwjGuttf7+f4boW+EuYoW4KfIuXgBoEOtJk1mEHUR+1diepscOJ/
-         ib7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686593998; x=1689185998;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C4cxOfKTTvDZcNfp7Q3cCq6cFjQ+nLVM01oDWqMRamI=;
-        b=d2LpfZst0z7GxL/EYF3MtMGRqpGJaDDGcCRqEh0z4+jMomsJ+R3QDHF0K0VHKdUqZ0
-         hTDd8zWmV5M9+ic0SrBCsWPCfKBuLRl8LRFIqtRbyI8JP3/SMCV/2kGuGxnIhHw9AX3e
-         uAJ77xAXGh+PVb1cB2pyIiC/dST0b+k6A4obK5vaGlkqsX0/bbD0hyi1M+qvQserWFhe
-         O9oy5OJEyImU0gzf9kOd87zzeaauHFKKKG2QQ10XR2Tl2I1MVsmKTBKJYGKtSVrhUjqM
-         bTw9Ugkff6FFd7w0Ja34kUG05+RtLCqMIOi9CqldzspUGjwngpgpwsIwQbPIweV3e5ix
-         MUmA==
-X-Gm-Message-State: AC+VfDwXBtCBb94IKqDjOOrVj5pBQjkbTr0CLWlZaq2/zOsugb1xCQjH
-        Y4FV3yXB2xM5lef2FZXgARW8jw==
-X-Google-Smtp-Source: ACHHUZ6EnMu+AeLIi6226BV8ycsU3I7rA5S34eKhYzKJmE27e3+zJ4AJxKMBdeYLfK1LwtNfze4BPg==
-X-Received: by 2002:a17:907:9307:b0:973:ebbc:1d6a with SMTP id bu7-20020a170907930700b00973ebbc1d6amr10489039ejc.33.1686593997962;
-        Mon, 12 Jun 2023 11:19:57 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id a9-20020a17090680c900b0096f782f727esm5618321ejx.140.2023.06.12.11.19.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 11:19:57 -0700 (PDT)
-Message-ID: <73243db4-3caa-9746-0a78-223f512c9130@linaro.org>
-Date:   Mon, 12 Jun 2023 20:19:55 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v2 05/12] dt-bindings: remoteproc: Add Qualcomm RPM
- processor/subsystem
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+        Mon, 12 Jun 2023 18:03:52 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA3010C2;
+        Mon, 12 Jun 2023 15:03:50 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35CLpUjG007363;
+        Mon, 12 Jun 2023 22:03:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=g0jcez2nstLVW2iarNEvZx6vEL3dr5pkytXSctylQjQ=;
+ b=e/aJOlohe9H3ZE05c9nybpvUrEeN7wI8yes0OH38tU6QdytTW6rkNQCbB4c+K96USYt8
+ Gg0tvuPHeuG5Yt57q5wKOVrNow/aYP5HkcqZPWYDi7B3alX772qYiv9dTkper2vkVDBq
+ ghHmPLxpvyig17Ws1KLIsK/+X2srF/ceI64vLRlX0CQUFHM98FSJWlleDSyIJVu7QbQX
+ vCNVp4IhbA+O3dKsjwk3fnnYE/4mYV4hIRz61WK310zpHzaijAS3DVEpAml9WaF6HdnA
+ 9l4GobkiV43fDtqgu0Qqo3XIbZaGyVqBuUW40Wa0rmwaqSF4KU1hqGM4WufKXxJCyWuJ iw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r68x9896g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jun 2023 22:03:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35CM3i0g009912
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jun 2023 22:03:44 GMT
+Received: from hu-gokukris-sd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Mon, 12 Jun 2023 15:03:44 -0700
+From:   Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+To:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>
+CC:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net>
- <20230531-rpm-rproc-v2-5-56a4a00c8260@gerhold.net>
- <9cdf22cc-6509-b87e-e631-4e3633d1f542@linaro.org>
- <ZISqNPnQgPNEsmxa@gerhold.net>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZISqNPnQgPNEsmxa@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        "Elliot Berman" <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+Subject: [PATCH v5 0/2] Patches for introducing traces in remoteproc.
+Date:   Mon, 12 Jun 2023 15:03:24 -0700
+Message-ID: <cover.1686606835.git.quic_gokukris@quicinc.com>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cyt0ApF6NnSrwASddo5e5zU5arhUfkZk
+X-Proofpoint-ORIG-GUID: cyt0ApF6NnSrwASddo5e5zU5arhUfkZk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-12_16,2023-06-12_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=737 mlxscore=0 adultscore=0 malwarescore=0
+ clxscore=1011 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306120189
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 10/06/2023 18:52, Stephan Gerhold wrote:
-> On Sat, Jun 10, 2023 at 06:43:17PM +0200, Krzysztof Kozlowski wrote:
->> On 08/06/2023 09:10, Stephan Gerhold wrote:
->>> On Qualcomm platforms, most subsystems (e.g. audio/modem DSP) are
->>> described as remote processors in the device tree, with a dedicated
->>> node where properties and services related to them can be described.
->>> +
->>> +  smd-edge:
->>> +    $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
->>> +    description:
->>> +      Qualcomm Shared Memory subnode which represents communication edge,
->>> +      channels and devices related to the RPM subsystem.
->>> +
->>> +  glink-rpm:
->>
->> This should be "glink-edge", to be a bit more generic and match existing
->> smd-edge.
->>
-> 
-> I fully agree and I actually made that change at some point before
-> sending v1. Unfortunately, it doesn't work: The node name "glink-edge"
-> is already reserved by qcom,glink-edge.yaml. While it's very similar it
-> has some subtle differences to glink-rpm-edge.yaml. For example, there
-> is no qcom,remote-pid in the RPM variant which is required by the normal
-> glink-edge.
+V5: Add more text to Kconfig
+    Move this trace point to function rproc_load_segments() and rename
+    it to trace_rproc_load_segment_event()
+    
+V4: Add config symbol REMOTEPROC_TRACEPOINTS to enable traces
+    Rename rproc_qcom.h to remoteproc_tracepoints.h
+    Rename qcom_tracepoints.c to remoteproc_tracepoints.c
+    Switch to EXPORT_SYMBOL_GPL
 
-But the other variant has, so they are pretty similar. It could be one
-binding or some common part. Anyway we can as well drop the nodename
-from the qcom,glink-edge.yaml binding. Anyway the binding is referenced
-by each specific remote proc, so this nodename brings nothing.
+V3: Split the Patch to 2 as per suggestion from Mukesh, fixed format
+error from v2. 
 
-> Would "glink-rpm-edge" sound better?
-> 
-> Thanks,
-> Stephan
-> 
+V2: Moved the traces to common code from the qcom_pas driver as per
+Bjorns review, fixed text as per Triloks suggestion, Updated QuiC
+copyright to 2023.
 
-Best regards,
-Krzysztof
+[1]: https://lore.kernel.org/all/20230224165142.17745-2-quic_gokukris@quicinc.com/
+
+Gokul krishna Krishnakumar (2):
+  remoteproc: Introduce traces for remoteproc events
+  remoteproc: qcom: Add remoteproc tracing
+
+ drivers/remoteproc/Kconfig                    |   9 ++
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_common.c              |  37 +++++
+ drivers/remoteproc/qcom_q6v5.c                |   9 ++
+ drivers/remoteproc/remoteproc_core.c          |   5 +
+ drivers/remoteproc/remoteproc_internal.h      |   9 +-
+ drivers/remoteproc/remoteproc_tracepoints.c   |  14 ++
+ include/trace/events/remoteproc_tracepoints.h | 152 ++++++++++++++++++
+ 8 files changed, 234 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/remoteproc/remoteproc_tracepoints.c
+ create mode 100644 include/trace/events/remoteproc_tracepoints.h
+
+
+base-commit: 1ca04f21b204e99dd704146231adfb79ea2fb366
+-- 
+2.40.1
 
