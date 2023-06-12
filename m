@@ -2,240 +2,122 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7CEC7EE2E
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 17:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97118C88CB4
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 18:20:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236654AbjFLRzG (ORCPT
+        id S237477AbjFLSUI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Jun 2023 13:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
+        Mon, 12 Jun 2023 14:20:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237100AbjFLRzA (ORCPT
+        with ESMTP id S237475AbjFLSUC (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Jun 2023 13:55:00 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82C419D
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 10:54:57 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-652a6bf4e6aso3659270b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 10:54:57 -0700 (PDT)
+        Mon, 12 Jun 2023 14:20:02 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D268199
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 11:19:59 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977cf86aae5so705122266b.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 11:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686592497; x=1689184497;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W3QVmqP35ml+Zcd/ACOdBpI7Nl407UcaAzEIMqiZ+kc=;
-        b=EKX5sORL5xWywKAInrL8721zWX/+Td5IhSfbCg0UB2+aOGAnbONy7wM7llHRvCN4pj
-         ENHSqSPG5zQwAIhuwG21Y0WFEXml9YJx1GhSTR2fQSEB5B5QN3ii+aQsr+15Z3iQSK2p
-         CWyR0TJE/TZYDQlPeQHqAFC+sATrLr1MOL8pnwjW8SnI80u6oJK+MQAqwi81FNnnIVpj
-         FT0+k1xj8CQ04ygLZSgo+kTEfJt25w3jadn0FUj9I6aDrnEiCY5x85zFiZH6UEKA0H15
-         9HJT5jAH3z/KRTcPDbl0Xzuw9P/ZQtYWVeSXhyLmTQm4lWA8HVLHymgqizhW29nzXHGa
-         KuQw==
+        d=linaro.org; s=google; t=1686593998; x=1689185998;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C4cxOfKTTvDZcNfp7Q3cCq6cFjQ+nLVM01oDWqMRamI=;
+        b=a/yq5FtlV3i+LTkUI21h759UVdMobPe33EwC9V1kaTkfOEceXO8gcVEwppExH93p61
+         XmJM9aqDB9ob8SwguvAGhu1UEK9nyf90lRhsWtIjW0qaZoXMpjZQOr2t+n6aK3C+Pqtb
+         3P5lSHbH8eQXEuLH9BJvM3LxqC4H7LCiFCtV9uvD6MDuPOQ0dhMlEkAMxxThB3W6Mh8Z
+         pbCjeltU8snS7hMrKHfrruhn3V+qt+P9Uqk/4Mb86yXwfxmJ3beYwpLCPtRWQF/oJxW2
+         7UP4Xs3L917msGb2NwjGuttf7+f4boW+EuYoW4KfIuXgBoEOtJk1mEHUR+1diepscOJ/
+         ib7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686592497; x=1689184497;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W3QVmqP35ml+Zcd/ACOdBpI7Nl407UcaAzEIMqiZ+kc=;
-        b=lNbhN5afSE/WZUNHzkVYmzRgaGUinnpWBS9wpvSOL/u5IeI2725FrPcFZlWWj8W6AR
-         AGYXR3iIZOobMJFx/GvQT7KiCsCxIJZkWV2xiGe4iMpcHb9I1vC1qBa3FtJJl7dn9AMj
-         7ME0eErRRGw9Scfnd1Z47teZBkMbvmzX4eY/reLP2Icv6y5jauGXInSwEYml2baYRcga
-         XMWnTe1Lx+8VWxWny9Vsasf/kPlm/wWaw8xhvtHzg6737jdHZeExgQ4vqP8a6XdtNo79
-         zQBIcrC7EKITyC0vyhweXkdqJ5Ffm/nrB8zvwbCibWcl2XXUqslkUTjQlbhn/a+yXHFW
-         Srdw==
-X-Gm-Message-State: AC+VfDwUDMVlsj86CdKCVkfBntfX2zi6ywxy9Xv8qvktLo9i82znedjM
-        Jkp0MJlKD5z+It4HFDsuK2SyNw==
-X-Google-Smtp-Source: ACHHUZ7c3dE4bFyUEg0IBA9gRJo/g3kfgnIer48hTU53YCzcy0yu3zeW7SAdtKluX0MICYM4Pb3iPg==
-X-Received: by 2002:a05:6a00:1401:b0:661:4a00:1e8b with SMTP id l1-20020a056a00140100b006614a001e8bmr11394543pfu.23.1686592497280;
-        Mon, 12 Jun 2023 10:54:57 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8960:fd1b:9d08:8ca1])
-        by smtp.gmail.com with ESMTPSA id x21-20020aa784d5000000b0064d566f658esm7155939pfn.135.2023.06.12.10.54.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 10:54:56 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 11:54:54 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tinghan Shen <tinghan.shen@mediatek.com>
+        d=1e100.net; s=20221208; t=1686593998; x=1689185998;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C4cxOfKTTvDZcNfp7Q3cCq6cFjQ+nLVM01oDWqMRamI=;
+        b=d2LpfZst0z7GxL/EYF3MtMGRqpGJaDDGcCRqEh0z4+jMomsJ+R3QDHF0K0VHKdUqZ0
+         hTDd8zWmV5M9+ic0SrBCsWPCfKBuLRl8LRFIqtRbyI8JP3/SMCV/2kGuGxnIhHw9AX3e
+         uAJ77xAXGh+PVb1cB2pyIiC/dST0b+k6A4obK5vaGlkqsX0/bbD0hyi1M+qvQserWFhe
+         O9oy5OJEyImU0gzf9kOd87zzeaauHFKKKG2QQ10XR2Tl2I1MVsmKTBKJYGKtSVrhUjqM
+         bTw9Ugkff6FFd7w0Ja34kUG05+RtLCqMIOi9CqldzspUGjwngpgpwsIwQbPIweV3e5ix
+         MUmA==
+X-Gm-Message-State: AC+VfDwXBtCBb94IKqDjOOrVj5pBQjkbTr0CLWlZaq2/zOsugb1xCQjH
+        Y4FV3yXB2xM5lef2FZXgARW8jw==
+X-Google-Smtp-Source: ACHHUZ6EnMu+AeLIi6226BV8ycsU3I7rA5S34eKhYzKJmE27e3+zJ4AJxKMBdeYLfK1LwtNfze4BPg==
+X-Received: by 2002:a17:907:9307:b0:973:ebbc:1d6a with SMTP id bu7-20020a170907930700b00973ebbc1d6amr10489039ejc.33.1686593997962;
+        Mon, 12 Jun 2023 11:19:57 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id a9-20020a17090680c900b0096f782f727esm5618321ejx.140.2023.06.12.11.19.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 11:19:57 -0700 (PDT)
+Message-ID: <73243db4-3caa-9746-0a78-223f512c9130@linaro.org>
+Date:   Mon, 12 Jun 2023 20:19:55 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v2 05/12] dt-bindings: remoteproc: Add Qualcomm RPM
+ processor/subsystem
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v13 07/11] remoteproc: mediatek: Add scp_boot_peers and
- scp_shutdown_peers operations
-Message-ID: <ZIdb7n3LWKRekOdu@p14s>
-References: <20230607072222.8628-1-tinghan.shen@mediatek.com>
- <20230607072222.8628-8-tinghan.shen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230607072222.8628-8-tinghan.shen@mediatek.com>
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net>
+ <20230531-rpm-rproc-v2-5-56a4a00c8260@gerhold.net>
+ <9cdf22cc-6509-b87e-e631-4e3633d1f542@linaro.org>
+ <ZISqNPnQgPNEsmxa@gerhold.net>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ZISqNPnQgPNEsmxa@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 03:22:18PM +0800, Tinghan Shen wrote:
-> Due to that SCP core 0 controls the SCP clock and SRAM power, add two
-> new mtk_scp_of_data operations, scp_boot_peers and scp_shutdown_peers,
-> to manage the boot sequence and watchdog timeout handling of SCP core 1.
-> It ensures that core 1 boots after or shuts down before core 0 for
-> maintaining the proper control flow over SCP core 1.
+On 10/06/2023 18:52, Stephan Gerhold wrote:
+> On Sat, Jun 10, 2023 at 06:43:17PM +0200, Krzysztof Kozlowski wrote:
+>> On 08/06/2023 09:10, Stephan Gerhold wrote:
+>>> On Qualcomm platforms, most subsystems (e.g. audio/modem DSP) are
+>>> described as remote processors in the device tree, with a dedicated
+>>> node where properties and services related to them can be described.
+>>> +
+>>> +  smd-edge:
+>>> +    $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
+>>> +    description:
+>>> +      Qualcomm Shared Memory subnode which represents communication edge,
+>>> +      channels and devices related to the RPM subsystem.
+>>> +
+>>> +  glink-rpm:
+>>
+>> This should be "glink-edge", to be a bit more generic and match existing
+>> smd-edge.
+>>
 > 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> ---
->  drivers/remoteproc/mtk_common.h |  3 ++
->  drivers/remoteproc/mtk_scp.c    | 55 +++++++++++++++++++++++++++++++++
->  2 files changed, 58 insertions(+)
+> I fully agree and I actually made that change at some point before
+> sending v1. Unfortunately, it doesn't work: The node name "glink-edge"
+> is already reserved by qcom,glink-edge.yaml. While it's very similar it
+> has some subtle differences to glink-rpm-edge.yaml. For example, there
+> is no qcom,remote-pid in the RPM variant which is required by the normal
+> glink-edge.
+
+But the other variant has, so they are pretty similar. It could be one
+binding or some common part. Anyway we can as well drop the nodename
+from the qcom,glink-edge.yaml binding. Anyway the binding is referenced
+by each specific remote proc, so this nodename brings nothing.
+
+> Would "glink-rpm-edge" sound better?
 > 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index 56395e8664cb..0bfd242c41cc 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -93,6 +93,8 @@ struct mtk_scp_of_data {
->  	void (*scp_reset_deassert)(struct mtk_scp *scp);
->  	void (*scp_stop)(struct mtk_scp *scp);
->  	void *(*scp_da_to_va)(struct mtk_scp *scp, u64 da, size_t len);
-> +	void (*scp_boot_peers)(struct mtk_scp *scp);
-> +	void (*scp_shutdown_peers)(struct mtk_scp *scp);
-
-This isn't what I suggested in my previous email.  This solution will not work
-if a user is looking to independently start/stop CPU1 from sysfs.
-
-I will not go further with this revision.
-
-Mathieu
-
->  
->  	u32 host_to_scp_reg;
->  	u32 host_to_scp_int_bit;
-> @@ -130,6 +132,7 @@ struct mtk_scp {
->  	struct rproc_subdev *rpmsg_subdev;
->  
->  	struct list_head elem;
-> +	struct list_head *cluster;
->  };
->  
->  /**
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index d644e232dfec..edbf71f4c21e 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -74,8 +74,21 @@ void scp_put(struct mtk_scp *scp)
->  }
->  EXPORT_SYMBOL_GPL(scp_put);
->  
-> +static void mt8195_scp_shutdown_peers(struct mtk_scp *scp)
-> +{
-> +	struct mtk_scp *next_scp;
-> +
-> +	next_scp = list_next_entry(scp, elem);
-> +	list_for_each_entry_from(next_scp, scp->cluster, elem) {
-> +		rproc_shutdown(next_scp->rproc);
-> +	}
-> +}
-> +
->  static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
->  {
-> +	if (scp->data->scp_shutdown_peers)
-> +		scp->data->scp_shutdown_peers(scp);
-> +
->  	dev_err(scp->dev, "SCP watchdog timeout! 0x%x", scp_to_host);
->  	rproc_report_crash(scp->rproc, RPROC_WATCHDOG);
->  }
-> @@ -539,6 +552,18 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> +static void mt8195_scp_boot_peers(struct mtk_scp *scp)
-> +{
-> +	struct mtk_scp *next_scp;
-> +
-> +	if (scp->cluster && !list_empty(scp->cluster)) {
-> +		next_scp = list_next_entry(scp, elem);
-> +		list_for_each_entry_from(next_scp, scp->cluster, elem) {
-> +			rproc_boot(next_scp->rproc);
-> +		}
-> +	}
-> +}
-> +
->  static int scp_start(struct rproc *rproc)
->  {
->  	struct mtk_scp *scp = rproc->priv;
-> @@ -574,6 +599,9 @@ static int scp_start(struct rproc *rproc)
->  	clk_disable_unprepare(scp->clk);
->  	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
->  
-> +	if (scp->data->scp_boot_peers)
-> +		scp->data->scp_boot_peers(scp);
-> +
->  	return 0;
->  
->  stop:
-> @@ -977,6 +1005,8 @@ static int scp_add_single_core(struct platform_device *pdev)
->  	if (IS_ERR(scp))
->  		return PTR_ERR(scp);
->  
-> +	scp->cluster = cluster;
-> +
->  	ret = rproc_add(scp->rproc);
->  	if (ret) {
->  		dev_err(dev, "Failed to add rproc\n");
-> @@ -989,6 +1019,15 @@ static int scp_add_single_core(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static void scp_rproc_boot_core0(const struct firmware *fw, void *context)
-> +{
-> +	struct rproc *rproc = context;
-> +
-> +	rproc_boot(rproc);
-> +
-> +	release_firmware(fw);
-> +}
-> +
->  static int scp_add_multi_core(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1029,6 +1068,10 @@ static int scp_add_multi_core(struct platform_device *pdev)
->  			goto init_fail;
->  		}
->  
-> +		/* boot after all cores are discovered */
-> +		scp->rproc->auto_boot = false;
-> +		scp->cluster = cluster;
-> +
->  		ret = rproc_add(scp->rproc);
->  		if (ret) {
->  			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
-> @@ -1041,6 +1084,16 @@ static int scp_add_multi_core(struct platform_device *pdev)
->  		core_id++;
->  	}
->  
-> +	/* boot core 0, and other cores are booted following core 0 */
-> +	scp = list_first_entry(cluster, struct mtk_scp, elem);
-> +	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> +				      scp->rproc->firmware, &scp->rproc->dev, GFP_KERNEL,
-> +				      scp->rproc, scp_rproc_boot_core0);
-> +	if (ret < 0) {
-> +		dev_err(dev, "request_firmware_nowait err: %d\n", ret);
-> +		goto init_fail;
-> +	}
-> +
->  	return 0;
->  
->  init_fail:
-> @@ -1198,6 +1251,8 @@ static const struct mtk_scp_of_data mt8195_of_data = {
->  	.scp_reset_deassert = mt8192_scp_reset_deassert,
->  	.scp_stop = mt8195_scp_stop,
->  	.scp_da_to_va = mt8192_scp_da_to_va,
-> +	.scp_boot_peers = mt8195_scp_boot_peers,
-> +	.scp_shutdown_peers = mt8195_scp_shutdown_peers,
->  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
->  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
->  };
-> -- 
-> 2.18.0
+> Thanks,
+> Stephan
 > 
+
+Best regards,
+Krzysztof
+
