@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0E9C88CB2
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 17:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7CEC7EE2E
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 17:55:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbjFLR0C (ORCPT
+        id S236654AbjFLRzG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 12 Jun 2023 13:26:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36756 "EHLO
+        Mon, 12 Jun 2023 13:55:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229946AbjFLRZv (ORCPT
+        with ESMTP id S237100AbjFLRzA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 12 Jun 2023 13:25:51 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70FEFB
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 10:25:49 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id e9e14a558f8ab-33b3cfb9495so28505035ab.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 10:25:49 -0700 (PDT)
+        Mon, 12 Jun 2023 13:55:00 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82C419D
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 10:54:57 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-652a6bf4e6aso3659270b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jun 2023 10:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686590749; x=1689182749;
+        d=linaro.org; s=google; t=1686592497; x=1689184497;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=asb2YbzZmJ8Y+rb0Bv7BEXuQQgx2TEfK/rGH9i109JE=;
-        b=Rsa24uUzMqdAsJHSF+h42OlPLWjVBw3NTj71LvmnWO8UCuKFOQucADXXL4ZWvmi9SM
-         CRo2N5Kpd87oAbGXRc20izEoXbhDj6Q8uY5is/C7y97JkKz2zo6iYfJouigsTDd/PuUD
-         Eo3qia7gwf2Fkp5inLywL6vGHK94Ai2Lf5r6/mlVe2Q56GWJsYfwwRY27Gd9SX+x8Xp6
-         6sGZxLX+kEY8i9kNBJxR390lFr4NglwSyjJ2HXSyOGkzHXO+nLTQPYLZBXmVMU+Dhg84
-         ZA5lzRbjur1/nzI1Jz+m133OCImpZ+FyJpjhaSDR/7y1WCKJieGPd1biDTVrxeehY+ta
-         ouJQ==
+        bh=W3QVmqP35ml+Zcd/ACOdBpI7Nl407UcaAzEIMqiZ+kc=;
+        b=EKX5sORL5xWywKAInrL8721zWX/+Td5IhSfbCg0UB2+aOGAnbONy7wM7llHRvCN4pj
+         ENHSqSPG5zQwAIhuwG21Y0WFEXml9YJx1GhSTR2fQSEB5B5QN3ii+aQsr+15Z3iQSK2p
+         CWyR0TJE/TZYDQlPeQHqAFC+sATrLr1MOL8pnwjW8SnI80u6oJK+MQAqwi81FNnnIVpj
+         FT0+k1xj8CQ04ygLZSgo+kTEfJt25w3jadn0FUj9I6aDrnEiCY5x85zFiZH6UEKA0H15
+         9HJT5jAH3z/KRTcPDbl0Xzuw9P/ZQtYWVeSXhyLmTQm4lWA8HVLHymgqizhW29nzXHGa
+         KuQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686590749; x=1689182749;
+        d=1e100.net; s=20221208; t=1686592497; x=1689184497;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=asb2YbzZmJ8Y+rb0Bv7BEXuQQgx2TEfK/rGH9i109JE=;
-        b=EBe8nqNA9D3VWFn0bOmeazR/xlLF8SzbOwZIwm9MUn7mFxi0hF3Ws+8/Ch7/BH60Gx
-         bNBGg442KXqZaEOi7+bScNixeNp0K67b0vwinH7PJrqCov/DeS7Hh7+1AilGPRFMNeqN
-         PhSS7ZMsrjQImUhNWcSMxO0NlUaFJnrlTYVsO4+dDf2M7I085ZBC5oK+m7RK7kqlHgnG
-         kbcVuwWzjdBayyQdw7pVifOuo16m6z19uEuBjaLaAORuEvss/x8JlZzaNAX/iDhTyDq7
-         Lr+ygsNJE0OCU02azLf2brV1shgtRP/XZXjUwOjAW4OWlpRAUxm08FZ1tGmLnGID4fPx
-         m6xg==
-X-Gm-Message-State: AC+VfDyzsDCuLWGatrx+5z9uyPSpQYExpLPxx2o/s2R9+i0/Redg0phx
-        I5kUTTZR2W5RB8gE36SbUNUcgw==
-X-Google-Smtp-Source: ACHHUZ6KK5XCmTiJYojtBXCpmz3GhE+omMzev7vabWUK04m/npgSBykQTp4otvpM4xPPs67s/uA40g==
-X-Received: by 2002:a92:d986:0:b0:335:542b:aa48 with SMTP id r6-20020a92d986000000b00335542baa48mr8898230iln.19.1686590749311;
-        Mon, 12 Jun 2023 10:25:49 -0700 (PDT)
+        bh=W3QVmqP35ml+Zcd/ACOdBpI7Nl407UcaAzEIMqiZ+kc=;
+        b=lNbhN5afSE/WZUNHzkVYmzRgaGUinnpWBS9wpvSOL/u5IeI2725FrPcFZlWWj8W6AR
+         AGYXR3iIZOobMJFx/GvQT7KiCsCxIJZkWV2xiGe4iMpcHb9I1vC1qBa3FtJJl7dn9AMj
+         7ME0eErRRGw9Scfnd1Z47teZBkMbvmzX4eY/reLP2Icv6y5jauGXInSwEYml2baYRcga
+         XMWnTe1Lx+8VWxWny9Vsasf/kPlm/wWaw8xhvtHzg6737jdHZeExgQ4vqP8a6XdtNo79
+         zQBIcrC7EKITyC0vyhweXkdqJ5Ffm/nrB8zvwbCibWcl2XXUqslkUTjQlbhn/a+yXHFW
+         Srdw==
+X-Gm-Message-State: AC+VfDwUDMVlsj86CdKCVkfBntfX2zi6ywxy9Xv8qvktLo9i82znedjM
+        Jkp0MJlKD5z+It4HFDsuK2SyNw==
+X-Google-Smtp-Source: ACHHUZ7c3dE4bFyUEg0IBA9gRJo/g3kfgnIer48hTU53YCzcy0yu3zeW7SAdtKluX0MICYM4Pb3iPg==
+X-Received: by 2002:a05:6a00:1401:b0:661:4a00:1e8b with SMTP id l1-20020a056a00140100b006614a001e8bmr11394543pfu.23.1686592497280;
+        Mon, 12 Jun 2023 10:54:57 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:8960:fd1b:9d08:8ca1])
-        by smtp.gmail.com with ESMTPSA id n18-20020a63e052000000b005346b9a7fe5sm7781057pgj.22.2023.06.12.10.25.48
+        by smtp.gmail.com with ESMTPSA id x21-20020aa784d5000000b0064d566f658esm7155939pfn.135.2023.06.12.10.54.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 10:25:48 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 11:25:46 -0600
+        Mon, 12 Jun 2023 10:54:56 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 11:54:54 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tinghan Shen <tinghan.shen@mediatek.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
@@ -64,308 +64,178 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v13 05/11] remoteproc: mediatek: Introduce cluster on
- single-core SCP
-Message-ID: <ZIdVGoeMH91kamAI@p14s>
+Subject: Re: [PATCH v13 07/11] remoteproc: mediatek: Add scp_boot_peers and
+ scp_shutdown_peers operations
+Message-ID: <ZIdb7n3LWKRekOdu@p14s>
 References: <20230607072222.8628-1-tinghan.shen@mediatek.com>
- <20230607072222.8628-6-tinghan.shen@mediatek.com>
+ <20230607072222.8628-8-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230607072222.8628-6-tinghan.shen@mediatek.com>
+In-Reply-To: <20230607072222.8628-8-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 03:22:16PM +0800, Tinghan Shen wrote:
-> This is the preliminary step for probing multi-core SCP.
-> The initialization procedure for remoteproc is similar for both
-> single-core and multi-core architectures and is reusing to avoid
-> redundant code.
-> 
-> Rewrite the probing flow of single-core SCP to adapt with the 'cluster'
-> concept needed by probing the multi-core SCP. The main differences
-> are,
-> - the SCP core object(s) is maintained at the cluster list instead of at
->   the platofmr device driver data property.
-> - save the cluster information at the platofmr device driver data property.
-> - In order to keep the compatibility of exported SCP APIs which getting
->   the SCP core object by SCP node phandle, move the SCP core object
->   pointers to the platform device platform data property.
-> 
-> The registers of config and l1tcm are shared for multi-core
-> SCP. Reuse the mapped addresses for all cores.
+On Wed, Jun 07, 2023 at 03:22:18PM +0800, Tinghan Shen wrote:
+> Due to that SCP core 0 controls the SCP clock and SRAM power, add two
+> new mtk_scp_of_data operations, scp_boot_peers and scp_shutdown_peers,
+> to manage the boot sequence and watchdog timeout handling of SCP core 1.
+> It ensures that core 1 boots after or shuts down before core 0 for
+> maintaining the proper control flow over SCP core 1.
 > 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 > ---
->  drivers/remoteproc/mtk_common.h |   2 +
->  drivers/remoteproc/mtk_scp.c    | 151 +++++++++++++++++++++++---------
->  2 files changed, 112 insertions(+), 41 deletions(-)
+>  drivers/remoteproc/mtk_common.h |  3 ++
+>  drivers/remoteproc/mtk_scp.c    | 55 +++++++++++++++++++++++++++++++++
+>  2 files changed, 58 insertions(+)
 > 
 > diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index c0905aec3b4b..56395e8664cb 100644
+> index 56395e8664cb..0bfd242c41cc 100644
 > --- a/drivers/remoteproc/mtk_common.h
 > +++ b/drivers/remoteproc/mtk_common.h
-> @@ -128,6 +128,8 @@ struct mtk_scp {
->  	size_t dram_size;
+> @@ -93,6 +93,8 @@ struct mtk_scp_of_data {
+>  	void (*scp_reset_deassert)(struct mtk_scp *scp);
+>  	void (*scp_stop)(struct mtk_scp *scp);
+>  	void *(*scp_da_to_va)(struct mtk_scp *scp, u64 da, size_t len);
+> +	void (*scp_boot_peers)(struct mtk_scp *scp);
+> +	void (*scp_shutdown_peers)(struct mtk_scp *scp);
+
+This isn't what I suggested in my previous email.  This solution will not work
+if a user is looking to independently start/stop CPU1 from sysfs.
+
+I will not go further with this revision.
+
+Mathieu
+
 >  
+>  	u32 host_to_scp_reg;
+>  	u32 host_to_scp_int_bit;
+> @@ -130,6 +132,7 @@ struct mtk_scp {
 >  	struct rproc_subdev *rpmsg_subdev;
-> +
-> +	struct list_head elem;
+>  
+>  	struct list_head elem;
+> +	struct list_head *cluster;
 >  };
 >  
 >  /**
 > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index d66822dad943..c8fc6b46f82b 100644
+> index d644e232dfec..edbf71f4c21e 100644
 > --- a/drivers/remoteproc/mtk_scp.c
 > +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -23,6 +23,14 @@
->  #define MAX_CODE_SIZE 0x500000
->  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
+> @@ -74,8 +74,21 @@ void scp_put(struct mtk_scp *scp)
+>  }
+>  EXPORT_SYMBOL_GPL(scp_put);
 >  
-> +struct mtk_scp_of_cluster {
-> +	void __iomem *reg_base;
-> +	void __iomem *l1tcm_base;
-> +	size_t l1tcm_size;
-> +	phys_addr_t l1tcm_phys;
-> +	struct list_head mtk_scp_list;
-> +};
+> +static void mt8195_scp_shutdown_peers(struct mtk_scp *scp)
+> +{
+> +	struct mtk_scp *next_scp;
 > +
->  /**
->   * scp_get() - get a reference to SCP.
->   *
-> @@ -51,7 +59,7 @@ struct mtk_scp *scp_get(struct platform_device *pdev)
->  		return NULL;
->  	}
->  
-> -	return platform_get_drvdata(scp_pdev);
-> +	return *(struct mtk_scp **)dev_get_platdata(&scp_pdev->dev);
->  }
->  EXPORT_SYMBOL_GPL(scp_get);
->  
-> @@ -810,14 +818,14 @@ static void scp_unmap_memory_region(struct mtk_scp *scp)
->  static int scp_register_ipi(struct platform_device *pdev, u32 id,
->  			    ipi_handler_t handler, void *priv)
+> +	next_scp = list_next_entry(scp, elem);
+> +	list_for_each_entry_from(next_scp, scp->cluster, elem) {
+> +		rproc_shutdown(next_scp->rproc);
+> +	}
+> +}
+> +
+>  static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
 >  {
-> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
-> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
->  
->  	return scp_ipi_register(scp, id, handler, priv);
+> +	if (scp->data->scp_shutdown_peers)
+> +		scp->data->scp_shutdown_peers(scp);
+> +
+>  	dev_err(scp->dev, "SCP watchdog timeout! 0x%x", scp_to_host);
+>  	rproc_report_crash(scp->rproc, RPROC_WATCHDOG);
+>  }
+> @@ -539,6 +552,18 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  	return ret;
 >  }
 >  
->  static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
+> +static void mt8195_scp_boot_peers(struct mtk_scp *scp)
+> +{
+> +	struct mtk_scp *next_scp;
+> +
+> +	if (scp->cluster && !list_empty(scp->cluster)) {
+> +		next_scp = list_next_entry(scp, elem);
+> +		list_for_each_entry_from(next_scp, scp->cluster, elem) {
+> +			rproc_boot(next_scp->rproc);
+> +		}
+> +	}
+> +}
+> +
+>  static int scp_start(struct rproc *rproc)
 >  {
-> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
-> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  	struct mtk_scp *scp = rproc->priv;
+> @@ -574,6 +599,9 @@ static int scp_start(struct rproc *rproc)
+>  	clk_disable_unprepare(scp->clk);
+>  	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
 >  
->  	scp_ipi_unregister(scp, id);
->  }
-> @@ -825,7 +833,7 @@ static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
->  static int scp_send_ipi(struct platform_device *pdev, u32 id, void *buf,
->  			unsigned int len, unsigned int wait)
->  {
-> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
-> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+> +	if (scp->data->scp_boot_peers)
+> +		scp->data->scp_boot_peers(scp);
+> +
+>  	return 0;
 >  
->  	return scp_ipi_send(scp, id, buf, len, wait);
->  }
-> @@ -855,7 +863,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
->  	}
+>  stop:
+> @@ -977,6 +1005,8 @@ static int scp_add_single_core(struct platform_device *pdev)
+>  	if (IS_ERR(scp))
+>  		return PTR_ERR(scp);
+>  
+> +	scp->cluster = cluster;
+> +
+>  	ret = rproc_add(scp->rproc);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to add rproc\n");
+> @@ -989,6 +1019,15 @@ static int scp_add_single_core(struct platform_device *pdev)
+>  	return 0;
 >  }
 >  
-> -static int scp_probe(struct platform_device *pdev)
-> +static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
-> +				      struct mtk_scp_of_cluster *scp_cluster)
+> +static void scp_rproc_boot_core0(const struct firmware *fw, void *context)
+> +{
+> +	struct rproc *rproc = context;
+> +
+> +	rproc_boot(rproc);
+> +
+> +	release_firmware(fw);
+> +}
+> +
+>  static int scp_add_multi_core(struct platform_device *pdev)
 >  {
 >  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> @@ -867,52 +876,42 @@ static int scp_probe(struct platform_device *pdev)
+> @@ -1029,6 +1068,10 @@ static int scp_add_multi_core(struct platform_device *pdev)
+>  			goto init_fail;
+>  		}
 >  
->  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
->  	if (ret < 0 && ret != -EINVAL)
-> -		return ret;
-> +		return ERR_PTR(ret);
->  
->  	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
-> -	if (!rproc)
-> -		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
-> +	if (!rproc) {
-> +		dev_err(dev, "unable to allocate remoteproc\n");
-> +		return ERR_PTR(-ENOMEM);
-> +	}
->  
->  	scp = rproc->priv;
->  	scp->rproc = rproc;
->  	scp->dev = dev;
->  	scp->data = of_device_get_match_data(dev);
-> -	platform_set_drvdata(pdev, scp);
-> +	platform_device_add_data(pdev, &scp, sizeof(scp));
+> +		/* boot after all cores are discovered */
+> +		scp->rproc->auto_boot = false;
+> +		scp->cluster = cluster;
 > +
-> +	scp->reg_base = scp_cluster->reg_base;
-> +	scp->l1tcm_base = scp_cluster->l1tcm_base;
-> +	scp->l1tcm_size = scp_cluster->l1tcm_size;
-> +	scp->l1tcm_phys = scp_cluster->l1tcm_phys;
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
->  	scp->sram_base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(scp->sram_base))
-> -		return dev_err_probe(dev, PTR_ERR(scp->sram_base),
-> -				     "Failed to parse and map sram memory\n");
-> +	if (IS_ERR(scp->sram_base)) {
-> +		dev_err(dev, "Failed to parse and map sram memory\n");
-> +		return ERR_PTR(PTR_ERR(scp->sram_base));
-
-Can you spot what is wrong here?
-
-> +	}
->  
->  	scp->sram_size = resource_size(res);
->  	scp->sram_phys = res->start;
->  
-> -	/* l1tcm is an optional memory region */
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> -	scp->l1tcm_base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(scp->l1tcm_base)) {
-> -		ret = PTR_ERR(scp->l1tcm_base);
-> -		if (ret != -EINVAL) {
-> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> -		}
-> -	} else {
-> -		scp->l1tcm_size = resource_size(res);
-> -		scp->l1tcm_phys = res->start;
-> -	}
-> -
-> -	scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
-> -	if (IS_ERR(scp->reg_base))
-> -		return dev_err_probe(dev, PTR_ERR(scp->reg_base),
-> -				     "Failed to parse and map cfg memory\n");
-> -
->  	ret = scp->data->scp_clk_get(scp);
->  	if (ret)
-> -		return ret;
-> +		return ERR_PTR(ret);
->  
->  	ret = scp_map_memory_region(scp);
->  	if (ret)
-> -		return ret;
-> +		return ERR_PTR(ret);
->  
->  	mutex_init(&scp->send_lock);
->  	for (i = 0; i < SCP_IPI_MAX; i++)
-> @@ -939,11 +938,7 @@ static int scp_probe(struct platform_device *pdev)
->  		goto remove_subdev;
+>  		ret = rproc_add(scp->rproc);
+>  		if (ret) {
+>  			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
+> @@ -1041,6 +1084,16 @@ static int scp_add_multi_core(struct platform_device *pdev)
+>  		core_id++;
 >  	}
 >  
-> -	ret = rproc_add(rproc);
-> -	if (ret)
-> -		goto remove_subdev;
-> -
-> -	return 0;
-> +	return scp;
->  
->  remove_subdev:
->  	scp_remove_rpmsg_subdev(scp);
-> @@ -954,15 +949,13 @@ static int scp_probe(struct platform_device *pdev)
->  		mutex_destroy(&scp->ipi_desc[i].lock);
->  	mutex_destroy(&scp->send_lock);
->  
-> -	return ret;
-> +	return ERR_PTR(ret);
->  }
->  
-> -static void scp_remove(struct platform_device *pdev)
-> +static void scp_free(struct mtk_scp *scp)
->  {
-> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
->  	int i;
->  
-> -	rproc_del(scp->rproc);
->  	scp_remove_rpmsg_subdev(scp);
->  	scp_ipi_unregister(scp, SCP_IPI_INIT);
->  	scp_unmap_memory_region(scp);
-> @@ -971,6 +964,82 @@ static void scp_remove(struct platform_device *pdev)
->  	mutex_destroy(&scp->send_lock);
->  }
->  
-> +static int scp_cluster_init(struct platform_device *pdev)
-> +{
-> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
-> +	struct list_head *cluster = &scp_cluster->mtk_scp_list;
-> +	struct mtk_scp *scp;
-> +	int ret;
-> +
-> +	scp = scp_rproc_init(pdev, scp_cluster);
-> +	if (IS_ERR(scp))
-> +		return PTR_ERR(scp);
-> +
-> +	ret = rproc_add(scp->rproc);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to add rproc\n");
-> +		scp_free(scp);
-> +		return ret;
+> +	/* boot core 0, and other cores are booted following core 0 */
+> +	scp = list_first_entry(cluster, struct mtk_scp, elem);
+> +	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
+> +				      scp->rproc->firmware, &scp->rproc->dev, GFP_KERNEL,
+> +				      scp->rproc, scp_rproc_boot_core0);
+> +	if (ret < 0) {
+> +		dev_err(dev, "request_firmware_nowait err: %d\n", ret);
+> +		goto init_fail;
 > +	}
 > +
-> +	list_add_tail(&scp->elem, cluster);
-> +
-> +	return 0;
-> +}
-> +
-> +static int scp_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mtk_scp_of_cluster *scp_cluster;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	scp_cluster = devm_kzalloc(dev, sizeof(*scp_cluster), GFP_KERNEL);
-> +	if (!scp_cluster)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
-> +	scp_cluster->reg_base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(scp_cluster->reg_base))
-> +		return dev_err_probe(dev, PTR_ERR(scp_cluster->reg_base),
-> +				     "Failed to parse and map cfg memory\n");
-> +
-> +	/* l1tcm is an optional memory region */
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> +	scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(scp_cluster->l1tcm_base)) {
-> +		ret = PTR_ERR(scp_cluster->l1tcm_base);
-> +		if (ret != -EINVAL)
-> +			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> +
-> +		scp_cluster->l1tcm_base = NULL;
-> +	} else {
-> +		scp_cluster->l1tcm_size = resource_size(res);
-> +		scp_cluster->l1tcm_phys = res->start;
-> +	}
-> +
-> +	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
-> +	platform_set_drvdata(pdev, scp_cluster);
-> +
-> +	ret = scp_cluster_init(pdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static void scp_remove(struct platform_device *pdev)
-> +{
-> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
-> +	struct mtk_scp *scp, *temp;
-> +
-> +	list_for_each_entry_safe_reverse(scp, temp, &scp_cluster->mtk_scp_list, elem) {
-> +		list_del(&scp->elem);
-> +		rproc_del(scp->rproc);
-> +		scp_free(scp);
-> +	}
-> +}
-> +
->  static const struct mtk_scp_of_data mt8183_of_data = {
->  	.scp_clk_get = mt8183_scp_clk_get,
->  	.scp_before_load = mt8183_scp_before_load,
+>  	return 0;
+>  
+>  init_fail:
+> @@ -1198,6 +1251,8 @@ static const struct mtk_scp_of_data mt8195_of_data = {
+>  	.scp_reset_deassert = mt8192_scp_reset_deassert,
+>  	.scp_stop = mt8195_scp_stop,
+>  	.scp_da_to_va = mt8192_scp_da_to_va,
+> +	.scp_boot_peers = mt8195_scp_boot_peers,
+> +	.scp_shutdown_peers = mt8195_scp_shutdown_peers,
+>  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+>  };
 > -- 
 > 2.18.0
 > 
