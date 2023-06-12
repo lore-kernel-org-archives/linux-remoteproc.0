@@ -2,122 +2,176 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24035C7EE43
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 10 Jun 2023 16:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 009C5C7EE2F
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 12 Jun 2023 14:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229804AbjFJQwK (ORCPT
+        id S237084AbjFLOKx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 10 Jun 2023 12:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53918 "EHLO
+        Mon, 12 Jun 2023 10:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229620AbjFJQwK (ORCPT
+        with ESMTP id S236976AbjFLOKw (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 10 Jun 2023 12:52:10 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1AA26B0;
-        Sat, 10 Jun 2023 09:52:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686415926; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=S9tuWrHM9P+DwbMzIWWJRvgBYqviXieKUUL9XWt4RigB2zwzvZzUxrM25bXtcXNmwK
-    a61HYo2YnnwvVelVR088vIFhnxvyjXYtPzDUl+MkirujDfrP+c+/gI2UAXNXxuLYHVmT
-    JF242tHKxpooHcy9uLE0QRU8uSVDRhm9gIE14r4qHhXNj7gAxdbcVPz7p1cFiCynWOyi
-    UDDlfgZ8Vo65RPLqfBVM8F52ejJKA4FYzxzIi03e6MMRSI55qrkulhxMwYq0K/u0AYD2
-    T6ybeZ0H2plWb7K610RnRDXTwXaJ/RZzIf7CxHr00mRypcnjF6nZSLQIDX9nJwdunFJR
-    vPGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686415926;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=QWIRPWXgw/uXm0KjKjXznsIUsIykKDfMwhJ/S2bPOrE=;
-    b=rmP7bcyR2HDLLSeUXXrqOffceZhKyAtQ796mxNZwt/I5WFVA47bJzWjP6mkob9+DIO
-    pkn0euJQcChYe2wyeEYsde+SsUt+QQRa4qebA7wBefpsZJbfuPROziY45KI3gGf1Zh6l
-    UmTaOO8opjRbZUczAOlGfyQ1wUv3Ticd73Y7lQZfO/pugycgW0eG8YfphXdSWtHpeLgi
-    qe4HGBwovlcnvEdRY+Drei+nRnRUkKH/b6yeoFNZgg0eNu4CORaoka5NpSSzyQqf5VPC
-    Eoah4zT5eEqfW7tuOGwssslziKHmv4xYy3ms2vRwbnJw3YcGsVDVrcVSX0uLRK7sxYNf
-    Ah2g==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686415926;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=QWIRPWXgw/uXm0KjKjXznsIUsIykKDfMwhJ/S2bPOrE=;
-    b=akLBgHXBJdPQyaTJRYWr6t0syQ93uLKt0Tm23WYuBJEhIYKYuwXdG6QYnSIGf+S8vT
-    c1auiMaL2j/YocueXoEuzlnkXZBsmAR0GtgiGB2qv40cG1zMh72kFp2rG1CzPk9w7YQh
-    kUql4Hl+f0vhqJTOxw5Asew6CKF6Hr7GHAAM89V/SKkK4DMGumULDH78WePhCHKLsI8/
-    tkGjhm1GyOW8mSVCw0jwL6LCDkUcnTiiy++4GCjs8IBzYrCsIR3s2PCFWZixC0oMPR8G
-    VARpiBFnKFLQlJUzTd4CrOsjb6rPteW2WEloIUGQcx1R5b6dgfApM3A7uU1PdMn8MS1r
-    N+XQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686415926;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=QWIRPWXgw/uXm0KjKjXznsIUsIykKDfMwhJ/S2bPOrE=;
-    b=zwSi5lfSpJ7AnKLDZ/74+CyGQVo0tfEBcaWhfcmtSIzkqc1NBTkM9M7EK/QKQ0T0Q5
-    wGdI+WRSM3T8x+wZFBDg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA9J/h"
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
-    with ESMTPSA id Z82ec2z5AGq6QY3
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Sat, 10 Jun 2023 18:52:06 +0200 (CEST)
-Date:   Sat, 10 Jun 2023 18:52:04 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v2 05/12] dt-bindings: remoteproc: Add Qualcomm RPM
- processor/subsystem
-Message-ID: <ZISqNPnQgPNEsmxa@gerhold.net>
-References: <20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net>
- <20230531-rpm-rproc-v2-5-56a4a00c8260@gerhold.net>
- <9cdf22cc-6509-b87e-e631-4e3633d1f542@linaro.org>
+        Mon, 12 Jun 2023 10:10:52 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D6E5E7B;
+        Mon, 12 Jun 2023 07:10:47 -0700 (PDT)
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35CB9kRo004087;
+        Mon, 12 Jun 2023 16:10:26 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=qDnB/Ttau+kc/Wg5I//2bOem0e9PFiWCTRRnCsljavE=;
+ b=mxBzoRgtXDbmbBLAdwsBAmrx8LMmThleqhFae/EJrdqCds8ELuHvHLAbgUm+/UO6sEvp
+ /3xdjZCGJTgALooad/6QWQabCmgqoSvjD593VEwSAPse2YgddVPEyKyRzLUGZ0+Zg31x
+ 14FDqvtAq9Butiyt0DN/WGgDXhUyFve4tTS2syk02KiOHd0B/EZB9zV6Zxd46OOt+AZP
+ n5t7Cr1LSXNeCnlECGF2JJx7K4lTjZ2pwMxDG8lcreatDAw6uqN69cv83sY2XU5ZQvod
+ bJIkIynakuYOCsiDkTj5iMNrh4Q952eYEVb4qEP5CW6+ToAnZk4fuPgfUz2V1yzqwnvw DA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3r5yd7tbsu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jun 2023 16:10:26 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B523510002A;
+        Mon, 12 Jun 2023 16:10:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A918523C6B3;
+        Mon, 12 Jun 2023 16:10:23 +0200 (CEST)
+Received: from [10.252.14.202] (10.252.14.202) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Mon, 12 Jun
+ 2023 16:10:23 +0200
+Message-ID: <7846c69b-5c2d-16d3-6079-d11a60171a69@foss.st.com>
+Date:   Mon, 12 Jun 2023 16:10:22 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9cdf22cc-6509-b87e-e631-4e3633d1f542@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] remoteproc: stm32: use correct format strings on 64-bit
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     Arnd Bergmann <arnd@arndb.de>, Ben Levinsky <ben.levinsky@amd.com>,
+        Tanmay Shah <tanmay.shah@amd.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20230609120546.3937821-1-arnd@kernel.org>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20230609120546.3937821-1-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.252.14.202]
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-12_06,2023-06-09_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Jun 10, 2023 at 06:43:17PM +0200, Krzysztof Kozlowski wrote:
-> On 08/06/2023 09:10, Stephan Gerhold wrote:
-> > On Qualcomm platforms, most subsystems (e.g. audio/modem DSP) are
-> > described as remote processors in the device tree, with a dedicated
-> > node where properties and services related to them can be described.
-> > +
-> > +  smd-edge:
-> > +    $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
-> > +    description:
-> > +      Qualcomm Shared Memory subnode which represents communication edge,
-> > +      channels and devices related to the RPM subsystem.
-> > +
-> > +  glink-rpm:
-> 
-> This should be "glink-edge", to be a bit more generic and match existing
-> smd-edge.
-> 
+Hi Arnd
 
-I fully agree and I actually made that change at some point before
-sending v1. Unfortunately, it doesn't work: The node name "glink-edge"
-is already reserved by qcom,glink-edge.yaml. While it's very similar it
-has some subtle differences to glink-rpm-edge.yaml. For example, there
-is no qcom,remote-pid in the RPM variant which is required by the normal
-glink-edge.
+On 6/9/23 14:05, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> With CONFIG_ARCH_STM32 making it into arch/arm64, a couple of format
+> strings no longer work, since they rely on size_t being compatible
+> with %x, or they print an 'int' using %z:
+> 
+> drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_mem_alloc':
+> drivers/remoteproc/stm32_rproc.c:122:22: error: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
+> drivers/remoteproc/stm32_rproc.c:122:40: note: format string is defined here
+>   122 |         dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
+>       |                                       ~^
+>       |                                        |
+>       |                                        unsigned int
+>       |                                       %lx
+> drivers/remoteproc/stm32_rproc.c:125:30: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
+> drivers/remoteproc/stm32_rproc.c:125:65: note: format string is defined here
+>   125 |                 dev_err(dev, "Unable to map memory region: %pa+%x\n",
+>       |                                                                ~^
+>       |                                                                 |
+>       |                                                                 unsigned int
+>       |                                                                %lx
+> drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_get_loaded_rsc_table':
+> drivers/remoteproc/stm32_rproc.c:646:30: error: format '%zx' expects argument of type 'size_t', but argument 4 has type 'int' [-Werror=format=]
+> drivers/remoteproc/stm32_rproc.c:646:66: note: format string is defined here
+>   646 |                 dev_err(dev, "Unable to map memory region: %pa+%zx\n",
+>       |                                                                ~~^
+>       |                                                                  |
+>       |                                                                  long unsigned int
+>       |                                                                %x
+> 
+> Fix up all three instances to work across architectures, and enable
+> compile testing for this driver to ensure it builds everywhere.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Would "glink-rpm-edge" sound better?
+
+I also have it for the stm32mp2 :)
+
+Please find a remark below , with or without that
+
+Reviewed-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+
+> ---
+>  drivers/remoteproc/Kconfig       | 2 +-
+>  drivers/remoteproc/stm32_rproc.c | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index a850e9f486dd6..48845dc8fa852 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -313,7 +313,7 @@ config ST_SLIM_REMOTEPROC
+>  
+>  config STM32_RPROC
+>  	tristate "STM32 remoteproc support"
+> -	depends on ARCH_STM32
+> +	depends on ARCH_STM32 || COMPILE_TEST
+>  	depends on REMOTEPROC
+>  	select MAILBOX
+>  	help
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index a7457777aae43..cf073bac79f73 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -119,10 +119,10 @@ static int stm32_rproc_mem_alloc(struct rproc *rproc,
+>  	struct device *dev = rproc->dev.parent;
+>  	void *va;
+>  
+> -	dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
+> +	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
+>  	va = ioremap_wc(mem->dma, mem->len);
+>  	if (IS_ERR_OR_NULL(va)) {
+> -		dev_err(dev, "Unable to map memory region: %pa+%x\n",
+> +		dev_err(dev, "Unable to map memory region: %pad+0x%zx\n",
+>  			&mem->dma, mem->len);
+>  		return -ENOMEM;
+>  	}
+> @@ -643,7 +643,7 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+>  
+>  	ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
+>  	if (IS_ERR_OR_NULL(ddata->rsc_va)) {
+> -		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
+> +		dev_err(dev, "Unable to map memory region: %pa+%x\n",
+>  			&rsc_pa, RSC_TBL_SIZE);
+
+What about cast the RSC_TBL_SIZE define instead to ensure to be independent from
+the arch and to match with the use of RSC_TBL_SIZE?
+
+#define RSC_TBL_SIZE		((size_t)1024)
 
 Thanks,
-Stephan
+Arnaud
 
+>  		ddata->rsc_va = NULL;
+>  		return ERR_PTR(-ENOMEM);
