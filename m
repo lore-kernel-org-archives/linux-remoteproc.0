@@ -2,106 +2,111 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C35B9C7EE29
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Jun 2023 10:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 653D2EB64D7
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Jun 2023 15:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240539AbjFMKGY (ORCPT
+        id S242790AbjFMP2x (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Jun 2023 06:06:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44344 "EHLO
+        Tue, 13 Jun 2023 11:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239379AbjFMKGH (ORCPT
+        with ESMTP id S242809AbjFMP2w (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Jun 2023 06:06:07 -0400
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BBDBAC;
-        Tue, 13 Jun 2023 03:06:05 -0700 (PDT)
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35D9ZI1N014655;
-        Tue, 13 Jun 2023 12:05:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=pf5/hUeYgSZiBacOfGYZ8c0QDBazie2ZPPuq8uncPHA=;
- b=SwhEA+vDBiXnI+P932+wLPczEomiKBYTXuPE4RO7F2TN1tSMhCp0c8BGvPXgiTduEuqC
- pF0y4hXhf1/FHb8JIWlkYjdZ7zN5IfBQDAO7L7KlhOdPbDUKa3/dMRamAMF3jGyqunHc
- LQMGsCvYVA2lsboqmpbgAGEoqkYxON0DNMaAuLz5Pd5RkPo35d7W1nUMtGJ+DtWvKXM/
- GZUHjjJNfH0nM5QNk55xYIy2gmr7tV6dosozWtjaDqLQvKiw4+oPf4w95S1UGJO6C441
- XxjV08+158td96Ynpnovcd9/hEaTRFcUZzDaOPKwfumLWdDlz7RhPW3LjWsVBWVyyxKx bg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3r6k1shmpc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jun 2023 12:05:36 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 9C264100045;
-        Tue, 13 Jun 2023 12:05:35 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9143921ADD9;
-        Tue, 13 Jun 2023 12:05:35 +0200 (CEST)
-Received: from [10.201.21.93] (10.201.21.93) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 13 Jun
- 2023 12:05:34 +0200
-Message-ID: <6a09a674-342e-b197-aee7-980de410e970@foss.st.com>
-Date:   Tue, 13 Jun 2023 12:05:33 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] remoteproc: stm32: use correct format strings on 64-bit
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-        Arnd Bergmann <arnd@kernel.org>,
+        Tue, 13 Jun 2023 11:28:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA9210E9;
+        Tue, 13 Jun 2023 08:28:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 554D1637B9;
+        Tue, 13 Jun 2023 15:28:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9A7C433F0;
+        Tue, 13 Jun 2023 15:28:47 +0000 (UTC)
+Date:   Tue, 13 Jun 2023 11:28:45 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
+Cc:     <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-trace-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC:     Ben Levinsky <ben.levinsky@amd.com>,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20230609120546.3937821-1-arnd@kernel.org>
- <7846c69b-5c2d-16d3-6079-d11a60171a69@foss.st.com>
- <ba58f0cb-3683-4aae-8c10-2fad2e701501@app.fastmail.com>
-From:   Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <ba58f0cb-3683-4aae-8c10-2fad2e701501@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        <linux-kernel@vger.kernel.org>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        "Elliot Berman" <quic_eberman@quicinc.com>,
+        Guru Das Srinagesh <quic_gurus@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>
+Subject: Re: [PATCH v5 2/2] remoteproc: qcom: Add remoteproc tracing
+Message-ID: <20230613112845.626670df@gandalf.local.home>
+In-Reply-To: <12b533c73b8c6b039e90f20afef1c8dcd30b80de.1686606835.git.quic_gokukris@quicinc.com>
+References: <cover.1686606835.git.quic_gokukris@quicinc.com>
+        <12b533c73b8c6b039e90f20afef1c8dcd30b80de.1686606835.git.quic_gokukris@quicinc.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.201.21.93]
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-13_04,2023-06-12_02,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Arnd
+On Mon, 12 Jun 2023 15:03:26 -0700
+Gokul krishna Krishnakumar <quic_gokukris@quicinc.com> wrote:
 
-On 6/12/23 16:17, Arnd Bergmann wrote:
-> On Mon, Jun 12, 2023, at 16:10, Arnaud POULIQUEN wrote:
-> 
->>>   	ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
->>>   	if (IS_ERR_OR_NULL(ddata->rsc_va)) {
->>> -		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
->>> +		dev_err(dev, "Unable to map memory region: %pa+%x\n",
->>>   			&rsc_pa, RSC_TBL_SIZE);
->>
->> What about cast the RSC_TBL_SIZE define instead to ensure to be independent from
->> the arch and to match with the use of RSC_TBL_SIZE?
->>
->> #define RSC_TBL_SIZE		((size_t)1024)
-> 
-> I have no objection to that, but I don't see it doing anything good either,
-> as this is a constant value that will always work.
-> 
->       Arnd
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index d4dbb8d1d80c..f7cb31b94a60 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -14,6 +14,7 @@
+>  
+>  #include <linux/irqreturn.h>
+>  #include <linux/firmware.h>
+> +#include <trace/events/remoteproc_tracepoints.h>
+>  
+>  struct rproc;
+>  
+> @@ -171,8 +172,13 @@ u64 rproc_get_boot_addr(struct rproc *rproc, const struct firmware *fw)
+>  static inline
+>  int rproc_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  {
+> -	if (rproc->ops->load)
+> -		return rproc->ops->load(rproc, fw);
+> +	if (rproc->ops->load) {
+> +		int ret;
+> +
+> +		ret = rproc->ops->load(rproc, fw);
+> +		trace_rproc_load_segment_event(rproc, ret);
+> +		return ret;
+> +	}
+>  
+>  	return -EINVAL;
+>  }
 
-The kernel robot shot me for my STM32MP25  PR due to this issue. Do I 
-have to resend something ?
+So, tracepoints in header files tend to cause problems due to the way they
+are created. See the comment in include/linux/tracepoint-defs.h.
 
-Thanks
-Alex
+What you need to do is:
+
+#include <linux/tracepoint-defs.h>
+
+DECLARE_TRACEPOINT(rproc_load_segment_event);
+
+extern void call_trace_rproc_load_segment_event(struct rproc *rproc, int ret);
+
+static inline void test_trace_rproc_load_segment_event(struct rproc *rproc, int ret)
+{
+	if (trace_rproc_load_segment_event_enabled())
+		call_trace_rproc_load_segment_event(rproc, ret);
+}
+
+After adding the above in the header. In the C file, add:
+
+void call_trace_rproc_load_segment_event(struct rproc *rproc, int ret)
+{
+	trace_rproc_load_segment_event(rproc, ret);
+}
+
+-- Steve
