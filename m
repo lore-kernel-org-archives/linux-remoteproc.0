@@ -2,115 +2,106 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74656C88CB2
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Jun 2023 07:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8967C88CB4
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 13 Jun 2023 10:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238470AbjFMHn0 (ORCPT
+        id S238226AbjFMKGB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 13 Jun 2023 03:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41408 "EHLO
+        Tue, 13 Jun 2023 06:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240556AbjFMHnG (ORCPT
+        with ESMTP id S242074AbjFMKGA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 13 Jun 2023 03:43:06 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C0D171A;
-        Tue, 13 Jun 2023 00:42:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686642165; x=1718178165;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3Ak4/m1xzWc3DziD0sz6Zov4RGEsJQMuHazVQwECIsQ=;
-  b=WRkI+BI0s7PgSqBJAoLA+ypko5V+OURoFyjpquhD7nIGfV/bGP0CaJZq
-   nHQYYGC/Sx0yjvHCWxioyC1RVHq8sg0PzSs/9ldbIL6cC1B3Z8KBW337c
-   +S4tsI1AqfO33M2grzTq6/LF+JWbaE/u3eBzXUzXQwMBSe8e9R6oGwUzm
-   dKNjlie+ikeyqdYYJQ0JfXoBBA5njzTxKxoLIiCvpkJmcTmRKJnHKHP11
-   UiIv+CPFoeDVj1XzXlbSyiuycq18u2YHUbFdiIJaaPX68z/n1jJyPb2tB
-   8GJRvSCj/rNfjkw7TOA4BFONrm04FDYq7Jg8+cP6vZaMai09qvK5AIJn9
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="338614737"
-X-IronPort-AV: E=Sophos;i="6.00,239,1681196400"; 
-   d="scan'208";a="338614737"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2023 00:42:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="781552009"
-X-IronPort-AV: E=Sophos;i="6.00,239,1681196400"; 
-   d="scan'208";a="781552009"
-Received: from lkp-server01.sh.intel.com (HELO 211f47bdb1cb) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Jun 2023 00:42:42 -0700
-Received: from kbuild by 211f47bdb1cb with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q8yfp-00016c-14;
-        Tue, 13 Jun 2023 07:42:41 +0000
-Date:   Tue, 13 Jun 2023 15:42:01 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-kernel@vger.kernel.org, Trilok Soni <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Guru Das Srinagesh <quic_gurus@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Gokul krishna Krishnakumar <quic_gokukris@quicinc.com>
-Subject: Re: [PATCH v5 2/2] remoteproc: qcom: Add remoteproc tracing
-Message-ID: <202306131523.EwZZ3cVl-lkp@intel.com>
-References: <12b533c73b8c6b039e90f20afef1c8dcd30b80de.1686606835.git.quic_gokukris@quicinc.com>
+        Tue, 13 Jun 2023 06:06:00 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 887708E;
+        Tue, 13 Jun 2023 03:05:58 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35DA4NpX000354;
+        Tue, 13 Jun 2023 12:05:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=cRX+auEkIEZ1xY8U2wyEZt0TGCmMuO7kC2MF/5cWd/M=;
+ b=DX2MIeJP2wYVKOV/Ib9YUiFVxLuweMCh5S5XG883IheVH9jsQwCdrDWJr3b7OyEx9BYw
+ r2+qcOjLUJThmE56Y4RjyjoxcOM3Lk4cg0wX31b4p1WMw2V4EPPOeQl+mxs+VRuNC7KM
+ KvmmMNUQffmNZdvR9jWafmKltWAxDMz0X3h7/jM8ejsX3g5k+5GuZQIBEYJYdcJdOYYO
+ EDkU0aIIWHqTY/Apv2Aq3Ae+1g6XzTS6OMRaM0eLTS49fYlEz1IW36QPfoLFsr2YgPb6
+ Sy90IUJdY5kDeHlvErdGaLDaqoUaVsQu2x3K9burj91ZKZs30d3hViQothSwECLtH/ry Uw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3r6pcrr07t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Jun 2023 12:05:30 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BF893100045;
+        Tue, 13 Jun 2023 12:05:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B3E6721ADD8;
+        Tue, 13 Jun 2023 12:05:26 +0200 (CEST)
+Received: from [10.252.6.14] (10.252.6.14) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Tue, 13 Jun
+ 2023 12:05:24 +0200
+Message-ID: <1ec74263-085c-68ab-3490-56172f11b7c1@foss.st.com>
+Date:   Tue, 13 Jun 2023 12:05:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12b533c73b8c6b039e90f20afef1c8dcd30b80de.1686606835.git.quic_gokukris@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] remoteproc: stm32: use correct format strings on 64-bit
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+CC:     Ben Levinsky <ben.levinsky@amd.com>,
+        Tanmay Shah <tanmay.shah@amd.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20230609120546.3937821-1-arnd@kernel.org>
+ <7846c69b-5c2d-16d3-6079-d11a60171a69@foss.st.com>
+ <ba58f0cb-3683-4aae-8c10-2fad2e701501@app.fastmail.com>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <ba58f0cb-3683-4aae-8c10-2fad2e701501@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.252.6.14]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-13_04,2023-06-12_02,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Gokul,
 
-kernel test robot noticed the following build errors:
 
-[auto build test ERROR on 1ca04f21b204e99dd704146231adfb79ea2fb366]
+On 6/12/23 16:17, Arnd Bergmann wrote:
+> On Mon, Jun 12, 2023, at 16:10, Arnaud POULIQUEN wrote:
+> 
+>>>  	ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
+>>>  	if (IS_ERR_OR_NULL(ddata->rsc_va)) {
+>>> -		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
+>>> +		dev_err(dev, "Unable to map memory region: %pa+%x\n",
+>>>  			&rsc_pa, RSC_TBL_SIZE);
+>>
+>> What about cast the RSC_TBL_SIZE define instead to ensure to be independent from
+>> the arch and to match with the use of RSC_TBL_SIZE?
+>>
+>> #define RSC_TBL_SIZE		((size_t)1024)
+> 
+> I have no objection to that, but I don't see it doing anything good either,
+> as this is a constant value that will always work.
+> 
+>      Arnd
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-krishna-Krishnakumar/remoteproc-Introduce-traces-for-remoteproc-events/20230613-060527
-base:   1ca04f21b204e99dd704146231adfb79ea2fb366
-patch link:    https://lore.kernel.org/r/12b533c73b8c6b039e90f20afef1c8dcd30b80de.1686606835.git.quic_gokukris%40quicinc.com
-patch subject: [PATCH v5 2/2] remoteproc: qcom: Add remoteproc tracing
-config: microblaze-randconfig-r003-20230612 (https://download.01.org/0day-ci/archive/20230613/202306131523.EwZZ3cVl-lkp@intel.com/config)
-compiler: microblaze-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout 1ca04f21b204e99dd704146231adfb79ea2fb366
-        b4 shazam https://lore.kernel.org/r/12b533c73b8c6b039e90f20afef1c8dcd30b80de.1686606835.git.quic_gokukris@quicinc.com
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=microblaze olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=microblaze SHELL=/bin/bash
+It was just to avoid to have the constant used with different types in the code
+But that's nitpicking, let's keep your proposal.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306131523.EwZZ3cVl-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   microblaze-linux-ld: drivers/remoteproc/remoteproc_core.o: in function `rproc_stop':
->> .tmp_gl_remoteproc_core.o:(.text+0xe1c): undefined reference to `__tracepoint_rproc_stop_event'
->> microblaze-linux-ld: .tmp_gl_remoteproc_core.o:(.text+0xe94): undefined reference to `__traceiter_rproc_stop_event'
-   microblaze-linux-ld: drivers/remoteproc/remoteproc_core.o: in function `rproc_start':
->> .tmp_gl_remoteproc_core.o:(.text.unlikely+0x664): undefined reference to `__tracepoint_rproc_load_segment_event'
->> microblaze-linux-ld: .tmp_gl_remoteproc_core.o:(.text.unlikely+0x6dc): undefined reference to `__traceiter_rproc_load_segment_event'
-   microblaze-linux-ld: drivers/remoteproc/remoteproc_core.o: in function `trace_rproc_start_event':
->> .tmp_gl_remoteproc_core.o:(.text.unlikely+0x8c8): undefined reference to `__tracepoint_rproc_start_event'
->> microblaze-linux-ld: .tmp_gl_remoteproc_core.o:(.text.unlikely+0x948): undefined reference to `__traceiter_rproc_start_event'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Arnaud
