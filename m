@@ -2,169 +2,113 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E459DEB64D8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 15:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1357EEB64D9
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 15:21:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343595AbjFNPNT (ORCPT
+        id S1343718AbjFNPVQ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jun 2023 11:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52314 "EHLO
+        Wed, 14 Jun 2023 11:21:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343594AbjFNPNR (ORCPT
+        with ESMTP id S1343705AbjFNPVP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jun 2023 11:13:17 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C4CF2101;
-        Wed, 14 Jun 2023 08:13:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686755592; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=IBLrXQumV9gvhZ5cuFdLlDATix6u1lpargigSDFWF0idUbwaf4tmwa0U+/caZ1uVGp
-    oWV84Sq1SsqsFnAy++6RuZPpC8hh1PJ5uwPHLmHKLdQPsLxmvq6ZsTRqolhPK6ZwZjBy
-    NC/JI1srL/1TmLHNakTYEB8StMQ1yREvLji8vF7hDhagfVXfm5aw5io9jchM/78t5muG
-    kJ7awRbPixNzXfdyNjqJVTOCZqlMhv+Bg5zpLI0xW3SRQ/F+OesFS6Kl9lo+Utr5XkOj
-    qbUuBzeZIsJ6CHDBE4Hq8OQUqLjrjSp/SyhYR0GA6BMFIxOurQqm4MKn7I0LLkQYeQio
-    dxZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686755592;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=6vWmnjq8PtOemDu4fY8kEJsPcuBxy1e+Pqtj3pY7T9k=;
-    b=Si4pICgNty0wr0B1iS//6ReDIJjHqhpfclr3Q0zTR9JTach9ceGMKAGl6SZPs9E05P
-    6eCM+WsN9PBjm9qnKw+k8Hm9Twt2VVaRAlviQc+m5FYsIKk5l2ipjmz2x70GVeJaeceF
-    RuTtMGqhHK8qK0kS/X1Usham7WZFGjidlMsr7sOxard1KbF/WON7u38yE1YIa9uFtmO2
-    7GNQIhrQRwJ29geAa7UI+x7kKbOe+W+8hVF/Hka1NJ0s6pXpeJzcbivSM1Gy+L8yqCFt
-    b9VEsbdEsjP3m1CeTqGWN227xkvodGeVII5cE0q5oVP+KeTg9t4kZgE708aAv5iD7tJB
-    ir4w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686755592;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=6vWmnjq8PtOemDu4fY8kEJsPcuBxy1e+Pqtj3pY7T9k=;
-    b=Mgg741W2+VYSXlbkmVk/GzFkQcxC2/kFof6xc8CuKtdI1kLDM11ACcYWDjVRgUekku
-    R8Te2sN3QYE6AKAA1Sv5cyJO0Kn1QFMQ7u0HuTv/5pLd8IExgcOKyymvxdslBhKfhCsJ
-    wu7s7K2kMX/SOUuz+tRZQpP1dLZW+YHGnBahgXgQ7BLMzxcidHVTTPG8hA+Sgc5ZD5eO
-    E1eUqnQvAGnwK/7h3kdJUsZWtNJ01xcvhLrvZ0SboilzzMSQ0DN7XnudqMfCC2RUMTib
-    VdO7siKabiq3p/bdXbe//4m0y/rUY8wb31zb0RP25h7wXYlLDfB4fvpCut84D/S6ZAp5
-    YfOQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686755592;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=6vWmnjq8PtOemDu4fY8kEJsPcuBxy1e+Pqtj3pY7T9k=;
-    b=vGqj8TXpZQtPvTEGotwrpykui0AN9b3DBr7ThBGtrsD+gJzUvZHRlwljiyVky8LJ6R
-    7kc3AdYP4uLnTFUVkXDA==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA95nh"
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
-    with ESMTPSA id D0d0a8z5EFDC0Kr
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 14 Jun 2023 17:13:12 +0200 (CEST)
-Date:   Wed, 14 Jun 2023 17:13:03 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Wed, 14 Jun 2023 11:21:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C29C5;
+        Wed, 14 Jun 2023 08:21:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CACFD63A36;
+        Wed, 14 Jun 2023 15:21:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAC5C433C8;
+        Wed, 14 Jun 2023 15:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686756073;
+        bh=8YsXKUXaEWCUoIrtqUUwU4kG3YB5yIZs9T+odfm5bLo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qqSdCzUlAis9bugdmCSIkRmGN7RIr/2eCjqEZWMss/YKvu0k1/oQ4ZzV93bCYnVCq
+         YzDEDO+2CjU4Jp+T2mPkRlL4G6i2GSRsfIZCB6fUmgkgL+hL8PIWjaqpLglX5/MmYn
+         11B+t2kYm0V8tNMvuDgA15hoa/c7oSTTi16j54Y97HbRgILCSr4It3u07B5TRrGsjv
+         B0pNIVKTs/ZMOfkC7HPhbdhvwh7Moa58yciHSaVUp2jPg960zAXLdnvuQwzMVO1YSy
+         ZJ9ZMHMK8RfoPFHwibI4jwtEwdJYvCim0loenTx9C+jW+LiiePJO/WhKZrpalthcYN
+         Firh4obe83YTg==
+Date:   Wed, 14 Jun 2023 08:24:35 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+        swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: Use of_reserved_mem_lookup()
-Message-ID: <ZInY_9QjJXIo7Bn8@gerhold.net>
-References: <20230529-rproc-of-rmem-v1-1-5b1e38880aba@gerhold.net>
- <20230614151213.qiimwth3fkic5vct@ripper>
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: Re: [PATCH V7 1/3] rpmsg: core: Add signal API support
+Message-ID: <20230614152435.2quoctx6ouvw4ous@ripper>
+References: <1682160127-18103-1-git-send-email-quic_sarannya@quicinc.com>
+ <1682160127-18103-2-git-send-email-quic_sarannya@quicinc.com>
+ <c44d8942-83e5-01ec-491b-bac1fb27de99@foss.st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230614151213.qiimwth3fkic5vct@ripper>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <c44d8942-83e5-01ec-491b-bac1fb27de99@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 08:12:13AM -0700, Bjorn Andersson wrote:
-> On Wed, May 31, 2023 at 11:34:54AM +0200, Stephan Gerhold wrote:
-> > Reserved memory can be either looked up using the generic function
-> > of_address_to_resource() or using the special of_reserved_mem_lookup().
-> > The latter has the advantage that it ensures that the referenced memory
-> > region was really reserved and is not e.g. status = "disabled".
-> > 
-> > of_reserved_mem also supports allocating reserved memory dynamically at
-> > boot time. This works only when using of_reserved_mem_lookup() since
-> > there won't be a fixed address in the device tree.
-> > 
-> > Switch the code to use of_reserved_mem_lookup(), similar to
-> > qcom_q6v5_wcss.c which is using it already. There is no functional
-> > difference for static reserved memory allocations.
-> > 
-> > While at it this also adds two missing of_node_put() calls in
-> > qcom_q6v5_pas.c.
-> > 
-> > Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> > ---
-> > See e.g. [1] for an example of dynamically allocated reserved memory.
-> > (This patch does *not* depend on [1] and is useful without as well...)
-> > 
-> > NOTE: Changes in qcom_q6v5_adsp.c and qcom_q6v5_pas.c are untested,
-> > I only checked qcom_q6v5_mss.c and qcom_wcnss.c on MSM8916/DB410c.
-> > The code changes are pretty similar for all of those though.
-> > 
-> > [1]: https://lore.kernel.org/linux-arm-msm/20230510-dt-resv-bottom-up-v1-5-3bf68873dbed@gerhold.net/
-> > ---
-> >  drivers/remoteproc/qcom_q6v5_adsp.c | 22 ++++++++--------
-> >  drivers/remoteproc/qcom_q6v5_mss.c  | 35 +++++++++++++++----------
-> >  drivers/remoteproc/qcom_q6v5_pas.c  | 51 ++++++++++++++++++++-----------------
-> >  drivers/remoteproc/qcom_wcnss.c     | 24 ++++++++---------
-> >  4 files changed, 69 insertions(+), 63 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> > index 6777a3bd6226..948b3d00a564 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> > @@ -14,8 +14,8 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/mfd/syscon.h>
-> >  #include <linux/module.h>
-> > -#include <linux/of_address.h>
-> >  #include <linux/of_device.h>
-> > +#include <linux/of_reserved_mem.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_domain.h>
-> >  #include <linux/pm_runtime.h>
-> > @@ -637,28 +637,26 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
-> >  
-> >  static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
-> >  {
-> > +	struct reserved_mem *rmem = NULL;
-> >  	struct device_node *node;
-> > -	struct resource r;
-> > -	int ret;
-> >  
-> >  	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
-> > +	if (node)
-> > +		rmem = of_reserved_mem_lookup(node);
-> > +	of_node_put(node);
-> > +
-> >  	if (!node) {
-> > -		dev_err(adsp->dev, "no memory-region specified\n");
-> > +		dev_err(adsp->dev, "unable to resolve memory-region\n");
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > -	ret = of_address_to_resource(node, 0, &r);
-> > -	of_node_put(node);
-> > -	if (ret)
-> > -		return ret;
-> > -
-> > -	adsp->mem_phys = adsp->mem_reloc = r.start;
-> > -	adsp->mem_size = resource_size(&r);
+On Mon, Apr 24, 2023 at 02:49:29PM +0200, Arnaud POULIQUEN wrote:
+> Hello,
 > 
-> Aren't you missing a check for !rmem here? (The others has it)
+> On 4/22/23 12:42, Sarannya S wrote:
+> > From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> > 
+> > Some transports like Glink support the state notifications between
+> > clients using flow control signals similar to serial protocol signals.
+> > Local glink client drivers can send and receive flow control status
+> > to glink clients running on remote processors.
+> > 
+> > Add APIs to support sending and receiving of flow control status by
+> > rpmsg clients.
+> > 
+> > Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> > Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+> > ---
+> >  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
+> >  drivers/rpmsg/rpmsg_internal.h |  2 ++
+> >  include/linux/rpmsg.h          | 15 +++++++++++++++
+> >  3 files changed, 38 insertions(+)
+> > 
+> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> > index a2207c0..e8bbe05 100644
+> > --- a/drivers/rpmsg/rpmsg_core.c
+> > +++ b/drivers/rpmsg/rpmsg_core.c
+> > @@ -331,6 +331,25 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+> >  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+> >  
+> >  /**
+> > + * rpmsg_set_flow_control() - sets/clears serial flow control signals
+> > + * @ept:	the rpmsg endpoint
+> > + * @enable:	pause/resume incoming data flow	
+> > + * @dst:	destination address of the endpoint
+> > + *
+> > + * Return: 0 on success and an appropriate error value on failure.
+> > + */
+> > +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
+> > +{
+> > +	if (WARN_ON(!ept))
+> > +		return -EINVAL;
+> > +	if (!ept->ops->set_flow_control)
+> > +		return -ENXIO;
+> 
+> Here we return an error if the backend does not implement the ops.
+> But the set_flow_control ops is optional.
+> Should we return 0 instead with a debug message?
 > 
 
-Indeed, thanks for spotting this! Will send a v2.
+It seems reasonable to allow the software to react to the absence of
+flow control support, so a debug message wouldn't help.
 
-Stephan
+But advertising that more explicitly by returning something like
+EOPNOTSUPP seems better.
+
+Regards,
+Bjorn
