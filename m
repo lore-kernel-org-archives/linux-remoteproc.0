@@ -2,113 +2,210 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1357EEB64D9
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 15:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29930EB64D8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 15:30:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343718AbjFNPVQ (ORCPT
+        id S236504AbjFNPaR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jun 2023 11:21:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59436 "EHLO
+        Wed, 14 Jun 2023 11:30:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343705AbjFNPVP (ORCPT
+        with ESMTP id S231331AbjFNPaQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jun 2023 11:21:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C29C5;
-        Wed, 14 Jun 2023 08:21:14 -0700 (PDT)
+        Wed, 14 Jun 2023 11:30:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39641FDD;
+        Wed, 14 Jun 2023 08:30:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CACFD63A36;
-        Wed, 14 Jun 2023 15:21:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAC5C433C8;
-        Wed, 14 Jun 2023 15:21:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 48D3460C5B;
+        Wed, 14 Jun 2023 15:30:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEEDC433C0;
+        Wed, 14 Jun 2023 15:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686756073;
-        bh=8YsXKUXaEWCUoIrtqUUwU4kG3YB5yIZs9T+odfm5bLo=;
+        s=k20201202; t=1686756613;
+        bh=v+krQLSQvy0RGcZLcqbIXiObIFKECGV3dMiU83A9I2g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qqSdCzUlAis9bugdmCSIkRmGN7RIr/2eCjqEZWMss/YKvu0k1/oQ4ZzV93bCYnVCq
-         YzDEDO+2CjU4Jp+T2mPkRlL4G6i2GSRsfIZCB6fUmgkgL+hL8PIWjaqpLglX5/MmYn
-         11B+t2kYm0V8tNMvuDgA15hoa/c7oSTTi16j54Y97HbRgILCSr4It3u07B5TRrGsjv
-         B0pNIVKTs/ZMOfkC7HPhbdhvwh7Moa58yciHSaVUp2jPg960zAXLdnvuQwzMVO1YSy
-         ZJ9ZMHMK8RfoPFHwibI4jwtEwdJYvCim0loenTx9C+jW+LiiePJO/WhKZrpalthcYN
-         Firh4obe83YTg==
-Date:   Wed, 14 Jun 2023 08:24:35 -0700
+        b=r9g20ssYNKtaULjYRXWMOoLGNr8ZM6tbNo/yhpgRFFeAH8p6PmFDtGHKTP8c91vrL
+         upcsrYypir8z5EQPzaglE8dDndY5hBBuZmcnwr8xvBl1m9uaaDXKTNDv9H056Ysw7I
+         cimA9WSSdat3kpguG6RPXyi3h9+TwpPZLXbnNsGXj6bkmBj/LIli+fO0o7WbYl956E
+         Q8pJxcHqV1BHcfOmwOL9czQ7uHZpPxMrL7ZKcGECxVdlLRiKlcf5mXG3KVe+NB236q
+         g1sVSCewkPMAs1kcBDAKubnRctG5W3UhZ27ea+rO9Vm5Rl7F78rj05uVV4mKF2S7JC
+         1M++kyryhcP3g==
+Date:   Wed, 14 Jun 2023 08:33:35 -0700
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+To:     Sarannya S <quic_sarannya@quicinc.com>
+Cc:     quic_bjorande@quicinc.com, arnaud.pouliquen@foss.st.com,
         swboyd@chromium.org, quic_clew@quicinc.com,
         mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>
-Subject: Re: [PATCH V7 1/3] rpmsg: core: Add signal API support
-Message-ID: <20230614152435.2quoctx6ouvw4ous@ripper>
+        Deepak Kumar Singh <quic_deesin@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH V7 2/3] rpmsg: glink: Add support to handle signals
+ command
+Message-ID: <20230614153335.w7mej6mate5tki5w@ripper>
 References: <1682160127-18103-1-git-send-email-quic_sarannya@quicinc.com>
- <1682160127-18103-2-git-send-email-quic_sarannya@quicinc.com>
- <c44d8942-83e5-01ec-491b-bac1fb27de99@foss.st.com>
+ <1682160127-18103-3-git-send-email-quic_sarannya@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c44d8942-83e5-01ec-491b-bac1fb27de99@foss.st.com>
+In-Reply-To: <1682160127-18103-3-git-send-email-quic_sarannya@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Apr 24, 2023 at 02:49:29PM +0200, Arnaud POULIQUEN wrote:
-> Hello,
+On Sat, Apr 22, 2023 at 04:12:06PM +0530, Sarannya S wrote:
+> From: Chris Lew <quic_clew@quicinc.com>
 > 
-> On 4/22/23 12:42, Sarannya S wrote:
-> > From: Deepak Kumar Singh <quic_deesin@quicinc.com>
-> > 
-> > Some transports like Glink support the state notifications between
-> > clients using flow control signals similar to serial protocol signals.
-> > Local glink client drivers can send and receive flow control status
-> > to glink clients running on remote processors.
-> > 
-> > Add APIs to support sending and receiving of flow control status by
-> > rpmsg clients.
-> > 
-> > Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-> > Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
-> > ---
-> >  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
-> >  drivers/rpmsg/rpmsg_internal.h |  2 ++
-> >  include/linux/rpmsg.h          | 15 +++++++++++++++
-> >  3 files changed, 38 insertions(+)
-> > 
-> > diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> > index a2207c0..e8bbe05 100644
-> > --- a/drivers/rpmsg/rpmsg_core.c
-> > +++ b/drivers/rpmsg/rpmsg_core.c
-> > @@ -331,6 +331,25 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
-> >  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
-> >  
-> >  /**
-> > + * rpmsg_set_flow_control() - sets/clears serial flow control signals
-> > + * @ept:	the rpmsg endpoint
-> > + * @enable:	pause/resume incoming data flow	
-> > + * @dst:	destination address of the endpoint
-> > + *
-> > + * Return: 0 on success and an appropriate error value on failure.
-> > + */
-> > +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
-> > +{
-> > +	if (WARN_ON(!ept))
-> > +		return -EINVAL;
-> > +	if (!ept->ops->set_flow_control)
-> > +		return -ENXIO;
+> Remote peripherals send signal notifications over glink with commandID 15.
 > 
-> Here we return an error if the backend does not implement the ops.
-> But the set_flow_control ops is optional.
-> Should we return 0 instead with a debug message?
+> Add support to send and receive the signal command and based signals
+> enable or disable flow control with remote host.
 > 
+> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+> ---
+>  drivers/rpmsg/qcom_glink_native.c | 64 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 01d2805..ff5e926 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/sizes.h>
+>  #include <linux/slab.h>
+> +#include <linux/termios.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/mailbox_client.h>
+>  
+> @@ -197,9 +198,15 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
+>  #define GLINK_CMD_TX_DATA_CONT		12
+>  #define GLINK_CMD_READ_NOTIF		13
+>  #define GLINK_CMD_RX_DONE_W_REUSE	14
+> +#define GLINK_CMD_SIGNALS		15
+>  
+>  #define GLINK_FEATURE_INTENTLESS	BIT(1)
+>  
+> +#define NATIVE_DTR_SIG			NATIVE_DSR_SIG
+> +#define NATIVE_DSR_SIG			BIT(31)
+> +#define NATIVE_RTS_SIG			NATIVE_CTS_SIG
+> +#define NATIVE_CTS_SIG			BIT(30)
+> +
+>  static void qcom_glink_rx_done_work(struct work_struct *work);
+>  
+>  static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
+> @@ -1014,6 +1021,58 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * qcom_glink_set_flow_control() - convert a signal cmd to wire format and
+> + * 				   transmit
+> + * @ept:	Rpmsg endpoint for channel.
+> + * @enable:	True/False - enable or disable flow control
+> + * @dst:	destination address of the endpoint
+> + *
+> + * Return: 0 on success or standard Linux error code.
+> + */
+> +static int qcom_glink_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
+> +{
+> +	struct glink_channel *channel = to_glink_channel(ept);
+> +	struct qcom_glink *glink = channel->glink;
+> +	struct glink_msg msg;
+> +	u32 sigs = 0;
+> +
+> +	if (enable)
+> +		sigs |= NATIVE_DTR_SIG | NATIVE_RTS_SIG;
+> +
+> +	msg.cmd = cpu_to_le16(GLINK_CMD_SIGNALS);
+> +	msg.param1 = cpu_to_le16(channel->lcid);
+> +	msg.param2 = cpu_to_le32(sigs);
+> +
+> +	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
+> +}
+> +
+> +static int qcom_glink_handle_signals(struct qcom_glink *glink,
+> +				     unsigned int rcid, unsigned int sigs)
+> +{
+> +	struct glink_channel *channel;
+> +	unsigned long flags;
+> +	bool enable = false;
+> +
+> +	spin_lock_irqsave(&glink->idr_lock, flags);
+> +	channel = idr_find(&glink->rcids, rcid);
+> +	spin_unlock_irqrestore(&glink->idr_lock, flags);
+> +	if (!channel) {
+> +		dev_err(glink->dev, "signal for non-existing channel\n");
+> +		return -EINVAL;
 
-It seems reasonable to allow the software to react to the absence of
-flow control support, so a debug message wouldn't help.
+You don't handle this return value, so this works fine. But the other
+cases of returning an error to qcom_glink_native_rx() indicates that no
+further messages should be processed (e.g. because there's no sufficient
+data in the FIFO).
 
-But advertising that more explicitly by returning something like
-EOPNOTSUPP seems better.
+But getting a signal on a non-existing channel is not something that's
+going to be resolved until we get the next interrupt, so I think you
+shouldn't propagate this error.
+
+Which means that it would be better to make the return type void of this
+function.
+
+> +	}
+> +
+> +	if (!channel->ept.flow_cb)
+> +		return 0;
+> +
+> +	if (sigs & (NATIVE_DSR_SIG | NATIVE_CTS_SIG))
+> +		enable = true;
+
+I'd find it cleaner to skip the early initialization and have a single
+point of assignment of enable, like:
+
+	enable = sigs & NATIVE_DSR_SIG || sigs & NATIVE_CTS_SIG;
+
+
+And consolidate the flow_cb query/invocation to one place:
+	if (channel->eptf.flow_cb)
+		channel->ept.flow_cb(, enable);
 
 Regards,
 Bjorn
+
+> +
+> +	channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
+> +
+> +	return 0;
+> +}
+> +
+>  void qcom_glink_native_rx(struct qcom_glink *glink)
+>  {
+>  	struct glink_msg msg;
+> @@ -1075,6 +1134,10 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
+>  			qcom_glink_handle_intent_req_ack(glink, param1, param2);
+>  			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+>  			break;
+> +		case GLINK_CMD_SIGNALS:
+> +			qcom_glink_handle_signals(glink, param1, param2);
+> +			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
+> +			break;
+>  		default:
+>  			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
+>  			ret = -EINVAL;
+> @@ -1449,6 +1512,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+>  	.sendto = qcom_glink_sendto,
+>  	.trysend = qcom_glink_trysend,
+>  	.trysendto = qcom_glink_trysendto,
+> +	.set_flow_control = qcom_glink_set_flow_control,
+>  };
+>  
+>  static void qcom_glink_rpdev_release(struct device *dev)
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
