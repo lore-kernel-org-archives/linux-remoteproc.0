@@ -2,209 +2,217 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29930EB64D8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 15:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5F5EB64D8
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 15:38:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236504AbjFNPaR (ORCPT
+        id S235239AbjFNPiX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jun 2023 11:30:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36690 "EHLO
+        Wed, 14 Jun 2023 11:38:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231331AbjFNPaQ (ORCPT
+        with ESMTP id S235947AbjFNPiT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jun 2023 11:30:16 -0400
+        Wed, 14 Jun 2023 11:38:19 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39641FDD;
-        Wed, 14 Jun 2023 08:30:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F123A123;
+        Wed, 14 Jun 2023 08:38:18 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 48D3460C5B;
-        Wed, 14 Jun 2023 15:30:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEEDC433C0;
-        Wed, 14 Jun 2023 15:30:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 85D9B643DA;
+        Wed, 14 Jun 2023 15:38:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD32C433C8;
+        Wed, 14 Jun 2023 15:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686756613;
-        bh=v+krQLSQvy0RGcZLcqbIXiObIFKECGV3dMiU83A9I2g=;
+        s=k20201202; t=1686757097;
+        bh=xPsZfZMXejY7kb0kn7Ws5xGYfQGwc+dwRrlGM9Khnfc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r9g20ssYNKtaULjYRXWMOoLGNr8ZM6tbNo/yhpgRFFeAH8p6PmFDtGHKTP8c91vrL
-         upcsrYypir8z5EQPzaglE8dDndY5hBBuZmcnwr8xvBl1m9uaaDXKTNDv9H056Ysw7I
-         cimA9WSSdat3kpguG6RPXyi3h9+TwpPZLXbnNsGXj6bkmBj/LIli+fO0o7WbYl956E
-         Q8pJxcHqV1BHcfOmwOL9czQ7uHZpPxMrL7ZKcGECxVdlLRiKlcf5mXG3KVe+NB236q
-         g1sVSCewkPMAs1kcBDAKubnRctG5W3UhZ27ea+rO9Vm5Rl7F78rj05uVV4mKF2S7JC
-         1M++kyryhcP3g==
-Date:   Wed, 14 Jun 2023 08:33:35 -0700
+        b=YccOMKqouS1zlk/hKjfl6CkEmKWbWGOTqiEYcijXCM5QzpGjxk971Lrv47HQnUXQ8
+         4fQtS3iJ/gL9acmbIDF/LWD1ebHDF/Sr7zDXkcIWtkh4tIUrZFbI2XWgJdQrbHtsHY
+         huN/R4w6XQmiN+pzmSEI4TVMyuVCXnwZQcvBM1HEW7xisH8ewgZ4VvaLTMGYr1RuLF
+         NmfG7mmyLcoZX5zeubDq2/MMUq61u3JXbXaW7J2b65dnAUJCGuuvWArfVSgxyxzkP0
+         oJ7buPnAn1vyO0/8Ikmcw2of2RcfAlYVGTeS9Qv6RqEMcH+m/wmgzHrro4pTQYmZX1
+         c8SNQX4GlupSA==
+Date:   Wed, 14 Jun 2023 08:41:40 -0700
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Sarannya S <quic_sarannya@quicinc.com>
 Cc:     quic_bjorande@quicinc.com, arnaud.pouliquen@foss.st.com,
         swboyd@chromium.org, quic_clew@quicinc.com,
         mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH V7 2/3] rpmsg: glink: Add support to handle signals
- command
-Message-ID: <20230614153335.w7mej6mate5tki5w@ripper>
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: Re: [PATCH V7 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL
+ support
+Message-ID: <20230614154140.4ebqtkaccha2rmqp@ripper>
 References: <1682160127-18103-1-git-send-email-quic_sarannya@quicinc.com>
- <1682160127-18103-3-git-send-email-quic_sarannya@quicinc.com>
+ <1682160127-18103-4-git-send-email-quic_sarannya@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1682160127-18103-3-git-send-email-quic_sarannya@quicinc.com>
+In-Reply-To: <1682160127-18103-4-git-send-email-quic_sarannya@quicinc.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Apr 22, 2023 at 04:12:06PM +0530, Sarannya S wrote:
+On Sat, Apr 22, 2023 at 04:12:07PM +0530, Sarannya S wrote:
 > From: Chris Lew <quic_clew@quicinc.com>
 > 
-> Remote peripherals send signal notifications over glink with commandID 15.
-> 
-> Add support to send and receive the signal command and based signals
-> enable or disable flow control with remote host.
+> Add RPMSG_GET_OUTGOING_FLOWCONTROL and RPMSG_SET_INCOMING_FLOWCONTROL
+> IOCTL support for rpmsg char device nodes to get/set the low level
+> transport signals.
 > 
 > Signed-off-by: Chris Lew <quic_clew@quicinc.com>
 > Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
 > Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
 > ---
->  drivers/rpmsg/qcom_glink_native.c | 64 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 64 insertions(+)
+>  drivers/rpmsg/rpmsg_char.c | 49 ++++++++++++++++++++++++++++++++++++++++------
+>  include/uapi/linux/rpmsg.h | 11 ++++++++++-
+>  2 files changed, 53 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index 01d2805..ff5e926 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -16,6 +16,7 @@
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index a271fce..d50908f 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -23,6 +23,7 @@
 >  #include <linux/rpmsg.h>
->  #include <linux/sizes.h>
+>  #include <linux/skbuff.h>
 >  #include <linux/slab.h>
 > +#include <linux/termios.h>
->  #include <linux/workqueue.h>
->  #include <linux/mailbox_client.h>
+>  #include <linux/uaccess.h>
+>  #include <uapi/linux/rpmsg.h>
 >  
-> @@ -197,9 +198,15 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
->  #define GLINK_CMD_TX_DATA_CONT		12
->  #define GLINK_CMD_READ_NOTIF		13
->  #define GLINK_CMD_RX_DONE_W_REUSE	14
-> +#define GLINK_CMD_SIGNALS		15
+> @@ -68,6 +69,8 @@ struct rpmsg_eptdev {
+>  	struct sk_buff_head queue;
+>  	wait_queue_head_t readq;
 >  
->  #define GLINK_FEATURE_INTENTLESS	BIT(1)
->  
-> +#define NATIVE_DTR_SIG			NATIVE_DSR_SIG
-> +#define NATIVE_DSR_SIG			BIT(31)
-> +#define NATIVE_RTS_SIG			NATIVE_CTS_SIG
-> +#define NATIVE_CTS_SIG			BIT(30)
-> +
->  static void qcom_glink_rx_done_work(struct work_struct *work);
->  
->  static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-> @@ -1014,6 +1021,58 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
->  	return 0;
->  }
->  
-> +/**
-> + * qcom_glink_set_flow_control() - convert a signal cmd to wire format and
-> + * 				   transmit
-> + * @ept:	Rpmsg endpoint for channel.
-> + * @enable:	True/False - enable or disable flow control
-> + * @dst:	destination address of the endpoint
-> + *
-> + * Return: 0 on success or standard Linux error code.
-> + */
-> +static int qcom_glink_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
-> +{
-> +	struct glink_channel *channel = to_glink_channel(ept);
-> +	struct qcom_glink *glink = channel->glink;
-> +	struct glink_msg msg;
-> +	u32 sigs = 0;
-> +
-> +	if (enable)
-> +		sigs |= NATIVE_DTR_SIG | NATIVE_RTS_SIG;
-> +
-> +	msg.cmd = cpu_to_le16(GLINK_CMD_SIGNALS);
-> +	msg.param1 = cpu_to_le16(channel->lcid);
-> +	msg.param2 = cpu_to_le32(sigs);
-> +
-> +	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-> +}
-> +
-> +static int qcom_glink_handle_signals(struct qcom_glink *glink,
-> +				     unsigned int rcid, unsigned int sigs)
-> +{
-> +	struct glink_channel *channel;
-> +	unsigned long flags;
-> +	bool enable = false;
-> +
-> +	spin_lock_irqsave(&glink->idr_lock, flags);
-> +	channel = idr_find(&glink->rcids, rcid);
-> +	spin_unlock_irqrestore(&glink->idr_lock, flags);
-> +	if (!channel) {
-> +		dev_err(glink->dev, "signal for non-existing channel\n");
-> +		return -EINVAL;
+> +	bool remote_flow;
 
-You don't handle this return value, so this works fine. But the other
-cases of returning an error to qcom_glink_native_rx() indicates that no
-further messages should be processed (e.g. because there's no sufficient
-data in the FIFO).
+I was about to agree with Arnaud, that this needs to be defaulted to
+true. But the flag means "has the remote asked for flow to be limited".
 
-But getting a signal on a non-existing channel is not something that's
-going to be resolved until we get the next interrupt, so I think you
-shouldn't propagate this error.
+As such, the name of this variable is misleading. Please rename it
+"remote_flow_restricted" or something like that.
 
-Which means that it would be better to make the return type void of this
-function.
-
-> +	}
-> +
-> +	if (!channel->ept.flow_cb)
-> +		return 0;
-> +
-> +	if (sigs & (NATIVE_DSR_SIG | NATIVE_CTS_SIG))
-> +		enable = true;
-
-I'd find it cleaner to skip the early initialization and have a single
-point of assignment of enable, like:
-
-	enable = sigs & NATIVE_DSR_SIG || sigs & NATIVE_CTS_SIG;
-
-
-And consolidate the flow_cb query/invocation to one place:
-	if (channel->eptf.flow_cb)
-		channel->ept.flow_cb(, enable);
+And please update the kerneldoc for this struct.
 
 Regards,
 Bjorn
 
+> +	bool remote_flow_updated;
+>  };
+>  
+>  int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+> @@ -116,6 +119,18 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  	return 0;
+>  }
+>  
+> +static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable)
+> +{
+> +	struct rpmsg_eptdev *eptdev = priv;
 > +
-> +	channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
+> +	eptdev->remote_flow = enable;
+> +	eptdev->remote_flow_updated = true;
+> +
+> +	wake_up_interruptible(&eptdev->readq);
 > +
 > +	return 0;
 > +}
 > +
->  void qcom_glink_native_rx(struct qcom_glink *glink)
+>  static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
 >  {
->  	struct glink_msg msg;
-> @@ -1075,6 +1134,10 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
->  			qcom_glink_handle_intent_req_ack(glink, param1, param2);
->  			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
->  			break;
-> +		case GLINK_CMD_SIGNALS:
-> +			qcom_glink_handle_signals(glink, param1, param2);
-> +			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-> +			break;
->  		default:
->  			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
->  			ret = -EINVAL;
-> @@ -1449,6 +1512,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
->  	.sendto = qcom_glink_sendto,
->  	.trysend = qcom_glink_trysend,
->  	.trysendto = qcom_glink_trysendto,
-> +	.set_flow_control = qcom_glink_set_flow_control,
->  };
+>  	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+> @@ -152,6 +167,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  		return -EINVAL;
+>  	}
 >  
->  static void qcom_glink_rpdev_release(struct device *dev)
+> +	ept->flow_cb = rpmsg_ept_flow_cb;
+>  	eptdev->ept = ept;
+>  	filp->private_data = eptdev;
+>  	mutex_unlock(&eptdev->ept_lock);
+> @@ -172,6 +188,7 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+>  		eptdev->ept = NULL;
+>  	}
+>  	mutex_unlock(&eptdev->ept_lock);
+> +	eptdev->remote_flow_updated = false;
+>  
+>  	/* Discard all SKBs */
+>  	skb_queue_purge(&eptdev->queue);
+> @@ -285,6 +302,9 @@ static __poll_t rpmsg_eptdev_poll(struct file *filp, poll_table *wait)
+>  	if (!skb_queue_empty(&eptdev->queue))
+>  		mask |= EPOLLIN | EPOLLRDNORM;
+>  
+> +	if (eptdev->remote_flow_updated)
+> +		mask |= EPOLLPRI;
+> +
+>  	mutex_lock(&eptdev->ept_lock);
+>  	mask |= rpmsg_poll(eptdev->ept, filp, wait);
+>  	mutex_unlock(&eptdev->ept_lock);
+> @@ -297,14 +317,31 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  {
+>  	struct rpmsg_eptdev *eptdev = fp->private_data;
+>  
+> -	if (cmd != RPMSG_DESTROY_EPT_IOCTL)
+> -		return -EINVAL;
+> +	bool set;
+> +	int ret;
+>  
+> -	/* Don't allow to destroy a default endpoint. */
+> -	if (eptdev->default_ept)
+> -		return -EINVAL;
+> +	switch (cmd) {
+> +	case RPMSG_GET_OUTGOING_FLOWCONTROL:
+> +		eptdev->remote_flow_updated = false;
+> +		ret = put_user(eptdev->remote_flow, (int __user *)arg);
+> +		break;
+> +	case RPMSG_SET_INCOMING_FLOWCONTROL:
+> +		set = !!arg;
+> +		ret = rpmsg_set_flow_control(eptdev->ept, set, eptdev->chinfo.dst);
+> +		break;
+> +	case RPMSG_DESTROY_EPT_IOCTL:
+> +		/* Don't allow to destroy a default endpoint. */
+> +		if (eptdev->default_ept) {
+> +			ret = -EINVAL;
+> +			break;
+> +		}
+> +		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +	}
+>  
+> -	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> +	return ret;
+>  }
+>  
+>  static const struct file_operations rpmsg_eptdev_fops = {
+> diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+> index 1637e68..c955e27 100644
+> --- a/include/uapi/linux/rpmsg.h
+> +++ b/include/uapi/linux/rpmsg.h
+> @@ -10,7 +10,6 @@
+>  #include <linux/types.h>
+>  
+>  #define RPMSG_ADDR_ANY		0xFFFFFFFF
+> -
+>  /**
+>   * struct rpmsg_endpoint_info - endpoint info representation
+>   * @name: name of service
+> @@ -43,4 +42,14 @@ struct rpmsg_endpoint_info {
+>   */
+>  #define RPMSG_RELEASE_DEV_IOCTL	_IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
+>  
+> +/**
+> + * Set the flow control for the remote rpmsg char device.
+> + */
+> +#define RPMSG_GET_OUTGOING_FLOWCONTROL _IOW(0xb5, 0x5, struct rpmsg_endpoint_info)
+> +
+> +/**
+> + * Set the flow control for the local rpmsg char device.
+> + */
+> +#define RPMSG_SET_INCOMING_FLOWCONTROL _IOW(0xb5, 0x6, struct rpmsg_endpoint_info)
+> +
+>  #endif
 > -- 
 > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 > a Linux Foundation Collaborative Project
