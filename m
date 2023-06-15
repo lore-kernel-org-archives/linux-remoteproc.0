@@ -2,77 +2,78 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 533DCC0015E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD965EB64D9
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237597AbjFOQvT (ORCPT
+        id S237810AbjFOQva (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48968 "EHLO
+        Thu, 15 Jun 2023 12:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232816AbjFOQvH (ORCPT
+        with ESMTP id S236546AbjFOQvK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jun 2023 12:51:07 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE352700;
-        Thu, 15 Jun 2023 09:51:01 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686847854; cv=none;
+        Thu, 15 Jun 2023 12:51:10 -0400
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1C2295B;
+        Thu, 15 Jun 2023 09:51:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1686847856; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=WZWd7Gl/e+4dCnuTPOnZzwtcCG0Og+xPH/+GuAJHhkZXvYaUWsETWHTOyTz5UK2x/Z
-    +yO+ojjnfrrcvaec2jkBWl72SEEBHIvcA48Gad4I41Jz6YQvR/kf31rTOxo+W3HAHY5J
-    rb24knGAWoen2fQXci+0z1fS7K8vurO1ENC+jb2DiygjEFtH1hrS0S7fPneIYlMlsGon
-    K+Bk+Kz9UMmHxYrSTz6EhgsE+KQqTpXJtmeGZZKd+93Km3tWS9CV1y1RgS+cnbvgwuEq
-    6QCmFrCxd+wieqXJLT1RILGAtk1nu2LVE8T7kCE84dBS6HcikBs1tLtcWikU6cw+Y6eH
-    0fug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847854;
+    b=ZGZXJkfzELpI5qbC7xNTY8jGr83JyQ8SWqdBpz9hVxd2l9eK56I1Dqja57/2E55UXl
+    LjOvYc+nAbC4XNkbFl5kzLMuq+ogtE1Gh0ujTyYrKF2Mp2EtyzYJf+9YsTOWgFqQGkHE
+    t32wUDh7uSr71YVqNXZSGrtR3sL09krDYzfjXMhmucaaOxG/idfGGfmon6QTS+VDzXIh
+    hN8JVlqbHiA+ouE5rH9Hnpq3Q5CMJm2/rUU+XL1KZzChtP1Yhm7bgG0glmzhLwU8qTa3
+    7AhgIzuqrZJte0EvkCM8ojo7D/Lvh9eULr8OUd2qaThrpCEf8Z8qTt12jmXZ/L8ZuvfB
+    E8Kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847856;
     s=strato-dkim-0002; d=strato.com;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=9/8QJ+83SZcgzyzGg/ZFQUfcHWHODKJgtfjIafRsPyA=;
-    b=BGIuokiT9kjWQkSo+wAoJ//TZD20eiI37QPFtpJxUvDWBV4N5Otwga35iHmVwNwUw7
-    5DbG5Yhb2VgBn8nYCoHFWeN6NVjl+BpPgRAy1QKkRIiF2ma+hlNi8ai/9SMLjOfHUuYo
-    4NffxUr9O6c9wuOj++3lijWkaRueoz1acQpHg/gV2pSF0mtM7dx+sIWrRANj9jHG12L/
-    5qjcHntDbr7XUezlsJPkHc7WHkUAGfLjQwU49Rm5ShbIoqFR3UV1e0/NoGJnwFa7e0Gq
-    1zMCujDMgrF07zU5I2Yw4HFX/cENhRiXL469+WhfDavIwI3preUN0pv/PSxdruJw00Y3
-    yjkA==
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=95SvKWInsXsv+9QW7/rF4CGFetma59LUlbDrol1rcU8=;
+    b=tt/btTwMbuEEWjf8/0lg33mHeyCHZMr1zHohvGgaTGTQgR1In3LUHiNiXOajX+9/Kp
+    7u8o78O0+0bmxZ3b/rcyeonIJ+YjRuzVH9M+HZpb/9q9WkPmdmOBKryxjx47b4m8nt8a
+    kTbNI+mj/1McDA0ZtgfRXwMiA6BZJ0vwHDmAGZtl34E/11zzi60NrlYIwUrmzug1dxr3
+    EYq3WSe+EObL50hCmj+G+IpjELiaKbVQQMAricgZttt6K4R8usXCdOx1Q4ak3TqW4eSQ
+    PD2cEw/oq7IVlaZIcQceNTojeWGxbNAB8OEk98trfR00PmB3zx2e3jsiL5YaCLeg6bUi
+    L2xw==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847854;
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847856;
     s=strato-dkim-0002; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=9/8QJ+83SZcgzyzGg/ZFQUfcHWHODKJgtfjIafRsPyA=;
-    b=oBIXHM/sdqjI9z21xotX84DseviHVTpW4k7xCGTIRY2y4O7Jv+bQjxelfD9qedze5i
-    FPvEDFpazpW4pGbEQfMlKV7zV4wdmK+3p/Jr7lxmD1T1UtkWQennsHjzfZj/xlytJkSj
-    EnnADF1PIe+UgbHAYA7NFUoucFJtU45HXfq2MVeSTa9J+7q71mk2mATB9LWVO4nqA5cT
-    mqqHD4Rk0++aFYwatwQtOMoULzIDX5Crm1MctZXx3bW6FsnaRKgW0DHoiyJTcbtwy0Cm
-    3ELud1s3i87QnJ66W8ctLIb886yvNCBgO4QUrsG7avTqi10HuGg3xYX8E7ucj0BBOeKQ
-    RKtQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847854;
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=95SvKWInsXsv+9QW7/rF4CGFetma59LUlbDrol1rcU8=;
+    b=EULwcBjRf+O3kC9HslXclBsz3fUF3+F4XHVabuRTuf4Xisb1mkoiw+g/z+z9o/rkmO
+    kfnMi09LlYfdQG/OCnv2VfmtN/YqZB5BtCmH1Cg4OkGbbQo8Oqciwf4WOVgjG6RHENJy
+    CyalVasfvIcLQCLxov4/XGJ6ue6rKIPJmRy1DS6EzFS6g/g0Jm7Pa53DMau9wlOpjqXz
+    TIOkMA91kyb25aVUKlqLRH0X/2iMaAwmOQUk5qVXgiQ/yD0+QxJr5WluyBpFtyvwPQnk
+    CR+RR5gFR60dbtJvKEr8LDhiUc7stz/MvaVONHbgqXMvuM1RonMtlyCDDGWJue/OfG+w
+    stfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847856;
     s=strato-dkim-0003; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=9/8QJ+83SZcgzyzGg/ZFQUfcHWHODKJgtfjIafRsPyA=;
-    b=k2QyQAiSYag3CntnROxXNGAizBsC7HYHpctzhG4w9q2W6C4+xndI7rx3u4TgwvsODi
-    MyIf57S4i7+J7NK0eUBw==
+    h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
+    From:Subject:Sender;
+    bh=95SvKWInsXsv+9QW7/rF4CGFetma59LUlbDrol1rcU8=;
+    b=f6GYRh5Z7LmCyr5Kbmwv6nuiAOAnJUZz7iuz8ds5IRvOUqZFTVOiUsCoRAEWim4lq8
+    Ty0233VdZzMK9jdDWxDA==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn9VOf59w=="
 Received: from [192.168.244.3]
     by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
-    with ESMTPSA id D0d0a8z5FGos42b
+    with ESMTPSA id D0d0a8z5FGou42h
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Thu, 15 Jun 2023 18:50:54 +0200 (CEST)
+    Thu, 15 Jun 2023 18:50:56 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v3 00/13] Add dedicated device tree node for RPM
+Date:   Thu, 15 Jun 2023 18:50:39 +0200
+Subject: [PATCH v3 06/13] dt-bindings: remoteproc: Add Qualcomm RPM
  processor/subsystem
-Date:   Thu, 15 Jun 2023 18:50:33 +0200
-Message-Id: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFlBi2QC/3WNyw7CIBBFf6VhLYZHi9WV/2FcUJgWkgoNVKJp+
- u9OuzPRxSzOzZx7F5IhecjkUi0kQfHZx4AgDxUxTocBqLfIRDAhWSM5TdMDL0VDT00rVd3Ks7G
- W4H+nM9Au6WAcGuE5jhhOCXr/2gdud2Tn8xzTe98rfEt/VRdOGQWmZacs8J7X1wGSi6M9BpjJ1
- lPEX1eg2yhda8ZMKxT7dtd1/QDD2RAo9QAAAA==
+Message-Id: <20230531-rpm-rproc-v3-6-a07dcdefd918@gerhold.net>
+References: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
+In-Reply-To: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 To:     Bjorn Andersson <andersson@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -82,96 +83,270 @@ Cc:     Andy Gross <agross@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Stephan Gerhold <stephan@gerhold.net>
 X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The Resource Power Manager (RPM) currently does not have a dedicated 
-device tree node that represents the remoteproc/subsystem. The 
-functionality exposed through the SMD/GLINK channels is described in 
-top-level nodes of the device tree. This makes it hard to group other 
-functionality provided by the RPM together in the device tree. This 
-series adds a single top-level remoteproc-rpm/rpm-proc device tree node 
-that groups all RPM functionality together.
+On Qualcomm platforms, most subsystems (e.g. audio/modem DSP) are
+described as remote processors in the device tree, with a dedicated
+node where properties and services related to them can be described.
+
+The Resource Power Manager (RPM) is also such a subsystem, with a
+remote processor that is running a special firmware. Unfortunately,
+the RPM never got a dedicated node representing it properly in the
+device tree. Most of the RPM services are described below a top-level
+/smd or /rpm-glink node.
+
+However, SMD/GLINK is just one of the communication channels to the RPM
+firmware. For example, the MPM interrupt functionality provided by the
+RPM does not use SMD/GLINK but writes directly to a special memory
+region allocated by the RPM firmware in combination with a mailbox.
+Currently there is no good place in the device tree to describe this
+functionality. It doesn't belong below SMD/GLINK but it's not an
+independent top-level device either.
+
+Introduce a new "qcom,rpm-proc" compatible that allows describing the
+RPM as a remote processor/subsystem like all others. The SMD/GLINK node
+is moved to a "smd-edge"/"glink-edge" subnode consistent with other
+existing bindings. Additional subnodes (e.g. interrupt-controller for
+MPM, rpm-master-stats) can be also added there.
+
+Deprecate using the old top-level /smd node since all SMD edges
+are now specified as subnodes of the remote processor.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
-Changes in v3:
-- Rename "glink-rpm" -> "glink-edge" for consistency
-- Add extra patch that drops $nodename from qcom,glink-edge.yaml to 
-  allow using the same node name for glink-rpm-edge (Krzysztof)
-- Link to v2: https://lore.kernel.org/r/20230531-rpm-rproc-v2-0-56a4a00c8260@gerhold.net
-
-Changes in v2:
-- Pick up review/test tags from Konrad and Krzysztof
-- Rename "remoteproc-rpm" -> "remoteproc" everywhere (Krzysztof/Konrad)
-- "dt-bindings: remoteproc: Add Qualcomm RPM processor/subsystem"
-  - Squash with other dt-bindings changes to have atomic refactoring (Krzysztof)
-  - Add diagrams from discussion as clarification
-- "soc: qcom: smem: Add qcom_smem_is_available()"
-  - Add return documentation in qcom_smem_is_available() (Konrad)
-- "soc: qcom: Add RPM processor/subsystem driver"
-  - Add missing of_node_put(), fix children (Konrad)
-  - Add depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n to fix build 
-    error in weird kernel configurations (kernel test robot)
-- Link to v1: https://lore.kernel.org/r/20230531-rpm-rproc-v1-0-e0a3b6de1f14@gerhold.net
-
+This patch is based on qcom/for-next, since it needs the new
+qcom,rpm-master-stats.yaml schema that is only applied there.
 ---
-Stephan Gerhold (13):
-      dt-bindings soc: qcom: smd-rpm: Fix sort order
-      dt-bindings: soc: qcom: smd-rpm: Add MSM8909 to qcom,smd-channels
-      dt-bindings: soc: qcom: smd-rpm: Add some more compatibles
-      soc: qcom: smd-rpm: Match rpmsg channel instead of compatible
-      dt-bindings: remoteproc: glink-rpm-edge: Use "glink-edge" as node name
-      dt-bindings: remoteproc: Add Qualcomm RPM processor/subsystem
-      soc: qcom: smem: Add qcom_smem_is_available()
-      rpmsg: qcom_smd: Use qcom_smem_is_available()
-      soc: qcom: Add RPM processor/subsystem driver
-      arm64: dts: qcom: Add rpm-proc node for SMD platforms
-      arm64: dts: qcom: Add rpm-proc node for GLINK gplatforms
-      ARM: dts: qcom: Add rpm-proc node for SMD platforms
-      ARM: dts: qcom: apq8064: Drop redundant /smd node
-
- .../bindings/remoteproc/qcom,glink-edge.yaml       |   3 -
- .../bindings/remoteproc/qcom,glink-rpm-edge.yaml   |   2 +-
  .../bindings/remoteproc/qcom,rpm-proc.yaml         | 171 +++++++++++++++++++++
- .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml |  23 ++-
+ .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml |   6 +-
  .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |   7 +
- arch/arm/boot/dts/qcom-apq8064.dtsi                |  40 -----
- arch/arm/boot/dts/qcom-apq8084.dtsi                |   6 +-
- arch/arm/boot/dts/qcom-msm8226.dtsi                |  38 ++---
- arch/arm/boot/dts/qcom-msm8974.dtsi                |  44 +++---
- arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  48 +++---
- arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  28 ++--
- arch/arm64/boot/dts/qcom/msm8916.dtsi              |   6 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi              | 112 +++++++-------
- arch/arm64/boot/dts/qcom/msm8953.dtsi              | 136 ++++++++--------
- arch/arm64/boot/dts/qcom/msm8976.dtsi              | 152 +++++++++---------
- arch/arm64/boot/dts/qcom/msm8994.dtsi              |  99 ++++++------
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 113 +++++++-------
- arch/arm64/boot/dts/qcom/msm8998.dtsi              |  98 ++++++------
- arch/arm64/boot/dts/qcom/qcm2290.dtsi              | 126 +++++++--------
- arch/arm64/boot/dts/qcom/qcs404.dtsi               | 152 +++++++++---------
- arch/arm64/boot/dts/qcom/sdm630.dtsi               | 132 ++++++++--------
- arch/arm64/boot/dts/qcom/sm6115.dtsi               | 128 +++++++--------
- arch/arm64/boot/dts/qcom/sm6125.dtsi               | 140 +++++++++--------
- arch/arm64/boot/dts/qcom/sm6375.dtsi               | 126 +++++++--------
- drivers/rpmsg/qcom_smd.c                           |  10 +-
- drivers/soc/qcom/Kconfig                           |   1 +
- drivers/soc/qcom/Makefile                          |   2 +-
- drivers/soc/qcom/rpm-proc.c                        |  77 ++++++++++
- drivers/soc/qcom/smd-rpm.c                         |  35 ++---
- drivers/soc/qcom/smem.c                            |  11 ++
- include/linux/soc/qcom/smem.h                      |   1 +
- 31 files changed, 1162 insertions(+), 905 deletions(-)
----
-base-commit: d89ca618c27b9720f40c7f2b0cde673b51583059
-change-id: 20230531-rpm-rproc-758364839cdd
+ 3 files changed, 181 insertions(+), 3 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.yaml
+new file mode 100644
+index 000000000000..7afafde17a38
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,rpm-proc.yaml
+@@ -0,0 +1,171 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/qcom,rpm-proc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Resource Power Manager (RPM) Processor/Subsystem
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++  - Konrad Dybcio <konrad.dybcio@linaro.org>
++  - Stephan Gerhold <stephan@gerhold.net>
++
++description: |
++  Resource Power Manager (RPM) subsystem found in various Qualcomm platforms:
++
++                  +--------------------------------------------+
++                  |       RPM subsystem (qcom,rpm-proc)        |
++                  |                                            |
++            reset | +---------------+     +-----+  +-----+     |
++          --------->|               |     | MPM |  | CPR | ... |
++   IPC interrupts | | ARM Cortex-M3 |---  +-----+  +-----+     |
++  ----------------->|               |  |     |        |        |
++                  | +---------------+  |---------------------- |
++                  | +---------------+  |                       |
++                  | |   Code RAM    |--|  +------------------+ |
++                  | +---------------+  |  |                  | |
++                  | +---------------+  |--|   Message RAM    | |
++                  | |   Data RAM    |--|  |                  | |
++                  | +---------------+  |  +------------------+ |
++                  +--------------------|-----------------------+
++                                       v
++                                      NoC
++
++  The firmware running on the processor inside the RPM subsystem allows each
++  component in the system to vote for state of the system resources, such as
++  clocks, regulators and bus frequencies. It implements multiple separate
++  communication interfaces that are described in subnodes, e.g. SMD and MPM:
++
++             +------------------------------+
++             |        ARM Cortex-M3         |
++             |                              |   +------------------------------+
++             | +--------------------------+ |   |          Message RAM         |
++             | |  RPM firmware            | |   |                              |
++   IPC IRQ 0 | | +----------------------+ | |   | +--------------------------+ |
++  -------------->| SMD server           |<------->| SMD data structures      | |
++             | | | +--------------+     | | |   | | +--------------+         | |
++             | | | | rpm_requests | ... | | |   | | | rpm_requests |   ...   | |
++             | | | +--------------+     | | |   | | +--------------+         | |
++   IPC IRQ 1 | | +----------------------+ | |   | +--------------------------+ |
++  -------------->| MPM virtualization   |<--------| MPM register copy (vMPM) | |
++             | | +----------------------+ | |   | +--------------------------+ |
++             | |           ...      |     | |   |              ...             |
++             | +--------------------|-----+ |   +------------------------------+
++             +----------------------|-------+
++                                    v
++                             +--------------+
++                             | MPM Hardware |
++                             +--------------+
++
++  The services provided by the firmware are only available after the firmware
++  has been loaded and the processor has been released from reset. Usually this
++  happens early in the boot process before the operating system is started.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - qcom,apq8084-rpm-proc
++          - qcom,ipq6018-rpm-proc
++          - qcom,ipq9574-rpm-proc
++          - qcom,mdm9607-rpm-proc
++          - qcom,msm8226-rpm-proc
++          - qcom,msm8610-rpm-proc
++          - qcom,msm8909-rpm-proc
++          - qcom,msm8916-rpm-proc
++          - qcom,msm8917-rpm-proc
++          - qcom,msm8936-rpm-proc
++          - qcom,msm8937-rpm-proc
++          - qcom,msm8952-rpm-proc
++          - qcom,msm8953-rpm-proc
++          - qcom,msm8974-rpm-proc
++          - qcom,msm8976-rpm-proc
++          - qcom,msm8994-rpm-proc
++          - qcom,msm8996-rpm-proc
++          - qcom,msm8998-rpm-proc
++          - qcom,qcm2290-rpm-proc
++          - qcom,qcs404-rpm-proc
++          - qcom,sdm660-rpm-proc
++          - qcom,sm6115-rpm-proc
++          - qcom,sm6125-rpm-proc
++          - qcom,sm6375-rpm-proc
++      - const: qcom,rpm-proc
++
++  smd-edge:
++    $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
++    description:
++      Qualcomm Shared Memory subnode which represents communication edge,
++      channels and devices related to the RPM subsystem.
++
++  glink-edge:
++    $ref: /schemas/remoteproc/qcom,glink-rpm-edge.yaml#
++    description:
++      Qualcomm G-Link subnode which represents communication edge,
++      channels and devices related to the RPM subsystem.
++
++  interrupt-controller:
++    type: object
++    $ref: /schemas/interrupt-controller/qcom,mpm.yaml#
++    description:
++      MSM Power Manager (MPM) interrupt controller that monitors interrupts
++      when the system is asleep.
++
++  master-stats:
++    $ref: /schemas/soc/qcom/qcom,rpm-master-stats.yaml#
++    description:
++      Subsystem-level low-power mode statistics provided by RPM.
++
++required:
++  - compatible
++
++oneOf:
++  - required:
++      - smd-edge
++  - required:
++      - glink-edge
++
++additionalProperties: false
++
++examples:
++  # SMD
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    remoteproc {
++      compatible = "qcom,msm8916-rpm-proc", "qcom,rpm-proc";
++
++      smd-edge {
++        interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++        qcom,ipc = <&apcs 8 0>;
++        qcom,smd-edge = <15>;
++
++        rpm-requests {
++          compatible = "qcom,rpm-msm8916";
++          qcom,smd-channels = "rpm_requests";
++          /* ... */
++        };
++      };
++    };
++  # GLINK
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    remoteproc {
++      compatible = "qcom,qcm2290-rpm-proc", "qcom,rpm-proc";
++
++      glink-edge {
++        compatible = "qcom,glink-rpm";
++        interrupts = <GIC_SPI 194 IRQ_TYPE_EDGE_RISING>;
++        qcom,rpm-msg-ram = <&rpm_msg_ram>;
++        mboxes = <&apcs_glb 0>;
++
++        rpm-requests {
++          compatible = "qcom,rpm-qcm2290";
++          qcom,glink-channels = "rpm_requests";
++          /* ... */
++        };
++      };
++    };
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+index c6930706bfa9..2fa725b8af5d 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
+@@ -120,10 +120,10 @@ examples:
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+     #include <dt-bindings/interrupt-controller/irq.h>
+ 
+-    smd {
+-        compatible = "qcom,smd";
++    remoteproc {
++        compatible = "qcom,msm8916-rpm-proc", "qcom,rpm-proc";
+ 
+-        rpm {
++        smd-edge {
+             interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+             qcom,ipc = <&apcs 8 0>;
+             qcom,smd-edge = <15>;
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
+index 063e595c12f7..4819ce90d206 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd.yaml
+@@ -15,6 +15,12 @@ description:
+   The Qualcomm Shared Memory Driver is a FIFO based communication channel for
+   sending data between the various subsystems in Qualcomm platforms.
+ 
++  Using the top-level SMD node is deprecated. Instead, the SMD edges are defined
++  directly below the device node representing the respective remote subsystem
++  or remote processor.
++
++deprecated: true
++
+ properties:
+   compatible:
+     const: qcom,smd
+@@ -37,6 +43,7 @@ examples:
+   # The following example represents a smd node, with one edge representing the
+   # "rpm" subsystem. For the "rpm" subsystem we have a device tied to the
+   # "rpm_request" channel.
++  # NOTE: This is deprecated, represent the RPM using "qcom,rpm-proc" instead.
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+
 -- 
-Stephan Gerhold <stephan@gerhold.net>
+2.40.1
 
