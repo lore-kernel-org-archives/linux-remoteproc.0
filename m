@@ -2,116 +2,142 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19778EB64D8
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 14 Jun 2023 16:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E933DEB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 08:50:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234093AbjFNQcU (ORCPT
+        id S238674AbjFOIuN (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 14 Jun 2023 12:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
+        Thu, 15 Jun 2023 04:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234083AbjFNQcT (ORCPT
+        with ESMTP id S245018AbjFOIsc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 14 Jun 2023 12:32:19 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.164])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE49C1A3;
-        Wed, 14 Jun 2023 09:32:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686760325; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=hOndUb/y7+FYDHND6o4HtEidA3dlWnXmPYHWSzGBZmfZNuyrjWA/iFHxlwhWwQaKYA
-    m91PrAgCyBehvxhx054ajMj5NAwwvJz95uvyBn1ckkm07wU2SewId1+UQXWtnGc+FH8H
-    XQsQxTi5F3uVZHnZgMbw38NKE8cfWXrOtz2ylCKHiVjsEvTBJK6fyQuDrK4gqHsGgpNT
-    e7so93vKVRRT/AkdfOwJ/uuu+pdLDdC4V3Ei1CLEhFCEK2IsuxcIu2zSLg+EGvZeaQwy
-    BHn4WnQK6owZV9WMZArXgkes4RFrgbu7CplxqyQTqtDAmzOUHVpRrKVQUz+RMiSE2N2h
-    O1mg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686760325;
-    s=strato-dkim-0002; d=strato.com;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=+mbk/aoGF1cxafxQrmnrqQYLPhOg+LPpMWgeAsoqNFI=;
-    b=kggcKKMP0d8i7yIQJ5xhN+jERDpgM+uHPNl3jzsEost4iUru5ZsWXOTigUvIpJONio
-    rdvLpGu2CxDw3Po+xh9/5fTuWIjobutSlLknTlSNxPRyaANmv/RtwmN9K7GWYnfN/S0J
-    dphWIsnbeQ5Ri6i5MXZrlT7MJggVSteftZ+5Oy5WAH7Li52QVrj90daZ+asZGcsVzAZh
-    6WWLMb5/A30zWyLF2qnP+UDPCGLn/bVZGJX21V3qscn8kOF5fEq7hp5iWXGH/HrieU88
-    6oMyxcc1Ot3jXcGi0haZudDGkMK9NriYsd8ELYfbZXgzm3rbb1StNwkqAElVHKzhDdmU
-    R7/w==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686760325;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=+mbk/aoGF1cxafxQrmnrqQYLPhOg+LPpMWgeAsoqNFI=;
-    b=XPKiUm/adpLckW3woYucjEL9LfFv2cT8Dd+k7qYvyfBGPZL2ommNHujhYevDzmTTMp
-    bfp4bGK7Dfqmm1tnaemAcbh8oEWqRkYJuWSVSXbNhIdKHAH/EvJuIaLJSX7/Gwkw5sF2
-    eGtE2Cj2wj0aX2mv5dc1EvGvPeQYp/GxEQ8HxbOZcWEFGTNYeHAs5WPDGOpp7bTGPuM7
-    18WhRkUe+bH1mx1KJsdnwETRJvqhjMDxQ9bMtgSwK8aBGtGWDHoRHoXoUCN4aYVw3w3p
-    xqQJYW8Xfdo3mAJyoGYfUR4K/gUb97VAIi01ZBppXChjXw5Kw5iegkg4cYAk1kFmc+Wk
-    gOvw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686760325;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=Cc:To:Message-Id:Date:Subject:From:Cc:Date:From:Subject:Sender;
-    bh=+mbk/aoGF1cxafxQrmnrqQYLPhOg+LPpMWgeAsoqNFI=;
-    b=lrWDo+JUzK2svFuy1bKLyW4l735AvsuEmuDLQ2GWlAD5jUJrzFeQyTmRdg76QGpCQw
-    GPpE5JGWSk/45YoY95AA==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn8u4xxmw=="
-Received: from [192.168.244.3]
-    by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
-    with ESMTPSA id D0d0a8z5EGW50U2
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 14 Jun 2023 18:32:05 +0200 (CEST)
-From:   Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v2 0/2] remoteproc: qcom: Use of_reserved_mem_lookup()
-Date:   Wed, 14 Jun 2023 18:31:53 +0200
-Message-Id: <20230529-rproc-of-rmem-v2-0-95e39b959585@gerhold.net>
+        Thu, 15 Jun 2023 04:48:32 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1697A2D6D;
+        Thu, 15 Jun 2023 01:47:44 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35F6Zuum016146;
+        Thu, 15 Jun 2023 10:47:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=2Uw0OO2d1PspJCO4EJYYYgI2JrkAhJ2sdxcuh6mFlpM=;
+ b=xVhhHeGQk1l7ea79uw+yuhQ39SZI4WchooY3/cPP3xFjGN11KZFtl5B2mrsJT17TbKUR
+ f8AxrLwehKRpHX962cLr7dPjY4Maf1nEhKaa9et2RAk0pO6MHKdZUJ2THHbUuDqMbX13
+ enx87+NiOynbQebC7D874lgHe01VUvCbJl/T0ER5o2of+EOa90i8ut1ddOfE/8MxujkP
+ +buyV31H7D95FBblYNWlPxWqYxHdLKYwLVcbabYeTEGcMayVKwCBK+hPDQ8i9UpeSod0
+ LWysLZG/ObVHsv4PayIaIb+J1v86Lb0j6+o1kpunQx1HQ82uV4ak+nVIUM7oBfsOPcI4 +w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3r7wgx169a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Jun 2023 10:47:36 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0FB9810004B;
+        Thu, 15 Jun 2023 10:47:31 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 079F721862A;
+        Thu, 15 Jun 2023 10:47:31 +0200 (CEST)
+Received: from [10.201.21.9] (10.201.21.9) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Thu, 15 Jun
+ 2023 10:47:30 +0200
+Message-ID: <f95a6dbe-f774-7778-9cd8-aba0677b9413@foss.st.com>
+Date:   Thu, 15 Jun 2023 10:47:29 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHnriWQC/3WNwQ6CMBBEf4Xs2TW0iIIn/8NwaGGhTaAlWyQaw
- r+7cjeZy5vkzWyQiD0luGcbMK0++RgE9CmD1pkwEPpOGHSui7zUNfLMscXYI0804a2rC9VfJRc
- CcaxJhJZNaJ1Y4TWOUs5MvX8fJ89G2Pm0RP4cn6v6tf/mV4UKS6uoqKoqN9Y8BmIXx+4caIFm3
- /cvORgOh8EAAAA=
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V7 1/3] rpmsg: core: Add signal API support
+Content-Language: en-US
 To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
-X-Mailer: b4 0.12.2
+CC:     Sarannya S <quic_sarannya@quicinc.com>,
+        <quic_bjorande@quicinc.com>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+References: <1682160127-18103-1-git-send-email-quic_sarannya@quicinc.com>
+ <1682160127-18103-2-git-send-email-quic_sarannya@quicinc.com>
+ <c44d8942-83e5-01ec-491b-bac1fb27de99@foss.st.com>
+ <20230614152435.2quoctx6ouvw4ous@ripper>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20230614152435.2quoctx6ouvw4ous@ripper>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.21.9]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-15_05,2023-06-14_02,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Use of_reserved_mem_lookup() instead of of_address_to_resource() inside
-the Qualcomm remoteproc drivers. This has the advantage that it ensures
-that the referenced memory region was really reserved and is not e.g.
-status = "disabled".
+Hi,
 
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
----
-Changes in v2:
-- Add missing check for rmem (Bjorn)
-- Add checks for rmem->size to ensure dynamic reserved memory was 
-  really allocated
-- Link to v1: https://lore.kernel.org/r/20230529-rproc-of-rmem-v1-1-5b1e38880aba@gerhold.net
+On 6/14/23 17:24, Bjorn Andersson wrote:
+> On Mon, Apr 24, 2023 at 02:49:29PM +0200, Arnaud POULIQUEN wrote:
+>> Hello,
+>>
+>> On 4/22/23 12:42, Sarannya S wrote:
+>>> From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+>>>
+>>> Some transports like Glink support the state notifications between
+>>> clients using flow control signals similar to serial protocol signals.
+>>> Local glink client drivers can send and receive flow control status
+>>> to glink clients running on remote processors.
+>>>
+>>> Add APIs to support sending and receiving of flow control status by
+>>> rpmsg clients.
+>>>
+>>> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+>>> Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+>>> ---
+>>>  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
+>>>  drivers/rpmsg/rpmsg_internal.h |  2 ++
+>>>  include/linux/rpmsg.h          | 15 +++++++++++++++
+>>>  3 files changed, 38 insertions(+)
+>>>
+>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>>> index a2207c0..e8bbe05 100644
+>>> --- a/drivers/rpmsg/rpmsg_core.c
+>>> +++ b/drivers/rpmsg/rpmsg_core.c
+>>> @@ -331,6 +331,25 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>>>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+>>>  
+>>>  /**
+>>> + * rpmsg_set_flow_control() - sets/clears serial flow control signals
+>>> + * @ept:	the rpmsg endpoint
+>>> + * @enable:	pause/resume incoming data flow	
+>>> + * @dst:	destination address of the endpoint
+>>> + *
+>>> + * Return: 0 on success and an appropriate error value on failure.
+>>> + */
+>>> +int rpmsg_set_flow_control(struct rpmsg_endpoint *ept, bool enable, u32 dst)
+>>> +{
+>>> +	if (WARN_ON(!ept))
+>>> +		return -EINVAL;
+>>> +	if (!ept->ops->set_flow_control)
+>>> +		return -ENXIO;
+>>
+>> Here we return an error if the backend does not implement the ops.
+>> But the set_flow_control ops is optional.
+>> Should we return 0 instead with a debug message?
+>>
+> 
+> It seems reasonable to allow the software to react to the absence of
+> flow control support, so a debug message wouldn't help.
+> 
+> But advertising that more explicitly by returning something like
+> EOPNOTSUPP seems better.
 
----
-Stephan Gerhold (2):
-      remoteproc: qcom: Handle reserved-memory allocation issues
-      remoteproc: qcom: Use of_reserved_mem_lookup()
+Right, this seems more reliable.
 
- drivers/remoteproc/qcom_q6v5_adsp.c | 24 ++++++++---------
- drivers/remoteproc/qcom_q6v5_mss.c  | 35 +++++++++++++++----------
- drivers/remoteproc/qcom_q6v5_pas.c  | 51 ++++++++++++++++++++-----------------
- drivers/remoteproc/qcom_q6v5_wcss.c |  2 +-
- drivers/remoteproc/qcom_wcnss.c     | 24 ++++++++---------
- 5 files changed, 71 insertions(+), 65 deletions(-)
----
-base-commit: 1ca04f21b204e99dd704146231adfb79ea2fb366
-change-id: 20230529-rproc-of-rmem-7d931f61f64e
+Thanks,
+Arnaud
 
-Best regards,
--- 
-Stephan Gerhold <stephan@gerhold.net>
-
+> 
+> Regards,
+> Bjorn
