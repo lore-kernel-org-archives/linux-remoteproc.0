@@ -2,76 +2,76 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1947C0015E
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0E8EB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238287AbjFOQvz (ORCPT
+        id S237511AbjFOQvx (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:51:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49064 "EHLO
+        Thu, 15 Jun 2023 12:51:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237387AbjFOQvP (ORCPT
+        with ESMTP id S237432AbjFOQvP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 15 Jun 2023 12:51:15 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6B82D42;
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8372D45;
         Thu, 15 Jun 2023 09:51:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686847855; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1686847856; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=gL5W6HGm+DTIDs26J7diIqJ6ahxc8NUK0dtOvxnfNOeFIa2CPBcx8vL/0AV7LIlESO
-    jKUERNcs1VbRSfUxOsLAUN3hLLVD4GfUssObop+c6LmexmtBbHstaDjhLyp3I12liNuj
-    NbXihYACMorI7DhS50flLS3j+5Ap4wWe57b3CZv651oR9zf4NE+1NUWZXY+8Psf7xjfz
-    KIq7Qk81KpCbI2p03bZyHDpDhRNBdS8FzTIqjsg0A56JCPfnd6w0Y4ocIKNtOuvgo8eT
-    35a9nmHE+JhqSEjcV+uv8CtihX66+i6dYSza2UXLY8RCuPdvDP5uXdQNh5WUWJJK47Wx
-    4Qqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847855;
+    b=OYnkWFMUf+7i2X4XQ2dNmwIMlqLRCnQqtCxCYNxczyBOJic2pfhdkqNjgMtgocUGsB
+    Yp8FXznppIaVfWoxLsGAvdRe+w60i5k+LIOt+l7CK/4S2bnyA8mE3ucvLGi+07TPQWdv
+    GAgf0y4C5AbcqP2tDP2Vj+vIaNvx6tm+xVADb2s6CvcKq4NklHKxZVRJNd66aDvELZyg
+    qq+IkKwBsnbV2jYn4Ee2H9B05d5pdVK/eEh8LXn1/LHousgt1AA71YRHHt5YGplLLBmt
+    Q3y5kkH7cI9bgFb7TyzYik9QRX084FG9RG3eki+ExNf2kxdisA42sOJvgnqyz8ISMlyE
+    9B0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847856;
     s=strato-dkim-0002; d=strato.com;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=nRkyocmmJe+ZT+D2mB6MkX0aB75RjEJdyVVI5mxHOIk=;
-    b=KrgUppjcHxkg5WE7cw9fNpAAAMFqQTAqR8SOHjITy0pAr1SYO5f5Lfi2SiAU18Jl6t
-    3thzseQACLjnFrSSGia5FOojWWabzDMUw+xZrCnFDKqp34025sd9aurXH37syhZKjdag
-    TI5sUz51H2lV/8rNngioDwx9ZnGK3y0i6L9ZmmH24FNhP1Uf1iit4EqLdLtIBTICvwwN
-    8PtDpt7gFymaBhPAPv/lLMKG3ebRWpdI/eKxfhjaGXYcatzAEy5sVhJdqKOS0q2TKV3V
-    OIZxAkqimftxTzKI4m+E4osBD6xD4t7dVkdWeb2VSstrOjLSZaHyONoD1oDGXS28+WA3
-    GLoA==
+    bh=e3uST5fLGOUnGwSt4p0Biiiiiw75/Lg6PSk0roxV6pQ=;
+    b=XIf9zo/ePoqBILUcV8XMOz/WoXR+UnojFBBvyeHVEjcjx0njR2UR1RhJsor86h80cc
+    JcpJHHa73MemtwYQbjtBXf1ji0/9Td7jf3HRxE5MNfLrKN9Y27UohAVRP2pGI6QfRBp6
+    brCWhLJAe/xUixEcdhNLqz9k01czvbuMBXakCk+zbYJD0D9TmH7pXXTZqOWiW0ID/dEF
+    4j9I1LyD1XDfUUqX9365SnJFMnHfK7B66Za6055M74eN27QP9WM3g2W6cCCqDL3zLEdY
+    jOUSwbbzwTMoYGVNZurAlTQrsOidtMHuXvs0eg9sDt/iN1oh0oCtpGaz/LtcyikLrHCB
+    xPiA==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847855;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847856;
     s=strato-dkim-0002; d=gerhold.net;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=nRkyocmmJe+ZT+D2mB6MkX0aB75RjEJdyVVI5mxHOIk=;
-    b=aTj0sHUsJuaVXUyJVIAorOb/wyapVnlQrPkyvHmDsk9xDELDzn8LE7nIBjBv1htvCa
-    jjmNq+siJxl9B11weexfCtWW8OksZa6gaDdlH9tm/xQvo+hakh4KTdbyJFHlFzDJd6+i
-    lkUfjw4IyvMiM6dxOfWt9NJ/59WOY82hERBpgonkDbRm95haaY0gUlxoozTxxW2lkeC3
-    Ndv/Xb+u3rH7x3pLCLQ3W21dkQaoNiUtC7QgJYZiX/7acuVrC9FKKzoBEcHesjPgyeH0
-    Eews7aDIUqhEka38Ptv1BQGo+MH/uTBPPyy3hT5553zTdfiBjpf8w73ueL+y72sC+vSm
-    agYw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847855;
+    bh=e3uST5fLGOUnGwSt4p0Biiiiiw75/Lg6PSk0roxV6pQ=;
+    b=g2oGJXqqpjdrZyL44VtX3CKm8zLZoxvP0pXbyCMZcoeLW/K4ExYIGwkj9TLcgw2x5G
+    t6L95uLX9XEHdvdfG6VNhTTMgVdd2YlMgcKWDH2MVTQgfxkxDZXbhMAI5it5d/8sR4ji
+    eG0Zwv1+jKbZpkdr/RlgN2xAkmED+3HFEnujFAvJ/ma1MnF64BUwCE928B9pczPpd3fo
+    bcn2ArIjvOp/OhIiqjuwzf1lDzdQaFv4QnztqC2nIUIO4YD09LoFy4DiPGFVUn5hUmJ7
+    SybG5tUXuk9HmT18NUTayBg9/E56UJX9Jg0VlbuYE02yyvBN8j6lJbz+aNDjcLZxMrk+
+    zu+g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847856;
     s=strato-dkim-0003; d=gerhold.net;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=nRkyocmmJe+ZT+D2mB6MkX0aB75RjEJdyVVI5mxHOIk=;
-    b=m9iFwPi6ENzDikdqnVB8mS7dUiPWcfGJMzHGD2Gk49LOiDywh53jyqqhCxkfHx/Dup
-    1gdsRDNeM7jFKjnAEnDw==
+    bh=e3uST5fLGOUnGwSt4p0Biiiiiw75/Lg6PSk0roxV6pQ=;
+    b=BMwdx7q/33kCd/fAH+bctrNNpccJHiC5IHiANOMjqH0E+a/7tc0SsmOvyR/gAFLBbF
+    UpJhxqlapbDZ+qB5lhAA==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn9VOf59w=="
 Received: from [192.168.244.3]
     by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
-    with ESMTPSA id D0d0a8z5FGot42e
+    with ESMTPSA id D0d0a8z5FGou42g
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Thu, 15 Jun 2023 18:50:55 +0200 (CEST)
+    Thu, 15 Jun 2023 18:50:56 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-Date:   Thu, 15 Jun 2023 18:50:36 +0200
-Subject: [PATCH v3 03/13] dt-bindings: soc: qcom: smd-rpm: Add some more
- compatibles
+Date:   Thu, 15 Jun 2023 18:50:38 +0200
+Subject: [PATCH v3 05/13] dt-bindings: remoteproc: glink-rpm-edge: Use
+ "glink-edge" as node name
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-rpm-rproc-v3-3-a07dcdefd918@gerhold.net>
+Message-Id: <20230531-rpm-rproc-v3-5-a07dcdefd918@gerhold.net>
 References: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 In-Reply-To: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 To:     Bjorn Andersson <andersson@kernel.org>
@@ -83,60 +83,57 @@ Cc:     Andy Gross <agross@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Stephan Gerhold <stephan@gerhold.net>
 X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-To avoid several more small patches adding new RPM compatibles in the
-future, add MDM9607, MSM8610, MSM8917, MSM8937 and MSM8952 at once.
-All of these have been worked on over the time by some people and are
-definitely compatible as-is with the smd-rpm driver.
+Semantically glink-edge and glink-rpm-edge are similar: Both describe
+the communication channels to a remote processor. The RPM glink-edge is
+a special case that needs slightly different properties but otherwise
+it is used exactly the same.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To improve consistency use the same "glink-edge" node name also for
+glink-rpm-edge. Drop the $nodename from qcom,glink-edge.yaml to avoid
+matching the wrong schema. qcom,glink-edge.yaml is always referenced
+explicitly from other schemas. This will already ensure that the nodes
+are being checked, so it's not necessary to bind to all nodes named
+"glink-edge".
+
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml     | 3 ---
+ Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml | 2 +-
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-index 78822315edeb..c6930706bfa9 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml
-@@ -34,10 +34,15 @@ properties:
-       - qcom,rpm-apq8084
-       - qcom,rpm-ipq6018
-       - qcom,rpm-ipq9574
-+      - qcom,rpm-mdm9607
-       - qcom,rpm-msm8226
-+      - qcom,rpm-msm8610
-       - qcom,rpm-msm8909
-       - qcom,rpm-msm8916
-+      - qcom,rpm-msm8917
-       - qcom,rpm-msm8936
-+      - qcom,rpm-msm8937
-+      - qcom,rpm-msm8952
-       - qcom,rpm-msm8953
-       - qcom,rpm-msm8974
-       - qcom,rpm-msm8976
-@@ -81,10 +86,15 @@ if:
-       contains:
-         enum:
-           - qcom,rpm-apq8084
-+          - qcom,rpm-mdm9607
-           - qcom,rpm-msm8226
-+          - qcom,rpm-msm8610
-           - qcom,rpm-msm8909
-           - qcom,rpm-msm8916
-+          - qcom,rpm-msm8917
-           - qcom,rpm-msm8936
-+          - qcom,rpm-msm8937
-+          - qcom,rpm-msm8952
-           - qcom,rpm-msm8953
-           - qcom,rpm-msm8974
-           - qcom,rpm-msm8976
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+index 7b43ad3daa56..e78a89c9ec41 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
+@@ -14,9 +14,6 @@ description:
+   related to the remote processor.
+ 
+ properties:
+-  $nodename:
+-    const: glink-edge
+-
+   apr:
+     $ref: /schemas/soc/qcom/qcom,apr.yaml#
+     required:
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
+index f5a044e20c4e..884158bccd50 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
+@@ -84,7 +84,7 @@ examples:
+   - |
+     #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-    rpm-glink {
++    glink-edge {
+         compatible = "qcom,glink-rpm";
+         interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+         mboxes = <&apcs_glb 0>;
 
 -- 
 2.40.1
