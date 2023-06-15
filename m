@@ -2,150 +2,101 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0653BEB64D9
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 22:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37BFEB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 23:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbjFOWkO (ORCPT
+        id S230315AbjFOXHR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 18:40:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35558 "EHLO
+        Thu, 15 Jun 2023 19:07:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231976AbjFOWkN (ORCPT
+        with ESMTP id S229534AbjFOXHP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jun 2023 18:40:13 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9DF271C;
-        Thu, 15 Jun 2023 15:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=rTef7a63KNQH6q3WD5RtrkA98bSlXC3sIaMOsAmrFcM=; b=fXXB40CfrwyBYWYox5xSovHXoe
-        LcKMGnUyhm1wkcZWzwApUEuC9vh02ZegJBPhftlYhJJTXS7SIoZ7jR5orti08KYMIcuY2bEH1RMha
-        7OzXOLhFAcq9S8499kMlpv7WXjZAgggpBrh+1zTpTRzurWgxjz/2xM+MRrYWi0Sz0PM+/VnXMqdW3
-        /1usV3MYBG1eZ4jQmvABGF9ntB/uCXBzR+bKD3LW/ggL9yixwC6pdA6Nei6yRkosiZbW9b8EmNJdn
-        gAlVOI8LcCcTRt2V4LnsNumb77nzyN+I9Z5CYaLrJ2vUppow2w2ZhYR3koSTj0+6U/XJ6wsRNkoov
-        I0s3u84Q==;
-Received: from [2601:1c2:980:9ec0::2764]
-        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1q9vdJ-00GGRx-2x;
-        Thu, 15 Jun 2023 22:40:01 +0000
-Message-ID: <9ebb9a5a-7bc8-da67-529f-5193b9352b23@infradead.org>
-Date:   Thu, 15 Jun 2023 15:40:01 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] remoteproc: stm32: use correct format strings on 64-bit
-To:     Arnd Bergmann <arnd@kernel.org>,
+        Thu, 15 Jun 2023 19:07:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54B9273D;
+        Thu, 15 Jun 2023 16:07:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3874461F82;
+        Thu, 15 Jun 2023 23:07:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EDCAC433C0;
+        Thu, 15 Jun 2023 23:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686870433;
+        bh=1PjAQXC6EO6kyUJubG5wMVdHRFYZIFiLVImaErWPjBI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pMgHW0sLFNHkyTREetfSgwDQToYlSsp1sZ8YAWd7yGIa/Ull2kkuyCsUXtTtXl3eV
+         vcA+Qx8wNvwW/rlbmyy2notXaHBgobRx7d/1MPrjj251Hg2zJW3g8YPtsgOAnkHpcb
+         D+i2nuJqImqv+PV47OVKG4mhnPegQ27xvuOc1Fyw8whi8af3rE+27PXqKXuc/G1qH5
+         yLqyWD6+toB//A4PP0y+O3Rf/9d1MvbO+H89bWERcJHXm474jBIIMNaykvQd4uLt3s
+         RKHGhA8L+DzFTNibj0HBGi6fy4zvjjZmaqvalrDF6aDABFNLBtQO77OtXZOeaB9W/H
+         f1atP3ctfAeyQ==
+Date:   Fri, 16 Jun 2023 00:07:05 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sebastian Reichel <sre@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Ben Levinsky <ben.levinsky@amd.com>,
-        Tanmay Shah <tanmay.shah@amd.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-References: <20230609120546.3937821-1-arnd@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20230609120546.3937821-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        =?iso-8859-1?Q?Fern=E1ndez?= Rojas <noltari@gmail.com>,
+        Marek Vasut <marex@denx.de>, Suman Anna <s-anna@ti.com>,
+        - <devicetree-spec@vger.kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
+ in titles
+Message-ID: <20230616-skydiver-unwritten-5cc47e04bf07@spud>
+References: <20230615213154.1753313-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UYzgGdFRAKyKvt7y"
+Content-Disposition: inline
+In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
+--UYzgGdFRAKyKvt7y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 6/9/23 05:05, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> With CONFIG_ARCH_STM32 making it into arch/arm64, a couple of format
-> strings no longer work, since they rely on size_t being compatible
-> with %x, or they print an 'int' using %z:
-> 
-> drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_mem_alloc':
-> drivers/remoteproc/stm32_rproc.c:122:22: error: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
-> drivers/remoteproc/stm32_rproc.c:122:40: note: format string is defined here
->   122 |         dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
->       |                                       ~^
->       |                                        |
->       |                                        unsigned int
->       |                                       %lx
-> drivers/remoteproc/stm32_rproc.c:125:30: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
-> drivers/remoteproc/stm32_rproc.c:125:65: note: format string is defined here
->   125 |                 dev_err(dev, "Unable to map memory region: %pa+%x\n",
->       |                                                                ~^
->       |                                                                 |
->       |                                                                 unsigned int
->       |                                                                %lx
-> drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_get_loaded_rsc_table':
-> drivers/remoteproc/stm32_rproc.c:646:30: error: format '%zx' expects argument of type 'size_t', but argument 4 has type 'int' [-Werror=format=]
-> drivers/remoteproc/stm32_rproc.c:646:66: note: format string is defined here
->   646 |                 dev_err(dev, "Unable to map memory region: %pa+%zx\n",
->       |                                                                ~~^
->       |                                                                  |
->       |                                                                  long unsigned int
->       |                                                                %x
-> 
-> Fix up all three instances to work across architectures, and enable
-> compile testing for this driver to ensure it builds everywhere.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On Thu, Jun 15, 2023 at 03:31:54PM -0600, Rob Herring wrote:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+> -title: Restart and shutdown handler generic binding
+> +title: Restart and shutdown handler Common Properties
 
-Thanks.
+With the new caps for Common Properties, the title here looks a bit odd.
+Should probably be s/shutdown handler/Shutdown Handler/ for title case,
+but w/e...
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-> ---
->  drivers/remoteproc/Kconfig       | 2 +-
->  drivers/remoteproc/stm32_rproc.c | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index a850e9f486dd6..48845dc8fa852 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -313,7 +313,7 @@ config ST_SLIM_REMOTEPROC
->  
->  config STM32_RPROC
->  	tristate "STM32 remoteproc support"
-> -	depends on ARCH_STM32
-> +	depends on ARCH_STM32 || COMPILE_TEST
->  	depends on REMOTEPROC
->  	select MAILBOX
->  	help
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index a7457777aae43..cf073bac79f73 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -119,10 +119,10 @@ static int stm32_rproc_mem_alloc(struct rproc *rproc,
->  	struct device *dev = rproc->dev.parent;
->  	void *va;
->  
-> -	dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
-> +	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
->  	va = ioremap_wc(mem->dma, mem->len);
->  	if (IS_ERR_OR_NULL(va)) {
-> -		dev_err(dev, "Unable to map memory region: %pa+%x\n",
-> +		dev_err(dev, "Unable to map memory region: %pad+0x%zx\n",
->  			&mem->dma, mem->len);
->  		return -ENOMEM;
->  	}
-> @@ -643,7 +643,7 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
->  
->  	ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
->  	if (IS_ERR_OR_NULL(ddata->rsc_va)) {
-> -		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-> +		dev_err(dev, "Unable to map memory region: %pa+%x\n",
->  			&rsc_pa, RSC_TBL_SIZE);
->  		ddata->rsc_va = NULL;
->  		return ERR_PTR(-ENOMEM);
+Cheers,
+Conor.
 
--- 
-~Randy
+
+--UYzgGdFRAKyKvt7y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZIuZmQAKCRB4tDGHoIJi
+0vaOAQCvuB+Vy9A841viHe6D4DHohHomPDJhhehcVREBQDS3/wD/W6WhHVSt6J46
+5pM/kAhmxxmkyTHVvMdH2/sXzNDawgM=
+=Uxoq
+-----END PGP SIGNATURE-----
+
+--UYzgGdFRAKyKvt7y--
