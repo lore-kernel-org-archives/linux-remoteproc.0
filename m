@@ -2,75 +2,75 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B4FEB64DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDD4C001DD
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238074AbjFOQvr (ORCPT
+        id S233689AbjFOQvs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:51:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
+        Thu, 15 Jun 2023 12:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237326AbjFOQvN (ORCPT
+        with ESMTP id S236658AbjFOQvO (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jun 2023 12:51:13 -0400
+        Thu, 15 Jun 2023 12:51:14 -0400
 Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [85.215.255.102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1182B295D;
-        Thu, 15 Jun 2023 09:51:07 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686847857; cv=none;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DA12978;
+        Thu, 15 Jun 2023 09:51:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1686847859; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=bqvc4scDPqPTyPzHTlwbvFbNL0chs2E6P/PmmG1VCohYOPsvppN/o296CWjO6MxyR9
-    mifjjuVG7mGG1BB1n5UEp8WSdT76RjVD0hcd+gpWPsdN48SJLAxTpJkZJqq8+Sp68kiS
-    bLFk9fMTPL4/1fGgxNuv6u8UyCvuTtCvPnzqH3liNU9Ty6uhIDE2jkyZ3napB5FnWwbW
-    teRxMtSAjaCSIA+PQz3pk/rIEKArmDO1ENXh/DF5VZoe7Ktso1UKnIaXJvFl+xMzWYkD
-    lmtG+RaFDeSZ0EuroFR4u8mxaIcfuxg/qs5vlGpwAPxO3mnxm88uBu7N2DkTvsjN/qgi
-    mATw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847857;
+    b=C2MFh3Nl8ySHEwkt+v9B/pLF1JcBLKtutcWC9OiPC/bCibrN5lkkkTzp49/4SykZBs
+    KgyUgbw4Z4ph4LTyJ7jlD2696Vh8H5ZGLBqQyi1aTh6+74gCZQ1bNKUVTLIxNaAKpf7x
+    fiIQUsOWukCzLnnLbdvw2qtBYYuwb2y7vR2Aq1L7doo37Jv1MReNRp3FP49GCEzBGz3t
+    xIcyLZRVXXCQWPdnviIVN4Y+ErZ8+yYyxIOeScMhNIsYNy/zk4AVwKALZT1Z3WOwbjgy
+    5xQzh7m+WdDqE4EounwbhT9RjKNaGE96UwKcbVQa6LaGTvKvnB5IyzeKZ9Ve4w9pizCZ
+    ZOJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847859;
     s=strato-dkim-0002; d=strato.com;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=/IK/YL613oCwX1BVM5btJH/g/5FePMBvICB1GubRDSw=;
-    b=WUrJrZQ3EpHaN3XxxUqaKZSeenit6UGTT6NeEzm7lwGScXsbwe2l9a6UfK2J2XX5fJ
-    OrlS37/TkeEDCkf8ADyako86Ua9jCswaNmn2METs+GKBRkiIhbGQRP28AXs38RKep2Zm
-    T7AGNwYAflPGK6+W7RDwP6VtiwXellJ2b8jZ7IRGmvU6WFVGm4yy8B0L8jX7aHh1StcL
-    jAZk1WuF0Wg8RJ2CDr4zu8j+k7C5G/G2hygPK/rScxWQPNPj89YGNEe0eIF9UKlSN72z
-    ptwUelYBnA/frhRd/6RJHiYhjnLR/wSF8nEAMhEBvHoqGA+BmcUyEsmVn7tbgDESYyrJ
-    dGZA==
+    bh=HZV9aVwyvKPAu680AA1+pBj60E1yrRK6tgCJfx+g4+I=;
+    b=fZUfb8AQnoOE0tkl35f7Ar+JSvF1pBm2x6IMPCIbJttTFxLtFt6JdaTiSBJjc13SBf
+    Wza2FHcCa5PHfTKs6EvmPp8X3as3ACbY9YGyvjb+f+5u3A8kRCOGEqc046p7iosD4A6z
+    xH3OqTs47mV1G+cSt6/BbPvuDI2HmZfwpPlcN38+cD8p+7iW5F9ET07FzpKx/DYGPB11
+    4ox3n4JqZYxfKFKK5q2SgkaiGD5QOPDFMBDsfmb9q1uYOxlvkGxrnPTqJxOAC2Ekpa9N
+    /9SzqsTEwdjwGt+62BZbaPgnx4q1JtaMVt1NBGJAHY8BKELtXbC1evtuDwz8VmypzmIx
+    VFDw==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
 X-RZG-CLASS-ID: mo03
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847857;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847859;
     s=strato-dkim-0002; d=gerhold.net;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=/IK/YL613oCwX1BVM5btJH/g/5FePMBvICB1GubRDSw=;
-    b=Zt9UE6ueBbFM7VPd9uxsEVLXkGodec6McY/dCfHxzXo/LCfEm777Ey5YU+Pno8Wvz+
-    pWyad+CYmPd2yup+ZJze74oxNnQwi1MfOJZHUM7hEgCzHj+5XCEy1TSbRibK7U/M6HCh
-    O/u4otwsBPOuA/uZ5B8krFZwEXrb82QPDmecGaeQjHbntpp/uvIP1atDw0X3siGf5y69
-    +4w0SRgmv1IVuSWlMUlbbetX3uLJhsV2vjn6laa0Z4FJDMYBdLE2ou87en0x03W1E5Bj
-    UXNvaRwbtAQSkAxY2BxgLsMo2fbmweMfU+lqBFWlu0rHzGlVxPJgVxVIKgh+SLgaIsJi
-    lkXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847857;
+    bh=HZV9aVwyvKPAu680AA1+pBj60E1yrRK6tgCJfx+g4+I=;
+    b=gcWZ53fNE/QS2POK0QH3S/bL2YfH7Wsdpv0atmEE5oOp4/fYpK6dmqB/zW6bxobkZk
+    vUoYB1nfBZT0HqkyF6tza8zRibywJoYmqNj/ezDuAsfwTuuW1HtXlvmlEQFmsKH1OXP/
+    UqBMlwQZFQSPobzkVKZXleQp8zgqHmde25ZCQyvGqXXXerRIIAKDB1tmviNOfTWxsORJ
+    jL/htI0ijf/EjKvFFs2tSozJAdOe+rX82fUAQ0iKkl8/uDkIno+IyzDk5HDOtchr5ysg
+    rMygKwDMZDZjGBmW5mltnx2OD9GiM/X1WYKbRSQn/W7DIrAg9QpPQU9fGRucpRQm7/MS
+    0qlg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847859;
     s=strato-dkim-0003; d=gerhold.net;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=/IK/YL613oCwX1BVM5btJH/g/5FePMBvICB1GubRDSw=;
-    b=dwKxbAVnIW41tgY6v+kzrK4GS9/v56sRn6UQ+saMLctS4kRrqnpg+SwHtPnUcUZSYw
-    9NonjHIs1Nzv/Ql6dgCg==
+    bh=HZV9aVwyvKPAu680AA1+pBj60E1yrRK6tgCJfx+g4+I=;
+    b=fwOIT1RYgqTGXoPQNDvu8mELjjgHM3iBnqixt3m6Qsjl5vmOtq2ENGwS0m4lH4RW6n
+    JX2LvHf8b8QrKf4HtsCA==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn9VOf59w=="
 Received: from [192.168.244.3]
     by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
-    with ESMTPSA id D0d0a8z5FGov42j
+    with ESMTPSA id D0d0a8z5FGox42o
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Thu, 15 Jun 2023 18:50:57 +0200 (CEST)
+    Thu, 15 Jun 2023 18:50:59 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-Date:   Thu, 15 Jun 2023 18:50:41 +0200
-Subject: [PATCH v3 08/13] rpmsg: qcom_smd: Use qcom_smem_is_available()
+Date:   Thu, 15 Jun 2023 18:50:46 +0200
+Subject: [PATCH v3 13/13] ARM: dts: qcom: apq8064: Drop redundant /smd node
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-rpm-rproc-v3-8-a07dcdefd918@gerhold.net>
+Message-Id: <20230531-rpm-rproc-v3-13-a07dcdefd918@gerhold.net>
 References: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 In-Reply-To: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 To:     Bjorn Andersson <andersson@kernel.org>
@@ -88,50 +88,74 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Rather than looking up a dummy item from SMEM, use the new
-qcom_smem_is_available() function to make the code more clear
-(and reduce the overhead slightly).
+The "smd-edge"s for remote processors are typically specified below the
+remoteproc nodes. For some reason apq8064 also has them all listed in a
+top-level /smd node, disabled by default. None of the boards enable them.
 
-Add the same check to qcom_smd_register_edge() as well to ensure that
-it only succeeds if SMEM is already available - if a driver calls the
-function and SMEM is not available yet then the initial state will be
-read incorrectly and the RPMSG devices might never become available.
+Right now apq8064 only has support for WCNSS/riva, but there the
+smd-edge is already defined with the same interrupt etc below the
+riva-pil node.
+
+Drop these redundant definitions since the /smd top-level node is now
+deprecated.
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- drivers/rpmsg/qcom_smd.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/qcom-apq8064.dtsi | 40 -------------------------------------
+ 1 file changed, 40 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 7b9c298aa491..43f601c84b4f 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1479,6 +1479,9 @@ struct qcom_smd_edge *qcom_smd_register_edge(struct device *parent,
- 	struct qcom_smd_edge *edge;
- 	int ret;
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index d2289205ff81..e0adf237fc5c 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -226,46 +226,6 @@ smem {
+ 		hwlocks = <&sfpb_mutex 3>;
+ 	};
  
-+	if (!qcom_smem_is_available())
-+		return ERR_PTR(-EPROBE_DEFER);
-+
- 	edge = kzalloc(sizeof(*edge), GFP_KERNEL);
- 	if (!edge)
- 		return ERR_PTR(-ENOMEM);
-@@ -1553,12 +1556,9 @@ EXPORT_SYMBOL(qcom_smd_unregister_edge);
- static int qcom_smd_probe(struct platform_device *pdev)
- {
- 	struct device_node *node;
--	void *p;
+-	smd {
+-		compatible = "qcom,smd";
+-
+-		modem-edge {
+-			interrupts = <0 37 IRQ_TYPE_EDGE_RISING>;
+-
+-			qcom,ipc = <&l2cc 8 3>;
+-			qcom,smd-edge = <0>;
+-
+-			status = "disabled";
+-		};
+-
+-		q6-edge {
+-			interrupts = <0 90 IRQ_TYPE_EDGE_RISING>;
+-
+-			qcom,ipc = <&l2cc 8 15>;
+-			qcom,smd-edge = <1>;
+-
+-			status = "disabled";
+-		};
+-
+-		dsps-edge {
+-			interrupts = <0 138 IRQ_TYPE_EDGE_RISING>;
+-
+-			qcom,ipc = <&sps_sic_non_secure 0x4080 0>;
+-			qcom,smd-edge = <3>;
+-
+-			status = "disabled";
+-		};
+-
+-		riva-edge {
+-			interrupts = <0 198 IRQ_TYPE_EDGE_RISING>;
+-
+-			qcom,ipc = <&l2cc 8 25>;
+-			qcom,smd-edge = <6>;
+-
+-			status = "disabled";
+-		};
+-	};
+-
+ 	smsm {
+ 		compatible = "qcom,smsm";
  
--	/* Wait for smem */
--	p = qcom_smem_get(QCOM_SMEM_HOST_ANY, smem_items[0].alloc_tbl_id, NULL);
--	if (PTR_ERR(p) == -EPROBE_DEFER)
--		return PTR_ERR(p);
-+	if (!qcom_smem_is_available())
-+		return -EPROBE_DEFER;
- 
- 	for_each_available_child_of_node(pdev->dev.of_node, node)
- 		qcom_smd_register_edge(&pdev->dev, node);
 
 -- 
 2.40.1
