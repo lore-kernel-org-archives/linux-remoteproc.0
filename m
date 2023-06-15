@@ -2,114 +2,150 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A97AEB64D9
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 22:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0653BEB64D9
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 22:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239202AbjFOWXB (ORCPT
+        id S231534AbjFOWkO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 18:23:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57138 "EHLO
+        Thu, 15 Jun 2023 18:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjFOWXA (ORCPT
+        with ESMTP id S231976AbjFOWkN (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jun 2023 18:23:00 -0400
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D3D1FD4;
-        Thu, 15 Jun 2023 15:22:58 -0700 (PDT)
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 730028471B;
-        Fri, 16 Jun 2023 00:22:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1686867776;
-        bh=73RYwg9Cvb/ETFjrgPGXzFwhwmQvzx5PYELjo6ENv/g=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=KusWaHDbPqRq3uF7moqmAjpQxuG3jf4l412/nX/jK1AS/gIVX0yIiKXfnwDFVE2Gi
-         G16Gelh5Oh/wHvcP9Uy9muv5f9BZMvwmCCQ3AbAqvjRaoy+ZFYzk207AlxI3iu6QUZ
-         G22HMQ8bsODd4dzmmChlMf8pdtHXVH/arxN56D21JqmUZE2dF1MC2fjuinCbtL3yTp
-         miLP6MFgFGhHMM4nyVDo2EQMOAtijZ2Gg9He3tBpQwzQ+rg/CZmtp5fjfLYnqFSNKC
-         ZFBaOwMhkOzGCcSFS9PJDqASR3G0eJYvGU/t1MvOxluqIBgCsoGPdg88M1D43Hdc3p
-         gokdcmHw+2MIA==
-Message-ID: <44c41dff-31c9-9d4a-9a44-eec9e5689aed@denx.de>
-Date:   Fri, 16 Jun 2023 00:22:53 +0200
+        Thu, 15 Jun 2023 18:40:13 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9DF271C;
+        Thu, 15 Jun 2023 15:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:
+        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+        bh=rTef7a63KNQH6q3WD5RtrkA98bSlXC3sIaMOsAmrFcM=; b=fXXB40CfrwyBYWYox5xSovHXoe
+        LcKMGnUyhm1wkcZWzwApUEuC9vh02ZegJBPhftlYhJJTXS7SIoZ7jR5orti08KYMIcuY2bEH1RMha
+        7OzXOLhFAcq9S8499kMlpv7WXjZAgggpBrh+1zTpTRzurWgxjz/2xM+MRrYWi0Sz0PM+/VnXMqdW3
+        /1usV3MYBG1eZ4jQmvABGF9ntB/uCXBzR+bKD3LW/ggL9yixwC6pdA6Nei6yRkosiZbW9b8EmNJdn
+        gAlVOI8LcCcTRt2V4LnsNumb77nzyN+I9Z5CYaLrJ2vUppow2w2ZhYR3koSTj0+6U/XJ6wsRNkoov
+        I0s3u84Q==;
+Received: from [2601:1c2:980:9ec0::2764]
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q9vdJ-00GGRx-2x;
+        Thu, 15 Jun 2023 22:40:01 +0000
+Message-ID: <9ebb9a5a-7bc8-da67-529f-5193b9352b23@infradead.org>
+Date:   Thu, 15 Jun 2023 15:40:01 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
- in titles
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sebastian Reichel <sre@kernel.org>,
+ Thunderbird/102.11.2
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH] remoteproc: stm32: use correct format strings on 64-bit
+To:     Arnd Bergmann <arnd@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        =?UTF-8?Q?Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
-        Suman Anna <s-anna@ti.com>, - <devicetree-spec@vger.kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20230615213154.1753313-1-robh@kernel.org>
-From:   Marek Vasut <marex@denx.de>
-In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Ben Levinsky <ben.levinsky@amd.com>,
+        Tanmay Shah <tanmay.shah@amd.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+References: <20230609120546.3937821-1-arnd@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20230609120546.3937821-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 6/15/23 23:31, Rob Herring wrote:
-> The Devicetree bindings document does not have to say in the title that
-> it is a "Devicetree binding", but instead just describe the hardware.
-> 
-> Most of these have been fixed already, so fix the handful that snuck in.
-> With this, a meta-schema check can be enabled to catch these
-> automatically.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
->   Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
->   .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
->   .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
->   .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
->   5 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml
-> index 199818b2fb6d..cd0d763ce2f3 100644
-> --- a/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml
-> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml
-> @@ -4,7 +4,7 @@
->   $id: http://devicetree.org/schemas/clock/brcm,bcm63268-timer-clocks.yaml#
->   $schema: http://devicetree.org/meta-schemas/core.yaml#
->   
-> -title: Broadcom BCM63268 Timer Clock and Reset Device Tree Bindings
-> +title: Broadcom BCM63268 Timer Clock and Reset
->   
->   maintainers:
->     - Álvaro Fernández Rojas <noltari@gmail.com>
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> index ff9600474df2..0a6dc1a6e122 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> @@ -4,7 +4,7 @@
->   $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
->   $schema: http://devicetree.org/meta-schemas/core.yaml#
->   
-> -title: NXP i.MX8MP AudioMIX Block Control Binding
-> +title: NXP i.MX8MP AudioMIX Block Control
 
-For AudioMIX:
-Reviewed-by: Marek Vasut <marex@denx.de>
+
+On 6/9/23 05:05, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> With CONFIG_ARCH_STM32 making it into arch/arm64, a couple of format
+> strings no longer work, since they rely on size_t being compatible
+> with %x, or they print an 'int' using %z:
+> 
+> drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_mem_alloc':
+> drivers/remoteproc/stm32_rproc.c:122:22: error: format '%x' expects argument of type 'unsigned int', but argument 5 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
+> drivers/remoteproc/stm32_rproc.c:122:40: note: format string is defined here
+>   122 |         dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
+>       |                                       ~^
+>       |                                        |
+>       |                                        unsigned int
+>       |                                       %lx
+> drivers/remoteproc/stm32_rproc.c:125:30: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'size_t' {aka 'long unsigned int'} [-Werror=format=]
+> drivers/remoteproc/stm32_rproc.c:125:65: note: format string is defined here
+>   125 |                 dev_err(dev, "Unable to map memory region: %pa+%x\n",
+>       |                                                                ~^
+>       |                                                                 |
+>       |                                                                 unsigned int
+>       |                                                                %lx
+> drivers/remoteproc/stm32_rproc.c: In function 'stm32_rproc_get_loaded_rsc_table':
+> drivers/remoteproc/stm32_rproc.c:646:30: error: format '%zx' expects argument of type 'size_t', but argument 4 has type 'int' [-Werror=format=]
+> drivers/remoteproc/stm32_rproc.c:646:66: note: format string is defined here
+>   646 |                 dev_err(dev, "Unable to map memory region: %pa+%zx\n",
+>       |                                                                ~~^
+>       |                                                                  |
+>       |                                                                  long unsigned int
+>       |                                                                %x
+> 
+> Fix up all three instances to work across architectures, and enable
+> compile testing for this driver to ensure it builds everywhere.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
+
+Thanks.
+
+> ---
+>  drivers/remoteproc/Kconfig       | 2 +-
+>  drivers/remoteproc/stm32_rproc.c | 6 +++---
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index a850e9f486dd6..48845dc8fa852 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -313,7 +313,7 @@ config ST_SLIM_REMOTEPROC
+>  
+>  config STM32_RPROC
+>  	tristate "STM32 remoteproc support"
+> -	depends on ARCH_STM32
+> +	depends on ARCH_STM32 || COMPILE_TEST
+>  	depends on REMOTEPROC
+>  	select MAILBOX
+>  	help
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index a7457777aae43..cf073bac79f73 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -119,10 +119,10 @@ static int stm32_rproc_mem_alloc(struct rproc *rproc,
+>  	struct device *dev = rproc->dev.parent;
+>  	void *va;
+>  
+> -	dev_dbg(dev, "map memory: %pa+%x\n", &mem->dma, mem->len);
+> +	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
+>  	va = ioremap_wc(mem->dma, mem->len);
+>  	if (IS_ERR_OR_NULL(va)) {
+> -		dev_err(dev, "Unable to map memory region: %pa+%x\n",
+> +		dev_err(dev, "Unable to map memory region: %pad+0x%zx\n",
+>  			&mem->dma, mem->len);
+>  		return -ENOMEM;
+>  	}
+> @@ -643,7 +643,7 @@ stm32_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+>  
+>  	ddata->rsc_va = devm_ioremap_wc(dev, rsc_pa, RSC_TBL_SIZE);
+>  	if (IS_ERR_OR_NULL(ddata->rsc_va)) {
+> -		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
+> +		dev_err(dev, "Unable to map memory region: %pa+%x\n",
+>  			&rsc_pa, RSC_TBL_SIZE);
+>  		ddata->rsc_va = NULL;
+>  		return ERR_PTR(-ENOMEM);
+
+-- 
+~Randy
