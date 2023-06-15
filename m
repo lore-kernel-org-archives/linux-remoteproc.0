@@ -2,76 +2,76 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0E8EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7D9C001DD
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 16:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237511AbjFOQvx (ORCPT
+        id S230267AbjFOQv5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:51:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
+        Thu, 15 Jun 2023 12:51:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237432AbjFOQvP (ORCPT
+        with ESMTP id S237188AbjFOQvP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 15 Jun 2023 12:51:15 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E8372D45;
-        Thu, 15 Jun 2023 09:51:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686847856; cv=none;
+Received: from mo4-p03-ob.smtp.rzone.de (mo4-p03-ob.smtp.rzone.de [81.169.146.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45FCD297B;
+        Thu, 15 Jun 2023 09:51:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1686847859; cv=none;
     d=strato.com; s=strato-dkim-0002;
-    b=OYnkWFMUf+7i2X4XQ2dNmwIMlqLRCnQqtCxCYNxczyBOJic2pfhdkqNjgMtgocUGsB
-    Yp8FXznppIaVfWoxLsGAvdRe+w60i5k+LIOt+l7CK/4S2bnyA8mE3ucvLGi+07TPQWdv
-    GAgf0y4C5AbcqP2tDP2Vj+vIaNvx6tm+xVADb2s6CvcKq4NklHKxZVRJNd66aDvELZyg
-    qq+IkKwBsnbV2jYn4Ee2H9B05d5pdVK/eEh8LXn1/LHousgt1AA71YRHHt5YGplLLBmt
-    Q3y5kkH7cI9bgFb7TyzYik9QRX084FG9RG3eki+ExNf2kxdisA42sOJvgnqyz8ISMlyE
-    9B0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847856;
+    b=Q1BPpixcWCrnN3Om+WeezEJOrJZCrEXheP0xrzO8DhC6tthXM0aTmrg41RWsq3fIak
+    cdIfxjD+jcIwBqZn8IND1YmOn0jtc+Q6LezfcH2UYI6diSHyVywbCUsqlxl1GcSvPWll
+    +RoH6Xygkee878KeB6D5Mdb/JXLTavSYUXxJLESwdZERgtg6ADrtFtIp7VAeF2bK6bcS
+    CSkEGsvhTd7HBvkpHEFJT3vmpym1vELHqvC2FLJeGVA4PrZ187qrFjIa9lyTJttBI8o0
+    VUZLcqkotixhMOAGgb3TP9FzdsnI01HZpZmU8+SUwtVDSxp5DmmlB/UQe1WTgAkVkUkK
+    iz2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847859;
     s=strato-dkim-0002; d=strato.com;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=e3uST5fLGOUnGwSt4p0Biiiiiw75/Lg6PSk0roxV6pQ=;
-    b=XIf9zo/ePoqBILUcV8XMOz/WoXR+UnojFBBvyeHVEjcjx0njR2UR1RhJsor86h80cc
-    JcpJHHa73MemtwYQbjtBXf1ji0/9Td7jf3HRxE5MNfLrKN9Y27UohAVRP2pGI6QfRBp6
-    brCWhLJAe/xUixEcdhNLqz9k01czvbuMBXakCk+zbYJD0D9TmH7pXXTZqOWiW0ID/dEF
-    4j9I1LyD1XDfUUqX9365SnJFMnHfK7B66Za6055M74eN27QP9WM3g2W6cCCqDL3zLEdY
-    jOUSwbbzwTMoYGVNZurAlTQrsOidtMHuXvs0eg9sDt/iN1oh0oCtpGaz/LtcyikLrHCB
-    xPiA==
+    bh=Vj5Z5EeVRMBdfZYdOR4Fv2Get1Ee6bFBctEVmqEZJKI=;
+    b=azWN9MDhO0mR/ouGwI6ftlh/HmnDENE/rwje2yy9X2UUR5xQmTkb0evKbNiUyYHj4j
+    +njyyd3eWn1+ROG2oqCXR2OYtMzA3ZwPudTS8/A4Pu527ipPZwa/QdJLXAWDm4/jLJSW
+    xAe5BHWFCgnfO4JW+zveQmA7xraZeHv/5nX/bfXLaSovPSetkBp9sYp51tNXCrqUYFl3
+    EhS7kRjGCZBI/1MGYXHgavakT0xqA+4nWHgDMA1o8p8rPHEAcqfYRo9hf4f1UG5H/NT9
+    6Ytk/SY7G6yR0e43D3R2GDxqaSoPujSeCl1/Q16aC16jywd1SxDiiYIHiI3PHspMhw9O
+    mU9w==
 ARC-Authentication-Results: i=1; strato.com;
     arc=none;
     dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847856;
+X-RZG-CLASS-ID: mo03
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686847859;
     s=strato-dkim-0002; d=gerhold.net;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=e3uST5fLGOUnGwSt4p0Biiiiiw75/Lg6PSk0roxV6pQ=;
-    b=g2oGJXqqpjdrZyL44VtX3CKm8zLZoxvP0pXbyCMZcoeLW/K4ExYIGwkj9TLcgw2x5G
-    t6L95uLX9XEHdvdfG6VNhTTMgVdd2YlMgcKWDH2MVTQgfxkxDZXbhMAI5it5d/8sR4ji
-    eG0Zwv1+jKbZpkdr/RlgN2xAkmED+3HFEnujFAvJ/ma1MnF64BUwCE928B9pczPpd3fo
-    bcn2ArIjvOp/OhIiqjuwzf1lDzdQaFv4QnztqC2nIUIO4YD09LoFy4DiPGFVUn5hUmJ7
-    SybG5tUXuk9HmT18NUTayBg9/E56UJX9Jg0VlbuYE02yyvBN8j6lJbz+aNDjcLZxMrk+
-    zu+g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847856;
+    bh=Vj5Z5EeVRMBdfZYdOR4Fv2Get1Ee6bFBctEVmqEZJKI=;
+    b=Vmb8S5jGoHwDyAZxsKz7Q+NV/Jt6J24Sxq+fg9875vi+RdVvTNeGjsymzOWOqpF6gh
+    opZZFXKje988RKLh8J/Ox6lAbYFqKdIyS4hz6l8M1yIDSj0pcp/O5A2EqberMK1Pj45P
+    +syxVQcmOKEuwdgrHWfCZFRb4Yn9jRt+cYIOuA+BbcaEJ+3WCsZ0Am5T9AEqB4nKHNMz
+    QttZaTJn6joQbj5itLT5B5syYocm0733V+zxr8DBjU4wyTSqLjFPHPKx2pqlH7QN0PK4
+    FY9Sxyv9+0PnDZHTvdnSzFPlMTMpt59qGpW7oSj0nvwiyKUFumXk2sWakzhpLUelcF/P
+    aFVA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686847859;
     s=strato-dkim-0003; d=gerhold.net;
     h=Cc:To:In-Reply-To:References:Message-Id:Subject:Date:From:Cc:Date:
     From:Subject:Sender;
-    bh=e3uST5fLGOUnGwSt4p0Biiiiiw75/Lg6PSk0roxV6pQ=;
-    b=BMwdx7q/33kCd/fAH+bctrNNpccJHiC5IHiANOMjqH0E+a/7tc0SsmOvyR/gAFLBbF
-    UpJhxqlapbDZ+qB5lhAA==
+    bh=Vj5Z5EeVRMBdfZYdOR4Fv2Get1Ee6bFBctEVmqEZJKI=;
+    b=IkoX7UXpRIv6CmNWgJapnA+R6/eemhsymGaED5VAWPBm3jvLJXLSO1z63/Gm4xqEFf
+    ZwyOnaf+PdZjQxF6EUCg==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQjVd4CteZ/7jYgS+mLFY+H0JAn9VOf59w=="
 Received: from [192.168.244.3]
     by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
-    with ESMTPSA id D0d0a8z5FGou42g
+    with ESMTPSA id D0d0a8z5FGow42n
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Thu, 15 Jun 2023 18:50:56 +0200 (CEST)
+    Thu, 15 Jun 2023 18:50:58 +0200 (CEST)
 From:   Stephan Gerhold <stephan@gerhold.net>
-Date:   Thu, 15 Jun 2023 18:50:38 +0200
-Subject: [PATCH v3 05/13] dt-bindings: remoteproc: glink-rpm-edge: Use
- "glink-edge" as node name
+Date:   Thu, 15 Jun 2023 18:50:45 +0200
+Subject: [PATCH v3 12/13] ARM: dts: qcom: Add rpm-proc node for SMD
+ platforms
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-rpm-rproc-v3-5-a07dcdefd918@gerhold.net>
+Message-Id: <20230531-rpm-rproc-v3-12-a07dcdefd918@gerhold.net>
 References: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 In-Reply-To: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
 To:     Bjorn Andersson <andersson@kernel.org>
@@ -89,51 +89,158 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Semantically glink-edge and glink-rpm-edge are similar: Both describe
-the communication channels to a remote processor. The RPM glink-edge is
-a special case that needs slightly different properties but otherwise
-it is used exactly the same.
+Rather than having the RPM SMD channels as the only child of a dummy
+SMD node, switch to representing the RPM as remoteproc like all the
+other remoteprocs (WCNSS, modem DSP).
 
-To improve consistency use the same "glink-edge" node name also for
-glink-rpm-edge. Drop the $nodename from qcom,glink-edge.yaml to avoid
-matching the wrong schema. qcom,glink-edge.yaml is always referenced
-explicitly from other schemas. This will already ensure that the nodes
-are being checked, so it's not necessary to bind to all nodes named
-"glink-edge".
+This allows assigning additional subdevices to it like the MPM
+interrupt-controller or rpm-master-stats.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml     | 3 ---
- Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml | 2 +-
- 2 files changed, 1 insertion(+), 4 deletions(-)
+ arch/arm/boot/dts/qcom-apq8084.dtsi |  6 ++---
+ arch/arm/boot/dts/qcom-msm8226.dtsi | 38 ++++++++++++++++----------------
+ arch/arm/boot/dts/qcom-msm8974.dtsi | 44 ++++++++++++++++++-------------------
+ 3 files changed, 44 insertions(+), 44 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
-index 7b43ad3daa56..e78a89c9ec41 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-edge.yaml
-@@ -14,9 +14,6 @@ description:
-   related to the remote processor.
+diff --git a/arch/arm/boot/dts/qcom-apq8084.dtsi b/arch/arm/boot/dts/qcom-apq8084.dtsi
+index 8f178bc87e1d..2b1f9d0fb510 100644
+--- a/arch/arm/boot/dts/qcom-apq8084.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8084.dtsi
+@@ -784,10 +784,10 @@ spmi_bus: spmi@fc4cf000 {
+ 		};
+ 	};
  
- properties:
--  $nodename:
--    const: glink-edge
+-	smd {
+-		compatible = "qcom,smd";
++	rpm: remoteproc {
++		compatible = "qcom,apq8084-rpm-proc", "qcom,rpm-proc";
+ 
+-		rpm {
++		smd-edge {
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+ 			qcom,ipc = <&apcs 8 0>;
+ 			qcom,smd-edge = <15>;
+diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
+index 313a726f4704..612c305c1540 100644
+--- a/arch/arm/boot/dts/qcom-msm8226.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
+@@ -53,26 +53,10 @@ pmu {
+ 					 IRQ_TYPE_LEVEL_HIGH)>;
+ 	};
+ 
+-	reserved-memory {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges;
 -
-   apr:
-     $ref: /schemas/soc/qcom/qcom,apr.yaml#
-     required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
-index f5a044e20c4e..884158bccd50 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,glink-rpm-edge.yaml
-@@ -84,7 +84,7 @@ examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
+-		smem_region: smem@3000000 {
+-			reg = <0x3000000 0x100000>;
+-			no-map;
+-		};
+-
+-		adsp_region: adsp@dc00000 {
+-			reg = <0x0dc00000 0x1900000>;
+-			no-map;
+-		};
+-	};
+-
+-	smd {
+-		compatible = "qcom,smd";
++	rpm: remoteproc {
++		compatible = "qcom,msm8226-rpm-proc", "qcom,rpm-proc";
  
--    rpm-glink {
-+    glink-edge {
-         compatible = "qcom,glink-rpm";
-         interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
-         mboxes = <&apcs_glb 0>;
+-		rpm {
++		smd-edge {
+ 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+ 			qcom,ipc = <&apcs 8 0>;
+ 			qcom,smd-edge = <15>;
+@@ -120,6 +104,22 @@ rpmpd_opp_super_turbo: opp6 {
+ 		};
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		smem_region: smem@3000000 {
++			reg = <0x3000000 0x100000>;
++			no-map;
++		};
++
++		adsp_region: adsp@dc00000 {
++			reg = <0x0dc00000 0x1900000>;
++			no-map;
++		};
++	};
++
+ 	smem {
+ 		compatible = "qcom,smem";
+ 
+diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
+index aeca504918a0..706fef53767e 100644
+--- a/arch/arm/boot/dts/qcom-msm8974.dtsi
++++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
+@@ -113,6 +113,28 @@ pmu {
+ 		interrupts = <GIC_PPI 7 0xf04>;
+ 	};
+ 
++	rpm: remoteproc {
++		compatible = "qcom,msm8974-rpm-proc", "qcom,rpm-proc";
++
++		smd-edge {
++			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
++			qcom,ipc = <&apcs 8 0>;
++			qcom,smd-edge = <15>;
++
++			rpm_requests: rpm-requests {
++				compatible = "qcom,rpm-msm8974";
++				qcom,smd-channels = "rpm_requests";
++
++				rpmcc: clock-controller {
++					compatible = "qcom,rpmcc-msm8974", "qcom,rpmcc";
++					#clock-cells = <1>;
++					clocks = <&xo_board>;
++					clock-names = "xo";
++				};
++			};
++		};
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+@@ -293,28 +315,6 @@ wcnss_smsm: wcnss@7 {
+ 		};
+ 	};
+ 
+-	smd {
+-		compatible = "qcom,smd";
+-
+-		rpm {
+-			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+-			qcom,ipc = <&apcs 8 0>;
+-			qcom,smd-edge = <15>;
+-
+-			rpm_requests: rpm-requests {
+-				compatible = "qcom,rpm-msm8974";
+-				qcom,smd-channels = "rpm_requests";
+-
+-				rpmcc: clock-controller {
+-					compatible = "qcom,rpmcc-msm8974", "qcom,rpmcc";
+-					#clock-cells = <1>;
+-					clocks = <&xo_board>;
+-					clock-names = "xo";
+-				};
+-			};
+-		};
+-	};
+-
+ 	soc: soc {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 
 -- 
 2.40.1
