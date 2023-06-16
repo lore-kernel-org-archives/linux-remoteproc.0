@@ -2,257 +2,180 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBDAEB64D8
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Jun 2023 12:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33610EB64D7
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Jun 2023 15:21:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344762AbjFPMfV (ORCPT
+        id S231208AbjFPPVA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 16 Jun 2023 08:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
+        Fri, 16 Jun 2023 11:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344909AbjFPMfU (ORCPT
+        with ESMTP id S229883AbjFPPU7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 16 Jun 2023 08:35:20 -0400
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 414F92702;
-        Fri, 16 Jun 2023 05:35:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n9/lAY9HO8rZfvcHo2vzME/4OcIC9ir+SbWxmG28F7RoZ0+fFoAeW82UuWcgcH+hECCa4kf1Z+V07FDRNN0G0k+TFNeqcivgS/suseSQb1gL/IPjP0cY//vy1hreDQ6JSgSD/04+VVsecolWXF2cKvwfOXshGwOF+b2X5vkGQg52aNgbLXyUvzkPzq0QmiFkxRrtITFr4QzVv68tIH8qA/ilWErxJF98JNmEgAg6Be+x1EqQ067yLtaJAC1OLqHZpm2Yju4+fQ1rysL4GFYYraqD47YKNcYfgIu39+maHl/Bky2A320pCAyGy5VUnqQluI/PpYvqGD9Ajpqoz4S7FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/1wT/I1X/OZISgF8/h1k9yvimuUOptt/A7Zv+3UJqsc=;
- b=mY8akAhlw8Yn/AyNY2gHk/BEXbdXVK3QxicTSvag6Hl1MYu87aGyD4gnmG35MgdAsZGfNpZx1SHPjNSQlqZ0EOKR0b95mxIkmLH6ghuF3SXd6gZ4MzUKWCP2QnTuxi4ezGYOgUUaJ9kx0XnzrbuWaJM4AuV8zf0pmOoqaL+R7GTYPnuwU0mUxE+GYG3nZVVK+60Cgs5NO49C9jqn+SmaXCAgWIELE/fFGydtKOGpzOa8HN3Ttohpj33PsT0n0Wc7mdfvWRwBKHz5l1fikdBctChxthQtLNeVRrnGV5/HzYoHZX4UP9sDbv+CFClrgU+pC2NL2+s/Ad/sJHQzM+q/OQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/1wT/I1X/OZISgF8/h1k9yvimuUOptt/A7Zv+3UJqsc=;
- b=FhWa+SzAFscM45FLdEF92Ssm2GJiPV0wPzvetryIaLfwaxS6SVt0OFeXkqOGikRC+uFZqMVubn6FhmrhPuQ0UJli6vhVGAtZqD/TyO+nSKqjJ1nHNc9SVMMI53yufnsFaSs+fjeTywY9Xob6nuVuBvj76NpB4qP2QKRV+WdsaBc=
-Received: from DM6PR06CA0089.namprd06.prod.outlook.com (2603:10b6:5:336::22)
- by DS0PR12MB8563.namprd12.prod.outlook.com (2603:10b6:8:165::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.25; Fri, 16 Jun
- 2023 12:35:17 +0000
-Received: from DM6NAM11FT092.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:336:cafe::f4) by DM6PR06CA0089.outlook.office365.com
- (2603:10b6:5:336::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.29 via Frontend
- Transport; Fri, 16 Jun 2023 12:35:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DM6NAM11FT092.mail.protection.outlook.com (10.13.173.44) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6500.29 via Frontend Transport; Fri, 16 Jun 2023 12:35:15 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.23; Fri, 16 Jun
- 2023 07:35:15 -0500
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.23 via Frontend
- Transport; Fri, 16 Jun 2023 07:35:11 -0500
-From:   Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <michal.simek@amd.com>,
-        <ben.levinsky@amd.com>, <tanmay.shah@amd.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <git@amd.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Subject: [PATCH] dt-bindings: remoteproc: add Tightly Coupled Memory (TCM) bindings
-Date:   Fri, 16 Jun 2023 18:04:25 +0530
-Message-ID: <1686918865-2330677-1-git-send-email-radhey.shyam.pandey@amd.com>
-X-Mailer: git-send-email 2.1.1
+        Fri, 16 Jun 2023 11:20:59 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A95E530FE
+        for <linux-remoteproc@vger.kernel.org>; Fri, 16 Jun 2023 08:20:57 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-311153ec442so687164f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 16 Jun 2023 08:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686928856; x=1689520856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nwl0LNhJUMmewFF0gr0xbjGPARcgwNZ+TwWnvyZN5TM=;
+        b=y6d7G/bcZeVfhtOwzWnupZfcpOIbpWqUETtVqEcRoO7agztBlbsJ6YPPP9rYTnGqzZ
+         GaMK7QstokUuhf97rxF7jzZwOYgriGRPuzTUvT48ELnphBNOYsBb9D1DTICnOs6M8OKE
+         afYvikew/Y7RqAZhLpRwdqewU9DxCRMUyvx1k9copwZaX3/AxPMwFqa4eAl8AmUC6O/L
+         MYjLAIxrTSG/+UJT2GjtFggqqIRQGnBl/iecVw42bxB5r48bywnIAXXWp/0rTY8uKtm7
+         ke1QekA/keSjnmIm/uc4gQQ3Nlc4tvOymz/gtGs1v9pBcUMWaFozL8jLveLpXomgA4m+
+         ONAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686928856; x=1689520856;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nwl0LNhJUMmewFF0gr0xbjGPARcgwNZ+TwWnvyZN5TM=;
+        b=aS8cYTsPpkuipuw2xPALiOqBSxzM9LNEMrQycg94C/SKOwzJQVDPkpOn/mNxD1hPfj
+         IZNL23QVRhAMXOYUq8fD9zuQomh8t0NK3U3b5WyDro2hmk0jLXu4k24HTTQ9O0IX8P7W
+         lfls7tiHdM12Q9QTimyqrsnkQzzoCEagSFlgnQl0cc/RKT6XmPRm2k6aIyYV0gbLfV9E
+         DJYWIwffzhS8kiiqB1saHz9sxgtIGISfJ0BYKqCW1Ehwu2aEuHQsdl7AWXq+LiLnzSns
+         /HBjXixIwyLnpPiQBxz1xjnUp64ne5vX4WD17T0i1i9aOwz7rZp1dNJqNOwkk4dUEsdA
+         B5SQ==
+X-Gm-Message-State: AC+VfDydNP2kWlqUlgviYUrbygmswqDYxeTTsmdYaYNUqC7sws0LfyhE
+        9FUOHSimcNzHLXXusvnUvo3XGULHVhRd+Nj9qZpTUA==
+X-Google-Smtp-Source: ACHHUZ7Wieql98Qo7JahSqyBzgeFyTeWSzVEw0p2WQO9ukcNU4vWKZ3JzJ0l9v2deSmbwPenZ18DpHRCFahcErhiCN0=
+X-Received: by 2002:adf:e4cb:0:b0:311:f11:4c55 with SMTP id
+ v11-20020adfe4cb000000b003110f114c55mr2252797wrm.13.1686928856105; Fri, 16
+ Jun 2023 08:20:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT092:EE_|DS0PR12MB8563:EE_
-X-MS-Office365-Filtering-Correlation-Id: eaa57f87-e802-4467-94de-08db6e662349
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mZIACYi0DgSs1D6nxiT1ZD6+4l5gOmZYXKgEmqcgBziACLcbhutFlr17NBN3YGksynp3nBgLNz8z5gF21tA5i3IEEqXqTzCAkogGRSV5BnGvtdFtuovyjUqSTXJNNJ0Ca5yF31Qxr411hAL4HpTSCsQcKhTKAdIIX+JCz/FT+afieKHXPuo4RQdHlDmM1R1Mwo/HfwyIpsVhqTeqgZ0kTjfkV4km9O/d1ZnAzu06zJJA7MoxaGywvqBiDE449ukH9bFv/5FACJRaH98L43ajavLn5tBUoo445dN29pXf6U0xVKUbkweJ1S9SGk7t7+d7kg699cjr8SOtn2vywtHUMSdeAeaA1upX2Mev9iZLBql5JHgUdIg5829PLd7y0Wos4hKS4MMrrF0KoA8ViVtzE0L0hWUxloAEEDao6nR+az1XL4DM93ioepFtKmAC5VFv3tDBvm9O8HfAce2UyWi7NbsYuvIOYuwC0DFDhsafrer58L/alQpDK3E4Liy/1pACtlAsBMqE2yWVIbVM4Z4dfkeiSEwjIiHeFH2V0W4oLcItku4EOd/dwsfcxfGIcZTGnOVjMaEtRZc8obgJ6LRHQf9YLLLM7koYGbJpqbbhHufZYyCdJQb18kwDB0iD7+j+OPiWPi2L+a5lxIKxCuof2idIlMDxhLV618tNTYbE5HYBxAD0hOvmy0on5rhRCPEn/WLBkDc5eJm6uD4wmp15/BeT9udHXS9iufKggX/JqxV8oWzfS/9voGoerCfJ/FaTqPQ7YBKHYdQ1Tm9vNOKivQ==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230028)(4636009)(396003)(39860400002)(136003)(346002)(376002)(451199021)(40470700004)(36840700001)(46966006)(356005)(81166007)(82310400005)(86362001)(82740400003)(5660300002)(336012)(316002)(8936002)(41300700001)(8676002)(70206006)(70586007)(4326008)(110136005)(36860700001)(6636002)(83380400001)(47076005)(54906003)(426003)(2616005)(186003)(478600001)(36756003)(26005)(2906002)(40480700001)(6666004)(40460700003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2023 12:35:15.9864
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: eaa57f87-e802-4467-94de-08db6e662349
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT092.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8563
+References: <20230615213154.1753313-1-robh@kernel.org>
+In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Fri, 16 Jun 2023 09:20:45 -0600
+Message-ID: <CANLsYkx_cd7QxMpE8OKe+jJT-tSt23Ub0p8ceAuKbchLtQmKcg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
+ in titles
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        =?UTF-8?Q?Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+        Marek Vasut <marex@denx.de>, Suman Anna <s-anna@ti.com>,
+        - <devicetree-spec@vger.kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Introduce bindings for TCM memory address space on AMD-xilinx Zynq
-UltraScale+ platform. As of now TCM addresses are hardcoded in xilinx
-remoteproc driver. This binding will help in defining TCM in device-tree
-and make it's access platform agnostic and data-driven from the driver.
+On Thu, 15 Jun 2023 at 15:32, Rob Herring <robh@kernel.org> wrote:
+>
+> The Devicetree bindings document does not have to say in the title that
+> it is a "Devicetree binding", but instead just describe the hardware.
+>
+> Most of these have been fixed already, so fix the handful that snuck in.
+> With this, a meta-schema check can be enabled to catch these
+> automatically.
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
+>  Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
+>  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
+>  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-=
+clocks.yaml b/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-c=
+locks.yaml
+> index 199818b2fb6d..cd0d763ce2f3 100644
+> --- a/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-clocks.=
+yaml
+> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm63268-timer-clocks.=
+yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/clock/brcm,bcm63268-timer-clocks.yaml=
+#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+> -title: Broadcom BCM63268 Timer Clock and Reset Device Tree Bindings
+> +title: Broadcom BCM63268 Timer Clock and Reset
+>
+>  maintainers:
+>    - =C3=81lvaro Fern=C3=A1ndez Rojas <noltari@gmail.com>
+> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml=
+ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> index ff9600474df2..0a6dc1a6e122 100644
+> --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+> -title: NXP i.MX8MP AudioMIX Block Control Binding
+> +title: NXP i.MX8MP AudioMIX Block Control
+>
+>  maintainers:
+>    - Marek Vasut <marex@denx.de>
+> diff --git a/Documentation/devicetree/bindings/power/reset/restart-handle=
+r.yaml b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> index 1f9a2aac53c0..f2ffdd29d52a 100644
+> --- a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/power/reset/restart-handler.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+> -title: Restart and shutdown handler generic binding
+> +title: Restart and shutdown handler Common Properties
+>
+>  maintainers:
+>    - Sebastian Reichel <sre@kernel.org>
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer=
+.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> index c6d86964b72a..35f0bb38f7b2 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+> -title: Common TI PRU Consumer Binding
+> +title: TI PRU Consumer Common Properties
+>
 
-Tightly-coupled memories(TCMs) are low-latency memory that provides
-predictable instruction execution and predictable data load/store
-timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
-banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-In split mode, TCM resources(reg, ranges and power-domain) are documented
-in each R5 node and in lockstep mode TCM resources are documented in any
-of the R5 node.
-
-It also extends the examples for TCM split and lockstep modes.
-
-Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
----
-The inspiration for integrating TCM nodes in R5 nodes is taken from
-"5ee79c2ed5bd dt-bindings: remoteproc: Add bindings for R5F subsystem
-on TI K3 SoCs".Once the binding is reviewed/accepted will send out
-driver changes in follow-up series.
----
- .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 86 +++++++++++++++++--
- 1 file changed, 81 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-index 9f677367dd9f..0bc3a8bb8374 100644
---- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-@@ -20,6 +20,12 @@ properties:
-   compatible:
-     const: xlnx,zynqmp-r5fss
- 
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 1
-+
-   xlnx,cluster-mode:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [0, 1, 2]
-@@ -37,7 +43,7 @@ properties:
-       2: single cpu mode
- 
- patternProperties:
--  "^r5f-[a-f0-9]+$":
-+  "^r5f(.*)+$":
-     type: object
-     description: |
-       The RPU is located in the Low Power Domain of the Processor Subsystem.
-@@ -54,8 +60,27 @@ patternProperties:
-       compatible:
-         const: xlnx,zynqmp-r5f
- 
-+      "#address-cells":
-+        const: 1
-+
-+      "#size-cells":
-+        const: 1
-+
-+      reg:
-+        items:
-+          - description: Address and Size of the ATCM internal memory region
-+          - description: Address and Size of the BTCM internal memory region
-+
-+      reg-names:
-+        items:
-+          - const: atcm
-+          - const: btcm
-+
-+      ranges: true
-+
-       power-domains:
--        maxItems: 1
-+        minItems: 1
-+        maxItems: 3
- 
-       mboxes:
-         minItems: 1
-@@ -112,13 +137,64 @@ additionalProperties: false
- 
- examples:
-   - |
-+    #include <dt-bindings/power/xlnx-zynqmp-power.h>
-+
-+    //Split mode configuration
-+    remoteproc {
-+        compatible = "xlnx,zynqmp-r5fss";
-+        xlnx,cluster-mode = <0>;
-+
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        r5f_0: r5f@ffe00000 {
-+            compatible = "xlnx,zynqmp-r5f";
-+            #address-cells = <1>;
-+            #size-cells = <1>;
-+            reg = <0xffe00000 0x10000>, <0xffe20000 0x10000>;
-+            reg-names = "atcm", "btcm";
-+            ranges = <0x0 0xffe00000 0x10000>, <0x20000 0xffe20000 0x10000>;
-+            power-domains = <&zynqmp_firmware PD_RPU_0>,
-+                            <&zynqmp_firmware PD_R5_0_ATCM>,
-+                            <&zynqmp_firmware PD_R5_0_BTCM>;
-+            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-+            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-+            mbox-names = "tx", "rx";
-+        };
-+
-+        r5f_1: r5f@ffe90000 {
-+            compatible = "xlnx,zynqmp-r5f";
-+            #address-cells = <1>;
-+            #size-cells = <1>;
-+            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
-+            reg-names = "atcm", "btcm";
-+            ranges = <0x0 0xffe90000 0x10000>, <0x20000 0xffeb0000 0x10000>;
-+            power-domains = <&zynqmp_firmware PD_RPU_1>,
-+                            <&zynqmp_firmware PD_R5_1_ATCM>,
-+                            <&zynqmp_firmware PD_R5_1_BTCM>;
-+            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
-+            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
-+            mbox-names = "tx", "rx";
-+        };
-+    };
-+
-+  - |
-+    //Lockstep configuration
-     remoteproc {
-         compatible = "xlnx,zynqmp-r5fss";
-         xlnx,cluster-mode = <1>;
- 
--        r5f-0 {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        r5f_00: r5f@ffe00000 {
-             compatible = "xlnx,zynqmp-r5f";
--            power-domains = <&zynqmp_firmware 0x7>;
-+            #address-cells = <1>;
-+            #size-cells = <1>;
-+            reg = <0xffe00000 0x20000>, <0xffe20000 0x20000>;
-+            reg-names = "atcm", "btcm";
-+            ranges = <0x0 0xffe00000 0x20000>, <0x20000 0xffe20000 0x20000>;
-+            power-domains = <&zynqmp_firmware PD_RPU_0>,
-+                            <&zynqmp_firmware PD_R5_0_ATCM>,
-+                            <&zynqmp_firmware PD_R5_0_BTCM>;
-             memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-             mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-             mbox-names = "tx", "rx";
-@@ -126,7 +202,7 @@ examples:
- 
-         r5f-1 {
-             compatible = "xlnx,zynqmp-r5f";
--            power-domains = <&zynqmp_firmware 0x8>;
-+            power-domains = <&zynqmp_firmware PD_RPU_1>;
-             memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
-             mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
-             mbox-names = "tx", "rx";
--- 
-2.25.1
-
+>  maintainers:
+>    - Suman Anna <s-anna@ti.com>
+> diff --git a/Documentation/devicetree/bindings/reserved-memory/framebuffe=
+r.yaml b/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+> index 05b6648b3458..851ec24d6142 100644
+> --- a/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+> +++ b/Documentation/devicetree/bindings/reserved-memory/framebuffer.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/reserved-memory/framebuffer.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+> -title: /reserved-memory framebuffer node bindings
+> +title: /reserved-memory framebuffer node
+>
+>  maintainers:
+>    - devicetree-spec@vger.kernel.org
+> --
+> 2.39.2
+>
