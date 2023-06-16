@@ -2,138 +2,183 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5899FEB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Jun 2023 00:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E84EB64D7
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Jun 2023 07:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232027AbjFPAhR (ORCPT
+        id S240978AbjFPHvK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 20:37:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
+        Fri, 16 Jun 2023 03:51:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229509AbjFPAhP (ORCPT
+        with ESMTP id S230318AbjFPHvI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jun 2023 20:37:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82672962;
-        Thu, 15 Jun 2023 17:37:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BC85611DD;
-        Fri, 16 Jun 2023 00:37:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E836C433C0;
-        Fri, 16 Jun 2023 00:37:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686875833;
-        bh=J55ESfNtGwwnrR+cNXZIBNS0rU9QKWNkSjf07aIrJEQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iyfDZSJFtZ2hl+gEx08XuqQZYJbKs9nmgyKESWbNzvnUE1dtWMAwRPLIP/D4VMvuO
-         9KxIfRXXj7amb7jFeM7ZDcfzoRxKw7f/TsjJ9bU5l3fLJyoM3SgsCtQnIghCizTVDv
-         ztQB7PTqMLmx1tNFAIVuxOMU6FZbMPpHa8IslPLPIVoc5Tdc0sFhfLcIHgVVBpe01e
-         NA0v1+/orrFhyqNr5ePIaEZyn10l7ml8gMoh/74Fq4sgqd6eALMeFpL0FCnPRkiBbJ
-         Ydvn9Nk0yFeGtMUFlAt71Myl/R/I4Ai4UXTUm8f1yqdjkTGLlaZ545d8PwsgOvm0pe
-         167t8SGNre9rA==
-Received: by mercury (Postfix, from userid 1000)
-        id D47AD1060EDC; Fri, 16 Jun 2023 02:37:10 +0200 (CEST)
-Date:   Fri, 16 Jun 2023 02:37:10 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        =?utf-8?Q?Fern=C3=A1ndez?= Rojas <noltari@gmail.com>,
-        Marek Vasut <marex@denx.de>, Suman Anna <s-anna@ti.com>,
-        - <devicetree-spec@vger.kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
- in titles
-Message-ID: <20230616003710.arsee2k3732kdhfk@mercury.elektranox.org>
-References: <20230615213154.1753313-1-robh@kernel.org>
+        Fri, 16 Jun 2023 03:51:08 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 025AC1FC3;
+        Fri, 16 Jun 2023 00:51:03 -0700 (PDT)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35G6Caw4029463;
+        Fri, 16 Jun 2023 09:50:31 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=urauJacVUNG8muiUJtZCcVbTigmq8+/WZEuTP+wxZgY=;
+ b=6eMf+wUEuj+XX/rTmLMoh/OyZlzek60fq9B3hoafxgLxYJf7EsC1Hv2CtiYxrYUk+AE2
+ ZruXp6JHnRRrVSsXXATinvYNJjfVIvH39g3684afmJfAsj63Gih9a9gox+e2F384pUh4
+ lE3hYokFSNEPDMHYzdszm6Lh2hTw0oIqImrvTzvUjG8xM8Wx3uHqHbg84FnkBfc5rtns
+ hmeL9U/EvmAU6uWhMsC2RZnRzpW93IhRXQa55RMWF6dpqmbbqp43T1cBOIdet/sE32gF
+ 4GjIibbj5mgSCX6YMGeQNThWhgWD75SBKwCQJ6Qa3t/iXknTl/7654DdHzXoIAy4bP6i JA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3r8j92gjrj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Jun 2023 09:50:31 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3E94010002A;
+        Fri, 16 Jun 2023 09:50:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36590217B9C;
+        Fri, 16 Jun 2023 09:50:26 +0200 (CEST)
+Received: from [10.201.21.9] (10.201.21.9) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Fri, 16 Jun
+ 2023 09:50:25 +0200
+Message-ID: <5db6f583-d906-d314-42ef-02f837b40310@foss.st.com>
+Date:   Fri, 16 Jun 2023 09:50:24 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="po5r3akfx43ntm5u"
-Content-Disposition: inline
-In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V7 1/3] rpmsg: core: Add signal API support
+Content-Language: en-US
+To:     Bjorn Andersson <andersson@kernel.org>
+CC:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Sarannya S <quic_sarannya@quicinc.com>, <swboyd@chromium.org>,
+        <quic_clew@quicinc.com>, <mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+References: <1682160127-18103-1-git-send-email-quic_sarannya@quicinc.com>
+ <1682160127-18103-2-git-send-email-quic_sarannya@quicinc.com>
+ <20230614155453.dywcrntfjddxojfv@ripper>
+ <6e51d6d8-cd3a-b0f2-c044-6282749aae89@foss.st.com>
+ <20230615145039.GA3256591@hu-bjorande-lv.qualcomm.com>
+ <4d89950d-0376-e355-c70b-d054776e83d4@foss.st.com>
+ <20230615164507.mu7fd22poamjth7p@ripper>
+From:   Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <20230615164507.mu7fd22poamjth7p@ripper>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.201.21.9]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-16_04,2023-06-15_01,2023-05-22_02
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
---po5r3akfx43ntm5u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 6/15/23 18:45, Bjorn Andersson wrote:
+> On Thu, Jun 15, 2023 at 06:19:37PM +0200, Arnaud POULIQUEN wrote:
+>>
+>>
+>> On 6/15/23 16:50, Bjorn Andersson wrote:
+>>> On Thu, Jun 15, 2023 at 11:01:14AM +0200, Arnaud POULIQUEN wrote:
+>>>>
+>>>>
+>>>> On 6/14/23 17:54, Bjorn Andersson wrote:
+>>>>> On Sat, Apr 22, 2023 at 04:12:05PM +0530, Sarannya S wrote:
+>>>>>> From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+>>>>>>
+>>>>>> Some transports like Glink support the state notifications between
+>>>>>> clients using flow control signals similar to serial protocol signals.
+>>>>>> Local glink client drivers can send and receive flow control status
+>>>>>> to glink clients running on remote processors.
+>>>>>>
+>>>>>> Add APIs to support sending and receiving of flow control status by
+>>>>>> rpmsg clients.
+>>>>>>
+>>>>>> Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+>>>>>> Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+>>>>>> ---
+>>>>>>  drivers/rpmsg/rpmsg_core.c     | 21 +++++++++++++++++++++
+>>>>>>  drivers/rpmsg/rpmsg_internal.h |  2 ++
+>>>>>>  include/linux/rpmsg.h          | 15 +++++++++++++++
+>>>>>>  3 files changed, 38 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>>>>>> index a2207c0..e8bbe05 100644
+>>>>>> --- a/drivers/rpmsg/rpmsg_core.c
+>>>>>> +++ b/drivers/rpmsg/rpmsg_core.c
+>>>>>> @@ -331,6 +331,25 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>>>>>>  EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+>>>>>>  
+>>>>>>  /**
+>>>>>> + * rpmsg_set_flow_control() - sets/clears serial flow control signals
+>>>>>> + * @ept:	the rpmsg endpoint
+>>>>>> + * @enable:	pause/resume incoming data flow	
+>>>>>
+>>>>> As shown in the discussion, it's still not clear what true/false means.
+>>>>> Also, let's try to clarify that it's a request for the other side to do
+>>>>> something:
+>>>>>
+>>>>> * rpmsg_set_flow_control() - request remote to pause/resume transmission
+>>>>> * ...
+>>>>> * @enable: flow restricted
+>>>>> * ...
+>>>>>
+>>>>>
+>>>>> PS. There's a stray space at the end of the line.
+>>>>
+>>>> The notion of flow restricted seems to me also ambiguous. It does
+>>>> not specify if the stream is limited in term of bandwidth or stopped.
+>>>>
+>>>> What about using XON/XOFF as specified in software flow control[1]
+>>>>
+>>>> XOFF	Pause transmission
+>>>> XON	Resume transmission
+>>>>
+>>>> or simply pause/resume definitions
+>>>>
+>>>
+>>> I agree, that's still ambiguous.
+>>>
+>>> I was concerned about expressing it such that the reader would assume
+>>> that calling this means there will be no more data coming, but there
+>>> might be things in the queues etc. Expressing it in terms of the state
+>>> of transmission is clearer.
+>>>
+>>>
+>>> /*
+>>>  * rpmsg_set_flow_control() - request remote to pause/resume transmission
+>>>  ...
+>>>  * @enable: Pause transmission
+>>>  ...
+>>>  */
+>>>
+>>> Does that sound okay and clear to you?
+>>
+>> Much better! I still have a nitpicking point :)
+>> What about replacing @enable variable by @pause to align the variable with the
+>> usage?
+>>  /*
+>>   * rpmsg_set_flow_control() - request remote to pause/resume transmission
+>>   ...
+>>   * @pause: set to 1 to pause transmission, to 0 to resume the transmission
+> 
+> It's a boolean, so I think with your name change suggestion, together
+> with the function description, it should be clear enough what the two
+> states (true/false) means.
+> 
+> * @pause: Pause transmission
 
-On Thu, Jun 15, 2023 at 03:31:54PM -0600, Rob Herring wrote:
-> The Devicetree bindings document does not have to say in the title that
-> it is a "Devicetree binding", but instead just describe the hardware.
->=20
-> Most of these have been fixed already, so fix the handful that snuck in.
-> With this, a meta-schema check can be enabled to catch these
-> automatically.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
->  Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
->  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
->  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
->  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
+Ok for me
 
-=2E..
+Thanks,
+Arnaud
 
-> diff --git a/Documentation/devicetree/bindings/power/reset/restart-handle=
-r.yaml b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-> index 1f9a2aac53c0..f2ffdd29d52a 100644
-> --- a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/power/reset/restart-handler.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> =20
-> -title: Restart and shutdown handler generic binding
-> +title: Restart and shutdown handler Common Properties
-> =20
->  maintainers:
->    - Sebastian Reichel <sre@kernel.org>
-
-Acked-by: Sebastian Reichel <sre@kernel.org>
-
--- Sebastian
-
---po5r3akfx43ntm5u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmSLrrAACgkQ2O7X88g7
-+ppshA//WlBWN4mcN0Kg9SD3Ko+IPfh7SzWZCTvjwXzfW1GBH5T5FIJDYgGMesO1
-YIq0TI4Afr3wWEQxYbNR4PBDnflE/gtkrK7Pwr59d1ft4yid54na8T0Ax6S8R3Ru
-FTW1dufmjQ7pT0QuqIyOH5GPTt5VPZNOGrh0ph9Un09PO2y3IzJ3BJ4XO8vEB4sc
-cN2UebftqaC6UcsHKl5Ux9BdrS8bI83/e7SbvMwdsaGN6CPrGgyZdmroD5MKRw/4
-SgswJZkElUnUlAisaO9h9ii7WlTlD1L90mr8xrNAfvuMg46HtRWP1z8xEkfsnj+N
-cnwBW+hhCXUq7jEW4Yw9ShgAYvxi74gxKGglnBNCdSjEFxMOQWqCeGlzg1ta+AAm
-bpVzc7M9OG1I/qjUVWlAQm4jgPSo9Vy7M55rwjzkxdXe2UsKeCxxbqx1gZsEgg/C
-e7QHGixSMhh1Q+UagP2UF1M15qdHL+gV2FoAyU9Al4oPIb/+N+tcM1yVbdf2oAJk
-8esyAD88tMZant9M6musxltBcaqS67X8xR7j44nFTnp3sbN5Y8WX9B6IyKOc6p9F
-xhH70cEACDHpbNQBpv70U51dR36gnf4UIFoDKHMqqIUsG0muvKldcu596zu/IR96
-xYrnu+5SUIla3pxG2ZJ5nhmLjoToTOHPSNduRFArX4EYNr+hwaM=
-=bwes
------END PGP SIGNATURE-----
-
---po5r3akfx43ntm5u--
+> 
+> Thanks,
+> Bjorn
