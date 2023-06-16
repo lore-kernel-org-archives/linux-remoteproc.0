@@ -2,54 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C550EB64DB
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 15 Jun 2023 23:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5899FEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 16 Jun 2023 00:37:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229453AbjFOXTy (ORCPT
+        id S232027AbjFPAhR (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 15 Jun 2023 19:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44964 "EHLO
+        Thu, 15 Jun 2023 20:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232355AbjFOXTr (ORCPT
+        with ESMTP id S229509AbjFPAhP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 15 Jun 2023 19:19:47 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC002949;
-        Thu, 15 Jun 2023 16:19:45 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 35FNJFm0023895;
-        Thu, 15 Jun 2023 18:19:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1686871155;
-        bh=ron0yTFP9tS1tz+dksMbJ6CQO1+vivWHLKGGTZLpBaM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=XvLIBwWMRs6qiujxn4WaAVAKKPBa+n0z3IJnnF/d6CZYz8AaSZZlqQFMX+3Q7BH6K
-         M31h9Rr346Hd0TEx+LCf/5tWPx3/Fb3g4bGdCGYHN870wtZc53sXn1UFJleBNYkXdK
-         t7djQmLIInsgxa8LRxpxgTqrmJG0CUMU1yKFIuu0=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 35FNJFAh098307
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Jun 2023 18:19:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 15
- Jun 2023 18:19:15 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 15 Jun 2023 18:19:15 -0500
-Received: from [128.247.79.139] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 35FNJD6B002099;
-        Thu, 15 Jun 2023 18:19:13 -0500
-Message-ID: <8d966915-301e-7728-a8ff-db19cecfa9af@ti.com>
-Date:   Thu, 15 Jun 2023 18:19:13 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
- in titles
-To:     Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Thu, 15 Jun 2023 20:37:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82672962;
+        Thu, 15 Jun 2023 17:37:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BC85611DD;
+        Fri, 16 Jun 2023 00:37:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E836C433C0;
+        Fri, 16 Jun 2023 00:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686875833;
+        bh=J55ESfNtGwwnrR+cNXZIBNS0rU9QKWNkSjf07aIrJEQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iyfDZSJFtZ2hl+gEx08XuqQZYJbKs9nmgyKESWbNzvnUE1dtWMAwRPLIP/D4VMvuO
+         9KxIfRXXj7amb7jFeM7ZDcfzoRxKw7f/TsjJ9bU5l3fLJyoM3SgsCtQnIghCizTVDv
+         ztQB7PTqMLmx1tNFAIVuxOMU6FZbMPpHa8IslPLPIVoc5Tdc0sFhfLcIHgVVBpe01e
+         NA0v1+/orrFhyqNr5ePIaEZyn10l7ml8gMoh/74Fq4sgqd6eALMeFpL0FCnPRkiBbJ
+         Ydvn9Nk0yFeGtMUFlAt71Myl/R/I4Ai4UXTUm8f1yqdjkTGLlaZ545d8PwsgOvm0pe
+         167t8SGNre9rA==
+Received: by mercury (Postfix, from userid 1000)
+        id D47AD1060EDC; Fri, 16 Jun 2023 02:37:10 +0200 (CEST)
+Date:   Fri, 16 Jun 2023 02:37:10 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -59,35 +49,43 @@ To:     Rob Herring <robh@kernel.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        Sebastian Reichel <sre@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        =?UTF-8?Q?Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
-        Marek Vasut <marex@denx.de>,
-        - <devicetree-spec@vger.kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>
+        =?utf-8?Q?Fern=C3=A1ndez?= Rojas <noltari@gmail.com>,
+        Marek Vasut <marex@denx.de>, Suman Anna <s-anna@ti.com>,
+        - <devicetree-spec@vger.kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
+ in titles
+Message-ID: <20230616003710.arsee2k3732kdhfk@mercury.elektranox.org>
 References: <20230615213154.1753313-1-robh@kernel.org>
-Content-Language: en-US
-From:   Suman Anna <s-anna@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="po5r3akfx43ntm5u"
+Content-Disposition: inline
 In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 6/15/23 16:31, Rob Herring wrote:
+
+--po5r3akfx43ntm5u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Thu, Jun 15, 2023 at 03:31:54PM -0600, Rob Herring wrote:
 > The Devicetree bindings document does not have to say in the title that
 > it is a "Devicetree binding", but instead just describe the hardware.
-> 
+>=20
 > Most of these have been fixed already, so fix the handful that snuck in.
 > With this, a meta-schema check can be enabled to catch these
 > automatically.
-> 
+>=20
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
 >  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
@@ -96,27 +94,46 @@ On 6/15/23 16:31, Rob Herring wrote:
 >  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
 >  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
 >  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
 
-...
+=2E..
 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> index c6d86964b72a..35f0bb38f7b2 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> diff --git a/Documentation/devicetree/bindings/power/reset/restart-handle=
+r.yaml b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> index 1f9a2aac53c0..f2ffdd29d52a 100644
+> --- a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
 > @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
+>  $id: http://devicetree.org/schemas/power/reset/restart-handler.yaml#
 >  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Common TI PRU Consumer Binding
-> +title: TI PRU Consumer Common Properties
->  
+> =20
+> -title: Restart and shutdown handler generic binding
+> +title: Restart and shutdown handler Common Properties
+> =20
 >  maintainers:
->    - Suman Anna <s-anna@ti.com>
+>    - Sebastian Reichel <sre@kernel.org>
 
-For PRU Consumer binding,
-Reviewed-by: Suman Anna <s-anna@ti.com>
+Acked-by: Sebastian Reichel <sre@kernel.org>
 
-regards
-Suman
+-- Sebastian
 
+--po5r3akfx43ntm5u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmSLrrAACgkQ2O7X88g7
++ppshA//WlBWN4mcN0Kg9SD3Ko+IPfh7SzWZCTvjwXzfW1GBH5T5FIJDYgGMesO1
+YIq0TI4Afr3wWEQxYbNR4PBDnflE/gtkrK7Pwr59d1ft4yid54na8T0Ax6S8R3Ru
+FTW1dufmjQ7pT0QuqIyOH5GPTt5VPZNOGrh0ph9Un09PO2y3IzJ3BJ4XO8vEB4sc
+cN2UebftqaC6UcsHKl5Ux9BdrS8bI83/e7SbvMwdsaGN6CPrGgyZdmroD5MKRw/4
+SgswJZkElUnUlAisaO9h9ii7WlTlD1L90mr8xrNAfvuMg46HtRWP1z8xEkfsnj+N
+cnwBW+hhCXUq7jEW4Yw9ShgAYvxi74gxKGglnBNCdSjEFxMOQWqCeGlzg1ta+AAm
+bpVzc7M9OG1I/qjUVWlAQm4jgPSo9Vy7M55rwjzkxdXe2UsKeCxxbqx1gZsEgg/C
+e7QHGixSMhh1Q+UagP2UF1M15qdHL+gV2FoAyU9Al4oPIb/+N+tcM1yVbdf2oAJk
+8esyAD88tMZant9M6musxltBcaqS67X8xR7j44nFTnp3sbN5Y8WX9B6IyKOc6p9F
+xhH70cEACDHpbNQBpv70U51dR36gnf4UIFoDKHMqqIUsG0muvKldcu596zu/IR96
+xYrnu+5SUIla3pxG2ZJ5nhmLjoToTOHPSNduRFArX4EYNr+hwaM=
+=bwes
+-----END PGP SIGNATURE-----
+
+--po5r3akfx43ntm5u--
