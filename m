@@ -2,97 +2,81 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75649EB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 18 Jun 2023 06:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA51EB64D7
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 19 Jun 2023 03:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229498AbjFRGsU (ORCPT
+        id S229660AbjFSDNH (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 18 Jun 2023 02:48:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        Sun, 18 Jun 2023 23:13:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjFRGsT (ORCPT
+        with ESMTP id S229565AbjFSDNF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 18 Jun 2023 02:48:19 -0400
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A76AFE5E;
-        Sat, 17 Jun 2023 23:48:18 -0700 (PDT)
-Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-558cf19575dso1758107eaf.3;
-        Sat, 17 Jun 2023 23:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687070898; x=1689662898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTo1KCmoI+3M46rfBk4X9GJE9+liBm16LyxJ6tR7Fxc=;
-        b=oY3btrBjo/LfqdGWh6E6EVUrJi/7vM+uTKPjlDUnBvX2yE07x4jZct56Gnl8WB81WN
-         QAzV0LxE5EC4KhkpeeCMC3juCYCBg4hUsuZrKS0R4yRB1l3Qb7Al5NntC1476q5LAF5V
-         GBm+aG4BRUwH8cuaareS5WOGMRyU47aHPjbDZnWPQkoh9Ju0+VxZEojK8B6FH5Vuqevk
-         bk6Pxl7fWmqFJphL7WoqHdVRsHQp4ooeAkKUYrA+7WLtxgObkQAzBkJLRNdFDhaq+JOA
-         aEs8yLFH8FgSaiodu9tPI0E7nPX9zboJTts9lnQY9W+bRqW12qNweuDq5vsPfGYuasDS
-         p9mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687070898; x=1689662898;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LTo1KCmoI+3M46rfBk4X9GJE9+liBm16LyxJ6tR7Fxc=;
-        b=iMkkM4xD7W5J9RWlvCigTbRSwQb7cvc3zXPpS8LRP6JTtzjUeXiOtY+OeTbINrG07Y
-         4jKtHVbz2oRaKxI1EiLi5tR+e27T1fb+5viFxpQ9QkpaK5UE72oL+PZvv/04nrO3wVlU
-         ytwXgTiPVnKpFYOEh4+5wp2I3pYivNQ7I1klXVxPb5qBbqEdoMF1NDzHguLUeUdjBvw3
-         d9rePR4hyzcoRr/MGiQdqXfxxBJc9OwaICcngl8Lbk52cn64StRoLs0KvMZOiF+4hEui
-         NXLj9lhLkNYT70PhPt9QQG4EjjgpzJQLSrahptN0GzDqBwAdhZWkRqG0+plnebY6Cr62
-         N0ug==
-X-Gm-Message-State: AC+VfDzSjhVGLzNJ4g74ZAjygdsPegGKGZ+tYrff0yuv9T5MserEJuv6
-        FhMehRdbFsEs0shInjIGrSM=
-X-Google-Smtp-Source: ACHHUZ7VGsWXSPSZpioEsUzxOniWvUcGzZsx86ZogwaxQv95Qm4aWDEuaEYwcOcvyYSfsNbxe+o7iw==
-X-Received: by 2002:a05:6808:300f:b0:39a:bd0e:43d with SMTP id ay15-20020a056808300f00b0039abd0e043dmr10012266oib.36.1687070897840;
-        Sat, 17 Jun 2023 23:48:17 -0700 (PDT)
-Received: from ubuntu777.domain.name (36-228-68-11.dynamic-ip.hinet.net. [36.228.68.11])
-        by smtp.gmail.com with ESMTPSA id n6-20020a1709026a8600b001a0448731c2sm18217909plk.47.2023.06.17.23.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Jun 2023 23:48:17 -0700 (PDT)
-From:   Min-Hua Chen <minhuadotchen@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Min-Hua Chen <minhuadotchen@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: qcom_q6v5_pas: make adsp_segment_dump static
-Date:   Sun, 18 Jun 2023 14:48:12 +0800
-Message-Id: <20230618064812.230265-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sun, 18 Jun 2023 23:13:05 -0400
+X-Greylist: delayed 384 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 18 Jun 2023 20:13:04 PDT
+Received: from cstnet.cn (smtp80.cstnet.cn [159.226.251.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4BAE4E;
+        Sun, 18 Jun 2023 20:13:03 -0700 (PDT)
+Received: from ed3e173716be.home.arpa (unknown [124.16.138.129])
+        by APP-01 (Coremail) with SMTP id qwCowAB3GPI4xo9kUaJEAQ--.1734S2;
+        Mon, 19 Jun 2023 11:06:33 +0800 (CST)
+From:   Jiasheng Jiang <jiasheng@iscas.ac.cn>
+To:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mathieu.poirier@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jiasheng Jiang <jiasheng@iscas.ac.cn>
+Subject: [PATCH] rpmsg: glink: Add check for kstrdup
+Date:   Mon, 19 Jun 2023 11:06:31 +0800
+Message-Id: <20230619030631.12361-1-jiasheng@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qwCowAB3GPI4xo9kUaJEAQ--.1734S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrur45XrWrCr43Cw48CF45Jrb_yoWfZrcE9r
+        yrZ3Z3Zryqkr93uF47Xrn3XF9ayw1qq3Wvqw4vqFy3AFykGwnxZryvqrs3CrZruasrGF4D
+        C34DtryfCr47ZjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbcxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+        Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+        0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
+        GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+        1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
+        64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+        0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
+        0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjQBMtUUUUU==
+X-Originating-IP: [124.16.138.129]
+X-CM-SenderInfo: pmld2xxhqjqxpvfd2hldfou0/
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-This patch fixes the following sparse warning:
+Add check for the return value of kstrdup() and return the error
+if it fails in order to avoid NULL pointer dereference.
 
-drivers/remoteproc/qcom_q6v5_pas.c:108:6: sparse: warning: symbol
-'adsp_segment_dump' was not declared. Should it be static?
-
-No functional change intended.
-
-Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Signed-off-by: Jiasheng Jiang <jiasheng@iscas.ac.cn>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rpmsg/qcom_glink_native.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index e34d82b18a67..f77d11c91a75 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -105,7 +105,7 @@ struct qcom_adsp {
- 	struct qcom_scm_pas_metadata dtb_pas_metadata;
- };
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 1beb40a1d3df..e4015db99899 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -221,6 +221,10 @@ static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
  
--void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
-+static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
- 		       void *dest, size_t offset, size_t size)
- {
- 	struct qcom_adsp *adsp = rproc->priv;
+ 	channel->glink = glink;
+ 	channel->name = kstrdup(name, GFP_KERNEL);
++	if (!channel->name) {
++		kfree(channel);
++		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	init_completion(&channel->open_req);
+ 	init_completion(&channel->open_ack);
 -- 
-2.34.1
+2.25.1
 
