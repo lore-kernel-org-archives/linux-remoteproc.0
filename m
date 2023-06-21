@@ -2,188 +2,144 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDC5EB64D7
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Jun 2023 15:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94986EB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 21 Jun 2023 17:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233583AbjFUPfa (ORCPT
+        id S231817AbjFUR4C (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 21 Jun 2023 11:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42292 "EHLO
+        Wed, 21 Jun 2023 13:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233606AbjFUPfC (ORCPT
+        with ESMTP id S231139AbjFURzn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 21 Jun 2023 11:35:02 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D2BBC;
-        Wed, 21 Jun 2023 08:34:54 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35L9DQUq003230;
-        Wed, 21 Jun 2023 15:34:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=l8IXCYQiN1DAAczqyeHLbKyxo4X10EwpiOW0x86mFDg=;
- b=UwRmYAOszktY+JkxXerzGLXRod25NHjk0r32dAB692YJcjREoX78wXcYV2350h2b6RD+
- 3V0FQMr0rG652mNuafrqr2RX9U9CL5fZ9FxSclQN146IkR9KHvVk0AtFvzQLINW9ZhSn
- IJLXVPPlf/UI5O0ZIYJK8rcp0Yl2RwNJhxOD21+6XhT89Xj9++ZsBPZ9qQojJzGQCZMG
- ss9fNGB+sQuOARBY7oTh4aIk1UMvo8R1tVU6Af0LEcpQD6LRYjG+RhsmmLzPeU89+gtJ
- pF0pJr/nfLymufnXi5Y80jcVWBjpCYYrr5hW181xm8iRU55gZq2Dr8vMJ4UDkPEom3uS Zg== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rbxc7rx0b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Jun 2023 15:34:47 +0000
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35LFYkla022334
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Jun 2023 15:34:46 GMT
-Received: from sarannya-linux.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 21 Jun 2023 08:34:42 -0700
-From:   Sarannya S <quic_sarannya@quicinc.com>
-To:     <quic_bjorande@quicinc.com>, <arnaud.pouliquen@foss.st.com>,
-        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Deepak Kumar Singh <quic_deesin@quicinc.com>,
-        Sarannya S <quic_sarannya@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
+        Wed, 21 Jun 2023 13:55:43 -0400
+Received: from proxmox1.postmarketos.org (proxmox1.postmarketos.org [213.239.216.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3A87419AB;
+        Wed, 21 Jun 2023 10:54:45 -0700 (PDT)
+Received: from lexxgentoo.devos.club (unknown [77.239.252.99])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by proxmox1.postmarketos.org (Postfix) with ESMTPSA id F150C1408B3;
+        Wed, 21 Jun 2023 17:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+        s=donut; t=1687369959;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=spj7M1eu0BpTeWO4D88uXHofRs63AcicfCjtgCEG0j4=;
+        b=bUP0j+i7VThOhmj1qULSbsnS2q8655wfM/XpfJNl53YC4HK7km1yUcz5GBjPsrwQtrYOzT
+        isUEBs95ZytRcRA/wMVGrEHCOxyLzG3GfiWf4DzgtLbi5EFx+ZGmPJ6GsoDThl46xQk3bh
+        P9+yHoMSdQ7mLSvfECwFnVjK1SfbUME=
+From:   Alexey Minnekhanov <alexeymin@postmarketos.org>
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH V8 2/3] rpmsg: glink: Add support to handle signals command
-Date:   Wed, 21 Jun 2023 21:04:07 +0530
-Message-ID: <1687361648-27688-3-git-send-email-quic_sarannya@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1687361648-27688-1-git-send-email-quic_sarannya@quicinc.com>
-References: <1687361648-27688-1-git-send-email-quic_sarannya@quicinc.com>
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Alexey Minnekhanov <alexeymin@postmarketos.org>
+Subject: [PATCH v2 3/3] arm64: dts: qcom: sdm630: Add support for modem remoteproc
+Date:   Wed, 21 Jun 2023 20:50:46 +0300
+Message-Id: <20230621175046.61521-3-alexeymin@postmarketos.org>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20230621175046.61521-1-alexeymin@postmarketos.org>
+References: <20230621175046.61521-1-alexeymin@postmarketos.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: c88zgRSMoHjYO7OHmDsuMhVZ2jEWvnjm
-X-Proofpoint-ORIG-GUID: c88zgRSMoHjYO7OHmDsuMhVZ2jEWvnjm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-21_08,2023-06-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 spamscore=0 impostorscore=0
- mlxlogscore=999 clxscore=1011 suspectscore=0 phishscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306210131
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Chris Lew <quic_clew@quicinc.com>
+Modem subsystem in SDM630/660 is similar to MSM8998 and
+device tree node for it is based on the one from msm8998.dtsi.
 
-Remote peripherals send signal notifications over glink with commandID 15.
-
-Add support to send and receive the signal command and based signals
-enable or disable flow control with remote host.
-
-Signed-off-by: Chris Lew <quic_clew@quicinc.com>
-Signed-off-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-Signed-off-by: Sarannya S <quic_sarannya@quicinc.com>
+Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 56 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm630.dtsi | 65 ++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index 1beb40a..bc87e6d 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -200,9 +200,15 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops;
- #define GLINK_CMD_TX_DATA_CONT		12
- #define GLINK_CMD_READ_NOTIF		13
- #define GLINK_CMD_RX_DONE_W_REUSE	14
-+#define GLINK_CMD_SIGNALS		15
+diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+index 014237d4b5b2..ad01f2951154 100644
+--- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+@@ -1028,6 +1028,71 @@ data-pins {
+ 			};
+ 		};
  
- #define GLINK_FEATURE_INTENTLESS	BIT(1)
++		remoteproc_mss: remoteproc@4080000 {
++			compatible = "qcom,sdm660-mss-pil";
++			reg = <0x04080000 0x100>, <0x04180000 0x40>;
++			reg-names = "qdsp6", "rmb";
++
++			interrupts-extended = <&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
++					      <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "wdog",
++					  "fatal",
++					  "ready",
++					  "handover",
++					  "stop-ack",
++					  "shutdown-ack";
++
++			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
++				 <&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
++				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
++				 <&gcc GPLL0_OUT_MSSCC>,
++				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
++				 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
++				 <&rpmcc RPM_SMD_QDSS_CLK>,
++				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
++			clock-names = "iface",
++				      "bus",
++				      "mem",
++				      "gpll0_mss",
++				      "snoc_axi",
++				      "mnoc_axi",
++				      "qdss",
++				      "xo";
++
++			qcom,smem-states = <&modem_smp2p_out 0>;
++			qcom,smem-state-names = "stop";
++
++			resets = <&gcc GCC_MSS_RESTART>;
++			reset-names = "mss_restart";
++
++			qcom,halt-regs = <&tcsr_regs_1 0x3000 0x5000 0x4000>;
++
++			power-domains = <&rpmpd SDM660_VDDCX>,
++					<&rpmpd SDM660_VDDMX>;
++			power-domain-names = "cx", "mx";
++
++			status = "disabled";
++
++			mba {
++				memory-region = <&mba_region>;
++			};
++
++			mpss {
++				memory-region = <&mpss_region>;
++			};
++
++			glink-edge {
++				interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
++				label = "modem";
++				qcom,remote-pid = <1>;
++				mboxes = <&apcs_glb 15>;
++			};
++		};
++
+ 		adreno_gpu: gpu@5000000 {
+ 			compatible = "qcom,adreno-508.0", "qcom,adreno";
  
-+#define NATIVE_DTR_SIG			NATIVE_DSR_SIG
-+#define NATIVE_DSR_SIG			BIT(31)
-+#define NATIVE_RTS_SIG			NATIVE_CTS_SIG
-+#define NATIVE_CTS_SIG			BIT(30)
-+
- static void qcom_glink_rx_done_work(struct work_struct *work);
- 
- static struct glink_channel *qcom_glink_alloc_channel(struct qcom_glink *glink,
-@@ -1025,6 +1031,51 @@ static int qcom_glink_rx_open_ack(struct qcom_glink *glink, unsigned int lcid)
- 	return 0;
- }
- 
-+/**
-+ * qcom_glink_set_flow_control() - convert a signal cmd to wire format and
-+ * 				   transmit
-+ * @ept:	Rpmsg endpoint for channel.
-+ * @pause:	Pause transmission
-+ * @dst:	destination address of the endpoint
-+ *
-+ * Return: 0 on success or standard Linux error code.
-+ */
-+static int qcom_glink_set_flow_control(struct rpmsg_endpoint *ept, bool pause, u32 dst)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	struct qcom_glink *glink = channel->glink;
-+	struct glink_msg msg;
-+	u32 sigs = 0;
-+
-+	if (pause)
-+		sigs |= NATIVE_DTR_SIG | NATIVE_RTS_SIG;
-+
-+	msg.cmd = cpu_to_le16(GLINK_CMD_SIGNALS);
-+	msg.param1 = cpu_to_le16(channel->lcid);
-+	msg.param2 = cpu_to_le32(sigs);
-+
-+	return qcom_glink_tx(glink, &msg, sizeof(msg), NULL, 0, true);
-+}
-+
-+static void qcom_glink_handle_signals(struct qcom_glink *glink,
-+				     unsigned int rcid, unsigned int sigs)
-+{
-+	struct glink_channel *channel;
-+	unsigned long flags;
-+	bool enable;
-+
-+	spin_lock_irqsave(&glink->idr_lock, flags);
-+	channel = idr_find(&glink->rcids, rcid);
-+	spin_unlock_irqrestore(&glink->idr_lock, flags);
-+	if (!channel)
-+		dev_err(glink->dev, "signal for non-existing channel\n");
-+
-+	enable = sigs & NATIVE_DSR_SIG || sigs & NATIVE_CTS_SIG;
-+
-+	if (channel->ept.flow_cb)
-+		channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
-+}
-+
- void qcom_glink_native_rx(struct qcom_glink *glink)
- {
- 	struct glink_msg msg;
-@@ -1086,6 +1137,10 @@ void qcom_glink_native_rx(struct qcom_glink *glink)
- 			qcom_glink_handle_intent_req_ack(glink, param1, param2);
- 			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
- 			break;
-+		case GLINK_CMD_SIGNALS:
-+			qcom_glink_handle_signals(glink, param1, param2);
-+			qcom_glink_rx_advance(glink, ALIGN(sizeof(msg), 8));
-+			break;
- 		default:
- 			dev_err(glink->dev, "unhandled rx cmd: %d\n", cmd);
- 			ret = -EINVAL;
-@@ -1446,6 +1501,7 @@ static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
- 	.sendto = qcom_glink_sendto,
- 	.trysend = qcom_glink_trysend,
- 	.trysendto = qcom_glink_trysendto,
-+	.set_flow_control = qcom_glink_set_flow_control,
- };
- 
- static void qcom_glink_rpdev_release(struct device *dev)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.39.3
 
