@@ -2,115 +2,164 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3999BEB64D8
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 22 Jun 2023 06:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9676DEB64D8
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 22 Jun 2023 10:00:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230017AbjFVGWw (ORCPT
+        id S231246AbjFVKAd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 22 Jun 2023 02:22:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
+        Thu, 22 Jun 2023 06:00:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229931AbjFVGWv (ORCPT
+        with ESMTP id S230125AbjFVKAX (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 22 Jun 2023 02:22:51 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84396199E
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Jun 2023 23:22:49 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f904dcc1e2so58821745e9.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Jun 2023 23:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687414968; x=1690006968;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gmobDT7+8aP4aCITE+/y9FPE9+vYWQGY04+aUMJ3l7w=;
-        b=lID62h52Vg7jFEFKKGfYC1kkLFKjhrmEaN54va3c25gVRp2g2G2LKNjA5jU36CP/FM
-         EfbeCTtZ0jFAIPb6YIKzWuxc33dMDC068Dmdje4pOUrNa7RqiaHdJfceWAyu39ky3b2/
-         uhu0yXSogwt0krlQbGwRiKptmJh4XVy+BBwM3VTBzHNPY1zThzMoLOrBPEuxLJEbxf1c
-         KBd6X7MCFiXtbd9mkazy+H7pM+4XzNNsn7eY0hsEg/x+pvQHa2UiV3euzouZ3GLf8vZ/
-         uLCU1BqXhm6agprvaXHTCgJi7jzqht+Oyrm2KKpiYG6R4s/XRKsqWcU8PyHDfHRWY2rg
-         VNXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687414968; x=1690006968;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gmobDT7+8aP4aCITE+/y9FPE9+vYWQGY04+aUMJ3l7w=;
-        b=YBGFoAFnkvoLvttsW6S8WfY7YaRDfSIAJ4qd3bGLmU+23oekA4l20bFN5IYVisLr6O
-         c3LSFZNGEFPA+Fwh76Njax5Oi04I+YS6h2sEysQvFk0P+b7CjchKpvIdqDHLh20kY9E9
-         hs3JxFKABk/x4RlRRHJQ2/ZTBDoNTGv9JEHMYZK7xbZtm1HZ1F+XzTWd30xXvdfCkCKv
-         mRNblPXQMzziP3HmUo8OH7Y6FygKYvUAK+Epluf4c+2itUPtAAtUPqUF81iB0yVl0sY6
-         D0FAbZUpFvwJGVdbApUpqCTZdg6ltN/iBh1I3dm32EjuvVXmUgx7mEZyNO2UiQ9DLPwB
-         uJpg==
-X-Gm-Message-State: AC+VfDwzrEa0j1ShtKgUKzXFRA0KmQOUZAdHLXuGGeVJ6P64Gj7Be/TO
-        XqGgazbnd06biMeaZc0bc1EfZg==
-X-Google-Smtp-Source: ACHHUZ6+nD3/452NS4FRuKF9FIbtua9FwfR8JwTgiR4FpTZ6V0c9K02Q1pSxdZdLn4/hpcjiNbVA3g==
-X-Received: by 2002:a1c:7211:0:b0:3f9:206:c3a6 with SMTP id n17-20020a1c7211000000b003f90206c3a6mr12041497wmc.20.1687414967617;
-        Wed, 21 Jun 2023 23:22:47 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id b8-20020adff248000000b003063772a55bsm6183782wrp.61.2023.06.21.23.22.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jun 2023 23:22:46 -0700 (PDT)
-Message-ID: <5e381133-969f-943a-a7a1-1243d7b105b2@linaro.org>
-Date:   Thu, 22 Jun 2023 08:22:44 +0200
+        Thu, 22 Jun 2023 06:00:23 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3055118;
+        Thu, 22 Jun 2023 03:00:12 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2] (unknown [IPv6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 19E83660704A;
+        Thu, 22 Jun 2023 11:00:11 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1687428011;
+        bh=gpCgJrBqi/2Xavz4ppF0dv3Ye/36nrT5W9Yjh2qoe0c=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dmxEV7AKk6Fn2OONdeYVF5RAlqjAorSfESIYtHjPtfiWP4ItjKBQz9N4u8rrRBtr9
+         Y8xvfIbyQjSXUun1o3912RrISFNu3EdQyNL58h7HIMKA89INioEaxhbdIvhUtSOSz6
+         WyITPwvDU9zX+O6AZ6EP5sGZICKCR1BZ98HGExiTe2Oh/142tmB5jUNJfyAMZ+d+80
+         eIv9PtiLrgp77MOrs4zqsHDiVK1E6pNPsDB5kmfWQBCkgtv0ps2N2NpzLWPSBUOiE/
+         ri4cxwbeAd5T6uuem/i7uSSadSJ9TdORN+LHKkWEBzjvbtrlScTB2ATpumT7uPjVva
+         6rj7m9XuqTeJw==
+Message-ID: <5a9beeec-5762-c469-6e03-b71babb5f7ed@collabora.com>
+Date:   Thu, 22 Jun 2023 12:00:08 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: sdm630: Add support for modem
- remoteproc
+Subject: Re: [PATCH v13 00/11] Add support for MT8195 SCP 2nd core
 Content-Language: en-US
-To:     Alexey Minnekhanov <alexeymin@postmarketos.org>,
-        Andy Gross <agross@kernel.org>,
+To:     Tinghan Shen <tinghan.shen@mediatek.com>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-References: <20230621175046.61521-1-alexeymin@postmarketos.org>
- <20230621175046.61521-3-alexeymin@postmarketos.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230621175046.61521-3-alexeymin@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20230607072222.8628-1-tinghan.shen@mediatek.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230607072222.8628-1-tinghan.shen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 21/06/2023 19:50, Alexey Minnekhanov wrote:
-> Modem subsystem in SDM630/660 is similar to MSM8998 and
-> device tree node for it is based on the one from msm8998.dtsi.
-> 
-> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm630.dtsi | 65 ++++++++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
+Il 07/06/23 09:22, Tinghan Shen ha scritto:
+> The mediatek remoteproc driver currently only allows bringing up a
+> single core SCP, e.g. MT8183. It also only bringing up the 1st
+> core in SoCs with a dual-core SCP, e.g. MT8195. This series support
+> to bring-up the 2nd core of the dual-core SCP.
 > 
 
-...
-> +
-> +			qcom,halt-regs = <&tcsr_regs_1 0x3000 0x5000 0x4000>;
-> +
-> +			power-domains = <&rpmpd SDM660_VDDCX>,
-> +					<&rpmpd SDM660_VDDMX>;
-> +			power-domain-names = "cx", "mx";
-> +
-> +			status = "disabled";
-> +
-> +			mba {
-> +				memory-region = <&mba_region>;
-> +			};
-> +
-> +			mpss {
-> +				memory-region = <&mpss_region>;
-> +			};
+Hello TingHan,
 
-mba and mpss are deprecated. I think this was changed to memory-regions
-in remoteproc node.
+Can you please address the comments on patch [05/11] and send a new version ASAP?
+That's the only remaining issue, so after that the series should be ready.
 
-Best regards,
-Krzysztof
+Thanks,
+Angelo
+
+> v12 -> v13:
+> 1. replace subdevice with new mediatek scp operations in patchset 7
+> 2. add review tag to patchset 3
+> 3. modify mediatek,scp phandle name of video-codec@18000000 at patchset 11
+> 
+> v11 -> v12:
+> 1. add scp_add_single/multi_core() to patchset 6
+> 2. remove unused comment in patchset 6
+> 3. rename list name from mtk_scp_cluster to mtk_scp_list
+> 4. rewrite the multi-core probe flow
+> 5. disable rproc->autoboot and boot rproc by request_firmware_nowait at patchset 7
+> 6. remove patchset 7 review tag
+> 
+> v10 -> v11:
+> 1. rewrite patchset 5 to probe single-core SCP with the cluster list
+> 2. Also in patchset 5, move the pointer of mtk_scp object from the
+>     platform data property to the driver data property
+> 3. move the appearance of mtk_scp cluster property to patcheset 7
+> 
+> v9 -> v10:
+> 1. move the global mtk_scp list into the platform device driver data structure
+> 2. remove an unnecessary if() condition
+> 
+> v8 -> v9:
+> 1. initialize l1tcm_size/l1tcm_phys at patchset 05/11
+> 2. rewrite patchset 06/11 to unify the flow and remove hacks
+> 
+> v7 -> v8:
+> 1. update the node name of mt8192 asurada SCP rpmsg subnode
+> 2. squash register definitions into driver patches
+> 3. initialize local variables on the declaration at patch v8 06/11
+> 
+> v6 -> v7:
+> 1. merge the mtk_scp_cluster struct into the mtk_scp structure
+>     at the "Probe multi-core SCP" patch
+> 
+> v5 -> v6:
+> 1. move the mtk_scp_of_regs structure from mtk_common.h to mtk_scp.c
+> 2. rename the SCP core 0 label from 'scp' to 'scp_c0'
+> 
+> v4 -> v5:
+> 1. move resource release actions to the platform driver remove operation
+> 2. fix dual-core watchdog handling
+> 
+> v3 -> v4:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. drop 'remove redundant call of rproc_boot for SCP' in v3 for further investigation
+> 
+> v2 -> v3:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. add SCP core 1 node to mt8195.dtsi
+> 4. remove redundant call of rproc_boot for SCP
+> 5. refine IPI error message
+> 
+> v1 -> v2:
+> 1. update dt-binding property description
+> 2. remove kconfig for scp dual driver
+> 3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
+> 
+> 
+> Tinghan Shen (11):
+>    dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode
+>      definition
+>    arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
+>    dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
+>    remoteproc: mediatek: Add MT8195 SCP core 1 operations
+>    remoteproc: mediatek: Introduce cluster on single-core SCP
+>    remoteproc: mediatek: Probe multi-core SCP
+>    remoteproc: mediatek: Add scp_boot_peers and scp_shutdown_peers
+>      operations
+>    remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
+>    remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+>    remoteproc: mediatek: Refine ipi handler error message
+>    arm64: dts: mediatek: mt8195: Add SCP 2nd core
+> 
+>   .../bindings/remoteproc/mtk,scp.yaml          | 176 +++++++-
+>   .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
+>   .../boot/dts/mediatek/mt8192-asurada.dtsi     |   2 +-
+>   .../boot/dts/mediatek/mt8195-cherry.dtsi      |   6 +-
+>   arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  32 +-
+>   drivers/remoteproc/mtk_common.h               |  26 ++
+>   drivers/remoteproc/mtk_scp.c                  | 425 ++++++++++++++++--
+>   7 files changed, 594 insertions(+), 75 deletions(-)
+> 
 
