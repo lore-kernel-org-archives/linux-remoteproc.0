@@ -2,623 +2,158 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9B8EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 24 Jun 2023 07:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA42EB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Sun, 25 Jun 2023 12:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229841AbjFXH2W (ORCPT
+        id S231401AbjFYMac (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 24 Jun 2023 03:28:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43800 "EHLO
+        Sun, 25 Jun 2023 08:30:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjFXH2T (ORCPT
+        with ESMTP id S230457AbjFYMab (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 24 Jun 2023 03:28:19 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E82B272D
-        for <linux-remoteproc@vger.kernel.org>; Sat, 24 Jun 2023 00:28:15 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-988b204ce5fso161827866b.3
-        for <linux-remoteproc@vger.kernel.org>; Sat, 24 Jun 2023 00:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687591693; x=1690183693;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=N0d9ka9qXrT8bIH/PefHROeo/N45KfGB6MKK5OqaRnM=;
-        b=LKtnuqdjpHEo+jp85EapT8pw3v/EECkwGHgK/L6Xzfvv5m7s2KqIYc7klBebFsifbm
-         IXv3zFHMUGSr6SlKIGYYNBv+H91z+Q4FOe4WeyI2zH9Jqo1J93ovCfXeAzQEBTRbSK6E
-         jnCaPtSq/ESLgtR9fkjwXpBovjikmSTIXvXhbVvjr65HCOhUt41qOL6calvPECZMzBNw
-         52V00Bc/fcQgQ/5o7yLUH9QA4E3hmhNCroFwmbVtv1LlP8aGDPk80+x08qvG/dFozPJ5
-         gbl1VPe5/es+AtPj+J+zfa/fh1k9c6hBL+TmpkadninTYvn6pIF0ClDWmQ2ARJr256pG
-         /NjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687591693; x=1690183693;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N0d9ka9qXrT8bIH/PefHROeo/N45KfGB6MKK5OqaRnM=;
-        b=fbBkgwUUKWvVQOWCaAlu5fL7NnGAjHqAugam1rK39U20g8apr3XTaAUihS10dBLb/u
-         ZMDRDYks4OXg1wfgCaW1xbALmWeOrGoZoOmnnBGgaevsxywZkF5Z3qO23vfANpinPL9G
-         Fwr80MaWWYzJmjerfbgdojh3qwIwi5ecqhahwH8I5Ag29OvtWThe/5MxguoqIN2zMqR5
-         s5WeMk738hqlboarFvVETc9uaAEoZ3enanYw1tqBWvJ2WvPsHJa3l4rdKamcqzLZzjHn
-         cSchFXhMSzsHxpft9QYhfI5iSnpxuF7ZRKZfotCugJITCEXDiXf/QYqlxNUHWmELrYzB
-         XIrg==
-X-Gm-Message-State: AC+VfDz9Xfk5O0iAOUrVruQ69ub6tC67w8fyy4olTdEu5355AHRmSP2p
-        uAdoD8/5hDqeKQIJv5cYiqwq2wNosKHA7U8DlY8=
-X-Google-Smtp-Source: ACHHUZ5PJCKogs55RBIbcnabcf2e0CYuLz8z97UtAeEl9sPxG4v63qpxRs0LdQqEKLw1yfxUAWGdlw==
-X-Received: by 2002:a17:906:7312:b0:98d:3ae:b693 with SMTP id di18-20020a170906731200b0098d03aeb693mr6692863ejc.7.1687591693362;
-        Sat, 24 Jun 2023 00:28:13 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id z18-20020a1709067e5200b00989257be620sm552582ejr.200.2023.06.24.00.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jun 2023 00:28:12 -0700 (PDT)
-Message-ID: <2061a641-4b97-1aa6-27cd-99f01a785033@linaro.org>
-Date:   Sat, 24 Jun 2023 09:28:09 +0200
+        Sun, 25 Jun 2023 08:30:31 -0400
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2089.outbound.protection.outlook.com [40.107.13.89])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04A8E7;
+        Sun, 25 Jun 2023 05:30:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hMwAELTUOvzNgo7e3vCBqZwNItRVgQp6W9llbhR2JE1ONgyeuAQ5I0x7wpOo+x3ZtwB+SWx3EGkYLHr9hJ2+icxQRyqR2z1TKizzpQcCvSLPqtrrvqoF/aS2dzpTzlpeZgrU5yRVVS9klzGTZfkbnBh1+dO0F7YaWLTk5ZTkh7AFxeHcrTiAdhFkVDANhrfYZJHVjw52rB0NBt7MnQP+r1eyKIlt6/21AbeFtlLsBWaPtj29kAfQaJT9BFTUT9vNBh1piUXtEQ/YlRX0VX3Eqr1rY5Q/RVaWGarI9kjpDYLfRE+BWU9xYQYZv6SOTEfaGy96x4dJfw9sxjLwnxjc7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wC1r+bR51QkblR3gPwo9xPNkn+1wxEuu4PDRDtPmhuE=;
+ b=bCoXnhWFjNUU5JcA6cXaRTCLy71XJrYj6Ee0M3unw7GhSQK1s5uKNR7kq3vwKuFj0/wkOUUQjD0md6KL+9cO/qDg4XXU55bHaiqjNlVgQitpGt9FdEQ+V5cOCIAA83+1s+pk3VrfmI4xpYjW+dMu8kmVSZgu5k7DHtgsvlUVGNkG2/gwoNoTlhjdeyx9E1PEvEQd/bFtpzZ/T5wBGkv15h5YSYjtGrCWV36OYCfxBSnXM5WtnsSBxuWiM6yslLo5tpI0W/ETA7vSrRMzgqLRDWweM05pnTucCXBOYS/x7lNSp05U1Mb0WcUxiOw3Sl/DcvBlJwB3sB8NSls1cXvzLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wC1r+bR51QkblR3gPwo9xPNkn+1wxEuu4PDRDtPmhuE=;
+ b=RkSut5TPNk6bHe8HeTXwTVgf+qcrnSBPj2MTZTadG5gHNZ/jvSN+cKimM3B3j2V4aqn2uib/8lVoQ3jULIC38fpth+NYL9yD3ewTxdZPZ5kKz0wtwk9igOscNg+Z9IABnuyuQPYm8VmUbaDLFKICxPahjj/Ypyby8EkbEaKumQM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AS8PR04MB8865.eurprd04.prod.outlook.com (2603:10a6:20b:42c::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Sun, 25 Jun
+ 2023 12:30:23 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::efff:43d6:6f46:eea]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::efff:43d6:6f46:eea%7]) with mapi id 15.20.6521.026; Sun, 25 Jun 2023
+ 12:30:23 +0000
+From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+To:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, daniel.baluta@nxp.com,
+        iuliana.prodan@nxp.com
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] remoteproc: imx_rproc: iterate all notifiyids in rx callback
+Date:   Sun, 25 Jun 2023 20:35:14 +0800
+Message-Id: <20230625123514.4069724-1-peng.fan@oss.nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0115.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::19) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH V2 10/13] remoteproc: qcom: Add Hexagon based multipd
- rproc driver
-Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jassisinghbrar@gmail.com,
-        mathieu.poirier@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
-        kvalo@kernel.org, loic.poulain@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
-        quic_devipriy@quicinc.com
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
- <20230521222852.5740-11-quic_mmanikan@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230521222852.5740-11-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AS8PR04MB8865:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cf4f93b-ea58-4d47-0e87-08db7577f27e
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SIAynDpew0gvTA+id5pABZD0354hCaw3PUovN+AY09M6gYJnI2ABpE3iDITOpD4WFcX4yT9mtqM/Os7r2Crm/iWe4Y+pshoXjiULz+nwRHuWb9IN0sPO2wl9UaGNK7fKJBT4A7Po7BlUtu0J1qNsMIw054MfiVXhl3zb2ftDFATjOzONumDduu09mysc30WFyZiWGDJeivXRudwqxhPJlmyJ6Ztnhf75UPtlDpBo8CaZ4xKXt29Y7WEEYT1+5WQwJTwD6l1Ef6EGKTpksiky/3na6XkaF1cjRHkwbQCnpryDs0vSbBQD7WGvrzMbY47duuckg68JgMMsaNBHkmV5a49+GD3d4HLp8byornp7YX3ow7z2AB1PpXqrgLFazoMxksK0XGgQu5EG9F0njXSuc9HqQMTAuPWokizouwLFok+zQdWmCAwC85igJzvGjNjZ22E6EoPdtAIPqyWPEQGtSigIfPIS+0mUJUiiI82W2gKFTmO/vClwZVKuL+Z1y94axWgwMqngeWZ1n4WDUYrRouOtk8r+bIqzDwL8spgNoaqBQgeltFaytcZYTvtbM4XYAmq9Ynd+7mDgPjVlC458b+un9YiNAAhzuGdpIRu+Bn4JIJuF5pxVfnIC6u2Dy1IX
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(136003)(396003)(39860400002)(346002)(451199021)(6486002)(478600001)(52116002)(2616005)(83380400001)(6666004)(6506007)(6512007)(1076003)(26005)(186003)(2906002)(5660300002)(38350700002)(38100700002)(4326008)(66946007)(8936002)(8676002)(41300700001)(316002)(86362001)(66476007)(66556008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6cB5171z4kNLOI/c7EVioiPZSAGWNYYdrCryWeVh86jXZAEP5kV2kDvLXIT0?=
+ =?us-ascii?Q?eqqi8V2USgzFcQPOV3rzWUgdaYHaZaSi/AkMAsxTPjIYedcoz4ZtHUA+ak+v?=
+ =?us-ascii?Q?3gsGwB8yJPXrAJYr8SAsiQW8J3bYo+ClakK25xXaYrXCyDLpMo8NMJe7bozd?=
+ =?us-ascii?Q?YqUop3pY1eR5E91T6SzS/UatYZYCduvKKusglOiO9Uw99d5hMWdLGZywpT9c?=
+ =?us-ascii?Q?rRhlChjAv4J+L4PKADbXrnKi7xHn3pEa+KtZqdAFjBXB4a1dEO3UhhhB3xjB?=
+ =?us-ascii?Q?I2S/CGYMS/1ZivR8Rfl8WzAWYu/D3Od74oHnAi+12aiXK4kRc4HrUgrXt3N5?=
+ =?us-ascii?Q?P9Mi0ZZmv9p6QqfHfQsHyKjVBUNDusd9iGRW4GYn2OvvcrC6JsfLws5HV3gl?=
+ =?us-ascii?Q?1nNvfkVFDvDvb2HPvuXKCtJhWQBMnYg9YAh3OXlVgdpZfchIa+5Kfh03zVjV?=
+ =?us-ascii?Q?7RKb25eLIPaqSYm+IrhIuarJYDUZIjgoVox3DBnk3kM5nMtceQZLSK2thAC7?=
+ =?us-ascii?Q?FdvGvwkvnU8wOIuoBlwUusmSuT6PEPm26a2O8p3WwlEh3FsZE9LD2dRYk/gU?=
+ =?us-ascii?Q?b8yY+R+/xxpTiloV+9tZnEtyyvKA9u8+kyK7soT6/p3ijM5IHz7x1ywS0zeA?=
+ =?us-ascii?Q?LRVXndatyWKWs7aBhOxGLUlNoVP1Y8sc4+0Q3iWxdVMozl+gvt+4mUJKdkCQ?=
+ =?us-ascii?Q?pYOPonMpFsYu4aRVHmYCKw5AoG1JgKUk5A9G72/GHp+Xat0+1QCWpDlETevV?=
+ =?us-ascii?Q?2HOtgkcNuHsWK68uPjB2KjSwQo/nisEqMPJvb7nLamhe5O0XTpN9pxqzNeOR?=
+ =?us-ascii?Q?WPWuTcA/9hOga0GLCY4hqD9M+jS6WNuol+KrwO6WwZna5OvSBaITCnqrr3Cw?=
+ =?us-ascii?Q?WzQdTrugZyk14bRkF2Qkzj/TUDAEzjjViAzObX/RhfmR8KjImoq7bypSgS3G?=
+ =?us-ascii?Q?Zjq2IbeWFK7ThAi8KoLhDtXwKr5/9YWS6q/ZviMnP68rCsY23BZ1lKKgmk0+?=
+ =?us-ascii?Q?Kjip+4bQYAREFrR50xDjXo6Qp0EfGOgaeYOvwSEOM1ruBJNVmY0jZTwx+K8e?=
+ =?us-ascii?Q?UV1x/L1vzSa2U7oMM7rvqIy+Tn6OXWfe5gNh26loaNuARgM10Td8wwJUps1D?=
+ =?us-ascii?Q?sujtA0E/sV91TBagA/p4ikSlo4JR2Xs2jgiNnEQyaYQI8XwyvGBv2JEfq6V3?=
+ =?us-ascii?Q?lO2q5ZkBxJeTT+CuKi//IAORgOmaTBWwi6zDNPEG572GnQH2x1HIUhAOln1h?=
+ =?us-ascii?Q?16MQClivYW7eGEpXN6OKeuWWd43MS2iktglnnmGM0M8EpUT+WIYdLgJgHpRy?=
+ =?us-ascii?Q?7WDl5c4IrqQBJ6tOhJSYKvrmzQPwVwjKr9/6Ef2QOB5MTi58nBQJpW4rz0HE?=
+ =?us-ascii?Q?M39M+rZja3VCb3LJpRcwmTycDnVbS5+1WDQt43LmMLlrnpubTcJ+MQk58dc+?=
+ =?us-ascii?Q?gg0xRH6p5VPv2ZneU4rII38YKE0vcvoU403irk5OwPFa4QzqUoiXuxFFYy/+?=
+ =?us-ascii?Q?wXKqqDDMwvsdmhPT+46pQIR3dEDdtsJ+m++hFVRNDETSiY8p3GuP9apeRtqU?=
+ =?us-ascii?Q?UUAMcgX0XntlI12wNwOt8N82kAeaYm0hjqxTkw8Z?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cf4f93b-ea58-4d47-0e87-08db7577f27e
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2023 12:30:23.6222
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bPTNA7rS24Ay1B8LF4oWvnqz9c2eQ2dosg2gN2cKhOcyPydjGeZkoayO6h4HXlbpt3DfWWmpNt6/DNQKvUs5pA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8865
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
-> It adds support to bring up remoteproc's on multipd model.
-> Pd means protection domain. It's similar to process in Linux.
-> Here QDSP6 processor runs each wifi radio functionality on a
-> separate process. One process can't access other process
-> resources, so this is termed as PD i.e protection domain.
-> 
-> Here we have two pd's called root and user pd. We can correlate
-> Root pd as root and user pd as user in linux. Root pd has more
-> privileges than user pd. Root will provide services to user pd.
-> 
-> From remoteproc driver perspective, root pd corresponds to QDSP6
-> processor bring up and user pd corresponds to Wifi radio (WCSS)
-> bring up.
-> 
-> Here WCSS(user) PD is dependent on Q6(root) PD, so first
-> q6 pd should be up before wcss pd. After wcss pd goes down,
-> q6 pd should be turned off.
-> 
-> IPQ5018, IPQ9574 supports multipd remoteproc driver.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
-> Changes in V2:
-> 	- Common functionalities moved to seperate patches
-> 	- qcom_get_pd_asid() moved to mpd driver
-> 	- Last DMA block alone memset to zero
-> 	- Added diagram to show how userpd data is organized and sent to
-> 	  trustzone
-> 	- Rewritten commit message since most of the content available
-> 	  in cover page
-> 	- Removed 'remote_id' becuase it's not required for bring up.
-> 
->  drivers/remoteproc/Kconfig          |  20 +
->  drivers/remoteproc/Makefile         |   1 +
->  drivers/remoteproc/qcom_common.h    |   9 +
->  drivers/remoteproc/qcom_q6v5_mpd.c  | 677 ++++++++++++++++++++++++++++
->  drivers/soc/qcom/mdt_loader.c       | 332 ++++++++++++++
->  include/linux/soc/qcom/mdt_loader.h |  19 +
->  6 files changed, 1058 insertions(+)
->  create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index a850e9f486dd..44af5c36f67e 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -234,6 +234,26 @@ config QCOM_Q6V5_PAS
->  	  CDSP (Compute DSP), MPSS (Modem Peripheral SubSystem), and
->  	  SLPI (Sensor Low Power Island).
-> 
-> +config QCOM_Q6V5_MPD
-> +	tristate "Qualcomm Hexagon based MPD model Peripheral Image Loader"
-> +	depends on OF && ARCH_QCOM
-> +	depends on QCOM_SMEM
-> +	depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
-> +	depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
-> +	depends on QCOM_SYSMON || QCOM_SYSMON=n
-> +	depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
-> +	depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
-> +	select MFD_SYSCON
+From: Peng Fan <peng.fan@nxp.com>
 
-Do you really need this?
+The current code has an assumption that there is one tx and one rx
+vring, but it is not always true. There maybe more vrings. So iterate
+all notifyids to not miss any vring events.
 
-> +	select QCOM_MDT_LOADER
-> +	select QCOM_PIL_INFO
-> +	select QCOM_Q6V5_COMMON
-> +	select QCOM_RPROC_COMMON
-> +	select QCOM_SCM
-> +	help
-> +	  Say y here to support the Qualcomm Secure Peripheral Image Loader
-> +	  for the Hexagon based MultiPD model remote processors on e.g. IPQ5018.
-> +	  This is trustZone wireless subsystem.
-> +
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/remoteproc/imx_rproc.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-...
-
-> +	int (*powerup_scm)(u32 peripheral);
-> +	int (*powerdown_scm)(u32 peripheral);
-> +};
-> +
-> +/**
-> + * qcom_get_pd_asid() - get the pd asid number from DT node
-
-From node name? NAK. It does not work like that. Node names can change
-and you did not define this number as part of ABI.
-
-Probably you wanted unit address.
-
-> + * @node:	device tree node
-> + *
-> + * Returns asid if node name has 'pd' string
-> + */
-> +s8 qcom_get_pd_asid(struct device_node *node)
-> +{
-> +	char *str;
-> +	s8 pd_asid;
-> +
-> +	if (!node)
-> +		return -EINVAL;
-> +
-> +	str = strstr(node->name, "pd");
-> +	if (!str)
-> +		return 0;
-> +
-> +	str += strlen("pd") + 1;
-> +	return kstrtos8(str, 10, &pd_asid) ? -EINVAL : pd_asid;
-> +}
-> +EXPORT_SYMBOL(qcom_get_pd_asid);
-> +
-
-...
-
-> +
-> +static int q6_wcss_spawn_pd(struct rproc *rproc)
-> +{
-> +	int ret;
-> +	struct q6_wcss *wcss = rproc->priv;
-> +
-> +	ret = qcom_q6v5_request_spawn(&wcss->q6);
-> +	if (ret == -ETIMEDOUT) {
-> +		pr_err("%s spawn timedout\n", rproc->name);
-
-dev_err
-
-> +		return ret;
-> +	}
-> +
-> +	ret = qcom_q6v5_wait_for_start(&wcss->q6, msecs_to_jiffies(10000));
-> +	if (ret == -ETIMEDOUT) {
-> +		pr_err("%s start timedout\n", rproc->name);
-
-dev_err
-
-> +		wcss->q6.running = false;
-> +		return ret;
-> +	}
-> +	wcss->q6.running = true;
-> +	return ret;
-> +}
-> +
-> +static int wcss_ahb_pcie_pd_start(struct rproc *rproc)
-> +{
-> +	struct q6_wcss *wcss = rproc->priv;
-> +	const struct wcss_data *desc = wcss->desc;
-> +	int ret;
-> +
-> +	if (!desc->reset_seq)
-> +		return 0;
-> +
-> +	if (desc->powerup_scm) {
-> +		ret = desc->powerup_scm(desc->pasid);
-> +		if (ret) {
-> +			dev_err(wcss->dev, "failed to power up pd\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	ret = q6_wcss_spawn_pd(rproc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	wcss->state = WCSS_NORMAL;
-> +	return ret;
-> +}
-> +
-> +static int q6_wcss_stop(struct rproc *rproc)
-> +{
-> +	struct q6_wcss *wcss = rproc->priv;
-> +	const struct wcss_data *desc = wcss->desc;
-> +	int ret;
-> +
-> +	ret = qcom_scm_pas_shutdown(desc->pasid);
-> +	if (ret) {
-> +		dev_err(wcss->dev, "not able to shutdown\n");
-> +		return ret;
-> +	}
-> +	qcom_q6v5_unprepare(&wcss->q6);
-> +
-> +	return 0;
-> +}
-> +
-> +static int wcss_ahb_pcie_pd_stop(struct rproc *rproc)
-> +{
-> +	struct q6_wcss *wcss = rproc->priv;
-> +	struct rproc *rpd_rproc = dev_get_drvdata(wcss->dev->parent);
-> +	const struct wcss_data *desc = wcss->desc;
-> +	int ret;
-> +
-> +	if (!desc->reset_seq)
-> +		goto shut_down_rpd;
-> +
-> +	if (rproc->state != RPROC_CRASHED && wcss->q6.stop_bit) {
-> +		ret = qcom_q6v5_request_stop(&wcss->q6, NULL);
-> +		if (ret) {
-> +			dev_err(&rproc->dev, "pd not stopped\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if (desc->powerdown_scm) {
-> +		ret = desc->powerdown_scm(desc->pasid);
-> +		if (ret) {
-> +			dev_err(wcss->dev, "failed to power down pd\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +shut_down_rpd:
-> +	rproc_shutdown(rpd_rproc);
-> +
-> +	wcss->state = WCSS_SHUTDOWN;
-> +	return 0;
-> +}
-> +
-> +static void *q6_wcss_da_to_va(struct rproc *rproc, u64 da, size_t len,
-> +			      bool *is_iomem)
-> +{
-> +	struct q6_wcss *wcss = rproc->priv;
-> +	int offset;
-> +
-> +	offset = da - wcss->mem_reloc;
-> +	if (offset < 0 || offset + len > wcss->mem_size)
-> +		return NULL;
-> +
-> +	return wcss->mem_region + offset;
-> +}
-> +
-> +static int q6_wcss_load(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	struct q6_wcss *wcss = rproc->priv;
-> +	const struct firmware *fw_hdl;
-> +	int ret;
-> +	const struct wcss_data *desc = wcss->desc;
-> +	int loop;
-> +
-> +	ret = qcom_mdt_load(wcss->dev, fw, rproc->firmware,
-> +			    desc->pasid, wcss->mem_region,
-> +			    wcss->mem_phys, wcss->mem_size,
-> +			    &wcss->mem_reloc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (loop = 1; loop < MAX_FIRMWARE; loop++) {
-> +		if (!wcss->firmware[loop])
-> +			continue;
-> +
-> +		ret = request_firmware(&fw_hdl, wcss->firmware[loop],
-> +				       wcss->dev);
-> +		if (ret)
-> +			continue;
-> +
-> +		ret = qcom_mdt_load_no_init(wcss->dev, fw_hdl,
-> +					    wcss->firmware[loop], 0,
-> +					    wcss->mem_region,
-> +					    wcss->mem_phys,
-> +					    wcss->mem_size,
-> +					    &wcss->mem_reloc);
-> +
-> +		release_firmware(fw_hdl);
-> +
-> +		if (ret) {
-> +			dev_err(wcss->dev,
-> +				"can't load %s ret:%d\n", wcss->firmware[loop], ret);
-> +			return ret;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +/* This function load's userpd firmware. Since Userpd depends on rootpd
-
-Use Linux coding style comments.
-
-> + * first bring up root pd and then load. User pd firmware load is required
-> + * only during user pd restart because root pd loads user pd FW pil segments
-> + * during it's bringup.
-> + */
-> +static int wcss_ahb_pcie_pd_load(struct rproc *rproc, const struct firmware *fw)
-> +{
-> +	struct q6_wcss *wcss = rproc->priv, *wcss_rpd;
-> +	struct rproc *rpd_rproc = dev_get_drvdata(wcss->dev->parent);
-> +	const struct wcss_data *desc = wcss->desc;
-> +	int ret;
-> +
-> +	wcss_rpd = rpd_rproc->priv;
-> +
-> +	/* Boot rootpd rproc */
-
-That's not helpful - i tcopies the function name.
-
-> +	ret = rproc_boot(rpd_rproc);
-> +	if (ret || wcss->state == WCSS_NORMAL)
-> +		return ret;
-> +
-> +	return desc->mdt_load_sec(wcss->dev, fw, rproc->firmware,
-> +				  desc->pasid, wcss->mem_region,
-> +				  wcss->mem_phys, wcss->mem_size,
-> +				  &wcss->mem_reloc);
-> +}
-> +
-
-...
-
-> +
-> +static int q6_get_inbound_irq(struct qcom_q6v5 *q6,
-> +			      struct platform_device *pdev,
-> +			      const char *int_name,
-> +			      irqreturn_t (*handler)(int irq, void *data))
-> +{
-> +	int ret, irq;
-> +	char *interrupt, *tmp = (char *)int_name;
-> +	struct q6_wcss *wcss = q6->rproc->priv;
-> +
-> +	irq = platform_get_irq_byname(pdev, int_name);
-> +	if (irq < 0) {
-> +		if (irq != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev,
-> +				"failed to retrieve %s IRQ: %d\n",
-> +					int_name, irq);
-
-return dev_err_probe
-
-> +		return irq;
-> +	}
-> +
-> +	if (!strcmp(int_name, "fatal")) {
-> +		q6->fatal_irq = irq;
-> +	} else if (!strcmp(int_name, "stop-ack")) {
-> +		q6->stop_irq = irq;
-> +		tmp = "stop_ack";
-> +	} else if (!strcmp(int_name, "ready")) {
-> +		q6->ready_irq = irq;
-> +	} else if (!strcmp(int_name, "handover")) {
-> +		q6->handover_irq  = irq;
-> +	} else if (!strcmp(int_name, "spawn-ack")) {
-> +		q6->spawn_irq = irq;
-> +		tmp = "spawn_ack";
-> +	} else {
-> +		dev_err(&pdev->dev, "unknown interrupt\n");
-> +		return -EINVAL;
-> +	}
-
-This is over complicated method of getting interrupts. First, you can
-pass here address of variable with interrupt to assign (*irq_field =
-irq). Second, drop the names and get by index. Entries are fixed, not
-flexible.
-
-> +
-> +	interrupt = devm_kzalloc(&pdev->dev, BUF_SIZE, GFP_KERNEL);
-> +	if (!interrupt)
-> +		return -ENOMEM;
-> +
-> +	snprintf(interrupt, BUF_SIZE, "q6v5_wcss_userpd%d_%s", wcss->pd_asid, tmp);
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, irq,
-> +					NULL, handler,
-> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +					interrupt, q6);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to acquire %s irq\n", interrupt);
-> +		return ret;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int q6_get_outbound_irq(struct qcom_q6v5 *q6,
-> +			       struct platform_device *pdev,
-> +			       const char *int_name)
-> +{
-> +	struct qcom_smem_state *tmp_state;
-> +	unsigned  bit;
-> +
-> +	tmp_state = qcom_smem_state_get(&pdev->dev, int_name, &bit);
-> +	if (IS_ERR(tmp_state)) {
-> +		dev_err(&pdev->dev, "failed to acquire %s state\n", int_name);
-> +		return PTR_ERR(tmp_state);
-> +	}
-> +
-> +	if (!strcmp(int_name, "stop")) {
-> +		q6->state = tmp_state;
-> +		q6->stop_bit = bit;
-> +	} else if (!strcmp(int_name, "spawn")) {
-> +		q6->spawn_state = tmp_state;
-> +		q6->spawn_bit = bit;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int init_irq(struct qcom_q6v5 *q6,
-> +		    struct platform_device *pdev, struct rproc *rproc,
-> +		    int crash_reason, const char *load_state,
-> +		    void (*handover)(struct qcom_q6v5 *q6))
-> +{
-> +	int ret;
-> +
-> +	q6->rproc = rproc;
-> +	q6->dev = &pdev->dev;
-> +	q6->crash_reason = crash_reason;
-> +	q6->handover = handover;
-> +
-> +	init_completion(&q6->start_done);
-> +	init_completion(&q6->stop_done);
-> +	init_completion(&q6->spawn_done);
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "fatal",
-> +				 q6v5_fatal_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "ready",
-> +				 q6v5_ready_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "stop-ack",
-> +				 q6v5_stop_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "spawn-ack",
-> +				 q6v5_spawn_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_outbound_irq(q6, pdev, "stop");
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_outbound_irq(q6, pdev, "spawn");
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int q6_wcss_probe(struct platform_device *pdev)
-> +{
-> +	const struct wcss_data *desc;
-> +	struct q6_wcss *wcss;
-> +	struct rproc *rproc;
-> +	int ret;
-> +	char *subdev_name;
-> +	const char **firmware;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	firmware = devm_kcalloc(&pdev->dev, MAX_FIRMWARE,
-> +				sizeof(*firmware), GFP_KERNEL);
-> +	if (!firmware)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
-> +					    firmware, MAX_FIRMWARE);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
-> +			    firmware[0], sizeof(*wcss));
-> +	if (!rproc) {
-> +		dev_err(&pdev->dev, "failed to allocate rproc\n");
-
-ENOMEM do not print errors. Why do you have to print something here?
-
-> +		return -ENOMEM;
-> +	}
-> +	wcss = rproc->priv;
-> +	wcss->dev = &pdev->dev;
-> +	wcss->desc = desc;
-> +	wcss->firmware = firmware;
-> +
-> +	ret = q6_alloc_memory_region(wcss);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	wcss->pd_asid = qcom_get_pd_asid(wcss->dev->of_node);
-> +	if (wcss->pd_asid < 0)
-> +		goto free_rproc;
-> +
-> +	if (desc->init_irq) {
-> +		ret = desc->init_irq(&wcss->q6, pdev, rproc,
-> +				     desc->crash_reason_smem, NULL, NULL);
-> +		if (ret)
-> +			goto free_rproc;
-> +	}
-> +
-> +	if (desc->glink_subdev_required)
-> +		qcom_add_glink_subdev(rproc, &wcss->glink_subdev, desc->ssr_name);
-> +
-> +	subdev_name = (char *)(desc->ssr_name ? desc->ssr_name : pdev->name);
-> +	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, subdev_name);
-> +
-> +	rproc->auto_boot = false;
-> +	ret = rproc_add(rproc);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	platform_set_drvdata(pdev, rproc);
-> +
-> +	ret = of_platform_populate(wcss->dev->of_node, NULL,
-> +				   NULL, wcss->dev);
-
-It is the same probe used for the children, right? So whom do they populate?
-
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to populate wcss pd nodes\n");
-
-dev_err_probe
-
-> +		goto free_rproc;
-> +	}
-> +	return 0;
-> +
-> +free_rproc:
-> +	rproc_free(rproc);
-> +
-> +	return ret;
-> +}
-> +
-> +static int q6_wcss_remove(struct platform_device *pdev)
-> +{
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	struct q6_wcss *wcss = rproc->priv;
-> +
-> +	qcom_q6v5_deinit(&wcss->q6);
-> +
-> +	rproc_del(rproc);
-> +	rproc_free(rproc);
-> +
-> +	return 0;
-> +}
-
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index f9874fc5a80f..e3f40d0e9f3d 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -725,13 +725,23 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+ 	return 0;
+ }
+ 
++static int imx_rproc_notified_idr_cb(int id, void *ptr, void *data)
++{
++	struct rproc *rproc = data;
++
++	if (rproc_vq_interrupt(rproc, id) == IRQ_NONE)
++		dev_dbg(&rproc->dev, "no message in vqid: %d\n", id);
++
++	return 0;
++}
++
+ static void imx_rproc_vq_work(struct work_struct *work)
+ {
+ 	struct imx_rproc *priv = container_of(work, struct imx_rproc,
+ 					      rproc_work);
++	struct rproc *rproc = priv->rproc;
+ 
+-	rproc_vq_interrupt(priv->rproc, 0);
+-	rproc_vq_interrupt(priv->rproc, 1);
++	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
+ }
+ 
+ static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
+-- 
+2.37.1
 
