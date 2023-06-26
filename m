@@ -2,33 +2,50 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74968EB64D9
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 20:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA42EB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 21:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbjFZU0L (ORCPT
+        id S230353AbjFZV1a (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Jun 2023 16:26:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37576 "EHLO
+        Mon, 26 Jun 2023 17:27:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjFZU0K (ORCPT
+        with ESMTP id S229562AbjFZV13 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Jun 2023 16:26:10 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8A3183;
-        Mon, 26 Jun 2023 13:26:06 -0700 (PDT)
-Received: from g550jk.localnet (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 7DB97CEF49;
-        Mon, 26 Jun 2023 20:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1687811164; bh=9Dd6Sb1LPtubpsUmqERQ2V++xS4zWW1SYkzFpWae+fc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=ANkFkbBIfxQGWRv7yIwCdXXzj0GsWSmLEgp6qKnS/ese4wCD9okQBQtDtSGHw8oFq
-         v+C4DMTbCj6C89Kb4wuvHUJhmmgHsTHPMk5a/OokUBnEDrD/yq+KlCJFcnofhZvMwX
-         i7jNhpkRQp0kAGIpPqq3V7MDxCHtYKMLQDnh+gTI=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     Andy Gross <agross@kernel.org>,
+        Mon, 26 Jun 2023 17:27:29 -0400
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 304B7B1;
+        Mon, 26 Jun 2023 14:27:29 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-345b231322fso3380655ab.2;
+        Mon, 26 Jun 2023 14:27:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687814848; x=1690406848;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=avBjJWfibsZdQeCWvAjApLqo6hXIYkVIdlb5U2XqZs0=;
+        b=ZOmn3yroLBzdZxb79yyXHPz65pbqJZXCMkVYVPSZjIOnKeLLjCgQtfldgcS54yGhli
+         r135gVTQT59jjvDxC0YLkjrnRADKDXATWfDj1G3QunSKYS8Sp9wfTDeHH/Ia19bDwiHB
+         +NLiQbpNXx83+wAsGUBa2DxoEXf6AXxLa7y1QfKPO90aWtVGJdDhuEwlDN5P5e7YSb9b
+         jIa5SxIkChnTgtFWeKEPwUw2QqMz2vdBdmUs2JTupfZNN84iZZKXoYUN33N+OZmJ5HpV
+         Az14/qRVv7UFy0jObawifFuZ4LJZIdLcykvN/XEOY1hM1bk32hr5tLQ+yQnk4EKxOjaP
+         EHmg==
+X-Gm-Message-State: AC+VfDyl/gC6qcRVPJzEarhqHPpY6xQee7Rn8TWOlq7mJ7ZEeWkxJc8d
+        bGMLsNUYdd0vDgs6r3eEnZLHiduEEw==
+X-Google-Smtp-Source: ACHHUZ6UkVZjSj1u1k9+RdwdmznVPLiWtyCjlufEfW5+WQVL9ireq9EnVIj4c+KH6q7zFQWZ0WYpVA==
+X-Received: by 2002:a92:d651:0:b0:345:66f5:3404 with SMTP id x17-20020a92d651000000b0034566f53404mr7248388ilp.0.1687814848321;
+        Mon, 26 Jun 2023 14:27:28 -0700 (PDT)
+Received: from robh_at_kernel.org ([199.114.228.113])
+        by smtp.gmail.com with ESMTPSA id f25-20020a056638023900b0042887e69e99sm1996354jaq.95.2023.06.26.14.27.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 14:27:27 -0700 (PDT)
+Received: (nullmailer pid 3927531 invoked by uid 1000);
+        Mon, 26 Jun 2023 21:27:26 -0000
+Date:   Mon, 26 Jun 2023 15:27:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Bhupesh Sharma <bhupesh.sharma@linaro.org>,
@@ -39,83 +56,54 @@ To:     Andy Gross <agross@kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
         AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Luca Weiss <luca@z3ntu.xyz>, Vinod Koul <vkoul@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: [PATCH 3/7] arm64: dts: qcom: pm6150l: Add missing short interrupt
-Date:   Mon, 26 Jun 2023 22:26:03 +0200
-Message-ID: <5684422.DvuYhMxLoT@z3ntu.xyz>
-In-Reply-To: <2b14f2a7-7f65-1b9d-06dc-92f0ea7fe096@linaro.org>
+Subject: Re: [PATCH 1/7] dt-bindings: qcom: Allow SoC names ending in "pro"
+Message-ID: <20230626212726.GA3924052-robh@kernel.org>
 References: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
- <2684880.mvXUDI8C0e@z3ntu.xyz>
- <2b14f2a7-7f65-1b9d-06dc-92f0ea7fe096@linaro.org>
+ <20230626-topic-bindingsfixups-v1-1-254ae8642e69@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230626-topic-bindingsfixups-v1-1-254ae8642e69@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Montag, 26. Juni 2023 22:18:11 CEST Konrad Dybcio wrote:
-> On 26.06.2023 22:17, Luca Weiss wrote:
-> > On Montag, 26. Juni 2023 22:00:25 CEST Konrad Dybcio wrote:
-> >> Add the missing short interrupt. This fixes the schema warning:
-> >> 
-> >> wled@d800: interrupt-names: ['ovp'] is too short
-> >> 
-> >> Fixes: fe508ced49dd ("arm64: dts: qcom: pm6150l: Add wled node")
-> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >> ---
-> >> 
-> >>  arch/arm64/boot/dts/qcom/pm6150l.dtsi | 5 +++--
-> >>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git a/arch/arm64/boot/dts/qcom/pm6150l.dtsi
-> >> b/arch/arm64/boot/dts/qcom/pm6150l.dtsi index 6a7fe1e59f15..d13a1ab7c20b
-> >> 100644
-> >> --- a/arch/arm64/boot/dts/qcom/pm6150l.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/pm6150l.dtsi
-> >> @@ -121,8 +121,9 @@ pm6150l_flash: led-controller@d300 {
-> >> 
-> >>  		pm6150l_wled: leds@d800 {
-> >>  		
-> >>  			compatible = "qcom,pm6150l-wled";
-> >>  			reg = <0xd800>, <0xd900>;
-> >> 
-> >> -			interrupts = <0x5 0xd8 0x1 
-IRQ_TYPE_EDGE_RISING>;
-> >> -			interrupt-names = "ovp";
-> >> +			interrupts = <0x5 0xd8 0x1 
-IRQ_TYPE_EDGE_RISING>,
-> >> +				     <0x5 0xd8 0x2 
-IRQ_TYPE_EDGE_RISING>;
-> >> +			interrupt-names = "ovp", "short";
-> > 
-> > Are you sure this interrupt really exists? It's not a thing used
-> > downstream at least:
-> > https://android.googlesource.com/kernel/msm-extra/devicetree/+/refs/heads/
-> > android-msm-bramble-4.19-android11-qpr1/qcom/pm6150l.dtsi#293
-> Confirmed with a reliable source.
-
-Fine by me then.
-
-Reviewed-by: Luca Weiss <luca@z3ntu.xyz>
-
+On Mon, Jun 26, 2023 at 10:00:23PM +0200, Konrad Dybcio wrote:
+> There are a couple of SoCs whose names end in "pro", with the currently-
+> upstream examples being msm8974pro and msm8996pro. Allow such suffix in
+> SoC-specific compatibles.
 > 
-> Konrad
+> Fixes: 5aa332c5e7ca ("dt-bindings: qcom: document preferred compatible naming")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom-soc.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > Regards
-> > Luca
-> > 
-> >>  			label = "backlight";
-> >>  			
-> >>  			status = "disabled";
+> diff --git a/Documentation/devicetree/bindings/arm/qcom-soc.yaml b/Documentation/devicetree/bindings/arm/qcom-soc.yaml
+> index e333ec4a9c5f..607a1cf1ef94 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom-soc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom-soc.yaml
+> @@ -31,7 +31,7 @@ properties:
+>    compatible:
+>      oneOf:
+>        # Preferred naming style for compatibles of SoC components:
+> -      - pattern: "^qcom,(apq|ipq|mdm|msm|qcm|qcs|sa|sc|sdm|sdx|sm)[0-9]+-.*$"
+> +      - pattern: "^qcom,(apq|ipq|mdm|msm|qcm|qcs|sa|sc|sdm|sdx|sm)[0-9]+(pro|)-.*$"
 
+"(pro)?" would be slightly better than "(pro|)" IMO.
 
+Acked-by: Rob Herring <robh@kernel.org>
 
-
+>        - pattern: "^qcom,(sa|sc)8[0-9]+[a-z][a-z]?-.*$"
+>  
+>        # Legacy namings - variations of existing patterns/compatibles are OK,
+> 
+> -- 
+> 2.41.0
+> 
