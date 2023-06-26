@@ -2,62 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72AC9EB64D7
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 20:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED955EB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 20:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjFZUA4 (ORCPT
+        id S229666AbjFZUB2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Jun 2023 16:00:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51270 "EHLO
+        Mon, 26 Jun 2023 16:01:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbjFZUAw (ORCPT
+        with ESMTP id S229742AbjFZUAy (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Jun 2023 16:00:52 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022301984
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:49 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4fb5bcb9a28so2430473e87.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:48 -0700 (PDT)
+        Mon, 26 Jun 2023 16:00:54 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32ABB1BC1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:51 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f96d680399so4947484e87.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687809647; x=1690401647;
+        d=linaro.org; s=google; t=1687809649; x=1690401649;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jKfIdLUUH2RS/LUserqASM5cmaLcT+sMjCEMVJp6OG0=;
-        b=qsKd6ggy1Axj9lwIWB2x+mFB2qIylwRI7aUVdF0KWYKyzCnHXgocW+DxYET2wtcQJ7
-         ms7H9kIvTWV4I+LzJv6w0tdtv5EvUSwYtKWosuxUMUY4I7HrPLkYFmhawBfQY9uGGOjq
-         z1aVRVxrhiAPdsqDx6vvrQQaPQ0m3Dyu2G4MLf2E2xIyfHKXOBHkRWP8l9URAz8IH5Ho
-         C8biajrPGizw8+ceEXeUdlcSR+CPY4xKtJ7C3FGCCuKIJ10wRPUy/TznqAzhRmJXDNMM
-         bWxiXvh/HCylYruibx/6DXyA8PXwL3LprjPQXQECtlDi26AebNyGljYSLKMGNbqgn533
-         ZX2Q==
+        bh=9oE1vA9oZECxb4lngoFC5l9QDNuTaz25Y3kIWdbl1G4=;
+        b=vw1Zn2lkdQDV8C2mNkXXf2b6yxaSYrNGCJ/o/8rmXru/l9NDdM7l8Amw9sahWGfL1/
+         b1cqNvH9gTWYlX+k8BYada27hhiz0RMgMNoJfe1nkmC89ya0YNMcpYJnXXFjMjRIsIpE
+         rK2TFcb/eVhmOh3lL72hu1geZq6ASYxpWKfMKdneXpddc5fTN1Zxdi6tbQeVUgrmzR9b
+         ZUk6ExFgrqnqIZhJtDuxOSk0N6QO4+n7QcX6SFG92kHPnFkf0wlQHoegIzsvDDhsr1RS
+         /lCGwg7fR7Kjg1djr0IiaDrMwmlhFilMiOoIdvEjuJMuW0/Q1fXHwieLeWfT7chpSBL0
+         +ucA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687809647; x=1690401647;
+        d=1e100.net; s=20221208; t=1687809649; x=1690401649;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jKfIdLUUH2RS/LUserqASM5cmaLcT+sMjCEMVJp6OG0=;
-        b=iWtE0NI/RadyApTM3dfSYxz0w6yA7cfwA//WeO+uqalljvU7vUH0H607i+9pv8H16H
-         wsUQQ8DsJCXG6VGVnEKnoxbWbH9y8jsmtEazc5yMDyazcIvw+5uACVrc/JBGa7GxPPMU
-         ixMarsWH9wqXBck5xGA8wAZEXjjdO4vU21XMnO3AoBIzQIz8NA+zIalx/eswJRNw6oHk
-         qxwEEw+8qgCWqBp6jIxMlK23tVCIeSg0NW94I5G8qyO/xaiG8O7eV37H/hXwMnf0z29E
-         w/85EdgK2B6+yZTL+IKDxoNhla4UJXurbtrYefUEuK2yer6FBveltIcMu+cBDynpDmb0
-         S7YA==
-X-Gm-Message-State: AC+VfDwAB8OKfin8wjz8yNJp6681EWGTItvWHTQ8Ly6DlUKJidETH136
-        XjC3qCALAtMQJJGS6K3L0G1pQu0aeOplX2B+hJE=
-X-Google-Smtp-Source: ACHHUZ4NLSXysy6psp13JHUXwmMYc7ARbE87NuhMyBupcqaANX/p2M/kcomktzH1OGLoppl6tRXEnw==
-X-Received: by 2002:a05:6512:447:b0:4f8:5fce:3683 with SMTP id y7-20020a056512044700b004f85fce3683mr15653218lfk.20.1687809647097;
-        Mon, 26 Jun 2023 13:00:47 -0700 (PDT)
+        bh=9oE1vA9oZECxb4lngoFC5l9QDNuTaz25Y3kIWdbl1G4=;
+        b=gCr99zQxNlyhzHdVtHfphQSx5zUnxdruJe5UFZlhWVyyLvG7K1JxaqUPuFzwuEBq95
+         E5HWIcj4BnV4TNifOE1aTB81IjWVfyRrpLdtudxnjP+vaJ8dew4VJ7wbeae3gHWsbjSd
+         xbPDSgH/cmcm3xpfCskzxGkYFf9VsKc+/h5HWjEDldWZfuyMmAMQQ/zzXSmQ5udgN7LQ
+         969i76tOxN/T9h4z/dpFw32jn/zXWi7Ei4Q19Yg9VkEXv6TKmZkaRF6Njy2k2XPMPXpn
+         yx6bRqgnszElRtmLfdylECpm5MAtmd3ebyMCtQdRfRzv2O1BWI+g4zxY9CowQcAPFiMn
+         7NRA==
+X-Gm-Message-State: AC+VfDwMAxAs9Cc94x3ebm8T8jcYkPrg7fJqYisPYMghzPHX3r0A6ejb
+        Nisula2FhNuJIzj6Ora8M37pZYkytusnKOq+aTY=
+X-Google-Smtp-Source: ACHHUZ4OiBhU4ZhPCNUmYmycNqrSBBeUaIAmkQGKJPpildJC6x6za9LCFa2p42QVBFQtf9EZLkInIw==
+X-Received: by 2002:a05:6512:3a96:b0:4fb:7642:88d3 with SMTP id q22-20020a0565123a9600b004fb764288d3mr2947490lfu.27.1687809649016;
+        Mon, 26 Jun 2023 13:00:49 -0700 (PDT)
 Received: from [192.168.1.101] (abyk179.neoplus.adsl.tpnet.pl. [83.9.30.179])
-        by smtp.gmail.com with ESMTPSA id o11-20020ac2494b000000b004fb74cb9670sm628082lfi.125.2023.06.26.13.00.45
+        by smtp.gmail.com with ESMTPSA id o11-20020ac2494b000000b004fb74cb9670sm628082lfi.125.2023.06.26.13.00.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 13:00:46 -0700 (PDT)
+        Mon, 26 Jun 2023 13:00:48 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 26 Jun 2023 22:00:27 +0200
-Subject: [PATCH 5/7] arm64: dts: qcom: pmi8950: Add missing OVP interrupt
+Date:   Mon, 26 Jun 2023 22:00:28 +0200
+Subject: [PATCH 6/7] arm64: dts: qcom: pmi8994: Add missing OVP interrupt
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230626-topic-bindingsfixups-v1-5-254ae8642e69@linaro.org>
+Message-Id: <20230626-topic-bindingsfixups-v1-6-254ae8642e69@linaro.org>
 References: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
 In-Reply-To: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -82,11 +82,11 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1687809636; l=1018;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1687809636; l=1039;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=KUd2AC4tc+iLheKuH/ERKh2OsQIUCXg4x0GOwnEVQBc=;
- b=3BhxLUb7/d4mmkWDECw8N4IewedZ36153EHBhClQZe07ll84G9Q/ATFQMLlZrTTxPAYqXzcp2
- RexIcXisuOjBJwBAaW0zxlo66RnSjeHVuZBf22YFCMJCNhOFJp14BO1
+ bh=ZiBnl3ppLgPG+6RsUgiLkAxM9fVUIHOAF6RSdTbrPSM=;
+ b=GKIu4T7ibjpsm2tmTrKQED9br3OgA+LWnPEAhuS767DpB016iimNdk40hfz04vB7l0+oZsFJq
+ lBP0unrfJyqCBgyGG23dbfIJIghh/6j/QEmu65W3NnR/vGTVMi89B61
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
@@ -97,27 +97,27 @@ Add the missing OVP interrupt. This fixes the schema warning:
 
 wled@d800: interrupt-names: ['short'] is too short
 
-Fixes: 0d97fdf380b4 ("arm64: dts: qcom: Add configuration for PMI8950 peripheral")
+Fixes: 37aa540cbd30 ("arm64: dts: qcom: pmi8994: Add WLED node")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/pmi8950.dtsi | 5 +++--
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/pmi8950.dtsi b/arch/arm64/boot/dts/qcom/pmi8950.dtsi
-index c09a9681bc0c..1029f3b1bb9a 100644
---- a/arch/arm64/boot/dts/qcom/pmi8950.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8950.dtsi
-@@ -87,8 +87,9 @@ pmic@3 {
- 		pmi8950_wled: leds@d800 {
- 			compatible = "qcom,pmi8950-wled";
+diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+index 0192968f4d9b..36d6a1fb553a 100644
+--- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
+@@ -54,8 +54,9 @@ pmi8994_spmi_regulators: regulators {
+ 		pmi8994_wled: wled@d800 {
+ 			compatible = "qcom,pmi8994-wled";
  			reg = <0xd800>, <0xd900>;
--			interrupts = <0x3 0xd8 0x02 IRQ_TYPE_EDGE_RISING>;
+-			interrupts = <3 0xd8 0x02 IRQ_TYPE_EDGE_RISING>;
 -			interrupt-names = "short";
 +			interrupts = <0x3 0xd8 0x1 IRQ_TYPE_EDGE_RISING>,
 +				     <0x3 0xd8 0x2 IRQ_TYPE_EDGE_RISING>;
 +			interrupt-names = "ovp", "short";
- 			label = "backlight";
- 
+ 			qcom,cabc;
+ 			qcom,external-pfet;
  			status = "disabled";
 
 -- 
