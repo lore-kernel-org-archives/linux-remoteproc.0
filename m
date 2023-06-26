@@ -2,65 +2,30 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CEBC001DE
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 20:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD26EB64D7
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 20:18:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbjFZUB3 (ORCPT
+        id S229861AbjFZUR5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 26 Jun 2023 16:01:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51702 "EHLO
+        Mon, 26 Jun 2023 16:17:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230070AbjFZUBD (ORCPT
+        with ESMTP id S229740AbjFZURv (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 26 Jun 2023 16:01:03 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 062301BE4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:52 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4f9fdb0ef35so3073819e87.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687809650; x=1690401650;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EuktTM1UhdAXyb9mJvjHwufVvOKEzeBXkcK386zAIO0=;
-        b=hGFXgcp1n/VTAG9JKtBSrKkyJIMQ5W9aN33MYvWk0ga+6fcAkKRLJKt1fxiCYKqav9
-         4KThNR3P50sR78T010b7R7SoBTu0RQJCWAbfcRPObzUrPhK2zSs8FZkJH/tjBYwkf17z
-         piEIHO/fhmx9fW5tpEafldrGNsjBBGQcFUUzoIoHqvPCYi342GeJvLCN3SZ0t9//wzMA
-         jMWmGFdWeqsQS5Q3NQRgUioze2z0r9cRoEpGCVMc0KlJ7vshUUQM+iFHPLwBKRuWYrSe
-         P9alLc6v+qhYtqR0EOG7a1wIndaftiGDgqH2Sedzf6Hn/MoiPzLhUFgEpjYnZl55vIUd
-         lk/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687809650; x=1690401650;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EuktTM1UhdAXyb9mJvjHwufVvOKEzeBXkcK386zAIO0=;
-        b=MVDFUf7p32exJfCW5jZldOLuJwCHIUsUHpRqa1iWoZq9XTJ8NTGNASKoGCtUj5OC50
-         2uPXF3/SkcUz48B3gKgISySgEq8BqWzjSFT/+LVhN7rww9aDSCQN3ZQmu7OQPq/Mafsr
-         YdKaVaHaQ4U9ewoBNlgzX19n98Uj8CAs1gAh59t9WpwZFW3olf3Soru5B5D8pNq9BPgt
-         YDXAs8w/dOXjpPIKww0Lffz4NhOPPx1gbfLdgZB9bSsNAveHhHpT88gTbonLHnGmEbag
-         QgZjp/7y5jP++sIW5G7dl3JxJCTs1+98UGb7ihd6n5YU2CQ9VcQuKwjJUwSvy74sUW3E
-         v9ww==
-X-Gm-Message-State: AC+VfDz263ZHlpxJ3XVoMAviaJUFE00H/GAHMJeCYB9BzBoHAcQlf4Ik
-        o/bESZjbSQHp5nB+9y7BAq0GQtzFZZKVWCcVZrc=
-X-Google-Smtp-Source: ACHHUZ7EXepLP9S0iQxWok0b76K0pbQWxmI21PNK3vwwhPWOkkfzSbxqTwv0BqrkbGqJc+qzUVwKmw==
-X-Received: by 2002:a19:7715:0:b0:4f9:5a87:1028 with SMTP id s21-20020a197715000000b004f95a871028mr8492827lfc.30.1687809650686;
-        Mon, 26 Jun 2023 13:00:50 -0700 (PDT)
-Received: from [192.168.1.101] (abyk179.neoplus.adsl.tpnet.pl. [83.9.30.179])
-        by smtp.gmail.com with ESMTPSA id o11-20020ac2494b000000b004fb74cb9670sm628082lfi.125.2023.06.26.13.00.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 13:00:50 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 26 Jun 2023 22:00:29 +0200
-Subject: [PATCH 7/7] arm64: dts: qcom: sc8180x: Add missing 'cache-unified'
- to L3
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230626-topic-bindingsfixups-v1-7-254ae8642e69@linaro.org>
-References: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
-In-Reply-To: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
+        Mon, 26 Jun 2023 16:17:51 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57C0F2;
+        Mon, 26 Jun 2023 13:17:50 -0700 (PDT)
+Received: from g550jk.localnet (unknown [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id CCDD7C702D;
+        Mon, 26 Jun 2023 20:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1687810637; bh=T1Y1F6wzIq4WEpcK/umv/lAT9j8dZ1QsdeEbyMnqVt4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=jqzzxwTQF39f9molmYemDHqmGVusGr5Fe5o9MfY/iVjqVLeOvwkqrANjynaOAxw/K
+         cHRPJceyQ59HUyTvk6TT+b/1htbofi25YRsTeAJ/J7RM0/1dHpawxiE1K8TzFBUipA
+         3LV/OLwsymH6ag6qR4LWlpTJ3LPuRo0XKRLWPUVA=
+From:   Luca Weiss <luca@z3ntu.xyz>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -74,7 +39,8 @@ To:     Andy Gross <agross@kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@somainline.org>,
         AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>, Vinod Koul <vkoul@kernel.org>
+        Vinod Koul <vkoul@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
@@ -82,41 +48,56 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-remoteproc@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1687809636; l=751;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=ibNUSGIgP6PhhvRriKU7DI4t+22ag5VAkhr7uTbUPMA=;
- b=PtMSn6MU54shBkuVwhD30ztIxSCv8W5HtCsm2V3hIf4gC1CdzHM4oX54cI2b2WAz1X6VI5gv0
- nuUIs36narkAfFei2b3tnCm708vhbpIALOw5HObFpt8ZcBQ5FzQv+ZZ
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Subject: Re: [PATCH 3/7] arm64: dts: qcom: pm6150l: Add missing short interrupt
+Date:   Mon, 26 Jun 2023 22:17:16 +0200
+Message-ID: <2684880.mvXUDI8C0e@z3ntu.xyz>
+In-Reply-To: <20230626-topic-bindingsfixups-v1-3-254ae8642e69@linaro.org>
+References: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
+ <20230626-topic-bindingsfixups-v1-3-254ae8642e69@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add the missing property to fix the dt checker warning:
+On Montag, 26. Juni 2023 22:00:25 CEST Konrad Dybcio wrote:
+> Add the missing short interrupt. This fixes the schema warning:
+> 
+> wled@d800: interrupt-names: ['ovp'] is too short
+> 
+> Fixes: fe508ced49dd ("arm64: dts: qcom: pm6150l: Add wled node")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/pm6150l.dtsi | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm6150l.dtsi
+> b/arch/arm64/boot/dts/qcom/pm6150l.dtsi index 6a7fe1e59f15..d13a1ab7c20b
+> 100644
+> --- a/arch/arm64/boot/dts/qcom/pm6150l.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm6150l.dtsi
+> @@ -121,8 +121,9 @@ pm6150l_flash: led-controller@d300 {
+>  		pm6150l_wled: leds@d800 {
+>  			compatible = "qcom,pm6150l-wled";
+>  			reg = <0xd800>, <0xd900>;
+> -			interrupts = <0x5 0xd8 0x1 IRQ_TYPE_EDGE_RISING>;
+> -			interrupt-names = "ovp";
+> +			interrupts = <0x5 0xd8 0x1 IRQ_TYPE_EDGE_RISING>,
+> +				     <0x5 0xd8 0x2 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "ovp", "short";
 
-qcom/sc8180x-primus.dtb: l3-cache: 'cache-unified' is a required property
+Are you sure this interrupt really exists? It's not a thing used downstream at
+least:
+https://android.googlesource.com/kernel/msm-extra/devicetree/+/refs/heads/android-msm-bramble-4.19-android11-qpr1/qcom/pm6150l.dtsi#293
 
-Fixes: 8575f197b077 ("arm64: dts: qcom: Introduce the SC8180x platform")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Regards
+Luca
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index 204deefbfa8b..5d8303a8dc95 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -64,6 +64,7 @@ L2_0: l2-cache {
- 				L3_0: l3-cache {
- 					compatible = "cache";
- 					cache-level = <3>;
-+					cache-unified;
- 				};
- 			};
- 		};
+>  			label = "backlight";
+> 
+>  			status = "disabled";
 
--- 
-2.41.0
+
+
 
