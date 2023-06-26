@@ -2,158 +2,121 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA42EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Sun, 25 Jun 2023 12:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A537EB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 26 Jun 2023 20:00:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231401AbjFYMac (ORCPT
+        id S229481AbjFZUAn (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sun, 25 Jun 2023 08:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
+        Mon, 26 Jun 2023 16:00:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230457AbjFYMab (ORCPT
+        with ESMTP id S229684AbjFZUAm (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sun, 25 Jun 2023 08:30:31 -0400
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2089.outbound.protection.outlook.com [40.107.13.89])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04A8E7;
-        Sun, 25 Jun 2023 05:30:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hMwAELTUOvzNgo7e3vCBqZwNItRVgQp6W9llbhR2JE1ONgyeuAQ5I0x7wpOo+x3ZtwB+SWx3EGkYLHr9hJ2+icxQRyqR2z1TKizzpQcCvSLPqtrrvqoF/aS2dzpTzlpeZgrU5yRVVS9klzGTZfkbnBh1+dO0F7YaWLTk5ZTkh7AFxeHcrTiAdhFkVDANhrfYZJHVjw52rB0NBt7MnQP+r1eyKIlt6/21AbeFtlLsBWaPtj29kAfQaJT9BFTUT9vNBh1piUXtEQ/YlRX0VX3Eqr1rY5Q/RVaWGarI9kjpDYLfRE+BWU9xYQYZv6SOTEfaGy96x4dJfw9sxjLwnxjc7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wC1r+bR51QkblR3gPwo9xPNkn+1wxEuu4PDRDtPmhuE=;
- b=bCoXnhWFjNUU5JcA6cXaRTCLy71XJrYj6Ee0M3unw7GhSQK1s5uKNR7kq3vwKuFj0/wkOUUQjD0md6KL+9cO/qDg4XXU55bHaiqjNlVgQitpGt9FdEQ+V5cOCIAA83+1s+pk3VrfmI4xpYjW+dMu8kmVSZgu5k7DHtgsvlUVGNkG2/gwoNoTlhjdeyx9E1PEvEQd/bFtpzZ/T5wBGkv15h5YSYjtGrCWV36OYCfxBSnXM5WtnsSBxuWiM6yslLo5tpI0W/ETA7vSrRMzgqLRDWweM05pnTucCXBOYS/x7lNSp05U1Mb0WcUxiOw3Sl/DcvBlJwB3sB8NSls1cXvzLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wC1r+bR51QkblR3gPwo9xPNkn+1wxEuu4PDRDtPmhuE=;
- b=RkSut5TPNk6bHe8HeTXwTVgf+qcrnSBPj2MTZTadG5gHNZ/jvSN+cKimM3B3j2V4aqn2uib/8lVoQ3jULIC38fpth+NYL9yD3ewTxdZPZ5kKz0wtwk9igOscNg+Z9IABnuyuQPYm8VmUbaDLFKICxPahjj/Ypyby8EkbEaKumQM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AS8PR04MB8865.eurprd04.prod.outlook.com (2603:10a6:20b:42c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Sun, 25 Jun
- 2023 12:30:23 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::efff:43d6:6f46:eea]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::efff:43d6:6f46:eea%7]) with mapi id 15.20.6521.026; Sun, 25 Jun 2023
- 12:30:23 +0000
-From:   "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        shawnguo@kernel.org, s.hauer@pengutronix.de, daniel.baluta@nxp.com,
-        iuliana.prodan@nxp.com
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] remoteproc: imx_rproc: iterate all notifiyids in rx callback
-Date:   Sun, 25 Jun 2023 20:35:14 +0800
-Message-Id: <20230625123514.4069724-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0115.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::19) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        Mon, 26 Jun 2023 16:00:42 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A90631716
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:40 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f76a0a19d4so5066448e87.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jun 2023 13:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687809638; x=1690401638;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MsirXe6F0XKcfpoI+mPFBbyk07gurBlFwHC8qBI/sU8=;
+        b=Q/WGo3McwEk59cszkwupzJcRO9xyOSy+utaXON8ApCzhym4ChsXJ+rT3OtJE6MFFgj
+         nUx9OD3TkzQ9SoiT2JtOIXza8B8ItW+jxeWsZkvxazdSyLI4FBg4zRkxxPe87QlYlCIE
+         KIN3Zu2EcQO7Vhs42Lzp1G7oqcwBY+JWidRD6hryz6WSpc3dvq6CYsRJ+sTfWTnjOAdh
+         6Wwl7NCMImN/vPA9CgUREEhiSKFSX64C0VfhOzc83GI/6g7akuzYIpRWz8m3rTlJuvrR
+         lJKV2CvCJeG8LXW9py4y3kmcyyfN11kAtUR3yOFwhz22u4USKIMTn3ukpIjju31TYt+E
+         fmLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687809638; x=1690401638;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MsirXe6F0XKcfpoI+mPFBbyk07gurBlFwHC8qBI/sU8=;
+        b=P/gSnGXVZtfEE6wlDzKRz9IrkP8luALsP+kpNeCSB1uFVO1T3irrwHMAE+uM9C9fT+
+         eGln/O0l1nZbwuAcS8bl7oxxo44UOCDg+ZEK2Wgt31AtmSew02RMGnTq2J/Q7ltW5/ox
+         BO5RINAhoMgjzo0Ox2fbQtPL3cTAhBTrtwA95gClDV83y/f4jQApV0e+KLC9YjqWEuu3
+         MzW1l7g9wElDIZnAQtZ7FVi/5b9fQcnDdllmUh1vdnn/tyXRtONA3aVhPYIy67bhw/t5
+         Zw3anAyNBAwtNbSHjTDPxEwXNKTpxbrKNTn7GMF1SYvvbLAghybnQAZTiM0j2nkzB/D7
+         ZbBA==
+X-Gm-Message-State: AC+VfDzg7pFaaFGjZuhCi1S4y7YJ6SJaHEisdZ9DdZ6VqrJrLcZVJez1
+        w3dQ14MkJg2MutIAyQ5m9616z2aTz/L8vLvRjkA=
+X-Google-Smtp-Source: ACHHUZ4ATesustUL/xAV8LHcUVMG7FtETK7Yna7fm5Eluo+f67Ecu8epVQdSXXT6d2/XgnTgdEGgNQ==
+X-Received: by 2002:a05:6512:3483:b0:4fb:78a0:dd34 with SMTP id v3-20020a056512348300b004fb78a0dd34mr1564096lfr.42.1687809638646;
+        Mon, 26 Jun 2023 13:00:38 -0700 (PDT)
+Received: from [192.168.1.101] (abyk179.neoplus.adsl.tpnet.pl. [83.9.30.179])
+        by smtp.gmail.com with ESMTPSA id o11-20020ac2494b000000b004fb74cb9670sm628082lfi.125.2023.06.26.13.00.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jun 2023 13:00:38 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/7] random msm bindings fixes
+Date:   Mon, 26 Jun 2023 22:00:22 +0200
+Message-Id: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AS8PR04MB8865:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cf4f93b-ea58-4d47-0e87-08db7577f27e
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SIAynDpew0gvTA+id5pABZD0354hCaw3PUovN+AY09M6gYJnI2ABpE3iDITOpD4WFcX4yT9mtqM/Os7r2Crm/iWe4Y+pshoXjiULz+nwRHuWb9IN0sPO2wl9UaGNK7fKJBT4A7Po7BlUtu0J1qNsMIw054MfiVXhl3zb2ftDFATjOzONumDduu09mysc30WFyZiWGDJeivXRudwqxhPJlmyJ6Ztnhf75UPtlDpBo8CaZ4xKXt29Y7WEEYT1+5WQwJTwD6l1Ef6EGKTpksiky/3na6XkaF1cjRHkwbQCnpryDs0vSbBQD7WGvrzMbY47duuckg68JgMMsaNBHkmV5a49+GD3d4HLp8byornp7YX3ow7z2AB1PpXqrgLFazoMxksK0XGgQu5EG9F0njXSuc9HqQMTAuPWokizouwLFok+zQdWmCAwC85igJzvGjNjZ22E6EoPdtAIPqyWPEQGtSigIfPIS+0mUJUiiI82W2gKFTmO/vClwZVKuL+Z1y94axWgwMqngeWZ1n4WDUYrRouOtk8r+bIqzDwL8spgNoaqBQgeltFaytcZYTvtbM4XYAmq9Ynd+7mDgPjVlC458b+un9YiNAAhzuGdpIRu+Bn4JIJuF5pxVfnIC6u2Dy1IX
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(136003)(396003)(39860400002)(346002)(451199021)(6486002)(478600001)(52116002)(2616005)(83380400001)(6666004)(6506007)(6512007)(1076003)(26005)(186003)(2906002)(5660300002)(38350700002)(38100700002)(4326008)(66946007)(8936002)(8676002)(41300700001)(316002)(86362001)(66476007)(66556008);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?6cB5171z4kNLOI/c7EVioiPZSAGWNYYdrCryWeVh86jXZAEP5kV2kDvLXIT0?=
- =?us-ascii?Q?eqqi8V2USgzFcQPOV3rzWUgdaYHaZaSi/AkMAsxTPjIYedcoz4ZtHUA+ak+v?=
- =?us-ascii?Q?3gsGwB8yJPXrAJYr8SAsiQW8J3bYo+ClakK25xXaYrXCyDLpMo8NMJe7bozd?=
- =?us-ascii?Q?YqUop3pY1eR5E91T6SzS/UatYZYCduvKKusglOiO9Uw99d5hMWdLGZywpT9c?=
- =?us-ascii?Q?rRhlChjAv4J+L4PKADbXrnKi7xHn3pEa+KtZqdAFjBXB4a1dEO3UhhhB3xjB?=
- =?us-ascii?Q?I2S/CGYMS/1ZivR8Rfl8WzAWYu/D3Od74oHnAi+12aiXK4kRc4HrUgrXt3N5?=
- =?us-ascii?Q?P9Mi0ZZmv9p6QqfHfQsHyKjVBUNDusd9iGRW4GYn2OvvcrC6JsfLws5HV3gl?=
- =?us-ascii?Q?1nNvfkVFDvDvb2HPvuXKCtJhWQBMnYg9YAh3OXlVgdpZfchIa+5Kfh03zVjV?=
- =?us-ascii?Q?7RKb25eLIPaqSYm+IrhIuarJYDUZIjgoVox3DBnk3kM5nMtceQZLSK2thAC7?=
- =?us-ascii?Q?FdvGvwkvnU8wOIuoBlwUusmSuT6PEPm26a2O8p3WwlEh3FsZE9LD2dRYk/gU?=
- =?us-ascii?Q?b8yY+R+/xxpTiloV+9tZnEtyyvKA9u8+kyK7soT6/p3ijM5IHz7x1ywS0zeA?=
- =?us-ascii?Q?LRVXndatyWKWs7aBhOxGLUlNoVP1Y8sc4+0Q3iWxdVMozl+gvt+4mUJKdkCQ?=
- =?us-ascii?Q?pYOPonMpFsYu4aRVHmYCKw5AoG1JgKUk5A9G72/GHp+Xat0+1QCWpDlETevV?=
- =?us-ascii?Q?2HOtgkcNuHsWK68uPjB2KjSwQo/nisEqMPJvb7nLamhe5O0XTpN9pxqzNeOR?=
- =?us-ascii?Q?WPWuTcA/9hOga0GLCY4hqD9M+jS6WNuol+KrwO6WwZna5OvSBaITCnqrr3Cw?=
- =?us-ascii?Q?WzQdTrugZyk14bRkF2Qkzj/TUDAEzjjViAzObX/RhfmR8KjImoq7bypSgS3G?=
- =?us-ascii?Q?Zjq2IbeWFK7ThAi8KoLhDtXwKr5/9YWS6q/ZviMnP68rCsY23BZ1lKKgmk0+?=
- =?us-ascii?Q?Kjip+4bQYAREFrR50xDjXo6Qp0EfGOgaeYOvwSEOM1ruBJNVmY0jZTwx+K8e?=
- =?us-ascii?Q?UV1x/L1vzSa2U7oMM7rvqIy+Tn6OXWfe5gNh26loaNuARgM10Td8wwJUps1D?=
- =?us-ascii?Q?sujtA0E/sV91TBagA/p4ikSlo4JR2Xs2jgiNnEQyaYQI8XwyvGBv2JEfq6V3?=
- =?us-ascii?Q?lO2q5ZkBxJeTT+CuKi//IAORgOmaTBWwi6zDNPEG572GnQH2x1HIUhAOln1h?=
- =?us-ascii?Q?16MQClivYW7eGEpXN6OKeuWWd43MS2iktglnnmGM0M8EpUT+WIYdLgJgHpRy?=
- =?us-ascii?Q?7WDl5c4IrqQBJ6tOhJSYKvrmzQPwVwjKr9/6Ef2QOB5MTi58nBQJpW4rz0HE?=
- =?us-ascii?Q?M39M+rZja3VCb3LJpRcwmTycDnVbS5+1WDQt43LmMLlrnpubTcJ+MQk58dc+?=
- =?us-ascii?Q?gg0xRH6p5VPv2ZneU4rII38YKE0vcvoU403irk5OwPFa4QzqUoiXuxFFYy/+?=
- =?us-ascii?Q?wXKqqDDMwvsdmhPT+46pQIR3dEDdtsJ+m++hFVRNDETSiY8p3GuP9apeRtqU?=
- =?us-ascii?Q?UUAMcgX0XntlI12wNwOt8N82kAeaYm0hjqxTkw8Z?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cf4f93b-ea58-4d47-0e87-08db7577f27e
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2023 12:30:23.6222
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bPTNA7rS24Ay1B8LF4oWvnqz9c2eQ2dosg2gN2cKhOcyPydjGeZkoayO6h4HXlbpt3DfWWmpNt6/DNQKvUs5pA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8865
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFbumWQC/x2NSwrDMAwFrxK0rsC124T2KqULf5REEBRjJaUQc
+ veKLmd4wztAqTEpPLsDGn1YeRWD66WDPEeZCLkYg3c+uN73uK2VMyaWwjLpyN+9Kj5CGcJQ0uj
+ uN7A0RSVMLUqeLZZ9WUzWRjb/f73e5/kDVNEqdHsAAAA=
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>, Vinod Koul <vkoul@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1687809636; l=1303;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=3wIlxdysNDx1S4zitAfCftwhXW5BSqJ8vJhHAM8IWMs=;
+ b=ITP1xvCp9uv79ZAHCNFGu/TF4jdTjkj3S4K0O8ZBP20yFazofvjfaai3MusmfJj4Mr68VbtW7
+ RDY+A2lYeZZB6zsQ/weoSrwbw3yNzIFFmu+C+3aXMr1tSu77O5Bjwtm
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
-
-The current code has an assumption that there is one tx and one rx
-vring, but it is not always true. There maybe more vrings. So iterate
-all notifyids to not miss any vring events.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/remoteproc/imx_rproc.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Konrad Dybcio (7):
+      dt-bindings: qcom: Allow SoC names ending in "pro"
+      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Fix 8996 clocks
+      arm64: dts: qcom: pm6150l: Add missing short interrupt
+      arm64: dts: qcom: pm660l: Add missing short interrupt
+      arm64: dts: qcom: pmi8950: Add missing OVP interrupt
+      arm64: dts: qcom: pmi8994: Add missing OVP interrupt
+      arm64: dts: qcom: sc8180x: Add missing 'cache-unified' to L3
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index f9874fc5a80f..e3f40d0e9f3d 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -725,13 +725,23 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
- 	return 0;
- }
- 
-+static int imx_rproc_notified_idr_cb(int id, void *ptr, void *data)
-+{
-+	struct rproc *rproc = data;
-+
-+	if (rproc_vq_interrupt(rproc, id) == IRQ_NONE)
-+		dev_dbg(&rproc->dev, "no message in vqid: %d\n", id);
-+
-+	return 0;
-+}
-+
- static void imx_rproc_vq_work(struct work_struct *work)
- {
- 	struct imx_rproc *priv = container_of(work, struct imx_rproc,
- 					      rproc_work);
-+	struct rproc *rproc = priv->rproc;
- 
--	rproc_vq_interrupt(priv->rproc, 0);
--	rproc_vq_interrupt(priv->rproc, 1);
-+	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
- }
- 
- static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
+ Documentation/devicetree/bindings/arm/qcom-soc.yaml                | 2 +-
+ .../devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml       | 7 +++----
+ arch/arm64/boot/dts/qcom/pm6150l.dtsi                              | 5 +++--
+ arch/arm64/boot/dts/qcom/pm660l.dtsi                               | 5 +++--
+ arch/arm64/boot/dts/qcom/pmi8950.dtsi                              | 5 +++--
+ arch/arm64/boot/dts/qcom/pmi8994.dtsi                              | 5 +++--
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi                              | 1 +
+ 7 files changed, 17 insertions(+), 13 deletions(-)
+---
+base-commit: 3eedd211ad93c322fb360b83a3d76a2c6cd622dc
+change-id: 20230626-topic-bindingsfixups-93d737dbf054
+
+Best regards,
 -- 
-2.37.1
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
