@@ -2,144 +2,164 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF132C001DB
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Jun 2023 16:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED706EB64D7
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 28 Jun 2023 19:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230507AbjF1QxY (ORCPT
+        id S231282AbjF1Tbj (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 28 Jun 2023 12:53:24 -0400
-Received: from dfw.source.kernel.org ([139.178.84.217]:46110 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjF1QxW (ORCPT
+        Wed, 28 Jun 2023 15:31:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57398 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231547AbjF1TbS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 28 Jun 2023 12:53:22 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F100E6129B;
-        Wed, 28 Jun 2023 16:53:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC8EC433C8;
-        Wed, 28 Jun 2023 16:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1687971201;
-        bh=gozokXz2eVh6fctzR506kgwTFWCpOKR95WNjlihKjp0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XSAZJUru2/LERqubKZhN960vjbBGOsstoqQchktqgk2eAmAtD04A8rchUv6KtMPCO
-         bluJTB4rl9FsREuSLLbvkM+kuLVOwWaqtIpM5FPIWWt2zmRAH96RiEjex7HjZ2P52U
-         90KKlCAHvvTURFden0f0Wv5p/9azoOifGjIJdo/I=
-Date:   Wed, 28 Jun 2023 18:53:18 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        mathieu.poirier@linaro.org, catalin.marinas@arm.com,
-        will@kernel.org, linus.walleij@linaro.org,
-        andy.shevchenko@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
- support
-Message-ID: <2023062812-exporter-facing-aaf9@gregkh>
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <2023062814-chance-flounder-f002@gregkh>
- <10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com>
+        Wed, 28 Jun 2023 15:31:18 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7ED130
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Jun 2023 12:31:16 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-311367a3e12so207887f8f.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Jun 2023 12:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687980674; x=1690572674;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2cD9nWDKqFEBglacIaBSQSC9LLpc/QEKjNb3hi7bLXI=;
+        b=e5O2fp29bH+Q4XLcW49jbx/kd2WjPftE8K8LTFE85N4KzKnC6HAItFODdYDU2Up0zG
+         6D1xWGhiPfrHRAwiW61l0xj84J8nSSLwdbyLULASCR8SYqcfbo31/rBi/OS7HgOdZyxf
+         lPW2yOdUqqT/o1P6AK6IL4s/VGaxD+3Mk7aNWG5A/Ip9HKvOpAZsmkhzU++53iaK6Mx8
+         i1u+/aDZJNfU/g4ldHdbqkfIH1r/6GjP5uZlf3EydcZqGAWVY+V58GpspZL8kJFDymIB
+         IYDBn0j1M00qboiAByZpnNaxmAjJBsKqFdQTWwNx981QXFybd1pEGeBO6q4ZB1IuIKDa
+         JVFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687980674; x=1690572674;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2cD9nWDKqFEBglacIaBSQSC9LLpc/QEKjNb3hi7bLXI=;
+        b=J4bcop0308UmG/+m3n5HnlS3Nj+dWu5Fu8CpHmH0ObfIXXr2V4uDfKzzA0pizakpj+
+         T8N90GcMlXWxYR+b9/wec0ubn0BOB0Slg4UvMIf7dp2yXgcz7jq8hXkqfNkmITm/V2ov
+         yN9dOPH2ZcPc1synxNHIiFsBe0gEg0YF3by7lun0jFowqufhj/LALKZYSQTnKQ3r4VVC
+         WDmI7cMEkL7LQuPJhrj15VSYKhXJotgwIYjdxYczLMpa9o7jnLQAK5F2ewWwtpNg4lvb
+         8klVLz3aCMYwCZm30FXJYHc/cn/WC+XSW2ToPNawBVRr5lYMTdO5B12g297F/dpRQdCs
+         i3qQ==
+X-Gm-Message-State: AC+VfDwY7Yl/Y73bVD8uVGzB3FJgTnRqHjua7O/fwrt4FnH98b1ngMrx
+        h2Q8xjMjtIRopT6Kvcpzn1kUIQxqScCNQIljvpSmtQ==
+X-Google-Smtp-Source: ACHHUZ4hcyhmKJ3v60dhxsUbIZrTLohLwTXOAXWNKivCQTfG8O74AI7kC/vrcQ+ZSBrq5+aKbJenLOR35JHBptod29A=
+X-Received: by 2002:a5d:4910:0:b0:314:144:adb2 with SMTP id
+ x16-20020a5d4910000000b003140144adb2mr4728766wrq.5.1687980674560; Wed, 28 Jun
+ 2023 12:31:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10dd2ead-758a-89f0-cda4-70ae927269eb@quicinc.com>
+References: <20230625123514.4069724-1-peng.fan@oss.nxp.com>
+ <ZJtlF/tzh0ZMXji4@p14s> <DU0PR04MB94177CF1F7EEBD1EBF4B177A8824A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+In-Reply-To: <DU0PR04MB94177CF1F7EEBD1EBF4B177A8824A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 28 Jun 2023 13:31:03 -0600
+Message-ID: <CANLsYkzZ=resYxStMDEkqEksWiVngH_hJ+wB=z94fqpTtU7PnQ@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: imx_rproc: iterate all notifiyids in rx callback
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "andersson@kernel.org" <andersson@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 09:50:00PM +0530, Mukesh Ojha wrote:
-> 
-> 
-> On 6/28/2023 9:15 PM, Greg KH wrote:
-> > On Wed, Jun 28, 2023 at 06:04:27PM +0530, Mukesh Ojha wrote:
-> > > Minidump is a best effort mechanism to collect useful and predefined data
-> > > for first level of debugging on end user devices running on Qualcomm SoCs.
-> > > It is built on the premise that System on Chip (SoC) or subsystem part of
-> > > SoC crashes, due to a range of hardware and software bugs. Hence, the
-> > > ability to collect accurate data is only a best-effort. The data collected
-> > > could be invalid or corrupted, data collection itself could fail, and so on.
-> > > 
-> > > Qualcomm devices in engineering mode provides a mechanism for generating
-> > > full system ramdumps for post mortem debugging. But in some cases it's
-> > > however not feasible to capture the entire content of RAM. The minidump
-> > > mechanism provides the means for selecting which snippets should be
-> > > included in the ramdump.
-> > > 
-> > > Minidump kernel driver implementation is divided into two parts for
-> > > simplicity, one is minidump core which can also be called minidump
-> > > frontend(As API gets exported from this driver for registration with
-> > > backend) and the other part is minidump backend i.e, where the underlying
-> > > implementation of minidump will be there. There could be different way
-> > > how the backend is implemented like Shared memory, Memory mapped IO
-> > > or Resource manager(gunyah) based where the guest region information is
-> > > passed to hypervisor via hypercalls.
-> > > 
-> > >      Minidump Client-1     Client-2      Client-5    Client-n
-> > >               |               |              |             |
-> > >               |               |    ...       |   ...       |
-> > >               |               |              |             |
-> > >               |               |              |             |
-> > >               |               |              |             |
-> > >               |               |              |             |
-> > >               |               |              |             |
-> > >               |               |              |             |
-> > >               |           +---+--------------+----+        |
-> > >               +-----------+  qcom_minidump(core)  +--------+
-> > >                           |                       |
-> > >                           +------+-----+------+---+
-> > >                                  |     |      |
-> > >                                  |     |      |
-> > >                  +---------------+     |      +--------------------+
-> > >                  |                     |                           |
-> > >                  |                     |                           |
-> > >                  |                     |                           |
-> > >                  v                     v                           v
-> > >       +-------------------+      +-------------------+     +------------------+
-> > >       |qcom_minidump_smem |      |qcom_minidump_mmio |     | qcom_minidump_rm |
-> > >       |                   |      |                   |     |                  |
-> > >       +-------------------+      +-------------------+     +------------------+
-> > >         Shared memory              Memory mapped IO           Resource manager
-> > >          (backend)                   (backend)                   (backend)
-> > > 
-> > > 
-> > > Here, we will be giving all analogy of backend with SMEM as it is the
-> > > only implemented backend at present but general idea remains the same.
-> > 
-> > If you only have one "backend" then you don't need the extra compexity
-> > here at all, just remove that whole middle layer please and make this
-> > much simpler and smaller and easier to review and possibly accept.
-> > 
-> > We don't add layers when they are not needed, and never when there is no
-> > actual user.  If you need the extra "complexity" later, then add it
-> > later when it is needed as who knows when that will ever be.
-> > 
-> > Please redo this series based on that, thanks.
-> 
-> I already followed without this middle layer till v3 since without
-> the middle layer it will be end up with lot of code duplication if there
-> is another backend.
+On Tue, 27 Jun 2023 at 18:55, Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: Re: [PATCH] remoteproc: imx_rproc: iterate all notifiyids in rx
+> > callback
+> >
+> > On Sun, Jun 25, 2023 at 08:35:14PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > The current code has an assumption that there is one tx and one rx
+> > > vring, but it is not always true. There maybe more vrings. So iterate
+> > > all notifyids to not miss any vring events.
+> >
+> > Can you be more specific on the use case where more than 2 virqueues are
+> > allocated?  The remoteproc core can handle more than 2 but right now the
+> > only configuration I see doesn't support more than that.
+>
+> In downstream tree, we have below remoteproc node. It use
+> vdev0 vring0/vring1 for vdev0, vdev1 vring0/vring1 for vdev1.
+> vdev0 and vdev1 are for different services, saying vdev0 for gpio rpmsg,
+> vdev1 for i2c rpmsg.
 
-But as this series does not have such a thing, only add it when needed
-please.  Don't make us review a whole bunch of stuff that is not
-actually used here.
+So you are talking about cases where more than one vdev are
+instantiated and a single callback channel is available.  Please fix
+your changelog description.  The way it is currently written one can
+easily think you are referring to more than 2 virtqueues for each
+vdev.
 
-Would you want to review such a thing?
+One more comment below.
 
-> We already have other backend implementation in the downstream, if you
-> want to see them, i will try to post them in upcoming series..
+>         cm33: imx93-cm33 {
+>                 compatible = "fsl,imx93-cm33";
+>                 mbox-names = "tx", "rx", "rxdb";
+>                 mboxes = <&mu1 0 1
+>                           &mu1 1 1
+>                           &mu1 3 1>;
+>                 memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+>                                 <&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+>                 fsl,startup-delay-ms = <500>;
+>         };
+>
+> Thanks,
+> Peng.
+>
+> >
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/remoteproc/imx_rproc.c | 14 ++++++++++++--
+> > >  1 file changed, 12 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/remoteproc/imx_rproc.c
+> > > b/drivers/remoteproc/imx_rproc.c index f9874fc5a80f..e3f40d0e9f3d
+> > > 100644
+> > > --- a/drivers/remoteproc/imx_rproc.c
+> > > +++ b/drivers/remoteproc/imx_rproc.c
+> > > @@ -725,13 +725,23 @@ static int imx_rproc_addr_init(struct imx_rproc
+> > *priv,
+> > >     return 0;
+> > >  }
+> > >
+> > > +static int imx_rproc_notified_idr_cb(int id, void *ptr, void *data) {
+> > > +   struct rproc *rproc = data;
+> > > +
+> > > +   if (rproc_vq_interrupt(rproc, id) == IRQ_NONE)
+> > > +           dev_dbg(&rproc->dev, "no message in vqid: %d\n", id);
+> > > +
 
-Ok, so if you already have it, yes, post it as part of the series,
-otherwise such a layer makes no sense.
+A debug message is already displayed by vring_interrupt(), please remove.
 
-thanks,
+Thanks,
+Mathieu
 
-greg k-h
+> > > +   return 0;
+> > > +}
+> > > +
+> > >  static void imx_rproc_vq_work(struct work_struct *work)  {
+> > >     struct imx_rproc *priv = container_of(work, struct imx_rproc,
+> > >                                           rproc_work);
+> > > +   struct rproc *rproc = priv->rproc;
+> > >
+> > > -   rproc_vq_interrupt(priv->rproc, 0);
+> > > -   rproc_vq_interrupt(priv->rproc, 1);
+> > > +   idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
+> > >  }
+> > >
+> > >  static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
+> > > --
+> > > 2.37.1
+> > >
