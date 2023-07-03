@@ -2,181 +2,373 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF646C001DE
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Jul 2023 15:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F535C001B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Jul 2023 16:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230330AbjGCP4E (ORCPT
+        id S229719AbjGCQE7 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 3 Jul 2023 11:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39882 "EHLO
+        Mon, 3 Jul 2023 12:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230112AbjGCP4D (ORCPT
+        with ESMTP id S229504AbjGCQE6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 3 Jul 2023 11:56:03 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 789FFC2;
-        Mon,  3 Jul 2023 08:56:02 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363FUOcM031763;
-        Mon, 3 Jul 2023 15:55:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=Av3lLX3sN6J40Wcfq3svRclc16LCWMFV9nEGD6f8Qe0=;
- b=kGTndyVbxANG6Spl3MkoMp0oNspAr3+qYh2cfrkwOOYe4hiOQ0HttwrtX0/AeLSCG7zq
- Mx3jTa9vJjGaDkoa7EY3fh7huiK1967IQff9OExKNuSPY+VxyAFPwYaVL0uHxH2qrlrm
- 6zCT0DtPE1CmrD6PjeGC6qFIopz8Sj6MgFMEF+HQqCHKdsX2IqL5SowyKeg55MS88hxL
- VqgPIQFSG23yhGYMkKe2gMXlJTKYio1mNbgqfXYXR85fNC9b8DJaKpCXP/rDQmGs0FNH
- A2Ah+HMkRFx+rY7pHvJQN750LJ/rYCq8xoETrvkAaK4ukA/OjWRzzfZv8fS8VMafPaDt og== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rky5mgamw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jul 2023 15:55:36 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 363FtZGq021971
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 3 Jul 2023 15:55:35 GMT
-Received: from [10.216.56.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 3 Jul 2023
- 08:55:25 -0700
-Message-ID: <ba04bb7b-6599-6f41-09a8-834ee280830d@quicinc.com>
-Date:   Mon, 3 Jul 2023 21:25:21 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4 08/21] dt-bindings: reserved-memory: Add qcom,ramoops
- binding
-Content-Language: en-US
+        Mon, 3 Jul 2023 12:04:58 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C202BE52
+        for <linux-remoteproc@vger.kernel.org>; Mon,  3 Jul 2023 09:04:56 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b8918dadbdso6993745ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 03 Jul 2023 09:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688400296; x=1690992296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UBEn+DORUJ5ij2DLOyIr1+keFOgWZdq/wK0YAWYuj18=;
+        b=wF1J8mqRpZ/0eHecvY4A6d0+f61b+gLvgtgwZ8kNufHjfAFZDZBgnY8CBXJ8cpjeN4
+         n/iS1HnDgYMUwDvOXpGzd9N7cFJx2kstYDzXBhUgXLTa0hrWXCPclNWgUaMenCy1TDVg
+         nbxXRjQy8ML0HprfQFB/HnzTOWNTUf6f/UT80KdAhoFukugUsPKCwzFTWb8XVioL2rNj
+         sNI4jANkgEX3k7nRXfw6uy13PENUpRiQU3DjJrkCQoewutdEvrFvtj3d2tDhhy2lOds6
+         wxg1hCpW6ApALyDUyENW0BaznLAVqftyb6WSI/ypuMfGe9eCOGhhLfku/QPpQnq42KZp
+         2jcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688400296; x=1690992296;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UBEn+DORUJ5ij2DLOyIr1+keFOgWZdq/wK0YAWYuj18=;
+        b=O5dHG3o6b/Svx9k+2K81nS0S0lgCFUkn9bYsJzk9NNbD0XXgBmFvBDD4UI1SWu0cms
+         8A8CKcGzCpWGHYM/8BNRN3mrnjcDWhBPvydyNkbkSI4mtRJHSsAjQsATGaOdJOeyCVOy
+         cTz7cxF48mS+Way0FzvIyBlUfdBtweH/XVsdrVFJy2WUu8Bx5ah/OwpASOFXypAUgGPl
+         bQZpPf57tu+Jc5j2ss1txElnM1sc7jf+gbdIaKW9Kn9EBqDGLiFGJURwwAGAp/s5U+Wd
+         5cIZqensTrpeOow8LKCp3RQnfIX98vSV6I53tfeBu6nulsHm7olnxgfdk44Ci0cGsABa
+         IP/Q==
+X-Gm-Message-State: ABy/qLYR1GYomEchnhn9sK1rA+RWtNnLdSM2mci/e+mgU2xGwo7x9voc
+        QQbh2BsTkX1ar8gx29GVJmU/pA==
+X-Google-Smtp-Source: APBJJlGjEgZXbJ/Z6L8I7MLh6q1bS6/iEJLDe5vdJOhJhJXD38MLY3FNvd2g70KJTdpLSSdLro04Kg==
+X-Received: by 2002:a17:903:496:b0:1b8:63c6:84ab with SMTP id jj22-20020a170903049600b001b863c684abmr6673059plb.61.1688400296152;
+        Mon, 03 Jul 2023 09:04:56 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6f20:cb07:ed03:2be8])
+        by smtp.gmail.com with ESMTPSA id x3-20020a1709027c0300b001ab1b7bae5asm15454989pll.184.2023.07.03.09.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Jul 2023 09:04:55 -0700 (PDT)
+Date:   Mon, 3 Jul 2023 10:04:52 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Rob Herring <robh+dt@kernel.org>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <conor+dt@kernel.org>,
-        <keescook@chromium.org>, <tony.luck@intel.com>,
-        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <1687955688-20809-9-git-send-email-quic_mojha@quicinc.com>
- <CAL_JsqJ_TTnGjjB2d8_FKHpWBRG5GHLoWnabCKjsdeZ4QFdNEg@mail.gmail.com>
- <cacbbb02-732e-076e-50bf-292d20a4d722@quicinc.com>
- <58a26b9e-a48d-d567-c310-193a2c52521e@linaro.org>
- <5447f9f8-55b4-8bed-66a6-1c9d62b02c79@quicinc.com>
- <CAGE=qrq0CuO4J-6yC=YZ4xjL67o9QTqpei0ovX-X_8MLVeEH6g@mail.gmail.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <CAGE=qrq0CuO4J-6yC=YZ4xjL67o9QTqpei0ovX-X_8MLVeEH6g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Db2EPXBzIBt9vTeo1n-9ktIyz-gVCL0o
-X-Proofpoint-GUID: Db2EPXBzIBt9vTeo1n-9ktIyz-gVCL0o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-03_11,2023-06-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- spamscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 phishscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2307030145
+Cc:     Leo Yan <leo.yan@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, coresight@lists.linaro.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: cleanup DTS example whitespaces
+Message-ID: <ZKLxpAKTQ3P3KNYb@p14s>
+References: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 7/3/2023 12:50 PM, Krzysztof Kozlowski wrote:
-> On Mon, 3 Jul 2023 at 08:22, Mukesh Ojha <quic_mojha@quicinc.com> wrote:
->> On 7/2/2023 1:42 PM, Krzysztof Kozlowski wrote:
->>>>> The big difference is if firmware is not deciding where this log
->>>>> lives, then it doesn't need to be in DT. How does anything except the
->>>>> kernel that allocates the log find the logs?
->>>>
->>>> Yes, you are correct, firmware is not deciding where the logs lives
->>>> instead here, Kernel has reserved the region where the ramoops region
->>>> lives and later with the minidump registration where, physical
->>>> address/size/virtual address(for parsing) are passed and that is how
->>>> firmware is able to know and dump those region before triggering system
->>>> reset.
->>>
->>> Your explanation does not justify storing all this in DT. Kernel can
->>> allocate any memory it wishes, store there logs and pass the address to
->>> the firmware. That's it, no need for DT.
->>
->> If you go through the driver, you will know that what it does, is
+On Sun, Jul 02, 2023 at 08:23:08PM +0200, Krzysztof Kozlowski wrote:
+> The DTS code coding style expects spaces around '=' sign.
 > 
-> We talk about bindings and I should not be forced to look at the
-> driver to be able to understand them. Bindings should stand on their
-> own.
-
-Why can't ramoops binding have one more feature where it can add a flag 
-*dynamic* to indicate the regions are dynamic and it is for platforms
-where there is another entity 'minidump' who is interested in these
-regions.
-
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
->> just create platform device for actual ramoops driver to probe and to
+> ---
 > 
-> Not really justification for Devicetree anyway. Whatever your driver
-> is doing, is driver's business, not bindings.
+> Rob,
 > 
->> provide this it needs exact set of parameters of input what original
->> ramoops DT provides, we need to keep it in DT as maintaining this in
->> driver will not scale well with different size/parameter size
->> requirement for different targets.
+> Maybe this could go via your tree? Rebased on your for-next:
+> v6.4-rc2-45-gf0ac35049606
+> ---
+>  .../bindings/arm/arm,coresight-cti.yaml        | 18 +++++++++---------
+>  .../bindings/arm/keystone/ti,sci.yaml          |  8 ++++----
+>  .../devicetree/bindings/display/msm/gmu.yaml   |  2 +-
+>  .../display/panel/samsung,s6e8aa0.yaml         |  2 +-
+>  .../display/rockchip/rockchip-vop.yaml         |  4 ++--
+>  .../bindings/iio/adc/ti,adc108s102.yaml        |  2 +-
+>  .../bindings/media/renesas,rzg2l-cru.yaml      |  4 ++--
+>  .../devicetree/bindings/media/renesas,vin.yaml |  4 ++--
+>  .../devicetree/bindings/mtd/mtd-physmap.yaml   |  2 +-
+>  .../bindings/net/mediatek-dwmac.yaml           |  2 +-
+>  .../bindings/perf/amlogic,g12-ddr-pmu.yaml     |  4 ++--
+>  .../bindings/phy/mediatek,dsi-phy.yaml         |  2 +-
+>  .../remoteproc/amlogic,meson-mx-ao-arc.yaml    |  2 +-
+>  .../devicetree/bindings/usb/mediatek,mtu3.yaml |  2 +-
+>  .../devicetree/bindings/usb/ti,am62-usb.yaml   |  2 +-
+>  15 files changed, 30 insertions(+), 30 deletions(-)
 > 
-> Really? Why? I don't see a problem in scaling. At all.
+> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
+> index 0c5b875cb654..d6c84b6e7fe6 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
+> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
+> @@ -287,7 +287,7 @@ examples:
+>              arm,trig-in-sigs = <0 1>;
+>              arm,trig-in-types = <PE_DBGTRIGGER
+>                                   PE_PMUIRQ>;
+> -            arm,trig-out-sigs=<0 1 2 >;
+> +            arm,trig-out-sigs = <0 1 2 >;
+>              arm,trig-out-types = <PE_EDBGREQ
+>                                    PE_DBGRESTART
+>                                    PE_CTIIRQ>;
+> @@ -309,24 +309,24 @@ examples:
+>  
+>        trig-conns@0 {
+>          reg = <0>;
+> -        arm,trig-in-sigs=<0>;
+> -        arm,trig-in-types=<GEN_INTREQ>;
+> -        arm,trig-out-sigs=<0>;
+> -        arm,trig-out-types=<GEN_HALTREQ>;
+> +        arm,trig-in-sigs = <0>;
+> +        arm,trig-in-types = <GEN_INTREQ>;
+> +        arm,trig-out-sigs = <0>;
+> +        arm,trig-out-types = <GEN_HALTREQ>;
+>          arm,trig-conn-name = "sys_profiler";
+>        };
+>  
+>        trig-conns@1 {
+>          reg = <1>;
+> -        arm,trig-out-sigs=<2 3>;
+> -        arm,trig-out-types=<GEN_HALTREQ GEN_RESTARTREQ>;
+> +        arm,trig-out-sigs = <2 3>;
+> +        arm,trig-out-types = <GEN_HALTREQ GEN_RESTARTREQ>;
+>          arm,trig-conn-name = "watchdog";
+>        };
+>  
+>        trig-conns@2 {
+>          reg = <2>;
+> -        arm,trig-in-sigs=<1 6>;
+> -        arm,trig-in-types=<GEN_HALTREQ GEN_RESTARTREQ>;
+> +        arm,trig-in-sigs = <1 6>;
+> +        arm,trig-in-types = <GEN_HALTREQ GEN_RESTARTREQ>;
+>          arm,trig-conn-name = "g_counter";
+>        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> index 91b96065f7df..86b59de7707e 100644
+> --- a/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> +++ b/Documentation/devicetree/bindings/arm/keystone/ti,sci.yaml
+> @@ -96,8 +96,8 @@ examples:
+>        compatible = "ti,k2g-sci";
+>        ti,system-reboot-controller;
+>        mbox-names = "rx", "tx";
+> -      mboxes= <&msgmgr 5 2>,
+> -              <&msgmgr 0 0>;
+> +      mboxes = <&msgmgr 5 2>,
+> +               <&msgmgr 0 0>;
+>        reg-names = "debug_messages";
+>        reg = <0x02921800 0x800>;
+>      };
+> @@ -107,8 +107,8 @@ examples:
+>        compatible = "ti,k2g-sci";
+>        ti,host-id = <12>;
+>        mbox-names = "rx", "tx";
+> -      mboxes= <&secure_proxy_main 11>,
+> -              <&secure_proxy_main 13>;
+> +      mboxes = <&secure_proxy_main 11>,
+> +               <&secure_proxy_main 13>;
+>        reg-names = "debug_messages";
+>        reg = <0x44083000 0x1000>;
+>  
+> diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+> index 029d72822d8b..65b02c7a1211 100644
+> --- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
+> @@ -225,7 +225,7 @@ examples:
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>      gmu: gmu@506a000 {
+> -        compatible="qcom,adreno-gmu-630.2", "qcom,adreno-gmu";
+> +        compatible = "qcom,adreno-gmu-630.2", "qcom,adreno-gmu";
+>  
+>          reg = <0x506a000 0x30000>,
+>                <0xb280000 0x10000>,
+> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa0.yaml b/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa0.yaml
+> index 1cdc91b3439f..200fbf1c74a0 100644
+> --- a/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa0.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e8aa0.yaml
+> @@ -74,7 +74,7 @@ examples:
+>              vdd3-supply = <&vcclcd_reg>;
+>              vci-supply = <&vlcd_reg>;
+>              reset-gpios = <&gpy4 5 0>;
+> -            power-on-delay= <50>;
+> +            power-on-delay = <50>;
+>              reset-delay = <100>;
+>              init-delay = <100>;
+>              panel-width-mm = <58>;
+> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> index 6f43d885c9b3..df61cb5f5c54 100644
+> --- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop.yaml
+> @@ -121,11 +121,11 @@ examples:
+>          #size-cells = <0>;
+>          vopb_out_edp: endpoint@0 {
+>            reg = <0>;
+> -          remote-endpoint=<&edp_in_vopb>;
+> +          remote-endpoint = <&edp_in_vopb>;
+>          };
+>          vopb_out_hdmi: endpoint@1 {
+>            reg = <1>;
+> -          remote-endpoint=<&hdmi_in_vopb>;
+> +          remote-endpoint = <&hdmi_in_vopb>;
+>          };
+>        };
+>      };
+> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml b/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml
+> index 9b072b057f16..a60b1e100ee4 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/ti,adc108s102.yaml
+> @@ -35,7 +35,7 @@ unevaluatedProperties: false
+>  examples:
+>    - |
+>      spi {
+> -        #address-cells= <1>;
+> +        #address-cells = <1>;
+>          #size-cells = <0>;
+>  
+>          adc@0 {
+> diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
+> index 7dde7967c886..1e72b8808d24 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
+> +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-cru.yaml
+> @@ -137,7 +137,7 @@ examples:
+>  
+>                  cru_parallel_in: endpoint@0 {
+>                      reg = <0>;
+> -                    remote-endpoint= <&ov5642>;
+> +                    remote-endpoint = <&ov5642>;
+>                      hsync-active = <1>;
+>                      vsync-active = <1>;
+>                  };
+> @@ -150,7 +150,7 @@ examples:
+>  
+>                  cru_csi_in: endpoint@0 {
+>                      reg = <0>;
+> -                    remote-endpoint= <&csi_cru_in>;
+> +                    remote-endpoint = <&csi_cru_in>;
+>                  };
+>              };
+>          };
+> diff --git a/Documentation/devicetree/bindings/media/renesas,vin.yaml b/Documentation/devicetree/bindings/media/renesas,vin.yaml
+> index 91e8f368fb52..324703bfb1bd 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,vin.yaml
+> +++ b/Documentation/devicetree/bindings/media/renesas,vin.yaml
+> @@ -303,11 +303,11 @@ examples:
+>  
+>                              vin0csi20: endpoint@0 {
+>                                      reg = <0>;
+> -                                    remote-endpoint= <&csi20vin0>;
+> +                                    remote-endpoint = <&csi20vin0>;
+>                              };
+>                              vin0csi40: endpoint@2 {
+>                                      reg = <2>;
+> -                                    remote-endpoint= <&csi40vin0>;
+> +                                    remote-endpoint = <&csi40vin0>;
+>                              };
+>                      };
+>              };
+> diff --git a/Documentation/devicetree/bindings/mtd/mtd-physmap.yaml b/Documentation/devicetree/bindings/mtd/mtd-physmap.yaml
+> index f8c976898a95..18f6733408b4 100644
+> --- a/Documentation/devicetree/bindings/mtd/mtd-physmap.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/mtd-physmap.yaml
+> @@ -164,7 +164,7 @@ examples:
+>              reg = <0 0xf80000>;
+>          };
+>          firmware@f80000 {
+> -            label ="firmware";
+> +            label = "firmware";
+>              reg = <0xf80000 0x80000>;
+>              read-only;
+>          };
+> diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml b/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
+> index 0fa2132fa4f4..400aedb58205 100644
+> --- a/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.yaml
+> @@ -156,7 +156,7 @@ examples:
+>          reg = <0x1101c000 0x1300>;
+>          interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
+>          interrupt-names = "macirq";
+> -        phy-mode ="rgmii-rxid";
+> +        phy-mode = "rgmii-rxid";
+>          mac-address = [00 55 7b b5 7d f7];
+>          clock-names = "axi",
+>                        "apb",
+> diff --git a/Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml b/Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
+> index 50f46a6898b1..4adab0149108 100644
+> --- a/Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
+> +++ b/Documentation/devicetree/bindings/perf/amlogic,g12-ddr-pmu.yaml
+> @@ -42,8 +42,8 @@ examples:
+>    - |
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>      pmu {
+> -        #address-cells=<2>;
+> -        #size-cells=<2>;
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+>  
+>          pmu@ff638000 {
+>              compatible = "amlogic,g12a-ddr-pmu";
+> diff --git a/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml b/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml
+> index 26f2b887cfc1..b8d77165c4a1 100644
+> --- a/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/mediatek,dsi-phy.yaml
+> @@ -83,7 +83,7 @@ examples:
+>          clocks = <&clk26m>;
+>          clock-output-names = "mipi_tx0_pll";
+>          drive-strength-microamp = <4000>;
+> -        nvmem-cells= <&mipi_tx_calibration>;
+> +        nvmem-cells = <&mipi_tx_calibration>;
+>          nvmem-cell-names = "calibration-data";
+>          #clock-cells = <0>;
+>          #phy-cells = <0>;
+> diff --git a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> index 3100cb870170..76e8ca44906a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> @@ -75,7 +75,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      remoteproc@1c {
+> -      compatible= "amlogic,meson8-ao-arc", "amlogic,meson-mx-ao-arc";
+> +      compatible = "amlogic,meson8-ao-arc", "amlogic,meson-mx-ao-arc";
 
-I had attempted it here,
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-https://lore.kernel.org/lkml/1683133352-10046-10-git-send-email-quic_mojha@quicinc.com/
-
-but got comments related to hard coding and some in favor of having
-the same set of properties what ramoops has/provides
-
-https://lore.kernel.org/lkml/e25723bf-be85-b458-a84c-1a45392683bb@gmail.com/
-
-https://lore.kernel.org/lkml/202305161347.80204C1A0E@keescook/
+>        reg = <0x1c 0x8>, <0x38 0x8>;
+>        reg-names = "remap", "cpu";
+>        resets = <&media_cpu_reset>;
+> diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+> index 478214ab045e..a59d91243ac8 100644
+> --- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+> +++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.yaml
+> @@ -304,7 +304,7 @@ examples:
+>    # Dual role switch with type-c
+>    - |
+>      usb@11201000 {
+> -        compatible ="mediatek,mt8183-mtu3", "mediatek,mtu3";
+> +        compatible = "mediatek,mt8183-mtu3", "mediatek,mtu3";
+>          reg = <0x11201000 0x2e00>, <0x11203e00 0x0100>;
+>          reg-names = "mac", "ippc";
+>          interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_LOW>;
+> diff --git a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
+> index d25fc708e32c..fec5651f5602 100644
+> --- a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
+> +++ b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
+> @@ -92,7 +92,7 @@ examples:
+>  
+>          usb@31100000 {
+>            compatible = "snps,dwc3";
+> -          reg =<0x00 0x31100000 0x00 0x50000>;
+> +          reg = <0x00 0x31100000 0x00 0x50000>;
+>            interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>, /* irq.0 */
+>                         <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>; /* irq.0 */
+>            interrupt-names = "host", "peripheral";
+> -- 
+> 2.34.1
 > 
->>
->>>
->>>>
->>>> A part of this registration code you can find in 11/21
->>>>
->>>>> I'm pretty sure I already said all this before.
->>>>
->>>> Yes, you said this before but that's the reason i came up with vendor
->>>> ramoops instead of changing traditional ramoops binding.
->>>
->>> That's unexpected conclusion. Adding more bindings is not the answer to
->>> comment that it should not be in the DTS in the first place.
->>
->> Please suggest, what is the other way being above text as requirement..
-> 
-> I do not see any requirement for us there. Forcing me to figure out
-> how to add non-hardware property to DT is not the way to convince
-> reviewers. But if you insist - we have ABI for this, called sysfs. If
-> it is debugging feature, then debugfs.
-
-ramoops already support module params and a way to pass these parameters
-from bootargs but it also need to know the hard-codes addresses, so, 
-doing something in sysfs will be again duplication with ramoops driver..
-
-If this can be accommodated under ramoops, this will be very small 
-change, like this
-
-https://lore.kernel.org/lkml/20230622005213.458236-1-isaacmanjarres@google.com/
-
--- Mukesh
-> 
-> Best regards,
-> Krzysztof
