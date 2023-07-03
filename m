@@ -2,121 +2,181 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C162EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Jul 2023 13:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF646C001DE
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Jul 2023 15:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231452AbjGCNZt (ORCPT
+        id S230330AbjGCP4E (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 3 Jul 2023 09:25:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49230 "EHLO
+        Mon, 3 Jul 2023 11:56:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231450AbjGCNZl (ORCPT
+        with ESMTP id S230112AbjGCP4D (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 3 Jul 2023 09:25:41 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1EBEE6E
-        for <linux-remoteproc@vger.kernel.org>; Mon,  3 Jul 2023 06:25:34 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc244d386so46912515e9.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 03 Jul 2023 06:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688390733; x=1690982733;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :to:content-language:subject:reply-to:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=IOndpcYQZRei86HjTSa6sLCOIMedJ10F8ZmbDKThl2M=;
-        b=vd7G70PqJmphoqcC5/iGI9byEgifXwK6Rj3mJrKjAIB8uLw1hpzkudZj36bLUzAfkk
-         CjzNWks5k2enqZ83uiheJk1bPKP4uBNGIYPZq9fUuff3p2KtuZ3rqJncJyFJqF58Wk11
-         z3wyE/Lpomy7vrHjrlZWBHS1lrFctL5sXDGQirjHnrOynrP0Lsyxy/RUFfpaiizpZ15D
-         m2niLhmeobmjKoqyeci4H11VdTtxm8S2YpJ4x7pVGDNNw+N9JpOT8TaCH2LRBE6AMkMV
-         2n86A3zQAeyy55sfLbSPXNIM5/Y7R6C5jvxqBMMqtnupqZrKysuVl4uSym0zdS0BCsLV
-         ydtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688390733; x=1690982733;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :to:content-language:subject:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IOndpcYQZRei86HjTSa6sLCOIMedJ10F8ZmbDKThl2M=;
-        b=PoMr0JcaKq3YqdJRuoqhVKKekfJACQxtkI+Q1VoBwc1kaeallmvPZ3Z1/DPhro6UHl
-         fVdOaisAPJT+/0sSTlm+mnm85S51huUzRt6J6YuMRgaV3tX0afSJtVz3sSyjVDjhu1zY
-         DpEO/2yro2I84DuCdHwQ8Uz/1NB1Q2UD52S2ZvibZSheTv/5OOzPxrKGekzxl0Y2LGmE
-         KJUWEv1oOB8My39V5ZZGzsNXgyMLVeHAV9eIy3RMTOnNQtUk1sIAjBUiRQOu+4ogBOVe
-         96wJSsTLwhnXtOQQ/Vf9pUR8Gv9qR6WvRZCuHWf22YmAVJYYbCnzUpn9DeYaP5fJQKUF
-         iWAw==
-X-Gm-Message-State: ABy/qLZIU1gOcaXG7CnVgp4bqnxzENnw+xKsYUPVQqT4ptYfqNh9zGUp
-        KVAVUpzqCP0ECssJKB4MQ4rxIg==
-X-Google-Smtp-Source: APBJJlFRFQcvat3EQxFgB5SI6iSmXIGa31iU1VkZvt3I+z99Hnaof/6yj4+br2u7++97LUjZHWQZuw==
-X-Received: by 2002:a1c:790e:0:b0:3fb:db66:8332 with SMTP id l14-20020a1c790e000000b003fbdb668332mr1599049wme.40.1688390733118;
-        Mon, 03 Jul 2023 06:25:33 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:cf0b:9dd4:190:b74f? ([2a01:e0a:982:cbb0:cf0b:9dd4:190:b74f])
-        by smtp.gmail.com with ESMTPSA id p19-20020a05600c205300b003fbc2c0addbsm10279849wmg.42.2023.07.03.06.25.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jul 2023 06:25:32 -0700 (PDT)
-Message-ID: <1ed2eca7-b5bf-8d25-d38e-15022a8c8a39@linaro.org>
-Date:   Mon, 3 Jul 2023 15:25:31 +0200
+        Mon, 3 Jul 2023 11:56:03 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 789FFC2;
+        Mon,  3 Jul 2023 08:56:02 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363FUOcM031763;
+        Mon, 3 Jul 2023 15:55:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Av3lLX3sN6J40Wcfq3svRclc16LCWMFV9nEGD6f8Qe0=;
+ b=kGTndyVbxANG6Spl3MkoMp0oNspAr3+qYh2cfrkwOOYe4hiOQ0HttwrtX0/AeLSCG7zq
+ Mx3jTa9vJjGaDkoa7EY3fh7huiK1967IQff9OExKNuSPY+VxyAFPwYaVL0uHxH2qrlrm
+ 6zCT0DtPE1CmrD6PjeGC6qFIopz8Sj6MgFMEF+HQqCHKdsX2IqL5SowyKeg55MS88hxL
+ VqgPIQFSG23yhGYMkKe2gMXlJTKYio1mNbgqfXYXR85fNC9b8DJaKpCXP/rDQmGs0FNH
+ A2Ah+HMkRFx+rY7pHvJQN750LJ/rYCq8xoETrvkAaK4ukA/OjWRzzfZv8fS8VMafPaDt og== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rky5mgamw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jul 2023 15:55:36 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 363FtZGq021971
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 3 Jul 2023 15:55:35 GMT
+Received: from [10.216.56.66] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 3 Jul 2023
+ 08:55:25 -0700
+Message-ID: <ba04bb7b-6599-6f41-09a8-834ee280830d@quicinc.com>
+Date:   Mon, 3 Jul 2023 21:25:21 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] dt-bindings: cleanup DTS example whitespaces
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4 08/21] dt-bindings: reserved-memory: Add qcom,ramoops
+ binding
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
+ <1687955688-20809-9-git-send-email-quic_mojha@quicinc.com>
+ <CAL_JsqJ_TTnGjjB2d8_FKHpWBRG5GHLoWnabCKjsdeZ4QFdNEg@mail.gmail.com>
+ <cacbbb02-732e-076e-50bf-292d20a4d722@quicinc.com>
+ <58a26b9e-a48d-d567-c310-193a2c52521e@linaro.org>
+ <5447f9f8-55b4-8bed-66a6-1c9d62b02c79@quicinc.com>
+ <CAGE=qrq0CuO4J-6yC=YZ4xjL67o9QTqpei0ovX-X_8MLVeEH6g@mail.gmail.com>
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <CAGE=qrq0CuO4J-6yC=YZ4xjL67o9QTqpei0ovX-X_8MLVeEH6g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Db2EPXBzIBt9vTeo1n-9ktIyz-gVCL0o
+X-Proofpoint-GUID: Db2EPXBzIBt9vTeo1n-9ktIyz-gVCL0o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-03_11,2023-06-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ spamscore=0 clxscore=1015 mlxscore=0 priorityscore=1501 phishscore=0
+ bulkscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307030145
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 02/07/2023 20:23, Krzysztof Kozlowski wrote:
-> The DTS code coding style expects spaces around '=' sign.
+
+
+On 7/3/2023 12:50 PM, Krzysztof Kozlowski wrote:
+> On Mon, 3 Jul 2023 at 08:22, Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+>> On 7/2/2023 1:42 PM, Krzysztof Kozlowski wrote:
+>>>>> The big difference is if firmware is not deciding where this log
+>>>>> lives, then it doesn't need to be in DT. How does anything except the
+>>>>> kernel that allocates the log find the logs?
+>>>>
+>>>> Yes, you are correct, firmware is not deciding where the logs lives
+>>>> instead here, Kernel has reserved the region where the ramoops region
+>>>> lives and later with the minidump registration where, physical
+>>>> address/size/virtual address(for parsing) are passed and that is how
+>>>> firmware is able to know and dump those region before triggering system
+>>>> reset.
+>>>
+>>> Your explanation does not justify storing all this in DT. Kernel can
+>>> allocate any memory it wishes, store there logs and pass the address to
+>>> the firmware. That's it, no need for DT.
+>>
+>> If you go through the driver, you will know that what it does, is
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> We talk about bindings and I should not be forced to look at the
+> driver to be able to understand them. Bindings should stand on their
+> own.
+
+Why can't ramoops binding have one more feature where it can add a flag 
+*dynamic* to indicate the regions are dynamic and it is for platforms
+where there is another entity 'minidump' who is interested in these
+regions.
+
 > 
-> ---
+>> just create platform device for actual ramoops driver to probe and to
 > 
-> Rob,
+> Not really justification for Devicetree anyway. Whatever your driver
+> is doing, is driver's business, not bindings.
 > 
-> Maybe this could go via your tree? Rebased on your for-next:
-> v6.4-rc2-45-gf0ac35049606
-> ---
->   .../bindings/arm/arm,coresight-cti.yaml        | 18 +++++++++---------
->   .../bindings/arm/keystone/ti,sci.yaml          |  8 ++++----
->   .../devicetree/bindings/display/msm/gmu.yaml   |  2 +-
->   .../display/panel/samsung,s6e8aa0.yaml         |  2 +-
->   .../display/rockchip/rockchip-vop.yaml         |  4 ++--
->   .../bindings/iio/adc/ti,adc108s102.yaml        |  2 +-
->   .../bindings/media/renesas,rzg2l-cru.yaml      |  4 ++--
->   .../devicetree/bindings/media/renesas,vin.yaml |  4 ++--
->   .../devicetree/bindings/mtd/mtd-physmap.yaml   |  2 +-
->   .../bindings/net/mediatek-dwmac.yaml           |  2 +-
->   .../bindings/perf/amlogic,g12-ddr-pmu.yaml     |  4 ++--
->   .../bindings/phy/mediatek,dsi-phy.yaml         |  2 +-
->   .../remoteproc/amlogic,meson-mx-ao-arc.yaml    |  2 +-
-
-For amlogic ones:
-
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
-
-
->   .../devicetree/bindings/usb/mediatek,mtu3.yaml |  2 +-
->   .../devicetree/bindings/usb/ti,am62-usb.yaml   |  2 +-
->   15 files changed, 30 insertions(+), 30 deletions(-)
+>> provide this it needs exact set of parameters of input what original
+>> ramoops DT provides, we need to keep it in DT as maintaining this in
+>> driver will not scale well with different size/parameter size
+>> requirement for different targets.
 > 
+> Really? Why? I don't see a problem in scaling. At all.
 
-<snip>
+I had attempted it here,
 
+https://lore.kernel.org/lkml/1683133352-10046-10-git-send-email-quic_mojha@quicinc.com/
+
+but got comments related to hard coding and some in favor of having
+the same set of properties what ramoops has/provides
+
+https://lore.kernel.org/lkml/e25723bf-be85-b458-a84c-1a45392683bb@gmail.com/
+
+https://lore.kernel.org/lkml/202305161347.80204C1A0E@keescook/
+> 
+>>
+>>>
+>>>>
+>>>> A part of this registration code you can find in 11/21
+>>>>
+>>>>> I'm pretty sure I already said all this before.
+>>>>
+>>>> Yes, you said this before but that's the reason i came up with vendor
+>>>> ramoops instead of changing traditional ramoops binding.
+>>>
+>>> That's unexpected conclusion. Adding more bindings is not the answer to
+>>> comment that it should not be in the DTS in the first place.
+>>
+>> Please suggest, what is the other way being above text as requirement..
+> 
+> I do not see any requirement for us there. Forcing me to figure out
+> how to add non-hardware property to DT is not the way to convince
+> reviewers. But if you insist - we have ABI for this, called sysfs. If
+> it is debugging feature, then debugfs.
+
+ramoops already support module params and a way to pass these parameters
+from bootargs but it also need to know the hard-codes addresses, so, 
+doing something in sysfs will be again duplication with ramoops driver..
+
+If this can be accommodated under ramoops, this will be very small 
+change, like this
+
+https://lore.kernel.org/lkml/20230622005213.458236-1-isaacmanjarres@google.com/
+
+-- Mukesh
+> 
+> Best regards,
+> Krzysztof
