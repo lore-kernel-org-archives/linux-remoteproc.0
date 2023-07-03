@@ -2,139 +2,122 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62070C001B0
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Jul 2023 20:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB817C30659
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  3 Jul 2023 21:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbjGCUTF (ORCPT
+        id S230006AbjGCVG2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 3 Jul 2023 16:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37114 "EHLO
+        Mon, 3 Jul 2023 17:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbjGCUTF (ORCPT
+        with ESMTP id S229517AbjGCVG1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 3 Jul 2023 16:19:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 236BBE47;
-        Mon,  3 Jul 2023 13:19:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AB4A360F1D;
-        Mon,  3 Jul 2023 20:19:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C3BC433C8;
-        Mon,  3 Jul 2023 20:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688415543;
-        bh=Bho0HWTGqswebYZftJzWBw9tCtS4GbuUl26UGY4111o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EaDV6colSSZJy2r0pAUsx/HkfOAC9iNVGAjWUQ+NcHJotEHb4Dt7xm2sZNUtTZ5O1
-         Cnqv93NYqRASXTUGHtl4eX48mhKGWzEaeqh6Cz8xlWfV77D3ssdGOY2CDGyjbIqfZ9
-         Wa1n7PT17REJTkUsOhNf4KvBIGF0RctiqvuT7hMmBvhorppJyg3CS/2Vdn4iHatPrv
-         2XcOn1ybTkRA4y7WMULaa90YFKbI6zj6vdtotb7XblYXqp654pplVE9MBwuTxNzNwM
-         DwF1Xwp1nzeOGPVD1QMLYBFI0W4UgRiGmhcudhsXhqoVSF3URniRcfV+ryXfHqNqL5
-         NTrTp54zDpccQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL] remoteproc updates for v6.5
-Date:   Mon,  3 Jul 2023 13:22:46 -0700
-Message-ID: <20230703202248.3083122-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.41.0
+        Mon, 3 Jul 2023 17:06:27 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C28FAE59;
+        Mon,  3 Jul 2023 14:06:26 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 363KkklH015899;
+        Mon, 3 Jul 2023 21:06:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Kf6a8f2zayKx9LTfaLSkoGTGTiIxgMuV5IPvELMWJQ4=;
+ b=Y32lhCdsHualNtkQYtskbVgQ8iR34tiZd70U/wTcVT15B6fbh+jzd/7FdEP63oLabR9s
+ RTIUm8NjzabsOQP7Hp2SgiQkLuH43Y91sx5PhaASmCImp3OYtjC2CfTf15Z2aqguH/s2
+ NpQeR4i0p+YJ5xzqFviKXBht4UNWd1zv6nUL/tY4IUDFIpoMtx/vGje0f2FdH6NTfj4k
+ YH0j5ilYCVcvp0YEcs1I3Sx5iplHPRln3Fia3HB1PwKtzGN5NcWzU5UaB5YtCy3zVsS/
+ YEDyJ/o/ypB+smeQJh3BKywwshPmUkoyLwppD/AXw2gfDPq9pl/ixzgBj90/sDe8kHFG xw== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rkwyfh0ss-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Jul 2023 21:06:00 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 363L5xAY020569
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 3 Jul 2023 21:05:59 GMT
+Received: from [10.110.23.29] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.7; Mon, 3 Jul 2023
+ 14:05:58 -0700
+Message-ID: <957a3cdb-6091-8679-ddb0-296db2347291@quicinc.com>
+Date:   Mon, 3 Jul 2023 14:05:58 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
+ support
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC:     <corbet@lwn.net>, <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <keescook@chromium.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <linus.walleij@linaro.org>,
+        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, Alex Elder <elder@linaro.org>
+References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
+ <2023062814-chance-flounder-f002@gregkh>
+ <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
+ <cc30660f-dd72-aade-6346-a93c6ad4b695@quicinc.com>
+ <29af84dc-7db8-0c43-07b6-eb743cf25e57@linaro.org>
+From:   Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <29af84dc-7db8-0c43-07b6-eb743cf25e57@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xPPByBNK4qpXUqaj3eMFPyXF3yEyeyp0
+X-Proofpoint-GUID: xPPByBNK4qpXUqaj3eMFPyXF3yEyeyp0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-03_15,2023-06-30_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=802
+ lowpriorityscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
+ spamscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307030193
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On 7/2/2023 1:29 AM, Krzysztof Kozlowski wrote:
+> On 30/06/2023 18:04, Mukesh Ojha wrote:
+>>>
+>>>> We don't add layers when they are not needed, and never when there is no
+>>>> actual user.  If you need the extra "complexity" later, then add it
+>>>> later when it is needed as who knows when that will ever be.
+>>>>
+>>>> Please redo this series based on that, thanks.
+>>>
+>>> My bigger issue with this whole series is what would this all look
+>>> like if every SoC vendor upstreamed their own custom dumping
+>>> mechanism. That would be a mess. (I have similar opinions on the
+>>> $soc-vendor hypervisors.)
+> 
+> Mukesh,
+> 
+> LPC CFP is still open. There will be also Android and Kernel Debugging
+> LPC microconference tracks. Coming with a unified solution could be a
+> great topic for LPC. Solutions targeting only one user are quite often
+> frowned upon.
 
-The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+LPC is far out and in November. Can we not have others speak up if they 
+have the similar solution now? We can expand this to linux-kernel and 
+ask for the other SOC vendors to chime in. I am sure that we may have 
+existing solutions which came in for the one user first like Intel RDT 
+if I remember. I am sure ARM MPAM usecase was present at that time but 
+Intel RDT based solution which was x86 specific but accepted.
 
-  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.5
-
-for you to fetch changes up to 181da4bcc3d4bb4b58e3df481e72353925b36edd:
-
-  remoteproc: qcom_q6v5_pas: staticize adsp_segment_dump() (2023-06-14 08:16:04 -0700)
-
-----------------------------------------------------------------
-remoteproc updates for v6.5
-
-The bulk of these patches relates to the moving to a void-returning
-remove callback.
-
-The i.MX HiFi remoteproc driver gets its pm_ops helpers updated to
-resolve build warnings about "defined but not used" variables in certain
-configurations.
-
-The ST STM32 remoteproc driver is extended to allow using a SCMI reset
-controller to hold boot, and has an error message corrected.
-
-The Qualcomm Q6V5 PAS driver gains a missing "static" qualifier on
-adsp_segment_dump().
-
-----------------------------------------------------------------
-Arnaud Pouliquen (2):
-      dt-bindings: remoteproc: st,stm32-rproc: Rework reset declarations
-      remoteproc: stm32: Allow hold boot management by the SCMI reset controller
-
-Arnd Bergmann (1):
-      remoteproc: imx_dsp_rproc: use modern pm_ops
-
-Dan Carpenter (1):
-      remoteproc: stm32: Fix error code in stm32_rproc_parse_dt()
-
-Krzysztof Kozlowski (1):
-      remoteproc: qcom_q6v5_pas: staticize adsp_segment_dump()
-
-Uwe Kleine-König (18):
-      remoteproc: da8xx: Convert to platform remove callback returning void
-      remoteproc: imx_dsp: Convert to platform remove callback returning void
-      remoteproc: imx: Convert to platform remove callback returning void
-      remoteproc: keystone: Convert to platform remove callback returning void
-      remoteproc: meson_mx_ao_arc: Convert to platform remove callback returning void
-      remoteproc: mtk_scp: Convert to platform remove callback returning void
-      remoteproc: omap: Convert to platform remove callback returning void
-      remoteproc: pru: Convert to platform remove callback returning void
-      remoteproc: qcom_q6v5_adsp: Convert to platform remove callback returning void
-      remoteproc: qcom_q6v5_mss: Convert to platform remove callback returning void
-      remoteproc: qcom_q6v5_pas: Convert to platform remove callback returning void
-      remoteproc: qcom_q6v5_wcss: Convert to platform remove callback returning void
-      remoteproc: qcom_wcnss: Convert to platform remove callback returning void
-      remoteproc: rcar: Convert to platform remove callback returning void
-      remoteproc: virtio: Convert to platform remove callback returning void
-      remoteproc: st: Convert to platform remove callback returning void
-      remoteproc: stm32: Convert to platform remove callback returning void
-      remoteproc: wkup_m3: Convert to platform remove callback returning void
-
- .../bindings/remoteproc/st,stm32-rproc.yaml        | 44 ++++++++++--
- drivers/remoteproc/da8xx_remoteproc.c              |  6 +-
- drivers/remoteproc/imx_dsp_rproc.c                 | 17 ++---
- drivers/remoteproc/imx_rproc.c                     |  6 +-
- drivers/remoteproc/keystone_remoteproc.c           |  6 +-
- drivers/remoteproc/meson_mx_ao_arc.c               |  6 +-
- drivers/remoteproc/mtk_scp.c                       |  6 +-
- drivers/remoteproc/omap_remoteproc.c               |  6 +-
- drivers/remoteproc/pru_rproc.c                     |  6 +-
- drivers/remoteproc/qcom_q6v5_adsp.c                |  6 +-
- drivers/remoteproc/qcom_q6v5_mss.c                 |  6 +-
- drivers/remoteproc/qcom_q6v5_pas.c                 |  8 +--
- drivers/remoteproc/qcom_q6v5_wcss.c                |  6 +-
- drivers/remoteproc/qcom_wcnss.c                    |  6 +-
- drivers/remoteproc/rcar_rproc.c                    |  6 +-
- drivers/remoteproc/remoteproc_virtio.c             |  6 +-
- drivers/remoteproc/st_remoteproc.c                 |  6 +-
- drivers/remoteproc/stm32_rproc.c                   | 82 +++++++++++++++-------
- drivers/remoteproc/wkup_m3_rproc.c                 |  6 +-
- 19 files changed, 136 insertions(+), 105 deletions(-)
+---Trilok Soni
