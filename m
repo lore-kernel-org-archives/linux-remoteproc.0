@@ -2,86 +2,81 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D540C001DD
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  4 Jul 2023 14:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 750BAC001E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Jul 2023 15:54:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbjGDOmp (ORCPT
+        id S232191AbjGEPyB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 4 Jul 2023 10:42:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54440 "EHLO
+        Wed, 5 Jul 2023 11:54:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbjGDOmo (ORCPT
+        with ESMTP id S232113AbjGEPyA (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 4 Jul 2023 10:42:44 -0400
-Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D36B110CB;
-        Tue,  4 Jul 2023 07:42:42 -0700 (PDT)
-Received: by mail-vs1-xe29.google.com with SMTP id ada2fe7eead31-440b9d60606so1920733137.1;
-        Tue, 04 Jul 2023 07:42:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688481762; x=1691073762;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cxhjD7KY5JD674i+41mIILyrwvbeMopv+PbB7rT3+IE=;
-        b=qXoDuKf7tijC6nBenqA4HmNXCVz12f5ddVrWo/iBC08Xy5X/GCcU43sZ0mtpwstHzz
-         GGG4rED1L0Z3jHx0ObuuPnqTWgOV3lvgb0UgCTp0CeJLzQJEGAmTwNjVcNLWi2mplii/
-         gTzcErjfLOJvdkMr/rbh3rwy+y80EnZd7ymGi3sD7e4+hc0QpRfU1gEicpQvVZGtzAVf
-         6EUu76BBqp0jaLUX1ZJLF1j0K7hxvYq5PwkFk8Ccvmvlcutquq7I+RgTWyWu/YG1H3fa
-         w3VIu5zXhiZjEGvEfADAqF0uBRfL7T9poR368enlmGkLswEIk/idT17/IjIAC8boz7sh
-         McZA==
+        Wed, 5 Jul 2023 11:54:00 -0400
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30BAE12A;
+        Wed,  5 Jul 2023 08:53:59 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7836164a08aso333897239f.1;
+        Wed, 05 Jul 2023 08:53:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688481762; x=1691073762;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cxhjD7KY5JD674i+41mIILyrwvbeMopv+PbB7rT3+IE=;
-        b=NVqUSAuRHHcB89RqYVobleynYC2hVcXKjZa8hF9UHv20t+JZuHBw4KMzAVhfMiLve+
-         9AoHRnQrrkwS0z2Rn9mnK2p5g7xA9+xvVMtfRZSrJU+LJC1RqHCjcQc6miGc7rXAsG0l
-         B6tZDB7ywdvo6TNJbwjUyntJEaFKVocVNK0gxKPUZruwfi9IypU0EPa7Cjy8xeVpV4bD
-         SylalahU12wYgHPNFPGtUv5QWXjnoGcz6qsCN3+hfwDjgNbcl/bFK2z4bI4fyKdIhQw6
-         qQJFXyohRZb2nHLmOFf6+fh9m3m8O/nvglgaLJGSaSfC6Mnm89iIVXjVjZe7S/O0zdRV
-         fXmg==
-X-Gm-Message-State: ABy/qLZ2Ae9Aizb2N12lDTaYnR9kFA75bm+s+CSMZYT/BXOIeN+jxK9L
-        r+OhSYS7talt7d1xA3zKSxtA4Kw9647eKCy3ibY=
-X-Google-Smtp-Source: APBJJlEzBfrRFFxw3waM7f1ipL7WWKBgZ8jQmyUjVtnbM0TCNsn4+zGfKdFXtaZmMtcuMEXY1XjZXuAM/dQift4uNtI=
-X-Received: by 2002:a67:f3d5:0:b0:443:7170:b048 with SMTP id
- j21-20020a67f3d5000000b004437170b048mr6639880vsn.27.1688481761915; Tue, 04
- Jul 2023 07:42:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
-From:   Jonas Gorski <jonas.gorski@gmail.com>
-Date:   Tue, 4 Jul 2023 16:42:30 +0200
-Message-ID: <CAOiHx=kreUEnqssO7y_+UqAxsnXaLPbwBz8h3JRkdEq+pkdW2A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: cleanup DTS example whitespaces
+        d=1e100.net; s=20221208; t=1688572438; x=1691164438;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3RLbkYBSMtZSZWsdqOipQPRF1AXaIm7IXw5H9F31xDg=;
+        b=YOqBHMuBehhI/6uka/fZOxhJyax+4qIFzKd0buYsQuhqnnScQyhVdSkC7Ns2BzAsAX
+         2fmBfR9utC9mjai0aTY3EkUE37XQriezfYOPQMpzYk1wn63E7oS0ICNvHGkT8cA9d57G
+         AFpc1RKl+FSvTHDZnnK3ePskWfK0y/sac06IfVczJjk5Tm4DbC9MfjBCp1j2+t6uu9p3
+         S8a5i6J+TlxwDXF5i2CohEOBhzseFE9847xH569wijaIninvh9VkapHsXLHD6gwQEKWS
+         ZEc55j1BAEYyxJ9FdSVc1BXUVNTMMj2UepKO4KfIx9YO8sLtwQE6wn2UWs/gRmeB2Vpn
+         vRkQ==
+X-Gm-Message-State: AC+VfDx0wiFQ35lCD5kTnt/OdJ9vRUKVoS93ym466XbHpyA+iBbRj2zA
+        21SOrvPeiRShKnXXatsB+w==
+X-Google-Smtp-Source: ACHHUZ73QtYKyynoI9ylI1XEWC2lq+A/sJ6q02lzFpAinNpUOyDvzNhBset5FBiQu0bFE/MLWXDyOg==
+X-Received: by 2002:a5e:8811:0:b0:785:ca70:46a2 with SMTP id l17-20020a5e8811000000b00785ca7046a2mr18137083ioj.4.1688572438444;
+        Wed, 05 Jul 2023 08:53:58 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id q15-20020a02c8cf000000b0042ad6abe0bbsm6425382jao.20.2023.07.05.08.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Jul 2023 08:53:57 -0700 (PDT)
+Received: (nullmailer pid 691642 invoked by uid 1000);
+        Wed, 05 Jul 2023 15:53:55 -0000
+Date:   Wed, 5 Jul 2023 09:53:55 -0600
+From:   Rob Herring <robh@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>,
+Cc:     Leo Yan <leo.yan@linaro.org>, linux-arm-kernel@lists.infradead.org,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-mtd@lists.infradead.org,
+        freedreno@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        coresight@lists.linaro.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: cleanup DTS example whitespaces
+Message-ID: <168857243311.691536.13322875472425620659.robh@kernel.org>
+References: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230702182308.7583-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, 2 Jul 2023 at 20:24, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
+
+On Sun, 02 Jul 2023 20:23:08 +0200, Krzysztof Kozlowski wrote:
 > The DTS code coding style expects spaces around '=' sign.
->
+> 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
+> 
 > ---
->
+> 
 > Rob,
->
+> 
 > Maybe this could go via your tree? Rebased on your for-next:
 > v6.4-rc2-45-gf0ac35049606
 > ---
@@ -101,19 +96,7 @@ On Sun, 2 Jul 2023 at 20:24, Krzysztof Kozlowski
 >  .../devicetree/bindings/usb/mediatek,mtu3.yaml |  2 +-
 >  .../devicetree/bindings/usb/ti,am62-usb.yaml   |  2 +-
 >  15 files changed, 30 insertions(+), 30 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> index 0c5b875cb654..d6c84b6e7fe6 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> @@ -287,7 +287,7 @@ examples:
->              arm,trig-in-sigs = <0 1>;
->              arm,trig-in-types = <PE_DBGTRIGGER
->                                   PE_PMUIRQ>;
-> -            arm,trig-out-sigs=<0 1 2 >;
-> +            arm,trig-out-sigs = <0 1 2 >;
+> 
 
-There's a space before the closing > you could drop as well.
+Applied, thanks!
 
-Best Regards,
-Jonas
