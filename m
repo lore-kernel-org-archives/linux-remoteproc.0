@@ -2,117 +2,142 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF31C0502B
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Jul 2023 17:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273A3EB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Jul 2023 23:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbjGERcJ (ORCPT
+        id S232441AbjGEX1o (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 13:32:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49346 "EHLO
+        Wed, 5 Jul 2023 19:27:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232757AbjGERcG (ORCPT
+        with ESMTP id S231608AbjGEX1n (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Jul 2023 13:32:06 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25D4199D;
-        Wed,  5 Jul 2023 10:31:29 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3658VZdo020618;
-        Wed, 5 Jul 2023 17:29:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=MlX/UZ0ZXE/72U2AV0V88Yyf3NKh+5tvQkq5oSMpx9E=;
- b=oEsYD/vvDJx9I16U5GmklPgKbnTHKeZMkb2tJer354sH217R0zTqquJ53M+OqPzsf2JZ
- 26hjQhgAyVBxQ+kkGociceDG2sxd+2HdTMFPf3apSBaqmmHMRnaikxoYD58y/QY0byrt
- rr2dPVHfrckS93szwrh9M0av/93juQes52/Liqj6XVTFZAMt0+Pb0WR5kaeJaNJglwJK
- DdOa6n07F73z9fH2EeRNH0o0yeUIWOdtQnp1KIzaiQlPFSR9VmjvZOD6UDECrACP896y
- e2Fypy4iSXxGMA6sPbidN8TOJjpYVtXUqFulpihlHX7qiExvdB50F/hNAjwUCgMw8PLZ lw== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rmhf13myy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Jul 2023 17:29:57 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 365HTu6b015191
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 5 Jul 2023 17:29:56 GMT
-Received: from [10.110.49.233] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 5 Jul
- 2023 10:29:55 -0700
-Message-ID: <355de4c7-180d-4edd-b6fd-9c8e29e40e42@quicinc.com>
-Date:   Wed, 5 Jul 2023 10:29:54 -0700
+        Wed, 5 Jul 2023 19:27:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE47A171A;
+        Wed,  5 Jul 2023 16:27:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B2DF6187C;
+        Wed,  5 Jul 2023 23:27:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE9CC433CA;
+        Wed,  5 Jul 2023 23:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688599661;
+        bh=71ABv5/JwaJZ55URTzD8vGgqeEszc1MgI9Tgv+MINjE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ZONJDYYI4DfLy7Qsq2iruWU/TAy+MfhN8a+13GK2IWPkDZqio7bRNxa5SQs05lP4P
+         cwPUPxti1OHDRjna7RLvlHvYzjGzNzbIQj3qP3y/Bn+msmAYu9HbnUfdOB0mW+oJ0Y
+         xXd9KYSiaVMbhH8iXxtVbsReICsvqSFCZ93UbTBDH2SxezF1CiOXVRCeK6+eL9LKGf
+         lv5Tdq9By8SoiBvDGs8LHavKem9Wb+MzUqre5RXfWHiAchuT+L/DCozo3/BlyhktAW
+         7OLkwTDgnazo9mvhKgyHb/J//J+68K3lIP4d0Lf8VbQ7BmWtxd0vaabSh0ecr/t8zz
+         aclhgVyMhnn3Q==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2b6ef64342aso231811fa.3;
+        Wed, 05 Jul 2023 16:27:41 -0700 (PDT)
+X-Gm-Message-State: ABy/qLZ15zN9i0RK29N24/YPEZcU9AmIcYDkhPFpv4CaynvygCJuwO56
+        xE1BiyzvzmSOMJMehNsGnW17NxHUoZ1nVel/ew==
+X-Google-Smtp-Source: APBJJlEpNIPlBGdtVBVr58J7X3ky87DEhp6DbA9itW5/VGUcmhmKpi6TWJGAkGRnBuBFSJRhMLcgVJySm3N6emm2tmc=
+X-Received: by 2002:a2e:a170:0:b0:2b6:e958:d03 with SMTP id
+ u16-20020a2ea170000000b002b6e9580d03mr124735ljl.30.1688599659474; Wed, 05 Jul
+ 2023 16:27:39 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
- support
-Content-Language: en-US
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>
-CC:     Greg KH <gregkh@linuxfoundation.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <keescook@chromium.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>
 References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <2023062814-chance-flounder-f002@gregkh>
- <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
- <CACRpkda3CJ7G4-wDPkWmzg6nyCoEfG+u2cQH6KXWNjbftd90ow@mail.gmail.com>
-From:   Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <CACRpkda3CJ7G4-wDPkWmzg6nyCoEfG+u2cQH6KXWNjbftd90ow@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VZW6qNveH1EguEh4PjOv0RhaMztUvQ2V
-X-Proofpoint-ORIG-GUID: VZW6qNveH1EguEh4PjOv0RhaMztUvQ2V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-05_09,2023-07-05_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 clxscore=1011 impostorscore=0 adultscore=0
- suspectscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- bulkscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2307050159
+ <1687955688-20809-11-git-send-email-quic_mojha@quicinc.com>
+ <CAL_Jsq+O70mnreuS1m54RKM+uZu_z1L87RT8sKBYEw5uvowGJg@mail.gmail.com> <e0fef1b0-3fa1-08c1-3c0e-aca30c9da266@quicinc.com>
+In-Reply-To: <e0fef1b0-3fa1-08c1-3c0e-aca30c9da266@quicinc.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 5 Jul 2023 17:27:27 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+FEAYXJTfMKQ6nOKzZLJH49x=XroNCYnkqa=RHuQ99qg@mail.gmail.com>
+Message-ID: <CAL_Jsq+FEAYXJTfMKQ6nOKzZLJH49x=XroNCYnkqa=RHuQ99qg@mail.gmail.com>
+Subject: Re: [PATCH v4 10/21] soc: qcom: Add qcom's pstore minidump driver support
+To:     Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
+        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
+        andy.shevchenko@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/4/2023 2:27 AM, Linus Walleij wrote:
-> On Thu, Jun 29, 2023 at 1:12 AM Rob Herring <robh+dt@kernel.org> wrote:
-> 
->> My bigger issue with this whole series is what would this all look
->> like if every SoC vendor upstreamed their own custom dumping
->> mechanism. That would be a mess. (I have similar opinions on the
->> $soc-vendor hypervisors.)
-> 
-> I agree with Rob's stance.
-> 
-> I think it would be useful to get input from the hwtracing developers
-> (Alexander and Mathieu) who faced this "necessarily different" issue
-> with all the hwtrace mechanisms and found a way out of it. I suspect
-> they can have an idea of how this should be abstracted.
+On Thu, Jun 29, 2023 at 3:16=E2=80=AFAM Mukesh Ojha <quic_mojha@quicinc.com=
+> wrote:
+>
+>
+>
+> On 6/29/2023 4:27 AM, Rob Herring wrote:
+> > On Wed, Jun 28, 2023 at 6:37=E2=80=AFAM Mukesh Ojha <quic_mojha@quicinc=
+.com> wrote:
+> >>
+> >> This driver was inspired from the fact pstore ram region should be
+> >> fixed and boot firmware need to have awarness about this region,
+> >> so that it will be persistent across boot. But, there are many
+> >> QCOM SoC which does not support warm boot from hardware but they
+> >> have minidump support from the software, and for them, there is
+> >> no need of this pstore ram region to be fixed, but at the same
+> >> time have interest in the pstore frontends data. So, this driver
+> >> get the dynamic reserved region from the ram and register the
+> >> ramoops platform device.
+> >>
+> >>   +---------+     +---------+   +--------+     +---------+
+> >>   | console |     | pmsg    |   | ftrace |     | dmesg   |
+> >>   +---------+     +---------+   +--------+     +---------+
+> >>         |             |             |              |
+> >>         |             |             |              |
+> >>         +------------------------------------------+
+> >>                            |
+> >>                           \ /
+> >>                    +----------------+
+> >>              (1)   |pstore frontends|
+> >>                    +----------------+
+> >>                            |
+> >>                           \ /
+> >>                   +------------------- +
+> >>              (2)  | pstore backend(ram)|
+> >>                   +--------------------+
+> >>                            |
+> >>                           \ /
+> >>                   +--------------------+
+> >>              (3)  |qcom_pstore_minidump|
+> >>                   +--------------------+
+> >>                            |
+> >>                           \ /
+> >>                     +---------------+
+> >>              (4)    | qcom_minidump |
+> >>                     +---------------+
+> >>
+> >> This driver will route all the pstore front data to the stored
+> >> in qcom pstore reserved region and the reason of showing an
+> >> arrow from (3) to (4) as qcom_pstore_minidump driver will register
+> >> all the available frontends region with qcom minidump driver
+> >> in upcoming patch.
+> >>
+> >> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> >> ---
+> >>   drivers/soc/qcom/Kconfig                | 12 +++++
+> >>   drivers/soc/qcom/Makefile               |  1 +
+> >>   drivers/soc/qcom/qcom_pstore_minidump.c | 85 +++++++++++++++++++++++=
+++++++++++
+> >
+> > drivers/soc/ is the dumping ground for things with no other place. As
+> > this is a pstore driver, it belongs with pstore.
+>
+> The inspiration of this driver was taken from
+> drivers/platform/chrome/chromeos_pstore.c, do you think that is misplaced=
+ ?
 
-Any mailing list you suggest we expand to so that we get inputs from the 
-hwtracing developers and maintainers or just look into the MAINTAINERS 
-file and start an email thread?
+The difference is really that's nothing more than platform specific
+logic to instantiate a normal ramoops device. It's kind of ugly, yes,
+but it's still just a normal ramoops device in the end. Your case is
+that plus all the extra parts for minidump.
 
-We are fine to submit the abstract for the LPC in next two weeks, but 
-prefer to have lot of good discussion before it on the mailing list, so 
-that we have code to talk about in LPC.
-
----Trilok Soni
+Rob
