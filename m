@@ -2,250 +2,107 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FA8EB64D9
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Jul 2023 19:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0BDEB64D9
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Jul 2023 21:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjGFTCK (ORCPT
+        id S229552AbjGFVma (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Jul 2023 15:02:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37716 "EHLO
+        Thu, 6 Jul 2023 17:42:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjGFTCJ (ORCPT
+        with ESMTP id S229501AbjGFVm2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Jul 2023 15:02:09 -0400
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA111AE;
-        Thu,  6 Jul 2023 12:02:08 -0700 (PDT)
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-34574eb05f4so3924305ab.0;
-        Thu, 06 Jul 2023 12:02:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688670127; x=1691262127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yHyEaPrZCKQByAh3DFl+UnNETs5AwZcjbcPbdv9JJW8=;
-        b=lmNsfV7WSyNs1OYQGl6F+KLWmR/NYN0xzDnzf852zg/QEIC0q8lkMpyRd7BWZ3TNCQ
-         9axPmcQ3wa4gu+LfLSBQb51JMu4kKEgcDldBoOEj3y5+glvV7vdItMF3n1f2bRKgCsqT
-         O0YDI/+CtvDPGHBhLp3T5+gX61taXqzvt6Gxrbx5Uk8WUhC0wLJ/sY3DDKcG8h9zKrxL
-         P97K/VxPkcoBzjyoPJ0OvxInY7efxZPFyqltjFslkWu8HBYAkUKZaafKc/HHEXqmsDCO
-         ybSNYoSDRvjRGfdR1cOvYsUVx7Leot8RiCwmddMNF4ZcIoOM8EQdbroVgSkWoFvRwFNS
-         O28g==
-X-Gm-Message-State: ABy/qLZfCJMpdh4+g5Iptz2Kr5UHicB1zFW+Dv+NhBCIrw4QA7kZxKWX
-        YNI5LUazm2yCv9soF5ioug==
-X-Google-Smtp-Source: APBJJlFbADYE6+hk4uSXwI2HJZPLgzAEGH3jTEX9QJwf2mycuUE2+lpXa4xdL1M7WZg+jYHFc5CghQ==
-X-Received: by 2002:a92:c9d1:0:b0:345:787a:cb27 with SMTP id k17-20020a92c9d1000000b00345787acb27mr2839568ilq.21.1688670127186;
-        Thu, 06 Jul 2023 12:02:07 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id z11-20020a92cd0b000000b0033a50ad8176sm703067iln.18.2023.07.06.12.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jul 2023 12:02:06 -0700 (PDT)
-Received: (nullmailer pid 154245 invoked by uid 1000);
-        Thu, 06 Jul 2023 19:02:04 -0000
-Date:   Thu, 6 Jul 2023 13:02:04 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        michal.simek@amd.com, ben.levinsky@amd.com, tanmay.shah@amd.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        git@amd.com
-Subject: Re: [PATCH v2] dt-bindings: remoteproc: add Tightly Coupled Memory
- (TCM) bindings
-Message-ID: <20230706190204.GA144696-robh@kernel.org>
-References: <1687892226-3784452-1-git-send-email-radhey.shyam.pandey@amd.com>
+        Thu, 6 Jul 2023 17:42:28 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F8B19A0;
+        Thu,  6 Jul 2023 14:42:27 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 366LVEbs022729;
+        Thu, 6 Jul 2023 21:42:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=nB+FrfRB00byByv0fjxvglIPHplvgPchqpWrlgRCZPM=;
+ b=S/zyy80DBLgkkuGk2Cbcvj2ws4NtXGO1VR1jELLLdtygA36zVpPnsZ4if55o26fCjSIa
+ 9P1eUuO/4MdhhwSdbbCo9lY8pwz1L66s7+vTfrkMihWOm3CDEEan+3LX/vzgERMylF7e
+ 6Mz45N6xA+CcPYiI3ptZJi8OgSegFnhRNYjr2s4SwBq6W7ULVFSdRi5zRdvWLu5T88ZG
+ MBPLwMWt1uCHIA9zHvU6bJdrNs2DkPqQzSrgcIWAOmbMwjGs8238GRtIVen/vOyuz+PV
+ xfFXjf+nmtcqlEjxMSPQZ0iIZWK2BVM38nRtycFB5FsXotBdci8MaY58Qx0VFAZ+f96N xQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rnsu71hmu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Jul 2023 21:42:22 +0000
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 366LgKVc010263
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Jul 2023 21:42:20 GMT
+Received: from sarannya-linux.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Thu, 6 Jul 2023 14:42:17 -0700
+From:   Sarannya S <quic_sarannya@quicinc.com>
+To:     <quic_bjorande@quicinc.com>, <arnaud.pouliquen@foss.st.com>,
+        <swboyd@chromium.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Sarannya S <sarannya@qti.qualcomm.com>
+Subject: [PATCH V9 0/3] rpmsg signaling/flowcontrol patches
+Date:   Fri, 7 Jul 2023 03:11:35 +0530
+Message-ID: <1688679698-31274-1-git-send-email-quic_sarannya@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1687892226-3784452-1-git-send-email-radhey.shyam.pandey@amd.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Pi5Y8vJEImoUSXfkDmfpgAbiLWOkmquk
+X-Proofpoint-ORIG-GUID: Pi5Y8vJEImoUSXfkDmfpgAbiLWOkmquk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-06_15,2023-07-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=711
+ adultscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ spamscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2307060189
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 12:27:06AM +0530, Radhey Shyam Pandey wrote:
-> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
-> UltraScale+ platform. As of now TCM addresses are hardcoded in xilinx
-> remoteproc driver. This binding will help in defining TCM in device-tree
-> and make it's access platform agnostic and data-driven from the driver.
-> 
-> Tightly-coupled memories(TCMs) are low-latency memory that provides
-> predictable instruction execution and predictable data load/store
-> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
-> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
-> 
-> The TCM resources(reg and power-domain) are documented in each R5 node.
-> It also extends the examples for TCM split and lockstep modes.
-> 
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> ---
-> Changes for v2:
-> - Add ranges property to r5fss cluster node.
-> - Use regex "^r5f(@[0-9a-f]+|-[a-f0-9]+)$".
-> - Drop address/size-cells and ranges from r5f core node.
-> - Mention "reg" and "reg names" as r5f core node required properties.
-> - Mention address/size-cells and ranges as r5fss required node properties.
-> - Modify commit description to remove ranges from R5 node.
-> - Rename r5f node labels(r5f_0 -> r5f_0_split/lockstep and
->   r5f_1->r5f_1_split/lockstep)
-> 
-> The inspiration for integrating TCM nodes in R5 nodes is taken from
-> "5ee79c2ed5bd dt-bindings: remoteproc: Add bindings for R5F subsystem
-> on TI K3 SoCs".Once the binding is reviewed/accepted will send out
-> driver changes in follow-up series.
-> ---
->  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 90 +++++++++++++++++--
->  1 file changed, 83 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> index 9f677367dd9f..958044b08e86 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-> @@ -20,6 +20,17 @@ properties:
->    compatible:
->      const: xlnx,zynqmp-r5fss
->  
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  ranges:
-> +    description: |
-> +      Standard ranges definition providing address translations for
-> +      local R5F TCM address spaces to bus addresses.
-> +
->    xlnx,cluster-mode:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      enum: [0, 1, 2]
-> @@ -37,7 +48,7 @@ properties:
->        2: single cpu mode
->  
->  patternProperties:
-> -  "^r5f-[a-f0-9]+$":
-> +  "^r5f(@[0-9a-f]+|-[a-f0-9]+)$":
+From: Sarannya S <sarannya@qti.qualcomm.com>
 
-If reg is required, then you don't need '-[a-f0-9]+'. Though new 
-required properties is an ABI change which needs justification.
+Changes from V8:
+* Updated the argument for RPMSG_SET_INCOMING_FLOWCONTROL to int.
+* Return -EINVAL if arg > 1 in RPMSG_SET_INCOMING_FLOWCONTROL.
 
->      type: object
->      description: |
->        The RPU is located in the Low Power Domain of the Processor Subsystem.
-> @@ -54,8 +65,19 @@ patternProperties:
->        compatible:
->          const: xlnx,zynqmp-r5f
->  
-> +      reg:
-> +        items:
-> +          - description: Address and Size of the ATCM internal memory region
-> +          - description: Address and Size of the BTCM internal memory region
+Key changes from earlier revisions:
+* Added two new RPMSG IOCTLs for rpmsg_char- RPMSG_GET_SIGNAL_IOCTRL and RPMSG_SET_SIGNAL_IOCTRL, to set/get the flow.
+* Updated the cmd name 'RPM_CMD_SIGNALS' to 'GLINK_CMD_SIGNALS'.
+* Return EOPNOTSUPP error in rpmsg_set_flow_control(), if the backend does not support flow control ops.
+* For rpmsg_set_flow_control, change "EXPORT_SYMBOL" to "EXPORT_SYMBOL_GPL".
+* Change return type of qcom_glink_handle_signals() from int to void.
+* Added destination address of the endpoint as parameter in rpmsg_set_flow_control.
+* Changed 'remote_flow' to bool type, and updated it's evaluation.
+* Updated evaluation of 'set' in rpmsg_char as 'set = !!arg'.
 
-Drop 'Address and Size of '
+Chris Lew (2):
+  rpmsg: glink: Add support to handle signals command
+  rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support
 
-> +
-> +      reg-names:
-> +        items:
-> +          - const: atcm
-> +          - const: btcm
-> +
->        power-domains:
-> -        maxItems: 1
-> +        minItems: 1
-> +        maxItems: 3
->  
->        mboxes:
->          minItems: 1
-> @@ -102,31 +124,85 @@ patternProperties:
->      required:
->        - compatible
->        - power-domains
-> +      - reg
-> +      - reg-names
->  
->      unevaluatedProperties: false
->  
->  required:
->    - compatible
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
->  
->  additionalProperties: false
->  
->  examples:
->    - |
-> -    remoteproc {
-> +    #include <dt-bindings/power/xlnx-zynqmp-power.h>
-> +
-> +    //Split mode configuration
-> +    remoteproc@ffe00000 {
-> +        compatible = "xlnx,zynqmp-r5fss";
-> +        xlnx,cluster-mode = <0>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0x0 0xffe00000 0x10000>, <0x20000 0xffe20000 0x10000>,
-> +                 <0x0 0xffe90000 0x10000>, <0x20000 0xffeb0000 0x10000>;
-> +
-> +        r5f_0_split: r5f@ffe00000 {
-> +            compatible = "xlnx,zynqmp-r5f";
-> +            reg = <0xffe00000 0x10000>, <0xffe20000 0x10000>;
-> +            reg-names = "atcm", "btcm";
-> +            power-domains = <&zynqmp_firmware PD_RPU_0>,
-> +                            <&zynqmp_firmware PD_R5_0_ATCM>,
-> +                            <&zynqmp_firmware PD_R5_0_BTCM>;
-> +            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
-> +            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
-> +            mbox-names = "tx", "rx";
-> +        };
-> +
-> +        r5f_1_split: r5f@ffe90000 {
-> +            compatible = "xlnx,zynqmp-r5f";
-> +            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
-> +            reg-names = "atcm", "btcm";
-> +            power-domains = <&zynqmp_firmware PD_RPU_1>,
-> +                            <&zynqmp_firmware PD_R5_1_ATCM>,
-> +                            <&zynqmp_firmware PD_R5_1_BTCM>;
-> +            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
-> +            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
-> +            mbox-names = "tx", "rx";
-> +        };
-> +    };
-> +
-> +  - |
-> +    //Lockstep configuration
-> +    remoteproc@ffe00000 {
->          compatible = "xlnx,zynqmp-r5fss";
->          xlnx,cluster-mode = <1>;
->  
-> -        r5f-0 {
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0x0 0xffe00000 0x20000>, <0x20000 0xffe20000 0x20000>;
-> +
-> +        r5f_0_lockstep: r5f@ffe00000 {
->              compatible = "xlnx,zynqmp-r5f";
-> -            power-domains = <&zynqmp_firmware 0x7>;
-> +            reg = <0xffe00000 0x20000>, <0xffe20000 0x20000>;
-> +            reg-names = "atcm", "btcm";
-> +            power-domains = <&zynqmp_firmware PD_RPU_0>,
-> +                            <&zynqmp_firmware PD_R5_0_ATCM>,
-> +                            <&zynqmp_firmware PD_R5_0_BTCM>;
->              memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
->              mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
->              mbox-names = "tx", "rx";
->          };
->  
-> -        r5f-1 {
-> +        r5f_1_lockstep: r5f@ffe90000 {
->              compatible = "xlnx,zynqmp-r5f";
-> -            power-domains = <&zynqmp_firmware 0x8>;
-> +            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
-> +            reg-names = "atcm", "btcm";
-> +            power-domains = <&zynqmp_firmware PD_RPU_1>;
->              memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
->              mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
->              mbox-names = "tx", "rx";
-> -- 
-> 2.25.1
-> 
+Deepak Kumar Singh (1):
+  rpmsg: core: Add signal API support
+
+ drivers/rpmsg/qcom_glink_native.c | 56 +++++++++++++++++++++++++++++++++++++++
+ drivers/rpmsg/rpmsg_char.c        | 54 ++++++++++++++++++++++++++++++++-----
+ drivers/rpmsg/rpmsg_core.c        | 21 +++++++++++++++
+ drivers/rpmsg/rpmsg_internal.h    |  2 ++
+ include/linux/rpmsg.h             | 15 +++++++++++
+ include/uapi/linux/rpmsg.h        | 10 +++++++
+ 6 files changed, 152 insertions(+), 6 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
