@@ -2,142 +2,129 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 273A3EB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Wed,  5 Jul 2023 23:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7222FEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Jul 2023 02:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232441AbjGEX1o (ORCPT
+        id S230383AbjGFCyP (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 5 Jul 2023 19:27:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42690 "EHLO
+        Wed, 5 Jul 2023 22:54:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231608AbjGEX1n (ORCPT
+        with ESMTP id S229634AbjGFCyP (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 5 Jul 2023 19:27:43 -0400
+        Wed, 5 Jul 2023 22:54:15 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE47A171A;
-        Wed,  5 Jul 2023 16:27:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1DB1BC5;
+        Wed,  5 Jul 2023 19:54:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B2DF6187C;
-        Wed,  5 Jul 2023 23:27:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE9CC433CA;
-        Wed,  5 Jul 2023 23:27:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C6CFD61461;
+        Thu,  6 Jul 2023 02:54:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B43C433C8;
+        Thu,  6 Jul 2023 02:54:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688599661;
-        bh=71ABv5/JwaJZ55URTzD8vGgqeEszc1MgI9Tgv+MINjE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZONJDYYI4DfLy7Qsq2iruWU/TAy+MfhN8a+13GK2IWPkDZqio7bRNxa5SQs05lP4P
-         cwPUPxti1OHDRjna7RLvlHvYzjGzNzbIQj3qP3y/Bn+msmAYu9HbnUfdOB0mW+oJ0Y
-         xXd9KYSiaVMbhH8iXxtVbsReICsvqSFCZ93UbTBDH2SxezF1CiOXVRCeK6+eL9LKGf
-         lv5Tdq9By8SoiBvDGs8LHavKem9Wb+MzUqre5RXfWHiAchuT+L/DCozo3/BlyhktAW
-         7OLkwTDgnazo9mvhKgyHb/J//J+68K3lIP4d0Lf8VbQ7BmWtxd0vaabSh0ecr/t8zz
-         aclhgVyMhnn3Q==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2b6ef64342aso231811fa.3;
-        Wed, 05 Jul 2023 16:27:41 -0700 (PDT)
-X-Gm-Message-State: ABy/qLZ15zN9i0RK29N24/YPEZcU9AmIcYDkhPFpv4CaynvygCJuwO56
-        xE1BiyzvzmSOMJMehNsGnW17NxHUoZ1nVel/ew==
-X-Google-Smtp-Source: APBJJlEpNIPlBGdtVBVr58J7X3ky87DEhp6DbA9itW5/VGUcmhmKpi6TWJGAkGRnBuBFSJRhMLcgVJySm3N6emm2tmc=
-X-Received: by 2002:a2e:a170:0:b0:2b6:e958:d03 with SMTP id
- u16-20020a2ea170000000b002b6e9580d03mr124735ljl.30.1688599659474; Wed, 05 Jul
- 2023 16:27:39 -0700 (PDT)
+        s=k20201202; t=1688612053;
+        bh=HenXvbXh+FMHOsANhghfX7JZNcwVNRAhL9A7ZADg4CE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fd/V7FTEXBp1VYm62AoFVVui6Jv9BmsU8Mpp1Sl/o5TIVF4hN2kDBG3LIsMlsqHJB
+         5XZR2Lf/Mc5TKC13GUPSUFDcz1KH1B+LOyHyJmMiy/5Dum1fn+g18Wg6YAmfS/fYmY
+         pBOPjwLHzHDywF8A92FTjlfCue1bWfPI7YGlI+JW18CP+42bhDWF/v7I5TnkKqViLj
+         8e8CYESNdiSZTvML2GSBKeK6CAS986YYHNEm6VJXNnN7curGU4YIDbWRpO3Pnxm8ye
+         BCcskMdJHDvaV3JzlEHAu3M+ibg9Mqeid80tV/N3uSmpWMTH+CyoMfuOqjme+KM+lj
+         KWuEoy7OgLF8Q==
+Date:   Wed, 5 Jul 2023 19:57:54 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc:     Sarannya S <quic_sarannya@quicinc.com>, quic_bjorande@quicinc.com,
+        swboyd@chromium.org, quic_clew@quicinc.com,
+        mathieu.poirier@linaro.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <quic_deesin@quicinc.com>
+Subject: Re: [PATCH V8 3/3] rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL
+ support
+Message-ID: <qobozhguxj5hc5oo3s7iesvznqohi2trf5os2wlpdx737opics@fkq72gprbtfd>
+References: <1687361648-27688-1-git-send-email-quic_sarannya@quicinc.com>
+ <1687361648-27688-4-git-send-email-quic_sarannya@quicinc.com>
+ <d0e5a6bf-e89f-bcf0-7009-94edfbcf2a83@foss.st.com>
 MIME-Version: 1.0
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <1687955688-20809-11-git-send-email-quic_mojha@quicinc.com>
- <CAL_Jsq+O70mnreuS1m54RKM+uZu_z1L87RT8sKBYEw5uvowGJg@mail.gmail.com> <e0fef1b0-3fa1-08c1-3c0e-aca30c9da266@quicinc.com>
-In-Reply-To: <e0fef1b0-3fa1-08c1-3c0e-aca30c9da266@quicinc.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 5 Jul 2023 17:27:27 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+FEAYXJTfMKQ6nOKzZLJH49x=XroNCYnkqa=RHuQ99qg@mail.gmail.com>
-Message-ID: <CAL_Jsq+FEAYXJTfMKQ6nOKzZLJH49x=XroNCYnkqa=RHuQ99qg@mail.gmail.com>
-Subject: Re: [PATCH v4 10/21] soc: qcom: Add qcom's pstore minidump driver support
-To:     Mukesh Ojha <quic_mojha@quicinc.com>
-Cc:     corbet@lwn.net, agross@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
-        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
-        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
-        andy.shevchenko@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0e5a6bf-e89f-bcf0-7009-94edfbcf2a83@foss.st.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jun 29, 2023 at 3:16=E2=80=AFAM Mukesh Ojha <quic_mojha@quicinc.com=
-> wrote:
->
->
->
-> On 6/29/2023 4:27 AM, Rob Herring wrote:
-> > On Wed, Jun 28, 2023 at 6:37=E2=80=AFAM Mukesh Ojha <quic_mojha@quicinc=
-.com> wrote:
-> >>
-> >> This driver was inspired from the fact pstore ram region should be
-> >> fixed and boot firmware need to have awarness about this region,
-> >> so that it will be persistent across boot. But, there are many
-> >> QCOM SoC which does not support warm boot from hardware but they
-> >> have minidump support from the software, and for them, there is
-> >> no need of this pstore ram region to be fixed, but at the same
-> >> time have interest in the pstore frontends data. So, this driver
-> >> get the dynamic reserved region from the ram and register the
-> >> ramoops platform device.
-> >>
-> >>   +---------+     +---------+   +--------+     +---------+
-> >>   | console |     | pmsg    |   | ftrace |     | dmesg   |
-> >>   +---------+     +---------+   +--------+     +---------+
-> >>         |             |             |              |
-> >>         |             |             |              |
-> >>         +------------------------------------------+
-> >>                            |
-> >>                           \ /
-> >>                    +----------------+
-> >>              (1)   |pstore frontends|
-> >>                    +----------------+
-> >>                            |
-> >>                           \ /
-> >>                   +------------------- +
-> >>              (2)  | pstore backend(ram)|
-> >>                   +--------------------+
-> >>                            |
-> >>                           \ /
-> >>                   +--------------------+
-> >>              (3)  |qcom_pstore_minidump|
-> >>                   +--------------------+
-> >>                            |
-> >>                           \ /
-> >>                     +---------------+
-> >>              (4)    | qcom_minidump |
-> >>                     +---------------+
-> >>
-> >> This driver will route all the pstore front data to the stored
-> >> in qcom pstore reserved region and the reason of showing an
-> >> arrow from (3) to (4) as qcom_pstore_minidump driver will register
-> >> all the available frontends region with qcom minidump driver
-> >> in upcoming patch.
-> >>
-> >> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> >> ---
-> >>   drivers/soc/qcom/Kconfig                | 12 +++++
-> >>   drivers/soc/qcom/Makefile               |  1 +
-> >>   drivers/soc/qcom/qcom_pstore_minidump.c | 85 +++++++++++++++++++++++=
-++++++++++
-> >
-> > drivers/soc/ is the dumping ground for things with no other place. As
-> > this is a pstore driver, it belongs with pstore.
->
-> The inspiration of this driver was taken from
-> drivers/platform/chrome/chromeos_pstore.c, do you think that is misplaced=
- ?
+On Fri, Jun 23, 2023 at 11:11:03AM +0200, Arnaud POULIQUEN wrote:
+> On 6/21/23 17:34, Sarannya S wrote:
+[..]
+> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+[..]
+> > +	switch (cmd) {
+> > +	case RPMSG_GET_OUTGOING_FLOWCONTROL:
+> > +		eptdev->remote_flow_updated = false;
+> > +		ret = put_user(eptdev->remote_flow_restricted, (int __user *)arg);
+> > +		break;
+> > +	case RPMSG_SET_INCOMING_FLOWCONTROL:
+> > +		set = !!arg;
+> > +		ret = rpmsg_set_flow_control(eptdev->ept, set, eptdev->chinfo.dst);
+> > +		break;
+> > +	case RPMSG_DESTROY_EPT_IOCTL:
+> > +		/* Don't allow to destroy a default endpoint. */
+> > +		if (eptdev->default_ept) {
+> > +			ret = -EINVAL;
+> > +			break;
+> > +		}
+> > +		ret = rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> > +		break;
+> > +	default:
+> > +		ret = -EINVAL;
+> > +	}
+> >  
+> > -	return rpmsg_chrdev_eptdev_destroy(&eptdev->dev, NULL);
+> > +	return ret;
+> >  }
+> >  
+> >  static const struct file_operations rpmsg_eptdev_fops = {
+> > diff --git a/include/uapi/linux/rpmsg.h b/include/uapi/linux/rpmsg.h
+> > index 1637e68..b0a6c17 100644
+> > --- a/include/uapi/linux/rpmsg.h
+> > +++ b/include/uapi/linux/rpmsg.h
+> > @@ -43,4 +43,14 @@ struct rpmsg_endpoint_info {
+> >   */
+> >  #define RPMSG_RELEASE_DEV_IOCTL	_IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
+> >  
+> > +/**
+> > + * Set the flow control for the remote rpmsg char device.
 
-The difference is really that's nothing more than platform specific
-logic to instantiate a normal ramoops device. It's kind of ugly, yes,
-but it's still just a normal ramoops device in the end. Your case is
-that plus all the extra parts for minidump.
+We improved the wording elsewhere in the patch, to make the description
+of what the interface controls/exposes. This would benefit from the same
+attention.
 
-Rob
+And this says "Set" while the ioctl says "GET".
+
+> > + */
+> > +#define RPMSG_GET_OUTGOING_FLOWCONTROL _IOW(0xb5, 0x5, struct rpmsg_endpoint_info)
+> > +
+> > +/**
+> > + * Set the flow control for the local rpmsg char device.
+> > + */
+> > +#define RPMSG_SET_INCOMING_FLOWCONTROL _IOW(0xb5, 0x6, struct rpmsg_endpoint_info)
+> 
+> 
+> Perhaps I missed something, but you use "rpmsg_endpoint_info" as argument.
+> In rpmsg_eptdev_ioctl the argument is treated as a boolean.
+> Seems to me that something is wrong here.
+> 
+
+This is indeed an int in the implementation above.
+
+Regards,
+Bjorn
+
+> regards,
+> Arnaud
+> 
+> > +
+> >  #endif
