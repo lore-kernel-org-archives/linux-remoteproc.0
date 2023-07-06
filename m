@@ -2,154 +2,250 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7A0C001E0
-	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Jul 2023 18:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FA8EB64D9
+	for <linux-remoteproc@archiver.kernel.org>; Thu,  6 Jul 2023 19:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232227AbjGFSHn (ORCPT
+        id S229613AbjGFTCK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 6 Jul 2023 14:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51388 "EHLO
+        Thu, 6 Jul 2023 15:02:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjGFSHl (ORCPT
+        with ESMTP id S229522AbjGFTCJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 6 Jul 2023 14:07:41 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9221F1986;
-        Thu,  6 Jul 2023 11:07:38 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 366Hal47003323;
-        Thu, 6 Jul 2023 18:07:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=AnBk3//qqbv6jRGecm2FdBxy7OhNyDeEajuF9tJwEds=;
- b=mtHGrztW01ckZelvZg/jz2727wr5EWlt+nG8bZdvMT5G9TvX6jalxVaq3xTR2Agv9JRE
- jlLuZVS3hthkhojmy6/IoG9HJI37pvOEISy9HBdNrQWujHxD0q8DlHT1y6cZ3HT6G8Rz
- SToS99am8/nuPAbCgXDaZDYtxYJHktlqIF6UbaSx6nWYbDUa57fXXREzzW6vKpCb4XMS
- j+Jtrs6ZtBJ0GxDeURnUWZ1AVcE6UR/OtoHWI8QtmijxV1iVz6yBgYW7xvjrDFiCRy/n
- 4iZGbyv39fpReOY7I4gpL0Z7b/mWDo6tQNsm3M8Zqvpo486yUimuzwqcZbXy49udVNYH 6g== 
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rn152mb92-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Jul 2023 18:07:11 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 366I7Akq032528
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 6 Jul 2023 18:07:10 GMT
-Received: from [10.110.49.233] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Thu, 6 Jul
- 2023 11:07:08 -0700
-Message-ID: <9f054246-d134-25b5-75ee-ff5b4b78d8a4@quicinc.com>
-Date:   Thu, 6 Jul 2023 11:07:08 -0700
+        Thu, 6 Jul 2023 15:02:09 -0400
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA111AE;
+        Thu,  6 Jul 2023 12:02:08 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-34574eb05f4so3924305ab.0;
+        Thu, 06 Jul 2023 12:02:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688670127; x=1691262127;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yHyEaPrZCKQByAh3DFl+UnNETs5AwZcjbcPbdv9JJW8=;
+        b=lmNsfV7WSyNs1OYQGl6F+KLWmR/NYN0xzDnzf852zg/QEIC0q8lkMpyRd7BWZ3TNCQ
+         9axPmcQ3wa4gu+LfLSBQb51JMu4kKEgcDldBoOEj3y5+glvV7vdItMF3n1f2bRKgCsqT
+         O0YDI/+CtvDPGHBhLp3T5+gX61taXqzvt6Gxrbx5Uk8WUhC0wLJ/sY3DDKcG8h9zKrxL
+         P97K/VxPkcoBzjyoPJ0OvxInY7efxZPFyqltjFslkWu8HBYAkUKZaafKc/HHEXqmsDCO
+         ybSNYoSDRvjRGfdR1cOvYsUVx7Leot8RiCwmddMNF4ZcIoOM8EQdbroVgSkWoFvRwFNS
+         O28g==
+X-Gm-Message-State: ABy/qLZfCJMpdh4+g5Iptz2Kr5UHicB1zFW+Dv+NhBCIrw4QA7kZxKWX
+        YNI5LUazm2yCv9soF5ioug==
+X-Google-Smtp-Source: APBJJlFbADYE6+hk4uSXwI2HJZPLgzAEGH3jTEX9QJwf2mycuUE2+lpXa4xdL1M7WZg+jYHFc5CghQ==
+X-Received: by 2002:a92:c9d1:0:b0:345:787a:cb27 with SMTP id k17-20020a92c9d1000000b00345787acb27mr2839568ilq.21.1688670127186;
+        Thu, 06 Jul 2023 12:02:07 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id z11-20020a92cd0b000000b0033a50ad8176sm703067iln.18.2023.07.06.12.02.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jul 2023 12:02:06 -0700 (PDT)
+Received: (nullmailer pid 154245 invoked by uid 1000);
+        Thu, 06 Jul 2023 19:02:04 -0000
+Date:   Thu, 6 Jul 2023 13:02:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        michal.simek@amd.com, ben.levinsky@amd.com, tanmay.shah@amd.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        git@amd.com
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: add Tightly Coupled Memory
+ (TCM) bindings
+Message-ID: <20230706190204.GA144696-robh@kernel.org>
+References: <1687892226-3784452-1-git-send-email-radhey.shyam.pandey@amd.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
- support
-Content-Language: en-US
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Mukesh Ojha <quic_mojha@quicinc.com>,
-        Greg KH <gregkh@linuxfoundation.org>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <keescook@chromium.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, Alex Elder <elder@linaro.org>
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <2023062814-chance-flounder-f002@gregkh>
- <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
- <cc30660f-dd72-aade-6346-a93c6ad4b695@quicinc.com>
- <29af84dc-7db8-0c43-07b6-eb743cf25e57@linaro.org>
- <957a3cdb-6091-8679-ddb0-296db2347291@quicinc.com>
- <CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com>
-From:   Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Zfm93BmM8TzEd0B4HaqTd4YfERv3kG6E
-X-Proofpoint-ORIG-GUID: Zfm93BmM8TzEd0B4HaqTd4YfERv3kG6E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-06_13,2023-07-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 mlxscore=0 malwarescore=0 clxscore=1015 mlxlogscore=999
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2307060162
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1687892226-3784452-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/6/2023 10:40 AM, Rob Herring wrote:
-> On Mon, Jul 3, 2023 at 3:06 PM Trilok Soni <quic_tsoni@quicinc.com> wrote:
->>
->> On 7/2/2023 1:29 AM, Krzysztof Kozlowski wrote:
->>> On 30/06/2023 18:04, Mukesh Ojha wrote:
->>>>>
->>>>>> We don't add layers when they are not needed, and never when there is no
->>>>>> actual user.  If you need the extra "complexity" later, then add it
->>>>>> later when it is needed as who knows when that will ever be.
->>>>>>
->>>>>> Please redo this series based on that, thanks.
->>>>>
->>>>> My bigger issue with this whole series is what would this all look
->>>>> like if every SoC vendor upstreamed their own custom dumping
->>>>> mechanism. That would be a mess. (I have similar opinions on the
->>>>> $soc-vendor hypervisors.)
->>>
->>> Mukesh,
->>>
->>> LPC CFP is still open. There will be also Android and Kernel Debugging
->>> LPC microconference tracks. Coming with a unified solution could be a
->>> great topic for LPC. Solutions targeting only one user are quite often
->>> frowned upon.
->>
->> LPC is far out and in November. Can we not have others speak up if they
->> have the similar solution now? We can expand this to linux-kernel and
->> ask for the other SOC vendors to chime in. I am sure that we may have
->> existing solutions which came in for the one user first like Intel RDT
->> if I remember. I am sure ARM MPAM usecase was present at that time but
->> Intel RDT based solution which was x86 specific but accepted.
+On Wed, Jun 28, 2023 at 12:27:06AM +0530, Radhey Shyam Pandey wrote:
+> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+> UltraScale+ platform. As of now TCM addresses are hardcoded in xilinx
+> remoteproc driver. This binding will help in defining TCM in device-tree
+> and make it's access platform agnostic and data-driven from the driver.
 > 
-> RDT predated MPAM. resctrl is the kernel feature, and it supports
-> Intel and AMD which are not identical. resctrl is being (extensively)
-> refactored to add in MPAM support.
+> Tightly-coupled memories(TCMs) are low-latency memory that provides
+> predictable instruction execution and predictable data load/store
+> timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
+> banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
 > 
-> You are not the first here like Intel RDT, so I fail to see the
-> parallel with minidump. We have an existing logging to persistent
-> storage mechanism which is pstore. You should integrate into that
-> rather than grafting something on to the side or underneath.
+> The TCM resources(reg and power-domain) are documented in each R5 node.
+> It also extends the examples for TCM split and lockstep modes.
 > 
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> ---
+> Changes for v2:
+> - Add ranges property to r5fss cluster node.
+> - Use regex "^r5f(@[0-9a-f]+|-[a-f0-9]+)$".
+> - Drop address/size-cells and ranges from r5f core node.
+> - Mention "reg" and "reg names" as r5f core node required properties.
+> - Mention address/size-cells and ranges as r5fss required node properties.
+> - Modify commit description to remove ranges from R5 node.
+> - Rename r5f node labels(r5f_0 -> r5f_0_split/lockstep and
+>   r5f_1->r5f_1_split/lockstep)
+> 
+> The inspiration for integrating TCM nodes in R5 nodes is taken from
+> "5ee79c2ed5bd dt-bindings: remoteproc: Add bindings for R5F subsystem
+> on TI K3 SoCs".Once the binding is reviewed/accepted will send out
+> driver changes in follow-up series.
+> ---
+>  .../remoteproc/xlnx,zynqmp-r5fss.yaml         | 90 +++++++++++++++++--
+>  1 file changed, 83 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> index 9f677367dd9f..958044b08e86 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> @@ -20,6 +20,17 @@ properties:
+>    compatible:
+>      const: xlnx,zynqmp-r5fss
+>  
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +  ranges:
+> +    description: |
+> +      Standard ranges definition providing address translations for
+> +      local R5F TCM address spaces to bus addresses.
+> +
+>    xlnx,cluster-mode:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      enum: [0, 1, 2]
+> @@ -37,7 +48,7 @@ properties:
+>        2: single cpu mode
+>  
+>  patternProperties:
+> -  "^r5f-[a-f0-9]+$":
+> +  "^r5f(@[0-9a-f]+|-[a-f0-9]+)$":
 
-Mukesh will chime in once he looks at the hwtracing suggested by Linus W 
-and see if it fits. Mukesh seems have already looked at pstore and 
-discussions/patches are there w/ pstore logic I believe, but it is okay 
-if they are not perfect if we are still not decided on the right 
-framework. Best to decide if the existing frameworks fits or not or we 
-need to create the new one.
+If reg is required, then you don't need '-[a-f0-9]+'. Though new 
+required properties is an ABI change which needs justification.
 
-I would still prefer if other SOC vendors chime in here, since I am sure 
-in the Mobile and Embedded world various SOCs may have requirements to 
-get specific portion of the ramdump only for the quick analysis and 
-meeting the storage requirements on the device for its collection.
+>      type: object
+>      description: |
+>        The RPU is located in the Low Power Domain of the Processor Subsystem.
+> @@ -54,8 +65,19 @@ patternProperties:
+>        compatible:
+>          const: xlnx,zynqmp-r5f
+>  
+> +      reg:
+> +        items:
+> +          - description: Address and Size of the ATCM internal memory region
+> +          - description: Address and Size of the BTCM internal memory region
 
-As mentioned on another patch, we are fine the submit abstract at LPC 
-debug MC, but I would like the framework discussion to continue so that 
-we can decide during the LPC that either existing frameworks fits the 
-needs or they need to be extended or new fwk is needed.
+Drop 'Address and Size of '
 
----Trilok Soni
+> +
+> +      reg-names:
+> +        items:
+> +          - const: atcm
+> +          - const: btcm
+> +
+>        power-domains:
+> -        maxItems: 1
+> +        minItems: 1
+> +        maxItems: 3
+>  
+>        mboxes:
+>          minItems: 1
+> @@ -102,31 +124,85 @@ patternProperties:
+>      required:
+>        - compatible
+>        - power-domains
+> +      - reg
+> +      - reg-names
+>  
+>      unevaluatedProperties: false
+>  
+>  required:
+>    - compatible
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - ranges
+>  
+>  additionalProperties: false
+>  
+>  examples:
+>    - |
+> -    remoteproc {
+> +    #include <dt-bindings/power/xlnx-zynqmp-power.h>
+> +
+> +    //Split mode configuration
+> +    remoteproc@ffe00000 {
+> +        compatible = "xlnx,zynqmp-r5fss";
+> +        xlnx,cluster-mode = <0>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0x0 0xffe00000 0x10000>, <0x20000 0xffe20000 0x10000>,
+> +                 <0x0 0xffe90000 0x10000>, <0x20000 0xffeb0000 0x10000>;
+> +
+> +        r5f_0_split: r5f@ffe00000 {
+> +            compatible = "xlnx,zynqmp-r5f";
+> +            reg = <0xffe00000 0x10000>, <0xffe20000 0x10000>;
+> +            reg-names = "atcm", "btcm";
+> +            power-domains = <&zynqmp_firmware PD_RPU_0>,
+> +                            <&zynqmp_firmware PD_R5_0_ATCM>,
+> +                            <&zynqmp_firmware PD_R5_0_BTCM>;
+> +            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
+> +            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
+> +            mbox-names = "tx", "rx";
+> +        };
+> +
+> +        r5f_1_split: r5f@ffe90000 {
+> +            compatible = "xlnx,zynqmp-r5f";
+> +            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
+> +            reg-names = "atcm", "btcm";
+> +            power-domains = <&zynqmp_firmware PD_RPU_1>,
+> +                            <&zynqmp_firmware PD_R5_1_ATCM>,
+> +                            <&zynqmp_firmware PD_R5_1_BTCM>;
+> +            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
+> +            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
+> +            mbox-names = "tx", "rx";
+> +        };
+> +    };
+> +
+> +  - |
+> +    //Lockstep configuration
+> +    remoteproc@ffe00000 {
+>          compatible = "xlnx,zynqmp-r5fss";
+>          xlnx,cluster-mode = <1>;
+>  
+> -        r5f-0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0x0 0xffe00000 0x20000>, <0x20000 0xffe20000 0x20000>;
+> +
+> +        r5f_0_lockstep: r5f@ffe00000 {
+>              compatible = "xlnx,zynqmp-r5f";
+> -            power-domains = <&zynqmp_firmware 0x7>;
+> +            reg = <0xffe00000 0x20000>, <0xffe20000 0x20000>;
+> +            reg-names = "atcm", "btcm";
+> +            power-domains = <&zynqmp_firmware PD_RPU_0>,
+> +                            <&zynqmp_firmware PD_R5_0_ATCM>,
+> +                            <&zynqmp_firmware PD_R5_0_BTCM>;
+>              memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
+>              mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
+>              mbox-names = "tx", "rx";
+>          };
+>  
+> -        r5f-1 {
+> +        r5f_1_lockstep: r5f@ffe90000 {
+>              compatible = "xlnx,zynqmp-r5f";
+> -            power-domains = <&zynqmp_firmware 0x8>;
+> +            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
+> +            reg-names = "atcm", "btcm";
+> +            power-domains = <&zynqmp_firmware PD_RPU_1>;
+>              memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
+>              mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
+>              mbox-names = "tx", "rx";
+> -- 
+> 2.25.1
+> 
