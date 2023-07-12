@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09127EB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Jul 2023 19:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F47FEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 12 Jul 2023 20:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232530AbjGLTiS (ORCPT
+        id S231213AbjGLUlF (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 12 Jul 2023 15:38:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34214 "EHLO
+        Wed, 12 Jul 2023 16:41:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232439AbjGLTiQ (ORCPT
+        with ESMTP id S229618AbjGLUlE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 12 Jul 2023 15:38:16 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E363D1FD2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Jul 2023 12:38:15 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-66872d4a141so5157947b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Jul 2023 12:38:15 -0700 (PDT)
+        Wed, 12 Jul 2023 16:41:04 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3390710E2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Jul 2023 13:41:03 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id d9443c01a7336-1b8a44ee159so39578255ad.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Jul 2023 13:41:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689190695; x=1691782695;
+        d=linaro.org; s=google; t=1689194462; x=1691786462;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RAqGktah/O0GFdZ50GvGMkJOQPo1Bdaik/QUjfLnP24=;
-        b=WJeDPc4KW7qUMZDwMdPPhOaka2bROkoS7mx53G29NSbD7Ho7yYmc5DWWptBlgYfTxt
-         zfnMq/SKO0HNNKGCdxkL8LGfDh8GBN4fT+3wlM5EicocAxeHR2tEZAF2/cm0pfSJy9FT
-         wV8sXOdOas0qgOoZS4s634XJxtQ+bfVqhwB9hqn2W5sYFiOWciiKaBqgS0W1rs634cwy
-         08zTJVZyeXy5/rzp7F3HUNoTICYiFnQQettEA/0tjHc11Tjn9tHJlE9VF7TvACuuc108
-         qj57ut4ZCiACpGnOJ6DiE2jA2keRXkY9lDe2lxK8yeSwDdhAUENDv6WxlBOOIrcUKfrJ
-         PAzA==
+        bh=vTQ8Q2thfWAfcL5Ck5oeBseIeiNj0gT5+ucM2ZzcSW8=;
+        b=E7KBfQ+ADb+vOC9lwKfy4GUPzNoADOdXa1tyUiOMFGAbEqDesg/7DPyIpZ04rRG7SS
+         CI9Pxxm0DFCqsHFxySFgF2dscOX9++DJ7MGSAjAqFHOqPZgaixGZBm/9WKShJNt9fE9x
+         zfmNnNzud93xdBIjvhYbLR2XoaN5mGeNfskAZjJhEypJ55Ni/Lk/oIVcm96605h4guWA
+         IdSR7+H3NSpHOImmI1UK2ApZDe63UQBySTEbIR7SqPSPAgWQaldLuwG515ON+gR6X2zh
+         7JBO6tQDN88HFs91cQ2YmfiTamIT4PHQrRw4PNdhDhBhh6m/m/UQkz9ZdV+ITDgnk4MA
+         PmOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689190695; x=1691782695;
+        d=1e100.net; s=20221208; t=1689194462; x=1691786462;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RAqGktah/O0GFdZ50GvGMkJOQPo1Bdaik/QUjfLnP24=;
-        b=Za2FK6WjVW4YmqzzjEK1bmaNBeMGGhnM3+ejRvMRSlLy7Ez+DGv/poxFvGChXC8GE5
-         dyGOZOut6VkGrqWKTVU1wR7CIXDAYU5A3UsqPVRnY8LBOdxDyLf+FgAgasY/yL+2vaJs
-         wQSYcxhummIfO/z3hpvwo5D9td4tANm8uNB1btBfhnSySUW9iURA8/dmAvBqZ/p5PlFa
-         oDX0LrR7RtImF8pgGOibR9UWwswb5/81HqfL4wb3DW8PNhCqcMb6KQVrt08FQibKOy6I
-         PIuXuzxkfNSvfWPE1o0RNbTTH62xF3zXj5GVaBBlkBfOAiXACeot5hrmu53M31Haal8i
-         g1KQ==
-X-Gm-Message-State: ABy/qLZro6bf2re/49/++vPrNi4KW8LehVcALbsgddsvp0s9RFmkjR32
-        2XsglydQj0o7PaFDio8zh28vzA==
-X-Google-Smtp-Source: APBJJlGMOcbAwwVpsCYEnmiXNjwnmO20wsWdfSSDUrRNsz5IVZWYyjz+0agcO2l6LoBeRiJr0STtHg==
-X-Received: by 2002:a05:6a00:148b:b0:681:6169:e403 with SMTP id v11-20020a056a00148b00b006816169e403mr19538672pfu.8.1689190695254;
-        Wed, 12 Jul 2023 12:38:15 -0700 (PDT)
+        bh=vTQ8Q2thfWAfcL5Ck5oeBseIeiNj0gT5+ucM2ZzcSW8=;
+        b=WZ3s10aOtTb/8MXWkvz8iVgFyFmSqk2OAlKXJ3ejjxw9xIO1+MwX71DZ5oeOou8N8V
+         5cBXaoQli755+Tf1Y6IuRv49WxdEPpO0qc6caVpJjVFj5YolKHodypL3Rmoz9MDVfRnv
+         JyBlhDE7PB5v0bVj4v5XiH2+jxsTQtPlmQajxCxAXtHDC9SI9FI6mzQofnG1N+wPqwCu
+         XLH4+lC5akOXF+tXG+xXq1Lrbp0tgjFBC9KCozaTwf4ur8iJUBvSGVabvemAnOpurffY
+         W+yTzTR9wA1ISWQJ5O0qWDGPu3VMsHwBWYrr9I+bwnUGdKyJWSgvbOVP3R5stPvtjge1
+         tMxQ==
+X-Gm-Message-State: ABy/qLa9ctMHGZfc7q9NmaSIimjhtXZtQR190yIz2S3jSaMmSR92JepO
+        fstyt2J8QP4Nv8k9LmiLcGCHgg==
+X-Google-Smtp-Source: APBJJlHwE0pVMBV73p3yQVDBY+sz7V2ACI+xlVqOGxoxCpaCEw8GFmGebdDC8OiamYOddWM0OJatOg==
+X-Received: by 2002:a17:902:ed44:b0:1b8:a3a0:d9b3 with SMTP id y4-20020a170902ed4400b001b8a3a0d9b3mr15434979plb.47.1689194462561;
+        Wed, 12 Jul 2023 13:41:02 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:70ea:7145:ddf8:7208])
-        by smtp.gmail.com with ESMTPSA id v11-20020aa7808b000000b00669c99d05fasm3907344pff.150.2023.07.12.12.38.13
+        by smtp.gmail.com with ESMTPSA id p16-20020a170902b09000b001b8422f1000sm4386306plr.201.2023.07.12.13.41.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 12:38:14 -0700 (PDT)
-Date:   Wed, 12 Jul 2023 13:38:12 -0600
+        Wed, 12 Jul 2023 13:41:02 -0700 (PDT)
+Date:   Wed, 12 Jul 2023 14:40:59 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tinghan Shen <tinghan.shen@mediatek.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
@@ -64,52 +64,329 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v14 10/12] remoteproc: mediatek: Report watchdog crash to
- all cores
-Message-ID: <ZK8BJOXcBjjLXUlu@p14s>
+Subject: Re: [PATCH v14 05/12] remoteproc: mediatek: Introduce cluster on
+ single-core SCP
+Message-ID: <ZK8P25K2RaxdAKHh@p14s>
 References: <20230707052612.27521-1-tinghan.shen@mediatek.com>
- <20230707052612.27521-11-tinghan.shen@mediatek.com>
+ <20230707052612.27521-6-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230707052612.27521-11-tinghan.shen@mediatek.com>
+In-Reply-To: <20230707052612.27521-6-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 07, 2023 at 01:26:10PM +0800, Tinghan Shen wrote:
-> Once the SCP watchdog timeout happened, trigger the rproc recovery flow on
-> all cores.
+From an overall perspective this patchset looks good.  Now that we can clearly
+see what is going on there are a few things to improve on.  Please see below. 
+
+On Fri, Jul 07, 2023 at 01:26:05PM +0800, Tinghan Shen wrote:
+> This is the preliminary step for probing multi-core SCP.
+> The initialization procedure for remoteproc is similar for both
+> single-core and multi-core architectures and is reusing to avoid
+> redundant code.
 > 
-
-You are missing the most important part... "Why" is this needed?  Without it I
-don't know what is going on and can't review your work.
-
+> Rewrite the probing flow of single-core SCP to adapt with the 'cluster'
+> concept needed by probing the multi-core SCP. The main differences
+> are,
+> - the SCP core object(s) is maintained at the cluster list instead of at
+>   the platform device driver data property.
+> - save the cluster information at the platform device driver data property.
+> - In order to keep the compatibility of exported SCP APIs which getting
+>   the SCP core object by SCP node phandle, move the SCP core object
+>   pointers to the platform device platform data property.
+> 
+> The registers of config and l1tcm are shared for multi-core
+> SCP. Reuse the mapped addresses for all cores.
+> 
 > Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
 > ---
->  drivers/remoteproc/mtk_scp.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  drivers/remoteproc/mtk_common.h |   2 +
+>  drivers/remoteproc/mtk_scp.c    | 151 +++++++++++++++++++++++---------
+>  2 files changed, 112 insertions(+), 41 deletions(-)
 > 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index c0905aec3b4b..56395e8664cb 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -128,6 +128,8 @@ struct mtk_scp {
+>  	size_t dram_size;
+>  
+>  	struct rproc_subdev *rpmsg_subdev;
+> +
+> +	struct list_head elem;
+>  };
+>  
+>  /**
 > diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 9fed5161f094..7e786aaf04e1 100644
+> index 48e759c2d486..3a8c8bcfa46b 100644
 > --- a/drivers/remoteproc/mtk_scp.c
 > +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -80,8 +80,14 @@ EXPORT_SYMBOL_GPL(scp_put);
+> @@ -23,6 +23,14 @@
+>  #define MAX_CODE_SIZE 0x500000
+>  #define SECTION_NAME_IPI_BUFFER ".ipi_buffer"
 >  
->  static void scp_wdt_handler(struct mtk_scp *scp, u32 scp_to_host)
+> +struct mtk_scp_of_cluster {
+> +	void __iomem *reg_base;
+> +	void __iomem *l1tcm_base;
+> +	size_t l1tcm_size;
+> +	phys_addr_t l1tcm_phys;
+> +	struct list_head mtk_scp_list;
+> +};
+> +
+>  /**
+>   * scp_get() - get a reference to SCP.
+>   *
+> @@ -51,7 +59,7 @@ struct mtk_scp *scp_get(struct platform_device *pdev)
+>  		return NULL;
+>  	}
+>  
+> -	return platform_get_drvdata(scp_pdev);
+> +	return *(struct mtk_scp **)dev_get_platdata(&scp_pdev->dev);
+>  }
+>  EXPORT_SYMBOL_GPL(scp_get);
+>  
+> @@ -809,14 +817,14 @@ static void scp_unmap_memory_region(struct mtk_scp *scp)
+>  static int scp_register_ipi(struct platform_device *pdev, u32 id,
+>  			    ipi_handler_t handler, void *priv)
 >  {
-> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(scp->cluster_pdev);
-> +	struct mtk_scp *scp_node;
-> +
->  	dev_err(scp->dev, "SCP watchdog timeout! 0x%x", scp_to_host);
-> -	rproc_report_crash(scp->rproc, RPROC_WATCHDOG);
-> +
-> +	/* report watchdog timeout to all cores */
-> +	list_for_each_entry(scp_node, &scp_cluster->mtk_scp_list, elem)
-> +		rproc_report_crash(scp_node->rproc, RPROC_WATCHDOG);
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  
+>  	return scp_ipi_register(scp, id, handler, priv);
 >  }
 >  
->  static void scp_init_ipi_handler(void *data, unsigned int len, void *priv)
+>  static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  
+>  	scp_ipi_unregister(scp, id);
+>  }
+> @@ -824,7 +832,7 @@ static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
+>  static int scp_send_ipi(struct platform_device *pdev, u32 id, void *buf,
+>  			unsigned int len, unsigned int wait)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp = *(struct mtk_scp **)dev_get_platdata(&pdev->dev);
+>  
+>  	return scp_ipi_send(scp, id, buf, len, wait);
+>  }
+> @@ -854,7 +862,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+>  	}
+>  }
+>  
+> -static int scp_probe(struct platform_device *pdev)
+> +static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+> +				      struct mtk_scp_of_cluster *scp_cluster)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> @@ -866,52 +875,42 @@ static int scp_probe(struct platform_device *pdev)
+>  
+>  	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+>  	if (ret < 0 && ret != -EINVAL)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+>  	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
+> -	if (!rproc)
+> -		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
+> +	if (!rproc) {
+> +		dev_err(dev, "unable to allocate remoteproc\n");
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+>  
+>  	scp = rproc->priv;
+>  	scp->rproc = rproc;
+>  	scp->dev = dev;
+>  	scp->data = of_device_get_match_data(dev);
+> -	platform_set_drvdata(pdev, scp);
+> +	platform_device_add_data(pdev, &scp, sizeof(scp));
+
+Using platform_device_add_data() doesn't work because it creates a duplicate
+copy of @scp.  To fix this I suggest to:
+
+1. Change mtk_scp_of_cluster::l2tcm_lock to mtk_scp_of_cluster::cluster_lock
+2. Add a struct mtk_scp_of_cluster *cluster to struct mtk_scp
+3. Don't call platform_set_drvdata(pdev, scp_cluster) in scp_probe()
+4. Above do scp->cluster = scp_cluster and call platform_set_drvdata(pdev, scp)
+instead of platform_device_add_data().
+5. Every time you are modifying scp->cluster, scp->cluster->cluster_lock must be
+held.
+
+> +
+> +	scp->reg_base = scp_cluster->reg_base;
+> +	scp->l1tcm_base = scp_cluster->l1tcm_base;
+> +	scp->l1tcm_size = scp_cluster->l1tcm_size;
+> +	scp->l1tcm_phys = scp_cluster->l1tcm_phys;
+
+
+Fields reg_base, l1tcm_base, l1tcm_size and l1tcm_phy don't belong in the
+mtk_scp struct anymore but in the mtk_scp_of_cluster struct.  With the above
+changes they should be available in the same way.
+
+Thanks,
+Mathieu
+
+>  
+>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+>  	scp->sram_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(scp->sram_base))
+> -		return dev_err_probe(dev, PTR_ERR(scp->sram_base),
+> -				     "Failed to parse and map sram memory\n");
+> +	if (IS_ERR(scp->sram_base)) {
+> +		dev_err(dev, "Failed to parse and map sram memory\n");
+> +		return ERR_CAST(scp->sram_base);
+> +	}
+>  
+>  	scp->sram_size = resource_size(res);
+>  	scp->sram_phys = res->start;
+>  
+> -	/* l1tcm is an optional memory region */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> -	scp->l1tcm_base = devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(scp->l1tcm_base)) {
+> -		ret = PTR_ERR(scp->l1tcm_base);
+> -		if (ret != -EINVAL) {
+> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> -		}
+> -	} else {
+> -		scp->l1tcm_size = resource_size(res);
+> -		scp->l1tcm_phys = res->start;
+> -	}
+> -
+> -	scp->reg_base = devm_platform_ioremap_resource_byname(pdev, "cfg");
+> -	if (IS_ERR(scp->reg_base))
+> -		return dev_err_probe(dev, PTR_ERR(scp->reg_base),
+> -				     "Failed to parse and map cfg memory\n");
+> -
+>  	ret = scp->data->scp_clk_get(scp);
+>  	if (ret)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+>  	ret = scp_map_memory_region(scp);
+>  	if (ret)
+> -		return ret;
+> +		return ERR_PTR(ret);
+>  
+>  	mutex_init(&scp->send_lock);
+>  	for (i = 0; i < SCP_IPI_MAX; i++)
+> @@ -938,11 +937,7 @@ static int scp_probe(struct platform_device *pdev)
+>  		goto remove_subdev;
+>  	}
+>  
+> -	ret = rproc_add(rproc);
+> -	if (ret)
+> -		goto remove_subdev;
+> -
+> -	return 0;
+> +	return scp;
+>  
+>  remove_subdev:
+>  	scp_remove_rpmsg_subdev(scp);
+> @@ -953,15 +948,13 @@ static int scp_probe(struct platform_device *pdev)
+>  		mutex_destroy(&scp->ipi_desc[i].lock);
+>  	mutex_destroy(&scp->send_lock);
+>  
+> -	return ret;
+> +	return ERR_PTR(ret);
+>  }
+>  
+> -static void scp_remove(struct platform_device *pdev)
+> +static void scp_free(struct mtk_scp *scp)
+>  {
+> -	struct mtk_scp *scp = platform_get_drvdata(pdev);
+>  	int i;
+>  
+> -	rproc_del(scp->rproc);
+>  	scp_remove_rpmsg_subdev(scp);
+>  	scp_ipi_unregister(scp, SCP_IPI_INIT);
+>  	scp_unmap_memory_region(scp);
+> @@ -970,6 +963,82 @@ static void scp_remove(struct platform_device *pdev)
+>  	mutex_destroy(&scp->send_lock);
+>  }
+>  
+> +static int scp_cluster_init(struct platform_device *pdev)
+> +{
+> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
+> +	struct list_head *cluster = &scp_cluster->mtk_scp_list;
+> +	struct mtk_scp *scp;
+> +	int ret;
+> +
+> +	scp = scp_rproc_init(pdev, scp_cluster);
+> +	if (IS_ERR(scp))
+> +		return PTR_ERR(scp);
+> +
+> +	ret = rproc_add(scp->rproc);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to add rproc\n");
+> +		scp_free(scp);
+> +		return ret;
+> +	}
+> +
+> +	list_add_tail(&scp->elem, cluster);
+> +
+> +	return 0;
+> +}
+> +
+> +static int scp_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mtk_scp_of_cluster *scp_cluster;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	scp_cluster = devm_kzalloc(dev, sizeof(*scp_cluster), GFP_KERNEL);
+> +	if (!scp_cluster)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> +	scp_cluster->reg_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_cluster->reg_base))
+> +		return dev_err_probe(dev, PTR_ERR(scp_cluster->reg_base),
+> +				     "Failed to parse and map cfg memory\n");
+> +
+> +	/* l1tcm is an optional memory region */
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
+> +	scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(scp_cluster->l1tcm_base)) {
+> +		ret = PTR_ERR(scp_cluster->l1tcm_base);
+> +		if (ret != -EINVAL)
+> +			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
+> +
+> +		scp_cluster->l1tcm_base = NULL;
+> +	} else {
+> +		scp_cluster->l1tcm_size = resource_size(res);
+> +		scp_cluster->l1tcm_phys = res->start;
+> +	}
+> +
+> +	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
+> +	platform_set_drvdata(pdev, scp_cluster);
+> +
+> +	ret = scp_cluster_init(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static void scp_remove(struct platform_device *pdev)
+> +{
+> +	struct mtk_scp_of_cluster *scp_cluster = platform_get_drvdata(pdev);
+> +	struct mtk_scp *scp, *temp;
+> +
+> +	list_for_each_entry_safe_reverse(scp, temp, &scp_cluster->mtk_scp_list, elem) {
+> +		list_del(&scp->elem);
+> +		rproc_del(scp->rproc);
+> +		scp_free(scp);
+> +	}
+> +}
+> +
+>  static const struct mtk_scp_of_data mt8183_of_data = {
+>  	.scp_clk_get = mt8183_scp_clk_get,
+>  	.scp_before_load = mt8183_scp_before_load,
 > -- 
 > 2.18.0
 > 
