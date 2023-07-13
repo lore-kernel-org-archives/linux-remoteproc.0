@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DC1C001DF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Jul 2023 07:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61ABC04A6A
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Jul 2023 07:23:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234268AbjGMHW4 (ORCPT
+        id S234266AbjGMHXI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Jul 2023 03:22:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
+        Thu, 13 Jul 2023 03:23:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234235AbjGMHWy (ORCPT
+        with ESMTP id S234281AbjGMHW7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Jul 2023 03:22:54 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09AC61BD4
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:22:51 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-3141fa31c2bso493160f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:22:50 -0700 (PDT)
+        Thu, 13 Jul 2023 03:22:59 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630F0213C
+        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:22:57 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fbc6ab5ff5so2918015e9.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689232969; x=1691824969;
+        d=linaro.org; s=google; t=1689232976; x=1691824976;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9VhVRS/5dxN4m8eKpWEVuk9vUu8h4ihVl/JzGPAbAAs=;
-        b=YRtDouko0xvR5DDrRgCV2tJp3+AIdmP0rf1SwCO9ET8Bz7ysdxLMKnmDQ7D+nw6G/W
-         oOBm3PkScVXGT7vP7FvtWkIuHcjxhinUP8EanPs2bb53zD17RLbBlDEF8WWwQJEUruN9
-         sbSVmsP+wiLSXwt1EimlDWBwJKjCU1aviyLr9mm1abHX756BP6yYotsSYTKJdZPogMcx
-         bROgcLMU24V8efnLbIRGXtz28fopYwezvaDyBWpixnr2MlQ4Xf20uRyrimwA4RZn91I5
-         ush5E7mUQm2ZtSUIi/uxc0+tUwRCDjtb2CIzHnkzRHGGUlmnRex7kJV/bQ0KDPrG5vcr
-         Ps6w==
+        bh=lFUQi6OnF9bs8nJtTX/TRFzCi1Y/q9xnjKXZLWVR1u8=;
+        b=M5zXkBkaxgT+Hex0mKeW8oex+TyLNEeNFdX5fTrR6UyMnTEJZxJqFFvQqQFH9Ct0Z4
+         tiQFbeeMEPR9Yr11FFGwP4iZTQCVsMn21YbtXYSlrGlqdLQhBsKNDALTP3p8dLrbCi+v
+         ZHxPxfF1em4N6bsUpkAhH3kA6xydKv6Q9TIoITSSwzUtF+sjiOe+Z5DpdbAj7EcdSrEA
+         PXNsL84UXIgjumjZXLazeFYanKJkfrnsSDaLbutHv4xi4Cl6pHyk0tLuGegEz2fc9fVn
+         FIDsFqeF4L7FU4roCQ4a2QJXGkhxZci//P8GL9t8ihrtUF69MCxHIGTfM5CfW4IhzmdC
+         p1Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689232969; x=1691824969;
+        d=1e100.net; s=20221208; t=1689232976; x=1691824976;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9VhVRS/5dxN4m8eKpWEVuk9vUu8h4ihVl/JzGPAbAAs=;
-        b=PLNYTOnzCJBXQgQmMoWCdBCKo2Olh0YqYDSL+VucUAuZr0R8v4FoJJAqG71MHytFfM
-         THOS+TV3e4GvLMMhm9O4zmDE+o8XRNEvAxYZSPdMwhEIAdwsOKEnPa1Pd685amcUOS2N
-         FOoR6qzNfqjtGvv8MMdgpVEgdLqYdremRWwgU71sYCpPg6ZFJZVG+X/IW8mvSfMCcOnO
-         KUYJyRubnAiuqe1vNMsQHrOchIDGWOd7pw/8O5toCHTqrLrdzmDTZdJU0eZfs9KHt6PR
-         WAU/TitvmLkdsDJ/yqfDnJC22RnBppkus/25XzEH2W/ft5ampsSwWBT95wXdH7mBAJNs
-         Ut4g==
-X-Gm-Message-State: ABy/qLalgw247GejbHaxbBjrRHwjAi7waEgNcqEw1cSM/6HMuSK6SuGc
-        QAFpAnz2rOuYNXc9AT1anuG4fQ==
-X-Google-Smtp-Source: APBJJlGXmaGmc6ytTc/C0bMcfckruKjPSCP9a/zag9EMsee880YCKNYTabMsaIQM2YV0vpe29X6Jmg==
-X-Received: by 2002:a5d:4d4c:0:b0:314:53a4:42a5 with SMTP id a12-20020a5d4d4c000000b0031453a442a5mr715341wru.51.1689232969501;
-        Thu, 13 Jul 2023 00:22:49 -0700 (PDT)
+        bh=lFUQi6OnF9bs8nJtTX/TRFzCi1Y/q9xnjKXZLWVR1u8=;
+        b=fP2aAjraqK/A4OJ5jS0NKOeA9KarmC6GCD/Z/C4vZE/ShTDuE+/uEeanEsCQXMQU25
+         Zc5tmSxkMNOBf6bTQe/x48eh71dmqIDOjgaZ/InviesAbtcA+UiOEPr6G+GQr8LRQp/c
+         Q/YjxXNllJY4SHKVg8aP14xClEyco4UQEs2LLKFikLRYO3ZKBwCBv965fwe/dJ976lrS
+         xNqNzVhjKwnhD7O8MrVh+FSrX1szOkdq313CgbAAvgIeXKu+BRxKbLYZBzQDdsYky1H1
+         HcJDhzQRA8dfV6mPTnZi6sSVXR/ZotD+BlcX9b1spHPBFo90D/AHytU9ucfjlnwvQLfc
+         HsRA==
+X-Gm-Message-State: ABy/qLaxsk/svXs9F7WTV/mcYxcJ54jgblEjxpjgZRtod9QTv8MZ8yRK
+        AirG4XwJUtWtcADSfuU7o6D4Cg==
+X-Google-Smtp-Source: APBJJlFnSB8t5HOJ82BbWQ3NZaaQFwrdEwGuewAhihdDKEuV+JMDlgd5cfplq6KiK0mtmi1RpYa0sQ==
+X-Received: by 2002:a5d:684a:0:b0:2ce:d84d:388f with SMTP id o10-20020a5d684a000000b002ced84d388fmr726600wrw.40.1689232975910;
+        Thu, 13 Jul 2023 00:22:55 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id w16-20020a5d6810000000b003144b50034esm7071384wru.110.2023.07.13.00.22.47
+        by smtp.gmail.com with ESMTPSA id w16-20020a5d6810000000b003144b50034esm7071384wru.110.2023.07.13.00.22.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 00:22:48 -0700 (PDT)
+        Thu, 13 Jul 2023 00:22:55 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -66,9 +66,9 @@ To:     Andy Gross <agross@kernel.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Rob Herring <robh@kernel.org>
-Subject: [RESEND PATCH v2 1/4] dt-bindings: remoteproc: qcom,pas: correct memory-region constraints
-Date:   Thu, 13 Jul 2023 09:22:39 +0200
-Message-Id: <20230713072242.11268-2-krzysztof.kozlowski@linaro.org>
+Subject: [RESEND PATCH v2 4/4] dt-bindings: remoteproc: qcom,adsp: bring back firmware-name
+Date:   Thu, 13 Jul 2023 09:22:42 +0200
+Message-Id: <20230713072242.11268-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230713072242.11268-1-krzysztof.kozlowski@linaro.org>
 References: <20230713072242.11268-1-krzysztof.kozlowski@linaro.org>
@@ -78,9 +78,9 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Qualcomm PAS devices expect exactly one memory region, not many.  Also,
-the memory-region is now defined in device specific binding, not in
-qcom,pas-common.yaml, thus also require it in the same place.
+The firmware-name property was moved from common qcom,pas-common.yaml
+binding to each device-specific schema, but the qcom,adsp.yaml was not
+updated.
 
 Fixes: cee616c68846 ("dt-bindings: remoteproc: qcom: adsp: move memory-region and firmware-name out of pas-common")
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
@@ -88,215 +88,27 @@ Reviewed-by: Rob Herring <robh@kernel.org>
 
 ---
 
-Following dtbs_check errors are expected (not related):
- - qcom,halt-regs:0: [142] is too short
- - clocks: [[24, 222], [24, 223], [24, 157], [16], [24, 229], [24, 224], [24, 225], [27, 2], [27, 8]] is too short
- - 'px-supply' is a required property
+Changes since v1:
+1. Use maxItems:1 (Rob)
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml    | 1 +
- .../devicetree/bindings/remoteproc/qcom,pas-common.yaml        | 1 -
- .../devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml        | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml        | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml       | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml      | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml         | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml        | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml        | 3 ++-
- .../devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml        | 3 ++-
- 10 files changed, 17 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 643ee787a81f..b571efe6d550 100644
+index b571efe6d550..2edadba91dfc 100644
 --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
 +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -46,6 +46,7 @@ properties:
- 
- required:
-   - compatible
-+  - memory-region
- 
- unevaluatedProperties: false
- 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-index 171ef85de193..63a82e7a8bf8 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-@@ -82,7 +82,6 @@ required:
-   - clock-names
-   - interrupts
-   - interrupt-names
--  - memory-region
-   - qcom,smem-states
-   - qcom,smem-state-names
- 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-index 5efa0e5c0439..eb868a7ff4cd 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-@@ -42,7 +42,7 @@ properties:
-   smd-edge: false
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
+@@ -44,6 +44,10 @@ properties:
+     maxItems: 1
      description: Reference to the reserved-memory for the Hexagon core
  
-   firmware-name:
-@@ -52,6 +52,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-index 5cefd2c58593..689d5d535331 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-@@ -51,7 +51,7 @@ properties:
-       - const: mss
- 
-   memory-region:
--    minItems: 1
++  firmware-name:
 +    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   qcom,qmp:
-@@ -67,6 +67,7 @@ properties:
++    description: Firmware name for the Hexagon core
++
  required:
    - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-index c1f8dd8d0e4c..4744a37b2b5d 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8180x-pas.yaml
-@@ -38,7 +38,7 @@ properties:
-   smd-edge: false
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
-@@ -48,6 +48,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-index f6fbc531dc28..96d53baf6e00 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-@@ -38,7 +38,7 @@ properties:
-   smd-edge: false
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
-@@ -48,6 +48,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-index c66e298462c7..5d463272165f 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-@@ -46,7 +46,7 @@ properties:
-       - const: mss
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   qcom,qmp:
-@@ -62,6 +62,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-index fee02fa800b5..f7e40fb166da 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-@@ -36,7 +36,7 @@ properties:
-     description: Reference to the AOSS side-channel message RAM.
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   smd-edge: false
-@@ -48,6 +48,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index 2c085ac2c3fb..238c6e5e67c5 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -40,7 +40,7 @@ properties:
-     description: Reference to the AOSS side-channel message RAM.
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   smd-edge: false
-@@ -52,6 +52,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-index af24f9a3cdf1..4394dfd2d8e6 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-@@ -43,7 +43,7 @@ properties:
-   smd-edge: false
- 
-   memory-region:
--    minItems: 1
-+    maxItems: 1
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
-@@ -53,6 +53,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
+   - memory-region
 -- 
 2.34.1
 
