@@ -2,104 +2,94 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A29C04FDF
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Jul 2023 07:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC078C001B0
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Jul 2023 07:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234277AbjGMHXJ (ORCPT
+        id S234028AbjGMHYV (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Jul 2023 03:23:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44954 "EHLO
+        Thu, 13 Jul 2023 03:24:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233928AbjGMHW4 (ORCPT
+        with ESMTP id S234190AbjGMHYT (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Jul 2023 03:22:56 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B8C419A6
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:22:55 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-307d20548adso492125f8f.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:22:55 -0700 (PDT)
+        Thu, 13 Jul 2023 03:24:19 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49EB12D4A
+        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:23:56 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fc03aa6e04so2912725e9.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 13 Jul 2023 00:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689232973; x=1691824973;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NW6ucyBlPaXPLxhxGyKJLKFBicJXxXMRT8wQieSVLcc=;
-        b=a75IyubDe9U1hEUKqxIL36g8vj3+5t/2j5ofDIOSZR4U628P2xqfokU24KGbUtaUUC
-         dQSYE7jOlDQFaQgpNUIp+n1e22Yc66xVI0+njn2Saa5Mgfje4In9pBWtJCqKpKZokOxq
-         dbi60B2cCmcbE8W9mRl64bxPOZokbxK6cSM79qcd9iPDHHUIDUlv88KbL7LM1/4+izq/
-         9SJa0Gs/3VA2eNeDujMzdfyBXYT6GTY3WZghEHlQRwH3NBC2fi2cBxzypglDVQJ/YNJC
-         A8fVg7nfM/mKNn6S5+LgfPjszs+8RO7HYAU20LVODHeITktK+eNXCPVwEV5OzbiKHA8G
-         ianQ==
+        d=linaro.org; s=google; t=1689233030; x=1691825030;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8OEo6fkU/i3JzBNmiaB+dxX8Uf+Q34nzBHgV0wIfnHU=;
+        b=E2UT07TExkP2asBLtmPaDoO7Z3DEqa8rQNXrQI/BcYx4w1aBRgh0ugPYU6EY/7VSY3
+         l1+L8fbXb9WE3Y/MDWTLh6V23uaw7/zkh5h2LCQyLMykp4kzlkBDXjqZRyR3nBWerueA
+         dhBmpO14ckbkA9Ts08BJtIvZMPKYKDQMu5nu01S39XPX8uIQOWFSWld7iVnRIF09c4cC
+         lLubvm95OpL3k2sTSRn2N8ot97bZ3Aqk2fSDMI0inaikajCe1/Ziizxx7LNn2hc/qwhW
+         qVNIVc0RASZJpvOPBZTrygsTG2jyWHrRgSc+A+Er1LyCmnS/41HpNN0PIhUmFKflliC1
+         E6Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689232973; x=1691824973;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NW6ucyBlPaXPLxhxGyKJLKFBicJXxXMRT8wQieSVLcc=;
-        b=WnORrn6Omsyq1T3qYQtUXf3hISr4p41V1VirSbrEp3zt87sIyr8RQwCsudQ6RNEdxY
-         loU18azLlh3yqI+u99k4lQf1e3DT1gNRuhyp+vnBLqgY4PR2nM/xPgmZ5PzSJy5rL51u
-         aJHdRZT9b8c/GydsalpLn3U86cISJCG5Vdwvjk1rObvvdDM/pyeJ9UhtBd7dRa62ezmh
-         t9q51TN5IX7fFax7VTU2fA0KZVKU2Ie1Oe+UCDrWt5vvQ6aDHDndr5JSt7iVXO5dHj2s
-         2d2qz6s1iaKwLWcECAmAUik4RaSmZzFH/rOs8PIpZXal8YOq0U62h8nxsSwAz5yFTjIw
-         1v0Q==
-X-Gm-Message-State: ABy/qLazZxccm6/q+ghCe8Qc8bVm4TAP8DPT178K3wp3Bp8cEQfr8T1A
-        xjvDWmMPT8vlRq5L+8RwyMXjhg==
-X-Google-Smtp-Source: APBJJlFVGUsqZ4FQTLTVpn9EV3aQ28WUtoMGwF7oOJFs6AbukV5SlFQoumyRUSDdCkenLSXfNGXPIw==
-X-Received: by 2002:adf:e781:0:b0:314:15b1:d611 with SMTP id n1-20020adfe781000000b0031415b1d611mr753448wrm.0.1689232973592;
-        Thu, 13 Jul 2023 00:22:53 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id w16-20020a5d6810000000b003144b50034esm7071384wru.110.2023.07.13.00.22.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Jul 2023 00:22:53 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689233030; x=1691825030;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8OEo6fkU/i3JzBNmiaB+dxX8Uf+Q34nzBHgV0wIfnHU=;
+        b=dc+H9oqreQXlbefDC3Ggvp6ZuLnZtWxIr6mZdGgRIzhgJQI8DN2N0EaiVjHMd3tAbf
+         kX9NZAvkOn1hA79UZ3X2W4EOD76BSEVD/wxOOSLxryAnLzLa/z8Uql/yFSpILaLe8Xm4
+         Jp9Nwv2NqbfgTT6aB62QHNBM8MfkICfhJ6Td6NFKnZF4p7nf27GHtHRKMJ1mjb+f9dyi
+         tqwMSEPBan3L7RWoqTZfPadhEjv9qW2vTRzj5CSYxHRdfQhAioPR7pyXYNVsgoy0A1P7
+         1fFu54ZpddBYRLsm0p2LP5JvB1W27GFDX0yvsKgCtg1kOAQS2ruM57Ot+8HkUVJvtaA/
+         97/Q==
+X-Gm-Message-State: ABy/qLZLMkfhb/mph02J5SYqd8of791t8ys3WCbjQVyRcmS3HeQzj5jc
+        LQ66W+bS4sVaBf6H9/ZA4A8Zpw==
+X-Google-Smtp-Source: APBJJlFwjpkNKPs8sNZBDYzF12cK2QOWsZHkzLEuQ4eSVVd4ErROtfQLH46/oLpyXrPQs9qOId4QEg==
+X-Received: by 2002:a1c:f711:0:b0:3fb:ef86:e30 with SMTP id v17-20020a1cf711000000b003fbef860e30mr573822wmh.10.1689233029963;
+        Thu, 13 Jul 2023 00:23:49 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id q14-20020a1cf30e000000b003fbb25da65bsm6972214wmq.30.2023.07.13.00.23.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jul 2023 00:23:49 -0700 (PDT)
+Message-ID: <00453cc8-e595-cbd3-ac23-63190c73795f@linaro.org>
+Date:   Thu, 13 Jul 2023 09:23:47 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: adsp: document
+ firmware-name property
+Content-Language: en-US
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
+To:     David Heidelberg <david@ixit.cz>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Subject: [RESEND PATCH v2 3/4] dt-bindings: remoteproc: qcom,sm8550-pas: require memory-region
-Date:   Thu, 13 Jul 2023 09:22:41 +0200
-Message-Id: <20230713072242.11268-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230713072242.11268-1-krzysztof.kozlowski@linaro.org>
-References: <20230713072242.11268-1-krzysztof.kozlowski@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230712235409.97213-1-david@ixit.cz>
+ <29358bac-6c1b-1e6e-9f21-20ec62518cec@linaro.org>
+In-Reply-To: <29358bac-6c1b-1e6e-9f21-20ec62518cec@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The memory-region is defined in device specific binding, not in
-qcom,pas-common.yaml, thus also require it in the same place.
+On 13/07/2023 08:38, Krzysztof Kozlowski wrote:
+> On 13/07/2023 01:54, David Heidelberg wrote:
+>> Signed-off-by: David Heidelberg <david@ixit.cz>
+> 
+> 
+> You miss commit msg. Anyway, this was sent:
+> 
+> https://lore.kernel.org/all/20230309083548.47205-1-krzysztof.kozlowski@linaro.org/
 
-Fixes: 084258d60712 ("dt-bindings: remoteproc: qcom: adsp: document sm8550 adsp, cdsp & mpss compatible")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml          | 1 +
- 1 file changed, 1 insertion(+)
+I also now resent (again) my previous, old set:
+https://lore.kernel.org/linux-arm-msm/20230713072242.11268-1-krzysztof.kozlowski@linaro.org/T/#t
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-index fe216aa531ed..58120829fb06 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-@@ -53,6 +53,7 @@ properties:
- required:
-   - compatible
-   - reg
-+  - memory-region
- 
- allOf:
-   - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
--- 
-2.34.1
+Best regards,
+Krzysztof
 
