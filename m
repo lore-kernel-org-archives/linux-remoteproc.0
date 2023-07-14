@@ -2,55 +2,64 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC1DEB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 05:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 605CAC001DF
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 05:45:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234972AbjGNFbA (ORCPT
+        id S234788AbjGNFp2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 01:31:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58976 "EHLO
+        Fri, 14 Jul 2023 01:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234943AbjGNFay (ORCPT
+        with ESMTP id S229574AbjGNFp1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Jul 2023 01:30:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305482D78;
-        Thu, 13 Jul 2023 22:30:51 -0700 (PDT)
+        Fri, 14 Jul 2023 01:45:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59363211C;
+        Thu, 13 Jul 2023 22:45:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DB47E61C0A;
-        Fri, 14 Jul 2023 05:30:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA97C433C8;
-        Fri, 14 Jul 2023 05:30:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E278F61C0C;
+        Fri, 14 Jul 2023 05:45:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CFEC433A9;
+        Fri, 14 Jul 2023 05:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689312650;
-        bh=0p6TOtFq3eOq1+ueMOV54oBonIFAvO+hOosLaT4eTNE=;
+        s=k20201202; t=1689313525;
+        bh=c2mEckZvwo14N7trNxL1C24iVTUZzDt1jRZMiYQDuQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RH/VQWx08tWFU8wjhX7dOwArW/p8x/OO/uX1Cm8D1LKQV5/fbkIpR3XY/KaBhje/W
-         jM3/5CDuEXcTGC941mB3ywk0n37rJLxjVwhdY9uHmBfdRPbarQ/QQWnyhSXkgtuN70
-         YIKtDkK03NvNWQ/ZDWa3Mcgh8Z6rdzv6LHk9CUeK/NnmzfdT2NXcD1qWENHcwJV6+p
-         IzA/csX6JEzktMXQBrE67QMo7iFWFt4x7csiGI5IIsTKpiIK9U49VnL9RRimfQODu5
-         +gCI94jZzDKQ98WtIEk/1+Bq1XYTpD+dNx/k/Ih24nCa+SoMzXtwOiWiEBZIVFoiEu
-         ZHj2JNmOTrv9A==
+        b=t1qOzPj11TCBJujmG8cHbTprRRV4bo/tncvX1PAMIiX+Ubkr1S2Y2JM14Ju47GL91
+         h+pU0WpdQIabgbYs0vFT4x2d80Jr7Ma7DBG6B9KRHACwqCvFUenTZLozZmO3ThcGmC
+         0sY5xSp3f6cmjAyXNCahQuOAmQfxILzhxkofk/V0+4pzpvt//mlryVGvu9yhv9zlw2
+         0EvTYKfUflxAlA4DVS+tGTp7csGIwZVoSjrMCY8ueTAce02PXeYDOLKusUppyygKYq
+         MVc8ZW2U4QCvGLj5WhTyRHOMRN5YvDXBM3txWkIeM64cW6DiQCJeR0WjC+nhMm5Uqs
+         FJEk5dXVERHcA==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: (subset) [PATCH v3 00/13] Add dedicated device tree node for RPM processor/subsystem
-Date:   Thu, 13 Jul 2023 22:34:05 -0700
-Message-ID: <168931284129.1538684.15537187886743646347.b4-ty@kernel.org>
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Luca Weiss <luca@z3ntu.xyz>, Vinod Koul <vkoul@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Subject: Re: (subset) [PATCH 0/7] random msm bindings fixes
+Date:   Thu, 13 Jul 2023 22:48:52 -0700
+Message-ID: <168931373093.1571673.3158979708778276469.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
-References: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
+In-Reply-To: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
+References: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -59,23 +68,22 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On Thu, 15 Jun 2023 18:50:33 +0200, Stephan Gerhold wrote:
-> The Resource Power Manager (RPM) currently does not have a dedicated
-> device tree node that represents the remoteproc/subsystem. The
-> functionality exposed through the SMD/GLINK channels is described in
-> top-level nodes of the device tree. This makes it hard to group other
-> functionality provided by the RPM together in the device tree. This
-> series adds a single top-level remoteproc-rpm/rpm-proc device tree node
-> that groups all RPM functionality together.
+On Mon, 26 Jun 2023 22:00:22 +0200, Konrad Dybcio wrote:
 > 
-> [...]
+
 
 Applied, thanks!
 
-[12/13] ARM: dts: qcom: Add rpm-proc node for SMD platforms
-        commit: b471a1bc797429f905b97edd727f4678d7b20ec8
-[13/13] ARM: dts: qcom: apq8064: Drop redundant /smd node
-        commit: 3f30509ff561453ea0c4de1716ab72125f8bf83c
+[3/7] arm64: dts: qcom: pm6150l: Add missing short interrupt
+      commit: 7e1f024ef0d1da456f61d00f01dc3287ede915b3
+[4/7] arm64: dts: qcom: pm660l: Add missing short interrupt
+      commit: 9a4ac09db3c7413e334b4abd6b2f6de8930dd781
+[5/7] arm64: dts: qcom: pmi8950: Add missing OVP interrupt
+      commit: 4d77b639531fd85b84a7079c3369908dfaddf8b2
+[6/7] arm64: dts: qcom: pmi8994: Add missing OVP interrupt
+      commit: 8db94432690371b1736e9a2566a9b3d8a73d5a97
+[7/7] arm64: dts: qcom: sc8180x: Add missing 'cache-unified' to L3
+      commit: e4322bb818bbcd36b441de9880fa4ac911a5eb51
 
 Best regards,
 -- 
