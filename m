@@ -2,95 +2,81 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C3EC001DC
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 13 Jul 2023 10:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC1DEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 05:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233809AbjGMKFi (ORCPT
+        id S234972AbjGNFbA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 13 Jul 2023 06:05:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46658 "EHLO
+        Fri, 14 Jul 2023 01:31:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234446AbjGMKFW (ORCPT
+        with ESMTP id S234943AbjGNFay (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 13 Jul 2023 06:05:22 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFA026B7;
-        Thu, 13 Jul 2023 03:05:20 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51ff068c09cso623322a12.2;
-        Thu, 13 Jul 2023 03:05:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689242718; x=1691834718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2eU1v8SBPLo/f8d631zxPH7q1FrYfpA8BtvD+U5WDps=;
-        b=IWo8CdTQ52nAlRuplSmJYxlM4xkupx0emk+pAK1lZ8Rpzqq1LvtWfPCZrq2XFMCZW+
-         WoRaLwvf4NwuAB27T1uDNMm/NAq3x0J3SdVuEUhsowfaGnt5GzCig97hB3QArr5itt0K
-         4jDmJNl6w9qQ7VhnJ/lnAyEdXS3AUc576jo9dhBwBARlbb9xZTVt4T/W+tb/BU9/Ax/7
-         QrC+lfA4E95GRgenodQc0jEHMuP6pERg1kJtnHS7AYoA+EOja6eh5GLPOBIvR/amlftz
-         L11VWTVbJMa9iLmW21FeAFaPHkagtOvaDE9eN9yDpMhNKpEzqghwq0MKppkSkgJoeaJh
-         LVdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689242718; x=1691834718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2eU1v8SBPLo/f8d631zxPH7q1FrYfpA8BtvD+U5WDps=;
-        b=KLly6M4lSNsDdTRhlYVaV3LRsUkVC4Hm2aFuykcOHSV+aWgEttMIaCGS8XibPMqhc1
-         n7DRHKndl5cLfkeV3hIza6gv2zJ+eyc7JMdEZHcwEzT0cvflbY9/OHKpJA936uGt5g9x
-         aj9FGZV0EnOBJ26hrqcLMcvi7yiXgglOJvRwaPXJGzabJWbUh6UecVwuRGleVtdfkEk0
-         WdlfqzpcGNDPA5OBnoqACIGbeMh4/x8wpkzWjK3h30FG+/vTDIWCanYStgvQUq9HksaE
-         scHI/QVqhsfqhmetzVD0M9KjIHMa7S1Fqmx9UbO0546EJitFfId5DYBeMo34JenygV60
-         Ilpg==
-X-Gm-Message-State: ABy/qLbWrPFZKIaRYIsrnw8h/+D22THNrkfTugbXoV5d4nGmpVgyhm+A
-        yETzAVnumm+l9iQtfd0Tqaa5Qep4wWeHjnWSnww=
-X-Google-Smtp-Source: APBJJlFtOTqr20EEKymM6u44/YxzkjgdahoshDCP2JdeZwBwVK0vai/JD8A+i69fF56gan+5u0QDcbgSuf/PrETob5A=
-X-Received: by 2002:a05:6402:b2e:b0:51b:dcb4:a9b3 with SMTP id
- bo14-20020a0564020b2e00b0051bdcb4a9b3mr1514757edb.24.1689242718185; Thu, 13
- Jul 2023 03:05:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
-In-Reply-To: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Thu, 13 Jul 2023 13:05:06 +0300
-Message-ID: <CAEnQRZBc+EWZDX05KpFNSz1A_NQjX4K2x+LPftpezkeUXRd6fA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: add module parameter to
- ignore ready flag from remote processor
-To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Fri, 14 Jul 2023 01:30:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305482D78;
+        Thu, 13 Jul 2023 22:30:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DB47E61C0A;
+        Fri, 14 Jul 2023 05:30:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA97C433C8;
+        Fri, 14 Jul 2023 05:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689312650;
+        bh=0p6TOtFq3eOq1+ueMOV54oBonIFAvO+hOosLaT4eTNE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RH/VQWx08tWFU8wjhX7dOwArW/p8x/OO/uX1Cm8D1LKQV5/fbkIpR3XY/KaBhje/W
+         jM3/5CDuEXcTGC941mB3ywk0n37rJLxjVwhdY9uHmBfdRPbarQ/QQWnyhSXkgtuN70
+         YIKtDkK03NvNWQ/ZDWa3Mcgh8Z6rdzv6LHk9CUeK/NnmzfdT2NXcD1qWENHcwJV6+p
+         IzA/csX6JEzktMXQBrE67QMo7iFWFt4x7csiGI5IIsTKpiIK9U49VnL9RRimfQODu5
+         +gCI94jZzDKQ98WtIEk/1+Bq1XYTpD+dNx/k/Ih24nCa+SoMzXtwOiWiEBZIVFoiEu
+         ZHj2JNmOTrv9A==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mpuaudiosw <Mpuaudiosw@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        LnxRevLi <LnxRevLi@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v3 00/13] Add dedicated device tree node for RPM processor/subsystem
+Date:   Thu, 13 Jul 2023 22:34:05 -0700
+Message-ID: <168931284129.1538684.15537187886743646347.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
+References: <20230531-rpm-rproc-v3-0-a07dcdefd918@gerhold.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 2:15=E2=80=AFAM Iuliana Prodan (OSS)
-<iuliana.prodan@oss.nxp.com> wrote:
->
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->
-> There are cases when we want to test samples that do not
-> reply with FW READY message, after fw is loaded and the
-> remote processor started.
-> In these cases, do not wait for a confirmation from the remote processor
-> at start.
->
-> Added "ignore_dsp_ready" flag while inserting the module to ignore
-> remote processor reply after start.
-> By default, this is off - do not ignore reply from rproc.
->
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+On Thu, 15 Jun 2023 18:50:33 +0200, Stephan Gerhold wrote:
+> The Resource Power Manager (RPM) currently does not have a dedicated
+> device tree node that represents the remoteproc/subsystem. The
+> functionality exposed through the SMD/GLINK channels is described in
+> top-level nodes of the device tree. This makes it hard to group other
+> functionality provided by the RPM together in the device tree. This
+> series adds a single top-level remoteproc-rpm/rpm-proc device tree node
+> that groups all RPM functionality together.
+> 
+> [...]
+
+Applied, thanks!
+
+[12/13] ARM: dts: qcom: Add rpm-proc node for SMD platforms
+        commit: b471a1bc797429f905b97edd727f4678d7b20ec8
+[13/13] ARM: dts: qcom: apq8064: Drop redundant /smd node
+        commit: 3f30509ff561453ea0c4de1716ab72125f8bf83c
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
