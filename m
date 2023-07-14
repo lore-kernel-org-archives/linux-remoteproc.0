@@ -2,326 +2,128 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B43EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 18:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 650C2C04A94
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 23:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236784AbjGNSCA (ORCPT
+        id S229926AbjGNXqa (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 14:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48502 "EHLO
+        Fri, 14 Jul 2023 19:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236659AbjGNSBv (ORCPT
+        with ESMTP id S229502AbjGNXq2 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Jul 2023 14:01:51 -0400
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AA85271E;
-        Fri, 14 Jul 2023 11:01:06 -0700 (PDT)
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-403a72df0a6so14163721cf.2;
-        Fri, 14 Jul 2023 11:01:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689357597; x=1691949597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x7CAXtBYk6X27uebkH9zYJjyXa8Snp/PDN8dALPovlA=;
-        b=JmX461CvRYG9EcwGIjmYLjnjOkt96EvhB016+LFjFDpsoC7qYYg5p9pclaahu9smCD
-         E7hEyh2fbOzFkvVqrBpDxlZLg7RBwcjm0clmfuAE7JAiR/M8gS4mCWoiUNaxiPeRenOQ
-         AvjmHhxs+0cy+UUoW8NoZrQkLj4QDQdCAxZ8DV/dHpGi3+DiCu0GsgR/aY4HlNRg76QJ
-         wDh3Bsv6dZoU+41bSZl1WLTHtIp3qUjLCDVumX8lZgUVc8dY6/0wJANziT6oXDR5ij1Y
-         yEWNI78b333djghX5XNNdA1OTozCmmYKCdPJFrBMzqZ2Ze2zRB32C2NxAUPh/NqsarmB
-         olUg==
-X-Gm-Message-State: ABy/qLYj9Gp3BseMeXhdBpvM4MQhYCWcbVvU4NmYq8+CbblfFD3rFsok
-        dT/igrH002cbnv+HwgJ2rasYephMKDLV
-X-Google-Smtp-Source: APBJJlHM+IfdU83rP5wrXpggh4K0BHRspj+8cjiFvu8XdIfuPps+mwrVgBvFaLyiPhM0nRIFKO8M+A==
-X-Received: by 2002:a92:d311:0:b0:346:77f5:116f with SMTP id x17-20020a92d311000000b0034677f5116fmr4943472ila.16.1689356987789;
-        Fri, 14 Jul 2023 10:49:47 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id g7-20020a0566380bc700b0042b2e309f97sm2656917jad.177.2023.07.14.10.49.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 10:49:47 -0700 (PDT)
-Received: (nullmailer pid 4063624 invoked by uid 1000);
-        Fri, 14 Jul 2023 17:49:37 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH] remoteproc: Explicitly include correct DT includes
-Date:   Fri, 14 Jul 2023 11:49:33 -0600
-Message-Id: <20230714174935.4063513-1-robh@kernel.org>
-X-Mailer: git-send-email 2.40.1
+        Fri, 14 Jul 2023 19:46:28 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D24813A93;
+        Fri, 14 Jul 2023 16:46:27 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36ELlPJL013025;
+        Fri, 14 Jul 2023 23:45:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=wUjJXOLQQaP2ZEAprH4fQWl8uZ95OgFaQHeNSlopaBw=;
+ b=jC/Ci3XaraVH2SUoMHwH/1LRum615P+g1b1DbzCpu8GEeJWjXs/J8ix+SyPJ2TplrYxC
+ MhVHOcWoa5KRwaRsgcB3YLcQNUyHB1qRE1PW7rwWnedwQrZ/YnHEt8SmlKXYJKE/BQnz
+ GtWuHs99WiWILPkSZYGoj2HMS2YqeeEv1n7rJvqwwN3qZ6PkKbMkVwRafw99JmYaLzbb
+ 9Ha6B7t1CvrCkQuBBECDi1K7XCRId7y8rNU4peMiSr02JsRtxlFR0WvkdGVvQZjP+Ocn
+ XQlqFxjV1CzVmAETG9Z39Cni9dOcsZVJzSQTzR9sF8RAWee+nT4BfNwcBq6SXXRGGHud Kg== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rtpubb1qu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jul 2023 23:45:33 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36ENjW4e001624
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jul 2023 23:45:32 GMT
+Received: from [10.110.114.79] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 14 Jul
+ 2023 16:45:31 -0700
+Message-ID: <52650970-de78-764f-28e2-ee0115b7d5c6@quicinc.com>
+Date:   Fri, 14 Jul 2023 16:45:28 -0700
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
+ support
+From:   Trilok Soni <quic_tsoni@quicinc.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>
+CC:     Greg KH <gregkh@linuxfoundation.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <keescook@chromium.org>,
+        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
+ <2023062814-chance-flounder-f002@gregkh>
+ <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
+ <CACRpkda3CJ7G4-wDPkWmzg6nyCoEfG+u2cQH6KXWNjbftd90ow@mail.gmail.com>
+ <355de4c7-180d-4edd-b6fd-9c8e29e40e42@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <355de4c7-180d-4edd-b6fd-9c8e29e40e42@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jXG6FgGFtb_gNPqZH6g1IhhZEKBI1bZD
+X-Proofpoint-GUID: jXG6FgGFtb_gNPqZH6g1IhhZEKBI1bZD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-14_11,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
+ suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307140216
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The DT of_device.h and of_platform.h date back to the separate
-of_platform_bus_type before it as merged into the regular platform bus.
-As part of that merge prepping Arm DT support 13 years ago, they
-"temporarily" include each other. They also include platform_device.h
-and of.h. As a result, there's a pretty much random mix of those include
-files used throughout the tree. In order to detangle these headers and
-replace the implicit includes with struct declarations, users need to
-explicitly include the correct includes.
+On 7/5/2023 10:29 AM, Trilok Soni wrote:
+> On 7/4/2023 2:27 AM, Linus Walleij wrote:
+>> On Thu, Jun 29, 2023 at 1:12 AM Rob Herring <robh+dt@kernel.org> wrote:
+>>
+>>> My bigger issue with this whole series is what would this all look
+>>> like if every SoC vendor upstreamed their own custom dumping
+>>> mechanism. That would be a mess. (I have similar opinions on the
+>>> $soc-vendor hypervisors.)
+>>
+>> I agree with Rob's stance.
+>>
+>> I think it would be useful to get input from the hwtracing developers
+>> (Alexander and Mathieu) who faced this "necessarily different" issue
+>> with all the hwtrace mechanisms and found a way out of it. I suspect
+>> they can have an idea of how this should be abstracted.
+> 
+> Any mailing list you suggest we expand to so that we get inputs from the 
+> hwtracing developers and maintainers or just look into the MAINTAINERS 
+> file and start an email thread?
+> 
+> We are fine to submit the abstract for the LPC in next two weeks, but 
+> prefer to have lot of good discussion before it on the mailing list, so 
+> that we have code to talk about in LPC.
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/remoteproc/imx_dsp_rproc.c        | 3 +--
- drivers/remoteproc/imx_rproc.c            | 2 +-
- drivers/remoteproc/omap_remoteproc.c      | 3 ++-
- drivers/remoteproc/pru_rproc.c            | 3 ++-
- drivers/remoteproc/qcom_q6v5_adsp.c       | 2 +-
- drivers/remoteproc/qcom_q6v5_mss.c        | 3 ++-
- drivers/remoteproc/qcom_q6v5_pas.c        | 2 +-
- drivers/remoteproc/qcom_sysmon.c          | 1 -
- drivers/remoteproc/qcom_wcnss.c           | 2 +-
- drivers/remoteproc/qcom_wcnss_iris.c      | 1 +
- drivers/remoteproc/rcar_rproc.c           | 3 ++-
- drivers/remoteproc/st_slim_rproc.c        | 1 -
- drivers/remoteproc/stm32_rproc.c          | 4 ++--
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 2 +-
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 3 ++-
- drivers/remoteproc/wkup_m3_rproc.c        | 2 +-
- 16 files changed, 20 insertions(+), 17 deletions(-)
+We have submitted abstract at LPC MC. Let's continue the discussion here 
+though.
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index d95fa5586189..8fcda9b74545 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -12,8 +12,7 @@
- #include <linux/mailbox_client.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
--#include <linux/of_address.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index f9874fc5a80f..b403a37ddb02 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -13,9 +13,9 @@
- #include <linux/mailbox_client.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_reserved_mem.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/regmap.h>
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 82ed90f03d91..8f50ab80e56f 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -19,7 +19,8 @@
- #include <linux/clk/ti.h>
- #include <linux/err.h>
- #include <linux/io.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 2874c8d324f7..5b2dc75836fc 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -16,8 +16,9 @@
- #include <linux/debugfs.h>
- #include <linux/irqdomain.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_irq.h>
-+#include <linux/platform_device.h>
- #include <linux/remoteproc/pruss.h>
- #include <linux/pruss_driver.h>
- #include <linux/remoteproc.h>
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 6777a3bd6226..7733be477db5 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -14,8 +14,8 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 70bffc9f33f6..76c546871a94 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -15,9 +15,10 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 3153d82037e7..faec3a3d8e4e 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -13,8 +13,8 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
-index 746f56b4bafb..c24e4a882873 100644
---- a/drivers/remoteproc/qcom_sysmon.c
-+++ b/drivers/remoteproc/qcom_sysmon.c
-@@ -9,7 +9,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/of_irq.h>
--#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc/qcom_rproc.h>
- #include <linux/rpmsg.h>
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 1ed0647bc962..c109096bbfe3 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -14,8 +14,8 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/io.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
-index 09720ddddc85..dd36fd077911 100644
---- a/drivers/remoteproc/qcom_wcnss_iris.c
-+++ b/drivers/remoteproc/qcom_wcnss_iris.c
-@@ -10,6 +10,7 @@
- #include <linux/clk.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
-diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-index 90e8769d5624..cc17e8421f65 100644
---- a/drivers/remoteproc/rcar_rproc.c
-+++ b/drivers/remoteproc/rcar_rproc.c
-@@ -5,8 +5,9 @@
- 
- #include <linux/limits.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
-diff --git a/drivers/remoteproc/st_slim_rproc.c b/drivers/remoteproc/st_slim_rproc.c
-index 4ed9467897e5..d17719384c16 100644
---- a/drivers/remoteproc/st_slim_rproc.c
-+++ b/drivers/remoteproc/st_slim_rproc.c
-@@ -12,7 +12,6 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
- #include <linux/remoteproc/st_slim_rproc.h>
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index cf073bac79f7..98234b44f038 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -12,9 +12,9 @@
- #include <linux/mailbox_client.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
--#include <linux/of_address.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
- #include <linux/pm_wakeirq.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index ec626a37fef6..ef8415a7cd54 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -9,7 +9,7 @@
- #include <linux/io.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_reserved_mem.h>
- #include <linux/omap-mailbox.h>
- #include <linux/platform_device.h>
-diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index 23fe44d4d7a5..ad3415a3851b 100644
---- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -12,9 +12,10 @@
- #include <linux/kernel.h>
- #include <linux/mailbox_client.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/of_platform.h>
- #include <linux/omap-mailbox.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-diff --git a/drivers/remoteproc/wkup_m3_rproc.c b/drivers/remoteproc/wkup_m3_rproc.c
-index 120dc7d2dac1..36a55f7ffa64 100644
---- a/drivers/remoteproc/wkup_m3_rproc.c
-+++ b/drivers/remoteproc/wkup_m3_rproc.c
-@@ -12,7 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
-+#include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
--- 
-2.40.1
+Mukesh, do you want to expand the lists as necessary to see if other 
+soc-vendors are having any inputs here? May be add Exynos or MTK kernel 
+mailing lists + linux-kernel? I don't know if anyone will respond or 
+not, but let's try.
+
+---Trilok Soni
 
