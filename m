@@ -2,89 +2,145 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605CAC001DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 05:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA8CC001DC
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 14 Jul 2023 15:26:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234788AbjGNFp2 (ORCPT
+        id S233758AbjGNP0h (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 14 Jul 2023 01:45:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37424 "EHLO
+        Fri, 14 Jul 2023 11:26:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229574AbjGNFp1 (ORCPT
+        with ESMTP id S236019AbjGNP0f (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 14 Jul 2023 01:45:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59363211C;
-        Thu, 13 Jul 2023 22:45:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E278F61C0C;
-        Fri, 14 Jul 2023 05:45:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CFEC433A9;
-        Fri, 14 Jul 2023 05:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689313525;
-        bh=c2mEckZvwo14N7trNxL1C24iVTUZzDt1jRZMiYQDuQo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t1qOzPj11TCBJujmG8cHbTprRRV4bo/tncvX1PAMIiX+Ubkr1S2Y2JM14Ju47GL91
-         h+pU0WpdQIabgbYs0vFT4x2d80Jr7Ma7DBG6B9KRHACwqCvFUenTZLozZmO3ThcGmC
-         0sY5xSp3f6cmjAyXNCahQuOAmQfxILzhxkofk/V0+4pzpvt//mlryVGvu9yhv9zlw2
-         0EvTYKfUflxAlA4DVS+tGTp7csGIwZVoSjrMCY8ueTAce02PXeYDOLKusUppyygKYq
-         MVc8ZW2U4QCvGLj5WhTyRHOMRN5YvDXBM3txWkIeM64cW6DiQCJeR0WjC+nhMm5Uqs
-         FJEk5dXVERHcA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Luca Weiss <luca@z3ntu.xyz>, Vinod Koul <vkoul@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: (subset) [PATCH 0/7] random msm bindings fixes
-Date:   Thu, 13 Jul 2023 22:48:52 -0700
-Message-ID: <168931373093.1571673.3158979708778276469.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
-References: <20230626-topic-bindingsfixups-v1-0-254ae8642e69@linaro.org>
+        Fri, 14 Jul 2023 11:26:35 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC42E30C0;
+        Fri, 14 Jul 2023 08:26:34 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36ECbstq019424;
+        Fri, 14 Jul 2023 15:26:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=KlTyfug7EZTBZKaQpxZzWcVPGIFRszohTvpxdR5Kc6k=;
+ b=ixhfhWtHAH5MMBtVuvcB7T+CAwWuyvrqrit2WO+RxmSM4gZFUohL3Dt+SYWt6TAJbDsv
+ UqNrJNSDvfOrEPizTj27/tMO1j/KiWGurbjxu4kiCQyewmL0rHY9VQAZFe/riA9QwqJx
+ ZODC1f0JfTBrmnpyoqyh2DrjA45KDwymCTZtpl+TQ5fgLQW11OeXc+CC/l+ozDQJ0Uu6
+ oAz7PziZ5lt2fqTKTHi6GMJcq08Si80VrKvqWyrMbBOb/ynoZNJdnLpDLQvnnveZfnUv
+ glFvbv2Bf6gokOfQnvxVMNzTKK/ADJJDDfdkzsYpfQQDQWYLook+8liu+lL5Nc0NclSr TQ== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rtpts23jr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jul 2023 15:26:12 +0000
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36EFQBK1031783
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Jul 2023 15:26:11 GMT
+Received: from [10.216.56.39] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 14 Jul
+ 2023 08:25:59 -0700
+Message-ID: <d77f5601-2b08-a7c7-1400-7ab68b8add3a@quicinc.com>
+Date:   Fri, 14 Jul 2023 20:55:26 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
+ support
+To:     Kathiravan T <quic_kathirav@quicinc.com>, <corbet@lwn.net>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <keescook@chromium.org>, <tony.luck@intel.com>,
+        <gpiccoli@igalia.com>, <mathieu.poirier@linaro.org>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>
+References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
+ <c712597e-f870-f224-fc1b-90c6f8f19710@quicinc.com>
+Content-Language: en-US
+From:   Mukesh Ojha <quic_mojha@quicinc.com>
+In-Reply-To: <c712597e-f870-f224-fc1b-90c6f8f19710@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: k6kW04K-HSKuFwXlBT09sQYlyELKk4zM
+X-Proofpoint-ORIG-GUID: k6kW04K-HSKuFwXlBT09sQYlyELKk4zM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-14_06,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 phishscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999
+ clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307140140
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On Mon, 26 Jun 2023 22:00:22 +0200, Konrad Dybcio wrote:
 > 
+> Hi Mukesh,
+> 
+> For IPQ chipsets, for the crashdump to work, we need the below patch
+> 
+> firmware: scm: Modify only the download bits in TCSR register
+> 
+> can you post the below patches separately? Looks like minidump will take 
+> some time and also I don't see any dependencies for these to go along 
+> with the minidump. Given that, will it be possible to post the below 
+> patches separately?
+> 
+>    firmware: qcom_scm: provide a read-modify-write function
+>    pinctrl: qcom: Use qcom_scm_io_update_field()
+>    firmware: scm: Modify only the download bits in TCSR register
+> 
+> Do let us know if we can take these patches and post it separately.
 
+Yes, we can post this separately.
 
-Applied, thanks!
-
-[3/7] arm64: dts: qcom: pm6150l: Add missing short interrupt
-      commit: 7e1f024ef0d1da456f61d00f01dc3287ede915b3
-[4/7] arm64: dts: qcom: pm660l: Add missing short interrupt
-      commit: 9a4ac09db3c7413e334b4abd6b2f6de8930dd781
-[5/7] arm64: dts: qcom: pmi8950: Add missing OVP interrupt
-      commit: 4d77b639531fd85b84a7079c3369908dfaddf8b2
-[6/7] arm64: dts: qcom: pmi8994: Add missing OVP interrupt
-      commit: 8db94432690371b1736e9a2566a9b3d8a73d5a97
-[7/7] arm64: dts: qcom: sc8180x: Add missing 'cache-unified' to L3
-      commit: e4322bb818bbcd36b441de9880fa4ac911a5eb51
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+-Mukesh
+> 
+>>
+>>   Documentation/admin-guide/index.rst                |   1 +
+>>   Documentation/admin-guide/qcom_minidump.rst        | 293 +++++++++++
+>>   .../devicetree/bindings/soc/qcom/qcom,ramoops.yaml | 126 +++++
+>>   MAINTAINERS                                        |  15 +
+>>   arch/arm64/boot/dts/qcom/sm8450.dtsi               |  12 +
+>>   arch/arm64/configs/defconfig                       |   4 +
+>>   drivers/firmware/Kconfig                           |  11 -
+>>   drivers/firmware/qcom_scm.c                        |  85 ++-
+>>   drivers/pinctrl/qcom/pinctrl-msm.c                 |  12 +-
+>>   drivers/remoteproc/qcom_common.c                   | 142 +----
+>>   drivers/soc/qcom/Kconfig                           |  39 ++
+>>   drivers/soc/qcom/Makefile                          |   3 +
+>>   drivers/soc/qcom/qcom_minidump.c                   | 582 
+>> +++++++++++++++++++++
+>>   drivers/soc/qcom/qcom_minidump_internal.h          |  98 ++++
+>>   drivers/soc/qcom/qcom_minidump_smem.c              | 387 ++++++++++++++
+>>   drivers/soc/qcom/qcom_pstore_minidump.c            | 210 ++++++++
+>>   drivers/soc/qcom/smem.c                            |   9 +
+>>   fs/pstore/ram.c                                    |  26 +-
+>>   include/linux/firmware/qcom/qcom_scm.h             |   2 +
+>>   include/linux/pstore_ram.h                         |   2 +
+>>   include/soc/qcom/qcom_minidump.h                   |  64 +++
+>>   kernel/kallsyms.c                                  |   2 +-
+>>   22 files changed, 1973 insertions(+), 152 deletions(-)
+>>   create mode 100644 Documentation/admin-guide/qcom_minidump.rst
+>>   create mode 100644 
+>> Documentation/devicetree/bindings/soc/qcom/qcom,ramoops.yaml
+>>   create mode 100644 drivers/soc/qcom/qcom_minidump.c
+>>   create mode 100644 drivers/soc/qcom/qcom_minidump_internal.h
+>>   create mode 100644 drivers/soc/qcom/qcom_minidump_smem.c
+>>   create mode 100644 drivers/soc/qcom/qcom_pstore_minidump.c
+>>   create mode 100644 include/soc/qcom/qcom_minidump.h
+>>
