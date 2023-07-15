@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA8AC001DF
-	for <linux-remoteproc@archiver.kernel.org>; Sat, 15 Jul 2023 22:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC248C16B13
+	for <linux-remoteproc@archiver.kernel.org>; Sat, 15 Jul 2023 22:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230103AbjGOWKV (ORCPT
+        id S229587AbjGOWKX (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Sat, 15 Jul 2023 18:10:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55886 "EHLO
+        Sat, 15 Jul 2023 18:10:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbjGOWKT (ORCPT
+        with ESMTP id S230090AbjGOWKV (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Sat, 15 Jul 2023 18:10:19 -0400
+        Sat, 15 Jul 2023 18:10:21 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFBDD2723;
-        Sat, 15 Jul 2023 15:10:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E4282723;
+        Sat, 15 Jul 2023 15:10:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 640A460C50;
-        Sat, 15 Jul 2023 22:10:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F7BC433CD;
-        Sat, 15 Jul 2023 22:10:15 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 318BF60C47;
+        Sat, 15 Jul 2023 22:10:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E0AC433C7;
+        Sat, 15 Jul 2023 22:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689459016;
-        bh=fzXa2Uoxmo5Pv7nm/8+pm9wLcvtWAWr1jggWVxuBw00=;
+        s=k20201202; t=1689459019;
+        bh=wg3gQs+CZ4wlzlacPdDFW5G/hgcmzR3RDndodc/Clrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b1pagmP32wtVHiXPU+YIl4NOlKlY2I60P+Ef+Zh1ztvzV/A59jXBMnjXPdyN9qJO8
-         8pLuv8Rz3y2Wk70v/Pmmi7Bg+rDyItime+rIBWZmX8JnZGFo4Ztp6N5GTXRioj3Lqt
-         mT67SL4SVs2nAHLib464zKmgZoZarxnoLV3UXysQ+BtL50PIkC1TlLyK1cuumGi3DD
-         KDo4ZPXaCbFkLS2FHHjc9SEmiXhkVlQczKl+M8AcO+pawmKT5lH/lEsgYaP/HYrDZA
-         6TKLNSA/uusSaT8EpaueLvgzEZM2rHLtLOaEHWhm2LU4do0z7pfxGyEN2cNdPIWomp
-         3sgtTkQk7oJRQ==
+        b=Cq7uHBFD3h8wnQ2G1mml0l6V5nAQbhmjBMTucBTKtC1quhW1XaYL85btXRFR1xTBF
+         Fil1oxXHyrWNF9VM0NKVEaTJTPez8RxI4DXSh8tm6X+uR1rasHa1xmAIDf5CjWhlHO
+         vimFngSHJM4nUcsYxv4cK+aa/q+8oZe+dPRL3UnJ7z7dkXuHXzmrzeG/7/pgvmUIdR
+         Thr+uNpJpqKU8pFgOvUoKxQ4Iw6OJ3zXae6fTJn+iSXAKp2SHxAfw3zFIRMeOd7XGn
+         EXdLHY0UQ4rZXjrLUv4bY9HgVjkif67bvTO5XR0OxbesZtBurqC3c7BclUls4qFomQ
+         OjF/lWCzRwUww==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dylan Van Assche <me@dylanvanassche.be>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 0/3] remoteproc: qcom: pas: Support SDM845 SLPI
-Date:   Sat, 15 Jul 2023 15:13:32 -0700
-Message-ID: <168945921474.1805013.11097249554000566257.b4-ty@kernel.org>
+To:     agross@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
+        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+        catalin.marinas@arm.com, will@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
+        srinivas.kandagatla@linaro.org,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 00/18] Add basic Minidump kernel driver support
+Date:   Sat, 15 Jul 2023 15:13:34 -0700
+Message-ID: <168945921478.1805013.7211960599963339759.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230330164633.117335-1-me@dylanvanassche.be>
-References: <20230330164633.117335-1-me@dylanvanassche.be>
+In-Reply-To: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
+References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -59,28 +59,20 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
-On Thu, 30 Mar 2023 18:46:30 +0200, Dylan Van Assche wrote:
-> * About *
-> 
-> The Qualcomm SDM845 SoC has a separate SLPI (Sensor Low Power Island)
-> DSP for sensors connected to the SoC which is responsible for exposing
-> sensors to userspace, power saving, and other features.
-> While sensors are connected to GPIOs of the SoC, they cannot be used
-> because the hypervisor blocks direct access to the sensors, thus the
-> DSP must be used to access any sensor on this SoC. The SLPI DSP uses a
-> GLink edge (dsps) to communicate with the host and has a FastRPC interface
-> to load files from the host filesystem such as sensor configuration files.
-> The FastRPC interface does not use regular FastRPC Compute Banks
-> but instead uses an allocated CMA region through which communication happens.
+On Wed, 03 May 2023 22:32:14 +0530, Mukesh Ojha wrote:
+> Minidump is a best effort mechanism to collect useful and predefined data
+> for first level of debugging on end user devices running on Qualcomm SoCs.
+> It is built on the premise that System on Chip (SoC) or subsystem part of
+> SoC crashes, due to a range of hardware and software bugs. Hence, the
+> ability to collect accurate data is only a best-effort. The data collected
+> could be invalid or corrupted, data collection itself could fail, and so on.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: remoteproc: qcom: adsp: add qcom,sdm845-slpi-pas compatible
-      commit: 242a626870eb453934b75749f8dbab997556b555
-[2/3] remoteproc: qcom: pas: refactor SLPI remoteproc init
-      commit: 637e98bfe20b2c6866cd79b8d487430af09dc8ac
+[01/18] remoteproc: qcom: Expand MD_* as MINIDUMP_*
+        commit: 318da1371246fdc1806011a27138175cfb078687
 
 Best regards,
 -- 
