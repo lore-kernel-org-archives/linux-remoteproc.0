@@ -2,109 +2,117 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE64BEB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 Jul 2023 08:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 010A3C001DC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 Jul 2023 14:06:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbjGQICX (ORCPT
+        id S231987AbjGQOG6 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 04:02:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58760 "EHLO
+        Mon, 17 Jul 2023 10:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbjGQICW (ORCPT
+        with ESMTP id S231990AbjGQOGx (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 17 Jul 2023 04:02:22 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF13211F
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jul 2023 01:02:19 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4fdb856482fso1649607e87.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jul 2023 01:02:19 -0700 (PDT)
+        Mon, 17 Jul 2023 10:06:53 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5810A1A3;
+        Mon, 17 Jul 2023 07:06:44 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fbc656873eso46853895e9.1;
+        Mon, 17 Jul 2023 07:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689580938; x=1692172938;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ybDWeGYh7QkWqKSuqnHy7+o3sCCASBcWk0Zen0RPF2c=;
-        b=oQS7I5usrfXc9q0gkIN9Y65z8MX729Uvxqkggz/yHgR5zI/SEHh5DYqV2rdAXHZz6S
-         xrXBD9MLtRN+12vp9l0UM+LnEfi6o3Pi+51jaJoKcnUt8mckvAdye4NiO4QMUPytFTk8
-         5VN9v1rLHdxhj1u1Gk82EsVI2IRVURW7KldC3dBbuOsVBCk8nBIV3qqIvLHSJIiH4eH+
-         Y2lOsr+kTeyQdF6QUXGRFSz6/nkz3mBMy5Xn5+uLI8OG2beLLYHveAtf0TC5lx5fuctf
-         mGhsHS38S22KiPxT4CmPMHzmrrVDQUc6snqRe0pDy8L8YgdXFDILzekGXsgw3MNM7uzn
-         eSEA==
+        d=gmail.com; s=20221208; t=1689602803; x=1692194803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VGGtLy42tXq8i70nRWR8TQ7FF5MysAyQGWfRhzKitW0=;
+        b=bcN7cd5Loixv1mGPI4frS+1cnEfiLNq1R08jPHMi6P/rv3ccOTFN/QwkrBZUzn8Pro
+         R86+HuQl9jtDco5m94JCOYIpHGzKQ8f9aD2Jsn/fXR2oPaVCOeY5jkjTbZOV2Jp2kCmJ
+         gjJIXLY6YxlnJZ36xBi7vKQIYWQqxnHmfq8gSZpH55vGRgZOwRiU0ORVP3kvi+2p2jZf
+         LaBu0touE7aofYsHp0xQEEAKBh3J+Cas7rcSnT17UU9rHzyd2sdsYlbUDh4sVov4Svop
+         lP0L+NtHAoGFYnftSS6514FAFW1vQ8Z9n1abjSO8zklYHhVhe9i098eYMG2CTX6VnSS6
+         DJMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689580938; x=1692172938;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ybDWeGYh7QkWqKSuqnHy7+o3sCCASBcWk0Zen0RPF2c=;
-        b=jiSLahwvu1uNn4mKO6Res0hbUxAP51n3qXbfR6g2Yce0Jem0JWc2L3FQNKAGLVjGEi
-         7w+nJLrGNnHtbw/3UBLAO3aO34liWKrtR0og326AAXynRfxJ/It9ID/rj1aQF7j0KSNW
-         opXBQR+hru2jaBfD9T8tSScsrLCEaXwdBiQjhntXAMw93KrEeSYGn0yDIsLFYMBoJhRH
-         bnOgXntaCASOHVfgLhcQIaLUc3JPjsSATLxoS2dO0VJmfxQzTvaMyr8B4F+IhtIzSnWm
-         9AP7Gyl0vENqkX6dhGTAMZdaAhrp34hnhdFKXF82dF3UV4hk7HGepLleBv1Run3lZSOM
-         8Ebw==
-X-Gm-Message-State: ABy/qLZVpCqlDSjGbXBFRrgLTveVw/t4uARZhlDVHUentzVlfsjYLMhM
-        L4AIF6Y95GxUMut1hMkie5EOxg==
-X-Google-Smtp-Source: APBJJlGaWSnDlZyb6JY1n2wdxR3Lgs52I2miQt9O/go6p3/cQ8xCwjp0Gz89lXxwN9nZK8HZKTWn2w==
-X-Received: by 2002:a05:6512:3c92:b0:4fa:5e76:7ad4 with SMTP id h18-20020a0565123c9200b004fa5e767ad4mr9100751lfv.10.1689580937881;
-        Mon, 17 Jul 2023 01:02:17 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id n16-20020a05640206d000b0051e0bf5807bsm9518544edy.49.2023.07.17.01.02.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jul 2023 01:02:17 -0700 (PDT)
-Message-ID: <128bcf0e-9b74-0df1-6366-d553475fbad7@linaro.org>
-Date:   Mon, 17 Jul 2023 10:02:14 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: (subset) [PATCH v3 00/18] Add basic Minidump kernel driver
- support
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-Cc:     agross@kernel.org, konrad.dybcio@linaro.org, corbet@lwn.net,
-        keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
-        linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-        srinivas.kandagatla@linaro.org,
-        Mukesh Ojha <quic_mojha@quicinc.com>,
+        d=1e100.net; s=20221208; t=1689602803; x=1692194803;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VGGtLy42tXq8i70nRWR8TQ7FF5MysAyQGWfRhzKitW0=;
+        b=On+GRr25LbjmRU7HL7QrT/nGBKSHvGk9GV5twVzg0eZNGm9aM4hkVysS6zzYZWFFJe
+         UoYc4GfPiINZbP6OUhngYoDIRsR/miJsVIoT15MsqKS4iog2M6F+OEoVc5cSD6u2XsPq
+         arf2Qav0DrOxlCUbiRgpyjsXrPAh65YoMelL31hxWmxBCwuOEnwjNF9m0cf2074gsF5F
+         FS6yJmpOLiKKixQrUKedh0iFW5EMxR1hofwnTAgzZcatSE3uA4iFaUXw+n6dT3UD0iEz
+         VSEQ4VFFuNSYl++Fl7dA0g+FpHIm75zTKvif4iJIW+klNUXh7GBvkyFjHGrKNUeiLw+p
+         17lg==
+X-Gm-Message-State: ABy/qLbOOKJ/ChtGksmmz2/cl5KNA15NLZlHls5KKa6PWoncx3ACr0BG
+        JpS2Usqd5bIDhbcyk9t3gHY=
+X-Google-Smtp-Source: APBJJlG6kAd8gMh7mEl7ZB8YF4NYhFgVr+x3eFjCbEXE1J/OMeeUTT2Wmcm7iGQZYl9bMYL21KnPQQ==
+X-Received: by 2002:a1c:f313:0:b0:3fc:5bcc:a91a with SMTP id q19-20020a1cf313000000b003fc5bcca91amr354182wmq.6.1689602802203;
+        Mon, 17 Jul 2023 07:06:42 -0700 (PDT)
+Received: from localhost.localdomain ([176.200.123.3])
+        by smtp.googlemail.com with ESMTPSA id u11-20020a05600c00cb00b003fbb346279dsm8045800wmm.38.2023.07.17.07.06.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 07:06:41 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-References: <1683133352-10046-1-git-send-email-quic_mojha@quicinc.com>
- <168945921478.1805013.7211960599963339759.b4-ty@kernel.org>
- <ZLSWTaMtr9UGmrDy@p14s>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ZLSWTaMtr9UGmrDy@p14s>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH] hwspinlock: qcom: add missing regmap config for SFPB MMIO implementation
+Date:   Sun, 16 Jul 2023 04:28:04 +0200
+Message-Id: <20230716022804.21239-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 17/07/2023 03:15, Mathieu Poirier wrote:
-> On Sat, Jul 15, 2023 at 03:13:34PM -0700, Bjorn Andersson wrote:
->>
->> On Wed, 03 May 2023 22:32:14 +0530, Mukesh Ojha wrote:
->>> Minidump is a best effort mechanism to collect useful and predefined data
->>> for first level of debugging on end user devices running on Qualcomm SoCs.
->>> It is built on the premise that System on Chip (SoC) or subsystem part of
->>> SoC crashes, due to a range of hardware and software bugs. Hence, the
->>> ability to collect accurate data is only a best-effort. The data collected
->>> could be invalid or corrupted, data collection itself could fail, and so on.
->>>
->>> [...]
->>
->> Applied, thanks!
->>
->> [01/18] remoteproc: qcom: Expand MD_* as MINIDUMP_*
->>         commit: 318da1371246fdc1806011a27138175cfb078687
->>
-> 
-> Krzysztof asked for modifications on this patch.
+Commit 5d4753f741d8 ("hwspinlock: qcom: add support for MMIO on older
+SoCs") introduced and made regmap_config mandatory in the of_data struct
+but didn't add the regmap_config for sfpb based devices.
 
-I guess it is fine, no big issue.
+SFPB based devices can both use the legacy syscon way to probe or the
+new MMIO way and currently device that use the MMIO way are broken as
+they lack the definition of the now required regmap_config and always
+return -EINVAL (and indirectly makes fail probing everything that
+depends on it, smem, nandc with smem-parser...)
 
-Best regards,
-Krzysztof
+Fix this by correctly adding the missing regmap_config and restore
+function of hwspinlock on SFPB based devices with MMIO implementation.
+
+Cc: stable@vger.kernel.org
+Fixes: 5d4753f741d8 ("hwspinlock: qcom: add support for MMIO on older SoCs")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/hwspinlock/qcom_hwspinlock.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
+index 9cf186362ae2..3f08cd4a5c28 100644
+--- a/drivers/hwspinlock/qcom_hwspinlock.c
++++ b/drivers/hwspinlock/qcom_hwspinlock.c
+@@ -69,9 +69,18 @@ static const struct hwspinlock_ops qcom_hwspinlock_ops = {
+ 	.unlock		= qcom_hwspinlock_unlock,
+ };
+ 
++static const struct regmap_config sfpb_mutex_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x100,
++	.fast_io		= true,
++};
++
+ static const struct qcom_hwspinlock_of_data of_sfpb_mutex = {
+ 	.offset = 0x4,
+ 	.stride = 0x4,
++	.regmap_config = &sfpb_mutex_config,
+ };
+ 
+ static const struct regmap_config tcsr_msm8226_mutex_config = {
+-- 
+2.40.1
 
