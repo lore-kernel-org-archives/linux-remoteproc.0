@@ -2,244 +2,151 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53596EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 Jul 2023 17:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387BFEB64DC
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 17 Jul 2023 17:34:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjGQRKW (ORCPT
+        id S230500AbjGQRe5 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 17 Jul 2023 13:10:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33922 "EHLO
+        Mon, 17 Jul 2023 13:34:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230059AbjGQRKH (ORCPT
+        with ESMTP id S231466AbjGQReq (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 17 Jul 2023 13:10:07 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A440A4
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jul 2023 10:10:06 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-666e6541c98so4844208b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jul 2023 10:10:06 -0700 (PDT)
+        Mon, 17 Jul 2023 13:34:46 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EABCE1735
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jul 2023 10:34:38 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id d2e1a72fcca58-666ed230c81so4927130b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Jul 2023 10:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689613806; x=1692205806;
+        d=linaro.org; s=google; t=1689615278; x=1692207278;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ui+5kFaQhEBk/elAgYltOKQsUH4OF0/XGE8UzsMb61M=;
-        b=hZkcqmTWpwz6l3X+yRVS+3eyE9e6WH73zBq+ZqaKx/EFC7QTbvEVfvQ6K4ed7xhq/9
-         pX1z0TOwttgKekgJZ3a/fQlGAIvw+VzrgRnxbOsfTbCtC8g8vEO7MU56mDphY3bJKiRr
-         +LA80t6lkbKXrqS86nZS5/KTCwm2GE194ttbXJ18E5wL9VNt4KSZMQLBtp7MWVivq/DW
-         QIrg3BSGWPepHYI4v9T/JR/xTMAZBPS+RNEQT/hZIoaSok9OinlAlQQJ3GXGvHBrI5zm
-         9E7pzPrLwoR7MbhZ0r7IIBo88DYRxlW5U8wczj3kUHn7NYPfvuIAoD9EHL1ilmPkdn5P
-         J7ew==
+        bh=dY/bKQhYLiqziai543FPa4bdBPuQhVrSABQRER0pkAA=;
+        b=CzzO1UVmFSsJKWOy2kEtRTQBmaii38fNH/tiE9eh+1JQOvxM7H0FH5QeUcoRf7RBes
+         7NrjRO7iLl5L3tASdtSROv9xyITqvUiEJJ2ZpFITl3YXRQBEHBSiFpw4taaCKl07i7MK
+         mDYKrEBz4WrxLDltIj0AaYblClBXROPBy5Mv3EnwFvdk05us3Luf3nHX6RT3lHm5HquR
+         /LW2UAoIqJ7sIwAdZ87RARWHGvLs7JfEzqL7gWOTvGZmarc50/uws5C3H+fHVDsLwWgB
+         Oc26EhALQGbjQuFJLzRvSKudyne+Vz3VOvGk7d2MmEi65r3mqZCxHcVoSs4JAJKUJtp8
+         XqeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689613806; x=1692205806;
+        d=1e100.net; s=20221208; t=1689615278; x=1692207278;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ui+5kFaQhEBk/elAgYltOKQsUH4OF0/XGE8UzsMb61M=;
-        b=f0Pr5wiu5xwTQb0X7Vz60F4SwQOi7TTuDJe4Aqfa9dmTOMuvonFeAiIa+eOWCINpDm
-         7EfB8yTL7vU47rnaNQXunoOi6i7FJCcvpPzbeixHUu12zv6cH6LeLqcVq8/sGgaciNE4
-         vj5OTkMIEATkFuifFvq0e+oxXQsJdyj9206zSmalGVKGhrOtBO4L5XLWmCD4ccSNie3y
-         brhYoq1i1SuH+czXvIXdcWDZPS0nmjIf7h4COlhiWbcSfwfowcTAof/UjuV48pkagP8G
-         p5U5g4/WFgrdqu1PJjwuTYo5UHs7NCngFLNdFTV9MmihbeAuKNAE8pKhre6SP7H718qm
-         2Qwg==
-X-Gm-Message-State: ABy/qLaomj+nup4EDoQP3OGZcEsWrfNLaLYDFeuh1MBOH7+9IkPAxYAt
-        mJ/nCPX3YTtSvO3wWRyDz3RagV0JkFIUll0Lh5E88A==
-X-Google-Smtp-Source: APBJJlE5EMPbRsXVLlVD6FoW2+kRp86bPE0pinr29pc2aSdTHz1MeIxibB57BjDc+ITD78EDWml7zA==
-X-Received: by 2002:a05:6a20:158f:b0:134:7364:a59f with SMTP id h15-20020a056a20158f00b001347364a59fmr7150533pzj.29.1689613805900;
-        Mon, 17 Jul 2023 10:10:05 -0700 (PDT)
+        bh=dY/bKQhYLiqziai543FPa4bdBPuQhVrSABQRER0pkAA=;
+        b=K3oGjcX96ejUF36sdlHCUXBgiFRe/HE3WOBHUt8BQc28HFZpQ6qyUEuYb8olTMIf8M
+         PWorQHDGn0stzRX2G7PBCAnwXPii/ocvSZ179SkH+VwGpqqlG4jpssI+9E7o4XDZZ5bX
+         2TbcM7M8T961+EqLbhf0vNfMGAlsxPZctVUWKeJEK9Dja0rZ0mnDX3jyVvd71RHur1j1
+         67ZYeCTf4KcB0yp7ULZ1DF2wFVxGlWBIyREHwCekn0u6fXn/wzH3n9cDK33/MPh1JBtb
+         sCuCU8ZnFbqjp60AxMUD3uucil8CUMb86wjurvVd9s8FB71WItpO38NLnbXg4ymt1I/F
+         FHyQ==
+X-Gm-Message-State: ABy/qLarss/K0Oa2Jyq31DdS9IwPlRC/6vI9HYhY/ppaRPOFcTzeaJNp
+        gu2uYggOeQbyv0GgvEQO7i3/ZA==
+X-Google-Smtp-Source: APBJJlHollXH/LMo0nBnBl8Njq/KUWEOy1sur5Y6TmKgvmsEoUxKdbtwJI4Fbu8pQb03mNHnf7sc2A==
+X-Received: by 2002:a05:6a20:6a0b:b0:135:6ef6:171 with SMTP id p11-20020a056a206a0b00b001356ef60171mr70712pzk.39.1689615277969;
+        Mon, 17 Jul 2023 10:34:37 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:3328:146c:de53:b695])
-        by smtp.gmail.com with ESMTPSA id r17-20020a63a011000000b0051b8172fa68sm65209pge.38.2023.07.17.10.10.04
+        by smtp.gmail.com with ESMTPSA id c11-20020aa78c0b000000b0063a04905379sm75391pfd.137.2023.07.17.10.34.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 10:10:05 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 11:10:02 -0600
+        Mon, 17 Jul 2023 10:34:37 -0700 (PDT)
+Date:   Mon, 17 Jul 2023 11:34:35 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     linux-remoteproc@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] remoteproc: imx_rproc: Switch iMX8MN/MP from SMCCC
- to MMIO
-Message-ID: <ZLV16sCOX9gRJS+S@p14s>
-References: <20230707232626.374475-1-marex@denx.de>
- <20230707232626.374475-2-marex@denx.de>
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        linux-imx <linux-imx@nxp.com>, linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>
+Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: add module parameter to
+ ignore ready flag from remote processor
+Message-ID: <ZLV7q9ipDaw4b1Hi@p14s>
+References: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230707232626.374475-2-marex@denx.de>
+In-Reply-To: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Good morning,
+Hi Iuliana,
 
-On Sat, Jul 08, 2023 at 01:26:26AM +0200, Marek Vasut wrote:
-> The MX8M CM7 boot via SMC call is problematic, since not all versions
-> of ATF support this interface. Extend the MMIO support so it can boot
-> the CM7 on MX8MN/MP instead and discern the two alternatives using DT
-> compatible strings.
+On Thu, Jul 13, 2023 at 01:42:51AM +0300, Iuliana Prodan (OSS) wrote:
+> From: Iuliana Prodan <iuliana.prodan@nxp.com>
 > 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-remoteproc@vger.kernel.org
-> ---
->  drivers/remoteproc/imx_rproc.c | 53 ++++++++++++++++++++++++++++++++--
->  drivers/remoteproc/imx_rproc.h |  2 ++
->  2 files changed, 53 insertions(+), 2 deletions(-)
+> There are cases when we want to test samples that do not
+> reply with FW READY message, after fw is loaded and the
+> remote processor started.
+
+This seems like a bug to me - where is this FW comes from?
+
+> In these cases, do not wait for a confirmation from the remote processor
+> at start.
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index d0eb96d6a4fe1..09589f664a2be 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -41,6 +41,12 @@
->  #define IMX7D_M4_STOP			(IMX7D_ENABLE_M4 | IMX7D_SW_M4C_RST | \
->  					 IMX7D_SW_M4C_NON_SCLR_RST)
+> Added "ignore_dsp_ready" flag while inserting the module to ignore
+> remote processor reply after start.
+> By default, this is off - do not ignore reply from rproc.
+> 
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> 
+> ---
+> This was discovered while testing openamp_rsc_table sample from Zephyr
+> repo (https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc/openamp_rsc_table).
+> 
+> We have IPC, but the remote proc doesn't send a FW_READY reply.
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index b5634507d953..ed89de2f3b98 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -36,7 +36,13 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
+>  MODULE_PARM_DESC(no_mailboxes,
+>  		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
 >  
-> +#define IMX8M_M7_STOP			(IMX7D_ENABLE_M4 | IMX7D_SW_M4C_RST)
-> +#define IMX8M_M7_POLL			IMX7D_ENABLE_M4
+> +static unsigned int imx_dsp_rproc_ignore_ready;
+> +module_param_named(ignore_dsp_ready, imx_dsp_rproc_ignore_ready, int, 0644);
+> +MODULE_PARM_DESC(ignore_dsp_ready,
+> +		 "Ignore remote proc reply after start, default is 0 (off).");
 > +
-> +#define IMX8M_GPR22			0x58
-> +#define IMX8M_GPR22_CM7_CPUWAIT		BIT(0)
-> +
->  /* Address: 0x020D8000 */
->  #define IMX6SX_SRC_SCR			0x00
->  #define IMX6SX_ENABLE_M4		BIT(22)
-> @@ -92,6 +98,7 @@ static int imx_rproc_detach_pd(struct rproc *rproc);
->  struct imx_rproc {
->  	struct device			*dev;
->  	struct regmap			*regmap;
-> +	struct regmap			*gpr;
->  	struct rproc			*rproc;
->  	const struct imx_rproc_dcfg	*dcfg;
->  	struct imx_rproc_mem		mem[IMX_RPROC_MEM_MAX];
-> @@ -287,6 +294,18 @@ static const struct imx_rproc_att imx_rproc_att_imx6sx[] = {
->  	{ 0x80000000, 0x80000000, 0x60000000, 0 },
->  };
+>  #define REMOTE_IS_READY				BIT(0)
+> +#define REMOTE_IGNORE_READY_REPLY	BIT(1)
+>  #define REMOTE_READY_WAIT_MAX_RETRIES		500
 >  
-> +static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mn_mmio = {
-> +	.src_reg	= IMX7D_SRC_SCR,
-> +	.src_mask	= IMX7D_M4_RST_MASK,
-> +	.src_start	= IMX7D_M4_START,
-> +	.src_stop	= IMX8M_M7_STOP,
-> +	.gpr_reg	= IMX8M_GPR22,
-> +	.gpr_wait	= IMX8M_GPR22_CM7_CPUWAIT,
-> +	.att		= imx_rproc_att_imx8mn,
-> +	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8mn),
-> +	.method		= IMX_RPROC_MMIO,
-> +};
-> +
->  static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mn = {
->  	.att		= imx_rproc_att_imx8mn,
->  	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8mn),
-> @@ -367,8 +386,14 @@ static int imx_rproc_start(struct rproc *rproc)
+>  /* att flags */
+> @@ -296,6 +302,12 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
+>  	if (!priv->rxdb_ch)
+>  		return 0;
 >  
->  	switch (dcfg->method) {
->  	case IMX_RPROC_MMIO:
-> -		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
-> -					 dcfg->src_start);
-> +		if (priv->gpr) {
-> +			ret = regmap_clear_bits(priv->gpr, dcfg->gpr_reg,
-> +						dcfg->gpr_wait);
-> +		} else {
-> +			ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
-> +						 dcfg->src_mask,
-> +						 dcfg->src_start);
-> +		}
->  		break;
->  	case IMX_RPROC_SMC:
->  		arm_smccc_smc(IMX_SIP_RPROC, IMX_SIP_RPROC_START, 0, 0, 0, 0, 0, 0, &res);
-> @@ -400,6 +425,16 @@ static int imx_rproc_stop(struct rproc *rproc)
->  
->  	switch (dcfg->method) {
->  	case IMX_RPROC_MMIO:
-> +		if (priv->gpr) {
-> +			ret = regmap_set_bits(priv->gpr, dcfg->gpr_reg,
-> +					      dcfg->gpr_wait);
-> +			if (ret) {
-> +				dev_err(priv->dev,
-> +					"Failed to quiescence M4 platform!\n");
-> +				return ret;
-> +			}
-> +		}
+> +	/*
+> +	 * FW_READY reply is optional/ignored, so don't wait for it.
+> +	 */
+> +	if (priv->flags & REMOTE_IGNORE_READY_REPLY)
+> +		return 0;
 > +
->  		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
->  					 dcfg->src_stop);
->  		break;
-> @@ -988,6 +1023,10 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  		break;
->  	}
+>  	for (i = 0; i < REMOTE_READY_WAIT_MAX_RETRIES; i++) {
+>  		if (priv->flags & REMOTE_IS_READY)
+>  			return 0;
+> @@ -1119,6 +1131,9 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
+>  	else
+>  		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_alloc;
 >  
-> +	priv->gpr = syscon_regmap_lookup_by_phandle(dev->of_node, "gpr");
-> +	if (IS_ERR(priv->gpr))
-> +		priv->gpr = NULL;
+> +	if (imx_dsp_rproc_ignore_ready)
+> +		priv->flags |= REMOTE_IGNORE_READY_REPLY;
 > +
->  	regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
->  	if (IS_ERR(regmap)) {
->  		dev_err(dev, "failed to find syscon\n");
-> @@ -997,6 +1036,14 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  	priv->regmap = regmap;
->  	regmap_attach_dev(dev, regmap, &config);
+>  	dev_set_drvdata(dev, rproc);
 >  
-> +	if (priv->gpr) {
-> +		ret = regmap_read(priv->gpr, dcfg->gpr_reg, &val);
-> +		if (val & dcfg->gpr_wait) {
-> +			imx_rproc_stop(priv->rproc);
-> +			return 0;
-> +		}
-> +	}
-
-Can you provide a comment to explain what is happening above?  In what kind of
-scenario would a GPR be set with the wait bit on startup?
-
-Thanks,
-Mathieu
-
-> +
->  	ret = regmap_read(regmap, dcfg->src_reg, &val);
->  	if (ret) {
->  		dev_err(dev, "Failed to read src\n");
-> @@ -1142,6 +1189,8 @@ static const struct of_device_id imx_rproc_of_match[] = {
->  	{ .compatible = "fsl,imx8mm-cm4", .data = &imx_rproc_cfg_imx8mq },
->  	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
->  	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
-> +	{ .compatible = "fsl,imx8mn-cm7-mmio", .data = &imx_rproc_cfg_imx8mn_mmio },
-> +	{ .compatible = "fsl,imx8mp-cm7-mmio", .data = &imx_rproc_cfg_imx8mn_mmio },
->  	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
->  	{ .compatible = "fsl,imx8qm-cm4", .data = &imx_rproc_cfg_imx8qm },
->  	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
-> diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
-> index 1c7e2127c7584..79a1b8956d142 100644
-> --- a/drivers/remoteproc/imx_rproc.h
-> +++ b/drivers/remoteproc/imx_rproc.h
-> @@ -31,6 +31,8 @@ struct imx_rproc_dcfg {
->  	u32				src_mask;
->  	u32				src_start;
->  	u32				src_stop;
-> +	u32				gpr_reg;
-> +	u32				gpr_wait;
->  	const struct imx_rproc_att	*att;
->  	size_t				att_size;
->  	enum imx_rproc_method		method;
+>  	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
 > -- 
-> 2.40.1
+> 2.17.1
 > 
