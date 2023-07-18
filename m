@@ -2,52 +2,57 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96331EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jul 2023 15:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE8DEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jul 2023 15:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231244AbjGRPlC (ORCPT
+        id S233105AbjGRPsI (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 11:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
+        Tue, 18 Jul 2023 11:48:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230296AbjGRPlB (ORCPT
+        with ESMTP id S232079AbjGRPsH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jul 2023 11:41:01 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2041.outbound.protection.outlook.com [40.107.7.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 769CEDD;
-        Tue, 18 Jul 2023 08:40:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GWY3/RpObjawJOezDAKkEGhC8rAk/vut4kEKDoFXTQfN/8ZKoyabbJzES5TICELAOVbOTajOVCduym8mql/TLXl6YpFqhJvvtqgjuK3OpO1B21ZvPPkZZIO3d27YO9tNTSIsRXePdoUDHHrasOqG2wd0/TJhWyWvj+ZGWlr+uh0IquDQnwEhrEK6klBZCD4ShifCj+yvqDN6vaqP9Prty2VPQChu7Yf2MIOc+dRz9A5JW09oPhY3zjBmmCPoHmGoNnDBX73FxJn1CeMdKjy62BMvUAaYf10/bIFZfcyzd5IBGWiWx/w1dmkFqNexpYyJmC2hHOELEJDu2o5yrGqm4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jG7CTn+1t4UFxt+pm9emW0cq48h8DO/l5TMegM506Vw=;
- b=ZFZMCGYU02wWdTzF8P7wbv0Qh8l3J51HoJKTvV8dD20jdC5J/cXVyoe6pve0v9rHEAm9po386anLVk2T98kz9RlF2pcH0UIZBPwZjdc0pMkIIBb5Tk1InrBfVstdKIceDt/Ykszx66FiNmfMXM8dztKGjY90kHPq7bvXoTit88TQoj8t2dM4aWocJmbNUZC/QKSuc73fBWxdRKVIT3ZhPJJ5u9WnOmZoH2X1uNb1JbSc8uRkPtZ5fvngzZD2JPGWP7zh1KW8suDG1CPdcZ0c1JfUxX+FCYtf/IMyovsUUjeTfxVnMbAcU6FyDgFcJTskMkgNO5GYGNvIjusRkr+WqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jG7CTn+1t4UFxt+pm9emW0cq48h8DO/l5TMegM506Vw=;
- b=le+Z0Ruh4wVQ2ZOf0q2zDxMpErMRYae3yMymsbvC+riByjW2FpGeWQNLpZLwT7vsXJYaglCKPKAzKbLfZ2NDL4q9UARRf/2qUwit3Rnv5XTsKxxpq1prn7NqAj+6F3ebQ0sx+s5N0f0MLyZKmVM9ygVT59GqIHmoLQ2qzwEAFyo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by AM0PR04MB7155.eurprd04.prod.outlook.com (2603:10a6:208:194::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Tue, 18 Jul
- 2023 15:40:56 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::f1e4:90a0:aabe:ac23]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::f1e4:90a0:aabe:ac23%7]) with mapi id 15.20.6588.031; Tue, 18 Jul 2023
- 15:40:55 +0000
-Message-ID: <03d7c703-81cb-20f9-aaf8-2ab8ca3e7138@nxp.com>
-Date:   Tue, 18 Jul 2023 18:40:53 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] remoteproc: imx_dsp_rproc: add mandatory
- find_loaded_rsc_table op
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+        Tue, 18 Jul 2023 11:48:07 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4DE1AC
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jul 2023 08:48:06 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id d2e1a72fcca58-6689430d803so3926641b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jul 2023 08:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689695286; x=1692287286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nMaNKzW364IzXp39gEH13PO0+N2Kob1GSxyJEEV3FuQ=;
+        b=yUvq8kPvagHqLvP5wLP/JLTNJ4EPEruA/erv9/PV5l+FI3k3ExL84pPm2i91UaZ5wu
+         mpQ7B3tyeWX2NkIEDXbqxeohUly2cQpmCFIhXzTjtxRGRKwznKGaCqmZg6MWO9Y+ByrE
+         BPfXr/ZxMxmnU2ofcxtI0hJfdhLb9vamRo0kaA839lyHXGcmJbQTX6eZtTndjCXie0M0
+         m/2DqZjQ+rbXo7OqVoDhCuQ/Rp60Y1RTf7G4SyNYGp2LiW5IW7ivch+iICV12IW4N/pt
+         da4AAeHJxMnWQJXpaP1f3YSM1sfFzpOTmU3UvM48ynDCK5tkKCSZF7H6iHSvFapeI3xe
+         P5Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689695286; x=1692287286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nMaNKzW364IzXp39gEH13PO0+N2Kob1GSxyJEEV3FuQ=;
+        b=U1pvK7kQDrFn4SymUcCXuByBbQj/xzbra5+GvyBxxj0v6eiqa+oySlgDwCj3TaqReB
+         wnViL7/2H8nBsQ11n3zMXiaisYZOIDRcYMHeLFbXDFm2fpRxcFfP7yewHNBMBlg32fR2
+         TN5V/URsW2PlBgAsGR9crik9waFIGJhG2kCfYQqUIhLtzzyTv53KGsX522pYg3mkT3pn
+         XzbtN8affDV4PMadO/V3eI1q4Xpj8lugSbi5GxvS4Sl85WSAaikIzsg1WoTeDKa99lOO
+         tX7boO91LOTV2p+AXero/WkrloW9aTGxItZ5Yoo1hv8xTnUvBaoHK8fpy4qYYz6ZUEHW
+         wrkA==
+X-Gm-Message-State: ABy/qLYekKJOnXw/Zse+j9mjS8z1h+yT9xoRDrTykJj1cMiLxO3LJC2z
+        OTuEchkO00x2Fw6vPq9+aoyYZw==
+X-Google-Smtp-Source: APBJJlH9RnLLkdWYjAyRtMI2gK97UOiaQOggN18fZu9Dxpw3LMeoROZuCKARy5NAcvxTDRqufFLgiA==
+X-Received: by 2002:a05:6a20:a122:b0:132:86ea:4725 with SMTP id q34-20020a056a20a12200b0013286ea4725mr17258077pzk.45.1689695285867;
+        Tue, 18 Jul 2023 08:48:05 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:181:e3fe:53e1:920])
+        by smtp.gmail.com with ESMTPSA id x53-20020a056a000bf500b00684ca1b45b9sm1748933pfu.149.2023.07.18.08.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 08:48:05 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 09:48:02 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>
 Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
         Bjorn Andersson <andersson@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -60,144 +65,118 @@ Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         LnxRevLi <LnxRevLi@nxp.com>
-References: <20230712224220.26430-1-iuliana.prodan@oss.nxp.com>
- <ZLV9gAmiDldlvIUR@p14s> <474c0241-a58e-b435-8ac1-82a5a458d79a@nxp.com>
- <ZLauY85b9SRC3z0x@p14s>
-Content-Language: en-US
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <ZLauY85b9SRC3z0x@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P190CA0030.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d0::20) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: add module parameter to
+ ignore ready flag from remote processor
+Message-ID: <ZLa0MqKvg1W3mx/7@p14s>
+References: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
+ <ZLV7q9ipDaw4b1Hi@p14s>
+ <6fe5691f-67f4-ff70-8350-b4b6c08097b0@nxp.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|AM0PR04MB7155:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0376dcea-3068-4a8f-7979-08db87a56032
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +G7h4PjTMlXKC6KApQkd/JOEiqPX6uApsGY9QRV+acf4jBdZcFgY7N7USxK1HK9qEWaHzMrrqHt3GKdoSM84ytkB4SIp3LFKVX7P0t1k258z9osMNpD3SPJzfH6L+rXOhhoLRQrfQfVdF0BGRtQneA5yDTpHbeFMo7tsZI2/DLWgz86EmjkN2m3U83/VPFRBfWcAyAo/XlXgc47To5F86mYRBdNQBV2bINbH6vDTq53my6m9fqm7c1iwhlYnqMZpnfAY5+5SFhJI0TiyltuTQGaa0fCy0Uk6Y3Krfn+rxy6awJXhcS4RDZ7lEmTF0WJNrLsF8DDUnuAIj9EsCZccRNIC94M4KA/SHBr5/pw4TlktGnzWlb6lndXWf/4k/F1ohey2VbIYCcsOtO5zQkwJ1xt0xQhFIUVW4f6MNQjwXlMXEz9rTom1X2sUxFr0A4UoAZHna7wWLW/wrXKbL+Bcv4705EeBB+Qr8MXQiWgyb4zjgsb8uW0dwyVLhTyVz8NlR4fNpskTzkcDXhWwBEevieWKk4KUvNifggmBCaNqGrbm+ps5IN5nUTyMUNwNLPH4McB03sIc9onjC1bKnFgg5tsqOyKmeiWLs84MCKVCivFEEjB/y/D4570jQod2ejmNaV9Obv+gCuzbEvczSiZ8jg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(136003)(376002)(366004)(346002)(39860400002)(451199021)(31696002)(8676002)(316002)(8936002)(44832011)(66556008)(31686004)(66946007)(5660300002)(6486002)(4326008)(2906002)(478600001)(26005)(6512007)(53546011)(54906003)(6506007)(41300700001)(186003)(66476007)(83380400001)(2616005)(6916009)(38100700002)(36756003)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Qm9PRVhvZWJsVFg5S2ZPNWhTR1MxUUJUWXZNL1FOdnh4R0JvNjlHQjVLOFFG?=
- =?utf-8?B?VEZZMHhRT2VMMjE1OHAyYkhvL2tqV2gvMjhzR1hyTm1rck8wTEM5SDZsRldF?=
- =?utf-8?B?ZTZWTmd1N1B2QVhOOTJ3ekpnNlN4Tkpid0ZuVHRyUVlzZXgvL0VUTjBTZ0x6?=
- =?utf-8?B?Z0N6NDBVNmxIVzdadklmcmhYcFRNWGpSek9QMEYrSjQ5ZnFIRWVNNitZai8x?=
- =?utf-8?B?ZFczWldOMkFoblExbFVkSmVWdW5SSk1tZWgyVDRJYWlJa01JSDAvdGN3V3Er?=
- =?utf-8?B?S01jSno0cHh3SDRVekhPMURrbjNHNVBJdmZ2WDB4U0trUjZwUk56eFZDOFBa?=
- =?utf-8?B?L0Z0eUNLUFNWeTk3WGUwM1ZDems1TW52dzZEUEdyQkJZUVNHQmxRQy9HaFpG?=
- =?utf-8?B?KzNSUFBUczM0MVJpZXZGdHY2TFUvUXozN0x2Z0VpS252MDJGenBEcytPa0dq?=
- =?utf-8?B?WkRmZ1gyZkh5ZE0ybWFxNlhYUjhVZmdaaHZVQ0hqSFFVVWI1ckZsUmg1M09x?=
- =?utf-8?B?SjRJUTRDdDFIZlFhejJHaDk5MHRSK204dk9jTFJqWWlLTytBZ0F6R1pTV25u?=
- =?utf-8?B?Q2wwcXBZbTZXS2U5bmVBbUF6NCs3bDlYSWM0RzFTUzgreWhYdUlheXFsYUVB?=
- =?utf-8?B?dzA5V2tQd2ovTlViT2ZGWGtBMVR0LzhKR1FKQ1pTZEF1ME9oNHpGVXNNenZt?=
- =?utf-8?B?K2FGcHNCcmxSclBhWVJhUzluNE9uaVJBNW9CdzRnZkMzaFhaSW8rbFRXODBm?=
- =?utf-8?B?RW9HVk83Q2hyMUVPTHZVb2xsT3NEMkhNdlVvQmk2c29Ba2o0TDVsRjBMbEo5?=
- =?utf-8?B?QXorenBvKzNvTHdFbjlSc081WVRRNGI3ejNYQzYrdzJkY2tyU2Zya3AyQ3Ro?=
- =?utf-8?B?VExCazIvTDQwVTZHRE0yMVZQQUZXQ09sS1Nha2YvZ3FYeXg2MWdFeUNlT3N5?=
- =?utf-8?B?KzRMYTRKL2FwTE5HbmFibnB6V0dDb3FFTUR1MGwwTnU5OTFITTJaV01HZlRx?=
- =?utf-8?B?Rm5EOEtWSnBXNHBwZFE1dWY3cUpzWVpYUk5iNkZXVW1oZUtRc1dOcXF3RTVa?=
- =?utf-8?B?RlFTemxGSmF5NzN2YmhTUGUrZlp4QnNIYWo4WExTeXdDQkl0bWdmWHR0WVRO?=
- =?utf-8?B?VGVac2FodG5HSUJvSkFGRnI5dlgvYUNuRi9hWkU3VW1pOGl5a3hSek5BbTVl?=
- =?utf-8?B?UG1HZUNlQVRveEVIcEJXZ3VEek9kT0VCZDVFbkF4eHlYbWY0ZWJrck0raWl4?=
- =?utf-8?B?NWNqdElsMHhOTmlFaHl6YUFueUlwcDIzUUdzdFFzc2YwNTB5Tkd4eDZYN09s?=
- =?utf-8?B?Mm12cnRDazRRUzNDcGNNWEE4elpUWFp1aTJmeDJXc2hqSjcwY2lLT0ZXQVk3?=
- =?utf-8?B?bVB4WUZBQXFVUEdUUFZTQU4ybmJTekpyeWxoR0FIcVpCaTFja1c2Z21mS1Rv?=
- =?utf-8?B?dnFUWUlKSUZXWFZzYlVSUzZYY2s4czNIYlJuYlRTdDV3SWd3Tnk0a01ZcEU2?=
- =?utf-8?B?OXlNQ0RsVjFRclNmTnRMclNUZlpJTi9PNnRwU1NGamJUTmIwOU5GZkM1a2ND?=
- =?utf-8?B?QlhsNjdEZkpQRGcyaThEWmZPK3ZzbjFhdDd3RnFibllPbk1ZbkJrbEdYQVg3?=
- =?utf-8?B?YVZHWHZFOWsrRmFicG1LcmJra3g2NFl2bEJ3aVJkdE1IWmlXNVN3bkNMS1FG?=
- =?utf-8?B?MkpOdDR5cVVtOWNzUHlzY2hmZWg4ck5yQUxZNE9xcWN0Z21oRDdtVmxzNHJ2?=
- =?utf-8?B?WDlYMWlZbnVpTW0yeU1sMDRNbkZpTnFVNUtpSE04dWdoVFNsY2MrazlUMU1U?=
- =?utf-8?B?ME9VeHRuNSsrVEdHUy9EUTFjR3RIOXI2WGppZlFaMmptT0NuL0J6UlNERnFL?=
- =?utf-8?B?L2p1UWdKVlprcWNtWmllc3hTOEpCaHFVNE82SFpCUlFuVTR5QUNDZHdFMEYv?=
- =?utf-8?B?V2x6T0h3Q21rMHVFakw5R2ZoanlxS1lIdE9DVVFveU5wYjYvd09QWlJFMnF6?=
- =?utf-8?B?OFpaL0x1SVd1ckhoZUUwTDRHZC9oQWFwTGhBRHRXZ1BYZkppa3F4Q29BajRM?=
- =?utf-8?B?a1lkT3hDWHRnSWdrNXozUDZ3UDM1UDFYVUdtNEpOMWI1bTRySFVjVlRRL3da?=
- =?utf-8?B?Ni9sWjZxYVowdk43UU0xa0Fwbkt1TTFtdmNLcVlrUW1GcnY0cDd0RFJGT0hV?=
- =?utf-8?B?a1E9PQ==?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0376dcea-3068-4a8f-7979-08db87a56032
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2023 15:40:55.9128
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2sbOgcP6To/F7hmKP0OCqQ3mLfHj0XNbA9iw2fLGFu4BaqFhWM8SFegqY+odvKCa+ihy+tTt8MGh7XOnY7NwVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7155
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6fe5691f-67f4-ff70-8350-b4b6c08097b0@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+On Tue, Jul 18, 2023 at 11:30:43AM +0300, Iuliana Prodan wrote:
+> Hi Mathieu,
+> 
+> On 7/17/2023 8:34 PM, Mathieu Poirier wrote:
+> > Hi Iuliana,
+> > 
+> > On Thu, Jul 13, 2023 at 01:42:51AM +0300, Iuliana Prodan (OSS) wrote:
+> > > From: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > > 
+> > > There are cases when we want to test samples that do not
+> > > reply with FW READY message, after fw is loaded and the
+> > > remote processor started.
+> > This seems like a bug to me - where is this FW comes from?
+> The firmware is a generic sample from Zephyr repo: https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc/openamp_rsc_table
+> 
+> There is no bug, this is how the application was written.
 
-On 7/18/2023 6:23 PM, Mathieu Poirier wrote:
-> On Tue, Jul 18, 2023 at 11:25:03AM +0300, Iuliana Prodan wrote:
->> On 7/17/2023 8:42 PM, Mathieu Poirier wrote:
->>> On Thu, Jul 13, 2023 at 01:42:20AM +0300, Iuliana Prodan (OSS) wrote:
->>>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->>>>
->>>> Add the .find_loaded_rsc_table operation for i.MX DSP.
->>>> We need it for inter-process communication between DSP
->>>> and main core.
->>>>
->>>> This callback is used to find the resource table (defined
->>>> in remote processor linker script) where the address of the
->>>> vrings along with the other allocated resources (carveouts etc)
->>>> are stored.
->>>> If this is not found, the vrings are not allocated and
->>>> the IPC between cores will not work.
->>> Is there a constraint on the system memory the M4 can address?  If so there
->>> will be a need to declare address ranges for vrings and buffers in reserved
->>> memory in the DT.
->>>
->>> Thanks,
->>> Mathieu
->> Hi Mathieu,
->>
->> No, there is no constraint on memory.
->>
->> We want the Cortex A core to communicate with the HiFi4 DSP.
->> The Cortex A is in charge of starting the DSP and loading the firmware in
->> HiFi4's memory.
->> When using rpmsg for IPC, the Cortex A needs to find the resource table
->> (defined in the DSP linker script) and this is done using
->> .find_loaded_rsc_table callback.
->>
->> For the DT, we are using a (not upstream) device tree where we have the
->> reserved-memory for dsp_vdev0vring0, dsp_vdev0vring1 and dsp_vdev0buffer.
-> That is the part I'm interested in.  Don't we need the reserved-memory entries?
-> Otherwise the M4 may not be able to access the memory chosen by the application
-> processor, most likely leading to a crash.
+But how did it ever worked before?  And how does having a module flag to
+characterize each FW implementation that springs up in the field can scale (and
+be maintainable)?
 
-This kernel module (imx_dsp_rproc) is used only for DSP.
-For M4 core we use imx_rproc.
+> 
+> Rather than modifying a generic sample for i.MX usecase, I prefer doing an
+> "insmod imx_dsp_rproc.ko ignore_dsp_ready=1" just for this sample.
 
-Iulia
+We already have a "no_mailbox" flag for cases where the FW doesn't need to
+communicate with the main processor.  What happens when some FW implementation
+requires a three-way handshake?  How many flags do we spin off?
 
->> Iulia
->>
->>
->>>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
->>>> ---
->>>>    drivers/remoteproc/imx_dsp_rproc.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
->>>> index d95fa5586189..b5634507d953 100644
->>>> --- a/drivers/remoteproc/imx_dsp_rproc.c
->>>> +++ b/drivers/remoteproc/imx_dsp_rproc.c
->>>> @@ -941,6 +941,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
->>>>    	.kick		= imx_dsp_rproc_kick,
->>>>    	.load		= imx_dsp_rproc_elf_load_segments,
->>>>    	.parse_fw	= imx_dsp_rproc_parse_fw,
->>>> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
->>>>    	.sanity_check	= rproc_elf_sanity_check,
->>>>    	.get_boot_addr	= rproc_elf_get_boot_addr,
->>>>    };
->>>> -- 
->>>> 2.17.1
->>>>
+As I said above this approach is not sustainable.  I suggest to either fix the
+FW (it doesn't work with upstream in its present form anyway) or start using the
+config space as described here [1] to dynamically probe the characteristics of
+the FW being loaded.  Whichever option you chose, the FW needs to be updated and
+the former is a lot more simple.
+
+Thanks,
+Mathieu
+
+[1]. https://elixir.bootlin.com/linux/latest/source/include/linux/remoteproc.h#L298
+
+> 
+> Thanks,
+> Iulia
+> 
+> > > In these cases, do not wait for a confirmation from the remote processor
+> > > at start.
+> > > 
+> > > Added "ignore_dsp_ready" flag while inserting the module to ignore
+> > > remote processor reply after start.
+> > > By default, this is off - do not ignore reply from rproc.
+> > > 
+> > > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > > 
+> > > ---
+> > > This was discovered while testing openamp_rsc_table sample from Zephyr
+> > > repo (https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fzephyrproject-rtos%2Fzephyr%2Ftree%2Fmain%2Fsamples%2Fsubsys%2Fipc%2Fopenamp_rsc_table&data=05%7C01%7Ciuliana.prodan%40nxp.com%7C4779cb20393e4af08a9408db86ec191e%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638252120814415013%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=iCjvv8wr3sQ4CEXFcXDsW0VSw5RXr1ASw7LN2J08SXE%3D&reserved=0).
+> > > 
+> > > We have IPC, but the remote proc doesn't send a FW_READY reply.
+> > > ---
+> > >   drivers/remoteproc/imx_dsp_rproc.c | 15 +++++++++++++++
+> > >   1 file changed, 15 insertions(+)
+> > > 
+> > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> > > index b5634507d953..ed89de2f3b98 100644
+> > > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > > @@ -36,7 +36,13 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
+> > >   MODULE_PARM_DESC(no_mailboxes,
+> > >   		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
+> > > +static unsigned int imx_dsp_rproc_ignore_ready;
+> > > +module_param_named(ignore_dsp_ready, imx_dsp_rproc_ignore_ready, int, 0644);
+> > > +MODULE_PARM_DESC(ignore_dsp_ready,
+> > > +		 "Ignore remote proc reply after start, default is 0 (off).");
+> > > +
+> > >   #define REMOTE_IS_READY				BIT(0)
+> > > +#define REMOTE_IGNORE_READY_REPLY	BIT(1)
+> > >   #define REMOTE_READY_WAIT_MAX_RETRIES		500
+> > >   /* att flags */
+> > > @@ -296,6 +302,12 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
+> > >   	if (!priv->rxdb_ch)
+> > >   		return 0;
+> > > +	/*
+> > > +	 * FW_READY reply is optional/ignored, so don't wait for it.
+> > > +	 */
+> > > +	if (priv->flags & REMOTE_IGNORE_READY_REPLY)
+> > > +		return 0;
+> > > +
+> > >   	for (i = 0; i < REMOTE_READY_WAIT_MAX_RETRIES; i++) {
+> > >   		if (priv->flags & REMOTE_IS_READY)
+> > >   			return 0;
+> > > @@ -1119,6 +1131,9 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
+> > >   	else
+> > >   		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_alloc;
+> > > +	if (imx_dsp_rproc_ignore_ready)
+> > > +		priv->flags |= REMOTE_IGNORE_READY_REPLY;
+> > > +
+> > >   	dev_set_drvdata(dev, rproc);
+> > >   	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
+> > > -- 
+> > > 2.17.1
+> > > 
