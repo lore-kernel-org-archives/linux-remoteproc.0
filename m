@@ -2,218 +2,228 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E08ACEB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jul 2023 08:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812ECEB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jul 2023 12:05:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbjGRIaw (ORCPT
+        id S232206AbjGRMFm (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 04:30:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50120 "EHLO
+        Tue, 18 Jul 2023 08:05:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbjGRIav (ORCPT
+        with ESMTP id S231922AbjGRMFj (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jul 2023 04:30:51 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2064.outbound.protection.outlook.com [40.107.21.64])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D33A10E;
-        Tue, 18 Jul 2023 01:30:49 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a/ZghBqi6+PQm9uRVQ0v1rxDkkes/z83zcqKX0R1mhMVcnKeaKMYKoCGeZMD7M6Rt/IuArSRsh8UTf3ekIeJIu1z+fRUCYNAzjNsx8ZWOh6JDRtu2bcT9BkvvjfhQ0TjmilDinq2RNTUy9hGf7puclFR9vFr1mNKjm9pGhIE1IZaczGuhlIpxcPL/GBTR1r/IS2MRG6vBrlV0n5+925lqiO8Jj0jS5NPIuwbar9RI7lYtUYiAsyJuTSJ2jNMFu/hJ3p/wQfubkmPwHTuLrOFSo+WCZiysLamUpg6MAUJJuWJ9tEbZbBrQxC39M3Bq5j7iGoePIifwKtWD/gHSKUztQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2x54rjkk5qZCg9moZsZJJltH31B7lmf3N+a0omJr+eY=;
- b=Zi3nTO6wo9pJcB9+mF54uod2x7TW6iFbmBpVTzy240j1B7Wz8vyPu9hfdGKsM0XNQ5N+48TXg1ItmUJePZJ8OPpu0HrUe+MNEeJ6k1ErsqQw2iDDHcMRNh+/9juW48s9SqGrxBjN3yG0lmSIYcGlYg4zSYEY+yv4CEoWsWEnM/pfO7ozVsMiGQNeNBi9A4VhvhSKxNENsq8WWePm14Ma7T/Gw8TITt2aF2ubxG90MmxZS6Y06DT8fIwQonU5w/WHIERfumQW22ss0oqhw3+wWR/2VwT0gl8htkyxIBSuCopkUr95wpcu0CNqwepBV+EfHZlQKxuj/63EQmssbE4RNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2x54rjkk5qZCg9moZsZJJltH31B7lmf3N+a0omJr+eY=;
- b=TRHV/VD+IqKz6tycxQvUGwAh7UOUpsWgUpfyAN64ibk3IkYXPdMVL9ppYTN+/oYUMc9YrO8wG0szWlvRP9ZT3trI8xAi9Z/auBfZZxBMTf6u3saLCTWZbfrVLV1mdX4BbbEjw95aVKZMH5/U/H+ZpYf2hathEWA9bZNb34EZ/28=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
- by AM9PR04MB8617.eurprd04.prod.outlook.com (2603:10a6:20b:438::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.32; Tue, 18 Jul
- 2023 08:30:46 +0000
-Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::f1e4:90a0:aabe:ac23]) by DU2PR04MB8774.eurprd04.prod.outlook.com
- ([fe80::f1e4:90a0:aabe:ac23%7]) with mapi id 15.20.6588.031; Tue, 18 Jul 2023
- 08:30:46 +0000
-Message-ID: <6fe5691f-67f4-ff70-8350-b4b6c08097b0@nxp.com>
-Date:   Tue, 18 Jul 2023 11:30:43 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: add module parameter to
- ignore ready flag from remote processor
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mpuaudiosw <Mpuaudiosw@nxp.com>, linux-imx <linux-imx@nxp.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        LnxRevLi <LnxRevLi@nxp.com>
-References: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
- <ZLV7q9ipDaw4b1Hi@p14s>
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-In-Reply-To: <ZLV7q9ipDaw4b1Hi@p14s>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR06CA0111.eurprd06.prod.outlook.com
- (2603:10a6:208:ab::16) To DU2PR04MB8774.eurprd04.prod.outlook.com
- (2603:10a6:10:2e1::21)
+        Tue, 18 Jul 2023 08:05:39 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B472610FE;
+        Tue, 18 Jul 2023 05:05:36 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36IASp5H013883;
+        Tue, 18 Jul 2023 12:05:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=Sd20FWYa9WTxZ1cR3hPWl6MiQfqV7a6+5JBs1FxeZA8=;
+ b=kHkAOIVECliPJUEAnJ5u8k72/V2H7chXlOs1qG5MgHl7sSK8+B24USm+dNzdgbUvqBkU
+ AiFXg/z4o5DEokhVk/ohk+G8+HiJF5Vz3c2ODawESikLTaBwtoQJb6/5yr50++0wrHSr
+ 9so2CnqCj4VMEaNoqyzL4b0xoqG5H2FzQRItvgq2nT7/oKny0P9oAyzgTeVZx7a6tvuy
+ viTZF6bxcSQjuPYVKMIBUz6tLRVNFk+SSqpImJi7xrym2asKSA607cvUjtIL35g4xrfL
+ bAVh6vTWndappZE5Zg0Xj3ARSkLzN0Of5D/Eg1ytBHIDGw01rKBfOBW6FhcioOL0U/HV 4A== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rwnrrgqft-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jul 2023 12:05:32 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36IC5VLk008983
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 18 Jul 2023 12:05:31 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Tue, 18 Jul 2023 05:05:24 -0700
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
+        <quic_mmanikan@quicinc.com>, <loic.poulain@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
+Subject: [V3,00/11] Add multipd remoteproc support
+Date:   Tue, 18 Jul 2023 17:34:50 +0530
+Message-ID: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|AM9PR04MB8617:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4af83cf7-93d1-41b5-3140-08db876948ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: M6KvcNyh7mIhlMXRGkpj90ainsLKx8w2QKpgccIv7wyVyvXSKno1CC3xOKA6y/Yypz01B7TKkYpvUBRjZ/yySTpZ0Ha5cGJTbgxtwNzQcknlRRdBM3CnqHf8a3DLGBxjFySH//d1C63YLst3nURfHRO4tFOorOQ2T9yRBlUSy7MjnjGu1Q9OKVQCrKAp0W1S10ecCjGPDOg/wftnZzRNYHQsrxyKkOCSWINshs36GfiktAyTmk/C5zCJWuS40jYhcDAg7yToQ0eLuO/gmHCOqVyEh9R6iSkcB0+3IDJNRh9D7xR+0xMHWfJleXXedv9/6apvr26vVJpegY3ojZENWxtg0RV5vTNXMJLivLLxGu8Q+Gn4/sb9AYP20n3oUG0Te89spC+8hLr8gGdT5TPznwBU6G7oc58G3ksXczxIEpmQFmkxkkm6hmfRofKfFl8jjK09zT0zGAJqgPrAb6WDrDD3OuOTTWFIO/8WVZIFxvVqVd20DdWAFqF2J2N1upCPoRT91BpIg1V45Dd6+sBwhlmX2GXMNA14zwx3mtulloDFwKJq9azlm8q55HX+IQMLaNV3EWBKRpAlMMlgGNbUn8KSw/ii+pJT++2fxkzjGNt0JxirdUr0yT9oFtYldinO8TkNlD21oCKDYTNCtSJ8FA==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(136003)(396003)(346002)(366004)(451199021)(54906003)(110136005)(31686004)(316002)(186003)(8676002)(44832011)(8936002)(478600001)(66556008)(66476007)(41300700001)(66946007)(4326008)(5660300002)(45080400002)(2906002)(966005)(83380400001)(6512007)(6486002)(6666004)(31696002)(86362001)(26005)(6506007)(36756003)(2616005)(53546011)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SW8zTGxzdGRNYTNsYnhRc3VLNEJnOWVVODVyY1poY2grVWRnNFNsMEFZMndn?=
- =?utf-8?B?TmtONERRMFo3M2E0TUNkRzI5TWNZUGlhdWRZenpKOXBNV0dLc21rVnlvK1ZE?=
- =?utf-8?B?VFFqVlBRS3lIcU14Wi9QMTM3TFNXQjBjVGJTTWhGeG05NFczVEV6d2QrYjg1?=
- =?utf-8?B?U1BDYmk0VWNmMHhtTGxCUlkvNGtGUEh2ZzRzRFlNdm5iSFo4c0l0VEcvc0lR?=
- =?utf-8?B?WHk2M2VEaWM0YzZMZmMxNTRRYUl1WU9WVjY0Y05oalQwdkkzelNoTTV1K2ZE?=
- =?utf-8?B?b0Y1S0J5ZEtBZXRGUTF0N0Qwa1VnL3RpRDVyVUI4Qmc5UmFvdkd1bzFtdUZ6?=
- =?utf-8?B?K0pFMzVDNUtGQTFIc1BUcFAxaVgxYW9xendkUVdNRVV2aTRYaFcxbEhkQ3o5?=
- =?utf-8?B?djBEeFEwMEloaUJjc2lXOVZjTzZmNVVtT0JmdXRZSEIxMjJaVG8wYkNqQWlP?=
- =?utf-8?B?RjFmdElqZ1hML21pS3A4RWJLb0FKZW0rdVVrUmNqN0N6UWNYYm81SHN6b2Nw?=
- =?utf-8?B?WGNUUExINkZ2Ris0bUZLdW5XQ2hvUW5uWkpuVkZZUjlVdlR6eUhIQ3JHTDJG?=
- =?utf-8?B?YVo4S1ZQaGREdGJNSFdORUxWSUFnRFh2MWhacUozdHpHYTF1WDRHQmdsUENN?=
- =?utf-8?B?K0x6MzI3ZXFNNFJZTnliZ08zaUhCbFh1S2h6NHZYWXBQYkRNMUNYZnhYZWxZ?=
- =?utf-8?B?bmgvTFRJNFMzMHNpR2c1eGNIZ2RZRUE3MGtWNy9SUEtyQkVUbndXeXhUNU9p?=
- =?utf-8?B?VXlFT2xPbE5UVjFuVCtqaklKTXo4NHNqNTRJUHM3Z2hLQmZITFNZS1ZtVmpr?=
- =?utf-8?B?Tk5pTjlhaU1YQXA1TE1yTVFQOGx1UHZvaGZQTTlWcmF3UXg1VTNxZlFraUd1?=
- =?utf-8?B?Yy9NOGFVZW1zWkR1bGMvVmpVbTUvNFhzYlIxZHNCMWJzSmZoTVdKRWZqNWRi?=
- =?utf-8?B?NkZDbktIU0l6VFd4OW9tdmNyWVNnQ2w4ejJSMDdKWVFHNTZDZFZ1enZiT0ZS?=
- =?utf-8?B?Q1doUTlkcUJUZkFkYXh3Y2h5UFNybFZxNVc4L2xvVFMrYVN2cWVYQXNZOEYz?=
- =?utf-8?B?clRSOG1FY2dvSFVXczVMSW54VFF5ZTc4YTRlZVpOOVlDRTlLNU44cVFQQ3Nm?=
- =?utf-8?B?RXZrSUpVOVlpVFNmNlRSWCtTTUxtZGRJQUNaQmdoZzI4L2hmd3UyMDJObS8v?=
- =?utf-8?B?alNqdFh6ZzFLeng1bUxzRkplSGRSYzZLR0I4NHNvZUJMWjN4cVF2eGhqU2Vy?=
- =?utf-8?B?NmoweEtUWjNSWG9MSWJTRnNQay84SnFoYmZVVXNUbG14bXNLS1RTR2hWclZO?=
- =?utf-8?B?aXZIbGoyMWZQK0M5anRUdkxSd3hqdFcrTE9PZ0tiQS9Lcktnb3I0bkJGT09y?=
- =?utf-8?B?TEtvRGJVNlk3alZJSzhQbW5oMVVlVTFKSkhKeS9hN2MwQUtCdmw4eWNLbmlK?=
- =?utf-8?B?d2lzb2xUZDBSckRXeEt6bVUwTWgwS212RUpiVjJRUmxmWkJsSUc4K0I3L0xq?=
- =?utf-8?B?RGlKYktUdzJPcVBzejhBU0lRYjNFOHkrbDdwVk04N09uUTN3V0JGTDV4QSs3?=
- =?utf-8?B?M2F5cExJb1lNR2xkazhhRENyWHhwRVRyMDdRRW5Gb1IwMVpxUDhGV0w3Tzhv?=
- =?utf-8?B?dGErdlZqR3A3QmFPVTNPSmRZNzJKNzFzNDNDMGZNNlRVa0pYN1N1K3Q5RjNS?=
- =?utf-8?B?QzJPS2IwWEEwR0RJOVNwSlVaOE9IcDd2MjZMeGNKUWYrd3lLbUQ2WHExajR5?=
- =?utf-8?B?b2R6WVN1c3U2QXBZUllGSVdxd1FSZVlXZm9IbzhjdjU1aDZxSjl2eUU0aGN6?=
- =?utf-8?B?MnlXMHV2QUdxd1BGWVBweVNGNTFJVEYwUUdwdXhhR0d1ZHZWWVU3WUxXTzlU?=
- =?utf-8?B?ZnA3MnVDZlgwblk3RVUxS3lDbmdZajc1LzdaYXNsT2dKeFFNSDZrNktyblNN?=
- =?utf-8?B?NEJvNzUxd3oyZzduN25YcDdnRlZ2MHBSc2YveU4rRVdad1QwM2VWNllBa0dq?=
- =?utf-8?B?REhRbmo3RWhPaUxCUGNrVFY1NW5kUzBPeWdTMkxMWURmOHM3R3B2eVFDOVVC?=
- =?utf-8?B?MnFwOXlaekhTWEVYTVI2Y0pEcjhsTjVqNmEvS3FlSWxGd2hWTkhmdFMwVnVE?=
- =?utf-8?B?MVUwWW5HNmQxTHkwMDJHTDM5SUFaQjhBTDNzRkZLRWxTVnk2VGZkVW1Jdk1U?=
- =?utf-8?B?TkE9PQ==?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4af83cf7-93d1-41b5-3140-08db876948ad
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2023 08:30:46.5067
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qTAAUnqm40qZLiWXpzFrVeia7lIG3PJI2pTwPAlEfYw/dy3NsBIGiI7gT4cgHRGFJnP3Vh+5j/FZZYcg5CdRUA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8617
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: m7eisAaa6f_NC7p7S2QGpmsYpw2cXxPo
+X-Proofpoint-ORIG-GUID: m7eisAaa6f_NC7p7S2QGpmsYpw2cXxPo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-18_09,2023-07-18_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 phishscore=0
+ malwarescore=0 suspectscore=0 adultscore=0 spamscore=0 lowpriorityscore=0
+ mlxlogscore=702 priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307180110
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Mathieu,
+APSS brings Q6 out of reset and then Q6 brings
+WCSS block (wifi radio's) out of reset.
 
-On 7/17/2023 8:34 PM, Mathieu Poirier wrote:
-> Hi Iuliana,
->
-> On Thu, Jul 13, 2023 at 01:42:51AM +0300, Iuliana Prodan (OSS) wrote:
->> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->>
->> There are cases when we want to test samples that do not
->> reply with FW READY message, after fw is loaded and the
->> remote processor started.
-> This seems like a bug to me - where is this FW comes from?
-The firmware is a generic sample from Zephyr repo: 
-https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc/openamp_rsc_table
+				   ---------------
+			      -->  |WiFi 2G radio|
+			      |	   --------------
+			      |
+--------	-------	      |
+| APSS | --->   |QDSP6|  -----|
+---------	-------       |
+                              |
+      			      |
+			      |   --------------
+			      --> |WiFi 5G radio|
+				  --------------
 
-There is no bug, this is how the application was written.
+Problem here is if any radio crashes, subsequently other
+radio also should crash because Q6 crashed. Let's say
+2G radio crashed, Q6 should pass this info to APSS. Only
+Q6 processor interrupts registered with APSS. Obviously
+Q6 should crash and raise fatal interrupt to APSS. Due
+to this 5G radio also crashed. But no issue in 5G radio,
+because of 2G radio crash 5G radio also impacted.
 
-Rather than modifying a generic sample for i.MX usecase, I prefer doing 
-an "insmod imx_dsp_rproc.ko ignore_dsp_ready=1" just for this sample.
+In multi pd model, this problem is resolved. Here WCSS
+functionality (WiFi radio's) moved out from Q6 root pd
+to a separate user pd. Due to this, radio's independently
+pass their status info to APPS with out crashing Q6. So
+other radio's won't be impacted.
 
-Thanks,
-Iulia
+Pd means protection domain. It's similar to process in Linux.
+Here QDSP6 processor runs each wifi radio functionality on a
+separate process. One process can't access other process
+resources, so this is termed as PD i.e protection domain.
 
->> In these cases, do not wait for a confirmation from the remote processor
->> at start.
->>
->> Added "ignore_dsp_ready" flag while inserting the module to ignore
->> remote processor reply after start.
->> By default, this is off - do not ignore reply from rproc.
->>
->> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
->>
->> ---
->> This was discovered while testing openamp_rsc_table sample from Zephyr
->> repo (https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fzephyrproject-rtos%2Fzephyr%2Ftree%2Fmain%2Fsamples%2Fsubsys%2Fipc%2Fopenamp_rsc_table&data=05%7C01%7Ciuliana.prodan%40nxp.com%7C4779cb20393e4af08a9408db86ec191e%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C638252120814415013%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&sdata=iCjvv8wr3sQ4CEXFcXDsW0VSw5RXr1ASw7LN2J08SXE%3D&reserved=0).
->>
->> We have IPC, but the remote proc doesn't send a FW_READY reply.
->> ---
->>   drivers/remoteproc/imx_dsp_rproc.c | 15 +++++++++++++++
->>   1 file changed, 15 insertions(+)
->>
->> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
->> index b5634507d953..ed89de2f3b98 100644
->> --- a/drivers/remoteproc/imx_dsp_rproc.c
->> +++ b/drivers/remoteproc/imx_dsp_rproc.c
->> @@ -36,7 +36,13 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
->>   MODULE_PARM_DESC(no_mailboxes,
->>   		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
->>   
->> +static unsigned int imx_dsp_rproc_ignore_ready;
->> +module_param_named(ignore_dsp_ready, imx_dsp_rproc_ignore_ready, int, 0644);
->> +MODULE_PARM_DESC(ignore_dsp_ready,
->> +		 "Ignore remote proc reply after start, default is 0 (off).");
->> +
->>   #define REMOTE_IS_READY				BIT(0)
->> +#define REMOTE_IGNORE_READY_REPLY	BIT(1)
->>   #define REMOTE_READY_WAIT_MAX_RETRIES		500
->>   
->>   /* att flags */
->> @@ -296,6 +302,12 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->>   	if (!priv->rxdb_ch)
->>   		return 0;
->>   
->> +	/*
->> +	 * FW_READY reply is optional/ignored, so don't wait for it.
->> +	 */
->> +	if (priv->flags & REMOTE_IGNORE_READY_REPLY)
->> +		return 0;
->> +
->>   	for (i = 0; i < REMOTE_READY_WAIT_MAX_RETRIES; i++) {
->>   		if (priv->flags & REMOTE_IS_READY)
->>   			return 0;
->> @@ -1119,6 +1131,9 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
->>   	else
->>   		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_alloc;
->>   
->> +	if (imx_dsp_rproc_ignore_ready)
->> +		priv->flags |= REMOTE_IGNORE_READY_REPLY;
->> +
->>   	dev_set_drvdata(dev, rproc);
->>   
->>   	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
->> -- 
->> 2.17.1
->>
+ APPS				QDSP6
+-------                      -------------
+|     |	 Crash notification  |		|	----------
+|     |<---------------------|----------|-------|WiFi    |
+|     |			     |		|    |->|2G radio|
+|     |			     |	-------	|    | 	----------
+|     |	     		     |	|     |	|    |
+|Root |	 Start/stop  Q6	     |	|  R  | |    |
+|PD   |<---------------------|->|     | |    |
+|rproc|  Crash notification  |	|  O  | |    |
+|     |			     |	|     |	|    |
+|User |Start/stop UserPD1(2G)|  |  O  | |    |
+|PD1  |----------------------|->|     |-|----|
+|rproc|			     |	|  T  |	|    |
+|     |			     |	|     | |    |
+|User |Start/stop UserPD2(5G)|	|  P  | |    |
+|PD2  |----------------------|->|     |-|----|
+|rproc|			     |	|  D  |	|    |
+|     |			     |	-------	|    |	-----------
+|     |	Crash notification   |		|    |->|WiFi	  |
+|     |<---------------------|----------|-------|5G radio |
+-------			     |		|	-----------
+                             ------------
+According to linux terminology, here consider Q6 as root
+i.e it provide all services, WCSS (wifi radio's) as user
+i.e it uses services provided by root.
+
+Since Q6 root & WCSS user pd's able to communicate with
+APSS individually, multipd remoteproc driver registers
+each PD with rproc framework. Here clients (Wifi host drivers)
+intrested on WCSS PD rproc, so multipd driver start's root
+pd in the context of WCSS user pd rproc start. Similarly
+on down path, root pd will be stopped after wcss user pd
+stopped.
+
+Here WCSS(user) PD is dependent on Q6(root) PD, so first
+q6 pd should be up before wcss pd. After wcss pd goes down,
+q6 pd should be turned off.
+
+rproc->ops->start(userpd_rproc) {
+	/* Boot root pd rproc */
+	rproc_boot(upd_dev->parent);
+	---
+	/* user pd rproc start sequence */
+	---
+	---
+}
+With this way we ensure that root pd brought up before userpd.
+
+rproc->ops->stop(userpd_rproc) {
+	---
+	---
+	/* user pd rproc stop sequence */
+	---
+	---
+	/* Shutdown root pd rproc */
+	rproc_shutdown(upd_dev->parent);
+}
+After userpd rproc stops, root pd rproc will be stopped.
+IPQ5332, IPQ9574 supports multipd remoteproc driver.
+
+[V3]:
+	- Fixed all comments and rebased for TOT.
+	- IPQ5018 support is dropped because it's base port
+	  patches not yet merged. Dropped below patches.
+	  https://lore.kernel.org/linux-arm-msm/20230521222852.5740-4-quic_mmanikan@quicinc.com/
+	  https://lore.kernel.org/linux-arm-msm/20230521222852.5740-5-quic_mmanikan@quicinc.com/
+	  https://lore.kernel.org/linux-arm-msm/20230521222852.5740-7-quic_mmanikan@quicinc.com/
+	  https://lore.kernel.org/linux-arm-msm/20230521222852.5740-9-quic_mmanikan@quicinc.com/
+	  https://lore.kernel.org/linux-arm-msm/20230521222852.5740-12-quic_mmanikan@quicinc.com/
+	  https://lore.kernel.org/linux-arm-msm/20230521222852.5740-13-quic_mmanikan@quicinc.com/
+	- IPQ5332 support is added with below patches.
+	  [03/11], [05/11], [06/11], [07/11], [10/11].
+[V2]:
+	- Fixed all comments and rebased for TOT.
+	- since clocks handled by QDSP6 firmware
+ 	  Added [04/13], [05/13], [06/13], [07/13] patches.
+
+Manikanta Mylavarapu (11):
+  dt-bindings: remoteproc: qcom: Add support for multipd model
+  dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring up clock macros
+  dt-bindings: clock: qcom: gcc-ipq5332: remove q6 bring up clock macros
+  clk: qcom: ipq9574: remove q6 bring up clocks
+  clk: qcom: ipq5332: remove q6 bring up clocks
+  firmware: qcom_scm: ipq5332: add support to pass metadata size
+  firmware: qcom_scm: ipq5332: add msa lock/unlock support
+  remoteproc: qcom: q6v5: Add multipd interrupts support
+  remoteproc: qcom: Add Hexagon based multipd rproc driver
+  arm64: dts: qcom: ipq5332: Add nodes to bringup multipd
+  arm64: dts: qcom: ipq9574: Add nodes to bring up multipd
+
+ .../bindings/remoteproc/qcom,multipd-pil.yaml | 189 ++++
+ arch/arm64/boot/dts/qcom/ipq5332-rdp441.dts   |  21 +
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  60 ++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  59 ++
+ drivers/clk/qcom/gcc-ipq5332.c                | 380 --------
+ drivers/clk/qcom/gcc-ipq9574.c                | 326 -------
+ drivers/firmware/qcom_scm.c                   |  86 ++
+ drivers/firmware/qcom_scm.h                   |   3 +
+ drivers/remoteproc/Kconfig                    |  19 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_q6v5.c                |  37 +-
+ drivers/remoteproc/qcom_q6v5.h                |  11 +
+ drivers/remoteproc/qcom_q6v5_mpd.c            | 851 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5332-gcc.h  |  20 -
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |  18 -
+ include/linux/firmware/qcom/qcom_scm.h        |   2 +
+ 16 files changed, 1336 insertions(+), 747 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+ create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
+
+-- 
+2.34.1
+
