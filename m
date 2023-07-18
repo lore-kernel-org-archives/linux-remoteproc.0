@@ -2,170 +2,144 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B10C00528
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jul 2023 15:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F28C0015E
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 18 Jul 2023 15:23:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbjGRPFc (ORCPT
+        id S233604AbjGRPXZ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 18 Jul 2023 11:05:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44688 "EHLO
+        Tue, 18 Jul 2023 11:23:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbjGRPFa (ORCPT
+        with ESMTP id S233445AbjGRPXY (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 18 Jul 2023 11:05:30 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3483510CB;
-        Tue, 18 Jul 2023 08:05:29 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36I6REAM009677;
-        Tue, 18 Jul 2023 15:03:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=l8jXQmV2PvUFWpCgMtL+9QUJ1C8Jq0rbIFdYtG4s468=;
- b=HQ9Dgbuumrk6U3TYMHXPq+XpXX9aBMnpORf4iEOsVGRbBqub7T8X+mfRSz0DyoLXaIjn
- xkLGBiYDNLsy00U0pnVKVirunJmzSzCLpz3rp4dAHEIqpNKSlGQ19d+FUgDiJnxxGA7i
- nLBhulwd1tMkmF2XEFKUBXnAtLsOVY8ljQGFD7eM4JzaZ+y9RRs1U0N4gXLwkTuxbtDK
- ALjGS3NomUPnCVtonoSLZq2+59J3WycjQbkdM3LY/4L7I/ZVFzCbJRFUhXoqexqHtiQ4
- 0D9Q4nBsNOViMtNAXINSLB6ynVIz/koB8TI4dTE3JuAJnt+SA0str0xN8Wp62oQ1HUOA ug== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rwfj79vw4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jul 2023 15:03:59 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36IF3wiL010970
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 18 Jul 2023 15:03:58 GMT
-Received: from [10.216.47.173] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Tue, 18 Jul
- 2023 08:03:49 -0700
-Message-ID: <c0284d98-4cb2-cb78-9123-54d83fc31101@quicinc.com>
-Date:   Tue, 18 Jul 2023 20:33:44 +0530
+        Tue, 18 Jul 2023 11:23:24 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8491997
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jul 2023 08:23:18 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-6686708c986so5892255b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Jul 2023 08:23:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689693798; x=1692285798;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SWDtHVs3Urak5aG+ygvNpGbYkcumje8U+MVjSEamA3I=;
+        b=OSgivM0r2+T7IwP3feiWb17Gir3+X4dfmryhv0WyyhJE/WNLA6uo1tuYEOKlXQyHtd
+         4O9/SbOauZ+QT0d/k7oBpbld7JMsW2KxBLkVKAARv8SzkUM//5zbFMwHVbui5y4P0qQi
+         kfFZMUdgnETrnYLtDqJ3U6V/W2egiA9BKth7tozj1pIWRYCXqQbP/KztX9S+jU9EY/uo
+         UdiaNYu7I77BnmfAMPhy7FsxHCJVDZsIEdTXPsUhMo7u0pv0BxuEDkqfPXE7de9OxEV0
+         fYty3cmjTv7Xk/QgNSOjfkVZB6mlBNJsoYGoqBDA5DQHAJnO49V2SAo94AByTKb4qwBF
+         MSVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689693798; x=1692285798;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SWDtHVs3Urak5aG+ygvNpGbYkcumje8U+MVjSEamA3I=;
+        b=idDUh5WlqWUs5/wOzNLtDs4vB9b4Sir3Zavid46zSDh/S/tsAM+i3lONSDja2eW1Y7
+         MybpTvBxXBMjCaYp7EZLLWdhE12OzhPQ+hjmhqWpVXTk5QPYdmGjquYXB40SUhzD/Z4H
+         2HPaSs+DTCD70BRvTQtakspKT6cGMNwujQr97TcbRJHSw5S7RpQ/E0EMJGlhkxGDIIKs
+         3sTWApcWy5y82Ys+dcj4DTYLC87T5qaCbd/17dE8uoBQzrMk8U56LDWbizWKHf8wYC2F
+         cicJ9/Ii0aT3MYPe2DuuT3Zm/y6Sc5lS015bm6Zx/xGTHtURFm813mKM2yPGqx0WIdDQ
+         +i+Q==
+X-Gm-Message-State: ABy/qLYvbSHilTWh0rRqbiNat13EBKEFcJ2GAlksteuEt40w1vHj+zTc
+        krhHSMdmcqJkZgvYp/gxmdGUhg==
+X-Google-Smtp-Source: APBJJlE+sWd4ROQI9JcUy6oSHWAFtSVeK0lAHGj5ZqujU3RjIYVyIliD/z6LGdnmOnfT++85IjeDIQ==
+X-Received: by 2002:a05:6a20:72a3:b0:133:96c9:fb3b with SMTP id o35-20020a056a2072a300b0013396c9fb3bmr16428354pzk.45.1689693798346;
+        Tue, 18 Jul 2023 08:23:18 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:181:e3fe:53e1:920])
+        by smtp.gmail.com with ESMTPSA id c14-20020aa78c0e000000b00654228f9e93sm1678412pfd.120.2023.07.18.08.23.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jul 2023 08:23:17 -0700 (PDT)
+Date:   Tue, 18 Jul 2023 09:23:15 -0600
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "S.J. Wang" <shengjiu.wang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Mpuaudiosw <Mpuaudiosw@nxp.com>, linux-imx <linux-imx@nxp.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        LnxRevLi <LnxRevLi@nxp.com>
+Subject: Re: [PATCH 1/2] remoteproc: imx_dsp_rproc: add mandatory
+ find_loaded_rsc_table op
+Message-ID: <ZLauY85b9SRC3z0x@p14s>
+References: <20230712224220.26430-1-iuliana.prodan@oss.nxp.com>
+ <ZLV9gAmiDldlvIUR@p14s>
+ <474c0241-a58e-b435-8ac1-82a5a458d79a@nxp.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
- support
-Content-Language: en-US
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <keescook@chromium.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <linus.walleij@linaro.org>, <andy.shevchenko@gmail.com>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, Alex Elder <elder@linaro.org>
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <2023062814-chance-flounder-f002@gregkh>
- <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
- <cc30660f-dd72-aade-6346-a93c6ad4b695@quicinc.com>
- <29af84dc-7db8-0c43-07b6-eb743cf25e57@linaro.org>
- <957a3cdb-6091-8679-ddb0-296db2347291@quicinc.com> <ZKb3wz2eXS6h1yIW@p14s>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <ZKb3wz2eXS6h1yIW@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5wVB4_xXDRj5tnrwuwAq9UgRU4sEv_dd
-X-Proofpoint-ORIG-GUID: 5wVB4_xXDRj5tnrwuwAq9UgRU4sEv_dd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-18_11,2023-07-18_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- mlxlogscore=999 impostorscore=0 clxscore=1011 phishscore=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307180138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <474c0241-a58e-b435-8ac1-82a5a458d79a@nxp.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-
-On 7/6/2023 10:50 PM, Mathieu Poirier wrote:
-> On Mon, Jul 03, 2023 at 02:05:58PM -0700, Trilok Soni wrote:
->> On 7/2/2023 1:29 AM, Krzysztof Kozlowski wrote:
->>> On 30/06/2023 18:04, Mukesh Ojha wrote:
->>>>>
->>>>>> We don't add layers when they are not needed, and never when there is no
->>>>>> actual user.  If you need the extra "complexity" later, then add it
->>>>>> later when it is needed as who knows when that will ever be.
->>>>>>
->>>>>> Please redo this series based on that, thanks.
->>>>>
->>>>> My bigger issue with this whole series is what would this all look
->>>>> like if every SoC vendor upstreamed their own custom dumping
->>>>> mechanism. That would be a mess. (I have similar opinions on the
->>>>> $soc-vendor hypervisors.)
->>>
->>> Mukesh,
->>>
->>> LPC CFP is still open. There will be also Android and Kernel Debugging
->>> LPC microconference tracks. Coming with a unified solution could be a
->>> great topic for LPC. Solutions targeting only one user are quite often
->>> frowned upon.
->>
->> LPC is far out and in November. Can we not have others speak up if they have
->> the similar solution now? We can expand this to linux-kernel and ask for the
->> other SOC vendors to chime in. I am sure that we may have existing solutions
->> which came in for the one user first like Intel RDT if I remember. I am sure
->> ARM MPAM usecase was present at that time but Intel RDT based solution which
->> was x86 specific but accepted.
+On Tue, Jul 18, 2023 at 11:25:03AM +0300, Iuliana Prodan wrote:
+> On 7/17/2023 8:42 PM, Mathieu Poirier wrote:
+> > On Thu, Jul 13, 2023 at 01:42:20AM +0300, Iuliana Prodan (OSS) wrote:
+> > > From: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > > 
+> > > Add the .find_loaded_rsc_table operation for i.MX DSP.
+> > > We need it for inter-process communication between DSP
+> > > and main core.
+> > > 
+> > > This callback is used to find the resource table (defined
+> > > in remote processor linker script) where the address of the
+> > > vrings along with the other allocated resources (carveouts etc)
+> > > are stored.
+> > > If this is not found, the vrings are not allocated and
+> > > the IPC between cores will not work.
+> > Is there a constraint on the system memory the M4 can address?  If so there
+> > will be a need to declare address ranges for vrings and buffers in reserved
+> > memory in the DT.
+> > 
+> > Thanks,
+> > Mathieu
 > 
-> I am not familiar with Intel RDT and Arm MPAM but the community is always
-> improving on the way it does things.
+> Hi Mathieu,
 > 
-> LPC is indeed far out in November but it is an opportunity to cover the
-> groundwork needed to have this discussion.  It is always best to improve on
-> something then introduce something new.  Even better if something specific such
-> as Intel RDT and Arm MPAM can be made more generic.  A perfect example is
-> hwtracing Linus referred to.  The perf framework wasn't a perfect fit but it was
-> enhanced to accommodate our requirements.  I suggest to look at what is currently
-> available and come up with a strategy to be presented at LPC - event better if
-> you have a prototype.  If you can't find anything or the drawbacks inherent to
-> each avenue outweigh the benefits then we can have that conversation at LPC.
+> No, there is no constraint on memory.
+> 
+> We want the Cortex A core to communicate with the HiFi4 DSP.
+> The Cortex A is in charge of starting the DSP and loading the firmware in
+> HiFi4's memory.
+> When using rpmsg for IPC, the Cortex A needs to find the resource table
+> (defined in the DSP linker script) and this is done using
+> .find_loaded_rsc_table callback.
+> 
+> For the DT, we are using a (not upstream) device tree where we have the
+> reserved-memory for dsp_vdev0vring0, dsp_vdev0vring1 and dsp_vdev0buffer.
 
-I was checking hwtracing[1] and pmu interface introduction of
-address filtering[3] from analogy point of view, which i think you
-meant that perf framework was extended to accommodate this.
-
-Minidump is quite different and simple in its way to address the problem
-of debugging on end user devices with minimum data captured to debug 
-crashes and this patch series is inline with similar (core + backend)
-implementation done for stm patches[1] where stm core was developed
-and intel trace hub get hooked into it and later it got reused in [2] by 
-coresight-stm driver.
-
-I am still exploring if something available we can reuse but it seems 
-unlikely at the moment to already available something in the kernel with
-similar use case.
-
--Mukesh
-
-[1]
-https://lwn.net/Articles/650245/
-
-[2]
-https://lwn.net/Articles/674201/
-
-[3]
-https://lore.kernel.org/lkml/1461771888-10409-1-git-send-email-alexander.shishkin@linux.intel.com/
-
+That is the part I'm interested in.  Don't we need the reserved-memory entries?
+Otherwise the M4 may not be able to access the memory chosen by the application
+processor, most likely leading to a crash.
 
 > 
->>
->> ---Trilok Soni
+> Iulia
+> 
+> 
+> > > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> > > ---
+> > >   drivers/remoteproc/imx_dsp_rproc.c | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> > > index d95fa5586189..b5634507d953 100644
+> > > --- a/drivers/remoteproc/imx_dsp_rproc.c
+> > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> > > @@ -941,6 +941,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+> > >   	.kick		= imx_dsp_rproc_kick,
+> > >   	.load		= imx_dsp_rproc_elf_load_segments,
+> > >   	.parse_fw	= imx_dsp_rproc_parse_fw,
+> > > +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> > >   	.sanity_check	= rproc_elf_sanity_check,
+> > >   	.get_boot_addr	= rproc_elf_get_boot_addr,
+> > >   };
+> > > -- 
+> > > 2.17.1
+> > > 
