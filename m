@@ -2,138 +2,139 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D74EB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 11:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BB3C001E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 15:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230144AbjGSLFj (ORCPT
+        id S230327AbjGSPMA (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 07:05:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41102 "EHLO
+        Wed, 19 Jul 2023 11:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230129AbjGSLFh (ORCPT
+        with ESMTP id S229920AbjGSPL6 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jul 2023 07:05:37 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305F319A;
-        Wed, 19 Jul 2023 04:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1689764736; x=1721300736;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lqPMmv8M10HlNolBgp653qSVYTh89TergptkrLWqzYo=;
-  b=S5NtVeRoGxWEjiy4hfYUAS6bs0vfE83cCaG/koNG3riMlWxEYMmxngH7
-   wd/UooOkJRRRf8oXEF1DJgiCM1fLoahHlHIoA1yA/8oYaOyrqLhMVs4Or
-   RUQm4+dbmqmr2n3HXCWsHzIO1QU8BY8NpqVJfIaKra3CIRmGTkE55oEYE
-   h/JUbwQI2rh7uzoF7NTpBdEQh+d/Nl+lfW+dJLoe4CIyIWKAjALjNVU5N
-   wBZV+ZjH1CcQsGEOPCEa+62lNArQO+022rBZYuDQQMNdczTFJNkIC54z2
-   PRwJxBle5D6naYj8wNIDeOjEdrIkxWMZ0jM53U4o2qAFBujmBb/bPR48k
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="346023055"
-X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
-   d="scan'208";a="346023055"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2023 04:05:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
-   d="scan'208";a="867422501"
-Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Jul 2023 04:05:15 -0700
-Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qM4zX-0004hf-2P;
-        Wed, 19 Jul 2023 11:05:12 +0000
-Date:   Wed, 19 Jul 2023 19:04:39 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_eberman@quicinc.com, kvalo@kernel.org,
-        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_anusha@quicinc.com
-Subject: Re: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
-Message-ID: <202307191844.WyywUs6s-lkp@intel.com>
-References: <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
+        Wed, 19 Jul 2023 11:11:58 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3753A2;
+        Wed, 19 Jul 2023 08:11:57 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36JAbFwL018116;
+        Wed, 19 Jul 2023 15:11:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=NEljoRLZmxSC945GR/7jUU+l1FRSEid4AYsn6lQQG0g=;
+ b=SljNi75lchYbJjSOGLfuDPVip5BrNdFSLhF/HfHRyTBU5CuRNa/s+FOaUrPezVFOQk3E
+ 9QNisxeLQrwftFXER7AwtK00JkxQYEZSbfLCDuqY8OCPt99pEB4q1N/ZiMOaGpQJWeJl
+ r8tOjM/W8dp/NnYX6iMhP5IH8AdLNFfb8tHbgjHy3flc6C7+avSZU8F95/goAwfe5HtN
+ n6PTvNmWl4xAeqMy64R5Mbr2nQvrLMaVB5Hocv53Dnq/EfYoiJGOKmzTO/xv8zotb5eq
+ IpC8T8iGKjl7SmejRndoHHQ/e+MEtmA4+EVVkSoWy+yFXWpb3tMklvwixKGrWddr0wcE zQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rx7rnhfyg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 15:11:53 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36JFBqoU021355
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 15:11:52 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 19 Jul
+ 2023 08:11:45 -0700
+Message-ID: <ed817ba3-a424-1247-0ba8-88f1a9c23fee@quicinc.com>
+Date:   Wed, 19 Jul 2023 20:41:42 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [V3,02/11] dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring
+ up clock macros
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
+References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
+ <20230718120501.3205661-3-quic_mmanikan@quicinc.com>
+ <9d473f0b-bd6b-f426-3bd2-2890e8a79431@linaro.org>
+ <9c540e3b-d8d1-0807-a21e-d01a301c1972@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <9c540e3b-d8d1-0807-a21e-d01a301c1972@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: htHNUGCH63xkGt4IDHmdVxTGxuKTqvWc
+X-Proofpoint-ORIG-GUID: htHNUGCH63xkGt4IDHmdVxTGxuKTqvWc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-19_10,2023-07-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 mlxlogscore=644
+ impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307190136
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Manikanta,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on next-20230718]
-[also build test WARNING on v6.5-rc2]
-[cannot apply to remoteproc/rproc-next clk/clk-next robh/for-next linus/master v6.5-rc2 v6.5-rc1 v6.4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Mylavarapu/dt-bindings-remoteproc-qcom-Add-support-for-multipd-model/20230718-202747
-base:   next-20230718
-patch link:    https://lore.kernel.org/r/20230718120501.3205661-10-quic_mmanikan%40quicinc.com
-patch subject: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc driver
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230719/202307191844.WyywUs6s-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230719/202307191844.WyywUs6s-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307191844.WyywUs6s-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/remoteproc/qcom_q6v5_mpd.c:112:4: warning: no previous prototype for 'qcom_get_pd_asid' [-Wmissing-prototypes]
-     112 | u8 qcom_get_pd_asid(struct rproc *rproc)
-         |    ^~~~~~~~~~~~~~~~
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for SM_GCC_8350
-   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
-   Selected by [m]:
-   - SM_VIDEOCC_8350 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-   WARNING: unmet direct dependencies detected for SM_GCC_8450
-   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
-   Selected by [m]:
-   - SM_GPUCC_8450 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-   - SM_VIDEOCC_8450 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-   WARNING: unmet direct dependencies detected for SM_GCC_8550
-   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
-   Selected by [m]:
-   - SM_GPUCC_8550 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
-   - SM_VIDEOCC_8550 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
 
 
-vim +/qcom_get_pd_asid +112 drivers/remoteproc/qcom_q6v5_mpd.c
+On 7/19/2023 12:45 PM, Krzysztof Kozlowski wrote:
+> On 19/07/2023 09:14, Krzysztof Kozlowski wrote:
+>> On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
+>>> In multipd model Q6 firmware takes care of bringup clocks,
+>>> so remove them.
+>>>
+>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>> ---
+>>> Changes in V3:
+>>> 	- Rebased on TOT
+>>
+>> No clue what is TOT. We have TIP, but you should not use it as a base.
+>> Other used names are mainline and linux-next.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Un-acked. I said last time that this does not compile and I do not see
+> any improvements here.
+> 
 
-   105	
-   106	/**
-   107	 * qcom_get_pd_asid() - get the pd asid number from PD spawn bit
-   108	 * @rproc:	rproc handle
-   109	 *
-   110	 * Returns asid on success
-   111	 */
- > 112	u8 qcom_get_pd_asid(struct rproc *rproc)
-   113	{
-   114		struct q6_wcss *wcss = rproc->priv;
-   115		u8 bit = wcss->q6.spawn_bit;
-   116	
-   117		return bit / 8;
-   118	}
-   119	
+My bad, i missed.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Is it fine to move gcc driver patch to first and then dt-bindings
+patch ?
+
+With this way dt-bindings patch will compile.
+
+Current patch order:
+-------------------
+1) Removing clock macros from dt-bindigs
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-3-quic_mmanikan@quicinc.com/
+
+2) Removing clocks from gcc driver
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-5-quic_mmanikan@quicinc.com/
+
+
+Proposed patch order:
+---------------------
+1) Removing clocks from gcc driver
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-5-quic_mmanikan@quicinc.com/
+
+2) Removing clock macros from dt-bindigs
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-3-quic_mmanikan@quicinc.com/
+
+Thanks & Regards,
+Manikanta.
+
+> Best regards,
+> Krzysztof
+> 
