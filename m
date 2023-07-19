@@ -2,120 +2,138 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAECBC04A94
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 07:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D8FEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 07:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230418AbjGSHBa (ORCPT
+        id S229621AbjGSHKB (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 03:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42758 "EHLO
+        Wed, 19 Jul 2023 03:10:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230346AbjGSHB1 (ORCPT
+        with ESMTP id S229587AbjGSHJ7 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jul 2023 03:01:27 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41BD1FC4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jul 2023 00:01:24 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-992ca792065so892595966b.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jul 2023 00:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689750083; x=1692342083;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WSZrt9jeszEZGu/mKauiyWiY1HTeSRHVXWkl0PsyR+c=;
-        b=BgrP9HbHLulKJqAh3a90fRdgO4sjNLYjWboQJenzmWIzqTETCKSTkJHOpYBFwF4qQB
-         bel2zi8jpzzRW3dQgrJfvkauUOmb7SUrbmqW3vJ0B4pe+mFKjD4bWIwstIzNydVSsstR
-         2bbQc4sz1ggaszirvJ+zXsbpAtLnWPtKgofL/oAasUQ6VgRM7Y/DU3hSsY496X8gxd1d
-         nQUJxAu6Xddw1Zj4tYagBOu8vipwkKoPD3231wfqwdAIQmNU169JPK/+nopUP6nZDy5y
-         RVlbSYICm/mVexr+x6rJuJSbqnhoi9LG5r9/ScVUEKSxjBublwhXyPzh59a/z1XGj0wH
-         Em5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689750083; x=1692342083;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSZrt9jeszEZGu/mKauiyWiY1HTeSRHVXWkl0PsyR+c=;
-        b=eAzUkkpobIT9+00+lSY1mdVdB8sn7qDho85KU/zZGfP6ttPUnhjmnOUcI+Jv5/Ixh8
-         1dKlIGRUu2dy0PAUhH4gyu0Tkf2FFf1kupFaZQT2m7J3Vf1pNenQ6h5Dt+QNkqKCDHxq
-         C8iJfLumMwaWZ2qtvSbOcuYE25lJUci3xaFM4eDphYvPcjMvsXEfiMlDo73R2RIcFVdM
-         R022mwiwwLZM7Gk250hUYXl1hGTt4DEWW+1YAHcSTampbiZuojAdwSdGe4kfFv1rKX0u
-         i4El/vFjL6UwceMcWi+2B9RHJ9S+YapQ+Yi0Wkyq9SpIQLEZH2RS64Pk7nlGMPwPGnp0
-         fCQQ==
-X-Gm-Message-State: ABy/qLZ0i1ptuBmUZsmIK3cGg1IomToAA0RRuG5K9eGu19RYRSxoW+JD
-        4El69CU+BHs8ZH5ST3l+ujC0rA==
-X-Google-Smtp-Source: APBJJlGX7cx1vVoHNi6pwROqc+qSgYNgqVavnXFuzLoHzyAPHaI3G/MLulDPjwxxVA6/dpRfkZ/Ugw==
-X-Received: by 2002:a17:906:95:b0:978:928:3b99 with SMTP id 21-20020a170906009500b0097809283b99mr1479059ejc.46.1689750083436;
-        Wed, 19 Jul 2023 00:01:23 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id qn24-20020a170907211800b00993470682e5sm1920268ejb.32.2023.07.19.00.01.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 00:01:22 -0700 (PDT)
-Message-ID: <bf6c7433-7773-9b4d-1141-b5ceccae77ee@linaro.org>
-Date:   Wed, 19 Jul 2023 09:01:21 +0200
+        Wed, 19 Jul 2023 03:09:59 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83755172B;
+        Wed, 19 Jul 2023 00:09:58 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36J5smMS028319;
+        Wed, 19 Jul 2023 07:09:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=MOFmThYSQ3uAWVQN8xSDNBD3gk6srOE1uRDrYefs0Jc=;
+ b=RXlNgPZKDZkj4ArXM+cvsi+osbBANp60ST5sDJx5d9f99q+brzvs4rVMkUIYvM5lmGro
+ zNryViSHsM28I4D3DFXJ5EHL5G4MLk7RjhdT3tVQS6rId8hfIZJ+grVkNOnhfsRNEjw1
+ fVZd5HP2tSWTS1gFrY66DSGM7d67ZKU1+BQHYLiwk/5/l9HCm6XQXMMh6S5fUXaDb3e/
+ F5gx4SYzb/9H/v8gaQZN/JR+P0W87W9Y6IOiCugk5jhP6YeCNPP29kMqvz/XuIodlrr0
+ OWDH+QuhUXxVKsEo8WM12Xb9QEbSVOF1RDzkDSoGv4ZnO/69dhNeg59NbNuAYpB1Xz/v Lw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rwpphjm2v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 07:09:54 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36J79r8a030247
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 07:09:53 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 19 Jul
+ 2023 00:09:46 -0700
+Message-ID: <f4337b79-96a5-ba1b-b824-b70068613126@quicinc.com>
+Date:   Wed, 19 Jul 2023 12:39:43 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
 Subject: Re: [V3,00/11] Add multipd remoteproc support
 Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_eberman@quicinc.com, kvalo@kernel.org,
-        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
 References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+ <bf6c7433-7773-9b4d-1141-b5ceccae77ee@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <bf6c7433-7773-9b4d-1141-b5ceccae77ee@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 541kBgwo4Jg-9khb6z4maG8F0aU4AHA6
+X-Proofpoint-ORIG-GUID: 541kBgwo4Jg-9khb6z4maG8F0aU4AHA6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-19_03,2023-07-18_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015
+ bulkscore=0 mlxlogscore=725 malwarescore=0 mlxscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307190065
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
-> APSS brings Q6 out of reset and then Q6 brings
-> WCSS block (wifi radio's) out of reset.
+
+
+On 7/19/2023 12:31 PM, Krzysztof Kozlowski wrote:
+> On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
+>> APSS brings Q6 out of reset and then Q6 brings
+>> WCSS block (wifi radio's) out of reset.
+>>
+>> 				   ---------------
+>> 			      -->  |WiFi 2G radio|
+>> 			      |	   --------------
+>> 			      |
+>> --------	-------	      |
+>> | APSS | --->   |QDSP6|  -----|
+>> ---------	-------       |
+>>                                |
+>>        			      |
+>> 			      |   --------------
+>> 			      --> |WiFi 5G radio|
+>> 				  --------------
+>>
+>> Problem here is if any radio crashes, subsequently other
+>> radio also should crash because Q6 crashed. Let's say
+>> 2G radio crashed, Q6 should pass this info to APSS. Only
+>> Q6 processor interrupts registered with APSS. Obviously
+>> Q6 should crash and raise fatal interrupt to APSS. Due
+>> to this 5G radio also crashed. But no issue in 5G radio,
+>> because of 2G radio crash 5G radio also impacted.
 > 
-> 				   ---------------
-> 			      -->  |WiFi 2G radio|
-> 			      |	   --------------
-> 			      |
-> --------	-------	      |
-> | APSS | --->   |QDSP6|  -----|
-> ---------	-------       |
->                               |
->       			      |
-> 			      |   --------------
-> 			      --> |WiFi 5G radio|
-> 				  --------------
+> Your patches and cover letter is unnecessarily more difficult to parse
+> and filter:
+> 1. Please use standard email subjects, so with the PATCH keyword in the
+> title. `git format-patch` helps here to create proper versioned patches.
+> Another useful tool is b4. Skipping the PATCH keyword makes filtering of
+> emails more difficult thus making the review process less convenient.
 > 
-> Problem here is if any radio crashes, subsequently other
-> radio also should crash because Q6 crashed. Let's say
-> 2G radio crashed, Q6 should pass this info to APSS. Only
-> Q6 processor interrupts registered with APSS. Obviously
-> Q6 should crash and raise fatal interrupt to APSS. Due
-> to this 5G radio also crashed. But no issue in 5G radio,
-> because of 2G radio crash 5G radio also impacted.
+I am wondering how i missed 'PATCH' keyword. Sorry for inconvenience.
+I won't repeat next time.
 
-Your patches and cover letter is unnecessarily more difficult to parse
-and filter:
-1. Please use standard email subjects, so with the PATCH keyword in the
-title. `git format-patch` helps here to create proper versioned patches.
-Another useful tool is b4. Skipping the PATCH keyword makes filtering of
-emails more difficult thus making the review process less convenient.
+> 2. Please wrap message according to Linux coding style / submission
+> process (neither too early nor over the limit):
+> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+> This is wrapped way too early.
 
-2. Please wrap message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-This is wrapped way too early.
+I will rework on cover page description and update it according
+to standards.
+
+Thanks & Regards,
+Manikanta.
+
+>>
 > 
-
-Best regards,
-Krzysztof
-
+> Best regards,
+> Krzysztof
+> 
