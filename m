@@ -2,390 +2,191 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5327C001DC
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 07:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8594C001E0
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 10:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229954AbjGSH1D (ORCPT
+        id S231261AbjGSK36 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 03:27:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
+        Wed, 19 Jul 2023 06:29:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229862AbjGSH1C (ORCPT
+        with ESMTP id S231211AbjGSK3n (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jul 2023 03:27:02 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF7BA4
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jul 2023 00:26:58 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-993d1f899d7so916141366b.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jul 2023 00:26:58 -0700 (PDT)
+        Wed, 19 Jul 2023 06:29:43 -0400
+Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EED51FFF;
+        Wed, 19 Jul 2023 03:29:13 -0700 (PDT)
+Received: by mail-pg1-x52e.google.com with SMTP id 41be03b00d2f7-56341268f2fso944709a12.0;
+        Wed, 19 Jul 2023 03:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689751617; x=1692343617;
+        d=gmail.com; s=20221208; t=1689762552; x=1692354552;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fyfO5lsrlJXVidyRvvPQwDaGq7oltGO0YP6DN+snoCw=;
-        b=AjSciQ9vitluZtJ0iIt94Np5PvkEbxDdQ3s084RB9U5x8sTLF/XnZd6fz5YTdnB/wy
-         BkXCzNlUHc8NhKuk1YrOO8m3M0k8mWa1mS9qxzFYW3q8X+hjmR0hThqW4nEe2qbBGyKi
-         85IxZGTdgqjziTpBEnlDNcQAA3SP6ujzpGHEPHM3YYj1AqfgkTtJZIH9BXRb0vqCl7BF
-         lsxcVQ+Mvnnts0SW+NaPUEKZyGcBzxRysgWNg0rSznkQCIttPbeK5QR8BIF7HQm3eem6
-         ynv8mMFF8GtB+dH66Y6gsoK8LbUsbWoSRYYZoCF0SduzqZ5oT9ePb458opbM3gJoIMCQ
-         WZWw==
+        bh=3cLoW1TQOaWlvp3NhBI7qdcwZ4QB0jKAj6tuRXeMoec=;
+        b=WPe4dG8IV5s9fX2/Z33QFeBzFdkgN3D2DGwyPXvHHrKuklW7v5XgYdlnocE8NyqE7d
+         2sa4VInAAEhTjDdr8d4PORMZoi2eCI50aGK/74MceoIYk2Md973VWveKcYSYcnJ8qMld
+         Cp6tce5LeSHIXuEEgWVxrrNu1ofvEHJxGiuCEtR5KNrID4ZaFQhHg6EbBx5XizEst4tu
+         sysTJszjJu0qJBSYiv7sqTSWElzKlFVwOIbLvS5P5XrnCAJ7fZEpNsGSBbK9PfF89Rjm
+         aBgFpEwF8X1lWxRrm/V7xXgC3rkz09T/Qau94iVqKzBQr4GllFFoyysvR8d1x0LwmXDZ
+         Ygsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689751617; x=1692343617;
+        d=1e100.net; s=20221208; t=1689762552; x=1692354552;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyfO5lsrlJXVidyRvvPQwDaGq7oltGO0YP6DN+snoCw=;
-        b=W+BNU1GGCazlXKU9U8WdSZZTXSjkMmpEtbycAozLUoCV+YVyqlc4EYhc61o3OYXXZr
-         4hYGcZLf+43gjB1v4mXuWysGy1IvOZC9ldEkGdbhDJdbbvI9EckbOL27i+kImtW+w1Ip
-         LJD5PUGWPzxy7HnCqxrmmBUm36qZNDWl8duet90ei3zqWWoiVlwpyOTI7oh1hfxJ4UWn
-         ANmMaE/Y3JvERFGU6GAxe5GUYhbrSvmMSlaYUxWkcMWaq115XZ0rpfmTRUzP8rSWqizh
-         +xWdgnZR8VV3Sc8OMUdvGlZ34Tbv/nkPAszN+v/xoH9wm33qYGcYYsyocYjhBuiVDJmv
-         O6WA==
-X-Gm-Message-State: ABy/qLYnck1ww6y7AqnDznoumg+K2f04SF/xf/vye7xWuVtC452wLgZA
-        cRmjW94dpc8A+y0shlfX5Zspcg==
-X-Google-Smtp-Source: APBJJlEQENMPwak7uAMJQP5lUd7qaD8836fd2duRgHWK7IwO9mD8HFp/b3gvoraUz2Hfh88Imp/n4g==
-X-Received: by 2002:a17:906:5388:b0:98d:cd3e:c193 with SMTP id g8-20020a170906538800b0098dcd3ec193mr1290513ejo.46.1689751617114;
-        Wed, 19 Jul 2023 00:26:57 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id k2-20020a170906128200b0098e2eaec394sm1925666ejb.101.2023.07.19.00.26.54
+        bh=3cLoW1TQOaWlvp3NhBI7qdcwZ4QB0jKAj6tuRXeMoec=;
+        b=DrmEGh1Op59NvGGYUygft7LglkCC63yP4D8vOKx4cZYZ1KsUeVFTtOo9W/S9v9LPk6
+         7JEzUq0eEeNZH4NzxagDhtkfFrNmv+XsDToI2lWPGF5E1ePfBAIAt6O8mqlxRkcMaxQU
+         HqwJnDRk8I/PsHp0DXKaCwwKfCEqB8PugfFpvT8h1uHxxyimcQlF6Q3ha1Cbh+81bzt0
+         KZZYPp/X3oJqol6qBq82iAcq0ucd88DSMn+D1JKBbZbbyokZit3dB1QN6d9zF+4XrhZe
+         scmulLfG9ishwUDq7lSDe+tu5wWDVhp/FMuoQjiwDdOroqDjJLPhmV/dLl5brnV6cbYu
+         P2Lw==
+X-Gm-Message-State: ABy/qLbM6ouFQf4Zs6IaDGLB9LeUVGTgF4yIKV85x6xTgN/iEGOxL+pB
+        2ibJMdpWufJzBBS7TgvrS9g=
+X-Google-Smtp-Source: APBJJlHdapFFwXVg7QIHj2SlCxGpSMVkZ7YXY9N0WNIT06DbPwKGONdFPKbpsK53hKMs6V3hHLd0zg==
+X-Received: by 2002:a05:6a20:549d:b0:134:f040:e970 with SMTP id i29-20020a056a20549d00b00134f040e970mr1817921pzk.48.1689762551553;
+        Wed, 19 Jul 2023 03:29:11 -0700 (PDT)
+Received: from [192.168.50.148] (net-2-34-93-18.cust.vodafonedsl.it. [2.34.93.18])
+        by smtp.gmail.com with ESMTPSA id s25-20020a62e719000000b0064d57ecaa1dsm2984524pfh.28.2023.07.19.03.29.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 00:26:56 -0700 (PDT)
-Message-ID: <fedea75a-a5f1-fbe4-7f12-75bfdf9bfcf2@linaro.org>
-Date:   Wed, 19 Jul 2023 09:26:53 +0200
+        Wed, 19 Jul 2023 03:29:11 -0700 (PDT)
+Message-ID: <3d9515b1-2df0-9bbf-1290-d0618ff8a598@gmail.com>
+Date:   Wed, 19 Jul 2023 12:29:02 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
+Subject: Re: [PATCH v4 08/21] dt-bindings: reserved-memory: Add qcom,ramoops
+ binding
 Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Mukesh Ojha <quic_mojha@quicinc.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, corbet@lwn.net,
         agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_eberman@quicinc.com, kvalo@kernel.org,
-        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com
-References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
- <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        conor+dt@kernel.org, keescook@chromium.org, tony.luck@intel.com,
+        gpiccoli@igalia.com, mathieu.poirier@linaro.org,
+        catalin.marinas@arm.com, will@kernel.org, linus.walleij@linaro.org,
+        andy.shevchenko@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
+ <1687955688-20809-9-git-send-email-quic_mojha@quicinc.com>
+ <CAL_JsqJ_TTnGjjB2d8_FKHpWBRG5GHLoWnabCKjsdeZ4QFdNEg@mail.gmail.com>
+ <cacbbb02-732e-076e-50bf-292d20a4d722@quicinc.com>
+ <58a26b9e-a48d-d567-c310-193a2c52521e@linaro.org>
+ <5447f9f8-55b4-8bed-66a6-1c9d62b02c79@quicinc.com>
+ <CAGE=qrq0CuO4J-6yC=YZ4xjL67o9QTqpei0ovX-X_8MLVeEH6g@mail.gmail.com>
+ <ba04bb7b-6599-6f41-09a8-834ee280830d@quicinc.com>
+ <f0609361-6fb6-a446-4e23-646201943923@linaro.org>
+From:   Luca Stefani <luca.stefani.ge1@gmail.com>
+In-Reply-To: <f0609361-6fb6-a446-4e23-646201943923@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
-> It adds support to bring up remoteproc's on multipd model.
-> Pd means protection domain. It's similar to process in Linux.
-> Here QDSP6 processor runs each wifi radio functionality on a
-> separate process. One process can't access other process
-> resources, so this is termed as PD i.e protection domain.
-> 
-> Here we have two pd's called root and user pd. We can correlate
-> Root pd as root and user pd as user in linux. Root pd has more
-> privileges than user pd. Root will provide services to user pd.
-> 
 
+On 04/07/23 07:57, Krzysztof Kozlowski wrote:
+> On 03/07/2023 17:55, Mukesh Ojha wrote:
+>>
+>> On 7/3/2023 12:50 PM, Krzysztof Kozlowski wrote:
+>>> On Mon, 3 Jul 2023 at 08:22, Mukesh Ojha <quic_mojha@quicinc.com> wrote:
+>>>> On 7/2/2023 1:42 PM, Krzysztof Kozlowski wrote:
+>>>>>>> The big difference is if firmware is not deciding where this log
+>>>>>>> lives, then it doesn't need to be in DT. How does anything except the
+>>>>>>> kernel that allocates the log find the logs?
+>>>>>> Yes, you are correct, firmware is not deciding where the logs lives
+>>>>>> instead here, Kernel has reserved the region where the ramoops region
+>>>>>> lives and later with the minidump registration where, physical
+>>>>>> address/size/virtual address(for parsing) are passed and that is how
+>>>>>> firmware is able to know and dump those region before triggering system
+>>>>>> reset.
+>>>>> Your explanation does not justify storing all this in DT. Kernel can
+>>>>> allocate any memory it wishes, store there logs and pass the address to
+>>>>> the firmware. That's it, no need for DT.
+>>>> If you go through the driver, you will know that what it does, is
+>>> We talk about bindings and I should not be forced to look at the
+>>> driver to be able to understand them. Bindings should stand on their
+>>> own.
+>> Why can't ramoops binding have one more feature where it can add a flag
+>> *dynamic* to indicate the regions are dynamic and it is for platforms
+>> where there is another entity 'minidump' who is interested in these
+>> regions.
+> Because we do not define dynamic stuff in Devicetree. Dynamic means
+> defined by SW or runtime configurable. It is against the entire idea of
+> Devicetree which is for non-discoverable hardware.
+>
+>>>> just create platform device for actual ramoops driver to probe and to
+>>> Not really justification for Devicetree anyway. Whatever your driver
+>>> is doing, is driver's business, not bindings.
+>>>
+>>>> provide this it needs exact set of parameters of input what original
+>>>> ramoops DT provides, we need to keep it in DT as maintaining this in
+>>>> driver will not scale well with different size/parameter size
+>>>> requirement for different targets.
+>>> Really? Why? I don't see a problem in scaling. At all.
+>> I had attempted it here,
+>>
+>> https://lore.kernel.org/lkml/1683133352-10046-10-git-send-email-quic_mojha@quicinc.com/
+>>
+>> but got comments related to hard coding and some in favor of having
+>> the same set of properties what ramoops has/provides
+>>
+>> https://lore.kernel.org/lkml/e25723bf-be85-b458-a84c-1a45392683bb@gmail.com/
+>>
+>> https://lore.kernel.org/lkml/202305161347.80204C1A0E@keescook/
+> Then you were tricked. I don't get why someone else suggests that
+> non-hardware property should be part of Devicetree, but anyway it's the
+> call of Devicetree binding maintainers, not someone else. DT is not
+> dumping ground for all the system configuration variables.
 
-> +static int q6_get_inbound_irq(struct qcom_q6v5 *q6,
-> +			      struct platform_device *pdev,
-> +			      const char *int_name,
-> +			      int index, int *pirq,
-> +			      irqreturn_t (*handler)(int irq, void *data))
-> +{
-> +	int ret, irq;
-> +	char *interrupt, *tmp = (char *)int_name;
-> +	struct q6_wcss *wcss = q6->rproc->priv;
-> +
-> +	irq = platform_get_irq(pdev, index);
-> +	if (irq < 0) {
-> +		if (irq != -EPROBE_DEFER)
-> +			dev_err_probe(&pdev->dev, irq,
-> +				      "failed to retrieve %s IRQ: %d\n",
-> +				      int_name, irq);
+Sorry for that, I assumed the interface should be as close as possible 
+to pstore, but apparently that's not the case. Why does it have to be 
+different from it? It provides the same functionality and is 
+configurable even if it doesn't explicitly configure non discoverable 
+hardware properties.
 
-Wait, what? This does not make any sense. dev_err_probe is to replace
-all this dance. return dev_err_probe which I explicitly asked last time:
+Assuming we make the driver picks the values, how would it do that?  
+Hardcoding a configuration could lead to a few problems, such as the 
+allocated region being smaller than the driver defaults or driver 
+defaults not fully utilizing the allocated region, possibly wasting more 
+memory than it'll ever use. On top of that what happens if we want to 
+configure it differently than the hardcoded default values? Via cmdline 
+options? For example in the previous version it allocated the whole 
+region for the console alone, while other entries, such as pmsg that 
+could be useful on devices using minidump to store Android logs, was 
+zero-sized.
 
-https://lore.kernel.org/all/2061a641-4b97-1aa6-27cd-99f01a785033@linaro.org/
-
-> +		return irq;
-> +	}
-> +
-> +	*pirq = irq;
-> +
-> +	interrupt = devm_kzalloc(&pdev->dev, BUF_SIZE, GFP_KERNEL);
-> +	if (!interrupt)
-> +		return -ENOMEM;
-> +
-> +	snprintf(interrupt, BUF_SIZE, "q6v5_wcss_userpd%d_%s", wcss->pd_asid, tmp);
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, *pirq,
-> +					NULL, handler,
-> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +					interrupt, q6);
-> +	if (ret) {
-> +		dev_err_probe(&pdev->dev, ret,
-> +			      "failed to acquire %s irq\n", interrupt);
-> +		return ret;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int q6_get_outbound_irq(struct qcom_q6v5 *q6,
-> +			       struct platform_device *pdev,
-> +			       const char *int_name)
-> +{
-> +	struct qcom_smem_state *tmp_state;
-> +	unsigned  bit;
-> +
-> +	tmp_state = qcom_smem_state_get(&pdev->dev, int_name, &bit);
-> +	if (IS_ERR(tmp_state)) {
-> +		dev_err_probe(&pdev->dev, IS_ERR(tmp_state),
-> +			      "failed to acquire %s state\n", int_name);
-> +		return PTR_ERR(tmp_state);
-
-So it is everywhere...
-
-
-> +	}
-> +
-> +	if (!strcmp(int_name, "stop")) {
-> +		q6->state = tmp_state;
-> +		q6->stop_bit = bit;
-> +	} else if (!strcmp(int_name, "spawn")) {
-> +		q6->spawn_state = tmp_state;
-> +		q6->spawn_bit = bit;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int init_irq(struct qcom_q6v5 *q6,
-> +		    struct platform_device *pdev, struct rproc *rproc,
-> +		    int crash_reason, const char *load_state,
-> +		    void (*handover)(struct qcom_q6v5 *q6))
-> +{
-> +	int ret;
-> +	struct q6_wcss *wcss = rproc->priv;
-> +
-> +	q6->rproc = rproc;
-> +	q6->dev = &pdev->dev;
-> +	q6->crash_reason = crash_reason;
-> +	q6->handover = handover;
-> +
-> +	init_completion(&q6->start_done);
-> +	init_completion(&q6->stop_done);
-> +	init_completion(&q6->spawn_done);
-> +
-> +	ret = q6_get_outbound_irq(q6, pdev, "stop");
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_outbound_irq(q6, pdev, "spawn");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Get pd_asid to prepare interrupt names */
-> +	wcss->pd_asid = qcom_get_pd_asid(rproc);
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "fatal", 0, &q6->fatal_irq,
-> +				 q6v5_fatal_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "ready", 1, &q6->ready_irq,
-> +				 q6v5_ready_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "stop-ack", 3, &q6->stop_irq,
-> +				 q6v5_stop_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "spawn-ack", 2, &q6->spawn_irq,
-> +				 q6v5_spawn_interrupt);
-> +	if (ret)
-> +		return ret;
-> +	return 0;
-> +}
-> +
-> +static void q6_release_resources(struct platform_device *pdev)
-> +{
-> +	struct rproc *upd_rproc;
-> +	struct device_node *upd_np;
-> +	struct platform_device *upd_pdev;
-> +
-> +	/* Release userpd resources */
-> +	for_each_available_child_of_node(pdev->dev.of_node, upd_np) {
-
-You should not iterate over OF to get devices to unregister. What if you
-have more nodes than before because of overlay?
-
-
-> +		upd_pdev = of_find_device_by_node(upd_np);
-> +		if (!upd_pdev)
-> +			continue;
-> +
-> +		upd_rproc = platform_get_drvdata(upd_pdev);
-> +		if (!upd_rproc) {
-> +			platform_device_unregister(upd_pdev);
-> +			continue;
-> +		}
-> +
-> +		rproc_del(upd_rproc);
-> +		rproc_free(upd_rproc);
-> +	}
-> +}
-> +
-> +static int q6_register_userpd(struct platform_device *pdev)
-> +{
-> +	struct q6_wcss *wcss;
-> +	struct rproc *rproc = NULL;
-> +	int ret;
-> +	struct device_node *userpd_np;
-> +	struct platform_device *userpd_pdev;
-> +	const char *firmware_name = NULL;
-> +
-> +	for_each_available_child_of_node(pdev->dev.of_node, userpd_np) {
-> +		ret = of_property_read_string(userpd_np, "firmware-name",
-> +					      &firmware_name);
-> +		if (ret < 0)
-> +			continue;
-> +
-> +		dev_info(&pdev->dev, "%s node found\n", userpd_np->name);
-> +
-> +		userpd_pdev = of_platform_device_create(userpd_np,
-> +							userpd_np->name,
-> +							&pdev->dev);
-> +		if (!userpd_pdev) {
-> +			ret = -ENODEV;
-> +			dev_err_probe(&pdev->dev, ret,
-> +				      "failed to create %s platform device\n",
-> +				      userpd_np->name);
-> +			goto release_resource;
-> +		}
-> +		userpd_pdev->dev.driver = pdev->dev.driver;
-> +		rproc = rproc_alloc(&userpd_pdev->dev, userpd_pdev->name,
-> +				    &wcss_ops, firmware_name,
-> +				    sizeof(*wcss));
-> +		if (!rproc) {
-> +			ret = -ENOMEM;
-> +			goto release_resource;
-> +		}
-> +
-> +		wcss = rproc->priv;
-> +		wcss->dev = &userpd_pdev->dev;
-> +
-> +		ret = q6_alloc_memory_region(wcss);
-> +		if (ret)
-
-How do you release the resource allocated in rproc_alloc() for this
-node? drvdata is not set, so your cleanup function will skip it.
-
-> +			goto release_resource;
-> +
-> +		ret = init_irq(&wcss->q6, userpd_pdev, rproc,
-> +			       WCSS_CRASH_REASON, NULL, NULL);
-> +		if (ret)
-> +			goto release_resource;
-> +
-> +		rproc->auto_boot = false;
-> +		ret = rproc_add(rproc);
-> +		if (ret)
-> +			goto release_resource;
-> +
-> +		platform_set_drvdata(userpd_pdev, rproc);
-> +		qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, userpd_pdev->name);
-> +	}
-> +	return 0;
-> +
-> +release_resource:
-> +	q6_release_resources(pdev);
-> +	return ret;
-> +}
-> +
-> +static int q6_wcss_probe(struct platform_device *pdev)
-> +{
-> +	const struct wcss_data *desc;
-> +	struct q6_wcss *wcss;
-> +	struct rproc *rproc;
-> +	int ret;
-> +	char *subdev_name;
-> +	const char **firmware;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	firmware = devm_kcalloc(&pdev->dev, MAX_FIRMWARE,
-> +				sizeof(*firmware), GFP_KERNEL);
-> +	if (!firmware)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
-> +					    firmware, MAX_FIRMWARE);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
-> +			    firmware[0], sizeof(*wcss));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	wcss = rproc->priv;
-> +	wcss->dev = &pdev->dev;
-> +	wcss->desc = desc;
-> +	wcss->firmware = firmware;
-> +
-> +	ret = q6_alloc_memory_region(wcss);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	ret = desc->init_irq(&wcss->q6, pdev, rproc,
-> +			     desc->crash_reason_smem, NULL, NULL);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	if (desc->glink_subdev_required)
-> +		qcom_add_glink_subdev(rproc, &wcss->glink_subdev, desc->ssr_name);
-> +
-> +	subdev_name = (char *)(desc->ssr_name ? desc->ssr_name : pdev->name);
-
-Wrong cast. Why are you dropping const? That's a bug.
-
-> +	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, subdev_name);
-> +
-> +	rproc->auto_boot = false;
-> +	ret = rproc_add(rproc);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	platform_set_drvdata(pdev, rproc);
-> +
-> +	ret = q6_register_userpd(pdev);
-> +	if (ret) {
-> +		dev_err_probe(&pdev->dev, ret, "Failed to register userpd\n");
-> +		return ret;
-
-return dev_err_probe
-
-> +	}
-> +
-> +	return 0;
-> +
-> +free_rproc:
-> +	rproc_free(rproc);
-> +
-> +	return ret;
-
-Best regards,
-Krzysztof
-
+>
+>>>>>> A part of this registration code you can find in 11/21
+>>>>>>
+>>>>>>> I'm pretty sure I already said all this before.
+>>>>>> Yes, you said this before but that's the reason i came up with vendor
+>>>>>> ramoops instead of changing traditional ramoops binding.
+>>>>> That's unexpected conclusion. Adding more bindings is not the answer to
+>>>>> comment that it should not be in the DTS in the first place.
+>>>> Please suggest, what is the other way being above text as requirement..
+>>> I do not see any requirement for us there. Forcing me to figure out
+>>> how to add non-hardware property to DT is not the way to convince
+>>> reviewers. But if you insist - we have ABI for this, called sysfs. If
+>>> it is debugging feature, then debugfs.
+>> ramoops already support module params and a way to pass these parameters
+>> from bootargs but it also need to know the hard-codes addresses, so,
+>> doing something in sysfs will be again duplication with ramoops driver..
+> Why do you need hard-coded addresses?
+>
+>> If this can be accommodated under ramoops, this will be very small
+>> change, like this
+>>
+>> https://lore.kernel.org/lkml/20230622005213.458236-1-isaacmanjarres@google.com/
+> That's also funny patch - missing bindings updated, missing CC DT
+> maintainers.
+>
+> Best regards,
+> Krzysztof
+>
+>
+>
