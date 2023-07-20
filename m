@@ -2,221 +2,209 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D83EB64DA
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 19 Jul 2023 15:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FFBEB64DA
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 20 Jul 2023 12:40:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231855AbjGSPrc (ORCPT
+        id S230211AbjGTMkJ (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 19 Jul 2023 11:47:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51398 "EHLO
+        Thu, 20 Jul 2023 08:40:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231696AbjGSPrb (ORCPT
+        with ESMTP id S229628AbjGTMkI (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 19 Jul 2023 11:47:31 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88801B6
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jul 2023 08:47:26 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-66872d4a141so4703335b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Jul 2023 08:47:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689781646; x=1690386446;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rA/3cYmYP9DShzYXoAgqhlU5HPUKS1wa/nHGxwzX3U4=;
-        b=wAAwX/qgHXj2kKMJar6LkvswRhFcqjK5dFVIG9vjvEys/9BY2QohFe8CAuOWVhEioK
-         UR3IoWsZQW7k7pO7RF6uoTEvPIDdo0vl3JMILlvySqf0XKmPZIdhCt7VDqkvvrHxtVpM
-         758tPg33Mn1YHpR9jyrrP0p19IqHO/NpZl0//6o4YLbotUHfdMzkWE10Acy+YrftEn0b
-         8r4eG1Z9wwWYSdNrT1vZrQMoaIffsVy+N3pe/f9ihbcuL/hRbHV1fUDPZazz0P8Cj/KB
-         MlEJmV0u6MmQy+XF+CgzO+M4g721y3bZv6JTAFMqXDV8eL78y/rPweLSkTQcXst9UwAS
-         TKNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689781646; x=1690386446;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rA/3cYmYP9DShzYXoAgqhlU5HPUKS1wa/nHGxwzX3U4=;
-        b=JQcWmluwLvY+84nL/Mr6ZJBwAhFB9S96K1T3BjMWG60jgHAy+DZ70jvdLuo6w//cXC
-         TYLP4jhdR36tJmN64wG7sTTXmM9NXnYQ3XYo23Y2EKQf/5KTnhLhqvkIpqkLXjBjq39s
-         zqflck6gWyEl5pCAv2GDc4zQHkL6HsmIfS9qTf+q5DWl7dKznphZYWrZBQtIljb9MRn8
-         KhVlZ4j3vL/8KwzSTlGG12Yun8gv3Op5z8Q5TVlx+6SpaJBgiW4ps/CCmPSrJSBsjIUR
-         sR3dVD5K7uJXxsn5GVpeAgbhqA1T1hqLAeaqxotPJUj67CErlEsOyNn2ugCRY+V7MrkX
-         xVpA==
-X-Gm-Message-State: ABy/qLYxCr7/o08QV64OGmMOZxUgKZSOd7xIDDot2fHEz+D+9d+qOeKr
-        n94EmvQI0Ip20QR+EzrhB+uuhw==
-X-Google-Smtp-Source: APBJJlFO0Ez8AMQpNzyS+AnJZrKeAbW1gKn8UNJsX4k6R0koGmrBG8IsKhxgiCrWFNvIbNgMoKwMrA==
-X-Received: by 2002:a05:6a00:2ea7:b0:67b:d2e4:6bd2 with SMTP id fd39-20020a056a002ea700b0067bd2e46bd2mr3665417pfb.17.1689781646252;
-        Wed, 19 Jul 2023 08:47:26 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:6ba3:d4ce:34db:c692])
-        by smtp.gmail.com with ESMTPSA id t1-20020a63b241000000b0055bf13811f5sm3669504pgo.15.2023.07.19.08.47.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jul 2023 08:47:24 -0700 (PDT)
-Date:   Wed, 19 Jul 2023 09:47:21 -0600
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc:     "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "S.J. Wang" <shengjiu.wang@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mpuaudiosw <Mpuaudiosw@nxp.com>, linux-imx <linux-imx@nxp.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        LnxRevLi <LnxRevLi@nxp.com>
-Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: add module parameter to
- ignore ready flag from remote processor
-Message-ID: <ZLgFiW+IH3m4MWLw@p14s>
-References: <20230712224251.26482-1-iuliana.prodan@oss.nxp.com>
- <ZLV7q9ipDaw4b1Hi@p14s>
- <6fe5691f-67f4-ff70-8350-b4b6c08097b0@nxp.com>
- <ZLa0MqKvg1W3mx/7@p14s>
- <86da3550-9711-6714-0857-2f7611dc9453@nxp.com>
+        Thu, 20 Jul 2023 08:40:08 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD2B2135;
+        Thu, 20 Jul 2023 05:40:04 -0700 (PDT)
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id 731A3867B0;
+        Thu, 20 Jul 2023 14:39:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1689856796;
+        bh=f8XyhbjfLqhWIVCe1Qt4oK/cpkZbc5yMtEPx8ztTzZE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gvTkaGK7PaN7RI9bX6CgMhCFNU908mJeGF+RO0K6/VFdjWCS1v4fCNcZSYrdWfqSS
+         QFtLbkdjxRsblxR98CJcULD0H+4H0rnQyRobnXV7Y9P02IdaYRxk7DrqL4LCSSDRq8
+         IJUj9FHAnUOtKNYBN2EvjnpxAx0CrMfpEMjLGev+YCKL7GKNxUxEwkY9rkYK4Hm0QA
+         Imc7NYxDTJm1qll2vczBN6DUnPS9Z1903aMcS/JKPipGnhvmWl0f8YVpLaXibi1H9m
+         u3J/tHkk8MX8qwJd+xz65GKLw93Q17g+WTRDH7RHsY27dntdHdOq9EBucMoEUxhkCm
+         CLmwwRkdPoyDw==
+Message-ID: <253d05ad-c04a-2221-b8fb-616fcf1174f8@denx.de>
+Date:   Thu, 20 Jul 2023 14:39:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86da3550-9711-6714-0857-2f7611dc9453@nxp.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: imx_rproc: Document
+ fsl,startup-delay-ms
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230707232444.374431-1-marex@denx.de>
+ <8f40484e-1721-a2bc-2344-f9e59e51a935@linaro.org>
+ <d3180b8f-96d6-380b-4518-17334a90799d@denx.de>
+ <c02d0271-9896-3990-33b0-c83fa54f5623@linaro.org>
+ <7a1d7a67-0a0c-8527-d430-30a1cb40de48@denx.de>
+ <51a1c2e9-1165-c7ff-809d-b09e09d776e2@linaro.org>
+ <6e2e16be-1f83-70d2-4c5d-c2e89a7d017f@denx.de>
+ <CANLsYkyWCaSwiL=nOSG1efw069GKEeK2nYkYeMVT7bx0329Bgw@mail.gmail.com>
+ <38b62bf0-018a-03b9-3107-23f91fe3fa35@denx.de> <ZK2BmlSSQOLpqXFj@p14s>
+Content-Language: en-US
+From:   Marek Vasut <marex@denx.de>
+In-Reply-To: <ZK2BmlSSQOLpqXFj@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 07:44:49PM +0300, Iuliana Prodan wrote:
-> On 7/18/2023 6:48 PM, Mathieu Poirier wrote:
-> > On Tue, Jul 18, 2023 at 11:30:43AM +0300, Iuliana Prodan wrote:
-> > > Hi Mathieu,
-> > > 
-> > > On 7/17/2023 8:34 PM, Mathieu Poirier wrote:
-> > > > Hi Iuliana,
-> > > > 
-> > > > On Thu, Jul 13, 2023 at 01:42:51AM +0300, Iuliana Prodan (OSS) wrote:
-> > > > > From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> > > > > 
-> > > > > There are cases when we want to test samples that do not
-> > > > > reply with FW READY message, after fw is loaded and the
-> > > > > remote processor started.
-> > > > This seems like a bug to me - where is this FW comes from?
-> > > The firmware is a generic sample from Zephyr repo: https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc/openamp_rsc_table
-> > > 
-> > > There is no bug, this is how the application was written.
-> > But how did it ever worked before?
+On 7/11/23 18:21, Mathieu Poirier wrote:
+> On Tue, Jul 11, 2023 at 12:23:02AM +0200, Marek Vasut wrote:
+>> On 7/11/23 00:01, Mathieu Poirier wrote:
+>>> On Mon, 10 Jul 2023 at 15:53, Marek Vasut <marex@denx.de> wrote:
+>>>>
+>>>> On 7/10/23 22:00, Krzysztof Kozlowski wrote:
+>>>>> On 10/07/2023 15:46, Marek Vasut wrote:
+>>>>>> On 7/10/23 14:52, Krzysztof Kozlowski wrote:
+>>>>>>> On 10/07/2023 11:18, Marek Vasut wrote:
+>>>>>>>> On 7/10/23 10:12, Krzysztof Kozlowski wrote:
+>>>>>>>>> On 08/07/2023 01:24, Marek Vasut wrote:
+>>>>>>>>>> Document fsl,startup-delay-ms property which indicates how long
+>>>>>>>>>> the system software should wait until attempting to communicate
+>>>>>>>>>> with the CM firmware. This gives the CM firmware a bit of time
+>>>>>>>>>> to boot and get ready for communication.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Marek Vasut <marex@denx.de>
+>>>>>>>>>> ---
+>>>>>>>>>> Cc: Bjorn Andersson <andersson@kernel.org>
+>>>>>>>>>> Cc: Conor Dooley <conor+dt@kernel.org>
+>>>>>>>>>> Cc: Fabio Estevam <festevam@gmail.com>
+>>>>>>>>>> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+>>>>>>>>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>>>>>>>>>> Cc: NXP Linux Team <linux-imx@nxp.com>
+>>>>>>>>>> Cc: Peng Fan <peng.fan@nxp.com>
+>>>>>>>>>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+>>>>>>>>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>>>>>>>>> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+>>>>>>>>>> Cc: Shawn Guo <shawnguo@kernel.org>
+>>>>>>>>>> Cc: devicetree@vger.kernel.org
+>>>>>>>>>> Cc: linux-arm-kernel@lists.infradead.org
+>>>>>>>>>> Cc: linux-remoteproc@vger.kernel.org
+>>>>>>>>>> ---
+>>>>>>>>>>       .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml        | 5 +++++
+>>>>>>>>>>       1 file changed, 5 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>>>>>>>>> index 0c3910f152d1d..c940199ce89df 100644
+>>>>>>>>>> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>>>>>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+>>>>>>>>>> @@ -76,6 +76,11 @@ properties:
+>>>>>>>>>>             This property is to specify the resource id of the remote processor in SoC
+>>>>>>>>>>             which supports SCFW
+>>>>>>>>>>
+>>>>>>>>>> +  fsl,startup-delay-ms:
+>>>>>>>>>> +    default: 0
+>>>>>>>>>> +    description:
+>>>>>>>>>> +      CM firmware start up delay.
+>>>>>>>>>
+>>>>>>>>> I don't see particular improvements from v2 and no responses addressing
+>>>>>>>>> my comment:
+>>>>>>>>> https://lore.kernel.org/all/20221102112451.128110-2-peng.fan@oss.nxp.com/
+>>>>>>>>
+>>>>>>>> I wasn't aware of this being submitted before, esp. since I wrote the
+>>>>>>>> binding document from scratch. Which comment is not addressed, the type
+>>>>>>>> ref is not present and the sentence starts with caps, so what is missing ?
+>>>>>>>
+>>>>>>>
+>>>>>>> That the property looks like a hacky solution to some SW problem. Why
+>>>>>>> this delay should be different on different boards?
+>>>>>>
+>>>>>> It probably depends more on the CM4 firmware that is being launched. The
+>>>>>> ones I tested were fine with 50..500ms delay, but the delay was always
+>>>>>> needed.
+>>>>>
+>>>>> If this is for some official remoteproc FW running on M4
+>>>>
+>>>> It is not, it is some SDK which can be downloaded from NXP website,
+>>>> which can then be used to compile the firmware blob. The license is
+>>>> BSD-3 however, so it is conductive to producing binaries without
+>>>> matching sources ...
+>>>>
+>>>
+>>> Why can't the SDK be upgraded to provide some kind of hand-shake
+>>> mechanism, as suggested when I first reviewed this patchset?
+>>
+>> I'd argue because of legacy firmware that is already deployed.
+>> New firmware builds can, old ones probably cannot be fixed.
+>>
+>> Do you have a suggestion how such a mechanism should look like?
+>> As far as I can tell, the MX8M SDK stuff looks very similar to the STM32
+>> Cube stuff, so maybe the mechanism is already there ?
 > 
-> It never worked on this kind of samples (and it was never tested like this).
-> We used only applications written by us (NXP) with the
-> requirements/limitations we know we have.
-> Now, we want to use also generic firmware/samples (from Zephyr) and we face
-> other kind of limitations.
->
+> Either with a flag in the config space of the resource table or implicit
+> synchronization using the mailbox.  I suggest to have a look at struct
+> mbox_client where tx_block, knows_txdone and tx_done should be useful.  I'd use
+> those with a completion in rproc::ops::prepare() or rproc_ops::start().
 
-Right, we can't expect firmware written for a totally different OS to work out
-of the box on Linux, and vice versa.
+I added the following to the CM7 BSP from NXP, which removes the need 
+for the extra delay. I believe that is also the proper fix. Whether NXP 
+will pick it up in some form, is up to NXP.
 
-> >   And how does having a module flag to
-> > characterize each FW implementation that springs up in the field can scale (and
-> > be maintainable)?
-> 
-> I believe the FW_READY reply is a limitation introduced by imx_dsp_rproc.
-> We cannot expect all firmware to give a FW_READY reply.
-> So, to keep both usecases (internal firmware and generic sample) I added
-> this flag.
->
+This whole startup-delay patch is now unnecessary for me, i.e. I stop here.
 
-What happens when a third, fourth and fifth protocol variation get introduced?
-Adding flags just doesn't scale.
+"
+Run RPMSG init with IRQs globally disabled
 
-> > > Rather than modifying a generic sample for i.MX usecase, I prefer doing an
-> > > "insmod imx_dsp_rproc.ko ignore_dsp_ready=1" just for this sample.
-> > We already have a "no_mailbox" flag for cases where the FW doesn't need to
-> > communicate with the main processor.
-> "no_mailbox" - no IPC between cores;
-> "ignore_dsp_ready" - we have IPC between cores, but the remote processor
-> doesn't send a fw_ready reply
-> These two can be combine, but for "no_mailbox" will do some useless memory
-> allocations.
-> 
-> When I added the "no_mailbox" flag, the problem was still FW_READY.
-> >   What happens when some FW implementation
-> > requires a three-way handshake?  How many flags do we spin off?
-> > 
-> > As I said above this approach is not sustainable.  I suggest to either fix the
-> > FW (it doesn't work with upstream in its present form anyway) or start using the
-> > config space as described here [1] to dynamically probe the characteristics of
-> > the FW being loaded.  Whichever option you chose, the FW needs to be updated and
-> > the former is a lot more simple.
-> I don't think I can modify a generic sample, used on other targets to send a
-> FW_READY reply.
-> How will it be handled on other platforms, if their *_rproc are not
-> expecting this kind of message?
-> 
+The rpmsg_lite_remote_init() function runs in parallel with Linux side
+rpmsg_probe()->virtqueue_notify()->rproc_virtio_notify() which raises an
+IRQ on CM7 side. Unless IRQs are disabled during rpmsg_lite_remote_init()
+time, it is possible the kick from CA53 side would be received and end up
+in MU_M7_IRQHandler()->env_isr()->virtqueue_notification() for virtqueue
+which is not yet fully initialized. Such IRQ would then be discarded or
+mishandled, and rpmsg_lite_wait_for_link_up() would never complete. The
+firmware would then fail to communicate with CA53 side.
 
-The only way forward is to come up with a standard specification to describe the
-protocol to use, the same way it is done for virtIO for example.
+Fix this by running the RPMSG initialization with global IRQs off, which
+delays the reception of IRQ from CA53 side until after the virtqueues are
+fully and properly initialized, and the IRQ can be properly handled.
 
-> Thanks,
-> Iulia
-> 
-> > Thanks,
-> > Mathieu
-> > 
-> > [1]. https://elixir.bootlin.com/linux/latest/source/include/linux/remoteproc.h#L298
-> > 
-> > > Thanks,
-> > > Iulia
-> > > 
-> > > > > In these cases, do not wait for a confirmation from the remote processor
-> > > > > at start.
-> > > > > 
-> > > > > Added "ignore_dsp_ready" flag while inserting the module to ignore
-> > > > > remote processor reply after start.
-> > > > > By default, this is off - do not ignore reply from rproc.
-> > > > > 
-> > > > > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> > > > > 
-> > > > > ---
-> > > > > This was discovered while testing openamp_rsc_table sample from Zephyr
-> > > > > repo (https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc/openamp_rsc_table).
-> > > > > 
-> > > > > We have IPC, but the remote proc doesn't send a FW_READY reply.
-> > > > > ---
-> > > > >    drivers/remoteproc/imx_dsp_rproc.c | 15 +++++++++++++++
-> > > > >    1 file changed, 15 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> > > > > index b5634507d953..ed89de2f3b98 100644
-> > > > > --- a/drivers/remoteproc/imx_dsp_rproc.c
-> > > > > +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> > > > > @@ -36,7 +36,13 @@ module_param_named(no_mailboxes, no_mailboxes, int, 0644);
-> > > > >    MODULE_PARM_DESC(no_mailboxes,
-> > > > >    		 "There is no mailbox between cores, so ignore remote proc reply after start, default is 0 (off).");
-> > > > > +static unsigned int imx_dsp_rproc_ignore_ready;
-> > > > > +module_param_named(ignore_dsp_ready, imx_dsp_rproc_ignore_ready, int, 0644);
-> > > > > +MODULE_PARM_DESC(ignore_dsp_ready,
-> > > > > +		 "Ignore remote proc reply after start, default is 0 (off).");
-> > > > > +
-> > > > >    #define REMOTE_IS_READY				BIT(0)
-> > > > > +#define REMOTE_IGNORE_READY_REPLY	BIT(1)
-> > > > >    #define REMOTE_READY_WAIT_MAX_RETRIES		500
-> > > > >    /* att flags */
-> > > > > @@ -296,6 +302,12 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
-> > > > >    	if (!priv->rxdb_ch)
-> > > > >    		return 0;
-> > > > > +	/*
-> > > > > +	 * FW_READY reply is optional/ignored, so don't wait for it.
-> > > > > +	 */
-> > > > > +	if (priv->flags & REMOTE_IGNORE_READY_REPLY)
-> > > > > +		return 0;
-> > > > > +
-> > > > >    	for (i = 0; i < REMOTE_READY_WAIT_MAX_RETRIES; i++) {
-> > > > >    		if (priv->flags & REMOTE_IS_READY)
-> > > > >    			return 0;
-> > > > > @@ -1119,6 +1131,9 @@ static int imx_dsp_rproc_probe(struct platform_device *pdev)
-> > > > >    	else
-> > > > >    		imx_dsp_rproc_mbox_init = imx_dsp_rproc_mbox_alloc;
-> > > > > +	if (imx_dsp_rproc_ignore_ready)
-> > > > > +		priv->flags |= REMOTE_IGNORE_READY_REPLY;
-> > > > > +
-> > > > >    	dev_set_drvdata(dev, rproc);
-> > > > >    	INIT_WORK(&priv->rproc_work, imx_dsp_rproc_vq_work);
-> > > > > -- 
-> > > > > 2.17.1
-> > > > > 
+diff --git 
+a/boards/evkmimx8mn/multicore_examples/rpmsg_lite_str_echo_rtos/main_remote.c 
+b/boards/evkmimx8mn/multicore_examples/rpmsg_lite_str_echo_rtos/main_remote.c
+index 655287c..936822e 100644
+--- 
+a/boards/evkmimx8mn/multicore_examples/rpmsg_lite_str_echo_rtos/main_remote.c
++++ 
+b/boards/evkmimx8mn/multicore_examples/rpmsg_lite_str_echo_rtos/main_remote.c
+@@ -87,6 +87,7 @@ void app_task(void *param)
+      /* Print the initial banner */
+      PRINTF("\r\nRPMSG String Echo FreeRTOS RTOS API Demo...\r\n");
+
++    __disable_irq();
+  #ifdef MCMGR_USED
+      uint32_t startupData;
+
+@@ -100,6 +101,7 @@ void app_task(void *param)
+  #else
+      my_rpmsg = rpmsg_lite_remote_init((void *)RPMSG_LITE_SHMEM_BASE, 
+RPMSG_LITE_LINK_ID, RL_NO_FLAGS);
+  #endif /* MCMGR_USED */
++    __enable_irq();
+
+      rpmsg_lite_wait_for_link_up(my_rpmsg, RL_BLOCK);
+"
