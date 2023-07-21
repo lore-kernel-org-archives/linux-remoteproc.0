@@ -2,47 +2,47 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 016EEC001DF
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 02:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D85BEB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 02:42:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjGUCmJ (ORCPT
+        id S229779AbjGUCmK (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 20 Jul 2023 22:42:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41012 "EHLO
+        Thu, 20 Jul 2023 22:42:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjGUCmF (ORCPT
+        with ESMTP id S229644AbjGUCmF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 20 Jul 2023 22:42:05 -0400
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA83271C;
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D9772719;
         Thu, 20 Jul 2023 19:41:59 -0700 (PDT)
-X-UUID: 263be0ea277011eeb20a276fd37b9834-20230721
+X-UUID: 2556cd70277011ee9cb5633481061a41-20230721
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=yJpPZnIfqbjbl1UOtIUv6D8T7S7CPLpi9wfN1Bi61F0=;
-        b=W1dzhOKUFjlPim+NU/ikO2o3lP67C0Nj/3g1zFcPdtmPmT6rdMkC45i6VEDqkxxmT+nywKd9IH1e5pQgwNwxT5+oh6o1EAXMynUwweq3Oul/P26Ne0IDNALv9gOtTBbDwXwNPuHHWsLY9XE+IKtVJBCRDKqwZCQO16cM6d8lx5o=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=MDZTnfwTSXVCge+SDxX9wN5oitrDO+XbT88RHnGIcQM=;
+        b=LUOTlbYGpjjPrASm4Mt4EmUVY4h6tRmo7tBWLqZY/AREFWGGIu5ziaCcbQ+uBLEHabnSvN9+lu0EOEcit1DyKC7yXhePqdSlS3ep7CQ55b4TtYAakZRhiiOofXLYgn/OALS/SJ3IVUyKzZ1I733Vx9oGLF45ca+GTVwgcrmUGEk=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.28,REQID:4f339582-5989-4e1b-a8e1-dfa7bda46caa,IP:0,U
-        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-        release,TS:0
-X-CID-META: VersionHash:176cd25,CLOUDID:c311de87-44fb-401c-8de7-6a5572f1f5d5,B
+X-CID-O-INFO: VERSION:1.1.28,REQID:9e431ea7-df74-4c43-834f-5f4058b425c4,IP:0,U
+        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:-5
+X-CID-META: VersionHash:176cd25,CLOUDID:6e8df44c-06c1-468b-847d-5b62d44dbb9b,B
         ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
         DKR:0,DKP:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 263be0ea277011eeb20a276fd37b9834-20230721
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+X-UUID: 2556cd70277011ee9cb5633481061a41-20230721
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1603218869; Fri, 21 Jul 2023 10:41:52 +0800
+        with ESMTP id 1109413881; Fri, 21 Jul 2023 10:41:51 +0800
 Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
  MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 21 Jul 2023 10:41:51 +0800
+ 15.2.1118.26; Fri, 21 Jul 2023 10:41:50 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
  mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 21 Jul 2023 10:41:51 +0800
+ 15.2.1118.26 via Frontend Transport; Fri, 21 Jul 2023 10:41:50 +0800
 From:   Tinghan Shen <tinghan.shen@mediatek.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -58,9 +58,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v15 09/13] remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
-Date:   Fri, 21 Jul 2023 10:41:28 +0800
-Message-ID: <20230721024132.6548-10-tinghan.shen@mediatek.com>
+Subject: [PATCH v15 06/13] remoteproc: mediatek: Probe SCP cluster on single-core SCP
+Date:   Fri, 21 Jul 2023 10:41:25 +0800
+Message-ID: <20230721024132.6548-7-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20230721024132.6548-1-tinghan.shen@mediatek.com>
 References: <20230721024132.6548-1-tinghan.shen@mediatek.com>
@@ -71,89 +71,190 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Because MT8195 SCP core 0 and core 1 both boot from head of SRAM and
-have the same viewpoint of SRAM, SCP has a "core 1 SRAM offset"
-configuration to control the access destination of SCP core 1 to boot
-core 1 from different SRAM location.
+This is the 2nd preliminary step for probing multi-core SCP.
+The initialization procedure for remoteproc is similar for both
+single-core and multi-core architectures and is reusing to avoid
+redundant code.
 
-The "core 1 SRAM offset" configuration is composed by a range
-and an offset. It works like a simple memory mapped mechanism.
-When SCP core 1 accesses a SRAM address located in the range,
-the SCP bus adds the configured offset to the address to
-shift the physical destination address on SCP SRAM. This shifting is
-transparent to the software running on SCP core 1.
+Rewrite the probing flow of single-core SCP to adapt with the 'cluster'
+concept needed by the multi-core SCP. The SCP core object(s)
+is maintained at the cluster list.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/remoteproc/mtk_common.h |  7 +++++++
- drivers/remoteproc/mtk_scp.c    | 28 ++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+ drivers/remoteproc/mtk_common.h |  2 +
+ drivers/remoteproc/mtk_scp.c    | 84 +++++++++++++++++++++++----------
+ 2 files changed, 62 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-index fea05bbba9aa..3d6b53b9f374 100644
+index b04d71277c1f..1438159ae736 100644
 --- a/drivers/remoteproc/mtk_common.h
 +++ b/drivers/remoteproc/mtk_common.h
-@@ -65,6 +65,13 @@
- #define MT8195_CORE1_MEM_ATT_PREDEF		0x20008
- #define MT8195_CORE1_WDT_CFG			0x20034
+@@ -105,6 +105,7 @@ struct mtk_scp_of_cluster {
+ 	void __iomem *l1tcm_base;
+ 	size_t l1tcm_size;
+ 	phys_addr_t l1tcm_phys;
++	struct list_head mtk_scp_list;
+ };
  
-+#define MT8195_SEC_CTRL				0x85000
-+#define MT8195_CORE_OFFSET_ENABLE_D		BIT(13)
-+#define MT8195_CORE_OFFSET_ENABLE_I		BIT(12)
-+#define MT8195_L2TCM_OFFSET_RANGE_0_LOW		0x850b0
-+#define MT8195_L2TCM_OFFSET_RANGE_0_HIGH	0x850b4
-+#define MT8195_L2TCM_OFFSET			0x850d0
-+
- #define SCP_FW_VER_LEN			32
- #define SCP_SHARE_BUFFER_SIZE		288
+ struct mtk_scp {
+@@ -132,6 +133,7 @@ struct mtk_scp {
+ 
+ 	struct rproc_subdev *rpmsg_subdev;
+ 
++	struct list_head elem;
+ 	struct mtk_scp_of_cluster *cluster;
+ };
  
 diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index c624f9c3db17..d1d0d7fb574c 100644
+index 9486f5020946..d67dcabdab9e 100644
 --- a/drivers/remoteproc/mtk_scp.c
 +++ b/drivers/remoteproc/mtk_scp.c
-@@ -495,6 +495,10 @@ static int mt8195_scp_before_load(struct mtk_scp *scp)
- 
- static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- {
-+	u32 sec_ctrl;
-+	struct mtk_scp *scp_c0;
-+	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-+
- 	scp->data->scp_reset_assert(scp);
- 
- 	mt8195_scp_l2tcm_on(scp);
-@@ -504,6 +508,30 @@ static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
- 	/* enable MPU for all memory regions */
- 	writel(0xff, scp->cluster->reg_base + MT8195_CORE1_MEM_ATT_PREDEF);
- 
-+	/*
-+	 * The L2TCM_OFFSET_RANGE and L2TCM_OFFSET shift the destination address
-+	 * on SRAM when SCP core 1 accesses SRAM.
-+	 *
-+	 * This configuration solves booting the SCP core 0 and core 1 from
-+	 * different SRAM address because core 0 and core 1 both boot from
-+	 * the head of SRAM by default. this must be configured before boot SCP core 1.
-+	 *
-+	 * The value of L2TCM_OFFSET_RANGE is from the viewpoint of SCP core 1.
-+	 * When SCP core 1 issues address within the range (L2TCM_OFFSET_RANGE),
-+	 * the address will be added with a fixed offset (L2TCM_OFFSET) on the bus.
-+	 * The shift action is tranparent to software.
-+	 */
-+	writel(0, scp->cluster->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_LOW);
-+	writel(scp->sram_size, scp->cluster->reg_base + MT8195_L2TCM_OFFSET_RANGE_0_HIGH);
-+
-+	scp_c0 = list_first_entry(&scp_cluster->mtk_scp_list, struct mtk_scp, elem);
-+	writel(scp->sram_phys - scp_c0->sram_phys, scp->cluster->reg_base + MT8195_L2TCM_OFFSET);
-+
-+	/* enable SRAM offset when fetching instruction and data */
-+	sec_ctrl = readl(scp->cluster->reg_base + MT8195_SEC_CTRL);
-+	sec_ctrl |= MT8195_CORE_OFFSET_ENABLE_I | MT8195_CORE_OFFSET_ENABLE_D;
-+	writel(sec_ctrl, scp->cluster->reg_base + MT8195_SEC_CTRL);
-+
- 	return 0;
+@@ -854,8 +854,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+ 	}
  }
  
+-static int scp_cluster_init(struct platform_device *pdev,
+-			    struct mtk_scp_of_cluster *scp_cluster)
++static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
++				      struct mtk_scp_of_cluster *scp_cluster)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+@@ -867,11 +867,13 @@ static int scp_cluster_init(struct platform_device *pdev,
+ 
+ 	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+ 	if (ret < 0 && ret != -EINVAL)
+-		return ret;
++		return ERR_PTR(ret);
+ 
+ 	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
+-	if (!rproc)
+-		return dev_err_probe(dev, -ENOMEM, "unable to allocate remoteproc\n");
++	if (!rproc) {
++		dev_err(dev, "unable to allocate remoteproc\n");
++		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	scp = rproc->priv;
+ 	scp->rproc = rproc;
+@@ -882,20 +884,21 @@ static int scp_cluster_init(struct platform_device *pdev,
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
+ 	scp->sram_base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(scp->sram_base))
+-		return dev_err_probe(dev, PTR_ERR(scp->sram_base),
+-				     "Failed to parse and map sram memory\n");
++	if (IS_ERR(scp->sram_base)) {
++		dev_err(dev, "Failed to parse and map sram memory\n");
++		return ERR_CAST(scp->sram_base);
++	}
+ 
+ 	scp->sram_size = resource_size(res);
+ 	scp->sram_phys = res->start;
+ 
+ 	ret = scp->data->scp_clk_get(scp);
+ 	if (ret)
+-		return ret;
++		return ERR_PTR(ret);
+ 
+ 	ret = scp_map_memory_region(scp);
+ 	if (ret)
+-		return ret;
++		return ERR_PTR(ret);
+ 
+ 	mutex_init(&scp->send_lock);
+ 	for (i = 0; i < SCP_IPI_MAX; i++)
+@@ -922,11 +925,7 @@ static int scp_cluster_init(struct platform_device *pdev,
+ 		goto remove_subdev;
+ 	}
+ 
+-	ret = rproc_add(rproc);
+-	if (ret)
+-		goto remove_subdev;
+-
+-	return 0;
++	return scp;
+ 
+ remove_subdev:
+ 	scp_remove_rpmsg_subdev(scp);
+@@ -937,7 +936,43 @@ static int scp_cluster_init(struct platform_device *pdev,
+ 		mutex_destroy(&scp->ipi_desc[i].lock);
+ 	mutex_destroy(&scp->send_lock);
+ 
+-	return ret;
++	return ERR_PTR(ret);
++}
++
++static void scp_free(struct mtk_scp *scp)
++{
++	int i;
++
++	scp_remove_rpmsg_subdev(scp);
++	scp_ipi_unregister(scp, SCP_IPI_INIT);
++	scp_unmap_memory_region(scp);
++	for (i = 0; i < SCP_IPI_MAX; i++)
++		mutex_destroy(&scp->ipi_desc[i].lock);
++	mutex_destroy(&scp->send_lock);
++}
++
++static int scp_cluster_init(struct platform_device *pdev,
++			    struct mtk_scp_of_cluster *scp_cluster)
++{
++	struct device *dev = &pdev->dev;
++	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
++	struct mtk_scp *scp;
++	int ret;
++
++	scp = scp_rproc_init(pdev, scp_cluster);
++	if (IS_ERR(scp))
++		return PTR_ERR(scp);
++
++	ret = rproc_add(scp->rproc);
++	if (ret) {
++		dev_err(dev, "Failed to add rproc\n");
++		scp_free(scp);
++		return ret;
++	}
++
++	list_add_tail(&scp->elem, scp_list);
++
++	return 0;
+ }
+ 
+ static int scp_probe(struct platform_device *pdev)
+@@ -970,6 +1005,8 @@ static int scp_probe(struct platform_device *pdev)
+ 		scp_cluster->l1tcm_phys = res->start;
+ 	}
+ 
++	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
++
+ 	ret = scp_cluster_init(pdev, scp_cluster);
+ 	if (ret)
+ 		return ret;
+@@ -980,15 +1017,14 @@ static int scp_probe(struct platform_device *pdev)
+ static void scp_remove(struct platform_device *pdev)
+ {
+ 	struct mtk_scp *scp = platform_get_drvdata(pdev);
+-	int i;
++	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
++	struct mtk_scp *temp;
+ 
+-	rproc_del(scp->rproc);
+-	scp_remove_rpmsg_subdev(scp);
+-	scp_ipi_unregister(scp, SCP_IPI_INIT);
+-	scp_unmap_memory_region(scp);
+-	for (i = 0; i < SCP_IPI_MAX; i++)
+-		mutex_destroy(&scp->ipi_desc[i].lock);
+-	mutex_destroy(&scp->send_lock);
++	list_for_each_entry_safe_reverse(scp, temp, &scp_cluster->mtk_scp_list, elem) {
++		list_del(&scp->elem);
++		rproc_del(scp->rproc);
++		scp_free(scp);
++	}
+ }
+ 
+ static const struct mtk_scp_of_data mt8183_of_data = {
 -- 
 2.18.0
 
