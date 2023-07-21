@@ -2,124 +2,287 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4A0EB64DC
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 15:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AC4EB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 18:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232338AbjGUPwN (ORCPT
+        id S230107AbjGUSm2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 21 Jul 2023 11:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50142 "EHLO
+        Fri, 21 Jul 2023 14:42:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232307AbjGUPvy (ORCPT
+        with ESMTP id S229451AbjGUSm1 (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 21 Jul 2023 11:51:54 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D83E4204;
-        Fri, 21 Jul 2023 08:51:30 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36LEUFWS027381;
-        Fri, 21 Jul 2023 15:50:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=wgnGZHbIoJ+Tel2Emd5h8/25wCwNLdaLGk5yznKHd3w=;
- b=NzBwJRVanLMvvClAzMWoLAf6bfOTURdpO1caceiPvWqyt/q20wHf64fWcqvJTM5Zlx62
- 6BBmcZj5gpRLaE1IdIVFKzt/Tm/1sno4qzxUXNewl2x17Og0vs+VoiI2NdeTEgznDKMr
- ueWHGxt7qLuL4jzg60A/+bc1o6tU4Cu4U5e0QphDXGDiXFFtyr1/caPYYzXX+bdptoeO
- BGCfVfRzLyA8Uzq7X32+knCOV9BEutpaeUlQRj+W1AT855ij4zcGmJ3AEK+vIk37gpb+
- pt+j4/Dc7KQt0FqOH10anRT8HI/1nKrrQuetCfNiseYJdObkVLIK0ytUnvpqWgaLtYa+ LQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ryksesawg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jul 2023 15:50:41 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36LFoemt002019
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jul 2023 15:50:40 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 21 Jul
- 2023 08:50:39 -0700
-Message-ID: <43afe706-5765-a8e7-2bbe-d9b21ec7a06e@quicinc.com>
-Date:   Fri, 21 Jul 2023 09:50:32 -0600
+        Fri, 21 Jul 2023 14:42:27 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2077.outbound.protection.outlook.com [40.107.243.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC642E62;
+        Fri, 21 Jul 2023 11:42:25 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TTyU7cM88aLBKdjdjIurhsHyG0YzZruKPSSxsQIXTMM0TW+CpT1xjlq46W95jwF4UaeLFwm8kaRs1QC+HIrHuxhL3BfxzrxhQykUHNCf3rewYBddC+HlYbGO+iUhugZ67YEijVVti/0t2PltBg+Ctzw7MoFUyXeDE0u5U3Ped5yI7q6kNHTV8NBdmr82orVdbufeikp7IEvP3P484J7g0vbZN3GERqO56w/4u/nc1+8xbRqYm3PKuZyOmG1eh3K/+iXOtpruPcgvxPwXunrpo3UgnJARoZsNvdTBXkjA2512zfiuXtwvW5jJmckryxI13SQ60lYZ/QqrnavjYHuRpA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aAgQYY2VEylhe9xhcUyMUSvejM0M1Eu1N/oiTcfctyQ=;
+ b=VZ30933kcbDVV9ZAclt6Dro2CTjFZOW9grQd/BzPEunzveXhcbVJF56HtIN4LTmRUfP/uhZtAMC4HCDSMTjw6VoHZqceG+Ns6jBDv6ekQTpT6H8bxCH53vzADKGIUfev1Dcd45b8bLP3v8BYSFwLVOfY5vQXrk1/ZTsVBR7AuwHBqcueW0j/mY4To4wGYL+SdOz+Ix1umcA+4s9IMD+2+oDycLQUb64xVyI06w5PzxcrM0TG/Z7ntqsq8coYkh6PNypnrL/Z9qcD3miDcnwziPE835fB32rHq8RyF6sivDfxODvFfDdTBuwSPsbop8XDXRg9xNdZbPsVahuiROlP3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aAgQYY2VEylhe9xhcUyMUSvejM0M1Eu1N/oiTcfctyQ=;
+ b=aSU0ZHVCvt5e4niMefzkKxZFcg4ioiAkxzBb88uLqGVzFUptJg+rFFe3jsnAzTs2hqvsC67JBM+vZke2GqYoN0J0DL42Re/jiMROd+6CfBXL1EPXuG6TPKT1VY14/kgD0sQJi1vHmnYNgrKStAWz4Dli3ETKSIi8TkEevMWKIBI=
+Received: from DS7PR03CA0175.namprd03.prod.outlook.com (2603:10b6:5:3b2::30)
+ by MN0PR12MB5764.namprd12.prod.outlook.com (2603:10b6:208:377::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6588.31; Fri, 21 Jul
+ 2023 18:42:23 +0000
+Received: from DM6NAM11FT079.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b2:cafe::9) by DS7PR03CA0175.outlook.office365.com
+ (2603:10b6:5:3b2::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.28 via Frontend
+ Transport; Fri, 21 Jul 2023 18:42:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DM6NAM11FT079.mail.protection.outlook.com (10.13.173.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6609.25 via Frontend Transport; Fri, 21 Jul 2023 18:42:22 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 21 Jul
+ 2023 13:42:21 -0500
+Received: from xhdvnc102.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.27 via Frontend
+ Transport; Fri, 21 Jul 2023 13:42:18 -0500
+From:   Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <michal.simek@amd.com>,
+        <ben.levinsky@amd.com>, <tanmay.shah@amd.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <git@amd.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Subject: [PATCH v3] dt-bindings: remoteproc: add Tightly Coupled Memory (TCM) bindings
+Date:   Sat, 22 Jul 2023 00:11:48 +0530
+Message-ID: <1689964908-22371-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 09/11] arm64: dts: qcom: msm8998: Remove AGGRE2 clock from
- SLPI
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>
-CC:     Marijn Suijten <marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20230721-topic-rpm_clk_cleanup-v1-0-cf6cd5c621d5@linaro.org>
- <20230721-topic-rpm_clk_cleanup-v1-9-cf6cd5c621d5@linaro.org>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20230721-topic-rpm_clk_cleanup-v1-9-cf6cd5c621d5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eSgD9s2AiCToG3pVyk6vRnuqxeuYDYTR
-X-Proofpoint-ORIG-GUID: eSgD9s2AiCToG3pVyk6vRnuqxeuYDYTR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-21_10,2023-07-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 phishscore=0
- mlxlogscore=947 mlxscore=0 spamscore=0 adultscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307210141
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT079:EE_|MN0PR12MB5764:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8619fad-913c-4c5a-1791-08db8a1a38dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0djd558Vcx17PbL8/OdXGV4+O/7/GaYuTbqjntx2ZPkn6Ly/ZAKMq5x1/V3NbmYSHdZ9g5U2s1KEKw/hcFwdFXU1EKO81Dsh8/Ue2TWff/Fzr10XMLn9hZtxeAX6TLmqn4tD4LqxEvPuRXVslKNgw3lhL1DbkzAk5qeY1vs/4gl/sTjLSTOcaMVIgmZgbFmTzfUEKntn/pqdf/wn44j0vNEGoISFjUyt5frO7KuKz2mIeyEfK7nHlKokiHTdwcbCN5Y6pP5h+4Wln9vhbVkKqdB9nz0JDutQphJ2HA6CYw11r9LmDwuAGouP1CZO8CrKc4Uz3GwqAQDJ5MErjZTXTjof0udYPdwBgr8zuao032n92BMcJsh+n2awIp1bTcpFNN1yUp5rUBSLSnJSDRqUwZ2GvaZjva7CBvrvWwTvznKaBOminUSWsHej+Dl5xa5Y3ofvuuwxBmNaBBT8cdWNBv7wEqH0T/tkwxxS/+F9NiEXzXuQ1xeppBgheafggjxgISA1jcqtPT0SCivN++buqLH1/ZXuglzLwOdZ+cUulughtYKDqK969OHof+byLDvS6KbKQDbmds/dQ5PrtPeiwv4ZIyhOgAb6yZDVJIWG4AHCz5aQ11D0EdyyRPXTKmF9aep61Ok1PnklUrAe/6vZOH7/fmnzRDBT/8XXNGP9520flTKLobBucSGWCU1gpAyHym2dR96r036U/T9f3WX5GrufJBpo1w9m6Yt9j42r1SoBpoyi4xZFipJ0gQ0r57LdlAvoh9J19MLBT8m1riJGuw==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(346002)(396003)(376002)(82310400008)(451199021)(46966006)(40470700004)(36840700001)(8676002)(81166007)(40460700003)(356005)(2616005)(47076005)(426003)(186003)(26005)(70586007)(4326008)(6636002)(41300700001)(316002)(6666004)(2906002)(70206006)(5660300002)(36756003)(110136005)(8936002)(54906003)(40480700001)(478600001)(36860700001)(83380400001)(82740400003)(336012)(86362001)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2023 18:42:22.9134
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8619fad-913c-4c5a-1791-08db8a1a38dd
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT079.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5764
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On 7/21/2023 9:36 AM, Konrad Dybcio wrote:
-> The AGGRE2 clock is a clock for the entire AGGRE2 bus, managed from
-> within the interconnect driver. Attaching it to SLPI was a total hack.
-> Get rid of it.
+Introduce bindings for TCM memory address space on AMD-xilinx Zynq
+UltraScale+ platform. It will help in defining TCM in device-tree
+and make it's access platform agnostic and data-driven.
 
-Nit - why do we care what driver manages the clock?  DT describes 
-hardware...
+Tightly-coupled memories(TCMs) are low-latency memory that provides
+predictable instruction execution and predictable data load/store
+timing. Each Cortex-R5F processor contains two 64-bit wide 64 KB memory
+banks on the ATCM and BTCM ports, for a total of 128 KB of memory.
 
-The entire SLPI block hangs off the AGGRE2 bus, so that bus needs to be 
-on for the SLPI.  I agree that AGGRE2 is really an interconnect device 
-and SLPI should be a consumer of that, but we don't have 8998 
-interconnects defined yet.  Seems like this hack is still needed.
+The TCM resources(reg, reg-names and power-domain) are documented for
+each TCM in the R5 node. The reg and reg-names are made as required
+properties as we don't want to hardcode TCM addresses for future
+platforms and for zu+ legacy implementation will ensure that the
+old dts w/o reg/reg-names works and stable ABI is maintained.
 
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/msm8998.dtsi | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> index 360fe3edcc08..547c3f9654a6 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> @@ -1599,9 +1599,8 @@ remoteproc_slpi: remoteproc@5800000 {
->   
->   			px-supply = <&vreg_lvs2a_1p8>;
->   
-> -			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> -				 <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-> -			clock-names = "xo", "aggre2";
-> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
-> +			clock-names = "xo";
->   
->   			memory-region = <&slpi_mem>;
->   
-> 
+It also extends the examples for TCM split and lockstep modes.
+
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+Changes for v3:
+- Modified commit description to document that reg/reg-names are
+  made as required properties and add justification for it.
+- Drop 'Address and Size of' in reg items description.
+- Modified commit description to remove driver reference.
+
+Changes for v2:
+- Add ranges property to r5fss cluster node.
+- Use regex "^r5f(@[0-9a-f]+|-[a-f0-9]+)$".
+- Drop address/size-cells and ranges from r5f core node.
+- Mention "reg" and "reg names" as r5f core node required properties.
+- Mention address/size-cells and ranges as r5fss required node
+  properties.
+- Modify commit description to remove ranges from R5 node.
+- Rename r5f node labels(r5f_0 -> r5f_0_split/lockstep and
+  r5f_1->r5f_1_split/lockstep)
+
+The inspiration for integrating TCM nodes in R5 nodes is taken from
+"5ee79c2ed5bd dt-bindings: remoteproc: Add bindings for R5F subsystem
+on TI K3 SoCs".Once the binding is reviewed/accepted will send out
+driver changes in follow-up series.
+---
+ .../bindings/remoteproc/xlnx,zynqmp-r5fss.yaml     | 90 ++++++++++++++++++++--
+ 1 file changed, 83 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+index 9f677367dd9f..43089b0e8a39 100644
+--- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+@@ -20,6 +20,17 @@ properties:
+   compatible:
+     const: xlnx,zynqmp-r5fss
+ 
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  ranges:
++    description: |
++      Standard ranges definition providing address translations for
++      local R5F TCM address spaces to bus addresses.
++
+   xlnx,cluster-mode:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     enum: [0, 1, 2]
+@@ -37,7 +48,7 @@ properties:
+       2: single cpu mode
+ 
+ patternProperties:
+-  "^r5f-[a-f0-9]+$":
++  "^r5f@[0-9a-f]+$":
+     type: object
+     description: |
+       The RPU is located in the Low Power Domain of the Processor Subsystem.
+@@ -54,8 +65,19 @@ patternProperties:
+       compatible:
+         const: xlnx,zynqmp-r5f
+ 
++      reg:
++        items:
++          - description: ATCM internal memory region
++          - description: BTCM internal memory region
++
++      reg-names:
++        items:
++          - const: atcm
++          - const: btcm
++
+       power-domains:
+-        maxItems: 1
++        minItems: 1
++        maxItems: 3
+ 
+       mboxes:
+         minItems: 1
+@@ -102,31 +124,85 @@ patternProperties:
+     required:
+       - compatible
+       - power-domains
++      - reg
++      - reg-names
+ 
+     unevaluatedProperties: false
+ 
+ required:
+   - compatible
++  - "#address-cells"
++  - "#size-cells"
++  - ranges
+ 
+ additionalProperties: false
+ 
+ examples:
+   - |
+-    remoteproc {
++    #include <dt-bindings/power/xlnx-zynqmp-power.h>
++
++    //Split mode configuration
++    remoteproc@ffe00000 {
++        compatible = "xlnx,zynqmp-r5fss";
++        xlnx,cluster-mode = <0>;
++
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0x0 0xffe00000 0x10000>, <0x20000 0xffe20000 0x10000>,
++                 <0x0 0xffe90000 0x10000>, <0x20000 0xffeb0000 0x10000>;
++
++        r5f_0_split: r5f@ffe00000 {
++            compatible = "xlnx,zynqmp-r5f";
++            reg = <0xffe00000 0x10000>, <0xffe20000 0x10000>;
++            reg-names = "atcm", "btcm";
++            power-domains = <&zynqmp_firmware PD_RPU_0>,
++                            <&zynqmp_firmware PD_R5_0_ATCM>,
++                            <&zynqmp_firmware PD_R5_0_BTCM>;
++            memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
++            mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
++            mbox-names = "tx", "rx";
++        };
++
++        r5f_1_split: r5f@ffe90000 {
++            compatible = "xlnx,zynqmp-r5f";
++            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
++            reg-names = "atcm", "btcm";
++            power-domains = <&zynqmp_firmware PD_RPU_1>,
++                            <&zynqmp_firmware PD_R5_1_ATCM>,
++                            <&zynqmp_firmware PD_R5_1_BTCM>;
++            memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
++            mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
++            mbox-names = "tx", "rx";
++        };
++    };
++
++  - |
++    //Lockstep configuration
++    remoteproc@ffe00000 {
+         compatible = "xlnx,zynqmp-r5fss";
+         xlnx,cluster-mode = <1>;
+ 
+-        r5f-0 {
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0x0 0xffe00000 0x20000>, <0x20000 0xffe20000 0x20000>;
++
++        r5f_0_lockstep: r5f@ffe00000 {
+             compatible = "xlnx,zynqmp-r5f";
+-            power-domains = <&zynqmp_firmware 0x7>;
++            reg = <0xffe00000 0x20000>, <0xffe20000 0x20000>;
++            reg-names = "atcm", "btcm";
++            power-domains = <&zynqmp_firmware PD_RPU_0>,
++                            <&zynqmp_firmware PD_R5_0_ATCM>,
++                            <&zynqmp_firmware PD_R5_0_BTCM>;
+             memory-region = <&rproc_0_fw_image>, <&rpu0vdev0buffer>, <&rpu0vdev0vring0>, <&rpu0vdev0vring1>;
+             mboxes = <&ipi_mailbox_rpu0 0>, <&ipi_mailbox_rpu0 1>;
+             mbox-names = "tx", "rx";
+         };
+ 
+-        r5f-1 {
++        r5f_1_lockstep: r5f@ffe90000 {
+             compatible = "xlnx,zynqmp-r5f";
+-            power-domains = <&zynqmp_firmware 0x8>;
++            reg = <0xffe90000 0x10000>, <0xffeb0000 0x10000>;
++            reg-names = "atcm", "btcm";
++            power-domains = <&zynqmp_firmware PD_RPU_1>;
+             memory-region = <&rproc_1_fw_image>, <&rpu1vdev0buffer>, <&rpu1vdev0vring0>, <&rpu1vdev0vring1>;
+             mboxes = <&ipi_mailbox_rpu1 0>, <&ipi_mailbox_rpu1 1>;
+             mbox-names = "tx", "rx";
+-- 
+2.1.1
 
