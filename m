@@ -2,408 +2,133 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F04EB64DD
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 07:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D1EC3DA40
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 15:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjGUHOm (ORCPT
+        id S232056AbjGUPgT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 21 Jul 2023 03:14:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50052 "EHLO
+        Fri, 21 Jul 2023 11:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjGUHOl (ORCPT
+        with ESMTP id S231302AbjGUPgS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 21 Jul 2023 03:14:41 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41A942710;
-        Fri, 21 Jul 2023 00:14:39 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36L6Vr21026911;
-        Fri, 21 Jul 2023 07:14:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=sfOPu6GrGESxmLaVpll2FfMbLdUhj1O3QpCA3VqTshg=;
- b=GXZYdvkeOfZHyk/Z11qDeJVQQ2PHxnv/aY2zQml8BgTkRTNUQwpoTgQSIttuxl0WpGuy
- EwQrPqnglYwy2JSfYn8Rs+im72K/LQzWH+Fd/b8KaXcq7HH2qdA0DFgS8uaBZ0Jhg63+
- apWSAAIh1Pn85yWvWuQq4LTHppcWVDSxCwAeQvkjnMW9So8HrO9PC0hkiTx9WAPaPymT
- e5hdP5ROa9gnRhcEIgDZm24lHX7rvuWhcIbS2QYLraER0RpmL+lbbCL26VAAPdakp7Ki
- bW0cd+46ydVuZOLykwb22mpdc7NLQQ6MYkV3lzW35DEQOLx9FTdUnq2tz3510OiOBUjJ zA== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rxxqv326f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jul 2023 07:14:34 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36L7EXB6018814
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jul 2023 07:14:33 GMT
-Received: from [10.216.60.229] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Fri, 21 Jul
- 2023 00:14:25 -0700
-Message-ID: <a996fcc8-381d-6534-8b08-549c4ecfb748@quicinc.com>
-Date:   Fri, 21 Jul 2023 12:44:22 +0530
+        Fri, 21 Jul 2023 11:36:18 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93C5E35A1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Jul 2023 08:36:10 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4faaaa476a9so3380337e87.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Jul 2023 08:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689953769; x=1690558569;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yNWCdaJdpClcitMaIL9p7WOYWVXCxYwceUbe7OdUFQU=;
+        b=KPnDZPYYz24xIjuhQDTvVyfwtgZoAkcRKUSpNvEi28AUyssfjyjRGx2AfDR29+iT+h
+         jkXHyasxK/pCcDfxsplUs9Wfd2EIqFnOaTTvJkkJH50BGHcRhVGnn2QvjPwkbi/UZiDQ
+         J/lORLm7/5zQM2HlGlef2I8j/n7AZrJNP4wkliN1M8/l0T+O48CtjV7GzQNd65dqWE97
+         1a6x/RQIW5Osilx1P7haYO2eoIWzbt4WY0BYVIyKIWphmggtdafTvFYt8jbbDLEuaBDZ
+         rvVgipYwj58GaHvXBnlM7AOLsy1iqoKep5Hg9XxyNxm0GuQrgTbB2DfgyuuFRPaiG3OQ
+         QmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689953769; x=1690558569;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yNWCdaJdpClcitMaIL9p7WOYWVXCxYwceUbe7OdUFQU=;
+        b=d2DdJyPGu8Vx4oYGozIooz4XmXPcuuLmdYCelAa/UgcnDVEhMO66zz1GMgybYRm067
+         RzszoACu6BYpAHzEY2qAf4z0QqMe2BLzmGvvTq5LbDQsYL9CWkUTdKldMCJvz0gO4bOo
+         23Zthgq7ZW8FfjY6WZJHcBZ0rQcTE2N7qjkjiAWGhbYm58Md3gmN95iIvZTTkfrfFYxF
+         O7ff3InpslIoh61MNmtydDX0iV+pubkIBL666bMBpsd/dCLB4waxV3hNa0QAJx6hdeU5
+         bteBDOov566SdbLN++Mjv/Svw6okmhMcqfZtJ5IE6xjFJtTLZWzr6PphnBoG9yYutu9t
+         n7XQ==
+X-Gm-Message-State: ABy/qLa+ufG0bFymvKCwPYKi9PLqD+aH4GAGn2ralxDWMeGrvo45gxy/
+        V5pOjintvD9g/zWb4vHDBLHrcQ==
+X-Google-Smtp-Source: APBJJlEWsQH7vQXNdvfKKwzYrZg4NjS/CWHBzHmpytj3/CqqwwBopJV9EP+dBekKjX+CEaUD3BBYIg==
+X-Received: by 2002:a05:6512:23aa:b0:4f8:6ac4:84 with SMTP id c42-20020a05651223aa00b004f86ac40084mr2004363lfv.8.1689953768733;
+        Fri, 21 Jul 2023 08:36:08 -0700 (PDT)
+Received: from [192.168.1.101] (abyj181.neoplus.adsl.tpnet.pl. [83.9.29.181])
+        by smtp.gmail.com with ESMTPSA id t9-20020a19ad09000000b004fba1278e6dsm782535lfc.107.2023.07.21.08.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jul 2023 08:36:08 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 00/11] Clean up RPM bus clocks remnants
+Date:   Fri, 21 Jul 2023 17:36:03 +0200
+Message-Id: <20230721-topic-rpm_clk_cleanup-v1-0-cf6cd5c621d5@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
-        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
-References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
- <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
- <fedea75a-a5f1-fbe4-7f12-75bfdf9bfcf2@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <fedea75a-a5f1-fbe4-7f12-75bfdf9bfcf2@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v_qB3oT3zJhA4Gp-k8yxQPlJ2zqidWrq
-X-Proofpoint-GUID: v_qB3oT3zJhA4Gp-k8yxQPlJ2zqidWrq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-21_04,2023-07-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 adultscore=0
- impostorscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307210063
+X-B4-Tracking: v=1; b=H4sIAOOlumQC/x2N0QrCMAxFf2Xk2UBTBcFfEZG0y1ywdiV1Ioz9u
+ 8GH+3AuHM4GXUylw2XYwOSjXZfqQIcB8sz1IaijM8QQj+EcCd9L04zWXvdcnj7hujakFKcTE+c
+ xELibuAsm45pnt+taip/NZNLvP3a97fsP+NpVrnwAAAA=
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1689953767; l=2180;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=4fL61MHD0Kzh42mw3EY0OMR0foISpp2lD0Ucz/dWu/E=;
+ b=3NHRlG5hjOMt1yY+y8JJLaNsK0ZsVpOwbUrA2J496pNW0yW124rAEN1I6lTvm1Dq6Lo6g7VQP
+ YT5J0o7v0GACFWTXqLVy2EAGHf1TIGrnOxFV3YVRvxTCuD9HPv5Bl5x
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+After the recent cleanups ([1], [2]) some in-tree abusers that directly
+accessed the RPM bus clocks, effectively circumventing and working
+against the efforts of the interconnect framework, were found.
 
+Patches 1-5 drop deprecated references and the rest attempt to stop
+direct bus clock abuses.
 
-On 7/19/2023 12:56 PM, Krzysztof Kozlowski wrote:
-> On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
->> It adds support to bring up remoteproc's on multipd model.
->> Pd means protection domain. It's similar to process in Linux.
->> Here QDSP6 processor runs each wifi radio functionality on a
->> separate process. One process can't access other process
->> resources, so this is termed as PD i.e protection domain.
->>
->> Here we have two pd's called root and user pd. We can correlate
->> Root pd as root and user pd as user in linux. Root pd has more
->> privileges than user pd. Root will provide services to user pd.
->>
-> 
-> 
->> +static int q6_get_inbound_irq(struct qcom_q6v5 *q6,
->> +			      struct platform_device *pdev,
->> +			      const char *int_name,
->> +			      int index, int *pirq,
->> +			      irqreturn_t (*handler)(int irq, void *data))
->> +{
->> +	int ret, irq;
->> +	char *interrupt, *tmp = (char *)int_name;
->> +	struct q6_wcss *wcss = q6->rproc->priv;
->> +
->> +	irq = platform_get_irq(pdev, index);
->> +	if (irq < 0) {
->> +		if (irq != -EPROBE_DEFER)
->> +			dev_err_probe(&pdev->dev, irq,
->> +				      "failed to retrieve %s IRQ: %d\n",
->> +				      int_name, irq);
-> 
-> Wait, what? This does not make any sense. dev_err_probe is to replace
-> all this dance. return dev_err_probe which I explicitly asked last time:
-> 
-> https://lore.kernel.org/all/2061a641-4b97-1aa6-27cd-99f01a785033@linaro.org/
-> 
->> +		return irq;
->> +	}
->> +
->> +	*pirq = irq;
->> +
->> +	interrupt = devm_kzalloc(&pdev->dev, BUF_SIZE, GFP_KERNEL);
->> +	if (!interrupt)
->> +		return -ENOMEM;
->> +
->> +	snprintf(interrupt, BUF_SIZE, "q6v5_wcss_userpd%d_%s", wcss->pd_asid, tmp);
->> +
->> +	ret = devm_request_threaded_irq(&pdev->dev, *pirq,
->> +					NULL, handler,
->> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
->> +					interrupt, q6);
->> +	if (ret) {
->> +		dev_err_probe(&pdev->dev, ret,
->> +			      "failed to acquire %s irq\n", interrupt);
->> +		return ret;
->> +	}
->> +	return 0;
->> +}
->> +
->> +static int q6_get_outbound_irq(struct qcom_q6v5 *q6,
->> +			       struct platform_device *pdev,
->> +			       const char *int_name)
->> +{
->> +	struct qcom_smem_state *tmp_state;
->> +	unsigned  bit;
->> +
->> +	tmp_state = qcom_smem_state_get(&pdev->dev, int_name, &bit);
->> +	if (IS_ERR(tmp_state)) {
->> +		dev_err_probe(&pdev->dev, IS_ERR(tmp_state),
->> +			      "failed to acquire %s state\n", int_name);
->> +		return PTR_ERR(tmp_state);
-> 
-> So it is everywhere...
-> 
-> 
->> +	}
->> +
->> +	if (!strcmp(int_name, "stop")) {
->> +		q6->state = tmp_state;
->> +		q6->stop_bit = bit;
->> +	} else if (!strcmp(int_name, "spawn")) {
->> +		q6->spawn_state = tmp_state;
->> +		q6->spawn_bit = bit;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int init_irq(struct qcom_q6v5 *q6,
->> +		    struct platform_device *pdev, struct rproc *rproc,
->> +		    int crash_reason, const char *load_state,
->> +		    void (*handover)(struct qcom_q6v5 *q6))
->> +{
->> +	int ret;
->> +	struct q6_wcss *wcss = rproc->priv;
->> +
->> +	q6->rproc = rproc;
->> +	q6->dev = &pdev->dev;
->> +	q6->crash_reason = crash_reason;
->> +	q6->handover = handover;
->> +
->> +	init_completion(&q6->start_done);
->> +	init_completion(&q6->stop_done);
->> +	init_completion(&q6->spawn_done);
->> +
->> +	ret = q6_get_outbound_irq(q6, pdev, "stop");
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = q6_get_outbound_irq(q6, pdev, "spawn");
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Get pd_asid to prepare interrupt names */
->> +	wcss->pd_asid = qcom_get_pd_asid(rproc);
->> +
->> +	ret = q6_get_inbound_irq(q6, pdev, "fatal", 0, &q6->fatal_irq,
->> +				 q6v5_fatal_interrupt);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = q6_get_inbound_irq(q6, pdev, "ready", 1, &q6->ready_irq,
->> +				 q6v5_ready_interrupt);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = q6_get_inbound_irq(q6, pdev, "stop-ack", 3, &q6->stop_irq,
->> +				 q6v5_stop_interrupt);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = q6_get_inbound_irq(q6, pdev, "spawn-ack", 2, &q6->spawn_irq,
->> +				 q6v5_spawn_interrupt);
->> +	if (ret)
->> +		return ret;
->> +	return 0;
->> +}
->> +
->> +static void q6_release_resources(struct platform_device *pdev)
->> +{
->> +	struct rproc *upd_rproc;
->> +	struct device_node *upd_np;
->> +	struct platform_device *upd_pdev;
->> +
->> +	/* Release userpd resources */
->> +	for_each_available_child_of_node(pdev->dev.of_node, upd_np) {
-> 
-> You should not iterate over OF to get devices to unregister. What if you
-> have more nodes than before because of overlay?
-> 
-> 
-Yeah correct, i won't iterate over OF to get devices.
+Depends on [2].
 
->> +		upd_pdev = of_find_device_by_node(upd_np);
->> +		if (!upd_pdev)
->> +			continue;
->> +
->> +		upd_rproc = platform_get_drvdata(upd_pdev);
->> +		if (!upd_rproc) {
->> +			platform_device_unregister(upd_pdev);
->> +			continue;
->> +		}
->> +
->> +		rproc_del(upd_rproc);
->> +		rproc_free(upd_rproc);
->> +	}
->> +}
->> +
->> +static int q6_register_userpd(struct platform_device *pdev)
->> +{
->> +	struct q6_wcss *wcss;
->> +	struct rproc *rproc = NULL;
->> +	int ret;
->> +	struct device_node *userpd_np;
->> +	struct platform_device *userpd_pdev;
->> +	const char *firmware_name = NULL;
->> +
->> +	for_each_available_child_of_node(pdev->dev.of_node, userpd_np) {
->> +		ret = of_property_read_string(userpd_np, "firmware-name",
->> +					      &firmware_name);
->> +		if (ret < 0)
->> +			continue;
->> +
->> +		dev_info(&pdev->dev, "%s node found\n", userpd_np->name);
->> +
->> +		userpd_pdev = of_platform_device_create(userpd_np,
->> +							userpd_np->name,
->> +							&pdev->dev);
->> +		if (!userpd_pdev) {
->> +			ret = -ENODEV;
->> +			dev_err_probe(&pdev->dev, ret,
->> +				      "failed to create %s platform device\n",
->> +				      userpd_np->name);
->> +			goto release_resource;
->> +		}
->> +		userpd_pdev->dev.driver = pdev->dev.driver;
->> +		rproc = rproc_alloc(&userpd_pdev->dev, userpd_pdev->name,
->> +				    &wcss_ops, firmware_name,
->> +				    sizeof(*wcss));
->> +		if (!rproc) {
->> +			ret = -ENOMEM;
->> +			goto release_resource;
->> +		}
->> +
->> +		wcss = rproc->priv;
->> +		wcss->dev = &userpd_pdev->dev;
->> +
->> +		ret = q6_alloc_memory_region(wcss);
->> +		if (ret)
-> 
-> How do you release the resource allocated in rproc_alloc() for this
-> node? drvdata is not set, so your cleanup function will skip it.
-> 
-Yeah correct. I will free the rproc pointer and call cleanup API
-to unregister platform device.
+8996 and 8998 remoteproc changes were not tested, they never worked on
+my Sony phones.
 
-Is it fine ?
+[1] https://lore.kernel.org/linux-arm-msm/20230526-topic-smd_icc-v7-0-09c78c175546@linaro.org/
+[2] https://lore.kernel.org/linux-arm-msm/20230721-topic-icc_bindings-v1-0-93e2bc728fb7@linaro.org/
 
-Thanks & Regards,
-Manikanta.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (11):
+      arm64: dts: qcom: msm8916: Drop RPM bus clocks
+      arm64: dts: qcom: msm8996: Drop RPM bus clocks
+      arm64: dts: qcom: qcs404: Drop RPM bus clocks
+      arm64: dts: qcom: sdm630: Drop RPM bus clocks
+      arm64: dts: qcom: msm8939: Drop RPM bus clocks
+      dt-bindings: remoteproc: qcom,adsp: Remove AGGRE2 clock
+      dt-bindings: remoteproc: qcom,msm8996-mss-pil: Remove PNoC clock
+      remoteproc: qcom: q6v5-mss: Remove PNoC clock from 8996 MSS
+      arm64: dts: qcom: msm8998: Remove AGGRE2 clock from SLPI
+      arm64: dts: qcom: msm8996: Remove AGGRE2 clock from SLPI
+      arm64: dts: qcom: msm8996: Remove PNoC clock from MSS
 
->> +			goto release_resource;
->> +
->> +		ret = init_irq(&wcss->q6, userpd_pdev, rproc,
->> +			       WCSS_CRASH_REASON, NULL, NULL);
->> +		if (ret)
->> +			goto release_resource;
->> +
->> +		rproc->auto_boot = false;
->> +		ret = rproc_add(rproc);
->> +		if (ret)
->> +			goto release_resource;
->> +
->> +		platform_set_drvdata(userpd_pdev, rproc);
->> +		qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, userpd_pdev->name);
->> +	}
->> +	return 0;
->> +
->> +release_resource:
->> +	q6_release_resources(pdev);
->> +	return ret;
->> +}
->> +
->> +static int q6_wcss_probe(struct platform_device *pdev)
->> +{
->> +	const struct wcss_data *desc;
->> +	struct q6_wcss *wcss;
->> +	struct rproc *rproc;
->> +	int ret;
->> +	char *subdev_name;
->> +	const char **firmware;
->> +
->> +	desc = of_device_get_match_data(&pdev->dev);
->> +	if (!desc)
->> +		return -EINVAL;
->> +
->> +	firmware = devm_kcalloc(&pdev->dev, MAX_FIRMWARE,
->> +				sizeof(*firmware), GFP_KERNEL);
->> +	if (!firmware)
->> +		return -ENOMEM;
->> +
->> +	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
->> +					    firmware, MAX_FIRMWARE);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
->> +			    firmware[0], sizeof(*wcss));
->> +	if (!rproc)
->> +		return -ENOMEM;
->> +
->> +	wcss = rproc->priv;
->> +	wcss->dev = &pdev->dev;
->> +	wcss->desc = desc;
->> +	wcss->firmware = firmware;
->> +
->> +	ret = q6_alloc_memory_region(wcss);
->> +	if (ret)
->> +		goto free_rproc;
->> +
->> +	ret = desc->init_irq(&wcss->q6, pdev, rproc,
->> +			     desc->crash_reason_smem, NULL, NULL);
->> +	if (ret)
->> +		goto free_rproc;
->> +
->> +	if (desc->glink_subdev_required)
->> +		qcom_add_glink_subdev(rproc, &wcss->glink_subdev, desc->ssr_name);
->> +
->> +	subdev_name = (char *)(desc->ssr_name ? desc->ssr_name : pdev->name);
-> 
-> Wrong cast. Why are you dropping const? That's a bug.
-> 
->> +	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, subdev_name);
->> +
->> +	rproc->auto_boot = false;
->> +	ret = rproc_add(rproc);
->> +	if (ret)
->> +		goto free_rproc;
->> +
->> +	platform_set_drvdata(pdev, rproc);
->> +
->> +	ret = q6_register_userpd(pdev);
->> +	if (ret) {
->> +		dev_err_probe(&pdev->dev, ret, "Failed to register userpd\n");
->> +		return ret;
-> 
-> return dev_err_probe
-> 
->> +	}
->> +
->> +	return 0;
->> +
->> +free_rproc:
->> +	rproc_free(rproc);
->> +
->> +	return ret;
-> 
-> Best regards,
-> Krzysztof
-> 
+ .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |  2 -
+ .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |  2 -
+ arch/arm64/boot/dts/qcom/msm8916.dtsi              |  9 -----
+ arch/arm64/boot/dts/qcom/msm8939.dtsi              | 12 ------
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 43 +++++++---------------
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  5 +--
+ arch/arm64/boot/dts/qcom/qcs404.dtsi               |  9 -----
+ arch/arm64/boot/dts/qcom/sdm630.dtsi               | 29 ++-------------
+ drivers/remoteproc/qcom_q6v5_mss.c                 |  1 -
+ 9 files changed, 20 insertions(+), 92 deletions(-)
+---
+base-commit: ae867bc97b713121b2a7f5fcac68378a0774739b
+change-id: 20230721-topic-rpm_clk_cleanup-1b2f4a1acd01
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
