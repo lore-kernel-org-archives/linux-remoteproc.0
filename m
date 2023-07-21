@@ -2,42 +2,42 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46817C04FDF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC673C0015E
 	for <linux-remoteproc@archiver.kernel.org>; Fri, 21 Jul 2023 02:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbjGUCmO (ORCPT
+        id S229727AbjGUCmO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Thu, 20 Jul 2023 22:42:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40998 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbjGUCmG (ORCPT
+        with ESMTP id S229685AbjGUCmH (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 20 Jul 2023 22:42:06 -0400
+        Thu, 20 Jul 2023 22:42:07 -0400
 Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D443E272C;
-        Thu, 20 Jul 2023 19:42:01 -0700 (PDT)
-X-UUID: 25a7fc2c277011eeb20a276fd37b9834-20230721
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D229C2733;
+        Thu, 20 Jul 2023 19:42:03 -0700 (PDT)
+X-UUID: 254cc956277011eeb20a276fd37b9834-20230721
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=YSHFsVlW2pGdDULRNUTFKCM8MDeN2kOhN9DuZnncjA8=;
-        b=iXzGvPz4y3TTokFpRigAwvZtuwS8sRR3QHetstnNOfyUo/tdf7L016LUcOAbLuRT5MIzChPOSRP97gj6rNDUmhqsfKOtub8V0OrwPQjnkJSHTOpFdipKCXf9aVX0OgJ+xZRXDECyg3+jyHKFFfXBOnfVathYXpuj2uH5dKo7R0M=;
+        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=mHZvfrM0o5UaIt01vL+X0Xi78aCQjddfdApBpcmPqT8=;
+        b=k3a3feZ/kvopBeWhHh7LKe+hkweEtUT1kk/Lt+8EA2UtpqFenJoYhKJBBOcuHgmeNsNrD6jbGbRiVFQHZzBUd9KkOU+k/ksb/7gg39ZFahZjSeRvvmOlNukb1SfiMoBMX+N/0Ps/wmzN3VG2+dzT1bwv+xjwTjEzLQ+rbW/oG38=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.28,REQID:72b78da8-fa86-4113-840d-a3cf3bdb40a2,IP:0,U
-        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:-5
-X-CID-META: VersionHash:176cd25,CLOUDID:c411de87-44fb-401c-8de7-6a5572f1f5d5,B
+X-CID-O-INFO: VERSION:1.1.28,REQID:afc3b599-6ce9-40d1-8190-2e157f3cac45,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:176cd25,CLOUDID:7a14d8dc-dc79-4898-9235-1134b97257a8,B
         ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
         RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,
         DKR:0,DKP:0
 X-CID-BVR: 0
 X-CID-BAS: 0,_,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 25a7fc2c277011eeb20a276fd37b9834-20230721
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+X-UUID: 254cc956277011eeb20a276fd37b9834-20230721
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
         (envelope-from <tinghan.shen@mediatek.com>)
         (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 1856706030; Fri, 21 Jul 2023 10:41:51 +0800
+        with ESMTP id 164175484; Fri, 21 Jul 2023 10:41:51 +0800
 Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1118.26; Fri, 21 Jul 2023 10:41:50 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
@@ -58,9 +58,9 @@ CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v15 07/13] remoteproc: mediatek: Probe SCP cluster on multi-core SCP
-Date:   Fri, 21 Jul 2023 10:41:26 +0800
-Message-ID: <20230721024132.6548-8-tinghan.shen@mediatek.com>
+Subject: [PATCH v15 03/13] dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
+Date:   Fri, 21 Jul 2023 10:41:22 +0800
+Message-ID: <20230721024132.6548-4-tinghan.shen@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20230721024132.6548-1-tinghan.shen@mediatek.com>
 References: <20230721024132.6548-1-tinghan.shen@mediatek.com>
@@ -71,197 +71,201 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The difference of single-core SCP and multi-core SCP device tree is
-the presence of child device nodes described SCP cores. The SCP
-driver populates the platform device and checks the child nodes
-to identify whether it's a single-core SCP or a multi-core SCP.
+Extend the SCP binding to describe the MT8195 dual-core SCP.
 
-Add the remoteproc instances of multi-core SCP to the SCP cluster list.
-When the SCP driver is removed, it cleanup resources by walking
-through the cluster list.
+Under different applications, the MT8195 SCP can be used as single-core
+or dual-core. This change keeps the single-core definitions and
+adds new definitions for the dual-core use case.
 
 Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/remoteproc/mtk_scp.c | 118 +++++++++++++++++++++++++++++++++--
- 1 file changed, 113 insertions(+), 5 deletions(-)
+ .../bindings/remoteproc/mtk,scp.yaml          | 145 +++++++++++++++++-
+ 1 file changed, 141 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index d67dcabdab9e..34095a461e15 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -855,7 +855,8 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
- }
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index 271081df0e46..09102dda4942 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -21,6 +21,7 @@ properties:
+       - mediatek,mt8188-scp
+       - mediatek,mt8192-scp
+       - mediatek,mt8195-scp
++      - mediatek,mt8195-scp-dual
  
- static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
--				      struct mtk_scp_of_cluster *scp_cluster)
-+				      struct mtk_scp_of_cluster *scp_cluster,
-+				      const struct mtk_scp_of_data *of_data)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
-@@ -878,7 +879,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
- 	scp = rproc->priv;
- 	scp->rproc = rproc;
- 	scp->dev = dev;
--	scp->data = of_device_get_match_data(dev);
-+	scp->data = of_data;
- 	scp->cluster = scp_cluster;
- 	platform_set_drvdata(pdev, scp);
+   reg:
+     description:
+@@ -31,10 +32,7 @@ properties:
  
-@@ -951,15 +952,15 @@ static void scp_free(struct mtk_scp *scp)
- 	mutex_destroy(&scp->send_lock);
- }
+   reg-names:
+     minItems: 2
+-    items:
+-      - const: sram
+-      - const: cfg
+-      - const: l1tcm
++    maxItems: 3
  
--static int scp_cluster_init(struct platform_device *pdev,
--			    struct mtk_scp_of_cluster *scp_cluster)
-+static int scp_add_single_core(struct platform_device *pdev,
-+			       struct mtk_scp_of_cluster *scp_cluster)
- {
- 	struct device *dev = &pdev->dev;
- 	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
- 	struct mtk_scp *scp;
- 	int ret;
+   clocks:
+     description:
+@@ -70,6 +68,81 @@ properties:
  
--	scp = scp_rproc_init(pdev, scp_cluster);
-+	scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev));
- 	if (IS_ERR(scp))
- 		return PTR_ERR(scp);
+     unevaluatedProperties: false
  
-@@ -975,6 +976,102 @@ static int scp_cluster_init(struct platform_device *pdev,
- 	return 0;
- }
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 1
++
++  ranges:
++    description:
++      Standard ranges definition providing address translations for
++      local SCP SRAM address spaces to bus addresses.
++
++patternProperties:
++  "^scp@[a-f0-9]+$":
++    type: object
++    description:
++      The MediaTek SCP integrated to SoC might be a multi-core version.
++      The other cores are represented as child nodes of the boot core.
++      There are some integration differences for the IP like the usage of
++      address translator for translating SoC bus addresses into address space
++      for the processor.
++
++      Each SCP core has own cache memory. The SRAM and L1TCM are shared by
++      cores. The power of cache, SRAM and L1TCM power should be enabled
++      before booting SCP cores. The size of cache, SRAM, and L1TCM are varied
++      on differnt SoCs.
++
++      The SCP cores do not use an MMU, but has a set of registers to
++      control the translations between 32-bit CPU addresses into system bus
++      addresses. Cache and memory access settings are provided through a
++      Memory Protection Unit (MPU), programmable only from the SCP.
++
++    properties:
++      compatible:
++        enum:
++          - mediatek,scp-core
++
++      reg:
++        description: The base address and size of SRAM.
++        maxItems: 1
++
++      reg-names:
++        const: sram
++
++      interrupts:
++        maxItems: 1
++
++      firmware-name:
++        $ref: /schemas/types.yaml#/definitions/string
++        description:
++          If present, name (or relative path) of the file within the
++          firmware search path containing the firmware image used when
++          initializing sub cores of multi-core SCP.
++
++      memory-region:
++        maxItems: 1
++
++      cros-ec-rpmsg:
++        $ref: /schemas/mfd/google,cros-ec.yaml
++        description:
++          This subnode represents the rpmsg device. The properties
++          of this node are defined by the individual bindings for
++          the rpmsg devices.
++
++        required:
++          - mediatek,rpmsg-name
++
++        unevaluatedProperties: false
++
++    required:
++      - compatible
++      - reg
++      - reg-names
++
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
+@@ -99,7 +172,37 @@ allOf:
+         reg:
+           maxItems: 2
+         reg-names:
++          items:
++            - const: sram
++            - const: cfg
++  - if:
++      properties:
++        compatible:
++          enum:
++            - mediatek,mt8192-scp
++            - mediatek,mt8195-scp
++    then:
++      properties:
++        reg:
++          maxItems: 3
++        reg-names:
++          items:
++            - const: sram
++            - const: cfg
++            - const: l1tcm
++  - if:
++      properties:
++        compatible:
++          enum:
++            - mediatek,mt8195-scp-dual
++    then:
++      properties:
++        reg:
+           maxItems: 2
++        reg-names:
++          items:
++            - const: cfg
++            - const: l1tcm
  
-+static int scp_add_multi_core(struct platform_device *pdev,
-+			      struct mtk_scp_of_cluster *scp_cluster)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev_of_node(dev);
-+	struct platform_device *cpdev;
-+	struct device_node *child;
-+	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
-+	const struct mtk_scp_of_data **cluster_of_data;
-+	struct mtk_scp *scp, *temp;
-+	int core_id = 0;
-+	int ret;
-+
-+	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
-+
-+	for_each_available_child_of_node(np, child) {
-+		if (!cluster_of_data[core_id]) {
-+			ret = -EINVAL;
-+			dev_err(dev, "Not support core %d\n", core_id);
-+			of_node_put(child);
-+			goto init_fail;
-+		}
-+
-+		cpdev = of_find_device_by_node(child);
-+		if (!cpdev) {
-+			ret = -ENODEV;
-+			dev_err(dev, "Not found platform device for core %d\n", core_id);
-+			of_node_put(child);
-+			goto init_fail;
-+		}
-+
-+		scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id]);
-+		put_device(&cpdev->dev);
-+		if (IS_ERR(scp)) {
-+			ret = PTR_ERR(scp);
-+			dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
-+			of_node_put(child);
-+			goto init_fail;
-+		}
-+
-+		ret = rproc_add(scp->rproc);
-+		if (ret) {
-+			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
-+			of_node_put(child);
-+			scp_free(scp);
-+			goto init_fail;
-+		}
-+
-+		list_add_tail(&scp->elem, scp_list);
-+		core_id++;
-+	}
-+
-+	platform_set_drvdata(pdev, list_first_entry(scp_list, struct mtk_scp, elem));
-+
-+	return 0;
-+
-+init_fail:
-+	list_for_each_entry_safe_reverse(scp, temp, scp_list, elem) {
-+		list_del(&scp->elem);
-+		rproc_del(scp->rproc);
-+		scp_free(scp);
-+	}
-+
-+	return ret;
-+}
-+
-+static int scp_is_single_core(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev_of_node(dev);
-+	struct device_node *child;
-+
-+	child = of_get_next_available_child(np, NULL);
-+	if (!child)
-+		return dev_err_probe(dev, -ENODEV, "No child node\n");
-+
-+	of_node_put(child);
-+	return of_node_name_eq(child, "cros-ec-rpmsg");
-+}
-+
-+static int scp_cluster_init(struct platform_device *pdev, struct mtk_scp_of_cluster *scp_cluster)
-+{
-+	int ret;
-+
-+	ret = scp_is_single_core(pdev);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (ret)
-+		ret = scp_add_single_core(pdev, scp_cluster);
-+	else
-+		ret = scp_add_multi_core(pdev, scp_cluster);
-+
-+	return ret;
-+}
-+
- static int scp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1007,6 +1104,10 @@ static int scp_probe(struct platform_device *pdev)
+ additionalProperties: false
  
- 	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
- 
-+	ret = devm_of_platform_populate(dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to populate platform devices\n");
+@@ -121,3 +224,37 @@ examples:
+             mediatek,rpmsg-name = "cros-ec-rpmsg";
+         };
+     };
 +
- 	ret = scp_cluster_init(pdev, scp_cluster);
- 	if (ret)
- 		return ret;
-@@ -1101,12 +1202,19 @@ static const struct mtk_scp_of_data mt8195_of_data_c1 = {
- 	.host_to_scp_int_bit = MT8195_CORE1_HOST_IPC_INT_BIT,
- };
- 
-+static const struct mtk_scp_of_data *mt8195_of_data_cores[] = {
-+	&mt8195_of_data,
-+	&mt8195_of_data_c1,
-+	NULL
-+};
++  - |
++    scp@10500000 {
++        compatible = "mediatek,mt8195-scp-dual";
++        reg = <0x10720000 0xe0000>,
++              <0x10700000 0x8000>;
++        reg-names = "cfg", "l1tcm";
 +
- static const struct of_device_id mtk_scp_of_match[] = {
- 	{ .compatible = "mediatek,mt8183-scp", .data = &mt8183_of_data },
- 	{ .compatible = "mediatek,mt8186-scp", .data = &mt8186_of_data },
- 	{ .compatible = "mediatek,mt8188-scp", .data = &mt8188_of_data },
- 	{ .compatible = "mediatek,mt8192-scp", .data = &mt8192_of_data },
- 	{ .compatible = "mediatek,mt8195-scp", .data = &mt8195_of_data },
-+	{ .compatible = "mediatek,mt8195-scp-dual", .data = &mt8195_of_data_cores },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
++        #address-cells = <1>;
++        #size-cells = <1>;
++        ranges = <0 0x10500000 0x100000>;
++
++        scp@0 {
++            compatible = "mediatek,scp-core";
++            reg = <0x0 0xa0000>;
++            reg-names = "sram";
++
++            cros-ec-rpmsg {
++                compatible = "google,cros-ec-rpmsg";
++                mediatek,rpmsg-name = "cros-ec-rpmsg";
++            };
++        };
++
++        scp@a0000 {
++            compatible = "mediatek,scp-core";
++            reg = <0xa0000 0x20000>;
++            reg-names = "sram";
++
++            cros-ec-rpmsg {
++                compatible = "google,cros-ec-rpmsg";
++                mediatek,rpmsg-name = "cros-ec-rpmsg";
++            };
++        };
++    };
 -- 
 2.18.0
 
