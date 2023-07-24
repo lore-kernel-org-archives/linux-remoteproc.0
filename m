@@ -2,69 +2,134 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 597B2C001B0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jul 2023 16:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEE0C001B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jul 2023 19:57:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjGXQQj (ORCPT
+        id S230245AbjGXT5O (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46816 "EHLO
+        Mon, 24 Jul 2023 15:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjGXQQg (ORCPT
+        with ESMTP id S229850AbjGXT5N (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 24 Jul 2023 12:16:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78F1610C3;
-        Mon, 24 Jul 2023 09:16:35 -0700 (PDT)
+        Mon, 24 Jul 2023 15:57:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9B45A6;
+        Mon, 24 Jul 2023 12:57:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 08AE361254;
-        Mon, 24 Jul 2023 16:16:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637C7C433C7;
-        Mon, 24 Jul 2023 16:16:33 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8019161362;
+        Mon, 24 Jul 2023 19:57:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05336C433C7;
+        Mon, 24 Jul 2023 19:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690215394;
-        bh=x3A3zOJ4CdXcBTt2FepwCLKHLI0SCa4VSWer2FWHZXE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZJkto0NSHXZgkOYlitfIZeqOK/5arLC5ZiHbR6kzCNpCdJ7Tdsk+/TOCSJ3t3gvdD
-         1m5s8zDy2z4mX8FbyiUn6dDmzHZmXvjr6pJgzV9kMcKBdNfkoKJ73jDLMLGULz5sLj
-         RufRJTI4c14pr+SCvtFFictWl1XoyH3VFO5J+XMFVqodgyFbWEgp2E63sNxlAwjqHF
-         2CF7TJSblLV+ecHj9kuJDcncT99rklPpu2JHCp+VUGyW33IrwNLbyH7BHVjHKjPSPy
-         WgMWLMT7XMpx0SiiOCVtYpTXotler6VX14iZ6kenv6k40u8aOePs2wqxlrWEKdxoIF
-         kiz2M9kU1TfdQ==
-Received: (nullmailer pid 3712940 invoked by uid 1000);
-        Mon, 24 Jul 2023 16:16:32 -0000
-Date:   Mon, 24 Jul 2023 10:16:32 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        michal.simek@amd.com, ben.levinsky@amd.com, tanmay.shah@amd.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        git@amd.com
-Subject: Re: [PATCH v3] dt-bindings: remoteproc: add Tightly Coupled Memory
- (TCM) bindings
-Message-ID: <20230724161632.GA3686365-robh@kernel.org>
-References: <1689964908-22371-1-git-send-email-radhey.shyam.pandey@amd.com>
+        s=k20201202; t=1690228631;
+        bh=4/mO24Ikk4CHlDznLLlA+DvTvlfb2sd89TKv9AA3wYI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AUoQC2XvXKgQjD1P9rrEu/Kn5JiiXB9Y3c14lNwXwW8M78id+LM2WIXSvx/0NR4kN
+         rpkXzhemn2iR1aPhh3j5QtMk4YkB+BZsYSHUbcUN/dhzG3tCUzR+xJBPGTVIKqqC+r
+         ySr9TOHnyoViYDraWSOqRfjzyq3STt68AXlSa/tsZHOa4omxhxjV/EPfXYnpMeOO6+
+         Dcza/NTZjSvHS0tLJHix2T6ZCkHi/3NCPCv0FoCii98M8APB8a8VB+aPtzvb8gAIjv
+         vCzrcNIkUC8Le5AjF4JTIiIwRD2+163T6KL8/D79/DqObvVQNT/3zSbc/LF+5pbFGf
+         mASLsQvohf3pw==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        linux-remoteproc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: stm32: fix incorrect optional pointers
+Date:   Mon, 24 Jul 2023 21:56:49 +0200
+Message-Id: <20230724195704.2432382-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1689964908-22371-1-git-send-email-radhey.shyam.pandey@amd.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sat, Jul 22, 2023 at 12:11:48AM +0530, Radhey Shyam Pandey wrote:
-> Introduce bindings for TCM memory address space on AMD-xilinx Zynq
-> UltraScale+ platform. It will help in defining TCM in device-tree
-> and make it's access platform agnostic and data-driven.
+From: Arnd Bergmann <arnd@arndb.de>
 
-From the subject, it sounds like this is a binding for all of remoteproc 
-for TCMs.
+Compile-testing without CONFIG_OF shows that the of_match_ptr() macro
+was used incorrectly here:
 
-Otherwise,
+drivers/remoteproc/stm32_rproc.c:662:34: warning: unused variable 'stm32_rproc_match' [-Wunused-const-variable]
 
-Acked-by: Rob Herring <robh@kernel.org>
+As in almost every driver, the solution is simply to remove the
+use of this macro. The same thing happened with the deprecated
+SIMPLE_DEV_PM_OPS(), but the corresponding warning was already shut
+up with __maybe_unused annotations, so fix those as well by using the
+correct DEFINE_SIMPLE_DEV_PM_OPS() macros and removing the extraneous
+__maybe_unused modifiers. For completeness, also add a pm_ptr() to let
+the PM ops be eliminated completely when CONFIG_PM is turned off.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202307242300.ia82qBTp-lkp@intel.com
+Fixes: 03bd158e1535e ("remoteproc: stm32: use correct format strings on 64-bit")
+Fixes: 410119ee29b6c ("remoteproc: stm32: wakeup the system by wdg irq")
+Fixes: 13140de09cc2d ("remoteproc: stm32: add an ST stm32_rproc driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/remoteproc/stm32_rproc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 98234b44f0389..9d9b13530f78a 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -921,7 +921,7 @@ static void stm32_rproc_remove(struct platform_device *pdev)
+ 	rproc_free(rproc);
+ }
+ 
+-static int __maybe_unused stm32_rproc_suspend(struct device *dev)
++static int stm32_rproc_suspend(struct device *dev)
+ {
+ 	struct rproc *rproc = dev_get_drvdata(dev);
+ 	struct stm32_rproc *ddata = rproc->priv;
+@@ -932,7 +932,7 @@ static int __maybe_unused stm32_rproc_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused stm32_rproc_resume(struct device *dev)
++static int stm32_rproc_resume(struct device *dev)
+ {
+ 	struct rproc *rproc = dev_get_drvdata(dev);
+ 	struct stm32_rproc *ddata = rproc->priv;
+@@ -943,16 +943,16 @@ static int __maybe_unused stm32_rproc_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
+-			 stm32_rproc_suspend, stm32_rproc_resume);
++static DEFINE_SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
++				stm32_rproc_suspend, stm32_rproc_resume);
+ 
+ static struct platform_driver stm32_rproc_driver = {
+ 	.probe = stm32_rproc_probe,
+ 	.remove_new = stm32_rproc_remove,
+ 	.driver = {
+ 		.name = "stm32-rproc",
+-		.pm = &stm32_rproc_pm_ops,
+-		.of_match_table = of_match_ptr(stm32_rproc_match),
++		.pm = pm_ptr(&stm32_rproc_pm_ops),
++		.of_match_table = stm32_rproc_match,
+ 	},
+ };
+ module_platform_driver(stm32_rproc_driver);
+-- 
+2.39.2
+
