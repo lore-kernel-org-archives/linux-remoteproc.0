@@ -2,134 +2,141 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEE0C001B0
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jul 2023 19:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF1FEB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jul 2023 22:24:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230245AbjGXT5O (ORCPT
+        id S229645AbjGXWYd (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 24 Jul 2023 15:57:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51332 "EHLO
+        Mon, 24 Jul 2023 18:24:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbjGXT5N (ORCPT
+        with ESMTP id S229479AbjGXWYc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 24 Jul 2023 15:57:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9B45A6;
-        Mon, 24 Jul 2023 12:57:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        Mon, 24 Jul 2023 18:24:32 -0400
+Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8538410D;
+        Mon, 24 Jul 2023 15:24:31 -0700 (PDT)
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8019161362;
-        Mon, 24 Jul 2023 19:57:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05336C433C7;
-        Mon, 24 Jul 2023 19:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690228631;
-        bh=4/mO24Ikk4CHlDznLLlA+DvTvlfb2sd89TKv9AA3wYI=;
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id B6BCA867E3;
+        Tue, 25 Jul 2023 00:24:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+        s=phobos-20191101; t=1690237470;
+        bh=rK8b3/IPpSE0ll7vrNZpoHCEBMwF61sgD6J2PS0mQWg=;
         h=From:To:Cc:Subject:Date:From;
-        b=AUoQC2XvXKgQjD1P9rrEu/Kn5JiiXB9Y3c14lNwXwW8M78id+LM2WIXSvx/0NR4kN
-         rpkXzhemn2iR1aPhh3j5QtMk4YkB+BZsYSHUbcUN/dhzG3tCUzR+xJBPGTVIKqqC+r
-         ySr9TOHnyoViYDraWSOqRfjzyq3STt68AXlSa/tsZHOa4omxhxjV/EPfXYnpMeOO6+
-         Dcza/NTZjSvHS0tLJHix2T6ZCkHi/3NCPCv0FoCii98M8APB8a8VB+aPtzvb8gAIjv
-         vCzrcNIkUC8Le5AjF4JTIiIwRD2+163T6KL8/D79/DqObvVQNT/3zSbc/LF+5pbFGf
-         mASLsQvohf3pw==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
+        b=cCiBb+wcPDl+duyVdqnkJ7hASD1T7tR2FMWRMqn5qB4IeKyjwR761Ks0bquiWU5yA
+         pgG95GidO1tikb2ZKaL4vZ61/dcWLkx7DYJxKCAl75vboS8/pFzbHDPm6aQs3AGkKn
+         tq+SZXg7BSvpo3kSqzuDOx+KscOTGGNT+wHoekA9thX6pXH5lfyDFSiplAh9e3xlSY
+         v2XiKzK39IUGowmTUeMW0OvfrQsC/1ZgV6lK9G/5HqW7lVQA8RzA02SIS5apPr5yw2
+         PFZHSZkYAFM7UHWSAiVmnWmJ079MG1Yeo42Umw3nFYSkdGEsMD2/o5kEXJIk4vOuMt
+         ICRLKHEDp9YUA==
+From:   Marek Vasut <marex@denx.de>
+To:     linux-remoteproc@vger.kernel.org
+Cc:     Marek Vasut <marex@denx.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Fabien Dessenne <fabien.dessenne@st.com>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        linux-remoteproc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: stm32: fix incorrect optional pointers
-Date:   Mon, 24 Jul 2023 21:56:49 +0200
-Message-Id: <20230724195704.2432382-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 1/2] dt-bindings: remoteproc: imx_rproc: Support i.MX8MN/P MMIO
+Date:   Tue, 25 Jul 2023 00:24:17 +0200
+Message-Id: <20230724222418.163220-1-marex@denx.de>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+The MX8M CM7 boot via SMC call is problematic, since not all versions
+of ATF support this interface. Document MMIO support used to boot the
+CM7 on MX8MN/MP instead and discern MMIO interface using DT compatible
+string. Document GPR register syscon phandle which is required by the
+MMIO interface too.
 
-Compile-testing without CONFIG_OF shows that the of_match_ptr() macro
-was used incorrectly here:
-
-drivers/remoteproc/stm32_rproc.c:662:34: warning: unused variable 'stm32_rproc_match' [-Wunused-const-variable]
-
-As in almost every driver, the solution is simply to remove the
-use of this macro. The same thing happened with the deprecated
-SIMPLE_DEV_PM_OPS(), but the corresponding warning was already shut
-up with __maybe_unused annotations, so fix those as well by using the
-correct DEFINE_SIMPLE_DEV_PM_OPS() macros and removing the extraneous
-__maybe_unused modifiers. For completeness, also add a pm_ptr() to let
-the PM ops be eliminated completely when CONFIG_PM is turned off.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202307242300.ia82qBTp-lkp@intel.com
-Fixes: 03bd158e1535e ("remoteproc: stm32: use correct format strings on 64-bit")
-Fixes: 410119ee29b6c ("remoteproc: stm32: wakeup the system by wdg irq")
-Fixes: 13140de09cc2d ("remoteproc: stm32: add an ST stm32_rproc driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Marek Vasut <marex@denx.de>
 ---
- drivers/remoteproc/stm32_rproc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Cc: Bjorn Andersson <andersson@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Peng Fan <peng.fan@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-remoteproc@vger.kernel.org
+---
+V2: Rename 'gpr' to 'fsl,iomuxc-gpr'
+V3: Rename 'gpr' to 'fsl,iomuxc-gpr' everywhere
+---
+Note that the MMIO being discerned using compatible string is similar
+approach to "st,stm32mp1-rcc" vs "st,stm32mp1-rcc-secure".
+---
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 98234b44f0389..9d9b13530f78a 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -921,7 +921,7 @@ static void stm32_rproc_remove(struct platform_device *pdev)
- 	rproc_free(rproc);
- }
+diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+index 0c3910f152d1d..30632efdad8bb 100644
+--- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+@@ -20,7 +20,9 @@ properties:
+       - fsl,imx7ulp-cm4
+       - fsl,imx8mm-cm4
+       - fsl,imx8mn-cm7
++      - fsl,imx8mn-cm7-mmio
+       - fsl,imx8mp-cm7
++      - fsl,imx8mp-cm7-mmio
+       - fsl,imx8mq-cm4
+       - fsl,imx8qm-cm4
+       - fsl,imx8qxp-cm4
+@@ -70,6 +72,11 @@ properties:
+     description:
+       Specify CPU entry address for SCU enabled processor.
  
--static int __maybe_unused stm32_rproc_suspend(struct device *dev)
-+static int stm32_rproc_suspend(struct device *dev)
- {
- 	struct rproc *rproc = dev_get_drvdata(dev);
- 	struct stm32_rproc *ddata = rproc->priv;
-@@ -932,7 +932,7 @@ static int __maybe_unused stm32_rproc_suspend(struct device *dev)
- 	return 0;
- }
++  fsl,iomuxc-gpr:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      Phandle to IOMUXC GPR block which provide access to CM7 CPUWAIT bit.
++
+   fsl,resource-id:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     description:
+@@ -79,6 +86,19 @@ properties:
+ required:
+   - compatible
  
--static int __maybe_unused stm32_rproc_resume(struct device *dev)
-+static int stm32_rproc_resume(struct device *dev)
- {
- 	struct rproc *rproc = dev_get_drvdata(dev);
- 	struct stm32_rproc *ddata = rproc->priv;
-@@ -943,16 +943,16 @@ static int __maybe_unused stm32_rproc_resume(struct device *dev)
- 	return 0;
- }
++allOf:
++  - if:
++      properties:
++        compatible:
++          not:
++            contains:
++              enum:
++                - fsl,imx8mn-cm7-mmio
++                - fsl,imx8mp-cm7-mmio
++    then:
++      properties:
++        fsl,iomuxc-gpr: false
++
+ additionalProperties: false
  
--static SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
--			 stm32_rproc_suspend, stm32_rproc_resume);
-+static DEFINE_SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
-+				stm32_rproc_suspend, stm32_rproc_resume);
- 
- static struct platform_driver stm32_rproc_driver = {
- 	.probe = stm32_rproc_probe,
- 	.remove_new = stm32_rproc_remove,
- 	.driver = {
- 		.name = "stm32-rproc",
--		.pm = &stm32_rproc_pm_ops,
--		.of_match_table = of_match_ptr(stm32_rproc_match),
-+		.pm = pm_ptr(&stm32_rproc_pm_ops),
-+		.of_match_table = stm32_rproc_match,
- 	},
- };
- module_platform_driver(stm32_rproc_driver);
+ examples:
 -- 
-2.39.2
+2.40.1
 
