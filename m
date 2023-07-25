@@ -2,225 +2,131 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63243C0015E
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 24 Jul 2023 22:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208A2C04A6A
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Jul 2023 09:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbjGXWYe (ORCPT
+        id S232770AbjGYJBO (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 24 Jul 2023 18:24:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52184 "EHLO
+        Tue, 25 Jul 2023 05:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjGXWYe (ORCPT
+        with ESMTP id S232641AbjGYJBJ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 24 Jul 2023 18:24:34 -0400
-Received: from phobos.denx.de (phobos.denx.de [IPv6:2a01:238:438b:c500:173d:9f52:ddab:ee01])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB15710CB;
-        Mon, 24 Jul 2023 15:24:32 -0700 (PDT)
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: marex@denx.de)
-        by phobos.denx.de (Postfix) with ESMTPSA id 6E83F8680B;
-        Tue, 25 Jul 2023 00:24:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-        s=phobos-20191101; t=1690237471;
-        bh=NjHjTUmq5vcknHwE6RJuA0VOFaQl8AWtuqdOfy4SpoQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qJZ2TWOddZliK9Ima3ux01wk19LX8+W4gr6dqOTjE1YTad/rxAcRJ0G39npkCWHFq
-         K0k03RV4nZvECjjwt/EQiQDEE7d9RdBnkXE0IeDX3qW9r0HLYjLYbCehw2h7DfKP2v
-         B+XruLfCWWkcXSqk2NKIXTJ7JtyHClqA5PwCLSkrLryIlmJX9Fj71SAZ+gib0D6knV
-         BZ7gTmpUTKhVwOWOeM73G7BlKIGILHA8uoKrneY4z8royccRACsWxEzNDEy+K4pd3X
-         G38a7StikwpL1VssvsrWX+DwTMreluiYcpFuab0e7wV9KK9P5K26XscjlEkkx/j6eZ
-         td16mbdYYKlHA==
-From:   Marek Vasut <marex@denx.de>
-To:     linux-remoteproc@vger.kernel.org
-Cc:     Marek Vasut <marex@denx.de>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/2] remoteproc: imx_rproc: Switch iMX8MN/MP from SMCCC to MMIO
-Date:   Tue, 25 Jul 2023 00:24:18 +0200
-Message-Id: <20230724222418.163220-2-marex@denx.de>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230724222418.163220-1-marex@denx.de>
-References: <20230724222418.163220-1-marex@denx.de>
+        Tue, 25 Jul 2023 05:01:09 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6859A1999
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 02:00:42 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fba8e2aa52so51760285e9.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 02:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690275634; x=1690880434;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7Qh4SLEY1eLgJVS8m4AG3+oVzUXdrRAOvEVED2PMdU=;
+        b=qAmEn5KU8WaxCdLJKYsT6B7H3MTGmTKWRj4CjmcCMDAC7t8j4iL/ALonYKoRqOdqFy
+         vuh2ueNCHD8Z9tGVV45pdlWu0yg8jAg/5m/btZQHBUCf7WfUqTVORU+N1969jlOfwlHu
+         7h7lv2qQQtoi5xUKT4c6nFJN/VUC9zwfFCtsZpldsHpepW7T8VJ26WboW0J4nbRLV2Aa
+         yZsCLHwubAY+ll28aPUUXRPyRi5S6E6/EUuvPjAAUHpl46ipxDwd1sHqL+IDkQw0ag8y
+         YCyOFT/EazzY//gEefkEGsSLAM1X39ozh0R+G2g9o+Fg9hRWeS+3pCZXd9Kd671Myhe/
+         cLpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690275634; x=1690880434;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j7Qh4SLEY1eLgJVS8m4AG3+oVzUXdrRAOvEVED2PMdU=;
+        b=fSBZlQc2WH0K9QlPSvebZ++Tj5LmzgSz+Wg5akTD8IGq03/S9Xez0FrYj3e2hB52vL
+         ff1UOv3iGs2slNH6R+3SO4B89KhPWRYTSm8N5v5tD7zl7aoOKCAuxJB+upbPFWELyJf8
+         2Ucj5IwBQm+/fQb4LLrwBXkf7fqyA4+U4RDgoKBgXJqqTo6Bi8dhXFoxUayl/UnUPm6O
+         LZIP32MmGvgJ/iVH2zAWkzeeAuDmU7R2+0tf+D+c1kOSt6ippbVvdCC6weneK2Yi5A1I
+         2BQW60N+ccZI0ERt1AsYHMUVEBQMZiKTnAZyImyHTWQpioW3VNXV0Lb7wguYDzRj56uO
+         fG2A==
+X-Gm-Message-State: ABy/qLZBAymFlN2ePgQyVwCN9VM1tMdssXeXC3JDYaJ1waUOjiu5ve9B
+        AwDSph71hsHoz7M2gTO+at+uUw==
+X-Google-Smtp-Source: APBJJlGI2bvBb8cUMLfFKTvfQy/8j2HbRp6KngSO9LZm27HZyh5fpzLeuHCrPJJ07fcGW6ABaS5oRQ==
+X-Received: by 2002:a7b:c453:0:b0:3fa:99d6:4798 with SMTP id l19-20020a7bc453000000b003fa99d64798mr10044249wmi.37.1690275633845;
+        Tue, 25 Jul 2023 02:00:33 -0700 (PDT)
+Received: from [192.168.1.101] (abxj221.neoplus.adsl.tpnet.pl. [83.9.3.221])
+        by smtp.gmail.com with ESMTPSA id f5-20020a1c6a05000000b003fc015ae1e1sm12648420wmc.3.2023.07.25.02.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jul 2023 02:00:33 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v4 0/3] SM6375 remoteprocs
+Date:   Tue, 25 Jul 2023 11:00:27 +0200
+Message-Id: <20230725-topic-6375_rproc-v4-0-d55e8a6d0f5f@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACuPv2QC/0WNQQ6CMBBFr2K6dkhpCw2uvIcxZigtNGKHTNFoC
+ He3cePy/eS9v4nsOfosTodNsH/FHCkVMMeDcBOm0UMcCgsllZZWNbDSEh202jY3XpgcmCCtwU4
+ FbIIoWo/ZQ8+Y3FTE9JznMi7sQ3z/fi7XwoHpAevEHv/1Wna1blpjK607pQzUcKfEOFTDp3eRz
+ nNMyFQRj2LfvwyNBA+6AAAA
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690275632; l=1779;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=fw4ZCgvUkpz8oGonNg5rYSidS90Y7mSsueusBESngNc=;
+ b=2nrR5I4qmkcWiMkQisBkgUu7tnSNSdqmhYswI/yyOAVzvqnc/9hyS2ImF5EtZPoKup89aXn1j
+ SAmn8O8VuJgB3zZgHxIs0HDVA/WHnwOwYpgLaYh7RZYW8bD7K6s7MH+
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The MX8M CM7 boot via SMC call is problematic, since not all versions
-of ATF support this interface. Extend the MMIO support so it can boot
-the CM7 on MX8MN/MP instead and discern the two alternatives using DT
-compatible strings.
+Resending as the previous revision was mostly ignored on the rproc side.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-remoteproc@vger.kernel.org
----
-V2: Rename 'gpr' to 'fsl,iomuxc-gpr'
-V3: No change
----
- drivers/remoteproc/imx_rproc.c | 58 ++++++++++++++++++++++++++++++++--
- drivers/remoteproc/imx_rproc.h |  2 ++
- 2 files changed, 58 insertions(+), 2 deletions(-)
+Changes since v3:
+- Pick up krzk's rb on bindings
+- Drop patch 4 (applied)
+Link to v3: https://lore.kernel.org/linux-arm-msm/20230109135647.339224-1-konrad.dybcio@linaro.org/
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 4ee2646ce62ad..8bb293b9f327c 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -40,6 +40,12 @@
- #define IMX7D_M4_STOP			(IMX7D_ENABLE_M4 | IMX7D_SW_M4C_RST | \
- 					 IMX7D_SW_M4C_NON_SCLR_RST)
- 
-+#define IMX8M_M7_STOP			(IMX7D_ENABLE_M4 | IMX7D_SW_M4C_RST)
-+#define IMX8M_M7_POLL			IMX7D_ENABLE_M4
-+
-+#define IMX8M_GPR22			0x58
-+#define IMX8M_GPR22_CM7_CPUWAIT		BIT(0)
-+
- /* Address: 0x020D8000 */
- #define IMX6SX_SRC_SCR			0x00
- #define IMX6SX_ENABLE_M4		BIT(22)
-@@ -91,6 +97,7 @@ static int imx_rproc_detach_pd(struct rproc *rproc);
- struct imx_rproc {
- 	struct device			*dev;
- 	struct regmap			*regmap;
-+	struct regmap			*gpr;
- 	struct rproc			*rproc;
- 	const struct imx_rproc_dcfg	*dcfg;
- 	struct imx_rproc_mem		mem[IMX_RPROC_MEM_MAX];
-@@ -285,6 +292,18 @@ static const struct imx_rproc_att imx_rproc_att_imx6sx[] = {
- 	{ 0x80000000, 0x80000000, 0x60000000, 0 },
- };
- 
-+static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mn_mmio = {
-+	.src_reg	= IMX7D_SRC_SCR,
-+	.src_mask	= IMX7D_M4_RST_MASK,
-+	.src_start	= IMX7D_M4_START,
-+	.src_stop	= IMX8M_M7_STOP,
-+	.gpr_reg	= IMX8M_GPR22,
-+	.gpr_wait	= IMX8M_GPR22_CM7_CPUWAIT,
-+	.att		= imx_rproc_att_imx8mn,
-+	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8mn),
-+	.method		= IMX_RPROC_MMIO,
-+};
-+
- static const struct imx_rproc_dcfg imx_rproc_cfg_imx8mn = {
- 	.att		= imx_rproc_att_imx8mn,
- 	.att_size	= ARRAY_SIZE(imx_rproc_att_imx8mn),
-@@ -365,8 +384,14 @@ static int imx_rproc_start(struct rproc *rproc)
- 
- 	switch (dcfg->method) {
- 	case IMX_RPROC_MMIO:
--		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
--					 dcfg->src_start);
-+		if (priv->gpr) {
-+			ret = regmap_clear_bits(priv->gpr, dcfg->gpr_reg,
-+						dcfg->gpr_wait);
-+		} else {
-+			ret = regmap_update_bits(priv->regmap, dcfg->src_reg,
-+						 dcfg->src_mask,
-+						 dcfg->src_start);
-+		}
- 		break;
- 	case IMX_RPROC_SMC:
- 		arm_smccc_smc(IMX_SIP_RPROC, IMX_SIP_RPROC_START, 0, 0, 0, 0, 0, 0, &res);
-@@ -395,6 +420,16 @@ static int imx_rproc_stop(struct rproc *rproc)
- 
- 	switch (dcfg->method) {
- 	case IMX_RPROC_MMIO:
-+		if (priv->gpr) {
-+			ret = regmap_set_bits(priv->gpr, dcfg->gpr_reg,
-+					      dcfg->gpr_wait);
-+			if (ret) {
-+				dev_err(priv->dev,
-+					"Failed to quiescence M4 platform!\n");
-+				return ret;
-+			}
-+		}
-+
- 		ret = regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask,
- 					 dcfg->src_stop);
- 		break;
-@@ -992,6 +1027,10 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
- 		break;
- 	}
- 
-+	priv->gpr = syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,iomuxc-gpr");
-+	if (IS_ERR(priv->gpr))
-+		priv->gpr = NULL;
-+
- 	regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "syscon");
- 	if (IS_ERR(regmap)) {
- 		dev_err(dev, "failed to find syscon\n");
-@@ -1001,6 +1040,19 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
- 	priv->regmap = regmap;
- 	regmap_attach_dev(dev, regmap, &config);
- 
-+	if (priv->gpr) {
-+		ret = regmap_read(priv->gpr, dcfg->gpr_reg, &val);
-+		if (val & dcfg->gpr_wait) {
-+			/*
-+			 * After cold boot, the CM indicates its in wait
-+			 * state, but not fully powered off. Power it off
-+			 * fully so firmware can be loaded into it.
-+			 */
-+			imx_rproc_stop(priv->rproc);
-+			return 0;
-+		}
-+	}
-+
- 	ret = regmap_read(regmap, dcfg->src_reg, &val);
- 	if (ret) {
- 		dev_err(dev, "Failed to read src\n");
-@@ -1142,6 +1194,8 @@ static const struct of_device_id imx_rproc_of_match[] = {
- 	{ .compatible = "fsl,imx8mm-cm4", .data = &imx_rproc_cfg_imx8mq },
- 	{ .compatible = "fsl,imx8mn-cm7", .data = &imx_rproc_cfg_imx8mn },
- 	{ .compatible = "fsl,imx8mp-cm7", .data = &imx_rproc_cfg_imx8mn },
-+	{ .compatible = "fsl,imx8mn-cm7-mmio", .data = &imx_rproc_cfg_imx8mn_mmio },
-+	{ .compatible = "fsl,imx8mp-cm7-mmio", .data = &imx_rproc_cfg_imx8mn_mmio },
- 	{ .compatible = "fsl,imx8qxp-cm4", .data = &imx_rproc_cfg_imx8qxp },
- 	{ .compatible = "fsl,imx8qm-cm4", .data = &imx_rproc_cfg_imx8qm },
- 	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
-diff --git a/drivers/remoteproc/imx_rproc.h b/drivers/remoteproc/imx_rproc.h
-index 1c7e2127c7584..79a1b8956d142 100644
---- a/drivers/remoteproc/imx_rproc.h
-+++ b/drivers/remoteproc/imx_rproc.h
-@@ -31,6 +31,8 @@ struct imx_rproc_dcfg {
- 	u32				src_mask;
- 	u32				src_start;
- 	u32				src_stop;
-+	u32				gpr_reg;
-+	u32				gpr_wait;
- 	const struct imx_rproc_att	*att;
- 	size_t				att_size;
- 	enum imx_rproc_method		method;
+This revision merges two [1] [2] previously separate series,
+adding SM6375's ADSP, CDSP, MPSS and related bindings.
+
+[1] https://lore.kernel.org/linux-arm-msm/20230107120623.1903056-1-konrad.dybcio@linaro.org/T/#m89d629bd788593dfd27e4dbf0cf0bf94ffd0a7ce
+[2] https://lore.kernel.org/linux-arm-msm/622afd8b-a469-4c95-d2b8-030e47b0cac2@linaro.org/T/#m17aee8f3a51cfbd3f92fe2b4dd48b3722a6a0a7e
+
+Konrad Dybcio (4):
+  dt-bindings: remoteproc: qcom,sm6375-pas: Document remoteprocs
+  remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
+  remoteproc: qcom: pas: Add SM6375 MPSS
+  arm64: dts: qcom: sm6375: Add missing power-domain-named to CDSP
+
+ .../bindings/remoteproc/qcom,sm6375-pas.yaml  | 137 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm6375.dtsi          |   1 +
+ drivers/remoteproc/qcom_q6v5_pas.c            |  18 +++
+ 3 files changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
+
+--
+2.39.0
+
+---
+Konrad Dybcio (3):
+      dt-bindings: remoteproc: qcom,sm6375-pas: Document remoteprocs
+      remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
+      remoteproc: qcom: pas: Add SM6375 MPSS
+
+ .../bindings/remoteproc/qcom,sm6375-pas.yaml       | 137 +++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  18 +++
+ 2 files changed, 155 insertions(+)
+---
+base-commit: 1e25dd7772483f477f79986d956028e9f47f990a
+change-id: 20230725-topic-6375_rproc-4f074a92fa5f
+
+Best regards,
 -- 
-2.40.1
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
