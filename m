@@ -2,55 +2,55 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66083C001DF
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Jul 2023 20:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 843FEEB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Jul 2023 20:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbjGYUFq (ORCPT
+        id S229728AbjGYUfE (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 Jul 2023 16:05:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
+        Tue, 25 Jul 2023 16:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbjGYUFq (ORCPT
+        with ESMTP id S229558AbjGYUfE (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 Jul 2023 16:05:46 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8022B1FFA
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 13:05:44 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-686ba29ccb1so162410b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 13:05:44 -0700 (PDT)
+        Tue, 25 Jul 2023 16:35:04 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2901BC3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 13:35:02 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-668709767b1so3848253b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 13:35:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690315544; x=1690920344;
+        d=linaro.org; s=google; t=1690317302; x=1690922102;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LFAdcXQq2TbouVe/mhNRHhN8yEAUVW7zlofTPbemmaQ=;
-        b=SpbOLV6hmgXaXShe5PIT+d3dvOUDu7fuESHBtgRBLBcZsMjOJr4K5qt9EeSCxNzHZv
-         CfSSMci5zM1EHX4We1Hlg03rP0QdgpwqTZXf6doFcUMQZPEl+xe0mw92Lr+O1mC4w5r1
-         Nxv/2ZAM3HjHF7f8dRNYaOmUw3CaCxW0UyrIYraNe0Gsq6fWAX3xnwRFpEYJK1I8QAUz
-         dfCUt84sYToB9bp6XYUinRKnv6+jz+7zKgpcUYVWduclNGN1VNbI5VtvQJek4CzfBCXQ
-         v3BcImtrCDMMNqDLSAWTrqJchH0Tai2h0xXI6hpfBpbb3gtunK0LqFD9fKspPxUgro1A
-         8v0w==
+        bh=dEBFhajNAbJA8oyQ3SzCNr6bDDYsCg4XK+Nkm+WUeyo=;
+        b=eY6zQW3yCE3HW7dgVJNQZhe10AN6qBQt2ko/chealQwqHrG4pM7GbfZSTeJjki77ur
+         vvleenmBb5FbgzGEaPwOFmpaKUTOWBHwreBUUoapzQSDFCTju1zARvVMKgp7X7voD+Nl
+         sXGfLqWP8rjifH8hqHsJWCsAktmKU/tFHQMq5EuvNH/TroIDEQo6kCLEp9pwNh7VUb3c
+         zLdZA9nSTj/zpvIkmp2CT+s8H4mAClm9FNigMM4FuVifUsUmWhUx+sNaPxSb6axgGSDq
+         g0fPFLH/O4qJeu+Cfaye5RHsStJDo8BFlqz0YObnHUoCnMYpBXWeebG+Imz7w0UTWiHL
+         YF4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690315544; x=1690920344;
+        d=1e100.net; s=20221208; t=1690317302; x=1690922102;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LFAdcXQq2TbouVe/mhNRHhN8yEAUVW7zlofTPbemmaQ=;
-        b=HuNTzERNcWWKFQj4B6/Dz7AQQ46FiKLH21ihwy/3CbQXUNZfP8S8L+6RjkCxGqy+8h
-         36g9ntxeq2qkS2D/JbJYJLgcYVjr+eJP1VGcxt7VX18LY9K1M/aKRScUuYQdjMt9JUyh
-         quhGoRX1AKWeB6Xv+MF9qNC5hkDN2EPAGb8jIqtoVCokGTBSgN9HH6scZ/kyCxZc6ir2
-         JVNjNBbNw1JG2nlnSMlpYqGrLyZP7SZhA2f0l7CfNHZ/z+CcALfO3MtFxHGygfSijppG
-         htkzW/5HdnAZXiFg3z+dXlLtENVBCSLlN0KicIWnslHxK5MvgWPQhiJdR+R41YZ7NaXd
-         KC1w==
-X-Gm-Message-State: ABy/qLbqGVbys8WGnJHWBQTLrnsJxR70zk/fg4vISIVzZMGUZ8itPjKu
-        Zn7tZg1JccHPKOQuRxku3XiE0Q==
-X-Google-Smtp-Source: APBJJlH0XpWJCxlu0n3SaBiolZbr7Vn8DktJDCGrpC7bf4UzXUjX0SjLrqRDh6fvkUKYscx7Hj9ZnA==
-X-Received: by 2002:a05:6a20:6a1a:b0:133:6696:1db with SMTP id p26-20020a056a206a1a00b00133669601dbmr176622pzk.29.1690315543962;
-        Tue, 25 Jul 2023 13:05:43 -0700 (PDT)
+        bh=dEBFhajNAbJA8oyQ3SzCNr6bDDYsCg4XK+Nkm+WUeyo=;
+        b=GPB2sHEQz3fziECwYRATt3JWkfA2IiZHEr+tts0P4m+HfRGVcncUMo6ZrutP5d3g/G
+         J6DUu8aFf+lfWXrBErqf5hK3zHv1L2Kv6erjKBBiE83LSqycEH2YdPmTHBV46bNQlhe0
+         +OpnGNkV2HHfhOUL63hZ+x5iGzvK5KK34W7ao+EyEwaBsAPFVqAmSTOohwyDL3hWIkMf
+         6H53md3gcLLQY2YSViWPcsAF2j1KhotxU9LuxxsbuVtuAyuyjb8WFppqOr4ANO09efjO
+         UqAcjxTBNonsxjaOZwFxaydZKbUQcqdTtB58lUaYoaSPHoTdYh2G5hdxNpSTExiKUhp2
+         6DsA==
+X-Gm-Message-State: ABy/qLa45nOT+wKHI9grSCkLXWmCt62DSbxu6vQeGyv2nST53VHIrBgT
+        +VcWm9VPT5hdVKoxvZgHz9cu5A==
+X-Google-Smtp-Source: APBJJlGSzayuOHxBmo/tEETnK6cmj1CrVYQ2LOCdES+hgyiq0gr838HgHLCeJA/FeOOzp9ZE+OXsYw==
+X-Received: by 2002:a05:6a20:914d:b0:122:10f9:f635 with SMTP id x13-20020a056a20914d00b0012210f9f635mr119916pzc.19.1690317301899;
+        Tue, 25 Jul 2023 13:35:01 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:2116:2b1f:2fd8:ec8d])
-        by smtp.gmail.com with ESMTPSA id p13-20020a62ab0d000000b00686bdff1d6fsm193249pff.77.2023.07.25.13.05.42
+        by smtp.gmail.com with ESMTPSA id s11-20020a63770b000000b0052c22778e64sm10847608pgc.66.2023.07.25.13.35.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 13:05:43 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 14:05:40 -0600
+        Tue, 25 Jul 2023 13:35:01 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 14:34:58 -0600
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     Tinghan Shen <tinghan.shen@mediatek.com>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
@@ -64,177 +64,136 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v15 08/13] remoteproc: mediatek: Remove dependency of
- MT8195 SCP L2TCM power control on dual-core SCP
-Message-ID: <ZMArFGTabcc2j6i9@p14s>
+Subject: Re: [PATCH v15 00/13] Add support for MT8195 SCP 2nd core
+Message-ID: <ZMAx8mc0tjgPvU3j@p14s>
 References: <20230721024132.6548-1-tinghan.shen@mediatek.com>
- <20230721024132.6548-9-tinghan.shen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230721024132.6548-9-tinghan.shen@mediatek.com>
+In-Reply-To: <20230721024132.6548-1-tinghan.shen@mediatek.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 10:41:27AM +0800, Tinghan Shen wrote:
-> Previously, SCP core 0 controlled the power of L2TCM and dictated that
-> SCP core 1 could only boot after SCP core 0. To address this constraint,
-> extracted the power control flow of L2TCM and made it shared
-> between both cores, enabling support of arbitrary boot order.
->
-
-s/of/for
-
-> The flow for controlling L2TCM power has been incorporated into the
-> mt8195_scp_before_load() and mt8195_scp_stop() APIs, which are
-> respectively invoked during the rproc->ops->start() and
-> rproc->ops->stop() operations. These APIs effectively serve the same
-> purpose as the rproc prepare()/unprepare() APIs."
+On Fri, Jul 21, 2023 at 10:41:19AM +0800, Tinghan Shen wrote:
+> The mediatek remoteproc driver currently only allows bringing up a 
+> single core SCP, e.g. MT8183. It also only bringing up the 1st 
+> core in SoCs with a dual-core SCP, e.g. MT8195. This series support 
+> to bring-up the 2nd core of the dual-core SCP.
 > 
-> Signed-off-by: Tinghan Shen <tinghan.shen@mediatek.com>
-> ---
->  drivers/remoteproc/mtk_common.h |  3 ++
->  drivers/remoteproc/mtk_scp.c    | 71 ++++++++++++++++++++++++++-------
->  2 files changed, 59 insertions(+), 15 deletions(-)
+> v15 -> v14:
+> 1. Use the common SCP registers in struct mtk_scp_of_cluster instead of
+>    copy it to struct mtk_scp at patchset 5 
+> 2. Use platform_set_drvdata instead of platform_device_add_data at patchset 5 
+> 3. Rename l2tcm_lock to cluster_lock at patchset 8
+> 4. Check l2tcm_refcnt value before decreasing at patchset 8
+> 5. Revise the commit message at patchset 11
+
+I am done reviewing this set.  Checkpatch is giving a warning for patch 01/13,
+something I would expect to have been dealt with after 15 iterations.  I will be
+away for the next 3 weeks so no point in rushing another revision to sqeeze
+in the v6.6 merge window.
+
+Mathieu
+
 > 
-> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
-> index 1438159ae736..fea05bbba9aa 100644
-> --- a/drivers/remoteproc/mtk_common.h
-> +++ b/drivers/remoteproc/mtk_common.h
-> @@ -106,6 +106,9 @@ struct mtk_scp_of_cluster {
->  	size_t l1tcm_size;
->  	phys_addr_t l1tcm_phys;
->  	struct list_head mtk_scp_list;
-> +	/* Prevent concurrent operations of this structure and L2TCM power control. */
-> +	struct mutex cluster_lock;
-> +	u32 l2tcm_refcnt;
->  };
->  
->  struct mtk_scp {
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 34095a461e15..c624f9c3db17 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -454,19 +454,37 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
->  	return 0;
->  }
->  
-> -static int mt8195_scp_before_load(struct mtk_scp *scp)
-> +static int mt8195_scp_l2tcm_on(struct mtk_scp *scp)
->  {
-> -	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-> -	writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
-> +	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-> +
-> +	mutex_lock(&scp_cluster->cluster_lock);
-> +
-> +	if (scp_cluster->l2tcm_refcnt == 0) {
-> +		/* clear SPM interrupt, SCP2SPM_IPC_CLR */
-> +		writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
-> +
-> +		/* Power on L2TCM */
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-> +		scp_sram_power_on(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
-> +				  MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-> +	}
-> +
-> +	scp_cluster->l2tcm_refcnt += 1;
->  
-> +	mutex_unlock(&scp_cluster->cluster_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int mt8195_scp_before_load(struct mtk_scp *scp)
-> +{
->  	writel(1, scp->cluster->reg_base + MT8192_CORE0_SW_RSTN_SET);
->  
-> -	/* enable SRAM clock */
-> -	scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-> -	scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-> -	scp_sram_power_on(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-> -	scp_sram_power_on(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
-> -			  MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-> +	mt8195_scp_l2tcm_on(scp);
-> +
->  	scp_sram_power_on(scp->cluster->reg_base + MT8192_CPU0_SRAM_PD, 0);
->  
->  	/* enable MPU for all memory regions */
-> @@ -479,6 +497,8 @@ static int mt8195_scp_c1_before_load(struct mtk_scp *scp)
->  {
->  	scp->data->scp_reset_assert(scp);
->  
-> +	mt8195_scp_l2tcm_on(scp);
-> +
->  	scp_sram_power_on(scp->cluster->reg_base + MT8195_CPU1_SRAM_PD, 0);
->  
->  	/* enable MPU for all memory regions */
-> @@ -645,14 +665,31 @@ static void mt8192_scp_stop(struct mtk_scp *scp)
->  	writel(0, scp->cluster->reg_base + MT8192_CORE0_WDT_CFG);
->  }
->  
-> +static void mt8195_scp_l2tcm_off(struct mtk_scp *scp)
-> +{
-> +	struct mtk_scp_of_cluster *scp_cluster = scp->cluster;
-> +
-> +	mutex_lock(&scp_cluster->cluster_lock);
-> +
-> +	if (scp_cluster->l2tcm_refcnt > 0)
-> +		scp_cluster->l2tcm_refcnt -= 1;
-> +
-> +	if (scp_cluster->l2tcm_refcnt == 0) {
-> +		/* Power off L2TCM */
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-> +		scp_sram_power_off(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
-> +				   MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-> +	}
-> +
-> +	mutex_unlock(&scp_cluster->cluster_lock);
-> +}
-> +
->  static void mt8195_scp_stop(struct mtk_scp *scp)
->  {
-> -	/* Disable SRAM clock */
-> -	scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_0, 0);
-> -	scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_1, 0);
-> -	scp_sram_power_off(scp->cluster->reg_base + MT8192_L2TCM_SRAM_PD_2, 0);
-> -	scp_sram_power_off(scp->cluster->reg_base + MT8192_L1TCM_SRAM_PDN,
-> -			   MT8195_L1TCM_SRAM_PDN_RESERVED_RSI_BITS);
-> +	mt8195_scp_l2tcm_off(scp);
-> +
->  	scp_sram_power_off(scp->cluster->reg_base + MT8192_CPU0_SRAM_PD, 0);
->  
->  	/* Disable SCP watchdog */
-> @@ -661,6 +698,8 @@ static void mt8195_scp_stop(struct mtk_scp *scp)
->  
->  static void mt8195_scp_c1_stop(struct mtk_scp *scp)
->  {
-> +	mt8195_scp_l2tcm_off(scp);
-> +
->  	/* Power off CPU SRAM */
->  	scp_sram_power_off(scp->cluster->reg_base + MT8195_CPU1_SRAM_PD, 0);
->  
-> @@ -1103,6 +1142,7 @@ static int scp_probe(struct platform_device *pdev)
->  	}
->  
->  	INIT_LIST_HEAD(&scp_cluster->mtk_scp_list);
-> +	mutex_init(&scp_cluster->cluster_lock);
->  
->  	ret = devm_of_platform_populate(dev);
->  	if (ret)
-> @@ -1126,6 +1166,7 @@ static void scp_remove(struct platform_device *pdev)
->  		rproc_del(scp->rproc);
->  		scp_free(scp);
->  	}
-> +	mutex_destroy(&scp_cluster->cluster_lock);
->  }
->  
->  static const struct mtk_scp_of_data mt8183_of_data = {
+> v13 -> v14:
+> 1. add review tag to patchset 1,6
+> 2. exchange the order of sram power on and reset assert in
+> mt8195_scp_c1_before_load at patchset 2
+> 3. Use ERR_CAST in patchset 5
+> 4. Re-write patchset 7 to remove dependency between core 0 and core 1 
+> 5. Add patch set 10 to report watchdot timeout to all cores
+> 
+> v12 -> v13:
+> 1. replace subdevice with new mediatek scp operations in patchset 7 
+> 2. add review tag to patchset 3
+> 3. modify mediatek,scp phandle name of video-codec@18000000 at patchset 11
+> 
+> v11 -> v12:
+> 1. add scp_add_single/multi_core() to patchset 6
+> 2. remove unused comment in patchset 6
+> 3. rename list name from mtk_scp_cluster to mtk_scp_list
+> 4. rewrite the multi-core probe flow 
+> 5. disable rproc->autoboot and boot rproc by request_firmware_nowait at patchset 7 
+> 6. remove patchset 7 review tag  
+> 
+> v10 -> v11:
+> 1. rewrite patchset 5 to probe single-core SCP with the cluster list
+> 2. Also in patchset 5, move the pointer of mtk_scp object from the
+>    platform data property to the driver data property 
+> 3. move the appearance of mtk_scp cluster property to patcheset 7
+> 
+> v9 -> v10:
+> 1. move the global mtk_scp list into the platform device driver data structure
+> 2. remove an unnecessary if() condition
+> 
+> v8 -> v9:
+> 1. initialize l1tcm_size/l1tcm_phys at patchset 05/11 
+> 2. rewrite patchset 06/11 to unify the flow and remove hacks
+> 
+> v7 -> v8:
+> 1. update the node name of mt8192 asurada SCP rpmsg subnode
+> 2. squash register definitions into driver patches
+> 3. initialize local variables on the declaration at patch v8 06/11 
+> 
+> v6 -> v7:
+> 1. merge the mtk_scp_cluster struct into the mtk_scp structure
+>    at the "Probe multi-core SCP" patch
+> 
+> v5 -> v6:
+> 1. move the mtk_scp_of_regs structure from mtk_common.h to mtk_scp.c
+> 2. rename the SCP core 0 label from 'scp' to 'scp_c0'
+> 
+> v4 -> v5:
+> 1. move resource release actions to the platform driver remove operation 
+> 2. fix dual-core watchdog handling
+> 
+> v3 -> v4:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. drop 'remove redundant call of rproc_boot for SCP' in v3 for further investigation
+> 
+> v2 -> v3:
+> 1. change the representation of dual-core SCP in dts file and update SCP yaml
+> 2. rewrite SCP driver to reflect the change of dts node
+> 3. add SCP core 1 node to mt8195.dtsi
+> 4. remove redundant call of rproc_boot for SCP
+> 5. refine IPI error message
+> 
+> v1 -> v2:
+> 1. update dt-binding property description
+> 2. remove kconfig for scp dual driver
+> 3. merge mtk_scp_dual.c and mtk_scp_subdev.c to mtk_scp.c
+> 
+> 
+> Tinghan Shen (13):
+>   dt-bindings: remoteproc: mediatek: Improve the rpmsg subnode
+>     definition
+>   arm64: dts: mediatek: Update the node name of SCP rpmsg subnode
+>   dt-bindings: remoteproc: mediatek: Support MT8195 dual-core SCP
+>   remoteproc: mediatek: Add MT8195 SCP core 1 operations
+>   remoteproc: mediatek: Extract SCP common registers
+>   remoteproc: mediatek: Probe SCP cluster on single-core SCP
+>   remoteproc: mediatek: Probe SCP cluster on multi-core SCP
+>   remoteproc: mediatek: Remove dependency of MT8195 SCP L2TCM power
+>     control on dual-core SCP
+>   remoteproc: mediatek: Setup MT8195 SCP core 1 SRAM offset
+>   remoteproc: mediatek: Handle MT8195 SCP core 1 watchdog timeout
+>   remoteproc: mediatek: Report watchdog crash to all cores
+>   remoteproc: mediatek: Refine ipi handler error message
+>   arm64: dts: mediatek: mt8195: Add SCP 2nd core
+> 
+>  .../bindings/remoteproc/mtk,scp.yaml          | 176 +++++-
+>  .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi |   2 +-
+>  .../boot/dts/mediatek/mt8192-asurada.dtsi     |   2 +-
+>  .../boot/dts/mediatek/mt8195-cherry.dtsi      |   6 +-
+>  arch/arm64/boot/dts/mediatek/mt8195.dtsi      |  34 +-
+>  drivers/remoteproc/mtk_common.h               |  39 +-
+>  drivers/remoteproc/mtk_scp.c                  | 534 ++++++++++++++----
+>  drivers/remoteproc/mtk_scp_ipi.c              |   4 +-
+>  8 files changed, 651 insertions(+), 146 deletions(-)
+> 
 > -- 
 > 2.18.0
 > 
