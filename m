@@ -2,63 +2,62 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1767C04A6A
-	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Jul 2023 09:01:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA511C001DE
+	for <linux-remoteproc@archiver.kernel.org>; Tue, 25 Jul 2023 09:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232489AbjGYJBT (ORCPT
+        id S232916AbjGYJBW (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 25 Jul 2023 05:01:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45894 "EHLO
+        Tue, 25 Jul 2023 05:01:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbjGYJBK (ORCPT
+        with ESMTP id S232742AbjGYJBL (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 25 Jul 2023 05:01:10 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8D201FEC
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 02:00:42 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fbc244d307so51856145e9.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 02:00:42 -0700 (PDT)
+        Tue, 25 Jul 2023 05:01:11 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A77F10CC
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 02:00:44 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbd33a57ddso43546325e9.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Jul 2023 02:00:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690275635; x=1690880435;
+        d=linaro.org; s=google; t=1690275637; x=1690880437;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a7K8nxIZpShzeSCTf6xMMLnjngvYy+BOizxURXufMvo=;
-        b=BMUow0YPkcyGhHa7QT07tlBD87quCMneQDdzKMvACAbcnhZa71IwmXm++ze/fr2CU6
-         0IltiRkiEgZ5sgXBXVyLg80vO1RDzxwvPMbCmmxs/u8pm6FerBuHg1l46uG2nKD4ntrR
-         Rlq7UXlqvn4J/psbnCqx37B8/uQ5ij44xXLVxizWZXiDOAJjrwvDlMKtoOemB645QWGi
-         ERdVN5dSRBVJIWfPiOGxW2WH2chqlKlYcGyay5wRF1yTiS/w/zzGcwKhs7ed0OA9ZeLi
-         GiFpRpXujlf6Q6ckF+7CU+pti8TppkgAZ7kw4gCBsSYL7hGxVQ0x7WiAAE8eDGMpRqbI
-         Jc4A==
+        bh=2zU/cjwRMTTz2495il9q5eV7STYjp78SNHViO7CJZv4=;
+        b=lpxJA1OEBqmxCVZwM7/k5ol2T7tS4AJJFs3Xmwi3+Q3qO1iQeyMQwLyyR9O+gdOaty
+         j+2zL3ad+2KVxyIhtRuPeoKqnxJFdXWGFRtzsZpqzkvMRj+PKQCuvEljaUto5TSDfa3v
+         ocDOQ4fzIF/HdWWfxiTLEJXeU9EG007kQKt7NPkHe5FQal+bMrO2WcLSV2WDZFWZWjla
+         ArBCMr71ny2p9suFlOb//mccdxu9SMtqES5JYD2OQgHOpD+SKfmmwL3SgnhpzIG+sxQf
+         J2/8sgDN99c3yFVDkc9ujfY2//1nxhpPe2y+0ql1/pNhAhXEFFhWoTxFSOACnz2kYOiA
+         MrKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690275635; x=1690880435;
+        d=1e100.net; s=20221208; t=1690275637; x=1690880437;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a7K8nxIZpShzeSCTf6xMMLnjngvYy+BOizxURXufMvo=;
-        b=Qv0if4+LK8Ga1MnFhxModQ+ql8n3gUxhBxtUsrxqYDoDSLeg4MJ97v/JlaxGrNFgRY
-         0w6SbuUu8lCpo6Fk+Ns+SD/nv1ioAxscP6abFiU4gDUC6dplpCXy8bBGBNRx+4zSPkPD
-         noEY3SH+3muZdkBjM+qFPdZ2VKYY/rriFrXnGCduBGSvwR747V5Gn1B2lYg/u74E++P8
-         FaCacW6aPR7vK4L8o7J4zHJsY9uwPKod03wPgP5cAuufbqXdHI2pQPMVvrU18dMGICYj
-         6+2B/HIGShxVnWOtKfSk1CQxfvAlmmDw2G0GgV3hxwE08PXO0ZLepTV29UAFOnzoLmdh
-         WCzA==
-X-Gm-Message-State: ABy/qLZDioVyg2ZtZZI6tT4tEV3yusktQrJf0t5t32e/CX52hVuuzLir
-        +uValPIif9z56F5WaB8yas8nLA==
-X-Google-Smtp-Source: APBJJlHTKXNKGKX8QAlbJUxnc46MXgYrlKJ/UA5PdejRBoxCd2mq4Ffib2iDbdmvYeFDqFPITPKTkA==
-X-Received: by 2002:a05:600c:ac6:b0:3fc:5606:c243 with SMTP id c6-20020a05600c0ac600b003fc5606c243mr10117259wmr.13.1690275635331;
-        Tue, 25 Jul 2023 02:00:35 -0700 (PDT)
+        bh=2zU/cjwRMTTz2495il9q5eV7STYjp78SNHViO7CJZv4=;
+        b=fyPfDl+PEXQrhv+vAy4vo1EaLDSC2aA6CrznksosCPBdii8mBb0f0wksCm6519MWpL
+         aMJ6gNjwrJU5/yPcB+QwNqrjg0vldWLVehnn9SCpbd0OxxOZqkEEcTYHYLl2hXwK83wC
+         24N4IerHRZXBh/eno32YX432vbFWv+NzF1SBzeCDMuMCyexAqw0jyoCclgcCMMCaGPEz
+         MJEMCVqjylVj8gQgOf1MyTJEGDPO8yTi+xts33thHNhIR3+TFfnUnlvWG/CfatAPapK3
+         vayS6rnAMvHZe/BSN0PU1Fh/k/xr+7/O3kmeIv6F/u3vY3zv/Xk8VQgTzsBLXFzw4hfV
+         8P+A==
+X-Gm-Message-State: ABy/qLaFFiQHShJtFD5LA4OyFO9iKZ2l7CG8qbFEiFd6ksGvs1oY/oO0
+        pImvI+uVBNth+eWx1xsMkYTYSA==
+X-Google-Smtp-Source: APBJJlFE+E8WPxVy6Mm8c0BDyptcXh01hA22eGb23odV8R7mbPbrWatWfCk6xeye3M/DA0IfLXgaIw==
+X-Received: by 2002:a1c:7217:0:b0:3fc:1f0:a66e with SMTP id n23-20020a1c7217000000b003fc01f0a66emr8996587wmc.1.1690275636818;
+        Tue, 25 Jul 2023 02:00:36 -0700 (PDT)
 Received: from [192.168.1.101] (abxj221.neoplus.adsl.tpnet.pl. [83.9.3.221])
-        by smtp.gmail.com with ESMTPSA id f5-20020a1c6a05000000b003fc015ae1e1sm12648420wmc.3.2023.07.25.02.00.33
+        by smtp.gmail.com with ESMTPSA id f5-20020a1c6a05000000b003fc015ae1e1sm12648420wmc.3.2023.07.25.02.00.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 02:00:35 -0700 (PDT)
+        Tue, 25 Jul 2023 02:00:36 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 25 Jul 2023 11:00:28 +0200
-Subject: [PATCH v4 1/3] dt-bindings: remoteproc: qcom,sm6375-pas: Document
- remoteprocs
+Date:   Tue, 25 Jul 2023 11:00:29 +0200
+Subject: [PATCH v4 2/3] remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230725-topic-6375_rproc-v4-1-d55e8a6d0f5f@linaro.org>
+Message-Id: <20230725-topic-6375_rproc-v4-2-d55e8a6d0f5f@linaro.org>
 References: <20230725-topic-6375_rproc-v4-0-d55e8a6d0f5f@linaro.org>
 In-Reply-To: <20230725-topic-6375_rproc-v4-0-d55e8a6d0f5f@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -71,172 +70,39 @@ To:     Andy Gross <agross@kernel.org>,
         Manivannan Sadhasivam <mani@kernel.org>
 Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1690275632; l=4377;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690275632; l=1093;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=Kz6Ktb07wAdLnp1vHpLFn8SJ0/Kt84BenGBICrSQ2Bk=;
- b=B9H7CXHxbMtl85LCvSqaRuOI7eXZto3hApKxU2pjHXfoGSyK+PRUjtHRdGFiHByljh0r49zcC
- OXh2sO2ola4A9Wz14++KnJ6dthqFPBmH9rGug/NhA0hF9HSQ0/m0oTd
+ bh=dhLWSUNPf4MHw81JBZTsRJ2sX68bGcNHGXn7nRcPQs0=;
+ b=P+oi8UCkLPTSksv3BuliO13fIMgjcU4aLpTLAj8O7oMwSD1PGF41N5zMvfWhaWA42zhS/U/38
+ uzW78XXOn1DBJX/Ugq3RvcbS913XCbXKR94K0kbjwkPgtJtQQQQC9vd
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-SM6375 hosts an ADSP, CDSP and modem as remote processors. Create
-related bindings.
+Add a config for the ADSP&CDSP present on SM6375.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- .../bindings/remoteproc/qcom,sm6375-pas.yaml       | 137 +++++++++++++++++++++
- 1 file changed, 137 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-new file mode 100644
-index 000000000000..60ee3fc7ab5b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-@@ -0,0 +1,137 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,sm6375-pas.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SM6375 Peripheral Authentication Service
-+
-+maintainers:
-+  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+
-+description:
-+  Qualcomm SM6375 SoC Peripheral Authentication Service loads and boots
-+  firmware on the Qualcomm DSP Hexagon cores.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,sm6375-adsp-pas
-+      - qcom,sm6375-cdsp-pas
-+      - qcom,sm6375-mpss-pas
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: XO clock
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+
-+  smd-edge: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sm6375-adsp-pas
-+            - qcom,sm6375-cdsp-pas
-+    then:
-+      properties:
-+        interrupts:
-+          maxItems: 5
-+        interrupt-names:
-+          maxItems: 5
-+    else:
-+      properties:
-+        interrupts:
-+          minItems: 6
-+        interrupt-names:
-+          minItems: 6
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sm6375-adsp-pas
-+    then:
-+      properties:
-+        power-domains:
-+          items:
-+            - description: LCX power domain
-+            - description: LMX power domain
-+        power-domain-names:
-+          items:
-+            - const: lcx
-+            - const: lmx
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sm6375-cdsp-pas
-+            - qcom,sm6375-mpss-pas
-+    then:
-+      properties:
-+        power-domains:
-+          items:
-+            - description: CX power domain
-+        power-domain-names:
-+          items:
-+            - const: cx
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmcc.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/mailbox/qcom-ipcc.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+
-+    remoteproc_adsp: remoteproc@a400000 {
-+        compatible = "qcom,sm6375-adsp-pas";
-+        reg = <0x0a400000 0x100>;
-+
-+        interrupts-extended = <&intc GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-+                              <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-+                              <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "wdog", "fatal", "ready",
-+                          "handover", "stop-ack";
-+
-+        clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+        clock-names = "xo";
-+
-+        power-domains = <&rpmpd SM6375_VDD_LPI_CX>,
-+                        <&rpmpd SM6375_VDD_LPI_MX>;
-+        power-domain-names = "lcx", "lmx";
-+
-+        memory-region = <&pil_adsp_mem>;
-+
-+        qcom,smem-states = <&smp2p_adsp_out 0>;
-+        qcom,smem-state-names = "stop";
-+
-+        glink-edge {
-+            interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
-+                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-+                                         IRQ_TYPE_EDGE_RISING>;
-+            mboxes = <&ipcc IPCC_CLIENT_LPASS
-+                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+
-+            label = "lpass";
-+            qcom,remote-pid = <2>;
-+
-+            /* ... */
-+        };
-+    };
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index b5447dd2dd35..0d58b5be9a77 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1180,6 +1180,8 @@ static const struct of_device_id adsp_of_match[] = {
+ 	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
+ 	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
+ 	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
++	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource},
++	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource},
+ 	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
+ 	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
+ 	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
 
 -- 
 2.41.0
