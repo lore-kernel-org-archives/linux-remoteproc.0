@@ -2,102 +2,112 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6919CC0015E
-	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Jul 2023 17:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E15C41513
+	for <linux-remoteproc@archiver.kernel.org>; Wed, 26 Jul 2023 17:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbjGZRQf (ORCPT
+        id S232152AbjGZRSG (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Wed, 26 Jul 2023 13:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54256 "EHLO
+        Wed, 26 Jul 2023 13:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjGZRQe (ORCPT
+        with ESMTP id S232066AbjGZRRu (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Wed, 26 Jul 2023 13:16:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E52791739;
-        Wed, 26 Jul 2023 10:16:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FA7161BFE;
-        Wed, 26 Jul 2023 17:16:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C22CC433C9;
-        Wed, 26 Jul 2023 17:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690391791;
-        bh=UHqmAOZsQc8ZTGmy68dQB8Ojo9/sG7yu9Yqf49KKWGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t0V0oh1JMzFmxEhBsjjG2yIHSgfHzSAUsUgtaVNofOvCl8SmzYJq3bH+Gpo225wpH
-         KEhYMquSmOT005yjD679Apjr8m05Lm1GuN8NHagf7yeL8ZL57TiBbsxTftBs2EBnB6
-         ytmw34/XoDdXLoL3p7TOLVgffAF+xw4QC1O17GHsFmSdkVz5Rlpv7yIPCPBNIazxmR
-         ERqhlG7+hLZSfeoU+Z6V9skHgwilQzDNB/7XCecSySMqEyKwLJDafusIf1QqiS7rZM
-         lEiyAekFVLXXb51Ou/SVvtVeCi9jcxUBMyySWsRGUK6uOn5Q5Q9BYA224g/3q5vO28
-         ZVoeFExt/uUCg==
-Received: (nullmailer pid 1654135 invoked by uid 1000);
-        Wed, 26 Jul 2023 17:16:29 -0000
-Date:   Wed, 26 Jul 2023 11:16:29 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marek Vasut <marex@denx.de>
-Cc:     Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: imx_rproc: Support
- i.MX8MN/P MMIO
-Message-ID: <169039178910.1653997.4216776018058058907.robh@kernel.org>
-References: <20230724222418.163220-1-marex@denx.de>
+        Wed, 26 Jul 2023 13:17:50 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB971BEF
+        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jul 2023 10:17:49 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-991da766865so1145097766b.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 26 Jul 2023 10:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690391867; x=1690996667;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AZVHVyLP2Fs6Ujz4VOoAQDXsJk8IXJKbAzZaD2vyiz4=;
+        b=Xa3ia7jMz2vBzoVjm55myhdNUSq0Gax/YsQAFDrs6O8WdtBV/BuDEwW/G4F8DNLf1s
+         7RsVG4OTIQhhkTBCMgZeVLyw58Sm8aO89Sl/rGLegxJ/f6iqrtkownpXn0Zp6olWdO0F
+         XUJI36JoI+WPsuw6j88csZBr+vpvwnGthOgg/r5z2yYHXXH6l1A5NHJqvqKxo6t+HYsJ
+         hX1L6ivgUl1wueQvpLaM4OCGwdHCTuAa8ymjaY6MBhmkQn6vrkdI3spZdYZupKam+XFM
+         tnFVfxjUIBObe+mq7brkaEzUfHllLe6gaePF+/tXu2/tSFXWA/QvR+rauLG6KanErSxU
+         X59A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690391867; x=1690996667;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AZVHVyLP2Fs6Ujz4VOoAQDXsJk8IXJKbAzZaD2vyiz4=;
+        b=OzUz4rBX+l8t8L7zG271gsO5gPMjAHaRo7PG5zES/b3eiUK3F5LCpbWC7iu/nt8ayz
+         KqRAyGIp0PgD3SG94nskrbppl2n6p+bYOI0WGbP4/W/M8wLl/c7SftAB+TAGwhRdYDPf
+         EOnQxURgQ600tNiYfpzJy+2CWJ3hkAbU2ek1qfdRH7pxjF6vmeR8yyGzzYFUkzqh2+5q
+         WRIMoG/KbY3F+z+zSXlTFYIfSy3c6k5aG0NCKlDALvWAi4K4OMXVsDzGpdvDucxizSpy
+         QqgHgM60z/3KBEdXMXL1kDR8Km0cyZbhH/t9hY837f7Gcwi2svpBudf5LHHx/NnOkUT6
+         GoDQ==
+X-Gm-Message-State: ABy/qLavOpz9l7IXVqi7y3Q+wauZaxKhkTwZRLnZsj+6CDkfOhrYSkCM
+        8UQ17hPzlUYGMM1jP+svnfomew==
+X-Google-Smtp-Source: APBJJlFCI6lWymFjvnB6DNDMKkaJaE6aU8ogI4gYDwt5Mx4/qCVyfiQKuc5qTv+OCpMfqYVcpj6aPw==
+X-Received: by 2002:a17:906:8a65:b0:974:1ef7:1e88 with SMTP id hy5-20020a1709068a6500b009741ef71e88mr2247972ejc.13.1690391867523;
+        Wed, 26 Jul 2023 10:17:47 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id u18-20020a1709060b1200b00991faf3810esm9963958ejg.146.2023.07.26.10.17.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jul 2023 10:17:47 -0700 (PDT)
+Message-ID: <398f85d8-a0c4-1430-3d92-ed475d2fe220@linaro.org>
+Date:   Wed, 26 Jul 2023 19:17:44 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230724222418.163220-1-marex@denx.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 1/3] dt-bindings: remoteproc: qcom,sm6375-pas: Document
+ remoteprocs
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-remoteproc@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+References: <20230725-topic-6375_rproc-v4-0-d55e8a6d0f5f@linaro.org>
+ <20230725-topic-6375_rproc-v4-1-d55e8a6d0f5f@linaro.org>
+ <169027725059.2472994.10579462158675554822.robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <169027725059.2472994.10579462158675554822.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-
-On Tue, 25 Jul 2023 00:24:17 +0200, Marek Vasut wrote:
-> The MX8M CM7 boot via SMC call is problematic, since not all versions
-> of ATF support this interface. Document MMIO support used to boot the
-> CM7 on MX8MN/MP instead and discern MMIO interface using DT compatible
-> string. Document GPR register syscon phandle which is required by the
-> MMIO interface too.
+On 25/07/2023 11:27, Rob Herring wrote:
 > 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-remoteproc@vger.kernel.org
-> ---
-> V2: Rename 'gpr' to 'fsl,iomuxc-gpr'
-> V3: Rename 'gpr' to 'fsl,iomuxc-gpr' everywhere
-> ---
-> Note that the MMIO being discerned using compatible string is similar
-> approach to "st,stm32mp1-rcc" vs "st,stm32mp1-rcc-secure".
-> ---
->  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> On Tue, 25 Jul 2023 11:00:28 +0200, Konrad Dybcio wrote:
+>> SM6375 hosts an ADSP, CDSP and modem as remote processors. Create
+>> related bindings.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
+>>  .../bindings/remoteproc/qcom,sm6375-pas.yaml       | 137 +++++++++++++++++++++
+>>  1 file changed, 137 insertions(+)
+>>
+> 
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.example.dtb: remoteproc@a400000: Unevaluated properties are not allowed ('memory-region' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,sm6375-pas.yaml#
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+This needs fixing.
+
+Best regards,
+Krzysztof
 
