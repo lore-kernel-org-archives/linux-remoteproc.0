@@ -2,64 +2,65 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6BCC04FE0
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Jul 2023 17:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E55C05051
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 27 Jul 2023 17:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbjG0Rdc (ORCPT
+        id S231667AbjG0Rde (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 27 Jul 2023 13:33:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32906 "EHLO
+        Thu, 27 Jul 2023 13:33:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231478AbjG0Rdb (ORCPT
+        with ESMTP id S231621AbjG0Rdb (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
         Thu, 27 Jul 2023 13:33:31 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89CE52D75
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D34F230E3
         for <linux-remoteproc@vger.kernel.org>; Thu, 27 Jul 2023 10:33:29 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fbaef9871cso2212476e87.0
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fe07f0636bso2173279e87.1
         for <linux-remoteproc@vger.kernel.org>; Thu, 27 Jul 2023 10:33:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690479207; x=1691084007;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2zU/cjwRMTTz2495il9q5eV7STYjp78SNHViO7CJZv4=;
-        b=aawJwoZtdtlmzFYOH9u38ujoIumO7jTEeokK1PlW6G4RYjskCVvfxlQuM4q1rIrW5c
-         uEeDIeQ6ikVcKR508t9ozGw+K3YUik1eK8/IIoRuqJu4nyi8OQ5npMAvkJx4/KNhfXts
-         h4dRUvNzbp5tUO4pjrkDGrcK+ihh4pDEihVLl1D7hWQc37yUPsxm9v8QI9Xw6r902zXO
-         /nOk/67a0rB/z8QQ1ntwWmW+dEUX+43fDzeHPt8j8A40Z2Oopfx3hUZMg6KU0/b1zYwp
-         PfrjpKia56s3+1klgDK9OSrPYFHN6rcu92CxGSmbWOawxtiUti5xQUz0VeBme4AhYz0S
-         Hl0Q==
+        d=linaro.org; s=google; t=1690479208; x=1691084008;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y4JznAwqUwxEns3QHdYNhwDRE+I8wR/yzqEuWAMFbic=;
+        b=PcWPtR9b1nCRdEFGVqDS0YR2Jo3PkQoX8nI9M1AfkF0XYnOGJ9iwy5lSWs4KI/aIJp
+         jTqWREY0L8q2BRi5UNx3okPiXmoBCuGgz5ww5wlyY2FS7gvdkCGw9ll1VFyFWC9L+rNB
+         RhccdqMW7iOj6rQNwb1KsL8/RomjhvKnWETd5t6X0u7/ntUCnAPplW2lST2TUk9bIpon
+         s/hvV4NoBjk+W9Qtmca0BIUnIxezshpQM4u4Xl0FhhdOsD2uTgB9OoU/P4RkQm5EJI+L
+         gSBq1F7EHJy89T0WBL9sx7jAo99uCRPm/u9fiY7SEWQ1+9O35/tj78scvFc5xCVF6JDL
+         iRrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690479207; x=1691084007;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2zU/cjwRMTTz2495il9q5eV7STYjp78SNHViO7CJZv4=;
-        b=IN0gEuiyXppCVXnZ0Q7d+NQ/6V6JWYwIsEzESLJ22dRQy1n9DnEUM/e0T3hKVEXmz5
-         oVa6gFvD9/Aiio2fQfzLF9FlWj4ZS8CiBsBgc+t1mQgqmbO7ZnXlOYOF35oYzVmEZP97
-         PNdGQg1DPf97R9VTaffZy3W7eftWNgc/Cdv4c0q5xKPXSWKy7HHLm1Ou1qJdd855FwjY
-         X+QdAXmbNax5jN/FZH8wIo4O4AyeXG0fXKqX/OteM7OAX+fPHj9/ztV/LC4Bn0iE30Wj
-         d/ohqan0dHN1jzmC9Yb9+1grXtq+F6EFZfY+7qtGT/+EfQ3iLBIQu/pViG/GP3FNU03g
-         Tgjw==
-X-Gm-Message-State: ABy/qLYVsu9gSCFMtqdiRbjrr8Bk2rrrFCbri96YrGFfAbTZWxOgOzev
-        IUbIIGVQSkreowrfsip0gMtXsQ==
-X-Google-Smtp-Source: APBJJlFLZ+7kfHF1+btz2Bf3Qwq8581ll27cAP4w+uf+K6K4zg9kauFawNUx8bbmAESVTdSDqToJFA==
-X-Received: by 2002:a19:7512:0:b0:4fb:9da2:6cec with SMTP id y18-20020a197512000000b004fb9da26cecmr2285617lfe.7.1690479207657;
-        Thu, 27 Jul 2023 10:33:27 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1690479208; x=1691084008;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y4JznAwqUwxEns3QHdYNhwDRE+I8wR/yzqEuWAMFbic=;
+        b=L/iArn7PTdNlbKzztVLdCnq5BE41MGUvzIccjcBSE1+VF5No2LF0jNWt9MgutUgv3W
+         9qlSwDf7Y7FjVWAaQC+XZfmd+ZQdabp3E/1/hL2FAs/ycYNefdqrljNdJ9JTH3lkr3vr
+         osIX20UZASr665IxZMIeuvfI7HbCoYytMXl/b9HmjKRH7iBYSmgsaYVSD2VvaAUhGblM
+         21ve+JNvDwc7ATr++yIR7x+qR0wQubVCfgJ43iV2BmhY5/It2qDxiOo7ZF+lqWWbamf5
+         wBb2AmWw+jFEyfBN/+0YBKjTCKrhuQb3biiHIFmXKl8W6QJqNPPjGCt043vKKmHDmGQw
+         T1nw==
+X-Gm-Message-State: ABy/qLaeGITtHawBdF7XK5lasRH3XWZMLQl/PoF6+pfiGMQkTJiaj1CE
+        j60HwvZZpWKgi0LurhYNOO4y6w==
+X-Google-Smtp-Source: APBJJlHwcmw/KyFLe5ksFAFNL/2577EugKUqrVekH06+MUX621YSkGula6cTwfUp9vkFCLLrB/ayGw==
+X-Received: by 2002:a05:6512:1152:b0:4fb:cabd:2a66 with SMTP id m18-20020a056512115200b004fbcabd2a66mr2329775lfg.21.1690479204174;
+        Thu, 27 Jul 2023 10:33:24 -0700 (PDT)
 Received: from [192.168.1.101] (abxi99.neoplus.adsl.tpnet.pl. [83.9.2.99])
-        by smtp.gmail.com with ESMTPSA id g4-20020a19ac04000000b004fe07f06337sm412089lfc.53.2023.07.27.10.33.26
+        by smtp.gmail.com with ESMTPSA id g4-20020a19ac04000000b004fe07f06337sm412089lfc.53.2023.07.27.10.33.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jul 2023 10:33:26 -0700 (PDT)
+        Thu, 27 Jul 2023 10:33:23 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Thu, 27 Jul 2023 19:33:22 +0200
-Subject: [PATCH v5 2/3] remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
+Subject: [PATCH v5 0/3] SM6375 remoteprocs
+Date:   Thu, 27 Jul 2023 19:33:20 +0200
+Message-Id: <20230725-topic-6375_rproc-v5-0-a8e9cde56a20@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230725-topic-6375_rproc-v5-2-a8e9cde56a20@linaro.org>
-References: <20230725-topic-6375_rproc-v5-0-a8e9cde56a20@linaro.org>
-In-Reply-To: <20230725-topic-6375_rproc-v5-0-a8e9cde56a20@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGCqwmQC/32OO27DMBBEr2Kw9goUP1LkKvcIjIDix1pY5gpLR
+ Yhh6O6h3SRVyjfAvJmHKJExFnE6PATHDQtSrmCPB+Enly8RMFQWSiote2VhpQU9dLq3n7wweTB
+ J9sYNKjmbRK2NrkQY2WU/1WL+mucaLhwTfr92Ps6VE9MN1omj+7W3cmi17UzfaD0oZaCFK2V2o
+ Qn30SO9z5gdU0N8ee5MWFbi++v5Zp7if05uBiQEa+Ob64JMNv2Vnfd9/wFUYHvxCQEAAA==
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -72,38 +73,65 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1690479202; l=1093;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1690479202; l=1994;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=dhLWSUNPf4MHw81JBZTsRJ2sX68bGcNHGXn7nRcPQs0=;
- b=gzkyaQ6/ofOUqpvt1ivZImnV4ynsHOFETL170ObvEWPjt1AMTQE+p/TkX2lH3oFt/1iF7Xuvg
- p7Wkmpb9aT3Brn5oZqoegSVEj1t38p8oYRTs7SGZ+EK1Wko2IPPTaEi
+ bh=61U37Uw72v05UEzFluxQektiVeexmyoM4WiivXI068k=;
+ b=pAnAQak2rce0Y4N+KN1l4zAW9NFfM1BgAT6ebdaiESIvsmaVZ8eoT3T4AIt0zFU7+X9jTwtly
+ YLn2VPCD6aKCrY7/gR4y9JdM6muNRMuOuZ1GiMYOCd7oIpJN2MlQD0O
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Add a config for the ADSP&CDSP present on SM6375.
+Resending as the previous revision was mostly ignored on the rproc side.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Changes since v3:
+- Pick up krzk's rb on bindings
+- Drop patch 4 (applied)
+Link to v3: https://lore.kernel.org/linux-arm-msm/20230109135647.339224-1-konrad.dybcio@linaro.org/
+
+This revision merges two [1] [2] previously separate series,
+adding SM6375's ADSP, CDSP, MPSS and related bindings.
+
+[1] https://lore.kernel.org/linux-arm-msm/20230107120623.1903056-1-konrad.dybcio@linaro.org/T/#m89d629bd788593dfd27e4dbf0cf0bf94ffd0a7ce
+[2] https://lore.kernel.org/linux-arm-msm/622afd8b-a469-4c95-d2b8-030e47b0cac2@linaro.org/T/#m17aee8f3a51cfbd3f92fe2b4dd48b3722a6a0a7e
+
+Konrad Dybcio (4):
+  dt-bindings: remoteproc: qcom,sm6375-pas: Document remoteprocs
+  remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
+  remoteproc: qcom: pas: Add SM6375 MPSS
+  arm64: dts: qcom: sm6375: Add missing power-domain-named to CDSP
+
+ .../bindings/remoteproc/qcom,sm6375-pas.yaml  | 137 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm6375.dtsi          |   1 +
+ drivers/remoteproc/qcom_q6v5_pas.c            |  18 +++
+ 3 files changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
+
+--
+2.39.0
+
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v5:
+- Fix up bindings atop cee616c6884616aea3be72a9debafd0614332682
+- Drop krzk's rb from patch 1
+- Link to v4: https://lore.kernel.org/r/20230725-topic-6375_rproc-v4-0-d55e8a6d0f5f@linaro.org
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index b5447dd2dd35..0d58b5be9a77 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1180,6 +1180,8 @@ static const struct of_device_id adsp_of_match[] = {
- 	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
- 	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
- 	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
-+	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource},
-+	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
- 	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
- 	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
+---
+Konrad Dybcio (3):
+      dt-bindings: remoteproc: qcom,sm6375-pas: Document remoteprocs
+      remoteproc: qcom: pas: Add SM6375 ADSP & CDSP
+      remoteproc: qcom: pas: Add SM6375 MPSS
 
+ .../bindings/remoteproc/qcom,sm6375-pas.yaml       | 145 +++++++++++++++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  18 +++
+ 2 files changed, 163 insertions(+)
+---
+base-commit: 451cc82bd11eb6a374f4dbcfc1cf007eafea91ab
+change-id: 20230725-topic-6375_rproc-4f074a92fa5f
+
+Best regards,
 -- 
-2.41.0
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
