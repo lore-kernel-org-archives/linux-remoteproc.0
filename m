@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5755BC0015E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 Jul 2023 07:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F29BEB64DD
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 28 Jul 2023 07:09:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233106AbjG1HBA (ORCPT
+        id S233888AbjG1HJ2 (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 28 Jul 2023 03:01:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37578 "EHLO
+        Fri, 28 Jul 2023 03:09:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231708AbjG1HA7 (ORCPT
+        with ESMTP id S233853AbjG1HJK (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 28 Jul 2023 03:00:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3180D10D2;
-        Fri, 28 Jul 2023 00:00:58 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36S6Qoaq029041;
-        Fri, 28 Jul 2023 06:34:57 GMT
+        Fri, 28 Jul 2023 03:09:10 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE9C63C01;
+        Fri, 28 Jul 2023 00:09:06 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36S4cC1n004846;
+        Fri, 28 Jul 2023 06:35:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=AJwzfrlNoRDjh7mN4XnJxhQyAS+e0B1NUkAFZiVolyk=;
- b=NQC83j5LvEOUeYwzLt9S2MHOkbv9XzfnaxnRmCnDYng3DfXRFn+Ovgn73qMYqvd3Mwin
- PytWVmCylmd5ucrCTQ9iPG7CiDBkkLyViomuAeqIf8UYoEVDmAXZh2wcbApLV4ZngN/I
- 3lP/yCvnw53xLMHxWgU9J9fJLXDRwk9cSlFh6w02h4KdxllWEZs0xStdEB3YuAcSeIG5
- eL1QIGua0wHUDDfcMfHMaJS4I03mGKn7lR/KjbiGSBBx4NY2rB6xRNjBmuu+av1a5DL+
- cXe2Pc9qOpR8pvtTl4CSHKD64u2m5ggExdj6tH8jrzdJveYP43+d5q5NcBnvyN4JgnrE Ew== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s3ufusg7c-1
+ bh=EGtWRlxiweRAHs5kOvm00xvdEsKNTUh4Zx40cbgMXcs=;
+ b=gbHvF4g7Vd6/aQPwlr5Bn3B2+YmneUdhkKeAzsQMG4ESI9qW+5tL2Ra6R6I0jPevHwEh
+ 4+VGR+yYlr5jQXvNjK/r4zwqf6fI/BLi0doTUKq/JYEq2mL4wXuiyfCFIiFdsaXrnVnJ
+ ckB0Zhw2wnvr+GlT9mtiqbQ/Cj8dfgSKUzRKjUR3eWlSzk3dpEI0x93uDzXmL08PM/H/
+ bWktRFWyi/cAv0FbqsUjbdbZb0MYZf+8BXFcKdCY6fiKrjBC9kKyP4aJRPQzpqWu+2XH
+ MqOUTqEBCRXRnPZo5L2t5QlLWoigfpM/jyCNr2vwayEBeQXOSw/HfN6YgNBmBRZ02jn5 9w== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s3k7u2ss7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jul 2023 06:34:57 +0000
+        Fri, 28 Jul 2023 06:35:24 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36S6YoRC010058
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36S6ZM5R031276
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Jul 2023 06:34:50 GMT
+        Fri, 28 Jul 2023 06:35:22 GMT
 Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 27 Jul 2023 23:34:44 -0700
+ 15.2.1118.30; Thu, 27 Jul 2023 23:35:15 -0700
 From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
@@ -53,9 +53,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
 CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_varada@quicinc.com>
-Subject: [PATCH v4 02/11] clk: qcom: ipq5332: remove q6 bring up clocks
-Date:   Fri, 28 Jul 2023 12:04:03 +0530
-Message-ID: <20230728063412.1641856-3-quic_mmanikan@quicinc.com>
+Subject: [PATCH v4 07/11] firmware: qcom_scm: ipq5332: add msa lock/unlock support
+Date:   Fri, 28 Jul 2023 12:04:08 +0530
+Message-ID: <20230728063412.1641856-8-quic_mmanikan@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
 References: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
@@ -67,459 +67,149 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9YzVvey9zGqLWa_YAQZ-Nk9Ye3iYCFPM
-X-Proofpoint-ORIG-GUID: 9YzVvey9zGqLWa_YAQZ-Nk9Ye3iYCFPM
+X-Proofpoint-GUID: FseLkCPVZKca-AeaDJB6-Xd--8PlPQTh
+X-Proofpoint-ORIG-GUID: FseLkCPVZKca-AeaDJB6-Xd--8PlPQTh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-27_10,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- clxscore=1015 priorityscore=1501 adultscore=0 phishscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307280060
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
+ suspectscore=0 priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307280059
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-In multipd model Q6 firmware takes care of bringup clocks,
-so remove them from gcc driver.
+IPQ5332 user pd remoteproc firmwares need to be locked
+with MSA(modem secure access) features. This patch add
+support to lock/unlock MSA features.
 
 Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 ---
 Changes in v4:
-	- In V3 series this patch is [05/11]. Here it's moved to [02/11]
-	  because to compile dt-bindings patches.
+	- Rebased on linux-next
 
- drivers/clk/qcom/gcc-ipq5332.c | 380 ---------------------------------
- 1 file changed, 380 deletions(-)
+ drivers/firmware/qcom_scm.c            | 78 ++++++++++++++++++++++++++
+ drivers/firmware/qcom_scm.h            |  2 +
+ include/linux/firmware/qcom/qcom_scm.h |  2 +
+ 3 files changed, 82 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-index ce6dc6e99a29..7153c2853b74 100644
---- a/drivers/clk/qcom/gcc-ipq5332.c
-+++ b/drivers/clk/qcom/gcc-ipq5332.c
-@@ -2266,150 +2266,6 @@ static struct clk_branch gcc_prng_ahb_clk = {
- 	},
- };
+diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+index 3bc8c63a997f..2275cf7bc887 100644
+--- a/drivers/firmware/qcom_scm.c
++++ b/drivers/firmware/qcom_scm.c
+@@ -676,6 +676,84 @@ bool qcom_scm_pas_supported(u32 peripheral)
+ }
+ EXPORT_SYMBOL(qcom_scm_pas_supported);
  
--static struct clk_branch gcc_q6_ahb_clk = {
--	.halt_reg = 0x25014,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x25014,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6_ahb_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_wcss_ahb_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6_ahb_s_clk = {
--	.halt_reg = 0x25018,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x25018,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6_ahb_s_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_wcss_ahb_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6_axim_clk = {
--	.halt_reg = 0x2500c,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x2500c,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6_axim_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_q6_axim_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6_axis_clk = {
--	.halt_reg = 0x25010,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x25010,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6_axis_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_system_noc_bfdcd_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6_tsctr_1to2_clk = {
--	.halt_reg = 0x25020,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x25020,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6_tsctr_1to2_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_tsctr_div2_clk_src.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6ss_atbm_clk = {
--	.halt_reg = 0x2501c,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x2501c,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6ss_atbm_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_at_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6ss_pclkdbg_clk = {
--	.halt_reg = 0x25024,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x25024,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6ss_pclkdbg_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_dap_div_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_q6ss_trig_clk = {
--	.halt_reg = 0x250a0,
--	.halt_check = BRANCH_HALT_VOTED,
--	.clkr = {
--		.enable_reg = 0x250a0,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_q6ss_trig_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_dap_div_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_qdss_at_clk = {
- 	.halt_reg = 0x2d038,
- 	.halt_check = BRANCH_HALT_VOTED,
-@@ -2837,24 +2693,6 @@ static struct clk_branch gcc_sys_noc_at_clk = {
- 	},
- };
++/**
++ * qcom_scm_msa_lock() - Lock given peripheral firmware region as MSA
++ *
++ * @peripheral:	peripheral id
++ *
++ * Return 0 on success.
++ */
++int qcom_scm_msa_lock(u32 peripheral)
++{
++	int ret;
++	struct qcom_scm_desc desc = {
++		.svc = QCOM_SCM_SVC_PIL,
++		.cmd = QCOM_SCM_MSA_LOCK,
++		.arginfo = QCOM_SCM_ARGS(1),
++		.args[0] = peripheral,
++		.owner = ARM_SMCCC_OWNER_SIP,
++	};
++	struct qcom_scm_res res;
++
++	if (!__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_PIL,
++					  QCOM_SCM_MSA_LOCK))
++		return 0;
++
++	ret = qcom_scm_clk_enable();
++	if (ret)
++		return ret;
++
++	ret = qcom_scm_bw_enable();
++	if (ret)
++		return ret;
++
++	ret = qcom_scm_call(__scm->dev, &desc, &res);
++	qcom_scm_bw_disable();
++	qcom_scm_clk_disable();
++
++	return ret ? : res.result[0];
++}
++EXPORT_SYMBOL(qcom_scm_msa_lock);
++
++/**
++ * qcom_scm_msa_unlock() - Unlock given peripheral MSA firmware region
++ *
++ * @peripheral:	peripheral id
++ *
++ * Return 0 on success.
++ */
++int qcom_scm_msa_unlock(u32 peripheral)
++{
++	int ret;
++	struct qcom_scm_desc desc = {
++		.svc = QCOM_SCM_SVC_PIL,
++		.cmd = QCOM_SCM_MSA_UNLOCK,
++		.arginfo = QCOM_SCM_ARGS(1),
++		.args[0] = peripheral,
++		.owner = ARM_SMCCC_OWNER_SIP,
++	};
++	struct qcom_scm_res res;
++
++	if (!__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_PIL,
++					  QCOM_SCM_MSA_UNLOCK))
++		return 0;
++
++	ret = qcom_scm_clk_enable();
++	if (ret)
++		return ret;
++
++	ret = qcom_scm_bw_enable();
++	if (ret)
++		return ret;
++
++	ret = qcom_scm_call(__scm->dev, &desc, &res);
++	qcom_scm_bw_disable();
++	qcom_scm_clk_disable();
++
++	return ret ? : res.result[0];
++}
++EXPORT_SYMBOL(qcom_scm_msa_unlock);
++
+ static int __qcom_scm_pas_mss_reset(struct device *dev, bool reset)
+ {
+ 	struct qcom_scm_desc desc = {
+diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+index 6ab5e7c77e8d..9480b0b57c3d 100644
+--- a/drivers/firmware/qcom_scm.h
++++ b/drivers/firmware/qcom_scm.h
+@@ -97,6 +97,8 @@ extern int scm_legacy_call(struct device *dev, const struct qcom_scm_desc *desc,
+ #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
+ #define QCOM_SCM_PIL_PAS_IS_SUPPORTED	0x07
+ #define QCOM_SCM_PIL_PAS_MSS_RESET	0x0a
++#define QCOM_SCM_MSA_LOCK		0x24
++#define QCOM_SCM_MSA_UNLOCK		0x25
  
--static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
--	.halt_reg = 0x2e030,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x2e030,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_sys_noc_wcss_ahb_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_wcss_ahb_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_uniphy0_ahb_clk = {
- 	.halt_reg = 0x16010,
- 	.halt_check = BRANCH_HALT,
-@@ -3070,204 +2908,6 @@ static struct clk_branch gcc_usb0_sleep_clk = {
- 	},
- };
+ #define QCOM_SCM_SVC_IO			0x05
+ #define QCOM_SCM_IO_READ		0x01
+diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+index 250ea4efb7cb..a150e2914483 100644
+--- a/include/linux/firmware/qcom/qcom_scm.h
++++ b/include/linux/firmware/qcom/qcom_scm.h
+@@ -81,6 +81,8 @@ extern int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,
+ extern int qcom_scm_pas_auth_and_reset(u32 peripheral);
+ extern int qcom_scm_pas_shutdown(u32 peripheral);
+ extern bool qcom_scm_pas_supported(u32 peripheral);
++extern int qcom_scm_msa_lock(u32 peripheral);
++extern int qcom_scm_msa_unlock(u32 peripheral);
  
--static struct clk_branch gcc_wcss_axim_clk = {
--	.halt_reg = 0x2505c,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x2505c,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_axim_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_system_noc_bfdcd_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_axis_clk = {
--	.halt_reg = 0x25060,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x25060,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_axis_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_system_noc_bfdcd_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_dbg_ifc_apb_bdg_clk = {
--	.halt_reg = 0x25048,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x25048,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_dbg_ifc_apb_bdg_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_dap_div_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_dbg_ifc_apb_clk = {
--	.halt_reg = 0x25038,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x25038,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_dbg_ifc_apb_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_dap_div_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_dbg_ifc_atb_bdg_clk = {
--	.halt_reg = 0x2504c,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x2504c,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_dbg_ifc_atb_bdg_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_at_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_dbg_ifc_atb_clk = {
--	.halt_reg = 0x2503c,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x2503c,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_dbg_ifc_atb_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_at_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_dbg_ifc_nts_bdg_clk = {
--	.halt_reg = 0x25050,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x25050,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_dbg_ifc_nts_bdg_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_tsctr_div2_clk_src.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_dbg_ifc_nts_clk = {
--	.halt_reg = 0x25040,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x25040,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_dbg_ifc_nts_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_qdss_tsctr_div2_clk_src.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_ecahb_clk = {
--	.halt_reg = 0x25058,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x25058,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_ecahb_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_wcss_ahb_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_mst_async_bdg_clk = {
--	.halt_reg = 0x2e0b0,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x2e0b0,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_mst_async_bdg_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_system_noc_bfdcd_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
--static struct clk_branch gcc_wcss_slv_async_bdg_clk = {
--	.halt_reg = 0x2e0b4,
--	.halt_check = BRANCH_HALT,
--	.clkr = {
--		.enable_reg = 0x2e0b4,
--		.enable_mask = BIT(0),
--		.hw.init = &(const struct clk_init_data) {
--			.name = "gcc_wcss_slv_async_bdg_clk",
--			.parent_hws = (const struct clk_hw*[]) {
--				&gcc_system_noc_bfdcd_clk_src.clkr.hw,
--			},
--			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
--			.ops = &clk_branch2_ops,
--		},
--	},
--};
--
- static struct clk_branch gcc_xo_clk = {
- 	.halt_reg = 0x34018,
- 	.halt_check = BRANCH_HALT,
-@@ -3500,15 +3140,7 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
- 	[GCC_PCNOC_BFDCD_CLK_SRC] = &gcc_pcnoc_bfdcd_clk_src.clkr,
- 	[GCC_PCNOC_LPASS_CLK] = &gcc_pcnoc_lpass_clk.clkr,
- 	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
--	[GCC_Q6_AHB_CLK] = &gcc_q6_ahb_clk.clkr,
--	[GCC_Q6_AHB_S_CLK] = &gcc_q6_ahb_s_clk.clkr,
--	[GCC_Q6_AXIM_CLK] = &gcc_q6_axim_clk.clkr,
- 	[GCC_Q6_AXIM_CLK_SRC] = &gcc_q6_axim_clk_src.clkr,
--	[GCC_Q6_AXIS_CLK] = &gcc_q6_axis_clk.clkr,
--	[GCC_Q6_TSCTR_1TO2_CLK] = &gcc_q6_tsctr_1to2_clk.clkr,
--	[GCC_Q6SS_ATBM_CLK] = &gcc_q6ss_atbm_clk.clkr,
--	[GCC_Q6SS_PCLKDBG_CLK] = &gcc_q6ss_pclkdbg_clk.clkr,
--	[GCC_Q6SS_TRIG_CLK] = &gcc_q6ss_trig_clk.clkr,
- 	[GCC_QDSS_AT_CLK] = &gcc_qdss_at_clk.clkr,
- 	[GCC_QDSS_AT_CLK_SRC] = &gcc_qdss_at_clk_src.clkr,
- 	[GCC_QDSS_CFG_AHB_CLK] = &gcc_qdss_cfg_ahb_clk.clkr,
-@@ -3537,7 +3169,6 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
- 	[GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
- 	[GCC_SNOC_USB_CLK] = &gcc_snoc_usb_clk.clkr,
- 	[GCC_SYS_NOC_AT_CLK] = &gcc_sys_noc_at_clk.clkr,
--	[GCC_SYS_NOC_WCSS_AHB_CLK] = &gcc_sys_noc_wcss_ahb_clk.clkr,
- 	[GCC_SYSTEM_NOC_BFDCD_CLK_SRC] = &gcc_system_noc_bfdcd_clk_src.clkr,
- 	[GCC_UNIPHY0_AHB_CLK] = &gcc_uniphy0_ahb_clk.clkr,
- 	[GCC_UNIPHY0_SYS_CLK] = &gcc_uniphy0_sys_clk.clkr,
-@@ -3558,17 +3189,6 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
- 	[GCC_USB0_PIPE_CLK] = &gcc_usb0_pipe_clk.clkr,
- 	[GCC_USB0_SLEEP_CLK] = &gcc_usb0_sleep_clk.clkr,
- 	[GCC_WCSS_AHB_CLK_SRC] = &gcc_wcss_ahb_clk_src.clkr,
--	[GCC_WCSS_AXIM_CLK] = &gcc_wcss_axim_clk.clkr,
--	[GCC_WCSS_AXIS_CLK] = &gcc_wcss_axis_clk.clkr,
--	[GCC_WCSS_DBG_IFC_APB_BDG_CLK] = &gcc_wcss_dbg_ifc_apb_bdg_clk.clkr,
--	[GCC_WCSS_DBG_IFC_APB_CLK] = &gcc_wcss_dbg_ifc_apb_clk.clkr,
--	[GCC_WCSS_DBG_IFC_ATB_BDG_CLK] = &gcc_wcss_dbg_ifc_atb_bdg_clk.clkr,
--	[GCC_WCSS_DBG_IFC_ATB_CLK] = &gcc_wcss_dbg_ifc_atb_clk.clkr,
--	[GCC_WCSS_DBG_IFC_NTS_BDG_CLK] = &gcc_wcss_dbg_ifc_nts_bdg_clk.clkr,
--	[GCC_WCSS_DBG_IFC_NTS_CLK] = &gcc_wcss_dbg_ifc_nts_clk.clkr,
--	[GCC_WCSS_ECAHB_CLK] = &gcc_wcss_ecahb_clk.clkr,
--	[GCC_WCSS_MST_ASYNC_BDG_CLK] = &gcc_wcss_mst_async_bdg_clk.clkr,
--	[GCC_WCSS_SLV_ASYNC_BDG_CLK] = &gcc_wcss_slv_async_bdg_clk.clkr,
- 	[GCC_XO_CLK] = &gcc_xo_clk.clkr,
- 	[GCC_XO_CLK_SRC] = &gcc_xo_clk_src.clkr,
- 	[GCC_XO_DIV4_CLK] = &gcc_xo_div4_clk.clkr,
+ extern int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
+ extern int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
 -- 
 2.34.1
 
