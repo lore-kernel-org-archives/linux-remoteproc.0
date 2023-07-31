@@ -2,173 +2,126 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A01C00528
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 04:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C26C04E69
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 05:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229892AbjGaEKk (ORCPT
+        id S229714AbjGaFEi (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 Jul 2023 00:10:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34780 "EHLO
+        Mon, 31 Jul 2023 01:04:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbjGaEKi (ORCPT
+        with ESMTP id S229379AbjGaFEg (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 Jul 2023 00:10:38 -0400
+        Mon, 31 Jul 2023 01:04:36 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4B4E45;
-        Sun, 30 Jul 2023 21:10:32 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36V4ALdY003422;
-        Mon, 31 Jul 2023 04:10:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=iPGu+a7vfT6bkQwP2to6KXLKlH2TykxH0AmqhSrw8I8=;
- b=jIvB004Tk1bF8FxLKQcnbEr8TmonQJpfztHPo0y9rYRtJ5s7YlEEjRve73XSZRwO+4jk
- GThmgXnCf5pNWv0QefwMTddzZiPbyv4gwlj4yPqOf8b3x2oEkxUeGh4yuNEqyAFqPWBu
- WznyvIcd/ClsoNuKllG5sZ9hd1IAAzMSUHpEqbQlgJXtp8aM1Ril2ZcB5mF4LHSEYB5W
- yhrO8gHoNIzWBIG5KOE5kuo12TLEJw/j3/X49rdoqipKhueZq2q/t+MDlSHS1oRWgj3d
- 5XY7So4bV1Jx4QzeoHsJeXkct/UMgr9azIb5+iTmpCe5ewOkxUxdbw2lyUvVi8tKJb97 Ug== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s4uh3aju8-1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CB51BF;
+        Sun, 30 Jul 2023 22:04:34 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36V4iGxL018972;
+        Mon, 31 Jul 2023 05:04:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=TcMnLnc/KdAeHdH42ftkVYIT3tPuoTwENsJK/nuaSqk=;
+ b=GRf1z0MfbJtNriUXrz4cYj2TAoZANx1ilpD9+hlD0aVCbhvCjsnotgvMWAzyBiGMKCjg
+ pM3pS3yQpE7aNf8DarZ9kV/7Hv+JJ7iMtwf4eDJZN7H6iRwVuf2G+cYKy4WwfepL0Otc
+ TmRcoDXfHaz9qzhtGJhJpAkEcflpv62PsJ9pRj+U0ZHGpbAsBd/xD8bCIXtvEYph7Ehr
+ iT/1xw0Ux8SpwLZaREjYJX+MHI69cE9A0ibLYZoWDy6DLAo2j6mWbNfC8tImU2sVfDlQ
+ +itxwczyf0GB3ZvUbJ3T3i3W+KJXqg1wxdt2yFyxe8f5Y+3Rx0mz+A38pnha0xyPFKXQ Ng== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s4uat2n6y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Jul 2023 04:10:21 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36V4AJlu031491
+        Mon, 31 Jul 2023 05:04:30 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36V54TKS031441
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Jul 2023 04:10:19 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Sun, 30 Jul 2023 21:10:19 -0700
-From:   Bjorn Andersson <quic_bjorande@quicinc.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Chris Lew <quic_clew@quicinc.com>
-CC:     Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH 2/4] soc: qcom: aoss: Add debugfs interface for sending messages
-Date:   Sun, 30 Jul 2023 21:10:11 -0700
-Message-ID: <20230731041013.2950307-3-quic_bjorande@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
-References: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
+        Mon, 31 Jul 2023 05:04:29 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Sun, 30 Jul
+ 2023 22:04:22 -0700
+Message-ID: <58e66ef8-25ff-9d66-da41-52f686480dc0@quicinc.com>
+Date:   Mon, 31 Jul 2023 10:34:19 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH v4 09/11] remoteproc: qcom: Add Hexagon based multipd
+ rproc driver
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20230728063412.1641856-1-quic_mmanikan@quicinc.com>
+ <20230728063412.1641856-10-quic_mmanikan@quicinc.com>
+ <117f6341-55d7-601b-203f-8a09dd4bb22f@linaro.org>
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <117f6341-55d7-601b-203f-8a09dd4bb22f@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ZQ3AGRPXVoyKxIE4dpVoNMcWhIITraLf
-X-Proofpoint-GUID: ZQ3AGRPXVoyKxIE4dpVoNMcWhIITraLf
+X-Proofpoint-ORIG-GUID: ZzqXozlKprTkbGbxntLcEqOIZPGLW9q8
+X-Proofpoint-GUID: ZzqXozlKprTkbGbxntLcEqOIZPGLW9q8
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-27_10,2023-07-26_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
- impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2306200000 definitions=main-2307310037
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ priorityscore=1501 mlxlogscore=903 suspectscore=0 spamscore=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 impostorscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307310046
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-From: Chris Lew <clew@codeaurora.org>
 
-In addition to the normal runtime commands, the Always On Processor
-(AOP) provides a number of debug commands which can be used during
-system debugging for things such as preventing power collapse or placing
-floor votes for certain resources. Some of these are documented in the
-Robotics RB5 "Debug AOP ADB" linked below.
 
-Provide a debugfs interface for the developer/tester to send these
-commands to the AOP.
+On 7/28/2023 1:57 PM, Krzysztof Kozlowski wrote:
+> On 28/07/2023 08:34, Manikanta Mylavarapu wrote:
+>> +
+>> +static int q6_get_inbound_irq(struct qcom_q6v5 *q6,
+>> +			      struct platform_device *pdev,
+>> +			      const char *int_name,
+>> +			      int index, int *pirq,
+>> +			      irqreturn_t (*handler)(int irq, void *data))
+>> +{
+>> +	int ret, irq;
+>> +	char *interrupt, *tmp = (char *)int_name;
+>> +	struct q6_wcss *wcss = q6->rproc->priv;
+>> +
+>> +	irq = platform_get_irq(pdev, index);
+>> +	if (irq < 0) {
+>> +		if (irq != -EPROBE_DEFER)
+> 
+> Still not good... I think I am saying this the third time: drop this
+> eprobe defer dance. It is not needed. Just open the definition of
+> dev_err_probe().
+> 
+Yeah, somehow it's missed. I will drop.
 
-Link: https://docs.qualcomm.com/bundle/publicresource/topics/80-88500-3/85_Debugging_AOP_ADB.html
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-[bjorn: Dropped debugfs guards, improve error codes, rewrote commit message]
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
- drivers/soc/qcom/qcom_aoss.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Thanks & Regards,
+Manikanta.
 
-diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-index 5e74332515cf..4c5bb7034fff 100644
---- a/drivers/soc/qcom/qcom_aoss.c
-+++ b/drivers/soc/qcom/qcom_aoss.c
-@@ -3,6 +3,7 @@
-  * Copyright (c) 2019, Linaro Ltd
-  */
- #include <linux/clk-provider.h>
-+#include <linux/debugfs.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/mailbox_client.h>
-@@ -82,6 +83,7 @@ struct qmp {
- 
- 	struct clk_hw qdss_clk;
- 	struct qmp_cooling_device *cooling_devs;
-+	struct dentry *debugfs_file;
- };
- 
- static void qmp_kick(struct qmp *qmp)
-@@ -475,6 +477,32 @@ void qmp_put(struct qmp *qmp)
- }
- EXPORT_SYMBOL(qmp_put);
- 
-+static ssize_t qmp_debugfs_write(struct file *file, const char __user *userstr,
-+				 size_t len, loff_t *pos)
-+{
-+	struct qmp *qmp = file->private_data;
-+	char buf[QMP_MSG_LEN];
-+	int ret;
-+
-+	if (!len || len > QMP_MSG_LEN)
-+		return -EINVAL;
-+
-+	if (copy_from_user(buf, userstr, len))
-+		return -EFAULT;
-+	buf[len] = '\0';
-+
-+	ret = qmp_send(qmp, buf);
-+	if (ret < 0)
-+		return ret;
-+
-+	return len;
-+}
-+
-+static const struct file_operations qmp_debugfs_fops = {
-+	.open = simple_open,
-+	.write = qmp_debugfs_write,
-+};
-+
- static int qmp_probe(struct platform_device *pdev)
- {
- 	struct qmp *qmp;
-@@ -523,6 +551,9 @@ static int qmp_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, qmp);
- 
-+	qmp->debugfs_file = debugfs_create_file("aoss_send_message", 0220, NULL,
-+						qmp, &qmp_debugfs_fops);
-+
- 	return 0;
- 
- err_close_qmp:
-@@ -537,6 +568,8 @@ static int qmp_remove(struct platform_device *pdev)
- {
- 	struct qmp *qmp = platform_get_drvdata(pdev);
- 
-+	debugfs_remove(qmp->debugfs_file);
-+
- 	qmp_qdss_clk_remove(qmp);
- 	qmp_cooling_devices_remove(qmp);
- 
--- 
-2.25.1
-
+>> +			return dev_err_probe(&pdev->dev, irq,
+>> +					     "failed to retrieve %s IRQ: %d\n",
+>> +					     int_name, irq);
+>> +	}
+>> +
+> 
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
