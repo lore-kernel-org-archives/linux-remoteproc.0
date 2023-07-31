@@ -2,61 +2,60 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2872FC001DC
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 08:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDC6C41513
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 08:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231827AbjGaISj (ORCPT
+        id S231976AbjGaIVy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 Jul 2023 04:18:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39366 "EHLO
+        Mon, 31 Jul 2023 04:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232129AbjGaISV (ORCPT
+        with ESMTP id S231986AbjGaIVW (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 Jul 2023 04:18:21 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27332110
-        for <linux-remoteproc@vger.kernel.org>; Mon, 31 Jul 2023 01:15:38 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fbf09a9139so6657062e87.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 31 Jul 2023 01:15:38 -0700 (PDT)
+        Mon, 31 Jul 2023 04:21:22 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F4710D9
+        for <linux-remoteproc@vger.kernel.org>; Mon, 31 Jul 2023 01:20:57 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4fe389d6f19so739515e87.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 31 Jul 2023 01:20:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690791337; x=1691396137;
+        d=linaro.org; s=google; t=1690791656; x=1691396456;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mYG0LasLifyyUM7Rwt2a0NjqR/rKg7HRv/UVMGYC+s0=;
-        b=bQvvl/B5tmOti6yZEthNbWipKzs48ju0grUG9tHoZV/l+Ad9JAM4+FLF2dmQQMoz7M
-         A+usfwRp8znkWl4k7fAOM8+pA7fR3iz1nN4Xuo0SVjeIo2h8NZGrP/D3uEjC3ujgN7lQ
-         jpyw4hIsOM9xgl7weU4KmNVcFBztPJwgxhaIRs8T5rlSUVl1ZjzhTG+o6K6BrtHBugj3
-         ghwIVYBXqMTkLKBsgSgb24pfNladB4HFpw/qQ3EAA6jO3OtO/cSJvtETNb5SNZ+qW/DJ
-         aOzfu8kqujjSjniHI6pUTarYdIoH+s4ZCOdbvGbF41lW+HlBAilP+9qDcwU9xs82PfbP
-         aGlQ==
+        bh=3fq/cbXGs/QxPb7Eea+s0s7hsPmjDBgYbWThXAxt1KQ=;
+        b=L1G6UGNI87/2QMFnmY6w3M2a2U9lTfnzXHHx+YO8F+gQXHL5MaQXSOsO/lo2NzVDGB
+         xJ8oaiZP/6xpzZER7nuVF116u9sLH4k11Lz3HHZeUc/rgwXluSybDnGyLkVSZpi1VdJd
+         7NWZZQn/ldE/aWqp1l79AQuRJto7EHyxnXWwDLVa0iTG2GU3buER3Z15DaNstkq4LXYn
+         fCe99s7IkCTkaFP+oH8Lcmzc315i3B/mWBLFqtsvc7cqpl6ULyQMqDqvnpJIUPJK9kwq
+         C60qxtd0l0ClA0/E+G1c7ZHgx521G/685EBtno6+Efc+mBdlTIGcNptq7RBTJ7B31+Ku
+         t1bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690791337; x=1691396137;
+        d=1e100.net; s=20221208; t=1690791656; x=1691396456;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mYG0LasLifyyUM7Rwt2a0NjqR/rKg7HRv/UVMGYC+s0=;
-        b=SgZwmK96NI/A81/xQnaj6Oi5mizt2FUxTka6nHFpIW1+f6Q2lghNp7IGCIYO/TbgcE
-         V6AD0O6GJaGVm91HtyfEBghNEFkjBDCE6sGJq0r5rfbfHE/ETQO99f6YAF1fZDYOGkXX
-         Jdp82/Y5ayKZky2uw0XZvN6KPU/eHOB+CnSrC+7TJHfFQ45HIpKQftJYsdxVxUouVhp4
-         ungWsGEAGBd5xugnBrggce1ROQ+F6omPPaJNWfiWGRK2ug9cty7vgLTEZ04+Doqn2Qlk
-         IU0alvfii0bSHo+RGyf+jtGsde8ymKpi24CgI2WdnrAzhUnfwDVw9M6lKQ0hwYgVyYrg
-         PvHA==
-X-Gm-Message-State: ABy/qLYrO9ATT7fWfiSUm2OFuihhDh7M9OM3g3ZuxJxm2B6wtORkOf9A
-        87HLr/ZGV/4DM73h04daXVz0aQ==
-X-Google-Smtp-Source: APBJJlEuqM3DeDa8wJtUXqjMUMmkQbWCxdq2T9GkSujeAsdIbk7bsJuEfiDxnmkMz/LJuSBzEP7Glw==
-X-Received: by 2002:a05:6512:1105:b0:4fe:8b5:588a with SMTP id l5-20020a056512110500b004fe08b5588amr6068382lfg.57.1690791336811;
-        Mon, 31 Jul 2023 01:15:36 -0700 (PDT)
+        bh=3fq/cbXGs/QxPb7Eea+s0s7hsPmjDBgYbWThXAxt1KQ=;
+        b=OgohpEV+QtMBIjDqe5G4FseZLsBpz6FahUaOeBTqjBpbfT8kXXt5oMLC3IE05YmSJr
+         UrqAHVoH+HPtWGjQfL3ZHgvyndBe5uYV3wI/1YNQtZ9JLuuGUlJvVhPl9HXTEFBY1nAa
+         fRjhNy9wlYPrh73NZudV45hnG0eKhoVBtrFmLZQs9gglQyuAaTe6Zh/9UyuMyAM1yHa+
+         WP8fX6D0GHi+jr0n8ujIvWuOY+qUg+T4TVdZ4QY/GDIm9AXwqa3AS2Vcfd+FCVUrFk/r
+         ezU7tPi+1ZHsVfNHdksekNgZccWH6Z7AFyEF+ar9bcXj0k/iCJeH9wTzJrKoLyFGINKp
+         xcbA==
+X-Gm-Message-State: ABy/qLbWFkC7ygNBIaNVr8qBef3VNECyi9FYQpoIuf6PLY/YSa/gxeUu
+        1wr+WGTQsagkB3HrPe80jhYHAw==
+X-Google-Smtp-Source: APBJJlHPQIFetL7y3mizvcj1exaBpBqoVRTbsWjh59nd6pAnEwG6GyFopmlGma4pizvvPFD9VhJTvQ==
+X-Received: by 2002:a19:641e:0:b0:4fe:85c:aeba with SMTP id y30-20020a19641e000000b004fe085caebamr4639898lfb.21.1690791656271;
+        Mon, 31 Jul 2023 01:20:56 -0700 (PDT)
 Received: from [192.168.1.101] (abyk53.neoplus.adsl.tpnet.pl. [83.9.30.53])
-        by smtp.gmail.com with ESMTPSA id f14-20020ac2532e000000b004fb73bea65esm1975317lfh.25.2023.07.31.01.15.35
+        by smtp.gmail.com with ESMTPSA id y7-20020ac24207000000b004fbc6a8ad08sm1979206lfh.306.2023.07.31.01.20.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Jul 2023 01:15:36 -0700 (PDT)
-Message-ID: <93dd0930-8699-9995-c9ac-d361c4c385f1@linaro.org>
-Date:   Mon, 31 Jul 2023 10:15:34 +0200
+        Mon, 31 Jul 2023 01:20:55 -0700 (PDT)
+Message-ID: <0b1b5224-b891-bf6d-8d6f-f5d236890127@linaro.org>
+Date:   Mon, 31 Jul 2023 10:20:54 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] soc: qcom: aoss: Add debugfs interface for sending
- messages
+Subject: Re: [PATCH 3/4] soc: qcom: aoss: Format string in qmp_send()
 Content-Language: en-US
 To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -68,7 +67,7 @@ Cc:     Alex Elder <elder@kernel.org>,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
 References: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
- <20230731041013.2950307-3-quic_bjorande@quicinc.com>
+ <20230731041013.2950307-4-quic_bjorande@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
@@ -105,7 +104,7 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20230731041013.2950307-3-quic_bjorande@quicinc.com>
+In-Reply-To: <20230731041013.2950307-4-quic_bjorande@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -113,33 +112,38 @@ List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 On 31.07.2023 06:10, Bjorn Andersson wrote:
-> From: Chris Lew <clew@codeaurora.org>
-No QUIC email?
-
+> The majority of callers to qmp_send() composes the message dynamically
+> using some form of sprintf(), resulting in unnecessary complication and
+> stack usage.
+> 
+> By changing the interface of qmp_send() to take a format string and
+> arguments, the duplicated composition of the commands can be moved to a
+> single location.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
 [...]
 
 
-> +static ssize_t qmp_debugfs_write(struct file *file, const char __user *userstr,
-> +				 size_t len, loff_t *pos)
-> +{
-> +	struct qmp *qmp = file->private_data;
-> +	char buf[QMP_MSG_LEN];
-> +	int ret;
-> +
-> +	if (!len || len > QMP_MSG_LEN)
->=? Otherwise the last char may be overwritten by the NULL termination
-couple lines below
+> +int qmp_send(struct qmp *qmp, const char *fmt, ...)
+>  {
+>  	long time_left;
+> +	va_list args;
+>  	char buf[QMP_MSG_LEN];
+> +	int len;
+>  	int ret;
+>  
+> -	if (WARN_ON(IS_ERR_OR_NULL(qmp) || !data))
+> +	if (WARN_ON(IS_ERR_OR_NULL(qmp) || !fmt))
+>  		return -EINVAL;
+>  
+> -	if (WARN_ON(strlen(data) >= sizeof(buf)))
+> -		return -EINVAL;
+> +	memset(buf, 0, sizeof(buf));
+Wouldn't initializing the array with = { 0 } be faster?
 
-> +		return -EINVAL;
-> +
-> +	if (copy_from_user(buf, userstr, len))
-> +		return -EFAULT;
-> +	buf[len] = '\0';
-> +
-> +	ret = qmp_send(qmp, buf);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return len;
-> +}
+Otherwise, this looks very cool
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
 Konrad
