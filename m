@@ -2,44 +2,44 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520ACC41513
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 04:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52155C00528
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 04:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbjGaEKh (ORCPT
+        id S229873AbjGaEKh (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
         Mon, 31 Jul 2023 00:10:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34768 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbjGaEKg (ORCPT
+        with ESMTP id S229552AbjGaEKf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 Jul 2023 00:10:36 -0400
+        Mon, 31 Jul 2023 00:10:35 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AD3E43;
-        Sun, 30 Jul 2023 21:10:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A1491B7;
+        Sun, 30 Jul 2023 21:10:30 -0700 (PDT)
 Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36V2mVwh019004;
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36V3v45n026768;
         Mon, 31 Jul 2023 04:10:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=gPvnt16QGA4ObIxg6yNEmot12urHMc4SMSDvzpuJp88=;
- b=RlLkPPOkE5u5Rw76QJjAmaE+bjsmWEzfXxz1oqz/Q2Ixelqy6P5gdoX+95bRWboGgKIz
- TB6TIPWVSz+Cy4FnNZidaQL2gHYAGBDL7J2nWo5Et/vAE47sNYVN471tMr1Y9ZGjgzvg
- Z2F7oYnp1gKwrHn4cy4KQQU5WvpDGK7Ghv4Btno6+Vpw5to6IZikvRLEieVIlZQV0OkC
- ks2J1dGpluLR+EBaAFJt96U8TaTD+RbkaXfQ1cctY1odiU4cSWHZZE1yZPBuo1Qiav9O
- Y3BibykIVP7nlHDGByK43P62j+kfZQ8LHDTB9P2kvZeDdN+V4IQdmfv4e4vjTxXKn918 Rg== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s4ueujk90-1
+ bh=kgenKl9freS+5VlM47boO9w9nJXcjiucfx9ioDXfiDw=;
+ b=d8Y+CtlyeLzriVNs2Mo5nqqPt2mJgLzyrvldl4ES9Tg71YC8RGOuLFphngc4hvZ+wWZA
+ ID0p3NU8SAZIudIMZpCnK0j65ZJonVd5vcchbtiyWJUEEGr6A1Y0/v0m9e/p9NpyiFWU
+ xHKPY/9TQVI1UU7r8gyToMS/+0pYZjWLz49YEfVNy9iw8hvJa201wVfuWaT005IZOm0F
+ PtSrC/up4Fnnk13wv2iK5AISUpxtqN1/Sa0PaES1sNHt9fdD5qGnfIC3PXUNk+quFv+2
+ GKl4eKp7+p1taqDdK+KARLTGSktJiUizk3wDp2eXt050dZB1AXudxqA599JDFp2xz3Qp Mw== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s4ueujk8y-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Jul 2023 04:10:21 +0000
+        Mon, 31 Jul 2023 04:10:20 +0000
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36V4AKiS031498
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36V4AJxV002499
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 31 Jul 2023 04:10:20 GMT
+        Mon, 31 Jul 2023 04:10:19 GMT
 Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
  nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Sun, 30 Jul 2023 21:10:20 -0700
+ 15.2.1118.30; Sun, 30 Jul 2023 21:10:19 -0700
 From:   Bjorn Andersson <quic_bjorande@quicinc.com>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -50,9 +50,9 @@ CC:     Alex Elder <elder@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-Subject: [PATCH 4/4] soc: qcom: aoss: Tidy up qmp_send() callers
-Date:   Sun, 30 Jul 2023 21:10:13 -0700
-Message-ID: <20230731041013.2950307-5-quic_bjorande@quicinc.com>
+Subject: [PATCH 1/4] soc: qcom: aoss: Move length requirements from caller
+Date:   Sun, 30 Jul 2023 21:10:10 -0700
+Message-ID: <20230731041013.2950307-2-quic_bjorande@quicinc.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
 References: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
@@ -64,8 +64,8 @@ X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7zMnZAXaYh_3srMd2w-mcsIwO6_BuxRf
-X-Proofpoint-ORIG-GUID: 7zMnZAXaYh_3srMd2w-mcsIwO6_BuxRf
+X-Proofpoint-GUID: PKrhk14bkJ_3GBV2QVUedKulTzMvNNU9
+X-Proofpoint-ORIG-GUID: PKrhk14bkJ_3GBV2QVUedKulTzMvNNU9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-27_10,2023-07-26_01,2023-05-22_02
@@ -78,112 +78,147 @@ Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-With qmp_send() handling variable length messages and string formatting
-he callers of qmp_send() can be cleaned up to not care about these
-things.
+The existing implementation of qmp_send() requires the caller to provide
+a buffer which is of word-aligned. The underlying reason for this is
+that message ram only supports word accesses, but pushing this
+requirement onto the clients results in the same boiler plate code
+sprinkled in every call site.
 
-Drop the QMP_MSG_LEN sized buffers and use the message formatting, as
-appropriate.
+By using a temporary buffer in qmp_send() we can hide the underlying
+hardware limitations from the clients and allow them to pass their
+NUL-terminates C string directly.
 
 Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 ---
- drivers/net/ipa/ipa_power.c    |  5 +----
- drivers/remoteproc/qcom_q6v5.c |  8 +-------
- drivers/soc/qcom/qcom_aoss.c   | 14 ++++----------
- 3 files changed, 6 insertions(+), 21 deletions(-)
+ drivers/net/ipa/ipa_power.c        |  2 +-
+ drivers/remoteproc/qcom_q6v5.c     |  2 +-
+ drivers/soc/qcom/qcom_aoss.c       | 25 ++++++++++++-------------
+ include/linux/soc/qcom/qcom_aoss.h |  4 ++--
+ 4 files changed, 16 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/net/ipa/ipa_power.c b/drivers/net/ipa/ipa_power.c
-index 26181eeed975..0eaa7a7f3343 100644
+index 921eecf3eff6..26181eeed975 100644
 --- a/drivers/net/ipa/ipa_power.c
 +++ b/drivers/net/ipa/ipa_power.c
-@@ -324,15 +324,12 @@ void ipa_power_retention(struct ipa *ipa, bool enable)
- {
- 	static const char fmt[] = "{ class: bcm, res: ipa_pc, val: %c }";
- 	struct ipa_power *power = ipa->power;
--	char buf[36];	/* Exactly enough for fmt[]; size a multiple of 4 */
- 	int ret;
+@@ -332,7 +332,7 @@ void ipa_power_retention(struct ipa *ipa, bool enable)
  
- 	if (!power->qmp)
- 		return;		/* Not needed on this platform */
+ 	(void)snprintf(buf, sizeof(buf), fmt, enable ? '1' : '0');
  
--	(void)snprintf(buf, sizeof(buf), fmt, enable ? '1' : '0');
--
--	ret = qmp_send(power->qmp, buf);
-+	ret = qmp_send(power->qmp, fmt, enable ? '1' : '0');
+-	ret = qmp_send(power->qmp, buf, sizeof(buf));
++	ret = qmp_send(power->qmp, buf);
  	if (ret)
  		dev_err(power->dev, "error %d sending QMP %sable request\n",
  			ret, enable ? "en" : "dis");
 diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 8b41a73fa4d1..4ee5e67a9f03 100644
+index 192c7aa0e39e..8b41a73fa4d1 100644
 --- a/drivers/remoteproc/qcom_q6v5.c
 +++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -23,19 +23,13 @@
+@@ -35,7 +35,7 @@ static int q6v5_load_state_toggle(struct qcom_q6v5 *q6v5, bool enable)
  
- static int q6v5_load_state_toggle(struct qcom_q6v5 *q6v5, bool enable)
- {
--	char buf[Q6V5_LOAD_STATE_MSG_LEN];
- 	int ret;
+ 	WARN_ON(ret >= Q6V5_LOAD_STATE_MSG_LEN);
  
- 	if (!q6v5->qmp)
- 		return 0;
- 
--	ret = snprintf(buf, sizeof(buf),
--		       "{class: image, res: load_state, name: %s, val: %s}",
-+	ret = qmp_send(q6v5->qmp, "{class: image, res: load_state, name: %s, val: %s}",
- 		       q6v5->load_state, enable ? "on" : "off");
--
--	WARN_ON(ret >= Q6V5_LOAD_STATE_MSG_LEN);
--
--	ret = qmp_send(q6v5->qmp, buf);
+-	ret = qmp_send(q6v5->qmp, buf, sizeof(buf));
++	ret = qmp_send(q6v5->qmp, buf);
  	if (ret)
  		dev_err(q6v5->dev, "failed to toggle load state\n");
  
 diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-index b59c8681bcfe..4a4e12c7439a 100644
+index e376c32cc16e..5e74332515cf 100644
 --- a/drivers/soc/qcom/qcom_aoss.c
 +++ b/drivers/soc/qcom/qcom_aoss.c
-@@ -266,7 +266,7 @@ EXPORT_SYMBOL(qmp_send);
- 
- static int qmp_qdss_clk_prepare(struct clk_hw *hw)
+@@ -206,36 +206,35 @@ static bool qmp_message_empty(struct qmp *qmp)
+  * qmp_send() - send a message to the AOSS
+  * @qmp: qmp context
+  * @data: message to be sent
+- * @len: length of the message
+  *
+  * Transmit @data to AOSS and wait for the AOSS to acknowledge the message.
+- * @len must be a multiple of 4 and not longer than the mailbox size. Access is
+- * synchronized by this implementation.
++ * data must not be longer than the mailbox size. Access is synchronized by
++ * this implementation.
+  *
+  * Return: 0 on success, negative errno on failure
+  */
+-int qmp_send(struct qmp *qmp, const void *data, size_t len)
++int qmp_send(struct qmp *qmp, const void *data)
  {
--	static const char buf[QMP_MSG_LEN] = "{class: clock, res: qdss, val: 1}";
-+	static const char *buf = "{class: clock, res: qdss, val: 1}";
- 	struct qmp *qmp = container_of(hw, struct qmp, qdss_clk);
- 
- 	return qmp_send(qmp, buf);
-@@ -274,7 +274,7 @@ static int qmp_qdss_clk_prepare(struct clk_hw *hw)
- 
- static void qmp_qdss_clk_unprepare(struct clk_hw *hw)
- {
--	static const char buf[QMP_MSG_LEN] = "{class: clock, res: qdss, val: 0}";
-+	static const char *buf = "{class: clock, res: qdss, val: 0}";
- 	struct qmp *qmp = container_of(hw, struct qmp, qdss_clk);
- 
- 	qmp_send(qmp, buf);
-@@ -336,7 +336,6 @@ static int qmp_cdev_set_cur_state(struct thermal_cooling_device *cdev,
- 				  unsigned long state)
- {
- 	struct qmp_cooling_device *qmp_cdev = cdev->devdata;
--	char buf[QMP_MSG_LEN] = {};
- 	bool cdev_state;
+ 	long time_left;
++	char buf[QMP_MSG_LEN];
  	int ret;
  
-@@ -346,13 +345,8 @@ static int qmp_cdev_set_cur_state(struct thermal_cooling_device *cdev,
- 	if (qmp_cdev->state == state)
- 		return 0;
+ 	if (WARN_ON(IS_ERR_OR_NULL(qmp) || !data))
+ 		return -EINVAL;
  
--	snprintf(buf, sizeof(buf),
--		 "{class: volt_flr, event:zero_temp, res:%s, value:%s}",
--			qmp_cdev->name,
--			cdev_state ? "on" : "off");
--
--	ret = qmp_send(qmp_cdev->qmp, buf);
--
-+	ret = qmp_send(qmp_cdev->qmp, "{class: volt_flr, event:zero_temp, res:%s, value:%s}",
-+		       qmp_cdev->name, cdev_state ? "on" : "off");
+-	if (WARN_ON(len + sizeof(u32) > qmp->size))
++	if (WARN_ON(strlen(data) >= sizeof(buf)))
+ 		return -EINVAL;
+ 
+-	if (WARN_ON(len % sizeof(u32)))
+-		return -EINVAL;
++	strscpy_pad(buf, data, sizeof(buf));
+ 
+ 	mutex_lock(&qmp->tx_lock);
+ 
+ 	/* The message RAM only implements 32-bit accesses */
+ 	__iowrite32_copy(qmp->msgram + qmp->offset + sizeof(u32),
+-			 data, len / sizeof(u32));
+-	writel(len, qmp->msgram + qmp->offset);
++			 buf, sizeof(buf) / sizeof(u32));
++	writel(sizeof(buf), qmp->msgram + qmp->offset);
+ 
+-	/* Read back len to confirm data written in message RAM */
++	/* Read back length to confirm data written in message RAM */
+ 	readl(qmp->msgram + qmp->offset);
+ 	qmp_kick(qmp);
+ 
+@@ -262,7 +261,7 @@ static int qmp_qdss_clk_prepare(struct clk_hw *hw)
+ 	static const char buf[QMP_MSG_LEN] = "{class: clock, res: qdss, val: 1}";
+ 	struct qmp *qmp = container_of(hw, struct qmp, qdss_clk);
+ 
+-	return qmp_send(qmp, buf, sizeof(buf));
++	return qmp_send(qmp, buf);
+ }
+ 
+ static void qmp_qdss_clk_unprepare(struct clk_hw *hw)
+@@ -270,7 +269,7 @@ static void qmp_qdss_clk_unprepare(struct clk_hw *hw)
+ 	static const char buf[QMP_MSG_LEN] = "{class: clock, res: qdss, val: 0}";
+ 	struct qmp *qmp = container_of(hw, struct qmp, qdss_clk);
+ 
+-	qmp_send(qmp, buf, sizeof(buf));
++	qmp_send(qmp, buf);
+ }
+ 
+ static const struct clk_ops qmp_qdss_clk_ops = {
+@@ -344,7 +343,7 @@ static int qmp_cdev_set_cur_state(struct thermal_cooling_device *cdev,
+ 			qmp_cdev->name,
+ 			cdev_state ? "on" : "off");
+ 
+-	ret = qmp_send(qmp_cdev->qmp, buf, sizeof(buf));
++	ret = qmp_send(qmp_cdev->qmp, buf);
+ 
  	if (!ret)
  		qmp_cdev->state = cdev_state;
+diff --git a/include/linux/soc/qcom/qcom_aoss.h b/include/linux/soc/qcom/qcom_aoss.h
+index 3c2a82e606f8..7a71406b6050 100644
+--- a/include/linux/soc/qcom/qcom_aoss.h
++++ b/include/linux/soc/qcom/qcom_aoss.h
+@@ -13,13 +13,13 @@ struct qmp;
  
+ #if IS_ENABLED(CONFIG_QCOM_AOSS_QMP)
+ 
+-int qmp_send(struct qmp *qmp, const void *data, size_t len);
++int qmp_send(struct qmp *qmp, const void *data);
+ struct qmp *qmp_get(struct device *dev);
+ void qmp_put(struct qmp *qmp);
+ 
+ #else
+ 
+-static inline int qmp_send(struct qmp *qmp, const void *data, size_t len)
++static inline int qmp_send(struct qmp *qmp, const void *data)
+ {
+ 	return -ENODEV;
+ }
 -- 
 2.25.1
 
