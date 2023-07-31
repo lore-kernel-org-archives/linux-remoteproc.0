@@ -2,140 +2,108 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2BFC001DF
-	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 15:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4946C001E0
+	for <linux-remoteproc@archiver.kernel.org>; Mon, 31 Jul 2023 15:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232508AbjGaPLQ (ORCPT
+        id S231267AbjGaPjv (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 31 Jul 2023 11:11:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34312 "EHLO
+        Mon, 31 Jul 2023 11:39:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233271AbjGaPKy (ORCPT
+        with ESMTP id S230258AbjGaPju (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 31 Jul 2023 11:10:54 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 271331996;
-        Mon, 31 Jul 2023 08:10:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BE373611A9;
-        Mon, 31 Jul 2023 15:10:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B807AC433D9;
-        Mon, 31 Jul 2023 15:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690816229;
-        bh=qU1aJBXLj8OvL5BxkBm/yTat5cqvXnPkIXeHqHxtlwk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OUi3CJXsrDYDon8PZ1ZFtDc3ZImRViLGAkenIm/dbcms4NKyHjAAuhpbXQHSj1OwD
-         fNvQc/0+GbtK2m1R/JtpN9raiFkubbDnJEbOuUW8/JOhH/vGXa+BD9MCTtvWsJTdNR
-         pmZZt45Xr05z4noO+rU+tjw3vo4pQrQeMx674cyTQClhPifmxs1uICImowl4/yJUR6
-         qhVXMOaOwVKXAQ4kAm/p3DrxZfKfa89TUcFwDy2msm6IvH0NOO8Ems7lfd+sVrpYOY
-         584rNgS5xgX7asKgBGAddiKhp9vzYZAHQerYTuDIOvDFtAjhRPqOk8OKE9bN6u7ZP6
-         62WhvKw+9pBCQ==
-Date:   Mon, 31 Jul 2023 17:10:24 +0200
-From:   Simon Horman <horms@kernel.org>
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Mon, 31 Jul 2023 11:39:50 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA56AE0;
+        Mon, 31 Jul 2023 08:39:49 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36VE2WvD024128;
+        Mon, 31 Jul 2023 15:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=mqdgDMedgXDsMg8vog/VIYIJoUvfxDyZ66BXl2u6HuQ=;
+ b=g0fE7tOx4EndgYJqJ+FBpa4bQFAYy4AUt/FZPB3D8oe3WKxIkSlUxG54/tNGtIfHGxCa
+ gms6vbqoZsEMlYXqePPHfWpeRjx2r6uGwbjQmM2ClHEBhjZ2QnKh+znYN07nvCRYVHD4
+ kK81eKU1aIPP6lPh8NgPdG3sQWTJjlsPR3/ef3Jn1JiMwcYjOh4HNOVJ9xw6yVVf2iio
+ DeJMN9SddbUyacNlDhrTfdrtCUFHyYW+USFHG4tr5LALOXrp4YJ9dirRHTTaww4La1BY
+ GneeeHg7h/bwgTsCHL7oaJDj0lRXMFfj3Ctzvfrx98zGoY/BFTRDOAgbGNnX8A8ObOP1 fA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s6d8grsgy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jul 2023 15:39:41 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36VFdes9000601
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 Jul 2023 15:39:40 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Mon, 31 Jul 2023 08:39:40 -0700
+Date:   Mon, 31 Jul 2023 08:39:38 -0700
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Chris Lew <quic_clew@quicinc.com>,
         Alex Elder <elder@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 1/4] soc: qcom: aoss: Move length requirements from caller
-Message-ID: <ZMfO4B5ZifxPv/sk@kernel.org>
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+Subject: Re: [PATCH 2/4] soc: qcom: aoss: Add debugfs interface for sending
+ messages
+Message-ID: <20230731153938.GF1428172@hu-bjorande-lv.qualcomm.com>
 References: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
- <20230731041013.2950307-2-quic_bjorande@quicinc.com>
+ <20230731041013.2950307-3-quic_bjorande@quicinc.com>
+ <21dfb855-8f44-4a4c-9dba-52eb5ae46b9b@lunn.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20230731041013.2950307-2-quic_bjorande@quicinc.com>
+In-Reply-To: <21dfb855-8f44-4a4c-9dba-52eb5ae46b9b@lunn.ch>
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xdBwbo7bfTmDlyBRAK8Mm44zJddJyOlv
+X-Proofpoint-GUID: xdBwbo7bfTmDlyBRAK8Mm44zJddJyOlv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-31_08,2023-07-31_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 adultscore=0
+ phishscore=0 priorityscore=1501 clxscore=1011 mlxlogscore=961
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307310140
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, Jul 30, 2023 at 09:10:10PM -0700, Bjorn Andersson wrote:
-> The existing implementation of qmp_send() requires the caller to provide
-> a buffer which is of word-aligned. The underlying reason for this is
-> that message ram only supports word accesses, but pushing this
-> requirement onto the clients results in the same boiler plate code
-> sprinkled in every call site.
+On Mon, Jul 31, 2023 at 10:21:31AM +0200, Andrew Lunn wrote:
+> On Sun, Jul 30, 2023 at 09:10:11PM -0700, Bjorn Andersson wrote:
+> > From: Chris Lew <clew@codeaurora.org>
+> > 
+> > In addition to the normal runtime commands, the Always On Processor
+> > (AOP) provides a number of debug commands which can be used during
+> > system debugging for things such as preventing power collapse or placing
+> > floor votes for certain resources. Some of these are documented in the
+> > Robotics RB5 "Debug AOP ADB" linked below.
+> > 
+> > Provide a debugfs interface for the developer/tester to send these
+> > commands to the AOP.
 > 
-> By using a temporary buffer in qmp_send() we can hide the underlying
-> hardware limitations from the clients and allow them to pass their
-> NUL-terminates C string directly.
+> This sort of sending arbitrary binary blob commands is not liked,
+> since it allow user space closed source drivers. At minimum, please
+> provide a file per command, with the kernel marshalling parameters
+> into the binary format, and decoding any returned values.
 > 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
->  drivers/net/ipa/ipa_power.c        |  2 +-
->  drivers/remoteproc/qcom_q6v5.c     |  2 +-
->  drivers/soc/qcom/qcom_aoss.c       | 25 ++++++++++++-------------
->  include/linux/soc/qcom/qcom_aoss.h |  4 ++--
->  4 files changed, 16 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/net/ipa/ipa_power.c b/drivers/net/ipa/ipa_power.c
-> index 921eecf3eff6..26181eeed975 100644
-> --- a/drivers/net/ipa/ipa_power.c
-> +++ b/drivers/net/ipa/ipa_power.c
-> @@ -332,7 +332,7 @@ void ipa_power_retention(struct ipa *ipa, bool enable)
->  
->  	(void)snprintf(buf, sizeof(buf), fmt, enable ? '1' : '0');
->  
-> -	ret = qmp_send(power->qmp, buf, sizeof(buf));
-> +	ret = qmp_send(power->qmp, buf);
->  	if (ret)
->  		dev_err(power->dev, "error %d sending QMP %sable request\n",
->  			ret, enable ? "en" : "dis");
-> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-> index 192c7aa0e39e..8b41a73fa4d1 100644
-> --- a/drivers/remoteproc/qcom_q6v5.c
-> +++ b/drivers/remoteproc/qcom_q6v5.c
-> @@ -35,7 +35,7 @@ static int q6v5_load_state_toggle(struct qcom_q6v5 *q6v5, bool enable)
->  
->  	WARN_ON(ret >= Q6V5_LOAD_STATE_MSG_LEN);
->  
-> -	ret = qmp_send(q6v5->qmp, buf, sizeof(buf));
-> +	ret = qmp_send(q6v5->qmp, buf);
->  	if (ret)
->  		dev_err(q6v5->dev, "failed to toggle load state\n");
->  
-> diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
-> index e376c32cc16e..5e74332515cf 100644
-> --- a/drivers/soc/qcom/qcom_aoss.c
-> +++ b/drivers/soc/qcom/qcom_aoss.c
-> @@ -206,36 +206,35 @@ static bool qmp_message_empty(struct qmp *qmp)
->   * qmp_send() - send a message to the AOSS
->   * @qmp: qmp context
->   * @data: message to be sent
-> - * @len: length of the message
->   *
->   * Transmit @data to AOSS and wait for the AOSS to acknowledge the message.
-> - * @len must be a multiple of 4 and not longer than the mailbox size. Access is
-> - * synchronized by this implementation.
-> + * data must not be longer than the mailbox size. Access is synchronized by
-> + * this implementation.
->   *
->   * Return: 0 on success, negative errno on failure
->   */
-> -int qmp_send(struct qmp *qmp, const void *data, size_t len)
-> +int qmp_send(struct qmp *qmp, const void *data)
->  {
->  	long time_left;
-> +	char buf[QMP_MSG_LEN];
->  	int ret;
 
-Hi Bjorn,
+Thanks for your input Andrew, that is a valid concern.
 
-please consider preserving reverse xmas tree - longest line to shortest -
-for local variable declarations in this Networking code.
+The interface is in debugfs and as such wouldn't be suitable for closed
+source drivers, as in the majority of our shipping software debugfs
+isn't enabled.
 
-	char buf[QMP_MSG_LEN];
-	long time_left;
-	int ret;
-
-...
-
+Regards,
+Bjorn
