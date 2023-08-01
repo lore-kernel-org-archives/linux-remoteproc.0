@@ -2,88 +2,91 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07605C001E0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Aug 2023 08:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81765C0015E
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Aug 2023 14:11:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231990AbjHAIpT (ORCPT
+        id S233794AbjHAOLs (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Aug 2023 04:45:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50182 "EHLO
+        Tue, 1 Aug 2023 10:11:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231812AbjHAIpS (ORCPT
+        with ESMTP id S233891AbjHAOLn (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Aug 2023 04:45:18 -0400
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3374F1B6;
-        Tue,  1 Aug 2023 01:45:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-        bh=+iCOMUZEBRmp0SfXP3l/d75t5cDd7ZTASaBmWC/aA3g=; b=Hr21qsxB3uCtbyYtTq54zdvsSe
-        LSi1orVTZmDgACnr7OMqBi+zYld5OJZ1RM1gHcmzXtsEHsV5SuYD3iFm3BSo5rp9yREoQayT68pFz
-        fWMRqbZcyz5EXaHHfzjS0N3NLiF1Mvnnj0Ta8kGGy5YoOnT1iig3AvDdcVNgJVykHcY4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1qQl00-002mRI-9L; Tue, 01 Aug 2023 10:45:00 +0200
-Date:   Tue, 1 Aug 2023 10:45:00 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Bjorn Andersson <quic_bjorande@quicinc.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Chris Lew <quic_clew@quicinc.com>,
-        Alex Elder <elder@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 2/4] soc: qcom: aoss: Add debugfs interface for sending
- messages
-Message-ID: <98179d9e-0c03-4659-9dcc-73a411bfa00e@lunn.ch>
-References: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
- <20230731041013.2950307-3-quic_bjorande@quicinc.com>
- <21dfb855-8f44-4a4c-9dba-52eb5ae46b9b@lunn.ch>
- <20230731153938.GF1428172@hu-bjorande-lv.qualcomm.com>
+        Tue, 1 Aug 2023 10:11:43 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A46CE2728;
+        Tue,  1 Aug 2023 07:11:33 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 371EBM2R070104;
+        Tue, 1 Aug 2023 09:11:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1690899082;
+        bh=W/F51boW0s52ykPrOys8Lt+Gz7rqGfuRoOXlgbyvudQ=;
+        h=From:To:CC:Subject:Date;
+        b=Kj5QwuC+CxoGWdlnsJiyf70niUD3ikWSuRaA89Q6FlSuN0nkyXSrJzSg5S3tnhOtG
+         KYCopODz/gMtc+Ijimk12oOWcZW15doscugwxmnnsnIvIJcPHm49aiDOLhL4g7vs2v
+         kxPCE5CAgZE1KgaUrfDDdaOeZ1Nh1cL1ZkyDU5eQ=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 371EBMmC000732
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 1 Aug 2023 09:11:22 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
+ Aug 2023 09:11:21 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 1 Aug 2023 09:11:21 -0500
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 371EBLMm039003;
+        Tue, 1 Aug 2023 09:11:21 -0500
+From:   Hari Nagalla <hnagalla@ti.com>
+To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+        <p.zabel@pengutronix.de>, <martyn.welch@collabora.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] TI K3 M4F support on AM64x and AM62x SoCs
+Date:   Tue, 1 Aug 2023 09:11:14 -0500
+Message-ID: <20230801141117.2559-1-hnagalla@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230731153938.GF1428172@hu-bjorande-lv.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Mon, Jul 31, 2023 at 08:39:38AM -0700, Bjorn Andersson wrote:
-> On Mon, Jul 31, 2023 at 10:21:31AM +0200, Andrew Lunn wrote:
-> > On Sun, Jul 30, 2023 at 09:10:11PM -0700, Bjorn Andersson wrote:
-> > > From: Chris Lew <clew@codeaurora.org>
-> > > 
-> > > In addition to the normal runtime commands, the Always On Processor
-> > > (AOP) provides a number of debug commands which can be used during
-> > > system debugging for things such as preventing power collapse or placing
-> > > floor votes for certain resources. Some of these are documented in the
-> > > Robotics RB5 "Debug AOP ADB" linked below.
-> > > 
-> > > Provide a debugfs interface for the developer/tester to send these
-> > > commands to the AOP.
-> > 
-> > This sort of sending arbitrary binary blob commands is not liked,
-> > since it allow user space closed source drivers. At minimum, please
-> > provide a file per command, with the kernel marshalling parameters
-> > into the binary format, and decoding any returned values.
-> > 
-> 
-> Thanks for your input Andrew, that is a valid concern.
-> 
-> The interface is in debugfs and as such wouldn't be suitable for closed
-> source drivers, as in the majority of our shipping software debugfs
-> isn't enabled.
+The following series introduces K3 M4F remoteproc driver support for
+AM64x and AM62x SoC families. These SoCs have a ARM Cortex M4F core in
+the MCU voltage domain. For safety oriented applications, this core is
+operated independently with out any IPC to other cores on the SoC.
+However, for non safety applications, some customers use it as a remote
+processor and so linux remote proc support is extended to the M4F core.
 
-There only appears to be 3 commands, so it is now too much of a burden
-to do it properly, and not have a binary blob API.
+See AM64x Technical Reference Manual (SPRUIM2C – SEPTEMBER 2021) for
+further details: https://www.ti.com/lit/pdf/SPRUIM2
 
-And most distros do have debugfs at least built and available, but
-maybe not mounted.
+Hari Nagalla (1):
+  dt-bindings: remoteproc: k3-m4f: Add bindings for K3 AM64x SoCs
 
-      Andrew
+Martyn Welch (2):
+  remoteproc: k3: Split out functions common with M4 driver
+  remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
+
+ .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 123 ++++
+ drivers/remoteproc/Kconfig                    |  13 +
+ drivers/remoteproc/Makefile                   |   3 +-
+ drivers/remoteproc/ti_k3_common.c             | 513 +++++++++++++++
+ drivers/remoteproc/ti_k3_common.h             | 108 ++++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 598 +-----------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c      | 333 ++++++++++
+ 7 files changed, 1121 insertions(+), 570 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_common.c
+ create mode 100644 drivers/remoteproc/ti_k3_common.h
+ create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+
+-- 
+2.34.1
+
