@@ -2,103 +2,88 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E5BEB64DD
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Aug 2023 04:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07605C001E0
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  1 Aug 2023 08:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbjHAElW (ORCPT
+        id S231990AbjHAIpT (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 1 Aug 2023 00:41:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35774 "EHLO
+        Tue, 1 Aug 2023 04:45:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjHAElV (ORCPT
+        with ESMTP id S231812AbjHAIpS (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 1 Aug 2023 00:41:21 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 486CFE5C;
-        Mon, 31 Jul 2023 21:41:20 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3714NSLe014598;
-        Tue, 1 Aug 2023 04:41:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=NrULh4nHCxDCKZEJwHsBPzOeEYRj8Qd4Tn2IDZGMods=;
- b=bOUCXaDwiXKNHTWn7mxB4HGd6OQzK5Wbawbf/P9IDedSM3Xw27mUzn+36RQbr6l65xO9
- D/PcTW6GKXAFF/l5SGwvDhWpLGC4vGvHJ/oGvcvd0k+a9d/fv9jzonnRJHfaqbuHwNNy
- qmzQco7Rjqem4wCDJc6O7oagfaAIC029hZhoJgukGV6Bg/sXGfszm+HW11I6ke3Wa9S2
- WLsA2tUgqG4Uvmrm8BqdnflLoPWi1JUgr9opn8Nk83c+t+5ifKDa82i2YAJKa4N5vRWw
- c0S5erSNtbRPysnNagDd872/M5HQ+O4WesdGhs+oSthTjh7MneUXTbglzTVf7a2ntbAa zA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3s6gs7h61m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Aug 2023 04:41:14 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3714fCsK013818
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 1 Aug 2023 04:41:12 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Mon, 31 Jul 2023 21:41:08 -0700
-Date:   Tue, 1 Aug 2023 10:11:04 +0530
-From:   Pavan Kondeti <quic_pkondeti@quicinc.com>
+        Tue, 1 Aug 2023 04:45:18 -0400
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3374F1B6;
+        Tue,  1 Aug 2023 01:45:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+        Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+        bh=+iCOMUZEBRmp0SfXP3l/d75t5cDd7ZTASaBmWC/aA3g=; b=Hr21qsxB3uCtbyYtTq54zdvsSe
+        LSi1orVTZmDgACnr7OMqBi+zYld5OJZ1RM1gHcmzXtsEHsV5SuYD3iFm3BSo5rp9yREoQayT68pFz
+        fWMRqbZcyz5EXaHHfzjS0N3NLiF1Mvnnj0Ta8kGGy5YoOnT1iig3AvDdcVNgJVykHcY4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1qQl00-002mRI-9L; Tue, 01 Aug 2023 10:45:00 +0200
+Date:   Tue, 1 Aug 2023 10:45:00 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
 To:     Bjorn Andersson <quic_bjorande@quicinc.com>
-CC:     Bjorn Andersson <andersson@kernel.org>,
+Cc:     Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Chris Lew <quic_clew@quicinc.com>,
         Alex Elder <elder@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
 Subject: Re: [PATCH 2/4] soc: qcom: aoss: Add debugfs interface for sending
  messages
-Message-ID: <0ec53a07-0b7d-47d1-9589-32c841cb691e@quicinc.com>
+Message-ID: <98179d9e-0c03-4659-9dcc-73a411bfa00e@lunn.ch>
 References: <20230731041013.2950307-1-quic_bjorande@quicinc.com>
  <20230731041013.2950307-3-quic_bjorande@quicinc.com>
+ <21dfb855-8f44-4a4c-9dba-52eb5ae46b9b@lunn.ch>
+ <20230731153938.GF1428172@hu-bjorande-lv.qualcomm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230731041013.2950307-3-quic_bjorande@quicinc.com>
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3MsnKKYdkAj5LINRduz0Jk4jJ6CFECB-
-X-Proofpoint-ORIG-GUID: 3MsnKKYdkAj5LINRduz0Jk4jJ6CFECB-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-01_01,2023-07-31_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1011
- adultscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=681 spamscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308010042
+In-Reply-To: <20230731153938.GF1428172@hu-bjorande-lv.qualcomm.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On Sun, Jul 30, 2023 at 09:10:11PM -0700, Bjorn Andersson wrote:
-> From: Chris Lew <clew@codeaurora.org>
+On Mon, Jul 31, 2023 at 08:39:38AM -0700, Bjorn Andersson wrote:
+> On Mon, Jul 31, 2023 at 10:21:31AM +0200, Andrew Lunn wrote:
+> > On Sun, Jul 30, 2023 at 09:10:11PM -0700, Bjorn Andersson wrote:
+> > > From: Chris Lew <clew@codeaurora.org>
+> > > 
+> > > In addition to the normal runtime commands, the Always On Processor
+> > > (AOP) provides a number of debug commands which can be used during
+> > > system debugging for things such as preventing power collapse or placing
+> > > floor votes for certain resources. Some of these are documented in the
+> > > Robotics RB5 "Debug AOP ADB" linked below.
+> > > 
+> > > Provide a debugfs interface for the developer/tester to send these
+> > > commands to the AOP.
+> > 
+> > This sort of sending arbitrary binary blob commands is not liked,
+> > since it allow user space closed source drivers. At minimum, please
+> > provide a file per command, with the kernel marshalling parameters
+> > into the binary format, and decoding any returned values.
+> > 
 > 
-> In addition to the normal runtime commands, the Always On Processor
-> (AOP) provides a number of debug commands which can be used during
-> system debugging for things such as preventing power collapse or placing
-> floor votes for certain resources. Some of these are documented in the
-> Robotics RB5 "Debug AOP ADB" linked below.
+> Thanks for your input Andrew, that is a valid concern.
 > 
-> Provide a debugfs interface for the developer/tester to send these
-> commands to the AOP.
-> 
-> Link: https://docs.qualcomm.com/bundle/publicresource/topics/80-88500-3/85_Debugging_AOP_ADB.html
-> Signed-off-by: Chris Lew <clew@codeaurora.org>
-> [bjorn: Dropped debugfs guards, improve error codes, rewrote commit message]
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> The interface is in debugfs and as such wouldn't be suitable for closed
+> source drivers, as in the majority of our shipping software debugfs
+> isn't enabled.
 
-Thanks Bjorn and Chris for enabling this interface. It will be very useful. 
-We use this interface  in downstream kernel during throughput/suspend issues debug. 
-I have tested your series with v6.4 on SM8550 and it works as expected.
+There only appears to be 3 commands, so it is now too much of a burden
+to do it properly, and not have a binary blob API.
 
-Thanks,
-Pavan
+And most distros do have debugfs at least built and available, but
+maybe not mounted.
+
+      Andrew
