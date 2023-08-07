@@ -2,145 +2,156 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A65D2C04FE0
-	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Aug 2023 14:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB47C001B0
+	for <linux-remoteproc@archiver.kernel.org>; Mon,  7 Aug 2023 14:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232142AbjHGOEO (ORCPT
+        id S234733AbjHGOja (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Mon, 7 Aug 2023 10:04:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52598 "EHLO
+        Mon, 7 Aug 2023 10:39:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235196AbjHGODv (ORCPT
+        with ESMTP id S232968AbjHGOja (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Mon, 7 Aug 2023 10:03:51 -0400
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BCA63ABE;
-        Mon,  7 Aug 2023 07:02:58 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 377E2mg4094662;
-        Mon, 7 Aug 2023 09:02:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1691416968;
-        bh=AgbQDfGfdzuWvDzkkcxAemP/8XRwP7vbhe7oAQMiZfk=;
-        h=From:To:CC:Subject:Date;
-        b=uKXIq4ucw8Lh6f3LZJFTPnsxiyzZytCKCwnnavv7NfYWvnBCIQRFJvCNuC/NnZ+7K
-         j5EMG7suKLnsofsl77hdF0rhu1KdcBWnlXDlhXqXX4dBtO1jnAqUZX80vimxCp3mic
-         AEFZdsp35SAnkHJQX+ic+G/CNHY2SY2+x9eemH/s=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 377E2m1X052987
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Aug 2023 09:02:48 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Aug 2023 09:02:48 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Aug 2023 09:02:48 -0500
-Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 377E2mLB130367;
-        Mon, 7 Aug 2023 09:02:48 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Nishanth Menon <nm@ti.com>,
-        Robert Nelson <robertcnelson@gmail.com>,
-        Kevin Cahalan <kevinacahalan@gmail.com>
-Subject: [PATCH] remoteproc: core: Honor device tree /alias entries when assigning IDs
-Date:   Mon, 7 Aug 2023 09:02:47 -0500
-Message-ID: <20230807140247.956255-1-nm@ti.com>
-X-Mailer: git-send-email 2.40.0
+        Mon, 7 Aug 2023 10:39:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB0A10DC;
+        Mon,  7 Aug 2023 07:39:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDA1161D5E;
+        Mon,  7 Aug 2023 14:39:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4259DC433C7;
+        Mon,  7 Aug 2023 14:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691419168;
+        bh=iQco7pxNtitwKp1HMGQSoYJsu9kvGpQLvoFE/amgGtQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XyObQZUI96AhyQVk1KiJRgyc+06JUEN3JWAeVsYTu9Auesm40X6tyStZ2VEF+445D
+         5KX/jJW04r+pqmmph88HEwa86wtORSzzOEBkovvWzwc2P+FaascJwvkxYR4Yd7X5NE
+         Tm4ltGmdBLS8taEqA4MpDAsJaYX36De+cuoWCHHtL4rO/dLIG4kHIN5bo6OpzETDmG
+         rM/oA2YmtSNMYY33tqdQVF2urVWi2BSNbBaDJisp6dHsKXJdj52MtaPP4xJlL3S+2j
+         mRRFXkU8ZqvAWFqkgcpek2Wj6uiZozb65CJZu5sRRUe47EPnca5y8uiCMvypkot5VF
+         Ex5u6xGiWQzuA==
+Date:   Mon, 7 Aug 2023 15:39:22 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     MD Danish Anwar <danishanwar@ti.com>
+Cc:     Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, vigneshr@ti.com, srk@ti.com,
+        nm@ti.com
+Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
+Message-ID: <20230807-euphemism-trailing-ef4130dc7437@spud>
+References: <20230807110836.2612730-1-danishanwar@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1jdWVwq42WtLkpBA"
+Content-Disposition: inline
+In-Reply-To: <20230807110836.2612730-1-danishanwar@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-On many platforms, such as Beaglebone-AI64 with many remote
-processors, firmware configurations provided by the distributions can
-vary substantially depending on the distribution build's functionality
-and the specific remote cores enabled in that variant. Ensuring
-consistent udev rules mapping remoteproc nodes to constant remote
-proc device indices across distributions (yocto, ubuntu, debian and
-it's variants, ...) on a board basis can be challenging due to the
-various functions of these distributions. Varied device node paths
-create challenges for applications that operate on remote processors,
-especially in minimal embedded systems(initrd like) that may not
-have udev-like capabilities and rely on a more straightforward bare
-filesystem. This challenge is similar to that faced by I2C, RTC or the
-GPIO subsystems.
 
-Assign remoteproc device IDs based on device tree /aliases entries if
-present, falling back to the existing numbering scheme if there is no
-/aliases entry (which includes when the system isn't booted using DT)
-or a numbering conflict. If the alias node is not present, the driver
-behaves as before.
+--1jdWVwq42WtLkpBA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Robert Nelson <robertcnelson@gmail.com>
-Reported-by: Kevin Cahalan <kevinacahalan@gmail.com>
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
-Test log: Beaglebone-AI64
-https://gist.github.com/nmenon/365cf80d6c0685dd9be7c2cb18d7c937 (along
-with a test change to force the sequence of initialization)
+On Mon, Aug 07, 2023 at 04:38:36PM +0530, MD Danish Anwar wrote:
+> Add interrupts and interrupt-names protperties for PRU and RTU cores.
+>=20
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> ---
+>  .../bindings/remoteproc/ti,pru-rproc.yaml     | 22 +++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.ya=
+ml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+> index cd55d80137f7..6970316943bb 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+> @@ -66,6 +66,16 @@ properties:
+>        Should contain the name of the default firmware image
+>        file located on the firmware search path.
+> =20
+> +  interrupts:
+> +    maxItems: 1
+> +    description:
+> +      Interrupt specifiers enable the virtio/rpmsg communication between=
+ MPU
+> +      and the PRU/RTU cores.
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: vring
+> +
+>  if:
+>    properties:
+>      compatible:
+> @@ -171,6 +181,9 @@ examples:
+>                <0x22400 0x100>;
+>          reg-names =3D "iram", "control", "debug";
+>          firmware-name =3D "am65x-pru0_0-fw";
+> +        interrupt-parent =3D <&icssg0_intc>;
+> +        interrupts =3D <16 2 2>;
+> +        interrupt-names =3D "vring";
+>        };
 
-The report occurred on Beagle discord channel - so I am not
-sure how to share the logs of the report.
+These examples would probably be more helpful if they used the
+appropriate defines, no?
 
- drivers/remoteproc/remoteproc_core.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+> =20
+>        rtu0_0: rtu@4000 {
+> @@ -180,6 +193,9 @@ examples:
+>                <0x23400 0x100>;
+>          reg-names =3D "iram", "control", "debug";
+>          firmware-name =3D "am65x-rtu0_0-fw";
+> +        interrupt-parent =3D <&icssg0_intc>;
+> +        interrupts =3D <20 4 4>;
+> +        interrupt-names =3D "vring";
+>        };
+> =20
+>        tx_pru0_0: txpru@a000 {
+> @@ -198,6 +214,9 @@ examples:
+>                <0x24400 0x100>;
+>          reg-names =3D "iram", "control", "debug";
+>          firmware-name =3D "am65x-pru0_1-fw";
+> +        interrupt-parent =3D <&icssg0_intc>;
+> +        interrupts =3D <18 3 3>;
+> +        interrupt-names =3D "vring";
+>        };
+> =20
+>        rtu0_1: rtu@6000 {
+> @@ -207,6 +226,9 @@ examples:
+>                <0x23c00 0x100>;
+>          reg-names =3D "iram", "control", "debug";
+>          firmware-name =3D "am65x-rtu0_1-fw";
+> +        interrupt-parent =3D <&icssg0_intc>;
+> +        interrupts =3D <22 5 5>;
+> +        interrupt-names =3D "vring";
+>        };
+> =20
+>        tx_pru0_1: txpru@c000 {
+> --=20
+> 2.34.1
+>=20
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 695cce218e8c..a12f3d37b8de 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -19,6 +19,7 @@
- #include <linux/delay.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/device.h>
- #include <linux/panic_notifier.h>
- #include <linux/slab.h>
-@@ -2417,6 +2418,25 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
- 	return 0;
- }
- 
-+static int rproc_device_get_id(struct device *dev)
-+{
-+	int of_id = -1, id = -1;
-+
-+	if (dev->of_node)
-+		of_id = of_alias_get_id(dev->of_node, "remoteproc");
-+
-+	if (of_id >= 0) {
-+		id = ida_simple_get(&rproc_dev_index, of_id, of_id + 1, GFP_KERNEL);
-+		if (id < 0)
-+			dev_warn(dev, "/aliases ID %d not available\n", of_id);
-+	}
-+
-+	if (id < 0)
-+		id = ida_alloc(&rproc_dev_index, GFP_KERNEL);
-+
-+	return id;
-+}
-+
- /**
-  * rproc_alloc() - allocate a remote processor handle
-  * @dev: the underlying device
-@@ -2476,7 +2496,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
- 		goto put_device;
- 
- 	/* Assign a unique device index and name */
--	rproc->index = ida_alloc(&rproc_dev_index, GFP_KERNEL);
-+	rproc->index = rproc_device_get_id(dev);
- 	if (rproc->index < 0) {
- 		dev_err(dev, "ida_alloc failed: %d\n", rproc->index);
- 		goto put_device;
--- 
-2.40.0
+--1jdWVwq42WtLkpBA
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNECFwAKCRB4tDGHoIJi
+0uAAAQCv+PBOP8/27AfSbERfPzfJ8qe0qOYDPQZg6GEo/lmsPAD+Nb/9LP9+9o+J
+8HIuSivmkOmx6egC3SyRduL0FiYz9gs=
+=IG6P
+-----END PGP SIGNATURE-----
+
+--1jdWVwq42WtLkpBA--
