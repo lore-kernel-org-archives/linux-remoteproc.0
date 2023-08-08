@@ -2,45 +2,45 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDB3C001B0
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Aug 2023 19:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBBBC41513
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Aug 2023 19:33:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233284AbjHHTcl (ORCPT
+        id S236261AbjHHTdb (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53030 "EHLO
+        Tue, 8 Aug 2023 15:33:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233375AbjHHTcY (ORCPT
+        with ESMTP id S236267AbjHHTdQ (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:32:24 -0400
+        Tue, 8 Aug 2023 15:33:16 -0400
 Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30D549016;
-        Tue,  8 Aug 2023 12:05:04 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3784jZWI099081;
-        Mon, 7 Aug 2023 23:45:35 -0500
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D314AC791;
+        Tue,  8 Aug 2023 12:04:58 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3784jWc9099071;
+        Mon, 7 Aug 2023 23:45:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1691469935;
-        bh=Yjzy1f4Yo+2tE1Bz1o6r2anCMRPv55nXaymz1EfrMOE=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=Of+H05UUMjW2bzglpzZSb4M5B9YJc7YGYDoOoY+jpl7DnUHRqAnPOR3iAKNFWauuT
-         xs+BGCJUrc+95ayq6YxTmq1uvistaoE4DjYZ/tjJIJUbCijFZdGqIrSz9xD+uJQ0vQ
-         SOGCJ3dbfFsUewaMFpz6fLXOpv0dX2KGKX+3Dxr4=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3784jZrG009809
+        s=ti-com-17Q1; t=1691469932;
+        bh=gOn0Xm5Ns+UYBBHCJQY6EKsCBpx22wZiaoVRu7YAI+k=;
+        h=From:To:CC:Subject:Date;
+        b=rqr2b5PaKyOrcsbl3CuDDay802u2cvS9Dfq+opVKwjBwdlejXBOrxPYNhtnoFrMeD
+         oRbzHCSDCXyxuDagw3FpjwhjSA/SE2aXEjFaRoj1vghCOXvNJGqdNorwcH1O5bbGre
+         WJpZKXxq73hMFaMyRnJ+Qz2SSVm9e0SML32AaJC8=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3784jWEb073740
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Aug 2023 23:45:35 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 7 Aug 2023 23:45:32 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Aug 2023 23:45:35 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2023 23:45:32 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Aug 2023 23:45:35 -0500
+ Frontend Transport; Mon, 7 Aug 2023 23:45:32 -0500
 Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3784jZBc114394;
-        Mon, 7 Aug 2023 23:45:35 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3784jWBQ017300;
+        Mon, 7 Aug 2023 23:45:32 -0500
 From:   Hari Nagalla <hnagalla@ti.com>
 To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
         <p.zabel@pengutronix.de>, <martyn.welch@collabora.com>,
@@ -50,133 +50,55 @@ To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
 CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>
-Subject: [PATCH v5 3/5] arm64: dts: ti: k3-am64 : Add M4F remote proc node
-Date:   Mon, 7 Aug 2023 23:45:27 -0500
-Message-ID: <20230808044529.25925-4-hnagalla@ti.com>
+Subject: [PATCH v5 0/5] TI K3 M4F support on AM64x and AM62x SoCs
+Date:   Mon, 7 Aug 2023 23:45:24 -0500
+Message-ID: <20230808044529.25925-1-hnagalla@ti.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230808044529.25925-1-hnagalla@ti.com>
-References: <20230808044529.25925-1-hnagalla@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-The AM64x SoCs of the TI K3 family have a Cortex M4F core in the MCU
-domain. This core can be used by non safety applications as a remote
-processor. When used as a remote processor with virtio/rpmessage IPC,
-two carveout reserved memory nodes are needed. The first region is used
-as a DMA pool for the rproc device, and the second region will furnish
-the static carveout regions for the firmware memory.
+The following series introduces K3 M4F remoteproc driver support for
+AM64x and AM62x SoC families. These SoCs have a ARM Cortex M4F core in
+the MCU voltage domain. For safety oriented applications, this core is
+operated independently with out any IPC to other cores on the SoC.
+However, for non safety applications, some customers use it as a remote
+processor and so linux remote proc support is extended to the M4F core.
 
-The current carveout addresses and sizes are defined statically for
-each rproc device. The M4F processor do not have an MMU, and as such
-require the exact memory used by the firmware to be set-aside.
+See AM64x Technical Reference Manual (SPRUIM2C – SEPTEMBER 2021) for
+further details: https://www.ti.com/lit/pdf/SPRUIM2
 
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
----
-Changes in v5:
- - Add M4F device node patches to the patch list
+Hari Nagalla (3):
+  dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
+  arm64: dts: ti: k3-am62 : Add M4F remote proc node
+  arm64: dts: ti: k3-am64 : Add M4F remote proc node
 
- arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi | 12 ++++++++++++
- arch/arm64/boot/dts/ti/k3-am642-evm.dts | 18 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am642-sk.dts  | 18 ++++++++++++++++++
- 3 files changed, 48 insertions(+)
+Martyn Welch (2):
+  remoteproc: k3: Split out functions common with M4 driver
+  remoteproc: k3-m4: Add a remoteproc driver for M4F subsystem
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi
-index 686d49790721..4151d0057bc8 100644
---- a/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi
-@@ -158,4 +158,16 @@ mcu_esm: esm@4100000 {
- 		reg = <0x00 0x4100000 0x00 0x1000>;
- 		ti,esm-pins = <0>, <1>;
- 	};
-+
-+	mcu_m4fss: m4fss@5000000 {
-+		compatible = "ti,am64-m4fss";
-+		reg = <0x00 0x5000000 0x00 0x30000>,
-+		<0x00 0x5040000 0x00 0x10000>;
-+		reg-names = "iram", "dram";
-+		ti,sci = <&dmsc>;
-+		ti,sci-dev-id = <9>;
-+		ti,sci-proc-ids = <0x18 0xff>;
-+		resets = <&k3_reset 9 1>;
-+		firmware-name = "am64-mcu-m4f0_0-fw";
-+	};
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-index d84e7ee16032..4fd1dc162534 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
-@@ -99,6 +99,18 @@ main_r5fss1_core1_memory_region: r5f-memory@a3100000 {
- 			no-map;
- 		};
- 
-+		mcu_m4fss_dma_memory_region: m4f-dma-memory@a4000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_m4fss_memory_region: m4f-memory@a4100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
- 		rtos_ipc_memory_region: ipc-memories@a5000000 {
- 			reg = <0x00 0xa5000000 0x00 0x00800000>;
- 			alignment = <0x1000>;
-@@ -639,6 +651,12 @@ &main_r5fss1_core1 {
- 			<&main_r5fss1_core1_memory_region>;
- };
- 
-+&mcu_m4fss {
-+	mboxes = <&mailbox0_cluster6>, <&mbox_m4_0>;
-+	memory-region = <&mcu_m4fss_dma_memory_region>,
-+			<&mcu_m4fss_memory_region>;
-+};
-+
- &serdes_ln_ctrl {
- 	idle-states = <AM64_SERDES0_LANE0_PCIE0>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-sk.dts b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-index 963d796a3a97..f919dd5ba9ba 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am642-sk.dts
-@@ -98,6 +98,18 @@ main_r5fss1_core1_memory_region: r5f-memory@a3100000 {
- 			no-map;
- 		};
- 
-+		mcu_m4fss_dma_memory_region: m4f-dma-memory@a4000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_m4fss_memory_region: m4f-memory@a4100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xa4100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+
- 		rtos_ipc_memory_region: ipc-memories@a5000000 {
- 			reg = <0x00 0xa5000000 0x00 0x00800000>;
- 			alignment = <0x1000>;
-@@ -637,6 +649,12 @@ &main_r5fss1_core1 {
- 			<&main_r5fss1_core1_memory_region>;
- };
- 
-+&mcu_m4fss {
-+	mboxes = <&mailbox0_cluster6>, <&mbox_m4_0>;
-+	memory-region = <&mcu_m4fss_dma_memory_region>,
-+			<&mcu_m4fss_memory_region>;
-+};
-+
- &ecap0 {
- 	status = "okay";
- 	/* PWM is available on Pin 1 of header J3 */
+ .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++
+ arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi       |  12 +
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |  19 +
+ arch/arm64/boot/dts/ti/k3-am64-mcu.dtsi       |  12 +
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  18 +
+ arch/arm64/boot/dts/ti/k3-am642-sk.dts        |  18 +
+ drivers/remoteproc/Kconfig                    |  13 +
+ drivers/remoteproc/Makefile                   |   3 +-
+ drivers/remoteproc/ti_k3_common.c             | 513 +++++++++++++++
+ drivers/remoteproc/ti_k3_common.h             | 108 ++++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c     | 598 +-----------------
+ drivers/remoteproc/ti_k3_m4_remoteproc.c      | 333 ++++++++++
+ 12 files changed, 1213 insertions(+), 570 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+ create mode 100644 drivers/remoteproc/ti_k3_common.c
+ create mode 100644 drivers/remoteproc/ti_k3_common.h
+ create mode 100644 drivers/remoteproc/ti_k3_m4_remoteproc.c
+
 -- 
 2.34.1
 
