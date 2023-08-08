@@ -2,241 +2,116 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3695C04E69
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Aug 2023 19:35:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E06C04A6A
+	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Aug 2023 19:35:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236503AbjHHTfk (ORCPT
+        id S236530AbjHHTft (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 15:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35672 "EHLO
+        Tue, 8 Aug 2023 15:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236376AbjHHTfY (ORCPT
+        with ESMTP id S236215AbjHHTfc (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Aug 2023 15:35:24 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8DC87D797;
-        Tue,  8 Aug 2023 10:23:12 -0700 (PDT)
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 3784jYY6092030;
-        Mon, 7 Aug 2023 23:45:34 -0500
+        Tue, 8 Aug 2023 15:35:32 -0400
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9CE29459;
+        Tue,  8 Aug 2023 12:00:07 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 378AvQC0121589;
+        Tue, 8 Aug 2023 05:57:26 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1691469934;
-        bh=e1qpTh7OgoPv/Lc8NJeUn0X/U4gQfp0Iaxx1TIJy1g8=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hfZ5LmzWkaBZ1+Ol/ywTGzAwwcZWy4oBvMLlyAz5c4ujSLooblbjvVOx7TRkVVrgR
-         80ndbpIMLf/yPi6v+yPYWyi+gCkNLmAlPbMv1IaE828a6+7KXCI+XN3teRkr+7tiLZ
-         UD1AzhvHKSfYAuQKJnsIftj68W7OBNPFMNA0hXg4=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 3784jYY8073747
+        s=ti-com-17Q1; t=1691492246;
+        bh=+wmWtx1vKl7gTF/aouUyV7Zp6iwajQ3qDPiq69+61co=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=blwxyIQeOu924/GLkem29ZkB+K4mvw1Bvg6lKpXES5j/qowDDUL/RgDh7yRlNcxBe
+         1uXQ5wLwTHMNn7yjECtEtpHSUTalQNu2fhxHnmOpL9c0KHsyNopryddJqrqPp8EVEF
+         ggzkmGfAIfeVaYhCYMEZIzh5t/eAyllZS9IUwIWM=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 378AvQoL021326
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 7 Aug 2023 23:45:34 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 7
- Aug 2023 23:45:33 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 8 Aug 2023 05:57:26 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 8
+ Aug 2023 05:57:26 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 7 Aug 2023 23:45:33 -0500
-Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 3784jXcH098630;
-        Mon, 7 Aug 2023 23:45:33 -0500
-From:   Hari Nagalla <hnagalla@ti.com>
-To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-        <p.zabel@pengutronix.de>, <martyn.welch@collabora.com>,
-        <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-Subject: [PATCH v5 1/5] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-Date:   Mon, 7 Aug 2023 23:45:25 -0500
-Message-ID: <20230808044529.25925-2-hnagalla@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230808044529.25925-1-hnagalla@ti.com>
-References: <20230808044529.25925-1-hnagalla@ti.com>
+ Frontend Transport; Tue, 8 Aug 2023 05:57:26 -0500
+Received: from [172.24.227.217] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 378AvL8F038075;
+        Tue, 8 Aug 2023 05:57:21 -0500
+Message-ID: <5ca41ad1-4f42-f71a-4b5f-f2b6def42cb1@ti.com>
+Date:   Tue, 8 Aug 2023 16:27:20 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Conor Dooley <conor@kernel.org>,
+        MD Danish Anwar <danishanwar@ti.com>
+CC:     Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
+        <srk@ti.com>, <nm@ti.com>
+References: <20230807110836.2612730-1-danishanwar@ti.com>
+ <20230807-euphemism-trailing-ef4130dc7437@spud>
+ <910a4a98-712a-5517-5a5b-ffb962f83463@ti.com>
+ <1ade44f5-b3d1-dcde-6819-9e944f3b115d@linaro.org>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <1ade44f5-b3d1-dcde-6819-9e944f3b115d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-The remote processor's life cycle management and IPC mechanisms are
-similar across the R5F and M4F cores from remote processor driver
-point of view. However, there are subtle differences in image loading
-and starting the M4F subsystems.
+On 08/08/23 3:48 pm, Krzysztof Kozlowski wrote:
+> On 08/08/2023 11:44, Md Danish Anwar wrote:
+>>>>    properties:
+>>>>      compatible:
+>>>> @@ -171,6 +181,9 @@ examples:
+>>>>                <0x22400 0x100>;
+>>>>          reg-names = "iram", "control", "debug";
+>>>>          firmware-name = "am65x-pru0_0-fw";
+>>>> +        interrupt-parent = <&icssg0_intc>;
+>>>> +        interrupts = <16 2 2>;
+>>>> +        interrupt-names = "vring";
+>>>>        };
+>>>
+>>> These examples would probably be more helpful if they used the
+>>> appropriate defines, no?
+>>>
+>>
+>> PRUSS Interrupt controller doesn't have any appropriate defines. This doesn't
+>> use GIC so defines from arm-gic.h can not be used here. These are specific to
+>> PRUSS INTC.
+>>
+>> I think these example are OK. Please let me know if this is OK to you.
+> 
+> But isn't "2" type of the interrupt?
+> 
+> Best regards,
+> Krzysztof
+> 
 
-The YAML binding document provides the various node properties to be
-configured by the consumers of the M4F subsystem.
+As per the description of interrupts property in ti,pruss-intc.yaml [1]
 
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
----
-Changes since v1:
- - Spelling corrections
- - Corrected to pass DT checks
+Cell 1 is PRU System event number, cell 2 is PRU channel and cell 3 is PRU
+host_event (target). None of them is type of interrupt. So that's why they all
+are hardcoded. I don't think we can use IRQ_TYPE macros here.
 
-Changes since v2:
- - Missed spelling correction to commit message
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc.yaml#:~:text=const%3A%203-,description%3A%20%7C,-Client%20users%20shall
 
-Changes since v3:
- - Removed unnecessary descriptions and used generic memory region names
- - Made mboxes and memory-region optional
- - Removed unrelated items from examples
-
-Changes since v4:
- - Rebased to the latest kernel-next tree
- - Added optional sram memory region for m4f device node
-
- .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
- 1 file changed, 136 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-new file mode 100644
-index 000000000000..21b7f14d9dc4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-@@ -0,0 +1,136 @@
-+# SPDX-License-Identifier: (GPL-2.0-only or BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI K3 M4F processor subsystems
-+
-+maintainers:
-+  - Hari Nagalla <hnagalla@ti.com>
-+  - Mathieu Poirier <mathieu.poirier@linaro.org>
-+
-+description: |
-+  Some K3 family SoCs have Arm Cortex M4F cores. AM64x is a SoC in K3
-+  family with a M4F core. Typically safety oriented applications may use
-+  the M4F core in isolation without an IPC. Where as some industrial and
-+  home automation applications, may use the M4F core as a remote processor
-+  with IPC communications.
-+
-+$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
-+
-+properties:
-+
-+  compatible:
-+    enum:
-+      - ti,am64-m4fss
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 2
-+
-+  "#size-cells":
-+    const: 2
-+
-+  reg:
-+    items:
-+      - description: IRAM internal memory region
-+      - description: DRAM internal memory region
-+
-+  reg-names:
-+    items:
-+      - const: iram
-+      - const: dram
-+
-+  resets:
-+    maxItems: 1
-+
-+  firmware-name:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: Name of firmware to load for the M4F core
-+
-+  mboxes:
-+    description: |
-+      Mailbox specifier denoting the sub-mailbox, to be used for communication
-+      with the remote processor. This property should match with the
-+      sub-mailbox node used in the firmware image.
-+    maxItems: 2
-+
-+  memory-region:
-+    description: |
-+      phandle to the reserved memory nodes to be associated with the
-+      remoteproc device. The reserved memory nodes should be carveout nodes,
-+      and should be defined with a "no-map" property as per the bindings in
-+      Documentation/devicetree/bindings/reserved-memory/reserved-memory.yaml
-+      Optional memory regions available for firmware specific purposes.
-+    maxItems: 8
-+    items:
-+      - description: regions used for DMA allocations like vrings, vring buffers
-+                     and memory dedicated to firmware's specific purposes.
-+    additionalItems: true
-+
-+  sram:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    minItems: 1
-+    maxItems: 4
-+    items:
-+      maxItems: 4
-+    description: |
-+      phandles to one or more reserved on-chip SRAM regions. The regions
-+      should be defined as child nodes of the respective SRAM node, and
-+      should be defined as per the generic bindings in,
-+      Documentation/devicetree/bindings/sram/sram.yaml
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - ti,sci
-+  - ti,sci-dev-id
-+  - ti,sci-proc-ids
-+  - resets
-+  - firmware-name
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0x9cb00000 0x00 0x100000>;
-+            no-map;
-+        };
-+
-+        mcu_m4fss_memory_region: m4f-memory@9cc00000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0x9cc00000 0x00 0xe00000>;
-+            no-map;
-+        };
-+    };
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        remoteproc@5000000 {
-+            compatible = "ti,am64-m4fss";
-+            reg = <0x00 0x5000000 0x00 0x30000>,
-+                  <0x00 0x5040000 0x00 0x10000>;
-+            reg-names = "iram", "dram";
-+            ti,sci = <&dmsc>;
-+            ti,sci-dev-id = <9>;
-+            ti,sci-proc-ids = <0x18 0xff>;
-+            resets = <&k3_reset 9 1>;
-+            firmware-name = "am62-mcu-m4f0_0-fw";
-+            mboxes = <&mailbox0_cluster0>, <&mbox_m4_0>;
-+            memory-region = <&mcu_m4fss_dma_memory_region>,
-+                            <&mcu_m4fss_memory_region>;
-+            sram = <&oc_sram>;
-+         };
-+    };
 -- 
-2.34.1
-
+Thanks and Regards,
+Danish.
