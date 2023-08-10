@@ -2,120 +2,116 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DB1C001DB
-	for <linux-remoteproc@archiver.kernel.org>; Tue,  8 Aug 2023 20:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5A0C04A94
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Aug 2023 11:06:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235200AbjHHUt6 (ORCPT
+        id S232124AbjHJLGL (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Tue, 8 Aug 2023 16:49:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53380 "EHLO
+        Thu, 10 Aug 2023 07:06:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235190AbjHHUts (ORCPT
+        with ESMTP id S233466AbjHJLGF (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Tue, 8 Aug 2023 16:49:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2173F7AB6;
-        Tue,  8 Aug 2023 13:31:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AC13762C74;
-        Tue,  8 Aug 2023 20:31:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC4A4C433C8;
-        Tue,  8 Aug 2023 20:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691526702;
-        bh=Hn9mNFdS9H/jjeLOgpbGHT61hv6DZ1X5BjlZ+cnfyWY=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-        b=NiWa4a3pnvcBdxVZdv4h/X6SFQV8kAICgWYmBYrKYr57ZycQfI8dRZTj+M+6nzqcG
-         Xb3xpqokXG3Kt/jDLw4hXEcnfvPvFMaha+4vyhAOV8+yaKF5JVwS+Q+cs8JqxxdWTg
-         GvSOTbdi3rOiT3kMkOMVRCG3jRVeJpWgeRDodLqzcNr1ntKpaFNESDZYeobiVcvuzp
-         stK6jJfwkUKAuxpdt9Mxt5hUUMMu5icWVYyWncXQp3t9hmx9S9amdKNh7KI8xFMw+x
-         Im25soeE3mBZqYjjLji7TEhHsDLuNK0a5gTv35Ge/TmDUrcqxJme7qTURh9D0XPb2c
-         3jGy1C3ian2qw==
-Received: (nullmailer pid 4174907 invoked by uid 1000);
-        Tue, 08 Aug 2023 20:31:39 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Aug 2023 07:06:05 -0400
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67D1211B;
+        Thu, 10 Aug 2023 04:06:02 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 37AB5tO7088044;
+        Thu, 10 Aug 2023 06:05:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1691665555;
+        bh=PVflcmV5/EUDy1cuZfknvEy0uj9dMjDS8ydBn356VLo=;
+        h=From:To:CC:Subject:Date;
+        b=tKogjRQYsipTbS79UiNIQjJUS31SfM2UJb82yJj/qYkp85l610+udEwB3IDS557vZ
+         7aTK7bKU4UhYnMZDrTLI0jsSd7Pd9CFP7EVrGEpWJxQzu7BRwQqsagkOazFqB0Keq4
+         KMTrgUBm0iBLpYvgSORgaohirHc9qnp00nd1rD5I=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 37AB5t2W049300
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Aug 2023 06:05:55 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 10
+ Aug 2023 06:05:55 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 10 Aug 2023 06:05:55 -0500
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 37AB5txa041652;
+        Thu, 10 Aug 2023 06:05:55 -0500
+From:   Hari Nagalla <hnagalla@ti.com>
+To:     <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <s-anna@ti.com>
+CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH] dt-bindings: remoteproc: k3-dsp: correct optional sram properties for AM62A SoCs
+Date:   Thu, 10 Aug 2023 06:05:45 -0500
+Message-ID: <20230810110545.11644-1-hnagalla@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Hari Nagalla <hnagalla@ti.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        devicetree@vger.kernel.org, martyn.welch@collabora.com,
-        mathieu.poirier@linaro.org, vigneshr@ti.com, andersson@kernel.org,
-        linux-remoteproc@vger.kernel.org, p.zabel@pengutronix.de,
-        conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-        nm@ti.com, linux-kernel@vger.kernel.org, kristo@kernel.org
-In-Reply-To: <20230808044529.25925-2-hnagalla@ti.com>
-References: <20230808044529.25925-1-hnagalla@ti.com>
- <20230808044529.25925-2-hnagalla@ti.com>
-Message-Id: <169152669984.4174873.13897253372545928644.robh@kernel.org>
-Subject: Re: [PATCH v5 1/5] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x
- SoCs
-Date:   Tue, 08 Aug 2023 14:31:39 -0600
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+The C7xv-dsp on AM62A have 32KB L1 I-cache and a 64KB L1 D-cache. It
+does not have an addressable l1dram . So, remove this optional sram
+property from the bindings to fix device tree build warnings.
 
-On Mon, 07 Aug 2023 23:45:25 -0500, Hari Nagalla wrote:
-> K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-> The remote processor's life cycle management and IPC mechanisms are
-> similar across the R5F and M4F cores from remote processor driver
-> point of view. However, there are subtle differences in image loading
-> and starting the M4F subsystems.
-> 
-> The YAML binding document provides the various node properties to be
-> configured by the consumers of the M4F subsystem.
-> 
-> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
-> Changes since v1:
->  - Spelling corrections
->  - Corrected to pass DT checks
-> 
-> Changes since v2:
->  - Missed spelling correction to commit message
-> 
-> Changes since v3:
->  - Removed unnecessary descriptions and used generic memory region names
->  - Made mboxes and memory-region optional
->  - Removed unrelated items from examples
-> 
-> Changes since v4:
->  - Rebased to the latest kernel-next tree
->  - Added optional sram memory region for m4f device node
-> 
->  .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 136 ++++++++++++++++++
->  1 file changed, 136 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-> 
+Also set the 'memory-regions' property as optional. This is because
+the remote processors can function without carveout regions.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+---
+ .../bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/stericsson,dma40.example.dtb: dma-controller@801c0000: sram:0: [4294967295, 4294967295] is too long
-	from schema $id: http://devicetree.org/schemas/dma/stericsson,dma40.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230808044529.25925-2-hnagalla@ti.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+index f16e90380df1..8dd22c57e22d 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+@@ -111,7 +111,6 @@ else:
+     properties:
+       compatible:
+         enum:
+-          - ti,am62a-c7xv-dsp
+           - ti,j721e-c71-dsp
+           - ti,j721s2-c71-dsp
+   then:
+@@ -124,6 +123,20 @@ else:
+         items:
+           - const: l2sram
+           - const: l1dram
++  else:
++    if:
++      properties:
++        compatible:
++          enum:
++            - ti,am62a-c7xv-dsp
++    then:
++      properties:
++        reg:
++          items:
++            - description: Address and Size of the L2 SRAM internal memory region
++        reg-names:
++          items:
++            - const: l2sram
+ 
+ required:
+   - compatible
+@@ -135,7 +148,6 @@ required:
+   - resets
+   - firmware-name
+   - mboxes
+-  - memory-region
+ 
+ unevaluatedProperties: false
+ 
+-- 
+2.34.1
 
