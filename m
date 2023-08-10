@@ -2,158 +2,139 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF13C04FE1
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Aug 2023 16:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE17FC001DE
+	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Aug 2023 19:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234525AbjHJQtC (ORCPT
+        id S236287AbjHJT0v (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Aug 2023 12:49:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
+        Thu, 10 Aug 2023 15:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229503AbjHJQtA (ORCPT
+        with ESMTP id S236302AbjHJT0u (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Aug 2023 12:49:00 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C6B910C4;
-        Thu, 10 Aug 2023 09:49:00 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37A722FV007831;
-        Thu, 10 Aug 2023 16:47:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=zAuUK+FUAKV1TK/43Krl8I0W9ZUqbAWCf5CKaQkFMEs=;
- b=T2IWYsPH96HEItjOrzS28ONVuqktQ1xJYBi+VdIlEwkue4tsysm4O15YHDEIltQtuzkl
- aIrz4TQfz/MEyQ+aoNqu2znZ6Xuin0QFfcPFcBet+ZGb9tGdTHtiVTw+GbNOmYzO5AGG
- xo+OXMFEfmuraggReqkwazE7OP5+Ze870eQBjEqnyBb6txyeJ8hWysxkInpZv9hsWnxC
- bpq9z0FUAhNRpxizqs+rFl/J/6+zxs+H0K3wGcgvrXSIazOFNXkEmHr3Jc1NNvjNtEAG
- WMTRYy/5Vb8JVBoc0jpj8FhtoXo3mS51IQroc4MlqYbqHlWpqJRsRO3BR/+TOtKLZG72 MQ== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3scbd4k5kh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Aug 2023 16:47:59 +0000
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 37AGlwu8003647
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Aug 2023 16:47:58 GMT
-Received: from [10.216.45.127] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Thu, 10 Aug
- 2023 09:47:50 -0700
-Message-ID: <695133e6-105f-de2a-5559-555cea0a0462@quicinc.com>
-Date:   Thu, 10 Aug 2023 22:17:47 +0530
+        Thu, 10 Aug 2023 15:26:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F95C7;
+        Thu, 10 Aug 2023 12:26:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D125864018;
+        Thu, 10 Aug 2023 19:26:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEDEC433C7;
+        Thu, 10 Aug 2023 19:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691695609;
+        bh=h2DqxVG13dnsEkNHhyxyTR+mtl+zHvJP4CblhcYkRrM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I73IqMyUiqgFtxCIB5FADS0X1Inn8xBcqvIWpl+naTeOatdDjd73eqoXSctboPtMD
+         hu3H0UUbqRNw+ExRvLmGPZkgid5SLmr4zEd+rbHP/mX7Jy9vZAtqZVe6WXJg1A3pmY
+         Oa8lutgbqB+Pft+fQqenG0odXyAmgAcZY87dDoYc75S/9kayrpA5X85mpPznGdjcO1
+         XKbpafIl4J7sPNhHe4907D3hr35bHWMYflkWZmzXF1962zkDl2pKPh6yVdJfyFMEcc
+         4oMAxiCWLHmtklNrCsBUvi+Yc3ogfSif46rqJOCkzfCYecdp1fW7WyIpjxaKMD4zcS
+         M8BwK/qwBhEbQ==
+Date:   Thu, 10 Aug 2023 20:26:44 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Hari Nagalla <hnagalla@ti.com>
+Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, s-anna@ti.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: k3-dsp: correct optional sram
+ properties for AM62A SoCs
+Message-ID: <20230810-dramatic-disregard-c254d763e1fe@spud>
+References: <20230810110545.11644-1-hnagalla@ti.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 00/21] Add Qualcomm Minidump kernel driver related
- support
-Content-Language: en-US
-To:     Rob Herring <robh+dt@kernel.org>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Greg KH <gregkh@linuxfoundation.org>, <corbet@lwn.net>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <keescook@chromium.org>,
-        <tony.luck@intel.com>, <gpiccoli@igalia.com>,
-        <mathieu.poirier@linaro.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <linus.walleij@linaro.org>,
-        <andy.shevchenko@gmail.com>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, "Alex Elder" <elder@linaro.org>
-References: <1687955688-20809-1-git-send-email-quic_mojha@quicinc.com>
- <2023062814-chance-flounder-f002@gregkh>
- <CAL_JsqLO9yey2-4FcWsaGxijiS6hGL0SH9VoMuiyei-u9=Cv=w@mail.gmail.com>
- <cc30660f-dd72-aade-6346-a93c6ad4b695@quicinc.com>
- <29af84dc-7db8-0c43-07b6-eb743cf25e57@linaro.org>
- <957a3cdb-6091-8679-ddb0-296db2347291@quicinc.com>
- <CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com>
-From:   Mukesh Ojha <quic_mojha@quicinc.com>
-In-Reply-To: <CAL_JsqK7MHR09U5h01=Gf1ZLeDVCgZdN-W1hQRH3AX+E94_uUg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: L6jmcWyk6X3XoJP6P5sO18G5atidhdNt
-X-Proofpoint-ORIG-GUID: L6jmcWyk6X3XoJP6P5sO18G5atidhdNt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-10_14,2023-08-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- phishscore=0 bulkscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
- definitions=main-2308100144
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pXtfXRWhPXTRbs8a"
+Content-Disposition: inline
+In-Reply-To: <20230810110545.11644-1-hnagalla@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
 
+--pXtfXRWhPXTRbs8a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 7/6/2023 11:10 PM, Rob Herring wrote:
-> On Mon, Jul 3, 2023 at 3:06 PM Trilok Soni <quic_tsoni@quicinc.com> wrote:
->>
->> On 7/2/2023 1:29 AM, Krzysztof Kozlowski wrote:
->>> On 30/06/2023 18:04, Mukesh Ojha wrote:
->>>>>
->>>>>> We don't add layers when they are not needed, and never when there is no
->>>>>> actual user.  If you need the extra "complexity" later, then add it
->>>>>> later when it is needed as who knows when that will ever be.
->>>>>>
->>>>>> Please redo this series based on that, thanks.
->>>>>
->>>>> My bigger issue with this whole series is what would this all look
->>>>> like if every SoC vendor upstreamed their own custom dumping
->>>>> mechanism. That would be a mess. (I have similar opinions on the
->>>>> $soc-vendor hypervisors.)
->>>
->>> Mukesh,
->>>
->>> LPC CFP is still open. There will be also Android and Kernel Debugging
->>> LPC microconference tracks. Coming with a unified solution could be a
->>> great topic for LPC. Solutions targeting only one user are quite often
->>> frowned upon.
->>
->> LPC is far out and in November. Can we not have others speak up if they
->> have the similar solution now? We can expand this to linux-kernel and
->> ask for the other SOC vendors to chime in. I am sure that we may have
->> existing solutions which came in for the one user first like Intel RDT
->> if I remember. I am sure ARM MPAM usecase was present at that time but
->> Intel RDT based solution which was x86 specific but accepted.
-> 
-> RDT predated MPAM. resctrl is the kernel feature, and it supports
-> Intel and AMD which are not identical. resctrl is being (extensively)
-> refactored to add in MPAM support.
-> 
-> You are not the first here like Intel RDT, so I fail to see the
-> parallel with minidump. We have an existing logging to persistent
-> storage mechanism which is pstore. You should integrate into that
-> rather than grafting something on to the side or underneath.
+On Thu, Aug 10, 2023 at 06:05:45AM -0500, Hari Nagalla wrote:
+> The C7xv-dsp on AM62A have 32KB L1 I-cache and a 64KB L1 D-cache. It
+> does not have an addressable l1dram . So, remove this optional sram
+> property from the bindings to fix device tree build warnings.
+>=20
+> Also set the 'memory-regions' property as optional. This is because
+> the remote processors can function without carveout regions.
 
-Most of the Qualcomm SoCs does not support *warm boot* and that is the
-base requirement for pstore(ram) to work to preserve the content of
-fixed region during the reboot. So, it will not work those SOCs.
+I thought I already said this today, but must be hallucinating - this
+second part here seems like it in an unrelated change that should go in
+its own patch..
 
-Minidump in its capability can do more than what is available
-through pstore, it can dump ramoops region as one of data point
-for debugging but it can dump anything given the size and address.
+>=20
+> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+> ---
+>  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc=
+=2Eyaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> index f16e90380df1..8dd22c57e22d 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+> @@ -111,7 +111,6 @@ else:
+>      properties:
+>        compatible:
+>          enum:
+> -          - ti,am62a-c7xv-dsp
+>            - ti,j721e-c71-dsp
+>            - ti,j721s2-c71-dsp
+>    then:
+> @@ -124,6 +123,20 @@ else:
+>          items:
+>            - const: l2sram
+>            - const: l1dram
+> +  else:
+> +    if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - ti,am62a-c7xv-dsp
+> +    then:
+> +      properties:
+> +        reg:
+> +          items:
+> +            - description: Address and Size of the L2 SRAM internal memo=
+ry region
+> +        reg-names:
+> +          items:
+> +            - const: l2sram
+> =20
+>  required:
+>    - compatible
+> @@ -135,7 +148,6 @@ required:
+>    - resets
+>    - firmware-name
+>    - mboxes
+> -  - memory-region
+> =20
+>  unevaluatedProperties: false
+> =20
+> --=20
+> 2.34.1
+>=20
 
-We can make minidump it another backend of pstore(ram), and improve
-pstore with more debug data collection during panic like timer data or 
-irqstats etc. which was our final goal with minidump that way pstore
-also gets benefit and minidump will just collect what is there in
-pstore(ram). but for that we need base infrastructure driver to
-merge.
+--pXtfXRWhPXTRbs8a
+Content-Type: application/pgp-signature; name="signature.asc"
 
-One of the proposal made here..
-https://lore.kernel.org/lkml/1683561060-2197-1-git-send-email-quic_mojha@quicinc.com/
+-----BEGIN PGP SIGNATURE-----
 
--Mukesh
-> 
-> Rob
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNU59AAKCRB4tDGHoIJi
+0ujdAP9/gwpeMbJnjqYnN0kVayzEgItu2KClO+kgQ81UuQw4NgEA5Y6J+VbZyben
+m5NLRRbeqxk7L2omT+VGx0b9piUZ5AM=
+=czQE
+-----END PGP SIGNATURE-----
+
+--pXtfXRWhPXTRbs8a--
