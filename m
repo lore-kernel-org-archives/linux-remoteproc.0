@@ -2,165 +2,120 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C95C0015E
-	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Aug 2023 11:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC50EC0015E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Aug 2023 15:21:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236196AbjHKLSo (ORCPT
+        id S236588AbjHKPVy (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Fri, 11 Aug 2023 07:18:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47468 "EHLO
+        Fri, 11 Aug 2023 11:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230418AbjHKLSo (ORCPT
+        with ESMTP id S236587AbjHKPVf (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Fri, 11 Aug 2023 07:18:44 -0400
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00BAE62;
-        Fri, 11 Aug 2023 04:18:42 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 37BBIY8w085739;
-        Fri, 11 Aug 2023 06:18:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1691752714;
-        bh=oZkPIEoMHCpMNfX7D1YcSVTXDaLgEpt81bEmqlGn+hw=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=hCHDQqzhxWCTbKXeD7LFTjY3v/mSe8LykCLRgohEigqSdRzExsnZmqcLJrKQjR/Vf
-         naVgV4l4fCtDe9um/aYnpf7k2cGPM9svbE7FJZ/pY9sg4gBqDaw4qpuHT2Zaf5q0QF
-         fo1fj4ATl8xabx0TwKxBS8JjGjn53Cj8ySOCoKbo=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 37BBIYFq127250
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 11 Aug 2023 06:18:34 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Aug 2023 06:18:33 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Aug 2023 06:18:33 -0500
-Received: from [172.24.227.217] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 37BBITqp086739;
-        Fri, 11 Aug 2023 06:18:29 -0500
-Message-ID: <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
-Date:   Fri, 11 Aug 2023 16:48:28 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>
-CC:     MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
+        Fri, 11 Aug 2023 11:21:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5AE4486;
+        Fri, 11 Aug 2023 08:21:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BB19674F1;
+        Fri, 11 Aug 2023 15:21:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF790C433C7;
+        Fri, 11 Aug 2023 15:21:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691767272;
+        bh=5yH/QY0qbIeK4kDqXoIZQCS0/v2CF5kLwjwQr2aVdjY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EXaNGE0ZDh36EgpW73kbhp8ZlQ8lfBJQKH2mYDG1xWouw9mNnArbV9fPQQR3QW/EC
+         1j4uKlH9R/LfVx94e8U1ama48jB02z/LGyGrbEz48iv0ipnVNA5CjJthdDrl4dQYCb
+         ym31+dc+S0vnSqayAs0KlngcXtKQHzYes2ZHAp4Xw+QTRptBe885Sbf5ov9Fj2hE7P
+         5gJNkbhVvAXDLZ+LMdxbx5lG+TA6x1Q6P8ceNah88GqEmvMGqES6NquxdsIqJEfqb3
+         tjKcGKlbneKOwjH2m/0vDsvb1Lc5O9y8tQfstXc+7pBa6P7k+8zp7GL1ApXT275qob
+         9Ti1fYZ66BuAw==
+Date:   Fri, 11 Aug 2023 16:21:07 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Md Danish Anwar <a0501179@ti.com>
+Cc:     MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
         Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
-        <srk@ti.com>, <nm@ti.com>
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, vigneshr@ti.com, srk@ti.com,
+        nm@ti.com
+Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
+Message-ID: <20230811-ladylike-snore-abba84731921@spud>
 References: <20230807110836.2612730-1-danishanwar@ti.com>
  <20230807-euphemism-trailing-ef4130dc7437@spud>
  <910a4a98-712a-5517-5a5b-ffb962f83463@ti.com>
  <20230808-unwomanly-generic-67d20f0e51cd@spud>
  <cd74e31f-8bc6-445b-9c33-51e53a439cd2@ti.com>
  <20230808-bazooka-uncoated-a3401d94b063@spud>
-From:   Md Danish Anwar <a0501179@ti.com>
-Organization: Texas Instruments
-In-Reply-To: <20230808-bazooka-uncoated-a3401d94b063@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+ <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UvC4hbAhKTdVUBxb"
+Content-Disposition: inline
+In-Reply-To: <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
-Hi Conor,
 
-On 08/08/23 4:58 pm, Conor Dooley wrote:
-> On Tue, Aug 08, 2023 at 04:30:32PM +0530, Md Danish Anwar wrote:
->> On 08/08/23 4:18 pm, Conor Dooley wrote:
->>> On Tue, Aug 08, 2023 at 03:14:31PM +0530, Md Danish Anwar wrote:
->>>> On 07/08/23 8:09 pm, Conor Dooley wrote:
->>>>> On Mon, Aug 07, 2023 at 04:38:36PM +0530, MD Danish Anwar wrote:
->>>>>> Add interrupts and interrupt-names protperties for PRU and RTU cores.
->>>>>>
->>>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>>>>> ---
->>>>>>  .../bindings/remoteproc/ti,pru-rproc.yaml     | 22 +++++++++++++++++++
->>>>>>  1 file changed, 22 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
->>>>>> index cd55d80137f7..6970316943bb 100644
->>>>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
->>>>>> @@ -66,6 +66,16 @@ properties:
->>>>>>        Should contain the name of the default firmware image
->>>>>>        file located on the firmware search path.
->>>>>>  
->>>>>> +  interrupts:
->>>>>> +    maxItems: 1
->>>>>> +    description:
->>>>>> +      Interrupt specifiers enable the virtio/rpmsg communication between MPU
->>>>>> +      and the PRU/RTU cores.
->>>>>> +
->>>>>> +  interrupt-names:
->>>>>> +    items:
->>>>>> +      - const: vring
->>>>>> +
->>>>>>  if:
->>>>>>    properties:
->>>>>>      compatible:
->>>>>> @@ -171,6 +181,9 @@ examples:
->>>>>>                <0x22400 0x100>;
->>>>>>          reg-names = "iram", "control", "debug";
->>>>>>          firmware-name = "am65x-pru0_0-fw";
->>>>>> +        interrupt-parent = <&icssg0_intc>;
->>>>>> +        interrupts = <16 2 2>;
->>>>>> +        interrupt-names = "vring";
->>>>>>        };
->>>>>
->>>>> These examples would probably be more helpful if they used the
->>>>> appropriate defines, no?
->>>>>
->>>>
->>>> PRUSS Interrupt controller doesn't have any appropriate defines. This doesn't
->>>> use GIC so defines from arm-gic.h can not be used here. These are specific to
->>>> PRUSS INTC.
->>>
->>> I was deliberately vague in case the gic stuff applied too, but my main
->>> question was about the standard defines used for interrupt types.
->>>
->>
->> There are no standard defines for these interrupt types. However I can create a
->> new .h file defining all the three interrupt cells and their values for both
->> PRU and RTU cores if you think that is required. Otherwise we can go with
->> hardcoded values.
->>
->> Please let me know what you think should be done here.
-> 
-> It'd be good to reference to the documentation for the cells, I don't
-> think adding a header is necessary here.
-> 
+--UvC4hbAhKTdVUBxb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-How should I reference to the documentation for the cells?
+On Fri, Aug 11, 2023 at 04:48:28PM +0530, Md Danish Anwar wrote:
 
-Should I just add the details of cells in description of interrupt property here.
+> >> There are no standard defines for these interrupt types. However I can=
+ create a
+> >> new .h file defining all the three interrupt cells and their values fo=
+r both
+> >> PRU and RTU cores if you think that is required. Otherwise we can go w=
+ith
+> >> hardcoded values.
+> >>
+> >> Please let me know what you think should be done here.
+> >=20
+> > It'd be good to reference to the documentation for the cells, I don't
+> > think adding a header is necessary here.
+> >=20
+>=20
+> How should I reference to the documentation for the cells?
+>=20
+> Should I just add the details of cells in description of interrupt proper=
+ty here.
+>=20
+>   interrupts:
+>     maxItems: 1
+>     description:
+>       Interrupt specifiers enable the virtio/rpmsg communication between =
+MPU
+>       and the PRU/RTU cores. The value of the interrupts should be the PRU
+>       System event number [cell 1], PRU channel [cell 2] and PRU host_eve=
+nt
+>       (target) [cell 3].
+>=20
+> Please let me know if this looks OK to you.
 
-  interrupts:
-    maxItems: 1
-    description:
-      Interrupt specifiers enable the virtio/rpmsg communication between MPU
-      and the PRU/RTU cores. The value of the interrupts should be the PRU
-      System event number [cell 1], PRU channel [cell 2] and PRU host_event
-      (target) [cell 3].
+I was thinking there'd be an binding for the interrupt controller that
+you could mentioned.
 
-Please let me know if this looks OK to you.
+--UvC4hbAhKTdVUBxb
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> Thanks,
-> Conor.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNZR4wAKCRB4tDGHoIJi
+0qvEAP99WX3NcLAixv8zdFz//y+7gtEByx3Dyc+XHWDHa7YrJAD9EBJnZ3J7vwcW
+vT8XG04W7Q7owcS/c87Q6QIPDBR2RAc=
+=Yd3F
+-----END PGP SIGNATURE-----
 
--- 
-Thanks and Regards,
-Danish.
+--UvC4hbAhKTdVUBxb--
