@@ -2,139 +2,165 @@ Return-Path: <linux-remoteproc-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE17FC001DE
-	for <linux-remoteproc@archiver.kernel.org>; Thu, 10 Aug 2023 19:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C95C0015E
+	for <linux-remoteproc@archiver.kernel.org>; Fri, 11 Aug 2023 11:18:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236287AbjHJT0v (ORCPT
+        id S236196AbjHKLSo (ORCPT
         <rfc822;linux-remoteproc@archiver.kernel.org>);
-        Thu, 10 Aug 2023 15:26:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39724 "EHLO
+        Fri, 11 Aug 2023 07:18:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236302AbjHJT0u (ORCPT
+        with ESMTP id S230418AbjHKLSo (ORCPT
         <rfc822;linux-remoteproc@vger.kernel.org>);
-        Thu, 10 Aug 2023 15:26:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F95C7;
-        Thu, 10 Aug 2023 12:26:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D125864018;
-        Thu, 10 Aug 2023 19:26:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEDEC433C7;
-        Thu, 10 Aug 2023 19:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691695609;
-        bh=h2DqxVG13dnsEkNHhyxyTR+mtl+zHvJP4CblhcYkRrM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I73IqMyUiqgFtxCIB5FADS0X1Inn8xBcqvIWpl+naTeOatdDjd73eqoXSctboPtMD
-         hu3H0UUbqRNw+ExRvLmGPZkgid5SLmr4zEd+rbHP/mX7Jy9vZAtqZVe6WXJg1A3pmY
-         Oa8lutgbqB+Pft+fQqenG0odXyAmgAcZY87dDoYc75S/9kayrpA5X85mpPznGdjcO1
-         XKbpafIl4J7sPNhHe4907D3hr35bHWMYflkWZmzXF1962zkDl2pKPh6yVdJfyFMEcc
-         4oMAxiCWLHmtklNrCsBUvi+Yc3ogfSif46rqJOCkzfCYecdp1fW7WyIpjxaKMD4zcS
-         M8BwK/qwBhEbQ==
-Date:   Thu, 10 Aug 2023 20:26:44 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Hari Nagalla <hnagalla@ti.com>
-Cc:     andersson@kernel.org, mathieu.poirier@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, s-anna@ti.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: remoteproc: k3-dsp: correct optional sram
- properties for AM62A SoCs
-Message-ID: <20230810-dramatic-disregard-c254d763e1fe@spud>
-References: <20230810110545.11644-1-hnagalla@ti.com>
+        Fri, 11 Aug 2023 07:18:44 -0400
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E00BAE62;
+        Fri, 11 Aug 2023 04:18:42 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 37BBIY8w085739;
+        Fri, 11 Aug 2023 06:18:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1691752714;
+        bh=oZkPIEoMHCpMNfX7D1YcSVTXDaLgEpt81bEmqlGn+hw=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=hCHDQqzhxWCTbKXeD7LFTjY3v/mSe8LykCLRgohEigqSdRzExsnZmqcLJrKQjR/Vf
+         naVgV4l4fCtDe9um/aYnpf7k2cGPM9svbE7FJZ/pY9sg4gBqDaw4qpuHT2Zaf5q0QF
+         fo1fj4ATl8xabx0TwKxBS8JjGjn53Cj8ySOCoKbo=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 37BBIYFq127250
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Aug 2023 06:18:34 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Aug 2023 06:18:33 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Aug 2023 06:18:33 -0500
+Received: from [172.24.227.217] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 37BBITqp086739;
+        Fri, 11 Aug 2023 06:18:29 -0500
+Message-ID: <e49fb304-bd5d-5013-815f-5933a2a170c4@ti.com>
+Date:   Fri, 11 Aug 2023 16:48:28 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pXtfXRWhPXTRbs8a"
-Content-Disposition: inline
-In-Reply-To: <20230810110545.11644-1-hnagalla@ti.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] dt-bindings: remoteproc: pru: Add Interrupt property
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <vigneshr@ti.com>,
+        <srk@ti.com>, <nm@ti.com>
+References: <20230807110836.2612730-1-danishanwar@ti.com>
+ <20230807-euphemism-trailing-ef4130dc7437@spud>
+ <910a4a98-712a-5517-5a5b-ffb962f83463@ti.com>
+ <20230808-unwomanly-generic-67d20f0e51cd@spud>
+ <cd74e31f-8bc6-445b-9c33-51e53a439cd2@ti.com>
+ <20230808-bazooka-uncoated-a3401d94b063@spud>
+From:   Md Danish Anwar <a0501179@ti.com>
+Organization: Texas Instruments
+In-Reply-To: <20230808-bazooka-uncoated-a3401d94b063@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-remoteproc.vger.kernel.org>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 
+Hi Conor,
 
---pXtfXRWhPXTRbs8a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08/08/23 4:58 pm, Conor Dooley wrote:
+> On Tue, Aug 08, 2023 at 04:30:32PM +0530, Md Danish Anwar wrote:
+>> On 08/08/23 4:18 pm, Conor Dooley wrote:
+>>> On Tue, Aug 08, 2023 at 03:14:31PM +0530, Md Danish Anwar wrote:
+>>>> On 07/08/23 8:09 pm, Conor Dooley wrote:
+>>>>> On Mon, Aug 07, 2023 at 04:38:36PM +0530, MD Danish Anwar wrote:
+>>>>>> Add interrupts and interrupt-names protperties for PRU and RTU cores.
+>>>>>>
+>>>>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>>>>> ---
+>>>>>>  .../bindings/remoteproc/ti,pru-rproc.yaml     | 22 +++++++++++++++++++
+>>>>>>  1 file changed, 22 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+>>>>>> index cd55d80137f7..6970316943bb 100644
+>>>>>> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.yaml
+>>>>>> @@ -66,6 +66,16 @@ properties:
+>>>>>>        Should contain the name of the default firmware image
+>>>>>>        file located on the firmware search path.
+>>>>>>  
+>>>>>> +  interrupts:
+>>>>>> +    maxItems: 1
+>>>>>> +    description:
+>>>>>> +      Interrupt specifiers enable the virtio/rpmsg communication between MPU
+>>>>>> +      and the PRU/RTU cores.
+>>>>>> +
+>>>>>> +  interrupt-names:
+>>>>>> +    items:
+>>>>>> +      - const: vring
+>>>>>> +
+>>>>>>  if:
+>>>>>>    properties:
+>>>>>>      compatible:
+>>>>>> @@ -171,6 +181,9 @@ examples:
+>>>>>>                <0x22400 0x100>;
+>>>>>>          reg-names = "iram", "control", "debug";
+>>>>>>          firmware-name = "am65x-pru0_0-fw";
+>>>>>> +        interrupt-parent = <&icssg0_intc>;
+>>>>>> +        interrupts = <16 2 2>;
+>>>>>> +        interrupt-names = "vring";
+>>>>>>        };
+>>>>>
+>>>>> These examples would probably be more helpful if they used the
+>>>>> appropriate defines, no?
+>>>>>
+>>>>
+>>>> PRUSS Interrupt controller doesn't have any appropriate defines. This doesn't
+>>>> use GIC so defines from arm-gic.h can not be used here. These are specific to
+>>>> PRUSS INTC.
+>>>
+>>> I was deliberately vague in case the gic stuff applied too, but my main
+>>> question was about the standard defines used for interrupt types.
+>>>
+>>
+>> There are no standard defines for these interrupt types. However I can create a
+>> new .h file defining all the three interrupt cells and their values for both
+>> PRU and RTU cores if you think that is required. Otherwise we can go with
+>> hardcoded values.
+>>
+>> Please let me know what you think should be done here.
+> 
+> It'd be good to reference to the documentation for the cells, I don't
+> think adding a header is necessary here.
+> 
 
-On Thu, Aug 10, 2023 at 06:05:45AM -0500, Hari Nagalla wrote:
-> The C7xv-dsp on AM62A have 32KB L1 I-cache and a 64KB L1 D-cache. It
-> does not have an addressable l1dram . So, remove this optional sram
-> property from the bindings to fix device tree build warnings.
->=20
-> Also set the 'memory-regions' property as optional. This is because
-> the remote processors can function without carveout regions.
+How should I reference to the documentation for the cells?
 
-I thought I already said this today, but must be hallucinating - this
-second part here seems like it in an unrelated change that should go in
-its own patch..
+Should I just add the details of cells in description of interrupt property here.
 
->=20
-> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
-> ---
->  .../bindings/remoteproc/ti,k3-dsp-rproc.yaml     | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc=
-=2Eyaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> index f16e90380df1..8dd22c57e22d 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-> @@ -111,7 +111,6 @@ else:
->      properties:
->        compatible:
->          enum:
-> -          - ti,am62a-c7xv-dsp
->            - ti,j721e-c71-dsp
->            - ti,j721s2-c71-dsp
->    then:
-> @@ -124,6 +123,20 @@ else:
->          items:
->            - const: l2sram
->            - const: l1dram
-> +  else:
-> +    if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - ti,am62a-c7xv-dsp
-> +    then:
-> +      properties:
-> +        reg:
-> +          items:
-> +            - description: Address and Size of the L2 SRAM internal memo=
-ry region
-> +        reg-names:
-> +          items:
-> +            - const: l2sram
-> =20
->  required:
->    - compatible
-> @@ -135,7 +148,6 @@ required:
->    - resets
->    - firmware-name
->    - mboxes
-> -  - memory-region
-> =20
->  unevaluatedProperties: false
-> =20
-> --=20
-> 2.34.1
->=20
+  interrupts:
+    maxItems: 1
+    description:
+      Interrupt specifiers enable the virtio/rpmsg communication between MPU
+      and the PRU/RTU cores. The value of the interrupts should be the PRU
+      System event number [cell 1], PRU channel [cell 2] and PRU host_event
+      (target) [cell 3].
 
---pXtfXRWhPXTRbs8a
-Content-Type: application/pgp-signature; name="signature.asc"
+Please let me know if this looks OK to you.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZNU59AAKCRB4tDGHoIJi
-0ujdAP9/gwpeMbJnjqYnN0kVayzEgItu2KClO+kgQ81UuQw4NgEA5Y6J+VbZyben
-m5NLRRbeqxk7L2omT+VGx0b9piUZ5AM=
-=czQE
------END PGP SIGNATURE-----
+> Thanks,
+> Conor.
 
---pXtfXRWhPXTRbs8a--
+-- 
+Thanks and Regards,
+Danish.
